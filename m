@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7E8C4167E
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 11:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA741C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 11:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A385861039
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 11:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82C160F6D
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Oct 2021 11:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240669AbhJHLo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Oct 2021 07:44:56 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47494
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243315AbhJHLnm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 07:43:42 -0400
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        id S242442AbhJHLpT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Oct 2021 07:45:19 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:33766
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242433AbhJHLmL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Oct 2021 07:42:11 -0400
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8B7DA40000
-        for <linux-clk@vger.kernel.org>; Fri,  8 Oct 2021 11:40:20 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A5C3140016
+        for <linux-clk@vger.kernel.org>; Fri,  8 Oct 2021 11:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1633693220;
-        bh=sO19rw6M+5EyeIJS4t8Wx47RQLw3db6b3KXg3W2uMhI=;
+        s=20210705; t=1633693214;
+        bh=B1LQlQ7B/5D6Dgl3qfPf6DLDJ9sR5D/GqEBR3sbuvCA=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=LEuQ3nE74BLgUfF3jDNX9NAWzVVciEWz9sFAiIhtY5u4WeMHBEKWrvaWgdjg7Y6Zg
-         6t8mAq8T5hJJ9hN3BL6NJpKpUkHC5HlwF7kAlhnR+WB6IjAfU2fOOKzUuudEyLM8On
-         J45uiWPesrSZWBLEqj+rBJutmLUd6GaK5+ySr6TC5UtsbRESCR0RoAGmtB1pKHzbAi
-         YuuJJTpSxupC0OqFzN0+dzeTAv6MnVxiSCHosX80+GN2OF+FCxRFWtugYwT/FkSH76
-         sUICKpQFLClcSzQfb095aRh4dWzEbVW7PtSwuNaK20ZvWPOwJDFwpU4QOr4/7T54ez
-         JafWIgn9pL+QA==
-Received: by mail-ed1-f71.google.com with SMTP id v2-20020a50f082000000b003db24e28d59so8942019edl.5
-        for <linux-clk@vger.kernel.org>; Fri, 08 Oct 2021 04:40:20 -0700 (PDT)
+        b=jXU0HLLgHBaP1b7E567QazLOTnCenmdPEKIxgTYwd0zt+wHIBLibRkevKhFr//AN1
+         leU4BzaBt8JJjFrQVt+CRv4gWc0ngzUj3Prelg5gTY+FF6Twz5QUXKz9wbE9a6MEIB
+         hcuKh5q9Zgy/doqv1uRvWVVQoRh1/X89XMdyERmAvrVx90U2HJfhMmWz0pANEpFMpW
+         Zjt0eT1/n5dsnLaCZ04IoCre5gJn5s3/UJAXSARMDs5DAM9KvC5ol18/2D39TZ/8rG
+         aLgO94H3TCqq0g3IHI3SQX243y/E72CYC1Fu4spNsrT4Z8ZhnSibdfx3SNPMJE0VhQ
+         fU8twIfe4m2Dg==
+Received: by mail-ed1-f69.google.com with SMTP id u23-20020a50a417000000b003db23c7e5e2so8941665edb.8
+        for <linux-clk@vger.kernel.org>; Fri, 08 Oct 2021 04:40:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sO19rw6M+5EyeIJS4t8Wx47RQLw3db6b3KXg3W2uMhI=;
-        b=5DgKWczly2C9Z4hO63P83NttjyTyKtxJ4NquWvJPxWKf8YEN7+ZkdvedtbwQ/7r/6X
-         50tiBSy93OWYYQozpbwgskSMhjAqWmi+1MF+rj6NfggrCS+jw8oWDFyP1/zFEH6laPA0
-         CKVybybM84au4a6rbIzGha2zVML7Si7vAVpWX9jEZectL/2YrAAyiDg59+x5bFyNXdCO
-         OgmiTw8XcIgRtFzIGxYA31v37vI6cUAy7Nxkr0lL7NKtg1f9CVM3NocTKUvgW/ZItkXR
-         8/dXvJHOe/Q3Qux/LVoZNAWXNa9O5JMGQT1RdkZajVb4CUx4lt0wVhFPqcRBW1mXBCuA
-         5krg==
-X-Gm-Message-State: AOAM532GquN8POK11vPgpLPb+nuDXvXHvP/I4xftBfoGFdhYNksL7Ip0
-        YUd5mGfPgtglsk11LJ9wQvmCo++s81Xjx51h1uhxZjNrGvYdatbqmuxu35SQUJp9Tpm7pvFQHl0
-        hBkka9xe216VjvF7HZvBihm+S9QYnVo/t3ttTJg==
-X-Received: by 2002:a05:6402:1e8c:: with SMTP id f12mr139106edf.71.1633693219750;
-        Fri, 08 Oct 2021 04:40:19 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJziRyxy/SEuWS0KeR8oHdzjv21FCdZ7f3M2Pyqj2cby9xINsHLJE7vwOeLRw11h+dcTb92YZg==
-X-Received: by 2002:a05:6402:1e8c:: with SMTP id f12mr139082edf.71.1633693219494;
-        Fri, 08 Oct 2021 04:40:19 -0700 (PDT)
+        bh=B1LQlQ7B/5D6Dgl3qfPf6DLDJ9sR5D/GqEBR3sbuvCA=;
+        b=LeeBp5dl53rw8QE6Pit0L+77NPcgPulEdEv3srtdcvgvWBsEKHPMBsRD1RoForUi8G
+         mxaJCNZVtH8qIK3x5lUKUUsNlF3Cn9qm6p+aj8lkGQTskMin5za//Vr8fEKnxH/1nDIg
+         tiiWRIkzlhgXhS8inKA2uEOHBcmn9t9UDkW7LvAt88yD+GEVZ9PjrRDIUk2YLjzD3Odj
+         nTb5HHogYxGL6bh2Ri/Fmh+wvJo8h7dHqVFULuv9K6GxK2JU8Bv8PvoJyKyek4/T4Ogw
+         JAFE9EkntDruxuL4PGnMoD+xYrRTzR7TbmBxXO84sqnQ5jvsK6aDme4WcCjNrps8AbPH
+         Aisw==
+X-Gm-Message-State: AOAM532PDKMMYQvmQ3zn1kxAXd0iWy/qa3rDSfIUx2LPCxNzsaBvhg7R
+        ZilDfQWgE6wDeOcqwZbyJEWNa735cFPjNenH6I9ojaPLc9tmwmX2Oro4raCfFX5XauA2BABBGrG
+        JxbXSkwjrcdskh/FM7CYTUQbYtEidd0tAJp2T6Q==
+X-Received: by 2002:a17:906:c1d0:: with SMTP id bw16mr3691956ejb.146.1633693214140;
+        Fri, 08 Oct 2021 04:40:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwuKP5BdLY5Fq3JlRDEgrRfyOt0gnhtGpKb+dXUYuugRnsOqnr9q4TsCmLP/rwcRPZSHNmP0w==
+X-Received: by 2002:a17:906:c1d0:: with SMTP id bw16mr3691930ejb.146.1633693213918;
+        Fri, 08 Oct 2021 04:40:13 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-186-13.adslplus.ch. [188.155.186.13])
-        by smtp.gmail.com with ESMTPSA id c17sm901437edu.11.2021.10.08.04.40.18
+        by smtp.gmail.com with ESMTPSA id c17sm901437edu.11.2021.10.08.04.40.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Oct 2021 04:40:19 -0700 (PDT)
+        Fri, 08 Oct 2021 04:40:13 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -72,9 +72,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-samsung-soc@vger.kernel.org
 Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 09/10] dt-bindings: mfd: samsung,s5m8767: convert to dtschema
-Date:   Fri,  8 Oct 2021 13:39:31 +0200
-Message-Id: <20211008113931.134847-6-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v4 05/10] regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
+Date:   Fri,  8 Oct 2021 13:39:27 +0200
+Message-Id: <20211008113931.134847-2-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211008113723.134648-1-krzysztof.kozlowski@canonical.com>
 References: <20211008113723.134648-1-krzysztof.kozlowski@canonical.com>
@@ -84,369 +84,81 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the MFD part of Samsung S5M8767 PMIC to DT schema format.
-Previously the bindings were mostly in mfd/samsung,sec-core.txt.
-
-Since all of bindings for Samsung S2M and S5M family of PMICs were
-converted from mfd/samsung,sec-core.txt to respective dtschema file,
-remove the former one.
+Convert the regulators of Samsung S2MPA01 PMIC to DT schema format.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/mfd/samsung,s5m8767.yaml         | 269 ++++++++++++++++++
- .../bindings/mfd/samsung,sec-core.txt         |  86 ------
- MAINTAINERS                                   |   2 +-
- 3 files changed, 270 insertions(+), 87 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+ .../bindings/regulator/samsung,s2mpa01.txt    | 79 -------------------
+ .../bindings/regulator/samsung,s2mpa01.yaml   | 62 +++++++++++++++
+ 2 files changed, 62 insertions(+), 79 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
 
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-new file mode 100644
-index 000000000000..b2529a48c890
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/samsung,s5m8767.yaml
-@@ -0,0 +1,269 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/samsung,s5m8767.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung S5M8767 Power Management IC
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+
-+description: |
-+  This is a part of device tree bindings for S2M and S5M family of Power
-+  Management IC (PMIC).
-+
-+  The Samsung S5M8767 is a Power Management IC which includes voltage
-+  and current regulators, RTC, clock outputs and other sub-blocks.
-+
-+properties:
-+  compatible:
-+    const: samsung,s5m8767-pmic
-+
-+  clocks:
-+    $ref: ../clock/samsung,s2mps11.yaml
-+    description:
-+      Child node describing clock provider.
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  regulators:
-+    $ref: ../regulator/samsung,s5m8767.yaml
-+    description:
-+      List of child nodes that specify the regulators.
-+
-+  s5m8767,pmic-buck2-dvs-voltage:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 8
-+    maxItems: 8
-+    description: |
-+      A set of 8 voltage values in micro-volt (uV) units for buck2 when
-+      changing voltage using gpio dvs.
-+
-+  s5m8767,pmic-buck3-dvs-voltage:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 8
-+    maxItems: 8
-+    description: |
-+      A set of 8 voltage values in micro-volt (uV) units for buck3 when
-+      changing voltage using gpio dvs.
-+
-+  s5m8767,pmic-buck4-dvs-voltage:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 8
-+    maxItems: 8
-+    description: |
-+      A set of 8 voltage values in micro-volt (uV) units for buck4 when
-+      changing voltage using gpio dvs.
-+
-+  s5m8767,pmic-buck-ds-gpios:
-+    minItems: 3
-+    maxItems: 3
-+    description: |
-+      GPIO specifiers for three host gpio's used for selecting GPIO DVS lines.
-+      It is one-to-one mapped to dvs gpio lines.
-+
-+  s5m8767,pmic-buck2-uses-gpio-dvs:
-+    type: boolean
-+    description: buck2 can be controlled by gpio dvs.
-+
-+  s5m8767,pmic-buck3-uses-gpio-dvs:
-+    type: boolean
-+    description: buck3 can be controlled by gpio dvs.
-+
-+  s5m8767,pmic-buck4-uses-gpio-dvs:
-+    type: boolean
-+    description: buck4 can be controlled by gpio dvs.
-+
-+  s5m8767,pmic-buck-default-dvs-idx:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minimum: 0
-+    maximum: 7
-+    default: 0
-+    description: |
-+      Default voltage setting selected from the possible 8 options selectable
-+      by the dvs gpios. The value of this property should be between 0 and 7.
-+      If not specified or if out of range, the default value of this property
-+      is set to 0.
-+
-+  s5m8767,pmic-buck-dvs-gpios:
-+    minItems: 3
-+    maxItems: 3
-+    description: |
-+      GPIO specifiers for three host gpio's used for dvs.
-+
-+  wakeup-source: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - regulators
-+  - s5m8767,pmic-buck-ds-gpios
-+
-+dependencies:
-+  s5m8767,pmic-buck2-dvs-voltage: [ 's5m8767,pmic-buck-dvs-gpios' ]
-+  s5m8767,pmic-buck3-dvs-voltage: [ 's5m8767,pmic-buck-dvs-gpios' ]
-+  s5m8767,pmic-buck4-dvs-voltage: [ 's5m8767,pmic-buck-dvs-gpios' ]
-+  s5m8767,pmic-buck2-uses-gpio-dvs: [ 's5m8767,pmic-buck-dvs-gpios', 's5m8767,pmic-buck2-dvs-voltage' ]
-+  s5m8767,pmic-buck3-uses-gpio-dvs: [ 's5m8767,pmic-buck-dvs-gpios', 's5m8767,pmic-buck3-dvs-voltage' ]
-+  s5m8767,pmic-buck4-uses-gpio-dvs: [ 's5m8767,pmic-buck-dvs-gpios', 's5m8767,pmic-buck4-dvs-voltage' ]
-+
-+additionalProperties: false
-+
-+allOf:
-+  - if:
-+      required:
-+        - s5m8767,pmic-buck2-uses-gpio-dvs
-+    then:
-+      properties:
-+        s5m8767,pmic-buck3-uses-gpio-dvs: false
-+        s5m8767,pmic-buck4-uses-gpio-dvs: false
-+
-+  - if:
-+      required:
-+        - s5m8767,pmic-buck3-uses-gpio-dvs
-+    then:
-+      properties:
-+        s5m8767,pmic-buck2-uses-gpio-dvs: false
-+        s5m8767,pmic-buck4-uses-gpio-dvs: false
-+
-+  - if:
-+      required:
-+        - s5m8767,pmic-buck4-uses-gpio-dvs
-+    then:
-+      properties:
-+        s5m8767,pmic-buck2-uses-gpio-dvs: false
-+        s5m8767,pmic-buck3-uses-gpio-dvs: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@66 {
-+            compatible = "samsung,s5m8767-pmic";
-+            reg = <0x66>;
-+
-+            interrupt-parent = <&gpx3>;
-+            interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-+            wakeup-source;
-+
-+            s5m8767,pmic-buck-default-dvs-idx = <3>;
-+            s5m8767,pmic-buck2-uses-gpio-dvs;
-+
-+            s5m8767,pmic-buck-dvs-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>,
-+                                          <&gpd1 1 GPIO_ACTIVE_LOW>,
-+                                          <&gpd1 2 GPIO_ACTIVE_LOW>;
-+
-+            s5m8767,pmic-buck-ds-gpios = <&gpx2 3 GPIO_ACTIVE_LOW>,
-+                                         <&gpx2 4 GPIO_ACTIVE_LOW>,
-+                                         <&gpx2 5 GPIO_ACTIVE_LOW>;
-+
-+            s5m8767,pmic-buck2-dvs-voltage = <1350000>, <1300000>,
-+                                             <1250000>, <1200000>,
-+                                             <1150000>, <1100000>,
-+                                             <1000000>, <950000>;
-+
-+            s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
-+                                             <1100000>, <1100000>,
-+                                             <1000000>, <1000000>,
-+                                             <1000000>, <1000000>;
-+
-+            s5m8767,pmic-buck4-dvs-voltage = <1200000>, <1200000>,
-+                                             <1200000>, <1200000>,
-+                                             <1200000>, <1200000>,
-+                                             <1200000>, <1200000>;
-+
-+            clocks {
-+                compatible = "samsung,s5m8767-clk";
-+                #clock-cells = <1>;
-+                clock-output-names = "en32khz_ap", "en32khz_cp", "en32khz_bt";
-+            };
-+
-+            regulators {
-+                LDO1 {
-+                    regulator-name = "VDD_ALIVE";
-+                    regulator-min-microvolt = <1100000>;
-+                    regulator-max-microvolt = <1100000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    op_mode = <1>; /* Normal Mode */
-+                };
-+
-+                // ...
-+
-+                BUCK1 {
-+                    regulator-name = "VDD_MIF";
-+                    regulator-min-microvolt = <950000>;
-+                    regulator-max-microvolt = <1100000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    op_mode = <1>; /* Normal Mode */
-+                };
-+
-+                BUCK2 {
-+                    regulator-name = "VDD_ARM";
-+                    regulator-min-microvolt = <900000>;
-+                    regulator-max-microvolt = <1350000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    op_mode = <1>; /* Normal Mode */
-+                };
-+
-+                // ...
-+            };
-+        };
-+    };
-+
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@66 {
-+            compatible = "samsung,s5m8767-pmic";
-+            reg = <0x66>;
-+
-+            interrupt-parent = <&gpx3>;
-+            interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-+            wakeup-source;
-+
-+            s5m8767,pmic-buck-ds-gpios = <&gpx2 3 GPIO_ACTIVE_LOW>,
-+                                         <&gpx2 4 GPIO_ACTIVE_LOW>,
-+                                         <&gpx2 5 GPIO_ACTIVE_LOW>;
-+
-+            clocks {
-+                compatible = "samsung,s5m8767-clk";
-+                #clock-cells = <1>;
-+                clock-output-names = "en32khz_ap", "en32khz_cp", "en32khz_bt";
-+            };
-+
-+            regulators {
-+                LDO1 {
-+                    regulator-name = "VDD_ALIVE";
-+                    regulator-min-microvolt = <1100000>;
-+                    regulator-max-microvolt = <1100000>;
-+                    regulator-always-on;
-+                    regulator-boot-on;
-+                    op_mode = <1>; /* Normal Mode */
-+                };
-+
-+                // ...
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt b/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
 deleted file mode 100644
-index c68cdd365153..000000000000
---- a/Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
+index bae3c7f838cf..000000000000
+--- a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.txt
 +++ /dev/null
-@@ -1,86 +0,0 @@
--Binding for Samsung S2M and S5M family multi-function device
--============================================================
+@@ -1,79 +0,0 @@
+-Binding for Samsung S2MPA01 regulator block
+-===========================================
 -
--This is a part of device tree bindings for S2M and S5M family multi-function
--devices.
+-This is a part of device tree bindings for S2M family multi-function devices.
+-More information can be found in bindings/mfd/sec-core.txt file.
 -
--The Samsung S2MPA01, S2MPS11/13/14/15, S2MPU02 and S5M8767 is a family
--of multi-function devices which include voltage and current regulators, RTC,
--charger controller, clock outputs and other sub-blocks. It is interfaced
--to the host controller using an I2C interface. Each sub-block is usually
--addressed by the host system using different I2C slave addresses.
+-The S2MPA01 device provide buck and LDO regulators.
 -
--
--This document describes bindings for main device node. Optional sub-blocks
--must be a sub-nodes to it. Bindings for them can be found in:
-- - bindings/regulator/samsung,s2mpa01.txt
-- - bindings/regulator/samsung,s2mps11.txt
-- - bindings/regulator/samsung,s5m8767.txt
-- - bindings/clock/samsung,s2mps11.txt
+-To register these with regulator framework instantiate under main device node
+-a sub-node named "regulators" with more sub-nodes for each regulator using the
+-common regulator binding documented in:
+- - Documentation/devicetree/bindings/regulator/regulator.txt
 -
 -
--Required properties:
-- - compatible: Should be one of the following
--	- "samsung,s2mpa01-pmic",
--	- "samsung,s2mps11-pmic",
--	- "samsung,s2mps13-pmic",
--	- "samsung,s2mps14-pmic",
--	- "samsung,s2mps15-pmic",
--	- "samsung,s2mpu02-pmic",
--	- "samsung,s5m8767-pmic".
-- - reg: Specifies the I2C slave address of the pmic block. It should be 0x66.
+-Names of regulators supported by S2MPA01 device:
+-	- LDOn
+-		  - valid values for n are 1 to 26
+-		  - Example: LDO1, LD02, LDO26
+-	- BUCKn
+-		  - valid values for n are 1 to 10.
+-		  - Example: BUCK1, BUCK2, BUCK9
+-Note: The 'n' in LDOn and BUCKn represents the LDO or BUCK number
+-as per the datasheet of device.
 -
--Optional properties:
-- - interrupts: Interrupt specifiers for interrupt sources.
-- - samsung,s2mps11-wrstbi-ground: Indicates that WRSTBI pin of PMIC is pulled
--   down. When the system is suspended it will always go down thus triggerring
--   unwanted buck warm reset (setting buck voltages to default values).
-- - samsung,s2mps11-acokb-ground: Indicates that ACOKB pin of S2MPS11 PMIC is
--   connected to the ground so the PMIC must manually set PWRHOLD bit in CTRL1
--   register to turn off the power. Usually the ACOKB is pulled up to VBATT so
--   when PWRHOLD pin goes low, the rising ACOKB will trigger power off.
+-
+-Optional properties of buck regulator nodes under "regulators" sub-node:
+- - regulator-ramp-delay: ramp delay in uV/us. May be 6250, 12500
+-   (default), 25000, or 50000. May be 0 for disabling the ramp delay on
+-   BUCK{1,2,3,4}.
+-
+-   In the absence of the regulator-ramp-delay property, the default ramp
+-   delay will be used.
+-
+-   Note: Some bucks share the ramp rate setting i.e. same ramp value
+-   will be set for a particular group of bucks so provide the same
+-   regulator-ramp-delay value for them.
+-   Groups sharing ramp rate:
+-    - buck{1,6},
+-    - buck{2,4},
+-    - buck{8,9,10}.
 -
 -Example:
 -
--	s2mps11_pmic@66 {
--		compatible = "samsung,s2mps11-pmic";
+-	s2mpa01_pmic@66 {
+-		compatible = "samsung,s2mpa01-pmic";
 -		reg = <0x66>;
--
--		s2m_osc: clocks {
--			compatible = "samsung,s2mps11-clk";
--			#clock-cells = <1>;
--			clock-output-names = "xx", "yy", "zz";
--		};
 -
 -		regulators {
 -			ldo1_reg: LDO1 {
--				regulator-name = "VDD_ABB_3.3V";
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
+-				regulator-name = "VDD_ALIVE";
+-				regulator-min-microvolt = <1000000>;
+-				regulator-max-microvolt = <1000000>;
 -			};
 -
 -			ldo2_reg: LDO2 {
--				regulator-name = "VDD_ALIVE_1.1V";
--				regulator-min-microvolt = <1100000>;
--				regulator-max-microvolt = <1100000>;
+-				regulator-name = "VDDQ_MMC2";
+-				regulator-min-microvolt = <2800000>;
+-				regulator-max-microvolt = <2800000>;
 -				regulator-always-on;
 -			};
 -
@@ -468,19 +180,74 @@ index c68cdd365153..000000000000
 -			};
 -		};
 -	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dc931242a7f9..e086102e8340 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16638,7 +16638,7 @@ L:	linux-samsung-soc@vger.kernel.org
- S:	Supported
- F:	Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml
- F:	Documentation/devicetree/bindings/mfd/samsung,s2m*.yaml
--F:	Documentation/devicetree/bindings/mfd/samsung,sec-core.txt
-+F:	Documentation/devicetree/bindings/mfd/samsung,s5m*.yaml
- F:	Documentation/devicetree/bindings/regulator/samsung,s2m*.yaml
- F:	Documentation/devicetree/bindings/regulator/samsung,s5m*.yaml
- F:	drivers/clk/clk-s2mps11.c
+diff --git a/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+new file mode 100644
+index 000000000000..0627dec513da
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/samsung,s2mpa01.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/samsung,s2mpa01.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung S2MPA01 Power Management IC regulators
++
++maintainers:
++  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
++
++description: |
++  This is a part of device tree bindings for S2M and S5M family of Power
++  Management IC (PMIC).
++
++  The S2MPA01 provides buck and LDO regulators.
++
++  See also Documentation/devicetree/bindings/mfd/samsung,s2mpa01.yaml for
++  additional information and example.
++
++patternProperties:
++  # 26 LDOs
++  "^LDO([1-9]|1[0-9]|2[0-6])$":
++    type: object
++    $ref: regulator.yaml#
++    unevaluatedProperties: false
++    description:
++      Properties for single LDO regulator.
++
++    required:
++      - regulator-name
++
++  # 10 bucks
++  "^BUCK([1-9]|10)$":
++    type: object
++    $ref: regulator.yaml#
++    unevaluatedProperties: false
++    description:
++      Properties for single BUCK regulator.
++
++    properties:
++      regulator-ramp-delay:
++        enum: [0, 6250, 12500, 25000, 50000]
++        default: 12500
++        description: |
++          May be 0 for disabling the ramp delay on BUCK{1,2,3,4}.
++
++          In the absence of the regulator-ramp-delay property, the default ramp
++          delay will be used.
++
++          Note: Some bucks share the ramp rate setting i.e. same ramp value
++          will be set for a particular group of bucks so provide the same
++          regulator-ramp-delay value for them.
++          Groups sharing ramp rate:
++            * buck{1,6},
++            * buck{2,4},
++            * buck{8,9,10}.
++
++    required:
++      - regulator-name
++
++additionalProperties: false
 -- 
 2.30.2
 
