@@ -2,92 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB69C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 09:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0393C43217
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 09:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5096160F5B
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 09:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B63AE60F92
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 09:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235469AbhJKJdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 05:33:08 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48063 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235452AbhJKJdI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Oct 2021 05:33:08 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10133"; a="250221457"
-X-IronPort-AV: E=Sophos;i="5.85,364,1624345200"; 
-   d="scan'208";a="250221457"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 02:30:50 -0700
-X-IronPort-AV: E=Sophos;i="5.85,364,1624345200"; 
-   d="scan'208";a="479785314"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 02:30:44 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 11 Oct 2021 12:30:41 +0300
-Date:   Mon, 11 Oct 2021 12:30:41 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 01/11] ACPI: delay enumeration of devices with a _DEP
- pointing to an INT3472 device
-Message-ID: <YWQEQVzF2nMjE10y@lahna>
-References: <20211010185707.195883-1-hdegoede@redhat.com>
- <20211010185707.195883-2-hdegoede@redhat.com>
- <YWPXixp/J6KIzWp6@lahna>
- <0c08069e-7758-fc09-c200-d867d097b499@redhat.com>
+        id S235556AbhJKJnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 05:43:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235529AbhJKJnT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 05:43:19 -0400
+X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Oct 2021 02:41:19 PDT
+Received: from lb1-smtp-cloud7.xs4all.net (lb1-smtp-cloud7.xs4all.net [IPv6:2001:888:0:108::1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC05C061570
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 02:41:19 -0700 (PDT)
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id ZrmzmxWsHk3b0Zrn3mLuYm; Mon, 11 Oct 2021 11:40:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1633945214; bh=QMJAVf8Q7oJ7fV4THX5ne/5n45aV1FB1ikretTZlvTk=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=fh+5Ii6t7j5Hj1MF7htRyUxZBLFY3A9VdDG+YYiUr2Mbc19QWo5svMucex0AaIdh/
+         hxTgJuqa7IKvPoWBp088UpQ58w81W5TyegEZfcveuZpCk4QaD+vnmKuwFjtPSJNlf4
+         wGFMT+zEMKq7wVkf3DWvP9dJRpnGJTsJaJ9LhslDstf9cfTadgSbCt26DC+40pglWl
+         1p+1EHUgbizuSNJktleMw3Mw13F20HSknuV+Q5OFNIyqU3ER4x4ublWqAGOap5aJ5R
+         CHhNeSGfMnIgvP1oXTH6HRtbDdv/16IchP3lzbIe5fsrqZPO7ScfZNlXXBtZx8SL1v
+         muABHYtaY3r/w==
+Subject: Re: [PATCH v3 6/8] media: v4l2-ctrls: Add ARGB color effects control
+To:     dillon.minfei@gmail.com, mchehab@kernel.org,
+        mchehab+huawei@kernel.org, ezequiel@collabora.com,
+        gnurou@gmail.com, pihsun@chromium.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, gabriel.fernandez@st.com,
+        gabriel.fernandez@foss.st.com
+Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1633689012-14492-1-git-send-email-dillon.minfei@gmail.com>
+ <1633689012-14492-7-git-send-email-dillon.minfei@gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <290d78b5-b6d4-a115-9556-f2f909f573da@xs4all.nl>
+Date:   Mon, 11 Oct 2021 11:40:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c08069e-7758-fc09-c200-d867d097b499@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1633689012-14492-7-git-send-email-dillon.minfei@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfA8mrB9Abh2IhqjcRtxRyKAse1GQxeM0M/SgzSbw8HkLHyu12yxnElzZhTCfKRhh/soLDsqaOBPhwN+cTmh6Ru2MpyRyzDRfmOQ2AuG9LP2BEMDAhJNW
+ 54p9fMY6GMgRiP5YMoOlwvpcCu6YmFjv4+0cge7V0VnzxyErDrzwWzjQNCBRl7zXGzj/DSagdo/L5BOfCPXT1u9cI5QgdtcepfvGNc76+s/wyjAumrDrQZkM
+ nciZ7ksamb4wTgDSKUvWhDNpU0LS9fUWQAR4lb2a1WWD+Cl0r8qQQ8RDMXzBsGIxX1z9TYe8pC4tTtBTVfwAjlIxLlUpY88dH31NTPTwY2ZDO0uPdChcb+ul
+ OSyglAZ1HlddrxnwOQl6JW9OW3hIerE4p7hhSjZWGQ+x/MjIG70+OkjhjSrn4yf/ec2FeJ5j7GgqMQGjM5TXAbAKdUTZU7WepIt332w43i08ktMdRAA0IWp3
+ VhtrMemf1IstQGzTnDkFxm40x/pVvnFK9bP38li91ZlwTm9vSAZzOkaZqvmE21R4VTGoo58d+Fb5Q0Q6EJ8ctviyfumwOyba9Cq7C+9EA3lpzEw8zQgO9bmq
+ ZdZFvFm0WbUaYpKhdNGRrr1VZG0VUXZ0y2K9JGhdZ9J8AUvzGZ9X8F3VBRCx/NeNYW5mik0FVciorMb0t3oGoC4eJ7ayW3CuBb3g5qTkOGuXnkaxgVu+yJF4
+ hwqwMBFuFjDdsQ4VTqhxglcp/S5FCFUGa+HTWv7oPlR7SFJZeyxNT/uwyUS+I9LCghxVSNGGx8A9PJaKs07+lsHsT5/p6qs12eSRzwsr8aGaZzVYb6buqgWD
+ ivDJR2IegcEnADEn3mDDhflHO+WOxg9gfkLcr+PBksWma6GHJGb3QwNlXPR8ElS1idrfkR2mqqpGA2Hjdv1UmCW++F2Gug8C3JOghirHWzK1UuHaqPyygR+B
+ 7P6EjEVSTobOXB8oEs7j4TIeeDU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 09:11:05AM +0200, Hans de Goede wrote:
-> Hi,
+On 08/10/2021 12:30, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
 > 
-> On 10/11/21 8:19 AM, Mika Westerberg wrote:
-> > Hi,
-> > 
-> > On Sun, Oct 10, 2021 at 08:56:57PM +0200, Hans de Goede wrote:
-> >> +/* List of HIDs for which we honor deps of matching ACPI devs, when checking _DEP lists. */
-> >> +static const char * const acpi_honor_dep_ids[] = {
-> >> +	"INT3472", /* Camera sensor PMIC / clk and regulator info */
-> > 
-> > Is there some reason why we can't do this for all devices with _DEP?
-> > That way we don't need to maintain lists like this.
+> - add V4L2_COLORFX_SET_ARGB color effects control.
+> - add V4L2_CID_COLORFX_ARGB for ARGB color setting.
 > 
-> Up until now the ACPI core deliberate mostly ignores _DEP-s because the
-> _DEP method may point to pretty much any random ACPI object and Linux does
-> not necessarily have a driver for all ACPI objects the driver points too,
-> which would lead to the devices never getting instantiated.
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> ---
+> v3: according to Hans's suggestion, thanks.
+> - remove old stm32 private R2M ioctl
+> - add V4L2_CID_COLORFX_ARGB
+> - add V4L2_COLORFX_SET_ARGB
 > 
-> In hindsight this might not have been the best solution (1), but if we
-> now start honoring _DEP-s for all devices all of a sudden then this
-> will almost certainly lead to a whole bunch of regressions.
+>  Documentation/userspace-api/media/v4l/control.rst | 8 ++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls-defs.c         | 2 ++
+>  include/uapi/linux/v4l2-controls.h                | 4 +++-
+>  3 files changed, 13 insertions(+), 1 deletion(-)
 > 
-> Note that in this case the HID which triggers this is for the device
-> being depended upon and for all camera sensors used with the IPU3 and
-> IPU4 Intel camera blocks this is the INT3472 device. By triggering on
-> this HID (rather then on the sensor HIDs) I expect that we will not
-> need to update this list all that often.
+> diff --git a/Documentation/userspace-api/media/v4l/control.rst b/Documentation/userspace-api/media/v4l/control.rst
+> index f8d0b923da20..319606a6288f 100644
+> --- a/Documentation/userspace-api/media/v4l/control.rst
+> +++ b/Documentation/userspace-api/media/v4l/control.rst
+> @@ -242,8 +242,16 @@ Control IDs
+>      * - ``V4L2_COLORFX_SET_CBCR``
+>        - The Cb and Cr chroma components are replaced by fixed coefficients
+>  	determined by ``V4L2_CID_COLORFX_CBCR`` control.
+> +    * - ``V4L2_COLORFX_SET_ARGB``
+> +      - ARGB colors.
 
-I see and agree. Thanks for the explanation!
+How about:
 
-No objections from my side then :)
+        - The ARGB components are replaced by the fixed ARGB components
+  	determined by ``V4L2_CID_COLORFX_ARGB`` control.
+
+I also wonder if it makes sense to include the alpha channel here.
+
+Looking at the driver code it appears to me (I might be wrong) that the alpha
+channel is never touched (DMA2D_ALPHA_MODE_NO_MODIF), and setting the alpha
+channel as part of a color effects control is rather odd as well.
+
+Alpha channel manipulation really is separate from the color and - if needed - should
+be done with a separate control.
+
+Regards,
+
+	Hans
+
+>  
+>  
+> +``V4L2_CID_COLORFX_ARGB`` ``(integer)``
+> +    Determines the Alpha, Red, Green, and Blue coefficients for
+> +    ``V4L2_COLORFX_SET_ARGB`` color effect.
+> +    Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
+> +    bits [15:8] as Green component, bits [23:16] as Red component, and
+> +    bits [31:24] as Alpha component.
+>  
+>  ``V4L2_CID_COLORFX_CBCR`` ``(integer)``
+>      Determines the Cb and Cr coefficients for ``V4L2_COLORFX_SET_CBCR``
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> index 421300e13a41..53be6aadb289 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> @@ -785,6 +785,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:	return "Min Number of Output Buffers";
+>  	case V4L2_CID_ALPHA_COMPONENT:		return "Alpha Component";
+>  	case V4L2_CID_COLORFX_CBCR:		return "Color Effects, CbCr";
+> +	case V4L2_CID_COLORFX_ARGB:		return "Color Effects, ARGB";
+>  
+>  	/*
+>  	 * Codec controls
+> @@ -1392,6 +1393,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  		*min = *max = *step = *def = 0;
+>  		break;
+>  	case V4L2_CID_BG_COLOR:
+> +	case V4L2_CID_COLORFX_ARGB:
+>  		*type = V4L2_CTRL_TYPE_INTEGER;
+>  		*step = 1;
+>  		*min = 0;
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 5532b5f68493..2876c2282a68 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -128,6 +128,7 @@ enum v4l2_colorfx {
+>  	V4L2_COLORFX_SOLARIZATION		= 13,
+>  	V4L2_COLORFX_ANTIQUE			= 14,
+>  	V4L2_COLORFX_SET_CBCR			= 15,
+> +	V4L2_COLORFX_SET_ARGB			= 16,
+>  };
+>  #define V4L2_CID_AUTOBRIGHTNESS			(V4L2_CID_BASE+32)
+>  #define V4L2_CID_BAND_STOP_FILTER		(V4L2_CID_BASE+33)
+> @@ -145,9 +146,10 @@ enum v4l2_colorfx {
+>  
+>  #define V4L2_CID_ALPHA_COMPONENT		(V4L2_CID_BASE+41)
+>  #define V4L2_CID_COLORFX_CBCR			(V4L2_CID_BASE+42)
+> +#define V4L2_CID_COLORFX_ARGB			(V4L2_CID_BASE+43)
+>  
+>  /* last CID + 1 */
+> -#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+43)
+> +#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+44)
+>  
+>  /* USER-class private control IDs */
+>  
+> 
+
