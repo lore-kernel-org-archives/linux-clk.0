@@ -2,95 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E78C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 11:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680DEC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 11:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2F0260EE2
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 11:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A4060EB1
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 11:27:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236090AbhJKLEU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 07:04:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235971AbhJKLET (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Oct 2021 07:04:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4591460EB4;
-        Mon, 11 Oct 2021 11:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633950139;
-        bh=rLvTUINnh7X5dxHDbrT7lTQpGD5oMjl+jxUxLtJ+E5o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q0ge84XtrlSzpb/dV/z0PauJWEg/iKeEJ27FwrRpvtbFcs7QdNGXcCxzv4797wC3F
-         gAwFr1EwDS8Ewh9vbsOjNuWzjg1+vwMXTSpPVc4/TtgxxLJ2GlTBNvuCuQLQX75res
-         Wg26Q1Mx4JY0HJBzGjT4/rJFiGOqP4dZ4+c5BdG8mC65JrDhlESL3BB/ZO6kBT7Evs
-         OR8meoJZco/NMWMkklSGG3tgi+crhr8XIDWa3eaUfLIcq3zchTM6w9heeUrrrNX4Dj
-         QHTN9PY2Ko3ieiFausxkfjNrDy9HYoBWJzlftoG+xktoIbVow/f9A7/Or1pFSWDo69
-         p9pQbANGVbLvw==
-Date:   Mon, 11 Oct 2021 12:02:14 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 04/13] regulator: Introduce tps68470-regulator driver
-Message-ID: <YWQZtj7N+2QoZKur@sirena.org.uk>
-References: <20211009160548.306550-1-hdegoede@redhat.com>
- <20211009160548.306550-5-hdegoede@redhat.com>
+        id S233102AbhJKL3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 07:29:31 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:61300 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230429AbhJKL3a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 07:29:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1633951652; x=1665487652;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DlAv5sayhPu+EI8WewXPhpt7h0/Q9kN/IpzGmaVkuQU=;
+  b=bJjLLkNzcNqNg9m7MhGNXVF/VsyfAXwgvtAvuIDlNxD7mLEsxkmLQA47
+   9QCzfx6x50ChWR2fWQiEsSZXQbwG4XhvrYm2IS535LnhiBIEHpbpUmOP6
+   gXF4m6jxbSwdF+3XeO7Ju4UgfRjqoL2ElPayBxp2xt3HmdvWG7aLWucJn
+   v7xHEkI3DXzuPgPQIMq3S8CEk27yyF/arx0roh0iJZJFxKqs5oghcLhXH
+   UIZxCSUJp8NxLQlRZCGwMN+n8e6N2bSTFc/1j+vaU0QGIkQwkejeVM5n7
+   VtD92wKR7pNcP0cs7g11SF1BFK4xhMMVRTqQ1gHBdbtT10NYNFx6Zyd5C
+   A==;
+IronPort-SDR: TFpPcnuuQGFR5uvefkP0o/OCPN9NYnbJdhxDPe/oZrz3W97hHTCrnsJwXxmpf54sD3AFhPbg4q
+ qzOvPuLIOzVNIBvLjhtZDXvNZ8aiiVPwMgiB9xihfVaQztzxyUJNQJKwKtFfokmzQQMX00rJO8
+ yjk7g0AtU3Cj0okJDPfFdRUUyJCP/4asxhI27c3ROiKusmhaVULIjQ0WBOBg61NZGiaKpqVaVV
+ vKVsLEJqovHCC7KhZNmPhp8XELVG9jwjsk8cgzzQBzS6Z6t72Rxljyo8p9NjhaLcCHDDXzhwAk
+ W0U1Kyh8IgWwI0aVDEGZ5nKU
+X-IronPort-AV: E=Sophos;i="5.85,364,1624345200"; 
+   d="scan'208";a="139244660"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Oct 2021 04:27:31 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Mon, 11 Oct 2021 04:27:30 -0700
+Received: from rob-dk-mpu01.microchip.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Mon, 11 Oct 2021 04:27:28 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v5 00/15] clk: at91: updates for power management and dvfs
+Date:   Mon, 11 Oct 2021 14:27:04 +0300
+Message-ID: <20211011112719.3951784-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6lVS4joxd6WyDi8G"
-Content-Disposition: inline
-In-Reply-To: <20211009160548.306550-5-hdegoede@redhat.com>
-X-Cookie: Your ignorance cramps my conversation.
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---6lVS4joxd6WyDi8G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This series addresses the clock power management for SAMA7G5 and also
+updates the master clock driver and sam9x60-pll driver to accommodate
+the requests at [1] and avoid overclocking of CPU and MCK0 domains while
+changing the frequency via DVFS.
 
-On Sat, Oct 09, 2021 at 06:05:39PM +0200, Hans de Goede wrote:
+The power management part is implemented by adding
+save_context()/restore_context() on each clock driver (patch 1/15). Since
+the PM part is necessary only for backup mode (supported on SAMA5D2 and
+SAMA7G5) the pmc.c has been adapted to call the
+save_context()/restore_context() only on switches to/from backup mode
+(patch 2/15).
 
-> +/*
-> + * The ACPI tps68470 probe-ordering depends on the clk/gpio/regulator drivers
-> + * registering before the drivers for the camera-sensors which use them bind.
-> + * subsys_initcall() ensures this when the drivers are builtin.
-> + */
-> +static int __init tps68470_regulator_init(void)
-> +{
-> +	return platform_driver_register(&tps68470_regulator_driver);
-> +}
-> +subsys_initcall(tps68470_regulator_init);
+Patch 3/15 adds the securam clock on SAMA7G5. This is necessary for
+backup mode of SAMA7G5.
 
-If this actually matters it is still going to get broken when the driver
-is built as a module.  We've not been doing this given probe deferral.
+Patch 4/15 adapt SAMA7G5 MCK1..4 driver to use the defines at
+include/linux/clk/at91_pmc.h introduced in commit ec03f18cc222
+("clk: at91: add register definition for sama7g5's master clock").
 
---6lVS4joxd6WyDi8G
-Content-Type: application/pgp-signature; name="signature.asc"
+Patch 5/15 improves a bit readabiblity in some places of master clock
+driver.
 
------BEGIN PGP SIGNATURE-----
+Patch 6/15 enable the suspend/resume for clocks also for SAMA7G5.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFkGbUACgkQJNaLcl1U
-h9BLowf/QN6baaUZLF3njsuXlGPn3X9MGZR5O4H4zAegyfy2uqSvwLtZgJj6RnLQ
-5vdRcy0lxfycPGUujHC44jqhb2x2CeyhS3u0zZ1/cD+ZgciSWxJL1cWRLf+CbQ5E
-19rJlzJ1jocQe9jN24xvSxcsmvQU0OXhIUDmkyLQY0j9eqFTqiousuTOrblRtK3A
-mdvRH2OMFXzEKOb9IVa5tc3nLPtRfmsVr6PmCnlgFVfD5mTF+XXYZiTNd+bHn1YG
-wmKXQwT8e+sloWTbwj2xbFasaF4VQ101iycUQGeandv1sfxhHkel9GaIEgtQla+C
-eg9CjLwcWKn0CU9KRru/yZITyPGW2g==
-=WgC1
------END PGP SIGNATURE-----
+Patches 7-10/15 adds fixes in master clock driver and sam9x60-pll driver.
 
---6lVS4joxd6WyDi8G--
+Patches 11-12/15 address DVFS by adding notifiers for master clock driver
+and sam9x60-pll driver to avoid overclocking for CPU domain and MCK0
+domain.
+
+Patch 13/15 removes the master clock prescaler from Linux clock tree
+as it has been discovered a hardware bug on it and it may not lock
+on some scenario although its output clock is stable.
+
+Patch 14/15 decreases the low limit of MCK0 as it can go even to 32KHz.
+
+Patch 15/15 uses clk_core_get_rate_recalc() in clk_rate_get().
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
+[2] https://lore.kernel.org/lkml/163047507296.42057.10597374695758699868@swboyd.mtv.corp.google.com/ 
+
+Changes in v5:
+- dropped patches 16/17, 17/17 from previous version
+- in patch 02/15:
+	- use read_relaxed() to get the value at address pointed by 
+	  at91_pmc_backup_suspend
+	- removed of_find_device_by_node() from pmc_register_ops() since its
+	  returned value was not used in the function (of_device_is_available()
+	  is enough to know before mapping securam). of_find_device_by_node()
+	  was the one which needed the changes of postcore_initcall() with
+	  subsys_initcall() (as described in commit description from v4) thus
+	  kept the postcore_initcall(); also updated the commit description
+	  to reflect this.
+
+Changes in v4:
+- removed opp dependencies along with get_cpu_device() in patch 11/17 as
+  those functionalities are not available at the initialization time for
+  clocks instantiated with CLK_OF_DECLARE
+
+Changes in v3:
+- minor fixes in patch 1/7 (e.g. use regmap_read() + checks + update +
+  regmap_write() sequence instead of regmap_read() + checks +
+  regmap_update_bits()
+- patch 4/17 has been updated after commit ec03f18cc222
+  ("clk: at91: add register definition for sama7g5's master clock")
+- patch 6-10/17, 14-17/17 are newly introduced
+- notifier for sam9x60 div pll was introduced (patch 11/17) and
+  notifier logic for master clock div has been changed (patch 12/17)
+  to use safe divider on PRE_RATE_CHANGE events and update clock to highest
+  possible rate on POST_RATE_CHANGE events
+- master clock prescaler has been removed from Linux clock tree for
+  SAMA7G5
+
+Changes in v2:
+- addressed code review comments
+- collected tags
+
+Claudiu Beznea (15):
+  clk: at91: re-factor clocks suspend/resume
+  clk: at91: pmc: execute suspend/resume only for backup mode
+  clk: at91: sama7g5: add securam's peripheral clock
+  clk: at91: clk-master: add register definition for sama7g5's master
+    clock
+  clk: at91: clk-master: improve readability by using local variables
+  clk: at91: pmc: add sama7g5 to the list of available pmcs
+  clk: at91: sam9x60-pll: use DIV_ROUND_CLOSEST_ULL
+  clk: at91: clk-master: check if div or pres is zero
+  clk: at91: clk-master: mask mckr against layout->mask
+  clk: at91: clk-master: fix prescaler logic
+  clk: at91: clk-sam9x60-pll: add notifier for div part of PLL
+  clk: at91: clk-master: add notifier for divider
+  clk: at91: sama7g5: remove prescaler part of master clock
+  clk: at91: sama7g5: set low limit for mck0 at 32KHz
+  clk: use clk_core_get_rate_recalc() in clk_rate_get()
+
+ drivers/clk/at91/at91rm9200.c       |   2 +-
+ drivers/clk/at91/at91sam9260.c      |   2 +-
+ drivers/clk/at91/at91sam9g45.c      |   2 +-
+ drivers/clk/at91/at91sam9n12.c      |   2 +-
+ drivers/clk/at91/at91sam9rl.c       |   2 +-
+ drivers/clk/at91/at91sam9x5.c       |   2 +-
+ drivers/clk/at91/clk-generated.c    |  46 ++-
+ drivers/clk/at91/clk-main.c         |  66 ++++
+ drivers/clk/at91/clk-master.c       | 463 ++++++++++++++++++++++------
+ drivers/clk/at91/clk-peripheral.c   |  40 ++-
+ drivers/clk/at91/clk-pll.c          |  39 +++
+ drivers/clk/at91/clk-programmable.c |  29 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  | 174 +++++++++--
+ drivers/clk/at91/clk-system.c       |  20 ++
+ drivers/clk/at91/clk-usb.c          |  27 ++
+ drivers/clk/at91/clk-utmi.c         |  39 +++
+ drivers/clk/at91/dt-compat.c        |   2 +-
+ drivers/clk/at91/pmc.c              | 173 +++--------
+ drivers/clk/at91/pmc.h              |  29 +-
+ drivers/clk/at91/sam9x60.c          |   6 +-
+ drivers/clk/at91/sama5d2.c          |   2 +-
+ drivers/clk/at91/sama5d3.c          |   2 +-
+ drivers/clk/at91/sama5d4.c          |   2 +-
+ drivers/clk/at91/sama7g5.c          |  29 +-
+ drivers/clk/clk.c                   |   2 +-
+ 25 files changed, 890 insertions(+), 312 deletions(-)
+
+-- 
+2.25.1
+
