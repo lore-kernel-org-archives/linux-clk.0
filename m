@@ -2,28 +2,28 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2DEC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C37EC433FE
 	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 17:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 627EA606A5
+	by mail.kernel.org (Postfix) with ESMTP id 7BE6061040
 	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 17:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233187AbhJKRGh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S233234AbhJKRGh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 11 Oct 2021 13:06:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52778 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233234AbhJKRGg (ORCPT
+        with ESMTP id S233271AbhJKRGg (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 13:06:36 -0400
 Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14FEC061745
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A153BC061749
         for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 10:04:36 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: hector@marcansoft.com)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 5FDA942553;
-        Mon, 11 Oct 2021 16:58:09 +0000 (UTC)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 5CA0E42499;
+        Mon, 11 Oct 2021 16:57:52 +0000 (UTC)
 From:   Hector Martin <marcan@marcan.st>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Hector Martin <marcan@marcan.st>,
@@ -41,9 +41,9 @@ Cc:     Hector Martin <marcan@marcan.st>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 8/9] arm64: apple: Select MEMORY and APPLE_MCC
-Date:   Tue, 12 Oct 2021 01:57:06 +0900
-Message-Id: <20211011165707.138157-9-marcan@marcan.st>
+Subject: [RFC PATCH 5/9] PM: domains: Add of_genpd_add_provider_simple_noclk()
+Date:   Tue, 12 Oct 2021 01:57:03 +0900
+Message-Id: <20211011165707.138157-6-marcan@marcan.st>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211011165707.138157-1-marcan@marcan.st>
 References: <20211011165707.138157-1-marcan@marcan.st>
@@ -53,28 +53,107 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver is for the memory controller and users should always have
-it; it is also a requirement with our devicetree configs for cpufreq to
-work properly if that driver is available.
+This is analogous to of_genpd_add_provider_simple(), but calls
+dev_pm_opp_of_add_table_noclk() instead of dev_pm_opp_of_add_table().
 
 Signed-off-by: Hector Martin <marcan@marcan.st>
 ---
- arch/arm64/Kconfig.platforms | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/base/power/domain.c | 39 +++++++++++++++++++++++++++++--------
+ include/linux/pm_domain.h   |  8 ++++++++
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index b0ce18d4cc98..b60ed872dae1 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -30,6 +30,8 @@ config ARCH_ALPINE
- config ARCH_APPLE
- 	bool "Apple Silicon SoC family"
- 	select APPLE_AIC
-+	select MEMORY
-+	select APPLE_MCC
- 	help
- 	  This enables support for Apple's in-house ARM SoC family, starting
- 	  with the Apple M1.
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 5db704f02e71..3377b9dd514c 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2227,13 +2227,9 @@ static bool genpd_present(const struct generic_pm_domain *genpd)
+ 	return ret;
+ }
+ 
+-/**
+- * of_genpd_add_provider_simple() - Register a simple PM domain provider
+- * @np: Device node pointer associated with the PM domain provider.
+- * @genpd: Pointer to PM domain associated with the PM domain provider.
+- */
+-int of_genpd_add_provider_simple(struct device_node *np,
+-				 struct generic_pm_domain *genpd)
++static int _of_genpd_add_provider_simple(struct device_node *np,
++					 struct generic_pm_domain *genpd,
++					 bool getclk)
+ {
+ 	int ret;
+ 
+@@ -2247,7 +2243,10 @@ int of_genpd_add_provider_simple(struct device_node *np,
+ 
+ 	/* Parse genpd OPP table */
+ 	if (genpd->set_performance_state) {
+-		ret = dev_pm_opp_of_add_table(&genpd->dev);
++		if (getclk)
++			ret = dev_pm_opp_of_add_table(&genpd->dev);
++		else
++			ret = dev_pm_opp_of_add_table_noclk(&genpd->dev, 0);
+ 		if (ret) {
+ 			if (ret != -EPROBE_DEFER)
+ 				dev_err(&genpd->dev, "Failed to add OPP table: %d\n",
+@@ -2278,8 +2277,32 @@ int of_genpd_add_provider_simple(struct device_node *np,
+ 
+ 	return 0;
+ }
++
++/**
++ * of_genpd_add_provider_simple() - Register a simple PM domain provider
++ * @np: Device node pointer associated with the PM domain provider.
++ * @genpd: Pointer to PM domain associated with the PM domain provider.
++ */
++int of_genpd_add_provider_simple(struct device_node *np,
++				 struct generic_pm_domain *genpd)
++{
++	return _of_genpd_add_provider_simple(np, genpd, true);
++}
+ EXPORT_SYMBOL_GPL(of_genpd_add_provider_simple);
+ 
++/**
++ * of_genpd_add_provider_simple_noclk() - Register a simple clockless
++ *   PM domain provider
++ * @np: Device node pointer associated with the PM domain provider.
++ * @genpd: Pointer to PM domain associated with the PM domain provider.
++ */
++int of_genpd_add_provider_simple_noclk(struct device_node *np,
++				       struct generic_pm_domain *genpd)
++{
++	return _of_genpd_add_provider_simple(np, genpd, false);
++}
++EXPORT_SYMBOL_GPL(of_genpd_add_provider_simple_noclk);
++
+ /**
+  * of_genpd_add_provider_onecell() - Register a onecell PM domain provider
+  * @np: Device node pointer associated with the PM domain provider.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 67017c9390c8..db3f75612512 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -316,6 +316,8 @@ struct genpd_onecell_data {
+ #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
+ int of_genpd_add_provider_simple(struct device_node *np,
+ 				 struct generic_pm_domain *genpd);
++int of_genpd_add_provider_simple_noclk(struct device_node *np,
++				       struct generic_pm_domain *genpd);
+ int of_genpd_add_provider_onecell(struct device_node *np,
+ 				  struct genpd_onecell_data *data);
+ void of_genpd_del_provider(struct device_node *np);
+@@ -342,6 +344,12 @@ static inline int of_genpd_add_provider_simple(struct device_node *np,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int of_genpd_add_provider_simple_noclk(struct device_node *np,
++					struct generic_pm_domain *genpd)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline int of_genpd_add_provider_onecell(struct device_node *np,
+ 					struct genpd_onecell_data *data)
+ {
 -- 
 2.33.0
 
