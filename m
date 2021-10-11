@@ -2,99 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FDBC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88073C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B11460C41
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6ED60F23
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:20:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234082AbhJKGT3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 02:19:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38476 "EHLO mail.kernel.org"
+        id S234129AbhJKGWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 02:22:04 -0400
+Received: from mga07.intel.com ([134.134.136.100]:63740 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234073AbhJKGT3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Oct 2021 02:19:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D4FB7608FB;
-        Mon, 11 Oct 2021 06:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633933049;
-        bh=w2CW+S/hgiQRfRSNcRoqzQvvxHGT0QjqoAYHJpU41CE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ot1gEZO/1/Ajwq8F9VaK4PqYHid8O3QbOrbYkotxX2iKWSu9du5q4JIcYrde6WBak
-         orqsQ9L8at+8ItJzRqdQ4NF1gJSAkyPCUzWJO15dzSLK8L9LwE0vgUot/eGfww5HUr
-         gv5nYrRI9SvzmxYgzwibwy5YObs3E1XrstmQZQ5KKVMjg2c8NVBNYRWt0hkNzX4jWD
-         nEhYUAKJofvxbFfJwiZBDjNwR0vklBaLVy1GsrABORh525EDAkFpIPMD2UZSfJZkSh
-         dO+SUnSQ3OhNL7q4BH5jpmpGCWRAb3hqgf/X7GpYrtlMaFoz2QABrWkprGSEm7l2kY
-         HYv5qdwXMf0jw==
-Date:   Mon, 11 Oct 2021 11:47:18 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linuxarm@huawei.com,
-        mauro.chehab@huawei.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: fix the need of booking clk_ignore_unused=true
- on embedded devs
-Message-ID: <20211011061718.GB1834@thinkpad>
-References: <cover.1633607765.git.mchehab+huawei@kernel.org>
+        id S233802AbhJKGWD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Oct 2021 02:22:03 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10133"; a="290299539"
+X-IronPort-AV: E=Sophos;i="5.85,363,1624345200"; 
+   d="scan'208";a="290299539"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2021 23:20:03 -0700
+X-IronPort-AV: E=Sophos;i="5.85,363,1624345200"; 
+   d="scan'208";a="440667869"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2021 23:19:57 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 11 Oct 2021 09:19:55 +0300
+Date:   Mon, 11 Oct 2021 09:19:55 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 01/11] ACPI: delay enumeration of devices with a _DEP
+ pointing to an INT3472 device
+Message-ID: <YWPXixp/J6KIzWp6@lahna>
+References: <20211010185707.195883-1-hdegoede@redhat.com>
+ <20211010185707.195883-2-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1633607765.git.mchehab+huawei@kernel.org>
+In-Reply-To: <20211010185707.195883-2-hdegoede@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mauro,
+Hi,
 
-On Thu, Oct 07, 2021 at 02:06:53PM +0200, Mauro Carvalho Chehab wrote:
-> Currently, the only way to boot a Kernel with drivers built as modules on embedded 
-> devices like HiKey 970 is to pass clk_ignore_unused=true as a modprobe parameter.
-> 
-> There are two separate issues:
-> 
-> 1. the clk's core calls clk_disable_unused() too early. By the time this
->    function is called, only the builtin drivers were already probed/initialized.
->    Drivers built as modules will only be probed afterwards.
-> 
->    This cause a race condition and boot instability, as the clk core will try
->    to disable clocks while the drivers built as modules are still being
->    probed and initialized.
+On Sun, Oct 10, 2021 at 08:56:57PM +0200, Hans de Goede wrote:
+> +/* List of HIDs for which we honor deps of matching ACPI devs, when checking _DEP lists. */
+> +static const char * const acpi_honor_dep_ids[] = {
+> +	"INT3472", /* Camera sensor PMIC / clk and regulator info */
 
-So you are mentioning a "race" condition here but it is not mentioned in the
-actual patch. If the issue you are seeing is because the clocks used by the
-modules are disabled before they are probed, why can't they just enable the
-clocks during the probe time?
+Is there some reason why we can't do this for all devices with _DEP?
+That way we don't need to maintain lists like this.
 
-Am I missing something?
-
-Thanks,
-Mani
-
-> 
->    I suspect that the same problem used to happen at the regulator's core,
->    as there's a code that waits for 30 seconds before disabling unused
->    regulators;
-> 
-> 2. there are some gate clocks defined at HiKey 970 that should always be on,
->    as otherwise the system will hang, or the filesystem I/O will stop.
-> 
-> Ps.: 
->   I submitted already 3 or 4 versions of patches for HiKey 970 clock, but
->   they're all unreliable, due to the race conditions at the clk core due to (1).
->    
-> Patch 1 solves the issue with the clk core.
-> Patch 2 solves the HiKey 970 specific issues.
-> 
-> Mauro Carvalho Chehab (2):
->   clk: wait for extra time before disabling unused clocks
->   clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
-> 
->  drivers/clk/clk.c                  | 51 +++++++++++++++++++-----------
->  drivers/clk/hisilicon/clk-hi3670.c | 24 +++++++-------
->  2 files changed, 44 insertions(+), 31 deletions(-)
-> 
-> -- 
-> 2.31.1
-> 
-> 
+Otherwise looks good.
