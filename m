@@ -2,234 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF928C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 12:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B21C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 14:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9835960187
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 12:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BD160F35
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 14:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234662AbhJKMIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 08:08:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234336AbhJKMIr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 08:08:47 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03FA0C061570;
-        Mon, 11 Oct 2021 05:06:48 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id h196so6726304iof.2;
-        Mon, 11 Oct 2021 05:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dvdG6HlDmxXl9QNwcywivYC+PXm6/ITcCVPBJxzG4NY=;
-        b=C1qWsjLw5l4MNV2aAjNVBfIS0Ba83JnhaE5w4yLp23z9eyqZcY7rCQUlPqisUVyy61
-         TMR4OYOYxcKtyP4116tuDpZBxy8KS6/jU3LQ/mifoV4Ku6/1LBL1c61SsoU6El1THs1T
-         HuxSdtePsl06pPukRu7yEn1suDC/Pay8UyDRmMtLbf+Fc+IktFu4R8ZBabk9RCgNjKbJ
-         eLohIYPRD5N4g+zvuH0kTsrDamfeZlWI/gSWVxG30BmXaDB0T72z94uL2aKUvNaLl6ew
-         wt06vHeiZM1mPC2O48ACgXGiiw2oJ4sAzPUO9/iFB4dOeUyKOar1/qFxwX2eSQBf8ga7
-         kKwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dvdG6HlDmxXl9QNwcywivYC+PXm6/ITcCVPBJxzG4NY=;
-        b=Va0d5GkUpxaoMUvlQjgb/71ZAsW4zQl+Pj2M1ArQFyV/1yi2fdHZvBrpf6crLRULUJ
-         UUNScAtUnoXrtIYmbKHxg7iYV4VRy7ev+ydgGdhnnzN/u4cwYrWkW7zoOcXsFkiaNygD
-         iNt5R+Ll8UITsm6W4BOsn7KOt2UIHZlNtb+Ca4CtPgv29l2hluOz35ZFQcTAZHBQCmE2
-         JZsUGYklZvzKFo12vxdJOoNX4xqxNUQ72+ebGo5ZsK/qpVqhb6e4ABHxIS6MXBqNC6B5
-         RSJNx1OyNGln7PPhP6adis7AJN81fMJObf/Y0z0dyRHZVBg9KVkUQjuyDahsN2zfWJje
-         qymw==
-X-Gm-Message-State: AOAM533FLNBWfm/+zsWTdqKURtNYgmZDNuZZV9mBrnENKWtzhUsZ02Jh
-        rUHnipfUMvIgQRP0FIAEckjropc/zexS3BChewAZ55BC5O0=
-X-Google-Smtp-Source: ABdhPJxle/Xfeq3Sdhdl2xj1q6S4qQCVGRu1IYV9HGZIZOmwpayBPeL+fM6GCwe1jE9UBeOgci4CTt5bzx3wirfDGkU=
-X-Received: by 2002:a05:6638:24c4:: with SMTP id y4mr18408723jat.31.1633954006985;
- Mon, 11 Oct 2021 05:06:46 -0700 (PDT)
+        id S243443AbhJKOTc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 10:19:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243292AbhJKORZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Oct 2021 10:17:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07AAC61078;
+        Mon, 11 Oct 2021 14:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633961503;
+        bh=zD+AKuupSTYCoj9CcPWhQv82n92KFccXo3yZu9KbnTk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NlKtPXc5y6RKZlCZzv1omZ6axzdFRkATGimdWqud/doU9kWYbzWK8c0frJfhyCfLI
+         25ejDlAh8OTc9yIpR7+XpyRQ/ozUm23Hghu+kZm18hSSqo8LFwfCdWdj1Q36P7RC1s
+         RGilW596VwN3Iu2z9xOnIPfCQexNBFvXud4Wc7LCmK+Okkl28DLAK6t1vFI2NrOtUv
+         Nv8c08ulC+pST0QI54DxJwrRA3d7rPFEOrCqCX+AVttHvG1YkuRyqqBiIW5fG03Vt0
+         YUEB5DJGFFXTLh+olfNiKhBXi7upaYffBalzaH+yPxgvBhCX3LbLixIKY8a2km/qHx
+         PRn4hNJ6S1Hfg==
+Received: by mail-ed1-f54.google.com with SMTP id g10so67631296edj.1;
+        Mon, 11 Oct 2021 07:11:42 -0700 (PDT)
+X-Gm-Message-State: AOAM531ftzA5BIuV5h3aBp5wQsVaUlXLMm7JxJ/jITQNhfz/0vt4XJt8
+        Yb3QcpGua/nOd9Rt0BTRQ/Kq9+t3ZDvKEs6WXQ==
+X-Google-Smtp-Source: ABdhPJw0f8TOUqPxU2srZU6oT+yPzQ8tPFsfVqJQ97sHOzWxNPvUan4j9Baaqte3d/Xw1feY7RVQSsfUXDUCp9emalk=
+X-Received: by 2002:a17:906:9399:: with SMTP id l25mr25557872ejx.363.1633961500932;
+ Mon, 11 Oct 2021 07:11:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <1633689012-14492-1-git-send-email-dillon.minfei@gmail.com>
- <1633689012-14492-7-git-send-email-dillon.minfei@gmail.com>
- <290d78b5-b6d4-a115-9556-f2f909f573da@xs4all.nl> <CAL9mu0KxAmULQofQMgt2JxVLs=L-YT5HZa+mA7sSKebG88GbcA@mail.gmail.com>
- <8331ab8a-39b7-588c-146d-77197d7637a8@xs4all.nl>
-In-Reply-To: <8331ab8a-39b7-588c-146d-77197d7637a8@xs4all.nl>
-From:   Dillon Min <dillon.minfei@gmail.com>
-Date:   Mon, 11 Oct 2021 20:06:10 +0800
-Message-ID: <CAL9mu0J7GmojuRbvqpCg6X=nkXiMgb9NLMmt3RxLO8wfhMUL-g@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] media: v4l2-ctrls: Add ARGB color effects control
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        mchehab+huawei@kernel.org, ezequiel@collabora.com,
-        gnurou@gmail.com, Pi-Hsun Shih <pihsun@chromium.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
-        gabriel.fernandez@foss.st.com,
-        Patrice CHOTARD <patrice.chotard@foss.st.com>,
-        hugues.fruchet@foss.st.com,
-        linux-media <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com>
+ <YV1XpL7ibF1y4LbV@google.com>
+In-Reply-To: <YV1XpL7ibF1y4LbV@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 11 Oct 2021 09:11:29 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+Message-ID: <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+To:     Lee Jones <lee.jones@linaro.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 Oct 2021 at 18:04, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
 >
-> On 11/10/2021 12:00, Dillon Min wrote:
-> > Hi Hans
-> >
-> > Thanks for the quick reply.
-> >
-> > On Mon, 11 Oct 2021 at 17:40, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
-> >>
-> >> On 08/10/2021 12:30, dillon.minfei@gmail.com wrote:
-> >>> From: Dillon Min <dillon.minfei@gmail.com>
-> >>>
-> >>> - add V4L2_COLORFX_SET_ARGB color effects control.
-> >>> - add V4L2_CID_COLORFX_ARGB for ARGB color setting.
-> >>>
-> >>> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
-> >>> ---
-> >>> v3: according to Hans's suggestion, thanks.
-> >>> - remove old stm32 private R2M ioctl
-> >>> - add V4L2_CID_COLORFX_ARGB
-> >>> - add V4L2_COLORFX_SET_ARGB
-> >>>
-> >>>  Documentation/userspace-api/media/v4l/control.rst | 8 ++++++++
-> >>>  drivers/media/v4l2-core/v4l2-ctrls-defs.c         | 2 ++
-> >>>  include/uapi/linux/v4l2-controls.h                | 4 +++-
-> >>>  3 files changed, 13 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/Documentation/userspace-api/media/v4l/control.rst b/Documentation/userspace-api/media/v4l/control.rst
-> >>> index f8d0b923da20..319606a6288f 100644
-> >>> --- a/Documentation/userspace-api/media/v4l/control.rst
-> >>> +++ b/Documentation/userspace-api/media/v4l/control.rst
-> >>> @@ -242,8 +242,16 @@ Control IDs
-> >>>      * - ``V4L2_COLORFX_SET_CBCR``
-> >>>        - The Cb and Cr chroma components are replaced by fixed coefficients
-> >>>       determined by ``V4L2_CID_COLORFX_CBCR`` control.
-> >>> +    * - ``V4L2_COLORFX_SET_ARGB``
-> >>> +      - ARGB colors.
-> >>
-> >> How about:
-> >>
-> >>         - The ARGB components are replaced by the fixed ARGB components
-> >>         determined by ``V4L2_CID_COLORFX_ARGB`` control.
-> >
-> > Sure, will be addressed by v4.
-> >
-> >>
-> >> I also wonder if it makes sense to include the alpha channel here.
-> >>
-> >> Looking at the driver code it appears to me (I might be wrong) that the alpha
-> >> channel is never touched (DMA2D_ALPHA_MODE_NO_MODIF), and setting the alpha
-> >> channel as part of a color effects control is rather odd as well.
-> >
-> > Indeed, Alpha channel is not used in current code. I'll remove this item in v4.
-> > how about change the code like below:
-> >
-> >     * - ``V4L2_COLORFX_SET_RGB``
-> >        - The RGB components are replaced by the fixed RGB components
-> >          determined by ``V4L2_CID_COLORFX_RGB`` control.
-> >
-> > ``V4L2_CID_COLORFX_RGB`` ``(integer)``
-> >     Determines the Red, Green, and Blue coefficients for
-> >     ``V4L2_COLORFX_SET_RGB`` color effect.
-> >     Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
-> >     bits [15:8] as Green component, bits [23:16] as Red component, and
-> >     bits [31:24] must be zero.
+> On Thu, 23 Sep 2021, Chunyan Zhang wrote:
 >
-> Yes, that looks OK to me.
+> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> >
+> > Add bindings for Unisoc system global register which provide register map
+> > for clocks.
+> >
+> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+>
+> Unapplied v3 and applied this (v4) instead, thanks.
 
-Ok, after getting your review feedback about the dma2d driver code.
-I will submit the v4 version. thanks.
+What about the clock binding this depends on:
 
-Best Regards.
-Dillon
+Unknown file referenced: [Errno 2] No such file or directory:
+'/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+xargs: dt-doc-validate: exited with status 255; aborting
+make[1]: *** Deleting file
+'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
+Unknown file referenced: [Errno 2] No such file or directory:
+'/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+make[1]: *** [scripts/Makefile.lib:385:
+Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
+Error 255
 
->
-> Regards,
->
->         Hans
->
-> >
-> >
-> >>
-> >> Alpha channel manipulation really is separate from the color and - if needed - should
-> >> be done with a separate control.
-> >
-> > OK, Will use a separate control when adding blend features.
-> >
-> > Best Regards,
-> > Dillon
-> >
-> >>
-> >> Regards,
-> >>
-> >>         Hans
-> >>
-> >>>
-> >>>
-> >>> +``V4L2_CID_COLORFX_ARGB`` ``(integer)``
-> >>> +    Determines the Alpha, Red, Green, and Blue coefficients for
-> >>> +    ``V4L2_COLORFX_SET_ARGB`` color effect.
-> >>> +    Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
-> >>> +    bits [15:8] as Green component, bits [23:16] as Red component, and
-> >>> +    bits [31:24] as Alpha component.
-> >>>
-> >>>  ``V4L2_CID_COLORFX_CBCR`` ``(integer)``
-> >>>      Determines the Cb and Cr coefficients for ``V4L2_COLORFX_SET_CBCR``
-> >>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> >>> index 421300e13a41..53be6aadb289 100644
-> >>> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> >>> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-> >>> @@ -785,6 +785,7 @@ const char *v4l2_ctrl_get_name(u32 id)
-> >>>       case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:   return "Min Number of Output Buffers";
-> >>>       case V4L2_CID_ALPHA_COMPONENT:          return "Alpha Component";
-> >>>       case V4L2_CID_COLORFX_CBCR:             return "Color Effects, CbCr";
-> >>> +     case V4L2_CID_COLORFX_ARGB:             return "Color Effects, ARGB";
-> >>>
-> >>>       /*
-> >>>        * Codec controls
-> >>> @@ -1392,6 +1393,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
-> >>>               *min = *max = *step = *def = 0;
-> >>>               break;
-> >>>       case V4L2_CID_BG_COLOR:
-> >>> +     case V4L2_CID_COLORFX_ARGB:
-> >>>               *type = V4L2_CTRL_TYPE_INTEGER;
-> >>>               *step = 1;
-> >>>               *min = 0;
-> >>> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> >>> index 5532b5f68493..2876c2282a68 100644
-> >>> --- a/include/uapi/linux/v4l2-controls.h
-> >>> +++ b/include/uapi/linux/v4l2-controls.h
-> >>> @@ -128,6 +128,7 @@ enum v4l2_colorfx {
-> >>>       V4L2_COLORFX_SOLARIZATION               = 13,
-> >>>       V4L2_COLORFX_ANTIQUE                    = 14,
-> >>>       V4L2_COLORFX_SET_CBCR                   = 15,
-> >>> +     V4L2_COLORFX_SET_ARGB                   = 16,
-> >>>  };
-> >>>  #define V4L2_CID_AUTOBRIGHTNESS                      (V4L2_CID_BASE+32)
-> >>>  #define V4L2_CID_BAND_STOP_FILTER            (V4L2_CID_BASE+33)
-> >>> @@ -145,9 +146,10 @@ enum v4l2_colorfx {
-> >>>
-> >>>  #define V4L2_CID_ALPHA_COMPONENT             (V4L2_CID_BASE+41)
-> >>>  #define V4L2_CID_COLORFX_CBCR                        (V4L2_CID_BASE+42)
-> >>> +#define V4L2_CID_COLORFX_ARGB                        (V4L2_CID_BASE+43)
-> >>>
-> >>>  /* last CID + 1 */
-> >>> -#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+43)
-> >>> +#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+44)
-> >>>
-> >>>  /* USER-class private control IDs */
-> >>>
-> >>>
-> >>
->
+
+Once again, all the components of MFD bindings need to be applied together.
+
+Rob
