@@ -2,127 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4BEC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 05:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FDBC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78AB160E98
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 05:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B11460C41
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 06:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233234AbhJKF70 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 01:59:26 -0400
-Received: from sauhun.de ([88.99.104.3]:49626 "EHLO pokefinder.org"
+        id S234082AbhJKGT3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 02:19:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232721AbhJKF7Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 11 Oct 2021 01:59:25 -0400
-X-Greylist: delayed 423 seconds by postgrey-1.27 at vger.kernel.org; Mon, 11 Oct 2021 01:59:24 EDT
-Received: from localhost (p54b3315a.dip0.t-ipconnect.de [84.179.49.90])
-        by pokefinder.org (Postfix) with ESMTPSA id 5F6122C00A6;
-        Mon, 11 Oct 2021 07:50:20 +0200 (CEST)
-Date:   Mon, 11 Oct 2021 07:50:16 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 02/11] i2c: acpi: Use acpi_dev_ready_for_enumeration()
- helper
-Message-ID: <YWPQmGKI0YzMnm35@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20211010185707.195883-1-hdegoede@redhat.com>
- <20211010185707.195883-3-hdegoede@redhat.com>
+        id S234073AbhJKGT3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 Oct 2021 02:19:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D4FB7608FB;
+        Mon, 11 Oct 2021 06:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633933049;
+        bh=w2CW+S/hgiQRfRSNcRoqzQvvxHGT0QjqoAYHJpU41CE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ot1gEZO/1/Ajwq8F9VaK4PqYHid8O3QbOrbYkotxX2iKWSu9du5q4JIcYrde6WBak
+         orqsQ9L8at+8ItJzRqdQ4NF1gJSAkyPCUzWJO15dzSLK8L9LwE0vgUot/eGfww5HUr
+         gv5nYrRI9SvzmxYgzwibwy5YObs3E1XrstmQZQ5KKVMjg2c8NVBNYRWt0hkNzX4jWD
+         nEhYUAKJofvxbFfJwiZBDjNwR0vklBaLVy1GsrABORh525EDAkFpIPMD2UZSfJZkSh
+         dO+SUnSQ3OhNL7q4BH5jpmpGCWRAb3hqgf/X7GpYrtlMaFoz2QABrWkprGSEm7l2kY
+         HYv5qdwXMf0jw==
+Date:   Mon, 11 Oct 2021 11:47:18 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linuxarm@huawei.com,
+        mauro.chehab@huawei.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: fix the need of booking clk_ignore_unused=true
+ on embedded devs
+Message-ID: <20211011061718.GB1834@thinkpad>
+References: <cover.1633607765.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kpSW/TDc2ClihKjN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211010185707.195883-3-hdegoede@redhat.com>
+In-Reply-To: <cover.1633607765.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Mauro,
 
---kpSW/TDc2ClihKjN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 07, 2021 at 02:06:53PM +0200, Mauro Carvalho Chehab wrote:
+> Currently, the only way to boot a Kernel with drivers built as modules on embedded 
+> devices like HiKey 970 is to pass clk_ignore_unused=true as a modprobe parameter.
+> 
+> There are two separate issues:
+> 
+> 1. the clk's core calls clk_disable_unused() too early. By the time this
+>    function is called, only the builtin drivers were already probed/initialized.
+>    Drivers built as modules will only be probed afterwards.
+> 
+>    This cause a race condition and boot instability, as the clk core will try
+>    to disable clocks while the drivers built as modules are still being
+>    probed and initialized.
 
-On Sun, Oct 10, 2021 at 08:56:58PM +0200, Hans de Goede wrote:
-> The clk and regulator frameworks expect clk/regulator consumer-devices
-> to have info about the consumed clks/regulators described in the device's
-> fw_node.
->=20
-> To work around cases where this info is not present in the firmware table=
-s,
-> which is often the case on x86/ACPI devices, both frameworks allow the
-> provider-driver to attach info about consumers to the clks/regulators
-> when registering these.
->=20
-> This causes problems with the probe ordering wrt drivers for consumers
-> of these clks/regulators. Since the lookups are only registered when the
-> provider-driver binds, trying to get these clks/regulators before then
-> results in a -ENOENT error for clks and a dummy regulator for regulators.
->=20
-> To ensure the correct probe-ordering the ACPI core has code to defer the
-> enumeration of consumers affected by this until the providers are ready.
->=20
-> Call the new acpi_dev_ready_for_enumeration() helper to avoid
-> enumerating / instantiating i2c-clients too early.
->=20
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+So you are mentioning a "race" condition here but it is not mentioned in the
+actual patch. If the issue you are seeing is because the clocks used by the
+modules are disabled before they are probed, why can't they just enable the
+clocks during the probe time?
 
-If the ACPI and I2C-ACPI maintainers are happy, I am fine with this,
-too:
+Am I missing something?
 
-Acked-by: Wolfram Sang <wsa@kernel.org>
+Thanks,
+Mani
 
-
---kpSW/TDc2ClihKjN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFj0JEACgkQFA3kzBSg
-KbYxJhAApjIf+9ZpThQuo57RPJf7E3JLEg8Zt4yCTURtmLlTlc9cX9xyZpaUulfV
-STyFose+JW+221p99KOlw5o3TIVQkXUdNEz2wLOrr3uorLpjYYcc4H2BAm+M7+4v
-Mn1LKckOrCCvoS3fGuHmJRfNId/GBLDHoyWVt3YYsW+2P7xQ3elEe9nm/sKdETIg
-1vmyq7ad5aAezhN2/qflYHCtR1WZWRbA0a4BrXGGg30t3bx1u34b0mG+Q7XqXb6s
-8MnRdT8EmU+2XKIvBUHFSR8BftmwjAbJvzHtGBVHnWgjJHlwJpPQnTRRMgNJSmq6
-OyXgEu506tF+8urV7Q3Iwh9T6B3avMD6+KwnFl1HqVI9dCwrsZTwLrUgA/h5MPkp
-dXleThz8PeJusOIZuNEbvwIwIBndHRS9yDT5Xt6pXPTEcwP7k4VDsNAhPMVMo5kH
-nJguFJ9EDlgxxayoD5R4zSKnDYW+6EJxVEOrRyMQHbjUQQWrXqOJBmqgCzswk8gR
-J5cBOF5deBidKRmS9uikQ+v3PzbSdQLRVa2houbQs7TOex3LJ7+r2aaRbkSAaJ/k
-G/vd9HqA8okfGxpDtm76bjyeEpigSY5xi+0VgWDgkGiud5MvUiiWy/NbmSllEpGx
-zP7glXE7ggCCr6Fc8ydZFp3sSL6hFJeb6tDsg9ev+juPlw8TCu0=
-=mBFk
------END PGP SIGNATURE-----
-
---kpSW/TDc2ClihKjN--
+> 
+>    I suspect that the same problem used to happen at the regulator's core,
+>    as there's a code that waits for 30 seconds before disabling unused
+>    regulators;
+> 
+> 2. there are some gate clocks defined at HiKey 970 that should always be on,
+>    as otherwise the system will hang, or the filesystem I/O will stop.
+> 
+> Ps.: 
+>   I submitted already 3 or 4 versions of patches for HiKey 970 clock, but
+>   they're all unreliable, due to the race conditions at the clk core due to (1).
+>    
+> Patch 1 solves the issue with the clk core.
+> Patch 2 solves the HiKey 970 specific issues.
+> 
+> Mauro Carvalho Chehab (2):
+>   clk: wait for extra time before disabling unused clocks
+>   clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
+> 
+>  drivers/clk/clk.c                  | 51 +++++++++++++++++++-----------
+>  drivers/clk/hisilicon/clk-hi3670.c | 24 +++++++-------
+>  2 files changed, 44 insertions(+), 31 deletions(-)
+> 
+> -- 
+> 2.31.1
+> 
+> 
