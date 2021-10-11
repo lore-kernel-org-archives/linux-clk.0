@@ -2,222 +2,133 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57898C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 10:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7FCC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 10:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 314A260F22
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 10:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADA060F21
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Oct 2021 10:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235713AbhJKKG2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 06:06:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39546 "EHLO
+        id S235848AbhJKKPX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 06:15:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235719AbhJKKG1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 06:06:27 -0400
-Received: from lb2-smtp-cloud7.xs4all.net (lb2-smtp-cloud7.xs4all.net [IPv6:2001:888:0:108::2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D460C06161C;
-        Mon, 11 Oct 2021 03:04:27 -0700 (PDT)
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id ZsAPmxj3kk3b0ZsASmM0Dv; Mon, 11 Oct 2021 12:04:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1633946665; bh=rmKfzfF1sxGJ4PhfThUHFV7E1M9VYlASwIwSx2gzoXM=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=j8T0k8krqDMem+fjbyghmdfwoeEbPqVw9JYej1bwbMF/4Q7BV4pmG6r3ee8tscc/B
-         zAhglDO+ciOk12DU84ejzbA7i+/Y4zQQz+v8v2l/+igOgVqT/9AqJy8GL8WGrwyTRZ
-         sddWsIfWXvLDNSlYkQUTVhM2ncmHP5mVt0Xg1OnM98OVQdQZ70PHxqBp5UIucTWgzi
-         8YnkDuRQklL60jjTFr3TOKVHFlGKyLKvB+syGNOYRgNPdh/m3rckEdQk7WezyBGRc0
-         PhjS8Nty40ktFXOWKsmSnJYtwu79Q2EGCPKq8RqnSLxTkb282RHFGzth8mT3DFmfJ5
-         UrRzyU4wfO2AQ==
-Subject: Re: [PATCH v3 6/8] media: v4l2-ctrls: Add ARGB color effects control
-To:     Dillon Min <dillon.minfei@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        mchehab+huawei@kernel.org, ezequiel@collabora.com,
-        gnurou@gmail.com, Pi-Hsun Shih <pihsun@chromium.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
-        gabriel.fernandez@foss.st.com,
-        Patrice CHOTARD <patrice.chotard@foss.st.com>,
-        hugues.fruchet@foss.st.com,
-        linux-media <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-References: <1633689012-14492-1-git-send-email-dillon.minfei@gmail.com>
- <1633689012-14492-7-git-send-email-dillon.minfei@gmail.com>
- <290d78b5-b6d4-a115-9556-f2f909f573da@xs4all.nl>
- <CAL9mu0KxAmULQofQMgt2JxVLs=L-YT5HZa+mA7sSKebG88GbcA@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <8331ab8a-39b7-588c-146d-77197d7637a8@xs4all.nl>
-Date:   Mon, 11 Oct 2021 12:04:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.14.0
+        with ESMTP id S230071AbhJKKPW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 06:15:22 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0519FC06161C
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 03:13:23 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id o124so18412403vsc.6
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 03:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I14GHi8jxA3YeP5lUl6dG6cQQNqNA9f8zkpHem77AXE=;
+        b=Iyead7c/Yz9/z8w1zLsuQQXRN4N9xsgHIwvPRw/5EPRjx2VnCODWhctr4Zs1zxLkWb
+         G9c640BWp1yyOHh6XjFuA8iTnplnJpinYbPCbzWjInweK3g0JNuVsxSKbQsdY8Gs+G2Y
+         I1As+3Yr3qRokQ+zh87zcBVd8FZDuCiza/MhyN7QbvuoGUXultzStxQ3/I2iw3p4BnqE
+         WuQZhEpseiPXvquKDoxG0hLuhdWnH6J0v8PNr8pk320ZMCsqsxCax71j/LNfTo69lke/
+         7YNCGaiUKNHPRcgUEFrErclqNB7aB0hjQCL5wJ3zpu0NZqfdtkbnul2qjydbvn9INcNe
+         3DSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I14GHi8jxA3YeP5lUl6dG6cQQNqNA9f8zkpHem77AXE=;
+        b=Oimcdwk6NrdzN/7lW0rmC3WSlbt4Go5NvFaLmmb1LeHcnG7jMB0CGjIz0N2Izjucq2
+         7xqlBrvtyGB0XgpUpL9oka0ab0IOyTS6HvrZ5hfkEgm0yZ30sifCOtyKN3ETz9/2Hnwg
+         qTE1kiPQNkoZ+7C5Z4tXTIe7EPV8OqZ4tpYrr9PtByXPM8xrUOiHVpphRV4f4u+kc1Kh
+         l3iqRUTrk3/jgYGtBj5Fl/ijALcLTc8+s72ggUHzXDvC5b+NmtZNytQdZzfQPrV3H2NP
+         XCLvZM9ZFecYVsFrOzZlxCaG8orKHn817AyLJlZwOwf4HaUVsdNdpKSKbsKxKhqFLUyl
+         blug==
+X-Gm-Message-State: AOAM532Gd+rsoLMZQmgtlhhF0YQIb0ZBIS2mIiw65vWpPckYGww/oa7z
+        62oLlh9RxLg1tBq1k2pYnsf+amyt6ozeNXyBR0TLVA==
+X-Google-Smtp-Source: ABdhPJzGhrvtSadLZJqKqJT3TOK0uyxaeX4nkcu5WKwayrjByJLIRU9CZUQy7omYuptslyvwrSEi19f6Q6iSlbAHsv4=
+X-Received: by 2002:a67:ed5a:: with SMTP id m26mr21164272vsp.35.1633947202056;
+ Mon, 11 Oct 2021 03:13:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAL9mu0KxAmULQofQMgt2JxVLs=L-YT5HZa+mA7sSKebG88GbcA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfI6gIQYzNuZRRJ7atifRKhQb6OnM6G4qdQlLJpYTELraJNgcaUYZWWeK4YOeU0wIKPqpIoERADNR3JzdrhPpMUXJxysktZjRzn4l77Lx8PzOutjDvbPI
- LWJS/iuWcf3xMboLPaGC2UIYzKEe1FfVtAPrPFFZBxHyl8j3Y6jYwO++mchOq48XWpY9Vy6hfAlBWtWr0qHW40e8s9g9nWmBfsqVnPDKRvhQCbKXNuE96Kx3
- 0SppxcUbjkIRls5oUkMayziAWGBYFn6h6BDip5cCH0tOhZr2ok9XV8zBPQdB77+2xnulM658FFdGnjE+weRam7bgodUQRfA5Dqu78i6LvK2I2qqsYt3tCCDZ
- WNUUCUWmxGsTfFUP+694fE+BEbnWrJcsCHR5avKMpijAjEqe0a3hP8H3gW0Qsc+vfixGn2qsW1H2gUYGGtfUKQCeFcZMrdprPMOARzwqA/cbbpVhux675Yj4
- K0t+nhUZpT5fnsgtIU7W5mlkubaZowS7gBLifXifLe+Y4goSC4MEvz/M/P9S5q7Rs0H/D7LNEoijR4i6NeNEWO06jT7I0lGCAag6xqxE4kM/wDdQUYjhwyM5
- dzZi9FqJuT7waa6CCk2o2CqLwBQ6WBjn/Va9l3Dq9uuv9FqmxAB5mkviJ+n4Jtv80Nh67GHiQQM5elcqd+ueWvf4/ZbQCq/wNnARcL0o1bSD5/pgoZGzE38O
- NtzR/qHs1ExUaJlwrg8SSV70cnCYW7Rvp7FeYwZh1HGAOSlP6uO2oFWHMmkLvFE+0ou9qvYi8yQnRMdMDF/PTwwk4GvSCEfBkBPFBkG6l0kOFGN5Taf9h3Q3
- BPLhWUbcDy0bvPK4ECMmi2c+noQ/eLPNJbT6PmsBSYQ4vf12t0EUOPw2qGVdVZlSvawVRq3Itez2+cFJIHjWrngKcJeQpq+SzKBHI4Lipc7xFdztajMT7oAB
- 0McHghWZ438fSWUhFvXclgzqfoo=
+References: <20211008154352.19519-1-semen.protsenko@linaro.org>
+ <20211008154352.19519-5-semen.protsenko@linaro.org> <7049b3a9-dc8f-2ae9-01e6-eb3b6f461400@kernel.org>
+In-Reply-To: <7049b3a9-dc8f-2ae9-01e6-eb3b6f461400@kernel.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 11 Oct 2021 13:13:10 +0300
+Message-ID: <CAPLW+4kJK=kaiCLDXX1EGLhbKJo5pcHQY9QCj0SVyGQP1n7q0g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: clock: Document Exynos850 CMU bindings
+To:     Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/10/2021 12:00, Dillon Min wrote:
-> Hi Hans
-> 
-> Thanks for the quick reply.
-> 
-> On Mon, 11 Oct 2021 at 17:40, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->>
->> On 08/10/2021 12:30, dillon.minfei@gmail.com wrote:
->>> From: Dillon Min <dillon.minfei@gmail.com>
->>>
->>> - add V4L2_COLORFX_SET_ARGB color effects control.
->>> - add V4L2_CID_COLORFX_ARGB for ARGB color setting.
->>>
->>> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
->>> ---
->>> v3: according to Hans's suggestion, thanks.
->>> - remove old stm32 private R2M ioctl
->>> - add V4L2_CID_COLORFX_ARGB
->>> - add V4L2_COLORFX_SET_ARGB
->>>
->>>  Documentation/userspace-api/media/v4l/control.rst | 8 ++++++++
->>>  drivers/media/v4l2-core/v4l2-ctrls-defs.c         | 2 ++
->>>  include/uapi/linux/v4l2-controls.h                | 4 +++-
->>>  3 files changed, 13 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/userspace-api/media/v4l/control.rst b/Documentation/userspace-api/media/v4l/control.rst
->>> index f8d0b923da20..319606a6288f 100644
->>> --- a/Documentation/userspace-api/media/v4l/control.rst
->>> +++ b/Documentation/userspace-api/media/v4l/control.rst
->>> @@ -242,8 +242,16 @@ Control IDs
->>>      * - ``V4L2_COLORFX_SET_CBCR``
->>>        - The Cb and Cr chroma components are replaced by fixed coefficients
->>>       determined by ``V4L2_CID_COLORFX_CBCR`` control.
->>> +    * - ``V4L2_COLORFX_SET_ARGB``
->>> +      - ARGB colors.
->>
->> How about:
->>
->>         - The ARGB components are replaced by the fixed ARGB components
->>         determined by ``V4L2_CID_COLORFX_ARGB`` control.
-> 
-> Sure, will be addressed by v4.
-> 
->>
->> I also wonder if it makes sense to include the alpha channel here.
->>
->> Looking at the driver code it appears to me (I might be wrong) that the alpha
->> channel is never touched (DMA2D_ALPHA_MODE_NO_MODIF), and setting the alpha
->> channel as part of a color effects control is rather odd as well.
-> 
-> Indeed, Alpha channel is not used in current code. I'll remove this item in v4.
-> how about change the code like below:
-> 
->     * - ``V4L2_COLORFX_SET_RGB``
->        - The RGB components are replaced by the fixed RGB components
->          determined by ``V4L2_CID_COLORFX_RGB`` control.
-> 
-> ``V4L2_CID_COLORFX_RGB`` ``(integer)``
->     Determines the Red, Green, and Blue coefficients for
->     ``V4L2_COLORFX_SET_RGB`` color effect.
->     Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
->     bits [15:8] as Green component, bits [23:16] as Red component, and
->     bits [31:24] must be zero.
+On Sat, 9 Oct 2021 at 23:41, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
+>
+> On 08.10.2021 17:43, Sam Protsenko wrote:
+> > Provide dt-schema documentation for Exynos850 SoC clock controller.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>
+> > diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> > new file mode 100644
+> > index 000000000000..79202e6e6402
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+> > @@ -0,0 +1,185 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/samsung,exynos850-clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos850 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Sam Protsenko <semen.protsenko@linaro.org>
+> > +  - Chanwoo Choi <cw00.choi@samsung.com>
+> > +  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> > +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > +  - Tomasz Figa <tomasz.figa@gmail.com>
+> > +
+> > +description: |
+> > +  Exynos850 clock controller is comprised of several CMU units, generating
+> > +  clocks for different domains. Those CMU units are modeled as separate device
+> > +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> > +  two external clocks:: OSCCLK (26 MHz) and RTCCLK (32768 Hz). Those external
+> > +  clocks must be defined as fixed-rate clocks in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> > +  dividers; all other leaf clocks (other CMUs) are usually derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this identifier
+> > +  to specify the clock which they consume. All clocks that available for usage
+>
+> s/All clocks that available/All clocks available ?
+> No need to resend, I can amend it when applying.
+>
 
-Yes, that looks OK to me.
+Yeah, not a native speaker, I tend to do such mistakes sometimes :)
+Please fix when applying.
 
-Regards,
+Btw, I can see that you already applied 3 out of 5 patches from this
+patch series here: [1]. Can you please also apply the rest, or is
+there any outstanding comments that I missed?
 
-	Hans
-
-> 
-> 
->>
->> Alpha channel manipulation really is separate from the color and - if needed - should
->> be done with a separate control.
-> 
-> OK, Will use a separate control when adding blend features.
-> 
-> Best Regards,
-> Dillon
-> 
->>
->> Regards,
->>
->>         Hans
->>
->>>
->>>
->>> +``V4L2_CID_COLORFX_ARGB`` ``(integer)``
->>> +    Determines the Alpha, Red, Green, and Blue coefficients for
->>> +    ``V4L2_COLORFX_SET_ARGB`` color effect.
->>> +    Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
->>> +    bits [15:8] as Green component, bits [23:16] as Red component, and
->>> +    bits [31:24] as Alpha component.
->>>
->>>  ``V4L2_CID_COLORFX_CBCR`` ``(integer)``
->>>      Determines the Cb and Cr coefficients for ``V4L2_COLORFX_SET_CBCR``
->>> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->>> index 421300e13a41..53be6aadb289 100644
->>> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->>> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
->>> @@ -785,6 +785,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->>>       case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:   return "Min Number of Output Buffers";
->>>       case V4L2_CID_ALPHA_COMPONENT:          return "Alpha Component";
->>>       case V4L2_CID_COLORFX_CBCR:             return "Color Effects, CbCr";
->>> +     case V4L2_CID_COLORFX_ARGB:             return "Color Effects, ARGB";
->>>
->>>       /*
->>>        * Codec controls
->>> @@ -1392,6 +1393,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->>>               *min = *max = *step = *def = 0;
->>>               break;
->>>       case V4L2_CID_BG_COLOR:
->>> +     case V4L2_CID_COLORFX_ARGB:
->>>               *type = V4L2_CTRL_TYPE_INTEGER;
->>>               *step = 1;
->>>               *min = 0;
->>> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
->>> index 5532b5f68493..2876c2282a68 100644
->>> --- a/include/uapi/linux/v4l2-controls.h
->>> +++ b/include/uapi/linux/v4l2-controls.h
->>> @@ -128,6 +128,7 @@ enum v4l2_colorfx {
->>>       V4L2_COLORFX_SOLARIZATION               = 13,
->>>       V4L2_COLORFX_ANTIQUE                    = 14,
->>>       V4L2_COLORFX_SET_CBCR                   = 15,
->>> +     V4L2_COLORFX_SET_ARGB                   = 16,
->>>  };
->>>  #define V4L2_CID_AUTOBRIGHTNESS                      (V4L2_CID_BASE+32)
->>>  #define V4L2_CID_BAND_STOP_FILTER            (V4L2_CID_BASE+33)
->>> @@ -145,9 +146,10 @@ enum v4l2_colorfx {
->>>
->>>  #define V4L2_CID_ALPHA_COMPONENT             (V4L2_CID_BASE+41)
->>>  #define V4L2_CID_COLORFX_CBCR                        (V4L2_CID_BASE+42)
->>> +#define V4L2_CID_COLORFX_ARGB                        (V4L2_CID_BASE+43)
->>>
->>>  /* last CID + 1 */
->>> -#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+43)
->>> +#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+44)
->>>
->>>  /* USER-class private control IDs */
->>>
->>>
->>
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git/log/?h=for-v5.16/next
