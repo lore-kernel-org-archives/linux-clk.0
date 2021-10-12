@@ -2,300 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18030C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AFAC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9F3D61056
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:19:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCB4610CE
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235540AbhJLJVT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Oct 2021 05:21:19 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:41694
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232502AbhJLJVS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 05:21:18 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DA5B640016
-        for <linux-clk@vger.kernel.org>; Tue, 12 Oct 2021 09:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634030356;
-        bh=r5y5/vVnc4K5UB1TBSz+7rG5tu9PmtPkhFbjFAsJwpg=;
-        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=cwImSNq/tDdvmlpRvEiglE/iHCoz4pjnemv5hXDztHO6Orvx+iBICiIFk/FqJNLtX
-         cWLuZwG2bZbrNnBBTR7QFNheDDF72P0kbPxKGsPasrmBo3luZADAmViL18Q4XXqtdD
-         U3a0SqR22Rt+RHXVBL6GSSPaJsPI+mwtNZGFvmk647ygramO1644z7AgEIJmRWNGGE
-         iuprmq3QPRX+ixOi3lRMWIKbELbAAOiQRTo6QQFN0BIh4BbcNhIOCo0d3b4RogKI/C
-         wxlhZBQd2vthfLqoHtGCY7ziPApxBNunQ7cVZGhE4xGa/BqzH5smAuRVz3g6D8pegD
-         VnaUYAMiiC+kQ==
-Received: by mail-lf1-f72.google.com with SMTP id u17-20020a05651206d100b003fd714d9a38so9182526lff.8
-        for <linux-clk@vger.kernel.org>; Tue, 12 Oct 2021 02:19:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=r5y5/vVnc4K5UB1TBSz+7rG5tu9PmtPkhFbjFAsJwpg=;
-        b=DHHRVV7gSnqrdYspkwx9ja3eCoc6XU9n6xyhJe6vpbuLJCD6rBtpCQk1G7ztApQwXo
-         H0reSt64YqB44pVyU1g10yTfOEseW2gdX2xp+DGnLczD/BTaNNDUfM6Nv0yVaCXnbSxu
-         MamtOhFO6X12HQzpIvomMOhotR5ojgZnI3LHOyAaoiGOZ9WUVQdjhDFgD42RJmfTTCPg
-         D5yYvyy/+v1ZBL9NDP2UB72Wd62BfpH8JgiYs2UHdPddTKCOoPSvWQe/jHeazem6LJl2
-         B6td0aTuyPLSaiYUupWKWRQkMC1rrzld8lheD76nqHNwpKTV2dY6nsURC4c0SsNeK6/H
-         ViCw==
-X-Gm-Message-State: AOAM533HDhrlQT9vmxIf68lJLa0IsQhcAg4kuBGAS7gWtSSmSTJ1qt+K
-        eiFc1UD3kmEs7Lhk+qmjKX80IFVVSSR2STk0B8PBz8sEgMKWSmQQjnZi7r9Ds3RN6JmVV8BFiUq
-        dNhBkUeYlH+Snn7Q0xZ9owQx8blo2pbHnzRNmVw==
-X-Received: by 2002:ac2:4c48:: with SMTP id o8mr27115419lfk.286.1634030356144;
-        Tue, 12 Oct 2021 02:19:16 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzq4pSLuFbcE7Kzfui9ayq9HU6yRKFDzy2Lesl+hVFgdjVy7SmfrAycDlAL4d25TBxgXwLBng==
-X-Received: by 2002:ac2:4c48:: with SMTP id o8mr27115394lfk.286.1634030355941;
-        Tue, 12 Oct 2021 02:19:15 -0700 (PDT)
-Received: from [192.168.0.20] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id s3sm567364lfs.175.2021.10.12.02.19.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Oct 2021 02:19:15 -0700 (PDT)
-To:     Hector Martin <marcan@marcan.st>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211011165707.138157-1-marcan@marcan.st>
- <20211011165707.138157-7-marcan@marcan.st>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: Re: [RFC PATCH 6/9] memory: apple: Add apple-mcc driver to manage MCC
- perf in Apple SoCs
-Message-ID: <a9f6898d-bd76-b94e-52fc-98e9da1a04bd@canonical.com>
-Date:   Tue, 12 Oct 2021 11:19:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <20211011165707.138157-7-marcan@marcan.st>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S235518AbhJLJ1Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Oct 2021 05:27:25 -0400
+Received: from mail-eopbgr70073.outbound.protection.outlook.com ([40.107.7.73]:4327
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S235547AbhJLJ1Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Oct 2021 05:27:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZdeOwL3nM2izw/JX7kra/fiYUeKJf5jMSQOy9nmUC1vHshgjg8pHrGzpfvrPHjI1xqa8GK0lTqVmg6nfGnL/OCLF7Jr4pne8bAUnhs27c0i9UwmoMp6EPFzlpU9Cod+Rb52FFsGBFSJA0Ir+VSpVclY/54I9hdfOXmkB9Cel+otQcqkRAKDH2pDG0fJ0bbEkNi0G0H4dTI+6rarHYEKORV+H59MzZk9Ib0uF7wKUsi1LpBGIHFNN6KJuXB7Ud4O4DQe9mVMt6uixd0kLGS91O4riym1MmpPc2gEpHWpha//ce12jrM9ZwXHGkxWtcxYP4zacnW44BKHQHqpXq6hUwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y9h5isO3Gyd+lKDZWj915Q77YXPEcj0RDQNoI8zrzBE=;
+ b=O3sbr+q95N241xyPPsK89XvxX3FwSm9k7OR1TveDflFEdY/xoL6Fbg9DiCqGlRvb0rxqoIxuqaa+YZe41eK5GpdzagmtbpDFXrvONyOqCqa2EkufPLXCZMGmHRJH8qnzmwjJg3wVWA3W16M2fQ9jRSeuVbG1g8yXdlLCUPQkEEU4haMFOe2JCzajmWR5SVafhR5A7HBOEIfqYRyKf0An4zMoIfCF1KujOKlPNdBSqBshv7B22w4GdBbNUvSyf8jS/+LvWNdMmkW26LKiobwRgV6aImatnLRhGFBdrSY7M90lM9wcmWY5/0Dod3e0qHofbwvJ/EagZUcsxyzA4SNpgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y9h5isO3Gyd+lKDZWj915Q77YXPEcj0RDQNoI8zrzBE=;
+ b=DQuZsUKew+BUKWphC3/TUpZYyKujXkDJFx6VpabRMiHwh2WSPgIK307i/gv/RF0di1mJThQebOIXwaX6cXBsiaE+csK+f1ngoG0w+1TFsyLjMXTSMBnVbV2T3cxbA+/IHW/mquPgqQSKzRJuDZzU7ePx0V/BkSwRS+uzuTaYia4=
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB9020.eurprd04.prod.outlook.com (2603:10a6:10:2e3::9)
+ by DU2PR04MB8981.eurprd04.prod.outlook.com (2603:10a6:10:2e0::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.19; Tue, 12 Oct
+ 2021 09:25:20 +0000
+Received: from DU2PR04MB9020.eurprd04.prod.outlook.com
+ ([fe80::b928:9230:aa10:639a]) by DU2PR04MB9020.eurprd04.prod.outlook.com
+ ([fe80::b928:9230:aa10:639a%9]) with mapi id 15.20.4587.026; Tue, 12 Oct 2021
+ 09:25:20 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com, abel.vesa@nxp.com,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: imx8ulp: set suppress_bind_attrs to true
+Date:   Tue, 12 Oct 2021 18:01:32 +0800
+Message-Id: <20211012100132.17829-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.30.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGXP274CA0004.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::16)
+ To DU2PR04MB9020.eurprd04.prod.outlook.com (2603:10a6:10:2e3::9)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SGXP274CA0004.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.20 via Frontend Transport; Tue, 12 Oct 2021 09:25:16 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 076133fb-830d-4f58-9c8b-08d98d6235b7
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8981:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DU2PR04MB8981F87744887DA0C613F166C9B69@DU2PR04MB8981.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:843;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: iSFVsB9ETuDCLhcmgcUgMPCtGJiGfuq3sX79XXBM7whGpg0SHSqk/EcBsZJQ1qHUA7NDOHNsqFCureezgrAJPsE0NX5Q6dlXhGC2hgDDp5CQK+NVql8lo248YPoL49Qk1JQpwvogXp/kkrI4fLJDms/I69zioPw83XW0N7/2faal3lqjZyoSJ6fI1PDlQy+hqFBefxzhHfFHKmnFERoA+6T7eILI6lnUTA90zlcXnAJFurrg1l+NhWyCsmdJNFfidVpYhDSsOHr17jwfl3KkT20rXIoObhhwdqKE0s/gjlDiob7xHw5/Gw7ONMuYzd/K6pEOfmbk2ofbZkkyyUKoQutRMRIW/uDTTGm1r5EZu5juMZFbKZ8w/K7WH79sD94kCSqOnAspeYHKy7GmgwRMK31od7xKaJs9jhuC8vczCSxFinqfrD3PvHTJ2pjnPhH15T8ZjZu2kUcjjfnUI1sxX77uvFDzOCP8BYyRh8Lhzp4RgsURMNRkqz7zhjtScJh4j3lE4Y4h7Ahiwub+u2nkFKT+T5QfFjIyO2VUlehAI/mD33YiWRCML76BCyWtLvrJrj2iDxEee6u4SMbAHy1hF+cryE4mR+vKM+mXY+c9WIGrNxEtoyqGsUzgnfe57eLY5PTOKJZEBNhahhQ2spfJDm0ZZWBbmwp+kTH3PSR8/UPOEbQ1ioC9NnYmFt+ucpNRAbK21B4s2FwyQ3U5s4s/1QjUYyreo+6pSbtxyleJAnc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB9020.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(4326008)(1076003)(6512007)(6486002)(26005)(5660300002)(8936002)(186003)(38350700002)(38100700002)(508600001)(4744005)(66556008)(316002)(66946007)(8676002)(2616005)(2906002)(956004)(83380400001)(52116002)(6506007)(86362001)(6666004)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e9afmrjJVtlieCS+d+eM8xoqS1nTvQraiUT4aj03ILCFIuwfhiUxLOs6+Hni?=
+ =?us-ascii?Q?+bT3RH2cFlC3xTm+L+tzEexGE48dQjJtNGBY1EiG2ji4aia6ob1Etly5BTAt?=
+ =?us-ascii?Q?L2b3WjpNO4FDVFo29jWGE88s9MwzX+VoHcTlwcXNc9v4ZGpZFNQzxHUVU92m?=
+ =?us-ascii?Q?WT91gcL2bSZUJUuzwwghBefdEDNZvJwCjXcnvuRNSF0zImX0pEjqf3uE0esi?=
+ =?us-ascii?Q?U8oBmkzjb5dkV3WmycUKDckN4PxoqVQoGbMx7/28ruv9urKj3jeQ8CGzhzmw?=
+ =?us-ascii?Q?3+5MJtr1ShGMHlnjVFUrMAWmLKKAm+kDacX+Q2jL7BtbDMUK9Tp9HwzerBvo?=
+ =?us-ascii?Q?D+1qjGERAXHC44OzUU4rZBXmcX0I7pl3k3LwVmAXhLf8bQP1Up9ANGzg00/+?=
+ =?us-ascii?Q?y+wh5dzhG0BkAchqoFF4OM7zHyGxCmohQ2uT4o+Lsiq3YPelW9GZgbtV2cDS?=
+ =?us-ascii?Q?284hAsY0mAgzDR7FrMRPELmMi+pGjc0QIFduEtpeArEa1YFKxrYtNr13iHKy?=
+ =?us-ascii?Q?nPR9nuKFcigf1v9fdU3aAPpE4RLjw3Cu/Z2WR/DnXWq7TVyIH6e9Fx0DqDRY?=
+ =?us-ascii?Q?QP2CN/g6SfctYSXYvEEtIYUiS2r6jo2QdqNR4LKD2+j9a/SoWJqJnDKiPduY?=
+ =?us-ascii?Q?+ZKYhAXbUQcoxU9O+377ZMZmdE7IkwT5mFQedLUkxmUZB4cCh+Mv8c52IqyL?=
+ =?us-ascii?Q?+AUUEJI5FMOgkLLu5Jy4cps28ZVCEXfVYtx7E0QZ5lBwxbEkgkG6e3uhPzI8?=
+ =?us-ascii?Q?3Lc6nxrmkaJAEs3o6zOZgUsXd/R/dgbG//4RGexFAahdIsYQVaF7wzN2MkfV?=
+ =?us-ascii?Q?EQ8RftPwoA6XkQwy6K8nwXZJLBzg+3dT1Qt80uRv8HMswKgkHS3j6rIVCWOw?=
+ =?us-ascii?Q?jVNdDYE5XnC3g2tBsDjBbfe7Rko2/BnoFvg7yhNd5ArSgJBPGBWIJRtUHV1k?=
+ =?us-ascii?Q?PFGDpa/pqHoeL5Ve6L5OnBnpaFhXWfyfXpyyiUImL6h1pA4VNSDjYcRG6aKN?=
+ =?us-ascii?Q?U7sjIQaJxO3R0uXV8f4D5cBj2bMmCOrZe3RCz5hVEuuDK5rf7viILfBy6Q8B?=
+ =?us-ascii?Q?Rp5RVjYnA12hcrlgiqIkiLYptMgnQyqU16UXak1pUIbU+ca5+dH1dd7cEVqC?=
+ =?us-ascii?Q?dbJ3SZhYc8bg+kndeqGUoU0gwrs9NMEtx4p3lZuGLlIFwO+iO4CJFi4uqJOJ?=
+ =?us-ascii?Q?FgT0YXz5Mh0EgG14cxVeCmd6UF5Kgl1zu6TaUoGgnwMFYSmKWZ5UE/w+INIC?=
+ =?us-ascii?Q?SYp28CnTemU5YBrJRqPC02GS7Z99mzuSS162ZI/76ljbS1SQPsmbjvgvKcVF?=
+ =?us-ascii?Q?OoKkIvkCjbtQ3J0UFZkchXhK?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 076133fb-830d-4f58-9c8b-08d98d6235b7
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB9020.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2021 09:25:20.0289
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +yiAsNa+rA7eEtoW9PYuKSwIX5f/ZV7EE+D1qB/LiANYwL6kVVYKRNxZp/u/pFe+xPI4Cpowwf6u/4sS/0MSgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8981
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/10/2021 18:57, Hector Martin wrote:
-> This driver binds to the memory controller hardware in Apple SoCs such
-> as the Apple M1, and provides a power domain that downstream devices can
-> use to change the performance state of the memory controller.
-> 
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> ---
->  drivers/memory/Kconfig     |   9 +++
->  drivers/memory/Makefile    |   1 +
->  drivers/memory/apple-mcc.c | 130 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 140 insertions(+)
->  create mode 100644 drivers/memory/apple-mcc.c
-> 
-> diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
-> index 72c0df129d5c..48ef3d563a1c 100644
-> --- a/drivers/memory/Kconfig
-> +++ b/drivers/memory/Kconfig
-> @@ -30,6 +30,15 @@ config ARM_PL172_MPMC
->  	  If you have an embedded system with an AMBA bus and a PL172
->  	  controller, say Y or M here.
->  
-> +config APPLE_MCC
-> +	tristate "Apple SoC MCC driver"
-> +	default y if ARCH_APPLE
-> +	select PM_GENERIC_DOMAINS
-> +	depends on ARCH_APPLE || COMPILE_TEST
-> +	help
-> +	  This driver manages performance tuning for the memory controller in
-> +	  Apple SoCs, such as the Apple M1.
-> +
->  config ATMEL_SDRAMC
->  	bool "Atmel (Multi-port DDR-)SDRAM Controller"
->  	default y if ARCH_AT91
-> diff --git a/drivers/memory/Makefile b/drivers/memory/Makefile
-> index bc7663ed1c25..947840cbd2d4 100644
-> --- a/drivers/memory/Makefile
-> +++ b/drivers/memory/Makefile
-> @@ -8,6 +8,7 @@ ifeq ($(CONFIG_DDR),y)
->  obj-$(CONFIG_OF)		+= of_memory.o
->  endif
->  obj-$(CONFIG_ARM_PL172_MPMC)	+= pl172.o
-> +obj-$(CONFIG_APPLE_MCC)		+= apple-mcc.o
->  obj-$(CONFIG_ATMEL_SDRAMC)	+= atmel-sdramc.o
->  obj-$(CONFIG_ATMEL_EBI)		+= atmel-ebi.o
->  obj-$(CONFIG_BRCMSTB_DPFE)	+= brcmstb_dpfe.o
-> diff --git a/drivers/memory/apple-mcc.c b/drivers/memory/apple-mcc.c
-> new file mode 100644
-> index 000000000000..55959f034b9a
-> --- /dev/null
-> +++ b/drivers/memory/apple-mcc.c
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> +/*
-> + * Apple SoC MCC memory controller performance control driver
-> + *
-> + * Copyright The Asahi Linux Contributors
+From: Peng Fan <peng.fan@nxp.com>
 
-Copyright date?
+Disable bind attributes, the clocks will not removed.
 
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/pm_opp.h>
-> +
-> +#define APPLE_MCC_PERF_CONFIG1  0xdc4
-> +#define APPLE_MCC_PERF_CONFIG2  0xdbc
-> +#define APPLE_MCC_CHANNEL(x)	((x) * 0x40000)
-> +
-> +struct apple_mcc {
-> +	struct device *dev;
-> +	struct generic_pm_domain genpd;
-> +	void __iomem *reg_base;
-> +	u32 num_channels;
-> +};
-> +
-> +#define to_apple_mcc(_genpd) container_of(_genpd, struct apple_mcc, genpd)
-> +
-> +static int apple_mcc_set_performance_state(struct generic_pm_domain *genpd, unsigned int state)
-> +{
-> +	struct apple_mcc *mcc = to_apple_mcc(genpd);
-> +	struct dev_pm_opp *opp;
-> +	struct device_node *np;
-> +	u32 perf_config[2];
-> +	unsigned int i;
-> +
-> +	dev_dbg(mcc->dev, "switching to perf state %d\n", state);
-> +
-> +	opp = dev_pm_opp_find_level_exact(&mcc->genpd.dev, state);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	np = dev_pm_opp_get_of_node(opp);
-> +	if (of_property_read_u32_array(np, "apple,memory-perf-config",
-> +		perf_config, ARRAY_SIZE(perf_config))) {
-> +		dev_err(mcc->dev, "missing apple,memory-perf-config property");
-> +		of_node_put(np);
-> +		return -EINVAL;
-> +	}
-> +	of_node_put(np);
-> +
-> +	for (i = 0; i < mcc->num_channels; i++) {
-> +		writel_relaxed(perf_config[0],
-> +			       mcc->reg_base + APPLE_MCC_CHANNEL(i) + APPLE_MCC_PERF_CONFIG1);
-> +		writel_relaxed(perf_config[1],
-> +			       mcc->reg_base + APPLE_MCC_CHANNEL(i) + APPLE_MCC_PERF_CONFIG2);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned int apple_mcc_opp_to_performance_state(struct generic_pm_domain *genpd,
-> +						       struct dev_pm_opp *opp)
-> +{
-> +	return dev_pm_opp_get_level(opp);
-> +}
-> +
-> +static int apple_mcc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-imx8ulp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-By convention mostly we call the variable "np".
+diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
+index 6699437e17b8..8eb1af2d6429 100644
+--- a/drivers/clk/imx/clk-imx8ulp.c
++++ b/drivers/clk/imx/clk-imx8ulp.c
+@@ -559,6 +559,7 @@ static struct platform_driver imx8ulp_clk_driver = {
+ 	.probe	= imx8ulp_clk_probe,
+ 	.driver = {
+ 		.name		= KBUILD_MODNAME,
++		.suppress_bind_attrs = true,
+ 		.of_match_table	= imx8ulp_clk_dt_ids,
+ 	},
+ };
+-- 
+2.30.0
 
-> +	struct apple_mcc *mcc;
-> +	int ret;
-> +
-> +	mcc = devm_kzalloc(dev, sizeof(*mcc), GFP_KERNEL);
-> +	if (!mcc)
-> +		return -ENOMEM;
-> +
-> +	mcc->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(mcc->reg_base))
-> +		return PTR_ERR(mcc->reg_base);
-> +
-> +	if (of_property_read_u32(node, "apple,num-channels", &mcc->num_channels)) {
-
-Don't you have a limit of supported channels? It cannot be any uint32...
-
-> +		dev_err(dev, "missing apple,num-channels property\n");
-
-Use almost everywhere dev_err_probe - less code and you get error msg
-printed.
-
-> +		return -ENOENT;
-> +	}
-> +
-> +	mcc->dev = dev;
-> +	mcc->genpd.name = "apple-mcc-perf";
-> +	mcc->genpd.opp_to_performance_state = apple_mcc_opp_to_performance_state;
-> +	mcc->genpd.set_performance_state = apple_mcc_set_performance_state;
-> +
-> +	ret = pm_genpd_init(&mcc->genpd, NULL, false);
-> +	if (ret < 0) {
-> +		dev_err(dev, "pm_genpd_init failed\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = of_genpd_add_provider_simple_noclk(node, &mcc->genpd);
-> +	if (ret < 0) {
-> +		dev_err(dev, "of_genpd_add_provider_simple failed\n");
-> +		return ret;
-> +	}
-> +
-> +	dev_info(dev, "Apple MCC performance driver initialized\n");
-
-Please skip it, or at least make it a dev_dbg, you don't print any
-valuable information here.
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id apple_mcc_of_match[] = {
-> +	{ .compatible = "apple,mcc" },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, apple_mcc_of_match);
-> +
-> +static struct platform_driver apple_mcc_driver = {
-> +	.probe = apple_mcc_probe,
-> +	.driver = {
-> +		.name = "apple-mcc",
-> +		.of_match_table = apple_mcc_of_match,
-> +	},
-> +};
-
-module_platform_driver() goes here.
-
-> +
-> +MODULE_AUTHOR("Hector Martin <marcan@marcan.st>");
-> +MODULE_DESCRIPTION("MCC memory controller performance tuning driver for Apple SoCs");
-> +MODULE_LICENSE("GPL v2");
-
-I think this will be "Dual MIT/GPL", based on your SPDX.
-
-> +
-> +module_platform_driver(apple_mcc_driver);
-> 
-
-
-Best regards,
-Krzysztof
