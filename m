@@ -2,26 +2,26 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39CDC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D0C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D14F60EE2
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABC33610D1
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 00:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231687AbhJLAz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 20:55:57 -0400
-Received: from mx.socionext.com ([202.248.49.38]:59612 "EHLO mx.socionext.com"
+        id S231905AbhJLAz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 20:55:58 -0400
+Received: from mx.socionext.com ([202.248.49.38]:50014 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230003AbhJLAz5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S229872AbhJLAz5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 11 Oct 2021 20:55:57 -0400
-Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
+Received: from unknown (HELO kinkan2-ex.css.socionext.com) ([172.31.9.52])
   by mx.socionext.com with ESMTP; 12 Oct 2021 09:53:55 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id CF8942058B40;
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan2-ex.css.socionext.com (Postfix) with ESMTP id CE33D2059034;
         Tue, 12 Oct 2021 09:53:55 +0900 (JST)
 Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 12 Oct 2021 09:53:55 +0900
 Received: from plum.e01.socionext.com (unknown [10.212.243.119])
-        by kinkan2.css.socionext.com (Postfix) with ESMTP id 93E1CAB192;
+        by kinkan2.css.socionext.com (Postfix) with ESMTP id 602A3B62B7;
         Tue, 12 Oct 2021 09:53:55 +0900 (JST)
 From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -31,37 +31,39 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: [PATCH v3 1/5] clk: uniphier: Add audio system and video input clock control for PXs3
-Date:   Tue, 12 Oct 2021 09:53:51 +0900
-Message-Id: <1634000035-3114-2-git-send-email-hayashi.kunihiko@socionext.com>
+Subject: [PATCH v3 0/5] clk: uniphier: Introduce some clock features and NX1 support
+Date:   Tue, 12 Oct 2021 09:53:50 +0900
+Message-Id: <1634000035-3114-1-git-send-email-hayashi.kunihiko@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1634000035-3114-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1634000035-3114-1-git-send-email-hayashi.kunihiko@socionext.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks for audio subsystem (AIO) and video input subsystem (EXIV) on
-UniPhier PXs3 SoC.
+This series includes the patches to add audio/video clock control for PXs3,
+SoC-glue clock source selector for Pro4, and basic clock controls for new
+UniPhier NX1 SoC. NX1 SoC also has the same kinds of clock controls as the
+other UniPhier SoCs.
 
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 ---
- drivers/clk/uniphier/clk-uniphier-sys.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since v2:
+- Remove SoC-glue binding example
 
-diff --git a/drivers/clk/uniphier/clk-uniphier-sys.c b/drivers/clk/uniphier/clk-uniphier-sys.c
-index 32b301724183..0ec28ebc39c2 100644
---- a/drivers/clk/uniphier/clk-uniphier-sys.c
-+++ b/drivers/clk/uniphier/clk-uniphier-sys.c
-@@ -288,6 +288,8 @@ const struct uniphier_clk_data uniphier_pxs3_sys_clk_data[] = {
- 	UNIPHIER_CLK_GATE("sata0", 28, NULL, 0x210c, 7),
- 	UNIPHIER_CLK_GATE("sata1", 29, NULL, 0x210c, 8),
- 	UNIPHIER_CLK_GATE("sata-phy", 30, NULL, 0x210c, 21),
-+	UNIPHIER_LD11_SYS_CLK_AIO(40),
-+	UNIPHIER_LD11_SYS_CLK_EXIV(42),
- 	/* CPU gears */
- 	UNIPHIER_CLK_DIV4("cpll", 2, 3, 4, 8),
- 	UNIPHIER_CLK_DIV4("spll", 2, 3, 4, 8),
+Changes since v1:
+- Fix dt-bindings to replace spaces from "\t"
+
+Kunihiko Hayashi (5):
+  clk: uniphier: Add audio system and video input clock control for PXs3
+  dt-bindings: clock: uniphier: Add NX1 clock binding
+  clk: uniphier: Add NX1 clock support
+  dt-bindings: clock: uniphier: Add clock binding for SoC-glue
+  clk: uniphier: Add SoC-glue clock source selector support for Pro4
+
+ .../bindings/clock/socionext,uniphier-clock.yaml   |  6 +++
+ drivers/clk/uniphier/clk-uniphier-core.c           | 17 ++++++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 47 ++++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                |  6 +++
+ 4 files changed, 76 insertions(+)
+
 -- 
 2.7.4
 
