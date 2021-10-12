@@ -2,31 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9BFC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 05:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57F0C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 05:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9754A6108F
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 05:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89D956108F
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 05:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232254AbhJLFgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Oct 2021 01:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49868 "EHLO
+        id S232690AbhJLFxr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Oct 2021 01:53:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229739AbhJLFgW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 01:36:22 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF9ABC061570;
-        Mon, 11 Oct 2021 22:34:20 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 681F2423B9;
-        Tue, 12 Oct 2021 05:34:12 +0000 (UTC)
-Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device does
- not exist
-To:     Viresh Kumar <viresh.kumar@linaro.org>
+        with ESMTP id S232654AbhJLFxr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 01:53:47 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40253C06161C
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 22:51:46 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id r2so12869228pgl.10
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 22:51:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kBtpCZbIOWtvahLXRDKKDjKecXESKAiO4U+qtM3fqF4=;
+        b=TnaMy710dXLuP2UJpvYYEci0HGuzrNFBasfSx2IKwcweLvhm7Ijn2ywSfxqmyqB+pP
+         1QN5V1L+gMujcMAp8UkixsGDdqUFYk/ECuh4XIEV25SpY7BcW2YSUxOtLgd5ZBTsf3uY
+         hRmDbHVciUR81IbQvUPR9YFNx5LNWWAoQr41EirdPU2Us/c8VbuBU7Xof9R+ZOMlP/3l
+         tjjZ1mW36NloFY/ns5OkKXzyfaWG0wXP4ClZ3Neg3bYRZBvsULE1WZbaZVDflXXhQvFc
+         ZF/6VxzdRLWUhHgZxgkuDn634tLGA6Ek7AiEFNJ+w1Aemy0Y9wNI4aCjlhgow47qNwoN
+         9UgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kBtpCZbIOWtvahLXRDKKDjKecXESKAiO4U+qtM3fqF4=;
+        b=ODPus6OUgOflTTEvnrQGScyysXTHMzN7JOJ2OQDvwMLZvx7L1OWqx8McN98vTpVac1
+         PzS10dXD3fFiaLjj8leRwZXyltJoXW+UMZcPNlvSQkb8WIUj4oj5vi/7ShbWGzkIasnZ
+         M+StCnmAiBQvHQnLAmOHueHI15xZISVvyz8/iY89PcoyqrZsFt+t2EoYQey8Sz3Sl8cP
+         zxZNoabcpd2rx1K72OvABXOCkiMCjSA912SKicwqi5EDSnuRxn4UEylxHAbyVUmsZDsd
+         VoR4cPkdBl5i4QdiDSI7hDQKORMjVj/zCjcWrVOdBwWWhzrYs2rcvUnDw+QyTCgkftTt
+         i2pw==
+X-Gm-Message-State: AOAM532FdpSDDJUf4EELvrzgVWrNYz+c9th8vRsM4T2r1Nv3jO9oxun5
+        9q81jEBOsfqle8T7FPSGjMVDpg==
+X-Google-Smtp-Source: ABdhPJxmbvSSSRs/QD+1yS5ZcH1WaRkFLvr50doFVs/VKoJlbooNZMTu2jEh9QgF3xf5jI/HzOhtPQ==
+X-Received: by 2002:aa7:870b:0:b0:44b:bcef:32b4 with SMTP id b11-20020aa7870b000000b0044bbcef32b4mr29407229pfo.41.1634017905739;
+        Mon, 11 Oct 2021 22:51:45 -0700 (PDT)
+Received: from localhost ([106.201.113.61])
+        by smtp.gmail.com with ESMTPSA id y142sm9477261pfc.169.2021.10.11.22.51.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Oct 2021 22:51:45 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 11:21:43 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Hector Martin <marcan@marcan.st>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
@@ -42,41 +70,37 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device
+ does not exist
+Message-ID: <20211012055143.xmkbvhbnolspgjin@vireshk-i7>
 References: <20211011165707.138157-1-marcan@marcan.st>
  <20211011165707.138157-5-marcan@marcan.st>
  <20211012032144.2ltlpat7orrsyr6k@vireshk-i7>
-From:   Hector Martin <marcan@marcan.st>
-Message-ID: <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
-Date:   Tue, 12 Oct 2021 14:34:09 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
 MIME-Version: 1.0
-In-Reply-To: <20211012032144.2ltlpat7orrsyr6k@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/10/2021 12.21, Viresh Kumar wrote:
-> I am not sure why you need this, since _set_required_opps() has this check:
+On 12-10-21, 14:34, Hector Martin wrote:
+> The table *is* assigned to a genpd (the memory controller), it's just that
+> that genpd isn't actually a parent of the CPU device. Without the patch you
+> end up with:
 > 
-> 	if (unlikely(!required_opp_tables[0]->is_genpd)) {
-> 		dev_err(dev, "required-opps don't belong to a genpd\n");
-> 		return -ENOENT;
-> 	}
-> 
+> [    3.040060] cpu cpu4: Failed to set performance rate of cpu4: 0 (-19)
+> [    3.042881] cpu cpu4: Failed to set required opps: -19
+> [    3.045508] cpufreq: __target_index: Failed to change cpu frequency: -19
 
-The table *is* assigned to a genpd (the memory controller), it's just 
-that that genpd isn't actually a parent of the CPU device. Without the 
-patch you end up with:
+Hmm, Saravana and Sibi were working on a similar problem earlier and decided to
+solve this using devfreq instead. Don't remember the exact series which got
+merged for this, Sibi ?
 
-[    3.040060] cpu cpu4: Failed to set performance rate of cpu4: 0 (-19)
-[    3.042881] cpu cpu4: Failed to set required opps: -19
-[    3.045508] cpufreq: __target_index: Failed to change cpu frequency: -19
-
+If this part fails, how do you actually set the performance state of the memory
+controller's genpd ?
 
 -- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+viresh
