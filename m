@@ -2,93 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009DC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 13:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0472C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 14:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6ADE60E9C
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 13:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE2D60F92
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 14:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236943AbhJLNuW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Oct 2021 09:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50190 "EHLO
+        id S237089AbhJLOIi convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Oct 2021 10:08:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236678AbhJLNuV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 09:50:21 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989EEC061570;
-        Tue, 12 Oct 2021 06:48:19 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 7D39F426A2;
-        Tue, 12 Oct 2021 13:48:12 +0000 (UTC)
-Subject: Re: [RFC PATCH 3/9] dt-bindings: clock: Add apple,cluster-clk binding
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-References: <20211011165707.138157-1-marcan@marcan.st>
- <20211011165707.138157-4-marcan@marcan.st>
- <0fe602f6-3adc-dfac-beee-2854b01cec5c@canonical.com>
- <20211012093529.pzzfo44ikq5oc6cl@vireshk-i7>
- <D0DE08FE-562E-4A48-BCA0-9094DAFCA564@marcan.st>
- <20211012094302.3cownyzr4phxwifs@vireshk-i7>
- <64584F8C-D49F-41B5-9658-CF8A25186E67@marcan.st>
- <20211012095735.mhh2lzu52ohtotl6@vireshk-i7>
-Cc:     Hector Martin <marcan@marcan.st>,
-        linux-arm-kernel@lists.infradead.org,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        with ESMTP id S236961AbhJLOIi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 10:08:38 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3991C061570
+        for <linux-clk@vger.kernel.org>; Tue, 12 Oct 2021 07:06:36 -0700 (PDT)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1maIQ0-0006DE-Q2; Tue, 12 Oct 2021 16:06:12 +0200
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1maIPx-0002gx-Jv; Tue, 12 Oct 2021 16:06:09 +0200
+Message-ID: <9446163d07a2ff135965c7bff249f76bd0da5fb8.camel@pengutronix.de>
+Subject: Re: [PATCH v1 09/16] reset: starfive-jh7100: Add StarFive JH7100
+ reset driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-From:   Hector Martin <marcan@marcan.st>
-Message-ID: <0168a91d-0e7d-41df-8a65-bc739fc50498@marcan.st>
-Date:   Tue, 12 Oct 2021 22:48:09 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 12 Oct 2021 16:06:09 +0200
+In-Reply-To: <20211012134027.684712-10-kernel@esmil.dk>
+References: <20211012134027.684712-1-kernel@esmil.dk>
+         <20211012134027.684712-10-kernel@esmil.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <20211012095735.mhh2lzu52ohtotl6@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/10/2021 18.57, Viresh Kumar wrote:
-> I didn't realize earlier that we have moved out of lists :)
+Hi Emil,
 
-Whoops, sorry, I was on mobile and must've hit the wrong reply button! 
-My apologies.
-
-> On 12-10-21, 18:54, Hector Martin "marcan" wrote:
->> Typically cpufreq-dt is used with clock drivers that directly take
->> the clock frequency and do whatever voodoo is necessary to set it
->> for the CPU. But here, the hardware just wants to know the index,
->> and does everything itself. So we need to encode that somewhere, to
->> avoid hardcoding it in the clock driver.
->>
->> In general, based on how these SoCs are designed, we're trying to
->> avoid having tables of volatile information in the drivers, and
->> instead keep everything in the DT. This means we have a good chance
->> that these drivers will continue to work with future SoC
->> generations, since Apple doesn't change register definitions
->> randomly most of the time.
+On Tue, 2021-10-12 at 15:40 +0200, Emil Renner Berthing wrote:
+> Add a driver for the StarFive JH7100 reset controller.
 > 
-> Yeah I get that and it is actually better this way. I just wanted to
-> point out that we didn't think of it this way earlier :)
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> ---
+>  MAINTAINERS                           |   7 ++
+>  drivers/reset/Kconfig                 |   8 ++
+>  drivers/reset/Makefile                |   1 +
+>  drivers/reset/reset-starfive-jh7100.c | 164 ++++++++++++++++++++++++++
+>  4 files changed, 180 insertions(+)
+>  create mode 100644 drivers/reset/reset-starfive-jh7100.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d2b95b96f0ec..f7883377895e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17854,6 +17854,13 @@ F:	Documentation/devicetree/bindings/clock/starfive,jh7100-clkgen.yaml
+>  F:	drivers/clk/starfive/clk-starfive-jh7100.c
+>  F:	include/dt-bindings/clock/starfive-jh7100.h
+>  
+> +STARFIVE JH7100 RESET CONTROLLER DRIVER
+> +M:	Emil Renner Berthing <kernel@esmil.dk>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> +F:	drivers/reset/reset-starfive-jh7100.c
+> +F:	include/dt-bindings/reset/starfive-jh7100.h
+> +
+>  STATIC BRANCH/CALL
+>  M:	Peter Zijlstra <peterz@infradead.org>
+>  M:	Josh Poimboeuf <jpoimboe@redhat.com>
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index be799a5abf8a..8345521744b3 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -92,6 +92,14 @@ config RESET_INTEL_GW
+>  	  Say Y to control the reset signals provided by reset controller.
+>  	  Otherwise, say N.
+>  
+> +config RESET_STARFIVE_JH7100
+> +	bool "StarFive JH7100 Reset Driver"
+> +	depends on SOC_STARFIVE || COMPILE_TEST
+> +	depends on OF
+> +	default SOC_STARFIVE
+> +	help
+> +	  This enables the reset controller driver for the StarFive JH7100 SoC.
+> +
 
-Yeah, makes sense. Seems to work fine :)
+Please keep these in alphabetical (config symbol name) order.
 
-
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+regards
+Philipp
