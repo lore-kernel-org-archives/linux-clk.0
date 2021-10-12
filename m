@@ -2,97 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB839C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 02:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA214C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 03:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A31D360EFE
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 02:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965E661039
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 03:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231517AbhJLCVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 Oct 2021 22:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35582 "EHLO
+        id S232129AbhJLDXt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 Oct 2021 23:23:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231165AbhJLCVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 22:21:49 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 577ACC061570;
-        Mon, 11 Oct 2021 19:19:48 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 75so12438393pga.3;
-        Mon, 11 Oct 2021 19:19:48 -0700 (PDT)
+        with ESMTP id S231742AbhJLDXs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 Oct 2021 23:23:48 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B834FC061570
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 20:21:47 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id x4so12622372pln.5
+        for <linux-clk@vger.kernel.org>; Mon, 11 Oct 2021 20:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IsTEZDiGXlkIDUL0VIL7ycKtQ7nRIFM02SA/nCqOki4=;
-        b=hOz3gRrfZQKg3ihnvPYwjZIs65xysfvluVM3fZB6pY5x1PWIVdxmLGXOqMiBbWsRnQ
-         J1pp8gpTr7Cx2fTjXH7AQq3kXIbwlIAI9gnhe8gyEP40pq2zb5PhvM6JXHWyiveukH05
-         ltCbJJLYvokyBr9s/eaB7DXc4rHPz8gDdf5Vpbo+4xMVL+qWWbL7EYG2U7+Xm6LkTIgB
-         JF96gWfzVPSt0ioP26MJoeFDchyn2CnNGgy4wcQeCG8pBGxgXOBEcxP1mZgVOqWh2xkX
-         6hDaBnhb2LJmu6fxrC4BbKkG5tTTsQFkHvxoFXRf2Po8G7MQWuAzr0UGXFRAAw7DmJ5d
-         A4BA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mindqxxsMB6gVGzm2IFNuF4jPvZILQH7yCXhl2T6zNY=;
+        b=QZJA/iS3B13DGkdmHHQotUlufTPmZqEGPTk+YGQR9U9cZt52XOM0UkmxMY/C1/lbjo
+         J3YW4Msr9PuEL5PUrM/pEs5lIYJBFuufQQruMV5zgAOkX8ePRf5NVRb/5CO9XJ0u1siO
+         1tBQkFEmWxax2bPkxeAH7diqEYZO8Kzeruq2cuHv67l3HiGT7x8b+Ug/DRNRnno0T39b
+         Q04SyzYt4oTHgnlDHgFq5wZYj7mPmVHjbAMVBQ2OKQWyPw+lKmSm/65N1iaaZH4pNwT1
+         kslCi4b8X6bgbbpgMQwptWWKFwkwaepWmMpTUpyxZqwssknfAwBZWmedud53BqzfT5Jj
+         PzeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IsTEZDiGXlkIDUL0VIL7ycKtQ7nRIFM02SA/nCqOki4=;
-        b=0BtK7CBKD7bOjvxJPFdH2K3RPY9Ihy/s8N//oLA/AAn6rT+HcGi4akobFv+9pVuRL7
-         UjH3GxXGkljDpuRDGtXWu8j/9qEcUdvt+6EpNYzJz5Pt29HYUTJ2z6rD/kqywxska5e8
-         fsRoiPnmWQyb/IHV3vAqbNsd7tjTVdYApXZ4ualRfRk168GSx9JsroaQCwgw7WC0IE5A
-         7E872Q7x5ds2SykRcGkozdQo1N9HpPhcgsn+i7qEdjSZxHaIQSVSxx/WZJYscDVQBMCE
-         RGZiceQFfzn0NCbh1869wHY0/DplRch6FSug7MoIcBbfd/0iMzzmL9a/rsdfhEDnmm2b
-         liGg==
-X-Gm-Message-State: AOAM532+anmzoOKfyZ3tx4JLFIQWZUAgVLKk9j7X0oNxEpXyVIcdczk2
-        BId77OT4yz0OgrFyTxAjk9s=
-X-Google-Smtp-Source: ABdhPJxfHTmL7N+QR5zJ12HR7ob99/RXp8zKZHNKZv7Rs+uxMtESTC9K7l25KUfdU7rDUm3gNQ5lbg==
-X-Received: by 2002:a63:8bc4:: with SMTP id j187mr20937440pge.402.1634005187871;
-        Mon, 11 Oct 2021 19:19:47 -0700 (PDT)
-Received: from debian11-dev-61.localdomain (192.243.120.180.16clouds.com. [192.243.120.180])
-        by smtp.gmail.com with ESMTPSA id y9sm8846845pfm.129.2021.10.11.19.19.44
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mindqxxsMB6gVGzm2IFNuF4jPvZILQH7yCXhl2T6zNY=;
+        b=kHvXYY3wyHjcD5GrUC4cfFq5lWwvk9xMNyvl99HWRzrLosJl0sJp/mfMOAUsE+mSev
+         fG1iFrMnhTm6Vogemss9mSyvN2V2N2pibrhOtb49BBiQ4VCPO3RjyvUH4Uftc717RC0v
+         n6IO4MrlQGle1c/t1On9asFOl8FqPLDNtzMI3gn2m7PlwYPleDi0Zfu1cgs4kUEthOdR
+         Uyw4+XmxGXONiVFkGYs1OPvuNYnW0P6lLjRgec9EuaPtCWbvifT2b7tokzMJItwU+1qt
+         2ALmGIQVUXeo+yN+NpeJjoBVw7KaOUKkXPO55o7il1mGayVrK1Xj94/zNtVQuJFIDmfa
+         CxWQ==
+X-Gm-Message-State: AOAM531R0MZ6EpVVp4nRsiJHC2yFM8vE+J69/GLxE4jlJwMXcTkqrMkt
+        qIj7SQIuODKuIAOfYF8hzclZWA==
+X-Google-Smtp-Source: ABdhPJy+1lpNhmLNBJe3RH5BEItdUMqGMbgnXp9vZo25wQRTtyx7yUrY2QLo0Yap+EDx7zbe8I8/hw==
+X-Received: by 2002:a17:90a:578e:: with SMTP id g14mr3268069pji.184.1634008907137;
+        Mon, 11 Oct 2021 20:21:47 -0700 (PDT)
+Received: from localhost ([106.201.113.61])
+        by smtp.gmail.com with ESMTPSA id u17sm810195pjn.30.2021.10.11.20.21.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 19:19:47 -0700 (PDT)
-From:   davidcomponentone@gmail.com
-To:     nm@ti.com
-Cc:     kristo@kernel.org, ssantosh@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        David Yang <davidcomponentone@gmail.com>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH sci-clk] Fix application of sizeof to pointer
-Date:   Tue, 12 Oct 2021 10:19:31 +0800
-Message-Id: <20211012021931.176727-1-davidcomponentone@gmail.com>
-X-Mailer: git-send-email 2.30.2
+        Mon, 11 Oct 2021 20:21:46 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 08:51:44 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Hector Martin <marcan@marcan.st>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device
+ does not exist
+Message-ID: <20211012032144.2ltlpat7orrsyr6k@vireshk-i7>
+References: <20211011165707.138157-1-marcan@marcan.st>
+ <20211011165707.138157-5-marcan@marcan.st>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211011165707.138157-5-marcan@marcan.st>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: David Yang <davidcomponentone@gmail.com>
+On 12-10-21, 01:57, Hector Martin wrote:
+> When required-opps is used in CPU OPP tables, there is no parent power
+> domain to drive it. Squelch this error, to allow a clock driver to
+> handle this directly instead.
+> 
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> ---
+>  drivers/opp/core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 04b4691a8aac..89e616721f70 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -873,12 +873,13 @@ static int _set_required_opp(struct device *dev, struct device *pd_dev,
+>  		return 0;
+>  
+>  	ret = dev_pm_genpd_set_performance_state(pd_dev, pstate);
+> -	if (ret) {
+> +	if (ret && ret != -ENODEV) {
+>  		dev_err(dev, "Failed to set performance rate of %s: %d (%d)\n",
+>  			dev_name(pd_dev), pstate, ret);
+> +		return ret;
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  /* This is only called for PM domain for now */
 
-The coccinelle check report:
-"./drivers/clk/keystone/sci-clk.c:398:8-14:
-ERROR: application of sizeof to pointer"
-Using the "sizeof(*clk)" to fix it.
+I am not sure why you need this, since _set_required_opps() has this check:
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: David Yang <davidcomponentone@gmail.com>
----
- drivers/clk/keystone/sci-clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	if (unlikely(!required_opp_tables[0]->is_genpd)) {
+		dev_err(dev, "required-opps don't belong to a genpd\n");
+		return -ENOENT;
+	}
 
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 7e1b136e71ae..010a61a2549c 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -395,7 +395,7 @@ static struct clk_hw *sci_clk_get(struct of_phandle_args *clkspec, void *data)
- 	key.clk_id = clkspec->args[1];
- 
- 	clk = bsearch(&key, provider->clocks, provider->num_clocks,
--		      sizeof(clk), _cmp_sci_clk);
-+		      sizeof(*clk), _cmp_sci_clk);
- 
- 	if (!clk)
- 		return ERR_PTR(-ENODEV);
 -- 
-2.30.2
-
+viresh
