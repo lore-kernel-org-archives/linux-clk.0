@@ -2,110 +2,182 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055EFC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4779C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 10:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD5FD610C7
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 09:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8636D610E7
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Oct 2021 10:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235750AbhJLJhe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Oct 2021 05:37:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235720AbhJLJhe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 05:37:34 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D85C06161C
-        for <linux-clk@vger.kernel.org>; Tue, 12 Oct 2021 02:35:32 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id oa4so14548788pjb.2
-        for <linux-clk@vger.kernel.org>; Tue, 12 Oct 2021 02:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=o1k8Z+wdh4QOPkQnS+F7/9QuIX0JH9DSlOiSZOGiLJ0=;
-        b=JPI1N3b7+PMvCr14EefM11K1KWWL9gaM68fMQB7IOAiZNObXnUiboTUHWlnYJDNW4Q
-         mAL5untW+5tZk/Drg861zZnJ9H4YHfyVpz6p6D8S9xoKxTdQVHUTycAjL9cKWw8J1PiX
-         cinbdgMKzCE4rX5LNwEYerT8da3aVSR2j4wjuDJVPrWYQfsUMfLgK1JDGIjjGZftmbR4
-         NfkMIKuopr20cjROoPqyebI1ELIut1t1FrnCNI1rm0SN4UeT0GFxPEmu6D3Mb6gc/vpf
-         NvU9Ikd8PH7/TCmv20xvT7bPLqqXs259HgnHrkCC0K33EmuDKKIWryZ0FLbBfB/rBqNc
-         UMfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o1k8Z+wdh4QOPkQnS+F7/9QuIX0JH9DSlOiSZOGiLJ0=;
-        b=1V/qwyBFRb9BrHEVYknoi0nD7sDQzOackrOOf80sWLDA1PXsk0YiWEiO5922xH9ZPH
-         VelOntkGEVuggoWCCHHUeel9f3G1gtGyfEanayyD4O+SxNDgl+6FFazkyrJmErRbj/4p
-         gbMbEZbWtCPxw1mnodIlQm/PULmjZtnSPrQ8/11ZJvgG1ns85NzWNNz41Cu6JVUefW3o
-         zjzUFXTWm+NeuPEBh8fyUj2AFTtTjM/Y/LWpLXPeGPYvK7uxr+pXmyScafo56i30gyg1
-         QKS5LRFzsgIj26Q0M/mkf1a6VoRnfut13gipH7l16vmXeoVGnp3BcxjQajrCl1oI3CSf
-         XSeA==
-X-Gm-Message-State: AOAM530g1VIo8++TUF8/Il5HZH74MmTwWWUvWotvQ0Bj1H3D/N0K/8sP
-        9zA4dqb99wB5pKVlD3RLwZQBug==
-X-Google-Smtp-Source: ABdhPJwmjNVx5j57L4zEiPRXtEe8aH/7F8Q9b0NO96Wmfmn8nm+42QOAA5HdzvgpsdPfHkHGSn5kpQ==
-X-Received: by 2002:a17:902:8494:b0:13b:9365:6f12 with SMTP id c20-20020a170902849400b0013b93656f12mr28929229plo.19.1634031332258;
-        Tue, 12 Oct 2021 02:35:32 -0700 (PDT)
-Received: from localhost ([106.201.113.61])
-        by smtp.gmail.com with ESMTPSA id e15sm10067916pfc.134.2021.10.12.02.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 02:35:31 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 15:05:29 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Hector Martin <marcan@marcan.st>,
-        linux-arm-kernel@lists.infradead.org,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/9] dt-bindings: clock: Add apple,cluster-clk binding
-Message-ID: <20211012093529.pzzfo44ikq5oc6cl@vireshk-i7>
-References: <20211011165707.138157-1-marcan@marcan.st>
- <20211011165707.138157-4-marcan@marcan.st>
- <0fe602f6-3adc-dfac-beee-2854b01cec5c@canonical.com>
+        id S235840AbhJLKbi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Oct 2021 06:31:38 -0400
+Received: from mailgw01.mediatek.com ([60.244.123.138]:45944 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S235153AbhJLKbh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Oct 2021 06:31:37 -0400
+X-UUID: 4408c824a8f947aaa53b05f088e8147e-20211012
+X-UUID: 4408c824a8f947aaa53b05f088e8147e-20211012
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 869037599; Tue, 12 Oct 2021 18:29:30 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 12 Oct 2021 18:29:29 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 12 Oct 2021 18:29:28 +0800
+Message-ID: <315d7823aa108c909a3d36464fe54763b76ab2f4.camel@mediatek.com>
+Subject: Re: [v3,7/9] dt-bindings: arm64: dts: mediatek: Add mt7986 series
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <Ryder.Lee@mediatek.com>, <devicetree@vger.kernel.org>,
+        <enric.balletbo@collabora.com>, <fparent@baylibre.com>,
+        <gregkh@linuxfoundation.org>, <herbert@gondor.apana.org.au>,
+        <hsinyi@chromium.org>, <john@phrozen.org>,
+        <linus.walleij@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-serial@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <linux@roeck-us.net>, <mpm@selenic.com>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>, <sboyd@kernel.org>, <sean.wang@kernel.org>,
+        <seiya.wang@mediatek.com>, <wim@linux-watchdog.org>
+Date:   Tue, 12 Oct 2021 18:29:28 +0800
+In-Reply-To: <bc29d5bc-9ce7-6147-a708-e6304249b600@gmail.com>
+References: <9552b0dc-337f-7edc-2997-50603dfe8bcd@gmail.com>
+         <20210924114046.26070-1-sam.shih@mediatek.com>
+         <bc29d5bc-9ce7-6147-a708-e6304249b600@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0fe602f6-3adc-dfac-beee-2854b01cec5c@canonical.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Apart from what Krzysztof already said:
+Hi
 
-On 12-10-21, 10:51, Krzysztof Kozlowski wrote:
-> On 11/10/2021 18:57, Hector Martin wrote:
-> > +    pcluster_opp: opp-table-1 {
-> > +        compatible = "operating-points-v2";
-> > +        opp-shared;
-> > +
-> > +        opp01 {
-> > +            opp-hz = /bits/ 64 <600000000>;
-> > +            opp-microvolt = <781000>;
-> > +            opp-level = <1>;
+On Fri, 2021-10-08 at 15:53 +0200, Matthias Brugger wrote:
+> Hi Sam,
+> 
+> I'd advise to split this series in parts for:
+> - basic device support via dts.
+> - pinctrl driver + dts
+> - clk driver + dts
 
-The opp-level thing wasn't designed to work this way, though it may
-work just fine. It was designed as a unique key for power-domains,
-which don't have opp-hz. The OPP core currently looks at 3 different
-values, which can act as a unique key to identify the OPP. clk-rate,
-bandwidth and level.
+Okay, I will split the patches that are still under review into the
+above patch series.
 
-I think this is the first platform which has both hz and level in the
-CPUs OPP table. What exactly is level in this case ?
+But I have a dumb question, currently, we have some patches that have
+been assigned version numbers.
+If I want to seprate original patch series, and resend 3 new patch
+series (basic / pinctrl / clock) according to your comment, if I want
+to keep the preview change log, tags in the patch set: 
 
-Again, it may work fine, I just don't know where it may end up
-breaking :)
+like:
+---
+v3: changed 'MT7986' to 'MT7986 series' in the commit message
+v2: added an Acked-by tag
+---
 
--- 
-viresh
+Which version number should I use for these new patch series ?
+
+Does the version number in corver-letter and the version number in each
+patch need to be the same in the entire patch series ?
+
+// (Original patch series/thread, version number is v3)
+[PATCH v3 0/3] Add basic SoC support for mediatek mt7986
+  [PATCH v3 1/3] dt-bindings: arm64: dts: mediatek: Add mt7986 series
+  // (the version number has been updated to v5 previously)
+  // (basic part only, not include pinctrl and clock nodes)
+  [PATCH v5 2/3] arm64: dts: mediatek: add mt7986a support
+  [PATCH v5 3/3] arm64: dts: mediatek: add mt7986b support
+
+// (New clock driver patch series)
+[PATCH 0/3] Add clock driver support for mediatek mt7986
+  [PATCH v3,1/3] dt-bindings: clock: mediatek: document clk bindings   
+for mediatek mt7986 SoC
+  // (the version number has been updated to v3 previously)
+  [PATCH v3 2/3] clk: mediatek: add mt7986 clock IDs
+  [PATCH v2 3/3] clk: mediatek: add mt7986 clock support
+
+// (New pinctrl driver patch series)
+[PATCH 0/4] Add pinctrl driver support for mediatek mt7986
+  // (the version number has been updated to v6 previously)
+  [PATCH v6 1/4] dt-bindings: pinctrl: update bindings for MT7986 SoC
+  // (the version number has been updated to v2 previously)
+  [PATCH v2 2/4] pinctrl: mediatek: add support for MT7986 SoC
+  [PATCH 3/4] arm64: dts: mediatek: add mt7986a pinctrl support
+  [PATCH 3/4] arm64: dts: mediatek: add mt7986b pinctrl support
+
+> 
+> I would also advise to not send new versions of patches as new
+> threads and don't 
+> respond in the same thread. At least for me that breaks my workflow
+> as I use b4.
+
+If I don't respond to the next patch set in the same thread, should I
+create an entire new patch series ?
+
+For example, if I want to update PATCH 2/3 in the bellows patch series,
+and my PATCH 1/3 has been accepted by reviewer previously
+
+[PATCH v2 0/3] Add basic SoC support for mediatek mt7986
+  [PATCH v2 1/3] ...   (patch set v1, applied by matainer)
+  [PATCH v2 2/3] ...   (patch set v2, need to be upgrade to v3)
+  [PATCH v2 3/3] ...   (patch set v1, waiting for review)
+
+Is this correct to send patch mail to maintaiers for the above
+situation ?
+
+[PATCH v3 0/2] Add basic SoC support for mediatek mt7986
+  [PATCH v3 1/2] ...   (patch set v3)
+  [PATCH v3 2/2] ...   (still patch set v1, waiting for review)
+
+
+> 
+> Regards,
+> Matthias
+> 
+> 
+> On 24/09/2021 13:40, Sam Shih wrote:
+> > MT7986 series is Mediatek's new 4-core SoC, which is mainly for
+> > wifi-router application. The difference between mt7986a and mt7986b
+> > is that some pins do not exist on mt7986b.
+> > 
+> > Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > 
+> > ---
+> > v3: changed 'MT7986' to 'MT7986 series' in the commit message
+> > v2: added an Acked-by tag
+> > ---
+> >   Documentation/devicetree/bindings/arm/mediatek.yaml | 8 ++++++++
+> >   1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> > b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> > index 80a05f6fee85..a9a778269684 100644
+> > --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> > @@ -76,6 +76,14 @@ properties:
+> >             - enum:
+> >                 - mediatek,mt7629-rfb
+> >             - const: mediatek,mt7629
+> > +      - items:
+> > +          - enum:
+> > +              - mediatek,mt7986a-rfb
+> > +          - const: mediatek,mt7986a
+> > +      - items:
+> > +          - enum:
+> > +              - mediatek,mt7986b-rfb
+> > +          - const: mediatek,mt7986b
+> >         - items:
+> >             - enum:
+> >                 - mediatek,mt8127-moose
+> > 
+
+Thanks,
+Sam
+
