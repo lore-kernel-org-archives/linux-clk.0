@@ -2,110 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10774C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC19EC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 18:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9A0360FDA
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:50:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C220160E53
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 18:03:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238374AbhJMRwq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 13:52:46 -0400
-Received: from mail-ua1-f41.google.com ([209.85.222.41]:44970 "EHLO
-        mail-ua1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbhJMRwS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 13:52:18 -0400
-Received: by mail-ua1-f41.google.com with SMTP id e7so6125246ual.11;
-        Wed, 13 Oct 2021 10:50:14 -0700 (PDT)
+        id S238372AbhJMSFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 14:05:06 -0400
+Received: from mail-ua1-f46.google.com ([209.85.222.46]:34493 "EHLO
+        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238258AbhJMSFF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 14:05:05 -0400
+Received: by mail-ua1-f46.google.com with SMTP id h4so6306471uaw.1;
+        Wed, 13 Oct 2021 11:03:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tIi5T5N2/yaJwmSaNVNNDL3lEJSP+D3EZbhPxV9bN7g=;
-        b=lBwUf98Ya9xGJQumHemveoYA3jaTGo9zceF+dlSBGjCHA+Jw2MOMxZ9OB934ZHub28
-         5V0ABhjVZZlvZ+qWYFw+P9SMRVXTIpguYu7gvrLFzeJfdcNzF1zQ6W5+GJr4ko/qmX33
-         mNaU3t7S3dcefIkBVLx5WaJaO0wIUUWCcisYJ3M/Khuo1Nc8+ePnQ8t9GOtFD4xJP62a
-         tNJ/V0MdsaVFB7VJj5663dRzvTghbMC3MkfLWjRt6i/7i3gInulrtow0NCcTDSC+mGLe
-         Y8RJWnu649ml0kDDeEFEBJ9TUdlnr37o9CBy+bZSsXfi3ju+3sQvs4Z5+gggZ1nO8gnq
-         smIw==
-X-Gm-Message-State: AOAM5318vrASNhOp78jMVxYwLNjoIj3Gdwq3n7Y5wXZqlQW/7whZGddO
-        DFdYQixye+6aHB/pDB0ctyRgwEr3UFmuDyTp4DY=
-X-Google-Smtp-Source: ABdhPJzI98rys3rSOTMBc774JLZNtowDx6KeQUTWoK/w1LLQIcU7V1QbgCRSZxN5x/TbAcms2qoGM52BOpUZIUalKpI=
-X-Received: by 2002:a67:d583:: with SMTP id m3mr967150vsj.41.1634147413827;
- Wed, 13 Oct 2021 10:50:13 -0700 (PDT)
+        bh=T1C46/jpqxsz6tI+W9Ak1jYU3EAHgNQuUCSEWH/baCg=;
+        b=o3eR/nuf/QOUa+P5Zohqh13O2y7fM44EmaducPjlPlpJl0PxWEgjobRXYnTL4ufWIU
+         fsrzOnYQRtwOemvOQdl6l8Zv+kW5eHdElavtPrw+PN1Bfe1LFvPZpZDEDHzrN/idcEEX
+         ZlVltthBjj5W5RFeYPDviXqq9ounuCyoJeJyJt9JsvKQUgF2o3/fY05RA5N4Isw7gbtp
+         X4YjjT/Vx5W0wbn2gsPmglTWYX++SrhT7UXINaUPqkNyr+8Fn8XkZ1aZemEeQZgWDw4g
+         vhUu/NM7w0/WrqK/Tw8vklqW5KLxU4JefpK7fckVCIPSeVGMjy6yFgMfOIW9ZxVufhJC
+         gYvw==
+X-Gm-Message-State: AOAM5305SS3P3dSozrUhQU8jVLD0e/YL9tLrNDGEJcQEFRkPQj5yLl2A
+        0HofuVAU67E0feMZa7L5QhrYHV9BF3BHAClNj2o=
+X-Google-Smtp-Source: ABdhPJzWe6D7GpmHL+uu9iSk9ZLP4zKoa4o6l86DroGgxk7GjStl2R3PiVqSWJKWWCbyRLA3ar1NMSHf1zJJNcPf5Fo=
+X-Received: by 2002:a67:ac04:: with SMTP id v4mr772084vse.50.1634148180292;
+ Wed, 13 Oct 2021 11:03:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-13-kernel@esmil.dk>
- <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
- <CANBLGczDZh+kLWM017mPenY8WO5OovH2DFUSS-shRD-aZVKa0A@mail.gmail.com> <YWc5zq0Moz3asWEa@smile.fi.intel.com>
-In-Reply-To: <YWc5zq0Moz3asWEa@smile.fi.intel.com>
+References: <20210913170436.243-1-alexander.helms.jy@renesas.com> <20210913170436.243-2-alexander.helms.jy@renesas.com>
+In-Reply-To: <20210913170436.243-2-alexander.helms.jy@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Oct 2021 19:50:02 +0200
-Message-ID: <CAMuHMdUBwUcs9GPWyrVqu=H1+VnXRzyTzT3XU2jASB+-VQ6axg@mail.gmail.com>
-Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Emil Renner Berthing <kernel@esmil.dk>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
+Date:   Wed, 13 Oct 2021 20:02:49 +0200
+Message-ID: <CAMuHMdWZp=7sR+dTL0F8o61weLqqC3k1kkemm_PktvyK8+ONmw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: Add binding for Renesas 8T49N241
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        david.cater.jc@renesas.com, Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 6:58 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Wed, Oct 13, 2021 at 06:38:14PM +0200, Emil Renner Berthing wrote:
-> > On Tue, 12 Oct 2021 at 19:03, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > On Tue, Oct 12, 2021 at 4:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+Hi Alex,
 
-> > > > +               v = pinmux[i];
-> > > > +               dout = ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & 0xffU);
-> > > > +               doen = ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & 0xffU);
-> > > > +               din  = (v >> 8) & 0xffU;
-> > >
-> > > What is this voodoo for?
-> >
-> > In order to do pinmux we need the following pieces of information from
-> > the device tree for each pin ("GPIO" they call it):
-> >
-> > output signal: 0-133 + 1bit reverse flag
-> > output enable signal: 0-133 + 1bit reverse flag
-> > optional input signal: 0-74 + special "none" value, right now 0xff
-> > gpio number: 0-63
-> >
-> > As the code is now all that info is packed into a u32 for each pin
-> > using the GPIOMUX macro defined in the dt-binding header added in
-> > patch 10. There is also a diagram for how this packing is done. The
-> > above voodoo is for unpacking that.
-> >
-> > I'd very much like to hear if you have a better solution for how to
-> > convey that information from the device tree to here.
+On Mon, Sep 13, 2021 at 7:05 PM Alex Helms
+<alexander.helms.jy@renesas.com> wrote:
+> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
+> The 8T49N241 accepts up to two differential or single-ended input clocks
+> and a fundamental-mode crystal input. The internal PLL can lock to either
+> of the input reference clocks or to the crystal to behave as a frequency
+> synthesizer.
 >
-> At very least this code should have something like above in the comment.
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-And perhaps introduce some helper macros to access the fields?
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
+
+> +  reg:
+> +    description: I2C device address
+> +    enum: [ 0x7c, 0x6c, 0x7d, 0x6d, 0x7e, 0x6e, 0x7f, 0x6f ]
+
+I think this is too strict: according to the datasheet, the full
+device address can be customized when ordering.
+
+> +examples:
+
+> +    i2c@0 {
+> +        reg = <0x0 0x100>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        renesas8t49n241_2: clock-generator@6c {
+> +            compatible = "renesas,8t49n241";
+> +            reg = <0x6c>;
+> +            #clock-cells = <1>;
+> +
+> +            clocks = <&xtal>;
+> +            clock-names = "xtal";
+> +
+> +            renesas,settings=[
+
+Missing spaces around equal sign.
+
+> +                09 50 00 60 67 C5 6C FF 03 00 30 00 00 01 00 00
+
+[...]
+
+> +            ];
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+BTW, do you plan to add interrupt and/or GPIO support later?
 
 Gr{oetje,eeting}s,
 
