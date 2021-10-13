@@ -2,113 +2,250 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4885C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 14:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7F9C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACBF76101D
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 14:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1DB561168
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236309AbhJMOZ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 10:25:56 -0400
-Received: from mail-ua1-f46.google.com ([209.85.222.46]:41633 "EHLO
-        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237023AbhJMOZt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 10:25:49 -0400
-Received: by mail-ua1-f46.google.com with SMTP id r17so4811342uaf.8;
-        Wed, 13 Oct 2021 07:23:46 -0700 (PDT)
+        id S236388AbhJMQKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 12:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45258 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229514AbhJMQKY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 12:10:24 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435F5C061570;
+        Wed, 13 Oct 2021 09:08:21 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id u18so10157346wrg.5;
+        Wed, 13 Oct 2021 09:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc
+         :references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=eX7yjJefdYC9EkA2tTv7QWyCDc8KjHPONkGSpJrjJ+4=;
+        b=Fh/+e/qKee/OC3Pdz/1y1XxQafvN08plEo51h2csXqSGGDsuhib/3q52O/b2mUKYD5
+         JdebSWNKT6si8Sukw4Qx+8ih9WTKC0gwi3GfkFRbHI6EeyXqJE0FsTGeXUReayK4yE2e
+         TkziOkGTOtRYd4TJa1tLgvOgk9Y6lOsINvu1SdTOMzmCgsASgncB3rl2yUw17BHiX3D3
+         QcRk6HlEJzzMklDt9srpG79X3vXuIGVi1KDfVk/jcoG9zQjuehhUqeZunxOg2qlS6+Hk
+         LfrVu7txywRk6tcN8W9WlMggmH0lj4y0usk1JWUu4Xxcdw+hwptpGNNoa3+H89F21m8B
+         tACg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zNNwxJntPelVzthYYfS3wD/s42WAInQuB5G4Ec3wxno=;
-        b=A4piRSdpFRFSsV2LwyaYTFZmHytfIHrqnOuo3vrhmsiHT1rI3DGs8w4r2X/z4ChBLA
-         v5naeVC49Sm+ufHk7Ip158La6BmkcXVBB3BWL9oNv7+d1u7fTPzjnG/jPWexraYeUvNs
-         vBeg/RE02a6RZfGVbApNj/k8HGgfYNAatj9MIkUJ/F9WuFnQvsY0SvDHRh0SsjKNJLOq
-         Umn9Cn7f4dCSHkt160RSrF6nqqpm6/MzVcTLd6mbcegnBW1ckpM5Qgx8iUkyvVvrYi6/
-         tdReIb3UPWfxz5eCmr1wgYcHi86DjuRFqR2NzwHfVcyaOKAVH52KXO2LoGpIUxSwOceE
-         sNRA==
-X-Gm-Message-State: AOAM531/bTw6Opv3DU4KN/CS/MD0yQ+ON6tNTr0opHcv/DZKO3pUvX1t
-        lBghnee6W1QMTJ2NLXJAI4zd+Q/mzo08/xTL4DPh8IgUAxU=
-X-Google-Smtp-Source: ABdhPJyVBz2qZhn6Yk8BFs3zwSU5zXbxoK7s+6JfEWHFLKXXJNvSK3MQArrzkyFAYgPN9iWjM7z9oHDAT4GQjuDmTus=
-X-Received: by 2002:a67:d583:: with SMTP id m3mr38709938vsj.41.1634135025809;
- Wed, 13 Oct 2021 07:23:45 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=eX7yjJefdYC9EkA2tTv7QWyCDc8KjHPONkGSpJrjJ+4=;
+        b=RamnbcasvGQ4OTXtjwguAGnvvMYtQ3wisL7ulgmwjvZX1obP54QQkOTL0NeP3i9dsY
+         kCy6+ixgCMGc8qe9+wImQoBJrvjHGoSRhojAm80CT7pdF11UwLNYsLpdg2YHYUT4L7NU
+         /0zRr5J5pIAyQS/eoXS6FD5/o3Qps861YJLQNBBBCpLiyumVZUrH7eJbBZaUa/0vC+iP
+         R7fuzhTQUJvDSLeUyQVvpiSUp5TeqdEjvO12q9Z9pKG6fw5Jtv+zu/VZA+cUpjcw5hVq
+         ybDWj67VP4YM3CNu6XGfZbpzCfG+L8aDaghnUohQ3xiEwsnowpMzy8eYSuzM+kNREmsh
+         DjRA==
+X-Gm-Message-State: AOAM5313GtDGsYgmIxSdjmPoBTA3zf8nuwrag9bIHiwObHtbZg2Bgz3I
+        e+yvraAGn/cBczudnyDCBjI=
+X-Google-Smtp-Source: ABdhPJyc2za+pLb2K8Q2vROq1u9HYfBpwC559+1Sp0MAfUmCphOwF4O3hP79hd0gYRqn2x2KDgvh0Q==
+X-Received: by 2002:adf:aadc:: with SMTP id i28mr44424wrc.320.1634141299580;
+        Wed, 13 Oct 2021 09:08:19 -0700 (PDT)
+Received: from ?IPV6:2620:113:80c0:8000:c::779? (nat0.nue.suse.com. [2001:67c:2178:4000::1111])
+        by smtp.gmail.com with ESMTPSA id 25sm5565503wmo.18.2021.10.13.09.08.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Oct 2021 09:08:18 -0700 (PDT)
+Message-ID: <8348ed3e-c561-ad7e-fe9e-a31ed346d8d0@gmail.com>
+Date:   Wed, 13 Oct 2021 18:08:17 +0200
 MIME-Version: 1.0
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com>
- <YV1XpL7ibF1y4LbV@google.com> <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
- <YWVD0RXHVLxuXEIN@google.com>
-In-Reply-To: <YWVD0RXHVLxuXEIN@google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Oct 2021 16:23:34 +0200
-Message-ID: <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.2
+Content-Language: en-US
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     Ryder.Lee@mediatek.com, devicetree@vger.kernel.org,
+        enric.balletbo@collabora.com, fparent@baylibre.com,
+        gregkh@linuxfoundation.org, herbert@gondor.apana.org.au,
+        hsinyi@chromium.org, john@phrozen.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux@roeck-us.net, mpm@selenic.com, mturquette@baylibre.com,
+        robh+dt@kernel.org, sboyd@kernel.org, sean.wang@kernel.org,
+        seiya.wang@mediatek.com, wim@linux-watchdog.org
+References: <9552b0dc-337f-7edc-2997-50603dfe8bcd@gmail.com>
+ <20210924114046.26070-1-sam.shih@mediatek.com>
+ <bc29d5bc-9ce7-6147-a708-e6304249b600@gmail.com>
+ <315d7823aa108c909a3d36464fe54763b76ab2f4.camel@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [v3,7/9] dt-bindings: arm64: dts: mediatek: Add mt7986 series
+In-Reply-To: <315d7823aa108c909a3d36464fe54763b76ab2f4.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lee,
+Hi Sam,
 
-On Tue, Oct 12, 2021 at 10:15 AM Lee Jones <lee.jones@linaro.org> wrote:
-> On Mon, 11 Oct 2021, Rob Herring wrote:
-> > On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
-> > >
-> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > >
-> > > > Add bindings for Unisoc system global register which provide register map
-> > > > for clocks.
-> > > >
-> > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
-> > > >  1 file changed, 68 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> > >
-> > > Unapplied v3 and applied this (v4) instead, thanks.
-> >
-> > What about the clock binding this depends on:
-> >
-> > Unknown file referenced: [Errno 2] No such file or directory:
-> > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > xargs: dt-doc-validate: exited with status 255; aborting
-> > make[1]: *** Deleting file
-> > 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
-> > Unknown file referenced: [Errno 2] No such file or directory:
-> > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > make[1]: *** [scripts/Makefile.lib:385:
-> > Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
-> > Error 255
-> >
-> >
-> > Once again, all the components of MFD bindings need to be applied together.
+On 12/10/2021 12:29, Sam Shih wrote:
+> Hi
+> 
+> On Fri, 2021-10-08 at 15:53 +0200, Matthias Brugger wrote:
+>> Hi Sam,
+>>
+>> I'd advise to split this series in parts for:
+>> - basic device support via dts.
+>> - pinctrl driver + dts
+>> - clk driver + dts
+> 
+> Okay, I will split the patches that are still under review into the
+> above patch series.
+> 
+> But I have a dumb question, currently, we have some patches that have
+> been assigned version numbers.
+> If I want to seprate original patch series, and resend 3 new patch
+> series (basic / pinctrl / clock) according to your comment, if I want
+> to keep the preview change log, tags in the patch set:
+> 
+> like:
+> ---
+> v3: changed 'MT7986' to 'MT7986 series' in the commit message
+> v2: added an Acked-by tag
+> ---
+> 
+> Which version number should I use for these new patch series ?
+> 
 
-Just ran into this, too...
+I'd use v4 keeping the change-log and adding a link with hint to v3 in the cover 
+letter.
 
-> I can't apply what is not sent to me.
->
-> This patch came in on its own.
+> Does the version number in corver-letter and the version number in each
+> patch need to be the same in the entire patch series ?
+> 
 
-Then please reject/postpone patches that don't build (yet) ;-)
+Yes, otherwise the version number doesn't make to much sense.
 
-Gr{oetje,eeting}s,
+> // (Original patch series/thread, version number is v3)
+> [PATCH v3 0/3] Add basic SoC support for mediatek mt7986
+>    [PATCH v3 1/3] dt-bindings: arm64: dts: mediatek: Add mt7986 series
+>    // (the version number has been updated to v5 previously)
+>    // (basic part only, not include pinctrl and clock nodes)
+>    [PATCH v5 2/3] arm64: dts: mediatek: add mt7986a support
+>    [PATCH v5 3/3] arm64: dts: mediatek: add mt7986b support
 
-                        Geert
+use v6 explaining where in the mailing list one can find v5.
 
+> 
+> // (New clock driver patch series)
+> [PATCH 0/3] Add clock driver support for mediatek mt7986
+>    [PATCH v3,1/3] dt-bindings: clock: mediatek: document clk bindings
+> for mediatek mt7986 SoC
+>    // (the version number has been updated to v3 previously)
+>    [PATCH v3 2/3] clk: mediatek: add mt7986 clock IDs
+>    [PATCH v2 3/3] clk: mediatek: add mt7986 clock support
+> 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Same here, use v4.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> // (New pinctrl driver patch series)
+> [PATCH 0/4] Add pinctrl driver support for mediatek mt7986
+>    // (the version number has been updated to v6 previously)
+>    [PATCH v6 1/4] dt-bindings: pinctrl: update bindings for MT7986 SoC
+>    // (the version number has been updated to v2 previously)
+>    [PATCH v2 2/4] pinctrl: mediatek: add support for MT7986 SoC
+>    [PATCH 3/4] arm64: dts: mediatek: add mt7986a pinctrl support
+>    [PATCH 3/4] arm64: dts: mediatek: add mt7986b pinctrl support
+> 
+
+use v7 here.
+
+>>
+>> I would also advise to not send new versions of patches as new
+>> threads and don't
+>> respond in the same thread. At least for me that breaks my workflow
+>> as I use b4.
+> 
+> If I don't respond to the next patch set in the same thread, should I
+> create an entire new patch series ?
+> 
+
+Respond to any review comments in the thread but once you are ready to send a 
+new version of the patch, send the whole series with an incremented
+
+> For example, if I want to update PATCH 2/3 in the bellows patch series,
+> and my PATCH 1/3 has been accepted by reviewer previously
+> 
+> [PATCH v2 0/3] Add basic SoC support for mediatek mt7986
+>    [PATCH v2 1/3] ...   (patch set v1, applied by matainer)
+
+beware: applied != accepted
+reviewer != maintainer
+
+if the patch got applied to some maintainer repo, then in the next version drop 
+that patch (it is already applied) but mention that in the cover letter.
+
+>    [PATCH v2 2/3] ...   (patch set v2, need to be upgrade to v3)
+>    [PATCH v2 3/3] ...   (patch set v1, waiting for review)
+> 
+
+This series would be v3, if 1/3 is applied, drop. 2/3 will have changes and 3/3 
+will be the same as in v2.
+
+> Is this correct to send patch mail to maintaiers for the above
+> situation ?
+> 
+> [PATCH v3 0/2] Add basic SoC support for mediatek mt7986
+>    [PATCH v3 1/2] ...   (patch set v3)
+>    [PATCH v3 2/2] ...   (still patch set v1, waiting for review)
+> 
+
+yes, that's how is expected you send your patches.
+
+Let me know if you have any further questions :)
+
+Regards,
+Matthias
+
+> 
+>>
+>> Regards,
+>> Matthias
+>>
+>>
+>> On 24/09/2021 13:40, Sam Shih wrote:
+>>> MT7986 series is Mediatek's new 4-core SoC, which is mainly for
+>>> wifi-router application. The difference between mt7986a and mt7986b
+>>> is that some pins do not exist on mt7986b.
+>>>
+>>> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+>>> Acked-by: Rob Herring <robh@kernel.org>
+>>>
+>>> ---
+>>> v3: changed 'MT7986' to 'MT7986 series' in the commit message
+>>> v2: added an Acked-by tag
+>>> ---
+>>>    Documentation/devicetree/bindings/arm/mediatek.yaml | 8 ++++++++
+>>>    1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> b/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> index 80a05f6fee85..a9a778269684 100644
+>>> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> @@ -76,6 +76,14 @@ properties:
+>>>              - enum:
+>>>                  - mediatek,mt7629-rfb
+>>>              - const: mediatek,mt7629
+>>> +      - items:
+>>> +          - enum:
+>>> +              - mediatek,mt7986a-rfb
+>>> +          - const: mediatek,mt7986a
+>>> +      - items:
+>>> +          - enum:
+>>> +              - mediatek,mt7986b-rfb
+>>> +          - const: mediatek,mt7986b
+>>>          - items:
+>>>              - enum:
+>>>                  - mediatek,mt8127-moose
+>>>
+> 
+> Thanks,
+> Sam
+> 
