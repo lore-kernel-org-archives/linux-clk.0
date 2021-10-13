@@ -2,203 +2,729 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D552C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050A0C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6024D61053
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D835F6113D
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:38:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbhJMQcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 12:32:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50420 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234505AbhJMQcq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 12:32:46 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E8DC061746
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 09:30:43 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id e7so5620032ual.11
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 09:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RQVZgR9vR5gKO2AWmj0QSl4XKIORrQl7GMS2ORJmghU=;
-        b=zxfyt4ljWth1az70Crk7yJesWaR+pVM+xVX/MS4b63MGjSZtFKPF0GmXW0+rlIXaKN
-         HkM/735csrWOVj1moVP9RDxwTpkNdGq4kGTJtKlez9c/4qbkLuhb0EOY81VWKNm/bmhG
-         JsxH4C5HsTUzafo4yOREq4XZC5ry1jUhOHlXrYmbW4kad+VE3d+OlHXY6XKpE4oyA+FQ
-         oAJhu1mQXLwqTRyh7RUfpXAEsQmF5Z1ITGQ4mucaq8/ZCXV7Cyb2v62/xnYZV023FyLy
-         DEf3FWIoSDabfTa4SmXP1H1FWYwKs4PnXFBzcgCkHtWQGcZCIVCvculhijmvSpPSUgZn
-         0r6g==
+        id S230216AbhJMQka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 12:40:30 -0400
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:37615 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229939AbhJMQk3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 12:40:29 -0400
+Received: by mail-pl1-f178.google.com with SMTP id n11so2226975plf.4;
+        Wed, 13 Oct 2021 09:38:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RQVZgR9vR5gKO2AWmj0QSl4XKIORrQl7GMS2ORJmghU=;
-        b=Ff+3dy64ebzORv45xh+qcBI2roAXF+VwXH+sRGEU647vvBjHtH9rT5VoAcrAYnOcLJ
-         e25YCPT+Q9loUrcdsqg8UW6tWsTpvCh3khkCp5Rtbf6qrX+9943g25wmO5DLY1KAItET
-         +JRLCCbBG/2xzYPNjjb9EyN9NMOovVsBuZADkRgGl1i4YXJm8bZLMzkSufRI09lbZKaM
-         7qCn6A+PIarbC2q9kADMMs/jH4Ni7XH+IaT9rKpq+A5PUs4u+cQYYY3DMde4uE/J+Tn2
-         wIGPNHJqUxNwnQjLiezctWUXqIU5c8G5zFv0sdMit+7y3Wgg8/H2qplbE356tgIKUf5E
-         SvWQ==
-X-Gm-Message-State: AOAM530D9bE1pb93Py+M+yJIJD4yicImrRRjdYvgKvrQbFlsb2TTkUaQ
-        NLoqTVGHAs8+KBAjxpp/HNpinvJfZRIXliQBZ8docbkUSg84VA1a
-X-Google-Smtp-Source: ABdhPJzGhkcqE/GkhFMVy6YeXIKi4m6UCC2DYgFhtgkoyPTMvCwCh//cxIFWrFeNNl0kY2Ye7K2FWrROTiIx5gIA5hQ=
-X-Received: by 2002:a67:ed5a:: with SMTP id m26mr6766vsp.35.1634142642361;
- Wed, 13 Oct 2021 09:30:42 -0700 (PDT)
+        bh=qqBBg0cpnxm6GRZe59JZnFiDqhYKmwCkzRYCtGQ6sYk=;
+        b=1Jr+uga9JA9kTg+i8glVPIgKlbyYSBLTbzcl+jc4cKVeyxjbrxLGS3gq4veQJkkzHr
+         BJLSEck9f3lj/mnTpaMsi0LThkjS8z4amj0NpX0VvACyrfTi7ZWImJQhKxd/5VCBZ/sS
+         e7X6TKWdeBEiOjd/ccQ69Lu3NJfH4+2xZO/b666s6GKNeSp2sCM6CjsyUkm6awBnjBRQ
+         JfFMS1rmVGxb9RvT8Gjd533NYtadUpCHTYHwVwItuqGAOc4wVtkl04rGm1+50zXvAo8F
+         u0chdh3zYJbAnDE5H7WX7mYa8gfbMYxAWI9o9sr82V76FbXohEj0Un4J77akoTjJxpWo
+         h9eA==
+X-Gm-Message-State: AOAM532MhjX1xO+Iy4tEwX+rCZTm15tzpHZ36E+UiiSq6TvY4MMsnFUA
+        Wd4uKdF8aGZdlvHokB68DhkQdfuVkzdfikMcj8U=
+X-Google-Smtp-Source: ABdhPJxl8HakLIR8XeyvOjtrMns0/XqViMpskmA7NK5K8F8XzqLcby68KlirHnm/HmbaVyE/1+jw4GjjYuhWBDjgrgA=
+X-Received: by 2002:a17:90b:694:: with SMTP id m20mr14745261pjz.160.1634143105508;
+ Wed, 13 Oct 2021 09:38:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211007182158.7490-1-semen.protsenko@linaro.org>
- <YWXaKevf8D0kKYXo@smile.fi.intel.com> <CAPLW+4==u6Lpi-tRpGCFjuCBUARsarJx=Lg2QVAbvXX7hOyRVg@mail.gmail.com>
- <CAMuHMdXmp5qngW9XKSzFwBGMQs4YduQbw3zxDfSAjho_deMjaQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXmp5qngW9XKSzFwBGMQs4YduQbw3zxDfSAjho_deMjaQ@mail.gmail.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 13 Oct 2021 19:30:30 +0300
-Message-ID: <CAPLW+4muEHPijg2yZJ-gu--6Sbg9DvTeSz5QcwOR+eAVniczyA@mail.gmail.com>
-Subject: Re: [PATCH v5] clk: Add write operation for clk_parent debugfs node
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-13-kernel@esmil.dk>
+ <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
+In-Reply-To: <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Wed, 13 Oct 2021 18:38:14 +0200
+Message-ID: <CANBLGczDZh+kLWM017mPenY8WO5OovH2DFUSS-shRD-aZVKa0A@mail.gmail.com>
+Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mike Tipton <mdtipton@codeaurora.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 Oct 2021 at 16:08, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
->   Hi Sam,
->
-> On Wed, Oct 13, 2021 at 1:36 PM Sam Protsenko
-> <semen.protsenko@linaro.org> wrote:
-> > On Tue, 12 Oct 2021 at 21:55, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Oct 07, 2021 at 09:21:58PM +0300, Sam Protsenko wrote:
-> > > > Useful for testing mux clocks. One can write the index of the parent to
-> > > > be set into clk_parent node, starting from 0. Example
-> > > >
-> > > >     # cd /sys/kernel/debug/clk/mout_peri_bus
-> > > >     # cat clk_possible_parents
-> > > >       dout_shared0_div4 dout_shared1_div4
-> > > >     # cat clk_parent
-> > > >       dout_shared0_div4
-> > > >     # echo 1 > clk_parent
-> > > >     # cat clk_parent
-> > > >       dout_shared1_div4
-> > > >
-> > > > CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
-> > > > order to use this feature.
-> > >
-> > > ...
-> > >
-> > > > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
-> > > > +     if (core->num_parents > 1)
-> > > > +             debugfs_create_file("clk_parent", 0644, root, core,
-> > > > +                                 &current_parent_rw_fops);
-> > > > +     else
-> > > > +#endif
-> > >
-> > > > +     {
-> > > > +             if (core->num_parents > 0)
-> > > > +                     debugfs_create_file("clk_parent", 0444, root, core,
-> > > > +                                         &current_parent_fops);
-> > > > +     }
-> > >
-> > > Currently there is no need to add the {} along with increased indentation
-> > > level. I.o.w. the 'else if' is valid in C.
+On Tue, 12 Oct 2021 at 19:03, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> On Tue, Oct 12, 2021 at 4:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
 > >
-> > Without those {} we have two bad options:
+> > Add a combined pinctrl and gpio driver for the StarFive JH7100 SoC.
 > >
-> >   1. When putting subsequent 'if' block on the same indentation level
-> > as 'else': looks ok-ish for my taste (though inconsistent with #ifdef
-> > code) and checkpatch swears:
+> > For each "GPIO" there are two registers for configuring the output and
+> > output enable signals which may come from other peripherals. Among these
+> > are two special signals that are constant 0 and constant 1 respectively.
+> > Controlling the GPIOs from software is done by choosing one of these
+> > signals. In other words the same registers are used for both pinmuxing
+> > and controlling the GPIOs, which makes it easier to combine the pinctrl
+> > and gpio driver in one.
 > >
-> >         WARNING: suspect code indent for conditional statements (8, 8)
-> >         #82: FILE: drivers/clk/clk.c:3334:
-> >         +    else
-> >         [...]
-> >              if (core->num_parents > 0)
-> >
-> >   2. When adding 1 additional indentation level for subsequent 'if'
-> > block: looks plain ugly to me, inconsistent for the case when
-> > CLOCK_ALLOW_WRITE_DEBUGFS is not defined, but checkpatch is happy
-> >
-> > I still think that the way I did that (with curly braces) is better
-> > one: it's consistent for all cases, looking ok, checkpatch is happy
-> > too. But isn't it hairsplitting? This particular case is not described
-> > in kernel coding style doc, so it's about personal preferences.
-> >
-> > If it's still important to you -- please provide exact code snippet
-> > here (with indentations) for what you desire, I'll send v6. But
-> > frankly I'd rather spend my time on something more useful. This is
-> > minor patch, and I don't see any maintainers wishing to pull it yet.
+> > I wrote the pinconf and pinmux parts, but the gpio part of the code is
+> > based on the gpio driver in the vendor tree written by Huan Feng with
+> > cleanups and fixes by Drew and me.
 >
-> Note that checkpatch is just a tool, providing advice. It is not perfect,
-> and if there is a good reason to ignore it, I'm all for that.
+> s/gpio/GPIO/g
 >
-
-Agreed. Actually I did the same grepping as Andy mentioned in previous
-mails, and used that style because that's what other people often do.
-checkpatch is more like excuse for me in this case :)
-
-> Personally, I would write:
+> ...
 >
->     #ifdef CLOCK_ALLOW_WRITE_DEBUGFS
->             if (core->num_parents > 1)
->                     debugfs_create_file("clk_parent", 0644, root, core,
->                                         &current_parent_rw_fops);
->             else
->     #endif
->             if (core->num_parents > 0)
->                     debugfs_create_file("clk_parent", 0444, root, core,
->                                         &current_parent_fops);
->             }
+> > +config PINCTRL_STARFIVE
 >
-
-That looks good to me. But I'd keep it as is, if you don't have a
-strong opinion about this: looks better with braces, because it's
-multi-line blocks (although physically and not semantically).
-
-> Then, I'm wondering if it really is worth it to have separate cases for
-> "num_parents> 1" and "num_parents > 0".  If there's a single parent,
-> current_parent_write() should still work fine with "0", wouldn't it?
-> Then the only differences are the file mode and the fops.
-> You could handle that with #defines above, like is currently done for
-> clk_rate_mode.  And the checkpatch issue is gone ;-)
+> > +       bool "Pinctrl and GPIO driver for the StarFive JH7100 SoC"
 >
-
-I considered such case. But it would be inconsistent with this already
-existing code:
-
-    if (core->num_parents > 1)
-        debugfs_create_file("clk_possible_parents", 0444, root, core,
-                    &possible_parents_fops);
-
-Because user would probably want to use both 'clk_parent' and
-'clk_possible_parents' together (e.g. see my example in commit
-message). From logical point of view, I designed that code for testing
-MUX clocks, and I doubt there are any MUXes with only one parent
-(input signal). So I'd like to keep this logic as is, if you don't
-mind, even though it might appear bulky.
-
-So for v6 I'm going to go exactly with what Andy suggested, hope it's
-fine with you?
-
-> Gr{oetje,eeting}s,
+> Why not module?
 >
->                         Geert
+> > +       depends on SOC_STARFIVE || COMPILE_TEST
+>
+> > +       depends on OF
+>
+> Do you really need this taking into account...
+>
+> > +       default SOC_STARFIVE
+> > +       select GENERIC_PINCTRL_GROUPS
+> > +       select GENERIC_PINMUX_FUNCTIONS
+> > +       select GENERIC_PINCONF
+> > +       select GPIOLIB
+> > +       select GPIOLIB_IRQCHIP
+>
+> > +       select OF_GPIO
+>
+> ...this one?
+>
+> ...
+>
+> bits.h ?
+>
+> > +#include <linux/clk.h>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+>
+>
+> mod_devicetable.h ?
+>
+> > +#include <linux/pinctrl/pinctrl.h>
+> > +#include <linux/pinctrl/pinmux.h>
+>
+> Can you move these as a group after generic linux/* ones?
+>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/spinlock.h>
+>
+> ...
+>
+> > +/*
+> > + * refer to Section 12. GPIO Registers in JH7100 datasheet:
+>
+> Be consistent in your style, here for example missed capitalization.
+>
+> > + * https://github.com/starfive-tech/StarLight_Docs
+>
+> Is it possible to have the datasheet to be provided as Datasheet: tag
+> in the commit message?
+
+Oh neat. Didn't know about that. I'll also check with StarFive if this
+is the best address for it.
+
+> > + */
+>
+> ...
+>
+> > +/*
+> > + * Global enable for GPIO interrupts, offset: 0x0, field: GPIOEN
+> > + * set to 1 if GPIO interrupts are enabled, set to 0 to disable
+> > + */
+> > +#define IRQ_GLOBAL_EN          0x0
+>
+> s/0x0/0x00/g
+>
+> ...
+>
+> > +/*
+> > + * Interrupt Type for GPIO[31:0], offset: 0x10, field: GPIOS_0
+> > + * set to 1 if edge-triggered, set to 0 for level-triggered
+> > + */
+> > +#define IRQ_TYPE_LOW           0x10
+> > +
+> > +/*
+> > + * Interrupt Type for GPIO[63:32], offset: 0x14, field: GPIOS_1
+> > + */
+> > +#define IRQ_TYPE_HIGH          0x14
+>
+> As I reviewed below, the IRQ is represented by a few registers in a
+> row, no need to define low and high separately. Ditto for the rest
+> register pairs.
+>
+> ...
+>
+> > +/*
+> > + * Interrupt Status after Masking GPIO[31:0], offset: 0x40, field: GPIOMIS_0
+> > + * status of edge-triggered or level-triggered after masking
+> > + * value of 1 means edge or level was detected, value of 0 menas not detected
+>
+> menas?!
+>
+> > + */
+>
+> ...
+>
+> > +/*
+> > + * Data Value of GPIO for GPIO[31:0], offest: 0x48, field: GPIODIN_0
+>
+> offest?!
+>
+> > + * dynamically reflects value on the GPIO pin
+> > + */
+>
+> Please, run a spellchecker.
+>
+> ...
+>
+> > +#define IO_PADSHARE_SEL                0x1a0
+>
+> Okay, make all registers to be fixed width, i.e. 0x000 for IRQ global
+> enabling and so on.
+>
+> ...
+>
+> > +#define PAD_SLEW_RATE_MASK             0xe00U
+>
+> GENMASK()
+>
+> > +#define PAD_BIAS_STRONG_PULL_UP                0x100U
+> > +#define PAD_INPUT_ENABLE               0x080U
+> > +#define PAD_INPUT_SCHMITT_ENABLE       0x040U
+> > +#define PAD_BIAS_DISABLE               0x020U
+> > +#define PAD_BIAS_PULL_DOWN             0x010U
+>
+> All above seems like BIT(_something_).
+>
+> > +#define PAD_BIAS_MASK                  0x130U
+> > +#define PAD_DRIVE_STRENGTH_MASK                0x007U
+>
+> GENMASK()
+>
+> ...
+>
+> > +#ifdef CONFIG_DEBUG_FS
+>
+> __maybe_unused ?
+
+This is the same as the clock driver. If we don't have the ifdef here
+we'll need it when populating the ops structure later or live with the
+code bloat when debugfs is not enabled. Other driver don't seem to do
+that.
+
+> > +#else
+> > +#define starfive_pin_dbg_show NULL
+> > +#endif
+>
+> ...
+>
+> > +       dout = readl_relaxed(reg);
+>
+> readl_relaxed(reg + 0x00)
+>
+> > +       reg += 4;
+>
+> > +       doen = readl_relaxed(reg);
+>
+> readl_relaxed(reg + 0x04);
+>
+> ...
+>
+> > +       seq_printf(s, "dout=%u%s doen=%u%s",
+> > +                  dout & 0xffU, (dout & 0x80000000U) ? "r" : "",
+> > +                  doen & 0xffU, (doen & 0x80000000U) ? "r" : "");
+>
+> GENMASK()
+> BIT()
+>
+> ...
+>
+> > +       for_each_child_of_node(np, child) {
+> > +               const __be32 *pinmux_list;
+> > +               const __be32 *pins_list;
+> > +               int pinmux_size;
+> > +               int pins_size;
+> > +
+> > +               pinmux_list = of_get_property(child, "pinmux", &pinmux_size);
+> > +               pins_list   = of_get_property(child, "pins",   &pins_size);
+> > +               if (pinmux_list && pins_list) {
+> > +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: %s\n",
+> > +                               np, child, "both pinmux and pins set");
+> > +                       of_node_put(child);
+> > +                       return -EINVAL;
+> > +               }
+> > +
+> > +               if (pinmux_list && pinmux_size > 0) {
+> > +                       nmaps += 2;
+> > +               } else if (pins_list && pins_size > 0) {
+> > +                       nmaps += 1;
+> > +               } else {
+> > +                       dev_err(dev, "invalid pinctrl group %pOFn.%pOFn: %s\n",
+> > +                               np, child, "neither pinmux nor pins set");
+> > +                       of_node_put(child);
+> > +                       return -EINVAL;
+> > +               }
+> > +               ngroups += 1;
+> > +       }
+>
+> This entire loop seems like
+> 1) it should be based on something from pin control core;
+> 2) it's using some low level APIs instead of better ones like
+> of_property_read_uXX();
+> 3) smells like unoptimized NIH.
+>
+> ...
+>
+> > +               if ((list = of_get_property(child, "pinmux", &npins))) {
+>
+> Why not of_property_read_...() ?
+>
+> ...
+>
+> > +                               u32 v = be32_to_cpu(*list++);
+>
+> My gosh!
+>
+> ...
+>
+> > +                       for (i = 0; i < npins; i++)
+> > +                               pins[i] = be32_to_cpu(*list++);
+>
+> Ditto.
+> Even for this we have something in byteorder headers.
+>
+> Summary, make sure you use much better _existing_ APIs instead of the
+> above crap.
+>
+> ...
+>
+> > +free_pinmux:
+> > +       devm_kfree(dev, pinmux);
+> > +free_pins:
+> > +       devm_kfree(dev, pins);
+> > +free_grpname:
+> > +       devm_kfree(dev, grpname);
+>
+> What the heck?!
+
+Just to be clear. You mean we don't need to explicitly free them
+because they're tied to the device right? I don't think the device
+will go away just because a single device tree entry can't be parsed,
+so on such errors this garbage would be left behind. You can still
+argue we shouldn't optimize for broken device trees, I just want to
+make it at conscious decision.
+
+> > +free_pgnames:
+> > +       devm_kfree(dev, pgnames);
+>
+> Ditto.
+>
+> ...
+>
+> > +out:
+>
+> Useless label.
+
+Hmm.. my compiler disagrees.
+
+> > +       return ret;
+>
+> ...
+>
+> > +       for (i = 0; i < group->num_pins; i++) {
+> > +               unsigned int gpio = starfive_pin_to_gpio(sfp, group->pins[i]);
+> > +               void __iomem *reg_dout;
+> > +               void __iomem *reg_doen;
+> > +               void __iomem *reg_din;
+> > +               u32 v, dout, doen, din;
+> > +               unsigned long flags;
+>
+> > +               if (dev_WARN_ONCE(dev, gpio >= MAX_GPIO,
+>
+> What?!
+>
+> > +                                 "%s: invalid gpiomux pin", group->name))
+> > +                       continue;
+> > +
+> > +               v = pinmux[i];
+> > +               dout = ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & 0xffU);
+> > +               doen = ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & 0xffU);
+> > +               din  = (v >> 8) & 0xffU;
+>
+> What is this voodoo for?
+
+In order to do pinmux we need the following pieces of information from
+the device tree for each pin ("GPIO" they call it):
+
+output signal: 0-133 + 1bit reverse flag
+output enable signal: 0-133 + 1bit reverse flag
+optional input signal: 0-74 + special "none" value, right now 0xff
+gpio number: 0-63
+
+As the code is now all that info is packed into a u32 for each pin
+using the GPIOMUX macro defined in the dt-binding header added in
+patch 10. There is also a diagram for how this packing is done. The
+above voodoo is for unpacking that.
+
+I'd very much like to hear if you have a better solution for how to
+convey that information from the device tree to here.
+
+> > +               if (din != 0xff)
+> > +                       reg_din = sfp->base + GPIO_IN_OFFSET + 4 * din;
+> > +               else
+> > +                       reg_din = NULL;
+>
+> This looks like you maybe use gpio-regmap instead?
+
+This was discussed at length when Drew sent in the GPIO part of this code:
+https://lore.kernel.org/linux-riscv/20210701002037.912625-1-drew@beagleboard.org/
+The conclusion was that because pinmux and controlling the pins from
+software in GPIO mode uses the same registers it is better to do a
+combined driver like this that can share the lock among other things.
+
+> ...
+>
+> > +       void __iomem *reg = sfp->padctl + 4 * (pin / 2);
+> > +       u32 value = readl_relaxed(reg);
+> > +
+> > +       if (pin & 1U)
+> > +               value >>= 16;
+> > +       return value;
+>
+> u8 shift = 16 * (pin % 2);
+>
+> return readl_relaxed() >> shift;
+>
+> ?
+>
+> Something similar for below code.
+>
+> ...
+>
+> > +#ifdef CONFIG_DEBUG_FS
+> > +static const struct pin_config_item
+> > +starfive_pinconf_custom_conf_items[ARRAY_SIZE(starfive_pinconf_custom_params)] = {
+>
+> Instead of using ARAY_SIZE() here, use static_assert().
+>
+> __maybe_unused?
+
+As above.
+
+> > +       PCONFDUMP(PIN_CONFIG_STARFIVE_STRONG_PULL_UP, "input bias strong pull-up", NULL, false),
+> > +};
+> > +#else
+> > +#define starfive_pinconf_custom_conf_items NULL
+> > +#endif
+>
+> ...
+>
+> > +static const unsigned char starfive_drive_strength[] = {
+> > +       14, 21, 28, 35, 42, 49, 56, 63,
+>
+> Why table? Can you simply use the formula?!
+
+Heh, yeah. So these are rounded values from a table and I never
+noticed that after rounding they follow a nice arithmetic progression.
+It'll probably still be nice to have an explanation in the comments
+about the formula then.
+
+> > +};
+>
+> ...
+>
+> > +       if (unlikely(!group))
+>
+> Why unlikely() Must be justified here and everywhere where you are using it.
+>
+> > +               return -EINVAL;
+> > +
+> > +       return starfive_pinconf_get(pctldev, group->pins[0], config);
+> > +}
+>
+> ...
+>
+> > +               case PIN_CONFIG_BIAS_DISABLE:
+>
+> > +                       mask |= PAD_BIAS_MASK;
+>
+> Use it...
+>
+> > +                       value = (value & ~PAD_BIAS_MASK) | PAD_BIAS_DISABLE;
+>
+> ...here. Ditto for the similar cases in this function and elsewhere.
+>
+> After done this, you will see how you can simplify and deduplicate the
+> switch-cases.
+>
+> ...
+>
+> > +#ifdef CONFIG_DEBUG_FS
+>
+> __maybe_unused ?
+>
+> > +#else
+> > +#define starfive_pinconf_dbg_show NULL
+> > +#endif
+>
+> ...
+>
+> > +       if (gpio < 32) {
+> > +               value = readl_relaxed(sfp->base + GPIO_DIN_LOW);
+>
+> > +               value = (value >> gpio) & 1U;
+>
+> Drop
+>
+> > +       } else {
+> > +               value = readl_relaxed(sfp->base + GPIO_DIN_HIGH);
+>
+> > +               value = (value >> (gpio - 32)) & 1U;
+>
+> Drop
+>
+> > +       }
+>
+> > +       return value;
+>
+> return !!(value & BIT(gpio % 32));
+>
+> ...
+>
+> > +               if (arg == 0)
+>
+> > +                       return -ENOTSUPP;
+>
+> Shouldn't we return something else and pin control core will change it
+> to something else if needed?
+
+The documentation include/linux/pinctrl/pinconf.h has rules for when
+to return -ENOTSUPP and -EINVAL.
+
+> > +               if (arg == 0)
+> > +                       return -ENOTSUPP;
+>
+> Ditto.
+>
+> > +       default:
+> > +               return -ENOTSUPP;
+>
+> ...
+>
+> > +       if (gpio < 0 || gpio >= MAX_GPIO)
+> > +               return;
+> > +
+> > +       if (gpio < 32) {
+> > +               ie = sfp->base + IRQ_ENABLE_LOW;
+> > +               mask = BIT(gpio);
+> > +       } else {
+> > +               ie = sfp->base + IRQ_ENABLE_HIGH;
+> > +               mask = BIT(gpio - 32);
+> > +       }
+>
+> See below. And update all occurrences of these lines accordingly and
+> everywhere. Also for IRQ may use helper functions if needed (but I
+> don't believe the high and low register have stride more than 4).
+>
+> ...
+>
+> > +       if (gpio < 0 || gpio >= MAX_GPIO)
+> > +               return -EINVAL;
+>
+> How is it possible to be ever triggered?
+>
+> ...
+>
+> > +       if (gpio < 32) {
+> > +               base = sfp->base;
+> > +               mask = BIT(gpio);
+> > +       } else {
+> > +               base = sfp->base + 4;
+> > +               mask = BIT(gpio - 32);
+> > +       }
+>
+> base = sfp_base + 4 * (gpio / 32);
+> mask = BIT(gpio % 32);
+>
+> ...
+>
+> > +               irq_set_handler_locked(d, handle_edge_irq);
+>
+> > +               irq_set_handler_locked(d, handle_edge_irq);
+>
+> Dup.
+>
+> ...
+>
+> > +               irq_set_handler_locked(d, handle_edge_irq);
+>
+> > +               irq_set_handler_locked(d, handle_level_irq);
+>
+> > +               irq_set_handler_locked(d, handle_level_irq);
+>
+> Ditto.
+>
+> ...
+>
+> > +               irq_set_handler_locked(d, handle_bad_irq);
+>
+> Why is this here? Move it to ->probe().
+
+My thinking was that if something tries to set a an unsupported irq
+type, we should make sure the caller doesn't get spurious interrupts
+because we left the handler at its old value.
+
+> ...
+>
+> > +       clk = devm_clk_get(dev, NULL);
+> > +       if (IS_ERR(clk)) {
+> > +               ret = PTR_ERR(clk);
+>
+> > +               dev_err(dev, "could not get clock: %d\n", ret);
+>
+> Thank you for spamming logs with this noise.
+>
+> > +               return ret;
+>
+> Hint: return dev_err_probe(). Ditto for the rest in this function.
+>
+> > +       }
+>
+> ...
+>
+> > +       ret = clk_prepare_enable(clk);
+> > +       if (ret) {
+>
+> > +               reset_control_deassert(rst);
+>
+> Use devm_add_action_or_reset().
+>
+> > +               dev_err(dev, "could not enable clock: %d\n", ret);
+> > +               return ret;
+> > +       }
+>
+> ...
+>
+> > +       if (!of_property_read_u32(dev->of_node, "starfive,signal-group", &value)) {
+>
+> Can be refactored without conditional. Also, why not to use
+> device_property_read_u32()?
+>
+> > +               if (value <= 6)
+> > +                       writel(value, sfp->padctl + IO_PADSHARE_SEL);
+> > +               else
+>
+> > +                       dev_err(dev, "invalid signal group %u\n", value);
+>
+> Why _err if you not bail out here?
+
+My thinking was that if the device tree specifies an invalid signal
+group we should just leave the setting alone and not break booting,
+but still be loud about it. Maybe that's too lenient and it's better
+to crash and burn immediately if someone does that.
+
+> > +       }
+>
+> ...
+>
+> > +       value = readl(sfp->padctl + IO_PADSHARE_SEL);
+> > +       switch (value) {
+> > +       case 0:
+> > +               sfp->gpios.pin_base = 0x10000;
+>
+> Magic number!
+>
+> > +               goto done;
+> > +       case 1:
+> > +               sfp->gpios.pin_base = PAD_GPIO(0);
+> > +               break;
+> > +       case 2:
+> > +               sfp->gpios.pin_base = PAD_FUNC_SHARE(72);
+> > +               break;
+> > +       case 3:
+> > +               sfp->gpios.pin_base = PAD_FUNC_SHARE(70);
+> > +               break;
+> > +       case 4: case 5: case 6:
+> > +               sfp->gpios.pin_base = PAD_FUNC_SHARE(0);
+> > +               break;
+> > +       default:
+> > +               dev_err(dev, "invalid signal group %u\n", value);
+> > +               return -EINVAL;
+> > +       }
+>
+> ...
+>
+> > +       sfp->gc.of_node = dev->of_node;
+>
+> Isn't GPIO library do this for you?
+>
+> ...
+>
+> > +       starfive_irq_chip.parent_device = dev;
+>
+> Ditto?
+>
+> ...
+>
+> > +       sfp->gc.irq.parents =
+> > +               devm_kcalloc(dev, 1, sizeof(*sfp->gc.irq.parents), GFP_KERNEL);
+>
+> 1 -> sfp->gc.irq.num_parents
+> And hence move below line up.
+>
+> > +       if (!sfp->gc.irq.parents)
+> > +               return -ENOMEM;
+>
+> > +       sfp->gc.irq.num_parents = 1;
+>
+> ...
+>
+> > +       dev_info(dev, "StarFive GPIO chip registered %d GPIOs\n", sfp->gc.ngpio);
+>
+> Redundant noise.
+>
+> ...
+>
+> > +static const struct of_device_id starfive_of_match[] = {
+> > +       { .compatible = "starfive,jh7100-pinctrl" },
+>
+> > +       { /* sentinel */ },
+>
+> No comma needed for terminator entry.
+>
+> > +};
 >
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+> With Best Regards,
+> Andy Shevchenko
