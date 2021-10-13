@@ -2,266 +2,249 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E67C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898BAC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15F57610CC
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C3C261130
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:37:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230232AbhJMRbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 13:31:42 -0400
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:37633 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbhJMRbl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 13:31:41 -0400
-Received: by mail-ot1-f45.google.com with SMTP id b4-20020a9d7544000000b00552ab826e3aso2906751otl.4;
-        Wed, 13 Oct 2021 10:29:38 -0700 (PDT)
+        id S230225AbhJMRje (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 13:39:34 -0400
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:38780 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229714AbhJMRje (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 13:39:34 -0400
+Received: by mail-pl1-f170.google.com with SMTP id x4so2336220pln.5;
+        Wed, 13 Oct 2021 10:37:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eJ0m8SYcSvneYrvdEJ83T97TerHAdKpgpvv24AabUdg=;
-        b=wnUHeq5oGWklPEIJqEuOMbCdLuYUTd/SNdtAywXEJtAA/exaIGfDQpXF/YEP/+ocTB
-         WP9NIO2EWTa3h1qec4ys7bQaSn7rMTwyo4HaGS2JtdfsgjKbSWhl3I9NUW/AOqXj9fH6
-         110Y0Uh3UAprurkb6MHPLzn00AgcxL7tAssAgk+InMJPYcVvozhKctLL88Cofn2YAWvE
-         FQlS8j9uwjBEUcm1kRf6QFxo2jqKm9dnt7q5AAZnQkJPtt3ZeLJiLC/1FM01G2AVjBe2
-         vQXsZyexkfO33RLB/DLenRd53ORdcs/RwhwZyEwtzO7bGJWC4Hj7x0/vAojZWz+s6EmA
-         lrkQ==
-X-Gm-Message-State: AOAM5333k4fKlNuo1xByziuA1j7rvcE4R/eb+chHKoRTmeF1UKHeQpLj
-        oM7ZLsFdL90uWrRsNsXcLTFFQT6taQC6KP5rGKY=
-X-Google-Smtp-Source: ABdhPJxhxiap4dH1a27n1Fc5796zv+6BZgI7c+b8xvs8tHay4d+9szem1uNN7b8FlbTcVqdsBOFrLoHgtvGI/A6kYh0=
-X-Received: by 2002:a05:6830:1af0:: with SMTP id c16mr438711otd.16.1634146177876;
- Wed, 13 Oct 2021 10:29:37 -0700 (PDT)
+        bh=QVBAEtzBf8NgxxaPCvIOBWMtr/VM/UkracigHu4Aldw=;
+        b=njSTvVLh3pwlEt6HIDohqFC6qG7iLxFH10gPAa3yIJ4pXEILqey9P5nzB4roxexiGL
+         QlqJf4MwtrGsDF0gbJH8Pi3viCw2rzJw9Wahp0XkI5+IPJaQpgYBpglixBOlVt8epL3J
+         y4ofuiKO27/757F71NN2LZvDgmABu2siMWkltLD5q8iBsByE9/OZ+yHxMDKRD6gFWQEX
+         Oub9WsIlesxlfXjyurJWpwLbOSzD2RFrXNPQUvKXOAWEX3rXhGXUEJOzx13VLPSIGnbc
+         jzmZHTPZcvQtsLgDX3KOhiLSAT7GSGedi6M5prUWOznmPu1Z68nJSTB0T7tIncKXx4q+
+         n8rg==
+X-Gm-Message-State: AOAM532cFSpvO+VQfBmEOVLXaHRkjie2LAGGi40m8ikFtRxcWni2MLqS
+        KMdstBJbF42ctXM2PGdjU6crrDG/SCWY+sSDvCY=
+X-Google-Smtp-Source: ABdhPJw/YzBKZ+RUpkqcTx87u4/1JB8mo6GfzPiUnysSmxNEGdy6ehUNO+jOIbpnwyFqhyCb1aePjG1Dul7hPUEfr9k=
+X-Received: by 2002:a17:902:7783:b0:13d:fee6:8095 with SMTP id
+ o3-20020a170902778300b0013dfee68095mr533536pll.7.1634146650266; Wed, 13 Oct
+ 2021 10:37:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211010185707.195883-1-hdegoede@redhat.com> <20211010185707.195883-2-hdegoede@redhat.com>
-In-Reply-To: <20211010185707.195883-2-hdegoede@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 13 Oct 2021 19:29:26 +0200
-Message-ID: <CAJZ5v0i0NR8faABuZVe7V6sKgM4+1kOh-S56usj2WyeiDnfy9g@mail.gmail.com>
-Subject: Re: [PATCH v3 01/11] ACPI: delay enumeration of devices with a _DEP
- pointing to an INT3472 device
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+References: <20211012134027.684712-1-kernel@esmil.dk> <20211012134027.684712-13-kernel@esmil.dk>
+ <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
+ <CANBLGczDZh+kLWM017mPenY8WO5OovH2DFUSS-shRD-aZVKa0A@mail.gmail.com> <YWc5zq0Moz3asWEa@smile.fi.intel.com>
+In-Reply-To: <YWc5zq0Moz3asWEa@smile.fi.intel.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Wed, 13 Oct 2021 19:37:19 +0200
+Message-ID: <CANBLGcx7M4z16Wb62bnpS0v3BP6E8RXEu0O0+D=RwD_1O=7AfQ@mail.gmail.com>
+Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Huan Feng <huan.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 10, 2021 at 8:57 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On Wed, 13 Oct 2021 at 18:59, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> On Wed, Oct 13, 2021 at 06:38:14PM +0200, Emil Renner Berthing wrote:
+> > On Tue, 12 Oct 2021 at 19:03, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > > On Tue, Oct 12, 2021 at 4:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
 >
-> The clk and regulator frameworks expect clk/regulator consumer-devices
-> to have info about the consumed clks/regulators described in the device's
-> fw_node.
+> ...
 >
-> To work around cases where this info is not present in the firmware tables,
-> which is often the case on x86/ACPI devices, both frameworks allow the
-> provider-driver to attach info about consumers to the clks/regulators
-> when registering these.
+> > > > +free_pinmux:
+> > > > +       devm_kfree(dev, pinmux);
+> > > > +free_pins:
+> > > > +       devm_kfree(dev, pins);
+> > > > +free_grpname:
+> > > > +       devm_kfree(dev, grpname);
+> > >
+> > > What the heck?!
+> >
+> > Just to be clear. You mean we don't need to explicitly free them
+> > because they're tied to the device right? I don't think the device
+> > will go away just because a single device tree entry can't be parsed,
+> > so on such errors this garbage would be left behind. You can still
+> > argue we shouldn't optimize for broken device trees, I just want to
+> > make it at conscious decision.
 >
-> This causes problems with the probe ordering wrt drivers for consumers
-> of these clks/regulators. Since the lookups are only registered when the
-> provider-driver binds, trying to get these clks/regulators before then
-> results in a -ENOENT error for clks and a dummy regulator for regulators.
+> If you are using devm_kfree() it is quite likely shows either of the following
+> issues:
 >
-> One case where we hit this issue is camera sensors such as e.g. the OV8865
-> sensor found on the Microsoft Surface Go. The sensor uses clks, regulators
-> and GPIOs provided by a TPS68470 PMIC which is described in an INT3472
-> ACPI device. There is special platform code handling this and setting
-> platform_data with the necessary consumer info on the MFD cells
-> instantiated for the PMIC under: drivers/platform/x86/intel/int3472.
->
-> For this to work properly the ov8865 driver must not bind to the I2C-client
-> for the OV8865 sensor until after the TPS68470 PMIC gpio, regulator and
-> clk MFD cells have all been fully setup.
->
-> The OV8865 on the Microsoft Surface Go is just one example, all X86
-> devices using the Intel IPU3 camera block found on recent Intel SoCs
-> have similar issues where there is an INT3472 HID ACPI-device, which
-> describes the clks and regulators, and the driver for this INT3472 device
-> must be fully initialized before the sensor driver (any sensor driver)
-> binds for things to work properly.
->
-> On these devices the ACPI nodes describing the sensors all have a _DEP
-> dependency on the matching INT3472 ACPI device (there is one per sensor).
->
-> This allows solving the probe-ordering problem by delaying the enumeration
-> (instantiation of the I2C-client in the ov8865 example) of ACPI-devices
-> which have a _DEP dependency on an INT3472 device.
->
-> The new acpi_dev_ready_for_enumeration() helper used for this is also
-> exported because for devices, which have the enumeration_by_parent flag
-> set, the parent-driver will do its own scan of child ACPI devices and
-> it will try to enumerate those during its probe(). Code doing this such
-> as e.g. the i2c-core-acpi.c code must call this new helper to ensure
-> that it too delays the enumeration until all the _DEP dependencies are
-> met on devices which have the new honor_deps flag set.
->
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/acpi/scan.c     | 36 ++++++++++++++++++++++++++++++++++--
->  include/acpi/acpi_bus.h |  5 ++++-
->  2 files changed, 38 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index 5b54c80b9d32..efee6ee91c8f 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -796,6 +796,12 @@ static const char * const acpi_ignore_dep_ids[] = {
->         NULL
->  };
->
-> +/* List of HIDs for which we honor deps of matching ACPI devs, when checking _DEP lists. */
-> +static const char * const acpi_honor_dep_ids[] = {
-> +       "INT3472", /* Camera sensor PMIC / clk and regulator info */
-> +       NULL
-> +};
-> +
->  static struct acpi_device *acpi_bus_get_parent(acpi_handle handle)
->  {
->         struct acpi_device *device = NULL;
-> @@ -1757,8 +1763,12 @@ static void acpi_scan_dep_init(struct acpi_device *adev)
->         struct acpi_dep_data *dep;
->
->         list_for_each_entry(dep, &acpi_dep_list, node) {
-> -               if (dep->consumer == adev->handle)
-> +               if (dep->consumer == adev->handle) {
-> +                       if (dep->honor_dep)
-> +                               adev->flags.honor_deps = 1;
+> * you mustn't use devm_*() in the first place due to object lifetime;
+> * you shouldn't use devm_kfree() since this is the whole point of devm.
 
-Any concerns about doing
+Hmm.. it seems like other drivers that dynamically builds the groups
+and functions either also uses devm_kcalloc/devm_kfree like fx.
+pinctrl-single or implements their own code to clean up groups and
+functions when unloaded. There are no group destroy or function
+destroy callbacks. I like devm_kcalloc/devm_kfree version better since
+it's less code to write.
 
-adev->flags.honor_deps = dep->honor_dep;
+> > > > +free_pgnames:
+> > > > +       devm_kfree(dev, pgnames);
+> > >
+> > > Ditto.
+>
+> ...
+>
+> > > > +out:
+> > >
+> > > Useless label.
+> >
+> > Hmm.. my compiler disagrees.
+>
+> The comment implies that you return directly instead of using `goto out;`.
+>
+> > > > +       return ret;
+>
+> ...
+>
+> > > > +               v = pinmux[i];
+> > > > +               dout = ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & 0xffU);
+> > > > +               doen = ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & 0xffU);
+> > > > +               din  = (v >> 8) & 0xffU;
+> > >
+> > > What is this voodoo for?
+> >
+> > In order to do pinmux we need the following pieces of information from
+> > the device tree for each pin ("GPIO" they call it):
+> >
+> > output signal: 0-133 + 1bit reverse flag
+> > output enable signal: 0-133 + 1bit reverse flag
+> > optional input signal: 0-74 + special "none" value, right now 0xff
+> > gpio number: 0-63
+> >
+> > As the code is now all that info is packed into a u32 for each pin
+> > using the GPIOMUX macro defined in the dt-binding header added in
+> > patch 10. There is also a diagram for how this packing is done. The
+> > above voodoo is for unpacking that.
+> >
+> > I'd very much like to hear if you have a better solution for how to
+> > convey that information from the device tree to here.
+>
+> At very least this code should have something like above in the comment.
 
-here?
+Will add!
 
-> +
->                         adev->dep_unmet++;
-> +               }
->         }
->  }
+> ...
 >
-> @@ -1962,7 +1972,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->         for (count = 0, i = 0; i < dep_devices.count; i++) {
->                 struct acpi_device_info *info;
->                 struct acpi_dep_data *dep;
-> -               bool skip;
-> +               bool skip, honor_dep;
+> > > > +               if (din != 0xff)
+> > > > +                       reg_din = sfp->base + GPIO_IN_OFFSET + 4 * din;
+> > > > +               else
+> > > > +                       reg_din = NULL;
+> > >
+> > > This looks like you maybe use gpio-regmap instead?
+> >
+> > This was discussed at length when Drew sent in the GPIO part of this code:
+> > https://lore.kernel.org/linux-riscv/20210701002037.912625-1-drew@beagleboard.org/
+> > The conclusion was that because pinmux and controlling the pins from
+> > software in GPIO mode uses the same registers it is better to do a
+> > combined driver like this that can share the lock among other things.
 >
->                 status = acpi_get_object_info(dep_devices.handles[i], &info);
->                 if (ACPI_FAILURE(status)) {
-> @@ -1971,6 +1981,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->                 }
->
->                 skip = acpi_info_matches_ids(info, acpi_ignore_dep_ids);
-> +              honor_dep = acpi_info_matches_ids(info, acpi_honor_dep_ids);
->                 kfree(info);
->
->                 if (skip)
-> @@ -1984,6 +1995,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->
->                 dep->supplier = dep_devices.handles[i];
->                 dep->consumer = handle;
-> +               dep->honor_dep = honor_dep;
->
->                 mutex_lock(&acpi_dep_list_lock);
->                 list_add_tail(&dep->node , &acpi_dep_list);
-> @@ -2071,6 +2083,9 @@ static acpi_status acpi_bus_check_add_2(acpi_handle handle, u32 lvl_not_used,
->
->  static void acpi_default_enumeration(struct acpi_device *device)
->  {
-> +       if (!acpi_dev_ready_for_enumeration(device))
-> +               return;
+> And what does prevent exactly to base the GPIO part on gpio-regmap?
 
-I'm not sure about this.
+Other reasons are that gpio-regmap doesn't implement the .set_config
+and .add_pin_ranges callbacks. add_pin_ranges is needed because the 64
+GPIOs map to different pin numbers depending on the chosen "signal
+group".
 
-First of all, this adds an acpi_device_is_present() check here which
-potentially is a change in behavior and I'm not sure how it is related
-to the other changes in this patch (it is not mentioned in the
-changelog AFAICS).
+> ...
+>
+> > > > +static const unsigned char starfive_drive_strength[] = {
+> > > > +       14, 21, 28, 35, 42, 49, 56, 63,
+> > >
+> > > Why table? Can you simply use the formula?!
+> >
+> > Heh, yeah. So these are rounded values from a table and I never
+> > noticed that after rounding they follow a nice arithmetic progression.
+> > It'll probably still be nice to have an explanation in the comments
+> > about the formula then.
+>
+> Yup!
+>
+> > > > +};
+>
+> ...
+>
+> > > > +               irq_set_handler_locked(d, handle_bad_irq);
+> > >
+> > > Why is this here? Move it to ->probe().
+> >
+> > My thinking was that if something tries to set a an unsupported irq
+> > type, we should make sure the caller doesn't get spurious interrupts
+> > because we left the handler at its old value.
+>
+> You already assigned to this handler in the ->probe(), what's this then?
 
-I'm saying "potentially", because if we get here at all,
-acpi_device_is_present() has been evaluated already by
-acpi_bus_attach().
+But userspace could fx. first request IRQ_TYPE_EDGE_BOTH through the
+gpio api and later load a driver that might request an unsupported irq
+type right? Or am I missing something.
 
-Now, IIUC, the new acpi_dev_ready_for_enumeration() is kind of an
-extension of acpi_device_is_present(), so shouldn't it be called by
-acpi_bus_attach() instead of the latter rather than from here?
+> ...
+>
+> > > > +               if (value <= 6)
+> > > > +                       writel(value, sfp->padctl + IO_PADSHARE_SEL);
+> > > > +               else
+> > >
+> > > > +                       dev_err(dev, "invalid signal group %u\n", value);
+> > >
+> > > Why _err if you not bail out here?
+> >
+> > My thinking was that if the device tree specifies an invalid signal
+> > group we should just leave the setting alone and not break booting,
+> > but still be loud about it. Maybe that's too lenient and it's better
+> > to crash and burn immediately if someone does that.
+>
+> Here is inconsistency between level of the message and following action.
+> There are (rare!) cases when it's justified, but I believe it's not the
+> case here. You have two choices or justify why you have to use error
+> level without stopping process.
+>
+> ...
+>
+> All uncommented stuff you agreed on, correct?
 
-> +
->         /*
->          * Do not enumerate devices with enumeration_by_parent flag set as
->          * they will be enumerated by their respective parents.
-> @@ -2313,6 +2328,23 @@ void acpi_dev_clear_dependencies(struct acpi_device *supplier)
->  }
->  EXPORT_SYMBOL_GPL(acpi_dev_clear_dependencies);
+Yes, thank you! (.. or at least I'll get back to you if something comes up ;)
+
 >
-> +/**
-> + * acpi_dev_ready_for_enumeration - Check if the ACPI device is ready for enumeration
-> + * @device: Pointer to the &struct acpi_device to check
-> + *
-> + * Check if the device is present and has no unmet dependencies.
-> + *
-> + * Return true if the device is ready for enumeratino. Otherwise, return false.
-> + */
-> +bool acpi_dev_ready_for_enumeration(const struct acpi_device *device)
-> +{
-> +       if (device->flags.honor_deps && device->dep_unmet)
-> +               return false;
-> +
-> +       return acpi_device_is_present(device);
-> +}
-> +EXPORT_SYMBOL_GPL(acpi_dev_ready_for_enumeration);
-> +
->  /**
->   * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
->   * @supplier: Pointer to the dependee device
-> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> index 13d93371790e..2da53b7b4965 100644
-> --- a/include/acpi/acpi_bus.h
-> +++ b/include/acpi/acpi_bus.h
-> @@ -202,7 +202,8 @@ struct acpi_device_flags {
->         u32 coherent_dma:1;
->         u32 cca_seen:1;
->         u32 enumeration_by_parent:1;
-> -       u32 reserved:19;
-> +       u32 honor_deps:1;
-> +       u32 reserved:18;
->  };
->
->  /* File System */
-> @@ -284,6 +285,7 @@ struct acpi_dep_data {
->         struct list_head node;
->         acpi_handle supplier;
->         acpi_handle consumer;
-> +       bool honor_dep;
->  };
->
->  /* Performance Management */
-> @@ -693,6 +695,7 @@ static inline bool acpi_device_can_poweroff(struct acpi_device *adev)
->  bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const char *uid2);
->
->  void acpi_dev_clear_dependencies(struct acpi_device *supplier);
-> +bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
->  struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
->  struct acpi_device *
->  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
 > --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
