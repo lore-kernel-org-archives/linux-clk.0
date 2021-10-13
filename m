@@ -2,83 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC31C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71810C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6CC7610FE
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:22:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C192610D0
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230437AbhJMWY7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 18:24:59 -0400
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:36855 "EHLO
-        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230507AbhJMWY6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 18:24:58 -0400
-Received: by mail-oi1-f174.google.com with SMTP id u69so5866471oie.3;
-        Wed, 13 Oct 2021 15:22:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IptNI8AZvdjuhYBGG1I13k/v8fLmke+LtonQRtVHqSY=;
-        b=7tRV5QhqJW0hCCflgCn+mRlJ9l9FzjEFCOLuAYlXqDTgoTle6qQQUKO77t2t0+UlCT
-         72/6pFuUKjgXGG5lrsijK38EFdM3eua+DG1YqQ7JFT+UnJqGw3I7Vu736+OeeE6a5eaD
-         vM8eJEDiuCr5UuT/kxt5C/UogWKS/iSw6pzsPbmGVuvtudMa0A3sxwPTzAx41prYY+xL
-         hE9rWZDTRLRi3MEn9Eyq3MDRamMQOKrXfe0Lbjhm+FTKGQTcR1T0fUB43B+/QMbMVIe6
-         edXsJk7V5pdi1ky41unIQ2uV8VOTx/OnpLg2yoXgcYkhQAh72CYG2wItfR8j+PqzMZvE
-         ahRQ==
-X-Gm-Message-State: AOAM530mKBUIJg+Or54VQPAluZBQ2hxoQgVYzDnvmkUOefMwemFZooED
-        KR+OOk3SYp4iprnJRMZwsw==
-X-Google-Smtp-Source: ABdhPJxKPLvlBvD316T1Z6lR/28YGgOUe4siTt8q9BJHQAunCqTt1weyOde3jg1GBrKZHU2/97OUeQ==
-X-Received: by 2002:aca:6109:: with SMTP id v9mr10080058oib.59.1634163774553;
-        Wed, 13 Oct 2021 15:22:54 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id s20sm269577oiw.44.2021.10.13.15.22.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Oct 2021 15:22:54 -0700 (PDT)
-Received: (nullmailer pid 1691441 invoked by uid 1000);
-        Wed, 13 Oct 2021 22:22:53 -0000
-Date:   Wed, 13 Oct 2021 17:22:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-clk@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v2 2/8] dt-bindings: leds: register-bit-led: Use 'reg'
- instead of 'offset'
-Message-ID: <YWdcPbLLGGkbrjI5@robh.at.kernel.org>
-References: <20210913192816.1225025-1-robh@kernel.org>
- <20210913192816.1225025-3-robh@kernel.org>
+        id S231434AbhJMW0m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 18:26:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231339AbhJMW0d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Oct 2021 18:26:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 14C88610FE;
+        Wed, 13 Oct 2021 22:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634163870;
+        bh=ALxBKYlLl531lA80YRE4l+ROVmmHmTDOT72LjPi7gTM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=eFyfy7p8MDZB8qsf/66JpHPjfM4FzuyXuUsZrP+gJroo4mFz/tWN+zBNG2vgO8q9G
+         ry2GT1EW5IokqgVSCZfm9TIkhpT9e9B1qcJdbvwL0QAfip39d63lGVL8a8SKMj3T1o
+         v5JbofG9DIZdNmCsVLpm1l6MsXwOLKKfiNAhAY/jZL0K8HNt30nA20Db2w8tLpDOiE
+         4jdehNLEnbuCo2gNRetL/491dMKihCwHc8A3WOGkZ+5EknpBdaT5seKEXP//ggxSCk
+         MlglKr1T6/ZwjMPdz/XGVd3RiXAv2tkQKlyPJTYWQNM7k3hEHK63ErcKPjSIaudcHq
+         ZnGgXzq2nA76Q==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210913192816.1225025-3-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1633484416-27852-1-git-send-email-tdas@codeaurora.org>
+References: <1633484416-27852-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH 1/3] clk: qcom: Kconfig: Sort the symbol for SC_LPASS_CORECC_7180
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Wed, 13 Oct 2021 15:24:28 -0700
+Message-ID: <163416386868.936110.15823504684881599548@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Sep 2021 14:28:10 -0500, Rob Herring wrote:
-> 'reg' is the standard property for defining register banks/addresses. Add
-> it to use for the register address and deprecate 'offset'. This also
-> allows for using standard node names with unit-addresses. However, since
-> it is quite possible to have multiple nodes at the same register
-> address, allow for the unit-address to optionally have the bit
-> offset. The unit-address format is '@<reg address>[,<bit offset>]'. This
-> matches the format recently added for nvmem binding which has the same
-> issue.
-> 
-> Cc: Pavel Machek <pavel@ucw.cz>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: linux-leds@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Quoting Taniya Das (2021-10-05 18:40:14)
+> Fix the order of the Kconfig symbol for SC_LPASS_CORECC_7180.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  .../bindings/leds/register-bit-led.yaml       | 25 ++++++++++++++++---
->  1 file changed, 21 insertions(+), 4 deletions(-)
-> 
 
-Applied, thanks!
+Applied to clk-next
