@@ -2,158 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDAEC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 13:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB1FC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 14:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63302610FC
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 13:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B9A61105
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 14:13:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbhJMNKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 09:10:52 -0400
-Received: from mail-ua1-f46.google.com ([209.85.222.46]:34535 "EHLO
-        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231294AbhJMNKw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 09:10:52 -0400
-Received: by mail-ua1-f46.google.com with SMTP id h4so4381691uaw.1;
-        Wed, 13 Oct 2021 06:08:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e70ZGQ5tbBAmM8hpsBFgeuMrXUs03WqPhKmll1O0FNQ=;
-        b=SZSttMG6wBT/sBuZHH/vbgJkn0Xfmp9f0Uau3YKtJT3M4R5llbhLH/TIAZc+rH/6hV
-         oRIUlSuSn2wLqmcRjXLumIPGfZLfUGPaH1YjcU9muS9cEGJc5PPlbzB0ubzzAxJSHsuQ
-         bGGxsjcumN4dMPVCfjWRxkFG/WsJfNZ5oO5N/0urlv3Jvq232S8qu+GaSJGp/hxv/+hr
-         FDf6uyWjaUAH0IZUItaUemtasXx1/kPSBldSTLQfiRzPIV6TjpMAMxoVPOLFdq5TTsAJ
-         9wCf+ZdSDM5T7H4ZJEiKTkWt2pHdqlS0D0OJyeicXXjvLylaqzLgCvG2EbVLtkrjbxAX
-         iTrA==
-X-Gm-Message-State: AOAM533m1e1UKJlJofsIUKctsqQkw1ro7lJgO4N+JSd86lGZgwdDU1eM
-        wOSkCAmAuMmnpB27mzIch0N6vX+7A2gKCyGk78w=
-X-Google-Smtp-Source: ABdhPJzzTnqMQ1H8/zxnS6rBpfwGWrPlgqwFBcbKeZ5QjGmd5ALyVtkAZrEjaLT34o+/6EAJu8G8bzb3kKOKq2cEdJc=
-X-Received: by 2002:a67:cb0a:: with SMTP id b10mr38971206vsl.9.1634130528502;
- Wed, 13 Oct 2021 06:08:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211007182158.7490-1-semen.protsenko@linaro.org>
- <YWXaKevf8D0kKYXo@smile.fi.intel.com> <CAPLW+4==u6Lpi-tRpGCFjuCBUARsarJx=Lg2QVAbvXX7hOyRVg@mail.gmail.com>
-In-Reply-To: <CAPLW+4==u6Lpi-tRpGCFjuCBUARsarJx=Lg2QVAbvXX7hOyRVg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Oct 2021 15:08:37 +0200
-Message-ID: <CAMuHMdXmp5qngW9XKSzFwBGMQs4YduQbw3zxDfSAjho_deMjaQ@mail.gmail.com>
-Subject: Re: [PATCH v5] clk: Add write operation for clk_parent debugfs node
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S235927AbhJMOP3 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 10:15:29 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:51981 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231664AbhJMOP3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 10:15:29 -0400
+Received: (Authenticated sender: gregory.clement@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 2EA486000F;
+        Wed, 13 Oct 2021 14:13:21 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mike Tipton <mdtipton@codeaurora.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 5/6] arm64: dts: marvell: armada-37xx: add device
+ node for UART clock and use it
+In-Reply-To: <20210930095838.28145-6-pali@kernel.org>
+References: <20210930095838.28145-1-pali@kernel.org>
+ <20210930095838.28145-6-pali@kernel.org>
+Date:   Wed, 13 Oct 2021 16:13:16 +0200
+Message-ID: <87r1cpdncz.fsf@BL-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  Hi Sam,
+Hello Pali,
 
-On Wed, Oct 13, 2021 at 1:36 PM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
-> On Tue, 12 Oct 2021 at 21:55, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Oct 07, 2021 at 09:21:58PM +0300, Sam Protsenko wrote:
-> > > Useful for testing mux clocks. One can write the index of the parent to
-> > > be set into clk_parent node, starting from 0. Example
-> > >
-> > >     # cd /sys/kernel/debug/clk/mout_peri_bus
-> > >     # cat clk_possible_parents
-> > >       dout_shared0_div4 dout_shared1_div4
-> > >     # cat clk_parent
-> > >       dout_shared0_div4
-> > >     # echo 1 > clk_parent
-> > >     # cat clk_parent
-> > >       dout_shared1_div4
-> > >
-> > > CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
-> > > order to use this feature.
-> >
-> > ...
-> >
-> > > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
-> > > +     if (core->num_parents > 1)
-> > > +             debugfs_create_file("clk_parent", 0644, root, core,
-> > > +                                 &current_parent_rw_fops);
-> > > +     else
-> > > +#endif
-> >
-> > > +     {
-> > > +             if (core->num_parents > 0)
-> > > +                     debugfs_create_file("clk_parent", 0444, root, core,
-> > > +                                         &current_parent_fops);
-> > > +     }
-> >
-> > Currently there is no need to add the {} along with increased indentation
-> > level. I.o.w. the 'else if' is valid in C.
+> This change defines DT node for UART clock "marvell,armada-3700-uart-clock"
+> and use this UART clock as a base clock for all UART devices.
 >
-> Without those {} we have two bad options:
+> Signed-off-by: Pali Rohár <pali@kernel.org>
 >
->   1. When putting subsequent 'if' block on the same indentation level
-> as 'else': looks ok-ish for my taste (though inconsistent with #ifdef
-> code) and checkpatch swears:
+> ---
+> Changes in v6:
+> * Do not disable uartclk by default
+> * Rename node to clock-controller@12010
+> ---
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 >
->         WARNING: suspect code indent for conditional statements (8, 8)
->         #82: FILE: drivers/clk/clk.c:3334:
->         +    else
->         [...]
->              if (core->num_parents > 0)
+> diff --git a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> index 9acc5d2b5a00..f9bfe73d8ec2 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-37xx.dtsi
+> @@ -132,10 +132,20 @@
+>  				reg = <0x11500 0x40>;
+>  			};
+>  
+> +			uartclk: clock-controller@12010 {
+> +				compatible = "marvell,armada-3700-uart-clock";
+> +				reg = <0x12010 0x4>, <0x12210 0x4>;
+> +				clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>,
+> +					<&tbg 3>, <&xtalclk>;
+> +				clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S",
+> +					"TBG-B-S", "xtal";
+> +				#clock-cells = <1>;
+> +			};
+> +
+>  			uart0: serial@12000 {
+>  				compatible = "marvell,armada-3700-uart";
+>  				reg = <0x12000 0x18>;
+> -				clocks = <&xtalclk>;
+> +				clocks = <&uartclk 0>;
+
+What happens if we have a new kernel using on old device tree ?
+
+Gregory
+
+>  				interrupts =
+>  				<GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+>  				<GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> @@ -147,7 +157,7 @@
+>  			uart1: serial@12200 {
+>  				compatible = "marvell,armada-3700-uart-ext";
+>  				reg = <0x12200 0x30>;
+> -				clocks = <&xtalclk>;
+> +				clocks = <&uartclk 1>;
+>  				interrupts =
+>  				<GIC_SPI 30 IRQ_TYPE_EDGE_RISING>,
+>  				<GIC_SPI 31 IRQ_TYPE_EDGE_RISING>;
+> -- 
+> 2.20.1
 >
->   2. When adding 1 additional indentation level for subsequent 'if'
-> block: looks plain ugly to me, inconsistent for the case when
-> CLOCK_ALLOW_WRITE_DEBUGFS is not defined, but checkpatch is happy
->
-> I still think that the way I did that (with curly braces) is better
-> one: it's consistent for all cases, looking ok, checkpatch is happy
-> too. But isn't it hairsplitting? This particular case is not described
-> in kernel coding style doc, so it's about personal preferences.
->
-> If it's still important to you -- please provide exact code snippet
-> here (with indentations) for what you desire, I'll send v6. But
-> frankly I'd rather spend my time on something more useful. This is
-> minor patch, and I don't see any maintainers wishing to pull it yet.
-
-Note that checkpatch is just a tool, providing advice. It is not perfect,
-and if there is a good reason to ignore it, I'm all for that.
-
-Personally, I would write:
-
-    #ifdef CLOCK_ALLOW_WRITE_DEBUGFS
-            if (core->num_parents > 1)
-                    debugfs_create_file("clk_parent", 0644, root, core,
-                                        &current_parent_rw_fops);
-            else
-    #endif
-            if (core->num_parents > 0)
-                    debugfs_create_file("clk_parent", 0444, root, core,
-                                        &current_parent_fops);
-            }
-
-Then, I'm wondering if it really is worth it to have separate cases for
-"num_parents> 1" and "num_parents > 0".  If there's a single parent,
-current_parent_write() should still work fine with "0", wouldn't it?
-Then the only differences are the file mode and the fops.
-You could handle that with #defines above, like is currently done for
-clk_rate_mode.  And the checkpatch issue is gone ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
