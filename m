@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1956C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8892AC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB23B610D0
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7064761154
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:33:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231431AbhJMW1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 18:27:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47632 "EHLO mail.kernel.org"
+        id S230495AbhJMWfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 18:35:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231474AbhJMW0q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Oct 2021 18:26:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7CF91610D0;
-        Wed, 13 Oct 2021 22:24:42 +0000 (UTC)
+        id S230348AbhJMWfS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Oct 2021 18:35:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BEFD9610CC;
+        Wed, 13 Oct 2021 22:33:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634163882;
-        bh=iSkwlRSRUWxKgv/2zZ5IoJVxhehEVym6q1lNDUtMr9k=;
+        s=k20201202; t=1634164394;
+        bh=n3rPWK0nTNXRwEymnsx6bbKrvVz9wDqzvD+JXV6h8n8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pFKUopZKh08yrj61vatpQGXCh02umwADgnzkpoHciLXSSegAAeuBhXdbI2R8u1IFG
-         Vk8Pk6t2eZTrn34gpLZZ96hp9UDV/sNyMe2F1xnaMeMWuIQG5Yhu390nMVenM2qaHf
-         ovkIzWC2X4Fzp9gPhL/+Wsqws2r7Zfwk4ggEHP2TLvyyar58z7QqlgDkzYL2fr6Q9Q
-         c4trSzNyl9gPoIcmTQxaUZQ5JbR370uoHACyFbUOALNnNcUeYtjozcQz4GClqSJXoc
-         SeZ0qbdMYcetqxLwxakPGzQsm7zLRy9Zf5d3hFn5x6WYqk6kv16ojvmalunMzygtQe
-         KqfNwlSztvkFA==
+        b=iJ8tI75d0c91NvJhIgQDOBfzPF6n6QUCiT6EXKWl3TKUd3sK711orCs5567HLZym0
+         UndevB/ueTF71Qs6zByHQsjeHaFRfsdTziRsJ55yrRN72b7tw3f8cgjVqKVR/LJNsG
+         73CtsJlKcVIAvEFPyPXGoRCZpxlKqqoN7B2wEk/9S+377F6cTGcmAIuvNIgGBw4vmb
+         CZheyZX2IjIjBSxj0OHmk/B5xeaKiccrnn3bojUqMxBXA0CgZvicmShJBBnAyujLGB
+         tyDePiieGdRi9Go1sS16fQtTrEMKG5vpQGIl7ilXWtlNImQVx64iQveXmibLeEN8Ef
+         lcZrjI3ee76ow==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1633484416-27852-3-git-send-email-tdas@codeaurora.org>
-References: <1633484416-27852-1-git-send-email-tdas@codeaurora.org> <1633484416-27852-3-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH 3/3] clk: qcom: Add lpass clock controller driver for SC7280
+In-Reply-To: <1633567425-11953-1-git-send-email-tdas@codeaurora.org>
+References: <1633567425-11953-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: Add YAML schemas for CAMCC clocks on SC7280
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
@@ -40,17 +40,17 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 13 Oct 2021 15:24:40 -0700
-Message-ID: <163416388091.936110.10584826404239603287@swboyd.mtv.corp.google.com>
+Date:   Wed, 13 Oct 2021 15:33:13 -0700
+Message-ID: <163416439337.936110.14569646955799205849@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2021-10-05 18:40:16)
-> Add support for the lpass clock controller found on SC7280 based devices.
-> This would allow lpass peripheral loader drivers to control the clocks to
-> bring the subsystem out of reset.
+Quoting Taniya Das (2021-10-06 17:43:44)
+> The camera clock controller clock provider have a bunch of generic
+> properties that are needed in a device tree. Add the CAMCC clock IDs for
+> camera client to request for the clocks.
 >=20
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
