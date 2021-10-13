@@ -2,226 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A2EC43217
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F42C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBED611BD
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A8F661151
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 22:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbhJMWMg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 18:12:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231235AbhJMWMf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 18:12:35 -0400
-Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADE20C061749
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
-Received: by mail-pg1-x54a.google.com with SMTP id t75-20020a63784e000000b002993a9284b0so2234299pgc.11
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=wqNELjpmtlGEH41rLEk9ERkQkG/0kIH/3vHQh1QjL18=;
-        b=shMjCyt21hCl3oG5ov9YV/koHCJMWMBpeRKIZiTz/TdlcaUZY4c5029DWcjOLBg55v
-         pP/p3ziQunijS7XGR4kOYNbDzOR6MtUq/BOKmmgTSddZKHNI0pM513UrfHdw8LpaxyAl
-         SIci4bHoNukoPscZnCMqpCstVAqQYHRiXBzxZahL991idYJeK0uCtq1IywfOAIE8AtVr
-         VCCKjdgwleV+Hu4O1F018Lc8VAqXJHmRKiuMmfA3yU1GIIiSYK8cKqfp7neNULCIjHiz
-         eArEfyh63J19/YrLexQIp4Uj2WlfTGHVcRz5R/C+noXT3JLTUEMpTr+H0fBM1ncPlnWa
-         QhgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=wqNELjpmtlGEH41rLEk9ERkQkG/0kIH/3vHQh1QjL18=;
-        b=mOwF6PDjkb+0pyjOfPEj6OaJ1MLcacyCjd9LwidU3c+BOY9UPgcVc+jHsu/xzQ3XJ5
-         0vxACT3M/0i/ULC2vu6N6Pk6+ph65dJgHV8C7ZCWlzzJU8RhPXX3enNJeO5/Fd1gOEsM
-         vyfWsN6MNWrXuruLq8zZBc0KXLeDpZm9TiHbZzLWCwZ1atqR2OXnxOUo7f0KFuWutnaM
-         dgfuQ9KIwGnG3Wd9wyp00BC5Shw13I5MqnxIUBKiLwOkWwSDzyAZjbulHiqSXVeflX0H
-         qNtdGhxyPnSfY/bn0wC/rnCDDRZkaHyh27jrWVQo37fZjbbI9XiW7di2lImoNp7t+t/q
-         esxQ==
-X-Gm-Message-State: AOAM532q0P/nlzG8yVsXt8wFOlL0CfaoSwTqpMmK/dFWJ6uCSfsGtZMM
-        EigS2UpWZuEjXQO18X2O13/H6TxrPDe5sVH/CTY=
-X-Google-Smtp-Source: ABdhPJwSHq7t4EDLLAtv4RUzmCWL7n/SHCwJF1dRQXyJ3LKA9du+tmSUO665Mf74ZPLjq2ZJLDufZJT9YVDHODWdxaA=
-X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
- (user=willmcvicker job=sendgmr) by 2002:a17:902:8b81:b0:13f:3d30:f624 with
- SMTP id ay1-20020a1709028b8100b0013f3d30f624mr1635638plb.51.1634163031149;
- Wed, 13 Oct 2021 15:10:31 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 22:10:20 +0000
-In-Reply-To: <20211013221021.3433704-1-willmcvicker@google.com>
-Message-Id: <20211013221021.3433704-3-willmcvicker@google.com>
-Mime-Version: 1.0
-References: <20211013221021.3433704-1-willmcvicker@google.com>
-X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
-Subject: [PATCH v3 2/2] [RFT] clk: samsung: exynos5433: update apollo and
- atlas clock probing
-From:   Will McVicker <willmcvicker@google.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S230142AbhJMWRe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 18:17:34 -0400
+Received: from aposti.net ([89.234.176.197]:39994 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230228AbhJMWRd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Oct 2021 18:17:33 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     kernel-team@android.com, Will McVicker <willmcvicker@google.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>
+Cc:     list@opendingux.net, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 2/2] clk: ingenic: Add MDMA and BDMA clocks
+Date:   Wed, 13 Oct 2021 23:08:15 +0100
+Message-Id: <20211013220815.38692-2-paul@crapouillou.net>
+In-Reply-To: <20211013220815.38692-1-paul@crapouillou.net>
+References: <20211013220815.38692-1-paul@crapouillou.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the samsung common clk driver to initialize and probe the apollo and
-atlas clocks. This removes their custom init functions and uses the
-samsung_cmu_register_one() instead.
+The Ingenic JZ4760 and JZ4770 both have an extra DMA core named BDMA
+dedicated to the NAND and BCH controller, but which can also do
+memory-to-memory transfers. The JZ4760 additionally has a DMA core named
+MDMA dedicated to memory-to-memory transfers. The programming manual for
+the JZ4770 does have a bit for a MDMA clock, but does not seem to have
+the hardware wired in.
 
-Signed-off-by: Will McVicker <willmcvicker@google.com>
+Add the BDMA and MDMA clocks to the JZ4760 CGU code, and the BDMA clock
+to the JZ4770 code, so that the BDMA and MDMA controllers can be used.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
- 1 file changed, 48 insertions(+), 72 deletions(-)
+ drivers/clk/ingenic/jz4760-cgu.c               | 10 ++++++++++
+ drivers/clk/ingenic/jz4770-cgu.c               |  5 +++++
+ include/dt-bindings/clock/ingenic,jz4760-cgu.h |  2 ++
+ include/dt-bindings/clock/ingenic,jz4770-cgu.h |  1 +
+ 4 files changed, 18 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index f203074d858b..0ef809c9e2da 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -3675,44 +3675,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst
- 	{  0 },
- };
+diff --git a/drivers/clk/ingenic/jz4760-cgu.c b/drivers/clk/ingenic/jz4760-cgu.c
+index 080d492ac95c..8fdd383560fb 100644
+--- a/drivers/clk/ingenic/jz4760-cgu.c
++++ b/drivers/clk/ingenic/jz4760-cgu.c
+@@ -313,6 +313,16 @@ static const struct ingenic_cgu_clk_info jz4760_cgu_clocks[] = {
+ 		.parents = { JZ4760_CLK_H2CLK, },
+ 		.gate = { CGU_REG_CLKGR0, 21 },
+ 	},
++	[JZ4760_CLK_MDMA] = {
++		"mdma", CGU_CLK_GATE,
++		.parents = { JZ4760_CLK_HCLK, },
++		.gate = { CGU_REG_CLKGR0, 25 },
++	},
++	[JZ4760_CLK_BDMA] = {
++		"bdma", CGU_CLK_GATE,
++		.parents = { JZ4760_CLK_HCLK, },
++		.gate = { CGU_REG_CLKGR1, 0 },
++	},
+ 	[JZ4760_CLK_I2C0] = {
+ 		"i2c0", CGU_CLK_GATE,
+ 		.parents = { JZ4760_CLK_EXT, },
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index 8c6c1208f462..7ef91257630e 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -329,6 +329,11 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		.parents = { JZ4770_CLK_H2CLK, },
+ 		.gate = { CGU_REG_CLKGR0, 21 },
+ 	},
++	[JZ4770_CLK_BDMA] = {
++		"bdma", CGU_CLK_GATE,
++		.parents = { JZ4770_CLK_H2CLK, },
++		.gate = { CGU_REG_CLKGR1, 0 },
++	},
+ 	[JZ4770_CLK_I2C0] = {
+ 		"i2c0", CGU_CLK_GATE,
+ 		.parents = { JZ4770_CLK_EXT, },
+diff --git a/include/dt-bindings/clock/ingenic,jz4760-cgu.h b/include/dt-bindings/clock/ingenic,jz4760-cgu.h
+index 4bb2e19c4743..9fb04ebac6de 100644
+--- a/include/dt-bindings/clock/ingenic,jz4760-cgu.h
++++ b/include/dt-bindings/clock/ingenic,jz4760-cgu.h
+@@ -50,5 +50,7 @@
+ #define JZ4760_CLK_LPCLK_DIV	41
+ #define JZ4760_CLK_TVE		42
+ #define JZ4760_CLK_LPCLK	43
++#define JZ4760_CLK_MDMA		44
++#define JZ4760_CLK_BDMA		45
  
-+static const struct samsung_cpu_clock apollo_cpu_clks[] __initconst = {
-+	CPU_CLK(CLK_SCLK_APOLLO, "apolloclk", "mout_apollo_pll",
-+			"mout_bus_pll_apollo_user",
-+			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-+			exynos5433_apolloclk_d),
-+};
-+
-+static const struct samsung_cmu_info apollo_cmu_info __initconst = {
-+	.pll_clks	= apollo_pll_clks,
-+	.nr_pll_clks	= ARRAY_SIZE(apollo_pll_clks),
-+	.mux_clks	= apollo_mux_clks,
-+	.nr_mux_clks	= ARRAY_SIZE(apollo_mux_clks),
-+	.div_clks	= apollo_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(apollo_div_clks),
-+	.gate_clks	= apollo_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(apollo_gate_clks),
-+	.cpu_clks	= apollo_cpu_clks,
-+	.nr_cpu_clks	= ARRAY_SIZE(apollo_cpu_clks),
-+	.nr_clk_ids	= APOLLO_NR_CLK,
-+	.clk_regs	= apollo_clk_regs,
-+	.nr_clk_regs	= ARRAY_SIZE(apollo_clk_regs),
-+};
-+
- static void __init exynos5433_cmu_apollo_init(struct device_node *np)
- {
--	void __iomem *reg_base;
--	struct samsung_clk_provider *ctx;
--	struct clk_hw **hws;
--
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
--		panic("%s: failed to map registers\n", __func__);
--		return;
--	}
--
--	ctx = samsung_clk_init(np, reg_base, APOLLO_NR_CLK);
--	if (!ctx) {
--		panic("%s: unable to allocate ctx\n", __func__);
--		return;
--	}
--
--	samsung_clk_register_pll(ctx, apollo_pll_clks,
--				 ARRAY_SIZE(apollo_pll_clks), reg_base);
--	samsung_clk_register_mux(ctx, apollo_mux_clks,
--				 ARRAY_SIZE(apollo_mux_clks));
--	samsung_clk_register_div(ctx, apollo_div_clks,
--				 ARRAY_SIZE(apollo_div_clks));
--	samsung_clk_register_gate(ctx, apollo_gate_clks,
--				  ARRAY_SIZE(apollo_gate_clks));
--
--	hws = ctx->clk_data.hws;
--
--	exynos_register_cpu_clock(ctx, CLK_SCLK_APOLLO, "apolloclk",
--		hws[CLK_MOUT_APOLLO_PLL], hws[CLK_MOUT_BUS_PLL_APOLLO_USER], 0x200,
--		exynos5433_apolloclk_d, ARRAY_SIZE(exynos5433_apolloclk_d),
--		CLK_CPU_HAS_E5433_REGS_LAYOUT);
--
--	samsung_clk_sleep_init(reg_base, apollo_clk_regs,
--			       ARRAY_SIZE(apollo_clk_regs));
--
--	samsung_clk_of_add_provider(np, ctx);
-+	samsung_cmu_register_one(np, &apollo_cmu_info);
- }
- CLK_OF_DECLARE(exynos5433_cmu_apollo, "samsung,exynos5433-cmu-apollo",
- 		exynos5433_cmu_apollo_init);
-@@ -3932,44 +3920,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_atlasclk_d[] __initconst =
- 	{  0 },
- };
+ #endif /* __DT_BINDINGS_CLOCK_JZ4760_CGU_H__ */
+diff --git a/include/dt-bindings/clock/ingenic,jz4770-cgu.h b/include/dt-bindings/clock/ingenic,jz4770-cgu.h
+index d68a7695a1f8..0b475e8ae321 100644
+--- a/include/dt-bindings/clock/ingenic,jz4770-cgu.h
++++ b/include/dt-bindings/clock/ingenic,jz4770-cgu.h
+@@ -54,5 +54,6 @@
+ #define JZ4770_CLK_OTG_PHY	45
+ #define JZ4770_CLK_EXT512	46
+ #define JZ4770_CLK_RTC		47
++#define JZ4770_CLK_BDMA		48
  
--static void __init exynos5433_cmu_atlas_init(struct device_node *np)
--{
--	void __iomem *reg_base;
--	struct samsung_clk_provider *ctx;
--	struct clk_hw **hws;
--
--	reg_base = of_iomap(np, 0);
--	if (!reg_base) {
--		panic("%s: failed to map registers\n", __func__);
--		return;
--	}
--
--	ctx = samsung_clk_init(np, reg_base, ATLAS_NR_CLK);
--	if (!ctx) {
--		panic("%s: unable to allocate ctx\n", __func__);
--		return;
--	}
--
--	samsung_clk_register_pll(ctx, atlas_pll_clks,
--				 ARRAY_SIZE(atlas_pll_clks), reg_base);
--	samsung_clk_register_mux(ctx, atlas_mux_clks,
--				 ARRAY_SIZE(atlas_mux_clks));
--	samsung_clk_register_div(ctx, atlas_div_clks,
--				 ARRAY_SIZE(atlas_div_clks));
--	samsung_clk_register_gate(ctx, atlas_gate_clks,
--				  ARRAY_SIZE(atlas_gate_clks));
--
--	hws = ctx->clk_data.hws;
--
--	exynos_register_cpu_clock(ctx, CLK_SCLK_ATLAS, "atlasclk",
--		hws[CLK_MOUT_ATLAS_PLL], hws[CLK_MOUT_BUS_PLL_ATLAS_USER], 0x200,
--		exynos5433_atlasclk_d, ARRAY_SIZE(exynos5433_atlasclk_d),
--		CLK_CPU_HAS_E5433_REGS_LAYOUT);
-+static const struct samsung_cpu_clock atlas_cpu_clks[] __initconst = {
-+	CPU_CLK(CLK_SCLK_ATLAS, "atlasclk", "mout_atlas_pll",
-+			"mout_bus_pll_atlas_user",
-+			CLK_CPU_HAS_E5433_REGS_LAYOUT, 0x200,
-+			exynos5433_atlasclk_d),
-+};
- 
--	samsung_clk_sleep_init(reg_base, atlas_clk_regs,
--			       ARRAY_SIZE(atlas_clk_regs));
-+static const struct samsung_cmu_info atlas_cmu_info __initconst = {
-+	.pll_clks	= atlas_pll_clks,
-+	.nr_pll_clks	= ARRAY_SIZE(atlas_pll_clks),
-+	.mux_clks	= atlas_mux_clks,
-+	.nr_mux_clks	= ARRAY_SIZE(atlas_mux_clks),
-+	.div_clks	= atlas_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(atlas_div_clks),
-+	.gate_clks	= atlas_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(atlas_gate_clks),
-+	.cpu_clks	= atlas_cpu_clks,
-+	.nr_cpu_clks	= ARRAY_SIZE(atlas_cpu_clks),
-+	.nr_clk_ids	= ATLAS_NR_CLK,
-+	.clk_regs	= atlas_clk_regs,
-+	.nr_clk_regs	= ARRAY_SIZE(atlas_clk_regs),
-+};
- 
--	samsung_clk_of_add_provider(np, ctx);
-+static void __init exynos5433_cmu_atlas_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &atlas_cmu_info);
- }
- CLK_OF_DECLARE(exynos5433_cmu_atlas, "samsung,exynos5433-cmu-atlas",
- 		exynos5433_cmu_atlas_init);
+ #endif /* __DT_BINDINGS_CLOCK_JZ4770_CGU_H__ */
 -- 
-2.33.0.882.g93a45727a2-goog
+2.33.0
 
