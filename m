@@ -2,101 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA3EC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 12:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3191C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 13:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37E1A610EA
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 12:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C359610E8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 13:00:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233247AbhJMNBk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 09:01:40 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:43089 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233852AbhJMNBj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 09:01:39 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 967F3580FE2;
-        Wed, 13 Oct 2021 08:59:36 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 13 Oct 2021 08:59:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-type:content-transfer-encoding; s=fm1; bh=
-        zu+J5SnYekd5o27sO2Ss06dMfXDXMjdb+rzQI1bZb34=; b=JVEBR4r7lQTeS92D
-        E70LH2Zj+nNUvNlhpN4xPVifydKsBjkTEQCco+xm8WnnhP20fuPcDG6eUk9sawR8
-        rAu/HDuFDr+Pj5EZkuklJNm8KZS0mjKJ0l3JbUJxLblc8DIZ1ON2ljuDyHd9OZZr
-        tJVnHEL4aUN1yYYg1obX3wvSI18R4O04WT5L4u7T5juOBamvHHdHSnDVBQYBT21r
-        irc7ghk0cwOtbyK49Wr40YdW2OppEgs3wuz+H+OW3V6F30jK2LfIaMYlSxqKt5Fg
-        i9DEdRmOmTBKUWtDH+geu5ytug76TGdwu4XPPYTVG4R5pP/HQ9VwaJK8EZq+ikuk
-        NfuEyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=zu+J5SnYekd5o27sO2Ss06dMfXDXMjdb+rzQI1bZb
-        34=; b=QvvjXzgzoVcuA2SfF7cusQyGfRcBB2ckkrbg0etexf/P2bm+T3l6XOoYZ
-        97yoPywEy8eW9VensxD7jyE0CEHSikJtEae6648pCEm4I5v245yeZ0xCKyLgdesj
-        Y2U4LR2DdD4/BsFOlVCvwsC0JpOVJQ6hWAuu08uRQYUTEP7bw3GiJuyoUsXnxu9s
-        OFf7PAs7Bp2sZMHObjFw+DaTPfYmn3UL+sQgpmXyWWkCRF97Qomvh0RntUNugk9Q
-        QvbNjK8jNy5L9D/a4HIwPLhzmdHnXKdhpEBQOcnK2juRuT1GDUNxnKCUhtsK0Ui/
-        ncIaDkxZgjOL4Z0G/U8BBsR1LLDrg==
-X-ME-Sender: <xms:ONhmYRiQF7eQHfFjx6EnBdXs12ROTPsAR77HZUjbFIPlZi3yeP9sDg>
-    <xme:ONhmYWAGlA7o-P6oQZKgRFsA2rU5HkA7w5GpTBAKxL2QBF9nPcKo7IEBlj-L4pWNN
-    oQprD7iDgNvG-0k2Mo>
-X-ME-Received: <xmr:ONhmYRFPoUr6p9eimawN52SYxUUzHqaMJ9Eu7lXZMRFGlJJBYyWzjW0o2Jpzq8VE3ldb4EEhjDZAS-FNytpcyUulZzI6G-kU5UJ2WUvh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddutddgheekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeejuefggeekfffgueevtddvudffhfejffejjedvvdduudethefhfefhfeeg
-    ieekkeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:ONhmYWRcR5oJG2XBAkrRbO5l5rhWL7UQWduuQ3q__633aJWOiT9Bxg>
-    <xmx:ONhmYezy1-3n_8mJqi7xp9BpXXZ9zerfYsCiN2xthqPpatC8Mo5-ZA>
-    <xmx:ONhmYc4SqWNmqpsTMPCrW8RvBiDtgSnag1Z0KcafZZ9aDfabnfqCxQ>
-    <xmx:ONhmYShvfB66Xa2SD4Doos9XxzKkNeHu4Bjxpxa2_1e0sA1fkgkexQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Oct 2021 08:59:36 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Michael Stapelberg <michael@stapelberg.ch>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: (subset) [PATCH 5/5] drm/vc4: hdmi: Make sure the controller is powered in detect
-Date:   Wed, 13 Oct 2021 14:59:25 +0200
-Message-Id: <163412979204.237205.12502576005063521363.b4-ty@cerno.tech>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210922125419.4125779-6-maxime@cerno.tech>
-References: <20210922125419.4125779-1-maxime@cerno.tech> <20210922125419.4125779-6-maxime@cerno.tech>
+        id S231312AbhJMNC6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 09:02:58 -0400
+Received: from mail-ua1-f53.google.com ([209.85.222.53]:42552 "EHLO
+        mail-ua1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231145AbhJMNC5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 09:02:57 -0400
+Received: by mail-ua1-f53.google.com with SMTP id j8so4240925uak.9;
+        Wed, 13 Oct 2021 06:00:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6ROb25SRHrlctqcwYNmk5SZxRis47NqhPR1W/F6S4hc=;
+        b=E7QqFJl6uynC1r5yt8BlnCYLRTtscpLNDIY+txTEbs1exxAW0Ic5l+I0wQ3DoyylO8
+         uz0O2b44py0/a4713QSjMOd2l4Dxkdcw9pY5VoPcVAMgXgsGwl3UGWgwQMZpk8uX1m96
+         oKHQ8VD/MOt+SyaQhw70pq21EHvDF61arAMnFeSgP7S8rTC9jwRZSL0Scl4TjknIWccD
+         skRilaV7awLVSsutGOobSK4f/o6tfNrqz1Bs4J+F03x/kcRP4dVl4LnlcDfkgKgwHtOX
+         DzyILvJrjxJ5LiPzp+BwvgNnb2hRQPNrab6x3KTQUo6CiQPW4xHcCCREoAI1dOV6vWWN
+         cjAw==
+X-Gm-Message-State: AOAM531sphkuSGHxwaKPJx3BvUt30X0+p2py6THOHt3C688Y4+WIm/XF
+        PAo43CrJnBs1JKvD0j6qc+dZcSG31cJoJ7VfbPDYGw3V
+X-Google-Smtp-Source: ABdhPJxLkApOC7yMyBdbfgVEppF7bfWIBh7G+fA1a8AE2efhgNQ3zXaJXtAdx0jG9P3V77HkHsz1i+mp8XWK0KAeY4Q=
+X-Received: by 2002:a67:d111:: with SMTP id u17mr37472705vsi.37.1634130053857;
+ Wed, 13 Oct 2021 06:00:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20211007182158.7490-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211007182158.7490-1-semen.protsenko@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Oct 2021 15:00:42 +0200
+Message-ID: <CAMuHMdU+N071GCb6OepwBu_2fTununksguD26nxY3f-BqzjsQg@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: Add write operation for clk_parent debugfs node
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mike Tipton <mdtipton@codeaurora.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Andy Shevchenko <andy@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 22 Sep 2021 14:54:19 +0200, Maxime Ripard wrote:
-> If the HPD GPIO is not available and drm_probe_ddc fails, we end up
-> reading the HDMI_HOTPLUG register, but the controller might be powered
-> off resulting in a CPU hang. Make sure we have the power domain and the
-> HSM clock powered during the detect cycle to prevent the hang from
-> happening.
-> 
-> 
-> [...]
+On Thu, Oct 7, 2021 at 8:22 PM Sam Protsenko <semen.protsenko@linaro.org> wrote:
+> Useful for testing mux clocks. One can write the index of the parent to
+> be set into clk_parent node, starting from 0. Example
+>
+>     # cd /sys/kernel/debug/clk/mout_peri_bus
+>     # cat clk_possible_parents
+>       dout_shared0_div4 dout_shared1_div4
+>     # cat clk_parent
+>       dout_shared0_div4
+>     # echo 1 > clk_parent
+>     # cat clk_parent
+>       dout_shared1_div4
+>
+> CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
+> order to use this feature.
+>
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-Applied to drm/drm-misc (drm-misc-fixes).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks!
-Maxime
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
