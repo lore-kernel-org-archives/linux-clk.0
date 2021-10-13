@@ -2,219 +2,210 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1347C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C12C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A24461139
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 16:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BB1161130
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Oct 2021 17:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231317AbhJMRAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Oct 2021 13:00:36 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20038 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230415AbhJMRAf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Oct 2021 13:00:35 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10136"; a="207594565"
-X-IronPort-AV: E=Sophos;i="5.85,371,1624345200"; 
-   d="scan'208";a="207594565"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2021 09:58:31 -0700
-X-IronPort-AV: E=Sophos;i="5.85,371,1624345200"; 
-   d="scan'208";a="547986866"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.159])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2021 09:58:23 -0700
-Received: from andy by smile with local (Exim 4.95)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1makM2-0001gg-8h;
-        Wed, 13 Oct 2021 22:55:58 +0300
-Date:   Wed, 13 Oct 2021 22:55:58 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S230404AbhJMRP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Oct 2021 13:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60512 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229915AbhJMRP2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Oct 2021 13:15:28 -0400
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F70C061746
+        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 10:13:24 -0700 (PDT)
+Received: by mail-ua1-x92c.google.com with SMTP id e10so1331612uab.3
+        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 10:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FqK/jWK79PuifDKA1/UfvqVKqumXLq/7p6XMlR8ggyA=;
+        b=MAEKzS3+RMUT1I7/97OKNNhT+hVWFG4OM53Pe/WUzd4eT3GOMZcPsQQmJCR8aFQSRy
+         /f8Z9lVDXi9aEnkr/x3Tm+QYLfyW1fKkcXRHbOrrH6G9NXQgkrm3ZlL3gi5jBIXGnT/5
+         4xFYj9egElMU7OI4G1UeAFz/Hpd3WKNUz3LHQ4QmqkYrfqbB5vUs1ao5sYkEUdVVx790
+         xrNFHyqMCq2ICTlkh+X7wYGzIXl5d0AHPHq+02HIfKczyllEdjFF2Y1hdLi/aX8Dph+a
+         CvKKxuW753lK6huHPr9YTFJpD4DE47bn+3PDoUVfyhzVxiv8Ggc+3wlN/gJxeHs8GrKt
+         jw5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FqK/jWK79PuifDKA1/UfvqVKqumXLq/7p6XMlR8ggyA=;
+        b=1X7OBPsDtam42cYF7ovqnsCtUtbP8ZYrWvA28oZVn8w3bmgNqb3YnV+ExWmK/7yKaE
+         6456Lo+jKH3l0qk8XsF0GJWoAI3FZQqfgHI2p4L4Te+EFaQb9Jhlqv0MgJsPBTGmWcTi
+         LKrMcxDO8f4ijwC+kzuUasSAw2d1AinHkTf1lt1jdibabyKUW4QTWvAUca1RZnO2o6Ty
+         lceaTlBbDzMNqkj1HryvOkm56bDVaIu2NNeTtSXEyrwJblDC3EumPIQ8x+LuMhI5pZFI
+         Zy13q8BAQGdL0KpifuhXNFVgyyLhirRWL4t8qfl/powYHINbsr6nEh1heat4d3y1qxkb
+         27Wg==
+X-Gm-Message-State: AOAM531Hqv7sjyUWTvZ1bA9qS7KyBFKlEVIyVwNFSwrvcDQ0eh8pe3ja
+        foSTuKjIGnY6ePRUbGEH9OlsSfJqln2ghdnkgWkQ3Q==
+X-Google-Smtp-Source: ABdhPJzvE1QVPK3BjPqCjduwVBx7y3jvdvgME1PG0alC7Qswg1nyX8kkTyqACtDHadH5YqzcixhuWS8DfQTSd+fVD8A=
+X-Received: by 2002:a67:d289:: with SMTP id z9mr308540vsi.39.1634145203777;
+ Wed, 13 Oct 2021 10:13:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211007182158.7490-1-semen.protsenko@linaro.org>
+ <YWXaKevf8D0kKYXo@smile.fi.intel.com> <CAPLW+4==u6Lpi-tRpGCFjuCBUARsarJx=Lg2QVAbvXX7hOyRVg@mail.gmail.com>
+ <CAMuHMdXmp5qngW9XKSzFwBGMQs4YduQbw3zxDfSAjho_deMjaQ@mail.gmail.com> <CAPLW+4muEHPijg2yZJ-gu--6Sbg9DvTeSz5QcwOR+eAVniczyA@mail.gmail.com>
+In-Reply-To: <CAPLW+4muEHPijg2yZJ-gu--6Sbg9DvTeSz5QcwOR+eAVniczyA@mail.gmail.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 13 Oct 2021 20:13:11 +0300
+Message-ID: <CAPLW+4=dK400WSFaBS_TGOTypCY9oWnDWS3xBp22b5n-ae=R-w@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: Add write operation for clk_parent debugfs node
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-Message-ID: <YWc5zq0Moz3asWEa@smile.fi.intel.com>
-References: <20211012134027.684712-1-kernel@esmil.dk>
- <20211012134027.684712-13-kernel@esmil.dk>
- <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
- <CANBLGczDZh+kLWM017mPenY8WO5OovH2DFUSS-shRD-aZVKa0A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBLGczDZh+kLWM017mPenY8WO5OovH2DFUSS-shRD-aZVKa0A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Russell King <linux@armlinux.org.uk>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mike Tipton <mdtipton@codeaurora.org>,
+        Andy Shevchenko <andy@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 06:38:14PM +0200, Emil Renner Berthing wrote:
-> On Tue, 12 Oct 2021 at 19:03, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Oct 12, 2021 at 4:43 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-
-...
-
-> > > +free_pinmux:
-> > > +       devm_kfree(dev, pinmux);
-> > > +free_pins:
-> > > +       devm_kfree(dev, pins);
-> > > +free_grpname:
-> > > +       devm_kfree(dev, grpname);
+On Wed, 13 Oct 2021 at 19:30, Sam Protsenko <semen.protsenko@linaro.org> wrote:
+>
+> On Wed, 13 Oct 2021 at 16:08, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > >
-> > What the heck?!
-> 
-> Just to be clear. You mean we don't need to explicitly free them
-> because they're tied to the device right? I don't think the device
-> will go away just because a single device tree entry can't be parsed,
-> so on such errors this garbage would be left behind. You can still
-> argue we shouldn't optimize for broken device trees, I just want to
-> make it at conscious decision.
-
-If you are using devm_kfree() it is quite likely shows either of the following
-issues:
-
-* you mustn't use devm_*() in the first place due to object lifetime;
-* you shouldn't use devm_kfree() since this is the whole point of devm.
-
-> > > +free_pgnames:
-> > > +       devm_kfree(dev, pgnames);
+> >   Hi Sam,
 > >
-> > Ditto.
-
-...
-
-> > > +out:
+> > On Wed, Oct 13, 2021 at 1:36 PM Sam Protsenko
+> > <semen.protsenko@linaro.org> wrote:
+> > > On Tue, 12 Oct 2021 at 21:55, Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Thu, Oct 07, 2021 at 09:21:58PM +0300, Sam Protsenko wrote:
+> > > > > Useful for testing mux clocks. One can write the index of the parent to
+> > > > > be set into clk_parent node, starting from 0. Example
+> > > > >
+> > > > >     # cd /sys/kernel/debug/clk/mout_peri_bus
+> > > > >     # cat clk_possible_parents
+> > > > >       dout_shared0_div4 dout_shared1_div4
+> > > > >     # cat clk_parent
+> > > > >       dout_shared0_div4
+> > > > >     # echo 1 > clk_parent
+> > > > >     # cat clk_parent
+> > > > >       dout_shared1_div4
+> > > > >
+> > > > > CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
+> > > > > order to use this feature.
+> > > >
+> > > > ...
+> > > >
+> > > > > +#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+> > > > > +     if (core->num_parents > 1)
+> > > > > +             debugfs_create_file("clk_parent", 0644, root, core,
+> > > > > +                                 &current_parent_rw_fops);
+> > > > > +     else
+> > > > > +#endif
+> > > >
+> > > > > +     {
+> > > > > +             if (core->num_parents > 0)
+> > > > > +                     debugfs_create_file("clk_parent", 0444, root, core,
+> > > > > +                                         &current_parent_fops);
+> > > > > +     }
+> > > >
+> > > > Currently there is no need to add the {} along with increased indentation
+> > > > level. I.o.w. the 'else if' is valid in C.
+> > >
+> > > Without those {} we have two bad options:
+> > >
+> > >   1. When putting subsequent 'if' block on the same indentation level
+> > > as 'else': looks ok-ish for my taste (though inconsistent with #ifdef
+> > > code) and checkpatch swears:
+> > >
+> > >         WARNING: suspect code indent for conditional statements (8, 8)
+> > >         #82: FILE: drivers/clk/clk.c:3334:
+> > >         +    else
+> > >         [...]
+> > >              if (core->num_parents > 0)
+> > >
+> > >   2. When adding 1 additional indentation level for subsequent 'if'
+> > > block: looks plain ugly to me, inconsistent for the case when
+> > > CLOCK_ALLOW_WRITE_DEBUGFS is not defined, but checkpatch is happy
+> > >
+> > > I still think that the way I did that (with curly braces) is better
+> > > one: it's consistent for all cases, looking ok, checkpatch is happy
+> > > too. But isn't it hairsplitting? This particular case is not described
+> > > in kernel coding style doc, so it's about personal preferences.
+> > >
+> > > If it's still important to you -- please provide exact code snippet
+> > > here (with indentations) for what you desire, I'll send v6. But
+> > > frankly I'd rather spend my time on something more useful. This is
+> > > minor patch, and I don't see any maintainers wishing to pull it yet.
 > >
-> > Useless label.
-> 
-> Hmm.. my compiler disagrees.
-
-The comment implies that you return directly instead of using `goto out;`.
-
-> > > +       return ret;
-
-...
-
-> > > +               v = pinmux[i];
-> > > +               dout = ((v & BIT(7)) << (31 - 7)) | ((v >> 24) & 0xffU);
-> > > +               doen = ((v & BIT(6)) << (31 - 6)) | ((v >> 16) & 0xffU);
-> > > +               din  = (v >> 8) & 0xffU;
+> > Note that checkpatch is just a tool, providing advice. It is not perfect,
+> > and if there is a good reason to ignore it, I'm all for that.
 > >
-> > What is this voodoo for?
-> 
-> In order to do pinmux we need the following pieces of information from
-> the device tree for each pin ("GPIO" they call it):
-> 
-> output signal: 0-133 + 1bit reverse flag
-> output enable signal: 0-133 + 1bit reverse flag
-> optional input signal: 0-74 + special "none" value, right now 0xff
-> gpio number: 0-63
-> 
-> As the code is now all that info is packed into a u32 for each pin
-> using the GPIOMUX macro defined in the dt-binding header added in
-> patch 10. There is also a diagram for how this packing is done. The
-> above voodoo is for unpacking that.
-> 
-> I'd very much like to hear if you have a better solution for how to
-> convey that information from the device tree to here.
-
-At very least this code should have something like above in the comment.
-
-...
-
-> > > +               if (din != 0xff)
-> > > +                       reg_din = sfp->base + GPIO_IN_OFFSET + 4 * din;
-> > > +               else
-> > > +                       reg_din = NULL;
+>
+> Agreed. Actually I did the same grepping as Andy mentioned in previous
+> mails, and used that style because that's what other people often do.
+> checkpatch is more like excuse for me in this case :)
+>
+> > Personally, I would write:
 > >
-> > This looks like you maybe use gpio-regmap instead?
-> 
-> This was discussed at length when Drew sent in the GPIO part of this code:
-> https://lore.kernel.org/linux-riscv/20210701002037.912625-1-drew@beagleboard.org/
-> The conclusion was that because pinmux and controlling the pins from
-> software in GPIO mode uses the same registers it is better to do a
-> combined driver like this that can share the lock among other things.
-
-And what does prevent exactly to base the GPIO part on gpio-regmap?
-
-...
-
-> > > +static const unsigned char starfive_drive_strength[] = {
-> > > +       14, 21, 28, 35, 42, 49, 56, 63,
+> >     #ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+> >             if (core->num_parents > 1)
+> >                     debugfs_create_file("clk_parent", 0644, root, core,
+> >                                         &current_parent_rw_fops);
+> >             else
+> >     #endif
+> >             if (core->num_parents > 0)
+> >                     debugfs_create_file("clk_parent", 0444, root, core,
+> >                                         &current_parent_fops);
+> >             }
 > >
-> > Why table? Can you simply use the formula?!
-> 
-> Heh, yeah. So these are rounded values from a table and I never
-> noticed that after rounding they follow a nice arithmetic progression.
-> It'll probably still be nice to have an explanation in the comments
-> about the formula then.
+>
 
-Yup!
+Actually... After considering all options and looking at actual diff,
+I'll go with that option: looks least cluttered, and the delta is
+really minimal.
 
-> > > +};
-
-...
-
-> > > +               irq_set_handler_locked(d, handle_bad_irq);
+> That looks good to me. But I'd keep it as is, if you don't have a
+> strong opinion about this: looks better with braces, because it's
+> multi-line blocks (although physically and not semantically).
+>
+> > Then, I'm wondering if it really is worth it to have separate cases for
+> > "num_parents> 1" and "num_parents > 0".  If there's a single parent,
+> > current_parent_write() should still work fine with "0", wouldn't it?
+> > Then the only differences are the file mode and the fops.
+> > You could handle that with #defines above, like is currently done for
+> > clk_rate_mode.  And the checkpatch issue is gone ;-)
 > >
-> > Why is this here? Move it to ->probe().
-> 
-> My thinking was that if something tries to set a an unsupported irq
-> type, we should make sure the caller doesn't get spurious interrupts
-> because we left the handler at its old value.
-
-You already assigned to this handler in the ->probe(), what's this then?
-
-...
-
-> > > +               if (value <= 6)
-> > > +                       writel(value, sfp->padctl + IO_PADSHARE_SEL);
-> > > +               else
+>
+> I considered such case. But it would be inconsistent with this already
+> existing code:
+>
+>     if (core->num_parents > 1)
+>         debugfs_create_file("clk_possible_parents", 0444, root, core,
+>                     &possible_parents_fops);
+>
+> Because user would probably want to use both 'clk_parent' and
+> 'clk_possible_parents' together (e.g. see my example in commit
+> message). From logical point of view, I designed that code for testing
+> MUX clocks, and I doubt there are any MUXes with only one parent
+> (input signal). So I'd like to keep this logic as is, if you don't
+> mind, even though it might appear bulky.
+>
+> So for v6 I'm going to go exactly with what Andy suggested, hope it's
+> fine with you?
+>
+> > Gr{oetje,eeting}s,
 > >
-> > > +                       dev_err(dev, "invalid signal group %u\n", value);
+> >                         Geert
 > >
-> > Why _err if you not bail out here?
-> 
-> My thinking was that if the device tree specifies an invalid signal
-> group we should just leave the setting alone and not break booting,
-> but still be loud about it. Maybe that's too lenient and it's better
-> to crash and burn immediately if someone does that.
-
-Here is inconsistency between level of the message and following action.
-There are (rare!) cases when it's justified, but I believe it's not the
-case here. You have two choices or justify why you have to use error
-level without stopping process.
-
-...
-
-All uncommented stuff you agreed on, correct?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> >
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
