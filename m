@@ -2,94 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1887CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A832C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E364961053
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 568EE61152
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229538AbhJNGkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 02:40:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58772 "EHLO mail.kernel.org"
+        id S229502AbhJNGqr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 02:46:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229457AbhJNGkr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Oct 2021 02:40:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7168561029;
-        Thu, 14 Oct 2021 06:38:43 +0000 (UTC)
+        id S229457AbhJNGqr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 02:46:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 866CF60F21;
+        Thu, 14 Oct 2021 06:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634193523;
-        bh=G10VS/6BBtrqv0MgD6Bl95nuURYHl2bUPHYWpk2iiaU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GXOl8jwtUUrxofhl0847Wcnp5i6+5J3OwDO0LcMGR7y9Vxvxryt4etEdDPkC3zTz3
-         UR8qiDsFkY33+1IQo60QktQ5PdFqwX6yAOpg3yA3ahZLVlVNSV3cerWYQRCyssxwM9
-         b2tHdt7BPYNe/oIyDw2//Gierx4309Z0VK9SRmT2DTOfn8X3Pve3JGGbaK8ujO9H8U
-         6hloPK4lrhzzJrC91P5ZdIlcC3KoB8DVaZtAB8msDbKwqoPrOtWaxglJQWhO7cS48U
-         HNlBa5ByB1Io5T2V6fKIlCZ6p1D7AgSYQ0Mo229/tbnj/hAKqiK4LWPlKbWKEt85UT
-         XdQKdbxS4lBog==
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1634193882;
+        bh=nyxODPb2p/zfIUMBOeqoEw5JaXddVkpJ92sGj/BOz9s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tu/q1YOH0iwtZN4UygL2yK/ZCtGlNkHkv+4CkT7UH0l4xVuQ0RoX7L+UUhHiwLmoQ
+         NfBOjSwtJnumc/gpDZ/bf0b3RgDZBb7VsqBIgxU8pouXfKtfJKya8iHUa+jBpBWh9v
+         gvL39KaaH4Ga85+OSJqdDyOmQGWhd0yPpGT99/BgZpXsu88D4azzsS0sviquunf5O3
+         Q8icSczn0gLmisO5MtwvtGPkMxFAf1Bn5F+DHCNoevsGM0y/Uwe8LpeCie14HrGtVP
+         Cei1u8e+NGD/P2zIk0PbRM2mlFyXBVxIpzMHR+IObIf28oq6Ll6zmxSo9EBj3vgcy+
+         xJfWKPuHW03+Q==
+Date:   Thu, 14 Oct 2021 08:44:37 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linuxarm@huawei.com,
+        mauro.chehab@huawei.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: fix the need of booking clk_ignore_unused=true
+ on embedded devs
+Message-ID: <20211014084437.47a04183@sal.lan>
+In-Reply-To: <20211011061718.GB1834@thinkpad>
+References: <cover.1633607765.git.mchehab+huawei@kernel.org>
+        <20211011061718.GB1834@thinkpad>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4e2e8b98.cc9.17c7c899967.Coremail.zhanglyra@163.com>
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com> <163416267274.936110.2784588823311275089@swboyd.mtv.corp.google.com> <5b8198f8.cc.17c7c0fc3e2.Coremail.zhanglyra@163.com> <163417628586.936110.17321921086246870791@swboyd.mtv.corp.google.com> <4e2e8b98.cc9.17c7c899967.Coremail.zhanglyra@163.com>
-Subject: Re:Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512 global registers
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-To:     ChunyanZhang <zhanglyra@163.com>
-Date:   Wed, 13 Oct 2021 23:38:42 -0700
-Message-ID: <163419352215.936110.17102590465311356046@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting ChunyanZhang (2021-10-13 19:02:44)
-> At 2021-10-14 09:51:25, "Stephen Boyd" <sboyd@kernel.org> wrote:
-> >Quoting ChunyanZhang (2021-10-13 16:49:40)
-> >> At 2021-10-14 06:04:32, "Stephen Boyd" <sboyd@kernel.org> wrote:
-> >> >Quoting Chunyan Zhang (2021-09-22 23:41:35)
-> >> >> diff --git a/Documentation/devicetree/bindings/mfd/sprd,ums512-glbr=
-eg.yaml b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> >> >> +
-> >> >> +examples:
-> >> >> +  - |
-> >> >> +    ap_apb_regs: syscon@71000000 {
-> >> >> +      compatible =3D "sprd,ums512-glbregs", "syscon", "simple-mfd";
-> >> >> +      reg =3D <0x71000000 0x3000>;
-> >> >> +      #address-cells =3D <1>;
-> >> >> +      #size-cells =3D <1>;
-> >> >> +      ranges =3D <0 0x71000000 0x3000>;
-> >> >> +
-> >> >> +      clock-controller@0 {
-> >> >> +        compatible =3D "sprd,ums512-apahb-gate";
-> >> >
-> >> >Why is this a subnode of a syscon and simple-mfd? Why not put the>clo=
-ck-controller@71000000 directly onto the bus? Does making it a child
-> >> >node help somehow?
-> >>=20
-> >> These clocks are at the same register range with global registers. I o=
-riginally put them directly onto the bus indeed when submitting the patches=
- for SC9863A clocks last year, and it had a private property named 'sprd,sy=
-scon' which could provide regmap for these clocks.
-> >>=20
-> >> Rob suggested [1] us to make them a child of the syscon, and would not=
- need the private property 'sprd, syscon' then.
-> >
-> >Why do you need to use a syscon? Are the registers shared with some
-> >other driver?
->=20
-> Yes, shared with more than one devices which basically are multimedia dev=
-ices. You may noticed that these are all gate clocks which are in the globa=
-l registers ranges and are used to controll the enable status of some devic=
-es or some part of devices.
->=20
+Em Mon, 11 Oct 2021 11:47:18 +0530
+Manivannan Sadhasivam <mani@kernel.org> escreveu:
 
-Where does the multimedia device address space start? I see 0x71000000
-to 0x71002000 is for the clock-controller. Is the multimedia device at
-0x71002000 to 0x71003000? If so they're next to each other but not
-sharing the same register space. Is ap_apb_regs more like a soft macro
-that combines a few clks with some multimedia device?
+> Hi Mauro,
+> 
+> On Thu, Oct 07, 2021 at 02:06:53PM +0200, Mauro Carvalho Chehab wrote:
+> > Currently, the only way to boot a Kernel with drivers built as modules on embedded 
+> > devices like HiKey 970 is to pass clk_ignore_unused=true as a modprobe parameter.
+> > 
+> > There are two separate issues:
+> > 
+> > 1. the clk's core calls clk_disable_unused() too early. By the time this
+> >    function is called, only the builtin drivers were already probed/initialized.
+> >    Drivers built as modules will only be probed afterwards.
+> > 
+> >    This cause a race condition and boot instability, as the clk core will try
+> >    to disable clocks while the drivers built as modules are still being
+> >    probed and initialized.  
+> 
+> So you are mentioning a "race" condition here but it is not mentioned in the
+> actual patch. 
+
+Patch 1 explains it...
+
+> If the issue you are seeing is because the clocks used by the
+> modules are disabled before they are probed, why can't they just enable the
+> clocks during the probe time?
+> 
+> Am I missing something?
+
+What happens is that such clocks are enabled when the system boots,
+and, when those are disabled, very bad things happen, as those
+interrupt clocks used by several parts of the system.
+
+Most of the problems happen because the ARM SoC produce SError NMI 
+interrupts when some such clocks are disabled, which calls panic().
+
+Other clocks disable some key components of the system that aren't
+directly related with a driver, but, instead, controls some core
+part of the device, making the SoC to wait forever for an I/O event
+that will never happen.
+
+A small set of clocks make the system unreliable, causing drivers
+to fail probing. Those can either lead to panic() or break support
+for a peripheral, like WiFi, USB and/or PCI.
+
+The core issue is that clk_disable_unused() happens too early.
+This is called at late_initcall_sync() time, which is triggered
+before the probe/init code of the drivers compiled as modules
+to be called. So, what happens is:
+
+
+ BIOS enables clocks that are needed for the device to boot             
+ |                                
+ +-> Linux start booting
+ |
+ +-> builtin drivers are probed 
+ |
+ +--------------------------------\
+ |                                |
+ +-> late_initcall_sync() calls   +-> Modules start probing
+ |   clk_disable_unused)          |
+ |                                +-> Some drivers are probed
+ |                                |   before their needed clks
+ |                                |   got disabled
+ |                                |
+ +-> Clocks are disabled          |
+ |                                |
+ +-> SError -> panic()            |
+                                  \ (several drivers weren't
+				     probed/initialized)
+
+The only fix for that is to postpone clk_disable_unused() to happen
+after all driver probe/init are called, or to completely disable
+it.
+
+The current distributions recommended at:
+	https://www.96boards.org/product/hikey970/
+
+pass clk_ignore_unused as a boot parameter, which disables the call
+to clk_disable_unused().
+
+The only sane way to get rid of that is to fix the core to let the
+drivers to finish probe/init before disabling clocks.
+
+See, the regulators logic that disables unused power lines also
+do the same: it waits for 30 seconds after late_initcall_sync()
+before calling Runtime PM suspend logic.
+
+Regards,
+Mauro
