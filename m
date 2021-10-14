@@ -2,114 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FC4C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85399C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A80D46101E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F8D6101E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230032AbhJNJzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 05:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
+        id S230172AbhJNJ57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 05:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230010AbhJNJzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 05:55:49 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4AEC06174E
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 02:53:44 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id x27so24610832lfu.5
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 02:53:44 -0700 (PDT)
+        with ESMTP id S230026AbhJNJ55 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 05:57:57 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE09C061570;
+        Thu, 14 Oct 2021 02:55:52 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id ec8so21927502edb.6;
+        Thu, 14 Oct 2021 02:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/KsJRdiob87Ja5PgF5X/ti+BR7dI5FBOZcD9kz6Ozto=;
-        b=h9409aXB6YV05xq/pABEkmxSxFhTfpqrruXdlc5z7R9nLrph5NnzM/EBjSxJ9VBEd1
-         6NMrB5sswM/Ks9ujE5TeT+LdGjhG5OW/Sthv0VyCQ+5TDGCWjs3BSdQpHqLJR32u/IVy
-         3yA7DnbG9F5PlUNRf80NI+u/iJrs96xdUBoYX07isyy2y2gEVggGj6uEw2GiV0+H3vCm
-         DLkuhQVpOZ2Epai5CX0uonVB6S/iAKC0NtfkPPQdQlX2OHtmG+crZfWual8sefpN/EVe
-         CILMtmLbkDVMdRNOJKLfW1mb3VJ5MpatvmEAXlRj9OHXTVA9YNMAOi0HLak+NWmk/Vjg
-         WwYA==
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=74OxFDQINVP0t2Tym9riIimusp8CKNtXPfS58HmDiLw=;
+        b=BS3g7dZGSS+szT6wf9qurt+RBfc0UoAM3kDnpqYZBSvbGq3ebU1UZHUSXwn5DYagOn
+         uvm22zri7XDVR2V/BNROSi7XPrguJodp/U0OLusEP8WUYZM+MWa9tRwKsHewBYskDx0b
+         ChgmNr7tWfYhfi1vP5HCChHcHD8thT9sQN5kEz8IMfjOq+buxwnn99DTB9VZp2xExb7o
+         GCOSEI9mnnzWM1YyNbMQHBF6X0VGQ692z1THXDHoDfi9mVWTs4pLhXV5TbrOdnCKOrXX
+         dPj3JQ0MxFCafqrhIxqWYQhRJRE60pjnDFRWYJa5Y+kqr/3ZmF5UD6dALujoXlx01dSk
+         u/ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/KsJRdiob87Ja5PgF5X/ti+BR7dI5FBOZcD9kz6Ozto=;
-        b=2aaTJJu/ZbGq00HnfqTkYjmwC/It6nGxLTDcGCVmTrrlWEsnKi08eoYZvk1yx2HpL2
-         +xqrCZfi9PvKDc+t2boxe77B+kOsaGegcNSapedTNUpiNve78ZdNQFWFwN6pQa+p9qid
-         gAHqJHtvSzlVWjV9Ul3jMbsX3rd6cgq7Ubw5qVf2NmdggcGalPjXkI5qtp1XP3FBDLmE
-         0e0K/O4CoSzxDPiUfVPU3gPnIfyajd9spGQm0ocpMkFeTpdgKIuKnQF05ZvTL+4BEU0A
-         OM3ApJf3OvH0PqQr4GrysgwMFKzVAJ5becSmQm33tW2QQXZCebAatnDRfz6jB33M1+VY
-         s/nQ==
-X-Gm-Message-State: AOAM533b9Cj8gIvXsm+vHKPN/h4o3vozZmODtwLpIS+BC4yHv5RHLG74
-        GfQSN+v31klortq4MA3EZwHP1g==
-X-Google-Smtp-Source: ABdhPJyyYEu0EPxRrb37K9hW8OcK5o+4Jwzf2jK9MJng9VLqg4T97Er87U0t4/FYgeISUNHmm0nAUw==
-X-Received: by 2002:a05:6512:b08:: with SMTP id w8mr4024902lfu.505.1634205223215;
-        Thu, 14 Oct 2021 02:53:43 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id s11sm181297lfd.262.2021.10.14.02.53.42
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=74OxFDQINVP0t2Tym9riIimusp8CKNtXPfS58HmDiLw=;
+        b=IU+//E9QpNe1jAJNB5UnDteA53co3O4SZlgu4qXJKY+CYcjvBJ/4eQfZpO05vyTCIE
+         1UKptOO+2vkOm1rjHQV3QB/1w/MYMoDuhx0EUjAYE3A/v5qk9BLeX8S7PdJjXV+rHf4w
+         BdZdXNbYNiZ8vqnRkLsZg5HC08rSIb3IpCe1R+xdBIyqMdh/XicmAPe+gb3qbE+0Cy2I
+         gfo4HWJrEZ0MQJl8RLBTO7ZF9d1CqA1Q3Wctp+MgnQx/+jCqe7OlSYACX+S7tTXDPGzL
+         JH5H5akyG0orKxW5yh+nfqGZXKKMZLa2UdkpHvTn5AaAWx07iou/GL+YL4rxd+ZCUkyd
+         hoYw==
+X-Gm-Message-State: AOAM531GUKPMRnztVvlWiAYeXtf3Y2UEFqZjVC0h7Z7k+hyODVChHK51
+        yh2B/s3QfBiz67EBQ0XQ9w==
+X-Google-Smtp-Source: ABdhPJwBHbs0l+qwtXWx6kiyM/z9QoRTuUFdwCI8NaqkcTZIJ9KfqxmcIMU5Y2fSgZC1yz6FzYc58g==
+X-Received: by 2002:a17:906:a382:: with SMTP id k2mr2543789ejz.454.1634205351095;
+        Thu, 14 Oct 2021 02:55:51 -0700 (PDT)
+Received: from ?IPv6:2a02:810b:f40:4200:e1d9:2e2e:532d:87df? ([2a02:810b:f40:4200:e1d9:2e2e:532d:87df])
+        by smtp.gmail.com with ESMTPSA id h18sm1513410ejt.29.2021.10.14.02.55.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Oct 2021 02:53:42 -0700 (PDT)
-Subject: Re: [PATCH v7 7/8] clk: qcom: dispcc-sm8250: stop using mmcx
- regulator
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
- <20210829154757.784699-8-dmitry.baryshkov@linaro.org>
- <YV8WsQb9H7+CaLjP@ripper> <4614587c-b87a-4375-cb6a-6af6f5462c6b@linaro.org>
- <163415465484.936110.9292145029740247591@swboyd.mtv.corp.google.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <070b1b25-3718-5f3a-869b-a3954fdcc7c5@linaro.org>
-Date:   Thu, 14 Oct 2021 12:53:41 +0300
+        Thu, 14 Oct 2021 02:55:50 -0700 (PDT)
+Subject: Re: [PATCH v1 1/6] clk: divider: Implement and wire up
+ .determine_rate by default
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-clk@vger.kernel.org, sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
+ <20210702225145.2643303-2-martin.blumenstingl@googlemail.com>
+From:   Alex Bee <knaerzche@gmail.com>
+Message-ID: <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com>
+Date:   Thu, 14 Oct 2021 11:55:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <163415465484.936110.9292145029740247591@swboyd.mtv.corp.google.com>
+In-Reply-To: <20210702225145.2643303-2-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13/10/2021 22:50, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2021-10-07 09:16:13)
->> On 07/10/2021 18:48, Bjorn Andersson wrote:
->>> On Sun 29 Aug 08:47 PDT 2021, Dmitry Baryshkov wrote:
->>>
->>>> Now as the common qcom clock controller code has been taught about power
->>>> domains, stop mentioning mmcx supply as a way to power up the clock
->>>> controller's gdsc.
->>>>
->>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>
->>> Once we merge these, I expect that the boards will start crashing if
->>> the kernel is booted using an existing DTB?
->>>
->>> Is it okay to just merge the first 6 patches in the series now and
->>> postpone these two until we've had the dts change sitting for a while?
->>
->> Sure it is.
->>
-> 
-> What's the merge strategy? It goes through arm-soc?
+Hi,
 
-I think this should go through the clk tree. There is little chance of 
-conflicts.
+Am 03.07.21 um 00:51 schrieb Martin Blumenstingl:
+> .determine_rate is meant to replace .round_rate. The former comes with a
+> benefit which is especially relevant on 32-bit systems: since
+> .determine_rate uses an "unsigned long" (compared to a "signed long"
+> which is used by .round_rate) the maximum value on 32-bit systems
+> increases from 2^31 (or approx. 2.14GHz) to 2^32 (or approx. 4.29GHz).
+>
+> Implement .determine_rate in addition to .round_rate so drivers that are
+> using clk_divider_{ro_,}ops can benefit from this by default. Keep the
+> .round_rate callback for now since some drivers rely on
+> clk_divider_ops.round_rate being implemented.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+This commit  breaks composite clocks with multiple parents, since it 
+adds a  determine_rate callback, which is preferred over 
+clock_round_rate in  clk_composite_determine_rate in clk-composite.c and 
+the "best-parent"-determination  is only done for clock_round_rate-op 
+there.
+There is no "best-parent"-determination  in determine_rate in 
+clk-divider which clk-compsite seems to expect - nor any multiple 
+parents handling at all.  That means that the composite will always stay 
+at the same/initial parent  clock (from the mux), without ever changing 
+it (even if necessary).
 
+This breaks lot of clocks for Rockchip which intensively uses 
+composites,  i.e. those clocks will always stay at the initial parent, 
+which in some cases  is the XTAL clock and I strongly guess it is the 
+same for other platforms,  which use composite clocks having more than 
+one parent (e.g. mediatek, ti ...)
 
--- 
-With best wishes
-Dmitry
+Example (RK3399)
+clk_sdio is set (initialized) with XTAL (24 MHz) as parent in u-boot.  
+It will always stay at this parent, even if the mmc driver sets a rate 
+of  200 MHz (fails, as the nature of things), which should switch it to 
+any of its possible parent PLLs defined in 
+mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p (see clk-rk3399.c)  - which 
+never happens.
+
+Reverting this commit makes it work again: Unless there is a quick and 
+obvious fix for that, I guess this should be done for 5.15 - even if the 
+real issue is somewhere else.
+
+Alex
+
+> ---
+>   drivers/clk/clk-divider.c | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+>
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 87ba4966b0e8..f6b2bf558486 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -446,6 +446,27 @@ static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
+>   				  divider->width, divider->flags);
+>   }
+>   
+> +static int clk_divider_determine_rate(struct clk_hw *hw,
+> +				      struct clk_rate_request *req)
+> +{
+> +	struct clk_divider *divider = to_clk_divider(hw);
+> +
+> +	/* if read only, just return current value */
+> +	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> +		u32 val;
+> +
+> +		val = clk_div_readl(divider) >> divider->shift;
+> +		val &= clk_div_mask(divider->width);
+> +
+> +		return divider_ro_determine_rate(hw, req, divider->table,
+> +						 divider->width,
+> +						 divider->flags, val);
+> +	}
+> +
+> +	return divider_determine_rate(hw, req, divider->table, divider->width,
+> +				      divider->flags);
+> +}
+> +
+>   int divider_get_val(unsigned long rate, unsigned long parent_rate,
+>   		    const struct clk_div_table *table, u8 width,
+>   		    unsigned long flags)
+> @@ -501,6 +522,7 @@ static int clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>   const struct clk_ops clk_divider_ops = {
+>   	.recalc_rate = clk_divider_recalc_rate,
+>   	.round_rate = clk_divider_round_rate,
+> +	.determine_rate = clk_divider_determine_rate,
+>   	.set_rate = clk_divider_set_rate,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_divider_ops);
+> @@ -508,6 +530,7 @@ EXPORT_SYMBOL_GPL(clk_divider_ops);
+>   const struct clk_ops clk_divider_ro_ops = {
+>   	.recalc_rate = clk_divider_recalc_rate,
+>   	.round_rate = clk_divider_round_rate,
+> +	.determine_rate = clk_divider_determine_rate,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
+>   
