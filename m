@@ -2,110 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3246BC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E369C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 167DD60E96
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF88610E6
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231819AbhJNTsu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 15:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56302 "EHLO
+        id S233166AbhJNTz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 15:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229926AbhJNTsu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 15:48:50 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E451DC061753
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 12:46:44 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g10so28728471edj.1
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 12:46:44 -0700 (PDT)
+        with ESMTP id S233601AbhJNTz5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 15:55:57 -0400
+Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD954C061755
+        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 12:53:52 -0700 (PDT)
+Received: by mail-pf1-x449.google.com with SMTP id j3-20020a056a00234300b0044d605e3e0fso3872304pfj.21
+        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 12:53:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LIsEKXGFSNqQILX0QaJSH8NtoAJ3+z1bPLQqixvplHo=;
-        b=hNxW5hC2idI1Jg8+e26evIeA5PeqpxeKwsKwB+H30h8vvhunj1NqfCIkEBTEPWiIW6
-         t24A1obCettCyty86kX4WHyoEnfLRxjsSfL2F/OKRbHMF511op01Xx1H62emuzBVoBn9
-         9wCjlWfo0NQPwekkaNaUqxT/dzQt9N00eV/U3OIUTbnWXUuDKZoMBxoauySOY1qOD/V5
-         CKgrqfEh10PJdZm6Yc9vcPAN61vfPJb6vk1OBq4g2snHqF6ys3BGN8Owy2PaZxTHacN2
-         H0Uzs8OD6vn1CoCPtyBuQFYohU+eLMjqW3SIgrqS6khDvWmHV2UzXC/1nNQKRV3e4qOH
-         CVzw==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=R/A1A0PEacctbWxfoyinE4EXZjh0hs5rayBemyeKvhs=;
+        b=Ccj60KB5+clN/g8yw8V0AvFPqpYtRevRPNAl88ECaouDXwhePm0EVHn3TvUZXBuikb
+         NAKgCmTzauq5p0dQbKjSIBENAVJbSfMBQSV+lMb5tUj2fFi3+Aq2GeRXo9by7rMu/6f5
+         D7PpHFhD7x1sF4gdy/3JxjrmCmAM4yTrv29zz80JGrCedp6YfuqRmzzfqaSv/esEj9sr
+         SLCJqftzhLudSp/QUTsOVfNuQ2FNHexSrmZ0TCNe8tG8xU7TaoiEKHZm0Jtr8DkueIT6
+         5shOlqnZ4vWy2erzNJHml8C/2dGDK29j9cxITM0usC7jpgFRtQGx0tChJVwri9MFfOxd
+         /Ltg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LIsEKXGFSNqQILX0QaJSH8NtoAJ3+z1bPLQqixvplHo=;
-        b=oO1J9AZImENGUi17/SwdBe1ZToq3VDdjqIKiHmP/7cbqi1ocWyMEzGyKHpLXK/8mw2
-         5amBD086bXY5PJwdhli//0dXlOCClYnPZfFi7anMqmf0DiFjF5HsqdcIS5EwvS8YNHek
-         7AO3CJ5A9kFSUsTLKeQsJ/gn800uFPNNxnaq1DzVc73Xa7HN90hBk4/t8QOGtYVk92Ka
-         xYs3IkcnJEJW3Mh2UwlV4uYZxSMyB/eYJidXwKHXaXM/Wn3eD4GFnf1QtDfqxJ7J0dZU
-         8mMmERoZLm+/b6bzIdI7rUejFJQMoWzeiFQhzVoXaphL7fqEL699OGHG7KP1KSiSr+yp
-         P5Hw==
-X-Gm-Message-State: AOAM532qruyZ4s4fEYVbEZ9XjDlKcBCRamnRFhl4ihhwlKR5PrN0mnz4
-        03G7LPg3dwxEaWuSkj1bv/t8LySdfNv5HvW+FFjlCw==
-X-Google-Smtp-Source: ABdhPJwt4SGLP1Ol1ETFJg5qPFl0XVP2v4pyiP5CQ1uByeWMBYVAMQNWbYhCWtLDwTvOQ3exBnQhRcPeb/5S6cFcZIU=
-X-Received: by 2002:a17:907:9908:: with SMTP id ka8mr1283587ejc.164.1634240803070;
- Thu, 14 Oct 2021 12:46:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20211013221032eucas1p1d8e2fcc36d3f021aa86cb846df0ed6da@eucas1p1.samsung.com>
- <20211013221021.3433704-1-willmcvicker@google.com> <b968773d-9ee4-4e7a-7e33-f3ded7362a9c@samsung.com>
-In-Reply-To: <b968773d-9ee4-4e7a-7e33-f3ded7362a9c@samsung.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=R/A1A0PEacctbWxfoyinE4EXZjh0hs5rayBemyeKvhs=;
+        b=xaUndQMZhwp4RNK5pVhPknTrudXlYbnJMeFKsCpwf7U7LdzAwiStUvf4qXfHEODwe8
+         C+Vx16uc6/TQYi1KgUJCGo/3hO6Ap4gbcaaBrqalNdzWDIEL/SjpOddm+9V44zOSVsaz
+         hrIVWjZ2XYvgoIPmxzAS4Y4mqj2FEDQfw+Hf+XwKh6bPHw/1Iz6OZ4a0EeweD3r0IQt0
+         kbb9CGA6i97jzuPN4plVO45u7+AjR1c08jc72b/28hfRsikSyiAqrxhw/CxxA3EIFzua
+         0NnOzdDX3maeRu04VaBYh+MJw1ltGZ2yLF16Chunu2X3YiSMBOPh9rVRwI+yOofZpyex
+         qTMA==
+X-Gm-Message-State: AOAM532qF7OIfnQ8mUFPkfciv5sBREYjAA2F2Q/rAtNRgwPFQsKoF/9r
+        POKD0KLgUdcpKvPYD03/vBdIOobpO42lcTixNSQ=
+X-Google-Smtp-Source: ABdhPJzJB0746aYvHaw0UyQpC8oiqKxrUMbT0zTR2WHYcybIVao09r4yq54iQiEOGomsy45bhkxA4UHH5Xjs/8E1XLU=
+X-Received: from willmcvicker.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:2dd0])
+ (user=willmcvicker job=sendgmr) by 2002:a17:902:b70d:b0:13d:f6c9:2066 with
+ SMTP id d13-20020a170902b70d00b0013df6c92066mr6942092pls.2.1634241232300;
+ Thu, 14 Oct 2021 12:53:52 -0700 (PDT)
+Date:   Thu, 14 Oct 2021 19:53:44 +0000
+Message-Id: <20211014195347.3635601-1-willmcvicker@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
+Subject: [RFT PATCH v4 0/2] clk: samsung: add common support for CPU clocks
 From:   Will McVicker <willmcvicker@google.com>
-Date:   Thu, 14 Oct 2021 12:46:27 -0700
-Message-ID: <CABYd82bcyweWba52wM6hXEgL_z6Ud+yE=Wtkb=5N8RyiQnxxiA@mail.gmail.com>
-Subject: Re: [RFT PATCH v3 0/2] clk: samsung: add common support for CPU clocks
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     kernel-team@android.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Will McVicker <willmcvicker@google.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 14, 2021 at 1:33 AM Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> On 14.10.2021 00:10, Will McVicker wrote:
-> > These two patches were originally a part of the series [1]. They add
-> > support to the common samsung clock driver to parse and register the
-> > CPU clocks when provided. This allows for the samsung clock drivers to
-> > simply provide a `struct samsung_cpu_clock` to `struct samsung_cmu_info`
-> > and then call samsung_cmu_register_one(). With this new support, we can
-> > now get rid of the custom apollo and atlas CLK_OF_DECLARE init functions.
-> >
-> > Since I don't have the hardware to test these, I'm including the RFT tag
-> > to try and get help testing and verifying these.
-> >
-> > [1] https://protect2.fireeye.com/v1/url?k=91329df7-cea9a478-913316b8-0cc47a31307c-8e0b8e6442100c5a&q=1&e=50af1e33-8bdf-429f-9e54-434d425998d6&u=https%3A%2F%2Flore.kernel.org%2Fall%2F20210928235635.1348330-4-willmcvicker%40google.com%2F
->
-> Works fine on my Exynos5433 TM2e test board.
->
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+These two patches were originally a part of the series [1]. They add
+support to the common samsung clock driver to parse and register the
+CPU clocks when provided. This allows for the samsung clock drivers to
+simply provide a `struct samsung_cpu_clock` to `struct samsung_cmu_info`
+and then call samsung_cmu_register_one(). With this new support, we can
+now get rid of the custom apollo and atlas CLK_OF_DECLARE init functions.
 
-Thanks for testing!
+Since I don't have the hardware to test these, I'm including the RFT tag
+to try and get help testing and verifying these.
 
->
-> > Will McVicker (2):
-> >    [RFT] clk: samsung: add support for CPU clocks
-> >    [RFT] clk: samsung: exynos5433: update apollo and atlas clock probing
-> >
-> >   drivers/clk/samsung/clk-cpu.c        |  26 ++++++
-> >   drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
-> >   drivers/clk/samsung/clk.c            |   2 +
-> >   drivers/clk/samsung/clk.h            |  26 ++++++
-> >   4 files changed, 102 insertions(+), 72 deletions(-)
-> >
-> Best regards
-> --
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
->
+[1] https://lore.kernel.org/all/20210928235635.1348330-4-willmcvicker@google.com/
+
+Will McVicker (2):
+  [RFT] clk: samsung: add support for CPU clocks
+  [RFT] clk: samsung: exynos5433: update apollo and atlas clock probing
+--
+Changes in v4:
+ - Updated 'struct samsung_cpu_clock' to reference the parent and alt_parent
+   hw clocks via ID instead of name
+ - Dropped __clk_lookup() in favor of ctx->clk_data.hw instead
+
+Changes in v3:
+ - Same as v1-v2
+ - Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+ drivers/clk/samsung/clk-cpu.c        |  18 ++++
+ drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
+ drivers/clk/samsung/clk.c            |   2 +
+ drivers/clk/samsung/clk.h            |  26 ++++++
+ 4 files changed, 94 insertions(+), 72 deletions(-)
+
+-- 
+2.33.0.1079.g6e70778dc9-goog
+
