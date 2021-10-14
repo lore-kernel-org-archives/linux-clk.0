@@ -2,70 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EF9C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B3FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC6DB61151
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D2CE61156
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 19:13:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231495AbhJNTNg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 15:13:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
+        id S233016AbhJNTPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 15:15:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231265AbhJNTNe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Oct 2021 15:13:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9923661090;
-        Thu, 14 Oct 2021 19:11:28 +0000 (UTC)
+        id S232392AbhJNTPF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 15:15:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 26E1561108;
+        Thu, 14 Oct 2021 19:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634238688;
-        bh=SUExpjeO0ZWO9PXaGWFIlspnd7e4CidpfLchVwZpqxc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=uM51oHn1wk6Sr092ovOaqu66dbICk3ixFMnaV5Dji84LkukJy3SHajtA5BeGaQ3b6
-         uHB/fWQrD6ZoR5BbTeKFZshjA14a/ZWgJSBAaO8qgmTRGQHad41AcobjYjVoX2j6vv
-         SE0GxVoj8tsJ7hPe6fFcrNrY96eH9cIxQEs2wv/ZueYYXs1yYzxQBrIXmSKh2fXm8W
-         ujjuA2pSeH6SzVFHV6Raww6jTIEyF/4RMt8Hgunj1/Cv1kghxp8sY0udGG5j0yjTGJ
-         vVj5/nRcLUL1Vhv3llDqmnygGjzL4haRbZ2dTN1jwzWpTVyZcLwvDFLchfGRx76PxJ
-         qfssM7rZH2D6w==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <202110142319.FQFXTiZp-lkp@intel.com>
-References: <202110142319.FQFXTiZp-lkp@intel.com>
-Subject: Re: [clk:clk-qcom 17/38] drivers/clk/qcom/gcc-sc7280.c:200:37: error: 'gcc_parent_data_0_ao' defined but not used
+        s=k20201202; t=1634238780;
+        bh=5qD1P2LTtN0mwVjdHZNYQdfeTUsXyK//h1c7T1/LYX0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DoRYWtotHTCQKy2AqZgpcfZ3n2/c/YN9edIYGdaPhfWzd3QkLc2BbLPfmU3UtyltD
+         Py+3O0Rk0JaL4bcwTIHPKZrnddQTA9JYHz0H6vcaRfBb45DvYMlPlyraXiBhaUROQr
+         Rd1Kf0PtFowVR9j2ixkPm/RDU9bfrUR3XQGHWWu3FIokVgqjLrFd4SBHbQXQyK+4fR
+         8243ZjRM4Sp3p29iLKImZSF2Vynhxekw5VoXOrjgsG1YJSXM8xEOLQsErJUsW5ZFsB
+         jFSPlDmJlf3UBBmglECjHILt0kgLaLwskJr8TGtMkyZ9/x6IOFpd9ozdF3fcgG93tO
+         phuHScJIGVzeg==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-To:     Taniya Das <tdas@codeaurora.org>, kernel test robot <lkp@intel.com>
-Date:   Thu, 14 Oct 2021 12:11:27 -0700
-Message-ID: <163423868721.1688384.12110807137093333765@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        kernel test robot <lkp@intel.com>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: gcc-sc7280: Drop unused array
+Date:   Thu, 14 Oct 2021 12:12:59 -0700
+Message-Id: <20211014191259.1689641-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting kernel test robot (2021-10-14 08:53:27)
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
--qcom
-> head:   1daec8cfebc28bbe596743c34bebd11b80fba990
-> commit: 3165d1e3c737fd9432e9e68b44a64c47f886f647 [17/38] clk: qcom: gcc: =
-Remove CPUSS clocks control for SC7280
-> config: arm-buildonly-randconfig-r005-20211014 (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 11.2.0
-> reproduce (this is a W=3D1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/c=
-ommit/?id=3D3165d1e3c737fd9432e9e68b44a64c47f886f647
->         git remote add clk https://git.kernel.org/pub/scm/linux/kernel/gi=
-t/clk/linux.git
->         git fetch --no-tags clk clk-qcom
->         git checkout 3165d1e3c737fd9432e9e68b44a64c47f886f647
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dgcc-11.2.0 make.cro=
-ss ARCH=3Darm=20
->=20
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
+After commit 3165d1e3c737 ("clk: qcom: gcc: Remove CPUSS clocks control
+for SC7280") this array is unused. Remove it.
 
-Thanks. I need to update my toolchain.
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Taniya Das <tdas@codeaurora.org>
+Fixes: 3165d1e3c737 ("clk: qcom: gcc: Remove CPUSS clocks control for SC7280")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/gcc-sc7280.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index 667f584bc2e1..8fb6bd69f240 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -197,12 +197,6 @@ static const struct clk_parent_data gcc_parent_data_0[] = {
+ 	{ .hw = &gcc_gpll0_out_even.clkr.hw },
+ };
+ 
+-static const struct clk_parent_data gcc_parent_data_0_ao[] = {
+-	{ .fw_name = "bi_tcxo_ao" },
+-	{ .hw = &gcc_gpll0.clkr.hw },
+-	{ .hw = &gcc_gpll0_out_even.clkr.hw },
+-};
+-
+ static const struct parent_map gcc_parent_map_1[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_GCC_GPLL0_OUT_MAIN, 1 },
+
+base-commit: 1daec8cfebc28bbe596743c34bebd11b80fba990
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
