@@ -2,140 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6243C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43908C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE55611AD
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B677610F9
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 06:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229530AbhJNGvI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 02:51:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbhJNGvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 02:51:04 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5E0C061570
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 23:48:52 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id m22so16240665wrb.0
-        for <linux-clk@vger.kernel.org>; Wed, 13 Oct 2021 23:48:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=tbshLX4iQMb9Vn7zjhDZQ6BLeAzJL58tLLtT5Oc9Dyw=;
-        b=I2fHaN3SeLVf9AvOIVBuIk8A4RiG2X+cOS+8PIYpKXwXpREvI0UYUa3AmutRXJY64P
-         4bfUqx39QdhxEMiaLoI4Yw6w0u9e1tf5xvKOcaSqYLeTxBLbUyBNxVSz8PVwMd6pCYod
-         JBs3CS7I3Z+CcHLLsmWM55Y9rB94vXZDUCwV91qtTf8zLe4WuYpVmR+38WZI+v5VE56+
-         u5+5yywIjxW8478iGD6VPrZxETHyeFSKHh5eXS+y8h/wNhdgsRb1F19Q8awkWe8gArWh
-         OrGPDREEMcWFcE/44ApebQDNTMr3icPhUh5/jWErfauFvdooYEzBaHYP5grV1Y9H6CNk
-         huYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=tbshLX4iQMb9Vn7zjhDZQ6BLeAzJL58tLLtT5Oc9Dyw=;
-        b=8IMFR06Nf+IS4DMS3lxqXtVDuHGFj8O+x0QIsfPWOwfbZbQDS/8oFeknkLLr+nLUQJ
-         ms7gWZMGOCg926N8mLSzaW76iWiz0qmW9naKN1vjudoMmqS6OT0DdxNHsMzUKZj4SjtO
-         R9kA7o6rjWGId66B6HUvns/rrU1k/sV0QaylIiayXot2R7DscO7Dr2Afc5o0kIoMYAkC
-         olLCqnfD4+HWckIaKtgkb0kmU9MCwtxAP/EOBDGFqBXcS9tt5WbfJzSnbpBLnmu9Wz9j
-         93OF3eoWUyPIJWZAWVRw7Qfj5StzQax2uszUsn4/4Tjgv75D8DV7/ncqB0t2fCrYfoom
-         luPw==
-X-Gm-Message-State: AOAM533y1B3F+elNIQJ5V89aHpMDkoI1JKA6AZlzoUxLvFcBKchlTGAF
-        f4arQalYgOYnIEAPBWIRQh8AFg==
-X-Google-Smtp-Source: ABdhPJwAtr+FLRUkC+UlVcvalCv0LKlHgZ+gVNPU1pBCubjLqcZDhzl9BvNotbQ8efjygcpi2Ovdeg==
-X-Received: by 2002:adf:b1c7:: with SMTP id r7mr4568194wra.392.1634194131265;
-        Wed, 13 Oct 2021 23:48:51 -0700 (PDT)
-Received: from google.com (176-35-142-29.xdsl.murphx.net. [176.35.142.29])
-        by smtp.gmail.com with ESMTPSA id w8sm1543502wrr.47.2021.10.13.23.48.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Oct 2021 23:48:50 -0700 (PDT)
-Date:   Thu, 14 Oct 2021 07:48:47 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-Message-ID: <YWfSz00Rj5AVhkgT@google.com>
-References: <20210923064137.60722-1-zhang.lyra@gmail.com>
- <20210923064137.60722-3-zhang.lyra@gmail.com>
- <YV1XpL7ibF1y4LbV@google.com>
- <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
- <YWVD0RXHVLxuXEIN@google.com>
- <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
+        id S229865AbhJNGzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 02:55:07 -0400
+Received: from marcansoft.com ([212.63.210.85]:43070 "EHLO mail.marcansoft.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229584AbhJNGzG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 02:55:06 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: marcan@marcan.st)
+        by mail.marcansoft.com (Postfix) with ESMTPSA id 9E34E41AC8;
+        Thu, 14 Oct 2021 06:52:54 +0000 (UTC)
+Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device does
+ not exist
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211011165707.138157-1-marcan@marcan.st>
+ <20211011165707.138157-5-marcan@marcan.st>
+ <20211012032144.2ltlpat7orrsyr6k@vireshk-i7>
+ <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
+ <20211012055143.xmkbvhbnolspgjin@vireshk-i7>
+ <caf16a6c-f127-7f27-ed17-0522d9f1fb9e@marcan.st>
+ <20211012092603.lkmhhjoo5v67wh44@vireshk-i7>
+ <049FC437-EC38-4FE5-891E-5E25960892CF@marcan.st>
+ <20211012093252.hb6rlcpxv5bmk7n3@vireshk-i7>
+From:   Hector Martin <marcan@marcan.st>
+Message-ID: <0db8e994-ac2c-8fad-55d0-1b5a9e2e21f2@marcan.st>
+Date:   Thu, 14 Oct 2021 15:52:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
+In-Reply-To: <20211012093252.hb6rlcpxv5bmk7n3@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: es-ES
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 Oct 2021, Geert Uytterhoeven wrote:
+On 12/10/2021 18.32, Viresh Kumar wrote:
+> On 12-10-21, 18:31, Hector Martin "marcan" wrote:
+>> That doesn't work, though, because the CPUs aren't normal devices
+>> with runtime-pm. That was the first thing I tried :).
+> 
+> What's the exact problem with runtime PM here ?
 
-> Hi Lee,
-> 
-> On Tue, Oct 12, 2021 at 10:15 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > On Mon, 11 Oct 2021, Rob Herring wrote:
-> > > On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > > > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
-> > > >
-> > > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > > >
-> > > > > Add bindings for Unisoc system global register which provide register map
-> > > > > for clocks.
-> > > > >
-> > > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > > ---
-> > > > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
-> > > > >  1 file changed, 68 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> > > >
-> > > > Unapplied v3 and applied this (v4) instead, thanks.
-> > >
-> > > What about the clock binding this depends on:
-> > >
-> > > Unknown file referenced: [Errno 2] No such file or directory:
-> > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > > xargs: dt-doc-validate: exited with status 255; aborting
-> > > make[1]: *** Deleting file
-> > > 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
-> > > Unknown file referenced: [Errno 2] No such file or directory:
-> > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > > make[1]: *** [scripts/Makefile.lib:385:
-> > > Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
-> > > Error 255
-> > >
-> > >
-> > > Once again, all the components of MFD bindings need to be applied together.
-> 
-> Just ran into this, too...
-> 
-> > I can't apply what is not sent to me.
-> >
-> > This patch came in on its own.
-> 
-> Then please reject/postpone patches that don't build (yet) ;-)
+The CPU devices aren't attached to their genpd, so the required OPP
+transition fails with the same error.
 
-I don't explicitly build DT documentation.
+However, this was easier to fix than I expected. With this patch to
+cpufreq-dt, it all works properly, and I can drop the parent genpd
+from the clock node and related handling. Thoughts?
 
-Since I use the build bots to let me know if there are strange !(C,
-ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
-configuration possibilities (randconfig) in the repos I maintain, you
-might have to convince them that this is important too.
+commit c4f88743374c1f4678ee7f17fb6cae30ded9ed59
+Author: Hector Martin <marcan@marcan.st>
+Date:   Thu Oct 14 15:47:45 2021 +0900
+
+     cpufreq: dt: Attach CPU devices to power domains
+     
+     This allows the required-opps mechanism to work for CPU OPP tables,
+     triggering specific OPP levels in a parent power domain.
+     
+     Signed-off-by: Hector Martin <marcan@marcan.st>
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 8fcaba541539..5b22846b557d 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -16,6 +16,7 @@
+  #include <linux/list.h>
+  #include <linux/module.h>
+  #include <linux/of.h>
++#include <linux/pm_domain.h>
+  #include <linux/pm_opp.h>
+  #include <linux/platform_device.h>
+  #include <linux/regulator/consumer.h>
+@@ -264,6 +265,16 @@ static int dt_cpufreq_early_init(struct device *dev, int cpu)
+  		goto out;
+  	}
+  
++	/*
++	 * Attach the CPU device to its genpd domain (if any), to allow OPP
++	 * dependencies to be satisfied.
++	 */
++	ret = genpd_dev_pm_attach(cpu_dev);
++	if (ret <= 0) {
++		dev_err(cpu_dev, "Failed to attach CPU device to genpd\n");
++		goto out;
++	}
++
+  	/*
+  	 * The OPP table must be initialized, statically or dynamically, by this
+  	 * point.
 
 -- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Hector Martin (marcan@marcan.st)
+Public Key: https://mrcn.st/pub
