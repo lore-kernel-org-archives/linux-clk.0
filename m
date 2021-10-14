@@ -2,322 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1CDC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 15:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9548C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 16:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A48061040
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 15:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 827E660E78
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 16:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231764AbhJNP5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 11:57:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22172 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233033AbhJNP5k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 11:57:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634226934;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JWnmViuZzS5vCJpHwulEVTRMqyjB1ka4+dw1VkAiD4g=;
-        b=ba42NLyfzebB0jQTUcd1Sdh3WTOfH5tu03hTK4jz/PovJC5oMvDdT0YAmw0lfQJTBFLNse
-        RzJMIS4Pp/pb4CVWFYd1q1/aYj3EleaJt1M0t8yiHEix5F3Z5+vXrIEBSMTo9kEA7TVmhJ
-        ouA7o4XXeiyhVkB3DugFx2eSxOHh20A=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-279-_2Vn2NZbMPay1bI-ND3zmQ-1; Thu, 14 Oct 2021 11:55:33 -0400
-X-MC-Unique: _2Vn2NZbMPay1bI-ND3zmQ-1
-Received: by mail-ed1-f71.google.com with SMTP id c25-20020a056402143900b003dc19782ea8so2046260edx.3
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 08:55:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JWnmViuZzS5vCJpHwulEVTRMqyjB1ka4+dw1VkAiD4g=;
-        b=HVFVcpZ0/plzMaa0Wux2ENU+227/g2jv16BLzcKNELRPulLipb0cha0Fm9wd7KifQK
-         ASvphKU9r7xX/AgqyG4bU9JJN0LzYLxMcIWX5mH9pd730Z6xKz76MXh86FQ5d1g2wEYT
-         70+GraCq3Woc5RflL5yGSdZUy2C1XJcv080DyY1romYrc0SLyv9Z+oFDlFjX/pSmcpZV
-         d0sxScXWReaCioM5iLAutP3aJN1WhTRm2ni7s3Vtf4bqXIQ6O4OQGQuOtXgL43eRG9ao
-         u15WjLJN9QdnM3kwDDSZe0v+6mCC3ouAFGQN0705V0pbjhC6KJ5d7U+qnb2VojeBNy6z
-         +7SQ==
-X-Gm-Message-State: AOAM533IgUwKZUtbjiXrgz8h4AkosFG1rycmbayQ0XWeHstIbSDV52nM
-        kBYvlxH35dduVh8EPykcnq7tt9omchoMkmQt7g+eSorWVlVcUOnRbLdNlsJ49TvoZ9YBsXQsND2
-        gYNApqeywDWgz4vryM5WGC6cS/dTalSMXB4nWktZOYD8BerXrtjaNMF0sB0grTQmk2IxD7RWI
-X-Received: by 2002:a50:ccc4:: with SMTP id b4mr9996653edj.83.1634226932047;
-        Thu, 14 Oct 2021 08:55:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7Wah1Y7cQHvDtlggE1t5rDd38gt88Yx5v6/TAUaNgjI2VtkWMOwkydRXvi/iQjcjEunuzVg==
-X-Received: by 2002:a50:ccc4:: with SMTP id b4mr9996587edj.83.1634226931676;
-        Thu, 14 Oct 2021 08:55:31 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id b2sm2587687edv.73.2021.10.14.08.55.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Oct 2021 08:55:31 -0700 (PDT)
-Subject: Re: [PATCH v3 01/11] ACPI: delay enumeration of devices with a _DEP
- pointing to an INT3472 device
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20211010185707.195883-1-hdegoede@redhat.com>
- <20211010185707.195883-2-hdegoede@redhat.com>
- <CAJZ5v0i0NR8faABuZVe7V6sKgM4+1kOh-S56usj2WyeiDnfy9g@mail.gmail.com>
- <0c90d1dd-8e03-714a-1dbf-51b09241a23c@redhat.com>
- <CAJZ5v0gN-o6O8daABdtD7ShnUkEgvknAa-VyzS7DG6jX2h8=uA@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <24f113e8-3af1-7c85-b8b8-584f5663a909@redhat.com>
-Date:   Thu, 14 Oct 2021 17:55:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S232099AbhJNQUm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 12:20:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231194AbhJNQUk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 12:20:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 87CB06101E;
+        Thu, 14 Oct 2021 16:18:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634228314;
+        bh=pRQ3JZfJtb5xsfp0oPcwUPPHLjaUmki8tcnhUCu7iwM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=C4pkMrjbMaqtqvVmV/hBpQ/Gk+2aUpRPSaCoBhG9Sz/NuJ9wDHC6LA0gtgkHqtMO4
+         fdAfI+Jh2EP3M0NxOpFgb1hAjfcV1S/1mcImMQx+JMPShDRyjcIvO+v3jJTjj2b6Ca
+         pXmjtgqkD9yfz42puOUj2OcE8pHhKe7KpdTysatwduJvFep1iE7shShIjZng/Hwpea
+         ZrJC4EnBa91wHusgAV1iWWqgGnVUwXgQaOEU9rn/Rg1w88Jb66NO41PreGWRhVNMYb
+         UXpqbuIFOuIw1QEx54YozGE+kWX+SyWdS4ODhyYLoVAKJCdfGeVocZN7hpYw1VfU5Z
+         Ny0Z/m8kiXPSA==
+Received: by mail-ed1-f52.google.com with SMTP id d9so26177901edh.5;
+        Thu, 14 Oct 2021 09:18:34 -0700 (PDT)
+X-Gm-Message-State: AOAM533YSvRy26dmBf2/2W4g7Dxg+acYQvbawx7Dtsm4Kps5e6b+s8M1
+        wI+U+i0jijYx1pKdun/9H29+Ap3Tmk7ydijuNQ==
+X-Google-Smtp-Source: ABdhPJzsUk/V37d7unFrB7QJ0575PStsMRgexykMDwTWWaEwyvjCjKzDfsjSHjCLV0d5RKuRpOizozD8OfiHo1993B0=
+X-Received: by 2002:aa7:c357:: with SMTP id j23mr10140454edr.145.1634228311827;
+ Thu, 14 Oct 2021 09:18:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0gN-o6O8daABdtD7ShnUkEgvknAa-VyzS7DG6jX2h8=uA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com>
+ <YV1XpL7ibF1y4LbV@google.com> <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+ <YWVD0RXHVLxuXEIN@google.com> <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
+ <YWfSz00Rj5AVhkgT@google.com>
+In-Reply-To: <YWfSz00Rj5AVhkgT@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 14 Oct 2021 11:18:16 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
+Message-ID: <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, Oct 14, 2021 at 1:48 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Wed, 13 Oct 2021, Geert Uytterhoeven wrote:
+>
+> > Hi Lee,
+> >
+> > On Tue, Oct 12, 2021 at 10:15 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > > On Mon, 11 Oct 2021, Rob Herring wrote:
+> > > > On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > > > > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
+> > > > >
+> > > > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > >
+> > > > > > Add bindings for Unisoc system global register which provide register map
+> > > > > > for clocks.
+> > > > > >
+> > > > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > > > ---
+> > > > > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+> > > > > >  1 file changed, 68 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> > > > >
+> > > > > Unapplied v3 and applied this (v4) instead, thanks.
+> > > >
+> > > > What about the clock binding this depends on:
+> > > >
+> > > > Unknown file referenced: [Errno 2] No such file or directory:
+> > > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> > > > xargs: dt-doc-validate: exited with status 255; aborting
+> > > > make[1]: *** Deleting file
+> > > > 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
+> > > > Unknown file referenced: [Errno 2] No such file or directory:
+> > > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> > > > make[1]: *** [scripts/Makefile.lib:385:
+> > > > Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
+> > > > Error 255
+> > > >
+> > > >
+> > > > Once again, all the components of MFD bindings need to be applied together.
+> >
+> > Just ran into this, too...
+> >
+> > > I can't apply what is not sent to me.
+> > >
+> > > This patch came in on its own.
+> >
+> > Then please reject/postpone patches that don't build (yet) ;-)
+>
+> I don't explicitly build DT documentation.
+>
+> Since I use the build bots to let me know if there are strange !(C,
+> ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
+> configuration possibilities (randconfig) in the repos I maintain, you
+> might have to convince them that this is important too.
 
-On 10/13/21 8:48 PM, Rafael J. Wysocki wrote:
-> On Wed, Oct 13, 2021 at 8:23 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 10/13/21 7:29 PM, Rafael J. Wysocki wrote:
->>> On Sun, Oct 10, 2021 at 8:57 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>>>
->>>> The clk and regulator frameworks expect clk/regulator consumer-devices
->>>> to have info about the consumed clks/regulators described in the device's
->>>> fw_node.
->>>>
->>>> To work around cases where this info is not present in the firmware tables,
->>>> which is often the case on x86/ACPI devices, both frameworks allow the
->>>> provider-driver to attach info about consumers to the clks/regulators
->>>> when registering these.
->>>>
->>>> This causes problems with the probe ordering wrt drivers for consumers
->>>> of these clks/regulators. Since the lookups are only registered when the
->>>> provider-driver binds, trying to get these clks/regulators before then
->>>> results in a -ENOENT error for clks and a dummy regulator for regulators.
->>>>
->>>> One case where we hit this issue is camera sensors such as e.g. the OV8865
->>>> sensor found on the Microsoft Surface Go. The sensor uses clks, regulators
->>>> and GPIOs provided by a TPS68470 PMIC which is described in an INT3472
->>>> ACPI device. There is special platform code handling this and setting
->>>> platform_data with the necessary consumer info on the MFD cells
->>>> instantiated for the PMIC under: drivers/platform/x86/intel/int3472.
->>>>
->>>> For this to work properly the ov8865 driver must not bind to the I2C-client
->>>> for the OV8865 sensor until after the TPS68470 PMIC gpio, regulator and
->>>> clk MFD cells have all been fully setup.
->>>>
->>>> The OV8865 on the Microsoft Surface Go is just one example, all X86
->>>> devices using the Intel IPU3 camera block found on recent Intel SoCs
->>>> have similar issues where there is an INT3472 HID ACPI-device, which
->>>> describes the clks and regulators, and the driver for this INT3472 device
->>>> must be fully initialized before the sensor driver (any sensor driver)
->>>> binds for things to work properly.
->>>>
->>>> On these devices the ACPI nodes describing the sensors all have a _DEP
->>>> dependency on the matching INT3472 ACPI device (there is one per sensor).
->>>>
->>>> This allows solving the probe-ordering problem by delaying the enumeration
->>>> (instantiation of the I2C-client in the ov8865 example) of ACPI-devices
->>>> which have a _DEP dependency on an INT3472 device.
->>>>
->>>> The new acpi_dev_ready_for_enumeration() helper used for this is also
->>>> exported because for devices, which have the enumeration_by_parent flag
->>>> set, the parent-driver will do its own scan of child ACPI devices and
->>>> it will try to enumerate those during its probe(). Code doing this such
->>>> as e.g. the i2c-core-acpi.c code must call this new helper to ensure
->>>> that it too delays the enumeration until all the _DEP dependencies are
->>>> met on devices which have the new honor_deps flag set.
->>>>
->>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>>> ---
->>>>  drivers/acpi/scan.c     | 36 ++++++++++++++++++++++++++++++++++--
->>>>  include/acpi/acpi_bus.h |  5 ++++-
->>>>  2 files changed, 38 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->>>> index 5b54c80b9d32..efee6ee91c8f 100644
->>>> --- a/drivers/acpi/scan.c
->>>> +++ b/drivers/acpi/scan.c
->>>> @@ -796,6 +796,12 @@ static const char * const acpi_ignore_dep_ids[] = {
->>>>         NULL
->>>>  };
->>>>
->>>> +/* List of HIDs for which we honor deps of matching ACPI devs, when checking _DEP lists. */
->>>> +static const char * const acpi_honor_dep_ids[] = {
->>>> +       "INT3472", /* Camera sensor PMIC / clk and regulator info */
->>>> +       NULL
->>>> +};
->>>> +
->>>>  static struct acpi_device *acpi_bus_get_parent(acpi_handle handle)
->>>>  {
->>>>         struct acpi_device *device = NULL;
->>>> @@ -1757,8 +1763,12 @@ static void acpi_scan_dep_init(struct acpi_device *adev)
->>>>         struct acpi_dep_data *dep;
->>>>
->>>>         list_for_each_entry(dep, &acpi_dep_list, node) {
->>>> -               if (dep->consumer == adev->handle)
->>>> +               if (dep->consumer == adev->handle) {
->>>> +                       if (dep->honor_dep)
->>>> +                               adev->flags.honor_deps = 1;
->>>
->>> Any concerns about doing
->>>
->>> adev->flags.honor_deps = dep->honor_dep;
->>>
->>> here?
->>
->> The idea is to set adev->flags.honor_deps even if the device has
->> multiple deps and only one of them has the honor_dep flag set.
->>
->> If we just do:
->>
->>         adev->flags.honor_deps = dep->honor_dep;
->>
->> Then adev->flags.honor_deps ends up having the honor_dep
->> flag of the last dependency checked.
-> 
-> OK, but in that case dep_unmet may be blocking the enumeration of the
-> device even if the one in the acpi_honor_dep_ids[] list has probed
-> successfully.
-> 
-> Isn't that a concern?
+It's really just a matter of turning on the build in
+allyesconfig/allmodconfig builds. I've not done that primarily because
+there's one person I don't want to yell at me, but I could probably
+make it arm and/or arm64 only. It's really arch and config
+independent, so doing it multiple times is kind of pointless.
 
-For the devices where we set the dep->honor_dep flag this is
-not a concern (based on the DSDTs which I've seen).
+I assume for bots you mean kernel-ci mainly? Do you run that before
+stuff gets into linux-next? IMO, that's too late. But still a slight
+improvement if things go in via one tree. Otherwise, I see the
+breakage twice, 1st linux-next then the merge window.
 
-I also don't expect it to be a concern for other cases where we may
-set that flag in the future either. This is an opt-in thing, so
-I expect that in cases where we opt in to this, we also ensure that
-any other _DEPs are also met (by having a Linux driver which calls
-acpi_dev_clear_dependencies() for them).
-
-And now a days we also have the acpi_ignore_dep_ids[] list so if
-in the future there are some _DEP-s which never get fulfilled/met
-on a device where we set the adev->flags.honor_deps flag, then we
-can always add the ACPI HIDs for those devices to that list.
-
->>>> +
->>>>                         adev->dep_unmet++;
->>>> +               }
->>>>         }
->>>>  }
->>>>
->>>> @@ -1962,7 +1972,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->>>>         for (count = 0, i = 0; i < dep_devices.count; i++) {
->>>>                 struct acpi_device_info *info;
->>>>                 struct acpi_dep_data *dep;
->>>> -               bool skip;
->>>> +               bool skip, honor_dep;
->>>>
->>>>                 status = acpi_get_object_info(dep_devices.handles[i], &info);
->>>>                 if (ACPI_FAILURE(status)) {
->>>> @@ -1971,6 +1981,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->>>>                 }
->>>>
->>>>                 skip = acpi_info_matches_ids(info, acpi_ignore_dep_ids);
->>>> +              honor_dep = acpi_info_matches_ids(info, acpi_honor_dep_ids);
->>>>                 kfree(info);
->>>>
->>>>                 if (skip)
->>>> @@ -1984,6 +1995,7 @@ static u32 acpi_scan_check_dep(acpi_handle handle, bool check_dep)
->>>>
->>>>                 dep->supplier = dep_devices.handles[i];
->>>>                 dep->consumer = handle;
->>>> +               dep->honor_dep = honor_dep;
->>>>
->>>>                 mutex_lock(&acpi_dep_list_lock);
->>>>                 list_add_tail(&dep->node , &acpi_dep_list);
->>>> @@ -2071,6 +2083,9 @@ static acpi_status acpi_bus_check_add_2(acpi_handle handle, u32 lvl_not_used,
->>>>
->>>>  static void acpi_default_enumeration(struct acpi_device *device)
->>>>  {
->>>> +       if (!acpi_dev_ready_for_enumeration(device))
->>>> +               return;
->>>
->>> I'm not sure about this.
->>>
->>> First of all, this adds an acpi_device_is_present() check here which
->>> potentially is a change in behavior and I'm not sure how it is related
->>> to the other changes in this patch (it is not mentioned in the
->>> changelog AFAICS).
->>>
->>> I'm saying "potentially", because if we get here at all,
->>> acpi_device_is_present() has been evaluated already by
->>> acpi_bus_attach().
->>
->> Right the idea was that for this code-path the extra
->> acpi_device_is_present() check is a no-op since the only
->> caller of acpi_default_enumeration() has already done
->> that check before calling acpi_default_enumeration(),
->> where as the is_present check is useful for users outside
->> of the ACPI core code, like e.g. the i2c ACPI enumeration
->> code.
->>
->> Although I see this is also called from
->> acpi_generic_device_attach which comes into play when there
->> is devicetree info embedded inside the ACPI tables.
-> 
-> That too, but generally speaking this change should at least be
-> mentioned in the changelog.
-> 
->>> Now, IIUC, the new acpi_dev_ready_for_enumeration() is kind of an
->>> extension of acpi_device_is_present(), so shouldn't it be called by
->>> acpi_bus_attach() instead of the latter rather than from here?
->>
->> That is an interesting proposal. I assume you want this to replace
->> the current acpi_device_is_present() call in acpi_bus_attach()
->> then ?
-> 
-> That seems consistent to me.
-> 
->> For the use-case at hand here that should work fine and it would also
->> make the honor_deps flag work for devices which bind to the actual
->> acpi_device (because we delay the device_attach()) or
->> use an acpi_scan_handler.
->>
->> This would mean though that we can now have acpi_device-s where
->> acpi_device_is_present() returns true, but which are not
->> initialized (do not have device->flags.initialized set)
->> that would be a new acpi_device state which we have not had
->> before. I do not immediately forsee this causing issues,
->> but still...
->>
->> If you want me to replace the current acpi_device_is_present() call
->> in acpi_bus_attach() with the new acpi_dev_ready_for_enumeration()
->> helper, let me know and I'll prepare a new version with this change
->> (and run some tests with that new version).
-> 
-> I would prefer doing that to making acpi_default_enumeration() special
-> with respect to the handling of dependencies.
-
-Ok I will make this change in the next version (ETA sometime next week).
-
-Regards,
-
-Hans
-
+Rob
