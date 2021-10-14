@@ -2,78 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E17C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 23:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24CBC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 23:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B08D6109E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 23:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1CAE610F8
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 23:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234220AbhJNXEu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 19:04:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42690 "EHLO mail.kernel.org"
+        id S233989AbhJNXLT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 19:11:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230503AbhJNXEt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Oct 2021 19:04:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 291E861053;
-        Thu, 14 Oct 2021 23:02:44 +0000 (UTC)
+        id S233935AbhJNXLS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 19:11:18 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5B8F360F11;
+        Thu, 14 Oct 2021 23:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634252564;
-        bh=KQhnfft+SeT/c5QZdp7RT0ENepdXT9rmIDodbBGmQKk=;
+        s=k20201202; t=1634252953;
+        bh=EZ/WB5HXZm7aAvIuXY679+z1Z+5GCBnK9dsEdZuxJr0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=V987DMuuAu143/QxCL25gnT67YWoLWnzDLrxGaQU2lZE4cKadqwaoj7ZSuvF1ueSH
-         4BFY2IndapYKmGjvJoV1jnI41eVkgUZ1JfE9Ll/CO9Xe52stcM286MeRcND9ugxvQr
-         wNQpjT1xp3meLcjMOcSsUTgg4eJb3JWl7Ve0aCJouIN4G1by8xMOuSZmWso+/FPv5Y
-         bmmxric7fYEBbPbnqdvLHWHbrlmIwZjFqVzdcfX/Vlp9vGJTJ9vy0uy6j4ov3XDBOZ
-         pMfGEADfc88zSMGY/IlJWghPrOzo+tiga7LzpmLXEaJUkGAqI23UrF4tZmmJ9Ez87H
-         5H/aqQSyW2ExA==
+        b=KEBp5D2AOpfE2zOoulrtgt9fECZ6NdWxFDL0s3VpbCLqiPigEFBMhOyFEGe3Lsy88
+         Gtv76yeq3aksqCBBxIB7Hk+HNzzDFV21w1dMCB4OVrO28VYK6z1nUOM3Qb6lqNboyd
+         709Z+IRdx4Mp/yMjvOAQlieOm42oE8/IxcHNsLz5Y9iGIg3fOzZYJvzSEYCX+zLLqA
+         nGE6qqblmTni/uWWYwgvNLcWG4Syyi1TxLGUdriVzG+TrHPkm6f+4eVtJNbR/pFo3A
+         5VOS9lkHHdCMCMciKMjCXAQKzsEt3EDw0l7cHW2zZ3VxgXiFe9k834QmKxYX/apLV1
+         BCH/hdAo+4ipw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com> <YV1XpL7ibF1y4LbV@google.com> <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com> <YWVD0RXHVLxuXEIN@google.com> <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com> <YWfSz00Rj5AVhkgT@google.com> <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512 global registers
+In-Reply-To: <71369ca3.307a.17c7de16354.Coremail.zhanglyra@163.com>
+References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com> <163416267274.936110.2784588823311275089@swboyd.mtv.corp.google.com> <5b8198f8.cc.17c7c0fc3e2.Coremail.zhanglyra@163.com> <163417628586.936110.17321921086246870791@swboyd.mtv.corp.google.com> <4e2e8b98.cc9.17c7c899967.Coremail.zhanglyra@163.com> <163419352215.936110.17102590465311356046@swboyd.mtv.corp.google.com> <71369ca3.307a.17c7de16354.Coremail.zhanglyra@163.com>
+Subject: Re:Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512 global registers
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>, open list:
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
         Orson Zhai <orsonzhai@gmail.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>, ;
-Illegal-Object: Syntax error in Cc: address found on vger.kernel.org:
-        Cc:     ;
-                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
-To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 14 Oct 2021 16:02:42 -0700
-Message-ID: <163425256290.1688384.5646232860050218479@swboyd.mtv.corp.google.com>
+        LKML <linux-kernel@vger.kernel.org>
+To:     ChunyanZhang <zhanglyra@163.com>
+Date:   Thu, 14 Oct 2021 16:09:12 -0700
+Message-ID: <163425295208.1688384.11023187625793114662@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2021-10-14 09:18:16)
-> On Thu, Oct 14, 2021 at 1:48 AM Lee Jones <lee.jones@linaro.org> wrote:
+Quoting ChunyanZhang (2021-10-14 01:18:15)
+>=20
+> Resend this since I forgot to switch to plain text mode :(
+>=20
+> At 2021-10-14 14:38:42, "Stephen Boyd" <sboyd@kernel.org> wrote:
+> >Quoting ChunyanZhang (2021-10-13 19:02:44)
+> >> At 2021-10-14 09:51:25, "Stephen Boyd" <sboyd@kernel.org> wrote:
+> >> >Quoting ChunyanZhang (2021-10-13 16:49:40)
+> >> >> At 2021-10-14 06:04:32, "Stephen Boyd" <sboyd@kernel.org> wrote:
+> >> >> >Quoting Chunyan Zhang (2021-09-22 23:41:35)
+> >> >> >> diff --git a/Documentation/devicetree/bindings/mfd/sprd,ums512-g=
+lbreg.yaml b/Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> >> >> >> +
+> >> >> >> +examples:
+> >> >> >> +  - |
+> >> >> >> +    ap_apb_regs: syscon@71000000 {
+> >> >> >> +      compatible =3D "sprd,ums512-glbregs", "syscon", "simple-m=
+fd";
+> >> >> >> +      reg =3D <0x71000000 0x3000>;
+> >> >> >> +      #address-cells =3D <1>;
+> >> >> >> +      #size-cells =3D <1>;
+> >> >> >> +      ranges =3D <0 0x71000000 0x3000>;
+> >> >> >> +
+> >> >> >> +      clock-controller@0 {
+> >> >> >> +        compatible =3D "sprd,ums512-apahb-gate";
+> >> >> >
+> >> >> >Why is this a subnode of a syscon and simple-mfd? Why not put the>=
+clock-controller@71000000 directly onto the bus? Does making it a child
+> >> >> >node help somehow?
+> >> >>=20
+> >> >> These clocks are at the same register range with global registers. =
+I originally put them directly onto the bus indeed when submitting the patc=
+hes for SC9863A clocks last year, and it had a private property named 'sprd=
+,syscon' which could provide regmap for these clocks.
+> >> >>=20
+> >> >> Rob suggested [1] us to make them a child of the syscon, and would =
+not need the private property 'sprd, syscon' then.
+> >> >
+> >> >Why do you need to use a syscon? Are the registers shared with some
+> >> >other driver?
+> >>=20
+> >> Yes, shared with more than one devices which basically are multimedia =
+devices. You may noticed that these are all gate clocks which are in the gl=
+obal registers ranges and are used to controll the enable status of some de=
+vices or some part of devices.
+> >>=20
 > >
-> > I don't explicitly build DT documentation.
-> >
-> > Since I use the build bots to let me know if there are strange !(C,
-> > ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
-> > configuration possibilities (randconfig) in the repos I maintain, you
-> > might have to convince them that this is important too.
 >=20
-> It's really just a matter of turning on the build in
-> allyesconfig/allmodconfig builds. I've not done that primarily because
-> there's one person I don't want to yell at me, but I could probably
-> make it arm and/or arm64 only. It's really arch and config
-> independent, so doing it multiple times is kind of pointless.
+> >Where does the multimedia device address space start? I see 0x71000000
 >=20
-> I assume for bots you mean kernel-ci mainly? Do you run that before
-> stuff gets into linux-next? IMO, that's too late. But still a slight
-> improvement if things go in via one tree. Otherwise, I see the
-> breakage twice, 1st linux-next then the merge window.
->=20
+> It doesn't mean that multimedia device address is in this space, multided=
+ia devices have their own address space actually.
 
-I run `make dt_binding_check DT_SCHEMA_FILES=3D"<path to yaml file>"` but
-nowadays this seems to check all the bindings and not just the one
-binding I care to check. Did something break?
+Ok got it.
+
+> All the registers in this space (started from 0x71000000) are more like c=
+ontroll registers for device power, and they were designed as "global regis=
+ters".
+> Some gate clocks are also in global register space, so we make this kind =
+of clocks a subnode of syscon, and clock driver can use regmap which mapped=
+ by syscon to avoid remapping the same address space to more than one virtu=
+al addresses.
+
+So it looks like we're making the "power controller" device into a
+syscon and then adding nodes in DT to describe the various pieces that
+some registers inside that correspond to, like clks, power domains, etc.
+I wonder why the ap_apb_regs device can't be a single node covering the
+entire register space and then use the auxiliary bus in the kernel to
+carve that device up into various kernel subsytems so that the
+appropriate maintainers can review it.
+
+>=20
+> Hope I've made that clear, I'd like to give you an example, but I'm on a =
+long leave and cannot look up the specification right now :(
+> This is not a new issue, we discussed this when the first time I submitte=
+d the patches for sprd clocks IIRC.
+
+Yes, I know it's not a new issue. Take care! We can pick this discussion
+back up when you get back from leave.
