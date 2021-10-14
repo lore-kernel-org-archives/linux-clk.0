@@ -2,112 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A68CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 11:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EA5C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 12:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D50A361163
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 11:44:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F72610CB
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 12:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231203AbhJNLqG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 07:46:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58370 "EHLO
+        id S231528AbhJNMOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 08:14:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbhJNLqF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 07:46:05 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AD0C061570;
-        Thu, 14 Oct 2021 04:44:00 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id 1D7CD3FA67;
-        Thu, 14 Oct 2021 11:43:52 +0000 (UTC)
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20211011165707.138157-1-marcan@marcan.st>
- <20211011165707.138157-5-marcan@marcan.st>
- <20211012032144.2ltlpat7orrsyr6k@vireshk-i7>
- <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
- <20211012055143.xmkbvhbnolspgjin@vireshk-i7>
- <caf16a6c-f127-7f27-ed17-0522d9f1fb9e@marcan.st>
- <CAPDyKFoVjVYkc4+v-=eD+JbC10GazGt8A1LtD1so3PKMmVcyMg@mail.gmail.com>
-From:   Hector Martin <marcan@marcan.st>
-Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device does
- not exist
-Message-ID: <bd07f4b3-6ebf-e074-c1cd-0ef501e8324f@marcan.st>
-Date:   Thu, 14 Oct 2021 20:43:50 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        with ESMTP id S231597AbhJNMNy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 08:13:54 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8305FC061570;
+        Thu, 14 Oct 2021 05:11:49 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id r18so23247988edv.12;
+        Thu, 14 Oct 2021 05:11:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PjunbPmLmTCHaDr1XFmiTYq62IyZTicb7wJjyiRmRZA=;
+        b=k1g+ewsT6tZT2k2DdXFuBV0VAEJGyoHMGjBtx7czRNjnlPd/iszs9Aq/bkgzSrBQfa
+         SOqtaUQ4uJrIubsrV6GCgYJo9KIi3OidljseX927z53EparhoxN72stIaB6KMiq2qd05
+         tGcDgySBBWS3uClbplw13TlwP2H9LYQUTRQwQYGWikyi8X5QqgiK0BZlYzrUTJlRFFoF
+         +/66BaVVku+6EnxMnFqmspWmFZe5nxz9P5qFTPu1uc9SYqukZyFZcfDXpJ7msHkYsN7v
+         nPbzVwV6znvHtPvqm+zRCGBTwkp/E8JylSYrwAlfSsFXgzltDPDi4HXOnuJI6D2Tww+r
+         x9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PjunbPmLmTCHaDr1XFmiTYq62IyZTicb7wJjyiRmRZA=;
+        b=X2x3Nl/SCbDdnQpcgrhcW4bd6TTqeU6mOmxXeOBhm0F06Ah16FlRdFEKpoMpkmd27O
+         5yzZznzEuKTUiGM0JWTj3hiV17wmvUftAtsFLWWI82A9fWxn8SSGUQU7FqXqWUFzYiZG
+         iWlWxG3fxCJkIuatcsa6mR1Bh14jUpALPEA5hY3f1D3aLqIUI/drnStxZr4ocshP8hQQ
+         X0UvPU4pZEHhmQhWR/3xY/KLoX0O2Oe7nYzh9t4L/azXA/esDWE7XzsdcjJ4TNU3kO3v
+         mwA0dN2l7z9h9X70vXZaJO4AsYyI0y8PmSpy6wRODCcmSQg/JLNOCzX81i484O1DM+Tm
+         8zxw==
+X-Gm-Message-State: AOAM530ctb+oFIL5LVaXiC7gCGSRApCmMGc/pQo8ocuxeiIpxjPl9VQS
+        Wz6NttkL0nmWIPAI1qdkUJ3FQu73s8R9FxshKBrrYPJnyUg=
+X-Google-Smtp-Source: ABdhPJx5EU+lmleEWQbrw1JraAtpjBxu2zDOu7TUNMfV09yvsoCuePUhiHL65M9Jh8js7gQxOyToclWUSYEw2GFi+xA=
+X-Received: by 2002:a05:6402:3186:: with SMTP id di6mr8028114edb.225.1634213508002;
+ Thu, 14 Oct 2021 05:11:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoVjVYkc4+v-=eD+JbC10GazGt8A1LtD1so3PKMmVcyMg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 8bit
+References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
+ <20210702225145.2643303-2-martin.blumenstingl@googlemail.com> <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com>
+In-Reply-To: <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 14 Oct 2021 14:11:37 +0200
+Message-ID: <CAFBinCAVtd8gmcuvGU79-85CqhSU8a3mBCa_jweeZBd59u+amQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] clk: divider: Implement and wire up
+ .determine_rate by default
+To:     Alex Bee <knaerzche@gmail.com>
+Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/10/2021 18.55, Ulf Hansson wrote:
-> Yes, this sounds like you should move away from modeling the memory
-> part as a parent genpd for the CPUs' genpd.
-> 
-> As Viresh pointed out, a devfreq driver seems like a better way to do
-> this. As a matter of fact, there are already devfreq drivers that do
-> this, unless I am mistaken.
-> 
-> It looks like devfreq providers are listening to opp/cpufreq
-> notifiers, as to get an indication of when it could make sense to
-> change a performance state.
-> 
-> In some cases the devfreq provider is also modeled as an interconnect
-> provider, allowing consumers to specify memory bandwidth constraints,
-> which may trigger a new performance state to be set for the memory
-> controller.
-> 
-> In the tegra case, the memory controller is modelled as an
-> interconnect provider and the devfreq node is modelled as an
-> interconnect-consumer of the memory controller. Perhaps this can work
-> for apple SoCs too?
+Hi Alex,
 
-I was poking around and noticed the OPP core can already integrate with 
-interconnect requirements, so perhaps the memory controller can be an 
-interconnect provider, and the CPU nodes can directly reference it as a 
-consumer? This seems like a more accurate model of what the hardware 
-does, and I think I saw some devices doing this already.
+On Thu, Oct 14, 2021 at 11:55 AM Alex Bee <knaerzche@gmail.com> wrote:
+[...]
+> This breaks lot of clocks for Rockchip which intensively uses
+> composites,  i.e. those clocks will always stay at the initial parent,
+> which in some cases  is the XTAL clock and I strongly guess it is the
+> same for other platforms,  which use composite clocks having more than
+> one parent (e.g. mediatek, ti ...)
+Sorry for that and thanks for bisecting this!
 
-(only problem is I have no idea of the actual bandwidth numbers involved 
-here... I'll have to run some benchmarks to make sure this isn't just 
-completely dummy data)
+> Example (RK3399)
+> clk_sdio is set (initialized) with XTAL (24 MHz) as parent in u-boot.
+> It will always stay at this parent, even if the mmc driver sets a rate
+> of  200 MHz (fails, as the nature of things), which should switch it to
+> any of its possible parent PLLs defined in
+> mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p (see clk-rk3399.c)  - which
+> never happens.
+My question to Stephen et. al. is: where is the correct place to solve this?
+What I came up with so far (in no particular order):
+1) not using clk-composite from clock drivers and letting CCF take
+care of re-parenting clocks as needed (and as specified with
+CLK_SET_RATE_NO_REPARENT)
+2) clk-composite.c: extending the logic so "rate" clocks with
+.determine_rate include the existing logic which only applies to
+.round_rate (which means clk-composite.c is then responsible for
+finding the best possible parent clock)
+3) clk-divider.c: extending the logic here to account for clk_hws with
+multiple parents
 
-> 
-> That said, perhaps as an option to move forward, we can try to get the
-> cpufreq pieces solved first. Then as a step on top, add the
-> performance scaling for the memory controller?
+For 3) I am wondering whether this would even work because it seems
+that clk-composite uses multiple struct clk_hw.
+Letting the divider handle multiple parents means it would need to
+know about the information which is only available in mux_hw - whereas
+clk-composite currently passes rate_hw (struct clk_hw for the
+divider).
 
-Sure; that's a pretty much independent part of this patchset, though I'm 
-thinking I might as well try some things out for v2 anyway; if it looks 
-like it'll take longer we can split it out and do just the cpufreq side.
+I am happy to work on a patch for this if I can get some help with
+testing (since I don't have any board with Rockchip SoC).
 
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+> Reverting this commit makes it work again: Unless there is a quick and
+> obvious fix for that, I guess this should be done for 5.15 - even if the
+> real issue is somewhere else.
+Reverting this patch is fine from the Amlogic SoC point of view.
+The main goal was to clean up / improve the CCF code.
+Nothing (that I am aware of) is going to break in Amlogic land if we
+revert this.
+
+
+
+Best regards,
+Martin
