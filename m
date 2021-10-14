@@ -2,103 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05961C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9F1C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 15:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF9606120E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 14:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A95C6109E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 15:43:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbhJNOdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 10:33:36 -0400
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:44885 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231978AbhJNOdV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 10:33:21 -0400
-Received: by mail-ot1-f47.google.com with SMTP id d21-20020a9d4f15000000b0054e677e0ac5so8433483otl.11;
-        Thu, 14 Oct 2021 07:31:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=7LzJFsTPL40Pc0hD3eRsvasVcxgNW0015ccj9x8BWbg=;
-        b=Q8A57+h8Ie/QPPBXGBjOJT6GLPb0lLjabjOA8QcGwohU9QBlY6Htgomp9iE3iEddqd
-         atAaz+Wu3MOYG7T5E/4teFIzdV1kQW/cJ+gZISblj1xrA6N4BTTCx00DAcFIZCY6ltBq
-         ettFddHUhhx/JO0hWVQnCSPj7R1Wi9Qj2Il7B/YP/m+1UHz9DSPWIOTDtIcPDr7UKXqp
-         nmDkxYe5OfrSzOIn2JV2dJ+YJJ+6BtwGB+hoPa9LU7MS/WjHfab/PYCP+q4GyNM5V6Hx
-         iHiJcy8/KqykhIDrzaOVppCoPdvpEhXbXEx07R6dtkfNHW3/fp2igyubXgltquxrbTWg
-         gGPw==
-X-Gm-Message-State: AOAM5313zgef+AyvkseWdZF73m9z/XeR2ypGzenTeNZI9OLbMPAAe4Y9
-        2OxPqURGh86XxpXX9KLjyw==
-X-Google-Smtp-Source: ABdhPJydt6+seG1Ow1oKkFS7PuvHRQL4pi2sc6D14ULOw8igIp7Ajhnn3IoxCd262A14/DP1SMv1jw==
-X-Received: by 2002:a9d:7f81:: with SMTP id t1mr2758721otp.376.1634221876072;
-        Thu, 14 Oct 2021 07:31:16 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id y4sm595787oix.23.2021.10.14.07.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 07:31:15 -0700 (PDT)
-Received: (nullmailer pid 3295879 invoked by uid 1000);
-        Thu, 14 Oct 2021 14:31:04 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     linux-clk@vger.kernel.org, Nishanth Menon <nm@ti.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        phone-devel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>, Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-arm-msm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-In-Reply-To: <20211014083016.137441-6-y.oudjana@protonmail.com>
-References: <20211014083016.137441-1-y.oudjana@protonmail.com> <20211014083016.137441-6-y.oudjana@protonmail.com>
-Subject: Re: [PATCH 5/8] dt-bindings: opp: Convert qcom-nvmem-cpufreq to DT schema
-Date:   Thu, 14 Oct 2021 09:31:04 -0500
-Message-Id: <1634221864.175463.3295878.nullmailer@robh.at.kernel.org>
+        id S232395AbhJNPpU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 11:45:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232565AbhJNPpT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 11:45:19 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD93EC061570
+        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 08:43:14 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mb2su-0002sB-Qj; Thu, 14 Oct 2021 17:43:08 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mb2su-00074v-0K; Thu, 14 Oct 2021 17:43:08 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1mb2st-000453-Vb; Thu, 14 Oct 2021 17:43:07 +0200
+Date:   Thu, 14 Oct 2021 17:43:07 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        linux-clk@vger.kernel.org, kernel@pengutronix.de,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2] clk: expand clk_ignore_unused mechanism to keep only
+ a few clks on
+Message-ID: <20211014154307.eb3y3sh5lca4426t@pengutronix.de>
+References: <20210819121403.337833-1-u.kleine-koenig@pengutronix.de>
+ <20210922081549.kit3lsek7lh6w6ji@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dh5ic32cncbw4ucf"
+Content-Disposition: inline
+In-Reply-To: <20210922081549.kit3lsek7lh6w6ji@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 14 Oct 2021 08:32:35 +0000, Yassine Oudjana wrote:
-> Convert qcom-nvmem-cpufreq to DT schema format.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> ---
->  .../bindings/opp/qcom-cpufreq-nvmem.yaml      | 877 ++++++++++++++++++
->  .../bindings/opp/qcom-nvmem-cpufreq.txt       | 796 ----------------
->  MAINTAINERS                                   |   2 +-
->  3 files changed, 878 insertions(+), 797 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/opp/qcom-cpufreq-nvmem.yaml
->  delete mode 100644 Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+--dh5ic32cncbw4ucf
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yamllint warnings/errors:
+Hello,
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/opp/qcom-cpufreq-nvmem.example.dt.yaml:0:0: /soc/power-controller@b018000: failed to match any schema with compatible: ['qcom,qcs404-cpr', 'qcom,cpr']
-Documentation/devicetree/bindings/opp/qcom-cpufreq-nvmem.example.dt.yaml:0:0: /soc/power-controller@b018000: failed to match any schema with compatible: ['qcom,qcs404-cpr', 'qcom,cpr']
-Documentation/devicetree/bindings/opp/qcom-cpufreq-nvmem.example.dt.yaml:0:0: /cpr-opp-table: failed to match any schema with compatible: ['operating-points-v2-qcom-level']
+On Wed, Sep 22, 2021 at 10:15:49AM +0200, Uwe Kleine-K=F6nig wrote:
+> On Thu, Aug 19, 2021 at 02:14:03PM +0200, Uwe Kleine-K=F6nig wrote:
+> > Allow to pass an integer n that results in only keeping n unused clocks
+> > enabled.
+> >=20
+> > This helps to debug the problem if you only know that clk_ignore_unused
+> > helps but you have no clue yet which clock is the culprit.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+>=20
+> I consider this patch really helpful, it helped me to debug a clk issue
+> without having to recompile the kernel for each bisection step.
+>=20
+> On #kernelnewbies I got some positive feedback for it (1629304050 < j_ey>
+> ukleinek: nice clk_ignore_unused patch, I added a pr_err there recently
+> to print the clocks that were being disabled).
 
-doc reference errors (make refcheckdocs):
+Any thoughts on this patch? Would be great if it makes it into the next
+merge window.
 
-See https://patchwork.ozlabs.org/patch/1540830
+Thanks for considering,
+Uwe
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+--dh5ic32cncbw4ucf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-pip3 install dtschema --upgrade
+-----BEGIN PGP SIGNATURE-----
 
-Please check and re-submit.
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmFoUAgACgkQwfwUeK3K
+7Aktygf/cdio49GPc9UkYKY+3xrQTW8959xvhu4EU90eE3NquxbG6EbX82LLacD/
+gzmrCE/3ZNaGEWkwjp2NQJZxlimjRA+RXqS3UsX2vXdBz0xwcOPVpx3HbJfzBdeN
+uLh+ZHxTX7zeq7TRiaO1jbKzGdKa2f0VusXDTet9OChGBuZmXdvazdF0OQPbOk/K
+tWvrLwDqEyEWR+6DkjxB8eI14eVHj0GwS+0gQuA+ZitdZE/J6cDEudWJhVCQq2oH
+hRQcdIg4RLtNcCVoOuIpbW/xJpYrascLZzU+1BrlqvebDCRZtedqVdf5TqqO+AXt
+Cx28VH+3r6ZLSBPq617FL+6IvYvPQw==
+=QxHw
+-----END PGP SIGNATURE-----
 
+--dh5ic32cncbw4ucf--
