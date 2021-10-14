@@ -2,148 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8980FC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 08:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FC4C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A683610D2
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 08:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A80D46101E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Oct 2021 09:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbhJNIfc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 04:35:32 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:26619 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230248AbhJNIf0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 04:35:26 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211014083320euoutp02cfb2dea7232e1418f061fe844487744e~t2JsuEmb11301613016euoutp02R
-        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 08:33:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211014083320euoutp02cfb2dea7232e1418f061fe844487744e~t2JsuEmb11301613016euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1634200400;
-        bh=TiSj1o9zl4Q3JV99HgMOj8hOrXVab++M3/wqJ4giETs=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=hMdcUjyZezKaEu8Ffs4p+Uon3dB/v1d7A9g5/6nobi8N/Xu7PF6Di/zzVCzeMr3d+
-         rNXBnv016M/hB8LmkJaXZPY2S8oAKmX207soYv0m53bMElWaWTr9ZiT4VYcTMbX57D
-         YCq5VnNklNhSFZKJ5ilR60i5ugfu4bq7MXPfw59Y=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20211014083320eucas1p1bb242244d0b0bbcbece76218f2065024~t2JsSwuNS2169221692eucas1p1f;
-        Thu, 14 Oct 2021 08:33:20 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 97.58.56448.05BE7616; Thu, 14
-        Oct 2021 09:33:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20211014083319eucas1p1c3e87b2cf393993fc24f5f4745847624~t2JriNsRT2169621696eucas1p1c;
-        Thu, 14 Oct 2021 08:33:19 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211014083319eusmtrp1c7976934c7ec177a97c4215d7d19a339~t2JrhZ40b2286722867eusmtrp1d;
-        Thu, 14 Oct 2021 08:33:19 +0000 (GMT)
-X-AuditID: cbfec7f5-d3bff7000002dc80-d8-6167eb50431f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 02.B1.20981.F4BE7616; Thu, 14
-        Oct 2021 09:33:19 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211014083318eusmtip123602346d88436281ef75c110080a0d4~t2JqydgI-1903819038eusmtip1W;
-        Thu, 14 Oct 2021 08:33:18 +0000 (GMT)
-Subject: Re: [RFT PATCH v3 0/2] clk: samsung: add common support for CPU
- clocks
-To:     Will McVicker <willmcvicker@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S230032AbhJNJzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 05:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230010AbhJNJzt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 05:55:49 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4AEC06174E
+        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 02:53:44 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id x27so24610832lfu.5
+        for <linux-clk@vger.kernel.org>; Thu, 14 Oct 2021 02:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=/KsJRdiob87Ja5PgF5X/ti+BR7dI5FBOZcD9kz6Ozto=;
+        b=h9409aXB6YV05xq/pABEkmxSxFhTfpqrruXdlc5z7R9nLrph5NnzM/EBjSxJ9VBEd1
+         6NMrB5sswM/Ks9ujE5TeT+LdGjhG5OW/Sthv0VyCQ+5TDGCWjs3BSdQpHqLJR32u/IVy
+         3yA7DnbG9F5PlUNRf80NI+u/iJrs96xdUBoYX07isyy2y2gEVggGj6uEw2GiV0+H3vCm
+         DLkuhQVpOZ2Epai5CX0uonVB6S/iAKC0NtfkPPQdQlX2OHtmG+crZfWual8sefpN/EVe
+         CILMtmLbkDVMdRNOJKLfW1mb3VJ5MpatvmEAXlRj9OHXTVA9YNMAOi0HLak+NWmk/Vjg
+         WwYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/KsJRdiob87Ja5PgF5X/ti+BR7dI5FBOZcD9kz6Ozto=;
+        b=2aaTJJu/ZbGq00HnfqTkYjmwC/It6nGxLTDcGCVmTrrlWEsnKi08eoYZvk1yx2HpL2
+         +xqrCZfi9PvKDc+t2boxe77B+kOsaGegcNSapedTNUpiNve78ZdNQFWFwN6pQa+p9qid
+         gAHqJHtvSzlVWjV9Ul3jMbsX3rd6cgq7Ubw5qVf2NmdggcGalPjXkI5qtp1XP3FBDLmE
+         0e0K/O4CoSzxDPiUfVPU3gPnIfyajd9spGQm0ocpMkFeTpdgKIuKnQF05ZvTL+4BEU0A
+         OM3ApJf3OvH0PqQr4GrysgwMFKzVAJ5becSmQm33tW2QQXZCebAatnDRfz6jB33M1+VY
+         s/nQ==
+X-Gm-Message-State: AOAM533b9Cj8gIvXsm+vHKPN/h4o3vozZmODtwLpIS+BC4yHv5RHLG74
+        GfQSN+v31klortq4MA3EZwHP1g==
+X-Google-Smtp-Source: ABdhPJyyYEu0EPxRrb37K9hW8OcK5o+4Jwzf2jK9MJng9VLqg4T97Er87U0t4/FYgeISUNHmm0nAUw==
+X-Received: by 2002:a05:6512:b08:: with SMTP id w8mr4024902lfu.505.1634205223215;
+        Thu, 14 Oct 2021 02:53:43 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id s11sm181297lfd.262.2021.10.14.02.53.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Oct 2021 02:53:42 -0700 (PDT)
+Subject: Re: [PATCH v7 7/8] clk: qcom: dispcc-sm8250: stop using mmcx
+ regulator
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <b968773d-9ee4-4e7a-7e33-f3ded7362a9c@samsung.com>
-Date:   Thu, 14 Oct 2021 10:33:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0)
-        Gecko/20100101 Thunderbird/78.14.0
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
+ <20210829154757.784699-8-dmitry.baryshkov@linaro.org>
+ <YV8WsQb9H7+CaLjP@ripper> <4614587c-b87a-4375-cb6a-6af6f5462c6b@linaro.org>
+ <163415465484.936110.9292145029740247591@swboyd.mtv.corp.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Message-ID: <070b1b25-3718-5f3a-869b-a3954fdcc7c5@linaro.org>
+Date:   Thu, 14 Oct 2021 12:53:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <20211013221021.3433704-1-willmcvicker@google.com>
+In-Reply-To: <163415465484.936110.9292145029740247591@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djP87oBr9MTDVaf4LW4/uU5q8WO7SIW
-        G9/+YLLY9Pgaq8XHnnusFpd3zWGzmHF+H5PFxVOuFofftLNa/Lu2kcVi1a4/jBarPv1ndODx
-        2LZ7G6vH+xut7B6zGnrZPHbOusvusWBTqcemVZ1sHpuX1Hv0bVnF6PF5k1wAZxSXTUpqTmZZ
-        apG+XQJXxrf3J1gKrnFXNFy+ztLAeJyzi5GTQ0LAROLCtpPMXYxcHEICKxglfp5aCuV8YZRo
-        O/qaBcL5zCjR9GsvC0zLqnl/oBLLGSX+7rzICOF8ZJT4t+YgI0iVsECgROf03WwgCRGBTUwS
-        DXufsoI4zAILGSXebNzOBlLFJmAo0fW2C8zmFbCTWDzlCdBcDg4WAVWJd7PFQMKiAskS0/42
-        MUOUCEqcnAlRwilgL/HtqShImFlAXmL72znMELa4xK0n85lAVkkITOeUeHxmP1i9hICLxPyb
-        1RAfCEu8Or6FHcKWkTg9uYcFor6ZUeLhubXsEE4Po8TlphmMEFXWEnfO/WIDGcQsoCmxfpc+
-        RNhR4sil/UwQ8/kkbrwVhLiBT2LStunMEGFeiY42IYhqNYlZx9fBrT144RLzBEalWUgem4Xk
-        m1lIvpmFsHcBI8sqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT83E2MwLR2+t/xrzsYV7z6qHeI
-        kYmD8RCjBAezkgjvuwPpiUK8KYmVValF+fFFpTmpxYcYpTlYlMR5d21dEy8kkJ5YkpqdmlqQ
-        WgSTZeLglGpgWn2y4dW2ObrqC6x7GL/ey7/Wymv3smnDjV0zLFy7JzwIy839Ebe3a3O33PVc
-        sdtnZ72Rt7khtKohQWv/qs6tfZZvLta8fn7dZWGH/hStGyGVb0yKumz3XDt73WFfuPfTUyYT
-        788J12bXDTwU75Gldug0p0+yDdc7ZQcp17MaRp8TNlj+kVW99ksw/2NYzO3kM5s67Gd07Lat
-        83x5L7Gu2TL0tcKJq7K7Nt0Tkd8275M646WG/t2cX58cz+Sb+PUiy94JRfyrGdWfqBXY8cf/
-        ULLrXlDo6WvfUFP+Y/HmIxuzDsXck5ip+TWwUEX4FuusC6//3f2x87B4e9zneftNcrWYLASY
-        XWeuvckjp8PAoMRSnJFoqMVcVJwIAMh+d1zaAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xu7r+r9MTDRbulbS4/uU5q8WO7SIW
-        G9/+YLLY9Pgaq8XHnnusFpd3zWGzmHF+H5PFxVOuFofftLNa/Lu2kcVi1a4/jBarPv1ndODx
-        2LZ7G6vH+xut7B6zGnrZPHbOusvusWBTqcemVZ1sHpuX1Hv0bVnF6PF5k1wAZ5SeTVF+aUmq
-        QkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZapG+XYJexrf3J1gKrnFXNFy+
-        ztLAeJyzi5GTQ0LARGLVvD8sILaQwFJGiQcfVCHiMhInpzWwQtjCEn+udbF1MXIB1bxnlHjz
-        9xkjSEJYIFCic/pusISIwCYmib7T28AcZoGFjBItm16yQLRMYpQ4c/sSG0gLm4ChRNfbLjCb
-        V8BOYvGUJ0BFHBwsAqoS72aLgYRFBZIl3r7+zgRRIihxciZECaeAvcS3p6IgYWYBM4l5mx8y
-        Q9jyEtvfzoGyxSVuPZnPNIFRaBaS7llIWmYhaZmFpGUBI8sqRpHU0uLc9NxiI73ixNzi0rx0
-        veT83E2MwDjeduznlh2MK1991DvEyMTBeIhRgoNZSYT33YH0RCHelMTKqtSi/Pii0pzU4kOM
-        pkDfTGSWEk3OByaSvJJ4QzMDU0MTM0sDU0szYyVxXpMja+KFBNITS1KzU1MLUotg+pg4OKUa
-        mKqemDh9PyT+gTGDdcZ+DjPt070znrcFl+SXmDSw1/et6c5kOLZKxkXTSryr83rW+51Jdb1m
-        yXNq+Fkex//pUp/oYsaTz3qW/2dwSNaigw/jNPLeda1wffPF46Ks5rr1r7JT48J26xWfnLHv
-        ywkjA+GtIX1HOq55uP+ffPnaSmPuPA+HnOfrm6+6ftz6fn4ba8flbXmPKuVcYjpPTlaZ6hB+
-        I1hHj3NywXSLuiftR042bDgwYYapcY/TcYWwNTYmU0Oe73Svm1qf5pk2O44nuSyMqeVeyYyk
-        Ayt9s+XLjKOdTnT8MKn93ZZ533qF35LPZswXGKonmnX76D6Okt41beHU5XkbVd4nOyx7nFeo
-        xFKckWioxVxUnAgA5ls0wWwDAAA=
-X-CMS-MailID: 20211014083319eucas1p1c3e87b2cf393993fc24f5f4745847624
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20211013221032eucas1p1d8e2fcc36d3f021aa86cb846df0ed6da
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20211013221032eucas1p1d8e2fcc36d3f021aa86cb846df0ed6da
-References: <CGME20211013221032eucas1p1d8e2fcc36d3f021aa86cb846df0ed6da@eucas1p1.samsung.com>
-        <20211013221021.3433704-1-willmcvicker@google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14.10.2021 00:10, Will McVicker wrote:
-> These two patches were originally a part of the series [1]. They add
-> support to the common samsung clock driver to parse and register the
-> CPU clocks when provided. This allows for the samsung clock drivers to
-> simply provide a `struct samsung_cpu_clock` to `struct samsung_cmu_info`
-> and then call samsung_cmu_register_one(). With this new support, we can
-> now get rid of the custom apollo and atlas CLK_OF_DECLARE init functions.
->
-> Since I don't have the hardware to test these, I'm including the RFT tag
-> to try and get help testing and verifying these.
->
-> [1] https://protect2.fireeye.com/v1/url?k=91329df7-cea9a478-913316b8-0cc47a31307c-8e0b8e6442100c5a&q=1&e=50af1e33-8bdf-429f-9e54-434d425998d6&u=https%3A%2F%2Flore.kernel.org%2Fall%2F20210928235635.1348330-4-willmcvicker%40google.com%2F
+On 13/10/2021 22:50, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2021-10-07 09:16:13)
+>> On 07/10/2021 18:48, Bjorn Andersson wrote:
+>>> On Sun 29 Aug 08:47 PDT 2021, Dmitry Baryshkov wrote:
+>>>
+>>>> Now as the common qcom clock controller code has been taught about power
+>>>> domains, stop mentioning mmcx supply as a way to power up the clock
+>>>> controller's gdsc.
+>>>>
+>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>>>
+>>> Once we merge these, I expect that the boards will start crashing if
+>>> the kernel is booted using an existing DTB?
+>>>
+>>> Is it okay to just merge the first 6 patches in the series now and
+>>> postpone these two until we've had the dts change sitting for a while?
+>>
+>> Sure it is.
+>>
+> 
+> What's the merge strategy? It goes through arm-soc?
 
-Works fine on my Exynos5433 TM2e test board.
+I think this should go through the clk tree. There is little chance of 
+conflicts.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> Will McVicker (2):
->    [RFT] clk: samsung: add support for CPU clocks
->    [RFT] clk: samsung: exynos5433: update apollo and atlas clock probing
->
->   drivers/clk/samsung/clk-cpu.c        |  26 ++++++
->   drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
->   drivers/clk/samsung/clk.c            |   2 +
->   drivers/clk/samsung/clk.h            |  26 ++++++
->   4 files changed, 102 insertions(+), 72 deletions(-)
->
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+With best wishes
+Dmitry
