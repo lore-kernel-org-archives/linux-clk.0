@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0194C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D6FC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C15E0611C2
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5558611C3
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236331AbhJOH4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 03:56:11 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:20586 "EHLO
+        id S236348AbhJOH4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 03:56:44 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:59437 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236327AbhJOH4K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 03:56:10 -0400
+        with ESMTP id S236325AbhJOH4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 03:56:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634284445; x=1665820445;
+  t=1634284478; x=1665820478;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=zQaLXl76PE8+h3DdG+gufronQg25e23Fb+DmD9fslEY=;
-  b=seBLCtsXYmpO2AygPeZHPW6gy3jyQeEj40y7/oK3eYabnvxMIwcnk7do
-   0pSyEtQYSjV7QLzcf7AXgK91doeXGs6uaORwUBIlOMUYoLRh18NnzPsG4
-   71GIQHEqvl8zBtUFIAgjyYE8vlUA2IVnFJN9BhNl+QNv+HselGs83zLbF
-   a8IeYdx3R1KyEa3fsipfOH06J+MjGS5vSCuKCRAOVj2r37G7rJUn29Cd+
-   w/gTq+8jViRTvCT9j7jM90Syn2wssZ3KxXSf0LUtpvCIs8YYumVvty8TX
-   9iBln/oR1ubmdYSvYK1iNkm2O8A5r0vkYuwpJ91y+L+R53MKXbGzXSbJM
+  bh=Ct3zMn5uJYMTMazgwCgbpkfLam5EAt+NrPc1iijkyX8=;
+  b=P9gdJTKyoJESL5vLebiBsc+N2uc1MyKNCGy9jh1W0FOKY7vtsOL/XgEr
+   fA1SFfBkvOZ+zqxO7Y8CiA2lNuXzQG/Pr7NJX0KEywy3wlUtp6n2gDcva
+   el4wh6eXB6/KtMzERGFWW9tEJ6mAI/eieLscL9gqZNnn9ZvTZGq+XzMIu
+   zjEXo6rBt+NqyTEGtvyfjpMCoIoy+TNkQETFrlZaTjo6hbtZA9bZSK+Zr
+   7xubmzQspu+NOFLIWGi5lq3UpaNqB0K0Uk5RmjEah4Ni659DvvFM8IgLO
+   ATgwCY2O+Kcne73igTW3FT4VqfDLEcRab7x5bfG8hYnxpWboYFCN8lqI6
    Q==;
-IronPort-SDR: 13+gWVQ/7Py/d3dqkuLEvVt7ri21SYqrIo9LyiaTLYNknZIxOrG3YCmjUbcUrvx6sIiaisEU6T
- qQ84AlwqZeOLnsNOqBfSQ7OOMSi60Oex3LQGTaKovYCoZpinhNt01gfLvrgyUHPLVJ4WQPpeVp
- anEhkGpe3af5Xn/HJwuKvD6pzPammjzccgKEekf/LDu/8JmCnPO/xyDSRp++XLm1O3xp4UpFSv
- TS10qMQTrd9vQLy2EET0M6fwEDj+uGwTmAny/SsLNGQUymCJLnY9kCt2DX/vZuMphITuFjAjSD
- aTI67zOpY2qLByvwohh501wt
+IronPort-SDR: WosOnCY4FEHoU66Eu9T6uvuh7aqgb83UdcB9ZaRRec7tRXHla7OGo2Zc5Crh2FcB+CAfphFBfY
+ AZYpotpkf9MBnrjdEcjtV9iKUUKw5hDBNmWjZXnA6W2CSGHEc182c7rQjtWUqF1cQGTWHZ7r1B
+ DbNzdLPFt8h3LrHThUw9smk7NIkRZqo67158OUJVjgXh/w/04BpgBDoghPR/ACp05Zmo5pLb2I
+ 6Fh0RxStDTZpbcvO5rHlYMC68ybFM75mlTTblYotoZucRVRFBiYiy8PUlEkG3NSLUEsHtMhPfc
+ X/rV7oQcygoW4IZWjr1XI+mP
 X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
-   d="scan'208";a="139817490"
+   d="scan'208";a="135629857"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2021 00:54:04 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2021 00:54:37 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 15 Oct 2021 00:54:04 -0700
+ 15.1.2176.14; Fri, 15 Oct 2021 00:54:37 -0700
 Received: from [10.12.67.94] (10.10.115.15) by chn-vm-ex02.mchp-main.com
  (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Fri, 15 Oct 2021 00:54:02 -0700
-Subject: Re: [PATCH v5 06/15] clk: at91: pmc: add sama7g5 to the list of
- available pmcs
+ Transport; Fri, 15 Oct 2021 00:54:35 -0700
+Subject: Re: [PATCH v5 07/15] clk: at91: sam9x60-pll: use
+ DIV_ROUND_CLOSEST_ULL
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>
@@ -52,15 +52,15 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <20211011112719.3951784-1-claudiu.beznea@microchip.com>
- <20211011112719.3951784-7-claudiu.beznea@microchip.com>
+ <20211011112719.3951784-8-claudiu.beznea@microchip.com>
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-Message-ID: <4414e97d-b467-fd5b-0e22-783833e1feba@microchip.com>
-Date:   Fri, 15 Oct 2021 09:54:01 +0200
+Message-ID: <62bea638-22b8-916e-85ad-55ae1b51ba68@microchip.com>
+Date:   Fri, 15 Oct 2021 09:54:34 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20211011112719.3951784-7-claudiu.beznea@microchip.com>
+In-Reply-To: <20211011112719.3951784-8-claudiu.beznea@microchip.com>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,41 +69,34 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 11/10/2021 at 13:27, Claudiu Beznea wrote:
-> Add SAMA7G5 to the list of available PMCs such that the suspend/resume
-> code for clocks to be used on backup mode.
+> Use DIV_ROUND_CLOSEST_ULL() to avoid any inconsistency b/w the rate
+> computed in sam9x60_frac_pll_recalc_rate() and the one computed in
+> sam9x60_frac_pll_compute_mul_frac().
 > 
+> Fixes: 43b1bb4a9b3e1 ("clk: at91: clk-sam9x60-pll: re-factor to support plls with multiple outputs")
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
 > ---
->   drivers/clk/at91/pmc.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/clk/at91/clk-sam9x60-pll.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-> index 517973062719..5aa9c1f1c886 100644
-> --- a/drivers/clk/at91/pmc.c
-> +++ b/drivers/clk/at91/pmc.c
-> @@ -148,8 +148,9 @@ static struct syscore_ops pmc_syscore_ops = {
->   	.resume = at91_pmc_resume,
->   };
+> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+> index 7020d3bf6e13..a73d7c96ce1d 100644
+> --- a/drivers/clk/at91/clk-sam9x60-pll.c
+> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
+> @@ -73,8 +73,8 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
+>   	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
+>   	struct sam9x60_frac *frac = to_sam9x60_frac(core);
 >   
-> -static const struct of_device_id sama5d2_pmc_dt_ids[] = {
-> +static const struct of_device_id pmc_dt_ids[] = {
->   	{ .compatible = "atmel,sama5d2-pmc" },
-> +	{ .compatible = "microchip,sama7g5-pmc", },
->   	{ /* sentinel */ }
->   };
+> -	return (parent_rate * (frac->mul + 1) +
+> -		((u64)parent_rate * frac->frac >> 22));
+> +	return parent_rate * (frac->mul + 1) +
+> +		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
+>   }
 >   
-> @@ -157,7 +158,7 @@ static int __init pmc_register_ops(void)
->   {
->   	struct device_node *np;
->   
-> -	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
-> +	np = of_find_matching_node(NULL, pmc_dt_ids);
->   	if (!np)
->   		return -ENODEV;
->   
+>   static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
 > 
 
 
