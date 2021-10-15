@@ -2,137 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBD7C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 12:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE83C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 12:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD9A60E54
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 12:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AC556109E
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 12:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235378AbhJOMIT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 08:08:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50186 "EHLO
+        id S235956AbhJOMr3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 08:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbhJOMIS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 08:08:18 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1CBC061570;
-        Fri, 15 Oct 2021 05:06:12 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id z2so2350370wmc.3;
-        Fri, 15 Oct 2021 05:06:12 -0700 (PDT)
+        with ESMTP id S235537AbhJOMr3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 08:47:29 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D773BC061762
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 05:45:22 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id r7so26331305wrc.10
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 05:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2pgx0g7Ab7G9I2hs6+wwaJaXi+B3ZQHmcz1sfiWia5A=;
-        b=p9mF5RB3QcxoH1nzcEzae/jHbNvfWVcw7H7HO+Fj86UQt9K3rhLQuXfj1nb0qqvpIA
-         Dg0olTtP9ma+CeksRGL56SJV1XVJB+azvRd3888/mR/zKtVXVF6x1qsUrKagFFmGbJvb
-         qyS/D9YCldWULqp8R0thYoqPFz5iSr0Rjminq+iniEzE89oYXV8gfMn6kfuXTCPXTKFQ
-         DsyhZl8cCqgCZyz6Do4vVqEONM7FHf23ZqIinSQ+ibZ83LAMahLC6OGiNN/GDYrQ1QlK
-         hOvbSrw24A5rqZzRVQ0ZhJo4aIGjyLEFv+4iC4zKHXGtBo6EPMcqCyjG4HIOejbpXw6S
-         5rBw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=H1fRj8KbyTC18M2qqUxC+yLQuVMOY9QK2Vkvq7KCP/Q=;
+        b=wQTgGjUNl5ZNWtCzfZgsJW5kL1LNboDm3JtJ9cH2cUjIi28Fz39i3VbuoVmmS+etat
+         3FWlClGElz2S5Yej3Pj6kzY0FXEMGGxRnCwmC93vCGkH8oVY5GTBVSuPpfj78ouJY2CN
+         hv1y4GWUyVPr76Vmv2ptef3zAL/aemZ5keucGkNa5AUyyLSpvhe/aoXaIZMJTX/0+oxW
+         vjkONNr2GE7TFjsuw1k2zzB2RaSyu+gNkHEmNK6UPEfhXvygEXsO3LUKgFBYiO1VApxV
+         eTpHM/blKl9Up381tU5yctffNmpFwekdfTtypoEzkQ9WsE5KA/EwXwfVRZ0vkLSB/82S
+         GVUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2pgx0g7Ab7G9I2hs6+wwaJaXi+B3ZQHmcz1sfiWia5A=;
-        b=k4pSNr5zYlVrdQLbYxEHtEskYprAnmby2MrQMdTEQZnutqc5Q1+z73SVj19yznrg7b
-         vtUfqLnH0lyqy0S4DyhLQhCX3s7EJ4/rERmLUxEYRO1qlp0iCjKopcmjpylVAZMV/1b7
-         X8ua2CN/4vYPbEsmvRZM3bKV7uo9/ITRVU2SQPmrdZxAvhQt4VVQkSRNQQCvuQ8cUjxp
-         bwKhgNv7uBAupIuGeNyvWSU/itUdI6g+ESDdufIHqaxSsLu4EdOx1pW8x30W29v959tb
-         hNYvbxBudVkjs9rjm60ADJkDqnJVtzhrj/EDJ7NoX6jT5RsU01/SxL2H/1BPlVX1lR6r
-         QwCQ==
-X-Gm-Message-State: AOAM531paV/ysYmWvCsAaNwglaDPWtNEvHuhnD7KIkhPveDn+wypweE2
-        RhtpQb5d4ki49ymcp67X416o8GwQ1x8=
-X-Google-Smtp-Source: ABdhPJwSdzurtgFgxXDGbUKhIi2uu02rWc1l+HCi+1IONPSJyiSZnabW2KnH8jXzGtkWKVBYzoIZHQ==
-X-Received: by 2002:a05:600c:1c10:: with SMTP id j16mr26328587wms.12.1634299570676;
-        Fri, 15 Oct 2021 05:06:10 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a01-0c23-c1f2-fb00-f22f-74ff-fe21-0725.c23.pool.telefonica.de. [2a01:c23:c1f2:fb00:f22f:74ff:fe21:725])
-        by smtp.googlemail.com with ESMTPSA id j1sm4869155wrd.28.2021.10.15.05.06.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=H1fRj8KbyTC18M2qqUxC+yLQuVMOY9QK2Vkvq7KCP/Q=;
+        b=GLDck027SKX3dDIS53A1KIBUw6Z9fG65ZTUUSnJBmC9Wngm3Cfdfj0o63A42M9d2Zw
+         8WrEJJ5jrMHJEo8aFhJpNmNJfECT1H2CUFAIfg3bdrSUt7gOkYoayZdO6CFCiLq2YI+1
+         awzPsXgMbpW70akW6Amv1WRBMTHP5HR7JGXCL20/40IF+7s+tthVDj6RhwltC8kvSSNR
+         6w0CJJHmtIZHImBq78hZ9bhqpmzpJB+CMRvrRUVerRKGg2M+dijxaDo/XSvpHe1T20xB
+         YqD7NLssdOBOYgO6ytXpaW6+GEtOvr78rYeMGFGN9VIzDa9aHoAOBwfGxvOXLCIkPEsg
+         TGww==
+X-Gm-Message-State: AOAM531yZfaqEEBtW4DNcmskTABwt1AHtGAYPFtyT2fgP9/bT7s+iStr
+        /Ffoyezo/5KZJQhYWJstc/cHEA==
+X-Google-Smtp-Source: ABdhPJxR+e4FClxsODFkAteKxROdwFc61kceh1QDU+2OORGy1s3RMcwDGYLNlbGhFmjyYlcrJpfBCA==
+X-Received: by 2002:adf:cd12:: with SMTP id w18mr4152785wrm.401.1634301921366;
+        Fri, 15 Oct 2021 05:45:21 -0700 (PDT)
+Received: from google.com ([95.148.6.175])
+        by smtp.gmail.com with ESMTPSA id e9sm4672725wme.37.2021.10.15.05.45.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 05:06:10 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     sboyd@kernel.org
-Cc:     heiko@sntech.de, knaerzche@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        martin.blumenstingl@googlemail.com
-Subject: [PATCH] clk: composite: Also consider .determine_rate for rate + mux composites
-Date:   Fri, 15 Oct 2021 14:05:59 +0200
-Message-Id: <20211015120559.3515645-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <163425193558.1688384.15520943968787313145@swboyd.mtv.corp.google.com>
-References: <163425193558.1688384.15520943968787313145@swboyd.mtv.corp.google.com>
+        Fri, 15 Oct 2021 05:45:20 -0700 (PDT)
+Date:   Fri, 15 Oct 2021 13:45:18 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+Message-ID: <YWl33gCy1ac29WSs@google.com>
+References: <20210923064137.60722-1-zhang.lyra@gmail.com>
+ <20210923064137.60722-3-zhang.lyra@gmail.com>
+ <YV1XpL7ibF1y4LbV@google.com>
+ <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+ <YWVD0RXHVLxuXEIN@google.com>
+ <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
+ <YWfSz00Rj5AVhkgT@google.com>
+ <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 69a00fb3d69706 ("clk: divider: Implement and wire up
-.determine_rate by default") switches clk_divider_ops to implement
-.determine_rate by default. This breaks composite clocks with multiple
-parents because clk-composite.c does not use the special handling for
-mux + divider combinations anymore (that was restricted to rate clocks
-which only implement .round_rate, but not .determine_rate).
+On Thu, 14 Oct 2021, Rob Herring wrote:
 
-Alex reports:
-  This breaks lot of clocks for Rockchip which intensively uses
-  composites,  i.e. those clocks will always stay at the initial parent,
-  which in some cases  is the XTAL clock and I strongly guess it is the
-  same for other platforms,  which use composite clocks having more than
-  one parent (e.g. mediatek, ti ...)
+> On Thu, Oct 14, 2021 at 1:48 AM Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > On Wed, 13 Oct 2021, Geert Uytterhoeven wrote:
+> >
+> > > Hi Lee,
+> > >
+> > > On Tue, Oct 12, 2021 at 10:15 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > > > On Mon, 11 Oct 2021, Rob Herring wrote:
+> > > > > On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > > > > > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
+> > > > > >
+> > > > > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > > >
+> > > > > > > Add bindings for Unisoc system global register which provide register map
+> > > > > > > for clocks.
+> > > > > > >
+> > > > > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > > > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > > > > ---
+> > > > > > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+> > > > > > >  1 file changed, 68 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> > > > > >
+> > > > > > Unapplied v3 and applied this (v4) instead, thanks.
+> > > > >
+> > > > > What about the clock binding this depends on:
+> > > > >
+> > > > > Unknown file referenced: [Errno 2] No such file or directory:
+> > > > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> > > > > xargs: dt-doc-validate: exited with status 255; aborting
+> > > > > make[1]: *** Deleting file
+> > > > > 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
+> > > > > Unknown file referenced: [Errno 2] No such file or directory:
+> > > > > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> > > > > make[1]: *** [scripts/Makefile.lib:385:
+> > > > > Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
+> > > > > Error 255
+> > > > >
+> > > > >
+> > > > > Once again, all the components of MFD bindings need to be applied together.
+> > >
+> > > Just ran into this, too...
+> > >
+> > > > I can't apply what is not sent to me.
+> > > >
+> > > > This patch came in on its own.
+> > >
+> > > Then please reject/postpone patches that don't build (yet) ;-)
+> >
+> > I don't explicitly build DT documentation.
+> >
+> > Since I use the build bots to let me know if there are strange !(C,
+> > ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
+> > configuration possibilities (randconfig) in the repos I maintain, you
+> > might have to convince them that this is important too.
+> 
+> It's really just a matter of turning on the build in
+> allyesconfig/allmodconfig builds. I've not done that primarily because
+> there's one person I don't want to yell at me, but I could probably
+> make it arm and/or arm64 only. It's really arch and config
+> independent, so doing it multiple times is kind of pointless.
+> 
+> I assume for bots you mean kernel-ci mainly? Do you run that before
+> stuff gets into linux-next? IMO, that's too late. But still a slight
+> improvement if things go in via one tree. Otherwise, I see the
+> breakage twice, 1st linux-next then the merge window.
 
-  Example (RK3399)
-  clk_sdio is set (initialized) with XTAL (24 MHz) as parent in u-boot.
-  It will always stay at this parent, even if the mmc driver sets a rate
-  of  200 MHz (fails, as the nature of things), which should switch it
-  to   any of its possible parent PLLs defined in
-  mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p (see clk-rk3399.c)  - which
-  never happens.
+Kernel test robot <lkp@intel.com> is the one that springs to mind.
 
-Restore the original behavior by changing the priority of the conditions
-inside clk-composite.c. Now the special rate + mux case (with rate_ops
-having a .round_rate - which is still the case for the default
-clk_divider_ops) is preferred over rate_ops which have .determine_rate
-defined (and not further considering the mux).
+Although, I'm sure there are other, less prolific implementations.
 
-Fixes: 69a00fb3d69706 ("clk: divider: Implement and wire up .determine_rate by default")
-Reported-by: Alex Bee <knaerzche@gmail.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
-Re-sending this as inline patch instead of attaching it.
-
- drivers/clk/clk-composite.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index 0506046a5f4b..510a9965633b 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -58,11 +58,8 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
- 	long rate;
- 	int i;
- 
--	if (rate_hw && rate_ops && rate_ops->determine_rate) {
--		__clk_hw_set_clk(rate_hw, hw);
--		return rate_ops->determine_rate(rate_hw, req);
--	} else if (rate_hw && rate_ops && rate_ops->round_rate &&
--		   mux_hw && mux_ops && mux_ops->set_parent) {
-+	if (rate_hw && rate_ops && rate_ops->round_rate &&
-+	    mux_hw && mux_ops && mux_ops->set_parent) {
- 		req->best_parent_hw = NULL;
- 
- 		if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
-@@ -107,6 +104,9 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
- 
- 		req->rate = best_rate;
- 		return 0;
-+	} else if (rate_hw && rate_ops && rate_ops->determine_rate) {
-+		__clk_hw_set_clk(rate_hw, hw);
-+		return rate_ops->determine_rate(rate_hw, req);
- 	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
- 		__clk_hw_set_clk(mux_hw, hw);
- 		return mux_ops->determine_rate(mux_hw, req);
 -- 
-2.33.0
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
