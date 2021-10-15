@@ -2,131 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA82C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BCBC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7024D610E8
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0B2D61163
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235286AbhJOTQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 15:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233027AbhJOTQy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 15:16:54 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7211CC061570;
-        Fri, 15 Oct 2021 12:14:47 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id e12so28152829wra.4;
-        Fri, 15 Oct 2021 12:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Ipq9+EXyzEcuYpTRY9Y+kbIGH9VBg09BZhdAzkrItDs=;
-        b=BaMsZ0P8JjX8c/KxJ4EEt776Nycim34n7F/GGvMD4m/eFCMqRR9Dmh8m14t4LfOCpT
-         2QH3cv3BIXptAbJCDpKNwxqCL1dc/Qctd9kU8fI2OL8jONdzFOBOOauUCq/t+ELn11Y0
-         DHNB1bTA2KgImdvTNZBjh8e/kUETMexHz8MjF2hAUuPNgfNgeRLHjzRC4hRbzqHjFekp
-         NOfjm+4WYJtqylL4fPUHLdusRx87sbkOvJhDoHsT6eRr6CO5XHGF2OTScSaxiRWEICCu
-         Yj3Cx8b1NotgDAyQFcMvYqAX+YQ9jN0u7hKtRlat3JpxqgnZYdXTaQ0RmpVtWK3BQcXF
-         0aSA==
+        id S238472AbhJOTaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 15:30:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33575 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238348AbhJOTaU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 15:30:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634326093;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DHgVsI500xUtFvvJhND0q9V1AUlhJG7wr9pcaJspSiE=;
+        b=HIjItu4Icvt7zKRnsHURmw7ew3OpCZhEGC+IwgEnpKTSLM/hHH3CXtBiFexfKQYm9JhBpi
+        gutx2HDGk5RXLSlwNz7X6Pk/hNNZ8WgpkbV5D247lnCqS1hjVORmI5yp2YYBuaFdmVLPVv
+        duCjsaSV675MVhgYZflvN7JhCL57LDo=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-248-MLodbRC5OqKwuiOp0eEBmg-1; Fri, 15 Oct 2021 15:28:12 -0400
+X-MC-Unique: MLodbRC5OqKwuiOp0eEBmg-1
+Received: by mail-ed1-f69.google.com with SMTP id t18-20020a056402021200b003db9e6b0e57so9146944edv.10
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 12:28:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Ipq9+EXyzEcuYpTRY9Y+kbIGH9VBg09BZhdAzkrItDs=;
-        b=dtknBXULTABM2Br1sWkJOaH0FAKZi9gUAzTFBotrd8ageY7UQhbVuo6nDAmBO1/Hk+
-         Wd7uKnDrPtByfcXGyW3ifZ2MPQbBgCylYQVEh4NJaie+xT+WRyUGmrrWSrRygMqzVc+5
-         5ICuG5TlgcbjHfueopb3HXwo/bACRT0vrBQ/EfB7XaryZuc2Wpvq5Ht6wYeu2wTOdBZg
-         QOoo2Oiv8Wuk4Vk4oOaJVVusjrbyKjr2neRD+DQ3QHpbWzjdmEW3OGPSGV4ptG06C3rc
-         iJHcFlH+fmnWzWyFmJs0r2KMvLMnYXC7BQZMqmLhIm3VG7WYBo5jbtzov+vcCrafee6m
-         O6Xw==
-X-Gm-Message-State: AOAM533CnSc6W1EXynbQngAtgB5R3wGJOngcZZ2g9vGE8Pyv7Cqm1F9Z
-        aWRl69EshKoUL/U5z4tMrg==
-X-Google-Smtp-Source: ABdhPJzlSx3ML0KPYsDAoukcZigA6bbc8nXm4srhmSlX/Q2c7HlWx2kZykU6xA2UUQiOP5CXvcJ3Jg==
-X-Received: by 2002:a5d:598a:: with SMTP id n10mr16579781wri.81.1634325286039;
-        Fri, 15 Oct 2021 12:14:46 -0700 (PDT)
-Received: from [192.168.200.23] (ip5b435a69.dynamic.kabel-deutschland.de. [91.67.90.105])
-        by smtp.gmail.com with ESMTPSA id b19sm11512430wmj.9.2021.10.15.12.14.37
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DHgVsI500xUtFvvJhND0q9V1AUlhJG7wr9pcaJspSiE=;
+        b=2kZDsOkGY+NFYxUKR7mWTum/lG7WCKRisoMcxh59Mj/q/pqd0GHG2HLSZvh4DtpNQJ
+         lNGCaYMP/1aPV0/jXeVCyKHPkZ0tbpoIT01X8STCD6qwXJIrW0O9xC5ydoTEbH3CZP2z
+         j+011OdDx44mL7PBHSbgiWivLUuz1YSiYODPiI1MpJFRO/Lk8bPmsriSyTicMlYtf6wV
+         nXrUU3LwgwgE7Fby2t9c6BCxDaJXuY1PiDj+HdcLvadfRZk2sTZujuZrBp/JJlbU3b7a
+         wXGn96L6DZJNyQn88VnGHqwkP1m3nb9nbM/0S5PVrqYNzRu0PZRcK1jCWIC425Kf0Elo
+         c3eg==
+X-Gm-Message-State: AOAM531c8WXOjRpvXL0V136ASmeEOdVjShXGWySeOLCejNz04YLOPE43
+        8CmYwl8BD88RpqP+HCU4oU5IWlFKfaQefZNMNwKgUjWu42tSq/I3R45FmYURcPuYCMoeSfMQ7qL
+        dcLmz+Xy+NU5BNfRuZQg0QlpOOwXer36b1svxUQ2/wKLqWwZYIo75EdMnCUEnivN4XLAMmb4H
+X-Received: by 2002:a17:906:270e:: with SMTP id z14mr9053755ejc.414.1634326089456;
+        Fri, 15 Oct 2021 12:28:09 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy99ctIGjGxXAO5TNTGMcJ4devw27O3hL7cIKeEZl4TN6Opbo3iCGN5jicyxAP/sXDRjcROAw==
+X-Received: by 2002:a17:906:270e:: with SMTP id z14mr9053711ejc.414.1634326089206;
+        Fri, 15 Oct 2021 12:28:09 -0700 (PDT)
+Received: from x1.localdomain ([2a0e:5700:4:11:334c:7e36:8d57:40cb])
+        by smtp.gmail.com with ESMTPSA id x22sm5218355edv.14.2021.10.15.12.27.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Oct 2021 12:14:45 -0700 (PDT)
-Subject: Re: [PATCH v1 1/6] clk: divider: Implement and wire up
- .determine_rate by default
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com>
- <20210702225145.2643303-2-martin.blumenstingl@googlemail.com>
- <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com>
- <CAFBinCAVtd8gmcuvGU79-85CqhSU8a3mBCa_jweeZBd59u+amQ@mail.gmail.com>
- <CAFBinCAT-FxcHpt=NCt4g-OfzEUhvxh8TNRcY2hb5kdxna0Uyw@mail.gmail.com>
-From:   Alex Bee <knaerzche@gmail.com>
-Message-ID: <67995168-e0fc-0916-7c34-3efedf4bad00@gmail.com>
-Date:   Fri, 15 Oct 2021 21:14:36 +0200
+        Fri, 15 Oct 2021 12:27:54 -0700 (PDT)
+Subject: Re: [PATCH 05/12] regulator: Introduce tps68470-regulator driver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20211008162121.6628-1-hdegoede@redhat.com>
+ <20211008162121.6628-6-hdegoede@redhat.com> <YWQU/SYTT5Vk24XH@sirena.org.uk>
+ <f6f2d7e8-fdb8-ed64-0cdd-65aded9fc42c@redhat.com>
+ <YWmwZJvDYjPWJdb4@sirena.org.uk>
+ <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
+ <YWnPaI/ZECdfYre9@sirena.org.uk>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <843f939a-7e43-bc12-e9fc-582e01129b63@redhat.com>
+Date:   Fri, 15 Oct 2021 21:27:50 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCAT-FxcHpt=NCt4g-OfzEUhvxh8TNRcY2hb5kdxna0Uyw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <YWnPaI/ZECdfYre9@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-Am 14.10.21 um 23:34 schrieb Martin Blumenstingl:
-> On Thu, Oct 14, 2021 at 2:11 PM Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
-> [...]
->>> Reverting this commit makes it work again: Unless there is a quick and
->>> obvious fix for that, I guess this should be done for 5.15 - even if the
->>> real issue is somewhere else.
->> Reverting this patch is fine from the Amlogic SoC point of view.
->> The main goal was to clean up / improve the CCF code.
->> Nothing (that I am aware of) is going to break in Amlogic land if we
->> revert this.
-> Unfortunately only now I realized that reverting this patch would also
-> require reverting the other five patches in this series (since they
-> depend on this one).
-Indeed, that whole series would need have to reverted, which is clear 
-(to me) when looking at the patches.
-> For this reason I propose changing the order of the checks in
-> clk-composite.c - see the attached patch (which I can send as a proper
-> one once agreed that this is the way to go forward)
+On 10/15/21 8:58 PM, Mark Brown wrote:
+> On Fri, Oct 15, 2021 at 08:50:13PM +0200, Hans de Goede wrote:
+> 
+>> Are you happy with the platform_data for this driver as defined in
+>> patch 4/12 ? :
+> 
+> Some of the other review comments lead me to believe that you'd be
+> sending out a new version at some point?
 
-Yes, your patch papers over the actual issue (no best parent-selection 
-in case determine_rate is used) and fixes it for now - as expected.
+That is correct.
 
-But it is not a long-term solution, as we will be at the same point, as 
-soon as round_rate gets removed from clk-divider. For me, who is 
-semi-knowledged in clock-framework, it was relatively hard to figure out 
-what was going on. "I'll do this later" has often been heard here.
+> 
+>> https://lore.kernel.org/platform-driver-x86/20211008162121.6628-1-hdegoede@redhat.com/T/#m745cc1191f531a57ae7998f5c8817ba9a46f0fed
+> 
+> I am very confused about why it's in the driver without a DMI quirk
+> and/or clear comments about why and saying that this is a terrible
+> example to copy.
 
-Though, I don't fully follow why moving the priority of determine_rate 
-lower would have been necessary anyways: from what I understand 
-determine_rate is expected to be the future-replacement of round_rate 
-everywhere and should be preferred.
+The DMI quirks live in the ACPI glue code under drivers/platform/x86,
+that code instantiates the MFD cell and sets the platform-data
+as part of the cell.
 
-I guess it's up to the maintainers on how to proceed.
+> I'd also expect to get compile test coverage for the driver.
 
-Alex
+Ack, Stephen made the same remark for the clk driver. I'll fix
+this for the next version.
 
-> Off-list Alex also suggested that I should use rate_ops.determine_rate
-> if available.
-> While I agree that this makes sense in general my plan is to do this
-> in a follow-up patch.
-> Changing the order of the conditions is needed anyways and it *should*
-> fix the issue reported here (but I have no way of testing that
-> unfortunately).
->
-> Alex, it would be great if you (or someone with Rockchip boards) could
-> test the attached patch and let me know if it fixes the reported
-> problem.
->
->
-> Best regards,
-> Martin
+Regards,
+
+Hans
+
+
