@@ -2,104 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F94C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C405C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E88D61374
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6013F611ED
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240405AbhJOOhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 10:37:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240422AbhJOOhf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 10:37:35 -0400
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9347C06176F
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 07:35:27 -0700 (PDT)
-Received: by mail-ua1-x935.google.com with SMTP id h4so18487537uaw.1
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 07:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dyzl3P7DZRGqshOKvxCFF4c9hztnCOx9dCdEwf3z48o=;
-        b=fCA1/Mx8Wx4HD26C2GobDtiFNBVWxx8Apth/0bJpJefFV7OQ5MrVIPgRMBNyaL9Byd
-         rxFQKH2tLsYFV/Hc2JnK5uXbTVoRCAtzQk5nKO5QKqo8d68U6SJALbtbTNT/ttOB8IjN
-         AErQmd4AFqCMtvXRkJ0Lqr0+ijfzJvtNHUd5vr4lSFwT15xLYCuzYa3Y2T7uw/a75y4R
-         fIAGEKLQWswk6amv4HFks4L5FKoiqjWSJJdWERS3RMYIRmkopRHqsnWvsKEVvCXHQdpi
-         aemyj4+A/h1bLfcxYClQ9XvarVa+TBIPiqeGDXkZvB8cYOwJLiWlLOwfwfA1LbccB2In
-         Tr3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dyzl3P7DZRGqshOKvxCFF4c9hztnCOx9dCdEwf3z48o=;
-        b=aqFuJc9EkZeIgGeVFxT2oDM1okfBxhhhzCBOHkaKuFENf1IvnKVziXUP7o2EQMFUBa
-         IxjD00k4dBfed37yAhQVjVFrIxiNsUff/Tg1IGyC4DvClmdAbtaE5I10ky5oaJeVWGD1
-         qVT9JakGFrJFq+Q4BIOpgE8BG8MsCzdqnYAAMWVflUbLbn0tHYtkiV6766XYIh7UDWdU
-         8GHt3v5qFFT8KhxO5x4+JzGq7D63sSv6tik0TYDOEimcalS0ad+4tr9EzyWW2vPZo+q3
-         Iw9H4a0KBU2zddusO9caNKW/kZZ1ALThF5o1TY62MFgWe30dylgD3WX0GcnFu/i0OmtV
-         6VVQ==
-X-Gm-Message-State: AOAM531XTwrJ3XgzcoOzKUuSVaFLn1Fi03EdTDokZLssRko0UsU0kBj5
-        JSD/LV3BnW9959njyfXMIh/uXV85JVtgd4Uu0ZU0GA==
-X-Google-Smtp-Source: ABdhPJw1G6RrMl0a+Cbkl9++iuc5F7VDW14l2hO3UQMme2WeLYVa/Brsyt2UcPIYPAS9JbdJyMVvqad8L7w4GXy58g4=
-X-Received: by 2002:a67:ab48:: with SMTP id k8mr14401258vsh.30.1634308526705;
- Fri, 15 Oct 2021 07:35:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211008154352.19519-1-semen.protsenko@linaro.org>
- <20211008154352.19519-6-semen.protsenko@linaro.org> <CAPLW+4n41GY_OszS=VgzgywVrD+epY1NTmwL1ghHZ=0DCYcbYQ@mail.gmail.com>
- <a98f7f83-8478-aa38-7699-0a5dce44616d@kernel.org>
-In-Reply-To: <a98f7f83-8478-aa38-7699-0a5dce44616d@kernel.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 15 Oct 2021 17:35:15 +0300
-Message-ID: <CAPLW+4kXbon+m_px-CuqUqdYTJE0V=bMxqqzyLSn37Lr=nAU7g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] clk: samsung: Introduce Exynos850 clock driver
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        id S240514AbhJOOjB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 10:39:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240409AbhJOOil (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Oct 2021 10:38:41 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5A519611C8;
+        Fri, 15 Oct 2021 14:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634308595;
+        bh=qiSxOHjVTjbYQll1RPDxZr+z5ma0kRqY3IsuLP+RIOs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Um4H778CxgGDe/VWH5/tv8c5ISYQ19U5AUSU2pbFLUi5SQTm9CjbZd8cOzZOCiiP6
+         QDIDZUB4eBjzMMkegxwsI0cY4YEvWTw2//UqshWbJB/IdL8fEPbtGmjheqfkmJVbjG
+         K+ZCUSJdrvk92w+lHVGE8EWs9RXUQ6FJsyfN2txLKnR3oUCou1jDI1lqe2kvgf3Bsl
+         UWXU1grw+cXGh016BWVD3JcrFR0+KP+LXY6fLnvjtwAPkXAn8f3omvp+Al1qDYTup5
+         HlqtGttgHeMxD2w8BR3sg5nKX0GlvuK/JW43pMBycvZLR2VMx7qgY/KewiMDRImIFn
+         AXlfXKk/Z2Fcg==
+Subject: Re: [PATCH v3 1/2] [RFT] clk: samsung: add support for CPU clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Will McVicker <willmcvicker@google.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Android Kernel <kernel-team@android.com>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20211013221021.3433704-1-willmcvicker@google.com>
+ <20211013221021.3433704-2-willmcvicker@google.com>
+ <163417617897.936110.4798836682696423903@swboyd.mtv.corp.google.com>
+ <CABYd82a7G7jAOMr=yjpkG6sbH+g0-r36NKSBwVEDZeEthuTTLA@mail.gmail.com>
+ <163424761868.1688384.7017177221097736499@swboyd.mtv.corp.google.com>
+From:   Sylwester Nawrocki <snawrocki@kernel.org>
+Message-ID: <e06cd125-cf18-9c2f-45c1-55be9c3f67b6@kernel.org>
+Date:   Fri, 15 Oct 2021 16:36:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <163424761868.1688384.7017177221097736499@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 15 Oct 2021 at 16:30, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
->
-> Hi Sam,
->
-> On 12.10.2021 10:14, Sam Protsenko wrote:
-> > Hi Sylwester,
-> >
-> > On Fri, 8 Oct 2021 at 18:44, Sam Protsenko<semen.protsenko@linaro.org>  wrote:
-> >> This is the initial implementation adding only basic clocks like UART,
-> >> MMC, I2C and corresponding parent clocks. Design is influenced by
-> >> Exynos5433 clock driver.
-> [...]
-> >> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
-> >> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
-> >> ---
-> > Can we also apply this one?
->
-> I think so, apologies for a bit excessive latency on my side. The patch looks
-> good to me, I have just applied it to clk-samsung tree. Thank you for your work
-> and good luck in upstreaming remaining parts of the exynos850 platform.
->
->
+On 14.10.2021 23:40, Stephen Boyd wrote:
+> Quoting Will McVicker (2021-10-14 12:35:57)
+>> On Wed, Oct 13, 2021 at 6:49 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>> Quoting Will McVicker (2021-10-13 15:10:19)
+>>>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
 
-Thank you, Sylwester! A lot of work remains to be done on E850 clock
-driver, so I guess I'll be bothering you soon enough :)
+>>>
+>>>> +               if (parent_clk)
+>>>> +                       parent_clk_hw = __clk_get_hw(parent_clk);
+>>>> +               alt_parent_clk = __clk_lookup(list->alt_parent_name);
+>>>
+>>> Can the DT binding be updated?
+>>
+>> Are you referring to removing alt_parent and just adding it as another
+>> parent clock?
+>>
+> 
+> I was wondering if this is an external clk that feeds into here or if it
+> is all internal to the clk controller. It sounds like it's all internal
+> to the clk controller? In which case a binding update isn't needed.
+
+Yes, I double checked and the cpu parent clocks are always internal to
+the clock provider. There is one exception where physically a parent clock
+comes from other CMU (exynos5250), but in that case all CMUs are modeled
+as a single clk provider anyway. Thus we don't need a binding update.
+  
+
