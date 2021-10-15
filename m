@@ -2,93 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5102C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5C8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BABB561151
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC2C611F0
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:55:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243110AbhJOVeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 17:34:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44026 "EHLO mail.kernel.org"
+        id S243171AbhJOV54 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 17:57:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243106AbhJOVeH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 17:34:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7644360F6F;
-        Fri, 15 Oct 2021 21:32:00 +0000 (UTC)
+        id S229921AbhJOV5z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Oct 2021 17:57:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CD0C661184;
+        Fri, 15 Oct 2021 21:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634333520;
-        bh=QNUJyl7CqYF0RbqP23fSOKnChSyYkX1cJLYbSZI3y6c=;
+        s=k20201202; t=1634334948;
+        bh=a/PKEB79rge1XrRUfmeasHckwgBHCh9o8ibzTCo/fw0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=nZAIRxyIefzTQjuUcjAkQS6tBZGi2E/PNKa9rWuzxuoJnPleMLaww7w9jfjjNCK/D
-         zaRcmRQ+ui7QHF5dmiLXHIOdAO5r1LzJ+yxpm4PBqHqY65mNCqcGjbpWYIQ7pVHdz+
-         NSRpMQ9r/He8bVWLknOglcDKVwI9FzTPIXUhSpTbijf+hWy+Y/GX8oDqID/4kSSPxJ
-         9wQayXlqa7eV3WekC1JYV68kFLt8F1oLDkmQDjz4TdBFFLe3V5vMjDr9KnbR8Ay+u7
-         Y+tFDnMHQHAdIRKl4Rs5Cm2eUumJApiS9//z5zfVxFHHcoCuBqKzlEnK1ZsoLHVfLG
-         y9fmX2seZ78JA==
+        b=B++huS3Zx4+xJH4mRegAJ9HTh26DHfq/mDCB/4lo9wviALq/OMCqnNkVUGIyBKzr6
+         pSlfrvt3OafxB0wTL1giMzIHXVQLAuoYZZIP8lnjxLY1gDw7EqK8zJY/GkPaknjsML
+         g0BXXm6QmcSV1gDkftnylIqRRwO0DQVOXa9nH0ybQChWM2KbfmV9RO/lvmyzYsZ0ZU
+         eY5uEsuHBo24mEq8LBj+p5Ouu9/IXW59MdSxy4tjVXufQbWGhYnrGF+zfk7upVFEWk
+         E3XDHZJHYZy3CTuSVadKurlnolyFwgZWvd73gMjvGH+eZhJpPV5vk+Kg4px1F/xdU8
+         eEdbozZP3KCsw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <67995168-e0fc-0916-7c34-3efedf4bad00@gmail.com>
-References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com> <20210702225145.2643303-2-martin.blumenstingl@googlemail.com> <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com> <CAFBinCAVtd8gmcuvGU79-85CqhSU8a3mBCa_jweeZBd59u+amQ@mail.gmail.com> <CAFBinCAT-FxcHpt=NCt4g-OfzEUhvxh8TNRcY2hb5kdxna0Uyw@mail.gmail.com> <67995168-e0fc-0916-7c34-3efedf4bad00@gmail.com>
-Subject: Re: [PATCH v1 1/6] clk: divider: Implement and wire up .determine_rate by default
+In-Reply-To: <20211015093701.pfvkighxsndj4ujg@pali>
+References: <20210930095838.28145-1-pali@kernel.org> <20210930095838.28145-4-pali@kernel.org> <163425678347.1688384.10695189000353676651@swboyd.mtv.corp.google.com> <20211015090937.gnt66hgugrhwnkei@pali> <20211015093701.pfvkighxsndj4ujg@pali>
+Subject: Re: [PATCH v7 3/6] dt-bindings: mvebu-uart: document DT bindings for marvell,armada-3700-uart-clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-To:     Alex Bee <knaerzche@gmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 15 Oct 2021 14:31:59 -0700
-Message-ID: <163433351924.1688384.17959086273596597053@swboyd.mtv.corp.google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+To:     Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
+Date:   Fri, 15 Oct 2021 14:55:47 -0700
+Message-ID: <163433494758.1688384.5994009027317282677@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alex Bee (2021-10-15 12:14:36)
+Quoting Pali Roh=C3=A1r (2021-10-15 02:37:01)
+> On Friday 15 October 2021 11:09:37 Pali Roh=C3=A1r wrote:
+> > On Thursday 14 October 2021 17:13:03 Stephen Boyd wrote:
+> > > Quoting Pali Roh=C3=A1r (2021-09-30 02:58:35)
+> > > > diff --git a/Documentation/devicetree/bindings/clock/marvell,armada=
+-3700-uart-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,arm=
+ada-3700-uart-clock.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..175f5c8f2bc5
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/marvell,armada-3700-u=
+art-clock.yaml
+> > > > @@ -0,0 +1,59 @@
+> > > [..]
+> > > > +  '#clock-cells':
+> > > > +    const: 1
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - clocks
+> > > > +  - clock-names
+> > > > +  - '#clock-cells'
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    uartclk: clock-controller@12010 {
+> > >=20
+> > > The uart device is at 0x12000 and the clock-controller is at 0x12010?
+> > > This looks like a node is being put into DT to represent a clk driver.
+> > > Why can't we register a clk from the uart device driver itself? I thi=
+nk
+> > > we talked about this a month or two ago but it still isn't clear to m=
+e.
+> >=20
+> > We have already talked about it and I have already wrote reasons. UART
+> > clk is shared for both UART1 and UART2. And UART clk regs are in both
+> > address spaces of UART1 and UART2. UART1 or UART2 can be independently
+> > disabled on particular board (as pins are MPP which may be configured to
+> > different function). So you have a board only with UART2, you have to
+> > disable UART1 node, but at the same time you have to access UART clk to
+> > drive UART2. And UART clk bits are in UART1 address space.
 >=20
-> Am 14.10.21 um 23:34 schrieb Martin Blumenstingl:
-> > On Thu, Oct 14, 2021 at 2:11 PM Martin Blumenstingl
-> > <martin.blumenstingl@googlemail.com> wrote:
-> > [...]
-> >>> Reverting this commit makes it work again: Unless there is a quick and
-> >>> obvious fix for that, I guess this should be done for 5.15 - even if =
-the
-> >>> real issue is somewhere else.
-> >> Reverting this patch is fine from the Amlogic SoC point of view.
-> >> The main goal was to clean up / improve the CCF code.
-> >> Nothing (that I am aware of) is going to break in Amlogic land if we
-> >> revert this.
-> > Unfortunately only now I realized that reverting this patch would also
-> > require reverting the other five patches in this series (since they
-> > depend on this one).
-> Indeed, that whole series would need have to reverted, which is clear=20
-> (to me) when looking at the patches.
-> > For this reason I propose changing the order of the checks in
-> > clk-composite.c - see the attached patch (which I can send as a proper
-> > one once agreed that this is the way to go forward)
->=20
-> Yes, your patch papers over the actual issue (no best parent-selection=20
-> in case determine_rate is used) and fixes it for now - as expected.
->=20
-> But it is not a long-term solution, as we will be at the same point, as=20
-> soon as round_rate gets removed from clk-divider. For me, who is=20
-> semi-knowledged in clock-framework, it was relatively hard to figure out =
+> It is explained also in commit message of patch 2/6.
 
-> what was going on. "I'll do this later" has often been heard here.
->=20
-> Though, I don't fully follow why moving the priority of determine_rate=20
-> lower would have been necessary anyways: from what I understand=20
-> determine_rate is expected to be the future-replacement of round_rate=20
-> everywhere and should be preferred.
+Cool, thanks for the pointer.
 
-This is the only place I can see where we would have to keep round_rate
-around, to mesh together rate rounding with parent selection. We can
-probably stop using round_rate in the framework and only use it in the
-composite code. It's not a big deal but it's sort of annoying that we
-won't be able to fully remove round_rate from the clk_ops without
-resolving this. Long term it may make sense to get rid of the composite
-clk code entirely. It's pretty confusing code to read and encourages use
-of the "basic clk types" which I'd like to see be used via direct
-function calls instead of through clk_ops structures.
+Why are the two uarts split into different device nodes? It looks like
+it's one device that was split into two nodes because they're fairly
+similar hardware blocks, and one or the other may not be used on the
+board so we want to use status =3D "disabled" to indicate that. Sadly the
+hardware team has delivered them as a single package into the SoC at
+address 0x12000 and then stuck a common clk for both uarts into the same
+uart wrapper. Here's a clk, job done!
+
+Is it a problem to map UART1 address space when it isn't used on the
+board? I'm trying to understand why it can't work to register two uart
+ports from one device node and driver. It seems to be the main reason
+why we're introducing another node for the clk registers when it feels
+like it could all be handled in the existing uart driver.
+
+For example, we could have a static clk pointer in the uart driver
+indicating the clk has been registered, and then register the clk if
+uart1 or uart2 is the first device to probe and then store that clk in a
+global (with clk_hw_get_clk(), I think that's a thing now). If uart2
+probes first it can take the reg property and subtract some number to
+find the clk, and if uart1 probes first it can take the reg property and
+add some number to find the clk. Either way, the binding doesn't change
+in this case and we don't have to add another binding for this same uart
+hardware.
+
+Then if someone wants to cleanup the binding they can combine both uarts
+into one node, make a new compatible string and add some property to
+indicate that one or the other uart isn't used. Probably also add some
+property to map the uart alias to the uart hardware block inside the
+wrapper node.
