@@ -2,95 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43069C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 13:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F94C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 224BD61181
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 13:59:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E88D61374
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239872AbhJOOBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 10:01:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239577AbhJOOBh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 10:01:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4CA1161090;
-        Fri, 15 Oct 2021 13:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634306371;
-        bh=tHCAgydHYCdUAD+HzPMssFmmvgjn4jyjNVTgtu+4eEw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=k42TqYhkmGmaE+EtfizqtlY/kh6oTSZCb5+sO8CXY8k/W0acjH9ZmUU7LnG2vj0hV
-         2RCoYDTUjzKMoP5b9rq9bsVAaJuswXgYZnm7V+xnWuGgYYb5hHg8VaQnN5ILzp2peG
-         ZEIkd7+AvL881MhjotOmjJfyspnDBx64fMJcfjTBByJmktQoPaqjhzOyt4mBM8RyFb
-         UMHMNexoPIOuP64CqEb6HwV/yOuzRVoN0bJ8h1yO/PHAGcgx1CVXOH/TC/vbQkyqCQ
-         cse0xOpVS5ZYtS4xq4/aizSC1QWr1HkrF8Chz34DZ7KEcqqee/7f4LPxggRxRaJzLg
-         XFjbAQBw3sznA==
-Received: by mail-ed1-f43.google.com with SMTP id w19so38393075edd.2;
-        Fri, 15 Oct 2021 06:59:31 -0700 (PDT)
-X-Gm-Message-State: AOAM532dExKFDVwsp/3cjfxyaayrioyPJpsNotz/ybO2um61epO+X8ld
-        SRfNA/QOprvvsaFsrKZzvIrYVnPnhwbTsltUbQ==
-X-Google-Smtp-Source: ABdhPJz5gjHqCTPm3hhHQQda5+tmnHnI+OJ0yzrp124Rt8HUd7Oj79eh0WY1zgZ3TL2WJ+4/wDNCJHf38OPe5F3Fc2M=
-X-Received: by 2002:a05:6402:1778:: with SMTP id da24mr17737518edb.318.1634306350756;
- Fri, 15 Oct 2021 06:59:10 -0700 (PDT)
+        id S240405AbhJOOhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 10:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240422AbhJOOhf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 10:37:35 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9347C06176F
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 07:35:27 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id h4so18487537uaw.1
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 07:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dyzl3P7DZRGqshOKvxCFF4c9hztnCOx9dCdEwf3z48o=;
+        b=fCA1/Mx8Wx4HD26C2GobDtiFNBVWxx8Apth/0bJpJefFV7OQ5MrVIPgRMBNyaL9Byd
+         rxFQKH2tLsYFV/Hc2JnK5uXbTVoRCAtzQk5nKO5QKqo8d68U6SJALbtbTNT/ttOB8IjN
+         AErQmd4AFqCMtvXRkJ0Lqr0+ijfzJvtNHUd5vr4lSFwT15xLYCuzYa3Y2T7uw/a75y4R
+         fIAGEKLQWswk6amv4HFks4L5FKoiqjWSJJdWERS3RMYIRmkopRHqsnWvsKEVvCXHQdpi
+         aemyj4+A/h1bLfcxYClQ9XvarVa+TBIPiqeGDXkZvB8cYOwJLiWlLOwfwfA1LbccB2In
+         Tr3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dyzl3P7DZRGqshOKvxCFF4c9hztnCOx9dCdEwf3z48o=;
+        b=aqFuJc9EkZeIgGeVFxT2oDM1okfBxhhhzCBOHkaKuFENf1IvnKVziXUP7o2EQMFUBa
+         IxjD00k4dBfed37yAhQVjVFrIxiNsUff/Tg1IGyC4DvClmdAbtaE5I10ky5oaJeVWGD1
+         qVT9JakGFrJFq+Q4BIOpgE8BG8MsCzdqnYAAMWVflUbLbn0tHYtkiV6766XYIh7UDWdU
+         8GHt3v5qFFT8KhxO5x4+JzGq7D63sSv6tik0TYDOEimcalS0ad+4tr9EzyWW2vPZo+q3
+         Iw9H4a0KBU2zddusO9caNKW/kZZ1ALThF5o1TY62MFgWe30dylgD3WX0GcnFu/i0OmtV
+         6VVQ==
+X-Gm-Message-State: AOAM531XTwrJ3XgzcoOzKUuSVaFLn1Fi03EdTDokZLssRko0UsU0kBj5
+        JSD/LV3BnW9959njyfXMIh/uXV85JVtgd4Uu0ZU0GA==
+X-Google-Smtp-Source: ABdhPJw1G6RrMl0a+Cbkl9++iuc5F7VDW14l2hO3UQMme2WeLYVa/Brsyt2UcPIYPAS9JbdJyMVvqad8L7w4GXy58g4=
+X-Received: by 2002:a67:ab48:: with SMTP id k8mr14401258vsh.30.1634308526705;
+ Fri, 15 Oct 2021 07:35:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com>
- <YV1XpL7ibF1y4LbV@google.com> <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
- <YWVD0RXHVLxuXEIN@google.com> <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
- <YWfSz00Rj5AVhkgT@google.com> <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
- <163425256290.1688384.5646232860050218479@swboyd.mtv.corp.google.com>
-In-Reply-To: <163425256290.1688384.5646232860050218479@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 15 Oct 2021 08:58:57 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJV_CoPH7VrX-D5=u2WsoUpp-pTKbcR2y+gWxhv+WKcEg@mail.gmail.com>
-Message-ID: <CAL_JsqJV_CoPH7VrX-D5=u2WsoUpp-pTKbcR2y+gWxhv+WKcEg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
+References: <20211008154352.19519-1-semen.protsenko@linaro.org>
+ <20211008154352.19519-6-semen.protsenko@linaro.org> <CAPLW+4n41GY_OszS=VgzgywVrD+epY1NTmwL1ghHZ=0DCYcbYQ@mail.gmail.com>
+ <a98f7f83-8478-aa38-7699-0a5dce44616d@kernel.org>
+In-Reply-To: <a98f7f83-8478-aa38-7699-0a5dce44616d@kernel.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Fri, 15 Oct 2021 17:35:15 +0300
+Message-ID: <CAPLW+4kXbon+m_px-CuqUqdYTJE0V=bMxqqzyLSn37Lr=nAU7g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/5] clk: samsung: Introduce Exynos850 clock driver
+To:     Sylwester Nawrocki <snawrocki@kernel.org>
+Cc:     Ryu Euiyoul <ryu.real@samsung.com>, Tom Gall <tom.gall@linaro.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 14, 2021 at 6:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Fri, 15 Oct 2021 at 16:30, Sylwester Nawrocki <snawrocki@kernel.org> wrote:
 >
-> Quoting Rob Herring (2021-10-14 09:18:16)
-> > On Thu, Oct 14, 2021 at 1:48 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > >
-> > > I don't explicitly build DT documentation.
-> > >
-> > > Since I use the build bots to let me know if there are strange !(C,
-> > > ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
-> > > configuration possibilities (randconfig) in the repos I maintain, you
-> > > might have to convince them that this is important too.
-> >
-> > It's really just a matter of turning on the build in
-> > allyesconfig/allmodconfig builds. I've not done that primarily because
-> > there's one person I don't want to yell at me, but I could probably
-> > make it arm and/or arm64 only. It's really arch and config
-> > independent, so doing it multiple times is kind of pointless.
-> >
-> > I assume for bots you mean kernel-ci mainly? Do you run that before
-> > stuff gets into linux-next? IMO, that's too late. But still a slight
-> > improvement if things go in via one tree. Otherwise, I see the
-> > breakage twice, 1st linux-next then the merge window.
-> >
+> Hi Sam,
 >
-> I run `make dt_binding_check DT_SCHEMA_FILES="<path to yaml file>"` but
-> nowadays this seems to check all the bindings and not just the one
-> binding I care to check. Did something break?
+> On 12.10.2021 10:14, Sam Protsenko wrote:
+> > Hi Sylwester,
+> >
+> > On Fri, 8 Oct 2021 at 18:44, Sam Protsenko<semen.protsenko@linaro.org>  wrote:
+> >> This is the initial implementation adding only basic clocks like UART,
+> >> MMC, I2C and corresponding parent clocks. Design is influenced by
+> >> Exynos5433 clock driver.
+> [...]
+> >> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+> >> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+> >> ---
+> > Can we also apply this one?
+>
+> I think so, apologies for a bit excessive latency on my side. The patch looks
+> good to me, I have just applied it to clk-samsung tree. Thank you for your work
+> and good luck in upstreaming remaining parts of the exynos850 platform.
+>
+>
 
-It should apply all the schemas to the example in DT_SCHEMA_FILES.
-Originally, it only applied DT_SCHEMA_FILES schema to the example in
-DT_SCHEMA_FILES.
-
-Rob
+Thank you, Sylwester! A lot of work remains to be done on E850 clock
+driver, so I guess I'll be bothering you soon enough :)
