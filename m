@@ -2,66 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520E4C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 00:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4598C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 359C2611CC
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 00:56:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B208F61167
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234678AbhJOA6f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 20:58:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36682 "EHLO mail.kernel.org"
+        id S230109AbhJOBDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 21:03:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234657AbhJOA6e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 Oct 2021 20:58:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8694361040;
-        Fri, 15 Oct 2021 00:56:28 +0000 (UTC)
+        id S229912AbhJOBDC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 21:03:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 77DEC61151;
+        Fri, 15 Oct 2021 01:00:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634259388;
-        bh=U4dnARrBWAJGLPP9DHiCUoMVYjVtEHe13X6lFc+M2aU=;
+        s=k20201202; t=1634259656;
+        bh=lGUI9wH5/guP38rhybog+cuLjuWEL/ojIBB1mkKpTzc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qlv2hEphxGUqwrs6OgVrQ1UYPmDSQcG/2vTNOcEzktQCqWVNJublBs/jENA4ARDal
-         6fpoHJismQiFl92yxnSea4s2/o2bdx+t04Hm/u45VrgGgoyc24DQBWXVVTxTpGptY2
-         lUk1TZ+Cb2JBNTsFm3L8fHgUG/u6bCkcC42GtcXt5bIHsQ5CX3lzfxanUguAap4dAX
-         M/lIpb4UCpMJl5aKBORuFJjQFPIV4wl8plINzng4UGcKwi7btU8ZR7pEY4D2r4sSDG
-         P1SFSARbuNCsmA22FPoP7P32grG+GjHa79dshW1EDhVe0Zvjeizqc7iHMf2o5Ez2yk
-         +C3UNJ5gpYvdA==
+        b=E9aTpY7cyvQ/HO3wrh/PHh9E49R8xJb1zTZipV6A5hJ4sePKxQyt5DUaXl3uo0hah
+         yyLqctxZgSqacFPUh6SU/+AHHf2Wwp0xZgNGsPGU9EdDsDJakw7icE6TenKdrwGKXO
+         sh490MUjSU+0oGBX4uOm5c/MFlvE7gQz1uIg0I5xQ2SvnosgqvrzYr6hJf3I421zJ7
+         Mddd820ZDVuuPpruJIVr98tSvEAptdwsuScnOtSg+E6PU6+wb2XnY4N7+k8Pzo82rT
+         TJa0xFpJ6mmzGRJtlI0IhTi70k17Kktxkm4LUvoEerr5E2jTJtPhtPtZVI0CUNYLqx
+         j0EQzTI1Jq+sA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210829154757.784699-6-dmitry.baryshkov@linaro.org>
-References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org> <20210829154757.784699-6-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v7 5/8] clk: qcom: gdsc: enable optional power domain support
+In-Reply-To: <20210901180833.4558932d@endymion>
+References: <20210901180833.4558932d@endymion>
+Subject: Re: [PATCH 1/2] clk: versatile: Rename ICST to CLK_ICST
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 14 Oct 2021 17:56:27 -0700
-Message-ID: <163425938743.1688384.8904532659751492259@swboyd.mtv.corp.google.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+To:     Jean Delvare <jdelvare@suse.de>, linux-clk@vger.kernel.org
+Date:   Thu, 14 Oct 2021 18:00:55 -0700
+Message-ID: <163425965520.1688384.4803949954545071072@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-08-29 08:47:54)
-> On sm8250 dispcc and videocc registers are powered up by the MMCX power
-> domain. Currently we use a regulator to enable this domain on demand,
-> however this has some consequences, as genpd code is not reentrant.
+Quoting Jean Delvare (2021-09-01 09:08:33)
+> For consistency, prefix the ICST config option with CLK as all other
+> clock source drivers have.
 >=20
-> Make gdsc code also use pm_runtime calls to ensure that registers are
-> accessible during the gdsc_enable/gdsc_disable operations.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
