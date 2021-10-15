@@ -2,123 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3863DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5102C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EDBD60EFF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BABB561151
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 21:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243062AbhJOV3O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 17:29:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41666 "EHLO mail.kernel.org"
+        id S243110AbhJOVeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 17:34:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243057AbhJOV3N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 17:29:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 04C9660F36;
-        Fri, 15 Oct 2021 21:27:06 +0000 (UTC)
+        id S243106AbhJOVeH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Oct 2021 17:34:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7644360F6F;
+        Fri, 15 Oct 2021 21:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634333227;
-        bh=dMAxjYXYMkKaHmAh6bSmJDsaAoZcAPf9FXj9DHK0xGc=;
+        s=k20201202; t=1634333520;
+        bh=QNUJyl7CqYF0RbqP23fSOKnChSyYkX1cJLYbSZI3y6c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qevXXEhpqVyvZ/n/fO7P9cQEp8zXn69UkBOSGTXaFmLGGCNwJqhxfW9luairtbPo6
-         L2jZg5RgwFC5du9ZEUkPvLOJI7MyoduVbFl/fe1zOShqWbj4NxLS/ZSXZ3xOSuvhGF
-         jVBWw5OTOd6bLOzQletvvUQf4gwRl24C4Li0D24XE1AVMCKUEmP4heSEVA+3Ldb/eo
-         DIkR25++Uf64xWP2empoxfkpqu5p84U1acVIayy89C0uH/AxFwwRk4lhgh6znkKjOJ
-         wyIQ0uGfuVvDKvJcJvitJpJU90yGMne/EkN75oKILmqkxWdRQAucWBlk0kYKi3qBIe
-         aaWmzcyeJfo3w==
+        b=nZAIRxyIefzTQjuUcjAkQS6tBZGi2E/PNKa9rWuzxuoJnPleMLaww7w9jfjjNCK/D
+         zaRcmRQ+ui7QHF5dmiLXHIOdAO5r1LzJ+yxpm4PBqHqY65mNCqcGjbpWYIQ7pVHdz+
+         NSRpMQ9r/He8bVWLknOglcDKVwI9FzTPIXUhSpTbijf+hWy+Y/GX8oDqID/4kSSPxJ
+         9wQayXlqa7eV3WekC1JYV68kFLt8F1oLDkmQDjz4TdBFFLe3V5vMjDr9KnbR8Ay+u7
+         Y+tFDnMHQHAdIRKl4Rs5Cm2eUumJApiS9//z5zfVxFHHcoCuBqKzlEnK1ZsoLHVfLG
+         y9fmX2seZ78JA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211015120559.3515645-1-martin.blumenstingl@googlemail.com>
-References: <163425193558.1688384.15520943968787313145@swboyd.mtv.corp.google.com> <20211015120559.3515645-1-martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH] clk: composite: Also consider .determine_rate for rate + mux composites
+In-Reply-To: <67995168-e0fc-0916-7c34-3efedf4bad00@gmail.com>
+References: <20210702225145.2643303-1-martin.blumenstingl@googlemail.com> <20210702225145.2643303-2-martin.blumenstingl@googlemail.com> <4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com> <CAFBinCAVtd8gmcuvGU79-85CqhSU8a3mBCa_jweeZBd59u+amQ@mail.gmail.com> <CAFBinCAT-FxcHpt=NCt4g-OfzEUhvxh8TNRcY2hb5kdxna0Uyw@mail.gmail.com> <67995168-e0fc-0916-7c34-3efedf4bad00@gmail.com>
+Subject: Re: [PATCH v1 1/6] clk: divider: Implement and wire up .determine_rate by default
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     heiko@sntech.de, knaerzche@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        martin.blumenstingl@googlemail.com
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 15 Oct 2021 14:27:05 -0700
-Message-ID: <163433322577.1688384.5988903670868801272@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+To:     Alex Bee <knaerzche@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 15 Oct 2021 14:31:59 -0700
+Message-ID: <163433351924.1688384.17959086273596597053@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2021-10-15 05:05:59)
-> Commit 69a00fb3d69706 ("clk: divider: Implement and wire up
-> .determine_rate by default") switches clk_divider_ops to implement
-> .determine_rate by default. This breaks composite clocks with multiple
-> parents because clk-composite.c does not use the special handling for
-> mux + divider combinations anymore (that was restricted to rate clocks
-> which only implement .round_rate, but not .determine_rate).
+Quoting Alex Bee (2021-10-15 12:14:36)
 >=20
-> Alex reports:
->   This breaks lot of clocks for Rockchip which intensively uses
->   composites,  i.e. those clocks will always stay at the initial parent,
->   which in some cases  is the XTAL clock and I strongly guess it is the
->   same for other platforms,  which use composite clocks having more than
->   one parent (e.g. mediatek, ti ...)
+> Am 14.10.21 um 23:34 schrieb Martin Blumenstingl:
+> > On Thu, Oct 14, 2021 at 2:11 PM Martin Blumenstingl
+> > <martin.blumenstingl@googlemail.com> wrote:
+> > [...]
+> >>> Reverting this commit makes it work again: Unless there is a quick and
+> >>> obvious fix for that, I guess this should be done for 5.15 - even if =
+the
+> >>> real issue is somewhere else.
+> >> Reverting this patch is fine from the Amlogic SoC point of view.
+> >> The main goal was to clean up / improve the CCF code.
+> >> Nothing (that I am aware of) is going to break in Amlogic land if we
+> >> revert this.
+> > Unfortunately only now I realized that reverting this patch would also
+> > require reverting the other five patches in this series (since they
+> > depend on this one).
+> Indeed, that whole series would need have to reverted, which is clear=20
+> (to me) when looking at the patches.
+> > For this reason I propose changing the order of the checks in
+> > clk-composite.c - see the attached patch (which I can send as a proper
+> > one once agreed that this is the way to go forward)
 >=20
->   Example (RK3399)
->   clk_sdio is set (initialized) with XTAL (24 MHz) as parent in u-boot.
->   It will always stay at this parent, even if the mmc driver sets a rate
->   of  200 MHz (fails, as the nature of things), which should switch it
->   to   any of its possible parent PLLs defined in
->   mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p (see clk-rk3399.c)  - which
->   never happens.
+> Yes, your patch papers over the actual issue (no best parent-selection=20
+> in case determine_rate is used) and fixes it for now - as expected.
 >=20
-> Restore the original behavior by changing the priority of the conditions
-> inside clk-composite.c. Now the special rate + mux case (with rate_ops
-> having a .round_rate - which is still the case for the default
-> clk_divider_ops) is preferred over rate_ops which have .determine_rate
-> defined (and not further considering the mux).
->=20
-> Fixes: 69a00fb3d69706 ("clk: divider: Implement and wire up .determine_ra=
-te by default")
-> Reported-by: Alex Bee <knaerzche@gmail.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
-> Re-sending this as inline patch instead of attaching it.
->=20
->  drivers/clk/clk-composite.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-> index 0506046a5f4b..510a9965633b 100644
-> --- a/drivers/clk/clk-composite.c
-> +++ b/drivers/clk/clk-composite.c
-> @@ -58,11 +58,8 @@ static int clk_composite_determine_rate(struct clk_hw =
-*hw,
->         long rate;
->         int i;
-> =20
-> -       if (rate_hw && rate_ops && rate_ops->determine_rate) {
-> -               __clk_hw_set_clk(rate_hw, hw);
-> -               return rate_ops->determine_rate(rate_hw, req);
-> -       } else if (rate_hw && rate_ops && rate_ops->round_rate &&
-> -                  mux_hw && mux_ops && mux_ops->set_parent) {
-> +       if (rate_hw && rate_ops && rate_ops->round_rate &&
-> +           mux_hw && mux_ops && mux_ops->set_parent) {
+> But it is not a long-term solution, as we will be at the same point, as=20
+> soon as round_rate gets removed from clk-divider. For me, who is=20
+> semi-knowledged in clock-framework, it was relatively hard to figure out =
 
-What do we do if rate_ops and mux_ops only implement determine_rate? It
-will fail right? We can't mesh them together in function. We should
-probably fail to let the composite clk be registered if that happens.
+> what was going on. "I'll do this later" has often been heard here.
+>=20
+> Though, I don't fully follow why moving the priority of determine_rate=20
+> lower would have been necessary anyways: from what I understand=20
+> determine_rate is expected to be the future-replacement of round_rate=20
+> everywhere and should be preferred.
 
->                 req->best_parent_hw =3D NULL;
-> =20
->                 if (clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT) {
-> @@ -107,6 +104,9 @@ static int clk_composite_determine_rate(struct clk_hw=
- *hw,
-> =20
->                 req->rate =3D best_rate;
->                 return 0;
-> +       } else if (rate_hw && rate_ops && rate_ops->determine_rate) {
-> +               __clk_hw_set_clk(rate_hw, hw);
-> +               return rate_ops->determine_rate(rate_hw, req);
->         } else if (mux_hw && mux_ops && mux_ops->determine_rate) {
->                 __clk_hw_set_clk(mux_hw, hw);
->                 return mux_ops->determine_rate(mux_hw, req);
-> --=20
-> 2.33.0
->
+This is the only place I can see where we would have to keep round_rate
+around, to mesh together rate rounding with parent selection. We can
+probably stop using round_rate in the framework and only use it in the
+composite code. It's not a big deal but it's sort of annoying that we
+won't be able to fully remove round_rate from the clk_ops without
+resolving this. Long term it may make sense to get rid of the composite
+clk code entirely. It's pretty confusing code to read and encourages use
+of the "basic clk types" which I'd like to see be used via direct
+function calls instead of through clk_ops structures.
