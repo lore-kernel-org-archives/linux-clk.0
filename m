@@ -2,212 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BCDC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 08:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C57C7C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 09:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD5060FDA
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 08:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A24F261108
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 09:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233629AbhJOIfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 04:35:48 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:50928 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233165AbhJOIfr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 04:35:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634286822; x=1665822822;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=iSeF2rGUIFXjTrM2ckflciJ6BWr0KHRfBP5Y3ZkD8Mc=;
-  b=gDruQwCvnRckucQIzX9tLwL/qBGo2cTRbhl9ReVLncsFQMaGsMas2Rge
-   VWdRADMc/MBMUtb67fdZVQdXHePTqBk9O/titGY5dlM6UGa3oaU846W/k
-   P7SypVjmjV60R/Woj+9agGjZBiHTethGljBMr9aoQH1YOhL9cHMNwyaiK
-   lLib4WKWFePtYiqoqQ7Yv6Ksk+6SHlny3it6DpFO99iSZaNNnzAdhXF/m
-   JLZovKm6K5ndDjranUz6tsUKXiw78LHaknq/EJ97Va7AU9aCwq0wiffDK
-   MczgBQEahrG9p1Uv9tpDY4A4NHySxQFYh7WaCfa71zNWlr3Lu1eRMOjgw
-   w==;
-IronPort-SDR: pr45eMZcSEnkIIKRAQXfcp0H3/1t5DULEreBoR3CBjqUFlE8qBhoWJH/39Hsy3Z94fueporHda
- BApWjUfGtt+BY3K7il4qZ1V1/84agNlJqU2B6zQSGGdwkPShYnj0xZoE514SfqzNjdaFFw7NVu
- gs/vT0C0HS9mWTjrRGemBjdWIfIBHserOMN+V1nWxBTQgDDVMLsw+0SSdxcP1ESU/3WGr0T/S3
- fH9G4YKqVxI6WNiqtAqDxe77ZFCx4DA6JF8FCzsmwLLKvUwL8KtOeeYuG7KGksBj38SxCm7A+v
- v9Iwqikq6yzyZ5r0zZUf3VTQ
-X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
-   d="scan'208";a="140407863"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2021 01:33:41 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 15 Oct 2021 01:33:40 -0700
-Received: from [10.12.67.94] (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Fri, 15 Oct 2021 01:33:38 -0700
-Subject: Re: [PATCH v5 00/15] clk: at91: updates for power management and dvfs
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <ludovic.desroches@microchip.com>,
-        <alexandre.belloni@bootlin.com>
-References: <20211011112719.3951784-1-claudiu.beznea@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <2dad9397-425f-baaf-e0fc-5a9e6e39de32@microchip.com>
-Date:   Fri, 15 Oct 2021 10:33:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S234564AbhJOJLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 05:11:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231971AbhJOJLq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Oct 2021 05:11:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1BFAE60F70;
+        Fri, 15 Oct 2021 09:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634288980;
+        bh=gKlmBZCKfh377td8Ai6w0QzUjV+rvKC3o7zhAOzeFS0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Fd8YKgeP+xXi8oXh/Q0MY+iTcyS6Os7t5d0ZReea+QOPW8mm/Ofwv/96h81wbBMWL
+         6OGgpY8NKVIEMJkEfttNQZ1rvAnKgY+FjPbWb0cxDajhudVdH32dmrTlyBmnAG483F
+         LmPmGLNitQvXTKq/Sl9CVvw0sf72uYPKTJFTKnWSpNasgxTNGN2/wB/xlqnZUpaeV1
+         fe72nGFHS/v42AUGNhtXoJj6DR3/AiSJjA5mDbAlaTmu6O5rHgpQNPmlYIhKSXQoAM
+         Vfy51Ob0BZc0SxziOeybOOOi/UGfx3cINJHtxxCXd1QZBzbnZY4Cbc5rlw58L8ykl8
+         pCANqiz3vKJ1w==
+Received: by pali.im (Postfix)
+        id 8374D80A; Fri, 15 Oct 2021 11:09:37 +0200 (CEST)
+Date:   Fri, 15 Oct 2021 11:09:37 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 3/6] dt-bindings: mvebu-uart: document DT bindings for
+ marvell,armada-3700-uart-clock
+Message-ID: <20211015090937.gnt66hgugrhwnkei@pali>
+References: <20210930095838.28145-1-pali@kernel.org>
+ <20210930095838.28145-4-pali@kernel.org>
+ <163425678347.1688384.10695189000353676651@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20211011112719.3951784-1-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <163425678347.1688384.10695189000353676651@swboyd.mtv.corp.google.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Stephen,
+On Thursday 14 October 2021 17:13:03 Stephen Boyd wrote:
+> Quoting Pali Rohár (2021-09-30 02:58:35)
+> > diff --git a/Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+> > new file mode 100644
+> > index 000000000000..175f5c8f2bc5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+> > @@ -0,0 +1,59 @@
+> [..]
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - '#clock-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    uartclk: clock-controller@12010 {
+> 
+> The uart device is at 0x12000 and the clock-controller is at 0x12010?
+> This looks like a node is being put into DT to represent a clk driver.
+> Why can't we register a clk from the uart device driver itself? I think
+> we talked about this a month or two ago but it still isn't clear to me.
 
-On 11/10/2021 at 13:27, Claudiu Beznea wrote:
-> Hi,
-> 
-> This series addresses the clock power management for SAMA7G5 and also
-> updates the master clock driver and sam9x60-pll driver to accommodate
-> the requests at [1] and avoid overclocking of CPU and MCK0 domains while
-> changing the frequency via DVFS.
+We have already talked about it and I have already wrote reasons. UART
+clk is shared for both UART1 and UART2. And UART clk regs are in both
+address spaces of UART1 and UART2. UART1 or UART2 can be independently
+disabled on particular board (as pins are MPP which may be configured to
+different function). So you have a board only with UART2, you have to
+disable UART1 node, but at the same time you have to access UART clk to
+drive UART2. And UART clk bits are in UART1 address space.
 
-I've just added my Ack tags to the whole series. I think that it brings 
-so much important additions to our new SoC as well as fixing some (non 
-urgent) bugs.
-
-In order to streamline the process of including this series to upstream, 
-do you want me to send you a pull-request? against latest clk-at91 
-branch in your tree?
-
-Best regards,
-   Nicolas
-
-> The power management part is implemented by adding
-> save_context()/restore_context() on each clock driver (patch 1/15). Since
-> the PM part is necessary only for backup mode (supported on SAMA5D2 and
-> SAMA7G5) the pmc.c has been adapted to call the
-> save_context()/restore_context() only on switches to/from backup mode
-> (patch 2/15).
-> 
-> Patch 3/15 adds the securam clock on SAMA7G5. This is necessary for
-> backup mode of SAMA7G5.
-> 
-> Patch 4/15 adapt SAMA7G5 MCK1..4 driver to use the defines at
-> include/linux/clk/at91_pmc.h introduced in commit ec03f18cc222
-> ("clk: at91: add register definition for sama7g5's master clock").
-> 
-> Patch 5/15 improves a bit readability in some places of master clock
-> driver.
-> 
-> Patch 6/15 enable the suspend/resume for clocks also for SAMA7G5.
-> 
-> Patches 7-10/15 adds fixes in master clock driver and sam9x60-pll driver.
-> 
-> Patches 11-12/15 address DVFS by adding notifiers for master clock driver
-> and sam9x60-pll driver to avoid overclocking for CPU domain and MCK0
-> domain.
-> 
-> Patch 13/15 removes the master clock prescaler from Linux clock tree
-> as it has been discovered a hardware bug on it and it may not lock
-> on some scenario although its output clock is stable.
-> 
-> Patch 14/15 decreases the low limit of MCK0 as it can go even to 32KHz.
-> 
-> Patch 15/15 uses clk_core_get_rate_recalc() in clk_rate_get().
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> [1] https://lore.kernel.org/lkml/20210105104426.4tmgc2l3vyicwedd@vireshk-i7/
-> [2] https://lore.kernel.org/lkml/163047507296.42057.10597374695758699868@swboyd.mtv.corp.google.com/
-> 
-> Changes in v5:
-> - dropped patches 16/17, 17/17 from previous version
-> - in patch 02/15:
-> 	- use read_relaxed() to get the value at address pointed by
-> 	  at91_pmc_backup_suspend
-> 	- removed of_find_device_by_node() from pmc_register_ops() since its
-> 	  returned value was not used in the function (of_device_is_available()
-> 	  is enough to know before mapping securam). of_find_device_by_node()
-> 	  was the one which needed the changes of postcore_initcall() with
-> 	  subsys_initcall() (as described in commit description from v4) thus
-> 	  kept the postcore_initcall(); also updated the commit description
-> 	  to reflect this.
-> 
-> Changes in v4:
-> - removed opp dependencies along with get_cpu_device() in patch 11/17 as
->    those functionalities are not available at the initialization time for
->    clocks instantiated with CLK_OF_DECLARE
-> 
-> Changes in v3:
-> - minor fixes in patch 1/7 (e.g. use regmap_read() + checks + update +
->    regmap_write() sequence instead of regmap_read() + checks +
->    regmap_update_bits()
-> - patch 4/17 has been updated after commit ec03f18cc222
->    ("clk: at91: add register definition for sama7g5's master clock")
-> - patch 6-10/17, 14-17/17 are newly introduced
-> - notifier for sam9x60 div pll was introduced (patch 11/17) and
->    notifier logic for master clock div has been changed (patch 12/17)
->    to use safe divider on PRE_RATE_CHANGE events and update clock to highest
->    possible rate on POST_RATE_CHANGE events
-> - master clock prescaler has been removed from Linux clock tree for
->    SAMA7G5
-> 
-> Changes in v2:
-> - addressed code review comments
-> - collected tags
-> 
-> Claudiu Beznea (15):
->    clk: at91: re-factor clocks suspend/resume
->    clk: at91: pmc: execute suspend/resume only for backup mode
->    clk: at91: sama7g5: add securam's peripheral clock
->    clk: at91: clk-master: add register definition for sama7g5's master
->      clock
->    clk: at91: clk-master: improve readability by using local variables
->    clk: at91: pmc: add sama7g5 to the list of available pmcs
->    clk: at91: sam9x60-pll: use DIV_ROUND_CLOSEST_ULL
->    clk: at91: clk-master: check if div or pres is zero
->    clk: at91: clk-master: mask mckr against layout->mask
->    clk: at91: clk-master: fix prescaler logic
->    clk: at91: clk-sam9x60-pll: add notifier for div part of PLL
->    clk: at91: clk-master: add notifier for divider
->    clk: at91: sama7g5: remove prescaler part of master clock
->    clk: at91: sama7g5: set low limit for mck0 at 32KHz
->    clk: use clk_core_get_rate_recalc() in clk_rate_get()
-> 
->   drivers/clk/at91/at91rm9200.c       |   2 +-
->   drivers/clk/at91/at91sam9260.c      |   2 +-
->   drivers/clk/at91/at91sam9g45.c      |   2 +-
->   drivers/clk/at91/at91sam9n12.c      |   2 +-
->   drivers/clk/at91/at91sam9rl.c       |   2 +-
->   drivers/clk/at91/at91sam9x5.c       |   2 +-
->   drivers/clk/at91/clk-generated.c    |  46 ++-
->   drivers/clk/at91/clk-main.c         |  66 ++++
->   drivers/clk/at91/clk-master.c       | 463 ++++++++++++++++++++++------
->   drivers/clk/at91/clk-peripheral.c   |  40 ++-
->   drivers/clk/at91/clk-pll.c          |  39 +++
->   drivers/clk/at91/clk-programmable.c |  29 +-
->   drivers/clk/at91/clk-sam9x60-pll.c  | 174 +++++++++--
->   drivers/clk/at91/clk-system.c       |  20 ++
->   drivers/clk/at91/clk-usb.c          |  27 ++
->   drivers/clk/at91/clk-utmi.c         |  39 +++
->   drivers/clk/at91/dt-compat.c        |   2 +-
->   drivers/clk/at91/pmc.c              | 173 +++--------
->   drivers/clk/at91/pmc.h              |  29 +-
->   drivers/clk/at91/sam9x60.c          |   6 +-
->   drivers/clk/at91/sama5d2.c          |   2 +-
->   drivers/clk/at91/sama5d3.c          |   2 +-
->   drivers/clk/at91/sama5d4.c          |   2 +-
->   drivers/clk/at91/sama7g5.c          |  29 +-
->   drivers/clk/clk.c                   |   2 +-
->   25 files changed, 890 insertions(+), 312 deletions(-)
-> 
-
-
--- 
-Nicolas Ferre
+> > +      compatible = "marvell,armada-3700-uart-clock";
+> > +      reg = <0x12010 0x4>, <0x12210 0x4>;
+> > +      clocks = <&tbg 0>, <&tbg 1>, <&tbg 2>, <&tbg 3>, <&xtalclk>;
+> > +      clock-names = "TBG-A-P", "TBG-B-P", "TBG-A-S", "TBG-B-S", "xtal";
+> > +      #clock-cells = <1>;
+> > +    };
+> > -- 
+> > 2.20.1
+> >
