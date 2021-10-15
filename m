@@ -2,143 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD87C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1D1C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81EC660FDA
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB39C61139
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 01:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbhJOBEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Oct 2021 21:04:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229912AbhJOBEV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Oct 2021 21:04:21 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87BCDC061753;
-        Thu, 14 Oct 2021 18:02:14 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id x27so34830638lfu.5;
-        Thu, 14 Oct 2021 18:02:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mv5Z6Sdks/z0PRafNWu7V1r7LCkQQrDbmE+ZfMmHLqw=;
-        b=H60RnvlX2azwNGf02ab1Oyj8wVvv7xw4MWUErTGrxY7uhb1rctVozCIO8sCS81VzVS
-         hOZVQcmidgo6srorYYEKXtrCX+uka5RufIHO9FB8YjYtosAd1tV7yduYszwn7XqHY8T3
-         P2XSvit2SOy5d04RRrtHtjjy0pTszcQ+avWKslDagv90QnM8kxz9GqKKNEWsuZkwk0oG
-         RI0hyWIS7l6XKbWqVyVn0ypJq/EzThrBHBqQNDqP1p+HoYYDahsR4SOJzmb7tEtGttAs
-         Wv2t95lbRv4BVqh+KbIj7b+IMF63pQ6o3e7MjI+Qa1vL14XEfbtvpEfBnM3DX3ZKeOzd
-         j7Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mv5Z6Sdks/z0PRafNWu7V1r7LCkQQrDbmE+ZfMmHLqw=;
-        b=KG9b7jUsnSLEQL22bKZ75gAPD8cDejEMNuEyAj+5pM1X85J0/dAuhtagheoTmF3li4
-         /nqMAJFDIDb09ZYin+8GOyNmo98+SHn7ITC39b82zi8i7rxEnLXS2MkR7rANv9F+vyjA
-         YPtU0W82GXXmxOrIUjh14mSmY3zyQFBQmo3hsjy9BsQSnfsvLmYcYEcMpPSjZEccL61A
-         wbfqAmXwxYggSHZb8YjTp2YymxiOjqlul6E0OLVKa+gapsy4U3jowm5YejWagVnsSRbB
-         pxGOlelSX6r9W3dU+i3ySFZy8eGPi8zik0viaVgDKvxSyQ3g0RxGDeVcRWBqGRL3WIzK
-         sNBQ==
-X-Gm-Message-State: AOAM532+eBifjjMJKcvqhvgI4IzR6gzKfHGVJUWgHyiwCEl4I0X34QWu
-        feIGuA5b07Vpy4Uc0k8cuUfh3pomKo0=
-X-Google-Smtp-Source: ABdhPJwI0m+5o/4/ErJJ6urO1/gJpgb5iHK/zkQpI7uZEJJsVGNazonwuMOVf2cdk0laSZAgpG/4Tw==
-X-Received: by 2002:ac2:443b:: with SMTP id w27mr8198374lfl.63.1634259732934;
-        Thu, 14 Oct 2021 18:02:12 -0700 (PDT)
-Received: from [192.168.2.145] (79-139-176-16.dynamic.spd-mgts.ru. [79.139.176.16])
-        by smtp.googlemail.com with ESMTPSA id x145sm357902lff.155.2021.10.14.18.02.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Oct 2021 18:02:12 -0700 (PDT)
-Subject: Re: [PATCH v12 05/35] dt-bindings: clock: tegra-car: Document new
- clock sub-nodes
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Peter Chen <peter.chen@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Viresh Kumar <vireshk@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20210920181145.19543-1-digetx@gmail.com>
- <20210920181145.19543-6-digetx@gmail.com>
- <163425700766.1688384.4481739110941660602@swboyd.mtv.corp.google.com>
- <4090acf8-c8af-d98c-2121-9fd105365e55@gmail.com>
- <163425874534.1688384.5636050222516713710@swboyd.mtv.corp.google.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <97b2e36d-b380-8565-8409-3884ab4ca11e@gmail.com>
-Date:   Fri, 15 Oct 2021 04:02:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S232847AbhJOBV7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Oct 2021 21:21:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232557AbhJOBVq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Oct 2021 21:21:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 45D2360E09;
+        Fri, 15 Oct 2021 01:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634260780;
+        bh=GZZ2feHg0GDLfc64+kYhL/INwc8MQcn+uMwJjklnMbY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ohRe9LB78Y+Xqb3pVvtFyeEY6yPnHm9nzEOsxeqCObVD59FF4jfYiQZDXqw8wG9YR
+         VkET5SDbz347TtaEEDQtvgsWHl3gUYpDeFagXrR7/Aprw0YobAUs88KyIbDZkYnaJz
+         XFXiX33kk0F3Ilc/K6s0YKdhPXFmquIo544JIJLZR7ElrVHkoxbZjC19Hkp3iy1EcB
+         fMtUnbPF4fT4mB0Ekq/Ai3n7Ag6aIPysnTJfgXiNnF7aVkU9zd7rnvcWED9Ex1sedZ
+         3tvo6+pd+gBIzQPSSEUQI4EI3HKYwZJGG7Ql+88PXgaLaAmYFNXtrZ+CWj0zsFsjuO
+         fGuQgxFGN6u6g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <163425874534.1688384.5636050222516713710@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1634095574-4076-1-git-send-email-wangqing@vivo.com>
+References: <1634095574-4076-1-git-send-email-wangqing@vivo.com>
+Subject: Re: [PATCH] clk-si5341: replace snprintf in show functions with sysfs_emit
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Qing Wang <wangqing@vivo.com>,
+        Robert Hancock <robert.hancock@calian.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Qing Wang <wangqing@vivo.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 14 Oct 2021 18:19:38 -0700
+Message-ID: <163426077803.1688384.13526132296218990684@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-15.10.2021 03:45, Stephen Boyd пишет:
-> Quoting Dmitry Osipenko (2021-10-14 17:43:49)
->> 15.10.2021 03:16, Stephen Boyd пишет:
->>> Quoting Dmitry Osipenko (2021-09-20 11:11:15)
->>>> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> index 459d2a525393..f832abb7f11a 100644
->>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra20-car.yaml
->>>> @@ -42,6 +42,36 @@ properties:
->>>>    "#reset-cells":
->>>>      const: 1
->>>>  
->>>> +patternProperties:
->>>> +  "^(sclk)|(pll-[cem])$":
->>>> +    type: object
->>>> +    properties:
->>>> +      compatible:
->>>> +        enum:
->>>> +          - nvidia,tegra20-sclk
->>>> +          - nvidia,tegra30-sclk
->>>> +          - nvidia,tegra30-pllc
->>>> +          - nvidia,tegra30-plle
->>>> +          - nvidia,tegra30-pllm
->>>> +
->>>> +      operating-points-v2: true
->>>> +
->>>> +      clocks:
->>>> +        items:
->>>> +          - description: node's clock
->>>> +
->>>> +      power-domains:
->>>> +        maxItems: 1
->>>> +        description: phandle to the core SoC power domain
->>>
->>> Is this done to associate the power domain with a particular clk? And an
->>> OPP table with a particular clk?
->>
->> Yes
->>
-> 
-> Ok. Can Ulf/Viresh review this patch series?
+Quoting Qing Wang (2021-10-12 20:26:14)
+> coccicheck complains about the use of snprintf() in sysfs show functions.
+>=20
+> Fix the following coccicheck warning:
+> drivers/clk/clk-si5341.c:1471:8-16: WARNING: use scnprintf or sprintf.
+> drivers/clk/clk-si5341.c:1486:8-16: WARNING: use scnprintf or sprintf.
+> drivers/clk/clk-si5341.c:1501:8-16: WARNING: use scnprintf or sprintf.
+> drivers/clk/clk-si5341.c:1516:8-16: WARNING: use scnprintf or sprintf.
+>=20
+> Use sysfs_emit instead of scnprintf or sprintf makes more sense.
+>=20
+> Signed-off-by: Qing Wang <wangqing@vivo.com>
 
-They already did, please see v13 [1].
+Please include authors on Cc
 
-[1] https://lore.kernel.org/lkml/20210926224058.1252-1-digetx@gmail.com/
+> ---
+>  drivers/clk/clk-si5341.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+> index 57ae183..5d62ddb 100644
+> --- a/drivers/clk/clk-si5341.c
+> +++ b/drivers/clk/clk-si5341.c
+> @@ -1468,7 +1468,7 @@ static ssize_t input_present_show(struct device *de=
+v,
+>         if (res < 0)
+>                 return res;
+>         res =3D !(status & SI5341_STATUS_LOSREF);
+> -       return snprintf(buf, PAGE_SIZE, "%d\n", res);
+> +       return sysfs_emit(buf, "%d\n", res);
+>  }
+>  static DEVICE_ATTR_RO(input_present);
+> =20
+> @@ -1483,7 +1483,7 @@ static ssize_t input_present_sticky_show(struct dev=
+ice *dev,
+>         if (res < 0)
+>                 return res;
+>         res =3D !(status & SI5341_STATUS_LOSREF);
+> -       return snprintf(buf, PAGE_SIZE, "%d\n", res);
+> +       return sysfs_emit(buf, "%d\n", res);
+>  }
+>  static DEVICE_ATTR_RO(input_present_sticky);
+> =20
+> @@ -1498,7 +1498,7 @@ static ssize_t pll_locked_show(struct device *dev,
+>         if (res < 0)
+>                 return res;
+>         res =3D !(status & SI5341_STATUS_LOL);
+> -       return snprintf(buf, PAGE_SIZE, "%d\n", res);
+> +       return sysfs_emit(buf, "%d\n", res);
+>  }
+>  static DEVICE_ATTR_RO(pll_locked);
+> =20
+> @@ -1513,7 +1513,7 @@ static ssize_t pll_locked_sticky_show(struct device=
+ *dev,
+>         if (res < 0)
+>                 return res;
+>         res =3D !(status & SI5341_STATUS_LOL);
+> -       return snprintf(buf, PAGE_SIZE, "%d\n", res);
+> +       return sysfs_emit(buf, "%d\n", res);
+>  }
+>  static DEVICE_ATTR_RO(pll_locked_sticky);
+>
