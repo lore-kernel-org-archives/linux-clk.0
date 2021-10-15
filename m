@@ -2,110 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7029C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ADEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD28661053
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 10:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3445960F8F
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:27:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237889AbhJOKRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 06:17:00 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:46282
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237909AbhJOKQ4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 06:16:56 -0400
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CE7A53FFFD
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 10:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634292889;
-        bh=mNH6ovSrsZzXaFK7GnPEbneieuXh4e/GszJJRRWO4tU=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=PkpbG5x233bpjz4wrhW0qy1Uk5+8unxT8R5hGo+KOUkyct1yBCnjYaON0iiwB65uK
-         tgY9/K7bdxYAe0lVpXah49wlvAU9vHl4k4UpKvY97vzlYPmnVGPGGts0c7v/bKSqGi
-         NF0QNr8D4ASc+nKNxEcvOC+juxKOoGoyegBzVtCWkIQsrY9wUULnOeBa4itlkn5ym8
-         KknuJ94ZIFmvbiFY6CwKi8G/IAkvLezEkTZH0Ywfd5atELzP3ftNG0qcD1DsvYY/Xx
-         UHE/bTpY+5j5ryB6J1f12WJqAKb6NWaffGDguTWjUNOUW3CBW9E9HDyBYg1Wsm6Erg
-         IVtWJf42bYxfQ==
-Received: by mail-lf1-f71.google.com with SMTP id d12-20020a0565123d0c00b003fdb52f1cdcso4434672lfv.4
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 03:14:49 -0700 (PDT)
+        id S229768AbhJOL3Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 07:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232658AbhJOL3S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 07:29:18 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC04C061760
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 04:27:12 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id q129so12684213oib.0
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 04:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NKgeFjMzQGbOlv7b4giRKfd3xluRkC6Y3aCMzdKTmcI=;
+        b=Wm4Wd6dvvDFnTkE00hxoA1bUki0lOHa+WoFWUIXZWiyl6BYiN/VJMfw+VnMnOCFaCL
+         jQ/04aPgGreSwDm51jxnPJc9pkqywXE26egdgnLAAok719vghfDASfmYTOjn+J9+fwG+
+         q/10lDtvDgAT1UYJHz5rI7tM4bgXHiMlTFU0bfwd97rrUQBuH+ZcmSEP+7HO6CUo/zZr
+         CYvsbAtjc89xss/CKzqeHdvLDimYn1hwLBeYUoQqfujZ+roY4R1sCnIjQGg7W3W/Tmsf
+         Xo/iQrJTbgRFodmMVP5Xapec+3WlJ78UAXbtc9fa6D6bWDahM/6PJbdWmF+2ol5JsZXE
+         T1fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mNH6ovSrsZzXaFK7GnPEbneieuXh4e/GszJJRRWO4tU=;
-        b=UWdNr562eO5kKnB3LCV246JZg+wdociv4ur7vaPY63Bg/NMHyEQBjlQTbOQz6NrhDK
-         QMOlqcDEEAhNcL6EHjh5/XSMyzvp5Qno1zq0Faj7BEmAxdzoKm7UIQmgBSB11vsCynvX
-         iNIrwRH5Vq+I7m/6XsbGLxosS1Y9PZORcVnKIe7k8AorJwSF4YvsXtJxy1at6Kkrh27x
-         CRKMXMmpV0aCG0mBlxIZb6KRpUH3VW7ooG6xTzIxqhPdXMTEhurVjnh0taA5VI34tYlp
-         2qyN0HUefQJwMZcQuXDWgXMYyBQu8B+YyI56o3YlPdF5TbwBJHPOXgeJTUJiDAmBMcbP
-         7Mrw==
-X-Gm-Message-State: AOAM531+iQsFPfeBS3gKnooSSawFjuwvBv8OeYnghC8WITKxAd191MNm
-        PzTqt7DTC9ugauM4CtBu6mz34cVJlK23B/fXng4+lPNSW9+LnOIUWf3JQXIGS0bf8WuK+r+BJ6J
-        u+2kwP7RJ4YlYirQmZyx29dZ5DBO/3ROPPO99cQ==
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr11430713ljl.507.1634292889125;
-        Fri, 15 Oct 2021 03:14:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzj8pWt+ZNhjXMi79/AJl3fIpOyA6FNnV6Krm2En23aHOzWTdTC/H+JaioClNMPNag6ble8/A==
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr11430687ljl.507.1634292888834;
-        Fri, 15 Oct 2021 03:14:48 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id 15sm465081lfy.86.2021.10.15.03.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Oct 2021 03:14:48 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] [RFT] clk: samsung: exynos5433: update apollo and
- atlas clock probing
-To:     Will McVicker <willmcvicker@google.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-team@android.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20211014195347.3635601-1-willmcvicker@google.com>
- <20211014195347.3635601-3-willmcvicker@google.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <7cd65a6c-4d6b-a287-9a12-c81eec87e9df@canonical.com>
-Date:   Fri, 15 Oct 2021 12:14:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NKgeFjMzQGbOlv7b4giRKfd3xluRkC6Y3aCMzdKTmcI=;
+        b=dlINZxxi/ZP0DGfm5VjuwbrloKXvC4c9QofhB2GzTVZBe8sV8WE9ciWE7muFpKFac5
+         DwWliVDDH72Z4D4RVS7+WAYN3V3p+we98ykWV0OmlBct4e9jISTh23t5fF5lYJcX7igy
+         aqJVu8b9jzuSVKr+sjGQpMIpoe4u9oLagdxUbfA1WOvgYPjewlS7oT/WAQV7kFwpUf1n
+         MGOq/6DEgpv045EY/LzjV0AOhHui+iszGp+4qt0woY5tSX7U4qvKqmxyb8nvThhuxyBm
+         DbVxqMaVhZvNRq9o2UukhXcQZRrH+BYUq1N/JpzzBto6R4XlveliPQnRlftr5oXc2Qk0
+         DCAw==
+X-Gm-Message-State: AOAM530MWr4WJBDw5BbB9OIYBzngyTuOgw37ayKUxOOKM78YrlFo/nUC
+        y+HiZKqxVvl8qbHb0tJ596nkrbkyo8lCO9/Ms0fQVg==
+X-Google-Smtp-Source: ABdhPJyDcpqGbwskrQSivF3Hrk9czLe3jAaUJI090sO0PPQ/+jfBKyc4oV3D64eX1CbrHycowOE0cMxWzV6ZAtM7o8E=
+X-Received: by 2002:a05:6808:2218:: with SMTP id bd24mr513771oib.94.1634297231969;
+ Fri, 15 Oct 2021 04:27:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211014195347.3635601-3-willmcvicker@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211011165707.138157-1-marcan@marcan.st> <20211011165707.138157-5-marcan@marcan.st>
+ <20211012032144.2ltlpat7orrsyr6k@vireshk-i7> <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
+ <20211012055143.xmkbvhbnolspgjin@vireshk-i7> <caf16a6c-f127-7f27-ed17-0522d9f1fb9e@marcan.st>
+ <CAPDyKFoVjVYkc4+v-=eD+JbC10GazGt8A1LtD1so3PKMmVcyMg@mail.gmail.com>
+ <bd07f4b3-6ebf-e074-c1cd-0ef501e8324f@marcan.st> <CAPDyKFrFX93XV8a7e7oo1N5weWp2auq=_94fTnzr2EkO3c37Ug@mail.gmail.com>
+ <ca820b86-fc12-63b9-ec6b-5823ddd73aba@marcan.st>
+In-Reply-To: <ca820b86-fc12-63b9-ec6b-5823ddd73aba@marcan.st>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 15 Oct 2021 13:26:35 +0200
+Message-ID: <CAPDyKFpCw1M8bK5T6a+=x-kHaCco88wiRnvUm5Dy90XU360=4A@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device does
+ not exist
+To:     Hector Martin <marcan@marcan.st>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
+        Mark Kettenis <mark.kettenis@xs4all.nl>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/10/2021 21:53, Will McVicker wrote:
-> Use the samsung common clk driver to initialize the apollo and atlas
-> clocks. This removes their custom init functions and uses the
-> samsung_cmu_register_one() instead.
-> 
-> Signed-off-by: Will McVicker <willmcvicker@google.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 120 +++++++++++----------------
->  1 file changed, 48 insertions(+), 72 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index f203074d858b..cec66d2a4ee2 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -3675,44 +3675,32 @@ static const struct exynos_cpuclk_cfg_data exynos5433_apolloclk_d[] __initconst
->  	{  0 },
->  };
+On Thu, 14 Oct 2021 at 19:02, Hector Martin <marcan@marcan.st> wrote:
+>
+> On 14/10/2021 21.55, Ulf Hansson wrote:
+> > On Thu, 14 Oct 2021 at 13:43, Hector Martin <marcan@marcan.st> wrote:
+> >> I was poking around and noticed the OPP core can already integrate with
+> >> interconnect requirements, so perhaps the memory controller can be an
+> >> interconnect provider, and the CPU nodes can directly reference it as a
+> >> consumer? This seems like a more accurate model of what the hardware
+> >> does, and I think I saw some devices doing this already.
+> >
+> > Yeah, that could work too. And, yes, I agree, it may be a better
+> > description of the HW.
+> >
+> >>
+> >> (only problem is I have no idea of the actual bandwidth numbers involved
+> >> here... I'll have to run some benchmarks to make sure this isn't just
+> >> completely dummy data)
+> >>
+>
+> So... I tried getting bandwidth numbers and failed. It seems these
+> registers don't actually affect peak performance in any measurable way.
+> I'm also getting almost the same GeekBench scores on macOS with and
+> without this mechanism enabled, although there is one subtest that seems
+> to show a measurable difference.
+>
+> My current guess is this is something more subtle (latencies? idle
+> timers and such?) than a performance state. If that is the case, do you
+> have any ideas as to the best way to model it in Linux? Should we even
+> bother if it mostly has a minimal performance gain for typical workloads?
 
+For latency constraints, we have dev_pm_qos. This will make the genpd
+governor, to prevent deeper idle states for the device and its
+corresponding PM domain (genpd). But that doesn't sound like a good
+fit here.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+If you are right, it rather sounds like there is some kind of
+quiescence mode of the memory controller that can be prevented. But I
+have no clue, of course. :-)
 
+>
+> I'll try to do some latency tests, see if I can make sense of what it's
+> actually doing.
+>
 
-Best regards,
-Krzysztof
+Kind regards
+Uffe
