@@ -2,131 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ADEC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C8EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3445960F8F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B137601FA
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 11:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbhJOL3Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 07:29:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41378 "EHLO
+        id S238529AbhJOLtv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 07:49:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232658AbhJOL3S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 07:29:18 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC04C061760
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 04:27:12 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id q129so12684213oib.0
-        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 04:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NKgeFjMzQGbOlv7b4giRKfd3xluRkC6Y3aCMzdKTmcI=;
-        b=Wm4Wd6dvvDFnTkE00hxoA1bUki0lOHa+WoFWUIXZWiyl6BYiN/VJMfw+VnMnOCFaCL
-         jQ/04aPgGreSwDm51jxnPJc9pkqywXE26egdgnLAAok719vghfDASfmYTOjn+J9+fwG+
-         q/10lDtvDgAT1UYJHz5rI7tM4bgXHiMlTFU0bfwd97rrUQBuH+ZcmSEP+7HO6CUo/zZr
-         CYvsbAtjc89xss/CKzqeHdvLDimYn1hwLBeYUoQqfujZ+roY4R1sCnIjQGg7W3W/Tmsf
-         Xo/iQrJTbgRFodmMVP5Xapec+3WlJ78UAXbtc9fa6D6bWDahM/6PJbdWmF+2ol5JsZXE
-         T1fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NKgeFjMzQGbOlv7b4giRKfd3xluRkC6Y3aCMzdKTmcI=;
-        b=dlINZxxi/ZP0DGfm5VjuwbrloKXvC4c9QofhB2GzTVZBe8sV8WE9ciWE7muFpKFac5
-         DwWliVDDH72Z4D4RVS7+WAYN3V3p+we98ykWV0OmlBct4e9jISTh23t5fF5lYJcX7igy
-         aqJVu8b9jzuSVKr+sjGQpMIpoe4u9oLagdxUbfA1WOvgYPjewlS7oT/WAQV7kFwpUf1n
-         MGOq/6DEgpv045EY/LzjV0AOhHui+iszGp+4qt0woY5tSX7U4qvKqmxyb8nvThhuxyBm
-         DbVxqMaVhZvNRq9o2UukhXcQZRrH+BYUq1N/JpzzBto6R4XlveliPQnRlftr5oXc2Qk0
-         DCAw==
-X-Gm-Message-State: AOAM530MWr4WJBDw5BbB9OIYBzngyTuOgw37ayKUxOOKM78YrlFo/nUC
-        y+HiZKqxVvl8qbHb0tJ596nkrbkyo8lCO9/Ms0fQVg==
-X-Google-Smtp-Source: ABdhPJyDcpqGbwskrQSivF3Hrk9czLe3jAaUJI090sO0PPQ/+jfBKyc4oV3D64eX1CbrHycowOE0cMxWzV6ZAtM7o8E=
-X-Received: by 2002:a05:6808:2218:: with SMTP id bd24mr513771oib.94.1634297231969;
- Fri, 15 Oct 2021 04:27:11 -0700 (PDT)
+        with ESMTP id S235514AbhJOLtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 07:49:50 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76F5C061762
+        for <linux-clk@vger.kernel.org>; Fri, 15 Oct 2021 04:47:41 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:ad48:4534:27c0:db4b])
+        by andre.telenet-ops.be with bizsmtp
+        id 6Bnf2600U0SQF6f01Bnf0b; Fri, 15 Oct 2021 13:47:40 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mbLgZ-0053cg-K0; Fri, 15 Oct 2021 13:47:39 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mbLgZ-004hk2-4g; Fri, 15 Oct 2021 13:47:39 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.16 (take two)
+Date:   Fri, 15 Oct 2021 13:47:36 +0200
+Message-Id: <cover.1634298371.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20211011165707.138157-1-marcan@marcan.st> <20211011165707.138157-5-marcan@marcan.st>
- <20211012032144.2ltlpat7orrsyr6k@vireshk-i7> <b7cd51ec-38e5-11d8-5193-1170c9d60ac9@marcan.st>
- <20211012055143.xmkbvhbnolspgjin@vireshk-i7> <caf16a6c-f127-7f27-ed17-0522d9f1fb9e@marcan.st>
- <CAPDyKFoVjVYkc4+v-=eD+JbC10GazGt8A1LtD1so3PKMmVcyMg@mail.gmail.com>
- <bd07f4b3-6ebf-e074-c1cd-0ef501e8324f@marcan.st> <CAPDyKFrFX93XV8a7e7oo1N5weWp2auq=_94fTnzr2EkO3c37Ug@mail.gmail.com>
- <ca820b86-fc12-63b9-ec6b-5823ddd73aba@marcan.st>
-In-Reply-To: <ca820b86-fc12-63b9-ec6b-5823ddd73aba@marcan.st>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 15 Oct 2021 13:26:35 +0200
-Message-ID: <CAPDyKFpCw1M8bK5T6a+=x-kHaCco88wiRnvUm5Dy90XU360=4A@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/9] opp: core: Don't warn if required OPP device does
- not exist
-To:     Hector Martin <marcan@marcan.st>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 14 Oct 2021 at 19:02, Hector Martin <marcan@marcan.st> wrote:
->
-> On 14/10/2021 21.55, Ulf Hansson wrote:
-> > On Thu, 14 Oct 2021 at 13:43, Hector Martin <marcan@marcan.st> wrote:
-> >> I was poking around and noticed the OPP core can already integrate with
-> >> interconnect requirements, so perhaps the memory controller can be an
-> >> interconnect provider, and the CPU nodes can directly reference it as a
-> >> consumer? This seems like a more accurate model of what the hardware
-> >> does, and I think I saw some devices doing this already.
-> >
-> > Yeah, that could work too. And, yes, I agree, it may be a better
-> > description of the HW.
-> >
-> >>
-> >> (only problem is I have no idea of the actual bandwidth numbers involved
-> >> here... I'll have to run some benchmarks to make sure this isn't just
-> >> completely dummy data)
-> >>
->
-> So... I tried getting bandwidth numbers and failed. It seems these
-> registers don't actually affect peak performance in any measurable way.
-> I'm also getting almost the same GeekBench scores on macOS with and
-> without this mechanism enabled, although there is one subtest that seems
-> to show a measurable difference.
->
-> My current guess is this is something more subtle (latencies? idle
-> timers and such?) than a performance state. If that is the case, do you
-> have any ideas as to the best way to model it in Linux? Should we even
-> bother if it mostly has a minimal performance gain for typical workloads?
+	Hi Mike, Stephen,
 
-For latency constraints, we have dev_pm_qos. This will make the genpd
-governor, to prevent deeper idle states for the device and its
-corresponding PM domain (genpd). But that doesn't sound like a good
-fit here.
+The following changes since commit cc3e8f97bbd370b51b3bb7fec391d65d461d7d02:
 
-If you are right, it rather sounds like there is some kind of
-quiescence mode of the memory controller that can be prevented. But I
-have no clue, of course. :-)
+  clk: renesas: r8a779a0: Add Z0 and Z1 clock support (2021-09-28 09:28:53 +0200)
 
->
-> I'll try to do some latency tests, see if I can make sense of what it's
-> actually doing.
->
+are available in the Git repository at:
 
-Kind regards
-Uffe
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.16-tag2
+
+for you to fetch changes up to 2bd9feed23166f5ab67dec2ca02bd3f74c77b0ba:
+
+  clk: renesas: r8a779[56]x: Add MLP clocks (2021-10-15 09:46:14 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.16 (take two)
+
+  - Add SPI Multi I/O Bus and SDHI clocks and resets on RZ/G2L,
+  - Add SPI Multi I/O Bus (RPC) clocks on R-Car V3U,
+  - Add MediaLB clocks on R-Car H3, M3-W/W+, and M3-N.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Andrey Gusakov (1):
+      clk: renesas: r8a779[56]x: Add MLP clocks
+
+Biju Das (2):
+      clk: renesas: rzg2l: Add SDHI clk mux support
+      clk: renesas: r9a07g044: Add SDHI clock and reset entries
+
+Lad Prabhakar (1):
+      clk: renesas: r9a07g044: Add clock and reset entries for SPI Multi I/O Bus Controller
+
+Wolfram Sang (2):
+      clk: renesas: cpg-lib: Move RPC clock registration to the library
+      clk: renesas: r8a779a0: Add RPC support
+
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |   1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  |   1 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |   1 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c |  32 +++++++++
+ drivers/clk/renesas/r9a07g044-cpg.c     |  54 +++++++++++++++
+ drivers/clk/renesas/rcar-cpg-lib.c      |  83 ++++++++++++++++++++++
+ drivers/clk/renesas/rcar-cpg-lib.h      |   7 ++
+ drivers/clk/renesas/rcar-gen3-cpg.c     |  89 +-----------------------
+ drivers/clk/renesas/rzg2l-cpg.c         | 118 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h         |  19 +++++
+ 10 files changed, 318 insertions(+), 87 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
