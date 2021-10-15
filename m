@@ -2,200 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E67C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 22:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9867C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 22:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6AEC611EE
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 22:29:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ACC3611F0
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 22:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235857AbhJOWbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 18:31:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235751AbhJOWbS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 18:31:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B73FE6115C;
-        Fri, 15 Oct 2021 22:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634336951;
-        bh=TQtRtLYNlFE/GQNWGHE6FL49bQNWg/4TcBK38kMyEcE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OdvqBCvilrxB5rg9TaeamtdhCRox0HpwskMXhsphnvc8PFUZGtmpsu1AMs2gF0wGA
-         9YbLmc+sy5PqGzjPYGxE5N8j3btU3CYGreT7U6rr0J8kGJsi0k7C4g7XDY79WIj8SC
-         X4V3+fTgQxB9FRxot1OBSbzaVd1IiLGDS13cJj0LkVWA1nzN2HqHnsfI9/uQJBGDlg
-         IGPDilW56TCaxYQa/EkCkyG7N5A+jk31n9n5ovfpDLKLInpH7NgYcgvyXQI9C3p/fg
-         9LZj9zgxlhoEvuSNjtRnEfXsvvXsgGg1TCleGikg4tBdzfiMNovhH4+q1XNOdgPnkL
-         e0plAGH1ltXhA==
-Date:   Fri, 15 Oct 2021 23:29:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 05/12] regulator: Introduce tps68470-regulator driver
-Message-ID: <YWoAtCdikYfMpUnD@sirena.org.uk>
-References: <YWQU/SYTT5Vk24XH@sirena.org.uk>
- <f6f2d7e8-fdb8-ed64-0cdd-65aded9fc42c@redhat.com>
- <YWmwZJvDYjPWJdb4@sirena.org.uk>
- <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
- <YWnPaI/ZECdfYre9@sirena.org.uk>
- <843f939a-7e43-bc12-e9fc-582e01129b63@redhat.com>
- <YWnZIZTPiuAIazV+@sirena.org.uk>
- <c595b143-d7ed-e76b-7734-e03d14e0f76e@redhat.com>
- <YWndpGgBtLEAEaNj@sirena.org.uk>
- <1805d16e-87ab-c291-6a73-adabf41344ca@redhat.com>
+        id S238903AbhJOWin (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 18:38:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235542AbhJOWin (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 18:38:43 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2A4C061570;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id w14so7259504pll.2;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YQxaOcZ/dqklpCTNGHeKXN2tK/O7rbUuAovDRSjUZyE=;
+        b=IyqFnELja/7KEsOzN2pHh0BvyUCGD+e6zYj+VTFH7cQYm9TuL7GAXeGJ9w9cD282Uz
+         53R3TIabBpCiPJQerjpCjcwd7o4aW9RCntoN+zDYFHU6nmFbALsVIyJ0MDgU98Jvr0+j
+         XFDW/qW6A2C/gX01OiUKo/snAOC7vTqauOGNkUsnACMH6GelGhOA6sYb4nTdX9vcsE5g
+         fTtb7PEkb4P7ND1hvS4OyMPA2hiZRnborE7P+rZ1Twl/giUf5ZFOt9yLR7YWvkeJElIk
+         bEpYAB1ibZoOAbhEmYlE0wnAfRUg7/lzL9jZ1PPHB6QTq7FKJie7nZMcSLGWj4KEZlo4
+         dJIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YQxaOcZ/dqklpCTNGHeKXN2tK/O7rbUuAovDRSjUZyE=;
+        b=6uMt2uTun6c9K/WZZpbXmg0SNPW5fHiKvPCybNC3Av90A7K1UV4CU0kqCq5RjlUALG
+         moKw4u+EJbjyFHVpXl/+tM3NAjXDL5qFhOb+RQVWZy2Gyr3IhhsmmPJLvPinF+D0mUT7
+         Y+wbwMbYqbnTxTEzUMOD6mK5O+Pt0tzbf0MGQycED8HPzVmmb+XpcskHX+4n5RfGX5Zv
+         a+5opkdqY5+wJbQxT66IurkFMj1slSAQJ47WvJVkf4uV6Ne1A2YEteLfKJr1aEzImv1S
+         6Fat+s1KhenocdcnALq+ifyVTuTRp+OOQYzV0aAhFvib8vxFb/8NLpYmHb/Mv1tDCcjJ
+         /ToQ==
+X-Gm-Message-State: AOAM533BbqN7OaWz8a9xkn9vyFzTb26Fo4PeHzFja6gxJlsV5egdUHPz
+        8Y4b5UgFtonca3ZnbjI5138=
+X-Google-Smtp-Source: ABdhPJy9eVEcn+64JdF9UWjF0GmxROZQH1Ez+dHOMD6+J/kMXpP/DlHxsQNZ36KfgNJd8IfbzMEp+A==
+X-Received: by 2002:a17:903:1252:b0:13d:f3f6:2e1c with SMTP id u18-20020a170903125200b0013df3f62e1cmr13326229plh.73.1634337396021;
+        Fri, 15 Oct 2021 15:36:36 -0700 (PDT)
+Received: from [172.30.1.32] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id k14sm5859982pji.45.2021.10.15.15.36.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Oct 2021 15:36:35 -0700 (PDT)
+Subject: Re: [PATCH] clk: samsung: remove __clk_lookup() usage
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <CGME20211015093935eucas1p2782d5f8263fd8843139f3e3e9c6caaa3@eucas1p2.samsung.com>
+ <20211015093931.28086-1-m.szyprowski@samsung.com>
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <9d6496f8-3c9b-24d2-4dfd-6b6d9a0de10f@gmail.com>
+Date:   Sat, 16 Oct 2021 07:36:30 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="F/jmgXxh9qwDNeFa"
-Content-Disposition: inline
-In-Reply-To: <1805d16e-87ab-c291-6a73-adabf41344ca@redhat.com>
-X-Cookie: 1: No code table for op: ++post
+In-Reply-To: <20211015093931.28086-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 21. 10. 15. 오후 6:39, Marek Szyprowski wrote:
+> __clk_lookup() interface is obsolete, so remove it from the Samsung clock
+> drivers. This has been achieved by getting rid of custom _get_rate()
+> helper and replacing it with clk_hw_get_rate().
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> This patch is based on top of the "[RFT PATCH v4 0/2] clk: samsung: add
+> common support for CPU clocks" patchset:
+> https://lore.kernel.org/linux-samsung-soc/20211014195347.3635601-1-willmcvicker@google.com/
+> 
+> Tested on the following Exynos SoC based boards: 4210, 4412, 5250 and
+> 5422. S3C2410, S3C64XX and S5PV210 are only compile-tested.
+> ---
+>   drivers/clk/samsung/clk-exynos4.c      | 18 ++++++++++--------
+>   drivers/clk/samsung/clk-exynos5250.c   | 10 +++++-----
+>   drivers/clk/samsung/clk-exynos5420.c   |  2 +-
+>   drivers/clk/samsung/clk-s3c2410.c      |  6 ++++--
+>   drivers/clk/samsung/clk-s3c64xx.c      |  8 ++++++--
+>   drivers/clk/samsung/clk-s5pv210.c      |  8 ++++++--
+>   drivers/clk/samsung/clk.c              | 14 --------------
+>   drivers/clk/samsung/clk.h              |  2 --
+>   include/dt-bindings/clock/exynos4.h    |  4 +++-
+>   include/dt-bindings/clock/exynos5250.h |  4 +++-
+>   10 files changed, 38 insertions(+), 38 deletions(-)
+> 
 
---F/jmgXxh9qwDNeFa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+(snip)
 
-On Fri, Oct 15, 2021 at 10:14:30PM +0200, Hans de Goede wrote:
-> On 10/15/21 9:59 PM, Mark Brown wrote:
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-> > No, it's not.  What normally happens is that whatever registers the
-> > device will when registering the device supply platform data that the
-> > device later picks up from the struct device during probe.  What you're
-> > saying is that the idea here is that driver unconditionally declares
-> > platform data and then other code scribbles over that before the driver
-> > instantiates.  This is cleaner in that it keeps the platform
 
-Actually, correction - there's no export of tps68470_init[] so I guess
-that's just the data that gets used :/
-
-> > configuration together and safer since the device can't exist before
-> > it's configuration is provided.
-
-> Right, this is the standard device-tree model. Unfortunately the
-> information about which supplies are needed and the constraints
-> for those supplies is missing from the ACPI description for the
-> devices which we are dealing with here.
-
-That's not just the standard device tree model, that's how systems with
-board files work too.
-
-> During that discussion you said that instead we should sinmply
-> directly pass the regulator_init_data, rather then first
-> encoding this in device-properties in a swnode and then
-> decoding those again in the regulator core.
-
-> And passing the regulator_init_data is exactly what we are doing
-> now; and now again this is not what we should be doing ?
-
-No, it is not what the driver doing now.  The driver will *optionally*
-check for platform data, but if none is provided or if it doesn't
-configure some of the regulators then the driver will provide some hard
-coded regulator_init_data as a default.  These might be OK on the system
-you're looking at but will also be used on any other system that happens
-to instantiate the driver without platform data where there's no
-guarantee that the information provided will be safe.  These defaults
-that are being provided may use the same structure that gets used for
-platform data but they aren't really platform data.
-
-Yes, someone could use this on a system that does things in the standard
-fashion where the platform data is getting passed in but if it's ever
-run on any other system then it's going to assume this default platform
-data with these constraints that have been embedded directly into the
-driver without anything to ensure that they make sense on that system.
-
-Indeed, now I go back and dig out the rest of the series it seems that
-there's some drivers/platforms/x86 code added later which does in fact
-do the right thing for some but not all of the regulators, it supplies
-some platform data which overrides some but not all of this default
-regulator_init_data using platform_data having identified the system
-using DMI information (with configurations quite different to and much
-more restricted than the defaults provided, exactly why defaults are an
-issue).  I'm now even more confused about what the information that's
-there is doing in the driver.  Either it's all unneeded even for your
-system and should just be deleted, or if any of it is needed then it
-should be moved to being initialised in the same place everything else
-is so that it's only used on your system and not on any other system
-that happens to end up running the driver.
-
-In any case given that your platform does actually have code for
-identifying it and supplying appropriate platform data the driver itself
-can be fixed by just deleting the else case of
-
-	if (pdata && pdata->reg_init_data[i])
-		config.init_data = pdata->reg_init_data[i];
-	else
-		config.init_data = &tps68470_init[i];
-
-and the data structure/macro it uses.  If no configuration is provided
-by the platform then none should be provided to the core, this in turn
-means that the regulator framework won't reconfigure the hardware if it
-doesn't know it's safe to do so.
-
-> Also note that the current solution is exactly what I suggested
-> we should do during the discussion with Daniel and I even provided
-> example code and you said absolutely nothing about this!
-
-I had been under the impression that the platform data would look like
-normal platform data and come along with the device registration,
-providing default regulator_init_data hadn't really occurred to me.
-
-> And please keep in mind that we *cannot* change the ACPI firmware interfaces
-> and that whether we like it or not things simply work different in the ACPI
-> world.
-
-> Frankly I'm quit unhappy, angry even about how you are blocking progress
-> here. You don't like APCI we get it, can we get over that now please?
-
-ACPI is fine, we have a bunch of perfectly good ways to handle things
-that need quirking on it safely - both platform_data and DMI quirks can
-and do work well here.  The issue is that we should be using those
-things rather than inventing new things unless those new things solve a
-problem.
-
-> So far all you seem to be doing is shooting down solutions, then first
-> being quiet about suggested alternative solutions and then once the
-> alternative solutions are implemented shoot them down again...
-
-> And all that without adding anything constructive. All you have
-> told us is how things should not be done (according to you).
-
-> So fine everything we come up is wrong, please tell us how we should
-> solve this instead then!
-
-The important thing is to get rid of the hard coded defaults for the
-regulator_init_data in the driver itself, if there is regulator_init_data
-in the driver itself then it should be guarded with a DMI or similar
-quirk.  Like I say above I think now I've gone back and dug through the
-rest of the series once the default init_data is gone it's probably OK.
-
---F/jmgXxh9qwDNeFa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFqALMACgkQJNaLcl1U
-h9B5aQgAhQ7bqrNnhCcHborjeRwONxMdsrv6cyyt5sQlX5QAkjsYkIsE6OJfdwPM
-vHFJhWNXVJxfixf0+HRxF0ROwDSxjE+YOhuAnfxi61RWXx1aLkovdK9kBjVcRP3Y
-+WAgoVItgQ5PZkaL5x8+EvGDlAAmqjauL2EstgBYLoIA4jO9DW0jUoBEISyTlngS
-GXw+3CGX0mKpIADv8UCCjVKFZ4gXerXRroZD6tMqS1rV/YkpaLreZtHZz1iTMSOX
-lkllAPXbaqmKK2XIGd3N6kniK1JgG2uBoXGf4ErkWGl5swcNjIV8QaOVrCfyyg0r
-w23iI+GBFoQd2NNhwK+8601UryTwZQ==
-=ujeE
------END PGP SIGNATURE-----
-
---F/jmgXxh9qwDNeFa--
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
