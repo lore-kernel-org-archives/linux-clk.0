@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE444C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCA6C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B782660BD3
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC43B611C2
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 07:56:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236404AbhJOH5p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 03:57:45 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:1067 "EHLO
+        id S232099AbhJOH6w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 03:58:52 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:48651 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232019AbhJOH5o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 03:57:44 -0400
+        with ESMTP id S236397AbhJOH6v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 03:58:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634284538; x=1665820538;
+  t=1634284605; x=1665820605;
   h=subject:to:cc:references:from:message-id:date:
    mime-version:in-reply-to:content-transfer-encoding;
-  bh=je+fRzZbUtkEQeC1OXFMaXlMlWixDGzDWn2+u6AGNhc=;
-  b=c5FZAnXyBfCOkzqdF+V34mXxIhqrqb4DIjCQ2EHqUjKXPJk9R8ezC1uh
-   2i0+8psmwQLYUCjojtGUbwfpLF8Eh/hsRZ9hS6FJ8nHFZUp1I7/Oz7IlW
-   8QNplnkIp/1DDN8ZAmkOfnJa9ljjyqY9xVQNZyuSo5rtLp8d2ks68aI+w
-   65KFQ6qkLKgkgVWCGSaqwDWkx48Bj66eobXzSD53p8K+fRr8H+CSzDKN6
-   FUHADDMBesEV9GPXhgZWWJ/ZQR1Cnp9kQuRhBUGbWh0h4ELaD6b7tnAa0
-   NP80dLDVrBcyMJiks+r14v5ik45z18Ln0hA5OQb60sUrlnt/BVvvY3Q3H
+  bh=BGy4nKkFSUYhNDse2rH6kKGMeEkum5mhKIYnkWkpkE8=;
+  b=waztTigSx7/gmIrbuachBcpRhn3P2/mpGtk1ec10SwZiyMCOoJMKuBHE
+   zqgXhawW4cpbXF5ni0NGa2GnvKGdhqC2k5NDlSD6DMxzXf+4VN55/CC17
+   kVI6FYWPYjtQLo30+Mh2z4AbRVDYkZHzzdNRfeW4izOLX22U3R6aH3tU6
+   DLvSFqSAHyzwPmnu8Q/TDp8mvQmnmc8z0iSe0aVHxWzLLRtYGBDQhtvAs
+   MmMxWFN1HCqwzWeypYnbbNEFCqZG3pabmz2Ril7U8g14og65Yxyz/dcNS
+   iADKkvX7Z9NA97tq5MIKNIQKp9ATmGe4v3COpeOsAg2R/CiVXR/M7C07F
    Q==;
-IronPort-SDR: 7DOrw+CuIqYQBmgcp1cQwrbTsL0Bx0hMA6YeUI76OgaDZyPO0WexPMCCOyqi6OSjvGZgB4Mpr6
- n4gNgHJEs1QfYYXctfjYrxg8X3SspTpHL1kpto+xBkc6+uj9jIMnkZtX4xM9FESVLwoFRkJ6+1
- Wblw3oQUV8v4mnCtrxKQarjFO+TYs8zsBUy6vQAxbkj2iINIyQu+y8BekuiE8WW1Z4rxMCzNGM
- k7jiBgchBmUIczNCkArJAMkL0enrcGcwvRXOsqaHCVdEC7+4XRkpV0oG8dGVWyolrBvmsTdFQl
- B6fp3tvT0IQz4n59TpCcuC1R
+IronPort-SDR: wbQTdL9+1lsQc4C8EYa3Qtfm+H2Ex4UJVsau1O2LN5QhbzRynAliwGZw3GLSTvTm3MPFOr4+xs
+ aqvcUdWRYdZEkz3WS873x1ORSXuDFK4GNRdlR66dPoZTRxQ4+KFP212xtK0R7FW6tLnuR1AGYW
+ ph7LMqeR6tEk0CbSqN/LqKiozI4s3yXQ+xBfYNMbiwdqdNNTBXblf3zNq5BfVjHliIPFlWusyW
+ ksSxSPGMsGTODZuwpKTClU/G1t+1vyZ/2Gf2Yg7T6IY5Ww5HxZBXT9P94k+1/MQRiaIeSyWgjn
+ YZQv2bqre/RoQIHMrzT9HFJc
 X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
-   d="scan'208";a="133104565"
+   d="scan'208";a="140403841"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2021 00:55:37 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Oct 2021 00:56:44 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 15 Oct 2021 00:55:37 -0700
+ 15.1.2176.14; Fri, 15 Oct 2021 00:56:44 -0700
 Received: from [10.12.67.94] (10.10.115.15) by chn-vm-ex02.mchp-main.com
  (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Fri, 15 Oct 2021 00:55:36 -0700
-Subject: Re: [PATCH v5 08/15] clk: at91: clk-master: check if div or pres is
- zero
+ Transport; Fri, 15 Oct 2021 00:56:43 -0700
+Subject: Re: [PATCH v5 09/15] clk: at91: clk-master: mask mckr against
+ layout->mask
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>
@@ -52,15 +52,15 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <20211011112719.3951784-1-claudiu.beznea@microchip.com>
- <20211011112719.3951784-9-claudiu.beznea@microchip.com>
+ <20211011112719.3951784-10-claudiu.beznea@microchip.com>
 From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-Message-ID: <e56bc978-5442-c229-ce01-e37c4aea46e7@microchip.com>
-Date:   Fri, 15 Oct 2021 09:55:35 +0200
+Message-ID: <579573e1-ab48-75b2-b185-5885ac5a15c5@microchip.com>
+Date:   Fri, 15 Oct 2021 09:56:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20211011112719.3951784-9-claudiu.beznea@microchip.com>
+In-Reply-To: <20211011112719.3951784-10-claudiu.beznea@microchip.com>
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,42 +69,49 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 11/10/2021 at 13:27, Claudiu Beznea wrote:
-> Check if div or pres is zero before using it as argument for ffs().
-> In case div is zero ffs() will return 0 and thus substracting from
-> zero will lead to invalid values to be setup in registers.
+> Mask values read/written from/to MCKR against layout->mask as this
+> mask may be different b/w PMC versions.
 > 
-> Fixes: 7a110b9107ed8 ("clk: at91: clk-master: re-factor master clock")
-> Fixes: 75c88143f3b87 ("clk: at91: clk-master: add master clock support for SAMA7G5")
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
 Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 
 > ---
->   drivers/clk/at91/clk-master.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/clk/at91/clk-master.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-> index 9a2c8e64cacf..2093e13b5068 100644
+> index 2093e13b5068..6da9ae34313a 100644
 > --- a/drivers/clk/at91/clk-master.c
 > +++ b/drivers/clk/at91/clk-master.c
-> @@ -344,7 +344,7 @@ static int clk_master_pres_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -186,8 +186,8 @@ static int clk_master_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>   	if (ret)
+>   		goto unlock;
 >   
->   	else if (pres == 3)
->   		pres = MASTER_PRES_MAX;
-> -	else
-> +	else if (pres)
->   		pres = ffs(pres) - 1;
+> -	tmp = mckr & master->layout->mask;
+> -	tmp = (tmp >> MASTER_DIV_SHIFT) & MASTER_DIV_MASK;
+> +	mckr &= master->layout->mask;
+> +	tmp = (mckr >> MASTER_DIV_SHIFT) & MASTER_DIV_MASK;
+>   	if (tmp == div)
+>   		goto unlock;
 >   
->   	spin_lock_irqsave(master->lock, flags);
-> @@ -757,7 +757,7 @@ static int clk_sama7g5_master_set_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -384,6 +384,7 @@ static unsigned long clk_master_pres_recalc_rate(struct clk_hw *hw,
+>   	regmap_read(master->regmap, master->layout->offset, &val);
+>   	spin_unlock_irqrestore(master->lock, flags);
 >   
->   	if (div == 3)
->   		div = MASTER_PRES_MAX;
-> -	else
-> +	else if (div)
->   		div = ffs(div) - 1;
+> +	val &= master->layout->mask;
+>   	pres = (val >> master->layout->pres_shift) & MASTER_PRES_MASK;
+>   	if (pres == 3 && characteristics->have_div3_pres)
+>   		pres = 3;
+> @@ -403,6 +404,8 @@ static u8 clk_master_pres_get_parent(struct clk_hw *hw)
+>   	regmap_read(master->regmap, master->layout->offset, &mckr);
+>   	spin_unlock_irqrestore(master->lock, flags);
 >   
->   	spin_lock_irqsave(master->lock, flags);
+> +	mckr &= master->layout->mask;
+> +
+>   	return mckr & AT91_PMC_CSS;
+>   }
+>   
 > 
 
 
