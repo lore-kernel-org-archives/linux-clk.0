@@ -2,29 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1F2C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFA8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7324E61181
+	by mail.kernel.org (Postfix) with ESMTP id EA81C6120A
 	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 14:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbhJOOz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S240669AbhJOOz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 15 Oct 2021 10:55:57 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:57812 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236248AbhJOOz4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 10:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240642AbhJOOz5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 10:55:57 -0400
+Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AFB3BC061570;
+        Fri, 15 Oct 2021 07:53:50 -0700 (PDT)
 Received: from hq-00021.fritz.box (p57bc9963.dip0.t-ipconnect.de [87.188.153.99])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id D0A9148E45A;
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 42EF948E459;
         Fri, 15 Oct 2021 14:53:48 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
         Daniel Mack <daniel@zonque.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH RESEND v4 2/9] dt-bindings: clock: cs2000-cp: document aux-output-source
-Date:   Fri, 15 Oct 2021 16:53:19 +0200
-Message-Id: <20211015145326.1018458-3-daniel@zonque.org>
+Subject: [PATCH RESEND v4 1/9] dt-bindings: clock: convert cs2000-cp bindings to yaml
+Date:   Fri, 15 Oct 2021 16:53:18 +0200
+Message-Id: <20211015145326.1018458-2-daniel@zonque.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211015145326.1018458-1-daniel@zonque.org>
 References: <20211015145326.1018458-1-daniel@zonque.org>
@@ -34,76 +37,114 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This new optional property can be used to control the function of the
-auxiliary output pin. Introduce a new dt-bindings include file that
-contains the numerical values.
+The original author of the file was added as maintainer.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/cirrus,cs2000-cp.yaml           | 14 ++++++++++++++
- include/dt-bindings/clock/cirrus,cs2000-cp.h       | 14 ++++++++++++++
- 2 files changed, 28 insertions(+)
- create mode 100644 include/dt-bindings/clock/cirrus,cs2000-cp.h
+ .../bindings/clock/cirrus,cs2000-cp.yaml      | 63 +++++++++++++++++++
+ .../devicetree/bindings/clock/cs2000-cp.txt   | 22 -------
+ 2 files changed, 63 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/cs2000-cp.txt
 
 diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-index 379a8bab49ca..79b90500f6ac 100644
---- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -37,6 +37,17 @@ properties:
-   reg:
-     maxItems: 1
- 
-+  cirrus,aux-output-source:
-+    description:
-+      Specifies the function of the auxiliary clock output pin
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # CS2000CP_AUX_OUTPUT_REF_CLK:  ref_clk input
-+      - 1 # CS2000CP_AUX_OUTPUT_CLK_IN:   clk_in input
-+      - 2 # CS2000CP_AUX_OUTPUT_CLK_OUT:  clk_out output
-+      - 3 # CS2000CP_AUX_OUTPUT_PLL_LOCK: pll lock status
-+    default: 0
-+
- required:
-   - compatible
-   - reg
-@@ -48,6 +59,8 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/clock/cirrus,cs2000-cp.h>
-+
-     i2c@0 {
-       reg = <0x0 0x100>;
-       #address-cells = <1>;
-@@ -59,5 +72,6 @@ examples:
-         reg = <0x4f>;
-         clocks = <&rcar_sound 0>, <&x12_clk>;
-         clock-names = "clk_in", "ref_clk";
-+        cirrus,aux-output-source = <CS2000CP_AUX_OUTPUT_CLK_OUT>;
-       };
-     };
-diff --git a/include/dt-bindings/clock/cirrus,cs2000-cp.h b/include/dt-bindings/clock/cirrus,cs2000-cp.h
 new file mode 100644
-index 000000000000..fe3ac71750a8
+index 000000000000..379a8bab49ca
 --- /dev/null
-+++ b/include/dt-bindings/clock/cirrus,cs2000-cp.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2021 Daniel Mack
-+ */
++++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/cirrus,cs2000-cp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#ifndef __DT_BINDINGS_CS2000CP_CLK_H
-+#define __DT_BINDINGS_CS2000CP_CLK_H
++title: Binding CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
 +
-+#define CS2000CP_AUX_OUTPUT_REF_CLK	0
-+#define CS2000CP_AUX_OUTPUT_CLK_IN	1
-+#define CS2000CP_AUX_OUTPUT_CLK_OUT	2
-+#define CS2000CP_AUX_OUTPUT_PLL_LOCK	3
++maintainers:
++  - Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 +
-+#endif /* __DT_BINDINGS_CS2000CP_CLK_H */
++description: |
++  The CS2000-CP is an extremely versatile system clocking device that
++  utilizes a programmable phase lock loop.
++
++  Link: https://www.cirrus.com/products/cs2000/
++
++properties:
++  compatible:
++    enum:
++      - cirrus,cs2000-cp
++
++  clocks:
++    description:
++      Common clock binding for CLK_IN, XTI/REF_CLK
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: clk_in
++      - const: ref_clk
++
++  '#clock-cells':
++    const: 0
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c@0 {
++      reg = <0x0 0x100>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      clock-controller@4f {
++        #clock-cells = <0>;
++        compatible = "cirrus,cs2000-cp";
++        reg = <0x4f>;
++        clocks = <&rcar_sound 0>, <&x12_clk>;
++        clock-names = "clk_in", "ref_clk";
++      };
++    };
+diff --git a/Documentation/devicetree/bindings/clock/cs2000-cp.txt b/Documentation/devicetree/bindings/clock/cs2000-cp.txt
+deleted file mode 100644
+index 54e6df0bee8a..000000000000
+--- a/Documentation/devicetree/bindings/clock/cs2000-cp.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-CIRRUS LOGIC Fractional-N Clock Synthesizer & Clock Multiplier
+-
+-Required properties:
+-
+-- compatible:		"cirrus,cs2000-cp"
+-- reg:			The chip select number on the I2C bus
+-- clocks:		common clock binding for CLK_IN, XTI/REF_CLK
+-- clock-names:		CLK_IN : clk_in, XTI/REF_CLK : ref_clk
+-- #clock-cells:		must be <0>
+-
+-Example:
+-
+-&i2c2 {
+-	...
+-	cs2000: clk_multiplier@4f {
+-		#clock-cells = <0>;
+-		compatible = "cirrus,cs2000-cp";
+-		reg = <0x4f>;
+-		clocks = <&rcar_sound 0>, <&x12_clk>;
+-		clock-names = "clk_in", "ref_clk";
+-	};
+-};
 -- 
 2.31.1
 
