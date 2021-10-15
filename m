@@ -2,98 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B51C4321E
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 18:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C76CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:02:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1E4D6105A
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 18:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFDD26108B
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Oct 2021 19:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242205AbhJOTA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Oct 2021 15:00:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242091AbhJOTA6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 Oct 2021 15:00:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9B9361041;
-        Fri, 15 Oct 2021 18:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634324331;
-        bh=G82GvShkI2sS0Zha329b0vmAJ+/o/V8FAjLI2CyDuHE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HEcftEAp7E/3KdVqr9ES8s9gv/a7pp/vZmNc2SdZRqaV6jwAmcx5TMfUb5/zuCkFw
-         QJe9FWB98sKeyIu7UDoWBOKsjlFrxivPC7Qk5Fg8oskNQ62JI8JmOaJiHYMtO4rp+Y
-         1C8BwGt3rCoXZXEzLPoYYRQPcL8N6GeQ2ZbmUhfCwjFRAAhxxPwiiwuYiiKZ2zvcHC
-         biQ8dmmnkAN4CCULB9N2VvtSszyN7sh0mw2PYxsKZPK7W+I8ccCrDlix5nJevD26hk
-         fea53Hv4pyVoNatdrBWVumdFeQDfy1vRMIV2Kjr/V2Picb8G1MW35RRBEuB2MLgEBs
-         Nni976TeDnvUw==
-Date:   Fri, 15 Oct 2021 19:58:48 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 05/12] regulator: Introduce tps68470-regulator driver
-Message-ID: <YWnPaI/ZECdfYre9@sirena.org.uk>
-References: <20211008162121.6628-1-hdegoede@redhat.com>
- <20211008162121.6628-6-hdegoede@redhat.com>
- <YWQU/SYTT5Vk24XH@sirena.org.uk>
- <f6f2d7e8-fdb8-ed64-0cdd-65aded9fc42c@redhat.com>
- <YWmwZJvDYjPWJdb4@sirena.org.uk>
- <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
+        id S238369AbhJOTEG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Oct 2021 15:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238263AbhJOTEG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Oct 2021 15:04:06 -0400
+Received: from relay01.th.seeweb.it (relay01.th.seeweb.it [IPv6:2001:4b7a:2000:18::162])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6AC0C061764;
+        Fri, 15 Oct 2021 12:01:58 -0700 (PDT)
+Received: from [192.168.1.101] (83.6.166.47.neoplus.adsl.tpnet.pl [83.6.166.47])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 668EC1F90E;
+        Fri, 15 Oct 2021 21:01:55 +0200 (CEST)
+Message-ID: <a8114098-f700-974b-e17e-54f5baebec46@somainline.org>
+Date:   Fri, 15 Oct 2021 21:01:54 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Fik2/uEMPbbf9stB"
-Content-Disposition: inline
-In-Reply-To: <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
-X-Cookie: 1: No code table for op: ++post
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH 7/8] arm64: dts: qcom: msm8996: Add MSM8996 Pro support
+Content-Language: en-US
+To:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org
+References: <20211014083016.137441-1-y.oudjana@protonmail.com>
+ <20211014083016.137441-8-y.oudjana@protonmail.com>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20211014083016.137441-8-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---Fik2/uEMPbbf9stB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 14.10.2021 10:32, Yassine Oudjana wrote:
+> Add a new DTSI for MSM8996 Pro (MSM8996SG) with msm-id and CPU/GPU OPPs.
+> CBF OPPs and CPR parameters will be added to it as well once support for
+> CBF scaling and CPR is introduced.
+>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi    |  82 +++----
+>  arch/arm64/boot/dts/qcom/msm8996pro.dtsi | 281 +++++++++++++++++++++++
+>  2 files changed, 322 insertions(+), 41 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/msm8996pro.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 94a846c3f1ee..5b2600a4fb2a 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -142,82 +142,82 @@ cluster0_opp: opp_table0 {
+>  		/* Nominal fmax for now */
+>  		opp-307200000 {
+>  			opp-hz = /bits/ 64 <307200000>;
+> -			opp-supported-hw = <0x77>;
+> +			opp-supported-hw = <0x7>;
 
-On Fri, Oct 15, 2021 at 08:50:13PM +0200, Hans de Goede wrote:
+You didn't describe what's the reason for changing this everywhere.
 
-> Are you happy with the platform_data for this driver as defined in
-> patch 4/12 ? :
+If it's been always broken, perhaps make it a separate commit describing
 
-Some of the other review comments lead me to believe that you'd be
-sending out a new version at some point?
+the issue.
 
-> https://lore.kernel.org/platform-driver-x86/20211008162121.6628-1-hdegoede@redhat.com/T/#m745cc1191f531a57ae7998f5c8817ba9a46f0fed
 
-I am very confused about why it's in the driver without a DMI quirk
-and/or clear comments about why and saying that this is a terrible
-example to copy.  I'd also expect to get compile test coverage for the
-driver.
+Konrad
 
---Fik2/uEMPbbf9stB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFpz2gACgkQJNaLcl1U
-h9Duwwf7BD9CuMWRm3gNfjStvs3aYG6Zil6RBWStSHHnVqi6JXOSXL/qEtD/MSTx
-fYmQ9GikR+iOnZk916F+Iux8DMGV0XunUnnv0X0C7yt3fpo+GtJYpHsYdLeGYaxC
-BkAvEs3C4EEGWtf3OLtcqE/PZwFaXPFvj8yk1iM/VXnHWtsottsklIQQD+eCKSVV
-Q98ZH/m/NmS2sQyTYBfcfIHtUIT0n2P3XnlG3CocoXyxfAnrCoiTJKD6zUxt+kdJ
-h/Rn5VFcYOZXZQd0ZFbwwFSz2+2Rq5pqmL26NKtExZxr6Wy0C4AbYLojiwLstbiI
-yRE9TQbogn37aDMHN8Ip5k4G99YqZw==
-=cCEU
------END PGP SIGNATURE-----
-
---Fik2/uEMPbbf9stB--
