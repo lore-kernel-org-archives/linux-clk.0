@@ -2,137 +2,190 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B67DC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 08:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE2C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E29561101
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 08:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E11A611C3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:18:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235032AbhJPIoh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Oct 2021 04:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45204 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234494AbhJPIoe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 04:44:34 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2372C061570;
-        Sat, 16 Oct 2021 01:42:25 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id m67so16665963oif.6;
-        Sat, 16 Oct 2021 01:42:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dRFpjv0QFobuihrGVtFv7+z3s3YwkmdjK5buj6rIYYk=;
-        b=e4XZ+unUBUbMrqDFojloAf/MWyJ+7XUX2dM0yuSK7u14qDHlWK3jvBmprF3eYtc41J
-         8M1c6eZrCrVKlQMU3PM/uYlBL2ivf3LPcCL9qO4B5xzvOLu3F+OdSCR+kwSs+MArGLWx
-         yCGehbJXmOGnWkjKKBbtmCoQnhT+pPutBIpW28uG/F222mq9CRKO1EW+ktqcNg0F6Bcm
-         NqLkFbsjp44wrmkxs/PJYxsqfz+90YowR+fIn4d5mfPvSr4nu2Ytf3CyLgnnu8RLdHX2
-         vNT0PjLvR0IlNPR0R2v2CCa/yJidaWB1Ynu+B93MI53bqYT6Naw/xFwcyLLdHbI/s3qb
-         MiEA==
+        id S244104AbhJPKUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Oct 2021 06:20:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25195 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244097AbhJPKUa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 06:20:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634379502;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lRKifhuZPEWMV9NZ2wr+qPq6taJBi8mO/4F/nJu9ENk=;
+        b=Kkh/ARh4ZzzY0jfO/HfqlKEgh64pzOBYEwTQodBwTBrukREV9FZ1r51i+1OHjUtJzVEjHv
+        eY7vdtDG00BmvAFqkyjZDzU88lcJavL0VRLpkTp7ZAaQFxt8KXa0zTS1TR+va8qPZ7G1tp
+        NEEnvxWH3DONV69cC8mszAwxsX0fgd4=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-515-gWyW8BzhNaa2yrz4H3Za6g-1; Sat, 16 Oct 2021 06:18:21 -0400
+X-MC-Unique: gWyW8BzhNaa2yrz4H3Za6g-1
+Received: by mail-ed1-f70.google.com with SMTP id i7-20020a50d747000000b003db0225d219so5725721edj.0
+        for <linux-clk@vger.kernel.org>; Sat, 16 Oct 2021 03:18:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dRFpjv0QFobuihrGVtFv7+z3s3YwkmdjK5buj6rIYYk=;
-        b=duLWg2GD3eZAuI208tJTjOAPVolmhPQf05oTaoNLNj7YtU3zUpRpQEJC5smoHMuyzz
-         pFuKX5KrTrybnWPKCcjz43o0t56d8BNGOQ/FT+XDfVWC3Je9RP23TVWVAeIKUIMQPhwx
-         zW4H9dm+L1whAX3sCMCkBJbwrU1g2rx0MoXtAcZsXX1WXounS1t4bJ1iEMEt2XKdCBCU
-         WD4iX89ukJ/RbQXfzHO/H/u38AGDFj02Bx2sOvJdF5ZU1phOAdje7kvjn5c141lO/iBj
-         44rqT19C5gO+9izDhv6+xZrz6WqUYE2wnUx6qozcAEJ6VA7WRbVPLi8VXJwQtON7zjzr
-         7rGw==
-X-Gm-Message-State: AOAM531dqogw6G62N9QsAurSREWuiKWDhJS4NCFZGjd2w5zEYDqEDAsY
-        IEvM1fk9NjnR3M1+5MkUYNUzS2lUEjEnOV5IOFQ=
-X-Google-Smtp-Source: ABdhPJy7lxlVoFewmgMKKAJEJU2jodl1MUdYceXgsLVeOYAQGnAFtkQKC4i0vOQatn7rMG5PNtcsz8B3nHzpLxeEnuY=
-X-Received: by 2002:a05:6808:309c:: with SMTP id bl28mr7351673oib.140.1634373745382;
- Sat, 16 Oct 2021 01:42:25 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lRKifhuZPEWMV9NZ2wr+qPq6taJBi8mO/4F/nJu9ENk=;
+        b=g7IImWno8dc7vX0YdF+YDkxYOLDbCNgMnBlcWwoS2lhKz6M6fSbn3uzpqLPZqxDQli
+         Q1yScCyO3kGWC5pDVmR2YJZXA4GFJW1mLAki+K82iTN2IOFaEXcfsyGCucD77E82iqzV
+         pZbEHNNrHrYtPXoLXKdh8+iCDjOfoe4QysR9jLKummCpqurIbZe/chRWg/ORDpKZijCW
+         GF8qlw9AVCDpEYIHXY9XxJzwDjLVpB6W/80Cem+L84ZcmpYa8KUIyMD9Zh8sT1hVQKrD
+         Lz8Fej8OiHFyocQYw7jmIXM/rkrR8WnxalLxhozzEJXQfSs8O/mN3j05PQxXsOolRmee
+         T+dg==
+X-Gm-Message-State: AOAM532bVws3b9FQLgVt1SNjLZ1Dws3DBUDlylddNPc9W/fSqLup14R3
+        U0DHmPPQ7GYNJiConZdv4X5njO8+W+eQCG4ZMT9yhyYL02JgzAZfICtvZOg/alrsJYe30wpMGyL
+        jxtD2WRc7wsruTH9IdaOLXeE08ByQMtk/9x3DRA2/HTfpauR+PxT+qCFSaaasDuH2Z4VHGlK4
+X-Received: by 2002:a05:6402:1c85:: with SMTP id cy5mr26031907edb.281.1634379499563;
+        Sat, 16 Oct 2021 03:18:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwuJiWcON3M4nXKn747LTbTpMeMQmvBtJaORLUCaPCevFz0HcJ8P2t0t0MZp62LMyoxb4bUTQ==
+X-Received: by 2002:a05:6402:1c85:: with SMTP id cy5mr26031859edb.281.1634379499200;
+        Sat, 16 Oct 2021 03:18:19 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id m18sm3371750ejn.62.2021.10.16.03.18.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Oct 2021 03:18:18 -0700 (PDT)
+Subject: Re: [PATCH 05/12] regulator: Introduce tps68470-regulator driver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <YWQU/SYTT5Vk24XH@sirena.org.uk>
+ <f6f2d7e8-fdb8-ed64-0cdd-65aded9fc42c@redhat.com>
+ <YWmwZJvDYjPWJdb4@sirena.org.uk>
+ <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
+ <YWnPaI/ZECdfYre9@sirena.org.uk>
+ <843f939a-7e43-bc12-e9fc-582e01129b63@redhat.com>
+ <YWnZIZTPiuAIazV+@sirena.org.uk>
+ <c595b143-d7ed-e76b-7734-e03d14e0f76e@redhat.com>
+ <YWndpGgBtLEAEaNj@sirena.org.uk>
+ <1805d16e-87ab-c291-6a73-adabf41344ca@redhat.com>
+ <YWoAtCdikYfMpUnD@sirena.org.uk>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <26a1b636-1b82-2ca6-4f78-b1d22fa556d6@redhat.com>
+Date:   Sat, 16 Oct 2021 12:18:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-2-zhang.lyra@gmail.com>
- <CAMuHMdWq3M3i+5yATeGEUxupU6Gb5ZnJeNsn9czX6tukEbHQng@mail.gmail.com>
-In-Reply-To: <CAMuHMdWq3M3i+5yATeGEUxupU6Gb5ZnJeNsn9czX6tukEbHQng@mail.gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Sat, 16 Oct 2021 16:41:49 +0800
-Message-ID: <CAAfSe-sQB4wXGwGSPYpoF_YmzJjT=dFLTz36haJ6orE_=zai-Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YWoAtCdikYfMpUnD@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Hi Mark,
 
-Thanks for the review.
+On 10/16/21 12:29 AM, Mark Brown wrote:
+> On Fri, Oct 15, 2021 at 10:14:30PM +0200, Hans de Goede wrote:
+>> On 10/15/21 9:59 PM, Mark Brown wrote:
 
-On Wed, 13 Oct 2021 at 22:23, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Chunyan.
->
-> On Thu, Sep 23, 2021 at 8:42 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >
-> > Add a new bindings to describe ums512 clock compatible strings.
-> >
-> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
->
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 4
->
-> After applying this to my local tree, as it is a dependency for 2/4 in
-> for-mfd-next:
->
->     Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml:
-> properties:clock-names: {'required': ['maxItems']} is not allowed for
-> {'minItems': 1, 'maxItems': 4, 'items': [{'const': 'ext-26m'},
-> {'const': 'ext-32k'}, {'const': 'ext-4m'}, {'const': 'rco-100m'}]}
->     hint: "maxItems" is not needed with an "items" list
->     from schema $id: http://devicetree.org/meta-schemas/items.yaml#
->
-> so please drop the maxItems 4.
+<snip>
 
-Ok, I will, but I don't have this compile error on my side, how do you
-get this error report?
+>> During that discussion you said that instead we should sinmply
+>> directly pass the regulator_init_data, rather then first
+>> encoding this in device-properties in a swnode and then
+>> decoding those again in the regulator core.
+> 
+>> And passing the regulator_init_data is exactly what we are doing
+>> now; and now again this is not what we should be doing ?
+> 
+> No, it is not what the driver doing now.  The driver will *optionally*
+> check for platform data, but if none is provided or if it doesn't
+> configure some of the regulators then the driver will provide some hard
+> coded regulator_init_data as a default.  These might be OK on the system
+> you're looking at but will also be used on any other system that happens
+> to instantiate the driver without platform data where there's no
+> guarantee that the information provided will be safe.  These defaults
+> that are being provided may use the same structure that gets used for
+> platform data but they aren't really platform data.
+> 
+> Yes, someone could use this on a system that does things in the standard
+> fashion where the platform data is getting passed in but if it's ever
+> run on any other system then it's going to assume this default platform
+> data with these constraints that have been embedded directly into the
+> driver without anything to ensure that they make sense on that system.
+> 
+> Indeed, now I go back and dig out the rest of the series it seems that
+> there's some drivers/platforms/x86 code added later which does in fact
+> do the right thing for some but not all of the regulators, it supplies
+> some platform data which overrides some but not all of this default
+> regulator_init_data using platform_data having identified the system
+> using DMI information (with configurations quite different to and much
+> more restricted than the defaults provided, exactly why defaults are an
+> issue).  I'm now even more confused about what the information that's
+> there is doing in the driver.  Either it's all unneeded even for your
+> system and should just be deleted, or if any of it is needed then it
+> should be moved to being initialised in the same place everything else
+> is so that it's only used on your system and not on any other system
+> that happens to end up running the driver.
+> 
+> In any case given that your platform does actually have code for
+> identifying it and supplying appropriate platform data the driver itself
+> can be fixed by just deleting the else case of
+> 
+> 	if (pdata && pdata->reg_init_data[i])
+> 		config.init_data = pdata->reg_init_data[i];
+> 	else
+> 		config.init_data = &tps68470_init[i];
+> 
+> and the data structure/macro it uses.  If no configuration is provided
+> by the platform then none should be provided to the core, this in turn
+> means that the regulator framework won't reconfigure the hardware if it
+> doesn't know it's safe to do so.
 
-I use the command below:
-make -k dt_binding_check
-DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-and,
-make -k dt_binding_check
+Ah, ok. The default regulator_init_data in the tps68470_init[]
+array was already there in the out of tree version of this driver
+Daniel and I started with:
 
-Thanks,
-Chunyan
+https://github.com/intel/linux-intel-lts/blob/4.14/base/drivers/regulator/tps68470-regulator.c
 
->
->
-> > +    items:
-> > +      - const: ext-26m
-> > +      - const: ext-32k
-> > +      - const: ext-4m
-> > +      - const: rco-100m
-> > +
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Now that you have pointed this out I would be more then happy to
+delete it and I agree that providing this bogus data is not a
+good idea.
+
+<snip>
+
+> The important thing is to get rid of the hard coded defaults for the
+> regulator_init_data in the driver itself, if there is regulator_init_data
+> in the driver itself then it should be guarded with a DMI or similar
+> quirk.  Like I say above I think now I've gone back and dug through the
+> rest of the series once the default init_data is gone it's probably OK.
+
+Ok, for the next version of this patch-set I will:
+
+1. Remove the default init_data
+2. Change the toplevel comment to be all C++ style matching the SPDX line
+3. Add a || COMPILE_TEST to the Kconfig so that this can be compile-tested
+   without selecting the INTEL_SKL_INT3472 option
+
+Thank you for taking the time to dive a bit deeper into the patch-set
+and make it clear that your objection is the presence of the default
+regulator_init_data; and sorry for loosing my cool a bit in my previous
+email.
+
+Regards,
+
+Hans
+
