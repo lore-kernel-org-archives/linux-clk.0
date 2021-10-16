@@ -2,106 +2,203 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BCEC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 14:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D741C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 15:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 759B8611C1
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 14:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01BF560EE3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 15:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236590AbhJPOxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Oct 2021 10:53:12 -0400
-Received: from mail-4319.protonmail.ch ([185.70.43.19]:27269 "EHLO
-        mail-4319.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236162AbhJPOxK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 10:53:10 -0400
-Date:   Sat, 16 Oct 2021 14:50:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1634395859;
-        bh=R3/CWC+oQyHLNJ8Mqz/kp0RXJtD7NTUkw0e4eKR5loA=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=S/3JdJgGa1H1gmxU2faAPy6ZJdotBfNnj5Nh1hghcVZ78AWMsv7JuiW3e9tnnXc/s
-         ZfNTQfXpOzzDdQXbLsVcgYOjIX6yan9IOdxu1L/ox9aGNAnjqnPrTWg03UusmkLj04
-         k4N8pqcUAqD9fAiCN2+ub5BskSt4mmdUN8xIydrc=
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-From:   Yassine Oudjana <y.oudjana@protonmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org
-Reply-To: Yassine Oudjana <y.oudjana@protonmail.com>
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: msm8996: Add MSM8996 Pro support
-Message-ID: <ZVR21R.X63CT137R99A3@protonmail.com>
-In-Reply-To: <a8114098-f700-974b-e17e-54f5baebec46@somainline.org>
-References: <20211014083016.137441-1-y.oudjana@protonmail.com> <20211014083016.137441-8-y.oudjana@protonmail.com> <a8114098-f700-974b-e17e-54f5baebec46@somainline.org>
+        id S236398AbhJPPCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Oct 2021 11:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234554AbhJPPCQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 11:02:16 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC85EC061570;
+        Sat, 16 Oct 2021 08:00:07 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id y3so31885051wrl.1;
+        Sat, 16 Oct 2021 08:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KqnMuFpgSADQq8LPQeZiTx5HVHbVDQMXAFWHZfFF9ZU=;
+        b=fk6S2/0U84Ed4T3ZK/U92G/9b6uIOmZ9WS6lCYyMAtTq4M0vSHh9GNLEAUbEW7U+ut
+         dmoc70mZ9dAiuHQxKj+Ohy+JyJrvjaCoG5U81nEO0KU4nlovcjYIx84N6gjx3qWS+RK5
+         cfkulnmvbTqh8Por5CFHoNGRwib+wNlFZAED4KW4hLJUPd6b/Tbd9jmYXbiIdK4viFXp
+         /bOd2d91jI2KKnJT4G3YAmYlMqw/UCooyVr2id8UR+H9fqbCGLm6a8ATt3jt/hu62yDi
+         9g0gT8LfkchWkMVlLKUWQ2CzzRM+TmiimAxB2ufhzGgTitD/VpINbAwCCz3MD8N69L/O
+         ru8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KqnMuFpgSADQq8LPQeZiTx5HVHbVDQMXAFWHZfFF9ZU=;
+        b=BV2NJY0gUPdUxmH1mBr5b+CnEh+8Xix3kTyvOFIjcaFVcRn1IXHaYCcN09aRRjHywP
+         xeYiAyhpA3nungPPzMKh2QYUaPSfP0TnuGauHBsANK04NlG6X7H1uK+6yC5zUIVi2mem
+         K6BPO0TFXciBGzVCgmSEOpFK9iFRUWSANxo2WFohKLxZwwsUxHFxxe1INzDNhRmLCvEd
+         H/NVBz0npPMpNZ9zUP9iK/YfOvhxpMRTlWu/oSqqYOovL9V5J3GH3heZvXj3SbLvGib2
+         FoeUHrdx5qNB6QVVKUSDMnJllfjqj3wHhXLAOVukiAtK9pVp359otYzhACdXax/LPJB+
+         xEGQ==
+X-Gm-Message-State: AOAM5328o97n5P8S+E92AD3CKvsGR2Q5g4zb+7IY/tZeGC9X47dPaB8s
+        v2rrMthpUGBYHUIZasHWqt2EZxzzxAY=
+X-Google-Smtp-Source: ABdhPJy2g66J/9AMlkBlIifsI4nVNpR0kyb4gKOZhUVlH9yhJd/6Dd7f2cmtbUvbfO3Hu7LYaOmcQw==
+X-Received: by 2002:a5d:6982:: with SMTP id g2mr22269558wru.51.1634396406342;
+        Sat, 16 Oct 2021 08:00:06 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a01-0c22-7b82-9800-f22f-74ff-fe21-0725.c22.pool.telefonica.de. [2a01:c22:7b82:9800:f22f:74ff:fe21:725])
+        by smtp.googlemail.com with ESMTPSA id k17sm13543280wmj.0.2021.10.16.08.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Oct 2021 08:00:05 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
+Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0 on GXBB
+Date:   Sat, 16 Oct 2021 16:59:39 +0200
+Message-Id: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Christian reports that 48kHz audio does not work on his WeTek Play 2
+(which uses a GXBB SoC), while 44.1kHz audio works fine on the same
+board. He also reports that 48kHz audio works on GXL and GXM SoCs,
+which are using an (almost) identical AIU (audio controller).
 
-On Fri, Oct 15 2021 at 23:01:54 +0400, Konrad Dybcio=20
-<konrad.dybcio@somainline.org> wrote:
->=20
-> On 14.10.2021 10:32, Yassine Oudjana wrote:
->>  Add a new DTSI for MSM8996 Pro (MSM8996SG) with msm-id and CPU/GPU=20
->> OPPs.
->>  CBF OPPs and CPR parameters will be added to it as well once=20
->> support for
->>  CBF scaling and CPR is introduced.
->>=20
->>  Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
->>  ---
->>   arch/arm64/boot/dts/qcom/msm8996.dtsi    |  82 +++----
->>   arch/arm64/boot/dts/qcom/msm8996pro.dtsi | 281=20
->> +++++++++++++++++++++++
->>   2 files changed, 322 insertions(+), 41 deletions(-)
->>   create mode 100644 arch/arm64/boot/dts/qcom/msm8996pro.dtsi
->>=20
->>  diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi=20
->> b/arch/arm64/boot/dts/qcom/msm8996.dtsi
->>  index 94a846c3f1ee..5b2600a4fb2a 100644
->>  --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
->>  +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
->>  @@ -142,82 +142,82 @@ cluster0_opp: opp_table0 {
->>   =09=09/* Nominal fmax for now */
->>   =09=09opp-307200000 {
->>   =09=09=09opp-hz =3D /bits/ 64 <307200000>;
->>  -=09=09=09opp-supported-hw =3D <0x77>;
->>  +=09=09=09opp-supported-hw =3D <0x7>;
->=20
-> You didn't describe what's the reason for changing this everywhere.
->=20
-> If it's been always broken, perhaps make it a separate commit=20
-> describing
->=20
-> the issue.
->=20
->=20
-> Konrad
->=20
+Experimenting has shown that MPLL0 is causing this problem. In the .dts
+we have by default:
+	assigned-clocks = <&clkc CLKID_MPLL0>,
+			  <&clkc CLKID_MPLL1>,
+			  <&clkc CLKID_MPLL2>;
+	assigned-clock-rates = <294912000>,
+			       <270950400>,
+			       <393216000>;
+The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
+rate is divisible by 44.1kHz without remainder. Swapping these two clock
+rates "fixes" 48kHz audio but breaks 44.1kHz audio.
 
-Before removing reading msm-id in qcom_cpufreq_nvmem, bits 0-2 (0x07)=20
-were MSM8996 speed bins, while bits 4-6 (0x70) were MSM8996 Pro speed=20
-bins. Now, only bits 0-2 are used for either one, so basically I moved=20
-bits 4-6 into msm8996pro.dtsi after shifting them right to become bits=20
-0-2.
+Everything looks normal when looking at the info provided by the common
+clock framework while playing 48kHz audio (via I2S with mclk-fs = 256):
+        mpll_prediv                 1        1        0  2000000000
+           mpll0_div                1        1        0   294909641
+              mpll0                 1        1        0   294909641
+                 cts_amclk_sel       1        1        0   294909641
+                    cts_amclk_div       1        1        0    12287902
+                       cts_amclk       1        1        0    12287902
 
-I'll put this in a separate patch and describe the change.
+meson-clk-msr however shows that the actual MPLL0 clock is off by more
+than 38MHz:
+        mp0_out               333322917    +/-10416Hz
 
-=09Yassine
+The 3.14 vendor kernel uses the following code to enable SSEN only for
+MPLL0 (where con_reg2 is HHI_MPLL_CNTL and SSEN_shift is 25):
+	if (strncmp(hw->clk->name, "mpll_clk_out0", 13) == 0) {
+		val = readl(mpll->con_reg2);
+		val |= 1 <<  mpll->SSEN_shift;
+		writel(val, mpll->con_reg2);
+	}
 
+Add the SSEN (spread spectrum enable) bit and add the
+CLK_MESON_MPLL_SPREAD_SPECTRUM flag to enable this bit for MPLL0. Do
+this for GXBB *only* since GXL doesn't seem to care if this bit is set
+or not, meaning that meson-clk-msr always sees (approximately) the same
+frequency as common clock framework.
 
+Fixes: 8925dbd03bb29b ("clk: meson: gxbb: no spread spectrum on mpll")
+Reported-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/gxbb.c | 50 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 47 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index d6eed760327d..673bc915c7d9 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -713,6 +713,41 @@ static struct clk_regmap gxbb_mpll_prediv = {
+ };
+ 
+ static struct clk_regmap gxbb_mpll0_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = HHI_MPLL_CNTL7,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = HHI_MPLL_CNTL7,
++			.shift   = 15,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = HHI_MPLL_CNTL7,
++			.shift   = 16,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = HHI_MPLL_CNTL,
++			.shift   = 25,
++			.width   = 1,
++		},
++		.flags = CLK_MESON_MPLL_SPREAD_SPECTRUM,
++		.lock = &meson_clk_lock,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&gxbb_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap gxl_mpll0_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+ 			.reg_off = HHI_MPLL_CNTL7,
+@@ -749,7 +784,16 @@ static struct clk_regmap gxbb_mpll0 = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+ 		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) { &gxbb_mpll0_div.hw },
++		.parent_data = &(const struct clk_parent_data) {
++			/*
++			 * Note:
++			 * GXL and GXBB have different SSEN requirements. We
++			 * fallback to the global naming string mechanism so
++			 * mpll0_div picks up the appropriate one.
++			 */
++			.name = "mpll0_div",
++			.index = -1,
++		},
+ 		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -3044,7 +3088,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
+ 		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
+ 		[CLKID_VAPB]		    = &gxbb_vapb.hw,
+-		[CLKID_MPLL0_DIV]	    = &gxbb_mpll0_div.hw,
++		[CLKID_MPLL0_DIV]	    = &gxl_mpll0_div.hw,
+ 		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
+ 		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
+ 		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
+@@ -3439,7 +3483,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
+ 	&gxbb_mpll0,
+ 	&gxbb_mpll1,
+ 	&gxbb_mpll2,
+-	&gxbb_mpll0_div,
++	&gxl_mpll0_div,
+ 	&gxbb_mpll1_div,
+ 	&gxbb_mpll2_div,
+ 	&gxbb_cts_amclk_div,
+-- 
+2.33.1
 
