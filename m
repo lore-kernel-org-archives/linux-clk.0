@@ -2,190 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE2C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA82C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E11A611C3
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA053611C1
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 10:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244104AbhJPKUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Oct 2021 06:20:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25195 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244097AbhJPKUa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 06:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634379502;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lRKifhuZPEWMV9NZ2wr+qPq6taJBi8mO/4F/nJu9ENk=;
-        b=Kkh/ARh4ZzzY0jfO/HfqlKEgh64pzOBYEwTQodBwTBrukREV9FZ1r51i+1OHjUtJzVEjHv
-        eY7vdtDG00BmvAFqkyjZDzU88lcJavL0VRLpkTp7ZAaQFxt8KXa0zTS1TR+va8qPZ7G1tp
-        NEEnvxWH3DONV69cC8mszAwxsX0fgd4=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-515-gWyW8BzhNaa2yrz4H3Za6g-1; Sat, 16 Oct 2021 06:18:21 -0400
-X-MC-Unique: gWyW8BzhNaa2yrz4H3Za6g-1
-Received: by mail-ed1-f70.google.com with SMTP id i7-20020a50d747000000b003db0225d219so5725721edj.0
-        for <linux-clk@vger.kernel.org>; Sat, 16 Oct 2021 03:18:21 -0700 (PDT)
+        id S240285AbhJPKwy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Oct 2021 06:52:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233698AbhJPKwx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Oct 2021 06:52:53 -0400
+Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F4E5C061570
+        for <linux-clk@vger.kernel.org>; Sat, 16 Oct 2021 03:50:45 -0700 (PDT)
+Received: by mail-wr1-x42b.google.com with SMTP id m22so31095662wrb.0
+        for <linux-clk@vger.kernel.org>; Sat, 16 Oct 2021 03:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mSTXmeX4sFrog+3nTR6inAdAdU/+pQPl/AxORL6OElA=;
+        b=ip81vhs46kUsPTF1X/uzvoPnllvQY4CGnhpICvG9xvNO0HEyJt5O5c7pThjkqay2pf
+         0G1wBoMhUD4TwnlI91DD9DZfZCnmdphvAyObwm7YAH4Re2gboH5vOOvkBoC/8+DpE0fM
+         VfWkQZvX7A9cmQ8xpy12x+vZNTwjvbKEP5ysldUUpSCfWvQ3ZlhmMdm2rdU3omANAySR
+         MY3kl+QMHXtO625cZ1ebhoISMd1iVy2rlE0umeCxf6I6cdFfh76X7F3fVw9e56phhg3h
+         jrQVCYCjQ8++NTV3u2cUsH5pJlW0E6OVVfsjjXxrrdPJsfqUtkFVqJbC+HqOI5Gp8KlB
+         suRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=lRKifhuZPEWMV9NZ2wr+qPq6taJBi8mO/4F/nJu9ENk=;
-        b=g7IImWno8dc7vX0YdF+YDkxYOLDbCNgMnBlcWwoS2lhKz6M6fSbn3uzpqLPZqxDQli
-         Q1yScCyO3kGWC5pDVmR2YJZXA4GFJW1mLAki+K82iTN2IOFaEXcfsyGCucD77E82iqzV
-         pZbEHNNrHrYtPXoLXKdh8+iCDjOfoe4QysR9jLKummCpqurIbZe/chRWg/ORDpKZijCW
-         GF8qlw9AVCDpEYIHXY9XxJzwDjLVpB6W/80Cem+L84ZcmpYa8KUIyMD9Zh8sT1hVQKrD
-         Lz8Fej8OiHFyocQYw7jmIXM/rkrR8WnxalLxhozzEJXQfSs8O/mN3j05PQxXsOolRmee
-         T+dg==
-X-Gm-Message-State: AOAM532bVws3b9FQLgVt1SNjLZ1Dws3DBUDlylddNPc9W/fSqLup14R3
-        U0DHmPPQ7GYNJiConZdv4X5njO8+W+eQCG4ZMT9yhyYL02JgzAZfICtvZOg/alrsJYe30wpMGyL
-        jxtD2WRc7wsruTH9IdaOLXeE08ByQMtk/9x3DRA2/HTfpauR+PxT+qCFSaaasDuH2Z4VHGlK4
-X-Received: by 2002:a05:6402:1c85:: with SMTP id cy5mr26031907edb.281.1634379499563;
-        Sat, 16 Oct 2021 03:18:19 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwuJiWcON3M4nXKn747LTbTpMeMQmvBtJaORLUCaPCevFz0HcJ8P2t0t0MZp62LMyoxb4bUTQ==
-X-Received: by 2002:a05:6402:1c85:: with SMTP id cy5mr26031859edb.281.1634379499200;
-        Sat, 16 Oct 2021 03:18:19 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id m18sm3371750ejn.62.2021.10.16.03.18.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Oct 2021 03:18:18 -0700 (PDT)
-Subject: Re: [PATCH 05/12] regulator: Introduce tps68470-regulator driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <YWQU/SYTT5Vk24XH@sirena.org.uk>
- <f6f2d7e8-fdb8-ed64-0cdd-65aded9fc42c@redhat.com>
- <YWmwZJvDYjPWJdb4@sirena.org.uk>
- <d0d1dc05-4cc6-2f47-88a9-700cfc356d86@redhat.com>
- <YWnPaI/ZECdfYre9@sirena.org.uk>
- <843f939a-7e43-bc12-e9fc-582e01129b63@redhat.com>
- <YWnZIZTPiuAIazV+@sirena.org.uk>
- <c595b143-d7ed-e76b-7734-e03d14e0f76e@redhat.com>
- <YWndpGgBtLEAEaNj@sirena.org.uk>
- <1805d16e-87ab-c291-6a73-adabf41344ca@redhat.com>
- <YWoAtCdikYfMpUnD@sirena.org.uk>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <26a1b636-1b82-2ca6-4f78-b1d22fa556d6@redhat.com>
-Date:   Sat, 16 Oct 2021 12:18:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        bh=mSTXmeX4sFrog+3nTR6inAdAdU/+pQPl/AxORL6OElA=;
+        b=s8pmLEepAdaxH+8N862RVr2IbYcb/rq/eV07At3VuGrVEsSDlCuCyZNIdkYEhwtl3o
+         JHz2lNd1eb/oX8YmIdG3XMYqAkc7xbxCk+7sv7LbHIDA4Tcy961KTyIkfzmoEtGWfeE0
+         kKTUd6uH8y+QygN0f95mKJHG/TvMptVSKNnlknljQRn3OCc7PcpPqNP3CTmWWcNUYysa
+         F/Bu/Cuknul2NGqv3WJc0aJc6nRGKGKJ4le1lUFMaGy1RmsSrV30lV2VSGJEhLloe2ad
+         ie/znLe/q4wx+D4cF3H+XtXukGV65s7oatLgXJIe7sbU/sWY2NxXd9uxS0/XJtIcxdkS
+         4pPw==
+X-Gm-Message-State: AOAM533va7TLtWEs7wO19HJKbvp1TtiJvdK3EweBYe6mImoZoQUkS+l+
+        GGw/P3l+FanJxr6eOxAtTDc6CzRYw+k=
+X-Google-Smtp-Source: ABdhPJwQ+2KaoYY2Wd3UdDLl/jkJ9ImDKPLj7xga2DvjHIpZE8WohAHYurxp1GBBC/8rCS7Ul7yQrQ==
+X-Received: by 2002:a5d:6dae:: with SMTP id u14mr7848763wrs.46.1634381443635;
+        Sat, 16 Oct 2021 03:50:43 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a01-0c22-7b82-9800-f22f-74ff-fe21-0725.c22.pool.telefonica.de. [2a01:c22:7b82:9800:f22f:74ff:fe21:725])
+        by smtp.googlemail.com with ESMTPSA id d8sm7415796wrv.80.2021.10.16.03.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Oct 2021 03:50:43 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-clk@vger.kernel.org, sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, knaerzche@gmail.com,
+        mturquette@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH clk-fixes v1 0/2] Fix clk-composite to support .determine_rate
+Date:   Sat, 16 Oct 2021 12:50:20 +0200
+Message-Id: <20211016105022.303413-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <YWoAtCdikYfMpUnD@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mark,
+Alex reports [0] that commit 69a00fb3d69706 ("clk: divider: Implement
+and wire up .determine_rate by default") breaks Rockchip platforms
+because the parent is not considered anymore. This is because
+clk-composite skips the "best parent" selection when
+rate_ops.determine_rate is set. Above commit does this by adding
+clk_divider_ops.determine_rate by default (then the Rockchip platform
+drivers are using clk_divider_ops as rate_ops in clk-composite).
 
-On 10/16/21 12:29 AM, Mark Brown wrote:
-> On Fri, Oct 15, 2021 at 10:14:30PM +0200, Hans de Goede wrote:
->> On 10/15/21 9:59 PM, Mark Brown wrote:
+With these two patches a revert of above commit is not needed anymore
+(which would result in a revert of five follow-up commits as well).
+Instead the first patch changes the order so clk_divider_ops which
+has both, .determine_rate and .round_rate are supported by clk-divider
+(again).
+The second patch makes clk-composite use (and even prefer)
+rate_ops.determine_rate when available.
 
-<snip>
+Special thanks to Alex for his patience and helping test these patches
+off-list (since I don't have any board with Rockchip SoC).
 
->> During that discussion you said that instead we should sinmply
->> directly pass the regulator_init_data, rather then first
->> encoding this in device-properties in a swnode and then
->> decoding those again in the regulator core.
-> 
->> And passing the regulator_init_data is exactly what we are doing
->> now; and now again this is not what we should be doing ?
-> 
-> No, it is not what the driver doing now.  The driver will *optionally*
-> check for platform data, but if none is provided or if it doesn't
-> configure some of the regulators then the driver will provide some hard
-> coded regulator_init_data as a default.  These might be OK on the system
-> you're looking at but will also be used on any other system that happens
-> to instantiate the driver without platform data where there's no
-> guarantee that the information provided will be safe.  These defaults
-> that are being provided may use the same structure that gets used for
-> platform data but they aren't really platform data.
-> 
-> Yes, someone could use this on a system that does things in the standard
-> fashion where the platform data is getting passed in but if it's ever
-> run on any other system then it's going to assume this default platform
-> data with these constraints that have been embedded directly into the
-> driver without anything to ensure that they make sense on that system.
-> 
-> Indeed, now I go back and dig out the rest of the series it seems that
-> there's some drivers/platforms/x86 code added later which does in fact
-> do the right thing for some but not all of the regulators, it supplies
-> some platform data which overrides some but not all of this default
-> regulator_init_data using platform_data having identified the system
-> using DMI information (with configurations quite different to and much
-> more restricted than the defaults provided, exactly why defaults are an
-> issue).  I'm now even more confused about what the information that's
-> there is doing in the driver.  Either it's all unneeded even for your
-> system and should just be deleted, or if any of it is needed then it
-> should be moved to being initialised in the same place everything else
-> is so that it's only used on your system and not on any other system
-> that happens to end up running the driver.
-> 
-> In any case given that your platform does actually have code for
-> identifying it and supplying appropriate platform data the driver itself
-> can be fixed by just deleting the else case of
-> 
-> 	if (pdata && pdata->reg_init_data[i])
-> 		config.init_data = pdata->reg_init_data[i];
-> 	else
-> 		config.init_data = &tps68470_init[i];
-> 
-> and the data structure/macro it uses.  If no configuration is provided
-> by the platform then none should be provided to the core, this in turn
-> means that the regulator framework won't reconfigure the hardware if it
-> doesn't know it's safe to do so.
+At least the first patch should go into -fixes.
 
-Ah, ok. The default regulator_init_data in the tps68470_init[]
-array was already there in the out of tree version of this driver
-Daniel and I started with:
 
-https://github.com/intel/linux-intel-lts/blob/4.14/base/drivers/regulator/tps68470-regulator.c
+[0] https://lore.kernel.org/linux-clk/4eb964ac-4fff-b59d-2660-2f84d8af5901@gmail.com/
 
-Now that you have pointed this out I would be more then happy to
-delete it and I agree that providing this bogus data is not a
-good idea.
 
-<snip>
+Martin Blumenstingl (2):
+  clk: composite: Also consider .determine_rate for rate + mux
+    composites
+  clk: composite: Use rate_ops.determine_rate when also a mux is
+    available
 
-> The important thing is to get rid of the hard coded defaults for the
-> regulator_init_data in the driver itself, if there is regulator_init_data
-> in the driver itself then it should be guarded with a DMI or similar
-> quirk.  Like I say above I think now I've gone back and dug through the
-> rest of the series once the default init_data is gone it's probably OK.
+ drivers/clk/clk-composite.c | 76 +++++++++++++++++++++++++------------
+ 1 file changed, 52 insertions(+), 24 deletions(-)
 
-Ok, for the next version of this patch-set I will:
-
-1. Remove the default init_data
-2. Change the toplevel comment to be all C++ style matching the SPDX line
-3. Add a || COMPILE_TEST to the Kconfig so that this can be compile-tested
-   without selecting the INTEL_SKL_INT3472 option
-
-Thank you for taking the time to dive a bit deeper into the patch-set
-and make it clear that your objection is the presence of the default
-regulator_init_data; and sorry for loosing my cool a bit in my previous
-email.
-
-Regards,
-
-Hans
+-- 
+2.33.1
 
