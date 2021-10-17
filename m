@@ -2,128 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D79AC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 09:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454E8C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 12:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E335610E8
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 09:16:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BAFF61260
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 12:29:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235169AbhJQJSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Oct 2021 05:18:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234497AbhJQJSu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Oct 2021 05:18:50 -0400
-Received: from mail.marcansoft.com (marcansoft.com [IPv6:2a01:298:fe:f::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29855C061765;
-        Sun, 17 Oct 2021 02:16:41 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: marcan@marcan.st)
-        by mail.marcansoft.com (Postfix) with ESMTPSA id E3D3E423BA;
-        Sun, 17 Oct 2021 09:16:31 +0000 (UTC)
-To:     Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Sven Peter <sven@svenpeter.dev>, Marc Zyngier <maz@kernel.org>,
-        Mark Kettenis <mark.kettenis@xs4all.nl>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211011165707.138157-1-marcan@marcan.st>
- <20211011165707.138157-8-marcan@marcan.st>
- <163424925931.1688384.9647104000291025081@swboyd.mtv.corp.google.com>
-From:   Hector Martin <marcan@marcan.st>
-Subject: Re: [RFC PATCH 7/9] clk: apple: Add clk-apple-cluster driver to
- manage CPU p-states
-Message-ID: <5fab7650-7313-2c20-54eb-65078dd9c3d9@marcan.st>
-Date:   Sun, 17 Oct 2021 18:16:29 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S245634AbhJQMb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Oct 2021 08:31:59 -0400
+Received: from mail-ua1-f44.google.com ([209.85.222.44]:40776 "EHLO
+        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245651AbhJQMbz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Oct 2021 08:31:55 -0400
+Received: by mail-ua1-f44.google.com with SMTP id e2so2241330uax.7;
+        Sun, 17 Oct 2021 05:29:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZNQrmeLcRYkhU7gSap9RiYo7RaZ8Ovh5R/DJnqwEvKY=;
+        b=AJ1DOCof6SmlDUlOwDeP6loJP/W58A1GoYVytgix/yVypJAFFZBnrnKxO0tJ4yErWW
+         LkCwnfvdZhgvSJap8TPDbQnfMA/DIM8dBx9jUO1YccatLsl5Lj30bzgU2hrqMpse7Qes
+         znmfbEGejqg/zicXnyVUoo5pivOsfzW6sypEdS81YDYlZKaibBnSeDHvoYjM3DjfNLJc
+         cnGj1x2oeeN+ojAPRN81DCZPm5zb+61MQclOonS7Z3VM2NcP3M/d7bOYIIrBucsPZwqd
+         dnQUNZ1IiJYE9varwHu+A5PvRFj0UEwi788slSA0vrZpVfSKUO3hehiyoYi4FYIIFsPo
+         K2Pw==
+X-Gm-Message-State: AOAM530GEITODQC5CmIBu484NCaOwQ7zEIcKXugDhlD86rSoaj0/IPUt
+        AgEq0hab6NyoHYPRQY7Aso/VrOh7gtjijw==
+X-Google-Smtp-Source: ABdhPJxLg0q3sxr2Bpd51F2wvK+Dxosx3ycnWqy03AsVO7lzQ6X4K141M2ibwJQ/1Ri7ezP4QLb6zA==
+X-Received: by 2002:ab0:45c4:: with SMTP id u62mr21063253uau.69.1634473785574;
+        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id s6sm7593694vkh.45.2021.10.17.05.29.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id h19so1702834uax.5;
+        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
+X-Received: by 2002:a67:cb0a:: with SMTP id b10mr23567811vsl.9.1634473784867;
+ Sun, 17 Oct 2021 05:29:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <163424925931.1688384.9647104000291025081@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: es-ES
-Content-Transfer-Encoding: 8bit
+References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-2-zhang.lyra@gmail.com>
+ <CAMuHMdWq3M3i+5yATeGEUxupU6Gb5ZnJeNsn9czX6tukEbHQng@mail.gmail.com> <CAAfSe-sQB4wXGwGSPYpoF_YmzJjT=dFLTz36haJ6orE_=zai-Q@mail.gmail.com>
+In-Reply-To: <CAAfSe-sQB4wXGwGSPYpoF_YmzJjT=dFLTz36haJ6orE_=zai-Q@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 17 Oct 2021 14:29:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV8=5p8bdSaw0U+=OdzsQW-Te68XR1o8W_p7oPWjyhGUQ@mail.gmail.com>
+Message-ID: <CAMuHMdV8=5p8bdSaw0U+=OdzsQW-Te68XR1o8W_p7oPWjyhGUQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
+ clock controller
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/10/2021 07.07, Stephen Boyd wrote:
-> This looks bad from a locking perspective. How is lockdep holding up
-> with this driver? We're underneath the prepare lock here and we're
-> setting a couple level registers which is all good but now we're calling
-> into genpd code and who knows what's going to happen locking wise.
+Hi Chunyan,
 
-It seems this is all going away given the other discussion threads point 
-towards handling this directly via OPP in the cpufreq-dt driver. I'll 
-run whatever I end up with for v2 through lockdep though, good call!
+On Sat, Oct 16, 2021 at 10:42 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> On Wed, 13 Oct 2021 at 22:23, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Thu, Sep 23, 2021 at 8:42 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > Add a new bindings to describe ums512 clock compatible strings.
+> > >
+> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-> I don't actually see anything in here that indicates this is supposed to
-> be a clk provider. Is it being modeled as a clk so that it can use
-> cpufreq-dt? If it was a clk provider I'd expect it to be looking at
-> parent clk rates, and reading hardware to calculate frequencies based on
-> dividers and multipliers, etc. None of that is happening here.
-> 
-> Why not write a cpufreq driver, similar to qcom-cpufreq-hw.c that looks
-> through the OPP table and then writes the value into the pstate
-> registers? The registers in here look awfully similar to the qcom
-> hardware. I don't know what the DESIRED1 and DESIRED2 registers are for
-> though. Maybe they're so that one or the other frequency can be used if
-> available? Like a min/max?
-> 
-> Either way, writing this as a cpufreq driver avoids the clk framework
-> entirely which is super great for me :) It also avoids locking headaches
-> from the clk prepare lock, and it also lets you support lockless cpufreq
-> transitions by implementing the fast_switch function. I don't see any
-> downsides to the cpufreq driver approach.
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> >
+> > > +  clock-names:
+> > > +    minItems: 1
+> > > +    maxItems: 4
+> >
+> > After applying this to my local tree, as it is a dependency for 2/4 in
+> > for-mfd-next:
+> >
+> >     Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml:
+> > properties:clock-names: {'required': ['maxItems']} is not allowed for
+> > {'minItems': 1, 'maxItems': 4, 'items': [{'const': 'ext-26m'},
+> > {'const': 'ext-32k'}, {'const': 'ext-4m'}, {'const': 'rco-100m'}]}
+> >     hint: "maxItems" is not needed with an "items" list
+> >     from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+> >
+> > so please drop the maxItems 4.
+>
+> Ok, I will, but I don't have this compile error on my side, how do you
+> get this error report?
+>
+> I use the command below:
+> make -k dt_binding_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
+> and,
+> make -k dt_binding_check
 
-I wasn't too sure about this approach; I thought using a clk provider 
-would end up simplifying things since I could use the cpufreq-dt 
-machinery to take care of all the OPP stuff, and a lot of SoCs seemed to 
-be going that way, but it seems cpufreq might be a better approach for 
-this SoC?
+Do you have the latest dt-schema?
 
-There can only be one cpufreq driver instance, while I used two clock 
-controllers to model the two clusters. So in the cpufreq case, the 
-driver itself would have to deal with all potential CPU cluster 
-instances/combinations itself. Not sure how much more code that will be, 
-hopefully not too much...
+Gr{oetje,eeting}s,
 
-I see qcom-cpufreq-hw uses a qcom,freq-domain prop to link CPUs to the 
-cpufreq domains. cpufreq-dt and vexpress-spc-cpufreq instead use 
-dev_pm_opp_get_sharing_cpus to look for shared OPP tables. Is there a 
-reason not to do it that way and avoid the vendor prop? I guess the prop 
-is more explicit while the sharing approach would have an implicit order 
-dependency (i.e. CPUs are always grouped by cluster and clusters are 
-listed in /cpus in the same order as in the cpufreq node)...
+                        Geert
 
-(Ack on the other comments, but if this becomes a cpufreq driver most of 
-it is going to end up rewritten... :))
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-For the cpufreq case, do you have any suggestions as to how to relate it 
-to the memory controller configuration tweaks? Ideally this would go 
-through the OPP tables so it can be customized for future SoCs without 
-stuff hardcoded in the driver... it seems the configuration affects 
-power saving behavior / latencies, so it doesn't quite match the 
-interconnect framework bandwidth request stuff. I'm also not sure how 
-this would affect fast_switch, since going through those frameworks 
-might imply locks... we might even find ourselves with a situation in 
-the near future where multiple cpufreq policies can request memory 
-controller latency reduction independently; I can come up with how to do 
-this locklessly using atomics, but I can't imagine that being workable 
-with higher-level frameworks, it would have to be a vendor-specific 
-mechanism at that point...
-
--- 
-Hector Martin (marcan@marcan.st)
-Public Key: https://mrcn.st/pub
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
