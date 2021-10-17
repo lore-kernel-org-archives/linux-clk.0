@@ -2,60 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4B9C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 17:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F3AC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 01:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0878261108
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Oct 2021 17:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F500611F0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 01:45:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244425AbhJPRa3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Oct 2021 13:30:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50766 "EHLO mail.kernel.org"
+        id S244806AbhJQBrc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Oct 2021 21:47:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244409AbhJPRa2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Oct 2021 13:30:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0B5FE610D1;
-        Sat, 16 Oct 2021 17:28:20 +0000 (UTC)
+        id S244778AbhJQBrb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Oct 2021 21:47:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB904611C1;
+        Sun, 17 Oct 2021 01:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634405300;
-        bh=1bn5gas+3rMRPrZGUa7pX/L5IwS3pGFwO5XAb/1LvT4=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=PkTYoWtiKXZo0WpyGKK/BBHUq1EqkTUrsm3IGij09ej3FDBMKmSmvumNTbcnPgEM9
-         nbRJTV2/xa2dMu1cHmVDroHMdIvD0EOsXb+t3m+RNaGDrIb6qF7EA/tZKWDSZVfxkJ
-         TJ9yNfoW1BxhxR7CW2g2U5GGP4PUA8y/gsn+tvtlBhIraETQ5IpRbRT6465Jim/pWR
-         O+fuKooN2Qr6w0/+75d8AALVCZUVq6YRsfoxygeDf6Kmjnmeuq8+gF4LjXgbldDznC
-         xLdW8yJqfjrcx1DP0k11EL9z2Eo9CF7xOlvzCgpslVvmIdrMSk13GKgOpXefycqJbw
-         szUlowOTRizMg==
-Subject: Re: [GIT PULL] clk fixes for v5.15-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211016000534.972778-1-sboyd@kernel.org>
-References: <20211016000534.972778-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211016000534.972778-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 92c02ff1a43edce37cf1b092bfad37d84d7e4ea6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6985c40ab6c5d63a494ce9adce9a4768364f2507
-Message-Id: <163440529991.22586.5137798362034760928.pr-tracker-bot@kernel.org>
-Date:   Sat, 16 Oct 2021 17:28:19 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        s=k20201202; t=1634435123;
+        bh=hWu3naWLEljaXZ6tCZEQaxOp96L1LV3vPZgdeT/1r/0=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=j0NccPw45ETG4C3Etjd4vW0JPRmNpLqmnDm555cthALGKxuJkothgDDrzIcgDmfTq
+         wkHAOxvZfE8WD9F8uPj4ya26RpIzIVXQuKenoNpCpNaHm6KAi/iNKorf06/kvYXWoU
+         +wjsg54Qh5o18hFotjEd0guNEGmLou92bjMIV0lXz1jmmSdTKpiN5OxnDx4Um45gK3
+         nHcFuoXePVTj6t7lUx2Skjtku0PUm1wvhM6Tf/j/TECVwzqcxuelYeDkRcaOhUvgwL
+         D/bOqYfSdlovqt5Fm5Z76S75ltgmDBKDstT1RHWkzLAeoI/CyRgELiwQJQfAE0mtIT
+         aoZdPYXJop30Q==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
+References: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
+Subject: Re: [PATCH] clk:aspeed:Fix reset driver probe from builtin_platform to core_initcal
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ryan_chen <ryan_chen@aspeedtech.com>
+Date:   Sat, 16 Oct 2021 18:45:21 -0700
+Message-ID: <163443512161.1557475.9840437799108931135@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 15 Oct 2021 17:05:34 -0700:
+Quoting Ryan Chen (2021-10-04 23:45:13)
+> Change the reset probe sequence from builtin_platform to core_initcal.
+> For avoid some driver is probe but failed due to reset driver not probe.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+I don't get it. Does something never try probe again because it can't
+get the reset it wants? I understand that builtin_platform_driver()
+moves the initcall level later than core_initcall() so this is a
+workaround for some driver probe ordering problem?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6985c40ab6c5d63a494ce9adce9a4768364f2507
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>=20
+> Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
