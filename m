@@ -2,115 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454E8C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 12:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0723CC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 15:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BAFF61260
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 12:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E332C61264
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Oct 2021 15:31:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245634AbhJQMb7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Oct 2021 08:31:59 -0400
-Received: from mail-ua1-f44.google.com ([209.85.222.44]:40776 "EHLO
-        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245651AbhJQMbz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Oct 2021 08:31:55 -0400
-Received: by mail-ua1-f44.google.com with SMTP id e2so2241330uax.7;
-        Sun, 17 Oct 2021 05:29:46 -0700 (PDT)
+        id S1344027AbhJQPdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Oct 2021 11:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52464 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344012AbhJQPdf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Oct 2021 11:33:35 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E835C06176A
+        for <linux-clk@vger.kernel.org>; Sun, 17 Oct 2021 08:31:26 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id o83so20955373oif.4
+        for <linux-clk@vger.kernel.org>; Sun, 17 Oct 2021 08:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DHs/CYcm2qKRKw2WotgRIQKXcOHYWF5rKMY3LC5HdnY=;
+        b=kgg1PBx3V0Co2ywaEFgOub/6RanqM1JagwdUiSWUyPi53pXZV4POksFqGjkhWlTtW6
+         WlKLJv8s24BwZhl+YdIPHm5CrneU7GcaVHpYABlcMsSyP7baKHWE/wB1b1BflLOFKc5/
+         f69KUatQ7WWVDoINE9UZaganUHuGvm+uZ/tEgbKAnzSgeOTzdLy373gr67LIiJH4QOU4
+         NYh8kFcKmyQzM8z03UbLz99AoGB2zbw3Kj78nhx/iMte/7ThAIW8JGsGMpBiFsTDa42S
+         i1ByhkEP8iC24rZmVbB1nAGz3uzLOH60PkVAyvYOKy1x8RDDwhwGuUfftxxPtwJIwX0d
+         1HAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZNQrmeLcRYkhU7gSap9RiYo7RaZ8Ovh5R/DJnqwEvKY=;
-        b=AJ1DOCof6SmlDUlOwDeP6loJP/W58A1GoYVytgix/yVypJAFFZBnrnKxO0tJ4yErWW
-         LkCwnfvdZhgvSJap8TPDbQnfMA/DIM8dBx9jUO1YccatLsl5Lj30bzgU2hrqMpse7Qes
-         znmfbEGejqg/zicXnyVUoo5pivOsfzW6sypEdS81YDYlZKaibBnSeDHvoYjM3DjfNLJc
-         cnGj1x2oeeN+ojAPRN81DCZPm5zb+61MQclOonS7Z3VM2NcP3M/d7bOYIIrBucsPZwqd
-         dnQUNZ1IiJYE9varwHu+A5PvRFj0UEwi788slSA0vrZpVfSKUO3hehiyoYi4FYIIFsPo
-         K2Pw==
-X-Gm-Message-State: AOAM530GEITODQC5CmIBu484NCaOwQ7zEIcKXugDhlD86rSoaj0/IPUt
-        AgEq0hab6NyoHYPRQY7Aso/VrOh7gtjijw==
-X-Google-Smtp-Source: ABdhPJxLg0q3sxr2Bpd51F2wvK+Dxosx3ycnWqy03AsVO7lzQ6X4K141M2ibwJQ/1Ri7ezP4QLb6zA==
-X-Received: by 2002:ab0:45c4:: with SMTP id u62mr21063253uau.69.1634473785574;
-        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id s6sm7593694vkh.45.2021.10.17.05.29.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id h19so1702834uax.5;
-        Sun, 17 Oct 2021 05:29:45 -0700 (PDT)
-X-Received: by 2002:a67:cb0a:: with SMTP id b10mr23567811vsl.9.1634473784867;
- Sun, 17 Oct 2021 05:29:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DHs/CYcm2qKRKw2WotgRIQKXcOHYWF5rKMY3LC5HdnY=;
+        b=Bw/tXOeoVhK4U6gIzUFeVVRDx4Go+ce4BYgj6f823D5SD+JDHxTh8FrRKMPrJ5T8pn
+         jJL6PWokPRYME6Pnoq46ng5X4VaraGLdyjhUYGRSjbQdj7MLC85AtO2ly7TZUIW67gQ+
+         ZF6VuchjQBmS6C37mhEMZeBUyasYHfrDq01sFu8wDCo6adwvpYDHBVLDjZIweOJy/jwq
+         6KHu2GYPHsSpBDNlqmDPsxRJCgZL+ZAod8N2SI7BnpH0sflI3e5SdCrdU7uQI3GduXWY
+         0xc00VrHMWjlbFnfQGTYDkZ/fHqbdojxO1zlDvsq4WNSjOipIqNkBD/W2rsSdkq2cbyv
+         kSEg==
+X-Gm-Message-State: AOAM53384nivl7Iw25RvEAYpIVZJzDWpSnI6BZhWfmJbdNKM0kEQSEaY
+        RTDeJfW+vOlhDoq8q69ykbiqPA==
+X-Google-Smtp-Source: ABdhPJyoKBhysey+HUBoaspOx6durmCbGKIDzgFX90eJiuJCZ9vXUITaHoWQ9yrCq7T3kYPIEmbEqA==
+X-Received: by 2002:aca:db8a:: with SMTP id s132mr25047575oig.119.1634484685445;
+        Sun, 17 Oct 2021 08:31:25 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id x6sm2565698otp.49.2021.10.17.08.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Oct 2021 08:31:25 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>, Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: (subset) [PATCH v7 0/6] clk: qcom: use power-domain for sm8250's clock controllers
+Date:   Sun, 17 Oct 2021 10:31:11 -0500
+Message-Id: <163448466184.410927.258014767858670421.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
+References: <20210829154757.784699-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-2-zhang.lyra@gmail.com>
- <CAMuHMdWq3M3i+5yATeGEUxupU6Gb5ZnJeNsn9czX6tukEbHQng@mail.gmail.com> <CAAfSe-sQB4wXGwGSPYpoF_YmzJjT=dFLTz36haJ6orE_=zai-Q@mail.gmail.com>
-In-Reply-To: <CAAfSe-sQB4wXGwGSPYpoF_YmzJjT=dFLTz36haJ6orE_=zai-Q@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 17 Oct 2021 14:29:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV8=5p8bdSaw0U+=OdzsQW-Te68XR1o8W_p7oPWjyhGUQ@mail.gmail.com>
-Message-ID: <CAMuHMdV8=5p8bdSaw0U+=OdzsQW-Te68XR1o8W_p7oPWjyhGUQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clk: sprd: Add bindings for ums512
- clock controller
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chunyan,
+On Sun, 29 Aug 2021 18:47:49 +0300, Dmitry Baryshkov wrote:
+> On SM8250 both the display and video clock controllers are powered up by
+> the MMCX power domain. Handle this by linking clock controllers to the
+> proper power domain, and using runtime power management to enable and
+> disable the MMCX power domain.
+> 
+> Dependencies:
+> https://lore.kernel.org/linux-pm/1628767642-4008-1-git-send-email-rnayak@codeaurora.org/
+> (pending inclusion into 5.15)
+> 
+> [...]
 
-On Sat, Oct 16, 2021 at 10:42 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> On Wed, 13 Oct 2021 at 22:23, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Thu, Sep 23, 2021 at 8:42 AM Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > Add a new bindings to describe ums512 clock compatible strings.
-> > >
-> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Applied, thanks!
 
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> >
-> > > +  clock-names:
-> > > +    minItems: 1
-> > > +    maxItems: 4
-> >
-> > After applying this to my local tree, as it is a dependency for 2/4 in
-> > for-mfd-next:
-> >
-> >     Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml:
-> > properties:clock-names: {'required': ['maxItems']} is not allowed for
-> > {'minItems': 1, 'maxItems': 4, 'items': [{'const': 'ext-26m'},
-> > {'const': 'ext-32k'}, {'const': 'ext-4m'}, {'const': 'rco-100m'}]}
-> >     hint: "maxItems" is not needed with an "items" list
-> >     from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-> >
-> > so please drop the maxItems 4.
->
-> Ok, I will, but I don't have this compile error on my side, how do you
-> get this error report?
->
-> I use the command below:
-> make -k dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/sprd,ums512-clk.yaml
-> and,
-> make -k dt_binding_check
+[6/8] arm64: dts: qcom: sm8250: remove mmcx regulator
+      commit: 266e5cf39a0f25787cb66a36dde50799194062c6
 
-Do you have the latest dt-schema?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
