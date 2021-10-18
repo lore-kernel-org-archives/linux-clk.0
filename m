@@ -2,31 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BC0C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A07EC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B33F6128B
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7340E60EE5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbhJRLtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 07:49:42 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:50548 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231590AbhJRLtg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 07:49:36 -0400
-X-UUID: d66bd93910b74d9d82a9dd7af70321d1-20211018
-X-UUID: d66bd93910b74d9d82a9dd7af70321d1-20211018
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        id S231590AbhJRLtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 07:49:49 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:38292 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231611AbhJRLth (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 07:49:37 -0400
+X-UUID: 1646afa329b84a3ea31ca59a8d0e8b07-20211018
+X-UUID: 1646afa329b84a3ea31ca59a8d0e8b07-20211018
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
         (envelope-from <sam.shih@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1630306755; Mon, 18 Oct 2021 19:47:24 +0800
+        with ESMTP id 1770654054; Mon, 18 Oct 2021 19:47:22 +0800
 Received: from mtkcas10.mediatek.inc (172.21.101.39) by
  mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Mon, 18 Oct 2021 19:47:22 +0800
+ Mon, 18 Oct 2021 19:47:21 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 18 Oct 2021 19:47:22 +0800
+ Transport; Mon, 18 Oct 2021 19:47:21 +0800
 From:   Sam Shih <sam.shih@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -44,9 +44,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 CC:     John Crispin <john@phrozen.org>,
         Ryder Lee <Ryder.Lee@mediatek.com>,
         "Sam Shih" <sam.shih@mediatek.com>
-Subject: [PATCH v5 5/5] arm64: dts: mediatek: add clock support for mt7986b
-Date:   Mon, 18 Oct 2021 19:47:01 +0800
-Message-ID: <20211018114701.13984-6-sam.shih@mediatek.com>
+Subject: [PATCH v5 4/5] arm64: dts: mediatek: add clock support for mt7986a
+Date:   Mon, 18 Oct 2021 19:47:00 +0800
+Message-ID: <20211018114701.13984-5-sam.shih@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20211018114701.13984-1-sam.shih@mediatek.com>
 References: <20211018114701.13984-1-sam.shih@mediatek.com>
@@ -62,13 +62,13 @@ infracfg, apmixedsys and ethernet subsystem.
 
 Signed-off-by: Sam Shih <sam.shih@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7986b.dtsi | 68 +++++++++++++++++++++--
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi | 68 +++++++++++++++++++++--
  1 file changed, 63 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986b.dtsi b/arch/arm64/boot/dts/mediatek/mt7986b.dtsi
-index 2b8e0a382398..0bb33b614b56 100644
---- a/arch/arm64/boot/dts/mediatek/mt7986b.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7986b.dtsi
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a.dtsi b/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
+index 75912bcf6c9c..a8cf0eb79688 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7986a.dtsi
 @@ -6,6 +6,7 @@
  
  #include <dt-bindings/interrupt-controller/irq.h>
@@ -76,7 +76,7 @@ index 2b8e0a382398..0bb33b614b56 100644
 +#include <dt-bindings/clock/mt7986-clk.h>
  
  / {
- 	compatible = "mediatek,mt7986b";
+ 	compatible = "mediatek,mt7986a";
 @@ -13,10 +14,11 @@ / {
  	#address-cells = <2>;
  	#size-cells = <2>;
