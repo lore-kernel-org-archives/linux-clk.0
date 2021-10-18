@@ -2,146 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C77C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A733C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3BD76127B
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EFE0603E7
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231305AbhJRIFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 04:05:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231346AbhJRIEx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Oct 2021 04:04:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F34D361050;
-        Mon, 18 Oct 2021 08:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634544162;
-        bh=BdkWGAx269FXd8NJj1ZdIeBOhpIj9kgTKpkTG3i3X54=;
-        h=Date:From:To:Cc:Subject:From;
-        b=F6nyDjQf/nK4Q2ehHm1kiHbmO8HROiQEDTShm0lV25zVEkKiRHkaXRTPxlt/0mFL4
-         16gQEm44sd9JYFJq8NtV/A4IdpWQOZpL93tgATu3KRS2bdP9UJBXiq4I45Iprlqsmr
-         MUW8Iy2NfVjbWmr/SctmIJbQuMtDSjH6SrqrH/hPSQYnt0CF7p1rX5IjsFMtC9nYfN
-         gZZZG+ACWrMHDQivf5DEK+dhLVMdczznxe3htLq8k9h6TxUZMUmHDYAdL4SjE8sdwy
-         dwL38hQdbHBxJvwQuZIXzHRuUK/VIC1f7zycXSwx/luewQjKbkRCQcPm9NdEN3yzZn
-         wUae0CYFTdemA==
-Date:   Mon, 18 Oct 2021 10:02:40 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [GIT PULL] Allwinner Clock Changes for 5.16
-Message-ID: <f7f3c718-eab3-4d8e-a8f3-8d1ef986a5dc.lettre@localhost>
+        id S231316AbhJRI2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 04:28:52 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51827 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231147AbhJRI2t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 04:28:49 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211018082636euoutp02cd6f9532c66da2da3d0e28800391f39c~vEo9lAXb21227912279euoutp02V
+        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 08:26:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211018082636euoutp02cd6f9532c66da2da3d0e28800391f39c~vEo9lAXb21227912279euoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634545596;
+        bh=KkaKX1e1Dd7h4BZnYesJfdk1PFf+z9be2kqdgsNommY=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=rmbgoKkZDyBnoqXc2mmgHhI4M9DzKVoVaRcLsNWx6tHRtUQKW4fhamDY5zRn5UIQS
+         ffiXknxS1FusxWGKhYAN4OfFtFQgwdYx/lBRmooMFZi3YpGJl9JNUxCkR/Jpq57ABr
+         vqkSNHBZaHY5M5IwVtWHwsN9qKX4VGUgw/xhU4dg=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20211018082636eucas1p16bab41b13f40446e6cb43aefa56c7bb2~vEo9Nq8oF1318013180eucas1p18;
+        Mon, 18 Oct 2021 08:26:36 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 38.C7.42068.CBF2D616; Mon, 18
+        Oct 2021 09:26:36 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20211018082635eucas1p1f65471364499ea8e370024892655703c~vEo8yPJV22797127971eucas1p1F;
+        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211018082635eusmtrp12fc0234431dfcd8cbc843883e76712dc~vEo8xiBBO1790017900eusmtrp1I;
+        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
+X-AuditID: cbfec7f4-c89ff7000002a454-e7-616d2fbc5cad
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6A.B1.31287.BBF2D616; Mon, 18
+        Oct 2021 09:26:35 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20211018082635eusmtip18ac6d84561f998c722baa75b5c78a75b~vEo8KR8eA2094420944eusmtip1o;
+        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
+Message-ID: <7a72a9a6-b250-7072-bfb3-a8dd90643c65@samsung.com>
+Date:   Mon, 18 Oct 2021 10:26:34 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Ib1gpXeIVE6pa8+r"
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.2.0
+Subject: Re: [PATCH] clk: samsung: describe drivers in KConfig
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+In-Reply-To: <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7djPc7p79HMTDQ5uk7C4/uU5q8XGtz+Y
+        LDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvFv2sbWSxW7frD6MDp8f5GK7vHrIZeNo+ds+6y
+        e2xa1cnmsXlJvUffllWMHp83yQWwR3HZpKTmZJalFunbJXBlvL96na3gP2PFrFlrWRsYrzF2
+        MXJySAiYSPza/IMFxBYSWMEosWCfQBcjF5D9hVHi29NbTBDOZ6DEsf/sMB1HT1xng0gsZ5T4
+        erCBFaL9I6PE9M4gEJtXwE7i5tO/TCA2i4CqxNbXsxgh4oISJ2c+AVsnKpAkMX/2A6ChHBzC
+        QPXH5guDhJkFxCVuPZkPtlhEYBmjxOlv38CWMQvsYpT4fXwi2BVsAoYSvUf7wIZyCnhIzPm4
+        kBGiW15i+9s5zCANEgLNnBI/r+1mhjjbReLKhmNMELawxKvjW6DekZE4PbmHBaqBUaJn9212
+        CGcCo8T94wugwWQtcefcLzaQW5kFNCXW79KHCDtKfG2bwAoSlhDgk7jxVhDiCD6JSdumM0OE
+        eSU62oQgqlUkfq+aDnWClET3k/8sExiVZiGFyyykAJiF5J1ZCHsXMLKsYhRPLS3OTU8tNspL
+        LdcrTswtLs1L10vOz93ECExUp/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nw8n3MSRTiTUmsrEot
+        yo8vKs1JLT7EKM3BoiTOm7RlTbyQQHpiSWp2ampBahFMlomDU6qBqeKV6cEZttzsOyqVNKQ5
+        0+50+6y51/sw98YE5qYs+fUzLM+zqGpVvhFguMI0aeO8GIVDDRd8RKc8u7jzxe6pTj/dO2QE
+        +ityU9Xmf5vhxF3tJ6VuLGMjfKxV4ljc/+/tq78vuss8K2LLKTshzxVSH+wfHmFe/O7gmz3H
+        uO8esS0Q9rrVNcfGU35pzYo7Tydq+kyR2NIY+eWqw9Jvojx8IWc9jor9C+loXegbKawgbjM5
+        d0bOy+XftrVO4LJw0TvVsT6dW2PzZ8Fa0WkvYkv2uS3JeqO5/N7VjOtKujctX/KF7nk1T6jU
+        7/rfjtZQzSVh2ybqzpH7ZH5Fx83o2xypjM0re+73Gk0Oejr5o+bhY0osxRmJhlrMRcWJADaT
+        MbzDAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7q79XMTDRa2Wlpc//Kc1WLj2x9M
+        FpseX2O1+Nhzj9Xi8q45bBYzzu9jsrh4ytXi37WNLBardv1hdOD0eH+jld1jVkMvm8fOWXfZ
+        PTat6mTz2Lyk3qNvyypGj8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
+        jEyV9O1sUlJzMstSi/TtEvQy3l+9zlbwn7Fi1qy1rA2M1xi7GDk5JARMJI6euM7WxcjFISSw
+        lFFi1b/9LF2MHEAJKYn5LUoQNcISf651QdW8Z5Q4fbSPGSTBK2AncfPpXyYQm0VAVWLr61mM
+        EHFBiZMzn7CA2KICSRIfN8xgBpkpDFR/bL4wSJhZQFzi1pP5TCAzRQSWMUrsW/kPbAGzwC5G
+        iT/rDzNCbJvNKHHi60k2kBY2AUOJ3qN9YBs4BTwk5nxcyAgylVlAXWL9PCGIqfIS29/OYZ7A
+        KDQLyR2zkCychdAxC0nHAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIFxue3Yz807GOe9
+        +qh3iJGJg/EQowQHs5IIL9/HnEQh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA9MDHkl8YZm
+        BqaGJmaWBqaWZsZK4rxb566JFxJITyxJzU5NLUgtgulj4uCUamDq83q9atLclI17Nb/na0s/
+        3Te9y+1VYd3zbzMjOmdd+Schdef1Fc0zyeuTI7UuHt3y1SeyoEDh73qDlWtvPbn2cPPeSxlP
+        3n7MrmtLacmMb/8YWml5Z/KGN8er/3D7Nq5RuxPgsJxb8ZnDug0zlY0bd/Ml3yzY/Jblqnh3
+        vlpIvJcvqw772ceVf2Vutb6qL75ntfxYmfA+seRHu8oqWYxSvpw1X6f3g2/Wyuz1/oeNJm/R
+        z5FZkOei2BbQo56bZLpRIPTXrvLcm123V6v/uPzzXtrTfe13u5njs81/MhmI8LBwTb+yf2rX
+        1SUuSyYu/GIizMu5kiFjkfVucxbFqzOX72I8++0Juwv/Wea+GpZ7SizFGYmGWsxFxYkAVstm
+        MFQDAAA=
+X-CMS-MailID: 20211018082635eucas1p1f65471364499ea8e370024892655703c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367
+References: <CGME20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367@eucas1p1.samsung.com>
+        <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 24.09.2021 15:36, Krzysztof Kozlowski wrote:
+> Describe better which driver applies to which SoC, to make configuring
+> kernel for Samsung SoC easier.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
---Ib1gpXeIVE6pa8+r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-Please pull the following changes for the next release.
-
-Thanks!
-Maxime
-
-The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
-
-  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-for-5.16-1
-
-for you to fetch changes up to e65d38e3d2d0e61ca464b46ad804f7a94e1ae45f:
-
-  clk: sunxi: sun8i-apb0: Make use of the helper function devm_platform_ioremap_resource() (2021-09-13 09:03:24 +0200)
-
-----------------------------------------------------------------
-Our usual PR for the Allwinner SoCs, this time improving the module
-support and converting to more helpers.
-
-----------------------------------------------------------------
-Cai Huoqing (13):
-      clk: sunxi: clk-mod0: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun50i-a64: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun50i-h6: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun8i-a83t: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun8i-de2: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun8i-r40: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun9i-a80: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun9i-a80-de: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi-ng: ccu-sun9i-a80-usb: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi: sun6i-apb0: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi: sun6i-apb0-gates: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi: sun6i-ar100: Make use of the helper function devm_platform_ioremap_resource()
-      clk: sunxi: sun8i-apb0: Make use of the helper function devm_platform_ioremap_resource()
-
-Maxime Ripard (1):
-      dt-bindings: clocks: Fix typo in the H6 compatible
-
-Samuel Holland (5):
-      clk: sunxi-ng: mux: Remove unused 'reg' field
-      clk: sunxi-ng: Add machine dependency to A83T CCU
-      clk: sunxi-ng: Unregister clocks/resets when unbinding
-      clk: sunxi-ng: Prevent unbinding CCUs via sysfs
-      clk: sunxi-ng: Use a separate lock for each CCU instance
-
-
- Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml |  2 +-
- drivers/clk/sunxi-ng/Kconfig                                              |  1 +-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c                                      |  2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c                                  |  3 ++-
- drivers/clk/sunxi-ng/ccu-sun50i-a100.c                                    |  3 ++-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c                                     |  7 ++----
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c                                    |  2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c                                      |  7 ++----
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c                                    |  4 +---
- drivers/clk/sunxi-ng/ccu-sun5i.c                                          |  2 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c                                      |  2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c                                      |  2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c                                      |  2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c                                     |  7 ++----
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c                                      |  6 +----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                                       |  2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                                        |  2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c                                      |  7 ++----
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c                                      |  2 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c                                   |  8 ++-----
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c                                  |  7 +-----
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c                                      |  7 ++----
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c                                  |  2 +-
- drivers/clk/sunxi-ng/ccu_common.c                                         | 96 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------
- drivers/clk/sunxi-ng/ccu_common.h                                         |  6 +++--
- drivers/clk/sunxi-ng/ccu_mux.h                                            |  1 +-
- drivers/clk/sunxi/clk-mod0.c                                              |  4 +---
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c                                  |  4 +---
- drivers/clk/sunxi/clk-sun6i-apb0.c                                        |  4 +---
- drivers/clk/sunxi/clk-sun6i-ar100.c                                       |  4 +---
- drivers/clk/sunxi/clk-sun8i-apb0.c                                        |  4 +---
- 31 files changed, 127 insertions(+), 85 deletions(-)
-
-
-
---Ib1gpXeIVE6pa8+r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYW0qIAAKCRDj7w1vZxhR
-xYRiAQC6a0/cmekem6LHgKeEUraJlj5G6KvlyzjvUoKTQK/6jAD/bSJNVYIZqsVF
-a+aufFfvQ4FuNw0QEkr33EAjJ05zWwM=
-=32yW
------END PGP SIGNATURE-----
-
---Ib1gpXeIVE6pa8+r--
+Applied, thanks.
