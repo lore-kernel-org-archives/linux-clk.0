@@ -2,168 +2,242 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFB9C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 09:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17BDC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46C7260FD7
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 09:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B895C60FD8
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbhJRKBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 06:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41784 "EHLO
+        id S229494AbhJRKVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 06:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbhJRKBp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 06:01:45 -0400
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0155C06161C;
-        Mon, 18 Oct 2021 02:59:34 -0700 (PDT)
-Received: by mail-il1-x133.google.com with SMTP id k3so3871348ilo.7;
-        Mon, 18 Oct 2021 02:59:34 -0700 (PDT)
+        with ESMTP id S229993AbhJRKVt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 06:21:49 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACFD0C061714
+        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 03:19:38 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id o20so40448457wro.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 03:19:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yEQAn5uV9AfMBE5tXOwewIzSaClqzwXKCugpoaZ1wLk=;
-        b=n6CwHB+oIVObBW5uujQM8Q9GCGrixHj9QdHrVwnwSPKGd76JV2XYjMYVLXdgPhAImU
-         t4Ux5p/GHbpNNBJuSOAll7LRYXII8BV40z2kt4vGRBohfzlfwVLizmNl6QTog9IWXVTq
-         RcVx4PME/zML631cjdbwdnILpJCUwVzCyB3dFKAxvImpCmtr72jBO26D/tuDzWKCllY8
-         ZcqUNolZjaMT22aMdCe2rSLfuk/scebZ8mg0vMwpoKI/M2wEEaxIdLN0SkwSNbaipZUg
-         nVohAruew81ozODDp6A4kPC5fi7Wg/e4Xr1lXAEg2iCX0eoeUwNftXNl1DlKTgkycECX
-         GhWg==
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=references:user-agent:from:to:cc:subject:date:in-reply-to
+         :message-id:mime-version;
+        bh=Nt/DsbKNf/U6oEyp70zMTCvXerDbHSsEBUDTCVY5SZk=;
+        b=5prZanh3ZiXhFVmZwmd5KUugHHD62JYZdj6kbC7LvJgiZdHYH0s0vO011ti4DMcnZr
+         qlQoIAao/4qCYznRVSDHoZM1iigy+9qF1q1pHveIgmx4x9E8sURQmiSwMXdNhZ673ljE
+         lELpcTfmf2l7n07+dqsYEyopKg+GWb9oXfd3rdgRzmwhAspBbEUI+6eiCUtEx13p3Qu4
+         7qKY17EBlz1W9WgxHQhHYTOPzTOmkEVcwlLSoEbDg8lRec4pojWfGdBm6h+KohIOQFt/
+         a8dobw/8/6VTGUerqw4ruNgiT07VNLCwUJeCNAVqjT+IDLpPaN4kFqqimnd2lG+vGAJe
+         EcGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yEQAn5uV9AfMBE5tXOwewIzSaClqzwXKCugpoaZ1wLk=;
-        b=QT+Wv0qsJi74gHKVu2W6eClYcDRk1eycFHuUaBt2xraR/AVmzJtgadXcU/zr6RBMqR
-         7G+PL1aMPPTTPmZ4mJFKoIFl9aMCQtYADXTlLKqHk69qlnmiCqmPF4UnanMDG120orGD
-         eqA9kq1udwUHimwjfS8EmGSOCwtRBvoQr57gY6AmnAEoRFVRkrCdTiTxs6mSvSxk6U3p
-         wn0F38+qPHwLG13X27xC0LLeKsxfBvDBjagfDzCezdKTu34xShhJIeRF+m+b7IESLchk
-         O2KyAfeXQZk9vzdE0l70w8kzk9gEz4PieN4p+TWY8S0inLNammGGlwtyjyYJHnt89rzk
-         Np2Q==
-X-Gm-Message-State: AOAM531OQN3yVzdBk25oR+UUtWz5QkHCG6/kd+w7i8oMBLH7p1fGjVAk
-        Mi23o2s915alufIPZdKgF8HEGabvwYVVy5zgnGQ=
-X-Google-Smtp-Source: ABdhPJwpl0Po7TzEvXtBa7vjIvp9QYgcURhpjY4jJKzgN+EYqExncVGlpyZ0GN4mPIAPh51IinDYpdGDT+g3slVkcBo=
-X-Received: by 2002:a05:6e02:190a:: with SMTP id w10mr13138492ilu.243.1634551174071;
- Mon, 18 Oct 2021 02:59:34 -0700 (PDT)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
+         :in-reply-to:message-id:mime-version;
+        bh=Nt/DsbKNf/U6oEyp70zMTCvXerDbHSsEBUDTCVY5SZk=;
+        b=InQRWAJLTzpebgwSa5yHkJu+p4cb1STTUatVcTfYm9cDnuhSSi/m3N8axHdQ0FfB/R
+         11atQiXPsFriiV7xg2RiuUyRzF1loMULh2ZqB2dkEpUFTfiwCG3NPSrYQf0j9S+2Jb3N
+         ZKh9FRXKIUKRQ7rkzHjJmRosKsItcj4TBAdrYHC7Vjh05sz8exaLY88sP6C8UPrJYKrc
+         YFFQEaJfs4o9CHOq2i/TiZYDYdThYrDY7ODQh8HBOi7/Qp6UI7cJh9j7N8sSqRSQ2nVE
+         rKXeKiY6K1BMkytI5cwduALjOqLltH0b9dvPWkKyoZJCUHskslc/Vow3Gv2uUjagLI3B
+         o2HQ==
+X-Gm-Message-State: AOAM531aGcEeFkkEBMO3k24vFUJTmDW5jztwu223cPjYmTwhmFOv96W3
+        An9L6ykKo50B/oY4a3PZAsjle6ieVypXxQ==
+X-Google-Smtp-Source: ABdhPJzDG8zynX/vI4wK2ttElJLD5TxdXfRAChpQdZOTiLhuvQVv+a2L+hRjAsFbPLNZJPD3ux8LKA==
+X-Received: by 2002:adf:a54f:: with SMTP id j15mr34068977wrb.218.1634552377158;
+        Mon, 18 Oct 2021 03:19:37 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id r5sm3208324wmh.28.2021.10.18.03.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 03:19:36 -0700 (PDT)
+References: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
+User-agent: mu4e 1.6.6; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>
+Subject: Re: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0
+ on GXBB
+Date:   Mon, 18 Oct 2021 11:54:45 +0200
+In-reply-to: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
+Message-ID: <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
- <1634533488-25334-10-git-send-email-dillon.minfei@gmail.com> <1159ec06-cf36-efef-e87a-5d826b6b44d3@xs4all.nl>
-In-Reply-To: <1159ec06-cf36-efef-e87a-5d826b6b44d3@xs4all.nl>
-From:   Dillon Min <dillon.minfei@gmail.com>
-Date:   Mon, 18 Oct 2021 17:58:57 +0800
-Message-ID: <CAL9mu0+wdQ-QGJEfjvc+x4vF--9HdvfG3W+5L3FWR9ij85YvTQ@mail.gmail.com>
-Subject: Re: [PATCH v5 09/10] clk: stm32: Fix ltdc's clock turn off by
- clk_disable_unused() after system enter shell
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        mchehab+huawei@kernel.org, ezequiel@collabora.com,
-        gnurou@gmail.com, Pi-Hsun Shih <pihsun@chromium.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
-        gabriel.fernandez@foss.st.com,
-        Patrice CHOTARD <patrice.chotard@foss.st.com>,
-        hugues.fruchet@foss.st.com,
-        linux-media <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hans
 
-On Mon, 18 Oct 2021 at 17:37, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> Hi Dillon,
->
-> On 18/10/2021 07:04, dillon.minfei@gmail.com wrote:
-> > From: Dillon Min <dillon.minfei@gmail.com>
-> >
-> > stm32's clk driver register two ltdc gate clk to clk core by
-> > clk_hw_register_gate() and clk_hw_register_composite()
-> >
-> > first: 'stm32f429_gates[]', clk name is 'ltdc', which no user to use.
-> > second: 'stm32f429_aux_clk[]', clk name is 'lcd-tft', used by ltdc driver
-> >
-> > both of them point to the same offset of stm32's RCC register. after
-> > kernel enter console, clk core turn off ltdc's clk as 'stm32f429_gates[]'
-> > is no one to use. but, actually 'stm32f429_aux_clk[]' is in use.
-> >
-> > stm32f469/746/769 have the same issue, fix it.
-> >
-> > Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
->
-> Just to double check (I asked as well when v1 was posted, but that's a long time ago):
-> I can ignore this patch, right? If so, then make sure you follow up on this in the clk
-> subsystem since it is not yet merged in mainline.
->
-> If you DO want me to pick it up, then I see that the clk maintainer has already Acked
-> it, so I take it as well.
+On Sat 16 Oct 2021 at 16:59, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-Appreciate, please help to pick it up.
+> Christian reports that 48kHz audio does not work on his WeTek Play 2
+> (which uses a GXBB SoC), while 44.1kHz audio works fine on the same
+> board. He also reports that 48kHz audio works on GXL and GXM SoCs,
+> which are using an (almost) identical AIU (audio controller).
 
-Thanks & Regards
-Dillon
+The above is a bit "personal" - it is not great fit for the commit
+description. Please rephrase or put it in comment section bellow
 
 >
-> Regards,
+> Experimenting has shown that MPLL0 is causing this problem. In the .dts
+> we have by default:
+> 	assigned-clocks = <&clkc CLKID_MPLL0>,
+> 			  <&clkc CLKID_MPLL1>,
+> 			  <&clkc CLKID_MPLL2>;
+> 	assigned-clock-rates = <294912000>,
+> 			       <270950400>,
+> 			       <393216000>;
+> The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
+> rate is divisible by 44.1kHz without remainder. Swapping these two clock
+> rates "fixes" 48kHz audio but breaks 44.1kHz audio.
 >
->         Hans
+> Everything looks normal when looking at the info provided by the common
+> clock framework while playing 48kHz audio (via I2S with mclk-fs = 256):
+>         mpll_prediv                 1        1        0  2000000000
+>            mpll0_div                1        1        0   294909641
+>               mpll0                 1        1        0   294909641
+>                  cts_amclk_sel       1        1        0   294909641
+>                     cts_amclk_div       1        1        0    12287902
+>                        cts_amclk       1        1        0    12287902
 >
-> > Link: https://lore.kernel.org/linux-arm-kernel/1590564453-24499-7-git-send-email-dillon.minfei@gmail.com/
-> > Link: https://lore.kernel.org/lkml/CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com/
-> > Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
-> > ---
-> > v5: no change.
-> >
-> >  drivers/clk/clk-stm32f4.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-> > index af46176ad053..473dfe632cc5 100644
-> > --- a/drivers/clk/clk-stm32f4.c
-> > +++ b/drivers/clk/clk-stm32f4.c
-> > @@ -129,7 +129,6 @@ static const struct stm32f4_gate_data stm32f429_gates[] __initconst = {
-> >       { STM32F4_RCC_APB2ENR, 20,      "spi5",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
-> > -     { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
-> >  };
-> >
-> >  static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
-> > @@ -211,7 +210,6 @@ static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
-> >       { STM32F4_RCC_APB2ENR, 20,      "spi5",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
-> > -     { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
-> >  };
-> >
-> >  static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
-> > @@ -286,7 +284,6 @@ static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
-> >       { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 23,      "sai2",         "apb2_div" },
-> > -     { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
-> >  };
-> >
-> >  static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
-> > @@ -364,7 +361,6 @@ static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
-> >       { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 23,      "sai2",         "apb2_div" },
-> > -     { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
-> >       { STM32F4_RCC_APB2ENR, 30,      "mdio",         "apb2_div" },
-> >  };
-> >
-> >
+> meson-clk-msr however shows that the actual MPLL0 clock is off by more
+> than 38MHz:
+>         mp0_out               333322917    +/-10416Hz
 >
+> The 3.14 vendor kernel uses the following code to enable SSEN only for
+> MPLL0 (where con_reg2 is HHI_MPLL_CNTL and SSEN_shift is 25):
+> 	if (strncmp(hw->clk->name, "mpll_clk_out0", 13) == 0) {
+> 		val = readl(mpll->con_reg2);
+> 		val |= 1 <<  mpll->SSEN_shift;
+> 		writel(val, mpll->con_reg2);
+> 	}
+>
+> Add the SSEN (spread spectrum enable) bit and add the
+> CLK_MESON_MPLL_SPREAD_SPECTRUM flag to enable this bit for MPLL0. Do
+> this for GXBB *only* since GXL doesn't seem to care if this bit is set
+> or not, meaning that meson-clk-msr always sees (approximately) the same
+> frequency as common clock framework.
+
+ 1 - it is odd that we need to poke a bit in the register related to the
+ fixed PLL but ok ...
+ 2 - 3.14 does yes, 4.9 does not soooo ... no real proof there
+ 3 - That is the most important to me: the effect you described clearly is
+ not spread spectrum.
+
+Spread spectrum varies the frequencies quickly, IOW it makes the
+frequencies unstable. Some stuff do not need a particularly stable rate
+and it can help with EM compatibility. This is not desirable for audio.
+
+So 2 things:
+ - If this bit really enables spread spectrum on MPLL0 (or worse, the
+ Fixed PLL) - checking clk measure is not enough. It is just a mean of
+ the rate seen by the SoC itself. You would not see the effect of the
+ spread spectrum here ... you need to capture the clock output with a
+ scope for that.
+
+ - Or the bit is incorrectly documented (or DDS0_SSEN does not mean
+ spread spectrum). If it is not a spread spectrum function, then this
+ patch seems to indicate it is and it is misleading.
+
+Either way, I'm not OK with it.
+
+To me, the rate drop that happens when you flip this bit looks more like
+the effect SDM_EN should have.
+
+Could you check the internal values (n2 and sdm) compare this to the
+output rate you actually get ? see if this leads to anything ? does
+SDM_EN really has an effect on this MPLL ? it is a combination of both ?
+
+>
+> Fixes: 8925dbd03bb29b ("clk: meson: gxbb: no spread spectrum on mpll")
+> Reported-by: Christian Hewitt <christianshewitt@gmail.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/gxbb.c | 50 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 47 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> index d6eed760327d..673bc915c7d9 100644
+> --- a/drivers/clk/meson/gxbb.c
+> +++ b/drivers/clk/meson/gxbb.c
+> @@ -713,6 +713,41 @@ static struct clk_regmap gxbb_mpll_prediv = {
+>  };
+>  
+>  static struct clk_regmap gxbb_mpll0_div = {
+> +	.data = &(struct meson_clk_mpll_data){
+> +		.sdm = {
+> +			.reg_off = HHI_MPLL_CNTL7,
+> +			.shift   = 0,
+> +			.width   = 14,
+> +		},
+> +		.sdm_en = {
+> +			.reg_off = HHI_MPLL_CNTL7,
+> +			.shift   = 15,
+> +			.width	 = 1,
+> +		},
+> +		.n2 = {
+> +			.reg_off = HHI_MPLL_CNTL7,
+> +			.shift   = 16,
+> +			.width   = 9,
+> +		},
+> +		.ssen = {
+> +			.reg_off = HHI_MPLL_CNTL,
+> +			.shift   = 25,
+> +			.width   = 1,
+> +		},
+> +		.flags = CLK_MESON_MPLL_SPREAD_SPECTRUM,
+> +		.lock = &meson_clk_lock,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "mpll0_div",
+> +		.ops = &meson_clk_mpll_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&gxbb_mpll_prediv.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap gxl_mpll0_div = {
+>  	.data = &(struct meson_clk_mpll_data){
+>  		.sdm = {
+>  			.reg_off = HHI_MPLL_CNTL7,
+> @@ -749,7 +784,16 @@ static struct clk_regmap gxbb_mpll0 = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mpll0",
+>  		.ops = &clk_regmap_gate_ops,
+> -		.parent_hws = (const struct clk_hw *[]) { &gxbb_mpll0_div.hw },
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			/*
+> +			 * Note:
+> +			 * GXL and GXBB have different SSEN requirements. We
+> +			 * fallback to the global naming string mechanism so
+> +			 * mpll0_div picks up the appropriate one.
+> +			 */
+> +			.name = "mpll0_div",
+> +			.index = -1,
+> +		},
+>  		.num_parents = 1,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+> @@ -3044,7 +3088,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+>  		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
+>  		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
+>  		[CLKID_VAPB]		    = &gxbb_vapb.hw,
+> -		[CLKID_MPLL0_DIV]	    = &gxbb_mpll0_div.hw,
+> +		[CLKID_MPLL0_DIV]	    = &gxl_mpll0_div.hw,
+>  		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
+>  		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
+>  		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
+> @@ -3439,7 +3483,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
+>  	&gxbb_mpll0,
+>  	&gxbb_mpll1,
+>  	&gxbb_mpll2,
+> -	&gxbb_mpll0_div,
+> +	&gxl_mpll0_div,
+>  	&gxbb_mpll1_div,
+>  	&gxbb_mpll2_div,
+>  	&gxbb_cts_amclk_div,
+
