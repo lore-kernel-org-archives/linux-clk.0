@@ -2,71 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2E5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 19:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5F5C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 20:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33E6160ED3
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 19:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57BD3610A1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 20:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232790AbhJRTJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 15:09:02 -0400
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:40851 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbhJRTJC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 15:09:02 -0400
-Received: by mail-oi1-f169.google.com with SMTP id n63so1152884oif.7;
-        Mon, 18 Oct 2021 12:06:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=49SMLI2EfcSIIHBo/pZf8JUrstQjUQ4o89khtSTgLmQ=;
-        b=3TOegyYLWLJXobV0Q2Q4r/MJ8HqNPgnOpr6sQvfTnTW83dLuscv2E0kFm34P1cihCb
-         8Ur0C3lplMVnJixsj9f5gbwin1kO1g14dwg9bQ+G/QwhDtei8jdRjec/RnSJtTcAyBHq
-         xwg3Hn1xuRlKCCb4aVlj2wp9y017Hh8FE4yevkbY2qbWa1VF0HeGw4uEOrAKKwVLoSmv
-         6lNGOOSvT3rzUIi8iwxqydg0suAZY1Bb5qDtY80b/HguSxxcsMaJXwtUf9vdKxCIne38
-         ReswKfluAFJIlUFzioBV5V6/bavK2Xa4ASAxh+eLY9E0s0Tlxoqvvu5Iff202bBTa12l
-         rd+g==
-X-Gm-Message-State: AOAM531ME2R0rHrcu0n3gT6Eo6IvtHHn1cEtpQ8VIboaGo+bisM4mRSm
-        rly09AUrLinDCcbuEdpK6A==
-X-Google-Smtp-Source: ABdhPJxmkPWje3+Z7w9ARfxBxTnx7/aJ0lYuSxFW/pvIp+fzwpJ6iKcT4Cd0MeKNCREIMFx6RbFkXQ==
-X-Received: by 2002:aca:5cd4:: with SMTP id q203mr548649oib.179.1634584010752;
-        Mon, 18 Oct 2021 12:06:50 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id x62sm3173707oig.24.2021.10.18.12.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 12:06:50 -0700 (PDT)
-Received: (nullmailer pid 2768871 invoked by uid 1000);
-        Mon, 18 Oct 2021 19:06:49 -0000
-Date:   Mon, 18 Oct 2021 14:06:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: clock: uniphier: Add clock binding
- for SoC-glue
-Message-ID: <YW3FyW4Ee1dCYM1s@robh.at.kernel.org>
-References: <1634000035-3114-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1634000035-3114-5-git-send-email-hayashi.kunihiko@socionext.com>
+        id S232159AbhJRUDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 16:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230415AbhJRUDQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Oct 2021 16:03:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 07BF461038;
+        Mon, 18 Oct 2021 20:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634587265;
+        bh=ND4nONknV1sQlC0sVLhYSw9ZA+Ygnsc/erHXNn2DGi8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hFR3rzkRliqXOVanehUd81P7LznNLjcSTrsD7SlWNETqLkUqr+/fpa5I7GSIqK70O
+         4nNNe/qAkGO6ZLFoVB/1OfJJw9rWuMrNAlox7cC9SS1Iy/YZiSfqjcktkjCZP4Fqvc
+         jzLZZaSpKbdaXmYcz3/NK5v9Ao+8qgdd196+G0wlfY/MyzzjPEB7ZkhCqac8W//KmK
+         9nmLLdT1DghcAD8kewbLsvkWSghXtz80WEDXEyyLJF1O1/ThOKWlVT7M9GeDnasZhX
+         XHfW7e/1WEXtfp/Fb5O91CpStmGOd7wn6gPyHh5ARqQdFx1gKCAOhFevyL2brEWnw3
+         aNZqMrnge2QVQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1634000035-3114-5-git-send-email-hayashi.kunihiko@socionext.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211016105022.303413-2-martin.blumenstingl@googlemail.com>
+References: <20211016105022.303413-1-martin.blumenstingl@googlemail.com> <20211016105022.303413-2-martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH clk-fixes v1 1/2] clk: composite: Also consider .determine_rate for rate + mux composites
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, knaerzche@gmail.com,
+        mturquette@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 18 Oct 2021 13:01:03 -0700
+Message-ID: <163458726377.1767887.8064107515338216758@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Oct 2021 09:53:54 +0900, Kunihiko Hayashi wrote:
-> Update binding document for clocks implemented in SoC-glue.
-> 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Quoting Martin Blumenstingl (2021-10-16 03:50:21)
+> Commit 69a00fb3d69706 ("clk: divider: Implement and wire up
+> .determine_rate by default") switches clk_divider_ops to implement
+> .determine_rate by default. This breaks composite clocks with multiple
+> parents because clk-composite.c does not use the special handling for
+> mux + divider combinations anymore (that was restricted to rate clocks
+> which only implement .round_rate, but not .determine_rate).
+>=20
+> Alex reports:
+>   This breaks lot of clocks for Rockchip which intensively uses
+>   composites,  i.e. those clocks will always stay at the initial parent,
+>   which in some cases  is the XTAL clock and I strongly guess it is the
+>   same for other platforms,  which use composite clocks having more than
+>   one parent (e.g. mediatek, ti ...)
+>=20
+>   Example (RK3399)
+>   clk_sdio is set (initialized) with XTAL (24 MHz) as parent in u-boot.
+>   It will always stay at this parent, even if the mmc driver sets a rate
+>   of  200 MHz (fails, as the nature of things), which should switch it
+>   to   any of its possible parent PLLs defined in
+>   mux_pll_src_cpll_gpll_npll_ppll_upll_24m_p (see clk-rk3399.c)  - which
+>   never happens.
+>=20
+> Restore the original behavior by changing the priority of the conditions
+> inside clk-composite.c. Now the special rate + mux case (with rate_ops
+> having a .round_rate - which is still the case for the default
+> clk_divider_ops) is preferred over rate_ops which have .determine_rate
+> defined (and not further considering the mux).
+>=20
+> Fixes: 69a00fb3d69706 ("clk: divider: Implement and wire up .determine_ra=
+te by default")
+> Reported-by: Alex Bee <knaerzche@gmail.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  Documentation/devicetree/bindings/clock/socionext,uniphier-clock.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-fixes
