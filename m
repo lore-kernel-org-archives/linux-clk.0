@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7840DC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CC3C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F9FD61283
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB1361283
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbhJRFHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 01:07:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60270 "EHLO
+        id S230063AbhJRFHx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 01:07:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbhJRFHc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 01:07:32 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25D21C06176C;
-        Sun, 17 Oct 2021 22:05:16 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id t11so10371569plq.11;
-        Sun, 17 Oct 2021 22:05:16 -0700 (PDT)
+        with ESMTP id S230077AbhJRFHl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 01:07:41 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6571C061769;
+        Sun, 17 Oct 2021 22:05:30 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id y7so13777323pfg.8;
+        Sun, 17 Oct 2021 22:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PzGkUsbLWrD/fizVl6QbcWER2UnDlXJ5Kvt3KlRxinw=;
-        b=iJkleu9vPyrl+MLBEf1JKcbvSB5unQ9NbyHJ7fzqtoXdt6FOXerNLXhD31ERZAcNDN
-         0fejkyn1dAbqJntVNSqWJ+a9FBKjKIcywdXKLKWcUMv/ilPOUVj3/NPXIm2NA0U+iQNd
-         N6PUa2NI3iVYNPmlUM4x31yvfSniA0IAMVj9490PmmoU5UmGN1/5YRWrqQcqnx0cp5mU
-         GyYQdZDM6ywVao6Xw+3EzfM0zzIKHU8QfXAzCeXeB3tDDSjaa/vfZqgewmBpurh+iHgb
-         vVWRoQPDNCq//24Fc9QhCJ+k3jBGL4SEYDu7N2NNhTuGvr3wQETrVJIdKdI+9TIXA99K
-         GKnA==
+        bh=gBhJdCQI3tgtAb+zO+s0+nyy0RkQE7ndnmuRgYdQzh4=;
+        b=A4ueMt8YMHWW/89Hh4pdnL//KdrM/svGtwnfxp+r3w3lF/50FZqd/5YFCkL0jU/H9Q
+         q7sMGUB7fvz9K33mRO+tE+q7nbC2KV3+gv8yzUMInzTRRyKtdG9uMZ64e9AzzIVB6iJb
+         ldev6OY3KCHbw1rnKyY3vuQD7UVvBrofYRQFXVvmRvrN5HEXeSsGBpjBPgv0qp0Q7gC/
+         e2DIqgWGb3f015ajx8fjLzg6vIGpI/Qg2/5cbE6QqjjXPmKxEPMdIE+4LOHxsvTjbYNH
+         6m4mCxaDIWmArBiCArZ2uS/lB7mNgyCgLKpM2jKiNvRfmy0do3iruFzVlJj9MEx0K7sU
+         n2oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PzGkUsbLWrD/fizVl6QbcWER2UnDlXJ5Kvt3KlRxinw=;
-        b=ypgYAyHIrBb2Br4T3vn1ckbOXsgQC55Go4Oc2yFpBfcv2RXz5EnReJsmbrKVU/WOgp
-         Uv3YuUYm8VwwMQv7Svbld1D/Ou3JxBS1/Gkn7aCx+PDERinBsQemDUF0pRArM8IkQa9B
-         tpxOkjS6h3f3Z/JqwzdIOxRrHqoWYL/94TcKMQmq3wTayt3JrGDjuymJV6qSX757/S0P
-         QyCyhXcSQcTADpKWIVAjjekeWzmjOl8meAzACRLAZlHxMwoPZPDFMYNVbt6qB57pxFrA
-         21KAdDjTHS1idTmeyJ7c+qDZ80gt4f7U19GYULJudaFCfK2Fn7T+oA+VAh1GZ0kqM6i1
-         vUXg==
-X-Gm-Message-State: AOAM531JweQez87yr349og3w09aG+oZTZZtTSV4K5v+ptLqUrcoN1Y12
-        bt0qfJSlpOpze0dCJGO6nok=
-X-Google-Smtp-Source: ABdhPJzFIGL/C3R/Jx+goNAzsN41+4QdhLrtABR4a7qLxtm7YYYOXpSVS7AYDqWe/lbixFNQSl9fwQ==
-X-Received: by 2002:a17:902:ce85:b0:13f:9678:ecd2 with SMTP id f5-20020a170902ce8500b0013f9678ecd2mr15598799plg.39.1634533515562;
-        Sun, 17 Oct 2021 22:05:15 -0700 (PDT)
+        bh=gBhJdCQI3tgtAb+zO+s0+nyy0RkQE7ndnmuRgYdQzh4=;
+        b=nKfPmapDu9EpYqZN1Y65MkD7pQJdgpFX2ObyNBgJqqXIOVH9ysZ1FeGBYY9sXRd8gx
+         lVrW44HA9gMglvFU5a46KW6rKgy8CcJMpb51oO3tq4kZpHYVkAutefvmCA20NERYXOJn
+         gm9DADF86SxT8Lbj83o2easswFP7WDU5k4DOWsilu0JfY5gnaA7jTNd7Pas4uNyG0HhJ
+         s5gTiuB/b4yAlV87yVfVc6FMDxN7nO4h+SJamcWHzVOuBXQ2D1ic+9OTNbIeaBwQmi7w
+         +Wl5lidRxXZ2wbwR4i8lY6D32FvZlhe1aInNuk6YU8vTjWF9zDRrucKtl7ER4YvH8mi2
+         GCtw==
+X-Gm-Message-State: AOAM530rzzRz4kaCko9hSG5JWeiVBa6EXUx+P4ma0OLt31cB6oWjqAQU
+        68T5TWocbODcrK8Cca56clU=
+X-Google-Smtp-Source: ABdhPJyCsuGeq8UL5I8geM4XvFrDzoZlwiEmGEWko6BtyDIXuIYoj91fZat5S85qitooIzHRujHGBA==
+X-Received: by 2002:a05:6a00:23d6:b0:44d:8426:e2bb with SMTP id g22-20020a056a0023d600b0044d8426e2bbmr22738198pfc.30.1634533530348;
+        Sun, 17 Oct 2021 22:05:30 -0700 (PDT)
 Received: from fmin-OptiPlex-7060.nreal.work ([137.59.103.165])
-        by smtp.gmail.com with ESMTPSA id c205sm11416625pfc.43.2021.10.17.22.05.11
+        by smtp.gmail.com with ESMTPSA id c205sm11416625pfc.43.2021.10.17.22.05.25
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Oct 2021 22:05:15 -0700 (PDT)
+        Sun, 17 Oct 2021 22:05:30 -0700 (PDT)
 From:   dillon.minfei@gmail.com
 To:     mchehab@kernel.org, mchehab+huawei@kernel.org,
         hverkuil-cisco@xs4all.nl, ezequiel@collabora.com, gnurou@gmail.com,
@@ -61,9 +61,9 @@ Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Dillon Min <dillon.minfei@gmail.com>
-Subject: [PATCH v5 04/10] ARM: dts: stm32: Enable DMA2D on STM32F469-DISCO board
-Date:   Mon, 18 Oct 2021 13:04:42 +0800
-Message-Id: <1634533488-25334-5-git-send-email-dillon.minfei@gmail.com>
+Subject: [PATCH v5 07/10] media: v4l2-ctrls: Add V4L2_CID_COLORFX_CBCR max setting
+Date:   Mon, 18 Oct 2021 13:04:45 +0800
+Message-Id: <1634533488-25334-8-git-send-email-dillon.minfei@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
 References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
@@ -73,30 +73,31 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Dillon Min <dillon.minfei@gmail.com>
 
-Enable DMA2D on STM32F469-DISCO board.
+The max of V4L2_CID_COLORFX_CBCR is 0xffff, so add it to v4l2_ctrl_fill()
+to sure not beyond that.
 
 Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
 ---
-v5: no change.
+ drivers/media/v4l2-core/v4l2-ctrls-defs.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- arch/arm/boot/dts/stm32f469-disco.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f469-disco.dts b/arch/arm/boot/dts/stm32f469-disco.dts
-index 30905ce672a0..ba26a3375b0d 100644
---- a/arch/arm/boot/dts/stm32f469-disco.dts
-+++ b/arch/arm/boot/dts/stm32f469-disco.dts
-@@ -132,6 +132,10 @@
- 	clock-frequency = <8000000>;
- };
- 
-+&dma2d {
-+	status = "okay";
-+};
-+
- &dsi {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+index ebe82b6ba6e6..0cb6c0f18b39 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+@@ -1400,6 +1400,12 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+ 		/* Max is calculated as RGB888 that is 2^24 */
+ 		*max = 0xFFFFFF;
+ 		break;
++	case V4L2_CID_COLORFX_CBCR:
++		*type = V4L2_CTRL_TYPE_INTEGER;
++		*step = 1;
++		*min = 0;
++		*max = 0xffff;
++		break;
+ 	case V4L2_CID_FLASH_FAULT:
+ 	case V4L2_CID_JPEG_ACTIVE_MARKER:
+ 	case V4L2_CID_3A_LOCK:
 -- 
 2.7.4
 
