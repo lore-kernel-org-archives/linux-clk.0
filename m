@@ -2,129 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A011AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 085E8C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82CC260EE5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF9216103D
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 11:44:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231443AbhJRLj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 07:39:28 -0400
-Received: from mail-ua1-f54.google.com ([209.85.222.54]:37382 "EHLO
-        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbhJRLj2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 07:39:28 -0400
-Received: by mail-ua1-f54.google.com with SMTP id f4so5124904uad.4;
-        Mon, 18 Oct 2021 04:37:17 -0700 (PDT)
+        id S231295AbhJRLrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 07:47:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38184 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230478AbhJRLrB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 07:47:01 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C175C06161C;
+        Mon, 18 Oct 2021 04:44:50 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id y30so51944616edi.0;
+        Mon, 18 Oct 2021 04:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MEsxZ3O1mk7PChv7vz5Z0iqmE+aipOaKaFUC4ugt0HI=;
+        b=PmN8QFKOKioU2foRHAA5okAAN5N4bMfte+owkgFjLKehpAIrYtSHCWcxS080oOE9I5
+         5k/9tfxdRDiQEoBRjoG80KbZRaW4uPJ9yZzP4/Ym3DEYQWUGT1wM5DesLZW6lzavmHfR
+         sa9H0B2Yum/I18d0n2PIZ04I6+jMbv99xi3YJN+LJv9uA/zbk8JtXu7hp2ymGPL5TPVm
+         Q5MAE9zyjbPEQ4uNmECrpPewu5we/x5Syuo3xtCH2mgpCW0WEYYhyIp4k38QzjABPJ24
+         jVRYK4bWlYXiWLwzAca1JLt6SRJITPQFS9YOgfYDviu0Boi83TJuv5ZfpVgYkKrmMCRh
+         M3sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yoiylfhsu7vOzWaVrb8Sfpqi1MCIs1ryTZwMWyEH6Ag=;
-        b=Bcen5t89gEoZ6eoroXnsq1Mk7Q4yFwfaYv+3P41TrqBwwGwl67CaWO0xOtEeZeLb/m
-         1RU/+Ca9flBr94WEBsskisVTGI59N8bKM+TU3zwPhKTUldAhvr0b8mZtIrDUUTFfGbfh
-         7sMdpFc/dZuAInSct28pjRrbYD/epxA7ZPxEL+Pkl/wHHCnTMkUEiWtsUVMfqGSb0rqX
-         jmFxUrMm6cuj7933Ys3K2fjvNCdqDHve4Yx7QfB7hMROTjiyN8XjC0l7yRAyr+0Dj5Nh
-         1ru86qU2/tGnM+CGF80nQF4rqiWgTa0OhBM5HgwkayyOwHbCVKT33huM2QeABTStmvHG
-         EJ7Q==
-X-Gm-Message-State: AOAM531dn9lx344lXGlobSEuULUbTpE65CufM/q4Mdo1fTlfbfZ54aRh
-        6B6GiNRV8Ai+kVTzwPFB6n4gAe0uRuQp9w==
-X-Google-Smtp-Source: ABdhPJydUuu55vT6vkPDOdiZ7jMcFEzd+CMbA4JZz4mJY4f2LLn2V1q80p/42Pgpc5nGRORgyn47Zw==
-X-Received: by 2002:ab0:3c48:: with SMTP id u8mr25896475uaw.124.1634557036521;
-        Mon, 18 Oct 2021 04:37:16 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id p26sm1646092uaa.18.2021.10.18.04.37.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Oct 2021 04:37:16 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id x207so8421804vke.2;
-        Mon, 18 Oct 2021 04:37:15 -0700 (PDT)
-X-Received: by 2002:a1f:1841:: with SMTP id 62mr23885899vky.26.1634557035711;
- Mon, 18 Oct 2021 04:37:15 -0700 (PDT)
+        bh=MEsxZ3O1mk7PChv7vz5Z0iqmE+aipOaKaFUC4ugt0HI=;
+        b=h5ulqNl5e4m0j8VfLjJXHAO4/4EdYzMto5OpmbaU5ziFj9aAMv5yxbJAgnnnTgK8K1
+         WV+4MzvkVzPDYuuxETCwa+GVaNNM2SfuRF982E792p/Z7mOqNg79pVp7YipynG6XihTj
+         bmNtU5DwvjLHIGXBJjd9MZff57SACEFVqhGq8e1/zCSe67gRRgGtu4357VXMVzCk883z
+         WM2V6FtOIjLcaVlngQlOkVHtb8rn0l2QW+xvwxEjLaus63PRocuXktS99qjFR5O5PyuP
+         /i1bRm0KnEgxKSCTJHsWb94H0mhviu8s6gc6hjKfqWBzChwPUIjogSg1orefUcXW89bS
+         x3aQ==
+X-Gm-Message-State: AOAM530N8bFSBMkKSwDDkDmlTkNSOkWRQdo2bt3sEHzZTLUGdg/ONjhf
+        wtpkJM+dhc/UuCxFVa7ckfKk2FN/mTtfjHkpLhyG5xKuZws=
+X-Google-Smtp-Source: ABdhPJw0zF+HiS1YmJukOua82SZK7pUVcvH3fPcFCdBlxV/8b282W9eA+SQY/dem5eqHXs3ukpIm4qt25lwuQpy1x3o=
+X-Received: by 2002:a17:906:f2cd:: with SMTP id gz13mr28303283ejb.278.1634557486136;
+ Mon, 18 Oct 2021 04:44:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210923064137.60722-1-zhang.lyra@gmail.com> <YV1XpL7ibF1y4LbV@google.com>
- <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
- <YWVD0RXHVLxuXEIN@google.com> <CAMuHMdWqYVp1JyzZoidAJhPy9ypRnSOWHJLz5knDUMcFHPOzAw@mail.gmail.com>
- <YWfSz00Rj5AVhkgT@google.com> <CAL_Jsq+GHt+DqHa0GeLKWoni+Lghg5wg5ssREZBdSD-=K3XQ1A@mail.gmail.com>
- <163425256290.1688384.5646232860050218479@swboyd.mtv.corp.google.com>
- <CAL_JsqJV_CoPH7VrX-D5=u2WsoUpp-pTKbcR2y+gWxhv+WKcEg@mail.gmail.com>
- <CAMuHMdU1TCOvDwx6pjg=0-hLkFywRGQsZUNM+0aJLb96fZGAQA@mail.gmail.com> <163433541408.1688384.16269113818432626325@swboyd.mtv.corp.google.com>
-In-Reply-To: <163433541408.1688384.16269113818432626325@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Oct 2021 13:37:04 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUuB1JfDXJiC281xanzW1zoq-LeTRmWtRDzn3vn2Z6wFw@mail.gmail.com>
-Message-ID: <CAMuHMdUuB1JfDXJiC281xanzW1zoq-LeTRmWtRDzn3vn2Z6wFw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20211016145939.15643-1-martin.blumenstingl@googlemail.com> <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 18 Oct 2021 13:44:35 +0200
+Message-ID: <CAFBinCBGZi3MRqTRshyCkq8AAaqHi2NkZVV80ppZr4Lx=xWOWA@mail.gmail.com>
+Subject: Re: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0
+ on GXBB
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Jerome,
 
-On Sat, Oct 16, 2021 at 12:03 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2021-10-15 10:09:10)
-> > On Fri, Oct 15, 2021 at 3:59 PM Rob Herring <robh+dt@kernel.org> wrote:
-> > > On Thu, Oct 14, 2021 at 6:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > Quoting Rob Herring (2021-10-14 09:18:16)
-> > > > > On Thu, Oct 14, 2021 at 1:48 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > > > > >
-> > > > > > I don't explicitly build DT documentation.
-> > > > > >
-> > > > > > Since I use the build bots to let me know if there are strange !(C,
-> > > > > > ASM, arm, aarch64, mips, ppc, x86) build issues or ones with odd
-> > > > > > configuration possibilities (randconfig) in the repos I maintain, you
-> > > > > > might have to convince them that this is important too.
-> > > > >
-> > > > > It's really just a matter of turning on the build in
-> > > > > allyesconfig/allmodconfig builds. I've not done that primarily because
-> > > > > there's one person I don't want to yell at me, but I could probably
-> > > > > make it arm and/or arm64 only. It's really arch and config
-> > > > > independent, so doing it multiple times is kind of pointless.
-> > > > >
-> > > > > I assume for bots you mean kernel-ci mainly? Do you run that before
-> > > > > stuff gets into linux-next? IMO, that's too late. But still a slight
-> > > > > improvement if things go in via one tree. Otherwise, I see the
-> > > > > breakage twice, 1st linux-next then the merge window.
-> > > > >
-> > > >
-> > > > I run `make dt_binding_check DT_SCHEMA_FILES="<path to yaml file>"` but
-> > > > nowadays this seems to check all the bindings and not just the one
-> > > > binding I care to check. Did something break?
-> > >
-> > > It should apply all the schemas to the example in DT_SCHEMA_FILES.
-> > > Originally, it only applied DT_SCHEMA_FILES schema to the example in
-> > > DT_SCHEMA_FILES.
-> >
-> > Probably Stephen means that yamllint is still run on all files, which
-> > I tried to fix in [1]?
-> >
-> > I've been running an improved version for months, but I haven't sent
-> > it out yet.
-> >
+On Mon, Oct 18, 2021 at 12:19 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> Oh yeah probably. Do I need to carry this patch locally until it is
-> fixed?
+>
+> On Sat 16 Oct 2021 at 16:59, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>
+> > Christian reports that 48kHz audio does not work on his WeTek Play 2
+> > (which uses a GXBB SoC), while 44.1kHz audio works fine on the same
+> > board. He also reports that 48kHz audio works on GXL and GXM SoCs,
+> > which are using an (almost) identical AIU (audio controller).
+>
+> The above is a bit "personal" - it is not great fit for the commit
+> description. Please rephrase or put it in comment section bellow
+sure, I can rephrase that
 
-Submitted the improved version:
-https://lore.kernel.org/all/cover.1634551582.git.geert+renesas@glider.be
+[...]
+> > Add the SSEN (spread spectrum enable) bit and add the
+> > CLK_MESON_MPLL_SPREAD_SPECTRUM flag to enable this bit for MPLL0. Do
+> > this for GXBB *only* since GXL doesn't seem to care if this bit is set
+> > or not, meaning that meson-clk-msr always sees (approximately) the same
+> > frequency as common clock framework.
+>
+>  1 - it is odd that we need to poke a bit in the register related to the
+>  fixed PLL but ok ...
+>  2 - 3.14 does yes, 4.9 does not soooo ... no real proof there
+The fact that 4.9 doesn't do it is also no proof for anything either.
+Amlogic hasn't ported forward GXBB support to their 4.9 kernel. Even
+"mesongxbb.dtsi" is missing there [0]
+So in my opinion the code from Amlogic's patched 4.9 kernel cannot be
+used as reference for anything GXBB related. Only the 3.14 code can be
+used as reference.
 
-Gr{oetje,eeting}s,
+[...]
+> So 2 things:
+>  - If this bit really enables spread spectrum on MPLL0 (or worse, the
+>  Fixed PLL) - checking clk measure is not enough. It is just a mean of
+>  the rate seen by the SoC itself. You would not see the effect of the
+>  spread spectrum here ... you need to capture the clock output with a
+>  scope for that.
+I suspect that a board with pin headers is needed to route the signal there?
+Personally I don't have any GXBB board(s).
 
-                        Geert
+>  - Or the bit is incorrectly documented (or DDS0_SSEN does not mean
+>  spread spectrum). If it is not a spread spectrum function, then this
+>  patch seems to indicate it is and it is misleading.
+>
+> Either way, I'm not OK with it.
+>
+> To me, the rate drop that happens when you flip this bit looks more like
+> the effect SDM_EN should have.
+>
+> Could you check the internal values (n2 and sdm) compare this to the
+> output rate you actually get ? see if this leads to anything ? does
+> SDM_EN really has an effect on this MPLL ? it is a combination of both ?
+Christian has provided a dump of the HHI registers (via userspace,
+regmap makes them accessible).
+On GXBB WP2 HHI_MPLL_CNTL7 is set to 0x0006f208
+On GXL Le Potato (which he used for comparison as it wasn't affected
+by the MPLL0 issue) HHI_MPLL_CNTL7 is set to 0x0006b208
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+If you're interested in the full HHI register dump you can find it here: [1]
+GXBB WP2 is on the left and GXL Le Potato is on the right.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+The difference here is BIT(14). un-setting BIT(14) (documented as
+EN_DDS0) did not change anything according to Christian's test.
+That also means that SDM, SDM_EN and N2 have the expected values.
+I manually did the maths:
+(2000000000Hz * 16384) / ((16384 * 6) + 12808) = 294909640.7Hz
+which matches what clk_summary sees:
+294909641Hz
+
+Just to clarify that I am not wasting Christian's time when I ask him
+to test something:
+next up we'll set SDM_EN to 0 (instead of 1) and see the reaction using clk-msr?
+
+
+Best regards,
+Martin
+
+
+[0] https://github.com/hardkernel/linux/tree/db88db3864c5d6903fb11f6528874887d1c473ce/arch/arm64/boot/dts/amlogic
+[1] https://pastebin.com/raw/1cjPFsfa
