@@ -2,119 +2,424 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A733C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFD2C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 09:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFE0603E7
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 08:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A4661278
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 09:31:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhJRI2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 04:28:52 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51827 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231147AbhJRI2t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 04:28:49 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211018082636euoutp02cd6f9532c66da2da3d0e28800391f39c~vEo9lAXb21227912279euoutp02V
-        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 08:26:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211018082636euoutp02cd6f9532c66da2da3d0e28800391f39c~vEo9lAXb21227912279euoutp02V
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1634545596;
-        bh=KkaKX1e1Dd7h4BZnYesJfdk1PFf+z9be2kqdgsNommY=;
-        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-        b=rmbgoKkZDyBnoqXc2mmgHhI4M9DzKVoVaRcLsNWx6tHRtUQKW4fhamDY5zRn5UIQS
-         ffiXknxS1FusxWGKhYAN4OfFtFQgwdYx/lBRmooMFZi3YpGJl9JNUxCkR/Jpq57ABr
-         vqkSNHBZaHY5M5IwVtWHwsN9qKX4VGUgw/xhU4dg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20211018082636eucas1p16bab41b13f40446e6cb43aefa56c7bb2~vEo9Nq8oF1318013180eucas1p18;
-        Mon, 18 Oct 2021 08:26:36 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 38.C7.42068.CBF2D616; Mon, 18
-        Oct 2021 09:26:36 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20211018082635eucas1p1f65471364499ea8e370024892655703c~vEo8yPJV22797127971eucas1p1F;
-        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20211018082635eusmtrp12fc0234431dfcd8cbc843883e76712dc~vEo8xiBBO1790017900eusmtrp1I;
-        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
-X-AuditID: cbfec7f4-c89ff7000002a454-e7-616d2fbc5cad
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6A.B1.31287.BBF2D616; Mon, 18
-        Oct 2021 09:26:35 +0100 (BST)
-Received: from [106.210.134.141] (unknown [106.210.134.141]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20211018082635eusmtip18ac6d84561f998c722baa75b5c78a75b~vEo8KR8eA2094420944eusmtip1o;
-        Mon, 18 Oct 2021 08:26:35 +0000 (GMT)
-Message-ID: <7a72a9a6-b250-7072-bfb3-a8dd90643c65@samsung.com>
-Date:   Mon, 18 Oct 2021 10:26:34 +0200
+        id S231545AbhJRJdr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 05:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231540AbhJRJc6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 05:32:58 -0400
+Received: from lb1-smtp-cloud7.xs4all.net (lb1-smtp-cloud7.xs4all.net [IPv6:2001:888:0:108::1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1274C061769;
+        Mon, 18 Oct 2021 02:30:46 -0700 (PDT)
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id cOybmtm7ck3b0cOyemhBR3; Mon, 18 Oct 2021 11:30:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1634549444; bh=314Sd+CYYub2TCSDZrCT8JO6mjb7VWzzMPEBE2zgT7Y=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=FE9GxTlHeHJPMVJWoHdzVPGZhgs0gMh64QEgRlETMSaWIn0Mck1Eg5GiJkjSVjcAX
+         EifomidD7hgQ5ea+qYzk9rQVgblsN+V89zJXKwhKepTwdK3BBG1GuEHLSLnuWOZXju
+         E7kT2RmuWDJgBpBc8/XhvALoJbR7CNk5qFlG4xiXn+i0q1Nvw1HRzXzRl5ypLbGRAb
+         56KAYOGFE/TrJDq1BusRbIGgDIIqFRKKwsGWp/W+paTflEOvnXEM/qBqZ5GdRdpADI
+         5TXwF3HAWFkCK0Yg4l7b7t5tkliGnj8t0D5ZgxIh4eeGXUt+aGT0/IhF5sHtjg/iIF
+         wppUCXh7Krxhw==
+Subject: Re: [PATCH v5 10/10] media: stm32-dma2d: STM32 DMA2D driver
+To:     dillon.minfei@gmail.com, mchehab@kernel.org,
+        mchehab+huawei@kernel.org, ezequiel@collabora.com,
+        gnurou@gmail.com, pihsun@chromium.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org, gabriel.fernandez@st.com,
+        gabriel.fernandez@foss.st.com
+Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
+ <1634533488-25334-11-git-send-email-dillon.minfei@gmail.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <5393e39f-cee8-cbe6-f8fd-203a48b35ed8@xs4all.nl>
+Date:   Mon, 18 Oct 2021 11:30:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Firefox/78.0 Thunderbird/78.14.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-        Gecko/20100101 Thunderbird/91.2.0
-Subject: Re: [PATCH] clk: samsung: describe drivers in KConfig
+In-Reply-To: <1634533488-25334-11-git-send-email-dillon.minfei@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-In-Reply-To: <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7djPc7p79HMTDQ5uk7C4/uU5q8XGtz+Y
-        LDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHxlKvFv2sbWSxW7frD6MDp8f5GK7vHrIZeNo+ds+6y
-        e2xa1cnmsXlJvUffllWMHp83yQWwR3HZpKTmZJalFunbJXBlvL96na3gP2PFrFlrWRsYrzF2
-        MXJySAiYSPza/IMFxBYSWMEosWCfQBcjF5D9hVHi29NbTBDOZ6DEsf/sMB1HT1xng0gsZ5T4
-        erCBFaL9I6PE9M4gEJtXwE7i5tO/TCA2i4CqxNbXsxgh4oISJ2c+AVsnKpAkMX/2A6ChHBzC
-        QPXH5guDhJkFxCVuPZkPtlhEYBmjxOlv38CWMQvsYpT4fXwi2BVsAoYSvUf7wIZyCnhIzPm4
-        kBGiW15i+9s5zCANEgLNnBI/r+1mhjjbReLKhmNMELawxKvjW6DekZE4PbmHBaqBUaJn9212
-        CGcCo8T94wugwWQtcefcLzaQW5kFNCXW79KHCDtKfG2bwAoSlhDgk7jxVhDiCD6JSdumM0OE
-        eSU62oQgqlUkfq+aDnWClET3k/8sExiVZiGFyyykAJiF5J1ZCHsXMLKsYhRPLS3OTU8tNspL
-        LdcrTswtLs1L10vOz93ECExUp/8d/7KDcfmrj3qHGJk4GA8xSnAwK4nw8n3MSRTiTUmsrEot
-        yo8vKs1JLT7EKM3BoiTOm7RlTbyQQHpiSWp2ampBahFMlomDU6qBqeKV6cEZttzsOyqVNKQ5
-        0+50+6y51/sw98YE5qYs+fUzLM+zqGpVvhFguMI0aeO8GIVDDRd8RKc8u7jzxe6pTj/dO2QE
-        +ityU9Xmf5vhxF3tJ6VuLGMjfKxV4ljc/+/tq78vuss8K2LLKTshzxVSH+wfHmFe/O7gmz3H
-        uO8esS0Q9rrVNcfGU35pzYo7Tydq+kyR2NIY+eWqw9Jvojx8IWc9jor9C+loXegbKawgbjM5
-        d0bOy+XftrVO4LJw0TvVsT6dW2PzZ8Fa0WkvYkv2uS3JeqO5/N7VjOtKujctX/KF7nk1T6jU
-        7/rfjtZQzSVh2ybqzpH7ZH5Fx83o2xypjM0re+73Gk0Oejr5o+bhY0osxRmJhlrMRcWJADaT
-        MbzDAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7q79XMTDRa2Wlpc//Kc1WLj2x9M
-        FpseX2O1+Nhzj9Xi8q45bBYzzu9jsrh4ytXi37WNLBardv1hdOD0eH+jld1jVkMvm8fOWXfZ
-        PTat6mTz2Lyk3qNvyypGj8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOt
-        jEyV9O1sUlJzMstSi/TtEvQy3l+9zlbwn7Fi1qy1rA2M1xi7GDk5JARMJI6euM7WxcjFISSw
-        lFFi1b/9LF2MHEAJKYn5LUoQNcISf651QdW8Z5Q4fbSPGSTBK2AncfPpXyYQm0VAVWLr61mM
-        EHFBiZMzn7CA2KICSRIfN8xgBpkpDFR/bL4wSJhZQFzi1pP5TCAzRQSWMUrsW/kPbAGzwC5G
-        iT/rDzNCbJvNKHHi60k2kBY2AUOJ3qN9YBs4BTwk5nxcyAgylVlAXWL9PCGIqfIS29/OYZ7A
-        KDQLyR2zkCychdAxC0nHAkaWVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIFxue3Yz807GOe9
-        +qh3iJGJg/EQowQHs5IIL9/HnEQh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA9MDHkl8YZm
-        BqaGJmaWBqaWZsZK4rxb566JFxJITyxJzU5NLUgtgulj4uCUamDq83q9atLclI17Nb/na0s/
-        3Te9y+1VYd3zbzMjOmdd+Schdef1Fc0zyeuTI7UuHt3y1SeyoEDh73qDlWtvPbn2cPPeSxlP
-        3n7MrmtLacmMb/8YWml5Z/KGN8er/3D7Nq5RuxPgsJxb8ZnDug0zlY0bd/Ml3yzY/Jblqnh3
-        vlpIvJcvqw772ceVf2Vutb6qL75ntfxYmfA+seRHu8oqWYxSvpw1X6f3g2/Wyuz1/oeNJm/R
-        z5FZkOei2BbQo56bZLpRIPTXrvLcm123V6v/uPzzXtrTfe13u5njs81/MhmI8LBwTb+yf2rX
-        1SUuSyYu/GIizMu5kiFjkfVucxbFqzOX72I8++0Juwv/Wea+GpZ7SizFGYmGWsxFxYkAVstm
-        MFQDAAA=
-X-CMS-MailID: 20211018082635eucas1p1f65471364499ea8e370024892655703c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367
-References: <CGME20210924133716eucas1p192fed7e3e993c0759d2bb7a8f8af7367@eucas1p1.samsung.com>
-        <20210924133624.112593-1-krzysztof.kozlowski@canonical.com>
+X-CMAE-Envelope: MS4xfC8nmBvV+pVbvQFeJ9vsitCjeMpKHLa1Y5S3CUm9z+vp/wXWtn4ijmvrYw+dt8bM3GDQmL89bCgxMIoLGn6EKD+kc0Z4L7dDMj5cNbFMCwjHGgCMWigd
+ WD1WkjMFZ9UBMUlAEXKfUuxjBq6RxtoSwdkgdHUzyWwgSM22Qk9X8rQsIz8RlgrF2PGVzGMMUlPsqfdoSiSoj+KMbmc2oFPnNu2N/Jvm4XcqyEP8jomvyQHj
+ leASHIWW1LdcK3U2CY7bii5e7nLXfz87oQy+YVievNZmaX4NTlDDSVMxeO+X3GTiTSJFPD0/HjyhuZ0LHOV9UBbtNbgmg30aSiuMc0/poM4aKBkWAZ3lFEyM
+ vTQAu+t/dYXRLILPNNck3ZY/fL1HsbFczmZgJjKuQPFFhkQQuxwiqX0u7mF0wtcV/RPGhfCCfB8stHS7chkV9CP9JTyqG2a8a5lXQH/5WCi5U4p5yQ5TmGcK
+ B0X/Xc9+3fibLRX4HG8zsPHddQfMWTrk/fTavZCpQkAOPA/hhZDmL16mB8ezvCYtmnfIWDnd3lGbFea3AZiwXQddoJxAEJsv5zb47NI6n5zDU8LP/7cOi09E
+ XwZAqdJ/C9Hj2nf/X31rbljD3/6L2E/Y4MMhg5SyZ9BwwgzwCBpSplx8jNSiBlSeTgkUjAmCSxDuUuM/RRNg89MH7HAQegDqin6TvnF+gxHRfdpR88O+nogQ
+ dklQdESNqjcyddjy4o+y72z9WZiybjye28AfpwAeU77dQeGOnsSs94iP3X2ZhHomL7I7twuR1hto52PkUld0d5wSVUwlICCwfIPYQetN0MuSdoNYgtMsa34k
+ 2l5crV6fQ9uGbx3QdmyoajpoZ1VjBTjfzMCFWL1CPRWQN70t3l7ic4P9dacYGHGMsT9YjswXoyje2TnXCZFAi+GSdppJE67Pjq5amS8718Scm2aRQ71ULyro
+ 67OPVtDdSQo+cw42xnZYFmLkKwM=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24.09.2021 15:36, Krzysztof Kozlowski wrote:
-> Describe better which driver applies to which SoC, to make configuring
-> kernel for Samsung SoC easier.
+On 18/10/2021 07:04, dillon.minfei@gmail.com wrote:
+> From: Dillon Min <dillon.minfei@gmail.com>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> This V4L2 subdev m2m driver enables Chrom-Art Accelerator unit
+> of STMicroelectronics STM32 SoC series.
+> 
+> Currently support r2m, m2m, m2m_pfc functions.
+> - r2m, Filling a part or the whole of a destination image with a specific
+>   color.
+> - m2m, Copying a part or the whole of a source image into a part or the
+>   whole of a destination.
+> - m2m_pfc, Copying a part or the whole of a source image into a part or the
+>   whole of a destination image with a pixel format conversion.
+> 
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> ---
+> v5:
+> - remove useless log from dma2d driver.
+> - update config VIDEO_STM32_DMA2D description.
+> 
+>  drivers/media/platform/Kconfig                  |  11 +
+>  drivers/media/platform/Makefile                 |   1 +
+>  drivers/media/platform/stm32/Makefile           |   2 +
+>  drivers/media/platform/stm32/dma2d/dma2d-hw.c   | 143 +++++
+>  drivers/media/platform/stm32/dma2d/dma2d-regs.h | 113 ++++
+>  drivers/media/platform/stm32/dma2d/dma2d.c      | 739 ++++++++++++++++++++++++
+>  drivers/media/platform/stm32/dma2d/dma2d.h      | 135 +++++
+>  7 files changed, 1144 insertions(+)
+>  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-hw.c
+>  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-regs.h
+>  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.c
+>  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.h
+> 
+> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> index d9f90084c2f6..0b3bdf56b44e 100644
+> --- a/drivers/media/platform/Kconfig
+> +++ b/drivers/media/platform/Kconfig
+> @@ -476,6 +476,17 @@ config VIDEO_STI_DELTA_DRIVER
+>  
+>  endif # VIDEO_STI_DELTA
+>  
+> +config VIDEO_STM32_DMA2D
+> +	tristate "STM32 Chrom-Art Accelerator (DMA2D)"
+> +	depends on (VIDEO_DEV && VIDEO_V4L2 && ARCH_STM32) || COMPILE_TEST
+> +	select VIDEOBUF2_DMA_CONTIG
+> +	select V4L2_MEM2MEM_DEV
+> +	help
+> +	  Enables DMA2D hwarware support on stm32.
+> +
+> +	  The STM32 DMA2D is a memory-to-memory engine for pixel conversion
+> +	  and specialized DMA dedicated to image manipulation.
+> +
+>  config VIDEO_RENESAS_FDP1
+>  	tristate "Renesas Fine Display Processor"
+>  	depends on VIDEO_DEV && VIDEO_V4L2
+> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+> index 73ce083c2fc6..46f1c05bc576 100644
+> --- a/drivers/media/platform/Makefile
+> +++ b/drivers/media/platform/Makefile
+> @@ -70,6 +70,7 @@ obj-$(CONFIG_VIDEO_ATMEL_ISI)		+= atmel/
+>  obj-$(CONFIG_VIDEO_ATMEL_XISC)		+= atmel/
+>  
+>  obj-$(CONFIG_VIDEO_STM32_DCMI)		+= stm32/
+> +obj-$(CONFIG_VIDEO_STM32_DMA2D)		+= stm32/
+>  
+>  obj-$(CONFIG_VIDEO_MEDIATEK_VPU)	+= mtk-vpu/
+>  
+> diff --git a/drivers/media/platform/stm32/Makefile b/drivers/media/platform/stm32/Makefile
+> index 48b36db2c2e2..896ef98a73ab 100644
+> --- a/drivers/media/platform/stm32/Makefile
+> +++ b/drivers/media/platform/stm32/Makefile
+> @@ -1,2 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  obj-$(CONFIG_VIDEO_STM32_DCMI) += stm32-dcmi.o
+> +stm32-dma2d-objs := dma2d/dma2d.o dma2d/dma2d-hw.o
+> +obj-$(CONFIG_VIDEO_STM32_DMA2D) += stm32-dma2d.o
+> diff --git a/drivers/media/platform/stm32/dma2d/dma2d-hw.c b/drivers/media/platform/stm32/dma2d/dma2d-hw.c
+> new file mode 100644
+> index 000000000000..8c1c664ab13b
+> --- /dev/null
+> +++ b/drivers/media/platform/stm32/dma2d/dma2d-hw.c
+> @@ -0,0 +1,143 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * ST stm32 Chrom-Art - 2D Graphics Accelerator Driver
+> + *
+> + * Copyright (c) 2021 Dillon Min
+> + * Dillon Min, <dillon.minfei@gmail.com>
+> + *
+> + * based on s5p-g2d
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + * Kamil Debski, <k.debski@samsung.com>
+> + */
+> +
+> +#include <linux/io.h>
+> +
+> +#include "dma2d.h"
+> +#include "dma2d-regs.h"
+> +
+> +static inline u32 reg_read(void __iomem *base, u32 reg)
+> +{
+> +	return readl_relaxed(base + reg);
+> +}
+> +
+> +static inline void reg_write(void __iomem *base, u32 reg, u32 val)
+> +{
+> +	writel_relaxed(val, base + reg);
+> +}
+> +
+> +static inline void reg_set(void __iomem *base, u32 reg, u32 mask)
+> +{
+> +	reg_write(base, reg, reg_read(base, reg) | mask);
+> +}
+> +
+> +static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
+> +{
+> +	reg_write(base, reg, reg_read(base, reg) & ~mask);
+> +}
+> +
+> +static inline void reg_update_bits(void __iomem *base, u32 reg, u32 mask,
+> +				   u32 val)
+> +{
+> +	reg_write(base, reg, (reg_read(base, reg) & ~mask) | val);
+> +}
+> +
+> +void dma2d_start(struct dma2d_dev *d)
+> +{
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_START, CR_START);
+> +}
+> +
+> +u32 dma2d_get_int(struct dma2d_dev *d)
+> +{
+> +	return reg_read(d->regs, DMA2D_ISR_REG);
+> +}
+> +
+> +void dma2d_clear_int(struct dma2d_dev *d)
+> +{
+> +	u32 isr_val = reg_read(d->regs, DMA2D_ISR_REG);
+> +
+> +	reg_write(d->regs, DMA2D_IFCR_REG, isr_val & 0x003f);
+> +}
+> +
+> +void dma2d_config_common(struct dma2d_dev *d, enum dma2d_op_mode op_mode,
+> +			 u16 width, u16 height)
+> +{
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_MODE_MASK,
+> +			op_mode << CR_MODE_SHIFT);
+> +
+> +	reg_write(d->regs, DMA2D_NLR_REG, (width << 16) | height);
+> +}
+> +
+> +void dma2d_config_out(struct dma2d_dev *d, struct dma2d_frame *frm,
+> +		      dma_addr_t o_addr)
+> +{
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_CEIE, CR_CEIE);
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_CTCIE, CR_CTCIE);
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_CAEIE, CR_CAEIE);
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_TCIE, CR_TCIE);
+> +	reg_update_bits(d->regs, DMA2D_CR_REG, CR_TEIE, CR_TEIE);
+> +
+> +	if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> +	    frm->fmt->cmode <= CM_MODE_ARGB4444)
+> +		reg_update_bits(d->regs, DMA2D_OPFCCR_REG, OPFCCR_CM_MASK,
+> +				frm->fmt->cmode);
+> +
+> +	reg_write(d->regs, DMA2D_OMAR_REG, o_addr);
+> +
+> +	reg_write(d->regs, DMA2D_OCOLR_REG,
+> +		  (frm->a_rgb[3] << 24) |
+> +		  (frm->a_rgb[2] << 16) |
+> +		  (frm->a_rgb[1] << 8) |
+> +		  frm->a_rgb[0]);
+> +
+> +	reg_update_bits(d->regs, DMA2D_OOR_REG, OOR_LO_MASK,
+> +			frm->line_offset & 0x3fff);
+> +}
+> +
+> +void dma2d_config_fg(struct dma2d_dev *d, struct dma2d_frame *frm,
+> +		     dma_addr_t f_addr)
+> +{
+> +	reg_write(d->regs, DMA2D_FGMAR_REG, f_addr);
+> +	reg_update_bits(d->regs, DMA2D_FGOR_REG, FGOR_LO_MASK,
+> +			frm->line_offset);
+> +
+> +	if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> +	    frm->fmt->cmode <= CM_MODE_A4)
+> +		reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_CM_MASK,
+> +				frm->fmt->cmode);
+> +
+> +	reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_AM_MASK,
+> +			(frm->a_mode << 16) & 0x03);
+> +
+> +	reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_ALPHA_MASK,
+> +			frm->a_rgb[3] << 24);
+> +
+> +	reg_write(d->regs, DMA2D_FGCOLR_REG,
+> +		  (frm->a_rgb[2] << 16) |
+> +		  (frm->a_rgb[1] << 8) |
+> +		  frm->a_rgb[0]);
+> +}
+> +
+> +void dma2d_config_bg(struct dma2d_dev *d, struct dma2d_frame *frm,
+> +		     dma_addr_t b_addr)
+> +{
+> +	reg_write(d->regs, DMA2D_BGMAR_REG, b_addr);
+> +	reg_update_bits(d->regs, DMA2D_BGOR_REG, BGOR_LO_MASK,
+> +			frm->line_offset);
+> +
+> +	if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> +	    frm->fmt->cmode <= CM_MODE_A4)
+> +		reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_CM_MASK,
+> +				frm->fmt->cmode);
+> +
+> +	reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_AM_MASK,
+> +			(frm->a_mode << 16) & 0x03);
+> +
+> +	reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_ALPHA_MASK,
+> +			frm->a_rgb[3] << 24);
+> +
+> +	reg_write(d->regs, DMA2D_BGCOLR_REG,
+> +		  (frm->a_rgb[2] << 16) |
+> +		  (frm->a_rgb[1] << 8) |
+> +		  frm->a_rgb[0]);
+> +}
+> diff --git a/drivers/media/platform/stm32/dma2d/dma2d-regs.h b/drivers/media/platform/stm32/dma2d/dma2d-regs.h
+> new file mode 100644
+> index 000000000000..2128364406c8
+> --- /dev/null
+> +++ b/drivers/media/platform/stm32/dma2d/dma2d-regs.h
+> @@ -0,0 +1,113 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * ST stm32 Chrom-Art - 2D Graphics Accelerator Driver
+> + *
+> + * Copyright (c) 2021 Dillon Min
+> + * Dillon Min, <dillon.minfei@gmail.com>
+> + *
+> + * based on s5p-g2d
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + * Kamil Debski, <k.debski@samsung.com>
+> + */
+> +
+> +#ifndef __DMA2D_REGS_H__
+> +#define __DMA2D_REGS_H__
+> +
+> +#define DMA2D_CR_REG		0x0000
+> +#define CR_MODE_MASK		GENMASK(17, 16)
+> +#define CR_MODE_SHIFT		16
+> +#define CR_M2M			0x0000
+> +#define CR_M2M_PFC		BIT(16)
+> +#define CR_M2M_BLEND		BIT(17)
+> +#define CR_R2M			(BIT(17) | BIT(16))
+> +#define CR_CEIE			BIT(13)
+> +#define CR_CTCIE		BIT(12)
+> +#define CR_CAEIE		BIT(11)
+> +#define CR_TWIE			BIT(10)
+> +#define CR_TCIE			BIT(9)
+> +#define CR_TEIE			BIT(8)
+> +#define CR_ABORT		BIT(2)
+> +#define CR_SUSP			BIT(1)
+> +#define CR_START		BIT(0)
+> +
+> +#define DMA2D_ISR_REG		0x0004
+> +#define ISR_CEIF		BIT(5)
+> +#define ISR_CTCIF		BIT(4)
+> +#define ISR_CAEIF		BIT(3)
+> +#define ISR_TWIF		BIT(2)
+> +#define ISR_TCIF		BIT(1)
+> +#define ISR_TEIF		BIT(0)
+> +
+> +#define DMA2D_IFCR_REG		0x0008
+> +#define IFCR_CCEIF		BIT(5)
+> +#define IFCR_CCTCIF		BIT(4)
+> +#define IFCR_CAECIF		BIT(3)
+> +#define IFCR_CTWIF		BIT(2)
+> +#define IFCR_CTCIF		BIT(1)
+> +#define IFCR_CTEIF		BIT(0)
+> +
+> +#define DMA2D_FGMAR_REG		0x000c
+> +#define DMA2D_FGOR_REG		0x0010
+> +#define FGOR_LO_MASK		GENMASK(13, 0)
+> +
+> +#define DMA2D_BGMAR_REG		0x0014
+> +#define DMA2D_BGOR_REG		0x0018
+> +#define BGOR_LO_MASK		GENMASK(13, 0)
+> +
+> +#define DMA2D_FGPFCCR_REG	0x001c
+> +#define FGPFCCR_ALPHA_MASK	GENMASK(31, 24)
+> +#define FGPFCCR_AM_MASK		GENMASK(17, 16)
+> +#define FGPFCCR_CS_MASK		GENMASK(15, 8)
+> +#define FGPFCCR_START		BIT(5)
+> +#define FGPFCCR_CCM_RGB888	BIT(4)
+> +#define FGPFCCR_CM_MASK		GENMASK(3, 0)
+> +
+> +#define DMA2D_FGCOLR_REG	0x0020
+> +#define FGCOLR_REG_MASK		GENMASK(23, 16)
+> +#define FGCOLR_GREEN_MASK	GENMASK(15, 8)
+> +#define FGCOLR_BLUE_MASK	GENMASK(7, 0)
+> +
+> +#define DMA2D_BGPFCCR_REG	0x0024
+> +#define BGPFCCR_ALPHA_MASK	GENMASK(31, 24)
+> +#define BGPFCCR_AM_MASK		GENMASK(17, 16)
+> +#define BGPFCCR_CS_MASK		GENMASK(15, 8)
+> +#define BGPFCCR_START		BIT(5)
+> +#define BGPFCCR_CCM_RGB888	BIT(4)
+> +#define BGPFCCR_CM_MASK		GENMASK(3, 0)
+> +
+> +#define DMA2D_BGCOLR_REG	0x0028
+> +#define BGCOLR_REG_MASK		GENMASK(23, 16)
+> +#define BGCOLR_GREEN_MASK	GENMASK(15, 8)
+> +#define BGCOLR_BLUE_MASK	GENMASK(7, 0)
+> +
+> +#define DMA2D_OPFCCR_REG	0x0034
+> +#define OPFCCR_CM_MASK		GENMASK(2, 0)
+> +
+> +#define DMA2D_OCOLR_REG		0x0038
+> +#define OCOLR_ALPHA_MASK	GENMASK(31, 24)
+> +#define OCOLR_RED_MASK		GENMASK(23, 16)
+> +#define OCOLR_GREEN_MASK	GENMASK(15, 8)
+> +#define OCOLR_BLUE_MASK		GENMASK(7, 0)
+> +
+> +#define DMA2D_OMAR_REG		0x003c
+> +
+> +#define DMA2D_OOR_REG		0x0040
+> +#define OOR_LO_MASK		GENMASK(13, 0)
+> +
+> +#define DMA2D_NLR_REG		0x0044
+> +#define NLR_PL_MASK		GENMASK(29, 16)
+> +#define NLR_NL_MASK		GENMASK(15, 0)
+> +
+> +/* Hardware limits */
+> +#define MAX_WIDTH		0x3fff
+> +#define MAX_HEIGHT		0xffff
 
-Applied, thanks.
+I think these max width/height values are unrealistic. Even though the hardware
+theoretically supports this, it is causing the memory alloc failures.
+
+I see that the camera driver has 2592x2592 as the max width/height, so perhaps
+that should be used? Or alternatively the max resolution of the video output driver,
+whatever that is?
+
+Regards,
+
+	Hans
+
+> +
+> +#define DEFAULT_WIDTH		240
+> +#define DEFAULT_HEIGHT		320
+> +#define DEFAULT_SIZE		307200
+> +
+> +#define CM_MODE_ARGB8888	0x00
+> +#define CM_MODE_ARGB4444	0x04
+> +#define CM_MODE_A4		0x0a
+> +#endif /* __DMA2D_REGS_H__ */
