@@ -2,242 +2,452 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17BDC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E009C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B895C60FD8
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D2F861283
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 10:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229494AbhJRKVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 06:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46436 "EHLO
+        id S231477AbhJRK2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 06:28:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbhJRKVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 06:21:49 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACFD0C061714
-        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 03:19:38 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id o20so40448457wro.3
-        for <linux-clk@vger.kernel.org>; Mon, 18 Oct 2021 03:19:38 -0700 (PDT)
+        with ESMTP id S229644AbhJRK2h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 06:28:37 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77227C061714;
+        Mon, 18 Oct 2021 03:26:26 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id s17so15533631ioa.13;
+        Mon, 18 Oct 2021 03:26:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=Nt/DsbKNf/U6oEyp70zMTCvXerDbHSsEBUDTCVY5SZk=;
-        b=5prZanh3ZiXhFVmZwmd5KUugHHD62JYZdj6kbC7LvJgiZdHYH0s0vO011ti4DMcnZr
-         qlQoIAao/4qCYznRVSDHoZM1iigy+9qF1q1pHveIgmx4x9E8sURQmiSwMXdNhZ673ljE
-         lELpcTfmf2l7n07+dqsYEyopKg+GWb9oXfd3rdgRzmwhAspBbEUI+6eiCUtEx13p3Qu4
-         7qKY17EBlz1W9WgxHQhHYTOPzTOmkEVcwlLSoEbDg8lRec4pojWfGdBm6h+KohIOQFt/
-         a8dobw/8/6VTGUerqw4ruNgiT07VNLCwUJeCNAVqjT+IDLpPaN4kFqqimnd2lG+vGAJe
-         EcGA==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/vokOc2LtwVaw1Hwx0U1gcZJpnph9o7jf7cmeoVDtt8=;
+        b=IzdYYmN3lMetA7RKY+pePpZYYugCjeqNfO97XftGlDUVJPPw4qsX5SJf9/A2JMK7QR
+         rkxv590YCLRcx0iJGWq4TSSDBrVlcPwFCri7qu46ly4zkw727kdx5zHtRlhiOUL54zvs
+         OhX5OQd3t8kDaJlVG/JKHAIKhTh6S1+MfsKougQyHMA5OtJP6dN+HHJD/v5jRcov4lW0
+         qiUrYfiRBHlCKSB68WRnUxibOrbERgJB4yDKuUpvXTvwsFPUUqBWfl2B0nD1ad6Bu59G
+         +EACj7jNAetuMMDlr/Wx8+j5I1Yf+mqNJ29yveSLshcK7B0aMDU52jOlPJW20WErmDEI
+         O7kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=Nt/DsbKNf/U6oEyp70zMTCvXerDbHSsEBUDTCVY5SZk=;
-        b=InQRWAJLTzpebgwSa5yHkJu+p4cb1STTUatVcTfYm9cDnuhSSi/m3N8axHdQ0FfB/R
-         11atQiXPsFriiV7xg2RiuUyRzF1loMULh2ZqB2dkEpUFTfiwCG3NPSrYQf0j9S+2Jb3N
-         ZKh9FRXKIUKRQ7rkzHjJmRosKsItcj4TBAdrYHC7Vjh05sz8exaLY88sP6C8UPrJYKrc
-         YFFQEaJfs4o9CHOq2i/TiZYDYdThYrDY7ODQh8HBOi7/Qp6UI7cJh9j7N8sSqRSQ2nVE
-         rKXeKiY6K1BMkytI5cwduALjOqLltH0b9dvPWkKyoZJCUHskslc/Vow3Gv2uUjagLI3B
-         o2HQ==
-X-Gm-Message-State: AOAM531aGcEeFkkEBMO3k24vFUJTmDW5jztwu223cPjYmTwhmFOv96W3
-        An9L6ykKo50B/oY4a3PZAsjle6ieVypXxQ==
-X-Google-Smtp-Source: ABdhPJzDG8zynX/vI4wK2ttElJLD5TxdXfRAChpQdZOTiLhuvQVv+a2L+hRjAsFbPLNZJPD3ux8LKA==
-X-Received: by 2002:adf:a54f:: with SMTP id j15mr34068977wrb.218.1634552377158;
-        Mon, 18 Oct 2021 03:19:37 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r5sm3208324wmh.28.2021.10.18.03.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 03:19:36 -0700 (PDT)
-References: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.6.6; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0
- on GXBB
-Date:   Mon, 18 Oct 2021 11:54:45 +0200
-In-reply-to: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
-Message-ID: <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/vokOc2LtwVaw1Hwx0U1gcZJpnph9o7jf7cmeoVDtt8=;
+        b=b0MPBpHvfzupZyJiIMzH76kA7eimtSLWm9pP9uBc0lQerLYTdO9NE54SNg+poKgTMg
+         th11fmoFRAWlAqTzKJa32x1lbFWcY0sJhS0HTshW8RlkNY4LYR5bqJJu3FGSGzT9+E6z
+         keJR0TwOeh7+MTWc8nwze8i1ry0NUgpaCLff8hQN1BeyYwy/uPTkK1CoBlF/I0B9UV19
+         sddfxr3jhqKbTLmlV4nkq8a0o1ZO1q36oJCdRAwf43fx4l57GSP3oaBiAuQimEzjbWJP
+         PI6z3p2hGPjHBWqU87ApMeWi7YcVAkcQ4prJwF3B8kjSgRPwJ/p2CfaHEH5MMFFmbl8i
+         qKiA==
+X-Gm-Message-State: AOAM530+y5EpMJ12YdalCcbtmKfBdomN3qBsz28E9M0zYlw+2GB2fh0/
+        70NWc4bjlM8XgjanUcioc2uErpeAXk0omyCHiPc=
+X-Google-Smtp-Source: ABdhPJxjdBpJZIcYx29YfU5yzqqk9sePMQrvgBYuXx3SHVD19Iaas3KU5kb/IxVpOZBiHiGLVMwy7m7IfQpwk9Tvn1A=
+X-Received: by 2002:a05:6602:29c6:: with SMTP id z6mr13489560ioq.215.1634552785869;
+ Mon, 18 Oct 2021 03:26:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
+ <1634533488-25334-11-git-send-email-dillon.minfei@gmail.com> <5393e39f-cee8-cbe6-f8fd-203a48b35ed8@xs4all.nl>
+In-Reply-To: <5393e39f-cee8-cbe6-f8fd-203a48b35ed8@xs4all.nl>
+From:   Dillon Min <dillon.minfei@gmail.com>
+Date:   Mon, 18 Oct 2021 18:25:49 +0800
+Message-ID: <CAL9mu0+Ea7eQDetJs8He9RNUDOO3UejQVepVLr_LTYqOYeUrXA@mail.gmail.com>
+Subject: Re: [PATCH v5 10/10] media: stm32-dma2d: STM32 DMA2D driver
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        mchehab+huawei@kernel.org, ezequiel@collabora.com,
+        gnurou@gmail.com, Pi-Hsun Shih <pihsun@chromium.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
+        gabriel.fernandez@foss.st.com,
+        Patrice CHOTARD <patrice.chotard@foss.st.com>,
+        hugues.fruchet@foss.st.com,
+        linux-media <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Hans
 
-On Sat 16 Oct 2021 at 16:59, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+On Mon, 18 Oct 2021 at 17:30, Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
+>
+> On 18/10/2021 07:04, dillon.minfei@gmail.com wrote:
+> > From: Dillon Min <dillon.minfei@gmail.com>
+> >
+> > This V4L2 subdev m2m driver enables Chrom-Art Accelerator unit
+> > of STMicroelectronics STM32 SoC series.
+> >
+> > Currently support r2m, m2m, m2m_pfc functions.
+> > - r2m, Filling a part or the whole of a destination image with a specific
+> >   color.
+> > - m2m, Copying a part or the whole of a source image into a part or the
+> >   whole of a destination.
+> > - m2m_pfc, Copying a part or the whole of a source image into a part or the
+> >   whole of a destination image with a pixel format conversion.
+> >
+> > Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> > ---
+> > v5:
+> > - remove useless log from dma2d driver.
+> > - update config VIDEO_STM32_DMA2D description.
+> >
+> >  drivers/media/platform/Kconfig                  |  11 +
+> >  drivers/media/platform/Makefile                 |   1 +
+> >  drivers/media/platform/stm32/Makefile           |   2 +
+> >  drivers/media/platform/stm32/dma2d/dma2d-hw.c   | 143 +++++
+> >  drivers/media/platform/stm32/dma2d/dma2d-regs.h | 113 ++++
+> >  drivers/media/platform/stm32/dma2d/dma2d.c      | 739 ++++++++++++++++++++++++
+> >  drivers/media/platform/stm32/dma2d/dma2d.h      | 135 +++++
+> >  7 files changed, 1144 insertions(+)
+> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-hw.c
+> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-regs.h
+> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.c
+> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.h
+> >
+> > diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
+> > index d9f90084c2f6..0b3bdf56b44e 100644
+> > --- a/drivers/media/platform/Kconfig
+> > +++ b/drivers/media/platform/Kconfig
+> > @@ -476,6 +476,17 @@ config VIDEO_STI_DELTA_DRIVER
+> >
+> >  endif # VIDEO_STI_DELTA
+> >
+> > +config VIDEO_STM32_DMA2D
+> > +     tristate "STM32 Chrom-Art Accelerator (DMA2D)"
+> > +     depends on (VIDEO_DEV && VIDEO_V4L2 && ARCH_STM32) || COMPILE_TEST
+> > +     select VIDEOBUF2_DMA_CONTIG
+> > +     select V4L2_MEM2MEM_DEV
+> > +     help
+> > +       Enables DMA2D hwarware support on stm32.
+> > +
+> > +       The STM32 DMA2D is a memory-to-memory engine for pixel conversion
+> > +       and specialized DMA dedicated to image manipulation.
+> > +
+> >  config VIDEO_RENESAS_FDP1
+> >       tristate "Renesas Fine Display Processor"
+> >       depends on VIDEO_DEV && VIDEO_V4L2
+> > diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
+> > index 73ce083c2fc6..46f1c05bc576 100644
+> > --- a/drivers/media/platform/Makefile
+> > +++ b/drivers/media/platform/Makefile
+> > @@ -70,6 +70,7 @@ obj-$(CONFIG_VIDEO_ATMEL_ISI)               += atmel/
+> >  obj-$(CONFIG_VIDEO_ATMEL_XISC)               += atmel/
+> >
+> >  obj-$(CONFIG_VIDEO_STM32_DCMI)               += stm32/
+> > +obj-$(CONFIG_VIDEO_STM32_DMA2D)              += stm32/
+> >
+> >  obj-$(CONFIG_VIDEO_MEDIATEK_VPU)     += mtk-vpu/
+> >
+> > diff --git a/drivers/media/platform/stm32/Makefile b/drivers/media/platform/stm32/Makefile
+> > index 48b36db2c2e2..896ef98a73ab 100644
+> > --- a/drivers/media/platform/stm32/Makefile
+> > +++ b/drivers/media/platform/stm32/Makefile
+> > @@ -1,2 +1,4 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  obj-$(CONFIG_VIDEO_STM32_DCMI) += stm32-dcmi.o
+> > +stm32-dma2d-objs := dma2d/dma2d.o dma2d/dma2d-hw.o
+> > +obj-$(CONFIG_VIDEO_STM32_DMA2D) += stm32-dma2d.o
+> > diff --git a/drivers/media/platform/stm32/dma2d/dma2d-hw.c b/drivers/media/platform/stm32/dma2d/dma2d-hw.c
+> > new file mode 100644
+> > index 000000000000..8c1c664ab13b
+> > --- /dev/null
+> > +++ b/drivers/media/platform/stm32/dma2d/dma2d-hw.c
+> > @@ -0,0 +1,143 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * ST stm32 Chrom-Art - 2D Graphics Accelerator Driver
+> > + *
+> > + * Copyright (c) 2021 Dillon Min
+> > + * Dillon Min, <dillon.minfei@gmail.com>
+> > + *
+> > + * based on s5p-g2d
+> > + *
+> > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> > + * Kamil Debski, <k.debski@samsung.com>
+> > + */
+> > +
+> > +#include <linux/io.h>
+> > +
+> > +#include "dma2d.h"
+> > +#include "dma2d-regs.h"
+> > +
+> > +static inline u32 reg_read(void __iomem *base, u32 reg)
+> > +{
+> > +     return readl_relaxed(base + reg);
+> > +}
+> > +
+> > +static inline void reg_write(void __iomem *base, u32 reg, u32 val)
+> > +{
+> > +     writel_relaxed(val, base + reg);
+> > +}
+> > +
+> > +static inline void reg_set(void __iomem *base, u32 reg, u32 mask)
+> > +{
+> > +     reg_write(base, reg, reg_read(base, reg) | mask);
+> > +}
+> > +
+> > +static inline void reg_clear(void __iomem *base, u32 reg, u32 mask)
+> > +{
+> > +     reg_write(base, reg, reg_read(base, reg) & ~mask);
+> > +}
+> > +
+> > +static inline void reg_update_bits(void __iomem *base, u32 reg, u32 mask,
+> > +                                u32 val)
+> > +{
+> > +     reg_write(base, reg, (reg_read(base, reg) & ~mask) | val);
+> > +}
+> > +
+> > +void dma2d_start(struct dma2d_dev *d)
+> > +{
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_START, CR_START);
+> > +}
+> > +
+> > +u32 dma2d_get_int(struct dma2d_dev *d)
+> > +{
+> > +     return reg_read(d->regs, DMA2D_ISR_REG);
+> > +}
+> > +
+> > +void dma2d_clear_int(struct dma2d_dev *d)
+> > +{
+> > +     u32 isr_val = reg_read(d->regs, DMA2D_ISR_REG);
+> > +
+> > +     reg_write(d->regs, DMA2D_IFCR_REG, isr_val & 0x003f);
+> > +}
+> > +
+> > +void dma2d_config_common(struct dma2d_dev *d, enum dma2d_op_mode op_mode,
+> > +                      u16 width, u16 height)
+> > +{
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_MODE_MASK,
+> > +                     op_mode << CR_MODE_SHIFT);
+> > +
+> > +     reg_write(d->regs, DMA2D_NLR_REG, (width << 16) | height);
+> > +}
+> > +
+> > +void dma2d_config_out(struct dma2d_dev *d, struct dma2d_frame *frm,
+> > +                   dma_addr_t o_addr)
+> > +{
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_CEIE, CR_CEIE);
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_CTCIE, CR_CTCIE);
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_CAEIE, CR_CAEIE);
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_TCIE, CR_TCIE);
+> > +     reg_update_bits(d->regs, DMA2D_CR_REG, CR_TEIE, CR_TEIE);
+> > +
+> > +     if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> > +         frm->fmt->cmode <= CM_MODE_ARGB4444)
+> > +             reg_update_bits(d->regs, DMA2D_OPFCCR_REG, OPFCCR_CM_MASK,
+> > +                             frm->fmt->cmode);
+> > +
+> > +     reg_write(d->regs, DMA2D_OMAR_REG, o_addr);
+> > +
+> > +     reg_write(d->regs, DMA2D_OCOLR_REG,
+> > +               (frm->a_rgb[3] << 24) |
+> > +               (frm->a_rgb[2] << 16) |
+> > +               (frm->a_rgb[1] << 8) |
+> > +               frm->a_rgb[0]);
+> > +
+> > +     reg_update_bits(d->regs, DMA2D_OOR_REG, OOR_LO_MASK,
+> > +                     frm->line_offset & 0x3fff);
+> > +}
+> > +
+> > +void dma2d_config_fg(struct dma2d_dev *d, struct dma2d_frame *frm,
+> > +                  dma_addr_t f_addr)
+> > +{
+> > +     reg_write(d->regs, DMA2D_FGMAR_REG, f_addr);
+> > +     reg_update_bits(d->regs, DMA2D_FGOR_REG, FGOR_LO_MASK,
+> > +                     frm->line_offset);
+> > +
+> > +     if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> > +         frm->fmt->cmode <= CM_MODE_A4)
+> > +             reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_CM_MASK,
+> > +                             frm->fmt->cmode);
+> > +
+> > +     reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_AM_MASK,
+> > +                     (frm->a_mode << 16) & 0x03);
+> > +
+> > +     reg_update_bits(d->regs, DMA2D_FGPFCCR_REG, FGPFCCR_ALPHA_MASK,
+> > +                     frm->a_rgb[3] << 24);
+> > +
+> > +     reg_write(d->regs, DMA2D_FGCOLR_REG,
+> > +               (frm->a_rgb[2] << 16) |
+> > +               (frm->a_rgb[1] << 8) |
+> > +               frm->a_rgb[0]);
+> > +}
+> > +
+> > +void dma2d_config_bg(struct dma2d_dev *d, struct dma2d_frame *frm,
+> > +                  dma_addr_t b_addr)
+> > +{
+> > +     reg_write(d->regs, DMA2D_BGMAR_REG, b_addr);
+> > +     reg_update_bits(d->regs, DMA2D_BGOR_REG, BGOR_LO_MASK,
+> > +                     frm->line_offset);
+> > +
+> > +     if (frm->fmt->cmode >= CM_MODE_ARGB8888 &&
+> > +         frm->fmt->cmode <= CM_MODE_A4)
+> > +             reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_CM_MASK,
+> > +                             frm->fmt->cmode);
+> > +
+> > +     reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_AM_MASK,
+> > +                     (frm->a_mode << 16) & 0x03);
+> > +
+> > +     reg_update_bits(d->regs, DMA2D_BGPFCCR_REG, BGPFCCR_ALPHA_MASK,
+> > +                     frm->a_rgb[3] << 24);
+> > +
+> > +     reg_write(d->regs, DMA2D_BGCOLR_REG,
+> > +               (frm->a_rgb[2] << 16) |
+> > +               (frm->a_rgb[1] << 8) |
+> > +               frm->a_rgb[0]);
+> > +}
+> > diff --git a/drivers/media/platform/stm32/dma2d/dma2d-regs.h b/drivers/media/platform/stm32/dma2d/dma2d-regs.h
+> > new file mode 100644
+> > index 000000000000..2128364406c8
+> > --- /dev/null
+> > +++ b/drivers/media/platform/stm32/dma2d/dma2d-regs.h
+> > @@ -0,0 +1,113 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > +/*
+> > + * ST stm32 Chrom-Art - 2D Graphics Accelerator Driver
+> > + *
+> > + * Copyright (c) 2021 Dillon Min
+> > + * Dillon Min, <dillon.minfei@gmail.com>
+> > + *
+> > + * based on s5p-g2d
+> > + *
+> > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> > + * Kamil Debski, <k.debski@samsung.com>
+> > + */
+> > +
+> > +#ifndef __DMA2D_REGS_H__
+> > +#define __DMA2D_REGS_H__
+> > +
+> > +#define DMA2D_CR_REG         0x0000
+> > +#define CR_MODE_MASK         GENMASK(17, 16)
+> > +#define CR_MODE_SHIFT                16
+> > +#define CR_M2M                       0x0000
+> > +#define CR_M2M_PFC           BIT(16)
+> > +#define CR_M2M_BLEND         BIT(17)
+> > +#define CR_R2M                       (BIT(17) | BIT(16))
+> > +#define CR_CEIE                      BIT(13)
+> > +#define CR_CTCIE             BIT(12)
+> > +#define CR_CAEIE             BIT(11)
+> > +#define CR_TWIE                      BIT(10)
+> > +#define CR_TCIE                      BIT(9)
+> > +#define CR_TEIE                      BIT(8)
+> > +#define CR_ABORT             BIT(2)
+> > +#define CR_SUSP                      BIT(1)
+> > +#define CR_START             BIT(0)
+> > +
+> > +#define DMA2D_ISR_REG                0x0004
+> > +#define ISR_CEIF             BIT(5)
+> > +#define ISR_CTCIF            BIT(4)
+> > +#define ISR_CAEIF            BIT(3)
+> > +#define ISR_TWIF             BIT(2)
+> > +#define ISR_TCIF             BIT(1)
+> > +#define ISR_TEIF             BIT(0)
+> > +
+> > +#define DMA2D_IFCR_REG               0x0008
+> > +#define IFCR_CCEIF           BIT(5)
+> > +#define IFCR_CCTCIF          BIT(4)
+> > +#define IFCR_CAECIF          BIT(3)
+> > +#define IFCR_CTWIF           BIT(2)
+> > +#define IFCR_CTCIF           BIT(1)
+> > +#define IFCR_CTEIF           BIT(0)
+> > +
+> > +#define DMA2D_FGMAR_REG              0x000c
+> > +#define DMA2D_FGOR_REG               0x0010
+> > +#define FGOR_LO_MASK         GENMASK(13, 0)
+> > +
+> > +#define DMA2D_BGMAR_REG              0x0014
+> > +#define DMA2D_BGOR_REG               0x0018
+> > +#define BGOR_LO_MASK         GENMASK(13, 0)
+> > +
+> > +#define DMA2D_FGPFCCR_REG    0x001c
+> > +#define FGPFCCR_ALPHA_MASK   GENMASK(31, 24)
+> > +#define FGPFCCR_AM_MASK              GENMASK(17, 16)
+> > +#define FGPFCCR_CS_MASK              GENMASK(15, 8)
+> > +#define FGPFCCR_START                BIT(5)
+> > +#define FGPFCCR_CCM_RGB888   BIT(4)
+> > +#define FGPFCCR_CM_MASK              GENMASK(3, 0)
+> > +
+> > +#define DMA2D_FGCOLR_REG     0x0020
+> > +#define FGCOLR_REG_MASK              GENMASK(23, 16)
+> > +#define FGCOLR_GREEN_MASK    GENMASK(15, 8)
+> > +#define FGCOLR_BLUE_MASK     GENMASK(7, 0)
+> > +
+> > +#define DMA2D_BGPFCCR_REG    0x0024
+> > +#define BGPFCCR_ALPHA_MASK   GENMASK(31, 24)
+> > +#define BGPFCCR_AM_MASK              GENMASK(17, 16)
+> > +#define BGPFCCR_CS_MASK              GENMASK(15, 8)
+> > +#define BGPFCCR_START                BIT(5)
+> > +#define BGPFCCR_CCM_RGB888   BIT(4)
+> > +#define BGPFCCR_CM_MASK              GENMASK(3, 0)
+> > +
+> > +#define DMA2D_BGCOLR_REG     0x0028
+> > +#define BGCOLR_REG_MASK              GENMASK(23, 16)
+> > +#define BGCOLR_GREEN_MASK    GENMASK(15, 8)
+> > +#define BGCOLR_BLUE_MASK     GENMASK(7, 0)
+> > +
+> > +#define DMA2D_OPFCCR_REG     0x0034
+> > +#define OPFCCR_CM_MASK               GENMASK(2, 0)
+> > +
+> > +#define DMA2D_OCOLR_REG              0x0038
+> > +#define OCOLR_ALPHA_MASK     GENMASK(31, 24)
+> > +#define OCOLR_RED_MASK               GENMASK(23, 16)
+> > +#define OCOLR_GREEN_MASK     GENMASK(15, 8)
+> > +#define OCOLR_BLUE_MASK              GENMASK(7, 0)
+> > +
+> > +#define DMA2D_OMAR_REG               0x003c
+> > +
+> > +#define DMA2D_OOR_REG                0x0040
+> > +#define OOR_LO_MASK          GENMASK(13, 0)
+> > +
+> > +#define DMA2D_NLR_REG                0x0044
+> > +#define NLR_PL_MASK          GENMASK(29, 16)
+> > +#define NLR_NL_MASK          GENMASK(15, 0)
+> > +
+> > +/* Hardware limits */
+> > +#define MAX_WIDTH            0x3fff
+> > +#define MAX_HEIGHT           0xffff
+>
+> I think these max width/height values are unrealistic. Even though the hardware
+> theoretically supports this, it is causing the memory alloc failures.
 
-> Christian reports that 48kHz audio does not work on his WeTek Play 2
-> (which uses a GXBB SoC), while 44.1kHz audio works fine on the same
-> board. He also reports that 48kHz audio works on GXL and GXM SoCs,
-> which are using an (almost) identical AIU (audio controller).
-
-The above is a bit "personal" - it is not great fit for the commit
-description. Please rephrase or put it in comment section bellow
+Oh, I suppose the memory alloc failures test case was fixed designed
+by v4l2-compliance , actually it depends on the driver's ability.
 
 >
-> Experimenting has shown that MPLL0 is causing this problem. In the .dts
-> we have by default:
-> 	assigned-clocks = <&clkc CLKID_MPLL0>,
-> 			  <&clkc CLKID_MPLL1>,
-> 			  <&clkc CLKID_MPLL2>;
-> 	assigned-clock-rates = <294912000>,
-> 			       <270950400>,
-> 			       <393216000>;
-> The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
-> rate is divisible by 44.1kHz without remainder. Swapping these two clock
-> rates "fixes" 48kHz audio but breaks 44.1kHz audio.
->
-> Everything looks normal when looking at the info provided by the common
-> clock framework while playing 48kHz audio (via I2S with mclk-fs = 256):
->         mpll_prediv                 1        1        0  2000000000
->            mpll0_div                1        1        0   294909641
->               mpll0                 1        1        0   294909641
->                  cts_amclk_sel       1        1        0   294909641
->                     cts_amclk_div       1        1        0    12287902
->                        cts_amclk       1        1        0    12287902
->
-> meson-clk-msr however shows that the actual MPLL0 clock is off by more
-> than 38MHz:
->         mp0_out               333322917    +/-10416Hz
->
-> The 3.14 vendor kernel uses the following code to enable SSEN only for
-> MPLL0 (where con_reg2 is HHI_MPLL_CNTL and SSEN_shift is 25):
-> 	if (strncmp(hw->clk->name, "mpll_clk_out0", 13) == 0) {
-> 		val = readl(mpll->con_reg2);
-> 		val |= 1 <<  mpll->SSEN_shift;
-> 		writel(val, mpll->con_reg2);
-> 	}
->
-> Add the SSEN (spread spectrum enable) bit and add the
-> CLK_MESON_MPLL_SPREAD_SPECTRUM flag to enable this bit for MPLL0. Do
-> this for GXBB *only* since GXL doesn't seem to care if this bit is set
-> or not, meaning that meson-clk-msr always sees (approximately) the same
-> frequency as common clock framework.
+> I see that the camera driver has 2592x2592 as the max width/height, so perhaps
+> that should be used? Or alternatively the max resolution of the video output driver,
+> whatever that is?
 
- 1 - it is odd that we need to poke a bit in the register related to the
- fixed PLL but ok ...
- 2 - 3.14 does yes, 4.9 does not soooo ... no real proof there
- 3 - That is the most important to me: the effect you described clearly is
- not spread spectrum.
+I will try 2592x2592, and 2048x2048[display driver]. It fits the
+camera's output or display input is a good idea.
 
-Spread spectrum varies the frequencies quickly, IOW it makes the
-frequencies unstable. Some stuff do not need a particularly stable rate
-and it can help with EM compatibility. This is not desirable for audio.
+[display driver] drivers/gpu/drm/stm/drv.c
 
-So 2 things:
- - If this bit really enables spread spectrum on MPLL0 (or worse, the
- Fixed PLL) - checking clk measure is not enough. It is just a mean of
- the rate seen by the SoC itself. You would not see the effect of the
- spread spectrum here ... you need to capture the clock output with a
- scope for that.
-
- - Or the bit is incorrectly documented (or DDS0_SSEN does not mean
- spread spectrum). If it is not a spread spectrum function, then this
- patch seems to indicate it is and it is misleading.
-
-Either way, I'm not OK with it.
-
-To me, the rate drop that happens when you flip this bit looks more like
-the effect SDM_EN should have.
-
-Could you check the internal values (n2 and sdm) compare this to the
-output rate you actually get ? see if this leads to anything ? does
-SDM_EN really has an effect on this MPLL ? it is a combination of both ?
+Thanks & Regards
+Dillon
 
 >
-> Fixes: 8925dbd03bb29b ("clk: meson: gxbb: no spread spectrum on mpll")
-> Reported-by: Christian Hewitt <christianshewitt@gmail.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/gxbb.c | 50 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 47 insertions(+), 3 deletions(-)
+> Regards,
 >
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index d6eed760327d..673bc915c7d9 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -713,6 +713,41 @@ static struct clk_regmap gxbb_mpll_prediv = {
->  };
->  
->  static struct clk_regmap gxbb_mpll0_div = {
-> +	.data = &(struct meson_clk_mpll_data){
-> +		.sdm = {
-> +			.reg_off = HHI_MPLL_CNTL7,
-> +			.shift   = 0,
-> +			.width   = 14,
-> +		},
-> +		.sdm_en = {
-> +			.reg_off = HHI_MPLL_CNTL7,
-> +			.shift   = 15,
-> +			.width	 = 1,
-> +		},
-> +		.n2 = {
-> +			.reg_off = HHI_MPLL_CNTL7,
-> +			.shift   = 16,
-> +			.width   = 9,
-> +		},
-> +		.ssen = {
-> +			.reg_off = HHI_MPLL_CNTL,
-> +			.shift   = 25,
-> +			.width   = 1,
-> +		},
-> +		.flags = CLK_MESON_MPLL_SPREAD_SPECTRUM,
-> +		.lock = &meson_clk_lock,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "mpll0_div",
-> +		.ops = &meson_clk_mpll_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&gxbb_mpll_prediv.hw
-> +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxl_mpll0_div = {
->  	.data = &(struct meson_clk_mpll_data){
->  		.sdm = {
->  			.reg_off = HHI_MPLL_CNTL7,
-> @@ -749,7 +784,16 @@ static struct clk_regmap gxbb_mpll0 = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "mpll0",
->  		.ops = &clk_regmap_gate_ops,
-> -		.parent_hws = (const struct clk_hw *[]) { &gxbb_mpll0_div.hw },
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			/*
-> +			 * Note:
-> +			 * GXL and GXBB have different SSEN requirements. We
-> +			 * fallback to the global naming string mechanism so
-> +			 * mpll0_div picks up the appropriate one.
-> +			 */
-> +			.name = "mpll0_div",
-> +			.index = -1,
-> +		},
->  		.num_parents = 1,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -3044,7 +3088,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
->  		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
->  		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
->  		[CLKID_VAPB]		    = &gxbb_vapb.hw,
-> -		[CLKID_MPLL0_DIV]	    = &gxbb_mpll0_div.hw,
-> +		[CLKID_MPLL0_DIV]	    = &gxl_mpll0_div.hw,
->  		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
->  		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
->  		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
-> @@ -3439,7 +3483,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
->  	&gxbb_mpll0,
->  	&gxbb_mpll1,
->  	&gxbb_mpll2,
-> -	&gxbb_mpll0_div,
-> +	&gxl_mpll0_div,
->  	&gxbb_mpll1_div,
->  	&gxbb_mpll2_div,
->  	&gxbb_cts_amclk_div,
-
+>         Hans
+>
+> > +
+> > +#define DEFAULT_WIDTH                240
+> > +#define DEFAULT_HEIGHT               320
+> > +#define DEFAULT_SIZE         307200
+> > +
+> > +#define CM_MODE_ARGB8888     0x00
+> > +#define CM_MODE_ARGB4444     0x04
+> > +#define CM_MODE_A4           0x0a
+> > +#endif /* __DMA2D_REGS_H__ */
