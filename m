@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97817C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603D1C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80A9D61283
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477C6610E8
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 05:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbhJRFHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230283AbhJRFHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 18 Oct 2021 01:07:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60370 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbhJRFHt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 01:07:49 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9291AC061774;
-        Sun, 17 Oct 2021 22:05:35 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id oa4so11386008pjb.2;
-        Sun, 17 Oct 2021 22:05:35 -0700 (PDT)
+        with ESMTP id S230165AbhJRFHg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 01:07:36 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E19C061745;
+        Sun, 17 Oct 2021 22:05:25 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id kk10so11397651pjb.1;
+        Sun, 17 Oct 2021 22:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XJwjsX3RToov9Z4nOYrIEZtpjBwYPXRGpAMPohzdNNE=;
-        b=QDO75htsjXYqb2DAxHbfdQNR5AVNA4CaaoRmQbelPnXbVU41R0aByOajJcUb4tUz3T
-         iOe9rI7fsBKcL4QQF7469J4Oi3+M0C9TE5Dl0vFZ5/ljJxqw03jzcsO6bLL+zSImS9vu
-         iPZ/UXopwkA2K7ePh5Aev155pjIOupnaDl/tO3FXCymLREz1D+obyoi04zsdV4uf/MlN
-         DiM2w90xhF4YxClEXD9+cztWLtthcuc2uiLjfZteGgrsYo6Zo3nNBhIbs4piexet8V0S
-         ro9b3cxtbJsYXP7MQ+WuJU4AGZdJsEhZFYbkp0SYqWFt57Ek5jBmVMJUnly+4mLqzHpQ
-         xPrQ==
+        bh=29PDo+p3EfHpq27CPeMSdLjX2BQJx7Ug0wrORCRfK58=;
+        b=WJYWfuPh+OajY6dsQk2+VLx1e7YWW1RyMbR/5byyZ+B/b5kzYKUECdrcefwao9KBAx
+         KTU5w4TA691xtWhZCeKRbQyEn+XrHUqnUmzLnoctTfZOlO5a8A92PXlvR7vq+fw14a9y
+         gxHv/j7lePr/OmX2X1OjAyCu2XeYpu8OUEMC3Lv9iou+eAm9Ih1p4a1qtc+7dZTomVQB
+         FJdgVUQp8McDmnKY69rW7OKEkq3rT4vyIppfPe9M51VKw8KI9qjC3AER6k821Xsbhwjg
+         uWyrn8UPwqDn4Rh5xQQVC3LMz+01O40VUN6sYPEmVUP/A850w4+AF0PWTz39Erz9PeLe
+         k0tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XJwjsX3RToov9Z4nOYrIEZtpjBwYPXRGpAMPohzdNNE=;
-        b=m77gK/G+0tYkWGyoVKwRe7fgN+INg3AsFzf3om82krTkHyOUC8PUGMN5ViTT3+en50
-         u+6QnhrkRttOuvzJ6QItDdQo2BxDw6CYHsTUaEGgdyuhfWrTIvr75izc2UoGbUu+n5NB
-         lJoJn2tG3LttVOsOen1qxJjI2/OJEhTSZYr8FIiw1mmBbGbjF00doqtdhTAht8b8rjoa
-         j/IjBDb05iw1W+qzGgDAZettGhXwSXGYQebQmo4o11NAVsG/1veS2QVbzac80aNUknJO
-         Gzm2mZH/iioIEf8OlN3l4eo3/bqSdSy7edBCKWwNdCTSB979NBtS/QsetMf/TjrYtDpl
-         4uaA==
-X-Gm-Message-State: AOAM5304YGpt/J90ctQBskQFHe7rO94pRxzVAdlGXiwGCbjPLjho0xmv
-        jrcBUQvvzKWsmhZ8xVQvG8o=
-X-Google-Smtp-Source: ABdhPJxG7B2LQToCmjWowQRf1ZtWcWDVKj1aUKxTsPkOKJ9r7NKhFR0NPcAowEQ8nY6V3wxdOw2LvA==
-X-Received: by 2002:a17:90b:354a:: with SMTP id lt10mr31448599pjb.3.1634533535183;
-        Sun, 17 Oct 2021 22:05:35 -0700 (PDT)
+        bh=29PDo+p3EfHpq27CPeMSdLjX2BQJx7Ug0wrORCRfK58=;
+        b=tEnDyBqJpK6rE7AYZ8fT300+RLrqCkX7Gw4XfTSk7ju44UQjAo7ZYCubd+c/znrEJB
+         MFrOPn6z0iQJkk6xCYyedE0KEFXBQIPx1yeLuuhT02HSY9795IRdLc/swlrdvVZVyfhS
+         NCmuFQ1sr9ZtLKFdCKrenLDyA3WcbW0BmT+DXCxFzY4J7VZWZYoj++bBsuAKwIPTUljT
+         I/eWIRMffX/wIeNXtlQJ9ch78V5Ziis8R5ZeIRqLiG/yD36s6vR3lEsm6jtJ4V4SqZVh
+         r1keDjC1TToq48WX8fyhl5iEtK/0Ofg4m1rgFqYHbcNIzyKG1WR7Xg9e0andl3BCZ1yX
+         gnbA==
+X-Gm-Message-State: AOAM532Vg607ZAMgb0EuxagJlUakjp7vZ2eCOuEUbZhz9OgtuxAKbVZV
+        Mtf4GbtvTC+XnPPsTcKNkcg=
+X-Google-Smtp-Source: ABdhPJzQ00mI5AcAKN07GqU2OI5fsgC7XyeknXIjjUsm/1r60g9CUJFoAmlN+s/52us+I1GjFqtQcA==
+X-Received: by 2002:a17:90a:6782:: with SMTP id o2mr45230800pjj.165.1634533525461;
+        Sun, 17 Oct 2021 22:05:25 -0700 (PDT)
 Received: from fmin-OptiPlex-7060.nreal.work ([137.59.103.165])
-        by smtp.gmail.com with ESMTPSA id c205sm11416625pfc.43.2021.10.17.22.05.30
+        by smtp.gmail.com with ESMTPSA id c205sm11416625pfc.43.2021.10.17.22.05.20
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Oct 2021 22:05:34 -0700 (PDT)
+        Sun, 17 Oct 2021 22:05:25 -0700 (PDT)
 From:   dillon.minfei@gmail.com
 To:     mchehab@kernel.org, mchehab+huawei@kernel.org,
         hverkuil-cisco@xs4all.nl, ezequiel@collabora.com, gnurou@gmail.com,
@@ -61,9 +61,9 @@ Cc:     patrice.chotard@foss.st.com, hugues.fruchet@foss.st.com,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Dillon Min <dillon.minfei@gmail.com>
-Subject: [PATCH v5 08/10] media: v4l2-ctrls: Add RGB color effects control
-Date:   Mon, 18 Oct 2021 13:04:46 +0800
-Message-Id: <1634533488-25334-9-git-send-email-dillon.minfei@gmail.com>
+Subject: [PATCH v5 06/10] media: videobuf2: Fix the size printk format
+Date:   Mon, 18 Oct 2021 13:04:44 +0800
+Message-Id: <1634533488-25334-7-git-send-email-dillon.minfei@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
 References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com>
@@ -73,96 +73,36 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Dillon Min <dillon.minfei@gmail.com>
 
-Add V4L2_COLORFX_SET_RGB color effects control, V4L2_CID_COLORFX_RGB
-for RGB color setting.
+Since the type of parameter size is unsigned long,
+it should printk by %lu, instead of %ld, fix it.
 
-with two mirror changes:
-- change 0xFFFFFF to 0xffffff
-- fix comments 2^24 to 2^24 - 1
-
+Fixes: 7952be9b6ece ("media: drivers/media/common/videobuf2: rename from videobuf")
 Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
 ---
-v5:
-- change 0xFFFFFF to 0xffffff.
-- change 2^24 to 2^24 -1.
+ drivers/media/common/videobuf2/videobuf2-dma-contig.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- Documentation/userspace-api/media/v4l/control.rst | 9 +++++++++
- drivers/media/v4l2-core/v4l2-ctrls-defs.c         | 6 ++++--
- include/uapi/linux/v4l2-controls.h                | 4 +++-
- 3 files changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/userspace-api/media/v4l/control.rst b/Documentation/userspace-api/media/v4l/control.rst
-index f8d0b923da20..3eec65174260 100644
---- a/Documentation/userspace-api/media/v4l/control.rst
-+++ b/Documentation/userspace-api/media/v4l/control.rst
-@@ -242,8 +242,17 @@ Control IDs
-     * - ``V4L2_COLORFX_SET_CBCR``
-       - The Cb and Cr chroma components are replaced by fixed coefficients
- 	determined by ``V4L2_CID_COLORFX_CBCR`` control.
-+    * - ``V4L2_COLORFX_SET_RGB``
-+      - The RGB components are replaced by the fixed RGB components determined
-+        by ``V4L2_CID_COLORFX_RGB`` control.
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+index b052a4e36961..28b917e03929 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+@@ -257,7 +257,7 @@ static void *vb2_dc_alloc(struct vb2_buffer *vb,
+ 		ret = vb2_dc_alloc_coherent(buf);
  
+ 	if (ret) {
+-		dev_err(dev, "dma alloc of size %ld failed\n", size);
++		dev_err(dev, "dma alloc of size %lu failed\n", size);
+ 		kfree(buf);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -298,7 +298,7 @@ static int vb2_dc_mmap(void *buf_priv, struct vm_area_struct *vma)
  
-+``V4L2_CID_COLORFX_RGB`` ``(integer)``
-+    Determines the Red, Green, and Blue coefficients for
-+    ``V4L2_COLORFX_SET_RGB`` color effect.
-+    Bits [7:0] of the supplied 32 bit value are interpreted as Blue component,
-+    bits [15:8] as Green component, bits [23:16] as Red component, and
-+    bits [31:24] must be zero.
+ 	vma->vm_ops->open(vma);
  
- ``V4L2_CID_COLORFX_CBCR`` ``(integer)``
-     Determines the Cb and Cr coefficients for ``V4L2_COLORFX_SET_CBCR``
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-index 0cb6c0f18b39..6f00f8e4b4a6 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
-@@ -785,6 +785,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:	return "Min Number of Output Buffers";
- 	case V4L2_CID_ALPHA_COMPONENT:		return "Alpha Component";
- 	case V4L2_CID_COLORFX_CBCR:		return "Color Effects, CbCr";
-+	case V4L2_CID_COLORFX_RGB:              return "Color Effects, RGB";
- 
- 	/*
- 	 * Codec controls
-@@ -1394,11 +1395,12 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 		*min = *max = *step = *def = 0;
- 		break;
- 	case V4L2_CID_BG_COLOR:
-+	case V4L2_CID_COLORFX_RGB:
- 		*type = V4L2_CTRL_TYPE_INTEGER;
- 		*step = 1;
- 		*min = 0;
--		/* Max is calculated as RGB888 that is 2^24 */
--		*max = 0xFFFFFF;
-+		/* Max is calculated as RGB888 that is 2^24 -1 */
-+		*max = 0xffffff;
- 		break;
- 	case V4L2_CID_COLORFX_CBCR:
- 		*type = V4L2_CTRL_TYPE_INTEGER;
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 133e20444939..00bb181b56cc 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -128,6 +128,7 @@ enum v4l2_colorfx {
- 	V4L2_COLORFX_SOLARIZATION		= 13,
- 	V4L2_COLORFX_ANTIQUE			= 14,
- 	V4L2_COLORFX_SET_CBCR			= 15,
-+	V4L2_COLORFX_SET_RGB			= 16,
- };
- #define V4L2_CID_AUTOBRIGHTNESS			(V4L2_CID_BASE+32)
- #define V4L2_CID_BAND_STOP_FILTER		(V4L2_CID_BASE+33)
-@@ -145,9 +146,10 @@ enum v4l2_colorfx {
- 
- #define V4L2_CID_ALPHA_COMPONENT		(V4L2_CID_BASE+41)
- #define V4L2_CID_COLORFX_CBCR			(V4L2_CID_BASE+42)
-+#define V4L2_CID_COLORFX_RGB			(V4L2_CID_BASE+43)
- 
- /* last CID + 1 */
--#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+43)
-+#define V4L2_CID_LASTP1                         (V4L2_CID_BASE+44)
- 
- /* USER-class private control IDs */
+-	pr_debug("%s: mapped dma addr 0x%08lx at 0x%08lx, size %ld\n",
++	pr_debug("%s: mapped dma addr 0x%08lx at 0x%08lx, size %lu\n",
+ 		 __func__, (unsigned long)buf->dma_addr, vma->vm_start,
+ 		 buf->size);
  
 -- 
 2.7.4
