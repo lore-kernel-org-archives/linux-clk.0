@@ -2,147 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59D3C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 20:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16988C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 01:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81FE161207
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Oct 2021 20:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6B2A61360
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 01:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229941AbhJRUKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Oct 2021 16:10:02 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:53002 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230298AbhJRUKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 16:10:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634587670; x=1666123670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jU2TIbW2nRIVyj8Hr+GCR3NNoC+DnWdiYc46k5ir78Q=;
-  b=SVkt1rmFzI7oH2eP4pI6+2wa/CdXNTueyehCsuGczE/HvqnXsqSvrAa7
-   RcVC2xFe2BBgjkCMspd6ulecF2FxEZ4ec45Kr0O/vWlcvhBKQBvBAtTwM
-   Bl2OSTBrseiSKDpqOZITS+lHdaGmJCTDVF0RZ7g1SdT0KYR4pw1vH9HkP
-   kJ7c9/FlwIDbKiBDYKLRtCPvJT1k7qFogx44Xm1JFF0L/xbSd8zQ2j+AQ
-   AvRdmhT3d6ogrtyOJHTtK8t6jA8MDV6hukdRvnkVzwcjIZndWOPOYkvME
-   dVSsDFZmSB6I5ZB3q43BQdIG2bs8WocjzZgl43Ybybe73Yw1f6jlSlSQe
-   g==;
-IronPort-SDR: LNpVprfZsbaYgkP7MRcdRpXlrF8FZ7NmDCIjbBzr/YXNX5iKtjTHEzTX0Rc8dq4m9GJR0WCVW/
- tem9yOwqBlicNf6OPg2kdRo0LJaLVNKFaPoxn6eL6m0iI6Htie4nKzxwNDGKOqOAL2C6jUojTb
- shEztbC6YHsC7mnWcP2HgdK2ltpuPNSdLySJ+/wE/iuDjvXXnH8PqJsGd0gD5SlKB9DrUSDyw3
- 8aB1kIn6kb3lUdNUF4J3Qb+0qRS/janzi8NMH84cEpX2rwqCbbqL1mAkMrCnboo7suUZIsqFqr
- L0LmKv4qzw3Md4KgPe4UZx2B
-X-IronPort-AV: E=Sophos;i="5.85,382,1624345200"; 
-   d="scan'208";a="133487798"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Oct 2021 13:07:46 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 18 Oct 2021 13:07:43 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Mon, 18 Oct 2021 13:07:43 -0700
-Date:   Mon, 18 Oct 2021 22:09:15 +0200
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-CC:     <robh+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <nicolas.ferre@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
-        <Eugen.Hristev@microchip.com>, <Manohar.Puri@microchip.com>
-Subject: Re: [PATCH v8 3/3] clk: lan966x: Add lan966x SoC clock driver
-Message-ID: <20211018200915.5jdgf6lqrs633vck@soft-dev3-1.localhost>
-References: <20211008082635.31774-1-kavyasree.kotagiri@microchip.com>
- <20211008082635.31774-4-kavyasree.kotagiri@microchip.com>
+        id S229692AbhJSBk4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Oct 2021 21:40:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59054 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229529AbhJSBkz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Oct 2021 21:40:55 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C740FC06161C;
+        Mon, 18 Oct 2021 18:38:43 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id s1so10729003plg.12;
+        Mon, 18 Oct 2021 18:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CaPcF3lLntgPi4dtmIgmORhsMIR+dCPTrmx/7W3scZs=;
+        b=gaS9hJyuilcF5+JKjLFe8um9uxdmcEPQEj276Rpl1z99TTJ1xSi3qSdkS7u9WdEN2G
+         /69cd2OVP1xQNkDgmiVmHkNvLM9poNJnhRnoRNxIMAmDs89Mu2GYws8oagVjNC50QMA9
+         1AMbuT3AhQDHg/le8tD9rKMLJIoIc9XRIHuLPN02A4L7Jgyo95aGZ24UoAcfZXBIuhR+
+         rnIj4/b3R5xvZ6tCuNgNOljEmhcMABeB2urGNFCGFgdSRFDbp4py4AcYuBx+CXm1PF8/
+         8M6Purtsg2PM9tVSHYWqq3dexwNwrgzXqDayW6ljPltxrAqjBrx6y9A7WN8/IDTJ75q3
+         Bp0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CaPcF3lLntgPi4dtmIgmORhsMIR+dCPTrmx/7W3scZs=;
+        b=fXQZnSZjK7E45bxbQVDm+rJOWG0/jAOhfWr54bslxJwmO9EuNsAGffF3B7bSV7oQF3
+         9PH2CV3dsx312keeljMIAlMZm8ENW37IdMkl41uBOnVMT8uKCuuF+qT1LpK3IAjCwa5i
+         T+JLk1mYiV/Mme4BLgn8y/HsBkysNSYfSeYCTlcBvnsj0NRwiyHfpzhXngBrYCrak2rq
+         y47d5D7Z4X15evK8MeHNxo59PbsYta1056aU66jhxRk5P1y33XRX69HNfxai3poEKe0D
+         aZwulRmauT1odfB8RxMgGqFLYPuoUDPqjIYk2Pwjs5P86Nvmap14QuCtIjviafjzNgy+
+         /UWg==
+X-Gm-Message-State: AOAM530efr1UZjreRtdMp3tN0hDI33aN4zheYcf8D14W0sjmV2Xi/mTt
+        TWtBBXRj4i+N/vOm1qwaAGU=
+X-Google-Smtp-Source: ABdhPJyHCs6f10hqJrvEiziHyRg9yorV3VFk0caNl/+VA1adXRXrroKqi1IQvEWZJyezciCO42MWgQ==
+X-Received: by 2002:a17:902:70cb:b0:13e:91f3:641a with SMTP id l11-20020a17090270cb00b0013e91f3641amr30226304plt.13.1634607523184;
+        Mon, 18 Oct 2021 18:38:43 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id t3sm13660314pgu.87.2021.10.18.18.38.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 18:38:42 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: ran.jianping@zte.com.cn
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
+        chun-jie.chen@mediatek.com, ran.jianping@zte.com.cn,
+        wenst@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH clk:mediatek] clk:mediatek: remove duplicate include in  clk-mt8195-imp_iic_wrap.c
+Date:   Tue, 19 Oct 2021 01:37:59 +0000
+Message-Id: <20211019013759.970600-1-ran.jianping@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20211008082635.31774-4-kavyasree.kotagiri@microchip.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 10/08/2021 13:56, Kavyasree Kotagiri wrote:
-> This adds Generic Clock Controller driver for lan966x SoC.
+From: Ran Jianping <ran.jianping@zte.com.cn>
 
-Hi Kavya,
+'dt-bindings/clock/mt8195-clk.h' included in
+'/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c' is duplicated.It is
+also included on the 13 line.
 
-> 
-> +#define DIV_MAX		256
-> +
-> +static const char *clk_names[N_CLOCKS] = {
-> +	"qspi0", "qspi1", "qspi2", "sdmmc0",
-> +	"pi", "mcan0", "mcan1", "flexcom0",
-> +	"flexcom1", "flexcom2", "flexcom3",
-> +	"flexcom4", "timer", "usb_refclk",
-> +};
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Ran Jianping <ran.jianping@zte.com.cn>
+---
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Aren't these names a little bit generic, especially 'timer'?
-The problem that I am seeing, if there is another clock driver that
-register a clock with the same name, then this will fail. Here is the
-check for this[1]
-
-> +
-> +static int lan966x_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *hw_data;
-> +	struct device *dev = &pdev->dev;
-> +	int i;
-> +
-> +	hw_data = devm_kzalloc(dev, sizeof(*hw_data), GFP_KERNEL);
-
-Is this correct? Shouldn't be
-
-devm_kzalloc(dev, struct_size(hw_data, hws, N_CLOCKS), GFP_KERNEL);
-
-> +	if (!hw_data)
-> +		return -ENOMEM;
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	init.ops = &lan966x_gck_ops;
-> +
-> +	hw_data->num = N_CLOCKS;
-> +
-> +	for (i = 0; i < N_CLOCKS; i++) {
-> +		init.name = clk_names[i];
-> +		hw_data->hws[i] = lan966x_gck_clk_register(dev, i);
-> +		if (IS_ERR(hw_data->hws[i])) {
-> +			dev_err(dev, "failed to register %s clock\n",
-> +				init.name);
-> +			return PTR_ERR(hw_data->hws[i]);
-> +		}
-> +	}
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_data);
-> +}
-> +
-> +static const struct of_device_id lan966x_clk_dt_ids[] = {
-> +	{ .compatible = "microchip,lan966x-gck", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, lan966x_clk_dt_ids);
-> +
-> +static struct platform_driver lan966x_clk_driver = {
-> +	.probe  = lan966x_clk_probe,
-> +	.driver = {
-> +		.name = "lan966x-clk",
-> +		.of_match_table = lan966x_clk_dt_ids,
-> +	},
-> +};
-> +builtin_platform_driver(lan966x_clk_driver);
-> +
-> +MODULE_AUTHOR("Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>");
-> +MODULE_DESCRIPTION("LAN966X clock driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.17.1
-> 
-
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L3423
-
+diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+index 0e2ac0a30aa0..1aa5afc05929 100644
+--- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+@@ -10,7 +10,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ 
+-#include <dt-bindings/clock/mt8195-clk.h>
++
+ 
+ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
+ 	.set_ofs = 0xe08,
 -- 
-/Horatiu
+2.25.1
+
