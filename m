@@ -2,173 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E355C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7BBC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 06:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18D536128B
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF56610A1
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 06:29:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229755AbhJSEtr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Oct 2021 00:49:47 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41476 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229649AbhJSEtq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 00:49:46 -0400
-X-UUID: 8ad71689af5a4caaa262c52bc2324fe4-20211019
-X-UUID: 8ad71689af5a4caaa262c52bc2324fe4-20211019
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1024412807; Tue, 19 Oct 2021 12:47:31 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 19 Oct 2021 12:47:30 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 19 Oct 2021 12:47:30 +0800
-Message-ID: <6c7879c2db62cad0f6de1452b5d3b39cc8c58a2a.camel@mediatek.com>
-Subject: Re: [PATCH v5 4/5] arm64: dts: mediatek: add clock support for
- mt7986a
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Sam Shih <sam.shih@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        "Enric Balletbo i Serra" <enric.balletbo@collabora.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     John Crispin <john@phrozen.org>, Ryder Lee <Ryder.Lee@mediatek.com>
-Date:   Tue, 19 Oct 2021 12:47:30 +0800
-In-Reply-To: <20211018114701.13984-5-sam.shih@mediatek.com>
-References: <20211018114701.13984-1-sam.shih@mediatek.com>
-         <20211018114701.13984-5-sam.shih@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        id S229755AbhJSGcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Oct 2021 02:32:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhJSGcC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 02:32:02 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0597C06161C;
+        Mon, 18 Oct 2021 23:29:50 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id c4so11385069pgv.11;
+        Mon, 18 Oct 2021 23:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnXn+h5taVTZko0OST5Rrf452xL+m2nCHrGrWQWsoO8=;
+        b=pL4ipHDmG3TfyQE5wlMTOb8U/OdBLqTm607+cLDZdIFBBFRpgfFMDf45EWwDFFVbg8
+         liUD57wxDtfz3Hg+kwalp2G9MJEYVeC8M55bEmf7+riBxIZtxEtMCXQDUHb5Pi9wD2bw
+         pv8dKByL5OobbvsJG6jQ08xkwPQGwY4cP4Oa78d3dhrNTetjPFDCYLwdJvF271RaBhgx
+         CK8ETdWLB879kZldQWhqCopY7baJMQgz8BN/iZIJLoUbx5M59dd4azMftALHWC22bPzj
+         D7hxx5kcPa5nCWQgpnXejbm5Z5T9MINwkfEodZbo/32G4lAv3/hhwa323Q68d9xKnla4
+         mgow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dnXn+h5taVTZko0OST5Rrf452xL+m2nCHrGrWQWsoO8=;
+        b=Ojnl6N4+QpfxO8hcL5fQ/8be3Uw9YG538t2FmXph7zcR7GAmRqBUV1x/sFu3/Zzcx0
+         grPBGnc3nDX/LBwANJKllgXOpNwCXKYxSx25UcRd6qyznl3xKoI5GyjB1AJYKw+YDOcL
+         A9Umrrw7yyMf53sd6ug3huF8YW+5wBKFm/WqW2HhvJa5ZO2mjsMlEVkV7S171TUINhHu
+         6ZCaqmLmGRTFxAssiYkW2GDdOySfFVAZLjb4g/YCXVa6UT3Vcv3VKDrf5Ljcv4HO/0Ka
+         zRgI/5rVIESPjOwT4z93FLuzhcssUtx1YXtAgI5g8Ha7h2b0NFy5XhsR20Z0pOUBywSA
+         OeeQ==
+X-Gm-Message-State: AOAM5306xMIh9d0aNsOFAIDsyHY9ltPRhzNIOAkh4XRH7FPpa8wglEGG
+        +dfY9st/ao6iIKkh7RBudQE=
+X-Google-Smtp-Source: ABdhPJwExjdwTxD3Dj/lgIOSPSS3R74iQXiAt6bQeFWHIwggACFsS+Lj/fzO+5rgWMmY8wHSm3+4xg==
+X-Received: by 2002:a05:6a00:2390:b0:44d:bccd:7bc with SMTP id f16-20020a056a00239000b0044dbccd07bcmr16462708pfc.4.1634624990209;
+        Mon, 18 Oct 2021 23:29:50 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id d14sm6469690pfu.124.2021.10.18.23.29.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 23:29:49 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: ran.jianping@zte.com.cn
+To:     mturquette@baylibre.com, wenst@chromium.org
+Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
+        chun-jie.chen@mediatek.com, ran.jianping@zte.com.cn,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH v2 clk:mediatek] clk:mediatek: remove duplicate include in  clk-mt8195-imp_iic_wrap.c
+Date:   Tue, 19 Oct 2021 06:29:39 +0000
+Message-Id: <20211019062939.979660-1-ran.jianping@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sam,
+From: Ran Jianping <ran.jianping@zte.com.cn>
 
-> +		infracfg: infracfg@10001000 {
-> +			compatible = "mediatek,mt7986-infracfg",
-> "syscon";
-> +			reg = <0 0x10001000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		topckgen: topckgen@1001b000 {
-> +			compatible = "mediatek,mt7986-topckgen",
-> "syscon";
-> +			reg = <0 0x1001B000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
+'dt-bindings/clock/mt8195-clk.h' included in
+'/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c' is duplicated.It is
+also included on the 13 line.
 
-please use lowercase hex value.
-> +
->  		watchdog: watchdog@1001c000 {
->  			compatible = "mediatek,mt7986-wdt",
->  				     "mediatek,mt6589-wdt";
-> @@ -108,11 +122,31 @@ watchdog: watchdog@1001c000 {
->  			status = "disabled";
->  		};
->  
-> +		apmixedsys: apmixedsys@1001e000 {
-> +			compatible = "mediatek,mt7986-apmixedsys";
-> +			reg = <0 0x1001E000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		sgmiisys0: syscon@10060000 {
-> +			compatible = "mediatek,mt7986-sgmiisys_0",
-> +				     "syscon";
-> +			reg = <0 0x10060000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
-> +		sgmiisys1: syscon@10070000 {
-> +			compatible = "mediatek,mt7986-sgmiisys_1",
-> +				     "syscon";
-> +			reg = <0 0x10070000 0 0x1000>;
-> +			#clock-cells = <1>;
-> +		};
-> +
->  		trng: trng@1020f000 {
->  			compatible = "mediatek,mt7986-rng",
->  				     "mediatek,mt7623-rng";
->  			reg = <0 0x1020f000 0 0x100>;
-> -			clocks = <&system_clk>;
-> +			clocks = <&infracfg CLK_INFRA_TRNG_CK>;
->  			clock-names = "rng";
->  			status = "disabled";
->  		};
-> @@ -122,7 +156,13 @@ uart0: serial@11002000 {
->  				     "mediatek,mt6577-uart";
->  			reg = <0 0x11002000 0 0x400>;
->  			interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&system_clk>;
-> +			clocks = <&infracfg CLK_INFRA_UART0_SEL>,
-> +				 <&infracfg CLK_INFRA_UART0_CK>;
-> +			clock-names = "baud", "bus";
-> +			assigned-clocks = <&topckgen CLK_TOP_UART_SEL>,
-> +					  <&infracfg
-> CLK_INFRA_UART0_SEL>;
-> +			assigned-clock-parents = <&topckgen
-> CLK_TOP_XTAL>,
-> +						 <&topckgen
-> CLK_TOP_UART_SEL>;
->  			status = "disabled";
->  		};
->  
-> @@ -131,7 +171,11 @@ uart1: serial@11003000 {
->  				     "mediatek,mt6577-uart";
->  			reg = <0 0x11003000 0 0x400>;
->  			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&system_clk>;
-> +			clocks = <&infracfg CLK_INFRA_UART1_SEL>,
-> +				 <&infracfg CLK_INFRA_UART1_CK>;
-> +			clock-names = "baud", "bus";
-> +			assigned-clocks = <&infracfg
-> CLK_INFRA_UART1_SEL>;
-> +			assigned-clock-parents = <&topckgen
-> CLK_TOP_F26M_SEL>;
->  			status = "disabled";
->  		};
->  
-> @@ -140,10 +184,24 @@ uart2: serial@11004000 {
->  				     "mediatek,mt6577-uart";
->  			reg = <0 0x11004000 0 0x400>;
->  			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&system_clk>;
-> +			clocks = <&infracfg CLK_INFRA_UART2_SEL>,
-> +				 <&infracfg CLK_INFRA_UART2_CK>;
-> +			clock-names = "baud", "bus";
-> +			assigned-clocks = <&infracfg
-> CLK_INFRA_UART2_SEL>;
-> +			assigned-clock-parents = <&topckgen
-> CLK_TOP_F26M_SEL>;
->  			status = "disabled";
->  		};
->  
-> +		ethsys: syscon@15000000 {
-> +			 #address-cells = <1>;
-> +			 #size-cells = <1>;
-> +			 compatible = "mediatek,mt7986-ethsys",
-> +				      "syscon";
-> +			 reg = <0 0x15000000 0 0x1000>;
-> +			 #clock-cells = <1>;
-> +			 #reset-cells = <1>;
-> +		};
-> +
->  	};
->  
->  };
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Ran Jianping <ran.jianping@zte.com.cn>
+
+v2:
+  delete extra empty line.
+
+---
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c | 2 --
+ 1 file changed, 2 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+index 0e2ac0a30aa0..1aa5afc05929 100644
+--- a/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
++++ b/drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c
+@@ -10,8 +10,6 @@
+ #include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ 
+-#include <dt-bindings/clock/mt8195-clk.h>
+-
+ static const struct mtk_gate_regs imp_iic_wrap_cg_regs = {
+ 	.set_ofs = 0xe08,
+ 	.clr_ofs = 0xe04,
+-- 
+2.25.1
 
