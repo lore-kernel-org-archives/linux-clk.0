@@ -2,86 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297D3C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 22:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B66CC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 23:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 021B1610A1
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 22:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4B36101A
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 23:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbhJSWuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Oct 2021 18:50:19 -0400
-Received: from mail-oo1-f52.google.com ([209.85.161.52]:33789 "EHLO
-        mail-oo1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbhJSWuT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 18:50:19 -0400
-Received: by mail-oo1-f52.google.com with SMTP id y145-20020a4a4597000000b002b7d49905acso748829ooa.0;
-        Tue, 19 Oct 2021 15:48:05 -0700 (PDT)
+        id S229677AbhJTAAW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Oct 2021 20:00:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229610AbhJTAAV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 20:00:21 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24718C06161C
+        for <linux-clk@vger.kernel.org>; Tue, 19 Oct 2021 16:58:08 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id y15so11099168lfk.7
+        for <linux-clk@vger.kernel.org>; Tue, 19 Oct 2021 16:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aoJoRicRoKRwwH8sKnmnAcz3hOYI18/6K1zt/5RQ9go=;
+        b=uGEx80SNXwGvds4c/nV7QzKKF44gFULTkt9Z7sZ7/5pBoLD3FDnOZQZNYOh9vANTJJ
+         fsJ9l9ZtfuL6hDwjSAt0zOCZbC46bqdDDDhUBGUNUCiymt5sHNcDTW3vghQGRQInKCto
+         zXpjam2T5800N19jcCfpaQyc9yGaX0EhrEEKWrTBMF1rmd43c4m4S8xNIk7XfIN9KqTg
+         NXgH7avcU9zq2EKc8FvGANV1Jm0tK++xoVf+1BrstiLN53caOOMCnAb9Z6BTToHOYC6j
+         egSTmjcaQj1ul9t2WznwAaANfIST2W1rGBcDTDdSUu3/U94/Nnzi2azbY/CwgkknwM/i
+         TA1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qy225hlqYwRXCtGLKyscMysC+wuepXd23D/7I3vqNfc=;
-        b=B3/aSvDOcQ92TP+IkJQovgaDu60ln8LsiB1H3HzHS2vgFIgMy/uywc8d+INVjk7bhM
-         BBowuXkMelQtcIsY6/U/0CaiwRebOuCEsl+7Yq3NJlRbp1aMvj5RirgM3Vd7jycOH3G/
-         uPkfxIJvcMA8vF2Lv1ORDG96FlC5ViM/KHFKdAXtsJfyhV2C/1rXFRyK3r7FxtyqDBK+
-         sPAzBqs/Lzb1j9BSO1BInW4OtfAeEIoO2IEmvgNIOE28jWxFLycYK0Jez/hNdhm4uW6q
-         F3FgMJsM0xxgWiYvFIOa77TlILZvDNQKCAhbto3S+bpLeVBKvlsUCLTwOYpf2UM/rRgv
-         qX7A==
-X-Gm-Message-State: AOAM532dwGTLjK4rwGjaJ2aWFvRdrb/VVVfboYPszdlueHhKwk3Q3m2i
-        dpG+5jGh4/w8b1sncB9qBvqMEu24NQ==
-X-Google-Smtp-Source: ABdhPJx+7M3+gwkvEccdiQLtE6ApfeIIiJPnK81zPl6XyOGFDwaQcsleOmnfmF9OVJFcsgizIss55Q==
-X-Received: by 2002:a4a:ca0f:: with SMTP id w15mr6869426ooq.39.1634683685422;
-        Tue, 19 Oct 2021 15:48:05 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id n17sm82181oic.21.2021.10.19.15.48.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 15:48:04 -0700 (PDT)
-Received: (nullmailer pid 968061 invoked by uid 1000);
-        Tue, 19 Oct 2021 22:48:03 -0000
-Date:   Tue, 19 Oct 2021 17:48:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        devicetree@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-clk@vger.kernel.org, Sagar Kadam <sagar.kadam@sifive.com>,
-        linux-gpio@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Drew Fustini <drew@beagleboard.org>,
-        linux-kernel@vger.kernel.org, Matteo Croce <mcroce@microsoft.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Marc Zyngier <maz@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v1 02/16] dt-bindings: timer: Add StarFive JH7100 clint
-Message-ID: <YW9LI/scFZtyczt2@robh.at.kernel.org>
-References: <20211012134027.684712-1-kernel@esmil.dk>
- <20211012134027.684712-3-kernel@esmil.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aoJoRicRoKRwwH8sKnmnAcz3hOYI18/6K1zt/5RQ9go=;
+        b=ZGwUxqZfZYKwXad4ya7gBqt2r2CLSSL+JFRCB9758g+4ovHpLgtmPzb/cqg2z87i8/
+         y+HfG9UmFfL4qCSg4tkppoMB+c7HoGHUbIgpqsOdEfbJsPrcFH0Cwp1kGu18s4TVooXg
+         yalX+s9jcN8ExBRc80Pz31VnR5Lvg0zqIaMWGivrHAxMIxU/dyHSsY0jvAPzjsvvNQF3
+         KMflawGVmy6Xjf4nnDi5oHEGahWCIEI8GQTZMxao04MfWjb+4oNUsWEKeoG+YnFrvRGq
+         CcL6sYIl/4vmvdlx/iuO7kVdffp6rnd/iIMOLhPChSHfnfjG/l7v7W/HHwXUOFsJrPaJ
+         364Q==
+X-Gm-Message-State: AOAM533s57En5VxYmGVsPPB7LrXXepBICobBzIa5yV5ItZRcnOT92pOd
+        xBp5YMARfhDIXph/N1AoNgZjN7cSfLDKgQ2vccTlCQ==
+X-Google-Smtp-Source: ABdhPJyoM9l8GvG83pjRDT4StPbmgxeFTQFY2sOhwsdvTesKlg43bvAnzMTLP7bn1KwSWpGRKh288WjUmAjh41mxTSo=
+X-Received: by 2002:a05:6512:3d27:: with SMTP id d39mr8729458lfv.229.1634687886423;
+ Tue, 19 Oct 2021 16:58:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211012134027.684712-3-kernel@esmil.dk>
+References: <20210921184803.1757916-1-linus.walleij@linaro.org>
+In-Reply-To: <20210921184803.1757916-1-linus.walleij@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Oct 2021 01:57:55 +0200
+Message-ID: <CACRpkdbLxhUtXHs2+hy6U6OW2V3YTxrjxp0AxVP3PnV1hoFNKw@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v3] dt-bindings: clock: u8500: Rewrite in YAML and extend
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 12 Oct 2021 15:40:13 +0200, Emil Renner Berthing wrote:
-> Add compatible string for the StarFive JH7100 clint.
-> 
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> ---
->  Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Tue, Sep 21, 2021 at 8:50 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> This rewrites the ux500/u8500 clock bindings in YAML schema and extends them
+> with the PRCC reset controller.
+>
+> The bindings are a bit idiomatic but it just reflects their age, the ux500
+> platform was used as guinea pig for early device tree conversion of platforms
+> in 2015. The new subnode for the reset controller follows the pattern of the
+> old bindings and adds a node with reset-cells for this.
+>
+> Cc: devicetree@vger.kernel.org
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+
+One month has passed, can we merge this patch?
+
+Yours,
+Linus Walleij
