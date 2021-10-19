@@ -2,34 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C611C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E355C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 589816128B
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18D536128B
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 04:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbhJSEnV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Oct 2021 00:43:21 -0400
-Received: from mailgw01.mediatek.com ([60.244.123.138]:45374 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229649AbhJSEnV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 00:43:21 -0400
-X-UUID: 7f27188ceb7a40e3a084bc92d413ae66-20211019
-X-UUID: 7f27188ceb7a40e3a084bc92d413ae66-20211019
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        id S229755AbhJSEtr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Oct 2021 00:49:47 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41476 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229649AbhJSEtq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 00:49:46 -0400
+X-UUID: 8ad71689af5a4caaa262c52bc2324fe4-20211019
+X-UUID: 8ad71689af5a4caaa262c52bc2324fe4-20211019
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 361193371; Tue, 19 Oct 2021 12:41:04 +0800
+        with ESMTP id 1024412807; Tue, 19 Oct 2021 12:47:31 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 19 Oct 2021 12:41:03 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 19 Oct 2021 12:47:30 +0800
 Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 19 Oct 2021 12:41:03 +0800
-Message-ID: <5d2a803943ace606d356af2ec0a75bd42aaf7fb5.camel@mediatek.com>
-Subject: Re: [PATCH v5 5/5] arm64: dts: mediatek: add clock support for
- mt7986b
+ Transport; Tue, 19 Oct 2021 12:47:30 +0800
+Message-ID: <6c7879c2db62cad0f6de1452b5d3b39cc8c58a2a.camel@mediatek.com>
+Subject: Re: [PATCH v5 4/5] arm64: dts: mediatek: add clock support for
+ mt7986a
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     Sam Shih <sam.shih@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -44,10 +43,10 @@ To:     Sam Shih <sam.shih@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
 CC:     John Crispin <john@phrozen.org>, Ryder Lee <Ryder.Lee@mediatek.com>
-Date:   Tue, 19 Oct 2021 12:41:03 +0800
-In-Reply-To: <20211018114701.13984-6-sam.shih@mediatek.com>
+Date:   Tue, 19 Oct 2021 12:47:30 +0800
+In-Reply-To: <20211018114701.13984-5-sam.shih@mediatek.com>
 References: <20211018114701.13984-1-sam.shih@mediatek.com>
-         <20211018114701.13984-6-sam.shih@mediatek.com>
+         <20211018114701.13984-5-sam.shih@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -59,10 +58,6 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Sam,
 
-@@ -99,6 +101,18 @@ gic: interrupt-controller@c000000 {
->  			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
->  		};
->  
 > +		infracfg: infracfg@10001000 {
 > +			compatible = "mediatek,mt7986-infracfg",
 > "syscon";
@@ -74,11 +69,10 @@ Hi Sam,
 > +			compatible = "mediatek,mt7986-topckgen",
 > "syscon";
 > +			reg = <0 0x1001B000 0 0x1000>;
-
-please use lowercase hex values (e.g, 0x1001b000)
-
 > +			#clock-cells = <1>;
 > +		};
+
+please use lowercase hex value.
 > +
 >  		watchdog: watchdog@1001c000 {
 >  			compatible = "mediatek,mt7986-wdt",
@@ -92,9 +86,6 @@ please use lowercase hex values (e.g, 0x1001b000)
 > +			reg = <0 0x1001E000 0 0x1000>;
 > +			#clock-cells = <1>;
 > +		};
-
-Ditto
-
 > +
 > +		sgmiisys0: syscon@10060000 {
 > +			compatible = "mediatek,mt7986-sgmiisys_0",
