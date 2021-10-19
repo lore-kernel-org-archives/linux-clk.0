@@ -2,391 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 481D5C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 07:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A3CC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 08:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29E3760F22
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 07:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BD1F6136F
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 08:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbhJSHoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Oct 2021 03:44:20 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:3885 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234544AbhJSHoT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 03:44:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1634629327; x=1666165327;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=g4AZsJrPUtQXB9sl9Zo80Y3mOIjAUQMvMOb+slgqweE=;
-  b=I5dmdLSld6DEHKidy87NzFzGDyPalxEasELN0eV2TXAVIF3pF9BnN+u6
-   EMIpflF6oSqgwHzbEynt+S7uGXmP5oJIQrABGqkbeqQew6Yu21ObStBUY
-   oGmdZJg+Ae6pgTSXld6DsrG4H1S1O9bp6kYbhW86Ot8RHnh0TNEhf+kyU
-   DdnOACvqgqmO47qFukPGyR3vbG4p70Qnzjj6ks0XIR4AQQ5lZoV+4wyaZ
-   glyAplISwIuXjTB9cVIOc1Po30V5GyixBwRblUbtTByD0hSrgHmoRLcMQ
-   QWIgoCIt04u3IfxkrU0/WQEFw/sTkNhSksIg4s+yqcKXpWaG0A/xE4P/5
-   Q==;
-IronPort-SDR: UWP1jnV089+KSuJEXDNeZXY5h+mxOYzCYxhl0yrT5pnJxX7WmRMiQ7yHUE6lgANBO2zDFuZs1s
- ZyT07+qIKI273xLDZAHf6p8cOB2UMf3xpDgyAucFLTVLr7B1KhCXT7tNmwhlvBiT6fHr545awT
- ObdiBiiC+86x/W9QpxOSpOTfoS1nmTRx/FsYRG3IVa6fWSNs6a86RbWIhIIFhhNDgccIROQGW6
- RwtrfyHB3LTe/zI9Yf5fk3gaarYrGqy4RZvXSIBkg1gmdVOjMWTPhffr9BzLviJOztU0WtjIcA
- /Th+ZuDMWeKSnGJuAWOGo6D8
-X-IronPort-AV: E=Sophos;i="5.85,383,1624345200"; 
-   d="scan'208";a="148666149"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Oct 2021 00:42:05 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 19 Oct 2021 00:42:04 -0700
-Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 19 Oct 2021 00:42:00 -0700
-From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-To:     <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <nicolas.ferre@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <UNGLinuxDriver@microchip.com>, <Eugen.Hristev@microchip.com>,
-        <Kavyasree.Kotagiri@microchip.com>, <Manohar.Puri@microchip.com>
-Subject: [PATCH v9 3/3] clk: lan966x: Add lan966x SoC clock driver
-Date:   Tue, 19 Oct 2021 13:10:30 +0530
-Message-ID: <20211019074030.31294-4-kavyasree.kotagiri@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211019074030.31294-1-kavyasree.kotagiri@microchip.com>
-References: <20211019074030.31294-1-kavyasree.kotagiri@microchip.com>
+        id S234879AbhJSIIb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Oct 2021 04:08:31 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:26500 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235085AbhJSIHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 04:07:47 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211019080532euoutp02681a558ecb04ba0692bbc91d1b015301~vX-2xxseh1834818348euoutp02j
+        for <linux-clk@vger.kernel.org>; Tue, 19 Oct 2021 08:05:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211019080532euoutp02681a558ecb04ba0692bbc91d1b015301~vX-2xxseh1834818348euoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634630733;
+        bh=NEn4FshOOnDIdlhQWIpQEOPQGh3uPFEWbrtqfmrDCrY=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=K5i1cAbVt1/LgDUGYUgGwZ3btoFZsfvJQ0hh+GWQj24GvYNYNdCeaSZg3ezk5v1ak
+         h5s1OAnJwWK9YuLCpfW8Zjvek5v67Ftj7FmzpDlbh7CdXYfFYYuOTYG1fCB3iPcukW
+         SheyUBVsEmeDWMtPhauM6ouamSi5thBw1PrQHnns=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20211019080532eucas1p106832d45027f90101c0c7c271eb387f3~vX-2fX3fQ2547725477eucas1p19;
+        Tue, 19 Oct 2021 08:05:32 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id FE.D0.42068.C4C7E616; Tue, 19
+        Oct 2021 09:05:32 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20211019080532eucas1p181b54b8a8cb42f089313d211ea0a8421~vX-2Fy3JP0167201672eucas1p1S;
+        Tue, 19 Oct 2021 08:05:32 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211019080532eusmtrp1fb35ef9363eba8255fe9ecae115428e0~vX-2FJZxt0600406004eusmtrp1V;
+        Tue, 19 Oct 2021 08:05:32 +0000 (GMT)
+X-AuditID: cbfec7f4-c71ff7000002a454-60-616e7c4ce90c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 55.26.31287.C4C7E616; Tue, 19
+        Oct 2021 09:05:32 +0100 (BST)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20211019080531eusmtip1844806844d6ac8e311f3129328dcbe5d~vX-1rMLwO2762527625eusmtip1l;
+        Tue, 19 Oct 2021 08:05:31 +0000 (GMT)
+Message-ID: <6cd2815a-3dca-4373-8c4f-bae2522a36bd@samsung.com>
+Date:   Tue, 19 Oct 2021 10:05:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.2.0
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] clk: samsung: Updates for v5.16
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Language: en-US
+In-Reply-To: <CGME20210409182228eucas1p108c01fc7b0feba23d53b812aa8d15202@eucas1p1.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduzneV2fmrxEg6f/VS2uf3nOavGx5x6r
+        xYzz+5gsLp5ytfh3bSOLA6vH+xut7B6bVnWyefRtWcXo8XmTXABLFJdNSmpOZllqkb5dAlfG
+        tJ6zjAXTxCpuPHvL1sC4QLCLkZNDQsBE4uukSWxdjFwcQgIrGCVapzxmgXC+MEo82nmRCcL5
+        zCjx9cBGNpiWj4veM4LYQgLLGSWOTdeFKPrIKLFz9jawIl4BO4lP+5uYQWwWAVWJGQu+M0PE
+        BSVOznzCAmKLCiRJzJ/9gB3EZhMwlOg92gc2VFjAWGLnlfVgc0QEgiTu9K8Fu49ZoItR4vDv
+        o2CDmAXEJW49mc8EYnMKxEkcuT6bESIuL7H97RxmiEsvcEj8XwkU5wCyXSR+zpaECAtLvDq+
+        hR3ClpE4PbkH7GUJgWZGiZ7dt9khnAmMEvePL2CEqLKWuHPuFxvIIGYBTYn1u/QhZjpKbH3h
+        BGHySdx4KwhxAZ/EpG3TmSHCvBIdbUIQM1Qkfq+azgRhS0l0P/nPMoFRaRZSoMxC8tcsJL/M
+        Qli7gJFlFaN4amlxbnpqsVFearlecWJucWleul5yfu4mRmCCOf3v+JcdjMtffdQ7xMjEwXiI
+        UYKDWUmEN8k1N1GINyWxsiq1KD++qDQntfgQozQHi5I4b9KWNfFCAumJJanZqakFqUUwWSYO
+        TqkGJu7ahfkPp/AaC1aYrFu6oVnlaKqy6bm8bW5dRhqndpswfJpt4KhSo7TpxNprz05v4lHt
+        dj6zNOfHc/VwFuOQ+69Vj3QFvV4zvUT08bTVF5sc/qlve7aD+dmc21YJn26rW3Aax31Vvn+C
+        4UNYVpH4QqkpfqtLeAUM1aIblT51Vto+WStgy7hvsntRUaGjkcJqhry9h9vLJ1sqznEIb3jM
+        ljFn4qXfwmcsU9kWLIksS7t77MLzRB3rf0ydV9daGh1bxiZUydel3XB8oez6d+U+r8X3C97Z
+        +aYtt6bEf32Msm68ZMfityd7KsQDFgtIy+4xeS+T/mriDwfDj3PKVhS/0QxjUdXUORY0r757
+        m0aqEktxRqKhFnNRcSIAmYAs9p8DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsVy+t/xu7o+NXmJBt+2cVlc//Kc1eJjzz1W
+        ixnn9zFZXDzlavHv2kYWB1aP9zda2T02repk8+jbsorR4/MmuQCWKD2bovzSklSFjPziElul
+        aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MaT1nGQumiVXcePaWrYFxgWAX
+        IyeHhICJxMdF7xm7GLk4hASWMkp8/feMqYuRAyghJTG/RQmiRljiz7UuNoia94wSG76sZQdJ
+        8ArYSXza38QMYrMIqErMWPCdGSIuKHFy5hMWEFtUIEni44YZYHE2AUOJ3qN9jCC2sICxxM4r
+        69lAbBGBIIlfe+6xgixgFugCWjD1E9gCIYFYifnnVoDZzALiEreezGcCsTkF4iSOXJ/NCHIo
+        s4C6xPp5QhAl8hLb385hnsAoNAvJGbOQdM9C6JiFpGMBI8sqRpHU0uLc9NxiQ73ixNzi0rx0
+        veT83E2MwIjaduzn5h2M81591DvEyMTBeIhRgoNZSYQ3yTU3UYg3JbGyKrUoP76oNCe1+BCj
+        KTAoJjJLiSbnA2M6ryTe0MzA1NDEzNLA1NLMWEmcd+vcNfFCAumJJanZqakFqUUwfUwcnFIN
+        TPuu63dxLeCfsf6UdJbrqtM7j779mnp3Yhp/4keXa+2zfN1/tGhNy0jOPPXm4LLUvyfSdRdW
+        2a3/PFOHa337ibKY7+uz/ZgbSo3T5d4crFpXNNed54n6I9e+LbcKk18bpeScOPdm0Ymfn/ts
+        5B/l/c6YYDwhq9597ZUKm5XKucX37Kw2H5/Sb77t3+Ew7hUKfnfsDlw+dj7L8fOTj9vig4s/
+        2qzT3Zp7aM1G+W/XJlrfD12yzv5Ed0D5oylsfzwmf/Fe+TXY4vS8tFRGZgGXpKIT7bNts+cE
+        T6+fM6O0dleB9mXWOX/7Kk/ay+ZHTzU906L1J6faWm3O8iOX2r7KX7fYcE06euG9i/WrD+/+
+        +mSiEktxRqKhFnNRcSIAlt1dXjEDAAA=
+X-CMS-MailID: 20211019080532eucas1p181b54b8a8cb42f089313d211ea0a8421
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20210409182228eucas1p108c01fc7b0feba23d53b812aa8d15202
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20210409182228eucas1p108c01fc7b0feba23d53b812aa8d15202
+References: <CGME20210409182228eucas1p108c01fc7b0feba23d53b812aa8d15202@eucas1p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds Generic Clock Controller driver for lan966x SoC.
+Hi Stephen, Mike,
 
-Lan966x clock controller contains 3 PLLs - cpu_clk, ddr_clk
-and sys_clk. It generates and supplies clock to various
-peripherals within SoC.
-Register settings required to provide GCK clocking to a
-peripheral is as below:
-GCK_SRC_SEL     = Select clock source.
-GCK_PRESCALER   = Set divider value.
-GCK_ENA         = 1 - Enable GCK clock.
+The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
 
-Signed-off-by: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-Co-developed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
-v8 -> v9:
-- Changed clk_name "timer" to "timer1"
-- Updated devm_kzalloc in probe function.
+  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
 
-v7 -> v8:
-- Defined new constant DIV_MAX.
-- Corrected and updated divider value condition check.
-- Added Acked-by.
+are available in the Git repository at:
 
-v6 -> v7:
-- Added Kconfig and Makefile entires for lan966x clock driver.
+  https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.16-samsung
 
-v5 -> v6:
-- No changes.
+for you to fetch changes up to 9fe667af61d22fbeec823843962a77cd39993966:
 
-v4 -> v5:
-- Returning proper error - PTR_ERR.
-- Removed unused variable "ret" in probe function.
+  clk: samsung: describe drivers in Kconfig (2021-10-18 10:12:48 +0200)
 
-v3 -> v4:
-- Used clk_parent_data instead of of_clk_get_parent_name().
+----------------------------------------------------------------
+clk/samsung updates for v5.16
 
-v2 -> v3:
-- No changes.
+- Initial clock driver for the Exynos850 SoC
+- Refactoring of the CPU clock code and conversion of Exynos5433
+  CPU clock driver to the platform driver
+- A few conversions to devm_platform_ioremap_resource()
+- Updates of the Kconfig help text
 
-v1 -> v2:
-- No changes.
+----------------------------------------------------------------
+Cai Huoqing (4):
+      clk: samsung: exynos-audss: Make use of devm_platform_ioremap_resource()
+      clk: samsung: exynos4412-isp: Make use of devm_platform_ioremap_resource()
+      clk: samsung: exynos5433: Make use of devm_platform_ioremap_resource()
+      clk: samsung: s5pv210-audss: Make use of devm_platform_ioremap_resource()
 
- drivers/clk/Kconfig       |   7 ++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-lan966x.c | 240 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 248 insertions(+)
- create mode 100644 drivers/clk/clk-lan966x.c
+Krzysztof Kozlowski (1):
+      clk: samsung: describe drivers in Kconfig
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c5b3dc97396a..1b992a554ff8 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -221,6 +221,13 @@ config COMMON_CLK_GEMINI
- 	  This driver supports the SoC clocks on the Cortina Systems Gemini
- 	  platform, also known as SL3516 or CS3516.
- 
-+config COMMON_CLK_LAN966X
-+	bool "Generic Clock Controller driver for LAN966X SoC"
-+	help
-+	  This driver provides support for Generic Clock Controller(GCK) on
-+	  LAN966X SoC. GCK generates and supplies clock to various peripherals
-+	  within the SoC.
-+
- config COMMON_CLK_ASPEED
- 	bool "Clock driver for Aspeed BMC SoCs"
- 	depends on ARCH_ASPEED || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e42312121e51..d8565ef01b34 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
- obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
- obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
- obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
-+obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
- obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
- obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
- obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-new file mode 100644
-index 000000000000..19bec94e1551
---- /dev/null
-+++ b/drivers/clk/clk-lan966x.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Microchip LAN966x SoC Clock driver.
-+ *
-+ * Copyright (C) 2021 Microchip Technology, Inc. and its subsidiaries
-+ *
-+ * Author: Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/microchip,lan966x.h>
-+
-+#define GCK_ENA         BIT(0)
-+#define GCK_SRC_SEL     GENMASK(9, 8)
-+#define GCK_PRESCALER   GENMASK(23, 16)
-+
-+#define DIV_MAX		255
-+
-+static const char *clk_names[N_CLOCKS] = {
-+	"qspi0", "qspi1", "qspi2", "sdmmc0",
-+	"pi", "mcan0", "mcan1", "flexcom0",
-+	"flexcom1", "flexcom2", "flexcom3",
-+	"flexcom4", "timer1", "usb_refclk",
-+};
-+
-+struct lan966x_gck {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+};
-+#define to_lan966x_gck(hw) container_of(hw, struct lan966x_gck, hw)
-+
-+static const struct clk_parent_data lan966x_gck_pdata[] = {
-+	{ .fw_name = "cpu_clk", .name = "cpu_clk" },
-+	{ .fw_name = "ddr_clk", .name = "ddr_clk" },
-+	{ .fw_name = "sys_clk", .name = "sys_clk" },
-+};
-+
-+static struct clk_init_data init = {
-+	.parent_data = lan966x_gck_pdata,
-+	.num_parents = ARRAY_SIZE(lan966x_gck_pdata),
-+};
-+
-+static void __iomem *base;
-+
-+static int lan966x_gck_enable(struct clk_hw *hw)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 val = readl(gck->reg);
-+
-+	val |= GCK_ENA;
-+	writel(val, gck->reg);
-+
-+	return 0;
-+}
-+
-+static void lan966x_gck_disable(struct clk_hw *hw)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 val = readl(gck->reg);
-+
-+	val &= ~GCK_ENA;
-+	writel(val, gck->reg);
-+}
-+
-+static int lan966x_gck_set_rate(struct clk_hw *hw,
-+				unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 div, val = readl(gck->reg);
-+
-+	if (rate == 0 || parent_rate == 0)
-+		return -EINVAL;
-+
-+	/* Set Prescalar */
-+	div = parent_rate / rate;
-+	val &= ~GCK_PRESCALER;
-+	val |= FIELD_PREP(GCK_PRESCALER, (div - 1));
-+	writel(val, gck->reg);
-+
-+	return 0;
-+}
-+
-+static long lan966x_gck_round_rate(struct clk_hw *hw, unsigned long rate,
-+				   unsigned long *parent_rate)
-+{
-+	unsigned int div;
-+
-+	if (rate == 0 || *parent_rate == 0)
-+		return -EINVAL;
-+
-+	if (rate >= *parent_rate)
-+		return *parent_rate;
-+
-+	div = DIV_ROUND_CLOSEST(*parent_rate, rate);
-+
-+	return *parent_rate / div;
-+}
-+
-+static unsigned long lan966x_gck_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 div, val = readl(gck->reg);
-+
-+	div = FIELD_GET(GCK_PRESCALER, val);
-+
-+	return parent_rate / (div + 1);
-+}
-+
-+static int lan966x_gck_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
-+{
-+	struct clk_hw *parent;
-+	int i;
-+
-+	for (i = 0; i < clk_hw_get_num_parents(hw); ++i) {
-+		parent = clk_hw_get_parent_by_index(hw, i);
-+		if (!parent)
-+			continue;
-+
-+		/* Allowed prescaler divider range is 0-255 */
-+		if (clk_hw_get_rate(parent) / req->rate <= DIV_MAX) {
-+			req->best_parent_hw = parent;
-+			req->best_parent_rate = clk_hw_get_rate(parent);
-+
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static u8 lan966x_gck_get_parent(struct clk_hw *hw)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 val = readl(gck->reg);
-+
-+	return FIELD_GET(GCK_SRC_SEL, val);
-+}
-+
-+static int lan966x_gck_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct lan966x_gck *gck = to_lan966x_gck(hw);
-+	u32 val = readl(gck->reg);
-+
-+	val &= ~GCK_SRC_SEL;
-+	val |= FIELD_PREP(GCK_SRC_SEL, index);
-+	writel(val, gck->reg);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops lan966x_gck_ops = {
-+	.enable         = lan966x_gck_enable,
-+	.disable        = lan966x_gck_disable,
-+	.set_rate       = lan966x_gck_set_rate,
-+	.round_rate     = lan966x_gck_round_rate,
-+	.recalc_rate    = lan966x_gck_recalc_rate,
-+	.determine_rate = lan966x_gck_determine_rate,
-+	.set_parent     = lan966x_gck_set_parent,
-+	.get_parent     = lan966x_gck_get_parent,
-+};
-+
-+static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
-+{
-+	struct lan966x_gck *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return ERR_PTR(-ENOMEM);
-+
-+	priv->reg = base + (i * 4);
-+	priv->hw.init = &init;
-+	ret = devm_clk_hw_register(dev, &priv->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &priv->hw;
-+};
-+
-+static int lan966x_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *hw_data;
-+	struct device *dev = &pdev->dev;
-+	int i;
-+
-+	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, N_CLOCKS),
-+			       GFP_KERNEL);
-+	if (!hw_data)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	init.ops = &lan966x_gck_ops;
-+
-+	hw_data->num = N_CLOCKS;
-+
-+	for (i = 0; i < N_CLOCKS; i++) {
-+		init.name = clk_names[i];
-+		hw_data->hws[i] = lan966x_gck_clk_register(dev, i);
-+		if (IS_ERR(hw_data->hws[i])) {
-+			dev_err(dev, "failed to register %s clock\n",
-+				init.name);
-+			return PTR_ERR(hw_data->hws[i]);
-+		}
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_data);
-+}
-+
-+static const struct of_device_id lan966x_clk_dt_ids[] = {
-+	{ .compatible = "microchip,lan966x-gck", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lan966x_clk_dt_ids);
-+
-+static struct platform_driver lan966x_clk_driver = {
-+	.probe  = lan966x_clk_probe,
-+	.driver = {
-+		.name = "lan966x-clk",
-+		.of_match_table = lan966x_clk_dt_ids,
-+	},
-+};
-+builtin_platform_driver(lan966x_clk_driver);
-+
-+MODULE_AUTHOR("Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>");
-+MODULE_DESCRIPTION("LAN966X clock driver");
-+MODULE_LICENSE("GPL v2");
+Sam Protsenko (5):
+      clk: samsung: clk-pll: Implement pll0822x PLL type
+      clk: samsung: clk-pll: Implement pll0831x PLL type
+      dt-bindings: clock: Add bindings definitions for Exynos850 CMU
+      dt-bindings: clock: Document Exynos850 CMU bindings
+      clk: samsung: Introduce Exynos850 clock driver
+
+Will McVicker (2):
+      clk: samsung: add support for CPU clocks
+      clk: samsung: exynos5433: update apollo and atlas clock probing
+
+ .../clock/samsung,exynos850-clock.yaml        | 185 ++++
+ drivers/clk/samsung/Kconfig                   |  30 +-
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-cpu.c                 |  18 +
+ drivers/clk/samsung/clk-exynos-audss.c        |   4 +-
+ drivers/clk/samsung/clk-exynos4412-isp.c      |   4 +-
+ drivers/clk/samsung/clk-exynos5433.c          | 124 +--
+ drivers/clk/samsung/clk-exynos850.c           | 835 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 | 196 ++++
+ drivers/clk/samsung/clk-pll.h                 |   2 +
+ drivers/clk/samsung/clk-s5pv210-audss.c       |   4 +-
+ drivers/clk/samsung/clk.c                     |   2 +
+ drivers/clk/samsung/clk.h                     |  26 +
+ include/dt-bindings/clock/exynos850.h         | 141 +++
+ 14 files changed, 1478 insertions(+), 94 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynos850.c
+ create mode 100644 include/dt-bindings/clock/exynos850.h
+
 -- 
-2.17.1
+Regards,
+Sylwester
 
