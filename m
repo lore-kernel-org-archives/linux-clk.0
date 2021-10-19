@@ -2,99 +2,222 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5CEC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 09:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E2DC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA9B261372
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 09:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CAC66137D
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Oct 2021 11:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234955AbhJSJyk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Oct 2021 05:54:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:65378 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231652AbhJSJyk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:54:40 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10141"; a="209266693"
-X-IronPort-AV: E=Sophos;i="5.85,384,1624345200"; 
-   d="scan'208";a="209266693"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2021 02:52:27 -0700
-X-IronPort-AV: E=Sophos;i="5.85,384,1624345200"; 
-   d="scan'208";a="531371974"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.159])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2021 02:52:21 -0700
-Received: from andy by smile with local (Exim 4.95)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1mclms-000SXr-2L;
-        Tue, 19 Oct 2021 12:52:02 +0300
-Date:   Tue, 19 Oct 2021 12:52:02 +0300
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Subject: Re: [PATCH v1 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-Message-ID: <YW6VQutGMFOZPNlC@smile.fi.intel.com>
-References: <20211012134027.684712-1-kernel@esmil.dk>
- <20211012134027.684712-13-kernel@esmil.dk>
- <CAHp75Vep+i+iyJi0LAOKuer-cUZoUoB_ZrWKcmT=EB_4hOgFGw@mail.gmail.com>
- <CANBLGcxHD2vy0+tXYo5Pkqri9mV7aD9jikvs3ygBJRxF4ApLMA@mail.gmail.com>
- <CAHp75Vc65deoHbks-aPmnjEJzm3GdqFMfBCUqw4vVLVr=71Ncg@mail.gmail.com>
- <CANBLGcxriKLZ+CKUsj5sviW8FdHnWTF2koROwmAb=G2tbmE6vQ@mail.gmail.com>
- <CAHp75VccSDLVbs1sF_-1zghWyLKtKKV1qtxOxZZ-cS0e6S-sBA@mail.gmail.com>
- <CAHp75VcgFRGpca-pSU9T5Oo1fT4aWQJd5EQfyZscGYx0mDMJ_Q@mail.gmail.com>
- <CANBLGcxHLQZygX9CHsXK4aYS9m4VE5OnLNROOmvP1ps5UP-xAw@mail.gmail.com>
+        id S235446AbhJSLnJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Oct 2021 07:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53992 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235376AbhJSLnI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Oct 2021 07:43:08 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0062FC061768
+        for <linux-clk@vger.kernel.org>; Tue, 19 Oct 2021 04:40:54 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id r19so6725919lfe.10
+        for <linux-clk@vger.kernel.org>; Tue, 19 Oct 2021 04:40:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
+        b=gbZb/rIEkq16uEpMdDfbn531uPXxDE2vXRTZ1At7zc8FyijjHf+TaWP9WSCNsx9CRl
+         Ax+uAwkmd3zCdbRdDaM3dpQ6QH2wtz6LdoMLA6+gjkzDI8FsGa3Gg4WLu7V9K5SrUrby
+         y6A+UktAxyprVLbdSpurxxaZ8mnWtv03QgVC25vrqwdz6F5CjpkyH0G67ZL5o2xSalbx
+         z2YLwvEkGXJDZVRENSUyiANgZXnd7Hl65An187cV1TSi/tcYxCoWRVEqIP0BwzqCyQr0
+         hoZBxk1g0lrSFu4sw+cYxe+pvM8G9j1I2iiX+c9B9ryltLhmQtiX2zDR77yR1QolGdKK
+         MOng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p/y6DgAZycykowwrleZpy70Yak++qIhNqJ9ImugcYMs=;
+        b=h8NLoPmwoz6fla+8+hNiXwgkKRr7sfm9FT3Dfx90cqvkuCF+AFHHWCUrz6LY5B3vvn
+         N0XwVgO+e+2g+VuODFq3pqRGzbL3ebsEOJQU28LUFA9h36Xuij/DM9YCfSeifHTObGxR
+         alUqKBU8xO5hLaqILiB1rMs3IslzMApAc/vJ3NR0YOGjRkFowrkfjb6+kNm5U///IHzT
+         i6haB9cPvg88kBWqqiBo88ByqfXeMQJVgaPUo+tadruvUYIbnNnAQiZP3nUG77A2gRli
+         uJQvtofeUmlfwKkH63gIdGPRfWomUarQXGcCp3USLoETgau1BQYzLSEfSq+8V7XyoTjF
+         LWeQ==
+X-Gm-Message-State: AOAM530sMQnSFte00YPsKyVwz+YWfbsQBtrXt1dyP2k18hmBowYPd5b1
+        Y/3h+L+BJk6agY04CxiCu3hVs/TBvGeY8aRzd36TsQ==
+X-Google-Smtp-Source: ABdhPJyiZ8hxPaWs5ZGwktR/58DXEHsnrg2iCZG7+dtLEFQZezq+DvEjCTIwbhL0fm341kLJAfk/05h60QX3kuXQ9G4=
+X-Received: by 2002:a05:6512:3084:: with SMTP id z4mr5314051lfd.167.1634643653278;
+ Tue, 19 Oct 2021 04:40:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBLGcxHLQZygX9CHsXK4aYS9m4VE5OnLNROOmvP1ps5UP-xAw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210926224058.1252-1-digetx@gmail.com> <20210926224058.1252-21-digetx@gmail.com>
+ <CAPDyKFoF2QxZss_h9B1NFqOqgeF=TQ6LajCedGiJ9_P8X5M0NA@mail.gmail.com>
+ <0bcbcd3d-2154-03d2-f572-dc9032125c26@gmail.com> <CAPDyKFohA9iu2UQfwoc0pCrCGupdwnUTWjKOtP09_C2KaFSo8w@mail.gmail.com>
+ <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
+In-Reply-To: <073114ea-490b-89a9-e82d-852b34cb11df@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 19 Oct 2021 13:40:16 +0200
+Message-ID: <CAPDyKFoOMvEW0o6=-_bYKhwUcbfeTD4qu-K2tfkdXiR0bErHsw@mail.gmail.com>
+Subject: Re: [PATCH v13 20/35] mtd: rawnand: tegra: Add runtime PM and OPP support
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Peter Chen <peter.chen@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-staging@lists.linux.dev, linux-pwm@vger.kernel.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Lucas Stach <dev@lynxeye.de>, Stefan Agner <stefan@agner.ch>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        David Heidelberg <david@ixit.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 07:02:43PM +0200, Emil Renner Berthing wrote:
-> On Mon, 18 Oct 2021 at 18:29, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Mon, Oct 18, 2021 at 7:23 PM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
+On Sun, 17 Oct 2021 at 10:38, Dmitry Osipenko <digetx@gmail.com> wrote:
+>
+> 01.10.2021 18:01, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Fri, 1 Oct 2021 at 16:35, Dmitry Osipenko <digetx@gmail.com> wrote:
+> >>
+> >> 01.10.2021 17:24, Ulf Hansson =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> On Mon, 27 Sept 2021 at 00:42, Dmitry Osipenko <digetx@gmail.com> wro=
+te:
+> >>>>
+> >>>> The NAND on Tegra belongs to the core power domain and we're going t=
+o
+> >>>> enable GENPD support for the core domain. Now NAND must be resumed u=
+sing
+> >>>> runtime PM API in order to initialize the NAND power state. Add runt=
+ime PM
+> >>>> and OPP support to the NAND driver.
+> >>>>
+> >>>> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> >>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>>> ---
+> >>>>  drivers/mtd/nand/raw/tegra_nand.c | 55 ++++++++++++++++++++++++++--=
+---
+> >>>>  1 file changed, 47 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/ra=
+w/tegra_nand.c
+> >>>> index 32431bbe69b8..098fcc9cb9df 100644
+> >>>> --- a/drivers/mtd/nand/raw/tegra_nand.c
+> >>>> +++ b/drivers/mtd/nand/raw/tegra_nand.c
+> >>>> @@ -17,8 +17,11 @@
+> >>>>  #include <linux/mtd/rawnand.h>
+> >>>>  #include <linux/of.h>
+> >>>>  #include <linux/platform_device.h>
+> >>>> +#include <linux/pm_runtime.h>
+> >>>>  #include <linux/reset.h>
+> >>>>
+> >>>> +#include <soc/tegra/common.h>
+> >>>> +
+> >>>>  #define COMMAND                                        0x00
+> >>>>  #define   COMMAND_GO                           BIT(31)
+> >>>>  #define   COMMAND_CLE                          BIT(30)
+> >>>> @@ -1151,6 +1154,7 @@ static int tegra_nand_probe(struct platform_de=
+vice *pdev)
+> >>>>                 return -ENOMEM;
+> >>>>
+> >>>>         ctrl->dev =3D &pdev->dev;
+> >>>> +       platform_set_drvdata(pdev, ctrl);
+> >>>>         nand_controller_init(&ctrl->controller);
+> >>>>         ctrl->controller.ops =3D &tegra_nand_controller_ops;
+> >>>>
+> >>>> @@ -1166,14 +1170,22 @@ static int tegra_nand_probe(struct platform_=
+device *pdev)
+> >>>>         if (IS_ERR(ctrl->clk))
+> >>>>                 return PTR_ERR(ctrl->clk);
+> >>>>
+> >>>> -       err =3D clk_prepare_enable(ctrl->clk);
+> >>>> +       err =3D devm_pm_runtime_enable(&pdev->dev);
+> >>>> +       if (err)
+> >>>> +               return err;
+> >>>> +
+> >>>> +       err =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev=
+);
+> >>>> +       if (err)
+> >>>> +               return err;
+> >>>> +
+> >>>> +       err =3D pm_runtime_resume_and_get(&pdev->dev);
+> >>>>         if (err)
+> >>>>                 return err;
+> >>>>
+> >>>>         err =3D reset_control_reset(rst);
+> >>>>         if (err) {
+> >>>>                 dev_err(ctrl->dev, "Failed to reset HW: %d\n", err);
+> >>>> -               goto err_disable_clk;
+> >>>> +               goto err_put_pm;
+> >>>>         }
+> >>>>
+> >>>>         writel_relaxed(HWSTATUS_CMD_DEFAULT, ctrl->regs + HWSTATUS_C=
+MD);
+> >>>> @@ -1188,21 +1200,19 @@ static int tegra_nand_probe(struct platform_=
+device *pdev)
+> >>>>                                dev_name(&pdev->dev), ctrl);
+> >>>>         if (err) {
+> >>>>                 dev_err(ctrl->dev, "Failed to get IRQ: %d\n", err);
+> >>>> -               goto err_disable_clk;
+> >>>> +               goto err_put_pm;
+> >>>>         }
+> >>>>
+> >>>>         writel_relaxed(DMA_MST_CTRL_IS_DONE, ctrl->regs + DMA_MST_CT=
+RL);
+> >>>>
+> >>>>         err =3D tegra_nand_chips_init(ctrl->dev, ctrl);
+> >>>>         if (err)
+> >>>> -               goto err_disable_clk;
+> >>>> -
+> >>>> -       platform_set_drvdata(pdev, ctrl);
+> >>>> +               goto err_put_pm;
+> >>>>
+> >>>
+> >>> There is no corresponding call pm_runtime_put() here. Is it
+> >>> intentional to always leave the device runtime resumed after ->probe(=
+)
+> >>> has succeeded?
+> >>>
+> >>> I noticed you included some comments about this for some other
+> >>> drivers, as those needed more tweaks. Is that also the case for this
+> >>> driver?
+> >>
+> >> Could you please clarify? There is pm_runtime_put() in both probe-erro=
+r
+> >> and remove() code paths here.
+> >
+> > I was not considering the error path of ->probe() (or ->remove()), but
+> > was rather thinking about when ->probe() completes successfully. Then
+> > you keep the device runtime resumed, because you have called
+> > pm_runtime_resume_and_get() for it.
+> >
+> > Shouldn't you have a corresponding pm_runtime_put() in ->probe(),
+> > allowing it to be runtime suspended, until the device is really needed
+> > later on. No?
+>
+> This driver doesn't support active power management. I don't have Tegra
+> hardware that uses NAND storage for testing, so it's up to somebody else
+> to implement dynamic power management. NAND doesn't require high
+> voltages, so it's fine to keep the old driver behaviour by keeping
+> hardware resumed since the probe time.
 
-...
+Alright, fair enough and thanks for clarifying!
 
-> > Having a second look I found even problematic error paths because of
-> > mixing devm_*() with non-devm_*() calls, which only assures me that
-> > your ->probe() error path is broken and should be revisited.
-> 
-> So do you want to expand on that now or should I send v2 first?
-
-Here is not enough context anymore to point out. I expect one to have done
-their homework anyway.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Kind regards
+Uffe
