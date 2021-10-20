@@ -2,125 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F47C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 15:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E5FC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 16:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5308861373
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 15:59:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BF56136F
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 16:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbhJTQBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Oct 2021 12:01:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
+        id S230077AbhJTQHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Oct 2021 12:07:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbhJTQBO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Oct 2021 12:01:14 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00A2C061749
-        for <linux-clk@vger.kernel.org>; Wed, 20 Oct 2021 08:58:59 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id o24so12648191wms.0
-        for <linux-clk@vger.kernel.org>; Wed, 20 Oct 2021 08:58:59 -0700 (PDT)
+        with ESMTP id S231228AbhJTQHA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Oct 2021 12:07:00 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21D8DC06161C
+        for <linux-clk@vger.kernel.org>; Wed, 20 Oct 2021 09:04:46 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id l38-20020a05600c1d2600b0030d80c3667aso11353565wms.5
+        for <linux-clk@vger.kernel.org>; Wed, 20 Oct 2021 09:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=H+gRH76GjJMcJJIvfbmq+wi06oWXJKKHW0RhCwTVPXc=;
-        b=acn3qGxC3Mo9OmYRVDxgMTw+Z+TBUD6x84AEdFNyPqLztx7gioUami8NTv0w9xjMFR
-         tJd/v+bQWD1p4VfsOkRrUcNgiFoCADs7snjxYBJo1h+w2mx6CS4R3eAJfFQaqzH23Vfu
-         HkUbNlCeAXFz4ISUkwMgkKzSgVJML3zY98LC7dd5sRg57p3w6kfYZb4J/QFrH4j6zqE5
-         XnVfCHI96R9CnA6EoxonGNuls2LZz0k6ZCKYZL85rt4XzkPKlMZ29ErC8Lc2ZmJG3vPT
-         WVsj58bFXRjxv2hNAX+i0DCL0713wr2R1IimFullnDf56M7szIdwtQTSEFevZsseLLv0
-         f1EQ==
+        bh=6LK3dgO19Er8A0Vy4HuLuhd8am1JO5JwDs4yYmEsMCo=;
+        b=tGO2NXmyYBwerSCN1mWMRMkZqppRDAJWppgejQTRXFqjUCOOoVZInPDt/Z/v5CqTwH
+         17M6dBOHDGrlNzPZ7qwbIZSAMToixKv1isD01pR/2CjNf2/PVFSAt77d77QGNuSK1FTk
+         JMclBtzWNiSg5nCgYEliLj9xYQCXccmeaRETE/nom/EgpuiRyRyiDai87z0GDsdn/Ed+
+         7abMC8TglZiLM1muRh5D50kqVK/z4vV1lfhdl+X4Q6mBwSOsVkAs1gkX6sn54O/1VFIi
+         0c31BVO/Ak/Ku2he2II+yThklRSRsMt9Q6tduehVhmQOciHNNXYsO2QZZg8lbYOW9ntC
+         itvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=H+gRH76GjJMcJJIvfbmq+wi06oWXJKKHW0RhCwTVPXc=;
-        b=eDjB7QxWB0TUQsAhecG7bAOU9Kn9lDMG/IMpRbeV5PSIx3w+IIpsoPxSiAqFtN2yED
-         3XEe5NZCa24CseNzZlYt29cMnp0gq4P0crL7Ytbrw6SAAlHqiCWM16M3w3CmagiSS+SF
-         fH7EveMBHLvVL+0Sg4FgSUtzB0TcVHcloD2SoabYvJlDASGY7X5uGc8o1f/I7MYlkWZG
-         yYu+fZozkGBSHS1jtkfdwnx0EWSm6SpOocqUPLaqlLdxD4b3HTabQhluRKKDPTeXHEKK
-         c7IEUmKVcHwJyT/y0P+nkgSvGzuuWXSYsPIjQueXJXJyrccYPMwC5yBgSE3o6xHfEJTh
-         H+sw==
-X-Gm-Message-State: AOAM53366DNcwig5ZqfbGVSbVlfIDKhYH2su8dg9jbiq4K5as+U9nIev
-        /08gvvHF/XG6TRHQ15kjs4Veqg==
-X-Google-Smtp-Source: ABdhPJzu2kHxVdJL7wFokGtw+2Z4vFuRFipGsrFdgD1Ln0YPGyMZzRUU/Iy9xzrkN+HPUmSA6Nnt/g==
-X-Received: by 2002:adf:de0e:: with SMTP id b14mr15713wrm.271.1634745538412;
-        Wed, 20 Oct 2021 08:58:58 -0700 (PDT)
+        bh=6LK3dgO19Er8A0Vy4HuLuhd8am1JO5JwDs4yYmEsMCo=;
+        b=HJ7y4ghXf4UzDlOgLU78rS0zl67tOh8XZYF1GKwHNlOVQIS8WBwTsFvLFDmOItLkPU
+         48fwKKnwwZm2mWyek2EOmDMoyu48fkx86aJyyl7+UrQEXVBXMg+Ez2hcPdov+ITfRehP
+         KzZdNdeU6rcFU5hIBLv4xQicUTJNBy/yKULjlmR6Pt2VVw/MQD5SM+g7TaSy+bj+b5oU
+         zX46XXl030f5qUcsS4ZbRnqJw9VDmFYF5i19IBeYld9jbteWIYKUL1+Ysg3q1f5QFFry
+         3Tj0gahtZ/eHquN/69y7uEOV1whcV96rsbQFFUP8j9ASY48KkFk3nkS/4YOw1SAmbcaY
+         UQEA==
+X-Gm-Message-State: AOAM531yoRZ5BzB8k0uYt/JDrsf+xooURI8dFkLEteZ02+DL+Q7FS8UG
+        rm2i8etpN1nWtCWDrX/+cyf+iw==
+X-Google-Smtp-Source: ABdhPJxKzqGnu0kt8uL8SHSZ9aX357bKN0VD4bfSXdYMzAhgxn6H1uxkKKKo97ooott+OzBeU6J+eg==
+X-Received: by 2002:adf:c986:: with SMTP id f6mr138627wrh.216.1634745884615;
+        Wed, 20 Oct 2021 09:04:44 -0700 (PDT)
 Received: from google.com ([95.148.6.207])
-        by smtp.gmail.com with ESMTPSA id l2sm6038888wmi.1.2021.10.20.08.58.57
+        by smtp.gmail.com with ESMTPSA id g25sm2433383wrc.88.2021.10.20.09.04.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Oct 2021 08:58:57 -0700 (PDT)
-Date:   Wed, 20 Oct 2021 16:58:56 +0100
+        Wed, 20 Oct 2021 09:04:44 -0700 (PDT)
+Date:   Wed, 20 Oct 2021 17:04:42 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
- global registers
-Message-ID: <YXA8wBzhB/Dauu7v@google.com>
-References: <20210923064137.60722-1-zhang.lyra@gmail.com>
- <20210923064137.60722-3-zhang.lyra@gmail.com>
- <YV1XpL7ibF1y4LbV@google.com>
- <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
- <CAL_JsqLUkxKOMSWLzTK14h3EyBCsO2dfq3=MxOSvv1ZK0_H=ow@mail.gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 00/10] regulator/mfd/clock: dt-bindings: Samsung S2M
+ and S5M to dtschema
+Message-ID: <YXA+GoTf6u/Y4qLX@google.com>
+References: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqLUkxKOMSWLzTK14h3EyBCsO2dfq3=MxOSvv1ZK0_H=ow@mail.gmail.com>
+In-Reply-To: <20211006132324.76008-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 20 Oct 2021, Rob Herring wrote:
+On Wed, 06 Oct 2021, Krzysztof Kozlowski wrote:
 
-> On Mon, Oct 11, 2021 at 9:11 AM Rob Herring <robh+dt@kernel.org> wrote:
-> >
-> > On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
-> > >
-> > > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
-> > >
-> > > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > >
-> > > > Add bindings for Unisoc system global register which provide register map
-> > > > for clocks.
-> > > >
-> > > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
-> > > >  1 file changed, 68 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
-> > >
-> > > Unapplied v3 and applied this (v4) instead, thanks.
-> >
-> > What about the clock binding this depends on:
-> >
-> > Unknown file referenced: [Errno 2] No such file or directory:
-> > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > xargs: dt-doc-validate: exited with status 255; aborting
-> > make[1]: *** Deleting file
-> > 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
-> > Unknown file referenced: [Errno 2] No such file or directory:
-> > '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
-> > make[1]: *** [scripts/Makefile.lib:385:
-> > Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
-> > Error 255
-> >
-> >
-> > Once again, all the components of MFD bindings need to be applied together.
+> Hi All,
 > 
-> It seems that Stephen still has comments and there's a new check that
-> causes the clock schema to fail, so this should be dropped or
-> reverted.
+> Changes since v2
+> ================
+> 1. Add Rob's tags.
+> 2. Remove "regulator-name" from properties (all regulator dtschema).
+> 3. Move "unevaluatedProperties" higher to make code easier to read (all regulator dtschema).
+> 4. Add ref-type to op-mode property (patch 6: s5m8767 regulators).
+> 
+> Changes since v1
+> ================
+> 1. Drop DTS patches - applied.
+> 2. Fully remove bindings/regulator/samsung,s5m8767.txt .
+> 3. Minor subject reformatting and few typos in text.
+> 
+> 
+> Intro
+> =====
+> This patchset converts all devicetree bindings of Samsung S2M and S5M
+> PMIC devices from txt to dtschema.
+> 
+> It includes also two fixes because later conversion depends on it
+> (contextually).
+> 
+> 
+> Merging/dependencies
+> ====================
+> 1. Regulator related binding changes depend on first two commits (the
+>    fixes), because of context.
+> 2. The mfd bindings depend on clock and regulator bindings.
+> 
+> The fixes and bindings changes (patches 1-10) should go via the same
+> tree.  For example regulator or mfd tree.
+> 
+> Another alternative is that regulator patches (1-2, 4-6) go via Mark who
+> later gives MFD a stable branch/tag to pull. Then the clock and MFD
+> bindings would go on top via MFD tree. Or any other setup you would like
+> to have. :)
+> 
+> 
+> Overview of devices
+> ===================
+> Essentially all Samsung S2M and S5M PMICs are very similar devices. They
+> provide the same functionality: regulators, RTC, 2 or 3 clocks and main
+> power management (e.g. power cut to SoC).
+> 
+> The differences are mostly in registers layout and number of regulators.
+> 
+> The drivers are built around one common part, mfd/sec-core.c, and share
+> some drivers between devices:
+> 1. MFD sec-core for all devices,
+> 1. one clock driver for most of devices,
+> 2. one RTC driver for all devices,
+> 3. three regulator drivers.
+> 
+> The regulator drivers were implementing slightly different features,
+> therefore one regulator binding for all devices does not make much
+> sense.  However the clock device binding can be shared.
+> 
+> The final dtschema bindings try to implement this - share only the clock
+> bindings.
+> 
+> Best regards,
+> Krzysztof
+> 
+> Krzysztof Kozlowski (10):
+>   regulator: s5m8767: do not use reset value as DVS voltage if GPIO DVS
+>     is disabled
+>   regulator: dt-bindings: samsung,s5m8767: correct
+>     s5m8767,pmic-buck-default-dvs-idx property
+>   dt-bindings: clock: samsung,s2mps11: convert to dtschema
+>   regulator: dt-bindings: samsung,s2m: convert to dtschema
+>   regulator: dt-bindings: samsung,s2mpa01: convert to dtschema
+>   regulator: dt-bindings: samsung,s5m8767: convert to dtschema
+>   dt-bindings: mfd: samsung,s2mps11: convert to dtschema
+>   dt-bindings: mfd: samsung,s2mpa01: convert to dtschema
+>   dt-bindings: mfd: samsung,s5m8767: convert to dtschema
+>   dt-bindings: mfd: samsung,s5m8767: document buck and LDO supplies
 
-Dropped.
+Looks like these are ready to be pushed.
+
+However, I am not in receipt of patches 1-2.
+
+Am I okay to merge 3-10 right now?
 
 -- 
 Lee Jones [李琼斯]
