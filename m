@@ -2,154 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6C7C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 11:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175B8C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 15:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0CDB60FD8
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 11:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3D1E6137C
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 15:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230091AbhJTLlb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 Oct 2021 07:41:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56848 "EHLO mail.kernel.org"
+        id S230416AbhJTPLl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 20 Oct 2021 11:11:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229941AbhJTLla (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 20 Oct 2021 07:41:30 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BCC3611B0;
-        Wed, 20 Oct 2021 11:39:15 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1md9w8-000Q93-UK; Wed, 20 Oct 2021 12:39:13 +0100
-Date:   Wed, 20 Oct 2021 12:39:11 +0100
-Message-ID: <878ryoc4dc.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        patrice.chotard@foss.st.com
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        maxime coquelin <mcoquelin.stm32@gmail.com>,
-        alexandre torgue <alexandre.torgue@foss.st.com>,
-        michael turquette <mturquette@baylibre.com>,
-        stephen boyd <sboyd@kernel.org>,
-        herbert xu <herbert@gondor.apana.org.au>,
-        "david s . miller" <davem@davemloft.net>,
-        david airlie <airlied@linux.ie>,
-        daniel vetter <daniel@ffwll.ch>,
-        thierry reding <thierry.reding@gmail.com>,
-        sam ravnborg <sam@ravnborg.org>,
-        yannick fertre <yannick.fertre@foss.st.com>,
-        philippe cornu <philippe.cornu@foss.st.com>,
-        benjamin gaignard <benjamin.gaignard@linaro.org>,
-        vinod koul <vkoul@kernel.org>,
-        ohad ben-cohen <ohad@wizery.com>,
-        bjorn andersson <bjorn.andersson@linaro.org>,
-        baolin wang <baolin.wang7@gmail.com>,
-        jonathan cameron <jic23@kernel.org>,
-        lars-peter clausen <lars@metafoo.de>,
-        olivier moysan <olivier.moysan@foss.st.com>,
-        arnaud pouliquen <arnaud.pouliquen@foss.st.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        dillon min <dillon.minfei@gmail.com>,
-        Marek Vasut <marex@denx.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Fabien Dessenne <fabien.dessenne@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Lionel Debieve <lionel.debieve@foss.st.com>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-        Ludovic Barre <ludovic.barre@foss.st.com>,
-        Christophe Kerello <christophe.kerello@foss.st.com>,
-        pascal Paillet <p.paillet@foss.st.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Le Ray <erwan.leray@foss.st.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: dt-bindings: treewide: Update @st.com email address to @foss.st.com
-In-Reply-To: <22fb6f19-21eb-dcb5-fa31-bb243d4a7eaf@canonical.com>
-References: <20211020065000.21312-1-patrice.chotard@foss.st.com>
-        <22fb6f19-21eb-dcb5-fa31-bb243d4a7eaf@canonical.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: krzysztof.kozlowski@canonical.com, patrice.chotard@foss.st.com, robh+dt@kernel.org, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, mturquette@baylibre.com, sboyd@kernel.org, herbert@gondor.apana.org.au, davem@davemloft.net, airlied@linux.ie, daniel@ffwll.ch, thierry.reding@gmail.com, sam@ravnborg.org, yannick.fertre@foss.st.com, philippe.cornu@foss.st.com, benjamin.gaignard@linaro.org, vkoul@kernel.org, ohad@wizery.com, bjorn.andersson@linaro.org, baolin.wang7@gmail.com, jic23@kernel.org, lars@metafoo.de, olivier.moysan@foss.st.com, arnaud.pouliquen@foss.st.com, tglx@linutronix.de, jassisinghbrar@gmail.com, mchehab@kernel.org, hugues.fruchet@foss.st.com, fabrice.gasnier@foss.st.com, lee.jones@linaro.org, miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, kuba@kernel.org, srinivas.kandagatla@linaro.org, kishon@ti.com, linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, mathieu.poirier@linaro.org, mpm@selenic.com, a.zummo@towertech.i
- t, alexandre.belloni@bootlin.com, gregkh@linuxfoundation.org, rafael@kernel.org, daniel.lezcano@linaro.org, amitk@kernel.org, rui.zhang@intel.com, wim@linux-watchdog.org, linux@roeck-us.net, geert+renesas@glider.be, viresh.kumar@linaro.org, a.fatoum@pengutronix.de, jagan@amarulasolutions.com, dillon.minfei@gmail.com, marex@denx.de, laurent.pinchart@ideasonboard.com, sre@kernel.org, dmitry.torokhov@gmail.com, paul@crapouillou.net, fabien.dessenne@foss.st.com, christophe.roullier@foss.st.com, gabriel.fernandez@foss.st.com, lionel.debieve@foss.st.com, amelie.delaunay@foss.st.com, pierre-yves.mordret@foss.st.com, ludovic.barre@foss.st.com, christophe.kerello@foss.st.com, p.paillet@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com, erwan.leray@foss.st.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org,
-  dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, alsa-devel@alsa-project.org, linux-media@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        id S229570AbhJTPLj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 20 Oct 2021 11:11:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 56E0E6137C;
+        Wed, 20 Oct 2021 15:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634742565;
+        bh=V8dOGDI+8Esrzokm8M0yenicCab84JXeYlub3sJhK+o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YxGYAXE9zbZQX/iXvbXcaARd+gX5myi8BFCBo9z/IiVSOZUcyLzIpDHWIoeEEw9lq
+         ur5yChHfowLYRejboVz5EyCZ9gKtIvtnM7g7YWavWTNTYtXA5sfaLC1j/WDHSZpepT
+         bdIE+03FXIavtRSKAHs+zXVWjdWFhmWtvVthl1ydVZBHOXvScUy3e77JVpJWprHfw2
+         4kVUankFrG8DtmyFnMlk9L+iSCtwB5OyyZ0Q4EZmnSOB2/iIbKMpoNjduBbUYsX7Fo
+         n6vTaFDy0zNehwqGcpU57HId2M6dJ7GHOrD7YKuLypZxmXKyDPgk81sSSamZ7yMIGz
+         t5X4yYQ0pExvQ==
+Received: by mail-qk1-f176.google.com with SMTP id bp7so3350217qkb.12;
+        Wed, 20 Oct 2021 08:09:25 -0700 (PDT)
+X-Gm-Message-State: AOAM531bJ/YkFmuNL99g+4ux9jpOTVHrzmgY2kl1vcLsmt3i2r/ak/BZ
+        I05PyQiH0knl66xvuPn5wHVZLCUPPxlOm5Q+OA==
+X-Google-Smtp-Source: ABdhPJyGoWzG5JvS8XT67rDl5KsAoE+oAvmANea6yGKMy2Cxc0+sI6RuMRf9B7gkVo8hK4KsjNLCXx6U2Pzicu3/xZU=
+X-Received: by 2002:ae9:df01:: with SMTP id t1mr117844qkf.202.1634742564401;
+ Wed, 20 Oct 2021 08:09:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210923064137.60722-1-zhang.lyra@gmail.com> <20210923064137.60722-3-zhang.lyra@gmail.com>
+ <YV1XpL7ibF1y4LbV@google.com> <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+eqqv=qtKOiNdEpYGi2amek_m+Q-Z9A769pXXqJ4R88A@mail.gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 20 Oct 2021 10:09:13 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLUkxKOMSWLzTK14h3EyBCsO2dfq3=MxOSvv1ZK0_H=ow@mail.gmail.com>
+Message-ID: <CAL_JsqLUkxKOMSWLzTK14h3EyBCsO2dfq3=MxOSvv1ZK0_H=ow@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: sprd: Add bindings for ums512
+ global registers
+To:     Lee Jones <lee.jones@linaro.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, Baolin Wang <baolin.wang7@gmail.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 20 Oct 2021 08:45:02 +0100,
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-> 
-> On 20/10/2021 08:50, patrice.chotard@foss.st.com wrote:
-> > From: Patrice Chotard <patrice.chotard@foss.st.com>
-> > 
-> > Not all @st.com email address are concerned, only people who have
-> > a specific @foss.st.com email will see their entry updated.
-> > For some people, who left the company, remove their email.
-> > 
-> 
-> Please split simple address change from maintainer updates (removal,
-> addition).
-> 
-> Also would be nice to see here explained *why* are you doing this.
+On Mon, Oct 11, 2021 at 9:11 AM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Wed, Oct 6, 2021 at 3:00 AM Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > On Thu, 23 Sep 2021, Chunyan Zhang wrote:
+> >
+> > > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > >
+> > > Add bindings for Unisoc system global register which provide register map
+> > > for clocks.
+> > >
+> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > ---
+> > >  .../bindings/mfd/sprd,ums512-glbreg.yaml      | 68 +++++++++++++++++++
+> > >  1 file changed, 68 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.yaml
+> >
+> > Unapplied v3 and applied this (v4) instead, thanks.
+>
+> What about the clock binding this depends on:
+>
+> Unknown file referenced: [Errno 2] No such file or directory:
+> '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> xargs: dt-doc-validate: exited with status 255; aborting
+> make[1]: *** Deleting file
+> 'Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml'
+> Unknown file referenced: [Errno 2] No such file or directory:
+> '/usr/local/lib/python3.8/dist-packages/dtschema/schemas/clock/sprd,ums512-clk.yaml'
+> make[1]: *** [scripts/Makefile.lib:385:
+> Documentation/devicetree/bindings/mfd/sprd,ums512-glbreg.example.dt.yaml]
+> Error 255
+>
+>
+> Once again, all the components of MFD bindings need to be applied together.
 
-And why this can't be done with a single update to .mailmap, like
-anyone else does.
+It seems that Stephen still has comments and there's a new check that
+causes the clock schema to fail, so this should be dropped or
+reverted.
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Rob
