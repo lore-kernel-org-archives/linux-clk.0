@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1195C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 08:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FB3C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 08:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF52461212
+	by mail.kernel.org (Postfix) with ESMTP id E956F6135E
 	for <linux-clk@archiver.kernel.org>; Wed, 20 Oct 2021 08:50:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbhJTIwn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S229663AbhJTIwn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 20 Oct 2021 04:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57938 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229663AbhJTIwm (ORCPT
+        with ESMTP id S229677AbhJTIwm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 20 Oct 2021 04:52:42 -0400
 Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E895C06161C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E907C061746;
         Wed, 20 Oct 2021 01:50:28 -0700 (PDT)
 Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id B312A82F9E;
-        Wed, 20 Oct 2021 10:50:25 +0200 (CEST)
+        by phobos.denx.de (Postfix) with ESMTPSA id 385948319B;
+        Wed, 20 Oct 2021 10:50:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
         s=phobos-20191101; t=1634719826;
-        bh=HzN4VwCev1h0HKzqcm7IiINVPE1vhUzyaNSEfQ58SfA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PrinXZrndEL6CTZt/2hVmn3+J/TjvbJv8zhu0Wu8HX8fwmvmgb7wko8lpC8Ps8bja
-         3IqbVqYjHaAnj1pSjdVXFO+riuOgU6CzNgVtXoSP52Tx9BBGQg7Myd8XHnDNczZ3qI
-         WeEYlFvIVFkGc0uh+XzmLZ8Xy2EsMiIYz4a0QHGtNZn5V7F3sMkKh1BbSe8/HQVjvY
-         azq8+oRnFG8FQ3335H93Md8uNRaa7PUXA1LPAiphyGHqM4wNWV+Vnp8BDDLOVihgcj
-         E2VRHXe4YQtWnFvLlSzuZHfQWLF0uMLT8AVXF9KUW3VAZQ7Dq7D2SqdOzR7Bfi6J8s
-         au4FoU2tmTZPg==
+        bh=KuMbYZy0KqCB6uiczurO6mDyZHG1HljairWQFE7l5kE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZhMut0WMFeX/pnZGTf44hTSSFDDyeFAV0inwSBsHfld3yZRvfPJAHlc+4+TqmYw2t
+         +rLbpECWaSy4hDYZWwTEFFET6tvyBuIqlM850Blk86fy7BI+UKKFAIs2B7mUgGwE4c
+         GYr3/hxmsRii9/4AgfACjt87ncv2y1mjiDRdKkUyWHeh4HvPQuZAZFYzQBvHOcdptE
+         LRJpdineoUUfZFZy1GwNxeoEJtuQ0Cm0x/NWiQrlsEumPXd+JLV566kHXOSz+Ae5GE
+         nSdUcPqlX5f5n9EHFXAQCZQntv8vOv/+SJtNV/TxKhhhRCAIVx8GhOv0UlR4PSMrWx
+         h21cnBJsuhDtw==
 From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
 Cc:     Marek Vasut <marex@denx.de>,
@@ -41,10 +41,12 @@ Cc:     Marek Vasut <marex@denx.de>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-power@fi.rohmeurope.com
-Subject: [PATCH 1/2] dt-bindings: mfd: rohm,bd71847-pmic: Document rohm,clock-output-is-critical property
-Date:   Wed, 20 Oct 2021 10:49:55 +0200
-Message-Id: <20211020084956.83041-1-marex@denx.de>
+Subject: [PATCH 2/2] clk: bd718x7: Add rohm,clock-output-is-critical property
+Date:   Wed, 20 Oct 2021 10:49:56 +0200
+Message-Id: <20211020084956.83041-2-marex@denx.de>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211020084956.83041-1-marex@denx.de>
+References: <20211020084956.83041-1-marex@denx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
@@ -70,25 +72,27 @@ Cc: devicetree@vger.kernel.org
 Cc: linux-power@fi.rohmeurope.com
 To: linux-clk@vger.kernel.org
 ---
- Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/clk-bd718x7.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-index 5d531051a153..2497ade2bbd0 100644
---- a/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71847-pmic.yaml
-@@ -41,6 +41,11 @@ properties:
-   clock-output-names:
-     maxItems: 1
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index ac40b669d60b..a59bc57f13bc 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -125,6 +125,13 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
  
-+  rohm,clock-output-is-critical:
-+    description:
-+      Never gate off C32K_OUT clock.
-+    type: boolean
++	/*
++	 * The clock supply vital clock net, e.g. SoC XTAL input,
++	 * and the clock must not ever be turned off.
++	 */
++	if (of_property_read_bool(parent->of_node, "rohm,clock-output-is-critical"))
++		init.flags |= CLK_IS_CRITICAL,
 +
- # The BD71847 abd BD71850 support two different HW states as reset target
- # states. States are called as SNVS and READY. At READY state all the PMIC
- # power outputs go down and OTP is reload. At the SNVS state all other logic
+ 	of_property_read_string_index(parent->of_node,
+ 				      "clock-output-names", 0, &init.name);
+ 
 -- 
 2.33.0
 
