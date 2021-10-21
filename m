@@ -2,177 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A65C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 19:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA0CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 20:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B527B61284
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 19:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B019E60FE8
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 20:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230272AbhJUTxK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 15:53:10 -0400
-Received: from mail-pg1-f177.google.com ([209.85.215.177]:35651 "EHLO
-        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231728AbhJUTxJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 15:53:09 -0400
-Received: by mail-pg1-f177.google.com with SMTP id q187so1274761pgq.2;
-        Thu, 21 Oct 2021 12:50:53 -0700 (PDT)
+        id S232118AbhJUUeM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Oct 2021 16:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39038 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232025AbhJUUeL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 16:34:11 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ACFCC061348
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 13:31:55 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id g8so5579989edb.12
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 13:31:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+AAeT1s5etdXanRn4aSszKNI29PERXQFpDmpMaONVPY=;
+        b=XCV+7ls9ymJQESDnoVrKDqw43/z3HmKtMn5kgZkGDkChRBSDIFerDu7SxdASWpHeof
+         5+cV3u5rkCAukglJLnxyiWawK/p6JgUWnyB9FmVXutdRGfl/RJHWan8z3DcMmS8D4S6s
+         vAL4PlGz8U7dW7ou47v06kIyoGcnQHZlT1zU4mUF0cvXdwcFiYDE4cOaiiNF0gHiernP
+         yUS6Lw0lPz7vmUavtVkk5gTvleJDrsTlqbkAmv+eyuIL3LW5L+3kEb9jiewMlcwlE+Ig
+         9OBqMN5ZxHTkgzMsYccXVF2x1K9e1KBRCVo24Wa+d9W0izFU0xMt2S9lS9Bl/jFcd/CU
+         nUpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5qcBk3DeZv7+MBr+DGak5KmAIKq22H5/grJVeSCeLaw=;
-        b=ZjItPisPSDEL6cgmvUPYFaAZEy0N46bIWUjLpg8oJfA6tpA3SbC9C4EPghn/wGs4JD
-         cII7/2xC3dnbGAMmhklBB7JA4bZ2psdJXPmFoOFLR4ujbiiUb7l4VhAawaMEELxMYJ42
-         5Us60xzpB/f9V+wFNyPUoFur/ONjDcXD0xXb9wCy33GBIv3EQeTHDb4G/EYiWEK0ULtb
-         /v1yXWtKMZF8753QsYsm5LMlABi592MQcK3lgHqL6uaMPyfWy1Te4HeWGtEaylxBejpx
-         2q5fzejSLFYreio2lxOZ+shyweg+0PbM9ZWykT+W/wHWXxzCs4jKBjtNEODE+OO8J4xU
-         B9Bw==
-X-Gm-Message-State: AOAM533iLrDX8+dmEY3xez1WN3h0tALAHOWZuRq63VZ4EUPafgbABuR1
-        ODeaC6W3dj3IGudUs0K97/8sPTTHRAZ3HjwUuB4=
-X-Google-Smtp-Source: ABdhPJz2g45HVrm92zsQSGHVasZJ2oUSDzMsKNKTjLhfF9aY5UDp7p3S+/XUucIuf3UBNmD9xTaAgYYNmpQ1XqNUueI=
-X-Received: by 2002:a63:2d46:: with SMTP id t67mr5876914pgt.15.1634845853245;
- Thu, 21 Oct 2021 12:50:53 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211021174223.43310-1-kernel@esmil.dk> <20211021174223.43310-13-kernel@esmil.dk>
- <20211021190118.GA1802180@x1>
-In-Reply-To: <20211021190118.GA1802180@x1>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-Date:   Thu, 21 Oct 2021 21:50:42 +0200
-Message-ID: <CANBLGcy2WR2L_CE2FbLPBnDaHWaNgUySxyB4WyPYA1z8zsQAPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-To:     Drew Fustini <dfustini@baylibre.com>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+AAeT1s5etdXanRn4aSszKNI29PERXQFpDmpMaONVPY=;
+        b=FkmXer3EUxQMuaH/g+0zymza3rlBuaOvk0Mr6r2lZ9+W3+GKTwguP3khhzWbYBTSWi
+         kdEe07VvzfkXXI/1K3zBydDCud816QgZtTp+fAFRQuF9LnKkIcQ/k9tPb4O2liHmJUeh
+         eTCJCRmiXSmMAavgHcjSU/1a1tlZ8ooKANuOdZJjbepb1AuieA0EPdkBTvjS+q78tbdA
+         vvoBxam4iCtrzRdfIh5DKsQATLWLftf2EXZQmluOlyAg1N6n8+rAxLt3Vn6Bo/3gJ73n
+         6BE13YeFtF50O5k60WFfShQ+i8AHR1YEHVDj1ozAb0BSrrz+0v09313DtkIKZe1k7+jm
+         vlhQ==
+X-Gm-Message-State: AOAM532qW48LYfObQ+j8b7RDLqgfzGHUvRU0WVFSDLLxZcgLtD/8j/xz
+        ZA38SK9BdZfGzHBVSkd4s2caavSt60JICA==
+X-Google-Smtp-Source: ABdhPJx8Igs3iTlr4qpiVqe1jpwXDeVQlItrxTjJTiKYrz23gen6QSEo6M7blcHlSX3CgR4v2vi5mg==
+X-Received: by 2002:a17:906:c205:: with SMTP id d5mr9611265ejz.528.1634848313960;
+        Thu, 21 Oct 2021 13:31:53 -0700 (PDT)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id f7sm3296171edl.33.2021.10.21.13.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 13:31:53 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_APM
+Date:   Thu, 21 Oct 2021 23:31:51 +0300
+Message-Id: <20211021203152.29312-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 21 Oct 2021 at 21:01, Drew Fustini <dfustini@baylibre.com> wrote:
-> On Thu, Oct 21, 2021 at 07:42:19PM +0200, Emil Renner Berthing wrote:
-> > +/*
-> > + * Interrupt Trigger Polarity. If set to 1 the interrupt is triggered on a
-> > + * rising edge (edge-triggered) or high level (level-triggered). If set to 0 the
-> > + * interrupt is triggered on a falling edge (edge-triggered) or low level
-> > + * (level-triggered).
-> > + */
-> > +#define GPIOIEV              0x020
-> > +
-> > +/*
-> > + * Interrupt Mask. If set to 1 the interrupt is disabled (masked). If set to 0
-> > + * the interrupt is enabled (unmasked).
-> > + */
-> > +#define GPIOIE               0x028
->
-> It bothered me that the datasheet used the term GPIOIE for the interrupt
-> mask register. I had used a more verbose #define name because I worried
-> someone reading GPIOIE in functions might mistake it for an interrupt
-> enable register. This happened to me when I was originally working with
-> the gpio driver.
->
-> However I suppose the best solution would have been to get the datasheet
-> updated as I can see how it is best to have #define names in the driver
-> match the datasheet.
->
-> > +static void starfive_irq_mask(struct irq_data *d)
-> > +{
-> > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > +     u32 mask = BIT(gpio % 32);
-> > +     unsigned long flags;
-> > +     u32 value;
-> > +
-> > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > +     value = readl_relaxed(ie) & ~mask;
-> > +     writel_relaxed(value, ie);
-> > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > +}
-> > +
-> > +static void starfive_irq_mask_ack(struct irq_data *d)
-> > +{
-> > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > +     void __iomem *ic = sfp->base + GPIOIC + 4 * (gpio / 32);
-> > +     u32 mask = BIT(gpio % 32);
-> > +     unsigned long flags;
-> > +     u32 value;
-> > +
-> > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > +     value = readl_relaxed(ie) & ~mask;
-> > +     writel_relaxed(value, ie);
-> > +     writel_relaxed(mask, ic);
-> > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > +}
-> > +
-> > +static void starfive_irq_unmask(struct irq_data *d)
-> > +{
-> > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > +     u32 mask = BIT(gpio % 32);
-> > +     unsigned long flags;
-> > +     u32 value;
-> > +
-> > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > +     value = readl_relaxed(ie) | mask;
-> > +     writel_relaxed(value, ie);
-> > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > +}
-> > +
+CMU_APM generates clocks for APM IP-core (Active Power Management). In
+particular it generates RTC clocks, which are needed to enable rtc-s3c
+driver on Exynos850 SoC.
 
-...
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ .../clock/samsung,exynos850-clock.yaml        | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-> > +static int starfive_gpio_init_hw(struct gpio_chip *gc)
-> > +{
-> > +     struct starfive_pinctrl *sfp = starfive_from_gc(gc);
-> > +
-> > +     /* mask all GPIO interrupts */
-> > +     writel(0, sfp->base + GPIOIE + 0);
-> > +     writel(0, sfp->base + GPIOIE + 4);
->
-> Woudln't 0 in GPIOIE mean mask is disabled for all interrupts?
->
-> In other words, wouldn't this enable all the interrupts?
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+index 7f8c91a29b91..5618cfa62f80 100644
+--- a/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos850-clock.yaml
+@@ -32,6 +32,7 @@ properties:
+   compatible:
+     enum:
+       - samsung,exynos850-cmu-top
++      - samsung,exynos850-cmu-apm
+       - samsung,exynos850-cmu-core
+       - samsung,exynos850-cmu-dpu
+       - samsung,exynos850-cmu-hsi
+@@ -68,6 +69,24 @@ allOf:
+           items:
+             - const: oscclk
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynos850-cmu-apm
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (26 MHz)
++            - description: CMU_APM bus clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: dout_clkcmu_apm_bus
++
+   - if:
+       properties:
+         compatible:
+-- 
+2.30.2
 
-Heh, you're right. The code does the exact opposite of what the
-documentation says it should be doing. However I just tried and with
-the code as it is now GPIO interrupts work fine, but with the logic
-flipped the kernel fails to boot. I'm guessing because an interrupt
-storm. So it seems to me the documentation might be wrong and GPIOIE
-is actually a good name.
-
-Michael Zhu: Can you confirm if a 1 or 0 enables the interrupt in the
-GPIOIE registers?
-
-/Emil
