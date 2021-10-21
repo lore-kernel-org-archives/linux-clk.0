@@ -2,129 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A37C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9366C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD20E61221
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C3F611CE
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbhJUMWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 08:22:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231503AbhJUMWL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 08:22:11 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B135CC06174E
-        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 05:19:55 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id d3so757880wrh.8
-        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 05:19:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=1MAcWNR4eIJHPkpF0pYcakZ/CD1b8OAEZ6esT1QDubc=;
-        b=hBCnOWpAXWArLg0uH9UGShDwvTdqrT6J/fDuC7xhthw0qa2wBVNACShsI7AISgfR+d
-         YJIVZHIJPWeNFDiq2VIA+I///w1zDmM5lO2OWmh9154MduFB2OM8IhFLstq+rvPCmTTj
-         AecQMUgLfL7ChrRfMLg/mNhdLPy1a4IxlgTb33oc6uytvUdukI63bZhtEYHVnEXLbWkD
-         OE9r4iwGFvJIRzMDWVfad0JxcBuig+jD6hK518WZWIHfAicg0CstlGMEM5jHiD8E3pSE
-         pFiZx0isZAP5kHfk+EPvELt6K0hFc+4j3i7TBbr9LAffw8aCWZIjAequzLZy9FP46rPy
-         V1AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=1MAcWNR4eIJHPkpF0pYcakZ/CD1b8OAEZ6esT1QDubc=;
-        b=8EA/zP1na1l53/LUCg+NweL7etKZ2aOm/jhSgDkqZkL6wB+4c4Q9e/d9MyZBtUdjsy
-         dzgOffSghNGqoGb3aQU0HuOXAEjilYY2/OJMgAxg5KuzDZxdYQ0moOAM2eurkDlF8wOC
-         htIq/C4+Tcg79zWoYme4bAgwoMNCbrQu184lofsbouhnwWUwkGrK6oc0CGJSz51tD/6l
-         CCZu9LixQn2jATj8RwR8XGlx04ocBVFtlZz84RbG34q4FAKB2nP1AnNdVIMAduyiCOam
-         VkAvDt5XwLuBa67XlPwHZJGYn1s2V1fOEqcgbv04hu9f4kULsgMlja0mnSQbsotdcme/
-         FLqA==
-X-Gm-Message-State: AOAM532+YkKRKPigs/MlrjjeU3OJqPhx9zyHBD3k4oy1+6Xkc7HsOegG
-        bREwom0IKto/Z8hUwFO3/Zb7Hw==
-X-Google-Smtp-Source: ABdhPJzJvoUSpjaqHzOXELw1I39FiK/03T2TYTk/qaJuwZGyqBujn5meTTPNaXiPnO9TLEbK6mN7ZQ==
-X-Received: by 2002:adf:ff91:: with SMTP id j17mr6555798wrr.132.1634818794258;
-        Thu, 21 Oct 2021 05:19:54 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 133sm7971860wmb.24.2021.10.21.05.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 05:19:53 -0700 (PDT)
-References: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
- <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
- <CAFBinCBGZi3MRqTRshyCkq8AAaqHi2NkZVV80ppZr4Lx=xWOWA@mail.gmail.com>
- <1jmtn6tu99.fsf@starbuckisacylon.baylibre.com>
- <CAFBinCCRWS6j=6hDo_sOBmQZw5X8L4GYP=rHQVqHd04keCrbuQ@mail.gmail.com>
-User-agent: mu4e 1.6.7; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0
- on GXBB
-Date:   Thu, 21 Oct 2021 14:18:01 +0200
-In-reply-to: <CAFBinCCRWS6j=6hDo_sOBmQZw5X8L4GYP=rHQVqHd04keCrbuQ@mail.gmail.com>
-Message-ID: <1jfssumuxi.fsf@starbuckisacylon.baylibre.com>
+        id S230508AbhJUMZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Oct 2021 08:25:20 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:3531 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230425AbhJUMZU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 08:25:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1634818984; x=1666354984;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YtjyPXLkroGsz9agc6VrcGiYg7a86tG8R99+t7K0eFo=;
+  b=EGqQsKl3EYcNaPsjhYHqHdrWv1FKdLGsjrBAfQeuDPcBisOydv0DbI2Y
+   u/GgBtmZ7CeO0+bEUFGlTvb8eTCk/XCiyaC408d0eIc8PwryWSCfcV7KU
+   VgcJlulxUZ3l5k9t4f1s+3G5ZEv3bjqtKPZDgObMECpL6fuPpmrgGRWDC
+   YOkPS10TXIP8D7lbbPqeQ/X5nFj9yi/jyVYKtxIrW7xrYtAfsusfkjt92
+   PZyePeNLbbtxy+beJI84cKp0MLSwGMPF/iI+TAxEoc3SOLIVo6HabbjfY
+   FUuwVLbWIJCKOb9ybkz3ztuHaZvXF7W1uPq505tPm2giSRzwSlCSA+Md2
+   Q==;
+IronPort-SDR: 5SjRX4WIFmH8a0fVc5piMgZLHkcdwsfOgArp/+Sa9QkmWSA0vb5SWWUMGKEaE23B1hB2mOyYAF
+ 39K9n43lAupipxDUUW1u2CPoXwqEgEKFHfVU7XGHm7U3qPC+QHdZT6kOuk5nmTK6jJigu54QjJ
+ WdFjSGjslmyzAChHzYkvZUp9x0R4lrR/KFLGDjSAc66KittI3jDRHEMTdvRLZ2Gazt2LDnxHcs
+ 8eCw3V8VitFTw54X8DeTxD7pD/R4ahNG3HRg8eqgx7/4SX2z4R9FfSNqEj7xKkbWJibQbXxqB1
+ J13owTIfaSHlGBVEFWcuP7Uf
+X-IronPort-AV: E=Sophos;i="5.87,169,1631602800"; 
+   d="scan'208";a="133907797"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 21 Oct 2021 05:23:03 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 21 Oct 2021 05:23:03 -0700
+Received: from ness.mchp-main.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Thu, 21 Oct 2021 05:23:01 -0700
+From:   <nicolas.ferre@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [GIT PULL] clk: at91: clk changes for 5.16
+Date:   Thu, 21 Oct 2021 14:22:48 +0200
+Message-ID: <20211021122248.33261-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Organization: microchip
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-On Wed 20 Oct 2021 at 20:16, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+Stephen,
 
-> Hi Jerome,
->
-> On Mon, Oct 18, 2021 at 2:03 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> [...]
->> > The difference here is BIT(14). un-setting BIT(14) (documented as
->> > EN_DDS0) did not change anything according to Christian's test.
->> > That also means that SDM, SDM_EN and N2 have the expected values.
->> > I manually did the maths:
->> > (2000000000Hz * 16384) / ((16384 * 6) + 12808) = 294909640.7Hz
->> > which matches what clk_summary sees:
->> > 294909641Hz
->>
->>  ... and (2000000000Hz * 16384) / ((16384 * 6) = 333MHz which is fairly close
->>  to what you get w/o flipping the bit
-> This is actually a great hint. So far MPLL clocks have "just worked"
-> for me and I didn't have to work with this.
-> With your explanation it makes sense that SDM_EN makes the hardware
-> use or ignore the SDM value.
->
-> [...]
->> For example yes. I am asking check a bit more what this bit does and
->> what it does not:
->>  - I need confirmation whether or not it does spread spectrum. Yes this
->>  needs to be observed on a SoC pin, like MCLK with a fairly low divider
->>  to the averaging effect which could partially mask spread spectrum.
-> I did some more tests with Christian. It turns out that on GXBB
-> HHI_MPLL_CNTL7[15] has no impact on the rate seen by meson-clk-msr.
-> On the other hand, HHI_MPLL_CNTL[25] makes MPLL0 use or ignore the SDM
-> value (again, verified through meson-clk-msr).
->
->>  - Get an idea what it actually does. The 2 calculations above are an
->>  hint. (Spread spectrum does not change the rate mean value)
-> Indeed!
-> My conclusion is that on GXBB:
-> 1) HHI_MPLL_CNTL[25] doesn't control the spread spectrum setting of
-> MPLL0 - just like you thought
-> 2) HHI_MPLL_CNTL[25] is actually SDM_EN (and HHI_MPLL_CNTL7[15]
-> doesn't seem to have any impact on MPLL0's output rate)
->
-> Please let me know if there's anything else we can test.
-> Else I'll send a patch for making HHI_MPLL_CNTL[25] the SDM_EN bit of
-> MPLL0 on GXBB.
+Here are the clk changes for 5.16. I took the initiative to create a
+Pull-Request for it as it's surely more convenient, as I proposed in my
+reply to Claudiu's cover letter.
+I created it on top of your current clk-at91 branch that contains one patch by
+Clément already.
 
-Fine by me if you are confident that HHI_MPLL_CNTL7[15] has indeed no
-effect. Maybe add a comment about this oddity.
+Please pull.
 
->
->
-> Best regards,
-> Martin
+Thanks, best regards,
+  Nicolas
 
+The following changes since commit c405f5c15e9f6094f2fa1658e73e56f3058e2122:
+
+  clk: at91: check pmc node status before registering syscore ops (2021-10-07 20:47:47 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-at91-5.16
+
+for you to fetch changes up to 865aea519c06456c30846782be063dd9fcd3f99e:
+
+  clk: use clk_core_get_rate_recalc() in clk_rate_get() (2021-10-21 14:00:59 +0200)
+
+----------------------------------------------------------------
+AT91 clk driver changes for 5.16:
+
+- Clock power management for new SAMA7G5 SoC;
+- Updates to the master clock driver and sam9x60-pll to be able to use
+  cpufreq-dt driver and avoid overclocking of CPU and MCK0 domains while
+  changing the frequency via DVFS;
+- Power management refinement with the use of save_context()/restore_context()
+  on each clock driver to specify their use in case of Backup mode only.
+
+----------------------------------------------------------------
+Claudiu Beznea (15):
+      clk: at91: re-factor clocks suspend/resume
+      clk: at91: pmc: execute suspend/resume only for backup mode
+      clk: at91: sama7g5: add securam's peripheral clock
+      clk: at91: clk-master: add register definition for sama7g5's master clock
+      clk: at91: clk-master: improve readability by using local variables
+      clk: at91: pmc: add sama7g5 to the list of available pmcs
+      clk: at91: sam9x60-pll: use DIV_ROUND_CLOSEST_ULL
+      clk: at91: clk-master: check if div or pres is zero
+      clk: at91: clk-master: mask mckr against layout->mask
+      clk: at91: clk-master: fix prescaler logic
+      clk: at91: clk-sam9x60-pll: add notifier for div part of PLL
+      clk: at91: clk-master: add notifier for divider
+      clk: at91: sama7g5: remove prescaler part of master clock
+      clk: at91: sama7g5: set low limit for mck0 at 32KHz
+      clk: use clk_core_get_rate_recalc() in clk_rate_get()
+
+ drivers/clk/at91/at91rm9200.c       |   2 +-
+ drivers/clk/at91/at91sam9260.c      |   2 +-
+ drivers/clk/at91/at91sam9g45.c      |   2 +-
+ drivers/clk/at91/at91sam9n12.c      |   2 +-
+ drivers/clk/at91/at91sam9rl.c       |   2 +-
+ drivers/clk/at91/at91sam9x5.c       |   2 +-
+ drivers/clk/at91/clk-generated.c    |  46 +++-
+ drivers/clk/at91/clk-main.c         |  66 +++++
+ drivers/clk/at91/clk-master.c       | 463 ++++++++++++++++++++++++++++-------
+ drivers/clk/at91/clk-peripheral.c   |  40 ++-
+ drivers/clk/at91/clk-pll.c          |  39 +++
+ drivers/clk/at91/clk-programmable.c |  29 ++-
+ drivers/clk/at91/clk-sam9x60-pll.c  | 174 ++++++++++---
+ drivers/clk/at91/clk-system.c       |  20 ++
+ drivers/clk/at91/clk-usb.c          |  27 ++
+ drivers/clk/at91/clk-utmi.c         |  39 +++
+ drivers/clk/at91/dt-compat.c        |   2 +-
+ drivers/clk/at91/pmc.c              | 173 +++----------
+ drivers/clk/at91/pmc.h              |  29 ++-
+ drivers/clk/at91/sam9x60.c          |   6 +-
+ drivers/clk/at91/sama5d2.c          |   2 +-
+ drivers/clk/at91/sama5d3.c          |   2 +-
+ drivers/clk/at91/sama5d4.c          |   2 +-
+ drivers/clk/at91/sama7g5.c          |  29 +--
+ drivers/clk/clk.c                   |   2 +-
+ 25 files changed, 890 insertions(+), 312 deletions(-)
+
+-- 
+Nicolas Ferre
