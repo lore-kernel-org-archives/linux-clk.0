@@ -2,441 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA2FC43217
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 17:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866A5C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD3EF61A55
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 17:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A78260E97
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 17:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbhJUReK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 13:34:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30457 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231788AbhJUReJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 13:34:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634837513;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FttkWqye/woUbVrNK1gNL8Qh2ZShvlyYafkWzXQo3/U=;
-        b=VmEMu9Md1hMXNvMQPylpc3+zpJ7bE1vCDIiLqCmv1HeGDQh6fCm+ZdYtFwN0dWCCZEK0g5
-        3S5HjseVgmHihiRPfrX3koqL/BaskKSBJjxYU55epLjMnbSOY1Irkt8h6jM8zKwIq3Y+A6
-        hnu2swXPG6SCD+qXW0F4bfdT5+q2V6M=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-112-7uQ9cgs2NGK3ThK5aNVBww-1; Thu, 21 Oct 2021 13:31:51 -0400
-X-MC-Unique: 7uQ9cgs2NGK3ThK5aNVBww-1
-Received: by mail-ed1-f70.google.com with SMTP id g28-20020a50d0dc000000b003dae69dfe3aso1108146edf.7
-        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 10:31:51 -0700 (PDT)
+        id S231220AbhJURov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Oct 2021 13:44:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230355AbhJURou (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 13:44:50 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94324C061570;
+        Thu, 21 Oct 2021 10:42:33 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 5so3995660edw.7;
+        Thu, 21 Oct 2021 10:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0Hnxjoxm2iwcZipv3NbHtD4H4YAetTMMxyIE5z5T56c=;
+        b=l6q+vuyUE2OezuYKjC4R79e8L+5o05U3F1UYKTLx/NYflcaM+zCidFzvpB1zaO+iHF
+         WFXlqRwgw1wb/MdplOet4Xk6z4NRTYkO7lviyys1iYJj5ab5ULeqbGd4lFtmmgvLJXIe
+         acg326CXjdgiLlioo2sxOeJcOLyAohkVB9YVpmMnwPGx9iGooANRJuGhSEyWFCdaycDS
+         OU1ApjKRzjx/4UgfZCZL5o4+hJOrdGGYrCvRTDtB3wBHuFgOhM04fdTwMOBsP3TLqxpF
+         4YQ6bHcN58CkecWwGtEYosqd09vIGnZpXB/19LrkAlN1qYOklVXAcLu8ZRsx/FG9qLMX
+         mW8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=FttkWqye/woUbVrNK1gNL8Qh2ZShvlyYafkWzXQo3/U=;
-        b=62DDihMJH7mnkf7OnLFcjMIzoC0CAu/UVOWN8cSMPb68qtTRLFJiKrezrPxNVkGVby
-         uBP24nJToHPL/55garGL0ICmFUc/IXa2Ah9MFG2GDFlfYz1u3ZCsNsjOclQJwnXgu6SO
-         bFZ/P/W2lzGwd4/1S+BPmnxNuzL2qG6TPmRBj5aJXdzqM+oSa2viGrmjRFRLtNNCkKcg
-         0JQPmngNhsjVJx1kURcEhvvYDsmuKw2C1ZJsQU737sKiGisPnlwO5CiCT+aWTO+ZiuBN
-         eX7iVN/aFSFRdC0yeP+6EbD2inMEevbVKddZQ2NI7e2VQxzAlaauqJ8hAQlkzsnzzROA
-         X6EQ==
-X-Gm-Message-State: AOAM531XmVCLKal7Dy+2p6ohgP3QhtJgNIpu8FgoN8vYfOa5s+AJhoOK
-        aSBDWG+syKjhWTpO9pFVsHCu8P4sMabB8+XVDbg/T+tKVNsmmFKHXCCNFojLJSCJpZDUmBS6E4h
-        O1KylMVog84ej+0YgMCHx
-X-Received: by 2002:a05:6402:2682:: with SMTP id w2mr9441528edd.185.1634837509940;
-        Thu, 21 Oct 2021 10:31:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw40qts/AHKJnlgI9kc6XOVWl1IM7KUVJnVdm0nO18gQKI+uMolfMwNHlKBNH8kJjWRyFtUaA==
-X-Received: by 2002:a05:6402:2682:: with SMTP id w2mr9441489edd.185.1634837509694;
-        Thu, 21 Oct 2021 10:31:49 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id e22sm3418183edu.35.2021.10.21.10.31.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Oct 2021 10:31:36 -0700 (PDT)
-Message-ID: <4e5884d5-bcde-dac9-34fb-e29ed32f73c9@redhat.com>
-Date:   Thu, 21 Oct 2021 19:31:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v3 05/11] clk: Introduce clk-tps68470 driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Gross <markgross@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=0Hnxjoxm2iwcZipv3NbHtD4H4YAetTMMxyIE5z5T56c=;
+        b=ybuJjv0zr3ma1aX6vmbuAJCMygV+43foGXK7aGlTBPIcaMNgXQanaC/fkY45TBj2eu
+         3fvSfZpbSnm//TZ9KcfqfAnP+yRKqWkydXFk0GiGW5bnU9wz94B/viKTt50yeRUgSTjC
+         46RoOhfP8lE/ZDkQ69ZAiiEHZ/G8Mh1H5m95vw13wAoxSmeqhnvToroFaEybvjBaqz+i
+         euODhme2DQnrO6TfIGKyzmqdNEPQlBEpejWZeaCJnG/bcnUIFiVUIxKczpUL73+zuuNe
+         tZhuEv3Cfb/x76wMqaeM6YqzzcvAZEPIrHblO1ysFxAVnOamJPB8839QVqj9CA4BKUg9
+         KZ1A==
+X-Gm-Message-State: AOAM533ig4v+Q4PiCDkLQ54cjeYJI5LxOb3YnglWCaLKrf2jPMBjbNzK
+        eK1bbpCfEY4hUnFISClmJ1ykikHUMrJMOg==
+X-Google-Smtp-Source: ABdhPJzcjML/TfsdQg51Kl5oV/Ck6zjteV5YqfLCQabToGl/aFKFPRE2FkvcuLHfSuM0JLjOFWoOYw==
+X-Received: by 2002:a17:906:6c83:: with SMTP id s3mr9177246ejr.13.1634838152001;
+        Thu, 21 Oct 2021 10:42:32 -0700 (PDT)
+Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
+        by smtp.gmail.com with ESMTPSA id h7sm3144847edt.37.2021.10.21.10.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 10:42:31 -0700 (PDT)
+Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "Rafael J.Wysocki" <rjw@rjwysocki.net>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20211010185707.195883-1-hdegoede@redhat.com>
- <20211010185707.195883-6-hdegoede@redhat.com>
- <163415237957.936110.1269283416777498553@swboyd.mtv.corp.google.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <163415237957.936110.1269283416777498553@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/16] Basic StarFive JH7100 RISC-V SoC support
+Date:   Thu, 21 Oct 2021 19:42:07 +0200
+Message-Id: <20211021174223.43310-1-kernel@esmil.dk>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This series adds support for the StarFive JH7100 RISC-V SoC. The SoC has
+many devices that need non-coherent dma operations to work which isn't
+upstream yet[1], so this just adds basic support to boot up, get a
+serial console, blink an LED and reboot itself. Unlike the Allwinner D1
+this chip doesn't use any extra pagetable bits, but instead the DDR RAM
+appears twice in the memory map, with and without the cache.
 
-Thank you for the review.
+The JH7100 is a test chip for the upcoming JH7110 and about 300 BeagleV
+Starlight Beta boards were sent out with them as part of a now cancelled
+BeagleBoard.org project. However StarFive has produced more of the
+JH7100s and more boards will be available[2] to buy. Hopefully before
+the end of the year.
 
-On 10/13/21 21:12, Stephen Boyd wrote:
-> Quoting Hans de Goede (2021-10-10 11:57:01)
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index c5b3dc97396a..7dffecac83d1 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -169,6 +169,12 @@ config COMMON_CLK_CDCE706
->>         help
->>           This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
->>  
->> +config COMMON_CLK_TPS68470
->> +       tristate "Clock Driver for TI TPS68470 PMIC"
->> +       depends on I2C && REGMAP_I2C && INTEL_SKL_INT3472
-> 
-> Pretty sure REGMAP_I2C should be selected, not depended on.
-> 
-> Can it
-> 
-> 	depends on INTEL_SKL_INT3472 || COMPILE_TEST
-> 
-> so that we don't have to enable the intel specific config to compile
-> test this driver?
+This series is also available at
+https://github.com/esmil/linux/commits/starlight-minimal
+..but a more complete kernel including drivers for non-coherent
+peripherals based on this series can be found at
+https://github.com/starfive-tech/linux/tree/starlight
 
-Ack, all fixed for v4.
+[1]: https://lore.kernel.org/linux-riscv/20210723214031.3251801-2-atish.patra@wdc.com/
+[2]: https://www.linkedin.com/pulse/starfive-release-open-source-single-board-platform-q3-2021-starfive/
 
->> +       help
->> +        This driver supports the clocks provided by TPS68470
->> +
->>  config COMMON_CLK_CDCE925
->>         tristate "Clock driver for TI CDCE913/925/937/949 devices"
->>         depends on I2C
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index e42312121e51..6b6a88ae1425 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -63,6 +63,7 @@ obj-$(CONFIG_COMMON_CLK_SI570)                += clk-si570.o
->>  obj-$(CONFIG_COMMON_CLK_STM32F)                += clk-stm32f4.o
->>  obj-$(CONFIG_COMMON_CLK_STM32H7)       += clk-stm32h7.o
->>  obj-$(CONFIG_COMMON_CLK_STM32MP157)    += clk-stm32mp1.o
->> +obj-$(CONFIG_COMMON_CLK_TPS68470)      += clk-tps68470.o
->>  obj-$(CONFIG_CLK_TWL6040)              += clk-twl6040.o
->>  obj-$(CONFIG_ARCH_VT8500)              += clk-vt8500.o
->>  obj-$(CONFIG_COMMON_CLK_VC5)           += clk-versaclock5.o
->> diff --git a/drivers/clk/clk-tps68470.c b/drivers/clk/clk-tps68470.c
->> new file mode 100644
->> index 000000000000..27e8cbd0f60e
->> --- /dev/null
->> +++ b/drivers/clk/clk-tps68470.c
->> @@ -0,0 +1,256 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Clock driver for TPS68470 PMIC
->> + *
->> + * Copyright (C) 2018 Intel Corporation
->> + *
->> + * Authors:
->> + *     Zaikuo Wang <zaikuo.wang@intel.com>
->> + *     Tianshu Qiu <tian.shu.qiu@intel.com>
->> + *     Jian Xu Zheng <jian.xu.zheng@intel.com>
->> + *     Yuning Pu <yuning.pu@intel.com>
->> + *     Antti Laakso <antti.laakso@intel.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/clkdev.h>
->> +#include <linux/kernel.h>
->> +#include <linux/mfd/tps68470.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/platform_data/tps68470.h>
->> +#include <linux/regmap.h>
->> +
->> +#define TPS68470_CLK_NAME "tps68470-clk"
->> +
->> +#define to_tps68470_clkdata(clkd) \
->> +       container_of(clkd, struct tps68470_clkdata, clkout_hw)
->> +
->> +struct tps68470_clkout_freqs {
->> +       unsigned long freq;
->> +       unsigned int xtaldiv;
->> +       unsigned int plldiv;
->> +       unsigned int postdiv;
->> +       unsigned int buckdiv;
->> +       unsigned int boostdiv;
->> +} clk_freqs[] = {
->> +/*
->> + *  The PLL is used to multiply the crystal oscillator
->> + *  frequency range of 3 MHz to 27 MHz by a programmable
->> + *  factor of F = (M/N)*(1/P) such that the output
->> + *  available at the HCLK_A or HCLK_B pins are in the range
->> + *  of 4 MHz to 64 MHz in increments of 0.1 MHz
->> + *
->> + * hclk_# = osc_in * (((plldiv*2)+320) / (xtaldiv+30)) * (1 / 2^postdiv)
->> + *
->> + * PLL_REF_CLK should be as close as possible to 100kHz
->> + * PLL_REF_CLK = input clk / XTALDIV[7:0] + 30)
->> + *
->> + * PLL_VCO_CLK = (PLL_REF_CLK * (plldiv*2 + 320))
->> + *
->> + * BOOST should be as close as possible to 2Mhz
->> + * BOOST = PLL_VCO_CLK / (BOOSTDIV[4:0] + 16) *
->> + *
->> + * BUCK should be as close as possible to 5.2Mhz
->> + * BUCK = PLL_VCO_CLK / (BUCKDIV[3:0] + 5)
->> + *
->> + * osc_in   xtaldiv  plldiv   postdiv   hclk_#
->> + * 20Mhz    170      32       1         19.2Mhz
->> + * 20Mhz    170      40       1         20Mhz
->> + * 20Mhz    170      80       1         24Mhz
->> + *
->> + */
->> +       { 19200000, 170, 32, 1, 2, 3 },
->> +       { 20000000, 170, 40, 1, 3, 4 },
->> +       { 24000000, 170, 80, 1, 4, 8 },
->> +};
->> +
->> +struct tps68470_clkdata {
->> +       struct clk_hw clkout_hw;
->> +       struct regmap *regmap;
->> +       struct clk *clk;
->> +       int clk_cfg_idx;
->> +};
->> +
->> +static int tps68470_clk_is_prepared(struct clk_hw *hw)
->> +{
->> +       struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
->> +       int val;
->> +
->> +       if (regmap_read(clkdata->regmap, TPS68470_REG_PLLCTL, &val))
->> +               return 0;
->> +
->> +       return val & TPS68470_PLL_EN_MASK;
->> +}
->> +
->> +static int tps68470_clk_prepare(struct clk_hw *hw)
->> +{
->> +       struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
->> +       int idx = clkdata->clk_cfg_idx;
->> +
->> +       regmap_write(clkdata->regmap, TPS68470_REG_BOOSTDIV, clk_freqs[idx].boostdiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_BUCKDIV, clk_freqs[idx].buckdiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_PLLSWR, TPS68470_PLLSWR_DEFAULT);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_XTALDIV, clk_freqs[idx].xtaldiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_PLLDIV, clk_freqs[idx].plldiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_POSTDIV, clk_freqs[idx].postdiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_POSTDIV2, clk_freqs[idx].postdiv);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG2, TPS68470_CLKCFG2_DRV_STR_2MA);
->> +
->> +       regmap_write(clkdata->regmap, TPS68470_REG_PLLCTL,
->> +                    TPS68470_OSC_EXT_CAP_DEFAULT << TPS68470_OSC_EXT_CAP_SHIFT |
->> +                    TPS68470_CLK_SRC_XTAL << TPS68470_CLK_SRC_SHIFT);
->> +
->> +       regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG1,
->> +                          (TPS68470_PLL_OUTPUT_ENABLE <<
->> +                          TPS68470_OUTPUT_A_SHIFT) |
->> +                          (TPS68470_PLL_OUTPUT_ENABLE <<
->> +                          TPS68470_OUTPUT_B_SHIFT));
->> +
->> +       regmap_update_bits(clkdata->regmap, TPS68470_REG_PLLCTL,
->> +                          TPS68470_PLL_EN_MASK, TPS68470_PLL_EN_MASK);
->> +
->> +       return 0;
->> +}
->> +
->> +static void tps68470_clk_unprepare(struct clk_hw *hw)
->> +{
->> +       struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
->> +
->> +       /* disable clock first*/
->> +       regmap_update_bits(clkdata->regmap, TPS68470_REG_PLLCTL, TPS68470_PLL_EN_MASK, 0);
->> +
->> +       /* write hw defaults */
-> 
-> Is it necessary to reset the registers to 0? Can the comment indicate
-> why it is necessary instead of stating what the code is doing?
+/Emil
 
-As mentioned in the commit msg this driver started out of tree, this part
-comes unmodified from the out of tree driver.
-
-After inspecting the datasheet you are right and most of these register
-clears are not necessary to disable the clock.
-
-Only the clearing of TPS68470_REG_CLKCFG1 is necesary to tristate the
-clk output pin. I will remove the rest and add a comment about the
-clearing of TPS68470_REG_CLKCFG1.
-
-> 
->> +       regmap_write(clkdata->regmap, TPS68470_REG_BOOSTDIV, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_BUCKDIV, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_PLLSWR, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_XTALDIV, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_PLLDIV, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_POSTDIV, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG2, 0);
->> +       regmap_write(clkdata->regmap, TPS68470_REG_CLKCFG1, 0);
->> +}
->> +
->> +static unsigned long tps68470_clk_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->> +{
->> +       struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
->> +
->> +       return clk_freqs[clkdata->clk_cfg_idx].freq;
->> +}
->> +
->> +static int tps68470_clk_cfg_lookup(unsigned long rate)
-> 
-> unsigned? Doesn't seem to return negative numbers.
-
-Will fix for v4.
-> 
->> +{
->> +       long diff, best_diff = LONG_MAX;
->> +       int i, best_idx = 0;
->> +
->> +       for (i = 0; i < ARRAY_SIZE(clk_freqs); i++) {
->> +               diff = clk_freqs[i].freq - rate;
->> +               if (diff == 0)
->> +                       return i;
->> +
->> +               diff = abs(diff);
->> +               if (diff < best_diff) {
->> +                       best_diff = diff;
->> +                       best_idx = i;
->> +               }
->> +       }
->> +
->> +       return best_idx;
->> +}
->> +
->> +static long tps68470_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                                   unsigned long *parent_rate)
->> +{
->> +       int idx = tps68470_clk_cfg_lookup(rate);
-> 
-> unsigned?
-
-Will fix for v4.
+Changes since v1:
+- Let SOC_STARFIVE select RESET_CONTROLLER but drop SERIAL_8250_DW
+- Add missing Signed-of-by to clock dt-binding header
+- Use builtin_platform_driver macro for the clock driver, add explicit
+  comment to the determine_rate callback and other small nits from Andy
+- Use reset-controller for node names in documentation and device tree
+- Use readl_poll_timeout in reset driver to avoid hanging forever if a
+  driver leaves the associated clock gated and sort Kconfig and Makefile
+  entries properly.
+- In the pinctrl driver align register names with documentation, remove
+  invalid __init tag from probe function, use of_property_* functions to
+  parse device tree, hoist pinmux unpacking into helper function to
+  better document what's going on, bail on invalid signal group in
+  device tree and fix many other nits from Andy.
+- Refactor and rebase 8250_dw quirk on tty-next
 
 
-> 
->> +
->> +       return clk_freqs[idx].freq;
->> +}
->> +
->> +static int tps68470_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                unsigned long parent_rate)
->> +{
->> +       struct tps68470_clkdata *clkdata = to_tps68470_clkdata(hw);
->> +       int idx = tps68470_clk_cfg_lookup(rate);
->> +
->> +       if (rate != clk_freqs[idx].freq)
->> +               return -EINVAL;
->> +
->> +       clkdata->clk_cfg_idx = idx;
-> 
-> Newline here please.
+Emil Renner Berthing (12):
+  RISC-V: Add StarFive SoC Kconfig option
+  dt-bindings: timer: Add StarFive JH7100 clint
+  dt-bindings: interrupt-controller: Add StarFive JH7100 plic
+  dt-bindings: reset: Add Starfive JH7100 reset bindings
+  reset: starfive-jh7100: Add StarFive JH7100 reset driver
+  dt-bindings: pinctrl: Add StarFive pinctrl definitions
+  dt-bindings: pinctrl: Add StarFive JH7100 bindings
+  pinctrl: starfive: Add pinctrl driver for StarFive SoCs
+  dt-bindings: serial: snps-dw-apb-uart: Add JH7100 uarts
+  serial: 8250_dw: Add skip_clk_set_rate quirk
+  RISC-V: Add initial StarFive JH7100 device tree
+  RISC-V: Add BeagleV Starlight Beta device tree
 
-Done.
+Geert Uytterhoeven (4):
+  dt-bindings: clock: starfive: Add JH7100 clock definitions
+  dt-bindings: clock: starfive: Add JH7100 bindings
+  clk: starfive: Add JH7100 clock generator driver
+  dt-bindings: reset: Add StarFive JH7100 reset definitions
 
-> Also, why isn't this function actually writing
-> hardware?
+ .../clock/starfive,jh7100-clkgen.yaml         |   56 +
+ .../sifive,plic-1.0.0.yaml                    |    1 +
+ .../pinctrl/starfive,jh7100-pinctrl.yaml      |  274 ++++
+ .../bindings/reset/starfive,jh7100-reset.yaml |   38 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |    5 +
+ .../bindings/timer/sifive,clint.yaml          |    1 +
+ MAINTAINERS                                   |   22 +
+ arch/riscv/Kconfig.socs                       |    8 +
+ arch/riscv/boot/dts/Makefile                  |    1 +
+ arch/riscv/boot/dts/starfive/Makefile         |    2 +
+ .../dts/starfive/jh7100-beaglev-starlight.dts |  162 ++
+ arch/riscv/boot/dts/starfive/jh7100.dtsi      |  228 +++
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/starfive/Kconfig                  |    9 +
+ drivers/clk/starfive/Makefile                 |    3 +
+ drivers/clk/starfive/clk-starfive-jh7100.c    |  776 +++++++++
+ drivers/pinctrl/Kconfig                       |   16 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-starfive.c            | 1387 +++++++++++++++++
+ drivers/reset/Kconfig                         |    8 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-starfive-jh7100.c         |  165 ++
+ drivers/tty/serial/8250/8250_dw.c             |   19 +-
+ include/dt-bindings/clock/starfive-jh7100.h   |  202 +++
+ .../dt-bindings/pinctrl/pinctrl-starfive.h    |  274 ++++
+ include/dt-bindings/reset/starfive-jh7100.h   |  126 ++
+ 27 files changed, 3784 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7100-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+ create mode 100644 arch/riscv/boot/dts/starfive/Makefile
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100.dtsi
+ create mode 100644 drivers/clk/starfive/Kconfig
+ create mode 100644 drivers/clk/starfive/Makefile
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7100.c
+ create mode 100644 drivers/pinctrl/pinctrl-starfive.c
+ create mode 100644 drivers/reset/reset-starfive-jh7100.c
+ create mode 100644 include/dt-bindings/clock/starfive-jh7100.h
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-starfive.h
+ create mode 100644 include/dt-bindings/reset/starfive-jh7100.h
 
-set_rate can only be called when the clock is disabled, all the
-necessary values are programmed based on the clk_cfg_idx in
-tps68470_clk_prepare().
-
-Note there is no enable() since enable() may not sleep and
-this device is interfaced over I2C, so the clock is already
-enabled from the prepare() op.
-
-> 
->> +       return 0;
->> +}
->> +
->> +static const struct clk_ops tps68470_clk_ops = {
->> +       .is_prepared = tps68470_clk_is_prepared,
->> +       .prepare = tps68470_clk_prepare,
->> +       .unprepare = tps68470_clk_unprepare,
->> +       .recalc_rate = tps68470_clk_recalc_rate,
->> +       .round_rate = tps68470_clk_round_rate,
->> +       .set_rate = tps68470_clk_set_rate,
->> +};
->> +
->> +static struct clk_init_data tps68470_clk_initdata = {
-> 
-> const?
-
-Ack.
-
-> 
->> +       .name = TPS68470_CLK_NAME,
->> +       .ops = &tps68470_clk_ops,
->> +};
->> +
->> +static int tps68470_clk_probe(struct platform_device *pdev)
->> +{
->> +       struct tps68470_clk_platform_data *pdata = pdev->dev.platform_data;
->> +       struct tps68470_clkdata *tps68470_clkdata;
->> +       int ret;
->> +
->> +       tps68470_clkdata = devm_kzalloc(&pdev->dev, sizeof(*tps68470_clkdata),
->> +                                       GFP_KERNEL);
->> +       if (!tps68470_clkdata)
->> +               return -ENOMEM;
->> +
->> +       tps68470_clkdata->regmap = dev_get_drvdata(pdev->dev.parent);
->> +       tps68470_clkdata->clkout_hw.init = &tps68470_clk_initdata;
->> +       tps68470_clkdata->clk = devm_clk_register(&pdev->dev, &tps68470_clkdata->clkout_hw);
-> 
-> Please use devm_clk_hw_register()
-
-Good idea, done for v4.
-
-> 
->> +       if (IS_ERR(tps68470_clkdata->clk))
->> +               return PTR_ERR(tps68470_clkdata->clk);
->> +
->> +       ret = devm_clk_hw_register_clkdev(&pdev->dev, &tps68470_clkdata->clkout_hw,
->> +                                         TPS68470_CLK_NAME, NULL);
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (pdata) {
->> +               ret = devm_clk_hw_register_clkdev(&pdev->dev,
->> +                                                 &tps68470_clkdata->clkout_hw,
->> +                                                 pdata->consumer_con_id,
->> +                                                 pdata->consumer_dev_name);
->> +               if (ret)
->> +                       return ret;
-> 
-> Drop these two lines?
-> 
->> +       }
->> +
->> +       return 0;
-> 
-> And then
-> 
-> return ret;
-
-Done for v4.
-
-Regards,
-
-Hans
+-- 
+2.33.1
 
