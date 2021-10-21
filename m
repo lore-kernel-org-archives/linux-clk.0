@@ -2,113 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FA4C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 11:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A37C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B15261208
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 11:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD20E61221
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Oct 2021 12:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbhJULNI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 07:13:08 -0400
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:46059 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229765AbhJULNH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 07:13:07 -0400
-Received: by mail-ua1-f50.google.com with SMTP id a17so324392uax.12;
-        Thu, 21 Oct 2021 04:10:52 -0700 (PDT)
+        id S231586AbhJUMWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Oct 2021 08:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37034 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231503AbhJUMWL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 08:22:11 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B135CC06174E
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 05:19:55 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id d3so757880wrh.8
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 05:19:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=references:user-agent:from:to:cc:subject:date:in-reply-to
+         :message-id:mime-version;
+        bh=1MAcWNR4eIJHPkpF0pYcakZ/CD1b8OAEZ6esT1QDubc=;
+        b=hBCnOWpAXWArLg0uH9UGShDwvTdqrT6J/fDuC7xhthw0qa2wBVNACShsI7AISgfR+d
+         YJIVZHIJPWeNFDiq2VIA+I///w1zDmM5lO2OWmh9154MduFB2OM8IhFLstq+rvPCmTTj
+         AecQMUgLfL7ChrRfMLg/mNhdLPy1a4IxlgTb33oc6uytvUdukI63bZhtEYHVnEXLbWkD
+         OE9r4iwGFvJIRzMDWVfad0JxcBuig+jD6hK518WZWIHfAicg0CstlGMEM5jHiD8E3pSE
+         pFiZx0isZAP5kHfk+EPvELt6K0hFc+4j3i7TBbr9LAffw8aCWZIjAequzLZy9FP46rPy
+         V1AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=NiDoiN/gjYe+NR2j6ocH9JPnqQ+cVfUkoRHRlpOG3os=;
-        b=UbPhpmYVB8xFVoyKBiZAkA+YTWWXvwU7JXNLzceUYabdfU3hV9h7E19CtK7ZNIbzgj
-         /DX0ZxOOceW5djUnIghnbdOADuzCPUP8WqeuAZYaB/N50y9BLhtfNHmCUMFzE6aJGzL5
-         IsPrXb+qTwgUX70g3HyQkD9pMx09/mTP3NzqI0BhbdpJkZyAXn90icLJkyIRZHy21RSc
-         vc7wUDsCC2Lb7I6WER0RKF1YjuaLwT0wsWSMA0N83GbfqfYTnk7PDHYo4kTtwIDHntG7
-         9xW1EAVJMOdsd855MsSNDA/V3Ao2f36cclugMPO0Q8U4Cbb0Wkb824Lv894ngwV/3yHq
-         Pngw==
-X-Gm-Message-State: AOAM5316iTCvV4qbWQx2EMY9BAEZ6ekEtx90BTWAS36nUQuxaGKB9vPz
-        f67gTeDlSJWC2u4dPMT4GXoR6D2to0lMLg==
-X-Google-Smtp-Source: ABdhPJzUdJ4ms7vTEULfRWp7IkYmuL5cOImhVVZVvfGiyDsx0h1Qrv7EABNgn+cJqZdJiLPkvVqnRw==
-X-Received: by 2002:a05:6102:38cc:: with SMTP id k12mr5087861vst.24.1634814651397;
-        Thu, 21 Oct 2021 04:10:51 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id b20sm2881390uaf.10.2021.10.21.04.10.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Oct 2021 04:10:50 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id i22so351404ual.10;
-        Thu, 21 Oct 2021 04:10:50 -0700 (PDT)
-X-Received: by 2002:ab0:3d9a:: with SMTP id l26mr5561151uac.114.1634814650361;
- Thu, 21 Oct 2021 04:10:50 -0700 (PDT)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
+         :in-reply-to:message-id:mime-version;
+        bh=1MAcWNR4eIJHPkpF0pYcakZ/CD1b8OAEZ6esT1QDubc=;
+        b=8EA/zP1na1l53/LUCg+NweL7etKZ2aOm/jhSgDkqZkL6wB+4c4Q9e/d9MyZBtUdjsy
+         dzgOffSghNGqoGb3aQU0HuOXAEjilYY2/OJMgAxg5KuzDZxdYQ0moOAM2eurkDlF8wOC
+         htIq/C4+Tcg79zWoYme4bAgwoMNCbrQu184lofsbouhnwWUwkGrK6oc0CGJSz51tD/6l
+         CCZu9LixQn2jATj8RwR8XGlx04ocBVFtlZz84RbG34q4FAKB2nP1AnNdVIMAduyiCOam
+         VkAvDt5XwLuBa67XlPwHZJGYn1s2V1fOEqcgbv04hu9f4kULsgMlja0mnSQbsotdcme/
+         FLqA==
+X-Gm-Message-State: AOAM532+YkKRKPigs/MlrjjeU3OJqPhx9zyHBD3k4oy1+6Xkc7HsOegG
+        bREwom0IKto/Z8hUwFO3/Zb7Hw==
+X-Google-Smtp-Source: ABdhPJzJvoUSpjaqHzOXELw1I39FiK/03T2TYTk/qaJuwZGyqBujn5meTTPNaXiPnO9TLEbK6mN7ZQ==
+X-Received: by 2002:adf:ff91:: with SMTP id j17mr6555798wrr.132.1634818794258;
+        Thu, 21 Oct 2021 05:19:54 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 133sm7971860wmb.24.2021.10.21.05.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 05:19:53 -0700 (PDT)
+References: <20211016145939.15643-1-martin.blumenstingl@googlemail.com>
+ <1j5ytuvdmw.fsf@starbuckisacylon.baylibre.com>
+ <CAFBinCBGZi3MRqTRshyCkq8AAaqHi2NkZVV80ppZr4Lx=xWOWA@mail.gmail.com>
+ <1jmtn6tu99.fsf@starbuckisacylon.baylibre.com>
+ <CAFBinCCRWS6j=6hDo_sOBmQZw5X8L4GYP=rHQVqHd04keCrbuQ@mail.gmail.com>
+User-agent: mu4e 1.6.7; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>
+Subject: Re: [PATCH] clk: meson: gxbb: Add the spread spectrum bit for MPLL0
+ on GXBB
+Date:   Thu, 21 Oct 2021 14:18:01 +0200
+In-reply-to: <CAFBinCCRWS6j=6hDo_sOBmQZw5X8L4GYP=rHQVqHd04keCrbuQ@mail.gmail.com>
+Message-ID: <1jfssumuxi.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <20210928200804.50922-1-wsa+renesas@sang-engineering.com>
- <20210928200804.50922-5-wsa+renesas@sang-engineering.com> <CAMuHMdUdjNXkW-F0-aPR-o6uQaHsYz=yKf6RhC2tvxRpdhDzhw@mail.gmail.com>
- <YXE5597s0BigDNzu@ninjato>
-In-Reply-To: <YXE5597s0BigDNzu@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Oct 2021 13:10:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVXgWvP+mj-1uUqS0JYCe_FOo3Hr5DfafJ-eUX07VK4qw@mail.gmail.com>
-Message-ID: <CAMuHMdVXgWvP+mj-1uUqS0JYCe_FOo3Hr5DfafJ-eUX07VK4qw@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/9] clk: renesas: gen3: switch to new SD clock handling
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
 
-On Thu, Oct 21, 2021 at 11:59 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > > +       return clk_register_divider_table(NULL, name, parent_name, 0, sdnckcr,
-> > > +                                         0, 2, 0, cpg_sd_div_table, &cpg_lock);
-> >
-> > So the SDn clock can no longer be disabled, as CPG_SD_STP_CK
-> > handling is gone?
+On Wed 20 Oct 2021 at 20:16, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+
+> Hi Jerome,
 >
-> Yes. I thought we can do it since we had 7f2c2f38c1c0 ("clk: renesas:
-> rcar-gen3: Remove stp_ck handling for SDHI") anyhow.
-
-OK.
-
-> > > +       /* Fallback for old DTs */
-> > > +       if (of_device_is_compatible(pdev->dev.of_node, "renesas,rcar-gen3-sdhi"))
-> >
-> > I think it would be cleaner to check a flag in struct
-> > renesas_sdhi_of_data instead.
+> On Mon, Oct 18, 2021 at 2:03 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> [...]
+>> > The difference here is BIT(14). un-setting BIT(14) (documented as
+>> > EN_DDS0) did not change anything according to Christian's test.
+>> > That also means that SDM, SDM_EN and N2 have the expected values.
+>> > I manually did the maths:
+>> > (2000000000Hz * 16384) / ((16384 * 6) + 12808) = 294909640.7Hz
+>> > which matches what clk_summary sees:
+>> > 294909641Hz
+>>
+>>  ... and (2000000000Hz * 16384) / ((16384 * 6) = 333MHz which is fairly close
+>>  to what you get w/o flipping the bit
+> This is actually a great hint. So far MPLL clocks have "just worked"
+> for me and I didn't have to work with this.
+> With your explanation it makes sense that SDM_EN makes the hardware
+> use or ignore the SDM value.
 >
-> Because new SoCs with the fallback compatible might show up?
-
-Because it's frowned upon to sprinkle of_device_is_compatible()
-calls all over the code, especially if you already use
-of_device_get_match_data().
-
-> > >          * Some controllers provide a 2nd clock just to run the internal card
-> > >          * detection logic. Unfortunately, the existing driver architecture does
-> >
-> > The core looks good to me, but I have to admit I'm no expert on the
-> > SDHn/SDn clock relations and the various SDHI transfer modes.
+> [...]
+>> For example yes. I am asking check a bit more what this bit does and
+>> what it does not:
+>>  - I need confirmation whether or not it does spread spectrum. Yes this
+>>  needs to be observed on a SoC pin, like MCLK with a fairly low divider
+>>  to the averaging effect which could partially mask spread spectrum.
+> I did some more tests with Christian. It turns out that on GXBB
+> HHI_MPLL_CNTL7[15] has no impact on the rate seen by meson-clk-msr.
+> On the other hand, HHI_MPLL_CNTL[25] makes MPLL0 use or ignore the SDM
+> value (again, verified through meson-clk-msr).
 >
-> I am really glad you like the changes in general. And you point to the
-> reason for this change. All the clock relations of the SDHI transfer
-> modes should go into the SDHI driver. Now, we can control SDnH and SDn
-> seperately, so the SDHI driver can do the proper things depending on the
-> mode and the quirks of the SDHI instance. I really think the clock
-> driver part should be as simple as it is with this series.
+>>  - Get an idea what it actually does. The 2 calculations above are an
+>>  hint. (Spread spectrum does not change the rate mean value)
+> Indeed!
+> My conclusion is that on GXBB:
+> 1) HHI_MPLL_CNTL[25] doesn't control the spread spectrum setting of
+> MPLL0 - just like you thought
+> 2) HHI_MPLL_CNTL[25] is actually SDM_EN (and HHI_MPLL_CNTL7[15]
+> doesn't seem to have any impact on MPLL0's output rate)
+>
+> Please let me know if there's anything else we can test.
+> Else I'll send a patch for making HHI_MPLL_CNTL[25] the SDM_EN bit of
+> MPLL0 on GXBB.
 
-Good!
+Fine by me if you are confident that HHI_MPLL_CNTL7[15] has indeed no
+effect. Maybe add a comment about this oddity.
 
-Gr{oetje,eeting}s,
+>
+>
+> Best regards,
+> Martin
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
