@@ -2,63 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03556C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55331C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1B27610CF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DAFB610EA
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232192AbhJVI4Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Oct 2021 04:56:25 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:57778
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231563AbhJVI4Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 04:56:24 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 921C13FFF3
-        for <linux-clk@vger.kernel.org>; Fri, 22 Oct 2021 08:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634892846;
-        bh=T8ZnI8ftL6AYhp9J84dTnvaXATkPBfm654/mcp8m4oI=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=WX3oJZGSO0zhv5fJJLvk4OYnxRnunP3rNIqCeFJbyzZHwKrKQbRNGBuc+B+TdbT0o
-         BsEt7fvlPOoNUUj+NltqNipxdEGQ+P1ZZnA4UKyts14hWKmBGtp5c1sAsN8pxTfPJX
-         n0CUdIR//HHZiB9zf2bcmPbpf/gYl0nLy2T3d3R44H8CQIkZQZ0jtY6z5B9RXQDIH8
-         iH9lspah85DSlcv+P8qLLOGWin8IWUYeWbdz/MjIkDdx7jMSxnarxJylOryhaBx/uk
-         KxCDzPwvmovcZ1LCmBTBTLt1b6ns7wIK7rMf3ZAMqkxbhVzWb2kT94dDXdZUoGAuKD
-         u8nJ1k0ZSbofg==
-Received: by mail-lf1-f72.google.com with SMTP id z18-20020a0565120c1200b003fd76d7ca21so1432228lfu.13
-        for <linux-clk@vger.kernel.org>; Fri, 22 Oct 2021 01:54:06 -0700 (PDT)
+        id S232180AbhJVJAb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Oct 2021 05:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231755AbhJVJA3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 05:00:29 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF43EC061764;
+        Fri, 22 Oct 2021 01:58:12 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id o133so3032355pfg.7;
+        Fri, 22 Oct 2021 01:58:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5xtRMNZGn5SAc/gKSgN9hFxcEbA1FPul5npSl2d/6L4=;
+        b=JEHIaCbTp6JtllhKqgIc/tftQUeF39W5QrFVKYDldfm0PFdnjUfEd+2O9QOMJIwsSn
+         zABTpFT9/B1B6JjmHNADmiy/4cvGeKPw58cB0LZUt6OIoG3ehybVyq/Ns9H/lmnFHbKA
+         CthxVas+/wbXDNKfYO5c3/pPrJiQUvNQNOzJKYrdJvu2Wt2DmZil5uVfWQXp7miE9m82
+         6XU+SLFtnP5TiM824rjSMkJO//x+d35KrQAlQmMmh7xnBzuxqH8cdDwrLOAcgOkG393L
+         HnPUAkje+Bx1QTI00qw13eln00DhtLuiOEzxAtq91p4eyzZ+7kVLmXNEcC6fJEnzrrGs
+         4XTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=T8ZnI8ftL6AYhp9J84dTnvaXATkPBfm654/mcp8m4oI=;
-        b=WaLdiRwhmjF4/vh9fkEBRFbBmxsKxRAKn7fyccX85fg385Bv7hqPFvQ4vw98tOaLP1
-         44uXxfyC8B7O21MzpUCKOBOpS9/bhKJN/f2XdRne8XnUhXx71DnSH9itUXxGNWwrodl8
-         J5t9L60yxt2Z3g8FcLpjFTmjENNAkRphY6NWrCowOwUHRH3maAB56YK28quBVvEoDT5G
-         nWawIl2QuyXugSwj2EgWsn/C6lE6+3EaxN8JcAy8/CzUo/Cwjee3wPgAVy/HRy29DPHg
-         DlH4gLusoBz/8wi1jpKZ8YP72IPOio9/vRZeXk7NSQEa8l4+Nw2ewXqcxlQDZQlVU9X9
-         n2zw==
-X-Gm-Message-State: AOAM532f0T+RrfFBLQssWhw88iy3liKz8yp5txZs1PyYpkXl9RFkRRWj
-        7+eAaUQ/KSvn6vtVsQQMCbRJAjSsdR2BXYeZHlQfkrYsBMruNLxZ5zo9OLcnnCuVTKfx7at8i6+
-        +4E2oIeWokOvl1VoOu1qvjuDDmxnCkWOcd2zVNg==
-X-Received: by 2002:a2e:3012:: with SMTP id w18mr11354623ljw.30.1634892845930;
-        Fri, 22 Oct 2021 01:54:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx2nHJbQo/HjmQsPuw0zN1wt28/fAn8USrFruXIF4c7wF65KSM/Yc5Z7lZ0ZmoPhZdbVxUQqg==
-X-Received: by 2002:a2e:3012:: with SMTP id w18mr11354599ljw.30.1634892845684;
-        Fri, 22 Oct 2021 01:54:05 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id w19sm839529ljd.84.2021.10.22.01.54.04
+        bh=5xtRMNZGn5SAc/gKSgN9hFxcEbA1FPul5npSl2d/6L4=;
+        b=66h7wofAbQ5hfzTVS5l9mJPUno6LBL9q6jmDhFguG74CTPCN4vNSQ3wEGPQeM5XbMx
+         PtlO1jp2mOjexC+YH5zmaa6mSPxl0MVvFup4y3Q+Jef0Wx77LbPkPQvZaUg4C0b7T/Sz
+         JPXxGhRoZpDQoqhMeuONLY4C4JE4ILfIPesw0HjobnVezQzfdyY46x4+X0LkH2ue7G1b
+         4/JUXPuZbgBqn67leCOTdBDhvnECSmGIAbXfBmmxy4jpyncaEWzOTOuCLjpV/p5nv4qU
+         QjOkp93nBRz1HlFiFmZT46MJ+7pY8iLxmJcitZAaEE92yHTBAzgMQ7RnXPVg92Pi0Y7O
+         UVPg==
+X-Gm-Message-State: AOAM532ELJNUk2k9wG1Xxet1vIYtLSC3ci9kdkxoOhl8HsjuuT10PE7x
+        k23L5QnSwy7GnX6///q4nwyFK8ig1Sg=
+X-Google-Smtp-Source: ABdhPJwPxnTocirJlMPqovC+T7oulrp8irWGTrnagFBJ+d+xN2g5zl+hvkv51ZTTpXo9pGnOeFgvlg==
+X-Received: by 2002:a05:6a00:c8a:b0:44d:8985:ff4f with SMTP id a10-20020a056a000c8a00b0044d8985ff4fmr11410787pfv.1.1634893091820;
+        Fri, 22 Oct 2021 01:58:11 -0700 (PDT)
+Received: from [172.30.1.57] ([14.32.163.5])
+        by smtp.gmail.com with ESMTPSA id s2sm13559480pjs.56.2021.10.22.01.58.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 01:54:05 -0700 (PDT)
+        Fri, 22 Oct 2021 01:58:11 -0700 (PDT)
 Subject: Re: [PATCH 2/2] clk: samsung: exynos850: Implement CMU_APM domain
 To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -71,30 +66,30 @@ Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 References: <20211021203152.29312-1-semen.protsenko@linaro.org>
  <20211021203152.29312-2-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <25963ddb-bc22-aa4f-5c4a-f59a0c01788b@canonical.com>
-Date:   Fri, 22 Oct 2021 10:54:04 +0200
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Message-ID: <864f52d2-1336-eaca-1647-99a0f55da6f9@gmail.com>
+Date:   Fri, 22 Oct 2021 17:58:06 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
 In-Reply-To: <20211021203152.29312-2-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/10/2021 22:31, Sam Protsenko wrote:
+On 21. 10. 22. 오전 5:31, Sam Protsenko wrote:
 > CMU_APM clock domain provides clocks for APM IP-core (Active Power
 > Management). According to Exynos850 TRM, CMU_APM generates I3C, Mailbox,
 > Speedy, Timer, WDT, RTC and PMU clocks for BLK_ALIVE.
 > 
 > This patch adds next clocks:
->   - bus clocks in CMU_TOP needed for CMU_APM
->   - all internal CMU_APM clocks
->   - leaf clocks for I3C, Speedy and RTC IP-cores
->   - bus clocks for CMU_CMGP and CMU_CHUB
+>    - bus clocks in CMU_TOP needed for CMU_APM
+>    - all internal CMU_APM clocks
+>    - leaf clocks for I3C, Speedy and RTC IP-cores
+>    - bus clocks for CMU_CMGP and CMU_CHUB
 > 
 > CMU_APM doesn't belong to Power Domains, but platform driver is used for
 > its registration to keep its bus clock always running. Otherwise rtc-s3c
@@ -102,108 +97,108 @@ On 21/10/2021 22:31, Sam Protsenko wrote:
 > 
 > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos850.c   | 142 +++++++++++++++++++++++++-
->  include/dt-bindings/clock/exynos850.h | 107 +++++++++++--------
->  2 files changed, 208 insertions(+), 41 deletions(-)
+>   drivers/clk/samsung/clk-exynos850.c   | 142 +++++++++++++++++++++++++-
+>   include/dt-bindings/clock/exynos850.h | 107 +++++++++++--------
+>   2 files changed, 208 insertions(+), 41 deletions(-)
 > 
 > diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
 > index 2294989e244c..95e373d17b42 100644
 > --- a/drivers/clk/samsung/clk-exynos850.c
 > +++ b/drivers/clk/samsung/clk-exynos850.c
 > @@ -72,6 +72,7 @@ static void __init exynos850_init_clocks(struct device_node *np,
->  #define PLL_CON3_PLL_SHARED0			0x014c
->  #define PLL_CON0_PLL_SHARED1			0x0180
->  #define PLL_CON3_PLL_SHARED1			0x018c
+>   #define PLL_CON3_PLL_SHARED0			0x014c
+>   #define PLL_CON0_PLL_SHARED1			0x0180
+>   #define PLL_CON3_PLL_SHARED1			0x018c
 > +#define CLK_CON_MUX_MUX_CLKCMU_APM_BUS		0x1000
->  #define CLK_CON_MUX_MUX_CLKCMU_CORE_BUS		0x1014
->  #define CLK_CON_MUX_MUX_CLKCMU_CORE_CCI		0x1018
->  #define CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD	0x101c
+>   #define CLK_CON_MUX_MUX_CLKCMU_CORE_BUS		0x1014
+>   #define CLK_CON_MUX_MUX_CLKCMU_CORE_CCI		0x1018
+>   #define CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD	0x101c
 > @@ -83,6 +84,7 @@ static void __init exynos850_init_clocks(struct device_node *np,
->  #define CLK_CON_MUX_MUX_CLKCMU_PERI_BUS		0x1070
->  #define CLK_CON_MUX_MUX_CLKCMU_PERI_IP		0x1074
->  #define CLK_CON_MUX_MUX_CLKCMU_PERI_UART	0x1078
+>   #define CLK_CON_MUX_MUX_CLKCMU_PERI_BUS		0x1070
+>   #define CLK_CON_MUX_MUX_CLKCMU_PERI_IP		0x1074
+>   #define CLK_CON_MUX_MUX_CLKCMU_PERI_UART	0x1078
 > +#define CLK_CON_DIV_CLKCMU_APM_BUS		0x180c
->  #define CLK_CON_DIV_CLKCMU_CORE_BUS		0x1820
->  #define CLK_CON_DIV_CLKCMU_CORE_CCI		0x1824
->  #define CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD	0x1828
+>   #define CLK_CON_DIV_CLKCMU_CORE_BUS		0x1820
+>   #define CLK_CON_DIV_CLKCMU_CORE_CCI		0x1824
+>   #define CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD	0x1828
 > @@ -100,6 +102,7 @@ static void __init exynos850_init_clocks(struct device_node *np,
->  #define CLK_CON_DIV_PLL_SHARED1_DIV2		0x1898
->  #define CLK_CON_DIV_PLL_SHARED1_DIV3		0x189c
->  #define CLK_CON_DIV_PLL_SHARED1_DIV4		0x18a0
+>   #define CLK_CON_DIV_PLL_SHARED1_DIV2		0x1898
+>   #define CLK_CON_DIV_PLL_SHARED1_DIV3		0x189c
+>   #define CLK_CON_DIV_PLL_SHARED1_DIV4		0x18a0
 > +#define CLK_CON_GAT_GATE_CLKCMU_APM_BUS		0x2008
->  #define CLK_CON_GAT_GATE_CLKCMU_CORE_BUS	0x201c
->  #define CLK_CON_GAT_GATE_CLKCMU_CORE_CCI	0x2020
->  #define CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD	0x2024
+>   #define CLK_CON_GAT_GATE_CLKCMU_CORE_BUS	0x201c
+>   #define CLK_CON_GAT_GATE_CLKCMU_CORE_CCI	0x2020
+>   #define CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD	0x2024
 > @@ -122,6 +125,7 @@ static const unsigned long top_clk_regs[] __initconst = {
->  	PLL_CON3_PLL_SHARED0,
->  	PLL_CON0_PLL_SHARED1,
->  	PLL_CON3_PLL_SHARED1,
+>   	PLL_CON3_PLL_SHARED0,
+>   	PLL_CON0_PLL_SHARED1,
+>   	PLL_CON3_PLL_SHARED1,
 > +	CLK_CON_MUX_MUX_CLKCMU_APM_BUS,
->  	CLK_CON_MUX_MUX_CLKCMU_CORE_BUS,
->  	CLK_CON_MUX_MUX_CLKCMU_CORE_CCI,
->  	CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD,
+>   	CLK_CON_MUX_MUX_CLKCMU_CORE_BUS,
+>   	CLK_CON_MUX_MUX_CLKCMU_CORE_CCI,
+>   	CLK_CON_MUX_MUX_CLKCMU_CORE_MMC_EMBD,
 > @@ -133,6 +137,7 @@ static const unsigned long top_clk_regs[] __initconst = {
->  	CLK_CON_MUX_MUX_CLKCMU_PERI_BUS,
->  	CLK_CON_MUX_MUX_CLKCMU_PERI_IP,
->  	CLK_CON_MUX_MUX_CLKCMU_PERI_UART,
+>   	CLK_CON_MUX_MUX_CLKCMU_PERI_BUS,
+>   	CLK_CON_MUX_MUX_CLKCMU_PERI_IP,
+>   	CLK_CON_MUX_MUX_CLKCMU_PERI_UART,
 > +	CLK_CON_DIV_CLKCMU_APM_BUS,
->  	CLK_CON_DIV_CLKCMU_CORE_BUS,
->  	CLK_CON_DIV_CLKCMU_CORE_CCI,
->  	CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD,
+>   	CLK_CON_DIV_CLKCMU_CORE_BUS,
+>   	CLK_CON_DIV_CLKCMU_CORE_CCI,
+>   	CLK_CON_DIV_CLKCMU_CORE_MMC_EMBD,
 > @@ -150,6 +155,7 @@ static const unsigned long top_clk_regs[] __initconst = {
->  	CLK_CON_DIV_PLL_SHARED1_DIV2,
->  	CLK_CON_DIV_PLL_SHARED1_DIV3,
->  	CLK_CON_DIV_PLL_SHARED1_DIV4,
+>   	CLK_CON_DIV_PLL_SHARED1_DIV2,
+>   	CLK_CON_DIV_PLL_SHARED1_DIV3,
+>   	CLK_CON_DIV_PLL_SHARED1_DIV4,
 > +	CLK_CON_GAT_GATE_CLKCMU_APM_BUS,
->  	CLK_CON_GAT_GATE_CLKCMU_CORE_BUS,
->  	CLK_CON_GAT_GATE_CLKCMU_CORE_CCI,
->  	CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD,
+>   	CLK_CON_GAT_GATE_CLKCMU_CORE_BUS,
+>   	CLK_CON_GAT_GATE_CLKCMU_CORE_CCI,
+>   	CLK_CON_GAT_GATE_CLKCMU_CORE_MMC_EMBD,
 > @@ -183,6 +189,8 @@ static const struct samsung_pll_clock top_pll_clks[] __initconst = {
->  PNAME(mout_shared0_pll_p)	= { "oscclk", "fout_shared0_pll" };
->  PNAME(mout_shared1_pll_p)	= { "oscclk", "fout_shared1_pll" };
->  PNAME(mout_mmc_pll_p)		= { "oscclk", "fout_mmc_pll" };
+>   PNAME(mout_shared0_pll_p)	= { "oscclk", "fout_shared0_pll" };
+>   PNAME(mout_shared1_pll_p)	= { "oscclk", "fout_shared1_pll" };
+>   PNAME(mout_mmc_pll_p)		= { "oscclk", "fout_mmc_pll" };
 > +/* List of parent clocks for Muxes in CMU_TOP: for CMU_APM */
 > +PNAME(mout_clkcmu_apm_bus_p)	= { "dout_shared0_div4", "pll_shared1_div4" };
->  /* List of parent clocks for Muxes in CMU_TOP: for CMU_CORE */
->  PNAME(mout_core_bus_p)		= { "dout_shared1_div2", "dout_shared0_div3",
->  				    "dout_shared1_div3", "dout_shared0_div4" };
+>   /* List of parent clocks for Muxes in CMU_TOP: for CMU_CORE */
+>   PNAME(mout_core_bus_p)		= { "dout_shared1_div2", "dout_shared0_div3",
+>   				    "dout_shared1_div3", "dout_shared0_div4" };
 > @@ -222,6 +230,10 @@ static const struct samsung_mux_clock top_mux_clks[] __initconst = {
->  	MUX(CLK_MOUT_MMC_PLL, "mout_mmc_pll", mout_mmc_pll_p,
->  	    PLL_CON0_PLL_MMC, 4, 1),
->  
+>   	MUX(CLK_MOUT_MMC_PLL, "mout_mmc_pll", mout_mmc_pll_p,
+>   	    PLL_CON0_PLL_MMC, 4, 1),
+>   
 > +	/* APM */
 > +	MUX(CLK_MOUT_CLKCMU_APM_BUS, "mout_clkcmu_apm_bus",
 > +	    mout_clkcmu_apm_bus_p, CLK_CON_MUX_MUX_CLKCMU_APM_BUS, 0, 1),
 > +
->  	/* CORE */
->  	MUX(CLK_MOUT_CORE_BUS, "mout_core_bus", mout_core_bus_p,
->  	    CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
+>   	/* CORE */
+>   	MUX(CLK_MOUT_CORE_BUS, "mout_core_bus", mout_core_bus_p,
+>   	    CLK_CON_MUX_MUX_CLKCMU_CORE_BUS, 0, 2),
 > @@ -268,6 +280,10 @@ static const struct samsung_div_clock top_div_clks[] __initconst = {
->  	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
->  	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
->  
+>   	DIV(CLK_DOUT_SHARED1_DIV4, "dout_shared1_div4", "dout_shared1_div2",
+>   	    CLK_CON_DIV_PLL_SHARED1_DIV4, 0, 1),
+>   
 > +	/* APM */
 > +	DIV(CLK_DOUT_CLKCMU_APM_BUS, "dout_clkcmu_apm_bus",
 > +	    "gout_clkcmu_apm_bus", CLK_CON_DIV_CLKCMU_APM_BUS, 0, 3),
 > +
->  	/* CORE */
->  	DIV(CLK_DOUT_CORE_BUS, "dout_core_bus", "gout_core_bus",
->  	    CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
+>   	/* CORE */
+>   	DIV(CLK_DOUT_CORE_BUS, "dout_core_bus", "gout_core_bus",
+>   	    CLK_CON_DIV_CLKCMU_CORE_BUS, 0, 4),
 > @@ -310,6 +326,10 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
->  	GATE(CLK_GOUT_CORE_SSS, "gout_core_sss", "mout_core_sss",
->  	     CLK_CON_GAT_GATE_CLKCMU_CORE_SSS, 21, 0, 0),
->  
+>   	GATE(CLK_GOUT_CORE_SSS, "gout_core_sss", "mout_core_sss",
+>   	     CLK_CON_GAT_GATE_CLKCMU_CORE_SSS, 21, 0, 0),
+>   
 > +	/* APM */
 > +	GATE(CLK_GOUT_CLKCMU_APM_BUS, "gout_clkcmu_apm_bus",
 > +	     "mout_clkcmu_apm_bus", CLK_CON_GAT_GATE_CLKCMU_APM_BUS, 21, 0, 0),
 > +
->  	/* DPU */
->  	GATE(CLK_GOUT_DPU, "gout_dpu", "mout_dpu",
->  	     CLK_CON_GAT_GATE_CLKCMU_DPU, 21, 0, 0),
+>   	/* DPU */
+>   	GATE(CLK_GOUT_DPU, "gout_dpu", "mout_dpu",
+>   	     CLK_CON_GAT_GATE_CLKCMU_DPU, 21, 0, 0),
 > @@ -354,6 +374,124 @@ static void __init exynos850_cmu_top_init(struct device_node *np)
->  CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
->  	       exynos850_cmu_top_init);
->  
+>   CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
+>   	       exynos850_cmu_top_init);
+>   
 > +/* ---- CMU_APM ------------------------------------------------------------- */
 > +
 > +/* Register Offset definitions for CMU_APM (0x11800000) */
@@ -322,30 +317,30 @@ On 21/10/2021 22:31, Sam Protsenko wrote:
 > +	.clk_name		= "dout_clkcmu_apm_bus",
 > +};
 > +
->  /* ---- CMU_HSI ------------------------------------------------------------- */
->  
->  /* Register Offset definitions for CMU_HSI (0x13400000) */
+>   /* ---- CMU_HSI ------------------------------------------------------------- */
+>   
+>   /* Register Offset definitions for CMU_HSI (0x13400000) */
 > @@ -801,9 +939,11 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
->  	return 0;
->  }
->  
+>   	return 0;
+>   }
+>   
 > -/* CMUs which belong to Power Domains and need runtime PM to be implemented */
->  static const struct of_device_id exynos850_cmu_of_match[] = {
->  	{
+>   static const struct of_device_id exynos850_cmu_of_match[] = {
+>   	{
 > +		.compatible = "samsung,exynos850-cmu-apm",
 > +		.data = &apm_cmu_info,
 > +	}, {
->  		.compatible = "samsung,exynos850-cmu-hsi",
->  		.data = &hsi_cmu_info,
->  	}, {
+>   		.compatible = "samsung,exynos850-cmu-hsi",
+>   		.data = &hsi_cmu_info,
+>   	}, {
 > diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
 > index 8999184f94a2..c65e0300a8d3 100644
 > --- a/include/dt-bindings/clock/exynos850.h
 > +++ b/include/dt-bindings/clock/exynos850.h
 > @@ -16,46 +16,73 @@
->  #define CLK_MOUT_SHARED0_PLL		4
->  #define CLK_MOUT_SHARED1_PLL		5
->  #define CLK_MOUT_MMC_PLL		6
+>   #define CLK_MOUT_SHARED0_PLL		4
+>   #define CLK_MOUT_SHARED1_PLL		5
+>   #define CLK_MOUT_MMC_PLL		6
 > -#define CLK_MOUT_CORE_BUS		7
 > -#define CLK_MOUT_CORE_CCI		8
 > -#define CLK_MOUT_CORE_MMC_EMBD		9
@@ -388,53 +383,20 @@ On 21/10/2021 22:31, Sam Protsenko wrote:
 > -#define TOP_NR_CLK			46
 > +#define CLK_MOUT_CLKCMU_APM_BUS		7
 > +#define CLK_MOUT_CORE_BUS		8
-> +#define CLK_MOUT_CORE_CCI		9
-> +#define CLK_MOUT_CORE_MMC_EMBD		10
-> +#define CLK_MOUT_CORE_SSS		11
-> +#define CLK_MOUT_DPU			12
-> +#define CLK_MOUT_HSI_BUS		13
-> +#define CLK_MOUT_HSI_MMC_CARD		14
-> +#define CLK_MOUT_HSI_USB20DRD		15
-> +#define CLK_MOUT_PERI_BUS		16
-> +#define CLK_MOUT_PERI_UART		17
-> +#define CLK_MOUT_PERI_IP		18
-> +#define CLK_DOUT_SHARED0_DIV3		19
-> +#define CLK_DOUT_SHARED0_DIV2		20
-> +#define CLK_DOUT_SHARED1_DIV3		21
-> +#define CLK_DOUT_SHARED1_DIV2		22
-> +#define CLK_DOUT_SHARED0_DIV4		23
-> +#define CLK_DOUT_SHARED1_DIV4		24
-> +#define CLK_DOUT_CLKCMU_APM_BUS		25
-> +#define CLK_DOUT_CORE_BUS		26
-> +#define CLK_DOUT_CORE_CCI		27
-> +#define CLK_DOUT_CORE_MMC_EMBD		28
-> +#define CLK_DOUT_CORE_SSS		29
-> +#define CLK_DOUT_DPU			30
-> +#define CLK_DOUT_HSI_BUS		31
-> +#define CLK_DOUT_HSI_MMC_CARD		32
-> +#define CLK_DOUT_HSI_USB20DRD		33
-> +#define CLK_DOUT_PERI_BUS		34
-> +#define CLK_DOUT_PERI_UART		35
-> +#define CLK_DOUT_PERI_IP		36
-> +#define CLK_GOUT_CLKCMU_APM_BUS		37
-> +#define CLK_GOUT_CORE_BUS		38
-> +#define CLK_GOUT_CORE_CCI		39
-> +#define CLK_GOUT_CORE_MMC_EMBD		40
-> +#define CLK_GOUT_CORE_SSS		41
-> +#define CLK_GOUT_DPU			42
-> +#define CLK_GOUT_HSI_BUS		43
-> +#define CLK_GOUT_HSI_MMC_CARD		44
-> +#define CLK_GOUT_HSI_USB20DRD		45
-> +#define CLK_GOUT_PERI_BUS		46
-> +#define CLK_GOUT_PERI_UART		47
-> +#define CLK_GOUT_PERI_IP		48
-> +#define TOP_NR_CLK			49
 
-Everything is fine here, because there are no users of this, but just
-for the record: once your board stabilizes in mainline please avoid
-shuffling IDs because it would be an ABI break.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Basically, you can never change the already defined clock id
+in nclude/dt-bindings/clock/*.h because of supporting
+the compatibility of dtb files which were using the
+already defined clock id instead of changed clock id
 
-Best regards,
-Krzysztof
+If you want to add new clock with new clock id,
+you have to define the new clock id at the end of defined clock
+like the next of CLK_GOUT_PERI_IP for TOP domain case.
+
+(snip)
+
+-- 
+Best Regards,
+Samsung Electronics
+Chanwoo Choi
