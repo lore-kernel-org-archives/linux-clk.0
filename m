@@ -2,213 +2,226 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B192C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 02:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F76FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 06:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70C8F61163
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 02:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDEE61108
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 06:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232241AbhJVCIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 22:08:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57356 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232206AbhJVCIr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 22:08:47 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A49C061766
-        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id y4so1723862plb.0
-        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ic/jkXaDMCMZefIM+INQtLKGqHBF+RCyVHH3h2YGrKw=;
-        b=lOYDkrAgkjTYYjAVXORDOxu+X2oWJ4E99fQkCZASDeb6Bxv82OEj1GN5FK0PImm5Km
-         1ndDDD5m1+pbmgSn1SBOKkTkmI7jOGTmPdscGaAxvuyV0qv9zrNHSWWjIacTclp7IP8m
-         blwJCsF1Eav/gdde5L8blmmtrqSfTEaSWkVhkGUJlXUKR5GLx7C9pNVdNuQpKo0hWD5q
-         r1DrR3i3eTnq/y4cVofFTn7yizNn9/14ZJ233lM7YtM+F0dJDENsEyExx68GpuYIW9j3
-         V12+w1OEyyGSREogPhp1ezeuWIo0c7S25MveUfLpDoYgyADV8XIlq8q5tptjCMaone7i
-         fdWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ic/jkXaDMCMZefIM+INQtLKGqHBF+RCyVHH3h2YGrKw=;
-        b=6zEa0eHmmdhecyYWNq/a3vCJ8xyQD31p6+JZQENA2eR4TV2sN32ncyUZk+gwfVSCAx
-         JqXDwX5vUr5gGfTKTEkqKQ4L0oWm2r++Hzb4xhxvMdOq+yqldR9CegbwWyTh7M80JZyJ
-         lFUAW5Ryhhn4slICAOZR5TIqO/0/eYzCdj7myIixeIFRVoBz9HXqeyCXsJ937foNBHPL
-         9S/koWddgTeCMabX7e6c09pPLO/Hl7n/hoXDiNM9F7SgyS7TWiU0efsrXS5tW+nZOkJH
-         8QHvAJKVjh0Lb+A2IvbwNUidAMLyqwTU17UiZVMAtNkfJ0rqJKywbCCEiqY4+dZ9DeoQ
-         zsJA==
-X-Gm-Message-State: AOAM533SugAzT3sMTox/qfnC3WDE2R3zBhUIf7qgE8DfSrMLP52FJmMz
-        lrVLOgyUmlhnUVZjhg8yoklgsA==
-X-Google-Smtp-Source: ABdhPJyaepizqaQ/UmIrCDVyrV4BTCHFvghNob7aEx2InsVkBVoe5WCokUrJgYwitOuJP7tHnLeG1Q==
-X-Received: by 2002:a17:903:310c:b0:13f:f70e:6e8f with SMTP id w12-20020a170903310c00b0013ff70e6e8fmr7335147plc.82.1634868390409;
-        Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
-Received: from x1 ([2601:1c2:1080:1950:7c59:380a:adf8:4f49])
-        by smtp.gmail.com with ESMTPSA id p4sm6260957pgc.15.2021.10.21.19.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 19:06:29 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 19:06:27 -0700
-From:   Drew Fustini <dfustini@baylibre.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Subject: Re: [PATCH v2 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-Message-ID: <20211022020627.GA1836770@x1>
-References: <20211021174223.43310-1-kernel@esmil.dk>
- <20211021174223.43310-13-kernel@esmil.dk>
- <20211021190118.GA1802180@x1>
- <CANBLGcy2WR2L_CE2FbLPBnDaHWaNgUySxyB4WyPYA1z8zsQAPQ@mail.gmail.com>
+        id S230238AbhJVGWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Oct 2021 02:22:45 -0400
+Received: from [113.204.237.245] ([113.204.237.245]:45640 "EHLO
+        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231334AbhJVGWl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 02:22:41 -0400
+X-Greylist: delayed 377 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Oct 2021 02:22:41 EDT
+X-MailGates: (compute_score:DELIVER,40,3)
+Received: from 172.28.114.216
+        by cqmailgates with MailGates ESMTP Server V5.0(10964:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 22 Oct 2021 14:11:33 +0800 (CST)
+From:   qinjian <qinjian@cqplus1.com>
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qinjian <qinjian@cqplus1.com>
+Subject: [PATCH 3/4] dt-bindings: clock: Add bindings for SP7021 clock driver
+Date:   Fri, 22 Oct 2021 14:11:05 +0800
+Message-Id: <20211022061105.281807-1-qinjian@cqplus1.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBLGcy2WR2L_CE2FbLPBnDaHWaNgUySxyB4WyPYA1z8zsQAPQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 09:50:42PM +0200, Emil Renner Berthing wrote:
-> On Thu, 21 Oct 2021 at 21:01, Drew Fustini <dfustini@baylibre.com> wrote:
-> > On Thu, Oct 21, 2021 at 07:42:19PM +0200, Emil Renner Berthing wrote:
-> > > +/*
-> > > + * Interrupt Trigger Polarity. If set to 1 the interrupt is triggered on a
-> > > + * rising edge (edge-triggered) or high level (level-triggered). If set to 0 the
-> > > + * interrupt is triggered on a falling edge (edge-triggered) or low level
-> > > + * (level-triggered).
-> > > + */
-> > > +#define GPIOIEV              0x020
-> > > +
-> > > +/*
-> > > + * Interrupt Mask. If set to 1 the interrupt is disabled (masked). If set to 0
-> > > + * the interrupt is enabled (unmasked).
-> > > + */
-> > > +#define GPIOIE               0x028
-> >
-> > It bothered me that the datasheet used the term GPIOIE for the interrupt
-> > mask register. I had used a more verbose #define name because I worried
-> > someone reading GPIOIE in functions might mistake it for an interrupt
-> > enable register. This happened to me when I was originally working with
-> > the gpio driver.
-> >
-> > However I suppose the best solution would have been to get the datasheet
-> > updated as I can see how it is best to have #define names in the driver
-> > match the datasheet.
-> >
-> > > +static void starfive_irq_mask(struct irq_data *d)
-> > > +{
-> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > > +     u32 mask = BIT(gpio % 32);
-> > > +     unsigned long flags;
-> > > +     u32 value;
-> > > +
-> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > > +     value = readl_relaxed(ie) & ~mask;
-> > > +     writel_relaxed(value, ie);
-> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > > +}
-> > > +
-> > > +static void starfive_irq_mask_ack(struct irq_data *d)
-> > > +{
-> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > > +     void __iomem *ic = sfp->base + GPIOIC + 4 * (gpio / 32);
-> > > +     u32 mask = BIT(gpio % 32);
-> > > +     unsigned long flags;
-> > > +     u32 value;
-> > > +
-> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > > +     value = readl_relaxed(ie) & ~mask;
-> > > +     writel_relaxed(value, ie);
-> > > +     writel_relaxed(mask, ic);
-> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > > +}
-> > > +
-> > > +static void starfive_irq_unmask(struct irq_data *d)
-> > > +{
-> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
-> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
-> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
-> > > +     u32 mask = BIT(gpio % 32);
-> > > +     unsigned long flags;
-> > > +     u32 value;
-> > > +
-> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
-> > > +     value = readl_relaxed(ie) | mask;
-> > > +     writel_relaxed(value, ie);
-> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
-> > > +}
-> > > +
-> 
-> ...
-> 
-> > > +static int starfive_gpio_init_hw(struct gpio_chip *gc)
-> > > +{
-> > > +     struct starfive_pinctrl *sfp = starfive_from_gc(gc);
-> > > +
-> > > +     /* mask all GPIO interrupts */
-> > > +     writel(0, sfp->base + GPIOIE + 0);
-> > > +     writel(0, sfp->base + GPIOIE + 4);
-> >
-> > Woudln't 0 in GPIOIE mean mask is disabled for all interrupts?
-> >
-> > In other words, wouldn't this enable all the interrupts?
-> 
-> Heh, you're right. The code does the exact opposite of what the
-> documentation says it should be doing. However I just tried and with
-> the code as it is now GPIO interrupts work fine, but with the logic
-> flipped the kernel fails to boot. I'm guessing because an interrupt
-> storm. So it seems to me the documentation might be wrong and GPIOIE
-> is actually a good name.
+Add documentation to describe Sunplus SP7021 clock driver bindings.
 
-Ah, it seems I once knew this back in July [1] but never got the
-documentation changed:
+Signed-off-by: qinjian <qinjian@cqplus1.com>
+---
+ .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 ++++++
+ MAINTAINERS                                   |   2 +
+ include/dt-bindings/clock/sp-sp7021.h         | 112 ++++++++++++++++++
+ 3 files changed, 152 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/sp-sp7021.h
 
-NOTE: Table 12-9 in the JH7100 datasheet is incorrect regarding fields
-GPIOIE_0 and GPIOIE_1. An interrupt is enabled (unmasked) when the bit
-is   set to 1 and it is disabled (masked) when set to 0. The datasheet
-incorrectly states the opposite. I think this is due to the datasheet
-author thinking of it as mask field which it is not, it is an enable
-field. I will raise an issue on the documentation repo.
+diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+new file mode 100644
+index 000000000..5b3c0881b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) Sunplus Co., Ltd. 2021
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sunplus SP7021 SoC Clock Controller Binding
++
++maintainers:
++  - Qin Jian <qinjian@cqplus1.com>
++
++properties:
++  compatible:
++    const: sunplus,sp7021-clkc
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - "#clock-cells"
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    clkc: clkc@9c000000 {
++      compatible = "sunplus,sp7021-clkc";
++      #clock-cells = <1>;
++      reg = <0x9c000000 0x80>;
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 065da0846..474544db2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2660,7 +2660,9 @@ M:	Qin Jian <qinjian@cqplus1.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
++F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
++F:	include/dt-bindings/clock/sp-sp7021.h
+ F:	include/dt-bindings/interrupt-controller/sp7021-intc.h
+ 
+ ARM/Synaptics SoC support
+diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
+new file mode 100644
+index 000000000..98c3feba1
+--- /dev/null
++++ b/include/dt-bindings/clock/sp-sp7021.h
+@@ -0,0 +1,112 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
++ */
++#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
++#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
++
++#define XTAL        27000000
++
++/* plls */
++#define PLL_A		0
++#define PLL_E		1
++#define PLL_E_2P5	2
++#define PLL_E_25	3
++#define PLL_E_112P5	4
++#define PLL_F		5
++#define PLL_TV		6
++#define PLL_TV_A	7
++#define PLL_SYS		8
++
++/* gates: mo_clken0 ~ mo_clken9 */
++#define SYSTEM		0x10
++#define RTC			0x12
++#define IOCTL		0x13
++#define IOP			0x14
++#define OTPRX		0x15
++#define NOC			0x16
++#define BR			0x17
++#define RBUS_L00	0x18
++#define SPIFL		0x19
++#define SDCTRL0		0x1a
++#define PERI0		0x1b
++#define A926		0x1d
++#define UMCTL2		0x1e
++#define PERI1		0x1f
++
++#define DDR_PHY0	0x20
++#define ACHIP		0x22
++#define STC0		0x24
++#define STC_AV0		0x25
++#define STC_AV1		0x26
++#define STC_AV2		0x27
++#define UA0			0x28
++#define UA1			0x29
++#define UA2			0x2a
++#define UA3			0x2b
++#define UA4			0x2c
++#define HWUA		0x2d
++#define DDC0		0x2e
++#define UADMA		0x2f
++
++#define CBDMA0		0x30
++#define CBDMA1		0x31
++#define SPI_COMBO_0	0x32
++#define SPI_COMBO_1	0x33
++#define SPI_COMBO_2	0x34
++#define SPI_COMBO_3	0x35
++#define AUD			0x36
++#define USBC0		0x3a
++#define USBC1		0x3b
++#define UPHY0		0x3d
++#define UPHY1		0x3e
++
++#define I2CM0		0x40
++#define I2CM1		0x41
++#define I2CM2		0x42
++#define I2CM3		0x43
++#define PMC			0x4d
++#define CARD_CTL0	0x4e
++#define CARD_CTL1	0x4f
++
++#define CARD_CTL4	0x52
++#define BCH			0x54
++#define DDFCH		0x5b
++#define CSIIW0		0x5c
++#define CSIIW1		0x5d
++#define MIPICSI0	0x5e
++#define MIPICSI1	0x5f
++
++#define HDMI_TX		0x60
++#define VPOST		0x65
++
++#define TGEN		0x70
++#define DMIX		0x71
++#define TCON		0x7a
++#define INTERRUPT	0x7f
++
++#define RGST		0x80
++#define GPIO		0x83
++#define RBUS_TOP	0x84
++
++#define MAILBOX		0x96
++#define SPIND		0x9a
++#define I2C2CBUS	0x9b
++#define SEC			0x9d
++#define DVE			0x9e
++#define GPOST0		0x9f
++
++#define OSD0		0xa0
++#define DISP_PWM	0xa2
++#define UADBG		0xa3
++#define DUMMY_MASTER	0xa4
++#define FIO_CTL		0xa5
++#define FPGA		0xa6
++#define L2SW		0xa7
++#define ICM			0xa8
++#define AXI_GLOBAL	0xa9
++
++#define CLK_MAX		0xb0
++
++#endif
+-- 
+2.33.1
 
-
-> 
-> Michael Zhu: Can you confirm if a 1 or 0 enables the interrupt in the
-> GPIOIE registers?
-> 
-> /Emil
-
-[1] https://github.com/esmil/linux/pull/34/commits/e247a259e40312d0202cdbdd686dbba09afc7813
