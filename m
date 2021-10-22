@@ -2,100 +2,213 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AF2C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 00:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B192C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 02:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E802C61378
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 00:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70C8F61163
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 02:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232167AbhJVAzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Oct 2021 20:55:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229512AbhJVAzJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 21 Oct 2021 20:55:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A694761371;
-        Fri, 22 Oct 2021 00:52:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634863973;
-        bh=/ar7Vm5chhxFFJNLsH1Cx7MqXOvv+yBrbQnZyJ7ext0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugDqVE5LEFVT7/8vRX1SWqwaJ3I5ScNrEq2t0RusE9J4xkcI7xqNz/rGm+OGE2ePP
-         BMnWjwEuVU4FEa0SG+NUNzWfQDzTmJqHjz/8YAsI7FqN/SosBxBTjrADbYZynbiFDV
-         3qzPSII+4Tsym20VDjCTxdRgpAQLLFWSrK4esjxbSBQb9Nkuk2Uxv9VEnZhM7AYR3L
-         293LQ6kJc7HQFNFMJiGUxryVARloozj1p+HHPn67DnNFu3iJMGX3sYMsbCCXpP9Mrc
-         XOYIZ8CdU1kydl6iEJVkbSgk/zUzQyWwMZOYRZQS7U58HsbSCGJuUtOmQzPZmf5yiL
-         RhIKq8Di4+ggg==
-From:   Mark Brown <broonie@kernel.org>
-To:     linux-arm-msm@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
-Cc:     Mark Brown <broonie@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        David Collins <collinsd@codeaurora.org>,
-        linux-gpio@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        konrad.dybcio@somainline.org, linux-kernel@vger.kernel.org,
-        Hector Martin <marcan@marcan.st>,
+        id S232241AbhJVCIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Oct 2021 22:08:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232206AbhJVCIr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Oct 2021 22:08:47 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8A49C061766
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id y4so1723862plb.0
+        for <linux-clk@vger.kernel.org>; Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ic/jkXaDMCMZefIM+INQtLKGqHBF+RCyVHH3h2YGrKw=;
+        b=lOYDkrAgkjTYYjAVXORDOxu+X2oWJ4E99fQkCZASDeb6Bxv82OEj1GN5FK0PImm5Km
+         1ndDDD5m1+pbmgSn1SBOKkTkmI7jOGTmPdscGaAxvuyV0qv9zrNHSWWjIacTclp7IP8m
+         blwJCsF1Eav/gdde5L8blmmtrqSfTEaSWkVhkGUJlXUKR5GLx7C9pNVdNuQpKo0hWD5q
+         r1DrR3i3eTnq/y4cVofFTn7yizNn9/14ZJ233lM7YtM+F0dJDENsEyExx68GpuYIW9j3
+         V12+w1OEyyGSREogPhp1ezeuWIo0c7S25MveUfLpDoYgyADV8XIlq8q5tptjCMaone7i
+         fdWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ic/jkXaDMCMZefIM+INQtLKGqHBF+RCyVHH3h2YGrKw=;
+        b=6zEa0eHmmdhecyYWNq/a3vCJ8xyQD31p6+JZQENA2eR4TV2sN32ncyUZk+gwfVSCAx
+         JqXDwX5vUr5gGfTKTEkqKQ4L0oWm2r++Hzb4xhxvMdOq+yqldR9CegbwWyTh7M80JZyJ
+         lFUAW5Ryhhn4slICAOZR5TIqO/0/eYzCdj7myIixeIFRVoBz9HXqeyCXsJ937foNBHPL
+         9S/koWddgTeCMabX7e6c09pPLO/Hl7n/hoXDiNM9F7SgyS7TWiU0efsrXS5tW+nZOkJH
+         8QHvAJKVjh0Lb+A2IvbwNUidAMLyqwTU17UiZVMAtNkfJ0rqJKywbCCEiqY4+dZ9DeoQ
+         zsJA==
+X-Gm-Message-State: AOAM533SugAzT3sMTox/qfnC3WDE2R3zBhUIf7qgE8DfSrMLP52FJmMz
+        lrVLOgyUmlhnUVZjhg8yoklgsA==
+X-Google-Smtp-Source: ABdhPJyaepizqaQ/UmIrCDVyrV4BTCHFvghNob7aEx2InsVkBVoe5WCokUrJgYwitOuJP7tHnLeG1Q==
+X-Received: by 2002:a17:903:310c:b0:13f:f70e:6e8f with SMTP id w12-20020a170903310c00b0013ff70e6e8fmr7335147plc.82.1634868390409;
+        Thu, 21 Oct 2021 19:06:30 -0700 (PDT)
+Received: from x1 ([2601:1c2:1080:1950:7c59:380a:adf8:4f49])
+        by smtp.gmail.com with ESMTPSA id p4sm6260957pgc.15.2021.10.21.19.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 19:06:29 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 19:06:27 -0700
+From:   Drew Fustini <dfustini@baylibre.com>
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: (subset) [PATCH v2 00/11] Initial Fairphone 4 support
-Date:   Fri, 22 Oct 2021 01:52:45 +0100
-Message-Id: <163486395942.2610269.17464570982100143546.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211007212444.328034-1-luca@z3ntu.xyz>
-References: <20211007212444.328034-1-luca@z3ntu.xyz>
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Subject: Re: [PATCH v2 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+Message-ID: <20211022020627.GA1836770@x1>
+References: <20211021174223.43310-1-kernel@esmil.dk>
+ <20211021174223.43310-13-kernel@esmil.dk>
+ <20211021190118.GA1802180@x1>
+ <CANBLGcy2WR2L_CE2FbLPBnDaHWaNgUySxyB4WyPYA1z8zsQAPQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANBLGcy2WR2L_CE2FbLPBnDaHWaNgUySxyB4WyPYA1z8zsQAPQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 7 Oct 2021 23:24:27 +0200, Luca Weiss wrote:
-> This series adds basic support for the recently announced Fairphone 4
-> smartphone, based on the Snapdragon 750G (sm7225).
+On Thu, Oct 21, 2021 at 09:50:42PM +0200, Emil Renner Berthing wrote:
+> On Thu, 21 Oct 2021 at 21:01, Drew Fustini <dfustini@baylibre.com> wrote:
+> > On Thu, Oct 21, 2021 at 07:42:19PM +0200, Emil Renner Berthing wrote:
+> > > +/*
+> > > + * Interrupt Trigger Polarity. If set to 1 the interrupt is triggered on a
+> > > + * rising edge (edge-triggered) or high level (level-triggered). If set to 0 the
+> > > + * interrupt is triggered on a falling edge (edge-triggered) or low level
+> > > + * (level-triggered).
+> > > + */
+> > > +#define GPIOIEV              0x020
+> > > +
+> > > +/*
+> > > + * Interrupt Mask. If set to 1 the interrupt is disabled (masked). If set to 0
+> > > + * the interrupt is enabled (unmasked).
+> > > + */
+> > > +#define GPIOIE               0x028
+> >
+> > It bothered me that the datasheet used the term GPIOIE for the interrupt
+> > mask register. I had used a more verbose #define name because I worried
+> > someone reading GPIOIE in functions might mistake it for an interrupt
+> > enable register. This happened to me when I was originally working with
+> > the gpio driver.
+> >
+> > However I suppose the best solution would have been to get the datasheet
+> > updated as I can see how it is best to have #define names in the driver
+> > match the datasheet.
+> >
+> > > +static void starfive_irq_mask(struct irq_data *d)
+> > > +{
+> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
+> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> > > +     u32 mask = BIT(gpio % 32);
+> > > +     unsigned long flags;
+> > > +     u32 value;
+> > > +
+> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
+> > > +     value = readl_relaxed(ie) & ~mask;
+> > > +     writel_relaxed(value, ie);
+> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> > > +}
+> > > +
+> > > +static void starfive_irq_mask_ack(struct irq_data *d)
+> > > +{
+> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
+> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> > > +     void __iomem *ic = sfp->base + GPIOIC + 4 * (gpio / 32);
+> > > +     u32 mask = BIT(gpio % 32);
+> > > +     unsigned long flags;
+> > > +     u32 value;
+> > > +
+> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
+> > > +     value = readl_relaxed(ie) & ~mask;
+> > > +     writel_relaxed(value, ie);
+> > > +     writel_relaxed(mask, ic);
+> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> > > +}
+> > > +
+> > > +static void starfive_irq_unmask(struct irq_data *d)
+> > > +{
+> > > +     struct starfive_pinctrl *sfp = starfive_from_irq_data(d);
+> > > +     irq_hw_number_t gpio = irqd_to_hwirq(d);
+> > > +     void __iomem *ie = sfp->base + GPIOIE + 4 * (gpio / 32);
+> > > +     u32 mask = BIT(gpio % 32);
+> > > +     unsigned long flags;
+> > > +     u32 value;
+> > > +
+> > > +     raw_spin_lock_irqsave(&sfp->lock, flags);
+> > > +     value = readl_relaxed(ie) | mask;
+> > > +     writel_relaxed(value, ie);
+> > > +     raw_spin_unlock_irqrestore(&sfp->lock, flags);
+> > > +}
+> > > +
 > 
-> This adds support for UART, power & volume buttons, screen based on
-> simple-framebuffer, regulators and USB.
+> ...
 > 
-> v2 fixes some stylistic problems in dts and corrects the situation with
-> pm6350 regulator supplies.
+> > > +static int starfive_gpio_init_hw(struct gpio_chip *gc)
+> > > +{
+> > > +     struct starfive_pinctrl *sfp = starfive_from_gc(gc);
+> > > +
+> > > +     /* mask all GPIO interrupts */
+> > > +     writel(0, sfp->base + GPIOIE + 0);
+> > > +     writel(0, sfp->base + GPIOIE + 4);
+> >
+> > Woudln't 0 in GPIOIE mean mask is disabled for all interrupts?
+> >
+> > In other words, wouldn't this enable all the interrupts?
 > 
-> [...]
+> Heh, you're right. The code does the exact opposite of what the
+> documentation says it should be doing. However I just tried and with
+> the code as it is now GPIO interrupts work fine, but with the logic
+> flipped the kernel fails to boot. I'm guessing because an interrupt
+> storm. So it seems to me the documentation might be wrong and GPIOIE
+> is actually a good name.
 
-Applied to
+Ah, it seems I once knew this back in July [1] but never got the
+documentation changed:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+NOTE: Table 12-9 in the JH7100 datasheet is incorrect regarding fields
+GPIOIE_0 and GPIOIE_1. An interrupt is enabled (unmasked) when the bit
+is   set to 1 and it is disabled (masked) when set to 0. The datasheet
+incorrectly states the opposite. I think this is due to the datasheet
+author thinking of it as mask field which it is not, it is an enable
+field. I will raise an issue on the documentation repo.
 
-Thanks!
 
-[02/11] dt-bindings: regulator: qcom,rpmh: Add compatible for PM6350
-        commit: 12271ba94530e7476eff09e98a7de10c31f5d474
-[03/11] regulator: qcom-rpmh: Add PM6350 regulators
-        commit: 0adafd62505ccb4787d4918fd0b4ca126b754453
+> 
+> Michael Zhu: Can you confirm if a 1 or 0 enables the interrupt in the
+> GPIOIE registers?
+> 
+> /Emil
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+[1] https://github.com/esmil/linux/pull/34/commits/e247a259e40312d0202cdbdd686dbba09afc7813
