@@ -2,226 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F76FC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 06:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA84C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 07:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDEE61108
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 06:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78771610D2
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 07:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbhJVGWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Oct 2021 02:22:45 -0400
-Received: from [113.204.237.245] ([113.204.237.245]:45640 "EHLO
-        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231334AbhJVGWl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 02:22:41 -0400
-X-Greylist: delayed 377 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Oct 2021 02:22:41 EDT
-X-MailGates: (compute_score:DELIVER,40,3)
-Received: from 172.28.114.216
-        by cqmailgates with MailGates ESMTP Server V5.0(10964:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 22 Oct 2021 14:11:33 +0800 (CST)
-From:   qinjian <qinjian@cqplus1.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qinjian <qinjian@cqplus1.com>
-Subject: [PATCH 3/4] dt-bindings: clock: Add bindings for SP7021 clock driver
-Date:   Fri, 22 Oct 2021 14:11:05 +0800
-Message-Id: <20211022061105.281807-1-qinjian@cqplus1.com>
-X-Mailer: git-send-email 2.33.1
+        id S231920AbhJVH2T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Oct 2021 03:28:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231334AbhJVH2T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 03:28:19 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED233C061764;
+        Fri, 22 Oct 2021 00:26:01 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id a8so3257823ilj.10;
+        Fri, 22 Oct 2021 00:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xGW6THywkFBuOv9pHK/lIzKrkZB0E8ZIytUvD2+0Xw8=;
+        b=Eh4hasD9RvEAh6ImQl27Ae2v7t2vwvorjoDgIoYVCE+rXO0eIBgQvFwbIQD/g7hjG8
+         SSTAEDjo228I1eH+2ZxK0SNqiNxVzHLqlxLwDSAwsd18aQLw0b1mNmAb9all+hB2mt1P
+         HtjnOE/qSbehdmf4XR7Q2K1EF4Es5SwxR3eVL7gO/+iHL/XLFauKArm0YveFUS5BOF6t
+         JDpgpVP0CkCf1I9qARXL2F8saP3ocO6f3XRCFHfsLo/u+yY5EoF7iMCN4Xb1riPwcuB1
+         azWIRU2HmiQ6tokGswRjYjrvzN7oI8HAkjpBXK3cqtAA0umeZIVp1MTovtBth4wAqrWx
+         knzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xGW6THywkFBuOv9pHK/lIzKrkZB0E8ZIytUvD2+0Xw8=;
+        b=VT9/ygnsVUrMN5tV3C8HxZL9oKI1/mCvOXgy3SA8y27RVGnd7IJ8WnkMar0UFpjqve
+         PXgSrkrziLkjgBUAa8zul4W4DykXSMrVl6n2VRWO7BDVl/99Ya1mJskFPWneNT65BELX
+         Zn3fksUidRTMh4eh2q9segyLxjjKVzY2sMFZpEnCl9kYDD8IqgJ9fmzH6d3fTl7uj+Up
+         Vnc30KaJG3JeJgmbdcn25tdsSn92cHkOhInv+jLX+iOrdI/MCplr6Ej4R5lqu0HlRDt1
+         k8NZeIujRQaN/5eo+u0Q1ZaEXak7xtU2rmjB+BlaOw/+4mr8a2dgSI9GTK0fYVt9V4oU
+         W12A==
+X-Gm-Message-State: AOAM533nJNfOQWofWU8SIt0n9QQn7cdCtfUz5VgAIKPNRGoOkiH6G843
+        z/9hesze1IyMdy59GJgIg6kHPe3IU7lQZXNsEQg=
+X-Google-Smtp-Source: ABdhPJzptGfW29mWmQ2t1Ao8a4dPISAZrav5sOoX2pl1Jm+Kj5xoE3Qsw272r5sA9jxvbALGZVvbQPMQ5FuvNiZm1XY=
+X-Received: by 2002:a05:6e02:164e:: with SMTP id v14mr6777429ilu.320.1634887561381;
+ Fri, 22 Oct 2021 00:26:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1634633003-18132-1-git-send-email-dillon.minfei@gmail.com> <1634633003-18132-10-git-send-email-dillon.minfei@gmail.com>
+In-Reply-To: <1634633003-18132-10-git-send-email-dillon.minfei@gmail.com>
+From:   Dillon Min <dillon.minfei@gmail.com>
+Date:   Fri, 22 Oct 2021 15:25:25 +0800
+Message-ID: <CAL9mu0Jw99aeSmwy7gnY3XQK3V1V-C1-R8ET5jvSMz7niH=g4g@mail.gmail.com>
+Subject: Re: [PATCH v6 09/10] clk: stm32: Fix ltdc's clock turn off by
+ clk_disable_unused() after system enter shell
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        mchehab+huawei@kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        ezequiel@collabora.com, gnurou@gmail.com,
+        Pi-Hsun Shih <pihsun@chromium.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
+        gabriel.fernandez@foss.st.com
+Cc:     Patrice CHOTARD <patrice.chotard@foss.st.com>,
+        hugues.fruchet@foss.st.com,
+        linux-media <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation to describe Sunplus SP7021 clock driver bindings.
+Hi Gabriel
 
-Signed-off-by: qinjian <qinjian@cqplus1.com>
----
- .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 ++++++
- MAINTAINERS                                   |   2 +
- include/dt-bindings/clock/sp-sp7021.h         | 112 ++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- create mode 100644 include/dt-bindings/clock/sp-sp7021.h
+I guess you are the maintainer of stm32 clk subsystem from [1], Could
+you help to review this patch, just give a brief of the history:
 
-diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
-new file mode 100644
-index 000000000..5b3c0881b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) Sunplus Co., Ltd. 2021
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sunplus SP7021 SoC Clock Controller Binding
-+
-+maintainers:
-+  - Qin Jian <qinjian@cqplus1.com>
-+
-+properties:
-+  compatible:
-+    const: sunplus,sp7021-clkc
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clkc: clkc@9c000000 {
-+      compatible = "sunplus,sp7021-clkc";
-+      #clock-cells = <1>;
-+      reg = <0x9c000000 0x80>;
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 065da0846..474544db2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2660,7 +2660,9 @@ M:	Qin Jian <qinjian@cqplus1.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
- S:	Maintained
- F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-+F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
-+F:	include/dt-bindings/clock/sp-sp7021.h
- F:	include/dt-bindings/interrupt-controller/sp7021-intc.h
- 
- ARM/Synaptics SoC support
-diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
-new file mode 100644
-index 000000000..98c3feba1
---- /dev/null
-+++ b/include/dt-bindings/clock/sp-sp7021.h
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Sunplus Technology Co., Ltd.
-+ *       All rights reserved.
-+ */
-+#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-+#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-+
-+#define XTAL        27000000
-+
-+/* plls */
-+#define PLL_A		0
-+#define PLL_E		1
-+#define PLL_E_2P5	2
-+#define PLL_E_25	3
-+#define PLL_E_112P5	4
-+#define PLL_F		5
-+#define PLL_TV		6
-+#define PLL_TV_A	7
-+#define PLL_SYS		8
-+
-+/* gates: mo_clken0 ~ mo_clken9 */
-+#define SYSTEM		0x10
-+#define RTC			0x12
-+#define IOCTL		0x13
-+#define IOP			0x14
-+#define OTPRX		0x15
-+#define NOC			0x16
-+#define BR			0x17
-+#define RBUS_L00	0x18
-+#define SPIFL		0x19
-+#define SDCTRL0		0x1a
-+#define PERI0		0x1b
-+#define A926		0x1d
-+#define UMCTL2		0x1e
-+#define PERI1		0x1f
-+
-+#define DDR_PHY0	0x20
-+#define ACHIP		0x22
-+#define STC0		0x24
-+#define STC_AV0		0x25
-+#define STC_AV1		0x26
-+#define STC_AV2		0x27
-+#define UA0			0x28
-+#define UA1			0x29
-+#define UA2			0x2a
-+#define UA3			0x2b
-+#define UA4			0x2c
-+#define HWUA		0x2d
-+#define DDC0		0x2e
-+#define UADMA		0x2f
-+
-+#define CBDMA0		0x30
-+#define CBDMA1		0x31
-+#define SPI_COMBO_0	0x32
-+#define SPI_COMBO_1	0x33
-+#define SPI_COMBO_2	0x34
-+#define SPI_COMBO_3	0x35
-+#define AUD			0x36
-+#define USBC0		0x3a
-+#define USBC1		0x3b
-+#define UPHY0		0x3d
-+#define UPHY1		0x3e
-+
-+#define I2CM0		0x40
-+#define I2CM1		0x41
-+#define I2CM2		0x42
-+#define I2CM3		0x43
-+#define PMC			0x4d
-+#define CARD_CTL0	0x4e
-+#define CARD_CTL1	0x4f
-+
-+#define CARD_CTL4	0x52
-+#define BCH			0x54
-+#define DDFCH		0x5b
-+#define CSIIW0		0x5c
-+#define CSIIW1		0x5d
-+#define MIPICSI0	0x5e
-+#define MIPICSI1	0x5f
-+
-+#define HDMI_TX		0x60
-+#define VPOST		0x65
-+
-+#define TGEN		0x70
-+#define DMIX		0x71
-+#define TCON		0x7a
-+#define INTERRUPT	0x7f
-+
-+#define RGST		0x80
-+#define GPIO		0x83
-+#define RBUS_TOP	0x84
-+
-+#define MAILBOX		0x96
-+#define SPIND		0x9a
-+#define I2C2CBUS	0x9b
-+#define SEC			0x9d
-+#define DVE			0x9e
-+#define GPOST0		0x9f
-+
-+#define OSD0		0xa0
-+#define DISP_PWM	0xa2
-+#define UADBG		0xa3
-+#define DUMMY_MASTER	0xa4
-+#define FIO_CTL		0xa5
-+#define FPGA		0xa6
-+#define L2SW		0xa7
-+#define ICM			0xa8
-+#define AXI_GLOBAL	0xa9
-+
-+#define CLK_MAX		0xb0
-+
-+#endif
--- 
-2.33.1
+- this patch was acked by Stephen Boyd at [2].
+- reviewed by Patrice Chotard at [3].
 
+Without this patch , the kernel will turn off ltdc's clk after the
+system reach shell.
+
+[1] https://lore.kernel.org/lkml/AM8PR10MB4785545DC980090C1E7D66B281009@AM8PR10MB4785.EURPRD10.PROD.OUTLOOK.COM/
+
+[2] https://lore.kernel.org/linux-arm-kernel/159056850835.88029.9264848839121822798@swboyd.mtv.corp.google.com/
+
+[3] https://lore.kernel.org/lkml/6915fa2a-e211-476f-8317-6825e280c322@foss.st.com/#t
+
+Best Regards
+Dillon
+
+On Tue, 19 Oct 2021 at 16:44, Dillon Min <dillon.minfei@gmail.com> wrote:
+>
+> stm32's clk driver register two ltdc gate clk to clk core by
+> clk_hw_register_gate() and clk_hw_register_composite()
+>
+> first: 'stm32f429_gates[]', clk name is 'ltdc', which no user to use.
+> second: 'stm32f429_aux_clk[]', clk name is 'lcd-tft', used by ltdc driver
+>
+> both of them point to the same offset of stm32's RCC register. after
+> kernel enter console, clk core turn off ltdc's clk as 'stm32f429_gates[]'
+> is no one to use. but, actually 'stm32f429_aux_clk[]' is in use.
+>
+> stm32f469/746/769 have the same issue, fix it.
+>
+> Fixes: daf2d117cbca ("clk: stm32f4: Add lcd-tft clock")
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Link: https://lore.kernel.org/linux-arm-kernel/1590564453-24499-7-git-send-email-dillon.minfei@gmail.com/
+> Link: https://lore.kernel.org/lkml/CAPTRvHkf0cK_4ZidM17rPo99gWDmxgqFt4CDUjqFFwkOeQeFDg@mail.gmail.com/
+> Signed-off-by: Dillon Min <dillon.minfei@gmail.com>
+> ---
+> v6: no change.
+>
+>  drivers/clk/clk-stm32f4.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index af46176ad053..473dfe632cc5 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -129,7 +129,6 @@ static const struct stm32f4_gate_data stm32f429_gates[] __initconst = {
+>         { STM32F4_RCC_APB2ENR, 20,      "spi5",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
+> -       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
+>  };
+>
+>  static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
+> @@ -211,7 +210,6 @@ static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
+>         { STM32F4_RCC_APB2ENR, 20,      "spi5",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
+> -       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
+>  };
+>
+>  static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
+> @@ -286,7 +284,6 @@ static const struct stm32f4_gate_data stm32f746_gates[] __initconst = {
+>         { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 23,      "sai2",         "apb2_div" },
+> -       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
+>  };
+>
+>  static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
+> @@ -364,7 +361,6 @@ static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
+>         { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 23,      "sai2",         "apb2_div" },
+> -       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 30,      "mdio",         "apb2_div" },
+>  };
+>
+> --
+> 2.7.4
+>
