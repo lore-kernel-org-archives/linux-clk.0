@@ -2,103 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581F1C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A8FC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39DED610A8
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C850660EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 08:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbhJVIxF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Oct 2021 04:53:05 -0400
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:44158
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231755AbhJVIxF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 04:53:05 -0400
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 056D240019
-        for <linux-clk@vger.kernel.org>; Fri, 22 Oct 2021 08:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1634892647;
-        bh=rhThjc69gD8klHJ2HlQUvp1F029DaZ1HD6bgaTLsMRM=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=kjRf84sUCnRUZmlj/f8iSgRZmHWoL8cUlihi5tfk9QIP8BxPxeL7QB1pxNqpnBJmc
-         Teo7UQHZTJEwest3iYaq07jMqLprxn4Jbj66Z2//e+LcezA46FON5L2uPuQ4bbekh/
-         Nn018iHLXBmnHnPsVyCiEAVrtN0ot3QpKGRvQHmLr6bhhH0CSRV5ZpeDYkNyUis6wX
-         VyiDFYpzf6zQfFLx0wRNCCjaodolaJrc7AGwjx8iImw6iNiPUxdUw686bi7sGRP/8j
-         xmL+3tioqm/6RwGO3Nv+qCjLg/GG5WJhBF5cAuzIDYu9tGPHazkXpBN/cZm3Ae4iRy
-         7g0IpQM6oiSlQ==
-Received: by mail-lf1-f72.google.com with SMTP id k8-20020a0565123d8800b003fd6e160c77so1428522lfv.17
-        for <linux-clk@vger.kernel.org>; Fri, 22 Oct 2021 01:50:46 -0700 (PDT)
+        id S232180AbhJVIyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Oct 2021 04:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34412 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231563AbhJVIyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 04:54:07 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27611C061764;
+        Fri, 22 Oct 2021 01:51:50 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id z20so966985edc.13;
+        Fri, 22 Oct 2021 01:51:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vsSof8B35sJ3TdkUFeoW7PDjPfQXbtV3oB1joueUNsI=;
+        b=LmOW2M7Fls4cmKaeo5kDREtk0zbyuTkrGZBD8wxmaysk/H0O0rScyPc56wgFeg6BtR
+         Oi8BOBQD+Fym+tArVe6z1Y1H1aNXcMv7ojyYr+GFhZEZXyp2DJpyEt9B3MqLdt0ZMIUJ
+         TvGAy/iVDbjKK1Wyha135Etodgnpe8mk04QRAJI0qG+7mRumNyYYXS+JClEOk/xkj8+v
+         dXgtyctgJtieXo7LMiBedb3Vcoub142ihtAxE6RQXey9sjgjhpwhQXulz+s633tIDqDc
+         j6LSTINe9bgiELKxM8C3MTuaYked3bcPiczfVP26IQo7fdvNZ7kS8zxCFteFea8RGbbh
+         YMSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rhThjc69gD8klHJ2HlQUvp1F029DaZ1HD6bgaTLsMRM=;
-        b=M7TfNtH8fkX0dYJXaPStDZk6IeetctWUjwTQpuYpZJvewWMP3Pq+pn9EiiXSkDmLR2
-         K5pCx6UFCMWiqkZOPI4k/IPmcMoNX70bir2MzMyz4rEcgQfI/HhmK4A2TStATgZlQO9z
-         AtC+vH52ak4OUr10f6Xce0KZl3ZRCLOkREh99xeD+ErIDgeSnlzmmyhRHCPkJl3V1QiO
-         cDMYRYHLWb5QFGBT2fKW/t2pehhGxRODhzReRdYQ8iEQCw7PNuLNGn36N+VPwEiXmhe9
-         +mgbQ3Z9fMedNQJmD1dbbHvJeL5PG62I6tY2e/FCe7/PZ/LOqsaS6rexZQZ9DQchiVKv
-         YDzQ==
-X-Gm-Message-State: AOAM530UsxzaunZhWTHnkGIQBL2i4ZfsssFm4yiW2vQccm6uGK9TH5t5
-        kX1qymlOfwBqZOxn/JXLvbgTpobxGR246lD8GTMrdkMtWBXawh4bDhJ326hcHRBXouLsM99s1Nw
-        706WSluNO9+8mBDVEVEEBnhpfmwU9ah1k3XbY0Q==
-X-Received: by 2002:a2e:a164:: with SMTP id u4mr11573061ljl.195.1634892646409;
-        Fri, 22 Oct 2021 01:50:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7R2BPnrUquhReFpj1fTuRbmb5kq31vlb03XMGyoObg+X2rVNUTOXDvu/rTk7lDl+ktmirmg==
-X-Received: by 2002:a2e:a164:: with SMTP id u4mr11573048ljl.195.1634892646143;
-        Fri, 22 Oct 2021 01:50:46 -0700 (PDT)
-Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id q24sm673300lfr.138.2021.10.22.01.50.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 01:50:45 -0700 (PDT)
-Subject: Re: [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850
- CMU_APM
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20211021203152.29312-1-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <59a5cf03-fbf4-7003-4309-e9e5b63112a9@canonical.com>
-Date:   Fri, 22 Oct 2021 10:50:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vsSof8B35sJ3TdkUFeoW7PDjPfQXbtV3oB1joueUNsI=;
+        b=XmF2Z//OphpBD45R4K/WSPOeVv/dZkMQDLrcBuJgxbZSsqjJwae1L2foLyrK1Z7aXl
+         Eor3dltASS/f0r5F/tTFk50JWiG/PSu9xdr0SUzkUlP/hq/mI0KqOBV2w4T+kxLI1vJC
+         0EbKM/rgfZMeHtPJWZUAWfz1D7j6Qqr+obvlce8KiShS3xsxFIKzjLyfxohEk2d4Vkgj
+         ezUuBcUZuX8lpXDmTvq6qkkRT0patXPlaET3/wqe+2rcKxH1jZbwSLguq7fCwUtvG4DO
+         s5jNdMHAblyIWyVxYaRG6CQjoxPg5mCDb6D6Ux1owTwmlTnPWhyhYAc5ZawxMEEYWkKc
+         oqMA==
+X-Gm-Message-State: AOAM532oKHdfB/wT4e58xoeQ2MfO63dRgwJzmkkp/+vnLbbaIEoo8Tv+
+        InsuGDKMxFwiQV1DBbykFKbqokDziI3uTYHJ4t8=
+X-Google-Smtp-Source: ABdhPJxg0tLJ7/LdpnuntihRiqWvlRRwACrMPNo7XYl/Y8z0+A5FUElZXiGRbf+lmQ4LBqBm7evjGm3ttticSo63kcs=
+X-Received: by 2002:a17:906:1707:: with SMTP id c7mr13563725eje.377.1634892708737;
+ Fri, 22 Oct 2021 01:51:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211021203152.29312-1-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211021174223.43310-1-kernel@esmil.dk> <20211021174223.43310-2-kernel@esmil.dk>
+In-Reply-To: <20211021174223.43310-2-kernel@esmil.dk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 22 Oct 2021 11:50:52 +0300
+Message-ID: <CAHp75VfD73Nsrp-3hMzFtuEAfka+rRc=2m0ZZYddhWBAzg=QAw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/16] RISC-V: Add StarFive SoC Kconfig option
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/10/2021 22:31, Sam Protsenko wrote:
-> CMU_APM generates clocks for APM IP-core (Active Power Management). In
-> particular it generates RTC clocks, which are needed to enable rtc-s3c
-> driver on Exynos850 SoC.
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  .../clock/samsung,exynos850-clock.yaml        | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
+On Thu, Oct 21, 2021 at 8:42 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+>
+> Add StarFive Kconfig option to select SoC specific and common drivers
+> required for these SoCs.
 
+...
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> +config SOC_STARFIVE
+> +       bool "StarFive SoCs"
+> +       select PINCTRL
+> +       select RESET_CONTROLLER
 
+> +       select SIFIVE_PLIC
 
-Best regards,
-Krzysztof
+If this is well understood and platform related the above two are too
+generic. Why have you selected them?
+
+> +       help
+> +         This enables support for StarFive SoC platform hardware.
+
+Not too much to read here. What is the point of this help?
+I would elaborate what kind of platform it may support, what kind of
+drivers it selects due to necessity of the accomplishing the boot
+process, etc.
+
+-- 
+With Best Regards,
+Andy Shevchenko
