@@ -2,103 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 13:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C454CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 12:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C70B56112F
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 13:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA106108B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Oct 2021 12:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbhJVNjF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Oct 2021 09:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231658AbhJVNjE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 09:39:04 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5FFC061764;
-        Fri, 22 Oct 2021 06:36:46 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id e19so3227197edy.0;
-        Fri, 22 Oct 2021 06:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3VqjR5oI/ait3rohMOusYdeugPboOfYtc3O9o05eMHQ=;
-        b=Q1yRtDerJPfkd6V6vThQqZzlZX02K8g1faPyh5JvGtWbxyqlvyJdVLUGTYwPQ3saLq
-         //fIB06jwTGHRGxKPLs8MJWyLB830xmXmsTkCETeG1taPcahOXie4rvc7CK5zltFt8oF
-         oPUshuRuTnd0iZXy0ny9kVNx8mrm1ouS31YXXV69DYolYaT48xWqECVE7DhkqpFj8Azm
-         VWMFDlsZTra/bzin+kya2NessF7ZGFHODA9zaBsoaYq5uCJaZikR/QWJcRu4iqFGwBxl
-         7SUxGngqa3kITyZSSsSKeCn5rbO8WWtCwQv7XozRKVi8eu+fjf3xq7bGmV9vMO/W2GeJ
-         DmEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3VqjR5oI/ait3rohMOusYdeugPboOfYtc3O9o05eMHQ=;
-        b=LA0O2ritGvHs42KGT2DfYX62qe8ITDzUTgz14pdTQ+Ni3AIMsYNJcA40Pn5JOabVnK
-         87brKmiOojCeim57Kn+uUWiTdUQnb34hf6CvomFeL2qRkZNdOscWyHoWxwyhS4c1uOP7
-         MxqPczorrJT46LtNePqqPBjn3DAXg5Ndoj4hDx3IL3vLEiDlMTjdH+wWgm0dvaXKyRZU
-         SrTMT8KhUlbWi2Y924iVUpBeTIxEHzHvo7/VYtS5qeJE+ESnIMVmumuODQoLDmuMSNLG
-         VSvoygyK/RZYigSjMDhGQYmou2BW9i+PGOU5O6Ln+bmTE/I8mB5ys7gTCpfZq21XSFMq
-         3GHA==
-X-Gm-Message-State: AOAM5318jS0lKWZF04wL+wimiEv+AuQOU5uWYs63r2B+KakiCXel7Ruh
-        yyGYxtyrdky1OwUpy6cALAS+zFqZ/EFuSTLHAyU=
-X-Google-Smtp-Source: ABdhPJxTUPfm1rVOGx8gokzVv5igP9B4UGk9EquAWiBprb/AKADuLLwJMD4BsQNPgSHNpLkA0ym/zi0SHdqrUZTvc64=
-X-Received: by 2002:a17:906:5a47:: with SMTP id my7mr14903725ejc.128.1634909805119;
- Fri, 22 Oct 2021 06:36:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211021174223.43310-1-kernel@esmil.dk> <20211021174223.43310-7-kernel@esmil.dk>
- <CAHp75VcS7ZZCciAgBH2QU7u8CiHzveAOsvSdv2DQBvpBn_6opQ@mail.gmail.com> <CANBLGcyHpxuT9N+H8Lk=5CjMb1=-17_sH3dBzALCMYpAEZfeuw@mail.gmail.com>
-In-Reply-To: <CANBLGcyHpxuT9N+H8Lk=5CjMb1=-17_sH3dBzALCMYpAEZfeuw@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 22 Oct 2021 16:35:49 +0300
-Message-ID: <CAHp75VfjmYONiuaQMybCvnfswZKvwBVAXH+sFirOoOb9YEzYHg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/16] clk: starfive: Add JH7100 clock generator driver
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S231795AbhJVMWO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 Oct 2021 08:22:14 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58648 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231724AbhJVMWN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Oct 2021 08:22:13 -0400
+X-UUID: 552bc8c760a8464581cb8b812cb8e39d-20211022
+X-UUID: 552bc8c760a8464581cb8b812cb8e39d-20211022
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 265884305; Fri, 22 Oct 2021 20:19:53 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 22 Oct 2021 20:19:52 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Fri, 22 Oct
+ 2021 20:19:52 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 22 Oct 2021 20:19:51 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fabien Parent <fparent@baylibre.com>,
+        "Weiyi Lu" <weiyi.lu@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        "Enric Balletbo i Serra" <enric.balletbo@collabora.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC:     John Crispin <john@phrozen.org>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        "Sam Shih" <sam.shih@mediatek.com>
+Subject: 
+Date:   Fri, 22 Oct 2021 20:19:39 +0800
+Message-ID: <20211022121944.25687-1-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 4:13 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> On Fri, 22 Oct 2021 at 14:34, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+Subject: [PATCH v6 0/5] Mediatek MT7986 basic clock support
 
-...
+This patch series add basic clock support for mediatek mt7986 SoC.
+It is based on patch series "Add basic SoC support for mediatek mt7986"
+https://lore.kernel.org/all/20211018114009.13350-1-sam.shih@mediatek.com/
+and "clk: mediatek: Add API for clock resource recycle"
+https://lore.kernel.org/linux-arm-kernel/20210914021633.26377-5-chun-jie.chen@mediatek.com/
 
-> Hmm.. this function doesn't return int, but struct clk_hw *, hence the ERR_PTR.
+---
+v6: Used lowercase hex values in clock DT
+v5: used builtin_platform_driver instead of CLK_OF_DECLARE
+    follow recent clk-mt8195 clock patch series:
+    https://lore.kernel.org/linux-arm-kernel/20210914021633.26377-1-chun-jie.chen@mediatek.com/
 
-Ah, indeed, sorry. Got your point.
+v4:
+According to the maintainer’s suggestion, this patch splits the previous
+thread into independent patch series.
+This patch include clock driver and device tree update
 
-Of course one may try 'return ERR_PTR(dev_err_probe())', but this looks ugly.
+Original thread:
+https://lore.kernel.org/all/20210914085137.31761-1-sam.shih@mediatek.com/
+https://lore.kernel.org/linux-arm-kernel/20210914085137.31761-2-sam.shih@mediatek.com/
+---
 
--- 
-With Best Regards,
-Andy Shevchenko
+Sam Shih (5):
+  dt-bindings: clock: mediatek: document clk bindings for mediatek
+    mt7986 SoC
+  clk: mediatek: add mt7986 clock IDs
+  clk: mediatek: add mt7986 clock support
+  arm64: dts: mediatek: add clock support for mt7986a
+  arm64: dts: mediatek: add clock support for mt7986b
+
+ .../arm/mediatek/mediatek,apmixedsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,ethsys.txt |   1 +
+ .../arm/mediatek/mediatek,infracfg.txt        |   1 +
+ .../arm/mediatek/mediatek,sgmiisys.txt        |   2 +
+ .../arm/mediatek/mediatek,topckgen.txt        |   1 +
+ arch/arm64/boot/dts/mediatek/mt7986a.dtsi     |  68 +++-
+ arch/arm64/boot/dts/mediatek/mt7986b.dtsi     |  68 +++-
+ drivers/clk/mediatek/Kconfig                  |  17 +
+ drivers/clk/mediatek/Makefile                 |   4 +
+ drivers/clk/mediatek/clk-mt7986-apmixed.c     | 100 +++++
+ drivers/clk/mediatek/clk-mt7986-eth.c         | 132 +++++++
+ drivers/clk/mediatek/clk-mt7986-infracfg.c    | 224 ++++++++++++
+ drivers/clk/mediatek/clk-mt7986-topckgen.c    | 342 ++++++++++++++++++
+ include/dt-bindings/clock/mt7986-clk.h        | 169 +++++++++
+ 14 files changed, 1120 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-apmixed.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-eth.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-infracfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt7986-topckgen.c
+ create mode 100644 include/dt-bindings/clock/mt7986-clk.h
+
+--
+2.29.2
+
