@@ -2,613 +2,319 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF8DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DA5C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 22:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 977186103C
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 22:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA22461076
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 22:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233625AbhJYWXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Oct 2021 18:23:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35764 "EHLO
+        id S234305AbhJYWsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Oct 2021 18:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233280AbhJYWXK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 18:23:10 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA98C061745;
-        Mon, 25 Oct 2021 15:20:47 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id r134so17575547iod.11;
-        Mon, 25 Oct 2021 15:20:47 -0700 (PDT)
+        with ESMTP id S234299AbhJYWsL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 18:48:11 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9563C061745;
+        Mon, 25 Oct 2021 15:45:47 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id o11so19483398ljg.10;
+        Mon, 25 Oct 2021 15:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/qJPXKqSRLehN7I0XY9nEuofUqPsSO6565yChZfXI1U=;
-        b=ZXwkCAGwGB6K7qcGtIGFCBuRJU2XlVQGrlaQn48BGPZHXyvX0SfGyFZZNACn+k/rSj
-         /dkrxNThc9Scgsfx0rlP0YRHfiibwSTauGqL83B4umodpf9bxeVXvOhYXJOga+1McbwQ
-         1KgtYXsGpT5f96pXSrFQH3W5uI8TDOhEg+FqwnfsuZ1IMUL/V1Hvln8ZSPR0VwnKmIev
-         rHsItkzmXBuDwo5UbdOxdErWJYfY8DbysaPsczmHL/Ka4klmQthbmdZG8fW05sV9Q5kH
-         4gaM7+E20r3cfaWEK/l9h+gi6tB/l+PepVlPntI5HzKrZzzWPBf+qXFLk/BjtGbfX4tB
-         Nb8w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=39CMtNssy0IdLNdTHSiRgbTDhpo+7dXk7MfY+4UvIsE=;
+        b=NSg8V1Di6Jc34q7w5NDEHGYDuoCAJtEdMQcFvSiuxZ5TSCW0dt+qa3WapYxDQZH0k6
+         VL3M3Z4NCzjhUEcE6ZZdk7pr/rLUUbzc9Kw70wL5RA1WwbAqrVi/jjBg1EN9e3PosDxB
+         KzzfOHqm3k7Fg2Kr1SajkER7Tyb6fKRzFZIaoSnKonrIHrg6p0j4MxEeGD4+kGCuimH9
+         4Q4NFrwjBYI0xOBUdMa6ighYiCAjMyynuNyhnW7yxOHwuitbhEdRhWdsEHlWQK5c6Gc3
+         R7nKQHM+ZSYTga/Cx91JXAchg15NKtHmgJJKeNFz9ePub7W/dD1rW/XFpWRIf17imXtT
+         V4cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/qJPXKqSRLehN7I0XY9nEuofUqPsSO6565yChZfXI1U=;
-        b=TtVr6qfGZS7VJIeQux//3G5VogC3L3zfHcLBSO7zAYvQG50AP7Kyq4ZS/d7UFc/IIk
-         aE8nloxjyG9RNagAHk4d42slv4Uh/L6Ce4+QBgRGVG7//NehpMKjZ8e2Nf6SEELAyNey
-         QBJf6nk0CNG/E6ujZCqfzE+Oo/ayayYebVbTHWdbTbWUUk2QMmHoczks0A6/sxf1Opxi
-         uJ5RvAmbtgNFvUrQj2IT8U/MmE8uWnjsn0G6jqM8BEmke/EWy29q2yEL8TIyzU352i1y
-         aWzHlDhLVIrmk7VnSFaZJT2wsh/CWNJWrL2XqHF+xEtQm7o0P6UjaH33MqYuwkvxLp65
-         s3nw==
-X-Gm-Message-State: AOAM5307AUI/Fe2SRQDPk2E+ncPiX+nx76VxLqnJZtypfxr0FQVcRvLb
-        1Ex9hgTIqOHlR+LJ/lApwejO5MJste0WWWHN7+s=
-X-Google-Smtp-Source: ABdhPJwFcHHCKvPvq37PkocpzFQsiPXHbxF8uNVFU1qKgWkaIMxaj998ppYlXY8zg99QrkdUmtuUDNz5/q8TTLbvAyw=
-X-Received: by 2002:a05:6602:2e05:: with SMTP id o5mr12183102iow.204.1635200446459;
- Mon, 25 Oct 2021 15:20:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <1634533488-25334-1-git-send-email-dillon.minfei@gmail.com> <b72028ca1e4635ff16c2102ff527ec18b61120df.camel@ndufresne.ca>
-In-Reply-To: <b72028ca1e4635ff16c2102ff527ec18b61120df.camel@ndufresne.ca>
-From:   Dillon Min <dillon.minfei@gmail.com>
-Date:   Tue, 26 Oct 2021 06:20:10 +0800
-Message-ID: <CAL9mu0LrUxd1-etTBNYVdLzcDDeGAZ1y97v7pP0MBAJZOxcNgg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/10] Add support for DMA2D of STMicroelectronics
- STM32 Soc series
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        mchehab+huawei@kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        ezequiel@collabora.com, gnurou@gmail.com,
-        Pi-Hsun Shih <pihsun@chromium.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=39CMtNssy0IdLNdTHSiRgbTDhpo+7dXk7MfY+4UvIsE=;
+        b=SkD3k54QkElFxyEY5WrxzbDNSIFb729Q9MOngHgWEhoiVjaGWR6nsHHqyc+ofgSgcc
+         ELlfhT9qRLFWYHrnuOmXXeLlLUWCr8/3WwSzqU1FytqiwMhFtN3TRxUlFDTK9p/U9cqi
+         ywq/0/NNmqkz8L67x56aRs9cwqeVSGeGNSz3gpNl6idw7SJCon83AnufJYP4QcHdMBIK
+         zxVxRYIPxILhEVHfuUw95Fl7tu6Cx2E57GHzcGU1mi5jr+EERwxdr/u4/85DfaWJcE2y
+         O4vbO5pSHi11royqylfxdOExYROnNnYEQgHQMPJitJaYYWQycHAVh2piSyMGDgG4pDS+
+         NwHA==
+X-Gm-Message-State: AOAM532Mo4NzihkhtrF1nMRC5koUDLKBblL7MdQDDLIKiXrhJ77tLjBP
+        MwZDj90qyG+MB58hMuHwc/0=
+X-Google-Smtp-Source: ABdhPJyWLiWv44ToBgSw5RBEMLq9qG+pRYG5xtbrcNBaq5dHicEfv9vSo9P6mc/xUnfXucjhBSdJ6Q==
+X-Received: by 2002:a05:651c:905:: with SMTP id e5mr22738007ljq.238.1635201946112;
+        Mon, 25 Oct 2021 15:45:46 -0700 (PDT)
+Received: from localhost.localdomain (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.gmail.com with ESMTPSA id t20sm2040956lft.240.2021.10.25.15.45.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Oct 2021 15:45:45 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, gabriel.fernandez@st.com,
-        gabriel.fernandez@foss.st.com,
-        Patrice CHOTARD <patrice.chotard@foss.st.com>,
-        hugues.fruchet@foss.st.com,
-        linux-media <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: [PATCH v14 00/39] NVIDIA Tegra power management patches for 5.17
+Date:   Tue, 26 Oct 2021 01:39:53 +0300
+Message-Id: <20211025224032.21012-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nicolas
+This series adds runtime PM support to Tegra drivers and enables core
+voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
 
-On Tue, 26 Oct 2021 at 03:37, Nicolas Dufresne <nicolas@ndufresne.ca> wrote=
-:
->
-> Le lundi 18 octobre 2021 =C3=A0 13:04 +0800, dillon.minfei@gmail.com a =
-=C3=A9crit :
-> > From: Dillon Min <dillon.minfei@gmail.com>
-> >
-> > This patchset introduces a basic support for DMA2D Interface
-> > of STMicroelectronics STM32 SoC series.
-> >
-> > This first basic support implements R2M, M2M, M2M_PFC
-> > M2M_BLEND support will be added later on.
-> >
-> > This has been tested on STM32469-DISCO board.
-> >
-> > history
-> > v5:
-> > - rebase to media_tree https://git.linuxtv.org/media_tree.git/
-> > - remove unused log from dma2d driver to avoid spam kernel log.
-> > - fix 0xFFFFFF to 0xffffff, 2^24 to 2^24 -1, etc.
-> > - introduce patch "media: v4l2-ctrls: Add V4L2_CID_COLORFX_CBCR max set=
-ting"
-> >   to add V4L2_CID_COLORFX_CBCR entry.
-> > - thanks to Hans's patch, open nullptr check in v4l2-compliance, update=
- new
-> >   test result. thanks.
-> >   https://lore.kernel.org/linux-media/3acd9ee4-5a58-6ed4-17fe-61596a525=
-2b8@xs4all.nl/
-> >
-> > v4 link:
-> > https://lore.kernel.org/lkml/bc8e1cd1-0013-9062-88b6-fddca535919f@xs4al=
-l.nl/
-> >
-> > v4:
-> > - replace V4L2_COLORFX_SET_ARGB, V4L2_CID_COLORFX_ARGB to
-> >   V4L2_COLORFX_SET_RGB, V4L2_CID_COLORFX_RGB since Alpha paramter not u=
-sed
-> >   in current. thanks Hans.
-> > v3 link:
-> > https://lore.kernel.org/lkml/1633689012-14492-1-git-send-email-dillon.m=
-infei@gmail.com/
-> >
-> > v3:
-> > - use V4L2_COLORFX_SET_ARGB, V4L2_CID_COLORFX_ARGB to pass argb paramte=
-r to
-> >   the dma2d driver, instead of add stm32 private ioctl.
-> > - some v2's patch are removed in this version.
-> >   - "[PATCH v2 7/9] media: docs: add doc for the stm32 dma2d driver"
-> >   - "[PATCH v2 8/9] media: v4l: uapi: Add user control base for stm32 d=
-ma2d
-> >     controls"
-> > - dma2d's driver changes based on Hans's review result. detail can be f=
-ound at
-> >   "media: stm32-dma2d: STM32 DMA2D driver"
-> > - add stm32 clk drivers bugfix, ltdc clock disabled after kenerl boot u=
-p.
-> > v3 based on kernel and v4l-utils git:
-> >
-> > kernel:
-> > commit 9e1ff307c779ce1f0f810c7ecce3d95bbae40896
-> > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > Date:   Sun Oct 3 14:08:47 2021 -0700
-> >
-> >     Linux 5.15-rc4
-> >
-> > v4l-utils:
-> > commit 700f5ded9c6de2c6dfe5d1b453d85566f95b4f0c
-> > Author: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> > Date:   Sat Oct 2 11:01:05 2021 +0200
-> >
-> >     test-media: show version info earlier and show cmd args
-> >
-> >     Log the version info earlier and also log the command line argument=
-s.
-> >
-> >     Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> >
-> > v2 link:
-> > https://lore.kernel.org/lkml/1626341068-20253-11-git-send-email-dillon.=
-minfei@gmail.com/
-> >
-> >
-> > v2:
-> > - update v4l2-compliance to SHA: a4f2e3a6f306 2021-07-13 08:04:15
-> >   the test results at below [1].
-> > - introduce Documentation/userspace-api/media/drivers/stm32-uapi.rst
-> >   to explain the detail of dma2d's ioctl.
-> > - reserved 16 ioctls from v4l2-controls.h for stm32, introduce stm32-me=
-dia.h.
-> > - collect Reviewed-by tag from Rob Herring.
-> > - update dma2d driver from Hans's review. the details can be found
-> >   at related patches.
-> > v1 link:
-> > https://lore.kernel.org/lkml/1621508727-24486-1-git-send-email-dillon.m=
-infei@gmail.com/
-> >
-> > v1:
-> > The commit based on kernel(master): c3d0e3fd41b7f0f5d5d5b6022ab7e813f04=
-ea727
-> >
-> > Note for v4l2-compliance tool on nu-mmu platform:
-> > I add two change based on v4l-utils since commit:
-> > f0c7e3d71eaf4182bae7eb3ee0e43b4eeb047ea9
-> >
-> > - change fork() to vfork() in v4l2-test-controls.cpp
-> >   since no-mmu platform don't include fork().
-> >
-> > with v4l2-compliance test log (with above modification):
-> > since the stm32f469-disco ram limitation, there are 25 failed on
-> > dma_alloc_coherent()
-> >
-> > Really appreciate if someone can help to test this patch on the STM3242=
-9I-EVAL
-> > evaluation board (https://www.st.com/en/evaluation-tools/stm32429i-eval=
-.html)
-> > 8M x 32-bit SDRAM, 1M x 16-bit SRAM and 8M x 16-bit NOR Flash
-> >
-> > ~ # v4l2-compliance -f -d /dev/video0 > /dev/ttyprintk
-> > [ 1798.550690] [U] v4l2-compliance 1.21.0-4855, 32 bits, 32-bit time_t
-> > [ 1799.527504] [U] v4l2-compliance SHA: 700f5ded9c6d 2021-10-02 09:01:0=
-5
-> > [ 1800.534558] [U] Compliance test for stm-dma2d device /dev/video0:
-> > [ 1801.514999] [U] Driver Info:
-> > [ 1801.998840] [U]      Driver name      : stm-dma2d
-> > [ 1802.482151] [U]      Card type        : stm-dma2d
-> > [ 1802.959808] [U]      Bus info         : platform:stm-dma2d
-> > [ 1803.435715] [U]      Driver version   : 5.15.0
-> > [ 1803.904938] [U]      Capabilities     : 0x84208000
-> > [ 1804.371290] [U]              Video Memory-to-Memory
-> > [ 1804.830870] [U]              Streaming
-> > [ 1805.281465] [U]              Extended Pix Format
-> > [ 1805.733249] [U]              Device Capabilities
-> > [ 1806.181369] [U]      Device Caps      : 0x04208000
-> > [ 1806.622899] [U]              Video Memory-to-Memory
-> > [ 1807.057208] [U]              Streaming
-> > [ 1807.483866] [U]              Extended Pix Format
-> > [ 1807.907678] [U] Required ioctls:
-> > [ 1808.325287] [U]      test VIDIOC_QUERYCAP: OK
-> > [ 1808.785260] [U]      test invalid ioctls: OK
-> > [ 1809.199015] [U] Allow for multiple opens:
-> > [ 1809.613894] [U]      test second /dev/video0 open: OK
-> > [ 1810.416746] [U]      test VIDIOC_QUERYCAP: OK
-> > [ 1810.827974] [U]      test VIDIOC_G/S_PRIORITY: OK
-> > [ 1811.466506] [U]      test for unlimited opens: OK
-> > [ 1811.868388] [U] Debug ioctls:
-> > [ 1812.257689] [U]      test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported=
-)
-> > [ 1813.034108] [U]      test VIDIOC_LOG_STATUS: OK (Not Supported)
-> > [ 1813.807583] [U] Input ioctls:
-> > [ 1814.192271] [U]      test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not =
-Supported)
-> > [ 1814.958053] [U]      test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> > [ 1815.721424] [U]      test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
-> > [ 1816.486425] [U]      test VIDIOC_ENUMAUDIO: OK (Not Supported)
-> > [ 1817.253873] [U]      test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
-> > [ 1818.021773] [U]      test VIDIOC_G/S_AUDIO: OK (Not Supported)
-> > [ 1818.783542] [U]      Inputs: 0 Audio Inputs: 0 Tuners: 0
-> > [ 1819.170414] [U] Output ioctls:
-> > [ 1819.549601] [U]      test VIDIOC_G/S_MODULATOR: OK (Not Supported)
-> > [ 1820.306132] [U]      test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
-> > [ 1821.085495] [U]      test VIDIOC_ENUMAUDOUT: OK (Not Supported)
-> > [ 1821.883894] [U]      test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
-> > [ 1822.698269] [U]      test VIDIOC_G/S_AUDOUT: OK (Not Supported)
-> > [ 1823.541345] [U]      Outputs: 0 Audio Outputs: 0 Modulators: 0
-> > [ 1824.391635] [U] Input/Output configuration ioctls:
-> > [ 1824.830293] [U]      test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Support=
-ed)
-> > [ 1825.708848] [U]      test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not =
-Supported)
-> > [ 1826.608994] [U]      test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
-> > [ 1827.520616] [U]      test VIDIOC_G/S_EDID: OK (Not Supported)
-> > [ 1828.438211] [U] Control ioctls:
-> > [ 1828.926449] [U]      test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-> > [ 1829.856497] [U]      test VIDIOC_QUERYCTRL: OK
-> > [ 1830.335647] [U]      test VIDIOC_G/S_CTRL: OK
-> > [ 1830.816513] [U]      test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-> > [ 1831.740067] [U]      test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
-> > [ 1832.666736] [U]      test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-> > [ 1833.597005] [U]      Standard Controls: 3 Private Controls: 0
-> > [ 1834.070452] [U] Format ioctls:
-> > [ 1834.540460] [U]      test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS:=
- OK
-> > [ 1835.473065] [U]      test VIDIOC_G/S_PARM: OK (Not Supported)
-> > [ 1836.395238] [U]      test VIDIOC_G_FBUF: OK (Not Supported)
-> > [ 1837.322128] [U]      test VIDIOC_G_FMT: OK
-> > [ 1837.798880] [U]      test VIDIOC_TRY_FMT: OK
-> > [ 1838.267574] [U]      test VIDIOC_S_FMT: OK
-> > [ 1838.724264] [U]      test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported=
-)
-> > [ 1839.627408] [U]      test Cropping: OK (Not Supported)
-> > [ 1840.526875] [U]      test Composing: OK (Not Supported)
-> > [ 1841.428562] [U]      test Scaling: OK
-> > [ 1841.882087] [U] Codec ioctls:
-> > [ 1842.331672] [U]      test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supporte=
-d)
-> > [ 1843.221419] [U]      test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-> > [ 1844.105854] [U]      test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supporte=
-d)
-> > [ 1844.993986] [U] Buffer ioctls:
-> > [ 1845.558827] [U]      test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
-> > [ 1846.486226] [U]      test VIDIOC_EXPBUF: OK
-> > [ 1846.936148] [U]      test Requests: OK (Not Supported)
-> > [ 1847.805687] [U]      test TIME32/64: OK
-> > [ 1848.255712] [U] Test input 0:
-> > [ 1848.685591] [U] Stream using all formats:
-> > [ 1853.598085] [U]      BA24 (32-bit ARGB 8-8-8-8) 1x1 -> BA24 (32-bit =
-ARGB 8-8-8-8) 1x1: OK
-> > [ 1858.085109] [U]      BA24 (32-bit ARGB 8-8-8-8) 1x1 -> RGB3 (24-bit =
-RGB 8-8-8) 1x1: OK
-> > [ 1861.799188] [U]      BA24 (32-bit ARGB 8-8-8-8) 1x1 -> RGBP (16-bit =
-RGB 5-6-5) 1x1: OK
-> > [ 1864.859534] [U]      BA24 (32-bit ARGB 8-8-8-8) 1x1 -> AR15 (16-bit =
-ARGB 1-5-5-5) 1x1: OK
-> > [ 1867.974755] [U]      BA24 (32-bit ARGB 8-8-8-8) 1x1 -> AR12 (16-bit =
-ARGB 4-4-4-4) 1x1: OK
-> > [ 1868.466365] stm-dma2d 4002b000.dma2d: dma alloc of size 4294643712 f=
-ailed
-> > [ 1868.971398] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1869.487572] [U]      BA24 (32-bit ARGB 8-8-8-8) 16383x65535 -> BA24 =
-(32-bit ARGB 8-8-8-8) 16383x65535: FAIL
->
-> Have you considered adapting your maximum width/height to something reaso=
-nable ?
-> Consider V4L2 drivers will usually be used for streaming, so using 2 OUTP=
-UT and
-> 2 CAPTURE buffer isn't special, so perhaps find something that will be po=
-ssible
-> to allocate ? I bet you can't even have more then 4G of ram on that devic=
-e, so
-> even if theoretically you could program the HW for 16383x65535, it is phy=
-sically
-> impossible to allocate a second buffer of that size (or any size).
+All patches in this series are interdependent and should go via Tegra tree
+for simplicity.
 
-Thanks for your reminder. yes it's not a reasonable max resolution.
-I just use the max value which dma2d controller can accept, but forget
-the physical memory size. My board only mount 32MiB sdram,
-Anyway, this issue was fixed in [v6] suggested by Hans.
+Changelog:
 
-[v6] https://lore.kernel.org/lkml/1634633003-18132-11-git-send-email-dillon=
-.minfei@gmail.com/
+v14: - Fixed missing runtime PM syncing on removal of drivers, which was
+       spotted by Ulf Hansson in v13.
 
-Thanks & Best Regards
-Dillon
+     - clk-device driver now resumes RPM on system suspend instead of
+       preparing clock which it backs. This was suggested by Ulf Hansson.
 
->
-> > [ 1870.017197] stm-dma2d 4002b000.dma2d: dma alloc of size 4294643712 f=
-ailed
-> > [ 1870.562272] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1871.147644] [U]      BA24 (32-bit ARGB 8-8-8-8) 16383x65535 -> RGB3 =
-(24-bit RGB 8-8-8) 16383x65535: FAIL
-> > [ 1871.780530] stm-dma2d 4002b000.dma2d: dma alloc of size 4294643712 f=
-ailed
-> > [ 1872.431797] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1873.112100] [U]      BA24 (32-bit ARGB 8-8-8-8) 16383x65535 -> RGBP =
-(16-bit RGB 5-6-5) 16383x65535: FAIL
-> > [ 1873.805156] stm-dma2d 4002b000.dma2d: dma alloc of size 4294643712 f=
-ailed
-> > [ 1874.492353] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1875.221576] [U]      BA24 (32-bit ARGB 8-8-8-8) 16383x65535 -> AR15 =
-(16-bit ARGB 1-5-5-5) 16383x65535: FAIL
-> > [ 1876.000283] stm-dma2d 4002b000.dma2d: dma alloc of size 4294643712 f=
-ailed
-> > [ 1876.808963] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1877.634785] [U]      BA24 (32-bit ARGB 8-8-8-8) 16383x65535 -> AR12 =
-(16-bit ARGB 4-4-4-4) 16383x65535: FAIL
-> > [ 1883.283141] [U]      BA24 (32-bit ARGB 8-8-8-8) 240x320 -> BA24 (32-=
-bit ARGB 8-8-8-8) 240x320: OK
-> > [ 1888.533587] [U]      BA24 (32-bit ARGB 8-8-8-8) 240x320 -> RGB3 (24-=
-bit RGB 8-8-8) 240x320: OK
-> > [ 1892.729322] [U]      BA24 (32-bit ARGB 8-8-8-8) 240x320 -> RGBP (16-=
-bit RGB 5-6-5) 240x320: OK
-> > [ 1896.013783] [U]      BA24 (32-bit ARGB 8-8-8-8) 240x320 -> AR15 (16-=
-bit ARGB 1-5-5-5) 240x320: OK
-> > [ 1899.195802] [U]      BA24 (32-bit ARGB 8-8-8-8) 240x320 -> AR12 (16-=
-bit ARGB 4-4-4-4) 240x320: OK
-> > [ 1902.318853] [U]      RGB3 (24-bit RGB 8-8-8) 1x1 -> BA24 (32-bit ARG=
-B 8-8-8-8) 1x1: OK
-> > [ 1905.399663] [U]      RGB3 (24-bit RGB 8-8-8) 1x1 -> RGB3 (24-bit RGB=
- 8-8-8) 1x1: OK
-> > [ 1908.515463] [U]      RGB3 (24-bit RGB 8-8-8) 1x1 -> RGBP (16-bit RGB=
- 5-6-5) 1x1: OK
-> > [ 1911.589775] [U]      RGB3 (24-bit RGB 8-8-8) 1x1 -> AR15 (16-bit ARG=
-B 1-5-5-5) 1x1: OK
-> > [ 1914.682147] [U]      RGB3 (24-bit RGB 8-8-8) 1x1 -> AR12 (16-bit ARG=
-B 4-4-4-4) 1x1: OK
-> > [ 1915.169478] stm-dma2d 4002b000.dma2d: dma alloc of size 3220983808 f=
-ailed
-> > [ 1915.671278] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1916.184281] [U]      RGB3 (24-bit RGB 8-8-8) 16383x65535 -> BA24 (32=
--bit ARGB 8-8-8-8) 16383x65535: FAIL
-> > [ 1916.709840] stm-dma2d 4002b000.dma2d: dma alloc of size 3220983808 f=
-ailed
-> > [ 1917.252352] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1917.834611] [U]      RGB3 (24-bit RGB 8-8-8) 16383x65535 -> RGB3 (24=
--bit RGB 8-8-8) 16383x65535: FAIL
-> > [ 1918.463784] stm-dma2d 4002b000.dma2d: dma alloc of size 3220983808 f=
-ailed
-> > [ 1919.114290] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1919.789982] [U]      RGB3 (24-bit RGB 8-8-8) 16383x65535 -> RGBP (16=
--bit RGB 5-6-5) 16383x65535: FAIL
-> > [ 1920.479624] stm-dma2d 4002b000.dma2d: dma alloc of size 3220983808 f=
-ailed
-> > [ 1921.165202] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1921.893374] [U]      RGB3 (24-bit RGB 8-8-8) 16383x65535 -> AR15 (16=
--bit ARGB 1-5-5-5) 16383x65535: FAIL
-> > [ 1922.668057] stm-dma2d 4002b000.dma2d: dma alloc of size 3220983808 f=
-ailed
-> > [ 1923.469342] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1924.297500] [U]      RGB3 (24-bit RGB 8-8-8) 16383x65535 -> AR12 (16=
--bit ARGB 4-4-4-4) 16383x65535: FAIL
-> > [ 1929.890593] [U]      RGB3 (24-bit RGB 8-8-8) 240x320 -> BA24 (32-bit=
- ARGB 8-8-8-8) 240x320: OK
-> > [ 1935.098497] [U]      RGB3 (24-bit RGB 8-8-8) 240x320 -> RGB3 (24-bit=
- RGB 8-8-8) 240x320: OK
-> > [ 1939.250033] [U]      RGB3 (24-bit RGB 8-8-8) 240x320 -> RGBP (16-bit=
- RGB 5-6-5) 240x320: OK
-> > [ 1942.503854] [U]      RGB3 (24-bit RGB 8-8-8) 240x320 -> AR15 (16-bit=
- ARGB 1-5-5-5) 240x320: OK
-> > [ 1945.659254] [U]      RGB3 (24-bit RGB 8-8-8) 240x320 -> AR12 (16-bit=
- ARGB 4-4-4-4) 240x320: OK
-> > [ 1948.763903] [U]      RGBP (16-bit RGB 5-6-5) 1x1 -> BA24 (32-bit ARG=
-B 8-8-8-8) 1x1: OK
-> > [ 1951.832407] [U]      RGBP (16-bit RGB 5-6-5) 1x1 -> RGB3 (24-bit RGB=
- 8-8-8) 1x1: OK
-> > [ 1954.927592] [U]      RGBP (16-bit RGB 5-6-5) 1x1 -> RGBP (16-bit RGB=
- 5-6-5) 1x1: OK
-> > [ 1957.991536] [U]      RGBP (16-bit RGB 5-6-5) 1x1 -> AR15 (16-bit ARG=
-B 1-5-5-5) 1x1: OK
-> > [ 1961.086603] [U]      RGBP (16-bit RGB 5-6-5) 1x1 -> AR12 (16-bit ARG=
-B 4-4-4-4) 1x1: OK
-> > [ 1961.575893] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 1962.079572] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1962.594354] [U]      RGBP (16-bit RGB 5-6-5) 16383x65535 -> BA24 (32=
--bit ARGB 8-8-8-8) 16383x65535: FAIL
-> > [ 1963.121249] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 1963.665788] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1964.249129] [U]      RGBP (16-bit RGB 5-6-5) 16383x65535 -> RGB3 (24=
--bit RGB 8-8-8) 16383x65535: FAIL
-> > [ 1964.880104] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 1965.530670] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1966.210598] [U]      RGBP (16-bit RGB 5-6-5) 16383x65535 -> RGBP (16=
--bit RGB 5-6-5) 16383x65535: FAIL
-> > [ 1966.902316] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 1967.590215] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1968.319871] [U]      RGBP (16-bit RGB 5-6-5) 16383x65535 -> AR15 (16=
--bit ARGB 1-5-5-5) 16383x65535: FAIL
-> > [ 1969.097012] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 1969.900036] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 1970.729920] [U]      RGBP (16-bit RGB 5-6-5) 16383x65535 -> AR12 (16=
--bit ARGB 4-4-4-4) 16383x65535: FAIL
-> > [ 1976.318963] [U]      RGBP (16-bit RGB 5-6-5) 240x320 -> BA24 (32-bit=
- ARGB 8-8-8-8) 240x320: OK
-> > [ 1981.494224] [U]      RGBP (16-bit RGB 5-6-5) 240x320 -> RGB3 (24-bit=
- RGB 8-8-8) 240x320: OK
-> > [ 1985.599406] [U]      RGBP (16-bit RGB 5-6-5) 240x320 -> RGBP (16-bit=
- RGB 5-6-5) 240x320: OK
-> > [ 1988.829141] [U]      RGBP (16-bit RGB 5-6-5) 240x320 -> AR15 (16-bit=
- ARGB 1-5-5-5) 240x320: OK
-> > [ 1991.998991] [U]      RGBP (16-bit RGB 5-6-5) 240x320 -> AR12 (16-bit=
- ARGB 4-4-4-4) 240x320: OK
-> > [ 1995.084529] [U]      AR15 (16-bit ARGB 1-5-5-5) 1x1 -> BA24 (32-bit =
-ARGB 8-8-8-8) 1x1: OK
-> > [ 1998.191853] [U]      AR15 (16-bit ARGB 1-5-5-5) 1x1 -> RGB3 (24-bit =
-RGB 8-8-8) 1x1: OK
-> > [ 2001.307217] [U]      AR15 (16-bit ARGB 1-5-5-5) 1x1 -> RGBP (16-bit =
-RGB 5-6-5) 1x1: OK
-> > [ 2004.413725] [U]      AR15 (16-bit ARGB 1-5-5-5) 1x1 -> AR15 (16-bit =
-ARGB 1-5-5-5) 1x1: OK
-> > [ 2007.527437] [U]      AR15 (16-bit ARGB 1-5-5-5) 1x1 -> AR12 (16-bit =
-ARGB 4-4-4-4) 1x1: OK
-> > [ 2008.016277] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2008.523318] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2009.038828] [U]      AR15 (16-bit ARGB 1-5-5-5) 16383x65535 -> BA24 =
-(32-bit ARGB 8-8-8-8) 16383x65535: FAIL
-> > [ 2009.567269] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2010.112209] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2010.697226] [U]      AR15 (16-bit ARGB 1-5-5-5) 16383x65535 -> RGB3 =
-(24-bit RGB 8-8-8) 16383x65535: FAIL
-> > [ 2011.329552] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2011.979307] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2012.658449] [U]      AR15 (16-bit ARGB 1-5-5-5) 16383x65535 -> RGBP =
-(16-bit RGB 5-6-5) 16383x65535: FAIL
-> > [ 2013.350104] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2014.035612] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2014.762649] [U]      AR15 (16-bit ARGB 1-5-5-5) 16383x65535 -> AR15 =
-(16-bit ARGB 1-5-5-5) 16383x65535: FAIL
-> > [ 2015.538183] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2016.338784] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2017.166692] [U]      AR15 (16-bit ARGB 1-5-5-5) 16383x65535 -> AR12 =
-(16-bit ARGB 4-4-4-4) 16383x65535: FAIL
-> > [ 2022.744387] [U]      AR15 (16-bit ARGB 1-5-5-5) 240x320 -> BA24 (32-=
-bit ARGB 8-8-8-8) 240x320: OK
-> > [ 2027.927575] [U]      AR15 (16-bit ARGB 1-5-5-5) 240x320 -> RGB3 (24-=
-bit RGB 8-8-8) 240x320: OK
-> > [ 2032.066337] [U]      AR15 (16-bit ARGB 1-5-5-5) 240x320 -> RGBP (16-=
-bit RGB 5-6-5) 240x320: OK
-> > [ 2035.295351] [U]      AR15 (16-bit ARGB 1-5-5-5) 240x320 -> AR15 (16-=
-bit ARGB 1-5-5-5) 240x320: OK
-> > [ 2038.476408] [U]      AR15 (16-bit ARGB 1-5-5-5) 240x320 -> AR12 (16-=
-bit ARGB 4-4-4-4) 240x320: OK
-> > [ 2041.591223] [U]      AR12 (16-bit ARGB 4-4-4-4) 1x1 -> BA24 (32-bit =
-ARGB 8-8-8-8) 1x1: OK
-> > [ 2044.678274] [U]      AR12 (16-bit ARGB 4-4-4-4) 1x1 -> RGB3 (24-bit =
-RGB 8-8-8) 1x1: OK
-> > [ 2047.774851] [U]      AR12 (16-bit ARGB 4-4-4-4) 1x1 -> RGBP (16-bit =
-RGB 5-6-5) 1x1: OK
-> > [ 2050.849788] [U]      AR12 (16-bit ARGB 4-4-4-4) 1x1 -> AR15 (16-bit =
-ARGB 1-5-5-5) 1x1: OK
-> > [ 2053.955560] [U]      AR12 (16-bit ARGB 4-4-4-4) 1x1 -> AR12 (16-bit =
-ARGB 4-4-4-4) 1x1: OK
-> > [ 2054.446212] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2054.951517] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2055.467584] [U]      AR12 (16-bit ARGB 4-4-4-4) 16383x65535 -> BA24 =
-(32-bit ARGB 8-8-8-8) 16383x65535: FAIL
-> > [ 2055.997127] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2056.543193] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2057.128457] [U]      AR12 (16-bit ARGB 4-4-4-4) 16383x65535 -> RGB3 =
-(24-bit RGB 8-8-8) 16383x65535: FAIL
-> > [ 2057.761407] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2058.413191] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2059.093749] [U]      AR12 (16-bit ARGB 4-4-4-4) 16383x65535 -> RGBP =
-(16-bit RGB 5-6-5) 16383x65535: FAIL
-> > [ 2059.786201] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2060.472393] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2061.200709] [U]      AR12 (16-bit ARGB 4-4-4-4) 16383x65535 -> AR15 =
-(16-bit ARGB 1-5-5-5) 16383x65535: FAIL
-> > [ 2061.977728] stm-dma2d 4002b000.dma2d: dma alloc of size 2147323904 f=
-ailed
-> > [ 2062.780816] [U]              fail: v4l2-test-buffers.cpp(1349): q.re=
-qbufs(node, 2)
-> > [ 2063.610351] [U]      AR12 (16-bit ARGB 4-4-4-4) 16383x65535 -> AR12 =
-(16-bit ARGB 4-4-4-4) 16383x65535: FAIL
-> > [ 2069.207680] [U]      AR12 (16-bit ARGB 4-4-4-4) 240x320 -> BA24 (32-=
-bit ARGB 8-8-8-8) 240x320: OK
-> > [ 2074.392036] [U]      AR12 (16-bit ARGB 4-4-4-4) 240x320 -> RGB3 (24-=
-bit RGB 8-8-8) 240x320: OK
-> > [ 2078.538621] [U]      AR12 (16-bit ARGB 4-4-4-4) 240x320 -> RGBP (16-=
-bit RGB 5-6-5) 240x320: OK
-> > [ 2081.749134] [U]      AR12 (16-bit ARGB 4-4-4-4) 240x320 -> AR15 (16-=
-bit ARGB 1-5-5-5) 240x320: OK
-> > [ 2084.922145] [U]      AR12 (16-bit ARGB 4-4-4-4) 240x320 -> AR12 (16-=
-bit ARGB 4-4-4-4) 240x320: OK
-> > [ 2085.416538] [U] Total for stm-dma2d device /dev/video0: 121, Succeed=
-ed: 96, Failed: 25, Warnings: 0
-> > *** BLURB HERE ***
->
-> ^ I guess that was meant for you to justify the failures.
->
-> >
-> > Dillon Min (10):
-> >   media: admin-guide: add stm32-dma2d description
-> >   media: dt-bindings: media: add document for STM32 DMA2d bindings
-> >   ARM: dts: stm32: Add DMA2D support for STM32F429 series soc
-> >   ARM: dts: stm32: Enable DMA2D on STM32F469-DISCO board
-> >   media: v4l2-mem2mem: add v4l2_m2m_get_unmapped_area for no-mmu
-> >     platform
-> >   media: videobuf2: Fix the size printk format
-> >   media: v4l2-ctrls: Add V4L2_CID_COLORFX_CBCR max setting
-> >   media: v4l2-ctrls: Add RGB color effects control
-> >   clk: stm32: Fix ltdc's clock turn off by clk_disable_unused() after
-> >     system enter shell
-> >   media: stm32-dma2d: STM32 DMA2D driver
-> >
-> >  .../admin-guide/media/platform-cardlist.rst        |   1 +
-> >  .../devicetree/bindings/media/st,stm32-dma2d.yaml  |  71 ++
-> >  Documentation/userspace-api/media/v4l/control.rst  |   9 +
-> >  arch/arm/boot/dts/stm32f429.dtsi                   |  10 +
-> >  arch/arm/boot/dts/stm32f469-disco.dts              |   4 +
-> >  drivers/clk/clk-stm32f4.c                          |   4 -
-> >  .../media/common/videobuf2/videobuf2-dma-contig.c  |   4 +-
-> >  drivers/media/platform/Kconfig                     |  11 +
-> >  drivers/media/platform/Makefile                    |   1 +
-> >  drivers/media/platform/stm32/Makefile              |   2 +
-> >  drivers/media/platform/stm32/dma2d/dma2d-hw.c      | 143 ++++
-> >  drivers/media/platform/stm32/dma2d/dma2d-regs.h    | 113 ++++
-> >  drivers/media/platform/stm32/dma2d/dma2d.c         | 739 +++++++++++++=
-++++++++
-> >  drivers/media/platform/stm32/dma2d/dma2d.h         | 135 ++++
-> >  drivers/media/v4l2-core/v4l2-ctrls-defs.c          |  12 +-
-> >  drivers/media/v4l2-core/v4l2-mem2mem.c             |  21 +
-> >  include/media/v4l2-mem2mem.h                       |   5 +
-> >  include/uapi/linux/v4l2-controls.h                 |   4 +-
-> >  18 files changed, 1280 insertions(+), 9 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/media/st,stm32-dm=
-a2d.yaml
-> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-hw.c
-> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d-regs.h
-> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.c
-> >  create mode 100644 drivers/media/platform/stm32/dma2d/dma2d.h
-> >
->
->
+     - clk-device driver now syncs power domain performance unconditionally
+       during driver's probe time since GENPD API allows to do this now.
+       It was spotted by Ulf Hansson.
+
+     - Added new "Enable runtime PM during OPP state-syncing" patch, which
+       allows drivers to sync state at any time. Previously drivers were
+       obligated to take care of enabling RPM at the "right" time.
+
+     - Moved runtime PM initialization/uninitialization of DRM drivers that
+       use host1x channel to host1x client init/deinit phase. I noticed that
+       there is UAF problem because RPM-suspend callback waits until channel
+       is idling and channel is already released/freed during driver's removal
+       phase.
+
+     - Added system suspend support to the new NVDEC DRM driver.
+
+     - Added missing pm_runtime_mark_last_busy() to DRM driver.
+
+     - Corrected VDE GENPD patch which previously made video decoder clock
+       always-enabled by mistake if legacy PD code path was used. It was
+       spotted while we were testing VDE on Tegra114 that doesn't support
+       GENPD yet.
+
+     - Added ack from Peter Chen to the USB patch that he gave to v13.
+
+     - Changed OPP table names in accordance to the new naming scheme
+       required by the recent core OPP binding.
+
+     - Added 500MHz memory OPP entry used by ASUS Transformer tablets.
+
+v13: - Fixed compile-test error reported by build bot by reverting the
+       mmc/ patch to v11. The sdhci_suspend/resume_host() functions aren't
+       available with the disabled CONFIG_PM_SLEEP, some code needs the
+       ifdef.
+
+     - Added last r-b from Rob Herring for the DT patches.
+
+     - Corrected clk/ PM domain-support patch by not using the
+       devm_tegra_core_dev_init_opp_table_common() helper, which I
+       utilized in v12. The clk driver implements its own power domain
+       state syncing and common helper shouldn't be used. This fixes driver
+       probing for some clocks on some devices. It was reported by
+       Svyatoslav Ryhel for PLLE OPP error on T30 Asus Transformer tablet.
+
+v12: - Added r-b from Rob Herring to the host1x binding patch.
+
+     - Added acks from Hans Verkuil to the video decoder patches.
+
+     - In the v11 changelog I forgot to mention that the clk-binding
+       patch was also changed with a corrected regex pattern and removed
+       'clocks' sub-node. This patch needs r-b or ack too.
+
+     - Added new "Rename 3d power domains" patch to match the DT schema
+       naming requirement. Thanks to David Heidelberg for spotting this
+       problem.
+
+     - Replaced #ifdef CONFIG_PM_SLEEP with maybe_unused in the MMC patch
+       to make code cleaner.
+
+v11: - Added acks and r-b from Rob Herring, Mark Brown and Miquel Raynal
+       that were given to v8.
+
+     - Corrected order of the new memory controller reset entry in
+       device-trees and host1x DT binding patch, which was requested by
+       Rob Herring.
+
+     - Switched consumer drivers to use power domain state syncing done
+       by new Tegra's common OPP-initialization helper.
+
+     - Made use of new devm_pm_runtime_enable() helper that was added to
+       v5.15 kernel, where appropriate.
+
+     - Added "fuse: Use resource-managed helpers" patch.
+
+     - Converted Tegra20/30 clk drivers to a proper platform drivers,
+       which was requested by Thierry Reding.
+
+     - Removed clk-bulk API usage from the MMC patch, which was requested
+       by Thierry Reding.
+
+     - Changed CORE power domain name to "core" in a new patch
+       "Change name of core power domain".
+
+     - Misc small fixes for problems that I found since v8, like couple
+       typos in error code paths and restored working RPM for Tegra DRM
+       UAPI v1 that was removed in v8 by accident.
+
+v9-v10: Figured out remaining GENPD API changes with Ulf Hansson and
+        Viresh Kumar. The OPP-sync helper that was used in v8 isn't needed
+        anymore because GENPD API now allows consumer drivers to
+        init rpm_pstate of power domains.
+
+v8: - Added new generic dev_pm_opp_sync() helper that syncs OPP state with
+      hardware. All drivers changed to use it. This replaces GENPD attach_dev
+      callback hacks that were used in v7.
+
+    - Added new patch patch "soc/tegra: regulators: Prepare for suspend"
+      that fixes dying Tegra20 SoC after enabling VENC power domain during
+      resume from suspend. It matches to what downstream kernel does on
+      suspend/resume.
+
+    - After a second thought, I dropped patches which added RPM to memory
+      drivers since hardware is always-on and RPM not needed.
+
+    - Replaced the "dummy host1x driver" patch with new "Disable unused
+      host1x hardware" patch, since it's a cleaner solution.
+
+Dmitry Osipenko (39):
+  soc/tegra: Enable runtime PM during OPP state-syncing
+  soc/tegra: Add devm_tegra_core_dev_init_opp_table_common()
+  soc/tegra: Don't print error message when OPPs not available
+  dt-bindings: clock: tegra-car: Document new clock sub-nodes
+  clk: tegra: Support runtime PM and power domain
+  dt-bindings: host1x: Document OPP and power domain properties
+  dt-bindings: host1x: Document Memory Client resets of Host1x, GR2D and
+    GR3D
+  gpu: host1x: Add initial runtime PM and OPP support
+  gpu: host1x: Add host1x_channel_stop()
+  drm/tegra: dc: Support OPP and SoC core voltage scaling
+  drm/tegra: hdmi: Add OPP support
+  drm/tegra: gr2d: Support generic power domain and runtime PM
+  drm/tegra: gr3d: Support generic power domain and runtime PM
+  drm/tegra: vic: Stop channel on suspend
+  drm/tegra: nvdec: Stop channel on suspend
+  drm/tegra: submit: Remove pm_runtime_enabled() checks
+  drm/tegra: submit: Add missing pm_runtime_mark_last_busy()
+  usb: chipidea: tegra: Add runtime PM and OPP support
+  bus: tegra-gmi: Add runtime PM and OPP support
+  pwm: tegra: Add runtime PM and OPP support
+  mmc: sdhci-tegra: Add runtime PM and OPP support
+  mtd: rawnand: tegra: Add runtime PM and OPP support
+  spi: tegra20-slink: Add OPP support
+  media: dt: bindings: tegra-vde: Convert to schema
+  media: dt: bindings: tegra-vde: Document OPP and power domain
+  media: staging: tegra-vde: Support generic power domain
+  soc/tegra: fuse: Reset hardware
+  soc/tegra: fuse: Use resource-managed helpers
+  soc/tegra: regulators: Prepare for suspend
+  soc/tegra: pmc: Rename 3d power domains
+  soc/tegra: pmc: Rename core power domain
+  soc/tegra: pmc: Enable core domain support for Tegra20 and Tegra30
+  ARM: tegra: Rename CPU and EMC OPP table device-tree nodes
+  ARM: tegra: Add 500MHz entry to Tegra30 memory OPP table
+  ARM: tegra: Add OPP tables and power domains to Tegra20 device-trees
+  ARM: tegra: Add OPP tables and power domains to Tegra30 device-trees
+  ARM: tegra: Add Memory Client resets to Tegra20 GR2D, GR3D and Host1x
+  ARM: tegra: Add Memory Client resets to Tegra30 GR2D, GR3D and Host1x
+  ARM: tegra20/30: Disable unused host1x hardware
+
+ .../bindings/clock/nvidia,tegra20-car.yaml    |   37 +
+ .../display/tegra/nvidia,tegra20-host1x.txt   |   53 +
+ .../bindings/media/nvidia,tegra-vde.txt       |   64 -
+ .../bindings/media/nvidia,tegra-vde.yaml      |  119 ++
+ arch/arm/boot/dts/tegra124-apalis-emc.dtsi    |    4 +-
+ .../arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |    4 +-
+ arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi  |    8 +-
+ .../arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |    8 +-
+ .../boot/dts/tegra124-peripherals-opp.dtsi    |  140 +-
+ .../boot/dts/tegra20-acer-a500-picasso.dts    |    5 +-
+ arch/arm/boot/dts/tegra20-colibri.dtsi        |    5 +-
+ .../boot/dts/tegra20-cpu-opp-microvolt.dtsi   |   82 +-
+ arch/arm/boot/dts/tegra20-cpu-opp.dtsi        |   82 +-
+ arch/arm/boot/dts/tegra20-harmony.dts         |    3 +-
+ arch/arm/boot/dts/tegra20-paz00.dts           |    3 +-
+ .../arm/boot/dts/tegra20-peripherals-opp.dtsi |  949 +++++++++++-
+ arch/arm/boot/dts/tegra20-seaboard.dts        |    3 +-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi       |    3 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts       |    9 +
+ arch/arm/boot/dts/tegra20-ventana.dts         |    1 +
+ arch/arm/boot/dts/tegra20.dtsi                |  118 +-
+ .../tegra30-asus-nexus7-grouper-common.dtsi   |    1 +
+ ...30-asus-nexus7-grouper-memory-timings.dtsi |   12 +-
+ arch/arm/boot/dts/tegra30-beaver.dts          |    1 +
+ arch/arm/boot/dts/tegra30-cardhu.dtsi         |    1 +
+ arch/arm/boot/dts/tegra30-colibri.dtsi        |   17 +-
+ .../boot/dts/tegra30-cpu-opp-microvolt.dtsi   |  144 +-
+ arch/arm/boot/dts/tegra30-cpu-opp.dtsi        |  144 +-
+ arch/arm/boot/dts/tegra30-ouya.dts            |    5 +-
+ .../arm/boot/dts/tegra30-peripherals-opp.dtsi | 1373 ++++++++++++++++-
+ arch/arm/boot/dts/tegra30.dtsi                |  175 ++-
+ drivers/bus/tegra-gmi.c                       |   53 +-
+ drivers/clk/tegra/Makefile                    |    1 +
+ drivers/clk/tegra/clk-device.c                |  199 +++
+ drivers/clk/tegra/clk-pll.c                   |    2 +-
+ drivers/clk/tegra/clk-super.c                 |    2 +-
+ drivers/clk/tegra/clk-tegra20.c               |   77 +-
+ drivers/clk/tegra/clk-tegra30.c               |  116 +-
+ drivers/clk/tegra/clk.c                       |   75 +-
+ drivers/clk/tegra/clk.h                       |    2 +
+ drivers/gpu/drm/tegra/dc.c                    |   79 +
+ drivers/gpu/drm/tegra/dc.h                    |    2 +
+ drivers/gpu/drm/tegra/gr2d.c                  |  184 ++-
+ drivers/gpu/drm/tegra/gr3d.c                  |  363 ++++-
+ drivers/gpu/drm/tegra/hdmi.c                  |   16 +-
+ drivers/gpu/drm/tegra/nvdec.c                 |   29 +-
+ drivers/gpu/drm/tegra/submit.c                |   14 +-
+ drivers/gpu/drm/tegra/vic.c                   |   36 +-
+ drivers/gpu/host1x/channel.c                  |    8 +
+ drivers/gpu/host1x/debug.c                    |   15 +
+ drivers/gpu/host1x/dev.c                      |  150 +-
+ drivers/gpu/host1x/dev.h                      |    3 +-
+ drivers/gpu/host1x/hw/channel_hw.c            |   44 +-
+ drivers/gpu/host1x/intr.c                     |    3 -
+ drivers/gpu/host1x/syncpt.c                   |    5 +-
+ drivers/mmc/host/sdhci-tegra.c                |   81 +-
+ drivers/mtd/nand/raw/tegra_nand.c             |   60 +-
+ drivers/pwm/pwm-tegra.c                       |   84 +-
+ drivers/soc/tegra/common.c                    |   20 +-
+ drivers/soc/tegra/fuse/fuse-tegra.c           |   51 +-
+ drivers/soc/tegra/fuse/fuse-tegra20.c         |   33 +-
+ drivers/soc/tegra/fuse/fuse.h                 |    1 +
+ drivers/soc/tegra/pmc.c                       |   14 +-
+ drivers/soc/tegra/regulators-tegra20.c        |   99 ++
+ drivers/soc/tegra/regulators-tegra30.c        |  122 ++
+ drivers/spi/spi-tegra20-slink.c               |    9 +-
+ drivers/staging/media/tegra-vde/vde.c         |   63 +-
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |   55 +-
+ include/linux/host1x.h                        |    1 +
+ include/soc/tegra/common.h                    |   15 +
+ 70 files changed, 4936 insertions(+), 823 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.txt
+ create mode 100644 Documentation/devicetree/bindings/media/nvidia,tegra-vde.yaml
+ create mode 100644 drivers/clk/tegra/clk-device.c
+
+-- 
+2.33.1
+
