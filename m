@@ -2,104 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 909E5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 12:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DD8C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 14:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A92660FBF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 12:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 413DD60F6F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 14:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233429AbhJYM4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Oct 2021 08:56:44 -0400
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:39677 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233414AbhJYM4n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 08:56:43 -0400
-Received: by mail-ot1-f54.google.com with SMTP id e59-20020a9d01c1000000b00552c91a99f7so14791170ote.6;
-        Mon, 25 Oct 2021 05:54:21 -0700 (PDT)
+        id S232670AbhJYOs3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Oct 2021 10:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232260AbhJYOs3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 10:48:29 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C4CC061746
+        for <linux-clk@vger.kernel.org>; Mon, 25 Oct 2021 07:46:06 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id u130so5315327vku.2
+        for <linux-clk@vger.kernel.org>; Mon, 25 Oct 2021 07:46:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w7Nv9MdDuJmNWCjczdBB5OvM7fjU1pFKjbuVkcMA+wA=;
+        b=nYOBLeK1cY2M1/R1tnKXFZOOsqLvfESyY9IeGuwXWm3EH6A1iyoQf9Q//81RDO3Cp5
+         SkJHQVx77QV+OMVkSWDo/q6ygCXlLCh18uoR9aN7MqVDgfJ7jsimjtk6eZlp5BAZ6nj6
+         16fFhfiP8gTpWjGpU7DqHIxeCgcylSP5/AJMsvS8e+4OI992rtbekXZMC695HhER37e5
+         kVFafrzQtyKkUAGYHQ7SDs/W57PyZ+GGVwoFjEpAaTyt9kckjMKvFPvLz4JofU6w7GhO
+         T5zK2mhQ50y2ZdqV7VETsUHENE9xw3snr8/beef91WUfovteIM0I24Wmuy1XcA6kq0in
+         WKJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=xfPmPgNFQgIKrWKVU27Szuu0QsSCtm+5R24aa/F4BSg=;
-        b=lefDfrVSvWR8U4WnOGkF76AwFCk8T7kwi4iXWysxEQOHCWhxgytedxzDmpLotohspU
-         4yIHd1goYVMJ62GPiS7B0X1CWbsgkgb5Ahqzrywtp7mk3EcFto3F+iaMnAuSSvGd4SZA
-         z2mSapmsWoNGGnGXMs+2LjUd39+PrxCAB/gXm7/q8cXzs3EI8sx/T6EasX+de84STXna
-         c9/UfbPjWGJWOjO2RajtyLPcLrkp3ds8n+bTR4Rq52mY9fWbDQMLOZD8Noou3ntkp0w6
-         NHR2piQo0ZUn5zoocHV9C1z2Vbr9FEwc0gIdDzqHFqVRZ7VyFZ+qmIVG0xR4OcabjR8r
-         zXWg==
-X-Gm-Message-State: AOAM532ryVk5dLiBR4k316724wgmMcaTKOhvxgMEi0iRdQGPRETIJRTT
-        EIAXQki6lhWh5Tn/vglSPA==
-X-Google-Smtp-Source: ABdhPJxSzDa6Aw86E7HU9PcZR3V6hQx/apZrKRCDa2ilOHhh7Q1/dkrii+HwuqomKgo/nUzIa6Dt1Q==
-X-Received: by 2002:a05:6830:1e08:: with SMTP id s8mr13970909otr.305.1635166460875;
-        Mon, 25 Oct 2021 05:54:20 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id bf3sm3946646oib.34.2021.10.25.05.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 05:54:20 -0700 (PDT)
-Received: (nullmailer pid 190976 invoked by uid 1000);
-        Mon, 25 Oct 2021 12:54:14 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     arnd@arndb.de, mturquette@baylibre.com, olof@lixom.net,
-        aisheng.dong@nxp.com, sboyd@kernel.org, Mr.Bossman075@gmail.com,
-        fugang.duan@nxp.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-        adrian.hunter@intel.com, linux-arm-kernel@lists.infradead.org,
-        b20788@freescale.com, linux-serial@vger.kernel.org,
-        gregkh@linuxfoundation.org, linus.walleij@linaro.org,
-        ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, s.hauer@pengutronix.de,
-        abel.vesa@nxp.com, leonard.crestez@nxp.com, linux@armlinux.org.uk,
-        shawnguo@kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, jirislaby@kernel.org,
-        linux-imx@nxp.com, linux-mmc@vger.kernel.org, festevam@gmail.com,
-        stefan@agner.ch, giulio.benetti@benettiengineering.com,
-        soc@kernel.org
-In-Reply-To: <20211024154027.1479261-6-Mr.Bossman075@gmail.com>
-References: <20211024154027.1479261-1-Mr.Bossman075@gmail.com> <20211024154027.1479261-6-Mr.Bossman075@gmail.com>
-Subject: Re: [PATCH 05/13] dt-bindings: clock: imx: Add documentation for i.MXRT clock
-Date:   Mon, 25 Oct 2021 07:54:14 -0500
-Message-Id: <1635166454.818167.190975.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w7Nv9MdDuJmNWCjczdBB5OvM7fjU1pFKjbuVkcMA+wA=;
+        b=7cCFs2M2WScw9XlFbgeYThjRob1TlRHeu/visZzlZpCHZuj4p0EcLqay7Reji1Pa4T
+         ACdSbg31H44sAsvrsF0YNt1SFxbe57Dj7Z9qV8K8lhKtQZXmRItxkXyF8gU0Eqka+7Fr
+         +AjetlTkbQQl31L5F4dAXSMAbKIqr9Mj/wYgY8MLJPImYC/eT1KpbBN2r0iKZ2ZUI/DY
+         xNakAv5o13mRSncXnKZtMP1mhJHsxkkrG6b6r8TUQ+fel5/OTyBWw+QfJvrL7lGl2p6b
+         BrSTb2tOC6QzVYULxHbUBJPZ0YSPUntmGcWDbBCus3V4uFFEM2ghMzR2Om++l9uyCMhv
+         Pf3Q==
+X-Gm-Message-State: AOAM5337o8z92D8g1hynq/iZbHB3FDrQ3kpoBu/EDKpqfNr1NddtnAyr
+        dB7AmSkW+WmqjQx8KzFBGbPnChlFl4sPcbnEMDe7Ig==
+X-Google-Smtp-Source: ABdhPJwsLJkppl1vHeQd439U7ptbfGOILqCOBsfzqrvFvNYwXpiGKKZmBIl2IxFsZQ8ol0cNfWQbGmhI0smyVopPYG0=
+X-Received: by 2002:a05:6122:1827:: with SMTP id ay39mr3476582vkb.24.1635173165035;
+ Mon, 25 Oct 2021 07:46:05 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211022215635.31128-1-semen.protsenko@linaro.org> <f8f1121a-f9ba-e231-ece2-646d9de8b22b@canonical.com>
+In-Reply-To: <f8f1121a-f9ba-e231-ece2-646d9de8b22b@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Mon, 25 Oct 2021 17:45:53 +0300
+Message-ID: <CAPLW+4kh0B70M0n_vc39Me_EPcPk+r_ZHCaJFtWrMgnnPYDL5w@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynos850: Register clocks early
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 24 Oct 2021 11:40:19 -0400, Jesse Taube wrote:
-> Add DT binding documentation for i.MXRT clock driver.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
->  .../bindings/clock/imxrt-clock.yaml           | 57 +++++++++++++++++++
->  1 file changed, 57 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imxrt-clock.yaml
-> 
+On Sat, 23 Oct 2021 at 12:19, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 22/10/2021 23:56, Sam Protsenko wrote:
+> > Some clocks must be registered before init calls. For example MCT clock
+> > (from CMU_PERI) is needed for MCT timer driver, which is registered
+> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
+> > clk-exynos850 platform driver init, it's already too late. Inability to
+> > get "mct" clock in MCT driver leads to kernel panic, as functions
+> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
+> > can't be fixed either, as it's acting as a clock source and it's
+> > essential to register it in start_kernel() -> time_init().
+> >
+> > Let's register all Exynos850 clocks early, using
+> > CLK_OF_DECLARE_DRIVER(), and do all stuff relying on "struct dev" object
+> > (like runtime PM and enabling bus clock) later in platform driver probe.
+> > Basically CLK_OF_DECLARE_DRIVER() matches CMU compatible, but clears
+> > OF_POPULATED flag, which allows the same device to be matched again
+> > later.
+> >
+> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
+> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
+> > drivers/clk/mediatek/clk-mt2712.c.
+> >
+> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> > Notes:
+> >   - This patch should be applied on top of CMU_APM series
+> >     (clk: samsung: exynos850: Implement CMU_APM domain)
+> >   - I considered introducing some macro to reduce the code duplication
+> >     (actually created one), but decided to go with plain code: this way
+> >     it's easier to understand and navigate
+> >   - Also considered registering only *some* clocks early: won't be
+> >     possible, as leaf clocks (like MCT) depend on the whole clock tree.
+> >     Registering early only *some* CMUs (like CMU_PERI) looks possible,
+> >     but I'm not sure what is the best way to implement this, and that
+> >     won't be consistent with other CMUs (too much code variation as for
+> >     my taste)
+> >
+>
+> In the long term it is better for entire kernel and SoC to support
+> deferred probes and register clocks as devices, not as CLK_OF_DECLARE. I
+> understand that it's not possible now to get rid of CLK_OF_DECLARE
+> entirely, but we could meet half-way.
+>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Agreed, the more general problem is probably insufficient dependency
+resolving in kernel, so this is more like a workaround anyway. I'll
+send v2 soon.
 
-yamllint warnings/errors:
+> The Exynos5433 has the same problem and it registers few core CMUs
+> early: the TOP, CPUs, memory bus, peripheral buses including PERIS with
+> MCT. I prefer this approach than yours. The only domains needing
+> CLK_OF_DECLARE are TOP and PERIS. Maybe also CORE - one would have to
+> check if GIC and CCI are needed early.
+>
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/imxrt-clock.example.dts:32.27-28 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/clock/imxrt-clock.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1441: dt_binding_check] Error 2
+Let's register only CMU_PERI clocks early for now. If the need arises,
+we can do the same for other domains later.
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1545398
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+>
+> Best regards,
+> Krzysztof
