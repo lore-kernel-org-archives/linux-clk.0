@@ -2,125 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA548C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 11:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEB3C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 11:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E03E61039
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 11:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2694060F46
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 11:52:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233110AbhJYLoA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Oct 2021 07:44:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232207AbhJYLn5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 07:43:57 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5DFC061745;
-        Mon, 25 Oct 2021 04:41:35 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g8so10320150edb.2;
-        Mon, 25 Oct 2021 04:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Af+qmYvV3PY7oY9iMHf1WDLN+yTC/dfVl6LmNB2Ru+M=;
-        b=iLTzGHKq62wcRXJw/NQeb8QVl0SSGxd0VOXTRXyEMYtWDF16J/H4D9o1cX+9caqz8h
-         pXrPyzBaUiZ0wa/rRI5QqSYx28CxRd1p5Ys03yoYaNBgm3qYTV80XOmaEFCOc8WN3eI+
-         /Zwrh18K9RiH6f4EmIOxd9zjwFUeuIeq/GdpkLulr84hMeotFMMfUuWWmc1F0lnxsvey
-         1wozSc9mRa+aSgqBIsqi3KeUU16h2VN8zp5sptzJqmma4Ljkt5BOEK3yDYNWT89byf7X
-         cX9CfI4culRu/NEpETmT2OCUXcdXtWlLT82RGyimdnOIp4g0iEyt3U8uwefzVYNDGf9/
-         VyeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Af+qmYvV3PY7oY9iMHf1WDLN+yTC/dfVl6LmNB2Ru+M=;
-        b=UUfPSHY/5GTlh7vNnngmfbwcsOt1bbIg3kAuA7pAdr+5yiWD+5apss0uaJI76lIM0B
-         PZNlk+dFc68optixYEHjIqKAyILm+RYyPEpMXWQ1Tb13icpyy9tzLG042Y/VZ/JtZLBj
-         AZzJhiDwiefr//OvgpmAuy96rWNR++eWXf6MBy2DbhgqhgN3M8z84jozTE3JHJwIKaXi
-         f6ONyxx/qZpx8+Uwm0kOIn9Go5HjvbCVJjFg0HJW93gFp6sWMbRjCW4fYssGvWltrRmy
-         8UdxH94gs4NyNN4pffRPyXicaJwVUI7+ocgYLLVt14J9AeCQKDVP+8RLV4bG+8DcQafQ
-         aadw==
-X-Gm-Message-State: AOAM532wd7W+KrnWTlLjEnCsLZLCJmsW7oqOtBK8pUNvMRulJG3xTnhE
-        yHSacVq8seR56o2Xe1L4jRZLNbzZQxllRv5/bb0=
-X-Google-Smtp-Source: ABdhPJzjBN4K07mgHexd4fWyTF3MfP5LCSNqxjtFEIj1rgPmmarKsiTdhxurgICUQfmRRjgJ3XTV28Ui7aDLiZxfOA8=
-X-Received: by 2002:a17:906:d553:: with SMTP id cr19mr14340955ejc.128.1635162093757;
- Mon, 25 Oct 2021 04:41:33 -0700 (PDT)
+        id S231699AbhJYLy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Oct 2021 07:54:57 -0400
+Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:29489
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231855AbhJYLyz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Oct 2021 07:54:55 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=REAahljd/XWf1mKM4SwYrsRAaW/XryKSkP7NnjuAXxjsPXROc02/jqAnU6mSu1ILSHlaZ/rWf8jKVfMwCdsObfYE3Z7dpj+Hj1wWvALOoKP+6b4gUADb3OP5S3Ku0ZucVQ1gfG3oMLL5ixe4kFj7/bhDTKASV0aA+YB1TcW/kBcH372etuNUHB+DwmVtLqErotuS9xXYkHOj+5bJLKJeW/eWJd0r9Z2Hi6IYXOs5yPnRIt/+vU97V79qTTf3edE1W96n4xkw49PDK7G20dIjI5cMU++urMqJZAlQLl4z+5C9JQOjqJe0GqdvXdy/2L17AxvAedR1lg4RLTwNsybSFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qgT5a3RyUl6QqrOguIZYh0l4rMCS6QAkW9XIdSNtfR4=;
+ b=SJnqwqeo7hm7s26WBkJMr08feL/xEjF7wpLDi1cXr0dezuT0c88YUQ22y4bLbRXNnqX8J3J2IC4gjXmvSykEUrsMmNIG2gLCjZR8nQCfiVMMK4E2C9tRiIfsBLiOhXLzFhdKwmnMXnbZeyFJq89cyRil/hgL62PLwENEtwWVGvX5FK6z83sQ30I7pJqKStwI6yVUDAW/CY+eekmFw6t9qmWST0tQHMEigipYzCbg1tB/8svYjqiIkMm4rZYPMwIQt9QH4lOGksd+cfbnxZTxQG3V7rZ3rpDHGPgKEDK7nOR54UbgMIC8R8gWB+ZWyoY/RaUmlGSJKrfLZECIFE5npw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qgT5a3RyUl6QqrOguIZYh0l4rMCS6QAkW9XIdSNtfR4=;
+ b=E4N8cv9qJeqrCu8/26khbK79ro2EnW3GwYsSWY/Enc0GIWRdJ9cYqjbvpna+iyqrKmUFfR/A2RvKPCcDBltYF86dDGXw3BZUW+bgedEWJmFDmF0dnzNQdgCYCzx2DlMpYf3u/95MliQhvzzJGn4ISkhAPKLYEQsta9Q9Pg9I/Lc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB9020.eurprd04.prod.outlook.com (2603:10a6:10:2e3::9)
+ by DB9PR04MB8445.eurprd04.prod.outlook.com (2603:10a6:10:2bc::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16; Mon, 25 Oct
+ 2021 11:52:30 +0000
+Received: from DU2PR04MB9020.eurprd04.prod.outlook.com
+ ([fe80::b928:9230:aa10:639a]) by DU2PR04MB9020.eurprd04.prod.outlook.com
+ ([fe80::b928:9230:aa10:639a%9]) with mapi id 15.20.4628.020; Mon, 25 Oct 2021
+ 11:52:30 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com, abel.vesa@nxp.com,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2] clk: imx: gate off peripheral clock slice
+Date:   Mon, 25 Oct 2021 20:29:02 +0800
+Message-Id: <20211025122902.1151-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.30.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR0401CA0017.apcprd04.prod.outlook.com
+ (2603:1096:3:1::27) To DU2PR04MB9020.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e3::9)
 MIME-Version: 1.0
-References: <20211025094119.82967-1-hdegoede@redhat.com> <20211025094119.82967-12-hdegoede@redhat.com>
-In-Reply-To: <20211025094119.82967-12-hdegoede@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 25 Oct 2021 14:40:39 +0300
-Message-ID: <CAHp75VdJav6L03oVNd0DNA8jUXHPaqNzHU+q=+2-eEbh087bOQ@mail.gmail.com>
-Subject: Re: [PATCH v4 11/11] platform/x86: int3472: Deal with probe ordering issues
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-1xn6.ap.freescale.net (119.31.174.71) by SG2PR0401CA0017.apcprd04.prod.outlook.com (2603:1096:3:1::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.15 via Frontend Transport; Mon, 25 Oct 2021 11:52:26 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 3a7b1132-a127-4168-c82a-08d997adec25
+X-MS-TrafficTypeDiagnostic: DB9PR04MB8445:
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-Microsoft-Antispam-PRVS: <DB9PR04MB8445FDA18369F34D2ABC68AEC9839@DB9PR04MB8445.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: U03KNJ55/sN+qPJmDIBsxoUAfFW1eCeJrTvUT9V01nr7Bx2rKOU9FPmV9T2afpaPp70HkGeA6+fiitLGu+40pNY9oglCrYAWbadhjs56/ftGoZuukXgIHfN0rddKTEw97b/3zhCAqjM0tsKb9KwDYGl+WFpCfMJRctyykAEtbReBUIzc3jbs7vzRJSF2czbERCKA0g5qRDo20E15ylku2mzsqYc09/EzLPyDTJILqyc4HTmlzzwYRzrGORmofdXm1B/BTyeXM7uCTb0xBE+2E0GJuDB8vUhJrgYG98jz6sJJ/8nLXyuUHl/6Z/xw4eRhdKWGb4V2xQXPBLaV+T4MOkZzxzlxJexyvQ0Q5CSCrr4rjUVCipmg3DVwLC6ubwL3caBtxRNBlw2rg38zmsW+JWqCGEwd++3tS7dsFuNOjCSqpZwXfSZ8N65r/kXt4C+/FKvzqggyn+BWRIGSfJcdGdBjuUgzD34ChIneXtOwuOoi7o2+FrWawN3KA7VxLaCuqy1WEPY5YCJzM3NS5LA5IKKUuZHeYMzTwyzJYU3MRZSTOd196EQ0kZdHSuP6LaDCC78cxTlSAGlsszrliU8g7dlEPtN1RJfHcvrVEsWvKZeSQufR7wjXspaJxbJ7nk1jUkNn6Hxwp8Vmcl/Bb5E3naqrhvLZi8XO/63ayPt/jxz25q84YB7/wtx88ALYwSIcedd1TTJHruHGYOL/q7OCag==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB9020.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(6512007)(4326008)(26005)(52116002)(6666004)(6506007)(8676002)(83380400001)(6486002)(186003)(956004)(38100700002)(38350700002)(2616005)(1076003)(316002)(66476007)(66556008)(86362001)(2906002)(66946007)(508600001)(5660300002)(8936002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?i4PtnC3m8J7Lbx0Q58aretjrYgJJLKHHftI06qsxre794cnsVJDr6Ov88JXa?=
+ =?us-ascii?Q?AjC4Uz2FfCy799XV8r/aYcIl7g9wFMsMSaLKeA1DOeAlQVOiXOjU9CwOhOp6?=
+ =?us-ascii?Q?XHxRiQGsQcF7wXLbj8ZiJwPX+QZS/lnk/08wG1sZVYEpIZ8lEQCG8FJ+OB/H?=
+ =?us-ascii?Q?Cg32CPO8QjJkilhG22/1KI/2IUWsn7zNrWWOo2EPMnzKQJw6OkO7kDbnLvIZ?=
+ =?us-ascii?Q?jOZsPAI5D3vNj0VA5zHBvSOYiDdyMspqF18W6GQypW/Udu//cRDK0m8yaZCD?=
+ =?us-ascii?Q?WrrTHkjsaH3OkvuHip0i8QFmf42Kn0lG71Pqb9LACO/Nb5wL2F/TBsvLBVFH?=
+ =?us-ascii?Q?yZS1Z8B7mQUnQIVabCYA5bpad0XMMIWF15ebb9eo6qnXikGHPY+lENL9ChRa?=
+ =?us-ascii?Q?ct7SapLuHtfMlrco0/XY3HVndAD777mL6aLWf8LcoqDRVIJW2gGtGxZf2Oxi?=
+ =?us-ascii?Q?98RVdcu93JfCzcb0Sycs6xVoZx0Et2Y1+IhiCOIqrtmsCwJ7Htr9avRgljrz?=
+ =?us-ascii?Q?GbfVQKGIlaFN001NJ7o6jY0oVyVx1Mrwc09Qwqs/8oG7yJSnjcW1nAhxJwFc?=
+ =?us-ascii?Q?/SV+kUgGNrLaDmHDD+1ZkhB7CmyGE3MfcxWEJAYyWBN7ezvb7eFBKFIVL9CI?=
+ =?us-ascii?Q?HxXI41DkrDUWpBpo5XbmjBPP+3g4SGP1wS/Uo8Chc9tfeSdDdmKi002G930R?=
+ =?us-ascii?Q?P29n2qTV127VIdT+QWIll3chxLXxH7vi4S5E8E4QkJRDouksqn5FCPUlHDbc?=
+ =?us-ascii?Q?FdaBkhuIJlI9DR0yg+dS8p0n8/KqBiFmzfu7Y3NFZkyjge9VgNAqqk2xB5fs?=
+ =?us-ascii?Q?/UearhFW3r/82K04cVi1dREonvZatFFIy9rBLuA43VYKqpwB41NyfrQWv/Vx?=
+ =?us-ascii?Q?ylOPRxwnmnYfrvYWaK2Oj6QavSlTMZxXSASkBckZv0HNST/o+oiMrQX93+7d?=
+ =?us-ascii?Q?f3hcmS0uhUyxMw1rcrNJ3nQbNsQi0xRuyysnrpMNaPFK7f8lTyJKfuRLtfgO?=
+ =?us-ascii?Q?OyVNA0VU+SH7OeJ1dgTscKtARoGsh/j8TF7LZf7DK/MStoCLmDadpbaTXLEP?=
+ =?us-ascii?Q?Vxdq7Q6y8pM8tfALHg/Xou0FPMAUaCvAYKj6iOisRUMQWz+1EUmHbXnkdzyY?=
+ =?us-ascii?Q?frt62dPOgu+FkjnbB0LZ0C0c+jKYMDTwlJpPnn3jzWUGZKQl4IFchNaSLOxe?=
+ =?us-ascii?Q?nDZVCa3kfDBYkUICb7Q51EPG2y+SspfydiUXC1dI6AxmcuIx2o1bpUWUg0sn?=
+ =?us-ascii?Q?c7t8mz3h9HEjmyzrpVz7NbCaZtUHK1TcF1caHlKgSaJYicxjARyINRxeEVa9?=
+ =?us-ascii?Q?It/2piRXqdlP68N47TLSBgd1OrSK9qt+HJZFZv3RHJLg4qinT1by/oevPeWt?=
+ =?us-ascii?Q?xGTYldpsfpgHWeitZNbYTQwPQR1wNpJw5ekZy6BPtsvzodBhOTkvvJ0tQNWI?=
+ =?us-ascii?Q?LtnNUmZf9zBz+AAQHCu1WqGRACw9RR1RoeOQH8hahiXQzy4oZnDPUzs4FjsF?=
+ =?us-ascii?Q?rDQ9pnqeNBETKXnTGhaZo82cMwOxVg5JxlCBHzOFsOLPJvm2jOh9SIqCTVsT?=
+ =?us-ascii?Q?I477LymeRVoQrM8XC1+RmfDeSqV418BJOoKLpyq6WzJQkASy7avfWjJBZlGw?=
+ =?us-ascii?Q?ZfHEISxCz4KNcvrg08GTdEk=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a7b1132-a127-4168-c82a-08d997adec25
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB9020.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2021 11:52:29.9538
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: obArg+8i52AX+NMzVi1a+xIpTySXauCDjqqyWHg9ZmlvRISNdesCwRL3G1LITlOeg7+t8eEL4TclMdUT3j9sOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8445
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 12:42 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> The clk and regulator frameworks expect clk/regulator consumer-devices
-> to have info about the consumed clks/regulators described in the device's
-> fw_node.
->
-> To work around this info missing from the ACPI tables on devices where
-> the int3472 driver is used, the int3472 MFD-cell drivers attach info about
-> consumers to the clks/regulators when registering these.
->
-> This causes problems with the probe ordering wrt drivers for consumers
-> of these clks/regulators. Since the lookups are only registered when the
-> provider-driver binds, trying to get these clks/regulators before then
-> results in a -ENOENT error for clks and a dummy regulator for regulators.
->
-> All the sensor ACPI fw-nodes have a _DEP dependency on the INT3472 ACPI
-> fw-node, so to work around these probe ordering issues the ACPI core /
-> i2c-code does not instantiate the I2C-clients for any ACPI devices
-> which have a _DEP dependency on an INT3472 ACPI device until all
-> _DEP-s are met.
->
-> This relies on acpi_dev_clear_dependencies() getting called by the driver
-> for the _DEP-s when they are ready, add a acpi_dev_clear_dependencies()
-> call to the discrete.c probe code.
->
-> In the tps68470 case calling acpi_dev_clear_dependencies() is already done
-> by the acpi_gpiochip_add() call done by the driver for the GPIO MFD cell
-> (The GPIO cell is deliberately the last cell created to make sure the
-> clk + regulator cells are already instantiated when this happens).
->
-> However for proper probe ordering, the clk/regulator cells must not just
-> be instantiated the must be fully ready (the clks + regulators must be
-> registered with their subsystems).
->
-> Add MODULE_SOFTDEP dependencies for the clk and regulator drivers for
-> the instantiated MFD-cells so that these are loaded before us and so
-> that they bind immediately when the platform-devs are instantiated.
+From: Peng Fan <peng.fan@nxp.com>
 
-Just a side note: MODULE_SOFTDEP() won't work in some (special?) cases
-when module tools are limited in functionality (e.g. busybox
-implementation as of today).
+The Peripheral clocks are default enabled when SoC power on, and
+bootloader not gate off the clocks when booting Linux Kernel.
 
+So Linux Kernel is not aware the peripheral clocks are enabled and
+still take them as disabled because of enable count is zero.
+
+Then Peripheral clock's source without clock gated off could be
+changed when have assigned-parents in device tree
+
+However, per i.MX8M* reference mannual, "Peripheral clock slices must
+be stopped to change the clock source", so need to gate off the
+the peripheral clock when registering the clocks to avoid glitch.
+
+Tested boot on i.MX8MM/P-EVK board
+
+Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+V2:
+ Add Fixes tag
+
+ drivers/clk/imx/clk-composite-8m.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 2dfd6149e528..ee41fbf90589 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -184,6 +184,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 	struct clk_mux *mux = NULL;
+ 	const struct clk_ops *divider_ops;
+ 	const struct clk_ops *mux_ops;
++	u32 val;
+ 
+ 	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+ 	if (!mux)
+@@ -216,8 +217,14 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 		div->width = PCG_PREDIV_WIDTH;
+ 		divider_ops = &imx8m_clk_composite_divider_ops;
+ 		mux_ops = &clk_mux_ops;
+-		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
++		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED)) {
+ 			flags |= CLK_SET_PARENT_GATE;
++			if (!(flags & CLK_IS_CRITICAL)) {
++				val = readl(reg);
++				val &= ~BIT(PCG_CGC_SHIFT);
++				writel(val, reg);
++			}
++		}
+ 	}
+ 
+ 	div->lock = &imx_ccm_lock;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.30.0
+
