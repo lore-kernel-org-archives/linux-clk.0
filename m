@@ -2,135 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DD8C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 14:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C72AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 15:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 413DD60F6F
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 14:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6489960EBD
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Oct 2021 15:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbhJYOs3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Oct 2021 10:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232260AbhJYOs3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 10:48:29 -0400
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C4CC061746
-        for <linux-clk@vger.kernel.org>; Mon, 25 Oct 2021 07:46:06 -0700 (PDT)
-Received: by mail-vk1-xa2a.google.com with SMTP id u130so5315327vku.2
-        for <linux-clk@vger.kernel.org>; Mon, 25 Oct 2021 07:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w7Nv9MdDuJmNWCjczdBB5OvM7fjU1pFKjbuVkcMA+wA=;
-        b=nYOBLeK1cY2M1/R1tnKXFZOOsqLvfESyY9IeGuwXWm3EH6A1iyoQf9Q//81RDO3Cp5
-         SkJHQVx77QV+OMVkSWDo/q6ygCXlLCh18uoR9aN7MqVDgfJ7jsimjtk6eZlp5BAZ6nj6
-         16fFhfiP8gTpWjGpU7DqHIxeCgcylSP5/AJMsvS8e+4OI992rtbekXZMC695HhER37e5
-         kVFafrzQtyKkUAGYHQ7SDs/W57PyZ+GGVwoFjEpAaTyt9kckjMKvFPvLz4JofU6w7GhO
-         T5zK2mhQ50y2ZdqV7VETsUHENE9xw3snr8/beef91WUfovteIM0I24Wmuy1XcA6kq0in
-         WKJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w7Nv9MdDuJmNWCjczdBB5OvM7fjU1pFKjbuVkcMA+wA=;
-        b=7cCFs2M2WScw9XlFbgeYThjRob1TlRHeu/visZzlZpCHZuj4p0EcLqay7Reji1Pa4T
-         ACdSbg31H44sAsvrsF0YNt1SFxbe57Dj7Z9qV8K8lhKtQZXmRItxkXyF8gU0Eqka+7Fr
-         +AjetlTkbQQl31L5F4dAXSMAbKIqr9Mj/wYgY8MLJPImYC/eT1KpbBN2r0iKZ2ZUI/DY
-         xNakAv5o13mRSncXnKZtMP1mhJHsxkkrG6b6r8TUQ+fel5/OTyBWw+QfJvrL7lGl2p6b
-         BrSTb2tOC6QzVYULxHbUBJPZ0YSPUntmGcWDbBCus3V4uFFEM2ghMzR2Om++l9uyCMhv
-         Pf3Q==
-X-Gm-Message-State: AOAM5337o8z92D8g1hynq/iZbHB3FDrQ3kpoBu/EDKpqfNr1NddtnAyr
-        dB7AmSkW+WmqjQx8KzFBGbPnChlFl4sPcbnEMDe7Ig==
-X-Google-Smtp-Source: ABdhPJwsLJkppl1vHeQd439U7ptbfGOILqCOBsfzqrvFvNYwXpiGKKZmBIl2IxFsZQ8ol0cNfWQbGmhI0smyVopPYG0=
-X-Received: by 2002:a05:6122:1827:: with SMTP id ay39mr3476582vkb.24.1635173165035;
- Mon, 25 Oct 2021 07:46:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211022215635.31128-1-semen.protsenko@linaro.org> <f8f1121a-f9ba-e231-ece2-646d9de8b22b@canonical.com>
-In-Reply-To: <f8f1121a-f9ba-e231-ece2-646d9de8b22b@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 25 Oct 2021 17:45:53 +0300
-Message-ID: <CAPLW+4kh0B70M0n_vc39Me_EPcPk+r_ZHCaJFtWrMgnnPYDL5w@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: exynos850: Register clocks early
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S230146AbhJYPwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Oct 2021 11:52:12 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:51853 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230070AbhJYPwM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Oct 2021 11:52:12 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 7D7305806E4;
+        Mon, 25 Oct 2021 11:49:49 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 25 Oct 2021 11:49:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=0aER1SAbuXA9nYwjSnrNi66UhKk
+        Mzhn0/WJpn0hsF2I=; b=a3HDdU3oG6CY8b3GHjdKaB5w08HQNnLO0b7ow8rgCHn
+        QLSDmr7wbfQ4qqchyk1XklS7i7CHr7a+TPUc78e/ENH92Vpf/hxKiupMcz/IMoEa
+        10niQvw+bRbEV3/D0U3WZtfh+8vDRQP2LZildMs6pCLPLVq67cbRlsvN8GdFA7CW
+        lRSf0n3F6ve4HfrTO9phOjTY0T5zCb/Freyemcoi0FJwqtUuYWjgbMc5cZvE1xOa
+        STI1g2ghRVSkgH0B+NxlbzXbnczza5lC36zWLOSDW53IgRwwpwf9oBUqJoC4+Fgq
+        yQQm3NMTnid30Vdu7kGgX9Qpd7j2cgIKPZJfFrM4UFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=0aER1S
+        AbuXA9nYwjSnrNi66UhKkMzhn0/WJpn0hsF2I=; b=TXvfYLmNlJzAj25uXHxj4U
+        LuabYELPTeKHnKUUiEpQO7IjyTsogqzj5tRA1x7tQ4qOKhbiKtvXx3+sGrBnqsbP
+        0qqP68eYmhjTSpAla1lnYqmQy74jbT37FbI3qv/3wigC5HTak9Osj2vwAjGxw5S+
+        BkRAfVMdDKO7Sj9jkhSc+J3uyOzsUnM3PongiXKJdU/QkKoRotVf7/kPB3NXoziI
+        AMVTg137o+CLTocZF63d6R6/kyPGYXdf6qDpWpJBu7ozrr/VZvA8lsOjap+RhICn
+        uA22i7sUe1Gm4aIFAc186HH2krU+sMxMyWXl6Isy+svRkSWaIEoX3AQT7+0TkEoQ
+        ==
+X-ME-Sender: <xms:G9J2YbRC7-45o-m3FHYhpcL2lOnWgy5K5VRkr_EfqEpSulCjSuuliA>
+    <xme:G9J2Ycw6s4-L6skN-EpVViAD832PVYxXCKe8Mq7PkLj4geky9aIue271XLN-hWFFS
+    W1JBAZR60h8uaXDSwY>
+X-ME-Received: <xmr:G9J2YQ2pk0m8Xv5M6GNjxLns07AJ7mSLjCrYjRUEKlG-3PQ0M7p0YRZyhCks44_xNpMrWCSNLMK3QZ66AfMCculhMFdqIOorgoJEUvtU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdefhedgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:G9J2YbAUoGC6Lnl7bYGuDw-PZul04KodCu1RQJQeVD76R4yllfo8cg>
+    <xmx:G9J2YUizQuWwZW6VVZ6sSqA6UCnBb_DUthdj0utT_suUCEEvqsZCkA>
+    <xmx:G9J2Yfqhv8Gc4XofYEgGk2N7O3cEAVKLrY8P2I7x7rGLbFE2Cqqosw>
+    <xmx:HdJ2YVZTk9djiSN8X49jHj9yP-qB9C--K9FHyMX5F3e8ZzExgMmxNw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 25 Oct 2021 11:49:47 -0400 (EDT)
+Date:   Mon, 25 Oct 2021 17:49:45 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] dt-bindings: rtc: sun6i: Add H616, R329, and D1
+ support
+Message-ID: <20211025154945.6vbp7ru5qvvpe34r@gilmour>
+References: <20210928080335.36706-1-samuel@sholland.org>
+ <20210928080335.36706-3-samuel@sholland.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ihzrd562brfvvncn"
+Content-Disposition: inline
+In-Reply-To: <20210928080335.36706-3-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 23 Oct 2021 at 12:19, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 22/10/2021 23:56, Sam Protsenko wrote:
-> > Some clocks must be registered before init calls. For example MCT clock
-> > (from CMU_PERI) is needed for MCT timer driver, which is registered
-> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-> > clk-exynos850 platform driver init, it's already too late. Inability to
-> > get "mct" clock in MCT driver leads to kernel panic, as functions
-> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-> > can't be fixed either, as it's acting as a clock source and it's
-> > essential to register it in start_kernel() -> time_init().
-> >
-> > Let's register all Exynos850 clocks early, using
-> > CLK_OF_DECLARE_DRIVER(), and do all stuff relying on "struct dev" object
-> > (like runtime PM and enabling bus clock) later in platform driver probe.
-> > Basically CLK_OF_DECLARE_DRIVER() matches CMU compatible, but clears
-> > OF_POPULATED flag, which allows the same device to be matched again
-> > later.
-> >
-> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-> > drivers/clk/mediatek/clk-mt2712.c.
-> >
-> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > ---
-> > Notes:
-> >   - This patch should be applied on top of CMU_APM series
-> >     (clk: samsung: exynos850: Implement CMU_APM domain)
-> >   - I considered introducing some macro to reduce the code duplication
-> >     (actually created one), but decided to go with plain code: this way
-> >     it's easier to understand and navigate
-> >   - Also considered registering only *some* clocks early: won't be
-> >     possible, as leaf clocks (like MCT) depend on the whole clock tree.
-> >     Registering early only *some* CMUs (like CMU_PERI) looks possible,
-> >     but I'm not sure what is the best way to implement this, and that
-> >     won't be consistent with other CMUs (too much code variation as for
-> >     my taste)
-> >
->
-> In the long term it is better for entire kernel and SoC to support
-> deferred probes and register clocks as devices, not as CLK_OF_DECLARE. I
-> understand that it's not possible now to get rid of CLK_OF_DECLARE
-> entirely, but we could meet half-way.
->
 
-Agreed, the more general problem is probably insufficient dependency
-resolving in kernel, so this is more like a workaround anyway. I'll
-send v2 soon.
+--ihzrd562brfvvncn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The Exynos5433 has the same problem and it registers few core CMUs
-> early: the TOP, CPUs, memory bus, peripheral buses including PERIS with
-> MCT. I prefer this approach than yours. The only domains needing
-> CLK_OF_DECLARE are TOP and PERIS. Maybe also CORE - one would have to
-> check if GIC and CCI are needed early.
->
+Hi,
 
-Let's register only CMU_PERI clocks early for now. If the need arises,
-we can do the same for other domains later.
+On Tue, Sep 28, 2021 at 03:03:28AM -0500, Samuel Holland wrote:
+> These new RTC variants all have a single alarm, like the R40 variant.
+>=20
+> For the new SoCs, start requiring a complete list of input clocks. The
+> H616 has three required clocks. The R329 also has three required clocks
+> (but one is different), plus an optional crystal oscillator input. The
+> D1 RTC is identical to the one in the R329.
+>=20
+> And since these new SoCs will have a well-defined output clock order as
+> well, they do not need the clock-output-names property.
+>=20
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+> Changes since v1:
+>   - Properly update the DT binding clocks and clock-names properties.
+>=20
+>  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 72 ++++++++++++++++++-
+>  include/dt-bindings/clock/sun6i-rtc.h         | 10 +++
+>  2 files changed, 79 insertions(+), 3 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/sun6i-rtc.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rt=
+c.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> index a88d46ffb457..b971510a5ae7 100644
+> --- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+> @@ -24,9 +24,14 @@ properties:
+>            - allwinner,sun8i-v3-rtc
+>            - allwinner,sun50i-h5-rtc
+>            - allwinner,sun50i-h6-rtc
+> +          - allwinner,sun50i-h616-rtc
+> +          - allwinner,sun50i-r329-rtc
+>        - items:
+>            - const: allwinner,sun50i-a64-rtc
+>            - const: allwinner,sun8i-h3-rtc
+> +      - items:
+> +          - const: allwinner,sun20i-d1-rtc
+> +          - const: allwinner,sun50i-r329-rtc
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -38,7 +43,10 @@ properties:
+>        - description: RTC Alarm 1
+> =20
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+> +
+> +  clock-names:
+> +    minItems: 1
+> =20
+>    clock-output-names:
+>      minItems: 1
+> @@ -98,7 +106,66 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: allwinner,sun8i-r40-rtc
+> +            const: allwinner,sun50i-h616-rtc
+> +
+> +    then:
+> +      clocks:
+> +        minItems: 3
+> +        maxItems: 3
 
->
-> Best regards,
-> Krzysztof
+If clocks is set to minItems: 1, you'll still get a failure.
+
+The way the schemas are checked is a bit weird, but it's not checked
+once with the sum of all the schemas, they are all checked separately.
+
+So the schema under the then here will be valid, but the global check
+property will fail because it expects 1 item.
+
+You'll need minItems: 1, maxItems: 4 for the global clocks and
+clock-names.
+
+Maxime
+
+--ihzrd562brfvvncn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYXbSGQAKCRDj7w1vZxhR
+xUS7AP9dNLk6cWYN+vxStPWF4+biVpg60Zru5IdULikRqQBmlQD/dCBOoGYPDuE0
+TtN7hEAVpGbjJcDGTznhWfsYr5rTJQM=
+=b+4w
+-----END PGP SIGNATURE-----
+
+--ihzrd562brfvvncn--
