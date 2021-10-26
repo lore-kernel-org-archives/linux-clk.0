@@ -2,126 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFD7C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Oct 2021 14:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1635FC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C178860E74
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Oct 2021 14:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E925660E0B
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Oct 2021 15:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236965AbhJZOzc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Oct 2021 10:55:32 -0400
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39442
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236058AbhJZOzc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Oct 2021 10:55:32 -0400
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        id S235577AbhJZPcO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Oct 2021 11:32:14 -0400
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56440
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235548AbhJZPcN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Oct 2021 11:32:13 -0400
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 99E834027E
-        for <linux-clk@vger.kernel.org>; Tue, 26 Oct 2021 14:53:07 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 5CFDA3F176
+        for <linux-clk@vger.kernel.org>; Tue, 26 Oct 2021 15:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1635259987;
-        bh=FLFyjOECX2AvNUG03Y16Xa3yjaSG0p5S8KEMYABunrs=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+        s=20210705; t=1635262188;
+        bh=WSJF9KCqXo5B633RP/TS84McxX2RgkL3V5mZBciirmg=;
+        h=To:Cc:References:From:Subject:Message-ID:Date:MIME-Version:
          In-Reply-To:Content-Type;
-        b=jrY61ghtCUmCMt+Khqongv7L6q1zMfjDjlL5alnq3wwWwnFqr1Ku1MouPEK5P5Fs4
-         zMvHvF6x3vdUjq027iUh21GSun/KfqphOs5SW8iZDwj/I6jozr6h29JZw7dnmEZGfM
-         7qlQKRfOfL7ZuPmxZ/iLNB6qtEjwqBu75qE8cMQkUAgXRkdmpcRe14JwkmWxrjv53E
-         a2N2i0Z3MYhuqE+CJdtLm5qood8dwBJzIEhJa478X/AlTOv83tl3NqXdPLW5M+EgwO
-         ShUurdwrCy1baZFHPgIMgUdkkz1WN4yNusfNEQpzle5W5+PhKSnJwF3QeLw9Wk9t0C
-         nyCzxFSRp/Qqg==
-Received: by mail-lj1-f199.google.com with SMTP id s5-20020a2e98c5000000b002112895b3f6so4489539ljj.21
-        for <linux-clk@vger.kernel.org>; Tue, 26 Oct 2021 07:53:07 -0700 (PDT)
+        b=SpFEJpiCSMyUIFGSrjANcYREQx3NFW09vYCzAsM89Vcql+U/oItlal9xkoJ+BCUcP
+         6eK8IppgrvYjQC/u/rU54jp6NUdxFqSwHS7UqSR2UA3pP3T7sv4POaKPdUaMcnDt6T
+         8J2ePsZb8+TsFgcrZ925i7ZhZjrCEaLKACCojaJ21AVc34T6chtWZ46gboME0N5ONM
+         SmoZ7eUlSW8witUuAj3sMe8rvovxRKuN9A91rB8zLx/dRzY/z0teb3JkbNLtVrtAvi
+         hje9ubp12df/bTwvfe7t7v0u81yK5Dk8uM9jmFHnzoWY+rSekSzlOtud8MLVzmqcNC
+         hoVOej4tIG7dA==
+Received: by mail-lf1-f71.google.com with SMTP id f21-20020a056512229500b003ffaa744cddso2317486lfu.1
+        for <linux-clk@vger.kernel.org>; Tue, 26 Oct 2021 08:29:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FLFyjOECX2AvNUG03Y16Xa3yjaSG0p5S8KEMYABunrs=;
-        b=VUfeX329WIBkmeytzSb+5xywgFncaI7AOmfTkvKrbs44p7dbEAujXBbz7Xr4CjccK8
-         oHr0zbIP5VjhpUu9QICw2PyTDrrHKpmwr5dchwhReQE13ZmZGxxk1GRJMciPbuUMndXZ
-         hRcdwk56b8T3fmx7YCyBA7Oy/nI+OncGDalbJ1ZJe3sv1eYmbQN3AbUdepWc4KUNhRDA
-         Vo6V+7HrHlOthGD+QnLQctuv4E+u48Y0LmmQSCk6DYSb7dzBIkANqSh1oEttY4r7nA9h
-         hbJKrnWVYWFfq/sXcu47NLSNg28YWDPcErvySdmLOVWnaKTffVIPSxnWytXplcFCTq93
-         ABdQ==
-X-Gm-Message-State: AOAM532XxHNRr9cckDpvAiXnSFEB1vXhXZXiaV5RrWGZNrzm5JgbDSGD
-        k8kPgQyem0M2wtkIEjociOg2bJ3k3w5qntHeAKSqYceO2qoUdCCE1lkfCjEcCcWklqyTxk9qHv0
-        1IWPBU8J5I9eE3beWjxbx3j6QJVmFCOY+a9cELA==
-X-Received: by 2002:a2e:b708:: with SMTP id j8mr26414030ljo.466.1635259987031;
-        Tue, 26 Oct 2021 07:53:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw7yFHlYp4WaoDp3jQHqEZPyAcBTUqWSTqaKAo9daRd2erHD77YdKOoek8eu9IXM/FCwnFEtg==
-X-Received: by 2002:a2e:b708:: with SMTP id j8mr26414005ljo.466.1635259986876;
-        Tue, 26 Oct 2021 07:53:06 -0700 (PDT)
+        bh=WSJF9KCqXo5B633RP/TS84McxX2RgkL3V5mZBciirmg=;
+        b=YEKMv1rHBjDM4Qsx0JEHQoBDo+nplfDKGEqmRr8G4bYPLs4kQosPNVJqJr6kA7qlp8
+         7Zc5HX7k9cc+mXUwTyqnrSHgS9NG1QUK7V+ZLVcvhjeHU1MG+C7GGSmc//2XDeDfeb8g
+         CooIZSNcjh1MJRpLvKTytCrLjXVERP+0tNkfNYTk8muOrYaELK3+hdZusDRYyHYxxHsT
+         puzkobMwCWVAnkCW8ykw9haoEMVcxVGSpZfH5/saBfPF85h7/dhv86o8yCAesPASoz9X
+         pQ73Ck6dEE8+NcBQkVIn7T2siF+iZTNUI3OTbba+B7LiogRftjMe8b+PRzyrK4MxKss4
+         8EeA==
+X-Gm-Message-State: AOAM530ezIjMVgL6rPbFJY/bKVURF0DdX1Srvrh+rNIx9dzRh/iy2AJ8
+        LQFNS0qre+twcig1tmUQFOqa4VKb46hPNKEq9DzGNuNydLQl95xcmzFoz7Mx2bxbSZIi1BtLebL
+        qwr3ESck8TrhDP9a/lG+2WYe+J1mQvSOX33KuWA==
+X-Received: by 2002:a05:651c:230e:: with SMTP id bi14mr26414046ljb.467.1635262187755;
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyk7sNJbWjdv3xhjfE+UFgqNsGbUUen1K1mx8YhCM7+SWcWNWstn2HGR1lnvG7kYqDxBpr9RA==
+X-Received: by 2002:a05:651c:230e:: with SMTP id bi14mr26414022ljb.467.1635262187572;
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
 Received: from [192.168.3.161] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id f8sm1956093lfq.168.2021.10.26.07.53.05
+        by smtp.gmail.com with ESMTPSA id bp40sm441461lfb.78.2021.10.26.08.29.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Oct 2021 07:53:06 -0700 (PDT)
-Subject: Re: [PATCH v2 1/1] clk: samsung: exynos850: Register clocks early
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Tue, 26 Oct 2021 08:29:47 -0700 (PDT)
+To:     Will McVicker <willmcvicker@google.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20211025161254.5575-1-semen.protsenko@linaro.org>
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-team@android.com, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20211015190515.3760577-1-willmcvicker@google.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Message-ID: <cc106f70-7352-c1e3-7bdd-72e070877be3@canonical.com>
-Date:   Tue, 26 Oct 2021 16:53:05 +0200
+Subject: Re: [PATCH v1] clk: samsung: update CPU clk registration
+Message-ID: <cbdbf565-6403-39d3-a4cd-817e515d89a0@canonical.com>
+Date:   Tue, 26 Oct 2021 17:29:46 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20211025161254.5575-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211015190515.3760577-1-willmcvicker@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/10/2021 18:12, Sam Protsenko wrote:
-> Some clocks must be registered before init calls. For example MCT clock
-> (from CMU_PERI) is needed for MCT timer driver, which is registered
-> with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-> clk-exynos850 platform driver init, it's already too late. Inability to
-> get "mct" clock in MCT driver leads to kernel panic, as functions
-> registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-> can't be fixed either, as it's acting as a clock source and it's
-> essential to register it in start_kernel() -> time_init().
+On 15/10/2021 21:05, Will McVicker wrote:
+> Convert the remaining exynos clock drivers to use
+> samsung_clk_register_cpu() or if possible use
+> samsung_cmu_register_one(). With this we can now make
+> exynos_register_cpu_clock() a static function so that future CPU clock
+> registration changes will use the samsung common clock driver.
 > 
-> Let's register CMU_PERI clocks early, using CLK_OF_DECLARE_DRIVER(), and
-> do all stuff relying on "struct dev" object (like runtime PM and
-> enabling bus clock) later in platform driver probe. Basically
-> CLK_OF_DECLARE_DRIVER() matches CMU compatible, but clears OF_POPULATED
-> flag, which allows the same device to be matched again later.
+> The main benefit of this change is that it standardizes the CPU clock
+> registration for the samsung clock drivers.
 > 
-> Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-> ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-> drivers/clk/mediatek/clk-mt2712.c.
-> 
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Will McVicker <willmcvicker@google.com>
 > ---
-> Changes in v2:
->   - Register only CMU_PERI clocks early
-> 
-> Notes:
->   - This patch should be applied on top of CMU_APM series
->     (clk: samsung: exynos850: Implement CMU_APM domain)
-> 
->  drivers/clk/samsung/clk-exynos850.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
+>  drivers/clk/samsung/clk-cpu.c        |  2 +-
+>  drivers/clk/samsung/clk-cpu.h        |  7 ----
+>  drivers/clk/samsung/clk-exynos3250.c | 54 ++++++++++++++--------------
+>  drivers/clk/samsung/clk-exynos4.c    | 25 +++++++------
+>  drivers/clk/samsung/clk-exynos5250.c | 13 +++----
+>  drivers/clk/samsung/clk-exynos5420.c | 27 +++++++++-----
+>  6 files changed, 67 insertions(+), 61 deletions(-)
 > 
 
-
+Looks good. Tested also on Exynos5422 board:
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
+Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
 Best regards,
 Krzysztof
