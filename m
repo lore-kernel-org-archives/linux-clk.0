@@ -2,119 +2,165 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DBAC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 18:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D997DC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 19:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2179360F38
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 18:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25F56109F
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 19:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240501AbhJ0S4h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Oct 2021 14:56:37 -0400
-Received: from mail-ot1-f51.google.com ([209.85.210.51]:43536 "EHLO
-        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbhJ0S4g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Oct 2021 14:56:36 -0400
-Received: by mail-ot1-f51.google.com with SMTP id y15-20020a9d460f000000b0055337e17a55so4952365ote.10;
-        Wed, 27 Oct 2021 11:54:10 -0700 (PDT)
+        id S243696AbhJ0TfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Oct 2021 15:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57714 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243694AbhJ0TfD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Oct 2021 15:35:03 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA123C061570;
+        Wed, 27 Oct 2021 12:32:37 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id x27so8447098lfu.5;
+        Wed, 27 Oct 2021 12:32:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OTBdPJFa+ah3P9FuQhKUL9RznqjaKHz1+CuZIYV3wsc=;
+        b=agih9qYZmYcntiWOtjjpqFInO/NVgVrWGE905q2yfSEyyV2BoggudSRC0uWF+1avff
+         7h8uADNMgxE72KU5FMyuapAtk8t88XRt2jfl54CZfqYvfnhCV75du+zNwvIkpk3yCgVL
+         5o9kX2dk8r96+D9juLvJdGhh7jbf4BxzAJXKAEQRsRoc3C6FmbCmEAsyjnlucSt2pWtU
+         83u5VeuC3bsmPi7byNO1u5d3lYPRedAvTMiCRtXBDeyQCqpUwvSHd2PVm0VgcshYs06T
+         bsc+rK79JJB2gmNcE8cTUf426Ht1SndEa2i1Np6mV8Ss5aEDyzIPzgP6y8adlqO2cjBC
+         Qp1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0BMTeXCdhZ7VaC/eWMcigTkrnP2pN01kWWzYJFIQyu0=;
-        b=HO7aDRTVppu2yosyAPICQSxU5lZ2c/IAU7mENzj2Yo+g35S4jyN81S/nOvQFt8IeMa
-         iSxbgkOPknv3UJfXJ6ZB+rNIIieF0nX7pT8u9A8ugyviKYXfqJ9GynfPJGnXg0lY3wQz
-         k+P/M9SLXiqEYYLMKu7PHGki/0gOxznCv6Yag5tQvV6ldvgXyYq6qPGbc5y7bzhD/xNh
-         tdNfTP9V/rlGW4/88xZTr+UVPxpAxxJtswzyAWYyna3mLcyjIWZtMVpTYFYbMfJVcQDG
-         08mRvET7OYyxzDFsLcVnMNoYavmi2C4ydmBkWJk+4qYzGPdt776gKCgEEypNcqjYjSKt
-         mK/A==
-X-Gm-Message-State: AOAM5325/P09KwSftqsB9AjpEOKVfdPFpMMIgKDiIDS9b1odyIR+0dJL
-        T/wbSmw5pyTjdh15j7B3wrShb8sE7KZPGVLcXKc=
-X-Google-Smtp-Source: ABdhPJw0AMpRmI1zFTOHuehxHHn8AZdWi9FzbUBykmyZ1w/j7Rjw32Mx1RuAL2p+wihj2Y1Je++etttIOPSnN3B9SVM=
-X-Received: by 2002:a05:6830:1af0:: with SMTP id c16mr25788038otd.16.1635360850599;
- Wed, 27 Oct 2021 11:54:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211025094119.82967-1-hdegoede@redhat.com> <20211025094119.82967-3-hdegoede@redhat.com>
-In-Reply-To: <20211025094119.82967-3-hdegoede@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 27 Oct 2021 20:53:59 +0200
-Message-ID: <CAJZ5v0h2gaVxOKL0xnDpJiO2G3zvacTVbQajYaDBcXuxaoEjrg@mail.gmail.com>
-Subject: Re: [PATCH v4 02/11] i2c: acpi: Use acpi_dev_ready_for_enumeration() helper
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OTBdPJFa+ah3P9FuQhKUL9RznqjaKHz1+CuZIYV3wsc=;
+        b=swytmm9GqTNoiVEB0sjt8W1+egJtPJWbQlQQ+sgQGn414UHhJljPu3+4A0QgiX2nL8
+         qcPVDUqRkOiAJ0lmpJdQzDGyMXMH0bTdh8rLYoBoLU4Fd4VCaid51z68mjFH1JLEE2BZ
+         8drkT9jab2dwT76tT7SxEfnv0WkKwoXo/BHJP6aFo1VwlK3vCYY6TkHJeXtZSKifHz70
+         IrkEl7v7yu0at4dvkU/sPVUztIk/GjpK1aTN9rHfe+qYxIsjQJRuUxnlVm2RW7+lodOy
+         KHvBQITrRd1zMBEGay9y0afhUqaLG3LrKCBhZFGjb9lM3M+renxA05LUS8Qbe/IUeFA5
+         s/+g==
+X-Gm-Message-State: AOAM533JRFbYKM07uXdLww7TrNVEsJj78b53DFNv+nRkbzGv0CuAgPGv
+        Mu+Fmyfrhsp4YlCfF1HprWk=
+X-Google-Smtp-Source: ABdhPJyaiRz/Ui6iA1xiTx91a3t+RwtvYGxJT3StDDfm32LrCKRStVdKsTDTbJW/siFtx98e9FjJ2w==
+X-Received: by 2002:a05:6512:1510:: with SMTP id bq16mr31326351lfb.268.1635363156058;
+        Wed, 27 Oct 2021 12:32:36 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-41-28.dynamic.spd-mgts.ru. [46.138.41.28])
+        by smtp.googlemail.com with ESMTPSA id t3sm81030lfc.216.2021.10.27.12.32.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 12:32:35 -0700 (PDT)
+Subject: Re: [PATCH v14 01/39] soc/tegra: Enable runtime PM during OPP
+ state-syncing
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Wolfram Sang <wsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+References: <20211025224032.21012-1-digetx@gmail.com>
+ <20211025224032.21012-2-digetx@gmail.com>
+ <CAPDyKFr7VY73cQugSA5n-p_oXf43o1M-7s3-M+fnk0656h25UA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8076eee8-ac8b-90a7-b87a-35e40d7300fb@gmail.com>
+Date:   Wed, 27 Oct 2021 22:32:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFr7VY73cQugSA5n-p_oXf43o1M-7s3-M+fnk0656h25UA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 11:42 AM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> The clk and regulator frameworks expect clk/regulator consumer-devices
-> to have info about the consumed clks/regulators described in the device's
-> fw_node.
->
-> To work around cases where this info is not present in the firmware tables,
-> which is often the case on x86/ACPI devices, both frameworks allow the
-> provider-driver to attach info about consumers to the clks/regulators
-> when registering these.
->
-> This causes problems with the probe ordering wrt drivers for consumers
-> of these clks/regulators. Since the lookups are only registered when the
-> provider-driver binds, trying to get these clks/regulators before then
-> results in a -ENOENT error for clks and a dummy regulator for regulators.
->
-> To ensure the correct probe-ordering the ACPI core has code to defer the
-> enumeration of consumers affected by this until the providers are ready.
->
-> Call the new acpi_dev_ready_for_enumeration() helper to avoid
-> enumerating / instantiating i2c-clients too early.
->
-> Acked-by: Wolfram Sang <wsa@kernel.org>
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+27.10.2021 18:06, Ulf Hansson пишет:
+> On Tue, 26 Oct 2021 at 00:45, Dmitry Osipenko <digetx@gmail.com> wrote:
+>>
+>> GENPD core now can set up domain's performance state properly while device
+>> is RPM-suspended. Runtime PM of a device must be enabled during setup
+>> because GENPD checks whether device is suspended and check doesn't work
+>> while RPM is disabled. Instead of replicating the boilerplate RPM-enable
+>> code around OPP helper for each driver, let's make OPP helper to take care
+>> of enabling it.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Just a minor nitpick, see below. Nevertheless feel free to add:
+> 
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Kind regards
+> Uffe
+> 
+>> ---
+>>  drivers/soc/tegra/common.c | 16 ++++++++++++++++
+>>  1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+>> index cd33e99249c3..d930a2b4facc 100644
+>> --- a/drivers/soc/tegra/common.c
+>> +++ b/drivers/soc/tegra/common.c
+>> @@ -10,6 +10,7 @@
+>>  #include <linux/export.h>
+>>  #include <linux/of.h>
+>>  #include <linux/pm_opp.h>
+>> +#include <linux/pm_runtime.h>
+>>
+>>  #include <soc/tegra/common.h>
+>>  #include <soc/tegra/fuse.h>
+>> @@ -43,6 +44,7 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+>>  {
+>>         unsigned long rate;
+>>         struct clk *clk;
+>> +       bool rpm_enabled;
+>>         int err;
+>>
+>>         clk = devm_clk_get(dev, NULL);
+>> @@ -57,8 +59,22 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+>>                 return -EINVAL;
+>>         }
+>>
+>> +       /*
+>> +        * Runtime PM of the device must be enabled in order to set up
+>> +        * GENPD's performance properly because GENPD core checks whether
+>> +        * device is suspended and this check doesn't work while RPM is
+>> +        * disabled.
+>> +        */
+>> +       rpm_enabled = pm_runtime_enabled(dev);
+>> +       if (!rpm_enabled)
+>> +               pm_runtime_enable(dev);
+> 
+> This makes sure the OPP vote below gets cached in genpd for the
+> device. Instead, the vote is done the next time the device gets
+> runtime resumed.
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thanks, I'll extend the code's comment with this text in v15.
 
-> ---
->  drivers/i2c/i2c-core-acpi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
-> index 546cc935e035..71eee5bc17ab 100644
-> --- a/drivers/i2c/i2c-core-acpi.c
-> +++ b/drivers/i2c/i2c-core-acpi.c
-> @@ -144,9 +144,12 @@ static int i2c_acpi_do_lookup(struct acpi_device *adev,
->         struct list_head resource_list;
->         int ret;
->
-> -       if (acpi_bus_get_status(adev) || !adev->status.present)
-> +       if (acpi_bus_get_status(adev))
->                 return -EINVAL;
->
-> +       if (!acpi_dev_ready_for_enumeration(adev))
-> +               return -ENODEV;
-> +
->         if (acpi_match_device_ids(adev, i2c_acpi_ignored_device_ids) == 0)
->                 return -ENODEV;
->
-> --
-> 2.31.1
->
+I also noticed that won't hurt to add extra sanity check of whether RPM
+indeed got enabled since it could be disabled multiple times in a
+nesting fashion.
+
+> I don't have an issue doing it like this, but at the same time it does
+> remove some flexibility for the drivers/subsystem that calls
+> tegra_core_dev_init_opp_state().
+> 
+> Isn't it better to leave this to be flexible - or you prefer to have
+> it done like this for everybody?
+
+All the current users of the helper function want this behaviour by
+default. It's unlikely that we will ever have a user that will want
+different bahaviour, but even then it won't be a problem to add extra
+flag to struct tegra_core_opp_params to specify that special case.
