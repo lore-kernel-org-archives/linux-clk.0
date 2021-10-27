@@ -2,60 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF69C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 01:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3681FC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 01:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC1C061078
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 01:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1154761090
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 01:35:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237455AbhJ0BcQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Oct 2021 21:32:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34910 "EHLO mail.kernel.org"
+        id S237555AbhJ0Bhl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Oct 2021 21:37:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231458AbhJ0BcQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Oct 2021 21:32:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9A42D61040;
-        Wed, 27 Oct 2021 01:29:51 +0000 (UTC)
+        id S234326AbhJ0Bhi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Oct 2021 21:37:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0020161090;
+        Wed, 27 Oct 2021 01:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635298191;
-        bh=EMt/dllsPExZmeLgiFTfjhC3BFyE2z/pbIGXK4RgpE0=;
+        s=k20201202; t=1635298514;
+        bh=wzUAKibokzpu1YYUAj4sR9y15lTC/Rx79Ak5rO0PQZU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Sihtpe8R22x1AsqC3LzWYrfUTRfCMSNLB6HXzrfGBkYKO44ejcUCedv/fIXR/Zef7
-         uOsSIvjnxJmqs9YiXBdJ4xjrDPbhnY5//StfY5PsHTw7AMwc8oyTPBaD6BQ7qpJtWI
-         YoevB1eHAWGOtKSLKssrcn+uI3Ov/gJ99QMrR+6Yr6vuRxcaW+g0cTknC52Q5DpWhx
-         4TE9vW/gLFXrrMaJ6mFJBAL8L0BecQpGbhtJC25jiFCOz1QOUzF+fvSBQvjq5yShYb
-         wpr7uFr+kc4c+NX7HLw+3MajoxeMivxEhw9bl8QJIdozsB3R9Z6qkLeBdf8FVnCMTQ
-         n3Kkgezk4G/9A==
+        b=EH5Y6cMpcuJKqlSdDq2VydAAFoQZQjyT+D5XZ+pC1kt4jIOgZtz6l1AcfuSYg0gvU
+         7FZZOtBNVr+tAKG2J0r/0dKJRTdohIkSplhM/q1s0ZXOeApOqR3JMzGl8bUBSzo0Jt
+         7Wpr2pMKAdFg0xedbO+r+w4Yt36qJjADvGmAOaNqJnsDjn79fvWcakUfHp11YR1Sqs
+         5qUSi7ToonoEIMcp90UxdyLqMi/n0jx4tggYZdiJibfJGMFcapfmSLnynWdD6umHI6
+         RUknELPSYTTf6k1nH8JJKohSe8BzrXjeY/TqDycsGdwEd6+dtUa+pisSFWW0DXWAx8
+         5L/eI9MaxhPPA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211021122248.33261-1-nicolas.ferre@microchip.com>
-References: <20211021122248.33261-1-nicolas.ferre@microchip.com>
-Subject: Re: [GIT PULL] clk: at91: clk changes for 5.16
+In-Reply-To: <2dad9397-425f-baaf-e0fc-5a9e6e39de32@microchip.com>
+References: <20211011112719.3951784-1-claudiu.beznea@microchip.com> <2dad9397-425f-baaf-e0fc-5a9e6e39de32@microchip.com>
+Subject: Re: [PATCH v5 00/15] clk: at91: updates for power management and dvfs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        nicolas.ferre@microchip.com
-Date:   Tue, 26 Oct 2021 18:29:50 -0700
-Message-ID: <163529819030.15791.7009809622910069319@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ludovic.desroches@microchip.com,
+        alexandre.belloni@bootlin.com
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        mturquette@baylibre.com
+Date:   Tue, 26 Oct 2021 18:35:12 -0700
+Message-ID: <163529851265.15791.12903982814427348260@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting nicolas.ferre@microchip.com (2021-10-21 05:22:48)
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->=20
+Quoting Nicolas Ferre (2021-10-15 01:33:38)
 > Stephen,
 >=20
-> Here are the clk changes for 5.16. I took the initiative to create a
-> Pull-Request for it as it's surely more convenient, as I proposed in my
-> reply to Claudiu's cover letter.
+> On 11/10/2021 at 13:27, Claudiu Beznea wrote:
+> > Hi,
+> >=20
+> > This series addresses the clock power management for SAMA7G5 and also
+> > updates the master clock driver and sam9x60-pll driver to accommodate
+> > the requests at [1] and avoid overclocking of CPU and MCK0 domains while
+> > changing the frequency via DVFS.
+>=20
+> I've just added my Ack tags to the whole series. I think that it brings=20
+> so much important additions to our new SoC as well as fixing some (non=20
+> urgent) bugs.
+>=20
+> In order to streamline the process of including this series to upstream, =
 
-Thanks. I didn't pick it up this time but I can pick it up next time. I
-wanted to take the clk.c patch via a different branch.
+> do you want me to send you a pull-request? against latest clk-at91=20
+> branch in your tree?
+>=20
+
+That's fine. Just let me know if you want to do that in the future. For
+now I picked them all up and pushed it out.
