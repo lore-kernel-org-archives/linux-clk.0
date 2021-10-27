@@ -2,130 +2,203 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08259C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 16:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E305C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 18:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5233610C7
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 16:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31B3D610A6
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Oct 2021 18:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235480AbhJ0QEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Oct 2021 12:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242889AbhJ0QEF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Oct 2021 12:04:05 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886A9C0613B9
-        for <linux-clk@vger.kernel.org>; Wed, 27 Oct 2021 09:01:39 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id q16so5528787ljg.3
-        for <linux-clk@vger.kernel.org>; Wed, 27 Oct 2021 09:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tkCgQJkUSUXPKa9PPaG98xGW8ORLrJoeUL+lFNuAKlI=;
-        b=JuXVzxzuz+qv/oGJh4H3FGcoT4i1PRfFmZGPc6lEW/N9sVUHQywzVSA6QOXoew8eMN
-         2VuWytyylFxvVVv4NHBnyfc0Qf66xZSXHV0PNkrxsRogr/txx31V1QIsqMYUDW3/lS/Q
-         puLCWl/i68QH+uN4xJWqYNAHxq8s/ABltDsTffJInX/ueXsemQ/gPVFmTZ93Ha2IFRxA
-         fbB3/Ci3reBmhbmZLY5Agp3ldPGxwIMR97E/B9IL/d5CWC5Xg4LcOyrcEsyeLsDfw7q4
-         1r0gIxWuTyvt/wIwtmEfq/EQYkL7wpbE/0EDTKaVxaRJS8WIN0jvlGqgTJ1Igaa+L78p
-         ZceQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tkCgQJkUSUXPKa9PPaG98xGW8ORLrJoeUL+lFNuAKlI=;
-        b=58zT7qNbZp2zFr0v9sgC0WCwW6aacA5hG7fu6GzdJ5VnAfgPEsgEinu8MB9w1M9G6H
-         9ImhFsAMI6QZ/KIO6N3JW3SKKInX0ZiBniRdA3GtrAYxRgxHJj/KPAprhSQ6dbsZtZfE
-         XJxoEH8P1Ayf3xlT/moLI57YURnty37Kj5WzymIV9mMWDPvvVvlOqGFVM+nFXXmloACS
-         thnYifWqZbRObQ47NnYNVn3DlOdJvtroXNBsZLi6avMk2jXEIBNofAJDWMp6Ybps3Dd3
-         TXvmACz2xlFXgixC77MWPL0TTmpyZ73wCGi3Ddr7/YxJDsAjNAi7nXPH8Y1+oW+Nu7Lj
-         5IOw==
-X-Gm-Message-State: AOAM531+x8L7uanQ1ZotUJoDMnWaDCxI/3kpxH0e+dmU/AqpynLlG7Kf
-        Ks1Pj4a8r7N5BnDND4RSi8eT6gwAcBfaCfqOSV/nvg==
-X-Google-Smtp-Source: ABdhPJyLTmxvQZ0j5lQGHsFYcydy71+PhRmg+SxpLEXAm87AnzbFNmKI1TyiM271I2tAbjx+BOKyohjDU7jCER0qQM4=
-X-Received: by 2002:a2e:5c45:: with SMTP id q66mr22976435ljb.273.1635350497549;
- Wed, 27 Oct 2021 09:01:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211025224032.21012-1-digetx@gmail.com>
-In-Reply-To: <20211025224032.21012-1-digetx@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 27 Oct 2021 18:01:01 +0200
-Message-ID: <CAPDyKFrA2Jcb5BmaFmajtdUCmpwoPjAAvPC_MhoWwjDXJynD=w@mail.gmail.com>
-Subject: Re: [PATCH v14 00/39] NVIDIA Tegra power management patches for 5.17
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
+        id S243477AbhJ0STP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Oct 2021 14:19:15 -0400
+Received: from smtprelay0188.hostedemail.com ([216.40.44.188]:60032 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S243507AbhJ0SSv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Oct 2021 14:18:51 -0400
+X-Greylist: delayed 4652 seconds by postgrey-1.27 at vger.kernel.org; Wed, 27 Oct 2021 14:18:42 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id D94841811FE43;
+        Wed, 27 Oct 2021 16:58:46 +0000 (UTC)
+Received: from omf01.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 88CE218027A8A;
+        Wed, 27 Oct 2021 16:58:41 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf01.hostedemail.com (Postfix) with ESMTPA id 34EC11727C;
+        Wed, 27 Oct 2021 16:57:52 +0000 (UTC)
+Message-ID: <20ffb5604269f9add568b343701d42097c599c89.camel@perches.com>
+Subject: Re: dt-bindings: treewide: Update @st.com email address to
+ @foss.st.com
+From:   Joe Perches <joe@perches.com>
+To:     Patrice CHOTARD <patrice.chotard@foss.st.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        maxime coquelin <mcoquelin.stm32@gmail.com>,
+        alexandre torgue <alexandre.torgue@foss.st.com>,
+        michael turquette <mturquette@baylibre.com>,
+        stephen boyd <sboyd@kernel.org>,
+        herbert xu <herbert@gondor.apana.org.au>,
+        "david s . miller" <davem@davemloft.net>,
+        david airlie <airlied@linux.ie>,
+        daniel vetter <daniel@ffwll.ch>,
+        thierry reding <thierry.reding@gmail.com>,
+        sam ravnborg <sam@ravnborg.org>,
+        yannick fertre <yannick.fertre@foss.st.com>,
+        philippe cornu <philippe.cornu@foss.st.com>,
+        benjamin gaignard <benjamin.gaignard@linaro.org>,
+        vinod koul <vkoul@kernel.org>,
+        ohad ben-cohen <ohad@wizery.com>,
+        bjorn andersson <bjorn.andersson@linaro.org>,
+        baolin wang <baolin.wang7@gmail.com>,
+        jonathan cameron <jic23@kernel.org>,
+        lars-peter clausen <lars@metafoo.de>,
+        olivier moysan <olivier.moysan@foss.st.com>,
+        arnaud pouliquen <arnaud.pouliquen@foss.st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
         Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Content-Type: text/plain; charset="UTF-8"
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        dillon min <dillon.minfei@gmail.com>,
+        Marek Vasut <marex@denx.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        Ludovic Barre <ludovic.barre@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        pascal Paillet <p.paillet@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Le Ray <erwan.leray@foss.st.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dmaengine@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-media@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org
+Date:   Wed, 27 Oct 2021 09:57:50 -0700
+In-Reply-To: <865a4055-5c2f-0793-bdce-9f04eac167d2@foss.st.com>
+References: <20211020065000.21312-1-patrice.chotard@foss.st.com>
+         <22fb6f19-21eb-dcb5-fa31-bb243d4a7eaf@canonical.com>
+         <878ryoc4dc.wl-maz@kernel.org>
+         <82492eb2-5a5e-39a2-a058-5e2ba75323e0@foss.st.com>
+         <865a4055-5c2f-0793-bdce-9f04eac167d2@foss.st.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Stat-Signature: d7f39g9ut4x78f1qzm6ux4u3z7warbny
+X-Rspamd-Server: rspamout02
+X-Rspamd-Queue-Id: 34EC11727C
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/mP1yO9Xb7wezovkJWdqP2VR+2BHiCxac=
+X-HE-Tag: 1635353872-396338
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Oct 2021 at 00:45, Dmitry Osipenko <digetx@gmail.com> wrote:
->
-> This series adds runtime PM support to Tegra drivers and enables core
-> voltage scaling for Tegra20/30 SoCs, resolving overheating troubles.
->
-> All patches in this series are interdependent and should go via Tegra tree
-> for simplicity.
->
-> Changelog:
->
-> v14: - Fixed missing runtime PM syncing on removal of drivers, which was
->        spotted by Ulf Hansson in v13.
->
->      - clk-device driver now resumes RPM on system suspend instead of
->        preparing clock which it backs. This was suggested by Ulf Hansson.
->
->      - clk-device driver now syncs power domain performance unconditionally
->        during driver's probe time since GENPD API allows to do this now.
->        It was spotted by Ulf Hansson.
->
->      - Added new "Enable runtime PM during OPP state-syncing" patch, which
->        allows drivers to sync state at any time. Previously drivers were
->        obligated to take care of enabling RPM at the "right" time.
->
->      - Moved runtime PM initialization/uninitialization of DRM drivers that
->        use host1x channel to host1x client init/deinit phase. I noticed that
->        there is UAF problem because RPM-suspend callback waits until channel
->        is idling and channel is already released/freed during driver's removal
->        phase.
->
->      - Added system suspend support to the new NVDEC DRM driver.
->
->      - Added missing pm_runtime_mark_last_busy() to DRM driver.
->
->      - Corrected VDE GENPD patch which previously made video decoder clock
->        always-enabled by mistake if legacy PD code path was used. It was
->        spotted while we were testing VDE on Tegra114 that doesn't support
->        GENPD yet.
->
->      - Added ack from Peter Chen to the USB patch that he gave to v13.
->
->      - Changed OPP table names in accordance to the new naming scheme
->        required by the recent core OPP binding.
->
->      - Added 500MHz memory OPP entry used by ASUS Transformer tablets.
+On Wed, 2021-10-27 at 15:56 +0200, Patrice CHOTARD wrote:
+> On 10/27/21 8:11 AM, Patrice CHOTARD wrote:
+> > On 10/20/21 1:39 PM, Marc Zyngier wrote:
+> > > On Wed, 20 Oct 2021 08:45:02 +0100,
+> > > Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
+> > > > On 20/10/2021 08:50, patrice.chotard@foss.st.com wrote:
+> > > > > From: Patrice Chotard <patrice.chotard@foss.st.com>
+> > > > > 
+> > > > > Not all @st.com email address are concerned, only people who have
+> > > > > a specific @foss.st.com email will see their entry updated.
+> > > > > For some people, who left the company, remove their email.
+> > > > Also would be nice to see here explained *why* are you doing this.
+> > > 
+> > > And why this can't be done with a single update to .mailmap, like
+> > > anyone else does.
+> > 
+> > Thanks for the tips, yes, it will be simpler.
+> 
+> I made a try by updating .mailmap with adding a new entry with my @foss.st.com email :
+> 
+>  Pali Rohár <pali@kernel.org> <pali.rohar@gmail.com>
+>  Paolo 'Blaisorblade' Giarrusso <blaisorblade@yahoo.it>
+> +Patrice Chotard <patrice.chotard@foss.st.com> <patrice.chotard@st.com>
+>  Patrick Mochel <mochel@digitalimplant.org>
+>  Paul Burton <paulburton@kernel.org> <paul.burton@imgtec.com>
+> 
+> But when running ./scripts/get_maintainer.pl Documentation/devicetree/bindings/arm/sti.yaml, by old email is still displayed
+> 
+> Rob Herring <robh+dt@kernel.org> (maintainer:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> Patrice Chotard <patrice.chotard@st.com> (in file)
+> devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS)
+> linux-kernel@vger.kernel.org (open list)
+> 
+> By default, the get_maintainer.pl script is using .mailmap file ($email_use_mailmap = 1).
+> 
+> It seems there is an issue with get_maintainer.pl and maintainer name/e-mail found in yaml file ?
 
-Besides those minor nitpicks/questions that I have sent for patch1 and
-patch29, the series looks good to me!
+I'm of two minds whether it's an "issue" actually.
 
-Feel free to add, for the whole series:
+get_maintainer is not the only tool used to create email
+address lists.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Some actually read files like MAINTAINERS or .dts or .yaml
+files directly to find maintainer addresses.
 
-Kind regards
-Uffe
+So If your name and email address is listed in an source file
+where nominally active email addresses are entered then I
+believe .mailmap should not modify it.
+
+So I believe email addresses in each file should be updated
+in preference to using a mailmap entry for nominally active
+email addresses in these files.
+
+---
+
+$ cat Documentation/devicetree/bindings/arm/sti.yaml
+# SPDX-License-Identifier: GPL-2.0
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/arm/sti.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: ST STi Platforms Device Tree Bindings
+
+maintainers:
+  - Patrice Chotard <patrice.chotard@st.com>
+
+
+
