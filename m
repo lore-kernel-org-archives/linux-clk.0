@@ -2,47 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8234CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 03:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2916C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 04:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 540C76103B
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 03:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA7761051
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 04:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbhJ2Dsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Oct 2021 23:48:46 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:39419 "EHLO
+        id S231695AbhJ2Erk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 00:47:40 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:35267 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231611AbhJ2Dsp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Oct 2021 23:48:45 -0400
+        by vger.kernel.org with ESMTP id S231649AbhJ2Erk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 00:47:40 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id B08B95C01C2;
-        Thu, 28 Oct 2021 23:46:16 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 674C75C0148;
+        Fri, 29 Oct 2021 00:45:12 -0400 (EDT)
 Received: from imap43 ([10.202.2.93])
-  by compute2.internal (MEProxy); Thu, 28 Oct 2021 23:46:16 -0400
+  by compute2.internal (MEProxy); Fri, 29 Oct 2021 00:45:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
         mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=4ecynQE/mi8JhloxKEfsAbzg5Np3viO
-        3Lizq0tTL4VY=; b=X2X2PCsmSdbzcEeXZWbW+ZXCPG7jmpVFtvff0XV+5qtXwQY
-        +rymTSK1eEb7us4kdoRhOO45meBl6tUxhn5VGOA9PVMvkVJVLpz7yemP5tibrz5g
-        LeccPkKhAGPB6grIs+vsPeVWAwSEV66B1RtTI9qQ8ZF8xVZaUH+PVFNYT3NJ19iU
-        c5R+WmmytsLvgjm83EMTRqW0aI2ml8xSqeMJQcZZmTqGPNd/qD2xHwb1hSeRNX+N
-        7dDQJNc27WrA25ygdXdtnB1jQT+BFzPRpg8s9E45skQv1kiuLjZs8LMldme51/r+
-        /J8yDGbZXOYhk/shNWsvOpJhPqpKOn07SDFjraA==
+        :subject:content-type; s=fm1; bh=vyy231FXuKUqgqLMipsH9fLVHErGre0
+        LfOy72BrnbEQ=; b=dvUuDJ2CvRs13MLkeEmKdxA8TKvyCW26Ho3ONXVwBfP5Sov
+        UWsftteHbY6yZcTS8IDvxVKK3OOM+E66KEIxA1VzWcuE2cQlGPKu7jfHBb3Jg2pv
+        0uWxMsMZ3GIEz8fQAATVjmGHKoXsxcqYZYuNTOiL5RK0A8S9mefoUz7vXxl73LBt
+        nt8lbuWNOkTEaT1yPlxOvqsIZdBy6ovpUfGiKPXDxACYaLD3lkq6vpSC8QM+7XIo
+        wcmltqbKa9gHCz6m+pZfxgD2K1bgkPNJlaAdQ3Vy52sAECLnWA7dpG1vpAPqnRMW
+        xHQZ+G5oXKPABt2ne9xdqor4+jvudNXUN5nusVw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=4ecynQ
-        E/mi8JhloxKEfsAbzg5Np3viO3Lizq0tTL4VY=; b=PuVcCq+viEy2hxryrBJalc
-        8GpInWN5x6d97JrHckjCLXXsvpNvE2snvQadDk/4kWLlbuUMx+9NrRixpw1RRAuO
-        F/ud8NXOykyOgey9LdBhlmOx5HoPTIyfzVuBf5720h4V+dq7O66r5N+uAbcAgFHw
-        Z2k/bVGeLChB5wF/Q44Oa8H8JGZj8uP3C8NVSzratoIIbKg3776YuW8X8m8lAjwG
-        h1OWNdeKFJ7GATWDLP0+tcFKbKaUhhfdb8NqE0P4i4Wt7X08my6GxraaKMmmSDl6
-        UwUJO360tr+doufy2J6CANys0TyWwzF7eji36GLIibcXiBji7wa0BSp6sqDAuyMw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=vyy231
+        FXuKUqgqLMipsH9fLVHErGre0LfOy72BrnbEQ=; b=CHgcXEIeSsNkqm7hyqSJWY
+        4lrO9aCJD4YLLF5URdM8IIT++KOc8aDplRTD2CgorKwco1LTgKcehU5Rl1yLsRrD
+        PLSBt6f9bUtIRfwTTErToDzjTFIPC5FuwpZZ6sZ65F6bqD/1XCO2PosBdAsWkYoL
+        upU/eDaOPlIV9/7plim5FL+Ubk9HeGcb0PT4OSIiZZUIfPpec8+T9NqZJZLsn7QU
+        5mXpesi8r6WLc9ucmrGF2NUqYbYiGVPqBj4sJ+lgzC4+RhXyvfMe5H+Y6FkVEF19
+        cQMOZQYUL7jwfB1Jrdwn8/LNuXWso60Zge/P/D+Ma8rYNLMfDlSNMVAwpRXFL7QQ
         ==
-X-ME-Sender: <xms:hm57YejhuTlnRN1NAZ0MKP_Lhu2xfrzr93qBDeq0Dru7vCWcqT2RLQ>
-    <xme:hm57YfC78U7bBIDe1YJ33k9H4KDGXX1MvETuTGB6Lig_iDQTGt3cJu7D4sf6J1WJW
-    dSJmGvxvEq_LxDWyA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdeggedgjeduucetufdoteggodetrfdotf
+X-ME-Sender: <xms:V3x7YdA_EzzFHN85dcQ0qV3uDkSj-QVKa3H81b7cBxrITQ1nmNoJpQ>
+    <xme:V3x7YbgnPVt2nXxGinC5jeWVAjEmhoK9-nbq-ahO4HyR7GSrSazCb1u_iRYp0wQ4z
+    5NFIFhHIt3b406NTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdeggedgkeefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
@@ -50,29 +50,27 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvdeggedgjeduucetufdoteggod
     grthhtvghrnhephefhfeekgfekudevheffheeihedujeefjeevjeefudfgfeeutdeuvdeh
     hfevueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
     eprghnughrvgifsegrjhdrihgurdgruh
-X-ME-Proxy: <xmx:hm57YWH9ZiQczwe8vRqUNtLmjS3MBCBW72L2-SSXY1iED6htS_WJJw>
-    <xmx:hm57YXR0zv--y_gmEdJVfBhM4jJKi2ZSOIi5acp8DV6onfiaIWiNAg>
-    <xmx:hm57YbyRu5YjlOIEkJraZ93pT8h0VjDRp1MK0ksGUQXDju_0suz4xg>
-    <xmx:iG57Yb-E3BcvJ1T9CefPUjlYNu9YPgxm-RUcMpe5u6IZuKJFKLVSTw>
+X-ME-Proxy: <xmx:V3x7YYmRue994ko3-9ln70ORUGgTZQCEbf7gPWiV2DOsl6KZJRd4pw>
+    <xmx:V3x7YXx58wcHpmCvX4uU1t_vz4sFmJ_gsQl7ZA4xqhQgLmGM_U9rLg>
+    <xmx:V3x7YSTmY-SguYk46tWZrIR32LElTRVNa-T4zIAPSlD7Zr5CbgIZaQ>
+    <xmx:WHx7YYOavk5otQwtQUYnFLTv_53u_QqLNAkuChApYELzo3JMPFmj7g>
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 73114AC0DD1; Thu, 28 Oct 2021 23:46:14 -0400 (EDT)
+        id 74332AC0DD1; Fri, 29 Oct 2021 00:45:11 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.5.0-alpha0-1369-gd055fb5e7c-fm-20211018.002-gd055fb5e
 Mime-Version: 1.0
-Message-Id: <ad15c868-de54-41c2-8d3c-716c33b7aa8c@www.fastmail.com>
-In-Reply-To: <HK0PR06MB338025A6EC2AE11D25C34998F2B29@HK0PR06MB3380.apcprd06.prod.outlook.com>
-References: <20210925022354.10297-1-ryan_chen@aspeedtech.com>
- <CACPK8Xct9rWEu40XHWjo_uY9P7dJ=U5LBM+O3KjmjNL+9yD5QQ@mail.gmail.com>
- <HK0PR06MB338025A6EC2AE11D25C34998F2B29@HK0PR06MB3380.apcprd06.prod.outlook.com>
-Date:   Fri, 29 Oct 2021 14:15:54 +1030
+Message-Id: <8588b86d-7f46-4ce4-bd6e-432499bbc0eb@www.fastmail.com>
+In-Reply-To: <20210922235449.213631-1-joel@jms.id.au>
+References: <20210922235449.213631-1-joel@jms.id.au>
+Date:   Fri, 29 Oct 2021 15:14:51 +1030
 From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Ryan Chen" <ryan_chen@aspeedtech.com>,
-        "Joel Stanley" <joel@jms.id.au>
-Cc:     "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv3] clk:aspeed:Fix AST2600 hpll calculate formula
+To:     "Joel Stanley" <joel@jms.id.au>,
+        "Chin-Ting Kuo" <chin-ting_kuo@aspeedtech.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>
+Cc:     BMC-SW@aspeedtech.com, linux-clk@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH] clk/ast2600: Fix soc revision for AHB
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -80,140 +78,78 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On Fri, 8 Oct 2021, at 18:02, Ryan Chen wrote:
->> -----Original Message-----
->> From: Joel Stanley <joel@jms.id.au>
->> Sent: Friday, October 8, 2021 12:06 PM
->> To: Ryan Chen <ryan_chen@aspeedtech.com>
->> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
->> <sboyd@kernel.org>; Andrew Jeffery <andrew@aj.id.au>;
->> linux-clk@vger.kernel.org; Linux Kernel Mailing List
->> <linux-kernel@vger.kernel.org>
->> Subject: Re: [PATCHv3] clk:aspeed:Fix AST2600 hpll calculate formula
->> 
->> On Sat, 25 Sept 2021 at 02:24, Ryan Chen <ryan_chen@aspeedtech.com>
->> wrote:
->> >
->> 
->> A few notes on process:
->> 
->> > v2 -> v3: change else than if to directly else if
->> > v1 -> v2: add Fixes commit hash
->> 
->> As this is normally information for reviewers to know what you've changed
->> since the last version, we normally put this below the --- in the patch, which
->> means it is not included in the commit message.
->> 
->> Also we put a space between the PATCH and v3 in the subject. If you use the
->> tools, it will generate this for you:
->> 
->> git format-patch -v3 -1 --to=...
->> 
->> >
->> > AST2600 HPLL calculate formula [SCU200] HPLL Numerator(M): have fixed
->> > value depend on SCU strap.
->> > M = SCU500[10] ? 0x5F : SCU500[8] ? 0xBF : SCU200[12:0]
->> 
->> I recommend adding to the commit message the text from my first review:
->> 
->> From the datasheet:
->> 
->> CPU frequency selection
->> 000 1.2GHz
->> 001 1.6GHz
->> 010 1.2GHz
->> 011 1.6GHz
->> 100 800MHz
->> 101 800MHz
->> 110 800MHz
->> 111 800MHz
->> 
->> So when the system is running at 800MHz or 1.6GHz, the value for the
->> numerator (m) in SCU204 is incorrect, and must be overridden.
+On Thu, 23 Sep 2021, at 09:24, Joel Stanley wrote:
+> Move the soc revision parsing to the initial probe, saving the driver
+> from parsing the register multiple times.
 >
-> Yes, SCU204 will be overridden by chip design.
-> Let me clarify m is in SCU200[12:0] not SCU204. SCU204 is NB not 
-> related with freq.
+> Use this variable to select the correct divisor table for the AHB clock.
+> Before this fix the A2 would have used the A0 table.
 >
->> 
->> >
->> > if SCU500[10] = 1, M=0x5F.
->> > else if SCU500[10]=0 & SCU500[8]=1, M=0xBF.
->> > others (SCU510[10]=0 and SCU510[8]=0)
->> > depend on SCU200[12:0] (default 0x8F) register setting.
->> >
->> > HPLL Denumerator (N) =  SCU200[18:13] (default 0x2)
->> > HPLL Divider (P)         =      SCU200[22:19] (default 0x0)
->> >
->> > Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
->> > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
->> > ---
->> >  drivers/clk/clk-ast2600.c | 28 +++++++++++++++++++++++++++-
->> >  1 file changed, 27 insertions(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
->> > index 085d0a18b2b6..d30188355aaf 100644
->> > --- a/drivers/clk/clk-ast2600.c
->> > +++ b/drivers/clk/clk-ast2600.c
->> > @@ -169,6 +169,32 @@ static const struct clk_div_table
->> > ast2600_div_table[] = {  };
->> >
->> >  /* For hpll/dpll/epll/mpll */
->> > +static struct clk_hw *ast2600_calc_hpll(const char *name, u32 val) {
->> > +       unsigned int mult, div;
->> > +       u32 hwstrap = readl(scu_g6_base + ASPEED_G6_STRAP1);
->> > +
->> > +       if (val & BIT(24)) {
->> > +               /* Pass through mode */
->> > +               mult = div = 1;
->> > +       } else {
->> > +               /* F = 25Mhz * [(M + 2) / (n + 1)] / (p + 1) */
->> > +               u32 m = val  & 0x1fff;
->> > +               u32 n = (val >> 13) & 0x3f;
->> > +               u32 p = (val >> 19) & 0xf;
->> > +
->> 
->> Add a comment:
->> 
->> /* If the CPU is running at 800Mhz. */
->> 
->> > +               if (hwstrap & BIT(10))
->> > +                       m = 0x5F;
->> 
->> /* If the CPU is running at 1600Mhz. */
->> 
->> > +               else if (hwstrap & BIT(8))
->> > +                       m = 0xBF;
->> 
->> 
->> Or you could copy what I suggested in the first patch, and write it like this,
->> which I think is clear:
->> 
->> ff (hwstrap & BIT(10)) {
->>     /* CPU running at 800MHz */
->>    m = 95;
->> } else if (hwstrap & BIT(10)) {
->>     /* CPU running at 1.6GHz */
->>   m  = 191;
->> } else {
->>    /* CPU running at 1.2Ghz */
->>   m = val  & 0x1fff;
->> }
->
-> How about following 
->
-> ff (hwstrap & BIT(10)) {
->     /* CPU running at 800MHz */
->     m = 0x5F;
-> } else if (hwstrap & BIT(10)) {
+> Fixes: 2d491066ccd4 ("clk: ast2600: Fix AHB clock divider for A1")
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
 
-This is the same condition as the `if` above. That doesn't seem right.
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
->     /* CPU running at 1.6GHz */
->     m = 0xBF;
-> } else {
->    /* CPU running at 1.2Ghz */
->    m = val  & 0x1fff;
-> }
+> ---
+>  drivers/clk/clk-ast2600.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 >
->> 
+> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+> index bc3be5f3eae1..24dab2312bc6 100644
+> --- a/drivers/clk/clk-ast2600.c
+> +++ b/drivers/clk/clk-ast2600.c
+> @@ -51,6 +51,8 @@ static DEFINE_SPINLOCK(aspeed_g6_clk_lock);
+>  static struct clk_hw_onecell_data *aspeed_g6_clk_data;
+> 
+>  static void __iomem *scu_g6_base;
+> +/* AST2600 revision: A0, A1, A2, etc */
+> +static u8 soc_rev;
+> 
+>  /*
+>   * Clocks marked with CLK_IS_CRITICAL:
+> @@ -191,9 +193,8 @@ static struct clk_hw *ast2600_calc_pll(const char 
+> *name, u32 val)
+>  static struct clk_hw *ast2600_calc_apll(const char *name, u32 val)
+>  {
+>  	unsigned int mult, div;
+> -	u32 chip_id = readl(scu_g6_base + ASPEED_G6_SILICON_REV);
+> 
+> -	if (((chip_id & CHIP_REVISION_ID) >> 16) >= 2) {
+> +	if (soc_rev >= 2) {
+>  		if (val & BIT(24)) {
+>  			/* Pass through mode */
+>  			mult = div = 1;
+> @@ -707,7 +708,7 @@ static const u32 ast2600_a1_axi_ahb200_tbl[] = {
+>  static void __init aspeed_g6_cc(struct regmap *map)
+>  {
+>  	struct clk_hw *hw;
+> -	u32 val, div, divbits, chip_id, axi_div, ahb_div;
+> +	u32 val, div, divbits, axi_div, ahb_div;
+> 
+>  	clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, 25000000);
+> 
+> @@ -738,8 +739,7 @@ static void __init aspeed_g6_cc(struct regmap *map)
+>  		axi_div = 2;
+> 
+>  	divbits = (val >> 11) & 0x3;
+> -	regmap_read(map, ASPEED_G6_SILICON_REV, &chip_id);
+> -	if (chip_id & BIT(16)) {
+> +	if (soc_rev >= 1) {
+
+This is hidden in the noise a bit, but the patch also isn't that big.
+
+>  		if (!divbits) {
+>  			ahb_div = ast2600_a1_axi_ahb200_tbl[(val >> 8) & 0x3];
+>  			if (val & BIT(16))
+> @@ -784,6 +784,8 @@ static void __init aspeed_g6_cc_init(struct device_node *np)
+>  	if (!scu_g6_base)
+>  		return;
+> 
+> +	soc_rev = (readl(scu_g6_base + ASPEED_G6_SILICON_REV) & 
+> CHIP_REVISION_ID) >> 16;
+> +
+>  	aspeed_g6_clk_data = kzalloc(struct_size(aspeed_g6_clk_data, hws,
+>  				      ASPEED_G6_NUM_CLKS), GFP_KERNEL);
+>  	if (!aspeed_g6_clk_data)
+> -- 
+> 2.33.0
