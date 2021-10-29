@@ -2,231 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672B6C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8905C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4231460E0B
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:01:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E29E610EA
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:04:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231178AbhJ2MEJ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 08:04:09 -0400
-Received: from aposti.net ([89.234.176.197]:37894 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229930AbhJ2MEG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Oct 2021 08:04:06 -0400
-Date:   Fri, 29 Oct 2021 13:01:23 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Rename Ingenic CGU headers to
- ingenic,*.h
+        id S230492AbhJ2MHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 08:07:18 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:7821 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229692AbhJ2MHR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 08:07:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1635509089; x=1667045089;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rLhxBIcFSdOiKZQUIOx/5AlyAZ5laI3Gc0J2/okOBqc=;
+  b=XwRA0bgFkk8UXwtqlpx7QmKKyN/zyagM+kaqP0aLQzSc4JAHQeYO4c80
+   XvZkVO2b/HlFIUyYcrrg5lWZChqdsFV/Q33YlVb1gzqna5rtxGpVLAp2t
+   4AteFeisaItJWZiNmhuGfeEqTCp2+qsbMx4MdZO9JHaG1ozqe/vzWFyYj
+   QCj8VOhe7g59kvAX7jpOX1J5i1K0TaZzxEvCWhjL790jxOKOr4EZXi9Js
+   qPiqppOLuemEY7VlI/BcKvrjhl8RQZApfAGdQqnR9oUJ3uk3rAy1QaGEE
+   sctoOSZLlvMLIHeJAHggs6nuL5O4y5PuYBEqZICiZN0tKyR/JkW9K0SGZ
+   A==;
+IronPort-SDR: TMnM0lPzY3HH4TBwEEepbdRw93UljuFTHZf4Aulz1yV0BZBP+S8296Keezbh8vAFl7FZAby7nI
+ S5aQw8OkNWh/eG3T3yVQMvFLiT+IPIVcH/MQEy5/wNXcNT0A6D6nCRX5dpd2a7Mb1sjxgNz+ob
+ wZBMdapUqFgQyP5cbLTf4O8Tqv1RdpKcZIn2ShQqwUO/nVSz/AbUvejxaW0Uxf0xO3O6UArr4V
+ HG0wQiELInhuCQ2GNi1C+8PgB7u+pHKpr7yMs8TqrGAqAARQgF47d/DxVO4lXngQs56A3jw/At
+ m8q+pW7gxWtn4KzbSm37D9r+
+X-IronPort-AV: E=Sophos;i="5.87,192,1631602800"; 
+   d="scan'208";a="150025505"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2021 05:04:48 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Fri, 29 Oct 2021 05:04:48 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Fri, 29 Oct 2021 05:04:48 -0700
+Date:   Fri, 29 Oct 2021 14:06:31 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
 To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, list@opendingux.net,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <BQMQ1R.WLWA4YQT423M3@crapouillou.net>
-In-Reply-To: <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
-References: <20211016133322.40771-1-paul@crapouillou.net>
-        <YXiNLZ9ne8D8uv82@robh.at.kernel.org> <VCRO1R.FQ8R7TN6NPYP3@crapouillou.net>
-        <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <kavyasree.kotagiri@microchip.com>,
+        <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: clock: lan966x: Extend for clock
+ gate support
+Message-ID: <20211029120631.a7p6d6hurefz4emt@soft-dev3-1.localhost>
+References: <20211019084449.1411060-1-horatiu.vultur@microchip.com>
+ <20211019084449.1411060-2-horatiu.vultur@microchip.com>
+ <YXjCufT1WyLEriY2@robh.at.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <YXjCufT1WyLEriY2@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The 10/26/2021 22:08, Rob Herring wrote:
+
 Hi Rob,
 
-Le jeu., oct. 28 2021 at 17:26:54 -0500, Rob Herring <robh@kernel.org> 
-a écrit :
-> On Thu, Oct 28, 2021 at 6:46 AM Paul Cercueil <paul@crapouillou.net> 
-> wrote:
->> 
->>  Hi Rob,
->> 
->>  Le mar., oct. 26 2021 at 18:20:13 -0500, Rob Herring 
->> <robh@kernel.org>
->>  a écrit :
->>  > On Sat, Oct 16, 2021 at 02:33:21PM +0100, Paul Cercueil wrote:
->>  >>  Tidy up a bit the tree, by prefixing all 
->> include/dt-bindings/clock/
->>  >> files
->>  >>  related to Ingenic SoCs with 'ingenic,'.
->>  >>
->>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  >>  ---
->>  >>
->>  >>  Notes:
->>  >>      v2: Fix x1000-cgu.h and x1830-cgu.h incorrectly renamed to
->>  >>          x1000.h / x1830.h
->>  >>
->>  >>   Documentation/devicetree/bindings/clock/ingenic,cgu.yaml      
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/display/ingenic,ipu.yaml    
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/display/ingenic,lcd.yaml    
->> | 4
->>  >> ++--
->>  >>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml        
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/i2c/ingenic,i2c.yaml        
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml    
->> | 2
->>  >> +-
->>  >>   .../devicetree/bindings/memory-controllers/ingenic,nemc.yaml  
->> | 2
->>  >> +-
->>  >>   .../devicetree/bindings/mips/ingenic/ingenic,cpu.yaml         
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml        
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/mtd/ingenic,nand.yaml       
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/net/ingenic,mac.yaml        
->> | 2
->>  >> +-
->>  >>   .../devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml       
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml    
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml 
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/rng/ingenic,trng.yaml       
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml        
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/serial/ingenic,uart.yaml    
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/sound/ingenic,aic.yaml      
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/sound/ingenic,codec.yaml    
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/timer/ingenic,sysost.yaml   
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/timer/ingenic,tcu.yaml      
->> | 2
->>  >> +-
->>  >>   Documentation/devicetree/bindings/usb/ingenic,musb.yaml       
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/jz4725b.dtsi                       
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/jz4740.dtsi                        
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/jz4770.dtsi                        
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/jz4780.dtsi                        
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/x1000.dtsi                         
->> | 2
->>  >> +-
->>  >>   arch/mips/boot/dts/ingenic/x1830.dtsi                         
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/jz4725b-cgu.c                             
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/jz4740-cgu.c                              
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/jz4760-cgu.c                              
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/jz4770-cgu.c                              
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/jz4780-cgu.c                              
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/x1000-cgu.c                               
->> | 2
->>  >> +-
->>  >>   drivers/clk/ingenic/x1830-cgu.c                               
->> | 2
->>  >> +-
->>  >>   .../clock/{jz4725b-cgu.h => ingenic,jz4725b-cgu.h}            
->> | 0
->>  >>   .../dt-bindings/clock/{jz4740-cgu.h => ingenic,jz4740-cgu.h}  
->> | 0
->>  >>   .../dt-bindings/clock/{jz4760-cgu.h => ingenic,jz4760-cgu.h}  
->> | 0
->>  >>   .../dt-bindings/clock/{jz4770-cgu.h => ingenic,jz4770-cgu.h}  
->> | 0
->>  >>   .../dt-bindings/clock/{jz4780-cgu.h => ingenic,jz4780-cgu.h}  
->> | 0
->>  >>   .../dt-bindings/clock/{x1000-cgu.h => ingenic,x1000-cgu.h}    
->> | 0
->>  >>   .../dt-bindings/clock/{x1830-cgu.h => ingenic,x1830-cgu.h}    
->> | 0
->>  >>   42 files changed, 36 insertions(+), 36 deletions(-)
->>  >>   rename include/dt-bindings/clock/{jz4725b-cgu.h =>
->>  >> ingenic,jz4725b-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{jz4740-cgu.h =>
->>  >> ingenic,jz4740-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{jz4760-cgu.h =>
->>  >> ingenic,jz4760-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{jz4770-cgu.h =>
->>  >> ingenic,jz4770-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{jz4780-cgu.h =>
->>  >> ingenic,jz4780-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{x1000-cgu.h =>
->>  >> ingenic,x1000-cgu.h} (100%)
->>  >>   rename include/dt-bindings/clock/{x1830-cgu.h =>
->>  >> ingenic,x1830-cgu.h} (100%)
->>  >
->>  > Acked-by: Rob Herring <robh@kernel.org>
->>  >
->>  > However, this will be a pain to merge if there are any new users
->>  > coming
->>  > in during the merge window. If not, then Stephen can just take 
->> this.
->>  > If
->>  > there are, then at the end of the merge window is the best time. 
->> For
->>  > that to work, you need to track when all dependent changes are 
->> merged
->>  > and we need to agree who will pick this up. I usually have fixes 
->> from
->>  > breakages in the merge window anyways.
->> 
->>  I get Cc'd on all ingenic-related patches, so far I don't see 
->> anything
->>  that will cause a breakage. I think it would be okay to merge it now
->>  (we're at -rc7 after all).
 > 
-> Then can you apply this to linux-next and check it all works there.
-> Specifically, 'make dt_binding_check dtbs drivers/clk/' needs to work.
-> Or confirm you already did that.
+> On Tue, Oct 19, 2021 at 10:44:47AM +0200, Horatiu Vultur wrote:
+> > It is required to add a new resource to be able to access the clock gate
+> > registers. Now that we have 2 resources, add also reg-names property to
+> > make more clear.
+> 
+> It is an ABI breakage to require 2 reg entries. If that's okay for this
+> binding, you need to explain why. The binding requiring 2 so that DT
+> files get updated, but the driver allowing for 1 is okay.
 
-I did it on Linus' master branch and it all worked.
+I will make the resource optional not to break any ABI.
 
-But indeed, it does conflict on linux-next since 
-Documentation/devicetree/bindings/spi/ingenic,spi.yaml was added there.
+> 
+> >
+> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> > ---
+> >  .../bindings/clock/microchip,lan966x-gck.yaml       | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> > index fca83bd68e26..047c77e049f1 100644
+> > --- a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+> > @@ -19,7 +19,14 @@ properties:
+> >      const: microchip,lan966x-gck
+> >
+> >    reg:
+> > -    maxItems: 1
+> > +    items:
+> > +      - description: core registers
+> > +      - description: gate registers
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: core
+> > +      - const: gate
+> >
+> >    clocks:
+> >      items:
+> > @@ -39,6 +46,7 @@ properties:
+> >  required:
+> >    - compatible
+> >    - reg
+> > +  - reg-names
+> >    - clocks
+> >    - clock-names
+> >    - '#clock-cells'
+> > @@ -52,6 +60,7 @@ examples:
+> >          #clock-cells = <1>;
+> >          clocks = <&cpu_clk>, <&ddr_clk>, <&sys_clk>;
+> >          clock-names = "cpu", "ddr", "sys";
+> > -        reg = <0xe00c00a8 0x38>;
+> > +        reg = <0xe00c00a8 0x38>, <0xe00c02cc 0x4>;
+> > +        reg-names = "core", "gate";
+> >      };
+> >  ...
+> > --
+> > 2.33.0
+> >
+> >
 
-Should I rebase the patchset on top of linux-next?
-
--Paul
-
-
+-- 
+/Horatiu
