@@ -2,132 +2,231 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2C9C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 672B6C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E732A610A0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4231460E0B
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231449AbhJ2Jgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 05:36:42 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:27563 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbhJ2Jgm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:36:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1635500053; x=1667036053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UA3mT5pGOwCaE2esRTHjdF4YdhrEwD31Y+BDYVHSjPc=;
-  b=LKIuMt/EZRc++R79R19IWHXVXvQ6jIVdABCMRQS6HoEnSJaIF80c2gWj
-   6JpFF0uz1eJofeCO/fQ5Jixb98NO/6jUf+AerMY5df+X9BIzKoMCiHfWe
-   EtKbintIrkpUyK1cf7CbGaUjNp6EpV01lZfPhY+VB99oZIKGvroEMLAyT
-   ugrzJKfo86IlcLL3o1jCYWVe53P33kHzklZZ7Q2kIoZM/eRtno8NbLmwt
-   t3mXRniqba6Qtmh2dMeEIBkv+wDNZkfmx2boyXA8vyvb9SmF8viwKR9sh
-   s5tsq5pbSadUkpfKrFwP0oQBUy5+AlhexL85+r0ZDp6gs7o8Wv4fbcVPg
-   g==;
-IronPort-SDR: Z58UCXVOAmV806wBgMO50/n0HZgZnw7G1JwQKLqIqeVHFwthiQt5BSlTkE6j+OPpzGmOqnYKZE
- BX3rzmXI32YiQ94NsCkLl+wCZg3vREV+VltPjcEW0v1ZY9m8ziURxvyhSuNMfl4twwOllq0qig
- w+Y1rn6zTkLBQfHdGfVpGf5rCZe+lPXjJvFUbbcwjGTtFWKcDluyqZm38HWopf88CYuFJEYD9p
- eQ50GtQnYK2JnwmkgRl1myG7cFYeFBTH05QsT+3r7Vv1YhBLNO0A4n3YB0Eco6CdVDGB/YNtEF
- V5YTuJ9SlKZjYmeOcgpMZtrZ
-X-IronPort-AV: E=Sophos;i="5.87,192,1631602800"; 
-   d="scan'208";a="134776882"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2021 02:34:13 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 29 Oct 2021 02:34:13 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Fri, 29 Oct 2021 02:34:12 -0700
-Date:   Fri, 29 Oct 2021 11:35:56 +0200
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <mturquette@baylibre.com>, <robh+dt@kernel.org>,
-        <nicolas.ferre@microchip.com>, <kavyasree.kotagiri@microchip.com>,
-        <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 3/3] clk: lan966x: Extend lan966x clock driver for
- clock gating support
-Message-ID: <20211029093556.tdvroyommqi5xb6g@soft-dev3-1.localhost>
-References: <20211019084449.1411060-1-horatiu.vultur@microchip.com>
- <20211019084449.1411060-4-horatiu.vultur@microchip.com>
- <163548971798.15791.952778566228263608@swboyd.mtv.corp.google.com>
+        id S231178AbhJ2MEJ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 08:04:09 -0400
+Received: from aposti.net ([89.234.176.197]:37894 "EHLO aposti.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229930AbhJ2MEG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Oct 2021 08:04:06 -0400
+Date:   Fri, 29 Oct 2021 13:01:23 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/2] dt-bindings: Rename Ingenic CGU headers to
+ ingenic,*.h
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, list@opendingux.net,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <BQMQ1R.WLWA4YQT423M3@crapouillou.net>
+In-Reply-To: <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
+References: <20211016133322.40771-1-paul@crapouillou.net>
+        <YXiNLZ9ne8D8uv82@robh.at.kernel.org> <VCRO1R.FQ8R7TN6NPYP3@crapouillou.net>
+        <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <163548971798.15791.952778566228263608@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 10/28/2021 23:41, Stephen Boyd wrote:
+Hi Rob,
 
-Hi Stephen,
-
+Le jeu., oct. 28 2021 at 17:26:54 -0500, Rob Herring <robh@kernel.org> 
+a écrit :
+> On Thu, Oct 28, 2021 at 6:46 AM Paul Cercueil <paul@crapouillou.net> 
+> wrote:
+>> 
+>>  Hi Rob,
+>> 
+>>  Le mar., oct. 26 2021 at 18:20:13 -0500, Rob Herring 
+>> <robh@kernel.org>
+>>  a écrit :
+>>  > On Sat, Oct 16, 2021 at 02:33:21PM +0100, Paul Cercueil wrote:
+>>  >>  Tidy up a bit the tree, by prefixing all 
+>> include/dt-bindings/clock/
+>>  >> files
+>>  >>  related to Ingenic SoCs with 'ingenic,'.
+>>  >>
+>>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  >>  ---
+>>  >>
+>>  >>  Notes:
+>>  >>      v2: Fix x1000-cgu.h and x1830-cgu.h incorrectly renamed to
+>>  >>          x1000.h / x1830.h
+>>  >>
+>>  >>   Documentation/devicetree/bindings/clock/ingenic,cgu.yaml      
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/display/ingenic,ipu.yaml    
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/display/ingenic,lcd.yaml    
+>> | 4
+>>  >> ++--
+>>  >>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml        
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/i2c/ingenic,i2c.yaml        
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml    
+>> | 2
+>>  >> +-
+>>  >>   .../devicetree/bindings/memory-controllers/ingenic,nemc.yaml  
+>> | 2
+>>  >> +-
+>>  >>   .../devicetree/bindings/mips/ingenic/ingenic,cpu.yaml         
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml        
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/mtd/ingenic,nand.yaml       
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/net/ingenic,mac.yaml        
+>> | 2
+>>  >> +-
+>>  >>   .../devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml       
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml    
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml 
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/rng/ingenic,trng.yaml       
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml        
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/serial/ingenic,uart.yaml    
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/sound/ingenic,aic.yaml      
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/sound/ingenic,codec.yaml    
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/timer/ingenic,sysost.yaml   
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/timer/ingenic,tcu.yaml      
+>> | 2
+>>  >> +-
+>>  >>   Documentation/devicetree/bindings/usb/ingenic,musb.yaml       
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/jz4725b.dtsi                       
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/jz4740.dtsi                        
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/jz4770.dtsi                        
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/jz4780.dtsi                        
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/x1000.dtsi                         
+>> | 2
+>>  >> +-
+>>  >>   arch/mips/boot/dts/ingenic/x1830.dtsi                         
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/jz4725b-cgu.c                             
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/jz4740-cgu.c                              
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/jz4760-cgu.c                              
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/jz4770-cgu.c                              
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/jz4780-cgu.c                              
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/x1000-cgu.c                               
+>> | 2
+>>  >> +-
+>>  >>   drivers/clk/ingenic/x1830-cgu.c                               
+>> | 2
+>>  >> +-
+>>  >>   .../clock/{jz4725b-cgu.h => ingenic,jz4725b-cgu.h}            
+>> | 0
+>>  >>   .../dt-bindings/clock/{jz4740-cgu.h => ingenic,jz4740-cgu.h}  
+>> | 0
+>>  >>   .../dt-bindings/clock/{jz4760-cgu.h => ingenic,jz4760-cgu.h}  
+>> | 0
+>>  >>   .../dt-bindings/clock/{jz4770-cgu.h => ingenic,jz4770-cgu.h}  
+>> | 0
+>>  >>   .../dt-bindings/clock/{jz4780-cgu.h => ingenic,jz4780-cgu.h}  
+>> | 0
+>>  >>   .../dt-bindings/clock/{x1000-cgu.h => ingenic,x1000-cgu.h}    
+>> | 0
+>>  >>   .../dt-bindings/clock/{x1830-cgu.h => ingenic,x1830-cgu.h}    
+>> | 0
+>>  >>   42 files changed, 36 insertions(+), 36 deletions(-)
+>>  >>   rename include/dt-bindings/clock/{jz4725b-cgu.h =>
+>>  >> ingenic,jz4725b-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{jz4740-cgu.h =>
+>>  >> ingenic,jz4740-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{jz4760-cgu.h =>
+>>  >> ingenic,jz4760-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{jz4770-cgu.h =>
+>>  >> ingenic,jz4770-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{jz4780-cgu.h =>
+>>  >> ingenic,jz4780-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{x1000-cgu.h =>
+>>  >> ingenic,x1000-cgu.h} (100%)
+>>  >>   rename include/dt-bindings/clock/{x1830-cgu.h =>
+>>  >> ingenic,x1830-cgu.h} (100%)
+>>  >
+>>  > Acked-by: Rob Herring <robh@kernel.org>
+>>  >
+>>  > However, this will be a pain to merge if there are any new users
+>>  > coming
+>>  > in during the merge window. If not, then Stephen can just take 
+>> this.
+>>  > If
+>>  > there are, then at the end of the merge window is the best time. 
+>> For
+>>  > that to work, you need to track when all dependent changes are 
+>> merged
+>>  > and we need to agree who will pick this up. I usually have fixes 
+>> from
+>>  > breakages in the merge window anyways.
+>> 
+>>  I get Cc'd on all ingenic-related patches, so far I don't see 
+>> anything
+>>  that will cause a breakage. I think it would be okay to merge it now
+>>  (we're at -rc7 after all).
 > 
-> Quoting Horatiu Vultur (2021-10-19 01:44:49)
-> > diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-> > index 19bec94e1551..40be47092a31 100644
-> > --- a/drivers/clk/clk-lan966x.c
-> > +++ b/drivers/clk/clk-lan966x.c
-> > @@ -188,26 +202,64 @@ static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
-> >         return &priv->hw;
-> >  };
-> >
-> > +static int lan966x_gate_clk_register(struct device *dev,
-> > +                                    struct clk_hw_onecell_data *hw_data,
-> > +                                    void __iomem *gate_base)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i) {
-> > +               int idx = i - GCK_GATE_UHPHS;
-> > +
-> > +               hw_data->hws[i] =
-> > +                       clk_hw_register_gate(dev, clk_gate_desc[idx].name,
-> 
-> Use devm?
+> Then can you apply this to linux-next and check it all works there.
+> Specifically, 'make dt_binding_check dtbs drivers/clk/' needs to work.
+> Or confirm you already did that.
 
-I couldn't find any devm_clk_hw_register_gate or something similar for
-the gate.
+I did it on Linus' master branch and it all worked.
 
-> 
-> > +                                            "lan966x", 0, base,
-> > +                                            clk_gate_desc[idx].bit_idx,
-> > +                                            0, &clk_gate_lock);
-> > +
-> > +               if (IS_ERR(hw_data->hws[i]))
-> > +                       return dev_err_probe(dev, PTR_ERR(hw_data->hws[i]),
-> > +                                            "failed to register %s clock\n",
-> > +                                            clk_gate_desc[idx].name);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void lan966x_gate_clk_unregister(struct clk_hw_onecell_data *hw_data)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i)
-> 
-> for (int i =
-> 
-> should suffice
+But indeed, it does conflict on linux-next since 
+Documentation/devicetree/bindings/spi/ingenic,spi.yaml was added there.
 
-That would not work. I will get the error:
-error: â€˜forâ€™ loop initial declarations are only allowed in C99 or C11 mode
+Should I rebase the patchset on top of linux-next?
 
-> 
-> > +               if (!IS_ERR(hw_data->hws[i]))
-> > +                       clk_hw_unregister(hw_data->hws[i]);
-> > +}
-> > +
+-Paul
 
--- 
-/Horatiu
+
