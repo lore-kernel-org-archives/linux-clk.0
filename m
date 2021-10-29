@@ -2,18 +2,18 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9B3C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8870C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 901B961179
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09B660F0F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbhJ2JOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 05:14:12 -0400
-Received: from [113.204.237.245] ([113.204.237.245]:55576 "EHLO
+        id S231409AbhJ2JON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 05:14:13 -0400
+Received: from [113.204.237.245] ([113.204.237.245]:55574 "EHLO
         test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231612AbhJ2JN2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:13:28 -0400
+        with ESMTP id S231616AbhJ2JN3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:13:29 -0400
 X-MailGates: (compute_score:DELIVER,40,3)
 Received: from 172.28.114.216
         by cqmailgates with MailGates ESMTP Server V5.0(10981:0:AUTH_RELAY)
@@ -25,9 +25,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v2 5/8] dt-bindings: clock: Add bindings for SP7021 clock driver
-Date:   Fri, 29 Oct 2021 16:44:31 +0800
-Message-Id: <188ff538d83266930bbba0e056106e285437da5b.1635496594.git.qinjian@cqplus1.com>
+Subject: [PATCH v2 7/8] dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt controller
+Date:   Fri, 29 Oct 2021 16:44:33 +0800
+Message-Id: <f3215c63729c7d717074dc5823d45acc0f89b39a.1635496594.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1635496594.git.qinjian@cqplus1.com>
 References: <cover.1635496594.git.qinjian@cqplus1.com>
@@ -37,192 +37,127 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation to describe Sunplus SP7021 clock driver bindings.
+Add documentation to describe Sunplus SP7021 interrupt controller bindings.
 
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 ++++++
- MAINTAINERS                                   |   2 +
- include/dt-bindings/clock/sp-sp7021.h         | 112 ++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- create mode 100644 include/dt-bindings/clock/sp-sp7021.h
+ .../sunplus,sp7021-intc.yaml                  | 59 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +
+ .../interrupt-controller/sp7021-intc.h        | 24 ++++++++
+ 3 files changed, 85 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+ create mode 100644 include/dt-bindings/interrupt-controller/sp7021-intc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
 new file mode 100644
-index 000000000..1ce7e41d8
+index 000000000..185c99b5e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
-@@ -0,0 +1,38 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+@@ -0,0 +1,59 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +# Copyright (C) Sunplus Co., Ltd. 2021
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
++$id: http://devicetree.org/schemas/interrupt-controller/sunplus,sp7021-intc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Sunplus SP7021 SoC Clock Controller Binding
++title: Sunplus SP7021 SoC Interrupt Controller Device Tree Bindings
 +
 +maintainers:
 +  - Qin Jian <qinjian@cqplus1.com>
 +
 +properties:
 +  compatible:
-+    const: sunplus,sp7021-clkc
++    items:
++      - const: sunplus,sp7021-intc
 +
-+  "#clock-cells":
-+    const: 1
++  interrupt-controller: true
++
++  "#interrupt-cells":
++    const: 2
++    description:
++      The first cell is the IRQ number, the second cell the trigger
++      type as defined in interrupt.txt in this directory.
++      The MSB of second cell also indicate route to which EXT_INT.
 +
 +  reg:
-+    maxItems: 1
++    maxItems: 2
++
++  interrupts:
++    maxItems: 2
++    description:
++      EXT_INT0 & EXT_INT1, 2 interrupts references to primary interrupt
++      controller.
 +
 +required:
 +  - compatible
-+  - "#clock-cells"
++  - interrupt-controller
++  - "#interrupt-cells"
 +  - reg
++  - interrupts
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clkc: clkc@9c000000 {
-+      compatible = "sunplus,sp7021-clkc";
-+      #clock-cells = <1>;
-+      reg = <0x9c000000 0x280>;
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    intc: interrupt-controller@9c000780 {
++        compatible = "sunplus,sp7021-intc";
++        interrupt-controller;
++        #interrupt-cells = <2>;
++        reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
++        interrupt-parent = <&gic>;
++        interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>, /* EXT_INT0 */
++                    <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>; /* EXT_INT1 */
 +    };
 +
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 6caffd6d0..90ebb823f 100644
+index 5069f552f..be0334d6a 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2661,8 +2661,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
- S:	Maintained
+@@ -2662,10 +2662,12 @@ S:	Maintained
  W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
  F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-+F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
++F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ F:	drivers/clk/clk-sp7021.c
  F:	drivers/reset/reset-sunplus.c
-+F:	include/dt-bindings/clock/sp-sp7021.h
+ F:	include/dt-bindings/clock/sp-sp7021.h
++F:	include/dt-bindings/interrupt-controller/sp7021-intc.h
  F:	include/dt-bindings/reset/sp-sp7021.h
  
  ARM/Synaptics SoC support
-diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
+diff --git a/include/dt-bindings/interrupt-controller/sp7021-intc.h b/include/dt-bindings/interrupt-controller/sp7021-intc.h
 new file mode 100644
-index 000000000..1ae9c4083
+index 000000000..fa2eb8100
 --- /dev/null
-+++ b/include/dt-bindings/clock/sp-sp7021.h
-@@ -0,0 +1,112 @@
++++ b/include/dt-bindings/interrupt-controller/sp7021-intc.h
+@@ -0,0 +1,24 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (C) Sunplus Technology Co., Ltd.
 + *       All rights reserved.
++ *
++ *
++ * This header provides constants for the SP7021 INTC
 + */
-+#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
-+#define _DT_BINDINGS_CLOCK_SUNPLUS_Sp7021_H
 +
-+#define XTAL		27000000
++#ifndef _DT_BINDINGS_INTERRUPT_CONTROLLER_SP7021_INTC_H
++#define _DT_BINDINGS_INTERRUPT_CONTROLLER_SP7021_INTC_H
 +
-+/* plls */
-+#define PLL_A		0
-+#define PLL_E		1
-+#define PLL_E_2P5	2
-+#define PLL_E_25	3
-+#define PLL_E_112P5	4
-+#define PLL_F		5
-+#define PLL_TV		6
-+#define PLL_TV_A	7
-+#define PLL_SYS		8
++#include <dt-bindings/interrupt-controller/irq.h>
 +
-+/* gates: mo_clken0 ~ mo_clken9 */
-+#define SYSTEM		0x10
-+#define RTC			0x12
-+#define IOCTL		0x13
-+#define IOP			0x14
-+#define OTPRX		0x15
-+#define NOC			0x16
-+#define BR			0x17
-+#define RBUS_L00	0x18
-+#define SPIFL		0x19
-+#define SDCTRL0		0x1a
-+#define PERI0		0x1b
-+#define A926		0x1d
-+#define UMCTL2		0x1e
-+#define PERI1		0x1f
-+
-+#define DDR_PHY0	0x20
-+#define ACHIP		0x22
-+#define STC0		0x24
-+#define STC_AV0		0x25
-+#define STC_AV1		0x26
-+#define STC_AV2		0x27
-+#define UA0			0x28
-+#define UA1			0x29
-+#define UA2			0x2a
-+#define UA3			0x2b
-+#define UA4			0x2c
-+#define HWUA		0x2d
-+#define DDC0		0x2e
-+#define UADMA		0x2f
-+
-+#define CBDMA0		0x30
-+#define CBDMA1		0x31
-+#define SPI_COMBO_0	0x32
-+#define SPI_COMBO_1	0x33
-+#define SPI_COMBO_2	0x34
-+#define SPI_COMBO_3	0x35
-+#define AUD			0x36
-+#define USBC0		0x3a
-+#define USBC1		0x3b
-+#define UPHY0		0x3d
-+#define UPHY1		0x3e
-+
-+#define I2CM0		0x40
-+#define I2CM1		0x41
-+#define I2CM2		0x42
-+#define I2CM3		0x43
-+#define PMC			0x4d
-+#define CARD_CTL0	0x4e
-+#define CARD_CTL1	0x4f
-+
-+#define CARD_CTL4	0x52
-+#define BCH			0x54
-+#define DDFCH		0x5b
-+#define CSIIW0		0x5c
-+#define CSIIW1		0x5d
-+#define MIPICSI0	0x5e
-+#define MIPICSI1	0x5f
-+
-+#define HDMI_TX		0x60
-+#define VPOST		0x65
-+
-+#define TGEN		0x70
-+#define DMIX		0x71
-+#define TCON		0x7a
-+#define INTERRUPT	0x7f
-+
-+#define RGST		0x80
-+#define GPIO		0x83
-+#define RBUS_TOP	0x84
-+
-+#define MAILBOX		0x96
-+#define SPIND		0x9a
-+#define I2C2CBUS	0x9b
-+#define SEC			0x9d
-+#define DVE			0x9e
-+#define GPOST0		0x9f
-+
-+#define OSD0		0xa0
-+#define DISP_PWM	0xa2
-+#define UADBG		0xa3
-+#define DUMMY_MASTER	0xa4
-+#define FIO_CTL		0xa5
-+#define FPGA		0xa6
-+#define L2SW		0xa7
-+#define ICM			0xa8
-+#define AXI_GLOBAL	0xa9
-+
-+#define CLK_MAX		0xb0
++/*
++ * Interrupt specifier cell 1.
++ * The flags in irq.h are valid, plus those below.
++ */
++#define SP_INTC_EXT_INT0		0x00000
++#define SP_INTC_EXT_INT1		0x01000
++#define SP_INTC_EXT_INT_MASK	0xff000
++#define SP_INTC_EXT_INT_SHFIT	12
 +
 +#endif
 -- 
