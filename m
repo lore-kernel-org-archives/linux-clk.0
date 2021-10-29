@@ -2,189 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA3EC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A329BC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2A9461166
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79EC56113E
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 12:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231655AbhJ2MXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 08:23:13 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:49381 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231365AbhJ2MXM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 08:23:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1635510043; x=1667046043;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qWLANHqrECD1c00l6A2+f9SeN9ESj/I6wRgyvY0QQ0w=;
-  b=zgZH7DwyQ08DfT07lt4aemxYdb5EJQ+9GsgyAPqKir/13ppGy+2jfdV4
-   bb4p1Xbp8ZKnHh1D2l6T0ZojsLPTyu5aDe9n46DJ5I8E2ufWVvYjcWT2E
-   zMh6kJPI/Jsnit/AHLsEQwCD8uc2J+XhxZ1trFK67W3Of5uAujyNduliZ
-   ah6uLtgTmXe4x0+orbQ9B8eb0VtIWzrsBowH9xNdzrb6bFsS6+KgZ2JwL
-   F0abYr5hudPVfLHGQWeIGOdrATgAiAztiGt5NLkmsF2CBXLReWilasdmo
-   +JCi+HJnOtrF6UOSQe43ZgAMRWPjutTU9K877uGEilBk+yXxncMGhuBrg
-   Q==;
-IronPort-SDR: ld3sOUvLWFsX1oIqoWbrGKddLKx7HmupsXw494TAodEDBSUaY4/bChqQ9cemqpsQDtI9vRuWEt
- TemU2Moc4DbeaeXyGC0Dam9XAI7w2dDBMeq6cgDdRXXURWsGCcaVxclxbhsfJGWOJ20ZkvZQHQ
- NXu6XNnNVyIo/jqK68ul+HHUkQYGiCNGZs/GQuI7Osi6ourA14qN6FZqHMZfzenO8X7eaUsIay
- Fwx9WuIF3QvOAxXHbEa348DpyoWor0YPnYtCpJAf0s6JexandyHwzL0P9ebRQA4isi7GyJ1K7I
- fK29EmOo9pSKG3U9DNpGAdi3
-X-IronPort-AV: E=Sophos;i="5.87,192,1631602800"; 
-   d="scan'208";a="134789148"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2021 05:20:43 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Fri, 29 Oct 2021 05:20:29 -0700
-Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Fri, 29 Oct 2021 05:20:26 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-        <kavyasree.kotagiri@microchip.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [RFC PATCH v2 3/3] clk: lan966x: Extend lan966x clock driver for clock gating support
-Date:   Fri, 29 Oct 2021 14:19:29 +0200
-Message-ID: <20211029121929.2811811-4-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211029121929.2811811-1-horatiu.vultur@microchip.com>
-References: <20211029121929.2811811-1-horatiu.vultur@microchip.com>
+        id S231519AbhJ2Mjn convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 08:39:43 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:54300 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231409AbhJ2Mjm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Oct 2021 08:39:42 -0400
+Received: from ip5f5a6e92.dynamic.kabel-deutschland.de ([95.90.110.146] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1mgR87-00013w-6j; Fri, 29 Oct 2021 14:37:07 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     linux-rockchip@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@esmil.dk, linux-clk@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH 0/2] clk: rockchip: cleanup errors in (module-)driver handling
+Date:   Fri, 29 Oct 2021 14:37:06 +0200
+Message-ID: <2912588.a5UK1EFgBA@diego>
+In-Reply-To: <163548978553.15791.2075313346592720953@swboyd.mtv.corp.google.com>
+References: <20211027132616.1039814-1-heiko@sntech.de> <5381956.U9aoDET0nm@diego> <163548978553.15791.2075313346592720953@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Extend the clock driver to add support also for clock gating. The
-following peripherals can be gated: UHPHS, UDPHS, MCRAMC, HMATRIX.
+Am Freitag, 29. Oktober 2021, 08:43:05 CEST schrieb Stephen Boyd:
+> Quoting Heiko Stübner (2021-10-27 16:20:17)
+> > Am Mittwoch, 27. Oktober 2021, 22:27:46 CEST schrieb Stephen Boyd:
+> > > Quoting Heiko Stuebner (2021-10-27 06:26:14)
+> > > > Recent conversions or inclusions of rk3399 and rk3568 as platform-drivers
+> > > > and subsequently allowing them to be built as modules introduced some
+> > > > problems.
+> > > > 
+> > > > These two patches try to correct them.
+> > > 
+> > > By removing modular support? Ok.
+> > 
+> > It looked like the easiest way to go for now.
+> > 
+> > With all the clock-definitions as init-data still in both drivers, I don't think
+> > anybody ever tested running this as a real module.
+> > 
+> > We could of course also remove all the __init + __initdata attributes, but
+> > still wouldn't know if it actually runs as a module, without someone
+> > building a real test environment for it.
+> > 
+> > 
+> 
+> Sure. Do I need to pick these up directly?
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/clk/clk-lan966x.c | 78 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 74 insertions(+), 4 deletions(-)
+I don't have anything more for 5.16 and the 5.15 release should happen
+on sunday, so yeah just pick them if you like - no need for doing a separate
+pull request.
 
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index 19bec94e1551..cd372e2c0654 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -48,6 +48,20 @@ static struct clk_init_data init = {
- 	.num_parents = ARRAY_SIZE(lan966x_gck_pdata),
- };
- 
-+struct clk_gate_soc_desc {
-+	const char *name;
-+	int bit_idx;
-+};
-+
-+static const struct clk_gate_soc_desc clk_gate_desc[] = {
-+	{ "uhphs", 11 },
-+	{ "udphs", 10 },
-+	{ "mcramc", 9 },
-+	{ "hmatrix", 8 },
-+	{ }
-+};
-+
-+static DEFINE_SPINLOCK(clk_gate_lock);
- static void __iomem *base;
- 
- static int lan966x_gck_enable(struct clk_hw *hw)
-@@ -188,11 +202,46 @@ static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
- 	return &priv->hw;
- };
- 
-+static int lan966x_gate_clk_register(struct device *dev,
-+				     struct clk_hw_onecell_data *hw_data,
-+				     void __iomem *gate_base)
-+{
-+	int i;
-+
-+	for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i) {
-+		int idx = i - GCK_GATE_UHPHS;
-+
-+		hw_data->hws[i] =
-+			clk_hw_register_gate(dev, clk_gate_desc[idx].name,
-+					     "lan966x", 0, base,
-+					     clk_gate_desc[idx].bit_idx,
-+					     0, &clk_gate_lock);
-+
-+		if (IS_ERR(hw_data->hws[i]))
-+			return dev_err_probe(dev, PTR_ERR(hw_data->hws[i]),
-+					     "failed to register %s clock\n",
-+					     clk_gate_desc[idx].name);
-+	}
-+
-+	return 0;
-+}
-+
-+static void lan966x_gate_clk_unregister(struct clk_hw_onecell_data *hw_data)
-+{
-+	int i;
-+
-+	for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i)
-+		if (!IS_ERR(hw_data->hws[i]))
-+			clk_hw_unregister(hw_data->hws[i]);
-+}
-+
- static int lan966x_clk_probe(struct platform_device *pdev)
- {
- 	struct clk_hw_onecell_data *hw_data;
- 	struct device *dev = &pdev->dev;
--	int i;
-+	void __iomem *gate_base;
-+	struct resource *res;
-+	int i, ret;
- 
- 	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, N_CLOCKS),
- 			       GFP_KERNEL);
-@@ -205,9 +254,9 @@ static int lan966x_clk_probe(struct platform_device *pdev)
- 
- 	init.ops = &lan966x_gck_ops;
- 
--	hw_data->num = N_CLOCKS;
-+	hw_data->num = GCK_GATE_UHPHS;
- 
--	for (i = 0; i < N_CLOCKS; i++) {
-+	for (i = 0; i < GCK_GATE_UHPHS; i++) {
- 		init.name = clk_names[i];
- 		hw_data->hws[i] = lan966x_gck_clk_register(dev, i);
- 		if (IS_ERR(hw_data->hws[i])) {
-@@ -217,7 +266,28 @@ static int lan966x_clk_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_data);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (res) {
-+		gate_base = devm_ioremap_resource(&pdev->dev, res);
-+		if (IS_ERR(gate_base))
-+			return PTR_ERR(gate_base);
-+
-+		hw_data->num = N_CLOCKS;
-+
-+		ret = lan966x_gate_clk_register(dev, hw_data, gate_base);
-+		if (ret)
-+			goto unregister;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_data);
-+	if (ret)
-+		goto unregister;
-+
-+	return 0;
-+
-+unregister:
-+	lan966x_gate_clk_unregister(hw_data);
-+	return ret;
- }
- 
- static const struct of_device_id lan966x_clk_dt_ids[] = {
--- 
-2.33.0
+Thanks
+Heiko
+
 
