@@ -2,147 +2,554 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66368C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE1BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E48D61184
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F248E61165
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229968AbhJ2PXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 11:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbhJ2PXV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 11:23:21 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65AB5C061570;
-        Fri, 29 Oct 2021 08:20:52 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id u21so21705566lff.8;
-        Fri, 29 Oct 2021 08:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lKRvF3HEzsPjmvnhdSOneYxn8GKeq2VyROYToBcwKqg=;
-        b=NOKTBqx0zL9etgzmHgf1oJxxEva2iGeeOh+4E1i+Uoun1qXSNBFS1lNQC88fmc/XOx
-         EyAsxSZly1bRq3TmlsSW08aYbK/JB9WKiZjvvAc6IRSVBHFLgaxq5WghrNgqH9N06Cgk
-         rVszgStQ8TpOhlNS+BEfMv2qPVDnZzTEXL2vamo6PvIjGTbjHy4zAlniV7LCLM4z8qJ+
-         3d31fE3KYfU1VMXEHzZS2oldd3BUoObYtPfHaEBGLFbTrlAVq3+HlsjsOz7ean0hjU7/
-         HGTTI/1EcTjErLyfGPhmM82MicBuWD5C+m3+1geOb7uZN0RBh1lgz8H3yqSys+vx0w95
-         nBLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lKRvF3HEzsPjmvnhdSOneYxn8GKeq2VyROYToBcwKqg=;
-        b=DtdCc8nFBVBNiUzyMANr4WhkoHsA549H+sXv4E78URiSo9+piTHhCpOs4U8gLv4p/i
-         IsksW/OilRaTZ+OVp8m7KKYl9gCZcLIxA1YHB329FG0d/pxbZTsfoytifwIMxcbZ3PRE
-         2Codu3bszwTdRSgRfioJP7cQ73Sl8QnBAPG43LyFWOmBssuHpQkt+68NZ+EEcuoL5CdB
-         lkjWELY7QFFZldNmw0IrU2ef6ywLB5QqCcI4Fonuk3x17IhZlm+xZIPfe/j831fhFj95
-         077famsxRelAgxV3i0aDrvocO6PU+J3UTYAkEzw6Ho0XH3AGdfLnBbkmRX5ZNL1gGOA+
-         nSlw==
-X-Gm-Message-State: AOAM533X/Xq8BpZVs0UYcZiR9hZ1vjHASl/o1CsxO21S/c3AD+qmie/Q
-        6K8r8QplBSOtBS0JGBHstzg=
-X-Google-Smtp-Source: ABdhPJxvYqPO801LDBYB4F60HZArGOgVHSUSi60pYfKAJNyhUGpwrMQ1Y80dwIJ4c7MkaVL/b474ZQ==
-X-Received: by 2002:a05:6512:228d:: with SMTP id f13mr3384237lfu.491.1635520850816;
-        Fri, 29 Oct 2021 08:20:50 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-44-18.dynamic.spd-mgts.ru. [46.138.44.18])
-        by smtp.googlemail.com with ESMTPSA id e5sm28298lfs.52.2021.10.29.08.20.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Oct 2021 08:20:50 -0700 (PDT)
-Subject: Re: [PATCH v14 20/39] pwm: tegra: Add runtime PM and OPP support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211025224032.21012-1-digetx@gmail.com>
- <20211025224032.21012-21-digetx@gmail.com>
-Message-ID: <09c05206-c0e5-9a25-8ffa-b9291f6ea5ae@gmail.com>
-Date:   Fri, 29 Oct 2021 18:20:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20211025224032.21012-21-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S229712AbhJ2P1t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 11:27:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229527AbhJ2P1t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 Oct 2021 11:27:49 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A2D060F55;
+        Fri, 29 Oct 2021 15:25:20 +0000 (UTC)
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1mgTks-002TO0-E4; Fri, 29 Oct 2021 16:25:18 +0100
+Date:   Fri, 29 Oct 2021 16:25:18 +0100
+Message-ID: <87h7czam5d.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        tglx@linutronix.de, p.zabel@pengutronix.de, broonie@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com
+Subject: Re: [PATCH v2 8/8] irqchip: Add support for Sunplus SP7021 interrupt controller
+In-Reply-To: <833a3060692f2d9e20ed2c821ba9e45a938eb294.1635496594.git.qinjian@cqplus1.com>
+References: <cover.1635496594.git.qinjian@cqplus1.com>
+        <833a3060692f2d9e20ed2c821ba9e45a938eb294.1635496594.git.qinjian@cqplus1.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qinjian@cqplus1.com, robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de, p.zabel@pengutronix.de, broonie@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, wells.lu@sunplus.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-26.10.2021 01:40, Dmitry Osipenko пишет:
-> +	ret = devm_pm_runtime_enable(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Set maximum frequency of the IP */
-> -	ret = clk_set_rate(pwm->clk, pwm->soc->max_frequency);
-> +	ret = dev_pm_opp_set_rate(pwm->dev, pwm->soc->max_frequency);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
-> -		return ret;
-> +		goto put_pm;
->  	}
+On Fri, 29 Oct 2021 09:44:34 +0100,
+Qin Jian <qinjian@cqplus1.com> wrote:
+> 
+> Add interrupt driver for Sunplus SP7021 SoC.
+> 
+> This is the interrupt controller in P chip which collects all interrupt
+> sources in P-chip and routes them to C-chip. C-chip adopts ARM CA7
+> interrupt controller (compitable = "arm,cortex-a7-gic"). It is a parent
+
+This information isn't relevant.
+
+> interrupt controller of P-chip interrupt controller.
+> 
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  MAINTAINERS                       |   1 +
+>  drivers/irqchip/Kconfig           |   9 +
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-sp7021-intc.c | 324 ++++++++++++++++++++++++++++++
+>  4 files changed, 335 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-sp7021-intc.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index be0334d6a..bfa891d86 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2665,6 +2665,7 @@ F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+>  F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+>  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+>  F:	drivers/clk/clk-sp7021.c
+> +F:	drivers/irqchip/irq-sp7021-intc.c
+>  F:	drivers/reset/reset-sunplus.c
+>  F:	include/dt-bindings/clock/sp-sp7021.h
+>  F:	include/dt-bindings/interrupt-controller/sp7021-intc.h
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index aca7b595c..8a58dfb88 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -602,4 +602,13 @@ config APPLE_AIC
+>  	  Support for the Apple Interrupt Controller found on Apple Silicon SoCs,
+>  	  such as the M1.
 >  
->  	/*
-> @@ -278,7 +294,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
->  	if (IS_ERR(pwm->rst)) {
->  		ret = PTR_ERR(pwm->rst);
->  		dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
-> -		return ret;
-> +		goto put_pm;
->  	}
->  
->  	reset_control_deassert(pwm->rst);
-> @@ -291,10 +307,15 @@ static int tegra_pwm_probe(struct platform_device *pdev)
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
->  		reset_control_assert(pwm->rst);
-> -		return ret;
-> +		goto put_pm;
->  	}
->  
-> +	pm_runtime_put(&pdev->dev);
+> +config SUNPLUS_SP7021_INTC
+> +	bool "Sunplus SP7021 interrupt controller"
+> +	default SOC_SP7021
+> +	help
+> +	  Support for the Sunplus SP7021 Interrupt Controller IP core.
+> +	  This is used as a primary controller with SP7021 ChipP and can also
+> +	  be used as a secondary chained controller on SP7021 ChipC.
+> +	  This is selected automatically by platform config.
+
+If it is selected, drop the default.
+
 > +
->  	return 0;
-> +put_pm:
-> +	pm_runtime_put_sync_suspend(&pdev->dev);
+>  endmenu
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index f88cbf36a..75411f654 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -116,3 +116,4 @@ obj-$(CONFIG_MACH_REALTEK_RTL)		+= irq-realtek-rtl.o
+>  obj-$(CONFIG_WPCM450_AIC)		+= irq-wpcm450-aic.o
+>  obj-$(CONFIG_IRQ_IDT3243X)		+= irq-idt3243x.o
+>  obj-$(CONFIG_APPLE_AIC)			+= irq-apple-aic.o
+> +obj-$(CONFIG_SUNPLUS_SP7021_INTC)	+= irq-sp7021-intc.o
+> diff --git a/drivers/irqchip/irq-sp7021-intc.c b/drivers/irqchip/irq-sp7021-intc.c
+> new file mode 100644
+> index 000000000..3431ec746
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-sp7021-intc.c
+> @@ -0,0 +1,324 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Copyright (C) Sunplus Technology Co., Ltd.
+> + *       All rights reserved.
+> + */
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/io.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +
+> +#include <asm/exception.h>
+> +#include <dt-bindings/interrupt-controller/sp7021-intc.h>
+> +
+> +#define SP_INTC_HWIRQ_MIN     0
+> +#define SP_INTC_HWIRQ_MAX     223
+> +
+> +/* Interrupt G0/G1 offset */
+> +#define INTR_REG_SIZE		(7 * 4)
+
+Why isn't that derived from the number of interrupts?
+
+> +
+> +#define G0_INTR_TYPE		(0)
+> +#define G0_INTR_POLARITY	(G0_INTR_TYPE + INTR_REG_SIZE)
+> +#define G0_INTR_PRIORITY	(G0_INTR_POLARITY + INTR_REG_SIZE)
+> +#define G0_INTR_MASK		(G0_INTR_PRIORITY + INTR_REG_SIZE)
+> +
+> +#define G1_INTR_CLR			(0)
+> +#define G1_MASKED_EXT1		(G1_INTR_CLR + INTR_REG_SIZE)
+> +#define G1_MASKED_EXT0		(G1_MASKED_EXT1 + INTR_REG_SIZE)
+> +#define G1_INTR_GROUP		(31 * 4)
+> +#define G1_INTR_MASK		(0x7F)
+> +#define G1_EXT1_SHIFT		(0)
+> +#define G1_EXT0_SHIFT		(8)
+> +
+> +static struct sp_intctl {
+> +	void __iomem *g0;
+> +	void __iomem *g1;
+
+What is G0? what is G1?
+
+> +	struct irq_domain *domain;
+> +	struct device_node *node;
+> +	raw_spinlock_t lock;
+> +	int virq[2];
+> +} sp_intc;
+> +
+> +/* GPIO INT EDGE BUG WORKAROUND */
+> +#define GPIO_INT0_HWIRQ			120
+> +#define GPIO_INT7_HWIRQ			127
+> +#define GPIO_INT_EDGE_ACTIVE	BIT(31)
+> +#define IS_GPIO_INT(n)	(((n) >= GPIO_INT0_HWIRQ) && ((n) <= GPIO_INT7_HWIRQ))
+> +/* array to hold which interrupt needs to workaround the bug
+> + * INT_TYPE_NONE: no need
+> + * INT_TYPE_EDGE_FALLING/INT_TYPE_EDGE_RISING: need to workaround
+> + * GPIO_INT_EDGE_ACTIVING: workaround is on going
+
+Please describe the nature of the workaround. s/ACTIVING/ACTIVE/.
+
+> + */
+> +static u32 edge_trigger[SP_INTC_HWIRQ_MAX];
+
+4 states per interrupt, and yet you use a u32 for each of them...
+Also, why isn't this part of your sp_intc data structure? You also
+have enough space for 200+ interrupts (ignoring the obvious off-by-one
+bug), and yet you are only concerned with 8 of them. Do you spot a
+trend here?
+
+> +
+> +static struct irq_chip sp_intc_chip;
+> +
+> +static void sp_intc_assign_bit(u32 hwirq, void __iomem *base, u32 value)
+
+If value describes a single bit, why is it a u32?
+
+> +{
+> +	u32 offset, mask;
+> +	unsigned long flags;
+> +	void __iomem *reg;
+> +
+> +	offset = (hwirq / 32) * 4;
+> +	reg = base + offset;
+> +
+> +	raw_spin_lock_irqsave(&sp_intc.lock, flags);
+> +	mask = readl_relaxed(reg);
+> +	if (value)
+> +		mask |= BIT(hwirq % 32);
+> +	else
+> +		mask &= ~BIT(hwirq % 32);
+> +	writel_relaxed(mask, reg);
+> +	raw_spin_unlock_irqrestore(&sp_intc.lock, flags);
+> +}
+> +
+> +static void sp_intc_ack_irq(struct irq_data *d)
+> +{
+> +	u32 hwirq = d->hwirq;
+> +
+> +	if (edge_trigger[hwirq] != IRQ_TYPE_NONE) {
+
+Why don't you just check the irq number instead?
+
+> +		sp_intc_assign_bit(hwirq, sp_intc.g0 + G0_INTR_POLARITY,
+> +			(edge_trigger[hwirq] == IRQ_TYPE_EDGE_RISING));
+> +		edge_trigger[hwirq] |= GPIO_INT_EDGE_ACTIVE;
+
+The whole thing is terrible. For each of the 8 interrupts, you only
+need to know whether:
+
+- it is rising or falling
+- it is active or not
+
+That's a grand total of 16 bits instead of almost a 1kB worth of
+nothing. Use atomic bitops, and this is done.
+
+> +	}
+> +
+> +	sp_intc_assign_bit(hwirq, sp_intc.g1 + G1_INTR_CLR, 1);
+> +}
+> +
+> +static void sp_intc_mask_irq(struct irq_data *d)
+> +{
+> +	sp_intc_assign_bit(d->hwirq, sp_intc.g0 + G0_INTR_MASK, 0);
+> +}
+> +
+> +static void sp_intc_unmask_irq(struct irq_data *d)
+> +{
+> +	sp_intc_assign_bit(d->hwirq, sp_intc.g0 + G0_INTR_MASK, 1);
+> +}
+> +
+> +static void sp_intc_set_priority(u32 hwirq, u32 priority)
+> +{
+> +	sp_intc_assign_bit(hwirq, sp_intc.g0 + G0_INTR_PRIORITY, priority);
+> +}
+> +
+> +static int sp_intc_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +	u32 intr_type;		/* 0: level			1: edge */
+> +	u32 intr_polarity;	/* 0: high/rising	1: low/falling */
+
+So how about giving the variables sensible names and types:
+
+	bool is_level, is_high;
+
+> +	u32 hwirq = d->hwirq;
+> +
+> +	/* update the chip/handler */
+> +	if (type & IRQ_TYPE_LEVEL_MASK)
+> +		irq_set_chip_handler_name_locked(d, &sp_intc_chip,
+> +						   handle_level_irq, NULL);
+> +	else
+> +		irq_set_chip_handler_name_locked(d, &sp_intc_chip,
+> +						   handle_edge_irq, NULL);
+> +
+> +	edge_trigger[hwirq] = IRQ_TYPE_NONE;
+> +
+> +	if (type & IRQ_TYPE_LEVEL_MASK)
+> +		intr_type = 0;
+> +	else if (IS_GPIO_INT(hwirq)) {
+> +		intr_type = 0;
+> +		edge_trigger[hwirq] = type;
+> +	} else
+> +		intr_type = 1;
+
+Coding style.
+
+> +
+> +	intr_polarity = (type == IRQ_TYPE_LEVEL_LOW || type == IRQ_TYPE_EDGE_FALLING);
+> +
+> +	sp_intc_assign_bit(hwirq, sp_intc.g0 + G0_INTR_TYPE, intr_type);
+> +	sp_intc_assign_bit(hwirq, sp_intc.g0 + G0_INTR_POLARITY, intr_polarity);
+> +
+> +	return IRQ_SET_MASK_OK;
+> +}
+> +
+> +static int sp_intc_get_ext_irq(int ext_num)
+> +{
+> +	u32 hwirq, mask;
+> +	u32 i;
+> +
+> +	i = readl_relaxed(sp_intc.g1 + G1_INTR_GROUP);
+> +	if (ext_num)
+> +		mask = (i >> G1_EXT1_SHIFT) & G1_INTR_MASK;
+> +	else
+> +		mask = (i >> G1_EXT0_SHIFT) & G1_INTR_MASK;
+> +	if (mask) {
+> +		i = fls(mask) - 1;
+> +		if (ext_num)
+> +			mask = readl_relaxed(sp_intc.g1 + G1_MASKED_EXT1 + i * 4);
+> +		else
+> +			mask = readl_relaxed(sp_intc.g1 + G1_MASKED_EXT0 + i * 4);
+> +		if (mask) {
+> +			hwirq = (i << 5) + fls(mask) - 1;
+> +			return hwirq;
+> +		}
+> +	}
+
+What a terrible control flow. Also, variable names are cheap, and you
+don't need to reuse them when they mean something different.
+
+	if (ext_num) {
+		shift = G1_EXT1_SHIFT;
+		offset = G1_MASKED_EXT1;
+	} else {
+		[[ same thing with G0 ]
+	}
+
+	status = readl_relaxed();
+
+	pending_summary = (status >> shift) & G1_INTR_MASK;
+	if (!pending_summary)
+		return -1;
+
+	index = fls(pending_summary) - 1;
+	pending = readl_relaxed(g1 + offset + index * 4);
+	if (!pending)
+		return -1;
+
+	return (index << 5) | (fls(pending) - 1);
+
+Look: no nesting, obvious names, anyone can understand it.
+
+> +	return -1; /* No interrupt */
+> +}
+> +
+> +static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *host_chip = irq_desc_get_chip(desc);
+> +	int ext_num = (int)irq_desc_get_handler_data(desc);
+> +	int hwirq;
+> +
+> +	chained_irq_enter(host_chip, desc);
+> +
+> +	while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
+> +		if (edge_trigger[hwirq] & GPIO_INT_EDGE_ACTIVE) {
+> +			edge_trigger[hwirq] &= ~GPIO_INT_EDGE_ACTIVE;
+> +			sp_intc_assign_bit(hwirq, sp_intc.g0 + G0_INTR_POLARITY,
+> +				(edge_trigger[hwirq] != IRQ_TYPE_EDGE_RISING));
+> +		} else
+> +			generic_handle_domain_irq(sp_intc.domain, hwirq);
+
+Coding style.
+
+> +	}
+> +
+> +	chained_irq_exit(host_chip, desc);
+> +}
+> +
+> +static void __exception_irq_entry sp_intc_handle_irq(struct pt_regs *regs)
+> +{
+> +	int hwirq;
+> +
+> +	while ((hwirq = sp_intc_get_ext_irq(0)) >= 0)
+> +		generic_handle_domain_irq(sp_intc.domain, hwirq);
+> +}
+> +
+> +static void __init sp_intc_chip_init(void __iomem *base0, void __iomem *base1)
+> +{
+> +	int i;
+> +
+> +	sp_intc.g0 = base0;
+> +	sp_intc.g1 = base1;
+> +
+> +	for (i = 0; i < 7; i++) {
+> +		/* all mask */
+> +		writel_relaxed(0, sp_intc.g0 + G0_INTR_MASK + i * 4);
+> +		/* all edge */
+> +		writel_relaxed(~0, sp_intc.g0 + G0_INTR_TYPE + i * 4);
+> +		/* all high-active */
+> +		writel_relaxed(0, sp_intc.g0 + G0_INTR_POLARITY + i * 4);
+> +		/* all irq */
+> +		writel_relaxed(~0, sp_intc.g0 + G0_INTR_PRIORITY + i * 4);
+> +		/* all clear */
+> +		writel_relaxed(~0, sp_intc.g1 + G1_INTR_CLR + i * 4);
+> +	}
+> +}
+> +
+> +int sp_intc_xlate_of(struct irq_domain *d, struct device_node *node,
+> +			  const u32 *intspec, unsigned int intsize,
+> +			  irq_hw_number_t *out_hwirq, unsigned int *out_type)
+> +{
+> +	int ret;
+> +
+> +	ret = irq_domain_xlate_twocell(d, node,
+> +		intspec, intsize, out_hwirq, out_type);
+> +	if (!ret) {
+> +		/* intspec[1]: IRQ_TYPE | SP_INTC_EXT_INT
+> +		 * SP_INTC_EXT_INT: 0-1,
+> +		 *   to indicate route to which parent irq: EXT_INT0/EXT_INT1
+> +		 */
+
+Why is that in the DT? If that's a SW decision, it doesn't belong there.
+
+> +		u32 ext_int = (intspec[1] & SP_INTC_EXT_INT_MASK) >> SP_INTC_EXT_INT_SHFIT;
+> +
+> +		/* priority = 0, route to EXT_INT1
+> +		 *    otherwise, route to EXT_INT0
+> +		 */
+> +		sp_intc_set_priority(*out_hwirq, 1 - ext_int);
+
+I already said in the initial review that changing the HW didn't
+belong in the translate callback, but should be done at map() time.
+
+> +	}
+> +
 > +	return ret;
->  }
->  
->  static int tegra_pwm_remove(struct platform_device *pdev)
-> @@ -305,20 +326,44 @@ static int tegra_pwm_remove(struct platform_device *pdev)
->  
->  	reset_control_assert(pc->rst);
->  
-> +	pm_runtime_force_suspend(&pdev->dev);
+> +}
+> +
+> +static struct irq_chip sp_intc_chip = {
+> +	.name = "sp_intc",
+> +	.irq_ack = sp_intc_ack_irq,
+> +	.irq_mask = sp_intc_mask_irq,
+> +	.irq_unmask = sp_intc_unmask_irq,
+> +	.irq_set_type = sp_intc_set_type,
+> +};
+> +
+> +static int sp_intc_irq_domain_map(struct irq_domain *domain,
+> +	unsigned int irq, irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
+> +	irq_set_chip_data(irq, &sp_intc_chip);
+> +	irq_set_noprobe(irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops sp_intc_dm_ops = {
+> +	.xlate = sp_intc_xlate_of,
+> +	.map = sp_intc_irq_domain_map,
+> +};
+> +
+> +#ifdef CONFIG_OF
 
-I just noticed that RPM core doesn't reset RPM-enable count of a device
-on driver's unbind (pm_runtime_reinit). It was a bad idea to use
-devm_pm_runtime_enable() + pm_runtime_force_suspend() here, since RPM is
-disabled twice on driver's removal, and thus, RPM will never be enabled
-again.
+Why the #ifdef? This thing doesn't work without OF anyway.
 
-I'll fix it for PWM and other drivers in this series, in v15.
+> +static int sp_intc_irq_map(struct device_node *node, int i)
+> +{
+> +	sp_intc.virq[i] = irq_of_parse_and_map(node, i);
+> +	if (!sp_intc.virq[i]) {
+> +		pr_err("%s: missed EXT_INT%d in DT\n", __func__, i);
+
+-ENOENT is enough, no need to shout on the console.
+
+> +		return -ENOENT;
+> +	}
+> +
+> +	pr_info("%s: EXT_INT%d = %d\n", __func__, i, sp_intc.virq[i]);
+
+Nobody cares about this. Get rid of it.
+
+> +	irq_set_chained_handler_and_data(sp_intc.virq[i],
+> +		sp_intc_handle_ext_cascaded, (void *)i);
+> +
+> +	return 0;
+> +}
+> +
+> +int __init sp_intc_init_dt(
+> +	struct device_node *node, struct device_node *parent)
+
+Single line.
+
+> +{
+> +	void __iomem *base0, *base1;
+> +
+> +	base0 = of_iomap(node, 0);
+> +	if (!base0) {
+> +		pr_err("unable to map sp-intc base 0\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	base1 = of_iomap(node, 1);
+> +	if (!base1) {
+> +		pr_err("unable to map sp-intc base 1\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	sp_intc.node = node;
+> +
+> +	sp_intc_chip_init(base0, base1);
+> +
+> +	sp_intc.domain = irq_domain_add_linear(node,
+> +			SP_INTC_HWIRQ_MAX - SP_INTC_HWIRQ_MIN,
+> +			&sp_intc_dm_ops, &sp_intc);
+> +	if (!sp_intc.domain) {
+> +		pr_err("%s: unable to create linear domain\n", __func__);
+
+Drop the error message.
+
+> +		return -EINVAL;
+> +	}
+> +
+> +	raw_spin_lock_init(&sp_intc.lock);
+> +
+> +	if (parent) {
+> +		/* secondary chained controller */
+> +		if (sp_intc_irq_map(node, 0)) // EXT_INT0
+> +			return -ENOENT;
+
+Just return whatever the helper returned. You don't need to
+reinterpret it.
+
+> +
+> +		if (sp_intc_irq_map(node, 1)) // EXT_INT1
+> +			return -ENOENT;
+> +	} else {
+> +		/* primary controller */
+> +		set_handle_irq(sp_intc_handle_irq);
+> +	}
+
+So what happens if you have *two* of these blocks? One as the root
+controller, and another implementing the chained stuff?
+
+> +
+> +	return 0;
+> +}
+> +IRQCHIP_DECLARE(sp_intc, "sunplus,sp7021-intc", sp_intc_init_dt);
+> +#endif
+> +
+> +MODULE_AUTHOR("Qin Jian <qinjian@cqplus1.com>");
+> +MODULE_DESCRIPTION("Sunplus SP7021 Interrupt Controller Driver");
+> +MODULE_LICENSE("GPL v2");
+
+You are using IRQCHIP_DECLARE(), so this isn't a module. Drop this.
+
+Thankfully, it is too late for 5.16, so you have a full cycle to give
+this code another major cleanup.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
