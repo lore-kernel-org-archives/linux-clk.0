@@ -2,257 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614B3C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 14:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66368C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 402FB61165
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 14:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E48D61184
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 15:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbhJ2O4V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 10:56:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229549AbhJ2O4V (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Oct 2021 10:56:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id CE987610FD;
-        Fri, 29 Oct 2021 14:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635519232;
-        bh=5LTp5jc3eDq9xjCbBlddVmUCvBpA1/tGAU/Q0N5abB8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MvmhyBaiFRNLb4z/SfvPcx/oQQJjYYyLSh+65fEqpTq+RrHdWtDPRp2nyeYmyJ8ZB
-         SV7VqEmEGnG0Pmgn1pRrmkQvQToBsw6OQd3ahsREAu/VPZNNtPSYSKRZr5z2wOBiug
-         59nKPoEjA4FnGFB0SQOjHrTN855in4B0NehrGaT/mEg1K2iAAfCDkeirl6gwmNccDJ
-         EkYarLBlzxs3ivv51S8azwvJNTBAHEKLYfXUlbqQhAsI87mwXCSh70DFjlPGiWPRPk
-         4Ox2O5Pa3B9wPPVjjL09x7fWLFsHJVNE7xFfpSk+PV4RO+YunR+BLSN5UoAMtHlzt6
-         sXlLZz14V8sVg==
-Received: by mail-ed1-f46.google.com with SMTP id w1so20608804edd.0;
-        Fri, 29 Oct 2021 07:53:52 -0700 (PDT)
-X-Gm-Message-State: AOAM5320e2TxI63z9wNJu0F7C9h9a6kj169oUs3iMOoMrdOY2CAvNR+/
-        G1cqlQWko1SQ7TVejXGh325Y9ePpfEkkqZGzGw==
-X-Google-Smtp-Source: ABdhPJzbB0cSGKHpb2uX+fdxvl2megjjmrAVPnRerDGXcV/l0EJOlQTfSNErn+Jvm4BBLgKOHn7ZEq4uDbg/RaSYCLE=
-X-Received: by 2002:a17:907:869e:: with SMTP id qa30mr13992481ejc.320.1635519228586;
- Fri, 29 Oct 2021 07:53:48 -0700 (PDT)
+        id S229968AbhJ2PXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 11:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229607AbhJ2PXV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 11:23:21 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65AB5C061570;
+        Fri, 29 Oct 2021 08:20:52 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id u21so21705566lff.8;
+        Fri, 29 Oct 2021 08:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lKRvF3HEzsPjmvnhdSOneYxn8GKeq2VyROYToBcwKqg=;
+        b=NOKTBqx0zL9etgzmHgf1oJxxEva2iGeeOh+4E1i+Uoun1qXSNBFS1lNQC88fmc/XOx
+         EyAsxSZly1bRq3TmlsSW08aYbK/JB9WKiZjvvAc6IRSVBHFLgaxq5WghrNgqH9N06Cgk
+         rVszgStQ8TpOhlNS+BEfMv2qPVDnZzTEXL2vamo6PvIjGTbjHy4zAlniV7LCLM4z8qJ+
+         3d31fE3KYfU1VMXEHzZS2oldd3BUoObYtPfHaEBGLFbTrlAVq3+HlsjsOz7ean0hjU7/
+         HGTTI/1EcTjErLyfGPhmM82MicBuWD5C+m3+1geOb7uZN0RBh1lgz8H3yqSys+vx0w95
+         nBLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lKRvF3HEzsPjmvnhdSOneYxn8GKeq2VyROYToBcwKqg=;
+        b=DtdCc8nFBVBNiUzyMANr4WhkoHsA549H+sXv4E78URiSo9+piTHhCpOs4U8gLv4p/i
+         IsksW/OilRaTZ+OVp8m7KKYl9gCZcLIxA1YHB329FG0d/pxbZTsfoytifwIMxcbZ3PRE
+         2Codu3bszwTdRSgRfioJP7cQ73Sl8QnBAPG43LyFWOmBssuHpQkt+68NZ+EEcuoL5CdB
+         lkjWELY7QFFZldNmw0IrU2ef6ywLB5QqCcI4Fonuk3x17IhZlm+xZIPfe/j831fhFj95
+         077famsxRelAgxV3i0aDrvocO6PU+J3UTYAkEzw6Ho0XH3AGdfLnBbkmRX5ZNL1gGOA+
+         nSlw==
+X-Gm-Message-State: AOAM533X/Xq8BpZVs0UYcZiR9hZ1vjHASl/o1CsxO21S/c3AD+qmie/Q
+        6K8r8QplBSOtBS0JGBHstzg=
+X-Google-Smtp-Source: ABdhPJxvYqPO801LDBYB4F60HZArGOgVHSUSi60pYfKAJNyhUGpwrMQ1Y80dwIJ4c7MkaVL/b474ZQ==
+X-Received: by 2002:a05:6512:228d:: with SMTP id f13mr3384237lfu.491.1635520850816;
+        Fri, 29 Oct 2021 08:20:50 -0700 (PDT)
+Received: from [192.168.2.145] (46-138-44-18.dynamic.spd-mgts.ru. [46.138.44.18])
+        by smtp.googlemail.com with ESMTPSA id e5sm28298lfs.52.2021.10.29.08.20.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Oct 2021 08:20:50 -0700 (PDT)
+Subject: Re: [PATCH v14 20/39] pwm: tegra: Add runtime PM and OPP support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+References: <20211025224032.21012-1-digetx@gmail.com>
+ <20211025224032.21012-21-digetx@gmail.com>
+Message-ID: <09c05206-c0e5-9a25-8ffa-b9291f6ea5ae@gmail.com>
+Date:   Fri, 29 Oct 2021 18:20:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20211016133322.40771-1-paul@crapouillou.net> <YXiNLZ9ne8D8uv82@robh.at.kernel.org>
- <VCRO1R.FQ8R7TN6NPYP3@crapouillou.net> <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
- <BQMQ1R.WLWA4YQT423M3@crapouillou.net>
-In-Reply-To: <BQMQ1R.WLWA4YQT423M3@crapouillou.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 29 Oct 2021 09:53:36 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+wKTZvwT7Xjt_db1ZF+KBgLe5tcRB+mNny0hT=y8h2=g@mail.gmail.com>
-Message-ID: <CAL_Jsq+wKTZvwT7Xjt_db1ZF+KBgLe5tcRB+mNny0hT=y8h2=g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Rename Ingenic CGU headers to ingenic,*.h
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>, list@opendingux.net,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211025224032.21012-21-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 7:01 AM Paul Cercueil <paul@crapouillou.net> wrote:
->
-> Hi Rob,
->
-> Le jeu., oct. 28 2021 at 17:26:54 -0500, Rob Herring <robh@kernel.org>
-> a =C3=A9crit :
-> > On Thu, Oct 28, 2021 at 6:46 AM Paul Cercueil <paul@crapouillou.net>
-> > wrote:
-> >>
-> >>  Hi Rob,
-> >>
-> >>  Le mar., oct. 26 2021 at 18:20:13 -0500, Rob Herring
-> >> <robh@kernel.org>
-> >>  a =C3=A9crit :
-> >>  > On Sat, Oct 16, 2021 at 02:33:21PM +0100, Paul Cercueil wrote:
-> >>  >>  Tidy up a bit the tree, by prefixing all
-> >> include/dt-bindings/clock/
-> >>  >> files
-> >>  >>  related to Ingenic SoCs with 'ingenic,'.
-> >>  >>
-> >>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  >>  ---
-> >>  >>
-> >>  >>  Notes:
-> >>  >>      v2: Fix x1000-cgu.h and x1830-cgu.h incorrectly renamed to
-> >>  >>          x1000.h / x1830.h
-> >>  >>
-> >>  >>   Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/display/ingenic,ipu.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-> >> | 4
-> >>  >> ++--
-> >>  >>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/i2c/ingenic,i2c.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   .../devicetree/bindings/memory-controllers/ingenic,nemc.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   .../devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/mtd/ingenic,nand.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/net/ingenic,mac.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   .../devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/rng/ingenic,trng.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/serial/ingenic,uart.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/sound/ingenic,aic.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/sound/ingenic,codec.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/timer/ingenic,sysost.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/timer/ingenic,tcu.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   Documentation/devicetree/bindings/usb/ingenic,musb.yaml
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/jz4725b.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/jz4740.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/jz4770.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/jz4780.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/x1000.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   arch/mips/boot/dts/ingenic/x1830.dtsi
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/jz4725b-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/jz4740-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/jz4760-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/jz4770-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/jz4780-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/x1000-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   drivers/clk/ingenic/x1830-cgu.c
-> >> | 2
-> >>  >> +-
-> >>  >>   .../clock/{jz4725b-cgu.h =3D> ingenic,jz4725b-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{jz4740-cgu.h =3D> ingenic,jz4740-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{jz4760-cgu.h =3D> ingenic,jz4760-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{jz4770-cgu.h =3D> ingenic,jz4770-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{jz4780-cgu.h =3D> ingenic,jz4780-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{x1000-cgu.h =3D> ingenic,x1000-cgu.h}
-> >> | 0
-> >>  >>   .../dt-bindings/clock/{x1830-cgu.h =3D> ingenic,x1830-cgu.h}
-> >> | 0
-> >>  >>   42 files changed, 36 insertions(+), 36 deletions(-)
-> >>  >>   rename include/dt-bindings/clock/{jz4725b-cgu.h =3D>
-> >>  >> ingenic,jz4725b-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{jz4740-cgu.h =3D>
-> >>  >> ingenic,jz4740-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{jz4760-cgu.h =3D>
-> >>  >> ingenic,jz4760-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{jz4770-cgu.h =3D>
-> >>  >> ingenic,jz4770-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{jz4780-cgu.h =3D>
-> >>  >> ingenic,jz4780-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{x1000-cgu.h =3D>
-> >>  >> ingenic,x1000-cgu.h} (100%)
-> >>  >>   rename include/dt-bindings/clock/{x1830-cgu.h =3D>
-> >>  >> ingenic,x1830-cgu.h} (100%)
-> >>  >
-> >>  > Acked-by: Rob Herring <robh@kernel.org>
-> >>  >
-> >>  > However, this will be a pain to merge if there are any new users
-> >>  > coming
-> >>  > in during the merge window. If not, then Stephen can just take
-> >> this.
-> >>  > If
-> >>  > there are, then at the end of the merge window is the best time.
-> >> For
-> >>  > that to work, you need to track when all dependent changes are
-> >> merged
-> >>  > and we need to agree who will pick this up. I usually have fixes
-> >> from
-> >>  > breakages in the merge window anyways.
-> >>
-> >>  I get Cc'd on all ingenic-related patches, so far I don't see
-> >> anything
-> >>  that will cause a breakage. I think it would be okay to merge it now
-> >>  (we're at -rc7 after all).
-> >
-> > Then can you apply this to linux-next and check it all works there.
-> > Specifically, 'make dt_binding_check dtbs drivers/clk/' needs to work.
-> > Or confirm you already did that.
->
-> I did it on Linus' master branch and it all worked.
->
-> But indeed, it does conflict on linux-next since
-> Documentation/devicetree/bindings/spi/ingenic,spi.yaml was added there.
->
-> Should I rebase the patchset on top of linux-next?
+26.10.2021 01:40, Dmitry Osipenko пишет:
+> +	ret = devm_pm_runtime_enable(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(&pdev->dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Set maximum frequency of the IP */
+> -	ret = clk_set_rate(pwm->clk, pwm->soc->max_frequency);
+> +	ret = dev_pm_opp_set_rate(pwm->dev, pwm->soc->max_frequency);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
+> -		return ret;
+> +		goto put_pm;
+>  	}
+>  
+>  	/*
+> @@ -278,7 +294,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+>  	if (IS_ERR(pwm->rst)) {
+>  		ret = PTR_ERR(pwm->rst);
+>  		dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
+> -		return ret;
+> +		goto put_pm;
+>  	}
+>  
+>  	reset_control_deassert(pwm->rst);
+> @@ -291,10 +307,15 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
+>  		reset_control_assert(pwm->rst);
+> -		return ret;
+> +		goto put_pm;
+>  	}
+>  
+> +	pm_runtime_put(&pdev->dev);
+> +
+>  	return 0;
+> +put_pm:
+> +	pm_runtime_put_sync_suspend(&pdev->dev);
+> +	return ret;
+>  }
+>  
+>  static int tegra_pwm_remove(struct platform_device *pdev)
+> @@ -305,20 +326,44 @@ static int tegra_pwm_remove(struct platform_device *pdev)
+>  
+>  	reset_control_assert(pc->rst);
+>  
+> +	pm_runtime_force_suspend(&pdev->dev);
 
-Yes, but no one can apply that until all the dependencies land in
-Linus' tree yet we still want it in -rc1 so that there's not cross
-tree dependencies in the next cycle. Or Mark can provide a stable
-branch to Stephen. Like I said, it's a pain.
+I just noticed that RPM core doesn't reset RPM-enable count of a device
+on driver's unbind (pm_runtime_reinit). It was a bad idea to use
+devm_pm_runtime_enable() + pm_runtime_force_suspend() here, since RPM is
+disabled twice on driver's removal, and thus, RPM will never be enabled
+again.
 
-In any case, at this point Stephen needs to comment.
-
-Rob
+I'll fix it for PWM and other drivers in this series, in v15.
