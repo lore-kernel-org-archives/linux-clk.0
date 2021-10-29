@@ -2,163 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E8C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 16:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDCBC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 16:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3258161177
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 16:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 486DC6115B
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 16:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbhJ2Qbh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 12:31:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44664 "EHLO
+        id S229623AbhJ2Qty (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 12:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbhJ2Qbg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 12:31:36 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A15C061570;
-        Fri, 29 Oct 2021 09:29:07 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id h11so17807987ljk.1;
-        Fri, 29 Oct 2021 09:29:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C/nh1wSPg2qxieXH4r9qgq/nYihsX9fQ0PQvzCv1u8k=;
-        b=QY7EJfShfyck1TNZ/R2aaluwJPz15sC5RiT0pKVl1JBZVtBQSxxtlPJ1sxLt3NSauJ
-         CS3k6WGYEDy8OAAylkhJsCngz89Un3dxHovP4No3itSutHrrDyZUd72WZaq/i5tHjp33
-         lELVUGAvVDfpR+gOelx4tk66n3mxSuPyepdsDgYLhjJ942Xk7Ojaj0+h/HPUgrqIm0PJ
-         oYBdL5ErZ1oNHi3Kn4P4PHdWPZBdxADBaeRANLbbWXlgxWOpPqB08jsO0BNBX7Sw3/FW
-         /qECNqXLz41564ZEAm3eAFY8BNN+76YGZTkvpTl5C2EJMJUFNomDIzfOzG30Tp71fxVV
-         wlUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C/nh1wSPg2qxieXH4r9qgq/nYihsX9fQ0PQvzCv1u8k=;
-        b=ihHquU2vRH0RqXpJBwoQmn4u86X9SkO264iDrWNPsApfMeelJzNtWCIwQ0hn5ZBOxb
-         vHGrfkM3Z61uAbf8pujixB2aaEDskxG5yKr3lr1dNU70mCx3KNoEAJhMY780EDfG+dwi
-         8TOqQvzLp8H+XMLBGI+yFypHRZ9Ib0cW1Aj8EcHd+ZG//5V4v90TphBlCPRYBBO/shPL
-         06L5X/UnaCq0dv83PhCX2mglM6muCZagBn6Iyw31wZE7ZkN8pLQ4kvaddukoEm+u3OHK
-         wj+JjriW0jKUtN/WzF5iJt/2JXeAwn3icpqmp0wXi2wmhZQ03Hb6srHzhXA+ux1AI53U
-         V3KQ==
-X-Gm-Message-State: AOAM530Yty0IQoT7uXdABMbDVy6qlx02eUo8Z1AwaFQTNzMCo6r/0w0/
-        bTvnh/fTJ3Ey1akHAB4kOqQ=
-X-Google-Smtp-Source: ABdhPJyZDHoy7QReMDTuh43voSzqtG9TmWKveT2FDJagZ7MTM03XORP0SaqpQynyngPjXYo2byU+CQ==
-X-Received: by 2002:a2e:b162:: with SMTP id a2mr12833961ljm.440.1635524946194;
-        Fri, 29 Oct 2021 09:29:06 -0700 (PDT)
-Received: from [192.168.2.145] (46-138-44-18.dynamic.spd-mgts.ru. [46.138.44.18])
-        by smtp.googlemail.com with ESMTPSA id 9sm433066lfq.44.2021.10.29.09.29.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Oct 2021 09:29:05 -0700 (PDT)
-Subject: Re: [PATCH v14 20/39] pwm: tegra: Add runtime PM and OPP support
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        David Heidelberg <david@ixit.cz>
-References: <20211025224032.21012-1-digetx@gmail.com>
- <20211025224032.21012-21-digetx@gmail.com>
- <09c05206-c0e5-9a25-8ffa-b9291f6ea5ae@gmail.com>
- <CAJZ5v0i9OtA1nDiv8UXuF3ASdENFYJFV7+nMWm6Pcu=kw8k1aQ@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4dc8a6bd-4072-ccbf-513b-221d286bd6d5@gmail.com>
-Date:   Fri, 29 Oct 2021 19:29:05 +0300
+        with ESMTP id S229607AbhJ2Qtx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 12:49:53 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299FDC061570
+        for <linux-clk@vger.kernel.org>; Fri, 29 Oct 2021 09:47:25 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1mgV2I-0005zT-3l; Fri, 29 Oct 2021 18:47:22 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: Re: [PATCH V2] clk: imx: gate off peripheral clock slice
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, festevam@gmail.com, s.hauer@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+References: <20211025122902.1151-1-peng.fan@oss.nxp.com>
+ <YXaeOa9CsT3cd/u+@ryzen>
+Message-ID: <d3fd4bdf-6e3d-7752-dcc2-293fc5e6f469@pengutronix.de>
+Date:   Fri, 29 Oct 2021 18:47:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0i9OtA1nDiv8UXuF3ASdENFYJFV7+nMWm6Pcu=kw8k1aQ@mail.gmail.com>
+In-Reply-To: <YXaeOa9CsT3cd/u+@ryzen>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-29.10.2021 18:56, Rafael J. Wysocki пишет:
-> On Fri, Oct 29, 2021 at 5:20 PM Dmitry Osipenko <digetx@gmail.com> wrote:
+Hello Peng, Abel,
+
+On 25.10.21 14:08, Abel Vesa wrote:
+> On 21-10-25 20:29:02, Peng Fan (OSS) wrote:
+>> From: Peng Fan <peng.fan@nxp.com>
 >>
->> 26.10.2021 01:40, Dmitry Osipenko пишет:
->>> +     ret = devm_pm_runtime_enable(&pdev->dev);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     ret = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     ret = pm_runtime_resume_and_get(&pdev->dev);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>>       /* Set maximum frequency of the IP */
->>> -     ret = clk_set_rate(pwm->clk, pwm->soc->max_frequency);
->>> +     ret = dev_pm_opp_set_rate(pwm->dev, pwm->soc->max_frequency);
->>>       if (ret < 0) {
->>>               dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
->>> -             return ret;
->>> +             goto put_pm;
->>>       }
->>>
->>>       /*
->>> @@ -278,7 +294,7 @@ static int tegra_pwm_probe(struct platform_device *pdev)
->>>       if (IS_ERR(pwm->rst)) {
->>>               ret = PTR_ERR(pwm->rst);
->>>               dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
->>> -             return ret;
->>> +             goto put_pm;
->>>       }
->>>
->>>       reset_control_deassert(pwm->rst);
->>> @@ -291,10 +307,15 @@ static int tegra_pwm_probe(struct platform_device *pdev)
->>>       if (ret < 0) {
->>>               dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
->>>               reset_control_assert(pwm->rst);
->>> -             return ret;
->>> +             goto put_pm;
->>>       }
->>>
->>> +     pm_runtime_put(&pdev->dev);
->>> +
->>>       return 0;
->>> +put_pm:
->>> +     pm_runtime_put_sync_suspend(&pdev->dev);
->>> +     return ret;
->>>  }
->>>
->>>  static int tegra_pwm_remove(struct platform_device *pdev)
->>> @@ -305,20 +326,44 @@ static int tegra_pwm_remove(struct platform_device *pdev)
->>>
->>>       reset_control_assert(pc->rst);
->>>
->>> +     pm_runtime_force_suspend(&pdev->dev);
+>> The Peripheral clocks are default enabled when SoC power on, and
+>> bootloader not gate off the clocks when booting Linux Kernel.
 >>
->> I just noticed that RPM core doesn't reset RPM-enable count of a device
->> on driver's unbind (pm_runtime_reinit). It was a bad idea to use
->> devm_pm_runtime_enable() + pm_runtime_force_suspend() here, since RPM is
->> disabled twice on driver's removal, and thus, RPM will never be enabled
->> again.
+>> So Linux Kernel is not aware the peripheral clocks are enabled and
+>> still take them as disabled because of enable count is zero.
 >>
->> I'll fix it for PWM and other drivers in this series, in v15.
+>> Then Peripheral clock's source without clock gated off could be
+>> changed when have assigned-parents in device tree
+>>
+>> However, per i.MX8M* reference mannual, "Peripheral clock slices must
+>> be stopped to change the clock source", so need to gate off the
+>> the peripheral clock when registering the clocks to avoid glitch.
+>>
+>> Tested boot on i.MX8MM/P-EVK board
+
+I just noticed this breaks earlycon on an i.MX8MN, I assume because
+the earlycon driver will access unclocked registers.
+
+On the i.MX8MN, I also noticed that disabling usb_phy_ref hangs the
+system, whether via sysfs or via this patch. Still trying to figure
+that one out.
+
+Cheers,
+Ahmad
+
+>> Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+>> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>> ---
+>>
+>> V2:
+>>  Add Fixes tag
+>>
+>>  drivers/clk/imx/clk-composite-8m.c | 9 ++++++++-
+>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+>> index 2dfd6149e528..ee41fbf90589 100644
+>> --- a/drivers/clk/imx/clk-composite-8m.c
+>> +++ b/drivers/clk/imx/clk-composite-8m.c
+>> @@ -184,6 +184,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>>  	struct clk_mux *mux = NULL;
+>>  	const struct clk_ops *divider_ops;
+>>  	const struct clk_ops *mux_ops;
+>> +	u32 val;
+>>  
+>>  	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+>>  	if (!mux)
+>> @@ -216,8 +217,14 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>>  		div->width = PCG_PREDIV_WIDTH;
+>>  		divider_ops = &imx8m_clk_composite_divider_ops;
+>>  		mux_ops = &clk_mux_ops;
+>> -		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
+>> +		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED)) {
+>>  			flags |= CLK_SET_PARENT_GATE;
+>> +			if (!(flags & CLK_IS_CRITICAL)) {
+>> +				val = readl(reg);
+>> +				val &= ~BIT(PCG_CGC_SHIFT);
+>> +				writel(val, reg);
+>> +			}
+>> +		}
 > 
-> Well, for the record, IMV using pm_runtime_force_suspend() is
-> generally a questionable idea.
+> Though I'm usually against special cases like this one. I think the clock
+> core needs some generic flag that would read the state from HW on probe
+> and/or another generic flag for disabling on probe.
+> 
+> But for now, I'm OK with this:
+> 
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> 
+>>  	}
+>>  
+>>  	div->lock = &imx_ccm_lock;
+>> -- 
+>> 2.30.0
+>>
+> 
 > 
 
-Please clarify why it's a questionable idea.
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
