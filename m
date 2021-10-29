@@ -2,108 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 382D6C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2C9C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20B9260FC4
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E732A610A0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231490AbhJ2JOu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Oct 2021 05:14:50 -0400
-Received: from [113.204.237.245] ([113.204.237.245]:55568 "EHLO
-        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231617AbhJ2JNb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:13:31 -0400
-X-MailGates: (compute_score:DELIVER,40,3)
-Received: from 172.28.114.216
-        by cqmailgates with MailGates ESMTP Server V5.0(10981:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 29 Oct 2021 16:45:59 +0800 (CST)
-From:   Qin Jian <qinjian@cqplus1.com>
-To:     robh+dt@kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, broonie@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v2 0/8] Add Sunplus SP7021 SoC Support
-Date:   Fri, 29 Oct 2021 16:44:26 +0800
-Message-Id: <cover.1635496594.git.qinjian@cqplus1.com>
-X-Mailer: git-send-email 2.33.1
+        id S231449AbhJ2Jgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Oct 2021 05:36:42 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:27563 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231273AbhJ2Jgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:36:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1635500053; x=1667036053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UA3mT5pGOwCaE2esRTHjdF4YdhrEwD31Y+BDYVHSjPc=;
+  b=LKIuMt/EZRc++R79R19IWHXVXvQ6jIVdABCMRQS6HoEnSJaIF80c2gWj
+   6JpFF0uz1eJofeCO/fQ5Jixb98NO/6jUf+AerMY5df+X9BIzKoMCiHfWe
+   EtKbintIrkpUyK1cf7CbGaUjNp6EpV01lZfPhY+VB99oZIKGvroEMLAyT
+   ugrzJKfo86IlcLL3o1jCYWVe53P33kHzklZZ7Q2kIoZM/eRtno8NbLmwt
+   t3mXRniqba6Qtmh2dMeEIBkv+wDNZkfmx2boyXA8vyvb9SmF8viwKR9sh
+   s5tsq5pbSadUkpfKrFwP0oQBUy5+AlhexL85+r0ZDp6gs7o8Wv4fbcVPg
+   g==;
+IronPort-SDR: Z58UCXVOAmV806wBgMO50/n0HZgZnw7G1JwQKLqIqeVHFwthiQt5BSlTkE6j+OPpzGmOqnYKZE
+ BX3rzmXI32YiQ94NsCkLl+wCZg3vREV+VltPjcEW0v1ZY9m8ziURxvyhSuNMfl4twwOllq0qig
+ w+Y1rn6zTkLBQfHdGfVpGf5rCZe+lPXjJvFUbbcwjGTtFWKcDluyqZm38HWopf88CYuFJEYD9p
+ eQ50GtQnYK2JnwmkgRl1myG7cFYeFBTH05QsT+3r7Vv1YhBLNO0A4n3YB0Eco6CdVDGB/YNtEF
+ V5YTuJ9SlKZjYmeOcgpMZtrZ
+X-IronPort-AV: E=Sophos;i="5.87,192,1631602800"; 
+   d="scan'208";a="134776882"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Oct 2021 02:34:13 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Fri, 29 Oct 2021 02:34:13 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Fri, 29 Oct 2021 02:34:12 -0700
+Date:   Fri, 29 Oct 2021 11:35:56 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+        <nicolas.ferre@microchip.com>, <kavyasree.kotagiri@microchip.com>,
+        <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/3] clk: lan966x: Extend lan966x clock driver for
+ clock gating support
+Message-ID: <20211029093556.tdvroyommqi5xb6g@soft-dev3-1.localhost>
+References: <20211019084449.1411060-1-horatiu.vultur@microchip.com>
+ <20211019084449.1411060-4-horatiu.vultur@microchip.com>
+ <163548971798.15791.952778566228263608@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <163548971798.15791.952778566228263608@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series add Sunplus SP7021 SoC support.
+The 10/28/2021 23:41, Stephen Boyd wrote:
 
-Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
-peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
-single chip. It is designed for industrial control.
+Hi Stephen,
 
-SP7021 consists of two chips (dies) in a package. One is called C-chip
-(computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
-process (22 nm) for high performance computing. The other is called P-
-chip (peripheral chip). It has many peripherals and an ARM A926 added
-especially for real-time control. P-chip is made for customers. It adopts
-low-level process (ex: 0.11 um) to reduce cost.
+> 
+> Quoting Horatiu Vultur (2021-10-19 01:44:49)
+> > diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
+> > index 19bec94e1551..40be47092a31 100644
+> > --- a/drivers/clk/clk-lan966x.c
+> > +++ b/drivers/clk/clk-lan966x.c
+> > @@ -188,26 +202,64 @@ static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
+> >         return &priv->hw;
+> >  };
+> >
+> > +static int lan966x_gate_clk_register(struct device *dev,
+> > +                                    struct clk_hw_onecell_data *hw_data,
+> > +                                    void __iomem *gate_base)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i) {
+> > +               int idx = i - GCK_GATE_UHPHS;
+> > +
+> > +               hw_data->hws[i] =
+> > +                       clk_hw_register_gate(dev, clk_gate_desc[idx].name,
+> 
+> Use devm?
 
-Refer to (for documentations):
-https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+I couldn't find any devm_clk_hw_register_gate or something similar for
+the gate.
 
-Refer to (applications):
-https://tibbo.com/store/plus1.html
+> 
+> > +                                            "lan966x", 0, base,
+> > +                                            clk_gate_desc[idx].bit_idx,
+> > +                                            0, &clk_gate_lock);
+> > +
+> > +               if (IS_ERR(hw_data->hws[i]))
+> > +                       return dev_err_probe(dev, PTR_ERR(hw_data->hws[i]),
+> > +                                            "failed to register %s clock\n",
+> > +                                            clk_gate_desc[idx].name);
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void lan966x_gate_clk_unregister(struct clk_hw_onecell_data *hw_data)
+> > +{
+> > +       int i;
+> > +
+> > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i)
+> 
+> for (int i =
+> 
+> should suffice
 
-Refer to (applications):
-http://www.sinovoip.com.cn/ecp_view.asp?id=586
+That would not work. I will get the error:
+error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
 
-Changes in v2:
-- sunplus,sp7021-intc.yaml: add descrption for "#interrupt-cells", interrupts
-- sunplus,sp7021-intc.yaml: drop "ext0-mask"/"ext1-mask" from DT
-- sunplus,sp7021-intc.yaml: fix example.dt too long error
-- irq-sp7021-intc.c: major rewrite
-- all files with dual license
+> 
+> > +               if (!IS_ERR(hw_data->hws[i]))
+> > +                       clk_hw_unregister(hw_data->hws[i]);
+> > +}
+> > +
 
-Qin Jian (8):
-  dt-bindings: vendor-prefixes: Add Sunplus
-  dt-bindings: arm: sunplus: Add bindings for Sunplus SP7021 SoC boards
-  dt-bindings: reset: Add bindings for SP7021 reset driver
-  reset: Add Sunplus SP7021 reset driver
-  dt-bindings: clock: Add bindings for SP7021 clock driver
-  clk: Add Sunplus SP7021 clock driver
-  dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt
-    controller
-  irqchip: Add support for Sunplus SP7021 interrupt controller
-
- .../bindings/arm/sunplus,sp7021.yaml          |  27 +
- .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 +
- .../sunplus,sp7021-intc.yaml                  |  59 ++
- .../bindings/reset/sunplus,reset.yaml         |  40 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- MAINTAINERS                                   |  16 +
- drivers/clk/Kconfig                           |   8 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-sp7021.c                      | 770 ++++++++++++++++++
- drivers/irqchip/Kconfig                       |   9 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-sp7021-intc.c             | 324 ++++++++
- drivers/reset/Kconfig                         |   9 +
- drivers/reset/Makefile                        |   1 +
- drivers/reset/reset-sunplus.c                 | 159 ++++
- include/dt-bindings/clock/sp-sp7021.h         | 112 +++
- .../interrupt-controller/sp7021-intc.h        |  24 +
- include/dt-bindings/reset/sp-sp7021.h         |  99 +++
- 18 files changed, 1699 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
- create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
- create mode 100644 drivers/clk/clk-sp7021.c
- create mode 100644 drivers/irqchip/irq-sp7021-intc.c
- create mode 100644 drivers/reset/reset-sunplus.c
- create mode 100644 include/dt-bindings/clock/sp-sp7021.h
- create mode 100644 include/dt-bindings/interrupt-controller/sp7021-intc.h
- create mode 100644 include/dt-bindings/reset/sp-sp7021.h
-
---
-2.33.1
+-- 
+/Horatiu
