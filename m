@@ -2,186 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F81C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Oct 2021 22:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA38C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 01:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE87A60D07
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Oct 2021 22:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E4461107
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 01:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231442AbhJ1W3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Oct 2021 18:29:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231201AbhJ1W3e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Oct 2021 18:29:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 514F460724;
-        Thu, 28 Oct 2021 22:27:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635460027;
-        bh=IRb7K8Scugbw79p/NGKJBlQoJGry2ngto823hUEGEXs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Yf5anAcMBtVVkTQpCbcRofd+PD62RsVQ89MO1qIpqtDDFHWzVAdY203I6unG8xVU0
-         XjtsI12TDdIT8OeN6WjCeAZkSftNbH2P8k0Qnhxnfq5cc/pCno4AlAPNTg74KNmInZ
-         wp6E9P+jv7OpZqYdmDP7TZw7pwrzHK1lAnKKkw4DOYbvZ+J67/rtMQDBxatHNY1Ec5
-         Hb0NwuD5QuAUFntWupLvggdszu8bfFXwXLUjZlQp5+k2CKU+7q40HF8/RnTMwyg66d
-         GcglvdZ2hKsG9/xVHTiR3U18t01/IMGlW1ipdwehO14bXwnw0DkGUVR6CStssItnKk
-         wHMw1GZf8Carg==
-Received: by mail-ed1-f54.google.com with SMTP id h7so31425845ede.8;
-        Thu, 28 Oct 2021 15:27:07 -0700 (PDT)
-X-Gm-Message-State: AOAM533POUZP1qmbgEGy05Dz9++vxA73Qexs8o6yVk92HwpSVz+jP2vr
-        13MZKBEUW00CylzH8EN6DxeS9R9yrpTDc9GeMg==
-X-Google-Smtp-Source: ABdhPJzFTlJEyEZBeLoX8gbLZTqeBCF4HRrpqgvzZDMGlEcd9Rlm2NDmyjV99mlD28xMEO+ThsFmdXEcamqMH0cUx/c=
-X-Received: by 2002:a05:6402:348c:: with SMTP id v12mr9451716edc.271.1635460025785;
- Thu, 28 Oct 2021 15:27:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211016133322.40771-1-paul@crapouillou.net> <YXiNLZ9ne8D8uv82@robh.at.kernel.org>
- <VCRO1R.FQ8R7TN6NPYP3@crapouillou.net>
-In-Reply-To: <VCRO1R.FQ8R7TN6NPYP3@crapouillou.net>
+        id S231162AbhJ2Bjw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Oct 2021 21:39:52 -0400
+Received: from mail-oo1-f53.google.com ([209.85.161.53]:40772 "EHLO
+        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229950AbhJ2Bjv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Oct 2021 21:39:51 -0400
+Received: by mail-oo1-f53.google.com with SMTP id m37-20020a4a9528000000b002b83955f771so2782857ooi.7;
+        Thu, 28 Oct 2021 18:37:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=PfowumfndLK5nYVoy8RPc3ruj7Nut9GNjhXXbRm7A70=;
+        b=iQChW9r6BZp2/euMQcNMfox3z1qhYL5AYNm8D6Z/422c9OpbOI94faIcZtJhS2nW5y
+         k9zN3KvAbWlJlG5WhDiRbi1YFAudMoLylfFP6R3RpnxY5TkX9SSF779k0lZ56RVWFPoe
+         IjJD1NyVzqAdTQ/+whnJW2z96VZuavNsDGrxRF57dCLg9RcTkdG1MVmmDUWEzb9gBb3v
+         84mmNQLwnzKdTBRsGW7iej5/3iNeoYdIlI13OLHFrcvWlY8haxxEvuZ9SlK2TQP2Sg6N
+         EBF/KZCQwi6316XgEdbM9JPjxv6ZH9hJf8dBntL2xHd44VUjcIZPSi/ETTG5Hth0RegV
+         LQUA==
+X-Gm-Message-State: AOAM532FvW/UvbmfH+fJ47CBFSSM3fubh34YeEMqc7Gmzhq0BiBz6dVY
+        H+C1WfqB4O8oIXRY2O+kTQ==
+X-Google-Smtp-Source: ABdhPJwR8ig3tEdXtBL0iU/K9fusKlCVqxfGknYDMYCLCEPUbQI9R7STXg9I9RLwbuwCl5zs7lDh8w==
+X-Received: by 2002:a05:6820:13c:: with SMTP id i28mr5611166ood.65.1635471443147;
+        Thu, 28 Oct 2021 18:37:23 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id m13sm394486ooj.43.2021.10.28.18.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 18:37:22 -0700 (PDT)
+Received: (nullmailer pid 967920 invoked by uid 1000);
+        Fri, 29 Oct 2021 01:37:21 -0000
+Date:   Thu, 28 Oct 2021 20:37:21 -0500
 From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 28 Oct 2021 17:26:54 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+wU=R_F3iNRfMaZtKUftQLDR2d-4Mt98QMWgt3HkOvQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Rename Ingenic CGU headers to ingenic,*.h
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, list@opendingux.net,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-riscv@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Anup Patel <anup.patel@wdc.com>,
+        Drew Fustini <drew@beagleboard.org>, linux-clk@vger.kernel.org,
+        Matteo Croce <mcroce@microsoft.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-gpio@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 03/16] dt-bindings: interrupt-controller: Add StarFive
+ JH7100 plic
+Message-ID: <YXtQUcQDCfd6Q1PT@robh.at.kernel.org>
+References: <20211021174223.43310-1-kernel@esmil.dk>
+ <20211021174223.43310-4-kernel@esmil.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211021174223.43310-4-kernel@esmil.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 6:46 AM Paul Cercueil <paul@crapouillou.net> wrote:
->
-> Hi Rob,
->
-> Le mar., oct. 26 2021 at 18:20:13 -0500, Rob Herring <robh@kernel.org>
-> a =C3=A9crit :
-> > On Sat, Oct 16, 2021 at 02:33:21PM +0100, Paul Cercueil wrote:
-> >>  Tidy up a bit the tree, by prefixing all include/dt-bindings/clock/
-> >> files
-> >>  related to Ingenic SoCs with 'ingenic,'.
-> >>
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
-> >>
-> >>  Notes:
-> >>      v2: Fix x1000-cgu.h and x1830-cgu.h incorrectly renamed to
-> >>          x1000.h / x1830.h
-> >>
-> >>   Documentation/devicetree/bindings/clock/ingenic,cgu.yaml      | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/display/ingenic,ipu.yaml    | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/display/ingenic,lcd.yaml    | 4
-> >> ++--
-> >>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml        | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/i2c/ingenic,i2c.yaml        | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml    | 2
-> >> +-
-> >>   .../devicetree/bindings/memory-controllers/ingenic,nemc.yaml  | 2
-> >> +-
-> >>   .../devicetree/bindings/mips/ingenic/ingenic,cpu.yaml         | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml        | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/mtd/ingenic,nand.yaml       | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/net/ingenic,mac.yaml        | 2
-> >> +-
-> >>   .../devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml       | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml    | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/rng/ingenic,trng.yaml       | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml        | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/serial/ingenic,uart.yaml    | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/sound/ingenic,aic.yaml      | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/sound/ingenic,codec.yaml    | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/timer/ingenic,sysost.yaml   | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/timer/ingenic,tcu.yaml      | 2
-> >> +-
-> >>   Documentation/devicetree/bindings/usb/ingenic,musb.yaml       | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/jz4725b.dtsi                       | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/jz4740.dtsi                        | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/jz4770.dtsi                        | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/jz4780.dtsi                        | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/x1000.dtsi                         | 2
-> >> +-
-> >>   arch/mips/boot/dts/ingenic/x1830.dtsi                         | 2
-> >> +-
-> >>   drivers/clk/ingenic/jz4725b-cgu.c                             | 2
-> >> +-
-> >>   drivers/clk/ingenic/jz4740-cgu.c                              | 2
-> >> +-
-> >>   drivers/clk/ingenic/jz4760-cgu.c                              | 2
-> >> +-
-> >>   drivers/clk/ingenic/jz4770-cgu.c                              | 2
-> >> +-
-> >>   drivers/clk/ingenic/jz4780-cgu.c                              | 2
-> >> +-
-> >>   drivers/clk/ingenic/x1000-cgu.c                               | 2
-> >> +-
-> >>   drivers/clk/ingenic/x1830-cgu.c                               | 2
-> >> +-
-> >>   .../clock/{jz4725b-cgu.h =3D> ingenic,jz4725b-cgu.h}            | 0
-> >>   .../dt-bindings/clock/{jz4740-cgu.h =3D> ingenic,jz4740-cgu.h}  | 0
-> >>   .../dt-bindings/clock/{jz4760-cgu.h =3D> ingenic,jz4760-cgu.h}  | 0
-> >>   .../dt-bindings/clock/{jz4770-cgu.h =3D> ingenic,jz4770-cgu.h}  | 0
-> >>   .../dt-bindings/clock/{jz4780-cgu.h =3D> ingenic,jz4780-cgu.h}  | 0
-> >>   .../dt-bindings/clock/{x1000-cgu.h =3D> ingenic,x1000-cgu.h}    | 0
-> >>   .../dt-bindings/clock/{x1830-cgu.h =3D> ingenic,x1830-cgu.h}    | 0
-> >>   42 files changed, 36 insertions(+), 36 deletions(-)
-> >>   rename include/dt-bindings/clock/{jz4725b-cgu.h =3D>
-> >> ingenic,jz4725b-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{jz4740-cgu.h =3D>
-> >> ingenic,jz4740-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{jz4760-cgu.h =3D>
-> >> ingenic,jz4760-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{jz4770-cgu.h =3D>
-> >> ingenic,jz4770-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{jz4780-cgu.h =3D>
-> >> ingenic,jz4780-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{x1000-cgu.h =3D>
-> >> ingenic,x1000-cgu.h} (100%)
-> >>   rename include/dt-bindings/clock/{x1830-cgu.h =3D>
-> >> ingenic,x1830-cgu.h} (100%)
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> >
-> > However, this will be a pain to merge if there are any new users
-> > coming
-> > in during the merge window. If not, then Stephen can just take this.
-> > If
-> > there are, then at the end of the merge window is the best time. For
-> > that to work, you need to track when all dependent changes are merged
-> > and we need to agree who will pick this up. I usually have fixes from
-> > breakages in the merge window anyways.
->
-> I get Cc'd on all ingenic-related patches, so far I don't see anything
-> that will cause a breakage. I think it would be okay to merge it now
-> (we're at -rc7 after all).
+On Thu, 21 Oct 2021 19:42:10 +0200, Emil Renner Berthing wrote:
+> Add compatible string for StarFive JH7100 plic.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Then can you apply this to linux-next and check it all works there.
-Specifically, 'make dt_binding_check dtbs drivers/clk/' needs to work.
-Or confirm you already did that.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
