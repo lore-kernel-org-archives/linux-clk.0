@@ -2,22 +2,22 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA81C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9B3C4332F
 	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8305D61175
+	by mail.kernel.org (Postfix) with ESMTP id 901B961179
 	for <linux-clk@archiver.kernel.org>; Fri, 29 Oct 2021 09:11:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231816AbhJ2JOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231502AbhJ2JOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 29 Oct 2021 05:14:12 -0400
-Received: from [113.204.237.245] ([113.204.237.245]:55564 "EHLO
+Received: from [113.204.237.245] ([113.204.237.245]:55576 "EHLO
         test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231610AbhJ2JN2 (ORCPT
+        with ESMTP id S231612AbhJ2JN2 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Oct 2021 05:13:28 -0400
 X-MailGates: (compute_score:DELIVER,40,3)
 Received: from 172.28.114.216
         by cqmailgates with MailGates ESMTP Server V5.0(10981:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 29 Oct 2021 16:45:59 +0800 (CST)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 29 Oct 2021 16:46:00 +0800 (CST)
 From:   Qin Jian <qinjian@cqplus1.com>
 To:     robh+dt@kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
@@ -25,9 +25,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v2 3/8] dt-bindings: reset: Add bindings for SP7021 reset driver
-Date:   Fri, 29 Oct 2021 16:44:29 +0800
-Message-Id: <852e24e942cf40b8240ced4de4ac78acc7694355.1635496594.git.qinjian@cqplus1.com>
+Subject: [PATCH v2 5/8] dt-bindings: clock: Add bindings for SP7021 clock driver
+Date:   Fri, 29 Oct 2021 16:44:31 +0800
+Message-Id: <188ff538d83266930bbba0e056106e285437da5b.1635496594.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1635496594.git.qinjian@cqplus1.com>
 References: <cover.1635496594.git.qinjian@cqplus1.com>
@@ -37,42 +37,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation to describe Sunplus SP7021 reset driver bindings.
+Add documentation to describe Sunplus SP7021 clock driver bindings.
 
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- .../bindings/reset/sunplus,reset.yaml         | 40 ++++++++
- MAINTAINERS                                   |  2 +
- include/dt-bindings/reset/sp-sp7021.h         | 99 +++++++++++++++++++
- 3 files changed, 141 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
- create mode 100644 include/dt-bindings/reset/sp-sp7021.h
+ .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 ++++++
+ MAINTAINERS                                   |   2 +
+ include/dt-bindings/clock/sp-sp7021.h         | 112 ++++++++++++++++++
+ 3 files changed, 152 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/sp-sp7021.h
 
-diff --git a/Documentation/devicetree/bindings/reset/sunplus,reset.yaml b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
 new file mode 100644
-index 000000000..bf55f4ee2
+index 000000000..1ce7e41d8
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-@@ -0,0 +1,40 @@
++++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+@@ -0,0 +1,38 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +# Copyright (C) Sunplus Co., Ltd. 2021
 +%YAML 1.2
 +---
-+$id: "http://devicetree.org/schemas/reset/sunplus,reset.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Sunplus SoC Reset Controller
++title: Sunplus SP7021 SoC Clock Controller Binding
 +
 +maintainers:
 +  - Qin Jian <qinjian@cqplus1.com>
 +
 +properties:
 +  compatible:
-+    enum:
-+      - sunplus,sp7021-reset # Reset Controller on SP7021 and compatible SoCs
-+      - sunplus,q645-reset # Reset Controller on Q645 and compatible SoCs
++    const: sunplus,sp7021-clkc
 +
-+  "#reset-cells":
++  "#clock-cells":
 +    const: 1
 +
 +  reg:
@@ -80,136 +78,151 @@ index 000000000..bf55f4ee2
 +
 +required:
 +  - compatible
-+  - "#reset-cells"
++  - "#clock-cells"
 +  - reg
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    rstc: reset@9c000054 {
-+      compatible = "sunplus,sp7021-reset";
-+      #reset-cells = <1>;
-+      reg = <0x9c000054 0x28>;
++    clkc: clkc@9c000000 {
++      compatible = "sunplus,sp7021-clkc";
++      #clock-cells = <1>;
++      reg = <0x9c000000 0x280>;
 +    };
 +
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 6a5422f10..652f42cab 100644
+index 6caffd6d0..90ebb823f 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2661,6 +2661,8 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
+@@ -2661,8 +2661,10 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
  S:	Maintained
  W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
  F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-+F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	include/dt-bindings/reset/sp-sp7021.h
++F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ F:	drivers/reset/reset-sunplus.c
++F:	include/dt-bindings/clock/sp-sp7021.h
+ F:	include/dt-bindings/reset/sp-sp7021.h
  
  ARM/Synaptics SoC support
- M:	Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-diff --git a/include/dt-bindings/reset/sp-sp7021.h b/include/dt-bindings/reset/sp-sp7021.h
+diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
 new file mode 100644
-index 000000000..8823d25ce
+index 000000000..1ae9c4083
 --- /dev/null
-+++ b/include/dt-bindings/reset/sp-sp7021.h
-@@ -0,0 +1,99 @@
++++ b/include/dt-bindings/clock/sp-sp7021.h
+@@ -0,0 +1,112 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 +/*
 + * Copyright (C) Sunplus Technology Co., Ltd.
 + *       All rights reserved.
 + */
-+#ifndef _DT_BINDINGS_RST_SUNPLUS_SP7021_H
-+#define _DT_BINDINGS_RST_SUNPLUS_SP7021_H
++#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
++#define _DT_BINDINGS_CLOCK_SUNPLUS_Sp7021_H
 +
-+/* mo_reset0 ~ mo_reset9 */
-+#define RST_SYSTEM		0x00
-+#define	RST_RTC			0x02
-+#define RST_IOCTL		0x03
-+#define RST_IOP			0x04
-+#define RST_OTPRX		0x05
-+#define RST_NOC			0x06
-+#define RST_BR			0x07
-+#define RST_RBUS_L00		0x08
-+#define RST_SPIFL		0x09
-+#define RST_SDCTRL0		0x0a
-+#define RST_PERI0		0x0b
-+#define RST_A926		0x0d
-+#define RST_UMCTL2		0x0e
-+#define RST_PERI1		0x0f
++#define XTAL		27000000
 +
-+#define RST_DDR_PHY0		0x10
-+#define RST_ACHIP		0x12
-+#define RST_STC0		0x14
-+#define RST_STC_AV0		0x15
-+#define RST_STC_AV1		0x16
-+#define RST_STC_AV2		0x17
-+#define RST_UA0			0x18
-+#define RST_UA1			0x19
-+#define RST_UA2			0x1a
-+#define RST_UA3			0x1b
-+#define RST_UA4			0x1c
-+#define RST_HWUA		0x1d
-+#define RST_DDC0		0x1e
-+#define RST_UADMA		0x1f
++/* plls */
++#define PLL_A		0
++#define PLL_E		1
++#define PLL_E_2P5	2
++#define PLL_E_25	3
++#define PLL_E_112P5	4
++#define PLL_F		5
++#define PLL_TV		6
++#define PLL_TV_A	7
++#define PLL_SYS		8
 +
-+#define RST_CBDMA0		0x20
-+#define RST_CBDMA1		0x21
-+#define RST_SPI_COMBO_0		0x22
-+#define RST_SPI_COMBO_1		0x23
-+#define RST_SPI_COMBO_2		0x24
-+#define RST_SPI_COMBO_3		0x25
-+#define RST_AUD			0x26
-+#define RST_USBC0		0x2a
-+#define RST_USBC1		0x2b
-+#define RST_UPHY0		0x2d
-+#define RST_UPHY1		0x2e
++/* gates: mo_clken0 ~ mo_clken9 */
++#define SYSTEM		0x10
++#define RTC			0x12
++#define IOCTL		0x13
++#define IOP			0x14
++#define OTPRX		0x15
++#define NOC			0x16
++#define BR			0x17
++#define RBUS_L00	0x18
++#define SPIFL		0x19
++#define SDCTRL0		0x1a
++#define PERI0		0x1b
++#define A926		0x1d
++#define UMCTL2		0x1e
++#define PERI1		0x1f
 +
-+#define RST_I2CM0		0x30
-+#define RST_I2CM1		0x31
-+#define RST_I2CM2		0x32
-+#define RST_I2CM3		0x33
-+#define RST_PMC			0x3d
-+#define RST_CARD_CTL0		0x3e
-+#define RST_CARD_CTL1		0x3f
++#define DDR_PHY0	0x20
++#define ACHIP		0x22
++#define STC0		0x24
++#define STC_AV0		0x25
++#define STC_AV1		0x26
++#define STC_AV2		0x27
++#define UA0			0x28
++#define UA1			0x29
++#define UA2			0x2a
++#define UA3			0x2b
++#define UA4			0x2c
++#define HWUA		0x2d
++#define DDC0		0x2e
++#define UADMA		0x2f
 +
-+#define RST_CARD_CTL4		0x42
-+#define RST_BCH			0x44
-+#define RST_DDFCH		0x4b
-+#define RST_CSIIW0		0x4c
-+#define RST_CSIIW1		0x4d
-+#define RST_MIPICSI0		0x4e
-+#define RST_MIPICSI1		0x4f
++#define CBDMA0		0x30
++#define CBDMA1		0x31
++#define SPI_COMBO_0	0x32
++#define SPI_COMBO_1	0x33
++#define SPI_COMBO_2	0x34
++#define SPI_COMBO_3	0x35
++#define AUD			0x36
++#define USBC0		0x3a
++#define USBC1		0x3b
++#define UPHY0		0x3d
++#define UPHY1		0x3e
 +
-+#define RST_HDMI_TX		0x50
-+#define RST_VPOST		0x55
++#define I2CM0		0x40
++#define I2CM1		0x41
++#define I2CM2		0x42
++#define I2CM3		0x43
++#define PMC			0x4d
++#define CARD_CTL0	0x4e
++#define CARD_CTL1	0x4f
 +
-+#define RST_TGEN		0x60
-+#define RST_DMIX		0x61
-+#define RST_TCON		0x6a
-+#define RST_INTERRUPT		0x6f
++#define CARD_CTL4	0x52
++#define BCH			0x54
++#define DDFCH		0x5b
++#define CSIIW0		0x5c
++#define CSIIW1		0x5d
++#define MIPICSI0	0x5e
++#define MIPICSI1	0x5f
 +
-+#define RST_RGST		0x70
-+#define RST_GPIO		0x73
-+#define RST_RBUS_TOP		0x74
++#define HDMI_TX		0x60
++#define VPOST		0x65
 +
-+#define RST_MAILBOX		0x86
-+#define RST_SPIND		0x8a
-+#define RST_I2C2CBUS		0x8b
-+#define RST_SEC			0x8d
-+#define RST_DVE			0x8e
-+#define RST_GPOST0		0x8f
++#define TGEN		0x70
++#define DMIX		0x71
++#define TCON		0x7a
++#define INTERRUPT	0x7f
 +
-+#define RST_OSD0		0x90
-+#define RST_DISP_PWM		0x92
-+#define RST_UADBG		0x93
-+#define RST_DUMMY_MASTER	0x94
-+#define RST_FIO_CTL		0x95
-+#define RST_FPGA		0x96
-+#define RST_L2SW		0x97
-+#define RST_ICM			0x98
-+#define RST_AXI_GLOBAL		0x99
++#define RGST		0x80
++#define GPIO		0x83
++#define RBUS_TOP	0x84
 +
-+#define RST_MAX			0xA0
++#define MAILBOX		0x96
++#define SPIND		0x9a
++#define I2C2CBUS	0x9b
++#define SEC			0x9d
++#define DVE			0x9e
++#define GPOST0		0x9f
++
++#define OSD0		0xa0
++#define DISP_PWM	0xa2
++#define UADBG		0xa3
++#define DUMMY_MASTER	0xa4
++#define FIO_CTL		0xa5
++#define FPGA		0xa6
++#define L2SW		0xa7
++#define ICM			0xa8
++#define AXI_GLOBAL	0xa9
++
++#define CLK_MAX		0xb0
 +
 +#endif
 -- 
