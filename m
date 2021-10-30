@@ -2,193 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A97AC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE75C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 744CE60FC4
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71CD060FC4
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231836AbhJ3OWr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Oct 2021 10:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49170 "EHLO
+        id S230043AbhJ3OZz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Oct 2021 10:25:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbhJ3OWq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Oct 2021 10:22:46 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619C2C061764;
-        Sat, 30 Oct 2021 07:20:16 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id g191-20020a1c9dc8000000b0032fbf912885so4777731wme.4;
-        Sat, 30 Oct 2021 07:20:16 -0700 (PDT)
+        with ESMTP id S229585AbhJ3OZy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Oct 2021 10:25:54 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70B56C061570;
+        Sat, 30 Oct 2021 07:23:24 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id i6so9349732uae.6;
+        Sat, 30 Oct 2021 07:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n0RL45OoJsxDqII6WqqJzrCBAIvt4D77cElanpVHtTc=;
-        b=GNeo7I0U8PGWtkl9WICK3ZlFrQ4n2yjQeX+zgUYaUwDmWS+4uYnTXX4e6gswMDbZ1m
-         WH8nWomgiwHqE7Rmv6LCfJqRbk3T2wkNChpmKDpQMk4eTHRvnz5NLDS3mX1bzp8cQ8sE
-         44esKJ0F40hmj9H1OhXUEhnnXd6sd3n5TInbZkbya01ZTATfFzi2UkyMX2kWPPulKuh1
-         W9oebzvO4MK4HMU6jU5x8FIyogDJnkjFS0XBc/9BTOSXiY7yRNOWWP7TXeky0Lc7XBvM
-         DwMWG+7yE73v2eYHSV71ZLqd/1c+oEValxqc7+c2lkGdTCnRFWZi2VqEipkloVErRf1+
-         GO4A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2X5YJfC5EItlH9jFztQTg0PcOzeEO1fDAz5we8++GiY=;
+        b=DTCl4uKh0judLjcX5ts/CnqE0z1+pHIvmxbPrm9qjNWUPUaIpb5juM6IqQpP2tTA3n
+         FDwrPf6WiGmNKHWR1g9aFsqtGiWoylNL4xjCjOab1kJsXmSCl5R9hKG6BYL6vBX8FfCt
+         5HEmn7XEFkhI/nVdX5vpO/8EO/kIRwg6lUMRyuv0rQpEXL2PQczEFo5IPILiUjpwgI1O
+         FxFHOF83Kyg5g2fqu442ApFy/CRd0Jvu9V14J1PAu4P/98c12CJzE7AwLFfy00X0GCwP
+         5r1y3eHR/Hgi1+PECLHcwyMYmM8P4DikrCu+P8gwSqRNHMcF6gTtnNDgRJ6EnfUcnMCh
+         yQVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n0RL45OoJsxDqII6WqqJzrCBAIvt4D77cElanpVHtTc=;
-        b=4mGIlBCTViDin2Y90IKV6VaK7s209HjIquAVOjSGC29uMR1U+z8p3RJqwnx2hB2zDz
-         mURa3i5usLx9CGeaXdevnFQEMdxCs0z6DdD0/bOfUndRuPCaf8fbcxNKaKYlGp1pWXNo
-         rQ628oKlyvPT3FruYO2Kq/4UKA50ACTUTGeAHtHRrqWf0KAFOLc5bG7l/9zFHsGeGxvI
-         dxkHCzwJLbrN3urhRwO46MtT9Puyf9JV3VIa1eQmuh4KDb9+O3BHwqfUC5MMVKVPLgRX
-         UW+kEbVS3CAtfChJQRj5woaUZLZkNsr7SZE/WMYAhzeyoYZZwaloirCvPr7OjBdEGpUE
-         srZg==
-X-Gm-Message-State: AOAM5328odwZPHUTw6zruKtLnfzcPU65pYPK6v9HfV+fCH7FMrj7+cBO
-        P51b4KtFYih272EivcriMhocNpv9ei7/dg==
-X-Google-Smtp-Source: ABdhPJy0ZkfweqZlJjFujNSr2CZvexAqhEQkVVUqsOlnPCE3zbzKoRd492AVjqCEKpK5hGO8Eiawxw==
-X-Received: by 2002:a05:600c:4f96:: with SMTP id n22mr19151208wmq.168.1635603614655;
-        Sat, 30 Oct 2021 07:20:14 -0700 (PDT)
-Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id m12sm8208521wrq.69.2021.10.30.07.20.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Oct 2021 07:20:14 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org, john@phrozen.org,
-        linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
-        neil@brown.name
-Subject: [PATCH v3 4/4] staging: mt7621-dts: align resets with binding documentation
-Date:   Sat, 30 Oct 2021 16:20:07 +0200
-Message-Id: <20211030142007.27085-5-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211030142007.27085-1-sergio.paracuellos@gmail.com>
-References: <20211030142007.27085-1-sergio.paracuellos@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2X5YJfC5EItlH9jFztQTg0PcOzeEO1fDAz5we8++GiY=;
+        b=R5NL2q6CPvfVSSrjarSEMw4VEVMw/AH8RV+2mytNlvtdRcvaXmZar+9BkoxN9c4HaO
+         icGPEw6zrFh7qIiqI7t+sHuRt7A4Fu5slLbIJ5oKrWJMrNpYXaTmA61KOyk76aqV+Gs8
+         1hbpW6oGvI/X8EtMrj8gUzPQGUe2DAQZ0uj0ks5XxPO4PkorVNwcLHxyYD4rrwESpXPy
+         9pRpdJVI5z+U1+mR0tfoxJ+x1O8Y8OxujMpwgpJYLxZk7WV/5ZAEXbdwLymEGHbSc/ib
+         GXSFA0YIOlDhtFn3IP9Kfh6ISqHYbhL6WWayt+YOqP6m1efBve/YyRlsK9TqH0LsADFM
+         LegA==
+X-Gm-Message-State: AOAM530UfBJHOcInh4sE7pguG9rXY82aBcPCXj1oR62cPjj9KevEb5Yc
+        jKvgsvzutzz8wZ4Mes3cP5yXSqe4elDmZiZS6qk=
+X-Google-Smtp-Source: ABdhPJyxHRhDw+BgPFeGayDFg1fzBys5+4RzsLm1jCgvQC3cS74mErFYc6nvXUaE92sjBXof/G8E23ko3XAcQxTh9O0=
+X-Received: by 2002:a67:ec57:: with SMTP id z23mr19405997vso.55.1635603803625;
+ Sat, 30 Oct 2021 07:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211006112306.4691-1-sergio.paracuellos@gmail.com> <CAMhs-H_h9=sj5_p58WcqrYJuT-CGHp38xELwD1jvt=XzfvG2bw@mail.gmail.com>
+In-Reply-To: <CAMhs-H_h9=sj5_p58WcqrYJuT-CGHp38xELwD1jvt=XzfvG2bw@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Sat, 30 Oct 2021 16:23:12 +0200
+Message-ID: <CAMhs-H8zCdhRUaqo3t6RZ95C2E89YFhvPN52SgDbPBAFtTwO0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] clk: ralink: make system controller a reset provider
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-staging@lists.linux.dev, NeilBrown <neil@brown.name>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        John Crispin <john@phrozen.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-to be used as a reset provider. Align reset related bits and system controller
-node with binding documentation along the dtsi file.
+Hi Stephen,
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+On Sun, Oct 17, 2021 at 8:51 AM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> Hi Stephen,
+>
+> On Wed, Oct 6, 2021 at 1:23 PM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > Hi all,
+> >
+> > This patch series add minimal change to provide mt7621 resets properly
+> > defining them in the 'mediatek,mt7621-sysc' node which is the system
+> > controller of the SoC and is already providing clocks to the rest of
+> > the world.
+> >
+> > There is shared architecture code for all ralink platforms in 'reset.c'
+> > file located in 'arch/mips/ralink' but the correct thing to do to align
+> > hardware with software seems to define and add related reset code to the
+> > already mainlined clock driver.
+> >
+> > After this changes, we can get rid of the useless reset controller node
+> > in the device tree and use system controller node instead where the property
+> > '#reset-cells' has been added. Binding documentation for this nodeq has
+> > been updated with the new property accordly.
+> >
+> > This series also provide a bindings include header where all related
+> > reset bits for the MT7621 SoC are defined.
+> >
+> > Also, please take a look to this review [0] to understand better motivation
+> > for this series.
+> >
+> > Thanks in advance for your feedback.
+> >
+> > Changes in v2:
+> >  - Address review comments of Dan Carpenter [1]:
+> >     + Avoid 'inline' in function definition.
+> >     + Return proper error codes (-EINVAL) instead of '-1'.
+> >     + Make use of 'devm_kzalloc' instead of 'kzalloc'.
+>
+> Can you please take a look into this series? I'd like them to be added
+> in the next merge window and if something needs to be changed I'd like
+> to have a bit of time to do it :)).
+>
+> Regarding how to merge this I guess all of the patches should apply
+> cleanly in any tree but since there are already changes in mt7621-dts
+> maybe patches 1 and 4 which are related can go through the staging
+> tree (if Greg is ok with this) and the bindings doc change and driver
+> changes (patches 2 and 3) can go through your tree.
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 6d158e4f4b8c..2bf74468d495 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -2,6 +2,7 @@
- #include <dt-bindings/interrupt-controller/mips-gic.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/clock/mt7621-clk.h>
-+#include <dt-bindings/reset/mt7621-reset.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -67,6 +68,7 @@ sysc: syscon@0 {
- 			compatible = "mediatek,mt7621-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			ralink,memctl = <&memc>;
- 			clock-output-names = "xtal", "cpu", "bus",
- 					     "50m", "125m", "150m",
-@@ -96,7 +98,7 @@ i2c: i2c@900 {
- 
- 			clocks = <&sysc MT7621_CLK_I2C>;
- 			clock-names = "i2c";
--			resets = <&rstctrl 16>;
-+			resets = <&sysc MT7621_RST_I2C>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -137,7 +139,7 @@ spi0: spi@b00 {
- 			clocks = <&sysc MT7621_CLK_SPI>;
- 			clock-names = "spi";
- 
--			resets = <&rstctrl 18>;
-+			resets = <&sysc MT7621_RST_SPI>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -153,7 +155,7 @@ gdma: gdma@2800 {
- 
- 			clocks = <&sysc MT7621_CLK_GDMA>;
- 			clock-names = "gdma";
--			resets = <&rstctrl 14>;
-+			resets = <&sysc MT7621_RST_GDMA>;
- 			reset-names = "dma";
- 
- 			interrupt-parent = <&gic>;
-@@ -172,7 +174,7 @@ hsdma: hsdma@7000 {
- 
- 			clocks = <&sysc MT7621_CLK_HSDMA>;
- 			clock-names = "hsdma";
--			resets = <&rstctrl 5>;
-+			resets = <&sysc MT7621_RST_HSDMA>;
- 			reset-names = "hsdma";
- 
- 			interrupt-parent = <&gic>;
-@@ -272,11 +274,6 @@ pinmux {
- 		};
- 	};
- 
--	rstctrl: rstctrl {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	sdhci: sdhci@1e130000 {
- 		status = "disabled";
- 
-@@ -355,7 +352,7 @@ ethernet: ethernet@1e100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		resets = <&rstctrl 6 &rstctrl 23>;
-+		resets = <&sysc MT7621_CLK_FE &sysc MT7621_CLK_ETH>;
- 		reset-names = "fe", "eth";
- 
- 		interrupt-parent = <&gic>;
-@@ -400,7 +397,7 @@ switch0: switch0@0 {
- 				#size-cells = <0>;
- 				reg = <0>;
- 				mediatek,mcm;
--				resets = <&rstctrl 2>;
-+				resets = <&sysc MT7621_RST_MCM>;
- 				reset-names = "mcm";
- 				interrupt-controller;
- 				#interrupt-cells = <1>;
-@@ -486,7 +483,7 @@ pcie@0,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 4 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 24>;
-+			resets = <&sysc MT7621_RST_PCIE0>;
- 			clocks = <&sysc MT7621_CLK_PCIE0>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy0";
-@@ -501,7 +498,7 @@ pcie@1,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 25>;
-+			resets = <&sysc MT7621_RST_PCIE1>;
- 			clocks = <&sysc MT7621_CLK_PCIE1>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy1";
-@@ -516,7 +513,7 @@ pcie@2,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 25 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 26>;
-+			resets = <&sysc MT7621_RST_PCIE2>;
- 			clocks = <&sysc MT7621_CLK_PCIE2>;
- 			phys = <&pcie2_phy 0>;
- 			phy-names = "pcie-phy2";
--- 
-2.33.0
+I have just sent v3 since PATCH 4 did not apply cleanly anymore in
+both clock tree and staging tree.
 
+Best regards,
+     Sergio Paracuellos
+>
+> Thanks in advance for your time.
+>
+> Best regards,
+>     Sergio Paracuellos
+>
+> >
+> > Best regards,
+> >     Sergio Paracuellos
+> >
+> > [0]: https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20210926145931.14603-3-sergio.paracuellos@gmail.com/
+> > [1]: https://lkml.org/lkml/2021/10/6/204
+> >
+> > Sergio Paracuellos (4):
+> >   dt-bindings: reset: add dt binding header for Mediatek MT7621 resets
+> >   dt-bindings: clock: mediatek,mt7621-sysc: add '#reset-cells' property
+> >   clk: ralink: make system controller node a reset provider
+> >   staging: mt7621-dts: align resets with binding documentation
+> >
+> >  .../bindings/clock/mediatek,mt7621-sysc.yaml  | 12 +++
+> >  drivers/clk/ralink/clk-mt7621.c               | 79 +++++++++++++++++++
+> >  drivers/staging/mt7621-dts/mt7621.dtsi        | 27 +++----
+> >  include/dt-bindings/reset/mt7621-reset.h      | 37 +++++++++
+> >  4 files changed, 140 insertions(+), 15 deletions(-)
+> >  create mode 100644 include/dt-bindings/reset/mt7621-reset.h
+> >
+> > --
+> > 2.33.0
+> >
