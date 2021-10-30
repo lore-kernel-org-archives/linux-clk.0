@@ -2,241 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED61EC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 07:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FEEC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5A1560FF2
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 07:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC6E7608FE
+	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 14:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231428AbhJ3HmC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Oct 2021 03:42:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230365AbhJ3HmC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Oct 2021 03:42:02 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B1C7C061570;
-        Sat, 30 Oct 2021 00:39:32 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id f8so24723848edy.4;
-        Sat, 30 Oct 2021 00:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WnDflYyo3vnsJsPrmBMpCvW7yx+6ot4PlCCkUYxmJpI=;
-        b=Kzc+uy1+PCn3EvrvI8PrXqlgdfCwC7Tav4/plDfcCM+GWP9TvRR7q+b1cDjhYJzN3N
-         6UA7flRe6Zt33mfuxPjmILgU/854GrFQNYRo3habjmJgiWnP4eP8VB3qYfFc5kyEfayI
-         5r71lZF3XSHM5/sMUV8pgcjqRnE5OWJIVxQpDvTfXDV857mEOcuD6AaqIpVdSbeXjro4
-         5c6/49gQK2NMAei2dLi83ua+I9Q+dlCu8bklkL4tCYriZ5UHtbrt1uPHxBl/5KDMFenI
-         ZzFWRolG+ToY9UbrdaVJzCu5NuQpcMC3mubdlENTxhAzEgoZzku0/I997vxqt7U76Nf+
-         Zfcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=WnDflYyo3vnsJsPrmBMpCvW7yx+6ot4PlCCkUYxmJpI=;
-        b=FSqq+/SKzp9pk6mLjdmD8sseQcpQf9IzxLxeFFviYvznIJUwPUA96H/jg9TI/DiwI7
-         mF5kIsAoMt4It88UQv+0CFRdnGqKDno0DTpBzmIU+dLpsw7ZBZmDEibcoGggo9sXqBe7
-         wlFRkidR8A+zMsJ6UNH8scwTpIoO7FW3XZ3COHQ/9PRz+DfkEwGkFNMInjG9U83ANTtH
-         /9dV2YbDFZ3VNM+6RAsJEr6eQ9jjq+SvoyeCWiJYC3fQkNzuB1QPpucAhX3p3/mMDnv3
-         K2sYAzi1hPVyvddnbV7s/4WPbae/LlOHqIYYo7tL3+uYz6086NLDRKrYrloIq9vNs+os
-         PTmw==
-X-Gm-Message-State: AOAM530fAAuiylBXjw0IcXj+YdgzrA3cYVuLYpRqVPe2xNgZuv7uWisJ
-        s+A3MzE4YpVK+bc3FP39FPo=
-X-Google-Smtp-Source: ABdhPJz7JfGatjQ7hHHqwrX7DDpASIlPz2talrTheUGX9T6ZDp9zPBd5ZSJIa/UhER9UwE3geNl1eQ==
-X-Received: by 2002:a17:907:1c15:: with SMTP id nc21mr5512560ejc.510.1635579570680;
-        Sat, 30 Oct 2021 00:39:30 -0700 (PDT)
-Received: from [172.16.20.20] ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id o22sm3925764ejy.50.2021.10.30.00.39.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Oct 2021 00:39:30 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
-Subject: Re: [PATCH v2] clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
-From:   Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <20211027185326.1653827-1-martin.blumenstingl@googlemail.com>
-Date:   Sat, 30 Oct 2021 11:39:27 +0400
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <691BBB53-101E-464F-965A-3CD6EB63F27E@gmail.com>
-References: <20211027185326.1653827-1-martin.blumenstingl@googlemail.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-X-Mailer: Apple Mail (2.3608.120.23.2.7)
+        id S229879AbhJ3OK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Oct 2021 10:10:27 -0400
+Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:58192
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229877AbhJ3OK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 Oct 2021 10:10:26 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LwOpB8kymM0FUFwgAP8UDhG/FeRA+kIWEH9HXAxYPROOh7WT1FI7sk7smv0iwiVOMNLwka34/2UvmWckuK8R+x083TBhr3f1K6/Crfs3ys0Y4TwIExTnSQ9/JUyA0MwMzl+YafQ5A/0otUlSnEgs1/riov8xxHtxYP91bbucmJdMOdzuIi+qeD4ckIm2PbDwPQ5eI8Wzux/PFNaqPpLukgUHgZxrWQwBy/g6qMw4u7vA8aQ48lwBucP7hntqygQvhYhAAd8/G2UohzEuX6oaGBQMEpkNVnHPxWT9TDvMr7jKg60KYr1e4y9bI3iliGy0f+K+MTcjn07pSDs5diW7nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TTyEncDh0c6FyeH6ewDUvYCZYaHfTD7nRkocSGGyglA=;
+ b=gEeo3/wjUYmoiVC99RrCgB6wIQ6p8CrkKNeweDGFNgZMK9rzYZ8Uhm9K5AM2ifKBfEluS6puLWzqzBqqy2110NZMFuNu1nq0yER4xWUgDtvyDJb3G+Po4YB0QVFBB4ZNhsKtHvzRDlNIPpBf6O//g36x8ifvt3I7E+ukVQm3W6yQTj7dmjeJW0XkZ/l9LAg1GaIaCU1h+VSPQQ7YrQKJu+tJcz48zcy6s91vRB0KzBo6qDvQX75Xuv7+mqy/iR1LpGKyot8Y8vR8dkAyOIzT86RCQW5f0IEKAsyNrX9ZZ0LNXRlKmsozuXDF3RN1Q+/b34PebJ9oacBD5iQ4cK7pNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=connect.ust.hk; dmarc=pass action=none
+ header.from=connect.ust.hk; dkim=pass header.d=connect.ust.hk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=connect.ust.hk;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TTyEncDh0c6FyeH6ewDUvYCZYaHfTD7nRkocSGGyglA=;
+ b=v088HzDWvm+zpNOnHObUq/Y0jcmzusN6KliDSwIJgL4IX82zAiCRpJX26YyzLkd7Yd/GjPisASVeDs3Km/LuAKrkryGD+uAISEwIyeiaMTGG5AgvCgXKdtG8ixvZcbkGERoYUhw55a2uwZPGdXSYOWTq0HvJOFaJVty1m/hGmJU=
+Authentication-Results: baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=none action=none
+ header.from=connect.ust.hk;
+Received: from TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:b7::8) by
+ TYYP286MB0985.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:e2::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4649.15; Sat, 30 Oct 2021 14:07:55 +0000
+Received: from TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::c0af:a534:cead:3a04]) by TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::c0af:a534:cead:3a04%8]) with mapi id 15.20.4649.018; Sat, 30 Oct 2021
+ 14:07:55 +0000
+From:   Chengfeng Ye <cyeaa@connect.ust.hk>
+To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Chengfeng Ye <cyeaa@connect.ust.hk>
+Subject: [PATCH] clk/mediatek: fix missing null-check for mt7622
+Date:   Sat, 30 Oct 2021 07:07:40 -0700
+Message-Id: <20211030140740.6947-1-cyeaa@connect.ust.hk>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: HK2P15301CA0016.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:202:1::26) To TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:b7::8)
+MIME-Version: 1.0
+Received: from ubuntu.localdomain (175.159.124.155) by HK2P15301CA0016.APCP153.PROD.OUTLOOK.COM (2603:1096:202:1::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.0 via Frontend Transport; Sat, 30 Oct 2021 14:07:54 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b5652177-7c59-4c66-8c5f-08d99baeab46
+X-MS-TrafficTypeDiagnostic: TYYP286MB0985:
+X-Microsoft-Antispam-PRVS: <TYYP286MB0985ED0B89A14E2B26F031FF8A889@TYYP286MB0985.JPNP286.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 61qeMAe6YOOrXCJpQqWmBSC370NunEErWGUTrYztZnv2ZuoXYknAVvCPxcFX03ium/eId35OcUkL3mE5R0L6N0/QvZVwQYH2C8OxohnkG0oFDmeWk2j02jysCn103t3Gfe+R0Ln+UQs/0FaRf0VKxjJC3BDqFaZOCqIKK99TSvwM5QB86g/3iUqsyfavUuSuqMwB4APFp4zh5Ha/pvigm6x658V/Tl0q/6CnLQdXxWsjPk/aJC2OEpKpfVNwmNwbqGnWN8QdaoqHamysm9hEMUkWDo2MOWG7hVDGCC1+ct34l8Po5YCPOx0AgMEGAcZaS/8DtVxcM1nLkDS+HagWvVroVdnHTflDmd8/q/niiNhoIuZrRrpwknn/x878JFQmcmom1wLJ/A8KLFOBz2jdIIRLC0rARLi6Z41LEVQ07Z/Q3R3W6mZCsG3ZoDew2+vs0Dz9U88aPfSUX3oB4c+19dQRvwYYSlBwamiraUzvOQP2ZDoTKWWmZJm/hZGfezcMWb6hPK8EYWTxPOxEZRchncdlRrhFe+YXT9Zc0nPcw2ICHAfTEQ4RcSA9LYZA1Prd9J6LKAKiuesRqmj7suJ+pgnyW8MHgqx1ImqmpSTIB51ntLcsMOkyWrv1I5nPlRyUNKiH+SMkxj11w1fXDfgaBL05nkEkesZK7P8D6WODbYVkdaF8QOjADrTxDxp5zu+/4RDtPXD0p0GcBqLBNB0fUA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(36756003)(316002)(2906002)(38350700002)(956004)(66946007)(5660300002)(26005)(86362001)(2616005)(38100700002)(6486002)(66556008)(66476007)(786003)(6512007)(8676002)(6506007)(107886003)(52116002)(508600001)(8936002)(6666004)(1076003)(4326008);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tJX2fJf5sZRj8vwXm3WjPGc+WpIOKBc0GG5IRki83Hy9p0Mqq73DKi6fydAU?=
+ =?us-ascii?Q?Kr5UMsNtSiBKxGnhD0yy9KZ+uGlQWvul01Z5gozWfNQlMN3oozzsY8ztWImU?=
+ =?us-ascii?Q?cpDuCmu4few083nd9P4ZHQ9WnCanEI9mcUP5ZmwFHDqcUO5jb4Bcmn7/bbWK?=
+ =?us-ascii?Q?uO/o0Md4mqW5C7ADJGTNlQAl9MF3V+jzgf3duhC0sOZ7lFrh+RrmMQru7o/y?=
+ =?us-ascii?Q?2Xbeq74Q5qZCBb3b97/UkX0whqVVgvHxPGEqs3UWxOAAopV5ww2CqW7Ru3Fi?=
+ =?us-ascii?Q?vsjXKRZCTbnFH71hSprVBup8PVKX6XP/QqSBjx8jWP1yJfVhKev2hatDP0Le?=
+ =?us-ascii?Q?5PlQez9CqOEdgddVLZtD4ws4VH2jHef+BhSIy2i93qwutThJEMegmbQcuPGZ?=
+ =?us-ascii?Q?smjhPUj7FbuEpEmFoDyKY4hrR1NPpFaDHi5FsVOgXxwnkx1JjjdGUNlMuHEU?=
+ =?us-ascii?Q?pyLQxiqwpRyJTlpTFdQGCaTUW3rMWUqsivy6j6V1n1NBqDu+NhkcINi4GYHZ?=
+ =?us-ascii?Q?0GFHHHWixSDGCbZdlLgtxirmdYddS0u45s8b76J49oIHT39csc/YtSF2SLC3?=
+ =?us-ascii?Q?boQkpBG9ako1SXXoOISV1hRYapXypQbZOANTibw+YK3RsJnSFvJlUA7VoEhh?=
+ =?us-ascii?Q?THsxj0pe+xERz2C67D20M5NwOTLUj/+m1jKVbCt/b6kIqIdjm5LMG00bRZfB?=
+ =?us-ascii?Q?hH1jkxQaFDi/NRvvdJ0298wOhKrwmoRi1TeaHKGJHA1siNPCy/wd+XcCSyyQ?=
+ =?us-ascii?Q?SlyI4KjnZz1Kmblwh/CP6DHUjpc+9cSpXaUcsCoo3dK7eHiPq2UxcNNtaL6Y?=
+ =?us-ascii?Q?mA16F6m0ED/g9TZt6cm1mc+Dg1sO/pXidolH4RFhU/Fq60rLd+zMjfSEQJy+?=
+ =?us-ascii?Q?2mwxhy7QxJgUb66vyrT4K/tOaO1lFsOSiTLy1v9bjG2kI0kn8GVu3bs0Phb7?=
+ =?us-ascii?Q?gQ8R1z/+6qN6PmmIaAoZzXAN0uf81KLrqnn07wpQPnYKR3z9MlBTrn1DYqgJ?=
+ =?us-ascii?Q?EVZLCUZnhOLncO9+RRUVeA3fdnjHLSFgBFICxkJ4kF30RY7EJIn9L578iV/A?=
+ =?us-ascii?Q?se7zQAWzdOmZb5ovj3GNq+VK0KAyb4Wny6D1dbIvwl/Fpx81NTaJ1LZe/boV?=
+ =?us-ascii?Q?7PcVyM1VoMp6KVfVcJ0nAOCrr1yQoBwKlUucyvSbe754FeYz+kiE9QrYoWBZ?=
+ =?us-ascii?Q?o9dRdVQeXAE0tmCPJA0zG+Kswe4CC3tfEdBJDANtv0o/Z900vM7d8WkYouR/?=
+ =?us-ascii?Q?gCVdZ+v5k2/qxOKJEbU7pVDgvnWkjFP5GsUWBLu6Mav3dMQFBqxhfs6p1pVg?=
+ =?us-ascii?Q?NpuV22XnJmNq8UjFcKwAtHRIw157YISn2vRfMmG/ZGhBBfrshQJBBE/bS+rf?=
+ =?us-ascii?Q?Xy8HMviiVOeOjKcm/JKi8PD//z0xBcURfcw7reIMYixLJCTEG47z1V6yLSTD?=
+ =?us-ascii?Q?1y0BRFW1pWabSWHUJkOW34I9wxwPv30IxAsI7v7ZG9di0OCYjQVN3LB69QNE?=
+ =?us-ascii?Q?kEMikfIwb6i/ezoVoAqIhpNP+TBWiGpXYVgu27IPBEy0OGYQ6eOLFXhNuVzo?=
+ =?us-ascii?Q?IUCBhb2IKch36Br+rArO9Go+ruu32JcxrNTVaEs9NNYJjodI6AfYO3g+tP4Q?=
+ =?us-ascii?Q?Qx2XTs/+ekq9mDQdPmQFCGc=3D?=
+X-OriginatorOrg: connect.ust.hk
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5652177-7c59-4c66-8c5f-08d99baeab46
+X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB1188.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2021 14:07:55.1261
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 6c1d4152-39d0-44ca-88d9-b8d6ddca0708
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SmW4GVBNT+t8HAOXrZiGB9zlIzYvDytHh8mbzVq+33Kr5pTIWfwtXQS1ELgEVHeykCf4a/AfUhjMyQtctB1CNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYP286MB0985
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The return pointer of mtk_alloc_clk_data could
+be null, adding null check for all the call sites.
 
-> On 27 Oct 2021, at 10:53 pm, Martin Blumenstingl =
-<martin.blumenstingl@googlemail.com> wrote:
->=20
-> There are reports that 48kHz audio does not work on his WeTek Play 2
+Signed-off-by: Chengfeng Ye <cyeaa@connect.ust.hk>
+---
+ drivers/clk/mediatek/clk-mt7622.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Typo to fixup when applying ^ s/his/the
-
-> (which uses a GXBB SoC), while 44.1kHz audio works fine on the same
-> board. There are also reports of 48kHz audio working fine on GXL and
-> GXM SoCs, which are using an (almost) identical AIU (audio =
-controller).
->=20
-> Experimenting has shown that MPLL0 is causing this problem. In the =
-.dts
-> we have by default:
-> 	assigned-clocks =3D <&clkc CLKID_MPLL0>,
-> 			  <&clkc CLKID_MPLL1>,
-> 			  <&clkc CLKID_MPLL2>;
-> 	assigned-clock-rates =3D <294912000>,
-> 			       <270950400>,
-> 			       <393216000>;
-> The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
-> rate is divisible by 44.1kHz without remainder. Swapping these two =
-clock
-> rates "fixes" 48kHz audio but breaks 44.1kHz audio.
->=20
-> Everything looks normal when looking at the info provided by the =
-common
-> clock framework while playing 48kHz audio (via I2S with mclk-fs =3D =
-256):
->        mpll_prediv                 1        1        0  2000000000
->           mpll0_div                1        1        0   294909641
->              mpll0                 1        1        0   294909641
->                 cts_amclk_sel       1        1        0   294909641
->                    cts_amclk_div       1        1        0    12287902
->                       cts_amclk       1        1        0    12287902
->=20
-> meson-clk-msr however shows that the actual MPLL0 clock is off by more
-> than 38MHz:
->        mp0_out               333322917    +/-10416Hz
->=20
-> The rate seen by meson-clk-msr is very close to what we would get when
-> SDM (the fractional part) was ignored:
->  (2000000000Hz * 16384) / ((16384 * 6) =3D 333.33MHz
-> If SDM was considered the we should get close to:
->  (2000000000Hz * 16384) / ((16384 * 6) + 12808) =3D 294.9MHz
->=20
-> Further experimenting shows that HHI_MPLL_CNTL7[15] does not have any
-> effect on the rate of MPLL0 as seen my meson-clk-msr (regardless of
-> whether that bit is zero or one the rate is always the same according =
-to
-> meson-clk-msr). Using HHI_MPLL_CNTL[25] on the other hand as SDM_EN
-> results in SDM being considered for the rate output by the hardware. =
-The
-> rate - as seen by meson-clk-msr - matches with what we expect when
-> SDM_EN is enabled (fractional part is being considered, resulting in a
-> 294.9MHz output) or disable (fractional part being ignored, resulting =
-in
-> a 333.33MHz output).
->=20
-> Reported-by: Christian Hewitt <christianshewitt@gmail.com>
-> Signed-off-by: Martin Blumenstingl =
-<martin.blumenstingl@googlemail.com>
-
-Tested on WP2/Odroid C2 (fixed) and VIM1/LePotato (still good), thanks!
-
-Tested-by: Christian Hewitt <christianshewitt@gmail.com>
-
-> ---
-> changes since v1 at [0]:
-> - consider HHI_MPLL_CNTL[25] as SDM_EN bit after Jerome helped me
->  understand the purpose of SDM_EN and gave some explanation why this
->  can't be a spread spectrum bit
->=20
->=20
-> [0] =
-https://patchwork.kernel.org/project/linux-amlogic/patch/20211016145939.15=
-643-1-martin.blumenstingl@googlemail.com/
->=20
->=20
-> drivers/clk/meson/gxbb.c | 44 +++++++++++++++++++++++++++++++++++++---
-> 1 file changed, 41 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index d6eed760327d..608e0e8ca49a 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -713,6 +713,35 @@ static struct clk_regmap gxbb_mpll_prediv =3D {
-> };
->=20
-> static struct clk_regmap gxbb_mpll0_div =3D {
-> +	.data =3D &(struct meson_clk_mpll_data){
-> +		.sdm =3D {
-> +			.reg_off =3D HHI_MPLL_CNTL7,
-> +			.shift   =3D 0,
-> +			.width   =3D 14,
-> +		},
-> +		.sdm_en =3D {
-> +			.reg_off =3D HHI_MPLL_CNTL,
-> +			.shift   =3D 25,
-> +			.width	 =3D 1,
-> +		},
-> +		.n2 =3D {
-> +			.reg_off =3D HHI_MPLL_CNTL7,
-> +			.shift   =3D 16,
-> +			.width   =3D 9,
-> +		},
-> +		.lock =3D &meson_clk_lock,
-> +	},
-> +	.hw.init =3D &(struct clk_init_data){
-> +		.name =3D "mpll0_div",
-> +		.ops =3D &meson_clk_mpll_ops,
-> +		.parent_hws =3D (const struct clk_hw *[]) {
-> +			&gxbb_mpll_prediv.hw
-> +		},
-> +		.num_parents =3D 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxl_mpll0_div =3D {
-> 	.data =3D &(struct meson_clk_mpll_data){
-> 		.sdm =3D {
-> 			.reg_off =3D HHI_MPLL_CNTL7,
-> @@ -749,7 +778,16 @@ static struct clk_regmap gxbb_mpll0 =3D {
-> 	.hw.init =3D &(struct clk_init_data){
-> 		.name =3D "mpll0",
-> 		.ops =3D &clk_regmap_gate_ops,
-> -		.parent_hws =3D (const struct clk_hw *[]) { =
-&gxbb_mpll0_div.hw },
-> +		.parent_data =3D &(const struct clk_parent_data) {
-> +			/*
-> +			 * Note:
-> +			 * GXL and GXBB have different SDM_EN registers. =
-We
-> +			 * fallback to the global naming string =
-mechanism so
-> +			 * mpll0_div picks up the appropriate one.
-> +			 */
-> +			.name =3D "mpll0_div",
-> +			.index =3D -1,
-> +		},
-> 		.num_parents =3D 1,
-> 		.flags =3D CLK_SET_RATE_PARENT,
-> 	},
-> @@ -3044,7 +3082,7 @@ static struct clk_hw_onecell_data =
-gxl_hw_onecell_data =3D {
-> 		[CLKID_VAPB_1]		    =3D &gxbb_vapb_1.hw,
-> 		[CLKID_VAPB_SEL]	    =3D &gxbb_vapb_sel.hw,
-> 		[CLKID_VAPB]		    =3D &gxbb_vapb.hw,
-> -		[CLKID_MPLL0_DIV]	    =3D &gxbb_mpll0_div.hw,
-> +		[CLKID_MPLL0_DIV]	    =3D &gxl_mpll0_div.hw,
-> 		[CLKID_MPLL1_DIV]	    =3D &gxbb_mpll1_div.hw,
-> 		[CLKID_MPLL2_DIV]	    =3D &gxbb_mpll2_div.hw,
-> 		[CLKID_MPLL_PREDIV]	    =3D &gxbb_mpll_prediv.hw,
-> @@ -3439,7 +3477,7 @@ static struct clk_regmap *const =
-gxl_clk_regmaps[] =3D {
-> 	&gxbb_mpll0,
-> 	&gxbb_mpll1,
-> 	&gxbb_mpll2,
-> -	&gxbb_mpll0_div,
-> +	&gxl_mpll0_div,
-> 	&gxbb_mpll1_div,
-> 	&gxbb_mpll2_div,
-> 	&gxbb_cts_amclk_div,
-> --=20
-> 2.33.1
->=20
->=20
+diff --git a/drivers/clk/mediatek/clk-mt7622.c b/drivers/clk/mediatek/clk-mt7622.c
+index ef5947e15c75..f16b3655ff76 100644
+--- a/drivers/clk/mediatek/clk-mt7622.c
++++ b/drivers/clk/mediatek/clk-mt7622.c
+@@ -620,6 +620,8 @@ static int mtk_topckgen_init(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
+ 				    clk_data);
+@@ -650,6 +652,8 @@ static int mtk_infrasys_init(struct platform_device *pdev)
+ 	int r;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_gates(node, infra_clks, ARRAY_SIZE(infra_clks),
+ 			       clk_data);
+@@ -700,6 +704,8 @@ static int mtk_pericfg_init(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
++	if (!clk_data)
++		return -ENOMEM;
+ 
+ 	mtk_clk_register_gates(node, peri_clks, ARRAY_SIZE(peri_clks),
+ 			       clk_data);
+-- 
+2.17.1
 
