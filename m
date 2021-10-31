@@ -2,60 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A492C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 20:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BD3C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 02:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC2660F3A
-	for <linux-clk@archiver.kernel.org>; Sat, 30 Oct 2021 20:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E9E60F22
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 02:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231518AbhJ3UuJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Oct 2021 16:50:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231437AbhJ3UuJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 30 Oct 2021 16:50:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 9A1CE60F38;
-        Sat, 30 Oct 2021 20:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635626858;
-        bh=Y8WJ2ly3YSyis+TcSKDN1sXLoncu8sSC0xRedEgNf2c=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=LPCLSfhKQ5je0+blyFWnxxPjxBB3CPTReDNv0985N0zoYfaJyzHiquV7fJBg1advf
-         EplUhLJMh4d+IIVMXPm4b1accRg3g/zImlhTKiEtjghl7T9Gcw5AOqZ4y++36npFEK
-         t5/10Eq6mGWNnDPYTNJTbwmY+wAg0m5oB9mly30RsIQJADpPw7T+s4sNCh5JYSCb6v
-         ZEhu5hakNF0jFdHFpPtNQsJKpZGF2a5bOyjXTqERt3pnZxtn4b4OTkFpBYw39nffCG
-         TqSUkYIezQK1qJGVyIkLxKcZZGSrGEXCkrut3FiNUcdYsWL6H2EqHpeMsC6Im0Qwrx
-         cW09uY3YETbyg==
-Subject: Re: [GIT PULL] clk fixes for v5.15-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211030024551.2638329-1-sboyd@kernel.org>
-References: <20211030024551.2638329-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211030024551.2638329-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 675c496d0f92b481ebe4abf4fb06eadad7789de6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3a4347d82efdfcc5465b3ed37616426989182915
-Message-Id: <163562685845.6976.8628880673991238224.pr-tracker-bot@kernel.org>
-Date:   Sat, 30 Oct 2021 20:47:38 +0000
+        id S232023AbhJaCJ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 Oct 2021 22:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60294 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232020AbhJaCJ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Oct 2021 22:09:59 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0039C061714
+        for <linux-clk@vger.kernel.org>; Sat, 30 Oct 2021 19:07:28 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id j9so5645031pgh.1
+        for <linux-clk@vger.kernel.org>; Sat, 30 Oct 2021 19:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=FZws8a0NnRSfwKNA4DrXN6xO9IuC3RkTXLzHBaK74pk=;
+        b=eDNKkWqtGF0RWMlK58QTj864wOzXAzCXSKL9KtcgTbTd2gMCLI98kC8pPmwD7DFf4/
+         12qDdcW8DLjQfaztzlMBd5DRJMtX0YQi/zHDaIQDbDe0W+0dcxEUoF//deFOVdJiulgV
+         iGIYyE7GmyEO0u9tHxUP62iczBXLTFdXdQyv3H3FClkFZpvF/8wRXlQpO5Avn0a+ka63
+         ajIE6i2e5fhS40igGpxanW//H+xW5ypoLCqdzPzMtjVP3kKCw0XQS2fr6OohH1G7LIh4
+         thv1nwuc0Lci5Suv97vvmPAo+fFm1M+q02nz48v49YwwFVqfRZ+L8WKpqxFAJQFyZQnJ
+         YeaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FZws8a0NnRSfwKNA4DrXN6xO9IuC3RkTXLzHBaK74pk=;
+        b=op4uEfb4rthE84Qbgu7V0fqckueyfOwPw0T1W0Pd5NycyUX7fjV0lWopOIdxqBceCs
+         VYFA2QeStJ+ye4XVOrXTbPzH7RfFlL24dlnRKZ1gnEF84aRe4EXVli4PgyjetEiSIsPL
+         VABDvujlMZc5IL9Ickt/jnJZdMZTaroQIQyaHB62llHPWNzU0fSBZIwaHmuBBaAKLci8
+         3lOvxx0biNHikXCoM9+oVvQX+rodyey0wqbP6FNcoEPxi+iFjYdc7OZvARGQfu8FN1Cb
+         WvDXQFxU6OSHex5YoLBLB0R/JzkMKsc/FXXnOnawJvgR10xGve6r0cKQulmsvx8HFQqM
+         jG4g==
+X-Gm-Message-State: AOAM532Qryz4VD3iwOrYyUU6ToaJsxyM8TkIOt46tkvm+RzsSONVnqek
+        3vPj9Y5t6dWXHd3yiP+15NLd/JqzgUjZ3A==
+X-Google-Smtp-Source: ABdhPJxZRsL6oy18FF58BzLeRINGjp4Deyiv1s1R/0ulZXTTdGGk268zD341ubKIUG9CWFVgkQWqtw==
+X-Received: by 2002:a65:6a54:: with SMTP id o20mr62852pgu.227.1635646048199;
+        Sat, 30 Oct 2021 19:07:28 -0700 (PDT)
+Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id p9sm10748986pfn.7.2021.10.30.19.07.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 30 Oct 2021 19:07:27 -0700 (PDT)
+From:   Shawn Guo <shawn.guo@linaro.org>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH 0/3] A few smd-rpm clock driver cleanups
+Date:   Sun, 31 Oct 2021 10:07:12 +0800
+Message-Id: <20211031020715.21636-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 29 Oct 2021 19:45:51 -0700:
+Here are a few smd-rpm clock driver cleanups found in the code
+inspection.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Shawn Guo (3):
+  clk: qcom: smd-rpm: Drop MFD qcom-rpm reference
+  clk: qcom: smd-rpm: Drop the use of struct rpm_cc
+  clk: qcom: smd-rpm: Drop binary value handling for buffered clock
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3a4347d82efdfcc5465b3ed37616426989182915
-
-Thank you!
+ drivers/clk/qcom/clk-smd-rpm.c | 31 ++++---------------------------
+ 1 file changed, 4 insertions(+), 27 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.17.1
+
