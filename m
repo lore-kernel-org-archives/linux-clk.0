@@ -2,105 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00CFC433FE
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 02:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A8EC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 09:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6A30610CB
-	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 02:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C52561058
+	for <linux-clk@archiver.kernel.org>; Sun, 31 Oct 2021 09:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbhJaCK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 Oct 2021 22:10:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232131AbhJaCKM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 Oct 2021 22:10:12 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B989EC0613F5
-        for <linux-clk@vger.kernel.org>; Sat, 30 Oct 2021 19:07:34 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id j9so5645302pgh.1
-        for <linux-clk@vger.kernel.org>; Sat, 30 Oct 2021 19:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vqKYg6dNuNcTvm4gAvh9iY3XhP1oG3tG2dM4lX9EWLU=;
-        b=FqQ+WYpzW/8dJmtef4TQNCOMBHv/+8ehEx1sXKW5SitexXRcNqc+kl2iD6C7cIH13t
-         X4dzh4sqB7sgNq9qVJB7U3Jid9Q8mzo5Oy3wcZFDK2RWR27DUzkz3xr7pplD1of6Hsln
-         IME09zob+JHkU03vNL3kYCfnlEgVavqnKxEucgRolhsTqyHs6Jss015kuXyYPOrmctbf
-         +2RQU8TGjmQVisadqnXVN2rXhe++c4jXuHDabGWx45QrcdsGlCG8dJkR+B2hLRbrxd+0
-         BBSpUOngyF+xyjH+G/0Vc7xZtncucyEwszkpZlGqQlkOXaYb32iktiOZqZgLA6vxe4yb
-         d1JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vqKYg6dNuNcTvm4gAvh9iY3XhP1oG3tG2dM4lX9EWLU=;
-        b=ajRyQ1sanSyNIXe9HIJQD1yCCMhcvnSkBTd++cSy/z7nzMp03NE8TXNEAslY2GxTQn
-         ovq1LWGQdntq4m3ysgEZed3zADu8ITEBXss42/aWWdmxuRruOVdt+yflr2ujMipo1Wgu
-         XSgOecFF7NFUhbp50r0Lp+8aKKKViDZMAg8SbIogRfLywoMFprzNcbOBH4ziPnGmddzB
-         VV9lx+NWuIdhhTr2ujUG/suJOkJQAP+PFSnM2tNgJK0XKpV2zNG69vCcr1L8VUDXXZ7J
-         +d9l9c59S87C+C1n22p+iQswHjA4ocUUCK16MXxNYjoWJCa/PMv1Dco4t3X+yJ7p9deu
-         Tyqg==
-X-Gm-Message-State: AOAM530CuES+4RX0FiF9COI6X/+UEwisonHYQnLPwJol+j++KqfDMvs1
-        fe09wFvQUJB4XYvBcJWv7zmYwUgEcoQn5A==
-X-Google-Smtp-Source: ABdhPJzn24RYS3oErnKGYpc3gzdG/yLAzl/Rea65kdjXmf4hJKcqkFFDBKEi5vC2ws5LUvYMd1P3sw==
-X-Received: by 2002:a63:155d:: with SMTP id 29mr5700982pgv.245.1635646053900;
-        Sat, 30 Oct 2021 19:07:33 -0700 (PDT)
-Received: from localhost.localdomain (80.251.214.228.16clouds.com. [80.251.214.228])
-        by smtp.gmail.com with ESMTPSA id p9sm10748986pfn.7.2021.10.30.19.07.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Oct 2021 19:07:33 -0700 (PDT)
-From:   Shawn Guo <shawn.guo@linaro.org>
+        id S229939AbhJaJEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 Oct 2021 05:04:16 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:17172 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229525AbhJaJEP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 Oct 2021 05:04:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1635670904; x=1667206904;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=GF1M9lRgfv1qWAvis+/hrRXIO8JBr+hqe2AlP1qmu1I=;
+  b=VgPNS8RkGB50cXsTW2C40P6kiANZZfE+idgwZzKKvdj4EQhx7hetINhM
+   XkqWganpm3x3PPV6cLYTqU9g87L3UkmF8q/0PtodCXPd8pP0hWiJW/gMu
+   xdLu4mfQiJ1HEMjRFa+eBcmNaNIE6uMnl+WHDR0E7NYHNBmIXKPwcY8IK
+   ePx2m8WC6AEdbhmcGGWhztakc/mo9o1rrg79yGrSIi7syFODIEqG9HDE1
+   UoEBS3sIpdc/esXqdASI6ih20xRDcP12LqtX5Pb5R6vqoiqv3k7eq29zL
+   qzLAm/m6tDEViAEv9WCUux5soC8oZLpeULKcBzDI+/ux3vRIBXQg1cjDp
+   g==;
+IronPort-SDR: BBJbwG37SJ4KsKYtsh+iUseNBbJbn2VKE3VbDM0rFORC0t5us7wgp4QN8S82dsKNtGIWc5SL/O
+ wSU9C2QyHWO4Hs5Ni88JCvVp44ukC7MT7hoA79QDZaXjReikIgpDxeCG00tEdsyy753HgxtahA
+ bkECOQHc6F7NsLymBrCvJ84lf4xBfC0pAkrMaYa3/v4LtkgeEkjivoGyc1tW18gz9QRsxupmCK
+ WywtNbRuVNspfUGuYwpCkNkgB/U83Y4dyb1hUVePNqW9RELhXqrWaWR1VAberMbnhiHsFj1sZK
+ qoQjpJg6mrZ51kcjScURCbVs
+X-IronPort-AV: E=Sophos;i="5.87,197,1631602800"; 
+   d="scan'208";a="134941229"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Oct 2021 02:01:42 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Sun, 31 Oct 2021 02:01:42 -0700
+Received: from localhost (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Sun, 31 Oct 2021 02:01:42 -0700
+Date:   Sun, 31 Oct 2021 10:03:27 +0100
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
-Subject: [PATCH 3/3] clk: qcom: smd-rpm: Drop binary value handling for buffered clock
-Date:   Sun, 31 Oct 2021 10:07:15 +0800
-Message-Id: <20211031020715.21636-4-shawn.guo@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211031020715.21636-1-shawn.guo@linaro.org>
-References: <20211031020715.21636-1-shawn.guo@linaro.org>
+CC:     <mturquette@baylibre.com>, <robh+dt@kernel.org>,
+        <nicolas.ferre@microchip.com>, <kavyasree.kotagiri@microchip.com>,
+        <eugen.hristev@microchip.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 3/3] clk: lan966x: Extend lan966x clock driver for
+ clock gating support
+Message-ID: <20211031090327.z7nm67iinkwyblus@soft-dev3-1.localhost>
+References: <20211019084449.1411060-1-horatiu.vultur@microchip.com>
+ <20211019084449.1411060-4-horatiu.vultur@microchip.com>
+ <163548971798.15791.952778566228263608@swboyd.mtv.corp.google.com>
+ <20211029093556.tdvroyommqi5xb6g@soft-dev3-1.localhost>
+ <163555035420.15791.5764699436982333377@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <163555035420.15791.5764699436982333377@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The buffered clock binary value handling added by commit 36354c32bd76
-("clk: qcom: smd-rpm: Add .recalc_rate hook for clk_smd_rpm_branch_ops")
-is redundant, because buffered clock is branch type, and the binary
-value handling for branch clock has been handled by
-clk_smd_rpm_prepare/unprepare functions.
+The 10/29/2021 16:32, Stephen Boyd wrote:
+> 
+> Quoting Horatiu Vultur (2021-10-29 02:35:56)
+> > The 10/28/2021 23:41, Stephen Boyd wrote:
+> >
+> > Hi Stephen,
+> >
+> > >
+> > > Quoting Horatiu Vultur (2021-10-19 01:44:49)
+> > > > diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
+> > > > index 19bec94e1551..40be47092a31 100644
+> > > > --- a/drivers/clk/clk-lan966x.c
+> > > > +++ b/drivers/clk/clk-lan966x.c
+> > > > @@ -188,26 +202,64 @@ static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
+> > > >         return &priv->hw;
+> > > >  };
+> > > >
+> > > > +static int lan966x_gate_clk_register(struct device *dev,
+> > > > +                                    struct clk_hw_onecell_data *hw_data,
+> > > > +                                    void __iomem *gate_base)
+> > > > +{
+> > > > +       int i;
+> > > > +
+> > > > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i) {
+> > > > +               int idx = i - GCK_GATE_UHPHS;
+> > > > +
+> > > > +               hw_data->hws[i] =
+> > > > +                       clk_hw_register_gate(dev, clk_gate_desc[idx].name,
+> > >
+> > > Use devm?
+> >
+> > I couldn't find any devm_clk_hw_register_gate or something similar for
+> > the gate.
+> 
+> Add one?
 
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 8 --------
- 1 file changed, 8 deletions(-)
+Yes, I will do that.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index dd3d373a1309..ea28e45ca371 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -189,10 +189,6 @@ static int clk_smd_rpm_set_rate_active(struct clk_smd_rpm *r,
- 		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
- 	};
- 
--	/* Buffered clock needs a binary value */
--	if (r->rpm_res_type == QCOM_SMD_RPM_CLK_BUF_A)
--		req.value = cpu_to_le32(!!req.value);
--
- 	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
- 				  r->rpm_res_type, r->rpm_clk_id, &req,
- 				  sizeof(req));
-@@ -207,10 +203,6 @@ static int clk_smd_rpm_set_rate_sleep(struct clk_smd_rpm *r,
- 		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
- 	};
- 
--	/* Buffered clock needs a binary value */
--	if (r->rpm_res_type == QCOM_SMD_RPM_CLK_BUF_A)
--		req.value = cpu_to_le32(!!req.value);
--
- 	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
- 				  r->rpm_res_type, r->rpm_clk_id, &req,
- 				  sizeof(req));
+> 
+> >
+> > >
+> > > > +                                            "lan966x", 0, base,
+> > > > +                                            clk_gate_desc[idx].bit_idx,
+> > > > +                                            0, &clk_gate_lock);
+> > > > +
+> > > > +               if (IS_ERR(hw_data->hws[i]))
+> > > > +                       return dev_err_probe(dev, PTR_ERR(hw_data->hws[i]),
+> > > > +                                            "failed to register %s clock\n",
+> > > > +                                            clk_gate_desc[idx].name);
+> > > > +       }
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > > +static void lan966x_gate_clk_unregister(struct clk_hw_onecell_data *hw_data)
+> > > > +{
+> > > > +       int i;
+> > > > +
+> > > > +       for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i)
+> > >
+> > > for (int i =
+> > >
+> > > should suffice
+> >
+> > That would not work. I will get the error:
+> > error: ‘for’ loop initial declarations are only allowed in C99 or C11 mode
+> 
+> Ah ok
+
 -- 
-2.17.1
-
+/Horatiu
