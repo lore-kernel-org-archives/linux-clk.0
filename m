@@ -2,106 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB7FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 14:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5EDC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 19:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 589E36108F
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 14:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08A3B60E9C
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 19:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231366AbhKAO22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Nov 2021 10:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbhKAO21 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 10:28:27 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB3EC061714;
-        Mon,  1 Nov 2021 07:25:53 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id f4so6731768edx.12;
-        Mon, 01 Nov 2021 07:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U8dGpHr2LbqeeAeL0rdMryoAEIzzb9ek644l/wYoSc0=;
-        b=qfPfuUyKZZiLcmVeHl4aZMPpfyaRykfYCtocxIUEaKcP1sB2WeHuRpeSenxfRhzVaJ
-         1VToEAmhDVB5dUVFxg4K9ZVhi1cSVQbk/SummxncNmrLuKtvht+NCy73ZODXPf0WpRUC
-         OlsvB2pbLI0s5s2DL5dB9MUj3UxOO05PLIzMGuKr92Wtv+CDEKAvF+UdX2zJ9N+auyUx
-         cdTKbekFXwzb9hHd0RJpv2JbV+fMSvTLlYDQf658hcmLLUWifohDy7PLV1yu3nYzAwVi
-         jS7+wCXEVlP2VUrf350Mk2gwzhAZiT7P9w41C2y47tSEs/7Vbz1lSjdIV3eCwjr4RBQX
-         2APw==
+        id S229725AbhKAUBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Nov 2021 16:01:36 -0400
+Received: from mail-oo1-f54.google.com ([209.85.161.54]:43909 "EHLO
+        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229560AbhKAUBf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 16:01:35 -0400
+Received: by mail-oo1-f54.google.com with SMTP id x135-20020a4a418d000000b002b961605657so5951635ooa.10;
+        Mon, 01 Nov 2021 12:59:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U8dGpHr2LbqeeAeL0rdMryoAEIzzb9ek644l/wYoSc0=;
-        b=yD4D/vX1Wlx/bwizGp1iTt7Tq74zg4QMBnlg90G+nxYIRiw7CbgWAfTq5FdylhpNoX
-         JHuKLUahKvKV5yERDLpcqYdqjQx6EXbqfv8ruQHsBkf9jI1Z9p0cDLHF+7fbSLeuNxD9
-         qMyvqRJxAOmWCzV7rWovsVkEQPb0Fiwe0EjhN4ZbX8u56ASSUGIjjCFcFIlFYxzH66d2
-         x9DED/LZb+N1zjEShIDu9BA6DE71zjjpl4H11b4xPrwhozaRLVhrA9pTgXnMWCpM8bja
-         +DmH8gtgcMmxgrSW6FyQ4zjVXTTo9seywwVIOFPFnb77e2Fs8meCdjUk2DOMCw+6VPFv
-         eRqw==
-X-Gm-Message-State: AOAM530tLeVXc0Cwp/DLy96fJ+dqAwzoKKMd8fVr+KzY5lPO5ciE+LfR
-        oTVMueDUwRJK4BWUPSJBxPlDcuxqEP2GXRWeOMIbtrfXLCk=
-X-Google-Smtp-Source: ABdhPJzWM6VCDa5ZmF2ZKjZ1DdhV+AAGA9EqR2F/VhuTDDoFuYjeq48tl6QyW1NBKDlXUB980wqbufQ1zQVeZg6M+74=
-X-Received: by 2002:aa7:c44b:: with SMTP id n11mr20384013edr.238.1635776752332;
- Mon, 01 Nov 2021 07:25:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=P4yf0/RJJTO707X28C6gjptjzJu306yuYyoatECp3Cw=;
+        b=C571Ot8TVH3zmhjwI8IvQjxsKFpq6e+sLghzHvuXRuYRnYG6pBRiNlCtIT1MVpc/bG
+         hdcdAjlxhGi4exTwimG0nCW7Nz5sTAz+1QGxHwUJTOsx6zWqzXeRw/OFih0X8n8aH/ox
+         5q/9c/xMmxGvVRKe4HFIsdHHtFmmC+84/w/1qf6vkzkfhTmjDxG90Cj8e6nSSrDsHFjV
+         TlCHOFU7jsgx4XBKzSFCjKrand0dv7U9ed5/sSBOsZz2pHTn1P38Cvwn8pHQ/malDY8T
+         OUirGe6P/BBTC10ekeLm6KS0Wc9N7d5mVN9MRDZcJOP4wQO3jbUNXEB69qv36pElSAA4
+         03UA==
+X-Gm-Message-State: AOAM530V5oV1m49ijFRwaMUVyht54ClbwpCJzq/PiUuOnfw9mujXvGrM
+        PZV3dajB4GKq4IPWZhEavw==
+X-Google-Smtp-Source: ABdhPJxLufXU/SGbvCYYMWFNd6u844obE7VmFwQmuvxYzp2DmN8gLhbRUdLnq5m8FfpQtAd75RjNRA==
+X-Received: by 2002:a05:6820:1622:: with SMTP id bb34mr9281532oob.93.1635796741776;
+        Mon, 01 Nov 2021 12:59:01 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id t12sm3591760oth.21.2021.11.01.12.59.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Nov 2021 12:59:00 -0700 (PDT)
+Received: (nullmailer pid 935479 invoked by uid 1000);
+        Mon, 01 Nov 2021 19:58:59 -0000
+Date:   Mon, 1 Nov 2021 14:58:59 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, broonie@kernel.org,
+        wells.lu@sunplus.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, maz@kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Subject: Re: [PATCH v3 2/8] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Message-ID: <YYBHA/AEq3zvI4+N@robh.at.kernel.org>
+References: <cover.1635737544.git.qinjian@cqplus1.com>
+ <5d790d13fbe818504552054849646a7a19ae852a.1635737544.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-References: <20211025094119.82967-1-hdegoede@redhat.com> <20211025094119.82967-11-hdegoede@redhat.com>
- <CAHp75VdC8i1YWZh_KXNqz_hHgHFoXQ57cce4-x3e6Ha0ZVPQag@mail.gmail.com> <08a94895-ad57-c8f2-fcb5-ff1c1637dc0d@redhat.com>
-In-Reply-To: <08a94895-ad57-c8f2-fcb5-ff1c1637dc0d@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 1 Nov 2021 16:25:02 +0200
-Message-ID: <CAHp75VfYMEZKtR5HZTazSSZ1qgz5iV7Nk9JFHgFmtUuWGqQabg@mail.gmail.com>
-Subject: Re: [PATCH v4 10/11] platform/x86: int3472: Pass tps68470_regulator_platform_data
- to the tps68470-regulator MFD-cell
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d790d13fbe818504552054849646a7a19ae852a.1635737544.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 1, 2021 at 1:32 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 10/25/21 13:38, Andy Shevchenko wrote:
-> > On Mon, Oct 25, 2021 at 12:42 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On Mon, 01 Nov 2021 13:01:52 +0800, Qin Jian wrote:
+> This introduces bindings for boards based Sunplus SP7021 SoC.
+> 
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  .../bindings/arm/sunplus,sp7021.yaml          | 27 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 +++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+> 
 
-...
-
-> >> +       board_data = int3472_tps68470_get_board_data(dev_name(&client->dev));
-> >
-> >> +       if (board_data)
-> >
-> > IIRC it's a dup. Below already incorporates this.
-> >
-> >> +               gpiod_remove_lookup_table(board_data->tps68470_gpio_lookup_table);
->
-> Not sure what you mean here? This line *dereferences* board_data, so even if
-> gpiod_remove_lookup_table() already contains a NULL check for the table pointer,
-> we still need the board_data check to avoid dereferencing it to get
-> the tps68470_gpio_lookup_table member.
-
-Oh, I see now. Nothing needs to be changed here.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Rob Herring <robh@kernel.org>
