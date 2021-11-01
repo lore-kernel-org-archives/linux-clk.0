@@ -2,18 +2,18 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E05C43219
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 05:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AADC4321E
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 05:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3777610A2
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 05:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3530D610CA
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 05:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231249AbhKAFXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Nov 2021 01:23:40 -0400
-Received: from [113.204.237.245] ([113.204.237.245]:39248 "EHLO
+        id S231267AbhKAFXl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Nov 2021 01:23:41 -0400
+Received: from [113.204.237.245] ([113.204.237.245]:39224 "EHLO
         test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231281AbhKAFX2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 01:23:28 -0400
+        with ESMTP id S231309AbhKAFX3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 01:23:29 -0400
 X-MailGates: (compute_score:DELIVER,40,3)
 Received: from 172.28.114.216
         by cqmailgates with MailGates ESMTP Server V5.0(16723:0:AUTH_RELAY)
@@ -25,78 +25,94 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, maz@kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v3 2/8] dt-bindings: arm: sunplus: Add bindings for Sunplus SP7021 SoC boards
-Date:   Mon,  1 Nov 2021 13:01:52 +0800
-Message-Id: <5d790d13fbe818504552054849646a7a19ae852a.1635737544.git.qinjian@cqplus1.com>
+Subject: [PATCH v3 0/8] Add Sunplus SP7021 SoC Support
+Date:   Mon,  1 Nov 2021 13:01:50 +0800
+Message-Id: <cover.1635737544.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <cover.1635737544.git.qinjian@cqplus1.com>
-References: <cover.1635737544.git.qinjian@cqplus1.com>
+In-Reply-To: <87h7czam5d.wl-maz@kernel.org>
+References: <87h7czam5d.wl-maz@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This introduces bindings for boards based Sunplus SP7021 SoC.
+This patch series add Sunplus SP7021 SoC support.
 
-Signed-off-by: Qin Jian <qinjian@cqplus1.com>
----
- .../bindings/arm/sunplus,sp7021.yaml          | 27 +++++++++++++++++++
- MAINTAINERS                                   |  7 +++++
- 2 files changed, 34 insertions(+)
+Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
+peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
+single chip. It is designed for industrial control.
+
+SP7021 consists of two chips (dies) in a package. One is called C-chip
+(computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
+process (22 nm) for high performance computing. The other is called P-
+chip (peripheral chip). It has many peripherals and an ARM A926 added
+especially for real-time control. P-chip is made for customers. It adopts
+low-level process (ex: 0.11 um) to reduce cost.
+
+Refer to (for documentations):
+https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+
+Refer to (applications):
+https://tibbo.com/store/plus1.html
+
+Refer to (applications):
+http://www.sinovoip.com.cn/ecp_view.asp?id=586
+
+Changes in v3:
+- sp7021-intc: remove primary controller mode due to P-chip running Linux
+  not supported any more.
+- sp7021-intc.h: removed, not set ext through the DT but sp_intc_set_ext()
+- sunplus,sp7021-intc.yaml: update descriptions for above changes
+- irq-sp7021-intc.c: more cleanup based on Marc's review
+- all driver's Kconfig removed default, it's selected by platform config
+
+Changes in v2:
+- sunplus,sp7021-intc.yaml: add descrption for "#interrupt-cells", interrupts
+- sunplus,sp7021-intc.yaml: drop "ext0-mask"/"ext1-mask" from DT
+- sunplus,sp7021-intc.yaml: fix example.dt too long error
+- irq-sp7021-intc.c: major rewrite
+- all files with dual license
+
+Qin Jian (8):
+  dt-bindings: vendor-prefixes: Add Sunplus
+  dt-bindings: arm: sunplus: Add bindings for Sunplus SP7021 SoC boards
+  dt-bindings: reset: Add bindings for SP7021 reset driver
+  reset: Add Sunplus SP7021 reset driver
+  dt-bindings: clock: Add bindings for SP7021 clock driver
+  clk: Add Sunplus SP7021 clock driver
+  dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt
+    controller
+  irqchip: Add Sunplus SP7021 interrupt controller driver
+
+ .../bindings/arm/sunplus,sp7021.yaml          |  27 +
+ .../bindings/clock/sunplus,sp7021-clkc.yaml   |  38 +
+ .../sunplus,sp7021-intc.yaml                  |  62 ++
+ .../bindings/reset/sunplus,reset.yaml         |  40 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |  15 +
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-sp7021.c                      | 770 ++++++++++++++++++
+ drivers/irqchip/Kconfig                       |   9 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-sp7021-intc.c             | 279 +++++++
+ drivers/reset/Kconfig                         |   8 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-sunplus.c                 | 159 ++++
+ include/dt-bindings/clock/sp-sp7021.h         | 112 +++
+ include/dt-bindings/reset/sp-sp7021.h         |  99 +++
+ 17 files changed, 1632 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+ create mode 100644 drivers/clk/clk-sp7021.c
+ create mode 100644 drivers/irqchip/irq-sp7021-intc.c
+ create mode 100644 drivers/reset/reset-sunplus.c
+ create mode 100644 include/dt-bindings/clock/sp-sp7021.h
+ create mode 100644 include/dt-bindings/reset/sp-sp7021.h
 
-diff --git a/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-new file mode 100644
-index 000000000..5b9985b73
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) Sunplus Co., Ltd. 2021
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/sunplus,sp7021.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sunplus SP7021 Boards Device Tree Bindings
-+
-+maintainers:
-+  - qinjian <qinjian@cqplus1.com>
-+
-+description: |
-+  ARM platforms using Sunplus SP7021, an ARM Cortex A7 (4-cores) based SoC.
-+  Wiki: https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: sunplus,sp7021-achip
-+
-+additionalProperties: true
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0bca0de0..6a5422f10 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2655,6 +2655,13 @@ F:	drivers/clocksource/armv7m_systick.c
- N:	stm32
- N:	stm
- 
-+ARM/SUNPLUS SP7021 SOC SUPPORT
-+M:	Qin Jian <qinjian@cqplus1.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
-+S:	Maintained
-+W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
-+F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-+
- ARM/Synaptics SoC support
- M:	Jisheng Zhang <Jisheng.Zhang@synaptics.com>
- M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 -- 
 2.33.1
 
