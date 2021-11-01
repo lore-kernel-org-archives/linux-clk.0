@@ -2,47 +2,47 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F5CC433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 08:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4943C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 08:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C246760C4B
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 08:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A926460EE9
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Nov 2021 08:07:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231708AbhKAIJ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Nov 2021 04:09:59 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:62106 "EHLO
+        id S231800AbhKAIKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Nov 2021 04:10:01 -0400
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:62892 "EHLO
         esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbhKAIJ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 04:09:58 -0400
+        with ESMTP id S231486AbhKAIKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 Nov 2021 04:10:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1635754045; x=1667290045;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OqCupavxhellN9DVR1JhZQjBSHWKv2Z7me13wqboXFA=;
-  b=NQxnJ5z3jW3/xH6F5RBXQWmLq9a9h3slWpo1bML9LSivyN99bXnkwokm
-   /BT4KR86uOj+Y39pxxX9yooKMakIk6cAzrHY7oKkSZPAijHTTQBdqySIS
-   a02dwNnf5srG9ZCAMuF8wop7vhrQg0BAi0pPL+vg8blNO++vRrSpCgF5L
-   a8AlsojQrMIgTUXr8UbkD9av4G81ZuHNlDK2fBgY+tjYQvD6EVKiTj0qo
-   NdhOLlQpOfvQcGGfAodHTLVSWbetohWgL12e4vsE7OJphFUJvIL5iPUZU
-   vH0xGOk7DPktedQitmmMkEP3BWm+WGUUdsdznkloxPOG8UprA6xoj3Mai
+  t=1635754048; x=1667290048;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=aZmHkkZf73KvGooq49A6E2ZVCnfxaS3fQI/Km25LJkI=;
+  b=m3xSd3y53P3i7qT7UoF7qv1zyr7fomkJTWG+m+F5WIghZ+ss6825WeWn
+   zqkdH3NCQAWLmPvL0kJ4w3V/rcRzY4wPvrd57MtYZ1s7O9DEOOOpGBXLy
+   m0uD467bNyyeF6v80KXXXS7EHQuAxnzBBuAKMB+rIZY1eg9xexh5aOTaF
+   EoPtslTPeF7u1WnMZrpPznVpfHpWqDiqRIJg8lbeEWpNuqSiAZes/BmMO
+   qTZdJB+WbxBFzBZufiobicEXDhGqFzBCUKg0mobA+0s67+cI3ZFp0GboE
+   9MKjl5gV8TIPbKzu08H7CZpvRqpU9nlwFP2RJkgWx+TiWboAB+EyLmB4Y
    A==;
-IronPort-SDR: vrQeYL6J66D6id8IuHpnn0Zu1WGRP+40chCbfCulU9d0+Bc11evTze2C8vqrw+5FMvdEI1FSqb
- tG/tFHq+3CpQE4JAH/yLBUV6GGijHFtxcqY1UAk/StzciVk5OjOPuH4YVGr5OyZvV+mr3jTBxp
- 0xSZKDctFN7LZ7DKqis3+TgUdMSmrwmtmRl5o88LSsSCiCyLidoYHRSP1qAgNiamXgaYiL+Y9P
- TazDQiJux9JHTxu/T0IeIS/nGP7i4zvsTc5WbcOlbFYn4HiykqQRpYk+bFEMEFbMeFehwW3lCO
- K9KlJRsGvC5CvHyulHlVcmhx
+IronPort-SDR: GUdC4fWoOP0Cb1OxUGiGn1hFyh6Y0zfMFRLhd9/rAcuYU1lMkLGvE7V1Hun6hTxav+aI25aWuw
+ WtnQRi/U07/ocp4B9XUWmXJtaiB9lKUi+/y0TaluBHFwiy2HaHUvk0ncCosjrtgLzbNdhLSPeC
+ 4kARxbBObzOw9QhEBGrLCWlLVy9itmm+qAG25GgdUlTtrau1nr1i3b+FyONKOyVqMlOTIbi55W
+ M60atTlhES8pWJJ4gYhIbaDCtkP7yUoWBTC8TEg5cc1zAVZt2C96OSLs5Y4CUSztNM1k0SC61R
+ fyGSTnb6YqxTqs8hVxSMBRzZ
 X-IronPort-AV: E=Sophos;i="5.87,198,1631602800"; 
-   d="scan'208";a="74923430"
+   d="scan'208";a="137558396"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Nov 2021 01:07:23 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Nov 2021 01:07:27 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 1 Nov 2021 01:07:23 -0700
+ 15.1.2176.14; Mon, 1 Nov 2021 01:07:27 -0700
 Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Mon, 1 Nov 2021 01:07:21 -0700
+ 15.1.2176.14 via Frontend Transport; Mon, 1 Nov 2021 01:07:25 -0700
 From:   Horatiu Vultur <horatiu.vultur@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <nicolas.ferre@microchip.com>,
@@ -50,10 +50,12 @@ To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [RFC PATCH v3 0/4] Extend lan966x clock driver for clock gating support
-Date:   Mon, 1 Nov 2021 09:08:41 +0100
-Message-ID: <20211101080845.3343836-1-horatiu.vultur@microchip.com>
+Subject: [RFC PATCH v3 2/4] dt-bindings: clock: lan966x: Extend for clock gate support
+Date:   Mon, 1 Nov 2021 09:08:43 +0100
+Message-ID: <20211101080845.3343836-3-horatiu.vultur@microchip.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211101080845.3343836-1-horatiu.vultur@microchip.com>
+References: <20211101080845.3343836-1-horatiu.vultur@microchip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -61,31 +63,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series depends on the following series, therefor keep it as RFC.
-https://www.spinics.net/lists/linux-clk/msg62795.html
+Allow to add an optional resource to be able to access the clock gate
+registers.
 
-This patch series extend the clock driver to support also clock gating.
+Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+---
+ .../devicetree/bindings/clock/microchip,lan966x-gck.yaml       | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-v2->v3:
- - add devm_clk_hw_register_gate function
-
-v1->v2:
- - add Acked-by tag for patch 2
- - make the resource for clock gating as an optional resource
-
-Horatiu Vultur (4):
-  clk: gate: Add devm_clk_hw_register_gate()
-  dt-bindings: clock: lan966x: Extend for clock gate support
-  dt-bindings: clock: lan966x: Extend includes with clock gates
-  clk: lan966x: Extend lan966x clock driver for clock gating support
-
- .../bindings/clock/microchip,lan966x-gck.yaml |  3 +-
- drivers/clk/clk-gate.c                        | 35 +++++++++++
- drivers/clk/clk-lan966x.c                     | 59 ++++++++++++++++++-
- include/dt-bindings/clock/microchip,lan966x.h |  8 ++-
- include/linux/clk-provider.h                  | 23 ++++++++
- 5 files changed, 123 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+index fca83bd68e26..a53c889629da 100644
+--- a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
++++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+@@ -19,7 +19,8 @@ properties:
+     const: microchip,lan966x-gck
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
+ 
+   clocks:
+     items:
 -- 
 2.33.0
 
