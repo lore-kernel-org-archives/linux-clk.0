@@ -2,197 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26639C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 09:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749A0C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 10:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1220D60E73
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 09:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F01A60F24
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 10:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231378AbhKBKAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 06:00:20 -0400
-Received: from so254-9.mailgun.net ([198.61.254.9]:37377 "EHLO
-        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231249AbhKBKAO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 06:00:14 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1635847060; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=xEp4cY0mLa1do9x2vcWS+WYrDvGl3H3y8rLCPQj0v4Y=; b=Ynzks8zqnvIZ1YMduiDntXRVq34OF0z+hoserZf0S2cY9I3H49und+5O4GfJQI8ZHQUJoLBn
- Yf00ibUKXOujYA/F9JdljUDCdB1B+I+2hC32b2XL6pUIOELfKdhCvYtZ9LLx+d+Vh7sOKHXs
- TwyR9gw2NCHu9S/Iqf5oVajMEsQ=
-X-Mailgun-Sending-Ip: 198.61.254.9
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 61810b7df6a3eeacf97cc6bc (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Nov 2021 09:57:17
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 21204C43617; Tue,  2 Nov 2021 09:57:17 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 617A1C4360D;
-        Tue,  2 Nov 2021 09:57:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 617A1C4360D
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 2/4] clk: qcom: gdsc: Add support for clock voting from GDSC
-Date:   Tue,  2 Nov 2021 15:26:51 +0530
-Message-Id: <1635847013-3220-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1635847013-3220-1-git-send-email-tdas@codeaurora.org>
-References: <1635847013-3220-1-git-send-email-tdas@codeaurora.org>
+        id S230518AbhKBK7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 06:59:51 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:19591 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230102AbhKBK7t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 06:59:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1635850635; x=1667386635;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=SIUPUU55vSWyOBfzNwHvs0zIbo+l0kHmiuexipAo3M0=;
+  b=ZSTmL6zMRRBfTRYodbvxuBztVCKiKwy7WyfCAlvxlRqukLCkiSb93+p/
+   64I+hWBufXGAl1At7Z72AV8NGhMI0Q0xW4E4K4ytth8cT18kONRaxsHGK
+   BUnEpZ5EKRvQ1uewqYD5xWQAIPunEsGwPrprIitgRB3/nJLoTQoqdPFvV
+   1Eia7qdBVglYj0yWmHZPt1dIBZ3Jv65SKsEEs/oE+zbiK5LnfpNMB2mjS
+   eP7pnWNy2nc023zWin3ta49IWjPKm9SXWftOroSnC7RPPF+33YzQ13TwB
+   4FZnJs8gDCTFpWOeCtXGYLgJBlc+O2xT8rLSF+VJwifRxB5G3B+TxKwhj
+   g==;
+IronPort-SDR: io8ckJG/muLi815GzgwaSMPFP3kwwhDLR4MVvM+DVp2TzWpxMVZ3tvywJRtYgDaVUnSmPdaRo1
+ R6N3Z+DKTEiLVWZ/6uz0kpKu2mJdyLQfjcH0rfEkWeAckR3chJPPxollwEHrJxKvElpZN1MNiG
+ K6JzP8BLtWHq3iXayw9Nmqz5x7PnrUQwTb83JNtdcUQhfUbafONC1Hqa2T4OpMpEtMk0pi/gdA
+ 4pbi8RbCEi7NRY8d/OeFEyZ5zVO1OUZ2nfX6bCRCl06iwHckvNwFte7KFKgA0trVAktw+T6ojV
+ GsxKugVkiTSWAwhrnUKc12es
+X-IronPort-AV: E=Sophos;i="5.87,202,1631602800"; 
+   d="scan'208";a="141915742"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Nov 2021 03:57:14 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 2 Nov 2021 03:57:13 -0700
+Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Tue, 2 Nov 2021 03:57:12 -0700
+Subject: Re: [GIT PULL] clk: at91: clk changes for 5.16
+To:     Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>
+CC:     Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+References: <20211021122248.33261-1-nicolas.ferre@microchip.com>
+ <163529819030.15791.7009809622910069319@swboyd.mtv.corp.google.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <23f15e48-319d-646d-5b7f-bd812be1d4b4@microchip.com>
+Date:   Tue, 2 Nov 2021 11:57:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <163529819030.15791.7009809622910069319@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the cases where the clock is required to be enabled before the genpd
-enable add support for the same.
+Stephen,
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/gdsc.c | 45 +++++++++++++++++++++++++++++++++++++++------
- drivers/clk/qcom/gdsc.h |  3 +++
- 2 files changed, 42 insertions(+), 6 deletions(-)
+On 27/10/2021 at 03:29, Stephen Boyd wrote:
+> Quoting nicolas.ferre@microchip.com (2021-10-21 05:22:48)
+>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>
+>> Stephen,
+>>
+>> Here are the clk changes for 5.16. I took the initiative to create a
+>> Pull-Request for it as it's surely more convenient, as I proposed in my
+>> reply to Claudiu's cover letter.
+> 
+> Thanks. I didn't pick it up this time but I can pick it up next time. I
+> wanted to take the clk.c patch via a different branch.
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index 7e1dd8c..1caca32 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -4,6 +4,7 @@
-  */
+Perfect for me. I'll send Pull-Requests for at91 on the model of other 
+silicon vendors.
+Don't hesitate to tell me if you want special arrangement for some of 
+the development cycles.
 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -256,6 +257,15 @@ static int _gdsc_enable(struct gdsc *sc)
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
+Best regards,
+   Nicolas
 
-+	if (sc->clk) {
-+		ret = clk_enable(sc->clk);
-+		if (ret) {
-+			pr_err("Failed to enable clock %s\n", sc->clk_name);
-+			return ret;
-+		}
-+		sc->clk_enable = true;
-+	}
-+
- 	if (sc->flags & SW_RESET) {
- 		gdsc_assert_reset(sc);
- 		udelay(1);
-@@ -269,8 +279,11 @@ static int _gdsc_enable(struct gdsc *sc)
- 	}
 
- 	ret = gdsc_toggle_logic(sc, GDSC_ON);
--	if (ret)
-+	if (ret) {
-+		if (sc->clk)
-+			clk_disable(sc->clk);
- 		return ret;
-+	}
-
- 	if (sc->pwrsts & PWRSTS_OFF)
- 		gdsc_force_mem_on(sc);
-@@ -287,8 +300,12 @@ static int _gdsc_enable(struct gdsc *sc)
- 	/* Turn on HW trigger mode if supported */
- 	if (sc->flags & HW_CTRL) {
- 		ret = gdsc_hwctrl(sc, true);
--		if (ret)
-+		if (ret) {
-+			if (sc->clk)
-+				clk_disable(sc->clk);
- 			return ret;
-+		}
-+
- 		/*
- 		 * Wait for the GDSC to go through a power down and
- 		 * up cycle.  In case a firmware ends up polling status
-@@ -329,7 +346,7 @@ static int _gdsc_disable(struct gdsc *sc)
- 	if (sc->flags & HW_CTRL) {
- 		ret = gdsc_hwctrl(sc, false);
- 		if (ret < 0)
--			return ret;
-+			goto disable_clk;
- 		/*
- 		 * Wait for the GDSC to go through a power down and
- 		 * up cycle.  In case we end up polling status
-@@ -340,7 +357,7 @@ static int _gdsc_disable(struct gdsc *sc)
-
- 		ret = gdsc_poll_status(sc, GDSC_ON);
- 		if (ret)
--			return ret;
-+			goto disable_clk;
- 	}
-
- 	if (sc->pwrsts & PWRSTS_OFF)
-@@ -348,12 +365,16 @@ static int _gdsc_disable(struct gdsc *sc)
-
- 	ret = gdsc_toggle_logic(sc, GDSC_OFF);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
-
- 	if (sc->flags & CLAMP_IO)
- 		gdsc_assert_clamp_io(sc);
-
--	return 0;
-+disable_clk:
-+	if (sc->clk && sc->clk_enable)
-+		clk_disable(sc->clk);
-+
-+	return ret;
- }
-
- static int gdsc_disable(struct generic_pm_domain *domain)
-@@ -478,6 +499,18 @@ int gdsc_register(struct gdsc_desc *desc,
- 			return PTR_ERR(scs[i]->rsupply);
- 	}
-
-+	for (i = 0; i < num; i++) {
-+		if (!scs[i])
-+			continue;
-+
-+		scs[i]->clk = devm_clk_get(dev, scs[i]->clk_name);
-+		if (IS_ERR(scs[i]->clk))
-+			return PTR_ERR(scs[i]->clk);
-+		ret = clk_prepare(scs[i]->clk);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	data->num_domains = num;
- 	for (i = 0; i < num; i++) {
- 		if (!scs[i])
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 702d47a..cff5440 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -59,6 +59,9 @@ struct gdsc {
-
- 	const char 			*supply;
- 	struct regulator		*rsupply;
-+	const char			*clk_name;
-+	struct clk			*clk;
-+	bool				clk_enable;
- 	struct device 			*dev;
- };
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+-- 
+Nicolas Ferre
