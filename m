@@ -2,116 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E309AC197A0
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AA2C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 17:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9E5A60EBB
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C26E260F36
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 17:44:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235244AbhKBQwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 12:52:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235044AbhKBQv5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 12:51:57 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3F1C06120D;
-        Tue,  2 Nov 2021 09:11:50 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 5so76678658edw.7;
-        Tue, 02 Nov 2021 09:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=CMB5icMsNI9B+HlHvOZ/rsWpb2j9DPNZlwQY5zjCx08=;
-        b=CMMVSV/17ZP/t0ZBRMEqWcOl9jcn9EdPRril8YLsjXXQ2q8NvoJjHJ57oTlhFh45V3
-         +ZOLem70FEuu1QiZh/Z1w1z2E6gYgboUv6mQltr6qS6vJ++TyWSIHKL6/MfV5WL4U+Ds
-         y/ANstadh3d4G8+mjG3SM/OaZJwZU26njMFC5d7xyCEJgGJvjmF+DQf+xjDYHQwLHwBc
-         BMMdUPomJAblZRysCg+B4xOsLGYcpi56j0TOj4IRnzCn5zmC7CPGu9M2x81mN8aXjkd3
-         9tNPV+vYKt2iRfzLaI78XilKWkYJJmvhRSlsHetuS1MAgy2XfVKpo2ID/KF80yZIMGVj
-         /ceA==
+        id S230500AbhKBRqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 13:46:46 -0400
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:42653 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234676AbhKBRqp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 13:46:45 -0400
+Received: by mail-oi1-f172.google.com with SMTP id g125so31099935oif.9;
+        Tue, 02 Nov 2021 10:44:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=CMB5icMsNI9B+HlHvOZ/rsWpb2j9DPNZlwQY5zjCx08=;
-        b=5WMbvdC4bHaBIoLoryLBI22lDePYo/hi6BD5nCZgPAcdktJxjEmvwo9EyPnK5MbfKD
-         3i8UcGrWIbj9ZyZo/iDyMkF+ymiIIjnrTACwbyPNHmzw9tPBOQLEM4YU0q1hGBaSNExJ
-         C1pLyAvMAYqp6eBeaj7UB1g4o38w/PBpySx2IbDUpLg9RVHwNugUGy/XOuOUSmRdNHTk
-         TE4Jo4NTQdCHzZocBqj+cko2TN1vzrTRKnnEq/DFQIiAGSaK0Q1Am9+7yn1sqN2FuZwD
-         GJD0ergsf92xsowo/6ta7vkkjiucd13jYxm8GauNMrUKj9SPu1OmzCbVgJBn0bJEEjJL
-         OJ/Q==
-X-Gm-Message-State: AOAM533R9qQ4pDSXRDMvDBW9EkCjDGSSyscq0BRd/QzCHawrmq1SllUK
-        wgp3eAbaQdQN6wlRy+wSWOA=
-X-Google-Smtp-Source: ABdhPJyoAG8vEmS8dlIAtihH24GOCuPEV/1mht6fav6+Hnp4TnUGEtAeeO/iUfhnB8QhPY8fzmFSsg==
-X-Received: by 2002:a17:906:1683:: with SMTP id s3mr33340791ejd.331.1635869509118;
-        Tue, 02 Nov 2021 09:11:49 -0700 (PDT)
-Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
-        by smtp.gmail.com with ESMTPSA id c7sm8451374ejd.91.2021.11.02.09.11.47
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1SmEr1k0s7n+Ap3lvkJLWzJiWyw4fGH67BDx2Poz4iM=;
+        b=A5R6z8XpmItM9CX2bk2lJ3cOp7G/6FKCY6a6er+fwC7w7Z6cld4bU20TO095QkVoav
+         DHllEiuDrrCSpYqvjOnwSNuxsUJPelqdPuHx/svaore24YsWZEj5/My3FfEeEPjCNf8p
+         dBNKo/cIp7zuTftK/pAW0ZvbUQ5n/4H0xQsxd3bPpsx5A7MhZtJr/ZPqpwcihAL92Qct
+         kZrX26McvXxgf7os6ctwuIxZjnFRzAxUOI3h6Kul3wFdb0RQ7nifPtSFrUTYx1ZLKAJb
+         GiYUNb6CPLZlPzs3Y3t7C2U5rxyk28epGkt8IOsy9SXFjSbWilHfJcn965o3+as0RZhq
+         72Nw==
+X-Gm-Message-State: AOAM531DJcxOkxD0p0tNr7mRiWyN5C+Zh+sZgIAaTraIt6F4elXoF59W
+        7rW9EwJqYO/lLXOufjIpvA==
+X-Google-Smtp-Source: ABdhPJxBIecywmYXbnEap9qc5dDUbTqVmZVPKWGPUUIKP/Z7AhbRBm0jx7LwK4YSUiNa7vO+6mapVQ==
+X-Received: by 2002:a05:6808:f8b:: with SMTP id o11mr6034751oiw.5.1635875050384;
+        Tue, 02 Nov 2021 10:44:10 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id z13sm1097381otq.53.2021.11.02.10.44.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 09:11:48 -0700 (PDT)
-Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Emil Renner Berthing <kernel@esmil.dk>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 02/16] dt-bindings: timer: Add StarFive JH7100 clint
-Date:   Tue,  2 Nov 2021 17:11:11 +0100
-Message-Id: <20211102161125.1144023-3-kernel@esmil.dk>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211102161125.1144023-1-kernel@esmil.dk>
-References: <20211102161125.1144023-1-kernel@esmil.dk>
+        Tue, 02 Nov 2021 10:44:09 -0700 (PDT)
+Received: (nullmailer pid 3142432 invoked by uid 1000);
+        Tue, 02 Nov 2021 17:44:08 -0000
+Date:   Tue, 2 Nov 2021 12:44:08 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
+        wells.lu@sunplus.com, maz@kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: vendor-prefixes: Add Sunplus
+Message-ID: <YYF46H/1JUSD59AZ@robh.at.kernel.org>
+References: <cover.1635737544.git.qinjian@cqplus1.com>
+ <1a5f86dbfd1e4053cd2a69111fc7b277a49bc98a.1635737544.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a5f86dbfd1e4053cd2a69111fc7b277a49bc98a.1635737544.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add compatible string for the StarFive JH7100 clint.
+On Mon, 01 Nov 2021 13:01:51 +0800, Qin Jian wrote:
+> Add vendor prefix for Sunplus Technology Co., Ltd. (http://www.sunplus.com)
+> 
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/timer/sifive,clint.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/sifive,clint.yaml b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-index a35952f48742..8d5f4687add9 100644
---- a/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-+++ b/Documentation/devicetree/bindings/timer/sifive,clint.yaml
-@@ -25,6 +25,7 @@ properties:
-     items:
-       - enum:
-           - sifive,fu540-c000-clint
-+          - starfive,jh7100-clint
-           - canaan,k210-clint
-       - const: sifive,clint0
- 
--- 
-2.33.1
-
