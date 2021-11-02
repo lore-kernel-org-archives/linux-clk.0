@@ -2,141 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F18C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DC1C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 571FD60EBB
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:47:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2F161052
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 16:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234205AbhKBQto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 12:49:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57433 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230429AbhKBQto (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 12:49:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635871628;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OXCcgVDujHkdu74YmEm/6uZxSbK6QTtbfJnMu16uuZU=;
-        b=hgaFsWGpl073kSM7zs0J6RIyNgrUoIZOtWxnxxV+pwq2kUlSeXihoak9vycHUtuIZayYpl
-        3z0RRwqlJMe8+lzBK+qFyLGcWUPAPLmWM8mmX4cjhdbGV1iL7Ew5gWNos08lw5wjqMtGuS
-        hiq8B/1WE1hv4VIZK1lkvGELnlOwkXw=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-37-XBOhyq3GMu2D1jYI7g3TkQ-1; Tue, 02 Nov 2021 12:11:30 -0400
-X-MC-Unique: XBOhyq3GMu2D1jYI7g3TkQ-1
-Received: by mail-ed1-f71.google.com with SMTP id t18-20020a056402021200b003db9e6b0e57so19309983edv.10
-        for <linux-clk@vger.kernel.org>; Tue, 02 Nov 2021 09:11:30 -0700 (PDT)
+        id S235136AbhKBQwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 12:52:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235012AbhKBQvw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 12:51:52 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 267D3C06120F;
+        Tue,  2 Nov 2021 09:11:52 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id f8so56340750edy.4;
+        Tue, 02 Nov 2021 09:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JB6hpmX7hgdEksB90s0jcnSr+ju9+L9HjspXKT59qjU=;
+        b=fVb101zrOEdS1jAihWIfIyG+HQ66faBfoTEPEjsImMCJlaDk99daHWDiRdMv9qAm6U
+         GM9H/u2t1uEvPHe30jLQEM+ouGBlHQe+ZhRo1x05dUPrBFSf8SKhs3rxpXbbxcQ+hLAp
+         etv+xJQmu+twe90NWHLP3z3ci25uyuukUISDFEK6i2lfbVbpaopLQYGT5SSq/BvwlQbj
+         EZcCo5CLWZIg+UbzGNT9ufQwPkQux5wMhqJsSJQOX7IxtVW69drDJMh4b77eacE469jg
+         t9hRSVozQqpwWK2svSUwTunE16HCRfntTzc3PMSOsRLxVQFt0VJfX0xnWdeHbmoIQU7v
+         AFYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=OXCcgVDujHkdu74YmEm/6uZxSbK6QTtbfJnMu16uuZU=;
-        b=NlRmz0NRkIV7fnq/3l70HJY5PDoT0Hd6BlLlOQu1oWFyTUGjpLFUoZOMyDi0Tan6Od
-         NAbJFXt9uPx39zwEn0MbxR4/ODSjFMQwSuDuI3MZNfmGC9z9Uhlj3j+oe7BtsYnw85j7
-         Vb3Hk0QHpB1yEyByWmmXKrJStKUGDL1ODQAgoEeFnM8O/W2KIg9KYSmRPLmk2jX6UC+R
-         bjy5KPwBUDiRQb7qO8oYJpfOVnpvU2j8CbIHb+04VipdcQQ7IrL26v2wsHqjhSBSSJAg
-         tqpL+zoi528pOG2SrbETWHSENfTqV+Wr/36ybS6X3S1RrQhUqKlSmZOUeIYfF19JKYhM
-         +xdQ==
-X-Gm-Message-State: AOAM532jdnNTrEDk2+g0oG3+PbnZ/fokWgoDMBYaHV5/t2xv4RoOCQum
-        7lcvvPkmL5Cq9630iPp8EIPB9XaNhKyK9CpORloJYiiGV9/YQeqD6aZ+NExZc4LxfniN/UeOe4d
-        M3zbgupcclJUFzZZ8nt8w
-X-Received: by 2002:a17:906:ce2b:: with SMTP id sd11mr41196384ejb.357.1635869489709;
-        Tue, 02 Nov 2021 09:11:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwc7xvozzFCrT+ldZQZpz2qqh+5IJOeJ4jcizwG2L2dQLGetL43/Fnv4jvYRJN+ddJ55lpktA==
-X-Received: by 2002:a17:906:ce2b:: with SMTP id sd11mr41196329ejb.357.1635869489417;
-        Tue, 02 Nov 2021 09:11:29 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id j3sm8322037ejo.2.2021.11.02.09.11.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Nov 2021 09:11:28 -0700 (PDT)
-Message-ID: <69cc36ec-0674-2acb-6d23-4d7bc8c63fd9@redhat.com>
-Date:   Tue, 2 Nov 2021 17:11:27 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v5 10/11] platform/x86: int3472: Pass
- tps68470_regulator_platform_data to the tps68470-regulator MFD-cell
-Content-Language: en-US
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=JB6hpmX7hgdEksB90s0jcnSr+ju9+L9HjspXKT59qjU=;
+        b=Cuwlg+BI3SRlfd9wtfhWm3YznVd0wJjMI4y4LSMxKwTDQW340ucit5+U2acqhkiVkS
+         1KdnOnjcnwOgz3YEA4eST4QL7PA7TBU3uTx7fPsArdpjmFW87jt0K9jF2KuWdEV3kk9F
+         cmFxCR7dPB1fxgdNpWYM1rZxS4nLejNSCR86gvA61HYv6VchUzIBHPWOiR6i2CzL9Ozs
+         VqH/Wa61JiHyq+0cILdI5Q6rS4sp7AMnb5+2jYaDm+xMeBOb2tFfxTKTE5gvROraS70M
+         D6dzPbmn65t3ntp9GyJWr3PDH80fbxBwtLPOAQyeOS6Jl91ClV/AUGVTszC9L9xBDuj1
+         zzlg==
+X-Gm-Message-State: AOAM530jbnzxfngcEvQ7CuH2GlgJ4tu8826+sJzxWsvCNz7ynKlLTB4c
+        aEDZo5mTi4KFF8hHngkez1c=
+X-Google-Smtp-Source: ABdhPJxfmR6VqzkUY6gH2B1BqxHGO4w5PXJoyND0TScH00vVuowx+rxq+rysIijJ0FZBUXcxhZe0Aw==
+X-Received: by 2002:a50:fa99:: with SMTP id w25mr48882966edr.324.1635869510676;
+        Tue, 02 Nov 2021 09:11:50 -0700 (PDT)
+Received: from stitch.. (80.71.140.73.ipv4.parknet.dk. [80.71.140.73])
+        by smtp.gmail.com with ESMTPSA id c7sm8451374ejd.91.2021.11.02.09.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 09:11:50 -0700 (PDT)
+Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20211102094907.31271-1-hdegoede@redhat.com>
- <20211102094907.31271-11-hdegoede@redhat.com>
- <CAHp75Vd-xY43H8jPOUqJp55Rq3Wuhsdzctfhqq300S0vAKTzpw@mail.gmail.com>
- <1f4377bb-2902-05e9-95c7-ad924477b543@redhat.com>
- <CAHp75VfJZYiVvE0uQ6ahOJo9wxh0EwjgkeN81vas89pNMDv3GQ@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAHp75VfJZYiVvE0uQ6ahOJo9wxh0EwjgkeN81vas89pNMDv3GQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 03/16] dt-bindings: interrupt-controller: Add StarFive JH7100 plic
+Date:   Tue,  2 Nov 2021 17:11:12 +0100
+Message-Id: <20211102161125.1144023-4-kernel@esmil.dk>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211102161125.1144023-1-kernel@esmil.dk>
+References: <20211102161125.1144023-1-kernel@esmil.dk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Add compatible string for StarFive JH7100 plic.
 
-On 11/2/21 16:52, Andy Shevchenko wrote:
-> On Tue, Nov 2, 2021 at 4:59 PM Hans de Goede <hdegoede@redhat.com> wrote:
->> On 11/2/21 15:34, Andy Shevchenko wrote:
->>> On Tue, Nov 2, 2021 at 11:50 AM Hans de Goede <hdegoede@redhat.com> wrote:
-> 
-> ...
-> 
->>>> +               board_data = int3472_tps68470_get_board_data(dev_name(&client->dev));
->>>> +               if (!board_data) {
->>>> +                       dev_err(&client->dev, "No board-data found for this laptop/tablet model\n");
->>>> +                       return -ENODEV;
->>>
->>> It's fine to use dev_err_probe() for known error codes.
->>>
->>>> +               }
->>>
->>> ...
->>>
->>>> +               cells[1].platform_data = (void *)board_data->tps68470_regulator_pdata;
->>>
->>> Do we need casting?
->>
->> Yes, the cast casts away a "const", the const is correct
->> since the data only ever gets read by the regulator driver,
->> but platform_data pointers are normally not const, so it
->> is either the cast, or loose the const on the definition
->> of the struct to which board_data->tps68470_regulator_pdata
->> points...
->>
->> So not good choice here really, only chosing between bad
->> options and I picked the lets do the cast "least worse"
->> option (at least to me). I'm open to changing this.
-> 
-> Hmm... Okay, I was under the impression that MFD is using const for
-> that field...
+Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml         | 1 +
+ 1 file changed, 1 insertion(+)
 
-Nope, I just double-checked and it is a plain "void *" 
-
-Regards,
-
-Hans
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+index 08d5a57ce00f..28b6b17fe4b2 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+@@ -45,6 +45,7 @@ properties:
+     items:
+       - enum:
+           - sifive,fu540-c000-plic
++          - starfive,jh7100-plic
+           - canaan,k210-plic
+       - const: sifive,plic-1.0.0
+ 
+-- 
+2.33.1
 
