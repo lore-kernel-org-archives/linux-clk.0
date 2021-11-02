@@ -2,199 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84545C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 07:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD62FC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 09:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6882A61075
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 07:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DF7B60C4B
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 09:49:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbhKBIB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 04:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37668 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbhKBIBW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 04:01:22 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7235CC061714;
-        Tue,  2 Nov 2021 00:58:47 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 2431C1F4448D
-Subject: Re: [PATCH] clk: composite: Also consider .determine_rate for rate +
- mux composites
-To:     Alex Bee <knaerzche@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Corentin Labbe <clabbe@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     sboyd@kernel.org, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        "kernelci@groups.io" <kernelci@groups.io>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Chen-Yu Tsai <wens@csie.org>
-References: <163425193558.1688384.15520943968787313145@swboyd.mtv.corp.google.com>
- <20211015120559.3515645-1-martin.blumenstingl@googlemail.com>
- <04a58d50-634b-fa20-95b4-eb6831f77e85@collabora.com>
- <CAFBinCAEt9_EfLYWZEzTBK6iN97+Wacho7pNd2LYDPX3+goMzg@mail.gmail.com>
- <b6468523-a730-6a44-f4b9-3fd5b9ea2354@arm.com>
- <3e42ae24-8db4-fb11-edf2-a25bca47ecae@arm.com>
- <49a0dda1-8d0f-580c-d92d-de759b51edb3@gmail.com>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <31d462cb-1158-dd13-0ca8-46d54d2502f5@collabora.com>
-Date:   Tue, 2 Nov 2021 07:58:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S230368AbhKBJv5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 05:51:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37852 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229813AbhKBJvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 05:51:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635846559;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=KVkhA/eHg41ZCf31Loe6OEIjMqSDbcOXOhrvxn4pOJQ=;
+        b=P4mowVIhfcX2HD/PFmo3m5FtwA/TU2idJNhrWcDrxw6ERRfIIxKWH6m5bhvg54oZKbKQDH
+        E95tTOxJCr9nw2L7XEjWhySGtEh+rXrwczu+PbVK6qaxi1kH0gCj9TQro3t/sLOl1BcN6L
+        M3GhnIxRq+zXqB31ARmaeXfpUGvMQvE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-477-VBVYC6UNMxezgjdLgwsVbw-1; Tue, 02 Nov 2021 05:49:16 -0400
+X-MC-Unique: VBVYC6UNMxezgjdLgwsVbw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C47989F93E;
+        Tue,  2 Nov 2021 09:49:12 +0000 (UTC)
+Received: from x1.localdomain (unknown [10.39.195.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DBC45D9DC;
+        Tue,  2 Nov 2021 09:49:08 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v5 00/11] Add support for X86/ACPI camera sensor/PMIC setup with clk and regulator platform data
+Date:   Tue,  2 Nov 2021 10:48:56 +0100
+Message-Id: <20211102094907.31271-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <49a0dda1-8d0f-580c-d92d-de759b51edb3@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-+Kevin +Corentin
+Here is v5 of my patch-set adding support for camera sensor connected to a
+TPS68470 PMIC on x86/ACPI devices.
 
-On 01/11/2021 22:41, Alex Bee wrote:
-> Hi Guillaume,
-> 
-> Am 01.11.21 um 23:11 schrieb Robin Murphy:
->> On 2021-11-01 21:59, Robin Murphy wrote:
->>> On 2021-11-01 20:58, Martin Blumenstingl wrote:
->>>> Hi Guillaume,
->>>>
->>>> On Mon, Nov 1, 2021 at 9:19 PM Guillaume Tucker
->>>> <guillaume.tucker@collabora.com> wrote:
->>>>>
->>>>> Hi Martin,
->>>>>
->>>>> Please see the bisection report below about a boot failure on
->>>>> rk3328-rock64.
->>>>>
->>>>> Reports aren't automatically sent to the public while we're
->>>>> trialing new bisection features on kernelci.org but this one
->>>>> looks valid.
->>>>>
->>>>> Some more details can be found here:
->>>>>
->>>>>    https://linux.kernelci.org/test/case/id/617f11f5c157b666fb3358e6/
->>>>>
->>>>> Here's what appears to be the cause of the problem:
->>>>>
->>>>> [    0.033465] CPU: CPUs started in inconsistent modes
->>>>> [    0.033557] Unexpected kernel BRK exception at EL1
->>>>> [    0.034432] Internal error: BRK handler: f2000800 [#1] PREEMPT SMP
->>>
->>> What's weird is that that's really just the same WARN that's also
->>> present in 'successful' logs, except for some reason it's behaving as
->>> if the break handler hasn't been registered, despite that having
->>> happened long before we got to smp_init(). At this point we're also
->>> still some way off getting as far as initcalls, so I'm not sure that
->>> the clock driver would be in the picture at all yet.
->>>
->>> Is the bisection repeatable, or is this just random flakiness
->>> misleading things? I'd also note that you need pretty horrifically
->>> broken firmware to hit that warning in the first place, which might
->>> cast a bit of doubt over the trustworthiness of that board altogether.
+Changes in v5:
+- Update regulator_init_data in patch 10/11 to include the VCM regulator
+- Address various small review remarks from Andy
+- Make a couple of functions / vars static in the clk + regulator drivers
+  Reported-by: kernel test robot <lkp@intel.com>
 
-The bisection has checks to avoid false positives, so tests that
-produce flaky results won't normally lead to a report like this.
-Then they're manually triaged, and there were 2 separate
-bisections that landed on this same commit.
+Changes in v4:
+[PATCH 01/11] ACPI: delay enumeration of devices with a _DEP
+              pointing to an INT3472 device:
+- Move the acpi_dev_ready_for_enumeration() check to acpi_bus_attach()
+  (replacing the acpi_device_is_present() check there)
 
->> Ah, on closer inspection it might be entirely repeatable for a given
->> kernel build, but with the behaviour being very sensitive to code/data
->> segment layout changes...
->>
->> ...
->> 23:44:24.457917  Filename '1007060/tftp-deploy-dvdnydcw/kernel/Image'.
->> 23:44:24.460178  Load address: 0x2000000
->> ...
->> 23:44:27.180962  Bytes transferred = 33681920 (201f200 hex)
->> ...
->> 23:44:27.288135  Filename
->> '1007060/tftp-deploy-dvdnydcw/ramdisk/ramdisk.cpio.gz.uboot'.
->> 23:44:27.288465  Load address: 0x4000000
->> ...
+[PATCH 04/11] regulator: Introduce tps68470-regulator driver:
+- Make the top comment block use c++ style comments
+- Drop the bogus builtin regulator_init_data
+- Make the driver enable the PMIC clk when enabling the Core buck
+  regulator, this switching regulator needs the PLL to be on
+- Kconfig: add || COMPILE_TEST, fix help text
 
-That is indeed where the remaining false positives are still
-likely to be coming from, when the infrastructure consistently
-causes test failures following particular kernel revisions.  I
-don't think there's an easy way to rule those out, but we can try
-to address them one by one at least.
+[PATCH 05/11] clk: Introduce clk-tps68470 driver
+- Kconfig: select REGMAP_I2C, add || COMPILE_TEST, fix help text
+- tps68470_clk_prepare(): Wait for the PLL to lock before returning
+- tps68470_clk_unprepare(): Remove unnecesary clearing of divider regs
+- tps68470_clk_probe(): Use devm_clk_hw_register()
+- Misc. small cleanups
 
-In the case of colliding address ranges in the bootloader, we
-could add a check with the "good" revision and extra data in the
-kernel image to make it at least as big as the "bad" revision...
+I'm quite happy with how this works now, so from my pov this is the final
+version of the device-instantiation deferral code / approach.
 
-> could you try updating u-boot to more recent version: the ramdisk
-> address has been moved [1] to 0x06000000 in v2020.01-rc5.
+###
 
-Thanks for investigating this.  The board is in BayLibre's lab.
+The clk and regulator frameworks expect clk/regulator consumer-devices
+to have info about the consumed clks/regulators described in the device's
+fw_node, but on ACPI this info is missing.
 
-Corentin, Kevin, could you please take a look?
+This series worksaround this by providing platform_data with the info to
+the TPS68470 clk/regulator MFD cells.
 
-Thanks,
-Guillaume
+Patches 1 - 2 deal with a probe-ordering problem this introduces,
+since the lookups are only registered when the provider-driver binds,
+trying to get these clks/regulators before then results in a -ENOENT
+error for clks and a dummy regulator for regulators. See the patches
+for more details.
 
-> I couldn't reproduce this issue with the very same board.
-> 
-> [1]
-> https://github.com/u-boot/u-boot/commit/b2e373d16b0345d3c3f4beefdf0889e83faf173d
-> 
-> Alex
-> 
->>
->> Yeah, that'll be a problem ;)
->>
->> Cheers,
->> Robin.
->>
->>>>> There doesn't appear to be any other platform in KernelCI showing
->>>>> the same issue.
->>>> That's a strange error for the changes from my patch.
->>>> At first glance I don't see any relation to clk-composite code:
->>>> - the call trace doesn't have any references to CCF or rockchip clock
->>>> drivers
->>>> - clk-rk3328.c uses drivers/clk/rockchip/clk-cpu.c to register the CPU
->>>> clock which does not use clk-composite
->>>>
->>>> Chen-Yu has tested this patch (plus [0]) on RK3399 and didn't observe
->>>> any problems.
->>>> So maybe this is a RK3328 specific issue?
->>>> Anyways, I am interested in fixing this issue because reverting is
->>>> becoming more and more complex (since I think we're at eight commits
->>>> which would need to be reverted in total).
->>>>
->>>>> Please let us know if you need help debugging the issue or if you
->>>>> have a fix to try.
->>>> Could you please try [0] which is the second patch in the series which
->>>> finally made it upstream.
->>>> This second patch is not in 5.15 because I believed that it's only
->>>> something to make the code in clk-composite.c more future-proof. It's
->>>> not a condition that I am aware of.
->>>>
->>>> I don't have any Rockchip boards myself.
->>>> So I am thankful for any help I can get.
->>>>
->>>>
->>>> Best regards,
->>>> Martin
->>>>
->>>>
->>>> [0]
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=6594988fd625ff0d9a8f90f1788e16185358a3e6
->>>>
->>>>
->>>> _______________________________________________
->>>> Linux-rockchip mailing list
->>>> Linux-rockchip@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
->>>>
->>>
->>> _______________________________________________
->>> Linux-rockchip mailing list
->>> Linux-rockchip@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Patch 3 adds a header file which adds tps68470_clk_platform_data and
+tps68470_regulator_platform_data structs. The futher patches depend on
+this new header file.
+
+Patch 4 + 5 add the TPS68470 clk and regulator drivers
+
+Patches 6 - 11 Modify the INT3472 driver which instantiates the MFD cells to
+provide the necessary platform-data.
+
+Assuming this series is acceptable to everyone, we need to talk about how
+to merge this.
+
+Patch 2 has already been acked by Wolfram for merging by Rafael, so patch
+1 + 2 can be merged into linux-pm, independent of the rest of the series
+(there are some runtime deps on other changes for everything to work,
+but the camera-sensors impacted by this are not fully supported yet in
+the mainline kernel anyways).
+
+For "[PATCH 03/13] platform_data: Add linux/platform_data/tps68470.h file",
+which all further patches depend on I plan to provide an immutable branch
+myself (once it has been reviewed), which the clk / regulator maintainers
+can then merge before merging the clk / regulator driver which depends on
+this.
+
+And I will merge that IM-branch + patches 6-11 into the pdx86 tree myself.
+
+Regards,
+
+Hans
+
+
+Daniel Scally (1):
+  platform/x86: int3472: Enable I2c daisy chain
+
+Hans de Goede (10):
+  ACPI: delay enumeration of devices with a _DEP pointing to an INT3472
+    device
+  i2c: acpi: Use acpi_dev_ready_for_enumeration() helper
+  platform_data: Add linux/platform_data/tps68470.h file
+  regulator: Introduce tps68470-regulator driver
+  clk: Introduce clk-tps68470 driver
+  platform/x86: int3472: Split into 2 drivers
+  platform/x86: int3472: Add get_sensor_adev_and_name() helper
+  platform/x86: int3472: Pass tps68470_clk_platform_data to the
+    tps68470-regulator MFD-cell
+  platform/x86: int3472: Pass tps68470_regulator_platform_data to the
+    tps68470-regulator MFD-cell
+  platform/x86: int3472: Deal with probe ordering issues
+
+ drivers/acpi/scan.c                           |  37 ++-
+ drivers/clk/Kconfig                           |   8 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-tps68470.c                    | 257 ++++++++++++++++++
+ drivers/i2c/i2c-core-acpi.c                   |   5 +-
+ drivers/platform/x86/intel/int3472/Makefile   |   9 +-
+ ...lk_and_regulator.c => clk_and_regulator.c} |   2 +-
+ drivers/platform/x86/intel/int3472/common.c   |  82 ++++++
+ .../{intel_skl_int3472_common.h => common.h}  |   6 +-
+ ...ntel_skl_int3472_discrete.c => discrete.c} |  51 ++--
+ .../intel/int3472/intel_skl_int3472_common.c  | 106 --------
+ ...ntel_skl_int3472_tps68470.c => tps68470.c} |  99 ++++++-
+ drivers/platform/x86/intel/int3472/tps68470.h |  25 ++
+ .../x86/intel/int3472/tps68470_board_data.c   | 134 +++++++++
+ drivers/regulator/Kconfig                     |   9 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/tps68470-regulator.c        | 212 +++++++++++++++
+ include/acpi/acpi_bus.h                       |   5 +-
+ include/linux/mfd/tps68470.h                  |  11 +
+ include/linux/platform_data/tps68470.h        |  35 +++
+ 20 files changed, 944 insertions(+), 151 deletions(-)
+ create mode 100644 drivers/clk/clk-tps68470.c
+ rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_clk_and_regulator.c => clk_and_regulator.c} (99%)
+ create mode 100644 drivers/platform/x86/intel/int3472/common.c
+ rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_common.h => common.h} (94%)
+ rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_discrete.c => discrete.c} (91%)
+ delete mode 100644 drivers/platform/x86/intel/int3472/intel_skl_int3472_common.c
+ rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_tps68470.c => tps68470.c} (54%)
+ create mode 100644 drivers/platform/x86/intel/int3472/tps68470.h
+ create mode 100644 drivers/platform/x86/intel/int3472/tps68470_board_data.c
+ create mode 100644 drivers/regulator/tps68470-regulator.c
+ create mode 100644 include/linux/platform_data/tps68470.h
+
+-- 
+2.31.1
 
