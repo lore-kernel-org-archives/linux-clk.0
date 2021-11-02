@@ -2,95 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749A0C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 10:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B6FC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 11:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F01A60F24
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 10:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C43460295
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 11:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbhKBK7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 06:59:51 -0400
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:19591 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230102AbhKBK7t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 06:59:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1635850635; x=1667386635;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=SIUPUU55vSWyOBfzNwHvs0zIbo+l0kHmiuexipAo3M0=;
-  b=ZSTmL6zMRRBfTRYodbvxuBztVCKiKwy7WyfCAlvxlRqukLCkiSb93+p/
-   64I+hWBufXGAl1At7Z72AV8NGhMI0Q0xW4E4K4ytth8cT18kONRaxsHGK
-   BUnEpZ5EKRvQ1uewqYD5xWQAIPunEsGwPrprIitgRB3/nJLoTQoqdPFvV
-   1Eia7qdBVglYj0yWmHZPt1dIBZ3Jv65SKsEEs/oE+zbiK5LnfpNMB2mjS
-   eP7pnWNy2nc023zWin3ta49IWjPKm9SXWftOroSnC7RPPF+33YzQ13TwB
-   4FZnJs8gDCTFpWOeCtXGYLgJBlc+O2xT8rLSF+VJwifRxB5G3B+TxKwhj
-   g==;
-IronPort-SDR: io8ckJG/muLi815GzgwaSMPFP3kwwhDLR4MVvM+DVp2TzWpxMVZ3tvywJRtYgDaVUnSmPdaRo1
- R6N3Z+DKTEiLVWZ/6uz0kpKu2mJdyLQfjcH0rfEkWeAckR3chJPPxollwEHrJxKvElpZN1MNiG
- K6JzP8BLtWHq3iXayw9Nmqz5x7PnrUQwTb83JNtdcUQhfUbafONC1Hqa2T4OpMpEtMk0pi/gdA
- 4pbi8RbCEi7NRY8d/OeFEyZ5zVO1OUZ2nfX6bCRCl06iwHckvNwFte7KFKgA0trVAktw+T6ojV
- GsxKugVkiTSWAwhrnUKc12es
-X-IronPort-AV: E=Sophos;i="5.87,202,1631602800"; 
-   d="scan'208";a="141915742"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Nov 2021 03:57:14 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 2 Nov 2021 03:57:13 -0700
-Received: from [10.159.245.112] (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Tue, 2 Nov 2021 03:57:12 -0700
-Subject: Re: [GIT PULL] clk: at91: clk changes for 5.16
-To:     Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>
-CC:     Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-References: <20211021122248.33261-1-nicolas.ferre@microchip.com>
- <163529819030.15791.7009809622910069319@swboyd.mtv.corp.google.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-Message-ID: <23f15e48-319d-646d-5b7f-bd812be1d4b4@microchip.com>
-Date:   Tue, 2 Nov 2021 11:57:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S229720AbhKBLyG convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 07:54:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231161AbhKBLyF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 07:54:05 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E390BC061714
+        for <linux-clk@vger.kernel.org>; Tue,  2 Nov 2021 04:51:30 -0700 (PDT)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1mhsJx-0004RX-3V; Tue, 02 Nov 2021 12:51:17 +0100
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1mhsJv-0049ko-1l; Tue, 02 Nov 2021 12:51:15 +0100
+Message-ID: <34481cb056c4bc4dc355571713675f141350e04d.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/8] dt-bindings: reset: Add bindings for SP7021
+ reset driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, maz@kernel.org,
+        broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, wells.lu@sunplus.com
+Date:   Tue, 02 Nov 2021 12:51:14 +0100
+In-Reply-To: <852e24e942cf40b8240ced4de4ac78acc7694355.1635737544.git.qinjian@cqplus1.com>
+References: <cover.1635737544.git.qinjian@cqplus1.com>
+         <852e24e942cf40b8240ced4de4ac78acc7694355.1635737544.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-In-Reply-To: <163529819030.15791.7009809622910069319@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Stephen,
-
-On 27/10/2021 at 03:29, Stephen Boyd wrote:
-> Quoting nicolas.ferre@microchip.com (2021-10-21 05:22:48)
->> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->>
->> Stephen,
->>
->> Here are the clk changes for 5.16. I took the initiative to create a
->> Pull-Request for it as it's surely more convenient, as I proposed in my
->> reply to Claudiu's cover letter.
+On Mon, 2021-11-01 at 13:01 +0800, Qin Jian wrote:
+> Add documentation to describe Sunplus SP7021 reset driver bindings.
 > 
-> Thanks. I didn't pick it up this time but I can pick it up next time. I
-> wanted to take the clk.c patch via a different branch.
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  .../bindings/reset/sunplus,reset.yaml         | 40 ++++++++
+>  MAINTAINERS                                   |  2 +
+>  include/dt-bindings/reset/sp-sp7021.h         | 99 +++++++++++++++++++
+>  3 files changed, 141 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+>  create mode 100644 include/dt-bindings/reset/sp-sp7021.h
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/sunplus,reset.yaml b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+> new file mode 100644
+> index 000000000..bf55f4ee2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) Sunplus Co., Ltd. 2021
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/reset/sunplus,reset.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Sunplus SoC Reset Controller
+> +
+> +maintainers:
+> +  - Qin Jian <qinjian@cqplus1.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sunplus,sp7021-reset # Reset Controller on SP7021 and compatible SoCs
+> +      - sunplus,q645-reset # Reset Controller on Q645 and compatible SoCs
 
-Perfect for me. I'll send Pull-Requests for at91 on the model of other 
-silicon vendors.
-Don't hesitate to tell me if you want special arrangement for some of 
-the development cycles.
+The commit message only mentions SP7021. Should Q645 be added later, or
+is this patch missing the binding header for Q655?
 
-Best regards,
-   Nicolas
-
-
--- 
-Nicolas Ferre
+regards
+Philipp
