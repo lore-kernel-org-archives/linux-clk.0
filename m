@@ -2,94 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10131C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 17:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D282EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6E5A60F36
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 17:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B85AF60F36
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 19:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234502AbhKBRtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 13:49:40 -0400
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:45757 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231506AbhKBRtj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 13:49:39 -0400
-Received: by mail-oi1-f177.google.com with SMTP id u2so11940981oiu.12;
-        Tue, 02 Nov 2021 10:47:04 -0700 (PDT)
+        id S230419AbhKBTp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 15:45:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58966 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230361AbhKBTp5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 15:45:57 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B38C061714;
+        Tue,  2 Nov 2021 12:43:20 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id r4so1374382edi.5;
+        Tue, 02 Nov 2021 12:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ceu22Dc39UeKUUHkFo8E6TEFnBT5pBoF+8MRYhui+3g=;
+        b=iL9ZdMGpiEq08FDiyAvoxoALZriK6r3TSAAvJPOItnzqnE834kvOqkBw4kyHzjlRgw
+         hwojMrQb148XuOqrV7AjcG+H0RoTRQS8uAZ3Azmzz8vXs99IaiQzln+ZbxHTV20Za7K/
+         sdLjOXP0y9PbUG2/IBzv6PLoiX418Q9ppI6hPCaBRrf1p7j6y3LeO0m46ulrsleuDhB6
+         7KlijIokOrLyjaRYKaBLH7ugQMl+wkWnrqB4M3tEkcGGjyLIoFCa6XYuy2BgVG8X8H+t
+         N9/xnLKZUGsHgw/zra7e0WQsxiHTNdryMfLdqcKCoFZDTMijIuI7DL3lreiERhI1VO69
+         SqHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uW9s2FSdm9CorVCeI1XNZOx+Rhacrk0vCMIgqByVKQ0=;
-        b=B+wzAZahNvPvBhq9WOlbjmK/pkHeVgQdPd8wFyisZeD7VhFoqGk5bPfFcYFZPFIqLx
-         spb+5wH0ENDFx1+Fy9s6qqmJszmkqTVZruBStLURXwOG6pR6sDF1oD1jWMma/keJUvEt
-         6CamV5JYrcrvMn1YG0JuaADgnK7GIoMUIe7/0Qf6T1Xm8aQaA5J801Mz//evvNizgKIH
-         bWZd+C7hBTX49apbJSp0c48Bk+h5Rk7bKqEV0d44CDUoZJHqFbOW1s6+qq7g0fd6jgz3
-         F1odTiA79TVHCoctEgUOHutzMtbvtnoshCoZbQz3QHDGDzR+Z4Z0MIE6wtYogbveeWtR
-         NLOA==
-X-Gm-Message-State: AOAM531tkXh6x/NDyZEmMdSLyxAAfY75aeTqSWN5FYfvFKSpy6wVTjgo
-        CMdrfVStR4sN5JvIK5xPFCNm/qxbFg==
-X-Google-Smtp-Source: ABdhPJwCznAlRoiYCLgrvFkfFfkWOGPtCK1+qcFeceWeh1S10J0DgEb9lt9cj9AHwEeGJkqHs/ztHA==
-X-Received: by 2002:a05:6808:2097:: with SMTP id s23mr6210784oiw.43.1635875224449;
-        Tue, 02 Nov 2021 10:47:04 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a20sm4592639oie.58.2021.11.02.10.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Nov 2021 10:47:03 -0700 (PDT)
-Received: (nullmailer pid 3147705 invoked by uid 1000);
-        Tue, 02 Nov 2021 17:47:03 -0000
-Date:   Tue, 2 Nov 2021 12:47:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        nicolas.ferre@microchip.com, kavyasree.kotagiri@microchip.com,
-        eugen.hristev@microchip.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 2/4] dt-bindings: clock: lan966x: Extend for clock
- gate support
-Message-ID: <YYF5l0bFw+P/rsDx@robh.at.kernel.org>
-References: <20211101080845.3343836-1-horatiu.vultur@microchip.com>
- <20211101080845.3343836-3-horatiu.vultur@microchip.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ceu22Dc39UeKUUHkFo8E6TEFnBT5pBoF+8MRYhui+3g=;
+        b=n/v0jYVgwnEorjPOsyilVn589aJncLkGVdzht5MMS1DrTkVEpbYnB4IyfjDmEp3ANH
+         OPS8TCpCYBbcY3cYO+rpDKp2lVPKy66Hur1eMyYYlGXEP1cuLvit1xTNlIzCTku+XzHo
+         ZJLphkDezb3MzY8tYVZkyuPJvXfAb+anb0K5aRbbIt86ei15pRK8QJkOP3MYzNugePhs
+         cQwA3/c3O5vbQeCS5eYBzbMEpLsFB9G1Xeqp0ygeCBgEFELf2h5o3zqLB0/ELVQlGspr
+         96tOb0nzAa74eGWumBRF/1euOJdzmzBZetviSftFr9Z9Pc5F7V2gHYIllLfM0jm8fxlA
+         UIgQ==
+X-Gm-Message-State: AOAM531zTIev5zsdy8sPRPXYkTIrBqGTGsis7SRCG/euPrHvLVi2Vptv
+        UN3nRPmmllmMFhdj9IvYy/P+ENkp8NB7LSOPYhA=
+X-Google-Smtp-Source: ABdhPJx9QGKRGz3j6D7SSykvvgSu5AJJRydl2DbJOG2BUnaKZeBT7ctk5NcVsU1upIedOx7rpLMKjvjWoEYUwxGTUhY=
+X-Received: by 2002:a17:906:a158:: with SMTP id bu24mr44829165ejb.356.1635882199443;
+ Tue, 02 Nov 2021 12:43:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211101080845.3343836-3-horatiu.vultur@microchip.com>
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-10-kernel@esmil.dk>
+In-Reply-To: <20211102161125.1144023-10-kernel@esmil.dk>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 2 Nov 2021 21:42:30 +0200
+Message-ID: <CAHp75Ve-P8DR00mtRP_NkrXgB4nsZ+qBkgBen94iTcPqxQYUOg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/16] reset: starfive-jh7100: Add StarFive JH7100
+ reset driver
+To:     Emil Renner Berthing <kernel@esmil.dk>,
+        Yury Norov <yury.norov@gmail.com>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 01, 2021 at 09:08:43AM +0100, Horatiu Vultur wrote:
-> Allow to add an optional resource to be able to access the clock gate
-> registers.
-> 
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> ---
->  .../devicetree/bindings/clock/microchip,lan966x-gck.yaml       | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-> index fca83bd68e26..a53c889629da 100644
-> --- a/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-> +++ b/Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
-> @@ -19,7 +19,8 @@ properties:
->      const: microchip,lan966x-gck
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
++Cc: Yury (bitmap expert)
 
-When there is more than 1 entry, you need to describe each entry:
+On Tue, Nov 2, 2021 at 6:50 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+>
+> Add a driver for the StarFive JH7100 reset controller.
 
-minItems: 1
-items:
-  - description: ...
-  - description: ...
+...
 
->  
->    clocks:
->      items:
-> -- 
-> 2.33.0
-> 
-> 
+> +#define BIT_MASK32(x) BIT((x) % 32)
+
+Possible namespace collision.
+
+...
+
+> +/*
+> + * the registers work like a 32bit bitmap, so writing a 1 to the m'th bit of
+> + * the n'th ASSERT register asserts line 32n + m, and writing a 0 deasserts the
+> + * same line.
+> + * most reset lines have their status inverted so a 0 in the STATUS register
+> + * means the line is asserted and a 1 means it's deasserted. a few lines don't
+> + * though, so store the expected value of the status registers when all lines
+> + * are asserted.
+> + */
+
+Besides missing capitalization, if it sounds like bitmap, use bitmap.
+I have checked DT definitions and it seems you don't even need the
+BIT_MASK() macro,
+
+> +static const u32 jh7100_reset_asserted[4] = {
+> +       /* STATUS0 register */
+> +       BIT_MASK32(JH7100_RST_U74) |
+> +       BIT_MASK32(JH7100_RST_VP6_DRESET) |
+> +       BIT_MASK32(JH7100_RST_VP6_BRESET),
+> +       /* STATUS1 register */
+> +       BIT_MASK32(JH7100_RST_HIFI4_DRESET) |
+> +       BIT_MASK32(JH7100_RST_HIFI4_BRESET),
+> +       /* STATUS2 register */
+> +       BIT_MASK32(JH7100_RST_E24),
+> +       /* STATUS3 register */
+> +       0,
+> +};
+
+Yury, do we have any clever (clean) way to initialize a bitmap with
+particular bits so that it will be a constant from the beginning? If
+no, any suggestion what we can provide to such users?
+
+...
+
+> +       dev_dbg(rcdev->dev, "reset(%lu)\n", id);
+
+These debug messages are useless since one should use ftrace facility instead,
+
+-- 
+With Best Regards,
+Andy Shevchenko
