@@ -2,252 +2,123 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE57C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 12:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6687FC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 12:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A2AB61078
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 12:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50A7F60E98
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 12:39:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230128AbhKBMZx convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 08:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230124AbhKBMZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 08:25:53 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86BAC061764
-        for <linux-clk@vger.kernel.org>; Tue,  2 Nov 2021 05:23:18 -0700 (PDT)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mhsok-0008Ea-4s; Tue, 02 Nov 2021 13:23:06 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mhsoe-004AoX-2M; Tue, 02 Nov 2021 13:23:00 +0100
-Message-ID: <296d4a9fdbe2b60eea4d259f1e2e3fe8d67b3c07.camel@pengutronix.de>
-Subject: Re: [PATCH v3 4/8] reset: Add Sunplus SP7021 reset driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, maz@kernel.org,
-        broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, wells.lu@sunplus.com
-Date:   Tue, 02 Nov 2021 13:22:59 +0100
-In-Reply-To: <c6f0aaef57b25705af988797ede5ab7119852a5c.1635737544.git.qinjian@cqplus1.com>
-References: <cover.1635737544.git.qinjian@cqplus1.com>
-         <c6f0aaef57b25705af988797ede5ab7119852a5c.1635737544.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        id S231247AbhKBMlc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 08:41:32 -0400
+Received: from mail-oi1-f179.google.com ([209.85.167.179]:44841 "EHLO
+        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231239AbhKBMlb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 08:41:31 -0400
+Received: by mail-oi1-f179.google.com with SMTP id t38so2579099oiw.11;
+        Tue, 02 Nov 2021 05:38:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=vX7tWdjvUh/n8P+ZM1cqLkwBY2iECa34Sj2X0s5E99w=;
+        b=0dfo5DQBTz1IhwmM1H1IyTFB+Sjcw7bGYK4L9nNz00raH2o8SEA+DqNoFuusnitTGZ
+         yxt2MSPSGBqHY5IGey+uB998TEETOmeRvPDTmwPsAGOQiKYzC0huTmnMBKZF2+c6IalT
+         ZEIqs8gf+PN430uXgTjhD3gxPK+YFX4kTE/0Xpa6kk8P/EveyWRkrt39V1BB8ZZzK4lr
+         ol5tHVq/+6T+OJOxwyGNwu/8OLF62NUuYeq3JVbDko4Xj9WAmEdNinYUNoNxkrQHK10U
+         PGs+xcem9U6MYj4Dv3VH2FpVIu3nIyNGsSz3MnrYE5fZtSXTjpjDWhIw34XA5xlbSZSe
+         Fzug==
+X-Gm-Message-State: AOAM533/E8YByf6LSfykvnocqYkZo4KcMETikd9oS1NGdBH26R5zjzyI
+        8I/A4jQiaKz+Lw7cOb1TiQ==
+X-Google-Smtp-Source: ABdhPJzoVPMiX3nMunzERDDXuZ7mJ4SspBwHfVenvCVSNdkdkQw52/a9hWdrWooA7zpr/PHz0br3Ag==
+X-Received: by 2002:a54:4391:: with SMTP id u17mr4814704oiv.15.1635856735813;
+        Tue, 02 Nov 2021 05:38:55 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id 126sm4826933oih.36.2021.11.02.05.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 05:38:55 -0700 (PDT)
+Received: (nullmailer pid 2636027 invoked by uid 1000);
+        Tue, 02 Nov 2021 12:38:52 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        robh+dt@kernel.org
+In-Reply-To: <1635847013-3220-4-git-send-email-tdas@codeaurora.org>
+References: <1635847013-3220-1-git-send-email-tdas@codeaurora.org> <1635847013-3220-4-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1 3/4] dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
+Date:   Tue, 02 Nov 2021 07:38:52 -0500
+Message-Id: <1635856732.621453.2636026.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2021-11-01 at 13:01 +0800, Qin Jian wrote:
-> Add reset driver for Sunplus SP7021 SoC.
-
-You don't mention Q645 here, it appears this driver supports both SoCs?
-
-[...]
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index be799a5ab..50695ab47 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -249,6 +249,14 @@ config RESET_TI_SYSCON
->  	  you wish to use the reset framework for such memory-mapped devices,
->  	  say Y here. Otherwise, say N.
+On Tue, 02 Nov 2021 15:26:52 +0530, Taniya Das wrote:
+> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
+> properties that are needed in a device tree. Also add clock ids for
+> LPASS core clocks and audio clock IDs for LPASS client to request for
+> the clocks.
 > 
->
-> +config RESET_SUNPLUS
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    | 137 +++++++++++++++++++++
+>  .../dt-bindings/clock/qcom,lpassaudiocc-sc7280.h   |  43 +++++++
+>  .../dt-bindings/clock/qcom,lpasscorecc-sc7280.h    |  26 ++++
+>  3 files changed, 206 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+>  create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h
+> 
 
-Please add these entries in alphabetical order.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-> +	bool "Sunplus SoCs Reset Driver"
+yamllint warnings/errors:
 
-Can this be made:
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3c00000: clocks: [[4294967295, 169]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3c00000: clock-names: ['iface'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3c00000: clocks: [[4294967295, 169]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3900000: clocks: [[4294967295, 169], [4294967295, 0]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3900000: clock-names: ['iface', 'bi_tcxo'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3900000: clocks: [[4294967295, 169], [4294967295, 0]] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3380000: clocks: [[4294967295, 3], [4294967295, 0]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3380000: clock-names: ['iface', 'bi_tcxo'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3380000: clocks: [[4294967295, 3], [4294967295, 0]] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3300000: clocks: [[4294967295, 0], [4294967295, 6]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3300000: clock-names:0: 'iface' was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3300000: clock-names:1: 'bi_tcxo' was expected
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3300000: clock-names: ['bi_tcxo', 'lpass_aon_cc_main_rcg'] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.example.dt.yaml: clock-controller@3300000: clocks: [[4294967295, 0], [4294967295, 6]] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
 
-	depends SOC_SP7021 || SOC_Q645 || COMPILE_TEST
+doc reference errors (make refcheckdocs):
 
-?
+See https://patchwork.ozlabs.org/patch/1549550
 
-> +	help
-> +	  This enables the reset driver support for Sunplus SP7021 SoC family.
-> +	  Say Y if you want to control reset signals by the reset controller.
-> +	  Otherwise, say N.
-> +	  This driver is selected automatically by platform config.
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
-Which platform config?
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
-[...]
-> diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
-> new file mode 100644
-> index 000000000..696efd75e
-> --- /dev/null
-> +++ b/drivers/reset/reset-sunplus.c
-> @@ -0,0 +1,159 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +/*
-> + * SP7021 reset driver
-> + *
-> + * Copyright (C) Sunplus Technology Co., Ltd.
-> + *       All rights reserved.
-> + *
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> + * kind, whether express or implied; without even the implied warranty
-> + * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
+Please check and re-submit.
 
-Drop this boilerplate, this is not required with the SPDX identifier
-above.
-
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/reboot.h>
-> +
-> +#if defined(CONFIG_SOC_SP7021)
-> +#include <dt-bindings/reset/sp-sp7021.h>
-> +#elif defined(CONFIG_SOC_Q645)
-> +#include <dt-bindings/reset/sp-q645.h>
-> +#endif
-
-I'd prefer if you added namespace prefixes to the defines and included
-both headers unconditionally.
-These are just required for RST_MAX, correct?
-
-> +
-> +#define BITASSERT(id, val)          ((1 << (16 + id)) | (val << id))
-> +
-> +
-> +struct sp_reset_data {
-> +	struct reset_controller_dev	rcdev;
-> +	void __iomem			*membase;
-> +} sp_reset;
-
-Please allocate this with devm_kzalloc in the probe function instead.
-
-> +
-> +
-> +static inline struct sp_reset_data *
-> +to_sp_reset_data(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct sp_reset_data, rcdev);
-> +}
-> +
-> +static int sp_reset_update(struct reset_controller_dev *rcdev,
-> +			      unsigned long id, bool assert)
-> +{
-> +	struct sp_reset_data *data = to_sp_reset_data(rcdev);
-> +	int reg_width = sizeof(u32)/2;
-> +	int bank = id / (reg_width * BITS_PER_BYTE);
-> +	int offset = id % (reg_width * BITS_PER_BYTE);
-> +	void __iomem *addr;
-> +
-> +	addr = data->membase + (bank * 4);
-> +
-> +	if (assert)
-> +		writel(BITASSERT(offset, 1), addr);
-> +	else
-> +		writel(BITASSERT(offset, 0), addr);
-
-Could be
-
-	writel(BITASSERT(offset, assert), addr);
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int sp_reset_assert(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	return sp_reset_update(rcdev, id, true);
-> +}
-> +
-> +
-> +static int sp_reset_deassert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	return sp_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int sp_reset_status(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	struct sp_reset_data *data = to_sp_reset_data(rcdev);
-> +	int reg_width = sizeof(u32)/2;
-> +	int bank = id / (reg_width * BITS_PER_BYTE);
-> +	int offset = id % (reg_width * BITS_PER_BYTE);
-> +	u32 reg;
-> +
-> +	reg = readl(data->membase + (bank * 4));
-> +
-> +	return !!(reg & BIT(offset));
-> +}
-> +
-> +static int sp_restart(struct notifier_block *this, unsigned long mode,
-> +				void *cmd)
-> +{
-> +	sp_reset_assert(&sp_reset.rcdev, RST_SYSTEM);
-> +	sp_reset_deassert(&sp_reset.rcdev, RST_SYSTEM);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block sp_restart_nb = {
-> +	.notifier_call = sp_restart,
-> +	.priority = 192,
-> +};
-> +
-> +static const struct reset_control_ops sp_reset_ops = {
-> +	.assert		= sp_reset_assert,
-> +	.deassert	= sp_reset_deassert,
-> +	.status		= sp_reset_status,
-> +};
-> +
-> +static const struct of_device_id sp_reset_dt_ids[] = {
-> +	{ .compatible = "sunplus,sp7021-reset", },
-> +	{ .compatible = "sunplus,q645-reset", },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static int sp_reset_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct sp_reset_data *data = &sp_reset;
-> +	void __iomem *membase;
-> +	struct resource *res;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	membase = devm_ioremap(dev, res->start, resource_size(res));
-> +	if (IS_ERR(membase))
-> +		return PTR_ERR(membase);
-> +
-> +	data->membase = membase;
-> +	data->rcdev.owner = THIS_MODULE;
-> +	data->rcdev.nr_resets = RST_MAX;
-
-Use of_device_get_match_data() to determine the correct number of
-resets.
-
-regards
-Philipp
