@@ -2,170 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25032C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 08:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3784C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 09:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF6361175
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 08:50:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CD561166
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 09:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231906AbhKCIxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 04:53:16 -0400
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:41046 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231912AbhKCIxM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 04:53:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1635929436; x=1667465436;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pTXbIMogLm/Gpj95PGTVNgiDG10a/0swbYRYN9YELKM=;
-  b=c+qCpxzQaJIvq/HKm4fZVJIXyAtPumeBLmM20NYDyUF497vUEqqfYxUf
-   8LF/96kgtbaBzUvWIOP4JIvVkA0AZYEtf0Y9c5YeO+D5fPr3WV/wHd43Z
-   HUU8EPav0MkImhSVv1K3Ti5sVIpB9k65wuFEi9HdDx6LTkzLtnI/TGZ/h
-   6xAm7AQT1NQDhKEa5fuY7Zvslta/6lvvp/PjLgZYLihXhJnEjV2j4K2PU
-   bg+IoWN8RXQGme+4g46d/+saEZWrdjC/CbXhFhNXxvW58VhCS6SnGWsmz
-   ZNieR92AKaPB/kNuLq36tyQdSHjDrJVL5Mnn1JQrktFQnoZppGpbRIwg0
-   A==;
-IronPort-SDR: gVDOsWKNcuPqYltAcw7bGUMHJLUTTzhI6ywd9J9EWg9vOd0hFx4CcifmI4QKU2jKCsvi07fL2r
- 1i0n4MqdeUY0P2wOXudMeDJQtcAyhtBCNSFl2Gz3SX/7yccvJl6rLO4BoxOPpuEaAZrrLvavnK
- rm1nlJ+/rCOozxKmxiwHk1ItsqxmfdJgDqRwuajH0VsRzzrEvPxPcW3TISizTKjuggg5KpBvmB
- uGGktSn8OTttE0feUyrutBvMDCfNybpcHyVTLHdC0DV+zCrxOIQDXRNvGq02L5QNR8v8tq6cQ0
- qZdtES10eb2VqR/PmYQXORj+
-X-IronPort-AV: E=Sophos;i="5.87,205,1631602800"; 
-   d="scan'208";a="75206335"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Nov 2021 01:50:35 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 3 Nov 2021 01:50:35 -0700
-Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Wed, 3 Nov 2021 01:50:33 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <kavyasree.kotagiri@microchip.com>,
-        <nicolas.ferre@microchip.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [RFC PATCH v4 4/4] clk: lan966x: Extend lan966x clock driver for clock gating support
-Date:   Wed, 3 Nov 2021 09:51:02 +0100
-Message-ID: <20211103085102.1656081-5-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211103085102.1656081-1-horatiu.vultur@microchip.com>
-References: <20211103085102.1656081-1-horatiu.vultur@microchip.com>
+        id S231557AbhKCJPi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 05:15:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42234 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230463AbhKCJPi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 05:15:38 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB47C061714;
+        Wed,  3 Nov 2021 02:13:01 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id z20so6591730edc.13;
+        Wed, 03 Nov 2021 02:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xKAL9xp/+xMBb6SWWdbM18jjZhDpz2vLJFJj9z7WZW0=;
+        b=VhiZ4M005IQJVGme3IaI5C/e6/VHSTZ8OeA37oUhiPODQeRbZoBlkbOIt5dnzjkDP2
+         czOsVsaV0BcyFBGY5nAO0Ew8HOjcDbJ+dR0GK0Toncies9mF66baSnNp1HEESaeENdYm
+         kULAuvWCQmNHaimi1v+rmU5MSaqzxoPSSOcgII1Qv88sl8yH+NlRItTwPrPZI46ELr16
+         +v3Qvt0C4gxXRtKO69r6aZlTi5ln6jnv4aFlRmfo5LyNlr+RsWy6fxLT+MXBREXzWTmW
+         uuMZVQ5Kdnpuci8unVq50JyTTClXZFszh7yjqvafDmNja5cg4YWeaUKjlZLuUqkYcfTX
+         23qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xKAL9xp/+xMBb6SWWdbM18jjZhDpz2vLJFJj9z7WZW0=;
+        b=bJOsbl6PqJiNJANzdDJdiW7Tw9bvAlyUvKNJovgCErLl73UgibtwfWBoSgpNICSCBi
+         1y9AyDiv1zmsiTeYgyEWeMbSelY1OlXVui3c0HxxKfWPLUT7QrsMynVqWzyZZVsfmGjG
+         YUk3Q3dVRAYv2Q0ZH8Z8A35h7hibNlmBjpL/gwRIzX5GzIoQqRZrb02zt3M28uzjVzlK
+         sIWCbwLtu34ZVCrnzQWLJLAmkeWDhMmlfzr52ljJQ6g3LkaQt4y0LNyOC2OmzK0nU5qY
+         oEGmnXpKvWoq8w1YCB1QvTMNnL39lTCvhxfZHGKfsugbw9cYiIiTuhY3ZKDURnf5zLqI
+         LPpw==
+X-Gm-Message-State: AOAM531oxHSsOvQ9BJC9BsFSHj4vdEfHCURWSrS+0ULkkMLCvBghWOxn
+        NTpHD7qp6YlF6js8HHj4RhWL9MBW2aYPh/JXUaQ=
+X-Google-Smtp-Source: ABdhPJw3gEKvcXzWscXHSKOeQHEdUeowhKhWDUie0k1xHof3mJ6WZb1bBy0j4iaHfePYZ1ng5He8bLypLuGuXbzyj0A=
+X-Received: by 2002:a17:907:7601:: with SMTP id jx1mr52699100ejc.69.1635930780351;
+ Wed, 03 Nov 2021 02:13:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
+ <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com> <CANBLGczn8+po09wF_uEvvU8tLCn0ahY+Gkj9JJLxOcj1LC1aLA@mail.gmail.com>
+In-Reply-To: <CANBLGczn8+po09wF_uEvvU8tLCn0ahY+Gkj9JJLxOcj1LC1aLA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 3 Nov 2021 11:12:24 +0200
+Message-ID: <CAHp75VetDHt9G+PT77_py8N4Z06j7oytnXgQq8zss_xZBBeEng@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Extend the clock driver to add support also for clock gating. The
-following peripherals can be gated: UHPHS, UDPHS, MCRAMC, HMATRIX.
+On Tue, Nov 2, 2021 at 10:35 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+>
+> On Tue, 2 Nov 2021 at 21:02, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Nov 2, 2021 at 6:50 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/clk/clk-lan966x.c | 59 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 56 insertions(+), 3 deletions(-)
+...
 
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index 19bec94e1551..328ded6b2eae 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -48,6 +48,20 @@ static struct clk_init_data init = {
- 	.num_parents = ARRAY_SIZE(lan966x_gck_pdata),
- };
- 
-+struct clk_gate_soc_desc {
-+	const char *name;
-+	int bit_idx;
-+};
-+
-+static const struct clk_gate_soc_desc clk_gate_desc[] = {
-+	{ "uhphs", 11 },
-+	{ "udphs", 10 },
-+	{ "mcramc", 9 },
-+	{ "hmatrix", 8 },
-+	{ }
-+};
-+
-+static DEFINE_SPINLOCK(clk_gate_lock);
- static void __iomem *base;
- 
- static int lan966x_gck_enable(struct clk_hw *hw)
-@@ -188,11 +202,37 @@ static struct clk_hw *lan966x_gck_clk_register(struct device *dev, int i)
- 	return &priv->hw;
- };
- 
-+static int lan966x_gate_clk_register(struct device *dev,
-+				     struct clk_hw_onecell_data *hw_data,
-+				     void __iomem *gate_base)
-+{
-+	int i;
-+
-+	for (i = GCK_GATE_UHPHS; i < N_CLOCKS; ++i) {
-+		int idx = i - GCK_GATE_UHPHS;
-+
-+		hw_data->hws[i] =
-+			devm_clk_hw_register_gate(dev, clk_gate_desc[idx].name,
-+						  "lan966x", 0, base,
-+						  clk_gate_desc[idx].bit_idx,
-+						  0, &clk_gate_lock);
-+
-+		if (IS_ERR(hw_data->hws[i]))
-+			return dev_err_probe(dev, PTR_ERR(hw_data->hws[i]),
-+					     "failed to register %s clock\n",
-+					     clk_gate_desc[idx].name);
-+	}
-+
-+	return 0;
-+}
-+
- static int lan966x_clk_probe(struct platform_device *pdev)
- {
- 	struct clk_hw_onecell_data *hw_data;
- 	struct device *dev = &pdev->dev;
--	int i;
-+	void __iomem *gate_base;
-+	struct resource *res;
-+	int i, ret;
- 
- 	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, N_CLOCKS),
- 			       GFP_KERNEL);
-@@ -205,9 +245,9 @@ static int lan966x_clk_probe(struct platform_device *pdev)
- 
- 	init.ops = &lan966x_gck_ops;
- 
--	hw_data->num = N_CLOCKS;
-+	hw_data->num = GCK_GATE_UHPHS;
- 
--	for (i = 0; i < N_CLOCKS; i++) {
-+	for (i = 0; i < GCK_GATE_UHPHS; i++) {
- 		init.name = clk_names[i];
- 		hw_data->hws[i] = lan966x_gck_clk_register(dev, i);
- 		if (IS_ERR(hw_data->hws[i])) {
-@@ -217,6 +257,19 @@ static int lan966x_clk_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (res) {
-+		gate_base = devm_ioremap_resource(&pdev->dev, res);
-+		if (IS_ERR(gate_base))
-+			return PTR_ERR(gate_base);
-+
-+		hw_data->num = N_CLOCKS;
-+
-+		ret = lan966x_gate_clk_register(dev, hw_data, gate_base);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, hw_data);
- }
- 
+> > > +static inline struct device *starfive_dev(const struct starfive_pinctrl *sfp)
+> > > +{
+> > > +       return sfp->gc.parent;
+> > > +}
+> > > +
+> >
+> > This seems useless helper. You may do what it's doing just in place.
+> > It will save 5 LOCs.
+>
+> I don't mind removing it, I just think it's easier to read when we're
+> explicit that all we want is a dev pointer, and we don't suddenly need
+> to know the parent of the gpio chip in all the pinmux/pinconf
+> callbacks.
+
+I don't really see the gain of it.
+
+...
+
+> > > +static int starfive_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
+> > > +{
+> > > +       struct starfive_pinctrl *sfp = container_of(gc, struct starfive_pinctrl, gc);
+> > > +       void __iomem *doen = sfp->base + GPON_DOEN_CFG + 8 * gpio;
+> > > +
+> > > +       /* return GPIO_LINE_DIRECTION_OUT (0) only if doen == GPO_ENABLE (0) */
+> > > +       return readl_relaxed(doen) != GPO_ENABLE;
+> >
+> > I believe the idea was to return the predefined values for the direction.
+>
+> You mean this?
+>   return readl_relaxed(doen) == GPO_ENABLE ? GPIO_LINE_DIRECTION_OUT :
+> GPIO_LINE_DIRECTION_IN;
+
+For example, or with if (...) return _OUT; return _IN;'
+
+> > > +}
+
+...
+
+> > > +       if (trigger & IRQ_TYPE_EDGE_BOTH)
+> > > +               irq_set_handler_locked(d, handle_edge_irq);
+> > > +       else if (trigger & IRQ_TYPE_LEVEL_MASK)
+> > > +               irq_set_handler_locked(d, handle_level_irq);
+> >
+> > Usually we don't assign this twice, so it should be after the switch.
+> >
+> > > +       switch (trigger) {
+
+> > > +       default:
+> >
+> > > +               irq_set_handler_locked(d, handle_bad_irq);
+> >
+> > Why? You have it already in ->probe(), what's the point?
+>
+> So last time you asked about this, I explained a situation where
+> userspace first grabs a GPIO, set the interrupt to edge triggered, and
+> then later loads a driver that requests an unsupported IRQ type.
+
+I didn't get this scenario. Is it real?
+
+> Then
+> I'd like to set the handler back to handle_bad_irq so we don't get
+> weird interrupts, but maybe now you know a reason why that doesn't
+> matter or can't happen?
+
+In ->probe() you set _default_ handler to bad(), what do you mean by
+'set the handler back to bad()'? How is it otherwise if you free an
+interrupt?
+
+So, please elaborate with call traces what the scenario / use case you
+are talking about. If it's true what you are saying, we have a
+situation (plenty of GPIO drivers don't do what you are suggesting
+here).
+
+> > > +               return -EINVAL;
+> > > +       }
+
+...
+
+> > > +       ret = reset_control_deassert(rst);
+> > > +       if (ret)
+> > > +               return dev_err_probe(dev, ret, "could not deassert resetd\n");
+> >
+> > > +       ret = devm_pinctrl_register_and_init(dev, &starfive_desc, sfp, &sfp->pctl);
+> > > +       if (ret)
+> >
+> > I don't see who will assert reset here.
+>
+> No, so originally this driver would first assert and then deassert
+> reset. I decided against that because in all likelyhood earlier boot
+> stages would have set pinmux up for a serial port, and we don't want
+> to interrupt the serial debug output. The only reason I make sure the
+> reset line is deasserted is in case someone makes a really minimal
+> bootloader that just does the absolute minimal to load a Linux kernel
+> and doesn't even log any anything.
+>
+> By the same token we also don't want to assert reset on error in case
+> it resets pin muxing for the the serial line that was supposed to log
+> the error.
+
+Perhaps comment in the code explaining this?
+
 -- 
-2.33.0
-
+With Best Regards,
+Andy Shevchenko
