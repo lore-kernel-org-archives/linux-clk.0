@@ -2,155 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8435C4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 02:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB7CC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 06:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B34BF60FC4
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 02:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC2961139
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 06:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhKCCvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 22:51:37 -0400
-Received: from smtpcmd11117.aruba.it ([62.149.156.117]:58886 "EHLO
-        smtpcmd11117.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbhKCCvg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 22:51:36 -0400
-Received: from smtpclient.apple ([146.241.216.221])
-        by Aruba Outgoing Smtp  with ESMTPA
-        id i6KdmWeslumo4i6KdmXOCm; Wed, 03 Nov 2021 03:48:58 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1635907738; bh=vn0en0EIlHgkPwPZZERx136vgq1/nmIMJ6ZT4dkZqag=;
-        h=Content-Type:From:Mime-Version:Subject:Date:To;
-        b=J9naTf+IAohR2xOuGFgEzMfooC6CT8nvH3rCcxEWgk4ynOkf9Na/5Aqb8CB1TYo6O
-         E72mOAH0K6Haxm+L3WXrEe/q9WMjDSlZd5pngARGRVwsq1+tUy5onszIqxfCDTHDSw
-         FJqY5awdjZXgfm/Z33r99rSTvYbfrSaei0yvkgo895UNDUgzzsfwvlsL4GZT5zf8g4
-         mlgBpKAQEB6xb/Nih89L56sQBD2benwgBCFHMJXdhbWd1w9XRNB2i+f+KJ5UaLAXax
-         xyAM63MAPZlAmH/xCTEiZZWeY0G7t6TrNo2hUg29dncGJPIvgBy6Z765r06VGFHqS3
-         /ZU34wbBbftfA==
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 08/13] dt-bindings: serial: fsl-lpuart: add i.MXRT compatible
-Date:   Wed, 3 Nov 2021 03:48:54 +0100
-Message-Id: <D0A3E11F-FEDE-4B2D-90AB-63DFC245A935@benettiengineering.com>
-References: <CAL_JsqJR6EfDsmwPmXxgdaC1GB7CLGYpjmDnOkD_f53Frsq6LA@mail.gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Jesse Taube <mr.bossman075@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        SoC Team <soc@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Anson Huang <b20788@freescale.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-In-Reply-To: <CAL_JsqJR6EfDsmwPmXxgdaC1GB7CLGYpjmDnOkD_f53Frsq6LA@mail.gmail.com>
-To:     Rob Herring <robh@kernel.org>
-X-Mailer: iPhone Mail (18H17)
-X-CMAE-Envelope: MS4wfATmIMv5GA3j34nA+iOgc1h+7L3tNW3abl9oCE6PZB8OMXI5H3mb85Frc03sGYy21FlO+oJkV4yTBbwgW5Rj/0du+RvtJQeN4d3pTWoUGmPhXXFYvLcV
- QNuPaJZ09aPj0+mshEem7c3H/dDtmBF6Js+GbUpl3X77ZVu54p7RysYHkjD72LZmj1H9nrKMau+2FU6gAH8OfwkJcqu+K/QuRnCIGQyGPr3XRSCMWIAeXcnh
- 14cBS5S+yv55Rx3kGkl8t/GASJe4FVaWXcwh2TmSlklGOJv0BnitVeN15pb+g3w02oFJrUgKwPJ60fOGTuEBSmuaWhDSUp0BnITKWVtU8NWjCdg22E/rK3ua
- UvuthcK4Gt+pMHdeNuelu7OQNeUa4osFW/xmS2SqnXAjQ/zXPIoKDZ9wYTW69+lVlUjcEQaQSIL5cDlAWhgyLYe58s0lVB+PUteYTjf5XPopnlNbF4BlhSUn
- 1703ZYebBfSnDYcMuwywTgcke/l6oZOuiSXUAER9Kw+NQDUTm6vTA1zd63V6/2mI8V6fIuErDfUgGhwidKoWGZgy8w0lMux5lnPF152l3b+t+PRXsgoo8Fup
- vyE5oPOG87RvxafyxS+PGYtiDRSgb5g6gBK+6HKCBnCITIepAP0MxaYELLdoZIxHd2jQNXlyEXbPoapsLfCN839NHGj5xtHTF+RdCX6xRJLv7QbeBGv2lxdk
- WQuMJJl1glCO71l/9HImQMgssA4qHKsCwrUS4eVH4UwdhuKJRRfzXYZJNepCANMb5jUUomkTVI3BMVMYPLFcPn2lylrtW6uuvCzwHaPbLJuHEchajyGi9mPy
- cNs/j1wljxUbrkXF2DSbjxuGxED1hrUDrV4auoDE5lUYgSroodiTneWziQtrRVB/JzYl4C6iYazCH18QbLDLZc0W24SBjADnoy2c3JaRoN05Me4ZYOFsc4Lp
- Rc/MtcuLY1/6kPE7+x4/Pu0oLxAPRi9gvMjOAn+TcU4p3/lAW2Cj8/Kzy9ZtRUlfltDpjFZJDqdxAgCh7oCj9sIreifIVrSwfCx6JcENijeCT6gpQ4OzTaxq
- mwcnYVUpvxOA21nMdUUvMEJlVoadyglqlr9tgcp/tZNlXbX2jPakmS1Bx/8Q/gOFJTP6kTQF5NkXBVxbUWxgSoRnllcDGy2LlCt2WmbbdKWGh7d8jt98gwJD
- czQA9XU4BZVnndLpD6YTF4YbKlfBqXsPIzN57bT3ahyvfyxxMEVyQ+no+RY503EiVcfZf3vMJa6jb/9lw3xxrA==
+        id S231250AbhKCGWY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 02:22:24 -0400
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:25055 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230152AbhKCGWX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 02:22:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1635920389; x=1667456389;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=8fiWC0I4AZJ0qKLZ/VUeYHpd1iutzUlsq7NnPUZ565g=;
+  b=aKuSVTLYp/WiAYGrm5kqoR+a93Ru95s4ydDelpgn9EzqH/Vh6VSrrac7
+   1JL61TCTWd7hpSQC9huT2NFaUL86L033Lk9WqBDXiroGqIoEE757uFHTF
+   Zkizr/EMWPl1cO2gyBKr5mQcBaAkg3jX6trJ4SROpH0I0lxKwxTs/nK/l
+   lf/XH3la+TXGsLP84w+g+H50vPKBp7AiRPIX/k2Hdvr8XjVL7Kn5xUMw1
+   CKR3BAPnzAiRzoI5xBk9tk4w+PCLfiXKj/UXgAvWID7D3o58b6QWLwRS4
+   bKGUsAV36xiw3g5vS9MwA8xSZyxrLgumEdtcSg6/Yw9wkh6qAJ8mX23Ts
+   A==;
+IronPort-SDR: 9rh9MjtsLzATcT3WLFkK9oTVBk63M9NnhvodoPUSHs2bH1vRJ0xuwK6fWbD8mYy3pUhh6SlGNs
+ AbFG6g6f75nmTaDp/d/P2CkoLRh9/efK6/iM+/CVu4RzyvPNfsEq9d96p553VwluQ/W6aRBRmo
+ lUSEMW21vZ3rZWisrpezStUXbWjVVyk2wc8qdXXSYZHtWw6JLOlbHRR5f1Kw9f+WuQ6+4USiQd
+ 82b5So2IQYS65BmgX2Pggt9PLMcZOHPvaUYB+FLrCQ+VK3RvGMqcSDbCfJoHWCXyBHkKuQ1J7P
+ 9YOlcv/6YpVhV7wd0ZyBdVtH
+X-IronPort-AV: E=Sophos;i="5.87,204,1631602800"; 
+   d="scan'208";a="142028626"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Nov 2021 23:19:46 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 2 Nov 2021 23:19:45 -0700
+Received: from kavya-HP-Compaq-6000-Pro-SFF-PC.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Tue, 2 Nov 2021 23:19:42 -0700
+From:   Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+To:     <robh+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+        <nicolas.ferre@microchip.com>, <Eugen.Hristev@microchip.com>,
+        <Kavyasree.Kotagiri@microchip.com>, <Manohar.Puri@microchip.com>
+Subject: [PATCH v10 0/3] Add driver for lan966x Generic Clock Controller
+Date:   Wed, 3 Nov 2021 11:49:32 +0530
+Message-ID: <20211103061935.25677-1-kavyasree.kotagiri@microchip.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Rob, Jesse, All,
+This patch series adds a device driver for Generic Clock Controller
+of lan966x SoC.
 
-> Il giorno 3 nov 2021, alle ore 01:49, Rob Herring <robh@kernel.org> ha scr=
-itto:
->=20
-> =EF=BB=BFOn Mon, Nov 1, 2021 at 6:34 PM Jesse Taube <mr.bossman075@gmail.c=
-om> wrote:
->>=20
->>=20
->>=20
->>> On 11/1/21 16:13, Rob Herring wrote:
->>> On Sun, Oct 24, 2021 at 11:40:22AM -0400, Jesse Taube wrote:
->>>> Add i.MXRT documentation for compatible string.
->>>>=20
->>>> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
->>>> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
->>>> ---
->>>> Documentation/devicetree/bindings/serial/fsl-lpuart.yaml | 1 +
->>>> 1 file changed, 1 insertion(+)
->>>>=20
->>>> diff --git a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml b=
-/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
->>>> index a90c971b4f1f..4b4340def2aa 100644
->>>> --- a/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
->>>> +++ b/Documentation/devicetree/bindings/serial/fsl-lpuart.yaml
->>>> @@ -21,6 +21,7 @@ properties:
->>>>           - fsl,ls1028a-lpuart
->>>>           - fsl,imx7ulp-lpuart
->>>>           - fsl,imx8qm-lpuart
->>>> +          - fsl,imxrt-lpuart
->>>=20
->>> Actually, 'rt' is not a single part is it? If the variations are same
->>> die, but fused off then no need to distinguish. Otherwise, these should
->>> be SoC specific.
->>>=20
->> I don't exactly know what "but fused off" means I would assume
->> disconnected but on-die?
->=20
-> Right. Or not pinned out is another possibility.
->=20
->> The imxrtxxx is a series that has the same UART
->> controller across them. Should I add ACK?
->=20
-> Looking at the errata docs briefly, there's at least 2 die as some of
-> the errata docs give the mask id. So they aren't necessarily 'the
-> same'.
+v9 -> v10:
+- Removed .name from lan966x_gck_pdata struct.
+- Removed "_clk" in fw_names like used in bindings  
 
-Thank you for pointing, we=E2=80=99ve missed this particular.
+v8 -> v9:
+- Added Acked-by to dt-bindings and Documentation file.
+- Changed clk_name "timer" to "timer1"
+- Updated devm_kzalloc in probe function.
 
-> You want the compatible strings to be specific enough to handle
-> any differences or errata. If you only care about the imxrt1050, then
-> I'd just use that and move on.
+v7 -> v8:
+- Defined new constant DIV_MAX.
+- Corrected and updated prescaler divider condition check.
+- Added Acked-by.
 
-We plan to add from imxrt1020 to imxrt1170 and eventual new SoC, so we defin=
-itely need separate
-.compatible strings.
+v6 -> v7:
+- Added Kconfig and Makefile entires for lan966x clock driver.
 
-@Jesse, can you please update with =E2=80=98fsl,imxrt1050=E2=80=9D?
+v5 -> v6:
+- Added Acked-by to dt-bindings file.
+- Removed "_clk" in clock-names.
+- Added Reviewed-by to Documentation file.
 
-> Otherwise, maybe someone from NXP wants
-> to comment?
+v4 -> v5:
+- In v4 dt-bindings, missed adding "clock-names" in required
+  properties and example. So, added them.
+- Returning proper error - PTR_ERR.
+- Removed unused variable "ret" in probe function.
 
-Any NXP comment is welcome!
+v3 -> v4:
+- Updated "clocks" and added "clock-names" in dt-bindings.
+- Used clk_parent_data instead of of_clk_get_parent_name().
 
-Best regards
-Giulio Benetti
-Benetti engineering sas
+v2 -> v3:
+- Fixed dt_binding_check errors.
 
->=20
-> Rob
+v1 -> v2:
+- Updated license in dt-bindings.
+- Updated example provided for clock controller node.
+
+Kavyasree Kotagiri (3):
+  dt-bindings: clock: lan966x: Add binding includes for lan966x SoC
+    clock IDs
+  dt-bindings: clock: lan966x: Add LAN966X Clock Controller
+  clk: lan966x: Add lan966x SoC clock driver
+
+ .../bindings/clock/microchip,lan966x-gck.yaml |  57 +++++
+ drivers/clk/Kconfig                           |   7 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-lan966x.c                     | 240 ++++++++++++++++++
+ include/dt-bindings/clock/microchip,lan966x.h |  28 ++
+ 5 files changed, 333 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+ create mode 100644 drivers/clk/clk-lan966x.c
+ create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+
+-- 
+2.17.1
 
