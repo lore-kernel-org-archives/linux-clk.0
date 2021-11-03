@@ -2,88 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD02C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 21:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D991C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 21:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F05860E78
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 21:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557AD6113E
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 21:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbhKCVQS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 17:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbhKCVQS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 17:16:18 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F3BAC061714;
-        Wed,  3 Nov 2021 14:13:41 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id f4so13858561edx.12;
-        Wed, 03 Nov 2021 14:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qTUaMxsJMGNeazWvO7/OQ8xtaQLlSaqiemGWBJDhd2A=;
-        b=HykZx+HdVjivDNlo3vODAh2ZD8GYrMym8EG8ZWJ6LuM/XH1W7qTRgeXMREoQCccm1E
-         +qEaXy3hEkLljqeOXuI74nc4aFLghGcLBYToz9VtdqiDeTeRzNmuFLO4nAs6DPyfGYSx
-         qwvNhG9IBkeRP8plNyQ6ARfs+h+zJ8CPk4SlulyB1ayiSa+LXo2NfLPBoX1PL+adBFax
-         vtUmYU6DXUsrlvdZQvEjIgjXdmAjfiJSR1ZP9lyRMj3/zmM+jmKIQeW9mU0pAn2l/5z9
-         e8xkolY9FdLE7CYowikzx6qakXk6VRZNoP94OcO9H7GyN0pbBLCT4xd8pm13jnsQ11Ol
-         Fitw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qTUaMxsJMGNeazWvO7/OQ8xtaQLlSaqiemGWBJDhd2A=;
-        b=UChvTRuiopROVJSvJR8lsVNjQbR5gmq5uo2WIPCX0IgwlP9wXOqrUppqWLKaV6v5Xq
-         b0H9yv4Dsrl1oWY1qpxCCiLy6dyZOgUr7wH2nnbzjj9BxVvJy6u0381D2HQEEkPnsRjb
-         C4Mv2T+Bvz/1T1l9UH6iUHsfXNKu8KKgjtPHvTQFPpJCRkk8ecI5qs5ZiUreoDJMsCXV
-         xdcKSTRjcC5ueB0SrGCFUFB29s+2fRDYkB/6O2pzOrCVBpGkRQZnkgJCTbx0SEMerHpr
-         o+JJg3g4MLwnwh4f0s+NqjAl71fS+zVk8ZZaZtZv4iKwqoP6Vu0Q+N1hU6X5mkUhhi5f
-         IhRw==
-X-Gm-Message-State: AOAM532SaO3X6EgHIPm6Ajf+PNbNXtOXOaNxM5rbtrFYG4m8fsR3kqkK
-        QKK3N2mvtWE8s7F0aLSndW5NQeUlkviWRlR5xIfIkGUXJtk=
-X-Google-Smtp-Source: ABdhPJwOl2+jLDK2/mU+yJe3MiYTPpozq/JGcqlu924DHo7nViEkylw7VwL4o1O5tOEf1fBaNpGhK74qfkJuxW/jcV4=
-X-Received: by 2002:a50:8e44:: with SMTP id 4mr5086537edx.45.1635974019583;
- Wed, 03 Nov 2021 14:13:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211103122441.3208576-1-alexander.stein@ew.tq-group.com>
-In-Reply-To: <20211103122441.3208576-1-alexander.stein@ew.tq-group.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 3 Nov 2021 22:13:28 +0100
-Message-ID: <CAFBinCCMKk-dKvVuhLyoNLkK_D-kYbv99c5-w6C2gKXd53e5Aw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: composite: Fix 'switching' to same clock
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
+        id S230310AbhKCVou (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 17:44:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229698AbhKCVot (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Nov 2021 17:44:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8393A610E7;
+        Wed,  3 Nov 2021 21:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635975732;
+        bh=dXG7SJaQ86pYqJemvGzySTPjN5HOWyXBZ8H3AZzV0mk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XDQvJJmqgrYtDTkFGpnKklT993BQjy5VMDYDDmPrbFmh2RiyVLdnOe/+edUVPy3LU
+         WYMzlPDCnRmpJyg6xuKz6tWbaIm8M3pBUwD2I4BBKotHWXH4eviCrKe4thQTmj+/lh
+         Vi3+Nvq0HvDovb94YsdTyUXcWj15fbzbq1kOOOLPcVNiSh2evrDvlC5yiPBoat1dqJ
+         b/9cBsZCykHL84fliTZ/QNO4BnC59EnxpojW/fk4nQuOr+HZajtvhIKu+ucyF1dwgQ
+         XKCZCNPI5rKQDvYMOoB/b3cPgF6nJfaZ5+J1Qno38WGRaxYzjQVh9zXnA05uXL4DcJ
+         gw6jpeNfeOhfQ==
+Received: by pali.im (Postfix)
+        id 0FB206FC; Wed,  3 Nov 2021 22:42:09 +0100 (CET)
+Date:   Wed, 3 Nov 2021 22:42:09 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alex Bee <knaerzche@gmail.com>, Chen-Yu Tsai <wens@csie.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] serial: mvebu-uart: Support for higher baudrates
+Message-ID: <20211103214209.azo2z3z4gy7aj5hu@pali>
+References: <20210930095838.28145-1-pali@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210930095838.28145-1-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Alexander,
+On Thursday 30 September 2021 11:58:32 Pali Rohár wrote:
+> This patch series add support for baudrates higher than 230400 on
+> Marvell Armada 37xx boards.
 
-On Wed, Nov 3, 2021 at 1:24 PM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> During commit 6594988fd625 ("clk: composite: Use rate_ops.determine_rate
-> when also a mux is available") setting req->best_parent_hw got lost,
-> so best_parent_hw stays NULL during switch to the same parent. This
-> results in the (debug) message:
->   clk_calc_new_rates: lcdif_pixel not gated but wants to reparent
-> and the following rate change is dropped.
-Thanks for investigating and fixing this!
+Stephen, Gregory, are there any issues with this patch series?
+If not, could you take them?
 
-note to myself: only clocks with CLK_SET_RATE_NO_REPARENT are affected.
-This might be the reason why it wasn't spotted on Rockchip SoCs (yet).
-I have Cc'ed Alex and Chen-Yu in case they're investigating breakage
-on Rockchip SoCs with linux-next
-
-> Fixes: 6594988fd625 ("clk: composite: Use rate_ops.determine_rate when also a mux is available")
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-
-Best regards,
-Martin
+> Changes in v7:
+> * fixed lint errors in yaml binding file
+> 
+> Changes in v6:
+> * fixed yaml binding file and dts files
+> 
+> Changes in v5:
+> * fixed yaml binding file
+> 
+> Changes in v4:
+> * converted armada3700-uart-clock documentation to YAML
+> * split documentation changes into two commits:
+>   - first which adds clock documentation
+>   - second which updates UART documentation
+> 
+> Changes in v3:
+> v3 is rebased on top of Linus master branch and all already applied patches
+> were dropped. There are no changes in patches itself since v2.
+> 
+> Pali Rohár (6):
+>   math64: New DIV_U64_ROUND_CLOSEST helper
+>   serial: mvebu-uart: implement UART clock driver for configuring UART
+>     base clock
+>   dt-bindings: mvebu-uart: document DT bindings for
+>     marvell,armada-3700-uart-clock
+>   dt-bindings: mvebu-uart: update information about UART clock
+>   arm64: dts: marvell: armada-37xx: add device node for UART clock and
+>     use it
+>   serial: mvebu-uart: implement support for baudrates higher than 230400
+> 
+>  .../clock/marvell,armada-3700-uart-clock.yaml |  59 ++
+>  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  14 +-
+>  drivers/tty/serial/Kconfig                    |   1 +
+>  drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
+>  include/linux/math64.h                        |  13 +
+>  6 files changed, 667 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+> 
+> -- 
+> 2.20.1
+> 
