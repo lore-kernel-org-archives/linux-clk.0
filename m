@@ -2,146 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40638C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAB9C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE5761101
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97B4F611AD
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbhKCMi2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 08:38:28 -0400
-Received: from mail-pf1-f171.google.com ([209.85.210.171]:39933 "EHLO
-        mail-pf1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231993AbhKCMiL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 08:38:11 -0400
-Received: by mail-pf1-f171.google.com with SMTP id x64so2161555pfd.6;
-        Wed, 03 Nov 2021 05:35:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JE/2edLy6usLclELy9HdQo+SFIip3f5Fv/danfH38Us=;
-        b=MqdddXuI5fFJnjftC8vLsoy2ixpIPYuFiM8V4oraxQUT2habCa1/OyVh9Or5gfhlsh
-         54/3R9jpxylyL59NOJYqx8AUw6mSbJYhw3biuhKm2adWmuVZACknH8ZNuHnUZ/0uG02b
-         OmCWlvN9TX3iMY7IGv/WKbv/v474vSrqB5kS2c3wn0ULhRtAyJOknq+t95nW0Lk3Zy95
-         LwBc1lj4j6oz9UtSbAf4l+osDv3bZAC0xQrNf+PSeygV8MS7manzlCFKNnK9bygpN0nV
-         urkvQwnd3LfAxkZ1ViFujKVTKGi7EUHwsYYGz9KDcDPuWp7eSZpDHhlHPFqipgi5r+y/
-         CwVA==
-X-Gm-Message-State: AOAM5311AHT7zBa2IzVqTifPUN7BErbjkrw5HebaKSMTVY+NoFg2980c
-        p0zTd45IlXYqMXRDyQCC7ZeMNrxMoUunQXhJGPU=
-X-Google-Smtp-Source: ABdhPJxYbn79vSJ2NRtioaA8LqjYkpfmXUk5eC68C/FQfgWNHpS1VH42PtOSnEicWrsOvNwI2un3ZgJ4IhQvUwx3oI0=
-X-Received: by 2002:a63:2d46:: with SMTP id t67mr32735713pgt.15.1635942934696;
- Wed, 03 Nov 2021 05:35:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
- <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
- <CANBLGczn8+po09wF_uEvvU8tLCn0ahY+Gkj9JJLxOcj1LC1aLA@mail.gmail.com> <CAHp75VetDHt9G+PT77_py8N4Z06j7oytnXgQq8zss_xZBBeEng@mail.gmail.com>
-In-Reply-To: <CAHp75VetDHt9G+PT77_py8N4Z06j7oytnXgQq8zss_xZBBeEng@mail.gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-Date:   Wed, 3 Nov 2021 13:35:23 +0100
-Message-ID: <CANBLGczTnf1UrRt=d-czaG-CE=Rwb1x6MV4c97ia+P3u5Mt8Jg@mail.gmail.com>
-Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S232065AbhKCMmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 08:42:35 -0400
+Received: from mx1.tq-group.com ([93.104.207.81]:39256 "EHLO mx1.tq-group.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231958AbhKCMmd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Nov 2021 08:42:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1635943196; x=1667479196;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=frB6WasuaNmxKic3MwCdWdYJsEoS4X1xN1rRTbJN3fs=;
+  b=KRDkrDW+e/KR5iZYp3QhwmPqfr3x/0WaesklEioBngOrGhVCjocrfnHr
+   XkINb7KNHNTnKQNi0Ro18MwTNg+mwqbNQVt995R5nxQ6iyDOA3EAS+Au1
+   3XqAAVYMJUJHdqOAjYuvKbSr/+Bt8BBlUsig5pmtkzdGiFwIoM5PYto1Q
+   VIJxECLCMrnKtAg362vTcpAQcp+H5aCL5QD8gv+zmR3ALSy4XhFMDgYLK
+   yi3FDDP6IA5jPs4bC/ai8kz8GXiwFloCINaHUFOqWjm5DL0uoq+3lrl8m
+   G0NKM6Xo0tbqkcvhFBprvmvK+fpmaST5+Qno3fH87dCXsxA7knK3Ewbk+
+   w==;
+X-IronPort-AV: E=Sophos;i="5.87,205,1631570400"; 
+   d="scan'208";a="20324534"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 03 Nov 2021 13:39:55 +0100
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Wed, 03 Nov 2021 13:39:55 +0100
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Wed, 03 Nov 2021 13:39:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1635943195; x=1667479195;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=frB6WasuaNmxKic3MwCdWdYJsEoS4X1xN1rRTbJN3fs=;
+  b=K6j5LM/ztRAzszKxQGJgTXf/WrqfRk+iRYC6Xs/mKyh4A8+5If4VopxU
+   EGVko7zo+RMDaH7lSSkXLMRudnuT271W9iblDwc9Qx3cSQnM7qH7sNYqx
+   TT3fYMf5OYi33j+TIf8AHSHl43JNmYSWiEPI6RVn7Z15E+vtFCf4p2ubX
+   7PalD/nMCSnbvJi9tvBRgldRX2gHWewoHJ5BOve8905KVX5hrH7R9oqvK
+   ntnpI2mziT8DuF+VgRpYgvnEuiRfEc0obtz97Dm19WkwbYTaFLeBvNkyt
+   2uxdSg5XyoSlkys3NUlHuaT0eKk5e7oMn+yapvt8uvXMuvT+vDmiYPsDX
+   A==;
+X-IronPort-AV: E=Sophos;i="5.87,205,1631570400"; 
+   d="scan'208";a="20324533"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 03 Nov 2021 13:39:55 +0100
+Received: from steina-w.tq-net.de (unknown [10.123.49.12])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id A2818280065;
+        Wed,  3 Nov 2021 13:39:55 +0100 (CET)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH 1/1] clk: imx8m: Do not set IMX_COMPOSITE_CORE for non-regular composites
+Date:   Wed,  3 Nov 2021 13:39:47 +0100
+Message-Id: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 3 Nov 2021 at 10:13, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> On Tue, Nov 2, 2021 at 10:35 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> > On Tue, 2 Nov 2021 at 21:02, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > On Tue, Nov 2, 2021 at 6:50 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
->
-> > > > +       switch (trigger) {
->
-> > > > +       default:
-> > >
-> > > > +               irq_set_handler_locked(d, handle_bad_irq);
-> > >
-> > > Why? You have it already in ->probe(), what's the point?
-> >
-> > So last time you asked about this, I explained a situation where
-> > userspace first grabs a GPIO, set the interrupt to edge triggered, and
-> > then later loads a driver that requests an unsupported IRQ type.
->
-> I didn't get this scenario. Is it real?
+Only imx8m_clk_hw_composite_core needs to set this flag.
 
-No, it's totally made up, but I mean we even have tools like fuzzing
-to help us find bugs that would never happen in real use cases.
+Fixes: a60fe746df94 ("clk: imx: Rework all imx_clk_hw_composite wrappers")
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+This is from clk_summary on a imx8mq custom board where you can clearly
+see the before the divider is limited to 8 (core composite)
 
-> > Then
-> > I'd like to set the handler back to handle_bad_irq so we don't get
-> > weird interrupts, but maybe now you know a reason why that doesn't
-> > matter or can't happen?
->
-> In ->probe() you set _default_ handler to bad(), what do you mean by
-> 'set the handler back to bad()'? How is it otherwise if you free an
-> interrupt?
+before:
+video_pll1_out        2        2        0  1031999997          0     0  50000         Y
+   dsi_phy_ref        1        1        0   129000000          0     0  50000         Y
+   lcdif_pixel        2        2        0   129000000          0     0  50000         Y
 
-It might not be, but when not sure I thought it better to error on the
-safe side.
+after:
+video_pll1_out        2        2        0  1031999997          0     0  50000         Y
+   dsi_phy_ref        1        1        0    24000000          0     0  50000         Y
+   lcdif_pixel        2        2        0    68800000          0     0  50000         Y
 
-> So, please elaborate with call traces what the scenario / use case you
-> are talking about. If it's true what you are saying, we have a
-> situation (plenty of GPIO drivers don't do what you are suggesting
-> here).
->
-> > > > +               return -EINVAL;
-> > > > +       }
->
-> ...
->
-> > > > +       ret = reset_control_deassert(rst);
-> > > > +       if (ret)
-> > > > +               return dev_err_probe(dev, ret, "could not deassert resetd\n");
-> > >
-> > > > +       ret = devm_pinctrl_register_and_init(dev, &starfive_desc, sfp, &sfp->pctl);
-> > > > +       if (ret)
-> > >
-> > > I don't see who will assert reset here.
-> >
-> > No, so originally this driver would first assert and then deassert
-> > reset. I decided against that because in all likelyhood earlier boot
-> > stages would have set pinmux up for a serial port, and we don't want
-> > to interrupt the serial debug output. The only reason I make sure the
-> > reset line is deasserted is in case someone makes a really minimal
-> > bootloader that just does the absolute minimal to load a Linux kernel
-> > and doesn't even log any anything.
-> >
-> > By the same token we also don't want to assert reset on error in case
-> > it resets pin muxing for the the serial line that was supposed to log
-> > the error.
->
-> Perhaps comment in the code explaining this?
+ drivers/clk/imx/clk.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sure.
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 819949973db1..7d220a01de1f 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -391,11 +391,11 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 
+ #define imx8m_clk_hw_composite(name, parent_names, reg) \
+ 	_imx8m_clk_hw_composite(name, parent_names, reg, \
+-			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
++			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+ 
+ #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
+ 	_imx8m_clk_hw_composite(name, parent_names, reg, \
+-			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
++			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
+ 
+ #define imx8m_clk_hw_composite_bus(name, parent_names, reg)	\
+ 	_imx8m_clk_hw_composite(name, parent_names, reg, \
+-- 
+2.25.1
+
