@@ -2,207 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B842AC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 23:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB398C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 00:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9860360E0C
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Nov 2021 23:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C20FC610E7
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 00:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbhKBX5M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 19:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbhKBX5L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 19:57:11 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46219C061714;
-        Tue,  2 Nov 2021 16:54:36 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id ay20so689368qkb.7;
-        Tue, 02 Nov 2021 16:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=LUJiTUBUz+nDDvCf1YrbjU2s+1FnYiIkeo+EME3kWwE=;
-        b=BNApYS/cqy5Q8pdJ6jerjEhOsDIbqWdYf8uPLunlFYkDoZhIBYDV7KLx9u1GGpwkbx
-         VDeMVUv2ZWvR9TRrck38B+vOyhfL9gTBUy629STDqNUMp1uGHHayoc7tZXW8D6YU6To9
-         kUvOO+J/uKtfxlmdUxI+rWQFwuy7C+ika/nna4YYGHKvLgLcTPbT6GxAQLPmCbwaoUg1
-         6fyU5H9l69w0bBtEA1OhYyxBIrSSOoXKjB1V27h1u8Cykxgs0k6m2y8CLpIlhK1dFLW4
-         tSNxarNGJIzfTiMXyL/IoiAOFpa+k+W9VH7iCSucuZNt0iM7bA1bkFYZdkr7zuLJGx5t
-         FSbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=LUJiTUBUz+nDDvCf1YrbjU2s+1FnYiIkeo+EME3kWwE=;
-        b=sWQ9curxuOlQcjmc4DU6GSxlQ+FlatpwLvk+kDmrC2A49c+HhVg4SQd2x4qEr7Oqu2
-         iwqztHwN2Spa0BUNbA7ptmo5BJQg+kkmwG7pSJzaKvC+m4PC/fnFjkUZLL/9IM3MR8Fx
-         K9wt3szx45E1ko6ysxGmpMv/OGImPMDxp/30NrRj/yuZM2SK03MPOz/5hwrnBdAYeCXl
-         RFaKgo0CvsgK9sM/7QdrM82EhlEQ1p+ADmiub7SnnUu5tI9+KApJ4WU4WR4hV/vaKmeI
-         sl+G5LyOmAI3Bnad/KRFG1hJ9Wq7y/7HQEcvRkjmreA60NxlLq4SzstpbqRbeSFQIn9g
-         weqQ==
-X-Gm-Message-State: AOAM531ifXzUvh1XvqBwYUz4M0JYtxlPYwrRiMiIt41iFk8ILnsBW2/R
-        g59qxz5pbgYMbcMQo7tbNFk=
-X-Google-Smtp-Source: ABdhPJzxro4hWmMP7y5iTOVWvZMs+GGc/IGEN1fn/TBo+Ziw7KfVlQyzMaZ6cwWeXs/C99ERXXqZjA==
-X-Received: by 2002:a05:620a:4150:: with SMTP id k16mr16278131qko.186.1635897275437;
-        Tue, 02 Nov 2021 16:54:35 -0700 (PDT)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id w1sm382768qtj.28.2021.11.02.16.54.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Nov 2021 16:54:35 -0700 (PDT)
-Message-ID: <e2f81ad7-9c58-3e39-fbb0-5ef3132bba7d@gmail.com>
-Date:   Tue, 2 Nov 2021 19:54:33 -0400
+        id S230008AbhKCBCF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 21:02:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229778AbhKCBCF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Nov 2021 21:02:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8582F60FC4;
+        Wed,  3 Nov 2021 00:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635901169;
+        bh=EE/bOVd8vhFU3MMrom1BvHLf8zsd5QVrHEBuJ973vWY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qN+p7UfX2eCOwF2fgyolD0kfSXyQ+yp/cmA2hul9GmNjOsQg+dBTWlQ991uEr05j1
+         HWSTh9Zt5K8gYaO/pRAfzS3r+tIhqJuGOLBs/SgPy7r7VDZNELc8W0hz1zSsJyVv27
+         YZ09eCSEllp2jko99wvBD5pjlDjzhTAPxrwU9OGlwgGD7izH+lKO0DvA/O3K9RW6Dn
+         uJ38S/6cgHt/cKpN7Ht4v8GpuaFPAKq9mv8j1eE2+95ez+iwytT+nAbXdlkFL6bG+R
+         838AI+lHb88kZzkRI+qKdkR8FpXMb+2OEXGJXwvlrkrzFjNx8QSe98aEVPBSdUmpJg
+         oeQ8WaDHMJy3g==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH v2 12/13] ARM: dts: imx: add i.MXRT1050-EVK support
-Content-Language: en-US
-To:     Fabio Estevam <festevam@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-References: <20211102225701.98944-1-Mr.Bossman075@gmail.com>
- <20211102225701.98944-13-Mr.Bossman075@gmail.com>
- <CAOMZO5DV-6dKnaGMgARhtv7mq-nOr9jO-XUWAJDmJWwNxc+B1g@mail.gmail.com>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <CAOMZO5DV-6dKnaGMgARhtv7mq-nOr9jO-XUWAJDmJWwNxc+B1g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2912588.a5UK1EFgBA@diego>
+References: <20211027132616.1039814-1-heiko@sntech.de> <5381956.U9aoDET0nm@diego> <163548978553.15791.2075313346592720953@swboyd.mtv.corp.google.com> <2912588.a5UK1EFgBA@diego>
+Subject: Re: [PATCH 0/2] clk: rockchip: cleanup errors in (module-)driver handling
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@esmil.dk, linux-clk@vger.kernel.org, mturquette@baylibre.com
+To:     Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Date:   Tue, 02 Nov 2021 17:59:28 -0700
+Message-ID: <163590116816.2993099.4747068629839558630@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Heiko St=C3=BCbner (2021-10-29 05:37:06)
+> Am Freitag, 29. Oktober 2021, 08:43:05 CEST schrieb Stephen Boyd:
+> > Quoting Heiko St=EF=BF=BDbner (2021-10-27 16:20:17)
+> > > Am Mittwoch, 27. Oktober 2021, 22:27:46 CEST schrieb Stephen Boyd:
+> > > > Quoting Heiko Stuebner (2021-10-27 06:26:14)
+> > > > > Recent conversions or inclusions of rk3399 and rk3568 as platform=
+-drivers
+> > > > > and subsequently allowing them to be built as modules introduced =
+some
+> > > > > problems.
+> > > > >=20
+> > > > > These two patches try to correct them.
+> > > >=20
+> > > > By removing modular support? Ok.
+> > >=20
+> > > It looked like the easiest way to go for now.
+> > >=20
+> > > With all the clock-definitions as init-data still in both drivers, I =
+don't think
+> > > anybody ever tested running this as a real module.
+> > >=20
+> > > We could of course also remove all the __init + __initdata attributes=
+, but
+> > > still wouldn't know if it actually runs as a module, without someone
+> > > building a real test environment for it.
+> > >=20
+> > >=20
+> >=20
+> > Sure. Do I need to pick these up directly?
+>=20
+> I don't have anything more for 5.16 and the 5.15 release should happen
+> on sunday, so yeah just pick them if you like - no need for doing a separ=
+ate
+> pull request.
+>=20
 
-
-On 11/2/21 19:42, Fabio Estevam wrote:
-> On Tue, Nov 2, 2021 at 7:57 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> 
->> +/ {
->> +       model = "NXP IMXRT1050-evk board";
->> +       compatible = "fsl,imxrt1050-evk", "fsl,imxrt1050";
->> +
->> +       chosen {
->> +               bootargs = "root=/dev/ram";
-> 
-> No need to pass bootargs here.
-> 
->> +               stdout-path = &lpuart1;
->> +       };
->> +
->> +       aliases {
->> +               gpio0 = &gpio1;
->> +               gpio1 = &gpio2;
->> +               gpio2 = &gpio3;
->> +               gpio3 = &gpio4;
->> +               gpio4 = &gpio5;
->> +               mmc0 = &usdhc1;
->> +               serial0 = &lpuart1;
->> +       };
->> +
->> +       memory@0 {
-> 
-> memory@80000000
-> 
-> Building with W=1 should give a dtc warning due to the unit address
-> and reg mismatch.
-Oh that makes sense.
-I guess I'm going to have to figure out how to get warnings to work as I 
-couldn't last time I tried.
-> 
->> +               device_type = "memory";
->> +               reg = <0x80000000 0x2000000>;
->> +       };
->> +
-> 
-> Unneeded blank line.
->> +
->> +&iomuxc {
->> +       pinctrl-names = "default";
->> +
->> +       imxrt1050-evk {
-> 
-> No need for this imxrt1050-evk container.
-I was wondering if that was needed, u-boot has it, good to know.
-> 
->> +               pinctrl_lpuart1: lpuart1grp {
->> +                       fsl,pins = <
->> +                               MXRT1050_IOMUXC_GPIO_AD_B0_12_LPUART1_TXD
->> +                                       0xf1
-> 
-> Put it on a single line. It helps readability. Same applies globally.
->> +&usdhc1 {
->> +       pinctrl-names = "default", "state_100mhz", "state_200mhz", "sleep";
->> +       pinctrl-0 = <&pinctrl_usdhc0>;
->> +       pinctrl-1 = <&pinctrl_usdhc0>;
->> +       pinctrl-2 = <&pinctrl_usdhc0>;
->> +       pinctrl-3 = <&pinctrl_usdhc0>;
->> +       status = "okay";
->> +
->> +       cd-gpios = <&gpio2 28 GPIO_ACTIVE_LOW>;
-> 
-> Make 'status' to be the last property. Remove the blank line.
-> 
->> +               edma1: dma-controller@400e8000 {
->> +                       #dma-cells = <2>;
->> +                       compatible = "fsl,imx7ulp-edma";
->> +                       reg = <0x400e8000 0x4000>,
->> +                               <0x400ec000 0x4000>;
->> +                       dma-channels = <32>;
->> +                       interrupts = <0>,
->> +                               <1>,
->> +                               <2>,
->> +                               <3>,
->> +                               <4>,
->> +                               <5>,
->> +                               <6>,
->> +                               <7>,
->> +                               <8>,
->> +                               <9>,
->> +                               <10>,
->> +                               <11>,
->> +                               <12>,
->> +                               <13>,
->> +                               <14>,
->> +                               <15>,
->> +                               <16>;
-> 
-> Please group more elements into the same line.
-> 
-> Putting one entry per line makes it extremely long.
-> 
->> +               gpio5: gpio@400c0000 {
->> +                       compatible = "fsl,imxrt-gpio", "fsl,imx35-gpio";
->> +                       reg = <0x400c0000 0x4000>;
->> +                       interrupts = <88>,
->> +                               <89>;
-> 
-> Put the interrupts into a single line.
-> 
-Ah all these make sense, will fix, sry about that.
+Ok I picked them up and I'll send them off next week.
