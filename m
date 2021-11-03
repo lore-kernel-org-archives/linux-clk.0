@@ -2,124 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BB1C43217
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 19:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6217EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 20:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD6161166
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 19:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 331626103C
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 20:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbhKCTNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 15:13:23 -0400
-Received: from smtpcmd0756.aruba.it ([62.149.156.56]:35157 "EHLO
-        smtpcmd0756.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230353AbhKCTNW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 15:13:22 -0400
-Received: from [192.168.153.129] ([146.241.216.221])
-        by Aruba Outgoing Smtp  with ESMTPSA
-        id iLehmQUVD4n4riLehmFuEJ; Wed, 03 Nov 2021 20:10:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1635966644; bh=0/31yxmO9a/oC0P8HSIAOi7F4D8XhUglntlI8cyweIg=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=JHt8XzSjYLi1rWyUyi2ykyjLwTWrBHdvKgItGaNHY9vgQDx4CIXQIBALXxgxMWPRM
-         oGtbjIF7McsY1X/k1uP2Acdeqw2BIas+OYupr81C2Dcca7XMa2Vp0Sp0FJTrwpcsSX
-         gFRfNMSc4dWtlo/n9+z2VXPjPRkCSC59N3R0G8+8JwmsfgviQHXTaF7kvRBJuWubei
-         hx+F0V/WiqGSUyEdMZ1mqAWtMsH7ZhpC7rP9NDKtvKOajBIDiWHDZJL7lyTxdyUfDg
-         n4sufjnQVMtJZjMUz4pfih0uAXT2MavO/91P0GGzNZ/d33kaReBHi5j6jAzzW4d6FZ
-         +cACDqCxUK6YQ==
-Subject: Re: [PATCH v2 11/13] mmc: sdhci-esdhc-imx: Add sdhc support for
- i.MXRT series
-To:     Fabio Estevam <festevam@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Jesse Taube <mr.bossman075@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S230198AbhKCUsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 16:48:33 -0400
+Received: from mail-eopbgr80045.outbound.protection.outlook.com ([40.107.8.45]:27473
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229893AbhKCUsc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Nov 2021 16:48:32 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TcYbSYf8bk0druheMKs8W7rpXWG5LmWHjZUTuR9za30bnjffp3gRKEFisuQRRVSgzrvuihpk4EoyWA6MradpPTmVMOplIvdYjQ/DpQ89I8acbljTXJHstBrvO/9qVE5YdShjHVBP8kPcIzNks3xU0UwhuV5SGngQnS7Hprdlwj7r1Xl8/LQjNTvP2P58ChWvr1MeIqki7PQp89N5giGaVy5n16mwUvF0wjn6/RDTTz+AfODQO7L96bCOw8qB+Cex+4M5JV1qFjxxBt+q2d1AcpicdkljSl9q0IJxRrvp8a0e8Oxv8bXuUD2NGifwnQLYM/VLWUg3tJ5GaFdKP2c6wQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fN4BiYJeQDyuDuAXH7qeqIX1pABPckBNht/WHAxtVhc=;
+ b=NQmM1lm1C8LXq3H4TUBLt8z/FRSwN/H1DlpFwFgTCfQM/U+mE9Cd/Ql9fZb5EYx9UecMOhKTE/XrWsK9RhHwDyvfu9OUapz8vLhwZzJk7BFsSd04a3b5NBqUV+h3gaFJilsT9peUXAHNkKNSqAzD24lWukArK6jI9XbgkckqbFZ1QaHeDFKUXRc3nTw9upoVAXaL97ksqyA88Y+a4ZMZ4O2zVXpZqK81Nz76m4YlO9RbKtWP64BwY36l3bpNguYBEknLAwotZdKJY3JEaB4QUro5hZyqa0iR2SrjJBS0q5+CPasjDN8qKLTj8+ssUBss3ekdyXNg8ZkEjHRsPQ32+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fN4BiYJeQDyuDuAXH7qeqIX1pABPckBNht/WHAxtVhc=;
+ b=oEDohIGCJKE33Oajx1ajyPQYerTEV3Z5kPPbu52yox6CREdl4+OkrYaPT17nSaR5Qf6CfH4Zn5+82tKSTqxOiwQ7URqtusajgq6+xM+ZURFmFs1FEenZsHuBHJe27vhS4pEjH3MZjXlWqM6//xG1XNUzAiM8zDTwagBPepI/wn4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by VI1PR04MB6942.eurprd04.prod.outlook.com (2603:10a6:803:136::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.17; Wed, 3 Nov
+ 2021 20:45:52 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::885c:ddee:c614:9787]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::885c:ddee:c614:9787%7]) with mapi id 15.20.4649.020; Wed, 3 Nov 2021
+ 20:45:52 +0000
+Date:   Wed, 3 Nov 2021 22:45:50 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-References: <20211102225701.98944-1-Mr.Bossman075@gmail.com>
- <20211102225701.98944-12-Mr.Bossman075@gmail.com>
- <CAOMZO5AxMXxDkNDqGJDhtepqSUxGRCWO+L=c67O==4fx66M7XQ@mail.gmail.com>
- <c1610093-95ae-68d3-57ae-93b1bc9715d7@gmail.com>
- <5ebe48f5-7b9c-be99-d50c-65a056084b96@benettiengineering.com>
- <CAOMZO5DHCYaxzSASKq6Bk8ALkiQeVjPOHOyk-pKYepJFJk6oFQ@mail.gmail.com>
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-Message-ID: <78cba8ec-72b0-89b8-d6e3-09ecea19ca7b@benettiengineering.com>
-Date:   Wed, 3 Nov 2021 20:10:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH 1/1] clk: imx8m: Do not set IMX_COMPOSITE_CORE for
+ non-regular composites
+Message-ID: <YYL0/hpn83XI84LP@ryzen>
+References: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
+X-ClientProxiedBy: VI1PR08CA0212.eurprd08.prod.outlook.com
+ (2603:10a6:802:15::21) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5DHCYaxzSASKq6Bk8ALkiQeVjPOHOyk-pKYepJFJk6oFQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfF6/WWjL7PJeZTTfz9UiWozyugqncNHx9tTkfwkkeDbnl31INXrmdyJqCSDLjNgQNAiX+KEFaL/glNmQk4hLNz+e91vJZFmZ3NF5I4POniLdU+133jcp
- XzXAVa/DOc7iJ7Umt9dQCiK70yv+dPSCm6DyvEHh3sPzUmjoblvN2rbQedLd/KRav15zduP3h7pa3TBT7GXnqFDja1xM10FZDIRnNyWpakY0+K6IpWr9CtRp
- RbGD2bB0eWYl2pgQ6oK7rgqwkfBiXt6WBqx32YZalbWMiwFTgFZXYFX2bhI4iGNXtHbYX6M7a2P6awc9yt+RpNOC46ceA2OSF2GD2nNLCCA85tkJbOLpIuW+
- 2qJ4tYuOUeifsY8fJ1OAWVgvpme4hq+Jn9KOnjeL9hMJkqLhKlMoFBWG4ZFAjx6P+T/WjW84919f5FBekomjfNlXPtI2bx8LowHcHVMxxtgWKrIy8/HCjQse
- hMtGvQbiPuqHqMSGKMU0Q3721Q7hTJXFuObQDrhcRED7Kw6KTtE+Aczv5xnK+GZFMBgayrKg+SPoimBROvDme87huk7quiukeu+sSdj2ldoS4sJzD14db2fG
- fUZGCElF1aWolDYn3zDRnuI9aNLyzS3y1bYpg51QmCdVikiJpSb9nuEDd32x1YmU5g6bp8wj6JvNaeEdLN+hZ8C98TiPIvfIAQlyjNyu4rl6AtSJkRa0xbkl
- Oqwe2dhAY8fi/AdyGAOTkGT9EcPX6i/VjPEh3HGAOLI7lQRyq0Do61LOcfvBUvIvN4UdwfKqBwD9s9EPIMQEYbN3mTdK+1FUVYNZBAwyyypuvn/FOjtDyP2H
- JMyFerHaBWkngEyHrqz25mjCOQMODTDTsNvvVliBq93lDPsgK3mJEl0Habe+NGvFA2p8EJtf0FwLgL0DRkJHzdhMV88ocFN+5a1+J0RrGZr4w1tABUN/5cm1
- WudLVrZSILp4LPugdLhbdtWqzTVqLr7Z5bwjuyY0ykWP1Okhj8x8edAs9QHPcNhSXogZq6iiuo5o1gC6xSOGhsYvQsVxL3miS8s3fPyG/QjEvDLLBWrnRyF1
- 0glwqRkuoJSHoK/FA3aAdIQ9Aeg2lDGEs3pbsWIwLor0bSAzNFFlUwrWmx7Z5ykPs8sZoNMAWTJRAnNPRjzG87S0dPFSboLuLSo=
+Received: from ryzen (188.26.41.202) by VI1PR08CA0212.eurprd08.prod.outlook.com (2603:10a6:802:15::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10 via Frontend Transport; Wed, 3 Nov 2021 20:45:52 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2a98a480-0636-4391-198f-08d99f0aed01
+X-MS-TrafficTypeDiagnostic: VI1PR04MB6942:
+X-Microsoft-Antispam-PRVS: <VI1PR04MB69428F4A5319AAB033E45D0BF68C9@VI1PR04MB6942.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:298;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: IJrLF1zj27fVPweNkGRJHZlfTi1V+NJazdmVnP4+kudFv/VmkMKB3xWSCN6yh/u76RvbLIukjHXnM2OXwsNhmKCVtOmFx6CSp53jAwlH0PXrWuiU1VAxBM+LxuKoQinUgIRm6vdqdA8/+/5Mex8KfzUdzuAd4eWNxEJMd123neOQJh40mw3bKju4RiFUNfSCw9vKsaufkYyW6/t9EwKvBmFDnTH/kLWW7va8euZVS/xirCjNxhZ+q10sLOugql+iTOp9MreuwhkzHc/ydKey5pW9Pb1epWnD1qQeXqCKwBu5Z4hp3U22BZdt/K5wm6pIm98AWPlo6Tq7wpAhR9aSkGQ+GnjDqs0781tdfpeiaNDU0Ofkte5BA4gRz0UQC3He0CyqRKBfi1SiLixPJOnqyg95BGTCK0kgrfuSvYQ4GCItiOPWxrMP7XRw11W2DilUwwtKwp2OT0kT6geruuQkks8sfJIute1F8LntA96be9jQTMVvwcaMD4pPw8IfRg/KBMskOGxNohju+knd+3XkCCXnjdZZ4yzYQY5x3697vXfU4LAmymxQQBav3KId80iAKdQl9hyysXJFq6zlgTd/E7qxjA60q3v+AzNbIQFP/vLOQdSpV46aDE2Fbz+XMpAfdcLYtxP5TeSo2iCEiKShUhB+/4RA3Xbct2e547NTWGVLd31xM0VjdN4j7jF+mBXXpKfbKRy1NJoq/SGk7fPeQb1aTvSmLqt0iZ3da0WVVL8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(86362001)(83380400001)(26005)(316002)(8676002)(5660300002)(44832011)(110136005)(6496006)(508600001)(38100700002)(38350700002)(4326008)(8936002)(54906003)(55016002)(66556008)(186003)(66946007)(9576002)(66476007)(2906002)(956004)(52116002)(53546011)(9686003)(33716001)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?j7Iym9nWZh05yZhK3AQQOZksuCt6wTkv7NE+GSg9spA06EfYtHQevYmobnX9?=
+ =?us-ascii?Q?umLVqnUtCJWJS5yb2hT2zvDdjZGl6TYWQ2xKt9G89YIcpIyCMLpj9A/vrpWh?=
+ =?us-ascii?Q?2FWFXnJkWOro9d6Jc+bW0KtbDmJprTLUkgeKmvlphXaJQT8j+7eJH1CljCd9?=
+ =?us-ascii?Q?uTsP+X0AjIHmpXhRt7/BMUqRD/5VO7XCOFQa1FF8skiGBHtfjEvZcNdvWnyz?=
+ =?us-ascii?Q?uSOh6j0KpwBYJb0b4au67ioQxNEcSIIIL96BebFdB7YDLKFW5TTQ102lgmL0?=
+ =?us-ascii?Q?0hE+OaEmh6QZi+IVrZ8FT6jwWoOD0Jig1MPtaqMpWMx45QDMYUExqNnNeaKN?=
+ =?us-ascii?Q?nvEOPdM+mioldAlqHx9t3MOJPDCCSo4K+mDF7twO69K6SBQE/TjVS3/YfzGh?=
+ =?us-ascii?Q?QM0bl10o3FO8C//Qp5uBXsigRCL+aA9JMAyZObJyk2Oo/VNSTv+u7upLnoGZ?=
+ =?us-ascii?Q?YNoNnuc+3wW0uyuHNu/JWEtxGUF6yIWkMJTID1PikoSqndFAdU7f+Lb/ecPs?=
+ =?us-ascii?Q?L91F9xBgniv4WKZ1yrU90+BMCk0GlkkTt1nlwgVI2G0YQQSX2Xjfo6BZ6t6d?=
+ =?us-ascii?Q?7a/gHgWWvp2qOUa3JEe9FBWQ2MJ7caiEXsAM0/ESD8SvVEpN8i5OSVLLPp6/?=
+ =?us-ascii?Q?vRPgGO+ENgtvrwNuayjdD6WVZpi9GlhB7qxXjV1qJFAqLXw3bVo9X25+bman?=
+ =?us-ascii?Q?+aJD9mmDUkXzifouDJlxhxEgzKoo2QWcEgMyLESFVrD0VJ9XA0qJRqoLHROP?=
+ =?us-ascii?Q?wcZ8j+fcyxlOuzUMeV1bMl2csrufdAzNY5NzqlV97H00GKOt5aI17GZp/V33?=
+ =?us-ascii?Q?B7j0uDR4scM7zu1KhtjY4VeSjFp7TFJNeipD+BIcAkEXXrt9vY9NO4Z4dgtf?=
+ =?us-ascii?Q?jevDctnyOnon+jV1kW5hl2F/uYFpMWe/MGuhpUg4MAHFJeApxe0wgLUkTpZv?=
+ =?us-ascii?Q?EMUjcQiwNyfZvXvsXEyhKQ6a3J1CkmgZOJlAMZeetU73QHwqLd4QWSorJFa1?=
+ =?us-ascii?Q?J/70Xlx+kDI1qAGbIWGR55yt3+ozeJNxphYlicntY4lMGDYefCn4bpGuBIIG?=
+ =?us-ascii?Q?zeXsLai3NJ9bY8eHnAMoAH9atEU6nfonJpoIP5biYU+CAbJbHxHIMk8urpFO?=
+ =?us-ascii?Q?uCmBfvSThLBmVJ55OcStKOdC4Y6pQBIWnAymKKBKVUqdfbfm9Ov2iP6bnhqx?=
+ =?us-ascii?Q?W/CuoNtYziK16d/0dTB7SS9qRWb7UrOzlgfTY8j8pA1eo25I1Vq3bOAzgFjz?=
+ =?us-ascii?Q?3aos9YP2t9UxE9pytkoRRIxg1lPOKW39x8LQwCLxPDTzU59HJEsSwSTQ7ZGj?=
+ =?us-ascii?Q?Vny0cI6/0VORWTNO873m2tYnpIEuyfLMAuSUkA9Ctry6KxqgBkmnkTgJKUfu?=
+ =?us-ascii?Q?xetk4BL2WiJFGGuIuqQvhedh8CGFOPvN6M0rWGlj40jidZY8wXtlEpVnlnys?=
+ =?us-ascii?Q?LorZn5+ovP3++fPhIDTZ0wFfLshdfvWjm5nj8GV8vUB0C5v+3ahWyOl22gML?=
+ =?us-ascii?Q?lF0GSmi6KXnzTjQs8mLueVat5vVqJKsRgZhqwVs4t1G9BPUF/BGV4QPwg3mq?=
+ =?us-ascii?Q?ow7xeHniCXbh4gBJugl2QoeUiyzkKr9KdTVJemVFRKgwDFS3odmWm/Zjh+Aj?=
+ =?us-ascii?Q?vIdMociffkJR7HsNnlkUaMw=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a98a480-0636-4391-198f-08d99f0aed01
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2021 20:45:52.5586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xgQ2RgNemIC6qyWkaTlFPNRyjKqfZEWSLeutXWl3leMvLmqp90oQjKtcMv94xsc0GAaH7f4EsHFyDyMmGY+adQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6942
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Fabio, Jesse, Rob, All,
-
-On 11/3/21 6:51 PM, Fabio Estevam wrote:
-> Hi Giulio,
+On 21-11-03 13:39:47, Alexander Stein wrote:
+> Only imx8m_clk_hw_composite_core needs to set this flag.
 > 
-> On Tue, Nov 2, 2021 at 8:30 PM Giulio Benetti
-> <giulio.benetti@benettiengineering.com> wrote:
-> 
->> If we add every SoC we will end up having a long list for every device
->> driver. At the moment it would be 7 parts:
->> 1) imxrt1020
->> 2) imxrt1024
->> .
->> .
->> .
->> 7) imxrt1170
->>
->> Is it ok anyway?
-> 
-> As this patch adds the support for imxrt1050, I would go with
-> "fsl,imxrt1050-usdhc" for now.
-> 
+> Fixes: a60fe746df94 ("clk: imx: Rework all imx_clk_hw_composite wrappers")
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Ok, then it's the same as pointed by Rob for lpuart[1]; @Jesse: we will 
-do the same for all peripherals(more or less) since it seems there are 
-little differences in the i.MXRT family.
+Looking at the commit a60fe746df94 it's obvious this change reverts the
+flags as they were before.
 
-[1]: 
-https://lore.kernel.org/lkml/D0A3E11F-FEDE-4B2D-90AB-63DFC245A935@benettiengineering.com/T/
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-Thanks a lot
-Best regards
--- 
-Giulio Benetti
-Benetti Engineering sas
+Stephen, will you apply this on clk/next or should I send a subsequent
+pull request ?
+
+> ---
+> This is from clk_summary on a imx8mq custom board where you can clearly
+> see the before the divider is limited to 8 (core composite)
+> 
+> before:
+> video_pll1_out        2        2        0  1031999997          0     0  50000         Y
+>    dsi_phy_ref        1        1        0   129000000          0     0  50000         Y
+>    lcdif_pixel        2        2        0   129000000          0     0  50000         Y
+> 
+> after:
+> video_pll1_out        2        2        0  1031999997          0     0  50000         Y
+>    dsi_phy_ref        1        1        0    24000000          0     0  50000         Y
+>    lcdif_pixel        2        2        0    68800000          0     0  50000         Y
+> 
+>  drivers/clk/imx/clk.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 819949973db1..7d220a01de1f 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -391,11 +391,11 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  
+>  #define imx8m_clk_hw_composite(name, parent_names, reg) \
+>  	_imx8m_clk_hw_composite(name, parent_names, reg, \
+> -			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+> +			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
+>  
+>  #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
+>  	_imx8m_clk_hw_composite(name, parent_names, reg, \
+> -			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
+> +			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
+>  
+>  #define imx8m_clk_hw_composite_bus(name, parent_names, reg)	\
+>  	_imx8m_clk_hw_composite(name, parent_names, reg, \
+> -- 
+> 2.25.1
+>
