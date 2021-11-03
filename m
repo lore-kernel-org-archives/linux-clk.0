@@ -2,81 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB398C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 00:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813EEC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 01:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C20FC610E7
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 00:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7AA61053
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 01:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230008AbhKCBCF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Nov 2021 21:02:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229778AbhKCBCF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Nov 2021 21:02:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8582F60FC4;
-        Wed,  3 Nov 2021 00:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635901169;
-        bh=EE/bOVd8vhFU3MMrom1BvHLf8zsd5QVrHEBuJ973vWY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qN+p7UfX2eCOwF2fgyolD0kfSXyQ+yp/cmA2hul9GmNjOsQg+dBTWlQ991uEr05j1
-         HWSTh9Zt5K8gYaO/pRAfzS3r+tIhqJuGOLBs/SgPy7r7VDZNELc8W0hz1zSsJyVv27
-         YZ09eCSEllp2jko99wvBD5pjlDjzhTAPxrwU9OGlwgGD7izH+lKO0DvA/O3K9RW6Dn
-         uJ38S/6cgHt/cKpN7Ht4v8GpuaFPAKq9mv8j1eE2+95ez+iwytT+nAbXdlkFL6bG+R
-         838AI+lHb88kZzkRI+qKdkR8FpXMb+2OEXGJXwvlrkrzFjNx8QSe98aEVPBSdUmpJg
-         oeQ8WaDHMJy3g==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2912588.a5UK1EFgBA@diego>
-References: <20211027132616.1039814-1-heiko@sntech.de> <5381956.U9aoDET0nm@diego> <163548978553.15791.2075313346592720953@swboyd.mtv.corp.google.com> <2912588.a5UK1EFgBA@diego>
-Subject: Re: [PATCH 0/2] clk: rockchip: cleanup errors in (module-)driver handling
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel@esmil.dk, linux-clk@vger.kernel.org, mturquette@baylibre.com
-To:     Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Date:   Tue, 02 Nov 2021 17:59:28 -0700
-Message-ID: <163590116816.2993099.4747068629839558630@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        id S233278AbhKCBXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Nov 2021 21:23:22 -0400
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:45903 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231495AbhKCBXR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Nov 2021 21:23:17 -0400
+Received: by mail-oi1-f174.google.com with SMTP id u2so1414700oiu.12;
+        Tue, 02 Nov 2021 18:20:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=7teodorTO0INls1DjJkT3je8WWhcqqBYQt3N+yxioBA=;
+        b=EDt6+4TgVBQ4iljRIN0mfmPqMrlbUCe825b30v6Dqwn9rmHUIcwV0s1fsgZ649p123
+         4IX/Ni44Evc3GVZn2WQ9ejn6OtirCBTVEWH17H6C2eMZk+54+vplfsXjpgH58Yh0yMvh
+         LazMIR8MR9qFpM8mtixarM8Ysp/vpwlqZi4J4nPEr4xxQJ2XrK479qSIZMPzg8GTmyhQ
+         AZ2m86o2XEUmsQj6nH81V6axECxTeEAVcML219kbkNoEmW8GHWV1K/+kWcP9UZjnb6vH
+         Lx0CSvVD0xrh1RRr6t5KhgDDp4ZubA2RBQHYMSN/S/o2aqK1zPjV0RweAa/0fa8msvZQ
+         YX/g==
+X-Gm-Message-State: AOAM531vn0Y3/nQZDxx5OWEyx3Pt2YUTVsuWdrIXQbADXR99fV8UrCQr
+        A3MAsPEevjtqPWZ8o8DaCw==
+X-Google-Smtp-Source: ABdhPJz+XiqXqa13HySwUt3ExapyVdCd7ov56jToPTJLR5fauSFywxLvyUKmpF4WrlpT7UIBwfhNfA==
+X-Received: by 2002:a05:6808:1408:: with SMTP id w8mr8047512oiv.128.1635902440976;
+        Tue, 02 Nov 2021 18:20:40 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id g21sm174822ooc.31.2021.11.02.18.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Nov 2021 18:20:39 -0700 (PDT)
+Received: (nullmailer pid 3880382 invoked by uid 1000);
+        Wed, 03 Nov 2021 01:20:37 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Anup Patel <anup.patel@wdc.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-serial@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-riscv@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        linux-gpio@vger.kernel.org, Fu Wei <tekkamanninja@gmail.com>
+In-Reply-To: <20211102161125.1144023-12-kernel@esmil.dk>
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-12-kernel@esmil.dk>
+Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
+Date:   Tue, 02 Nov 2021 20:20:37 -0500
+Message-Id: <1635902437.610819.3880381.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko St=C3=BCbner (2021-10-29 05:37:06)
-> Am Freitag, 29. Oktober 2021, 08:43:05 CEST schrieb Stephen Boyd:
-> > Quoting Heiko St=EF=BF=BDbner (2021-10-27 16:20:17)
-> > > Am Mittwoch, 27. Oktober 2021, 22:27:46 CEST schrieb Stephen Boyd:
-> > > > Quoting Heiko Stuebner (2021-10-27 06:26:14)
-> > > > > Recent conversions or inclusions of rk3399 and rk3568 as platform=
--drivers
-> > > > > and subsequently allowing them to be built as modules introduced =
-some
-> > > > > problems.
-> > > > >=20
-> > > > > These two patches try to correct them.
-> > > >=20
-> > > > By removing modular support? Ok.
-> > >=20
-> > > It looked like the easiest way to go for now.
-> > >=20
-> > > With all the clock-definitions as init-data still in both drivers, I =
-don't think
-> > > anybody ever tested running this as a real module.
-> > >=20
-> > > We could of course also remove all the __init + __initdata attributes=
-, but
-> > > still wouldn't know if it actually runs as a module, without someone
-> > > building a real test environment for it.
-> > >=20
-> > >=20
-> >=20
-> > Sure. Do I need to pick these up directly?
->=20
-> I don't have anything more for 5.16 and the 5.15 release should happen
-> on sunday, so yeah just pick them if you like - no need for doing a separ=
-ate
-> pull request.
->=20
+On Tue, 02 Nov 2021 17:11:20 +0100, Emil Renner Berthing wrote:
+> Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
+> StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> ---
+> 
+> @Linus: I'm really struggling to find a good way to describe how pin
+> muxing works on the JH7100. As you can see I've now resorted to
+> ascii-art to try to explain it, but please let me know if it's still
+> unclear.
+> 
+>  .../pinctrl/starfive,jh7100-pinctrl.yaml      | 307 ++++++++++++++++++
+>  1 file changed, 307 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> 
 
-Ok I picked them up and I'll send them off next week.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.example.dts:19:18: fatal error: dt-bindings/clock/starfive-jh7100.h: No such file or directory
+   19 |         #include <dt-bindings/clock/starfive-jh7100.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1441: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1549835
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
