@@ -2,172 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B265C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 18:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BB1C43217
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 19:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3526E61076
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 18:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD6161166
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 19:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbhKCS0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 14:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbhKCS0h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 14:26:37 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2ECC061714
-        for <linux-clk@vger.kernel.org>; Wed,  3 Nov 2021 11:24:00 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 5so12062922edw.7
-        for <linux-clk@vger.kernel.org>; Wed, 03 Nov 2021 11:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iyhrFP3gLyPaq9RQ/2gbasGr/ky7E127TZVkB2lEXhY=;
-        b=HEwjOj+uBRGhp/mN1q+IpCfrSznz4oNhaSdz+pnjrdm3/L0+eFK2uVsZYpQhtDP5SJ
-         kMy7ZujfPMfbYgU+a/hIV1vLb8pDnN6kEWNC98jM9fiHyojepYEj6iWHW2/EUimaR8YP
-         fHH0Wy9YVpYcHNAVcmOdzuZCppN6ihKZhGP86FaT+ZSQadZYmTu5dHrC1ueeEbY5P5Bh
-         ai8Mo+4rkkXV/6W38wmbaZKkZFOVzNHT0GJJg1Fnpm4fZ2vcyM3qGmg4O26QXBrf34qg
-         ZvyF3aNk6v8S5FABNJINR8aQbeTdTfMbFdcxC5rxV0e3Q1Vo1bCMogORjKSvldM1vhLb
-         hyew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iyhrFP3gLyPaq9RQ/2gbasGr/ky7E127TZVkB2lEXhY=;
-        b=RQsU1QKIYIrRKzSR+H2NnDJZ+0yRc/xnMGU8GxIK0nNtGVi2XPZ15RHQy/yS33GXrJ
-         X1ZmJIfUB5J0YUCVAgKRL7EcPq/UoytmQysi1jk710+d1qXx57HWznkH0p87YzWePwdw
-         dRGM1op0QkPF+Thsv8b+VYYbrq7bhHH+MY3NTN3bLDfBazHlM5ZfjUSOGsrA7Y7zTj9p
-         RTRpaXdzQfi7FqVRjq3bRY3YYVYYXb0fUzNAZsluiB4ad7xdr5yIrbsLKLaJTQWodeMM
-         fGguZjHlcSyBCve1S6ouLpM+iT+jF7qPge5vchtdMn1pU4xi3GmSkOHJ4iIPgKLXeCxj
-         N9Sw==
-X-Gm-Message-State: AOAM5302qIu8V6Q6O35RW4dQYXmdbL7ieqPqcKx6yq/j1VC9Tw4oesQK
-        9AlGI4O7OW5pu8+Jj0Tx8dxTmVt9OFZ2Y3DX4No=
-X-Google-Smtp-Source: ABdhPJzqbAd7nQLxn4HrKvFMuvTCV6aRG07ITt5zLoP3sk49otT77/Rq15PeKGdVxXGCsAt+uH4J9uFj0EBW0f21tS4=
-X-Received: by 2002:aa7:c553:: with SMTP id s19mr37235699edr.292.1635963838924;
- Wed, 03 Nov 2021 11:23:58 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
- <CAHCN7xJw02XxfWYt_DCKX0p02sPxTMgghYCLaVMJJ4mJXpsKMw@mail.gmail.com> <58a9758565f4cd6d7afd2c781fa51f2afe4d2ca9.camel@ew.tq-group.com>
-In-Reply-To: <58a9758565f4cd6d7afd2c781fa51f2afe4d2ca9.camel@ew.tq-group.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 3 Nov 2021 13:23:47 -0500
-Message-ID: <CAHCN7xKr8-GRW49n0V4GoJhFktnYxFikCDjALfuFkddJcoLpwg@mail.gmail.com>
-Subject: Re: (EXT) Re: [PATCH 1/1] clk: imx8m: Do not set IMX_COMPOSITE_CORE
- for non-regular composites
-To:     Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        id S230492AbhKCTNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 15:13:23 -0400
+Received: from smtpcmd0756.aruba.it ([62.149.156.56]:35157 "EHLO
+        smtpcmd0756.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230353AbhKCTNW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 15:13:22 -0400
+Received: from [192.168.153.129] ([146.241.216.221])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id iLehmQUVD4n4riLehmFuEJ; Wed, 03 Nov 2021 20:10:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1635966644; bh=0/31yxmO9a/oC0P8HSIAOi7F4D8XhUglntlI8cyweIg=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=JHt8XzSjYLi1rWyUyi2ykyjLwTWrBHdvKgItGaNHY9vgQDx4CIXQIBALXxgxMWPRM
+         oGtbjIF7McsY1X/k1uP2Acdeqw2BIas+OYupr81C2Dcca7XMa2Vp0Sp0FJTrwpcsSX
+         gFRfNMSc4dWtlo/n9+z2VXPjPRkCSC59N3R0G8+8JwmsfgviQHXTaF7kvRBJuWubei
+         hx+F0V/WiqGSUyEdMZ1mqAWtMsH7ZhpC7rP9NDKtvKOajBIDiWHDZJL7lyTxdyUfDg
+         n4sufjnQVMtJZjMUz4pfih0uAXT2MavO/91P0GGzNZ/d33kaReBHi5j6jAzzW4d6FZ
+         +cACDqCxUK6YQ==
+Subject: Re: [PATCH v2 11/13] mmc: sdhci-esdhc-imx: Add sdhc support for
+ i.MXRT series
+To:     Fabio Estevam <festevam@gmail.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     Jesse Taube <mr.bossman075@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         linux-clk <linux-clk@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Fabio Estevam <festevam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org
+References: <20211102225701.98944-1-Mr.Bossman075@gmail.com>
+ <20211102225701.98944-12-Mr.Bossman075@gmail.com>
+ <CAOMZO5AxMXxDkNDqGJDhtepqSUxGRCWO+L=c67O==4fx66M7XQ@mail.gmail.com>
+ <c1610093-95ae-68d3-57ae-93b1bc9715d7@gmail.com>
+ <5ebe48f5-7b9c-be99-d50c-65a056084b96@benettiengineering.com>
+ <CAOMZO5DHCYaxzSASKq6Bk8ALkiQeVjPOHOyk-pKYepJFJk6oFQ@mail.gmail.com>
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+Message-ID: <78cba8ec-72b0-89b8-d6e3-09ecea19ca7b@benettiengineering.com>
+Date:   Wed, 3 Nov 2021 20:10:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <CAOMZO5DHCYaxzSASKq6Bk8ALkiQeVjPOHOyk-pKYepJFJk6oFQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfF6/WWjL7PJeZTTfz9UiWozyugqncNHx9tTkfwkkeDbnl31INXrmdyJqCSDLjNgQNAiX+KEFaL/glNmQk4hLNz+e91vJZFmZ3NF5I4POniLdU+133jcp
+ XzXAVa/DOc7iJ7Umt9dQCiK70yv+dPSCm6DyvEHh3sPzUmjoblvN2rbQedLd/KRav15zduP3h7pa3TBT7GXnqFDja1xM10FZDIRnNyWpakY0+K6IpWr9CtRp
+ RbGD2bB0eWYl2pgQ6oK7rgqwkfBiXt6WBqx32YZalbWMiwFTgFZXYFX2bhI4iGNXtHbYX6M7a2P6awc9yt+RpNOC46ceA2OSF2GD2nNLCCA85tkJbOLpIuW+
+ 2qJ4tYuOUeifsY8fJ1OAWVgvpme4hq+Jn9KOnjeL9hMJkqLhKlMoFBWG4ZFAjx6P+T/WjW84919f5FBekomjfNlXPtI2bx8LowHcHVMxxtgWKrIy8/HCjQse
+ hMtGvQbiPuqHqMSGKMU0Q3721Q7hTJXFuObQDrhcRED7Kw6KTtE+Aczv5xnK+GZFMBgayrKg+SPoimBROvDme87huk7quiukeu+sSdj2ldoS4sJzD14db2fG
+ fUZGCElF1aWolDYn3zDRnuI9aNLyzS3y1bYpg51QmCdVikiJpSb9nuEDd32x1YmU5g6bp8wj6JvNaeEdLN+hZ8C98TiPIvfIAQlyjNyu4rl6AtSJkRa0xbkl
+ Oqwe2dhAY8fi/AdyGAOTkGT9EcPX6i/VjPEh3HGAOLI7lQRyq0Do61LOcfvBUvIvN4UdwfKqBwD9s9EPIMQEYbN3mTdK+1FUVYNZBAwyyypuvn/FOjtDyP2H
+ JMyFerHaBWkngEyHrqz25mjCOQMODTDTsNvvVliBq93lDPsgK3mJEl0Habe+NGvFA2p8EJtf0FwLgL0DRkJHzdhMV88ocFN+5a1+J0RrGZr4w1tABUN/5cm1
+ WudLVrZSILp4LPugdLhbdtWqzTVqLr7Z5bwjuyY0ykWP1Okhj8x8edAs9QHPcNhSXogZq6iiuo5o1gC6xSOGhsYvQsVxL3miS8s3fPyG/QjEvDLLBWrnRyF1
+ 0glwqRkuoJSHoK/FA3aAdIQ9Aeg2lDGEs3pbsWIwLor0bSAzNFFlUwrWmx7Z5ykPs8sZoNMAWTJRAnNPRjzG87S0dPFSboLuLSo=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 3, 2021 at 9:33 AM Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> Am Mittwoch, dem 03.11.2021 um 09:25 -0500 schrieb Adam Ford:
-> > On Wed, Nov 3, 2021 at 7:41 AM Alexander Stein
-> > <
-> > alexander.stein@ew.tq-group.com
-> > > wrote:
-> > > Only imx8m_clk_hw_composite_core needs to set this flag.
-> > >
+Hi Fabio, Jesse, Rob, All,
 
-Tested-by: Adam Ford <aford173@gmail.com> #imx8mm-beacon
+On 11/3/21 6:51 PM, Fabio Estevam wrote:
+> Hi Giulio,
+> 
+> On Tue, Nov 2, 2021 at 8:30 PM Giulio Benetti
+> <giulio.benetti@benettiengineering.com> wrote:
+> 
+>> If we add every SoC we will end up having a long list for every device
+>> driver. At the moment it would be 7 parts:
+>> 1) imxrt1020
+>> 2) imxrt1024
+>> .
+>> .
+>> .
+>> 7) imxrt1170
+>>
+>> Is it ok anyway?
+> 
+> As this patch adds the support for imxrt1050, I would go with
+> "fsl,imxrt1050-usdhc" for now.
+> 
 
-> > > Fixes: a60fe746df94 ("clk: imx: Rework all imx_clk_hw_composite
-> > > wrappers")
-> > > Signed-off-by: Alexander Stein <
-> > > alexander.stein@ew.tq-group.com
-> > > >
-> > > ---
-> > > This is from clk_summary on a imx8mq custom board where you can
-> > > clearly
-> > > see the before the divider is limited to 8 (core composite)
-> > >
-> > > before:
-> > > video_pll1_out        2        2        0  1031999997          0
-> > >   0  50000         Y
-> > >    dsi_phy_ref        1        1        0   129000000          0
-> > >   0  50000         Y
-> > >    lcdif_pixel        2        2        0   129000000          0
-> > >   0  50000         Y
-> > >
-> > > after:
-> > > video_pll1_out        2        2        0  1031999997          0
-> > >   0  50000         Y
-> > >    dsi_phy_ref        1        1        0    24000000          0
-> > >   0  50000         Y
-> > >    lcdif_pixel        2        2        0    68800000          0
-> > >   0  50000         Y
-> > >
+Ok, then it's the same as pointed by Rob for lpuart[1]; @Jesse: we will 
+do the same for all peripherals(more or less) since it seems there are 
+little differences in the i.MXRT family.
 
-This appears to fix a couple clocks on the imx8mm as well.
+[1]: 
+https://lore.kernel.org/lkml/D0A3E11F-FEDE-4B2D-90AB-63DFC245A935@benettiengineering.com/T/
 
-root@beacon-imx8mm-kit:~# diff before.txt after.txt
-225c225
-<                 dsi_phy_ref           0        0        0
-99000000          0     0  50000         N
----
->                 dsi_phy_ref           0        0        0    27000000          0     0  50000         N
-234,235c234,235
-<                 sai3                  0        0        0
-49152000          0     0  50000         N
-<                    sai3_root_clk       0        0        0
-49152000          0     0  50000         N
----
->                 sai3                  0        0        0    24576000          0     0  50000         N
->                    sai3_root_clk       0        0        0    24576000          0     0  50000         N
-
-At least for sai3 on the beacon board,  24576000 is the desired clock rate.
-
-> > >  drivers/clk/imx/clk.h | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> >
-> > I attempted to apply this against linux/master and it doesn't apply.
-> > What branch did you use?
->
-> The referenced commit a60fe746df94 is not in Linus' tree yet, but in
-> linux-next. My patch is based on linux-next/next-20211101. Sorry missed
-> to mention that.
->
-> Best regards,
-> Alexander
->
-> > > >
-> > > index 819949973db1..7d220a01de1f 100644
-> > > --- a/drivers/clk/imx/clk.h
-> > > +++ b/drivers/clk/imx/clk.h
-> > > @@ -391,11 +391,11 @@ struct clk_hw *__imx8m_clk_hw_composite(const
-> > > char *name,
-> > >
-> > >  #define imx8m_clk_hw_composite(name, parent_names, reg) \
-> > >         _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > > -                       IMX_COMPOSITE_CORE,
-> > > IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
-> > > +                       0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
-> > >
-> > >  #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
-> > >         _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > > -                       IMX_COMPOSITE_CORE,
-> > > IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-> > > +                       0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-> > >
-> > >  #define imx8m_clk_hw_composite_bus(name, parent_names, reg)    \
-> > >         _imx8m_clk_hw_composite(name, parent_names, reg, \
-> > > --
-> > > 2.25.1
-> > >
->
->
+Thanks a lot
+Best regards
+-- 
+Giulio Benetti
+Benetti Engineering sas
