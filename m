@@ -2,122 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAB9C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C578C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 13:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97B4F611AD
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 12:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E75F60F39
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Nov 2021 13:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232065AbhKCMmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 08:42:35 -0400
-Received: from mx1.tq-group.com ([93.104.207.81]:39256 "EHLO mx1.tq-group.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231958AbhKCMmd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Nov 2021 08:42:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1635943196; x=1667479196;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=frB6WasuaNmxKic3MwCdWdYJsEoS4X1xN1rRTbJN3fs=;
-  b=KRDkrDW+e/KR5iZYp3QhwmPqfr3x/0WaesklEioBngOrGhVCjocrfnHr
-   XkINb7KNHNTnKQNi0Ro18MwTNg+mwqbNQVt995R5nxQ6iyDOA3EAS+Au1
-   3XqAAVYMJUJHdqOAjYuvKbSr/+Bt8BBlUsig5pmtkzdGiFwIoM5PYto1Q
-   VIJxECLCMrnKtAg362vTcpAQcp+H5aCL5QD8gv+zmR3ALSy4XhFMDgYLK
-   yi3FDDP6IA5jPs4bC/ai8kz8GXiwFloCINaHUFOqWjm5DL0uoq+3lrl8m
-   G0NKM6Xo0tbqkcvhFBprvmvK+fpmaST5+Qno3fH87dCXsxA7knK3Ewbk+
-   w==;
-X-IronPort-AV: E=Sophos;i="5.87,205,1631570400"; 
-   d="scan'208";a="20324534"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 03 Nov 2021 13:39:55 +0100
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Wed, 03 Nov 2021 13:39:55 +0100
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Wed, 03 Nov 2021 13:39:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1635943195; x=1667479195;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=frB6WasuaNmxKic3MwCdWdYJsEoS4X1xN1rRTbJN3fs=;
-  b=K6j5LM/ztRAzszKxQGJgTXf/WrqfRk+iRYC6Xs/mKyh4A8+5If4VopxU
-   EGVko7zo+RMDaH7lSSkXLMRudnuT271W9iblDwc9Qx3cSQnM7qH7sNYqx
-   TT3fYMf5OYi33j+TIf8AHSHl43JNmYSWiEPI6RVn7Z15E+vtFCf4p2ubX
-   7PalD/nMCSnbvJi9tvBRgldRX2gHWewoHJ5BOve8905KVX5hrH7R9oqvK
-   ntnpI2mziT8DuF+VgRpYgvnEuiRfEc0obtz97Dm19WkwbYTaFLeBvNkyt
-   2uxdSg5XyoSlkys3NUlHuaT0eKk5e7oMn+yapvt8uvXMuvT+vDmiYPsDX
-   A==;
-X-IronPort-AV: E=Sophos;i="5.87,205,1631570400"; 
-   d="scan'208";a="20324533"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 03 Nov 2021 13:39:55 +0100
-Received: from steina-w.tq-net.de (unknown [10.123.49.12])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id A2818280065;
-        Wed,  3 Nov 2021 13:39:55 +0100 (CET)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH 1/1] clk: imx8m: Do not set IMX_COMPOSITE_CORE for non-regular composites
-Date:   Wed,  3 Nov 2021 13:39:47 +0100
-Message-Id: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.25.1
+        id S231178AbhKCNct (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 09:32:49 -0400
+Received: from mail-pl1-f170.google.com ([209.85.214.170]:39819 "EHLO
+        mail-pl1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230152AbhKCNct (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 09:32:49 -0400
+Received: by mail-pl1-f170.google.com with SMTP id t21so2476608plr.6;
+        Wed, 03 Nov 2021 06:30:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zTMij4riOHLD0cKrMBvNEsbDWm7ejt3VqpUfGJxdY7w=;
+        b=w30Fme3CiHvQKDNNkdMfjSHphx+3+lFFr1hGo321h/V5Bds7z0YYBldKhx0jwNySYP
+         +GDvLyZsJjFpGGaMXdpqOA5/9lpeib/OZmtoQRiLMKGW/D6uVgVp/6wE1k/d2DBGH5Eq
+         Mjwof52X93V2oTu1sosUUFrM3pXcisZaKQewZG87h/9Z+YW9BruOTegvLmlpLi6gwCcq
+         VEECimDokKnnvxmnY4VqSw48eBPIlSV/09PDUpgTCkk9HgrcnzyXFvfJsVIioyDJtdKk
+         jflWWPBdEaruc1AM51uqgWdLe7qpyNlxFlMMpV4K/a275d34BdwCPMS1KyhRz99eEKH1
+         EKvw==
+X-Gm-Message-State: AOAM531fDikhil/13SuoviOWCDCPWrHTq5AoJzxuVQuUtgAeq7fMJbSL
+        uq9klRlng0/wSpXs5/qJwuNQrA6SKsKCVUxBfQQ=
+X-Google-Smtp-Source: ABdhPJwNq6Q76J7qXE/0eAQN5HimezZY3rwDPmoANzNGDoGAXLzuRGbdMKq3Oek9Nc0X4IigXZvlpuqyhJ7hmGVXXQg=
+X-Received: by 2002:a17:902:a60f:b0:141:8996:3fe with SMTP id
+ u15-20020a170902a60f00b00141899603femr37563503plq.71.1635946212677; Wed, 03
+ Nov 2021 06:30:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-12-kernel@esmil.dk>
+ <1635902437.610819.3880381.nullmailer@robh.at.kernel.org>
+In-Reply-To: <1635902437.610819.3880381.nullmailer@robh.at.kernel.org>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Wed, 3 Nov 2021 14:30:01 +0100
+Message-ID: <CANBLGcwTB27kSRC7HCAJvrk7T0zyj1eM1i4YHj8Prar6JLqTYA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Anup Patel <anup.patel@wdc.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Atish Patra <atish.patra@wdc.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Fu Wei <tekkamanninja@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Only imx8m_clk_hw_composite_core needs to set this flag.
+On Wed, 3 Nov 2021 at 02:20, Rob Herring <robh@kernel.org> wrote:
+> On Tue, 02 Nov 2021 17:11:20 +0100, Emil Renner Berthing wrote:
+> > Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
+> > StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+> >
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > ---
+> >
+> > @Linus: I'm really struggling to find a good way to describe how pin
+> > muxing works on the JH7100. As you can see I've now resorted to
+> > ascii-art to try to explain it, but please let me know if it's still
+> > unclear.
+> >
+> >  .../pinctrl/starfive,jh7100-pinctrl.yaml      | 307 ++++++++++++++++++
+> >  1 file changed, 307 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> >
+>
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.example.dts:19:18: fatal error: dt-bindings/clock/starfive-jh7100.h: No such file or directory
+>    19 |         #include <dt-bindings/clock/starfive-jh7100.h>
+>       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[1]: *** [scripts/Makefile.lib:385: Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.example.dt.yaml] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:1441: dt_binding_check] Error 2
+>
+> doc reference errors (make refcheckdocs):
+>
+> See https://patchwork.ozlabs.org/patch/1549835
 
-Fixes: a60fe746df94 ("clk: imx: Rework all imx_clk_hw_composite wrappers")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-This is from clk_summary on a imx8mq custom board where you can clearly
-see the before the divider is limited to 8 (core composite)
+Hi Rob.
 
-before:
-video_pll1_out        2        2        0  1031999997          0     0  50000         Y
-   dsi_phy_ref        1        1        0   129000000          0     0  50000         Y
-   lcdif_pixel        2        2        0   129000000          0     0  50000         Y
+It seems like your bot didn't add the clock header because the patch
+already has an Acked-by from you.
 
-after:
-video_pll1_out        2        2        0  1031999997          0     0  50000         Y
-   dsi_phy_ref        1        1        0    24000000          0     0  50000         Y
-   lcdif_pixel        2        2        0    68800000          0     0  50000         Y
-
- drivers/clk/imx/clk.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 819949973db1..7d220a01de1f 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -391,11 +391,11 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 
- #define imx8m_clk_hw_composite(name, parent_names, reg) \
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
--			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
-+			0, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
- 
- #define imx8m_clk_hw_composite_critical(name, parent_names, reg) \
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
--			IMX_COMPOSITE_CORE, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-+			0, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
- 
- #define imx8m_clk_hw_composite_bus(name, parent_names, reg)	\
- 	_imx8m_clk_hw_composite(name, parent_names, reg, \
--- 
-2.25.1
-
+/Emil
