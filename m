@@ -2,90 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BA7C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC13CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 981D5611CE
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34F6611CB
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbhKDIZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Nov 2021 04:25:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230084AbhKDIZR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Nov 2021 04:25:17 -0400
-Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A72C610D0;
-        Thu,  4 Nov 2021 08:22:40 +0000 (UTC)
-Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1miY17-003QcM-QF; Thu, 04 Nov 2021 08:22:37 +0000
-Date:   Thu, 04 Nov 2021 08:22:37 +0000
-Message-ID: <8735oc9voy.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org,
-        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, wells.lu@sunplus.com
-Subject: Re: [PATCH v4 00/10] Add Sunplus SP7021 SoC Support
-In-Reply-To: <cover.1635993377.git.qinjian@cqplus1.com>
+        id S230335AbhKDIjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Nov 2021 04:39:24 -0400
+Received: from [113.204.237.245] ([113.204.237.245]:57414 "EHLO
+        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230084AbhKDIjX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Nov 2021 04:39:23 -0400
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by cqmailgates with MailGates ESMTP Server V5.0(16727:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 04 Nov 2021 16:35:07 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 4 Nov 2021 16:35:00 +0800
+Received: from CQEXMAIL01.cqplus1.com ([fe80::f436:deb3:dd20:6b5]) by
+ CQEXMAIL01.cqplus1.com ([fe80::f436:deb3:dd20:6b5%4]) with mapi id
+ 15.01.2176.009; Thu, 4 Nov 2021 16:35:00 +0800
+From:   =?gb2312?B?cWluamlhblvx+72hXQ==?= <qinjian@cqplus1.com>
+To:     Marc Zyngier <maz@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        =?gb2312?B?V2VsbHMgTHUghc63vPJ2?= <wells.lu@sunplus.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIHY0IDAwLzEwXSBBZGQgU3VucGx1cyBTUDcwMjEgU29D?=
+ =?gb2312?Q?_Support?=
+Thread-Topic: [PATCH v4 00/10] Add Sunplus SP7021 SoC Support
+Thread-Index: AQHX0SjJ2ipTnH6SmUuBHDnmt6AZUKvygdKAgACJW1A=
+Date:   Thu, 4 Nov 2021 08:35:00 +0000
+Message-ID: <98b3e76029bb4d7096de462c46bca08d@cqplus1.com>
 References: <cover.1635496594.git.qinjian@cqplus1.com>
-        <cover.1635993377.git.qinjian@cqplus1.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: qinjian@cqplus1.com, robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, wells.lu@sunplus.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        <cover.1635993377.git.qinjian@cqplus1.com> <8735oc9voy.wl-maz@kernel.org>
+In-Reply-To: <8735oc9voy.wl-maz@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Qin,
-
-On Thu, 04 Nov 2021 02:56:57 +0000,
-Qin Jian <qinjian@cqplus1.com> wrote:
-> 
-> This patch series add Sunplus SP7021 SoC support.
-> 
-> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
-> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
-> single chip. It is designed for industrial control.
-> 
-> SP7021 consists of two chips (dies) in a package. One is called C-chip
-> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
-> process (22 nm) for high performance computing. The other is called P-
-> chip (peripheral chip). It has many peripherals and an ARM A926 added
-> especially for real-time control. P-chip is made for customers. It adopts
-> low-level process (ex: 0.11 um) to reduce cost.
-
-That's the 3rd version of this series since Friday, two of them during
-the merge window. All you are achieving is to actually *delay* the
-review process (at this rate, I'll probably wait until v11 before I
-take another look at it).
-
-Documentation/process/submitting-patches.rst states it clearly:
-
-<quote>
-Wait for a minimum of one week before resubmitting
-</quote>
-
-So please leave people the time to actually do a good review job, and
-take the opportunity to review your own patches before posting them
-again.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+TWFyYywNCg0KR290IGl0LiBUaGFuayB5b3UgZm9yIHJlbWluZGluZyBtZS4NCkknbSBzb3JyeSBm
+b3IgdGhlIHByZXZpb3VzIG1pc3Rha2UuDQoNCg0KPiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4gt6K8
+/sjLOiBNYXJjIFp5bmdpZXIgPG1hekBrZXJuZWwub3JnPg0KPiC3osvNyrG85DogMjAyMcTqMTHU
+wjTI1SAxNjoyMw0KPiDK1bz+yMs6IHFpbmppYW5b8fu9oV0gPHFpbmppYW5AY3FwbHVzMS5jb20+
+DQo+ILOty806IHJvYmgrZHRAa2VybmVsLm9yZzsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNi
+b3lkQGtlcm5lbC5vcmc7IHAuemFiZWxAcGVuZ3V0cm9uaXguZGU7IGxpbnV4QGFybWxpbnV4Lm9y
+Zy51azsNCj4gYnJvb25pZUBrZXJuZWwub3JnOyBhcm5kQGFybmRiLmRlOyBsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBX
+ZWxscyBMdSCFzre88nYgPHdlbGxzLmx1QHN1bnBsdXMuY29tPg0KPiDW98ziOiBSZTogW1BBVENI
+IHY0IDAwLzEwXSBBZGQgU3VucGx1cyBTUDcwMjEgU29DIFN1cHBvcnQNCj4gDQo+IFFpbiwNCj4g
+DQo+IE9uIFRodSwgMDQgTm92IDIwMjEgMDI6NTY6NTcgKzAwMDAsDQo+IFFpbiBKaWFuIDxxaW5q
+aWFuQGNxcGx1czEuY29tPiB3cm90ZToNCj4gPg0KPiA+IFRoaXMgcGF0Y2ggc2VyaWVzIGFkZCBT
+dW5wbHVzIFNQNzAyMSBTb0Mgc3VwcG9ydC4NCj4gPg0KPiA+IFN1bnBsdXMgU1A3MDIxIGlzIGFu
+IEFSTSBDb3J0ZXggQTcgKDQgY29yZXMpIGJhc2VkIFNvQy4gSXQgaW50ZWdyYXRlcyBtYW55DQo+
+ID4gcGVyaXBoZXJhbHMgKGV4OiBVQVJULCBJMkMsIFNQSSwgU0RJTywgZU1NQywgVVNCLCBTRCBj
+YXJkIGFuZCBldGMuKSBpbnRvIGENCj4gPiBzaW5nbGUgY2hpcC4gSXQgaXMgZGVzaWduZWQgZm9y
+IGluZHVzdHJpYWwgY29udHJvbC4NCj4gPg0KPiA+IFNQNzAyMSBjb25zaXN0cyBvZiB0d28gY2hp
+cHMgKGRpZXMpIGluIGEgcGFja2FnZS4gT25lIGlzIGNhbGxlZCBDLWNoaXANCj4gPiAoY29tcHV0
+aW5nIGNoaXApLiBJdCBpcyBhIDQtY29yZSBBUk0gQ29ydGV4IEE3IENQVS4gSXQgYWRvcHRzIGhp
+Z2gtbGV2ZWwNCj4gPiBwcm9jZXNzICgyMiBubSkgZm9yIGhpZ2ggcGVyZm9ybWFuY2UgY29tcHV0
+aW5nLiBUaGUgb3RoZXIgaXMgY2FsbGVkIFAtDQo+ID4gY2hpcCAocGVyaXBoZXJhbCBjaGlwKS4g
+SXQgaGFzIG1hbnkgcGVyaXBoZXJhbHMgYW5kIGFuIEFSTSBBOTI2IGFkZGVkDQo+ID4gZXNwZWNp
+YWxseSBmb3IgcmVhbC10aW1lIGNvbnRyb2wuIFAtY2hpcCBpcyBtYWRlIGZvciBjdXN0b21lcnMu
+IEl0IGFkb3B0cw0KPiA+IGxvdy1sZXZlbCBwcm9jZXNzIChleDogMC4xMSB1bSkgdG8gcmVkdWNl
+IGNvc3QuDQo+IA0KPiBUaGF0J3MgdGhlIDNyZCB2ZXJzaW9uIG9mIHRoaXMgc2VyaWVzIHNpbmNl
+IEZyaWRheSwgdHdvIG9mIHRoZW0gZHVyaW5nDQo+IHRoZSBtZXJnZSB3aW5kb3cuIEFsbCB5b3Ug
+YXJlIGFjaGlldmluZyBpcyB0byBhY3R1YWxseSAqZGVsYXkqIHRoZQ0KPiByZXZpZXcgcHJvY2Vz
+cyAoYXQgdGhpcyByYXRlLCBJJ2xsIHByb2JhYmx5IHdhaXQgdW50aWwgdjExIGJlZm9yZSBJDQo+
+IHRha2UgYW5vdGhlciBsb29rIGF0IGl0KS4NCj4gDQo+IERvY3VtZW50YXRpb24vcHJvY2Vzcy9z
+dWJtaXR0aW5nLXBhdGNoZXMucnN0IHN0YXRlcyBpdCBjbGVhcmx5Og0KPiANCj4gPHF1b3RlPg0K
+PiBXYWl0IGZvciBhIG1pbmltdW0gb2Ygb25lIHdlZWsgYmVmb3JlIHJlc3VibWl0dGluZw0KPiA8
+L3F1b3RlPg0KPiANCj4gU28gcGxlYXNlIGxlYXZlIHBlb3BsZSB0aGUgdGltZSB0byBhY3R1YWxs
+eSBkbyBhIGdvb2QgcmV2aWV3IGpvYiwgYW5kDQo+IHRha2UgdGhlIG9wcG9ydHVuaXR5IHRvIHJl
+dmlldyB5b3VyIG93biBwYXRjaGVzIGJlZm9yZSBwb3N0aW5nIHRoZW0NCj4gYWdhaW4uDQo+IA0K
+PiBUaGFua3MsDQo+IA0KPiAJTS4NCj4gDQo+IC0tDQo+IFdpdGhvdXQgZGV2aWF0aW9uIGZyb20g
+dGhlIG5vcm0sIHByb2dyZXNzIGlzIG5vdCBwb3NzaWJsZS4NCg==
