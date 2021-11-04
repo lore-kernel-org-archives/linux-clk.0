@@ -2,161 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AB5C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 12:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF1BC43217
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 16:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4BA261215
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 12:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1184960D43
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 16:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbhKDMSf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Nov 2021 08:18:35 -0400
-Received: from mail-pg1-f176.google.com ([209.85.215.176]:36458 "EHLO
-        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231312AbhKDMSf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Nov 2021 08:18:35 -0400
-Received: by mail-pg1-f176.google.com with SMTP id 75so5255429pga.3;
-        Thu, 04 Nov 2021 05:15:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BbQxkXh1kRX5txg91IzBReR7Etxrh9MaaIL5VubC4mA=;
-        b=HwaDncFOGCkngqsx9mhphaCX9kCINHoPVkIt6zwRsCF/XLC2Stu1pMzkcI+laGuggx
-         WtNWzQUf2HtiwZIfpaYVa9QyDVnnPIR+Ky9MkxgDEmCIp82Kyo36261eV3WsG8iMsCKy
-         5TCL0XWo9yi+TVJKKbpqstz22CmCChIBximeJSIGh5vJ2FMkGGBINKHcxELqzVxdCTxI
-         zEKb9sIhDT5YogiZZx/SvRUSADQKYBn/5ScV7KhC7wTRifgwlxz9f4vpPGaCMew6adsC
-         ZpyYu7d+Op6oDiH2gPau7GmWP6DWUOtIC48kROCfF0V+ItWTtAmTfdPWBEK3Ime5eJWY
-         J06w==
-X-Gm-Message-State: AOAM531W3zX6vHHFbMupsQ67P1Kpvc/B/GyqSYBooLA22s889KpCBeeX
-        EG8YRrIrekcSgxqj3hSYml4CvAHE1xoEDZYPKWM=
-X-Google-Smtp-Source: ABdhPJyU1eOL96q9aeg27rCGRB1DzlV/CdmoIQADJWmiDt4mzuQNX51WDsHXaA6t5irbMhhl52dNgltzzdGXVDztegg=
-X-Received: by 2002:a05:6a00:1354:b0:494:5227:42c7 with SMTP id
- k20-20020a056a00135400b00494522742c7mr5310054pfu.53.1636028156990; Thu, 04
- Nov 2021 05:15:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-10-kernel@esmil.dk>
- <CAHp75Ve-P8DR00mtRP_NkrXgB4nsZ+qBkgBen94iTcPqxQYUOg@mail.gmail.com>
- <CANBLGcyb=TAP0h2WuxBAjRvpN9n7Dt1Hvh5yE8NMOwm3ixZWuA@mail.gmail.com>
- <CAHp75Vcg3En=xH+kz0GgAMGUoo5FABo2HwGoHd=7QgGVrYkYXg@mail.gmail.com> <CANBLGczrGwexRGvGxa9C+yzaSHZF_d5+AaebeLUX5BXFxipr=A@mail.gmail.com>
-In-Reply-To: <CANBLGczrGwexRGvGxa9C+yzaSHZF_d5+AaebeLUX5BXFxipr=A@mail.gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-Date:   Thu, 4 Nov 2021 13:15:46 +0100
-Message-ID: <CANBLGcztx0DL=U06QPJ5XT4ra=kx2QAZxxP=0bjfgQ0skhv3Bg@mail.gmail.com>
-Subject: Re: [PATCH v3 09/16] reset: starfive-jh7100: Add StarFive JH7100
- reset driver
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Yury Norov <yury.norov@gmail.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S231666AbhKDQLp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Nov 2021 12:11:45 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:34037 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231639AbhKDQLo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Nov 2021 12:11:44 -0400
+X-IronPort-AV: E=Sophos;i="5.87,209,1631545200"; 
+   d="scan'208";a="99217950"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2021 01:09:06 +0900
+Received: from localhost.localdomain (unknown [10.226.92.57])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3DD94017892;
+        Fri,  5 Nov 2021 01:09:03 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC 1/4] clk: renesas: rzg2l: Add support for watchdog reset selection
+Date:   Thu,  4 Nov 2021 16:08:55 +0000
+Message-Id: <20211104160858.15550-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20211104160858.15550-1-biju.das.jz@bp.renesas.com>
+References: <20211104160858.15550-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2 Nov 2021 at 22:17, Emil Renner Berthing <kernel@esmil.dk> wrote:
-> On Tue, 2 Nov 2021 at 21:14, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Nov 2, 2021 at 9:59 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> > > On Tue, 2 Nov 2021 at 20:43, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > > > On Tue, Nov 2, 2021 at 6:50 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> >
-> > ...
-> >
-> > > > > +/*
-> > > > > + * the registers work like a 32bit bitmap, so writing a 1 to the m'th bit of
-> > > > > + * the n'th ASSERT register asserts line 32n + m, and writing a 0 deasserts the
-> > > > > + * same line.
-> > > > > + * most reset lines have their status inverted so a 0 in the STATUS register
-> > > > > + * means the line is asserted and a 1 means it's deasserted. a few lines don't
-> > > > > + * though, so store the expected value of the status registers when all lines
-> > > > > + * are asserted.
-> > > > > + */
-> > > >
-> > > > Besides missing capitalization,
-> > >
-> > > I'm confused. it was you who wanted all comments to capitalized the same..
-> >
-> > Yes and there are two types of the comments, one-liners and
-> > multi-line. In multi-line you usually use proper English grammar,
-> > where capitalization means what it means. For the one-liners just
-> > choose either small letters or capital letters to start them with.
->
-> That sounds reasonable, it was just that you complained about
-> inconsistent comments in the pinctrl driver that follows the above.
->
-> > > if it sounds like bitmap, use bitmap.
-> > > > I have checked DT definitions and it seems you don't even need the
-> > > > BIT_MASK() macro,
-> > > >
-> > > > > +static const u32 jh7100_reset_asserted[4] = {
-> > > > > +       /* STATUS0 register */
-> > > > > +       BIT_MASK32(JH7100_RST_U74) |
-> > > > > +       BIT_MASK32(JH7100_RST_VP6_DRESET) |
-> > > > > +       BIT_MASK32(JH7100_RST_VP6_BRESET),
-> > > > > +       /* STATUS1 register */
-> > > > > +       BIT_MASK32(JH7100_RST_HIFI4_DRESET) |
-> > > > > +       BIT_MASK32(JH7100_RST_HIFI4_BRESET),
-> > > > > +       /* STATUS2 register */
-> > > > > +       BIT_MASK32(JH7100_RST_E24),
-> > > > > +       /* STATUS3 register */
-> > > > > +       0,
-> > > > > +};
-> > > >
-> > > > Yury, do we have any clever (clean) way to initialize a bitmap with
-> > > > particular bits so that it will be a constant from the beginning? If
-> > > > no, any suggestion what we can provide to such users?
-> > >
-> > > The problem is, that even if we could initialize this without the
-> > > monstrosity in our last conversation a 64bit bitmap would still
-> > > produce worse code. As it is now it's simply a 32bit load and mask
-> > > with index and mask already calculated for the registers. In the
-> > > status callback the mask can even be folded into the register read
-> > > mask. With a 64bit bitmap you'd need to calculate new 64bit index and
-> > > masks, and then conditionally shift the bits into position.
-> >
-> > Why? You may use 8 byte IO (writeq() / readq() or their relaxed versions), no?
-> >
-> > > If this reflection of the 32bit registers bothers you that much
-> >
-> > What bothers me is hidden endianess issues (yeah, here it might be
-> > theoretical, but consider that somebody will look at your code and use
-> > it as the best example ever).
->
-> Wouldn't endian issues be a reason to make sure we read 32bit
-> registers with 32bit reads? Or do you expect a hypothetical big-endian
-> StarFive SoC to also change the order of the registers?
+This patch adds support for watchdog reset selection.
 
-Hi Andy.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 22 ++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c     |  6 ++++++
+ drivers/clk/renesas/rzg2l-cpg.h     | 14 ++++++++++++++
+ 3 files changed, 42 insertions(+)
 
-I'd really like to understand your reasoning here. As far as I can
-tell reading 2 adjacent 32bit registers with a 64bit read as you're
-proposing is exactly what would cause endian issues. Eg. on little
-endian you'd get reg0 | reg1 << 32 whereas on big-endian you'd get
-reg0 << 32 | reg1.
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 47c16265fca9..8618b0f19d7a 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -8,6 +8,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+ #include <dt-bindings/clock/r9a07g044-cpg.h>
+@@ -271,7 +272,28 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
++#define CPG_WDTRST_SEL			0xb14
++#define CPG_WDTRST_SEL_WDTRSTSEL(n)	BIT(n)
++
++#define CPG_WDTRST_SEL_WDTRST	(CPG_WDTRST_SEL_WDTRSTSEL(0) | \
++				 CPG_WDTRST_SEL_WDTRSTSEL(1) | \
++				 CPG_WDTRST_SEL_WDTRSTSEL(2))
++
++int r9a07g044_wdt_rst_setect(void __iomem *base)
++{
++	writel((CPG_WDTRST_SEL_WDTRST << 16) | CPG_WDTRST_SEL_WDTRST,
++	       base + CPG_WDTRST_SEL);
++
++	return 0;
++}
++
++static const struct rzg2l_cpg_soc_operations r9a07g044_cpg_ops = {
++	.wdt_rst_setect = r9a07g044_wdt_rst_setect,
++};
++
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
++	.ops = &r9a07g044_cpg_ops,
++
+ 	/* Core Clocks */
+ 	.core_clks = r9a07g044_core_clks,
+ 	.num_core_clks = ARRAY_SIZE(r9a07g044_core_clks),
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index a77cb47b75e7..f9dfee14a33e 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -932,6 +932,12 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	if (info->ops && info->ops->wdt_rst_setect) {
++		error = info->ops->wdt_rst_setect(priv->base);
++		if (error)
++			return error;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 484c7cee2629..e1b1497002ed 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -156,9 +156,20 @@ struct rzg2l_reset {
+ 		.bit = (_bit) \
+ 	}
+ 
++/**
++ * struct rzg2l_cpg_soc_operations - SoC-specific CPG Operations
++ *
++ * @wdt_rst_setect: WDT reset selection
++ */
++struct rzg2l_cpg_soc_operations {
++	int (*wdt_rst_setect)(void __iomem *base); /* Platform specific WDT reset selection */
++};
++
+ /**
+  * struct rzg2l_cpg_info - SoC-specific CPG Description
+  *
++ * @ops: SoC-specific CPG Operations
++ *
+  * @core_clks: Array of Core Clock definitions
+  * @num_core_clks: Number of entries in core_clks[]
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+@@ -176,6 +187,9 @@ struct rzg2l_reset {
+  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+  */
+ struct rzg2l_cpg_info {
++	/* CPG Operations */
++	const struct rzg2l_cpg_soc_operations *ops;
++
+ 	/* Core Clocks */
+ 	const struct cpg_core_clk *core_clks;
+ 	unsigned int num_core_clks;
+-- 
+2.17.1
 
-/Emil
