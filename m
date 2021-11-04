@@ -2,138 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03478C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 01:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC18C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 01:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D988461106
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 01:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1A9B611CA
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 01:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbhKDBIL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Nov 2021 21:08:11 -0400
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:38437 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbhKDBIK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 21:08:10 -0400
-Received: by mail-oi1-f182.google.com with SMTP id d12so3132664oij.5;
-        Wed, 03 Nov 2021 18:05:33 -0700 (PDT)
+        id S230233AbhKDBOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Nov 2021 21:14:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34858 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231489AbhKDBOg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Nov 2021 21:14:36 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C93FC06127A
+        for <linux-clk@vger.kernel.org>; Wed,  3 Nov 2021 18:11:58 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id j2so8744984lfg.3
+        for <linux-clk@vger.kernel.org>; Wed, 03 Nov 2021 18:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/aMvXOBVuDxAsSJ0JiTU0X5S+yUEp0VuD/6iPiLDe4w=;
+        b=Re/Kn8ZRQceQD3lgrGLsdcnRKNWGejLBWLOVh2KpBESephsqO+IJvUNZAoITWmxOgc
+         /bChYz7ljvGzO+x+RuobAdBSQgEOC1GSyT2yeO4YuIma3GjXanDFBEPiIwRRdxDWOqLO
+         eDo+3YFXCbGGLMsBAYXjiAQpkswYp2RfXBiUo6H73foMbgnn+7vvw2BHoD9oqlrUJ9oi
+         6xLvyLlah6leLj40VZbf6Ly04PbSrXmVYwLr2JF6K1co9c2//E1VrOuL4R+KM8aH2tT2
+         s84ARyMPZNlfZAct4r9qudwv6oxEhuiZqGmUMwVWxUB5Qv72S1oOeZewOfkVhX4720b6
+         E7CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mGavWcXNjdvsaFGjH3yLVdsxiECxJZKPSKveuDvmokQ=;
-        b=Nub1mM4IxnZs0x6UJyUMt6AXK0V9WY5zfpBpVFCirPnuiSzl2RprAOlgDd56c3JSca
-         efT7Jz2oUSwa7sBxBDPCRkQCSWsi/LBeF1pkAhBSvKA9+1SlV3jAO33LHHMg+p6vx4DP
-         cmCMahLIZCE0pNPmqpiRBBQOEZdKwvksMVQXv191H6xl2r02zOzuGV58XAxQFLcwb/VL
-         Cs2gUrJ6ADRGW7HbmH3HAdJYkeZOvl7EAwen0tvP5VHrkB/dnYdOJOeewrY3ZCHF0AuH
-         mO8221N5GiyYxf6EkRWB6nTDLtWe7Qab8dR8Ew6aXKybPJvXoR4zsMWZCcG+0BGp+6CO
-         V37g==
-X-Gm-Message-State: AOAM530cM9E/pGAf+48GzU+DsQ5MojUBTUWu4BPQgj9kKTJiiDL4pxU3
-        ns9jcxcnJ8IwQG1T3q3FFA==
-X-Google-Smtp-Source: ABdhPJwcF6k+uaPsW687lTM1lrQbGJ72CwyhOXZbDNl0jW49yDGyFkCfZIMrsqrxXE6V9BAJwSV6Qw==
-X-Received: by 2002:a54:4e97:: with SMTP id c23mr13542906oiy.153.1635987933167;
-        Wed, 03 Nov 2021 18:05:33 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id z12sm247106oid.45.2021.11.03.18.05.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/aMvXOBVuDxAsSJ0JiTU0X5S+yUEp0VuD/6iPiLDe4w=;
+        b=IscMGZsKIrXjWr7kxMCMyibQxmhDwHsPca7IUgCK9zYuvihWDC41DSuk09amTdW2KM
+         jihFdlKReR4vhoL/mdqvbhQU2Jo99Tbz2KXYKeWksJ4uVdDYLa/27yEdRucY6NF5mR89
+         WsHJDMvM1JG4+5hLBwywdQsCvc1pqQNcWII+3azcmOU3escAW8/MZiEKCcu9H+K4u+mV
+         tLwyyEYFSD394TTzm1uE4YzYQ2xTSWskDQ+YeBTVlLPhiuH0ipbCaRIWv6zWQ77rXlx6
+         po2WWhWZjoC4rzAdy5mm/ALnVLvHX6cI4/7hkfeX0jR/TXs3wRG5YBsBS3/1h7+gOT+5
+         c2SA==
+X-Gm-Message-State: AOAM533frQjFJMqpkJr6zGCxQGUgG7j0sW4Slj68xlyVdQcAXRKKmK39
+        Wii9XVGxTGn9mJpOdpGDpi2Hag==
+X-Google-Smtp-Source: ABdhPJxOyVv31u/8yJ/9LNK/9Lz94ZxKKOOgNfeX9MWjDS4qA9c3zCclKxfQLaqk0mTaDrKm2RXaJA==
+X-Received: by 2002:a05:6512:3401:: with SMTP id i1mr46815780lfr.336.1635988316671;
+        Wed, 03 Nov 2021 18:11:56 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id b10sm28681ljj.112.2021.11.03.18.11.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Nov 2021 18:05:32 -0700 (PDT)
-Received: (nullmailer pid 2115444 invoked by uid 1000);
-        Thu, 04 Nov 2021 01:05:31 -0000
-Date:   Wed, 3 Nov 2021 20:05:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Giulio Benetti <giulio.benetti@benettiengineering.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     Jesse Taube <mr.bossman075@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Wed, 03 Nov 2021 18:11:56 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 11/13] mmc: sdhci-esdhc-imx: Add sdhc support for
- i.MXRT series
-Message-ID: <YYMx28VvhR7nvMlt@robh.at.kernel.org>
-References: <20211102225701.98944-1-Mr.Bossman075@gmail.com>
- <20211102225701.98944-12-Mr.Bossman075@gmail.com>
- <CAOMZO5AxMXxDkNDqGJDhtepqSUxGRCWO+L=c67O==4fx66M7XQ@mail.gmail.com>
- <c1610093-95ae-68d3-57ae-93b1bc9715d7@gmail.com>
- <20211102233017.bvZyNHgwkuFX2SrymY1886iySuCFjH3IP1hlSc3HduY@z>
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: [PATCH] clk: qcom: gcc-msm8996: Drop (again) gcc_aggre1_pnoc_ahb_clk
+Date:   Thu,  4 Nov 2021 04:11:55 +0300
+Message-Id: <20211104011155.2209654-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211102233017.bvZyNHgwkuFX2SrymY1886iySuCFjH3IP1hlSc3HduY@z>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 03, 2021 at 12:30:17AM +0100, Giulio Benetti wrote:
-> Hi Fabio, Jesse, All,
-> 
-> On 11/3/21 12:25 AM, Jesse Taube wrote:
-> > 
-> > 
-> > On 11/2/21 19:17, Fabio Estevam wrote:
-> > > On Tue, Nov 2, 2021 at 7:57 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
-> > > 
-> > > >    static struct esdhc_soc_data usdhc_imx8qxp_data = {
-> > > >           .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
-> > > > @@ -357,6 +363,7 @@ static const struct of_device_id imx_esdhc_dt_ids[] = {
-> > > >           { .compatible = "fsl,imx7ulp-usdhc", .data = &usdhc_imx7ulp_data, },
-> > > >           { .compatible = "fsl,imx8qxp-usdhc", .data = &usdhc_imx8qxp_data, },
-> > > >           { .compatible = "fsl,imx8mm-usdhc", .data = &usdhc_imx8mm_data, },
-> > > > +       { .compatible = "fsl,imxrt-usdhc", .data = &usdhc_imxrt_data, },
-> > > 
-> > > I thought Rob suggested to use the SoC name, so this would be:
-> > > 
-> > Uh i think that may have been for the UART.
-> > > { .compatible = "fsl,imxrt1050-usdhc", .data = &usdhc_imxrt1050_data, },
-> > > 
-> > > The same applies to the other bindings in the series.
-> > > 
-> > > This way it would be possible to differentiate between future
-> > > supported i.MX RT devices.
-> > > 
-> > This makes sense will do in V3.
-> > 
-> 
-> If we add every SoC we will end up having a long list for every device
-> driver. At the moment it would be 7 parts:
-> 1) imxrt1020
-> 2) imxrt1024
-> .
-> .
-> .
-> 7) imxrt1170
+The gcc_aggre1_pnoc_ahb_clk is crucial for the proper MSM8996/APQ8096
+functioning. If it gets disabled, several subsytems will stop working
+(including eMMC/SDCC and USB). There are no in-kernel users of this
+clock, so it is much simpler to remove from the kernel.
 
-You don't need a driver update if you use a fallback. When you add 
-the 2nd chip, if you think it is 'the same', then you do:
+The clock was first removed in the commit 9e60de1cf270 ("clk: qcom:
+Remove gcc_aggre1_pnoc_ahb_clk from msm8996") by Stephen Boyd, but got
+added back in the commit b567752144e3 ("clk: qcom: Add some missing gcc
+clks for msm8996") by Rajendra Nayak.
 
-compatible = "fsl,imxrt1024-usdhc", "fsl,imxrt1050-usdhc";
+Let's remove it again in hope that nobody adds it back.
 
-That requires no driver update until the driver needs to handle some 
-difference. And when there is a difference, you don't need a DT update.
+Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Konrad Dybcio <konrad.dybcio@somainline.org>
+Fixes: b567752144e3 ("clk: qcom: Add some missing gcc clks for msm8996")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8996.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-You could make "fsl,imxrt-usdhc" the fallback from the start if you are 
-adverse to the first way.
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 3c3a7ff04562..9b1674b28d45 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -2937,20 +2937,6 @@ static struct clk_branch gcc_smmu_aggre0_ahb_clk = {
+ 	},
+ };
+ 
+-static struct clk_branch gcc_aggre1_pnoc_ahb_clk = {
+-	.halt_reg = 0x82014,
+-	.clkr = {
+-		.enable_reg = 0x82014,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "gcc_aggre1_pnoc_ahb_clk",
+-			.parent_names = (const char *[]){ "periph_noc_clk_src" },
+-			.num_parents = 1,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch gcc_aggre2_ufs_axi_clk = {
+ 	.halt_reg = 0x83014,
+ 	.clkr = {
+@@ -3474,7 +3460,6 @@ static struct clk_regmap *gcc_msm8996_clocks[] = {
+ 	[GCC_AGGRE0_CNOC_AHB_CLK] = &gcc_aggre0_cnoc_ahb_clk.clkr,
+ 	[GCC_SMMU_AGGRE0_AXI_CLK] = &gcc_smmu_aggre0_axi_clk.clkr,
+ 	[GCC_SMMU_AGGRE0_AHB_CLK] = &gcc_smmu_aggre0_ahb_clk.clkr,
+-	[GCC_AGGRE1_PNOC_AHB_CLK] = &gcc_aggre1_pnoc_ahb_clk.clkr,
+ 	[GCC_AGGRE2_UFS_AXI_CLK] = &gcc_aggre2_ufs_axi_clk.clkr,
+ 	[GCC_AGGRE2_USB3_AXI_CLK] = &gcc_aggre2_usb3_axi_clk.clkr,
+ 	[GCC_QSPI_AHB_CLK] = &gcc_qspi_ahb_clk.clkr,
+-- 
+2.33.0
 
-Rob
