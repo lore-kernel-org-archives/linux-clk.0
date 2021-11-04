@@ -2,78 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F243C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 05:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BA7C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6763B611CE
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 05:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981D5611CE
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 08:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbhKDFMP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Nov 2021 01:12:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbhKDFMO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Nov 2021 01:12:14 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADBC9C061714;
-        Wed,  3 Nov 2021 22:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=DlU9hmw4W8D9x6aVOx0iFXlJ+qpIS36/C+b8G40GJkE=; b=pslMV/T+V+ssGajnysctcPW9c4
-        7HZaM79NzDGy2w5GuPU0YREHlw7YVP0rGrk4uaMSpbMkejUzF/rD0Ys0a2uaGoFq9BiHlH+cFr9Mx
-        kQgI4u8shJGTRhCSQa3+rMqw/bzJcgdR78OIreWQNx8TJiwLMxg7FLiUHfSGUsSLCATEcLmEQGdWn
-        2S80VNW366tCEMmCuPR3dalvG1tt0uhybCXbDgSYncMaBSZocjo2b81JkGUlbtdwfB39wzVrHUog2
-        uhSBu/DK8kJyqybDC93UzpIoLso9Hm95A3mjHTh4Do8J+ixzRHSaZ8jefwCfkS0ggEmFZ6+OT977i
-        1A0b+1pQ==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1miV0L-007s7W-3M; Thu, 04 Nov 2021 05:09:37 +0000
-Subject: Re: [PATCH v4 06/10] clk: Add Sunplus SP7021 clock driver
-To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, maz@kernel.org,
+        id S230479AbhKDIZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Nov 2021 04:25:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48844 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230084AbhKDIZR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Nov 2021 04:25:17 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A72C610D0;
+        Thu,  4 Nov 2021 08:22:40 +0000 (UTC)
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1miY17-003QcM-QF; Thu, 04 Nov 2021 08:22:37 +0000
+Date:   Thu, 04 Nov 2021 08:22:37 +0000
+Message-ID: <8735oc9voy.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org,
         arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, wells.lu@sunplus.com
-References: <cover.1635993377.git.qinjian@cqplus1.com>
- <2373006c300bfde8b0a1470f81d252d3766ae1c3.1635993377.git.qinjian@cqplus1.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6d5986ac-68ef-5537-8882-f34b8436d16a@infradead.org>
-Date:   Wed, 3 Nov 2021 22:09:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <2373006c300bfde8b0a1470f81d252d3766ae1c3.1635993377.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v4 00/10] Add Sunplus SP7021 SoC Support
+In-Reply-To: <cover.1635993377.git.qinjian@cqplus1.com>
+References: <cover.1635496594.git.qinjian@cqplus1.com>
+        <cover.1635993377.git.qinjian@cqplus1.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qinjian@cqplus1.com, robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, wells.lu@sunplus.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/3/21 7:57 PM, Qin Jian wrote:
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c5b3dc973..1cd7ae7a3 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -334,6 +334,15 @@ config COMMON_CLK_VC5
->   	  This driver supports the IDT VersaClock 5 and VersaClock 6
->   	  programmable clock generators.
->   
-> +config COMMON_CLK_SP7021
-> +	bool "Clock driver for Sunplus SP7021 SoC"
-> +	help
-> +	  This driver supports the Sunplus SP7021 SoC clocks.
-> +	  It implemented SP7021 PLLs/gate.
+Qin,
 
-	     implements
+On Thu, 04 Nov 2021 02:56:57 +0000,
+Qin Jian <qinjian@cqplus1.com> wrote:
+> 
+> This patch series add Sunplus SP7021 SoC support.
+> 
+> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
+> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
+> single chip. It is designed for industrial control.
+> 
+> SP7021 consists of two chips (dies) in a package. One is called C-chip
+> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
+> process (22 nm) for high performance computing. The other is called P-
+> chip (peripheral chip). It has many peripherals and an ARM A926 added
+> especially for real-time control. P-chip is made for customers. It adopts
+> low-level process (ex: 0.11 um) to reduce cost.
 
-> +	  Not all features of the PLL are currently supported
-> +	  by the driver.
-> +	  This driver is selected automatically by platform config.
+That's the 3rd version of this series since Friday, two of them during
+the merge window. All you are achieving is to actually *delay* the
+review process (at this rate, I'll probably wait until v11 before I
+take another look at it).
 
+Documentation/process/submitting-patches.rst states it clearly:
+
+<quote>
+Wait for a minimum of one week before resubmitting
+</quote>
+
+So please leave people the time to actually do a good review job, and
+take the opportunity to review your own patches before posting them
+again.
+
+Thanks,
+
+	M.
 
 -- 
-~Randy
+Without deviation from the norm, progress is not possible.
