@@ -2,59 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE09C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 22:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB90C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 22:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 176FA611CE
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 22:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4398611CE
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 22:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233376AbhKEW3z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Nov 2021 18:29:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        id S231393AbhKEWc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Nov 2021 18:32:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230498AbhKEW3y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Nov 2021 18:29:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 576DA60EE9;
-        Fri,  5 Nov 2021 22:27:14 +0000 (UTC)
+        id S229940AbhKEWc1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Nov 2021 18:32:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A047A60EE9;
+        Fri,  5 Nov 2021 22:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636151234;
-        bh=wkcKAA5CPLc6sVm1QrPPPRn8RN7KShdtsSLOBoemL4g=;
+        s=k20201202; t=1636151387;
+        bh=zTa8NeOLlZY9rOnUeE9DsM6ltvHHHwJ6pez9o/KBqvs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=knCLS9wQzpV+K6QC+3jXZzQBiWpE7N2VXXi2I5vcNhsbsn0w+WZJ272OhND39/Rty
-         jCqvFIIwGuhnKvMbpECTMICb86OHn35hU4HCl6cMf3v2KseZb1lAjk0jSgBXiasg/W
-         AdC7BVfwtTxhS1rLlJCH2pwsH9iReo5eHEGHSVdfod/2al+dyWxQNtRKAeF6sYcyW1
-         5VisXZq2uBuWlqYGnSTOuw9oJ38t9+0gIEgYGHruymVAn0DcEiy5aY/sTJCQCK6AG/
-         XPxSFDn9kS/tDZGfxsQYOnokbptuXFYcjvR4hU60rv62xo5CxBRywxBuDm2UFnbOtK
-         nN4YfrGzgu/qA==
+        b=TXk8Y1lNqwkpGz7MpemhCG1HVTRYVAcD0ooHBojAXSejkjYcyM9vnZ6BE2H+H4Dnj
+         C6Co5tKJKpk+5yogPqI+p/m2P7mFdn25uJUbcCoQZXrWtL9gytGDiGQ/hiEFEpV/eK
+         +v9lYP/7b/0IDN7Yqoqx96FKR51fTsOWtRPhxhz7nMxC6Ylcl8Li27czcmhDWbIZnU
+         qjhnBlQH2pD8yUwNiOWwrupkjUaqYWBSjeiIen/lIk41hGoWiRgP7YQWNYEYylowFm
+         2VGSoIqdXV6RmroLmmR2qn06bG3k7aubye6nBJI886iwwklDH79JBBtlVzLXUvIQm4
+         6sOKVS8ZWHI9Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
-References: <20211103123947.3222443-1-alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH 1/1] clk: imx8m: Do not set IMX_COMPOSITE_CORE for non-regular composites
+In-Reply-To: <20211104011155.2209654-1-dmitry.baryshkov@linaro.org>
+References: <20211104011155.2209654-1-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gcc-msm8996: Drop (again) gcc_aggre1_pnoc_ahb_clk
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Date:   Fri, 05 Nov 2021 15:27:13 -0700
+        Taniya Das <tdas@codeaurora.org>
+Date:   Fri, 05 Nov 2021 15:29:46 -0700
 User-Agent: alot/0.9.1
-Message-Id: <20211105222714.576DA60EE9@mail.kernel.org>
+Message-Id: <20211105222947.A047A60EE9@mail.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexander Stein (2021-11-03 05:39:47)
-> Only imx8m_clk_hw_composite_core needs to set this flag.
+Quoting Dmitry Baryshkov (2021-11-03 18:11:55)
+> The gcc_aggre1_pnoc_ahb_clk is crucial for the proper MSM8996/APQ8096
+> functioning. If it gets disabled, several subsytems will stop working
+> (including eMMC/SDCC and USB). There are no in-kernel users of this
+> clock, so it is much simpler to remove from the kernel.
 >=20
-> Fixes: a60fe746df94 ("clk: imx: Rework all imx_clk_hw_composite wrappers")
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> The clock was first removed in the commit 9e60de1cf270 ("clk: qcom:
+> Remove gcc_aggre1_pnoc_ahb_clk from msm8996") by Stephen Boyd, but got
+> added back in the commit b567752144e3 ("clk: qcom: Add some missing gcc
+> clks for msm8996") by Rajendra Nayak.
+>=20
+> Let's remove it again in hope that nobody adds it back.
+>=20
+> Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Fixes: b567752144e3 ("clk: qcom: Add some missing gcc clks for msm8996")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
 
 Applied to clk-next
