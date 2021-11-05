@@ -2,85 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606EFC433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 16:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC18EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 05:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46B11611F2
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Nov 2021 16:09:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5E3C6127C
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Nov 2021 05:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231669AbhKDQLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Nov 2021 12:11:50 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:34037 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231651AbhKDQLu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Nov 2021 12:11:50 -0400
-X-IronPort-AV: E=Sophos;i="5.87,209,1631545200"; 
-   d="scan'208";a="99217962"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2021 01:09:11 +0900
-Received: from localhost.localdomain (unknown [10.226.92.57])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9A3964017749;
-        Fri,  5 Nov 2021 01:09:09 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC 3/4] clk: renesas: r9a07g044: Add WDT clock and reset entries
-Date:   Thu,  4 Nov 2021 16:08:57 +0000
-Message-Id: <20211104160858.15550-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211104160858.15550-1-biju.das.jz@bp.renesas.com>
-References: <20211104160858.15550-1-biju.das.jz@bp.renesas.com>
+        id S229471AbhKEGC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Nov 2021 02:02:29 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:45926 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229456AbhKEGC3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Nov 2021 02:02:29 -0400
+X-UUID: 533af3c586ae408283a3b2bfb7ae19b3-20211105
+X-UUID: 533af3c586ae408283a3b2bfb7ae19b3-20211105
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1347406527; Fri, 05 Nov 2021 13:59:47 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Fri, 5 Nov 2021 13:59:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs10n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.3 via Frontend Transport; Fri, 5 Nov 2021 13:59:46 +0800
+From:   <miles.chen@mediatek.com>
+To:     <sboyd@kernel.org>
+CC:     <abel.vesa@nxp.com>, <festevam@gmail.com>, <kernel@pengutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-imx@nxp.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <miles.chen@mediatek.com>,
+        <mturquette@baylibre.com>, <s.hauer@pengutronix.de>,
+        <shawnguo@kernel.org>, <wsd_upstream@mediatek.com>
+Subject: Re: [PATCH v3] clk: imx: use module_platform_driver
+Date:   Fri, 5 Nov 2021 13:59:32 +0800
+Message-ID: <20211105055932.3432-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <163087455086.405991.14496690646389782129@swboyd.mtv.corp.google.com>
+References: <163087455086.405991.14496690646389782129@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add WDT{0,1,2} clock and reset entries to CPG driver.
+From: Miles Chen <miles.chen@mediatek.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a07g044-cpg.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Hi Stephen,
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 8618b0f19d7a..79bad86b6cb7 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -146,6 +146,18 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
- 				0x52c, 0),
- 	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
- 				0x52c, 1),
-+	DEF_MOD("wdt0_pclk",	R9A07G044_WDT0_PCLK, R9A07G044_CLK_P0,
-+				0x548, 0),
-+	DEF_MOD("wdt0_clk",	R9A07G044_WDT0_CLK, R9A07G044_OSCCLK,
-+				0x548, 1),
-+	DEF_MOD("wdt1_pclk",	R9A07G044_WDT1_PCLK, R9A07G044_CLK_P0,
-+				0x548, 2),
-+	DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
-+				0x548, 3),
-+	DEF_MOD("wdt2_pclk",	R9A07G044_WDT2_PCLK, R9A07G044_CLK_P0,
-+				0x548, 4),
-+	DEF_MOD("wdt2_clk",	R9A07G044_WDT2_CLK, R9A07G044_OSCCLK,
-+				0x548, 5),
- 	DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
- 				0x550, 0),
- 	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
-@@ -234,6 +246,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
- 	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
-+	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
-+	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
- 	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
- 	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
- 	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
--- 
-2.17.1
+>> Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock driver as module")
+>> Cc: Fabio Estevam <festevam@gmail.com>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+
+Thanks for doing the review, I cannot find this patch in clk-imx tree,
+Would you pick this patch, please?
+
+Miles
