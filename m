@@ -2,193 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056E1C433FE
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Nov 2021 07:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC947C433F5
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Nov 2021 23:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D99E8613B3
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Nov 2021 07:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADF6A61352
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Nov 2021 23:43:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235097AbhKGHoz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Nov 2021 02:44:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235091AbhKGHou (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Nov 2021 02:44:50 -0500
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04505C061570;
-        Sun,  7 Nov 2021 00:42:08 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 71so10491992wma.4;
-        Sun, 07 Nov 2021 00:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n0RL45OoJsxDqII6WqqJzrCBAIvt4D77cElanpVHtTc=;
-        b=o+SJ2uQNb6R49PlN3XZlTNrdacUUdm9fB+QUqt0TQa0lX4CZwkP/8tSLAi/H/E9vl0
-         D5BTM2j4hvp5vmlnprPAm5yrgWv7TQj3pFe1wW04v06GWyZkqbMvSy0BuxbsOu+FMxDC
-         j9VxWIp27rwllfJn4KpmLAdBR2sayVuyXMBdswWNHGbVKSwaUb0USLLfxQw37rp5n0uV
-         aITT9VxexeqCJWUoPU0fedcP3wGpefmkuF+BmBjKQkZL5VDQTyD9YI5ElrlzmRne+r4Y
-         vDZl/HYBIoPt/Bq2u4tHefVgP4Ij11G+u+Cx1TCEoIL9pGUWW4ajtSt5DeX38wLizr3g
-         d8hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n0RL45OoJsxDqII6WqqJzrCBAIvt4D77cElanpVHtTc=;
-        b=1c96Z/0Q6JUGXoQMn74cbnA5oOA6DM+Cm1iDXEl3WI29BD89QhwYZBpj9e9WUAsCKD
-         YPMeemkjJbB5GhiCHbkTU5/HV97U+X06thYvcCoT++Q2XAro5p1ZBtdyKOIFyl53P3eT
-         SGnduYwckxPgcr8X+t7Kfpwt32MiHaWseTcYUoK+HNHkRCIxBZZ1gM2GBYEjCe4ZJ/qM
-         dgkCFH5j7dcsEdEzTj2ofKLgCABtHRG3CSHgGB/M+E1QQp60BL9EVV12n5wFGQ/Ww6xx
-         KXo0nqxLOM6xFNuuPlI39tWsxAfh2xNXlOfXuJW8+o7RmqCZSB2Rx58VE3YdPbgI8Nj3
-         rXBQ==
-X-Gm-Message-State: AOAM532DvkHAVV4jsfvHtyZRe3kPwmYjBXKy2b6qpeeq6aPaNAV2+I/+
-        od1uMPP9VSDn4atxg4zKYCTRznMizfpV8A==
-X-Google-Smtp-Source: ABdhPJyDr1ieFUcrkcAPbYNbKaizPUV5S+avKsnfAnsTm6DaNe4mL0R6F/qq6CCybEByS6vR0DyEOw==
-X-Received: by 2002:a05:600c:290b:: with SMTP id i11mr43823871wmd.137.1636270926343;
-        Sun, 07 Nov 2021 00:42:06 -0700 (PDT)
-Received: from localhost.localdomain (252.red-83-54-181.dynamicip.rima-tde.net. [83.54.181.252])
-        by smtp.gmail.com with ESMTPSA id e12sm15353352wrq.20.2021.11.07.00.42.05
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 07 Nov 2021 00:42:05 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org, john@phrozen.org,
-        linux-staging@lists.linux.dev, gregkh@linuxfoundation.org,
-        neil@brown.name
-Subject: [PATCH v5 4/4] staging: mt7621-dts: align resets with binding documentation
-Date:   Sun,  7 Nov 2021 08:42:00 +0100
-Message-Id: <20211107074200.18911-5-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211107074200.18911-1-sergio.paracuellos@gmail.com>
-References: <20211107074200.18911-1-sergio.paracuellos@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S236048AbhKGXpy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Nov 2021 18:45:54 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:42425 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236047AbhKGXpx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Nov 2021 18:45:53 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 8B2365807D9;
+        Sun,  7 Nov 2021 18:42:59 -0500 (EST)
+Received: from imap43 ([10.202.2.93])
+  by compute4.internal (MEProxy); Sun, 07 Nov 2021 18:42:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=hbglKme3vaas4sAGDC3hQO7l8i5Rd5g
+        igqzNWaFWDOk=; b=cg/olrAcD9tCJS1i8M23c2flw8WZk1wp4xkWGoML32//6N1
+        qpzOO+o7dMA8eWLFE6rAsFHsKng+Si7yzX4kDg4aQo7L4qrTvx5MClQ7yQM5fpg+
+        UOecU3cxTvQ14n90S68RZDuQT/clgf03ZdWu2qOCwhW243IOELSvWBwto2XrJXUL
+        8Va2qo9ggNRRA2TzvjUKPWPyJi3XXkmQBo9a+p9RQqY4PCKaT9D8mTP/DJarhvYY
+        Ap+Ry5N3Rik+IwlzLY4asm9rCLX3eDrxVLQK58sRR7hD/En0mSU4zUdKWkPZt8P4
+        gY+YKRZMdJQWlyPPsvNkHYdlk9Ro6vNptu8A47A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=hbglKm
+        e3vaas4sAGDC3hQO7l8i5Rd5gigqzNWaFWDOk=; b=clVyKuFzr3sg/qW8emnEu/
+        uSflp/Th4kX9QtyLi140V7rgiZSGXP4DNrqqUKTLsq6zHVgEjOztoS7ow26ULuHW
+        kooIkJ6cOXyFxd1cxdxoRGglACdZu4pU8dnH4vbEI3xgVupAQ6zQSl1mJ0/eYsa2
+        N3Xd8E/756QBt8wVuPf/U0jPmnb8QIplCzch5nl2cLM0zuHtJo6LwWhSe3YywUji
+        aCcBatQcHXMX8qn8jFVd+G70nnvrT6tOQ/ivmUhYxb+L4yCu3fV19GA8gYcB44+b
+        WOOQUw3v5E7SiCAwqAwcjKajlkP8yW1NdCA7T/n0yPa0ukWyRP+auHDVX53mkbxQ
+        ==
+X-ME-Sender: <xms:gmSIYVV48Zc_p8rEM4c1-RxjTzWWSB6DcAoRwdCYz34CWL7ZKYpBhg>
+    <xme:gmSIYVm2PpDK1898gZkl54CQOOTJWnWsgop22UlTPzJrjXM7004d7syE9whn8i0fS
+    ZFAG6tYksF0auBjCw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvuddruddugddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucggtffrrg
+    htthgvrhhnpeehhfefkefgkeduveehffehieehudejfeejveejfedugfefuedtuedvhefh
+    veeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:gmSIYRby8wH-M10d5xd46mb2XA-KsRM9kSzjrKm3MZhAae3Y-bxwMg>
+    <xmx:gmSIYYVDiYUEwzGrBmKRvEmbtW2MUh3-fU7psPgkOfKNJGLcrPg22w>
+    <xmx:gmSIYfkB-_5-upg3pYFdtkozb-Spxbl7x_uXiindt5Hrxltdis-Ekg>
+    <xmx:g2SIYS_cH4wiws1VbSozUnvd8Oz25lZ88Z4y9K30-2oJZYetRAQLVQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 7E8C5AC0DD1; Sun,  7 Nov 2021 18:42:58 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.5.0-alpha0-1369-gd055fb5e7c-fm-20211018.002-gd055fb5e
+Mime-Version: 1.0
+Message-Id: <30748da1-0fdb-40c1-bf28-8682d3a89c73@www.fastmail.com>
+In-Reply-To: <HK0PR06MB2786C1ED2463764EAAEA7166B28F9@HK0PR06MB2786.apcprd06.prod.outlook.com>
+References: <20210922103116.30652-1-chin-ting_kuo@aspeedtech.com>
+ <20210922103116.30652-6-chin-ting_kuo@aspeedtech.com>
+ <95669b37-d512-4439-86cb-418ab085118f@www.fastmail.com>
+ <HK0PR06MB2786C1ED2463764EAAEA7166B28F9@HK0PR06MB2786.apcprd06.prod.outlook.com>
+Date:   Mon, 08 Nov 2021 10:12:38 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Chin-Ting Kuo" <chin-ting_kuo@aspeedtech.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc:     BMC-SW <BMC-SW@aspeedtech.com>,
+        "Steven Lee" <steven_lee@aspeedtech.com>
+Subject: Re: [PATCH 05/10] mmc: aspeed: Adjust delay taps calculation method
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-to be used as a reset provider. Align reset related bits and system controller
-node with binding documentation along the dtsi file.
+Hi Chin-Ting,
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- drivers/staging/mt7621-dts/mt7621.dtsi | 25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+I've had another think about this, see my comments below.
 
-diff --git a/drivers/staging/mt7621-dts/mt7621.dtsi b/drivers/staging/mt7621-dts/mt7621.dtsi
-index 6d158e4f4b8c..2bf74468d495 100644
---- a/drivers/staging/mt7621-dts/mt7621.dtsi
-+++ b/drivers/staging/mt7621-dts/mt7621.dtsi
-@@ -2,6 +2,7 @@
- #include <dt-bindings/interrupt-controller/mips-gic.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/clock/mt7621-clk.h>
-+#include <dt-bindings/reset/mt7621-reset.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -67,6 +68,7 @@ sysc: syscon@0 {
- 			compatible = "mediatek,mt7621-sysc", "syscon";
- 			reg = <0x0 0x100>;
- 			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 			ralink,memctl = <&memc>;
- 			clock-output-names = "xtal", "cpu", "bus",
- 					     "50m", "125m", "150m",
-@@ -96,7 +98,7 @@ i2c: i2c@900 {
- 
- 			clocks = <&sysc MT7621_CLK_I2C>;
- 			clock-names = "i2c";
--			resets = <&rstctrl 16>;
-+			resets = <&sysc MT7621_RST_I2C>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -137,7 +139,7 @@ spi0: spi@b00 {
- 			clocks = <&sysc MT7621_CLK_SPI>;
- 			clock-names = "spi";
- 
--			resets = <&rstctrl 18>;
-+			resets = <&sysc MT7621_RST_SPI>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -153,7 +155,7 @@ gdma: gdma@2800 {
- 
- 			clocks = <&sysc MT7621_CLK_GDMA>;
- 			clock-names = "gdma";
--			resets = <&rstctrl 14>;
-+			resets = <&sysc MT7621_RST_GDMA>;
- 			reset-names = "dma";
- 
- 			interrupt-parent = <&gic>;
-@@ -172,7 +174,7 @@ hsdma: hsdma@7000 {
- 
- 			clocks = <&sysc MT7621_CLK_HSDMA>;
- 			clock-names = "hsdma";
--			resets = <&rstctrl 5>;
-+			resets = <&sysc MT7621_RST_HSDMA>;
- 			reset-names = "hsdma";
- 
- 			interrupt-parent = <&gic>;
-@@ -272,11 +274,6 @@ pinmux {
- 		};
- 	};
- 
--	rstctrl: rstctrl {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	sdhci: sdhci@1e130000 {
- 		status = "disabled";
- 
-@@ -355,7 +352,7 @@ ethernet: ethernet@1e100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		resets = <&rstctrl 6 &rstctrl 23>;
-+		resets = <&sysc MT7621_CLK_FE &sysc MT7621_CLK_ETH>;
- 		reset-names = "fe", "eth";
- 
- 		interrupt-parent = <&gic>;
-@@ -400,7 +397,7 @@ switch0: switch0@0 {
- 				#size-cells = <0>;
- 				reg = <0>;
- 				mediatek,mcm;
--				resets = <&rstctrl 2>;
-+				resets = <&sysc MT7621_RST_MCM>;
- 				reset-names = "mcm";
- 				interrupt-controller;
- 				#interrupt-cells = <1>;
-@@ -486,7 +483,7 @@ pcie@0,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 4 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 24>;
-+			resets = <&sysc MT7621_RST_PCIE0>;
- 			clocks = <&sysc MT7621_CLK_PCIE0>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy0";
-@@ -501,7 +498,7 @@ pcie@1,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 24 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 25>;
-+			resets = <&sysc MT7621_RST_PCIE1>;
- 			clocks = <&sysc MT7621_CLK_PCIE1>;
- 			phys = <&pcie0_phy 1>;
- 			phy-names = "pcie-phy1";
-@@ -516,7 +513,7 @@ pcie@2,0 {
- 			#interrupt-cells = <1>;
- 			interrupt-map-mask = <0 0 0 0>;
- 			interrupt-map = <0 0 0 0 &gic GIC_SHARED 25 IRQ_TYPE_LEVEL_HIGH>;
--			resets = <&rstctrl 26>;
-+			resets = <&sysc MT7621_RST_PCIE2>;
- 			clocks = <&sysc MT7621_CLK_PCIE2>;
- 			phys = <&pcie2_phy 0>;
- 			phy-names = "pcie-phy2";
--- 
-2.33.0
+On Sat, 6 Nov 2021, at 20:35, Chin-Ting Kuo wrote:
+> Hi Andrew,
+>> >  struct aspeed_sdhci_pdata {
+>> > @@ -158,43 +160,60 @@ aspeed_sdc_set_phase_taps(struct aspeed_sdc
+>> > *sdc,  }
+>> >
+>> >  #define PICOSECONDS_PER_SECOND		1000000000000ULL
+>> > -#define ASPEED_SDHCI_NR_TAPS		15
+>> > -/* Measured value with *handwave* environmentals and static loading */
+>> > -#define ASPEED_SDHCI_MAX_TAP_DELAY_PS	1253
+>> > +#define ASPEED_SDHCI_MAX_TAPS		15
+>> 
+>> Why are we renaming this? It looks to cause a bit of noise in the diff.
+>> 
+>
+> Okay, it can be changed back to the original one in the next patch version.
 
+Well, maybe it makes sense, but I think we have to take into account 
+how we describe the taps in the discussion below.
+
+>> > -	if (phase_deg >= 180) {
+>> > -		inverted = ASPEED_SDHCI_TAP_PARAM_INVERT_CLK;
+>> > -		phase_deg -= 180;
+>> > -		dev_dbg(dev,
+>> > -			"Inverting clock to reduce phase correction from %d to %d
+>> degrees\n",
+>> > -			phase_deg + 180, phase_deg);
+>> > -	} else {
+>> > -		inverted = 0;
+>> > +	prop_delay_ps = sdc->max_tap_delay_ps / nr_taps;
+>> > +	clk_period_ps = div_u64(PICOSECONDS_PER_SECOND, (u64)rate_hz);
+>> > +
+>> > +	/*
+>> > +	 * For ast2600, if clock phase degree is negative, clock signal is
+>> > +	 * output from falling edge first by default. Namely, clock signal
+>> > +	 * is leading to data signal by 90 degrees at least.
+>> > +	 */
+>> 
+>> Have I missed something about a asymmetric clock timings? Otherwise the
+>> falling edge is 180 degrees away from the rising edge? I'm still not clear on
+>> why 90 degrees is used here.
+>> 
+>
+> Oh, you are right. It should be 180 degrees.
+>
+>> > +	if (invert) {
+>> > +		if (phase_deg >= 90)
+>> > +			phase_deg -= 90;
+>> > +		else
+>> > +			phase_deg = 0;
+>> 
+>> Why are we throwing away information?
+>> 
+>
+> With the above correction, it should be modified as below.
+> If the "invert" is needed, we expect that its value should be greater than 180
+> degrees. We clear "phase_deg" if its value is unexpected. Maybe, a warning
+> should be shown and -EINVAL can be returned.
+>
+> if (invert) {
+> 	if (phase_deg >= 180)
+> 		phase_deg -= 180;
+> 	else
+> 		phase_deg = 0;
+
+Though we want this to return the EINVAL right?
+
+\>> > +		/*
+>> > +		 * There are 15 taps recorded in AST2600 datasheet.
+>> > +		 * But, actually, the time period of the first tap
+>> > +		 * is two times of others. Thus, 16 tap is used to
+>> > +		 * emulate this situation.
+>> > +		 */
+>> > +		.nr_taps = 16,
+>> 
+>> I think this is a very indirect way to communicate the problem. The only time
+>> we look at nr_taps is in a test that explicitly compensates for the non-uniform
+>> delay. I think we should just have a boolean struct member called
+>> 'non_uniform_delay' rather than 'nr_taps', as the number of taps isn't what's
+>> changing. But also see the discussion below about a potential
+>> aspeed,tap-delays property.
+>> 
+>
+> A new property may be the better choice.
+
+I think I'm changing my mind on this sorry.
+
+I'm think that aiming for fewer custom devicetree properties is better.
+
+Using SoC-specific and device-specific compatibles (i.e. to 
+differentiate between the eMMC and SD controllers in the 2600) we can 
+just encode this data straight in the driver using the OF match data.
+
+Rob and/or Joel: Thoughts?
+
+>
+>> Something further to consider is whether we
+>> separate the compatibles or add e.g. an aspeed,tap-delays property that
+>> specifies the specific delay of each logic element. This might take the place of
+>> e.g. the max-tap-delay property?
+>> 
+>
+> Yes, an additional property may be better.
+
+Again, flip-flopping on this a bit, the aspeed,ast2600-emmc compatible 
+is probably fine, and we add the tap delays in the OF match data for 
+the compatible. This means we get rid of any aspeed-specific devictree 
+properties with respect to the delays.
+
+Andrew
