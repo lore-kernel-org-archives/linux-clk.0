@@ -2,228 +2,161 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CFAC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 05:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8EAC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 08:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1866061406
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 05:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C2261037
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 08:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbhKHFO4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 00:14:56 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:21694 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235206AbhKHFOz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 00:14:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1636348331; x=1667884331;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=3iw0Zz5z4OjWBAcE9EaKn7B7UOUbGMiLpb4Qqiy9ntY=;
-  b=gpU3stzSdF/56pG+KFFQ9iZVDiN+PB2jeFI8NQ5KR1VPhRzkFcs8M8Zw
-   5gT0zf/nfCUD7NOl6pV9X0g9qlzPAZvnnnnwIE8gB8EGaBQIK/I7euyTE
-   FI+NqyyLWcjC2Hal3eVnOjEKIfofrWN65HT0BQ4z7DP+ZMVFLYl/vNXN1
-   Ca8s1DyycBSKfWA3JbLdbwv8U64uLGe5EvGZpXlr+g4G0+bWdEEFG2Wax
-   6pYpGI54SgQYz4/Svzsa71bVl5sJpZQIlTRtCGYg1CpziZlmwYqHluwLF
-   rB75xQw/tlEChV/20t8FdYKrms2Vngc+kHDD7VB9eZaGMAyjZL6T3Tsc/
-   A==;
-IronPort-SDR: ud0pVLAt/XI6GvtsPjOO9Fc1nVy6rx/VK+l4ZZJxj94Ca7EthQJfgsgShmax3S7jwxM2zTdmQt
- iAR6iqevtOIvBmimLqKrrC5aLw6QvMqUDKYked2r6QK6u2FFSTHiOSVspfK1iobFoe1P7xW7ca
- m1yPVvrDLtZG/kGf1HiGDNPpJKiBTIiL4LQ1FMar1/l2oWx1T5SDjkMb4+lJM2X8ayi5A08tNY
- lrAbvtKOIi97FjG1Ahhu3TSke7BtKXu8VJArVzM2C8ScnpUh1FB8wxv8dpphA+qHJBCsZ0o84L
- 5fKFFA4IyLYzVsmK9ZePgZTy
-X-IronPort-AV: E=Sophos;i="5.87,217,1631602800"; 
-   d="scan'208";a="143100325"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 07 Nov 2021 22:12:05 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Sun, 7 Nov 2021 22:12:05 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14 via Frontend
- Transport; Sun, 7 Nov 2021 22:12:05 -0700
+        id S237149AbhKHIJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 03:09:56 -0500
+Received: from mail-dm6nam11on2082.outbound.protection.outlook.com ([40.107.223.82]:45121
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237325AbhKHIJz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Nov 2021 03:09:55 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZOwNREpPSzKG6cV1xT+bA7Lju0Ejzg/U4L0dbEqZqqDfD4VozPlVm2CgbcyjA+FaHWOwWp3Rcr/WOxPG1oxljv2gHES5R4ZFWaJP2VCEVcsDThOgNP3zXyEMwn7PTIhpWvJJQjF0gpbwSC1JvgD09rE6w8bNJXatz69NVY+H341SA+n+pDnrheiZlC0wwzE0y5mOyO9DBuY6oE3Y2TlgqP9E8KX2+Swx8vjIfxnPIIznn7liEVDE/qFloN3vbyyYimbMeSNYqAzHljqnywyK0I0xgDJNuGfL5wdFpvROR+tu6aCJp65ftHYFtoxvkTTEAxGtcqbaSvNiGGcbV0DUIQ==
+ b=QYkDYWoDToFp8QUjuMO80d1/jv5lD0W7v9EREBsNOPDLBGgpnNkTnk8gjl7sB7LXuHTqRxxiiivDPPqQC/xCjnm7T/YRjBj1jkaKLPTbZSZpNcT9HzSE7BDXxtI5FlvYNDaKHbVHFfZMy2px+SzBsqu9Y8JSYflhrW8AFwyvIqP444RZUwykKkceY7MdRobUfQPzw9I/LWQac7i95RVCrYG4X+KE9HCOvK8A25mz/xK2O5NhuE5YAjGlzahAYX+JOIVAcAzWLVOyaHuwhyObXVjLbcsr9a5kJNKT+4I41N41fAAZMRnOinDYT0jacT6YRPuuDHK0LiTvJPGZX0RPQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4L745m2OmehPvNeFQOnxrTIUDs95cM5LAC2jRurc7Ms=;
- b=FDCWe3j1Np9g5drcNou4yS44nukRioCiXIyU0I4XFQKTUo2RptnEw+H9tw9Fjz3WDIh1dJi0/ZTf3o9OVcVkIKYt41xat4Fm7vnocDr4PPuPN1VQYG0MGEfrXiBcXGiX40Pk6rgHYG6z9Z5VHmFrbZ3vM/vd1wuQrDPBbvrriOrkuoFH1kq93rRmk5cStEpo/uPhHPNAaaqygFOyrXsa7FrC+uTGhd9uajd/gVz06e2IbVyxj88Cve2AawBJyuyySZIUNryOTawN1SlHS8Ve6GDFJPmVeNZXUdsquPR3QO7yDN1Ta1PFxWXSGCC+DJYh0EjNB+Iv0tgTijAh8343sA==
+ bh=adnevkwbGqneeJTjA4bwAe9r+AmbAGMumaRg57b5sss=;
+ b=Htn3GM/A4Fj5UDl5W+VXe6Nb9sytJyWbSjE9BiYkCV2mOzxPV6rIzLOvBTKX72i7S6Z7m92zvzLwfWjzHPlbxjgc9i/83zA7e/AsJ10ZqCjpmBOXUc2ST6P2DjyDaOi8/HNPbi4k6iKoXbFs9LMa1N4D00zsVl64DhzFRRed3syru0Pe3PO1A0fn6bw7vmqHEESfAvnu7RgVAUjdskpJmsZBy6cdS4I9E8PHgtuTDy3Xd4USyljjHZjr4MMr9NSEGYvzg/eYlO2yryzTISQwnJc8d6deeg9WqPHIcPG1y3JNhQuH6y1yZY0/X+PaXOHp8HK61nNdvILzManOUOpU6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4L745m2OmehPvNeFQOnxrTIUDs95cM5LAC2jRurc7Ms=;
- b=Fyr4C6/aCr50pw5lqdFpja3EKAmNzcd3PBR7F5dxQNyQ6Xee85vkrh36wEhT7S4Ait+9rH5L6xjnQJbZ5XOUaIeda+dQFy9dKj960YJEcd2RCjkjq1/foAeYJL/HUoIRx2SkxElagdpb26sJducOACw7ZT10aZj4RjmQi3Ux4Xg=
-Received: from CO1PR11MB4865.namprd11.prod.outlook.com (2603:10b6:303:9c::9)
- by MWHPR11MB1997.namprd11.prod.outlook.com (2603:10b6:300:2a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.13; Mon, 8 Nov
- 2021 05:12:01 +0000
-Received: from CO1PR11MB4865.namprd11.prod.outlook.com
- ([fe80::fc7a:748b:9fd:b66b]) by CO1PR11MB4865.namprd11.prod.outlook.com
- ([fe80::fc7a:748b:9fd:b66b%4]) with mapi id 15.20.4669.016; Mon, 8 Nov 2021
- 05:12:01 +0000
-From:   <Kavyasree.Kotagiri@microchip.com>
-To:     <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
-        <Nicolas.Ferre@microchip.com>, <Eugen.Hristev@microchip.com>,
-        <Manohar.Puri@microchip.com>, <robh+dt@kernel.org>,
-        <mturquette@baylibre.com>, <Kavyasree.Kotagiri@microchip.com>
-Subject: RE: [PATCH v10 0/3] Add driver for lan966x Generic Clock Controller
-Thread-Topic: [PATCH v10 0/3] Add driver for lan966x Generic Clock Controller
-Thread-Index: AQHX0HrODaqCiC7TlE2x8wXpDPfd1av5G8/g
-Date:   Mon, 8 Nov 2021 05:12:01 +0000
-Message-ID: <CO1PR11MB486571940F4F7037A08EDA9A92919@CO1PR11MB4865.namprd11.prod.outlook.com>
-References: <20211103061935.25677-1-kavyasree.kotagiri@microchip.com>
-In-Reply-To: <20211103061935.25677-1-kavyasree.kotagiri@microchip.com>
-Accept-Language: en-IN, en-US
+ bh=adnevkwbGqneeJTjA4bwAe9r+AmbAGMumaRg57b5sss=;
+ b=Z02Ky6wy4QSXZMuiM6BEoyhaQevymD+yAsLijRPVMRuyvgYAwIWJGSeN5TRFQarEkwRrZT3dJLO2/Jxhq7YByPMi5hxKfPaVbXTanBTYV9DkzBkue003S3EZ69KJChJk29eYo8dKmgKu3M6FPpkAlya3ZzhjvVWzPQp74chX1CE=
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB3627.namprd12.prod.outlook.com (2603:10b6:5:3e::18) by
+ DM6PR12MB2955.namprd12.prod.outlook.com (2603:10b6:5:181::33) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4669.15; Mon, 8 Nov 2021 08:07:09 +0000
+Received: from DM6PR12MB3627.namprd12.prod.outlook.com
+ ([fe80::549b:1773:f036:9ee2]) by DM6PR12MB3627.namprd12.prod.outlook.com
+ ([fe80::549b:1773:f036:9ee2%4]) with mapi id 15.20.4649.019; Mon, 8 Nov 2021
+ 08:07:09 +0000
+Message-ID: <acc78695-9156-7f39-619f-75434bcb3a1f@amd.com>
+Date:   Mon, 8 Nov 2021 13:36:56 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
+Subject: Re: [PATCH v2 RESEND 2/5] drivers: acpi: acpi_apd: Remove unused
+ device property "is-rv"
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 895a1a47-44ad-4015-08f1-08d9a2764c44
-x-ms-traffictypediagnostic: MWHPR11MB1997:
-x-microsoft-antispam-prvs: <MWHPR11MB1997E5E331C98E26D46B10FA92919@MWHPR11MB1997.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3631;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lfmP6qBL/58YHa+8B/7lwBWeExpxJapGWMreEbQkSYu1cVjleZIzYKJ4TfnQSe+J5IvtSxT3X78dVHXQTK3fEPouBUhlKxfuXU1/8oSwHrEXacBKR8PHcmF84abup8eYFdlBRWbqFSjm3S9Rk0LzMZ6et+cO1p0rrRGI+I4qZHjVVlFCbR3dvnYrhc1annDSvr8OlE/k0yU6rXJo6oDywr1wTWGGFzG/tHlxeBY1wJFJyXaSh8PduM+yY23nYtl5Ok3Nxs1o01B3G8P7pfOsyIQ+q5Io7KLFmr4pbyC33RS+IjXMcHlOBZExUVnd58gGjU+y8e8PXgOVtZpjpORV/mF2coi7xmo0h+qWUBLBpxCaT3WeOaj3vKNXYkJolnt1feg0lSk88guLxHQmriRDrn60Eo8EguzYUuLzHphOjIVQr43MGKVNdu8214tSdd3DxVBYuYeDXU3h0d9cvOYOuCTAS2LZFSB64fPnS+RGv3VxHCSLAeqT39+ojXMIJQw9p4U3d1aoQiR4BIIT4UDldr/Y9lnTt0p6iPqHgROvYqSOCcFEg/F3tW1pjbGqx8yQ3in4+HjV3tL36XQz+skDV9MNXcPB0YZ8pt0N5zpI5jYZuceJm7HpMyE9tGYtwKMLhGdBWj75P0uwN/vUYw8koLbwnPA5QicNw8wmJijgfvIbpKJ2/7ibtrkjbEv3KTNgXitaogXdQxaDRMSGU/Un1ujl9mF3+bIt0fCIRbYYqLo=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4865.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(316002)(7696005)(86362001)(122000001)(83380400001)(107886003)(8676002)(54906003)(5660300002)(2906002)(26005)(8936002)(33656002)(55016002)(71200400001)(4326008)(6506007)(508600001)(9686003)(186003)(64756008)(66446008)(66946007)(6916009)(66556008)(66476007)(52536014)(38070700005)(38100700002)(76116006)(53546011)(41533002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?U02TS3ZpFjcGxa/qDwLDsTn/fNXwKZgWg7O2U1J6bTTtroytmQCrKQAT4CmJ?=
- =?us-ascii?Q?CT20D+anTCZThVAQpXUDftj5IVCPkdMyFHv8Zc2R+684Mlhvu6dcPr8SSteV?=
- =?us-ascii?Q?y31fT6MLxIKlJcj2nGkr0FsdMLF/yaEhAv4KGnSH9/hipJo2PpNOtJqx52cx?=
- =?us-ascii?Q?UPP1OAzJquDwmgGDd4W2HckNwj+han/OpEKm5ysAhdkvpUWa1gCArYWUg3gM?=
- =?us-ascii?Q?jAvx8sAyFCo58eQe4mGr1QZGqnRlZyiR2CTyAZA46upOZE+k/wYBLyWTP1Z3?=
- =?us-ascii?Q?5Bf5iJ7aJ9YgIHrG0CHKuWqBvHfHAGbLeSTPZMPfLFGFB16G+cTnSCchV/m5?=
- =?us-ascii?Q?K9KsJqk1j95pZdO60zXf8vTzzk4OjashxZTqaBkEiXFKSt7M5loMHxaMyBDC?=
- =?us-ascii?Q?GocOmOr13ORp1loNQ39bCAOiEK8En5JFsdD5Ddoe0B7+fTJ9FHbo9G4O4Jhd?=
- =?us-ascii?Q?ixG7jrtTbg7fcGqcrd/HsLxGWsr/aG6txhvoJEGxe22Yun10XjGcu8x+jMyD?=
- =?us-ascii?Q?oYfmyT45W4TSXhQb3x1oQANYCkE+zSPTlLTjyq2KQVy5q4ZQ5+V7zVp+eS3O?=
- =?us-ascii?Q?BvXlr3iC6c2bPByCOPxEvmXYyQFPynN51A91aWgsO7yU4Yf3+HStFJGOQama?=
- =?us-ascii?Q?/z1ZjYamIyh/DIciPrJ6QZz3nxJeFsXUKCoahqeXAUZIiGTZyD4G12GA0u0+?=
- =?us-ascii?Q?bJW8cblSeANeJQ9+mCdciacW20bA5voZCjmv9E1ZE3c4kudf3UUPOgXxhQ2V?=
- =?us-ascii?Q?xFMbuf1U2ac18GxHOEbMHkvg0pNIDBzE7HxTct/p1k5E9I1dx52pakQLvtnd?=
- =?us-ascii?Q?7kPWb6jkt/eIL7pP84qjYBs0uR1fvx5Yr0763u7Xeb2rbDZHnDY35kb2yTPD?=
- =?us-ascii?Q?01wjYO96ohY4G+lNNzd0td9mPmlI+o0EoZMAKeeE5WzRxW3L2CCZpurgTlcr?=
- =?us-ascii?Q?TWSNyyuRN2bPZGa4BgusCMY8nLm+joASACg6v16lquYDgY7m77Fa2cHIbiu1?=
- =?us-ascii?Q?hCh9EST2VyoXLjz/7TQs1egHszJ2BTyv60QxXrKERTHmdEwOit+ocLltkpgY?=
- =?us-ascii?Q?AKTPEFSEwrEQ3ZMIxMV7dV+1IxWxCEOBVyuE6iIIf3Pma5u1ZCVyZz0kLtBO?=
- =?us-ascii?Q?5ZEg2sotVYi634uyFO9u6HWql50Rk9MgdslK4IloiGnArQpvvpc/QlmqgrL5?=
- =?us-ascii?Q?RSRDBPybk/4D8f0o2E/A3JsECSTsb4m694OFMoVBMBg1Z0zAi22ZENKOmGXm?=
- =?us-ascii?Q?SbuRwsEnLX3I+UV49Leq6vdrfEA+dEjh5UFWCdHeBzFGzo6bBgz9QLbY+kLT?=
- =?us-ascii?Q?Fw9VmPlvcEsoqhFxXTRqsKrbeR07ZTQPMt6EuIufwsrRQPum6WPfXOOc0Wbz?=
- =?us-ascii?Q?OW77JtJehzM+HLCQ9Klq+grU2+sa+n3RJqKftAEq0u3emAyeIoIBvbtnN10D?=
- =?us-ascii?Q?sPDEv2HrCWV1SxCbyqiCoY5bidP82hQvLXHs8mG2SNgBR9oltp5BeJMOX/sD?=
- =?us-ascii?Q?I5iPdQTg65sBJ3QQH7Skovbs4wF4Bu9I3tG40JqK9I+p4zbyBV4bvU/MMmbf?=
- =?us-ascii?Q?iXk4IXTyOOMUhKP4zPOBT7Sk6VFZsYhr24HlgDN5Y4sNzEp5/2rMM3qIXJeT?=
- =?us-ascii?Q?lww6h3jZc7512DrsydsByQMTGKxLxA7U+XVe7io1Y77woGY6m/JGRZoDOkx6?=
- =?us-ascii?Q?ORcw65mer+H+zNCR/BTbTuhAQMhUAP86mWmvK9ZhLoN5/Z1G?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>, Vijendar.Mukunda@amd.com,
+        Alex Deucher <Alexander.Deucher@amd.com>,
+        Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@amd.com>
+References: <20211029063228.578909-1-AjitKumar.Pandey@amd.com>
+ <20211029063228.578909-3-AjitKumar.Pandey@amd.com>
+ <CAJZ5v0jXnwC-C8mAWtQDtoPko9ALAYhpm3X-TZ5L83ROEUJWmA@mail.gmail.com>
+ <20211105222221.8AF8C60E93@mail.kernel.org>
+From:   Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
+In-Reply-To: <20211105222221.8AF8C60E93@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1PR01CA0155.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:68::25) To DM6PR12MB3627.namprd12.prod.outlook.com
+ (2603:10b6:5:3e::18)
 MIME-Version: 1.0
+Received: from [172.31.154.86] (165.204.158.249) by BM1PR01CA0155.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:68::25) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.11 via Frontend Transport; Mon, 8 Nov 2021 08:07:04 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 41c10182-d924-4b6a-4e4e-08d9a28ec330
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2955:
+X-Microsoft-Antispam-PRVS: <DM6PR12MB2955E843677015FC2D2D916482919@DM6PR12MB2955.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 23sHpSjFNVwk/0cz3LYf5maRg2X9qW3G12VX0vIkhvhrXCIE4bSc2lPSxE9kmY6ckDDN/6qmhjJ/QuDVxszdIyZaflDD+4AQcGxk48eFnrFwytK2KTgMusB/SxLFnsQ6wpllHvRRN6sukUhf1r+X2nOkWG2NkyWKbLsubCkTJ956XLPathBLzW824w23s+eua89QGxpnXwbNDwhbD9CGwsphpFcOUsHGC60vpFwFybLvIQ2q2Obgzfho8bpTLkpeHHUohrcbUsDTSYvEePfLsyNBUzXBHsYl3OpRQUgcelo59hTepGyVmFbpOMOuHgRSOnGG+XSS2taYa0GATdTSsAgaz+XVL5EKQa3K0DmARCQULA+M34WSw5VTlP1n41zRmRw/KCnrh3YyA5C5kJev/mY1HJBw1xdVZCLOWUEWqAU41ntObLxbylsDT5tjJo4ASyYB7woYYL6ExViB2zxYFAZCgEJJYXylpAGaQcwEw6fuWqmWAh3EAtCkGhTs4S1hhnF4pRNPzIFgYUpAEDeKwG1Whk6FrNhFOQOqcK6FQRi3n+DYoRHiVDAfA7LCxQQfm/Ojy4ZFhxx3nfpGIkPM21uuyhaXfZFb9X9lTGwbZtEVFIDMrLRKmxYqXJT+bZFz5diO1PdX+gZLakFa+M+6C8/wwzEm/VOhEx2dvG0dgQvoHfP8VXXetLJynMO1/O0AOjmfl5orymTWDSj5kLKp6OBESOmcWFVuw4HcR1QOV80=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3627.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(2906002)(186003)(4326008)(2616005)(956004)(5660300002)(6486002)(53546011)(8676002)(66946007)(66476007)(66556008)(31696002)(8936002)(110136005)(316002)(54906003)(16576012)(508600001)(26005)(6666004)(38100700002)(86362001)(31686004)(36756003)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dFBQNnJjd3RseTlhTFZTTVNNREJnRmpSTXBXNUttTlZWcmFndks2OVZMZXV1?=
+ =?utf-8?B?bmpxVmp5WVdsNWxCODkzY1pwT0sxdTNqVHFQOGFLOXJkbmZsVWFXOThzbDBN?=
+ =?utf-8?B?eW5XV21JNHFoWVJtdG9HR08veHAyeUtJZHBGdlhHb1V3NXR4a2ltQXdhNlpT?=
+ =?utf-8?B?NmVqaDBaUE9xbFl3T1B2T3hFRTQrOU1HYTZ6RHY4WWZEWlVXSmM0L25jY3hL?=
+ =?utf-8?B?d1IxZmpBTm90Y2tESGZ6WXpNMXNac2JFM1Rzb2lSU2hzaTlaQWt5MjJ3bFZO?=
+ =?utf-8?B?dG1mTGlORmE0Z0RrTDRGQWlodEpHSGxtdHZoS1FJMC9SdmVmM3UvM2t2ZWN3?=
+ =?utf-8?B?RmdnOEZiV2FVem16eVdhR1VTTHN2YkV0K3FTRVN2UmZtRHRGMkZyd3I2aW1v?=
+ =?utf-8?B?WHRTRzRVU2NaUzUvZWdoVytRc2lIcjFuVHBoNm9FTEZjKzg2b0FVM1NJQXBp?=
+ =?utf-8?B?R0cwaUZCNm1NYWlJVVFRK3gvR0ltbkJKOHRFRzh5RCtxRlN1MmVLYnJ1MEd1?=
+ =?utf-8?B?ZEttb202L1EvSFdBOVM0b3pCNDlxTlJwQnJ5azJDOC9kV3locXpPMGViWTlB?=
+ =?utf-8?B?S3FQZStaR1JBWFJEYXBJTm04UW0rWXZlUFBqOGgzc3BHcDJFaTNHc2xMdkxi?=
+ =?utf-8?B?bS9RQlBjZDVxb0RXYXlqUTNjODlFb3h4NlZIWENWdmVHT3VSdVNFT2ZUUnR0?=
+ =?utf-8?B?THlWMnVyWm11NUlEeGo2V091amk2RzlFbU5HU2l5N0pBVDV4VHVhN25iR0RV?=
+ =?utf-8?B?S0tMck1DNEpjUDhKNzRiZ29oTkE5ZE5BQU1VM1p0MW5YbGtJMTZOb2NWL25i?=
+ =?utf-8?B?L0N3TURENkEyT1pOZnlFVWYxQlE1UTN3R1YxdjBXbDdtMzYwbDFCWFhGZ0Nl?=
+ =?utf-8?B?Y1cvUStna0ZpWUVTdlFaVy9PNk55UGs4ek5aRkhEYTRvN2pPTUdFWXRiTmJn?=
+ =?utf-8?B?bm5XUXZVZGxZQTU3T2k2dkhzbHVIcEV1TjBkd2NkaWx2L1Qwd0JFSXBDaEFB?=
+ =?utf-8?B?Ry9WTkRVZzhNTDl1a29MKzBtbi91aUVVRGsvN1FkQTkxNysyc2V6ZGVKZU5P?=
+ =?utf-8?B?RDJRbDlXb0JITkx4Rm1WMHoxVytHbEU4TU9rWUZGQm5WMlliNEJJVFhpa2gz?=
+ =?utf-8?B?VzNvZnN4V3gybGxmMzd3R0w4aGhhNFVpdVlsVldtTytSTlQ2ZjBqWmEzbzB0?=
+ =?utf-8?B?QTV1cDY0eTlOZCtDa2V1T1FYVjFqQjJScEpEVU9XNjBSOEpWbldqbXFRc2N6?=
+ =?utf-8?B?b1cxZGFpc0YvS0ZBWWlkR2RSZVdsTVJROTF4M3NQMmsyczlGcmczRVhCL1ZY?=
+ =?utf-8?B?TkRsWGo5anNZdmlzc1QycUQ4NXVLL0N2a0kzMEJ6UUVxaFRZdEVBMmJHUjhI?=
+ =?utf-8?B?akNQdzM5N08xcURIZHhvdkRRTnJNWHdBWXl0aFFZRjMrTjE5eVdIeG4xNWlu?=
+ =?utf-8?B?SS9NcENXTTdXSE50TFRwaWpsck9HTy9vK3FrbWpMWHIzVmQxY3gzVC81V1k1?=
+ =?utf-8?B?TU1hRXhDVkljQWhiVVBsZlRaSS9sNTg0QXZPY3JIenloRGFoVU1ENUZLeUtw?=
+ =?utf-8?B?ZXU2UzVQQm51ME1JTE5jSVQwYUVxZ0VlSldiZGhHYUhlZFB4dDNuSlEza2Zy?=
+ =?utf-8?B?Wlk4dWIyeFJCNXZJWGpLRlU1RWc1UXRQSkFWSmlRQUlzbzcxMGpVMDJiQ01q?=
+ =?utf-8?B?QTJvNWpTN2ZEQ3kvcnVRcTVTR2Q5Z0FURDNUMHd4NzRWcUZMSVFUV0NZQkRm?=
+ =?utf-8?B?WUdWN25xWFJDNmVCNkM0c3lFaXhuUjJIRHpHTjJlaGxBU2prL3d2QlhBaXBu?=
+ =?utf-8?B?K0hEUVU1am1pcUh5TVNjZmlmdUIyY3VkK1lnWkdqa2pOcnk4R0pxM25IOGxr?=
+ =?utf-8?B?bFZxcDBIcVVrSnVOSXB3ZGswS1J3d0pKaEFhb0pNcGpHbGFuNmhFcmRiM2Y5?=
+ =?utf-8?B?aHRPbTA2cjVaWUwycFNObUJLTHdIYlBmVWxoOEVzQm9GY0paNXpMK3dERkZr?=
+ =?utf-8?B?eUhRclRtZnpVY0c3aS96YnNWWnA5UjEzbit2VHdxbGF6czU1TnNoZ0YrdjJ0?=
+ =?utf-8?B?bHBlYjBBeGpjYTFvSlIzTGpKNnE0dVdBZEpmZE1NWUVuOTNZek05RnpTZ2pN?=
+ =?utf-8?B?MjdMNTNJRlVZSHdBcEVnSDdjbGVBRms4QytPd1F0Z0pRblR0cUtBZnlPb1hC?=
+ =?utf-8?Q?mMFtIKnW+yHyJEyqEwJI8Kk=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41c10182-d924-4b6a-4e4e-08d9a28ec330
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3627.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4865.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 895a1a47-44ad-4015-08f1-08d9a2764c44
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2021 05:12:01.7032
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2021 08:07:09.7032
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TrU8XLZ0ku4RYHpkX/wCu1ynP1wyrrz69f6CfmCdAubwe5xWwzfeb2cDDzN2Bu3pprQ0K7fsoA9b1O9r5IsFakyvzmxqJ+Q6TNlzh0x06WVXY+ckwm618sSDAjNzQ7bM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1997
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Vm/eKcaJnEvO68u2VQPbUtpcp/IXz6BIRT5OQXYkaPYYPbu+yixqs9UBr4VnrRw3JUqcmVc6QpxJOLBUOIjL2Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2955
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
 
-Addressed your comments in v10 patch series.=20
-Please let me know when you include my patches into PR.
 
-Thanks,
-Kavya
-> -----Original Message-----
-> From: Kavyasree Kotagiri [mailto:kavyasree.kotagiri@microchip.com]
-> Sent: Wednesday, November 3, 2021 11:50 AM
-> To: robh+dt@kernel.org; mturquette@baylibre.com; sboyd@kernel.org
-> Cc: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> clk@vger.kernel.org; UNGLinuxDriver <UNGLinuxDriver@microchip.com>;
-> Nicolas Ferre - M43238 <Nicolas.Ferre@microchip.com>; Eugen Hristev -
-> M18282 <Eugen.Hristev@microchip.com>; Kavyasree Kotagiri - I30978
-> <Kavyasree.Kotagiri@microchip.com>; Manohar Puri - I30488
-> <Manohar.Puri@microchip.com>
-> Subject: [PATCH v10 0/3] Add driver for lan966x Generic Clock Controller
->=20
-> This patch series adds a device driver for Generic Clock Controller
-> of lan966x SoC.
->=20
-> v9 -> v10:
-> - Removed .name from lan966x_gck_pdata struct.
-> - Removed "_clk" in fw_names like used in bindings
->=20
-> v8 -> v9:
-> - Added Acked-by to dt-bindings and Documentation file.
-> - Changed clk_name "timer" to "timer1"
-> - Updated devm_kzalloc in probe function.
->=20
-> v7 -> v8:
-> - Defined new constant DIV_MAX.
-> - Corrected and updated prescaler divider condition check.
-> - Added Acked-by.
->=20
-> v6 -> v7:
-> - Added Kconfig and Makefile entires for lan966x clock driver.
->=20
-> v5 -> v6:
-> - Added Acked-by to dt-bindings file.
-> - Removed "_clk" in clock-names.
-> - Added Reviewed-by to Documentation file.
->=20
-> v4 -> v5:
-> - In v4 dt-bindings, missed adding "clock-names" in required
->   properties and example. So, added them.
-> - Returning proper error - PTR_ERR.
-> - Removed unused variable "ret" in probe function.
->=20
-> v3 -> v4:
-> - Updated "clocks" and added "clock-names" in dt-bindings.
-> - Used clk_parent_data instead of of_clk_get_parent_name().
->=20
-> v2 -> v3:
-> - Fixed dt_binding_check errors.
->=20
-> v1 -> v2:
-> - Updated license in dt-bindings.
-> - Updated example provided for clock controller node.
->=20
-> Kavyasree Kotagiri (3):
->   dt-bindings: clock: lan966x: Add binding includes for lan966x SoC
->     clock IDs
->   dt-bindings: clock: lan966x: Add LAN966X Clock Controller
->   clk: lan966x: Add lan966x SoC clock driver
->=20
->  .../bindings/clock/microchip,lan966x-gck.yaml |  57 +++++
->  drivers/clk/Kconfig                           |   7 +
->  drivers/clk/Makefile                          |   1 +
->  drivers/clk/clk-lan966x.c                     | 240 ++++++++++++++++++
->  include/dt-bindings/clock/microchip,lan966x.h |  28 ++
->  5 files changed, 333 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
->  create mode 100644 drivers/clk/clk-lan966x.c
->  create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
->=20
-> --
-> 2.17.1
-
+On 11/6/2021 3:52 AM, Stephen Boyd wrote:
+> [CAUTION: External Email]
+> 
+> Quoting Rafael J. Wysocki (2021-11-05 08:02:26)
+>> On Fri, Oct 29, 2021 at 8:33 AM Ajit Kumar Pandey
+>> <AjitKumar.Pandey@amd.com> wrote:
+>>>
+>>> Initially "is-rv" device property is added for 48MHz fixed clock
+>>> support on Raven or RV architecture. It's unused now as we moved
+>>> to clock config based selection to extend such support on others
+>>> architecture. This change removed unused code from acpi driver.
+>>>
+>>> Signed-off-by: Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
+>>
+>> Is this and the [3/5] applicable without the [1/5]?
+>>
+>> If so, I can pick them up once they are approved by some other AMD
+>> folks, preferably Mario.
+> 
+> I'm still lost why we're putting this decision to have some clk or not
+> into Kconfig.
+> 
+I agree it's kind of weird to select clock based on Kconfig but only 
+reason to put Kconfig based selection is that this clk support required 
+on some older platforms where BIOS or bootloader change isn't feasible.
+We have only one consumer for this 48MHzclk i.e audio drivers and idea 
+is that this config shouldn't be user-selectable one and automatically
+select from audio machine driver which uses this clk.
