@@ -2,79 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBCDC433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 17:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE73C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 18:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C987A619BB
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 17:46:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A3661361
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 18:55:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239206AbhKHRtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 12:49:15 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:35413 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239069AbhKHRtN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 12:49:13 -0500
-Received: by mail-oi1-f182.google.com with SMTP id m6so2891128oim.2;
-        Mon, 08 Nov 2021 09:46:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=toDZEBHuaa1x3Jwug3DZHPkTTaz7ktotK2ulHBej8nk=;
-        b=YXAV7tGF0edft6nsVUDKgKi1D2eJ+lXXysWGR2BVd+qrj+PktPTyXEQZ5axvvl0Ii5
-         D0iuZolCHalupuv+8R25lj+g4bOFrxu/+dmJcMgKcZ+Xnjc4euSsqLeGbyr1fu24TO09
-         XreADFfUEhvVtsTSkSCPXORyaLCeRp8G2adn5IbYdsqewYystPytHtGTtMIvFxyJJtFX
-         FfLOKzdR5KLPUU2A3JP3TngLtC3ScxYx5dm3xxS+XZaY85fLxguqzBt+xVskaZGbaG2x
-         jrZ8hP55UcVqnKmaQ7gy6MM7N0MDtqXWj2lRstU4PQk0ZM++DLncCZQxlgl627AKcKFj
-         H74w==
-X-Gm-Message-State: AOAM531305gsiLZgIrZt4gmWXV/1iqlsLgAYxz6E9dO82R+q+zDRue5x
-        ubFO666ryjLTEJRrfaWYJQ==
-X-Google-Smtp-Source: ABdhPJwJf1N4LQz7lHDGovI7YOIjHtafLOOX0BulYtrubOxSn+TFI+LBd2/q855qVhgiDlkyhm+wJA==
-X-Received: by 2002:aca:ab84:: with SMTP id u126mr43245oie.41.1636393585984;
-        Mon, 08 Nov 2021 09:46:25 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id k17sm1920099oom.6.2021.11.08.09.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Nov 2021 09:46:25 -0800 (PST)
-Received: (nullmailer pid 3817073 invoked by uid 1000);
-        Mon, 08 Nov 2021 17:46:24 -0000
-Date:   Mon, 8 Nov 2021 11:46:24 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     sboyd@kernel.org, wells.lu@sunplus.com, robh+dt@kernel.org,
-        p.zabel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
-        maz@kernel.org, mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        broonie@kernel.org
-Subject: Re: [PATCH v4 07/10] dt-bindings: interrupt-controller: Add bindings
- for SP7021 interrupt controller
-Message-ID: <YYlicPy04xGNIum4@robh.at.kernel.org>
-References: <cover.1635993377.git.qinjian@cqplus1.com>
- <d143123af9b90618d92264ec704d1be499662bb0.1635993377.git.qinjian@cqplus1.com>
+        id S236292AbhKHS6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 13:58:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229837AbhKHS6E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Nov 2021 13:58:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B15BA61361;
+        Mon,  8 Nov 2021 18:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636397719;
+        bh=nlWHtZSD28HFUcjijaDxHBOQhnjx4wm+XZ/r9gMfWC4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=E66u5zZbFZBi77EzAZ2Fn1XKLoUrVRH3KQZgfde55UndaJ6YDWMk48rwzH2B6xUa+
+         gXJGCYMArVZGRhi4tKFAmJVFdB1I7sb8fbQohkbEIxDQt9fEOU+6XkL+GkMPeL9tCm
+         Yfpgr6V3Af/ml50/v3IJbp+FF9ApoUKNatB0a/T/2xXTw7CSCYMElcOxaM1S2t3/4y
+         rerZ8TSJpD9XTcbe8rrfnsR5YmPp7+UDYSDRj4XW0L058TG7yLcsMcWUFhZRVlR5cT
+         w0haaiH5upd/RDFumZd0nRZCxjsfL1NbxjmhQt7CpGrPS0/tdked6K+g+K/oZigAZS
+         3NhZuNFEXxnEA==
+Date:   Mon, 8 Nov 2021 19:55:14 +0100
+From:   Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     pali@kernel.org
+Subject: request for review
+Message-ID: <20211108195514.51332aaf@thinkpad>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d143123af9b90618d92264ec704d1be499662bb0.1635993377.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 04 Nov 2021 10:57:04 +0800, Qin Jian wrote:
-> Add documentation to describe Sunplus SP7021 interrupt controller bindings.
-> 
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> ---
->  .../sunplus,sp7021-intc.yaml                  | 62 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
-> 
+Hello Michale, Stephen,
 
+I would like to ask you to review the 2nd patch of the series
+  [PATCH v7 0/6] serial: mvebu-uart: Support for higher baudrates
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+The series can be found at
+  https://lore.kernel.org/linux-serial/20210930095838.28145-1-pali@kernel.org/
 
-If a tag was not added on purpose, please state why and what changed.
+the second patch at
+  https://lore.kernel.org/linux-serial/20210930095838.28145-3-pali@kernel.org/
 
+We need to implement this clock driver inside the UART driver, because
+the clock configuration registers unfortunately are in UART driver
+space and various cross mutexes between clock driver and UART driver
+would have been needed otherwise.
+
+Could you please review this and give your Reviewed-by / Acked-by, if
+there aren't any problems? We would like to move on with it since we
+sent it 40 days ago and didn't get the necessary reviews yet.
+
+Thanks.
+
+Marek
