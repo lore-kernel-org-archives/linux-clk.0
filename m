@@ -2,117 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B1D5C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161AEC433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 16:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7282B61351
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED0E761350
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 16:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241125AbhKHQBy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 11:01:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33440 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236850AbhKHQBy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 11:01:54 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA6DC061570;
-        Mon,  8 Nov 2021 07:59:09 -0800 (PST)
-Received: from zn.tnic (p200300ec2f331100b486bab6e60d7aaf.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:b486:bab6:e60d:7aaf])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 341131EC04DE;
-        Mon,  8 Nov 2021 16:59:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1636387148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JALJsenIQCt4BletZS/B+Zq0YBxBp6L9Ch45cvOw8XQ=;
-        b=LCBDSZEhct23FIVquhfAlhIS3MpLXm84rotG+ppp99dGMPWi9iJHGgKkfiFg0DoLQ+NSWf
-        ixY2Bl+WafqAknd6kFkKb4q9SvLPR/pI4iyCTMD6S/zki4CWzqH6/1ZBq8awazUNWt4Xi0
-        idSLz3mdlao9wfI9n1SzGKhLH2sR0dI=
-Date:   Mon, 8 Nov 2021 16:58:57 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ayush Sawal <ayush.sawal@chelsio.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rohit Maheshwari <rohitm@chelsio.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        intel-gvt-dev@lists.freedesktop.org,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-edac@vger.kernel.org,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-leds <linux-leds@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        scsi <linux-scsi@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-staging@lists.linux.dev,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-um <linux-um@lists.infradead.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux <sparclinux@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
- already registered
-Message-ID: <YYlJQYLiIrhjwOmT@zn.tnic>
-References: <20211108101157.15189-1-bp@alien8.de>
- <20211108101157.15189-43-bp@alien8.de>
- <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com>
- <YYkyUEqcsOwQMb1S@zn.tnic>
- <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+        id S230265AbhKHQKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 11:10:52 -0500
+Received: from mail-ua1-f54.google.com ([209.85.222.54]:46657 "EHLO
+        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235799AbhKHQKw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 11:10:52 -0500
+Received: by mail-ua1-f54.google.com with SMTP id az37so32489429uab.13;
+        Mon, 08 Nov 2021 08:08:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l1guUS2rE5b4UjdbPreB/LTbDFGmKIfPoVdUdqsaY5k=;
+        b=EK8idvfU3T4JLQsR78BJgoUtf5zvMuHGtNJPGQfEChDfv43lfDsY1TqSdzVKOt8RQN
+         y6Z7HxDvX5haJTQUyFednhHs0aBOsm9gCL+Bh7E48GPI4B+mig9SNWWVOUCfUcn535K9
+         nayGyYTPQHFS8l71PyEfvlOh82TwK6XClMTBEnxuHm4OufnLLnegrYasPf6RPuun4vK3
+         kF2Rtr29SlOC1O0hj0x507MJFUQd9SSSKd6g3Bcg8dnBgxbJLB9HTqFxghUH4hKWT7Yi
+         yrTGVQaK/1Yt01j6slSS0cwxze/nzQGk5WVYpJhpgPEOThp3aFanYw6RtP5cC/LGDLuF
+         dzZw==
+X-Gm-Message-State: AOAM5329NdMINvMUveqJk0he4A12GhXS/QzebesPXp9IKQ6o2Teo8kmd
+        3fTmS6rdqLyN5VZwe/Rc+Zt5xF+Phw0WuJ61
+X-Google-Smtp-Source: ABdhPJyvihKNXbo2jHQj27t0VVFWT/2OjwTPdL1bpG69Qk5rn3dEhWjxmXQ1ctYo4NgYOqUTXXW+sg==
+X-Received: by 2002:a05:6102:948:: with SMTP id a8mr81797vsi.51.1636387687076;
+        Mon, 08 Nov 2021 08:08:07 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id v1sm2774841uac.18.2021.11.08.08.08.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Nov 2021 08:08:06 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id s13so16953139uaj.11;
+        Mon, 08 Nov 2021 08:08:06 -0800 (PST)
+X-Received: by 2002:a67:c38f:: with SMTP id s15mr715081vsj.50.1636387686435;
+ Mon, 08 Nov 2021 08:08:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+References: <20211104160858.15550-1-biju.das.jz@bp.renesas.com> <20211104160858.15550-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20211104160858.15550-4-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Nov 2021 17:07:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXCFLCfobzhMyOTNAF7C34BRJLDBasb+2v49Hfm2++FXg@mail.gmail.com>
+Message-ID: <CAMuHMdXCFLCfobzhMyOTNAF7C34BRJLDBasb+2v49Hfm2++FXg@mail.gmail.com>
+Subject: Re: [RFC 3/4] clk: renesas: r9a07g044: Add WDT clock and reset entries
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 04:25:47PM +0100, Geert Uytterhoeven wrote:
-> I'm not against returning proper errors codes.  I'm against forcing
-> callers to check things that cannot fail and to add individual error
-> printing to each and every caller.
+On Thu, Nov 4, 2021 at 5:09 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add WDT{0,1,2} clock and reset entries to CPG driver.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-If you're against checking things at the callers, then the registration
-function should be void. IOW, those APIs are not optimally designed atm.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.17.
 
-> Note that in other areas, we are moving in the other direction,
-> to a centralized printing of error messages, cfr. e.g. commit
-> 7723f4c5ecdb8d83 ("driver core: platform: Add an error message to
-> platform_get_irq*()").
+Gr{oetje,eeting}s,
 
-Yes, thus my other idea to add a lower level __notifier_chain_register()
-to do the checking.
+                        Geert
 
-I'll see if I can convert those notifier registration functions to
-return void, in the process. But let's see what the others think first.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks for taking the time.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
