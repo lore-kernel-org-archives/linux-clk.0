@@ -2,118 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81D0C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 14:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4468C43219
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 14:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A767610F8
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 14:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A03560E75
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 14:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237771AbhKHOPS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 09:15:18 -0500
-Received: from mail-vk1-f181.google.com ([209.85.221.181]:44580 "EHLO
-        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237250AbhKHOPR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 09:15:17 -0500
-Received: by mail-vk1-f181.google.com with SMTP id d128so8246855vkf.11;
-        Mon, 08 Nov 2021 06:12:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BPrzNjKOLau3hKF+y8oEKhXRBCES6tkh2qL6Bflm6IE=;
-        b=ebHAKzmUSnHOFSGkTFQaGS8FV4RI5yhUiO1RiBaFIIYrNz9OVHYoA6iZjmMJH3d+aI
-         l/njNmbKnFc1R+LaHcI9VRxY6xdd75MDckedmpmb9THcH1R7Q2TOa5fEJdxxYVkBkfL6
-         hGuG1YBVagHeAFxV21W7l6rVmMsrxSGjyx/IrTg6Zsp9qiL91Z6C58MjZUqGJzjq8m9u
-         A/+YF+iKnohLMyfKE9Hw58qbZN2Pl74rtscAsftmh1PFM4jGZLSVF07Uc1S0Ah3ga6O2
-         9peCChU3O8PpSERxYN5tn1GuIwl3q2DAoL+RBlhCyjc2PDdM8UPze1UtyGw1Xs8biNcJ
-         Zd4A==
-X-Gm-Message-State: AOAM530pXj3D6pPvKJGrP/2qhxMh9+7ExlCHLw5elpwBIK87yFOE75k5
-        7xKdDCZRbAZ92Ka6W6emHQJ2Px3Hy3+tTxDO
-X-Google-Smtp-Source: ABdhPJzdYP6krv5UfwBjHy/wLWmObTsStfKHvpfjnzyOK/NZ21hk8+GcmHgVCeu3d97H+lDOppxTbA==
-X-Received: by 2002:a05:6122:1812:: with SMTP id ay18mr12453769vkb.18.1636380752676;
-        Mon, 08 Nov 2021 06:12:32 -0800 (PST)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id m186sm3140724vsm.11.2021.11.08.06.12.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Nov 2021 06:12:32 -0800 (PST)
-Received: by mail-vk1-f174.google.com with SMTP id b192so2619943vkf.3;
-        Mon, 08 Nov 2021 06:12:32 -0800 (PST)
-X-Received: by 2002:a05:6122:20ab:: with SMTP id i43mr21826948vkd.19.1636380752180;
- Mon, 08 Nov 2021 06:12:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20211108101157.15189-1-bp@alien8.de> <20211108101157.15189-5-bp@alien8.de>
-In-Reply-To: <20211108101157.15189-5-bp@alien8.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Nov 2021 15:12:21 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUSvU6mW8cpiNGru7cv+B3hCvF=ou8ujTOz5czZqLrAxw@mail.gmail.com>
-Message-ID: <CAMuHMdUSvU6mW8cpiNGru7cv+B3hCvF=ou8ujTOz5czZqLrAxw@mail.gmail.com>
-Subject: Re: [PATCH v0 04/42] clk: renesas: Check notifier registration return value
+        id S240307AbhKHOTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 09:19:50 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:45045 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S240303AbhKHOTs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 09:19:48 -0500
+Received: (qmail 1667203 invoked by uid 1000); 8 Nov 2021 09:17:03 -0500
+Date:   Mon, 8 Nov 2021 09:17:03 -0500
+From:   Alan Stern <stern@rowland.harvard.edu>
 To:     Borislav Petkov <bp@alien8.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
+        intel-gfx@lists.freedesktop.org,
+        intel-gvt-dev@lists.freedesktop.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v0 00/42] notifiers: Return an error when callback is
+ already registered
+Message-ID: <20211108141703.GB1666297@rowland.harvard.edu>
+References: <20211108101157.15189-1-bp@alien8.de>
+ <20211108101924.15759-1-bp@alien8.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211108101924.15759-1-bp@alien8.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Borislav,
-
-Thanks for your patch!
-
-On Mon, Nov 8, 2021 at 1:49 PM Borislav Petkov <bp@alien8.de> wrote:
+On Mon, Nov 08, 2021 at 11:19:24AM +0100, Borislav Petkov wrote:
 > From: Borislav Petkov <bp@suse.de>
->
-> Avoid homegrown notifier registration checks.
+> 
+> Hi all,
+> 
+> this is a huge patchset for something which is really trivial - it
+> changes the notifier registration routines to return an error value
+> if a notifier callback is already present on the respective list of
+> callbacks. For more details scroll to the last patch.
+> 
+> Everything before it is converting the callers to check the return value
+> of the registration routines and issue a warning, instead of the WARN()
+> notifier_chain_register() does now.
 
-Which homegrown notifier registration check is avoided?
-IIANM, you're adding a homegrown notifier registration check?
+What reason is there for moving the check into the callers?  It seems 
+like pointless churn.  Why not add the error return code, change the 
+WARN to pr_warn, and leave the callers as they are?  Wouldn't that end 
+up having exactly the same effect?
 
-> No functional changes.
->
-> Signed-off-by: Borislav Petkov <bp@suse.de>
+For that matter, what sort of remedial action can a caller take if the 
+return code is -EEXIST?  Is there any point in forcing callers to check 
+the return code if they can't do anything about it?
 
-> --- a/drivers/clk/renesas/clk-div6.c
-> +++ b/drivers/clk/renesas/clk-div6.c
-> @@ -306,7 +306,9 @@ struct clk * __init cpg_div6_register(const char *name,
->
->         if (notifiers) {
->                 clock->nb.notifier_call = cpg_div6_clock_notifier_call;
-> -               raw_notifier_chain_register(notifiers, &clock->nb);
-> +
-> +               if (raw_notifier_chain_register(notifiers, &clock->nb))
-> +                       pr_warn("CPG DIV6 clock notifier already registered\n");
+> Before the last patch has been applied, though, that checking is a
+> NOP which would make the application of those patches trivial - every
+> maintainer can pick a patch at her/his discretion - only the last one
+> enables the build warnings and that one will be queued only after the
+> preceding patches have all been merged so that there are no build
+> warnings.
 
-A duplicate registration cannot happen, as the notifier is freshly allocated.
+Why should there be _any_ build warnings?  The real problem occurs when 
+a notifier callback is added twice, not when a caller fails to check the 
+return code.  Double-registration is not the sort of thing that can be 
+detected at build time.
 
->         }
->
->         return clk;
-> diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
-> index e93f0011eb07..fbbb6f4a8148 100644
-> --- a/drivers/clk/renesas/rcar-cpg-lib.c
-> +++ b/drivers/clk/renesas/rcar-cpg-lib.c
-> @@ -59,7 +59,9 @@ void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
->                                   struct cpg_simple_notifier *csn)
->  {
->         csn->nb.notifier_call = cpg_simple_notifier_call;
-> -       raw_notifier_chain_register(notifiers, &csn->nb);
-> +
-> +       if (raw_notifier_chain_register(notifiers, &csn->nb))
-> +               pr_warn("CPG notifier already registered\n");
+Alan Stern
 
-A duplicate registration cannot happen, as the notifier is freshly allocated.
-
->  }
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Due to the sheer volume of the patches, I have addressed the respective
+> patch and the last one, which enables the warning, with addressees for
+> each maintained area so as not to spam people unnecessarily.
+> 
+> If people prefer I carry some through tip, instead, I'll gladly do so -
+> your call.
+> 
+> And, if you think the warning messages need to be more precise, feel
+> free to adjust them before committing.
+> 
+> Thanks!
