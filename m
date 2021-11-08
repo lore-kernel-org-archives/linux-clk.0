@@ -2,133 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80861C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 09:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5920DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 10:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6344D6125F
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 09:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A62C60FC1
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 10:12:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238449AbhKHJf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 04:35:28 -0500
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:40466 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235884AbhKHJfU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 04:35:20 -0500
-Received: by mail-ua1-f50.google.com with SMTP id e2so30156091uax.7;
-        Mon, 08 Nov 2021 01:32:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=natkUAgTheIcsUsHIOKrKwm02jUscvarcAWkR9vE/gg=;
-        b=Qz3RRymHzuJjJXHo4tG/uvcnlefVze6axCfx1mf6z1rseco3fjOXL5UGL2zh3EHqsv
-         dWtem89E1P35Zm9fTb1zRnULThgNfdDD6wf05SAAYTGGOSn77TgKurtD3Max0OAkM8H7
-         Qo9r59UgkQY+DLmRpdjnNS/WYzZII6htcg8xipl9MRhJ8iEVOLtxT9bqj81XmI+vluLw
-         CKC5FB5fCd+6+vbF2Q0+OqLTxAP8NcYZLkUcA4voUKgHISo5f8xnVvlhi5TgnNE9A1R9
-         FgWZGhTB/Fz56ztxNaPx9KQMAATZxRs3+Nu6YIk0BRVf3t+HAclEP6lICuqD4txoIert
-         fd1g==
-X-Gm-Message-State: AOAM532UKTNvZQGPI/FW+ZV+6h2J49iXaOIAwy+qANQpir93XYUpBpB1
-        GiLqs0BG+A9xjB8fay35g/xC1lW5rTynag==
-X-Google-Smtp-Source: ABdhPJxvihut3Hp2eJTF+Zk6V+XSNksCPaXvC2rKzD+WiMxZSgb4VBp6iqohFHuEGE3y/w7FEy9PeQ==
-X-Received: by 2002:a67:e18e:: with SMTP id e14mr11488790vsl.49.1636363955295;
-        Mon, 08 Nov 2021 01:32:35 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id d128sm3095209vsd.20.2021.11.08.01.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Nov 2021 01:32:34 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id p22so6149216vke.7;
-        Mon, 08 Nov 2021 01:32:34 -0800 (PST)
-X-Received: by 2002:a05:6122:1350:: with SMTP id f16mr18817472vkp.26.1636363954170;
- Mon, 08 Nov 2021 01:32:34 -0800 (PST)
+        id S237759AbhKHKO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 05:14:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235650AbhKHKO5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 05:14:57 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41E3C061570;
+        Mon,  8 Nov 2021 02:12:12 -0800 (PST)
+Received: from zn.tnic (p200300ec2f33110088892b77bd117736.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:8889:2b77:bd11:7736])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 637521EC04DE;
+        Mon,  8 Nov 2021 11:12:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1636366331;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TQJym/1rmYQ4+cETXUsQAXpKycUCv2OKpLpqlLMp4Ec=;
+        b=Uqo+C9vwlVvqmyoGrtoRTw3O16a0AUpdq1SX2Gz7G0aoPI3oBCWzbY7o/NkFklAhHi8jOP
+        4k0JkskOEA2iWDf7cBUvtnCWIUr/7QKWlwCNCd7otRQAmCXhaayQyrbnUisCH0B82J4mq6
+        iNmEsmAyNNdmWWvc0o1vQmkI5q9GmBQ=
+From:   Borislav Petkov <bp@alien8.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v0 04/42] clk: renesas: Check notifier registration return value
+Date:   Mon,  8 Nov 2021 11:11:19 +0100
+Message-Id: <20211108101157.15189-5-bp@alien8.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20211108101157.15189-1-bp@alien8.de>
+References: <20211108101157.15189-1-bp@alien8.de>
 MIME-Version: 1.0
-References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-15-kernel@esmil.dk>
-In-Reply-To: <20211102161125.1144023-15-kernel@esmil.dk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Nov 2021 10:32:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVz1R_K7Zayj9LJBM1GpMVi2s8k9jFa8DZPhNWM6B2prA@mail.gmail.com>
-Message-ID: <CAMuHMdVz1R_K7Zayj9LJBM1GpMVi2s8k9jFa8DZPhNWM6B2prA@mail.gmail.com>
-Subject: Re: [PATCH v3 14/16] serial: 8250_dw: Add StarFive JH7100 quirk
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Esmil,
+From: Borislav Petkov <bp@suse.de>
 
-On Tue, Nov 2, 2021 at 5:12 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> On the StarFive JH7100 RISC-V SoC the UART core clocks can't be set to
-> exactly 16 * 115200Hz and many other common bitrates. Trying this will
-> only result in a higher input clock, but low enough that the UART's
-> internal divisor can't come close enough to the baud rate target.
-> So rather than try to set the input clock it's better to skip the
-> clk_set_rate call and rely solely on the UART's internal divisor.
->
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+Avoid homegrown notifier registration checks.
 
-Thanks for your patch!
+No functional changes.
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/renesas/clk-div6.c     | 4 +++-
+ drivers/clk/renesas/rcar-cpg-lib.c | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -414,6 +414,8 @@ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
->
->                 if (of_device_is_compatible(np, "marvell,armada-38x-uart"))
->                         p->serial_out = dw8250_serial_out38x;
-> +               if (of_device_is_compatible(np, "starfive,jh7100-uart"))
-> +                       p->set_termios = dw8250_do_set_termios;
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 3abd6e5400ad..7d89ca01889a 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -306,7 +306,9 @@ struct clk * __init cpg_div6_register(const char *name,
+ 
+ 	if (notifiers) {
+ 		clock->nb.notifier_call = cpg_div6_clock_notifier_call;
+-		raw_notifier_chain_register(notifiers, &clock->nb);
++
++		if (raw_notifier_chain_register(notifiers, &clock->nb))
++			pr_warn("CPG DIV6 clock notifier already registered\n");
+ 	}
+ 
+ 	return clk;
+diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
+index e93f0011eb07..fbbb6f4a8148 100644
+--- a/drivers/clk/renesas/rcar-cpg-lib.c
++++ b/drivers/clk/renesas/rcar-cpg-lib.c
+@@ -59,7 +59,9 @@ void cpg_simple_notifier_register(struct raw_notifier_head *notifiers,
+ 				  struct cpg_simple_notifier *csn)
+ {
+ 	csn->nb.notifier_call = cpg_simple_notifier_call;
+-	raw_notifier_chain_register(notifiers, &csn->nb);
++
++	if (raw_notifier_chain_register(notifiers, &csn->nb))
++		pr_warn("CPG notifier already registered\n");
+ }
+ 
+ /*
+-- 
+2.29.2
 
-BTW, it would be great for a follow-up patch to get rid of
-all these of_device_is_compatible() checks, and start using
-dw8250_of_match[...].data instead.
-
->
->         } else if (acpi_dev_present("APMC0D08", NULL, -1)) {
->                 p->iotype = UPIO_MEM32;
-> @@ -696,6 +698,7 @@ static const struct of_device_id dw8250_of_match[] = {
->         { .compatible = "cavium,octeon-3860-uart" },
->         { .compatible = "marvell,armada-38x-uart" },
->         { .compatible = "renesas,rzn1-uart" },
-> +       { .compatible = "starfive,jh7100-uart" },
->         { /* Sentinel */ }
->  };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
