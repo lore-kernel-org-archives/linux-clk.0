@@ -2,137 +2,157 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849BAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9CBC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 655FB61207
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C8161360
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Nov 2021 15:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239374AbhKHPEM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 10:04:12 -0500
-Received: from phobos.denx.de ([85.214.62.61]:49126 "EHLO phobos.denx.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240664AbhKHPEM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Nov 2021 10:04:12 -0500
-Received: from [IPv6:::1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 677C983176;
-        Mon,  8 Nov 2021 16:01:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1636383684;
-        bh=VW6XSQLYJ9hNWv0H95auB8+BwWLkGYH+tDrXB+ybyKk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=vInYaAnAqS5cbYJNtZgdZPtp5P83QrWlYfCvuEsLD3PjJwAtIfJVeYsrxT9ANR79z
-         ur2G8rf5k5qTnWXFgZBjoG4gSH91x57YG7p1ts49MDE1A10nhZJ4vK4WwUB99T7hf5
-         w0qJNd3NTZDTXT+0kzbO2mzJFbnqMs6tj8+aIsfBDE3er/Z7j3IGkTwY+NnkcLxzYE
-         ZQCMJuPwhQueMyQjlcammR2XPu/7wv6fsAh5oQHChAjP2M47QHcbmwGescBlDPskga
-         gkTSboRBZCfvYSc4T8JbLI4fTYO24e4nxdCBIbb/2YK0c0As3HkC4aiFsvdJUnKJhd
-         +BdbzeTIn3jKQ==
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: rohm,bd71847-pmic: Document
- rohm,clock-output-is-critical property
-To:     Rob Herring <robh@kernel.org>
-Cc:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>
-References: <20211020084956.83041-1-marex@denx.de>
- <263da45f-d648-3c65-aed3-e4ba41927911@fi.rohmeurope.com>
- <4b3cc52c-a618-ea7d-6778-68060cfadf8e@denx.de>
- <YXsVHRnzAWCFTPCo@robh.at.kernel.org>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <cd8b50cf-409f-20a4-ce5b-0e94701d9ab3@denx.de>
-Date:   Mon, 8 Nov 2021 16:01:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S240923AbhKHPgE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 10:36:04 -0500
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:43861 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240901AbhKHPgE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 10:36:04 -0500
+Received: by mail-qt1-f172.google.com with SMTP id 8so13954457qty.10;
+        Mon, 08 Nov 2021 07:33:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x4ykPITI22sSh/L6reU4seHVLFfVjdO/v+W3/SN8DUg=;
+        b=AK5+ymHpBJW394fq5QAJLtdTA/ZOqD4CMNR9HBtKgBlKaocEikykm9zWu2Qq3FsTDL
+         IBKgKBLjeGow4SxpkJ3x2oRGNnBBM0NSZ7leYaUE+sCbLlU8e+JdCCmHwGdf11yTS7jj
+         INUpSYd8YTGwyay9k1OcwzYpdYcV9EphK2OvOUVV9gSZxXZxi4QIiBYrsZTyoOgrppre
+         0wprgxHXRXz//JJtuaBp7hB+dbvc/y85rRMUeNSC0zaCdkGtvZcR3mZvLtetjRGhVxNU
+         Kq48BbcYt3WMF9YTaLnfqSufIaTCw2FbfsTbHiFPM419cNwj86653TvYIoMnsf+J4fK+
+         gBYw==
+X-Gm-Message-State: AOAM533eiMtrTJQK05ouqSS0wCB8B6mKp/DGcpb7z8dQ92ZCTvl80eY0
+        jARg/oG42UJJhg0c3f7dAUMoRa5LWBurk5lZ
+X-Google-Smtp-Source: ABdhPJykPOH3YWmh1bWslDbzGH3og2HDnOT28nOQQhf2wbjOhuI4A+4quz4f35G+kzZC3Oinm8VRnw==
+X-Received: by 2002:ac8:5a4b:: with SMTP id o11mr304870qta.321.1636385597559;
+        Mon, 08 Nov 2021 07:33:17 -0800 (PST)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id i14sm11098927qti.25.2021.11.08.07.33.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Nov 2021 07:33:17 -0800 (PST)
+Received: by mail-yb1-f174.google.com with SMTP id v7so44765592ybq.0;
+        Mon, 08 Nov 2021 07:33:17 -0800 (PST)
+X-Received: by 2002:a9f:2c98:: with SMTP id w24mr725068uaj.89.1636385158322;
+ Mon, 08 Nov 2021 07:25:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <YXsVHRnzAWCFTPCo@robh.at.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20211108101157.15189-1-bp@alien8.de> <20211108101157.15189-43-bp@alien8.de>
+ <CAMuHMdWH+txiSP_d7Jc4f_bU8Lf9iWpT4E3o5o7BJr-YdA6-VA@mail.gmail.com> <YYkyUEqcsOwQMb1S@zn.tnic>
+In-Reply-To: <YYkyUEqcsOwQMb1S@zn.tnic>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Nov 2021 16:25:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+Message-ID: <CAMuHMdXiBEQyEXJagSfpH44hxVA2t0sDH7B7YubLGHrb2MJLLA@mail.gmail.com>
+Subject: Re: [PATCH v0 42/42] notifier: Return an error when callback is
+ already registered
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ayush Sawal <ayush.sawal@chelsio.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rohit Maheshwari <rohitm@chelsio.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        intel-gvt-dev@lists.freedesktop.org,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-edac@vger.kernel.org,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-leds <linux-leds@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        scsi <linux-scsi@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        linux-staging@lists.linux.dev,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:TENSILICA XTENSA PORT (xtensa)" 
+        <linux-xtensa@linux-xtensa.org>, netdev <netdev@vger.kernel.org>,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux <sparclinux@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        xen-devel@lists.xenproject.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/28/21 11:24 PM, Rob Herring wrote:
-> On Wed, Oct 20, 2021 at 01:06:13PM +0200, Marek Vasut wrote:
->> On 10/20/21 12:14 PM, Vaittinen, Matti wrote:
->> [...]
->>
->>> I wonder if this really is something specific to ROHM ICs? Do you think
->>> this would warrant a generic, non vendor specific property? I am Ok with
->>> the ROHM specific property too but it just seems to me this might not be
->>> unique to ROHM IC(s).
-> 
-> I imagine we debated the need for a DT property when critical clocks was
-> added to the kernel.
+Hi Borislav,
 
-Have you got some reference to this debate ?
+On Mon, Nov 8, 2021 at 3:21 PM Borislav Petkov <bp@alien8.de> wrote:
+> On Mon, Nov 08, 2021 at 03:07:03PM +0100, Geert Uytterhoeven wrote:
+> > I think the addition of __must_check is overkill, leading to the
+> > addition of useless error checks and message printing.
+>
+> See the WARN in notifier_chain_register() - it will already do "message
+> printing".
 
-I think something like clk-hog , similar to gpio-hog , would be useful, 
-since we could also configure the critical clock frequency in DT.
+I mean the addition of useless error checks and message printing _to
+the callers_.
 
->>> By the way, the very same clk driver where you implemented the property
->>> reading (patch 2/2) is used by few other ROHM PMICs. At least by
->>> BD71837, BD71828, BD71815, BD9576 and BD9573. So the code change here
->>> adds support for this property to all of those PMICs. I wonder if the
->>> property should be mentioned in all of the binding docs... That could be
->>> another argument for making this a generic property and describing it in
->>> clk yaml ;)
->>>
->>> Well, just my 10 Cents - I am ok with this change as you presented it
->>> here if you don't think this should be generic one.
->>
->> I think we need something like gpio-hog, except for clock. Some clk-hog
->> maybe ? That would be useful not only here, but also for things where some
->> output generates clock for random stuff which cannot be described in the DT
->> for whatever reason (like e.g. the SoC is used as a substitute for CPLD XTAL
->> and the CPLD isn't connected to the SoC in any other way).
-> 
-> The justification given in this patch was for an SoC input which should
-> get described so that the clock is handled and kept enabled properly.
+> > Many callers call this where it cannot fail, and where nothing can
+> > be done in the very unlikely event that the call would ever start to
+> > fail.
+>
+> This is an attempt to remove this WARN() hack in
+> notifier_chain_register() and have the function return a proper error
+> value instead of this "Currently always returns zero." which is bad
+> design.
+>
+> Some of the registration functions around the tree check that retval and
+> some don't. So if "it cannot fail" those registration either should not
+> return a value or callers should check that return value - what we have
+> now doesn't make a whole lot of sense.
 
-This is the case I had here, yes. Although I've been running into 
-similar requirements repeatedly for almost a decade, I'm surprised 
-nobody implemented something like this yet.
+With __must_check callers are required to check, even if they know
+it cannot fail.
 
-> The CPLD case would be more interesting, but is there an actual need or
-> just a possible case?
+> Oh, and then fixing this should avoid stuff like:
+>
+> +       if (notifier_registered == false) {
+> +               mce_register_decode_chain(&amdgpu_bad_page_nb);
+> +               notifier_registered = true;
+> +       }
+>
+> from propagating in the code.
 
-This is an iMX53 board from 2012 or so, where they figured they don't 
-need an XTal for the CPLD because the SoC has this OSC_OUT and that can 
-be used to supply clock to the CPLD at just the frequency they need. So 
-the SoC is a clock source for the CPLD, and that's all there is to it.
+That's unrelated to the addition of __must_check.
 
-So far I hacked it in the clock driver to keep the clock running at 
-specific rate, but that hack has been a thorn in my side for long enough.
+I'm not against returning proper errors codes.  I'm against forcing
+callers to check things that cannot fail and to add individual error
+printing to each and every caller.
 
-> You could use the 'protected-clocks' property here. Maybe that's a bit
-> overloaded between can't access and don't turn off. But what it means is
-> really up the clock controller.
+Note that in other areas, we are moving in the other
+direction, to a centralized printing of error messages,
+cfr. e.g. commit 7723f4c5ecdb8d83 ("driver core: platform: Add an
+error message to platform_get_irq*()").
 
-This does not seem to describe what is needed here, protected-clock are 
-used to tell OS not to touch certain clock because they are protected by 
-e.g. firmware access restriction, it does not say anything about whether 
-the clock are critical. Also, it seems to be a non-generic property only 
-for some qualcomm clock driver.
+Gr{oetje,eeting}s,
 
-commit 48d7f160b10711f014bf07b574c73452646c9fdd
-[...]
-dt-bindings: clk: Introduce 'protected-clocks' property
+                        Geert
 
-Add a generic clk property for clks which are not intended to be used by
-the OS due to security restrictions put in place by firmware. For
-example, on some Qualcomm firmwares reading or writing certain clk
-registers causes the entire system to reboot, but on other firmwares
-reading and writing those same registers is required to make devices
-like QSPI work. Rather than adding one-off properties each time a new
-set of clks appears to be protected, let's add a generic clk property to
-describe any set of clks that shouldn't be touched by the OS. This way
-we never need to register the clks or use them in certain firmware
-configurations.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
