@@ -2,160 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB0AC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 20:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589E0C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 21:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FAFB611AF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 20:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ACC961251
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 21:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244588AbhKIUoN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 15:44:13 -0500
-Received: from aposti.net ([89.234.176.197]:53172 "EHLO aposti.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242487AbhKIUoN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Nov 2021 15:44:13 -0500
-Date:   Tue, 09 Nov 2021 20:41:16 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v2 1/2] dt-bindings: Rename Ingenic CGU headers to
- ingenic,*.h
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, list@opendingux.net,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Message-Id: <S4OB2R.59MVHDUBC2VP3@crapouillou.net>
-In-Reply-To: <YYqzT6ZjyQPMisXE@robh.at.kernel.org>
-References: <20211016133322.40771-1-paul@crapouillou.net>
-        <YYqzT6ZjyQPMisXE@robh.at.kernel.org>
+        id S244875AbhKIVHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 16:07:22 -0500
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:37585 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244853AbhKIVHV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 16:07:21 -0500
+Received: by mail-pf1-f182.google.com with SMTP id y5so563779pfb.4;
+        Tue, 09 Nov 2021 13:04:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E8Y2jyNg7h9soMk4rEm6rzTo1BjlaELOxyIkvTVeIKc=;
+        b=qFzg41KmFXXKxf0e7AIwCA80Vj91V/b5yxTOjkUyLj5g3HujBNOJ7qrqd9N4Mwa/P6
+         Sfl4ATULDY2ywqS3ruJg80zTSHpWY+zb9UQJHt9dZcQYnLqvb0dXt2mclUIlsiLZQnaV
+         vpBioGPkcymA/Ri3sCrAlRn2ZtIKOWZLVgqHuXnDtZ00y1DKMg72Uea8lMEFLivX/r8r
+         skk6f/aqTmMGnO0XocjxfLvBrD26RTW9NVGyGIaXbx5VfqMHEQukO8CGEbBUeoprVB4B
+         6M8YuUDbHJK5Yc0SNtY0OQt/eMN8VvyubtqwmF3xoltLU/GBmcMOrJ2TjZLYqJvEYcgf
+         UCXg==
+X-Gm-Message-State: AOAM530BGgMaRBQAP2cGf2AjT2BkjSOVO9gELRy1PUJFVIlumTA8KId7
+        /ajj9eER+M1Szon1rqPIXnQN+ZeMNAy0fTh2z6g=
+X-Google-Smtp-Source: ABdhPJz1YJYHQflXJx0Bc84bAu1eZK8Iidi5ru1YEkbahK+1/iI8yZB/R/hQC6b2vi+cWBbhfBoFSTKZxNwGdzS5FHg=
+X-Received: by 2002:aa7:8883:0:b0:49f:f87a:95de with SMTP id
+ z3-20020aa78883000000b0049ff87a95demr9062124pfe.53.1636491875224; Tue, 09 Nov
+ 2021 13:04:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: 8BIT
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
+ <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
+ <CAHp75VcuGdaq_TjjRS0S8R5y-nryLABZSp7ehrXz-fUS2W3vfA@mail.gmail.com>
+ <CACRpkdYe-tW2K2eOQa+FYb-ZXzrA95+pPc6kkLB8ZJLAT8G_eA@mail.gmail.com>
+ <CANBLGcyo3YjygkjDmdjt4C_H=MZdHQwqumsxnatuObeP2LADAg@mail.gmail.com>
+ <CAHp75VdBaKZVeA7dasHWP4E3c8F2phaGz-90FErj3bB8FJOS9w@mail.gmail.com>
+ <CANBLGcw7X9SY3_=A7ZXW60646vconjCbYBsvb=D2a0BPcyn75A@mail.gmail.com> <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
+In-Reply-To: <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Tue, 9 Nov 2021 22:04:24 +0100
+Message-ID: <CANBLGcxT_a3J+uaaKazRkfJQoBjGGGiz9agAZUzMEmfJiVXXbw@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+On Tue, 9 Nov 2021 at 21:29, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 9, 2021 at 10:40 AM Emil Renner Berthing <kernel@esmil.dk> wrote:
+> > On Tue, 9 Nov 2021 at 10:34, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>
+> > > > The order the different states are blinked depends entirely on
+> > > > how the pinctrl framework parses the device tree. I still think it
+> > > > would be more natural to cleanly go to the end result without this
+> > > > blinking.
+> >
+> > Hmm.. but if going through the different states is what you want, then
+> > wouldn't you need the device tree to have an ordered list of the
+> > states rather than just a single node and also a way to tune how long
+> > time the different states are blinked?
+>
+> In a way you are correct that the DT is a functional language and it's
+> a bit lite a style sheet or prolog or something in that the end reduction
+> is what counts.
+>
+> In this case, I would say something is weird if there are interim states,
+> the yaml validation should not allow you to set the same thing back
+> and forth in your DTS file.
 
-Le mar., nov. 9 2021 at 11:43:43 -0600, Rob Herring <robh@kernel.org> a 
-écrit :
-> On Sat, 16 Oct 2021 14:33:21 +0100, Paul Cercueil wrote:
->>  Tidy up a bit the tree, by prefixing all include/dt-bindings/clock/ 
->> files
->>  related to Ingenic SoCs with 'ingenic,'.
->> 
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  ---
->> 
->>  Notes:
->>      v2: Fix x1000-cgu.h and x1830-cgu.h incorrectly renamed to
->>          x1000.h / x1830.h
->> 
->>   Documentation/devicetree/bindings/clock/ingenic,cgu.yaml      | 2 
->> +-
->>   Documentation/devicetree/bindings/display/ingenic,ipu.yaml    | 2 
->> +-
->>   Documentation/devicetree/bindings/display/ingenic,lcd.yaml    | 4 
->> ++--
->>   Documentation/devicetree/bindings/dma/ingenic,dma.yaml        | 2 
->> +-
->>   Documentation/devicetree/bindings/i2c/ingenic,i2c.yaml        | 2 
->> +-
->>   Documentation/devicetree/bindings/iio/adc/ingenic,adc.yaml    | 2 
->> +-
->>   .../devicetree/bindings/memory-controllers/ingenic,nemc.yaml  | 2 
->> +-
->>   .../devicetree/bindings/mips/ingenic/ingenic,cpu.yaml         | 2 
->> +-
->>   Documentation/devicetree/bindings/mmc/ingenic,mmc.yaml        | 2 
->> +-
->>   Documentation/devicetree/bindings/mtd/ingenic,nand.yaml       | 2 
->> +-
->>   Documentation/devicetree/bindings/net/ingenic,mac.yaml        | 2 
->> +-
->>   .../devicetree/bindings/nvmem/ingenic,jz4780-efuse.yaml       | 2 
->> +-
->>   Documentation/devicetree/bindings/phy/ingenic,phy-usb.yaml    | 2 
->> +-
->>   Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml | 2 
->> +-
->>   Documentation/devicetree/bindings/rng/ingenic,trng.yaml       | 2 
->> +-
->>   Documentation/devicetree/bindings/rtc/ingenic,rtc.yaml        | 2 
->> +-
->>   Documentation/devicetree/bindings/serial/ingenic,uart.yaml    | 2 
->> +-
->>   Documentation/devicetree/bindings/sound/ingenic,aic.yaml      | 2 
->> +-
->>   Documentation/devicetree/bindings/sound/ingenic,codec.yaml    | 2 
->> +-
->>   Documentation/devicetree/bindings/timer/ingenic,sysost.yaml   | 2 
->> +-
->>   Documentation/devicetree/bindings/timer/ingenic,tcu.yaml      | 2 
->> +-
->>   Documentation/devicetree/bindings/usb/ingenic,musb.yaml       | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/jz4725b.dtsi                       | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/jz4740.dtsi                        | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/jz4770.dtsi                        | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/jz4780.dtsi                        | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/x1000.dtsi                         | 2 
->> +-
->>   arch/mips/boot/dts/ingenic/x1830.dtsi                         | 2 
->> +-
->>   drivers/clk/ingenic/jz4725b-cgu.c                             | 2 
->> +-
->>   drivers/clk/ingenic/jz4740-cgu.c                              | 2 
->> +-
->>   drivers/clk/ingenic/jz4760-cgu.c                              | 2 
->> +-
->>   drivers/clk/ingenic/jz4770-cgu.c                              | 2 
->> +-
->>   drivers/clk/ingenic/jz4780-cgu.c                              | 2 
->> +-
->>   drivers/clk/ingenic/x1000-cgu.c                               | 2 
->> +-
->>   drivers/clk/ingenic/x1830-cgu.c                               | 2 
->> +-
->>   .../clock/{jz4725b-cgu.h => ingenic,jz4725b-cgu.h}            | 0
->>   .../dt-bindings/clock/{jz4740-cgu.h => ingenic,jz4740-cgu.h}  | 0
->>   .../dt-bindings/clock/{jz4760-cgu.h => ingenic,jz4760-cgu.h}  | 0
->>   .../dt-bindings/clock/{jz4770-cgu.h => ingenic,jz4770-cgu.h}  | 0
->>   .../dt-bindings/clock/{jz4780-cgu.h => ingenic,jz4780-cgu.h}  | 0
->>   .../dt-bindings/clock/{x1000-cgu.h => ingenic,x1000-cgu.h}    | 0
->>   .../dt-bindings/clock/{x1830-cgu.h => ingenic,x1830-cgu.h}    | 0
->>   42 files changed, 36 insertions(+), 36 deletions(-)
->>   rename include/dt-bindings/clock/{jz4725b-cgu.h => 
->> ingenic,jz4725b-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{jz4740-cgu.h => 
->> ingenic,jz4740-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{jz4760-cgu.h => 
->> ingenic,jz4760-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{jz4770-cgu.h => 
->> ingenic,jz4770-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{jz4780-cgu.h => 
->> ingenic,jz4780-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{x1000-cgu.h => 
->> ingenic,x1000-cgu.h} (100%)
->>   rename include/dt-bindings/clock/{x1830-cgu.h => 
->> ingenic,x1830-cgu.h} (100%)
->> 
-> 
-> Applied, thanks!
-> 
-> I'll let Stephen take patch 2 after rc1.
+Yes, exactly.
 
-Perfect, thanks!
+> Alas we are not perfect as in yaml validation isn't perfect either.
+> I can't see what the problem is really, just write proper DTS files
+> and there will not be any interim states, right?
 
-I will later send a patch to update the spi/ingenic-spi.yaml example 
-(the one that was in linux-next and not yet in master) so that it 
-points to the right include.
+No, I agree. I think it's only that Andy wasn't sure if these interim
+states might be meaningful/useful.
 
--Paul
-
-
+> And if it is possible
+> to write DTS files that have states and sequence requirements,
+> these should be caught in validation. Should be.
+>
+> Yours,
+> Linus Walleij
