@@ -2,137 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00079C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 04:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEA8C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 08:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE1B861186
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 04:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 123E56103C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 08:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242529AbhKIEhs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 23:37:48 -0500
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:36616 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240672AbhKIEhr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 23:37:47 -0500
+        id S244617AbhKIJB4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 04:01:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244616AbhKIJB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 04:01:56 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7222DC061764;
+        Tue,  9 Nov 2021 00:59:10 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id f8so73911380edy.4;
+        Tue, 09 Nov 2021 00:59:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1636432502; x=1667968502;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=poM1gZKQfjN+HtFXLe21lk9FzBES5xXKmX+iYnChdps=;
-  b=bNdG9ALbQ54eAQUzxHKFq5uF0neO6+lW1V5IU0DC1U+OQYlb7olbMqPp
-   K5XLVmSLOWKJaQBRoUan4AjwN1uTmhFKFiMjmoPwW8SiaolZWRN5dBoZy
-   QIMv0uUrEbNCIW1s+nzUWBQHy4ivIoXV3GXNa/o7jiBlQuugs0Yf822wx
-   Q=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 08 Nov 2021 20:35:02 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2021 20:35:02 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.7;
- Mon, 8 Nov 2021 20:35:01 -0800
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.7;
- Mon, 8 Nov 2021 20:35:01 -0800
-From:   Mike Tipton <quic_mdtipton@quicinc.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-Subject: [PATCH] clk: Fix children not voting entire parent chain during init
-Date:   Mon, 8 Nov 2021 20:34:38 -0800
-Message-ID: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
-X-Mailer: git-send-email 2.31.1
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kmkcsLwhqrRlZYiF/o6WGOvaKjRFSvuNPZIr825qDS4=;
+        b=B0Nkb/Lxi0ma4Gqty9CoAxpahvSRtZuZt6gtGMcfl+nc1uMbWq8qR6m380Cn1GtcYo
+         CE3E5Ovrh+MmdKN0BaVZaUbM764j9Q8purv+cEYsE7jtPS7bPFvvHeJz079iNLi/xS50
+         tmY5tAsfSHvM0JsV0+46VXA338tcleeUlItyIbU33JpjEFGzuzuqIvp8ftahGriow6Lm
+         6ga1r+wPTMjilwoXyBDuRlEftn3l7MwikhGjtipWEF4yjm7F2gHTBWaG8pSC9BVrpWaG
+         fCgx5rL5EcCxwlbNhLvr/fueVV9MpPK1k1e0XYQVDh4pBQGif/GvKh04bDBmH1np8Oul
+         zWIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kmkcsLwhqrRlZYiF/o6WGOvaKjRFSvuNPZIr825qDS4=;
+        b=ThpqunLGSPdaxgSpkXRBf5nGa1GXQjKCxvdqDhlrbY1ahyXEMKwL6rIDIq0QMe9Jtj
+         KXeHJIKsrvw3Z3tm9Cq5KA+b3mlUDUHGZWq0ZbX4NSR67XWsws+lEm4YNIX5quXTq/ir
+         uduvCCXCPYPN++eTUb+AaRs9Lj1SM+tZ3ZKzoaGBPUfVPwO+7iEuvZA8mEBTr3aBlB/q
+         d1vxxGnZBDzrGCyc8qYOQaq/6BM22Ed/0nU+FKpu2cCIH6GbXQt4v/Ic9JRDjH7XRGKK
+         rgQElRBnLZB5cNdxQxJamJyNE53zYSZ80imNiLOe6UboJo8esGo7nDhej9CGA9wTPdQm
+         SE/A==
+X-Gm-Message-State: AOAM530C+KAhpqYUk/1DmwJf02Zc5s6JrVe0OjLEj1nlhh4ajXAZF7oJ
+        buH+/WXJv3A+eUM2C6L1u8rM2sYgn+9LYhWtV4c=
+X-Google-Smtp-Source: ABdhPJyUtICnxChNmThzPFmd2mxmlxgT2Vf4Uq3J6C6iLge/0z3Zlx6o0pBqiUkPlRNLnjsnz4Jc3nCgip5GrDG9gAs=
+X-Received: by 2002:a17:907:7601:: with SMTP id jx1mr7419521ejc.69.1636448348975;
+ Tue, 09 Nov 2021 00:59:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
+ <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com> <CACRpkdZOpXC0GvoyS8KexgjxL17rjyNkPuA0KGOvesZMDLvyJg@mail.gmail.com>
+In-Reply-To: <CACRpkdZOpXC0GvoyS8KexgjxL17rjyNkPuA0KGOvesZMDLvyJg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 9 Nov 2021 10:58:23 +0200
+Message-ID: <CAHp75VcxQ8nWqUTYzhJeUW55bvALHzcxQjMTP5UQwxmwu2aZ3Q@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If a child's parent is set by calling __clk_init_parent() while the
-parent is still being registered in __clk_register(), then it can result
-in the child voting its direct parent without those votes propagating up
-the entire parent chain.
+On Tue, Nov 9, 2021 at 2:54 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 2, 2021 at 9:02 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>
+> > > +       depends on OF
+> >
+> > So this descreases test coverage.
+> > Linus, can we provide a necessary stub so we may drop this dependency?
+>
+> Hm it further selects OF_GPIO which depends on OF
+> so I don't know how that would work.
+>
+> But does it decrease compile coverage a lot, even x86 has
+> optional OF support so I imagine it appears in x86
+> allyesconfig I suppose? Or am I wrong?
 
-__clk_register() sets hw->core before grabbing the prepare_lock and
-before initializing hw->core->parent. Since hw->core is used indirectly
-by __clk_init_parent(), then children can find their parents before
-they're fully initialized. If children vote for their parents during
-this window, then those votes won't propagate past the direct parent.
+I believe so. At least in my environment I have OF enabled (I haven't
+looked into what was the change to the config, though).
 
-This can happen when:
-    1. CRITICAL clocks are enabled in __clk_core_init().
-    2. Reparenting enabled orphans in clk_core_reparent_orphans_nolock().
-
-Fix this by not setting hw->core until we've already grabbed the
-prepare_lock in __clk_core_init(). This prevents orphaned children from
-finding and voting their parents before the parents are fully
-initialized.
-
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
----
-
-This is very difficult to reproduce. We can't reproduce it at all
-internally, in fact. But some customers are able to reproduce it fairly
-easily and this patch fixes it for them.
-
- drivers/clk/clk.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f467d63bbf1e..af562af9d54d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3418,6 +3418,13 @@ static int __clk_core_init(struct clk_core *core)
- 
- 	clk_prepare_lock();
- 
-+	/*
-+	 * Set hw->core after grabbing the prepare_lock to prevent race
-+	 * conditions with orphans finding and voting their parents before the
-+	 * parents are fully initialized.
-+	 */
-+	core->hw->core = core;
-+
- 	ret = clk_pm_runtime_get(core);
- 	if (ret)
- 		goto unlock;
-@@ -3582,8 +3589,10 @@ static int __clk_core_init(struct clk_core *core)
- out:
- 	clk_pm_runtime_put(core);
- unlock:
--	if (ret)
-+	if (ret) {
- 		hlist_del_init(&core->child_node);
-+		core->hw->core = NULL;
-+	}
- 
- 	clk_prepare_unlock();
- 
-@@ -3847,7 +3856,6 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	core->num_parents = init->num_parents;
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
--	hw->core = core;
- 
- 	ret = clk_core_populate_parent_map(core, init);
- 	if (ret)
-@@ -3865,7 +3873,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		goto fail_create_clk;
- 	}
- 
--	clk_core_link_consumer(hw->core, hw->clk);
-+	clk_core_link_consumer(core, hw->clk);
- 
- 	ret = __clk_core_init(core);
- 	if (!ret)
 -- 
-2.31.1
-
+With Best Regards,
+Andy Shevchenko
