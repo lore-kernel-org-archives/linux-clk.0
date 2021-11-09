@@ -2,237 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0B6C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15546C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2C5D610C8
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:44:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2A706112F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238765AbhKIQrc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 11:47:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59886 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238230AbhKIQra (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 11:47:30 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FCDC061764
-        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 08:44:44 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id i26so37477931ljg.7
-        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 08:44:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zbEeFT9w836IBoUS4GyHRkWfg1L5EahnC9mnhgRpa3s=;
-        b=O/Xk2B4gCaBgszZRqe5iECJPVDp9fgs4np5MIxs6v9rBORhGS6rUWSA/UBp6OvZeNf
-         9rCKhDC3T6UMxauO1Mr2tCrnrQnDQRQwLdjfPStGf2Pv1P8L0WID+i8VXtUHtQmq0QvS
-         GMng+YAE6gQtqBir21OG7ztaOJAUEYsU/4UefVts4Y3XdYXn1lqQZVa+WUQGjrbHwUHf
-         YqIv9W1vdoQ90SOQVrZv99lUsWneQ9vBcUyPSRok0pQyT9voLldbOEG8ZllIJtwiPToM
-         v2sOYJNebzOOorfNiXdWfRJ2YEhghgMmL5tv2jj/dWf8L8dDx+3ftHUOC9jio0udaM/X
-         DkWQ==
+        id S240326AbhKIQtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 11:49:42 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:38908 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238174AbhKIQti (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 11:49:38 -0500
+Received: by mail-ot1-f42.google.com with SMTP id z2-20020a9d71c2000000b0055c6a7d08b8so19557344otj.5;
+        Tue, 09 Nov 2021 08:46:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zbEeFT9w836IBoUS4GyHRkWfg1L5EahnC9mnhgRpa3s=;
-        b=Yf9zW+bxsJ6OmbsxFsP0cDGgz/wRk0k7cOLeHqy2b9IHin+LOqXf8VqvlrCe1zvfCL
-         fHxrsIHDHkowVvJCKL1XiLTaZkLQY8LRGZ5X8pa+yBywcrYofZ+q97zLgF4a4o6rWBVc
-         jNcPQlHl5dBBJKtolPIdpRMy83+yMRFUxlhsj3ScIF2ptAklILlX4oeLVRyVRbZnvs6Q
-         LerdIUr3zxTXpcmd2EMAx4I+OWJYj3oojl+UIz3BS2950GH4mRd2PXmNwLcK87gzCYgD
-         oLArWohK9a0eK+OvOlkCbLHI07cBdzYT7ZRUGbOqGNiphPlc6SEeo/MLGsrS/ut9mZhI
-         8Odw==
-X-Gm-Message-State: AOAM532X8kNfRJ9oga6Tn+1QdcSmlfMfM7xjioPZo5McZ0PUB5QqCacQ
-        JEp3fSGwFtz0wstr0dviiK4c1sUr6AFPfA3/
-X-Google-Smtp-Source: ABdhPJyzTBHeQ8PnKC2U7iuglUGCvnD+FFnA9QpJYme7wrZeYt+Q7U2OEsjuI9Wxy55/GZ1kmtUVUw==
-X-Received: by 2002:a2e:b013:: with SMTP id y19mr9034035ljk.132.1636476281128;
-        Tue, 09 Nov 2021 08:44:41 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id p3sm737647lfo.162.2021.11.09.08.44.40
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=arzfWqK0hGCq14CNUsPpTNtAe/8DBcFmT+M6WnZX4wQ=;
+        b=Mb0W2HxgqP6LsMh+3bEPrVVCUNDNVeOzONB0NKEE0ZsGGc8hfaLFDW8vH0UzTmxc0i
+         pnxGbTDhDDi+lGmu2IDqbjDNjfGo5Bc/AFwQMI/lkqyYqIh/Yy651K/VmORXWphCPSmV
+         twww7nPpjw13jHfqEwT0UgCV5HbN/yqJM4ijTuMgwdmtNyN0PXBhmuoG/rReXL6X5gWO
+         u403YvcZ6CdmxmDx5upP88SOuvHcRa40S5Q+5OJlTTW05+THLfpartd6zKzvqzpQa5XX
+         SrT1WQLgTJTHBUVGCefcxFPfnAGBrSCEYrTvHkKSs5cq7u+PGMffPdkKTHRvrLby/n7z
+         bTBw==
+X-Gm-Message-State: AOAM531Yl2R6Uk6SUEkG8YgBdcakTBXIhNwi+T99Z0ZZZIYMTTNQ9FUV
+        qZTL1iYzdTOHQGz+Cxjcmg==
+X-Google-Smtp-Source: ABdhPJzegdQDYjAxQMqk7anNTgjJTs08c4V8fztPM8C+wm2mMMEkkL/zRwrZbFF/zjlZNGp+G0SdoA==
+X-Received: by 2002:a9d:bef:: with SMTP id 102mr7218561oth.239.1636476411683;
+        Tue, 09 Nov 2021 08:46:51 -0800 (PST)
+Received: from xps15.herring.priv (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.googlemail.com with ESMTPSA id w22sm7514338otp.50.2021.11.09.08.46.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Nov 2021 08:44:40 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Tue, 09 Nov 2021 08:46:51 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 2/2] clk: samsung: exynos850: Implement CMU_CMGP domain
-Date:   Tue,  9 Nov 2021 18:44:36 +0200
-Message-Id: <20211109164436.11098-3-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211109164436.11098-1-semen.protsenko@linaro.org>
-References: <20211109164436.11098-1-semen.protsenko@linaro.org>
+        Sudeep Holla <sudeep.holla@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Fix Arm Ltd board node name collisions
+Date:   Tue,  9 Nov 2021 10:46:48 -0600
+Message-Id: <20211109164650.2233507-1-robh@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CMU_CMGP clock domain provides clocks for CMGP IP-core (Common GPIO).
-CMGP module incapsulates next blocks:
-  - 8 GPIO lines
-  - 1 GPADC
-  - 2 USI blocks, each can be configured to provide one of
-    UART/SPI/HSI2C serial interfaces
+The node name changes in commits 25b892b583cc ("ARM: dts: arm: Update 
+register-bit-led nodes 'reg' and node names") and 2d3de197a818 ("ARM: 
+dts: arm: Update ICST clock nodes 'reg' and node names") caused name 
+collisions with the kernel's handling of ICST clock names and platform 
+device names. This series fixes the kernel side to handle the DT 
+changes.
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/clk/samsung/clk-exynos850.c   | 100 ++++++++++++++++++++++++++
- include/dt-bindings/clock/exynos850.h |  17 +++++
- 2 files changed, 117 insertions(+)
+This does break DT ABI compatibility which is partially mitigated if 
+these changes are backported to stable. The alternative is reverting the 
+referenced DT changes and coming up with different node names without 
+unit-addresses. Ultimately, ABI issues are platform maintainers' 
+decision, not mine.
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index ecffa5c7a081..6965e1b44d24 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -492,6 +492,103 @@ static const struct samsung_cmu_info apm_cmu_info __initconst = {
- 	.clk_name		= "dout_clkcmu_apm_bus",
- };
- 
-+/* ---- CMU_CMGP ------------------------------------------------------------ */
-+
-+/* Register Offset definitions for CMU_CMGP (0x11c00000) */
-+#define CLK_CON_MUX_CLK_CMGP_ADC		0x1000
-+#define CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0	0x1004
-+#define CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1	0x1008
-+#define CLK_CON_DIV_DIV_CLK_CMGP_ADC		0x1800
-+#define CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP0	0x1804
-+#define CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP1	0x1808
-+#define CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S0	0x200c
-+#define CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1	0x2010
-+#define CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK		0x2018
-+#define CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK	0x2044
-+#define CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_PCLK	0x2048
-+#define CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_IPCLK	0x204c
-+#define CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_PCLK	0x2050
-+
-+static const unsigned long cmgp_clk_regs[] __initconst = {
-+	CLK_CON_MUX_CLK_CMGP_ADC,
-+	CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0,
-+	CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1,
-+	CLK_CON_DIV_DIV_CLK_CMGP_ADC,
-+	CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP0,
-+	CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP1,
-+	CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S0,
-+	CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1,
-+	CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK,
-+	CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK,
-+	CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_PCLK,
-+	CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_IPCLK,
-+	CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_PCLK,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_CMGP */
-+PNAME(mout_cmgp_usi0_p)	= { "clk_rco_cmgp", "gout_clkcmu_cmgp_bus" };
-+PNAME(mout_cmgp_usi1_p)	= { "clk_rco_cmgp", "gout_clkcmu_cmgp_bus" };
-+PNAME(mout_cmgp_adc_p)	= { "oscclk", "dout_cmgp_adc" };
-+
-+static const struct samsung_fixed_rate_clock cmgp_fixed_clks[] __initconst = {
-+	FRATE(CLK_RCO_CMGP, "clk_rco_cmgp", NULL, 0, 49152000),
-+};
-+
-+static const struct samsung_mux_clock cmgp_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_CMGP_ADC, "mout_cmgp_adc", mout_cmgp_adc_p,
-+	    CLK_CON_MUX_CLK_CMGP_ADC, 0, 1),
-+	MUX(CLK_MOUT_CMGP_USI0, "mout_cmgp_usi0", mout_cmgp_usi0_p,
-+	    CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP0, 0, 1),
-+	MUX(CLK_MOUT_CMGP_USI1, "mout_cmgp_usi1", mout_cmgp_usi1_p,
-+	    CLK_CON_MUX_MUX_CLK_CMGP_USI_CMGP1, 0, 1),
-+};
-+
-+static const struct samsung_div_clock cmgp_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_CMGP_ADC, "dout_cmgp_adc", "gout_clkcmu_cmgp_bus",
-+	    CLK_CON_DIV_DIV_CLK_CMGP_ADC, 0, 4),
-+	DIV(CLK_DOUT_CMGP_USI0, "dout_cmgp_usi0", "mout_cmgp_usi0",
-+	    CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP0, 0, 5),
-+	DIV(CLK_DOUT_CMGP_USI1, "dout_cmgp_usi1", "mout_cmgp_usi1",
-+	    CLK_CON_DIV_DIV_CLK_CMGP_USI_CMGP1, 0, 5),
-+};
-+
-+static const struct samsung_gate_clock cmgp_gate_clks[] __initconst = {
-+	GATE(CLK_GOUT_CMGP_ADC_S0_PCLK, "gout_adc_s0_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S0, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_ADC_S1_PCLK, "gout_adc_s1_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_ADC_PCLK_S1, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_GPIO_PCLK, "gout_gpio_cmgp_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_GPIO_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_USI0_IPCLK, "gout_cmgp_usi0_ipclk", "dout_cmgp_usi0",
-+	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_IPCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_USI0_PCLK, "gout_cmgp_usi0_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP0_PCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_USI1_IPCLK, "gout_cmgp_usi1_ipclk", "dout_cmgp_usi1",
-+	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_IPCLK, 21, 0, 0),
-+	GATE(CLK_GOUT_CMGP_USI1_PCLK, "gout_cmgp_usi1_pclk",
-+	     "gout_clkcmu_cmgp_bus",
-+	     CLK_CON_GAT_GOUT_CMGP_USI_CMGP1_PCLK, 21, 0, 0),
-+};
-+
-+static const struct samsung_cmu_info cmgp_cmu_info __initconst = {
-+	.mux_clks		= cmgp_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(cmgp_mux_clks),
-+	.div_clks		= cmgp_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(cmgp_div_clks),
-+	.gate_clks		= cmgp_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(cmgp_gate_clks),
-+	.fixed_clks		= cmgp_fixed_clks,
-+	.nr_fixed_clks		= ARRAY_SIZE(cmgp_fixed_clks),
-+	.nr_clk_ids		= CMGP_NR_CLK,
-+	.clk_regs		= cmgp_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(cmgp_clk_regs),
-+	.clk_name		= "gout_clkcmu_cmgp_bus",
-+};
-+
- /* ---- CMU_HSI ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_HSI (0x13400000) */
-@@ -956,6 +1053,9 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos850-cmu-apm",
- 		.data = &apm_cmu_info,
-+	}, {
-+		.compatible = "samsung,exynos850-cmu-cmgp",
-+		.data = &cmgp_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-hsi",
- 		.data = &hsi_cmu_info,
-diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
-index df3978b58304..8aa5e82af0d3 100644
---- a/include/dt-bindings/clock/exynos850.h
-+++ b/include/dt-bindings/clock/exynos850.h
-@@ -84,6 +84,23 @@
- #define CLK_GOUT_SPEEDY_PCLK		21
- #define APM_NR_CLK			22
- 
-+/* CMU_CMGP */
-+#define CLK_RCO_CMGP			1
-+#define CLK_MOUT_CMGP_ADC		2
-+#define CLK_MOUT_CMGP_USI0		3
-+#define CLK_MOUT_CMGP_USI1		4
-+#define CLK_DOUT_CMGP_ADC		5
-+#define CLK_DOUT_CMGP_USI0		6
-+#define CLK_DOUT_CMGP_USI1		7
-+#define CLK_GOUT_CMGP_ADC_S0_PCLK	8
-+#define CLK_GOUT_CMGP_ADC_S1_PCLK	9
-+#define CLK_GOUT_CMGP_GPIO_PCLK		10
-+#define CLK_GOUT_CMGP_USI0_IPCLK	11
-+#define CLK_GOUT_CMGP_USI0_PCLK		12
-+#define CLK_GOUT_CMGP_USI1_IPCLK	13
-+#define CLK_GOUT_CMGP_USI1_PCLK		14
-+#define CMGP_NR_CLK			15
-+
- /* CMU_HSI */
- #define CLK_MOUT_HSI_BUS_USER		1
- #define CLK_MOUT_HSI_MMC_CARD_USER	2
+Rob
+
+
+Rob Herring (2):
+  of: Support using 'mask' in making device bus id
+  clk: versatile: clk-icst: Ensure clock names are unique
+
+ drivers/clk/versatile/clk-icst.c |  6 ++++--
+ drivers/of/platform.c            | 10 ++++++++--
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
 -- 
-2.30.2
+2.32.0
 
