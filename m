@@ -2,44 +2,43 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D0DC43217
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43517C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7931D61251
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28F9E61360
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:32:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343984AbhKIWdA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 17:33:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51454 "EHLO mail.kernel.org"
+        id S1345144AbhKIWf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:35:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344814AbhKIWat (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Nov 2021 17:30:49 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C22C361A84;
-        Tue,  9 Nov 2021 22:20:56 +0000 (UTC)
+        id S1345213AbhKIWdi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Nov 2021 17:33:38 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 09ECA61AA4;
+        Tue,  9 Nov 2021 22:21:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636496457;
-        bh=s42mWIpAsOZrqBiWAEm25NkcCa/cXzGgUEKUh0F8EgY=;
+        s=k20201202; t=1636496508;
+        bh=oG/uIkjLf5CEuRpeIfPLBoyhAMHDQ+aFP2cDf3DGI9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V4dh0FHYTbMlhkJd63vDdRPy91FU7JKXz0+PaPrfZhgAp84p2x4VYfkJ3mxVTVndE
-         dCvYorZLcOETm4MuoJxnQzGaMoww/02YchPEDmkSEJCuLUfB/3lJESWKGmCTytSndm
-         qa71s0dbTO+XInKDb2Jq4QaJjAaeqSGF6TGi9NfBLLjHGt8K4/UJ0RcafgBXBgrTiO
-         DC3CCxdWWtp3Vzo5aGL897QQZPqjFGTkycM/zpFNR2a6dx7/BHjKN1a43F6WvU52iG
-         VfhtNEY3FeBliZriXipqREaOjW7gjyBEIFgCGDaCKoCgr7uP+bH30HOpCqDa1O6qbd
-         6l3BgWakpW1Jg==
+        b=aPU+IzzNg0INmEZYV6bUReyLmQ2Ndv/ChXvrK6/A1ZLpTN4ijVvbgggAr+EKFmN6R
+         Gp/7mOBtTpc2cT11nXCFwu8E+EtL2b7XFxDLQ9K6FGOMAkvOr3WRde0V6gyAIBpqE2
+         Z7P7Qy2evwNDZyXH1Sbs+Qy7XHfnmXWI/9RBj9xocWyzhLXpDwqIDV5ilGRwyLy31f
+         2lu0fJLeTAd+GdREBuQsukamL7rytywfUqh8znuZ1SkIsm28KBL1Dp01u4TH6pltw+
+         2AhsOwHIMaJlgqAQoNuU7Bf6kKN6s30IGJEEytq90lgdbyQ2MpHf/Zyo6QN/qxDElU
+         cY1VkjIWqsC5w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        boris.brezillon@free-electrons.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 72/75] clk: at91: sama7g5: remove prescaler part of master clock
-Date:   Tue,  9 Nov 2021 17:19:02 -0500
-Message-Id: <20211109221905.1234094-72-sashal@kernel.org>
+Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
+        Abel Vesa <abel.vesa@nxp.com>, Sasha Levin <sashal@kernel.org>,
+        shawnguo@kernel.org, kernel@pengutronix.de,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 26/50] clk: imx: imx6ul: Move csi_sel mux to correct base register
+Date:   Tue,  9 Nov 2021 17:20:39 -0500
+Message-Id: <20211109222103.1234885-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109221905.1234094-1-sashal@kernel.org>
-References: <20211109221905.1234094-1-sashal@kernel.org>
+In-Reply-To: <20211109222103.1234885-1-sashal@kernel.org>
+References: <20211109222103.1234885-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -48,52 +47,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+From: Stefan Riedmueller <s.riedmueller@phytec.de>
 
-[ Upstream commit facb87ad75603813bc3b1314f5a87377f020fcb8 ]
+[ Upstream commit 2f9d61869640f732599ec36b984c2b5c46067519 ]
 
-On SAMA7G5 the prescaler part of master clock has been implemented as a
-changeable one. Everytime the prescaler is changed the PMC_SR.MCKRDY bit
-must be polled. Value 1 for PMC_SR.MCKRDY means the prescaler update is
-done. Driver polls for this bit until it becomes 1. On SAMA7G5 it has
-been discovered that in some conditions the PMC_SR.MCKRDY is not rising
-but the rate it provides it's stable. The workaround is to add a timeout
-when polling for PMC_SR.MCKRDY. At the moment, for SAMA7G5, the prescaler
-will be removed from Linux clock tree as all the frequencies for CPU could
-be obtained from PLL and also there will be less overhead when changing
-frequency via DVFS.
+The csi_sel mux register is located in the CCM register base and not the
+CCM_ANALOG register base. So move it to the correct position in code.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Link: https://lore.kernel.org/r/20211011112719.3951784-14-claudiu.beznea@microchip.com
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Otherwise changing the parent of the csi clock can lead to a complete
+system failure due to the CCM_ANALOG_PLL_SYS_TOG register being falsely
+modified.
+
+Also remove the SET_RATE_PARENT flag since one possible supply for the
+csi_sel mux is the system PLL which we don't want to modify.
+
+Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Link: https://lore.kernel.org/r/20210927072857.3940880-1-s.riedmueller@phytec.de
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/sama7g5.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/clk/imx/clk-imx6ul.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 9e1ec48c44747..9c05ecb760b79 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -982,16 +982,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 	}
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index 5dbb6a9377324..206e4c43f68f8 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -161,7 +161,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	hws[IMX6UL_PLL5_BYPASS] = imx_clk_hw_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
+ 	hws[IMX6UL_PLL6_BYPASS] = imx_clk_hw_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
+ 	hws[IMX6UL_PLL7_BYPASS] = imx_clk_hw_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
+-	hws[IMX6UL_CLK_CSI_SEL] = imx_clk_hw_mux_flags("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels), CLK_SET_RATE_PARENT);
  
- 	parent_names[0] = "cpupll_divpmcck";
--	hw = at91_clk_register_master_pres(regmap, "cpuck", 1, parent_names,
--					   &mck0_layout, &mck0_characteristics,
--					   &pmc_mck0_lock,
--					   CLK_SET_RATE_PARENT, 0);
--	if (IS_ERR(hw))
--		goto err_free;
--
--	sama7g5_pmc->chws[PMC_CPU] = hw;
--
--	hw = at91_clk_register_master_div(regmap, "mck0", "cpuck",
-+	hw = at91_clk_register_master_div(regmap, "mck0", "cpupll_divpmcck",
- 					  &mck0_layout, &mck0_characteristics,
- 					  &pmc_mck0_lock, 0);
- 	if (IS_ERR(hw))
+ 	/* Do not bypass PLLs initially */
+ 	clk_set_parent(hws[IMX6UL_PLL1_BYPASS]->clk, hws[IMX6UL_CLK_PLL1]->clk);
+@@ -270,6 +269,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 	hws[IMX6UL_CLK_ECSPI_SEL]	  = imx_clk_hw_mux("ecspi_sel",	base + 0x38, 18, 1, ecspi_sels, ARRAY_SIZE(ecspi_sels));
+ 	hws[IMX6UL_CLK_LCDIF_PRE_SEL]	  = imx_clk_hw_mux_flags("lcdif_pre_sel", base + 0x38, 15, 3, lcdif_pre_sels, ARRAY_SIZE(lcdif_pre_sels), CLK_SET_RATE_PARENT);
+ 	hws[IMX6UL_CLK_LCDIF_SEL]	  = imx_clk_hw_mux("lcdif_sel",	base + 0x38, 9, 3, lcdif_sels, ARRAY_SIZE(lcdif_sels));
++	hws[IMX6UL_CLK_CSI_SEL]		  = imx_clk_hw_mux("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels));
+ 
+ 	hws[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_hw_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
+ 	hws[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_hw_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
 -- 
 2.33.0
 
