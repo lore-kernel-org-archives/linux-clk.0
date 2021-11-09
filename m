@@ -2,94 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DDEC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F092C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1AF260FDA
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21BDA60F4B
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345433AbhKIWkk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 17:40:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345397AbhKIWh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Nov 2021 17:37:28 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 306D561AEC;
-        Tue,  9 Nov 2021 22:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636496568;
-        bh=7xoY8n8uQOFMeGwlpGixZjniBDpaU8T0lcYuoX6KMzA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LS8yJXd/JZOvK30diXRX1RJlR0bjNZtWsUcNeNgyykOEexlln17Elz8mtIzzGBPgy
-         0UraVbJaWdjRbdKBktfVwh6bTBig16ABEQyQAEJSewM1M38w624qUBlukjkLVJUB+G
-         ed08NXkp999dUyPTSZ+GzCzbeC922vW95FFEruHhdqhVksV/6bfZ1Nk4i8O+1jo4SS
-         QioavIfH0eqwTRd6aSxBl+okTwm8sUwzqdl/P6Q5sXDMfqtwNkdpscB2sEU+D+Zy9l
-         4NYwUGYgAN+77h+fnTfgXRqDcgrYBdH0lN6Y1abCIXiydrX7FQglMdC1AXjUWGx32h
-         aR73kBBQtZc1g==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
-        Abel Vesa <abel.vesa@nxp.com>, Sasha Levin <sashal@kernel.org>,
-        shawnguo@kernel.org, kernel@pengutronix.de,
-        mturquette@baylibre.com, sboyd@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 14/30] clk: imx: imx6ul: Move csi_sel mux to correct base register
-Date:   Tue,  9 Nov 2021 17:22:08 -0500
-Message-Id: <20211109222224.1235388-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109222224.1235388-1-sashal@kernel.org>
-References: <20211109222224.1235388-1-sashal@kernel.org>
+        id S1346098AbhKIWrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:47:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55726 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346459AbhKIWpq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 17:45:46 -0500
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02798C014B1A
+        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 14:20:30 -0800 (PST)
+Received: by mail-oi1-x233.google.com with SMTP id r26so1430339oiw.5
+        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 14:20:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+tM5hwtc8qbA0vJnA/spVuUcAKq7RJsV9X1LvQfoH/k=;
+        b=h7vZVQnWosqI2nzh5w/sb5vYzdU1TiyAsKdqbBralIgonWiGEc5UbZidtSleiF0hxK
+         zJ+qaZ0+PaAS4lh02MOHHE9xLEDhPIp5BQxA3fx93Lm2208vnCLIj7G657nJ444On2Qo
+         j/9VVwemLZGIoyT7NPEAnF7viu+czcGHQtnzxoot7eP1RbAxY/7BMsqntlSfVSTZMeAX
+         9X2EOwbTvPS7xZohylFH8EdHRVWLpfu2A38P710onxxQx1QbkeMLPjBEDjcEE5pe978H
+         n61UNe1JttQKTk339jLavJ+Y/l+LE/Gqos+i2AV6i3KH/A71sNxsfwvIShZJtWx3kHEJ
+         qG1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+tM5hwtc8qbA0vJnA/spVuUcAKq7RJsV9X1LvQfoH/k=;
+        b=YZ8MNxPOiney8iS67ML+IJ+H3Mk+HInhi2aJ5wzZPPjJsgo5HfBzsijnnpLsDjYc34
+         vXOPj8U6B2/8aZq+Z6nELz/NbtK+QxUePfx5hzRZ/2tdw7ye8JI7cw7vf7pUoHZpc0sq
+         FJ2BaHbBavXsz+6yYcWXHxyoSj05+ozi3c5L2SzMg4OVGLdVu11fhkMVrXKbUr6CnYmG
+         8CE+NREBfF+SSASDxOdzv4LSBRhlb+ZRXkkioPkyjW3oacTJq6bJEAE9hGIl+wJJ9XKg
+         NrFNV/MNU5dkCT26f8G0mxFQlp+i5IkpyiRd4LibxOuSsHPDYEK9nHfGJNWd351bgUC9
+         h63Q==
+X-Gm-Message-State: AOAM530R6OtlF7sgOfHmDScgDGH4oQ+tAEb/7CzhJ1QDQsYc+eWLU+CP
+        nF8b1VeP4lyEyx3uO4K28W7nkqd9xKAWbpCDpcIYZw==
+X-Google-Smtp-Source: ABdhPJwS1A/efTpFOEzGt1pP7H+1n7DSmf2TzXrZeZBd93vSJksHoW0cKUO1zqPxehATkVkot2uor9tquBnaVfR43WM=
+X-Received: by 2002:a54:4791:: with SMTP id o17mr9294816oic.114.1636496429410;
+ Tue, 09 Nov 2021 14:20:29 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20211109164650.2233507-1-robh@kernel.org> <20211109164650.2233507-2-robh@kernel.org>
+In-Reply-To: <20211109164650.2233507-2-robh@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 9 Nov 2021 23:20:17 +0100
+Message-ID: <CACRpkdZOuhA8w4CYetBKfaZ_wKT4QgKe=bffdYDTB68ihVE3-A@mail.gmail.com>
+Subject: Re: [PATCH 1/2] of: Support using 'mask' in making device bus id
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Sudeep Holla <Sudeep.Holla@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stefan Riedmueller <s.riedmueller@phytec.de>
+On Tue, Nov 9, 2021 at 5:46 PM Rob Herring <robh@kernel.org> wrote:
 
-[ Upstream commit 2f9d61869640f732599ec36b984c2b5c46067519 ]
+> Commit 25b892b583cc ("ARM: dts: arm: Update register-bit-led nodes
+> 'reg' and node names") added a 'reg' property to nodes. This change has
+> the side effect of changing how the kernel generates the device name.
+> The assumption was a translatable 'reg' address is unique. However, in
+> the case of the register-bit-led binding (and a few others) that is not
+> the case. The 'mask' property must also be used in this case to make a
+> unique device name.
+>
+> Fixes: 25b892b583cc ("ARM: dts: arm: Update register-bit-led nodes 'reg' and node names")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Cc: stable@vger.kernel.org
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-The csi_sel mux register is located in the CCM register base and not the
-CCM_ANALOG register base. So move it to the correct position in code.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Otherwise changing the parent of the csi clock can lead to a complete
-system failure due to the CCM_ANALOG_PLL_SYS_TOG register being falsely
-modified.
-
-Also remove the SET_RATE_PARENT flag since one possible supply for the
-csi_sel mux is the system PLL which we don't want to modify.
-
-Signed-off-by: Stefan Riedmueller <s.riedmueller@phytec.de>
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-Link: https://lore.kernel.org/r/20210927072857.3940880-1-s.riedmueller@phytec.de
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imx/clk-imx6ul.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index bc931988fe7b2..f3ac5a524f4ed 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -161,7 +161,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6UL_PLL5_BYPASS] = imx_clk_hw_mux_flags("pll5_bypass", base + 0xa0, 16, 1, pll5_bypass_sels, ARRAY_SIZE(pll5_bypass_sels), CLK_SET_RATE_PARENT);
- 	hws[IMX6UL_PLL6_BYPASS] = imx_clk_hw_mux_flags("pll6_bypass", base + 0xe0, 16, 1, pll6_bypass_sels, ARRAY_SIZE(pll6_bypass_sels), CLK_SET_RATE_PARENT);
- 	hws[IMX6UL_PLL7_BYPASS] = imx_clk_hw_mux_flags("pll7_bypass", base + 0x20, 16, 1, pll7_bypass_sels, ARRAY_SIZE(pll7_bypass_sels), CLK_SET_RATE_PARENT);
--	hws[IMX6UL_CLK_CSI_SEL] = imx_clk_hw_mux_flags("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels), CLK_SET_RATE_PARENT);
- 
- 	/* Do not bypass PLLs initially */
- 	clk_set_parent(hws[IMX6UL_PLL1_BYPASS]->clk, hws[IMX6UL_CLK_PLL1]->clk);
-@@ -270,6 +269,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6UL_CLK_ECSPI_SEL]	  = imx_clk_hw_mux("ecspi_sel",	base + 0x38, 18, 1, ecspi_sels, ARRAY_SIZE(ecspi_sels));
- 	hws[IMX6UL_CLK_LCDIF_PRE_SEL]	  = imx_clk_hw_mux_flags("lcdif_pre_sel", base + 0x38, 15, 3, lcdif_pre_sels, ARRAY_SIZE(lcdif_pre_sels), CLK_SET_RATE_PARENT);
- 	hws[IMX6UL_CLK_LCDIF_SEL]	  = imx_clk_hw_mux("lcdif_sel",	base + 0x38, 9, 3, lcdif_sels, ARRAY_SIZE(lcdif_sels));
-+	hws[IMX6UL_CLK_CSI_SEL]		  = imx_clk_hw_mux("csi_sel", base + 0x3c, 9, 2, csi_sels, ARRAY_SIZE(csi_sels));
- 
- 	hws[IMX6UL_CLK_LDB_DI0_DIV_SEL]  = imx_clk_hw_mux("ldb_di0", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
- 	hws[IMX6UL_CLK_LDB_DI1_DIV_SEL]  = imx_clk_hw_mux("ldb_di1", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
--- 
-2.33.0
-
+Yours,
+Linus Walleij
