@@ -2,61 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBA6C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 00:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F773C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 00:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C405961178
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 00:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 086AE6124D
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 00:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235810AbhKIAsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Nov 2021 19:48:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39548 "EHLO
+        id S236374AbhKIA5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Nov 2021 19:57:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235507AbhKIAsw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 19:48:52 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A19C061766
-        for <linux-clk@vger.kernel.org>; Mon,  8 Nov 2021 16:46:07 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id p11-20020a9d4e0b000000b0055a5741bff7so28336040otf.2
-        for <linux-clk@vger.kernel.org>; Mon, 08 Nov 2021 16:46:07 -0800 (PST)
+        with ESMTP id S236332AbhKIA5Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Nov 2021 19:57:24 -0500
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42BDFC061767
+        for <linux-clk@vger.kernel.org>; Mon,  8 Nov 2021 16:54:39 -0800 (PST)
+Received: by mail-ot1-x32f.google.com with SMTP id h16-20020a9d7990000000b0055c7ae44dd2so12348396otm.10
+        for <linux-clk@vger.kernel.org>; Mon, 08 Nov 2021 16:54:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bG3Y/BqnxEVlePdqiSugZ7Hd/V/NSxSTAbSGa+VvoRs=;
-        b=M6szQqyTjFsganR9sNUTE9fnidl9uukXt7LqnK2czDeOY6OBN5fgOVflmA10HlXbqT
-         lSXjpwutL+GQALNCuC1yLgmH/Tw4T4hOVVXH6wSaiVbh7ge7Uq04DuVUfZalIDcXFKc/
-         FiSxguiMBIMljRGqkcw0wu2bdV1c5njLZhxFNcDf/bQBeEwcbCZKb+fS2xr+Ux+0IQ6/
-         eKPVPOTG5dWftFTBl6lnooe3AvycKpiY0cRbyr8cM/sArSde0d779fPCKd8hd6RWvG6T
-         aEsfRwwfb8ze7Lk/2Gfjkfn5+tm9deonu5TsIItVbE2PAQBRdIvCtpxQl0bN18se165b
-         GQXg==
+        bh=y/5wawZ4iCQr7l/M8N9c7Pm/2uOFf0V7hWRrRXV1YxY=;
+        b=n+jlur+tkjDc+lvzvnxzvjuMCuPiLormrOIgFn5OjIIJDPQHrK7TYPu8WkNQsELu1e
+         xa6Ms7ysitAQJllZkoG9r+FsT1x/JJVXiQQTYvYlfe4V1HuBUazR6CzD+341b1DQvMwR
+         ehKV26SEHzwLQUzAYiT6S9szxr+CZ+pug1+BngZBPtdxAohv7pweOteMw11Opm0tNZ4J
+         utDUZzCR8NkxuTy37qDOPhHzRcf/oMHy8/p3KMsuKzwOtzG+SS+L98bqykJsd9/3eYCg
+         e3N1zFEeyPwFmtROdKHMB5ZaAzoSn4g+NXJpbsKNunzO9Vaq/DN+cgYhOlkQyymcldrh
+         aR1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bG3Y/BqnxEVlePdqiSugZ7Hd/V/NSxSTAbSGa+VvoRs=;
-        b=kuuZspyEU15iqNV2rRqIH7SQ2kTa80H+AARkKkdvlHQ6qHEhANUXW2f+HQVkhCXBMw
-         8OP8l8XyLsyYPBfbVBNJhCf++gP/XbidkAojvE2Cy3kuqX4wZyMtnE0tA9Yb7X+Y5S/X
-         DYb74SM2yZ+pIg8rOkjbpprn9u8rVHqzLe0TLjI8G3N7jr84EWPcB6aVCRSrS2VuqNl6
-         I8M/SlewWdhGHHK4ywzwAhBFGc+jSlTgk226odBGr3WgazGCvbN/FQw+P5TS2AUkg4gf
-         KLBxcFIpNxVv94PZhxEeBGMBTl4CHTCDaNFOx9qovZAIoZeEJQ/4RgFGGlsRXZg57IzA
-         cFLw==
-X-Gm-Message-State: AOAM5309YBCFW6h5ooULVWmi3fJb/TdDnDFstnOZWTIKMtoMBdV9j3We
-        0bvbEqtHP8WjL9R8fSfd0xv+Ybm3onOLDGYzNapioA==
-X-Google-Smtp-Source: ABdhPJyys3qfTJGPVjeVT/HCn3VkOqbY3GVCdzVh24eOXr7uLVD857f62jht8jhypUUWDkrPmq/NlW044n5qV03SLYA=
-X-Received: by 2002:a9d:ed6:: with SMTP id 80mr2580722otj.35.1636418766697;
- Mon, 08 Nov 2021 16:46:06 -0800 (PST)
+        bh=y/5wawZ4iCQr7l/M8N9c7Pm/2uOFf0V7hWRrRXV1YxY=;
+        b=MPQME+v1Ajz4amKeDdFZlTy5mZMET78yfflX4JH/+KQkWrZ0d7Oq1NiS4tVWKKQ1mp
+         cTK1pQZQtVgogOAkJ0N0c4W43HwRGGbY9L7FlOnCYECPIPAyU2J4+hBQ/4BXlbFsxVYT
+         EpypJzNAp6CExHppdZRK/+k6fMdmP/oM0FrL4uUe9BNH4rX8OpbTXvxlw+vDA42puWBk
+         Ys7PQv286OmEMPxDhulZnMwqpcwuIKN+RTpuiICBwSk2fLvWzIVo2xoC4xLfzU0xrIs6
+         oVY7ASMP1OuCn5PCVdidHS7FjMARGawuSn+tTQAOQdw7ynhIpNmsCkNMEcxrxROwOc54
+         6AJg==
+X-Gm-Message-State: AOAM533lB8cC+JKcS1pK+PNbIWVg9H9Jzsa7B6tZVwOUiofWG2/sBzpM
+        nc97Utw8phSNAocxxBiwa+/4CQ7VPgI6sWIeagCaQA==
+X-Google-Smtp-Source: ABdhPJx6ntF9Ij4ABUlVfspt/BrE1AagUV5HYqW4lumhYW9HaJk/bpBVv2CAh2o/6TEPXu1pygB6104B8pbDewZcMzA=
+X-Received: by 2002:a9d:ed6:: with SMTP id 80mr2614070otj.35.1636419278616;
+ Mon, 08 Nov 2021 16:54:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-12-kernel@esmil.dk>
-In-Reply-To: <20211102161125.1144023-12-kernel@esmil.dk>
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
+ <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
+In-Reply-To: <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 9 Nov 2021 01:45:55 +0100
-Message-ID: <CACRpkdb0CrJ_uTbtfg-xGq8uu0AKoqfAB03mF2CA_G8ys_8Lzg@mail.gmail.com>
-Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>,
+Date:   Tue, 9 Nov 2021 01:54:26 +0100
+Message-ID: <CACRpkdZOpXC0GvoyS8KexgjxL17rjyNkPuA0KGOvesZMDLvyJg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -77,30 +83,27 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Anup Patel <anup.patel@wdc.com>,
         Atish Patra <atish.patra@wdc.com>,
         Matteo Croce <mcroce@microsoft.com>,
-        linux-kernel@vger.kernel.org
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 2, 2021 at 5:12 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+On Tue, Nov 2, 2021 at 9:02 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
-> Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
-> StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+> > +       depends on OF
 >
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> ---
->
-> @Linus: I'm really struggling to find a good way to describe how pin
-> muxing works on the JH7100. As you can see I've now resorted to
-> ascii-art to try to explain it, but please let me know if it's still
-> unclear.
+> So this descreases test coverage.
+> Linus, can we provide a necessary stub so we may drop this dependency?
 
-This looks perfectly acceptable to me:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Hm it further selects OF_GPIO which depends on OF
+so I don't know how that would work.
 
-As it appears to have some cross dependencies I assume
-it will be merged through the SoC tree?
+But does it decrease compile coverage a lot, even x86 has
+optional OF support so I imagine it appears in x86
+allyesconfig I suppose? Or am I wrong?
 
 Yours,
 Linus Walleij
