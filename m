@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43517C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:32:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DDEC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28F9E61360
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:32:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1AF260FDA
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345144AbhKIWf2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 17:35:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55890 "EHLO mail.kernel.org"
+        id S1345433AbhKIWkk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:40:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345213AbhKIWdi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Nov 2021 17:33:38 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 09ECA61AA4;
-        Tue,  9 Nov 2021 22:21:46 +0000 (UTC)
+        id S1345397AbhKIWh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Nov 2021 17:37:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 306D561AEC;
+        Tue,  9 Nov 2021 22:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636496508;
-        bh=oG/uIkjLf5CEuRpeIfPLBoyhAMHDQ+aFP2cDf3DGI9k=;
+        s=k20201202; t=1636496568;
+        bh=7xoY8n8uQOFMeGwlpGixZjniBDpaU8T0lcYuoX6KMzA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPU+IzzNg0INmEZYV6bUReyLmQ2Ndv/ChXvrK6/A1ZLpTN4ijVvbgggAr+EKFmN6R
-         Gp/7mOBtTpc2cT11nXCFwu8E+EtL2b7XFxDLQ9K6FGOMAkvOr3WRde0V6gyAIBpqE2
-         Z7P7Qy2evwNDZyXH1Sbs+Qy7XHfnmXWI/9RBj9xocWyzhLXpDwqIDV5ilGRwyLy31f
-         2lu0fJLeTAd+GdREBuQsukamL7rytywfUqh8znuZ1SkIsm28KBL1Dp01u4TH6pltw+
-         2AhsOwHIMaJlgqAQoNuU7Bf6kKN6s30IGJEEytq90lgdbyQ2MpHf/Zyo6QN/qxDElU
-         cY1VkjIWqsC5w==
+        b=LS8yJXd/JZOvK30diXRX1RJlR0bjNZtWsUcNeNgyykOEexlln17Elz8mtIzzGBPgy
+         0UraVbJaWdjRbdKBktfVwh6bTBig16ABEQyQAEJSewM1M38w624qUBlukjkLVJUB+G
+         ed08NXkp999dUyPTSZ+GzCzbeC922vW95FFEruHhdqhVksV/6bfZ1Nk4i8O+1jo4SS
+         QioavIfH0eqwTRd6aSxBl+okTwm8sUwzqdl/P6Q5sXDMfqtwNkdpscB2sEU+D+Zy9l
+         4NYwUGYgAN+77h+fnTfgXRqDcgrYBdH0lN6Y1abCIXiydrX7FQglMdC1AXjUWGx32h
+         aR73kBBQtZc1g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
@@ -33,12 +33,12 @@ Cc:     Stefan Riedmueller <s.riedmueller@phytec.de>,
         shawnguo@kernel.org, kernel@pengutronix.de,
         mturquette@baylibre.com, sboyd@codeaurora.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 26/50] clk: imx: imx6ul: Move csi_sel mux to correct base register
-Date:   Tue,  9 Nov 2021 17:20:39 -0500
-Message-Id: <20211109222103.1234885-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 14/30] clk: imx: imx6ul: Move csi_sel mux to correct base register
+Date:   Tue,  9 Nov 2021 17:22:08 -0500
+Message-Id: <20211109222224.1235388-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211109222103.1234885-1-sashal@kernel.org>
-References: <20211109222103.1234885-1-sashal@kernel.org>
+In-Reply-To: <20211109222224.1235388-1-sashal@kernel.org>
+References: <20211109222224.1235388-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -71,7 +71,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 5dbb6a9377324..206e4c43f68f8 100644
+index bc931988fe7b2..f3ac5a524f4ed 100644
 --- a/drivers/clk/imx/clk-imx6ul.c
 +++ b/drivers/clk/imx/clk-imx6ul.c
 @@ -161,7 +161,6 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
