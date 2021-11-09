@@ -2,125 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D10C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 15:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10376C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99A6861207
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 15:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E077161208
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 16:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237557AbhKIP5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 10:57:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        id S231167AbhKIQr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 11:47:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238342AbhKIP5l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 10:57:41 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57508C061767
-        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 07:54:55 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id b5-20020a9d60c5000000b0055c6349ff22so20752279otk.13
-        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 07:54:55 -0800 (PST)
+        with ESMTP id S231633AbhKIQr1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 11:47:27 -0500
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F042C0613F5
+        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 08:44:41 -0800 (PST)
+Received: by mail-lf1-x12a.google.com with SMTP id u11so45871465lfs.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 08:44:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=J2BWM/D/O6dLf23Hfa6szmHiiJ90bLdtonD436duf4I=;
-        b=hN0bkCPsYjCvyrMBxO8w0D/LZKDOtSz4D3sHyGPLmR/ZYJiZl7ha52gLpkQ0JyukrM
-         BASRd/6Ltmxz6DdnF7G3XNnjVrgk3PNRSS+nuIyox37nUvcUZLoygVc1ZsMc+WIfCy6l
-         JfYpyOcGbZK9RuN0LFVjOzCN0XigMGn7SMcoWD6h6dpC7jzPNVXhdu3M0nYYc51mMCLc
-         WZZrL4LB1c8M91rnRXQuESBqyE1z++Tl2Ehafk5xRxZcEYcgyGlVjTFa+cqTDhomO6nn
-         xM7Ix55GJxGBU83J6LUC7+yCULR7GxvoLB2GLvoeJwIFGo71mvKOxRL5CQut4UrvcG7V
-         GTlA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gEScOF3/fw9hfeuyrd9ku7cHldjk9nIyGiDu/7seULA=;
+        b=MR++4vZ4vG4FCKdpRBfywjVFO5yNCXuVnyv1/SHgE9HW9k/XqOQwpFHl9QKRjiSEU2
+         woWqOTktxEX30PFTbvJooXG61MnKG8DZP3wwbe2mVbmYch9iWdD/j6enby+LlYeddg+W
+         lkxeOBGxiIIm8gDik8QWNiKoi/8drzHwjOHEucz2nMR0nKBkKnjgjUX0ZIz2wHPvJlo7
+         l0OJrJObWp4pjLN9/xT8SErv9qPt9O/TAAX/MuMSvrS5GiHl2oBqk4HV2gYcarHA9ze6
+         qMaU7SbGOUPgRq6WjRKbbqICd+oddVFAP3vJ+Btcbe/yQKcKmHVbdjOyFrcacQtwOeOl
+         Ef7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=J2BWM/D/O6dLf23Hfa6szmHiiJ90bLdtonD436duf4I=;
-        b=yNCicMzGVuIx7brMWj9HAxirHJHLaV1cb2PhQ9PDLocg/LrS5urWRm5YbaFzuDM96C
-         Tiwn2mFg/oqhqzaAJ8Lsp+VdT68iSEt7SBx7vfTCt4AUcyYG9PLfGaGT/jyYG6xf0+5r
-         wqd3TJovAyMyPZeDWt0PxVFZ9IwnucQq0wsocGdSxUsW+2uahYwM3PuAohXuKEURz3/6
-         H4bxXKIrM7aFUhT2KHCrNAe05iYDY2uM16Z89HTDU8d4oeiboR3Q4xztSN6mm11eBAVi
-         65//iQtYXf6roZmphYLMNR2mwPPdpibT9Z+HhsF6W4eNZHz1Q7RimCY0p4MIYwCVaTm3
-         sNMg==
-X-Gm-Message-State: AOAM531WYGR3iHbsqz8wlLGip5K9c63iZSlkSwYXD5DbOQsQpXZnDAFw
-        P4d9plMpwX5jiSGjZFLC4zRc/StS4cenSA==
-X-Google-Smtp-Source: ABdhPJxeVMLFGR7Ycu8kluImtDwDwYEH4/r962d+izO3xg79wwialyaWogujdi/sD546fMa7jn4Dww==
-X-Received: by 2002:a9d:352:: with SMTP id 76mr6551987otv.79.1636473294656;
-        Tue, 09 Nov 2021 07:54:54 -0800 (PST)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id i16sm3019032oig.15.2021.11.09.07.54.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gEScOF3/fw9hfeuyrd9ku7cHldjk9nIyGiDu/7seULA=;
+        b=1Xd2XA2GH0r+HQQjAHXzHgbS7NsXKFIXgGV7SNArJ2QlwM91hmWEUgV5AD3vXswoxX
+         RVtaA2WOXd1iqFRpQyPESDKtZmYo0sOO03dRMNO33Bqziuxhjmh4kJ6kk6l0eCKBHPPY
+         i/MCqOali9gb0B/icww0TLzB9GyGtHbACy6khaF8GAnyk2ZbfD2kMI3jYSOV6lo5bn4e
+         zfGatQTOxwVpPuhjVJ5aeONf5GCgCbvubhZ+tdYdEjT3x0uYdLvKl58xBNAuIBw3ayQH
+         IYdIBzgJ0gUaz1zA1f+La+uGhpEudeWV2OOkMyJ0QxBLsu3aSXRPsnIObmjpBNTdLjQh
+         wHTw==
+X-Gm-Message-State: AOAM530udIrJ42hxth0aUk6JYQld8YddMwoZPX/2RIbCuQqoebs+ic+J
+        v0yW6F2wxmgZSCiaQiB2Qeo1NA==
+X-Google-Smtp-Source: ABdhPJxaqTeGSD5hAODwamYztqyOG/300aI6Te+SWZ1OufFDsvmu2hOQiEmiz8iRKsklyuQnYX/HNA==
+X-Received: by 2002:ac2:4313:: with SMTP id l19mr8161739lfh.132.1636476278151;
+        Tue, 09 Nov 2021 08:44:38 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id w40sm2189475lfu.48.2021.11.09.08.44.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Nov 2021 07:54:53 -0800 (PST)
-Date:   Tue, 9 Nov 2021 07:56:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Shawn Guo <shawn.guo@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: qcom: smd-rpm: Report enable state to framework
-Message-ID: <YYqaK/Evzuup0ocs@ripper>
-References: <20211109022558.14529-1-shawn.guo@linaro.org>
- <YYpMzau3CWRQYlkJ@gerhold.net>
+        Tue, 09 Nov 2021 08:44:37 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 0/2] clk: samsung: exynos850: Implement CMU_CMGP
+Date:   Tue,  9 Nov 2021 18:44:34 +0200
+Message-Id: <20211109164436.11098-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YYpMzau3CWRQYlkJ@gerhold.net>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 09 Nov 02:26 PST 2021, Stephan Gerhold wrote:
+This series adds CMU_CMGP clock domain to Exynos850 clock driver. In
+particular it needs to enable HSI2C (High-Speed I2C) nodes. This series
+depends on CMU_APM series [1].
 
-> Hi Shawn,
-> 
-> On Tue, Nov 09, 2021 at 10:25:55AM +0800, Shawn Guo wrote:
-> > Currently the enable state of smd-rpm clocks are not properly reported
-> > back to framework due to missing .is_enabled and .is_prepared hooks.
-> > This causes a couple of issues.
-> > 
-> > - All those unused clocks are not voted for off, because framework has
-> >   no knowledge that they are unused.  It becomes a problem for vlow
-> >   power mode support, as we do not have every single RPM clock claimed
-> >   and voted for off by client devices, and rely on clock framework to
-> >   disable those unused RPM clocks.
-> > 
-> 
-> I posted a similar patch a bit more than a year ago [1]. Back then one
-> of the concerns was that we might disable critical clocks just because
-> they have no driver using it actively. For example, not all of the
-> platforms using clk-smd-rpm already have an interconnect driver.
-> Disabling the interconnect related clocks will almost certainly make the
-> device lock up completely. (I tried it back then, it definitely does...)
-> 
-> I proposed adding CLK_IGNORE_UNUSED for the interconnect related clocks
-> back then [2] which would allow disabling most of the clocks at least.
-> Stephen Boyd had an alternative proposal to instead move the
-> interconnect related clocks completely out of clk-smd-rpm [3].
-> But I'm still unsure how this would work in a backwards compatible way. [4]
-> 
+Tested via /sys/kernel/debug/clk/clk_summary:
 
-With the introduction of QoS the interconnect drivers need to be mmio
-devices, and plural, while in order to talk to the RPM we need something
-on the rpmsg bus.
+<<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                 enable  prepare  protect
+   clock                          count    count    count        rate
+---------------------------------------------------------------------
 
-So I don't think Stephen's proposal will work, unless we like in the
-RPMh case comes up with an equivalent of the bcm-voter (which just moved
-the clocks from one clock driver to a "clock" driver).
+clk_rco_cmgp                         0        0        0    49152000
+oscclk                               1        1        0    26000000
+    mout_cmgp_adc                    0        0        0    26000000
+...
+    gout_clkcmu_cmgp_bus             1        1        0   399750000
+       gout_cmgp_usi1_pclk           0        0        0   399750000
+       gout_cmgp_usi0_pclk           0        0        0   399750000
+       gout_gpio_cmgp_pclk           0        0        0   399750000
+       dout_cmgp_adc                 0        0        0    28553572
+       mout_cmgp_usi1                0        0        0   399750000
+          dout_cmgp_usi1             0        0        0   199875000
+             gout_cmgp_usi1_ipclk    0        0        0   199875000
+       mout_cmgp_usi0                0        0        0   399750000
+          dout_cmgp_usi0             0        0        0   199875000
+             gout_cmgp_usi0_ipclk    0        0        0   199875000
+<<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+[1] https://lkml.org/lkml/2021/10/22/979
 
-On the other hand, if clocks and the clk-smd-rpm driver in particular
-moves to sync_state then this wouldn't be a problem...
+Sam Protsenko (2):
+  dt-bindings: clock: samsung: Document Exynos850 CMU_CMGP
+  clk: samsung: exynos850: Implement CMU_CMGP domain
 
-Regards,
-Bjorn
+ .../clock/samsung,exynos850-clock.yaml        |  19 ++++
+ drivers/clk/samsung/clk-exynos850.c           | 100 ++++++++++++++++++
+ include/dt-bindings/clock/exynos850.h         |  17 +++
+ 3 files changed, 136 insertions(+)
 
-> Since your patches are more or less identical I'm afraid the same
-> concerns still need to be solved somehow. :)
-> 
-> Thanks,
-> Stephan
-> 
-> [1]: https://lore.kernel.org/linux-arm-msm/20200817140908.185976-1-stephan@gerhold.net/
-> [2]: https://lore.kernel.org/linux-arm-msm/20200818080738.GA46574@gerhold.net/
-> [3]: https://lore.kernel.org/linux-arm-msm/159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com/
-> [4]: https://lore.kernel.org/linux-arm-msm/20200821064857.GA905@gerhold.net/
+-- 
+2.30.2
+
