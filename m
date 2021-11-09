@@ -2,65 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA600C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E207FC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1A95610CF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7191610A3
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240977AbhKIWu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 17:50:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57130 "EHLO
+        id S236383AbhKIWyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:54:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345043AbhKIWuF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 17:50:05 -0500
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC55C00EB3F
-        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 14:21:24 -0800 (PST)
-Received: by mail-ot1-x335.google.com with SMTP id b5-20020a9d60c5000000b0055c6349ff22so850445otk.13
-        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 14:21:24 -0800 (PST)
+        with ESMTP id S242389AbhKIWxO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 17:53:14 -0500
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D625EC0F26F0
+        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 14:23:03 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id w6-20020a9d77c6000000b0055e804fa524so932068otl.3
+        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 14:23:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qLsRex488etMkJyCCFaXLtgPzZ6BB/J9dKWw8UO3KF8=;
-        b=HiVLib1yZobRnuW7sMIDMYgEiV7yhcNYV53azWFi6aSYW4Hu++8xN0MqgT9ZBTBPe1
-         tHfuZJW+x3zpArXVhEztoQURqBgNNAqvkhrpdok2c1CYScgbTEkk3toWbsXGaEsMPhBc
-         pobpQ2rMClAZp0i0TvDBo0SZAGTrza1mdUUSgjugkU2oA7tzpHVZSIZWY2OOOlvRabpj
-         xPBPjmrQZd9Z6fxEVq7BWnagN67ohxQ3kkVDeE0cZHQkykxoJzisjtym0erskVnhIOYl
-         BxQABSwHk0vmOC8j2uq7gypLmELd9QUegVybgm3hF2dKB/JaBQMP0LD29ohzDV3YG8Wz
-         hM9A==
+        bh=PgvfvNdwSI/3ph2NDnZGZVBMBhLt3hGukHq2mKYVk4E=;
+        b=ezGw9H7bK2e/s/4uure9G6i0ebK2VdicuchuQBo0XrMhltr4yLF4uioTnD7PUtSme0
+         OePrOFZy2xKznFmRa4kWryPPqSDr5KsA3FHmWvPnhzn9VGOr/5/sCVsV/b48g58sZG5Y
+         LdGvmusJLsiDg78lbyLvDdTWzbI35WNVFVM4ialFj7jcKKOcZKQd308uyj0GomRNPo5u
+         XqaD370mJ5NKpFFmzdUhTiqzyL3riw7Uo7hYGZjzRMdR4eaMbWfB9t/4m2hFHbzw1+WL
+         ahXbPCs1rFJ3HXqJzf6XeOso0kdfvJyF4mVwiHwpKiKF9Kbxb7+LLq5Na8bZLQBd7KGi
+         ENHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qLsRex488etMkJyCCFaXLtgPzZ6BB/J9dKWw8UO3KF8=;
-        b=uWs1zah+dOeSMhA5a4cfamzicOulp4uyHdfXB3NmW2UNAvwKfcqvrxUiZHZjLSo4VJ
-         vvrNVp9FviKKq2XYk6PS7yqXVwyYvNDx3PW3N6HO9qYXTUM3LN+cNg/mRLMccdmxRhEc
-         hY+vwdm1MHRk6/5lAGcTlydrX1tS2VAj+TcmjSTg/9/jMhVW7v2NItA6bHaQQXNdFYUg
-         l53czAFBjx1k+J5xrXu3TS1LfTlCoSHPii0PdsCAH1rlxTmWzwNLmRMULt6uFNaSGk9H
-         WiV1NjHxMiLzBPRj0TpwPRWCopkdchDPs5Ivq+L4QuO0JBKm3p6Qp7d5R4efg/aDNlo8
-         Yoyw==
-X-Gm-Message-State: AOAM530wgtgK5CQ2wb9AZkb80ono1R78AKGE9X1lt5BKfq6KrxUeP2eV
-        UtlYX1gO+IwCQSo/sNgJS1TiF8VjJSA8B+E0IsRnKg==
-X-Google-Smtp-Source: ABdhPJxnGCMwPBzOn0vDnUGZChUhsq9PbhUnrHTyTVpdBpkdT5/1fxR/EpRTVr/sEUcMpLzruQlZhgh3IK5H9XIVdOU=
-X-Received: by 2002:a9d:ed6:: with SMTP id 80mr8689832otj.35.1636496484311;
- Tue, 09 Nov 2021 14:21:24 -0800 (PST)
+        bh=PgvfvNdwSI/3ph2NDnZGZVBMBhLt3hGukHq2mKYVk4E=;
+        b=yraDOZIuoWMkIHUEcPdonuVYTDCDdck1Lu2ZmvKmZ4oz9m+D5TVonCUKOXbVsnSbKh
+         1MoR+mNW+RdpgCztXXB2aadNhDLoU6qerB0Sv9nHZwrX43l1fqIKApdbNqXYb0Uphu00
+         Q+dJSuBFBdw57V76yoNCd7w2dZTl2R/0cid4V9l0zu+T+MKb4BEFctlecxSxiWud4jxj
+         Aqo2yoPwrbIRVNIPDz8GmOO37J6L4jIAnJV/VMwcHoTiXvizz1byw20Vm4lkCUk7Mc2m
+         w0jdYhN964V28D68x2qyIlPYxrlR4gaSrVYu8SfAZ8BI1De2CNcFbupDW1uipnbwKQEQ
+         7T/A==
+X-Gm-Message-State: AOAM532UqH6UU790de85ij83cKb+SBP1Yv8FmnOBfcrnnxdgJEOgachm
+        kkxbhuQ6tC+9+CMK6ad2qxlrDEL2pFjQNlyehAYbFA==
+X-Google-Smtp-Source: ABdhPJzm3G0CFDoatPM1xAySmN9ryiR6N5sit39Y1Pb5dB8zXLzT9ztTe9fQor4ppdDUgnGjTWOFVjbFNCkeAX5UGds=
+X-Received: by 2002:a9d:ed6:: with SMTP id 80mr8697308otj.35.1636496583272;
+ Tue, 09 Nov 2021 14:23:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20211109164650.2233507-1-robh@kernel.org> <20211109164650.2233507-3-robh@kernel.org>
-In-Reply-To: <20211109164650.2233507-3-robh@kernel.org>
+References: <20211109164650.2233507-1-robh@kernel.org>
+In-Reply-To: <20211109164650.2233507-1-robh@kernel.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 9 Nov 2021 23:21:12 +0100
-Message-ID: <CACRpkdaY9VQcUCNe4ZFKFyRd7HSFh1FX8yOT-AFqjJ6wc56Ehw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: versatile: clk-icst: Ensure clock names are unique
+Date:   Tue, 9 Nov 2021 23:22:51 +0100
+Message-ID: <CACRpkdYuX5zfJrywx0kWWJJk2A963kzzVGvFrGJciUuGjh7XGw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Fix Arm Ltd board node name collisions
 To:     Rob Herring <robh@kernel.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Sudeep Holla <Sudeep.Holla@arm.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Guenter Roeck <linux@roeck-us.net>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -68,20 +67,15 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, Nov 9, 2021 at 5:46 PM Rob Herring <robh@kernel.org> wrote:
 
-> Commit 2d3de197a818 ("ARM: dts: arm: Update ICST clock nodes 'reg' and
-> node names") moved to using generic node names. That results in trying
-> to register multiple clocks with the same name. Fix this by including
-> the unit-address in the clock name.
->
-> Fixes: 2d3de197a818 ("ARM: dts: arm: Update ICST clock nodes 'reg' and node names")
-> Cc: stable@vger.kernel.org
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> This does break DT ABI compatibility which is partially mitigated if
+> these changes are backported to stable. The alternative is reverting the
+> referenced DT changes and coming up with different node names without
+> unit-addresses. Ultimately, ABI issues are platform maintainers'
+> decision, not mine.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I don't mind breaking the ABI for these boards since everyone I
+know rebuild the DT with the kernel and boot. I don't know if
+other users flash it though, so check what Sudeep says.
 
 Yours,
 Linus Walleij
