@@ -2,128 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C814C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 13:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D10C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 15:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78D2461152
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 13:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99A6861207
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 15:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234705AbhKINNm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 08:13:42 -0500
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:38449 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234686AbhKINNl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 08:13:41 -0500
-Received: by mail-lj1-f182.google.com with SMTP id e9so15684307ljl.5;
-        Tue, 09 Nov 2021 05:10:55 -0800 (PST)
+        id S237557AbhKIP5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 10:57:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238342AbhKIP5l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 10:57:41 -0500
+Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57508C061767
+        for <linux-clk@vger.kernel.org>; Tue,  9 Nov 2021 07:54:55 -0800 (PST)
+Received: by mail-ot1-x333.google.com with SMTP id b5-20020a9d60c5000000b0055c6349ff22so20752279otk.13
+        for <linux-clk@vger.kernel.org>; Tue, 09 Nov 2021 07:54:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=J2BWM/D/O6dLf23Hfa6szmHiiJ90bLdtonD436duf4I=;
+        b=hN0bkCPsYjCvyrMBxO8w0D/LZKDOtSz4D3sHyGPLmR/ZYJiZl7ha52gLpkQ0JyukrM
+         BASRd/6Ltmxz6DdnF7G3XNnjVrgk3PNRSS+nuIyox37nUvcUZLoygVc1ZsMc+WIfCy6l
+         JfYpyOcGbZK9RuN0LFVjOzCN0XigMGn7SMcoWD6h6dpC7jzPNVXhdu3M0nYYc51mMCLc
+         WZZrL4LB1c8M91rnRXQuESBqyE1z++Tl2Ehafk5xRxZcEYcgyGlVjTFa+cqTDhomO6nn
+         xM7Ix55GJxGBU83J6LUC7+yCULR7GxvoLB2GLvoeJwIFGo71mvKOxRL5CQut4UrvcG7V
+         GTlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=sffqGSBwNCDIhRwsUWTxOGjcxPuiCUueCgTIxVPnjaw=;
-        b=nqsYEGOlFIuHw/lrmcVabQN5KQlidFnxPM97JUtQ+OlJyZM6C8ucjIQvWEpzqXIGVR
-         mHCofS6p7y576w9S2AeRlERVwlzIfUax1XgY10pNjqrcsOqGruyUYm4LnGCOKrVnBkbd
-         dEl8aFNo/K1gFjJrdFaz9nkhrTsZqSSAU7AD05/3mgxZ7G9cOnV5Wydi16AcH7SljQ5b
-         H1o4rFQ+/lRw7F17LinnTm/6VLcUXqKpGit83QYXFCSKD89Ypu/A8VZjDJrXALqL46Eg
-         dpXZujlCPrUjsjfwtGSjcr8xj8DKHaCzCpoh3HcQUWqbHavnv8peB0lNzPiEXrbl3AUF
-         sKuw==
-X-Gm-Message-State: AOAM531Aod6Z3zA0hyZ2BME7RleZMd5N6KOzpd/HKAhW1YplRI4wqmn8
-        rTp853Hje4BjPRmAJRTJSjOu9GL7UoQ=
-X-Google-Smtp-Source: ABdhPJwI7CpXfXTR+/LrzqLFzQJ2conFMadoEArtroeQlJPJEG4ItG/KBholgkNXmA54ZH3HzzHgPQ==
-X-Received: by 2002:a2e:9a41:: with SMTP id k1mr7345323ljj.147.1636463454654;
-        Tue, 09 Nov 2021 05:10:54 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.googlemail.com with ESMTPSA id d16sm819044ljj.87.2021.11.09.05.10.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Nov 2021 05:10:53 -0800 (PST)
-Message-ID: <488b7821-674f-61ff-a960-ba3f650d3a78@kernel.org>
-Date:   Tue, 9 Nov 2021 14:10:52 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=J2BWM/D/O6dLf23Hfa6szmHiiJ90bLdtonD436duf4I=;
+        b=yNCicMzGVuIx7brMWj9HAxirHJHLaV1cb2PhQ9PDLocg/LrS5urWRm5YbaFzuDM96C
+         Tiwn2mFg/oqhqzaAJ8Lsp+VdT68iSEt7SBx7vfTCt4AUcyYG9PLfGaGT/jyYG6xf0+5r
+         wqd3TJovAyMyPZeDWt0PxVFZ9IwnucQq0wsocGdSxUsW+2uahYwM3PuAohXuKEURz3/6
+         H4bxXKIrM7aFUhT2KHCrNAe05iYDY2uM16Z89HTDU8d4oeiboR3Q4xztSN6mm11eBAVi
+         65//iQtYXf6roZmphYLMNR2mwPPdpibT9Z+HhsF6W4eNZHz1Q7RimCY0p4MIYwCVaTm3
+         sNMg==
+X-Gm-Message-State: AOAM531WYGR3iHbsqz8wlLGip5K9c63iZSlkSwYXD5DbOQsQpXZnDAFw
+        P4d9plMpwX5jiSGjZFLC4zRc/StS4cenSA==
+X-Google-Smtp-Source: ABdhPJxeVMLFGR7Ycu8kluImtDwDwYEH4/r962d+izO3xg79wwialyaWogujdi/sD546fMa7jn4Dww==
+X-Received: by 2002:a9d:352:: with SMTP id 76mr6551987otv.79.1636473294656;
+        Tue, 09 Nov 2021 07:54:54 -0800 (PST)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id i16sm3019032oig.15.2021.11.09.07.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Nov 2021 07:54:53 -0800 (PST)
+Date:   Tue, 9 Nov 2021 07:56:27 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Shawn Guo <shawn.guo@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: qcom: smd-rpm: Report enable state to framework
+Message-ID: <YYqaK/Evzuup0ocs@ripper>
+References: <20211109022558.14529-1-shawn.guo@linaro.org>
+ <YYpMzau3CWRQYlkJ@gerhold.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-Subject: Re: [PATCH v5 2/2 resend] clk: microchip: Add driver for Microchip
- PolarFire SoC
-Content-Language: en-US
-To:     Palmer Dabbelt <palmer@dabbelt.com>, daire.mcnamara@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, cyril.jean@microchip.com,
-        conor.dooley@microchip.com, david.abdurachmanov@gmail.com
-References: <mhng-2e959dbf-7344-4ddc-b133-06ef3c5abccf@palmerdabbelt-glaptop>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <mhng-2e959dbf-7344-4ddc-b133-06ef3c5abccf@palmerdabbelt-glaptop>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YYpMzau3CWRQYlkJ@gerhold.net>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/08/2021 23:09, Palmer Dabbelt wrote:
-> On Wed, 18 Aug 2021 07:11:02 PDT (-0700), daire.mcnamara@microchip.com wrote:
->> From: Daire McNamara <daire.mcnamara@microchip.com>
->>
->> Add support for clock configuration on Microchip PolarFire SoC
->>
->> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
->> ---
->>  drivers/clk/Kconfig              |   1 +
->>  drivers/clk/Makefile             |   2 +-
->>  drivers/clk/microchip/Kconfig    |   7 +
->>  drivers/clk/microchip/Makefile   |   6 +-
->>  drivers/clk/microchip/clk-mpfs.c | 444 +++++++++++++++++++++++++++++++
->>  5 files changed, 457 insertions(+), 3 deletions(-)
->>  create mode 100644 drivers/clk/microchip/Kconfig
->>  create mode 100644 drivers/clk/microchip/clk-mpfs.c
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index a588d56502d4..ab604dd02acf 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -388,6 +388,7 @@ source "drivers/clk/keystone/Kconfig"
->>  source "drivers/clk/mediatek/Kconfig"
->>  source "drivers/clk/meson/Kconfig"
->>  source "drivers/clk/mstar/Kconfig"
->> +source "drivers/clk/microchip/Kconfig"
->>  source "drivers/clk/mvebu/Kconfig"
->>  source "drivers/clk/qcom/Kconfig"
->>  source "drivers/clk/renesas/Kconfig"
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index b22ae4f81e0b..fb87a18ae8ec 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -89,7 +89,7 @@ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
->>  obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
->>  obj-y					+= mediatek/
->>  obj-$(CONFIG_ARCH_MESON)		+= meson/
->> -obj-$(CONFIG_MACH_PIC32)		+= microchip/
->> +obj-y					+= microchip/
->>  ifeq ($(CONFIG_COMMON_CLK), y)
->>  obj-$(CONFIG_ARCH_MMP)			+= mmp/
->>  endif
->> diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
->> new file mode 100644
->> index 000000000000..f5edc7b3c07c
->> --- /dev/null
->> +++ b/drivers/clk/microchip/Kconfig
->> @@ -0,0 +1,7 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +config MCHP_CLK_MPFS
->> +	bool "Clk driver for PolarFire SoC"
->> +	depends on (RISCV && SOC_MICROCHIP_POLARFIRE) || COMPILE_TEST
+On Tue 09 Nov 02:26 PST 2021, Stephan Gerhold wrote:
+
+> Hi Shawn,
 > 
-> This shouldn't depend on the SOC config.  Those were meant to just 
-> enable a set of drivers, not restrict what can be enabled. 
+> On Tue, Nov 09, 2021 at 10:25:55AM +0800, Shawn Guo wrote:
+> > Currently the enable state of smd-rpm clocks are not properly reported
+> > back to framework due to missing .is_enabled and .is_prepared hooks.
+> > This causes a couple of issues.
+> > 
+> > - All those unused clocks are not voted for off, because framework has
+> >   no knowledge that they are unused.  It becomes a problem for vlow
+> >   power mode support, as we do not have every single RPM clock claimed
+> >   and voted for off by client devices, and rely on clock framework to
+> >   disable those unused RPM clocks.
+> > 
+> 
+> I posted a similar patch a bit more than a year ago [1]. Back then one
+> of the concerns was that we might disable critical clocks just because
+> they have no driver using it actively. For example, not all of the
+> platforms using clk-smd-rpm already have an interconnect driver.
+> Disabling the interconnect related clocks will almost certainly make the
+> device lock up completely. (I tried it back then, it definitely does...)
+> 
+> I proposed adding CLK_IGNORE_UNUSED for the interconnect related clocks
+> back then [2] which would allow disabling most of the clocks at least.
+> Stephen Boyd had an alternative proposal to instead move the
+> interconnect related clocks completely out of clk-smd-rpm [3].
+> But I'm still unsure how this would work in a backwards compatible way. [4]
+> 
 
-The kernel config is overwhelmed with amount of choices of drivers, so
-it is quite common to restrict the choices of subarch-specific drivers
-to these sub-architectures. That's how many, if not most, of ARM v7 and
-ARMv8 drivers are restricted. Some other RISC-V drivers follow this
-concept (git grep SOC_CANAAN, git grep SOC_SIFIVE) because it is
-friendly for people configuring kernels. Why making configuration choice
-more difficult and show the SoC-specific clock driver to every other
-platform (when this SoC is not used)?
+With the introduction of QoS the interconnect drivers need to be mmio
+devices, and plural, while in order to talk to the RPM we need something
+on the rpmsg bus.
 
-Best regards,
-Krzysztof
+So I don't think Stephen's proposal will work, unless we like in the
+RPMh case comes up with an equivalent of the bcm-voter (which just moved
+the clocks from one clock driver to a "clock" driver).
+
+
+On the other hand, if clocks and the clk-smd-rpm driver in particular
+moves to sync_state then this wouldn't be a problem...
+
+Regards,
+Bjorn
+
+> Since your patches are more or less identical I'm afraid the same
+> concerns still need to be solved somehow. :)
+> 
+> Thanks,
+> Stephan
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/20200817140908.185976-1-stephan@gerhold.net/
+> [2]: https://lore.kernel.org/linux-arm-msm/20200818080738.GA46574@gerhold.net/
+> [3]: https://lore.kernel.org/linux-arm-msm/159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com/
+> [4]: https://lore.kernel.org/linux-arm-msm/20200821064857.GA905@gerhold.net/
