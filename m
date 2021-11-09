@@ -2,120 +2,540 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589E0C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 21:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A2AC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACC961251
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 21:04:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA7156124C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Nov 2021 22:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244875AbhKIVHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Nov 2021 16:07:22 -0500
-Received: from mail-pf1-f182.google.com ([209.85.210.182]:37585 "EHLO
-        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244853AbhKIVHV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Nov 2021 16:07:21 -0500
-Received: by mail-pf1-f182.google.com with SMTP id y5so563779pfb.4;
-        Tue, 09 Nov 2021 13:04:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E8Y2jyNg7h9soMk4rEm6rzTo1BjlaELOxyIkvTVeIKc=;
-        b=qFzg41KmFXXKxf0e7AIwCA80Vj91V/b5yxTOjkUyLj5g3HujBNOJ7qrqd9N4Mwa/P6
-         Sfl4ATULDY2ywqS3ruJg80zTSHpWY+zb9UQJHt9dZcQYnLqvb0dXt2mclUIlsiLZQnaV
-         vpBioGPkcymA/Ri3sCrAlRn2ZtIKOWZLVgqHuXnDtZ00y1DKMg72Uea8lMEFLivX/r8r
-         skk6f/aqTmMGnO0XocjxfLvBrD26RTW9NVGyGIaXbx5VfqMHEQukO8CGEbBUeoprVB4B
-         6M8YuUDbHJK5Yc0SNtY0OQt/eMN8VvyubtqwmF3xoltLU/GBmcMOrJ2TjZLYqJvEYcgf
-         UCXg==
-X-Gm-Message-State: AOAM530BGgMaRBQAP2cGf2AjT2BkjSOVO9gELRy1PUJFVIlumTA8KId7
-        /ajj9eER+M1Szon1rqPIXnQN+ZeMNAy0fTh2z6g=
-X-Google-Smtp-Source: ABdhPJz1YJYHQflXJx0Bc84bAu1eZK8Iidi5ru1YEkbahK+1/iI8yZB/R/hQC6b2vi+cWBbhfBoFSTKZxNwGdzS5FHg=
-X-Received: by 2002:aa7:8883:0:b0:49f:f87a:95de with SMTP id
- z3-20020aa78883000000b0049ff87a95demr9062124pfe.53.1636491875224; Tue, 09 Nov
- 2021 13:04:35 -0800 (PST)
+        id S245378AbhKIWTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Nov 2021 17:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S245385AbhKIWTl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Nov 2021 17:19:41 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2CCAB611C9;
+        Tue,  9 Nov 2021 22:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636496215;
+        bh=LAQS6DgImP9PJxH4RxHA0IGZnQds1rsw5ivliJFeQqA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j++ktgXzA98CKlx6GL8BKVUXZco1Ak7MdnBdOov+iC8XQC0aK8NUyNrtLTMK7AKbp
+         w1jI5LjSvNjLUpn2+cdMWoyp7VpILKG4qFbAoxkozWrWPP0fGxnccspD5FD/ByGGe/
+         qJGhsro5pH3oBDNFKkbJ3pnP265oiG9/jloj7qOROPW6Ul6bdW39K5oCXOF5B/thEL
+         hgCj1vE+2scbVRKKRnoISN8K5w4gd6jE+fTFctGWve0I0fXIDaRFi0Q7SRgX2Hss3z
+         QVN0VwN9+0kFZkXvrQGmF/w56hrT78go7EybjbpiT38BG/hnaynEwhQgbhEYUJ4E3C
+         NZoF9aW3/ztxA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
+        sboyd@codeaurora.org, maxime.ripard@free-electrons.com,
+        wens@csie.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.15 03/82] clk: sunxi-ng: Unregister clocks/resets when unbinding
+Date:   Tue,  9 Nov 2021 17:15:21 -0500
+Message-Id: <20211109221641.1233217-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211109221641.1233217-1-sashal@kernel.org>
+References: <20211109221641.1233217-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
- <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
- <CAHp75VcuGdaq_TjjRS0S8R5y-nryLABZSp7ehrXz-fUS2W3vfA@mail.gmail.com>
- <CACRpkdYe-tW2K2eOQa+FYb-ZXzrA95+pPc6kkLB8ZJLAT8G_eA@mail.gmail.com>
- <CANBLGcyo3YjygkjDmdjt4C_H=MZdHQwqumsxnatuObeP2LADAg@mail.gmail.com>
- <CAHp75VdBaKZVeA7dasHWP4E3c8F2phaGz-90FErj3bB8FJOS9w@mail.gmail.com>
- <CANBLGcw7X9SY3_=A7ZXW60646vconjCbYBsvb=D2a0BPcyn75A@mail.gmail.com> <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
-In-Reply-To: <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
-From:   Emil Renner Berthing <kernel@esmil.dk>
-Date:   Tue, 9 Nov 2021 22:04:24 +0100
-Message-ID: <CANBLGcxT_a3J+uaaKazRkfJQoBjGGGiz9agAZUzMEmfJiVXXbw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 9 Nov 2021 at 21:29, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Tue, Nov 9, 2021 at 10:40 AM Emil Renner Berthing <kernel@esmil.dk> wrote:
-> > On Tue, 9 Nov 2021 at 10:34, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->
-> > > > The order the different states are blinked depends entirely on
-> > > > how the pinctrl framework parses the device tree. I still think it
-> > > > would be more natural to cleanly go to the end result without this
-> > > > blinking.
-> >
-> > Hmm.. but if going through the different states is what you want, then
-> > wouldn't you need the device tree to have an ordered list of the
-> > states rather than just a single node and also a way to tune how long
-> > time the different states are blinked?
->
-> In a way you are correct that the DT is a functional language and it's
-> a bit lite a style sheet or prolog or something in that the end reduction
-> is what counts.
->
-> In this case, I would say something is weird if there are interim states,
-> the yaml validation should not allow you to set the same thing back
-> and forth in your DTS file.
+From: Samuel Holland <samuel@sholland.org>
 
-Yes, exactly.
+[ Upstream commit 9bec2b9c6134052994115d2d3374e96f2ccb9b9d ]
 
-> Alas we are not perfect as in yaml validation isn't perfect either.
-> I can't see what the problem is really, just write proper DTS files
-> and there will not be any interim states, right?
+Currently, unbinding a CCU driver unmaps the device's MMIO region, while
+leaving its clocks/resets and their providers registered. This can cause
+a page fault later when some clock operation tries to perform MMIO. Fix
+this by separating the CCU initialization from the memory allocation,
+and then using a devres callback to unregister the clocks and resets.
 
-No, I agree. I think it's only that Andy wasn't sure if these interim
-states might be meaningful/useful.
+This also fixes a memory leak of the `struct ccu_reset`, and uses the
+correct owner (the specific platform driver) for the clocks and resets.
 
-> And if it is possible
-> to write DTS files that have states and sequence requirements,
-> these should be caught in validation. Should be.
->
-> Yours,
-> Linus Walleij
+Early OF clock providers are never unregistered, and limited error
+handling is possible, so they are mostly unchanged. The error reporting
+is made more consistent by moving the message inside of_sunxi_ccu_probe.
+
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Link: https://lore.kernel.org/r/20210901050526.45673-2-samuel@sholland.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100.c   |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c   |  4 +-
+ drivers/clk/sunxi-ng/ccu-sun5i.c         |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c      |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c       |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  |  3 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c |  3 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c     |  2 +-
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c |  2 +-
+ drivers/clk/sunxi-ng/ccu_common.c        | 89 ++++++++++++++++++++----
+ drivers/clk/sunxi-ng/ccu_common.h        |  6 +-
+ 23 files changed, 100 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+index f32366d9336e7..bd9a8782fec3d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
++++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+@@ -1464,7 +1464,7 @@ static void __init sun4i_ccu_init(struct device_node *node,
+ 	val &= ~GENMASK(7, 6);
+ 	writel(val | (2 << 6), reg + SUN4I_AHB_REG);
+ 
+-	sunxi_ccu_probe(node, reg, desc);
++	of_sunxi_ccu_probe(node, reg, desc);
+ }
+ 
+ static void __init sun4i_a10_ccu_setup(struct device_node *node)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+index a56142b909938..6f2a589705561 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+@@ -196,7 +196,7 @@ static int sun50i_a100_r_ccu_probe(struct platform_device *pdev)
+ 	if (IS_ERR(reg))
+ 		return PTR_ERR(reg);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a100_r_ccu_desc);
++	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_a100_r_ccu_desc);
+ }
+ 
+ static const struct of_device_id sun50i_a100_r_ccu_ids[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+index 81b48c73d389f..913bb08e6dee8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+@@ -1247,7 +1247,7 @@ static int sun50i_a100_ccu_probe(struct platform_device *pdev)
+ 		writel(val, reg + sun50i_a100_usb2_clk_regs[i]);
+ 	}
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a100_ccu_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_a100_ccu_desc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 149cfde817cba..54f25c624f020 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -955,7 +955,7 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ 
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_a64_ccu_desc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index f8909a7ed5539..f30d7eb5424d8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -232,7 +232,7 @@ static void __init sunxi_r_ccu_init(struct device_node *node,
+ 		return;
+ 	}
+ 
+-	sunxi_ccu_probe(node, reg, desc);
++	of_sunxi_ccu_probe(node, reg, desc);
+ }
+ 
+ static void __init sun50i_h6_r_ccu_setup(struct device_node *node)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index bff446b782907..c0800da2fa3d7 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -1240,7 +1240,7 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+ 	val |= BIT(24);
+ 	writel(val, reg + SUN50I_H6_HDMI_CEC_CLK_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_h6_ccu_desc);
++	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun50i_h6_ccu_desc);
+ }
+ 
+ static const struct of_device_id sun50i_h6_ccu_ids[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+index 225307305880e..22eb18079a154 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -1141,9 +1141,7 @@ static void __init sun50i_h616_ccu_setup(struct device_node *node)
+ 	val |= BIT(24);
+ 	writel(val, reg + SUN50I_H616_HDMI_CEC_CLK_REG);
+ 
+-	i = sunxi_ccu_probe(node, reg, &sun50i_h616_ccu_desc);
+-	if (i)
+-		pr_err("%pOF: probing clocks fails: %d\n", node, i);
++	of_sunxi_ccu_probe(node, reg, &sun50i_h616_ccu_desc);
+ }
+ 
+ CLK_OF_DECLARE(sun50i_h616_ccu, "allwinner,sun50i-h616-ccu",
+diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
+index b78e9b507c1c6..1f4bc0e773a7e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun5i.c
++++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+@@ -1012,7 +1012,7 @@ static void __init sun5i_ccu_init(struct device_node *node,
+ 	val &= ~GENMASK(7, 6);
+ 	writel(val | (2 << 6), reg + SUN5I_AHB_REG);
+ 
+-	sunxi_ccu_probe(node, reg, desc);
++	of_sunxi_ccu_probe(node, reg, desc);
+ }
+ 
+ static void __init sun5i_a10s_ccu_setup(struct device_node *node)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 9b40d53266a3f..3df5c0b415804 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -1257,7 +1257,7 @@ static void __init sun6i_a31_ccu_setup(struct device_node *node)
+ 	val |= 0x3 << 12;
+ 	writel(val, reg + SUN6I_A31_AHB1_REG);
+ 
+-	sunxi_ccu_probe(node, reg, &sun6i_a31_ccu_desc);
++	of_sunxi_ccu_probe(node, reg, &sun6i_a31_ccu_desc);
+ 
+ 	ccu_mux_notifier_register(pll_cpu_clk.common.hw.clk,
+ 				  &sun6i_a31_cpu_nb);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index 103aa504f6c8a..577bb235d6584 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -745,7 +745,7 @@ static void __init sun8i_a23_ccu_setup(struct device_node *node)
+ 	val &= ~BIT(16);
+ 	writel(val, reg + SUN8I_A23_PLL_MIPI_REG);
+ 
+-	sunxi_ccu_probe(node, reg, &sun8i_a23_ccu_desc);
++	of_sunxi_ccu_probe(node, reg, &sun8i_a23_ccu_desc);
+ }
+ CLK_OF_DECLARE(sun8i_a23_ccu, "allwinner,sun8i-a23-ccu",
+ 	       sun8i_a23_ccu_setup);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 91838cd110377..8f65cd03f5acc 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -805,7 +805,7 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
+ 	val &= ~BIT(16);
+ 	writel(val, reg + SUN8I_A33_PLL_MIPI_REG);
+ 
+-	sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
++	of_sunxi_ccu_probe(node, reg, &sun8i_a33_ccu_desc);
+ 
+ 	/* Gate then ungate PLL CPU after any rate changes */
+ 	ccu_pll_notifier_register(&sun8i_a33_pll_cpu_nb);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index 2b434521c5ccf..c2ddcd2ddab4e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -906,7 +906,7 @@ static int sun8i_a83t_ccu_probe(struct platform_device *pdev)
+ 	sun8i_a83t_cpu_pll_fixup(reg + SUN8I_A83T_PLL_C0CPUX_REG);
+ 	sun8i_a83t_cpu_pll_fixup(reg + SUN8I_A83T_PLL_C1CPUX_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_a83t_ccu_desc);
++	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun8i_a83t_ccu_desc);
+ }
+ 
+ static const struct of_device_id sun8i_a83t_ccu_ids[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index 524f33275bc73..4b94b6041b271 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -342,7 +342,7 @@ static int sunxi_de2_clk_probe(struct platform_device *pdev)
+ 		goto err_disable_mod_clk;
+ 	}
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, ccu_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, ccu_desc);
+ 	if (ret)
+ 		goto err_assert_reset;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 7e629a4493afd..d2fc2903787d8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -1154,7 +1154,7 @@ static void __init sunxi_h3_h5_ccu_init(struct device_node *node,
+ 	val &= ~GENMASK(19, 16);
+ 	writel(val | (0 << 16), reg + SUN8I_H3_PLL_AUDIO_REG);
+ 
+-	sunxi_ccu_probe(node, reg, desc);
++	of_sunxi_ccu_probe(node, reg, desc);
+ 
+ 	/* Gate then ungate PLL CPU after any rate changes */
+ 	ccu_pll_notifier_register(&sun8i_h3_pll_cpu_nb);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+index 4c8c491b87c27..9e754d1f754a1 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+@@ -265,7 +265,7 @@ static void __init sunxi_r_ccu_init(struct device_node *node,
+ 		return;
+ 	}
+ 
+-	sunxi_ccu_probe(node, reg, desc);
++	of_sunxi_ccu_probe(node, reg, desc);
+ }
+ 
+ static void __init sun8i_a83t_r_ccu_setup(struct device_node *node)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 84153418453f4..002e0c3a04dbe 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1346,7 +1346,7 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
+ 	if (IS_ERR(regmap))
+ 		return PTR_ERR(regmap);
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun8i_r40_ccu_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun8i_r40_ccu_desc);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index f49724a22540e..ce150f83ab54e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -822,7 +822,7 @@ static void __init sun8i_v3_v3s_ccu_init(struct device_node *node,
+ 	val &= ~GENMASK(19, 16);
+ 	writel(val, reg + SUN8I_V3S_PLL_AUDIO_REG);
+ 
+-	sunxi_ccu_probe(node, reg, ccu_desc);
++	of_sunxi_ccu_probe(node, reg, ccu_desc);
+ }
+ 
+ static void __init sun8i_v3s_ccu_setup(struct device_node *node)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+index 6616e8114f623..261e64416f26a 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+@@ -246,8 +246,7 @@ static int sun9i_a80_de_clk_probe(struct platform_device *pdev)
+ 		goto err_disable_clk;
+ 	}
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg,
+-			      &sun9i_a80_de_clk_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun9i_a80_de_clk_desc);
+ 	if (ret)
+ 		goto err_assert_reset;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+index 4b4a507d04edf..596243b3e0fa3 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+@@ -117,8 +117,7 @@ static int sun9i_a80_usb_clk_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	ret = sunxi_ccu_probe(pdev->dev.of_node, reg,
+-			      &sun9i_a80_usb_clk_desc);
++	ret = devm_sunxi_ccu_probe(&pdev->dev, reg, &sun9i_a80_usb_clk_desc);
+ 	if (ret)
+ 		goto err_disable_clk;
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index ef29582676f6e..97aaed0e68500 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -1231,7 +1231,7 @@ static int sun9i_a80_ccu_probe(struct platform_device *pdev)
+ 	sun9i_a80_cpu_pll_fixup(reg + SUN9I_A80_PLL_C0CPUX_REG);
+ 	sun9i_a80_cpu_pll_fixup(reg + SUN9I_A80_PLL_C1CPUX_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun9i_a80_ccu_desc);
++	return devm_sunxi_ccu_probe(&pdev->dev, reg, &sun9i_a80_ccu_desc);
+ }
+ 
+ static const struct of_device_id sun9i_a80_ccu_ids[] = {
+diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+index 7ecc3a5a5b5e1..61ad7ee91c114 100644
+--- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
++++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+@@ -538,7 +538,7 @@ static void __init suniv_f1c100s_ccu_setup(struct device_node *node)
+ 	val &= ~GENMASK(19, 16);
+ 	writel(val | (3 << 16), reg + SUNIV_PLL_AUDIO_REG);
+ 
+-	sunxi_ccu_probe(node, reg, &suniv_ccu_desc);
++	of_sunxi_ccu_probe(node, reg, &suniv_ccu_desc);
+ 
+ 	/* Gate then ungate PLL CPU after any rate changes */
+ 	ccu_pll_notifier_register(&suniv_pll_cpu_nb);
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 2e20e650b6c01..88cb569e58358 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/device.h>
+ #include <linux/iopoll.h>
+ #include <linux/slab.h>
+ 
+@@ -14,6 +15,11 @@
+ #include "ccu_gate.h"
+ #include "ccu_reset.h"
+ 
++struct sunxi_ccu {
++	const struct sunxi_ccu_desc	*desc;
++	struct ccu_reset		reset;
++};
++
+ static DEFINE_SPINLOCK(ccu_lock);
+ 
+ void ccu_helper_wait_for_lock(struct ccu_common *common, u32 lock)
+@@ -79,12 +85,15 @@ int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb)
+ 				     &pll_nb->clk_nb);
+ }
+ 
+-int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+-		    const struct sunxi_ccu_desc *desc)
++static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
++			   struct device_node *node, void __iomem *reg,
++			   const struct sunxi_ccu_desc *desc)
+ {
+ 	struct ccu_reset *reset;
+ 	int i, ret;
+ 
++	ccu->desc = desc;
++
+ 	for (i = 0; i < desc->num_ccu_clks; i++) {
+ 		struct ccu_common *cclk = desc->ccu_clks[i];
+ 
+@@ -103,7 +112,10 @@ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 			continue;
+ 
+ 		name = hw->init->name;
+-		ret = of_clk_hw_register(node, hw);
++		if (dev)
++			ret = clk_hw_register(dev, hw);
++		else
++			ret = of_clk_hw_register(node, hw);
+ 		if (ret) {
+ 			pr_err("Couldn't register clock %d - %s\n", i, name);
+ 			goto err_clk_unreg;
+@@ -115,15 +127,10 @@ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 	if (ret)
+ 		goto err_clk_unreg;
+ 
+-	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
+-	if (!reset) {
+-		ret = -ENOMEM;
+-		goto err_alloc_reset;
+-	}
+-
++	reset = &ccu->reset;
+ 	reset->rcdev.of_node = node;
+ 	reset->rcdev.ops = &ccu_reset_ops;
+-	reset->rcdev.owner = THIS_MODULE;
++	reset->rcdev.owner = dev ? dev->driver->owner : THIS_MODULE;
+ 	reset->rcdev.nr_resets = desc->num_resets;
+ 	reset->base = reg;
+ 	reset->lock = &ccu_lock;
+@@ -131,13 +138,11 @@ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 
+ 	ret = reset_controller_register(&reset->rcdev);
+ 	if (ret)
+-		goto err_of_clk_unreg;
++		goto err_del_provider;
+ 
+ 	return 0;
+ 
+-err_of_clk_unreg:
+-	kfree(reset);
+-err_alloc_reset:
++err_del_provider:
+ 	of_clk_del_provider(node);
+ err_clk_unreg:
+ 	while (--i >= 0) {
+@@ -149,3 +154,59 @@ err_clk_unreg:
+ 	}
+ 	return ret;
+ }
++
++static void devm_sunxi_ccu_release(struct device *dev, void *res)
++{
++	struct sunxi_ccu *ccu = res;
++	const struct sunxi_ccu_desc *desc = ccu->desc;
++	int i;
++
++	reset_controller_unregister(&ccu->reset.rcdev);
++	of_clk_del_provider(dev->of_node);
++
++	for (i = 0; i < desc->hw_clks->num; i++) {
++		struct clk_hw *hw = desc->hw_clks->hws[i];
++
++		if (!hw)
++			continue;
++		clk_hw_unregister(hw);
++	}
++}
++
++int devm_sunxi_ccu_probe(struct device *dev, void __iomem *reg,
++			 const struct sunxi_ccu_desc *desc)
++{
++	struct sunxi_ccu *ccu;
++	int ret;
++
++	ccu = devres_alloc(devm_sunxi_ccu_release, sizeof(*ccu), GFP_KERNEL);
++	if (!ccu)
++		return -ENOMEM;
++
++	ret = sunxi_ccu_probe(ccu, dev, dev->of_node, reg, desc);
++	if (ret) {
++		devres_free(ccu);
++		return ret;
++	}
++
++	devres_add(dev, ccu);
++
++	return 0;
++}
++
++void of_sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
++			const struct sunxi_ccu_desc *desc)
++{
++	struct sunxi_ccu *ccu;
++	int ret;
++
++	ccu = kzalloc(sizeof(*ccu), GFP_KERNEL);
++	if (!ccu)
++		return;
++
++	ret = sunxi_ccu_probe(ccu, NULL, node, reg, desc);
++	if (ret) {
++		pr_err("%pOF: probing clocks failed: %d\n", node, ret);
++		kfree(ccu);
++	}
++}
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index 04e7a12200a21..98a1834b58bb4 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -63,7 +63,9 @@ struct ccu_pll_nb {
+ 
+ int ccu_pll_notifier_register(struct ccu_pll_nb *pll_nb);
+ 
+-int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+-		    const struct sunxi_ccu_desc *desc);
++int devm_sunxi_ccu_probe(struct device *dev, void __iomem *reg,
++			 const struct sunxi_ccu_desc *desc);
++void of_sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
++			const struct sunxi_ccu_desc *desc);
+ 
+ #endif /* _COMMON_H_ */
+-- 
+2.33.0
+
