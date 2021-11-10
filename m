@@ -2,171 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1530DC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 17:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64370C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 19:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5B3861208
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 17:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E781611C9
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 19:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbhKJR7k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Nov 2021 12:59:40 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:60082 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230311AbhKJR7j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Nov 2021 12:59:39 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C176C1A10D4;
-        Wed, 10 Nov 2021 18:56:50 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B0C0C1A10CD;
-        Wed, 10 Nov 2021 18:56:50 +0100 (CET)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E20B20399;
-        Wed, 10 Nov 2021 18:56:50 +0100 (CET)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx: Add imx8dxl clk driver
-Date:   Wed, 10 Nov 2021 19:56:40 +0200
-Message-Id: <1636567000-24145-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S230200AbhKJTwi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Nov 2021 14:52:38 -0500
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:39884 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230171AbhKJTwh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Nov 2021 14:52:37 -0500
+Received: by mail-ot1-f54.google.com with SMTP id r10-20020a056830080a00b0055c8fd2cebdso5545847ots.6;
+        Wed, 10 Nov 2021 11:49:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Jffv+4OBBpjkkC43YZCngYWCvEJMwZVhqAxEmFK8L/I=;
+        b=MQxfkCCi2v2hsTKxKKuRvH/yTYF6TvDBR2IkrVLa3FgtYNkKDKAvhOX7hlWsN/EjhA
+         6++46uomlk3KOlLKNE7k9u0dvTqAYLBDLBZHQ6HZ0YNytxlA4y10ptz371mCGPzRsGCh
+         h/a/SsGW1e01hZkI9vuDR0obEq//YfAcPrQcEkR3WlwdocoMFfFIa0rrHuQ05Dj1v7Bs
+         82C3y+q4e6XXDZhAOfJPbSFyCn79J9t2hGE0w/Ewrs5NUPg4+q8n4DYanW8Ynzb/VWIy
+         6f8vx0BJyPV++gOnPVlNcixBtHRHKxqWz9RYhzjUgosiC3OOv6ZFWvz8ZIdnRilx7ChI
+         4D/w==
+X-Gm-Message-State: AOAM531HkJ2fCFC3fCq5mihHJeLsLKt6n9DZ2HfLf+TVea7JNQpnA2PV
+        +2/L2NW0LazGv+oEF/CAnQ==
+X-Google-Smtp-Source: ABdhPJyfVpmfG+ubS7aEU1ww03RUaTffAeDZHobEFdd7aYoPfW2ZAH5HMpiQ+tL5kGtHFO9Urrh52g==
+X-Received: by 2002:a9d:67c1:: with SMTP id c1mr1412382otn.299.1636573788340;
+        Wed, 10 Nov 2021 11:49:48 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id p14sm130082oov.0.2021.11.10.11.49.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Nov 2021 11:49:47 -0800 (PST)
+Received: (nullmailer pid 1843729 invoked by uid 1000);
+        Wed, 10 Nov 2021 19:49:44 -0000
+Date:   Wed, 10 Nov 2021 13:49:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     patrice.chotard@foss.st.com
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        thierry reding <thierry.reding@gmail.com>,
+        linux-iio@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        herbert xu <herbert@gondor.apana.org.au>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd@lists.infradead.org,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+        "david s . miller" <davem@davemloft.net>,
+        olivier moysan <olivier.moysan@foss.st.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
+        michael turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        arnaud pouliquen <arnaud.pouliquen@foss.st.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, netdev@vger.kernel.org,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        linux-stm32@st-md-mailman.stormreply.com, linux-pm@vger.kernel.org,
+        Amit Kucheria <amitk@kernel.org>, dmaengine@vger.kernel.org,
+        linux-usb@vger.kernel.org, dillon min <dillon.minfei@gmail.com>,
+        yannick fertre <yannick.fertre@foss.st.com>,
+        linux-watchdog@vger.kernel.org, ohad ben-cohen <ohad@wizery.com>,
+        Le Ray <erwan.leray@foss.st.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        devicetree@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-spi@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        bjorn andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-i2c@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        benjamin gaignard <benjamin.gaignard@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        david airlie <airlied@linux.ie>, alsa-devel@alsa-project.org,
+        baolin wang <baolin.wang7@gmail.com>,
+        philippe cornu <philippe.cornu@foss.st.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        daniel vetter <daniel@ffwll.ch>, linux-media@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        maxime coquelin <mcoquelin.stm32@gmail.com>,
+        Ludovic Barre <ludovic.barre@foss.st.com>,
+        linux-crypto@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Zhang Rui <rui.zhang@intel.com>,
+        jonathan cameron <jic23@kernel.org>,
+        Matt Mackall <mpm@selenic.com>,
+        alexandre torgue <alexandre.torgue@foss.st.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        sam ravnborg <sam@ravnborg.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marek Vasut <marex@denx.de>, linux-phy@lists.infradead.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Richard Weinberger <richard@nod.at>,
+        Lionel Debieve <lionel.debieve@foss.st.com>,
+        vinod koul <vkoul@kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        lars-peter clausen <lars@metafoo.de>,
+        linux-serial@vger.kernel.org,
+        pascal Paillet <p.paillet@foss.st.com>,
+        Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Christophe Kerello <christophe.kerello@foss.st.com>,
+        stephen boyd <sboyd@kernel.org>,
+        Amelie Delaunay <amelie.delaunay@foss.st.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: timer: Update maintainers for
+ st,stm32-timer
+Message-ID: <YYwiWGn0ehnD4nDZ@robh.at.kernel.org>
+References: <20211110150144.18272-1-patrice.chotard@foss.st.com>
+ <20211110150144.18272-2-patrice.chotard@foss.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211110150144.18272-2-patrice.chotard@foss.st.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jacky Bai <ping.bai@nxp.com>
+On Wed, 10 Nov 2021 16:01:40 +0100, patrice.chotard@foss.st.com wrote:
+> From: Patrice Chotard <patrice.chotard@foss.st.com>
+> 
+> Benjamin has left the company, add Fabrice and myself as maintainers.
+> 
+> Signed-off-by: Patrice Chotard <patrice.chotard@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/timer/st,stm32-timer.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-Add files for imx8dxl clk driver which is based on imx8qxp clock driver.
-
-Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/Makefile           |  3 +-
- drivers/clk/imx/clk-imx8dxl-rsrc.c | 66 ++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-imx8qxp.c      |  1 +
- drivers/clk/imx/clk-scu.h          |  1 +
- 4 files changed, 70 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-imx8dxl-rsrc.c
-
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index b5e040026dfb..f8a44c4ca94a 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -28,7 +28,8 @@ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
- 
- obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
- clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
--				     clk-imx8qxp-rsrc.o clk-imx8qm-rsrc.o
-+				     clk-imx8qxp-rsrc.o clk-imx8qm-rsrc.o \
-+				     clk-imx8dxl-rsrc.o
- clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
- 
- obj-$(CONFIG_CLK_IMX8ULP) += clk-imx8ulp.o
-diff --git a/drivers/clk/imx/clk-imx8dxl-rsrc.c b/drivers/clk/imx/clk-imx8dxl-rsrc.c
-new file mode 100644
-index 000000000000..69b7aa34fff5
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8dxl-rsrc.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2019~2020 NXP
-+ */
-+
-+#include <dt-bindings/firmware/imx/rsrc.h>
-+
-+#include "clk-scu.h"
-+
-+/* Keep sorted in the ascending order */
-+static u32 imx8dxl_clk_scu_rsrc_table[] = {
-+	IMX_SC_R_SPI_0,
-+	IMX_SC_R_SPI_1,
-+	IMX_SC_R_SPI_2,
-+	IMX_SC_R_SPI_3,
-+	IMX_SC_R_UART_0,
-+	IMX_SC_R_UART_1,
-+	IMX_SC_R_UART_2,
-+	IMX_SC_R_UART_3,
-+	IMX_SC_R_I2C_0,
-+	IMX_SC_R_I2C_1,
-+	IMX_SC_R_I2C_2,
-+	IMX_SC_R_I2C_3,
-+	IMX_SC_R_ADC_0,
-+	IMX_SC_R_FTM_0,
-+	IMX_SC_R_FTM_1,
-+	IMX_SC_R_CAN_0,
-+	IMX_SC_R_LCD_0,
-+	IMX_SC_R_LCD_0_PWM_0,
-+	IMX_SC_R_PWM_0,
-+	IMX_SC_R_PWM_1,
-+	IMX_SC_R_PWM_2,
-+	IMX_SC_R_PWM_3,
-+	IMX_SC_R_PWM_4,
-+	IMX_SC_R_PWM_5,
-+	IMX_SC_R_PWM_6,
-+	IMX_SC_R_PWM_7,
-+	IMX_SC_R_GPT_0,
-+	IMX_SC_R_GPT_1,
-+	IMX_SC_R_GPT_2,
-+	IMX_SC_R_GPT_3,
-+	IMX_SC_R_GPT_4,
-+	IMX_SC_R_FSPI_0,
-+	IMX_SC_R_FSPI_1,
-+	IMX_SC_R_SDHC_0,
-+	IMX_SC_R_SDHC_1,
-+	IMX_SC_R_SDHC_2,
-+	IMX_SC_R_ENET_0,
-+	IMX_SC_R_ENET_1,
-+	IMX_SC_R_MLB_0,
-+	IMX_SC_R_USB_1,
-+	IMX_SC_R_NAND,
-+	IMX_SC_R_M4_0_I2C,
-+	IMX_SC_R_M4_0_UART,
-+	IMX_SC_R_ELCDIF_PLL,
-+	IMX_SC_R_AUDIO_PLL_0,
-+	IMX_SC_R_AUDIO_PLL_1,
-+	IMX_SC_R_AUDIO_CLK_0,
-+	IMX_SC_R_AUDIO_CLK_1,
-+	IMX_SC_R_A35
-+};
-+
-+const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8dxl = {
-+	.rsrc = imx8dxl_clk_scu_rsrc_table,
-+	.num = ARRAY_SIZE(imx8dxl_clk_scu_rsrc_table),
-+};
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index c53a688d8ccc..7f4893706cc2 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -297,6 +297,7 @@ static const struct of_device_id imx8qxp_match[] = {
- 	{ .compatible = "fsl,scu-clk", },
- 	{ .compatible = "fsl,imx8qxp-clk", &imx_clk_scu_rsrc_imx8qxp, },
- 	{ .compatible = "fsl,imx8qm-clk", &imx_clk_scu_rsrc_imx8qm, },
-+	{ .compatible = "fsl,imx8dxl-clk", &imx_clk_scu_rsrc_imx8dxl, },
- 	{ /* sentinel */ }
- };
- 
-diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
-index 22156e93b85d..7d8069886b0c 100644
---- a/drivers/clk/imx/clk-scu.h
-+++ b/drivers/clk/imx/clk-scu.h
-@@ -23,6 +23,7 @@ extern struct list_head imx_scu_clks[];
- extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
- extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qxp;
- extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qm;
-+extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8dxl;
- 
- int imx_clk_scu_init(struct device_node *np,
- 		     const struct imx_clk_scu_rsrc_table *data);
--- 
-2.31.1
-
+Applied, thanks!
