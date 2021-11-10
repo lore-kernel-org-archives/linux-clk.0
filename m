@@ -2,64 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56652C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 13:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB59C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 14:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24E1C61055
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 13:46:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2426E610F7
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 14:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbhKJNt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Nov 2021 08:49:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60548 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231643AbhKJNt0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Nov 2021 08:49:26 -0500
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6FC6C061767
-        for <linux-clk@vger.kernel.org>; Wed, 10 Nov 2021 05:46:38 -0800 (PST)
-Received: by mail-oi1-x22b.google.com with SMTP id t19so5351968oij.1
-        for <linux-clk@vger.kernel.org>; Wed, 10 Nov 2021 05:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=V1WEPC64NcLgLTdaL03al/ajM9D+f6BWMbSpT0H+cds=;
-        b=iREzhFenPY1h7n0t87E/O0C8HuHSdCwtSL5zgQBJ2yQ7WyF+2YAOcWR6A/tqm4kgWG
-         /XYdcC20YyZ2xK1NJ1WqPS7FYDGe0jcatM56si63Lfpb5khOaMDW5jVxQsFMRZnfm17V
-         epqkgTMoXgXWQaSVLfhoEAhTbyjfh3oeVGxIxC2Xw3ja5J0lwW4oYnmm/ucD8ptBvPWk
-         ciL3m/FbMOO4eDKM1x1Qe9dTfw3P/E8/sUYUROjkw0y7ExazVW604huGIjj7l/RTMF8b
-         nb4yr7Eo/OROtaroFOMas6LjuHFJcPHJ+HaeS6UIGrUpSBrRBrBY8F+WgTZBi3WpuwEn
-         xoug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=V1WEPC64NcLgLTdaL03al/ajM9D+f6BWMbSpT0H+cds=;
-        b=0wJKaMR9AHfjQ08CMzRR9Unln/8ohQTfdmwYxCnYlG7L3YJkfCYND0Q6IZT8lUFX+r
-         XOM03ECSWuHY+oI4/s++oil0FPXUxxEIhj4d016qIHj81PdW7x4DLQH2gVYRgd6cZmqG
-         xSWugtw98f9X+51YWf2KpM9qrTddSzV7s1vE16b46fv08sFLsGS51UzyCPCn9+I9FyrF
-         FWK0/Dupyc/DadB5vwl+IUb2ZE7T1qcX1dh2VjnvuzPGUGBSjZ69lRTDGjFrtAlAzdhO
-         y0SiprqxAUFch/eJy2nFcFUyNsHRLfDyTZ9N9oikntMlbmnUF8x4ueq09scE1AxfrJXo
-         kVvw==
-X-Gm-Message-State: AOAM532j1wox0/mYDFq3hMQyE4Ycz9HUo2KY5pZPq6va95gWsq2npMAp
-        PFQcatVnhQZ2iYUuNViC6eVVSQ==
-X-Google-Smtp-Source: ABdhPJzZg+Lt4DH8rfVWDSJyzZEKhxVbwOgQOHoeKT3mgaovarbwQrnj/Mx0MBQwLBZG3NRdXyFWDw==
-X-Received: by 2002:aca:3885:: with SMTP id f127mr12711435oia.65.1636551998055;
-        Wed, 10 Nov 2021 05:46:38 -0800 (PST)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id n67sm8571676oib.42.2021.11.10.05.46.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 05:46:37 -0800 (PST)
-Date:   Wed, 10 Nov 2021 05:48:10 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+        id S231731AbhKJOMY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Nov 2021 09:12:24 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:19056 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231593AbhKJOMY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Nov 2021 09:12:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1636553373;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=QfUu8OCe6jaNhKwmF+8ZGKV54AQhvbOsoCPsnknhr0I=;
+    b=tbqxtQpowNbylsFaJMJS7/nHO1QE+gQcP7vZDPrAFN5EXYrPLVi6yvbTUipMG4tXsu
+    vty0F5diTffRVkzMGYxkaYPUndYfByS5nnxf+wQu6B2oSJj5XPryjmkNoiR98QKui8bl
+    f2BnbjEvOdLPW0JcVU4AAEJCtWKpH3ctuwXT4k/5HUtZBLKVT02FZPqqmCQ429xJcc6g
+    +Av6Gb8ZvKYWh180jJZZB6Rn5NsMf0FrccaajSag8lhplvZse9p9afV9SW5RCr+sMljE
+    7LhNJHaRHXHsB5HWO1VwsbSVl9xBCS2Iw9MN4mCQ9y7/3pPNEiYb81eUZSQolQ6LMu2i
+    TvbA==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrK8+86Y="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.34.5 AUTH)
+    with ESMTPSA id j05669xAAE9W51q
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Wed, 10 Nov 2021 15:09:32 +0100 (CET)
+Date:   Wed, 10 Nov 2021 15:09:28 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Loic Poulain <loic.poulain@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 0/3] clk: qcom: smd-rpm: Report enable state to framework
-Message-ID: <YYvNmrSeJNCE4BEC@ripper>
+Message-ID: <YYvSmEr/Fo2LPJwu@gerhold.net>
 References: <20211109022558.14529-1-shawn.guo@linaro.org>
  <YYpMzau3CWRQYlkJ@gerhold.net>
  <20211110131507.GJ7231@dragon>
@@ -71,13 +56,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 10 Nov 05:15 PST 2021, Shawn Guo wrote:
-
-> Hi Stephan,
-> 
+On Wed, Nov 10, 2021 at 09:15:11PM +0800, Shawn Guo wrote:
 > On Tue, Nov 09, 2021 at 11:26:21AM +0100, Stephan Gerhold wrote:
-> > Hi Shawn,
-> > 
 > > On Tue, Nov 09, 2021 at 10:25:55AM +0800, Shawn Guo wrote:
 > > > Currently the enable state of smd-rpm clocks are not properly reported
 > > > back to framework due to missing .is_enabled and .is_prepared hooks.
@@ -96,6 +76,16 @@ On Wed 10 Nov 05:15 PST 2021, Shawn Guo wrote:
 > spend such a long time to figure out why my platform fails to reach vlow
 > power mode :(
 > 
+
+Sorry, I was waiting for Stephen to reply and eventually decided to
+shift focus to other things first. :)
+
+The whole low-power topic is kind of frustrating on older platforms
+because they currently still lack almost everything that is necessary to
+reach those low power states. Even things that you already consider
+natural for newer platforms (such as interconnect) are still very much
+work in progress on all older ones.
+
 > > Back then one
 > > of the concerns was that we might disable critical clocks just because
 > > they have no driver using it actively. For example, not all of the
@@ -117,50 +107,21 @@ On Wed 10 Nov 05:15 PST 2021, Shawn Guo wrote:
 > where not all clock consumer drivers are ready.  Flag CLK_IGNORE_UNUSED
 > and kernel cmdline 'clk_ignore_unused' are created just for that.  Those
 > "broken" platforms should be booted with 'clk_ignore_unused' until they
-> have related consumer drivers in place.
-
-Afaict we still have the problem that if the interconnect driver is
-compiled as a module, or for other reasons doesn't probe until after
-late_initcall() clk-smd-rpm will turn off these clocks and we never will
-get a chance to probe the interconnect provider.
-
-I believe the way to handle that is to rely on sync_state, but there
-seems to be a lot of corner cases here.
-
-But with that in place, I agree that we should handle this temporarily
-during bringup by the use of clk_ignore_unused.
-
-> IMHO, properly reporting enable state to framework is definitely the
-> right thing to do, and should have been done from day one.
+> have related consumer drivers in place.  IMHO, properly reporting enable
+> state to framework is definitely the right thing to do, and should have
+> been done from day one.
 > 
 
-I always thought is_enabled() should reflect the hardware state - in
-particular for clk_summary. The particular concern being that by
-initializing the is_enabled() state to either true or false, we're
-making an assumption about the hardware state. And if something where to
-do if (enabled) disable (or if (disabled) enable), we might skip a
-critical operation just because we tricked the logic.
+... And therefore I think we should be careful with such changes,
+especially if they would prevent devices from booting completely.
+Unfortunately the users trying to make use of old platforms are also
+often the ones who might not be aware that they suddenly need
+"clk_ignore_unused" just to boot a system that was previously working
+(mostly) fine, except for the whole low-power topic.
 
-So, do you need it for anything other than clk_disable_unused()?
+I fully agree with you that disabling the unused clocks here is the
+right thing to do, but I think we should try to carefully flag the most
+important clocks in the driver to avoid causing too many regressions.
 
-I have a clock in the MDP with similar issue, where we don't have
-is_enabled() but I need it to be disabled by clk_disable_unused(),
-because the next iteration turns off the parent and locks up the still
-"active" rcg.
-So far I've not received any feedback on this though...
-https://lore.kernel.org/all/20210707043859.195870-1-bjorn.andersson@linaro.org/
-
-With this approach we don't make any assumptions about the hardware
-state, beyond the fact that we will issue a disable in
-clk_disable_unused() if no one has yet enabled the clock - which at
-worst turns off a clock that's already is off.
-
-Regards,
-Bjorn
-
-> Shawn
-> 
-> > [1]: https://lore.kernel.org/linux-arm-msm/20200817140908.185976-1-stephan@gerhold.net/
-> > [2]: https://lore.kernel.org/linux-arm-msm/20200818080738.GA46574@gerhold.net/
-> > [3]: https://lore.kernel.org/linux-arm-msm/159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com/
-> > [4]: https://lore.kernel.org/linux-arm-msm/20200821064857.GA905@gerhold.net/
+Thanks,
+Stephan
