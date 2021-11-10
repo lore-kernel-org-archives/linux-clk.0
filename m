@@ -2,101 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367FAC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 08:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB68EC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 08:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBD761179
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 08:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E056112F
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 08:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229831AbhKJIIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Nov 2021 03:08:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:22585 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229595AbhKJIIA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:08:00 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10163"; a="296063689"
-X-IronPort-AV: E=Sophos;i="5.87,223,1631602800"; 
-   d="scan'208";a="296063689"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2021 00:05:13 -0800
-X-IronPort-AV: E=Sophos;i="5.87,223,1631602800"; 
-   d="scan'208";a="545915896"
-Received: from smile.fi.intel.com ([10.237.72.184])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2021 00:05:05 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andy.shevchenko@gmail.com>)
-        id 1mkibE-005LVR-8K;
-        Wed, 10 Nov 2021 10:04:52 +0200
-Date:   Wed, 10 Nov 2021 10:04:51 +0200
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Huan Feng <huan.feng@starfivetech.com>
-Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
- StarFive SoCs
-Message-ID: <YYt9I7hfugtpeALs@smile.fi.intel.com>
-References: <20211102161125.1144023-1-kernel@esmil.dk>
- <20211102161125.1144023-13-kernel@esmil.dk>
- <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
- <CAHp75VcuGdaq_TjjRS0S8R5y-nryLABZSp7ehrXz-fUS2W3vfA@mail.gmail.com>
- <CACRpkdYe-tW2K2eOQa+FYb-ZXzrA95+pPc6kkLB8ZJLAT8G_eA@mail.gmail.com>
- <CANBLGcyo3YjygkjDmdjt4C_H=MZdHQwqumsxnatuObeP2LADAg@mail.gmail.com>
- <CAHp75VdBaKZVeA7dasHWP4E3c8F2phaGz-90FErj3bB8FJOS9w@mail.gmail.com>
- <CANBLGcw7X9SY3_=A7ZXW60646vconjCbYBsvb=D2a0BPcyn75A@mail.gmail.com>
- <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
- <CANBLGcxT_a3J+uaaKazRkfJQoBjGGGiz9agAZUzMEmfJiVXXbw@mail.gmail.com>
+        id S229595AbhKJIIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Nov 2021 03:08:18 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59502
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229582AbhKJIIR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Nov 2021 03:08:17 -0500
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 45CE13F1B7
+        for <linux-clk@vger.kernel.org>; Wed, 10 Nov 2021 08:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1636531529;
+        bh=6TCgaUiPF4La09b+Ec+Lpl19b+PHzqLrdJ1ei763Nyw=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=s8/aT3kOphpESLmVOsdiYs3wCB86zEJlNgV0WeB0B4CIfxXCmA+JhwI9CqjfZiUeR
+         +SfJSsrOOSKSwVEKDW/uVJ2lRyxZYhYwj4V98AhWvB0ooWF85xczyn8h5pu7YPOctf
+         pA1gvB47s36jXD+Z0lNukBEczgt3C89iumBPghMJeT3ZIpI5rKvz8BxgW2Bh951YaC
+         wvE1sbkvfzAEDOkyXfRNkuSPtVeLBzywxYEguXtDBvzfmvEHA2fUZrqT8qrT3iTl6v
+         460AeIZITtGvUXZFq7GF+LgWMM51vm/GgW8KCiS2WjxQrqvqKAee2HUe86s5P5g4oz
+         0vURIHtayYTzw==
+Received: by mail-lf1-f72.google.com with SMTP id f15-20020a056512228f00b004037c0ab223so921876lfu.16
+        for <linux-clk@vger.kernel.org>; Wed, 10 Nov 2021 00:05:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6TCgaUiPF4La09b+Ec+Lpl19b+PHzqLrdJ1ei763Nyw=;
+        b=znQtRK2+esjCnYzghQdN2kBuDEDNjh6XyzS9CGf7UdIQzdgaTMGart9Q40diUpOwpQ
+         wOqS2pUcNQrHIxCdH1tMJVSMuXxSe9L/yXs30VDDXNUmWJ0CZWthx6uc4AeSIQEswIbh
+         d3l7A4TVam325S8/p0Nz5SfWQs9BVAPma8shgKUvsDoX9MNDSxOMpCPcqYwttSGAbyJT
+         oT4Lggyow0dnANLKMp9FJ2IruMwM93ud7+aeB5vd66ZW1uD1V07VZdx/Xn92flMn3/cg
+         1Rsl6T0Suqm6heUFHkNEBToHslPCAWWKCIPPR+LqySPRvQ65KVr2+R+EEzJAyf+Dk+Fk
+         2JzA==
+X-Gm-Message-State: AOAM5309WnF5c/iYJlLYYkUrEPq2FR2kzzREJF4w05iNVSOaCbcxOUX4
+        EPbsXMzRW3FalZzB+52XG3Shw+IhKgtkch70kIP75zGiUlkOSA1tFmjeBHalwZ/x1A5+Ke1RPsX
+        MBASB5CZsNBOSEEuS9L2M2LyFHIb0f+epxkB1jg==
+X-Received: by 2002:a2e:a268:: with SMTP id k8mr14261026ljm.451.1636531528748;
+        Wed, 10 Nov 2021 00:05:28 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJylqFuKfrnfMruHmHwO1hSmBU1QGgVSCQ9hz7fqddvcA8xqLtwHzU5kLKIA2sLKbIvw1y5llw==
+X-Received: by 2002:a2e:a268:: with SMTP id k8mr14261009ljm.451.1636531528593;
+        Wed, 10 Nov 2021 00:05:28 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id p21sm1908747lfa.289.2021.11.10.00.05.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Nov 2021 00:05:28 -0800 (PST)
+Message-ID: <b0357d21-00a1-715d-72d3-b8e65c83736d@canonical.com>
+Date:   Wed, 10 Nov 2021 09:05:26 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBLGcxT_a3J+uaaKazRkfJQoBjGGGiz9agAZUzMEmfJiVXXbw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.1
+Subject: Re: [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850
+ CMU_CMGP
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20211109164436.11098-1-semen.protsenko@linaro.org>
+ <20211109164436.11098-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211109164436.11098-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 10:04:24PM +0100, Emil Renner Berthing wrote:
-> On Tue, 9 Nov 2021 at 21:29, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Tue, Nov 9, 2021 at 10:40 AM Emil Renner Berthing <kernel@esmil.dk> wrote:
-
-...
-
-> No, I agree. I think it's only that Andy wasn't sure if these interim
-> states might be meaningful/useful.
-
-Exactly. Because HW could behave differently.
-
-> > And if it is possible
-> > to write DTS files that have states and sequence requirements,
-> > these should be caught in validation. Should be.
-
--- 
-With Best Regards,
-Andy Shevchenko
+On 09/11/2021 17:44, Sam Protsenko wrote:
+> CMU_CMGP generates USI and ADC clocks for BLK_ALIVE. In particular USI
+> clocks are needed for HSI2C_3 and HSI2C_4 instances.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  .../clock/samsung,exynos850-clock.yaml        | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
 
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+
+Best regards,
+Krzysztof
