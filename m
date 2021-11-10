@@ -2,129 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0690C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 11:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525A5C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 11:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D35661055
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 11:14:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E54761055
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Nov 2021 11:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231266AbhKJLRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Nov 2021 06:17:05 -0500
-Received: from mail-bn8nam11on2065.outbound.protection.outlook.com ([40.107.236.65]:22241
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231240AbhKJLQ5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Nov 2021 06:16:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hqfIypXuSvmy6jQBuaH1IEv49323Ty4OEWvJwQmxN1pfwYnVM9dqF2PHZ5Vv3xoOP2YD55DgVrUpZ6g0uDGbfUGTopimJq1CSOjOXEz6Ta6U66TPXogPpsjsKt5qU4oU7uJXznYCVXl4j1QpTMlLxB54iMAhCBjb7znXkZYPteWk0gf4ziIv9F2FT9vIuzlXu/UBx+OUeNNz4NAJOnNeGZvj7zDikaJVSEsGeBxMsy9JogZvKkgEoRD51VF2hTK7TKzALlBfD7BAZwLb5t4RpT5I6aGg1i3HD3F2pM7f9qIyK3FMm9Q9fgc1XlfrdV1OT2x5+1CUuztf1qR7F8ZBXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nnwV8gdEgOWZNVmm4W/7TLrb0HGmXvLYIqI8Zuj5icI=;
- b=grCqIRJicJDdV8yThbiskepImd0iaU0bOjKfFOkJJYdPXNC9t2gmlhufrQKzpaceU0+/MDwxxgAYoYJpztxk6Qr6RgHA4Gsu07QdS31P4BxwZII9BZD/DPdwIT4a5UW453kx4wkje0PPbzlF/3uvP6yfvhyNXG+lPfYL2Z9qoqmbdQ/VeaToh9tQQnEMknpljbdO1TT0UD6UOIVEFnxfIWm4jUGoMBVxXiIZkmsQ2xlL61dHO0bwoJ8Y8JnvwTvHexe1xJRSvqv//liXgG6R+wTfjPMrP5PZsueBmZImQDMm4FuIwHfHfWUljvT9eLoW81wYS3/vjkz1p3gdb3zUhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nnwV8gdEgOWZNVmm4W/7TLrb0HGmXvLYIqI8Zuj5icI=;
- b=gHGFEFTRMrOl8Jox3QanIS0xS59hwujAJj2fQCjlY3R4LNhH7tx7iJE4D3fD+GJta7IyZrnriaicHybaXngapFpDJ4t9XYB68KZ8p2LcdgjXRvZ6skQ+SfDFeUy5tXx2k67MdAZ/vdoMdkZGQ6ePYkX7+dQzt9YpWJlLTnJ2Nlw=
-Received: from SN1PR12CA0044.namprd12.prod.outlook.com (2603:10b6:802:20::15)
- by MW4PR02MB7250.namprd02.prod.outlook.com (2603:10b6:303:71::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.16; Wed, 10 Nov
- 2021 11:14:03 +0000
-Received: from SN1NAM02FT0047.eop-nam02.prod.protection.outlook.com
- (2603:10b6:802:20:cafe::53) by SN1PR12CA0044.outlook.office365.com
- (2603:10b6:802:20::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10 via Frontend
- Transport; Wed, 10 Nov 2021 11:14:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT0047.mail.protection.outlook.com (10.97.5.120) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4690.15 via Frontend Transport; Wed, 10 Nov 2021 11:14:03 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 10 Nov 2021 03:14:01 -0800
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Wed, 10 Nov 2021 03:14:01 -0800
-Envelope-to: linux-clk@vger.kernel.org,
- mturquette@baylibre.com,
- sboyd@kernel.org
-Received: from [10.140.6.39] (port=47568 helo=xhdsgoud40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1mklYH-000CZX-7r; Wed, 10 Nov 2021 03:14:01 -0800
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-clk@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH] clk: zynq: trivial warning fix
-Date:   Wed, 10 Nov 2021 16:43:58 +0530
-Message-ID: <20211110111358.4133736-1-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.25.1
+        id S231263AbhKJLSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Nov 2021 06:18:11 -0500
+Received: from mail-pg1-f181.google.com ([209.85.215.181]:41734 "EHLO
+        mail-pg1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231131AbhKJLSL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Nov 2021 06:18:11 -0500
+Received: by mail-pg1-f181.google.com with SMTP id n23so1947939pgh.8;
+        Wed, 10 Nov 2021 03:15:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ClY6fmDoOxt9WGtpyKfVteeYzW6rEuh6CcP1PbPjKLs=;
+        b=7KS+mc/zYzu8kWe1NUQc4jnk/Sy956byztMcWbM7RwvQFiOJVQl5fUoE9OjRatzH+A
+         xbuPCaaBeT7YGhm1j2Pu152V0l0D3FfYlqSizNg434clsmGbd8M2v05th5sdIYWANjGP
+         gDvr8dnVuLq9zfA+CwVlYL/Iwe9aLTR0XQpu+9RHFFvU11nNnjssGiPg7dqRLhcRsZYT
+         oVWmZG9ZSHZZJcHzrDGrWZc3TtShH0LkftqjxanVT3X6uD51vHCEylctf1e2tdauMj41
+         XoUt8seXiqi+IKvlSGy84rJ4iDlgmbz99QX6EnFgQMMXRKMWFAA2Ius+GttzVf3bML2g
+         31eg==
+X-Gm-Message-State: AOAM530IrVhFzYkUz0Itl9p+iN/zp2Ei/mRG9ppVE/UZua911IMQ6hYJ
+        gJpJhXOPTPMP6TSQL24Fqc6fZtJOhE5Tdvew5+E=
+X-Google-Smtp-Source: ABdhPJytXP1IZu85W3D1n2+CMyE8syz896fxWd4se2sx5oabHakMgfHn+iJX8mmbMFqlgMuJ/UaEDepThBex+/NV1Mg=
+X-Received: by 2002:aa7:91c5:0:b0:49f:a400:9771 with SMTP id
+ z5-20020aa791c5000000b0049fa4009771mr15317197pfa.79.1636542923673; Wed, 10
+ Nov 2021 03:15:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 911ed2e3-9b0c-41a4-a108-08d9a43b342e
-X-MS-TrafficTypeDiagnostic: MW4PR02MB7250:
-X-Microsoft-Antispam-PRVS: <MW4PR02MB7250160CEC38F62889630711AA939@MW4PR02MB7250.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:1850;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: L/5Ly1ZQza3XBzBBhH2to2lXnr1bAAtZpoVJ1Q/ioqinjyCX3vhiVOQzHN6GXYSDyh0rIqDQHYgyVEyAwsmw0FDLGdL6uFxD5kx00ydptxgi2jjNButN85B2feh622yAsrC7YkNpAavIQVSwQGlj1c0Puz8f7QVLbX8X9MMtNYSCvqC4ffPDMqeBMvjnRR+il3AkurIvo8LcsO0QJMDRzyrLNTVi1MouXWbc+VBYaufo3G+/cJyzbDzMokNuZiUA8ONjL4M018aPp2srPrMGjBrVCoTY5DCgU6Uz/2z9Z+v45U5zlsxgytrmkM2ctnr50MDs2hhI202lvo30O7OPAmnN4Fi/TjYRw6B2D8I2FflH6jKoLHzohKioWWpY+3g3UQMr4CG+NXkG06tspNpxJD0h/zb9OF7CVpR6sPMIuZXB7SmFkA8b6Mdm/Uzcx4y8Ln3oD3qEU9kKOL7GEg7CDeFh1IOcL7yVtt3B/r0AMA2jsrzlHr+Jrr/3dfkBdS5nWgCG+2lRukqiLibks4pcQfT7nOCp4yUIV7VXEusDGE3jN+8J/ucnHPc9UBome77gR/HC3T11b4U7+qj0DFtXy6Q2xk7nxjJGzq0ecTNiqghICya0At1gBLuisYb/V6wipmPtNpMmOgHsaONXg0Yf8T5BxbTxGC/E6OfsV1pznxHbaen63x8FqzKCn4P1fFGnGSKBdMUKIxHQ0rTW4O2lDrIzm6DmNtFQOLH54MQFQYo=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(36840700001)(46966006)(8936002)(186003)(1076003)(83380400001)(508600001)(336012)(2616005)(26005)(6666004)(4744005)(7696005)(70206006)(82310400003)(47076005)(5660300002)(70586007)(4326008)(2906002)(356005)(44832011)(107886003)(36860700001)(36756003)(6916009)(7636003)(8676002)(426003)(54906003)(36906005)(316002)(9786002)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2021 11:14:03.4333
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 911ed2e3-9b0c-41a4-a108-08d9a43b342e
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0047.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7250
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-13-kernel@esmil.dk>
+ <CAHp75VdmnnrisuP00W0KYta0KgmC+fu3WMxm959dt5X1kpiKTw@mail.gmail.com>
+ <CAHp75VcuGdaq_TjjRS0S8R5y-nryLABZSp7ehrXz-fUS2W3vfA@mail.gmail.com>
+ <CACRpkdYe-tW2K2eOQa+FYb-ZXzrA95+pPc6kkLB8ZJLAT8G_eA@mail.gmail.com>
+ <CANBLGcyo3YjygkjDmdjt4C_H=MZdHQwqumsxnatuObeP2LADAg@mail.gmail.com>
+ <CAHp75VdBaKZVeA7dasHWP4E3c8F2phaGz-90FErj3bB8FJOS9w@mail.gmail.com>
+ <CANBLGcw7X9SY3_=A7ZXW60646vconjCbYBsvb=D2a0BPcyn75A@mail.gmail.com>
+ <CACRpkda7b+j1=X9rUrqwEFhxvp2zVTvFkxanjh3hL7AksqCX1g@mail.gmail.com>
+ <CANBLGcxT_a3J+uaaKazRkfJQoBjGGGiz9agAZUzMEmfJiVXXbw@mail.gmail.com> <YYt9I7hfugtpeALs@smile.fi.intel.com>
+In-Reply-To: <YYt9I7hfugtpeALs@smile.fi.intel.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Wed, 10 Nov 2021 12:15:12 +0100
+Message-ID: <CANBLGcwA8q5JRizzaSQKyMAMLmC1eF8tL=z5EJ2PK89488NJFg@mail.gmail.com>
+Subject: Re: [PATCH v3 12/16] pinctrl: starfive: Add pinctrl driver for
+ StarFive SoCs
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Huan Feng <huan.feng@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix the below warning
+On Wed, 10 Nov 2021 at 09:05, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+> On Tue, Nov 09, 2021 at 10:04:24PM +0100, Emil Renner Berthing wrote:
+> > On Tue, 9 Nov 2021 at 21:29, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > On Tue, Nov 9, 2021 at 10:40 AM Emil Renner Berthing <kernel@esmil.dk> wrote:
+>
+> ...
+>
+> > No, I agree. I think it's only that Andy wasn't sure if these interim
+> > states might be meaningful/useful.
+>
+> Exactly. Because HW could behave differently.
 
-WARNING: Missing a blank line after declarations
-+               int enable = !!(fclk_enable & BIT(i - fclk0));
-+               zynq_clk_register_fclk(i, clk_output_name[i],
+Right. But I think we've now established that what is described in the
+device tree is the state the pins should be in after the function has
+been called, eg. only the reduction matters, and any interim states
+would just be a byproduct of storing the state in the configs list.
 
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
- drivers/clk/zynq/clkc.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index 204b83d911b9..434511dcf5cb 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -349,6 +349,7 @@ static void __init zynq_clk_setup(struct device_node *np)
- 	/* Peripheral clocks */
- 	for (i = fclk0; i <= fclk3; i++) {
- 		int enable = !!(fclk_enable & BIT(i - fclk0));
-+
- 		zynq_clk_register_fclk(i, clk_output_name[i],
- 				SLCR_FPGA0_CLK_CTRL + 0x10 * (i - fclk0),
- 				periph_parents, enable);
--- 
-2.25.1
-
+> > > And if it is possible
+> > > to write DTS files that have states and sequence requirements,
+> > > these should be caught in validation. Should be.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
