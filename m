@@ -2,85 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7794BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 12:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81778C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 15:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DDC161261
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 12:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B65961252
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 15:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233014AbhKKMOo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Nov 2021 07:14:44 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:32020 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232855AbhKKMOo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 07:14:44 -0500
-X-IronPort-AV: E=Sophos;i="5.87,226,1631545200"; 
-   d="scan'208";a="99922513"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Nov 2021 21:11:54 +0900
-Received: from localhost.localdomain (unknown [10.226.93.91])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8710040083F4;
-        Thu, 11 Nov 2021 21:11:52 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/4] clk: renesas: r9a07g044: Change core clock "I" from DEF_FIXED->DEF_DIV
-Date:   Thu, 11 Nov 2021 12:11:42 +0000
-Message-Id: <20211111121144.11131-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211111121144.11131-1-biju.das.jz@bp.renesas.com>
-References: <20211111121144.11131-1-biju.das.jz@bp.renesas.com>
+        id S233857AbhKKPQY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Nov 2021 10:16:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:44712 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234050AbhKKPQY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 10:16:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636643614;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RaQiWNaeSvc1w9swWxxIumoFqnCNft3G1L1GowqGe2c=;
+        b=MSDTsxISWasLMfut4FQp6aIyIIUpEvvO0BNmPqpvYRWtZ7W9JA5/1dF/GbtGN0h7O8qndi
+        MWSJvnPV35hZfgjDhFJ+5IQVsn7iAzNygKXl3IVygTVOWLefw1yrooxZ9DoZEY6nJw/Nf+
+        F4V2NjHbvtvYkcNwyfOft/I4/dGmF84=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-E399mQNCOiO-arhfPnZtTg-1; Thu, 11 Nov 2021 10:13:33 -0500
+X-MC-Unique: E399mQNCOiO-arhfPnZtTg-1
+Received: by mail-ed1-f70.google.com with SMTP id g3-20020a056402424300b003e2981e1edbso5716927edb.3
+        for <linux-clk@vger.kernel.org>; Thu, 11 Nov 2021 07:13:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=RaQiWNaeSvc1w9swWxxIumoFqnCNft3G1L1GowqGe2c=;
+        b=i3LF01Ma9kfNCWQt+/jkASB95cJGPRy6hAt1aRDA6OfEPfxMdqsR2g2f+g44tej2eZ
+         Fusuv1CxiCzxrUn3VyBah3EtJ9L8LTJE23ZmnWCedocZAueiW2leC3E+4B31NcDQ/jEe
+         +4iarebE2M2IFcTFiXHhANqxGI+XUwu/TMgk+/ruHD4z60OqPxlVw73YX6fDQGFstpra
+         YmYda/QjuVge/2f9/YFGoCTjLjGOj8Apx4gHMTbVA+6Z6OtrsMKKdWNI4Q6e1eJAljNY
+         LjEXqeitmDhiMnd+7LcjhuqKvJQ2sDDqHGRW+SEl1+shLmhSKSvBnCzgh8xps4C1RFCD
+         X/kg==
+X-Gm-Message-State: AOAM531FrSL4Z6KumL4TDCcm59lrW9lH6cPvp0tRmhbP84PMkTM/XSj1
+        dcSNfe1TwQbGrH3stb8hBuGnXRvHWajyQKU/OtN2KciGBJxMre1p8CDmjx6aKEFv1ELbQxrxicP
+        Upfy5O4uCj9xjbftV0LwG
+X-Received: by 2002:a05:6402:184c:: with SMTP id v12mr10984236edy.242.1636643612257;
+        Thu, 11 Nov 2021 07:13:32 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwsd8FhsX1gKUjz/vl5VBZUjBU0VRQilvxDGoCBMaISX6Ysxjz7/nj2uP1yoHWIQVdIILT48w==
+X-Received: by 2002:a05:6402:184c:: with SMTP id v12mr10984194edy.242.1636643612058;
+        Thu, 11 Nov 2021 07:13:32 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id nb4sm1606641ejc.21.2021.11.11.07.13.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Nov 2021 07:13:31 -0800 (PST)
+Message-ID: <4b8f27a2-9c2f-af96-cbd2-9e4c01d37c90@redhat.com>
+Date:   Thu, 11 Nov 2021 16:13:30 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v4 04/11] regulator: Introduce tps68470-regulator driver
+Content-Language: en-US
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20211025094119.82967-1-hdegoede@redhat.com>
+ <20211025094119.82967-5-hdegoede@redhat.com>
+ <YYpmMNefsGUhqJ9W@paasikivi.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <YYpmMNefsGUhqJ9W@paasikivi.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Core clock "I" is sourced from CPG_PL1_DDIV divider as per HW manual
-Rev.1.00.
+Hi Sakari,
 
-This patch adds clock divider table "dtable_1_8" and switches to
-DEF_DIV for "I" clock.
+On 11/9/21 13:14, Sakari Ailus wrote:
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a07g044-cpg.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+<snip>
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 91643b4e1c9c..4893815cddd8 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -56,6 +56,14 @@ enum clk_ids {
- };
- 
- /* Divider tables */
-+static const struct clk_div_table dtable_1_8[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{3, 8},
-+	{0, 0},
-+};
-+
- static const struct clk_div_table dtable_1_32[] = {
- 	{0, 1},
- 	{1, 2},
-@@ -110,7 +118,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
- 
- 	/* Core output clk */
--	DEF_FIXED("I", R9A07G044_CLK_I, CLK_PLL1, 1, 1),
-+	DEF_DIV("I", R9A07G044_CLK_I, CLK_PLL1, DIVPL1A, dtable_1_8,
-+		CLK_DIVIDER_HIWORD_MASK),
- 	DEF_DIV("P0", R9A07G044_CLK_P0, CLK_PLL2_DIV2_8, DIVPL2A,
- 		dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
- 	DEF_FIXED("P0_DIV2", R9A07G044_CLK_P0_DIV2, R9A07G044_CLK_P0, 1, 2),
--- 
-2.17.1
+>> +config REGULATOR_TPS68470
+>> +	tristate "TI TPS68370 PMIC Regulators Driver"
+> 
+> s/3/4/
+
+Thanks fixed for the upcoming v6 of the patch-series.
+
+Regards,
+
+Hans
+
 
