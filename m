@@ -2,150 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA54EC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 08:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122C3C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 09:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A643461212
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 08:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1741610FC
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 09:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232724AbhKKIzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Nov 2021 03:55:40 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:32915 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232847AbhKKIzX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 03:55:23 -0500
-X-IronPort-AV: E=Sophos;i="5.87,225,1631545200"; 
-   d="scan'208";a="99903107"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Nov 2021 17:52:33 +0900
-Received: from localhost.localdomain (unknown [10.226.93.91])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2951F40A8DFB;
-        Thu, 11 Nov 2021 17:52:30 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v1 1/3] clk: renesas: rzg2l: Add support for watchdog reset selection
-Date:   Thu, 11 Nov 2021 08:52:23 +0000
-Message-Id: <20211111085225.7090-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211111085225.7090-1-biju.das.jz@bp.renesas.com>
-References: <20211111085225.7090-1-biju.das.jz@bp.renesas.com>
+        id S232513AbhKKJmW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Nov 2021 04:42:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229649AbhKKJmV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 04:42:21 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD40C061766
+        for <linux-clk@vger.kernel.org>; Thu, 11 Nov 2021 01:39:33 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id x131so5112803pfc.12
+        for <linux-clk@vger.kernel.org>; Thu, 11 Nov 2021 01:39:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=66upB9UJ5ORHzEAep2tUlnqy1cpQgTaUpFgQyeQM7dY=;
+        b=Wxr7X2sp8eKvGoz48TQ3IPxhQ4Nu4qygPiKKqgo/aBbYYKpRnesfp4LYCwK/FVA7Yg
+         TNZpOd5bktb1ZqkACJg7/ZFcYdX1nUmV3jytP7u3PO1NVb6clMa5glMjZQZMv+zxsOO/
+         wzoVAqSgGL6mYeRDOsmoTvAyBF805kCYy/3M+vODNYbYejue/H3siQtugQeerSxyF3f3
+         aFY1RWd4cmkpm753WxZYuZnDzCt6O+V0ee7xtjkxWjTyroWGBg7/At6f6+RWOh+OlldX
+         IyLzsvXZTQ+fGNLJiqZ1p3U3IOHuUfWeMzklXPXDCgtDv38Gg2TGDBka519DDBuedEt3
+         Mztw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=66upB9UJ5ORHzEAep2tUlnqy1cpQgTaUpFgQyeQM7dY=;
+        b=Xw9jp6xI8bnNx3+GOMnSknrQUJ76u9dsiJFJTDvGNwMq+2r/FPDCmehYPZzt0LZ9/S
+         uRx2iml+PhZBPJHTPZRKt5Dl5gLpoL5sn4KZrxT7gLB3+d6gt7jbVYHQSxIEKdHMn3dl
+         +YI3m54OQxFl546Mw1F3VmZAAxfGpHJvh7a7+7J1B6sZyaC4Y2ogGHCdDC2wU6H5pbBe
+         /OHrkDmMoUGxOgS1XRwrnWWS6N/6TtakVMkmcimjXFBY5FkbS7G/j97ZLsTTpkmed1Zl
+         oxHq8wld1VP6PYl00XSHHJIZhNnUAl7gG+ya9goAmDwZegVlDbfVKNpyBWET2D+vH7mW
+         NNwA==
+X-Gm-Message-State: AOAM531nwb5cEEIZgyrDEm6Kb6hOT+A/5uiwo14zN6b1w+XcjLIjrkF2
+        rsNo0dLoiRVJWg930XLfLyS2CA==
+X-Google-Smtp-Source: ABdhPJzAwF3ghBkf4IoJKTXb1HRcavwwixJemxah5ku3wC3cgiH64Pc9/2YwwSLt4r0ZQ06AB8sp+A==
+X-Received: by 2002:a05:6a00:1a94:b0:49f:f5b4:5d17 with SMTP id e20-20020a056a001a9400b0049ff5b45d17mr5328492pfv.55.1636623572688;
+        Thu, 11 Nov 2021 01:39:32 -0800 (PST)
+Received: from dragon (80.251.214.228.16clouds.com. [80.251.214.228])
+        by smtp.gmail.com with ESMTPSA id t4sm2435282pfj.166.2021.11.11.01.39.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Nov 2021 01:39:32 -0800 (PST)
+Date:   Thu, 11 Nov 2021 17:39:27 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: qcom: smd-rpm: Report enable state to framework
+Message-ID: <20211111093926.GL7231@dragon>
+References: <20211109022558.14529-1-shawn.guo@linaro.org>
+ <YYpMzau3CWRQYlkJ@gerhold.net>
+ <20211110131507.GJ7231@dragon>
+ <YYvNmrSeJNCE4BEC@ripper>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YYvNmrSeJNCE4BEC@ripper>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds support for watchdog reset selection.
+On Wed, Nov 10, 2021 at 05:48:10AM -0800, Bjorn Andersson wrote:
+> > IMHO, properly reporting enable state to framework is definitely the
+> > right thing to do, and should have been done from day one.
+> > 
+> 
+> I always thought is_enabled() should reflect the hardware state - in
+> particular for clk_summary. The particular concern being that by
+> initializing the is_enabled() state to either true or false, we're
+> making an assumption about the hardware state. And if something where to
+> do if (enabled) disable (or if (disabled) enable), we might skip a
+> critical operation just because we tricked the logic.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-RFC->V1:
- * No change
----
- drivers/clk/renesas/r9a07g044-cpg.c | 22 ++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     |  6 ++++++
- drivers/clk/renesas/rzg2l-cpg.h     | 14 ++++++++++++++
- 3 files changed, 42 insertions(+)
+That's probably why clk_smd_rpm_handoff() is called.  As there is no way
+to query RPM for resource state, we send enable request for all RPM
+clocks to get hardware and software state in sync.
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 91643b4e1c9c..0bbdc8bd6235 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -8,6 +8,7 @@
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/init.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- 
- #include <dt-bindings/clock/r9a07g044-cpg.h>
-@@ -295,7 +296,28 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
- };
- 
-+#define CPG_WDTRST_SEL			0xb14
-+#define CPG_WDTRST_SEL_WDTRSTSEL(n)	BIT(n)
-+
-+#define CPG_WDTRST_SEL_WDTRST	(CPG_WDTRST_SEL_WDTRSTSEL(0) | \
-+				 CPG_WDTRST_SEL_WDTRSTSEL(1) | \
-+				 CPG_WDTRST_SEL_WDTRSTSEL(2))
-+
-+int r9a07g044_wdt_rst_setect(void __iomem *base)
-+{
-+	writel((CPG_WDTRST_SEL_WDTRST << 16) | CPG_WDTRST_SEL_WDTRST,
-+	       base + CPG_WDTRST_SEL);
-+
-+	return 0;
-+}
-+
-+static const struct rzg2l_cpg_soc_operations r9a07g044_cpg_ops = {
-+	.wdt_rst_setect = r9a07g044_wdt_rst_setect,
-+};
-+
- const struct rzg2l_cpg_info r9a07g044_cpg_info = {
-+	.ops = &r9a07g044_cpg_ops,
-+
- 	/* Core Clocks */
- 	.core_clks = r9a07g044_core_clks,
- 	.num_core_clks = ARRAY_SIZE(r9a07g044_core_clks),
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index a77cb47b75e7..f9dfee14a33e 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -932,6 +932,12 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
-+	if (info->ops && info->ops->wdt_rst_setect) {
-+		error = info->ops->wdt_rst_setect(priv->base);
-+		if (error)
-+			return error;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 484c7cee2629..e1b1497002ed 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -156,9 +156,20 @@ struct rzg2l_reset {
- 		.bit = (_bit) \
- 	}
- 
-+/**
-+ * struct rzg2l_cpg_soc_operations - SoC-specific CPG Operations
-+ *
-+ * @wdt_rst_setect: WDT reset selection
-+ */
-+struct rzg2l_cpg_soc_operations {
-+	int (*wdt_rst_setect)(void __iomem *base); /* Platform specific WDT reset selection */
-+};
-+
- /**
-  * struct rzg2l_cpg_info - SoC-specific CPG Description
-  *
-+ * @ops: SoC-specific CPG Operations
-+ *
-  * @core_clks: Array of Core Clock definitions
-  * @num_core_clks: Number of entries in core_clks[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-@@ -176,6 +187,9 @@ struct rzg2l_reset {
-  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-  */
- struct rzg2l_cpg_info {
-+	/* CPG Operations */
-+	const struct rzg2l_cpg_soc_operations *ops;
-+
- 	/* Core Clocks */
- 	const struct cpg_core_clk *core_clks;
- 	unsigned int num_core_clks;
--- 
-2.17.1
+> So, do you need it for anything other than clk_disable_unused()?
 
+Not critical, but I need it for debugfs clk_summary as well.
+
+Shawn
