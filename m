@@ -2,66 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21505C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 00:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA54EC4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 08:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F32BF61381
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 00:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A643461212
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 08:52:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232332AbhKKAoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Nov 2021 19:44:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232077AbhKKAoH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Nov 2021 19:44:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 86ED26135E;
-        Thu, 11 Nov 2021 00:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636591279;
-        bh=hhTl/K3vGzRFZ3vjhy7pDbKkn6USsecqA6WNitwGUGk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=N4YAEYew+VeYugIXPsKBigKFuYUo+PkHXePWFofolFcvM+F4aHIyZhEPkJ1wn3LLf
-         ZcvG1irdlEbT5Jet+UZ7DISPOpxd9pcQLEPp77MZWPcGYhN+JYNKb6oHPtqMfe5KFX
-         yBeEuRVd6pYxxjVWDJXUxe01H+jVsqdzkQOVrbY8IyPkN0m4e+lZQa/rhEvBEK5fia
-         BACwM+kjtY4XhkRBoutMwKPdqK38NGnB3HdL1yWnGaP/uugNEaD9yehptySANwK58M
-         fw3pOUUFu8TKNeyHAvG4fCNuCP5diMEhHfWWdFGWHRbAGxI1bX526OsFttTlCEbQIy
-         fqt1AdGctnVMw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211109164650.2233507-3-robh@kernel.org>
-References: <20211109164650.2233507-1-robh@kernel.org> <20211109164650.2233507-3-robh@kernel.org>
-Subject: Re: [PATCH 2/2] clk: versatile: clk-icst: Ensure clock names are unique
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Date:   Wed, 10 Nov 2021 16:41:18 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211111004119.86ED26135E@mail.kernel.org>
+        id S232724AbhKKIzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Nov 2021 03:55:40 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:32915 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232847AbhKKIzX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 03:55:23 -0500
+X-IronPort-AV: E=Sophos;i="5.87,225,1631545200"; 
+   d="scan'208";a="99903107"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 11 Nov 2021 17:52:33 +0900
+Received: from localhost.localdomain (unknown [10.226.93.91])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2951F40A8DFB;
+        Thu, 11 Nov 2021 17:52:30 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v1 1/3] clk: renesas: rzg2l: Add support for watchdog reset selection
+Date:   Thu, 11 Nov 2021 08:52:23 +0000
+Message-Id: <20211111085225.7090-2-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20211111085225.7090-1-biju.das.jz@bp.renesas.com>
+References: <20211111085225.7090-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2021-11-09 08:46:50)
-> Commit 2d3de197a818 ("ARM: dts: arm: Update ICST clock nodes 'reg' and
-> node names") moved to using generic node names. That results in trying
-> to register multiple clocks with the same name. Fix this by including
-> the unit-address in the clock name.
->=20
-> Fixes: 2d3de197a818 ("ARM: dts: arm: Update ICST clock nodes 'reg' and no=
-de names")
-> Cc: stable@vger.kernel.org
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+This patch adds support for watchdog reset selection.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+RFC->V1:
+ * No change
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 22 ++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c     |  6 ++++++
+ drivers/clk/renesas/rzg2l-cpg.h     | 14 ++++++++++++++
+ 3 files changed, 42 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 91643b4e1c9c..0bbdc8bd6235 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -8,6 +8,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
++#include <linux/io.h>
+ #include <linux/kernel.h>
+ 
+ #include <dt-bindings/clock/r9a07g044-cpg.h>
+@@ -295,7 +296,28 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
++#define CPG_WDTRST_SEL			0xb14
++#define CPG_WDTRST_SEL_WDTRSTSEL(n)	BIT(n)
++
++#define CPG_WDTRST_SEL_WDTRST	(CPG_WDTRST_SEL_WDTRSTSEL(0) | \
++				 CPG_WDTRST_SEL_WDTRSTSEL(1) | \
++				 CPG_WDTRST_SEL_WDTRSTSEL(2))
++
++int r9a07g044_wdt_rst_setect(void __iomem *base)
++{
++	writel((CPG_WDTRST_SEL_WDTRST << 16) | CPG_WDTRST_SEL_WDTRST,
++	       base + CPG_WDTRST_SEL);
++
++	return 0;
++}
++
++static const struct rzg2l_cpg_soc_operations r9a07g044_cpg_ops = {
++	.wdt_rst_setect = r9a07g044_wdt_rst_setect,
++};
++
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
++	.ops = &r9a07g044_cpg_ops,
++
+ 	/* Core Clocks */
+ 	.core_clks = r9a07g044_core_clks,
+ 	.num_core_clks = ARRAY_SIZE(r9a07g044_core_clks),
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index a77cb47b75e7..f9dfee14a33e 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -932,6 +932,12 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++	if (info->ops && info->ops->wdt_rst_setect) {
++		error = info->ops->wdt_rst_setect(priv->base);
++		if (error)
++			return error;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 484c7cee2629..e1b1497002ed 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -156,9 +156,20 @@ struct rzg2l_reset {
+ 		.bit = (_bit) \
+ 	}
+ 
++/**
++ * struct rzg2l_cpg_soc_operations - SoC-specific CPG Operations
++ *
++ * @wdt_rst_setect: WDT reset selection
++ */
++struct rzg2l_cpg_soc_operations {
++	int (*wdt_rst_setect)(void __iomem *base); /* Platform specific WDT reset selection */
++};
++
+ /**
+  * struct rzg2l_cpg_info - SoC-specific CPG Description
+  *
++ * @ops: SoC-specific CPG Operations
++ *
+  * @core_clks: Array of Core Clock definitions
+  * @num_core_clks: Number of entries in core_clks[]
+  * @last_dt_core_clk: ID of the last Core Clock exported to DT
+@@ -176,6 +187,9 @@ struct rzg2l_reset {
+  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+  */
+ struct rzg2l_cpg_info {
++	/* CPG Operations */
++	const struct rzg2l_cpg_soc_operations *ops;
++
+ 	/* Core Clocks */
+ 	const struct cpg_core_clk *core_clks;
+ 	unsigned int num_core_clks;
+-- 
+2.17.1
+
