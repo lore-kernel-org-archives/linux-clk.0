@@ -2,108 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81778C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 15:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E964C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 23:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B65961252
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 15:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B7B61264
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Nov 2021 23:04:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233857AbhKKPQY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Nov 2021 10:16:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:44712 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234050AbhKKPQY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 10:16:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636643614;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RaQiWNaeSvc1w9swWxxIumoFqnCNft3G1L1GowqGe2c=;
-        b=MSDTsxISWasLMfut4FQp6aIyIIUpEvvO0BNmPqpvYRWtZ7W9JA5/1dF/GbtGN0h7O8qndi
-        MWSJvnPV35hZfgjDhFJ+5IQVsn7iAzNygKXl3IVygTVOWLefw1yrooxZ9DoZEY6nJw/Nf+
-        F4V2NjHbvtvYkcNwyfOft/I4/dGmF84=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-307-E399mQNCOiO-arhfPnZtTg-1; Thu, 11 Nov 2021 10:13:33 -0500
-X-MC-Unique: E399mQNCOiO-arhfPnZtTg-1
-Received: by mail-ed1-f70.google.com with SMTP id g3-20020a056402424300b003e2981e1edbso5716927edb.3
-        for <linux-clk@vger.kernel.org>; Thu, 11 Nov 2021 07:13:33 -0800 (PST)
+        id S230348AbhKKXHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Nov 2021 18:07:13 -0500
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:37813 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229839AbhKKXHM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Nov 2021 18:07:12 -0500
+Received: by mail-pl1-f180.google.com with SMTP id n8so6959576plf.4;
+        Thu, 11 Nov 2021 15:04:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=RaQiWNaeSvc1w9swWxxIumoFqnCNft3G1L1GowqGe2c=;
-        b=i3LF01Ma9kfNCWQt+/jkASB95cJGPRy6hAt1aRDA6OfEPfxMdqsR2g2f+g44tej2eZ
-         Fusuv1CxiCzxrUn3VyBah3EtJ9L8LTJE23ZmnWCedocZAueiW2leC3E+4B31NcDQ/jEe
-         +4iarebE2M2IFcTFiXHhANqxGI+XUwu/TMgk+/ruHD4z60OqPxlVw73YX6fDQGFstpra
-         YmYda/QjuVge/2f9/YFGoCTjLjGOj8Apx4gHMTbVA+6Z6OtrsMKKdWNI4Q6e1eJAljNY
-         LjEXqeitmDhiMnd+7LcjhuqKvJQ2sDDqHGRW+SEl1+shLmhSKSvBnCzgh8xps4C1RFCD
-         X/kg==
-X-Gm-Message-State: AOAM531FrSL4Z6KumL4TDCcm59lrW9lH6cPvp0tRmhbP84PMkTM/XSj1
-        dcSNfe1TwQbGrH3stb8hBuGnXRvHWajyQKU/OtN2KciGBJxMre1p8CDmjx6aKEFv1ELbQxrxicP
-        Upfy5O4uCj9xjbftV0LwG
-X-Received: by 2002:a05:6402:184c:: with SMTP id v12mr10984236edy.242.1636643612257;
-        Thu, 11 Nov 2021 07:13:32 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwsd8FhsX1gKUjz/vl5VBZUjBU0VRQilvxDGoCBMaISX6Ysxjz7/nj2uP1yoHWIQVdIILT48w==
-X-Received: by 2002:a05:6402:184c:: with SMTP id v12mr10984194edy.242.1636643612058;
-        Thu, 11 Nov 2021 07:13:32 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id nb4sm1606641ejc.21.2021.11.11.07.13.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Nov 2021 07:13:31 -0800 (PST)
-Message-ID: <4b8f27a2-9c2f-af96-cbd2-9e4c01d37c90@redhat.com>
-Date:   Thu, 11 Nov 2021 16:13:30 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CErV24ALLmtWHDv6Dg2Qhb0FOh3xq1Wa3w1/GJ4lZbo=;
+        b=4e0UX9Qsm72C1ZBGXy0GCqbhzDdMiCMxOKCSgaebGWLoRvDHXdx1NQDxLUtu5gOB49
+         JrQb3Fn3YuYICba4SGdiDB2YnIfB7MqQoFBzV8BRBox+2C59Gas/zM7bfkV2yL3jIdpz
+         dHhSBf4fxsLWtNdckXQsAuqVgEL8LGMtEpkXTWK/DU0flrRR/El1ZzxmmyJJ4FqcszvK
+         9Fbmy0VCOnZxVfrEETwbDEXm9KRenZDDoGhpgtHUAeuZdfXJtj1+DFionx3gT8lzrIvV
+         7Y3Vrb3dWr39m5s1B9q9U6htPw+PIHdbj7aHHYSTuMvFbe1KoY3djd9AvRU8Bf+CQKQR
+         GpKg==
+X-Gm-Message-State: AOAM5338rLX4hI/kKRXnJf8IijQiEPR00RUw9Ebfil579szaG2dVwjrh
+        aXC7HBIbctMD0sVXiAB1c+YEOpZlT2ONqCB2HAA=
+X-Google-Smtp-Source: ABdhPJwDbzrsxKzE9i1z6gPeh3fpqAXyMhqZWJsKWQps8Fb82bOoN9fZpAP7ITZ8MQCrDHMRtOBbF32CeFI5d3+zvz0=
+X-Received: by 2002:a17:902:728e:b0:143:a388:868b with SMTP id
+ d14-20020a170902728e00b00143a388868bmr2600284pll.33.1636671862963; Thu, 11
+ Nov 2021 15:04:22 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v4 04/11] regulator: Introduce tps68470-regulator driver
-Content-Language: en-US
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-12-kernel@esmil.dk>
+ <CACRpkdb0CrJ_uTbtfg-xGq8uu0AKoqfAB03mF2CA_G8ys_8Lzg@mail.gmail.com>
+In-Reply-To: <CACRpkdb0CrJ_uTbtfg-xGq8uu0AKoqfAB03mF2CA_G8ys_8Lzg@mail.gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Fri, 12 Nov 2021 00:04:11 +0100
+Message-ID: <CANBLGcwvGptHxP5+JQEQV1Y7G=dNTt86QuVgfUuvQDDBfNrzOA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+List-Id: <soc.lore.kernel.org>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20211025094119.82967-1-hdegoede@redhat.com>
- <20211025094119.82967-5-hdegoede@redhat.com>
- <YYpmMNefsGUhqJ9W@paasikivi.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <YYpmMNefsGUhqJ9W@paasikivi.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        soc@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sakari,
+On Tue, 9 Nov 2021 at 01:46, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Nov 2, 2021 at 5:12 PM Emil Renner Berthing <kernel@esmil.dk> wrote:
+> > Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
+> > StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+> >
+> > Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> > ---
+> >
+> > @Linus: I'm really struggling to find a good way to describe how pin
+> > muxing works on the JH7100. As you can see I've now resorted to
+> > ascii-art to try to explain it, but please let me know if it's still
+> > unclear.
+>
+> This looks perfectly acceptable to me:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-On 11/9/21 13:14, Sakari Ailus wrote:
+Thank you.
 
-<snip>
+> As it appears to have some cross dependencies I assume
+> it will be merged through the SoC tree?
 
->> +config REGULATOR_TPS68470
->> +	tristate "TI TPS68370 PMIC Regulators Driver"
-> 
-> s/3/4/
+I don't know. I've never tried this before, so whatever is easiest I
+guess. Do I do anything special other than cc'ing soc@kernel.org for
+v4 to make that happen?
 
-Thanks fixed for the upcoming v6 of the patch-series.
-
-Regards,
-
-Hans
-
-
+/Emil
