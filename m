@@ -2,84 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C1FC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 14:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F3FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:39:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C308061039
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 14:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2143D6103A
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235149AbhKLOwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Nov 2021 09:52:07 -0500
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:41603 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235124AbhKLOwH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 09:52:07 -0500
-Received: by mail-ua1-f50.google.com with SMTP id p37so17605015uae.8;
-        Fri, 12 Nov 2021 06:49:16 -0800 (PST)
+        id S232526AbhKLTmV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Nov 2021 14:42:21 -0500
+Received: from mail-oi1-f172.google.com ([209.85.167.172]:33304 "EHLO
+        mail-oi1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230101AbhKLTmT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 14:42:19 -0500
+Received: by mail-oi1-f172.google.com with SMTP id q25so14241798oiw.0;
+        Fri, 12 Nov 2021 11:39:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ph9WX+PC9wwTgY9FjYpuT8CokvHK7k/9y95jF3C8Dtw=;
-        b=ldviGeQt1ugAXnR6SpEgfRiXCPspihrtpBJYBB9yMDom642gSI4eOPDuB4UtNSQnhC
-         BnlQbCm3ui4iOVv9QEFn0vZLsrTS6C0xxvI//9K2XbQxQJQaQtAE8LssOjBzVKDizkwr
-         ZkvE4pnn1vPS4QHsi3+FJVExMs+j3GrqT22vxfYQAxqFt0/wPQFpLyFuIisyrvVDaOwj
-         x8mS4eXo1w/1kPsOzBI0KJKpSNfarWR3ny2KoJ8Y+749e9bu4SkInXAswF75iHauE3OP
-         TdTREFCWRyNdzM91+JvbMg0idUKsoJ1Qp/xaKxFuIgcRgBVb1wNf7rHxEiWMN/N3CkSA
-         ZcZw==
-X-Gm-Message-State: AOAM532XVZ5Fdc97t0F95mYD3QI7IbV6YH4GT5mhi2pfh5IsohiT7MY9
-        25g0vH2p5FFYgyDkEE+Y6NlAfa0Wh9wqtQ==
-X-Google-Smtp-Source: ABdhPJyscCgmJrxdotsPiJ4tCsBoaiO0McxvhkwpmH+dFiuri+fPsKuqJ6XW/pTnVPz/vUhHvbAq7g==
-X-Received: by 2002:ab0:5a23:: with SMTP id l32mr23371059uad.129.1636728555806;
-        Fri, 12 Nov 2021 06:49:15 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id l24sm4052909vkk.37.2021.11.12.06.49.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Nov 2021 06:49:15 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id p2so19246239uad.11;
-        Fri, 12 Nov 2021 06:49:15 -0800 (PST)
-X-Received: by 2002:a9f:2c98:: with SMTP id w24mr23034111uaj.89.1636728555102;
- Fri, 12 Nov 2021 06:49:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20211110082019.28554-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20211110082019.28554-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 12 Nov 2021 15:49:04 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXdy7rfxJrZw5Ug10cAj1ekDxc_UfwVoaKdExRsSiN59g@mail.gmail.com>
-Message-ID: <CAMuHMdXdy7rfxJrZw5Ug10cAj1ekDxc_UfwVoaKdExRsSiN59g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r9a07g044: Rename CLK_PLL2_DIV16 and
- CLK_PLL2_DIV20 macros
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HjdsaSpAmewvozo7q/CGdIoUTCTor2nmJMCGv/Gt4Yk=;
+        b=odAAGc7qLwcf/GgFJv4IzMxVv5B9R/dO+qklRhAhbFYxqLamwHrz6NRW0qql2aN2TC
+         ouCak/ySoaYsLw0U2vNzYxjzVgtzgwZVGQ6vvYge7dlQU3M582QBmzFlpXybdIhPjUk0
+         SYxf0RF66y8RZ3Dx6B3V/0DWH1ICDZQug0+V6Rvmyw8xDx25jT/gxzmz9L2lM7Rjb951
+         InrqMZwL13YY+oV+hR3Og8Sr8fIasy1wIRmqQqNur52ZL9316p7Nr0zptND3JpPLjGIs
+         +Z9iYWnQq7uFcibKla01rzBFdrpy02ckIJ+Fg+Y1jtBevrBk/xQVHKgPGnyFHPAKlRLS
+         G4ug==
+X-Gm-Message-State: AOAM530erF9EooA2C+uFaxlt1eH6nO56E4yWDFixYvur2wg1LBcuSemF
+        PT/sg/t0arJIMU5lW4Likg==
+X-Google-Smtp-Source: ABdhPJzS4fugKbkP1CBDpp1RTVDCjfbOlPki/eQgoV/X4tVZGm+outEJC2MgziwERrcTwP0OXE6Dvg==
+X-Received: by 2002:a05:6808:f01:: with SMTP id m1mr1962790oiw.166.1636745967654;
+        Fri, 12 Nov 2021 11:39:27 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id t12sm1240395oor.21.2021.11.12.11.39.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Nov 2021 11:39:27 -0800 (PST)
+Received: (nullmailer pid 3240277 invoked by uid 1000);
+        Fri, 12 Nov 2021 19:39:25 -0000
+Date:   Fri, 12 Nov 2021 13:39:25 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     linux-kernel@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Matteo Croce <mcroce@microsoft.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Atish Patra <atish.patra@wdc.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Drew Fustini <drew@beagleboard.org>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, Sagar Kadam <sagar.kadam@sifive.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linux-serial@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3 08/16] dt-bindings: reset: Add Starfive JH7100 reset
+ bindings
+Message-ID: <YY7C7R/vER5FrtVg@robh.at.kernel.org>
+References: <20211102161125.1144023-1-kernel@esmil.dk>
+ <20211102161125.1144023-9-kernel@esmil.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211102161125.1144023-9-kernel@esmil.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 9:20 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Rename the macros CLK_PLL2_DIV16->CLK_PLL2_DIV2_8 and
-> CLK_PLL2_DIV20->CLK_PLL2_DIV2_10 to match the clock tree mentioned in
-> the hardware manual(Rev.1.00 Sep, 2021).
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, 02 Nov 2021 17:11:17 +0100, Emil Renner Berthing wrote:
+> Add bindings for the reset controller on the JH7100 RISC-V SoC by
+> StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+> 
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> ---
+>  .../bindings/reset/starfive,jh7100-reset.yaml | 38 +++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.17.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
