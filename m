@@ -2,96 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A160FC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232A9C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80C6D61073
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3DB661078
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Nov 2021 19:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235326AbhKLTor (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Nov 2021 14:44:47 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:46815 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230101AbhKLTor (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 14:44:47 -0500
-Received: by mail-oi1-f182.google.com with SMTP id s139so19729252oie.13;
-        Fri, 12 Nov 2021 11:41:55 -0800 (PST)
+        id S232526AbhKLTse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Nov 2021 14:48:34 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:41748 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232474AbhKLTsd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 14:48:33 -0500
+Received: by mail-oi1-f175.google.com with SMTP id u74so19823137oie.8;
+        Fri, 12 Nov 2021 11:45:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=REnFA6XjBzbaJieuVI+3pKSNQf8y2uvx/eALnpSC2h8=;
-        b=zjkxNiibT3foDWBjcWPw4GeIVrsxVdutEzwhak0ltvEQTv0yGi7/S15wCKmVmIOfk4
-         HXQ42nF0eR5DyOGix6NyAURTbpbUBZL7HInWcng3vs4pSsNvOGcWwc+YwrlpX8/zdX7M
-         VBkH02Miwpr5PxFpc1M/iurcC83MHMFHwLyLlIrdtx3qM7JSm0I+vPTMjkJSAAG/9H/Z
-         KcA751ki1W9KUioRU0auJRYrOv5MXtfGR8DcrXjqdBvUduvS3Qn/E96LYesFFgay0V9j
-         sa9H2SzSp4d8VeQIa4jQOZdHJA99TCWozOBXJpcnHp8jciPw/CNz1gmuGU8+s0sW9/zW
-         8yYQ==
-X-Gm-Message-State: AOAM532XjR7/dQOcB6eWoV4/WxtotnjjulbYWpMu4NZDkF8pXbTStM2W
-        VFwqvAJW9LB0ApRaH9QXcw==
-X-Google-Smtp-Source: ABdhPJzcS2l/5MNH+2SzstpCYLnxRNd0oaOSeSF7EvZ53DH9N0wqYiTu9pw7lRw9oWf2KEUgJ3ArdQ==
-X-Received: by 2002:a54:4d89:: with SMTP id y9mr14782184oix.127.1636746115578;
-        Fri, 12 Nov 2021 11:41:55 -0800 (PST)
+        bh=j7/MNFvu3pWpHHh4C0yhpRtrsmK6UyzpTCQ5CFCyv9s=;
+        b=Oaa3VmvJl+mnAyq/b8vicZSejviNcOSzC6lRs4UoDMdUyVzjyxsQ1WhcmkEPtmAzcE
+         CCuLqJ6ekUw0o9iqMSlg95BqhW4HbvUZObpTtP8fzCSxt5d21scXemVAgPwPex60Q+8z
+         G14XHlZkAOv3ZLeSqQfXLP8CJvyU1/9Yk3sC2NfxgYSORYQbzTmgi59DvEL58losKT8h
+         yn7S3zEDL1Os1dE4ZrKfZiK8cHzxhTcxgLaEZ5qn1mn2lKK8tMqnw1XK5ttjnw0dxYwz
+         b3On7r2WS+Q5zngyr51caq09UIhpj1HoRKq+rblgmsXUSyLvxLfYrdrCBbljkx0nQNKY
+         RnbA==
+X-Gm-Message-State: AOAM530CgrT8P+m14ObIPLYGWKlVp/Yyx3hcre5tXoRq3plDC3xeBBqU
+        6ThiQKQytDD//xVN85Sj/w==
+X-Google-Smtp-Source: ABdhPJwIgDK32rwDVLbWBmyqAfVHdA77NWwWOZvzfvwJ16466RwO/aEXsqBx3mbXsLShMgAAZom83Q==
+X-Received: by 2002:a05:6808:4d9:: with SMTP id a25mr14955508oie.52.1636746342204;
+        Fri, 12 Nov 2021 11:45:42 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a23sm1202937ool.3.2021.11.12.11.41.54
+        by smtp.gmail.com with ESMTPSA id 93sm1428362oty.11.2021.11.12.11.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 11:41:55 -0800 (PST)
-Received: (nullmailer pid 3243939 invoked by uid 1000);
-        Fri, 12 Nov 2021 19:41:53 -0000
-Date:   Fri, 12 Nov 2021 13:41:53 -0600
+        Fri, 12 Nov 2021 11:45:41 -0800 (PST)
+Received: (nullmailer pid 3250136 invoked by uid 1000);
+        Fri, 12 Nov 2021 19:45:40 -0000
+Date:   Fri, 12 Nov 2021 13:45:40 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Emil Renner Berthing <kernel@esmil.dk>
-Cc:     Michael Zhu <michael.zhu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, Sagar Kadam <sagar.kadam@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-gpio@vger.kernel.org, Fu Wei <tekkamanninja@gmail.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-serial@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100
- bindings
-Message-ID: <YY7DgSPChPpXzA9j@robh.at.kernel.org>
-References: <20211102161125.1144023-1-kernel@esmil.dk>
- <20211102161125.1144023-12-kernel@esmil.dk>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org, sboyd@kernel.org,
+        kavyasree.kotagiri@microchip.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        nicolas.ferre@microchip.com
+Subject: Re: [RFC PATCH v4 2/4] dt-bindings: clock: lan966x: Extend for clock
+ gate support
+Message-ID: <YY7EZPX4Uoqwofe5@robh.at.kernel.org>
+References: <20211103085102.1656081-1-horatiu.vultur@microchip.com>
+ <20211103085102.1656081-3-horatiu.vultur@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211102161125.1144023-12-kernel@esmil.dk>
+In-Reply-To: <20211103085102.1656081-3-horatiu.vultur@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 02 Nov 2021 17:11:20 +0100, Emil Renner Berthing wrote:
-> Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
-> StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+On Wed, 03 Nov 2021 09:51:00 +0100, Horatiu Vultur wrote:
+> Allow to add an optional resource to be able to access the clock gate
+> registers.
 > 
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 > ---
-> 
-> @Linus: I'm really struggling to find a good way to describe how pin
-> muxing works on the JH7100. As you can see I've now resorted to
-> ascii-art to try to explain it, but please let me know if it's still
-> unclear.
-> 
->  .../pinctrl/starfive,jh7100-pinctrl.yaml      | 307 ++++++++++++++++++
->  1 file changed, 307 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+>  .../devicetree/bindings/clock/microchip,lan966x-gck.yaml     | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
