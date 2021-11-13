@@ -2,368 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67FCC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 02:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E668C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 06:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA72D610F7
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 02:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D4161051
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 06:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235216AbhKMCFn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Nov 2021 21:05:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56362 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235235AbhKMCFk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 21:05:40 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BDAC061767
-        for <linux-clk@vger.kernel.org>; Fri, 12 Nov 2021 18:02:49 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id c32so26723434lfv.4
-        for <linux-clk@vger.kernel.org>; Fri, 12 Nov 2021 18:02:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=snejp.pl; s=gmail;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NgoOuhfAl73jFFXXd4eaI5MvCReNuIWxc1PVQIO0ZGo=;
-        b=oc7RZCHnIe0INZashmKH2w3BjYqr5Fr3r3FtbVwubCxGrzVKnPy2Rv7K6PfHOzJo/r
-         sM6u04KOqT2TsjBa6gOa/YLcLQhrNDkk394Y/s7yqDu2jpztfbf2M1m5KXFwDSqZV/Rq
-         MA0MLsvgCfg8bwAfCBWSLPAZjeUiPmjgcqMeje02C4GoUDKeXCC0zu6yjQMplTlhxt4x
-         IUoKT81CB1Iv+2BoINijAtlGDjlEUfc2t3gCLGLLOQu00O8Y2CFDvVqZzCRrvRbHHnvd
-         3HJldIK0FJAt5+EHUb8/8nLA7zzwZAaoi1cOMRqX7q9WAz5i4CiHaKzl2pGeGLc+NKsN
-         Zr2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NgoOuhfAl73jFFXXd4eaI5MvCReNuIWxc1PVQIO0ZGo=;
-        b=zAOCWXqM4y2snxGJmXkAaCyE7KdipCBlmQJQEKGmAI/eYVmHYjr07zVoYTVW+MktrM
-         jm0risg0ta9/h61FJnumEJRpgQCDpk+ogyXfgXYGGc1YNuLbeiTegHh3hRH5CyVsiJNZ
-         m/3c/WorhXzPLxgqEPe5a+GOnFdwU+s0NlL9Y9NqWWDTK6gKBtIXGTyyjbZyvFBoEE4Y
-         71lxtBfT3/aqXs+VGAZpyzPxRma51T4THhAaRNYRco7q8AQxeXido7K+TGmmrps/bHNM
-         cfZNiDl8Al+7bVpmHPcFvLNq1tkTGPiKNZVMuWW1BaPLYJA942ssxO+z7ReTJMMkiChU
-         t48g==
-X-Gm-Message-State: AOAM533PLxoE9UvLeJFUIhqfJFPhGUzgPtN4ixbtIkECKMuTp7CQ43Qd
-        nXWstfL8NU+ZcTgwzXCbYder4w==
-X-Google-Smtp-Source: ABdhPJwf2Ts03q0OZZvu7iDxFC0RUt3MsLGPBU5hrYS3uaNiCtPRcnCwqIaWNsTxqVYozJiyS6+/rg==
-X-Received: by 2002:a05:6512:12c4:: with SMTP id p4mr8900521lfg.278.1636768967281;
-        Fri, 12 Nov 2021 18:02:47 -0800 (PST)
-Received: from PackardBell ([82.160.139.10])
-        by smtp.googlemail.com with ESMTPSA id j20sm686185ljg.104.2021.11.12.18.02.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Nov 2021 18:02:46 -0800 (PST)
-Received: from localhost (PackardBell [local])
-        by PackardBell (OpenSMTPD) with ESMTPA id 6d921332;
-        Sat, 13 Nov 2021 02:02:43 +0000 (UTC)
-From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Subject: [PATCH 2/2] clk: qcom: Add MSM8226 Multimedia Clock Controller support
-Date:   Sat, 13 Nov 2021 02:58:44 +0100
-Message-Id: <20211113015844.92762-2-bartosz.dudziak@snejp.pl>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211113015844.92762-1-bartosz.dudziak@snejp.pl>
-References: <20211113015844.92762-1-bartosz.dudziak@snejp.pl>
+        id S229553AbhKMGjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Nov 2021 01:39:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234733AbhKMGjl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Nov 2021 01:39:41 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 91D5261051;
+        Sat, 13 Nov 2021 06:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636785409;
+        bh=IygIySeT+RajiKXk1oyUUMbLk59Eo0OSl+6gQRlBMVs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TENOb6Jn6XNPQzGRLEy7TBKWCnCRA+N7HmX79PoDobO4t0h0PcwkFZraZryjl1W3T
+         9uslp/g+qXGGXAuxz1tGY0b1lnqDDZSNhmORI70P596er7FPug9XX14WzOks9dPkVt
+         7W3danSwTCizJ4YzvTNlOSMdo5o/Y2JXT/r0na35BD9ZhzlH6+rClpRTDmefeK1Z5Z
+         72dMiLbmCdMbFO+NJoB/UYi527SgIlkVLMMyuLz8FCZqRbVMOdrCAiwC04JgxJeew/
+         b6F5Q6ukH8p0OkY2gaHllZykzNYJ72Rz2sMNA0OY+4jIznyhC9QHQElpNZcmG/JwZx
+         YQnz90OgZDLlg==
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] More clk changes for the merge window
+Date:   Fri, 12 Nov 2021 22:36:48 -0800
+Message-Id: <20211113063648.3184640-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.34.0.rc1.387.gb447b232ab-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Modify the existing MSM8974 multimedia clock controller driver to
-support the MMCC found on MSM8226 based devices. This should allow most
-multimedia device drivers to probe and control their clocks.
+The following changes since commit e2ceaa867d266472b31f3e03ba16f3120aefc152:
 
-Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
----
- drivers/clk/qcom/mmcc-msm8974.c | 206 +++++++++++++++++++++++++++++++-
- 1 file changed, 201 insertions(+), 5 deletions(-)
+  Merge branches 'clk-composite-determine-fix', 'clk-allwinner', 'clk-amlogic' and 'clk-samsung' into clk-next (2021-11-02 11:27:06 -0700)
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index a1552b677..e890a23c2 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -257,6 +257,18 @@ static struct clk_rcg2 mmss_ahb_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_mmss_axi_clk_msm8226[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(37500000, P_GPLL0, 16, 0, 0),
-+	F(50000000, P_GPLL0, 12, 0, 0),
-+	F(75000000, P_GPLL0, 8, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	F(150000000, P_GPLL0, 4, 0, 0),
-+	F(200000000, P_MMPLL0, 4, 0, 0),
-+	F(266666666, P_MMPLL0, 3, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_mmss_axi_clk[] = {
- 	F( 19200000, P_XO, 1, 0, 0),
- 	F( 37500000, P_GPLL0, 16, 0, 0),
-@@ -364,6 +376,23 @@ static struct clk_rcg2 csi3_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_camss_vfe_vfe0_clk_msm8226[] = {
-+	F(37500000, P_GPLL0, 16, 0, 0),
-+	F(50000000, P_GPLL0, 12, 0, 0),
-+	F(60000000, P_GPLL0, 10, 0, 0),
-+	F(80000000, P_GPLL0, 7.5, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	F(109090000, P_GPLL0, 5.5, 0, 0),
-+	F(133330000, P_GPLL0, 4.5, 0, 0),
-+	F(150000000, P_GPLL0, 4, 0, 0),
-+	F(200000000, P_GPLL0, 3, 0, 0),
-+	F(228570000, P_MMPLL0, 3.5, 0, 0),
-+	F(266670000, P_MMPLL0, 3, 0, 0),
-+	F(320000000, P_MMPLL0, 2.5, 0, 0),
-+	F(400000000, P_MMPLL0, 2, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_camss_vfe_vfe0_1_clk[] = {
- 	F(37500000, P_GPLL0, 16, 0, 0),
- 	F(50000000, P_GPLL0, 12, 0, 0),
-@@ -407,6 +436,18 @@ static struct clk_rcg2 vfe1_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_mdss_mdp_clk_msm8226[] = {
-+	F(37500000, P_GPLL0, 16, 0, 0),
-+	F(60000000, P_GPLL0, 10, 0, 0),
-+	F(75000000, P_GPLL0, 8, 0, 0),
-+	F(92310000, P_GPLL0, 6.5, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	F(133330000, P_MMPLL0, 6, 0, 0),
-+	F(177780000, P_MMPLL0, 4.5, 0, 0),
-+	F(200000000, P_MMPLL0, 4, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_mdss_mdp_clk[] = {
- 	F(37500000, P_GPLL0, 16, 0, 0),
- 	F(60000000, P_GPLL0, 10, 0, 0),
-@@ -513,6 +554,14 @@ static struct clk_rcg2 pclk1_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_venus0_vcodec0_clk_msm8226[] = {
-+	F(66700000, P_GPLL0, 9, 0, 0),
-+	F(100000000, P_GPLL0, 6, 0, 0),
-+	F(133330000, P_MMPLL0, 6, 0, 0),
-+	F(160000000, P_MMPLL0, 5, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_venus0_vcodec0_clk[] = {
- 	F(50000000, P_GPLL0, 12, 0, 0),
- 	F(100000000, P_GPLL0, 6, 0, 0),
-@@ -593,6 +642,13 @@ static struct clk_rcg2 camss_gp1_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_camss_mclk0_3_clk_msm8226[] = {
-+	F(19200000, P_XO, 1, 0, 0),
-+	F(24000000, P_GPLL0, 5, 1, 5),
-+	F(66670000, P_GPLL0, 9, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_camss_mclk0_3_clk[] = {
- 	F(4800000, P_XO, 4, 0, 0),
- 	F(6000000, P_GPLL0, 10, 1, 10),
-@@ -705,6 +761,15 @@ static struct clk_rcg2 csi2phytimer_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_camss_vfe_cpp_clk_msm8226[] = {
-+	F(133330000, P_GPLL0, 4.5, 0, 0),
-+	F(150000000, P_GPLL0, 4, 0, 0),
-+	F(266670000, P_MMPLL0, 3, 0, 0),
-+	F(320000000, P_MMPLL0, 2.5, 0, 0),
-+	F(400000000, P_MMPLL0, 2, 0, 0),
-+	{ }
-+};
-+
- static struct freq_tbl ftbl_camss_vfe_cpp_clk[] = {
- 	F(133330000, P_GPLL0, 4.5, 0, 0),
- 	F(266670000, P_MMPLL0, 3, 0, 0),
-@@ -2366,6 +2431,116 @@ static struct gdsc oxilicx_gdsc = {
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-+static struct clk_regmap *mmcc_msm8226_clocks[] = {
-+	[MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
-+	[MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
-+	[MMPLL0] = &mmpll0.clkr,
-+	[MMPLL0_VOTE] = &mmpll0_vote,
-+	[MMPLL1] = &mmpll1.clkr,
-+	[MMPLL1_VOTE] = &mmpll1_vote,
-+	[CSI0_CLK_SRC] = &csi0_clk_src.clkr,
-+	[CSI1_CLK_SRC] = &csi1_clk_src.clkr,
-+	[VFE0_CLK_SRC] = &vfe0_clk_src.clkr,
-+	[MDP_CLK_SRC] = &mdp_clk_src.clkr,
-+	[JPEG0_CLK_SRC] = &jpeg0_clk_src.clkr,
-+	[PCLK0_CLK_SRC] = &pclk0_clk_src.clkr,
-+	[VCODEC0_CLK_SRC] = &vcodec0_clk_src.clkr,
-+	[CCI_CLK_SRC] = &cci_clk_src.clkr,
-+	[CAMSS_GP0_CLK_SRC] = &camss_gp0_clk_src.clkr,
-+	[CAMSS_GP1_CLK_SRC] = &camss_gp1_clk_src.clkr,
-+	[MCLK0_CLK_SRC] = &mclk0_clk_src.clkr,
-+	[MCLK1_CLK_SRC] = &mclk1_clk_src.clkr,
-+	[CSI0PHYTIMER_CLK_SRC] = &csi0phytimer_clk_src.clkr,
-+	[CSI1PHYTIMER_CLK_SRC] = &csi1phytimer_clk_src.clkr,
-+	[CPP_CLK_SRC] = &cpp_clk_src.clkr,
-+	[BYTE0_CLK_SRC] = &byte0_clk_src.clkr,
-+	[ESC0_CLK_SRC] = &esc0_clk_src.clkr,
-+	[VSYNC_CLK_SRC] = &vsync_clk_src.clkr,
-+	[CAMSS_CCI_CCI_AHB_CLK] = &camss_cci_cci_ahb_clk.clkr,
-+	[CAMSS_CCI_CCI_CLK] = &camss_cci_cci_clk.clkr,
-+	[CAMSS_CSI0_AHB_CLK] = &camss_csi0_ahb_clk.clkr,
-+	[CAMSS_CSI0_CLK] = &camss_csi0_clk.clkr,
-+	[CAMSS_CSI0PHY_CLK] = &camss_csi0phy_clk.clkr,
-+	[CAMSS_CSI0PIX_CLK] = &camss_csi0pix_clk.clkr,
-+	[CAMSS_CSI0RDI_CLK] = &camss_csi0rdi_clk.clkr,
-+	[CAMSS_CSI1_AHB_CLK] = &camss_csi1_ahb_clk.clkr,
-+	[CAMSS_CSI1_CLK] = &camss_csi1_clk.clkr,
-+	[CAMSS_CSI1PHY_CLK] = &camss_csi1phy_clk.clkr,
-+	[CAMSS_CSI1PIX_CLK] = &camss_csi1pix_clk.clkr,
-+	[CAMSS_CSI1RDI_CLK] = &camss_csi1rdi_clk.clkr,
-+	[CAMSS_CSI_VFE0_CLK] = &camss_csi_vfe0_clk.clkr,
-+	[CAMSS_GP0_CLK] = &camss_gp0_clk.clkr,
-+	[CAMSS_GP1_CLK] = &camss_gp1_clk.clkr,
-+	[CAMSS_ISPIF_AHB_CLK] = &camss_ispif_ahb_clk.clkr,
-+	[CAMSS_JPEG_JPEG0_CLK] = &camss_jpeg_jpeg0_clk.clkr,
-+	[CAMSS_JPEG_JPEG_AHB_CLK] = &camss_jpeg_jpeg_ahb_clk.clkr,
-+	[CAMSS_JPEG_JPEG_AXI_CLK] = &camss_jpeg_jpeg_axi_clk.clkr,
-+	[CAMSS_MCLK0_CLK] = &camss_mclk0_clk.clkr,
-+	[CAMSS_MCLK1_CLK] = &camss_mclk1_clk.clkr,
-+	[CAMSS_MICRO_AHB_CLK] = &camss_micro_ahb_clk.clkr,
-+	[CAMSS_PHY0_CSI0PHYTIMER_CLK] = &camss_phy0_csi0phytimer_clk.clkr,
-+	[CAMSS_PHY1_CSI1PHYTIMER_CLK] = &camss_phy1_csi1phytimer_clk.clkr,
-+	[CAMSS_TOP_AHB_CLK] = &camss_top_ahb_clk.clkr,
-+	[CAMSS_VFE_CPP_AHB_CLK] = &camss_vfe_cpp_ahb_clk.clkr,
-+	[CAMSS_VFE_CPP_CLK] = &camss_vfe_cpp_clk.clkr,
-+	[CAMSS_VFE_VFE0_CLK] = &camss_vfe_vfe0_clk.clkr,
-+	[CAMSS_VFE_VFE_AHB_CLK] = &camss_vfe_vfe_ahb_clk.clkr,
-+	[CAMSS_VFE_VFE_AXI_CLK] = &camss_vfe_vfe_axi_clk.clkr,
-+	[MDSS_AHB_CLK] = &mdss_ahb_clk.clkr,
-+	[MDSS_AXI_CLK] = &mdss_axi_clk.clkr,
-+	[MDSS_BYTE0_CLK] = &mdss_byte0_clk.clkr,
-+	[MDSS_ESC0_CLK] = &mdss_esc0_clk.clkr,
-+	[MDSS_MDP_CLK] = &mdss_mdp_clk.clkr,
-+	[MDSS_MDP_LUT_CLK] = &mdss_mdp_lut_clk.clkr,
-+	[MDSS_PCLK0_CLK] = &mdss_pclk0_clk.clkr,
-+	[MDSS_VSYNC_CLK] = &mdss_vsync_clk.clkr,
-+	[MMSS_MISC_AHB_CLK] = &mmss_misc_ahb_clk.clkr,
-+	[MMSS_MMSSNOC_AHB_CLK] = &mmss_mmssnoc_ahb_clk.clkr,
-+	[MMSS_MMSSNOC_BTO_AHB_CLK] = &mmss_mmssnoc_bto_ahb_clk.clkr,
-+	[MMSS_MMSSNOC_AXI_CLK] = &mmss_mmssnoc_axi_clk.clkr,
-+	[MMSS_S0_AXI_CLK] = &mmss_s0_axi_clk.clkr,
-+	[OCMEMCX_AHB_CLK] = &ocmemcx_ahb_clk.clkr,
-+	[OXILI_OCMEMGX_CLK] = &oxili_ocmemgx_clk.clkr,
-+	[OXILI_GFX3D_CLK] = &oxili_gfx3d_clk.clkr,
-+	[OXILICX_AHB_CLK] = &oxilicx_ahb_clk.clkr,
-+	[OXILICX_AXI_CLK] = &oxilicx_axi_clk.clkr,
-+	[VENUS0_AHB_CLK] = &venus0_ahb_clk.clkr,
-+	[VENUS0_AXI_CLK] = &venus0_axi_clk.clkr,
-+	[VENUS0_VCODEC0_CLK] = &venus0_vcodec0_clk.clkr,
-+};
-+
-+static const struct qcom_reset_map mmcc_msm8226_resets[] = {
-+	[SPDM_RESET] = { 0x0200 },
-+	[SPDM_RM_RESET] = { 0x0300 },
-+	[VENUS0_RESET] = { 0x1020 },
-+	[MDSS_RESET] = { 0x2300 },
-+};
-+
-+static struct gdsc *mmcc_msm8226_gdscs[] = {
-+	[VENUS0_GDSC] = &venus0_gdsc,
-+	[MDSS_GDSC] = &mdss_gdsc,
-+	[CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
-+	[CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
-+};
-+
-+static const struct regmap_config mmcc_msm8226_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= 0x5104,
-+	.fast_io	= true,
-+};
-+
-+static const struct qcom_cc_desc mmcc_msm8226_desc = {
-+	.config = &mmcc_msm8226_regmap_config,
-+	.clks = mmcc_msm8226_clocks,
-+	.num_clks = ARRAY_SIZE(mmcc_msm8226_clocks),
-+	.resets = mmcc_msm8226_resets,
-+	.num_resets = ARRAY_SIZE(mmcc_msm8226_resets),
-+	.gdscs = mmcc_msm8226_gdscs,
-+	.num_gdscs = ARRAY_SIZE(mmcc_msm8226_gdscs),
-+};
-+
- static struct clk_regmap *mmcc_msm8974_clocks[] = {
- 	[MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
- 	[MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
-@@ -2569,23 +2744,44 @@ static const struct qcom_cc_desc mmcc_msm8974_desc = {
- };
- 
- static const struct of_device_id mmcc_msm8974_match_table[] = {
--	{ .compatible = "qcom,mmcc-msm8974" },
-+	{ .compatible = "qcom,mmcc-msm8226", .data = &mmcc_msm8226_desc },
-+	{ .compatible = "qcom,mmcc-msm8974", .data = &mmcc_msm8974_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, mmcc_msm8974_match_table);
- 
-+static void msm8226_clock_override(void)
-+{
-+	mmss_axi_clk_src.freq_tbl = ftbl_mmss_axi_clk_msm8226;
-+	vfe0_clk_src.freq_tbl = ftbl_camss_vfe_vfe0_clk_msm8226;
-+	mdp_clk_src.freq_tbl = ftbl_mdss_mdp_clk_msm8226;
-+	vcodec0_clk_src.freq_tbl = ftbl_venus0_vcodec0_clk_msm8226;
-+	mclk0_clk_src.freq_tbl = ftbl_camss_mclk0_3_clk_msm8226;
-+	mclk1_clk_src.freq_tbl = ftbl_camss_mclk0_3_clk_msm8226;
-+	cpp_clk_src.freq_tbl = ftbl_camss_vfe_cpp_clk_msm8226;
-+}
-+
- static int mmcc_msm8974_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
-+	const struct of_device_id *match;
-+
-+	match = of_match_device(mmcc_msm8974_match_table, &pdev->dev);
-+	if (!match)
-+		return -ENODEV;
- 
--	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
-+	regmap = qcom_cc_map(pdev, match->data);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
--	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
--	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
-+	if (match->data == &mmcc_msm8974_desc) {
-+		clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
-+		clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
-+	} else {
-+		msm8226_clock_override();
-+	}
- 
--	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
-+	return qcom_cc_really_probe(pdev, match->data, regmap);
- }
- 
- static struct platform_driver mmcc_msm8974_driver = {
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+
+for you to fetch changes up to 05cf3ec00d460b50088d421fb878a0f83f57e262:
+
+  clk: qcom: gcc-msm8996: Drop (again) gcc_aggre1_pnoc_ahb_clk (2021-11-05 15:29:43 -0700)
+
+----------------------------------------------------------------
+This is the second batch of clk driver updates that needed
+a little more time to soak in linux-next.
+
+ - Use modern i2c probe in vc5
+ - Cleanup some includes
+ - Update links to datasheets
+ - Add UniPhier NX1 SoC clk support
+ - Fix DT bindings for SiFive FU740
+ - Revert the module platform driver support for Rockchip out
+   because it wasn't actually tested
+ - Fix the composite clk code again as the previous fix had a
+   one line bug that broke rate changes for clks that want to use
+   the same parent still
+ - Use the right table for a divider in ast2600 driver
+ - Get rid of gcc_aggre1_pnoc_ahb_clk in qcom clk driver again because
+   its critical but unused
+
+----------------------------------------------------------------
+Alexander Stein (2):
+      clk: composite: Fix 'switching' to same clock
+      clk: imx8m: Do not set IMX_COMPOSITE_CORE for non-regular composites
+
+Dmitry Baryshkov (1):
+      clk: qcom: gcc-msm8996: Drop (again) gcc_aggre1_pnoc_ahb_clk
+
+Heiko Stuebner (2):
+      Revert "clk: rockchip: use module_platform_driver_probe"
+      clk: rockchip: drop module parts from rk3399 and rk3568 drivers
+
+Jens Renner (1):
+      clk: si5351: Update datasheet references
+
+Joel Stanley (1):
+      clk/ast2600: Fix soc revision for AHB
+
+Krzysztof Kozlowski (1):
+      dt-bindings: clock: fu740-prci: add reset-cells
+
+Kunihiko Hayashi (5):
+      clk: uniphier: Add audio system and video input clock control for PXs3
+      dt-bindings: clock: uniphier: Add NX1 clock binding
+      clk: uniphier: Add NX1 clock support
+      dt-bindings: clock: uniphier: Add clock binding for SoC-glue
+      clk: uniphier: Add SoC-glue clock source selector support for Pro4
+
+Luca Ceresoli (1):
+      clk: vc5: Use i2c .probe_new
+
+Mianhan Liu (1):
+      clk/actions/owl-factor.c: remove superfluous headers
+
+Paul Cercueil (1):
+      clk: ingenic: Fix bugs with divided dividers
+
+Ran Jianping (1):
+      clk:mediatek: remove duplicate include in clk-mt8195-imp_iic_wrap.c
+
+ .../bindings/clock/sifive/fu740-prci.yaml          |  4 ++
+ .../devicetree/bindings/clock/silabs,si5351.txt    |  2 +-
+ .../bindings/clock/socionext,uniphier-clock.yaml   |  6 +++
+ drivers/clk/actions/owl-factor.c                   |  1 -
+ drivers/clk/clk-ast2600.c                          | 12 +++---
+ drivers/clk/clk-composite.c                        |  1 +
+ drivers/clk/clk-si5351.c                           |  8 ++--
+ drivers/clk/clk-si5351.h                           |  2 +-
+ drivers/clk/clk-versaclock5.c                      |  4 +-
+ drivers/clk/imx/clk.h                              |  4 +-
+ drivers/clk/ingenic/cgu.c                          |  6 +--
+ drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.c     |  2 -
+ drivers/clk/qcom/gcc-msm8996.c                     | 15 -------
+ drivers/clk/rockchip/Kconfig                       |  4 +-
+ drivers/clk/rockchip/clk-rk3399.c                  |  6 +--
+ drivers/clk/rockchip/clk-rk3568.c                  |  6 +--
+ drivers/clk/uniphier/clk-uniphier-core.c           | 17 ++++++++
+ drivers/clk/uniphier/clk-uniphier-sys.c            | 47 ++++++++++++++++++++++
+ drivers/clk/uniphier/clk-uniphier.h                |  6 +++
+ 19 files changed, 105 insertions(+), 48 deletions(-)
+
 -- 
-2.25.1
-
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
