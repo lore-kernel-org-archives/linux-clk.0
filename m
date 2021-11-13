@@ -2,152 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15636C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 00:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DB5C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 02:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D511B610A0
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 00:39:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 427D5610FF
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Nov 2021 02:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233513AbhKMAl7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Nov 2021 19:41:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38116 "EHLO
+        id S234920AbhKMCFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Nov 2021 21:05:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231261AbhKMAl6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 19:41:58 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB8FC061766;
-        Fri, 12 Nov 2021 16:39:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=9F6EZOrW/lhMYi7EcqBru1PQUWPDNkoeRqS5mGSyWZw=; b=hoDesaA+I2w1OIc6ShXlvgMBji
-        iMDCyK6rTCzWPudpEEGC7jnloufAlcKCoOHS2kJRckQHyTKcUDBWir89D7Set/Ms7XgtOE47AsU90
-        Ja9b3Yet+Hg1F8ZCDADidObRWwCxxCx7iTgnbNSj45HiARhAhf2YO0EjLt90h3wFHsB1IuzZC4wzK
-        1JNoVPYJSPtDZjPZjeUAw/yooIDPxHxok/sXc2QuzETVukBS/fJUoVYi5O18G9bv70e+FEEJLn8xO
-        DfOXGCQ2npHHvjn8Oouap4H5YGTJY3mF0pgtMj5KJrCh7nl1R9wcLzto0vS5llVM/1dA7KQ09q4h2
-        EoAcL7JA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mlh4T-00BwhH-Je; Sat, 13 Nov 2021 00:39:05 +0000
-Subject: Re: [PATCH v2] iio/adc: ingenic: fix (MIPS) ingenic-adc build errors
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-mips@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org
-References: <20211110023755.27176-1-rdunlap@infradead.org>
- <20211112172942.04553027@jic23-huawei>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dfc38220-c79a-f990-d025-c7f5344e0b9a@infradead.org>
-Date:   Fri, 12 Nov 2021 16:39:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        with ESMTP id S233171AbhKMCFj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Nov 2021 21:05:39 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8BE5C061766
+        for <linux-clk@vger.kernel.org>; Fri, 12 Nov 2021 18:02:47 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id 1so21975696ljv.2
+        for <linux-clk@vger.kernel.org>; Fri, 12 Nov 2021 18:02:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=snejp.pl; s=gmail;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2iGO71on63/LBV4+V6rXPmECeBXzrpOVOk0VbOEmQkM=;
+        b=Z+XMlXS8tibXv5AQJYE37X01NbN8LVqtLnu8NxqopAXH7wUSGRnHAUjMk/Xl66gLt0
+         /4jxMigxQtDyCVEOHH+HqwzaxyapiU+VGgc7NXp4YQmtqaXh00Vyvr8WBPmSoSoS8Xn+
+         DDmavL9kUdukD2R7d2MQhi3wTaCU9KSaely3QUIJilekR75TbdC2DjbM8XeF5NAS3GpZ
+         rJ1nUW0CWsMX+ht+J3K9KuPqWAzaiqAjSfv+rn1n3uMeDtl4ovCIuSnHQVjNwL1WC6EA
+         Hxbu5oPds02nsoq0/gAqZWyUPzzDtcOrbatyHRh48RZ1AbDd9WWpehOip0flDNsLzcoD
+         6dEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2iGO71on63/LBV4+V6rXPmECeBXzrpOVOk0VbOEmQkM=;
+        b=VLGTv4Owf7ktJ1faTmbz7aPvK3d+oMauRYfsydG+kQJY+0hCvTEO1gNE67N3V/s8qs
+         Q5DIt3ETJgDchMQwTwxmahQ5Fu8BmFbN6Ir9Hi23TFumSfA4FAIX/8lKd8pirWuDKGpR
+         3dS/+tyCi/wZ+kg6oPszxrSE0u7SOwI2oodatumUGQWTEsRiGp36chrAEwlw+nyLkyxX
+         Eog1Obtd4Hg9fAXfJY/8VjYf6MZsDmbt7kgrzAv+RqsZMcrikdG+PdHMsh6n9XJ6YR+V
+         W30Czsqb2lYu1+W1NGhiK5067mAHLnnI43FJ8ru5f8V3wcIAWToYTNmdMzsTaN6cfWVF
+         ywbA==
+X-Gm-Message-State: AOAM53232eBxvnDOGyWcTPJ53ayMB0yveO/krXsByfLGAQ9WmuDiW+aq
+        gA2yGB5SCN8LhZnCs6lgo4ez+AHhZhpd1fYh
+X-Google-Smtp-Source: ABdhPJztdtW06NfPhsVRQ0uv0GsFyBFCTeBNWfpaGQudrt/u1Ud/EW1oLbH0ge7kHcdlsOlmMgsiag==
+X-Received: by 2002:a05:651c:1543:: with SMTP id y3mr20179876ljp.436.1636768965984;
+        Fri, 12 Nov 2021 18:02:45 -0800 (PST)
+Received: from PackardBell ([82.160.139.10])
+        by smtp.googlemail.com with ESMTPSA id j20sm686185ljg.104.2021.11.12.18.02.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Nov 2021 18:02:45 -0800 (PST)
+Received: from localhost (PackardBell [local])
+        by PackardBell (OpenSMTPD) with ESMTPA id 66928ea7;
+        Sat, 13 Nov 2021 02:02:43 +0000 (UTC)
+From:   Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+Subject: [PATCH 1/2] dt-bindings: clock: Add support for the MSM8226 mmcc
+Date:   Sat, 13 Nov 2021 02:58:43 +0100
+Message-Id: <20211113015844.92762-1-bartosz.dudziak@snejp.pl>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20211112172942.04553027@jic23-huawei>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/12/21 9:29 AM, Jonathan Cameron wrote:
-> On Tue,  9 Nov 2021 18:37:55 -0800
-> Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> MIPS does not always provide clk*() interfaces and there are no
->> always-present stubs for them, so depending on "MIPS || COMPILE_TEST"
->> is not strong enough to prevent build errors.
->>
->> Likewise MACH_INGENIC_SOC || COMPILE_TEST is not strong enough
->> since if only COMPILE_TEST=y (with some other MIPS MACH_ or CPU or
->> BOARD setting), there are still the same build errors.
->>
->> It looks like depending on MACH_INGENIC is the only thing that is
->> sufficient here in order to prevent build errors.
->>
->> mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4770_adc_init_clk_div':
->> ingenic-adc.c:(.text+0xe4): undefined reference to `clk_get_parent'
->> mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4725b_adc_init_clk_div':
->> ingenic-adc.c:(.text+0x1b8): undefined reference to `clk_get_parent'
->>
->> Fixes: 1a78daea107d ("IIO: add Ingenic JZ47xx ADC driver.")
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Cc: Artur Rojek <contact@artur-rojek.eu>
->> Cc: Paul Cercueil <paul@crapouillou.net>
->> Cc: linux-mips@vger.kernel.org
->> Cc: Jonathan Cameron <jic23@kernel.org>
->> Cc: Lars-Peter Clausen <lars@metafoo.de>
->> Cc: linux-iio@vger.kernel.org
->> Cc: Florian Fainelli <f.fainelli@gmail.com>
->> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> 
-> I'm a bit confused.  There are stubs in include/linux/clk.h for these.
-> Why do those not apply here? Are these platforms built with CONFIG_CLK but
-> don't provide all the functions?
-> 
-> That sounds highly error prone and rather defeats the object of the
-> stubs.  Could we either provide the missing stubs, or solve this some other
-> way.  I'm not keen to massively cut the build coverage this driver is getting
-> by dropping COMPILE_TEST if there is any route to avoid doing so.
+Document the multimedia clock controller found on MSM8226.
 
-I'm all for that (above), but it's a mess.
+Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+---
+ Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Based on the guess than any platform with clks must be able to turn them on
-> I grepped for int clk_enable() and there seem to be only two possiblities
-> bcm63xx and lantiq as sources of the build breakage.
-
-CONFIG_BCM63XX=y
-# CONFIG_MACH_INGENIC_SOC is not set
-CONFIG_INGENIC_ADC=y
-CONFIG_HAVE_CLK=y
-
-
-According to the build error messages (above), clk_get_parent()
-is missing. Looking at <linux/clk.h>, for CONFIG_HAVE_CLK=y,
-there is a prototype for clk_get_parent(), and if CONFIG_HAVE_CLK
-is not set, there is a stub for it.
-
-Now look at drivers/clk/clk.c and drivers/clk/Makefile:
-
-clk_get_parent() is defined in clk.c, which is built when
-CONFIG_COMMON_CLK=y, but that is not set in this .config file.
-
-CONFIG_HAVE_CLK=y, but that doesn't get clk_get_parent()
-compiled.
-
-So to me it is a disparity or incongruity between HAVE_CLK and COMMON_CLK.
-
-Russell- do you have any suggestions for how to straighten
-this out?
-
-
-> Jonathan
-> 
->> ---
->> v2: use MACH_INGENIC instead of MACH_INGENIC_SOC (thanks, Paul)
->>
->>   drivers/iio/adc/Kconfig |    2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> --- linux-next-20211105.orig/drivers/iio/adc/Kconfig
->> +++ linux-next-20211105/drivers/iio/adc/Kconfig
->> @@ -501,7 +501,7 @@ config INA2XX_ADC
->>   
->>   config INGENIC_ADC
->>   	tristate "Ingenic JZ47xx SoCs ADC driver"
->> -	depends on MIPS || COMPILE_TEST
->> +	depends on MACH_INGENIC
->>   	select IIO_BUFFER
->>   	help
->>   	  Say yes here to build support for the Ingenic JZ47xx SoCs ADC unit.
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index 68fdc3d49..4b79e89fd 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -19,6 +19,7 @@ properties:
+     enum:
+       - qcom,mmcc-apq8064
+       - qcom,mmcc-apq8084
++      - qcom,mmcc-msm8226
+       - qcom,mmcc-msm8660
+       - qcom,mmcc-msm8960
+       - qcom,mmcc-msm8974
 -- 
-~Randy
+2.25.1
+
