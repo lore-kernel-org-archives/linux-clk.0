@@ -2,146 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D8FC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 05:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B25C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 19:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEB6361027
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 05:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1964B60F42
+	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 19:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbhKNFIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Nov 2021 00:08:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39160 "EHLO
+        id S236200AbhKNTi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Nov 2021 14:38:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbhKNFIp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Nov 2021 00:08:45 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95F74C061570;
-        Sat, 13 Nov 2021 21:05:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=WSZAJWnSjsbo4e+miaBI6kfHsQhyjZbf6uMSU2h/JBc=; b=ujgJy89Z75oLk75/BikSTdUjbA
-        qcNnUPfbGOGHC/2rzSBRE1TffQQpmK2yUapDzQWGkmjF6nNBG8QIdS9R7ZFifAabEOimiERmXOMTL
-        4ZHdHp1gwcysSLOJpider74Y6y3Ib1WIPd+KdJxu1yBNKbZFpwAGj28/yYs1Sm5DPaAakzadqiE+B
-        /nX3bvSoCBo5EEZxstwR4V8O0Ba3xno0RMc+FqHgZyPVKo306DRt0501z2Vn8BzZ0tInZtph7HSzM
-        ZNq+kWZuuUvzqD4YbAy2UoVxS+os9ea6SehhwZQfuiEtFuOKr9En6im2wOF59ve6NNo8T1HmGsJGi
-        O69yKHRg==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mm7i9-00DKbW-If; Sun, 14 Nov 2021 05:05:49 +0000
-Subject: Re: [PATCH v2] iio/adc: ingenic: fix (MIPS) ingenic-adc build errors
-To:     "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel test robot <lkp@intel.com>,
-        Artur Rojek <contact@artur-rojek.eu>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-mips@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        linux-iio@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-clk@vger.kernel.org
-References: <20211110023755.27176-1-rdunlap@infradead.org>
- <20211112172942.04553027@jic23-huawei>
- <dfc38220-c79a-f990-d025-c7f5344e0b9a@infradead.org>
- <YY94mLIM311/XiXU@shell.armlinux.org.uk>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e8ea9d51-a86b-16b3-eab0-e872b51781f3@infradead.org>
-Date:   Sat, 13 Nov 2021 21:05:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        with ESMTP id S233136AbhKNTix (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Nov 2021 14:38:53 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D247C061766;
+        Sun, 14 Nov 2021 11:35:59 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id e9so30696219ljl.5;
+        Sun, 14 Nov 2021 11:35:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8oXDZz/nBiCoTxlA9cxo84oljRiezPiTcqnco4cDqBk=;
+        b=UGiBcLX07i5tcZxvhl3xcl9985grLoBUJAa4nRMHfBtuA9SzMfsuQOokNs05nW45Kf
+         fQ8FsDl1gXUKd7aOzVAj++iGHO6pht7jhYaLJORIroBQUJOJO9rPq9oxaRguXpOkR2es
+         HKP3ddYdww1CTi2F/hA7kDwJyxua+kdEMfbP1LtJkhMKVUVe5qNFLOEgGsUnr96BFYvp
+         R/9sL5Cmvuv2na9Be//dTaiIzeOCk4fJifZc/ZGwfRCEQEINzhrhJS2O8CXYanKCr3eD
+         32uE6FSYjQMmoQ3FUb4jLKgEQ72IGAqmoXuUJB74Hm9gM0+EPjBtUTu6PyutHzCoCoz+
+         OWFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8oXDZz/nBiCoTxlA9cxo84oljRiezPiTcqnco4cDqBk=;
+        b=AkRAGrbCx3k2jmEpOq0StMIpNiuxxkYlWxdhUO5mq1FuzZpyKOCGWJ8/I5SNqGxjYu
+         Re+6Z7GqEtR4S+DRnBoaYWwbM6a6tFUXNv1j/cd1VppWh0yzD2aHgbCthHatkaH3372A
+         3Fgow4LMCGUOhPC8kYwVk5SGL/GVRbxnN8nv4y5ysxUcp9pS/WNGNmiee3gqrzVJwyMJ
+         OW4tpzisbhWRUi0Zz3Kd+OR/9xfwatKg245TWuTjfABGuysdDqH8A57ikVxuwDfWJq7+
+         NO3o9cQCxLwWsW10NaB+ZL1arA2aGjTTYgDHt1OWN3p1e5PZc8zSQbt0VKZz/WCuOiYs
+         hB9A==
+X-Gm-Message-State: AOAM533O3MgrugOViqF6M/O8gtytnZR6ZW6G7Zz0Hh9t7Nv0gG4x0JjK
+        wtSCklL8oEAuRaQk31uocJ0=
+X-Google-Smtp-Source: ABdhPJyNBM6ekkt/rg2AVG2uuJ/lXhjS09khr+YszZ8itWbaLgdOiAar/DdNSG4Di+eXJpFjV0CQkA==
+X-Received: by 2002:a05:651c:308:: with SMTP id a8mr34365352ljp.149.1636918557606;
+        Sun, 14 Nov 2021 11:35:57 -0800 (PST)
+Received: from localhost.localdomain (46-138-46-211.dynamic.spd-mgts.ru. [46.138.46.211])
+        by smtp.gmail.com with ESMTPSA id p18sm1191280lfu.127.2021.11.14.11.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Nov 2021 11:35:57 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: [PATCH v15 01/39] soc/tegra: Enable runtime PM during OPP state-syncing
+Date:   Sun, 14 Nov 2021 22:33:57 +0300
+Message-Id: <20211114193435.7705-2-digetx@gmail.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211114193435.7705-1-digetx@gmail.com>
+References: <20211114193435.7705-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YY94mLIM311/XiXU@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/13/21 12:34 AM, Russell King (Oracle) wrote:
-> On Fri, Nov 12, 2021 at 04:39:04PM -0800, Randy Dunlap wrote:
->> On 11/12/21 9:29 AM, Jonathan Cameron wrote:
->>> On Tue,  9 Nov 2021 18:37:55 -0800
->>> Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>>> MIPS does not always provide clk*() interfaces and there are no
->>>> always-present stubs for them, so depending on "MIPS || COMPILE_TEST"
->>>> is not strong enough to prevent build errors.
->>>>
->>>> Likewise MACH_INGENIC_SOC || COMPILE_TEST is not strong enough
->>>> since if only COMPILE_TEST=y (with some other MIPS MACH_ or CPU or
->>>> BOARD setting), there are still the same build errors.
->>>>
->>>> It looks like depending on MACH_INGENIC is the only thing that is
->>>> sufficient here in order to prevent build errors.
->>>>
->>>> mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4770_adc_init_clk_div':
->>>> ingenic-adc.c:(.text+0xe4): undefined reference to `clk_get_parent'
->>>> mips-linux-ld: drivers/iio/adc/ingenic-adc.o: in function `jz4725b_adc_init_clk_div':
->>>> ingenic-adc.c:(.text+0x1b8): undefined reference to `clk_get_parent'
->>>>
->>>> Fixes: 1a78daea107d ("IIO: add Ingenic JZ47xx ADC driver.")
->>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Cc: Artur Rojek <contact@artur-rojek.eu>
->>>> Cc: Paul Cercueil <paul@crapouillou.net>
->>>> Cc: linux-mips@vger.kernel.org
->>>> Cc: Jonathan Cameron <jic23@kernel.org>
->>>> Cc: Lars-Peter Clausen <lars@metafoo.de>
->>>> Cc: linux-iio@vger.kernel.org
->>>> Cc: Florian Fainelli <f.fainelli@gmail.com>
->>>> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
->>>
->>> I'm a bit confused.  There are stubs in include/linux/clk.h for these.
->>> Why do those not apply here? Are these platforms built with CONFIG_CLK but
->>> don't provide all the functions?
->>>
->>> That sounds highly error prone and rather defeats the object of the
->>> stubs.  Could we either provide the missing stubs, or solve this some other
->>> way.  I'm not keen to massively cut the build coverage this driver is getting
->>> by dropping COMPILE_TEST if there is any route to avoid doing so.
->>
->> I'm all for that (above), but it's a mess.
->>
->>> Based on the guess than any platform with clks must be able to turn them on
->>> I grepped for int clk_enable() and there seem to be only two possiblities
->>> bcm63xx and lantiq as sources of the build breakage.
->>
->> CONFIG_BCM63XX=y
->> # CONFIG_MACH_INGENIC_SOC is not set
->> CONFIG_INGENIC_ADC=y
->> CONFIG_HAVE_CLK=y
->>
->>
->> According to the build error messages (above), clk_get_parent()
->> is missing. Looking at <linux/clk.h>, for CONFIG_HAVE_CLK=y,
->> there is a prototype for clk_get_parent(), and if CONFIG_HAVE_CLK
->> is not set, there is a stub for it.
->>
->> Now look at drivers/clk/clk.c and drivers/clk/Makefile:
->>
->> clk_get_parent() is defined in clk.c, which is built when
->> CONFIG_COMMON_CLK=y, but that is not set in this .config file.
->>
->> CONFIG_HAVE_CLK=y, but that doesn't get clk_get_parent()
->> compiled.
->>
->> So to me it is a disparity or incongruity between HAVE_CLK and COMMON_CLK.
-> 
-> HAVE_CLK means we have the clk API implemented. COMMON_CLK is one such
-> implementation, and HAVE_LEGACY_CLK is another group of implementations.
-> 
-> BCM63XX has its own implementation and uses HAVE_LEGACY_CLK, which can
-> be found in arch/mips/bcm63xx/clk.c.
-> 
-> If it doesn't support parent clocks, then it should provide a stub
-> clk_get_parent() that returns NULL at the very least.
-> 
+GENPD core now can set up domain's performance state properly while device
+is RPM-suspended. Runtime PM of a device must be enabled during setup
+because GENPD checks whether device is suspended and check doesn't work
+while RPM is disabled. Instead of replicating the boilerplate RPM-enable
+code around OPP helper for each driver, let's make OPP helper to take care
+of enabling it.
 
-Russell- thanks for the explanation.
-That works nicely.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/soc/tegra/common.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-Jonathan, I'll send a different patch.
-
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index cd33e99249c3..35c882da55fc 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -10,6 +10,7 @@
+ #include <linux/export.h>
+ #include <linux/of.h>
+ #include <linux/pm_opp.h>
++#include <linux/pm_runtime.h>
+ 
+ #include <soc/tegra/common.h>
+ #include <soc/tegra/fuse.h>
+@@ -43,6 +44,7 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+ {
+ 	unsigned long rate;
+ 	struct clk *clk;
++	bool rpm_enabled;
+ 	int err;
+ 
+ 	clk = devm_clk_get(dev, NULL);
+@@ -57,8 +59,31 @@ static int tegra_core_dev_init_opp_state(struct device *dev)
+ 		return -EINVAL;
+ 	}
+ 
++	/*
++	 * Runtime PM of the device must be enabled in order to set up
++	 * GENPD's performance properly because GENPD core checks whether
++	 * device is suspended and this check doesn't work while RPM is
++	 * disabled. This makes sure the OPP vote below gets cached in
++	 * GENPD for the device. Instead, the vote is done the next time
++	 * the device gets runtime resumed.
++	 */
++	rpm_enabled = pm_runtime_enabled(dev);
++	if (!rpm_enabled)
++		pm_runtime_enable(dev);
++
++	/* should never happen in practice */
++	if (!pm_runtime_enabled(dev)) {
++		dev_WARN(dev, "failed to enable runtime PM\n");
++		pm_runtime_disable(dev);
++		return -EINVAL;
++	}
++
+ 	/* first dummy rate-setting initializes voltage vote */
+ 	err = dev_pm_opp_set_rate(dev, rate);
++
++	if (!rpm_enabled)
++		pm_runtime_disable(dev);
++
+ 	if (err) {
+ 		dev_err(dev, "failed to initialize OPP clock: %d\n", err);
+ 		return err;
 -- 
-~Randy
+2.33.1
+
