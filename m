@@ -2,102 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D12C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 03:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2134EC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 05:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A25161AA4
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 03:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE75A63220
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 05:31:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236610AbhKOD3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Nov 2021 22:29:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
+        id S229651AbhKOFeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Nov 2021 00:34:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236604AbhKOD3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Nov 2021 22:29:04 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C09C061767;
-        Sun, 14 Nov 2021 19:26:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=kakjXWrVPjIpWA4NzfTn4ZMWF2F5iG3NP2+aAwPTtfI=; b=BlMmvMFvUDyEGaT7hp7h+KajhG
-        R22K1iX9yWKfMbpK0XJE8sbs6ne9MePlGbOkpb3oXBvRnQTW6CnWm85P9Mf+G13tHvUIJOZO2Tv8H
-        JDMOzLg0QSEnWbpy2U0lonfmoZWZAu6SKqa+Q4A9fnx3Yl2viZC6FgoYILzk5Ea6p/icYLd5IyDGs
-        koSvj40V16ASuEHHYNgewS7ffjTkF9mZB63df0mKHZkSbTfm/gADCr+AIQIUpcJQ67ICmHcc8JC5Z
-        DLwjeLWrCKd6zuss79/G0MusnhkWVaRApuuhWICmlOQF+dgnReAlOjIHKyuemda3QJKgh8sVsPdKh
-        keUuj77w==;
-Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mmSdE-00EJ3U-87; Mon, 15 Nov 2021 03:26:08 +0000
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, Alexander Shiyan <shc_work@mail.ru>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH] clk: imx: pllv1: fix kernel-doc notation for struct clk_pllv1
-Date:   Sun, 14 Nov 2021 19:26:07 -0800
-Message-Id: <20211115032607.28970-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.31.1
+        with ESMTP id S229661AbhKOFeT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Nov 2021 00:34:19 -0500
+Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AADFC061746;
+        Sun, 14 Nov 2021 21:31:22 -0800 (PST)
+Received: by mail-ot1-x335.google.com with SMTP id u18-20020a9d7212000000b00560cb1dc10bso25475167otj.11;
+        Sun, 14 Nov 2021 21:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KPmwQ/kJpf+B9rVby2s8xXr+WWWYaWAXm47KkH9dtJw=;
+        b=Rd8g97AHhg6FExk66AhhfjhX9ObjAX8MJBZJZN2EvcmioayzuXGznGKwED2YkJi8ai
+         Kc9eYkIfRwjxCY6wzq0bb8Xw8evTZ2UQGd2siJLBmyty6RlOg7C7E+wpA0aHCS3a37N+
+         ZSYQnnmBSHgQNdS9x+lw5GV3UVlTdG0mHnyvDuf8MSXsfFpguELaoyry6lnag5/rRXJj
+         IDts84Us31hrBPrewtk7mEu/55usIdE76ogxn6fubyiL3YdWrwkf96Wmrg38Uyl/al5q
+         hpfAwflR99fa5JWOcc/7TRSFd/1vIGFwRX2CeTcudg16a1K52pIrru93oQ32CxG2fagq
+         To3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KPmwQ/kJpf+B9rVby2s8xXr+WWWYaWAXm47KkH9dtJw=;
+        b=BzTQF4MMQF8tI9hMWmB3I3R3/Ej2w/ywkm0/wloixDPA8uP893cb3H39vhilM3/V4o
+         G/aBpu1DOCqEaZOcwLP4b+N9wWh+igjIT0SHGBixjPd6rPmyvVDrt8vX8BQzlGIuXC3j
+         uuHPpKLuq7bkWrznh+OA9uVdO6v1g4bbOzTXyYHRlp7ItLqPrA0+T4CtuxxKLm7EUhYb
+         l7GZ8x+18wzwEaLB4xvJJ3JdYdiJ3Ix8D7wWZzeHWESLLS8W7TwuGlkjVUlr5JKe4Qsv
+         Lffb7K/JsjYq3iyff3Nk2NqxbbMer42CX9FTg9pO9TTjgUS3P8of5gpBVOVblvQMJ4LY
+         hZ0w==
+X-Gm-Message-State: AOAM530lCgl5FQkFkpL5mvrhem3ZV7Z4tKkHgSLlPRfE2q9y2P9Mo3Nv
+        XcW0exV1KzlQV9P9C+y1cqe1DsRB3LMtl1d1h+GJg2mFOJY=
+X-Google-Smtp-Source: ABdhPJwSbHIfB3qSPRPm28j+psyLxiB2xNqOrIlkrk95AA/OU6BtMmBRmu01MGqbdQYFYRG5YelqnXRJm0o7bUxJrlM=
+X-Received: by 2002:a05:6830:1e57:: with SMTP id e23mr28554851otj.16.1636954281875;
+ Sun, 14 Nov 2021 21:31:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1631623906.git.shubhrajyoti.datta@xilinx.com>
+In-Reply-To: <cover.1631623906.git.shubhrajyoti.datta@xilinx.com>
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date:   Mon, 15 Nov 2021 11:01:10 +0530
+Message-ID: <CAKfKVtGGsw10RAzowZdGmuu-5ABsnfOWhR-Sxnoymc4QiqvCPA@mail.gmail.com>
+Subject: Re: [PATCH v13 0/5] clk: clocking-wizard: Driver updates
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     linux-clk@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-staging@lists.linux.dev,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, git@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert struct clk_pllv1 comments to kernel-doc notation and move them
-below the MFN_* macros.
+Hi ,
+Could this patch series be merged if there are not further comments.
 
-Fixes this kernel-doc warning:
 
-drivers/clk/imx/clk-pllv1.c:12: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * pll v1
-
-Fixes: 2af9e6db14db ("ARM i.MX: Add common clock support for pllv1")
-Fixes: a594790368a8 ("ARM: imx: pllv1: Fix PLL calculation for i.MX27")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Abel Vesa <abel.vesa@nxp.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-imx@nxp.com
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Cc: Shawn Guo <shawn.guo@linaro.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/imx/clk-pllv1.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
---- linux-next-20211102.orig/drivers/clk/imx/clk-pllv1.c
-+++ linux-next-20211102/drivers/clk/imx/clk-pllv1.c
-@@ -8,20 +8,19 @@
- 
- #include "clk.h"
- 
-+#define MFN_BITS	(10)
-+#define MFN_SIGN	(BIT(MFN_BITS - 1))
-+#define MFN_MASK	(MFN_SIGN - 1)
-+
- /**
-- * pll v1
-+ * struct clk_pllv1 - IMX PLLv1 clock descriptor
-  *
-- * @clk_hw	clock source
-- * @parent	the parent clock name
-- * @base	base address of pll registers
-+ * @hw:		clock source
-+ * @base:	base address of pll registers
-+ * @type:	type of IMX_PLLV1
-  *
-  * PLL clock version 1, found on i.MX1/21/25/27/31/35
-  */
--
--#define MFN_BITS	(10)
--#define MFN_SIGN	(BIT(MFN_BITS - 1))
--#define MFN_MASK	(MFN_SIGN - 1)
--
- struct clk_pllv1 {
- 	struct clk_hw	hw;
- 	void __iomem	*base;
+On Tue, Sep 14, 2021 at 6:27 PM Shubhrajyoti Datta
+<shubhrajyoti.datta@xilinx.com> wrote:
+>
+> The patch does the following
+> Update the versions of the clocking wizard ip.
+> Move from staging to clk directory.
+> Update the bindings.
+>
+> v12:
+> No change.
+> Rebased
+> v13:
+> Update the clocking compatible
+> Add the change removing the driver from staging
+>
+>
