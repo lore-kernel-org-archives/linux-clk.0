@@ -2,99 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD798C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 22:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D12C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 03:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 934E860C4A
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Nov 2021 22:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A25161AA4
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Nov 2021 03:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234808AbhKNWvn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 Nov 2021 17:51:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43386 "EHLO
+        id S236610AbhKOD3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 Nov 2021 22:29:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231652AbhKNWvZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Nov 2021 17:51:25 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD4AC061767;
-        Sun, 14 Nov 2021 14:48:29 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id b1so32505589lfs.13;
-        Sun, 14 Nov 2021 14:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ukIDuU6IlT+86rCbL8zG0hZeRU+DOUqbYsBqeamrzG4=;
-        b=gc7lEoxEblf+lqkcWvb1ovyp45r96q6ZXcGWz8TUEKk1dl3sAJ0cYQgCNnrv7Xfmfz
-         F3dmQdq0XABP0kx07QUaVgdC152tDCGgVhxLfaDmKmDpr5EPafLtH14RyW0cc4QhVT+I
-         kuf6UzBFkfcQ9GtLEBjEh4iKHwhI+e9qsFl3U1eQUgN8+DQSjbwMR7wWhz9aoIuBMFIO
-         P489YXVM96jGobvUkB250f/4QF7T4xYEjdsX8uV+0s3vje7NV0XywfJsLEmBHRBiGJkX
-         R/ytKrqTFhPbVHKS9URThGzwBbcsXyzsapK3uJxbzOnubcWPT0JcX9JrOMOG5QVdCRK8
-         6SYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ukIDuU6IlT+86rCbL8zG0hZeRU+DOUqbYsBqeamrzG4=;
-        b=hcBZ1pHpazfpBP5Qzp5zTNxWlGRv7DirrcJRgNPlp6kHzvVcFPvQzobJvUVyKUcGRJ
-         hw5/Z13AUrllQOHaJ9p477J+34ZZ0HEDfpe0mLX3XobQ04FYY5zaNf0uXInhgPlFTawh
-         T8zMi068fExSHfQccZlmEpe1dN67h759wYS1DZwSxvnUBAixdPOgX4sTrrBP5a7SMNEH
-         hHSn1/7LvCUoWySH9IHA2ruU2fNWTy1lGs3qyoEALkxbrMy9pjlaRTWgmfQcsKRwtLGM
-         IpmzJT39Anjs2dDC15uwWZE3hKAQvgxwjImeMsY7oyidMyMbD5aoqjf5OxM8j1/OXCta
-         wSWA==
-X-Gm-Message-State: AOAM530LSAlqg38SDYc4J+M+535hELXBIoPD3pfroA6OTLy8R89jiolT
-        3loPIYYxd6GOSywn3YuVPrU=
-X-Google-Smtp-Source: ABdhPJx1HJ/U08X2T1uvRiZzPj/CNGmMlyAz/lzuqpzE2X9ZsB8VQxSKym1zKmQPOuj4OWRC2/Cr3g==
-X-Received: by 2002:a05:6512:1093:: with SMTP id j19mr31596154lfg.340.1636930107901;
-        Sun, 14 Nov 2021 14:48:27 -0800 (PST)
-Received: from localhost.localdomain (46-138-46-211.dynamic.spd-mgts.ru. [46.138.46.211])
-        by smtp.gmail.com with ESMTPSA id h1sm1228591lfu.277.2021.11.14.14.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Nov 2021 14:48:27 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] media: staging: tegra-vde: Properly mark invalid entries
-Date:   Mon, 15 Nov 2021 01:47:31 +0300
-Message-Id: <20211114224732.11550-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211114224732.11550-1-digetx@gmail.com>
-References: <20211114224732.11550-1-digetx@gmail.com>
+        with ESMTP id S236604AbhKOD3E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 Nov 2021 22:29:04 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C09C061767;
+        Sun, 14 Nov 2021 19:26:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=kakjXWrVPjIpWA4NzfTn4ZMWF2F5iG3NP2+aAwPTtfI=; b=BlMmvMFvUDyEGaT7hp7h+KajhG
+        R22K1iX9yWKfMbpK0XJE8sbs6ne9MePlGbOkpb3oXBvRnQTW6CnWm85P9Mf+G13tHvUIJOZO2Tv8H
+        JDMOzLg0QSEnWbpy2U0lonfmoZWZAu6SKqa+Q4A9fnx3Yl2viZC6FgoYILzk5Ea6p/icYLd5IyDGs
+        koSvj40V16ASuEHHYNgewS7ffjTkF9mZB63df0mKHZkSbTfm/gADCr+AIQIUpcJQ67ICmHcc8JC5Z
+        DLwjeLWrCKd6zuss79/G0MusnhkWVaRApuuhWICmlOQF+dgnReAlOjIHKyuemda3QJKgh8sVsPdKh
+        keUuj77w==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mmSdE-00EJ3U-87; Mon, 15 Nov 2021 03:26:08 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        kernel test robot <lkp@intel.com>,
+        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, Alexander Shiyan <shc_work@mail.ru>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH] clk: imx: pllv1: fix kernel-doc notation for struct clk_pllv1
+Date:   Sun, 14 Nov 2021 19:26:07 -0800
+Message-Id: <20211115032607.28970-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Convert struct clk_pllv1 comments to kernel-doc notation and move them
+below the MFN_* macros.
 
-Entries in the reference picture list are marked as invalid by setting
-the frame ID to 0x3f.
+Fixes this kernel-doc warning:
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+drivers/clk/imx/clk-pllv1.c:12: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * pll v1
+
+Fixes: 2af9e6db14db ("ARM i.MX: Add common clock support for pllv1")
+Fixes: a594790368a8 ("ARM: imx: pllv1: Fix PLL calculation for i.MX27")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Cc: Abel Vesa <abel.vesa@nxp.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-imx@nxp.com
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/staging/media/tegra-vde/vde.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imx/clk-pllv1.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/media/tegra-vde/vde.c b/drivers/staging/media/tegra-vde/vde.c
-index 81f3e9e7e4d6..f4f65eb78d44 100644
---- a/drivers/staging/media/tegra-vde/vde.c
-+++ b/drivers/staging/media/tegra-vde/vde.c
-@@ -340,7 +340,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
- 			value |= frame->frame_num;
- 		} else {
- 			aux_addr = 0x6ADEAD00;
--			value = 0;
-+			value = 0x3f;
- 		}
+--- linux-next-20211102.orig/drivers/clk/imx/clk-pllv1.c
++++ linux-next-20211102/drivers/clk/imx/clk-pllv1.c
+@@ -8,20 +8,19 @@
  
- 		tegra_vde_setup_iram_entry(vde, 0, i, value, aux_addr);
--- 
-2.33.1
-
+ #include "clk.h"
+ 
++#define MFN_BITS	(10)
++#define MFN_SIGN	(BIT(MFN_BITS - 1))
++#define MFN_MASK	(MFN_SIGN - 1)
++
+ /**
+- * pll v1
++ * struct clk_pllv1 - IMX PLLv1 clock descriptor
+  *
+- * @clk_hw	clock source
+- * @parent	the parent clock name
+- * @base	base address of pll registers
++ * @hw:		clock source
++ * @base:	base address of pll registers
++ * @type:	type of IMX_PLLV1
+  *
+  * PLL clock version 1, found on i.MX1/21/25/27/31/35
+  */
+-
+-#define MFN_BITS	(10)
+-#define MFN_SIGN	(BIT(MFN_BITS - 1))
+-#define MFN_MASK	(MFN_SIGN - 1)
+-
+ struct clk_pllv1 {
+ 	struct clk_hw	hw;
+ 	void __iomem	*base;
