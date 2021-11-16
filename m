@@ -2,81 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5F3C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 08:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB123C43219
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93DE561B2B
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 08:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C102C63227
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232192AbhKPIjy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Nov 2021 03:39:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231863AbhKPIjv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Nov 2021 03:39:51 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 804386152B;
-        Tue, 16 Nov 2021 08:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637051814;
-        bh=/t0e4IeDXzGKX4p1dz+7mNaAA0MK312fgunnrIZK2/s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J2TtRdSs9kDyxUNmQcdD8K37GrC1+1ceOUQ8AgOG2c+w+aVDjdRbOrkKwR1N7nD2f
-         i9up4SKEbp2TP7BcbDvVm8A9dV8J3naetdo/ao38ihMKXO+r7PdKebCeTPRG47TUNV
-         /BWp6cQR87apiVhFXMoadjS48cLPmnlhe6lXTPAtFDYIxPAm32Z4lqDVRgzfWd3HNE
-         St0tD6P+GnHfw5vtOhtVcmRk5ZE3LkKPg0dDr2P3gfLKI2srMEH+xaoXfSpCCyReiQ
-         KR6xl6rqOBlBt+DtnQ8uzmoh3aKasSkGpfRjqsofBXNWIRnwzimkyqx5XDtbx/RNQ/
-         Z65DxgQWg0mhg==
-Date:   Tue, 16 Nov 2021 14:06:49 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     quic_vamslank@quicinc.com
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        tglx@linutronix.de, maz@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 6/6] dt-bindings: clock: Introduce pdc bindings for
- SDX65
-Message-ID: <YZNtobehz9MUq6mz@matsya>
-References: <cover.1637047731.git.quic_vamslank@quicinc.com>
- <0943c652b09dda026545cc10f44b0c535088072f.1637047731.git.quic_vamslank@quicinc.com>
+        id S232675AbhKPJEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Nov 2021 04:04:36 -0500
+Received: from mail.bizjoindeal.pl ([80.211.97.164]:57978 "EHLO
+        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232723AbhKPJEd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 04:04:33 -0500
+X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 04:04:33 EST
+Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
+        id DD791A2A73; Tue, 16 Nov 2021 08:51:17 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
+        s=mail; t=1637052693;
+        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
+        h=Date:From:To:Subject:From;
+        b=NSvuU+YzweDsg9w+vvZbRcOfwLfTApudEWy4DjM3YkPb2Beq1Vcc/VIAcPannYF5C
+         jhnloKqUYbqecMek5/7Itsx7iU2CLkn0iaIPOXrKseK1UMkcFN4OHAQwThX29EwNe3
+         qMR3Al/Ckg8gMq+3q1rDirDoh2zRqlr0TNV+jg/5B0dCsZbN7tidi/myhVNgI72lod
+         2vu1zE2w9FZMQ5XOyXhYxun3JmIGal9SeL3NyCtYcpiyRB55Vr/09HL1CuKJ+hohW3
+         XXOGqOXi2T+CkzIoOgFTP3ZG4A85M88IKEQH7aq7K/TJVLwHokMD6hY3AsDc9QRr/o
+         LMHaaCO8f+z6w==
+Received: by mail.bizjoindeal.pl for <linux-clk@vger.kernel.org>; Tue, 16 Nov 2021 08:51:12 GMT
+Message-ID: <20211116074500-0.1.60.f0q1.0.gc7p803dac@bizjoindeal.pl>
+Date:   Tue, 16 Nov 2021 08:51:12 GMT
+From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Fotowoltaika dla firm
+X-Mailer: mail.bizjoindeal.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0943c652b09dda026545cc10f44b0c535088072f.1637047731.git.quic_vamslank@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15-11-21, 23:38, quic_vamslank@quicinc.com wrote:
-> From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> 
-> Add compatible for SDX65 pdc.
+Dzie=C5=84 dobry,
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
+liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
 
-> 
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/interrupt-controller/qcom,pdc.txt        | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> index 98d89e53013d..ce631d853db4 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> @@ -23,6 +23,7 @@ Properties:
->  		    - "qcom,sdm845-pdc": For SDM845
->  		    - "qcom,sdm8250-pdc": For SM8250
->  		    - "qcom,sdm8350-pdc": For SM8350
-> +		    - "qcom,sdx65-pdc": For SDX65
->  
->  - reg:
->  	Usage: required
-> -- 
-> 2.33.1
+Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
+re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
 
--- 
-~Vinod
+Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
+niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
+
+Czy s=C4=85 Pa=C5=84stwo zainteresowani?
+
+Pozdrawiam,
+Dorian Kwiatkowski
