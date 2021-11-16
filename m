@@ -2,103 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBA2C4167E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 07:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC63C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 08:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8C7561C12
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 07:47:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3A2763218
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 08:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbhKPHup (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Nov 2021 02:50:45 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:22136 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230441AbhKPHup (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 02:50:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1637048868; x=1668584868;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=wUi+LmWmWt7N0qIv/AFSpcpNjrr6d2HeC8ik8bKgGfI=;
-  b=TZx7Q2qoO3u2atYYhP8h0kzmfhzvZIgyARL9wJVYRFwXNt8CN7lDJbra
-   W21xiatuLiJqtEOSv27RdKtSiQI9CnQ9//zMhoPb3Gw/oWES3+nl8t5J0
-   7uLBTjQtjsEk7TWKErB9rKZ9uxNnkuile/OKszesDtCHfk9uxdpEuGHZm
-   s=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 15 Nov 2021 23:47:46 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2021 23:38:32 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Mon, 15 Nov 2021 23:38:27 -0800
-Received: from hu-vamslank-sd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Mon, 15 Nov 2021 23:38:26 -0800
-From:   <quic_vamslank@quicinc.com>
-To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <tglx@linutronix.de>, <maz@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <manivannan.sadhasivam@linaro.org>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-Subject: [PATCH v4 0/6] Add Pdc, GCC and RPMh clock support for SDX65 
-Date:   Mon, 15 Nov 2021 23:38:06 -0800
-Message-ID: <cover.1637047731.git.quic_vamslank@quicinc.com>
-X-Mailer: git-send-email 2.33.1
+        id S231931AbhKPI1K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Nov 2021 03:27:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231949AbhKPI0x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Nov 2021 03:26:53 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A29361B49;
+        Tue, 16 Nov 2021 08:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1637051036;
+        bh=OVXwhI5lQeFB2cyFD7EtpBMvt7F+BFfPHdqIKI8FKiY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YENtCLsHCGiCxkEqr+4qPeXGQiR7ecaoKexg9WM4O9gpLETpV/G4Eb1RS4kohz7U3
+         Jn0bTF/vbZb3NeJD8NTQ/3rTg+qwXgoiaoBmj2r77i0KiHoX4Q5ApfD4XGNWXoxgZ6
+         LhqqKLG3r9cgSRypfbVmoj1izC+SNRqjbVaOg1x4=
+Date:   Tue, 16 Nov 2021 09:23:54 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: regmap-mux: fix parent clock lookup
+Message-ID: <YZNqmpUXiub29QyU@kroah.com>
+References: <20211115233407.1046179-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211115233407.1046179-1-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-
-Hello,
-
-Changes from v3:
- - Fixed DTbindings and unused varaibles errors reported by kernel test bot
- - Rebased on top of v5.16-rc1 
-
-Changes from v2:
- - Addressed Taniya Das and Vinod Koul's comments related to adding LUCID_EVO
-   PLL type and rpmh support patches
- - Collected Rob's Acked-by for the dt-bindings patches
-
-Changes from v1:
- - Addressed Bjorn's comments related to the GCC support patch
- - Collected Bjorn's and Rob's Reviewed-by for the dt-bindings patches
-
-This patch series adds bindings and device driver changes for GCC, pdc and RPMh
-clock support for SDX65 Platform.
-
-Thanks,
-Vamsi
-
- .../bindings/clock/qcom,gcc-sdx65.yaml        |   78 +
- .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
- .../interrupt-controller/qcom,pdc.txt         |    1 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-alpha-pll.c              |  171 ++
- drivers/clk/qcom/clk-alpha-pll.h              |    3 +
- drivers/clk/qcom/clk-rpmh.c                   |   25 +
- drivers/clk/qcom/gcc-sdx65.c                  | 1589 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdx65.h    |  122 ++
- 10 files changed, 1999 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
- create mode 100644 drivers/clk/qcom/gcc-sdx65.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx65.h
+On Tue, Nov 16, 2021 at 02:34:07AM +0300, Dmitry Baryshkov wrote:
+> The function mux_get_parent() uses qcom_find_src_index() to find the
+> parent clock index, which is incorrect: qcom_find_src_index() uses src
+> enum for the lookup, while mux_get_parent() should use cfg field (which
+> corresponds to the register value). Add qcom_find_cfg_index() function
+> doing this kind of lookup and use it for mux parent lookup.
+> 
+> Fixes: df964016490b ("clk: qcom: add parent map for regmap mux")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-base-commit: 8ab774587903771821b59471cc723bba6d893942
--- 
-2.33.1
+<formletter>
 
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
+
+</formletter>
