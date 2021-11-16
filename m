@@ -2,156 +2,225 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B46FC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 12:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01ECC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 15:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2367461A7D
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 12:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2E4561A4E
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 15:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236039AbhKPMK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Nov 2021 07:10:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236231AbhKPMIr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Nov 2021 07:08:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1459961414;
-        Tue, 16 Nov 2021 12:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637064350;
-        bh=e7+yzDZOLvstJHIWR1WcsOs+RKbc+SNcRppOEfI6ixw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LNJfkLZWEdJ2AJmSTQzzvu+A+2uP27adn+sj1kNQJ+A3X2AxvqoTF8tXA+AJrfLEr
-         nFFOjqJq+zRUBlP6gPmbF2IlKcJZaqPFlXx7NtbaPwF45/eh8L4tqsDihTI8EcE2Lh
-         0JZvWgeQmA3aXrm9RfIaSoGv5M6Ivb9f2URiwDnjEwcP77W/ROK2jHfgJmqs1Clf0C
-         MFE3A1rUV53z4fhFco0DFTz2su8AhBrbWLpg/y1+YZAipR/2acRy78UlqrjUx0x2WD
-         9Ehv6Ibz6XNtJxdMgBbdzFs8xo9qScdpa8vzgACbmQz49+3cWsFKxay7kU9LDROirI
-         pZ/VSiFx/Q1gQ==
-Received: by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1mmxDe-00A9CI-Gc; Tue, 16 Nov 2021 12:05:46 +0000
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Wei Xu" <xuwei5@hisilicon.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND 2/2] clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
-Date:   Tue, 16 Nov 2021 12:05:44 +0000
-Message-Id: <69e24043e4c3e085b926282a5e528b8bd232ab7e.1637064075.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <cover.1637064075.git.mchehab+huawei@kernel.org>
-References: <cover.1637064075.git.mchehab+huawei@kernel.org>
+        id S237869AbhKPPHR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Nov 2021 10:07:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47790 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237919AbhKPPG0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 10:06:26 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4719AC06120C;
+        Tue, 16 Nov 2021 07:01:39 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id b15so88859856edd.7;
+        Tue, 16 Nov 2021 07:01:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uvr/k2Ia8iOpFTOdcJqjut/Vp0us0/bPkj+/qjjkrzU=;
+        b=B/EN/u3dH3M3mSHswgVCxWS9v2JqjfYJAgVLQXkJPvwGB0+gaBqb2ozWG/Q4su2CV0
+         kU9uK4QgdNZHOZh7Z2af69cSzQRN91g0VL4XDXOyvTggBrgzHNltV1LurDdy0gmUnRQl
+         +3YVLE+e8I7o3qDV0LsB3hcKWSqp6ICa2StV9IYxTuvkGuomsH4rdE+/CjKy65g/8xCh
+         12n6Oqq1p307Go+JFTTuZYwLE4gQ7qxb5F4oTI7yzMmjLoxX84w+jhkH6ucGKKGHzul/
+         +tQT6YjmkpvaNRSRoUZq2btVES++knu84w1rOlM/h2dYELlMafNsU8K4tAJsJz6l3Klg
+         C/Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=uvr/k2Ia8iOpFTOdcJqjut/Vp0us0/bPkj+/qjjkrzU=;
+        b=fGdgjULNCvBorSTNfZm2wPp12ccd9vJMn6YkY3Pp5UUTGfo3v3sTSy2S57xXj/P9bC
+         dR2zzmOVyxaT0gLJZsd50W2X/Vaj/fW/KzvZG0cEauVeznvFtBYOqt+4FDBppY1NxRtk
+         l+21gw2yKeHC/lE4nbrq9OM4zKMqgSoCcVjLI8RCg566tgPXbjGxa1JFWetyvpaey6oS
+         UuYXEl1jE3gCemDugods5wMCJ2xomOeUoDFZ/0RBZ29j0f4p7ygT8U3bwPK6gem+cn9+
+         1PsQuSd4Z7ehbuA8pzr6kfVUQsCS4Se1yOxB0esCjVxKZQAoiopMuMuhFCyzBVdAzNMv
+         Q7sA==
+X-Gm-Message-State: AOAM532qQEu4ErOYMbayluLM7dUqEwYUoLXGQP4GyROUSjZnmP7z8vUf
+        c49Eku4za5O50z5UyK7UeJ4=
+X-Google-Smtp-Source: ABdhPJy8Hnvg+7UmI9NDKhVkfuc7bCwcUfoFZLyxiYxzPwIFyYP6LjYVUbrDVt9OYHryosMWM70pNQ==
+X-Received: by 2002:a17:906:a1c1:: with SMTP id bx1mr10443644ejb.447.1637074896082;
+        Tue, 16 Nov 2021 07:01:36 -0800 (PST)
+Received: from stitch.. ([2a02:aa7:4600:b4ae:a375:e7a0:9eaf:8d7b])
+        by smtp.gmail.com with ESMTPSA id u16sm9414311edr.43.2021.11.16.07.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Nov 2021 07:01:35 -0800 (PST)
+Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/16] Basic StarFive JH7100 RISC-V SoC support
+Date:   Tue, 16 Nov 2021 16:01:03 +0100
+Message-Id: <20211116150119.2171-1-kernel@esmil.dk>
+X-Mailer: git-send-email 2.34.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some clocks can't be disabled or the device stops working.
+This series adds support for the StarFive JH7100 RISC-V SoC. The SoC has
+many devices that need non-coherent dma operations to work which isn't
+upstream yet[1], so this just adds basic support to boot up, get a
+serial console, blink an LED and reboot itself. Unlike the Allwinner D1
+this chip doesn't use any extra pagetable bits, but instead the DDR RAM
+appears twice in the memory map, with and without the cache.
 
-Mark those with CLK_IS_CRITICAL.
+The JH7100 is a test chip for the upcoming JH7110 and about 300 BeagleV
+Starlight Beta boards were sent out with them as part of a now cancelled
+BeagleBoard.org project. However StarFive has produced more of the
+JH7100s and more boards will be available[2] to buy. I've seen pictures
+of the new boards now, so hopefully before the end of the year.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
+This series is also available at
+https://github.com/esmil/linux/commits/starlight-minimal
+..but a more complete kernel including drivers for non-coherent
+peripherals based on this series can be found at
+https://github.com/starfive-tech/linux/tree/visionfive
 
-To mailbombing on a large number of people, only mailing lists were C/C on the cover.
-See [PATCH RESEND 0/2] at: https://lore.kernel.org/all/cover.1637064075.git.mchehab+huawei@kernel.org/
+[1]: https://lore.kernel.org/linux-riscv/20210723214031.3251801-2-atish.patra@wdc.com/
+[2]: https://www.linkedin.com/pulse/starfive-release-open-source-single-board-platform-q3-2021-starfive/
 
- drivers/clk/hisilicon/clk-hi3670.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+/Emil
 
-diff --git a/drivers/clk/hisilicon/clk-hi3670.c b/drivers/clk/hisilicon/clk-hi3670.c
-index 4d05a71683a5..d5813132df9c 100644
---- a/drivers/clk/hisilicon/clk-hi3670.c
-+++ b/drivers/clk/hisilicon/clk-hi3670.c
-@@ -82,13 +82,13 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_PPLL2_EN_ACPU, "ppll2_en_acpu", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x0, 3, 0, },
- 	{ HI3670_PPLL3_EN_ACPU, "ppll3_en_acpu", "clk_ppll3",
--	  CLK_SET_RATE_PARENT, 0x0, 27, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x0, 27, 0, },
- 	{ HI3670_PPLL1_GT_CPU, "ppll1_gt_cpu", "clk_ppll1",
- 	  CLK_SET_RATE_PARENT, 0x460, 16, 0, },
- 	{ HI3670_PPLL2_GT_CPU, "ppll2_gt_cpu", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x460, 18, 0, },
- 	{ HI3670_PPLL3_GT_CPU, "ppll3_gt_cpu", "clk_ppll3",
--	  CLK_SET_RATE_PARENT, 0x460, 20, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x460, 20, 0, },
- 	{ HI3670_CLK_GATE_PPLL2_MEDIA, "clk_gate_ppll2_media", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0x410, 27, 0, },
- 	{ HI3670_CLK_GATE_PPLL3_MEDIA, "clk_gate_ppll3_media", "clk_ppll3",
-@@ -166,7 +166,7 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_CLK_CCI400_BYPASS, "clk_cci400_bypass", "clk_ddrc_freq",
- 	  CLK_SET_RATE_PARENT, 0x22C, 28, 0, },
- 	{ HI3670_CLK_GATE_CCI400, "clk_gate_cci400", "clk_ddrc_freq",
--	  CLK_SET_RATE_PARENT, 0x50, 14, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 14, 0, },
- 	{ HI3670_CLK_GATE_SD, "clk_gate_sd", "clk_mux_sd_sys",
- 	  CLK_SET_RATE_PARENT, 0x40, 17, 0, },
- 	{ HI3670_HCLK_GATE_SD, "hclk_gate_sd", "clk_div_sysbus",
-@@ -248,15 +248,15 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_sep_clks[] = {
- 	{ HI3670_CLK_GATE_AO_ASP, "clk_gate_ao_asp", "clk_div_ao_asp",
- 	  CLK_SET_RATE_PARENT, 0x0, 26, 0, },
- 	{ HI3670_PCLK_GATE_PCTRL, "pclk_gate_pctrl", "clk_div_ptp",
--	  CLK_SET_RATE_PARENT, 0x20, 31, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x20, 31, 0, },
- 	{ HI3670_CLK_CSI_TRANS_GT, "clk_csi_trans_gt", "clk_div_csi_trans",
--	  CLK_SET_RATE_PARENT, 0x30, 24, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x30, 24, 0, },
- 	{ HI3670_CLK_DSI_TRANS_GT, "clk_dsi_trans_gt", "clk_div_dsi_trans",
- 	  CLK_SET_RATE_PARENT, 0x30, 25, 0, },
- 	{ HI3670_CLK_GATE_PWM, "clk_gate_pwm", "clk_div_ptp",
- 	  CLK_SET_RATE_PARENT, 0x20, 0, 0, },
- 	{ HI3670_ABB_AUDIO_EN0, "abb_audio_en0", "clk_gate_abb_192",
--	  CLK_SET_RATE_PARENT, 0x30, 8, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x30, 8, 0, },
- 	{ HI3670_ABB_AUDIO_EN1, "abb_audio_en1", "clk_gate_abb_192",
- 	  CLK_SET_RATE_PARENT, 0x30, 9, 0, },
- 	{ HI3670_ABB_AUDIO_GT_EN0, "abb_audio_gt_en0", "abb_audio_en0",
-@@ -331,9 +331,9 @@ static const struct hisi_gate_clock hi3670_crgctrl_gate_clks[] = {
- 	{ HI3670_CLK_GATE_DSI_TRANS, "clk_gate_dsi_trans", "clk_ppll2",
- 	  CLK_SET_RATE_PARENT, 0xF4, 1, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_PTP, "clk_andgt_ptp", "clk_div_320m",
--	  CLK_SET_RATE_PARENT, 0xF8, 5, CLK_GATE_HIWORD_MASK, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0xF8, 5, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_OUT0, "clk_andgt_out0", "clk_ppll0",
--	  CLK_SET_RATE_PARENT, 0xF0, 10, CLK_GATE_HIWORD_MASK, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0xF0, 10, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLK_ANDGT_OUT1, "clk_andgt_out1", "clk_ppll0",
- 	  CLK_SET_RATE_PARENT, 0xF0, 11, CLK_GATE_HIWORD_MASK, },
- 	{ HI3670_CLKGT_DP_AUDIO_PLL_AO, "clkgt_dp_audio_pll_ao", "clk_ppll6",
-@@ -569,9 +569,9 @@ static const struct hisi_gate_clock hi3670_sctrl_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_SPI, "pclk_gate_spi", "clk_div_ioperi",
- 	  CLK_SET_RATE_PARENT, 0x1B0, 10, 0, },
- 	{ HI3670_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_ufs_subsys",
--	  CLK_SET_RATE_PARENT, 0x1B0, 14, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x1B0, 14, 0, },
- 	{ HI3670_CLK_GATE_UFSIO_REF, "clk_gate_ufsio_ref", "clkin_sys",
--	  CLK_SET_RATE_PARENT, 0x1b0, 12, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x1b0, 12, 0, },
- 	{ HI3670_PCLK_AO_GPIO0, "pclk_ao_gpio0", "clk_div_aobus",
- 	  CLK_SET_RATE_PARENT, 0x160, 11, 0, },
- 	{ HI3670_PCLK_AO_GPIO1, "pclk_ao_gpio1", "clk_div_aobus",
-@@ -593,7 +593,7 @@ static const struct hisi_gate_clock hi3670_sctrl_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_SYSCNT, "pclk_gate_syscnt", "clk_div_aobus",
- 	  CLK_SET_RATE_PARENT, 0x160, 19, 0, },
- 	{ HI3670_CLK_GATE_SYSCNT, "clk_gate_syscnt", "clkin_sys",
--	  CLK_SET_RATE_PARENT, 0x160, 20, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x160, 20, 0, },
- 	{ HI3670_CLK_GATE_ASP_SUBSYS_PERI, "clk_gate_asp_subsys_peri",
- 	  "clk_mux_asp_subsys_peri",
- 	  CLK_SET_RATE_PARENT, 0x170, 6, 0, },
-@@ -703,7 +703,7 @@ static const struct hisi_gate_clock hi3670_media1_gate_sep_clks[] = {
- 	{ HI3670_PCLK_GATE_DISP_NOC_SUBSYS, "pclk_gate_disp_noc_subsys", "clk_div_sysbus",
- 	  CLK_SET_RATE_PARENT, 0x10, 18, 0, },
- 	{ HI3670_ACLK_GATE_DISP_NOC_SUBSYS, "aclk_gate_disp_noc_subsys", "clk_gate_vivobusfreq",
--	  CLK_SET_RATE_PARENT, 0x10, 17, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x10, 17, 0, },
- 	{ HI3670_PCLK_GATE_DSS, "pclk_gate_dss", "pclk_gate_disp_noc_subsys",
- 	  CLK_SET_RATE_PARENT, 0x00, 14, 0, },
- 	{ HI3670_ACLK_GATE_DSS, "aclk_gate_dss", "aclk_gate_disp_noc_subsys",
+Changes since v3:
+- The reset driver now uses 64bit read/write on the registers so we can
+  use the regular bitmap macros. Requested by Andy.
+- The pinctrl driver no longer resets the GPIO irq handler to
+  handle_bad_irq on errors, uses reverse xmas tree order where possible
+  and other nits by Andy.
+
+Changes since v2:
+- Ahmad and Geert agreed to switch the license of the clock and reset dt
+  headers to GPL-2.0 OR MIT, so that both headers and device tree files
+  can all use the same license.
+  Bindings are still GPL-2.0-only OR BSD-2-Clause as recommended.
+- Clock and reset drivers now set .suppress_bind_attrs = true and use
+  builtin_platform_driver_probe to make sure the probe function is only
+  called at init time so we can use __init and __initconst.
+- The clock driver now uses devm_clk_hw_register and .parent_data when
+  registering clocks. This way we can use the dt clock indexes rather
+  than strings for parent lists and decrease the amount of static data
+  needed considerably.
+- Various dt binding cleanups from Rob
+- Reworked description in the pinctrl dt binding.
+- Pinctrl driver now depends on CONFIG_OF again since it uses
+  pinconf_generic_parse_dt_config which is otherwise not defined.
+- Pinctrl no longer devm_kfree's data that won't be referenced
+  if dt pinconf parsing fails before registering groups and function,
+  and other nits by Andy.
+- The dw8250 quirk no longer needs a skip_clk_set_rate bit, but sets
+  port->set_termios to the function called after clk_set_rate.
+
+Changes since v1:
+- Let SOC_STARFIVE select RESET_CONTROLLER but drop SERIAL_8250_DW
+- Add missing Signed-of-by to clock dt-binding header
+- Use builtin_platform_driver macro for the clock driver, add explicit
+  comment to the determine_rate callback and other small nits from Andy
+- Use reset-controller for node names in documentation and device tree
+- Use readl_poll_timeout in reset driver to avoid hanging forever if a
+  driver leaves the associated clock gated and sort Kconfig and Makefile
+  entries properly.
+- In the pinctrl driver align register names with documentation, remove
+  invalid __init tag from probe function, use of_property_* functions to
+  parse device tree, hoist pinmux unpacking into helper function to
+  better document what's going on, bail on invalid signal group in
+  device tree and fix many other nits from Andy.
+- Refactor and rebase 8250_dw quirk on tty-next
+
+Emil Renner Berthing (12):
+  RISC-V: Add StarFive SoC Kconfig option
+  dt-bindings: timer: Add StarFive JH7100 clint
+  dt-bindings: interrupt-controller: Add StarFive JH7100 plic
+  dt-bindings: reset: Add Starfive JH7100 reset bindings
+  reset: starfive-jh7100: Add StarFive JH7100 reset driver
+  dt-bindings: pinctrl: Add StarFive pinctrl definitions
+  dt-bindings: pinctrl: Add StarFive JH7100 bindings
+  pinctrl: starfive: Add pinctrl driver for StarFive SoCs
+  dt-bindings: serial: snps-dw-apb-uart: Add JH7100 uarts
+  serial: 8250_dw: Add StarFive JH7100 quirk
+  RISC-V: Add initial StarFive JH7100 device tree
+  RISC-V: Add BeagleV Starlight Beta device tree
+
+Geert Uytterhoeven (4):
+  dt-bindings: clock: starfive: Add JH7100 clock definitions
+  dt-bindings: clock: starfive: Add JH7100 bindings
+  clk: starfive: Add JH7100 clock generator driver
+  dt-bindings: reset: Add StarFive JH7100 reset definitions
+
+ .../clock/starfive,jh7100-clkgen.yaml         |   56 +
+ .../sifive,plic-1.0.0.yaml                    |    1 +
+ .../pinctrl/starfive,jh7100-pinctrl.yaml      |  307 ++++
+ .../bindings/reset/starfive,jh7100-reset.yaml |   38 +
+ .../bindings/serial/snps-dw-apb-uart.yaml     |    5 +
+ .../bindings/timer/sifive,clint.yaml          |    1 +
+ MAINTAINERS                                   |   22 +
+ arch/riscv/Kconfig.socs                       |    8 +
+ arch/riscv/boot/dts/Makefile                  |    1 +
+ arch/riscv/boot/dts/starfive/Makefile         |    2 +
+ .../dts/starfive/jh7100-beaglev-starlight.dts |  164 ++
+ arch/riscv/boot/dts/starfive/jh7100.dtsi      |  230 +++
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/starfive/Kconfig                  |    9 +
+ drivers/clk/starfive/Makefile                 |    3 +
+ drivers/clk/starfive/clk-starfive-jh7100.c    |  689 +++++++++
+ drivers/pinctrl/Kconfig                       |   17 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-starfive.c            | 1354 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-starfive-jh7100.c         |  176 +++
+ drivers/tty/serial/8250/8250_dw.c             |    3 +
+ include/dt-bindings/clock/starfive-jh7100.h   |  202 +++
+ .../dt-bindings/pinctrl/pinctrl-starfive.h    |  275 ++++
+ include/dt-bindings/reset/starfive-jh7100.h   |  126 ++
+ 27 files changed, 3700 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7100-clkgen.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/reset/starfive,jh7100-reset.yaml
+ create mode 100644 arch/riscv/boot/dts/starfive/Makefile
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100-beaglev-starlight.dts
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7100.dtsi
+ create mode 100644 drivers/clk/starfive/Kconfig
+ create mode 100644 drivers/clk/starfive/Makefile
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7100.c
+ create mode 100644 drivers/pinctrl/pinctrl-starfive.c
+ create mode 100644 drivers/reset/reset-starfive-jh7100.c
+ create mode 100644 include/dt-bindings/clock/starfive-jh7100.h
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-starfive.h
+ create mode 100644 include/dt-bindings/reset/starfive-jh7100.h
+
 -- 
 2.33.1
 
