@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFF6C4167D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE954C4167E
 	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 15:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44CA763236
+	by mail.kernel.org (Postfix) with ESMTP id C945F63252
 	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 15:05:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238008AbhKPPIL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Nov 2021 10:08:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47978 "EHLO
+        id S238026AbhKPPIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Nov 2021 10:08:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236194AbhKPPHR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 10:07:17 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A6A0C061226;
-        Tue, 16 Nov 2021 07:02:15 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id r11so25347485edd.9;
-        Tue, 16 Nov 2021 07:02:15 -0800 (PST)
+        with ESMTP id S237793AbhKPPGw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 10:06:52 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083A8C061220;
+        Tue, 16 Nov 2021 07:02:01 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id y12so32713563eda.12;
+        Tue, 16 Nov 2021 07:02:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GS0NC5qfhI1GA5dEA0GnRmIq9rDYumLgycMlqKtyi0g=;
-        b=qBAaVA5vKIyf8xZhHWOFsazp6CurzEmOklwIIoebtF0Adpro2x7K6W9QMflekpufrV
-         tSEUJAWqEInb+8SjgQID1y57v7SVcKpi0QiYh+vuHqquHt/SMAz5zTvasdipNLGeq5Lj
-         r9CI2uGRAewt/rwn15ck0kkudBsumXIaMEnJHjTBsZ4TFm9CkY/JYRsNndbuBVkqoSYU
-         BZP8WOfFj47vUhO+3mQSfqzWEqfX+PeHE8z6Y0K0PUq28VALXmpx8oN316XmT8HlvFF9
-         /yBL0GzSuXKtn+4elnPjKsHUgvShH8kBKglyJEWfol7Tfitt4C74R+/3CYcITOqqB2JM
-         FMJw==
+        bh=K8dKASe/l2+LOI+r38ZTu5MH6BDOV4wDKFWMxZBsmrs=;
+        b=YW1w1VzRuSUEMy3YyqIKYHmAoIzHH5o31C+hDR/N0tO5BivMxTnh8kS3NO7R5Op23P
+         3iNjTqQLoA0ocRvDiaRWfZghGPVK5odh9ZrfR4SUTcc0EL+xnkxy6SO+hoSPpBsumIOe
+         YvCKbUwV8wTPYhIQdqVYZuuW3X/Wx5Khks8jNehqSS0snvi3rLOlGbh2YHGjoorTDxSE
+         69Qx7JIS0r7rTRLS33HmJxd5AogOeS6kRYNyO1RdqdVfLg+iTal7+eEV4hgRPKdqJaPT
+         GbyFLYQLTeyxbLl1O/MMV2AhQDdzujmM+38PEnYUlX1Bfqyuz9aznxYR+l86KY25+QUa
+         i4Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=GS0NC5qfhI1GA5dEA0GnRmIq9rDYumLgycMlqKtyi0g=;
-        b=3E60DTddRs071Js1KNG9A3Ythr15TvgfT2KsIHouiz7bok9tA2DFU4ZMDdFpIIToo9
-         QaGGciTc3+boarYcHKk4YlW4cp2lnuLWdje98bpSxbgCzrcEizOeb0eRAYkCtaXyChbY
-         MbpM0LjE2gKGavNABzBx8l7pB1j4MN646o9sN8HeRseyyJT+3bwQSVr07QMYvHUX31l/
-         iZWT8sR4mLUwt68V6vn1JdoAz93UCnYMLZpZUGhpB3tsHG93uLewaUQwpE675FGzz97k
-         2usHR7gAziOfiaQb6dMV9McxTc4aDk7ASFxJzP1Ep+iVH5PNWuSz8QsjMnbps784I/KX
-         1tBg==
-X-Gm-Message-State: AOAM530pfHWPQpTn2nURjqfXHgHggCFVYDRNb3CtojGAlu/qOYS227e7
-        akpeHYGmO6JnrHtv5pxe6nQ=
-X-Google-Smtp-Source: ABdhPJx5UEZJ3VGh5umNRV73vjeRS9phAagHqL4kK93yLs6wGMtag6F0Y7yhdesaNpKYeuPJy1++ng==
-X-Received: by 2002:a05:6402:1a27:: with SMTP id be7mr10525778edb.187.1637074931513;
-        Tue, 16 Nov 2021 07:02:11 -0800 (PST)
+        bh=K8dKASe/l2+LOI+r38ZTu5MH6BDOV4wDKFWMxZBsmrs=;
+        b=rv8av8C9gTE14XtPpZTAFNEo4FaurMiVdYEWrk4oZZp5MPK6RCSaSYhG/PQ5/3S8KA
+         l5isk3WEgm7X7efhxikWKyuC+/1kAhNmuB555b6JhEMcDUe3Yln4/eFzzaKoxL4DyM5/
+         evLUz5gzP7EyO4oqOKgEDnKrZyPOi6cfBC3lU7kdW7bIQo1k0q9MTeASJxy75RR76Roz
+         i75W037vIxVkz108xhNCAkqAm1vgirZ3+nAj7y0xFGg8+3kZbtyxb4kyEaMFui+DBlqJ
+         pZ3Ds0fc39cSnzaesAAmHtkMiZsdAaJA0D7hkwBtCNNocNY/9lj4PjdoG/oNG4gLP+PC
+         c1NA==
+X-Gm-Message-State: AOAM530riprfS0h1ZuCu3pyoApJ1fOd0FEBF7LoMK+x8g8GFf5ERPtOv
+        ImQJ2V5dIMRFo1y5TQQuUU4=
+X-Google-Smtp-Source: ABdhPJwBRYskJ/y34zKucepkl7e5Fy9BN8oFzRa/+FJpaswXjxiV5dhQ5JGX7p8aS34KcRZz+Rg16Q==
+X-Received: by 2002:a05:6402:438a:: with SMTP id o10mr10934406edc.353.1637074919641;
+        Tue, 16 Nov 2021 07:01:59 -0800 (PST)
 Received: from stitch.. ([2a02:aa7:4600:b4ae:a375:e7a0:9eaf:8d7b])
-        by smtp.gmail.com with ESMTPSA id u16sm9414311edr.43.2021.11.16.07.02.08
+        by smtp.gmail.com with ESMTPSA id u16sm9414311edr.43.2021.11.16.07.01.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Nov 2021 07:02:11 -0800 (PST)
+        Tue, 16 Nov 2021 07:01:58 -0800 (PST)
 Sender: Emil Renner Berthing <emil.renner.berthing@gmail.com>
 From:   Emil Renner Berthing <kernel@esmil.dk>
 To:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-serial@vger.kernel.org
-Cc:     Emil Renner Berthing <kernel@esmil.dk>,
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Palmer Dabbelt <palmer@dabbelt.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -72,17 +72,17 @@ Cc:     Emil Renner Berthing <kernel@esmil.dk>,
         Maximilian Luz <luzmaximilian@gmail.com>,
         Sagar Kadam <sagar.kadam@sifive.com>,
         Drew Fustini <drew@beagleboard.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Michael Zhu <michael.zhu@starfivetech.com>,
         Fu Wei <tekkamanninja@gmail.com>,
         Anup Patel <anup.patel@wdc.com>,
         Atish Patra <atish.patra@wdc.com>,
         Matteo Croce <mcroce@microsoft.com>,
         Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Emil Renner Berthing <kernel@esmil.dk>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
-Date:   Tue, 16 Nov 2021 16:01:14 +0100
-Message-Id: <20211116150119.2171-12-kernel@esmil.dk>
+Subject: [PATCH v4 07/16] dt-bindings: reset: Add StarFive JH7100 reset definitions
+Date:   Tue, 16 Nov 2021 16:01:10 +0100
+Message-Id: <20211116150119.2171-8-kernel@esmil.dk>
 X-Mailer: git-send-email 2.34.0
 In-Reply-To: <20211116150119.2171-1-kernel@esmil.dk>
 References: <20211116150119.2171-1-kernel@esmil.dk>
@@ -92,330 +92,153 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the GPIO/pin controller on the JH7100 RISC-V SoC by
-StarFive Ltd. This is a test chip for their upcoming JH7110 SoC.
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
+Add all resets for the StarFive JH7100 reset controller.
+
+Based on work by Ahmad Fatoum for Barebox, with "JH7100_" prefixes added
+to all definitions.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../pinctrl/starfive,jh7100-pinctrl.yaml      | 307 ++++++++++++++++++
- 1 file changed, 307 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+ include/dt-bindings/reset/starfive-jh7100.h | 126 ++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 include/dt-bindings/reset/starfive-jh7100.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+diff --git a/include/dt-bindings/reset/starfive-jh7100.h b/include/dt-bindings/reset/starfive-jh7100.h
 new file mode 100644
-index 000000000000..92963604422f
+index 000000000000..540e19254f39
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
-@@ -0,0 +1,307 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/starfive,jh7100-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/include/dt-bindings/reset/starfive-jh7100.h
+@@ -0,0 +1,126 @@
++/* SPDX-License-Identifier: GPL-2.0 OR MIT */
++/*
++ * Copyright (C) 2021 Ahmad Fatoum, Pengutronix
++ */
 +
-+title: StarFive JH7100 Pin Controller Device Tree Bindings
++#ifndef __DT_BINDINGS_RESET_STARFIVE_JH7100_H__
++#define __DT_BINDINGS_RESET_STARFIVE_JH7100_H__
 +
-+description: |
-+  Bindings for the JH7100 RISC-V SoC from StarFive Ltd.
++#define JH7100_RSTN_DOM3AHB_BUS		0
++#define JH7100_RSTN_DOM7AHB_BUS		1
++#define JH7100_RST_U74			2
++#define JH7100_RSTN_U74_AXI		3
++#define JH7100_RSTN_SGDMA2P_AHB		4
++#define JH7100_RSTN_SGDMA2P_AXI		5
++#define JH7100_RSTN_DMA2PNOC_AXI	6
++#define JH7100_RSTN_DLA_AXI		7
++#define JH7100_RSTN_DLANOC_AXI		8
++#define JH7100_RSTN_DLA_APB		9
++#define JH7100_RST_VP6_DRESET		10
++#define JH7100_RST_VP6_BRESET		11
++#define JH7100_RSTN_VP6_AXI		12
++#define JH7100_RSTN_VDECBRG_MAIN	13
++#define JH7100_RSTN_VDEC_AXI		14
++#define JH7100_RSTN_VDEC_BCLK		15
++#define JH7100_RSTN_VDEC_CCLK		16
++#define JH7100_RSTN_VDEC_APB		17
++#define JH7100_RSTN_JPEG_AXI		18
++#define JH7100_RSTN_JPEG_CCLK		19
++#define JH7100_RSTN_JPEG_APB		20
++#define JH7100_RSTN_JPCGC300_MAIN	21
++#define JH7100_RSTN_GC300_2X		22
++#define JH7100_RSTN_GC300_AXI		23
++#define JH7100_RSTN_GC300_AHB		24
++#define JH7100_RSTN_VENC_AXI		25
++#define JH7100_RSTN_VENCBRG_MAIN	26
++#define JH7100_RSTN_VENC_BCLK		27
++#define JH7100_RSTN_VENC_CCLK		28
++#define JH7100_RSTN_VENC_APB		29
++#define JH7100_RSTN_DDRPHY_APB		30
++#define JH7100_RSTN_NOC_ROB		31
++#define JH7100_RSTN_NOC_COG		32
++#define JH7100_RSTN_HIFI4_AXI		33
++#define JH7100_RSTN_HIFI4NOC_AXI	34
++#define JH7100_RST_HIFI4_DRESET		35
++#define JH7100_RST_HIFI4_BRESET		36
++#define JH7100_RSTN_USB_AXI		37
++#define JH7100_RSTN_USBNOC_AXI		38
++#define JH7100_RSTN_SGDMA1P_AXI		39
++#define JH7100_RSTN_DMA1P_AXI		40
++#define JH7100_RSTN_X2C_AXI		41
++#define JH7100_RSTN_NNE_AHB		42
++#define JH7100_RSTN_NNE_AXI		43
++#define JH7100_RSTN_NNENOC_AXI		44
++#define JH7100_RSTN_DLASLV_AXI		45
++#define JH7100_RSTN_DSPX2C_AXI		46
++#define JH7100_RSTN_VIN_SRC		47
++#define JH7100_RSTN_ISPSLV_AXI		48
++#define JH7100_RSTN_VIN_AXI		49
++#define JH7100_RSTN_VINNOC_AXI		50
++#define JH7100_RSTN_ISP0_AXI		51
++#define JH7100_RSTN_ISP0NOC_AXI		52
++#define JH7100_RSTN_ISP1_AXI		53
++#define JH7100_RSTN_ISP1NOC_AXI		54
++#define JH7100_RSTN_VOUT_SRC		55
++#define JH7100_RSTN_DISP_AXI		56
++#define JH7100_RSTN_DISPNOC_AXI		57
++#define JH7100_RSTN_SDIO0_AHB		58
++#define JH7100_RSTN_SDIO1_AHB		59
++#define JH7100_RSTN_GMAC_AHB		60
++#define JH7100_RSTN_SPI2AHB_AHB		61
++#define JH7100_RSTN_SPI2AHB_CORE	62
++#define JH7100_RSTN_EZMASTER_AHB	63
++#define JH7100_RST_E24			64
++#define JH7100_RSTN_QSPI_AHB		65
++#define JH7100_RSTN_QSPI_CORE		66
++#define JH7100_RSTN_QSPI_APB		67
++#define JH7100_RSTN_SEC_AHB		68
++#define JH7100_RSTN_AES			69
++#define JH7100_RSTN_PKA			70
++#define JH7100_RSTN_SHA			71
++#define JH7100_RSTN_TRNG_APB		72
++#define JH7100_RSTN_OTP_APB		73
++#define JH7100_RSTN_UART0_APB		74
++#define JH7100_RSTN_UART0_CORE		75
++#define JH7100_RSTN_UART1_APB		76
++#define JH7100_RSTN_UART1_CORE		77
++#define JH7100_RSTN_SPI0_APB		78
++#define JH7100_RSTN_SPI0_CORE		79
++#define JH7100_RSTN_SPI1_APB		80
++#define JH7100_RSTN_SPI1_CORE		81
++#define JH7100_RSTN_I2C0_APB		82
++#define JH7100_RSTN_I2C0_CORE		83
++#define JH7100_RSTN_I2C1_APB		84
++#define JH7100_RSTN_I2C1_CORE		85
++#define JH7100_RSTN_GPIO_APB		86
++#define JH7100_RSTN_UART2_APB		87
++#define JH7100_RSTN_UART2_CORE		88
++#define JH7100_RSTN_UART3_APB		89
++#define JH7100_RSTN_UART3_CORE		90
++#define JH7100_RSTN_SPI2_APB		91
++#define JH7100_RSTN_SPI2_CORE		92
++#define JH7100_RSTN_SPI3_APB		93
++#define JH7100_RSTN_SPI3_CORE		94
++#define JH7100_RSTN_I2C2_APB		95
++#define JH7100_RSTN_I2C2_CORE		96
++#define JH7100_RSTN_I2C3_APB		97
++#define JH7100_RSTN_I2C3_CORE		98
++#define JH7100_RSTN_WDTIMER_APB		99
++#define JH7100_RSTN_WDT			100
++#define JH7100_RSTN_TIMER0		101
++#define JH7100_RSTN_TIMER1		102
++#define JH7100_RSTN_TIMER2		103
++#define JH7100_RSTN_TIMER3		104
++#define JH7100_RSTN_TIMER4		105
++#define JH7100_RSTN_TIMER5		106
++#define JH7100_RSTN_TIMER6		107
++#define JH7100_RSTN_VP6INTC_APB		108
++#define JH7100_RSTN_PWM_APB		109
++#define JH7100_RSTN_MSI_APB		110
++#define JH7100_RSTN_TEMP_APB		111
++#define JH7100_RSTN_TEMP_SENSE		112
++#define JH7100_RSTN_SYSERR_APB		113
 +
-+  Out of the SoC's many pins only the ones named PAD_GPIO[0] to PAD_GPIO[63]
-+  and PAD_FUNC_SHARE[0] to PAD_FUNC_SHARE[141] can be multiplexed and have
-+  configurable bias, drive strength, schmitt trigger etc. The SoC has an
-+  interesting 2-layered approach to pin muxing best illustrated by the diagram
-+  below.
++#define JH7100_RSTN_END			114
 +
-+                          Signal group 0, 1, ... or 6
-+                                 ___|___
-+                                |       |
-+    LCD output -----------------|       |
-+    CMOS Camera interface ------|       |--- PAD_GPIO[0]
-+    Ethernet PHY interface -----|  MUX  |--- PAD_GPIO[1]
-+      ...                       |       |      ...
-+                                |       |--- PAD_GPIO[63]
-+     -------- GPIO0 ------------|       |
-+    |  -------|-- GPIO1 --------|       |--- PAD_FUNC_SHARE[0]
-+    | |       |   |             |       |--- PAD_FUNC_SHARE[1]
-+    | |       |   |  ...        |       |       ...
-+    | |       |   |             |       |--- PAD_FUNC_SHARE[141]
-+    | |  -----|---|-- GPIO63 ---|       |
-+    | | |     |   |   |          -------
-+    UART0     UART1 --
-+
-+
-+  The big MUX in the diagram only has 7 different ways of mapping peripherals
-+  on the left to pins on the right. StarFive calls the 7 configurations "signal
-+  groups".
-+  However some peripherals have their I/O go through the 64 "GPIOs". The
-+  diagram only shows UART0 and UART1, but this also includes a number of other
-+  UARTs, I2Cs, SPIs, PWMs etc. All these peripherals are connected to all 64
-+  GPIOs such that any GPIO can be set up to be controlled by any of the
-+  peripherals.
-+  Note that signal group 0 doesn't map any of the GPIOs to pins, and only
-+  signal group 1 maps the GPIOs to the pins named PAD_GPIO[0] to PAD_GPIO[63].
-+
-+maintainers:
-+  - Emil Renner Berthing <kernel@esmil.dk>
-+  - Drew Fustini <drew@beagleboard.org>
-+
-+properties:
-+  compatible:
-+    const: starfive,jh7100-pinctrl
-+
-+  reg:
-+    minItems: 2
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: gpio
-+      - const: padctl
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
-+  interrupts:
-+    maxItems: 1
-+    description: The GPIO parent interrupt.
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+
-+  starfive,signal-group:
-+    description: |
-+      Select one of the 7 signal groups. If this property is not set it
-+      defaults to the configuration already chosen by the earlier boot stages.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [0, 1, 2, 3, 4, 5, 6]
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - interrupts
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+
-+patternProperties:
-+  '-[0-9]+$':
-+    type: object
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        description: |
-+          A pinctrl node should contain at least one subnode representing the
-+          pinctrl groups available on the machine. Each subnode will list the
-+          pins it needs, and how they should be configured, with regard to
-+          muxer configuration, bias, input enable/disable, input schmitt
-+          trigger enable/disable, slew-rate and drive strength.
-+        $ref: "/schemas/pinctrl/pincfg-node.yaml"
-+
-+        properties:
-+          pins:
-+            description: |
-+              The list of pin identifiers that properties in the node apply to.
-+              This should be set using either the PAD_GPIO or PAD_FUNC_SHARE
-+              macros.
-+              Either this or "pinmux" has to be specified, but not both.
-+            $ref: "/schemas/pinctrl/pinmux-node.yaml#/properties/pins"
-+
-+          pinmux:
-+            description: |
-+              The list of GPIOs and their mux settings that properties in the
-+              node apply to. This should be set using the GPIOMUX macro.
-+              Either this or "pins" has to be specified, but not both.
-+            $ref: "/schemas/pinctrl/pinmux-node.yaml#/properties/pinmux"
-+
-+          bias-disable: true
-+
-+          bias-pull-up:
-+            type: boolean
-+
-+          bias-pull-down:
-+            type: boolean
-+
-+          drive-strength:
-+            enum: [ 14, 21, 28, 35, 42, 49, 56, 63 ]
-+
-+          input-enable: true
-+
-+          input-disable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          slew-rate:
-+            maximum: 7
-+
-+          starfive,strong-pull-up:
-+            description: enable strong pull-up.
-+            type: boolean
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/starfive-jh7100.h>
-+    #include <dt-bindings/reset/starfive-jh7100.h>
-+    #include <dt-bindings/pinctrl/pinctrl-starfive.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pinctrl@11910000 {
-+            compatible = "starfive,jh7100-pinctrl";
-+            reg = <0x0 0x11910000 0x0 0x10000>,
-+                  <0x0 0x11858000 0x0 0x1000>;
-+            reg-names = "gpio", "padctl";
-+            clocks = <&clkgen JH7100_CLK_GPIO_APB>;
-+            resets = <&clkgen JH7100_RSTN_GPIO_APB>;
-+            interrupts = <32>;
-+            gpio-controller;
-+            #gpio-cells = <2>;
-+            interrupt-controller;
-+            #interrupt-cells = <2>;
-+            starfive,signal-group = <6>;
-+
-+            gmac_pins_default: gmac-0 {
-+                gtxclk-pins {
-+                    pins = <PAD_FUNC_SHARE(115)>;
-+                    bias-pull-up;
-+                    drive-strength = <35>;
-+                    input-enable;
-+                    input-schmitt-enable;
-+                    slew-rate = <0>;
-+                };
-+                miitxclk-pins {
-+                    pins = <PAD_FUNC_SHARE(116)>;
-+                    bias-pull-up;
-+                    drive-strength = <14>;
-+                    input-enable;
-+                    input-schmitt-disable;
-+                    slew-rate = <0>;
-+                };
-+                tx-pins {
-+                    pins = <PAD_FUNC_SHARE(117)>,
-+                           <PAD_FUNC_SHARE(119)>,
-+                           <PAD_FUNC_SHARE(120)>,
-+                           <PAD_FUNC_SHARE(121)>,
-+                           <PAD_FUNC_SHARE(122)>,
-+                           <PAD_FUNC_SHARE(123)>,
-+                           <PAD_FUNC_SHARE(124)>,
-+                           <PAD_FUNC_SHARE(125)>,
-+                           <PAD_FUNC_SHARE(126)>;
-+                    bias-disable;
-+                    drive-strength = <35>;
-+                    input-disable;
-+                    input-schmitt-disable;
-+                    slew-rate = <0>;
-+                };
-+                rxclk-pins {
-+                    pins = <PAD_FUNC_SHARE(127)>;
-+                    bias-pull-up;
-+                    drive-strength = <14>;
-+                    input-enable;
-+                    input-schmitt-disable;
-+                    slew-rate = <6>;
-+                };
-+                rxer-pins {
-+                    pins = <PAD_FUNC_SHARE(129)>;
-+                    bias-pull-up;
-+                    drive-strength = <14>;
-+                    input-enable;
-+                    input-schmitt-disable;
-+                    slew-rate = <0>;
-+                };
-+                rx-pins {
-+                    pins = <PAD_FUNC_SHARE(128)>,
-+                           <PAD_FUNC_SHARE(130)>,
-+                           <PAD_FUNC_SHARE(131)>,
-+                           <PAD_FUNC_SHARE(132)>,
-+                           <PAD_FUNC_SHARE(133)>,
-+                           <PAD_FUNC_SHARE(134)>,
-+                           <PAD_FUNC_SHARE(135)>,
-+                           <PAD_FUNC_SHARE(136)>,
-+                           <PAD_FUNC_SHARE(137)>,
-+                           <PAD_FUNC_SHARE(138)>,
-+                           <PAD_FUNC_SHARE(139)>,
-+                           <PAD_FUNC_SHARE(140)>,
-+                           <PAD_FUNC_SHARE(141)>;
-+                    bias-pull-up;
-+                    drive-strength = <14>;
-+                    input-enable;
-+                    input-schmitt-enable;
-+                    slew-rate = <0>;
-+                };
-+            };
-+
-+            i2c0_pins_default: i2c0-0 {
-+                i2c-pins {
-+                    pinmux = <GPIOMUX(62, GPO_LOW,
-+                              GPO_I2C0_PAD_SCK_OEN,
-+                              GPI_I2C0_PAD_SCK_IN)>,
-+                             <GPIOMUX(61, GPO_LOW,
-+                              GPO_I2C0_PAD_SDA_OEN,
-+                              GPI_I2C0_PAD_SDA_IN)>;
-+                    bias-disable; /* external pull-up */
-+                    input-enable;
-+                    input-schmitt-enable;
-+                };
-+            };
-+
-+            uart3_pins_default: uart3-0 {
-+                rx-pins {
-+                    pinmux = <GPIOMUX(13, GPO_LOW, GPO_DISABLE,
-+                              GPI_UART3_PAD_SIN)>;
-+                    bias-pull-up;
-+                    input-enable;
-+                    input-schmitt-enable;
-+                };
-+                tx-pins {
-+                    pinmux = <GPIOMUX(14, GPO_UART3_PAD_SOUT,
-+                              GPO_ENABLE, GPI_NONE)>;
-+                    bias-disable;
-+                    input-disable;
-+                    input-schmitt-disable;
-+                };
-+            };
-+        };
-+
-+        gmac {
-+            pinctrl-0 = <&gmac_pins_default>;
-+            pinctrl-names = "default";
-+        };
-+
-+        i2c0 {
-+            pinctrl-0 = <&i2c0_pins_default>;
-+            pinctrl-names = "default";
-+        };
-+
-+        uart3 {
-+            pinctrl-0 = <&uart3_pins_default>;
-+            pinctrl-names = "default";
-+        };
-+    };
-+
-+...
++#endif /* __DT_BINDINGS_RESET_STARFIVE_JH7100_H__ */
 -- 
 2.33.1
 
