@@ -2,57 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB123C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC7CC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 12:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C102C63227
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 09:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B055061A7D
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Nov 2021 12:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232675AbhKPJEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Nov 2021 04:04:36 -0500
-Received: from mail.bizjoindeal.pl ([80.211.97.164]:57978 "EHLO
-        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232723AbhKPJEd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Nov 2021 04:04:33 -0500
-X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Nov 2021 04:04:33 EST
-Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
-        id DD791A2A73; Tue, 16 Nov 2021 08:51:17 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
-        s=mail; t=1637052693;
-        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
-        h=Date:From:To:Subject:From;
-        b=NSvuU+YzweDsg9w+vvZbRcOfwLfTApudEWy4DjM3YkPb2Beq1Vcc/VIAcPannYF5C
-         jhnloKqUYbqecMek5/7Itsx7iU2CLkn0iaIPOXrKseK1UMkcFN4OHAQwThX29EwNe3
-         qMR3Al/Ckg8gMq+3q1rDirDoh2zRqlr0TNV+jg/5B0dCsZbN7tidi/myhVNgI72lod
-         2vu1zE2w9FZMQ5XOyXhYxun3JmIGal9SeL3NyCtYcpiyRB55Vr/09HL1CuKJ+hohW3
-         XXOGqOXi2T+CkzIoOgFTP3ZG4A85M88IKEQH7aq7K/TJVLwHokMD6hY3AsDc9QRr/o
-         LMHaaCO8f+z6w==
-Received: by mail.bizjoindeal.pl for <linux-clk@vger.kernel.org>; Tue, 16 Nov 2021 08:51:12 GMT
-Message-ID: <20211116074500-0.1.60.f0q1.0.gc7p803dac@bizjoindeal.pl>
-Date:   Tue, 16 Nov 2021 08:51:12 GMT
-From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Fotowoltaika dla firm
-X-Mailer: mail.bizjoindeal.pl
+        id S236007AbhKPMK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Nov 2021 07:10:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236232AbhKPMIr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Nov 2021 07:08:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 11CF361A7D;
+        Tue, 16 Nov 2021 12:05:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637064350;
+        bh=BYhL4okiZLw5w3k/7r78kRy4W08MKuNGrkynR9V31m0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aOh1e63IYuuyJt3oc/lC89yb5yu7/8f0/OL4lap7+0HXaYRfeBTBoQFO6/CeHvxt6
+         RDsjeqp8FKHW/WVoC27otB9F7u8l4lgoDQ/n63NJ6chWw7rNAi2XJCECZgzGXG2lpJ
+         UqhPewKRlW8PUdz/lykBkshpMfPMmFTTNBACYKPFEWO8KmXvgTRKGhnNqu7peoERUd
+         R0UPcEe3R8HZazaJk+lvmHzW2Vh/fYn0xSmcC8uG+K2zmv+HPNE3OfO5M3B28b6YOQ
+         t+57KgGsmlFvo+0mEOsbovsQKUqChRFmZrITWTwpKMljlGMkZU0KRhiefKOUDRyWE8
+         LK8Uz8R3/49ZA==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1mmxDe-00A9CC-Em; Tue, 16 Nov 2021 12:05:46 +0000
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Wei Xu <xuwei5@hisilicon.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 0/2] Ensure that HiKey 970 won't hang during boot time
+Date:   Tue, 16 Nov 2021 12:05:42 +0000
+Message-Id: <cover.1637064075.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+During HiKey 970 boot, hundreds of clock lines are disabled, causing the device to
+hang.
 
-kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
-liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
+There are actually two issues here:
 
-Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
-re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
+1. The clk core doesn't wait enough time for the device drivers to be probed
+    before agressively disabling "unused" clocks. This was noticed at the
+    drivers built as modules;
+2. Several HiKey 970 gates are essencial for the device to work, but they're
+    not marked as such.
 
-Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
-niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
+The first patch fixes the clk core issue, while second one marks the mandatory
+clocks as such.
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani?
+Mauro Carvalho Chehab (2):
+  clk: wait for extra time before disabling unused clocks
+  clk: clk-hi3670: mark some clocks as CLK_IS_CRITICAL
 
-Pozdrawiam,
-Dorian Kwiatkowski
+ drivers/clk/clk.c                  | 51 +++++++++++++++++++-----------
+ drivers/clk/hisilicon/clk-hi3670.c | 24 +++++++-------
+ 2 files changed, 44 insertions(+), 31 deletions(-)
+
+-- 
+2.33.1
+
+
