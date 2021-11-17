@@ -2,109 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FED1C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 13:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EBDC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 14:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1497161B3A
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 13:32:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A9861C12
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 14:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237617AbhKQNfK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Nov 2021 08:35:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43340 "EHLO
+        id S233137AbhKQOom (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Nov 2021 09:44:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232814AbhKQNfK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Nov 2021 08:35:10 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA079C061764;
-        Wed, 17 Nov 2021 05:32:11 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id 8so2591326qtx.5;
-        Wed, 17 Nov 2021 05:32:11 -0800 (PST)
+        with ESMTP id S233131AbhKQOom (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Nov 2021 09:44:42 -0500
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BDFC061570;
+        Wed, 17 Nov 2021 06:41:43 -0800 (PST)
+Received: by mail-vk1-xa29.google.com with SMTP id d130so1827294vke.0;
+        Wed, 17 Nov 2021 06:41:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a+vy1Tb9YFr84RmlB3AJ4vwvLVwlNlrB/1q9IGAyrEA=;
-        b=bNKY+gtDtzIiwz4L+cuAGf8u8aVmbbjT7Sb7NbSQLx2yzKqQ5Qsg3Yn58cC6w4S9Lt
-         pnJfoODf5gDYmY+BPpmKBqjMVtBM+XTkoB8quIBe7Y1HKiFRADjAcL9FrULXYqkgkuJU
-         pMJ9AhiJO7TJZrbSbbIQigCZhIB1gvhKvDMn2F3dVwVlcHVAQURQQ0dbInJTNV2vHe+/
-         wyRYJOHHqUKYzFZZMEXb+DdWYIqf3ao+aBIF21LNQw+eym4SAetlt9IgT3kpqZd2nVrN
-         ZCYLJ00jRXSaAcsrw5Tx+sBeGzYhGSpd+NBPKIRgca8O2hr7ju+0zBz1PXQdZcNVVEYC
-         waPw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aQX8G7rKHKZpQg48Q5MVfIqJ7w7XTW5bUNjp+OA8epI=;
+        b=pMaVYoNziyx91tIqKDpmfA1rvzysvj9AE6tuddjG6iKNtXx/lW/n36v+UGgHq5vKUt
+         SS8Il5Gv7NvjuRu1MASBDQDJdQX2EV9P307lFq0fyps9KKWU102O97l8c4DLGfA8oNUb
+         m4PG8RN0EisgBYWCKsI6DNGDtgOUn9+1P6R/HH8nIQvVsu2P6idJ01WZ5Gn9EJCLKG0F
+         TBuYlVegMOZNRrrMYmTlw5Xjm8Uwmod7tZUlqqPVcqXbwnxlP59VrE14oa/6EdS3Rhd9
+         Br0ibo8pZHVIteHwZyEa2hIAYAtlfXHwbKZFadnVYZb7QmAdqg0674oJh79grhCYNAip
+         cWmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=a+vy1Tb9YFr84RmlB3AJ4vwvLVwlNlrB/1q9IGAyrEA=;
-        b=2C3bLcI6/B479N4yQ+kYxu7dPU4i52s8fSkL5aSa2W0mPBuMv9ugiaA6LoSiSCn0F0
-         mRsMJAr7yOVwpNDYV/OTMOH5008SwWEBYLjAWWxT9YrI/0hEw9zuvkCVWBKfTR0ySXet
-         uWcl3aAiwn6GLZHjuIyAsTLTZ2+S8dtXyuI7IVOl9ThbQOtETEsUXqQHRtfbYyXUBDYN
-         evzWTh9IkMg0VI0d/wWGZQ+SSPoBy4RhGnricDSTyf+JIiqWzsNnQB0pXb6VFbkElVnJ
-         j4MB+1FPvzSjeCuzZpucG6ofx15gIG0Kr+o926u9XxvIoYr6HjTlk2IHGrxLwxGNKSJv
-         mOpw==
-X-Gm-Message-State: AOAM531VwrtiE/Ehn0V2xXHEHkgUJA8X5k20tizXXBF+mql5o9aYRVyM
-        wRCOViZhNWhyb4/xzFPjni1Ndn41jHg=
-X-Google-Smtp-Source: ABdhPJzUmLkAvzGauT7l1Ljxu5j6zNhu+o2GrshVf+Wwb4j6G3O76fuJF/hDci4B4df6Ke44BxeSCA==
-X-Received: by 2002:ac8:59c5:: with SMTP id f5mr16956841qtf.135.1637155930158;
-        Wed, 17 Nov 2021 05:32:10 -0800 (PST)
-Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
-        by smtp.gmail.com with ESMTPSA id v5sm10411448qtc.60.2021.11.17.05.32.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Nov 2021 05:32:09 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, cstevens@beaconembedded.com,
-        Adam Ford <aford173@gmail.com>, Abel Vesa <abel.vesa@nxp.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aQX8G7rKHKZpQg48Q5MVfIqJ7w7XTW5bUNjp+OA8epI=;
+        b=gkgNUVid97V7lyzpm7cbkjgOXZqY6wZa0anrRE2YL0UEP/YFNGeXUptveOYYLCtZsZ
+         1S6nmjwqhpEf8a95KXpyeU4DXbWzgnRPRnD4eFUDIKUBAKMileMtKitlykW89pnzlh4i
+         P71Gnp5JGHZhjODxzihaytl7Ok/QkX+TOfmd8uq6T3QlsGQRNUDQJypQtpVYjUxFD95I
+         weaPqnoja7qrC/ZegjB9L1l59sm/7mZbK6MIBXC1UNrt3tl8mhEtko11jihgaY11rhV9
+         sZNPXp1YQOx8JSzEaiooA5RGDnyn7qLWqUKthmEETd8uezU71fvPyiC+rMhh1p/mUt3T
+         8tqA==
+X-Gm-Message-State: AOAM5330IyK5SYo326cLuSUVv0ydNZbLclY/xzuO5tGCEcnS/NpM7nEv
+        4QMW1rOTe2n6Elaa8EhyWjXi42wmIuVESqMx+GQ=
+X-Google-Smtp-Source: ABdhPJwkgwfg9vWaWtU0OosC5rdhZC3+RSAz0/4plgC3o++3h8wcVw0CbJO3vSK9W9mlwjRknryDJMg2DiycQX81KdA=
+X-Received: by 2002:a1f:9158:: with SMTP id t85mr89356241vkd.8.1637160102615;
+ Wed, 17 Nov 2021 06:41:42 -0800 (PST)
+MIME-Version: 1.0
+References: <20211117133202.775633-1-aford173@gmail.com>
+In-Reply-To: <20211117133202.775633-1-aford173@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 17 Nov 2021 11:41:32 -0300
+Message-ID: <CAOMZO5DbzD7FBDcPN63oZzc4usVN0ZbOPe8nbUj_BuSwdozTsA@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx8mn: Fix imx8mn_clko1_sels
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        cstevens@beaconembedded.com, Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Anson Huang <Anson.Huang@nxp.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: imx8mn: Fix imx8mn_clko1_sels
-Date:   Wed, 17 Nov 2021 07:32:02 -0600
-Message-Id: <20211117133202.775633-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When attempting to use sys_pll1_80m as the parent for clko1, the
-system hangs.  This is due to the fact that the source select
-for sys_pll1_80m was incorrectly pointing to m7_alt_pll_clk, which
-doesn't yet exist.
+On Wed, Nov 17, 2021 at 10:32 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> When attempting to use sys_pll1_80m as the parent for clko1, the
+> system hangs.  This is due to the fact that the source select
+> for sys_pll1_80m was incorrectly pointing to m7_alt_pll_clk, which
+> doesn't yet exist.
+>
+> According to Rev 3 of the TRM, The imx8mn_clko1_sels also incorrectly
+> references an osc_27m which does not exist, nor does an entry for
+> source select bits 010b.  Fix both by inserting a dummy clock into
+> the missing space in the table and renaming the incorrectly name clock
+> with dummy.
+>
+> Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-According to Rev 3 of the TRM, The imx8mn_clko1_sels also incorrectly
-references an osc_27m which does not exist, nor does an entry for
-source select bits 010b.  Fix both by inserting a dummy clock into
-the missing space in the table and renaming the incorrectly name clock
-with dummy.
-
-Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
-Signed-off-by: Adam Ford <aford173@gmail.com>
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index c55577604e16..021355a24708 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -277,9 +277,9 @@ static const char * const imx8mn_pdm_sels[] = {"osc_24m", "sys_pll2_100m", "audi
- 
- static const char * const imx8mn_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
- 
--static const char * const imx8mn_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m",
--						 "sys_pll1_200m", "audio_pll2_out", "vpu_pll",
--						 "sys_pll1_80m", };
-+static const char * const imx8mn_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "dummy",
-+						 "sys_pll1_200m", "audio_pll2_out", "sys_pll2_500m",
-+						 "dummy", "sys_pll1_80m", };
- static const char * const imx8mn_clko2_sels[] = {"osc_24m", "sys_pll2_200m", "sys_pll1_400m",
- 						 "sys_pll2_166m", "sys_pll3_out", "audio_pll1_out",
- 						 "video_pll1_out", "osc_32k", };
--- 
-2.32.0
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
