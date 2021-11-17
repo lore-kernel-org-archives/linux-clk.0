@@ -2,90 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EBDC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 14:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231C7C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 16:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72A9861C12
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 14:41:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04FC161BFB
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Nov 2021 16:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233137AbhKQOom (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Nov 2021 09:44:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59914 "EHLO
+        id S238937AbhKQQW4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Nov 2021 11:22:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233131AbhKQOom (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Nov 2021 09:44:42 -0500
-Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76BDFC061570;
-        Wed, 17 Nov 2021 06:41:43 -0800 (PST)
-Received: by mail-vk1-xa29.google.com with SMTP id d130so1827294vke.0;
-        Wed, 17 Nov 2021 06:41:43 -0800 (PST)
+        with ESMTP id S231442AbhKQQWz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Nov 2021 11:22:55 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44785C061570;
+        Wed, 17 Nov 2021 08:19:56 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id bu18so11337375lfb.0;
+        Wed, 17 Nov 2021 08:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aQX8G7rKHKZpQg48Q5MVfIqJ7w7XTW5bUNjp+OA8epI=;
-        b=pMaVYoNziyx91tIqKDpmfA1rvzysvj9AE6tuddjG6iKNtXx/lW/n36v+UGgHq5vKUt
-         SS8Il5Gv7NvjuRu1MASBDQDJdQX2EV9P307lFq0fyps9KKWU102O97l8c4DLGfA8oNUb
-         m4PG8RN0EisgBYWCKsI6DNGDtgOUn9+1P6R/HH8nIQvVsu2P6idJ01WZ5Gn9EJCLKG0F
-         TBuYlVegMOZNRrrMYmTlw5Xjm8Uwmod7tZUlqqPVcqXbwnxlP59VrE14oa/6EdS3Rhd9
-         Br0ibo8pZHVIteHwZyEa2hIAYAtlfXHwbKZFadnVYZb7QmAdqg0674oJh79grhCYNAip
-         cWmg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=slbKKxQ/rurVnSEI57eisp+SX8JJlPjNvxx5V40UNkE=;
+        b=LPsSelLRXOQ7hXG/tGo1OT5PsrkKtigvlerFF01UNiGw0JbdtWtE7K/cRew90F6eIX
+         6dgo8N8lCplnzkxHPN8XOh3nzbfLlAlsucENgGpvIu4f5tOCEZ2CwdJj91kOTRiYFmT+
+         4hkT/UqDSayWKkllMAjcfAhQqCdMdVQItwOdIXOSZcrUYAFIQ4NYJyDr2Mw8dQamhJVJ
+         51S3H5wZT7aAP2mpukvg2mtyHnSc+cPvVZzdFYXzRwpXeDxGOvB0xGVWlRCHls1e6FgT
+         CIiLVIkBvpw4Nvvjfqa1IexQaqXU3RChbVEV+Z3nGjCm+u3nlYHqo3Rl+pNkoKzS8BWB
+         22tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aQX8G7rKHKZpQg48Q5MVfIqJ7w7XTW5bUNjp+OA8epI=;
-        b=gkgNUVid97V7lyzpm7cbkjgOXZqY6wZa0anrRE2YL0UEP/YFNGeXUptveOYYLCtZsZ
-         1S6nmjwqhpEf8a95KXpyeU4DXbWzgnRPRnD4eFUDIKUBAKMileMtKitlykW89pnzlh4i
-         P71Gnp5JGHZhjODxzihaytl7Ok/QkX+TOfmd8uq6T3QlsGQRNUDQJypQtpVYjUxFD95I
-         weaPqnoja7qrC/ZegjB9L1l59sm/7mZbK6MIBXC1UNrt3tl8mhEtko11jihgaY11rhV9
-         sZNPXp1YQOx8JSzEaiooA5RGDnyn7qLWqUKthmEETd8uezU71fvPyiC+rMhh1p/mUt3T
-         8tqA==
-X-Gm-Message-State: AOAM5330IyK5SYo326cLuSUVv0ydNZbLclY/xzuO5tGCEcnS/NpM7nEv
-        4QMW1rOTe2n6Elaa8EhyWjXi42wmIuVESqMx+GQ=
-X-Google-Smtp-Source: ABdhPJwkgwfg9vWaWtU0OosC5rdhZC3+RSAz0/4plgC3o++3h8wcVw0CbJO3vSK9W9mlwjRknryDJMg2DiycQX81KdA=
-X-Received: by 2002:a1f:9158:: with SMTP id t85mr89356241vkd.8.1637160102615;
- Wed, 17 Nov 2021 06:41:42 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=slbKKxQ/rurVnSEI57eisp+SX8JJlPjNvxx5V40UNkE=;
+        b=tgXtcmvEryEGukIS4Fq6PhKRajlkOlsTLYZ3PuClDLOmeaEPIbf1cwcc2b1sNbmF9U
+         i6xEFyemuIiaM6UWNHUEJe5igN0Zvi2cGmRO9gfWdHDs+Qs5wJwXhsuci/ez1C4W2Ney
+         GiuagJpnGD/AkT3l9quTNFNIe2VpGJpGGTE8Gs6wdCOUGabgHX7F24aF27/dKMAprKw1
+         CxvAThXTKdTLLoPsNOko+Qn2RXvl4hfZWwj3Oyzzd1KCcAMEJ+97B+9XfY1G4JyKArTl
+         xYCJngWpXXsSgGykC0xvZ8ssyGQ3J9xwFEG36B4ozmtD1dT0iXFuc9wvr3BbyJCIE+Cu
+         H7xw==
+X-Gm-Message-State: AOAM531516sYc9oqh+eaVP1OFluXEoyY1n2d3XEkURYJoWTk/ZtNmeCr
+        Kg4MxtE6soc3YeGQ2ZYDA0u+NAE1lEM=
+X-Google-Smtp-Source: ABdhPJyfq1oyCehVK/MehD7wcDla30T+6xOUXDqwqeTSENy6xeLdvMcR4ZoYf1tizTWRd8K1lJ7mmw==
+X-Received: by 2002:a2e:7216:: with SMTP id n22mr8926810ljc.44.1637165994488;
+        Wed, 17 Nov 2021 08:19:54 -0800 (PST)
+Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
+        by smtp.googlemail.com with ESMTPSA id m11sm32535ljc.108.2021.11.17.08.19.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Nov 2021 08:19:54 -0800 (PST)
+Subject: Re: [PATCH v1 1/3] media: staging: tegra-vde: Support reference
+ picture marking
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anton Bambura <jenneron@protonmail.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211114222353.22435-1-digetx@gmail.com>
+ <20211114222353.22435-2-digetx@gmail.com>
+ <42b24cd0-ac37-3cfe-1fb2-d6292015318a@gmail.com>
+ <20211115124402.GE26989@kadam>
+ <e4b9d596-d206-71d1-6ec5-1a41af579836@gmail.com>
+ <20211115154858.GG27562@kadam>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <89166c20-6b05-ed4b-ed45-451f4f1e10bc@gmail.com>
+Date:   Wed, 17 Nov 2021 19:19:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20211117133202.775633-1-aford173@gmail.com>
-In-Reply-To: <20211117133202.775633-1-aford173@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 17 Nov 2021 11:41:32 -0300
-Message-ID: <CAOMZO5DbzD7FBDcPN63oZzc4usVN0ZbOPe8nbUj_BuSwdozTsA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8mn: Fix imx8mn_clko1_sels
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        cstevens@beaconembedded.com, Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211115154858.GG27562@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 17, 2021 at 10:32 AM Adam Ford <aford173@gmail.com> wrote:
->
-> When attempting to use sys_pll1_80m as the parent for clko1, the
-> system hangs.  This is due to the fact that the source select
-> for sys_pll1_80m was incorrectly pointing to m7_alt_pll_clk, which
-> doesn't yet exist.
->
-> According to Rev 3 of the TRM, The imx8mn_clko1_sels also incorrectly
-> references an osc_27m which does not exist, nor does an entry for
-> source select bits 010b.  Fix both by inserting a dummy clock into
-> the missing space in the table and renaming the incorrectly name clock
-> with dummy.
->
-> Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+15.11.2021 18:48, Dan Carpenter пишет:
+> On Mon, Nov 15, 2021 at 05:34:47PM +0300, Dmitry Osipenko wrote:
+>> 15.11.2021 15:44, Dan Carpenter пишет:
+>>> On Mon, Nov 15, 2021 at 01:34:18AM +0300, Dmitry Osipenko wrote:
+>>>> 15.11.2021 01:23, Dmitry Osipenko пишет:
+>>>>> +	vde->secure_bo = tegra_vde_alloc_bo(vde, DMA_FROM_DEVICE, 4096);
+>>>>> +	if (!vde->secure_bo) {
+>>>>> +		dev_err(dev, "Failed to allocate secure BO\n");
+>>>>> +		goto err_pm_runtime;
+>>>>> +	}
+>>>>
+>>>> My eye just caught that by accident err variable isn't assigned to
+>>>> -ENOMEM here. I'll make v2 shortly.
+>>>
+>>> Smatch has a check for this so we would have caught it.  :)
+>>
+>> Whish smatch was built-in into kernel and I could simply run "make
+>> smatch". On the other hand, I know that you're periodically checking
+>> upstream with smatch and patching the found bugs, so maybe it's fine
+>> as-is.
+> 
+> I run it every day, and it's integrated into the zero day bot and Mauro
+> runs it.  So someone would have caught it.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Very nice, I haven't noticed that 0-day runs smatch. I assume the smatch
+reports from the bots are private to you and Mauro since I never saw
+them in my inbox and on LKML, correct?
