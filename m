@@ -2,114 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A6CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 13:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A521FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 15:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58EC361A8C
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 13:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 856E061B39
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 15:25:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231834AbhKRN7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Nov 2021 08:59:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231620AbhKRN7l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Nov 2021 08:59:41 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 469FFC061570;
-        Thu, 18 Nov 2021 05:56:41 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id c32so26512599lfv.4;
-        Thu, 18 Nov 2021 05:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=assU+xqwKMXZXMgvbGwSACpg0iW9I33yDyaJq1bZY78=;
-        b=pwQsB9qgwE9Kf0x0rUv89oWr8bxw8cL/pkheUlX4hKs4P4SkCr0nZr7bOU8/oEi/nr
-         vmk6/SvWfIK7GHAd3J9YkJqp0FpVJ5s2Kd6f89Id573UXmzQKTVm2DW3eHgIWKuRZevx
-         f5ol6GFrfGKQLI1LYEd1uZJVsk2mfd1bXdaKwstEkSUtgPrXZTjg6q1CzSSOezMm4a2H
-         rVWZDgZjVTYYeP2bPeCchXXLMm9FZaXduhG2aC4U3M2qB97jcb73c3r/ZrPJY+varuth
-         Xz2qYNC2rgKJgXScjXJKHicKyKQyaV1Dse0iC2m8y5Lzofq8bo3Ie1m3Eqg6i2cMeDVY
-         pUVQ==
+        id S232123AbhKRP2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Nov 2021 10:28:55 -0500
+Received: from mail-vk1-f180.google.com ([209.85.221.180]:45579 "EHLO
+        mail-vk1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230376AbhKRP2z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Nov 2021 10:28:55 -0500
+Received: by mail-vk1-f180.google.com with SMTP id m19so3999009vko.12;
+        Thu, 18 Nov 2021 07:25:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=assU+xqwKMXZXMgvbGwSACpg0iW9I33yDyaJq1bZY78=;
-        b=EhA8wMo5aZzJhdY1GW6nYk5cNDJHp1PGZPeVdVwnULJjoY5FwPrT+FZkihfFTntokn
-         9hXrQZQ+mVVTHejEIjMlvavw5qOy/F9x3/00sll2axTKlp3MDg5srS/y9r+pvHJpzJqI
-         bF3/yzWIP/w8zcdOPwXrWUTHGy0K1Z0x+3NP9AmC03Nyva0lmFyEh0ZcJaheAH5Ux7PG
-         3/fTJheu+zYnwpY5ULwWruSdGwyAkLBXnXPsnWpX90K4+cksJ1TVW+zlFG1rWMhIHWTa
-         pK10lw8bCbTX4p9xhOU/JW9cU7fLaHPAf3vUmZSyHSjEz2d46bCsbEgpL9fK05ijPccu
-         Yljw==
-X-Gm-Message-State: AOAM530zOaZ+zfcDhqeVTM7ErotGWQKnyW0eF79HzsuayglmCLB4IeLQ
-        fr6OJiebbSg57mugUIiqfA5CHDF82Jw=
-X-Google-Smtp-Source: ABdhPJzywHzBvK2iQnHk9cczmUuenULBkbRAoPkANXhZngz0wNRgO0dK0BdZadLlCL1uZiAffCgFFQ==
-X-Received: by 2002:a05:6512:3406:: with SMTP id i6mr24720320lfr.262.1637243799281;
-        Thu, 18 Nov 2021 05:56:39 -0800 (PST)
-Received: from [192.168.2.145] (94-29-48-99.dynamic.spd-mgts.ru. [94.29.48.99])
-        by smtp.googlemail.com with ESMTPSA id z1sm323667lfu.222.2021.11.18.05.56.38
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l75YBvaIKIqMqRd0fPmOyxtiZBsumc8q9gz1NkIt1Os=;
+        b=zmBlb8RiIvXVZs0/HRSajIyAL9eQ0lqYKFPYwoGLjOaVp/X9QAI99bQHP9rkW8Nonw
+         fcl1xcvT5M0a7sn8sVtLaQ05g9q2FF8b05yl0xGIKtVfFngdDeQdL9GdPG4mIGq+M4+m
+         6XREFcqV91Tz+Okxfw5krRP1zVYOSCzdjfiD9xcJZoFtkKfRfe2YvtqUCgfpc5sriAGI
+         RdUhk962sQ9SSXKHg/krx6M7X59aFY6mCfITQJVazdiyG+J408vLT+TP6TI0Pt/FeMFC
+         ML9RAJnkoOXZqP/cMrgdCW36cfNCHuKTNx9SUQ75BxZ956ioFxFKqPwvwl+IGs9kvfh1
+         3vcQ==
+X-Gm-Message-State: AOAM532VfHTHyGUGM2++e8JhB6VRJDY8WvAnN4NAfKjEZtgFNS8nsYmQ
+        OjgPhAL4Edrb+VnRqW4PZBIwUJaippNzJQ==
+X-Google-Smtp-Source: ABdhPJwPINizTvpshG6X52QT8E8P79GrAmIz20sbfN05UjqYivYKBpMiDkqYDdfLytK3SGlvQ6nanA==
+X-Received: by 2002:a1f:f24f:: with SMTP id q76mr104864791vkh.11.1637249153981;
+        Thu, 18 Nov 2021 07:25:53 -0800 (PST)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id f21sm45253vke.39.2021.11.18.07.25.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Nov 2021 05:56:38 -0800 (PST)
-Subject: Re: [PATCH v1 1/3] media: staging: tegra-vde: Support reference
- picture marking
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anton Bambura <jenneron@protonmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211114222353.22435-1-digetx@gmail.com>
- <20211114222353.22435-2-digetx@gmail.com>
- <42b24cd0-ac37-3cfe-1fb2-d6292015318a@gmail.com>
- <20211115124402.GE26989@kadam>
- <e4b9d596-d206-71d1-6ec5-1a41af579836@gmail.com>
- <20211115154858.GG27562@kadam>
- <89166c20-6b05-ed4b-ed45-451f4f1e10bc@gmail.com>
- <20211118061418.GO26989@kadam>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a7238d27-6f9a-58ac-1acd-44fa6ea0727d@gmail.com>
-Date:   Thu, 18 Nov 2021 16:56:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Thu, 18 Nov 2021 07:25:53 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id y5so14436512ual.7;
+        Thu, 18 Nov 2021 07:25:53 -0800 (PST)
+X-Received: by 2002:a67:af0a:: with SMTP id v10mr82716792vsl.35.1637249153248;
+ Thu, 18 Nov 2021 07:25:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20211118061418.GO26989@kadam>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211117115101.28281-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20211117115101.28281-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20211117115101.28281-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 18 Nov 2021 16:25:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUhT64AixfTunxcu0T8xmP8sKH-k=f_w9T6pQDRBSPP0A@mail.gmail.com>
+Message-ID: <CAMuHMdUhT64AixfTunxcu0T8xmP8sKH-k=f_w9T6pQDRBSPP0A@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzg2l: Check return value of pm_genpd_init()
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jiri Kosina <trivial@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.11.2021 09:14, Dan Carpenter пишет:
-> It's not hard to run Smatch yourself...
-> 
-> Depending on if you're on a apt distro or yum distro then fetch the
-> dependencies with one of the follow commands:
-> apt-get install gcc make sqlite3 libsqlite3-dev libdbd-sqlite3-perl libssl-dev libtry-tiny-perl
-> yum install gcc make sqlite3 sqlite-devel sqlite perl-DBD-SQLite openssl-devel perl-Try-Tiny
-> 
-> git clone https://github.com/error27/smatch
-> cd smatch
-> make
-> cd ~/kernel_source/
-> ~/smatch/smatch_scripts/kchecker drivers/subsystem/
+On Wed, Nov 17, 2021 at 12:51 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Make sure we check the return value of pm_genpd_init() which might fail.
+> Also add a devres action to remove the power-domain in-case the probe
+> callback fails further down in the code flow.
+>
+> Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks, I was running Smatch couple times in the past. Finding how to
-run Smatch isn't the problem, the thing is that Smatch either isn't
-packaged by distros or packaged version is outdated, hence there is a
-need to maintain it by yourself.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Also, is it guaranteed that Smatch will always work properly with
-linux-next?
+Gr{oetje,eeting}s,
 
-I imagine more developers could start to engage in using Smatch if
-kernel supported 'make smatch' command which would automate the process
-of fetching, building and running Smatch.
+                        Geert
 
-Couldn't the "kernel" version of Smatch reside in the kernel's tools/?
-Or maybe just the parts of Smatch that are necessary for kernel
-checking, like kernel's DB/scripts and etc. Doesn't it make sense?
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
