@@ -2,116 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3A7C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 17:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC22EC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 19:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DBA861AA2
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 17:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C50D561353
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Nov 2021 19:55:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbhKRRte (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Nov 2021 12:49:34 -0500
-Received: from mail-vk1-f170.google.com ([209.85.221.170]:33335 "EHLO
-        mail-vk1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231787AbhKRRtd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Nov 2021 12:49:33 -0500
-Received: by mail-vk1-f170.google.com with SMTP id d130so4329868vke.0;
-        Thu, 18 Nov 2021 09:46:33 -0800 (PST)
+        id S233487AbhKRT6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Nov 2021 14:58:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233175AbhKRT6n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Nov 2021 14:58:43 -0500
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529D6C061748
+        for <linux-clk@vger.kernel.org>; Thu, 18 Nov 2021 11:55:43 -0800 (PST)
+Received: by mail-ua1-x934.google.com with SMTP id p2so16244587uad.11
+        for <linux-clk@vger.kernel.org>; Thu, 18 Nov 2021 11:55:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SSd0Cyuv9cBODmrFRgSe8o1nIwm4sr0eWjwIoBSPHXk=;
+        b=UX5927ShpKzjRcmzPgd3fgzWkbVY15csEPbZfVFBxK2meRkhSSSd31OQQNPuxyP+9h
+         naNuw606mUpB7J3afr6Mhbc1xEGznUtN9nA08LFrwBGTO6NP8r7cZ5dnpYRNPOzkMaKs
+         nkPAHtyCMekP3Y8aFPmRcy0guFRBpdbzBNWGVPRRzGTrzEkw5GNMNzUh8e3dN9F+5EHh
+         VCKLfUtSceYkGtwxiT0QHSvCp0hCEHgKG1a3XhqQgSXBRpH7ubwniI/JW8tun4oT1E5Y
+         yO89lEuJm2ZVT5xdul3rI2XPG6KIIPQhZTgIqqqhy3b6KngxbDyPuVzBBGrgl6AfL+2A
+         ki1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p1lPpkXFSgUv7yrQilxvI2d8ridWrFbToRTwtg1A234=;
-        b=4Cp+8WTNDFQK854045gAs2dBzGiikD4qxR5W+xLiVdv8bFrrjvgCOPbFG/XDAN2yX+
-         0PgxMi4f6LDtpdOJBxplfJXuclbAVpM4z5Fez/pXSNluaHcuaBySb8H/JHwQTnTFmqh3
-         rmiAU9iz131d5yilLWoMH9tizrW7H8BzI9xxtHteJkfCUnYpvJ0a6aYu9SZwI5fopBnc
-         QSITHZnIRXNUeEWwOWldyb84HAo4+F4B/k6lpGrV18yNdH+jiWVkY9c/kZdHhXW55cMT
-         DV3QbFTyZcPBPSZue2FbF0YsQKUDN18XiKPgFHAlXzcP+pBEx+P4JXGdJbI7az29xLSi
-         VSwQ==
-X-Gm-Message-State: AOAM530ElEKfJWbtVrza+r6Upp1t9xZgM6un5vPGHTRqhnwQBLcEtOJF
-        Zcc+xiab3F3qLFUVTP0dwEmUkuHncO9u5w==
-X-Google-Smtp-Source: ABdhPJyR0rYmEt3aqmCLH/DU2iquiCkP8LILND/1rdOWYpEHRJmDbyc26FIHqwrkTOijIuuDYsNDSg==
-X-Received: by 2002:a05:6122:da7:: with SMTP id bc39mr105262623vkb.22.1637257592606;
-        Thu, 18 Nov 2021 09:46:32 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id h24sm258036uab.5.2021.11.18.09.46.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Nov 2021 09:46:32 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id p37so15430778uae.8;
-        Thu, 18 Nov 2021 09:46:32 -0800 (PST)
-X-Received: by 2002:ab0:5552:: with SMTP id u18mr38074036uaa.78.1637257591918;
- Thu, 18 Nov 2021 09:46:31 -0800 (PST)
+        bh=SSd0Cyuv9cBODmrFRgSe8o1nIwm4sr0eWjwIoBSPHXk=;
+        b=MuF8AWQNn/r1khBsE0uzFqsmkWo13oDHuNJRzUX9XQs/50uZWBNLeR+scmMIGhBYcZ
+         mo1pUzTdWGkmcwJD6Utm5IvEw8bp3dIq9DnLOZRGnf2rsvictMK+6lzMsxcCCRwCTyIX
+         o3Yvy2JvXM31E+6ih/0e/oJEpIVeRzjXqDxx4L9+e8c5KVnUk1nvAqfnEv5AVTrRO2V1
+         TLqLmwLMYFGO581mp0BKdDol8Wlxy8ssuAeZO+J+qgx9sQiu3THY8JMVRF9gjTuxeBXf
+         Nh4AZ/W2PXqBXL9OlRs5gtheb4WGM6HGfUHFUFtrTkX6k058IYDuiBeSu81hu3jU5Cl4
+         Y9UA==
+X-Gm-Message-State: AOAM533Y54BDSw5QIhssgAuQu88kCcnJIIWTDo5Purjv2SDLOM+20jSC
+        TmxbnUWEE7TiGAc8pvQOkmkhbxZ4iuc14QenXkHFPw==
+X-Google-Smtp-Source: ABdhPJza1OFpR9DqJC5nA8lGb/hAIiBNmJcgpCYVHmRO/QWzHosbmHDHX32aMabXVmkISVpvhcg0aigUuqaZ0tjo0Hs=
+X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr85905750vsb.35.1637265342337;
+ Thu, 18 Nov 2021 11:55:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20211117115101.28281-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20211117115101.28281-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUi_Aj6JQ5n31R3DROUMG8F+032+L43AMmkiBwB_TQhWw@mail.gmail.com> <a427dace-171d-3cf7-ece6-ea7b15d586d0@omp.ru>
-In-Reply-To: <a427dace-171d-3cf7-ece6-ea7b15d586d0@omp.ru>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 18 Nov 2021 18:46:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUpu2yA1OYuWmzagXChdcT_B6yb8mmSutY4SNAGin-nDQ@mail.gmail.com>
-Message-ID: <CAMuHMdUpu2yA1OYuWmzagXChdcT_B6yb8mmSutY4SNAGin-nDQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: renesas: cpg-mssr: Check return value of pm_genpd_init()
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
+References: <20211109164436.11098-1-semen.protsenko@linaro.org>
+In-Reply-To: <20211109164436.11098-1-semen.protsenko@linaro.org>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Thu, 18 Nov 2021 21:55:30 +0200
+Message-ID: <CAPLW+4nphz7WEVAFye4tZNsYC3XqVGNCpVACCF6UAKXoUFthJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: samsung: exynos850: Implement CMU_CMGP
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Sumit Semwal <sumit.semwal@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sergey,
-
-On Thu, Nov 18, 2021 at 6:44 PM Sergey Shtylyov <s.shtylyov@omp.ru> wrote:
-> On 11/18/21 6:29 PM, Geert Uytterhoeven wrote:
+On Tue, 9 Nov 2021 at 18:44, Sam Protsenko <semen.protsenko@linaro.org> wrote:
 >
-> [...]
-> >> Make sure we check the return value of pm_genpd_init() which might fail.
-> >> Also add a devres action to remove the power-domain in-case the probe
-> >> callback fails further down in the code flow.
-> >>
-> >> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-clk-for-v5.17.
-> >
-> >> @@ -574,7 +580,13 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
-> >>                        GENPD_FLAG_ACTIVE_WAKEUP;
-> >>         genpd->attach_dev = cpg_mssr_attach_dev;
-> >>         genpd->detach_dev = cpg_mssr_detach_dev;
-> >> -       pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-> >> +       ret = pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +       ret = devm_add_action_or_reset(dev, cpg_mssr_genpd_remove, genpd);
-> >
-> > Will insert a blank line here.
+> This series adds CMU_CMGP clock domain to Exynos850 clock driver. In
+> particular it needs to enable HSI2C (High-Speed I2C) nodes. This series
+> depends on CMU_APM series [1].
 >
->    You mean after *return*? Else I don't think we need an empty line. :-)
-
-Meh, fortunately I'm better at making the actual code change ;-)
-
+> Tested via /sys/kernel/debug/clk/clk_summary:
 >
-> >
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >>         cpg_mssr_clk_domain = pd;
-> >>
-> >>         of_genpd_add_provider_simple(np, genpd);
+> <<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>                                  enable  prepare  protect
+>    clock                          count    count    count        rate
+> ---------------------------------------------------------------------
+>
+> clk_rco_cmgp                         0        0        0    49152000
+> oscclk                               1        1        0    26000000
+>     mout_cmgp_adc                    0        0        0    26000000
+> ...
+>     gout_clkcmu_cmgp_bus             1        1        0   399750000
+>        gout_cmgp_usi1_pclk           0        0        0   399750000
+>        gout_cmgp_usi0_pclk           0        0        0   399750000
+>        gout_gpio_cmgp_pclk           0        0        0   399750000
+>        dout_cmgp_adc                 0        0        0    28553572
+>        mout_cmgp_usi1                0        0        0   399750000
+>           dout_cmgp_usi1             0        0        0   199875000
+>              gout_cmgp_usi1_ipclk    0        0        0   199875000
+>        mout_cmgp_usi0                0        0        0   399750000
+>           dout_cmgp_usi0             0        0        0   199875000
+>              gout_cmgp_usi0_ipclk    0        0        0   199875000
+> <<<<<<<<<<<<<<<<<<<<<<<<<<<< cut here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>
+> [1] https://lkml.org/lkml/2021/10/22/979
+>
+> Sam Protsenko (2):
+>   dt-bindings: clock: samsung: Document Exynos850 CMU_CMGP
+>   clk: samsung: exynos850: Implement CMU_CMGP domain
+>
+>  .../clock/samsung,exynos850-clock.yaml        |  19 ++++
+>  drivers/clk/samsung/clk-exynos850.c           | 100 ++++++++++++++++++
+>  include/dt-bindings/clock/exynos850.h         |  17 +++
+>  3 files changed, 136 insertions(+)
+>
+> --
 
-Gr{oetje,eeting}s,
+Hi Sylwester,
 
-                        Geert
+Can you please review my patches I've submitted recently? Those are:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  - [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_APM
+  - [PATCH 2/2] clk: samsung: exynos850: Implement CMU_APM domain
+  - [PATCH 1/1] clk: samsung: exynos850: Register clocks early
+  - [PATCH 0/2] clk: samsung: exynos850: Implement CMU_CMGP
+  - [PATCH 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_CMGP
+  - [PATCH 2/2] clk: samsung: exynos850: Implement CMU_CMGP domain
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+My further series (like device tree patches for new dev board support)
+depend on the status of above patches. So it'd great if those can be
+reviewed and applied if it's feasible.
+
+Thanks!
+
+> 2.30.2
+>
