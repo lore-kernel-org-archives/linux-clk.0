@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E0DC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Nov 2021 06:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC12C43219
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Nov 2021 06:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4700B61A6C
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Nov 2021 06:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B1E361A6C
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Nov 2021 06:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233144AbhKSGO5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Nov 2021 01:14:57 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:15185 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbhKSGO5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Nov 2021 01:14:57 -0500
+        id S233539AbhKSGPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Nov 2021 01:15:05 -0500
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:24075 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233225AbhKSGO7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Nov 2021 01:14:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1637302316; x=1668838316;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yLibkCwwOUozNYKaIqem4036qsuB24KpYkk7La8iVcw=;
-  b=gFTFh2Fzu08BjgnLNISikjqYI8K+YN9HXZfTaAKUFHqoMYPk6be0wBvN
-   cICOPcMiNUKTXQvmOqpLqJSFdDRoLmj4f8TMfpxG7FV6Q2hGrlnucnqI8
-   pnBGHjpwKw8kUgBkdhihylleZUFRd8lkPT2i1jXvSR0/Qfka+hEwkoDoY
-   4=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 18 Nov 2021 22:11:55 -0800
+  t=1637302318; x=1668838318;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hoO0q3ATVpGGZ1434HlNAZKnycCcIbY6l6L181yYYRU=;
+  b=b0h2XtzmUFXLxdi6KvdXOmu01V1V21tigsIOy/MIM8YniTuyyp9wKwq+
+   vWPcREgdH+GiXxnT8n+15B2Te+l4nfAsgFhgkHApEAf2EO+0h6VeO1Bs2
+   4JBS03RTcTspNEOBS90cluQpCqs6EYeY9zrt6IIxOxWG0thAuLN0EMfVW
+   M=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 18 Nov 2021 22:11:58 -0800
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2021 22:11:53 -0800
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2021 22:11:57 -0800
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Thu, 18 Nov 2021 22:11:52 -0800
+ 15.2.922.19; Thu, 18 Nov 2021 22:11:57 -0800
 Received: from hu-vamslank-sd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Thu, 18 Nov 2021 22:11:52 -0800
+ 15.2.922.19; Thu, 18 Nov 2021 22:11:56 -0800
 From:   <quic_vamslank@quicinc.com>
 To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -44,11 +44,14 @@ To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
 CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <manivannan.sadhasivam@linaro.org>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-Subject: [PATCH v5 0/6] Add Pdc, GCC and RPMh clock support for SDX65 
-Date:   Thu, 18 Nov 2021 22:11:32 -0800
-Message-ID: <cover.1637302009.git.quic_vamslank@quicinc.com>
+        Vamsi krishna Lanka <quic_vamslank@quicinc.com>,
+        Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v5 4/6] dt-bindings: clock: Introduce RPMHCC bindings for SDX65
+Date:   Thu, 18 Nov 2021 22:11:36 -0800
+Message-ID: <f637d562238aaa446ce373f6409e6977d628712e.1637302009.git.quic_vamslank@quicinc.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1637302009.git.quic_vamslank@quicinc.com>
+References: <cover.1637302009.git.quic_vamslank@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -59,56 +62,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
 
-Hello,
+Add compatible for SDX65 RPMHCC.
 
-Changes from v4:
- - Fixed comments from vinod koul on Clock Alpha PLL and GCC driver support patches
- - Addressed Rob's comments related to GCC dt-binding patch  
- - Collected Vinod Koul's Reviewed-by for the dt-bindings patches
+Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes from v3:
- - Fixed DTbindings and unused variables errors reported by kernel test bot
- - Rebased on top of v5.16-rc1
-
-Changes from v2:
- - Addressed Taniya Das and Vinod Koul's comments related to adding LUCID_EVO
-   PLL type and rpmh support patches
- - Collected Rob's Acked-by for the dt-bindings patches
-
-Changes from v1:
- - Addressed Bjorn's comments related to the GCC support patch
- - Collected Bjorn's and Rob's Reviewed-by for the dt-bindings patches
-
-This patch series adds bindings and device driver changes for GCC, pdc and RPMh
-clock support for SDX65 Platform.
-
-Thanks,
-Vamsi
-
-Vamsi Krishna Lanka (3):
-  clk: qcom: Add LUCID_EVO PLL type for SDX65
-  clk: qcom: Add SDX65 GCC support
-  dt-bindings: clock: Introduce pdc bindings for SDX65
-
- .../bindings/clock/qcom,gcc-sdx65.yaml        |   80 +
- .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
- .../interrupt-controller/qcom,pdc.txt         |    1 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-alpha-pll.c              |  204 ++-
- drivers/clk/qcom/clk-alpha-pll.h              |    3 +
- drivers/clk/qcom/clk-rpmh.c                   |   25 +
- drivers/clk/qcom/gcc-sdx65.c                  | 1603 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdx65.h    |  122 ++
- 10 files changed, 2022 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
- create mode 100644 drivers/clk/qcom/gcc-sdx65.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx65.h
-
-
-base-commit: 4c388a8e740d3235a194f330c8ef327deef710f6
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 72212970e6f5..0e7e05e38bb2 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -22,6 +22,7 @@ properties:
+       - qcom,sc8180x-rpmh-clk
+       - qcom,sdm845-rpmh-clk
+       - qcom,sdx55-rpmh-clk
++      - qcom,sdx65-rpmh-clk
+       - qcom,sm6350-rpmh-clk
+       - qcom,sm8150-rpmh-clk
+       - qcom,sm8250-rpmh-clk
 -- 
 2.33.1
 
