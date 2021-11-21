@@ -2,94 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16E6C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Nov 2021 22:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9910EC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Nov 2021 23:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbhKUW6r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Nov 2021 17:58:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36300 "EHLO
+        id S231395AbhKUXWn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Nov 2021 18:22:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbhKUW6r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Nov 2021 17:58:47 -0500
-Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A679DC06173E
-        for <linux-clk@vger.kernel.org>; Sun, 21 Nov 2021 14:55:41 -0800 (PST)
-Received: by mail-ua1-x935.google.com with SMTP id n6so32916807uak.1
-        for <linux-clk@vger.kernel.org>; Sun, 21 Nov 2021 14:55:41 -0800 (PST)
+        with ESMTP id S231224AbhKUXWk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Nov 2021 18:22:40 -0500
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD73C06173E
+        for <linux-clk@vger.kernel.org>; Sun, 21 Nov 2021 15:19:34 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id u18-20020a9d7212000000b00560cb1dc10bso26090140otj.11
+        for <linux-clk@vger.kernel.org>; Sun, 21 Nov 2021 15:19:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=S438G+utz8pjDkvXqx18EM21msuvfiLmqt/53NycU20=;
-        b=zF4VuhMkOvolYehi5B/JWkTO1dRxbjNScex3BHFGl5I82XST22YzhAWj5ykjWWb1Eo
-         X1SmjNqdH/CeStdilN4MB9awVlBKEudQ0oaI4rkKrZEcjDyGoDT+6tlJlzLHrispfEsK
-         qSfaSsn6TIlcsAw6AqEetnZZXf2YxO6GvYphbP4/fLNYRd+HDRPL6IoCdiO50rvHCgCD
-         ErDkX1+6ann6fiQH/lsRxQvPIz99xsbQBb1PRPkfOwsI43WL5vCRcUfpy8lzxm+XbxSH
-         sWaEPZX2Sd8g4EaPYeB42Flkmlm/IQ3A6GFBwQ1T0xJERsfale5p6LuhlPFFPU455Rxo
-         QqUQ==
+        bh=niG4LhykdMe2sCgAWkzlpTzAknhhfhfFKN7/kHVLdb8=;
+        b=wcakSBzJXl9BZALRNXqLiyhsCB+m6PdHwbi8HzqWYQSDqzOUzvEqpnvo21ThgDfiUG
+         YeyUYuOqKliWaPSXP/3LV4nTzhJ67sErjZ9XmD8vEyQ0pDW321Hx2roOzp9DvJ0BEA7J
+         2IWUMeWBcGigOgZN2CdXyeomJHmgrZ/hwlM+gUea3h48Ioa5ZpPo0L3VUny+fxgUQ0ks
+         /ZLvb22GhtsiEvG5gQXnXcMFBm5AfOhDm+50f7dWkr6nQIM/zeugbt4FCtIx6kcdwEIS
+         IWPVkQyjCfhxRQIYm1R2CrQsPeeRMtMsD9QvTBmJ8X3sG9ojs8/p/EM1lQ+VBLpDkc4q
+         TKDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=S438G+utz8pjDkvXqx18EM21msuvfiLmqt/53NycU20=;
-        b=bPxMkOlbMxd3mkQ+iebgsL1Tsr69mha6bV0JuGLoRjSuYRUvDO49Xai44h8vZuutan
-         lVjytXHMSif7uNKFpiOEdxVbaoBVJYE3WZIn/WudNB4/SJ2u7YJwjVFqZaMeKZ2zSUjF
-         Er9EowO4FUkjZ6upQ/hFI93Mn8Ja9TNxjgX3ygOGDFwY0tapwYwKaEwuT8t/NyD1OQAt
-         TSsmCQQd5uCnmpgOpxE0N9hcrFcrLGtffTJR5ocUEU6tfC0cXzYzc4zo8KTuHP9vTUod
-         HpU6HZ+rOi08cYQtcJ89Vt4QJ2qI554N10cu+6Sp8r7d2Kyq2xAtY5xNONs4O1LodZFQ
-         pw6g==
-X-Gm-Message-State: AOAM530XQ0PU/Uxg29208xXkXo0TG4BiWKklxLYbfDHncIIVSzAiVNsV
-        gV4qjFIPgz7l6sLogxDVe2g/+HjkXq7veOtHLTwdzg==
-X-Google-Smtp-Source: ABdhPJwgf46PvVFqRlUS2culzCgQuSh0I0XL196ZF7cYR8TmgHwR+Gs2ynsMw9ktq+ZcHsUQSvUH0wfBjwF/ur2ckbw=
-X-Received: by 2002:a05:6102:4192:: with SMTP id cd18mr123860031vsb.35.1637535340797;
- Sun, 21 Nov 2021 14:55:40 -0800 (PST)
+        bh=niG4LhykdMe2sCgAWkzlpTzAknhhfhfFKN7/kHVLdb8=;
+        b=0ORSdHb5IuQ1hqq/OkHv+LwOLPoDQxnlCxrIMaUeMuBUIrI6z6uiF/L2j/H4OahxTC
+         AdtIPJupbM4YjfA0mQ2AY+YfZLULSy2ScwVWwpHJcwsuRjuFABCDSPg+ofZJuQx+3dew
+         R+wYDGUyqeAIk5v0c28NhEsdPyR0odks1Ttq+Fb3WVr9k1y+3aToAQN7ku64UK7x8grH
+         Y2iNKY/s5xWNwx92xdnramOZmt/UHcfVOz9JCyr3cB9I/UJEAwBLGsLNF0+hsi7Asbxn
+         QWH8RPbgxhA8l3sUutEZ8yN6w1dVskbmC/fr/XwDbb7pIO1gTMJahoJZvhjbbJcGoFKZ
+         BTug==
+X-Gm-Message-State: AOAM530sCHABv5qM5RbQff7gAfttwa4gMTNgB1XAbIwom2eqXHVmmKLG
+        e08bGy8tPbxkUfumJmEojJgVSMsqJOHzSVAAlUkk6Q==
+X-Google-Smtp-Source: ABdhPJyVdtjQUoLHr9GMlVhAVr/1N/sztecCcTj39EJlBe5nSjbyIi50Oo/ofoA+ROJrbzFktx9bDGshBDQgVsRlEgw=
+X-Received: by 2002:a9d:ed6:: with SMTP id 80mr20546619otj.35.1637536773648;
+ Sun, 21 Nov 2021 15:19:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20211022224556.18742-1-semen.protsenko@linaro.org> <YXtVS1YrZqE5kW32@robh.at.kernel.org>
-In-Reply-To: <YXtVS1YrZqE5kW32@robh.at.kernel.org>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 22 Nov 2021 00:55:29 +0200
-Message-ID: <CAPLW+4kgQ8CVS6eNXxwePiATHT41E2EhhAP3AbxgFTCnjyO-VQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: samsung: Document Exynos850 CMU_APM
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+References: <20211102161125.1144023-1-kernel@esmil.dk> <20211102161125.1144023-12-kernel@esmil.dk>
+ <CACRpkdb0CrJ_uTbtfg-xGq8uu0AKoqfAB03mF2CA_G8ys_8Lzg@mail.gmail.com> <CANBLGcwvGptHxP5+JQEQV1Y7G=dNTt86QuVgfUuvQDDBfNrzOA@mail.gmail.com>
+In-Reply-To: <CANBLGcwvGptHxP5+JQEQV1Y7G=dNTt86QuVgfUuvQDDBfNrzOA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 22 Nov 2021 00:19:22 +0100
+Message-ID: <CACRpkdbsP1zibFvg2yL67ndQJ1MxBRmH5j+cZ-giZkmrnGROdw@mail.gmail.com>
+Subject: Re: [PATCH v3 11/16] dt-bindings: pinctrl: Add StarFive JH7100 bindings
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        soc@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 29 Oct 2021 at 04:58, Rob Herring <robh@kernel.org> wrote:
+On Fri, Nov 12, 2021 at 12:04 AM Emil Renner Berthing <kernel@esmil.dk> wrote:
+> On Tue, 9 Nov 2021 at 01:46, Linus Walleij <linus.walleij@linaro.org> wrote:
+
+> > As it appears to have some cross dependencies I assume
+> > it will be merged through the SoC tree?
 >
-> On Sat, 23 Oct 2021 01:45:55 +0300, Sam Protsenko wrote:
-> > CMU_APM generates clocks for APM IP-core (Active Power Management). In
-> > particular it generates RTC clocks, which are needed to enable rtc-s3c
-> > driver on Exynos850 SoC.
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > ---
-> > Changes in v2:
-> >   - Added R-b tag by Krzysztof Kozlowski
-> >   - Added Ack by Chanwoo Choi
-> >
-> >  .../clock/samsung,exynos850-clock.yaml        | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> I don't know. I've never tried this before, so whatever is easiest I
+> guess. Do I do anything special other than cc'ing soc@kernel.org for
+> v4 to make that happen?
 
-This patch series is superseded by:
+You create a pull request with git request-pull and sent it to
+soc@vger.kernel.org and linux-arm-kernel on Cc that should
+work fine and it appears here:
+https://patchwork.kernel.org/project/linux-soc/list/
 
-    [PATCH 0/6] clk: samsung: exynos850: Clock driver improvements
-
-(going to submit that soon).
+Yours,
+Linus Walleij
