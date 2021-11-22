@@ -2,29 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEB5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 15:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D853DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 16:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240507AbhKVQAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 11:00:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37822 "EHLO
+        id S232806AbhKVQGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 11:06:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240535AbhKVQAS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 11:00:18 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2AE7C0617A0
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 07:57:00 -0800 (PST)
+        with ESMTP id S231613AbhKVQGN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 11:06:13 -0500
+X-Greylist: delayed 446 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 22 Nov 2021 08:03:07 PST
+Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4660EC061574
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 08:03:07 -0800 (PST)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HyX184mN5zMrTWg
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 16:55:40 +0100 (CET)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id MTwG260014C55Sk01TwGyl; Mon, 22 Nov 2021 16:56:58 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id MTuz260014C55Sk06Tuzyl; Mon, 22 Nov 2021 16:55:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe6-00EL3P-62; Mon, 22 Nov 2021 16:54:18 +0100
+        id 1mpBe6-00EL3g-9G; Mon, 22 Nov 2021 16:54:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe5-00HGyZ-Hn; Mon, 22 Nov 2021 16:54:17 +0100
+        id 1mpBe5-00HGz8-Ni; Mon, 22 Nov 2021 16:54:17 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,9 +73,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 05/17] bus: omap_l3_noc: Use bitfield helpers
-Date:   Mon, 22 Nov 2021 16:53:58 +0100
-Message-Id: <8f5ac0ff643fcfe29ba671b434c57d88524f0450.1637592133.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 10/17] media: ti-vpe: cal: Use bitfield helpers
+Date:   Mon, 22 Nov 2021 16:54:03 +0100
+Message-Id: <d0ec5ecf5681cc36e0b86f8b35dde5d4a79dd5e8.1637592133.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1637592133.git.geert+renesas@glider.be>
 References: <cover.1637592133.git.geert+renesas@glider.be>
@@ -81,8 +85,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the field_get() bitfield helper, instead of open-coding the same
-operation.
+Use the field_prep() helper, instead of open-coding the same operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
@@ -90,31 +93,31 @@ Compile-tested only.
 Marked RFC, as this depends on [PATCH 01/17], but follows a different
 path to upstream.
 ---
- drivers/bus/omap_l3_noc.c | 4 ++--
+ drivers/media/platform/ti-vpe/cal.h | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/omap_l3_noc.c b/drivers/bus/omap_l3_noc.c
-index dcfb32ee5cb60239..1a692c86d085f43e 100644
---- a/drivers/bus/omap_l3_noc.c
-+++ b/drivers/bus/omap_l3_noc.c
-@@ -14,6 +14,7 @@
-  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  */
-+#include <linux/bitfield.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -118,8 +119,7 @@ static int l3_handle_target(struct omap_l3 *l3, void __iomem *base,
- 	}
+diff --git a/drivers/media/platform/ti-vpe/cal.h b/drivers/media/platform/ti-vpe/cal.h
+index 527e22d022f300b7..5fcf1b55ff2879ac 100644
+--- a/drivers/media/platform/ti-vpe/cal.h
++++ b/drivers/media/platform/ti-vpe/cal.h
+@@ -303,7 +303,7 @@ static inline void cal_write_field(struct cal_dev *cal, u32 offset, u32 value,
+ 	u32 val = cal_read(cal, offset);
  
- 	/* STDERRLOG_MSTADDR Stores the NTTP master address. */
--	masterid = (readl_relaxed(l3_targ_mstaddr) &
--		    l3->mst_addr_mask) >> __ffs(l3->mst_addr_mask);
-+	masterid = field_get(l3->mst_addr_mask, readl_relaxed(l3_targ_mstaddr));
+ 	val &= ~mask;
+-	val |= (value << __ffs(mask)) & mask;
++	val |= field_prep(mask, value);
+ 	cal_write(cal, offset, val);
+ }
  
- 	for (k = 0, master = l3->l3_masters; k < l3->num_masters;
- 	     k++, master++) {
+@@ -312,7 +312,7 @@ static inline void cal_set_field(u32 *valp, u32 field, u32 mask)
+ 	u32 val = *valp;
+ 
+ 	val &= ~mask;
+-	val |= (field << __ffs(mask)) & mask;
++	val |= field_prep(mask, field);
+ 	*valp = val;
+ }
+ 
 -- 
 2.25.1
 
