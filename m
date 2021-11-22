@@ -2,223 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BECC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 18:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059B7C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 22:04:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239496AbhKVSl5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 13:41:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235182AbhKVSl4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 13:41:56 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F65C061574;
-        Mon, 22 Nov 2021 10:38:49 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id h16-20020a9d7990000000b0055c7ae44dd2so30098740otm.10;
-        Mon, 22 Nov 2021 10:38:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UHFB4okDolhXrN2KtXNKGXY4xx9A6ENlJZJpcpYJSa4=;
-        b=iF32sjGrzSvaDDiDrzm4Jn8+gNbGxPrbBxZFxi4uCknK7CkuUHGcqoOD65h4RyWxyF
-         y+wOmbGDPKkCG8jIqPGxKaFK0D3GvGCi7E7vj/rSSTElZKQ4I+sO6sAsXlhvWm4LJdnp
-         2KvDVCusXICAOU/8p8E70quXduhRoLziMS5wtCLJdF0xE54KuxD1Hx/LXZJoPAM3DNL1
-         BkvRF4pmS6od3lYRUbwlZMx97PcjFnI9HdmkEczPsl3ta8bzsAye+LybTN6gfUn7gNW8
-         MLS92ARh+GguAjdL9uq+LetI8B96GaD9Vc3Ip4BN7Uy3BSXQIu3jgX7O1p5U0Obaav48
-         V51g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
-         :subject:content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=UHFB4okDolhXrN2KtXNKGXY4xx9A6ENlJZJpcpYJSa4=;
-        b=wI6BKtLTjV71b36AuQa7eqeNpGoXyn1KTwsO+7skapVw+pmDbPKZmEh5H0sXecgQnt
-         yzJKt3KdhxBEAKbKcI8rSlhhEm/A4oZHuvvRZaObwtKQzlgvzMPHfGguy9imT/JcpjPs
-         I6XIlPCY8ETNjuOdWot9trq43v/2ZY4ki8uYzXC+qzEIgRO0AFRzV9hHjtkPA78ksFXK
-         futpmcQkacgTtsGbQt1gOephKyFO0eOGBW2j8cC8cild9soZ8YMcmBNn4Zk3rn1SOaxP
-         uPb25fsRYJ9hB3FsWqlRBxnxq6tUXiZRFaIAozbkbuoe0thxa6DODfQT+PD3xGAzWfQp
-         V3fw==
-X-Gm-Message-State: AOAM532lDdsUO3aNW37ss9kreDysmNYReVetgXnabQmUDkyYTfjx1cCb
-        yq2KAvvSNAzYtPgE/p1uNDk=
-X-Google-Smtp-Source: ABdhPJwfr5gWpFAYZtUOP0l+WeTUOCLuMHjoxvBl19lgRYsYRNjGQbRkBWj0P0bUDebnG/bzTCmu0Q==
-X-Received: by 2002:a9d:5190:: with SMTP id y16mr27309322otg.364.1637606329228;
-        Mon, 22 Nov 2021 10:38:49 -0800 (PST)
-Received: from [10.62.118.101] (cpe-24-31-246-181.kc.res.rr.com. [24.31.246.181])
-        by smtp.gmail.com with ESMTPSA id f18sm1729016otl.28.2021.11.22.10.38.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Nov 2021 10:38:48 -0800 (PST)
-Sender: Larry Finger <larry.finger@gmail.com>
-Message-ID: <a18f44bf-e590-0ebe-00c0-5658f3a51d86@lwfinger.net>
-Date:   Mon, 22 Nov 2021 12:38:41 -0600
+        id S239692AbhKVWH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 17:07:27 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49281 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239539AbhKVWHZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 17:07:25 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20211122220416euoutp02e97d667b1a63440671c584c5dcb74d9a~5-X3VW5IH0116701167euoutp029
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 22:04:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20211122220416euoutp02e97d667b1a63440671c584c5dcb74d9a~5-X3VW5IH0116701167euoutp029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1637618656;
+        bh=ynjXecPy+x67xYtTl2zbxpDhdENHt074ow1WT4E9cBU=;
+        h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+        b=OawMEl5As2nOSeQqux2L/uF4pLlxegHJhPp4DzXNXUUankmL4e4JIfTssqBXH5wgK
+         c8ViAGt016gtOUz4XIRcBM3fVN4pvaX/hMgZTMRqedmd5HZxFlzt3MBLf3xkswSTLY
+         25epVBwnbJNMm7B2rOQajfOo7t03CB8VmcymDpLg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20211122220415eucas1p228be94b02883e594aa747b4808d1ba11~5-X2W2yAI2755827558eucas1p20;
+        Mon, 22 Nov 2021 22:04:15 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id F6.2B.10260.FD31C916; Mon, 22
+        Nov 2021 22:04:15 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20211122220414eucas1p2aed07333fea9caccf343404365a8a0f5~5-X1tGKi32755827558eucas1p2x;
+        Mon, 22 Nov 2021 22:04:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20211122220414eusmtrp25b1be8ede9a482596ccfef5ecb53d3ef~5-X1sL7y11106011060eusmtrp2J;
+        Mon, 22 Nov 2021 22:04:14 +0000 (GMT)
+X-AuditID: cbfec7f5-bddff70000002814-5c-619c13dfae7b
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D1.69.09522.ED31C916; Mon, 22
+        Nov 2021 22:04:14 +0000 (GMT)
+Received: from [106.210.134.141] (unknown [106.210.134.141]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20211122220413eusmtip183fbf441f0a72e3fa73503374721a174~5-X1AhJ9u1648416484eusmtip1D;
+        Mon, 22 Nov 2021 22:04:13 +0000 (GMT)
+Message-ID: <95864889-e80b-e627-7b63-1079caa0fa12@samsung.com>
+Date:   Mon, 22 Nov 2021 23:04:13 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH/RFC 17/17] rtw89: Use bitfield helpers
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+        Gecko/20100101 Thunderbird/91.3.1
+Subject: Re: [PATCH v2 1/1] clk: samsung: exynos850: Register clocks early
 Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Cc:     David Virag <virag.david003@gmail.com>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <cover.1637592133.git.geert+renesas@glider.be>
- <f7b81122f7596fa004188bfae68f25a68c2d2392.1637592133.git.geert+renesas@glider.be>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-In-Reply-To: <f7b81122f7596fa004188bfae68f25a68c2d2392.1637592133.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Michael Turquette <mturquette@baylibre.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+In-Reply-To: <20211122144206.23134-1-semen.protsenko@linaro.org>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7djP87r3heckGix7xGtx/ctzVov5R86x
+        Wmx8+4PJYtPja6wWH3vusVpc3jWHzWLG+X1MFhdPuVr8ON7HbNG69wi7xb9rG1ksnvcBxVft
+        +sNocfz9Y0YHPo/3N1rZPWY19LJ57Jx1l91j06pONo871/aweWxeUu/Rt2UVo8fnTXIBHFFc
+        NimpOZllqUX6dglcGe3f/zEXrGKvOHhlDVMDYyNbFyMHh4SAicT19QZdjFwcQgIrGCWmNp1m
+        hXC+MEqcvP2FCcL5zCjx/uc0oAwnWMepowsYIRLLGSUWLTzHBuF8BGp5tJsJpIpXwE5i1e7P
+        YDaLgKpE/9JHLBBxQYmTM5+A2aICSRKnWycxg9jCAl4S3Tfvg8WZBcQlbj2ZD9YrIhAuseTT
+        fmaQBcwCb5klbmx4wA6SYBMwlOg92scIYnMKOEhsWNTLDNEsL7H97RywBgmB5ZwSXx+sYIG4
+        20Wib8dNZghbWOLV8S3sELaMxP+d85kgGpoZJXp232aHcCYwStw/voARospa4s65X+AwYxbQ
+        lFi/Sx8SfI4SE17kQph8EjfeCkLcwCcxadt0Zogwr0RHmxDEDBWJ36umM0HYUhLdT/6zTGBU
+        moUULLOQvD8LyTezENYuYGRZxSieWlqcm55abJyXWq5XnJhbXJqXrpecn7uJEZjkTv87/nUH
+        44pXH/UOMTJxMB5ilOBgVhLhvbZkdqIQb0piZVVqUX58UWlOavEhRmkOFiVxXpE/DYlCAumJ
+        JanZqakFqUUwWSYOTqkGJsN7X65e95kiYbRwxYLsnMRjPx71fr8o9d5MddVm880zSxRXy26V
+        PecoKZPh2nJL0vDNep74XtsqpfQwR43so/+2XIiIkTwSw6AQqfSrK7PV82CExuXnJlsLciJO
+        7+Rp1eDcvalUNohJcc21m4tnfI9fUxbHM2HWop06YSIMO9eIO9bflmR8E8zr89VkpnXWkuCY
+        h/FBh67d1JjQ8MJ1sbJbc0fV+/vlj8VOpKzf+mlhg9NCBdbbxXdLV5w1M12ZkcXTE2i4ZQ9T
+        SZJGgyaP+co1yxn6El9WJ+zI19X7m5QYlJlu2ivzRXDKHt2v/CZtTO8WLPU/qvh3YcLp23o/
+        G+bn/Qm/LLRAIz2cNcZbiaU4I9FQi7moOBEA3Qxlh+EDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRmVeSWpSXmKPExsVy+t/xu7r3hOckGmy7LWNx/ctzVov5R86x
+        Wmx8+4PJYtPja6wWH3vusVpc3jWHzWLG+X1MFhdPuVr8ON7HbNG69wi7xb9rG1ksnvcBxVft
+        +sNocfz9Y0YHPo/3N1rZPWY19LJ57Jx1l91j06pONo871/aweWxeUu/Rt2UVo8fnTXIBHFF6
+        NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2NimpOZllqUX6dgl6Ge3f/zEX
+        rGKvOHhlDVMDYyNbFyMnh4SAicSpowsYQWwhgaWMEr87C7oYOYDiUhLzW5QgSoQl/lzrAirn
+        Aip5zyjxaftisF5eATuJVbs/M4HYLAKqEv1LH7FAxAUlTs58AmaLCiRJ9H/fxQxiCwt4SXTf
+        vA8WZxYQl7j1ZD4TyC4RgXCJxft0QeYzC7xnlpjc+ZYVYtlkRokZR9rAlrEJGEr0Hu0DO5RT
+        wEFiw6JeZpBmZgF1ifXzhCBmyktsfzuHeQKj0CwkZ8xCsm4WQscsJB0LGFlWMYqklhbnpucW
+        G+oVJ+YWl+al6yXn525iBMbztmM/N+9gnPfqo94hRiYOxkOMEhzMSiK815bMThTiTUmsrEot
+        yo8vKs1JLT7EaAoMionMUqLJ+cCEklcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpa
+        kFoE08fEwSnVwNS2NOXMz+kM9kUVK/dfmtc+f3Hb5w+PfO0tPeT4pspe4amd1prQHO1cNzGf
+        xT0o+eui3Wsst5f5ZsYYJT9NnnXX6HHGPAXvp+Wsj6TUWl9f91+/ak3NdE6XL2Vz6z59WTX1
+        3bof5UeTk4ycfHoWTt63fuKOOXzNjZlT5vXemvT0X9LNmj+1jpeiZ3e+MIr7fKgjMLz7ebBt
+        xsM39ifEBJPEC58Xh0YxaNvqqkw2YV+78DTjg4qIH2uF5aesnHFg/2YvFxOBZfkbL75vPTyr
+        qGpr4skvlTwFz97q2Z/8NrXsR+h7jql8Ec9v/H1WdKHiQa5d6jmmtPmerh9jyp1kJX4dcJ9a
+        PHEa/3rPCZYTNLKVWIozEg21mIuKEwE5jDC+cAMAAA==
+X-CMS-MailID: 20211122220414eucas1p2aed07333fea9caccf343404365a8a0f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20211122144217eucas1p21c5f4930563ee051d625bb8e3a932a4a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20211122144217eucas1p21c5f4930563ee051d625bb8e3a932a4a
+References: <CGME20211122144217eucas1p21c5f4930563ee051d625bb8e3a932a4a@eucas1p2.samsung.com>
+        <20211122144206.23134-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/22/21 09:54, Geert Uytterhoeven wrote:
-> Use the field_{get,prep}() helpers, instead of open-coding the same
-> operations.
+On 22.11.2021 15:42, Sam Protsenko wrote:
+> Some clocks must be registered before init calls. For example MCT clock
+> (from CMU_PERI) is needed for MCT timer driver, which is registered
+> with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
+> clk-exynos850 platform driver init, it's already too late. Inability to
+> get "mct" clock in MCT driver leads to kernel panic, as functions
+> registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
+> can't be fixed either, as it's acting as a clock source and it's
+> essential to register it in start_kernel() -> time_init().
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Compile-tested only.
-> Marked RFC, as this depends on [PATCH 01/17], but follows a different
-> path to upstream.
-> ---
->   drivers/net/wireless/realtek/rtw89/core.h | 38 ++++-------------------
->   1 file changed, 6 insertions(+), 32 deletions(-)
-
-Tested-by: Larry Finger <Larry,Finger@lwfinger.net>
-
-Larry
-
+> Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
+> generates clocks needed for CMU_PERI, but it's already registered early.
 > 
-> diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wireless/realtek/rtw89/core.h
-> index c2885e4dd882f045..f9c0300ec373aaf2 100644
-> --- a/drivers/net/wireless/realtek/rtw89/core.h
-> +++ b/drivers/net/wireless/realtek/rtw89/core.h
-> @@ -2994,81 +2994,55 @@ rtw89_write32_clr(struct rtw89_dev *rtwdev, u32 addr, u32 bit)
->   static inline u32
->   rtw89_read32_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
->   {
-> -	u32 shift = __ffs(mask);
-> -	u32 orig;
-> -	u32 ret;
-> -
-> -	orig = rtw89_read32(rtwdev, addr);
-> -	ret = (orig & mask) >> shift;
-> -
-> -	return ret;
-> +	return field_get(mask, rtw89_read32(rtwdev, addr));
->   }
->   
->   static inline u16
->   rtw89_read16_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
->   {
-> -	u32 shift = __ffs(mask);
-> -	u32 orig;
-> -	u32 ret;
-> -
-> -	orig = rtw89_read16(rtwdev, addr);
-> -	ret = (orig & mask) >> shift;
-> -
-> -	return ret;
-> +	return field_get(mask, rtw89_read16(rtwdev, addr));
->   }
->   
->   static inline u8
->   rtw89_read8_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
->   {
-> -	u32 shift = __ffs(mask);
-> -	u32 orig;
-> -	u32 ret;
-> -
-> -	orig = rtw89_read8(rtwdev, addr);
-> -	ret = (orig & mask) >> shift;
-> -
-> -	return ret;
-> +	return field_get(mask, rtw89_read8(rtwdev, addr));
->   }
->   
->   static inline void
->   rtw89_write32_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u32 data)
->   {
-> -	u32 shift = __ffs(mask);
->   	u32 orig;
->   	u32 set;
->   
->   	WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
->   
->   	orig = rtw89_read32(rtwdev, addr);
-> -	set = (orig & ~mask) | ((data << shift) & mask);
-> +	set = (orig & ~mask) | field_prep(mask, data);
->   	rtw89_write32(rtwdev, addr, set);
->   }
->   
->   static inline void
->   rtw89_write16_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u16 data)
->   {
-> -	u32 shift;
->   	u16 orig, set;
->   
->   	mask &= 0xffff;
-> -	shift = __ffs(mask);
->   
->   	orig = rtw89_read16(rtwdev, addr);
-> -	set = (orig & ~mask) | ((data << shift) & mask);
-> +	set = (orig & ~mask) | field_prep(mask, data);
->   	rtw89_write16(rtwdev, addr, set);
->   }
->   
->   static inline void
->   rtw89_write8_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u8 data)
->   {
-> -	u32 shift;
->   	u8 orig, set;
->   
->   	mask &= 0xff;
-> -	shift = __ffs(mask);
->   
->   	orig = rtw89_read8(rtwdev, addr);
-> -	set = (orig & ~mask) | ((data << shift) & mask);
-> +	set = (orig & ~mask) | field_prep(mask, data);
->   	rtw89_write8(rtwdev, addr, set);
->   }
->   
-> 
+> While at it, let's cleanup the code a bit, by extracting everything
+> related to CMU initialization and registration to the separate function.
 
+Applied, thanks.
