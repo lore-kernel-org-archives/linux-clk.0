@@ -2,33 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D853DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 16:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B4DC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 16:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232806AbhKVQGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231613AbhKVQGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 22 Nov 2021 11:06:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39362 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231613AbhKVQGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 11:06:13 -0500
-X-Greylist: delayed 446 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 22 Nov 2021 08:03:07 PST
+        with ESMTP id S232071AbhKVQGO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 11:06:14 -0500
 Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4660EC061574
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C96BC06173E
         for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 08:03:07 -0800 (PST)
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HyX184mN5zMrTWg
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 16:55:40 +0100 (CET)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id MTuz260014C55Sk06Tuzyl; Mon, 22 Nov 2021 16:55:40 +0100
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4HyX172ChwzMrSv3
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 16:55:39 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:e4da:38c:79e9:48bf])
+        by laurent.telenet-ops.be with bizsmtp
+        id MTux2600m4yPVd601TuykH; Mon, 22 Nov 2021 16:55:39 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe6-00EL3g-9G; Mon, 22 Nov 2021 16:54:18 +0100
+        id 1mpBe5-00EL3L-Rf; Mon, 22 Nov 2021 16:54:17 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe5-00HGz8-Ni; Mon, 22 Nov 2021 16:54:17 +0100
+        id 1mpBe5-00HGy7-BC; Mon, 22 Nov 2021 16:54:17 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -73,9 +72,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 10/17] media: ti-vpe: cal: Use bitfield helpers
-Date:   Mon, 22 Nov 2021 16:54:03 +0100
-Message-Id: <d0ec5ecf5681cc36e0b86f8b35dde5d4a79dd5e8.1637592133.git.geert+renesas@glider.be>
+Subject: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}() helpers
+Date:   Mon, 22 Nov 2021 16:53:54 +0100
+Message-Id: <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1637592133.git.geert+renesas@glider.be>
 References: <cover.1637592133.git.geert+renesas@glider.be>
@@ -85,39 +84,93 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the field_prep() helper, instead of open-coding the same operation.
+The existing FIELD_{GET,PREP}() macros are limited to compile-time
+constants.  However, it is very common to prepare or extract bitfield
+elements where the bitfield mask is not a compile-time constant.
+
+To avoid this limitation, the AT91 clock driver already has its own
+field_{prep,get}() macros.  Make them available for general use by
+moving them to <linux/bitfield.h>, and improve them slightly:
+  1. Avoid evaluating macro parameters more than once,
+  2. Replace "ffs() - 1" by "__ffs()", as the latter operates on
+     "unsigned long", just like BIT() and GENMASK().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Compile-tested only.
-Marked RFC, as this depends on [PATCH 01/17], but follows a different
-path to upstream.
+Using __ffs() actually reduces code size (16 bytes for each of
+drivers/clk/at91/clk-{generated,peripheral}.o), as __ffs() doesn't
+need to verify that the value passed is non-zero.
 ---
- drivers/media/platform/ti-vpe/cal.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/at91/clk-peripheral.c |  1 +
+ drivers/clk/at91/pmc.h            |  3 ---
+ include/linux/bitfield.h          | 30 ++++++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/ti-vpe/cal.h b/drivers/media/platform/ti-vpe/cal.h
-index 527e22d022f300b7..5fcf1b55ff2879ac 100644
---- a/drivers/media/platform/ti-vpe/cal.h
-+++ b/drivers/media/platform/ti-vpe/cal.h
-@@ -303,7 +303,7 @@ static inline void cal_write_field(struct cal_dev *cal, u32 offset, u32 value,
- 	u32 val = cal_read(cal, offset);
+diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
+index e14fa5ac734cead7..e2f33498139a1b8c 100644
+--- a/drivers/clk/at91/clk-peripheral.c
++++ b/drivers/clk/at91/clk-peripheral.c
+@@ -3,6 +3,7 @@
+  *  Copyright (C) 2013 Boris BREZILLON <b.brezillon@overkiz.com>
+  */
  
- 	val &= ~mask;
--	val |= (value << __ffs(mask)) & mask;
-+	val |= field_prep(mask, value);
- 	cal_write(cal, offset, val);
- }
++#include <linux/bitfield.h>
+ #include <linux/bitops.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 3a1bf6194c287d09..1256e1ab91526a25 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -114,9 +114,6 @@ struct at91_clk_pms {
+ 	unsigned int parent;
+ };
  
-@@ -312,7 +312,7 @@ static inline void cal_set_field(u32 *valp, u32 field, u32 mask)
- 	u32 val = *valp;
+-#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
+-#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+-
+ #define ndck(a, s) (a[s - 1].id + 1)
+ #define nck(a) (a[ARRAY_SIZE(a) - 1].id + 1)
+ struct pmc_data *pmc_data_allocate(unsigned int ncore, unsigned int nsystem,
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 4e035aca6f7e6000..f03b0712e4babec1 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -156,4 +156,34 @@ __MAKE_OP(64)
+ #undef __MAKE_OP
+ #undef ____MAKE_OP
  
- 	val &= ~mask;
--	val |= (field << __ffs(mask)) & mask;
-+	val |= field_prep(mask, field);
- 	*valp = val;
- }
- 
++/**
++ * field_prep() - prepare a bitfield element
++ * @_mask: shifted mask defining the field's length and position
++ * @_val:  value to put in the field
++ *
++ * field_prep() masks and shifts up the value.  The result should be
++ * combined with other fields of the bitfield using logical OR.
++ * Unlike FIELD_PREP(), @_mask is not limited to a compile-time constant.
++ */
++#define field_prep(_mask, _val)						\
++	({								\
++		typeof(_mask) ___mask = (_mask);			\
++		(((_val) << __ffs(___mask)) & (___mask));		\
++	})
++
++/**
++ * field_get() - extract a bitfield element
++ * @_mask: shifted mask defining the field's length and position
++ * @_reg:  value of entire bitfield
++ *
++ * field_get() extracts the field specified by @_mask from the
++ * bitfield passed in as @_reg by masking and shifting it down.
++ * Unlike FIELD_GET(), @_mask is not limited to a compile-time constant.
++ */
++#define field_get(_mask, _reg)						\
++	({								\
++		typeof(_mask) ___mask = _mask;				\
++		(((_reg) & (___mask)) >> __ffs(___mask));		\
++	})
++
+ #endif
 -- 
 2.25.1
 
