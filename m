@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 837F4C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 15:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D14AC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 15:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240239AbhKVP6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 10:58:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37362 "EHLO
+        id S240086AbhKVP6s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 10:58:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240117AbhKVP6M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 10:58:12 -0500
+        with ESMTP id S240062AbhKVP6q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 10:58:46 -0500
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B266EC061759
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 07:55:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDCA2C061758
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 07:55:38 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:e4da:38c:79e9:48bf])
         by laurent.telenet-ops.be with bizsmtp
-        id MTuK2600N4yPVd601TuKeF; Mon, 22 Nov 2021 16:55:02 +0100
+        id MTux2600K4yPVd601Tuxk9; Mon, 22 Nov 2021 16:55:38 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe6-00EL3q-UU; Mon, 22 Nov 2021 16:54:18 +0100
+        id 1mpBe6-00EL3j-Vr; Mon, 22 Nov 2021 16:54:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe5-00HH2H-UD; Mon, 22 Nov 2021 16:54:17 +0100
+        id 1mpBe5-00HGzT-Qs; Mon, 22 Nov 2021 16:54:17 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 16/17] ALSA: ice1724: Use bitfield helpers
-Date:   Mon, 22 Nov 2021 16:54:09 +0100
-Message-Id: <45fa162856814176045ffbb49ee64cf0ea7e00bc.1637592133.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 13/17] pinctl: ti: iodelay: Use bitfield helpers
+Date:   Mon, 22 Nov 2021 16:54:06 +0100
+Message-Id: <60257a3c5b567fb5b14d6f9adb770899bce88f7a.1637592133.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1637592133.git.geert+renesas@glider.be>
 References: <cover.1637592133.git.geert+renesas@glider.be>
@@ -81,8 +81,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use the field_{get,prep}() helpers, instead of open-coding the same
-operations.
+Use the field_{get,prep}() helpers, instead of defining a custom
+function, or open-coding the same operations.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
@@ -90,110 +90,104 @@ Compile-tested only.
 Marked RFC, as this depends on [PATCH 01/17], but follows a different
 path to upstream.
 ---
- sound/pci/ice1712/wm8766.c | 14 +++++++-------
- sound/pci/ice1712/wm8776.c | 14 +++++++-------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 35 +++++++------------------
+ 1 file changed, 10 insertions(+), 25 deletions(-)
 
-diff --git a/sound/pci/ice1712/wm8766.c b/sound/pci/ice1712/wm8766.c
-index fe3e243b38549035..3e4d7f8f692785b0 100644
---- a/sound/pci/ice1712/wm8766.c
-+++ b/sound/pci/ice1712/wm8766.c
-@@ -7,6 +7,7 @@
-  *	Copyright (c) 2012 Ondrej Zary <linux@rainbow-software.org>
+diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+index 4e2382778d38f557..b220dcd9215520db 100644
+--- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
++++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
+@@ -9,6 +9,7 @@
+  * warranty of any kind, whether express or implied.
   */
  
 +#include <linux/bitfield.h>
- #include <linux/delay.h>
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -212,11 +213,10 @@ static int snd_wm8766_ctl_get(struct snd_kcontrol *kcontrol,
- 	if (wm->ctl[n].get)
- 		wm->ctl[n].get(wm, &val1, &val2);
- 	else {
--		val1 = wm->regs[wm->ctl[n].reg1] & wm->ctl[n].mask1;
--		val1 >>= __ffs(wm->ctl[n].mask1);
-+		val1 = field_get(wm->ctl[n].mask1, wm->regs[wm->ctl[n].reg1]);
- 		if (wm->ctl[n].flags & WM8766_FLAG_STEREO) {
--			val2 = wm->regs[wm->ctl[n].reg2] & wm->ctl[n].mask2;
--			val2 >>= __ffs(wm->ctl[n].mask2);
-+			val2 = field_get(wm->ctl[n].mask2,
-+					 wm->regs[wm->ctl[n].reg2]);
- 			if (wm->ctl[n].flags & WM8766_FLAG_VOL_UPDATE)
- 				val2 &= ~WM8766_VOL_UPDATE;
- 		}
-@@ -251,19 +251,19 @@ static int snd_wm8766_ctl_put(struct snd_kcontrol *kcontrol,
- 		wm->ctl[n].set(wm, regval1, regval2);
- 	else {
- 		val = wm->regs[wm->ctl[n].reg1] & ~wm->ctl[n].mask1;
--		val |= regval1 << __ffs(wm->ctl[n].mask1);
-+		val |= field_prep(wm->ctl[n].mask1, regval1);
- 		/* both stereo controls in one register */
- 		if (wm->ctl[n].flags & WM8766_FLAG_STEREO &&
- 				wm->ctl[n].reg1 == wm->ctl[n].reg2) {
- 			val &= ~wm->ctl[n].mask2;
--			val |= regval2 << __ffs(wm->ctl[n].mask2);
-+			val |= field_prep(wm->ctl[n].mask2, regval2);
- 		}
- 		snd_wm8766_write(wm, wm->ctl[n].reg1, val);
- 		/* stereo controls in different registers */
- 		if (wm->ctl[n].flags & WM8766_FLAG_STEREO &&
- 				wm->ctl[n].reg1 != wm->ctl[n].reg2) {
- 			val = wm->regs[wm->ctl[n].reg2] & ~wm->ctl[n].mask2;
--			val |= regval2 << __ffs(wm->ctl[n].mask2);
-+			val |= field_prep(wm->ctl[n].mask2, regval2);
- 			if (wm->ctl[n].flags & WM8766_FLAG_VOL_UPDATE)
- 				val |= WM8766_VOL_UPDATE;
- 			snd_wm8766_write(wm, wm->ctl[n].reg2, val);
-diff --git a/sound/pci/ice1712/wm8776.c b/sound/pci/ice1712/wm8776.c
-index 6eda86119dff60b3..b4edf8a03c342351 100644
---- a/sound/pci/ice1712/wm8776.c
-+++ b/sound/pci/ice1712/wm8776.c
-@@ -7,6 +7,7 @@
-  *	Copyright (c) 2012 Ondrej Zary <linux@rainbow-software.org>
-  */
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -155,18 +156,6 @@ struct ti_iodelay_device {
+ 	struct ti_iodelay_reg_values reg_init_conf_values;
+ };
  
-+#include <linux/bitfield.h>
- #include <linux/delay.h>
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -486,11 +487,10 @@ static int snd_wm8776_ctl_get(struct snd_kcontrol *kcontrol,
- 	if (wm->ctl[n].get)
- 		wm->ctl[n].get(wm, &val1, &val2);
- 	else {
--		val1 = wm->regs[wm->ctl[n].reg1] & wm->ctl[n].mask1;
--		val1 >>= __ffs(wm->ctl[n].mask1);
-+		val1 = field_get(wm->ctl[n].mask1, wm->regs[wm->ctl[n].reg1]);
- 		if (wm->ctl[n].flags & WM8776_FLAG_STEREO) {
--			val2 = wm->regs[wm->ctl[n].reg2] & wm->ctl[n].mask2;
--			val2 >>= __ffs(wm->ctl[n].mask2);
-+			val2 = field_get(wm->ctl[n].mask2,
-+					 wm->regs[wm->ctl[n].reg2]);
- 			if (wm->ctl[n].flags & WM8776_FLAG_VOL_UPDATE)
- 				val2 &= ~WM8776_VOL_UPDATE;
- 		}
-@@ -525,19 +525,19 @@ static int snd_wm8776_ctl_put(struct snd_kcontrol *kcontrol,
- 		wm->ctl[n].set(wm, regval1, regval2);
- 	else {
- 		val = wm->regs[wm->ctl[n].reg1] & ~wm->ctl[n].mask1;
--		val |= regval1 << __ffs(wm->ctl[n].mask1);
-+		val |= field_prep(wm->ctl[n].mask1, regval1);
- 		/* both stereo controls in one register */
- 		if (wm->ctl[n].flags & WM8776_FLAG_STEREO &&
- 				wm->ctl[n].reg1 == wm->ctl[n].reg2) {
- 			val &= ~wm->ctl[n].mask2;
--			val |= regval2 << __ffs(wm->ctl[n].mask2);
-+			val |= field_prep(wm->ctl[n].mask2, regval2);
- 		}
- 		snd_wm8776_write(wm, wm->ctl[n].reg1, val);
- 		/* stereo controls in different registers */
- 		if (wm->ctl[n].flags & WM8776_FLAG_STEREO &&
- 				wm->ctl[n].reg1 != wm->ctl[n].reg2) {
- 			val = wm->regs[wm->ctl[n].reg2] & ~wm->ctl[n].mask2;
--			val |= regval2 << __ffs(wm->ctl[n].mask2);
-+			val |= field_prep(wm->ctl[n].mask2, regval2);
- 			if (wm->ctl[n].flags & WM8776_FLAG_VOL_UPDATE)
- 				val |= WM8776_VOL_UPDATE;
- 			snd_wm8776_write(wm, wm->ctl[n].reg2, val);
+-/**
+- * ti_iodelay_extract() - extract bits for a field
+- * @val: Register value
+- * @mask: Mask
+- *
+- * Return: extracted value which is appropriately shifted
+- */
+-static inline u32 ti_iodelay_extract(u32 val, u32 mask)
+-{
+-	return (val & mask) >> __ffs(mask);
+-}
+-
+ /**
+  * ti_iodelay_compute_dpe() - Compute equation for delay parameter
+  * @period: Period to use
+@@ -233,10 +222,10 @@ static int ti_iodelay_pinconf_set(struct ti_iodelay_device *iod,
+ 	}
+ 
+ 	reg_mask = reg->signature_mask;
+-	reg_val = reg->signature_value << __ffs(reg->signature_mask);
++	reg_val = field_prep(reg->signature_mask, reg->signature_value);
+ 
+ 	reg_mask |= reg->binary_data_coarse_mask;
+-	tmp_val = c_elements << __ffs(reg->binary_data_coarse_mask);
++	tmp_val = field_prep(reg->binary_data_coarse_mask, c_elements);
+ 	if (tmp_val & ~reg->binary_data_coarse_mask) {
+ 		dev_err(dev, "Masking overflow of coarse elements %08x\n",
+ 			tmp_val);
+@@ -245,7 +234,7 @@ static int ti_iodelay_pinconf_set(struct ti_iodelay_device *iod,
+ 	reg_val |= tmp_val;
+ 
+ 	reg_mask |= reg->binary_data_fine_mask;
+-	tmp_val = f_elements << __ffs(reg->binary_data_fine_mask);
++	tmp_val = field_prep(reg->binary_data_fine_mask, f_elements);
+ 	if (tmp_val & ~reg->binary_data_fine_mask) {
+ 		dev_err(dev, "Masking overflow of fine elements %08x\n",
+ 			tmp_val);
+@@ -260,7 +249,7 @@ static int ti_iodelay_pinconf_set(struct ti_iodelay_device *iod,
+ 	 * impacting iodelay configuration. Use with care!
+ 	 */
+ 	reg_mask |= reg->lock_mask;
+-	reg_val |= reg->unlock_val << __ffs(reg->lock_mask);
++	reg_val |= field_prep(reg->lock_mask, reg->unlock_val);
+ 	r = regmap_update_bits(iod->regmap, cfg->offset, reg_mask, reg_val);
+ 
+ 	dev_dbg(dev, "Set reg 0x%x Delay(a: %d g: %d), Elements(C=%d F=%d)0x%x\n",
+@@ -296,16 +285,14 @@ static int ti_iodelay_pinconf_init_dev(struct ti_iodelay_device *iod)
+ 	r = regmap_read(iod->regmap, reg->reg_refclk_offset, &val);
+ 	if (r)
+ 		return r;
+-	ival->ref_clk_period = ti_iodelay_extract(val, reg->refclk_period_mask);
++	ival->ref_clk_period = field_get(reg->refclk_period_mask, val);
+ 	dev_dbg(dev, "refclk_period=0x%04x\n", ival->ref_clk_period);
+ 
+ 	r = regmap_read(iod->regmap, reg->reg_coarse_offset, &val);
+ 	if (r)
+ 		return r;
+-	ival->coarse_ref_count =
+-	    ti_iodelay_extract(val, reg->coarse_ref_count_mask);
+-	ival->coarse_delay_count =
+-	    ti_iodelay_extract(val, reg->coarse_delay_count_mask);
++	ival->coarse_ref_count = field_get(reg->coarse_ref_count_mask, val);
++	ival->coarse_delay_count = field_get(reg->coarse_delay_count_mask, val);
+ 	if (!ival->coarse_delay_count) {
+ 		dev_err(dev, "Invalid Coarse delay count (0) (reg=0x%08x)\n",
+ 			val);
+@@ -326,10 +313,8 @@ static int ti_iodelay_pinconf_init_dev(struct ti_iodelay_device *iod)
+ 	r = regmap_read(iod->regmap, reg->reg_fine_offset, &val);
+ 	if (r)
+ 		return r;
+-	ival->fine_ref_count =
+-	    ti_iodelay_extract(val, reg->fine_ref_count_mask);
+-	ival->fine_delay_count =
+-	    ti_iodelay_extract(val, reg->fine_delay_count_mask);
++	ival->fine_ref_count = field_get(reg->fine_ref_count_mask, val);
++	ival->fine_delay_count = field_get(reg->fine_delay_count_mask, val);
+ 	if (!ival->fine_delay_count) {
+ 		dev_err(dev, "Invalid Fine delay count (0) (reg=0x%08x)\n",
+ 			val);
 -- 
 2.25.1
 
