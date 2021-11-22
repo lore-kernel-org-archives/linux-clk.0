@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEF4C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 15:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC519C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 15:56:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240171AbhKVP7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 10:59:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37410 "EHLO
+        id S240344AbhKVP7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 10:59:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240181AbhKVP6P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 10:58:15 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3403DC06175A
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 07:55:08 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:e4da:38c:79e9:48bf])
-        by michel.telenet-ops.be with bizsmtp
-        id MTuK2600Z4yPVd606TuK7s; Mon, 22 Nov 2021 16:55:06 +0100
+        with ESMTP id S240432AbhKVP73 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 10:59:29 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1A1C061759
+        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 07:56:16 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id MTvb260044C55Sk06Tvb5d; Mon, 22 Nov 2021 16:56:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe6-00EL3u-UU; Mon, 22 Nov 2021 16:54:18 +0100
+        id 1mpBe6-00EL3k-Le; Mon, 22 Nov 2021 16:54:18 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mpBe5-00HH2O-V9; Mon, 22 Nov 2021 16:54:17 +0100
+        id 1mpBe5-00HH0g-SI; Mon, 22 Nov 2021 16:54:17 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         alsa-devel@alsa-project.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 17/17] rtw89: Use bitfield helpers
-Date:   Mon, 22 Nov 2021 16:54:10 +0100
-Message-Id: <f7b81122f7596fa004188bfae68f25a68c2d2392.1637592133.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 14/17] regulator: ti-abb: Use bitfield helpers
+Date:   Mon, 22 Nov 2021 16:54:07 +0100
+Message-Id: <c8508cae36c52c750dbb12493dd44d92fcf51ad4.1637592133.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1637592133.git.geert+renesas@glider.be>
 References: <cover.1637592133.git.geert+renesas@glider.be>
@@ -90,101 +90,48 @@ Compile-tested only.
 Marked RFC, as this depends on [PATCH 01/17], but follows a different
 path to upstream.
 ---
- drivers/net/wireless/realtek/rtw89/core.h | 38 ++++-------------------
- 1 file changed, 6 insertions(+), 32 deletions(-)
+ drivers/regulator/ti-abb-regulator.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wireless/realtek/rtw89/core.h
-index c2885e4dd882f045..f9c0300ec373aaf2 100644
---- a/drivers/net/wireless/realtek/rtw89/core.h
-+++ b/drivers/net/wireless/realtek/rtw89/core.h
-@@ -2994,81 +2994,55 @@ rtw89_write32_clr(struct rtw89_dev *rtwdev, u32 addr, u32 bit)
- static inline u32
- rtw89_read32_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
- {
--	u32 shift = __ffs(mask);
--	u32 orig;
--	u32 ret;
--
--	orig = rtw89_read32(rtwdev, addr);
--	ret = (orig & mask) >> shift;
--
--	return ret;
-+	return field_get(mask, rtw89_read32(rtwdev, addr));
- }
+diff --git a/drivers/regulator/ti-abb-regulator.c b/drivers/regulator/ti-abb-regulator.c
+index 2931a0b89bffbf7a..3bc6ca5c382a4273 100644
+--- a/drivers/regulator/ti-abb-regulator.c
++++ b/drivers/regulator/ti-abb-regulator.c
+@@ -17,6 +17,7 @@
+  * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  */
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/err.h>
+@@ -132,7 +133,7 @@ static inline u32 ti_abb_rmw(u32 mask, u32 value, void __iomem *reg)
  
- static inline u16
- rtw89_read16_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
- {
--	u32 shift = __ffs(mask);
--	u32 orig;
--	u32 ret;
--
--	orig = rtw89_read16(rtwdev, addr);
--	ret = (orig & mask) >> shift;
--
--	return ret;
-+	return field_get(mask, rtw89_read16(rtwdev, addr));
- }
+ 	val = readl(reg);
+ 	val &= ~mask;
+-	val |= (value << __ffs(mask)) & mask;
++	val |= field_prep(mask, value);
+ 	writel(val, reg);
  
- static inline u8
- rtw89_read8_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask)
- {
--	u32 shift = __ffs(mask);
--	u32 orig;
--	u32 ret;
--
--	orig = rtw89_read8(rtwdev, addr);
--	ret = (orig & mask) >> shift;
--
--	return ret;
-+	return field_get(mask, rtw89_read8(rtwdev, addr));
- }
+ 	return val;
+@@ -229,7 +230,7 @@ static void ti_abb_program_ldovbb(struct device *dev, const struct ti_abb *abb,
+ 	case TI_ABB_SLOW_OPP:
+ 	case TI_ABB_FAST_OPP:
+ 		val |= abb->ldovbb_override_mask;
+-		val |= info->vset << __ffs(abb->ldovbb_vset_mask);
++		val |= field_prep(abb->ldovbb_vset_mask, info->vset);
+ 		break;
+ 	}
  
- static inline void
- rtw89_write32_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u32 data)
- {
--	u32 shift = __ffs(mask);
- 	u32 orig;
- 	u32 set;
- 
- 	WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
- 
- 	orig = rtw89_read32(rtwdev, addr);
--	set = (orig & ~mask) | ((data << shift) & mask);
-+	set = (orig & ~mask) | field_prep(mask, data);
- 	rtw89_write32(rtwdev, addr, set);
- }
- 
- static inline void
- rtw89_write16_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u16 data)
- {
--	u32 shift;
- 	u16 orig, set;
- 
- 	mask &= 0xffff;
--	shift = __ffs(mask);
- 
- 	orig = rtw89_read16(rtwdev, addr);
--	set = (orig & ~mask) | ((data << shift) & mask);
-+	set = (orig & ~mask) | field_prep(mask, data);
- 	rtw89_write16(rtwdev, addr, set);
- }
- 
- static inline void
- rtw89_write8_mask(struct rtw89_dev *rtwdev, u32 addr, u32 mask, u8 data)
- {
--	u32 shift;
- 	u8 orig, set;
- 
- 	mask &= 0xff;
--	shift = __ffs(mask);
- 
- 	orig = rtw89_read8(rtwdev, addr);
--	set = (orig & ~mask) | ((data << shift) & mask);
-+	set = (orig & ~mask) | field_prep(mask, data);
- 	rtw89_write8(rtwdev, addr, set);
- }
- 
+@@ -606,7 +607,7 @@ static int ti_abb_init_table(struct device *dev, struct ti_abb *abb,
+ 					pname, *volt_table, vset_mask);
+ 			continue;
+ 		}
+-		info->vset = (efuse_val & vset_mask) >> __ffs(vset_mask);
++		info->vset = field_get(vset_mask, efuse_val);
+ 		dev_dbg(dev, "[%d]v=%d vset=%x\n", i, *volt_table, info->vset);
+ check_abb:
+ 		switch (info->opp_sel) {
 -- 
 2.25.1
 
