@@ -2,223 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B420C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 14:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A1AC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 14:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239534AbhKVOpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 09:45:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233367AbhKVOpQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Nov 2021 09:45:16 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F314EC061714
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 06:42:09 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id k37so82063399lfv.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 Nov 2021 06:42:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JY9o9Qw6OAmM2h7GF5DXcC1VsO28vOcpSP4iXZPByYc=;
-        b=UHDbtxGzA/5hiFwXBixij0WHcZACiUNY6U5OUIqC4pMhb/7nls3bOLzuU9mPEAQ7h/
-         iV6nS/1dxSQSdCk1k9VNfjLBjJnAJ4dFpmMcBVlzybOuJqOZPXdQ8HKbILGAtAPCv+oU
-         khBui81vf01KJaujHuCNxJ679lrQJ3bzRq3uxOjimkOIt6t+rFc+BjmGN+X5Avkg3JxD
-         yodg2ybtR2ixMT2O+OdCuWsnDhM4phmWc5cDVhskI5HRFAWe4pjIBUTU5IorGkXY8ZMp
-         sh5qyVjwD70a+DOcNGb0m9ek3IeXUPEFHu9nS2QtFZkTIv+3SF08AFXm8rgZou6T4EBu
-         Pr1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JY9o9Qw6OAmM2h7GF5DXcC1VsO28vOcpSP4iXZPByYc=;
-        b=cl8KX/nQB42nx4HusD8xmD18RMVYYKJVnc45Nvhj7vXU+Pwy2tljP9kg/srnPNNMyj
-         v5HJ/a1Qfbf+wemgN4LTNmk1eBI5fGcK8Q9IxPIDur3UEOo6ZHVPaNnljaCz4RHLbVAN
-         2/8h3jCoDsQzE98Gj6V1/wWCZsVUVW7mtN7/j1/FDMzID8830LuCQKI/7KtDWtvrXdD3
-         l1QdbVPHR3L3dvwpov/XohKxEm/2w/HXgZpjtIfZVh0aisyXnu/Bx9Gubk4oPjVAmRGj
-         9nxmxLrSV/W62n0tobVoMzLu1SnRGhsrs6h8n56sPTsGP1i744lXbO8gC2ztr558jNyg
-         GSYg==
-X-Gm-Message-State: AOAM532wfjAtZqLyzqQQvbmm+WI6maV9jLQFm1GfwV+nsDe764/4FU19
-        wWtoUn05GMporplvnSY7gaCzig==
-X-Google-Smtp-Source: ABdhPJxMdHB47e9WyBvRhkaCVvTJFHk1GZPxZIy4C6Igcqz3WurfOJOB7T0ZdbmuMdgykSdyQR7Pbg==
-X-Received: by 2002:a2e:b7d4:: with SMTP id p20mr51346402ljo.248.1637592128216;
-        Mon, 22 Nov 2021 06:42:08 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id f9sm614684lfu.10.2021.11.22.06.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Nov 2021 06:42:07 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Virag <virag.david003@gmail.com>,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 1/1] clk: samsung: exynos850: Register clocks early
-Date:   Mon, 22 Nov 2021 16:42:06 +0200
-Message-Id: <20211122144206.23134-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
+        id S238762AbhKVO6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 09:58:12 -0500
+Received: from mail-eopbgr60063.outbound.protection.outlook.com ([40.107.6.63]:46718
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232494AbhKVO6L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Nov 2021 09:58:11 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mZPMTD4UIeQhbLsVlRpvV0Iu3SjTrPnwtXO3HIJCc4Yd5123d8APQ10Q1cgO+5YFyLNnvzj0nWmhJK+A70W2SWWFo89yhe9ohAVdJx2kMDxnIyYzVQr2MWdgyf7nwSsqgUqBFfVMD1J/qAbPjeCkkRmsjMYeQ8utc8LR3k8dOy8nln1aMUWAepmladgRJJjTycN/bZ+gjUhrm/FX15q3nedyPnr2Mi9poW5eqgVl6Zn/Bi33E+kHeb+0rkjnuJIQ33+ooaCd/eqtftKd9A8ZDdayysLU+SDkbKXSJL72VJJAOr3UTPeQ2lC3DOBWHqVpmNsQRt6DC6pmhUjF3esUpw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kngCUDJ5BqMH1qnKp511Ki2Pz3zq0/yFtTb1CbpoQPM=;
+ b=SYNm1k2c+eJ8DsRDXB4disZe8ttMNHZtaLgHMgfG3gN6JJx4MlSaRjs9LOZz1gvz+TZcMjmnCzmYkyTMUUYyut9YJTyAadta3lPeLdSHP8inULON9Spxx8JltsMRt/Ler6le8iYDS1bD268ua8GaeHQe/HRne3Sq1KYn3XcOorkjEqmv+XShl4mzRfeY2YhCQb3satLHZfDjOKCkVbRTX1xR56QkJaO0p9AimmAc2mHh+XeGrQSC9zFr4fw6Z6Z29LHDJG9DvV5UtCEh89cPL3FhK75ta0N0+82cvD3WXO0538fE3KA1qkcoPaipo/LjjKw8VR7UVvSyrJ0Eud0b/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kngCUDJ5BqMH1qnKp511Ki2Pz3zq0/yFtTb1CbpoQPM=;
+ b=S14sbdP+MlbstYR++3tKuSa/Kt9c4XYqk5cndsEm1XmtzN49PPj4qX6qeO+d+RQK+lFZiRCoOdY1NGg8F+TkTR5OIYkCezc77zysCv+9mBO6vDRIrfiUOBZTIkDeuJhRboiifUAQ2ggqBBxTESoqYKq1uxV8zdKtA1l9J98xP/g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
+ by VE1PR04MB7216.eurprd04.prod.outlook.com (2603:10a6:800:1b0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.22; Mon, 22 Nov
+ 2021 14:55:03 +0000
+Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::d0eb:49aa:2a9:9fc4]) by VI1PR04MB4688.eurprd04.prod.outlook.com
+ ([fe80::d0eb:49aa:2a9:9fc4%4]) with mapi id 15.20.4713.025; Mon, 22 Nov 2021
+ 14:55:03 +0000
+Date:   Mon, 22 Nov 2021 16:55:00 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Hui Wang <hui.wang@canonical.com>
+Cc:     linux-clk@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
+        Anson.Huang@nxp.com, ping.bai@nxp.com
+Subject: Re: [PATCH 1/2] clk: imx8mp: Remove IPG_AUDIO_ROOT from
+ imx8mp-clock.h
+Message-ID: <YZuvRGEGeTqp3Lky@ryzen>
+References: <20211109125657.63485-1-hui.wang@canonical.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211109125657.63485-1-hui.wang@canonical.com>
+X-ClientProxiedBy: AS9PR06CA0031.eurprd06.prod.outlook.com
+ (2603:10a6:20b:463::7) To VI1PR04MB4688.eurprd04.prod.outlook.com
+ (2603:10a6:803:6a::30)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from ryzen (5.12.226.136) by AS9PR06CA0031.eurprd06.prod.outlook.com (2603:10a6:20b:463::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4713.21 via Frontend Transport; Mon, 22 Nov 2021 14:55:02 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: abb9f791-9fd9-433b-5644-08d9adc81070
+X-MS-TrafficTypeDiagnostic: VE1PR04MB7216:
+X-Microsoft-Antispam-PRVS: <VE1PR04MB72168388F5C6ADE3482F5ABDF69F9@VE1PR04MB7216.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:497;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: dGaRsXavN5K0GZLBwxmY0i11njk5yzAFr7BI6DL624RmNCvD2HEAW0iU9zxBqRwXImXWIYQK5eXFB2HYf03M1E+LWl4HSAbKvpt4UBGzcMPYVa5pG6lvKEF2zaYskxwIPwls4uVBeH5NiPik3miElEyM41wZBWduFeb6cPcCYceeGKzGeZdavzeA4sXHNOJkpjI+0Vqxww+1prEC9Eh7EdJB4pxI45yudZhV2EflM0Ah0LurdIp1cJr/sQVJVofvOiMB9zQewjxSGfzgD/D67/+RTbKHI3PMRjaFVsZvWgMtMOtKlqKKlJXSSUrp+XwKahgzGDkebpqItjeBYKSVYvaiD8MSAMjFGON02Ve71Jjic93CpMIRhSwCpDlWNJ60I9bSE7RD5BX/6M8SF5gg5zopIaACZUTqxcUBDXkKqWvP4rmT39VVPkB26X9I9FXvirue9ZhjjfSH2TuY2sjho9lVtYZj4uVonp1ppkyAkVhcItmmL1sMLjWtQYgeW1wqjzAxxUmx57YJpveFobnC2gBtGBktQahQXiz2Au83YQhE1Pc0Nny1Pw69TsTYylUSWS3jj5xMZih/a8lJB7yZzpz7aycqFQS5D74ND/px/55y1b8BElNcDk/XPuiKF55NTkaZEhrJTCqrSM6DNAJJ3jYTgTBqbpgrHJKavDoa3yzb6iefWce0JpL0/Xjjaol3ubMiZtloW8Jmh3ZnzdWX1jx9jj+J9KnJ6KEgZwxSmmk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(5660300002)(44832011)(9576002)(316002)(4326008)(2906002)(55016002)(53546011)(52116002)(6916009)(6496006)(8936002)(66946007)(66476007)(66556008)(956004)(33716001)(86362001)(508600001)(83380400001)(9686003)(38100700002)(38350700002)(26005)(8676002)(186003)(32563001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jp/slALX+NW8in3+CsOiNhMWmmLWbssRGI1ziPladA4S7aGO6dmXnU32ak3J?=
+ =?us-ascii?Q?pIeq9cbLMx1kwdu6lWS1Am83NxiPlhUt/wDJaRWBvhcT0n084IGzWSoQEDZ+?=
+ =?us-ascii?Q?cKNc9pCrR20pT2yc3gFFEqE+IukMa0gvsV//lAuAzgd7DuBs2IIJm+TgtXSC?=
+ =?us-ascii?Q?M1b4Us2kVr3W9AqGZAZVCNPWAiuogPKh27V31rhI5IUAQASacVEef0xQVAdG?=
+ =?us-ascii?Q?LjTX0gqb4d17nPFNXjYC/ftx7Vb85fTk2laTi76tSiAhV0RGQo1vmxh4mFoG?=
+ =?us-ascii?Q?VdgGrkdx3TAbo1MpmYSJinZNBJs9aas6/QQpmT3HXihoheAT+aKmv4Y2Qtlj?=
+ =?us-ascii?Q?zfSOae65IA4HIywdhcGBbqG70+AntokFyqWdTUjZXSbWLV734I3nQ1A5/lpk?=
+ =?us-ascii?Q?28uRemF1gywJ4i9BWCFB8SrsC6vCdXJGo7CZtriMp5q2ScvQgYQ20Vi26QR9?=
+ =?us-ascii?Q?VSgjYudUfCt1y+Q4/hG2CeIfnLikI6EDz3LoW8JhAf3cNwTh2Q/C6VVV2XhN?=
+ =?us-ascii?Q?9B7IhQ4OXP9BhuU8jkdYVwJomco3HrTOpfaA8JozUsqlsHuajCBY6fsz9zpD?=
+ =?us-ascii?Q?Gmue1DUEg4yw/MUVV6DbVSjB1qYXJlP5a3tmQ/gfB8yfh82mCUth4328kQEg?=
+ =?us-ascii?Q?ZPd0Wx/A6c2icSerwhLaiVuUphHcuLRap9HA+al90XGMWd1cBUYXc6mxFy9o?=
+ =?us-ascii?Q?K3uAuWmbVG0Mr6KeKBPrRhhMHFPRubP/HJfERJkoKhTTEGIF3odN8MarjqaH?=
+ =?us-ascii?Q?6JFpfZHxcgZK6QlH3tnWacSUUxABWg0mq0CdEW5OnHfIBzGWfGnw7oqo646F?=
+ =?us-ascii?Q?a6GHETWY/6B1AzK6UeNaRBNv/JOYbKJZYz7D1Q1uofTvxpsMSyWvzdYyeU3x?=
+ =?us-ascii?Q?zr+1Qj+UUl8+u8cnMEzXqZ0OYvY1/W08axV0JU9Ewc/LXDpdVsxHVzX6sT9m?=
+ =?us-ascii?Q?Wdbi90xnECBcy4GoMIaQcycUf14bDtUpgXnRU8QK3H2BoAGlQ8DU7o1ROrXM?=
+ =?us-ascii?Q?aDuoxKsumDUo94qsutsEtKQCKuNxEW1r8rYJLQOp+4IRPOmqJfbZknYlrQD1?=
+ =?us-ascii?Q?ngGbFCrEl5wIuocOnqwxOcI6KYl3UlebYFGhXsaZRfhBOcLxCvtcFtjypNXx?=
+ =?us-ascii?Q?cajQTLGuFGUCqv5p0kHnQs0TziJLTcPoKlzG7J8sUaJcfhUKaowPxiF0p16R?=
+ =?us-ascii?Q?ryWqXnRTkqXNH3AVWm4u/4IWllue/kjk2kqxB8/+QSsRRJyPgrVsJWT+1o5Y?=
+ =?us-ascii?Q?I47+0GMToeQUu2KBIaPpQPS9Mh+5RGfTgKWYJoINgNNb0GCSe15+ytJBYp/R?=
+ =?us-ascii?Q?n2ee8yQ6t0s4hXZ0NN6tQAhQ0vMoQiFKNMhOrsi0YFdD0gzgqBl1ojZBqY5+?=
+ =?us-ascii?Q?YJKUJK9MGrLH/4WlSZwrpW9eHLlwmRJbnufcw+Ug0xOHkQv/goadt+LmdwEV?=
+ =?us-ascii?Q?xuMRieSHJ0pooFs2v0riJJtbIgGNLoFaZpIJ0JIeuEZ/jY0H2QAGzRHOPrtC?=
+ =?us-ascii?Q?jrafAZhXF82f6RVA8OFTXEabduRsaO6KGQkeQy7qbF/0NOSNPtLtYJbF1ZvC?=
+ =?us-ascii?Q?anf6Ngj76vp0LiJmg6N6laADRcimK6kGeuuMYADA/usOb0kKO5lYYpEAGU7e?=
+ =?us-ascii?Q?1huC7fDhGqnN13743HpZKAs=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: abb9f791-9fd9-433b-5644-08d9adc81070
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2021 14:55:03.3026
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dDo1OUfx2Woh7tes7nxmrP22yznQZQWiC3S84MqVTw+Sbd8bicLcK4+BRt62lidNeQjC8y9m6GfogGlA2MNs7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7216
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some clocks must be registered before init calls. For example MCT clock
-(from CMU_PERI) is needed for MCT timer driver, which is registered
-with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-clk-exynos850 platform driver init, it's already too late. Inability to
-get "mct" clock in MCT driver leads to kernel panic, as functions
-registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-can't be fixed either, as it's acting as a clock source and it's
-essential to register it in start_kernel() -> time_init().
+On 21-11-09 20:56:56, Hui Wang wrote:
+> Since the commit b24e288d5063 ("clk: imx: Remove the audio ipg clock
+> from imx8mp") removes the non-existing IPG_AUDIO_ROOT from the
+> clk-imx8mp.c, and this definition is not used by anywhere, let us
+> removed it in the imx8mp-clock.h as well.
+> 
+> Signed-off-by: Hui Wang <hui.wang@canonical.com>
 
-Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
-generates clocks needed for CMU_PERI, but it's already registered early.
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-While at it, let's cleanup the code a bit, by extracting everything
-related to CMU initialization and registration to the separate function.
+> ---
+>  include/dt-bindings/clock/imx8mp-clock.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+> index 43927a1b9e94..235c7a00d379 100644
+> --- a/include/dt-bindings/clock/imx8mp-clock.h
+> +++ b/include/dt-bindings/clock/imx8mp-clock.h
+> @@ -117,7 +117,6 @@
+>  #define IMX8MP_CLK_AUDIO_AHB			108
+>  #define IMX8MP_CLK_MIPI_DSI_ESC_RX		109
+>  #define IMX8MP_CLK_IPG_ROOT			110
+> -#define IMX8MP_CLK_IPG_AUDIO_ROOT		111
 
-Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-drivers/clk/mediatek/clk-mt2712.c.
+Seems this hasn't been used since 5.14, so I guess we're safe.
 
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
-Changes in v2:
-  - Use of_clk_get_by_name() API to get parent clock when registering
-    CMU early (as suggested by Sylwester Nawrocki)
-  - Extracted CMU registration code to separate routine
-  - Use CLK_OF_DECLARE() for CMU_PERI init, instead of
-    CLK_OF_DECLARE_DRIVER(), as parent clock now can be enabled early
-  - Remove "samsung,exynos850-cmu-peri" from exynos850_cmu_of_match[]
-  - Add some comments for early domains
-
- drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 04a8d202c939..568ac97c8120 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -60,6 +60,43 @@ static void __init exynos850_init_clocks(struct device_node *np,
- 	iounmap(reg_base);
- }
- 
-+/**
-+ * exynos850_register_cmu - Register specified Exynos850 CMU domain
-+ * @dev:	Device object; may be NULL if this function is not being
-+ *		called from platform driver probe function
-+ * @np:		CMU device tree node
-+ * @cmu:	CMU data
-+ *
-+ * Register specified CMU domain, which includes next steps:
-+ *
-+ * 1. Enable parent clock of @cmu CMU
-+ * 2. Set initial registers configuration for @cmu CMU clocks
-+ * 3. Register @cmu CMU clocks using Samsung clock framework API
-+ */
-+static void __init exynos850_register_cmu(struct device *dev,
-+		struct device_node *np, const struct samsung_cmu_info *cmu)
-+{
-+	/* Keep CMU parent clock running (needed for CMU registers access) */
-+	if (cmu->clk_name) {
-+		struct clk *parent_clk;
-+
-+		if (dev)
-+			parent_clk = clk_get(dev, cmu->clk_name);
-+		else
-+			parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-+
-+		if (IS_ERR(parent_clk)) {
-+			pr_err("%s: could not find bus clock %s; err = %ld\n",
-+			       __func__, cmu->clk_name, PTR_ERR(parent_clk));
-+		} else {
-+			clk_prepare_enable(parent_clk);
-+		}
-+	}
-+
-+	exynos850_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	samsung_cmu_register_one(np, cmu);
-+}
-+
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_TOP (0x120e0000) */
-@@ -367,10 +404,10 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 
- static void __init exynos850_cmu_top_init(struct device_node *np)
- {
--	exynos850_init_clocks(np, top_clk_regs, ARRAY_SIZE(top_clk_regs));
--	samsung_cmu_register_one(np, &top_cmu_info);
-+	exynos850_register_cmu(NULL, np, &top_cmu_info);
- }
- 
-+/* Register CMU_TOP early, as it's a dependency for other early domains */
- CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
- 	       exynos850_cmu_top_init);
- 
-@@ -853,6 +890,15 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
- 	.clk_name		= "dout_peri_bus",
- };
- 
-+static void __init exynos850_cmu_peri_init(struct device_node *np)
-+{
-+	exynos850_register_cmu(NULL, np, &peri_cmu_info);
-+}
-+
-+/* Register CMU_PERI early, as it's needed for MCT timer */
-+CLK_OF_DECLARE(exynos850_cmu_peri, "samsung,exynos850-cmu-peri",
-+	       exynos850_cmu_peri_init);
-+
- /* ---- CMU_CORE ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_CORE (0x12000000) */
-@@ -1021,24 +1067,9 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 
- 	info = of_device_get_match_data(dev);
--	exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
--	samsung_cmu_register_one(np, info);
--
--	/* Keep bus clock running, so it's possible to access CMU registers */
--	if (info->clk_name) {
--		struct clk *bus_clk;
--
--		bus_clk = clk_get(dev, info->clk_name);
--		if (IS_ERR(bus_clk)) {
--			pr_err("%s: could not find bus clock %s; err = %ld\n",
--			       __func__, info->clk_name, PTR_ERR(bus_clk));
--		} else {
--			clk_prepare_enable(bus_clk);
--		}
--	}
-+	exynos850_register_cmu(dev, dev->of_node, info);
- 
- 	return 0;
- }
-@@ -1053,9 +1084,6 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-hsi",
- 		.data = &hsi_cmu_info,
--	}, {
--		.compatible = "samsung,exynos850-cmu-peri",
--		.data = &peri_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-core",
- 		.data = &core_cmu_info,
--- 
-2.30.2
-
+>  #define IMX8MP_CLK_DRAM_ALT			112
+>  #define IMX8MP_CLK_DRAM_APB			113
+>  #define IMX8MP_CLK_VPU_G1			114
+> -- 
+> 2.25.1
+>
