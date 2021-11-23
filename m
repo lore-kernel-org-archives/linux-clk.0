@@ -2,111 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755F4C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Nov 2021 16:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2BEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Nov 2021 16:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230053AbhKWQ0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Nov 2021 11:26:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33132 "EHLO
+        id S231629AbhKWQ2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Nov 2021 11:28:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhKWQ0b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Nov 2021 11:26:31 -0500
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F405C061574
-        for <linux-clk@vger.kernel.org>; Tue, 23 Nov 2021 08:23:23 -0800 (PST)
-Received: by mail-ot1-x32d.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso13990565ota.5
-        for <linux-clk@vger.kernel.org>; Tue, 23 Nov 2021 08:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zBuLmrD4RVS18Xj6yhG9KuDHzFKukaIEFbOkTKeiw1I=;
-        b=i/R6iuKAymapTKSGTomdwKbvBqToNTT/C28vCvn11DiBlVhMVKCNWZd8m5iIJws870
-         5i6M+Uromko5JASpYlf64cnDXfeiRhcXxeMc7SlPTrBT7ppkXhw4RzDn5aDBfyisz5xp
-         3BNIDYR0ZR6Vot9zl0CQj/Ff9yxpT+hKjvayZSdQdudMHDnDcLHd9ZHYAnC6ZCob96jL
-         sRnXshNLrv7V7KfCjp3REl/ctFWWFYenJLYMNwPzrSjECJ9f8Sz33ozK/nnCjkDQyvRy
-         qzFjFRwt+lkK0DQVHKukNwQxKY9Xi19siLuoD9ZUKJr52Y/QZKQAj0UrFMuXtmWCHvmK
-         FgJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zBuLmrD4RVS18Xj6yhG9KuDHzFKukaIEFbOkTKeiw1I=;
-        b=Q0YNcybcZ0C3TJY2MU7D2kLiDr4vpEi1v2xbVXzu/oqKa0qIlyTpHDyW00crw/RRaY
-         TABjs2AT5O+qDkdqwEOFkVeJ6s58GAdXljeEv7+qLbny/EAn9mFD3M4h7hFYhsmDAw59
-         XW6kHUcvHGyhJYqo6ZB+4fnPg4IR8c7XjQ9e7kTJNEjm8fBrlQN5SP/OXhckbhBVQ4Mo
-         XLSfq6XjcHD39DhWXTJ2Q2kmOA/BsXIwXAb9kKo78H+BsqSK9bhUPbnFebwLgi/Y6gqs
-         7nncI7rzlJQrdl989YxL6P9mxVpZBzVZzA4JqLrJCqSLL/FAtpscddKVG5CqHEriY5bp
-         bzOg==
-X-Gm-Message-State: AOAM5336maEWZdEBeDpQEGgu2h5uOWPiVmJtCmmfBbZ+GRG1Y/6ZZ/5R
-        ihIXYdaiVrt6PteLKgMUb6qEJrD/aj8lSA==
-X-Google-Smtp-Source: ABdhPJySUDxBc7WKKVZIoc6Yq1tAhOgCYQWNcF8/sGQlcJ5We9CtbA2F63QQnIzKYPDYtxwknNF4oA==
-X-Received: by 2002:a05:6830:232e:: with SMTP id q14mr5709355otg.133.1637684602631;
-        Tue, 23 Nov 2021 08:23:22 -0800 (PST)
-Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 111sm2264314otu.55.2021.11.23.08.23.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Nov 2021 08:23:22 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S231216AbhKWQ2A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Nov 2021 11:28:00 -0500
+Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4713AC061574;
+        Tue, 23 Nov 2021 08:24:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
+        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+        Resent-Cc:Resent-Message-ID; bh=YDWHeWKgv4r/9Wehkw2ZJglZ0nE6CAjALsQ8jZXrdcM=;
+        t=1637684692; x=1638894292; b=QuKynbq9kdH8NbuNaJiTsHXovNX8mUYubfwZlvWWk/x1mUE
+        ZRX9xyo0wdm9lnd6xshW0lGP+hFW8Iey28NjmNJv9IOAtLYLt0S1V7U2nKBaDNI8jbEznDDDsMd4h
+        qitZNKMu/Jx92KYNQNqwVeXigGzf/hexUOwEIVA4PifclIHOnvR8MEzQA0H29KNgA5EYPnkzBT2I3
+        b4r9RgmbiWoG8qOgAywUd5eqLUQ9TcpEe0xBkw57fyIidqhlV79WBSPPUrCl4LPAsbyyVVIjcswtk
+        CekrQQ7tsD8bfRxIfBRUEZ+4/Gl5VPxU43t0ba0JsWoh2yACk+ETopzUqeRPTHtw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.95)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1mpYaf-001olr-5U;
+        Tue, 23 Nov 2021 17:24:17 +0100
+Message-ID: <637a4183861a1f2cdab52b7652bfa7ed33fbcdd2.camel@sipsolutions.net>
+Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}()
+ helpers
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Paul Walmsley <paul@pwsan.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     Robert Foss <robert.foss@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: qcom: clk-alpha-pll: Don't reconfigure running Trion
-Date:   Tue, 23 Nov 2021 08:25:08 -0800
-Message-Id: <20211123162508.153711-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211123161630.123222-1-bjorn.andersson@linaro.org>
-References: 
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Date:   Tue, 23 Nov 2021 17:24:15 +0100
+In-Reply-To: <CAMuHMdWAAGrQUZN18cnDTDUUhuPNTZTFkRMe2Sbf+s7CedPSxA@mail.gmail.com>
+References: <cover.1637592133.git.geert+renesas@glider.be>
+         <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
+         <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
+         <20211122171739.03848154@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+         <CAMuHMdWAAGrQUZN18cnDTDUUhuPNTZTFkRMe2Sbf+s7CedPSxA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the event that the bootloader has configured the Trion PLL as source
-for the display clocks, e.g. for the continuous splashscreen, then there
-will also be RCGs that are clocked by this instance.
+On Tue, 2021-11-23 at 09:36 +0100, Geert Uytterhoeven wrote:
 
-Reconfiguring, and in particular disabling the output of, the PLL will
-cause issues for these downstream RCGs and has been shown to prevent
-them from being re-parented.
 
-Follow downstream and skip configuration if it's determined that the PLL
-is already running.
+Ah, here's your comment wrt. which one is nicer :)
 
-Fixes: 59128c20a6a9 ("clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
+> > > We have the upper-case (constant) versions, and already
+> > > {u32,...}_get_bits()/etc.
+> 
+> TBH, I don't like the *_get_bits() API: in general, u32_get_bits() does
+> the same as FIELD_GET(), but the order of the parameters is different?
 
-Changes since v1:
-- Forgot to commit the last minute s/pr_dbg/pr_debug/
+I don't really see how "the order of parameters is different" is a
+downside? Yeah it means if you're used to FIELD_GET() then you'll
+retrain, but ...?
 
- drivers/clk/qcom/clk-alpha-pll.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> (*_replace_bits() seems to be useful, though)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index eaedcceb766f..8f65b9bdafce 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1429,6 +1429,15 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
- void clk_trion_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
- {
-+	/*
-+	 * If the bootloader left the PLL enabled it's likely that there are
-+	 * RCGs that will lock up if we disable the PLL below.
-+	 */
-+	if (trion_pll_is_enabled(pll, regmap)) {
-+		pr_debug("Trion PLL is already enabled, skipping configuration\n");
-+		return;
-+	}
-+
- 	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
- 	regmap_write(regmap, PLL_CAL_L_VAL(pll), TRION_PLL_CAL_VAL);
- 	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
--- 
-2.33.1
+Indeed.
 
+Also as I said in my other mail, the le32/be32/... variants are
+tremendously useful, and they fundamentally cannot be expressed with the
+FIELD_GET() or field_get() macros. IMHO this is a clear advantage to the
+typed versions, and if you ask me we should get rid of the FIELD_GETand
+FIELD_PREP entirely - difficult now, but at least let's not propagate
+that?
+
+johannes
