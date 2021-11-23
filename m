@@ -2,157 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B37C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Nov 2021 23:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D64C4167D
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Nov 2021 01:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232292AbhKVXKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Nov 2021 18:10:53 -0500
-Received: from foss.arm.com ([217.140.110.172]:46266 "EHLO foss.arm.com"
+        id S232143AbhKWBUu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Nov 2021 20:20:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232316AbhKVXKk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Nov 2021 18:10:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF7CE1063;
-        Mon, 22 Nov 2021 15:07:32 -0800 (PST)
-Received: from e120937-lin.home (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1856C3F5A1;
-        Mon, 22 Nov 2021 15:07:30 -0800 (PST)
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
-        Jonathan.Cameron@Huawei.com, f.fainelli@gmail.com,
-        vincent.guittot@linaro.org, souvik.chakravarty@arm.com,
-        cristian.marussi@arm.com,
+        id S229776AbhKWBUt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Nov 2021 20:20:49 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7D9BC60FE7;
+        Tue, 23 Nov 2021 01:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637630262;
+        bh=aoZBtBydzk0bAevU49rnDfe9zlt/fW7CJBCoU7dRxYA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DP4A1u9wNAGb4TisYL/xclxXLCsu2eYg5z5kmYiYSKFhn68ml1u5EecsH0UtRKHqf
+         6WSeXmftsKJnT0cJoC45C1J/DRKEkyY8ZtRnMG5HUdipvmpB5FFIlmEIJvncTHRUsl
+         ZJL0QNbzVlJaWzKiVHfmtZTk38Yn3TlLB2z6CLXnGmgwi//WUT0SYP6cVTF8nOAJxN
+         15rOBhxuQkabwtldmp65OfJNj5TeFJmkuLPCAwUI0Dna0FEvAJIm2JVOaykJdOmzdN
+         ItdPFw828/65BBT1WXG3h6a2jxgAjBQ+Bbe/D392jq/wYgwXj4sze1/1CQib/FK9DM
+         tH9oaaLRu5SxA==
+Date:   Mon, 22 Nov 2021 17:17:39 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Paul Walmsley <paul@pwsan.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v6 16/16] clk: scmi: Support atomic clock enable/disable API
-Date:   Mon, 22 Nov 2021 23:06:40 +0000
-Message-Id: <20211122230640.1345-17-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211122230640.1345-1-cristian.marussi@arm.com>
-References: <20211122230640.1345-1-cristian.marussi@arm.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Keerthy <j-keerthy@ti.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}()
+ helpers
+Message-ID: <20211122171739.03848154@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
+References: <cover.1637592133.git.geert+renesas@glider.be>
+        <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
+        <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support also atomic enable/disable clk_ops beside the bare non-atomic one
-(sprepare/unprepare) when the underlying SCMI transport is configured to
-support atomic transactions for synchronous commands.
+On Mon, 22 Nov 2021 17:32:43 +0100 Johannes Berg wrote:
+> On Mon, 2021-11-22 at 16:53 +0100, Geert Uytterhoeven wrote:
+> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > constants.  However, it is very common to prepare or extract bitfield
+> > elements where the bitfield mask is not a compile-time constant.
+> 
+> I'm not sure it's really a good idea to add a third API here?
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-V5 --> V6
-- add concurrent availability of atomic and non atomic reqs
----
- drivers/clk/clk-scmi.c | 56 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 47 insertions(+), 9 deletions(-)
++1
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 1e357d364ca2..50033d873dde 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -88,21 +88,53 @@ static void scmi_clk_disable(struct clk_hw *hw)
- 	scmi_proto_clk_ops->disable(clk->ph, clk->id);
- }
- 
-+static int scmi_clk_atomic_enable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return scmi_proto_clk_ops->enable_atomic(clk->ph, clk->id);
-+}
-+
-+static void scmi_clk_atomic_disable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	scmi_proto_clk_ops->disable_atomic(clk->ph, clk->id);
-+}
-+
-+/*
-+ * We can provide enable/disable atomic callbacks only if the underlying SCMI
-+ * transport for an SCMI instance is configured to handle SCMI commands in an
-+ * atomic manner.
-+ *
-+ * When no SCMI atomic transport support is available we instead provide only
-+ * the prepare/unprepare API, as allowed by the clock framework when atomic
-+ * calls are not available.
-+ *
-+ * Two distinct sets of clk_ops are provided since we could have multiple SCMI
-+ * instances with different underlying transport quality, so they cannot be
-+ * shared.
-+ */
- static const struct clk_ops scmi_clk_ops = {
- 	.recalc_rate = scmi_clk_recalc_rate,
- 	.round_rate = scmi_clk_round_rate,
- 	.set_rate = scmi_clk_set_rate,
--	/*
--	 * We can't provide enable/disable callback as we can't perform the same
--	 * in atomic context. Since the clock framework provides standard API
--	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
--	 * context, it should be fine providing prepare/unprepare.
--	 */
- 	.prepare = scmi_clk_enable,
- 	.unprepare = scmi_clk_disable,
- };
- 
--static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-+static const struct clk_ops scmi_atomic_clk_ops = {
-+	.recalc_rate = scmi_clk_recalc_rate,
-+	.round_rate = scmi_clk_round_rate,
-+	.set_rate = scmi_clk_set_rate,
-+	.prepare = scmi_clk_enable,
-+	.unprepare = scmi_clk_disable,
-+	.enable = scmi_clk_atomic_enable,
-+	.disable = scmi_clk_atomic_disable,
-+};
-+
-+static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
-+			     const struct clk_ops *scmi_ops)
- {
- 	int ret;
- 	unsigned long min_rate, max_rate;
-@@ -110,7 +142,7 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
- 	struct clk_init_data init = {
- 		.flags = CLK_GET_RATE_NOCACHE,
- 		.num_parents = 0,
--		.ops = &scmi_clk_ops,
-+		.ops = scmi_ops,
- 		.name = sclk->info->name,
- 	};
- 
-@@ -145,6 +177,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 	struct device_node *np = dev->of_node;
- 	const struct scmi_handle *handle = sdev->handle;
- 	struct scmi_protocol_handle *ph;
-+	const struct clk_ops *scmi_ops;
- 
- 	if (!handle)
- 		return -ENODEV;
-@@ -168,6 +201,11 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 	clk_data->num = count;
- 	hws = clk_data->hws;
- 
-+	if (handle->is_transport_atomic(handle))
-+		scmi_ops = &scmi_atomic_clk_ops;
-+	else
-+		scmi_ops = &scmi_clk_ops;
-+
- 	for (idx = 0; idx < count; idx++) {
- 		struct scmi_clk *sclk;
- 
-@@ -184,7 +222,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 		sclk->id = idx;
- 		sclk->ph = ph;
- 
--		err = scmi_clk_ops_init(dev, sclk);
-+		err = scmi_clk_ops_init(dev, sclk, scmi_ops);
- 		if (err) {
- 			dev_err(dev, "failed to register clock %d\n", idx);
- 			devm_kfree(dev, sclk);
--- 
-2.17.1
+> We have the upper-case (constant) versions, and already
+> {u32,...}_get_bits()/etc.
+> 
+> Also, you're using __ffs(), which doesn't work for 64-bit on 32-bit
+> architectures (afaict), so that seems a bit awkward.
+> 
+> Maybe we can make {u32,...}_get_bits() be doing compile-time only checks
+> if it is indeed a constant? The __field_overflow() usage is already only
+> done if __builtin_constant_p(v), so I guess we can do the same with
+> __bad_mask()?
 
+Either that or add decomposition macros. Are compilers still really bad
+at passing small structs by value?
