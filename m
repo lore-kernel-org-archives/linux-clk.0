@@ -2,148 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B108FC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Nov 2021 08:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37275C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Nov 2021 10:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241308AbhKXI1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Nov 2021 03:27:30 -0500
-Received: from m43-7.mailgun.net ([69.72.43.7]:27607 "EHLO m43-7.mailgun.net"
+        id S240541AbhKXKu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Nov 2021 05:50:56 -0500
+Received: from mga18.intel.com ([134.134.136.126]:41222 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231701AbhKXI13 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Nov 2021 03:27:29 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1637742260; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=DLx8xZfugkoYBeo1v25B565K1wJJHlGolp3uooimdG4=; b=bNsxTrQyq9uGwuB3f2LyEcxsvAp9kD/C4fNIuYqL7wdR0INGNqkdkYAL6AQiYP+HKysGkv73
- CYHsPEgeVXDeFd7bJYmMA7Oz/1YUg44l72wHEEI5ntB8TnM3GEkzY/SvktnbEJA3SoSt3f0S
- PcTzk1aHGKk317FKx2i3qMH1ytk=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 619df6b3e7d68470afb02446 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 24 Nov 2021 08:24:19
- GMT
-Sender: kvalo=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id EBD19C4338F; Wed, 24 Nov 2021 08:24:18 +0000 (UTC)
-Received: from tykki (tynnyri.adurom.net [51.15.11.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02E23C4338F;
-        Wed, 24 Nov 2021 08:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 02E23C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>,
+        id S240440AbhKXKuz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Nov 2021 05:50:55 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10177"; a="222129462"
+X-IronPort-AV: E=Sophos;i="5.87,260,1631602800"; 
+   d="scan'208";a="222129462"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2021 02:47:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,260,1631602800"; 
+   d="scan'208";a="607149526"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 24 Nov 2021 02:47:43 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mppoU-0004fD-HG; Wed, 24 Nov 2021 10:47:42 +0000
+Date:   Wed, 24 Nov 2021 18:46:49 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}() helpers
-References: <cover.1637592133.git.geert+renesas@glider.be>
-        <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
-        <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
-        <CAMuHMdUnBgFpqhgjf5AA0LH9MZOFALeC=YinZ4Tv_V+Y9hkRSg@mail.gmail.com>
-Date:   Wed, 24 Nov 2021 10:24:02 +0200
-In-Reply-To: <CAMuHMdUnBgFpqhgjf5AA0LH9MZOFALeC=YinZ4Tv_V+Y9hkRSg@mail.gmail.com>
-        (Geert Uytterhoeven's message of "Tue, 23 Nov 2021 09:30:14 +0100")
-Message-ID: <87sfvm55ct.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+Cc:     kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Don't reconfigure running Trion
+Message-ID: <202111241836.A2WvIKic-lkp@intel.com>
+References: <20211123161630.123222-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211123161630.123222-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
+Hi Bjorn,
 
-> Hi Johannes,
->
-> On Mon, Nov 22, 2021 at 5:33 PM Johannes Berg <johannes@sipsolutions.net> wrote:
->> On Mon, 2021-11-22 at 16:53 +0100, Geert Uytterhoeven wrote:
->> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
->> > constants.  However, it is very common to prepare or extract bitfield
->> > elements where the bitfield mask is not a compile-time constant.
->> >
->>
->> I'm not sure it's really a good idea to add a third API here?
->>
->> We have the upper-case (constant) versions, and already
->> {u32,...}_get_bits()/etc.
->
-> These don't work for non-const masks.
->
->> Also, you're using __ffs(), which doesn't work for 64-bit on 32-bit
->> architectures (afaict), so that seems a bit awkward.
->
-> That's a valid comment. Can be fixed by using a wrapper macro
-> that checks if typeof(mask) == u64, and uses an __ffs64() version when
-> needed.
->
->> Maybe we can make {u32,...}_get_bits() be doing compile-time only checks
->> if it is indeed a constant? The __field_overflow() usage is already only
->> done if __builtin_constant_p(v), so I guess we can do the same with
->> __bad_mask()?
->
-> Are all compilers smart enough to replace the division by
-> field_multiplier(field) by a shift?
+I love your patch! Yet something to improve:
 
-It looks like the answer is no as few weeks back I received a comment
-internally that a team is seeing a slow down with u32_get_bits():
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on v5.16-rc2 next-20211124]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-"Time taken for executing both the macros/inline function (in terms of microseconds)
-(out of 3 Trails)
-FIELD_GET	: 32, 31, 32
-u32_get_bits	: 6379, 6664, 6558"
+url:    https://github.com/0day-ci/linux/commits/Bjorn-Andersson/clk-qcom-clk-alpha-pll-Don-t-reconfigure-running-Trion/20211124-001628
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20211124/202111241836.A2WvIKic-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/1c6539db17125d4d4eaf17c4071063fe8a7e2ca6
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Bjorn-Andersson/clk-qcom-clk-alpha-pll-Don-t-reconfigure-running-Trion/20211124-001628
+        git checkout 1c6539db17125d4d4eaf17c4071063fe8a7e2ca6
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross ARCH=m68k 
 
-Sadly I didn't realise to ask what compiler they were using. But I still
-prefer {u32,...}_get_bits() over FIELD_GET(), they are just so much
-cleaner to use.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+All errors (new ones prefixed by >>):
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+   drivers/clk/qcom/clk-alpha-pll.c: In function 'clk_trion_pll_configure':
+>> drivers/clk/qcom/clk-alpha-pll.c:1437:17: error: implicit declaration of function 'pr_dbg'; did you mean 'pr_debug'? [-Werror=implicit-function-declaration]
+    1437 |                 pr_dbg("Trion PLL is already enabled, skipping configuration\n");
+         |                 ^~~~~~
+         |                 pr_debug
+   cc1: some warnings being treated as errors
+
+
+vim +1437 drivers/clk/qcom/clk-alpha-pll.c
+
+  1421	
+  1422	/**
+  1423	 * clk_lucid_pll_configure - configure the lucid pll
+  1424	 *
+  1425	 * @pll: clk alpha pll
+  1426	 * @regmap: register map
+  1427	 * @config: configuration to apply for pll
+  1428	 */
+  1429	void clk_trion_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+  1430				     const struct alpha_pll_config *config)
+  1431	{
+  1432		/*
+  1433		 * If the bootloader left the PLL enabled it's likely that there are
+  1434		 * RCGs that will lock up if we disable the PLL below.
+  1435		 */
+  1436		if (trion_pll_is_enabled(pll, regmap)) {
+> 1437			pr_dbg("Trion PLL is already enabled, skipping configuration\n");
+  1438			return;
+  1439		}
+  1440	
+  1441		clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
+  1442		regmap_write(regmap, PLL_CAL_L_VAL(pll), TRION_PLL_CAL_VAL);
+  1443		clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+  1444		clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll),
+  1445					     config->config_ctl_val);
+  1446		clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll),
+  1447					     config->config_ctl_hi_val);
+  1448		clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll),
+  1449					     config->config_ctl_hi1_val);
+  1450		clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll),
+  1451						config->user_ctl_val);
+  1452		clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll),
+  1453						config->user_ctl_hi_val);
+  1454		clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U1(pll),
+  1455						config->user_ctl_hi1_val);
+  1456		clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll),
+  1457						config->test_ctl_val);
+  1458		clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll),
+  1459						config->test_ctl_hi_val);
+  1460		clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll),
+  1461						config->test_ctl_hi1_val);
+  1462	
+  1463		regmap_update_bits(regmap, PLL_MODE(pll), PLL_UPDATE_BYPASS,
+  1464				   PLL_UPDATE_BYPASS);
+  1465	
+  1466		/* Disable PLL output */
+  1467		regmap_update_bits(regmap, PLL_MODE(pll),  PLL_OUTCTRL, 0);
+  1468	
+  1469		/* Set operation mode to OFF */
+  1470		regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+  1471	
+  1472		/* Place the PLL in STANDBY mode */
+  1473		regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+  1474	}
+  1475	EXPORT_SYMBOL_GPL(clk_trion_pll_configure);
+  1476	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
