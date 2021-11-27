@@ -2,90 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62E5C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Nov 2021 17:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E85C2C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Nov 2021 22:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355626AbhK0Rfy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Nov 2021 12:35:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48136 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244168AbhK0Rdx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Nov 2021 12:33:53 -0500
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13691C061748;
-        Sat, 27 Nov 2021 09:30:39 -0800 (PST)
-Received: by mail-wr1-x432.google.com with SMTP id o13so26024653wrs.12;
-        Sat, 27 Nov 2021 09:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7vBV1V0UwOB0nNvkc/KUfYZpNF52U4NJO9cyMKDODpE=;
-        b=QWHUbuAlIOQEn0y7gFC+0eFrDk9tSBGXiWs1HsXZeTBkQbsAk8wJqT9oIGBZg39I6j
-         8DhAxsjXzVq02exXN0Nx8ndumfZgOmvabejvQVVoQBjl5LrVpaof/t2G57HxrOmIh8do
-         WI0BX8dMxAItBgYKjfhy08xJY+BZwte4Mof6HAPo8yG2dOyHLE7ErLK3B5F4d2Mb7o87
-         sr6ubPeEg9gYxqCCUXMgkdZUZqOev24pvvDs5AymH8eBu+hilGjz7qoePoBl0xf5tY5k
-         FSFYsDJNHX3wfVLKnLrRrdHyVd+h9JnDXFR6iGgRzgB/YaU+fDXLPTQLQ8nK/yeUqKDv
-         nlWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7vBV1V0UwOB0nNvkc/KUfYZpNF52U4NJO9cyMKDODpE=;
-        b=YAcOb+Rd+De4FysdFzvRkgZ+jVutxrBrvEoL/gxJhXnL+abjHj7CQSJXTDtOZKX6kL
-         NMjhOsD+qNkJRvNg/9BW576xfA/riaIkLvSF5drx8zZDbEdj7hh+hZjDEDCRSNIVc/Bl
-         YUlfEpIBB7c0d8FdAgA7kWIw7RUw79ICsIOGkv45TEzRwAz1SW2NSyyPTl0nhElLXa+q
-         lpNwyQhAIRGyB4HOoKjNu4G2dgwN66e+C1YogasEFC5R/bI4zhwbTCCPRNrDvYAcKL/e
-         6vBhEZRm1zCLauTMRmDYhEoqpNXesK613FAH3FMDHf1g/uwxVgYWeFBRObcWO5CS9d7P
-         dRTA==
-X-Gm-Message-State: AOAM533VhImYgEIUkv046YjuOSciQO8pBMOPoYz8FO8lUE9lc1Vf4yeC
-        6dNg6p/eOlVc9Mjs/v/dOvJe
-X-Google-Smtp-Source: ABdhPJyEdDnihheAH3e28L5SSP3KEtu9/TYjKyUoIqLxgE8YvQNuhRYBpHmJyF90lswN6LAqLhRqeQ==
-X-Received: by 2002:a05:6000:1787:: with SMTP id e7mr21937821wrg.433.1638034237666;
-        Sat, 27 Nov 2021 09:30:37 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id y6sm14227526wma.37.2021.11.27.09.30.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 09:30:37 -0800 (PST)
-From:   Colin Ian King <colin.i.king@googlemail.com>
-X-Google-Original-From: Colin Ian King <colin.i.king@gmail.com>
-To:     Tero Kristo <kristo@kernel.org>,
+        id S231409AbhK0Wy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Nov 2021 17:54:28 -0500
+Received: from sauhun.de ([88.99.104.3]:52196 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231691AbhK0Ww1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 Nov 2021 17:52:27 -0500
+Received: from localhost (p54b33988.dip0.t-ipconnect.de [84.179.57.136])
+        by pokefinder.org (Postfix) with ESMTPSA id 186602C009F;
+        Sat, 27 Nov 2021 23:49:10 +0100 (CET)
+Date:   Sat, 27 Nov 2021 23:49:04 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk/ti/adpll: Make const pointer error a static const array
-Date:   Sat, 27 Nov 2021 17:30:36 +0000
-Message-Id: <20211127173036.150535-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.33.1
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 03/15] i2c: acpi: Add i2c_acpi_new_device_by_fwnode()
+ function
+Message-ID: <YaK14JHgF5KS1Yzg@kunai>
+Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20211125165412.535063-1-hdegoede@redhat.com>
+ <20211125165412.535063-4-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="B+c7GcSbsVwZbrXV"
+Content-Disposition: inline
+In-Reply-To: <20211125165412.535063-4-hdegoede@redhat.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make const pointer error a static const array, removes a dereference
-and shrinks object code a little.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/ti/adpll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--B+c7GcSbsVwZbrXV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index b341cd990be7..962502ca7ff0 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -807,7 +807,7 @@ static int ti_adpll_init_registers(struct ti_adpll_data *d)
- 
- static int ti_adpll_init_inputs(struct ti_adpll_data *d)
- {
--	const char *error = "need at least %i inputs";
-+	static const char error[] = "need at least %i inputs";
- 	struct clk *clock;
- 	int nr_inputs;
- 
--- 
-2.33.1
+On Thu, Nov 25, 2021 at 05:54:00PM +0100, Hans de Goede wrote:
+> Change i2c_acpi_new_device() into i2c_acpi_new_device_by_fwnode() and
+> add a static inline wrapper providing the old i2c_acpi_new_device()
+> behavior.
+>=20
+> This is necessary because in some cases we may only have access
+> to the fwnode / acpi_device and not to the matching physical-node
+> struct device *.
+>=20
+> Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
+Acked-by: Wolfram Sang <wsa@kernel.org>
+
+
+--B+c7GcSbsVwZbrXV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmGitdsACgkQFA3kzBSg
+Kba4UA//dAQJdZByu+PraO/AJeiXb5P0B1XSecqdaGFPXLJAPqBEz9WQYMShmcd5
+X7jXbMjN6Bms26Qp8SVs4RDhXwl9BGrzZ8M3Ui1LLHbMYR5CEf+VH774fEPQIu73
+yyzCY9amwbe53ZaYgCOA1Y7vVf7dJF4pYfZOwDGPIu/QPRsHbsh6z6Ax6rX40AtP
+q7vm6/RMusfbFbtYEUUoxgmESapheayMxO50PS2q8jKVTXovP+4PVqXAYMU2HXFA
+pdykZTpG/GOuw1hrCciWWpJlabmIaIDnVYJZ/nUBvPkw/MQ2rDk3qJNwl7G7ndkh
+hTwdpPNVslh7DqXjBs3bGFrfFwk6QxLUOIfbJ0/vbw7z5aNs0v1vFhtFtcgX47ix
+FxGzyLVjojMiD9/GA4zSDnYy/9t1s5W3IWjrz8pTf5hunFz0nJlA1Mjes8FQUXHQ
+yhytbzG7ZagSgDkys/Vo0K8GUptohlVh+eabGCSQ4y0bw4bWRhXT8M2W8Ecjssxp
+CpDP1y+Q1zM46X0c9ZZcmpp9NPcirg9S8qZkAiDfG/i4nsQihmko9SrhjlLnR8i/
+i+WfFKuti/Nw+dp/YmpRjunOWNU5duvWXHXW6XO8KBY7ynPgxnA3dp32k1LfcS4p
+Zm67/bmDd9fZC/V0RsB2QPDz2KstjoH/OIAaVJic4QZdeRe0rLg=
+=1EJS
+-----END PGP SIGNATURE-----
+
+--B+c7GcSbsVwZbrXV--
