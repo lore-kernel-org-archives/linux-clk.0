@@ -2,88 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D23EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Nov 2021 02:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E6C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Nov 2021 11:26:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351144AbhK0CsM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Nov 2021 21:48:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347090AbhK0CqJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Nov 2021 21:46:09 -0500
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 910E0C061D7E
-        for <linux-clk@vger.kernel.org>; Fri, 26 Nov 2021 17:43:57 -0800 (PST)
-Received: by mail-ot1-x334.google.com with SMTP id x19-20020a9d7053000000b0055c8b39420bso16338724otj.1
-        for <linux-clk@vger.kernel.org>; Fri, 26 Nov 2021 17:43:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GeK4HqT/e1fsu13zkPU3IkJgtVeOhkfl5fSuGo1DHZQ=;
-        b=qjLR5eTJSJaMo0ZSTUaBFBSGHI8nrLplXVuWtlCvohacrdV5/VJanyfb6He9KQ9pob
-         k3CiZkYVdqEnxPQ/9mk3fScPbrwJJ7UNhePze4FuVXq2XBnOMgOQixfV+6Gz0Q+b16hW
-         5aAM5CecwMN3xGteRRD6GOLbLe/X8bh9vGAMYQ2Vl5fKDrmHfFmsLi0N8FwwHW0YG0HM
-         SKL5xqf1GWiWTCVyQMwm1gX/GD2Kp00RI2WXFporHY04CsZ2HdH1o1BN1xd7i+WLvz5T
-         ZTUqJ16/Yue3RT05FTsStDTQu8lr+P48rNfr4cK8L/zrgv5tAni8VwPwK4/C4bNTgzyC
-         +Kqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GeK4HqT/e1fsu13zkPU3IkJgtVeOhkfl5fSuGo1DHZQ=;
-        b=zdyn8/cp0L1k9+WZ9HBJ2V1myG6mr6dFH4LF2QqDThVhHoacewebRVYJP9VWsGGL4s
-         oByTguMcx7D6U65pUb4WRAkX0eJu3Ny4FS/qJ2dmogun7Qf6cWp7N8SYWdy4aivaynDy
-         5tKsqdXcCAZyyc7sGnJh0i58jteP2VDvfckNwL5aD7El9QHBgX6UIfyIRpbKmrrWkMQC
-         PmBlLcWhG4nl+DLM5bUQ15Uo9Zmk3C2IBl8M5h/oNPhztSiSyapuNMS8CmMh0+14uplk
-         p5DpvPq7EzPz+h5Eu5QmNDZVr3LL3AHB9WX774szAVgbx2j7A2ZOHsltWaHdgKzG6ERH
-         NFOQ==
-X-Gm-Message-State: AOAM533bsfOYxt9ZeV0OJL0lNMjW8y3hL841/rvAubaBPVQKXhqaI0cW
-        ffj0BV04ev1zUMighQ9UD9TSohp+TOsv1IhfF+Aimw==
-X-Google-Smtp-Source: ABdhPJyTlLOzBIZDBtBqbPekB83he0Wo6ZiqdSb7UFzeK3WWORy7nuj2f1/Qlo8XTqr792YAu5+oqYOGKdxlpC0Ganw=
-X-Received: by 2002:a9d:74d0:: with SMTP id a16mr30467451otl.237.1637977436884;
- Fri, 26 Nov 2021 17:43:56 -0800 (PST)
+        id S238664AbhK0LaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Nov 2021 06:30:05 -0500
+Received: from mga11.intel.com ([192.55.52.93]:52024 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233200AbhK0L2F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 Nov 2021 06:28:05 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="233249438"
+X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
+   d="scan'208";a="233249438"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2021 03:24:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
+   d="scan'208";a="498707234"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2021 03:24:48 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mqvp1-0009Q8-DK; Sat, 27 Nov 2021 11:24:47 +0000
+Date:   Sat, 27 Nov 2021 19:23:48 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Felix Fietkau <nbd@nbd.name>, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, john@phrozen.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 07/12] clk: en7523: Add clock driver for Airoha EN7523
+ SoC
+Message-ID: <202111271912.FCpB3UGa-lkp@intel.com>
+References: <20211125110738.41028-8-nbd@nbd.name>
 MIME-Version: 1.0
-References: <20211125211443.1150135-1-Mr.Bossman075@gmail.com> <20211125211443.1150135-5-Mr.Bossman075@gmail.com>
-In-Reply-To: <20211125211443.1150135-5-Mr.Bossman075@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 27 Nov 2021 02:43:45 +0100
-Message-ID: <CACRpkdaf9EoR15fOMXipr-z0zqwdDNtS_j9n7_M0QvxGYi2Gdg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/13] pinctrl: freescale: Add i.MXRT1050 pinctrl
- driver support
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, ulf.hansson@linaro.org,
-        aisheng.dong@nxp.com, stefan@agner.ch, gregkh@linuxfoundation.org,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, adrian.hunter@intel.com,
-        jirislaby@kernel.org, giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211125110738.41028-8-nbd@nbd.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 25, 2021 at 10:14 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+Hi Felix,
 
-> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
->
-> Add the pinctrl driver support for i.MXRT1050.
->
-> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1->V2:
-> * Nothing done
-> V2->V3:
-> * Nothing done
+I love your patch! Perhaps something to improve:
 
-I need a review from one of the Freescale pinctrl driver maintainers for this
-patch.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next v5.16-rc2 next-20211126]
+[cannot apply to linusw-gpio/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Yours,
-Linus Walleij
+url:    https://github.com/0day-ci/linux/commits/Felix-Fietkau/dt-bindings-Add-vendor-prefix-for-Airoha/20211125-200806
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: powerpc64-randconfig-s032-20211126 (https://download.01.org/0day-ci/archive/20211127/202111271912.FCpB3UGa-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 11.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/0day-ci/linux/commit/ff9f74e46043aecee2d7373f978a99ce9a3f1e27
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Felix-Fietkau/dt-bindings-Add-vendor-prefix-for-Airoha/20211125-200806
+        git checkout ff9f74e46043aecee2d7373f978a99ce9a3f1e27
+        # save the config file to linux build tree
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/clk/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/clk-en7523.c:202:27: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *np_base @@     got void [noderef] __iomem *base @@
+   drivers/clk/clk-en7523.c:202:27: sparse:     expected void *np_base
+   drivers/clk/clk-en7523.c:202:27: sparse:     got void [noderef] __iomem *base
+>> drivers/clk/clk-en7523.c:206:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:206:29: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:206:29: sparse:     got void *
+>> drivers/clk/clk-en7523.c:208:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:208:29: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:208:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:213:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:213:29: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:213:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:217:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:217:29: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:217:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:220:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:220:37: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:220:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:222:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:222:36: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:222:36: sparse:     got void *
+   drivers/clk/clk-en7523.c:224:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:224:37: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:224:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:229:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:229:29: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:229:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:230:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:230:37: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:230:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:232:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:232:36: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:232:36: sparse:     got void *
+   drivers/clk/clk-en7523.c:241:27: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *np_base @@     got void [noderef] __iomem *base @@
+   drivers/clk/clk-en7523.c:241:27: sparse:     expected void *np_base
+   drivers/clk/clk-en7523.c:241:27: sparse:     got void [noderef] __iomem *base
+   drivers/clk/clk-en7523.c:244:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:244:29: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:244:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:246:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void * @@
+   drivers/clk/clk-en7523.c:246:29: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/clk/clk-en7523.c:246:29: sparse:     got void *
+
+vim +202 drivers/clk/clk-en7523.c
+
+   198	
+   199	static int en7523_pci_enable(struct clk_hw *hw)
+   200	{
+   201		struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+ > 202		void *np_base = cg->base;
+   203		u32 val, mask;
+   204	
+   205		/* Need to pull device low before reset */
+ > 206		val = readl(np_base + REG_PCI_CONTROL);
+   207		val &= ~(REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT);
+ > 208		writel(val, np_base + REG_PCI_CONTROL);
+   209		usleep_range(1000, 2000);
+   210	
+   211		/* Enable PCIe port 1 */
+   212		val |= REG_PCI_CONTROL_REFCLK_EN1;
+   213		writel(val, np_base + REG_PCI_CONTROL);
+   214		usleep_range(1000, 2000);
+   215	
+   216		/* Reset to default */
+   217		val = readl(np_base + REG_RESET_CONTROL);
+   218		mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
+   219		       REG_RESET_CONTROL_PCIEHB;
+   220		writel(val & ~mask, np_base + REG_RESET_CONTROL);
+   221		usleep_range(1000, 2000);
+   222		writel(val | mask, np_base + REG_RESET_CONTROL);
+   223		msleep(100);
+   224		writel(val & ~mask, np_base + REG_RESET_CONTROL);
+   225		usleep_range(5000, 10000);
+   226	
+   227		/* Release device */
+   228		mask = REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT;
+   229		val = readl(np_base + REG_PCI_CONTROL);
+   230		writel(val & ~mask, np_base + REG_PCI_CONTROL);
+   231		usleep_range(1000, 2000);
+   232		writel(val | mask, np_base + REG_PCI_CONTROL);
+   233		msleep(250);
+   234	
+   235		return 0;
+   236	}
+   237	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
