@@ -2,166 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3E8C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 01:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD13C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 13:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231465AbhK2CAC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 Nov 2021 21:00:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44356 "EHLO
+        id S241020AbhK2Nbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Nov 2021 08:31:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231851AbhK2B6C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Nov 2021 20:58:02 -0500
-Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D50BC061574;
-        Sun, 28 Nov 2021 17:54:45 -0800 (PST)
-Received: by mail-qv1-xf2f.google.com with SMTP id m17so12995999qvx.8;
-        Sun, 28 Nov 2021 17:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=7MaKgHWKheFJxrj1uWy9VXOHQvwGLYHTJJDUwnT5qBg=;
-        b=Nw8U4Nh1acnHpjcd3TP0eUKlOTKgUcZahWOSyhCAb3yHOlEdJ17O2gO6qgdEKwTa6Q
-         gSsLL1gEzdyFYBknHxFyuzLyDvRMao53dpLtZuhVNSTzHr/aZRJpNNcEkRU4B/TI4IB1
-         JXVCvtR5DEXpm90y13qPNGMZdDQdyhF3Pbmq495t+xRBOsk7TwUfC9tvV6xL1IUVrsxB
-         D5ExKlsAsKUPMlx5PdLDg3vzEJC6M6pPdPA4HRp33AQM2ZiXHE9/WW9WKbxLs5cgrFsP
-         2uwQ5CMiRz4jHw3LuGRXLXqwvn8S6JQESz2pVvtGz+BV4bGsvo8l76tXEUq2LcNJ5bfo
-         bYHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=7MaKgHWKheFJxrj1uWy9VXOHQvwGLYHTJJDUwnT5qBg=;
-        b=Mxz7xlpfTO8GAM/iPOPEknTZt6Wj0VLAXBqE0QXlsd7tEpAJdH3Ol4IH8HVUccMIEb
-         o3rxR0RfHd1/IDq3qmBdRUviC9cruzAVjKtsiy91orvsnx88DZ4aCM/a8HgVPG5+Kj9a
-         FIpfgU3oU0EbQGdzON6pQmw/2UbkaZdUsMVGj66s9X9EBQhriwu30ueb0TPRcwJXMNg4
-         wajEERcrT7YiWs/0SoAJMZihSl4m+oSvmI5ie+Kv4/z3pS8XtBMfyVgHwpjzI3XdxbPR
-         U/XuTFKyolLNIUgcXMwyFk3PzODa89TvLyYPNNTLuDoiuiZdD+E9FJMcjc1eSEcGB3dg
-         JCug==
-X-Gm-Message-State: AOAM533kstJMbwnfZIrL35etIueD/nNn2pxgvdZX/kSsd+kqxq3Y5Ijq
-        rCfkl0vuiuMgd5iDXvvBhH0=
-X-Google-Smtp-Source: ABdhPJy8P5wGLR5qlwlUnmOoPab1PnL6Y6pKQU9VYozKNDseX9QhhAKbzXifVxoKlDW/T2V8qG2A8g==
-X-Received: by 2002:ad4:5ba7:: with SMTP id 7mr28358496qvq.109.1638150884300;
-        Sun, 28 Nov 2021 17:54:44 -0800 (PST)
-Received: from [10.4.10.5] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id j19sm7580997qkp.28.2021.11.28.17.54.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Nov 2021 17:54:44 -0800 (PST)
-Message-ID: <f65ac2c7-3f37-3740-fd7a-4d11cabb9892@gmail.com>
-Date:   Sun, 28 Nov 2021 20:54:42 -0500
+        with ESMTP id S235896AbhK2N3c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Nov 2021 08:29:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2CBC08E867;
+        Mon, 29 Nov 2021 04:08:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EAD9F612DD;
+        Mon, 29 Nov 2021 12:08:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1A1C004E1;
+        Mon, 29 Nov 2021 12:08:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638187697;
+        bh=AVNKEkmJUQ9Akh0ujLWrgjE9ECPTii2J34p78F6aXfw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jSaMOTsYyspim30zg0bDBb0uVEec5wgFmTHi9GaQon+uGOH/tc+TdBVNmersVCrEo
+         0HMFB0cCHq2DxHhktXImsyBWj9aGglvO/WwnGNPJ/rUq86FXT3sw0/k+nVYAJCihYq
+         Exr0epUXaL8/6JUFdJiIrQSygdI/kYE7Toaj+9tWP1nxbfqxE3oI00pTMBd2JpdJuN
+         taXK9z2gxdO6iIGRBQSkuVoBj35BM+scvhvaK83u/zg/dWST6O0yRN+Y/YO5XVzosZ
+         afP4niJMSN84BgZWulguW0TH8IsP3XhMS/+Tifm32XgplWwkYo0udX1BYOV9Cz/1q2
+         0WaT0OPtYW3MA==
+Date:   Mon, 29 Nov 2021 12:08:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Daniel Scally <djrscally@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v6 05/15] regulator: Introduce tps68470-regulator driver
+Message-ID: <YaTCpgYaPDssQp+N@sirena.org.uk>
+References: <20211125165412.535063-1-hdegoede@redhat.com>
+ <20211125165412.535063-6-hdegoede@redhat.com>
+ <YaAdIG+2MZPsdI+F@pendragon.ideasonboard.com>
+ <19aeff06-d397-5f88-6d07-f76a2073b682@redhat.com>
+ <YaLBeq0+0A6R2FZG@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v3 13/13] ARM: imxrt_defconfig: add i.MXRT family
- defconfig
-Content-Language: en-US
-To:     Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        linux-imx@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20211125211443.1150135-1-Mr.Bossman075@gmail.com>
- <20211125211443.1150135-14-Mr.Bossman075@gmail.com>
- <95252a9e-76fc-0770-8e7b-90d8755298eb@benettiengineering.com>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <95252a9e-76fc-0770-8e7b-90d8755298eb@benettiengineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="RmSGVEEsRbHLX9Ig"
+Content-Disposition: inline
+In-Reply-To: <YaLBeq0+0A6R2FZG@pendragon.ideasonboard.com>
+X-Cookie: Thank god!! ... It's HENNY YOUNGMAN!!
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--RmSGVEEsRbHLX9Ig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 11/28/21 20:21, Giulio Benetti wrote:
-> Hi Jesse,
-> 
-> On 25/11/21 22:14, Jesse Taube wrote:
->> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
->>
->> Add generic i.MXRT family defconfig.
->>
->> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
->> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
->> ---
->> V1->V2:
->> * Nothing done
->> V2->V3:
->> * Nothing done
->> ---
->>    arch/arm/configs/imxrt_defconfig | 157 +++++++++++++++++++++++++++++++
->>    1 file changed, 157 insertions(+)
->>    create mode 100644 arch/arm/configs/imxrt_defconfig
->>
->> diff --git a/arch/arm/configs/imxrt_defconfig b/arch/arm/configs/imxrt_defconfig
->> new file mode 100644
->> index 000000000000..d673745a5462
->> --- /dev/null
->> +++ b/arch/arm/configs/imxrt_defconfig
->> @@ -0,0 +1,157 @@
->> +# CONFIG_LOCALVERSION_AUTO is not set
->> +CONFIG_SYSVIPC=y
->> +CONFIG_USELIB=y
->> +CONFIG_NO_HZ=y
->> +CONFIG_HIGH_RES_TIMERS=y
->> +CONFIG_BPF_SYSCALL=y
->> +CONFIG_PREEMPT_VOLUNTARY=y
->> +CONFIG_BSD_PROCESS_ACCT=y
->> +CONFIG_BSD_PROCESS_ACCT_V3=y
->> +CONFIG_PSI=y
->> +CONFIG_IKCONFIG=y
->> +CONFIG_IKCONFIG_PROC=y
->> +CONFIG_LOG_BUF_SHIFT=18
->> +CONFIG_MEMCG=y
->> +CONFIG_BLK_CGROUP=y
->> +CONFIG_CFS_BANDWIDTH=y
->> +CONFIG_CGROUP_PIDS=y
->> +CONFIG_CGROUP_RDMA=y
->> +CONFIG_CGROUP_FREEZER=y
->> +CONFIG_CGROUP_DEVICE=y
->> +CONFIG_CGROUP_CPUACCT=y
->> +CONFIG_CGROUP_PERF=y
->> +CONFIG_CGROUP_BPF=y
->> +CONFIG_NAMESPACES=y
->> +CONFIG_USER_NS=y
->> +CONFIG_CHECKPOINT_RESTORE=y
->> +CONFIG_SCHED_AUTOGROUP=y
->> +CONFIG_RELAY=y
->> +CONFIG_BLK_DEV_INITRD=y
->> +CONFIG_EXPERT=y
->> +CONFIG_SGETMASK_SYSCALL=y
->> +# CONFIG_FUTEX is not set
->> +CONFIG_KALLSYMS_ALL=y
->> +CONFIG_PC104=y
->> +# CONFIG_SLUB_DEBUG is not set
->> +# CONFIG_COMPAT_BRK is not set
->> +CONFIG_SLAB_FREELIST_RANDOM=y
->> +CONFIG_SLAB_FREELIST_HARDENED=y
->> +CONFIG_PROFILING=y
->> +# CONFIG_MMU is not set
->> +CONFIG_ARCH_MXC=y
->> +CONFIG_SOC_IMXRT=y
->> +# CONFIG_ARM_DMA_MEM_BUFFERABLE is not set
->> +CONFIG_SET_MEM_PARAM=y
->> +CONFIG_DRAM_BASE=0x80000000
->> +CONFIG_DRAM_SIZE=0x02000000
-> 
-> While debugging I've found that both CONFIG_DRAM_* get their default
-> value because CONFIG_SET_MEM_PARAM is not enabled. This can work but
-> leads problems while debugging and in any case those 2 options are
-> ignored. So please add on top of them:
-> CONFIG_SET_MEM_PARAM=y
-> 
-oops i accidentally deleted that thx, im confused as to how it still 
-worked...
-> Thank you
-> 
+On Sun, Nov 28, 2021 at 01:38:34AM +0200, Laurent Pinchart wrote:
+> On Fri, Nov 26, 2021 at 12:22:35PM +0100, Hans de Goede wrote:
+> > On 11/26/21 00:32, Laurent Pinchart wrote:
+> > > On Thu, Nov 25, 2021 at 05:54:02PM +0100, Hans de Goede wrote:
+> > >> The TPS68470 PMIC provides Clocks, GPIOs and Regulators. At present in
+> > >> the kernel the Regulators and Clocks are controlled by an OpRegion
+> > >> driver designed to work with power control methods defined in ACPI, but
+
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
+
+> > >> + * (1) This regulator must have the same voltage as VIO if S_IO LDO is used to
+> > >> + *     power a sensor/VCM which I2C is daisy chained behind the PMIC.
+> > >> + * (2) If there is no I2C daisy chain it can be set freely.
+> > >> + */
+
+> > > Do we need safety checks for this ?
+
+> > There really is no way to deal this condition needs to matches inside the driver,
+> > this should be enforced by setting proper constraints on the 2 regulators where
+> > the PMIC is used with a sensor I2C daisy chained behind it.
+
+> Right. I tend to be cautious here, as incorrect settings can destroy the
+> hardware. We should err on the side of too many safety checks rather
+> than too few. I was thinking that the cio2-bridge driver could set a
+> daisy-chaining flag, which could trigger additional checks here, but it
+> wouldn't protect against someone experimenting to support a new device
+> and setting different voltages without the daisy-chaining flag.
+
+> My biggest worry is that someone with an unsupported machine may start
+> by copying and pasting an existing configuration to try it out, and fry
+> their hardware.
+
+There's really nothing you can do that prevents this, especially in the
+cut'n'paste scenario.  Overrides tend to get copied along with the rest
+of the configuration, or checks hacked out if people think they're
+getting in the way without realising what they're there for.
+
+--RmSGVEEsRbHLX9Ig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmGkwqUACgkQJNaLcl1U
+h9CAgAf8CzQIgZiHFaA5iv2jE3nlJ5tXNUlPqGuiPWQ/ZvLAOTS7xrHL0cWrUuTQ
+T1Rci4/aDPHWanPC43f9AR6nopwXJkzEhmc46AQn2bho+YIqta//ue7YrGX3TDCS
+vn/KYo8jTKMrXMd1QCItfhdYPhHpL6t5qHvmtyQSz2/UxGH7k+SzmPQQI7Wo3bwx
+wIi09kgVKlwCEpmFMI3TyoCCpJgVKYJXi6XiLsA6a8pW2O/IkoeMZc8mcMbFYbL3
+MeZzRi7KZ7xNneWZfyZ10MZqx70nGtARsQUn1yv/gyz66hdGtGg/a0l9BQufgecB
+n3mz+wbWmgILk3zQivafxzUdjYsEow==
+=qPlL
+-----END PGP SIGNATURE-----
+
+--RmSGVEEsRbHLX9Ig--
