@@ -2,92 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35383C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 18:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499FAC43217
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 19:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237856AbhK2STt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Nov 2021 13:19:49 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:11796 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344823AbhK2SRt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Nov 2021 13:17:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1638209671; x=1669745671;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F39v39L3voprfUnqtU9BVdYRaFEDQSbMeiIU98VHQTQ=;
-  b=w7ELvVJHEx5YWd10A1n8qtFETQQoo+efTmcLdBI4wCkYKB+1Ddzg0/H/
-   /NYnX2bLF9kyRXBW7BT2b3snMp6CC1ZiaM+GoHPibcQCLQJN+bkdi1cLE
-   kHK6EdM2TWF2D2OBuZy2FwyNlx35FBEKg/Vpyi0hP6ESnzZQRhe5UDslL
-   A=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 29 Nov 2021 10:14:31 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 10:14:30 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Mon, 29 Nov 2021 10:14:30 -0800
-Received: from [10.48.241.137] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Mon, 29 Nov
- 2021 10:14:29 -0800
-Message-ID: <03299e9a-56aa-6ce2-f5a1-38b35ad11dec@quicinc.com>
-Date:   Mon, 29 Nov 2021 10:14:28 -0800
+        id S1353343AbhK2TRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Nov 2021 14:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233999AbhK2TPx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Nov 2021 14:15:53 -0500
+Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35342C05293E;
+        Mon, 29 Nov 2021 07:33:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=S3Tw/8Fei/1i+bTG4/JHPJIzBoM/42mdFCJiUaqrlEk=; b=sZjtRftio6XBg6Mp2SkTb15K3T
+        uXZREeaUIepNExroud6Mwv3PmDmyA+bo+hMDI3UCgJSkUMv2VVIfmNmnyFU+Ymz/8oAaiJ62MOdJO
+        +IjcYtNFJ4U22jJ8nK3uw1t+wkATbNlZoBWR+zvY35jOYniFzVAfjUj2HO7C4E8nHMoM=;
+Received: from p54ae943f.dip0.t-ipconnect.de ([84.174.148.63] helo=localhost.localdomain)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1mriew-0000mo-7x; Mon, 29 Nov 2021 16:33:38 +0100
+From:   Felix Fietkau <nbd@nbd.name>
+To:     linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     john@phrozen.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 06/13] dt-bindings: Add en7523-scu device tree binding documentation
+Date:   Mon, 29 Nov 2021 16:33:22 +0100
+Message-Id: <20211129153330.37719-7-nbd@nbd.name>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20211129153330.37719-1-nbd@nbd.name>
+References: <20211129153330.37719-1-nbd@nbd.name>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] clk: Fix children not voting entire parent chain during
- init
-Content-Language: en-US
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
-From:   Mike Tipton <quic_mdtipton@quicinc.com>
-In-Reply-To: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/8/2021 8:34 PM, Mike Tipton wrote:
-> If a child's parent is set by calling __clk_init_parent() while the
-> parent is still being registered in __clk_register(), then it can result
-> in the child voting its direct parent without those votes propagating up
-> the entire parent chain.
-> 
-> __clk_register() sets hw->core before grabbing the prepare_lock and
-> before initializing hw->core->parent. Since hw->core is used indirectly
-> by __clk_init_parent(), then children can find their parents before
-> they're fully initialized. If children vote for their parents during
-> this window, then those votes won't propagate past the direct parent.
-> 
-> This can happen when:
->      1. CRITICAL clocks are enabled in __clk_core_init().
->      2. Reparenting enabled orphans in clk_core_reparent_orphans_nolock().
-> 
-> Fix this by not setting hw->core until we've already grabbed the
-> prepare_lock in __clk_core_init(). This prevents orphaned children from
-> finding and voting their parents before the parents are fully
-> initialized.
-> 
-> Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
-> ---
-> 
-> This is very difficult to reproduce. We can't reproduce it at all
-> internally, in fact. But some customers are able to reproduce it fairly
-> easily and this patch fixes it for them.
-> 
->   drivers/clk/clk.c | 14 +++++++++++---
->   1 file changed, 11 insertions(+), 3 deletions(-)
-> 
+From: John Crispin <john@phrozen.org>
 
-Reminder. We've had more reports of this and in each case this patch 
-fixes the problem.
+Adds device tree binding documentation for clocks in the EN7523 SOC.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: John Crispin <john@phrozen.org>
+---
+ .../bindings/clock/airoha,en7523-scu.yaml     | 58 +++++++++++++++++++
+ include/dt-bindings/clock/en7523-clk.h        | 17 ++++++
+ 2 files changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+ create mode 100644 include/dt-bindings/clock/en7523-clk.h
+
+diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+new file mode 100644
+index 000000000000..79660f8126fa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/airoha,en7523-scu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: EN7523 Clock Device Tree Bindings
++
++maintainers:
++  - Felix Fietkau <nbd@nbd.name>
++  - John Crispin <nbd@nbd.name>
++
++description: |
++  This node defines the System Control Unit of the EN7523 SoC,
++  a collection of registers configuring many different aspects of the SoC.
++
++  The clock driver uses it to read and configure settings of the
++  PLL controller, which provides clocks for the CPU, the bus and
++  other SoC internal peripherals.
++
++  Each clock is assigned an identifier and client nodes use this identifier
++  to specify which clock they consume.
++
++  All these identifiers can be found in:
++  [1]: <include/dt-bindings/clock/en7523-clk.h>.
++
++  The clocks are provided inside a system controller node.
++
++properties:
++  compatible:
++    items:
++      - const: airoha,en7523-scu
++
++  reg:
++    maxItems: 2
++
++  "#clock-cells":
++    description:
++      The first cell indicates the clock number, see [1] for available
++      clocks.
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/en7523-clk.h>
++    scu: scu@1fa20000 {
++      compatible = "airoha,en7523-scu";
++      reg = <0x1fa20000 0x400>,
++            <0x1fb00000 0x1000>;
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+new file mode 100644
+index 000000000000..717d23a5e5ae
+--- /dev/null
++++ b/include/dt-bindings/clock/en7523-clk.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++
++#ifndef _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_
++#define _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_
++
++#define EN7523_CLK_GSW		0
++#define EN7523_CLK_EMI		1
++#define EN7523_CLK_BUS		2
++#define EN7523_CLK_SLIC		3
++#define EN7523_CLK_SPI		4
++#define EN7523_CLK_NPU		5
++#define EN7523_CLK_CRYPTO	6
++#define EN7523_CLK_PCIE		7
++
++#define EN7523_NUM_CLOCKS	8
++
++#endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
+-- 
+2.30.1
+
