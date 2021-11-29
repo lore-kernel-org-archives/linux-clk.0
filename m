@@ -2,130 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD13C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 13:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35383C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Nov 2021 18:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241020AbhK2Nbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Nov 2021 08:31:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53360 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235896AbhK2N3c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Nov 2021 08:29:32 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2CBC08E867;
-        Mon, 29 Nov 2021 04:08:18 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EAD9F612DD;
-        Mon, 29 Nov 2021 12:08:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C1A1C004E1;
-        Mon, 29 Nov 2021 12:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638187697;
-        bh=AVNKEkmJUQ9Akh0ujLWrgjE9ECPTii2J34p78F6aXfw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jSaMOTsYyspim30zg0bDBb0uVEec5wgFmTHi9GaQon+uGOH/tc+TdBVNmersVCrEo
-         0HMFB0cCHq2DxHhktXImsyBWj9aGglvO/WwnGNPJ/rUq86FXT3sw0/k+nVYAJCihYq
-         Exr0epUXaL8/6JUFdJiIrQSygdI/kYE7Toaj+9tWP1nxbfqxE3oI00pTMBd2JpdJuN
-         taXK9z2gxdO6iIGRBQSkuVoBj35BM+scvhvaK83u/zg/dWST6O0yRN+Y/YO5XVzosZ
-         afP4niJMSN84BgZWulguW0TH8IsP3XhMS/+Tifm32XgplWwkYo0udX1BYOV9Cz/1q2
-         0WaT0OPtYW3MA==
-Date:   Mon, 29 Nov 2021 12:08:06 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v6 05/15] regulator: Introduce tps68470-regulator driver
-Message-ID: <YaTCpgYaPDssQp+N@sirena.org.uk>
-References: <20211125165412.535063-1-hdegoede@redhat.com>
- <20211125165412.535063-6-hdegoede@redhat.com>
- <YaAdIG+2MZPsdI+F@pendragon.ideasonboard.com>
- <19aeff06-d397-5f88-6d07-f76a2073b682@redhat.com>
- <YaLBeq0+0A6R2FZG@pendragon.ideasonboard.com>
+        id S237856AbhK2STt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Nov 2021 13:19:49 -0500
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:11796 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344823AbhK2SRt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Nov 2021 13:17:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1638209671; x=1669745671;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=F39v39L3voprfUnqtU9BVdYRaFEDQSbMeiIU98VHQTQ=;
+  b=w7ELvVJHEx5YWd10A1n8qtFETQQoo+efTmcLdBI4wCkYKB+1Ddzg0/H/
+   /NYnX2bLF9kyRXBW7BT2b3snMp6CC1ZiaM+GoHPibcQCLQJN+bkdi1cLE
+   kHK6EdM2TWF2D2OBuZy2FwyNlx35FBEKg/Vpyi0hP6ESnzZQRhe5UDslL
+   A=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 29 Nov 2021 10:14:31 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2021 10:14:30 -0800
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Mon, 29 Nov 2021 10:14:30 -0800
+Received: from [10.48.241.137] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Mon, 29 Nov
+ 2021 10:14:29 -0800
+Message-ID: <03299e9a-56aa-6ce2-f5a1-38b35ad11dec@quicinc.com>
+Date:   Mon, 29 Nov 2021 10:14:28 -0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RmSGVEEsRbHLX9Ig"
-Content-Disposition: inline
-In-Reply-To: <YaLBeq0+0A6R2FZG@pendragon.ideasonboard.com>
-X-Cookie: Thank god!! ... It's HENNY YOUNGMAN!!
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] clk: Fix children not voting entire parent chain during
+ init
+Content-Language: en-US
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
+From:   Mike Tipton <quic_mdtipton@quicinc.com>
+In-Reply-To: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 11/8/2021 8:34 PM, Mike Tipton wrote:
+> If a child's parent is set by calling __clk_init_parent() while the
+> parent is still being registered in __clk_register(), then it can result
+> in the child voting its direct parent without those votes propagating up
+> the entire parent chain.
+> 
+> __clk_register() sets hw->core before grabbing the prepare_lock and
+> before initializing hw->core->parent. Since hw->core is used indirectly
+> by __clk_init_parent(), then children can find their parents before
+> they're fully initialized. If children vote for their parents during
+> this window, then those votes won't propagate past the direct parent.
+> 
+> This can happen when:
+>      1. CRITICAL clocks are enabled in __clk_core_init().
+>      2. Reparenting enabled orphans in clk_core_reparent_orphans_nolock().
+> 
+> Fix this by not setting hw->core until we've already grabbed the
+> prepare_lock in __clk_core_init(). This prevents orphaned children from
+> finding and voting their parents before the parents are fully
+> initialized.
+> 
+> Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+> ---
+> 
+> This is very difficult to reproduce. We can't reproduce it at all
+> internally, in fact. But some customers are able to reproduce it fairly
+> easily and this patch fixes it for them.
+> 
+>   drivers/clk/clk.c | 14 +++++++++++---
+>   1 file changed, 11 insertions(+), 3 deletions(-)
+> 
 
---RmSGVEEsRbHLX9Ig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Nov 28, 2021 at 01:38:34AM +0200, Laurent Pinchart wrote:
-> On Fri, Nov 26, 2021 at 12:22:35PM +0100, Hans de Goede wrote:
-> > On 11/26/21 00:32, Laurent Pinchart wrote:
-> > > On Thu, Nov 25, 2021 at 05:54:02PM +0100, Hans de Goede wrote:
-> > >> The TPS68470 PMIC provides Clocks, GPIOs and Regulators. At present in
-> > >> the kernel the Regulators and Clocks are controlled by an OpRegion
-> > >> driver designed to work with power control methods defined in ACPI, but
-
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
-> > >> + * (1) This regulator must have the same voltage as VIO if S_IO LDO is used to
-> > >> + *     power a sensor/VCM which I2C is daisy chained behind the PMIC.
-> > >> + * (2) If there is no I2C daisy chain it can be set freely.
-> > >> + */
-
-> > > Do we need safety checks for this ?
-
-> > There really is no way to deal this condition needs to matches inside the driver,
-> > this should be enforced by setting proper constraints on the 2 regulators where
-> > the PMIC is used with a sensor I2C daisy chained behind it.
-
-> Right. I tend to be cautious here, as incorrect settings can destroy the
-> hardware. We should err on the side of too many safety checks rather
-> than too few. I was thinking that the cio2-bridge driver could set a
-> daisy-chaining flag, which could trigger additional checks here, but it
-> wouldn't protect against someone experimenting to support a new device
-> and setting different voltages without the daisy-chaining flag.
-
-> My biggest worry is that someone with an unsupported machine may start
-> by copying and pasting an existing configuration to try it out, and fry
-> their hardware.
-
-There's really nothing you can do that prevents this, especially in the
-cut'n'paste scenario.  Overrides tend to get copied along with the rest
-of the configuration, or checks hacked out if people think they're
-getting in the way without realising what they're there for.
-
---RmSGVEEsRbHLX9Ig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmGkwqUACgkQJNaLcl1U
-h9CAgAf8CzQIgZiHFaA5iv2jE3nlJ5tXNUlPqGuiPWQ/ZvLAOTS7xrHL0cWrUuTQ
-T1Rci4/aDPHWanPC43f9AR6nopwXJkzEhmc46AQn2bho+YIqta//ue7YrGX3TDCS
-vn/KYo8jTKMrXMd1QCItfhdYPhHpL6t5qHvmtyQSz2/UxGH7k+SzmPQQI7Wo3bwx
-wIi09kgVKlwCEpmFMI3TyoCCpJgVKYJXi6XiLsA6a8pW2O/IkoeMZc8mcMbFYbL3
-MeZzRi7KZ7xNneWZfyZ10MZqx70nGtARsQUn1yv/gyz66hdGtGg/a0l9BQufgecB
-n3mz+wbWmgILk3zQivafxzUdjYsEow==
-=qPlL
------END PGP SIGNATURE-----
-
---RmSGVEEsRbHLX9Ig--
+Reminder. We've had more reports of this and in each case this patch 
+fixes the problem.
