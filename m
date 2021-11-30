@@ -2,217 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A98FC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Nov 2021 13:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDABC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Nov 2021 14:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241394AbhK3NmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Nov 2021 08:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241386AbhK3NmX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Nov 2021 08:42:23 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C9DC061574
-        for <linux-clk@vger.kernel.org>; Tue, 30 Nov 2021 05:39:04 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id i12so17487384wmq.4
-        for <linux-clk@vger.kernel.org>; Tue, 30 Nov 2021 05:39:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=references:user-agent:from:to:cc:subject:date:in-reply-to
-         :message-id:mime-version;
-        bh=E60T24zX7KDl2K2domt3cduRqwrjvQOEzfi54FXnknA=;
-        b=qXuVrOAnZpxdW+1ahCDawZgNSsxKUWUqj8biapI3zv6U74/HuxE9qyaekQZ6QEq25L
-         uax7Qs9lXyv6EoTVv9zRWmfpDPmooYcSLhBe7ajPH1uOYhSlquv1dCqVKe6XRJYS+Fr5
-         FR+sVQINaW166CUnEfBbRvzcmdywwFcIO9YuRkRL0fNURqjRNQtfac9z2Obf1a/ZPpex
-         puaY6914+XmRiONkZSZKBzgELb83OUJvfg1nFYPwSO6ixc/LnhXn2iCgCukMawYf8/Tu
-         4nazkQZRBTXkgadZE0NHWoM0VAyRsSgI/j2y/CCdBIk/NF72C8FilOAxYatKoRbg6oyQ
-         BJWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject:date
-         :in-reply-to:message-id:mime-version;
-        bh=E60T24zX7KDl2K2domt3cduRqwrjvQOEzfi54FXnknA=;
-        b=feD0bHz08GQYmOPYNT5AtGaNYtBvesN17k7dBvZ8uOoStfwOXaib8FwWHkRL9GbAcW
-         MzSmkMRQpE7bDwYSgduAyqNUBIi6A5HCLZXMrdjj0NgmK/EjKTjOO3r93YV8aNTiDpVw
-         3yatj7TTlu4tz3L0phZ3YmUImTZ/QiuIcuEd/usC9scuuWmdKwGhwO7Tv7I0jF9YhW04
-         Zd1mH/XoxDYAhBzH2W7Ir5bf12cEKePq+al8cSJyOMIgmgBslerTcMHafqQWBTKxB5xV
-         ykibUClAzv6dOUDWy4rx/GApw/OGgOhFmVPd4JaEbBubzdCc3HyESanmQlnFoReHqnTZ
-         Sj7w==
-X-Gm-Message-State: AOAM530WiM50XOGHRB2DebpAIGH8qdLL3eGP35h4s2hmMprhB7AogZnQ
-        ZpRejhwc+5Cc/WGUB8Ib8s2iMdNx3rpU/w==
-X-Google-Smtp-Source: ABdhPJytmq+IF9a3nBkaL5+8n7g/UkZ/XjK6IBbQPNyrRjBek1UNMG5XNvhwwWnYSJ6Bhn1h/8OJGA==
-X-Received: by 2002:a7b:c76e:: with SMTP id x14mr5110876wmk.27.1638279542582;
-        Tue, 30 Nov 2021 05:39:02 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id g16sm3006844wmq.20.2021.11.30.05.39.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Nov 2021 05:39:01 -0800 (PST)
-References: <20211031135006.1508796-1-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.6.10; emacs 27.1
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>
-Subject: Re: [PATCH v3] clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
-Date:   Tue, 30 Nov 2021 14:38:32 +0100
-In-reply-to: <20211031135006.1508796-1-martin.blumenstingl@googlemail.com>
-Message-ID: <1jilw9g3uz.fsf@starbuckisacylon.baylibre.com>
+        id S241978AbhK3OJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Nov 2021 09:09:34 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:51641 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232664AbhK3OJe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Nov 2021 09:09:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1638281176; x=1669817176;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ciQNeOSqmIU7OH/IA+ThrDoT2rarbLr6/AZdOfHuXDw=;
+  b=g4fBtn7/bn6+yGgPryuOEfhG1Vye+66Yn2+T+i/1vsmHbRoJL9MzZIVW
+   2Od4P1xkmdZeCwTskYUxFEEtV9pcSUsCIom2N16Z4ZmBHlIxlASMUmAeb
+   rsCTMzxIKvSTmkqZU9T5CyLmEF+N8GTORqya4gTQ1Vo+g3JIfpkzVYQNT
+   unYD1cnPsdJMa48bcxrsCr6CkhwP+AXvIWueDDfCgZ0CQvLxdl1h0X1Lf
+   DzurjQAeZU5OZGCYcw27ZJGc6YUXY2oXGzHQnhUNqpfhrjGWKtNPtq+Yg
+   VtQQWc/xK/ld6EzJuw9mW5WJM5yJ09H84aDYUvcz1JOFKZ0UqCHaEkkub
+   w==;
+IronPort-SDR: wg5mQ/kCgf+6zaQHlV6UsfQmYHHZIpoBKqnrRgZP2Mj0O2eUhmeR87qTds3m+mMVGWC9gJ24Hz
+ bzy8BgQQtYzIwzOeifwTi7T6UEuhLPtuEHJ287g/LgD2ehtaLEh2ChynOYwIpQqCOiI7Av/idX
+ nfEcSHhSY9Oc45fnPYcKXN6QndZcXwKxsy23FuU9Z6thC5UHuVB1i6a6RFXpI1cx58TlbgxvW6
+ o44zn1cUsX5YlGTOJHVdbyfFtToBEnA4qj1RfHYqjKDsl0EeYmcZwdjcnAhHC7jNGwWvoETEji
+ qOVHVJ9j6QgG70S0MkSeBaYv
+X-IronPort-AV: E=Sophos;i="5.87,276,1631602800"; 
+   d="scan'208";a="140716090"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Nov 2021 07:06:15 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 30 Nov 2021 07:06:14 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Tue, 30 Nov 2021 07:06:12 -0700
+From:   <conor.dooley@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
+        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
+        <daire.mcnamara@microchip.com>, <cyril.jean@microchip.com>,
+        <conor.dooley@microchip.com>
+Subject: [PATCH v6 0/2] CLK: microchip: Add clkcfg driver for Microchip PolarFire SoC
+Date:   Tue, 30 Nov 2021 14:07:22 +0000
+Message-ID: <20211130140724.10750-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Conor Dooley <conor.dooley@microchip.com>
 
-On Sun 31 Oct 2021 at 14:50, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+This patchset adds support for the Microchip PolarFire clkcfg
+hardware block.
 
-> There are reports that 48kHz audio does not work on the WeTek Play 2
-> (which uses a GXBB SoC), while 44.1kHz audio works fine on the same
-> board. There are also reports of 48kHz audio working fine on GXL and
-> GXM SoCs, which are using an (almost) identical AIU (audio controller).
->
-> Experimenting has shown that MPLL0 is causing this problem. In the .dts
-> we have by default:
-> 	assigned-clocks = <&clkc CLKID_MPLL0>,
-> 			  <&clkc CLKID_MPLL1>,
-> 			  <&clkc CLKID_MPLL2>;
-> 	assigned-clock-rates = <294912000>,
-> 			       <270950400>,
-> 			       <393216000>;
-> The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
-> rate is divisible by 44.1kHz without remainder. Swapping these two clock
-> rates "fixes" 48kHz audio but breaks 44.1kHz audio.
->
-> Everything looks normal when looking at the info provided by the common
-> clock framework while playing 48kHz audio (via I2S with mclk-fs = 256):
->         mpll_prediv                 1        1        0  2000000000
->            mpll0_div                1        1        0   294909641
->               mpll0                 1        1        0   294909641
->                  cts_amclk_sel       1        1        0   294909641
->                     cts_amclk_div       1        1        0    12287902
->                        cts_amclk       1        1        0    12287902
->
-> meson-clk-msr however shows that the actual MPLL0 clock is off by more
-> than 38MHz:
->         mp0_out               333322917    +/-10416Hz
->
-> The rate seen by meson-clk-msr is very close to what we would get when
-> SDM (the fractional part) was ignored:
->   (2000000000Hz * 16384) / ((16384 * 6) = 333.33MHz
-> If SDM was considered the we should get close to:
->   (2000000000Hz * 16384) / ((16384 * 6) + 12808) = 294.9MHz
->
-> Further experimenting shows that HHI_MPLL_CNTL7[15] does not have any
-> effect on the rate of MPLL0 as seen my meson-clk-msr (regardless of
-> whether that bit is zero or one the rate is always the same according to
-> meson-clk-msr). Using HHI_MPLL_CNTL[25] on the other hand as SDM_EN
-> results in SDM being considered for the rate output by the hardware. The
-> rate - as seen by meson-clk-msr - matches with what we expect when
-> SDM_EN is enabled (fractional part is being considered, resulting in a
-> 294.9MHz output) or disable (fractional part being ignored, resulting in
-> a 333.33MHz output).
->
-> Reported-by: Christian Hewitt <christianshewitt@gmail.com>
-> Tested-by: Christian Hewitt <christianshewitt@gmail.com>
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Changes since v5:
+* Dropped clock-output-names property
 
-Applied. Thx
+Major changes since v4:
+* Adjusted license for microchip,mpfs-clock.h to match microchip,mpfs.yaml
+* Corrected the number of clocks to 33 from 32
 
-> ---
-> changes since v2 at [1]:
-> - add Christian's Tested-by (thank you!)
-> - s/his/the/ to fix the grammar in the first sentence as spotted by
->   Christian (off-list)
->
-> changes since v1 at [0]:
-> - consider HHI_MPLL_CNTL[25] as SDM_EN bit after Jerome helped me
->   understand the purpose of SDM_EN and gave some explanation why this
->   can't be a spread spectrum bit
->
->
-> [0] https://patchwork.kernel.org/project/linux-amlogic/patch/20211016145939.15643-1-martin.blumenstingl@googlemail.com/
-> [1] https://patchwork.kernel.org/project/linux-amlogic/patch/20211027185326.1653827-1-martin.blumenstingl@googlemail.com/
->
->
->  drivers/clk/meson/gxbb.c | 44 +++++++++++++++++++++++++++++++++++++---
->  1 file changed, 41 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> index d6eed760327d..608e0e8ca49a 100644
-> --- a/drivers/clk/meson/gxbb.c
-> +++ b/drivers/clk/meson/gxbb.c
-> @@ -713,6 +713,35 @@ static struct clk_regmap gxbb_mpll_prediv = {
->  };
->  
->  static struct clk_regmap gxbb_mpll0_div = {
-> +	.data = &(struct meson_clk_mpll_data){
-> +		.sdm = {
-> +			.reg_off = HHI_MPLL_CNTL7,
-> +			.shift   = 0,
-> +			.width   = 14,
-> +		},
-> +		.sdm_en = {
-> +			.reg_off = HHI_MPLL_CNTL,
-> +			.shift   = 25,
-> +			.width	 = 1,
-> +		},
-> +		.n2 = {
-> +			.reg_off = HHI_MPLL_CNTL7,
-> +			.shift   = 16,
-> +			.width   = 9,
-> +		},
-> +		.lock = &meson_clk_lock,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "mpll0_div",
-> +		.ops = &meson_clk_mpll_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&gxbb_mpll_prediv.hw
-> +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap gxl_mpll0_div = {
->  	.data = &(struct meson_clk_mpll_data){
->  		.sdm = {
->  			.reg_off = HHI_MPLL_CNTL7,
-> @@ -749,7 +778,16 @@ static struct clk_regmap gxbb_mpll0 = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "mpll0",
->  		.ops = &clk_regmap_gate_ops,
-> -		.parent_hws = (const struct clk_hw *[]) { &gxbb_mpll0_div.hw },
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			/*
-> +			 * Note:
-> +			 * GXL and GXBB have different SDM_EN registers. We
-> +			 * fallback to the global naming string mechanism so
-> +			 * mpll0_div picks up the appropriate one.
-> +			 */
-> +			.name = "mpll0_div",
-> +			.index = -1,
-> +		},
->  		.num_parents = 1,
->  		.flags = CLK_SET_RATE_PARENT,
->  	},
-> @@ -3044,7 +3082,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
->  		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
->  		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
->  		[CLKID_VAPB]		    = &gxbb_vapb.hw,
-> -		[CLKID_MPLL0_DIV]	    = &gxbb_mpll0_div.hw,
-> +		[CLKID_MPLL0_DIV]	    = &gxl_mpll0_div.hw,
->  		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
->  		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
->  		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
-> @@ -3439,7 +3477,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
->  	&gxbb_mpll0,
->  	&gxbb_mpll1,
->  	&gxbb_mpll2,
-> -	&gxbb_mpll0_div,
-> +	&gxl_mpll0_div,
->  	&gxbb_mpll1_div,
->  	&gxbb_mpll2_div,
->  	&gxbb_cts_amclk_div,
+Major changes since v3:
+* Patch reformatted so microchip,mpfs-clock.h is part of device-tree patch
+
+Major changes since v2:
+* In mpfs_cfg_clk_set_rate, return immediately if divider_get_val
+    returns <0 
+* rebased to v5.12-rc1
+
+Major changes since v1:
+ * Dependency on SOC_MICROCHIP_POLARFIRE
+ * All references to PFSOC/pfsoc changed to MPFS/mpfs
+ * Cleaned error handling in _probe
+ * Re-ordered code to place structs et al at top
+
+Daire McNamara (2):
+  dt-bindings: clk: microchip: Add Microchip PolarFire host binding
+  clk: microchip: Add driver for Microchip PolarFire SoC
+
+ .../bindings/clock/microchip,mpfs.yaml        |  58 +++
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/microchip/Kconfig                 |   7 +
+ drivers/clk/microchip/Makefile                |   6 +-
+ drivers/clk/microchip/clk-mpfs.c              | 444 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  45 ++
+ 7 files changed, 560 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+ create mode 100644 drivers/clk/microchip/Kconfig
+ create mode 100644 drivers/clk/microchip/clk-mpfs.c
+ create mode 100644 include/dt-bindings/clock/microchip,mpfs-clock.h
+
+-- 
+2.33.1
 
