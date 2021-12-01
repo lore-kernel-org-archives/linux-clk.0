@@ -2,53 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857C7C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Dec 2021 12:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3A4C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Dec 2021 15:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349229AbhLAMOa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Dec 2021 07:14:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41762 "EHLO
+        id S1351048AbhLAPlf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Dec 2021 10:41:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349275AbhLAMNN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 07:13:13 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8EAC0613E0
-        for <linux-clk@vger.kernel.org>; Wed,  1 Dec 2021 04:09:49 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id e11so47600785ljo.13
-        for <linux-clk@vger.kernel.org>; Wed, 01 Dec 2021 04:09:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WgVnAy4PaVSjL+4eGkdCy1MSurSmINPE/moDhmd7OEY=;
-        b=fGHuBiNONaIQcCEGqZ933n0z5CLNjyxitYLpdM95CqtoZrjDnnf0049EceiUDdzlCi
-         DLeM5kgtHk65Swl2mOqvlO7sPdM6RPowjQyC0NBilqGF+V/QgS6zS12MXQ6ECmSf5G/i
-         7LtMTeWWVFrSDdV5UhuoWUMN3ATxuD9U+XYKc76j+D6Wf6nIBqbPqZ15m/ub5iNILJDn
-         39QES/jHh+jaODfaMRpsroySad0MXtN24HC9ukBKijzXYQnRv9Gi856wLmwxJTlqRCUE
-         q36xud4TFp/n98IqYrLlIOC/3s3S2Xu+nSslMQPnlyCaub3e1ThOSXITn1DCV9GRF5XO
-         iWHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WgVnAy4PaVSjL+4eGkdCy1MSurSmINPE/moDhmd7OEY=;
-        b=J7akv03TxCHqdJn3IkKRRv8RBS1RkRxP7gSnFwrbdT1gmjqLYF4FkUI2R2xIwJasMQ
-         uOU6VB1mOX2KoUK6JYE4OpW81GhnMib0oxZMI6ny7wGmo7deCoBsKM6YsbnzgsQd6nVN
-         Huy4VstuXJOnBQRMJ7uuSP2ZMIsGsZXI4jCPFe6OEn+GvjRxZansaZ94w8eMEKsL/dzF
-         JBJyR/gi79SX8nIYUwqY3/fKhb2F6SwlPmBYRVXnckLUl6/LYGhaFECPEwK70DRzKPHO
-         tn3ZqV7BOxfE06BFiu4cLNNI3ludgjxjqR0h/Enll+03iVkN6hKA6lf3XsxrsS78eOdP
-         bRzQ==
-X-Gm-Message-State: AOAM532YAfhkXTrU/p2ME+eeHuAUhqrRpoUHrkx1nr6CyVMCNxmz5fJ5
-        YS8jBq96bD3TShFcrFqiR9NFyg==
-X-Google-Smtp-Source: ABdhPJwwMeZ23XuP5iUvcy/R/g0hpL/lUNgAh0ERVoZdcnMwCE7QDvXIpDSH/0/XU1A+sboOaZ3U0A==
-X-Received: by 2002:a2e:b1cf:: with SMTP id e15mr5267678lja.368.1638360587351;
-        Wed, 01 Dec 2021 04:09:47 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id f10sm2078642lfu.122.2021.12.01.04.09.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Dec 2021 04:09:46 -0800 (PST)
+        with ESMTP id S1351041AbhLAPle (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 10:41:34 -0500
+X-Greylist: delayed 67 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 01 Dec 2021 07:38:13 PST
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC7FC061574
+        for <linux-clk@vger.kernel.org>; Wed,  1 Dec 2021 07:38:12 -0800 (PST)
+Received: from [192.168.1.101] (83.6.166.111.neoplus.adsl.tpnet.pl [83.6.166.111])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 159FB3F6E2;
+        Wed,  1 Dec 2021 16:38:11 +0100 (CET)
+Message-ID: <ba9a02e6-5139-8d4e-c6a0-386c10c99f13@somainline.org>
+Date:   Wed, 1 Dec 2021 16:38:10 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
 Subject: Re: [PATCH 4/4] clk: qcom: rpmh: add support for SM8450 rpmh clocks
+Content-Language: en-US
 To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -60,79 +39,26 @@ Cc:     linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20211201072310.3968679-1-vkoul@kernel.org>
  <20211201072310.3968679-5-vkoul@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <ef6e0041-0e99-d169-d9af-9fa4d4ad5960@linaro.org>
-Date:   Wed, 1 Dec 2021 15:09:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
 In-Reply-To: <20211201072310.3968679-5-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/12/2021 10:23, Vinod Koul wrote:
+
+On 01.12.2021 08:23, Vinod Koul wrote:
 > This adds the RPMH clocks present in SM8450 SoC
-> 
+>
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+> Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->   drivers/clk/qcom/clk-rpmh.c | 27 +++++++++++++++++++++++++++
->   1 file changed, 27 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 441d7a20e6f3..0403cff6c230 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -515,6 +515,32 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
->   /* Resource name must match resource id present in cmd-db */
->   DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
->   
-> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
-> +DEFINE_CLK_RPMH_VRM(sm8450, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 4);
-> +
-> +static struct clk_hw *sm8450_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sc7280_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sc7280_bi_tcxo_ao.hw,
-> +	[RPMH_LN_BB_CLK1]	= &sm8450_ln_bb_clk1.hw,
-> +	[RPMH_LN_BB_CLK1_A]	= &sm8450_ln_bb_clk1_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &sm8450_ln_bb_clk2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &sm8450_ln_bb_clk2_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> +	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
-> +	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-> +	[RPMH_RF_CLK4]		= &sm8350_rf_clk4.hw,
-> +	[RPMH_RF_CLK4_A]	= &sm8350_rf_clk4_ao.hw,
-> +	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sm8450 = {
-> +	.clks = sm8450_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sm8450_rpmh_clocks),
-> +};
-> +
->   static struct clk_hw *sc7280_rpmh_clocks[] = {
->   	[RPMH_CXO_CLK]      = &sc7280_bi_tcxo.hw,
->   	[RPMH_CXO_CLK_A]    = &sc7280_bi_tcxo_ao.hw,
-> @@ -647,6 +673,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->   	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
->   	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
->   	{ .compatible = "qcom,sm8350-rpmh-clk", .data = &clk_rpmh_sm8350},
-> +	{ .compatible = "qcom,sm8450-rpmh-clk", .data = &clk_rpmh_sm8450},
->   	{ .compatible = "qcom,sc7280-rpmh-clk", .data = &clk_rpmh_sc7280},
->   	{ }
->   };
-> 
+>  drivers/clk/qcom/clk-rpmh.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
 
 
--- 
-With best wishes
-Dmitry
+Konrad
+
