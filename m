@@ -2,217 +2,814 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65239C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Dec 2021 15:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14A7C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Dec 2021 15:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238849AbhLAPsK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Dec 2021 10:48:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351106AbhLAPsJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 10:48:09 -0500
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C751EC061748
-        for <linux-clk@vger.kernel.org>; Wed,  1 Dec 2021 07:44:42 -0800 (PST)
-Received: from [192.168.1.101] (83.6.166.111.neoplus.adsl.tpnet.pl [83.6.166.111])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        id S1351146AbhLAPub (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Dec 2021 10:50:31 -0500
+Received: from relay04.th.seeweb.it ([5.144.164.165]:49861 "EHLO
+        relay04.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351190AbhLAPuM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 10:50:12 -0500
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 576393F767;
-        Wed,  1 Dec 2021 16:37:03 +0100 (CET)
-Message-ID: <2649eada-3e80-cec3-5dca-bded67fa5f80@somainline.org>
-Date:   Wed, 1 Dec 2021 16:37:02 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH 3/4] clk: qcom: Add clock driver for SM8450
-Content-Language: en-US
-To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 056A6201CF;
+        Wed,  1 Dec 2021 16:46:43 +0100 (CET)
+Date:   Wed, 1 Dec 2021 16:46:42 +0100
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Martin Botka <martin.botka@somainline.org>
+Cc:     martin.botka1@gmail.com, ~postmarketos/upstreaming@lists.sr.ht,
+        konrad.dybcio@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        jamipkettunen@somainline.org, paul.bouchara@somainline.org,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211201072310.3968679-1-vkoul@kernel.org>
- <20211201072310.3968679-4-vkoul@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20211201072310.3968679-4-vkoul@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: Add display clock controller driver for
+ SM6125
+Message-ID: <20211201154642.24j5emibojfel2vr@SoMainline.org>
+References: <20211130212137.25303-1-martin.botka@somainline.org>
+ <20211130212137.25303-2-martin.botka@somainline.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211130212137.25303-2-martin.botka@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2021-11-30 22:21:33, Martin Botka wrote:
+> Add support for the display clock controller found on SM6125
+> based devices. This allows display drivers to probe and
+> control their clocks.
+> 
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
 
-On 01.12.2021 08:23, Vinod Koul wrote:
-> This adds Global Clock controller (GCC) driver for SM8450 SoC including
-> the gcc resets and gdsc.
->
-> This patch is based on initial code downstream by Vivek Aknurwar
-> <viveka@codeaurora.org>
->
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This got lost in the pipeline:
+
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+
 > ---
->  drivers/clk/qcom/Kconfig      |    8 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-sm8450.c | 3314 +++++++++++++++++++++++++++++++++
->  3 files changed, 3323 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-sm8450.c
->
+>  drivers/clk/qcom/Kconfig         |   9 +
+>  drivers/clk/qcom/Makefile        |   1 +
+>  drivers/clk/qcom/dispcc-sm6125.c | 710 +++++++++++++++++++++++++++++++
+>  3 files changed, 720 insertions(+)
+>  create mode 100644 drivers/clk/qcom/dispcc-sm6125.c
+> 
 > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 74efc82127e1..3a568e7ad886 100644
+> index 74efc82127e1..2399b45767f5 100644
 > --- a/drivers/clk/qcom/Kconfig
 > +++ b/drivers/clk/qcom/Kconfig
-> @@ -618,6 +618,14 @@ config SM_GCC_8350
->  	  Say Y if you want to use peripheral devices such as UART,
->  	  SPI, I2C, USB, SD/UFS, PCIe etc.
+> @@ -564,6 +564,15 @@ config SM_CAMCC_8250
+>  	  Support for the camera clock controller on SM8250 devices.
+>  	  Say Y if you want to support camera devices and camera functionality.
 >  
-> +config SM_GCC_8450
-> +	tristate "SM8450 Global Clock Controller"
-> +	select QCOM_GDSC
+> +config SM_DISPCC_6125
+> +	tristate "SM6125 Display Clock Controller"
+> +	depends on SM_GCC_6125
 > +	help
-> +	  Support for the global clock controller on SM8450 devices.
-> +	  Say Y if you want to use peripheral devices such as UART,
-> +	  SPI, I2C, USB, SD/UFS, PCIe etc.
+> +	  Support for the display clock controller on Qualcomm Technologies, Inc
+> +	  SM6125 devices.
+> +	  Say Y if you want to support display devices and functionality such as
+> +	  splash screen
 > +
->  config SM_GPUCC_8150
->  	tristate "SM8150 Graphics Clock Controller"
->  	select SM_GCC_8150
+>  config SM_DISPCC_8250
+>  	tristate "SM8150 and SM8250 Display Clock Controller"
+>  	depends on SM_GCC_8150 || SM_GCC_8250
 > diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 1718c34d3551..efb0837ea199 100644
+> index 1718c34d3551..c9f38fbf86a8 100644
 > --- a/drivers/clk/qcom/Makefile
 > +++ b/drivers/clk/qcom/Makefile
-> @@ -90,6 +90,7 @@ obj-$(CONFIG_SM_GCC_6350) += gcc-sm6350.o
->  obj-$(CONFIG_SM_GCC_8150) += gcc-sm8150.o
->  obj-$(CONFIG_SM_GCC_8250) += gcc-sm8250.o
->  obj-$(CONFIG_SM_GCC_8350) += gcc-sm8350.o
-> +obj-$(CONFIG_SM_GCC_8450) += gcc-sm8450.o
->  obj-$(CONFIG_SM_GPUCC_8150) += gpucc-sm8150.o
->  obj-$(CONFIG_SM_GPUCC_8250) += gpucc-sm8250.o
->  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
-> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+> @@ -83,6 +83,7 @@ obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+>  obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+>  obj-$(CONFIG_SDX_GCC_55) += gcc-sdx55.o
+>  obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+> +obj-$(CONFIG_SM_DISPCC_6125) += dispcc-sm6125.o
+>  obj-$(CONFIG_SM_DISPCC_8250) += dispcc-sm8250.o
+>  obj-$(CONFIG_SM_GCC_6115) += gcc-sm6115.o
+>  obj-$(CONFIG_SM_GCC_6125) += gcc-sm6125.o
+> diff --git a/drivers/clk/qcom/dispcc-sm6125.c b/drivers/clk/qcom/dispcc-sm6125.c
 > new file mode 100644
-> index 000000000000..175c18a1cdbe
+> index 000000000000..dbab92d6261f
 > --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sm8450.c
-> @@ -0,0 +1,3314 @@
+> +++ b/drivers/clk/qcom/dispcc-sm6125.c
+> @@ -0,0 +1,710 @@
 > +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2021, Linaro Limited
+> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
 > + */
 > +
+> +#include <linux/clk.h>
 > +#include <linux/module.h>
-> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
 > +#include <linux/regmap.h>
 > +
-> +#include <dt-bindings/clock/qcom,gcc-sm8450.h>
+> +#include <dt-bindings/clock/qcom,dispcc-sm6125.h>
 > +
 > +#include "clk-alpha-pll.h"
 > +#include "clk-branch.h"
 > +#include "clk-rcg.h"
 > +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
+> +#include "common.h"
 > +#include "gdsc.h"
-> +#include "reset.h"
 > +
 > +enum {
 > +	P_BI_TCXO,
-> +	P_GCC_GPLL0_OUT_EVEN,
-> +	P_GCC_GPLL0_OUT_MAIN,
-> +	P_GCC_GPLL4_OUT_MAIN,
-> +	P_GCC_GPLL9_OUT_MAIN,
-> +	P_PCIE_0_PIPE_CLK,
-> +	P_PCIE_1_PHY_AUX_CLK,
-> +	P_PCIE_1_PIPE_CLK,
-> +	P_SLEEP_CLK,
-> +	P_UFS_PHY_RX_SYMBOL_0_CLK,
-> +	P_UFS_PHY_RX_SYMBOL_1_CLK,
-> +	P_UFS_PHY_TX_SYMBOL_0_CLK,
-> +	P_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
+> +	P_DISP_CC_PLL0_OUT_MAIN,
+> +	P_DP_PHY_PLL_LINK_CLK,
+> +	P_DP_PHY_PLL_VCO_DIV_CLK,
+> +	P_DSI0_PHY_PLL_OUT_BYTECLK,
+> +	P_DSI0_PHY_PLL_OUT_DSICLK,
+> +	P_DSI1_PHY_PLL_OUT_DSICLK,
+> +	P_GPLL0_OUT_MAIN,
 > +};
 > +
-> +static struct clk_alpha_pll gcc_gpll0 = {
+> +static struct pll_vco disp_cc_pll_vco[] = {
+> +	{ 500000000, 1000000000, 2 },
+> +};
+> +
+> +static struct clk_alpha_pll disp_cc_pll0 = {
 > +	.offset = 0x0,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+> +	.vco_table = disp_cc_pll_vco,
+> +	.num_vco = ARRAY_SIZE(disp_cc_pll_vco),
+> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
 > +	.clkr = {
-> +		.enable_reg = 0x62018,
-> +		.enable_mask = BIT(0),
 > +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_gpll0",
+> +			.name = "disp_cc_pll0",
 > +			.parent_data = &(const struct clk_parent_data){
 > +				.fw_name = "bi_tcxo",
-> +				.name = "bi_tcxo",
-
-I don't think we want .name for new drivers, as we do things cleanly
-
-from the start and don't have DT incompatibility problems.
-
-[...]
-
-
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_alpha_pll_ops,
+> +		},
+> +	},
+> +};
 > +
-> +static int gcc_sm8450_probe(struct platform_device *pdev)
+> +/* 768MHz configuration */
+> +static const struct alpha_pll_config disp_cc_pll0_config = {
+> +	.l = 0x28,
+> +	.vco_val = 0x2 << 20,
+> +	.vco_mask = 0x3 << 20,
+> +	.main_output_mask = BIT(0),
+> +	.config_ctl_val = 0x4001055b,
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_0[] = {
+> +	{ P_BI_TCXO, 0 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_0[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_1[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_DP_PHY_PLL_LINK_CLK, 1 },
+> +	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_1[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +	{ .fw_name = "dp_phy_pll_link_clk" },
+> +	{ .fw_name = "dp_phy_pll_vco_div_clk" },
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_2[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_2[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +	{ .fw_name = "dsi0_phy_pll_out_byteclk" },
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_3[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
+> +	{ P_GPLL0_OUT_MAIN, 4 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_3[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +	{ .hw = &disp_cc_pll0.clkr.hw },
+> +	{ .fw_name = "gcc_disp_gpll0_div_clk_src" },
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_4[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_GPLL0_OUT_MAIN, 4 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_4[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +	{ .fw_name = "gcc_disp_gpll0_div_clk_src" },
+> +};
+> +
+> +static const struct parent_map disp_cc_parent_map_5[] = {
+> +	{ P_BI_TCXO, 0 },
+> +	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
+> +	{ P_DSI1_PHY_PLL_OUT_DSICLK, 2 },
+> +};
+> +
+> +static const struct clk_parent_data disp_cc_parent_data_5[] = {
+> +	{ .fw_name = "bi_tcxo" },
+> +	{ .fw_name = "dsi0_phy_pll_out_dsiclk" },
+> +	{ .fw_name = "dsi1_phy_pll_out_dsiclk" },
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(37500000, P_GPLL0_OUT_MAIN, 16, 0, 0),
+> +	F(75000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_ahb_clk_src = {
+> +	.cmd_rcgr = 0x2154,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_4,
+> +	.freq_tbl = ftbl_disp_cc_mdss_ahb_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_ahb_clk_src",
+> +		.parent_data = disp_cc_parent_data_4,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_4),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
+> +	.cmd_rcgr = 0x20bc,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_2,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_byte0_clk_src",
+> +		.parent_data = disp_cc_parent_data_2,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_2),
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.ops = &clk_byte2_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux1_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
+> +	.cmd_rcgr = 0x213c,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_0,
+> +	.freq_tbl = ftbl_disp_cc_mdss_dp_aux1_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_dp_aux_clk_src",
+> +		.parent_data = disp_cc_parent_data_0,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] = {
+> +	F( 180000, P_DP_PHY_PLL_LINK_CLK,   1.5,   0,   0),
+> +	F( 360000, P_DP_PHY_PLL_LINK_CLK,   1.5,   0,   0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
+> +	.cmd_rcgr = 0x210c,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_1,
+> +	.freq_tbl = ftbl_disp_cc_mdss_dp_crypto_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_dp_crypto_clk_src",
+> +		.parent_data = disp_cc_parent_data_1,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
+> +		.flags = CLK_GET_RATE_NOCACHE,
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
+> +	F( 162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +	F( 270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +	F( 540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
+> +	.cmd_rcgr = 0x20f0,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_1,
+> +	.freq_tbl = ftbl_disp_cc_mdss_dp_link_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_dp_link_clk_src",
+> +		.parent_data = disp_cc_parent_data_1,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
+> +	.cmd_rcgr = 0x2124,
+> +	.mnd_width = 16,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_1,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_dp_pixel_clk_src",
+> +		.parent_data = disp_cc_parent_data_1,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_1),
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.ops = &clk_dp_ops,
+> +	},
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+> +	.cmd_rcgr = 0x20d8,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_2,
+> +	.freq_tbl = ftbl_disp_cc_mdss_dp_aux1_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_esc0_clk_src",
+> +		.parent_data = disp_cc_parent_data_2,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_2),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_mdp_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(192000000, P_DISP_CC_PLL0_OUT_MAIN, 4, 0, 0),
+> +	F(256000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
+> +	F(307200000, P_DISP_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
+> +	F(384000000, P_DISP_CC_PLL0_OUT_MAIN, 2, 0, 0),
+> +	F(400000000, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+> +	.cmd_rcgr = 0x2074,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_3,
+> +	.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_mdp_clk_src",
+> +		.parent_data = disp_cc_parent_data_3,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
+> +	.cmd_rcgr = 0x205c,
+> +	.mnd_width = 8,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_5,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_pclk0_clk_src",
+> +		.parent_data = disp_cc_parent_data_5,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+> +		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +		.ops = &clk_pixel_ops,
+> +	},
+> +};
+> +
+> +static const struct freq_tbl ftbl_disp_cc_mdss_rot_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(192000000, P_DISP_CC_PLL0_OUT_MAIN, 4, 0, 0),
+> +	F(256000000, P_DISP_CC_PLL0_OUT_MAIN, 3, 0, 0),
+> +	F(307200000, P_DISP_CC_PLL0_OUT_MAIN, 2.5, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
+> +	.cmd_rcgr = 0x208c,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_3,
+> +	.freq_tbl = ftbl_disp_cc_mdss_rot_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_rot_clk_src",
+> +		.parent_data = disp_cc_parent_data_3,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_3),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
+> +	.cmd_rcgr = 0x20a4,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = disp_cc_parent_map_0,
+> +	.freq_tbl = ftbl_disp_cc_mdss_dp_aux1_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "disp_cc_mdss_vsync_clk_src",
+> +		.parent_data = disp_cc_parent_data_0,
+> +		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_ahb_clk = {
+> +	.halt_reg = 0x2044,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2044,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_ahb_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_ahb_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_byte0_clk = {
+> +	.halt_reg = 0x2024,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2024,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_byte0_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_byte0_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_byte0_intf_clk = {
+> +	.halt_reg = 0x2028,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2028,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_byte0_intf_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_byte0_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_aux_clk = {
+> +	.halt_reg = 0x2040,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2040,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_dp_aux_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_dp_aux_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_crypto_clk = {
+> +	.halt_reg = 0x2038,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2038,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_dp_crypto_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_dp_crypto_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_link_clk = {
+> +	.halt_reg = 0x2030,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2030,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_dp_link_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_dp_link_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
+> +	.halt_reg = 0x2034,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2034,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_dp_link_intf_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_dp_link_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_dp_pixel_clk = {
+> +	.halt_reg = 0x203c,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x203c,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_dp_pixel_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_dp_pixel_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_esc0_clk = {
+> +	.halt_reg = 0x202c,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x202c,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_esc0_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_esc0_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_mdp_clk = {
+> +	.halt_reg = 0x2008,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2008,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_mdp_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_mdp_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_mdp_lut_clk = {
+> +	.halt_reg = 0x2018,
+> +	.halt_check = BRANCH_VOTED,
+> +	.clkr = {
+> +		.enable_reg = 0x2018,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_mdp_lut_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_mdp_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_non_gdsc_ahb_clk = {
+> +	.halt_reg = 0x4004,
+> +	.halt_check = BRANCH_VOTED,
+> +	.clkr = {
+> +		.enable_reg = 0x4004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_non_gdsc_ahb_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_ahb_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_pclk0_clk = {
+> +	.halt_reg = 0x2004,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2004,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_pclk0_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_pclk0_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_rot_clk = {
+> +	.halt_reg = 0x2010,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2010,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_rot_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_rot_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_mdss_vsync_clk = {
+> +	.halt_reg = 0x2020,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x2020,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_mdss_vsync_clk",
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&disp_cc_mdss_vsync_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch disp_cc_xo_clk = {
+> +	.halt_reg = 0x604c,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x604c,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "disp_cc_xo_clk",
+> +			.flags = CLK_IS_CRITICAL,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct gdsc mdss_gdsc = {
+> +	.gdscr = 0x3000,
+> +	.pd = {
+> +		.name = "mdss_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.flags = HW_CTRL,
+> +};
+> +
+> +static struct clk_regmap *disp_cc_sm6125_clocks[] = {
+> +	[DISP_CC_MDSS_AHB_CLK] = &disp_cc_mdss_ahb_clk.clkr,
+> +	[DISP_CC_MDSS_AHB_CLK_SRC] = &disp_cc_mdss_ahb_clk_src.clkr,
+> +	[DISP_CC_MDSS_BYTE0_CLK] = &disp_cc_mdss_byte0_clk.clkr,
+> +	[DISP_CC_MDSS_BYTE0_CLK_SRC] = &disp_cc_mdss_byte0_clk_src.clkr,
+> +	[DISP_CC_MDSS_BYTE0_INTF_CLK] = &disp_cc_mdss_byte0_intf_clk.clkr,
+> +	[DISP_CC_MDSS_DP_AUX_CLK] = &disp_cc_mdss_dp_aux_clk.clkr,
+> +	[DISP_CC_MDSS_DP_AUX_CLK_SRC] = &disp_cc_mdss_dp_aux_clk_src.clkr,
+> +	[DISP_CC_MDSS_DP_CRYPTO_CLK] = &disp_cc_mdss_dp_crypto_clk.clkr,
+> +	[DISP_CC_MDSS_DP_CRYPTO_CLK_SRC] = &disp_cc_mdss_dp_crypto_clk_src.clkr,
+> +	[DISP_CC_MDSS_DP_LINK_CLK] = &disp_cc_mdss_dp_link_clk.clkr,
+> +	[DISP_CC_MDSS_DP_LINK_CLK_SRC] = &disp_cc_mdss_dp_link_clk_src.clkr,
+> +	[DISP_CC_MDSS_DP_LINK_INTF_CLK] = &disp_cc_mdss_dp_link_intf_clk.clkr,
+> +	[DISP_CC_MDSS_DP_PIXEL_CLK] = &disp_cc_mdss_dp_pixel_clk.clkr,
+> +	[DISP_CC_MDSS_DP_PIXEL_CLK_SRC] = &disp_cc_mdss_dp_pixel_clk_src.clkr,
+> +	[DISP_CC_MDSS_ESC0_CLK] = &disp_cc_mdss_esc0_clk.clkr,
+> +	[DISP_CC_MDSS_ESC0_CLK_SRC] = &disp_cc_mdss_esc0_clk_src.clkr,
+> +	[DISP_CC_MDSS_MDP_CLK] = &disp_cc_mdss_mdp_clk.clkr,
+> +	[DISP_CC_MDSS_MDP_CLK_SRC] = &disp_cc_mdss_mdp_clk_src.clkr,
+> +	[DISP_CC_MDSS_MDP_LUT_CLK] = &disp_cc_mdss_mdp_lut_clk.clkr,
+> +	[DISP_CC_MDSS_NON_GDSC_AHB_CLK] = &disp_cc_mdss_non_gdsc_ahb_clk.clkr,
+> +	[DISP_CC_MDSS_PCLK0_CLK] = &disp_cc_mdss_pclk0_clk.clkr,
+> +	[DISP_CC_MDSS_PCLK0_CLK_SRC] = &disp_cc_mdss_pclk0_clk_src.clkr,
+> +	[DISP_CC_MDSS_ROT_CLK] = &disp_cc_mdss_rot_clk.clkr,
+> +	[DISP_CC_MDSS_ROT_CLK_SRC] = &disp_cc_mdss_rot_clk_src.clkr,
+> +	[DISP_CC_MDSS_VSYNC_CLK] = &disp_cc_mdss_vsync_clk.clkr,
+> +	[DISP_CC_MDSS_VSYNC_CLK_SRC] = &disp_cc_mdss_vsync_clk_src.clkr,
+> +	[DISP_CC_PLL0] = &disp_cc_pll0.clkr,
+> +	[DISP_CC_XO_CLK] = &disp_cc_xo_clk.clkr,
+> +};
+> +
+> +static struct gdsc *disp_cc_sm6125_gdscs[] = {
+> +	[MDSS_GDSC] = &mdss_gdsc,
+> +};
+> +
+> +static const struct regmap_config disp_cc_sm6125_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x10000,
+> +	.fast_io = true,
+> +};
+> +
+> +static const struct qcom_cc_desc disp_cc_sm6125_desc = {
+> +	.config = &disp_cc_sm6125_regmap_config,
+> +	.clks = disp_cc_sm6125_clocks,
+> +	.num_clks = ARRAY_SIZE(disp_cc_sm6125_clocks),
+> +	.gdscs = disp_cc_sm6125_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(disp_cc_sm6125_gdscs),
+> +};
+> +
+> +static const struct of_device_id disp_cc_sm6125_match_table[] = {
+> +	{ .compatible = "qcom,dispcc-sm6125" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, disp_cc_sm6125_match_table);
+> +
+> +static int disp_cc_sm6125_probe(struct platform_device *pdev)
 > +{
 > +	struct regmap *regmap;
-> +	int ret;
 > +
-> +	regmap = qcom_cc_map(pdev, &gcc_sm8450_desc);
+> +	regmap = qcom_cc_map(pdev, &disp_cc_sm6125_desc);
 > +	if (IS_ERR(regmap))
 > +		return PTR_ERR(regmap);
 > +
-> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
-> +				       ARRAY_SIZE(gcc_dfs_clocks));
-> +	if (ret)
-> +		return ret;
+> +	clk_alpha_pll_configure(&disp_cc_pll0, regmap,
+> +				&disp_cc_pll0_config);
 > +
-> +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
-> +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
+> +	return qcom_cc_really_probe(pdev, &disp_cc_sm6125_desc, regmap);
+> +}
 > +
-> +	/* Keep the critical clock always-On
-
-I think the general style for multiline comments is to start with /* and then add a newline
-
-
-
-> +	 * gcc_camera_ahb_clk, gcc_camera_xo_clk, gcc_disp_ahb_clk,
-> +	 * gcc_disp_xo_clk, gcc_gpu_cfg_ahb_clk, gcc_video_ahb_clk,
-> +	 * gcc_video_xo_clk
-> +	 */
-> +	regmap_update_bits(regmap, 0x36004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x36020, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x37004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x3701c, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x81004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x42004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x42028, BIT(0), BIT(0));
+> +static struct platform_driver disp_cc_sm6125_driver = {
+> +	.probe = disp_cc_sm6125_probe,
+> +	.driver = {
+> +		.name = "disp_cc-sm6125",
+> +		.of_match_table = disp_cc_sm6125_match_table,
+> +	},
+> +};
 > +
-> +	ret = qcom_cc_really_probe(pdev, &gcc_sm8450_desc, regmap);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
-
-That's a bad downstream leftover that we don't want..
-
-
-
-> +		return ret;
-> +	}
+> +static int __init disp_cc_sm6125_init(void)
+> +{
+> +	return platform_driver_register(&disp_cc_sm6125_driver);
+> +}
+> +subsys_initcall(disp_cc_sm6125_init);
 > +
-> +	dev_info(&pdev->dev, "Registered GCC clocks\n");
-
-And so is this.
-
-
-
+> +static void __exit disp_cc_sm6125_exit(void)
+> +{
+> +	platform_driver_unregister(&disp_cc_sm6125_driver);
+> +}
+> +module_exit(disp_cc_sm6125_exit);
 > +
-> +	return ret;
-
-You can simply return qcom_cc_really_probe(pdev, &gcc_sm8450_desc, regmap);
-
-
-Konrad
-
+> +MODULE_DESCRIPTION("QTI DISPCC SM6125 Driver");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.34.0
+> 
