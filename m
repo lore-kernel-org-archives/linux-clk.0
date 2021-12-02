@@ -2,116 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD64FC43217
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Dec 2021 22:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096CAC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Dec 2021 00:12:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353599AbhLAWa0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Dec 2021 17:30:26 -0500
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:17042 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353610AbhLAWaY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 17:30:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1638397624; x=1669933624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AMYlyWRGk0rGyJ8aOEHYyVAkZ0ZG0osDorr4K/cqWvQ=;
-  b=ULQTbgZz1z3aOzvCR1XCX92sxQQKOTE2+O4FVLjlsXX7CBHPOv3hkc9V
-   UyA42k15SXtlXXghHCtl4r5A8tZbz+547HOxgCSrXlAWyIs9sc64HFZqv
-   CwbLg6iU+t/Ol/+WtCFavOXFneExMP/9YZjcYIghTz0ZZLUYxdDgPYHz9
-   E=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 01 Dec 2021 14:27:03 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2021 14:27:01 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.922.19; Wed, 1 Dec 2021 14:26:40 -0800
-Received: from quicinc.com (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Wed, 1 Dec 2021
- 14:26:40 -0800
-Date:   Wed, 1 Dec 2021 14:26:38 -0800
-From:   Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <agross@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <tglx@linutronix.de>, <maz@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v5 6/6] dt-bindings: clock: Introduce pdc bindings for
- SDX65
-Message-ID: <20211201222638.GB586@quicinc.com>
-References: <cover.1637302009.git.quic_vamslank@quicinc.com>
- <538438f41153587043741747db5218e9f575c0f5.1637302009.git.quic_vamslank@quicinc.com>
- <YaF2eBKMkIvGapCY@ripper>
+        id S1353980AbhLBAPm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Dec 2021 19:15:42 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:35790 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354212AbhLBAPb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Dec 2021 19:15:31 -0500
+Received: by mail-oi1-f177.google.com with SMTP id m6so52123843oim.2;
+        Wed, 01 Dec 2021 16:12:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+s50L4ewH0uZfxKb9gTcsPyAWEISfg/7jiV2kO1vvPo=;
+        b=j2N5M1FyJXIuBQ3Rv2D1/2IKHZzK38WNP4hVUz302nxDDPGUAlCPf41FjknD7Enpac
+         QZTQkKMnVemNHQtEzbP4nW4HlAwwev2THmu6BQpDKFld1jcTkOZFhTJ1E+oc6JZnK2nW
+         T7YaDk5MFaEeSEjjfsiZSkx9BHH0RaQL2U9OdsaKi8aHZApr7Ad6GTFS29Hak5h+3lXv
+         1qKux6mTUyThvRFV+kCDSlGkYFtRMVQN0rrm3b49DZTk4Q7QKH8TfhFz+uLCLTkN2H8f
+         CV/XhE4LnzTU8ojmX7ohZlsJNHU6w9gvnrxzmNBqWzxCIXlWGbcbmf0j9IF5QxWny9bE
+         kHWg==
+X-Gm-Message-State: AOAM530xE2eJ3EiqYlDHarIA92IBz4Vg3fBPkSqFOxbRnL7q9KTUhNSW
+        Dg2g4aWQMD5MNnqp5NGIpA==
+X-Google-Smtp-Source: ABdhPJzdsRJrpzhVv6agP0inyMBFQdKUoQ0uW3BGKemHkqnCoJHNosyy7qg6P8pSiq37ZeYtxJeRkw==
+X-Received: by 2002:aca:4b11:: with SMTP id y17mr1660931oia.170.1638403929689;
+        Wed, 01 Dec 2021 16:12:09 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id t11sm514328otj.24.2021.12.01.16.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Dec 2021 16:12:09 -0800 (PST)
+Received: (nullmailer pid 3278312 invoked by uid 1000);
+        Thu, 02 Dec 2021 00:12:08 -0000
+Date:   Wed, 1 Dec 2021 18:12:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        David Virag <virag.david003@gmail.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+Message-ID: <YagPWOj0CLxE/+ER@robh.at.kernel.org>
+References: <20211126203641.24005-1-semen.protsenko@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YaF2eBKMkIvGapCY@ripper>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+In-Reply-To: <20211126203641.24005-1-semen.protsenko@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 26, 2021 at 04:06:16PM -0800, Bjorn Andersson wrote:
-> On Thu 18 Nov 22:11 PST 2021, quic_vamslank@quicinc.com wrote:
+On Fri, 26 Nov 2021 22:36:40 +0200, Sam Protsenko wrote:
+> System Register is used to configure system behavior, like USI protocol,
+> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> make it possible to modify SYSREG registers.
 > 
-> > From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> > 
-> > Add compatible for SDX65 pdc.
-> > 
-> > Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> and might be needed for corresponding Exynos850 features soon.
 > 
-> Sorry for not spotting this before, but as you can tell from the path of
-> the file you're changing, this has nothing to do with "clocks".
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> git log on qcom,pdc.txt shows that $subject should be:
-> 
->   dt-bindings: qcom,pdc: Add compatible for SDX65
-> 
-> Also, as this is unrelated to clocks, Stephen is not going to merge this
-> patch. You will have to repost it, with Marc Zyngier as recipient to get
-> it merged; per get_maintainer.
-> 
-> 
-> I think it's fine to keep the reviews and acks while adjusting $subject
-> and reposting this patch  - separate from the other 5 patches.
 
-Thank you for the review. Will repost this as a new patch.
-
-Thanks,
-Vamsi
-> 
-> Thanks,
-> Bjorn
-> 
-> > ---
-> >  .../devicetree/bindings/interrupt-controller/qcom,pdc.txt        | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> > index 98d89e53013d..ce631d853db4 100644
-> > --- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> > +++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.txt
-> > @@ -23,6 +23,7 @@ Properties:
-> >  		    - "qcom,sdm845-pdc": For SDM845
-> >  		    - "qcom,sdm8250-pdc": For SM8250
-> >  		    - "qcom,sdm8350-pdc": For SM8350
-> > +		    - "qcom,sdx65-pdc": For SDX65
-> >  
-> >  - reg:
-> >  	Usage: required
-> > -- 
-> > 2.33.1
-> > 
+Acked-by: Rob Herring <robh@kernel.org>
