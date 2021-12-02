@@ -2,261 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969ABC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Dec 2021 08:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3982CC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Dec 2021 17:34:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356079AbhLBIUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Dec 2021 03:20:03 -0500
-Received: from mga03.intel.com ([134.134.136.65]:42611 "EHLO mga03.intel.com"
+        id S237533AbhLBRiN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Dec 2021 12:38:13 -0500
+Received: from mga02.intel.com ([134.134.136.20]:34533 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1356065AbhLBIUB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Dec 2021 03:20:01 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="236594211"
-X-IronPort-AV: E=Sophos;i="5.87,281,1631602800"; 
-   d="scan'208";a="236594211"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 00:16:38 -0800
+        id S235806AbhLBRiM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 2 Dec 2021 12:38:12 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10185"; a="223992960"
+X-IronPort-AV: E=Sophos;i="5.87,282,1631602800"; 
+   d="scan'208";a="223992960"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Dec 2021 09:34:41 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,281,1631602800"; 
-   d="scan'208";a="602636502"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.76]) ([10.237.72.76])
-  by fmsmga002.fm.intel.com with ESMTP; 02 Dec 2021 00:16:33 -0800
-Subject: Re: [PATCH v16 22/40] mmc: sdhci-tegra: Add runtime PM and OPP
- support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-23-digetx@gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <fc60f593-cd74-558d-785f-5f0d2ba179cf@intel.com>
-Date:   Thu, 2 Dec 2021 10:16:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.13.0
+X-IronPort-AV: E=Sophos;i="5.87,282,1631602800"; 
+   d="scan'208";a="677739807"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga005.jf.intel.com with ESMTP; 02 Dec 2021 09:34:39 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mspyg-000GY2-BG; Thu, 02 Dec 2021 17:34:38 +0000
+Date:   Fri, 3 Dec 2021 01:34:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Felix Fietkau <nbd@nbd.name>, linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, john@phrozen.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 07/13] clk: en7523: Add clock driver for Airoha EN7523
+ SoC
+Message-ID: <202112030121.BuKKR1T4-lkp@intel.com>
+References: <20211129153330.37719-8-nbd@nbd.name>
 MIME-Version: 1.0
-In-Reply-To: <20211130232347.950-23-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211129153330.37719-8-nbd@nbd.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/12/2021 01:23, Dmitry Osipenko wrote:
-> The SDHCI on Tegra belongs to the core power domain and we're going to
-> enable GENPD support for the core domain. Now SDHCI must be resumed using
-> runtime PM API in order to initialize the SDHCI power state. The SDHCI
-> clock rate must be changed using OPP API that will reconfigure the power
-> domain performance state in accordance to the rate. Add runtime PM and OPP
-> support to the SDHCI driver.
-> 
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Hi Felix,
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+I love your patch! Perhaps something to improve:
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 81 +++++++++++++++++++++++++++-------
->  1 file changed, 65 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index a5001875876b..6435a75142a6 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -15,6 +15,8 @@
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/reset.h>
->  #include <linux/mmc/card.h>
-> @@ -24,6 +26,8 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/ktime.h>
->  
-> +#include <soc/tegra/common.h>
-> +
->  #include "sdhci-pltfm.h"
->  #include "cqhci.h"
->  
-> @@ -760,7 +764,9 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> +	struct device *dev = mmc_dev(host->mmc);
->  	unsigned long host_clk;
-> +	int err;
->  
->  	if (!clock)
->  		return sdhci_set_clock(host, clock);
-> @@ -778,7 +784,12 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	 * from clk_get_rate() is used.
->  	 */
->  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
-> -	clk_set_rate(pltfm_host->clk, host_clk);
-> +
-> +	err = dev_pm_opp_set_rate(dev, host_clk);
-> +	if (err)
-> +		dev_err(dev, "failed to set clk rate to %luHz: %d\n",
-> +			host_clk, err);
-> +
->  	tegra_host->curr_clk_rate = host_clk;
->  	if (tegra_host->ddr_signaling)
->  		host->max_clk = host_clk;
-> @@ -1705,7 +1716,6 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  				   "failed to get clock\n");
->  		goto err_clk_get;
->  	}
-> -	clk_prepare_enable(clk);
->  	pltfm_host->clk = clk;
->  
->  	tegra_host->rst = devm_reset_control_get_exclusive(&pdev->dev,
-> @@ -1716,15 +1726,24 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  		goto err_rst_get;
->  	}
->  
-> -	rc = reset_control_assert(tegra_host->rst);
-> +	rc = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
->  	if (rc)
->  		goto err_rst_get;
->  
-> +	pm_runtime_enable(&pdev->dev);
-> +	rc = pm_runtime_resume_and_get(&pdev->dev);
-> +	if (rc)
-> +		goto err_pm_get;
-> +
-> +	rc = reset_control_assert(tegra_host->rst);
-> +	if (rc)
-> +		goto err_rst_assert;
-> +
->  	usleep_range(2000, 4000);
->  
->  	rc = reset_control_deassert(tegra_host->rst);
->  	if (rc)
-> -		goto err_rst_get;
-> +		goto err_rst_assert;
->  
->  	usleep_range(2000, 4000);
->  
-> @@ -1736,8 +1755,11 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  
->  err_add_host:
->  	reset_control_assert(tegra_host->rst);
-> +err_rst_assert:
-> +	pm_runtime_put_sync_suspend(&pdev->dev);
-> +err_pm_get:
-> +	pm_runtime_disable(&pdev->dev);
->  err_rst_get:
-> -	clk_disable_unprepare(pltfm_host->clk);
->  err_clk_get:
->  	clk_disable_unprepare(tegra_host->tmclk);
->  err_power_req:
-> @@ -1756,19 +1778,38 @@ static int sdhci_tegra_remove(struct platform_device *pdev)
->  
->  	reset_control_assert(tegra_host->rst);
->  	usleep_range(2000, 4000);
-> -	clk_disable_unprepare(pltfm_host->clk);
-> -	clk_disable_unprepare(tegra_host->tmclk);
->  
-> +	pm_runtime_put_sync_suspend(&pdev->dev);
-> +	pm_runtime_force_suspend(&pdev->dev);
-> +
-> +	clk_disable_unprepare(tegra_host->tmclk);
->  	sdhci_pltfm_free(pdev);
->  
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_PM_SLEEP
-> -static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
-> +static int __maybe_unused sdhci_tegra_runtime_suspend(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +
-> +	clk_disable_unprepare(pltfm_host->clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused sdhci_tegra_runtime_resume(struct device *dev)
-> +{
-> +	struct sdhci_host *host = dev_get_drvdata(dev);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +
-> +	return clk_prepare_enable(pltfm_host->clk);
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int sdhci_tegra_suspend(struct device *dev)
-> +{
-> +	struct sdhci_host *host = dev_get_drvdata(dev);
->  	int ret;
->  
->  	if (host->mmc->caps2 & MMC_CAP2_CQE) {
-> @@ -1783,17 +1824,22 @@ static int __maybe_unused sdhci_tegra_suspend(struct device *dev)
->  		return ret;
->  	}
->  
-> -	clk_disable_unprepare(pltfm_host->clk);
-> +	ret = pm_runtime_force_suspend(dev);
-> +	if (ret) {
-> +		sdhci_resume_host(host);
-> +		cqhci_resume(host->mmc);
-> +		return ret;
-> +	}
-> +
->  	return 0;
->  }
->  
-> -static int __maybe_unused sdhci_tegra_resume(struct device *dev)
-> +static int sdhci_tegra_resume(struct device *dev)
->  {
->  	struct sdhci_host *host = dev_get_drvdata(dev);
-> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	int ret;
->  
-> -	ret = clk_prepare_enable(pltfm_host->clk);
-> +	ret = pm_runtime_force_resume(dev);
->  	if (ret)
->  		return ret;
->  
-> @@ -1812,13 +1858,16 @@ static int __maybe_unused sdhci_tegra_resume(struct device *dev)
->  suspend_host:
->  	sdhci_suspend_host(host);
->  disable_clk:
-> -	clk_disable_unprepare(pltfm_host->clk);
-> +	pm_runtime_force_suspend(dev);
->  	return ret;
->  }
->  #endif
->  
-> -static SIMPLE_DEV_PM_OPS(sdhci_tegra_dev_pm_ops, sdhci_tegra_suspend,
-> -			 sdhci_tegra_resume);
-> +static const struct dev_pm_ops sdhci_tegra_dev_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(sdhci_tegra_runtime_suspend, sdhci_tegra_runtime_resume,
-> +			   NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_tegra_suspend, sdhci_tegra_resume)
-> +};
->  
->  static struct platform_driver sdhci_tegra_driver = {
->  	.driver		= {
-> 
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next v5.16-rc3 next-20211202]
+[cannot apply to linusw-gpio/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
+url:    https://github.com/0day-ci/linux/commits/Felix-Fietkau/dt-bindings-Add-vendor-prefix-for-Airoha/20211130-033938
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: mips-randconfig-s031-20211202 (https://download.01.org/0day-ci/archive/20211203/202112030121.BuKKR1T4-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 11.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/0day-ci/linux/commit/f1c5b70976ce5352c8ac2ae85739e1be63f59ec2
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Felix-Fietkau/dt-bindings-Add-vendor-prefix-for-Airoha/20211130-033938
+        git checkout f1c5b70976ce5352c8ac2ae85739e1be63f59ec2
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=mips SHELL=/bin/bash drivers/clk/ drivers/gpio/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+   command-line: note: in included file:
+   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_ACQUIRE redefined
+   builtin:0:0: sparse: this was the original definition
+   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_SEQ_CST redefined
+   builtin:0:0: sparse: this was the original definition
+   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_ACQ_REL redefined
+   builtin:0:0: sparse: this was the original definition
+   builtin:1:9: sparse: sparse: preprocessor token __ATOMIC_RELEASE redefined
+   builtin:0:0: sparse: this was the original definition
+   drivers/clk/clk-en7523.c:202:27: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *np_base @@     got void [noderef] __iomem *base @@
+   drivers/clk/clk-en7523.c:202:27: sparse:     expected void *np_base
+   drivers/clk/clk-en7523.c:202:27: sparse:     got void [noderef] __iomem *base
+>> drivers/clk/clk-en7523.c:206:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:206:29: sparse:     expected void const volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:206:29: sparse:     got void *
+>> drivers/clk/clk-en7523.c:208:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:208:29: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:208:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:213:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:213:29: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:213:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:217:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:217:29: sparse:     expected void const volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:217:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:220:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:220:37: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:220:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:222:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:222:36: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:222:36: sparse:     got void *
+   drivers/clk/clk-en7523.c:224:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:224:37: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:224:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:229:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:229:29: sparse:     expected void const volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:229:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:230:37: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:230:37: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:230:37: sparse:     got void *
+   drivers/clk/clk-en7523.c:232:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:232:36: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:232:36: sparse:     got void *
+   drivers/clk/clk-en7523.c:241:27: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *np_base @@     got void [noderef] __iomem *base @@
+   drivers/clk/clk-en7523.c:241:27: sparse:     expected void *np_base
+   drivers/clk/clk-en7523.c:241:27: sparse:     got void [noderef] __iomem *base
+   drivers/clk/clk-en7523.c:244:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:244:29: sparse:     expected void const volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:244:29: sparse:     got void *
+   drivers/clk/clk-en7523.c:246:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/clk/clk-en7523.c:246:29: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/clk/clk-en7523.c:246:29: sparse:     got void *
+
+vim +206 drivers/clk/clk-en7523.c
+
+   198	
+   199	static int en7523_pci_enable(struct clk_hw *hw)
+   200	{
+   201		struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
+   202		void *np_base = cg->base;
+   203		u32 val, mask;
+   204	
+   205		/* Need to pull device low before reset */
+ > 206		val = readl(np_base + REG_PCI_CONTROL);
+   207		val &= ~(REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT);
+ > 208		writel(val, np_base + REG_PCI_CONTROL);
+   209		usleep_range(1000, 2000);
+   210	
+   211		/* Enable PCIe port 1 */
+   212		val |= REG_PCI_CONTROL_REFCLK_EN1;
+   213		writel(val, np_base + REG_PCI_CONTROL);
+   214		usleep_range(1000, 2000);
+   215	
+   216		/* Reset to default */
+   217		val = readl(np_base + REG_RESET_CONTROL);
+   218		mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
+   219		       REG_RESET_CONTROL_PCIEHB;
+   220		writel(val & ~mask, np_base + REG_RESET_CONTROL);
+   221		usleep_range(1000, 2000);
+   222		writel(val | mask, np_base + REG_RESET_CONTROL);
+   223		msleep(100);
+   224		writel(val & ~mask, np_base + REG_RESET_CONTROL);
+   225		usleep_range(5000, 10000);
+   226	
+   227		/* Release device */
+   228		mask = REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT;
+   229		val = readl(np_base + REG_PCI_CONTROL);
+   230		writel(val & ~mask, np_base + REG_PCI_CONTROL);
+   231		usleep_range(1000, 2000);
+   232		writel(val | mask, np_base + REG_PCI_CONTROL);
+   233		msleep(250);
+   234	
+   235		return 0;
+   236	}
+   237	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
