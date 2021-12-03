@@ -2,112 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FB4C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 16:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1E2C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 16:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238377AbhLCQNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 11:13:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
+        id S1352839AbhLCQ1Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 11:27:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382070AbhLCQMs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 11:12:48 -0500
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48310C061354
-        for <linux-clk@vger.kernel.org>; Fri,  3 Dec 2021 08:09:22 -0800 (PST)
-Received: by mail-ot1-x336.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so3846297otu.10
-        for <linux-clk@vger.kernel.org>; Fri, 03 Dec 2021 08:09:22 -0800 (PST)
+        with ESMTP id S1352812AbhLCQ1Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 11:27:25 -0500
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF34C061359
+        for <linux-clk@vger.kernel.org>; Fri,  3 Dec 2021 08:24:01 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso3947740ota.5
+        for <linux-clk@vger.kernel.org>; Fri, 03 Dec 2021 08:24:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=BKBDLL0Pg+6Be9p1WaSktay52T0y6mFUaQvtWCJbSMY=;
-        b=OAIncqtMT/0scZLU2/Ve9TW4YlALP3eX2kqcFI2dVzOsrl+AZ6q8pHZ06mPBgho/Vr
-         qjJ/T0TIm3neKK/2Hk6fXlFiRYa4RAnR9VcKY7d5ZGdnvTGP7GckpkoTOszLJAul9Hv3
-         Xq6jUGzRhb30NNs5LxnIEniqTw2eTalhG7CV42MoyU1BEBPiE9UbZx5tt6baxR4HCbXn
-         Fr3ldoIOA3VOSSd9ubeR+Ae4Oyucm41LP2RmyXQgQTZZidlYWV158BXniH168Ouqn2W0
-         rfNX1X42gZx9mhnQDhHesGeYt6axyqYAR9CEdGRuGbL3JD7SbM3I4nAcTYG95hUm7wAZ
-         7Q2g==
+        bh=2xACJuOXIrB8FTYoC3MHylDF07OdG/I2Q0C8TaQZfbw=;
+        b=Bbmfm8rkuLgAje49u8sF2Ajj/30Ci3RhjLp3nkql1h9eWRDhLseqdqCb4jRHN7hyQR
+         z3Nva42TdVaLbaBkYzwdDs/uNdw8Cnodr0T9Q+rz3pLFhNBVOz+CkTTdKgaCutiJ2auM
+         OXvS4zqcyWtLAvfqKqjr5GZgeYEtud8dvdEkjM6am//n3bej+nxTCBk+Y5IKH67GSBF5
+         a28xDKViHc8PUQH1J0ESfcRchT5E2o0SvtSEXW5DLOY5MArxJuxrj4azg8jrlgAfpmR8
+         jG2MH2pw/wOzqpOWd0EZ/cSEy4dmOMfuowJWzVnofNWeL1tp4o0nQ+HOG4SaFA7NzNce
+         fbPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=BKBDLL0Pg+6Be9p1WaSktay52T0y6mFUaQvtWCJbSMY=;
-        b=ewEj6Us40UbjX/+HaTSfjWH8LETN9s9GK0QNkQU4K2LPUCuWby/LgFYREWU7ovrLpm
-         PlcVpa0GZvU5qABw3kEBHPWPI7ufN80emidHsUUifQQppkgjOMj2P9v/Zyjy2D9ENX1F
-         JJc87oyV+EIOHOYTGOrgepchWv0dAcfjqEPiaO1DdWJ5rMuwAxvo2vgFrCbCVNg69YI/
-         FVLeH1h9aIKiMNEZJn7nNfDwsPwjWZDfRs5YadvjooyvBs73uWmk0/wsf1+xOfP6Mhm7
-         /2pUV8ZLRSEuF/UFOSrFZN4vrxEMYI7iVCbE41kQ9M6dGJZwfzkb6MHbqrHkH+KECDll
-         UbrQ==
-X-Gm-Message-State: AOAM5322rZ0ui2q1fdsqra9e/mcdj83kLUYX+nlqSKxSH1x/1d5Uhjgi
-        Fi9nRPF2MoCDxRTpKnQvbUF4aA==
-X-Google-Smtp-Source: ABdhPJx4AjNs6LMs4LnJVhhw+WDzmH+OPWF5FL9a4YiirmlcQkf0Z8zzZLQsjZ6nLcobpwTP8PufAQ==
-X-Received: by 2002:a05:6830:1494:: with SMTP id s20mr17149352otq.172.1638547761473;
-        Fri, 03 Dec 2021 08:09:21 -0800 (PST)
+        bh=2xACJuOXIrB8FTYoC3MHylDF07OdG/I2Q0C8TaQZfbw=;
+        b=SOUmqxmL6mCnj1iNVQP4Amn4hWLEAs3eY+Zmvwu1sFy7tmzt0WJ8wz9JFeVWFhTKVP
+         3HlRBBX91iW7uncoruCg3cYIMv86aCZnyCmMx0GmQREdt/ldHORpSvuj5uQ8ketZcmyd
+         DA8Hf8J5U3DhUNdHMa1aRCXcZ3xsd3D9Kma7rj+zXV7UkinjQJr6r434gZ5nr0UUAhWG
+         VShCigLztCftgR+kU78LdjRxVUCgkcuxtMk1PyuJMKO1or5u7EIL+7LHzvxE28gDVT75
+         K9BQs47bd8spS0jXN4Z1qiRhrQEFRdIAmY1u1/zb0yhTO1Gapl9xVjjke0B2/iuBX5d8
+         810w==
+X-Gm-Message-State: AOAM530cppGXIlPYPHMmqqemaAGU5CXAQFk77+49ma0qhfG++bHpczou
+        HFwo+LWdAi2l8fyngJu3Fu/z5g==
+X-Google-Smtp-Source: ABdhPJypLanQ4OMNp0yjPcUuMO08idH8aMtJK+/ehq9m13dhOyhPSsMxP381sLCbFlYqW65eBLY7Bw==
+X-Received: by 2002:a9d:7cce:: with SMTP id r14mr16948126otn.114.1638548640504;
+        Fri, 03 Dec 2021 08:24:00 -0800 (PST)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id f20sm840505oiw.48.2021.12.03.08.09.20
+        by smtp.gmail.com with ESMTPSA id w5sm646756otk.70.2021.12.03.08.23.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Dec 2021 08:09:20 -0800 (PST)
-Date:   Fri, 3 Dec 2021 10:09:16 -0600
+        Fri, 03 Dec 2021 08:24:00 -0800 (PST)
+Date:   Fri, 3 Dec 2021 10:23:57 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Martin Botka <martin.botka@somainline.org>
-Cc:     martin.botka1@gmail.com, ~postmarketos/upstreaming@lists.sr.ht,
-        konrad.dybcio@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        paul.bouchara@somainline.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: sm6125-gcc: Swap ops of ice and apps on sdcc1
-Message-ID: <YapBLN4b01E9Iz9F@builder.lan>
-References: <20211130212015.25232-1-martin.botka@somainline.org>
+To:     quic_vamslank@quicinc.com
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, tglx@linutronix.de, maz@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        manivannan.sadhasivam@linaro.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v6 5/5] clk: qcom: Add support for SDX65 RPMh clocks
+Message-ID: <YapEnd2d8Y9OXvvS@builder.lan>
+References: <cover.1638402361.git.quic_vamslank@quicinc.com>
+ <366448562ac52c600c45b5a15129d78b5e8dd5a7.1638402361.git.quic_vamslank@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211130212015.25232-1-martin.botka@somainline.org>
+In-Reply-To: <366448562ac52c600c45b5a15129d78b5e8dd5a7.1638402361.git.quic_vamslank@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 30 Nov 15:20 CST 2021, Martin Botka wrote:
+On Wed 01 Dec 18:21 CST 2021, quic_vamslank@quicinc.com wrote:
 
-> Without this change eMMC runs at overclocked freq.
-> Swap the ops to not OC the eMMC.
+> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
 > 
-> Signed-off-by: Martin Botka <martin.botka@somainline.org>
+> Add support for clocks maintained by RPMh in SDX65 SoCs.
+> 
+> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Fixes: 4b8d6ae57cdf ("clk: qcom: Add SM6125 (TRINKET) GCC driver")
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+The two RPMh patches are independent of the PLL/GCC patches, so I have
+picked up the RPMh patches from this series.
 
-Regards,
+Please respin the PLL & GCC patches per Stephen's feedback.
+
+
+PS. checkpatch --strict complains that the author signature doesn't
+match the Signed-off-by, because you have a lowercase 'k' in the From,
+but uppercase in the s-o-b. Can you please make sure the two matches in
+the future?
+
+Thanks,
 Bjorn
 
 > ---
->  drivers/clk/qcom/gcc-sm6125.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/clk/qcom/clk-rpmh.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/gcc-sm6125.c b/drivers/clk/qcom/gcc-sm6125.c
-> index 543cfab7561f..431b55bb0d2f 100644
-> --- a/drivers/clk/qcom/gcc-sm6125.c
-> +++ b/drivers/clk/qcom/gcc-sm6125.c
-> @@ -1121,7 +1121,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
->  		.name = "gcc_sdcc1_apps_clk_src",
->  		.parent_data = gcc_parent_data_1,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  	},
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 441d7a20e6f3..30b26fb96514 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -556,6 +556,30 @@ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
+>  	.num_clks = ARRAY_SIZE(sm6350_rpmh_clocks),
 >  };
 >  
-> @@ -1143,7 +1143,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
->  		.name = "gcc_sdcc1_ice_core_clk_src",
->  		.parent_data = gcc_parent_data_0,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
-> -		.ops = &clk_rcg2_floor_ops,
-> +		.ops = &clk_rcg2_ops,
->  	},
->  };
->  
+> +DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
+> +
+> +static struct clk_hw *sdx65_rpmh_clocks[] = {
+> +	[RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
+> +	[RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
+> +	[RPMH_LN_BB_CLK1]       = &sdx65_ln_bb_clk1.hw,
+> +	[RPMH_LN_BB_CLK1_A]     = &sdx65_ln_bb_clk1_ao.hw,
+> +	[RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
+> +	[RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
+> +	[RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
+> +	[RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
+> +	[RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
+> +	[RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
+> +	[RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
+> +	[RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
+> +	[RPMH_IPA_CLK]          = &sdm845_ipa.hw,
+> +	[RPMH_QPIC_CLK]         = &sdx55_qpic_clk.hw,
+> +};
+> +
+> +static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
+> +	.clks = sdx65_rpmh_clocks,
+> +	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
+> +};
+> +
+>  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+>  					 void *data)
+>  {
+> @@ -643,6 +667,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
+>  	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+>  	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
+>  	{ .compatible = "qcom,sdx55-rpmh-clk",  .data = &clk_rpmh_sdx55},
+> +	{ .compatible = "qcom,sdx65-rpmh-clk",  .data = &clk_rpmh_sdx65},
+>  	{ .compatible = "qcom,sm6350-rpmh-clk", .data = &clk_rpmh_sm6350},
+>  	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
+>  	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
 > -- 
-> 2.34.0
+> 2.33.1
 > 
