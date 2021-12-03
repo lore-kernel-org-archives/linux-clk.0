@@ -2,142 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1E2C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 16:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86886C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 20:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352839AbhLCQ1Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 11:27:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51662 "EHLO
+        id S234307AbhLCUUk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 15:20:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352812AbhLCQ1Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 11:27:25 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF34C061359
-        for <linux-clk@vger.kernel.org>; Fri,  3 Dec 2021 08:24:01 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso3947740ota.5
-        for <linux-clk@vger.kernel.org>; Fri, 03 Dec 2021 08:24:01 -0800 (PST)
+        with ESMTP id S1383056AbhLCUUj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 15:20:39 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B68C061751;
+        Fri,  3 Dec 2021 12:17:15 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id n15-20020a17090a160f00b001a75089daa3so6033232pja.1;
+        Fri, 03 Dec 2021 12:17:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2xACJuOXIrB8FTYoC3MHylDF07OdG/I2Q0C8TaQZfbw=;
-        b=Bbmfm8rkuLgAje49u8sF2Ajj/30Ci3RhjLp3nkql1h9eWRDhLseqdqCb4jRHN7hyQR
-         z3Nva42TdVaLbaBkYzwdDs/uNdw8Cnodr0T9Q+rz3pLFhNBVOz+CkTTdKgaCutiJ2auM
-         OXvS4zqcyWtLAvfqKqjr5GZgeYEtud8dvdEkjM6am//n3bej+nxTCBk+Y5IKH67GSBF5
-         a28xDKViHc8PUQH1J0ESfcRchT5E2o0SvtSEXW5DLOY5MArxJuxrj4azg8jrlgAfpmR8
-         jG2MH2pw/wOzqpOWd0EZ/cSEy4dmOMfuowJWzVnofNWeL1tp4o0nQ+HOG4SaFA7NzNce
-         fbPw==
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mnSnpOV3iUpweMKF/zZj+CKSpABDG2Pi7iODvdNpA9s=;
+        b=Xxzwr7JpTy1FZtQ1e49ff1w/idHzZQdkDrvFmp6Pw8ObtyMFsRt+QqWKpGRFrw1LXL
+         DHSgwUZqAvtl4iosG37yIXAS0ZWLXQPg8eQu5MtDMv9L81IZr3ld3aaswuBxxWyCh4hv
+         GsN0wNT9c0CdWFOF1BMyFXimqlTEL8ND9ZQNkSN4iKzpwVl9ER1F2dyf5O7o/pYC2Yxx
+         b6IP7cb8d7P11CvxYMdDlAma14i3VqKdEv2WL8p5RVbq6+VExnIKXiv56P1SRgsrEJLq
+         BWFm7hE/WhudP7m9S6znORM+/PYH8wGQkkozfkD4DGNJ3tFvdcmurJxBWZebHccpxc+5
+         uPLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2xACJuOXIrB8FTYoC3MHylDF07OdG/I2Q0C8TaQZfbw=;
-        b=SOUmqxmL6mCnj1iNVQP4Amn4hWLEAs3eY+Zmvwu1sFy7tmzt0WJ8wz9JFeVWFhTKVP
-         3HlRBBX91iW7uncoruCg3cYIMv86aCZnyCmMx0GmQREdt/ldHORpSvuj5uQ8ketZcmyd
-         DA8Hf8J5U3DhUNdHMa1aRCXcZ3xsd3D9Kma7rj+zXV7UkinjQJr6r434gZ5nr0UUAhWG
-         VShCigLztCftgR+kU78LdjRxVUCgkcuxtMk1PyuJMKO1or5u7EIL+7LHzvxE28gDVT75
-         K9BQs47bd8spS0jXN4Z1qiRhrQEFRdIAmY1u1/zb0yhTO1Gapl9xVjjke0B2/iuBX5d8
-         810w==
-X-Gm-Message-State: AOAM530cppGXIlPYPHMmqqemaAGU5CXAQFk77+49ma0qhfG++bHpczou
-        HFwo+LWdAi2l8fyngJu3Fu/z5g==
-X-Google-Smtp-Source: ABdhPJypLanQ4OMNp0yjPcUuMO08idH8aMtJK+/ehq9m13dhOyhPSsMxP381sLCbFlYqW65eBLY7Bw==
-X-Received: by 2002:a9d:7cce:: with SMTP id r14mr16948126otn.114.1638548640504;
-        Fri, 03 Dec 2021 08:24:00 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id w5sm646756otk.70.2021.12.03.08.23.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Dec 2021 08:24:00 -0800 (PST)
-Date:   Fri, 3 Dec 2021 10:23:57 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     quic_vamslank@quicinc.com
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, tglx@linutronix.de, maz@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        manivannan.sadhasivam@linaro.org, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v6 5/5] clk: qcom: Add support for SDX65 RPMh clocks
-Message-ID: <YapEnd2d8Y9OXvvS@builder.lan>
-References: <cover.1638402361.git.quic_vamslank@quicinc.com>
- <366448562ac52c600c45b5a15129d78b5e8dd5a7.1638402361.git.quic_vamslank@quicinc.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mnSnpOV3iUpweMKF/zZj+CKSpABDG2Pi7iODvdNpA9s=;
+        b=kBNXwOTa4g+LG6z4YPRNDS5U+pyYgfww5wy15KLGPoDgqCRk2ktH6ebZFN7/ooGKqr
+         MMX+tM1/fzdhdg+s+QpaK/4Cr5e6uogqbc+EPxNfqt5sZqS0qXs9cvGP19yhowqSCpGC
+         nplrAb3VvFMaPzYK15f3FE2YJCaV+pDKvF3M3rJY0JOcePCoeSxLKWGS0QneqjchgjEp
+         CPmX4/kcK9rHb/bXgTGNvSb7lCf9YzqxSGMGggSWBhfC4o9SOOEwJVkHMNIGqzLIzku7
+         JmKd0BEs7Wj8meTm6e31G5Aw73858ntQLVjLZfCLA6qPC5hHNnJIlIeObaJoq8bOmURH
+         94jw==
+X-Gm-Message-State: AOAM532ppBUc4Tbq07Zxn3O8eIopa3+e8G/N1GjUbUerPTKdcB1+pnio
+        F+iNFohV4lQTRRlRTkshz34yBM5TiN0=
+X-Google-Smtp-Source: ABdhPJySJETDFPcP9hgu7LDYapZecYZAw5T7SZkaimQMZDrSjQ4ENsy8cwPJYUrgF0N+79DPo4Zl7g==
+X-Received: by 2002:a17:902:dad2:b0:141:fbea:178d with SMTP id q18-20020a170902dad200b00141fbea178dmr25275454plx.78.1638562634673;
+        Fri, 03 Dec 2021 12:17:14 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id fs21sm5905275pjb.1.2021.12.03.12.17.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Dec 2021 12:17:14 -0800 (PST)
+Subject: Re: [PATCH v7 16/16] clk: scmi: Support atomic clock enable/disable
+ API
+To:     Cristian Marussi <cristian.marussi@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        Jonathan.Cameron@Huawei.com, etienne.carriere@linaro.org,
+        vincent.guittot@linaro.org, souvik.chakravarty@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20211129191156.29322-1-cristian.marussi@arm.com>
+ <20211129191156.29322-17-cristian.marussi@arm.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <a7372722-241c-be0c-0581-5446375cecdc@gmail.com>
+Date:   Fri, 3 Dec 2021 12:17:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <366448562ac52c600c45b5a15129d78b5e8dd5a7.1638402361.git.quic_vamslank@quicinc.com>
+In-Reply-To: <20211129191156.29322-17-cristian.marussi@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 01 Dec 18:21 CST 2021, quic_vamslank@quicinc.com wrote:
-
-> From: Vamsi krishna Lanka <quic_vamslank@quicinc.com>
+On 11/29/21 11:11 AM, Cristian Marussi wrote:
+> Support also atomic enable/disable clk_ops beside the bare non-atomic one
+> (prepare/unprepare) when the underlying SCMI transport is configured to
+> support atomic transactions for synchronous commands.
 > 
-> Add support for clocks maintained by RPMh in SDX65 SoCs.
-> 
-> Signed-off-by: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 
-The two RPMh patches are independent of the PLL/GCC patches, so I have
-picked up the RPMh patches from this series.
-
-Please respin the PLL & GCC patches per Stephen's feedback.
-
-
-PS. checkpatch --strict complains that the author signature doesn't
-match the Signed-off-by, because you have a lowercase 'k' in the From,
-but uppercase in the s-o-b. Can you please make sure the two matches in
-the future?
-
-Thanks,
-Bjorn
-
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 441d7a20e6f3..30b26fb96514 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -556,6 +556,30 @@ static const struct clk_rpmh_desc clk_rpmh_sm6350 = {
->  	.num_clks = ARRAY_SIZE(sm6350_rpmh_clocks),
->  };
->  
-> +DEFINE_CLK_RPMH_VRM(sdx65, ln_bb_clk1, ln_bb_clk1_ao, "lnbclka1", 4);
-> +
-> +static struct clk_hw *sdx65_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]          = &sc7280_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]        = &sc7280_bi_tcxo_ao.hw,
-> +	[RPMH_LN_BB_CLK1]       = &sdx65_ln_bb_clk1.hw,
-> +	[RPMH_LN_BB_CLK1_A]     = &sdx65_ln_bb_clk1_ao.hw,
-> +	[RPMH_RF_CLK1]          = &sdm845_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]        = &sdm845_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]          = &sdm845_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]        = &sdm845_rf_clk2_ao.hw,
-> +	[RPMH_RF_CLK3]          = &sdm845_rf_clk3.hw,
-> +	[RPMH_RF_CLK3_A]        = &sdm845_rf_clk3_ao.hw,
-> +	[RPMH_RF_CLK4]          = &sm8350_rf_clk4.hw,
-> +	[RPMH_RF_CLK4_A]        = &sm8350_rf_clk4_ao.hw,
-> +	[RPMH_IPA_CLK]          = &sdm845_ipa.hw,
-> +	[RPMH_QPIC_CLK]         = &sdx55_qpic_clk.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sdx65 = {
-> +	.clks = sdx65_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sdx65_rpmh_clocks),
-> +};
-> +
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -643,6 +667,7 @@ static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
->  	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
->  	{ .compatible = "qcom,sdx55-rpmh-clk",  .data = &clk_rpmh_sdx55},
-> +	{ .compatible = "qcom,sdx65-rpmh-clk",  .data = &clk_rpmh_sdx65},
->  	{ .compatible = "qcom,sm6350-rpmh-clk", .data = &clk_rpmh_sm6350},
->  	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
->  	{ .compatible = "qcom,sm8250-rpmh-clk", .data = &clk_rpmh_sm8250},
-> -- 
-> 2.33.1
-> 
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
