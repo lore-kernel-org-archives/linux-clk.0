@@ -2,88 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B8DC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 15:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FB4C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 16:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381768AbhLCPlR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 10:41:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
+        id S238377AbhLCQNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 11:13:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381746AbhLCPlR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 10:41:17 -0500
-Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EB49C061751;
-        Fri,  3 Dec 2021 07:37:53 -0800 (PST)
-Received: by mail-ua1-x930.google.com with SMTP id n6so6275375uak.1;
-        Fri, 03 Dec 2021 07:37:53 -0800 (PST)
+        with ESMTP id S1382070AbhLCQMs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 11:12:48 -0500
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48310C061354
+        for <linux-clk@vger.kernel.org>; Fri,  3 Dec 2021 08:09:22 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so3846297otu.10
+        for <linux-clk@vger.kernel.org>; Fri, 03 Dec 2021 08:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+HrQ3J/HeO/GYMnMzsFEsM1o2YndrW9CPhQv68AS01E=;
-        b=qAsjyc6ITBdQPfIq07bY2cHfZBHlABg0T9Oy5G6Hmgw4mQ7mMnmnHpKUQ73hjAjTiW
-         W4ymDk7FJU2c31gTdxEAnlj2HVNHyTOo69S0k0CrV5Mg15UbW7lSyrpKkBcj3AYYLOiD
-         X6Xi+kD3WgK7l4snPMkiGWu1/FHtllcd8ITjTdBw/VhYPjg85JN/2RnsBf40eVr457CG
-         4NOv3fS9w98Gq6y0pxtfco5d3VL9fLRkMQL386dl2kX3CSPXDOVAjFWnM4z8c6UEPj5G
-         AIN4b8k+aUZMRHcVr5KzvJA3DXwBsH37hjlhBVVwoTldNNhd/ktgMTqnh12FoL9qEF+e
-         8m2A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BKBDLL0Pg+6Be9p1WaSktay52T0y6mFUaQvtWCJbSMY=;
+        b=OAIncqtMT/0scZLU2/Ve9TW4YlALP3eX2kqcFI2dVzOsrl+AZ6q8pHZ06mPBgho/Vr
+         qjJ/T0TIm3neKK/2Hk6fXlFiRYa4RAnR9VcKY7d5ZGdnvTGP7GckpkoTOszLJAul9Hv3
+         Xq6jUGzRhb30NNs5LxnIEniqTw2eTalhG7CV42MoyU1BEBPiE9UbZx5tt6baxR4HCbXn
+         Fr3ldoIOA3VOSSd9ubeR+Ae4Oyucm41LP2RmyXQgQTZZidlYWV158BXniH168Ouqn2W0
+         rfNX1X42gZx9mhnQDhHesGeYt6axyqYAR9CEdGRuGbL3JD7SbM3I4nAcTYG95hUm7wAZ
+         7Q2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+HrQ3J/HeO/GYMnMzsFEsM1o2YndrW9CPhQv68AS01E=;
-        b=SBijK11PWJku+Ii8KoaBSbLFHedrJW57prs5N8Lh8hVar89g57tq/xFpDY4fLf4JOQ
-         +06P1bazc13+4utYO9ypOxUgxVZFIeHtFGyNc06PdZPYPK4VnXXj12Q5bsqY935f1De6
-         sP5FIuF6FTl7lVaPed6BnAfJoPbqOUD9XYvK2a60QkBQQ4QipnkhrXnnZdDNTyI6IJTN
-         ADWetDOgImIQhmee3RggMOMe1FwNtAmlpG3ybRYpT2sgLWhxPe/CRlzaXNvkkfFN8t5X
-         nKPejIa1i5t5tX30vnVCRxQAOaDp9KbL4OdbGbRNJpnIFQR316pVMcG7lSaQRO+xUjeq
-         5S4g==
-X-Gm-Message-State: AOAM5310kQPGWV/fi6ei/9EPEm4sqgR/Hs1FxZCRZiRWe58H4XALUEtR
-        b7kpBUMmkYPu2hcRHI3a1+rBN4eYCB4yzVOdMdo=
-X-Google-Smtp-Source: ABdhPJySDfWB5ZvpJndLFL0F219WJXO9O/8gTVzkZsiqUOsl9LpvktP7BU7fXuzHctYTF/4gCGoGdAo+70uHuCwcACw=
-X-Received: by 2002:a05:6102:2835:: with SMTP id ba21mr21178749vsb.76.1638545872863;
- Fri, 03 Dec 2021 07:37:52 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BKBDLL0Pg+6Be9p1WaSktay52T0y6mFUaQvtWCJbSMY=;
+        b=ewEj6Us40UbjX/+HaTSfjWH8LETN9s9GK0QNkQU4K2LPUCuWby/LgFYREWU7ovrLpm
+         PlcVpa0GZvU5qABw3kEBHPWPI7ufN80emidHsUUifQQppkgjOMj2P9v/Zyjy2D9ENX1F
+         JJc87oyV+EIOHOYTGOrgepchWv0dAcfjqEPiaO1DdWJ5rMuwAxvo2vgFrCbCVNg69YI/
+         FVLeH1h9aIKiMNEZJn7nNfDwsPwjWZDfRs5YadvjooyvBs73uWmk0/wsf1+xOfP6Mhm7
+         /2pUV8ZLRSEuF/UFOSrFZN4vrxEMYI7iVCbE41kQ9M6dGJZwfzkb6MHbqrHkH+KECDll
+         UbrQ==
+X-Gm-Message-State: AOAM5322rZ0ui2q1fdsqra9e/mcdj83kLUYX+nlqSKxSH1x/1d5Uhjgi
+        Fi9nRPF2MoCDxRTpKnQvbUF4aA==
+X-Google-Smtp-Source: ABdhPJx4AjNs6LMs4LnJVhhw+WDzmH+OPWF5FL9a4YiirmlcQkf0Z8zzZLQsjZ6nLcobpwTP8PufAQ==
+X-Received: by 2002:a05:6830:1494:: with SMTP id s20mr17149352otq.172.1638547761473;
+        Fri, 03 Dec 2021 08:09:21 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id f20sm840505oiw.48.2021.12.03.08.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Dec 2021 08:09:20 -0800 (PST)
+Date:   Fri, 3 Dec 2021 10:09:16 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Martin Botka <martin.botka@somainline.org>
+Cc:     martin.botka1@gmail.com, ~postmarketos/upstreaming@lists.sr.ht,
+        konrad.dybcio@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        paul.bouchara@somainline.org, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: sm6125-gcc: Swap ops of ice and apps on sdcc1
+Message-ID: <YapBLN4b01E9Iz9F@builder.lan>
+References: <20211130212015.25232-1-martin.botka@somainline.org>
 MIME-Version: 1.0
-References: <20211107074200.18911-1-sergio.paracuellos@gmail.com>
- <20211107074200.18911-5-sergio.paracuellos@gmail.com> <YaokmRHYsazdMByi@kroah.com>
-In-Reply-To: <YaokmRHYsazdMByi@kroah.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Fri, 3 Dec 2021 16:37:41 +0100
-Message-ID: <CAMhs-H81bbmncXcV2-HMLh-gLBCUshO18y6E=XsyVgST9Hj5xg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] staging: mt7621-dts: align resets with binding documentation
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
-        NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211130212015.25232-1-martin.botka@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 3, 2021 at 3:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Nov 07, 2021 at 08:42:00AM +0100, Sergio Paracuellos wrote:
-> > Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-> > to be used as a reset provider. Align reset related bits and system controller
-> > node with binding documentation along the dtsi file.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
-> >  drivers/staging/mt7621-dts/mt7621.dtsi | 25 +++++++++++--------------
-> >  1 file changed, 11 insertions(+), 14 deletions(-)
->
-> This patch does not apply to my tree :(
+On Tue 30 Nov 15:20 CST 2021, Martin Botka wrote:
 
-This needs to be added when the changes in mt7621-clk driver (the
-other patches in the series) are applied. Let me resend this properly
-rebased to get a clean apply in your tree when Stephen applies the
-others in the clk tree.
+> Without this change eMMC runs at overclocked freq.
+> Swap the ops to not OC the eMMC.
+> 
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
 
-Thanks,
-    Sergio Paracuellos
->
-> thanks,
->
-> greg k-h
+Fixes: 4b8d6ae57cdf ("clk: qcom: Add SM6125 (TRINKET) GCC driver")
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/clk/qcom/gcc-sm6125.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm6125.c b/drivers/clk/qcom/gcc-sm6125.c
+> index 543cfab7561f..431b55bb0d2f 100644
+> --- a/drivers/clk/qcom/gcc-sm6125.c
+> +++ b/drivers/clk/qcom/gcc-sm6125.c
+> @@ -1121,7 +1121,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
+>  		.name = "gcc_sdcc1_apps_clk_src",
+>  		.parent_data = gcc_parent_data_1,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_floor_ops,
+>  	},
+>  };
+>  
+> @@ -1143,7 +1143,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+>  		.name = "gcc_sdcc1_ice_core_clk_src",
+>  		.parent_data = gcc_parent_data_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+> -		.ops = &clk_rcg2_floor_ops,
+> +		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+>  
+> -- 
+> 2.34.0
+> 
