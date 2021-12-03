@@ -2,111 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBC0C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 00:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED08FC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 00:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343536AbhLCAYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Dec 2021 19:24:22 -0500
-Received: from smtpcmd0987.aruba.it ([62.149.156.87]:52630 "EHLO
-        smtpcmd0987.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243189AbhLCAYV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Dec 2021 19:24:21 -0500
-Received: from [192.168.50.18] ([146.241.138.59])
-        by Aruba Outgoing Smtp  with ESMTPSA
-        id swJnmyXe7q3qKswJnmEwWe; Fri, 03 Dec 2021 01:20:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1638490854; bh=2LjACOrDxyh4Vq04KPQqLKnV2CuYf0EUGRxt70YYlQQ=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=ebYXG4DJCu9IT3vvPgCkpAJS2wtdXKhkE7YzEmLq67Yg0OQp9Fu/f1FOjrnn4mzso
-         GjK0AFpGP/n2qXdPSzkeOHvFgFulNb/8sWdFsKV5AsRlhNz6yPS0sBjrCTwTmeFy4q
-         UyydFPOsVemUJmb1BMYK44O35NmAEozHWIxfjKMXKG5vRbfqspwFPuHls84u/yGaM9
-         NUQgCOgr1m/oQQzsbbJDX9Vhj4MXmXCx5HAzOlgPhb3DpZJBoj79Y75TrHQcIjbjMD
-         Qh3r2x5TIvzkO94SuAfVQppvF0rC4Mom8bDjP+LKOwDRRjvT0PteHHxkyIn0u9BWAU
-         vyjloNBhrLg/A==
-Subject: Re: [PATCH v3 12/13] ARM: dts: imx: add i.MXRT1050-EVK support
-To:     Rob Herring <robh@kernel.org>,
-        Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20211125211443.1150135-1-Mr.Bossman075@gmail.com>
- <20211125211443.1150135-13-Mr.Bossman075@gmail.com>
- <YaOxu441l41qPvTj@robh.at.kernel.org>
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-Message-ID: <c488ed94-ad0e-a326-adda-c4d782dbd6ef@benettiengineering.com>
-Date:   Fri, 3 Dec 2021 01:20:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S1344304AbhLCBCy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Dec 2021 20:02:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344077AbhLCBCy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Dec 2021 20:02:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D66C06174A;
+        Thu,  2 Dec 2021 16:59:31 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B9E1EB82025;
+        Fri,  3 Dec 2021 00:59:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BEDC00446;
+        Fri,  3 Dec 2021 00:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638493168;
+        bh=gAszAJGGHye2RgWWyEPNSetu+idKR1JbBRTAAgjo8Bk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=rHPfzz0Ngj45MaTUdSw87sLOh6NZ6A922ZLOMQtP/7C0N6o6b9hTcZ7HN15YqRpqI
+         sGCwNZo/2LbqPg/rn4c1Ho7uyLeHrawQHHtcJ/+mk32kdhqN5EbynXNf/bWN12Mf6K
+         NNuNX1V8T7Ip217EQ3WdcIpVv92FkH+G8cjYLOYHwcHs3Yy88/RV1ItRuWnvdCaLd6
+         EQhuAIYeI6lFTGd34+k2QydiSv4s5uSzlhfsaSXk3lf+C8NIJcGiVgJwR3eE79xHiW
+         GwTfRuzrcAcq1g2j8rzDAoI0Q0BLb4UxVudOBaGwIj/WiHLli9nuzoEJRvdJ6x7TDa
+         /MbNv6nY2eXsA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <YaOxu441l41qPvTj@robh.at.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfK8Tdp5T8tvvNmUT9UohQNCeGYnR9anIwxRjKM+y92PDZdL/7HkbCiy6B2m0+SCOO4s5E5LaPzSkdeQvV6Xn9LlcdR0ZzyFCRw4gOntPgC3rx5wfYna1
- Ce3Q7eNiM9qhi1JGlE8GLRmv3N3jDfKwIFQ6gDozWSI3X/9ayBxnXpbsNCKxdyPj/DR1Pv4BbMlEdOSN4nypGyJqovucliUq/snrle2ja+qgjSAA72hYSa6I
- mq66Jmj1S7hGpd/AEIjU+xSjdOOKxS+Do/lrjRQVuPOiEBl8A5/iSQHNC0uiX+CxFl5bcS1YH8MQQx5WdjzGE1GG47CfwDajLgcF9WJFkgTgZ5evEmQ1UCHO
- vi1zGYr9AQRy0LzlChz6SL5y5U3ivQL+L+nErv1iCTJj43gl2hdodzVMDh2jmdEAJy9GRzzl3exPrT+VKMQDURH0Uyv2jbAXGxBP1W76oy+bDeIJ0VXzXEzw
- j4qUPk2YSPJWtFNtKFPZm6zU1JO2+h8RcJPerlnhHAvpT731hKOMcukiGP6s8WUJ75ZfCFiK3iHuhbDoWh4D3wBszJ9iLDtJjViIBCVOjblUL5VKpavZ69DD
- CdHmyB2ST/8oWivEFKzgS0VOQmsxxAqXPLsOKxjMQwVX048FbISdBxwSXVq8UgI9muy9nFYrFb2YwckQRhmDkdiy07wHqNeJClZHiUlwS09NcC7rDVoO9y1A
- SGiiBDhB8TBAYb/ctDvDTzPagKmZj/D2dpUiAigXdrN0t229QFaWCghi+TQJDNC/IbqM/rlRf0OGb9QxOmYuboIOPMI+K4dzap11j+kSxBXXSn8PuskeaFsA
- hozZ8GIen728YS9Rx+grG55BvQzOZAN5+d5jvIHfJeSIduVyBQDilw9bMbkTqqUoU4qXRM3mYPSFvdrCVddlHS+DLc765Q7p9zOLRBj3RSkkPbt8Fuz4AMuR
- xlAg7kV9nw5f+EUZ+QbhHt1w00NWBSS4uNO0PL3eEuUzIE3iB89HVHLP71NEfvcmyY9OUYzh/CZgih9g+PN4rKoxMRLKHAY27x9ZtlaeDBPXKksHbBWagQSL
- Pq6UzehbAQcm15FzeeXZIJcTnYP0xBBdxGmMznk/5c3ExHHBRj5Tf2ZCWrI1dfCjEWTa5BT/Zo1ka9GlY9i4RJbb7z/92TOCzxY=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211123162508.153711-1-bjorn.andersson@linaro.org>
+References: <20211123162508.153711-1-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2] clk: qcom: clk-alpha-pll: Don't reconfigure running Trion
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Robert Foss <robert.foss@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+Date:   Thu, 02 Dec 2021 16:59:27 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211203005928.52BEDC00446@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob, Jesse,
+Quoting Bjorn Andersson (2021-11-23 08:25:08)
+> In the event that the bootloader has configured the Trion PLL as source
+> for the display clocks, e.g. for the continuous splashscreen, then there
+> will also be RCGs that are clocked by this instance.
+>=20
+> Reconfiguring, and in particular disabling the output of, the PLL will
+> cause issues for these downstream RCGs and has been shown to prevent
+> them from being re-parented.
+>=20
+> Follow downstream and skip configuration if it's determined that the PLL
+> is already running.
+>=20
+> Fixes: 59128c20a6a9 ("clk: qcom: clk-alpha-pll: Add support for controlli=
+ng Lucid PLLs")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-On 28/11/21 17:43, Rob Herring wrote:
-
-[SNIP]
-
->> diff --git a/arch/arm/boot/dts/imxrt1050.dtsi b/arch/arm/boot/dts/imxrt1050.dtsi
->> new file mode 100644
->> index 000000000000..35943a6896fa
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/imxrt1050.dtsi
->> @@ -0,0 +1,165 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Copyright (C) 2019
->> + * Author(s): Giulio Benetti <giulio.benetti@benettiengineering.com>
->> + */
->> +
->> +#include "armv7-m.dtsi"
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/clock/imxrt1050-clock.h>
->> +#include <dt-bindings/gpio/gpio.h>
->> +
->> +/ {
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +
->> +	clocks {
->> +		osc: osc {
->> +			compatible = "fsl,imx-osc", "fixed-clock";
-> 
-> fsl,imx-osc is not documented. IMO, just drop it.
-
-Regarding this ^^^, you're right, so we avoid to add "fsl,imx-osc", but 
-at this point, does it make sense we create a patchset to remove it from 
-the other .dts(i) files that use it? And same goes for "fsl,imx-ckil", 
-"fsl,imx-ckih1", "fsl,imx-ckih2"?
-
-I see that those try to repeat the name of the node itself so they are 
-useless. If you say so I send a patchset for that.
-
-Thank you
-Best regards
--- 
-Giulio Benetti
-Benetti Engineering sas
+Applied to clk-fixes
