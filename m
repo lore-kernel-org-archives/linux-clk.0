@@ -2,200 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D9BC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 03:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29512C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 07:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239067AbhLCD5y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Dec 2021 22:57:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49916 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234991AbhLCD5x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Dec 2021 22:57:53 -0500
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86870C06174A
-        for <linux-clk@vger.kernel.org>; Thu,  2 Dec 2021 19:54:30 -0800 (PST)
-Received: by mail-oi1-x231.google.com with SMTP id t23so3384828oiw.3
-        for <linux-clk@vger.kernel.org>; Thu, 02 Dec 2021 19:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WhvyA50uJRG7je6QLHwD3R7c8JzPQfTmm6dYn4D7d9Q=;
-        b=PIZ6/tfDlcdEgNiK2v74b+SLK0rbKIMT0qsWxFe8VD6C4DjOmV3W9HDNvqq9BMbrmp
-         tj7ZqSCZOv3fCN6j+ev3dTGrZcnz7U9MFIPeiSH64wi3oG33qBd3JqVsdT/SXqVHFkky
-         JkV0vHC5UHhBrsUpTJl9wlDGpWpODSAnaLHPCh85WAiT1unWnQCON7H88H1zUQt9DVPy
-         1BKoiYBeSbbk3h3cDwLz+PFozdsNmTHRhq/lfF56edpTIPGNKQAYaTY8r82OSWlJYUzF
-         S62NVjCZRbzRc51FvpXUi2/akpKJgrU70i9CGLhXP79zf28051tyOyD8lFi96ts18cnj
-         g89A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WhvyA50uJRG7je6QLHwD3R7c8JzPQfTmm6dYn4D7d9Q=;
-        b=pK7FeZ2HGWGhB0Xwm1w/Hea+/l9rY/t7Pbuo/K5vSU8dcmN1IlO+QjICqtf/eScdiU
-         gscZGHfjTEK6IAuotfVffp8aJ7tIjaQ4ic8jYEYRVmqpLGuTPoWsiRUDpDx5GBZgDtl/
-         8wh0d5JIFv43fEeYfywiatXy1kLP69Ywu8RtDgODLDCYQLcnzRo40I22Vlr/eH8BcKvr
-         uE/uBI7LVqd5OwQn73vbxGgz4L5i0P+cCxcOYugr4q2raDjySjEMHOQTI+b77iLE7Gll
-         GJa+OH4t/SjCVeLbsBP/Z2PgIO2O865Ba5vEUCLAPOe4z1pjX1g6CO+HFfgJoUktHy/6
-         P8Og==
-X-Gm-Message-State: AOAM530Addt+dGGILu9sEsSLDEzr2pJbWiwL/vrHrizagm6u2+NZmtyI
-        yBkGwwdt42KE74syQdqZ7wT1JA==
-X-Google-Smtp-Source: ABdhPJxnAqD3eI50LTHgYY2dc+3Wkof5nuCA5fHXOJkx7hauNN3Cognh3v5aO7VHPpQEBpiMIWLN/g==
-X-Received: by 2002:a05:6808:1246:: with SMTP id o6mr1263226oiv.73.1638503669871;
-        Thu, 02 Dec 2021 19:54:29 -0800 (PST)
-Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id x16sm440578otq.47.2021.12.02.19.54.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Dec 2021 19:54:29 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-Date:   Thu,  2 Dec 2021 19:56:01 -0800
-Message-Id: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+        id S243412AbhLCHqx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 02:46:53 -0500
+Received: from [113.204.237.245] ([113.204.237.245]:44242 "EHLO
+        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1379086AbhLCHqO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 02:46:14 -0500
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 172.28.114.216
+        by cqmailgates with MailGates ESMTP Server V5.0(21484:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 03 Dec 2021 15:35:50 +0800 (CST)
+From:   Qin Jian <qinjian@cqplus1.com>
+To:     robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        broonie@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 01/10] dt-bindings: vendor-prefixes: Add Sunplus
+Date:   Fri,  3 Dec 2021 15:34:18 +0800
+Message-Id: <2e74a1339a5ea54d92fdc4d1998a2b169e23b82b.1638515726.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1638515726.git.qinjian@cqplus1.com>
+References: <cover.1638515726.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As GDSCs are turned on and off some associated clocks are momentarily
-enabled for house keeping purposes. Failure to enable these clocks seems
-to have been silently ignored in the past, but starting in SM8350 this
-failure will prevent the GDSC to turn on.
+Add vendor prefix for Sunplus Technology Co., Ltd. (http://www.sunplus.com)
 
-At least on SM8350 this operation will enable the RCG per the
-configuration in CFG_REG. This means that the current model where the
-current configuration is written back to CF_REG immediately after
-parking the RCG doesn't work.
-
-Instead, keep track of the currently requested rate of the clock and
-upon enabling the clock reapply the configuration per the saved rate.
-
-Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- drivers/clk/qcom/clk-rcg.h  |  2 ++
- drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
- 2 files changed, 19 insertions(+), 15 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 99efcc7f8d88..6939f4e62768 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-  * @freq_tbl: frequency table
-  * @clkr: regmap clock handle
-  * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-+ * @current_rate: cached rate for parked RCGs
-  */
- struct clk_rcg2 {
- 	u32			cmd_rcgr;
-@@ -149,6 +150,7 @@ struct clk_rcg2 {
- 	const struct freq_tbl	*freq_tbl;
- 	struct clk_regmap	clkr;
- 	u8			cfg_off;
-+	unsigned long		current_rate;
- };
- 
- #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index e1b1b426fae4..b574b38dcbd5 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
-+	unsigned long rate;
- 
- 	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
- 
-@@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
- 	hid_div &= mask;
- 
--	return calc_rate(parent_rate, m, n, mode, hid_div);
-+	rate = calc_rate(parent_rate, m, n, mode, hid_div);
-+	if (!rcg->current_rate)
-+		rcg->current_rate = rate;
-+
-+	return rate;
- }
- 
- static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
-@@ -968,12 +973,14 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (!f)
- 		return -EINVAL;
- 
-+	rcg->current_rate = rate;
-+
- 	/*
--	 * In case clock is disabled, update the CFG, M, N and D registers
--	 * and don't hit the update bit of CMD register.
-+	 * In the case that the shared RCG is parked, current_rate will be
-+	 * applied as the clock is unparked again, so just return here.
- 	 */
- 	if (!__clk_is_enabled(hw->clk))
--		return __clk_rcg2_configure(rcg, f);
-+		return 0;
- 
- 	return clk_rcg2_shared_force_enable_clear(hw, f);
- }
-@@ -987,8 +994,13 @@ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
- static int clk_rcg2_shared_enable(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const struct freq_tbl *f = NULL;
- 	int ret;
- 
-+	f = qcom_find_freq(rcg->freq_tbl, rcg->current_rate);
-+	if (!f)
-+		return -EINVAL;
-+
- 	/*
- 	 * Set the update bit because required configuration has already
- 	 * been written in clk_rcg2_shared_set_rate()
-@@ -997,7 +1009,7 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
- 	if (ret)
- 		return ret;
- 
--	ret = update_config(rcg);
-+	ret = clk_rcg2_configure(rcg, f);
- 	if (ret)
- 		return ret;
- 
-@@ -1007,13 +1019,6 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
- static void clk_rcg2_shared_disable(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
--	u32 cfg;
--
--	/*
--	 * Store current configuration as switching to safe source would clear
--	 * the SRC and DIV of CFG register
--	 */
--	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
- 
- 	/*
- 	 * Park the RCG at a safe configuration - sourced off of safe source.
-@@ -1031,9 +1036,6 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	update_config(rcg);
- 
- 	clk_rcg2_clear_force_enable(hw);
--
--	/* Write back the stored configuration corresponding to current rate */
--	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
- }
- 
- const struct clk_ops clk_rcg2_shared_ops = {
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index a867f7102..50d4ee5ac 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1131,6 +1131,8 @@ patternProperties:
+     description: Summit microelectronics
+   "^sunchip,.*":
+     description: Shenzhen Sunchip Technology Co., Ltd
++  "^sunplus,.*":
++    description: Sunplus Technology Co., Ltd.
+   "^SUNW,.*":
+     description: Sun Microsystems, Inc
+   "^supermicro,.*":
 -- 
 2.33.1
 
