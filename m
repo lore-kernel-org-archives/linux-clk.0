@@ -2,234 +2,196 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7F8C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 08:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A043BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 10:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238164AbhLCIHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 03:07:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235044AbhLCIHK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 03:07:10 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A798CC06173E;
-        Fri,  3 Dec 2021 00:03:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DB80B6297A;
-        Fri,  3 Dec 2021 08:03:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B9DBC53FAD;
-        Fri,  3 Dec 2021 08:03:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638518625;
-        bh=SvfGN+PjcnykzpCAThdQO6VCpwrVwDZuHqNRCuT9r+E=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YFDgkq/+h5PhS1QAfp/s3FZQIo5S73TuxVAGSeiTVhQiy41kzDhCKLghwM0bzXmM5
-         ze0B3BZDvjzHpLejlprVcJZhB8fh5DW6BGTxyBTgdsyAbyIB1RF85fI/9Shi5AmFhv
-         7l6u5AiRWvBcPPHsXaWx+Wxcxg/NBXP3UbHQ3q5H7KR6u6NsrQa4USWCs0/oIapxnU
-         0b1ZQWDgCXe3T93lx+PI7Si4sur779HcEwUEXGyKRHVpuSdN90y3UvY8AW18r6UJ79
-         0K7yB2wUriWgdBom4WRspYUHMwSAe558uHM5U4Zl8f/xxU/lQGrO8Pp8G2fjmpK8gx
-         BNFsC2awjjx2w==
-Content-Type: text/plain; charset="utf-8"
+        id S1350049AbhLCKYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 05:24:51 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:25986 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1379823AbhLCKYr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 05:24:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1638526880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=16tCcBN6A3Kz/QH+fwsigWZzWp8j5LhPyBwzqPVfU+s=;
+        b=XDiVye4NHAeEYwtI08iauyqBMQ9igNTDxN05rx4eSiiUpaAUQg+SwnJoTRfAhTVKVNv91e
+        SVNvMM4cbiR/xLt+o+AOpjMs+RcmiPLWXhosP78niNajktNWuJzH3Trp6qRsXlLQDholD/
+        V3sgbasyXE2fLTsxHaH9KL4zOhnBDAo=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-463-Cz6Dvd4HPvK-gVgkdZJ5Tg-1; Fri, 03 Dec 2021 05:21:19 -0500
+X-MC-Unique: Cz6Dvd4HPvK-gVgkdZJ5Tg-1
+Received: by mail-ed1-f71.google.com with SMTP id w4-20020aa7cb44000000b003e7c0f7cfffso2207660edt.2
+        for <linux-clk@vger.kernel.org>; Fri, 03 Dec 2021 02:21:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=16tCcBN6A3Kz/QH+fwsigWZzWp8j5LhPyBwzqPVfU+s=;
+        b=UY54exz9zVW0dzmNe81M3pE6T11fhTNFFbMs+MG/NbBoO+7h9q9dsvbiHn0qRuFOiJ
+         5F9XwiUDAkFX8cEwZgJtsO6UmKeUXQ6UAkXpmeTpVI6GVgZw3RTVQ2TI6LIPloENeZP9
+         kN2zCczXeG1f2cCZ+91v0Fh3m0AVFr2+gOe8qR+tyKeXVkZ8Jydp7/Okfzmk9nf2uoiI
+         JH1ZLjh9MGN9Ufs5wfFYXtAqwySDQKsonDnQ7p8maGgEzz/cuVYWHo6Y6PDXDOiM8cLy
+         p+W+zBp+GdQtbTnElcOvf1wYDUTcXi0Q+h6IDHNefUtx8IsfaPT73+v4SZ0T6e0+hWf+
+         nPnw==
+X-Gm-Message-State: AOAM5323Q042BBwNUWFpLurmVGmVLf52fhgeTHF5Kx0bCPPLOrQYUfOT
+        ZIxqHmwjePtFQTcKaAoGlZ3qqVF54JThxrgM8byasyg8yE/GZ5C7i+ZptrxCF8pEEft7fUl/exS
+        eKDg2YnwFh+LFCJGL5dzR
+X-Received: by 2002:a17:906:1290:: with SMTP id k16mr21809391ejb.566.1638526878102;
+        Fri, 03 Dec 2021 02:21:18 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzfDVxFlYIQsj184u1/mFOHQafz2Rc5BDIkEaP4xxF7HrxkWS23R3eWGG8P7RWdWV8e7yqKbg==
+X-Received: by 2002:a17:906:1290:: with SMTP id k16mr21809366ejb.566.1638526877844;
+        Fri, 03 Dec 2021 02:21:17 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:1054:9d19:e0f0:8214? (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id d18sm1634905edj.23.2021.12.03.02.21.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Dec 2021 02:21:17 -0800 (PST)
+Message-ID: <724ab9d5-7ba1-dae6-49b9-831bafca5b84@redhat.com>
+Date:   Fri, 3 Dec 2021 11:21:16 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211129153330.37719-8-nbd@nbd.name>
-References: <20211129153330.37719-1-nbd@nbd.name> <20211129153330.37719-8-nbd@nbd.name>
-Subject: Re: [PATCH v5 07/13] clk: en7523: Add clock driver for Airoha EN7523 SoC
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     john@phrozen.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Felix Fietkau <nbd@nbd.name>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v6 07/15] platform/x86: int3472: Enable I2c daisy chain
+Content-Language: en-US
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Daniel Scally <djrscally@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mark Gross <markgross@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Fri, 03 Dec 2021 00:03:43 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211203080345.2B9DBC53FAD@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20211125165412.535063-1-hdegoede@redhat.com>
+ <20211125165412.535063-8-hdegoede@redhat.com>
+ <YaAel9HuAvemRg2s@pendragon.ideasonboard.com>
+ <03306e12-40ec-39ab-3b40-42b0395e1b65@redhat.com>
+ <4ab5efa7-65b0-009c-293a-d7a49776e78d@gmail.com>
+ <2fd5400e-e587-54d2-1071-ad8df49a8a68@redhat.com>
+In-Reply-To: <2fd5400e-e587-54d2-1071-ad8df49a8a68@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Felix Fietkau (2021-11-29 07:33:23)
-> This driver only registers fixed rate clocks, since the clocks are fully
-> initialized by the boot loader and should not be changed later, according
-> to Airoha.
->=20
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
->  arch/arm/boot/dts/en7523.dtsi |   8 +
->  drivers/clk/Kconfig           |   9 +
->  drivers/clk/Makefile          |   1 +
->  drivers/clk/clk-en7523.c      | 356 ++++++++++++++++++++++++++++++++++
->  4 files changed, 374 insertions(+)
->  create mode 100644 drivers/clk/clk-en7523.c
+Hi,
 
-Pleas don't mix clk driver changes and dts file updates together.
-Instead, introduce the clk driver in one patch and add the dts node in
-another patch so that the different maintainers can pick up the patch
-for the area they maintain.
+On 11/26/21 12:45, Hans de Goede wrote:
+> Hi,
+> 
+> On 11/26/21 12:39, Daniel Scally wrote:
+>> Hello
+>>
+>> On 26/11/2021 11:30, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 11/26/21 00:39, Laurent Pinchart wrote:
+>>>> Hi Hans,
+>>>>
+>>>> Thank you for the patch.
+>>>>
+>>>> On Thu, Nov 25, 2021 at 05:54:04PM +0100, Hans de Goede wrote:
+>>>>> From: Daniel Scally <djrscally@gmail.com>
+>>>>>
+>>>>> The TPS68470 PMIC has an I2C passthrough mode through which I2C traffic
+>>>>> can be forwarded to a device connected to the PMIC as though it were
+>>>>> connected directly to the system bus. Enable this mode when the chip
+>>>>> is initialised.
+>>>> Is there any drawback doing this unconditionally, if nothing is
+>>>> connected to the bus on the other side (including no pull-ups) ?
+>>> I actually never took a really close look at this patch, I just
+>>> sorta inherited it from Daniel.
+>>>
+>>> Now that I have taken a close look, I see that it is setting the
+>>> exact same bits as which get set when enabling the VSIO regulator.
+>>>
+>>> The idea here is that the I2C-passthrough only gets enabled when
+>>> the VSIO regulator is turned on, because some sensors end up
+>>> shorting the I2C pins to ground when the sensor is not powered.
+>>>
+>>> Since we set these bits when powering up the VSIO regulator
+>>> and since we do that before trying to talk to the sensor
+>>> I don't think that we need this (hack) anymore.
+>>>
+>>> I will give things a try without this change and if things
+>>> still work I will drop this patch from the set.
+>>>
+>>> Daniel, what do you think?
+>>
+>>
+>> Humm, we're only using the VSIO regulator with the VCM though right?
+> 
+> Nope, there is a mapping from VSIO to dovdd for the ov8865 in the
+> board_data; and I'm pretty sure I copied that from your earlier
+> attempts at getting regulator lookups registered :)
+> 
+> And even if the VSIO regulator was only used by the VCM, then it would
+> get turned off after probing the VCM, clearing the 2 bits which this
+> commit sets. Which would break things if we did not re-enable it when
+> the ov8865 needs it.
+> 
+>> Which might not be on when the ov8865 tries to probe. I haven't tried
+>> without this patch to be honest; I set it because that was what Windows
+>> does when powering on the PMIC.
+> 
+> See above, I'm pretty sure we can do without this patch which means
+> that the INT3472 code will no longer be poking at the PMIC directly
+> itself, which is good :)
+> 
+> Anyways I'll give this a try sometime next week and then drop the
+> patch.
 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c5b3dc97396a..b542f58c58d2 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -192,6 +192,15 @@ config COMMON_CLK_CS2000_CP
->         help
->           If you say yes here you get support for the CS2000 clock multip=
-lier.
-> =20
-> +config COMMON_CLK_EN7523
-> +       bool "Clock driver for Airoha EN7523 SoC system clocks"
-> +       depends on OF
-> +       depends on ARCH_AIROHA || ARM || COMPILE_TEST
+I can confirm that this patch indeed is no longer necessary with
+the current regulator code already taking care of this.
 
-Is this supposed to have parenthesis somewhere? Why is depending on ARM
-useful?
+I will post version 7 of this patch-set soon, with this patch dropped.
 
-> +       default ARCH_AIROHA
-> +       help
-> +         This driver provides the fixed clocks and gates present on Airo=
-ha
-> +         ARM silicon.
-> +
->  config COMMON_CLK_FSL_FLEXSPI
->         tristate "Clock driver for FlexSPI on Layerscape SoCs"
->         depends on ARCH_LAYERSCAPE || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index e42312121e51..be11d88c1603 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -27,6 +27,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)      +=3D clk-cdce925.o
->  obj-$(CONFIG_ARCH_CLPS711X)            +=3D clk-clps711x.o
->  obj-$(CONFIG_COMMON_CLK_CS2000_CP)     +=3D clk-cs2000-cp.o
->  obj-$(CONFIG_ARCH_SPARX5)              +=3D clk-sparx5.o
-> +obj-$(CONFIG_COMMON_CLK_EN7523)                +=3D clk-en7523.o
->  obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)    +=3D clk-fixed-mmio.o
->  obj-$(CONFIG_COMMON_CLK_FSL_FLEXSPI)   +=3D clk-fsl-flexspi.o
->  obj-$(CONFIG_COMMON_CLK_FSL_SAI)       +=3D clk-fsl-sai.o
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> new file mode 100644
-> index 000000000000..f1774a5bf537
-> --- /dev/null
-> +++ b/drivers/clk/clk-en7523.c
-> @@ -0,0 +1,356 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/regmap.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/en7523-clk.h>
-> +#include <linux/clk.h>
+Regards,
 
-Is this include used?
+Hans
 
-> +
-> +#define REG_PCI_CONTROL                        0x88
-> +#define   REG_PCI_CONTROL_PERSTOUT     BIT(29)
-> +#define   REG_PCI_CONTROL_PERSTOUT1    BIT(26)
-> +#define   REG_PCI_CONTROL_REFCLK_EN1   BIT(22)
-> +#define REG_GSW_CLK_DIV_SEL            0x1b4
-[...]
-> +
-> +static struct clk *en7523_register_pcie_clk(struct device *dev,
-> +                                           void __iomem *np_base)
-> +{
-> +       static const struct clk_ops pcie_gate_ops =3D {
-> +               .is_enabled =3D en7523_pci_is_enabled,
-> +               .enable =3D en7523_pci_enable,
-> +               .disable =3D en7523_pci_disable,
-> +       };
-> +       struct clk_init_data init =3D {
-> +               .name =3D "pcie",
-> +               .ops =3D &pcie_gate_ops,
-> +       };
-> +       struct en_clk_gate *cg;
-> +       struct clk *clk;
-> +
-> +       cg =3D devm_kzalloc(dev, sizeof(*cg), GFP_KERNEL);
-> +       if (!cg)
-> +               return NULL;
-> +
-> +       cg->base =3D np_base;
-> +       cg->hw.init =3D &init;
-> +       en7523_pci_disable(&cg->hw);
-> +
-> +       clk =3D clk_register(NULL, &cg->hw);
 
-Please use clk_hw_register
 
-> +       if (IS_ERR(clk))
-> +               clk =3D NULL;
-> +
-> +       return clk;
-> +}
-> +
-> +static void en7523_register_clocks(struct device *dev, struct clk_onecel=
-l_data *clk_data,
-> +                                  void __iomem *base, void __iomem *np_b=
-ase)
-> +{
-> +       struct clk *clk;
-> +       u32 rate;
-> +       int i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(en7523_base_clks); i++) {
-> +               const struct en_clk_desc *desc =3D &en7523_base_clks[i];
-> +
-> +               rate =3D en7523_get_base_rate(base, i);
-> +               rate /=3D en7523_get_div(base, i);
-> +
-> +               clk =3D clk_register_fixed_rate(NULL, desc->name, NULL, 0=
-, rate);
-> +               if (IS_ERR(clk)) {
-> +                       pr_err("Failed to register clk %s: %ld\n",
-> +                              desc->name, PTR_ERR(clk));
-> +                       continue;
-> +               }
-> +
-> +               clk_data->clks[desc->id] =3D clk;
-> +       }
-> +
-> +       clk =3D en7523_register_pcie_clk(dev, np_base);
-> +       clk_data->clks[EN7523_CLK_PCIE] =3D clk;
-> +
-> +       clk_data->clk_num =3D EN7523_NUM_CLOCKS;
-> +}
-> +
-> +static int en7523_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *node =3D pdev->dev.of_node;
-> +       struct clk_onecell_data *clk_data;
-> +       void __iomem *base, *np_base;
-> +       int r;
-> +
-> +       base =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(base);
-> +
-> +       np_base =3D devm_platform_ioremap_resource(pdev, 1);
-> +       if (IS_ERR(base))
-> +               return PTR_ERR(np_base);
-> +
-> +       clk_data =3D devm_kzalloc(&pdev->dev, sizeof(*clk_data), GFP_KERN=
-EL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       clk_data->clks =3D devm_kcalloc(&pdev->dev, EN7523_NUM_CLOCKS,
-> +                                     sizeof(*clk_data->clks), GFP_KERNEL=
-);
-> +       if (!clk_data->clks)
-> +               return -ENOMEM;
-> +
-> +       en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
-> +
-> +       r =3D of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>>>>> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>>>>> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+>>>>> ---
+>>>>>  .../x86/intel/int3472/intel_skl_int3472_tps68470.c         | 7 +++++++
+>>>>>  1 file changed, 7 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.c b/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.c
+>>>>> index c05b4cf502fe..42e688f4cad4 100644
+>>>>> --- a/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.c
+>>>>> +++ b/drivers/platform/x86/intel/int3472/intel_skl_int3472_tps68470.c
+>>>>> @@ -45,6 +45,13 @@ static int tps68470_chip_init(struct device *dev, struct regmap *regmap)
+>>>>>  		return ret;
+>>>>>  	}
+>>>>>  
+>>>>> +	/* Enable I2C daisy chain */
+>>>>> +	ret = regmap_write(regmap, TPS68470_REG_S_I2C_CTL, 0x03);
+>>>>> +	if (ret) {
+>>>>> +		dev_err(dev, "Failed to enable i2c daisy chain\n");
+>>>>> +		return ret;
+>>>>> +	}
+>>>>> +
+>>>>>  	dev_info(dev, "TPS68470 REVID: 0x%02x\n", version);
+>>>>>  
+>>>>>  	return 0;
+>>
 
-Please add a clk_hw provider instead of a clk provider.
-
-> +       if (r)
