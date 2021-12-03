@@ -2,257 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A8DC433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 10:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F97C43217
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 11:33:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380083AbhLCKek (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 05:34:40 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:59902 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1380021AbhLCKe3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 05:34:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1638527465;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vArHlsdMecG2QloyVHbd2lgxjdPi/Np+PU+dJLe52ak=;
-        b=II6iwP74iZ/lKoDqtvJzXnUMI5vtf2dj0SU37Iq5gb2xH7uvkGOsNhy0y9BtVZynqSSf2B
-        Oyjaew5GF7pAxippB1Dwix6zoy9uzspd+hgnwKcOAs+J3saqd+/VlYCBJaufmgFt66v1OW
-        6XVgD2w7lGp22ix76RJJOLRa5dHHg0M=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-471-YdBm_rJDOGS6_akgXoBlYw-1; Fri, 03 Dec 2021 05:31:02 -0500
-X-MC-Unique: YdBm_rJDOGS6_akgXoBlYw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED66481CCB4;
-        Fri,  3 Dec 2021 10:30:59 +0000 (UTC)
-Received: from x1.localdomain.com (unknown [10.39.194.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2462460843;
-        Fri,  3 Dec 2021 10:30:55 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        id S244070AbhLCLhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 06:37:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1380451AbhLCLhI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 06:37:08 -0500
+Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E542EC06173E;
+        Fri,  3 Dec 2021 03:33:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=S3Tw/8Fei/1i+bTG4/JHPJIzBoM/42mdFCJiUaqrlEk=; b=JNJRcWx8B+6Y2uXfXXuJAYvP2U
+        hvTqRmdC+GW12dYo73eDmMLR6E9gb6H1MqTx5SG4Ip0GAcpBKfR1nLK8HmzioIR6iC75YIucFABvM
+        scwil74Qcoodj6qb+fhavYrfoelTmLBiv5L4JcICxZHM7mUK0PGWssav/ItoV1puTLmc=;
+Received: from p54ae943f.dip0.t-ipconnect.de ([84.174.148.63] helo=localhost.localdomain)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1mt6ot-0004Ez-Fa; Fri, 03 Dec 2021 12:33:39 +0100
+From:   Felix Fietkau <nbd@nbd.name>
+To:     linux-arm-kernel@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v7 14/14] media: ipu3-cio2: Add support for instantiating i2c-clients for VCMs
-Date:   Fri,  3 Dec 2021 11:28:57 +0100
-Message-Id: <20211203102857.44539-15-hdegoede@redhat.com>
-In-Reply-To: <20211203102857.44539-1-hdegoede@redhat.com>
-References: <20211203102857.44539-1-hdegoede@redhat.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     john@phrozen.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 06/14] dt-bindings: Add en7523-scu device tree binding documentation
+Date:   Fri,  3 Dec 2021 12:33:23 +0100
+Message-Id: <20211203113331.20510-7-nbd@nbd.name>
+X-Mailer: git-send-email 2.30.1
+In-Reply-To: <20211203113331.20510-1-nbd@nbd.name>
+References: <20211203113331.20510-1-nbd@nbd.name>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some sensors come with a variable-focus lens where the lens focus is
-controller by a VCM (Voice Coil Motor). If there is a VCM for the
-lens-focus, and if so which one, is described on the vcm_type field
-of the ACPI SSDB table.
+From: John Crispin <john@phrozen.org>
 
-These VCMs are a second I2C device listed as an extra I2cSerialBusV2
-resource in the same ACPI device as the sensor. The i2c-core-acpi.c
-code only instantiates an i2c-client for the first I2cSerialBusV2
-resource.
+Adds device tree binding documentation for clocks in the EN7523 SOC.
 
-Add support for instantiating an i2c-client for the VCM with
-the type of the i2c-client set based on the SSDB vcm_type field.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: John Crispin <john@phrozen.org>
 ---
-Changes in v6:
-- New patch in v6 of this patch series
----
- drivers/media/pci/intel/ipu3/cio2-bridge.c | 55 ++++++++++++++++++++++
- drivers/media/pci/intel/ipu3/cio2-bridge.h | 16 ++++++-
- 2 files changed, 69 insertions(+), 2 deletions(-)
+ .../bindings/clock/airoha,en7523-scu.yaml     | 58 +++++++++++++++++++
+ include/dt-bindings/clock/en7523-clk.h        | 17 ++++++
+ 2 files changed, 75 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+ create mode 100644 include/dt-bindings/clock/en7523-clk.h
 
-diff --git a/drivers/media/pci/intel/ipu3/cio2-bridge.c b/drivers/media/pci/intel/ipu3/cio2-bridge.c
-index c805916d0909..7ccb7b6eaa82 100644
---- a/drivers/media/pci/intel/ipu3/cio2-bridge.c
-+++ b/drivers/media/pci/intel/ipu3/cio2-bridge.c
-@@ -3,6 +3,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/device.h>
-+#include <linux/i2c.h>
- #include <linux/pci.h>
- #include <linux/property.h>
- #include <media/v4l2-fwnode.h>
-@@ -38,6 +39,18 @@ static const struct cio2_property_names prop_names = {
- 	.link_frequencies = "link-frequencies",
- };
- 
-+static const char * const cio2_vcm_types[] = {
-+	"ad5823",
-+	"dw9714",
-+	"ad5816",
-+	"dw9719",
-+	"dw9718",
-+	"dw9806b",
-+	"wv517s",
-+	"lc898122xa",
-+	"lc898212axb",
-+};
+diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+new file mode 100644
+index 000000000000..79660f8126fa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/airoha,en7523-scu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static int cio2_bridge_read_acpi_buffer(struct acpi_device *adev, char *id,
- 					void *data, u32 size)
- {
-@@ -134,6 +147,12 @@ static void cio2_bridge_create_fwnode_properties(
- 	sensor->dev_properties[2] = PROPERTY_ENTRY_U32(
- 					sensor->prop_names.orientation,
- 					orientation);
-+	if (sensor->ssdb.vcmtype) {
-+		sensor->vcm_ref[0] =
-+			SOFTWARE_NODE_REFERENCE(&sensor->swnodes[SWNODE_VCM]);
-+		sensor->dev_properties[3] =
-+			PROPERTY_ENTRY_REF_ARRAY("lens-focus", sensor->vcm_ref);
-+	}
- 
- 	sensor->ep_properties[0] = PROPERTY_ENTRY_U32(
- 					sensor->prop_names.bus_type,
-@@ -195,6 +214,33 @@ static void cio2_bridge_create_connection_swnodes(struct cio2_bridge *bridge,
- 						sensor->node_names.endpoint,
- 						&nodes[SWNODE_CIO2_PORT],
- 						sensor->cio2_properties);
-+	if (sensor->ssdb.vcmtype)
-+		nodes[SWNODE_VCM] =
-+			NODE_VCM(cio2_vcm_types[sensor->ssdb.vcmtype - 1]);
-+}
++title: EN7523 Clock Device Tree Bindings
 +
-+static void cio2_bridge_instantiate_vcm_i2c_client(struct cio2_sensor *sensor)
-+{
-+	struct i2c_board_info board_info = { };
-+	char name[16];
++maintainers:
++  - Felix Fietkau <nbd@nbd.name>
++  - John Crispin <nbd@nbd.name>
 +
-+	if (!sensor->ssdb.vcmtype)
-+		return;
++description: |
++  This node defines the System Control Unit of the EN7523 SoC,
++  a collection of registers configuring many different aspects of the SoC.
 +
-+	snprintf(name, sizeof(name), "%s-VCM", acpi_dev_name(sensor->adev));
-+	board_info.dev_name = name;
-+	strscpy(board_info.type, cio2_vcm_types[sensor->ssdb.vcmtype - 1],
-+		ARRAY_SIZE(board_info.type));
-+	board_info.swnode = &sensor->swnodes[SWNODE_VCM];
++  The clock driver uses it to read and configure settings of the
++  PLL controller, which provides clocks for the CPU, the bus and
++  other SoC internal peripherals.
 +
-+	sensor->vcm_i2c_client =
-+		i2c_acpi_new_device_by_fwnode(acpi_fwnode_handle(sensor->adev),
-+					      1, &board_info);
-+	if (IS_ERR(sensor->vcm_i2c_client)) {
-+		dev_warn(&sensor->adev->dev, "Error instantiation VCM i2c-client: %ld\n",
-+			 PTR_ERR(sensor->vcm_i2c_client));
-+		sensor->vcm_i2c_client = NULL;
-+	}
- }
- 
- static void cio2_bridge_unregister_sensors(struct cio2_bridge *bridge)
-@@ -207,6 +253,7 @@ static void cio2_bridge_unregister_sensors(struct cio2_bridge *bridge)
- 		software_node_unregister_nodes(sensor->swnodes);
- 		ACPI_FREE(sensor->pld);
- 		acpi_dev_put(sensor->adev);
-+		i2c_unregister_device(sensor->vcm_i2c_client);
- 	}
- }
- 
-@@ -239,6 +286,12 @@ static int cio2_bridge_connect_sensor(const struct cio2_sensor_config *cfg,
- 		if (ret)
- 			goto err_put_adev;
- 
-+		if (sensor->ssdb.vcmtype > ARRAY_SIZE(cio2_vcm_types)) {
-+			dev_warn(&adev->dev, "Unknown VCM type %d\n",
-+				 sensor->ssdb.vcmtype);
-+			sensor->ssdb.vcmtype = 0;
-+		}
++  Each clock is assigned an identifier and client nodes use this identifier
++  to specify which clock they consume.
 +
- 		status = acpi_get_physical_device_location(adev->handle, &sensor->pld);
- 		if (ACPI_FAILURE(status)) {
- 			ret = -ENODEV;
-@@ -269,6 +322,8 @@ static int cio2_bridge_connect_sensor(const struct cio2_sensor_config *cfg,
- 		sensor->adev = acpi_dev_get(adev);
- 		adev->fwnode.secondary = fwnode;
- 
-+		cio2_bridge_instantiate_vcm_i2c_client(sensor);
++  All these identifiers can be found in:
++  [1]: <include/dt-bindings/clock/en7523-clk.h>.
 +
- 		dev_info(&cio2->dev, "Found supported sensor %s\n",
- 			 acpi_dev_name(adev));
- 
-diff --git a/drivers/media/pci/intel/ipu3/cio2-bridge.h b/drivers/media/pci/intel/ipu3/cio2-bridge.h
-index 202c7d494f7a..4418cbd08208 100644
---- a/drivers/media/pci/intel/ipu3/cio2-bridge.h
-+++ b/drivers/media/pci/intel/ipu3/cio2-bridge.h
-@@ -8,6 +8,8 @@
- 
- #include "ipu3-cio2.h"
- 
-+struct i2c_client;
++  The clocks are provided inside a system controller node.
 +
- #define CIO2_HID				"INT343E"
- #define CIO2_MAX_LANES				4
- #define MAX_NUM_LINK_FREQS			3
-@@ -42,12 +44,19 @@
- 		.properties = _PROPS,		\
- 	}
- 
-+#define NODE_VCM(_TYPE)				\
-+	(const struct software_node) {		\
-+		.name = _TYPE,			\
-+	}
++properties:
++  compatible:
++    items:
++      - const: airoha,en7523-scu
 +
- enum cio2_sensor_swnodes {
- 	SWNODE_SENSOR_HID,
- 	SWNODE_SENSOR_PORT,
- 	SWNODE_SENSOR_ENDPOINT,
- 	SWNODE_CIO2_PORT,
- 	SWNODE_CIO2_ENDPOINT,
-+	/* Must be last because it is optional / maybe empty */
-+	SWNODE_VCM,
- 	SWNODE_COUNT
- };
- 
-@@ -106,8 +115,10 @@ struct cio2_sensor_config {
- struct cio2_sensor {
- 	char name[ACPI_ID_LEN];
- 	struct acpi_device *adev;
-+	struct i2c_client *vcm_i2c_client;
- 
--	struct software_node swnodes[6];
-+	/* SWNODE_COUNT + 1 for terminating empty node */
-+	struct software_node swnodes[SWNODE_COUNT + 1];
- 	struct cio2_node_names node_names;
- 
- 	struct cio2_sensor_ssdb ssdb;
-@@ -115,10 +126,11 @@ struct cio2_sensor {
- 
- 	struct cio2_property_names prop_names;
- 	struct property_entry ep_properties[5];
--	struct property_entry dev_properties[4];
-+	struct property_entry dev_properties[5];
- 	struct property_entry cio2_properties[3];
- 	struct software_node_ref_args local_ref[1];
- 	struct software_node_ref_args remote_ref[1];
-+	struct software_node_ref_args vcm_ref[1];
- };
- 
- struct cio2_bridge {
++  reg:
++    maxItems: 2
++
++  "#clock-cells":
++    description:
++      The first cell indicates the clock number, see [1] for available
++      clocks.
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/en7523-clk.h>
++    scu: scu@1fa20000 {
++      compatible = "airoha,en7523-scu";
++      reg = <0x1fa20000 0x400>,
++            <0x1fb00000 0x1000>;
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+new file mode 100644
+index 000000000000..717d23a5e5ae
+--- /dev/null
++++ b/include/dt-bindings/clock/en7523-clk.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++
++#ifndef _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_
++#define _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_
++
++#define EN7523_CLK_GSW		0
++#define EN7523_CLK_EMI		1
++#define EN7523_CLK_BUS		2
++#define EN7523_CLK_SLIC		3
++#define EN7523_CLK_SPI		4
++#define EN7523_CLK_NPU		5
++#define EN7523_CLK_CRYPTO	6
++#define EN7523_CLK_PCIE		7
++
++#define EN7523_NUM_CLOCKS	8
++
++#endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
 -- 
-2.33.1
+2.30.1
 
