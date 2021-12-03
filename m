@@ -2,80 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A3C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 01:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E70EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 02:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbhLCCAl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Dec 2021 21:00:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbhLCCAk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Dec 2021 21:00:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1963C06174A;
-        Thu,  2 Dec 2021 17:57:16 -0800 (PST)
+        id S1350314AbhLCCKL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Dec 2021 21:10:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:56564 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235940AbhLCCKL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Dec 2021 21:10:11 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A562CB8259D;
-        Fri,  3 Dec 2021 01:57:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BCBCC00446;
-        Fri,  3 Dec 2021 01:57:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F38C6290D;
+        Fri,  3 Dec 2021 02:06:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831C6C00446;
+        Fri,  3 Dec 2021 02:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638496634;
-        bh=/UDPkKhe1xuwTbm+tg8qCshVaTn9o077A90hWi1CX6Q=;
+        s=k20201202; t=1638497207;
+        bh=pYYjckiCzk3YEd1gSBjBO3HJ8a/nWBicZ5vmVXY3QJQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=P22bOfSNPryoQdsSZD7kk6eRN7s+Om6vT2CrvzGA+WfQqsOfcQWB28+L3q4+DEVdg
-         RaEnE/+bS+Xa+JMb5+pnHft6xafn/ejRiKDa0WjnCi0lPjxlbn3MUtOhXAhMVbIPib
-         AVPGDMb85P3nJzplra/0mv6p6X7QkdB7dXOemB6QWNPx2K9Zpo9HOcRU1vDZsqrSu5
-         tOscy+82u0EROxyAmpcuYvHIoIuHxzebeqig5l/zRoOe0d4ZosVQ5sSce3PJZHGEMg
-         VERM8XGJcQF5Kv/6vDJt0fOyx25PEaweT+OYxDdLnveZRLlY5ZydyC9FqcwaDLAEQC
-         GAlTDVckYpiMQ==
+        b=UPHy2IXWzWILRb1Q0pEE5RyaxlDN+i70Q7ROUxmonA7TxYza4aKSzxPbY/9G5E5Ev
+         /7Td0aJiiWzCjYLVqgygDTq218gwyNyGkpIDTD+1wy8g8Xs9uBqRyoiE6AovX+iT7B
+         3iqlbrLGGN1kGdY/ntC9G4T8kd0cdzbm59Y/y6fFlHxZt8LqmyheGSTxoafcq3SEcE
+         MdjBpA0fglGhxfHi8yKL2CWdsRTs9Ko9caeGgX06eIA9/vnf97ATvNdgTJ0B/eQX1N
+         nT5yRhU9lMvMZlmKX26ZjRCq4FWY6mVS4V7nkDNq9vF++NgsgMWTGs9+yQsxon8Goe
+         ncJmOx8FXePBg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YZlchKnEqWN8nKQk@ryzen>
-References: <163087455086.405991.14496690646389782129@swboyd.mtv.corp.google.com> <20211105055932.3432-1-miles.chen@mediatek.com> <YZlchKnEqWN8nKQk@ryzen>
-Subject: Re: [PATCH v3] clk: imx: use module_platform_driver
+In-Reply-To: <20211129191156.29322-17-cristian.marussi@arm.com>
+References: <20211129191156.29322-1-cristian.marussi@arm.com> <20211129191156.29322-17-cristian.marussi@arm.com>
+Subject: Re: [PATCH v7 16/16] clk: scmi: Support atomic clock enable/disable API
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     festevam@gmail.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, mturquette@baylibre.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org,
-        wsd_upstream@mediatek.com
-To:     Abel Vesa <abel.vesa@nxp.com>, miles.chen@mediatek.com
-Date:   Thu, 02 Dec 2021 17:57:13 -0800
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        Jonathan.Cameron@Huawei.com, f.fainelli@gmail.com,
+        etienne.carriere@linaro.org, vincent.guittot@linaro.org,
+        souvik.chakravarty@arm.com, cristian.marussi@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Cristian Marussi <cristian.marussi@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Thu, 02 Dec 2021 18:06:46 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211203015714.4BCBCC00446@smtp.kernel.org>
+Message-Id: <20211203020647.831C6C00446@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2021-11-20 12:37:24)
-> On 21-11-05 13:59:32, miles.chen@mediatek.com wrote:
-> > From: Miles Chen <miles.chen@mediatek.com>
-> >=20
-> > Hi Stephen,
-> >=20
-> > >> Fixes: e0d0d4d86c766 ("clk: imx8qxp: Support building i.MX8QXP clock=
- driver as module")
-> > >> Cc: Fabio Estevam <festevam@gmail.com>
-> > >> Cc: Stephen Boyd <sboyd@kernel.org>
-> > >> Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> >=20
-> > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> >=20
-> > Thanks for doing the review, I cannot find this patch in clk-imx tree,
-> > Would you pick this patch, please?
+Quoting Cristian Marussi (2021-11-29 11:11:56)
+> Support also atomic enable/disable clk_ops beside the bare non-atomic one
+> (prepare/unprepare) when the underlying SCMI transport is configured to
+> support atomic transactions for synchronous commands.
 >=20
-> Sorry for the delay.=20
->=20
-> Fixes are usually picked up directly by Stephen,=20
-> therefore they're not going through clk-imx tree.
->=20
-> Stephen, can you pick this one up please?
->=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> ---
 
-It doesn't look like a very critical fix but ok. I suppose someone could
-try to use =3Dm for these files?
+Acked-by: Stephen Boyd <sboyd@kernel.org>
