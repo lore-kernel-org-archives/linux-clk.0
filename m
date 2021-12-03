@@ -2,63 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D0DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 14:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2355DC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Dec 2021 14:12:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244886AbhLCOKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Dec 2021 09:10:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48376 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352478AbhLCOKu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 09:10:50 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C700C06173E;
-        Fri,  3 Dec 2021 06:07:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A6BC62B11;
-        Fri,  3 Dec 2021 14:07:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED970C53FAD;
-        Fri,  3 Dec 2021 14:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1638540444;
-        bh=WEsQ0YJT+JFvn7QDLZTVVdMDj0ZbFJUPEDcXxcmqgb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2DWYXrjYmNzSNDnhxE/MEx/GMkOnZw+kLuV0oub7rrSZ52F9c4mFo6+SauUHZh1PU
-         eVkBF3maLXvofb0p27PsEYxte9z0hKrmX5aF9kbQvWv4DRJEklH9CZks4mgJ2q5bKN
-         L1t9R9baN2GsSTsj/dZHNBg/ap/ej/hFH0HcHE0M=
-Date:   Fri, 3 Dec 2021 15:07:21 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, john@phrozen.org, linux-staging@lists.linux.dev,
-        neil@brown.name
-Subject: Re: [PATCH v5 4/4] staging: mt7621-dts: align resets with binding
- documentation
-Message-ID: <YaokmRHYsazdMByi@kroah.com>
-References: <20211107074200.18911-1-sergio.paracuellos@gmail.com>
- <20211107074200.18911-5-sergio.paracuellos@gmail.com>
+        id S244785AbhLCOPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Dec 2021 09:15:52 -0500
+Received: from mail-4018.proton.ch ([185.70.40.18]:40797 "EHLO
+        mail-4018.proton.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233920AbhLCOPw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Dec 2021 09:15:52 -0500
+Date:   Fri, 03 Dec 2021 14:12:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wujek.eu;
+        s=protonmail; t=1638540745;
+        bh=o4WyFWh7JuWwZ/Mqq+iDh7Rd1ojXp+gx7VT03s0CIPY=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:From:To:Cc;
+        b=qH59D9CnADsjHUxAuCqCyBbzx/8mNeN9PBGR9dwRlK5i6rW6BaxhjBD27FuaNwewF
+         zdv0K1bb5sKZ6UuYaafy1r2VLncXrYU4yX8lTk2OVHMOFR4v10G9ODqjyq5Cwz2ZKc
+         Pg7n3RCyCH1JKGyVsHsZgR3sz4tU1ymKbzg/6rll+aAcGcpZZQ3ryW8RsUE+WNYN/7
+         pv0PNYUDWtNr0wCtScuNEwlB9xVy/+wC6cIvTl2DDxBTLg22+kOcBEk3P63aHoS4pY
+         X0PyXfOsC5w9R2mVDN3qe/vTr2HlRiy1YBPIbp5siGX7yDchCqgJQ8rM7Lc9loiVSh
+         sjJz/eZTG4TPg==
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Adam Wujek <dev_public@wujek.eu>
+Cc:     Adam Wujek <dev_public@wujek.eu>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Reply-To: Adam Wujek <dev_public@wujek.eu>
+Subject: [PATCH] clk: si5341: fix reported clk_rate when output divider is 2
+Message-ID: <20211203141125.2447520-1-dev_public@wujek.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211107074200.18911-5-sergio.paracuellos@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Nov 07, 2021 at 08:42:00AM +0100, Sergio Paracuellos wrote:
-> Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-> to be used as a reset provider. Align reset related bits and system controller
-> node with binding documentation along the dtsi file.
-> 
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> ---
->  drivers/staging/mt7621-dts/mt7621.dtsi | 25 +++++++++++--------------
->  1 file changed, 11 insertions(+), 14 deletions(-)
+SI5341_OUT_CFG_RDIV_FORCE2 shall be checked first to distinguish whether
+a divider for a given output is set to 2 (SI5341_OUT_CFG_RDIV_FORCE2
+is set) or the output is disabled (SI5341_OUT_CFG_RDIV_FORCE2 not set,
+SI5341_OUT_R_REG is set 0).
+Before the change, divider set to 2 (SI5341_OUT_R_REG set to 0) was
+interpreted as output is disabled.
 
-This patch does not apply to my tree :(
+Signed-off-by: Adam Wujek <dev_public@wujek.eu>
+---
+ drivers/clk/clk-si5341.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-thanks,
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index b7641abe6747..15b1c90cafe5 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -798,6 +798,15 @@ static unsigned long si5341_output_clk_recalc_rate(str=
+uct clk_hw *hw,
+ =09u32 r_divider;
+ =09u8 r[3];
 
-greg k-h
++=09err =3D regmap_read(output->data->regmap,
++=09=09=09SI5341_OUT_CONFIG(output), &val);
++=09if (err < 0)
++=09=09return err;
++
++=09/* If SI5341_OUT_CFG_RDIV_FORCE2 is set, r_divider is 2 */
++=09if (val & SI5341_OUT_CFG_RDIV_FORCE2)
++=09=09return parent_rate / 2;
++
+ =09err =3D regmap_bulk_read(output->data->regmap,
+ =09=09=09SI5341_OUT_R_REG(output), r, 3);
+ =09if (err < 0)
+@@ -814,13 +823,6 @@ static unsigned long si5341_output_clk_recalc_rate(str=
+uct clk_hw *hw,
+ =09r_divider +=3D 1;
+ =09r_divider <<=3D 1;
+
+-=09err =3D regmap_read(output->data->regmap,
+-=09=09=09SI5341_OUT_CONFIG(output), &val);
+-=09if (err < 0)
+-=09=09return err;
+-
+-=09if (val & SI5341_OUT_CFG_RDIV_FORCE2)
+-=09=09r_divider =3D 2;
+
+ =09return parent_rate / r_divider;
+ }
+--
+2.25.1
+
+
