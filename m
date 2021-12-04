@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33149C4332F
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Dec 2021 06:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5258C28CA7
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Dec 2021 06:11:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240412AbhLDGOP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Dec 2021 01:14:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37816 "EHLO
+        id S1384234AbhLDGO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Dec 2021 01:14:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239814AbhLDGON (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Dec 2021 01:14:13 -0500
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B70C061751;
-        Fri,  3 Dec 2021 22:10:48 -0800 (PST)
-Received: by mail-qt1-x829.google.com with SMTP id n15so5718404qta.0;
-        Fri, 03 Dec 2021 22:10:48 -0800 (PST)
+        with ESMTP id S241939AbhLDGOT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Dec 2021 01:14:19 -0500
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECBFC0611F7;
+        Fri,  3 Dec 2021 22:10:53 -0800 (PST)
+Received: by mail-qt1-x82a.google.com with SMTP id t11so5670084qtw.3;
+        Fri, 03 Dec 2021 22:10:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZZzll1NvlYUi9tw5UeTEbg0jqNcXl/cAUbiZhgavzag=;
-        b=Q4nSugKwo/e7P4oirQJWNn4CEBMcQvnIKD3q5wttbN1uHG/J7kPCIVzzAyy83R4Jj2
-         N8gARBqv5ZKnu3lepAX9Imp+Wx92Ljy5m/UK4AAmT7dsc63k6AJZa+4WgIDPlr1Y0slG
-         qjT/tTVlLTWRqu/egqfgBzmIEdkyL0d894FV2lytfLMel3CoIq3xuT0dub1kNCT9Bja3
-         Q7AVrRg4D00jKL4+6HbCpgmcQMdFD/Huc4c7RwQj65Uj8jd3CgaWcTSNZ8vuGO7rX0Jt
-         av6Ebu2FjQL3E6K1kmDmPxO3Oil/moKaRxY3u5ZgIOQDpZkWUvQxrtmVuE5Gy6KzfXYu
-         auTw==
+        bh=9xBCV9vw5++14Rhc+htGrnWDIYZcmcvIWQjwsIH6sGA=;
+        b=poErQ+vbqY98oeHZ9dPAkHkWrG5dbjxujdze7ycQauIWKzfTX95Qb4LI/ZlRbZZZGl
+         97JZM2oZJ8m4pF+3RJ0NFkXiHfMXnf+zqs4uUWlbuYcpaaJzHn/vDz2/6UBJ4K4QnynU
+         JE1cP64qIiVO2ed5g4rBFPzw9np8Xpy4sAgHwvC+IU1RDD/Vl1a3SgG2pUy+mj/+//AI
+         ta0mrVyaXMSuPffjaajrnm96B43hzAuR9A44ucEdFYmVQYogQ2kKW1hHhUDApdvR2etH
+         4WUJgWwnhzTzACMV5oMGGIWRF56j3J7w5zFe117UoC5mhMPFexqa4jT+B4Go0ErdpgRJ
+         H9Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZZzll1NvlYUi9tw5UeTEbg0jqNcXl/cAUbiZhgavzag=;
-        b=e/OEMxaNv0AcNUZOfx/+hqead2q5t2TwDaenbIgvZ0fTpQQkGwtd6LFGbSAjRVFdf3
-         owPFDcF770eG7kJb178xBWwXgA1VeXEvirzXdTz9g9DPfMfpaKGrvCo5sgbWg+1E+WiP
-         uFxldgaI8Qm27r1CSMquzGjhij61N+S8S2ArHg5ge7Wo6RFItISGWda8o/tws6MSd3G5
-         +JyizPOQYE1M2CUkFdr5ukSFrldYiS7wXh1KWO8ZTsNUpI6Uk5+b5NZ748EJVpRZlbVU
-         yFe+pRQXnvmgNJF/G7oh+tc9t541EsSKOld2gI+uYiv4YzANL7twkllIDes9Mbah56Ok
-         ulKA==
-X-Gm-Message-State: AOAM532/mdbWUAp/gzezRvd3gazOvKfsYU9Bh9O+1ZjwgoGaWbGUhwyc
-        2z38B3ql1GuxHX81EkAYldE=
-X-Google-Smtp-Source: ABdhPJwBe+Bo01JmYoEZJB0UR+he5xjzJib62CqZBZJG4oBKSdY6RlYb5BGngvmTZF7xMc1zlMWRlw==
-X-Received: by 2002:a05:622a:148:: with SMTP id v8mr25636973qtw.459.1638598247653;
-        Fri, 03 Dec 2021 22:10:47 -0800 (PST)
+        bh=9xBCV9vw5++14Rhc+htGrnWDIYZcmcvIWQjwsIH6sGA=;
+        b=sBDOFFccm/mMGOLoBp2SYs1anMPE4mfIl12HWzYKMycbAQMLCemH9aJm9MHqSpeOiT
+         EpXmhMAo7V/VWUZS8dZ+JDhy5Y9ZyX+Qk8uKkOlPjQcAyjuEpD5GHLhTlrAWCT0W3opo
+         jEyOHHSk/WJ2LG2IPNF13g+cugm5eCjiYNN0WefJepI7vP4WkXL95zI+XweJ81kvrRHj
+         2OEnmcr5FypakrT4ZwNm2+eztUqlpYRHtpb3aSbFUgBVuxV197AUnx/XTAzRzUhaFovk
+         IZMH0+yDLPr6D7/JRoh8yJupX/Kq8ckgi7qYo+D/dkS/Zw4QqvWBaalF9OcD50rLPo6Y
+         RzNw==
+X-Gm-Message-State: AOAM532hIIFEHNI0UAekehw/FwuCzPVogKo1wMWYQ1eKdpRPMP36IYiv
+        lBbFZIAfv98v5Ns2rXyGrKA=
+X-Google-Smtp-Source: ABdhPJx5uGTIcg9V9BSCFSFwsNAeSNvdBWIHnfbB0AahctyMhH9TQpFZR2wjWk+wARF6vf6sdRHhjg==
+X-Received: by 2002:a05:622a:4c9:: with SMTP id q9mr26077598qtx.102.1638598252834;
+        Fri, 03 Dec 2021 22:10:52 -0800 (PST)
 Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id l1sm3500913qkp.125.2021.12.03.22.10.46
+        by smtp.gmail.com with ESMTPSA id l1sm3500913qkp.125.2021.12.03.22.10.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Dec 2021 22:10:47 -0800 (PST)
+        Fri, 03 Dec 2021 22:10:52 -0800 (PST)
 From:   Jesse Taube <mr.bossman075@gmail.com>
 X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
 To:     linux-imx@nxp.com
@@ -62,12 +62,10 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Jesse Taube <mr.bossman075@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 02/13] dt-bindings: pinctrl: add i.MXRT1050 pinctrl binding doc
-Date:   Sat,  4 Dec 2021 01:10:31 -0500
-Message-Id: <20211204061042.1248028-3-Mr.Bossman075@gmail.com>
+        linux-serial@vger.kernel.org
+Subject: [PATCH v4 05/13] dt-bindings: imx: Add clock binding for i.MXRT1050
+Date:   Sat,  4 Dec 2021 01:10:34 -0500
+Message-Id: <20211204061042.1248028-6-Mr.Bossman075@gmail.com>
 X-Mailer: git-send-email 2.34.0
 In-Reply-To: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
 References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
@@ -77,113 +75,106 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jesse Taube <mr.bossman075@gmail.com>
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
 
-Add i.MXRT1050 pinctrl binding doc
+Add the clock binding doc for i.MXRT1050.
 
-Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Giulio: added all clocks up to IMXRT1050_CLK_USBOH3]
 Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+[Jesse: added clocks from IMXRT1050_CLK_IPG_PDOF to
+IMXRT1050_CLK_DMA_MUX and moved IMXRT1050_CLK_END on]
 ---
 V1->V2:
-* Replace macros with values
-* Add tab for last pinctrl value
-V2->V3:
-* Remove imxrt1050-evk container
-* Remove unnecessary handles
-* 2 space tabs to 4
-V3->V4:
 * Nothing done
+V2->V3:
+* Added GPT binding
+V3->V4:
+* Change License to MIT or GPL-2
 ---
- .../bindings/pinctrl/fsl,imxrt1050.yaml       | 79 +++++++++++++++++++
- 1 file changed, 79 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.yaml
+ include/dt-bindings/clock/imxrt1050-clock.h | 73 +++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+ create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.yaml
+diff --git a/include/dt-bindings/clock/imxrt1050-clock.h b/include/dt-bindings/clock/imxrt1050-clock.h
 new file mode 100644
-index 000000000000..1278f7293560
+index 000000000000..e5d26be8621a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/fsl,imxrt1050.yaml
-@@ -0,0 +1,79 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/fsl,imxrt1050.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/include/dt-bindings/clock/imxrt1050-clock.h
+@@ -0,0 +1,73 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/*
++ * Copyright(C) 2019
++ * Author(s): Giulio Benetti <giulio.benetti@benettiengineering.com>
++ */
 +
-+title: Freescale IMXRT1050 IOMUX Controller
++#ifndef __DT_BINDINGS_CLOCK_IMXRT1050_H
++#define __DT_BINDINGS_CLOCK_IMXRT1050_H
 +
-+maintainers:
-+  - Giulio Benetti <giulio.benetti@benettiengineering.com>
-+  - Jesse Taube <Mr.Bossman075@gmail.com>
++#define IMXRT1050_CLK_DUMMY			0
++#define IMXRT1050_CLK_CKIL			1
++#define IMXRT1050_CLK_CKIH			2
++#define IMXRT1050_CLK_OSC			3
++#define IMXRT1050_CLK_PLL2_PFD0_352M		4
++#define IMXRT1050_CLK_PLL2_PFD1_594M		5
++#define IMXRT1050_CLK_PLL2_PFD2_396M		6
++#define IMXRT1050_CLK_PLL3_PFD0_720M		7
++#define IMXRT1050_CLK_PLL3_PFD1_664_62M		8
++#define IMXRT1050_CLK_PLL3_PFD2_508_24M		9
++#define IMXRT1050_CLK_PLL3_PFD3_454_74M		10
++#define IMXRT1050_CLK_PLL2_198M			11
++#define IMXRT1050_CLK_PLL3_120M			12
++#define IMXRT1050_CLK_PLL3_80M			13
++#define IMXRT1050_CLK_PLL3_60M			14
++#define IMXRT1050_CLK_PLL1_BYPASS		15
++#define IMXRT1050_CLK_PLL2_BYPASS		16
++#define IMXRT1050_CLK_PLL3_BYPASS		17
++#define IMXRT1050_CLK_PLL5_BYPASS		19
++#define IMXRT1050_CLK_PLL1_REF_SEL		20
++#define IMXRT1050_CLK_PLL2_REF_SEL		21
++#define IMXRT1050_CLK_PLL3_REF_SEL		22
++#define IMXRT1050_CLK_PLL5_REF_SEL		23
++#define IMXRT1050_CLK_PRE_PERIPH_SEL		24
++#define IMXRT1050_CLK_PERIPH_SEL		25
++#define IMXRT1050_CLK_SEMC_ALT_SEL		26
++#define IMXRT1050_CLK_SEMC_SEL			27
++#define IMXRT1050_CLK_USDHC1_SEL		28
++#define IMXRT1050_CLK_USDHC2_SEL		29
++#define IMXRT1050_CLK_LPUART_SEL		30
++#define IMXRT1050_CLK_LCDIF_SEL			31
++#define IMXRT1050_CLK_VIDEO_POST_DIV_SEL	32
++#define IMXRT1050_CLK_VIDEO_DIV			33
++#define IMXRT1050_CLK_ARM_PODF			34
++#define IMXRT1050_CLK_LPUART_PODF		35
++#define IMXRT1050_CLK_USDHC1_PODF		36
++#define IMXRT1050_CLK_USDHC2_PODF		37
++#define IMXRT1050_CLK_SEMC_PODF			38
++#define IMXRT1050_CLK_AHB_PODF			39
++#define IMXRT1050_CLK_LCDIF_PRED		40
++#define IMXRT1050_CLK_LCDIF_PODF		41
++#define IMXRT1050_CLK_USDHC1			42
++#define IMXRT1050_CLK_USDHC2			43
++#define IMXRT1050_CLK_LPUART1			44
++#define IMXRT1050_CLK_SEMC			45
++#define IMXRT1050_CLK_LCDIF_APB			46
++#define IMXRT1050_CLK_PLL1_ARM			47
++#define IMXRT1050_CLK_PLL2_SYS			48
++#define IMXRT1050_CLK_PLL3_USB_OTG		49
++#define IMXRT1050_CLK_PLL4_AUDIO		50
++#define IMXRT1050_CLK_PLL5_VIDEO		51
++#define IMXRT1050_CLK_PLL6_ENET			52
++#define IMXRT1050_CLK_PLL7_USB_HOST		53
++#define IMXRT1050_CLK_LCDIF_PIX			54
++#define IMXRT1050_CLK_USBOH3			55
++#define IMXRT1050_CLK_IPG_PDOF			56
++#define IMXRT1050_CLK_PER_CLK_SEL		57
++#define IMXRT1050_CLK_PER_PDOF			58
++#define IMXRT1050_CLK_DMA			59
++#define IMXRT1050_CLK_DMA_MUX			60
++#define IMXRT1050_CLK_GPT			70
++#define IMXRT1050_CLK_END			71
 +
-+description:
-+  Please refer to fsl,imx-pinctrl.txt and pinctrl-bindings.txt in this directory
-+  for common binding part and usage.
-+
-+properties:
-+  compatible:
-+    const: fsl,imxrt1050-iomuxc
-+
-+  reg:
-+    maxItems: 1
-+
-+# Client device subnode's properties
-+patternProperties:
-+  'grp$':
-+    type: object
-+    description:
-+      Pinctrl node's client devices use subnodes for desired pin configuration.
-+      Client device subnodes use below standard properties.
-+
-+    properties:
-+      fsl,pins:
-+        description:
-+          each entry consists of 6 integers and represents the mux and config
-+          setting for one pin. The first 5 integers <mux_reg conf_reg input_reg
-+          mux_val input_val> are specified using a PIN_FUNC_ID macro, which can
-+          be found in <include/dt-bindings/pinctrl/pins-imxrt1050.h>. The last
-+          integer CONFIG is the pad setting value like pull-up on this pin. Please
-+          refer to i.MXRT1050 Reference Manual for detailed CONFIG settings.
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        items:
-+          items:
-+            - description: |
-+                "mux_reg" indicates the offset of mux register.
-+            - description: |
-+                "conf_reg" indicates the offset of pad configuration register.
-+            - description: |
-+                "input_reg" indicates the offset of select input register.
-+            - description: |
-+                "mux_val" indicates the mux value to be applied.
-+            - description: |
-+                "input_val" indicates the select input value to be applied.
-+            - description: |
-+                "pad_setting" indicates the pad configuration value to be applied.
-+
-+    required:
-+      - fsl,pins
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    iomuxc: iomuxc@401f8000 {
-+        compatible = "fsl,imxrt1050-iomuxc";
-+        reg = <0x401f8000 0x4000>;
-+
-+        pinctrl_lpuart1: lpuart1grp {
-+            fsl,pins =
-+              <0x0EC 0x2DC 0x000 0x2 0x0	0xf1>,
-+              <0x0F0 0x2E0 0x000 0x2 0x0	0xf1>;
-+        };
-+    };
++#endif /* __DT_BINDINGS_CLOCK_IMXRT1050_H */
 -- 
 2.34.0
 
