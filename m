@@ -2,109 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096B1C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Dec 2021 10:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F84C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Dec 2021 15:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384674AbhLDKul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Dec 2021 05:50:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41652 "EHLO
+        id S235559AbhLEPiH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Dec 2021 10:38:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351571AbhLDKuk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Dec 2021 05:50:40 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C66C061751;
-        Sat,  4 Dec 2021 02:47:15 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id x6so21827088edr.5;
-        Sat, 04 Dec 2021 02:47:15 -0800 (PST)
+        with ESMTP id S235449AbhLEPiG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Dec 2021 10:38:06 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD30C061714;
+        Sun,  5 Dec 2021 07:34:39 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id o20so32704935eds.10;
+        Sun, 05 Dec 2021 07:34:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d77EM0tE3JUwSxHiDu+PhK1bKg9re3Pgc3NQ6IiDdU0=;
-        b=QREKril2aVYAeeErWGoUn7QGA7lzEfM8Bnfjg66RWZUwJmgfoNOH3BG8L9AxQPF6pJ
-         AvGgyjTeu8vqYR6+vSr3AwNS+BmJOjGSfLEf/EUDWeIKUQ7erkhAavWUsQJ3ZWn7mGys
-         mh7cNCCvpWRMx5iloQoly5kzF2tFucLZ7tiQyq3EUDIz4R1LFIynn2G3YFR9NiAUa8fb
-         iIdiX3mEsvJUXmWlt5RNrVvaHlM6yBG5Ej6fVjyU8OoqWTkaU94YMCe3yX3iVjtVIorW
-         pm8esUmh7dKNsphuRyVrmuozykq2O3iJyIL5YQ2CHLpY4Vdg3Nc/50LS+bRVVvYnVsci
-         XwaA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uCWVRIBty2ysTW9LxrCBVZ2lJJbgYXQd/K1AUKUM9lE=;
+        b=m6EM0vjYH3agoF3Xok1WIcUpDBDbqoqgu1qqYXCnFbemDd8ATnQ8LSbWE9BNlvwede
+         4Eez0YxxdSln5svizIZkPLFxXHINCUJzQIfQDEQ0+tY1LvguAo6pdYvhIAjB64EGxKc9
+         AoOfSJDvtQ1vPamqJtT2SIyqJYmnQVsl6mr9n72OcEpZlXeG14aGIWP4V5vOv4C20v35
+         yymId3qzLZP3LObA5p94ed+PAo6cInbQPEMN9c4krTvnZUqVvdEWnLssaShl4bBELcJN
+         RYjEMMj2JG7/pRrqtoZuAYP5e+0tdELh2xzqNANLcz9IhSa78Xsabe8RHYHv3k5yxFs3
+         cCzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d77EM0tE3JUwSxHiDu+PhK1bKg9re3Pgc3NQ6IiDdU0=;
-        b=pVaz0Dlr7wMe+vA1C9li3I7rttV6wPObfLjomzEMZqgETpZrP4Y1DB3hsRQC35Iiu7
-         tPut9dUTOFfHiQEFSDpJk4688R9vI3PfdeNJ9dngQ0H3lQB0dBZ1dAbUJ5tX+xbS1XId
-         oWNkjA6qbmZg3PaoC+FlFV8bRumfRu9YzLfd/MAyVo6Hd1EJjR+ig6TbWHm+BS8ZydQm
-         qrixLuMOmw2dz+Rnq0uELq5xuM8nwD2gIQP+eDOoxRy3pneVOwTvFvCNiz/u6rl36umH
-         SCFka1jZAmD+WVAFaUdV2nfYFMWu96VyAKMPDtAgkml0fFnQyJHDfAPN1vrNR5Wsi5Hp
-         h7SA==
-X-Gm-Message-State: AOAM532ZM0B1+iTrW9pnP+coHxCZ9826BwTsqJOQNK8C82hWxJXxmZo1
-        YIGVYbYMDvqvaeVAVpJBQo5rxazswteUnDw4Ulk=
-X-Google-Smtp-Source: ABdhPJzjNMGKt1kskPkry21udVYUmkbii2mprzGh/hM7XWBm/ujHf1wyM5vRF8TshW0guQMFwG8dkpaCrs1muwTCrMk=
-X-Received: by 2002:a17:907:1689:: with SMTP id hc9mr29466609ejc.445.1638614833775;
- Sat, 04 Dec 2021 02:47:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
-In-Reply-To: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sat, 4 Dec 2021 07:47:02 -0300
-Message-ID: <CAOMZO5B15PqGZcGi6zneiqAmaA7y9-tELpeV7xRFYJm0SPLYqA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/13] Add initial support for the i.MXRTxxxx SoC
- family starting from i.IMXRT1050 SoC.
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uCWVRIBty2ysTW9LxrCBVZ2lJJbgYXQd/K1AUKUM9lE=;
+        b=xXGI5BGetlpGTCOcK4aNPuJ0WJQF3SZe2e3mUtYKghOX7/gdOtXbKhRvFRbC1k+VIW
+         j0+d9iizRt0z7jqYNG8gVYuz1jZYiGslIm2jcJn+ti9nzqJIcTg6EWECoYb7VIQTeCt0
+         AteePsg6Yhbc9FPtIe15JqyCIMpzSx+9zjYVMN1rxuhxQuix3/tXosVh66oTyp/zv5WQ
+         j2L9UC6HNAuqPYXWu6KRJldUsxzm/brvUmSKCQnVnrFag2I/twTKQHc675u7jKzVxuHZ
+         IgK7sUXRzrJ4UCZjJ7oxQSPptrfTu4jxdpHas7+0A3tBg+BhhNRrjJV7EdcRYTnvTVRe
+         qgdQ==
+X-Gm-Message-State: AOAM531i1S3RAzIMJOaMPfeVOmygrv5Xvr0C3K/YA/FdRDPya+hnAaCq
+        8imElPD+7VNuHfFKpM7s4QIKqNt8ZiznsaBW
+X-Google-Smtp-Source: ABdhPJxCNkgizFyBLpcFDeokmUs3vnv0IUg1QQtE31Pu9qVoohNJAdy0nySzwt78D/EODAthvIOO+Q==
+X-Received: by 2002:aa7:c714:: with SMTP id i20mr45489449edq.180.1638718478149;
+        Sun, 05 Dec 2021 07:34:38 -0800 (PST)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.googlemail.com with ESMTPSA id sa17sm5529941ejc.123.2021.12.05.07.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Dec 2021 07:34:37 -0800 (PST)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 0/6] Initial Samsung Galaxy A8 (2018) support
+Date:   Sun,  5 Dec 2021 16:32:54 +0100
+Message-Id: <20211205153302.76418-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jesse,
+Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+This phone is also known as "jackpotlte" and under the model name
+"SM-A530F". In its current state this should work on most if not all
+Exynos7885 phones/devices released.
 
-On Sat, Dec 4, 2021 at 3:10 AM Jesse Taube <mr.bossman075@gmail.com> wrote:
+As of now, it supports I2C nodes (all disabled by default) and UART
+console with basic clock support in place.
 
-> Giulio Benetti (5):
->   ARM: imx: add initial support for i.MXRT10xx family
->   pinctrl: freescale: Add i.MXRT1050 pinctrl driver support
->   dt-bindings: imx: Add clock binding for i.MXRT1050
->   ARM: dts: imx: add i.MXRT1050-EVK support
->   ARM: imxrt1050_defconfig: add i.MXRT1050 defconfig
->
-> Jesse Taube (8):
->   dt-bindings: pinctrl: add i.MXRT1050 pinctrl binding doc
->   ARM: dts: imxrt1050-pinfunc: Add pinctrl binding header
->   dt-bindings: clock: imx: Add documentation for i.MXRT clock
->   clk: imx: Add initial support for i.MXRT clock driver
->   dt-bindings: serial: fsl-lpuart: add i.MXRT compatible
->   tty: serial: fsl_lpuart: add i.MXRT support
->   dt-bindings: mmc: fsl-imx-esdhc: add i.MXRT compatible string
->   mmc: sdhci-esdhc-imx: Add sdhc support for i.MXRT series
+To access the UART console on the A8, there are two methods:
+  -You can open up the device and solder directly to some debug pins
+   close to the display connector.
+  -Through I2C you can set the S2MU004 MFD chip to multiplex the SoC's
+   UART lines to the d+ and d- on the USB Type-C port of the device.
 
-The emmc and pinctrl patches have already been applied and they are available
-in linux-next. No need to resend them.
+Note that UART works on 1.8 volts, so plugging in a normal USB cable
+while multiplexed to UART may fry the SoC.
+
+Everything was tested through UART by using a minimal driver that sets
+the S2MU004 to multiplex UART.
+
+The preferred way to boot this device is using my Minimal S-Boot Wrapper
+[1] to work around some issues caused by the stock, and non-replacable
+Samsung S-Boot bootloader.
+
+[1] https://github.com/VDavid003/minimal_sboot_wrapper
+
+David Virag (6):
+  clk: samsung: clk-pll: Add support for pll1417x
+  dt-bindings: clock: Add bindings definitions for Exynos7885 CMU
+  dt-bindings: clock: Document Exynos7885 CMU bindings
+  clk: samsung: Add initial Exynos7885 clock driver
+  dt-bindings: arm: samsung: document jackpotlte board binding
+  arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../clock/samsung,exynos7885-clock.yaml       | 166 ++++
+ arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
+ .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 929 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 444 +++++++++
+ drivers/clk/samsung/Makefile                  |   1 +
+ drivers/clk/samsung/clk-exynos7885.c          | 680 +++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   1 +
+ drivers/clk/samsung/clk-pll.h                 |   1 +
+ include/dt-bindings/clock/exynos7885.h        | 115 +++
+ 11 files changed, 2442 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos7885.c
+ create mode 100644 include/dt-bindings/clock/exynos7885.h
+
+-- 
+2.34.1
+
