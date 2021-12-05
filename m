@@ -2,58 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2694EC433F5
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Dec 2021 15:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2455C4332F
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Dec 2021 16:45:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234328AbhLEPqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Dec 2021 10:46:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236221AbhLEPqG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Dec 2021 10:46:06 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F63C061714;
-        Sun,  5 Dec 2021 07:42:39 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id e3so32870670edu.4;
-        Sun, 05 Dec 2021 07:42:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=uPhNvczeuSunjNtIHb635StOQzdWe5hSGlJOVerCe70=;
-        b=AShHHdFzo/7Fw5V2v01+h5zTFl1DEJtXY04/5Pd6XjF5unBpg8/mpkD3FT6C/j//lV
-         CCqHG5v/6IWhxdkhfkJSyoB3PPcjKYhUTqd2xETGDp7439V/12PKg1Gjwr5ncwna14RI
-         ns1kd+8GIpIfPpUpRTYxEydmp+fda9uABXPUXYD5BOdmSM6u+hePrY68GiQKokNIeaQ+
-         u4m1fPU8jRZ9cakLFzmTNSGK4iyBrVtnBplS+QaS5rSCrLa0zRrEHDvg1xqQUtNTPPkP
-         PvGAxBzs0sL7wseo6l/jts4SDBFdBo5go7+IStpQtb7YYN0l0X8PU+LSPlaQObUN4c/j
-         XRJg==
+        id S235963AbhLEQsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Dec 2021 11:48:53 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49832
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235939AbhLEQsx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Dec 2021 11:48:53 -0500
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 075BF3F1BF
+        for <linux-clk@vger.kernel.org>; Sun,  5 Dec 2021 16:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1638722725;
+        bh=Ynkq06ZARMCOYrhIwJJNWg9AtV11IKTUxlCiNMi7yFs=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=dljC7F68rKvH1urViLspgEBeopvIOV6rXIGr9pALyoOvebzQBcJ6n92EfAfZk/9KI
+         9TdoJmyPOH5aTQ0+VmOM58ZiUNrOEBKiRAb/Ldy+Y3e+cBFi/Ig4DRGndUW04ncxq3
+         jyIweooyRIb0BRqvtq8VEtjEccRNBXNhzPCh7TcaFsmskZsU5oRsIrUrHK7/MoQ+0R
+         rBkWdAruCOK+3BqiYOFUFa1Y4C2sNNYKGj513eSVaM9WH359H2IOFE7kte/LbL0jqx
+         2Eaa2vpwdgcgFBatT2tCfb31cnF5HeQt4aQLESFiWpLWw9agILpdwJM5Kn+nAPcOGK
+         cX1P9EDCRvO/A==
+Received: by mail-lj1-f197.google.com with SMTP id k24-20020a2e9a58000000b00218c7914524so2916774ljj.17
+        for <linux-clk@vger.kernel.org>; Sun, 05 Dec 2021 08:45:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=uPhNvczeuSunjNtIHb635StOQzdWe5hSGlJOVerCe70=;
-        b=dF95hcaF50Q70GYDzXjyJCxPIzBDeChuOPoiVYuv7vQIjg0J5fsREJjRneytvQOSfQ
-         AZJihnbdRIVd5EouFFGhhKcWFPuNz6vtNUlLGRUPzm7eRSo0ogmT0jUmtAcCiSLAqDSq
-         alp+noBT0B3fw+3dutyvRSLQAvx6hN4PrcRtF7js1NHgsSvu393hAzxYKLEm4filsDo2
-         Ble+Qobn87Z1lAzRPJytnvJq713qk6aKTbDyXemo78OYuaDqp94Cs3TLSIKzsnULRuAB
-         uevmBZGzGtZl3hOZ9OKtmmLgZDA4f228iGkEd4M2uYBKRkr9D+ojxlPqlhnGtz2hl7y4
-         4b2g==
-X-Gm-Message-State: AOAM530joAK0ShT7RwDVv1gywnJjb0Qy5EDF4xi4U0Sz61DKLL/OoAIB
-        eQibF0WD8BIcwBySXT6VDNw=
-X-Google-Smtp-Source: ABdhPJyDvq3mVFxjeVmdQzh+3GTCIxa+91K4K5U0Tont7GnRAgOdwRKi2+kgf1u5AInXTiwrz1ZWoQ==
-X-Received: by 2002:a17:906:d930:: with SMTP id rn16mr40668186ejb.223.1638718957716;
-        Sun, 05 Dec 2021 07:42:37 -0800 (PST)
-Received: from ?IPv6:2a02:ab88:368f:2080:eab:126a:947d:3008? ([2a02:ab88:368f:2080:eab:126a:947d:3008])
-        by smtp.gmail.com with ESMTPSA id j4sm5991820edk.64.2021.12.05.07.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Dec 2021 07:42:37 -0800 (PST)
-Message-ID: <b5d698b430b45b1b29e28b33b62702dd7deeaa76.camel@gmail.com>
-Subject: Re: [PATCH 0/6] Initial Samsung Galaxy A8 (2018) support
-From:   David Virag <virag.david003@gmail.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Ynkq06ZARMCOYrhIwJJNWg9AtV11IKTUxlCiNMi7yFs=;
+        b=GeVFB3+zC//EV9GQ3gg5+Dan80sAxunH71NMgLNUCvfA0CvalQGWqESpi8z0HBRxmR
+         qrDuuLM6eOVMgW5ppj+qLNGiLibbRhmkB0XNpWW+tzw9CjrVQzJbtgx4BMfk5tECCvkg
+         EJecRU3UiEC5gi1P13Y44be29tNBeDSSZmAI2LKiG8ou3x9pLHipZVsY8GmGafez486j
+         a/5MITsFYfiELzKZvjlec3y3WXqtJCSwDLxJZoXUNhfwMsXGT+Gs5ayAtCx6oo/8mwPd
+         V4/d5O/hPEvQCRv/vZn6mvgw5e1hXXCn9PnqzJ01qSSmc8E2BIcF4nGeZWGMasz3A600
+         BCQg==
+X-Gm-Message-State: AOAM531GLlUlXj9ZqDt42HxSPPuZQdNo9dGPa8caSamflje9vXAVesH5
+        iFi5Z0kSjSviZKXk5qhnScGOemESXU4xwHbmcTmPFxjzibMK0H/l9hFOuNrjWX87O0TUvRJUGmk
+        0lVybM84420KgmND8GMTkUfxvyW9IZ554SLT19Q==
+X-Received: by 2002:a05:6512:3718:: with SMTP id z24mr30354655lfr.563.1638722724466;
+        Sun, 05 Dec 2021 08:45:24 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwRuYQWcf9Blj+BSef7qa3hqIyQBNi63M86AiQYiGhVbFi71sm/nCqsjP+YXZtzSaItqny9OQ==
+X-Received: by 2002:a05:6512:3718:: with SMTP id z24mr30354638lfr.563.1638722724308;
+        Sun, 05 Dec 2021 08:45:24 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id v66sm1118752lfa.6.2021.12.05.08.45.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Dec 2021 08:45:23 -0800 (PST)
+Message-ID: <b650681f-62e4-8bff-37de-ea9066559072@canonical.com>
+Date:   Sun, 5 Dec 2021 17:45:22 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 2/6] dt-bindings: clock: Add bindings definitions for
+ Exynos7885 CMU
+Content-Language: en-US
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -62,24 +72,32 @@ Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Sun, 05 Dec 2021 16:41:53 +0100
-In-Reply-To: <20211205153302.76418-1-virag.david003@gmail.com>
 References: <20211205153302.76418-1-virag.david003@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.2 
-MIME-Version: 1.0
+ <20211205153302.76418-3-virag.david003@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211205153302.76418-3-virag.david003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I accidentally forgot to CC Sam Protsenko, so I'll CC him in this
-email, so hopefully it gets to him!
+On 05/12/2021 16:32, David Virag wrote:
+> Just like on Exynos850, the clock controller driver is designed to have
+> separate instances for each particular CMU, so clock IDs start from 1
+> for each CMU in this bindings header too.
+> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+>  include/dt-bindings/clock/exynos7885.h | 115 +++++++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/exynos7885.h
 
-I think it would have been important to CC him as he is the author of
-the original Exynos850 clock driver that the initial 7885 clock driver
-included in this series was based on. I just realized I didn't do it
-while the emails were already being sent.
 
-Best Regards,
-David
+This should be patch 1.
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+Best regards,
+Krzysztof
