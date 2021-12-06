@@ -2,139 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC41C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 20:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C72C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 22:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349635AbhLFU1W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Dec 2021 15:27:22 -0500
-Received: from smtpweb146.aruba.it ([62.149.158.146]:60316 "EHLO
-        smtpweb146.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349484AbhLFU1W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 15:27:22 -0500
-X-Greylist: delayed 420 seconds by postgrey-1.27 at vger.kernel.org; Mon, 06 Dec 2021 15:27:21 EST
-Received: from [192.168.50.18] ([146.241.138.59])
-        by Aruba Outgoing Smtp  with ESMTPSA
-        id uKPnm567IrmmOuKPnm6yxl; Mon, 06 Dec 2021 21:16:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-        t=1638821810; bh=Qdhx0uLObD6VmjbgQi/LtOmpCJZiNuHaAIau9CFzCwQ=;
-        h=Subject:To:From:Date:MIME-Version:Content-Type;
-        b=b0fR8m/obSGPPpKT7k9c0PgnumBdaFeeclYGZw/vBCPuWkIOLaghSlcg5YGuh/2Yx
-         3p/3sokWT+onlNpbHIfkJKvQq+KqB2r3CVpynKTrSvp8L1opy7gu7aYo9m8LuS19gV
-         UdSgXyxrdY5XWSA4fZDYav5Edgnja4Z52YzgYRgTUhHR+Bqv2kpSq3v4Mh/iUeoexN
-         2e5Gq9xENYFTvMjbYfPARKbXqgw+cwYH+Oaxf+KVPC707c/jlHK/ri7tO6yDhncsmq
-         12ldkM0pHniA2S2mrLyp310xclrrhTubuhYwXNvo1fmEg7dwGInk8uxL+1NDkYTuNR
-         UUSX51Evuby5g==
-Subject: Re: [PATCH v4 13/13] ARM: imxrt1050_defconfig: add i.MXRT1050
- defconfig
-To:     Jesse Taube <mr.bossman075@gmail.com>, linux-imx@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
- <20211204061042.1248028-14-Mr.Bossman075@gmail.com>
-From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
-Message-ID: <ab5026f8-4881-6483-5a42-121860a02c10@benettiengineering.com>
-Date:   Mon, 6 Dec 2021 21:16:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S1348908AbhLFWYq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Dec 2021 17:24:46 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:39780 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236193AbhLFWYq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 17:24:46 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 27597B815AE;
+        Mon,  6 Dec 2021 22:21:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B47C5C341C6;
+        Mon,  6 Dec 2021 22:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638829274;
+        bh=F8ejg9ujilnXLjN5vbT63HubpoxPpXXzuMEESv4d67U=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=jkYt58Xa3kuSS9fJfeEPEXJ/6T1lSPT+39FQSw5I1gqLweDsYjI/rsEpb+UeU2Yzb
+         5LcLGxyDrJihkAGqe1hbolCR8vq/MT14pSFwEKCkUKgfmhj5AzBFELX/aQ0Xuw8yHI
+         pICL46wRODVlVjpFXWLQGmIfuGxRqMJZcSTwZI+6ckgO2T8gSBXwKcZAsJfQzxCTxF
+         ZKrhV+Joerp/6Nnc0KdLWWv3zBtFji0CmV5DW7wQkan/NxdMzPD1Y2nwnJZ6m2EX4V
+         /A63auMXVuGOoiZDWr9V1ZLgdMTjSg3kTcIAuWB3FxDDEZtUyW0KDFTmRvRtz44SZL
+         t8Zrmrzj33BCA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20211204061042.1248028-14-Mr.Bossman075@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCbBD1k9Iy5MXE/bMLzKubSwohvt/2zyaZBzfKOfH44CiqXeP9aQj1PLrpsIUVgbO9jY8DsjMVABgzBI2+fgtS5mNkRkACOKuuaewQmfzFc6UFp3gWVy
- sPnsdeNJ8N7Zt9fhBZMEPtv72CBM9SgWED+4dog4RukHKZVyPjpKCgRmg40z9+stiY5m/6krLcnj3PJszuA5/AJw1au5Pb/gAJ0SVysVeyLED8mFi5TQNsrY
- KvXmLJnVM9nYkycSRPV2WykSZNjS4WU9TeDyhtydQMjQOoDVMJbfzEfB7dLQxhrcUpQEpF1Q+6sleQOn7OftMVG/6dPbDAkMyWgzXXIqlKaRMjOU5yljGLli
- 3gwHf3dg2ulJ+IEkpPs3NnENcrZNR3nYvQJBad3+tTwzRNvsexNa3oJlwy4f7/UiZ6Mdz3FNCoADbM4u4YFTqsLTRIG1eLHZy+E9wqQCwA9okDysgGIE35Ju
- QzVPk9720+2mK/iRUtLeX/8rRnAhfSD+6HUDKg4IXwIDA8aHMUTZGb9bNxumBphuZr80WCQ7K4gURi6Y/lOZAiGuRGtvnbUXvWv+nG1886hTSmTfe+ITsRPB
- pf6brlUlLnh+erfLhbZ2Tc/Qg4y16k6g417t651LCH7GOWShXgmUJMGR7qpU/dMYRPauQPcN1CXuwOt2Yrw3ppOhFBYn1PjrOTd+dmNkxhx/nIFBLMs/rhSt
- yg3FQv+XEkTFiGeFDoTMURFY0ydnTpkCP3XHEb2bXjXsxBkgq7InqJy2137xef28/SfmHtyvdyDbzHUg+CuLshmFx8Dt+G6LY6YOM203PF1ZwRmuOPo0P80p
- qJLvSQW+GeaQnfAJHI+zwQ76J/JrfFVDql0587t8bzItbvMuEeK5sPY4sVkijWqCwKLxnBqcQZjlqzO/viUaodxQr3y5IjtdmukmPZGlUWmucq3yKjX9Q39Q
- M3EbTWzXb9umRWdcR47SKsfhwEBQPOyJvV1fnWBNlzAXvjpHH0WUdERwKllPZWb6G8u3IWy6HW2I9duv0kXe8m5tcZMqkoCXMdwA4HXo1LbL1WA/eFZHmPJG
- xJt6REMY58OsrNqS07uCQzV+xxktX2VXinr9isx15PPrDX4MUJ+G24aywKbpzfA2dXzZwAQ+jufKNiGd2JiW/iQQIsxbm68O/7Q=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Ya4rtHSS1tLm7Gbi@builder.lan>
+References: <20211031020715.21636-1-shawn.guo@linaro.org> <20211031020715.21636-4-shawn.guo@linaro.org> <Ya4rtHSS1tLm7Gbi@builder.lan>
+Subject: Re: [PATCH 3/3] clk: qcom: smd-rpm: Drop binary value handling for buffered clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawn.guo@linaro.org>
+Date:   Mon, 06 Dec 2021 14:21:13 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211206222114.B47C5C341C6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jesse,
+Quoting Bjorn Andersson (2021-12-06 07:26:44)
+> On Sat 30 Oct 21:07 CDT 2021, Shawn Guo wrote:
+>=20
+> > The buffered clock binary value handling added by commit 36354c32bd76
+> > ("clk: qcom: smd-rpm: Add .recalc_rate hook for clk_smd_rpm_branch_ops")
+> > is redundant, because buffered clock is branch type, and the binary
+> > value handling for branch clock has been handled by
+> > clk_smd_rpm_prepare/unprepare functions.
+> >=20
+> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+>=20
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-On 04/12/21 07:10, Jesse Taube wrote:
-> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> 
-> Add i.MXRT1050 defconfig, that will be the basis for the i.MXRT family.
-
-here we need a generic imxrt_defconfig file for i.MXRT1xxx family, like 
-sunxi_defconfig, stm32_defconfig etc.
-
-Kind regards
--- 
-Giulio Benetti
-Benetti Engineering sas
-
-> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1->V2:
-> * Nothing done
-> V2->V3:
-> * Nothing done
-> V3->V4:
-> * Remove unnecessary CONFIGs
-> * Add futex suport after "ARM: 9122/1: select HAVE_FUTEX_CMPXCHG"
-> 9d417cbe36eee7afdd85c2e871685f8dab7c2dba
-> ---
->   arch/arm/configs/imxrt_defconfig | 35 ++++++++++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
->   create mode 100644 arch/arm/configs/imxrt_defconfig
-> 
-> diff --git a/arch/arm/configs/imxrt_defconfig b/arch/arm/configs/imxrt_defconfig
-> new file mode 100644
-> index 000000000000..52dba3762996
-> --- /dev/null
-> +++ b/arch/arm/configs/imxrt_defconfig
-> @@ -0,0 +1,35 @@
-> +# CONFIG_LOCALVERSION_AUTO is not set
-> +CONFIG_BPF_SYSCALL=y
-> +CONFIG_SCHED_AUTOGROUP=y
-> +# CONFIG_MMU is not set
-> +CONFIG_ARCH_MXC=y
-> +CONFIG_SOC_IMXRT=y
-> +CONFIG_SET_MEM_PARAM=y
-> +CONFIG_DRAM_BASE=0x80000000
-> +CONFIG_DRAM_SIZE=0x02000000
-> +CONFIG_BINFMT_FLAT=y
-> +CONFIG_UEVENT_HELPER=y
-> +CONFIG_DEVTMPFS=y
-> +CONFIG_DEVTMPFS_MOUNT=y
-> +CONFIG_IMX_WEIM=y
-> +CONFIG_LEGACY_PTY_COUNT=2
-> +CONFIG_SERIAL_FSL_LPUART=y
-> +CONFIG_SERIAL_FSL_LPUART_CONSOLE=y
-> +CONFIG_SERIAL_DEV_BUS=y
-> +CONFIG_PINCTRL_IMXRT1050=y
-> +CONFIG_GPIO_MXC=y
-> +CONFIG_MMC=y
-> +CONFIG_MMC_SDHCI=y
-> +CONFIG_MMC_SDHCI_PLTFM=y
-> +CONFIG_MMC_SDHCI_ESDHC_IMX=y
-> +CONFIG_DMADEVICES=y
-> +CONFIG_FSL_EDMA=y
-> +CONFIG_CLK_IMXRT1050=y
-> +CONFIG_EXT4_FS=y
-> +CONFIG_EXT4_FS_POSIX_ACL=y
-> +CONFIG_EXT4_FS_SECURITY=y
-> +CONFIG_VFAT_FS=y
-> +CONFIG_FAT_DEFAULT_UTF8=y
-> +CONFIG_EXFAT_FS=y
-> +CONFIG_NLS_ASCII=y
-> +CONFIG_NLS_UTF8=y
-> 
-
+Does that mean you picked it up? Or you want me to pick it up?
