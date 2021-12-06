@@ -2,103 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20530C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 14:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E8CC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 15:01:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344231AbhLFO26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Dec 2021 09:28:58 -0500
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:35646 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344236AbhLFO25 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 09:28:57 -0500
-Received: by mail-ot1-f46.google.com with SMTP id x43-20020a056830246b00b00570d09d34ebso13837178otr.2;
-        Mon, 06 Dec 2021 06:25:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=CWGHOhMZUfniE+Y2ng6wuO7zGULF9CPIy3yGJ1kJWX0=;
-        b=DgwFIAmc9k2dWMF6EQVDHIiNE35cuKEvoa+pjnuDeEpoU1T9GbQbFPHDX0ItXFnlwY
-         ddRE4uy8P1xniuAKAitMKdSo4lZwJ3GJNZWMq4J+hQndcEwYphV6FuJysgne/pqPSfcw
-         uKKRU+YgChofbHOQCk0QhwL6P97XQiQBgIav/9/UTfZr9De6WGWtkblnH9e6AxfPlhbm
-         uTQbWHRjacuypQvvrFtke+Ns08YssWEPkGzTiuoNtc949z5Nmq37UvnmHKXZCKB69UZb
-         A6BJMbFvASPBGFL59M+GF6AiW7RI4VTr5x1V/IaEfEKM3wnDijThouPnBSfokHFORpX5
-         viQw==
-X-Gm-Message-State: AOAM533JlCKddPbz3MaK9BV/OnSMpny5CgEvxXy3hMcpEA4kDTlFMhdk
-        R+VvpghYxn4GoSlytayN6Q==
-X-Google-Smtp-Source: ABdhPJyfp+sRZSmmxcQQNS5FVwHTA4gbp/9HMnapB0bZgOO+3eG1BRDTnxJZIBTFqjfhvJMpWKKcbg==
-X-Received: by 2002:a9d:12c:: with SMTP id 41mr30003581otu.322.1638800727961;
-        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id s2sm2197803otr.69.2021.12.06.06.25.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 06:25:27 -0800 (PST)
-Received: (nullmailer pid 1976294 invoked by uid 1000);
-        Mon, 06 Dec 2021 14:25:22 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20211205230804.202292-3-virag.david003@gmail.com>
-References: <20211205230804.202292-1-virag.david003@gmail.com> <20211205230804.202292-3-virag.david003@gmail.com>
-Subject: Re: [PATCH v3 2/7] dt-bindings: clock: Document Exynos7885 CMU bindings
-Date:   Mon, 06 Dec 2021 08:25:22 -0600
-Message-Id: <1638800722.490043.1976293.nullmailer@robh.at.kernel.org>
+        id S1345149AbhLFPE2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Dec 2021 10:04:28 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:37142 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1345158AbhLFPEB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 10:04:01 -0500
+X-IronPort-AV: E=Sophos;i="5.87,291,1631545200"; 
+   d="scan'208";a="102982266"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2021 00:00:30 +0900
+Received: from localhost.localdomain (unknown [10.226.93.57])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DC6BE43B6D99;
+        Tue,  7 Dec 2021 00:00:27 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/3] Add Mali-G31 GPU support for RZ/G2L SoC
+Date:   Mon,  6 Dec 2021 15:00:22 +0000
+Message-Id: <20211206150025.15703-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 06 Dec 2021 00:07:56 +0100, David Virag wrote:
-> Provide dt-schema documentation for Exynos7885 SoC clock controller.
-> Description is modified from Exynos850 clock controller documentation as
-> I couldn't describe it any better, that was written by Sam Protsenko.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> Signed-off-by: David Virag <virag.david003@gmail.com>
-> ---
-> Changes in v2:
->   - Fixed double : in description
->   - Added R-b tag by Krzysztof Kozlowski
-> 
-> Changes in v3:
->   - Nothing
-> 
->  .../clock/samsung,exynos7885-clock.yaml       | 166 ++++++++++++++++++
->  1 file changed, 166 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-> 
+RZ/G2L SoC embeds Mali-G31 bifrost GPU.
+This patch series aims to add support for the same
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+It is tested with latest drm-misc-next + mesa 21.3.0 + 
+out of tree patch for (du + DSI) + 
+platfrom mesa configuration for RZ/G2L.
 
-yamllint warnings/errors:
+Tested the kmscube application.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dts:21.47-46.11: Warning (unit_address_format): /example-0/clock-controller@0x10010000: unit name should not have leading "0x"
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.example.dt.yaml: example-0: 'clock-controller@0x10010000' does not match any of the regexes: '.*-names$', '.*-supply$', '^#.*-cells$', '^#[a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}$', '^[a-zA-Z][a-zA-Z0-9,+\\-._]{0,63}@[0-9a-fA-F]+(,[0-9a-fA-F]+)*$', '^__.*__$', 'pinctrl-[0-9]+'
-	From schema: /usr/local/lib/python3.8/dist-packages/dtschema/schemas/dt-core.yaml
+test logs:-
+root@smarc-rzg2l:~# kmscube
+Using display 0xaaaadb6e7d30 with EGL version 1.4
+===================================
+EGL information:
+  version: "1.4"
+  vendor: "Mesa Project"
+.....
+===================================
+OpenGL ES 2.x information:
+  version: "OpenGL ES 3.1 Mesa 21.3.0"
+  shading language version: "OpenGL ES GLSL ES 3.10"
+  vendor: "Panfrost"
+  renderer: "Mali-G31 (Panfrost)"
+  ....
+===================================
+^C
 
-doc reference errors (make refcheckdocs):
+root@smarc-rzg2l:~# cat /proc/interrupts | grep panfrost
+ 82:     587287          0     GICv3 186 Level     panfrost-job
+ 83:          2          0     GICv3 187 Level     panfrost-mmu
+ 84:          8          0     GICv3 185 Level     panfrost-gpu
 
-See https://patchwork.ozlabs.org/patch/1563783
+root@smarc-rzg2l:~# cat /sys/class/devfreq/11840000.gpu/trans_stat
+     From  :   To
+           :  50000000  62500000 100000000 125000000 200000000 250000000 400000000 500000000   time(ms)
+*  50000000:         0         0         0         0         0         0         0         0        72
+   62500000:         0         0         0         0         0         0         0         0         0
+  100000000:         0         0         0         0         0         0         0         0         0
+  125000000:         0         0         0         0         0         0         0         1        68
+  200000000:         0         0         0         0         0         0         0         1        68
+  250000000:         1         0         0         0         0         0         0         0        84
+  400000000:         0         0         0         0         0         0         0         0         0
+  500000000:         0         0         0         1         1         1         0         0       736
+Total transition : 6
+root@smarc-rzg2l:~# kmscube
+Using display 0xaaaaf7a421b0 with EGL version 1.4
+===================================
+EGL information:
+  version: "1.4"
+  vendor: "Mesa Project"
+  .....
+===================================
+OpenGL ES 2.x information:
+  version: "OpenGL ES 3.1 Mesa 21.3.0"
+  shading language version: "OpenGL ES GLSL ES 3.10"
+  vendor: "Panfrost"
+  renderer: "Mali-G31 (Panfrost)"
+  ......
+===================================
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+root@smarc-rzg2l:~#
+root@smarc-rzg2l:~#
+root@smarc-rzg2l:~# cat /sys/class/devfreq/11840000.gpu/trans_stat
+     From  :   To
+           :  50000000  62500000 100000000 125000000 200000000 250000000 400000000 500000000   time(ms)
+*  50000000:         0         0         0         0         0         0         0         1       144
+   62500000:         0         0         0         0         0         0         0         0         0
+  100000000:         0         0         0         0         0         0         0         9       524
+  125000000:         0         0         9         0         0         0         0         3      2544
+  200000000:         0         0         0        11         0         0         0        46      3304
+  250000000:         1         0         0         0        33         0         0         0      7496
+  400000000:         0         0         0         0        16        19         0         0      2024
+  500000000:         1         0         0         1         8        15        35         0      4032
+Total transition : 208
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Platform specific Mesa patch for RZ/G2L
+---------------------
+src/gallium/targets/dri/meson.build
++               'rcar-du_dri.so',
+src/gallium/targets/dri/target.c
++DEFINE_LOADER_DRM_ENTRYPOINT(rcar_du)
 
-pip3 install dtschema --upgrade
+V1->V2:
+ * Removed clock patches from this seies, as it is accepted for 5.17
+ * Added Rb tag from Geert
+ * Added reset-names required property for RZ/G2L and updated the board dtsi.
 
-Please check and re-submit.
+Biju Das (3):
+  dt-bindings: gpu: mali-bifrost: Document RZ/G2L support
+  arm64: dts: renesas: r9a07g044: Add Mali-G31 GPU node
+  arm64: dts: renesas: rzg2l-smarc-som: Add vdd core regulator
+
+ .../bindings/gpu/arm,mali-bifrost.yaml        | 39 ++++++++++-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    | 65 +++++++++++++++++++
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 13 ++++
+ 3 files changed, 115 insertions(+), 2 deletions(-)
+
+-- 
+2.17.1
 
