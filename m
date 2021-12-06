@@ -2,85 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F41C43217
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 15:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F207C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 15:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357693AbhLFPSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Dec 2021 10:18:21 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:42679 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358090AbhLFPQ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 10:16:26 -0500
-Received: by mail-ua1-f51.google.com with SMTP id t13so20168001uad.9;
-        Mon, 06 Dec 2021 07:12:57 -0800 (PST)
+        id S1385655AbhLFPo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Dec 2021 10:44:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358782AbhLFPia (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 10:38:30 -0500
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A7B7C08EB29
+        for <linux-clk@vger.kernel.org>; Mon,  6 Dec 2021 07:24:28 -0800 (PST)
+Received: by mail-ot1-x32e.google.com with SMTP id v15-20020a9d604f000000b0056cdb373b82so14038613otj.7
+        for <linux-clk@vger.kernel.org>; Mon, 06 Dec 2021 07:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4VchXGJRi71YWOB3jfH3EvBS4JbDgo7AC6aCyYRNxBo=;
+        b=hRBhG4h3uAW80lbyu5dGURg+fH9Rklm6Q1dqgkwjDS1YPldKKhm1kxwSdvOQk9F6xY
+         HQm0jRriMz15FczzIezD0t1LHyQQpg4TUT2QuiE0HKS9N4n4UiHpFZ1X8svb+02nJCSj
+         lN5hQBzVtC0a4ooTSmIguHWeWPl1UuZGeMxDXV4kPzGmlOe2Ceqt6NAK34oj8FxI5rZ1
+         BLAWfEpXN71e92fNXx8KzDsVN0i80mBYtkf7tTpVCcdtfRWwpqN34duabRcvLTDyNyOb
+         PIL6SW/1IU+Psqg6sYBB8YllygFRB21Y6/RxftM6ucBGLHSgjoFp/6Nfo1ACDB69PQ4b
+         b2tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aizL4V3R6kz8WyT46b5iR9KQsWFerEJyjc+TMAAR37s=;
-        b=DvSLc5ZECUpLiQNTvggoWbjgSk/Z8eowSeBgdNSTlG6SJBIAg1DRIayBz93enz828q
-         0wv4rNDM8qjhTagcie7xhFZvmjPuyQuo3HaHvYzMvsZPehnRj7oKBHYyy2WOLqIA7Vb/
-         PuAWm68PGY3M9qU21Pt9MtkOYU32NCraqGvbUZaKpADcPsDH9sLZNVxh76yEvRR1SC7s
-         +aO0nTgiR6PMq5SFWKATGAa0DBkoHOCZ/fKDpJ2D+eyWWAOLPN6+YHCZ8vENzVBXf8+R
-         JSjRw5fxl0/6vcAau8mWJ11A/DwrzhkvUAC6qKRUbvWslfxZQnS0+KlSUiGL5REGronN
-         ga+w==
-X-Gm-Message-State: AOAM531VVWV3I8l/wvywsT1hOpyj3Ps5YZJwwbrwF77+CSY9icsapCwD
-        gqFM5pX1OgRMvUy5PP2c39i1/8Mv52QnqQ==
-X-Google-Smtp-Source: ABdhPJxuhn287b6ddzQ8GQW49BAYZ8lCqCZa7SuGLKLR7gD5FO8oMIC0u0iE1DkbERc0xc0uV3eoXQ==
-X-Received: by 2002:ab0:3c9f:: with SMTP id a31mr42399445uax.134.1638803576964;
-        Mon, 06 Dec 2021 07:12:56 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id y22sm4223565vsy.33.2021.12.06.07.12.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Dec 2021 07:12:56 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id s1so7021332vks.9;
-        Mon, 06 Dec 2021 07:12:56 -0800 (PST)
-X-Received: by 2002:a1f:9f04:: with SMTP id i4mr41059573vke.33.1638803576344;
- Mon, 06 Dec 2021 07:12:56 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4VchXGJRi71YWOB3jfH3EvBS4JbDgo7AC6aCyYRNxBo=;
+        b=HKvzaLH0+r5+9HvO3+Dq9HXYHImTdx8RPenljf1NKePFByVhYfvkTPgkGIS59eGYNc
+         WYnG2XXUgzLovL8tMEKS3nxKzZkrNGD1c3EFK44yYE2o9JMJJn/O/+pFhmoIXJ7Dfkgd
+         6K7QGqEGlqPqykxfGzCqX3wuJvTLyqKOrNSbq1nNJjiVWTsoOm+mpITV/qIbkgdouFz3
+         6vzJaohTMVoiib6TTORR/RM7cqgD8tPBA7NgMot4wZ3ZGRcNHTiygYVPeG+x67APWgo6
+         niFFH/+6MM+I7399h8CEtiLP8KLolm5ydDdC5kEYQrnlFeCoZe7/iCTM/w03nIwJrTOV
+         nUFA==
+X-Gm-Message-State: AOAM531W2Gpw9jV7ETQcSOuLuf25Rt8B8uY8Qt9i6YYy8ZNtJ1y7gk0c
+        hosaFRjXzG2XlUprqIEBGBiJXbn4oDC3ag==
+X-Google-Smtp-Source: ABdhPJxX+a16IMjtH56euBWFjix7tt/mv2Fzl9Hcocp1woXhLoe0dpZYb84hSpzPcBa+ihCCPyJXYQ==
+X-Received: by 2002:a9d:ed6:: with SMTP id 80mr29824055otj.35.1638804267774;
+        Mon, 06 Dec 2021 07:24:27 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id bf17sm2888192oib.27.2021.12.06.07.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Dec 2021 07:24:26 -0800 (PST)
+Date:   Mon, 6 Dec 2021 09:24:21 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Shawn Guo <shawn.guo@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: smd-rpm: Drop the use of struct rpm_cc
+Message-ID: <Ya4rJUU6tBOw3cGw@builder.lan>
+References: <20211031020715.21636-1-shawn.guo@linaro.org>
+ <20211031020715.21636-3-shawn.guo@linaro.org>
 MIME-Version: 1.0
-References: <20211130140724.10750-1-conor.dooley@microchip.com> <20211130140724.10750-2-conor.dooley@microchip.com>
-In-Reply-To: <20211130140724.10750-2-conor.dooley@microchip.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 6 Dec 2021 16:12:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXy9B5B5tW6-nJ9J0aCGjHzy1C90ObA_7A2qz_NQphq-w@mail.gmail.com>
-Message-ID: <CAMuHMdXy9B5B5tW6-nJ9J0aCGjHzy1C90ObA_7A2qz_NQphq-w@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] dt-bindings: clk: microchip: Add Microchip
- PolarFire host binding
-To:     Conor Dooley <conor.dooley@microchip.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        david.abdurachmanov@gmail.com, Palmer Dabbelt <palmer@dabbelt.com>,
-        daire.mcnamara@microchip.com, cyril.jean@microchip.com,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211031020715.21636-3-shawn.guo@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 30, 2021 at 3:06 PM <conor.dooley@microchip.com> wrote:
-> From: Daire McNamara <daire.mcnamara@microchip.com>
->
-> Add device tree bindings for the Microchip PolarFire system
-> clock controller
->
-> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Sat 30 Oct 21:07 CDT 2021, Shawn Guo wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Considering that struct rpm_cc is now identical to rpm_smd_clk_desc,
+> and function qcom_smdrpm_clk_hw_get() uses rpm_cc in a read-only manner,
+> rpm_cc can be dropped by getting the function use rpm_smd_clk_desc
+> directly.
+> 
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 
-Gr{oetje,eeting}s,
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> ---
+>  drivers/clk/qcom/clk-smd-rpm.c | 21 ++++-----------------
+>  1 file changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index a27c0e740ab7..dd3d373a1309 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -150,11 +150,6 @@ struct clk_smd_rpm_req {
+>  	__le32 value;
+>  };
+>  
+> -struct rpm_cc {
+> -	struct clk_smd_rpm **clks;
+> -	size_t num_clks;
+> -};
+> -
+>  struct rpm_smd_clk_desc {
+>  	struct clk_smd_rpm **clks;
+>  	size_t num_clks;
+> @@ -1157,20 +1152,19 @@ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+>  static struct clk_hw *qcom_smdrpm_clk_hw_get(struct of_phandle_args *clkspec,
+>  					     void *data)
+>  {
+> -	struct rpm_cc *rcc = data;
+> +	const struct rpm_smd_clk_desc *desc = data;
+>  	unsigned int idx = clkspec->args[0];
+>  
+> -	if (idx >= rcc->num_clks) {
+> +	if (idx >= desc->num_clks) {
+>  		pr_err("%s: invalid index %u\n", __func__, idx);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	return rcc->clks[idx] ? &rcc->clks[idx]->hw : ERR_PTR(-ENOENT);
+> +	return desc->clks[idx] ? &desc->clks[idx]->hw : ERR_PTR(-ENOENT);
+>  }
+>  
+>  static int rpm_smd_clk_probe(struct platform_device *pdev)
+>  {
+> -	struct rpm_cc *rcc;
+>  	int ret;
+>  	size_t num_clks, i;
+>  	struct qcom_smd_rpm *rpm;
+> @@ -1190,13 +1184,6 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+>  	rpm_smd_clks = desc->clks;
+>  	num_clks = desc->num_clks;
+>  
+> -	rcc = devm_kzalloc(&pdev->dev, sizeof(*rcc), GFP_KERNEL);
+> -	if (!rcc)
+> -		return -ENOMEM;
+> -
+> -	rcc->clks = rpm_smd_clks;
+> -	rcc->num_clks = num_clks;
+> -
+>  	for (i = 0; i < num_clks; i++) {
+>  		if (!rpm_smd_clks[i])
+>  			continue;
+> @@ -1222,7 +1209,7 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	ret = devm_of_clk_add_hw_provider(&pdev->dev, qcom_smdrpm_clk_hw_get,
+> -				     rcc);
+> +					  (void *)desc);
+>  	if (ret)
+>  		goto err;
+>  
+> -- 
+> 2.17.1
+> 
