@@ -2,111 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C995C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 15:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC08AC43217
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Dec 2021 15:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1391057AbhLFPod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Dec 2021 10:44:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33498 "EHLO
+        id S1385872AbhLFPoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Dec 2021 10:44:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390489AbhLFPm1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 10:42:27 -0500
-Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA430C0A8870
-        for <linux-clk@vger.kernel.org>; Mon,  6 Dec 2021 07:26:47 -0800 (PST)
-Received: by mail-ot1-x32b.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so14031120otu.10
-        for <linux-clk@vger.kernel.org>; Mon, 06 Dec 2021 07:26:47 -0800 (PST)
+        with ESMTP id S1390784AbhLFPmu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 10:42:50 -0500
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE571C08E852;
+        Mon,  6 Dec 2021 07:32:17 -0800 (PST)
+Received: by mail-ed1-x529.google.com with SMTP id y12so44274360eda.12;
+        Mon, 06 Dec 2021 07:32:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/+S7xZ/J/Lmw5RKCZEGldriwwUmxNSdBbdaMcU/rL8o=;
-        b=JmSlfFhAT0/2mdCUBUSKhokDy4aXZggCgULvDuVT0DFsALxohzGGyH6jrWWjXvqkll
-         R6UedoyhN40oSn1MuRtFP1CWBHok1MXxma3mBMmAOZor3Gqr4xL5OU6lmVoR5iKQtMHu
-         CjXuhRxoEKIPk0nI+0wAHGC+VrTY5JZQ9TjIdtFc2q3CxwyGbXIeMNyYE2/ShMy79mbe
-         IRfXJl1CD8JjiwDYSZZ0TqqKGTgl256Hqxcr1D6J8YLNEhUEi/r39eTsttAAN0eB2gf6
-         9m8QEREPUzxhgp9r5cUZrq+DB3hlqWTziP4HTkc8Te9etDJAvfFVebIQhe0NdqGv2BPG
-         U7Qw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jA0/Vjs8HTmbMPDycewEdsM7ryNAIr3rJJKIVuOBXQc=;
+        b=jD0l0RMMRQH80ctwcpGj3byfYrfKGQ8gME4jJ3W9eBNZRv2zYUkXOCgbaYsosE7o+p
+         lcbMIRgRMjr/hskND+XKbxGRQtamjSrY9CR4vJHMWeYK2DnDJjMvaylyMhWF2Jr1cVuk
+         y0qDtwDP5MfWISlT8GBY2saM6/H6w4yzNi+N6xvdNxWy2Wz7EIy+mn8OVb7/AKLhlsnS
+         icnHPV3qcZoQssViNggvUFbj6CR5Dpca7bRI2XOrGHMf7h2R1Ppnht5JeFx3bSJisWLC
+         XnYHRQYcdxo7IfPHQ4CgMiheO0wjR/okvvvvjbbjqSXazHgBbLxso+G4nOkHChgXu6BQ
+         E2eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/+S7xZ/J/Lmw5RKCZEGldriwwUmxNSdBbdaMcU/rL8o=;
-        b=a1iOzzwIxoVy2sW+99pF3bt2Y7ltoYlC3KjF8avJ2dBwOcWmvBUifiPy5BzJ7pAiVs
-         ltfnUZBMl3qhCH/mNbb5fnAqYsmXVbYStq3c5n9vw9hamAPiYuDnRCl2OuDKzWK7agKl
-         lsAbOXcZZiUtPke47+rYCfsCk922h8yrz4bX2uQY/W5kJshbmm+ptiVcAzJjoyqNWrIV
-         qmZdudusXPmzCGP9lyUgZFGmA4wTqK1Vlq3hMEn1/rOvtnXKBJKO+vArrrWlZh71ubFB
-         EK+/QsoV1bOeI7J4wnLj1m1+8PyOpFYqNFRE6xRQ4pnerJ1SNzEK32BgTEa8v8clF2FT
-         /dPQ==
-X-Gm-Message-State: AOAM533Fiwowikh9mgOXV+mVFhumsKMFB4d7hvnB2aufY7JLwsE9CWYk
-        7HXrcgC7PZXoPQdI+YhrUfESeg==
-X-Google-Smtp-Source: ABdhPJzA2CSSjQl/Lw0cnPULTz2iuoU+21d0RxySX2OUR0bgAghgm+7NcJcalSV9XX+Q5S8BltbO0g==
-X-Received: by 2002:a9d:f63:: with SMTP id 90mr30482398ott.268.1638804407124;
-        Mon, 06 Dec 2021 07:26:47 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id bh12sm2770172oib.25.2021.12.06.07.26.46
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jA0/Vjs8HTmbMPDycewEdsM7ryNAIr3rJJKIVuOBXQc=;
+        b=HDDycVUnoXF6k1laMzMb9BQotxL6MSgk2CLemsiRdiZjhTi4pE/ldHpbj17sGsJfWT
+         7M5yWhL68d5EoNOEPALJHsXoZxLYpmx9kEg+b6FC5lSzYBMqQEKhLb5MtflJdfiLEJby
+         khN/ThAYaAZ2eg43AOsWeEcdC0e9trXUgmtplNI7hnIsMbewGyWqewBz94M+Y8Bqjnjk
+         LekuJKFvbjthY077USsLa0IOG38CtB4NLSYJPchPd4VUxT/jbN1KHU+lAdPQ31x4Y5bZ
+         27DrLY4nZ4FiGfn7RvBmjDcIua+CvxDqVfzKrBhecl20romxqJwCKw9ch24koTgHI7Rd
+         +YBQ==
+X-Gm-Message-State: AOAM532earI/58x8rQ7gZ4KShp5SyM80r94kmwZshMdar13jYfyGDXdf
+        bGeOWZIiBmLi2ciw0esXIEM=
+X-Google-Smtp-Source: ABdhPJyElICCwzglnbsKWrwExz94gKjSFu9kQNBc2/inrAfLJnJFdelTd1WFkEkfIxu5bDdrxN2VFg==
+X-Received: by 2002:aa7:c415:: with SMTP id j21mr56343729edq.357.1638804736486;
+        Mon, 06 Dec 2021 07:32:16 -0800 (PST)
+Received: from localhost.localdomain ([2a02:ab88:368f:2080:eab:126a:947d:3008])
+        by smtp.googlemail.com with ESMTPSA id d19sm7364688edt.34.2021.12.06.07.32.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Dec 2021 07:26:46 -0800 (PST)
-Date:   Mon, 6 Dec 2021 09:26:44 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: qcom: smd-rpm: Drop binary value handling for
- buffered clock
-Message-ID: <Ya4rtHSS1tLm7Gbi@builder.lan>
-References: <20211031020715.21636-1-shawn.guo@linaro.org>
- <20211031020715.21636-4-shawn.guo@linaro.org>
+        Mon, 06 Dec 2021 07:32:15 -0800 (PST)
+From:   David Virag <virag.david003@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        David Virag <virag.david003@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/7] Initial Samsung Galaxy A8 (2018) support
+Date:   Mon,  6 Dec 2021 16:31:14 +0100
+Message-Id: <20211206153124.427102-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211031020715.21636-4-shawn.guo@linaro.org>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat 30 Oct 21:07 CDT 2021, Shawn Guo wrote:
+Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+This phone is also known as "jackpotlte" and under the model name
+"SM-A530F". In its current state this should work on most if not all
+Exynos7885 phones/devices released.
 
-> The buffered clock binary value handling added by commit 36354c32bd76
-> ("clk: qcom: smd-rpm: Add .recalc_rate hook for clk_smd_rpm_branch_ops")
-> is redundant, because buffered clock is branch type, and the binary
-> value handling for branch clock has been handled by
-> clk_smd_rpm_prepare/unprepare functions.
-> 
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+As of now, it supports I2C nodes (all disabled by default) and UART
+console with basic clock support in place.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+To access the UART console on the A8, there are two methods:
+  -You can open up the device and solder directly to some debug pins
+   close to the display connector.
+  -Through I2C you can set the S2MU004 MFD chip to multiplex the SoC's
+   UART lines to the d+ and d- on the USB Type-C port of the device.
 
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index dd3d373a1309..ea28e45ca371 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -189,10 +189,6 @@ static int clk_smd_rpm_set_rate_active(struct clk_smd_rpm *r,
->  		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
->  	};
->  
-> -	/* Buffered clock needs a binary value */
-> -	if (r->rpm_res_type == QCOM_SMD_RPM_CLK_BUF_A)
-> -		req.value = cpu_to_le32(!!req.value);
-> -
->  	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_ACTIVE_STATE,
->  				  r->rpm_res_type, r->rpm_clk_id, &req,
->  				  sizeof(req));
-> @@ -207,10 +203,6 @@ static int clk_smd_rpm_set_rate_sleep(struct clk_smd_rpm *r,
->  		.value = cpu_to_le32(DIV_ROUND_UP(rate, 1000)), /* to kHz */
->  	};
->  
-> -	/* Buffered clock needs a binary value */
-> -	if (r->rpm_res_type == QCOM_SMD_RPM_CLK_BUF_A)
-> -		req.value = cpu_to_le32(!!req.value);
-> -
->  	return qcom_rpm_smd_write(r->rpm, QCOM_SMD_RPM_SLEEP_STATE,
->  				  r->rpm_res_type, r->rpm_clk_id, &req,
->  				  sizeof(req));
-> -- 
-> 2.17.1
-> 
+Note that UART works on 1.8 volts, so plugging in a normal USB cable
+while multiplexed to UART may fry the SoC.
+
+Everything was tested through UART by using a minimal driver that sets
+the S2MU004 to multiplex UART.
+
+The preferred way to boot this device is by using my Minimal S-Boot
+Wrapper [1] to work around some issues caused by the stock, and
+non-replacable Samsung S-Boot bootloader.
+
+Changes in v2:
+- Added R-b tags by Krzysztof Kozlowski
+- Moved dt-bindings patches to the beginning of the series
+- Fixed double : in 7885 CMU bindings
+- Fixed multiple double line breaks
+- Made Exynos850 and 7885 clock drivers share some code in a new patch
+- Lots of dts/dtsi fixes
+
+Changes in v3:
+- Fix SPDX comment style in clk-exynos-arm64.h
+- Fix typo in dts comment
+
+Changes in v4:
+- Fixed leading 0x in clock-controller nodes
+- Fixed missing headers in clock driver patches
+- "__SAMSUNG_CLK_ARM64_H" -> "__CLK_EXYNOS_ARM64_H" in
+  clk-exynos-arm64.h everywhere (only the comment at the end had the
+  latter by accident)
+- Added R-b tag by Krzysztof Kozlowski to pll1417x patch
+- Actually suffixed pin configuration node names with "-pins"
+- Seperated Cortex-A53 and Cortex-A73 PMU
+
+[1] https://github.com/VDavid003/minimal_sboot_wrapper
+
+David Virag (7):
+  dt-bindings: clock: Add bindings definitions for Exynos7885 CMU
+  dt-bindings: clock: Document Exynos7885 CMU bindings
+  dt-bindings: arm: samsung: document jackpotlte board binding
+  clk: samsung: Make exynos850_register_cmu shared
+  clk: samsung: clk-pll: Add support for pll1417x
+  clk: samsung: Add initial Exynos7885 clock driver
+  arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../clock/samsung,exynos7885-clock.yaml       | 166 ++++
+ arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+ .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
+ .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 865 ++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 438 +++++++++
+ drivers/clk/samsung/Makefile                  |   2 +
+ drivers/clk/samsung/clk-exynos-arm64.c        |  94 ++
+ drivers/clk/samsung/clk-exynos-arm64.h        |  20 +
+ drivers/clk/samsung/clk-exynos7885.c          | 597 ++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  88 +-
+ drivers/clk/samsung/clk-pll.c                 |   1 +
+ drivers/clk/samsung/clk-pll.h                 |   1 +
+ include/dt-bindings/clock/exynos7885.h        | 115 +++
+ 14 files changed, 2408 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.c
+ create mode 100644 drivers/clk/samsung/clk-exynos-arm64.h
+ create mode 100644 drivers/clk/samsung/clk-exynos7885.c
+ create mode 100644 include/dt-bindings/clock/exynos7885.h
+
+-- 
+2.34.1
+
