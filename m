@@ -2,176 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3528AC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 02:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 728DDC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 04:28:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243550AbhLGCg0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Dec 2021 21:36:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47930 "EHLO
+        id S235509AbhLGEcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Dec 2021 23:32:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243541AbhLGCgZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 21:36:25 -0500
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 406D7C061746;
-        Mon,  6 Dec 2021 18:32:56 -0800 (PST)
-Received: by mail-qt1-x833.google.com with SMTP id p19so12866690qtw.12;
-        Mon, 06 Dec 2021 18:32:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=QQzMbHoCIHQcabSUmv+A+cuD+7qIgSkwyMRvoh0L3Gs=;
-        b=h7KB6b3EX6ARdK4WUecjmEHeiKvtwdiOJ7RqH4PFeXYLLgP5MFzWNcJCmTMsW2Qo9e
-         CxdPOqBqWoCHISCIxvSQ0ZrXeU25dZarYGcdEbiNY3YIS7IRhpvfPclamQsoo72hliNM
-         +Sf+15JVxmE7F4MdCgG+wpcrZYcyr+er6kzGOCYufjK8QdcK1QuGeKaeK7+Rl6/hoFYn
-         Zx9vsSuzXJGAnzjB4Up5+6FxQ/U6XwLVENAv2jdmqWeuqqGNg9lTY7V2yNtCAJYSXWu5
-         f9mlC+tPdrnFk+OSsHHemX5Z6RX15/hRvxG4cphtCyNBmT758Co+yb2EabAy2C14lxym
-         TVwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=QQzMbHoCIHQcabSUmv+A+cuD+7qIgSkwyMRvoh0L3Gs=;
-        b=AJVlwyi/l52Rxc/dq7la/vfuB47U1gG2PUIBPSDmB5VZB9qDfQ7nRBpTfLNRmfpLBg
-         74Rh9OGWS2MsUkkaV0n7V/R1VXEdy8rz74iOJdtF+SPpDCj3hQAvc8iIi8mQNIpYSpf2
-         eBLTT2NkxVlpjNHVtblMOR8IJzuK/hEfIM01wsefCPytcdPpjymFvKTC1ODgK1LA2a5b
-         JNwpYjWhetsQigwsywCxDzGIIvoErwSzmP2ecoTZhnbS5tBltTe4vDOrH6TEwVfocpDu
-         GLCZtQ1sHNk1pg+lMyy+BYOZfRH2Vh32bw89+kkJKHDCsN29KsOes7+Vt9Jr/ZYBZxT8
-         OZUA==
-X-Gm-Message-State: AOAM531ykmHq3HWf8fFYTuQD156CVLtZh/b/76fDA9rYw8pCweHRyI04
-        3nwFdKmKzBMuaNFEfZBarDf1tlIkOPc7jw==
-X-Google-Smtp-Source: ABdhPJz9gAnjJaTSLqSBU8V1XbG1Ba11WfK8eAbaVVjxdKkz3fPB9mJLRZ4pHrpc7sQIC5T8EkI3Mg==
-X-Received: by 2002:ac8:4a0e:: with SMTP id x14mr45094726qtq.345.1638844375373;
-        Mon, 06 Dec 2021 18:32:55 -0800 (PST)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id t9sm7520523qkp.110.2021.12.06.18.32.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Dec 2021 18:32:54 -0800 (PST)
-Message-ID: <9dab64ca-0d91-3bea-f873-3c2da6ef1645@gmail.com>
-Date:   Mon, 6 Dec 2021 21:32:52 -0500
+        with ESMTP id S233659AbhLGEcW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Dec 2021 23:32:22 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB335C061746;
+        Mon,  6 Dec 2021 20:28:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id CFBF6CE19C0;
+        Tue,  7 Dec 2021 04:28:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A447C341C3;
+        Tue,  7 Dec 2021 04:28:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638851328;
+        bh=baR953xcu0rbWYXyxFKXRDvT2g5U7pX8hmGqm6E+cyM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gc5wM0yh9ESbFyC07oNtW+2Do5mmMVet1+QUiljWH6zaeRHM9uTbwWvNjBOTGVS3t
+         lAKpBQoY6zYAWwWU3yG+t9vnQ2hlkB2kss/9MtU4S1DenAz0nHKluaYnz9ywxdAngL
+         N2NC/uh2IEKDLqf8QQDBX13/tuSf6yCJH+YmpkgLRXPdd1mdvek6SDn6ANbQG3EXQ/
+         sNo6aMkvKnCTkDZv2ePS3aNk/s2OFh9XneWwbecSbZvdqbYNyhw3X0UkOkVKAAWT5j
+         eDM3rDrPc9W1wvHYdSJbr1+PpCtyWBnfvDBJXzAtMFcox+K4tx8dPWpZEw1lX4oIhF
+         yv2RT/h/CxRdA==
+Date:   Tue, 7 Dec 2021 09:58:43 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: qcom: Add clock driver for SM8450
+Message-ID: <Ya7i+zfHhuiHFlYX@matsya>
+References: <20211201072310.3968679-1-vkoul@kernel.org>
+ <20211201072310.3968679-4-vkoul@kernel.org>
+ <2649eada-3e80-cec3-5dca-bded67fa5f80@somainline.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH v4 06/13] dt-bindings: clock: imx: Add documentation for
- i.MXRT clock
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, linux-imx@nxp.com
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        ulf.hansson@linaro.org, aisheng.dong@nxp.com, stefan@agner.ch,
-        linus.walleij@linaro.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, adrian.hunter@intel.com,
-        jirislaby@kernel.org, giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
- <20211204061042.1248028-7-Mr.Bossman075@gmail.com>
- <20211206223849.554F6C341C6@smtp.kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20211206223849.554F6C341C6@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2649eada-3e80-cec3-5dca-bded67fa5f80@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 01-12-21, 16:37, Konrad Dybcio wrote:
+> On 01.12.2021 08:23, Vinod Koul wrote:
 
+> > +static struct clk_alpha_pll gcc_gpll0 = {
+> > +	.offset = 0x0,
+> > +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+> > +	.clkr = {
+> > +		.enable_reg = 0x62018,
+> > +		.enable_mask = BIT(0),
+> > +		.hw.init = &(struct clk_init_data){
+> > +			.name = "gcc_gpll0",
+> > +			.parent_data = &(const struct clk_parent_data){
+> > +				.fw_name = "bi_tcxo",
+> > +				.name = "bi_tcxo",
+> 
+> I don't think we want .name for new drivers, as we do things cleanly
+> 
+> from the start and don't have DT incompatibility problems.
 
-On 12/6/21 17:38, Stephen Boyd wrote:
-> Quoting Jesse Taube (2021-12-03 22:10:35)
->> diff --git a/Documentation/devicetree/bindings/clock/imxrt-clock.yaml b/Documentation/devicetree/bindings/clock/imxrt-clock.yaml
->> new file mode 100644
->> index 000000000000..8af48c59ff99
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/imxrt-clock.yaml
->> @@ -0,0 +1,67 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/imxrt-clock.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Clock bindings for Freescale i.MXRT
->> +
->> +maintainers:
->> +  - Giulio Benetti <giulio.benetti@benettiengineering.com>
->> +  - Jesse Taube <Mr.Bossman075@gmail.com>
->> +
->> +description: |
->> +  The clock consumer should specify the desired clock by having the clock
->> +  ID in its "clocks" phandle cell. See include/dt-bindings/clock/imxrt*-clock.h
->> +  for the full list of i.MXRT clock IDs.
->> +
->> +properties:
->> +  compatible:
->> +    const: fsl,imxrt1050-ccm
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 2
->> +
->> +  clocks:
->> +    minItems: 1
->> +
->> +  clock-names:
->> +    minItems: 1
-> 
-> Why minitems vs. exactly 1 for osc?
-because i don't understand yaml yet.
-I'll look into this.
+Yes we need only fw_name here, I missed to remove this
 
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - clock-names
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/imxrt1050-clock.h>
->> +
->> +    ccm@400fc000 {
+> > +static int gcc_sm8450_probe(struct platform_device *pdev)
+> > +{
+> > +	struct regmap *regmap;
+> > +	int ret;
+> > +
+> > +	regmap = qcom_cc_map(pdev, &gcc_sm8450_desc);
+> > +	if (IS_ERR(regmap))
+> > +		return PTR_ERR(regmap);
+> > +
+> > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> > +				       ARRAY_SIZE(gcc_dfs_clocks));
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
+> > +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg, BIT(14), BIT(14));
+> > +
+> > +	/* Keep the critical clock always-On
 > 
-> s/ccm/clock-controller/
+> I think the general style for multiline comments is to start with /* and then add a newline
 
-This made my day!
+Yes thanks for spotting, fixed
 
+> > +	 * gcc_camera_ahb_clk, gcc_camera_xo_clk, gcc_disp_ahb_clk,
+> > +	 * gcc_disp_xo_clk, gcc_gpu_cfg_ahb_clk, gcc_video_ahb_clk,
+> > +	 * gcc_video_xo_clk
+> > +	 */
+> > +	regmap_update_bits(regmap, 0x36004, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x36020, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x37004, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x3701c, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x81004, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x42004, BIT(0), BIT(0));
+> > +	regmap_update_bits(regmap, 0x42028, BIT(0), BIT(0));
+> > +
+> > +	ret = qcom_cc_really_probe(pdev, &gcc_sm8450_desc, regmap);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Failed to register GCC clocks\n");
 > 
->> +        compatible = "fsl,imxrt1050-ccm";
->> +        reg = <0x400fc000 0x4000>;
->> +        interrupts = <95>, <96>;
->> +        clocks = <&osc>;
->> +        clock-names = "osc";
->> +        #clock-cells = <1>;
->> +    };
->> +
->> +
+> That's a bad downstream leftover that we don't want..
 > 
-> Nitpick: Drop extra newline
-sorry will fix.
 > 
->> +    lpuart1: serial@40184000 {
->> +        compatible = "fsl,imxrt1050-lpuart";
->> +        reg = <0x40184000 0x4000>;
->> +        interrupts = <20>;
->> +        clocks = <&clks IMXRT1050_CLK_LPUART1>;
->> +        clock-names = "ipg";
->> +    };
->> -- 
->> 2.34.0
->>
+> 
+> > +		return ret;
+> > +	}
+> > +
+> > +	dev_info(&pdev->dev, "Registered GCC clocks\n");
+> 
+> And so is this.
+
+true will remove these
+
+> > +
+> > +	return ret;
+> 
+> You can simply return qcom_cc_really_probe(pdev, &gcc_sm8450_desc, regmap);
+
+right!
+
+-- 
+~Vinod
