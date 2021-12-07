@@ -2,60 +2,71 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C16C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 05:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F921C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 07:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231367AbhLGFIi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 00:08:38 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:52178 "EHLO
+        id S229551AbhLGHKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 02:10:40 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:53138 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230192AbhLGFIh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 00:08:37 -0500
+        with ESMTP id S229507AbhLGHKk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 02:10:40 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5097BB812A7;
-        Tue,  7 Dec 2021 05:05:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E7AC341C1;
-        Tue,  7 Dec 2021 05:05:03 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 63758B816A1;
+        Tue,  7 Dec 2021 07:07:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69468C341C1;
+        Tue,  7 Dec 2021 07:07:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638853505;
-        bh=Id5CjFD7567HKM0pW34CSYpAxpPcH5hFeKDWZOYR8wU=;
+        s=k20201202; t=1638860828;
+        bh=+2G/X5h3+hoYNKZYrwC4jUbRuh1P7OkgWwsP4LDLnyQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s5fkfo6k+OECwv8GeS9dMiYdfaR0iiZN+kmaUQ6xLbL+CO7WyhjPARrFaSdLK6gRi
-         4DxVisnFZuJGUfIiF0/TXP51hP7I1bC0b8RysO4DjMyHsLPV40+T6U1bCJ0fpW7iWJ
-         rlyaAETR7BjLV1AiibQn3rWa/tu3HAdaQivsyVylKJFK5xRzUzQ2jehO8KDArQ1VTc
-         Tu4lT4DdJipcLQr3FDFWLfhDMQr4H6eJWKwGy/jJ+hnuxF3Gi3Xaf60NNF1RWsf/Pn
-         CY7JbkDIVh8CR5EN4xDqjBeQpjIdyhPaOhTFVNLCwjze/388dPkh7OgfnJnNvYLKaZ
-         29126gL76hAAw==
-Date:   Tue, 7 Dec 2021 10:35:01 +0530
+        b=H2/t/5C1Y3UeAUtmCEQrkuXmrwdtbX/q4YuJ4wQ/NPupe2+6VWL7VtfORTwSJGQoc
+         Z2i7+ufESsn6D9DQ92u8u2ZFzAjiBOTz369/vdJbU+PSNuzk7l90Fw/cLGBQuSSxsJ
+         AXBm0cgYR+hSqQ2zd7As10LO0SM3IRrFousT89mPGPwus+TqWNST/lpmASShHY7gAe
+         E8QBfKRr8hmRdoJor0Se6aHdX3M3Mf2VmgAB4ZSq7ddj42XtzUiX9VvKikavdwrDap
+         72WCWwvElZhUNslWdQvw/ldIiw9iX8PGolJud10bT/cWiEjihkQPocp/8wfn+7DHsB
+         L3cdhFaIsbwOw==
+Date:   Tue, 7 Dec 2021 12:37:04 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, dmitry.baryshkov@linaro.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: sm8250-dispcc: Flag shared RCGs as
- assumed enable
-Message-ID: <Ya7rfVuaqgTTJEoh@matsya>
-References: <20211203035436.3505743-1-bjorn.andersson@linaro.org>
- <20211203035436.3505743-2-bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
+Message-ID: <Ya8IGPJCBl+seblO@matsya>
+References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211203035436.3505743-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02-12-21, 19:54, Bjorn Andersson wrote:
-> The state of the shared RCGs found in the SM8250 dispcc can't reliably
-> be queried and hence doesn't implement the is_enabled() callback.
+On 02-12-21, 19:56, Bjorn Andersson wrote:
+> As GDSCs are turned on and off some associated clocks are momentarily
+> enabled for house keeping purposes. Failure to enable these clocks seems
+> to have been silently ignored in the past, but starting in SM8350 this
+> failure will prevent the GDSC to turn on.
 > 
-> Mark the shared RCGs as CLK_ASSUME_ENABLED_WHEN_UNUSED, to ensure that
-> clk_disable_unused() will issue a disable and park the RCGs before it
-> turns off the parent PLLs - which will lock up these RCGs in any system
-> with continuous splash enabled.
+> At least on SM8350 this operation will enable the RCG per the
+> configuration in CFG_REG. This means that the current model where the
+> current configuration is written back to CF_REG immediately after
+
+s/CF_REG/CFG_REG
+
+> parking the RCG doesn't work.
+> 
+> Instead, keep track of the currently requested rate of the clock and
+> upon enabling the clock reapply the configuration per the saved rate.
+
+With that fixed:
 
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
