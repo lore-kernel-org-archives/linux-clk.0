@@ -2,84 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825AAC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 07:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB700C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 08:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231382AbhLGH6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 02:58:16 -0500
-Received: from [113.204.237.245] ([113.204.237.245]:41272 "EHLO
-        test.cqplus1.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231334AbhLGH6Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 02:58:16 -0500
-X-MailGates: (compute_score:DELIVER,40,3)
-Received: from 172.27.96.203
-        by cqmailgates with MailGates ESMTP Server V5.0(21476:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Tue, 07 Dec 2021 15:21:34 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 7 Dec 2021 15:21:31 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.017; Tue, 7 Dec 2021 15:21:31 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        id S232463AbhLGIaa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 03:30:30 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:58398 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232460AbhLGIa3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 03:30:29 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 07E4B1C0B7A; Tue,  7 Dec 2021 09:26:58 +0100 (CET)
+Date:   Tue, 7 Dec 2021 09:26:56 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
-Subject: RE: [PATCH v5 09/10] ARM: sunplus: Add initial support for Sunplus
- SP7021 SoC
-Thread-Topic: [PATCH v5 09/10] ARM: sunplus: Add initial support for Sunplus
- SP7021 SoC
-Thread-Index: AQHX6BmLzMMFC/bfnUOF4rJ/hd0nkqwgNNgAgAZiSeA=
-Date:   Tue, 7 Dec 2021 07:21:31 +0000
-Message-ID: <88f8cc0b1334467aae7a5a4b0643176a@cqplus1.com>
-References: <cover.1638515726.git.qinjian@cqplus1.com>
- <eabfe1b84b889e4aa95e24c30a114c68ef95fd07.1638515726.git.qinjian@cqplus1.com>
- <CAK8P3a1_coAnp8P3L2UA+smxuRL9widFQv9Y5ZZ0X_Sr9zsZtg@mail.gmail.com>
-In-Reply-To: <CAK8P3a1_coAnp8P3L2UA+smxuRL9widFQv9Y5ZZ0X_Sr9zsZtg@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/6] Initial Samsung Galaxy A8 (2018) support
+Message-ID: <20211207082656.GA12097@duo.ucw.cz>
+References: <20211205153302.76418-1-virag.david003@gmail.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Disposition: inline
+In-Reply-To: <20211205153302.76418-1-virag.david003@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICtjb25maWcgQVJDSF9TVU5QTFVTDQo+ID4gKyAgICAgICBib29sICJTdW5wbHVzIFNvQ3Mi
-DQo+ID4gKyAgICAgICBzZWxlY3QgQ0xLU1JDX09GDQo+ID4gKyAgICAgICBzZWxlY3QgQ09NTU9O
-X0NMSw0KPiA+ICsgICAgICAgc2VsZWN0IEdFTkVSSUNfQ0xPQ0tFVkVOVFMNCj4gPiArICAgICAg
-IHNlbGVjdCBHRU5FUklDX0lSUV9DSElQDQo+ID4gKyAgICAgICBzZWxlY3QgR0VORVJJQ19JUlFf
-TVVMVElfSEFORExFUg0KPiA+ICsgICAgICAgc2VsZWN0IFVTRV9PRg0KPiA+ICsgICAgICAgc2Vs
-ZWN0IFJUQ19DTEFTUw0KPiA+ICsgICAgICAgc2VsZWN0IFJFU0VUX1NVTlBMVVMNCj4gDQo+IFRo
-aXMgaXMgaW4gdGhlIHdyb25nIHBsYWNlOiBtb3ZlIHRoZSBLY29uZmlnIGVudHJ5IGludG8NCj4g
-YXJjaC9hcm0vbWFjaC1zdW5wbHVzL0tjb25maWcNCj4gYW5kIG1ha2UgaXQgJ2RlcGVuZHMgb24g
-QVJDSF9NVUxUSV9WNycuDQo+IA0KPiBJIHRoaW5rIHlvdSBjYW4gcmVtb3ZlIGFsbCB0aGUgJ3Nl
-bGVjdCcgbGluZXMgYXMgd2VsbCBiZWNhdXNlIHRoZXkgYXJlDQo+IGVpdGhlciBpbXBsaWVkIGJ5
-DQo+IEFSQ0hfTVVMVElfVjcgb3Igbm90IGFjdHVhbGx5IG5lY2Vzc2FyeS4NCj4gLi4uLi4uDQoN
-ClRoYW5rcyBmb3IgeW91ciByZXZpZXcsIEknbGwgY29ycmVjdCB0aGVzZSBhdCBuZXh0IGNvbW1p
-dC4NCg0KPiANCj4gPiBAQCAtMTUyLDYgKzE1Miw3IEBAIHRleHRvZnMtJChDT05GSUdfQVJDSF9N
-U004WDYwKSA6PSAweDAwMjA4MDAwDQo+ID4gIHRleHRvZnMtJChDT05GSUdfQVJDSF9NU004OTYw
-KSA6PSAweDAwMjA4MDAwDQo+ID4gIHRleHRvZnMtJChDT05GSUdfQVJDSF9NRVNPTikgOj0gMHgw
-MDIwODAwMA0KPiA+ICB0ZXh0b2ZzLSQoQ09ORklHX0FSQ0hfQVhYSUEpIDo9IDB4MDAzMDgwMDAN
-Cj4gPiArdGV4dG9mcy0kKENPTkZJR19BUkNIX1NVTlBMVVMpIDo9IDB4MDAzMDgwMDANCj4gDQo+
-IFdoYXQgaXMgdGhpcyBuZWVkZWQgZm9yPyBJZiBpdCBib290cyB3aXRob3V0IHRoaXMgbGluZSwg
-YmV0dGVyIGF2b2lkDQo+IGFkZGluZyBpdCwgYmVjYXVzZQ0KPiBpdCB3aWxsIGluY3JlYXNlIHRo
-ZSBrZXJuZWwgc2l6ZSBmb3IgZXZlcnlvbmUgZWxzZSAodW5sZXNzIHRoZXkgYWxzbyBlbmFibGUN
-Cj4gQVhYSUEpLg0KPiANCg0KU1A3MDIxIHJlc2VydmVkIHRoZSAxc3QgMU1CIG1lbW9yeSBmb3Ig
-QVJNOTI2QFAtQ2hpcCB1c2luZywNClRoZSAybmQgMU1CIG1lbW9yeSBmb3IgSU9QIGRldmljZSBh
-bmQgdGhlIDNyZCAxTUIgbWVtb3J5IGZvciBib290bG9hZGVyLg0KSSdsbCBhZGQgdGhlc2UgY29t
-bWVudHMgYXQgbmV4dCBjb21taXQuDQoNCg0K
+
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> Add basic initial support for the Samsung Galaxy A8 (2018) smartphone.
+> This phone is also known as "jackpotlte" and under the model name
+> "SM-A530F". In its current state this should work on most if not all
+> Exynos7885 phones/devices released.
+
+Thank you, it is good to see support for more hardware.
+
+Can I get you to cc phone-devel@vger.kernel.org mailing list in future?
+
+Besst regards,
+								Pavel
+							=09
+
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYa8a0AAKCRAw5/Bqldv6
+8rEnAJ9mza7GT9xYuJR4Ikn+RPGTOW9uvACdGNsilj2XujCT77t5DgPSIqjBeUk=
+=Vqks
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
