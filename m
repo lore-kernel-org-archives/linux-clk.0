@@ -2,173 +2,426 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EB1C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 08:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C550C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 09:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233033AbhLGIj2 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 03:39:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
+        id S232434AbhLGJFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 04:05:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233007AbhLGIj1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 03:39:27 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2869BC061746
-        for <linux-clk@vger.kernel.org>; Tue,  7 Dec 2021 00:35:57 -0800 (PST)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1muVwp-0005HR-6U; Tue, 07 Dec 2021 09:35:39 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1muVwg-0003U5-SO; Tue, 07 Dec 2021 09:35:30 +0100
-Message-ID: <75d34242693a41978fb7c6703dac3fd3a6437172.camel@pengutronix.de>
-Subject: Re: [PATCH v5 04/10] reset: Add Sunplus SP7021 reset driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, linux@armlinux.org.uk, broonie@kernel.org,
-        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, wells.lu@sunplus.com
-Date:   Tue, 07 Dec 2021 09:35:30 +0100
-In-Reply-To: <5b847375ae9591dfd0551c86141102e02b450479.1638515726.git.qinjian@cqplus1.com>
+        with ESMTP id S231313AbhLGJFy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 04:05:54 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1E9C061746;
+        Tue,  7 Dec 2021 01:02:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id E5721CE19FB;
+        Tue,  7 Dec 2021 09:02:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D90C341C1;
+        Tue,  7 Dec 2021 09:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638867741;
+        bh=1IukoI6r8Y3+ceVNx/4v3GTKBU5J+Is6mGvn/8YlWg8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Hoae/zLFUpSqApEhwKxiw4UtutDQdT6pjNJYO4M3kBwDXuD6/1d08m9o8TgoKI08B
+         2dZd3W5Cj9tIwul9sfyXde9ifzYozqaudCxQ7OU7wizX07YH/yrNp4SqrYGwZ6YAE9
+         YsmkKt2G9rYMLPgV73UHSpzIasHaLdFlutBSuwY8K8rZXmD84V4nWeAR1M7sY5X1dl
+         zXc3YxC5yeYdk8AMnF6RC4bIDEFq177RgAo8fuTu/54uNoii4ZGtb9OEFFjc4EGO6Z
+         LIYiLFdgXjm9P9UPwelVeIpzIgD9nJDLnRdqtT2Wuekn0ovKPP6cheB8lg+xikMh1T
+         chgfVT98YdpJQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=why.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <maz@kernel.org>)
+        id 1muWMc-00ASSc-LG; Tue, 07 Dec 2021 09:02:18 +0000
+Date:   Tue, 07 Dec 2021 09:02:18 +0000
+Message-ID: <87r1ao23fp.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        tglx@linutronix.de, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        broonie@kernel.org, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com
+Subject: Re: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt controller driver
+In-Reply-To: <e88ea4cf28ba69a41f6d1b4dd4128b82a6095c29.1638515726.git.qinjian@cqplus1.com>
 References: <cover.1638515726.git.qinjian@cqplus1.com>
-         <5b847375ae9591dfd0551c86141102e02b450479.1638515726.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        <e88ea4cf28ba69a41f6d1b4dd4128b82a6095c29.1638515726.git.qinjian@cqplus1.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: qinjian@cqplus1.com, robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de, p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, wells.lu@sunplus.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2021-12-03 at 15:34 +0800, Qin Jian wrote:
-[...]
-> diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
+On Fri, 03 Dec 2021 07:34:25 +0000,
+Qin Jian <qinjian@cqplus1.com> wrote:
+> 
+> Add interrupt controller driver for Sunplus SP7021 SoC.
+> 
+> This is the interrupt controller in P-chip which collects all interrupt
+> sources in P-chip and routes them to parent interrupt controller in C-chip.
+> 
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  MAINTAINERS                       |   1 +
+>  drivers/irqchip/Kconfig           |   9 +
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-sp7021-intc.c | 284 ++++++++++++++++++++++++++++++
+>  4 files changed, 295 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-sp7021-intc.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6b3bbe021..febbd97bf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2665,6 +2665,7 @@ F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+>  F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+>  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
+>  F:	drivers/clk/clk-sp7021.c
+> +F:	drivers/irqchip/irq-sp7021-intc.c
+>  F:	drivers/reset/reset-sunplus.c
+>  F:	include/dt-bindings/clock/sp-sp7021.h
+>  F:	include/dt-bindings/reset/sp-sp7021.h
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index aca7b595c..b9429b8d0 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -602,4 +602,13 @@ config APPLE_AIC
+>  	  Support for the Apple Interrupt Controller found on Apple Silicon SoCs,
+>  	  such as the M1.
+>  
+> +config SUNPLUS_SP7021_INTC
+> +	bool "Sunplus SP7021 interrupt controller"
+> +	help
+> +	  Support for the Sunplus SP7021 Interrupt Controller IP core.
+> +	  SP7021 SoC has 2 Chips: C-Chip & P-Chip. This is used as a
+> +	  chained controller, routing all interrupt source in P-Chip to
+> +	  the primary controller on C-Chip.
+> +	  This is selected automatically by platform config.
+> +
+>  endmenu
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index f88cbf36a..75411f654 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -116,3 +116,4 @@ obj-$(CONFIG_MACH_REALTEK_RTL)		+= irq-realtek-rtl.o
+>  obj-$(CONFIG_WPCM450_AIC)		+= irq-wpcm450-aic.o
+>  obj-$(CONFIG_IRQ_IDT3243X)		+= irq-idt3243x.o
+>  obj-$(CONFIG_APPLE_AIC)			+= irq-apple-aic.o
+> +obj-$(CONFIG_SUNPLUS_SP7021_INTC)	+= irq-sp7021-intc.o
+> diff --git a/drivers/irqchip/irq-sp7021-intc.c b/drivers/irqchip/irq-sp7021-intc.c
 > new file mode 100644
-> index 000000000..a1d88dbaf
+> index 000000000..beabc64d5
 > --- /dev/null
-> +++ b/drivers/reset/reset-sunplus.c
-> @@ -0,0 +1,132 @@
+> +++ b/drivers/irqchip/irq-sp7021-intc.c
+> @@ -0,0 +1,284 @@
 > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +/*
-> + * SP7021 reset driver
-> + *
 > + * Copyright (C) Sunplus Technology Co., Ltd.
 > + *       All rights reserved.
 > + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
 > +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/reboot.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
 > +
-> +/* HIWORD_MASK_REG BITS */
-> +#define BITS_PER_HWM_REG	16
+> +#define SP_INTC_HWIRQ_MIN	0
+> +#define SP_INTC_HWIRQ_MAX	223
 > +
-> +struct sp_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *membase;
-> +} *sp_reset;
-     ^^^^^^^^^^
-
-I'd prefer if you removed the global sp_reset pointer.
-
-[...]
-> +static int sp_restart(struct notifier_block *this, unsigned long mode,
-> +		      void *cmd)
+> +#define SP_INTC_NR_IRQS		(SP_INTC_HWIRQ_MAX - SP_INTC_HWIRQ_MIN + 1)
+> +#define SP_INTC_NR_GROUPS	DIV_ROUND_UP(SP_INTC_NR_IRQS, 32)
+> +#define SP_INTC_REG_SIZE	(SP_INTC_NR_GROUPS * 4)
+> +
+> +/* REG_GROUP_0 regs */
+> +#define REG_INTR_TYPE		(sp_intc.g0)
+> +#define REG_INTR_POLARITY	(REG_INTR_TYPE     + SP_INTC_REG_SIZE)
+> +#define REG_INTR_PRIORITY	(REG_INTR_POLARITY + SP_INTC_REG_SIZE)
+> +#define REG_INTR_MASK		(REG_INTR_PRIORITY + SP_INTC_REG_SIZE)
+> +
+> +/* REG_GROUP_1 regs */
+> +#define REG_INTR_CLEAR		(sp_intc.g1)
+> +#define REG_MASKED_EXT1		(REG_INTR_CLEAR    + SP_INTC_REG_SIZE)
+> +#define REG_MASKED_EXT0		(REG_MASKED_EXT1   + SP_INTC_REG_SIZE)
+> +#define REG_INTR_GROUP		(REG_INTR_CLEAR    + 31 * 4)
+> +
+> +#define GROUP_MASK			(BIT(SP_INTC_NR_GROUPS) - 1)
+> +#define GROUP_SHIFT_EXT1	(0)
+> +#define GROUP_SHIFT_EXT0	(8)
+> +
+> +/*
+> + * When GPIO_INT0~7 set to edge trigger, doesn't work properly.
+> + * WORKAROUND: change it to level trigger, and toggle the polarity
+> + * at ACK/Handler to make the HW work.
+> + */
+> +#define GPIO_INT0_HWIRQ		120
+> +#define GPIO_INT7_HWIRQ		127
+> +#define IS_GPIO_INT(irq)	\
+> +({ \
+> +	u32 i = irq; \
+> +	(i >= GPIO_INT0_HWIRQ) && (i <= GPIO_INT7_HWIRQ); \
+> +})
+> +
+> +/* index of states */
+> +enum {
+> +	_IS_EDGE = 0,
+> +	_IS_LOW,
+> +	_IS_ACTIVE
+> +};
+> +
+> +#define STATE_BIT(irq, idx)			(((irq) - GPIO_INT0_HWIRQ) * 3 + (idx))
+> +#define ASSIGN_STATE(irq, idx, v)	assign_bit(STATE_BIT(irq, idx), sp_intc.states, v)
+> +#define TEST_STATE(irq, idx)		test_bit(STATE_BIT(irq, idx), sp_intc.states)
+> +
+> +static struct sp_intctl {
+> +	/*
+> +	 * REG_GROUP_0: include type/polarity/priority/mask regs.
+> +	 * REG_GROUP_1: include clear/masked_ext0/masked_ext1/group regs.
+> +	 */
+> +	void __iomem *g0; // REG_GROUP_0 base
+> +	void __iomem *g1; // REG_GROUP_1 base
+> +
+> +	struct irq_domain *domain;
+> +	raw_spinlock_t lock;
+> +
+> +	/*
+> +	 * store GPIO_INT states
+> +	 * each interrupt has 3 states: is_edge, is_low, is_active
+> +	 */
+> +	DECLARE_BITMAP(states, (GPIO_INT7_HWIRQ - GPIO_INT0_HWIRQ + 1) * 3);
+> +} sp_intc;
+> +
+> +static struct irq_chip sp_intc_chip;
+> +
+> +static void sp_intc_assign_bit(u32 hwirq, void __iomem *base, bool value)
 > +{
-
-You could embed the sp_restart_nb notifier block in struct sp_reset_data
-and use container_of(this, struct sp_reset_data, notifier) to get to the
-rcdev here.
-
-> +	sp_reset_assert(&sp_reset->rcdev, 0);
-> +	sp_reset_deassert(&sp_reset->rcdev, 0);
+> +	unsigned long flags;
 > +
-> +	return NOTIFY_DONE;
+> +	raw_spin_lock_irqsave(&sp_intc.lock, flags);
+> +	__assign_bit(hwirq, base, value);
+
+__assign_bit() on an MMIO mapping? No. Why do you think we have
+separate MMIO accessors?
+
+> +	raw_spin_unlock_irqrestore(&sp_intc.lock, flags);
 > +}
 > +
-> +static struct notifier_block sp_restart_nb = {
-> +	.notifier_call = sp_restart,
-> +	.priority = 192,
-> +};
-> +
-> +static const struct reset_control_ops sp_reset_ops = {
-> +	.assert   = sp_reset_assert,
-> +	.deassert = sp_reset_deassert,
-> +	.status   = sp_reset_status,
-> +};
-> +
-> +static const struct of_device_id sp_reset_dt_ids[] = {
-> +	{.compatible = "sunplus,sp7021-reset",},
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static int sp_reset_probe(struct platform_device *pdev)
+> +static void sp_intc_ack_irq(struct irq_data *d)
 > +{
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *membase;
-> +	struct resource *res;
+> +	u32 hwirq = d->hwirq;
 > +
-> +	sp_reset = devm_kzalloc(&pdev->dev, sizeof(*sp_reset), GFP_KERNEL);
-> +	if (!sp_reset)
-> +		return -ENOMEM;
+> +	if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_EDGE))) { // WORKAROUND
+> +		sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, !TEST_STATE(hwirq, _IS_LOW));
+> +		ASSIGN_STATE(hwirq, _IS_ACTIVE, true);
+> +	}
 > +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	membase = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(membase))
-> +		return PTR_ERR(membase);
-> +
-> +	sp_reset->membase = membase;
-> +	sp_reset->rcdev.owner = THIS_MODULE;
-> +	sp_reset->rcdev.nr_resets = resource_size(res) / 4 * 16;	/* HIWORD_MASK */
-> +	sp_reset->rcdev.ops = &sp_reset_ops;
-> +	sp_reset->rcdev.of_node = dev->of_node;
-> +	register_restart_handler(&sp_restart_nb);
-
-Either do this after devm_reset_controller_register(), which could
-theoretically fail with -ENOMEM, or call unregister_restart_handler() in
-the error case below.
-
-> +
-> +	return devm_reset_controller_register(dev, &sp_reset->rcdev);
+> +	sp_intc_assign_bit(hwirq, REG_INTR_CLEAR, 1);
 > +}
 > +
-> +static struct platform_driver sp_reset_driver = {
-> +	.probe = sp_reset_probe,
-> +	.driver = {
-> +		   .name = "sunplus-reset",
-> +		   .of_match_table = sp_reset_dt_ids,
-		^
-Please fix the indentation, two tabs here.
-
-		.suppress_bind_attrs = true,
-
-to stop unbinding the driver. Alternatively, add a driver remove
-function that unregisters the restart handler.
-
-> +		   },
-	^
-One tab here.
-
+> +static void sp_intc_mask_irq(struct irq_data *d)
+> +{
+> +	sp_intc_assign_bit(d->hwirq, REG_INTR_MASK, 0);
+> +}
+> +
+> +static void sp_intc_unmask_irq(struct irq_data *d)
+> +{
+> +	sp_intc_assign_bit(d->hwirq, REG_INTR_MASK, 1);
+> +}
+> +
+> +static int sp_intc_set_type(struct irq_data *d, unsigned int type)
+> +{
+> +	u32 hwirq = d->hwirq;
+> +	bool is_edge = !(type & IRQ_TYPE_LEVEL_MASK);
+> +	bool is_low = (type == IRQ_TYPE_LEVEL_LOW || type == IRQ_TYPE_EDGE_FALLING);
+> +
+> +	irq_set_handler_locked(d, is_edge ? handle_edge_irq : handle_level_irq);
+> +
+> +	if (unlikely(IS_GPIO_INT(hwirq) && is_edge)) { // WORKAROUND
+> +		/* store states */
+> +		ASSIGN_STATE(hwirq, _IS_EDGE, is_edge);
+> +		ASSIGN_STATE(hwirq, _IS_LOW, is_low);
+> +		ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
+> +		/* change to level */
+> +		is_edge = false;
+> +	}
+> +
+> +	sp_intc_assign_bit(hwirq, REG_INTR_TYPE, is_edge);
+> +	sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, is_low);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sp_intc_get_ext_irq(int ext_num)
+> +{
+> +	void __iomem *base = ext_num ? REG_MASKED_EXT1 : REG_MASKED_EXT0;
+> +	u32 shift = ext_num ? GROUP_SHIFT_EXT1 : GROUP_SHIFT_EXT0;
+> +	u32 groups;
+> +	u32 pending_group;
+> +	u32 group;
+> +	u32 pending_irq;
+> +
+> +	groups = readl_relaxed(REG_INTR_GROUP);
+> +	pending_group = (groups >> shift) & GROUP_MASK;
+> +	if (!pending_group)
+> +		return -1;
+> +
+> +	group = fls(pending_group) - 1;
+> +	pending_irq = readl_relaxed(base + group * 4);
+> +	if (!pending_irq)
+> +		return -1;
+> +
+> +	return (group * 32) + fls(pending_irq) - 1;
+> +}
+> +
+> +static void sp_intc_handle_ext_cascaded(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	int ext_num = (int)irq_desc_get_handler_data(desc);
+> +	int hwirq;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	while ((hwirq = sp_intc_get_ext_irq(ext_num)) >= 0) {
+> +		if (unlikely(IS_GPIO_INT(hwirq) && TEST_STATE(hwirq, _IS_ACTIVE))) { // WORKAROUND
+> +			ASSIGN_STATE(hwirq, _IS_ACTIVE, false);
+> +			sp_intc_assign_bit(hwirq, REG_INTR_POLARITY, TEST_STATE(hwirq, _IS_LOW));
+> +		} else {
+> +			generic_handle_domain_irq(sp_intc.domain, hwirq);
+> +		}
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +#ifdef CONFIG_SMP
+> +static int sp_intc_set_affinity(struct irq_data *d, const struct cpumask *mask, bool force)
+> +{
+> +	return -EINVAL;
+> +}
+> +#endif
+> +
+> +static struct irq_chip sp_intc_chip = {
+> +	.name = "sp_intc",
+> +	.irq_ack = sp_intc_ack_irq,
+> +	.irq_mask = sp_intc_mask_irq,
+> +	.irq_unmask = sp_intc_unmask_irq,
+> +	.irq_set_type = sp_intc_set_type,
+> +#ifdef CONFIG_SMP
+> +	.irq_set_affinity = sp_intc_set_affinity,
+> +#endif
 > +};
 > +
-> +module_platform_driver(sp_reset_driver);
+> +static int sp_intc_irq_domain_map(struct irq_domain *domain,
+> +				  unsigned int irq, irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &sp_intc_chip, handle_level_irq);
+> +	irq_set_chip_data(irq, &sp_intc_chip);
+> +	irq_set_noprobe(irq);
 > +
-> +MODULE_AUTHOR("Edwin Chiu <edwin.chiu@sunplus.com>");
-> +MODULE_DESCRIPTION("Sunplus Reset Driver");
-> +MODULE_LICENSE("GPL v2");
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops sp_intc_dm_ops = {
+> +	.xlate = irq_domain_xlate_twocell,
+> +	.map = sp_intc_irq_domain_map,
+> +};
+> +
+> +static int sp_intc_irq_map(struct device_node *node, int i)
+> +{
+> +	unsigned int irq;
+> +
+> +	irq = irq_of_parse_and_map(node, i);
+> +	if (!irq)
+> +		return -ENOENT;
+> +
+> +	irq_set_chained_handler_and_data(irq, sp_intc_handle_ext_cascaded, (void *)i);
+> +
+> +	return 0;
+> +}
+> +
+> +void sp_intc_set_ext(u32 hwirq, int ext_num)
+> +{
+> +	sp_intc_assign_bit(hwirq, REG_INTR_PRIORITY, !ext_num);
+> +}
+> +EXPORT_SYMBOL_GPL(sp_intc_set_ext);
 
-regards
-Philipp
+No way. We don't export random symbols without a good justification,
+and you didn't give any.
+
+> +
+> +int __init sp_intc_init_dt(struct device_node *node, struct device_node *parent)
+
+This should be static.
+
+> +{
+> +	int i, ret;
+> +
+> +	sp_intc.g0 = of_iomap(node, 0);
+> +	if (!sp_intc.g0)
+> +		return -ENXIO;
+> +
+> +	sp_intc.g1 = of_iomap(node, 1);
+> +	if (!sp_intc.g1) {
+> +		ret = -ENXIO;
+> +		goto out_unmap0;
+> +	}
+> +
+> +	ret = sp_intc_irq_map(node, 0); // EXT_INT0
+> +	if (ret)
+> +		goto out_unmap1;
+> +
+> +	ret = sp_intc_irq_map(node, 1); // EXT_INT1
+> +	if (ret)
+> +		goto out_unmap1;
+> +
+> +	/* initial regs */
+> +	for (i = 0; i < SP_INTC_NR_GROUPS; i++) {
+> +		/* all mask */
+> +		writel_relaxed(0, REG_INTR_MASK + i * 4);
+> +		/* all edge */
+> +		writel_relaxed(~0, REG_INTR_TYPE + i * 4);
+> +		/* all high-active */
+> +		writel_relaxed(0, REG_INTR_POLARITY + i * 4);
+> +		/* all EXT_INT0 */
+> +		writel_relaxed(~0, REG_INTR_PRIORITY + i * 4);
+> +		/* all clear */
+> +		writel_relaxed(~0, REG_INTR_CLEAR + i * 4);
+> +	}
+> +
+> +	sp_intc.domain = irq_domain_add_linear(node, SP_INTC_NR_IRQS,
+> +					       &sp_intc_dm_ops, &sp_intc);
+> +	if (!sp_intc.domain) {
+> +		ret = -ENOMEM;
+> +		goto out_unmap1;
+> +	}
+> +
+> +	raw_spin_lock_init(&sp_intc.lock);
+> +
+> +	return 0;
+> +
+> +out_unmap1:
+> +	iounmap(sp_intc.g1);
+> +out_unmap0:
+> +	iounmap(sp_intc.g0);
+> +
+> +	return ret;
+> +}
+> +
+> +IRQCHIP_DECLARE(sp_intc, "sunplus,sp7021-intc", sp_intc_init_dt);
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
