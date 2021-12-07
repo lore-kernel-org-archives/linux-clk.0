@@ -2,151 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F75CC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 09:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92B3C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 09:32:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233017AbhLGJgC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 04:36:02 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:55522 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233687AbhLGJgB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 04:36:01 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S233940AbhLGJgN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 04:36:13 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:36532
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233743AbhLGJgM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 04:36:12 -0500
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B15A0B80E45;
-        Tue,  7 Dec 2021 09:32:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1970C341C1;
-        Tue,  7 Dec 2021 09:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638869549;
-        bh=V9cW8oqGAP8cNC7KbPVmeqamo6guvMW4YwPO084eXDA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hPxSmmvQzHpNxZ9VYN7klueDcqgzodJYZSyi4t+vdLQl1cyZXIZLuaYKMXnHbh3E8
-         IafOyxew1i4uIDJWXzIaRVSq+qSoElMdbBTAvra+GaKd6y+gSNmRdXDWFqHOvrBiet
-         GSvzjswNgYaPrHlqG9K42oCxPrpR2jzT65fyXLDLfwncR0DnB+cAVTExQxFNTZvdPE
-         WVBrjci3AxuOenNc6hnq0g16xQmvD24zJCH2g9dLkgsFneXHryQapC7sfOeiViclls
-         NxRjef2ve5wy9tpxmh8bMjjpXglq9jLCk2zgIlr4wzZIlCVgCiclK64A3NLDMrjU/s
-         198GBfZtFdeZw==
-Date:   Tue, 7 Dec 2021 15:02:25 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] clk: qcom: Add clock driver for SM8450
-Message-ID: <Ya8qKafMHQVgB3gc@matsya>
-References: <20211201072310.3968679-4-vkoul@kernel.org>
- <202112020334.Hw8YGuXD-lkp@intel.com>
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 515523F1F7
+        for <linux-clk@vger.kernel.org>; Tue,  7 Dec 2021 09:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1638869561;
+        bh=T6+9s82eszvtvdECt4LjIhYDKx4D2t9XfbY0joue/Fo=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=Jm/Hyhx5pGgs/QGzfTB/OsnrNBMqsQU9++qLk3/KoWnoQ4UHRZLulY0Mk3AiPqjmq
+         smFLibq2s9roLJVdkjNgDZ4eYO2c9YFNdfCMrO7YRZUBtr0ZIu/mledv+VMGjtwGsy
+         fGlNzPB/2wK6CoW8CJKxwvp3yGROf0c4VWEfjoWuZ2OJxzL7lTuBtnCchc06T8Md+2
+         0eHrN5jH+dNzzVDyxGP6RoJPIhNOjmv2oCrtw4WTa3Qg1nj6gei2ttffpOKJlcPFQ7
+         1a0gxN1vu9U4dVYCXQQXdW39961opiE42Xw901EkT5iuixKg4Y26RGOhXOOvbrrr4H
+         fPIytuhbIPv+w==
+Received: by mail-lf1-f70.google.com with SMTP id d2-20020a0565123d0200b0040370d0d2fbso5073250lfv.23
+        for <linux-clk@vger.kernel.org>; Tue, 07 Dec 2021 01:32:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=T6+9s82eszvtvdECt4LjIhYDKx4D2t9XfbY0joue/Fo=;
+        b=omT7OddqIK2jffLnhiw4QfztENEez1SaZMqjkJoCr/Hbf55MoiMg6J6+dohyFCBnIC
+         vy4k8Jo7iRjP6TzP6FYKYb2QjuikFzNMjzWLU5M5ozben8TVoojDjdRIkXaziK49zlJL
+         xRkrr+wPU2ihhfcbN7ViP1cxuYReSdPykdBxb8tnIGYg/q/oBZPcawjq6K8d29lhFUPP
+         JMihGJXBAriwXJ1wDU5GN0SFzP3bkSFd13IFMxTX90bNwubQ/xkLMnq1sPmeSPOZaxZ5
+         dDJUdiwbREUs402T9+eAZNjkuXr4lYuCITsg4pQ8rkfJsroygFYaf8ZvQ0Y2ewJyNvit
+         GPog==
+X-Gm-Message-State: AOAM5320K4k0L3WhoBiYV5csP4TQOJHwrHojC5d73zanYXbtlTlG4PR4
+        TnvS/v4DU+Xj3jBJwXZVsQIqaMSIECy2RViQZGxun7VqJPohzWdEC3gII7ZuOi0y5l04GaaUhFQ
+        NYDd/jpJ1rvNk4OpNLImKsIuE4U5ws9LSE5bfjw==
+X-Received: by 2002:a2e:994a:: with SMTP id r10mr41066359ljj.301.1638869560693;
+        Tue, 07 Dec 2021 01:32:40 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwKyBwQ35QuPUmJsbOyAfvODA2PllK81Af6yVKERMwFTiAYBejXq04Tp3ARzZKlv7wtY5zCdQ==
+X-Received: by 2002:a2e:994a:: with SMTP id r10mr41066327ljj.301.1638869560444;
+        Tue, 07 Dec 2021 01:32:40 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id l5sm1553374ljh.66.2021.12.07.01.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Dec 2021 01:32:39 -0800 (PST)
+Message-ID: <f2f2a084-9362-db44-27e9-19b54d350775@canonical.com>
+Date:   Tue, 7 Dec 2021 10:32:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202112020334.Hw8YGuXD-lkp@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v4 4/7] clk: samsung: Make exynos850_register_cmu shared
+Content-Language: en-US
+To:     David Virag <virag.david003@gmail.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+ <20211206153124.427102-5-virag.david003@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211206153124.427102-5-virag.david003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02-12-21, 03:40, kernel test robot wrote:
-> Hi Vinod,
+On 06/12/2021 16:31, David Virag wrote:
+> Rename exynos850_register_cmu to exynos_arm64_register_cmu and move it
+> to a new file called "clk-exynos-arm64.c".
 > 
-> I love your patch! Yet something to improve:
+> This should have no functional changes, but it will allow this code to
+> be shared between other arm64 Exynos SoCs, like the Exynos7885 and
+> possibly ExynosAuto V9.
 > 
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on robh/for-next v5.16-rc3 next-20211201]
-> [cannot apply to agross-msm/qcom/for-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Vinod-Koul/clk-qcom-Add-clocks-for-SM8450-SoC/20211201-152534
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20211202/202112020334.Hw8YGuXD-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 11.2.0
-> reproduce (this is a W=1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/0day-ci/linux/commit/e1e0cc0fd39b5e08530730ff2e973252bba25fc0
->         git remote add linux-review https://github.com/0day-ci/linux
->         git fetch --no-tags linux-review Vinod-Koul/clk-qcom-Add-clocks-for-SM8450-SoC/20211201-152534
->         git checkout e1e0cc0fd39b5e08530730ff2e973252bba25fc0
->         # save the config file to linux build tree
->         mkdir build_dir
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=alpha SHELL=/bin/bash
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> drivers/clk/qcom/gcc-sm8450.c:40:36: error: 'CLK_ALPHA_PLL_TYPE_LUCID_EVO' undeclared here (not in a function); did you mean 'CLK_ALPHA_PLL_TYPE_LUCID'?
->       40 |         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
->          |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->          |                                    CLK_ALPHA_PLL_TYPE_LUCID
-
-This is due to dependency on the lucid evo patchset from Vamsi as
-mentioned in the cover letter. So we can ignore this.
-
-> >> drivers/clk/qcom/gcc-sm8450.c:51:33: error: 'clk_alpha_pll_fixed_lucid_evo_ops' undeclared here (not in a function); did you mean 'clk_alpha_pll_fixed_lucid_5lpe_ops'?
->       51 |                         .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
->          |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->          |                                 clk_alpha_pll_fixed_lucid_5lpe_ops
-> >> drivers/clk/qcom/gcc-sm8450.c:74:25: error: 'clk_alpha_pll_postdiv_lucid_evo_ops' undeclared here (not in a function); did you mean 'clk_alpha_pll_postdiv_lucid_5lpe_ops'?
->       74 |                 .ops = &clk_alpha_pll_postdiv_lucid_evo_ops,
->          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->          |                         clk_alpha_pll_postdiv_lucid_5lpe_ops
-> 
-> 
-> vim +40 drivers/clk/qcom/gcc-sm8450.c
-> 
->     37	
->     38	static struct clk_alpha_pll gcc_gpll0 = {
->     39		.offset = 0x0,
->   > 40		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
->     41		.clkr = {
->     42			.enable_reg = 0x62018,
->     43			.enable_mask = BIT(0),
->     44			.hw.init = &(struct clk_init_data){
->     45				.name = "gcc_gpll0",
->     46				.parent_data = &(const struct clk_parent_data){
->     47					.fw_name = "bi_tcxo",
->     48					.name = "bi_tcxo",
->     49				},
->     50				.num_parents = 1,
->   > 51				.ops = &clk_alpha_pll_fixed_lucid_evo_ops,
->     52			},
->     53		},
->     54	};
->     55	
->     56	static const struct clk_div_table post_div_table_gcc_gpll0_out_even[] = {
->     57		{ 0x1, 2 },
->     58		{ }
->     59	};
->     60	
->     61	static struct clk_alpha_pll_postdiv gcc_gpll0_out_even = {
->     62		.offset = 0x0,
->     63		.post_div_shift = 10,
->     64		.post_div_table = post_div_table_gcc_gpll0_out_even,
->     65		.num_post_div = ARRAY_SIZE(post_div_table_gcc_gpll0_out_even),
->     66		.width = 4,
->     67		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
->     68		.clkr.hw.init = &(struct clk_init_data){
->     69			.name = "gcc_gpll0_out_even",
->     70			.parent_data = &(const struct clk_parent_data){
->     71				.hw = &gcc_gpll0.clkr.hw,
->     72			},
->     73			.num_parents = 1,
->   > 74			.ops = &clk_alpha_pll_postdiv_lucid_evo_ops,
->     75		},
->     76	};
->     77	
-> 
+> Signed-off-by: David Virag <virag.david003@gmail.com>
 > ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> Changes in v2:
+>   - New patch
+> 
+> Changes in v3:
+>   - Fix SPDX comment style in clk-exynos-arm64.h
+> 
+> Changes in v4:
+>   - Fix missing headers but still remove of_address.h
+>   - "__SAMSUNG_CLK_ARM64_H" -> "__CLK_EXYNOS_ARM64_H" in
+>     clk-exynos-arm64.h everywhere (only the comment at the end had the
+>     latter by accident)
+> 
+>  drivers/clk/samsung/Makefile           |  1 +
+>  drivers/clk/samsung/clk-exynos-arm64.c | 94 ++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos-arm64.h | 20 ++++++
+>  drivers/clk/samsung/clk-exynos850.c    | 88 ++----------------------
+>  4 files changed, 119 insertions(+), 84 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos-arm64.c
+>  create mode 100644 drivers/clk/samsung/clk-exynos-arm64.h
+> 
 
--- 
-~Vinod
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+
+
+Best regards,
+Krzysztof
