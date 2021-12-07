@@ -2,80 +2,173 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E376EC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 08:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EB1C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 08:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231515AbhLGIci (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 03:32:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
+        id S233033AbhLGIj2 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 03:39:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbhLGIch (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 03:32:37 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD5A9C061746;
-        Tue,  7 Dec 2021 00:29:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id AA931CE19FC;
-        Tue,  7 Dec 2021 08:29:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBC1C341C6;
-        Tue,  7 Dec 2021 08:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638865743;
-        bh=Jyne4LKUAq3BVvN2/aaEgD7olzdlQToMeMzYv2oyrHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdpqQkBSOLuZ3tMb4PW5ip4CRKVrF1WatuDjFMKKKS3wy24qywPrw7ic1gjIcDi7H
-         ggoAoodHve18NoJ4QApXatrBe47UksvlZG/ZIhVNipfrzk99tsmoDuiOodLCw7Q7ou
-         6HpEb9Nfo6NCwixbBcBieQai9i+NGXTU+pUC6qJLkBTqVn68iWYg5mSWWZc7BTm5Qa
-         EzO1HfCmjezQtCAl4PIENR5/7IVkipsA55o91FCqY1ALC+bOSXGK+tFoTrv/ITCaeL
-         7aGv4/CmNmOyAtkJDqCzlvxdqEhv/rt5ZPl/nkIcXxe3xqdpKRYBUNkv8UwG9B7pHs
-         /YZ7mRkXONF0w==
-Received: from mchehab by mail.kernel.org with local (Exim 4.94.2)
-        (envelope-from <mchehab@kernel.org>)
-        id 1muVqO-00BUe6-VW; Tue, 07 Dec 2021 09:29:00 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        "Wei Xu" <xuwei5@hisilicon.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bindings: clock: hi3670-clock.txt: add pmctrl compatible
-Date:   Tue,  7 Dec 2021 09:28:59 +0100
-Message-Id: <3bea78162ce721fff2d14ff83b11d3f982c25f2f.1638865711.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <61AF16AC.1080506@hisilicon.com>
-References: <61AF16AC.1080506@hisilicon.com>
+        with ESMTP id S233007AbhLGIj1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 03:39:27 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2869BC061746
+        for <linux-clk@vger.kernel.org>; Tue,  7 Dec 2021 00:35:57 -0800 (PST)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1muVwp-0005HR-6U; Tue, 07 Dec 2021 09:35:39 +0100
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1muVwg-0003U5-SO; Tue, 07 Dec 2021 09:35:30 +0100
+Message-ID: <75d34242693a41978fb7c6703dac3fd3a6437172.camel@pengutronix.de>
+Subject: Re: [PATCH v5 04/10] reset: Add Sunplus SP7021 reset driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, linux@armlinux.org.uk, broonie@kernel.org,
+        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, wells.lu@sunplus.com
+Date:   Tue, 07 Dec 2021 09:35:30 +0100
+In-Reply-To: <5b847375ae9591dfd0551c86141102e02b450479.1638515726.git.qinjian@cqplus1.com>
+References: <cover.1638515726.git.qinjian@cqplus1.com>
+         <5b847375ae9591dfd0551c86141102e02b450479.1638515726.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a compatible for the Power Management domain controller,
-which is needed in order to control power for the PCI devices
-on HiKey 970.
+On Fri, 2021-12-03 at 15:34 +0800, Qin Jian wrote:
+[...]
+> diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
+> new file mode 100644
+> index 000000000..a1d88dbaf
+> --- /dev/null
+> +++ b/drivers/reset/reset-sunplus.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * SP7021 reset driver
+> + *
+> + * Copyright (C) Sunplus Technology Co., Ltd.
+> + *       All rights reserved.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/reboot.h>
+> +
+> +/* HIWORD_MASK_REG BITS */
+> +#define BITS_PER_HWM_REG	16
+> +
+> +struct sp_reset_data {
+> +	struct reset_controller_dev rcdev;
+> +	void __iomem *membase;
+> +} *sp_reset;
+     ^^^^^^^^^^
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/devicetree/bindings/clock/hi3670-clock.txt | 1 +
- 1 file changed, 1 insertion(+)
+I'd prefer if you removed the global sp_reset pointer.
 
-diff --git a/Documentation/devicetree/bindings/clock/hi3670-clock.txt b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-index 66f3697eca78..8e9f12a3ba5b 100644
---- a/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-@@ -15,6 +15,7 @@ Required Properties:
- 	- "hisilicon,hi3670-iomcu"
- 	- "hisilicon,hi3670-media1-crg"
- 	- "hisilicon,hi3670-media2-crg"
-+	- "hisilicon,hi3670-pmctrl"
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
--- 
-2.33.1
+[...]
+> +static int sp_restart(struct notifier_block *this, unsigned long mode,
+> +		      void *cmd)
+> +{
 
+You could embed the sp_restart_nb notifier block in struct sp_reset_data
+and use container_of(this, struct sp_reset_data, notifier) to get to the
+rcdev here.
+
+> +	sp_reset_assert(&sp_reset->rcdev, 0);
+> +	sp_reset_deassert(&sp_reset->rcdev, 0);
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block sp_restart_nb = {
+> +	.notifier_call = sp_restart,
+> +	.priority = 192,
+> +};
+> +
+> +static const struct reset_control_ops sp_reset_ops = {
+> +	.assert   = sp_reset_assert,
+> +	.deassert = sp_reset_deassert,
+> +	.status   = sp_reset_status,
+> +};
+> +
+> +static const struct of_device_id sp_reset_dt_ids[] = {
+> +	{.compatible = "sunplus,sp7021-reset",},
+> +	{ /* sentinel */ },
+> +};
+> +
+> +static int sp_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	void __iomem *membase;
+> +	struct resource *res;
+> +
+> +	sp_reset = devm_kzalloc(&pdev->dev, sizeof(*sp_reset), GFP_KERNEL);
+> +	if (!sp_reset)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	membase = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(membase))
+> +		return PTR_ERR(membase);
+> +
+> +	sp_reset->membase = membase;
+> +	sp_reset->rcdev.owner = THIS_MODULE;
+> +	sp_reset->rcdev.nr_resets = resource_size(res) / 4 * 16;	/* HIWORD_MASK */
+> +	sp_reset->rcdev.ops = &sp_reset_ops;
+> +	sp_reset->rcdev.of_node = dev->of_node;
+> +	register_restart_handler(&sp_restart_nb);
+
+Either do this after devm_reset_controller_register(), which could
+theoretically fail with -ENOMEM, or call unregister_restart_handler() in
+the error case below.
+
+> +
+> +	return devm_reset_controller_register(dev, &sp_reset->rcdev);
+> +}
+> +
+> +static struct platform_driver sp_reset_driver = {
+> +	.probe = sp_reset_probe,
+> +	.driver = {
+> +		   .name = "sunplus-reset",
+> +		   .of_match_table = sp_reset_dt_ids,
+		^
+Please fix the indentation, two tabs here.
+
+		.suppress_bind_attrs = true,
+
+to stop unbinding the driver. Alternatively, add a driver remove
+function that unregisters the restart handler.
+
+> +		   },
+	^
+One tab here.
+
+> +};
+> +
+> +module_platform_driver(sp_reset_driver);
+> +
+> +MODULE_AUTHOR("Edwin Chiu <edwin.chiu@sunplus.com>");
+> +MODULE_DESCRIPTION("Sunplus Reset Driver");
+> +MODULE_LICENSE("GPL v2");
+
+regards
+Philipp
