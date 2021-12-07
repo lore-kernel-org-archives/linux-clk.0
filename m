@@ -2,73 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F921C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 07:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53202C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Dec 2021 07:33:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbhLGHKk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 02:10:40 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:53138 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbhLGHKk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 02:10:40 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63758B816A1;
-        Tue,  7 Dec 2021 07:07:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69468C341C1;
-        Tue,  7 Dec 2021 07:07:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638860828;
-        bh=+2G/X5h3+hoYNKZYrwC4jUbRuh1P7OkgWwsP4LDLnyQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H2/t/5C1Y3UeAUtmCEQrkuXmrwdtbX/q4YuJ4wQ/NPupe2+6VWL7VtfORTwSJGQoc
-         Z2i7+ufESsn6D9DQ92u8u2ZFzAjiBOTz369/vdJbU+PSNuzk7l90Fw/cLGBQuSSxsJ
-         AXBm0cgYR+hSqQ2zd7As10LO0SM3IRrFousT89mPGPwus+TqWNST/lpmASShHY7gAe
-         E8QBfKRr8hmRdoJor0Se6aHdX3M3Mf2VmgAB4ZSq7ddj42XtzUiX9VvKikavdwrDap
-         72WCWwvElZhUNslWdQvw/ldIiw9iX8PGolJud10bT/cWiEjihkQPocp/8wfn+7DHsB
-         L3cdhFaIsbwOw==
-Date:   Tue, 7 Dec 2021 12:37:04 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-Message-ID: <Ya8IGPJCBl+seblO@matsya>
-References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+        id S230243AbhLGHgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 02:36:37 -0500
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:40331 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230202AbhLGHgg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 02:36:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1638862386; x=1670398386;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EoBuBtj/CKp/HWzfb39zfxN4Nrr9d2HqG5zVFr+fPkQ=;
+  b=ZepunwatZ4O7Lu/v1MNc9jH/0RV8zvQ9Ejp+RYK3IPTtC2qhfAGDwm6E
+   wTfHct5b7vOJ+83U6FjCy54d1i9UWhQtjwQ/d4kJmQJ1ZrmxBk/72PwSE
+   X+vyHUDl6gCAWui0w80bvpBYcqUVECFmXqdTpatKJ+b1GnzRWQDKT8fm/
+   I=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 06 Dec 2021 23:33:06 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2021 23:33:05 -0800
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Mon, 6 Dec 2021 23:33:05 -0800
+Received: from hu-vamslank-sd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.922.19; Mon, 6 Dec 2021 23:33:04 -0800
+From:   <quic_vamslank@quicinc.com>
+To:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <manivannan.sadhasivam@linaro.org>,
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
+Subject: [PATCH v7 0/3] Add PLL and GCC clock support for SDX65 
+Date:   Mon, 6 Dec 2021 23:32:48 -0800
+Message-ID: <cover.1638861860.git.quic_vamslank@quicinc.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02-12-21, 19:56, Bjorn Andersson wrote:
-> As GDSCs are turned on and off some associated clocks are momentarily
-> enabled for house keeping purposes. Failure to enable these clocks seems
-> to have been silently ignored in the past, but starting in SM8350 this
-> failure will prevent the GDSC to turn on.
-> 
-> At least on SM8350 this operation will enable the RCG per the
-> configuration in CFG_REG. This means that the current model where the
-> current configuration is written back to CF_REG immediately after
+From: Vamsi Krishna Lanka <quic_vamslank@quicinc.com>
 
-s/CF_REG/CFG_REG
+Hello,
+Changes from v6:
+ - Addressed stephen's comments related to GCC and PLL patches
+ - separated PLL and GCC patches from rpmh patches as suggested by Bjorn
 
-> parking the RCG doesn't work.
-> 
-> Instead, keep track of the currently requested rate of the clock and
-> upon enabling the clock reapply the configuration per the saved rate.
+Changes from v5:
+ - Collected Vinod Koul's and Rob's Reviewed-by for the patches
+ - Rebased on the latest tip of Torvald's tree (MAINTAINERS: co-maintain random.c)
 
-With that fixed:
+Changes from v4:
+ - Fixed comments from vinod koul on Clock Alpha PLL and GCC driver support patches
+ - Addressed Rob's comments related to GCC dt-binding patch
+ - Collected Vinod Koul's Reviewed-by for the dt-bindings patches
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Changes from v3:
+ - Fixed DTbindings and unused variables errors reported by kernel test bot
+ - Rebased on top of v5.16-rc1
 
+Changes from v2:
+ - Addressed Taniya Das and Vinod Koul's comments related to adding LUCID_EVO
+   PLL type and rpmh support patches
+ - Collected Rob's Acked-by for the dt-bindings patches
+
+Changes from v1:
+ - Addressed Bjorn's comments related to the GCC support patch
+ - Collected Bjorn's and Rob's Reviewed-by for the dt-bindings patches
+
+This patch series adds bindings and device driver changes for GCC, pdc and RPMh
+clock support for SDX65 Platform.
+
+Thanks,
+Vamsi
+
+Vamsi Krishna Lanka (2):
+  clk: qcom: Add LUCID_EVO PLL type for SDX65
+  clk: qcom: Add SDX65 GCC support
+
+Vamsi krishna Lanka (1):
+  dt-bindings: clock: Add SDX65 GCC clock bindings
+
+ .../bindings/clock/qcom,gcc-sdx65.yaml        |   80 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  204 ++-
+ drivers/clk/qcom/clk-alpha-pll.h              |    3 +
+ drivers/clk/qcom/gcc-sdx65.c                  | 1611 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdx65.h    |  122 ++
+ 7 files changed, 2003 insertions(+), 26 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx65.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sdx65.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx65.h
+
+
+base-commit: 58e1100fdc5990b0cc0d4beaf2562a92e621ac7d
 -- 
-~Vinod
+2.33.1
+
