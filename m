@@ -2,96 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B16C0C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 19:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B21C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 22:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232740AbhLHTLP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 14:11:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232285AbhLHTLO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 14:11:14 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 503B7C061746;
-        Wed,  8 Dec 2021 11:07:42 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id r25so11658450edq.7;
-        Wed, 08 Dec 2021 11:07:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cqg6c8GPTNxn1iTThsV1QNq6rZCOvwgzQTX5X89ySUk=;
-        b=XHiQEsBmyzP/7SVxSY7AILyfRrEFTfqtpmNl7wjz9YViTRdo8+B7LlBI44uCX3kJlE
-         adZpj1psZPHnPxeDu9UYHm9Ly92vA9VmsozNJAQ5QkXdI9i9906OdF3g2zQ1govYvV5V
-         m4iI4DihO+X9WwTakEkWv5WuuLQHrc7tlMXb6GXTuZaYSP9EJgD/kGSDkIT1v4gkdU5p
-         1VzO/lk2n2PkJDb0cWvnOzBZ6mHIHrf7KA0y2wzwVbeO67xJXFr6eH8UV0Oa+wS8uVKj
-         dnEZyZ244cs5M2n9bkS2BQ1dBxHud4DQ1S6XmCGuUXVgYVmLzN7g4eI8xPKlX5vtNaQ2
-         mG0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cqg6c8GPTNxn1iTThsV1QNq6rZCOvwgzQTX5X89ySUk=;
-        b=XaBXI8huqm19HsUDxFZK6wJD8ZhHHRvp1trgUFjIjQdTKSKxVBogRt5yVuYhClTZF+
-         /Qp82Ihh5W/HOTqQGPRbZEsafrxlPJOI+Yfec6Fi5/Xq8mMs8Dx2nW5S+9658TC+bVmr
-         Tk0aB3jcfT7UFRj6bRim2Yu6oxj31AypDDK8KjCLYybM/pbpSpD3M9SNEH0jYsiQEQbI
-         K8SrR/bTi5Q50/FOlPEsnLCH6lC9qK1w24+5S/d1BBHcWsYf3cHiT5OtNftS9OYCnTKa
-         VGVcdglUVIJd83kZv0639VMYCplY7M8pGxzvErjkjAW3qRU5DcP8IqUgxGM9Lwy6wcTI
-         zyXA==
-X-Gm-Message-State: AOAM531xgKWhH2IyRDygOtx5jxQFdcV+/lF7bOvfn5HL/j8HsHU96J5X
-        r/KKucM0oS5HiOFtOB/tleVBcEPxT+RNOipP
-X-Google-Smtp-Source: ABdhPJxHc2LJ8uXX6xkzahGJR7jfwPLp2bD6ZS76HCYbTrYh7XW2ljSlwjCIokkzYP/zznjTzo352A==
-X-Received: by 2002:a17:907:6e91:: with SMTP id sh17mr10023526ejc.86.1638990460561;
-        Wed, 08 Dec 2021 11:07:40 -0800 (PST)
-Received: from [192.168.1.144] (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id x7sm2618328edd.28.2021.12.08.11.07.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Dec 2021 11:07:40 -0800 (PST)
-Subject: Re: [PATCH] clk: qcom: gcc-msm8974: Modernize the driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
+        id S240637AbhLHWsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 17:48:33 -0500
+Received: from m-r2.th.seeweb.it ([5.144.164.171]:43137 "EHLO
+        m-r2.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240636AbhLHWsc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 17:48:32 -0500
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4CB5C3ED5F;
+        Wed,  8 Dec 2021 23:44:58 +0100 (CET)
+Date:   Wed, 8 Dec 2021 23:44:51 +0100
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211118153107.8590-1-ivo.ivanov.ivanov1@gmail.com>
- <Ya40B1QkGmWmhSUX@builder.lan>
-From:   Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Message-ID: <8792e6d6-f5a2-3055-8011-4a2f5deb0220@gmail.com>
-Date:   Wed, 8 Dec 2021 21:07:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 02/11] clk: qcom: gpucc-sdm660: use parent_hws instead of
+ parent_data
+Message-ID: <20211208224451.b64bxukxygunlceo@SoMainline.org>
+References: <20211208175430.1333594-1-dmitry.baryshkov@linaro.org>
+ <20211208175430.1333594-3-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <Ya40B1QkGmWmhSUX@builder.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211208175430.1333594-3-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn, thanks for the review!
-
-> "xo_board" is actually the crystal feeding the PMIC with a reference
-> clock, of interest here is that this is split up in the 2 digital and 3
-> analog RPM_SMD_CX_{Dx,Ay} clocks. Out of these you have RPM_SMD_CXO_D0
-> being wired up on the CXO pin on the msm8974.
+On 2021-12-08 20:54:21, Dmitry Baryshkov wrote:
+> If all parents are specified as clk_hw, we can use parent_hws instead of
+> parent_data.
 > 
-> Back when this was devices we didn't have the means of dealing with
-> rpmcc as parent to gcc, so you can in gcc_msm8974_probe() find the
-> registration of a clock "xo" which is a 19.2MHz clock parented by
-> "xo_board".
-> 
-> As such, the appropriate .name here would be "xo".
-> 
-> Likewise "xo" (or actually "cxo") would be a better name for the
-> DT-based input clock - and it should point to &rpmcc RPM_SMD_CXO_D0
-> (iiuc).
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-I'll try to fix the mentioned issue and send a v2 in series of patches
-with other gcc-msm8974 improvements.
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
 
-Regards,
-Ivaylo
+> ---
+>  drivers/clk/qcom/gpucc-sdm660.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
+> index 26e17f349a77..27a506a78a25 100644
+> --- a/drivers/clk/qcom/gpucc-sdm660.c
+> +++ b/drivers/clk/qcom/gpucc-sdm660.c
+> @@ -65,8 +65,8 @@ static struct clk_alpha_pll gpu_pll0_pll_out_main = {
+>  	.num_vco = ARRAY_SIZE(gpu_vco),
+>  	.clkr.hw.init = &(struct clk_init_data){
+>  		.name = "gpu_pll0_pll_out_main",
+> -		.parent_data =  &(const struct clk_parent_data){
+> -			.hw = &gpucc_cxo_clk.clkr.hw,
+> +		.parent_hws = (const struct clk_hw*[]){
+> +			&gpucc_cxo_clk.clkr.hw,
+>  		},
+>  		.num_parents = 1,
+>  		.ops = &clk_alpha_pll_ops,
+> @@ -80,8 +80,8 @@ static struct clk_alpha_pll gpu_pll1_pll_out_main = {
+>  	.num_vco = ARRAY_SIZE(gpu_vco),
+>  	.clkr.hw.init = &(struct clk_init_data){
+>  		.name = "gpu_pll1_pll_out_main",
+> -		.parent_data = &(const struct clk_parent_data){
+> -			.hw = &gpucc_cxo_clk.clkr.hw,
+> +		.parent_hws = (const struct clk_hw*[]){
+> +			&gpucc_cxo_clk.clkr.hw,
+>  		},
+>  		.num_parents = 1,
+>  		.ops = &clk_alpha_pll_ops,
+> @@ -134,8 +134,8 @@ static struct clk_branch gpucc_gfx3d_clk = {
+>  		.enable_mask = BIT(0),
+>  		.hw.init = &(struct clk_init_data){
+>  			.name = "gpucc_gfx3d_clk",
+> -			.parent_data = &(const struct clk_parent_data){
+> -				.hw = &gfx3d_clk_src.rcg.clkr.hw,
+> +			.parent_hws = (const struct clk_hw*[]){
+> +				&gfx3d_clk_src.rcg.clkr.hw,
+>  			},
+>  			.num_parents = 1,
+>  			.ops = &clk_branch2_ops,
+> -- 
+> 2.33.0
+> 
