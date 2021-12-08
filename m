@@ -2,124 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8F3C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 10:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00163C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 13:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbhLHKvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 05:51:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231931AbhLHKvy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 05:51:54 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E61C0617A1
-        for <linux-clk@vger.kernel.org>; Wed,  8 Dec 2021 02:48:22 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id v15so3305498ljc.0
-        for <linux-clk@vger.kernel.org>; Wed, 08 Dec 2021 02:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b+SdIraKU1h/VTJU366bK+146L0b2CZSCkrC1RqcLiI=;
-        b=fhXHxYwOAsjpDT7PFmr/Ay2Bpv6Q52w7gzhLvGp3vi03x0kgJwC1mR2nR1tEBwpntR
-         5BIgAfnWN19+UstNXJU4S3pPdsYuWBgNebk4d3ZIyHcMtWi3YzAF0eZIz8zZvhekOaoN
-         dpXhu+rLaGYfNU3wPEK81pcn5RGWC+TYP50YKir8VfeN5bYZl1TC19FCevLctaRQ7GbS
-         gPCsf9ihaBJkTM0mvs/9FwV0KyzdDAXiEqb7QKxeQwaG8ND1MHBq/EpD6AasS8g7Ta3l
-         bXpZYLOXalhq5nbUEDXeIJBRG84NeR6F77adUrF6zH9WKGEaVG6SVgZm6ihC4RzUHLYr
-         VlWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b+SdIraKU1h/VTJU366bK+146L0b2CZSCkrC1RqcLiI=;
-        b=l1XhUI++4E+sMM1+ME1H+jRHEEYbzUJvoqdd7BUBdniDX7qsuYpK2yJxMOKsy88dtD
-         PtG278QyLlffc4AJHRnPeCK7nKP6uP6v4Tnas4VpDEELFNGJANwZvzTe3kQunco8yTqs
-         Y7US84FDyr0lq+vTz9rANXfXpoHRI1jAGcfyCN4Il+5YVMDr8ofqrlp5kvJQYxsZuwu5
-         qAKb5haxiVe3k6MVOEZwsUq9YHjudddbaN0axMnkXXkNKzKeCFunUC/lNkV0U23wwgMn
-         gNsCfQ+werdZ82WfG0BxpYWUVT59H0/fXxD9+gFyDwQKlZXlORAWTiTDrlJ0T7t+MK5X
-         haKg==
-X-Gm-Message-State: AOAM531sme1VRMKU7E9smEOK8FVbvzbLX311ifDADtnmaRbSC3M3tJ9F
-        z460kG6tH9K0pdlyBrUwPWoPRGAhqnywFvpn93T7vw==
-X-Google-Smtp-Source: ABdhPJwVpthnKSrDF/C2HexBrqNAjJ6E3HCFUU7MoAlXVzpyAbLD4i9B/Oo9exkRlkxfOdIXnrTziCam6tJi8meqZow=
-X-Received: by 2002:a2e:a22a:: with SMTP id i10mr48977767ljm.16.1638960500425;
- Wed, 08 Dec 2021 02:48:20 -0800 (PST)
+        id S232371AbhLHNfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 08:35:36 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:15492 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231299AbhLHNfg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 08:35:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1638970324; x=1670506324;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TY56zgAQOkoPTGFWpyt2EmMS4xIRb8tsNHpW/kK5u9o=;
+  b=Hd177mNOlG6up9eCOGSMoPSwEGrK2ZSuZ190XVC/VYo/7s5+9Ogenxmj
+   TfrV/qIq1LlVqL/n8gjnwgB0vTfaIHxvXYmv1AqBHBXk+n780IcU/ETRG
+   cxYixclzxvmlMauoW12SJXfOX35f/m/BR+JzbpDyZyD40Ku0mYGBX6OXy
+   XcCtLj4eoj18wfI3LhR8lMBLDM0km2GzXs7X+KsuvCQQJnU5F89Rj8i+8
+   wmW+aqYaC7L58CsdPZwC64tOQI9W5rlzfT8DVch95ytR5PtjiAF8O0RN2
+   ovTIxsbBnA79v5aikQF8YSDimdqWfExz2jtXtsbgMLR4RCrReHXbOFuJ3
+   A==;
+IronPort-SDR: CemCYyJJEaC/ZZ6yPAmD9UQ93E4Sdu91E/4YBRMj4rdoVnaSTzcpioEwxs0UE0E9swLaoJvnP+
+ xxfC185pLcMkkQ0f8eMuGyRqNY7CCo5S5y/4WBViXsgfo3a7VAUPNl6jfbUIfDwbHBRO7rKUln
+ S9EXtLWn0gQpUnzFvYl8kwO66C6Nv2AxnfsPRk0Z/k25RqFb93xUTe7brl6Qjp6o10XL7CEkuM
+ Ck7sCOyE7G+IA7lEHTLgCesGteX+CHhVc9ym+9U630BiVyqANrjWaxz4Gfwel53hUoswRSWYoG
+ aI4luFFhIEUNvIjwFiHEq1Kg
+X-IronPort-AV: E=Sophos;i="5.88,189,1635231600"; 
+   d="scan'208";a="141718629"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2021 06:32:03 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Wed, 8 Dec 2021 06:32:03 -0700
+Received: from ness.home (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Wed, 8 Dec 2021 06:32:01 -0700
+From:   <nicolas.ferre@microchip.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+Subject: [GIT PULL] clk: at91: clk for 5.17
+Date:   Wed, 8 Dec 2021 14:31:45 +0100
+Message-ID: <20211208133145.28267-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com> <20211204061042.1248028-12-Mr.Bossman075@gmail.com>
-In-Reply-To: <20211204061042.1248028-12-Mr.Bossman075@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 8 Dec 2021 11:47:44 +0100
-Message-ID: <CAPDyKFohGQ9M08sJmM5eo2jNhrvFSHA2bnb31AEgiFCFfV78ng@mail.gmail.com>
-Subject: Re: [PATCH v4 11/13] mmc: sdhci-esdhc-imx: Add sdhc support for
- i.MXRT series
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        Kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Organization: microchip
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 4 Dec 2021 at 07:11, Jesse Taube <mr.bossman075@gmail.com> wrote:
->
-> From: Jesse Taube <mr.bossman075@gmail.com>
->
-> Add support for i.MXRT1050's sdhc.
->
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-No need to resend this, it's already been applied.
+Stephen,
 
-Kind regards
-Uffe
+Here are the clk changes for 5.17 which collect changes to the lan966x product
+line. We agreed to include these Microchip patches into the at91 branch with
+Kavyasree and Horatiu.
 
+Please pull.
 
+Thanks, best regards,
+  Nicolas
 
-> ---
-> V1->V2:
-> * Nothing done
-> V2->V3:
-> * Rename imxrt to imxrt1050
-> * Remove BROKEN_AUTO_CMD23 and MAN_TUNING flags
-> V3->V4:
-> * Nothing done
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 764ee1b761d9..55981b0f0b10 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -305,6 +305,9 @@ static struct esdhc_soc_data usdhc_imx7ulp_data = {
->                         | ESDHC_FLAG_PMQOS | ESDHC_FLAG_HS400
->                         | ESDHC_FLAG_STATE_LOST_IN_LPMODE,
->  };
-> +static struct esdhc_soc_data usdhc_imxrt1050_data = {
-> +       .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_HS200 | ESDHC_FLAG_ERR004536,
-> +};
->
->  static struct esdhc_soc_data usdhc_imx8qxp_data = {
->         .flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
-> @@ -355,6 +358,7 @@ static const struct of_device_id imx_esdhc_dt_ids[] = {
->         { .compatible = "fsl,imx7ulp-usdhc", .data = &usdhc_imx7ulp_data, },
->         { .compatible = "fsl,imx8qxp-usdhc", .data = &usdhc_imx8qxp_data, },
->         { .compatible = "fsl,imx8mm-usdhc", .data = &usdhc_imx8mm_data, },
-> +       { .compatible = "fsl,imxrt1050-usdhc", .data = &usdhc_imxrt1050_data, },
->         { .compatible = "nxp,s32g2-usdhc", .data = &usdhc_s32g2_data, },
->         { /* sentinel */ }
->  };
-> --
-> 2.34.0
->
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-at91-5.17
+
+for you to fetch changes up to 5ad5915dea0047a6376d8f809ea3470ef68b1f92:
+
+  clk: lan966x: Extend lan966x clock driver for clock gating support (2021-12-08 11:19:20 +0100)
+
+----------------------------------------------------------------
+AT91 clk driver changes for 5.17:
+
+- Lan966x Generic Clock Controller driver and associated DT bindings
+- Lan966x clock driver extended to support clock gating
+
+----------------------------------------------------------------
+Horatiu Vultur (4):
+      clk: gate: Add devm_clk_hw_register_gate()
+      dt-bindings: clock: lan966x: Extend for clock gate support
+      dt-bindings: clock: lan966x: Extend includes with clock gates
+      clk: lan966x: Extend lan966x clock driver for clock gating support
+
+Kavyasree Kotagiri (3):
+      dt-bindings: clock: lan966x: Add binding includes for lan966x SoC clock IDs
+      dt-bindings: clock: lan966x: Add LAN966X Clock Controller
+      clk: lan966x: Add lan966x SoC clock driver
+
+ .../bindings/clock/microchip,lan966x-gck.yaml      |  60 +++++
+ drivers/clk/Kconfig                                |   7 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-gate.c                             |  35 +++
+ drivers/clk/clk-lan966x.c                          | 293 +++++++++++++++++++++
+ include/dt-bindings/clock/microchip,lan966x.h      |  34 +++
+ include/linux/clk-provider.h                       |  23 ++
+ 7 files changed, 453 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+ create mode 100644 drivers/clk/clk-lan966x.c
+ create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+
+-- 
+Nicolas Ferre
