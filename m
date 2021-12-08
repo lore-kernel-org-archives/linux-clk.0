@@ -2,89 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86930C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 09:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C31C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 10:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbhLHJpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 04:45:30 -0500
-Received: from [106.84.20.49] ([106.84.20.49]:7890 "EHLO test.cqplus1.com"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229915AbhLHJp3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 8 Dec 2021 04:45:29 -0500
-X-Greylist: delayed 632 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Dec 2021 04:45:29 EST
-X-MailGates: (compute_score:DELIVER,40,3)
-Received: from 172.27.96.203
-        by cqmailgates with MailGates ESMTP Server V5.0(21478:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Wed, 08 Dec 2021 17:28:45 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 8 Dec 2021 17:28:42 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.017; Wed, 8 Dec 2021 17:28:42 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Marc Zyngier <maz@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
-Subject: RE: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt controller
- driver
-Thread-Topic: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt
- controller driver
-Thread-Index: AQHX6BmQ/JspEgyikE+suUmdAKG1nqwmO/YAgAHtkbD//484gIAAn6dA
-Date:   Wed, 8 Dec 2021 09:28:42 +0000
-Message-ID: <8fa00c3b55874e90b5baae1f84010997@cqplus1.com>
-References: <cover.1638515726.git.qinjian@cqplus1.com>
- <e88ea4cf28ba69a41f6d1b4dd4128b82a6095c29.1638515726.git.qinjian@cqplus1.com>
- <87r1ao23fp.wl-maz@kernel.org> <39f9b853af7c44cb94421354744512a8@cqplus1.com>
- <ce867937861df454823eb703bfd29256@kernel.org>
-In-Reply-To: <ce867937861df454823eb703bfd29256@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S229534AbhLHKJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 05:09:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231283AbhLHKJz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 05:09:55 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E05EEC0617A1
+        for <linux-clk@vger.kernel.org>; Wed,  8 Dec 2021 02:06:23 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id v19so1205252plo.7
+        for <linux-clk@vger.kernel.org>; Wed, 08 Dec 2021 02:06:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vLsqqIOcK3x87D0lqx5TjStNHLlKk/oR3ZFyCJp2s0U=;
+        b=KZkrJZQF1iqqcIYWB/INHACwNxQlYjBuUCagjsMviC4w8dR9cDh1bmtZmWBjnMsiJZ
+         rC6tn1lLx7SyHN6UgSVSOerot5qYiwA0+3tobbXRHmAM3kjP82zBDqLmSn97bY5JYfyq
+         YWUTHvchOyjkgsPKBYLlLgB/W7RNxLZgGR/VIv1n9g8EFF8+1HMY+3R+/u+itWXDo7ve
+         CrxrX2w8g9NyDlwFoQL9bJhANRi8fB8RMMlLB5spyxYAOkpZT1ydZ21yU+OuL+QTGFLZ
+         d/X4LFPHKbKyMu01TijurTGtM03tdRjZTH8t6lduMuIAz66kHpH4iF/JvcSOvBVDcKJI
+         G/sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vLsqqIOcK3x87D0lqx5TjStNHLlKk/oR3ZFyCJp2s0U=;
+        b=g6sU1lFdJji8voFvGhijw62p9irHJWSpnZ4yC32xa0N4q0NVOkADs54YPsJKfDat5u
+         EnK1f+zW+I7vwi7x/OH45RfHEiEGl8X+OSFAHNyPZmnODPixL+iXEJzmvUyhTrOKNK2S
+         EYh3FtYomY5VSoBIckCnpc6pS5AGXgN6VfrCPUu0EOmKTEqGMBYDSR2aBKIlH/YPEv+x
+         lbe8olioGR80ERGPFt9iUuU38O/cBY20aeRYR9ru/R1Q0LODZB2nNOSctqFXbIEZYLkW
+         aVsU6tPnieqyoR6dtR5llggMtSaM2RtoYo+96itVv8GQeCBMpueI9czCRwBHbANUsf+U
+         dfnw==
+X-Gm-Message-State: AOAM530sR6mB+LDBojyF7AVO/RVH4h9e5lsI0ba3JTpY1xtoUUjo7FDG
+        Gn4bI6h41nfTZsAhK4WD+MOzhw==
+X-Google-Smtp-Source: ABdhPJxJM0rGENjhTjTx6Is6PlZ+znZvJakmsXjGiFUmS4EBjePVGdAA4K1S3V9+/m+9zXrnyLbsog==
+X-Received: by 2002:a17:90b:350b:: with SMTP id ls11mr6002127pjb.227.1638957983430;
+        Wed, 08 Dec 2021 02:06:23 -0800 (PST)
+Received: from hsinchu16.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
+        by smtp.gmail.com with ESMTPSA id y28sm2886312pfa.208.2021.12.08.02.06.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Dec 2021 02:06:22 -0800 (PST)
+From:   Zong Li <zong.li@sifive.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Zong Li <zong.li@sifive.com>
+Subject: [PATCH v2 1/1] clk: sifive: Fix W=1 kernel build warning
+Date:   Wed,  8 Dec 2021 18:06:18 +0800
+Message-Id: <7823666b57c105aee8323e6896f83f3ed249d9ee.1638957553.git.zong.li@sifive.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJjIFp5bmdpZXIgPG1hekBr
-ZXJuZWwub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDgsIDIwMjEgMzo0NSBQTQ0K
-PiBUbzogcWluamlhblvopoPlgaVdIDxxaW5qaWFuQGNxcGx1czEuY29tPg0KPiBDYzogcm9iaCtk
-dEBrZXJuZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVsLm9yZzsg
-dGdseEBsaW51dHJvbml4LmRlOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOw0KPiBsaW51eEBhcm1s
-aW51eC5vcmcudWs7IGJyb29uaWVAa2VybmVsLm9yZzsgYXJuZEBhcm5kYi5kZTsgbGludXgtYXJt
-LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsg
-bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5v
-cmc7IFdlbGxzIEx1IOWRguiKs+mosCA8d2VsbHMubHVAc3VucGx1cy5jb20+DQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjUgMDgvMTBdIGlycWNoaXA6IEFkZCBTdW5wbHVzIFNQNzAyMSBpbnRlcnJ1
-cHQgY29udHJvbGxlciBkcml2ZXINCj4gDQo+IE9uIDIwMjEtMTItMDggMDc6MTUsIHFpbmppYW5b
-6KaD5YGlXSB3cm90ZToNCj4gPj4gPiArdm9pZCBzcF9pbnRjX3NldF9leHQodTMyIGh3aXJxLCBp
-bnQgZXh0X251bSkNCj4gPj4gPiArew0KPiA+PiA+ICsJc3BfaW50Y19hc3NpZ25fYml0KGh3aXJx
-LCBSRUdfSU5UUl9QUklPUklUWSwgIWV4dF9udW0pOw0KPiA+PiA+ICt9DQo+ID4+ID4gK0VYUE9S
-VF9TWU1CT0xfR1BMKHNwX2ludGNfc2V0X2V4dCk7DQo+ID4+DQo+ID4+IE5vIHdheS4gV2UgZG9u
-J3QgZXhwb3J0IHJhbmRvbSBzeW1ib2xzIHdpdGhvdXQgYSBnb29kIGp1c3RpZmljYXRpb24sDQo+
-ID4+IGFuZCB5b3UgZGlkbid0IGdpdmUgYW55Lg0KPiA+Pg0KPiA+DQo+ID4gVGhpcyBmdW5jdGlv
-biBjYWxsZWQgYnkgU1A3MDIxIGRpc3BsYXkgZHJpdmVyIHRvIGRlY2lkZSBESVNQTEFZX0lSUQ0K
-PiA+IHJvdXRpbmcgdG8gd2hpY2ggcGFyZW50IGlycSAoRVhUX0lOVDAgb3IgRVhUX0lOVDEpLg0K
-PiANCj4gQmFzZWQgb24gd2hhdD8gSG93IGNhbiBhIGRpc3BsYXkgZHJpdmVyIGRlY2lkZSB3aGlj
-aCBwYXJlbnQgaXMNCj4gYXBwcm9wcmlhdGU/IFdoYXQgaW1wcm92ZW1lbnQgZG9lcyB0aGlzIGJy
-aW5nPw0KDQpJbiBkZWZhdWx0LCBhbGwgSVJRIHJvdXRpbmcgdG8gRVhUX0lOVDAsIHdoaWNoIHBy
-b2Nlc3NlZCBieSBDUFUwDQpTb21lIGRldmljZSdzIElSUSBuZWVkIGxvdyBsYXRlbmN5LCBsaWtl
-IGRpc3BsYXksIHNvIHJvdXRpbmcgRElTUExBWV9JUlEgdG8gRVhUX0lOVDEsDQp3aGljaCBwcm9j
-ZXNzZWQgYnkgQ1BVMSAoc2V0IC9wcm9jL2lycS88RVhUX0lOVDE+L3NtcF9hZmZpbml0eV9saXN0
-KQ0K
+This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+Declare static const variable 'prci_clk_fu540' where it's used").
+For fixing W=1 kernel build warning(s) about ‘prci_clk_fu540’ defined
+but not used [-Wunused-const-variable=], the problem is that the C file
+of fu540 and fu740 doesn't use these variables, but they includes the
+header files. We could refine the code by moving the definition of these
+variable into fu540 and fu740 implementation respectively, instead of
+common core code, then we could still separate the SoCs-dependent data
+in their own implementation.
+
+Signed-off-by: Zong Li <zong.li@sifive.com>
+---
+ drivers/clk/sifive/fu540-prci.c  |  6 +++++-
+ drivers/clk/sifive/fu540-prci.h  |  6 +-----
+ drivers/clk/sifive/fu740-prci.c  |  6 +++++-
+ drivers/clk/sifive/fu740-prci.h  | 11 +----------
+ drivers/clk/sifive/sifive-prci.c |  5 -----
+ 5 files changed, 12 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
+index 29bab915003c..5568bc26e36f 100644
+--- a/drivers/clk/sifive/fu540-prci.c
++++ b/drivers/clk/sifive/fu540-prci.c
+@@ -20,7 +20,6 @@
+ 
+ #include <dt-bindings/clock/sifive-fu540-prci.h>
+ 
+-#include "fu540-prci.h"
+ #include "sifive-prci.h"
+ 
+ /* PRCI integration data for each WRPLL instance */
+@@ -87,3 +86,8 @@ struct __prci_clock __prci_init_clocks_fu540[] = {
+ 		.ops = &sifive_fu540_prci_tlclksel_clk_ops,
+ 	},
+ };
++
++struct prci_clk_desc prci_clk_fu540 = {
++	.clks = __prci_init_clocks_fu540,
++	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
++};
+diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+index c220677dc010..931d6cad8c1c 100644
+--- a/drivers/clk/sifive/fu540-prci.h
++++ b/drivers/clk/sifive/fu540-prci.h
+@@ -7,10 +7,6 @@
+ #ifndef __SIFIVE_CLK_FU540_PRCI_H
+ #define __SIFIVE_CLK_FU540_PRCI_H
+ 
+-#include "sifive-prci.h"
+-
+-#define NUM_CLOCK_FU540	4
+-
+-extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
++extern struct prci_clk_desc prci_clk_fu540;
+ 
+ #endif /* __SIFIVE_CLK_FU540_PRCI_H */
+diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
+index 53f6e00a03b9..0ade3dcd24ed 100644
+--- a/drivers/clk/sifive/fu740-prci.c
++++ b/drivers/clk/sifive/fu740-prci.c
+@@ -8,7 +8,6 @@
+ 
+ #include <dt-bindings/clock/sifive-fu740-prci.h>
+ 
+-#include "fu540-prci.h"
+ #include "sifive-prci.h"
+ 
+ /* PRCI integration data for each WRPLL instance */
+@@ -132,3 +131,8 @@ struct __prci_clock __prci_init_clocks_fu740[] = {
+ 		.ops = &sifive_fu740_prci_pcie_aux_clk_ops,
+ 	},
+ };
++
++struct prci_clk_desc prci_clk_fu740 = {
++	.clks = __prci_init_clocks_fu740,
++	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu740),
++};
+diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
+index 511a0bf7ba2b..5bc0e18f058c 100644
+--- a/drivers/clk/sifive/fu740-prci.h
++++ b/drivers/clk/sifive/fu740-prci.h
+@@ -7,15 +7,6 @@
+ #ifndef __SIFIVE_CLK_FU740_PRCI_H
+ #define __SIFIVE_CLK_FU740_PRCI_H
+ 
+-#include "sifive-prci.h"
+-
+-#define NUM_CLOCK_FU740	9
+-
+-extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
+-
+-static const struct prci_clk_desc prci_clk_fu740 = {
+-	.clks = __prci_init_clocks_fu740,
+-	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu740),
+-};
++extern struct prci_clk_desc prci_clk_fu740;
+ 
+ #endif /* __SIFIVE_CLK_FU740_PRCI_H */
+diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+index 80a288c59e56..916d2fc28b9c 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -12,11 +12,6 @@
+ #include "fu540-prci.h"
+ #include "fu740-prci.h"
+ 
+-static const struct prci_clk_desc prci_clk_fu540 = {
+-	.clks = __prci_init_clocks_fu540,
+-	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
+-};
+-
+ /*
+  * Private functions
+  */
+-- 
+2.31.1
+
