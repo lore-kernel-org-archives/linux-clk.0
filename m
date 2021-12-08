@@ -2,211 +2,1759 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF68C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 15:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538DDC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 15:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236087AbhLHPd1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 10:33:27 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:56327 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236065AbhLHPdY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 10:33:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1638977393; x=1670513393;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=UxiAGq+yedpyxrFFh2+XTa59T9sYjn29RbXOg4KA0zY=;
-  b=PA4EPmoPPFooH8pyh2vvNbPTAfMJs3uwkwIik/gcPNNE2UpefM0FUhCl
-   Qz2oG9ySo54IQXRtWXX+twtNFLJ8zczjr+Qnn83vYQg7DEEZuwzgJ9Sdw
-   azWze9ZIEV8LV1pLl8kqFR7mrutmOipc+FDWU/kCQv0uzFZO+jUYvENUl
-   nYlP0D/bWA0kJ/Hmm7GH4eXb8sSWvg0YolpAWX43kr50um350E/xh1Kua
-   u70StvnnoiDBvRTJI78vw6Iv7g2woqHCo4d1XzInta7bsWvJokzLEKbHB
-   F7Y3cHjhBjHhxmatXVTyIX0wPo4kbv3tSeSMImicWC7O+CtSwYOKW1+YD
-   g==;
-IronPort-SDR: 9cCsv2vJ3Av+tv9OXUloH1QvK97Ed8jr4yJr5k535fSoPwtuOoToetkwQI7XyzGjDYRC01PonW
- FBm9bzCzJD1SViHv+ku8YlMnlqzxU1f5+kqM6fbPlyqI4ib33UHcGSsIKfQvTJCQZ2ipVd6x/f
- JMz7/wKDO860fqtJMDKaKTyGkViMPHvsCnh0XL8Cy/ryx2CJkUm7+bjDF50rV4mhYpT9eIOmV0
- av+VmfxD7dh5doC0SrD3eaqEuv3TgC/aGM3dNCIgMnbbZ+jNoRwGuPFhiNqybxZtSPZOK3lszv
- dqn7HUkZl9ysD23YLi7cS1i3
-X-IronPort-AV: E=Sophos;i="5.88,189,1635231600"; 
-   d="scan'208";a="145952143"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2021 08:29:52 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 8 Dec 2021 08:29:50 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14 via Frontend
- Transport; Wed, 8 Dec 2021 08:29:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gRjA4G7m+5KfS1eLIsufXgxLnhriRQbzhGYQo/uNDxPl4ZZhtNnIgOxiqNsMCJLQSfjTIHXwdg3caJfxFp9xfbfKr8TunFY613odbUSYRwqrOuBoz2IreC/RNVTTQCzIQgbLQYQufjfTItjcfmtHZK2Y2uHLr0HtvmM64AdTzQzL3guE2CEsBuHt0Pa/A7HLdKe4JZSBV/RGKbwoyBAyWMLKmKvlKxpRz4i8niOIUJ1S8LjnmEVIWUQyF4ayO63LHghsQrV2bDKkMGvPBmbX4foyqeqgu+fCRZA+0vsCPTBW1/mxj+vVmlfsQUJG5DdIExCyJXuDq8atYOzoA1414Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UxiAGq+yedpyxrFFh2+XTa59T9sYjn29RbXOg4KA0zY=;
- b=bLPXysUzqddU57+9ZjH0ckeCFweiJYHRaMR46sgoMFCqWMWYNPNp6XrSok6fpOh3ekbTg+Co3G1ClCVUDX8xTEj5LIWz50G/ngkg4Sl2N8VWv0HUU71sLFaVGbtjr6/FQVAh/fsqssFq+OL9zZK/ioIuByRfrPApiINVUNtxst4lmH6lu8PrYUNjfEXQffqqOrVeJTP/t6QD6JRQLqudFGX6nthdoGSGNHFfjCazSjrS9eWtVQNzVjSPDsyongLFNHLIu6JA+6FrCB5w3xvU2nAYTKssQBrpgZgOPL2khqaDbDl0mzOcwdU09ZeL09GAFn/3CQHS0F8wcx3wwqBDQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+        id S236161AbhLHPln (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 10:41:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230518AbhLHPlm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 10:41:42 -0500
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81770C061746
+        for <linux-clk@vger.kernel.org>; Wed,  8 Dec 2021 07:38:10 -0800 (PST)
+Received: by mail-ua1-x933.google.com with SMTP id j14so5336496uan.10
+        for <linux-clk@vger.kernel.org>; Wed, 08 Dec 2021 07:38:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UxiAGq+yedpyxrFFh2+XTa59T9sYjn29RbXOg4KA0zY=;
- b=Q03xKLhYMB6DUzRETFd6sWka3hPHqvfZGhAH556hsU4fOR/PQoi9ySFsTQy4ridshLs865IVZXQ3FzqyfeMBsQxM8fV3gNd0YcCw8j9giQdFnhSp7+rntQ2uEvEG6mN6DZgnooeRIJoTXPXRr/iy6p1lwA80SQSuas+BeOsxJH0=
-Received: from CO1PR11MB5154.namprd11.prod.outlook.com (2603:10b6:303:95::7)
- by MWHPR11MB1518.namprd11.prod.outlook.com (2603:10b6:301:c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.13; Wed, 8 Dec
- 2021 15:29:35 +0000
-Received: from CO1PR11MB5154.namprd11.prod.outlook.com
- ([fe80::b9b5:7a56:16e9:8f2f]) by CO1PR11MB5154.namprd11.prod.outlook.com
- ([fe80::b9b5:7a56:16e9:8f2f%5]) with mapi id 15.20.4755.024; Wed, 8 Dec 2021
- 15:29:35 +0000
-From:   <Conor.Dooley@microchip.com>
-To:     <geert@linux-m68k.org>, <Daire.McNamara@microchip.com>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <krzysztof.kozlowski@canonical.com>,
-        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
-        <Cyril.Jean@microchip.com>
-Subject: Re: [PATCH v6 2/2] clk: microchip: Add driver for Microchip PolarFire
- SoC
-Thread-Topic: [PATCH v6 2/2] clk: microchip: Add driver for Microchip
- PolarFire SoC
-Thread-Index: AQHX5fN6HlyL/iYcOUCEuV93zQ7Pw6wlpu8AgAMeX4A=
-Date:   Wed, 8 Dec 2021 15:29:35 +0000
-Message-ID: <3e2a08f5-d1b0-e2d3-c418-4b5b352f0800@microchip.com>
-References: <20211130140724.10750-1-conor.dooley@microchip.com>
- <20211130140724.10750-3-conor.dooley@microchip.com>
- <CAMuHMdV=QNtz0rRLQv+=k+GGuSyKANFjGQ1YTKaKwcmzsvf5RA@mail.gmail.com>
-In-Reply-To: <CAMuHMdV=QNtz0rRLQv+=k+GGuSyKANFjGQ1YTKaKwcmzsvf5RA@mail.gmail.com>
-Accept-Language: en-IE, en-US
-Content-Language: en-IE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 440a1001-f94d-4619-e624-08d9ba5f8a75
-x-ms-traffictypediagnostic: MWHPR11MB1518:EE_
-x-microsoft-antispam-prvs: <MWHPR11MB1518F3E225D56859A9DFFD8D986F9@MWHPR11MB1518.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3383;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 0xGG0pxeGJegitMDII0///dytVpU5iOuvd3Dsa5kfk3ot6bdcDw/kGmnE944zUXQYyR0P/yxXnKHO11WuBov+WsX2NjxtyPWE/BJbK/e59r/0ypestMvQg2IHG3xiWl9I0KtQHTXMdumfrYsl078bTPJPJyo1KSSLFFfAORV3rwiSqCdber5qbORXyNM/8WHd8o8UBxe9MghnwBovM3KESdR9IboA2bou2MiXP/MH8NbPqvshErG+pWdCLK30O3Ge5KLaZ1VbCnvxJADvn6GsXMocQjN5IxhkgF1T9JWiudaPcTVNgFP1XfWEVWk0YcGxqIdcb3+HcK4wKA2H63jRj+v2WsBPh1lYeNYpL7FQg7ZfgMKDYAoqEVn5eKbkBg/x2EltkUlh6jXC4qGPGgC7nYjFTgKtzzWp+QydTotq4ARs9WgGN+zYvU1aCnXpaTLeLcXsqkN2d/XniIgibjwSO2+0s1vsfKwy9EaMbfqJakKB08Fj4XxQ5t84mlaxlYEWLigqrs+j33pdEl6qkBxutBAuU46cB6r5flbKj29EPsiACNkxsFIOkFXXvl9ZelSgIQm3LaTGVlm53YSNQhfoYF+0cv11YhF6bydAfi6+53pVznbKdwLfp7bGcqFv+yEsnxrbZCQveSVXmW+VSVcNIwMylcTx7iGFDziewOLYVAotxCKY6VkTHoLr7q0BJZmXYuRWXOaVVFvf1IT2KfehuffKr7G9u5kQifC8Feq22fw62mcIDK/y1Idu2WP0OnzcEYj/ud5UhLBX78vW9c2RQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5154.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(8936002)(8676002)(6506007)(53546011)(91956017)(38070700005)(186003)(26005)(2616005)(66476007)(38100700002)(122000001)(66556008)(66446008)(64756008)(66946007)(2906002)(5660300002)(76116006)(31696002)(71200400001)(6512007)(83380400001)(6636002)(54906003)(36756003)(4326008)(110136005)(107886003)(31686004)(508600001)(86362001)(6486002)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UFBSZUloWUMvbWlEZG9mcEJKRm83MWthc0pFS29tNjlKakQ3RkJiUzNnbm85?=
- =?utf-8?B?OWZPUytVY3RldjRxd3QvNlFsYUY4QVNCOWxqSWxZZlF1cm11L0RZcko3OVR5?=
- =?utf-8?B?cFpPQXpOTnQvQVBNUFhERVJCa1YzMjdKNkw0V2duZ3QweWxyb0F5UVJFcmZ4?=
- =?utf-8?B?Y3E5aGN5RGt3R0hNdmFhdE5VYzFrSW10WUIxbFFURFdkMFRFbmlXckRhNTlI?=
- =?utf-8?B?OUtxK0NZOHkwZkNnbEx3eDdOVGo4WXNlSUR4R1M2Z2JSVENxaWRnLzFuS1Rk?=
- =?utf-8?B?RUQ3VVExZVJuWkIxWnlhRkhHSjQ5aWNNRjZwYzRneVdNa0hhbmRMRngrb2Q2?=
- =?utf-8?B?aCtTemc4cUtXUmdqWWRlcVFoUS85cTg4alByN29VVGdUcmlZcGJybFhaTWQ4?=
- =?utf-8?B?ZGhqVlBGZTVjUER3bXZlZWgrUnB0NnlRNUpJYkk0OG9kUjM0bTRQS1Q0SC8y?=
- =?utf-8?B?WGpSR25ZL3V6RW4rcDZETTFNVklYNlVnNXlZK2F1ZTZreE45MXhsVTRwMTZh?=
- =?utf-8?B?eXB3aEVqYVNSdk1jK05UN0ROeWI5RElDSCtwbGVqRG55WjQzNWVmcDlGanlX?=
- =?utf-8?B?NFdDZGFSUllYWmJxeGd3TmtiY3VQQ3gzTXRCdDRIWkRYNXJ0VllOczZqeDly?=
- =?utf-8?B?dS96UmFWMWFhU1d0V1orWS9jaDNGS2VaUWJ2czRTaWxvaHAwRTlnbmRYVXJn?=
- =?utf-8?B?dnBVQ1RqT2lHQ3prUFFUanpDbHE1WWpLdS9xdzhrR0g5RWJMTXhBcG5tWmR0?=
- =?utf-8?B?a3lyMHJadXNuQ3k1dCtZTWpQRVJjSmN5ckdMRjRPOGduakZ4RFFnM0llUjV1?=
- =?utf-8?B?UUp2R0tNaHk1N3Z1cWViQm9EbTVlR003L3V0bkV1Zk5KNHZZc2hlN1hwem80?=
- =?utf-8?B?QTk3S2JNK3pDQU12K0tJZ25hb1hnaTFkZ3d0TVpkd2MyWGF0MmdKZ2ZCSHJq?=
- =?utf-8?B?c1VYSFdaZ1VZaVQxYXpRVGZGRlpxakZLS2x1R205UkUvbHNyRmw3OVJMaVFw?=
- =?utf-8?B?Mmhod3pDeFVkengzYm1kamxMd1FGSVNkeGYySEFVZkhZSU5LcC9EQW9JdUgw?=
- =?utf-8?B?ampGRVQzSW1Ub3p1eTRzcHk3UHVsbTJpdkI0dmd4U0FMRzV6Tk5sYnc2VVlJ?=
- =?utf-8?B?czh5WDZSK3V5Uk9WN1RmanJhNmM3TE5BbjdkekxxZnhCUnVrN0w2dTFMWGhT?=
- =?utf-8?B?UVZXOUJHeFAzRTgxSnBWNjU1dG9aQ211cXVHRm9tUmhaOTIxS0E3a1crSEIx?=
- =?utf-8?B?MlJlVkhyN0NIVFkyK3VuM0J2K2J0RXNqb1J4QVBla2FaeGtkVUg5U1BNZmt5?=
- =?utf-8?B?a1FzazlRejk0NWQvQXBlVFdta09DZ2VyTXhWUlN1UHlGNHVxY2lNbGE0aTNJ?=
- =?utf-8?B?dklEQjBUUkMrRy9PY0dSOVdqSmx2cENiR2k2TjFkZERjN1ZEYngrQ1ZzbXlz?=
- =?utf-8?B?TTFJVldlYnBJdUIvaWhkTFBIdFhZM3I1U1hJM0poZmh2L2M0dUNDSHQvVTZy?=
- =?utf-8?B?UHdEWmFySy9rMEw4Q1RWcS83ZUJ6dW1YcDhuVk85OEFmRXhaK3R3NitDVnZs?=
- =?utf-8?B?dUM4OTYycGJlOFpWTkllTTg4TVljaTdOUlZjOW9BaEM1RDJucW85ZEIxVTlV?=
- =?utf-8?B?ZHhac1dQQTZmNjRpdHJlV05kaFZzWUpyY0RsWC8zRVlmNXZUMGxNbjQvSnI0?=
- =?utf-8?B?OFpoT0Z1cU5peGNZRlZqYnppQysrNkhTNjJobVJoTXlnWWdkQmh4ZDBvYXB6?=
- =?utf-8?B?ek9NeEFoUHhHVnE3S2U5bitQaWxkN21Lcjk2emRJRXdGVThXeml4Nm56dmIr?=
- =?utf-8?B?UjdjQVBMcDcxTjZ0eS9tZTNIWGJ4WEpmY2s2WTdZTXRyNUdycXNSZWhKNW93?=
- =?utf-8?B?RzRWMXNQZjcwamNMckg0VzdESCsrUlJpdHcxdzRSL3JFaEIxd0dYb1RrWjg1?=
- =?utf-8?B?N3dnb2J4cGVncXN6SXhtSzZlZ3JyWGVGbXJ2ZnZvdmhtZUQ5RGdpSitlT0U5?=
- =?utf-8?B?VjBhTlFFVGI0Rndyb1E5YXRZVXdEK3JBbExBTGVTbVJNc0FDSkQ0WWpCaFBC?=
- =?utf-8?B?K0ZhRU85YitBY2ZGVmRqaE54bU5MNDQ2Q2tETjJjRFNXQjNaVHlHSmNmWCtB?=
- =?utf-8?B?MnRBSnRyei9vbWRyWWFrdlpRNzExUWUvQ2FtNStuQkdmQmYzNGRQMFV0eXZs?=
- =?utf-8?B?aFZ2eTRqNm5QUUtEYmtRYmJaeW1Lb2hrUkJ5cVdHU2NrOWNsOG45OXVpdWwz?=
- =?utf-8?B?Z09jaUV0YlNjdkkvNGpnUEZLR09nPT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F4A42CA9D429944DBFB374EE0C4DC57E@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KBTI01jWXCYfkcfR3vp3cC7/H7slbhZrgEyBfgP0VRc=;
+        b=ZDaK/rVVrz1bkP2L2TCTWUH9DvKMONZWMvNG+M5J1YHHz8uoWQcioHQfFSxMP2yC0/
+         lYczkJ4+6HK1EzXbw8FkaRnXLOMtDPgt0LByOMczrPanC5C8vXaqEUOSsi6LtxlGb0Uy
+         xi4mKBVWA+sF7U3yQYmepB3myOiA2kucuDVndJTplIW4OuJkhNZbi5Vg+k+Ajq8gumkG
+         aPrqT4SsQ5LaEjdYNza24L+2DYcuDq20vGbYOkd/bO6HAnz1qjGCJp4L8oCX3WqdsmVI
+         7lHPjHcucoR+/EuxVrfVmVbHZIWFiHzeWvOO2AAGm7AG5rjA0ROwY9UHr+WhS07+WhiN
+         Io/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KBTI01jWXCYfkcfR3vp3cC7/H7slbhZrgEyBfgP0VRc=;
+        b=4guzfw0RVsLUAmMLAckIElLoQ1osPqTtgH/3GmQi9pwQm+ZYjIMIbASZdvT7QK5xZ1
+         4947hQMy5fcl2xj6VNLujWEEHGMhELq0mmpFIE3GE9ic7+Fe0EAe7g19Bn3/fHb7zZ0n
+         Zyy9AtUtlXSrxgWv9rNapDVrTEJsf3OCFJ6BxzMmR7n1nFXL06hMLpSt639H1Me3G7pb
+         PVn4ISf3jsSH3j/HPsawRukkm378F1AeMm/lO6BiyvsbCRBh6NyxkEhu97l2AJNdoBqC
+         +rIgNhWIEXOlKfOjNObeckfUVk8vnZCY8A+ubB6+2q2mHz86CIaJRmqKwZmgh4BFx4It
+         Bclw==
+X-Gm-Message-State: AOAM530k//DaX4x7VKPtrwbKIWxOcS8/IdfjoXBelVwfIRIyHMNBpbGO
+        iu6tnwkWq5yooYHNGcLOIBwVxxDuwNXuqW3x3PpPiw==
+X-Google-Smtp-Source: ABdhPJwzERF13CbyTLYZVGVNKXJfdUk7CjF9gCrgisv0sR1nwZQMgKdfeTXhmJl2rxdqRNZ47txpn+N38fdriAQn2Oc=
+X-Received: by 2002:ab0:458e:: with SMTP id u14mr9161929uau.104.1638977889089;
+ Wed, 08 Dec 2021 07:38:09 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5154.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 440a1001-f94d-4619-e624-08d9ba5f8a75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Dec 2021 15:29:35.6652
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: knEUbsAgHyz+DiF30W+jD/V/Lt6Y6KFw7DlnmJb31kvHUHcmtZe4MvAhCIFMlQez+02iDcy6RG4uMmu0ZXHu4X97kWXSHejI468XZBZlqYc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1518
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+ <20211206153124.427102-8-virag.david003@gmail.com> <CAPLW+4k3Vmg0W0jVsTChHTG8+eeg=5QF+actz1Tk0vNV9w-y-A@mail.gmail.com>
+ <0c7fc14b-a0d0-7d31-3a33-623f07114a80@canonical.com>
+In-Reply-To: <0c7fc14b-a0d0-7d31-3a33-623f07114a80@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Wed, 8 Dec 2021 17:37:55 +0200
+Message-ID: <CAPLW+4=ioLewf5Hv5FO1jXjxaLrgedrzyKNtNtevTGADF9rBmw@mail.gmail.com>
+Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree
+ support for Exynos7885 SoC
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     David Virag <virag.david003@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQpKdXN0IGdvaW5nIHRvIGFjayB0aGUgb3RoZXIgaXRlbXMgeW91IHJhaXNlZCBm
-b3Igbm93LCBidXQgY3VyaW91cyBhYm91dCANCnRoaXMgb25lOg0KT24gMDYvMTIvMjAyMSAxNTo1
-MywgR2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiBFWFRFUk5BTCBFTUFJTDogRG8gbm90IGNs
-aWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW5sZXNzIHlvdSBrbm93IHRoZSBjb250ZW50
-IGlzIHNhZmUNCj4+ICtzdGF0aWMgdm9pZCBtcGZzX2Nsa191bnJlZ2lzdGVyX2NmZyhzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIHN0cnVjdCBjbGtfaHcgKmh3KQ0KPj4gK3sNCj4+ICsgICAgICAgc3RydWN0
-IG1wZnNfY2ZnX2h3X2Nsb2NrICpjZmdfaHcgPSB0b19tcGZzX2NmZ19jbGsoaHcpOw0KPj4gKw0K
-Pj4gKyAgICAgICBkZXZtX2Nsa19od191bnJlZ2lzdGVyKGRldiwgaHcpOw0KPj4gKyAgICAgICBr
-ZnJlZShjZmdfaHcpOw0KPiANCj4gVGhpcyBpcyBmcmVlaW5nIGEgcGFydCBvZiB0aGUgYmlnIGFy
-cmF5IGFsbG9jYXRlZCB3aXRoIGRldm1fa3phbGxvYygpPw0KSSB0b29rIGEgbG9vayBhdCB0aGlz
-LCBhbmQgSSBkb24ndCB0aGluayBpdCBpcyBmcmVlaW5nIHRoZSBkZXZtIA0KYWxsb2NhdGVkIGFy
-cmF5Lg0KDQpUbyBtZSwgd2hhdCBpcyBhY3R1YWxseSBiZWluZyBmcmVlZCBpcyBhbiBlbGVtZW50
-IGluIHRoZSBhcnJheSBvZiANCnN0cnVjdHMgcGFzc2VkIHRvIG1wZnNfY2xrX3JlZ2lzdGVyX2Nm
-Z3MgaW4gdGhlIHByb2JlIGZ1bmN0aW9uLg0KSG93ZXZlciwgdGhpcyBzdHJ1Y3QgaXMgc3RhdGlj
-YWxseSBkZWZpbmVkIC0gc28gaXRzIGVsZW1lbnRzIHNob3VsZG4ndCANCmJlIGZyZWVkIGF0IGFs
-bD8NCg0KZHJpdmVycy9jbGsvY2xrLWJtMTg4MC5jIGhhcyB0aGUgc2FtZSBiZWhhdmlvdXIgaW4g
-dGhlIHVucmVnaXN0ZXIgDQpmdW5jdGlvbiwgd2hlcmUgaXQgY2FsbHMga2ZyZWUgb24gdGhlIGVs
-ZW1lbnRzIG9mIGEgc3RhdGljIGFycmF5IG9mIGNsayANCnN0cnVjdHMuIFNvIGlmIG15IHVuZGVy
-c3RhbmRpbmcgaXMgY29ycmVjdCBpdCB3b3VsZCBuZWVkIGZpeGluZyB0aGVyZSB0b28uDQoNCkNo
-ZWVycywNCkNvbm9yLg0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgc3RydWN0IGNsa19odyAqbXBm
-c19jbGtfcmVnaXN0ZXJfY2ZnKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IG1wZnNfY2ZnX2h3X2Nsb2NrICpj
-ZmdfaHcsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHZv
-aWQgX19pb21lbSAqc3lzX2Jhc2UpDQo+PiArew0KPj4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3ICpo
-dzsNCj4+ICsgICAgICAgaW50IGVycjsNCj4+ICsNCj4+ICsgICAgICAgY2ZnX2h3LT5zeXNfYmFz
-ZSA9IHN5c19iYXNlOw0KPj4gKyAgICAgICBjZmdfaHctPmxvY2sgPSAmbXBmc19jbGtfbG9jazsN
-Cj4+ICsNCj4+ICsgICAgICAgaHcgPSAmY2ZnX2h3LT5odzsNCj4+ICsgICAgICAgZXJyID0gZGV2
-bV9jbGtfaHdfcmVnaXN0ZXIoZGV2LCBodyk7DQo+PiArICAgICAgIGlmIChlcnIpDQo+PiArICAg
-ICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoZXJyKTsNCj4+ICsNCj4+ICsgICAgICAgcmV0dXJu
-IGh3Ow0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgaW50IG1wZnNfY2xrX3JlZ2lzdGVyX2NmZ3Mo
-c3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgbXBmc19jZmdfaHdfY2xvY2sgKmNmZ19od3MsDQo+
-PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaW50IG51bV9jbGtzLCBzdHJ1Y3Qg
-bXBmc19jbG9ja19kYXRhICpkYXRhKQ0KPiANCj4gdW5zaWduZWQgaW50IG51bV9jbGtzDQo+IA0K
-Pj4gK3sNCj4+ICsgICAgICAgc3RydWN0IGNsa19odyAqaHc7DQo+PiArICAgICAgIHZvaWQgX19p
-b21lbSAqc3lzX2Jhc2UgPSBkYXRhLT5iYXNlOw0KPj4gKyAgICAgICB1bnNpZ25lZCBpbnQgaSwg
-aWQ7DQo+PiArDQo+PiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBudW1fY2xrczsgaSsrKSB7DQo+
-PiArICAgICAgICAgICAgICAgc3RydWN0IG1wZnNfY2ZnX2h3X2Nsb2NrICpjZmdfaHcgPSAmY2Zn
-X2h3c1tpXTsNCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBodyA9IG1wZnNfY2xrX3JlZ2lzdGVy
-X2NmZyhkZXYsIGNmZ19odywgc3lzX2Jhc2UpOw0KPj4gKyAgICAgICAgICAgICAgIGlmIChJU19F
-UlIoaHcpKSB7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBkZXZfZXJyKGRldiwgIiVzOiBm
-YWlsZWQgdG8gcmVnaXN0ZXIgY2xvY2sgJXNcbiIsIF9fZnVuY19fLA0KPiANCj4gSSBndWVzcyB0
-aGUgX19mdW5jX18gY2FuIGJlIGRyb3BwZWQsIGFzIHRoZSBjbG9jayBuYW1lIGlzIHVuaXF1ZT8N
-Cj4gDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNmZ19ody0+Y2ZnLm5hbWUp
-Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgZ290byBlcnJfY2xrOw0KPj4gKyAgICAgICAg
-ICAgICAgIH0NCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBpZCA9IGNmZ19od3NbaV0uY2ZnLmlk
-Ow0KPj4gKyAgICAgICAgICAgICAgIGRhdGEtPmh3X2RhdGEuaHdzW2lkXSA9IGh3Ow0KPj4gKyAg
-ICAgICB9DQo+PiArDQo+PiArICAgICAgIHJldHVybiAwOw0KPj4gKw0KPj4gK2Vycl9jbGs6DQo+
-PiArICAgICAgIHdoaWxlIChpLS0pDQo+PiArICAgICAgICAgICAgICAgbXBmc19jbGtfdW5yZWdp
-c3Rlcl9jZmcoZGV2LCBkYXRhLT5od19kYXRhLmh3c1tjZmdfaHdzW2ldLmNmZy5pZF0pOw0KPj4g
-Kw0KPj4gKyAgICAgICByZXR1cm4gUFRSX0VSUihodyk7DQo+PiArfQ0K
+On Wed, 8 Dec 2021 at 11:05, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
+>
+> On 07/12/2021 21:19, Sam Protsenko wrote:
+> > On Mon, 6 Dec 2021 at 17:32, David Virag <virag.david003@gmail.com> wro=
+te:
+> >>
+> >> Add initial Exynos7885 device tree nodes with dts for the Samsung Gala=
+xy
+> >> A8 (2018), a.k.a. "jackpotlte", with model number "SM-A530F".
+> >> Currently this includes some clock support, UART support, and I2C node=
+s.
+> >>
+> >> Signed-off-by: David Virag <virag.david003@gmail.com>
+> >> ---
+> >> Changes in v2:
+> >>   - Remove address-cells, and size-cells from dts, since they are
+> >>     already in the dtsi.
+> >>   - Lower case hex in memory node
+> >>   - Fix node names with underscore instead of hyphen
+> >>   - Fix line breaks
+> >>   - Fix "-key" missing from gpio keys node names
+> >>   - Use the form without "key" in gpio key labels on all keys
+> >>   - Suffix pin configuration node names with "-pins"
+> >>   - Remove "fimc_is_mclk" nodes from pinctrl dtsi for now
+> >>   - Use macros for "samsung,pin-con-pdn", and "samsung,pin-con-pdn"
+> >>   - Add comment about Arm PMU
+> >>   - Rename "clock-oscclk" to "osc-clock"
+> >>   - Include exynos-syscon-restart.dtsi instead of rewriting its conten=
+ts
+> >>
+> >> Changes in v3:
+> >>   - Fix typo (seperate -> separate)
+> >>
+> >> Changes in v4:
+> >>   - Fixed leading 0x in clock-controller nodes
+> >>   - Actually suffixed pin configuration node names with "-pins"
+> >>   - Seperated Cortex-A53 and Cortex-A73 PMU
+> >>
+> >>  arch/arm64/boot/dts/exynos/Makefile           |   7 +-
+> >>  .../boot/dts/exynos/exynos7885-jackpotlte.dts |  95 ++
+> >>  .../boot/dts/exynos/exynos7885-pinctrl.dtsi   | 865 +++++++++++++++++=
++
+> >>  arch/arm64/boot/dts/exynos/exynos7885.dtsi    | 438 +++++++++
+> >>  4 files changed, 1402 insertions(+), 3 deletions(-)
+> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.d=
+ts
+> >
+> > Shouldn't SoC and board files be sent as two separate patches? For
+> > example, I've checked exynos5433 and exynos7, SoC support
+>
+> Does not have to be. DTSI by itself cannot be even compiled, so keeping
+> it a separate commit does not bring that much benefits. Especially if it
+> is only one DTSI and one DTS.
+>
+
+Right, the only theoretical benefit I can see is reverting the board
+dts in future, if another board already uses SoC dtsi. Or
+cherry-picking in similar manner. Not my call though, for me it just
+seems easier to review it that way, and more atomic.
+
+> >
+> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7885.dtsi
+> >>
+> >> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts=
+/exynos/Makefile
+> >> index b41e86df0a84..c68c4ad577ac 100644
+> >> --- a/arch/arm64/boot/dts/exynos/Makefile
+> >> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> >> @@ -1,6 +1,7 @@
+> >>  # SPDX-License-Identifier: GPL-2.0
+> >>  dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+> >> -       exynos5433-tm2.dtb      \
+> >> -       exynos5433-tm2e.dtb     \
+> >> -       exynos7-espresso.dtb    \
+> >> +       exynos5433-tm2.dtb              \
+> >> +       exynos5433-tm2e.dtb             \
+> >> +       exynos7-espresso.dtb            \
+> >> +       exynos7885-jackpotlte.dtb       \
+> >>         exynosautov9-sadk.dtb
+> >> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts b/ar=
+ch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+> >> new file mode 100644
+> >> index 000000000000..f5941dc4c374
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7885-jackpotlte.dts
+> >> @@ -0,0 +1,95 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Samsung Galaxy A8 2018 (jackpotlte/SM-A530F) device tree source
+> >> + *
+> >> + * Copyright (c) 2021 Samsung Electronics Co., Ltd.
+> >> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
+> >> + *
+> >
+> > This line is not needed.
+> >
+> >> + */
+> >> +
+> >> +/dts-v1/;
+> >
+> > Suggest adding empty line here.
+> >
+> >> +#include "exynos7885.dtsi"
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >> +#include <dt-bindings/input/input.h>
+> >> +#include <dt-bindings/interrupt-controller/irq.h>
+> >> +
+> >> +/ {
+> >> +       model =3D "Samsung Galaxy A8 (2018)";
+> >> +       compatible =3D "samsung,jackpotlte", "samsung,exynos7885";
+> >> +       chassis-type =3D "handset";
+> >> +
+> >> +       aliases {
+> >> +               serial0 =3D &serial_0;
+> >> +               serial1 =3D &serial_1;
+> >> +               serial2 =3D &serial_2;
+> >
+> > Suggestion: add aliases also for i2c nodes, to keep i2c instance
+> > numbers fixed in run-time (e.g. in "i2cdetect -l" output).
+> >
+> >> +       };
+> >> +
+> >> +       chosen {
+> >> +               stdout-path =3D &serial_2;
+> >> +       };
+> >> +
+> >> +       memory@80000000 {
+> >> +               device_type =3D "memory";
+> >> +               reg =3D <0x0 0x80000000 0x3da00000>,
+> >> +                     <0x0 0xc0000000 0x40000000>,
+> >> +                     <0x8 0x80000000 0x40000000>;
+> >> +       };
+> >> +
+> >> +       gpio-keys {
+> >> +               compatible =3D "gpio-keys";
+> >> +               pinctrl-names =3D "default";
+> >> +               pinctrl-0 =3D <&key_volup &key_voldown &key_power>;
+> >> +
+> >> +               volup-key {
+> >> +                       label =3D "Volume Up";
+> >> +                       interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH 0>;
+> >
+> > Here and below: what is 0, why it's needed? Also, isn't it enough to
+> > have just "gpios", and remove interrupt*? Need to check "gpio-keys"
+> > driver and bindings doc, but AFAIR it should be enough to have just
+> > "gpios =3D" or just "interrupts =3D".
+>
+> "gpios" is enough, because the IRQ line is derived from it. However
+> explicitly describing interrupts seems like a more detailed hardware
+> description.
+>
+
+Frankly I don't think it's more detailed, it states the same thing
+(gpa1 controller, line=3D5). Also not sure if level interrupt is needed
+for a key, maybe edge type would be better. Also, I still don't
+understand 0 in the end. Checking existing dts's, most of those only
+define "gpios". I'd say having only "gpios" is more obvious, and will
+work the same way. But that's not a strong preference on my side, just
+think it's a bit misleading right now.
+
+> >
+> >
+> >> +                       interrupt-parent =3D <&gpa1>;
+> >> +                       linux,code =3D <KEY_VOLUMEUP>;
+> >> +                       gpios =3D <&gpa1 5 GPIO_ACTIVE_LOW>;
+> >> +               };
+> >> +
+> >> +               voldown-key {
+> >> +                       label =3D "Volume Down";
+> >> +                       interrupts =3D <6 IRQ_TYPE_LEVEL_HIGH 0>;
+> >> +                       interrupt-parent =3D <&gpa1>;
+> >> +                       linux,code =3D <KEY_VOLUMEDOWN>;
+> >> +                       gpios =3D <&gpa1 6 GPIO_ACTIVE_LOW>;
+> >> +               };
+> >> +
+> >> +               power-key {
+> >> +                       label =3D "Power";
+> >> +                       interrupts =3D <7 IRQ_TYPE_LEVEL_HIGH 0>;
+> >> +                       interrupt-parent =3D <&gpa1>;
+> >> +                       linux,code =3D <KEY_POWER>;
+> >> +                       gpios =3D <&gpa1 7 GPIO_ACTIVE_LOW>;
+> >> +                       wakeup-source;
+> >> +               };
+> >> +       };
+> >> +};
+> >> +
+> >
+> > If there are some LEDs by chance on that board -- it might be useful
+> > to define those here with "gpio-leds" as well. Maybe even set some
+> > default trigger like "heartbeat".
+> >
+> >> +&serial_2 {
+> >> +       status =3D "okay";
+> >> +};
+> >> +
+> >> +&pinctrl_alive {
+> >> +       key_volup: key-volup-pins {
+> >> +               samsung,pins =3D "gpa1-5";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >
+> > Maybe EXYNOS_PIN_FUNC_EINT is more self-explanatory? Just a suggestion =
+though.
+> >
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >
+> > Here and below: please use EXYNOS5420_PIN_DRV_LV1 (means drive level =
+=3D 1x).
+>
+> But are these drive level 1x? The Exynos Auto v9 has different values
+> than older ones.
+>
+
+It should be that. One way to implicitly figure that out is to look at
+nodes like "sd0_clk_fast_slew_rate_3x" and those pin-drv properties.
+Also, in Exynos850 for most of domains those constants are
+appropriate, that's why I mentioned that.
+
+> >
+> >> +       };
+> >> +
+> >> +       key_voldown: key-voldown-pins {
+> >> +               samsung,pins =3D "gpa1-6";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       key_power: key-power-pins {
+> >> +               samsung,pins =3D "gpa1-7";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +};
+> >> diff --git a/arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi b/arch=
+/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+> >> new file mode 100644
+> >> index 000000000000..8336b2e48858
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7885-pinctrl.dtsi
+> >> @@ -0,0 +1,865 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Samsung Exynos7885 SoC pin-mux and pin-config device tree source
+> >> + *
+> >> + * Copyright (c) 2017 Samsung Electronics Co., Ltd.
+> >> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
+> >> + *
+> >> + * Samsung's Exynos7885 SoC pin-mux and pin-config options are listed=
+ as
+> >> + * device tree nodes in this file.
+> >> + */
+> >> +
+> >> +#include <dt-bindings/pinctrl/samsung.h>
+> >
+> > You probably also need <dt-bindings/interrupt-controller/arm-gic.h>
+> > here for GIC_SPI definition.
+> >
+> >> +
+> >> +&pinctrl_alive {
+> >> +       etc0: etc0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       etc1: etc1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >
+> > Hmm, what are these two? I can't find anything related in
+> > exynos7885.dtsi. If it's just some leftover from downstream vendor
+> > kernel -- please remove it.
+>
+> This is a pinctrl DTSI file. What do you expect to find in
+> exynos7885.dtsi for these? Why removing them?
+
+etc0 and etc1 nodes are defined as gpio-controller and
+interrupt-controller. So "compatible" should be provided somewhere for
+those nodes. For example, for "gpa0" node below you can find its
+compatible in exynos7885.dtsi. Right now I don't understand how those
+etc0 and etc1 can be used at all. So maybe it's better to just remove
+those? Those are not used anywhere and we probably don't even know
+what those nodes represent. My point is, if those are actually some
+leftovers from vendor kernel and those are not going to be used (and I
+don't see how, without "compatible"), then we probablly better off
+without those.
+
+> >
+> >> +
+> >> +       gpa0: gpa0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +               interrupt-parent =3D <&gic>;
+> >> +               interrupts =3D <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> >> +       };
+> >> +
+> >> +       gpa1: gpa1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <3>;
+> >> +               interrupt-parent =3D <&gic>;
+> >> +               interrupts =3D <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> >> +       };
+> >> +
+> >> +       gpa2: gpa2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpq0: gpq0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       sim1_det_gpio: sim1-det-gpio-pins {
+> >> +               samsung,pins =3D "gpa2-5";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       sim0_det_gpio: sim0-det-gpio-pins {
+> >> +               samsung,pins =3D "gpa2-6";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       speedy_bus: speedy-bus-pins {
+> >> +               samsung,pins =3D "gpq0-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >
+> > Here and below: suggest using EXYNOS5420_PIN_DRV_LV* constants. Then
+> > stuff like "sd1_clk_fast_slew_rate_4x" is going to make sense.
+> >
+> >> +       };
+> >> +
+> >> +       /* UART_DEBUG */
+> >> +       uart2_bus: uart2-bus-pins {
+> >> +               samsung,pins =3D "gpq0-4", "gpq0-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +};
+> >> +
+> >> +&pinctrl_dispaud {
+> >> +       gpb0: gpb0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpb1: gpb1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpb2: gpb2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       aud_codec_mclk: aud-codec-mclk-pins {
+> >> +               samsung,pins =3D "gpb0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_codec_mclk_idle: aud-codec-mclk-idle-pins {
+> >> +               samsung,pins =3D "gpb0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_codec_bus: aud-codec-bus-pins {
+> >> +               samsung,pins =3D "gpb0-1", "gpb0-2", "gpb0-3", "gpb0-4=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_codec_bus_idle: aud-codec-bus-idle-pins {
+> >> +               samsung,pins =3D "gpb0-1", "gpb0-2", "gpb0-3", "gpb0-4=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_loopback_bus: aud-loopback-bus-pins {
+> >> +               samsung,pins =3D "gpb1-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_loopback_bus_idle: aud-loopback-bus-idle-pins {
+> >> +               samsung,pins =3D "gpb1-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_fm_bus: aud-fm-bus-pins {
+> >> +               samsung,pins =3D "gpb1-1", "gpb1-2", "gpb1-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_fm_bus_idle: aud-fm-bus-idle-pins {
+> >> +               samsung,pins =3D "gpb1-1", "gpb1-2", "gpb1-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_spk_bus: aud-spk-bus-pins {
+> >> +               samsung,pins =3D "gpb2-0", "gpb2-1", "gpb2-2", "gpb2-3=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +
+> >> +       aud_spk_bus_idle: aud-spk-bus-idle-pins {
+> >> +               samsung,pins =3D "gpb2-0", "gpb2-1", "gpb2-2", "gpb2-3=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +       };
+> >> +};
+> >> +
+> >> +&pinctrl_fsys {
+> >> +       gpf0: gpf0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpf2: gpf2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpf3: gpf3 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpf4: gpf4 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd0_clk: sd0-clk-pins {
+> >> +               samsung,pins =3D "gpf0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_clk_fast_slew_rate_1x: sd0-clk-fast-slew-rate-1x-pins {
+> >> +               samsung,pins =3D "gpf0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       sd0_clk_fast_slew_rate_2x: sd0-clk-fast-slew-rate-2x-pins {
+> >> +               samsung,pins =3D "gpf0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <1>;
+> >> +       };
+> >> +
+> >> +       sd0_clk_fast_slew_rate_3x: sd0-clk-fast-slew-rate-3x-pins {
+> >> +               samsung,pins =3D "gpf0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd0_clk_fast_slew_rate_4x: sd0-clk-fast-slew-rate-4x-pins {
+> >> +               samsung,pins =3D "gpf0-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_cmd: sd0-cmd-pins {
+> >> +               samsung,pins =3D "gpf0-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_rdqs: sd0-rdqs-pins {
+> >> +               samsung,pins =3D "gpf0-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_bus1: sd0-bus-width1-pins {
+> >> +               samsung,pins =3D "gpf2-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_bus4: sd0-bus-width4-pins {
+> >> +               samsung,pins =3D "gpf2-1", "gpf2-2", "gpf2-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd0_bus8: sd0-bus-width8-pins {
+> >> +               samsung,pins =3D "gpf2-4", "gpf2-5", "gpf2-6", "gpf2-7=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd1_clk: sd1-clk-pins {
+> >> +               samsung,pins =3D "gpf3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd1_clk_fast_slew_rate_1x: sd1-clk-fast-slew-rate-1x-pins {
+> >> +               samsung,pins =3D "gpf3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       sd1_clk_fast_slew_rate_2x: sd1-clk-fast-slew-rate-2x-pins {
+> >> +               samsung,pins =3D "gpf3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <1>;
+> >> +       };
+> >> +
+> >> +       sd1_clk_fast_slew_rate_3x: sd1-clk-fast-slew-rate-3x-pins {
+> >> +               samsung,pins =3D "gpf3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd1_clk_fast_slew_rate_4x: sd1-clk-fast-slew-rate-4x-pins {
+> >> +               samsung,pins =3D "gpf3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd1_cmd: sd1-cmd-pins {
+> >> +               samsung,pins =3D "gpf3-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd1_bus1: sd1-bus-width1-pins {
+> >> +               samsung,pins =3D "gpf3-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd1_bus4: sd1-bus-width4-pins {
+> >> +               samsung,pins =3D "gpf3-3", "gpf3-5";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd2_clk: sd2-clk-pins {
+> >> +               samsung,pins =3D "gpf4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd2_clk_fast_slew_rate_1x: sd2-clk-fast-slew-rate-1x-pins {
+> >> +               samsung,pins =3D "gpf4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       sd2_clk_fast_slew_rate_2x: sd2-clk-fast-slew-rate-2x-pins {
+> >> +               samsung,pins =3D "gpf4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <1>;
+> >> +       };
+> >> +
+> >> +       sd2_clk_fast_slew_rate_3x: sd2-clk-fast-slew-rate-3x-pins {
+> >> +               samsung,pins =3D "gpf4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd2_clk_fast_slew_rate_4x: sd2-clk-fast-slew-rate-4x-pins {
+> >> +               samsung,pins =3D "gpf4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <3>;
+> >> +       };
+> >> +
+> >> +       sd2_cmd: sd2-cmd-pins {
+> >> +               samsung,pins =3D "gpf4-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd2_bus1: sd2-bus-width1-pins {
+> >> +               samsung,pins =3D "gpf4-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +
+> >> +       sd2_bus4: sd2-bus-width4-pins {
+> >> +               samsung,pins =3D "gpf4-3", "gpf4-4", "gpf4-5";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <2>;
+> >> +       };
+> >> +};
+> >> +
+> >> +&pinctrl_top {
+> >> +       gpc0: gpc0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpc1: gpc1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpc2: gpc2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpg0: gpg0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpg1: gpg1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpg2: gpg2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpg3: gpg3 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpg4: gpg4 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp0: gpp0 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp1: gpp1 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp2: gpp2 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp3: gpp3 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp4: gpp4 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp5: gpp5 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp6: gpp6 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp7: gpp7 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       gpp8: gpp8 {
+> >> +               gpio-controller;
+> >> +               #gpio-cells =3D <2>;
+> >> +
+> >> +               interrupt-controller;
+> >> +               #interrupt-cells =3D <2>;
+> >> +       };
+> >> +
+> >> +       /* DECON TE */
+> >> +       decon_f_te_on: decon_f_te_on-pins {
+> >> +               samsung,pins =3D "gpc0-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_F>;
+> >> +       };
+> >> +
+> >> +       decon_f_te_off: decon_f_te_off-pins {
+> >> +               samsung,pins =3D "gpc0-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_INPUT>;
+> >> +       };
+> >> +
+> >> +       hs_i2c0_bus: hs-i2c0-bus-pins {
+> >> +               samsung,pins =3D "gpc1-1", "gpc1-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       hs_i2c1_bus: hs-i2c1-bus-pins {
+> >> +               samsung,pins =3D "gpc1-3", "gpc1-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       hs_i2c2_bus: hs-i2c2-bus-pins {
+> >> +               samsung,pins =3D "gpc1-5", "gpc1-4";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       hs_i2c3_bus: hs-i2c3-bus-pins {
+> >> +               samsung,pins =3D "gpc1-7", "gpc1-6";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI0 UART */
+> >> +       uart3_bus_single: uart3-bus-single-pins {
+> >> +               samsung,pins =3D "gpc2-3", "gpc2-2", "gpc2-1", "gpc2-0=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       /* USI0 UART_HSI2C1 */
+> >> +       uart3_bus_dual: uart3-bus-dual-pins {
+> >> +               samsung,pins =3D "gpc2-1", "gpc2-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       /* USI0 HSI2C0 */
+> >> +       hs_i2c4_bus: hs-i2c4-bus-pins {
+> >> +               samsung,pins =3D "gpc2-1", "gpc2-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI0 HSI2C1 */
+> >> +       hs_i2c5_bus: hs-i2c5-bus-pins {
+> >> +               samsung,pins =3D "gpc2-3", "gpc2-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI0 SPI */
+> >> +       spi2_bus: spi2-bus-pins {
+> >> +               samsung,pins =3D "gpc2-1", "gpc2-0", "gpc2-3";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       spi2_cs: spi2-cs-pins {
+> >> +               samsung,pins =3D "gpc2-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       /* USI1 UART */
+> >> +       uart4_bus_single: uart4-bus-single-pins {
+> >> +               samsung,pins =3D "gpc2-7", "gpc2-6", "gpc2-5", "gpc2-4=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       /* USI1 UART_HSI2C1*/
+> >> +       uart4_bus_dual: uart4-bus-dual-pins {
+> >> +               samsung,pins =3D "gpc2-5", "gpc2-4";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       /* USI1 HSI2C0 */
+> >> +       hs_i2c6_bus: hs-i2c6-bus-pins {
+> >> +               samsung,pins =3D "gpc2-5", "gpc2-4";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI1 HSI2C1 */
+> >> +       hs_i2c7_bus: hs-i2c7-bus-pins {
+> >> +               samsung,pins =3D "gpc2-7", "gpc2-6";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI1 SPI */
+> >> +       spi3_bus: spi3-bus-pins {
+> >> +               samsung,pins =3D "gpc2-5", "gpc2-4", "gpc2-7";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       spi3_cs: spi3-cs-pins {
+> >> +               samsung,pins =3D "gpc2-6";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       fm_lna_en: fm-lna-en-pins {
+> >> +               samsung,pins =3D "gpg0-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_DOWN>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-val =3D <1>;
+> >> +       };
+> >> +
+> >> +       uart1_bus: uart1-bus-pins {
+> >> +               samsung,pins =3D "gpg1-3", "gpg1-2", "gpg1-1", "gpg1-0=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       i2c7_bus: i2c7-bus-pins {
+> >> +               samsung,pins =3D "gpg1-5", "gpg1-4";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       aud_dmic_on: aud-dmic-on-pins {
+> >> +               samsung,pins =3D "gpg2-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-val =3D <1>;
+> >> +       };
+> >> +
+> >> +       aud_dmic_off: aud-dmic-off-pins {
+> >> +               samsung,pins =3D "gpg2-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-val =3D <0>;
+> >> +       };
+> >> +
+> >> +       /* UART_HEALTH */
+> >> +       uart0_bus: uart0-bus-pins {
+> >> +               samsung,pins =3D "gpp0-3", "gpp0-2", "gpp0-1", "gpp0-0=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       i2c0_bus: i2c0-bus-pins {
+> >> +               samsung,pins =3D "gpp1-1", "gpp1-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c1_bus: i2c1-bus-pins {
+> >> +               samsung,pins =3D "gpp1-3", "gpp1-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_PREV>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c2_bus: i2c2-bus-pins {
+> >> +               samsung,pins =3D "gpp2-1", "gpp2-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c3_bus: i2c3-bus-pins {
+> >> +               samsung,pins =3D "gpp3-1", "gpp3-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c4_bus: i2c4-bus-pins {
+> >> +               samsung,pins =3D "gpp4-1", "gpp4-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c5_bus: i2c5-bus-pins {
+> >> +               samsung,pins =3D "gpp4-3", "gpp4-2";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       i2c6_bus: i2c6-bus-pins {
+> >> +               samsung,pins =3D "gpp4-5", "gpp4-4";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       /* SPI_ESE */
+> >> +       spi0_bus: spi0-bus-pins {
+> >> +               samsung,pins =3D "gpp5-3", "gpp5-2", "gpp5-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       spi0_cs: spi0-cs-pins {
+> >> +               samsung,pins =3D "gpp5-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       /* SPI_FP */
+> >> +       spi1_bus: spi1-bus-pins {
+> >> +               samsung,pins =3D "gpp6-3", "gpp6-2", "gpp6-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       spi1_cs: spi1-cs-pins {
+> >> +               samsung,pins =3D "gpp6-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       /* USI2 UART */
+> >> +       uart5_bus_single: uart5-bus-single-pins {
+> >> +               samsung,pins =3D "gpp8-1", "gpp8-0", "gpp7-1", "gpp7-0=
+";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +         };
+> >> +
+> >> +       /* USI2 UART_HSI2C1 */
+> >> +       uart5_bus_dual: uart5-bus-dual-pins {
+> >> +               samsung,pins =3D "gpp7-1", "gpp7-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +       };
+> >> +
+> >> +       /* USI2 HSI2C0 */
+> >> +       hs_i2c8_bus: hs-i2c8-bus-pins {
+> >> +               samsung,pins =3D "gpp7-1", "gpp7-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI2 HSI2C1 */
+> >> +       hs_i2c9_bus: hs-i2c9-bus-pins {
+> >> +               samsung,pins =3D "gpp8-1", "gpp8-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +               samsung,pin-con-pdn =3D <EXYNOS_PIN_PDN_OUT1>;
+> >> +               samsung,pin-pud-pdn =3D <EXYNOS_PIN_PULL_UP>;
+> >> +       };
+> >> +
+> >> +       /* USI2 SPI */
+> >> +       spi4_bus: spi4-bus-pins {
+> >> +               samsung,pins =3D "gpp7-1", "gpp7-0", "gpp8-1";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_2>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +
+> >> +       spi4_cs: spi4-cs-pins {
+> >> +               samsung,pins =3D "gpp8-0";
+> >> +               samsung,pin-function =3D <EXYNOS_PIN_FUNC_OUTPUT>;
+> >> +               samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> >> +               samsung,pin-drv =3D <0>;
+> >> +       };
+> >> +};
+> >> diff --git a/arch/arm64/boot/dts/exynos/exynos7885.dtsi b/arch/arm64/b=
+oot/dts/exynos/exynos7885.dtsi
+> >> new file mode 100644
+> >> index 000000000000..cc7a5ce0c103
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/exynos/exynos7885.dtsi
+> >> @@ -0,0 +1,438 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Samsung Exynos7885 SoC device tree source
+> >> + *
+> >> + * Copyright (c) 2021 Samsung Electronics Co., Ltd.
+> >> + * Copyright (c) 2021 D=C3=A1vid Vir=C3=A1g
+> >> + *
+> >
+> > This line is not needed.
+> >
+> >> + */
+> >> +
+> >> +#include <dt-bindings/clock/exynos7885.h>
+> >> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> >> +
+> >> +/ {
+> >> +       compatible =3D "samsung,exynos7885";
+> >> +       #address-cells =3D <2>;
+> >> +       #size-cells =3D <1>;
+> >> +
+> >> +       interrupt-parent =3D <&gic>;
+> >> +
+> >> +       aliases {
+> >> +               pinctrl0 =3D &pinctrl_alive;
+> >> +               pinctrl1 =3D &pinctrl_dispaud;
+> >> +               pinctrl2 =3D &pinctrl_fsys;
+> >> +               pinctrl3 =3D &pinctrl_top;
+> >> +       };
+> >> +
+> >> +       arm-a53-pmu {
+> >> +               compatible =3D "arm,cortex-a53-pmu";
+> >> +               interrupts =3D <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>;
+> >> +               interrupt-affinity =3D <&cpu0>,
+> >> +                                    <&cpu1>,
+> >> +                                    <&cpu2>,
+> >> +                                    <&cpu3>,
+> >> +                                    <&cpu4>,
+> >> +                                    <&cpu5>;
+> >
+> > Maybe have cpu0..cpu3 on one line, and cpu4..cpu5 on second line?
+>
+> No, let's keep them aligned the same as interrupts. Easier to count
+> total lines :)
+>
+> >
+> >> +       };
+> >> +
+> >> +       arm-a73-pmu {
+> >> +               compatible =3D "arm,cortex-a73-pmu";
+> >> +               interrupts =3D <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                            <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> >> +               interrupt-affinity =3D <&cpu6>,
+> >> +                                    <&cpu7>;
+> >
+> > Both cpus can be on the same line here.
+>
+> Same.
+>
+> >
+> >> +       };
+> >> +
+> >> +       cpus {
+> >> +               #address-cells =3D <1>;
+> >> +               #size-cells =3D <0>;
+> >> +
+> >> +               cpu-map {
+> >> +                       cluster0 {
+> >> +                               core0 {
+> >> +                                       cpu =3D <&cpu0>;
+> >> +                               };
+> >> +                               core1 {
+> >> +                                       cpu =3D <&cpu1>;
+> >> +                               };
+> >> +                               core2 {
+> >> +                                       cpu =3D <&cpu2>;
+> >> +                               };
+> >> +                               core3 {
+> >> +                                       cpu =3D <&cpu3>;
+> >> +                               };
+> >> +                               core4 {
+> >> +                                       cpu =3D <&cpu4>;
+> >> +                               };
+> >> +                               core5 {
+> >> +                                       cpu =3D <&cpu5>;
+> >> +                               };
+> >> +                       };
+> >> +
+> >> +                       cluster1 {
+> >> +                               core0 {
+> >> +                                       cpu =3D <&cpu6>;
+> >> +                               };
+> >> +                               core1 {
+> >> +                                       cpu =3D <&cpu7>;
+> >> +                               };
+> >> +                       };
+> >> +               };
+> >> +
+> >> +               cpu0: cpu@100 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x100>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu1: cpu@101 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x101>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu2: cpu@102 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x102>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu3: cpu@103 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x103>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu4: cpu@200 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x200>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu5: cpu@201 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a53";
+> >> +                       reg =3D <0x201>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu6: cpu@0 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a73";
+> >> +                       reg =3D <0x0>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +
+> >> +               cpu7: cpu@1 {
+> >> +                       device_type =3D "cpu";
+> >> +                       compatible =3D "arm,cortex-a73";
+> >> +                       reg =3D <0x1>;
+> >> +                       enable-method =3D "psci";
+> >> +               };
+> >> +       };
+> >> +
+> >> +       psci {
+> >> +               compatible =3D "arm,psci";
+> >> +               method =3D "smc";
+> >> +               cpu_suspend =3D <0xc4000001>;
+> >> +               cpu_off =3D <0x84000002>;
+> >> +               cpu_on =3D <0xc4000003>;
+> >> +       };
+> >> +
+> >> +       timer {
+> >> +               compatible =3D "arm,armv8-timer";
+> >> +               /* Hypervisor Virtual Timer interrupt is not wired to =
+GIC */
+> >> +               interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | I=
+RQ_TYPE_LEVEL_LOW)>,
+> >> +                            <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ=
+_TYPE_LEVEL_LOW)>,
+> >> +                            <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ=
+_TYPE_LEVEL_LOW)>,
+> >> +                            <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ=
+_TYPE_LEVEL_LOW)>;
+> >
+> > Can you please make it fit 80 characters per line?
+>
+> This exceeds only by 9 characters and is more readable than split. Keep
+> it like this, please.
+>
+> >
+> >> +       };
+> >> +
+> >> +       fixed-rate-clocks {
+> >> +               oscclk: osc-clock {
+> >> +                       compatible =3D "fixed-clock";
+> >> +                       #clock-cells =3D <0>;
+> >> +                       clock-frequency =3D <26000000>;
+> >
+> > Hmm, maybe it's better to set this clock frequency in board dts?
+>
+> Good point, frequency should be in DTS.
+> >
+> >> +                       clock-output-names =3D "oscclk";
+> >> +               };
+> >> +       };
+> >> +
+> >> +       soc: soc@0 {
+> >> +               compatible =3D "simple-bus";
+> >> +               #address-cells =3D <1>;
+> >> +               #size-cells =3D <1>;
+> >> +               ranges =3D <0x0 0x0 0x0 0x20000000>;
+> >> +
+> >> +               chipid@10000000 {
+> >> +                       compatible =3D "samsung,exynos850-chipid";
+> >> +                       reg =3D <0x10000000 0x24>;
+> >> +               };
+> >> +
+> >> +               gic: interrupt-controller@12301000 {
+> >> +                       compatible =3D "arm,gic-400";
+> >> +                       #interrupt-cells =3D <3>;
+> >> +                       #address-cells =3D <0>;
+> >> +                       interrupt-controller;
+> >> +                       reg =3D <0x12301000 0x1000>,
+> >> +                             <0x12302000 0x2000>,
+> >> +                             <0x12304000 0x2000>,
+> >> +                             <0x12306000 0x2000>;
+> >> +                       interrupts =3D <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE=
+(8) |
+> >> +                                                IRQ_TYPE_LEVEL_HIGH)>=
+;
+> >> +               };
+> >> +
+> >> +               cmu_peri: clock-controller@10010000 {
+> >> +                       compatible =3D "samsung,exynos7885-cmu-peri";
+> >> +                       reg =3D <0x10010000 0x8000>;
+> >> +                       #clock-cells =3D <1>;
+> >> +
+> >> +                       clocks =3D <&oscclk>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_BUS>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_SPI0>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_SPI1>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_UART0>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_UART1>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_UART2>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_USI0>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_USI1>,
+> >> +                                <&cmu_top CLK_DOUT_PERI_USI2>;
+> >> +                       clock-names =3D "oscclk",
+> >> +                                     "dout_peri_bus",
+> >> +                                     "dout_peri_spi0",
+> >> +                                     "dout_peri_spi1",
+> >> +                                     "dout_peri_uart0",
+> >> +                                     "dout_peri_uart1",
+> >> +                                     "dout_peri_uart2",
+> >> +                                     "dout_peri_usi0",
+> >> +                                     "dout_peri_usi1",
+> >> +                                     "dout_peri_usi2";
+> >> +               };
+> >> +
+> >> +               cmu_core: clock-controller@12000000 {
+> >> +                       compatible =3D "samsung,exynos7885-cmu-core";
+> >> +                       reg =3D <0x12000000 0x8000>;
+> >> +                       #clock-cells =3D <1>;
+> >> +
+> >> +                       clocks =3D <&oscclk>,
+> >> +                                <&cmu_top CLK_DOUT_CORE_BUS>,
+> >> +                                <&cmu_top CLK_DOUT_CORE_CCI>,
+> >> +                                <&cmu_top CLK_DOUT_CORE_G3D>;
+> >> +                       clock-names =3D "oscclk", "dout_core_bus", "do=
+ut_core_cci", "dout_core_g3d";
+> >
+> > 80 characters per line, please. Also, please keep the style
+> > consistent: in cmu_peri you have each clock per line, here all clocks
+> > are on one line.
+>
+> +1
+>
+> >
+> >> +               };
+> >> +
+> >> +               cmu_top: clock-controller@12060000 {
+> >
+> > I'd move cmu_top above, to be the first CMU node.
+>
+> No, let's keep them ordered by unit addresses, at least within each
+> group (so within clock controllers, pinctrl nodes etc). Ordering by
+> numbers is objective, while keeping order by some hierarchy requires
+> knowing this hierarchy and actually agreeing on it. :)
+>
+> >
+> >> +                       compatible =3D "samsung,exynos7885-cmu-top";
+> >> +                       reg =3D <0x12060000 0x8000>;
+> >> +                       #clock-cells =3D <1>;
+> >> +
+> >> +                       clocks =3D <&oscclk>;
+> >> +                       clock-names =3D "oscclk";
+> >> +               };
+> >> +
+> >> +               pinctrl_alive: pinctrl@11cb0000 {
+> >> +                       compatible =3D "samsung,exynos7885-pinctrl";
+> >> +                       reg =3D <0x11cb0000 0x1000>;
+> >> +                       interrupts =3D <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>=
+,
+> >> +                                    <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> >> +                                    <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> >> +
+> >> +                       wakeup-interrupt-controller {
+> >> +                               compatible =3D "samsung,exynos7-wakeup=
+-eint";
+> >> +                               interrupt-parent =3D <&gic>;
+> >> +                               interrupts =3D <GIC_SPI 130 IRQ_TYPE_L=
+EVEL_HIGH>;
+> >> +                       };
+> >> +               };
+> >> +
+> >> +               pinctrl_dispaud: pinctrl@148f0000 {
+> >> +                       compatible =3D "samsung,exynos7885-pinctrl";
+> >> +                       reg =3D <0x148f0000 0x1000>;
+> >> +                       interrupts =3D <GIC_SPI 130 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +               };
+> >> +
+> >> +               pinctrl_fsys: pinctrl@13430000 {
+> >> +                       compatible =3D "samsung,exynos7885-pinctrl";
+> >> +                       reg =3D <0x13430000 0x1000>;
+> >> +                       interrupts =3D <GIC_SPI 150 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +               };
+> >> +
+> >> +               pinctrl_top: pinctrl@139b0000 {
+> >> +                       compatible =3D "samsung,exynos7885-pinctrl";
+> >> +                       reg =3D <0x139b0000 0x1000>;
+> >> +                       interrupts =3D <GIC_SPI 266 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +               };
+> >> +
+> >> +               pmu_system_controller: system-controller@11c80000 {
+> >> +                       compatible =3D "samsung,exynos7-pmu", "syscon"=
+;
+> >> +                       reg =3D <0x11c80000 0x10000>;
+> >> +               };
+> >> +
+> >> +               serial_0: serial@13800000 {
+> >> +                       compatible =3D "samsung,exynos5433-uart";
+> >> +                       reg =3D <0x13800000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 246 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&uart0_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_UART0_EXT_UCLK>=
+,
+> >> +                                <&cmu_peri CLK_GOUT_UART0_PCLK>;
+> >
+> > AFAIU, usually PCLK is a bus clock. Are you sure it should be UART baud=
+ clock?
+> >
+> >> +                       clock-names =3D "uart", "clk_uart_baud0";
+> >> +                       samsung,uart-fifosize =3D <64>;
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               serial_1: serial@13810000 {
+> >> +                       compatible =3D "samsung,exynos5433-uart";
+> >> +                       reg =3D <0x13810000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 247 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&uart1_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_UART1_EXT_UCLK>=
+,
+> >> +                                <&cmu_peri CLK_GOUT_UART1_PCLK>;
+> >> +                       clock-names =3D "uart", "clk_uart_baud0";
+> >> +                       samsung,uart-fifosize =3D <256>;
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               serial_2: serial@13820000 {
+> >> +                       compatible =3D "samsung,exynos5433-uart";
+> >> +                       reg =3D <0x13820000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 279 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&uart2_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_UART2_EXT_UCLK>=
+,
+> >> +                                <&cmu_peri CLK_GOUT_UART2_PCLK>;
+> >> +                       clock-names =3D "uart", "clk_uart_baud0";
+> >> +                       samsung,uart-fifosize =3D <256>;
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_0: i2c@13830000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13830000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 248 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c0_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C0_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_1: i2c@13840000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13840000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 249 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c1_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C1_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_2: i2c@13850000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13850000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 250 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c2_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C2_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_3: i2c@13860000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13860000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 251 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c3_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C3_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_4: i2c@13870000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13870000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 252 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c4_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C4_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_5: i2c@13880000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13880000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 253 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c5_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C5_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_6: i2c@13890000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x13890000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 254 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c6_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C6_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +
+> >> +               i2c_7: i2c@11cd0000 {
+> >> +                       compatible =3D "samsung,s3c2440-i2c";
+> >> +                       reg =3D <0x11cd0000 0x100>;
+> >> +                       interrupts =3D <GIC_SPI 255 IRQ_TYPE_LEVEL_HIG=
+H>;
+> >> +                       #address-cells =3D <1>;
+> >> +                       #size-cells =3D <0>;
+> >> +                       pinctrl-names =3D "default";
+> >> +                       pinctrl-0 =3D <&i2c7_bus>;
+> >> +                       clocks =3D <&cmu_peri CLK_GOUT_I2C7_PCLK>;
+> >> +                       clock-names =3D "i2c";
+> >> +                       status =3D "disabled";
+> >> +               };
+> >> +       };
+> >> +};
+> >> +
+> >> +#include "exynos7885-pinctrl.dtsi"
+> >> +#include "arm/exynos-syscon-restart.dtsi"
+> >
+> > Have you verified both reboot and power off functions from this file?
+> > I guess if some doesn't work, it's better to avoid including this, but
+> > instead add corresponding sub-nodes into your pmu_sytem_controller.
+>
+> Why open-coding same code work and including would not? Assuming that it
+> compiles, of course.
+>
+
+For example, in case of Exynos850 the "power off" node from this file
+wasn't suitable. In that case it's not worth including it. But David
+already confirmed both work fine for him, so it doesn't matter
+anymore.
+
+>
+> Best regards,
+> Krzysztof
