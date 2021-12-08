@@ -2,93 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEF0C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 09:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86930C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 09:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbhLHJ0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 04:26:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbhLHJ0S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 04:26:18 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5EDC061746
-        for <linux-clk@vger.kernel.org>; Wed,  8 Dec 2021 01:22:46 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id k2so2870097lji.4
-        for <linux-clk@vger.kernel.org>; Wed, 08 Dec 2021 01:22:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e2tSCHCqfSK4pEQWNDYT3sY9fxle9rvZ4/DzOIeyubM=;
-        b=ngH69gtt+KeOf6V7oXzPHyryzf0BV6LzodeqY8KXBnAakFu1+BKYZvqZNM7GN1ibLr
-         /YyGgMmPoGQuUKZ+GxyTa2YD91fRUC+AKQ5WtiaqAubVPKKFi8lI6/9+jCPXx0I6Ygny
-         7i+aZqW2EgeyuRRzaJgaIX00ziMi9BHg4c6k937I8mRkUFSAK39xIImY78xbxahZVMbb
-         EA9QzubZKV4b4u7LSBDqqM3FGKW5EI7/y8Yq38znW7lYQ/ELgh4mQZfh1AF19hBR8dvA
-         vSoHn7g2wY+nrBMV0X4S476APQ01GbU9LZLz+3BQw1L6yRZcgLMDoqILoNe2t9tk6v5X
-         Bi3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e2tSCHCqfSK4pEQWNDYT3sY9fxle9rvZ4/DzOIeyubM=;
-        b=puvAHQ0jVmk2nmOpcNIw++e7Et+88MgdRyu1r/FNNV9TRIopuoZrROoMooARsRLJy9
-         061vcdkvtumdDBTx4ICoH4PityYOfIYkQwW1Wyc09kaqL8WnTy+N/zQhNY+FOGxOPvOs
-         DDVw9J719H+WHW2u+pZ9sMZCeK55h9YRYPIZKr3AZLTXNrXCwrieTGdCorgSubC99oyL
-         k2Cijaggh9ti/fHgtLDgtCtyRRzNaZ/oDraB5LjQGEB+2dEf/p2peYCx8/rxert/y4uz
-         a4VUabEzI8nIabS/eHslug0T5Ux/5WE7opEIznUb07BvZ/Jvl405W0IW5keGoQHZBbi1
-         uF2Q==
-X-Gm-Message-State: AOAM532gKDGqlo4tWmOftYBzTtpbmlmWdikY3AsE36JXS0xOl73IeLzZ
-        rCzE1klKQtHroC32nwbox5AEBebHTVrp1GVYL18SBA==
-X-Google-Smtp-Source: ABdhPJyBc//wB/JpYHeEC2IZ5cZZrH09/mGfMorl76XoRyb7O48UNZ3bKFR2OlH0yvV5HRH3AhgFOBjdHgsL3vzA3nE=
-X-Received: by 2002:a2e:b6c5:: with SMTP id m5mr1878864ljo.220.1638955364580;
- Wed, 08 Dec 2021 01:22:44 -0800 (PST)
+        id S229498AbhLHJpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 04:45:30 -0500
+Received: from [106.84.20.49] ([106.84.20.49]:7890 "EHLO test.cqplus1.com"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229915AbhLHJp3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Dec 2021 04:45:29 -0500
+X-Greylist: delayed 632 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Dec 2021 04:45:29 EST
+X-MailGates: (compute_score:DELIVER,40,3)
+Received: from 172.27.96.203
+        by cqmailgates with MailGates ESMTP Server V5.0(21478:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 08 Dec 2021 17:28:45 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Wed, 8 Dec 2021 17:28:42 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.017; Wed, 8 Dec 2021 17:28:42 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Marc Zyngier <maz@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
+Subject: RE: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt controller
+ driver
+Thread-Topic: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt
+ controller driver
+Thread-Index: AQHX6BmQ/JspEgyikE+suUmdAKG1nqwmO/YAgAHtkbD//484gIAAn6dA
+Date:   Wed, 8 Dec 2021 09:28:42 +0000
+Message-ID: <8fa00c3b55874e90b5baae1f84010997@cqplus1.com>
+References: <cover.1638515726.git.qinjian@cqplus1.com>
+ <e88ea4cf28ba69a41f6d1b4dd4128b82a6095c29.1638515726.git.qinjian@cqplus1.com>
+ <87r1ao23fp.wl-maz@kernel.org> <39f9b853af7c44cb94421354744512a8@cqplus1.com>
+ <ce867937861df454823eb703bfd29256@kernel.org>
+In-Reply-To: <ce867937861df454823eb703bfd29256@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <d2e681e5ea31c62529b619a3777570b4792e0684.1638928796.git.zong.li@sifive.com>
- <87pmq7qyzt.fsf@igel.home>
-In-Reply-To: <87pmq7qyzt.fsf@igel.home>
-From:   Zong Li <zong.li@sifive.com>
-Date:   Wed, 8 Dec 2021 17:22:29 +0800
-Message-ID: <CANXhq0rR1KRunK1iCH==23wJXuyZm2kMLzKCTd3aJpfazh+rOA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] clk: sifive: Fix W=1 kernel build warning
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>, lee.jones@linaro.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 8, 2021 at 4:31 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
->
-> On Dez 08 2021, Zong Li wrote:
->
-> > diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
-> > index c220677dc010..c8271efa7bdc 100644
-> > --- a/drivers/clk/sifive/fu540-prci.h
-> > +++ b/drivers/clk/sifive/fu540-prci.h
-> > @@ -13,4 +13,9 @@
-> >
-> >  extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
-> >
-> > +static const struct prci_clk_desc prci_clk_fu540 = {
-> > +     .clks = __prci_init_clocks_fu540,
-> > +     .num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
-> > +};
-> > +
->
-> A header should only declare things, not define them.
->
-
-oh yes, let me move them to fu540/fu740-prci.c respectively, thanks.
-
-> Andreas.
->
-> --
-> Andreas Schwab, schwab@linux-m68k.org
-> GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-> "And now for something completely different."
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNYXJjIFp5bmdpZXIgPG1hekBr
+ZXJuZWwub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIERlY2VtYmVyIDgsIDIwMjEgMzo0NSBQTQ0K
+PiBUbzogcWluamlhblvopoPlgaVdIDxxaW5qaWFuQGNxcGx1czEuY29tPg0KPiBDYzogcm9iaCtk
+dEBrZXJuZWwub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVsLm9yZzsg
+dGdseEBsaW51dHJvbml4LmRlOyBwLnphYmVsQHBlbmd1dHJvbml4LmRlOw0KPiBsaW51eEBhcm1s
+aW51eC5vcmcudWs7IGJyb29uaWVAa2VybmVsLm9yZzsgYXJuZEBhcm5kYi5kZTsgbGludXgtYXJt
+LWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsg
+bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5v
+cmc7IFdlbGxzIEx1IOWRguiKs+mosCA8d2VsbHMubHVAc3VucGx1cy5jb20+DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggdjUgMDgvMTBdIGlycWNoaXA6IEFkZCBTdW5wbHVzIFNQNzAyMSBpbnRlcnJ1
+cHQgY29udHJvbGxlciBkcml2ZXINCj4gDQo+IE9uIDIwMjEtMTItMDggMDc6MTUsIHFpbmppYW5b
+6KaD5YGlXSB3cm90ZToNCj4gPj4gPiArdm9pZCBzcF9pbnRjX3NldF9leHQodTMyIGh3aXJxLCBp
+bnQgZXh0X251bSkNCj4gPj4gPiArew0KPiA+PiA+ICsJc3BfaW50Y19hc3NpZ25fYml0KGh3aXJx
+LCBSRUdfSU5UUl9QUklPUklUWSwgIWV4dF9udW0pOw0KPiA+PiA+ICt9DQo+ID4+ID4gK0VYUE9S
+VF9TWU1CT0xfR1BMKHNwX2ludGNfc2V0X2V4dCk7DQo+ID4+DQo+ID4+IE5vIHdheS4gV2UgZG9u
+J3QgZXhwb3J0IHJhbmRvbSBzeW1ib2xzIHdpdGhvdXQgYSBnb29kIGp1c3RpZmljYXRpb24sDQo+
+ID4+IGFuZCB5b3UgZGlkbid0IGdpdmUgYW55Lg0KPiA+Pg0KPiA+DQo+ID4gVGhpcyBmdW5jdGlv
+biBjYWxsZWQgYnkgU1A3MDIxIGRpc3BsYXkgZHJpdmVyIHRvIGRlY2lkZSBESVNQTEFZX0lSUQ0K
+PiA+IHJvdXRpbmcgdG8gd2hpY2ggcGFyZW50IGlycSAoRVhUX0lOVDAgb3IgRVhUX0lOVDEpLg0K
+PiANCj4gQmFzZWQgb24gd2hhdD8gSG93IGNhbiBhIGRpc3BsYXkgZHJpdmVyIGRlY2lkZSB3aGlj
+aCBwYXJlbnQgaXMNCj4gYXBwcm9wcmlhdGU/IFdoYXQgaW1wcm92ZW1lbnQgZG9lcyB0aGlzIGJy
+aW5nPw0KDQpJbiBkZWZhdWx0LCBhbGwgSVJRIHJvdXRpbmcgdG8gRVhUX0lOVDAsIHdoaWNoIHBy
+b2Nlc3NlZCBieSBDUFUwDQpTb21lIGRldmljZSdzIElSUSBuZWVkIGxvdyBsYXRlbmN5LCBsaWtl
+IGRpc3BsYXksIHNvIHJvdXRpbmcgRElTUExBWV9JUlEgdG8gRVhUX0lOVDEsDQp3aGljaCBwcm9j
+ZXNzZWQgYnkgQ1BVMSAoc2V0IC9wcm9jL2lycS88RVhUX0lOVDE+L3NtcF9hZmZpbml0eV9saXN0
+KQ0K
