@@ -2,121 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00163C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 13:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B90C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 14:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbhLHNfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 08:35:36 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:15492 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbhLHNfg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 08:35:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1638970324; x=1670506324;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TY56zgAQOkoPTGFWpyt2EmMS4xIRb8tsNHpW/kK5u9o=;
-  b=Hd177mNOlG6up9eCOGSMoPSwEGrK2ZSuZ190XVC/VYo/7s5+9Ogenxmj
-   TfrV/qIq1LlVqL/n8gjnwgB0vTfaIHxvXYmv1AqBHBXk+n780IcU/ETRG
-   cxYixclzxvmlMauoW12SJXfOX35f/m/BR+JzbpDyZyD40Ku0mYGBX6OXy
-   XcCtLj4eoj18wfI3LhR8lMBLDM0km2GzXs7X+KsuvCQQJnU5F89Rj8i+8
-   wmW+aqYaC7L58CsdPZwC64tOQI9W5rlzfT8DVch95ytR5PtjiAF8O0RN2
-   ovTIxsbBnA79v5aikQF8YSDimdqWfExz2jtXtsbgMLR4RCrReHXbOFuJ3
-   A==;
-IronPort-SDR: CemCYyJJEaC/ZZ6yPAmD9UQ93E4Sdu91E/4YBRMj4rdoVnaSTzcpioEwxs0UE0E9swLaoJvnP+
- xxfC185pLcMkkQ0f8eMuGyRqNY7CCo5S5y/4WBViXsgfo3a7VAUPNl6jfbUIfDwbHBRO7rKUln
- S9EXtLWn0gQpUnzFvYl8kwO66C6Nv2AxnfsPRk0Z/k25RqFb93xUTe7brl6Qjp6o10XL7CEkuM
- Ck7sCOyE7G+IA7lEHTLgCesGteX+CHhVc9ym+9U630BiVyqANrjWaxz4Gfwel53hUoswRSWYoG
- aI4luFFhIEUNvIjwFiHEq1Kg
+        id S235145AbhLHOfi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 09:35:38 -0500
+Received: from mga03.intel.com ([134.134.136.65]:25321 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231398AbhLHOfi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Dec 2021 09:35:38 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="237780795"
 X-IronPort-AV: E=Sophos;i="5.88,189,1635231600"; 
-   d="scan'208";a="141718629"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2021 06:32:03 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 8 Dec 2021 06:32:03 -0700
-Received: from ness.home (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
- Transport; Wed, 8 Dec 2021 06:32:01 -0700
-From:   <nicolas.ferre@microchip.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>
-CC:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Subject: [GIT PULL] clk: at91: clk for 5.17
-Date:   Wed, 8 Dec 2021 14:31:45 +0100
-Message-ID: <20211208133145.28267-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.32.0
+   d="scan'208";a="237780795"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2021 06:31:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,189,1635231600"; 
+   d="scan'208";a="612105379"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 08 Dec 2021 06:31:46 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1muxyz-0000fQ-Eg; Wed, 08 Dec 2021 14:31:45 +0000
+Date:   Wed, 8 Dec 2021 22:31:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add clock driver for SM8450
+Message-ID: <202112082235.Hpn8OyQQ-lkp@intel.com>
+References: <20211207114003.100693-3-vkoul@kernel.org>
 MIME-Version: 1.0
-Organization: microchip
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211207114003.100693-3-vkoul@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Hi Vinod,
 
-Stephen,
+I love your patch! Yet something to improve:
 
-Here are the clk changes for 5.17 which collect changes to the lan966x product
-line. We agreed to include these Microchip patches into the at91 branch with
-Kavyasree and Horatiu.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next v5.16-rc4 next-20211208]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Please pull.
+url:    https://github.com/0day-ci/linux/commits/Vinod-Koul/clk-qcom-Add-clocks-for-SM8450-SoC/20211207-194218
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: riscv-randconfig-c006-20211208 (https://download.01.org/0day-ci/archive/20211208/202112082235.Hpn8OyQQ-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project 097a1cb1d5ebb3a0ec4bcaed8ba3ff6a8e33c00a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv64-linux-gnu
+        # https://github.com/0day-ci/linux/commit/42c0d6d58aceb3d76e99fd9738235962ab7a8e87
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Vinod-Koul/clk-qcom-Add-clocks-for-SM8450-SoC/20211207-194218
+        git checkout 42c0d6d58aceb3d76e99fd9738235962ab7a8e87
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/qcom/ drivers/iio/proximity/
 
-Thanks, best regards,
-  Nicolas
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+All errors (new ones prefixed by >>):
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+>> drivers/clk/qcom/gcc-sm8450.c:40:29: error: use of undeclared identifier 'CLK_ALPHA_PLL_TYPE_LUCID_EVO'; did you mean 'CLK_ALPHA_PLL_TYPE_LUCID'?
+           .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      CLK_ALPHA_PLL_TYPE_LUCID
+   drivers/clk/qcom/clk-alpha-pll.h:17:2: note: 'CLK_ALPHA_PLL_TYPE_LUCID' declared here
+           CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+           ^
+>> drivers/clk/qcom/gcc-sm8450.c:50:12: error: use of undeclared identifier 'clk_alpha_pll_fixed_lucid_evo_ops'; did you mean 'clk_alpha_pll_fixed_lucid_5lpe_ops'?
+                           .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                   clk_alpha_pll_fixed_lucid_5lpe_ops
+   drivers/clk/qcom/clk-alpha-pll.h:149:29: note: 'clk_alpha_pll_fixed_lucid_5lpe_ops' declared here
+   extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
+                               ^
+   drivers/clk/qcom/gcc-sm8450.c:66:29: error: use of undeclared identifier 'CLK_ALPHA_PLL_TYPE_LUCID_EVO'; did you mean 'CLK_ALPHA_PLL_TYPE_LUCID'?
+           .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      CLK_ALPHA_PLL_TYPE_LUCID
+   drivers/clk/qcom/clk-alpha-pll.h:17:2: note: 'CLK_ALPHA_PLL_TYPE_LUCID' declared here
+           CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+           ^
+>> drivers/clk/qcom/gcc-sm8450.c:73:11: error: use of undeclared identifier 'clk_alpha_pll_postdiv_lucid_evo_ops'
+                   .ops = &clk_alpha_pll_postdiv_lucid_evo_ops,
+                           ^
+   drivers/clk/qcom/gcc-sm8450.c:79:29: error: use of undeclared identifier 'CLK_ALPHA_PLL_TYPE_LUCID_EVO'; did you mean 'CLK_ALPHA_PLL_TYPE_LUCID'?
+           .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      CLK_ALPHA_PLL_TYPE_LUCID
+   drivers/clk/qcom/clk-alpha-pll.h:17:2: note: 'CLK_ALPHA_PLL_TYPE_LUCID' declared here
+           CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+           ^
+   drivers/clk/qcom/gcc-sm8450.c:89:12: error: use of undeclared identifier 'clk_alpha_pll_fixed_lucid_evo_ops'; did you mean 'clk_alpha_pll_fixed_lucid_5lpe_ops'?
+                           .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                   clk_alpha_pll_fixed_lucid_5lpe_ops
+   drivers/clk/qcom/clk-alpha-pll.h:149:29: note: 'clk_alpha_pll_fixed_lucid_5lpe_ops' declared here
+   extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
+                               ^
+   drivers/clk/qcom/gcc-sm8450.c:96:29: error: use of undeclared identifier 'CLK_ALPHA_PLL_TYPE_LUCID_EVO'; did you mean 'CLK_ALPHA_PLL_TYPE_LUCID'?
+           .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                      CLK_ALPHA_PLL_TYPE_LUCID
+   drivers/clk/qcom/clk-alpha-pll.h:17:2: note: 'CLK_ALPHA_PLL_TYPE_LUCID' declared here
+           CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+           ^
+   drivers/clk/qcom/gcc-sm8450.c:106:12: error: use of undeclared identifier 'clk_alpha_pll_fixed_lucid_evo_ops'; did you mean 'clk_alpha_pll_fixed_lucid_5lpe_ops'?
+                           .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
+                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                   clk_alpha_pll_fixed_lucid_5lpe_ops
+   drivers/clk/qcom/clk-alpha-pll.h:149:29: note: 'clk_alpha_pll_fixed_lucid_5lpe_ops' declared here
+   extern const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops;
+                               ^
+   8 errors generated.
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-at91-5.17
+vim +40 drivers/clk/qcom/gcc-sm8450.c
 
-for you to fetch changes up to 5ad5915dea0047a6376d8f809ea3470ef68b1f92:
+    37	
+    38	static struct clk_alpha_pll gcc_gpll0 = {
+    39		.offset = 0x0,
+  > 40		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+    41		.clkr = {
+    42			.enable_reg = 0x62018,
+    43			.enable_mask = BIT(0),
+    44			.hw.init = &(struct clk_init_data){
+    45				.name = "gcc_gpll0",
+    46				.parent_data = &(const struct clk_parent_data){
+    47					.fw_name = "bi_tcxo",
+    48				},
+    49				.num_parents = 1,
+  > 50				.ops = &clk_alpha_pll_fixed_lucid_evo_ops,
+    51			},
+    52		},
+    53	};
+    54	
+    55	static const struct clk_div_table post_div_table_gcc_gpll0_out_even[] = {
+    56		{ 0x1, 2 },
+    57		{ }
+    58	};
+    59	
+    60	static struct clk_alpha_pll_postdiv gcc_gpll0_out_even = {
+    61		.offset = 0x0,
+    62		.post_div_shift = 10,
+    63		.post_div_table = post_div_table_gcc_gpll0_out_even,
+    64		.num_post_div = ARRAY_SIZE(post_div_table_gcc_gpll0_out_even),
+    65		.width = 4,
+    66		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+    67		.clkr.hw.init = &(struct clk_init_data){
+    68			.name = "gcc_gpll0_out_even",
+    69			.parent_data = &(const struct clk_parent_data){
+    70				.hw = &gcc_gpll0.clkr.hw,
+    71			},
+    72			.num_parents = 1,
+  > 73			.ops = &clk_alpha_pll_postdiv_lucid_evo_ops,
+    74		},
+    75	};
+    76	
 
-  clk: lan966x: Extend lan966x clock driver for clock gating support (2021-12-08 11:19:20 +0100)
-
-----------------------------------------------------------------
-AT91 clk driver changes for 5.17:
-
-- Lan966x Generic Clock Controller driver and associated DT bindings
-- Lan966x clock driver extended to support clock gating
-
-----------------------------------------------------------------
-Horatiu Vultur (4):
-      clk: gate: Add devm_clk_hw_register_gate()
-      dt-bindings: clock: lan966x: Extend for clock gate support
-      dt-bindings: clock: lan966x: Extend includes with clock gates
-      clk: lan966x: Extend lan966x clock driver for clock gating support
-
-Kavyasree Kotagiri (3):
-      dt-bindings: clock: lan966x: Add binding includes for lan966x SoC clock IDs
-      dt-bindings: clock: lan966x: Add LAN966X Clock Controller
-      clk: lan966x: Add lan966x SoC clock driver
-
- .../bindings/clock/microchip,lan966x-gck.yaml      |  60 +++++
- drivers/clk/Kconfig                                |   7 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-gate.c                             |  35 +++
- drivers/clk/clk-lan966x.c                          | 293 +++++++++++++++++++++
- include/dt-bindings/clock/microchip,lan966x.h      |  34 +++
- include/linux/clk-provider.h                       |  23 ++
- 7 files changed, 453 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
- create mode 100644 drivers/clk/clk-lan966x.c
- create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
-
--- 
-Nicolas Ferre
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
