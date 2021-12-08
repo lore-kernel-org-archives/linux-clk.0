@@ -2,202 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963AFC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 01:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20913C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 02:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233696AbhLHB46 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 20:56:58 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:59388 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbhLHB46 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 20:56:58 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 52703CE1EEC;
-        Wed,  8 Dec 2021 01:53:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86282C341C5;
-        Wed,  8 Dec 2021 01:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638928404;
-        bh=U/UJTyPUQ/j2KXlTSFmG0qmTq16ORRf5unzrrXXVJDc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NbDLuQ2cSZVJpzmuRYhvCB/OsGgbiz8UvZJoRIREKVSZylxTjFtF/4TQYPDZem3RG
-         DKpuuZvhyRuvRKFahshXHNU8x8ZGz1AbqYP1xthE/QVY1MV0YQkfDdghtdbUrhPjPk
-         FHR+xQYOAQHgWYPvjzBdvuRMyIFTNUYNXWvzZTZEObVYZ+CNomaBdj+cYXWoDGK4/6
-         0xkrgxFXXWDafSRLx2KxZ1G5p9CKj3uNEEA+RHTfcCwsm0qXvPJy5Z6HgZ49BeEB+N
-         bW/BnBUcuoWoIHWU1aYtN3YKoEy3viH6zJ/TAisNqKayRplp5ks30aMw0DT6fj3kxU
-         hIXsMA8vBbB+g==
-Content-Type: text/plain; charset="utf-8"
+        id S230084AbhLHCH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 21:07:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229846AbhLHCH7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 21:07:59 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79558C061574
+        for <linux-clk@vger.kernel.org>; Tue,  7 Dec 2021 18:04:28 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id b13so551426plg.2
+        for <linux-clk@vger.kernel.org>; Tue, 07 Dec 2021 18:04:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QGhWCkmSzao6PeC0Ex225wGHRUhhH5KgwhKdqzOJZvA=;
+        b=YZ27ixf9+XfQMtQ3uXE/cQP2Ma/8qg0/QKNM7Pw1EEZ4KgvbcWAob75HGFNVic8Se+
+         zNrzhRkgISSv/Gegh3+EmZ9gKCXC6G+wVDeJ6vOaeM4Vf/zcuSUhGZpqLy0swwJQzayE
+         3uR6ZR0LLj72hednCXZyC/kXJ8BF8lud+pRbmyCJdcQ4PiPS1Ktxh/t20hvo4lMu1czi
+         jeWj6XUtAFlthjBXPQtQ1wSm6OUDddAIV7arUAYx3PeyA0FK/n9WcWZCl3dpfa/pRVfu
+         pVNjIXul/QWGJT8VHPLJ6YAeLLD5+BVlu3zy87t4lmMj/h4jwzDC8IKw2fRwaCPzyqJr
+         Zo7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QGhWCkmSzao6PeC0Ex225wGHRUhhH5KgwhKdqzOJZvA=;
+        b=XI8a1gpo5oVZdXITH8GeQ6bPpoEcG+g2kndFDR2tSNjL7miqhrQ1Y9dhIdl1nc7u2w
+         ko43xmtMOCzNKkmtYec6jg6LQoQ4jWtu/CGx/V/yB1ASTktU8qLL4f7D0ktR2hzrRNRe
+         6aVm+iZvDwjMb40TmaDDkUCrwDonM17MPkeE5/f2GGpZLZE+BxtRJNGnyMBVcVOYj32G
+         ndB2FW4/D3fB6KAzLah906AESa1lomra65SWRDbzVy8JlVNdMe3NZPqbqfVYA8ZlomuM
+         7HYhsZorBpvsdSHOGL1Yk1vzDEuo5vU1xyCyxK3er0h/YnttRxlgWCdok7lbB0nbvYjv
+         TfRQ==
+X-Gm-Message-State: AOAM531Xbl16uYDNJ0EUu4QDtZATqQVArQkWCrLS3GoMMHng1kkosB1J
+        cOpX8vDZPdyOQ5ndsvMMRNiA3w==
+X-Google-Smtp-Source: ABdhPJyGdggtAdCqWtci3i/oqvpmYcZUjWvaBoYPUoaEGyTuTbkrXuissLCUqR4a4hphrmR7mezhLQ==
+X-Received: by 2002:a17:902:c204:b0:142:2441:aa26 with SMTP id 4-20020a170902c20400b001422441aa26mr56090043pll.84.1638929068018;
+        Tue, 07 Dec 2021 18:04:28 -0800 (PST)
+Received: from hsinchu16.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
+        by smtp.gmail.com with ESMTPSA id b19sm1167929pfv.63.2021.12.07.18.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Dec 2021 18:04:27 -0800 (PST)
+From:   Zong Li <zong.li@sifive.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Cc:     Zong Li <zong.li@sifive.com>
+Subject: [PATCH 1/1] clk: sifive: Fix W=1 kernel build warning
+Date:   Wed,  8 Dec 2021 10:04:22 +0800
+Message-Id: <d2e681e5ea31c62529b619a3777570b4792e0684.1638928796.git.zong.li@sifive.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
-References: <20211109043438.4639-1-quic_mdtipton@quicinc.com>
-Subject: Re: [PATCH] clk: Fix children not voting entire parent chain during init
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-To:     Mike Tipton <quic_mdtipton@quicinc.com>, mturquette@baylibre.com
-Date:   Tue, 07 Dec 2021 17:53:23 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211208015324.86282C341C5@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Tipton (2021-11-08 20:34:38)
-> If a child's parent is set by calling __clk_init_parent() while the
-> parent is still being registered in __clk_register(), then it can result
-> in the child voting its direct parent without those votes propagating up
-> the entire parent chain.
+This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+Declare static const variable 'prci_clk_fu540' where it's used").
+For fixing W=1 kernel build warning(s) about ‘prci_clk_fu540’ defined
+but not used [-Wunused-const-variable=], we should just remove the
+header including in fu540 and fu740 implementation respectively,
+because they don't actually use these static variables. After that,
+we could still separate SoCs-dependent data in their own defination,
+rather than put it in the common core code.
 
-More details please!
+Signed-off-by: Zong Li <zong.li@sifive.com>
+---
+ drivers/clk/sifive/fu540-prci.c  | 1 -
+ drivers/clk/sifive/fu540-prci.h  | 5 +++++
+ drivers/clk/sifive/fu740-prci.c  | 1 -
+ drivers/clk/sifive/sifive-prci.c | 5 -----
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
->=20
-> __clk_register() sets hw->core before grabbing the prepare_lock and
-> before initializing hw->core->parent. Since hw->core is used indirectly
-> by __clk_init_parent(), then children can find their parents before
-> they're fully initialized. If children vote for their parents during
-> this window, then those votes won't propagate past the direct parent.
+diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
+index 29bab915003c..40ee5ab1748d 100644
+--- a/drivers/clk/sifive/fu540-prci.c
++++ b/drivers/clk/sifive/fu540-prci.c
+@@ -20,7 +20,6 @@
+ 
+ #include <dt-bindings/clock/sifive-fu540-prci.h>
+ 
+-#include "fu540-prci.h"
+ #include "sifive-prci.h"
+ 
+ /* PRCI integration data for each WRPLL instance */
+diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+index c220677dc010..c8271efa7bdc 100644
+--- a/drivers/clk/sifive/fu540-prci.h
++++ b/drivers/clk/sifive/fu540-prci.h
+@@ -13,4 +13,9 @@
+ 
+ extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
+ 
++static const struct prci_clk_desc prci_clk_fu540 = {
++	.clks = __prci_init_clocks_fu540,
++	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
++};
++
+ #endif /* __SIFIVE_CLK_FU540_PRCI_H */
+diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
+index 53f6e00a03b9..e1da4eec0786 100644
+--- a/drivers/clk/sifive/fu740-prci.c
++++ b/drivers/clk/sifive/fu740-prci.c
+@@ -8,7 +8,6 @@
+ 
+ #include <dt-bindings/clock/sifive-fu740-prci.h>
+ 
+-#include "fu540-prci.h"
+ #include "sifive-prci.h"
+ 
+ /* PRCI integration data for each WRPLL instance */
+diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+index 80a288c59e56..916d2fc28b9c 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -12,11 +12,6 @@
+ #include "fu540-prci.h"
+ #include "fu740-prci.h"
+ 
+-static const struct prci_clk_desc prci_clk_fu540 = {
+-	.clks = __prci_init_clocks_fu540,
+-	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
+-};
+-
+ /*
+  * Private functions
+  */
+-- 
+2.31.1
 
-Is the crucial detail that's missing here the fact that we now let
-__clk_init_parent() find a struct clk_hw before that clk has been
-published to the clk tree in __clk_core_init()? I can see the following
-scenario
-
-	struct clk_hw clkBad;
-	struct clk_hw clkA;
-
-	clkA.init.parent_hws =3D { &clkBad }
-
-	clk_hw_register(&clkA);
-
-And now clkA has a reference to clkBad in the clk tree but the clk isn't
-published to the clk tree yet. Except, clk_core_fill_parent_index() will
-fail to find the parent because hw->core isn't set yet. So now I'll
-write up a two CPU scenario to try to clarify.
-
-
-  CPU0                                     CPU1
-  ----                                     ----
-  struct clk_hw clkBad;
-  struct clk_hw clkA;
- =20
-  clkA.init.parent_hws =3D { &clkBad };
- =20
-  clk_hw_register(&clkA)                   clk_hw_register(&clkBad)
-                                            __clk_register()
-					     hw->core =3D core
-					     ...
-   __clk_register()
-    __clk_core_init()
-     clk_prepare_lock()
-     __clk_init_parent()
-      clk_core_get_parent_by_index()
-       clk_core_fill_parent_index()
-        if (entry->hw) {
-	 parent =3D entry->hw->core;
-	 <boom>
-
->=20
-> This can happen when:
->     1. CRITICAL clocks are enabled in __clk_core_init().
->     2. Reparenting enabled orphans in clk_core_reparent_orphans_nolock().
-
-I didn't really follow these two points. I guess you're saying this is a
-problem if we're enabling critical clks and the parents aren't
-registered yet or we're reparenting a whole subtree into the clk tree
-but they're still technically orphans because the parent isn't
-registered.
-
->=20
-> Fix this by not setting hw->core until we've already grabbed the
-> prepare_lock in __clk_core_init(). This prevents orphaned children from
-> finding and voting their parents before the parents are fully
-> initialized.
->=20
-> Fixes: fc0c209c147f ("clk: Allow parents to be specified without string n=
-ames")
-
-Thanks! Looks correct. It would be good to describe how this commit
-broke it though. Something like:
-
-When parent clks could only be found via string name we had to wait
-until the parent clk was added to a list in __clk_core_init() before we
-could find it, but after commit fc0c209c147f ("clk: Allow parents to be
-specified without string names") the parent clk can be found once we set
-hw->core in __clk_register().
-
-> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
-> ---
->=20
-> This is very difficult to reproduce. We can't reproduce it at all
-> internally, in fact. But some customers are able to reproduce it fairly
-> easily and this patch fixes it for them.
-
-This doesn't instill very much confidence in the fix if you can't
-reproduce it and can't describe the scenario where it happens. It would
-have helped signal boost the patch if the customers could reply to the
-list indicating this fixes things for them with tested-by tags :(
-
->=20
->  drivers/clk/clk.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index f467d63bbf1e..af562af9d54d 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3418,6 +3418,13 @@ static int __clk_core_init(struct clk_core *core)
-> =20
->         clk_prepare_lock();
-> =20
-> +       /*
-> +        * Set hw->core after grabbing the prepare_lock to prevent race
-> +        * conditions with orphans finding and voting their parents befor=
-e the
-> +        * parents are fully initialized.
-
-Let's make this comment better by talking about
-clk_core_fill_parent_index() only caring if hw->core is set to a
-non-NULL value. "race conditions" is nebulous.
-
-> +        */
-> +       core->hw->core =3D core;
-> +
->         ret =3D clk_pm_runtime_get(core);
->         if (ret)
->                 goto unlock;
-> @@ -3582,8 +3589,10 @@ static int __clk_core_init(struct clk_core *core)
->  out:
->         clk_pm_runtime_put(core);
->  unlock:
-> -       if (ret)
-> +       if (ret) {
->                 hlist_del_init(&core->child_node);
-> +               core->hw->core =3D NULL;
-> +       }
-> =20
->         clk_prepare_unlock();
-> =20
-> @@ -3847,7 +3856,6 @@ __clk_register(struct device *dev, struct device_no=
-de *np, struct clk_hw *hw)
->         core->num_parents =3D init->num_parents;
->         core->min_rate =3D 0;
->         core->max_rate =3D ULONG_MAX;
-> -       hw->core =3D core;
-> =20
->         ret =3D clk_core_populate_parent_map(core, init);
->         if (ret)
-> @@ -3865,7 +3873,7 @@ __clk_register(struct device *dev, struct device_no=
-de *np, struct clk_hw *hw)
->                 goto fail_create_clk;
->         }
-> =20
-> -       clk_core_link_consumer(hw->core, hw->clk);
-> +       clk_core_link_consumer(core, hw->clk);
-> =20
->         ret =3D __clk_core_init(core);
->         if (!ret)
-
-Let me see if I can fix this up on application.
