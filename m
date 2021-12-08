@@ -2,181 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C31C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 10:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A71BC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 10:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbhLHKJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 05:09:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231283AbhLHKJz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 05:09:55 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E05EEC0617A1
-        for <linux-clk@vger.kernel.org>; Wed,  8 Dec 2021 02:06:23 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id v19so1205252plo.7
-        for <linux-clk@vger.kernel.org>; Wed, 08 Dec 2021 02:06:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vLsqqIOcK3x87D0lqx5TjStNHLlKk/oR3ZFyCJp2s0U=;
-        b=KZkrJZQF1iqqcIYWB/INHACwNxQlYjBuUCagjsMviC4w8dR9cDh1bmtZmWBjnMsiJZ
-         rC6tn1lLx7SyHN6UgSVSOerot5qYiwA0+3tobbXRHmAM3kjP82zBDqLmSn97bY5JYfyq
-         YWUTHvchOyjkgsPKBYLlLgB/W7RNxLZgGR/VIv1n9g8EFF8+1HMY+3R+/u+itWXDo7ve
-         CrxrX2w8g9NyDlwFoQL9bJhANRi8fB8RMMlLB5spyxYAOkpZT1ydZ21yU+OuL+QTGFLZ
-         d/X4LFPHKbKyMu01TijurTGtM03tdRjZTH8t6lduMuIAz66kHpH4iF/JvcSOvBVDcKJI
-         G/sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vLsqqIOcK3x87D0lqx5TjStNHLlKk/oR3ZFyCJp2s0U=;
-        b=g6sU1lFdJji8voFvGhijw62p9irHJWSpnZ4yC32xa0N4q0NVOkADs54YPsJKfDat5u
-         EnK1f+zW+I7vwi7x/OH45RfHEiEGl8X+OSFAHNyPZmnODPixL+iXEJzmvUyhTrOKNK2S
-         EYh3FtYomY5VSoBIckCnpc6pS5AGXgN6VfrCPUu0EOmKTEqGMBYDSR2aBKIlH/YPEv+x
-         lbe8olioGR80ERGPFt9iUuU38O/cBY20aeRYR9ru/R1Q0LODZB2nNOSctqFXbIEZYLkW
-         aVsU6tPnieqyoR6dtR5llggMtSaM2RtoYo+96itVv8GQeCBMpueI9czCRwBHbANUsf+U
-         dfnw==
-X-Gm-Message-State: AOAM530sR6mB+LDBojyF7AVO/RVH4h9e5lsI0ba3JTpY1xtoUUjo7FDG
-        Gn4bI6h41nfTZsAhK4WD+MOzhw==
-X-Google-Smtp-Source: ABdhPJxJM0rGENjhTjTx6Is6PlZ+znZvJakmsXjGiFUmS4EBjePVGdAA4K1S3V9+/m+9zXrnyLbsog==
-X-Received: by 2002:a17:90b:350b:: with SMTP id ls11mr6002127pjb.227.1638957983430;
-        Wed, 08 Dec 2021 02:06:23 -0800 (PST)
-Received: from hsinchu16.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id y28sm2886312pfa.208.2021.12.08.02.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Dec 2021 02:06:22 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
-Cc:     Zong Li <zong.li@sifive.com>
-Subject: [PATCH v2 1/1] clk: sifive: Fix W=1 kernel build warning
-Date:   Wed,  8 Dec 2021 18:06:18 +0800
-Message-Id: <7823666b57c105aee8323e6896f83f3ed249d9ee.1638957553.git.zong.li@sifive.com>
-X-Mailer: git-send-email 2.31.1
+        id S229936AbhLHKNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 05:13:50 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:15304 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229453AbhLHKNu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 05:13:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1638958218; x=1670494218;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=y6oYwfVK4H1EdFEveLnJz6XsiGqlKM/VYn5RyroBPTk=;
+  b=jo8j/WuS85cEjvHL7yK3TKEZboIWdDs/hM+53H0vh47ctfyGB81wj72s
+   ibHjrqSYwlL9DuiqOO1MAGE2npsZRnoPLMwDAvvVLkjGZoz7ouMcl9VwP
+   ab0cmy0wEDW3UkH9Ufmjhub88jH/RnT+yDUYlObNNB9JUDEC9TRZvlZQD
+   +gX25IFYtYxbvOiitdCKkmmjSDA5ZUzmm77AZHBKKbAKZQzRZJ+XxImPZ
+   bNcv0JxxjwZUM9PQw/tXvRIGOUUO9gZk7KddJewcib7gs2EIgKW6Y6LhD
+   y88e28xofg3iCGcmXi4U51FfXySlPkWdqvEIDPOjSkOUZcX4AMZHeqFpt
+   g==;
+IronPort-SDR: mjMxSwesKdPjM8WUO4voYhArBV0e5rGacEZq2dDJ0egjKr/cYVo9ktKlmIxLOWHKMayHPx0TpE
+ /DhJrem8Xwly24lLLJwFxbsMsRBjki95S8KXsTYMD3JsQGTkgClLa48g4wYIxQEX9UZ/iKNBon
+ +LLQXwhMIX6P2F7MSvvm6vq9wQYpmtqLrRFIfiwiiBmKPE0LON887MCK3XPT6694wNA+Ddv6qf
+ Il62zlPAiV8VdlKG6/1m70PUzqryYp3ExRU01pbvTFu8M2IGAw3Lva5nb6s65Mv5i2BnolVALP
+ lsyN9xklU4gjNQ4dIX0hKm5V
+X-IronPort-AV: E=Sophos;i="5.87,297,1631602800"; 
+   d="scan'208";a="146500441"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Dec 2021 03:10:17 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Wed, 8 Dec 2021 03:10:17 -0700
+Received: from [10.12.73.2] (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2176.14 via Frontend
+ Transport; Wed, 8 Dec 2021 03:10:15 -0700
+Subject: Re: [PATCH v10 0/3] Add driver for lan966x Generic Clock Controller
+To:     Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+        <robh+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, "Claudiu Beznea" <Claudiu.Beznea@microchip.com>
+CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
+        <Eugen.Hristev@microchip.com>, <Manohar.Puri@microchip.com>
+References: <20211103061935.25677-1-kavyasree.kotagiri@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <8198b69e-44ba-3636-c02f-115c7851a664@microchip.com>
+Date:   Wed, 8 Dec 2021 11:10:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211103061935.25677-1-kavyasree.kotagiri@microchip.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
-Declare static const variable 'prci_clk_fu540' where it's used").
-For fixing W=1 kernel build warning(s) about ‘prci_clk_fu540’ defined
-but not used [-Wunused-const-variable=], the problem is that the C file
-of fu540 and fu740 doesn't use these variables, but they includes the
-header files. We could refine the code by moving the definition of these
-variable into fu540 and fu740 implementation respectively, instead of
-common core code, then we could still separate the SoCs-dependent data
-in their own implementation.
+On 03/11/2021 at 07:19, Kavyasree Kotagiri wrote:
+> This patch series adds a device driver for Generic Clock Controller
+> of lan966x SoC.
+> 
+> v9 -> v10:
+> - Removed .name from lan966x_gck_pdata struct.
+> - Removed "_clk" in fw_names like used in bindings
+> 
+> v8 -> v9:
+> - Added Acked-by to dt-bindings and Documentation file.
+> - Changed clk_name "timer" to "timer1"
+> - Updated devm_kzalloc in probe function.
+> 
+> v7 -> v8:
+> - Defined new constant DIV_MAX.
+> - Corrected and updated prescaler divider condition check.
+> - Added Acked-by.
+> 
+> v6 -> v7:
+> - Added Kconfig and Makefile entires for lan966x clock driver.
+> 
+> v5 -> v6:
+> - Added Acked-by to dt-bindings file.
+> - Removed "_clk" in clock-names.
+> - Added Reviewed-by to Documentation file.
+> 
+> v4 -> v5:
+> - In v4 dt-bindings, missed adding "clock-names" in required
+>    properties and example. So, added them.
+> - Returning proper error - PTR_ERR.
+> - Removed unused variable "ret" in probe function.
+> 
+> v3 -> v4:
+> - Updated "clocks" and added "clock-names" in dt-bindings.
+> - Used clk_parent_data instead of of_clk_get_parent_name().
+> 
+> v2 -> v3:
+> - Fixed dt_binding_check errors.
+> 
+> v1 -> v2:
+> - Updated license in dt-bindings.
+> - Updated example provided for clock controller node.
+> 
+> Kavyasree Kotagiri (3):
+>    dt-bindings: clock: lan966x: Add binding includes for lan966x SoC
+>      clock IDs
+>    dt-bindings: clock: lan966x: Add LAN966X Clock Controller
+>    clk: lan966x: Add lan966x SoC clock driver
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
----
- drivers/clk/sifive/fu540-prci.c  |  6 +++++-
- drivers/clk/sifive/fu540-prci.h  |  6 +-----
- drivers/clk/sifive/fu740-prci.c  |  6 +++++-
- drivers/clk/sifive/fu740-prci.h  | 11 +----------
- drivers/clk/sifive/sifive-prci.c |  5 -----
- 5 files changed, 12 insertions(+), 22 deletions(-)
+3 patches added in clk-at91 branch which will be merged in at91-next 
+consumed by linux-next.
 
-diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
-index 29bab915003c..5568bc26e36f 100644
---- a/drivers/clk/sifive/fu540-prci.c
-+++ b/drivers/clk/sifive/fu540-prci.c
-@@ -20,7 +20,6 @@
- 
- #include <dt-bindings/clock/sifive-fu540-prci.h>
- 
--#include "fu540-prci.h"
- #include "sifive-prci.h"
- 
- /* PRCI integration data for each WRPLL instance */
-@@ -87,3 +86,8 @@ struct __prci_clock __prci_init_clocks_fu540[] = {
- 		.ops = &sifive_fu540_prci_tlclksel_clk_ops,
- 	},
- };
-+
-+struct prci_clk_desc prci_clk_fu540 = {
-+	.clks = __prci_init_clocks_fu540,
-+	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
-+};
-diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
-index c220677dc010..931d6cad8c1c 100644
---- a/drivers/clk/sifive/fu540-prci.h
-+++ b/drivers/clk/sifive/fu540-prci.h
-@@ -7,10 +7,6 @@
- #ifndef __SIFIVE_CLK_FU540_PRCI_H
- #define __SIFIVE_CLK_FU540_PRCI_H
- 
--#include "sifive-prci.h"
--
--#define NUM_CLOCK_FU540	4
--
--extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
-+extern struct prci_clk_desc prci_clk_fu540;
- 
- #endif /* __SIFIVE_CLK_FU540_PRCI_H */
-diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
-index 53f6e00a03b9..0ade3dcd24ed 100644
---- a/drivers/clk/sifive/fu740-prci.c
-+++ b/drivers/clk/sifive/fu740-prci.c
-@@ -8,7 +8,6 @@
- 
- #include <dt-bindings/clock/sifive-fu740-prci.h>
- 
--#include "fu540-prci.h"
- #include "sifive-prci.h"
- 
- /* PRCI integration data for each WRPLL instance */
-@@ -132,3 +131,8 @@ struct __prci_clock __prci_init_clocks_fu740[] = {
- 		.ops = &sifive_fu740_prci_pcie_aux_clk_ops,
- 	},
- };
-+
-+struct prci_clk_desc prci_clk_fu740 = {
-+	.clks = __prci_init_clocks_fu740,
-+	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu740),
-+};
-diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
-index 511a0bf7ba2b..5bc0e18f058c 100644
---- a/drivers/clk/sifive/fu740-prci.h
-+++ b/drivers/clk/sifive/fu740-prci.h
-@@ -7,15 +7,6 @@
- #ifndef __SIFIVE_CLK_FU740_PRCI_H
- #define __SIFIVE_CLK_FU740_PRCI_H
- 
--#include "sifive-prci.h"
--
--#define NUM_CLOCK_FU740	9
--
--extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
--
--static const struct prci_clk_desc prci_clk_fu740 = {
--	.clks = __prci_init_clocks_fu740,
--	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu740),
--};
-+extern struct prci_clk_desc prci_clk_fu740;
- 
- #endif /* __SIFIVE_CLK_FU740_PRCI_H */
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index 80a288c59e56..916d2fc28b9c 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -12,11 +12,6 @@
- #include "fu540-prci.h"
- #include "fu740-prci.h"
- 
--static const struct prci_clk_desc prci_clk_fu540 = {
--	.clks = __prci_init_clocks_fu540,
--	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
--};
--
- /*
-  * Private functions
-  */
+I plan to issue a PR for at91 clock patches soon.
+
+Best regards,
+   Nicolas
+
+>   .../bindings/clock/microchip,lan966x-gck.yaml |  57 +++++
+>   drivers/clk/Kconfig                           |   7 +
+>   drivers/clk/Makefile                          |   1 +
+>   drivers/clk/clk-lan966x.c                     | 240 ++++++++++++++++++
+>   include/dt-bindings/clock/microchip,lan966x.h |  28 ++
+>   5 files changed, 333 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/microchip,lan966x-gck.yaml
+>   create mode 100644 drivers/clk/clk-lan966x.c
+>   create mode 100644 include/dt-bindings/clock/microchip,lan966x.h
+> 
+
+
 -- 
-2.31.1
-
+Nicolas Ferre
