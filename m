@@ -2,71 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACB7C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 04:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D56EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 04:30:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240269AbhLHEah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Dec 2021 23:30:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240029AbhLHEag (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 23:30:36 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848EAC061574;
-        Tue,  7 Dec 2021 20:27:05 -0800 (PST)
+        id S239671AbhLHEe2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Dec 2021 23:34:28 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:56838 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233519AbhLHEe2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Dec 2021 23:34:28 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3C11CB80F00;
-        Wed,  8 Dec 2021 04:27:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2D6C00446;
-        Wed,  8 Dec 2021 04:27:02 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 17101B81D81;
+        Wed,  8 Dec 2021 04:30:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFD6C00446;
+        Wed,  8 Dec 2021 04:30:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638937622;
-        bh=gm5U+6nX0OqHUocW+vFgpvA0DdUInMV72h3j85gnI+Y=;
+        s=k20201202; t=1638937854;
+        bh=EOEbeN/Kgi0GMYMankSSg0gzAST/9Pr1LyNkGfdUlxA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=V3TUKJkHA0uNFg5mmnT50camm9hsWJeSbBH/9dbCObUrQJj2i3Sb3TT7AkLjtvyyE
-         xb2aYV4Ox8OF+5mTK5yDKm3y84zFBiTVGdW+1g6tER0rqMwBefVreUcf/GhGKmBbDt
-         HlMp90EYZg4pZf2J+Y7uW6NKC35pI66fqpaWh4V8bVbCrCZpRcmwcpLhsrDhuT0TML
-         DSdEdMiLAfG+l1wlGr2Hg2ytAUCgDnD3jwJXymtqPYdKl00u8WAWDBZAEKOgbDEhLq
-         DzUGQHKIdwtjUylKebAU/mppFeRdGmqtvnzdA85nElvNyb6eF4Yfpu+8BSqB7LVg+g
-         HAPODgp/n6n2A==
+        b=Zn5CWZq7kQWCXlUGJFwTbIhdsZOlWu6ZHNBOI+v8wAZM9eDl5LtMJKwBy5R9zAAkV
+         +mgmQHMFesOKhq0b0b50NPwkDyx+1+DCK7kYrKPeHJ18Pv7/9vjIBrYQCxzTjuZu7F
+         vzTMbZ04ZqWlUgHfiCEPq3FEK5S4ZRnTNKcDqRFu3CsdVxy5nByUGqSWRAa6l0++SL
+         uwalAWnFAT+sXCcjFE0qe54kkEJ8McApYjbtht1s1zEgqExovfCszbIwh4j+8okLGv
+         2e+/r4bJ0IZi1JaBvUO/6+qgnN3iaLbQJFgDRCCP+J6dZrPGtag5AjdQjmCSWf67hF
+         MqkKSz8ySONMQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1638534376.git.geert+renesas@glider.be>
-References: <cover.1638534376.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.17
+In-Reply-To: <jgJW1u3RfTQcv5ZBcVQt4fz8_sA4gvyXsN5x18zzLo_nTR5nfLpZtdAjy-WlEaCMnmnPGZjeFGV5OoiWNtA4Tn5wLhqNJdQEvPw5Cqs1z3I=@wujek.eu>
+References: <20211203141515.2448129-1-dev_public@wujek.eu> <20211206225354.BF0AFC341C6@smtp.kernel.org> <jgJW1u3RfTQcv5ZBcVQt4fz8_sA4gvyXsN5x18zzLo_nTR5nfLpZtdAjy-WlEaCMnmnPGZjeFGV5OoiWNtA4Tn5wLhqNJdQEvPw5Cqs1z3I=@wujek.eu>
+Subject: Re: [PATCH] clk: si5341: Add sysfs property to check selected input
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 07 Dec 2021 20:27:01 -0800
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     wujek dev <dev_public@wujek.eu>
+Date:   Tue, 07 Dec 2021 20:30:53 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211208042702.BA2D6C00446@smtp.kernel.org>
+Message-Id: <20211208043054.CEFD6C00446@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-12-03 04:30:58)
->         Hi Mike, Stephen,
+Quoting wujek dev (2021-12-06 15:08:03)
+> Other sysfs properties used by this driver are not documented so I didn't=
+ add for this one. Even more not a single property from clk subsystem is de=
+scribed. Shall I the add description of this single property?
 >=20
-> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
-bf:
->=20
->   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.17-tag1
->=20
-> for you to fetch changes up to 33b22d9c3272003a525ba2d6b7b851f3d4f30574:
->=20
->   clk: renesas: r9a07g044: Add TSU clock and reset entry (2021-11-26 14:0=
-6:16 +0100)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+Please don't top post. sysfs properties are supposed to be single value
+and for machine consumption. Is this a debugfs property?
