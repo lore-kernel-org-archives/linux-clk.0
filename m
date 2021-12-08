@@ -2,99 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 151D6C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 07:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83503C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 08:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240583AbhLHHsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 02:48:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231739AbhLHHss (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 02:48:48 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5011EC061574;
-        Tue,  7 Dec 2021 23:45:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        id S232764AbhLHIll (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 03:41:41 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:32897 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236193AbhLHIlk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 03:41:40 -0500
+X-Greylist: delayed 404 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Dec 2021 03:41:40 EST
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 4J89P40jSzz1r877;
+        Wed,  8 Dec 2021 09:31:20 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 4J89P36P6wz1qqkC;
+        Wed,  8 Dec 2021 09:31:19 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id BADRdZDQlkw7; Wed,  8 Dec 2021 09:31:19 +0100 (CET)
+X-Auth-Info: tna6jNS7OLYeuupep279fwxSQb4u5tIM75GH2/x8Ki5BnDbR5rcv9nJuNY1bNTwr
+Received: from igel.home (ppp-46-244-185-244.dynamic.mnet-online.de [46.244.185.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 90E21CE2037;
-        Wed,  8 Dec 2021 07:45:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853CCC341C3;
-        Wed,  8 Dec 2021 07:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638949513;
-        bh=wW9RIet2nCD3niwV3rcV7PvV9BC7tdBsrg1L8F8DdmE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FNkTtqglWMumOqKlVH+Oztoj3XnhZjMI47pI/4mALFUcnU0KHATz622LZK0km7XF8
-         cdc2z+Zusc2nYQVgWsXskm/5ppYcHMpYRTyheS/WbgJg8vU/k+f9lxvQeLsqHcEmtP
-         qhekOYqMDzrxkW+q4JyGxlKnDQGdsiQVKbR9S66KLUv32rjO1on0aAMe3nN0pfGqbL
-         oeuWS86YzrRKDOxlmbIpURLySBhgu95PWahr185TSCWpwbsKhjXjXR/0Y5CjST/tBj
-         DtAnRBLw6ka5WQOJGDN9gq7M7Y4OmjVQ5s5qkbHLeASoRjEuMWAQq4mYmnB9rNJhFg
-         Jr6pu2PG2SgPQ==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1murdX-00Ai3a-D7; Wed, 08 Dec 2021 07:45:11 +0000
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed,  8 Dec 2021 09:31:19 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+        id 8588A2C3839; Wed,  8 Dec 2021 09:31:18 +0100 (CET)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Zong Li <zong.li@sifive.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
+        paul.walmsley@sifive.com, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/1] clk: sifive: Fix W=1 kernel build warning
+References: <d2e681e5ea31c62529b619a3777570b4792e0684.1638928796.git.zong.li@sifive.com>
+X-Yow:  Three attractive BANK ROBBERS are discussing RELIGIOUS DIFFERENCES and
+ MAKE-UP TECHNIQUE with them!!
+Date:   Wed, 08 Dec 2021 09:31:18 +0100
+In-Reply-To: <d2e681e5ea31c62529b619a3777570b4792e0684.1638928796.git.zong.li@sifive.com>
+        (Zong Li's message of "Wed, 8 Dec 2021 10:04:22 +0800")
+Message-ID: <87pmq7qyzt.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.90 (gnu/linux)
 MIME-Version: 1.0
-Date:   Wed, 08 Dec 2021 07:45:11 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     =?UTF-8?Q?qinjian=5B=E8=A6=83=E5=81=A5=5D?= <qinjian@cqplus1.com>
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        tglx@linutronix.de, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        broonie@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        =?UTF-8?Q?Wells_Lu_=E5=91=82=E8=8A=B3?= =?UTF-8?Q?=E9=A8=B0?= 
-        <wells.lu@sunplus.com>
-Subject: Re: [PATCH v5 08/10] irqchip: Add Sunplus SP7021 interrupt controller
- driver
-In-Reply-To: <39f9b853af7c44cb94421354744512a8@cqplus1.com>
-References: <cover.1638515726.git.qinjian@cqplus1.com>
- <e88ea4cf28ba69a41f6d1b4dd4128b82a6095c29.1638515726.git.qinjian@cqplus1.com>
- <87r1ao23fp.wl-maz@kernel.org>
- <39f9b853af7c44cb94421354744512a8@cqplus1.com>
-User-Agent: Roundcube Webmail/1.4.12
-Message-ID: <ce867937861df454823eb703bfd29256@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: qinjian@cqplus1.com, robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de, p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, wells.lu@sunplus.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-12-08 07:15, qinjian[覃健] wrote:
->> > +void sp_intc_set_ext(u32 hwirq, int ext_num)
->> > +{
->> > +	sp_intc_assign_bit(hwirq, REG_INTR_PRIORITY, !ext_num);
->> > +}
->> > +EXPORT_SYMBOL_GPL(sp_intc_set_ext);
->> 
->> No way. We don't export random symbols without a good justification,
->> and you didn't give any.
->> 
-> 
-> This function called by SP7021 display driver to decide DISPLAY_IRQ
-> routing to which parent irq (EXT_INT0 or EXT_INT1).
+On Dez 08 2021, Zong Li wrote:
 
-Based on what? How can a display driver decide which parent is
-appropriate? What improvement does this bring?
+> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
+> index c220677dc010..c8271efa7bdc 100644
+> --- a/drivers/clk/sifive/fu540-prci.h
+> +++ b/drivers/clk/sifive/fu540-prci.h
+> @@ -13,4 +13,9 @@
+>  
+>  extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
+>  
+> +static const struct prci_clk_desc prci_clk_fu540 = {
+> +	.clks = __prci_init_clocks_fu540,
+> +	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
+> +};
+> +
 
-> In previous patches, which defined in DT, parsed & processed @
-> sp_intc_xlate_of()
-> From your comment, this is a SW decision. So I removed it from DT &
-> intc driver, only
-> export this function to access the related intc reg.
+A header should only declare things, not define them.
 
-If a decision has to be made, it has to be done in the interrupt
-controller driver, or rely on the standard API. Exporting random
-low level functions to other random drivers is not acceptable.
+Andreas.
 
-         M.
 -- 
-Jazz is not dead. It just smells funny...
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
