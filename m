@@ -2,57 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DDFC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916DDC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbhLIISJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 03:18:09 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:41604 "EHLO
+        id S234504AbhLIIVY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 03:21:24 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:43488 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbhLIISG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:18:06 -0500
+        with ESMTP id S229536AbhLIIVV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:21:21 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B918CB823D0;
-        Thu,  9 Dec 2021 08:14:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D771C004DD;
-        Thu,  9 Dec 2021 08:14:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E22CCB823D2;
+        Thu,  9 Dec 2021 08:17:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A602BC004DD;
+        Thu,  9 Dec 2021 08:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639037671;
-        bh=6Yk7bLxA7TVto6o9AUHQrOCVn9C9axS/cn+ySOpLGlo=;
+        s=k20201202; t=1639037865;
+        bh=kSIIusx9xaK/GoMoLZqWX0pvenSDfG9Wd5vs3wVEza0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=g4aOHsf5I/tVcOwe6D/Y40LB5FGM0pc+zDSvzLlmYKbaeGNCiI3YvwhHrN2ZFEtiK
-         nlHrduOB/+hUC9ITANudBYWXP74fzjHd8rkta2kP1yKA9vhXt8OdIhODksPZB/kK8h
-         Zyi5ZWPkJ2CQ8VcBaU/0lM29iJAL++/AwlhVjTXWxRm1DHJV59YAC7cSZVOx3wuW/A
-         35yLVWnsOvOdX41d3pheudpb0UYkMFornNq1vJH9ffR/fWFdIMwddXHUwto0v9xFKa
-         OK8TvTAG0erEncz1Mv8mhggW36wWfleI9VDnTP9MNZOIN3HUk4HYEeH/v3ANzfs0sx
-         6Qxcp4Bs7dYIg==
+        b=BFY1NywGgTHu26oMmfuVs4DolrjrLzoJe553GPfbbcQV+KD2ATzsVVtxJV56RFitE
+         AttxpkmeN2Q9AKuZ0dunWgq3lHQw3Shz45sCtB6tSFA8O8L034VcauyjSeB1xZpMWr
+         m6TAPUcfyBXRFrbu5KcFNROE+6VbE47+qN6C2PyhI5bTrOTEtlFtVluJMtGML7BCEp
+         zz5Y7I2GHZohKVS5WXGI2jtpb5XsMKWTe8AbbigDnqWwGrmshMZumgM/0PORX0J/2j
+         0Um2lV6/NNJq+YjAKjKOvRVus/XIrGMT8n3uAVFMyUR+yOB+xngyXc8/6Xf5u+wc/X
+         VZ9L8sA/WGY5A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211208175430.1333594-12-dmitry.baryshkov@linaro.org>
-References: <20211208175430.1333594-1-dmitry.baryshkov@linaro.org> <20211208175430.1333594-12-dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 11/11] clk: qcom: gcc-msm8996: use ARRAY_SIZE instead of specifying num_parents
+In-Reply-To: <20211127173036.150535-1-colin.i.king@gmail.com>
+References: <20211127173036.150535-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk/ti/adpll: Make const pointer error a static const array
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin Ian King <colin.i.king@googlemail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 09 Dec 2021 00:14:30 -0800
+        Tero Kristo <kristo@kernel.org>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Date:   Thu, 09 Dec 2021 00:17:44 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211209081431.7D771C004DD@smtp.kernel.org>
+Message-Id: <20211209081745.A602BC004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2021-12-08 09:54:30)
-> Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
-> adding/removing entries to/from parent_data easy and errorproof.
+Quoting Colin Ian King (2021-11-27 09:30:36)
+> Make const pointer error a static const array, removes a dereference
+> and shrinks object code a little.
 >=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
