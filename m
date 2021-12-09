@@ -2,161 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A25C5C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Dec 2021 23:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30385C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 00:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241146AbhLHX1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Dec 2021 18:27:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
+        id S233602AbhLIAyn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Dec 2021 19:54:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237964AbhLHX1H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 18:27:07 -0500
-Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [IPv6:2001:4b7a:2000:18::165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3569C061746;
-        Wed,  8 Dec 2021 15:23:34 -0800 (PST)
-Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S233448AbhLIAym (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Dec 2021 19:54:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D05C061746;
+        Wed,  8 Dec 2021 16:51:10 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 3A64820407;
-        Thu,  9 Dec 2021 00:23:33 +0100 (CET)
-Date:   Thu, 9 Dec 2021 00:23:32 +0100
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 08/11] clk: qcom: gcc-msm8996: drop unsupported clock
- sources
-Message-ID: <20211208232332.opace4qmdcukl4uv@SoMainline.org>
-References: <20211208175430.1333594-1-dmitry.baryshkov@linaro.org>
- <20211208175430.1333594-9-dmitry.baryshkov@linaro.org>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1B88CB82338;
+        Thu,  9 Dec 2021 00:51:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98BF4C00446;
+        Thu,  9 Dec 2021 00:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639011067;
+        bh=lDpvo5Y5XkMJZEGTr3nhMxq/klLuv+XPxGliSChu3X0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=T/yyH422MMiUfEh4eFWKCXrPA1rT3ZCwMR7TYt9Iy6ePpoqbiNvwhZ9Vykf00DqCc
+         S635kFYlwPJQxoUeqz5vb0nEcUU4Tpw+4ZsbMq8akVz4HX5ePiWVh9lYMqGcuOk+IO
+         hNJsfXZKGc12P9JX/uL+MyKlbe0rpUEmMcpqGVFFZlZ99j3vdpFy9uK8Tl0OEaW3nJ
+         NZ9+Hi5p6aMjMXTlUajDbheSs0WOs6GfMW9gnHKY9D3IVa+aDO4jqYEhdDDczW4sRI
+         9cfkeeovr23xZAx8cJUcobkJ7/+ZUdvL/Q0hXEqlgdGrbd0XUh5rMb5jXbAafkl1uz
+         mH67mXCKf3yaA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211208175430.1333594-9-dmitry.baryshkov@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e7c9b7d4-8fef-57f5-b774-9931f5ff40ed@quicinc.com>
+References: <20211109043438.4639-1-quic_mdtipton@quicinc.com> <20211208015324.86282C341C5@smtp.kernel.org> <e7c9b7d4-8fef-57f5-b774-9931f5ff40ed@quicinc.com>
+Subject: Re: [PATCH] clk: Fix children not voting entire parent chain during init
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Mike Tipton <quic_mdtipton@quicinc.com>, mturquette@baylibre.com
+Date:   Wed, 08 Dec 2021 16:51:06 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211209005107.98BF4C00446@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-12-08 20:54:27, Dmitry Baryshkov wrote:
-> In preparation of updating the msm8996 gcc driver, drop all unsupported
-> GPLL sources (gpll1/gpll1_early_div, gpll2/gpll2_early and gpll3).
-> Downstream kernel also does not provide support for these GPLL sources,
-> so it is safe to drop them.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-msm8996.c | 55 ++++------------------------------
->  1 file changed, 6 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-> index 9b1674b28d45..3acefe16355c 100644
-> --- a/drivers/clk/qcom/gcc-msm8996.c
-> +++ b/drivers/clk/qcom/gcc-msm8996.c
-> @@ -27,15 +27,10 @@
->  enum {
->  	P_XO,
->  	P_GPLL0,
-> -	P_GPLL2,
-> -	P_GPLL3,
-> -	P_GPLL1,
-> -	P_GPLL2_EARLY,
->  	P_GPLL0_EARLY_DIV,
->  	P_SLEEP_CLK,
->  	P_GPLL4,
->  	P_AUD_REF_CLK,
-> -	P_GPLL1_EARLY_DIV
->  };
->  
->  static const struct parent_map gcc_sleep_clk_map[] = {
-> @@ -130,44 +125,6 @@ static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
->  	"gpll0_early_div"
->  };
->  
-> -static const struct parent_map gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL0, 1 },
-> -	{ P_GPLL1_EARLY_DIV, 3 },
-> -	{ P_GPLL1, 4 },
-> -	{ P_GPLL4, 5 },
-> -	{ P_GPLL0_EARLY_DIV, 6 }
-> -};
-> -
-> -static const char * const gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div[] = {
-> -	"xo",
-> -	"gpll0",
-> -	"gpll1_early_div",
-> -	"gpll1",
-> -	"gpll4",
-> -	"gpll0_early_div"
-> -};
-> -
-> -static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div_map[] = {
-> -	{ P_XO, 0 },
-> -	{ P_GPLL0, 1 },
-> -	{ P_GPLL2, 2 },
-> -	{ P_GPLL3, 3 },
-> -	{ P_GPLL1, 4 },
-> -	{ P_GPLL2_EARLY, 5 },
-> -	{ P_GPLL0_EARLY_DIV, 6 }
-> -};
-> -
-> -static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div[] = {
-> -	"xo",
-> -	"gpll0",
-> -	"gpll2",
-> -	"gpll3",
-> -	"gpll1",
-> -	"gpll2_early",
-> -	"gpll0_early_div"
-> -};
-> -
->  static struct clk_fixed_factor xo = {
->  	.mult = 1,
->  	.div = 1,
-> @@ -285,12 +242,12 @@ static const struct freq_tbl ftbl_system_noc_clk_src[] = {
->  static struct clk_rcg2 system_noc_clk_src = {
->  	.cmd_rcgr = 0x0401c,
->  	.hid_width = 5,
-> -	.parent_map = gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div_map,
-> +	.parent_map = gcc_xo_gpll0_gpll0_early_div_map,
->  	.freq_tbl = ftbl_system_noc_clk_src,
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "system_noc_clk_src",
-> -		.parent_names = gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early_div,
-> -		.num_parents = 7,
-> +		.parent_names = gcc_xo_gpll0_gpll0_early_div,
-> +		.num_parents = 3,
+Quoting Mike Tipton (2021-12-08 08:16:52)
+> On 12/7/2021 5:53 PM, Stephen Boyd wrote:
+> >=20
+> > Let me see if I can fix this up on application.
+> >=20
+>=20
+> Sorry, did you mean you'll address your comments when applying the patch =
 
-Is it perhaps preferred to perform the ARRAY_SIZE conversion _before_
-this patch, such that num_parents doesn't need to be updated
-temporarily?  That said, yes the name would have to be updated in two
-places then, but that seems less fragile than the hardcoded numbers we'd
-like to avoid.
+> to your tree? Or would you like me to submit a v2?
 
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> @@ -1257,12 +1214,12 @@ static const struct freq_tbl ftbl_qspi_ser_clk_src[] = {
->  static struct clk_rcg2 qspi_ser_clk_src = {
->  	.cmd_rcgr = 0x8b00c,
->  	.hid_width = 5,
-> -	.parent_map = gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map,
-> +	.parent_map = gcc_xo_gpll0_gpll4_gpll0_early_div_map,
->  	.freq_tbl = ftbl_qspi_ser_clk_src,
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "qspi_ser_clk_src",
-> -		.parent_names = gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div,
-> -		.num_parents = 6,
-> +		.parent_names = gcc_xo_gpll0_gpll4_gpll0_early_div,
-> +		.num_parents = 4,
->  		.ops = &clk_rcg2_ops,
->  	},
->  };
-> -- 
-> 2.33.0
-> 
+I fixed it up and applied it to clk-fixes.
