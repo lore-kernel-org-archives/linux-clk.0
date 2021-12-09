@@ -2,77 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444E6C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 11:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF00C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 11:36:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236485AbhLILSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 06:18:50 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:53758 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236469AbhLILSt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 06:18:49 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 461EDB82453;
-        Thu,  9 Dec 2021 11:15:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8AA3C004DD;
-        Thu,  9 Dec 2021 11:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639048514;
-        bh=5aaehfQCI+dbM2sQSzjE+odxWb0lMx6FIQFJTzmnlYw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Tp+/EW+Pm7RLI/X0tILg5x3sBdCc9esnGazO1Yd1o8ZqHnXjSaUYW5bBbBvrm1Gtg
-         os+13GHOUw8+Mjj1sDEuKZDbqZnrIW/S4NcnfSSFt5rNnaBwU8PbBkG8P+PrGpl8Em
-         thi1KvhwaOmpgh6mFajyRWsbv8Q3b3lOgqZujXmmldjnzc7kP/ocOZLPMGmWVJPlKl
-         udp03C41oiJnUpfJPVSe6ODLM1Xz4c3EUwWXerCOV8g7XOLVy1ZJVYGsRJPgTSTX+s
-         yCbnTNPhM3W7i5WIihJaJdTE2OLcdUrnzFD3btiEUQRJoa2HrubX0tUuAw8PCb+7C6
-         mEuOGPZH+DkgA==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S236790AbhLILkB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 06:40:01 -0500
+Received: from mail-ua1-f43.google.com ([209.85.222.43]:37697 "EHLO
+        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233082AbhLILkA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 06:40:00 -0500
+Received: by mail-ua1-f43.google.com with SMTP id o1so10172612uap.4;
+        Thu, 09 Dec 2021 03:36:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bCAtLuHkBfdhNiNN7zTcPyUKHpXBqsilvJRiJ7D60To=;
+        b=R8Z3MR8hM7pk/JOA52N2phoE2B2n7i+JSZIomhCJnde7XqW+IxB+hvlkL5DDlqbsOI
+         aYdaDY7Q/lEzQfuzyd9BXdFhL8X0p67tiKyIXbDRdwGCezKU+SAz4ZF6lhsST6xTsKEu
+         XN1BuNh+Qvh5AOOC6dGsHCKfMDZKfAxHNqKOPQXHKy2CpgkjZhO2DaQIKiZcBd0hPFpg
+         CpD9HO4kQyq+N+ZpqEGYg5feBzGywAAE4mgOg0mkPTNyuVSFnKYMymG+MSQ38YtnEDNc
+         IKwyVRTyCmhc5Xw4xa4BUFPDWPpwOxOQUlsLnjhdwOXsb7NMfX793UXdSOO0F4vO2N5T
+         N8AQ==
+X-Gm-Message-State: AOAM530qC8mgjoF6bwWjz+zJHGhCSR+akuy8xvjMRJp7rllZTgpiu6bO
+        gjTY/TOScvFN1aKzgjwjbk1GLJ3OIEtW9w==
+X-Google-Smtp-Source: ABdhPJydCmav7OT9vNc5YKZOC63I3sZZ5BfOqY7tCiH/XQb8IT0exMJaVDJzUcujWqjf4ubt55PD+g==
+X-Received: by 2002:a9f:2329:: with SMTP id 38mr18071745uae.124.1639049786061;
+        Thu, 09 Dec 2021 03:36:26 -0800 (PST)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id a128sm3662624vki.11.2021.12.09.03.36.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Dec 2021 03:36:25 -0800 (PST)
+Received: by mail-vk1-f182.google.com with SMTP id m16so3478173vkl.13;
+        Thu, 09 Dec 2021 03:36:25 -0800 (PST)
+X-Received: by 2002:a05:6122:104f:: with SMTP id z15mr8304256vkn.39.1639049785213;
+ Thu, 09 Dec 2021 03:36:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20211209111506.217637-1-arnd@kernel.org>
+In-Reply-To: <20211209111506.217637-1-arnd@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 9 Dec 2021 12:36:13 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW-g8TsBiOK9LKwtpvo933nuCN3HsGkz9sxuLnMgb4kbg@mail.gmail.com>
+Message-ID: <CAMuHMdW-g8TsBiOK9LKwtpvo933nuCN3HsGkz9sxuLnMgb4kbg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: cpg-mssr: fix R-Car S4-8 link failure
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: cpg-mssr: fix R-Car S4-8 link failure
-Date:   Thu,  9 Dec 2021 11:03:37 +0100
-Message-Id: <20211209111506.217637-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi Arnd,
 
-Without CONFIG_CLK_RCAR_GEN4_CPG, this driver fails to link:
+On Thu, Dec 9, 2021 at 12:15 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Without CONFIG_CLK_RCAR_GEN4_CPG, this driver fails to link:
+>
+> x86_64-linux-ld: drivers/clk/renesas/r8a779a0-cpg-mssr.o:(.init.rodata+0x70): undefined reference to `rcar_gen4_cpg_clk_register'
+>
+> Fixes: 95d3d41f958f ("clk: renesas: cpg-mssr: Add support for R-Car S4-8")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-x86_64-linux-ld: drivers/clk/renesas/r8a779a0-cpg-mssr.o:(.init.rodata+0x70): undefined reference to `rcar_gen4_cpg_clk_register'
+Thanks, but this is already fixed.
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?h=renesas-clk-for-v5.17&id=470e3f0d0b1529abf9759c93e23ac8dd678e0e70
 
-Fixes: 95d3d41f958f ("clk: renesas: cpg-mssr: Add support for R-Car S4-8")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/renesas/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 0927fa963ca6..b937041faab0 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -151,6 +151,7 @@ config CLK_R8A77995
- config CLK_R8A779A0
- 	bool "R-Car V3U clock support" if COMPILE_TEST
- 	select CLK_RCAR_CPG_LIB
-+	select CLK_RCAR_GEN4_CPG
- 	select CLK_RENESAS_CPG_MSSR
- 
- config CLK_R8A779F0
--- 
-2.29.2
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
