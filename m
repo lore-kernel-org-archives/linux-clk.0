@@ -2,69 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C7AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0E4C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234834AbhLII3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 03:29:46 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:54450 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234799AbhLII3n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:29:43 -0500
+        id S232650AbhLIIff (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 03:35:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232632AbhLIIfe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:35:34 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59201C061746;
+        Thu,  9 Dec 2021 00:32:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id DCC97CE2504;
-        Thu,  9 Dec 2021 08:26:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06929C004DD;
-        Thu,  9 Dec 2021 08:26:06 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A58FBCE241B;
+        Thu,  9 Dec 2021 08:31:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BAAC004DD;
+        Thu,  9 Dec 2021 08:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639038367;
-        bh=ZON+4u+q2F+Fa8whstAYeDuG7BMfCupQp2IyL4eIE6A=;
+        s=k20201202; t=1639038717;
+        bh=tnpW+JsUuLj2wWcANc9sa+ZLsGkL3XLw2Vx85Xbamp4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pn439sS9qvx5uBNoFPe9ptDWRL8pbZ9zvyijRzF+POy3u8NrZfMEzY0g3PG6e1iXA
-         VchtdngaJspHdM8nElC8WqGELW0HpONMxF5mXylhM7ODCpex5Jr/09MMUgg3fhkvOp
-         n7yqsceIAFbue9Oi0MbqLCTogu5JFdJrPlYGrOcCj2k4SLIzP2Z7IFYijQd1vCKUB6
-         Etx0kQO21ym622ju5mVusSSGFZEmbOjmPssjC0fCLL4ATL2DYZE4UzajaLJ8gnfYXP
-         L211Z3/ZfZZnCPWo/d6nycJW7yjvSIDMvstqS3zsFcqmrXGwQVDVxS628d5eTed8Tx
-         noCcJjRkYq/ew==
+        b=Od3HY/3NlYUc2Z6ofVIIkbDLdhgAXsGcsEsEAfH8Mk1bhj2CjoINR3sN+t1GUDP34
+         glUYfP8Zc8vyoK8A+SuwRYCWblG5mwMtxDZQpYs5mi3i1PLpTln+5u6fW6ocVQPX/P
+         Krpka/KBh42ItGeeNqxCgK1bRXnrz4OP/4G0PxExfcHFyctGeazqdAE8C/tt4Ywvr5
+         qWgYuFrMu9LLjzLR7wJ2yikDDEsGcf9g73eztqr1QhdEfzIzE0qIg2vUviKdUKMZSO
+         QpNheyX5snXV++iG17vaypf8M6BsN+Okbo+GNgGoa0ohhzlpi8pbFAZ9qhfoiNm3B4
+         bUzNrhvUuW2rg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211207114003.100693-3-vkoul@kernel.org>
-References: <20211207114003.100693-1-vkoul@kernel.org> <20211207114003.100693-3-vkoul@kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add clock driver for SM8450
+In-Reply-To: <20211208133145.28267-1-nicolas.ferre@microchip.com>
+References: <20211208133145.28267-1-nicolas.ferre@microchip.com>
+Subject: Re: [GIT PULL] clk: at91: clk for 5.17
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Date:   Thu, 09 Dec 2021 00:26:05 -0800
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        nicolas.ferre@microchip.com
+Date:   Thu, 09 Dec 2021 00:31:56 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211209082607.06929C004DD@smtp.kernel.org>
+Message-Id: <20211209083157.C0BAAC004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2021-12-07 03:40:03)
-> diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
-> new file mode 100644
-> index 000000000000..82ac419718d7
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sm8450.c
-> @@ -0,0 +1,3303 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2021, Linaro Limited
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
+Quoting nicolas.ferre@microchip.com (2021-12-08 05:31:45)
+> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+>=20
+> Stephen,
+>=20
+> Here are the clk changes for 5.17 which collect changes to the lan966x pr=
+oduct
+> line. We agreed to include these Microchip patches into the at91 branch w=
+ith
+> Kavyasree and Horatiu.
+>=20
+> Please pull.
+>=20
+> Thanks, best regards,
+>   Nicolas
+>=20
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
+bf:
+>=20
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-a=
+t91-5.17
+>=20
+> for you to fetch changes up to 5ad5915dea0047a6376d8f809ea3470ef68b1f92:
+>=20
+>   clk: lan966x: Extend lan966x clock driver for clock gating support (202=
+1-12-08 11:19:20 +0100)
+>=20
+> ----------------------------------------------------------------
 
-BTW, clk providers need to include clk-provider.h
+Thanks. Pulled into clk-next
