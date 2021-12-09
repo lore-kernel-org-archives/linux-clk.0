@@ -2,168 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C8EC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 13:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F2EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 14:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238276AbhLIOAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 09:00:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
+        id S238405AbhLIOOz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 09:14:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231853AbhLIOAv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 09:00:51 -0500
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85033C061746
-        for <linux-clk@vger.kernel.org>; Thu,  9 Dec 2021 05:57:17 -0800 (PST)
-Received: by mail-wr1-x431.google.com with SMTP id t9so9836067wrx.7
-        for <linux-clk@vger.kernel.org>; Thu, 09 Dec 2021 05:57:17 -0800 (PST)
+        with ESMTP id S238398AbhLIOOx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 09:14:53 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18796C061746
+        for <linux-clk@vger.kernel.org>; Thu,  9 Dec 2021 06:11:20 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id m15so5167116pgu.11
+        for <linux-clk@vger.kernel.org>; Thu, 09 Dec 2021 06:11:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=INUpPFFgEt5pw9ophBKKAQ7IapQv4sE23ioeoEBE0OY=;
-        b=yTYRX1BSqSSSdFgijh0cLEViDk4dB5eLUObNtmJczcLpYCTsB2VrlnSkNskPDGqKl8
-         0IHz+0IJ6pwtvPRswOw77ZDR+njkaIcb7ehm+t6kSZPIwUAeujBerNUGFVQiLhScPo9k
-         +7DwBG0QqP7eDyf7Wbj+hllerKIszULRjDow+uEDM8IiOX3mKVozkR+qSORtJEHKLKDv
-         eRiUGWuNZcNZWzGXdK4Z/il74NkyoIl3+CONRd3UR8vzuN4OBTHEWNLG2fM9MBo4E/uB
-         kpI3rzWWbhTZMDFo7dwgITzGwvAuiY4GAHbK4DHe0fv4vhzYVkbOFHQ8dbzdg8Y0RX6+
-         T8Cg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hxC5857k0/x0qpfripe0OcZLA0Jpy5Tn91k/gBvRbfY=;
+        b=QiLgkAxE+huWLx88a165wLHKu3m2OwUDbthXC8zx18V1Re2FnAvenu1xqhelM6d/KL
+         nht/pqG+yw3uDOoFnVB7ErN1d5/0QcDt2NkYKagUrNJEs9Fq1rFItG1xLZZlFvAMZGvB
+         ViQutqWOYoleAj6FQ0O/iJQprwCcTt9Gi7PRhpvzeBwKbQkRcu11/F7YH2G0LdZS6hJy
+         bUBfR9A+Xl5Rz7FcF5J+sZ1dh1qsCyW+XNSPtM4fBvq39rO+qCgxCGd7y3TbRpGphs1n
+         kNG5e12iXDBa21C/Z7mCGv423sbsJuBB1F3LXXshF1uskUmVuLg2dQwQld6nRb3RjzOq
+         hndg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=INUpPFFgEt5pw9ophBKKAQ7IapQv4sE23ioeoEBE0OY=;
-        b=TWcih7icgWDmje1ujAbJJR3mJR3BaD7+6FYLJKZO9xoW0l1mGWQ5FS4dzIxfG51MO5
-         2oZ0ASETLuPkTQZ9ZPLYSKlG8nqWuyyuqXSqvbuMAdgMvKTEFdiX+YJmBNmCCVktJnOH
-         FzbUBa9OiEtVNv5FFSpium3xvUnRHHS8V+v3XPA8xAG58pWtg1qjFglDHWLEF6p/4vEc
-         tiGFkUa6rUQNoS2H7ttF6i3SueP/hk1ZIJnEApbMUWgn+RLNF7fr8CQ18aeXVbWMB37f
-         4fbbrnzgxyk/albq1PjVmY8/C0y/6Hksh58gOZbYezQwRGz9PTJ8heNU1N0MtEOMAKBR
-         PlYw==
-X-Gm-Message-State: AOAM530YiFyMqIx92rWw1MpdgnVQ3BN6HdLQxaHa94GobAZPMVDnfhSc
-        OkTiZFtnzieQrVv8pwuJWBA/kA==
-X-Google-Smtp-Source: ABdhPJyteSOjZHYvMVrscybKNvrFHSauqZNNp92GwrEYHMpr8Q7vb/TI6ndQLPx5MNNvHshkcb3ZhA==
-X-Received: by 2002:a05:6000:156a:: with SMTP id 10mr6554478wrz.87.1639058236017;
-        Thu, 09 Dec 2021 05:57:16 -0800 (PST)
-Received: from localhost.localdomain ([88.160.176.23])
-        by smtp.gmail.com with ESMTPSA id d15sm7919295wri.50.2021.12.09.05.57.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 09 Dec 2021 05:57:15 -0800 (PST)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     bjorn.andersson@linaro.org, agross@kernel.org, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, shawn.guo@linaro.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH v2 2/2] dt-bindings: clock: Add qualcomm QCM2290 DISPCC bindings
-Date:   Thu,  9 Dec 2021 15:09:11 +0100
-Message-Id: <1639058951-12660-2-git-send-email-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1639058951-12660-1-git-send-email-loic.poulain@linaro.org>
-References: <1639058951-12660-1-git-send-email-loic.poulain@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hxC5857k0/x0qpfripe0OcZLA0Jpy5Tn91k/gBvRbfY=;
+        b=S2/S+gMh2RMCHYMwCGUzAcGxDzcbxKnj8Eap+uyg1RUCyqlSuQnj9NRTYz4FI3oktJ
+         q6EOStrSIrLOi07WwEplGe/XsnWl8x5I2iWYnZQxh5c4SDyCmEszv3xvP1Aw3kx5tz52
+         SO4Op+MPukRL3R1z42MJ7cIx3rfLFQiWh4XKJTivrNpdpR2waX29Tq3PA0mAB3y77P06
+         TY74RgvyObtTxFphjM0bB1p1JOR9vnXmzUIL2So6uh2/dT9O5uC2mI7tna2WngQRfpBv
+         K0PsozJJ/pozG+MDvjlJ4lRkVTryiQ99Isp70v5jSTzXJKHp93eRnUF6s9bnzGaa7GZb
+         RFxg==
+X-Gm-Message-State: AOAM531IIHVXTyoRk0QKA9NMsMgpfmcOXc083xEVn9OgSZSYFUVsK6Rv
+        1KQGld5GQveqG0yccbak/ArEkz0ksl56wP1qrgNhXw==
+X-Google-Smtp-Source: ABdhPJxSj9OSlrbLZlOQWBlk5VcpcFqZ5rMrICHi3obpWZAvx5XrQuSiXQFCDEUGjqkCmBs5yr+D2M4XkST0GDA/exY=
+X-Received: by 2002:a63:1564:: with SMTP id 36mr25236610pgv.324.1639059079400;
+ Thu, 09 Dec 2021 06:11:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org> <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
+From:   Robert Foss <robert.foss@linaro.org>
+Date:   Thu, 9 Dec 2021 15:11:08 +0100
+Message-ID: <CAG3jFyvuudxc_6Vh-24WcvgBDa0G2_uAtPYYtuBFoYosE3Ld1A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: qcom: dispcc-sdm845: park disp_cc_mdss_mdp_clk_src
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for display clock controller on QCM2290 SoCs.
+On Wed, 8 Dec 2021 at 03:22, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
+> was enabled by the bootloader, part it to the TCXO clock source.
+>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/dispcc-sdm845.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+> index 735adfefc379..f2afbba7bc72 100644
+> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
+>
+>         clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+>
+> +       /* Park disp_cc_mdss_mdp_clk_src */
+> +       clk_rcg2_park_safely(regmap, 0x2088, 0);
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- v2: no change
+Could the hardcoded number be replaced with
+disp_cc_mdss_mdp_clk_src.cmd_rcgr just to make this easier to read?
+Maybe the comment isn't needed with this change.
 
- .../bindings/clock/qcom,qcm2290-dispcc.yaml        | 87 ++++++++++++++++++++++
- 1 file changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
+> +
+>         /* Enable hardware clock gating for DSI and MDP clocks */
+>         regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
+>
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
-new file mode 100644
-index 00000000..44d5ce7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
-@@ -0,0 +1,87 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,qcm2290-dispcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Display Clock & Reset Controller Binding for qcm2290
-+
-+maintainers:
-+  - Loic Poulain <loic.poulain@linaro.org>
-+
-+description: |
-+  Qualcomm display clock control module which supports the clocks, resets and
-+  power domains on qcm2290.
-+
-+  See also dt-bindings/clock/qcom,dispcc-qcm2290.h.
-+
-+properties:
-+  compatible:
-+    const: qcom,qcm2290-dispcc
-+
-+  clocks:
-+    items:
-+      - description: Board XO source
-+      - description: Board active-only XO source
-+      - description: GPLL0 source from GCC
-+      - description: GPLL0 div source from GCC
-+      - description: Byte clock from DSI PHY
-+      - description: Pixel clock from DSI PHY
-+
-+  clock-names:
-+    items:
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: gcc_disp_gpll0_clk_src
-+      - const: gcc_disp_gpll0_div_clk_src
-+      - const: dsi0_phy_pll_out_byteclk
-+      - const: dsi0_phy_pll_out_dsiclk
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,dispcc-qcm2290.h>
-+    #include <dt-bindings/clock/qcom,gcc-qcm2290.h>
-+    #include <dt-bindings/clock/qcom,rpmcc.h>
-+    clock-controller@5f00000 {
-+            compatible = "qcom,qcm2290-dispcc";
-+            reg = <0x5f00000 0x20000>;
-+            clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+                     <&rpmcc RPM_SMD_XO_A_CLK_SRC>,
-+                     <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-+                     <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
-+                     <&dsi0_phy 0>,
-+                     <&dsi0_phy 1>;
-+            clock-names = "bi_tcxo",
-+                          "bi_tcxo_ao",
-+                          "gcc_disp_gpll0_clk_src",
-+                          "gcc_disp_gpll0_div_clk_src",
-+                          "dsi0_phy_pll_out_byteclk",
-+                          "dsi0_phy_pll_out_dsiclk";
-+            #clock-cells = <1>;
-+            #reset-cells = <1>;
-+            #power-domain-cells = <1>;
-+    };
-+...
--- 
-2.7.4
-
+Reviewed-by: Robert Foss <robert.foss@linaro.org>
