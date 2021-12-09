@@ -2,55 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F2EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 14:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF964C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 14:18:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238405AbhLIOOz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 09:14:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57624 "EHLO
+        id S232646AbhLIOVq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 09:21:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238398AbhLIOOx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 09:14:53 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18796C061746
-        for <linux-clk@vger.kernel.org>; Thu,  9 Dec 2021 06:11:20 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id m15so5167116pgu.11
-        for <linux-clk@vger.kernel.org>; Thu, 09 Dec 2021 06:11:20 -0800 (PST)
+        with ESMTP id S232049AbhLIOVq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 09:21:46 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C97C061746
+        for <linux-clk@vger.kernel.org>; Thu,  9 Dec 2021 06:18:12 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id 8so5412475qtx.5
+        for <linux-clk@vger.kernel.org>; Thu, 09 Dec 2021 06:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hxC5857k0/x0qpfripe0OcZLA0Jpy5Tn91k/gBvRbfY=;
-        b=QiLgkAxE+huWLx88a165wLHKu3m2OwUDbthXC8zx18V1Re2FnAvenu1xqhelM6d/KL
-         nht/pqG+yw3uDOoFnVB7ErN1d5/0QcDt2NkYKagUrNJEs9Fq1rFItG1xLZZlFvAMZGvB
-         ViQutqWOYoleAj6FQ0O/iJQprwCcTt9Gi7PRhpvzeBwKbQkRcu11/F7YH2G0LdZS6hJy
-         bUBfR9A+Xl5Rz7FcF5J+sZ1dh1qsCyW+XNSPtM4fBvq39rO+qCgxCGd7y3TbRpGphs1n
-         kNG5e12iXDBa21C/Z7mCGv423sbsJuBB1F3LXXshF1uskUmVuLg2dQwQld6nRb3RjzOq
-         hndg==
+        bh=GWGkM9rurSb1eSEYFyRCEnmhOoHzPSD6HMJKf80oaYg=;
+        b=Q+NEb8lUMRUWvd/mr5jIDet6HO2IaVk2ddCnCnm1NFIDlpaMi3NLUw21EvLbgp/XAp
+         ILM02klMH6CpJXQiYtv9GXZ/gAehsY/OiYQHQdFTvcS99jIFKn27WgujyKSH4O/nkAq1
+         H589pwrnxggrUaNugrDe9zfNJSYjmPhAHPXG6yF/ZYUhCNKGxRbWFR8rnUdEvu1dbx/3
+         9vXrTFncksCCnIxDc3F4xxVty5zbI16N6FLmJqn0VrFIiTU57X7IFkKogQhOd5elfsdJ
+         Xdl+XgRqnAP2Fr30PhXXVlQWdJf3DhZHuQHwJUlYZsyhed6YJ0Yglwsukf6Q36xDk1U+
+         g50A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hxC5857k0/x0qpfripe0OcZLA0Jpy5Tn91k/gBvRbfY=;
-        b=S2/S+gMh2RMCHYMwCGUzAcGxDzcbxKnj8Eap+uyg1RUCyqlSuQnj9NRTYz4FI3oktJ
-         q6EOStrSIrLOi07WwEplGe/XsnWl8x5I2iWYnZQxh5c4SDyCmEszv3xvP1Aw3kx5tz52
-         SO4Op+MPukRL3R1z42MJ7cIx3rfLFQiWh4XKJTivrNpdpR2waX29Tq3PA0mAB3y77P06
-         TY74RgvyObtTxFphjM0bB1p1JOR9vnXmzUIL2So6uh2/dT9O5uC2mI7tna2WngQRfpBv
-         K0PsozJJ/pozG+MDvjlJ4lRkVTryiQ99Isp70v5jSTzXJKHp93eRnUF6s9bnzGaa7GZb
-         RFxg==
-X-Gm-Message-State: AOAM531IIHVXTyoRk0QKA9NMsMgpfmcOXc083xEVn9OgSZSYFUVsK6Rv
-        1KQGld5GQveqG0yccbak/ArEkz0ksl56wP1qrgNhXw==
-X-Google-Smtp-Source: ABdhPJxSj9OSlrbLZlOQWBlk5VcpcFqZ5rMrICHi3obpWZAvx5XrQuSiXQFCDEUGjqkCmBs5yr+D2M4XkST0GDA/exY=
-X-Received: by 2002:a63:1564:: with SMTP id 36mr25236610pgv.324.1639059079400;
- Thu, 09 Dec 2021 06:11:19 -0800 (PST)
+        bh=GWGkM9rurSb1eSEYFyRCEnmhOoHzPSD6HMJKf80oaYg=;
+        b=alODsffzy2QQGF0UygNX5AwJZJq+GIqb75ctDSOhbRYoRel3fzRFgJieaYAX+Z3TYW
+         hQ3xPoh2TIprNcHJUMwrxaqIocZnt+xLvi1leByFAVj0TWbqwUYm5ofMq0X5wtxXjzxc
+         QhnAMP4MBkfVTZ9jbztwRmd0FUvNfr8guwVVqOZOjlcH9wOAnWLYp/ELwVmi0tHmwjDj
+         nUpyauxd28/BfonCkxG3xW43ldow6jT2Faa76JjtyBC0N6ZjX9E4g3lWPc5Q+PNj2F4z
+         hwM3Goh8wQHArCRPTEOGlEKmIodpqmlfbymXYLR3qnM03ueqyY88CENCeFlI/q++iOld
+         qFJA==
+X-Gm-Message-State: AOAM530wO1NKjl0dkio3NqrUmIb8Qb6ny+qfuwhTYjIuxI/Qghdmoe82
+        YwNgFBmu5HyF1CBdtAkpYwpvHbgMikRfCyJAZFP66n72GaB/zPwz7Qg=
+X-Google-Smtp-Source: ABdhPJyLMtblBvaUarBKdmP7UG/UfVF1Bi1UWWytJvthVbqiX1FqHZ48k/aF/lII2J3lJfWgdbS0HQ7lZNCDLfwuOKA=
+X-Received: by 2002:ac8:4e8c:: with SMTP id 12mr17673485qtp.45.1639059491769;
+ Thu, 09 Dec 2021 06:18:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org> <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
-In-Reply-To: <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
-From:   Robert Foss <robert.foss@linaro.org>
-Date:   Thu, 9 Dec 2021 15:11:08 +0100
-Message-ID: <CAG3jFyvuudxc_6Vh-24WcvgBDa0G2_uAtPYYtuBFoYosE3Ld1A@mail.gmail.com>
+References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
+ <20211208022210.1300773-3-dmitry.baryshkov@linaro.org> <CAG3jFyvuudxc_6Vh-24WcvgBDa0G2_uAtPYYtuBFoYosE3Ld1A@mail.gmail.com>
+In-Reply-To: <CAG3jFyvuudxc_6Vh-24WcvgBDa0G2_uAtPYYtuBFoYosE3Ld1A@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 9 Dec 2021 17:18:00 +0300
+Message-ID: <CAA8EJprC-jX-0otdLYJyGEnXzwpQVEcfo9jBRXhyVopxdHBMmA@mail.gmail.com>
 Subject: Re: [PATCH 2/2] clk: qcom: dispcc-sdm845: park disp_cc_mdss_mdp_clk_src
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Robert Foss <robert.foss@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -62,35 +63,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 8 Dec 2021 at 03:22, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
+On Thu, 9 Dec 2021 at 17:11, Robert Foss <robert.foss@linaro.org> wrote:
 >
-> To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
-> was enabled by the bootloader, part it to the TCXO clock source.
+> On Wed, 8 Dec 2021 at 03:22, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
+> > was enabled by the bootloader, part it to the TCXO clock source.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  drivers/clk/qcom/dispcc-sdm845.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+> > index 735adfefc379..f2afbba7bc72 100644
+> > --- a/drivers/clk/qcom/dispcc-sdm845.c
+> > +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> > @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
+> >
+> >         clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+> >
+> > +       /* Park disp_cc_mdss_mdp_clk_src */
+> > +       clk_rcg2_park_safely(regmap, 0x2088, 0);
 >
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/dispcc-sdm845.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
-> index 735adfefc379..f2afbba7bc72 100644
-> --- a/drivers/clk/qcom/dispcc-sdm845.c
-> +++ b/drivers/clk/qcom/dispcc-sdm845.c
-> @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
->
->         clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
->
-> +       /* Park disp_cc_mdss_mdp_clk_src */
-> +       clk_rcg2_park_safely(regmap, 0x2088, 0);
+> Could the hardcoded number be replaced with
+> disp_cc_mdss_mdp_clk_src.cmd_rcgr just to make this easier to read?
+> Maybe the comment isn't needed with this change.
 
-Could the hardcoded number be replaced with
-disp_cc_mdss_mdp_clk_src.cmd_rcgr just to make this easier to read?
-Maybe the comment isn't needed with this change.
+Nice idea!
 
-> +
->         /* Enable hardware clock gating for DSI and MDP clocks */
->         regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
 >
+> > +
+> >         /* Enable hardware clock gating for DSI and MDP clocks */
+> >         regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
+> >
+>
+> Reviewed-by: Robert Foss <robert.foss@linaro.org>
 
-Reviewed-by: Robert Foss <robert.foss@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
