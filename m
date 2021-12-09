@@ -2,90 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0E4C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B59C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 08:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232650AbhLIIff (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 03:35:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34614 "EHLO
+        id S234958AbhLIIly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 03:41:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232632AbhLIIfe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:35:34 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59201C061746;
-        Thu,  9 Dec 2021 00:32:01 -0800 (PST)
+        with ESMTP id S234975AbhLIIlD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 03:41:03 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DFBC0617A2;
+        Thu,  9 Dec 2021 00:37:29 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A58FBCE241B;
-        Thu,  9 Dec 2021 08:31:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BAAC004DD;
-        Thu,  9 Dec 2021 08:31:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6FCBCB823F6;
+        Thu,  9 Dec 2021 08:37:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DD2C004DD;
+        Thu,  9 Dec 2021 08:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639038717;
-        bh=tnpW+JsUuLj2wWcANc9sa+ZLsGkL3XLw2Vx85Xbamp4=;
+        s=k20201202; t=1639039047;
+        bh=Kh5cAxkTjXaQQ079e6q6EYZSzN7n6ke7cO2P0w5XRAY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Od3HY/3NlYUc2Z6ofVIIkbDLdhgAXsGcsEsEAfH8Mk1bhj2CjoINR3sN+t1GUDP34
-         glUYfP8Zc8vyoK8A+SuwRYCWblG5mwMtxDZQpYs5mi3i1PLpTln+5u6fW6ocVQPX/P
-         Krpka/KBh42ItGeeNqxCgK1bRXnrz4OP/4G0PxExfcHFyctGeazqdAE8C/tt4Ywvr5
-         qWgYuFrMu9LLjzLR7wJ2yikDDEsGcf9g73eztqr1QhdEfzIzE0qIg2vUviKdUKMZSO
-         QpNheyX5snXV++iG17vaypf8M6BsN+Okbo+GNgGoa0ohhzlpi8pbFAZ9qhfoiNm3B4
-         bUzNrhvUuW2rg==
+        b=tAWLu8uLff1EIjSAHj5M+z/6XrF7cBi6GhvA3mqqipdg7Fi4jSGSF+VO+4tZbB8XM
+         VP0V7e606vDcByb94LmO7PL2tGeWb2dHWwoQmAscignKQnWIIXvMq2GPp2lwhEZIWN
+         2RT75FckibR8MlNr6LiLfFnz12e+7dNR8Rg1norSQbhKj67R1mO5OSqAxz6iu0Bi6S
+         ECtiPGl+blfcKk+xPVUznN0c30NJ0WNTmpk7/46JMoPs1dmfh0f6YiajcD8FZrhvwI
+         /HzjR0h5ytdwncFac8839VPWc1D2MaQzSTWie8/ApiKqbEf86+KUWfnasNf/wylyz3
+         1EmPzUwJ8gYsw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211208133145.28267-1-nicolas.ferre@microchip.com>
-References: <20211208133145.28267-1-nicolas.ferre@microchip.com>
-Subject: Re: [GIT PULL] clk: at91: clk for 5.17
+In-Reply-To: <20211208022210.1300773-2-dmitry.baryshkov@linaro.org>
+References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org> <20211208022210.1300773-2-dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH 1/2] clk: qcom: add API to safely park RCG2 sources
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        nicolas.ferre@microchip.com
-Date:   Thu, 09 Dec 2021 00:31:56 -0800
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 09 Dec 2021 00:37:25 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211209083157.C0BAAC004DD@smtp.kernel.org>
+Message-Id: <20211209083727.30DD2C004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting nicolas.ferre@microchip.com (2021-12-08 05:31:45)
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->=20
-> Stephen,
->=20
-> Here are the clk changes for 5.17 which collect changes to the lan966x pr=
-oduct
-> line. We agreed to include these Microchip patches into the at91 branch w=
-ith
-> Kavyasree and Horatiu.
->=20
-> Please pull.
->=20
-> Thanks, best regards,
->   Nicolas
->=20
-> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
-bf:
->=20
->   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-a=
-t91-5.17
->=20
-> for you to fetch changes up to 5ad5915dea0047a6376d8f809ea3470ef68b1f92:
->=20
->   clk: lan966x: Extend lan966x clock driver for clock gating support (202=
-1-12-08 11:19:20 +0100)
->=20
-> ----------------------------------------------------------------
+Quoting Dmitry Baryshkov (2021-12-07 18:22:09)
+> Some of RCG2 clocks can become stuck during the boot process, when
+> device drivers are enabling and disabling the RCG2's parent clocks.
+> To prevernt such outcome of driver probe sequences, add API to park
 
-Thanks. Pulled into clk-next
+s/prevernt/prevent/
+
+> clocks to the safe clock source (typically TCXO).
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+I'd prefer this approach vs. adding a new clk flag. The clk framework
+doesn't handle handoff properly today so we shouldn't try to bandage
+that in the core.
+
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index e1b1b426fae4..230b04a7427c 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -1036,6 +1036,40 @@ static void clk_rcg2_shared_disable(struct clk_hw =
+*hw)
+>         regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
+>  }
+> =20
+> +int clk_rcg2_park_safely(struct regmap *regmap, u32 offset, unsigned int=
+ safe_src)
+
+Please add kernel doc as it's an exported symbol.
+
+> +{
+> +       unsigned int val, ret, count;
+> +
+> +       ret =3D regmap_read(regmap, offset + CFG_REG, &val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* assume safe source is 0 */
+
+Are we assuming safe source is 0 here? It looks like we pass it in now?
+
+> +       if ((val & CFG_SRC_SEL_MASK) =3D=3D (safe_src << CFG_SRC_SEL_SHIF=
+T))
+> +               return 0;
+> +
+> +       regmap_write(regmap, offset + CFG_REG, safe_src << CFG_SRC_SEL_SH=
+IFT);
+> +
+> +       ret =3D regmap_update_bits(regmap, offset + CMD_REG,
+> +                                CMD_UPDATE, CMD_UPDATE);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Wait for update to take effect */
+> +       for (count =3D 500; count > 0; count--) {
+> +               ret =3D regmap_read(regmap, offset + CMD_REG, &val);
+> +               if (ret)
+> +                       return ret;
+> +               if (!(val & CMD_UPDATE))
+> +                       return 0;
+> +               udelay(1);
+> +       }
+> +
+> +       WARN(1, "the rcg didn't update its configuration.");
+
+Add a newline?
+
+> +       return -EBUSY;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_rcg2_park_safely);
+> +
