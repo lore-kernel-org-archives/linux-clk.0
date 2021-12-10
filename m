@@ -2,89 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514EDC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB191C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 02:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232063AbhLJBtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 20:49:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51818 "EHLO
+        id S233725AbhLJCss (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 21:48:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231731AbhLJBtZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:49:25 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67344C061746;
-        Thu,  9 Dec 2021 17:45:51 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B2BC9CE2994;
-        Fri, 10 Dec 2021 01:45:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE24C004DD;
-        Fri, 10 Dec 2021 01:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639100747;
-        bh=e5iag6oxRvsbajNyLuY5BOF7cshdNJ5/JbbgYMMr8eQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Z5RRVhKtQ85QuE+Rn21KTVMMN85Y4zkILn0Cohmj8XaRMkkZk+EHFlomSMvX1bZfz
-         cf8Q+vf/o6qHL9ofi/yOQ7CgwFGIsxBUinaGRLQFn8ab7FlDsXFHhCjH7TGkvK+Hyd
-         7uDwT2nXy9dLzRJkHImKzWRDGhT6NuyP/u2LdkKqiDB8aucyVXCUzJ91gkcRIMZtk7
-         c0G8pbTR2nH2dEo3jt0MEAqw9Ii5S6IFOdrysTLbD1sPRWTQbY7qtU68o5ZWDVhXWV
-         XOpM5XMIaKoXTzUxsl9LnOHxQYkY025fYLZCg7qzz5KTlvN2Gj/jVrHefa79DpwZR8
-         RPIEykuWlsiPA==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231175AbhLJCsr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 21:48:47 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F70C061746;
+        Thu,  9 Dec 2021 18:45:13 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id m24so5315867pls.10;
+        Thu, 09 Dec 2021 18:45:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CR0Sv/RHFjpYBPdNl9D85z+uzaMDDyhH8oNdgJWoQd8=;
+        b=Q4PHNtHcCw8VjNpbVTcfLE7u89BSRU00VE94oECO4lq7yzUphXulq/IBM4gT8kj60B
+         0LI/VrmDdI40hgkVJUwsncLQftZVSvaMGVtsSaIoiRXyIEB2KelkzYP9t2xjCOGpAYip
+         5IEMBWyQ4XfuHZUQlbEj9qfjhsmCaLkGdeAaJheteAtlOW+lim3UJHH9ytG+s7lw0ge3
+         dbqXbWfQ2aOHhhLQxnce86wJnU26JitpssXIkCH/G8yqdU7koJmgjJxsuHLvWvBux17r
+         wJsWGvvor9O9Hy0z7KL1EU8QAIA9fsqjnaMVTvYTj9lU+n7GuFHKKIRZ24tWJ5JgSPeG
+         Xz/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CR0Sv/RHFjpYBPdNl9D85z+uzaMDDyhH8oNdgJWoQd8=;
+        b=XI6mCHJhUg1RDrpV77sTNpnk2bU8Ka+3LL/qnKJTAW81YmDtylkUAf1frqr2c9Yo4y
+         UeQl3Cp9Ef/E/s9fxUEoekmppsFQNKiQ+GySJqTsq0q1BsGhpEofugHZ0akcb2vQ8UGk
+         xR5Eo5QZ1Yw5/HtIpoJHRkaU4OGsMBiUKwl6hUGA6W4Jlv++/Uafu+pT5lR55tT6GNVK
+         dq165oGJvrwah+TD3BXSXIPEBEqzoSzqTfrMgX/aOEM0haC9oO/EtDJ4oCo0L1GEJgz2
+         XiHaCmxWRBYVDP9ZBI31JMeDSU7DnPm19CHrue4khQ+nzFoSEfSSRdojtV4FIBW3y/kU
+         kS2g==
+X-Gm-Message-State: AOAM530dfrP+H22jEZsVnmc3QUd3D1H47nQApnbEXTev7mLfiYFKggRo
+        vtsjnX/l8Dj11s8Vjg+KvSc=
+X-Google-Smtp-Source: ABdhPJypGBckEw8gWMSmN8AvKaFY2+1GEm9j1UK3AZVois0vmUDOfBeTgWfkwZ7VmWoizq5kRsEvlA==
+X-Received: by 2002:a17:90b:3a85:: with SMTP id om5mr20713643pjb.28.1639104313418;
+        Thu, 09 Dec 2021 18:45:13 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id z2sm1066860pfh.188.2021.12.09.18.45.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Dec 2021 18:45:13 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, chi.minghao@zte.com.cn,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zeal Robot <zealci@zte.com.cm>
+Subject: [PATCH clk-next] drivers/clk: remove unneeded variable make code cleaner
+Date:   Fri, 10 Dec 2021 02:44:46 +0000
+Message-Id: <20211210024446.425056-1-chi.minghao@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a7b9fbfc-c7e6-983e-1f79-189ce6dc983a@amd.com>
-References: <20211125110447.1188073-1-AjitKumar.Pandey@amd.com> <20211125110447.1188073-2-AjitKumar.Pandey@amd.com> <a7b9fbfc-c7e6-983e-1f79-189ce6dc983a@amd.com>
-Subject: Re: [PATCH v4 1/7] x86: clk: clk-fch: Add support for newer family of AMD's SOC
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Vijendar.Mukunda@amd.com, Alexander.Deucher@amd.com,
-        Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>
-To:     "Limonciello, Mario" <mario.limonciello@amd.com>,
-        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
-        linux-clk@vger.kernel.org, rafael@kernel.org
-Date:   Thu, 09 Dec 2021 17:45:46 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211210014547.CAE24C004DD@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Limonciello, Mario (2021-11-30 11:41:30)
-> On 11/25/2021 05:04, Ajit Kumar Pandey wrote:
-> > @@ -26,22 +27,37 @@
-> >   #define ST_CLK_GATE 3
-> >   #define ST_MAX_CLKS 4
-> >  =20
-> > -#define RV_CLK_48M   0
-> > -#define RV_CLK_GATE  1
-> > -#define RV_MAX_CLKS  2
-> > +#define CLK_48M_FIXED        0
-> > +#define CLK_GATE_FIXED       1
-> > +#define CLK_MAX_FIXED        2
-> > +
-> > +/* List of supported CPU ids for fixed clk */
-> > +#define AMD_CPU_ID_RV                        0x15D0
-> >  =20
-> >   static const char * const clk_oscout1_parents[] =3D { "clk48MHz", "cl=
-k25MHz" };
-> >   static struct clk_hw *hws[ST_MAX_CLKS];
-> >  =20
-> > +static const struct pci_device_id soc_pci_ids[] =3D {
-> > +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
-> > +     { }
-> > +};
-> > +
->=20
-> Have you considered inverting it?  The number of ASICs using the "older" =
+From: Minghao Chi <chi.minghao@zte.com.cn>
 
-> design with the mux and multiple clock sources is a fixed value, but=20
-> we'll keep adding new ASICs in the "new" design of just 48Mhz.
->=20
-> Notably; I see that this series is missing the Yellow Carp ID for=20
-> example.  We'll keep having more designs with the 48Mhz that need to be=20
-> added to this list.
+return value form directly instead of
+taking this in another redundant variable.
 
-+1 Let's not keep adding to a list.
+Reported-by: Zeal Robot <zealci@zte.com.cm>
+Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
+---
+ drivers/clk/mvebu/armada-37xx-tbg.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 585a02e0b330..fc403ad735ad 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -87,7 +87,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct clk *parent;
+ 	void __iomem *reg;
+-	int i, ret;
++	int i;
+ 
+ 	hw_tbg_data = devm_kzalloc(&pdev->dev,
+ 				   struct_size(hw_tbg_data, hws, NUM_TBG),
+@@ -123,9 +123,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 			dev_err(dev, "Can't register TBG clock %s\n", name);
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, hw_tbg_data);
+-
+-	return ret;
++	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, hw_tbg_data);
+ }
+ 
+ static int armada_3700_tbg_clock_remove(struct platform_device *pdev)
+-- 
+2.25.1
+
