@@ -2,89 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE950C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 21:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018F9C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 21:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244136AbhLJV2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Dec 2021 16:28:34 -0500
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:46043 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237368AbhLJV2d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Dec 2021 16:28:33 -0500
-Received: by mail-ot1-f41.google.com with SMTP id a23-20020a9d4717000000b0056c15d6d0caso10878251otf.12;
-        Fri, 10 Dec 2021 13:24:58 -0800 (PST)
+        id S236827AbhLJVad (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Dec 2021 16:30:33 -0500
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:41661 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230509AbhLJVab (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Dec 2021 16:30:31 -0500
+Received: by mail-ot1-f50.google.com with SMTP id n17-20020a9d64d1000000b00579cf677301so10924387otl.8;
+        Fri, 10 Dec 2021 13:26:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=8MM7Mqy4LVhqQo1WtAnEZHBAScofrOdZmMSPjQZ2muY=;
-        b=bAIXQgEUZfBMhYHPkSr7Q+ptZx62u/N9xYlsNjmMTxN4aYBx5bJyStVMA9wp3YmJ3H
-         y7+sZGVmw5DuhsCxvomRrFdncZvN/W5Uz1rwMU4UhNhyE51jPtU/tHIHPynIIJtOaeUq
-         omsQ59dMc97gf4Mf00E4VeDQ5gejHU4EBo1sYjmUqyjkAFHzxq3kEghCxLMs55Vzn0ys
-         3RO8PlBNSg0vMQSgGliy2ynLII1IMfzmbYMoSH7r9GgfpK1HsnhTHwLUq9cJpXRO4wUP
-         3vzgsqZHEfqAaCfXrqK7rfhWevrK2zaNjBlVXaG2nHVaaloICaQmnOoz18nYiWAG9qM3
-         BBNg==
-X-Gm-Message-State: AOAM532DYrdeo92ahRVbizoPb1WBJ8ckYvDsO9uxzgu4tFiMN7ZxzkiD
-        6AGcL+TC9hO9rN7po6RpLw==
-X-Google-Smtp-Source: ABdhPJyTn5sR0JkqUstumnB93RnMCqtBd+uULYV15dK0CVTcCdcT8gfqCXalGgl6VqPsJd0DE5LuYQ==
-X-Received: by 2002:a05:6830:1216:: with SMTP id r22mr13577934otp.10.1639171496337;
-        Fri, 10 Dec 2021 13:24:56 -0800 (PST)
+        bh=yZuyX6z8S30jeHc6oSsRE3u6hAb6GHX4f7wcgH1PISY=;
+        b=PXZrKTzOLI3jpJwZ1WtgyJC6kCU1xlUPo9J53c9cGOF5779bMCAsANu/JWKYNI3gAD
+         DgTjQbmQs/ETwjOgLineqqkN5pCr3/ri9gBkTuBIoURjrP+cHHzk0lU5noipjj3bY99U
+         zqUh/NqXJ9MHcuvYq6RHHQFfXzT2wSzrxSQ4flj1oYwbzI//WVKIvUOhwvQz5tHSuZna
+         8mVWHcn7Bwv+iLJmg2oarBVhj4b8QQE4pc8b9uCUgLzni3+k8fMkzR1bufPiQnpM0mHY
+         AjM7d9eT4XiFIjlN7vnMjYO9J8k3Sbg0/0NjCtR8NK8LMIT/mtzB2Yurt6iGjv9TVBd0
+         X+Hg==
+X-Gm-Message-State: AOAM532ALrgn3Di4QRqYeY/vnUt/b+1lf2gA8edMQ1i1ccZus/ONyVDI
+        QeIVsv1TPed+LnJpIRGcvAaifGic/w==
+X-Google-Smtp-Source: ABdhPJy/OeyMWo2q9s0YlIwOe67Bw9mijpU54WYT2IvHTTJoK/7NZQl3xWWEtSqFtWV6NyZk3oVlpA==
+X-Received: by 2002:a9d:7cce:: with SMTP id r14mr12864118otn.114.1639171615215;
+        Fri, 10 Dec 2021 13:26:55 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id r25sm722169ote.73.2021.12.10.13.24.54
+        by smtp.gmail.com with ESMTPSA id l9sm699579oom.4.2021.12.10.13.26.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 13:24:55 -0800 (PST)
-Received: (nullmailer pid 1925851 invoked by uid 1000);
-        Fri, 10 Dec 2021 21:24:54 -0000
-Date:   Fri, 10 Dec 2021 15:24:54 -0600
+        Fri, 10 Dec 2021 13:26:54 -0800 (PST)
+Received: (nullmailer pid 1930479 invoked by uid 1000);
+        Fri, 10 Dec 2021 21:26:53 -0000
+Date:   Fri, 10 Dec 2021 15:26:53 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     olof@lixom.net, s.hauer@pengutronix.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, ulf.hansson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
-        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        jirislaby@kernel.org, stefan@agner.ch,
-        linux-serial@vger.kernel.org, arnd@arndb.de,
-        giulio.benetti@benettiengineering.com, gregkh@linuxfoundation.org,
-        linux-mmc@vger.kernel.org, Mr.Bossman075@gmail.com,
-        festevam@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de,
-        abel.vesa@nxp.com, linux@armlinux.org.uk, aisheng.dong@nxp.com,
-        devicetree@vger.kernel.org, soc@kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v4 05/13] dt-bindings: imx: Add clock binding for
- i.MXRT1050
-Message-ID: <YbPFpt/EXjSBVBib@robh.at.kernel.org>
-References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
- <20211204061042.1248028-6-Mr.Bossman075@gmail.com>
+To:     David Virag <virag.david003@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sam Protsenko <semen.protsenko@linaro.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add bindings definitions for
+ Exynos7885 CMU
+Message-ID: <YbPGHc8GeGrsAnDP@robh.at.kernel.org>
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+ <20211206153124.427102-2-virag.david003@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211204061042.1248028-6-Mr.Bossman075@gmail.com>
+In-Reply-To: <20211206153124.427102-2-virag.david003@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 04 Dec 2021 01:10:34 -0500, Jesse Taube wrote:
-> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+On Mon, 06 Dec 2021 16:31:15 +0100, David Virag wrote:
+> Just like on Exynos850, the clock controller driver is designed to have
+> separate instances for each particular CMU, so clock IDs start from 1
+> for each CMU in this bindings header too.
 > 
-> Add the clock binding doc for i.MXRT1050.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+> Changes in v2:
+>   - Added R-b tag by Krzysztof Kozlowski
 > 
-> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> [Giulio: added all clocks up to IMXRT1050_CLK_USBOH3]
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> [Jesse: added clocks from IMXRT1050_CLK_IPG_PDOF to
-> IMXRT1050_CLK_DMA_MUX and moved IMXRT1050_CLK_END on]
-> ---
-> V1->V2:
-> * Nothing done
-> V2->V3:
-> * Added GPT binding
-> V3->V4:
-> * Change License to MIT or GPL-2
-> ---
->  include/dt-bindings/clock/imxrt1050-clock.h | 73 +++++++++++++++++++++
->  1 file changed, 73 insertions(+)
->  create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
+> Changes in v3:
+>   - Nothing
+> 
+> Changes in v4:
+>   - Nothing
+> 
+>  include/dt-bindings/clock/exynos7885.h | 115 +++++++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/exynos7885.h
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
