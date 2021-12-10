@@ -2,96 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C46C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514EDC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232672AbhLJBqQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 20:46:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        id S232063AbhLJBtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 20:49:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbhLJBqQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:46:16 -0500
+        with ESMTP id S231731AbhLJBtZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:49:25 -0500
 Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6F7C061746;
-        Thu,  9 Dec 2021 17:42:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67344C061746;
+        Thu,  9 Dec 2021 17:45:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id C1361CE2994;
-        Fri, 10 Dec 2021 01:42:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE95BC004DD;
-        Fri, 10 Dec 2021 01:42:37 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id B2BC9CE2994;
+        Fri, 10 Dec 2021 01:45:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE24C004DD;
+        Fri, 10 Dec 2021 01:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639100557;
-        bh=JlJ6afzOk2DAywlPVjTl4GV7LRs/fplw5FcqgaVwtuA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JVMbTC8qkQl1zij99M+ZZGj6lMJAXXox4bpKpNLye2DLFZ6imyfjek2tPM7VHmBNi
-         +k3XPuQmyWB1Gbav6Y7c/ceUNdZ1u+Sl7obmIsKF/nYTKYjaFOQkDZmQOme5LvqXHz
-         zT5OHsAh7pY//H634pMUYbmoGctKFM7lxcUTf9Kdv0W2SqyFYVbkmIm/rtTeY4JAuA
-         vW7k2pvQQqxNysBMe/2rdLI/VljFmLJmtZZVrcal1qp29mhmFJ8qfA4oCAFG4kM530
-         i9mFUH7Kr6NEvmKQKnvtSECoH0t9G8EmoaeSOL3i4lsbe7336j7of9YWzVMH6nH9Lt
-         D1ksH3iFRomMg==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: Emit a stern warning with writable debugfs enabled
-Date:   Thu,  9 Dec 2021 17:42:37 -0800
-Message-Id: <20211210014237.2130300-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.34.1.173.g76aa8bc2d0-goog
+        s=k20201202; t=1639100747;
+        bh=e5iag6oxRvsbajNyLuY5BOF7cshdNJ5/JbbgYMMr8eQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Z5RRVhKtQ85QuE+Rn21KTVMMN85Y4zkILn0Cohmj8XaRMkkZk+EHFlomSMvX1bZfz
+         cf8Q+vf/o6qHL9ofi/yOQ7CgwFGIsxBUinaGRLQFn8ab7FlDsXFHhCjH7TGkvK+Hyd
+         7uDwT2nXy9dLzRJkHImKzWRDGhT6NuyP/u2LdkKqiDB8aucyVXCUzJ91gkcRIMZtk7
+         c0G8pbTR2nH2dEo3jt0MEAqw9Ii5S6IFOdrysTLbD1sPRWTQbY7qtU68o5ZWDVhXWV
+         XOpM5XMIaKoXTzUxsl9LnOHxQYkY025fYLZCg7qzz5KTlvN2Gj/jVrHefa79DpwZR8
+         RPIEykuWlsiPA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a7b9fbfc-c7e6-983e-1f79-189ce6dc983a@amd.com>
+References: <20211125110447.1188073-1-AjitKumar.Pandey@amd.com> <20211125110447.1188073-2-AjitKumar.Pandey@amd.com> <a7b9fbfc-c7e6-983e-1f79-189ce6dc983a@amd.com>
+Subject: Re: [PATCH v4 1/7] x86: clk: clk-fch: Add support for newer family of AMD's SOC
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Vijendar.Mukunda@amd.com, Alexander.Deucher@amd.com,
+        Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>
+To:     "Limonciello, Mario" <mario.limonciello@amd.com>,
+        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+        linux-clk@vger.kernel.org, rafael@kernel.org
+Date:   Thu, 09 Dec 2021 17:45:46 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211210014547.CAE24C004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We don't want vendors to be enabling this part of the clk code and
-shipping it to customers. Exposing the ability to change clk frequencies
-and parents via debugfs is potentially damaging to the system if folks
-don't know what they're doing. Emit a strong warning so that the message
-is clear: don't enable this outside of development systems.
+Quoting Limonciello, Mario (2021-11-30 11:41:30)
+> On 11/25/2021 05:04, Ajit Kumar Pandey wrote:
+> > @@ -26,22 +27,37 @@
+> >   #define ST_CLK_GATE 3
+> >   #define ST_MAX_CLKS 4
+> >  =20
+> > -#define RV_CLK_48M   0
+> > -#define RV_CLK_GATE  1
+> > -#define RV_MAX_CLKS  2
+> > +#define CLK_48M_FIXED        0
+> > +#define CLK_GATE_FIXED       1
+> > +#define CLK_MAX_FIXED        2
+> > +
+> > +/* List of supported CPU ids for fixed clk */
+> > +#define AMD_CPU_ID_RV                        0x15D0
+> >  =20
+> >   static const char * const clk_oscout1_parents[] =3D { "clk48MHz", "cl=
+k25MHz" };
+> >   static struct clk_hw *hws[ST_MAX_CLKS];
+> >  =20
+> > +static const struct pci_device_id soc_pci_ids[] =3D {
+> > +     { PCI_DEVICE(PCI_VENDOR_ID_AMD, AMD_CPU_ID_RV) },
+> > +     { }
+> > +};
+> > +
+>=20
+> Have you considered inverting it?  The number of ASICs using the "older" =
 
-Fixes: 37215da5553e ("clk: Add support for setting clk_rate via debugfs")
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+> design with the mux and multiple clock sources is a fixed value, but=20
+> we'll keep adding new ASICs in the "new" design of just 48Mhz.
+>=20
+> Notably; I see that this series is missing the Yellow Carp ID for=20
+> example.  We'll keep having more designs with the 48Mhz that need to be=20
+> added to this list.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8ccedec2cc9d..ecb2a732a20d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3383,6 +3383,24 @@ static int __init clk_debug_init(void)
- {
- 	struct clk_core *core;
- 
-+#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
-+	pr_warn("\n");
-+	pr_warn("********************************************************************\n");
-+	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("**  WRITEABLE clk DebugFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("** This means that this kernel is built to expose clk operations  **\n");
-+	pr_warn("** such as parent or rate setting, enabling, disabling, etc.      **\n");
-+	pr_warn("** to userspace, which may compromise security on your system.    **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("** If you see this message and you are not debugging the          **\n");
-+	pr_warn("** kernel, report this immediately to your vendor!                **\n");
-+	pr_warn("**                                                                **\n");
-+	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
-+	pr_warn("********************************************************************\n");
-+#endif
-+
- 	rootdir = debugfs_create_dir("clk", NULL);
- 
- 	debugfs_create_file("clk_summary", 0444, rootdir, &all_lists,
-
-base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
-prerequisite-patch-id: e0d3f8e3fa43b55e55d7c4cee7c4902ae06ea4e0
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
++1 Let's not keep adding to a list.
