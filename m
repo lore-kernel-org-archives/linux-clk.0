@@ -2,77 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 091A6C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C46C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233497AbhLJBUz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 20:20:55 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:48896 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233408AbhLJBUz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:20:55 -0500
+        id S232672AbhLJBqQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 20:46:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230467AbhLJBqQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:46:16 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD6F7C061746;
+        Thu,  9 Dec 2021 17:42:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 98669CE25DC;
-        Fri, 10 Dec 2021 01:17:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E13C004DD;
-        Fri, 10 Dec 2021 01:17:17 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C1361CE2994;
+        Fri, 10 Dec 2021 01:42:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE95BC004DD;
+        Fri, 10 Dec 2021 01:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639099037;
-        bh=P8EOenvo2nuHAw+DOVUAUoRUdPP2urCA48hW4wDJXMU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ai8m6YPTKgbiMPzkMK6O/mM4hR2fny15R2zbsDzGDtPCHmVMm9lUJ0lkD5sF75MQh
-         dgTinYPydcUw8NpVO7UrmZ09XgfaFt6B1O947i5kYzDuFHunM/aTxl7X/91mHyTS+w
-         PvZOzDC6G3LucexgzKcYNxqrJ3uSntgOCWNto0da0ZZavQuT9JUMfcfW8OYX+RPUPj
-         5nR3bq/Shf/OV9Mg4aZDW8YIW8DtqHFnvVKhW27AiCc/G8WkxqMUF7a0zStDddjlck
-         Y9m3M78L9aNerEiIhIfeTzbeGwUBvuyk/x7bLqI5ew2h6rtfPUaZM5NQr39f7o72Po
-         fDNhPch8AK/nw==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211013172042.10884-1-semen.protsenko@linaro.org>
-References: <20211013172042.10884-1-semen.protsenko@linaro.org>
-Subject: Re: [PATCH v6] clk: Add write operation for clk_parent debugfs node
+        s=k20201202; t=1639100557;
+        bh=JlJ6afzOk2DAywlPVjTl4GV7LRs/fplw5FcqgaVwtuA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JVMbTC8qkQl1zij99M+ZZGj6lMJAXXox4bpKpNLye2DLFZ6imyfjek2tPM7VHmBNi
+         +k3XPuQmyWB1Gbav6Y7c/ceUNdZ1u+Sl7obmIsKF/nYTKYjaFOQkDZmQOme5LvqXHz
+         zT5OHsAh7pY//H634pMUYbmoGctKFM7lxcUTf9Kdv0W2SqyFYVbkmIm/rtTeY4JAuA
+         vW7k2pvQQqxNysBMe/2rdLI/VljFmLJmtZZVrcal1qp29mhmFJ8qfA4oCAFG4kM530
+         i9mFUH7Kr6NEvmKQKnvtSECoH0t9G8EmoaeSOL3i4lsbe7336j7of9YWzVMH6nH9Lt
+         D1ksH3iFRomMg==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mike Tipton <mdtipton@codeaurora.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Thu, 09 Dec 2021 17:17:16 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211210011717.B3E13C004DD@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: Emit a stern warning with writable debugfs enabled
+Date:   Thu,  9 Dec 2021 17:42:37 -0800
+Message-Id: <20211210014237.2130300-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.34.1.173.g76aa8bc2d0-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sam Protsenko (2021-10-13 10:20:42)
-> Useful for testing mux clocks. One can write the index of the parent to
-> be set into clk_parent node, starting from 0. Example
->=20
->     # cd /sys/kernel/debug/clk/mout_peri_bus
->     # cat clk_possible_parents
->       dout_shared0_div4 dout_shared1_div4
->     # cat clk_parent
->       dout_shared0_div4
->     # echo 1 > clk_parent
->     # cat clk_parent
->       dout_shared1_div4
->=20
-> CLOCK_ALLOW_WRITE_DEBUGFS has to be defined in drivers/clk/clk.c in
-> order to use this feature.
->=20
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+We don't want vendors to be enabling this part of the clk code and
+shipping it to customers. Exposing the ability to change clk frequencies
+and parents via debugfs is potentially damaging to the system if folks
+don't know what they're doing. Emit a strong warning so that the message
+is clear: don't enable this outside of development systems.
 
-Applied to clk-next
+Fixes: 37215da5553e ("clk: Add support for setting clk_rate via debugfs")
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8ccedec2cc9d..ecb2a732a20d 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3383,6 +3383,24 @@ static int __init clk_debug_init(void)
+ {
+ 	struct clk_core *core;
+ 
++#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
++	pr_warn("\n");
++	pr_warn("********************************************************************\n");
++	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
++	pr_warn("**                                                                **\n");
++	pr_warn("**  WRITEABLE clk DebugFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL **\n");
++	pr_warn("**                                                                **\n");
++	pr_warn("** This means that this kernel is built to expose clk operations  **\n");
++	pr_warn("** such as parent or rate setting, enabling, disabling, etc.      **\n");
++	pr_warn("** to userspace, which may compromise security on your system.    **\n");
++	pr_warn("**                                                                **\n");
++	pr_warn("** If you see this message and you are not debugging the          **\n");
++	pr_warn("** kernel, report this immediately to your vendor!                **\n");
++	pr_warn("**                                                                **\n");
++	pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE           **\n");
++	pr_warn("********************************************************************\n");
++#endif
++
+ 	rootdir = debugfs_create_dir("clk", NULL);
+ 
+ 	debugfs_create_file("clk_summary", 0444, rootdir, &all_lists,
+
+base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
+prerequisite-patch-id: e0d3f8e3fa43b55e55d7c4cee7c4902ae06ea4e0
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
