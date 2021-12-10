@@ -2,68 +2,55 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F5C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B35AC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:16:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233454AbhLJBTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 20:19:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44978 "EHLO
+        id S235137AbhLJBTo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 20:19:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233408AbhLJBTf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:19:35 -0500
+        with ESMTP id S233408AbhLJBTo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:19:44 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488D5C061746;
-        Thu,  9 Dec 2021 17:16:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CF8C061746;
+        Thu,  9 Dec 2021 17:16:10 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 31E14B8270A;
-        Fri, 10 Dec 2021 01:15:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13FDC341C6;
-        Fri, 10 Dec 2021 01:15:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 12607B82702;
+        Fri, 10 Dec 2021 01:16:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BE3C004DD;
+        Fri, 10 Dec 2021 01:16:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639098958;
-        bh=dbI5sTHyFXJhJ2LZ+wZe4mrteYlH76MwHZtF+BbA7Yw=;
+        s=k20201202; t=1639098967;
+        bh=UuY7UXFeegHRNpZnz6Uim3x7uDO6NcZK6IGYr2y8AKk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jr8WNJnVYSsOTxi0Fm6sA7qnMGB21CwN/kYkwiLwu+x3QCmzWeCVWjXKNHVQq0CLt
-         LOScOja7eLi/dRJqaS14ErFS+5F4toi21w1a/PqcBPNGXI6XD7fV4ngqFob+V/Oo+/
-         kFnIvaYv+y7drtUScPZ015PXHK6dm/ZYqgNpnKhyZ+LevjkaeyrihnirzhPh3ENCh7
-         XNQ69QEOcE6J/7oKQctDJsaFPztmvUxzf6hofzjRaEwEhyKwq70MWU24VKNKI8o/L3
-         rE1jXvX1bEtU65aDsbqWUIjBI22azWp6JiVYf8vGLooZHxnwZruBtEbRZzIl4IGD2L
-         7b17jpZu5uoGw==
+        b=l2AbTvWcnvNawkrlOpdKM/WCiEblUM4382g8ukJAcl/M8iRJCYH7PiKtwIwdAC7B4
+         d8K/L4YD8ajTQiLKWy661zsayVQ4zGpEvsd9LsnzpaEYICtRE79MK8ky6yDuNHcoEp
+         H5PAVTOVzWMyggzl/yiHylmUIP1PD/UpzSU7FIFNiHrLI9dkf9CATJyQ6AEBl84r9r
+         VYEpTGAeoN7ciBeuBE+BVFW4emzIBpqKgoedjg9QNyHHuValZdMgj51Cn0tyTu/us2
+         jOC/pkTZtEpnE4/vXij0TbCg3SlPix5VBT9YTmg1MdzfbqKkf8uzXWv0OCBX/sZP0E
+         UwFlwvPfbKv1Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211208041534.3928718-1-sboyd@kernel.org>
-References: <20211208041534.3928718-1-sboyd@kernel.org>
-Subject: Re: [PATCH 1/2] clk: clk_core_get() can also return NULL
+In-Reply-To: <20211208041534.3928718-2-sboyd@kernel.org>
+References: <20211208041534.3928718-1-sboyd@kernel.org> <20211208041534.3928718-2-sboyd@kernel.org>
+Subject: Re: [PATCH 2/2] clk: __clk_core_init() never takes NULL
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Date:   Thu, 09 Dec 2021 17:15:56 -0800
+Date:   Thu, 09 Dec 2021 17:16:06 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211210011557.E13FDC341C6@smtp.kernel.org>
+Message-Id: <20211210011607.A7BE3C004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2021-12-07 20:15:33)
-> Nothing stops a clk controller from registering an OF clk provider
-> before registering those clks with the clk framework. This is not great
-> but we deal with it in the clk framework by refusing to hand out struct
-> clk pointers when 'hw->core' is NULL, the indication that clk_register()
-> has been called.
->=20
-> Within clk_core_fill_parent_index() we considered this case when a
-> clk_hw pointer is referenced directly by filling in the parent cache
-> with an -EPROBE_DEFER pointer when the core pointer is NULL. When we
-> lookup a parent with clk_core_get() we don't care about the return value
-> being NULL though, because that was considered largely impossible, but
-> it's been proven now that it can be NULL if two clk providers are
-> probing in parallel and the parent provider has been registered before
-> the clk has. Let's check for NULL here as well and treat it the same as
-> direct clk_hw references.
+Quoting Stephen Boyd (2021-12-07 20:15:34)
+> The only caller of __clk_core_init() allocates the pointer and checks
+> the allocation for NULL so this check is impossible. Remove it.
 >=20
 > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
