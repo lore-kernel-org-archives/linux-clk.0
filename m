@@ -2,123 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A16AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Dec 2021 21:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F5C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 01:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232575AbhLIVIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Dec 2021 16:08:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S233454AbhLJBTf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Dec 2021 20:19:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbhLIVH7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 16:07:59 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1404DC061746
-        for <linux-clk@vger.kernel.org>; Thu,  9 Dec 2021 13:04:25 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id bi37so14439139lfb.5
-        for <linux-clk@vger.kernel.org>; Thu, 09 Dec 2021 13:04:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lZp3hok6ihhGHif3grQz+Gnqmz/u+UpVJtw5fpnKmkg=;
-        b=GbfIL5ruUB3nEW/Q1DyRYUIShr0DN3k5n9hGWBV40VRJn+IRTs6ctzPZJtHXeoGs1p
-         dMRB4TnAwETRjizy2m39ldnU+SoQ6FeUSepHnQpVZxT0jJQ+ZCPWjC+RttIHpkMzeknz
-         SOl+kkc7BaPWICIRBjEr4wvS39z9NUGd4RZ7QxrY95APXNX9kAK87tEJUd8/1DWF8rCO
-         TzXtxWQP/4RuEIjyvX7ppMj00cI46Qrw7yPtCslgS4by88N1FAkF//ElBMbbfWfHS4BH
-         C9tZYnIiCcCN+xLL/XN5CPNTIo5U/AKVDPt1ozn2fj/ZdOaAXgEsCWA240EPSgxdmW/o
-         PEvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=lZp3hok6ihhGHif3grQz+Gnqmz/u+UpVJtw5fpnKmkg=;
-        b=hkjqZ/7Y5kDSEM0qrWVp2Qevo50vIlTkS7TtFvoE95lBZv4BOBeF34cXyfmNrajQZH
-         coBEIu9WBc75nnnHcqZfx32A7Ql/sdslxHfUMTc14PNMrPG3RL6ZTNAqn2jehZGr5evE
-         r9CmoaE/TfnL2gC3HvkIzQ1aO9gYet+btW/INIptHfShDBV/23kj7mGmLImddp38ocP4
-         D24fuEuMnFyF6B4jcSQiDyGCsJJoeJ0EXeeB9Y2siIik4vBHfmmXuzuNiD2DaLSDjvFL
-         Xh/ob+xOF7NiUPqlYtfD/Itsg6q+/p5+yjzNfpo7JvdvqWwLg5cNoQFmmWVMp26TVk3w
-         Wf6Q==
-X-Gm-Message-State: AOAM531+rScO9Rv5uI4Fd5HTrZqx3EAFd3OWq0JFGe+gAivCXeJAAVwa
-        STrhRlo+wAmUV0F2A9xpDk7OUQ==
-X-Google-Smtp-Source: ABdhPJwDvgi99jlWiY+uJbdbh1F+ibWffgmIxwYECFrg7ndkPbcjjcobb/JswtGdFKvZQJ+2opRLOg==
-X-Received: by 2002:a05:6512:2286:: with SMTP id f6mr8378555lfu.368.1639083863351;
-        Thu, 09 Dec 2021 13:04:23 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id j18sm113427lfg.60.2021.12.09.13.04.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Dec 2021 13:04:22 -0800 (PST)
-Message-ID: <a2c9efed-7fc0-ec13-c08c-314d32353c91@linaro.org>
-Date:   Fri, 10 Dec 2021 00:04:21 +0300
+        with ESMTP id S233408AbhLJBTf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Dec 2021 20:19:35 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 488D5C061746;
+        Thu,  9 Dec 2021 17:16:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 31E14B8270A;
+        Fri, 10 Dec 2021 01:15:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E13FDC341C6;
+        Fri, 10 Dec 2021 01:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639098958;
+        bh=dbI5sTHyFXJhJ2LZ+wZe4mrteYlH76MwHZtF+BbA7Yw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=jr8WNJnVYSsOTxi0Fm6sA7qnMGB21CwN/kYkwiLwu+x3QCmzWeCVWjXKNHVQq0CLt
+         LOScOja7eLi/dRJqaS14ErFS+5F4toi21w1a/PqcBPNGXI6XD7fV4ngqFob+V/Oo+/
+         kFnIvaYv+y7drtUScPZ015PXHK6dm/ZYqgNpnKhyZ+LevjkaeyrihnirzhPh3ENCh7
+         XNQ69QEOcE6J/7oKQctDJsaFPztmvUxzf6hofzjRaEwEhyKwq70MWU24VKNKI8o/L3
+         rE1jXvX1bEtU65aDsbqWUIjBI22azWp6JiVYf8vGLooZHxnwZruBtEbRZzIl4IGD2L
+         7b17jpZu5uoGw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH 2/2] clk: qcom: dispcc-sdm845: park
- disp_cc_mdss_mdp_clk_src
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
- <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
- <YbJNp+tnD6kEQAzt@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YbJNp+tnD6kEQAzt@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211208041534.3928718-1-sboyd@kernel.org>
+References: <20211208041534.3928718-1-sboyd@kernel.org>
+Subject: Re: [PATCH 1/2] clk: clk_core_get() can also return NULL
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Thu, 09 Dec 2021 17:15:56 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211210011557.E13FDC341C6@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/12/2021 21:40, Bjorn Andersson wrote:
-> On Tue 07 Dec 18:22 PST 2021, Dmitry Baryshkov wrote:
-> 
->> To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
->> was enabled by the bootloader, part it to the TCXO clock source.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/dispcc-sdm845.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
->> index 735adfefc379..f2afbba7bc72 100644
->> --- a/drivers/clk/qcom/dispcc-sdm845.c
->> +++ b/drivers/clk/qcom/dispcc-sdm845.c
->> @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
->>   
->>   	clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
->>   
->> +	/* Park disp_cc_mdss_mdp_clk_src */
->> +	clk_rcg2_park_safely(regmap, 0x2088, 0);
-> 
-> Today booting the system with "clk_ignore_unused" will give you a
-> working efifb up until the point where the display driver kicks in and
-> reinitializes the hardware state - which during development might be
-> indefinite.
-> 
-> If we blindly cut the mdp_clk_src here that will no longer be possible.
+Quoting Stephen Boyd (2021-12-07 20:15:33)
+> Nothing stops a clk controller from registering an OF clk provider
+> before registering those clks with the clk framework. This is not great
+> but we deal with it in the clk framework by refusing to hand out struct
+> clk pointers when 'hw->core' is NULL, the indication that clk_register()
+> has been called.
+>=20
+> Within clk_core_fill_parent_index() we considered this case when a
+> clk_hw pointer is referenced directly by filling in the parent cache
+> with an -EPROBE_DEFER pointer when the core pointer is NULL. When we
+> lookup a parent with clk_core_get() we don't care about the return value
+> being NULL though, because that was considered largely impossible, but
+> it's been proven now that it can be NULL if two clk providers are
+> probing in parallel and the parent provider has been registered before
+> the clk has. Let's check for NULL here as well and treat it the same as
+> direct clk_hw references.
+>=20
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Yep. There is an opposite issue. I was getting the rcg2 stuck messages 
-_before_ the clk_disable_unused kicks in. So we definitely need 
-something more complex than both our proposals. Not to mention that 
-Steev tested that this does not fix the issue on C630.
-
-> 
-> Regards,
-> Bjorn
-> 
->> +
->>   	/* Enable hardware clock gating for DSI and MDP clocks */
->>   	regmap_update_bits(regmap, 0x8000, 0x7f0, 0x7f0);
->>   
->> -- 
->> 2.33.0
->>
-
-
--- 
-With best wishes
-Dmitry
+Applied to clk-next
