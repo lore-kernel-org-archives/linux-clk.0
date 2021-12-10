@@ -2,83 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D08C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 20:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE950C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Dec 2021 21:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344157AbhLJU5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Dec 2021 15:57:25 -0500
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:36795 "EHLO
-        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233105AbhLJU5Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Dec 2021 15:57:24 -0500
-Received: by mail-oi1-f180.google.com with SMTP id t23so14901985oiw.3;
-        Fri, 10 Dec 2021 12:53:49 -0800 (PST)
+        id S244136AbhLJV2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Dec 2021 16:28:34 -0500
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:46043 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237368AbhLJV2d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Dec 2021 16:28:33 -0500
+Received: by mail-ot1-f41.google.com with SMTP id a23-20020a9d4717000000b0056c15d6d0caso10878251otf.12;
+        Fri, 10 Dec 2021 13:24:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=bPa2sUzI1TTogWtVdv+gqxLQMcc0yIn4ajlG/Yv+sKg=;
-        b=k3Iex8DpJXq/I5gjvjAEiqYNenoB/gZ6AONQo+Ha0XMLOxCY/7rp15ze4pR7vnrv54
-         B5BH4ki/62zW+YZsgTsoWh5MVb1oYFNuwY00duzklXFk4yEdghzzjX9UVfcEPypXPwJ2
-         VIEoIFte7+ks/Y055YkX72kXcpSQqIBrLHPIKPq55Vo744iGExemrZUAsqc7vluNiElG
-         UH5eiKdvbQtiIHCOva/XLwXiLUMQKBE9TrBOrIlUuOefGIaeAPaQwov5dgvSy4H44Yk8
-         zlNIjbslBYxUnP3IukC9ZygN4LMdR5hfzyp0WcY3J0fql5jqWp4cB9CDXr8X2GJEf56P
-         /20w==
-X-Gm-Message-State: AOAM532JASvIMewDquFV7zbpHEiZ0JjAsyOtM9QTF5olF9bWC7fuLbfL
-        qHFW1k9HU6+UItxJCVKDAw==
-X-Google-Smtp-Source: ABdhPJw/WAZcAWnbMK5d5NnkzoKQPi02VZoijHmfZDlRJbNYKZ9ZQMfcdBwUsO71COLL2fOqFKGMkA==
-X-Received: by 2002:a05:6808:1814:: with SMTP id bh20mr14303276oib.31.1639169628833;
-        Fri, 10 Dec 2021 12:53:48 -0800 (PST)
+        bh=8MM7Mqy4LVhqQo1WtAnEZHBAScofrOdZmMSPjQZ2muY=;
+        b=bAIXQgEUZfBMhYHPkSr7Q+ptZx62u/N9xYlsNjmMTxN4aYBx5bJyStVMA9wp3YmJ3H
+         y7+sZGVmw5DuhsCxvomRrFdncZvN/W5Uz1rwMU4UhNhyE51jPtU/tHIHPynIIJtOaeUq
+         omsQ59dMc97gf4Mf00E4VeDQ5gejHU4EBo1sYjmUqyjkAFHzxq3kEghCxLMs55Vzn0ys
+         3RO8PlBNSg0vMQSgGliy2ynLII1IMfzmbYMoSH7r9GgfpK1HsnhTHwLUq9cJpXRO4wUP
+         3vzgsqZHEfqAaCfXrqK7rfhWevrK2zaNjBlVXaG2nHVaaloICaQmnOoz18nYiWAG9qM3
+         BBNg==
+X-Gm-Message-State: AOAM532DYrdeo92ahRVbizoPb1WBJ8ckYvDsO9uxzgu4tFiMN7ZxzkiD
+        6AGcL+TC9hO9rN7po6RpLw==
+X-Google-Smtp-Source: ABdhPJyTn5sR0JkqUstumnB93RnMCqtBd+uULYV15dK0CVTcCdcT8gfqCXalGgl6VqPsJd0DE5LuYQ==
+X-Received: by 2002:a05:6830:1216:: with SMTP id r22mr13577934otp.10.1639171496337;
+        Fri, 10 Dec 2021 13:24:56 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id r10sm782013ool.1.2021.12.10.12.53.47
+        by smtp.gmail.com with ESMTPSA id r25sm722169ote.73.2021.12.10.13.24.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Dec 2021 12:53:48 -0800 (PST)
-Received: (nullmailer pid 1878574 invoked by uid 1000);
-        Fri, 10 Dec 2021 20:53:47 -0000
-Date:   Fri, 10 Dec 2021 14:53:47 -0600
+        Fri, 10 Dec 2021 13:24:55 -0800 (PST)
+Received: (nullmailer pid 1925851 invoked by uid 1000);
+        Fri, 10 Dec 2021 21:24:54 -0000
+Date:   Fri, 10 Dec 2021 15:24:54 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, Pavel Dubrova <pashadubrova@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: clk: qcom: Document MSM8976 Global
- Clock Controller
-Message-ID: <YbO+WxSGYfMDY5RM@robh.at.kernel.org>
-References: <20211208091036.132334-1-marijn.suijten@somainline.org>
- <20211208091036.132334-2-marijn.suijten@somainline.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     olof@lixom.net, s.hauer@pengutronix.de, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, ulf.hansson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
+        adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+        jirislaby@kernel.org, stefan@agner.ch,
+        linux-serial@vger.kernel.org, arnd@arndb.de,
+        giulio.benetti@benettiengineering.com, gregkh@linuxfoundation.org,
+        linux-mmc@vger.kernel.org, Mr.Bossman075@gmail.com,
+        festevam@gmail.com, shawnguo@kernel.org, kernel@pengutronix.de,
+        abel.vesa@nxp.com, linux@armlinux.org.uk, aisheng.dong@nxp.com,
+        devicetree@vger.kernel.org, soc@kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v4 05/13] dt-bindings: imx: Add clock binding for
+ i.MXRT1050
+Message-ID: <YbPFpt/EXjSBVBib@robh.at.kernel.org>
+References: <20211204061042.1248028-1-Mr.Bossman075@gmail.com>
+ <20211204061042.1248028-6-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211208091036.132334-2-marijn.suijten@somainline.org>
+In-Reply-To: <20211204061042.1248028-6-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 08 Dec 2021 10:10:35 +0100, Marijn Suijten wrote:
-> Document the required properties and firmware clocks for gcc-msm8976 to
-> operate nominally, and add header definitions for referencing the clocks
-> from firmware.
+On Sat, 04 Dec 2021 01:10:34 -0500, Jesse Taube wrote:
+> From: Giulio Benetti <giulio.benetti@benettiengineering.com>
 > 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Add the clock binding doc for i.MXRT1050.
+> 
+> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> [Giulio: added all clocks up to IMXRT1050_CLK_USBOH3]
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> [Jesse: added clocks from IMXRT1050_CLK_IPG_PDOF to
+> IMXRT1050_CLK_DMA_MUX and moved IMXRT1050_CLK_END on]
 > ---
->  .../bindings/clock/qcom,gcc-msm8976.yaml      |  97 +++++++
->  include/dt-bindings/clock/qcom,gcc-msm8976.h  | 240 ++++++++++++++++++
->  2 files changed, 337 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8976.h
+> V1->V2:
+> * Nothing done
+> V2->V3:
+> * Added GPT binding
+> V3->V4:
+> * Change License to MIT or GPL-2
+> ---
+>  include/dt-bindings/clock/imxrt1050-clock.h | 73 +++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
