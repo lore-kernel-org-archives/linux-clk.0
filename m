@@ -2,103 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15866C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Dec 2021 02:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8694C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Dec 2021 17:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234001AbhLKCcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Dec 2021 21:32:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
+        id S230384AbhLKR2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Dec 2021 12:28:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233815AbhLKCcx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Dec 2021 21:32:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD73C061714;
-        Fri, 10 Dec 2021 18:29:17 -0800 (PST)
+        with ESMTP id S230358AbhLKR2s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Dec 2021 12:28:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D73C061714;
+        Sat, 11 Dec 2021 09:28:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A6F94CE2DDA;
-        Sat, 11 Dec 2021 02:29:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1BFC341C8;
-        Sat, 11 Dec 2021 02:29:12 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CD153B80B2B;
+        Sat, 11 Dec 2021 17:28:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6AE33C341C3;
+        Sat, 11 Dec 2021 17:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639189752;
-        bh=rwVs29kzBD5mlMpJeBeHYII9ZNlchTWq4SlsojX3yEA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=elFzdEzl+SoORCOC/hsOBkjC/Mu9rE6aV4Tybloo1ST+7RclpUAemqvuf8KBv1gnC
-         oQllg8pPdE8Wdg5GCSY8pTPLfvh/jCMR7GQnhAeRY/ZGV05Lk6fICEr25Z7FbmTdvi
-         cAEikPWfIrplwuwepAewMjwoaux2lwmrKTc6usv2FzbANvV41Ra0RIFDfSKJcxCB1p
-         LZO0LBfR+6FhBDx4HbHSCSIhijauRR+Qt15/xc0hv+VHLwZBjdk1kjpH3PnCnEssJm
-         rKDwoDzP11Mp0zlhDZBKCY0EuPOBDOCfIjn5EYccWnsy6v+Mer8vIJzMryMiziQrAj
-         Qq1tghzCqesBA==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=k20201202; t=1639243725;
+        bh=MA+kJuIlCfMgknttMCZ3gd2d0dqbF19Ppx51ou1+g48=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=SkAZC977XGfqp1O9+l+28Os1r4bww0LePkFG3lLkMyvl/fqfAt6Xb1LSlgIw55PEk
+         yA4d5IEw+CFf5sQsXcfLI4hNklh1pYXA7DhCVIBzUYphvBkC8o5qBGRWTFw9XlQCgO
+         Xt8+GhDWf+NjA9O4sh+7W2tEAGSS/BJ0SiOrQ/lnI2CFauKa0pEsDvgO69Jf25khnE
+         YQnwgI9P0uJI4EBB0rZIngEt8BIJWYhYe72Yuc6nygweOHw2HF0szOHsCrflVAUGbc
+         AMJlGUB0mdw2JFU4n9B68ixoJV46aHlH04OTBmUP6BdZCnZhled+4OIWB8jCisR5JS
+         a2axRvXYtSZow==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 4D67460BD0;
+        Sat, 11 Dec 2021 17:28:45 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v5.16-rc4
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20211211022912.3311440-1-sboyd@kernel.org>
+References: <20211211022912.3311440-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20211211022912.3311440-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 2d4fcc5ab35fac2e995f497d62439dcbb416babc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2acdaf59e5958a96500b035830384168dbbe099e
+Message-Id: <163924372531.9148.2784883854642582256.pr-tracker-bot@kernel.org>
+Date:   Sat, 11 Dec 2021 17:28:45 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.16-rc4
-Date:   Fri, 10 Dec 2021 18:29:11 -0800
-Message-Id: <20211211022912.3311440-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.34.1.173.g76aa8bc2d0-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+The pull request you sent on Fri, 10 Dec 2021 18:29:11 -0800:
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2acdaf59e5958a96500b035830384168dbbe099e
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 2d4fcc5ab35fac2e995f497d62439dcbb416babc:
-
-  clk: versatile: clk-icst: use after free on error path (2021-12-07 12:25:29 -0800)
-
-----------------------------------------------------------------
-Here's a collection of clk driver fixes.
-
- - Fix qcom mux logic to look at the proper parent table member.
-   Luckily this clk type isn't very common.
-
- - Don't kill clks on qcom systems that use Trion PLLs that are
-   enabled out of the bootloader. We will simply skip programming
-   the PLL rate if it's already done.
-
- - Use the proper clk_ops for the qcom sm6125 ICE clks.
-
- - Use module_platform_driver() in i.MX as it can be a module.
-
- - Fix a UAF in the versatile clk driver on an error path.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      clk: qcom: clk-alpha-pll: Don't reconfigure running Trion
-
-Dan Carpenter (1):
-      clk: versatile: clk-icst: use after free on error path
-
-Dmitry Baryshkov (1):
-      clk: qcom: regmap-mux: fix parent clock lookup
-
-Martin Botka (1):
-      clk: qcom: sm6125-gcc: Swap ops of ice and apps on sdcc1
-
-Miles Chen (1):
-      clk: imx: use module_platform_driver
-
- drivers/clk/imx/clk-imx8qxp-lpcg.c |  2 +-
- drivers/clk/imx/clk-imx8qxp.c      |  2 +-
- drivers/clk/qcom/clk-alpha-pll.c   |  9 +++++++++
- drivers/clk/qcom/clk-regmap-mux.c  |  2 +-
- drivers/clk/qcom/common.c          | 12 ++++++++++++
- drivers/clk/qcom/common.h          |  2 ++
- drivers/clk/qcom/gcc-sm6125.c      |  4 ++--
- drivers/clk/versatile/clk-icst.c   |  2 +-
- 8 files changed, 29 insertions(+), 6 deletions(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
