@@ -2,68 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8694C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Dec 2021 17:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AFBC433FE
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Dec 2021 18:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbhLKR2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Dec 2021 12:28:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51598 "EHLO
+        id S231648AbhLKSNY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Dec 2021 13:13:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230358AbhLKR2s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Dec 2021 12:28:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68D73C061714;
-        Sat, 11 Dec 2021 09:28:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CD153B80B2B;
-        Sat, 11 Dec 2021 17:28:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6AE33C341C3;
-        Sat, 11 Dec 2021 17:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639243725;
-        bh=MA+kJuIlCfMgknttMCZ3gd2d0dqbF19Ppx51ou1+g48=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=SkAZC977XGfqp1O9+l+28Os1r4bww0LePkFG3lLkMyvl/fqfAt6Xb1LSlgIw55PEk
-         yA4d5IEw+CFf5sQsXcfLI4hNklh1pYXA7DhCVIBzUYphvBkC8o5qBGRWTFw9XlQCgO
-         Xt8+GhDWf+NjA9O4sh+7W2tEAGSS/BJ0SiOrQ/lnI2CFauKa0pEsDvgO69Jf25khnE
-         YQnwgI9P0uJI4EBB0rZIngEt8BIJWYhYe72Yuc6nygweOHw2HF0szOHsCrflVAUGbc
-         AMJlGUB0mdw2JFU4n9B68ixoJV46aHlH04OTBmUP6BdZCnZhled+4OIWB8jCisR5JS
-         a2axRvXYtSZow==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 4D67460BD0;
-        Sat, 11 Dec 2021 17:28:45 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v5.16-rc4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211211022912.3311440-1-sboyd@kernel.org>
-References: <20211211022912.3311440-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211211022912.3311440-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 2d4fcc5ab35fac2e995f497d62439dcbb416babc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2acdaf59e5958a96500b035830384168dbbe099e
-Message-Id: <163924372531.9148.2784883854642582256.pr-tracker-bot@kernel.org>
-Date:   Sat, 11 Dec 2021 17:28:45 +0000
+        with ESMTP id S231183AbhLKSNX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Dec 2021 13:13:23 -0500
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F17AC061714
+        for <linux-clk@vger.kernel.org>; Sat, 11 Dec 2021 10:13:23 -0800 (PST)
+Received: by mail-oi1-x236.google.com with SMTP id r26so17629431oiw.5
+        for <linux-clk@vger.kernel.org>; Sat, 11 Dec 2021 10:13:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZKuXDdMqteEEKXb+96og2uMkZKlBM9xGB/3xrHMNNJ4=;
+        b=aWs1p9AyHBbvhMn//ieXmew23uafLMJkWDAEFpKLr/y3EDFmf/hAW9aqurfWekiYJa
+         5Y1mrm8+8O1+DctJZZ2x203nP/1PwLA1IforTxfWsg3iai7cKVIsegSiJtT77NzfsMxN
+         i3OAM1FhXsDcRi3Rl7pQZccNNGGmSlpGrh3CYXLV2Ka1U4baeL3O5R54nGYFWtIaq5Cq
+         IguHuhJ2jT5eEkAx5asn/T8vP7onjdwjd+qEmmL8QPvjHD6nlYJSopu5rLo2RVp7/kEZ
+         lZ6fMoyk0ht++uIEsgPGXNbCGBJAHDdAhzgeDYkqtfz7WC9AEbkZvfrZHVXfDsofSoF6
+         lMnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZKuXDdMqteEEKXb+96og2uMkZKlBM9xGB/3xrHMNNJ4=;
+        b=IXjcQpuLm+8rPPJjokHhmrSXe2kys/TsOnog4bSi3PwaU3FQbK3YMQyKdHSghKwIFg
+         K5ScXlRMNf+oZSm8+Kx4Thiv0oGf5q1T646NxLCFbPHzNQoNCeLAi/3mNaBAe7Oh6li4
+         uYcjUfEXRgfaz4uyYLCe5jFJjGPYH30btT0QOdTyTGBxgtmHmRhvPjSgydYzc0wgKHPZ
+         8soZrmeb2WMvZHFs+Ko8CwBVqlFWkVOOGVn7nRVzOuICQo/IeVNdLqD9BQ1l00XAiiAM
+         QULxfTaqlks9fZfXkjicYN4MsRqEwYnNSapoqKTe83frvzCHvx3+VVbqmyRzbPJ7qgWb
+         grtw==
+X-Gm-Message-State: AOAM531eviT7vmLAXBGUXnsL1gddww6b6E7/sNkH3Dwnq9jfglGKWIcL
+        +Dc7DHyUCGgge5czVTNR9Sz4MA==
+X-Google-Smtp-Source: ABdhPJwJgs25lTgbpqlRe9kzvrGm41yKRcwXPaPnmvLa062O2KlX0HXEsj/sNKm6DJR4tJAdo1WZPA==
+X-Received: by 2002:a05:6808:1a2a:: with SMTP id bk42mr19079854oib.118.1639246402724;
+        Sat, 11 Dec 2021 10:13:22 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id y12sm1641771oiv.49.2021.12.11.10.13.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Dec 2021 10:13:22 -0800 (PST)
+Date:   Sat, 11 Dec 2021 12:13:17 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add clock driver for SM8450
+Message-ID: <YbTqPfs7026l6LFE@builder.lan>
+References: <20211207114003.100693-1-vkoul@kernel.org>
+ <20211207114003.100693-3-vkoul@kernel.org>
+ <20211209082537.1AF6CC341C8@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211209082537.1AF6CC341C8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 10 Dec 2021 18:29:11 -0800:
+On Thu 09 Dec 02:25 CST 2021, Stephen Boyd wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+> Quoting Vinod Koul (2021-12-07 03:40:03)
+> > diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+> > new file mode 100644
+> > index 000000000000..82ac419718d7
+> > --- /dev/null
+> > +++ b/drivers/clk/qcom/gcc-sm8450.c
+> > @@ -0,0 +1,3303 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
+> > + * Copyright (c) 2021, Linaro Limited
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#include <dt-bindings/clock/qcom,gcc-sm8450.h>
+> > +
+> > +#include "clk-alpha-pll.h"
+> > +#include "clk-branch.h"
+> > +#include "clk-rcg.h"
+> > +#include "clk-regmap.h"
+> > +#include "clk-regmap-divider.h"
+> > +#include "clk-regmap-mux.h"
+> > +#include "gdsc.h"
+> > +#include "reset.h"
+> > +
+> > +enum {
+> > +       P_BI_TCXO,
+> > +       P_GCC_GPLL0_OUT_EVEN,
+> > +       P_GCC_GPLL0_OUT_MAIN,
+> > +       P_GCC_GPLL4_OUT_MAIN,
+> > +       P_GCC_GPLL9_OUT_MAIN,
+> > +       P_PCIE_0_PIPE_CLK,
+> > +       P_PCIE_1_PHY_AUX_CLK,
+> > +       P_PCIE_1_PIPE_CLK,
+> > +       P_SLEEP_CLK,
+> > +       P_UFS_PHY_RX_SYMBOL_0_CLK,
+> > +       P_UFS_PHY_RX_SYMBOL_1_CLK,
+> > +       P_UFS_PHY_TX_SYMBOL_0_CLK,
+> > +       P_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
+> > +};
+> > +
+> > +static struct clk_alpha_pll gcc_gpll0 = {
+> > +       .offset = 0x0,
+> > +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
+> > +       .clkr = {
+> > +               .enable_reg = 0x62018,
+> > +               .enable_mask = BIT(0),
+> > +               .hw.init = &(struct clk_init_data){
+> > +                       .name = "gcc_gpll0",
+> > +                       .parent_data = &(const struct clk_parent_data){
+> > +                               .fw_name = "bi_tcxo",
+> 
+> Maybe you want to drop these strings and use the dt index directly? That
+> may actually be faster because we don't do as many string comparisons
+> and the code may be smaller if we don't have to store bi_tcxo. I suppose
+> to make it more readable we could have #defines for each DT index like
+> 
+>  #define DT_BI_TCXO	0
+>  #define DT_SLEEP_CLK	1
+> 
+> Blaze a new trail!
+> 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2acdaf59e5958a96500b035830384168dbbe099e
+I like the idea, and iiuc it's just a matter of replacing .fw_name with
+.index?
 
-Thank you!
+I am however worried that people will get the order wrong as they are
+hacking on their dts/drivers, because (at least in my view) the order of
+clocks & clock-names has been seen as "a dt binding requirement" up
+until such change. But if we replace the names with indices such enum
+would have to be kept in sync with the DT binding and there's no way to
+validate it.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+If we do this we should force the driver and dts-writers to rely on the
+binding document by omitting clock-names from the binding (and hence
+dts). Otherwise people will (I will) assume that the clock-names are
+still what matters...
+
+Regards,
+Bjorn
+
+> > +                       },
+> > +                       .num_parents = 1,
+> > +                       .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
+> > +               },
+> > +       },
+> > +};
