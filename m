@@ -2,162 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AFBC433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Dec 2021 18:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8D7C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Dec 2021 18:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbhLKSNY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Dec 2021 13:13:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231183AbhLKSNX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Dec 2021 13:13:23 -0500
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F17AC061714
-        for <linux-clk@vger.kernel.org>; Sat, 11 Dec 2021 10:13:23 -0800 (PST)
-Received: by mail-oi1-x236.google.com with SMTP id r26so17629431oiw.5
-        for <linux-clk@vger.kernel.org>; Sat, 11 Dec 2021 10:13:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZKuXDdMqteEEKXb+96og2uMkZKlBM9xGB/3xrHMNNJ4=;
-        b=aWs1p9AyHBbvhMn//ieXmew23uafLMJkWDAEFpKLr/y3EDFmf/hAW9aqurfWekiYJa
-         5Y1mrm8+8O1+DctJZZ2x203nP/1PwLA1IforTxfWsg3iai7cKVIsegSiJtT77NzfsMxN
-         i3OAM1FhXsDcRi3Rl7pQZccNNGGmSlpGrh3CYXLV2Ka1U4baeL3O5R54nGYFWtIaq5Cq
-         IguHuhJ2jT5eEkAx5asn/T8vP7onjdwjd+qEmmL8QPvjHD6nlYJSopu5rLo2RVp7/kEZ
-         lZ6fMoyk0ht++uIEsgPGXNbCGBJAHDdAhzgeDYkqtfz7WC9AEbkZvfrZHVXfDsofSoF6
-         lMnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZKuXDdMqteEEKXb+96og2uMkZKlBM9xGB/3xrHMNNJ4=;
-        b=IXjcQpuLm+8rPPJjokHhmrSXe2kys/TsOnog4bSi3PwaU3FQbK3YMQyKdHSghKwIFg
-         K5ScXlRMNf+oZSm8+Kx4Thiv0oGf5q1T646NxLCFbPHzNQoNCeLAi/3mNaBAe7Oh6li4
-         uYcjUfEXRgfaz4uyYLCe5jFJjGPYH30btT0QOdTyTGBxgtmHmRhvPjSgydYzc0wgKHPZ
-         8soZrmeb2WMvZHFs+Ko8CwBVqlFWkVOOGVn7nRVzOuICQo/IeVNdLqD9BQ1l00XAiiAM
-         QULxfTaqlks9fZfXkjicYN4MsRqEwYnNSapoqKTe83frvzCHvx3+VVbqmyRzbPJ7qgWb
-         grtw==
-X-Gm-Message-State: AOAM531eviT7vmLAXBGUXnsL1gddww6b6E7/sNkH3Dwnq9jfglGKWIcL
-        +Dc7DHyUCGgge5czVTNR9Sz4MA==
-X-Google-Smtp-Source: ABdhPJwJgs25lTgbpqlRe9kzvrGm41yKRcwXPaPnmvLa062O2KlX0HXEsj/sNKm6DJR4tJAdo1WZPA==
-X-Received: by 2002:a05:6808:1a2a:: with SMTP id bk42mr19079854oib.118.1639246402724;
-        Sat, 11 Dec 2021 10:13:22 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id y12sm1641771oiv.49.2021.12.11.10.13.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Dec 2021 10:13:22 -0800 (PST)
-Date:   Sat, 11 Dec 2021 12:13:17 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add clock driver for SM8450
-Message-ID: <YbTqPfs7026l6LFE@builder.lan>
-References: <20211207114003.100693-1-vkoul@kernel.org>
- <20211207114003.100693-3-vkoul@kernel.org>
- <20211209082537.1AF6CC341C8@smtp.kernel.org>
+        id S230472AbhLLSGh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Dec 2021 13:06:37 -0500
+Received: from mail-bn7nam10on2069.outbound.protection.outlook.com ([40.107.92.69]:51872
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230468AbhLLSGh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 12 Dec 2021 13:06:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c6rm9ouzyd5sOKdJrcmph+6HGGQzd/txuWwc63bvib+at0W0NDyPR4bd8kS0d3iwA52CZ/QfNNVPo4OY6dN+zNbnnFfau7Sb89KrUbJdSAK1n2OwR6iolUCrl0eIC8jWEIdSC+er50nsvhhqgkysXJPQIvrFWEMtG1UOIQHhv51S9H0WSBxa6ZVagz9gaMLCkKGqhdFGtb3sCmUBSatRA3bAGwUszwbgjKSn4rJzM4ytPyGqTAQKMWpeNP7mwoh6Mv4n+hg9BI87+wnM6+hEEbcEcE0OyiQ0Xy+4iC3xU1miRbZNrwvmdYvGfIEi1SVIvT2TrN7LfFYyTI//MJiIpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6lFaL0U10nTm+MxEpOd8rWCodw6RVoiIwUrCcRscsAc=;
+ b=KLSAjpeXbm6dkTIBSS+JCPfuEYlQJfIJ2A7687xjKX3TnPG36wUajCOhIw76KUMedq8m//KVh3pu5LyAq2F9ff711LZpFMn/QDGkOBi/u1F8fx4qxQYI+J+UviGjQfhhRCB5DnlMIFegcMqp3rhIKafa4utEa7qvuMEoCh5yTNrs9Rgr7ky3tDBvx7ZZqNcuj6TX+sl3AKaWelLBObO4QLB8/EZjPF/q7rogCOL+tOzYOnIo7q4hhdf/Qs5DF0R6QHYQRQsn8lSt5ADwIzX1lcFyFm6L6xq8JU2Saj5Pq+Kr4dLrc1nP4tRcSBWMYEVU44ZTyLDpiId/PTOSkvzz/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6lFaL0U10nTm+MxEpOd8rWCodw6RVoiIwUrCcRscsAc=;
+ b=PiY9DyH8ELaGhILQ1CA5DRq5+IaOv+ZrMrSml/XPXPm5ohQCGpCwmv5kcXuAUD9sfTouTJHGdjBRy8U8XPHDcJqj0jFoOkAlpyH6E43TgWW3NUrOVbZJ0/9yyZVZsn/pW0rRw+DDPt8wJqLoShruBXnh7xhnmaCcMpBqbQxxoHk=
+Received: from DM6PR18CA0032.namprd18.prod.outlook.com (2603:10b6:5:15b::45)
+ by CH2PR12MB4937.namprd12.prod.outlook.com (2603:10b6:610:64::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.14; Sun, 12 Dec
+ 2021 18:06:33 +0000
+Received: from DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:15b:cafe::bc) by DM6PR18CA0032.outlook.office365.com
+ (2603:10b6:5:15b::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.12 via Frontend
+ Transport; Sun, 12 Dec 2021 18:06:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com;
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT062.mail.protection.outlook.com (10.13.173.40) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4778.13 via Frontend Transport; Sun, 12 Dec 2021 18:06:33 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Sun, 12 Dec
+ 2021 12:06:32 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Sun, 12 Dec
+ 2021 12:06:32 -0600
+Received: from chrome.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Sun, 12 Dec 2021 12:06:29 -0600
+From:   Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
+To:     <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <Vijendar.Mukunda@amd.com>, <Alexander.Deucher@amd.com>,
+        <Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
+        <Mario.Limonciello@amd.com>,
+        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
+Subject: [PATCH v5 0/5] clk-fch: Add support for newer family of AMD's SOC
+Date:   Sun, 12 Dec 2021 23:35:22 +0530
+Message-ID: <20211212180527.1641362-1-AjitKumar.Pandey@amd.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211209082537.1AF6CC341C8@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f0e30beb-95ab-4209-6fac-08d9bd9a2167
+X-MS-TrafficTypeDiagnostic: CH2PR12MB4937:EE_
+X-Microsoft-Antispam-PRVS: <CH2PR12MB4937A47CE87BC8D98B8D88A882739@CH2PR12MB4937.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: jNQygKajTRtlq3jvS6j30fAvvh/9g3F2mqxshhuz7253h/DZICneSIXWJsGs/sX7PziGJb9KokHHa8cO4dpidTVw6Lu1YlLkwSFyW4BPedjPT0qCcm97fyZlkxA6R6EvNg2UFUqy/+vSb4+urM8l+u2fZQJD+CR5WWbBcXqq9Gn4PGm3lgNRnw91pRUI2UPGnpENeRcrvzyUWS9pTg2cE3G9n80HLSv5O7JYxj6SW6naVn3tUGXy71xxEXBHX8ydc7RPklX0fMCQFer8qJ/fkUVjuX6XsE8kof3kSDRukxyD2Fw4n6THDcYod+O8bkjAg3y5G14Q+fUEOY/WsPFMksK73+vj7iNROGp1sJ1v4S/sZo6+wGSNjpcHT/w5Uyic34u8eRm//aRTtBv3Bhd3EMlHg4tJ9ulO3nbOtkbBSeabueapvTI5EDiMNCEmiG5CCFE6du1rYxik/8DvWFDkMHmfqQ6k/R8x8Srt+A3bjKmfnurW2vfm+HMv92hlmMUKjJgDFURHnfi17ojVXjFf0Dg7gTmOJ0sZS+4hLBzzaDsGALHP0HpV0VVLeXSsDEi15/cZN67+GCy9FOlYZ7A0XB1TDn+w8tDc+3jy4DWnaMJEEKAsWff4enK2wrsmoMCc71BygqL0Gs6XL3lDrdodZK4Tor5JolvQPpsRtBlHviJvmPMG2xWGH14AGraWrduiUkW3hc/2Pkj/xYZinr6qtF/RF0n0BOo9vjwwKfNNutcSXjinpo9ERO+puUptwDWKNldNmALhRVAEyRWpaSG3QKGVclay29cGJdGt+72j2iA=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(40470700001)(426003)(36756003)(81166007)(2616005)(1076003)(54906003)(8676002)(6666004)(82310400004)(336012)(40460700001)(110136005)(2906002)(4744005)(7696005)(70206006)(5660300002)(70586007)(316002)(86362001)(8936002)(508600001)(4326008)(47076005)(26005)(36860700001)(356005)(83380400001)(186003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2021 18:06:33.1603
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0e30beb-95ab-4209-6fac-08d9bd9a2167
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT062.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4937
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 09 Dec 02:25 CST 2021, Stephen Boyd wrote:
+changes since v4:
+- PATCH 1/5: Revert pci id check with default support for newer ASIC
+- Drop [PATCH 6/7] and [PATCH 7/7] as not required with newer logic   
 
-> Quoting Vinod Koul (2021-12-07 03:40:03)
-> > diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
-> > new file mode 100644
-> > index 000000000000..82ac419718d7
-> > --- /dev/null
-> > +++ b/drivers/clk/qcom/gcc-sm8450.c
-> > @@ -0,0 +1,3303 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-> > + * Copyright (c) 2021, Linaro Limited
-> > + */
-> > +
-> > +#include <linux/module.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#include <dt-bindings/clock/qcom,gcc-sm8450.h>
-> > +
-> > +#include "clk-alpha-pll.h"
-> > +#include "clk-branch.h"
-> > +#include "clk-rcg.h"
-> > +#include "clk-regmap.h"
-> > +#include "clk-regmap-divider.h"
-> > +#include "clk-regmap-mux.h"
-> > +#include "gdsc.h"
-> > +#include "reset.h"
-> > +
-> > +enum {
-> > +       P_BI_TCXO,
-> > +       P_GCC_GPLL0_OUT_EVEN,
-> > +       P_GCC_GPLL0_OUT_MAIN,
-> > +       P_GCC_GPLL4_OUT_MAIN,
-> > +       P_GCC_GPLL9_OUT_MAIN,
-> > +       P_PCIE_0_PIPE_CLK,
-> > +       P_PCIE_1_PHY_AUX_CLK,
-> > +       P_PCIE_1_PIPE_CLK,
-> > +       P_SLEEP_CLK,
-> > +       P_UFS_PHY_RX_SYMBOL_0_CLK,
-> > +       P_UFS_PHY_RX_SYMBOL_1_CLK,
-> > +       P_UFS_PHY_TX_SYMBOL_0_CLK,
-> > +       P_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
-> > +};
-> > +
-> > +static struct clk_alpha_pll gcc_gpll0 = {
-> > +       .offset = 0x0,
-> > +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_EVO],
-> > +       .clkr = {
-> > +               .enable_reg = 0x62018,
-> > +               .enable_mask = BIT(0),
-> > +               .hw.init = &(struct clk_init_data){
-> > +                       .name = "gcc_gpll0",
-> > +                       .parent_data = &(const struct clk_parent_data){
-> > +                               .fw_name = "bi_tcxo",
-> 
-> Maybe you want to drop these strings and use the dt index directly? That
-> may actually be faster because we don't do as many string comparisons
-> and the code may be smaller if we don't have to store bi_tcxo. I suppose
-> to make it more readable we could have #defines for each DT index like
-> 
->  #define DT_BI_TCXO	0
->  #define DT_SLEEP_CLK	1
-> 
-> Blaze a new trail!
-> 
+Ajit Kumar Pandey (5):
+  x86: clk: clk-fch: Add support for newer family of AMD's SOC
+  drivers: acpi: acpi_apd: Remove unused device property "is-rv"
+  ACPI: APD: Add a fmw property clk-name
+  clk: x86: Use dynamic con_id string during clk registration
+  clk: x86: Fix clk_gate_flags for RV_CLK_GATE
 
-I like the idea, and iiuc it's just a matter of replacing .fw_name with
-.index?
+ drivers/acpi/acpi_apd.c               | 11 ++++--
+ drivers/clk/x86/clk-fch.c             | 48 +++++++++++++++++++--------
+ include/linux/platform_data/clk-fch.h |  2 +-
+ 3 files changed, 44 insertions(+), 17 deletions(-)
 
-I am however worried that people will get the order wrong as they are
-hacking on their dts/drivers, because (at least in my view) the order of
-clocks & clock-names has been seen as "a dt binding requirement" up
-until such change. But if we replace the names with indices such enum
-would have to be kept in sync with the DT binding and there's no way to
-validate it.
+-- 
+2.25.1
 
-If we do this we should force the driver and dts-writers to rely on the
-binding document by omitting clock-names from the binding (and hence
-dts). Otherwise people will (I will) assume that the clock-names are
-still what matters...
-
-Regards,
-Bjorn
-
-> > +                       },
-> > +                       .num_parents = 1,
-> > +                       .ops = &clk_alpha_pll_fixed_lucid_evo_ops,
-> > +               },
-> > +       },
-> > +};
