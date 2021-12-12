@@ -2,127 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEF2C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Dec 2021 18:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900A0C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Dec 2021 18:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231889AbhLLSHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Dec 2021 13:07:12 -0500
-Received: from mail-mw2nam12on2058.outbound.protection.outlook.com ([40.107.244.58]:44932
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230468AbhLLSHK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 12 Dec 2021 13:07:10 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H/WwZnfOpaFB7x85U6NYWy6DAEM6LngNP4nFshdTsKAYqTNgUTRvLc2v+jVLST3yBEptx62YnjTivSqMKG0FTXxXksZBxKH27dxJI9QcMkcF4aDQuLqBmIhyjVEivF7Z0Xg1A1gcfRJ0yZ7hdVzUKC74ZW6oC9tzRATWGEHfT4UYKXzurkbxuyxISuY9qwk5IKyJuBD/u/6RZOnTu+ebZY2xfhhBBIdPpeOJbm7thO9mKS4NjOSmTZbgbepliTqEAUU46HH2AV1fxv9IpGhd3rygKUSk+n2lP4qF2ZBPxR5/N+K+kaG7QChe1ozkkfbQjFdkT1xsvItkZOYktOVbiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZTe6TzBlRFjzhVmSGHkJRdBFO+AVh8RlV9S8TFNLxRk=;
- b=SEAtBQZdmzMZnIEKH6VdKdjKzY5WXDAKRnsMc//GlpxBDqIgc2z4nyrdxKs0gkkUz621E4dyAgpPRZ++StGUB3+ca/48i2dUqZ3Aazq9rYizSkSY78hE7R+sfxCnNn67877fXX8xeGbeMnvNraM6PJKiTitLpbwciM6d3h80PpcQloxKQMaT7pEWeFFDs/+k/lHBaRTkI8GcVrLono9I9NDz2+/KSrZePbG3YZvW+y5xzL2/FlAzWwQK7aiexgPPHk88KjYotunyS3lURZwisz/pJh74O0lwZdecXLcmqO7Lha+BwQxtwQLgUOgcQt76Jyglnb2RoYQZIYWh+AMbnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZTe6TzBlRFjzhVmSGHkJRdBFO+AVh8RlV9S8TFNLxRk=;
- b=pbUFyhQg+xPAoz+DP2akwMP6LM7ayL3iMSwqmM+V5xELXjhX5pT7S0RY1tZ2ksuHxWdheTgvAgs1hA4ZKYVtruZaU1wpXj2NoTFw4153MtYLrvYGzzG1Qcxd+nSs18N4lIupMiMO09MbtnbVovvXEA3FtMk/nlLhFDTOmSIx1nU=
-Received: from DM5PR22CA0021.namprd22.prod.outlook.com (2603:10b6:3:101::31)
- by SN1PR12MB2431.namprd12.prod.outlook.com (2603:10b6:802:27::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.16; Sun, 12 Dec
- 2021 18:07:08 +0000
-Received: from DM6NAM11FT038.eop-nam11.prod.protection.outlook.com
- (2603:10b6:3:101:cafe::20) by DM5PR22CA0021.outlook.office365.com
- (2603:10b6:3:101::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.12 via Frontend
- Transport; Sun, 12 Dec 2021 18:07:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com;
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT038.mail.protection.outlook.com (10.13.173.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4778.13 via Frontend Transport; Sun, 12 Dec 2021 18:07:08 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Sun, 12 Dec
- 2021 12:07:07 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.17; Sun, 12 Dec
- 2021 12:07:07 -0600
-Received: from chrome.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Sun, 12 Dec 2021 12:07:04 -0600
-From:   Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
-To:     <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <Vijendar.Mukunda@amd.com>, <Alexander.Deucher@amd.com>,
-        <Basavaraj.Hiregoudar@amd.com>, <Sunil-kumar.Dommati@amd.com>,
-        <Mario.Limonciello@amd.com>,
-        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 5/5] clk: x86: Fix clk_gate_flags for RV_CLK_GATE
-Date:   Sun, 12 Dec 2021 23:35:27 +0530
-Message-ID: <20211212180527.1641362-6-AjitKumar.Pandey@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211212180527.1641362-1-AjitKumar.Pandey@amd.com>
-References: <20211212180527.1641362-1-AjitKumar.Pandey@amd.com>
+        id S231675AbhLLSjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Dec 2021 13:39:17 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:41396
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230386AbhLLSjQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Dec 2021 13:39:16 -0500
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 29FBD3F0EB
+        for <linux-clk@vger.kernel.org>; Sun, 12 Dec 2021 18:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1639334355;
+        bh=QOLe+d7csrM+OPfnGCO79vniT112Eujdhj2JN4MALTY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=EhYTMidWnkMC4/98ccp/2uKKFhs15LOCnpaLwlU69K9+DlBISSwTQooCrUvOmCTjf
+         idvlJtTuqHSk0ey5dmfQREu8ERYguOcl5vPGg8XwlBYwPwJpgArLaT4CFWWa59s6al
+         Ccyj0CT1uOntR4IZKjbUdH+3DLnOlnPUsoAH92zd4pqcPyLG1iYUNvQNF4P1JWZUpe
+         hUCk8x9MSxLIncEVT/w3DVsVRE1Eg6dD/j/5JOw8fmpb1hobceGHfR3ufsxzIZjtsE
+         EL3IibOzseEUg4xg9RECiJsw2CTTjbOdJ2mcCIJZRdjLOu9DPDh//jWb2vRLMJBVeR
+         JgyL8x9XVPLeQ==
+Received: by mail-lf1-f71.google.com with SMTP id s11-20020a195e0b000000b0041c0a47fb77so6433175lfb.20
+        for <linux-clk@vger.kernel.org>; Sun, 12 Dec 2021 10:39:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=QOLe+d7csrM+OPfnGCO79vniT112Eujdhj2JN4MALTY=;
+        b=rh6HmJCy6eRQBI9DvkBAVGKjS7LlNhZd+MqmQ0AyoibeoqfZZZlhaZPnIjqh4PA+aa
+         YZBSdZAi1zxUWGUtuIiNJY91C+TYe09msUFtM+c9FNo8LG6EBz7RzMPsMnnVFatMGFNx
+         YlFkfp8OOuFXCFksnDfa6Ae3mzNkDiw7zHPv7GEYAqKylaVqC+8ttMRywAirMFtKPsRQ
+         2hUWW6SmYAcgstCY8h7JcrAVNReT9cszlHB2rx3dV/jCLsxYglhK9t6+cd13UHfv5FbK
+         pfSLX1bjuwvoHTebFsj6YKm+z8vRhCZTIwps937TiPQo4cKACb+aXeKkaFX9RjrwHlGX
+         BvdA==
+X-Gm-Message-State: AOAM533HUon0CnpT33Z1qF4WwOBOPwW6IQhx9prGjTi/T8LV4XYHhDo8
+        gnOQyv3IIqAx1JuqrqodVBGDbALVak4MNqHg51qyomwpzgXES1Ze24DW+CyZSvGS8kibXHGZ+I+
+        cLa3Q3PvdPkYTW2A8YX9yb1ngLLnW/Bl7uL9fLg==
+X-Received: by 2002:a2e:9617:: with SMTP id v23mr24843163ljh.363.1639334354556;
+        Sun, 12 Dec 2021 10:39:14 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx71+OYijueDFlqmStOqg4sDXiEX31XHw2Ry8T7iC/wKfGFnQGSIzUB9ek+aU57Ro0uZLRFZg==
+X-Received: by 2002:a2e:9617:: with SMTP id v23mr24843135ljh.363.1639334354271;
+        Sun, 12 Dec 2021 10:39:14 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id 1sm1101519ljq.102.2021.12.12.10.39.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Dec 2021 10:39:13 -0800 (PST)
+Message-ID: <aa76e303-95ac-20ff-c0a9-26f7f8c6b2cb@canonical.com>
+Date:   Sun, 12 Dec 2021 19:39:12 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2fd33008-fce7-4566-2fa9-08d9bd9a3658
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2431:EE_
-X-Microsoft-Antispam-PRVS: <SN1PR12MB24319451DD82CAB59829F25F82739@SN1PR12MB2431.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ihIxXNs+DqlPjYp1b7rgPZieswJsLZQ1Gz0tZwyGTX7wFvRjGc2/0VVdOh/jLDGnQIMzpaYl2PjxE9VAQ3Y5GeSyUU9o5re0SPz0D5vw1QbigODVoWeJNgqhKi+FmGeLDVoYOysLcM+RFlJqE14Amy+NlXONdg1KZL5IndLxte5BgadZfXp+Q2G6CKDQvPbLFWmZ5ksgRUockF1/hvZ/TIsQyuda5TdZ/CgY4j9s3YWW41bpIUSDtiWPzNYKVo6kbi3NAgt6snB/d6VAyXGKMpnxpo6h0vDHEXQjxZTiGiG3Jl1+L9AR5pHVI9rnyaCRlica/zEBDMh2L+Kpwo1c7CkmOyR5wv76SLdvH4bXqYCIsKZWs695r0uAPcGuSt+kTgNCGkT6D5ZjIh+boZ3AVujcByPJzy8t0GFLMZMUDmO6pQbWdwXmtOyB+1+ZAcwecEz4Qnk697PbcVJYfZStDqLEB99tqmpjmVHgRJhf6qn26br3Eif64KYmftCyd5HkaovY7bqt+1Y/AeWIvA/cuxnQ5NM0VaX2X7qay1wFy7uGQ2OBmNsrLEExsPxCKcFwEspUtaQJB0p2y+a8Ervv+JcDye0Nni1H7rRxXugOG3I9sZYvY39q0/m9h85YHRdBGG3G4KyYU7EsRx02MM3Osogp8tHbuX636etdAI7HICBSEWhwH3RuzZWsnPPC1jjJxYDF3N9wRilvQSYfv26ghYTc18gf3ZDlT31q09SHe5a+CJL2YgTFNhkgmE6JPOwhxSVL3pzEGOZZ5tK/+NGzK0dDTYP3712idPG4RlGSuXM=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(40470700001)(81166007)(2906002)(82310400004)(316002)(356005)(86362001)(8936002)(110136005)(8676002)(1076003)(426003)(47076005)(36756003)(54906003)(36860700001)(40460700001)(6666004)(83380400001)(4744005)(70206006)(186003)(70586007)(5660300002)(336012)(7696005)(508600001)(4326008)(2616005)(26005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2021 18:07:08.3216
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fd33008-fce7-4566-2fa9-08d9bd9a3658
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT038.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2431
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add bindings definitions for
+ Exynos7885 CMU
+Content-Language: en-US
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        David Virag <virag.david003@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211206153124.427102-1-virag.david003@gmail.com>
+ <20211206153124.427102-2-virag.david003@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211206153124.427102-2-virag.david003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In newer SoC we have to clear bit for disabling 48MHz oscillator
-clock gate. Remove CLK_GATE_SET_TO_DISABLE flag for proper enable
-and disable of 48MHz clock.
+On 06/12/2021 16:31, David Virag wrote:
+> Just like on Exynos850, the clock controller driver is designed to have
+> separate instances for each particular CMU, so clock IDs start from 1
+> for each CMU in this bindings header too.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: David Virag <virag.david003@gmail.com>
+> ---
+> Changes in v2:
+>   - Added R-b tag by Krzysztof Kozlowski
+> 
+> Changes in v3:
+>   - Nothing
+> 
+> Changes in v4:
+>   - Nothing
+> 
+>  include/dt-bindings/clock/exynos7885.h | 115 +++++++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/exynos7885.h
+> 
 
-Signed-off-by: Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
-Reviewed-by: Mario Limonciello <Mario.Limonciello@amd.com>
----
- drivers/clk/x86/clk-fch.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Sylwester,
 
-diff --git a/drivers/clk/x86/clk-fch.c b/drivers/clk/x86/clk-fch.c
-index d41d519b9c2b..fdc060e75839 100644
---- a/drivers/clk/x86/clk-fch.c
-+++ b/drivers/clk/x86/clk-fch.c
-@@ -82,7 +82,7 @@ static int fch_clk_probe(struct platform_device *pdev)
- 
- 		hws[CLK_GATE_FIXED] = clk_hw_register_gate(NULL, "oscout1",
- 			"clk48MHz", 0, fch_data->base + MISCCLKCNTL1,
--			OSCCLKENB, CLK_GATE_SET_TO_DISABLE, NULL);
-+			OSCCLKENB, 0, NULL);
- 
- 		devm_clk_hw_register_clkdev(&pdev->dev, hws[CLK_GATE_FIXED],
- 					    fch_data->name, NULL);
--- 
-2.25.1
+The DTS/DTSI patch (7/7) depends on this one, just like the clock driver.
 
+Since some time Arnd and Olof prefer not to have external trees going
+into the arm-soc, even if this is only the header change. They recommend
+one of:
+1. to hard-code the numbers in DTS and replace numbers->macros later,
+2. merge headers to arm-soc tree with DTS and provide the header to an
+external (e.g. clk) tree,
+3. wait with merging DTSI till headers reach mainline.
+
+I propose that I take the clock headers, put on separate branch and
+provide them to you as stable tag. You can base clk driver changes on
+top of it.
+
+Are you okay with this?
+
+Best regards,
+Krzysztof
