@@ -2,237 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336E7C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Dec 2021 23:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCD7C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Dec 2021 01:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbhLLX2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Dec 2021 18:28:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32786 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbhLLX2i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Dec 2021 18:28:38 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB62BC06173F
-        for <linux-clk@vger.kernel.org>; Sun, 12 Dec 2021 15:28:37 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id t19so21127742oij.1
-        for <linux-clk@vger.kernel.org>; Sun, 12 Dec 2021 15:28:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=vh/wbUgkfdUKYGNf++vDHtfUUGTEz/aDqpk4svRd0AU=;
-        b=eFCYdoOnvicz305xpH32Kg8EG8w2nlSE/gKoZN+QDT0H8gjFjq9u+UK7t6hsKx9edk
-         vycsb162kCx//Be7+ctj2oHH4iauI1LBvJQhhDPhvIYRy0SN7EsFY7NBZBKVtFGP0FwZ
-         onqFNZlUwxK+y4f2a/dpfmjZJYOUgNVFC4EArWVnCp4TR5jT2yitkffWtafNPDXgSrg+
-         bu1bjOzNBu2mdMSGt+u7HPKjQGtC4PR2livr67HoE3RUrdGTx4GmW1Bk5t4M7f5MQf43
-         FlPvugwqwS0nsPToCBWxkbGHQahSkjIUBxStx3nZtbc/iFKRHG2yve04vvANPQzzG+Qa
-         Vmsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=vh/wbUgkfdUKYGNf++vDHtfUUGTEz/aDqpk4svRd0AU=;
-        b=VMtvO2yljhW1EozhLbYkwjeeXRbWHgVaHsFrhbWdwrcVk5I9ZyvbrDycw5RXsUaWmy
-         6uliXG9HUKWJdyLFXz2frhh4uJ1iaeSe6q3RiesWb3ShVg5e3rKxph/4EVDEhPBkYdBm
-         sAloVmvFcR8/zllVYIM/2p1yofmCpJB2mZtijVj1hIjfJe955fnLV1COyLErUDJGk+K3
-         bniDw9/UKXblCZJ6W21gA4lagrgctWfovZstPVjtE7IpRlG04eogZSAzjdKDV+pSrifx
-         z86dxgG8D1Nut96zVMgIrxe3dleDawZQtD8Vr5Do7ApGd8TlkuLIRsojSC7hZexQzbNU
-         zWeg==
-X-Gm-Message-State: AOAM531Dpde2ghU08hfcYOxiFQw2U5HDADHDo2p1hBKIm6je+eyZ+BkU
-        uXNZNuhA90oOug/RbLgdxsTBJ/ubCV6l1w==
-X-Google-Smtp-Source: ABdhPJynYL4sOmYh81k1oyCXWiDgoSrW3Neq8jhKGC61PeMkyTcbrmEIWYxN8k2HFvsYnGzbWYIlbg==
-X-Received: by 2002:aca:eb53:: with SMTP id j80mr23670708oih.85.1639351717273;
-        Sun, 12 Dec 2021 15:28:37 -0800 (PST)
-Received: from [192.168.11.48] (cpe-173-173-107-246.satx.res.rr.com. [173.173.107.246])
-        by smtp.gmail.com with ESMTPSA id c8sm1933033otk.40.2021.12.12.15.28.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Dec 2021 15:28:36 -0800 (PST)
-Message-ID: <89dfda08-a7cf-0acb-4b3d-6c57577a548e@kali.org>
-Date:   Sun, 12 Dec 2021 17:28:30 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.4.0
-Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        id S231197AbhLMBtn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Dec 2021 20:49:43 -0500
+Received: from mail-psaapc01on2138.outbound.protection.outlook.com ([40.107.255.138]:15328
+        "EHLO APC01-PSA-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231196AbhLMBtn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 12 Dec 2021 20:49:43 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C9PRS79GiNwKe2wIybMQWRQ+EjoWjSUYxbpmxMayoUnbNFRKv2jA+LoSW2w9P6Z9Oiczh3mpdmz5kUiiHTxwCrhQ0+Rbyh5pb8/kgK96pSV2uNkBGWI7F3NtT2+ffVFNLq3XFcTEU6sI+3ZuI9W7nhep+L3tcXcJgWwxWwpRS/Fu45yfSZnrnhQnP43mBpZqbJJValLl6Nap1SNVsCy0PouLK6vI2PPAOS92qscZRe+cuGCk4CdBvM8jbr7mxKKMxtDyN2+UweDOgw9swTjfrLc3vL/+TOcNEqLtRP7A9RY2CoCob56gHF8GlC1amTMR2ZjU+N+krVGsZz0/fnLrmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BQf2BnrfAoJPcww/lYHVV3QmyRKhVW3nmSq4F69areg=;
+ b=c327++G7Cr6JE1ayAkNUb+OhKrmE73dezemeYIJdKM7egiFcU08HaG5wOp+KNETdgcoNh3IUFSy4aVa9S46qian49KdW/8ASZx0K8TDq8AFDzNvXGOAdYGaPsvedo7VR4UsC80zC3dTNXH/NCSFtdt3l8z5paV9reO0/dLLbGUO4TWvSNSXmo9svzjdZGVhxUnxMBzsz2V8uUNeUzeAk/s6z8i6eN/3H1relu0frXD5iDLLi3QuNKALRWl1y4VCx0V5ZJDQAQaLSKDNNbi530cLbs92JWmVMEO/zCE2aRqIC7r2xCobljlXDs4s8jd56sDJb4RT4m4ADFbVt8Va53w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BQf2BnrfAoJPcww/lYHVV3QmyRKhVW3nmSq4F69areg=;
+ b=1z6jvMANx9R4rRJicpmGLL/DUIrGE1EUcjxTaHnCeaSugVeaxM/zKYIEfIwcSQuH1EYO2x0wbY+MZ+Gn6X4mBr1l2Q7Lvq16L3t14z2+KHhDVkEeJsxhhVkFvnrKfj9N+MRgyj/6JBU3rTj0ej0E5/KtJ8qT+r9lT3O+n6ZwQAXfnSqlb0UmvSjymLeFIka3kDVTlAChGy8WvVE7RfdqnvKy9DyZgPWxCzAr23FxZ3ymQA0mf4HrUHQOqSg+9loYek7lVPtC1IKHzDs4gPQFEi8m1UQKCGPymRW/IUNDBW/0moMw5zkl/quNRBDpLaCrgCRnrc47Q7R9kMUUaHMr2A==
+Received: from HK0PR06MB3362.apcprd06.prod.outlook.com (2603:1096:203:8b::10)
+ by HK0PR06MB2548.apcprd06.prod.outlook.com (2603:1096:203:6f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.16; Mon, 13 Dec
+ 2021 01:49:38 +0000
+Received: from HK0PR06MB3362.apcprd06.prod.outlook.com
+ ([fe80::7941:2fad:3c82:52eb]) by HK0PR06MB3362.apcprd06.prod.outlook.com
+ ([fe80::7941:2fad:3c82:52eb%3]) with mapi id 15.20.4778.017; Mon, 13 Dec 2021
+ 01:49:38 +0000
+From:   Billy Tsai <billy_tsai@aspeedtech.com>
+To:     Ryan Chen <ryan_chen@aspeedtech.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
-From:   Steev Klimaszewski <steev@kali.org>
-In-Reply-To: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk:aspeed:Fix reset driver probe from builtin_platform
+ to core_initcal
+Thread-Topic: [PATCH] clk:aspeed:Fix reset driver probe from builtin_platform
+ to core_initcal
+Thread-Index: AQHX78OvvR0AkHOyAUiNxiUKBKrwgg==
+Date:   Mon, 13 Dec 2021 01:49:38 +0000
+Message-ID: <E9DFB26F-F183-47D9-BE4E-6F739337F8CA@aspeedtech.com>
+References: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
+In-Reply-To: <20211005064513.27655-1-ryan_chen@aspeedtech.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cecf4d80-43e8-4194-337f-08d9bddad2a7
+x-ms-traffictypediagnostic: HK0PR06MB2548:EE_
+x-microsoft-antispam-prvs: <HK0PR06MB2548979C8C13580157BAECBE8B749@HK0PR06MB2548.apcprd06.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dZIUKM/disJSALo+9cqhsuvMrqv9IFCUEiZHK2xdCgCW8cfS0XwmkkX3F8BUGnnyn9pUn7SaoX3Lz1NE+aakl8/cQaukUaLQw1ZswMU/luCAzlieO7FBB1BMa3jBKL/BVV1p+1tHYLI96WsDsJbDG5UCSadmkUbZshq4Pv7/7liAwQWjqigCp1c1j5/Q1LamlbW4wPlvC/Za90M90G5oAp0bQr/sT+lQv08uSR2/Du19zChoApfXZe2/1Rx2LXltlflQP1+Fa5o1CCuD1/H8+3bTQJwT8Xfm+yhriWLwABSIJqx010f7D1zMTXpFgicBvDtAtoYke/wuRcS2Yurb8e/xeNa7e5VAGK61vh4sVjHlYANYCO1uRrIPaPwT2xH3bV6soMrvvdosYQXnsngvaphVTTG/4NXuFG4BP9Vl6APt7zGz0HZs2PxNrqzRlKkCbJ1v3PqB+HxzGNXbSbH2kIYv3UBXLGF2dLp/ztW90Yrez9UaXgTgHHbifZggVy0mwhCrvfhRdB/xlZdBdWoFjkS7EHJXUMJP7A0kCNOQnkUHROmoTdpd23gV2e0W5AMtf8kIhLyRcR2rPNAlKvFfjYx0gcXOrRwDOBi5rP9MjkUk3HJk/V9vueqsdMW0jmV8jByUw9vETBpCOK92E10PuVwxvFOuKEKXjIFSTO+P36M/lSpdHaaUr2/fXpH1XzuAx+vCTeGamCdD5I5CtAuMFUDwcwrOxQPcn9rVkBdQ2cFrPpQdZhTx4O47B5vfYIV+
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:HK0PR06MB3362.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(66476007)(86362001)(36756003)(316002)(110136005)(5660300002)(66446008)(83380400001)(186003)(26005)(508600001)(8676002)(6506007)(2906002)(8936002)(64756008)(66946007)(76116006)(33656002)(2616005)(53546011)(66556008)(38070700005)(38100700002)(6512007)(6486002)(71200400001)(122000001)(4744005)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WU0va0MrN1JuR0k5TXdMUWcyamI1ZFcvVlZOV0ViUWR6WVVaRC9PanZTeFZZ?=
+ =?utf-8?B?bGZWdllMSW1Ea0lqN01Qa0ZXUDFxMFBsWisvZnNlekdpZk12ZUVGRUg3NXNE?=
+ =?utf-8?B?NzZ1aGhiNU9SY0w1S0tPdDgvWERUWWk5WitnRCtEcm5qM3NkUVRTbzlrNHl2?=
+ =?utf-8?B?elc0NUczQlRpTElqSXNoSUVUMmcxUzExTU8vWTEvMEdLLy94d3hZTTZzM1F6?=
+ =?utf-8?B?YzM2YkZZWi9LWklQdmFOdnhFSWo4eGRTRkZrRVF1bFZ0S05leW9LT3ByTXJr?=
+ =?utf-8?B?dS94VHU1UXlxOFFkV1hSQnhRZG9hNHVPbjVEK0V6dDVwaUhJWTJNR0s2REtu?=
+ =?utf-8?B?L2xOWC9MWDNPMU1lUXQ0NUlBL3RQNnBycjl4aTVTWXlxL2xRSy9GOWJQUmJ4?=
+ =?utf-8?B?eldPcGRJb3ZvK3hOclNPWGxnN1ZmdUZjanJMMnN0Y0l1dVhNR1pwbmNSR2l4?=
+ =?utf-8?B?VjhtNThZUXRDMEZEVzhpcTdMN3pjSmVxNVFmaENRdlZwRXBjY3pzdll3SWQy?=
+ =?utf-8?B?cTIwWUpMZllXdFh4Z0lVOGg0WDJMMEs3dHhvNjNkbURMVFc4cUN0WEtzaFQ3?=
+ =?utf-8?B?and5SHpqNG80UlFxOVVGSEpyejJCYnVhVUt0U3RoQjJMQjZHVnZ1TFhDczZp?=
+ =?utf-8?B?S0N2NlR4RzlaZS8rb2s0RzJpaG9tSHAzdWRtUGFtRXpSNERRS2k5SmdaUkw3?=
+ =?utf-8?B?Mk4xc2FodzBsWGM1WWFlZUlQVlBoc3hlTkM3d3hQbmRBU3NOSjVWNFhPVWdL?=
+ =?utf-8?B?elJNS0trUHkrcnN4cGo3QjdzbjZ5Uld1VFRybkZqSE1rVXRWeERmYWxRR2hq?=
+ =?utf-8?B?LzJvdFByUlJqNUczSnA2a3ZPeWxjdlZ0RFZ3UVNnSzVlS2cxb2tmTjFYbzF6?=
+ =?utf-8?B?R2tFcFpsWnpZOGV2TEZMQ2xKU0Q4d2pqTHpGSGZXc0dNYkxoWVQ1NitYWDNt?=
+ =?utf-8?B?ZWdhME9ud3doeWJxZ2d5QzNtT0RFYXUxR3NRam9DcXlIem5YZ29SbGlkU0xv?=
+ =?utf-8?B?N3F5dnJPV3NSWjRMRTR2WVNJcmRjM0V2VWFsbktSS0luc0k4Uk5DekN3Mk1M?=
+ =?utf-8?B?bHBNNjVZNlVCa1AzRlRaU1pTenUwTmpqYU5rcndBSk1EcjBpNHA3a1pJUWNv?=
+ =?utf-8?B?QkJsVjIwRlBWZk5VZEhmS21mRFBEL3pBR1FlUnJXdWdlc1k0blBOUVg1dFhC?=
+ =?utf-8?B?UEIrYkpmSzlSZ2JseW1uMGJieDZTSlowUExGeTZ5UVJMZEsyeHNUaGpabXo1?=
+ =?utf-8?B?Tk41UUNhZkRDSmFSbjlCNnRGSW4rSjhmeS82MVBON0tmQTRkcWhGbUswdEhG?=
+ =?utf-8?B?MXlNT005Ym9GQWVDbGtXU25JdndFdHlyWWxEUzlIR0NlNjRyekw2MXVqRHVR?=
+ =?utf-8?B?Wk9CSVZsaGJERDlDcEZBemxvU3g5NTVlRDNuMlFIaDE0WU1hcCtkT3Z6NGlm?=
+ =?utf-8?B?Z2ZpTjIyRm8xNTdDODczbWRZR2ZUYUF4VnBFNUhON0NEcXlSLzFzNGw5aXZC?=
+ =?utf-8?B?dmZtbzFwL282UUh1UEtEYkFNeDN2ODVRdkN0VUFDSzBhUXhrczgxUlFqaGJT?=
+ =?utf-8?B?Rnd3UEZWaFZIQlBOaGxoejJmR3hvRUJ3bTVPWlArQlErOUxlYys5K2IxMmVa?=
+ =?utf-8?B?MmdmRlZqOVhtb29SLzdicDJ3OGIrSDI3NSswQkRmK3Fia1lsR3c5a0ZsMXVn?=
+ =?utf-8?B?a1N5aWZQeElJOGVGV3Jvc2pWTmpJRXpzakN5RlYyWmN6NW1BOEQ0MXpPMDFL?=
+ =?utf-8?B?OEpmcCtONEdqNVJ5M25Ld25zaVM5aVRPTmVwejdYc2FiNnFwcTNZZEpLVWtz?=
+ =?utf-8?B?L0hNb09PMW45bUNIYVJTSTcvSzBhdVdyaVFrZHVxVk41NkNTUUtjZVhQblhn?=
+ =?utf-8?B?WGFOZzFWWnZwdkRLUnlhcHh5SkdOcTNweVAybC9xR09oOHV6L0pUb1E4Mkhw?=
+ =?utf-8?B?TFptTDlnNmpva1NDVjRSWFFVdnFLOUovZEdSbXhDN0FjTno0ZVV5OGtHb21T?=
+ =?utf-8?B?bzNDS08xVG0xLzQxbysxU2dkTjJVdHpVOXBGcnk0ME8zNjdOMldVb1ZLbCtE?=
+ =?utf-8?B?NWxyUGpZN2tuSjhPT3AxWXdYQlNHZ3hYNG0yK09pSmZpTGQ3UVFLRU9keFFo?=
+ =?utf-8?B?Qm9FRXlRTTZualFmZXRXZHZldS9QRUVmclBNT3pkci9rVlpDZ08weUpkcmJQ?=
+ =?utf-8?B?alNpS0pIbmVTemIvemNNSXdRUTk1Z1pNTVNOcjVBOUoxQURXa2grcTdGRXY0?=
+ =?utf-8?Q?tOrmUdrkgaOpydWIZlos5kspJ+B5f5pPbRswINJNQw=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4BE20F05F1B92042A2468AF0A9590980@apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: HK0PR06MB3362.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cecf4d80-43e8-4194-337f-08d9bddad2a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2021 01:49:38.2540
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kXtMSysjYUU1wDS3eGM2NqqjwwN+Sr+2DaOggWT5pNmdp2vjm+ttgiYZByESUGUpc+WdQ/5aE03UifvI2aRVlDaK03ayGUGnb860VGUN/VE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK0PR06MB2548
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 12/2/21 9:56 PM, Bjorn Andersson wrote:
-> As GDSCs are turned on and off some associated clocks are momentarily
-> enabled for house keeping purposes. Failure to enable these clocks seems
-> to have been silently ignored in the past, but starting in SM8350 this
-> failure will prevent the GDSC to turn on.
->
-> At least on SM8350 this operation will enable the RCG per the
-> configuration in CFG_REG. This means that the current model where the
-> current configuration is written back to CF_REG immediately after
-> parking the RCG doesn't work.
->
-> Instead, keep track of the currently requested rate of the clock and
-> upon enabling the clock reapply the configuration per the saved rate.
->
-> Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->   drivers/clk/qcom/clk-rcg.h  |  2 ++
->   drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
->   2 files changed, 19 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> index 99efcc7f8d88..6939f4e62768 100644
-> --- a/drivers/clk/qcom/clk-rcg.h
-> +++ b/drivers/clk/qcom/clk-rcg.h
-> @@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
->    * @freq_tbl: frequency table
->    * @clkr: regmap clock handle
->    * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-> + * @current_rate: cached rate for parked RCGs
->    */
->   struct clk_rcg2 {
->   	u32			cmd_rcgr;
-> @@ -149,6 +150,7 @@ struct clk_rcg2 {
->   	const struct freq_tbl	*freq_tbl;
->   	struct clk_regmap	clkr;
->   	u8			cfg_off;
-> +	unsigned long		current_rate;
->   };
->   
->   #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index e1b1b426fae4..b574b38dcbd5 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->   	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
-> +	unsigned long rate;
->   
->   	regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
->   
-> @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
->   	hid_div = cfg >> CFG_SRC_DIV_SHIFT;
->   	hid_div &= mask;
->   
-> -	return calc_rate(parent_rate, m, n, mode, hid_div);
-> +	rate = calc_rate(parent_rate, m, n, mode, hid_div);
-> +	if (!rcg->current_rate)
-> +		rcg->current_rate = rate;
-> +
-> +	return rate;
->   }
->   
->   static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
-> @@ -968,12 +973,14 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
->   	if (!f)
->   		return -EINVAL;
->   
-> +	rcg->current_rate = rate;
-> +
->   	/*
-> -	 * In case clock is disabled, update the CFG, M, N and D registers
-> -	 * and don't hit the update bit of CMD register.
-> +	 * In the case that the shared RCG is parked, current_rate will be
-> +	 * applied as the clock is unparked again, so just return here.
->   	 */
->   	if (!__clk_is_enabled(hw->clk))
-> -		return __clk_rcg2_configure(rcg, f);
-> +		return 0;
->   
->   	return clk_rcg2_shared_force_enable_clear(hw, f);
->   }
-> @@ -987,8 +994,13 @@ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
->   static int clk_rcg2_shared_enable(struct clk_hw *hw)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const struct freq_tbl *f = NULL;
->   	int ret;
->   
-> +	f = qcom_find_freq(rcg->freq_tbl, rcg->current_rate);
-> +	if (!f)
-> +		return -EINVAL;
-> +
->   	/*
->   	 * Set the update bit because required configuration has already
->   	 * been written in clk_rcg2_shared_set_rate()
-> @@ -997,7 +1009,7 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
->   	if (ret)
->   		return ret;
->   
-> -	ret = update_config(rcg);
-> +	ret = clk_rcg2_configure(rcg, f);
->   	if (ret)
->   		return ret;
->   
-> @@ -1007,13 +1019,6 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
->   static void clk_rcg2_shared_disable(struct clk_hw *hw)
->   {
->   	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> -	u32 cfg;
-> -
-> -	/*
-> -	 * Store current configuration as switching to safe source would clear
-> -	 * the SRC and DIV of CFG register
-> -	 */
-> -	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
->   
->   	/*
->   	 * Park the RCG at a safe configuration - sourced off of safe source.
-> @@ -1031,9 +1036,6 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
->   	update_config(rcg);
->   
->   	clk_rcg2_clear_force_enable(hw);
-> -
-> -	/* Write back the stored configuration corresponding to current rate */
-> -	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
->   }
->   
->   const struct clk_ops clk_rcg2_shared_ops = {
-
-Revisiting this...
-
-With Dmitry's patches applied ( 
-https://lore.kernel.org/linux-arm-msm/20211208022210.1300773-1-dmitry.baryshkov@linaro.org/ 
-) as well as these, and clk_ignore_unused, I get both
-
-[ 4.767487] ------------[ cut here ]------------ [ 4.767495] 
-disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
-
-and
-
-
-[ 6.449518] ------------[ cut here ]------------ [ 6.449525] 
-video_cc_venus_clk_src: rcg didn't update its configuration.
-
-This includes after modifying Dmitry's patches to park the above 2 clocks.
-
-Removing "clk_ignore_unused" from the kernel command line, while keeping 
-Dmitry's patchset as well as this patch,
-
-results in the disp_cc_mdss_pclk0_clk_src going away, but the 
-video_cc_venus_clk_src still shows up.
-
-Applying Dmitry's patches, removing this one, and removing 
-"clk_ignore_unused" from command line arguments ends up
-
-with none of these rcg didn't update its configuration messages. As can 
-be seen in http://paste.debian.net/1222931
-
--- steev
-
+T24gMjAyMS8xMC81LCAyOjQ1IFBNLCAiUnlhbiBDaGVuIiA8cnlhbl9jaGVuQGFzcGVlZHRlY2gu
+Y29tPiB3cm90ZToNCg0KICAgID4gICBDaGFuZ2UgdGhlIHJlc2V0IHByb2JlIHNlcXVlbmNlIGZy
+b20gYnVpbHRpbl9wbGF0Zm9ybSB0byBjb3JlX2luaXRjYWwuDQogICAgPiAgIEZvciBhdm9pZCBz
+b21lIGRyaXZlciBpcyBwcm9iZSBidXQgZmFpbGVkIGR1ZSB0byByZXNldCBkcml2ZXIgbm90IHBy
+b2JlLg0KDQogICAgPiAgIEZpeGVzOiBkM2QwNGY2YzMzMGEgKCJjbGs6IEFkZCBzdXBwb3J0IGZv
+ciBBU1QyNjAwIFNvQyIpDQogICAgPiAgIFNpZ25lZC1vZmYtYnk6IFJ5YW4gQ2hlbiA8cnlhbl9j
+aGVuQGFzcGVlZHRlY2guY29tPg0KDQpSZXZpZXdlZC1ieTogQmlsbHkgVHNhaSA8YmlsbHlfdHNh
+aUBhc3BlZWR0ZWNoLmNvbT4NCg0KICAgID4gICAtLS0NCiAgICA+ICAgIGRyaXZlcnMvY2xrL2Ns
+ay1hc3QyNjAwLmMgfCA4ICsrKysrKystDQogICAgPiAgICAxIGZpbGUgY2hhbmdlZCwgNyBpbnNl
+cnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQogICAgIA0KICAgID4gICBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9jbGsvY2xrLWFzdDI2MDAuYyBiL2RyaXZlcnMvY2xrL2Nsay1hc3QyNjAwLmMNCiAgICA+
+ICAgaW5kZXggMDg1ZDBhMThiMmI2Li42MjkzZDhkMWE2YTggMTAwNjQ0DQogICAgPiAgIC0tLSBh
+L2RyaXZlcnMvY2xrL2Nsay1hc3QyNjAwLmMNCiAgICA+ICAgKysrIGIvZHJpdmVycy9jbGsvY2xr
+LWFzdDI2MDAuYw0KICAgID4gICBAQCAtNjg2LDcgKzY4NiwxMyBAQCBzdGF0aWMgc3RydWN0IHBs
+YXRmb3JtX2RyaXZlciBhc3BlZWRfZzZfY2xrX2RyaXZlciA9IHsNCiAgICA+ICAgIAkJLnN1cHBy
+ZXNzX2JpbmRfYXR0cnMgPSB0cnVlLA0KICAgID4gICAgCX0sDQogICAgPiAgICB9Ow0KICAgID4g
+ICAtYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIoYXNwZWVkX2c2X2Nsa19kcml2ZXIpOw0KICAgID4g
+ICArDQogICAgPiAgICtzdGF0aWMgaW50IF9faW5pdCBhc3BlZWRfZzZfY2xrX2luaXQodm9pZCkN
+CiAgICA+ICAgK3sNCiAgICA+ICAgKwlyZXR1cm4gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZh
+c3BlZWRfZzZfY2xrX2RyaXZlcik7DQogICAgPiAgICt9DQogICAgPiAgICsNCiAgICA+ICAgK2Nv
+cmVfaW5pdGNhbGwoYXNwZWVkX2c2X2Nsa19pbml0KTsNCiAgICAgIA0KICAgID4gICAgc3RhdGlj
+IGNvbnN0IHUzMiBhc3QyNjAwX2EwX2F4aV9haGJfZGl2X3RhYmxlW10gPSB7DQogICAgPiAgICAJ
+MiwgMiwgMywgNSwNCiAgICA+ICAgLS0gDQogICAgPiAgIDIuMTcuMQ0KDQoNCg0K
