@@ -2,29 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589DEC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 12:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE95C4167B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 12:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbhLNMS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231894AbhLNMTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 07:19:00 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:48164 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230114AbhLNMS6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 14 Dec 2021 07:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231876AbhLNMS5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 07:18:57 -0500
-Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 53770C061748;
-        Tue, 14 Dec 2021 04:18:57 -0800 (PST)
+X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Dec 2021 07:18:57 EST
 Received: from hq-00021.fritz.box (p57bc964a.dip0.t-ipconnect.de [87.188.150.74])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id DE9B14ECA21;
-        Tue, 14 Dec 2021 12:09:37 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 45BA34ECA26;
+        Tue, 14 Dec 2021 12:09:39 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
         Daniel Mack <daniel@zonque.org>
-Subject: [PATCH RESEND v4 5/9] clk: cs2000-cp: Make aux output function controllable
-Date:   Tue, 14 Dec 2021 13:09:25 +0100
-Message-Id: <20211214120929.2829705-6-daniel@zonque.org>
+Subject: [PATCH RESEND v4 8/9] clk: cs2000-cp: freeze config during register fiddling
+Date:   Tue, 14 Dec 2021 13:09:28 +0100
+Message-Id: <20211214120929.2829705-9-daniel@zonque.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211214120929.2829705-1-daniel@zonque.org>
 References: <20211214120929.2829705-1-daniel@zonque.org>
@@ -34,9 +32,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The aux output pin can be configured to output either of the two clock
-inputs, the generated clock or the pll lock status. Allow access to
-this feature through a new optional device-tree property.
+Make sure to freeze the configuration of the chip during the programming
+of 32-bit registers. This avoids the processing of invalid intermediate
+states.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
@@ -44,38 +42,39 @@ Signed-off-by: Daniel Mack <daniel@zonque.org>
  1 file changed, 9 insertions(+)
 
 diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 92bc4aca0f95..db7290621cef 100644
+index 9f99e39b41f2..1baf0595ba59 100644
 --- a/drivers/clk/clk-cs2000-cp.c
 +++ b/drivers/clk/clk-cs2000-cp.c
-@@ -39,6 +39,8 @@
- /* DEVICE_CFG1 */
- #define RSEL(x)		(((x) & 0x3) << 3)
- #define RSEL_MASK	RSEL(0x3)
-+#define AUXOUTSRC(x)	(((x) & 0x3) << 1)
-+#define AUXOUTSRC_MASK	AUXOUTSRC(0x3)
- #define ENDEV1		(0x1)
+@@ -52,6 +52,7 @@
+ #define FRACNSRC_DYNAMIC	(1 << 0)
  
- /* DEVICE_CFG2 */
-@@ -421,12 +423,19 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
- 	struct clk_init_data init;
- 	const char *name = np->name;
- 	static const char *parent_names[CLK_MAX];
-+	u32 aux_out = 0;
- 	int ch = 0; /* it uses ch0 only at this point */
- 	int rate;
+ /* GLOBAL_CFG */
++#define FREEZE		(1 << 7)
+ #define ENDEV2		(0x1)
+ 
+ /* FUNC_CFG1 */
+@@ -335,6 +336,10 @@ static int __cs2000_set_rate(struct cs2000_priv *priv, int ch,
+ {
  	int ret;
  
- 	of_property_read_string(np, "clock-output-names", &name);
- 
-+	of_property_read_u32(np, "cirrus,aux-output-source", &aux_out);
-+	ret = cs2000_bset(priv, DEVICE_CFG1,
-+			  AUXOUTSRC_MASK, AUXOUTSRC(aux_out));
++	ret = cs2000_bset(priv, GLOBAL_CFG, FREEZE, FREEZE);
 +	if (ret < 0)
 +		return ret;
 +
- 	/*
- 	 * set default rate as 1/1.
- 	 * otherwise .set_rate which setup ratio
+ 	ret = cs2000_select_ratio_mode(priv, rate, parent_rate);
+ 	if (ret < 0)
+ 		return ret;
+@@ -347,6 +352,10 @@ static int __cs2000_set_rate(struct cs2000_priv *priv, int ch,
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = cs2000_bset(priv, GLOBAL_CFG, FREEZE, 0);
++	if (ret < 0)
++		return ret;
++
+ 	priv->saved_rate	= rate;
+ 	priv->saved_parent_rate	= parent_rate;
+ 
 -- 
 2.31.1
 
