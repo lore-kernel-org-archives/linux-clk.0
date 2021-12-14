@@ -2,51 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85735C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 08:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA25C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 12:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231894AbhLNIku (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 03:40:50 -0500
-Received: from mail.thebizzie.pl ([192.236.147.111]:41884 "EHLO
-        mail.thebizzie.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229873AbhLNIkt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 03:40:49 -0500
-Received: by mail.thebizzie.pl (Postfix, from userid 1002)
-        id 628321814B4; Tue, 14 Dec 2021 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=thebizzie.pl; s=mail;
-        t=1639470837; bh=kU+//Lu71IqgcFfjayWXuIc0mZtoyrYJc2YuqyU8eS8=;
-        h=Date:From:To:Subject:From;
-        b=FqfkvnY+Z4fpG2NLdhP5a+MhrzJCBidBkzPBcccA4A2jCx0igTSON1FHdYxEkYVkL
-         l8CMF76uuczoDwP+TjPfwIpTIBaGuQDOhPihr8O3GntkciIf1LIw8eF7TR0RL8LKr+
-         mjf8nTwASU3rS1/6mX5zl9qi2Rrp7bUMOYERM4RPFDSspjzdiB5Ah3NsJi/6Tb1i6x
-         HWjuYRcboCj0QdR/uo2B19rXIpU+s4JXVd03IW/BmUBAtzKhOPjWhgu0ShtA0zeRMz
-         kg5YBlGsx1Qqs6D42VqjHnlZQ6AvK0SWdAqZLZKzKID8JOnFHJZF02Zt9TTd7fzMR7
-         tGetfFrIyCyGw==
-Received: by mail.thebizzie.pl for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 08:31:44 GMT
-Message-ID: <20211214074500-0.1.7.21p.0.cffcbhl69e@thebizzie.pl>
-Date:   Tue, 14 Dec 2021 08:31:44 GMT
-From:   "Mateusz Adamczyk" <mateusz.adamczyk@thebizzie.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Wycena paneli fotowoltaicznych
-X-Mailer: mail.thebizzie.pl
+        id S233762AbhLNMCz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 07:02:55 -0500
+Received: from mail-4322.protonmail.ch ([185.70.43.22]:12561 "EHLO
+        mail-4322.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229525AbhLNMCy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 07:02:54 -0500
+Date:   Tue, 14 Dec 2021 12:02:33 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail2; t=1639483372;
+        bh=U5buFUK5Mrq+BJQZ9Bg33X3EObx6Uh4DS3xHR8++K/E=;
+        h=Date:From:Cc:Reply-To:Subject:Message-ID:From:To:Cc;
+        b=ThZn4iRHhepA5UrWd8rE1707sNNHwwvF2HQ07HXFMQqaxDTpJNWvvOFc13lGEEunx
+         weUZL4JEU3pehE+QCZEkoE9Vtg4MTdmJ1UEwY+NK7brLQbuqvcN4lcxSmPgdE4Qpz3
+         yOBUFkQYjiKXBN4y7r8Vjl46g7datbUxC5EaMbcNwwnCaE5vA99JP0z2wRxMFchl5E
+         tCss9diO7cRKKkP3+b5Bztw8TPsnD8ummh9ssom/jGE5GVsv96kMZS7JjXyAghin5n
+         SjMJBxHnjOAnjXhgDJhVzZLW0OGMUVDXoSHvtyNuAsfEKRl278O0J1hC8na8Jtc9TI
+         0jcTnhE5sZeqg==
+From:   =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        kettenis@openbsd.org, marcan@marcan.st, sven@svenpeter.dev,
+        =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Reply-To: =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Subject: [PATCH 0/2] Support for Apple SoCs' NCO blocks
+Message-ID: <20211214120213.15649-1-povik@protonmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hi all,
 
-dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
-irm=C4=85.
+I am submitting a common clock driver for Numerically Controlled Oscillator=
+ (NCO)
+blocks on recent Apple ARM64 SoCs. The NCO driver will be used for audio
+support on these platforms which is work-in-progress.
 
-=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
-ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
+I suppose the only noteworthy thing is the blocks divide an input clock
+with a clock cycle counter in part implemented as a LFSR. For that reason
+the driver upfront calculates a table of LFSR states to be able to program
+the dividers.
 
-Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
-ropozycji?
+Best,
+Martin
+
+Martin Povi=C5=A1er (2):
+  dt-bindings: clock: Add Apple NCO
+  clk: clk-apple-nco: Add driver for Apple NCO
+
+ .../devicetree/bindings/clock/apple,nco.yaml  |  70 ++++
+ drivers/clk/Kconfig                           |   9 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-apple-nco.c                   | 299 ++++++++++++++++++
+ 4 files changed, 379 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.yaml
+ create mode 100644 drivers/clk/clk-apple-nco.c
+
+--
+2.33.0
 
 
-Pozdrawiam,
-Mateusz Adamczyk
