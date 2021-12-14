@@ -2,30 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C659EC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 12:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4E6C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 12:18:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231877AbhLNMS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 07:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58498 "EHLO
+        id S231898AbhLNMS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 07:18:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231531AbhLNMS5 (ORCPT
+        with ESMTP id S231864AbhLNMS5 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 07:18:57 -0500
-X-Greylist: delayed 557 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 14 Dec 2021 04:18:57 PST
 Received: from mail.bugwerft.de (mail.bugwerft.de [IPv6:2a03:6000:1011::59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3B251C061574;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 454A2C06173F;
         Tue, 14 Dec 2021 04:18:57 -0800 (PST)
 Received: from hq-00021.fritz.box (p57bc964a.dip0.t-ipconnect.de [87.188.150.74])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id D687C4ECA1F;
-        Tue, 14 Dec 2021 12:09:36 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 57A604ECA23;
+        Tue, 14 Dec 2021 12:09:38 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     mturquette@baylibre.com, sboyd@kernel.org
 Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
         devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        Daniel Mack <daniel@zonque.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH RESEND v4 3/9] dt-bindings: clock: cs2000-cp: document cirrus,clock-skip flag
-Date:   Tue, 14 Dec 2021 13:09:23 +0100
-Message-Id: <20211214120929.2829705-4-daniel@zonque.org>
+        Daniel Mack <daniel@zonque.org>
+Subject: [PATCH RESEND v4 6/9] clk: cs2000-cp: add support for dynamic mode
+Date:   Tue, 14 Dec 2021 13:09:26 +0100
+Message-Id: <20211214120929.2829705-7-daniel@zonque.org>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20211214120929.2829705-1-daniel@zonque.org>
 References: <20211214120929.2829705-1-daniel@zonque.org>
@@ -35,32 +34,271 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This mode allows the PLL to maintain lock even when CLK_IN has
-missing pulses for up to 20 ms.
+The CS2000 chip features two input clocks, REF_CLK and CLK_IN.
+
+In static mode, the output clock (CLK_OUT) is directly derived from
+REF_CLK, and CLK_IN is ignored. In dynamic mode, CLK_IN is used by the
+digital PLL.
+
+In dynamic mode, a low-frequency ratio configuration that uses a higher
+multiplier factor.
+
+Until now, only the static mode and high-frequency divider rations of
+the hardware was supported by the driver. This patch adds support for
+dynamic mode and both ratios:
+
+ * Parse a new OF property 'cirrus,dynamic-mode' to determine the mode
+ * In dynamic mode, present CLK_IN as parent clock, else use REF_CLK
+ * The low-frequency ratio mode is automatically selected, depending
+   on the mode of operation and the given input and output rates
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/cirrus,cs2000-cp.yaml         | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/clk-cs2000-cp.c | 111 ++++++++++++++++++++++++------------
+ 1 file changed, 74 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-index 79b90500f6ac..9047d8a24a08 100644
---- a/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-+++ b/Documentation/devicetree/bindings/clock/cirrus,cs2000-cp.yaml
-@@ -48,6 +48,12 @@ properties:
-       - 3 # CS2000CP_AUX_OUTPUT_PLL_LOCK: pll lock status
-     default: 0
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index db7290621cef..bd030e156d65 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -49,7 +49,7 @@
+ #define LOCKCLK_MASK	LOCKCLK(0x3)
+ #define FRACNSRC_MASK	(1 << 0)
+ #define FRACNSRC_STATIC		(0 << 0)
+-#define FRACNSRC_DYNAMIC	(1 << 1)
++#define FRACNSRC_DYNAMIC	(1 << 0)
  
-+  cirrus,clock-skip:
-+    description:
-+      This mode allows the PLL to maintain lock even when CLK_IN
-+      has missing pulses for up to 20 ms.
-+    $ref: /schemas/types.yaml#/definitions/flag
+ /* GLOBAL_CFG */
+ #define ENDEV2		(0x1)
+@@ -79,6 +79,9 @@ struct cs2000_priv {
+ 	struct clk *clk_in;
+ 	struct clk *ref_clk;
+ 
++	bool dynamic_mode;
++	bool lf_ratio;
 +
- required:
-   - compatible
-   - reg
+ 	/* suspend/resume */
+ 	unsigned long saved_rate;
+ 	unsigned long saved_parent_rate;
+@@ -134,17 +137,11 @@ static int cs2000_enable_dev_config(struct cs2000_priv *priv, bool enable)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* FIXME: for Static ratio mode */
+-	ret = cs2000_bset(priv, FUNC_CFG2, LFRATIO_MASK,
+-			  LFRATIO_12_20);
+-	if (ret < 0)
+-		return ret;
+-
+ 	return 0;
+ }
+ 
+-static int cs2000_clk_in_bound_rate(struct cs2000_priv *priv,
+-				    u32 rate_in)
++static int cs2000_ref_clk_bound_rate(struct cs2000_priv *priv,
++				     u32 rate_in)
+ {
+ 	u32 val;
+ 
+@@ -191,35 +188,37 @@ static int cs2000_clk_out_enable(struct cs2000_priv *priv, bool enable)
+ 			   (AUXOUTDIS | CLKOUTDIS));
+ }
+ 
+-static u32 cs2000_rate_to_ratio(u32 rate_in, u32 rate_out)
++static u32 cs2000_rate_to_ratio(u32 rate_in, u32 rate_out, bool lf_ratio)
+ {
+ 	u64 ratio;
++	u32 multiplier = lf_ratio ? 12 : 20;
+ 
+ 	/*
+-	 * ratio = rate_out / rate_in * 2^20
++	 * ratio = rate_out / rate_in * 2^multiplier
+ 	 *
+ 	 * To avoid over flow, rate_out is u64.
+ 	 * The result should be u32.
+ 	 */
+-	ratio = (u64)rate_out << 20;
++	ratio = (u64)rate_out << multiplier;
+ 	do_div(ratio, rate_in);
+ 
+ 	return ratio;
+ }
+ 
+-static unsigned long cs2000_ratio_to_rate(u32 ratio, u32 rate_in)
++static unsigned long cs2000_ratio_to_rate(u32 ratio, u32 rate_in, bool lf_ratio)
+ {
+ 	u64 rate_out;
++	u32 multiplier = lf_ratio ? 12 : 20;
+ 
+ 	/*
+-	 * ratio = rate_out / rate_in * 2^20
++	 * ratio = rate_out / rate_in * 2^multiplier
+ 	 *
+ 	 * To avoid over flow, rate_out is u64.
+ 	 * The result should be u32 or unsigned long.
+ 	 */
+ 
+ 	rate_out = (u64)ratio * rate_in;
+-	return rate_out >> 20;
++	return rate_out >> multiplier;
+ }
+ 
+ static int cs2000_ratio_set(struct cs2000_priv *priv,
+@@ -232,7 +231,7 @@ static int cs2000_ratio_set(struct cs2000_priv *priv,
+ 	if (CH_SIZE_ERR(ch))
+ 		return -EINVAL;
+ 
+-	val = cs2000_rate_to_ratio(rate_in, rate_out);
++	val = cs2000_rate_to_ratio(rate_in, rate_out, priv->lf_ratio);
+ 	for (i = 0; i < RATIO_REG_SIZE; i++) {
+ 		ret = cs2000_write(priv,
+ 				   Ratio_Add(ch, i),
+@@ -265,22 +264,20 @@ static u32 cs2000_ratio_get(struct cs2000_priv *priv, int ch)
+ static int cs2000_ratio_select(struct cs2000_priv *priv, int ch)
+ {
+ 	int ret;
++	u8 fracnsrc;
+ 
+ 	if (CH_SIZE_ERR(ch))
+ 		return -EINVAL;
+ 
+-	/*
+-	 * FIXME
+-	 *
+-	 * this driver supports static ratio mode only at this point.
+-	 */
+ 	ret = cs2000_bset(priv, DEVICE_CFG1, RSEL_MASK, RSEL(ch));
+ 	if (ret < 0)
+ 		return ret;
+ 
++	fracnsrc = priv->dynamic_mode ? FRACNSRC_DYNAMIC : FRACNSRC_STATIC;
++
+ 	ret = cs2000_bset(priv, DEVICE_CFG2,
+-			  (AUTORMOD | LOCKCLK_MASK | FRACNSRC_MASK),
+-			  (LOCKCLK(ch) | FRACNSRC_STATIC));
++			  AUTORMOD | LOCKCLK_MASK | FRACNSRC_MASK,
++			  LOCKCLK(ch) | fracnsrc);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -296,17 +293,39 @@ static unsigned long cs2000_recalc_rate(struct clk_hw *hw,
+ 
+ 	ratio = cs2000_ratio_get(priv, ch);
+ 
+-	return cs2000_ratio_to_rate(ratio, parent_rate);
++	return cs2000_ratio_to_rate(ratio, parent_rate, priv->lf_ratio);
+ }
+ 
+ static long cs2000_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
+ {
++	struct cs2000_priv *priv = hw_to_priv(hw);
+ 	u32 ratio;
+ 
+-	ratio = cs2000_rate_to_ratio(*parent_rate, rate);
++	ratio = cs2000_rate_to_ratio(*parent_rate, rate, priv->lf_ratio);
++
++	return cs2000_ratio_to_rate(ratio, *parent_rate, priv->lf_ratio);
++}
++
++static int cs2000_select_ratio_mode(struct cs2000_priv *priv,
++				    unsigned long rate,
++				    unsigned long parent_rate)
++{
++	/*
++	 * From the datasheet:
++	 *
++	 * | It is recommended that the 12.20 High-Resolution format be
++	 * | utilized whenever the desired ratio is less than 4096 since
++	 * | the output frequency accuracy of the PLL is directly proportional
++	 * | to the accuracy of the timing reference clock and the resolution
++	 * | of the R_UD.
++	 *
++	 * This mode is only available in dynamic mode.
++	 */
++	priv->lf_ratio = priv->dynamic_mode && ((rate / parent_rate) > 4096);
+ 
+-	return cs2000_ratio_to_rate(ratio, *parent_rate);
++	return cs2000_bset(priv, FUNC_CFG2, LFRATIO_MASK,
++			   priv->lf_ratio ? LFRATIO_20_12 : LFRATIO_12_20);
+ }
+ 
+ static int __cs2000_set_rate(struct cs2000_priv *priv, int ch,
+@@ -315,7 +334,7 @@ static int __cs2000_set_rate(struct cs2000_priv *priv, int ch,
+ {
+ 	int ret;
+ 
+-	ret = cs2000_clk_in_bound_rate(priv, parent_rate);
++	ret = cs2000_select_ratio_mode(priv, rate, parent_rate);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -382,8 +401,13 @@ static void cs2000_disable(struct clk_hw *hw)
+ 
+ static u8 cs2000_get_parent(struct clk_hw *hw)
+ {
+-	/* always return REF_CLK */
+-	return REF_CLK;
++	struct cs2000_priv *priv = hw_to_priv(hw);
++
++	/*
++	 * In dynamic mode, output rates are derived from CLK_IN.
++	 * In static mode, CLK_IN is ignored, so we return REF_CLK instead.
++	 */
++	return priv->dynamic_mode ? CLK_IN : REF_CLK;
+ }
+ 
+ static const struct clk_ops cs2000_ops = {
+@@ -424,28 +448,41 @@ static int cs2000_clk_register(struct cs2000_priv *priv)
+ 	const char *name = np->name;
+ 	static const char *parent_names[CLK_MAX];
+ 	u32 aux_out = 0;
++	int ref_clk_rate;
+ 	int ch = 0; /* it uses ch0 only at this point */
+-	int rate;
+ 	int ret;
+ 
+ 	of_property_read_string(np, "clock-output-names", &name);
+ 
++	priv->dynamic_mode = of_property_read_bool(np, "cirrus,dynamic-mode");
++	dev_info(dev, "operating in %s mode\n",
++		 priv->dynamic_mode ? "dynamic" : "static");
++
+ 	of_property_read_u32(np, "cirrus,aux-output-source", &aux_out);
+ 	ret = cs2000_bset(priv, DEVICE_CFG1,
+ 			  AUXOUTSRC_MASK, AUXOUTSRC(aux_out));
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/*
+-	 * set default rate as 1/1.
+-	 * otherwise .set_rate which setup ratio
+-	 * is never called if user requests 1/1 rate
+-	 */
+-	rate = clk_get_rate(priv->ref_clk);
+-	ret = __cs2000_set_rate(priv, ch, rate, rate);
++	ref_clk_rate = clk_get_rate(priv->ref_clk);
++	ret = cs2000_ref_clk_bound_rate(priv, ref_clk_rate);
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (priv->dynamic_mode) {
++		/* Default to low-frequency mode to allow for large ratios */
++		priv->lf_ratio = true;
++	} else {
++		/*
++		 * set default rate as 1/1.
++		 * otherwise .set_rate which setup ratio
++		 * is never called if user requests 1/1 rate
++		 */
++		ret = __cs2000_set_rate(priv, ch, ref_clk_rate, ref_clk_rate);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	parent_names[CLK_IN]	= __clk_get_name(priv->clk_in);
+ 	parent_names[REF_CLK]	= __clk_get_name(priv->ref_clk);
+ 
 -- 
 2.31.1
 
