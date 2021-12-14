@@ -2,126 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6DEC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 16:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF78C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 19:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231503AbhLNQU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 11:20:58 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:40872
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230493AbhLNQU5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 11:20:57 -0500
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        id S237523AbhLNTrA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 14:47:00 -0500
+Received: from relay07.th.seeweb.it ([5.144.164.168]:46199 "EHLO
+        relay07.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237527AbhLNTrA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 14:47:00 -0500
+Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 978C53F1B0
-        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639498856;
-        bh=g72ITHpP/7K4Fh+hY6HlPMtuc/bG4lnmI0aLyihu7SE=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=YXj5kSLyl8bOuIy4i6GRBdZ4iTRkw7zIvB8zOiOA42Dpwo7V1m5vo0SRYOlXqktki
-         K5P1HGPDF5RjuRseMq2pzmH43YrFe6J4/rmzo7lel6BFgVhY0mwwFLyosdh03lYN5s
-         8GRn0vSeLiKtR5fgE9KSganjGawDRZVdmWEBDoz4sXSTPSf/QZKS4p3v84zSC4FqsC
-         Kd3PgH4q694b2Xe8N1x4s4tmrZlmiq1Hc3LG5dPYi1KZY8IH1jjBgwCLlFA/3naGsu
-         BcevwvkqQXVC9GBIzB1yDR6ntH20fv9aG299Lu+bVdKk1sQbv053BHi7QTOVVPJhae
-         Ls2c7H2ohb2tw==
-Received: by mail-lf1-f69.google.com with SMTP id h40-20020a0565123ca800b00402514d959fso9024182lfv.7
-        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 08:20:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=g72ITHpP/7K4Fh+hY6HlPMtuc/bG4lnmI0aLyihu7SE=;
-        b=B6X7UpqC/Rx0GrpPKCl+tp7wKif01nhR3x+dT6HTiPEZkLCYcxNmTOCEL/xSn6A5d9
-         ZgTaTtEc6q6k/KmHes0/OLFnuiBf2mTl3Gea5x17ZziFrw4EmMgQwbEOZGcICc61XCoc
-         9SpXF/SDYlpJOM73jM4Y9OK+wpqs2dHrKeigLpafs8Cgr2rvVuwWV4WHQap7TkM4QBe1
-         kQUughHozm4lGtihPYccTRFx3utYTQFhaXsQxKWYhd14YljW+dsTnJFRtcHfDeXkRBoI
-         WaaGBgPLPizhaBkvDCzubePd4C/SR/SWDgfgN1TG1ORojlRF6+YCq0fypiGSAxMtCVLn
-         PiEQ==
-X-Gm-Message-State: AOAM531Dl14zYASd7WI8Wzr3AN7FPUMw5UuTE+WimNYp1Yz7vAzIwHKd
-        ndPmEC/wJLOgUjwFqLPpeGPoR8cDJEM+uSaZxKGPN5p4FKzs9wtf4gIeahYfCvmrnTbP0qEQmJH
-        6wGRFq32PAb7jh2TYTsCNcWwnp49lm8ufMJsEug==
-X-Received: by 2002:a05:6512:3503:: with SMTP id h3mr5805390lfs.235.1639498855841;
-        Tue, 14 Dec 2021 08:20:55 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzGdv+GMQwbnRoitBS7QBe4nCDhfEFoyFZe3SNqC32gORq8viuxl4Tm8fvxQYz8nQWL+HOjVw==
-X-Received: by 2002:a05:6512:3503:: with SMTP id h3mr5805362lfs.235.1639498855592;
-        Tue, 14 Dec 2021 08:20:55 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id bp41sm29251lfb.129.2021.12.14.08.20.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Dec 2021 08:20:55 -0800 (PST)
-Message-ID: <146b173e-f445-bebc-d44c-afd41123eb80@canonical.com>
-Date:   Tue, 14 Dec 2021 17:20:53 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        David Virag <virag.david003@gmail.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id CD3993F3BC;
+        Tue, 14 Dec 2021 20:46:57 +0100 (CET)
+Date:   Tue, 14 Dec 2021 20:46:56 +0100
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark <robdclark@chromium.org>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-References: <20211126203641.24005-1-semen.protsenko@linaro.org>
- <YagPWOj0CLxE/+ER@robh.at.kernel.org>
- <CAPLW+4=LTd8i2Tqr7Wa0NDRTJ5mRJXP=EvRCx84WxnwCDQ1eVg@mail.gmail.com>
- <CAPLW+4nk7Y8Psg9ZVacvzJeAV3VAGWfi+9hTPWgTeAWqh67AKQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAPLW+4nk7Y8Psg9ZVacvzJeAV3VAGWfi+9hTPWgTeAWqh67AKQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v3 0/2] Use "ref" clocks from firmware for DSI PLL VCO
+ parent
+Message-ID: <20211214194656.mayiy4xhcshjluwf@SoMainline.org>
+Mail-Followup-To: Marijn Suijten <marijn.suijten@somainline.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark <robdclark@chromium.org>, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+References: <20210911131922.387964-1-marijn.suijten@somainline.org>
+ <163165584152.763609.4056232270079096475@swboyd.mtv.corp.google.com>
+ <20210918144038.6q352hzqopx7vvdu@SoMainline.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210918144038.6q352hzqopx7vvdu@SoMainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/12/2021 17:15, Sam Protsenko wrote:
-> On Tue, 7 Dec 2021 at 22:54, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->>
->> On Thu, 2 Dec 2021 at 02:12, Rob Herring <robh@kernel.org> wrote:
->>>
->>> On Fri, 26 Nov 2021 22:36:40 +0200, Sam Protsenko wrote:
->>>> System Register is used to configure system behavior, like USI protocol,
->>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->>>> make it possible to modify SYSREG registers.
->>>>
->>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
->>>> and might be needed for corresponding Exynos850 features soon.
->>>>
->>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>>> ---
->>>>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
->>>>  1 file changed, 9 insertions(+), 3 deletions(-)
->>>>
->>>
->>> Acked-by: Rob Herring <robh@kernel.org>
->>
->> Hi Sylwester,
->>
->> Can you please review and apply this series, if it's ok?
->>
-> 
-> Hi Krzysztof,
-> 
-> Do you think it's possible to take this series in your tree? Once it's
-> applied, I can send the board support (dts) series -- this is the only
-> remaining blocker for that right now.
+Hi all,
 
-I would need an Ack from Sylwester anyway. If you have dependencies (the
-DTS), you should send them together with it. Once Sylwester applies this
-patch, the DTS either waits till next release or it has to be modified
-to not depend on this patch.
+On 2021-09-18 16:40:38, Marijn Suijten wrote:
+> On 2021-09-14 14:44:01, Stephen Boyd wrote:
+> > Quoting Marijn Suijten (2021-09-11 06:19:19)
+> > > All DSI PHY/PLL drivers were referencing their VCO parent clock by a
+> > > global name, most of which don't exist or have been renamed.  These
+> > > clock drivers seem to function fine without that except the 14nm driver
+> > > for sdm6xx [1].
+> > > 
+> > > At the same time all DTs provide a "ref" clock as per the requirements
+> > > of dsi-phy-common.yaml, but the clock is never used.  This patchset puts
+> > > that clock to use without relying on a global clock name, so that all
+> > > dependencies are explicitly defined in DT (the firmware) in the end.
+> > 
+> > I can take this through clk tree if it helps avoid conflicts. There are
+> > some other patches to sdm660.c in the clk tree already.
+> 
+> Might be useful to maintain proper ordering of these dependent patches
+> but it's up to Dmitry and Rob to decide, whom I'm sending this mail
+> directly to so that they can chime in.
 
-Best regards,
-Krzysztof
+Dependent patch [3] landed in 5.15 and [2] made it into 5.16 rc's - is
+it time to pick this series up and if so through what tree?
+
+Repeating the links from patch 1/2:
+[2]: https://lore.kernel.org/linux-arm-msm/20210830175739.143401-1-marijn.suijten@somainline.org/
+[3]: https://lore.kernel.org/linux-arm-msm/20210829203027.276143-2-marijn.suijten@somainline.org/
+
+Thanks!
+
+- marijn
