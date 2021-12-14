@@ -2,158 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0833CC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 21:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C33C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 23:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbhLNVck convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 16:32:40 -0500
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:50666 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231331AbhLNVck (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 16:32:40 -0500
-Received: from [77.244.183.192] (port=62494 helo=[192.168.178.41])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1mxFPa-0003ft-3B; Tue, 14 Dec 2021 22:32:38 +0100
-Subject: Re: drivers/pci/controller/dwc/pci-dra7xx.c:864 dra7xx_pcie_probe()
- warn: 'dra7xx->clk' not released on lines: 759.
-To:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@lists.01.org
-Cc:     lkp@intel.com, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <202111301803.NOwoj4Jd-lkp@intel.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <1521f09a-605a-746c-aabd-9cb036578a6f@lucaceresoli.net>
-Date:   Tue, 14 Dec 2021 22:32:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S235225AbhLNXxo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 18:53:44 -0500
+Received: from sin.source.kernel.org ([145.40.73.55]:55790 "EHLO
+        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235218AbhLNXxo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 18:53:44 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9919CCE19FE;
+        Tue, 14 Dec 2021 23:53:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950F4C34606;
+        Tue, 14 Dec 2021 23:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639526020;
+        bh=PvZMo/gj0nYljGM06LBmSCA4QR02E7C/XoKsqA/9ARM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=c2d6BbNmvFdZiDHdABT92aAf6OEkYVx22Co/nuhvM7QnuFMm11OaGheonLr55TAvY
+         DzYV+PZ0/SBiXtO9kB7RfhWmXj+i1UjzT+ARSSW40sUhS4s+h2MEQA9Pk44QGxgNqD
+         WnQQAsOiFqNY9StJLhzGJCA/0g6fiiAQVimc32yxrxv531blbHQBHpNqBZsfmzyrIC
+         wmb5r1r4tDGcN7X0NWHMyZqeKIVDS/tX+/EazGr2i9TWviIW/SVIVSe09wvp2zoohQ
+         7uTffCu1yvqBiJV9WBOpa6wsifX3qNO8ktuNWXCpNZtZgO2hpfqM6NcciMwbbfU+SN
+         Oix1It5XrSa7A==
+Received: by mail-ed1-f44.google.com with SMTP id z5so69277917edd.3;
+        Tue, 14 Dec 2021 15:53:40 -0800 (PST)
+X-Gm-Message-State: AOAM5317tcXpMa6GsOsWMHewcw4XafqKnzt6sIlWIiY8641+FZyqRPMh
+        wy9e0iDqxobHZgO3MyPgT004NTpdYrF1JSxiPw==
+X-Google-Smtp-Source: ABdhPJwZTLqb7EhBpI3gfOOkg0o3mBknMM3223fDkEXOuW0bRcjsRNNG9nIMm+fbqnKdl+8DcTDsDM23zLUH6+1T0Vs=
+X-Received: by 2002:a05:6402:4251:: with SMTP id g17mr11723087edb.89.1639526018906;
+ Tue, 14 Dec 2021 15:53:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <202111301803.NOwoj4Jd-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: it-IT
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20211214120213.15649-1-povik@protonmail.com> <20211214120213.15649-2-povik@protonmail.com>
+ <Ybi61fzpOV7CumtR@robh.at.kernel.org> <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com>
+In-Reply-To: <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 14 Dec 2021 17:53:26 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
+Message-ID: <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Apple NCO
+To:     =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Kettenis <kettenis@openbsd.org>,
+        Hector Martin <marcan@marcan.st>,
+        Sven Peter <sven@svenpeter.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dan, All,
+On Tue, Dec 14, 2021 at 2:08 PM Martin Povi=C5=A1er <povik@protonmail.com> =
+wrote:
+>
+> Hi Rob,
+>
+> > On 14. 12. 2021, at 16:40, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Tue, Dec 14, 2021 at 12:02:48PM +0000, Martin Povi=C5=A1er wrote:
+> >> The NCO block found on Apple SoCs is a programmable clock generator
+> >> performing fractional division of a high frequency input clock.
+> >>
+> >> Signed-off-by: Martin Povi=C5=A1er <povik@protonmail.com>
+> >> ---
+> >> .../devicetree/bindings/clock/apple,nco.yaml  | 70 +++++++++++++++++++
+> >> 1 file changed, 70 insertions(+)
+> >> create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.y=
+aml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/apple,nco.yaml b/=
+Documentation/devicetree/bindings/clock/apple,nco.yaml
+> >> new file mode 100644
+> >> index 000000000000..5029824ab179
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/apple,nco.yaml
+> >> @@ -0,0 +1,70 @@
+>
+> >> +
+> >> +  apple,nchannels:
+> >> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >> +    description:
+> >> +      The number of output channels the NCO block has been
+> >> +      synthesized for.
+> >
+> > I'd assume there is some max number?
+>
+> There might be some limit to the underlying IP but we wouldn=E2=80=99t kn=
+ow.
+> What we know about the hardware comes from blackbox reversing, and that
+> doesn't suggest a particular limit to the number of channels we might
+> see on the SoC block in future.
 
-On 30/11/21 12:04, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   d58071a8a76d779eedab38033ae4c821c30295a5
-> commit: 5af9405397bfb90d6adab61d58f4d94c78166698 PCI: dra7xx: Get an optional clock
-> config: powerpc64-randconfig-m031-20211128 (https://download.01.org/0day-ci/archive/20211130/202111301803.NOwoj4Jd-lkp@intel.com/config)
-> compiler: powerpc64-linux-gcc (GCC) 11.2.0
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> smatch warnings:
-> drivers/pci/controller/dwc/pci-dra7xx.c:864 dra7xx_pcie_probe() warn: 'dra7xx->clk' not released on lines: 759.
-> 
-> vim +864 drivers/pci/controller/dwc/pci-dra7xx.c
-> 
-> e259c2926c016d drivers/pci/controller/dwc/pci-dra7xx.c Tony Lindgren          2021-03-10  684  static int dra7xx_pcie_probe(struct platform_device *pdev)
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  685  {
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  686  	u32 reg;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  687  	int ret;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  688  	int irq;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  689  	int i;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  690  	int phy_count;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  691  	struct phy **phy;
-> 7a4db656a6350f drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-10-09  692  	struct device_link **link;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  693  	void __iomem *base;
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  694  	struct dw_pcie *pci;
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  695  	struct dra7xx_pcie *dra7xx;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  696  	struct device *dev = &pdev->dev;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  697  	struct device_node *np = dev->of_node;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  698  	char name[10];
-> 602d38bc65aa29 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-01-11  699  	struct gpio_desc *reset;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  700  	const struct of_device_id *match;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  701  	const struct dra7xx_pcie_of_data *data;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  702  	enum dw_pcie_device_mode mode;
-> c232c0df9610bf drivers/pci/controller/dwc/pci-dra7xx.c Kishon Vijay Abraham I 2019-01-24  703  	u32 b1co_mode_sel_mask;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  704  
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  705  	match = of_match_device(of_match_ptr(of_dra7xx_pcie_match), dev);
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  706  	if (!match)
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  707  		return -EINVAL;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  708  
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  709  	data = (struct dra7xx_pcie_of_data *)match->data;
-> 608793e27b3313 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-03-27  710  	mode = (enum dw_pcie_device_mode)data->mode;
-> c232c0df9610bf drivers/pci/controller/dwc/pci-dra7xx.c Kishon Vijay Abraham I 2019-01-24  711  	b1co_mode_sel_mask = data->b1co_mode_sel_mask;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  712  
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  713  	dra7xx = devm_kzalloc(dev, sizeof(*dra7xx), GFP_KERNEL);
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  714  	if (!dra7xx)
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  715  		return -ENOMEM;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  716  
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  717  	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  718  	if (!pci)
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  719  		return -ENOMEM;
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  720  
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  721  	pci->dev = dev;
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  722  	pci->ops = &dw_pcie_ops;
-> 442ec4c04d1235 drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-02-15  723  
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  724  	irq = platform_get_irq(pdev, 0);
-> caecb05c800081 drivers/pci/controller/dwc/pci-dra7xx.c Krzysztof Wilczyński   2020-08-02  725  	if (irq < 0)
-> a0d21ba120d2c7 drivers/pci/dwc/pci-dra7xx.c            Gustavo A. R. Silva    2017-08-09  726  		return irq;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  727  
-> c8a119779f5609 drivers/pci/controller/dwc/pci-dra7xx.c Wei Yongjun            2020-04-29  728  	base = devm_platform_ioremap_resource_byname(pdev, "ti_conf");
-> c8a119779f5609 drivers/pci/controller/dwc/pci-dra7xx.c Wei Yongjun            2020-04-29  729  	if (IS_ERR(base))
-> c8a119779f5609 drivers/pci/controller/dwc/pci-dra7xx.c Wei Yongjun            2020-04-29  730  		return PTR_ERR(base);
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  731  
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  732  	phy_count = of_property_count_strings(np, "phy-names");
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  733  	if (phy_count < 0) {
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  734  		dev_err(dev, "unable to find the strings\n");
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  735  		return phy_count;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  736  	}
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  737  
-> a86854d0c599b3 drivers/pci/dwc/pci-dra7xx.c            Kees Cook              2018-06-12  738  	phy = devm_kcalloc(dev, phy_count, sizeof(*phy), GFP_KERNEL);
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  739  	if (!phy)
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  740  		return -ENOMEM;
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  741  
-> a86854d0c599b3 drivers/pci/dwc/pci-dra7xx.c            Kees Cook              2018-06-12  742  	link = devm_kcalloc(dev, phy_count, sizeof(*link), GFP_KERNEL);
-> 7a4db656a6350f drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-10-09  743  	if (!link)
-> 7a4db656a6350f drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-10-09  744  		return -ENOMEM;
-> 7a4db656a6350f drivers/pci/dwc/pci-dra7xx.c            Kishon Vijay Abraham I 2017-10-09  745  
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  746  	dra7xx->clk = devm_clk_get_optional(dev, NULL);
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  747  	if (IS_ERR(dra7xx->clk))
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  748  		return dev_err_probe(dev, PTR_ERR(dra7xx->clk),
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  749  				     "clock request failed");
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  750  
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  751  	ret = clk_prepare_enable(dra7xx->clk);
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  752  	if (ret)
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  753  		return ret;
-> 5af9405397bfb9 drivers/pci/controller/dwc/pci-dra7xx.c Luca Ceresoli          2021-05-31  754  
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  755  	for (i = 0; i < phy_count; i++) {
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  756  		snprintf(name, sizeof(name), "pcie-phy%d", i);
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  757  		phy[i] = devm_phy_get(dev, name);
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  758  		if (IS_ERR(phy[i]))
-> 47ff3de911a728 drivers/pci/host/pci-dra7xx.c           Kishon Vijay Abraham I 2014-07-22  759  			return PTR_ERR(phy[i]);
-> 
-> Smatch wants an clk_unprepare_disable(dra7xx->clk) on failure paths.
+All the more reason to not put the size in the DT, but imply from the
+compatible. Unless it varies by instance...
 
-+linux-clk
+Though I guess you would need DT updates anyways to use the new clock.
 
-Looks like I assumed a devm-managed clock is disabled and unprepared on
-error. But apparently I was wrong and only deallocation happens
-automatically, at least it's what I could get from reading the code.
+> > Do you really need to know this? If this is just to validate the clock
+> > cell values are less than this, then just drop that and the property.
+> > It's not the kernel's job to validate the DT.
+>
+> Well strictly speaking the driver could do clock registration on-demand
+> at the cost of additional book-keeping, in which case we could drop
+> the property, but I would prefer we don=E2=80=99t do that. Rather than pr=
+oviding
+> validation the property simplifies drivers.
+>
+> Another option is calculating the no. of channels from size of the reg
+> range, but I assume that=E2=80=99s worse than having the nchannels proper=
+ty.
+>
+> >> +
+> >> +    nco: clock-generator@23b044000 {
+> >
+> > clock-controller@...
+>
+> Okay, will change.
+>
+> >
+> >> +      compatible =3D "apple,t8103-nco", "apple,nco";
+> >> +      reg =3D <0x3b044000 0x14000>;
+> >
+> > You really have 0x14000 worth of registers here because all of that
+> > will be mapped into virtual memory? Doesn't matter so much on 64-bit,
+> > but it did for 32-bit.
+>
+> There is about 5 registers per channel with 0x4000 stride between them,
+> blame Apple (or Samsung? I don=E2=80=99t know...).
 
-I'm sending a patch to fix this.
+I would think you could walk the 0x4000 until you hit registers that
+behave differently.
 
--- 
-Luca
+The register size / 0x4000 gives you the number of channels, too.
 
+Another question, how do you know this is 1 block with N channels vs.
+N blocks just happening to be next to each other in the memory map?
+
+Rob
