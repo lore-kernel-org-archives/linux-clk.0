@@ -2,167 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6384EC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 17:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB373C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 17:57:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245113AbhLOREw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 12:04:52 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:52566
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245087AbhLOREv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 12:04:51 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6A5A3405F6
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 17:04:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639587889;
-        bh=lND4OoA35DC/nm8kOM3LCMts4j9XNowECufJcxr7lKM=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=gz9O440pHBWszIBRUkGfj+q+X3IgZRQxJSsUBwaiuintYNVAA4EvbgltXaA61Ojh0
-         PbJg3bZXfQYQ0ZoB68sDiReHunMGrX6bGt3yVHZwlVkyD3xI2s1cnAp4tryNOSmYH2
-         9HFH9tWA7UZLALF8zMyWksybb1UCczO4q2DOHggFHF6Luceb/JdIugsWoJUdP4LKF6
-         D16sCQB/kSTCZAI8HuCmZTOxqSoKkM34Pb6i8jZ5Wodilli6Xea2lS/yGxSQq5fznS
-         9ajmgE8MH+/MR3U5SyE8hZOL99F+b+LEbHTGvRg9iHG5A8dZkZa45a8H5mRHyV9p/5
-         0dUU3MK3DIYkA==
-Received: by mail-lj1-f199.google.com with SMTP id a7-20020a05651c210700b00219132ab503so7287074ljq.12
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 09:04:49 -0800 (PST)
+        id S245267AbhLOR5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 12:57:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245258AbhLOR53 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 12:57:29 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A27C06173E
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 09:57:29 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id m12so34530372ljj.6
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 09:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=xqTgrfsM1Vl0EOy6LcbfVMGCUhLcoIpzVU6zweaZnhw=;
+        b=QU3FCUjTver8CpcxKcyd8sacnworCFUizlIDrr1u0CyCKO6Ikf/qlTt/kCpXx8dLq9
+         ocqpWQBVQQG5ZT2wTkrj+bdpeEARv13nNWGg35tCmZz548xUbqP1dekQizZ+benudmHy
+         mmQ7vrmNo7qLGqEJlqUldXNA4+Ru1V+sP87zvv5h7pQxiKLKz+nZRqwlP/XkqFWIgOPi
+         dHV6bQnVJFlGiTgsOhB5KGgOEdAUvTFnV2HoJzE6xVnPzDtTcepyKkKiWhlawEpuqy0I
+         IPYQfLgb1hu8ZtcO20Tnvw8hDCpvriUwEh0K75WPkbSAhTb5cTsbwHmZuE908de3YLc8
+         hMMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=lND4OoA35DC/nm8kOM3LCMts4j9XNowECufJcxr7lKM=;
-        b=S3SJglL2Yc9dzVwccdnQvL8TxegZkbS823UjDQOFjWmxRi2UYfNumNSRcSm9oGEQnq
-         5uHYlp/Rj22Pd0pPNnc/60HboDHHdV5S3ye1etNxYu5tSlUKf14GWynSZHatEv3ey/Sz
-         yPRyOhYhVQKs8PrqaP888T5XcjhD3xBf4HSim9McFZQzdxs1DDpPYvlCeUmTSX/MC5s8
-         tJc7z1U6D6iBDM3QWMg2PIg76frmzKs4MsGamiSqADb/dpgCqyMZQxygLO6nC/tesw1L
-         KbkHdCDF3ns/+tlXfeTF9BLJrmbLy4z/pY4Sm3lSTdiU2xq7R+yvgyWpHdcQE5dhxiTV
-         LO3A==
-X-Gm-Message-State: AOAM533MRWRCnpYqir30nvgqgM5XC60VvQYmvSsrjbUHf7Qk9nBXqszA
-        55eKSK1YPVceC52+JIWpdDu56sjBJA+pEFxX3EESHbbU8RuTLxrzmADKfW4ea63Ed5J8gaL+VPu
-        9W9pToiIGnwU8RqIOwilwFs9Ed8ZV/kkKbDWzqw==
-X-Received: by 2002:ac2:4c0b:: with SMTP id t11mr10861618lfq.520.1639587888813;
-        Wed, 15 Dec 2021 09:04:48 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyDC7Uhq9X079aLTRRyBWwLifon/fdJaMDRQkGk4uaeEYd+dFFSVGtgZL0YygKIzNYGxnNIDg==
-X-Received: by 2002:ac2:4c0b:: with SMTP id t11mr10861579lfq.520.1639587888551;
-        Wed, 15 Dec 2021 09:04:48 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id u23sm407224lfo.35.2021.12.15.09.04.47
+        bh=xqTgrfsM1Vl0EOy6LcbfVMGCUhLcoIpzVU6zweaZnhw=;
+        b=GuRHikqsWHatzyrZF4R0Dcd07fsAc/Ad7nO3+M0Q+I13gvEn1qFtp5+RSKwh3+7Tt1
+         DVL/lFPCPzpILJGmGDMeb2sha8KWyKzrmFluKLT/jJTvOPnoeItfVNCaWbjUt9SLZ793
+         t2EIToelPWLfbQU96irjLex496CeeuoQRvBES3RVBWHgtLXeXMXv/ekWySRicPXLGAZF
+         /9fPDDecU/QF0vSeRHtHWpMksZWbu1zPWq+uTWNuPOPE69Gq3dzwBkJv8uVyRI+303Rl
+         XytVPHssxdK+v6EroGJut04CCdVTje+0kT53MFBdWrEL1ASomj3tWsbqr6Z+T7eU7nKU
+         2CVw==
+X-Gm-Message-State: AOAM533yll0+hRxtOyfK8Rs8dYCLFQvp9V/QEDyT3KG5JRtaJzC/jFIh
+        K53qD6cI6/zJDuNY8A6HGc+eaQ==
+X-Google-Smtp-Source: ABdhPJxJ9W8SuT5c9X1oQeZdRpslbhWzloJcUYAo6odwzLJKoWAbzBrYWKGdYEogfEDxDKKzGtu7lA==
+X-Received: by 2002:a2e:3912:: with SMTP id g18mr11292596lja.96.1639591047539;
+        Wed, 15 Dec 2021 09:57:27 -0800 (PST)
+Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id o10sm572000ljp.49.2021.12.15.09.57.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 09:04:48 -0800 (PST)
-Message-ID: <b998809c-9d33-cd42-ebfd-7cce620a6ed8@canonical.com>
-Date:   Wed, 15 Dec 2021 18:04:46 +0100
+        Wed, 15 Dec 2021 09:57:27 -0800 (PST)
+Message-ID: <44171455-3aa3-cbda-0f0e-0038b95bb240@linaro.org>
+Date:   Wed, 15 Dec 2021 20:57:25 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 7/7] arm64: dts: exynos: Add initial E850-96 board support
-Content-Language: en-US
-To:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+ Thunderbird/91.3.2
+Subject: Re: [PATCH v2 07/15] clk: qcom: camcc-sdm845: get rid of the test
+ clock
+Content-Language: en-GB
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20211215160906.17451-1-semen.protsenko@linaro.org>
- <20211215160906.17451-8-semen.protsenko@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20211215160906.17451-8-semen.protsenko@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20211215005423.2114261-1-dmitry.baryshkov@linaro.org>
+ <20211215005423.2114261-8-dmitry.baryshkov@linaro.org>
+ <20211215092350.hripuu2ud6fs5hhl@SoMainline.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20211215092350.hripuu2ud6fs5hhl@SoMainline.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/12/2021 17:09, Sam Protsenko wrote:
-> E850-96 is a 96boards development board manufactured by WinLink. It
-> incorporates Samsung Exynos850 SoC, and is compatible with 96boards
-> mezzanine boards [1], as it follows 96boards standards.
+On 15/12/2021 12:23, Marijn Suijten wrote:
+> On 2021-12-15 03:54:15, Dmitry Baryshkov wrote:
+>> The test clock isn't in the bindings and apparently it's not used by
+>> anyone upstream.  Remove it.
+>>
+>> Suggested-by: Stephen Boyd <swboyd@chromium.org>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 > 
-> This patch adds minimal support for E850-96 board. Next features are
-> enabled in board dts file and verified with minimal BusyBox rootfs:
+> As with the other SoC patches in this series, you should move:
 > 
->  * User buttons
->  * LEDs
->  * Serial console
->  * Watchdog timers
->  * RTC
->  * eMMC
+>      [PATCH v2 09/15] clk: qcom: camcc-sdm845: use ARRAY_SIZE instead of specifying num_parents
 > 
-> [1] https://www.96boards.org/products/mezzanine/
-> 
-> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile           |   3 +-
->  .../boot/dts/exynos/exynos850-e850-96.dts     | 157 ++++++++++++++++++
->  2 files changed, 159 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index b41e86df0a84..803548ccc537 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos5433-tm2.dtb	\
->  	exynos5433-tm2e.dtb	\
->  	exynos7-espresso.dtb	\
-> -	exynosautov9-sadk.dtb
-> +	exynosautov9-sadk.dtb	\
-> +	exynos850-e850-96.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> new file mode 100644
-> index 000000000000..fd611906d81c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-> @@ -0,0 +1,157 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * WinLink E850-96 board device tree source
-> + *
-> + * Copyright (C) 2018 Samsung Electronics Co., Ltd.
-> + * Copyright (C) 2021 Linaro Ltd.
-> + *
-> + * Device tree source file for WinLink's E850-96 board which is based on
-> + * Samsung Exynos850 SoC.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "exynos850.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +
-> +#define BOARD_ID	0x0
-> +#define BOARD_REV	0x2
-> +
-> +/ {
-> +	model = "WinLink E850-96 board";
-> +	compatible = "winlink,e850-96", "samsung,exynos850";
-> +	board_id = <BOARD_ID>;
-> +	board_rev = <BOARD_REV>;
-> +
-> +	chosen {
-> +		stdout-path = &serial_0;
-> +	};
-> +
+> Before this patch (07/15).  Otherwise num_parents for all the clocks
+> using parent_map/names_0 will have to temporarily be changed from 6 down
+> to 5 to make this bisectable.
 
-You did not define memory node. Do you expect bootloader to fill it?
-Does it change between different boards?
+Oops, missed this.
+
+> 
+> - Marijn
+> 
+>> ---
+>>   drivers/clk/qcom/camcc-sdm845.c | 3 ---
+>>   1 file changed, 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
+>> index 1b2cefef7431..545c288a7f98 100644
+>> --- a/drivers/clk/qcom/camcc-sdm845.c
+>> +++ b/drivers/clk/qcom/camcc-sdm845.c
+>> @@ -23,7 +23,6 @@ enum {
+>>   	P_CAM_CC_PLL1_OUT_EVEN,
+>>   	P_CAM_CC_PLL2_OUT_EVEN,
+>>   	P_CAM_CC_PLL3_OUT_EVEN,
+>> -	P_CORE_BI_PLL_TEST_SE,
+>>   };
+>>   
+>>   static const struct parent_map cam_cc_parent_map_0[] = {
+>> @@ -32,7 +31,6 @@ static const struct parent_map cam_cc_parent_map_0[] = {
+>>   	{ P_CAM_CC_PLL1_OUT_EVEN, 2 },
+>>   	{ P_CAM_CC_PLL3_OUT_EVEN, 5 },
+>>   	{ P_CAM_CC_PLL0_OUT_EVEN, 6 },
+>> -	{ P_CORE_BI_PLL_TEST_SE, 7 },
+>>   };
+>>   
+>>   static const char * const cam_cc_parent_names_0[] = {
+>> @@ -41,7 +39,6 @@ static const char * const cam_cc_parent_names_0[] = {
+>>   	"cam_cc_pll1_out_even",
+>>   	"cam_cc_pll3_out_even",
+>>   	"cam_cc_pll0_out_even",
+>> -	"core_bi_pll_test_se",
+>>   };
+>>   
+>>   static struct clk_alpha_pll cam_cc_pll0 = {
+>> -- 
+>> 2.33.0
+>>
 
 
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
