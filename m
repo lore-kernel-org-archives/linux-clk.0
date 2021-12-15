@@ -2,63 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DE9C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 19:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8AEC43219
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 19:37:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232574AbhLOThe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 14:37:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38596 "EHLO
+        id S232579AbhLOThg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 14:37:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230009AbhLOThb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 14:37:31 -0500
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51796C061574
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 11:37:31 -0800 (PST)
-Received: by mail-lj1-x232.google.com with SMTP id a37so33831077ljq.13
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 11:37:31 -0800 (PST)
+        with ESMTP id S230009AbhLOThf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 14:37:35 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83C3AC061401
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 11:37:34 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id b19so33119306ljr.12
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 11:37:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qa27NrPkC4XYPRJlOgAmiVjkcn5Tn7vogR8Rx7d0464=;
-        b=EAHkCa/+tYW9bLjNsxJKXgUMteeVN0GO0ZqgvbcMe142YH9+DaFEugTlszhCn7WZ1q
-         t+TT13ewl7lszLqGMXBQqrqvq1YGUC/JWfyv6Wx4LP14o0Ztek7okZSWarG7mRpSD517
-         nRA6LlbufsH623Jp15kmSouaWQFUYRZPK22uqir5woyi9v7Es/NnLK4u0FSjFHW/zUaM
-         fDTzyM40/scN6T6tNWmbTOYCv2IVRdNVZsn/hl34uViLwowP1GncV7vczXcBBz/OXaP3
-         HA9HFrqm2B8dZEs8watvKZA/UNZTHO5OKLRaOKjBabFw4A+FLKskf+sVjH+3SRNAAbfu
-         klig==
+        bh=ED+CvZZdmTnzliZC6CUsqBsJW1sq3Ne4IvgOnWZDhLA=;
+        b=ZW8BJ3OxVYAJKE0pwFAlSs/GIyo6ypWidQ+8z24WIJJsAvp2m9GoaKT16P2ab2UR7t
+         nkzKp/q3Rjz60aL9tAq61HCiNNty7WqvZAOTqnaN/sQZCQjE1iIVWHBzIAWDE/X4RAvO
+         Wa333qo1CXEt4zaSB+aELfU0UxfnTVl8NFheRtCi6pGpeKPzZA96OBfKM1lEQXpoOCoB
+         hMpw7zmhE5a+3v04WgGgTOZUwUma+ZT1vmrhkBOXN0Lx0mC1wgntk+H6rogdb86wRVRk
+         1xa1/dxcx9mMaPl1gS8qx1/Q33uYZ0XB60ByLaSYLjm2cPYHmXzxYRWhZNvMmz4gViY+
+         IfNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qa27NrPkC4XYPRJlOgAmiVjkcn5Tn7vogR8Rx7d0464=;
-        b=cVn1sErt59tylb0FuqicFGTBokN9HMnRMM4+6TXYc3dBiSvVWIhG2dMcwwwWzGxHTo
-         +vixN+vLNzpefdtly+gAb4HSCBzhuai4hIpm5acFdjREtx5PGlcsQVcYP958+I/L1b68
-         xbGZIwbFUWeLyhcon8Vx++w9/eD2BkCyc2TPEcU659BETeCpm8UGlWR7EFPOfxKbvswm
-         KEqJ6vdlSJhkNFwTlbq6aa4vwDHDbqA9vXCrAHeDJHrWaxro4TIvpteoCjF7CgpbCYAW
-         5xED2DE6c3tXZzSebn4c1PJWrszo2fRCuXEx9JrbW75sn7jgAmk9tZE17fCR7mPbCnnH
-         BvLA==
-X-Gm-Message-State: AOAM532dwvGhC2PmgAjDi0zPdSd9T5cD/XzDQKGYQmpkdJ6jNTAq9Jqo
-        yH+C9xjkWG+r8ijFILV/4vaH2A==
-X-Google-Smtp-Source: ABdhPJzpbW2NIPCBt/REUPgndBL9V57V2gXUCq6PJy5TIo5L3jNm88enSl5Dikh1PVER9PF35koYNw==
-X-Received: by 2002:a2e:864a:: with SMTP id i10mr11878514ljj.395.1639597049649;
-        Wed, 15 Dec 2021 11:37:29 -0800 (PST)
+        bh=ED+CvZZdmTnzliZC6CUsqBsJW1sq3Ne4IvgOnWZDhLA=;
+        b=5xZ/dd4WyxUnXmIZCSe4zU9Xl8uEX5dPGMLv5UpDTPisgVbVMEiWO7rxefNFkbla5H
+         f6petR2RcGt/S0VhWjy/fJU17fSzfdygR/fYkBK51HFQyTLpd3lJOzxwFUtT8SQImTop
+         6f/rTI0nfKk+YAq67YTKIz3YQ2tfixFLKSsTvz0pTUVMQj6hEF8r6nVG22kU3s5x4rDU
+         uAjA16ioMOCBUWw24HMZlVs/7rYpa1CqNq9cCSQOqMyL+hnKgFQ8fF/Gbv+hFFUjZArz
+         TYPz+7shRNxauMGbd6OO60XZ1Vo6LxHFb7hi2OrrZGFAbSJGzLM5o/QnbGVytRsbG3B5
+         TKxw==
+X-Gm-Message-State: AOAM533KGtZcBkmzV37jQTq4sA45aQnu6bfopkGnzWIW7INtDGFPepIg
+        NFesLjrsPlZlZWQDIo7LNFpBuXDB9YVI8FzL
+X-Google-Smtp-Source: ABdhPJzqVfcFG7u431vmgXnWeciKV9pImYGNaFtv1WvIy6yeHmG0ru15q3J+Zv/Aj60aIyw3Zq8asQ==
+X-Received: by 2002:a2e:b60d:: with SMTP id r13mr11625290ljn.72.1639597052825;
+        Wed, 15 Dec 2021 11:37:32 -0800 (PST)
 Received: from eriador.lan ([2001:470:dd84:abc0::8a5])
-        by smtp.gmail.com with ESMTPSA id a7sm460592lfi.149.2021.12.15.11.37.28
+        by smtp.gmail.com with ESMTPSA id a7sm460592lfi.149.2021.12.15.11.37.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 11:37:29 -0800 (PST)
+        Wed, 15 Dec 2021 11:37:32 -0800 (PST)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v3 14/16] clk: qcom: gcc-msm8996: move clock parent tables down
-Date:   Wed, 15 Dec 2021 22:37:02 +0300
-Message-Id: <20211215193704.2821775-15-dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 16/16] clk: qcom: gcc-msm8996: start getting rid of xo clk
+Date:   Wed, 15 Dec 2021 22:37:04 +0300
+Message-Id: <20211215193704.2821775-17-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211215193704.2821775-1-dmitry.baryshkov@linaro.org>
 References: <20211215193704.2821775-1-dmitry.baryshkov@linaro.org>
@@ -68,218 +66,106 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Move clock parent tables down, after the GPLL declrataions, so that we
-can use gpll hw clock fields in the next commit.
+The "xo" fixed_factor clock is a leftover/hack from a time when we
+couldn't make rpmhcc the root of all clocks. It is going to be removed
+once all users of this clock are converted to use clocks specified
+through the DTS. Replace internal usage of the xo clock with the cxo
+(RPM_SMD_BB_CLK1) parent, specifying xo_board as a fallback.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8996.c | 184 ++++++++++++++++-----------------
- 1 file changed, 92 insertions(+), 92 deletions(-)
+ drivers/clk/qcom/gcc-msm8996.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 4c85b3935a81..8531f2f3665f 100644
+index 204c1f4c68c4..8da5ad2ad563 100644
 --- a/drivers/clk/qcom/gcc-msm8996.c
 +++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -33,98 +33,6 @@ enum {
- 	P_AUD_REF_CLK,
+@@ -54,8 +54,8 @@ static struct clk_alpha_pll gpll0_early = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll0_early",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&xo.hw,
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "cxo", .name = "xo_board",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_ops,
+@@ -131,8 +131,8 @@ static struct clk_alpha_pll gpll4_early = {
+ 		.enable_mask = BIT(4),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll4_early",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&xo.hw,
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "cxo", .name = "xo_board",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_ops,
+@@ -167,7 +167,7 @@ static const struct parent_map gcc_xo_gpll0_map[] = {
  };
  
--static const struct parent_map gcc_sleep_clk_map[] = {
--	{ P_SLEEP_CLK, 5 }
--};
--
--static const char * const gcc_sleep_clk[] = {
--	"sleep_clk"
--};
--
--static const struct parent_map gcc_xo_gpll0_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 }
--};
--
--static const char * const gcc_xo_gpll0[] = {
--	"xo",
--	"gpll0"
--};
--
--static const struct parent_map gcc_xo_sleep_clk_map[] = {
--	{ P_XO, 0 },
--	{ P_SLEEP_CLK, 5 }
--};
--
--static const char * const gcc_xo_sleep_clk[] = {
--	"xo",
--	"sleep_clk"
--};
--
--static const struct parent_map gcc_xo_gpll0_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll0_early_div"
--};
--
--static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL4, 5 }
--};
--
--static const char * const gcc_xo_gpll0_gpll4[] = {
--	"xo",
--	"gpll0",
--	"gpll4"
--};
--
--static const struct parent_map gcc_xo_gpll0_aud_ref_clk_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_AUD_REF_CLK, 2 }
--};
--
--static const char * const gcc_xo_gpll0_aud_ref_clk[] = {
--	"xo",
--	"gpll0",
--	"aud_ref_clk"
--};
--
--static const struct parent_map gcc_xo_gpll0_sleep_clk_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_SLEEP_CLK, 5 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_sleep_clk_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"sleep_clk",
--	"gpll0_early_div"
--};
--
--static const struct parent_map gcc_xo_gpll0_gpll4_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL4, 5 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll4",
--	"gpll0_early_div"
--};
--
- static struct clk_fixed_factor xo = {
- 	.mult = 1,
- 	.div = 1,
-@@ -229,6 +137,98 @@ static struct clk_alpha_pll_postdiv gpll4 = {
- 	},
+ static const struct clk_parent_data gcc_xo_gpll0[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw }
  };
  
-+static const struct parent_map gcc_sleep_clk_map[] = {
-+	{ P_SLEEP_CLK, 5 }
-+};
-+
-+static const char * const gcc_sleep_clk[] = {
-+	"sleep_clk"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 }
-+};
-+
-+static const char * const gcc_xo_gpll0[] = {
-+	"xo",
-+	"gpll0"
-+};
-+
-+static const struct parent_map gcc_xo_sleep_clk_map[] = {
-+	{ P_XO, 0 },
-+	{ P_SLEEP_CLK, 5 }
-+};
-+
-+static const char * const gcc_xo_sleep_clk[] = {
-+	"xo",
-+	"sleep_clk"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_gpll0_early_div_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_GPLL0_EARLY_DIV, 6 }
-+};
-+
-+static const char * const gcc_xo_gpll0_gpll0_early_div[] = {
-+	"xo",
-+	"gpll0",
-+	"gpll0_early_div"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_GPLL4, 5 }
-+};
-+
-+static const char * const gcc_xo_gpll0_gpll4[] = {
-+	"xo",
-+	"gpll0",
-+	"gpll4"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_aud_ref_clk_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_AUD_REF_CLK, 2 }
-+};
-+
-+static const char * const gcc_xo_gpll0_aud_ref_clk[] = {
-+	"xo",
-+	"gpll0",
-+	"aud_ref_clk"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_sleep_clk_gpll0_early_div_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_SLEEP_CLK, 5 },
-+	{ P_GPLL0_EARLY_DIV, 6 }
-+};
-+
-+static const char * const gcc_xo_gpll0_sleep_clk_gpll0_early_div[] = {
-+	"xo",
-+	"gpll0",
-+	"sleep_clk",
-+	"gpll0_early_div"
-+};
-+
-+static const struct parent_map gcc_xo_gpll0_gpll4_gpll0_early_div_map[] = {
-+	{ P_XO, 0 },
-+	{ P_GPLL0, 1 },
-+	{ P_GPLL4, 5 },
-+	{ P_GPLL0_EARLY_DIV, 6 }
-+};
-+
-+static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
-+	"xo",
-+	"gpll0",
-+	"gpll4",
-+	"gpll0_early_div"
-+};
-+
- static const struct freq_tbl ftbl_system_noc_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(50000000, P_GPLL0_EARLY_DIV, 6, 0, 0),
+@@ -177,7 +177,7 @@ static const struct parent_map gcc_xo_sleep_clk_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_sleep_clk[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .fw_name = "sleep_clk", .name = "sleep_clk" }
+ };
+ 
+@@ -188,7 +188,7 @@ static const struct parent_map gcc_xo_gpll0_gpll0_early_div_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_gpll0_gpll0_early_div[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll0_early_div.hw }
+ };
+@@ -200,7 +200,7 @@ static const struct parent_map gcc_xo_gpll0_gpll4_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_gpll0_gpll4[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll4.clkr.hw }
+ };
+@@ -212,7 +212,7 @@ static const struct parent_map gcc_xo_gpll0_aud_ref_clk_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_gpll0_aud_ref_clk[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .fw_name = "aud_ref_clk", .name = "aud_ref_clk" }
+ };
+@@ -225,7 +225,7 @@ static const struct parent_map gcc_xo_gpll0_sleep_clk_gpll0_early_div_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_gpll0_sleep_clk_gpll0_early_div[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
+ 	{ .hw = &gpll0_early_div.hw }
+@@ -239,7 +239,7 @@ static const struct parent_map gcc_xo_gpll0_gpll4_gpll0_early_div_map[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
+-	{ .hw = &xo.hw },
++	{ .fw_name = "cxo", .name = "xo_board" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll4.clkr.hw },
+ 	{ .hw = &gpll0_early_div.hw }
 -- 
 2.33.0
 
