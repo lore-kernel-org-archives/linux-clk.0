@@ -2,98 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B01C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 06:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935CEC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 07:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235815AbhLOGA2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 01:00:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46800 "EHLO
+        id S240617AbhLOHg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 02:36:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235741AbhLOGA1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 01:00:27 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78942C061574;
-        Tue, 14 Dec 2021 22:00:27 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id d21so11740041qkl.3;
-        Tue, 14 Dec 2021 22:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X94i9GwAGQdZXxmrKZXUyd71u3DF8Ifr+h6cNaVJuPo=;
-        b=amICIEk992AO724YjVsKghniSAM7DGR0e965C6lhwNf4ZsXI3LVeMyMxuLJdzOMiDO
-         cDlQ8bMItVKnV8ctON42lsrA5H65Z407eeuUiknUK1YZI6dLnTjGBjMp2uDrp/32xqmw
-         iP1u6H6g/+D5Ya0aByPVaqI6Z4aHKBQea0G6IO8st1ZfkuJ30K931qXd4v50JJPbeeGk
-         sYPgrVdvTyIRfn0PHzUqk74A/FA6LDbGvM6hmrkEHU2h8lc2GcWdsjfMkFoL/iCY/M7Y
-         SnwI9uzkrbxLO65FK29xdwn0GDJN52Cn65Lr4SqWhMo96cVI5V6QFlS7/gUr1gHz/sgv
-         mdRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=X94i9GwAGQdZXxmrKZXUyd71u3DF8Ifr+h6cNaVJuPo=;
-        b=JRUbQzDdhebpujjtY6jL+TBz33LPEW1DqCmJxWvgz1rYCOpYek7YHLzZNDpusmyCuX
-         8u+0rclpO9vJMJPvUforiSYPqAyqj+Th+fh5wSaf49/EzLGv7A4wR3t57mFl8gbs8fBg
-         FQ/5VqF6ZDvn44zWbmMrQtYDmkThh4e3qjXWMDapuWZL72765+WHOSwFMF1+fVnlEhhI
-         Z/Cr8p7KXa+hZAhEmchssCZsRv6nTAXvrhPTsvjO8xT5Gg+O27fD4loV9wuNu0WmaZcp
-         zAgyLv2g5U7nmFF1P/pRWDSoLE7o8/MDzQ6ksn1fEiVjGzHaDejoy5Pv8GnwuCCsv5pM
-         pfdw==
-X-Gm-Message-State: AOAM533mINaowfJUZIciXjqiARO3XWlBe0Ix1Hkax7HndLm2SESw0MKI
-        aT358IknkjCi0YyvWQFBBXc=
-X-Google-Smtp-Source: ABdhPJwjRhUri+keyasONrwHJcx0gAGe8Su0UuJjARiSq5P6lFSKTLV14PmUKftN7k93lis3tYiYyQ==
-X-Received: by 2002:a37:6cf:: with SMTP id 198mr7467379qkg.78.1639548026672;
-        Tue, 14 Dec 2021 22:00:26 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id u10sm820469qtx.3.2021.12.14.22.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Dec 2021 22:00:26 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     pdeschrijver@nvidia.com
-Cc:     pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH clk-next] drivers/clk: remove redundant result variable
-Date:   Wed, 15 Dec 2021 06:00:19 +0000
-Message-Id: <20211215060019.441549-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S232083AbhLOHg2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 02:36:28 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34A7C061574;
+        Tue, 14 Dec 2021 23:36:28 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 340F76182A;
+        Wed, 15 Dec 2021 07:36:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800E9C34600;
+        Wed, 15 Dec 2021 07:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639553787;
+        bh=DJ2GHnN3+A6IaBsHIRn0E837VrFieLJ7mGwRff2GO5U=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=K42zGEXQtbBUT2bBp6+lbHjYkNzFd6JkJbMuJ91E+Nz7cRsIzzkvNgi6kSRaeoVXA
+         kb6lglDpOdMVGikSLoyotjYyH3ieyB3VUCeABR/exa+uMUJ1+8q43SLUwrQkByNEab
+         +HJziIRWI19gF3NTBajou068WHrZujke73cH96PHZlyRksrZvXmC3gT4HCHNTenVFe
+         q68NCbL0sWxBa5+fxMnYVjam9VBfI8oRv+HA7k3vgpYsHilxdEL4breAyJIypCHtfJ
+         7ZNf1jeAKp84iCIAnCtHx/o9+L3E55fuQ77GWx1vVgeYaJJ2YJInBKfb+O3L6wSOtY
+         lFz9CBLy42htg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <YbTqPfs7026l6LFE@builder.lan>
+References: <20211207114003.100693-1-vkoul@kernel.org> <20211207114003.100693-3-vkoul@kernel.org> <20211209082537.1AF6CC341C8@smtp.kernel.org> <YbTqPfs7026l6LFE@builder.lan>
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add clock driver for SM8450
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Date:   Tue, 14 Dec 2021 23:36:26 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211215073627.800E9C34600@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+Quoting Bjorn Andersson (2021-12-11 10:13:17)
+> On Thu 09 Dec 02:25 CST 2021, Stephen Boyd wrote:
+>=20
+> > Maybe you want to drop these strings and use the dt index directly? That
+> > may actually be faster because we don't do as many string comparisons
+> > and the code may be smaller if we don't have to store bi_tcxo. I suppose
+> > to make it more readable we could have #defines for each DT index like
+> >=20
+> >  #define DT_BI_TCXO   0
+> >  #define DT_SLEEP_CLK 1
+> >=20
+> > Blaze a new trail!
+> >=20
+>=20
+> I like the idea, and iiuc it's just a matter of replacing .fw_name with
+> .index?
 
-Return value from FIELD_GET() directly instead
-of taking this in another redundant variable.
+Yes.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- drivers/clk/tegra/clk-tegra210-emc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> I am however worried that people will get the order wrong as they are
+> hacking on their dts/drivers, because (at least in my view) the order of
+> clocks & clock-names has been seen as "a dt binding requirement" up
+> until such change. But if we replace the names with indices such enum
+> would have to be kept in sync with the DT binding and there's no way to
+> validate it.
 
-diff --git a/drivers/clk/tegra/clk-tegra210-emc.c b/drivers/clk/tegra/clk-tegra210-emc.c
-index 672ca8c184d2..481fd50a36a0 100644
---- a/drivers/clk/tegra/clk-tegra210-emc.c
-+++ b/drivers/clk/tegra/clk-tegra210-emc.c
-@@ -52,12 +52,10 @@ static u8 tegra210_clk_emc_get_parent(struct clk_hw *hw)
- {
- 	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
- 	u32 value;
--	u8 src;
- 
- 	value = readl_relaxed(emc->regs + CLK_SOURCE_EMC);
--	src = FIELD_GET(CLK_SOURCE_EMC_2X_CLK_SRC, value);
- 
--	return src;
-+	return FIELD_GET(CLK_SOURCE_EMC_2X_CLK_SRC, value);
- }
- 
- static unsigned long tegra210_clk_emc_recalc_rate(struct clk_hw *hw,
--- 
-2.25.1
+That's lame, but I see your point. The order is definitely part of the
+binding but I'm not sure what we can do about folks deciding to reorder
+the clocks property. The checker has a blind spot here.
 
+>=20
+> If we do this we should force the driver and dts-writers to rely on the
+> binding document by omitting clock-names from the binding (and hence
+> dts). Otherwise people will (I will) assume that the clock-names are
+> still what matters...
+>=20
+
+I guess so. It still leaves everything exposed to the clocks property
+getting jumbled and then everything falling apart. Sigh.
+
+I'm not sure how much worse this is than today where the clock-names
+property could be wrong and doesn't match the order of the clocks
+property. We don't catch that either with the checker, so it's about the
+same risk from my perspective. Why not take the risk and save on image
+size?
