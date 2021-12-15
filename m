@@ -2,145 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C33C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Dec 2021 23:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58D4C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 00:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235225AbhLNXxo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 18:53:44 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:55790 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235218AbhLNXxo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 18:53:44 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 9919CCE19FE;
-        Tue, 14 Dec 2021 23:53:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 950F4C34606;
-        Tue, 14 Dec 2021 23:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639526020;
-        bh=PvZMo/gj0nYljGM06LBmSCA4QR02E7C/XoKsqA/9ARM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=c2d6BbNmvFdZiDHdABT92aAf6OEkYVx22Co/nuhvM7QnuFMm11OaGheonLr55TAvY
-         DzYV+PZ0/SBiXtO9kB7RfhWmXj+i1UjzT+ARSSW40sUhS4s+h2MEQA9Pk44QGxgNqD
-         WnQQAsOiFqNY9StJLhzGJCA/0g6fiiAQVimc32yxrxv531blbHQBHpNqBZsfmzyrIC
-         wmb5r1r4tDGcN7X0NWHMyZqeKIVDS/tX+/EazGr2i9TWviIW/SVIVSe09wvp2zoohQ
-         7uTffCu1yvqBiJV9WBOpa6wsifX3qNO8ktuNWXCpNZtZgO2hpfqM6NcciMwbbfU+SN
-         Oix1It5XrSa7A==
-Received: by mail-ed1-f44.google.com with SMTP id z5so69277917edd.3;
-        Tue, 14 Dec 2021 15:53:40 -0800 (PST)
-X-Gm-Message-State: AOAM5317tcXpMa6GsOsWMHewcw4XafqKnzt6sIlWIiY8641+FZyqRPMh
-        wy9e0iDqxobHZgO3MyPgT004NTpdYrF1JSxiPw==
-X-Google-Smtp-Source: ABdhPJwZTLqb7EhBpI3gfOOkg0o3mBknMM3223fDkEXOuW0bRcjsRNNG9nIMm+fbqnKdl+8DcTDsDM23zLUH6+1T0Vs=
-X-Received: by 2002:a05:6402:4251:: with SMTP id g17mr11723087edb.89.1639526018906;
- Tue, 14 Dec 2021 15:53:38 -0800 (PST)
+        id S235195AbhLOAMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 19:12:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229452AbhLOAMi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 19:12:38 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A853C061574
+        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:12:38 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id z8so30756645ljz.9
+        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:12:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=zAjAMQVShjcCOaBYyRGNXKWRjBrsW1noh9beLLTMUjc=;
+        b=cAGK2Y7u94l/HgJW5AdpmzrUdVP1cp5+tjGnMGvpBNSMuA75MW5jJF53/tRbNip6UX
+         3Eymtg+5WcTuF6KBM05gm87AezSTEY9QNdjuRUEiXC/bxuirGKFNXvIp/aFfDoFbT8xR
+         vR85cNI//yCA1xHMxNYiP1TKxExx/AdsTORGv6ttnq2IRhj+YdcCDYwQCTCunJRS33fM
+         GJuFrjrktAGa2f4VOOMcI+jconsCcku1/6a4lUxXLjdr57x2hmX4w9PkPUqP32bGoQy8
+         blzgWazw+mYTRV101YvEc8Jc4pEVfYrglxt2f171d5ZT/ujGFNq3ZtiITkojt2zFtJV9
+         +TeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=zAjAMQVShjcCOaBYyRGNXKWRjBrsW1noh9beLLTMUjc=;
+        b=PnsyW8R4L6hLunnnnh+Sr9iwzKxFNQ/4Le/69d9a9gCgbk86e/3oKgxrsDtNLyOUv+
+         W3dXhnmQWK2Q8WvQZRYg90aOOk2M8obn7gXpc8VyrySPcwKTsd8dyZwkwqNDUqvmVR/l
+         VJtpWp1oH/zOG45FGo0rBwJiq7mwGrvPeiYKchZi6HMP/qRmm5HOkO26vmclpkvePLwH
+         1hP+8DV8vsIpbUFWiScFpB+e5jKCO3W8/1/JExWEwNmlHUfjDr9ODxYNz9FilAPYmciH
+         ZtsjnfDvp1f5N93OE1ms4zmlILtc8FGTyC0V8ryJgkW5ercYzPNdB3jYekldOVkO/zAx
+         bOsg==
+X-Gm-Message-State: AOAM531tTONPtpd24vlKEAu+pU0cspTXLX5z8ieRdCl5NZQqJ5b3awor
+        kRQGuW502RSi5xLrRuP5o93k3X7f6DfbrQkV
+X-Google-Smtp-Source: ABdhPJxGjxdHWEJWsOj5EGq6SS5HKquCVaUC/ZfjhceiK9vwnOdy7xxROfSJOSLOlCg8n7ZLwjLnvw==
+X-Received: by 2002:a2e:e1a:: with SMTP id 26mr7758125ljo.199.1639527156576;
+        Tue, 14 Dec 2021 16:12:36 -0800 (PST)
+Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id x25sm40690lfe.69.2021.12.14.16.12.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Dec 2021 16:12:35 -0800 (PST)
+Message-ID: <0750dd24-1e84-6fb7-eb4e-9ab07d05ec62@linaro.org>
+Date:   Wed, 15 Dec 2021 03:12:34 +0300
 MIME-Version: 1.0
-References: <20211214120213.15649-1-povik@protonmail.com> <20211214120213.15649-2-povik@protonmail.com>
- <Ybi61fzpOV7CumtR@robh.at.kernel.org> <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com>
-In-Reply-To: <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 14 Dec 2021 17:53:26 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
-Message-ID: <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Apple NCO
-To:     =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Kettenis <kettenis@openbsd.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH 06/11] clk: qcom: camcc-sc7180: use parent_hws instead of
+ parent_data
+Content-Language: en-GB
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211208175430.1333594-1-dmitry.baryshkov@linaro.org>
+ <20211208175430.1333594-7-dmitry.baryshkov@linaro.org>
+ <20211209081131.8D886C004DD@smtp.kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20211209081131.8D886C004DD@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 14, 2021 at 2:08 PM Martin Povi=C5=A1er <povik@protonmail.com> =
-wrote:
->
-> Hi Rob,
->
-> > On 14. 12. 2021, at 16:40, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Tue, Dec 14, 2021 at 12:02:48PM +0000, Martin Povi=C5=A1er wrote:
-> >> The NCO block found on Apple SoCs is a programmable clock generator
-> >> performing fractional division of a high frequency input clock.
-> >>
-> >> Signed-off-by: Martin Povi=C5=A1er <povik@protonmail.com>
-> >> ---
-> >> .../devicetree/bindings/clock/apple,nco.yaml  | 70 +++++++++++++++++++
-> >> 1 file changed, 70 insertions(+)
-> >> create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.y=
-aml
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/apple,nco.yaml b/=
-Documentation/devicetree/bindings/clock/apple,nco.yaml
-> >> new file mode 100644
-> >> index 000000000000..5029824ab179
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/apple,nco.yaml
-> >> @@ -0,0 +1,70 @@
->
-> >> +
-> >> +  apple,nchannels:
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >> +    description:
-> >> +      The number of output channels the NCO block has been
-> >> +      synthesized for.
-> >
-> > I'd assume there is some max number?
->
-> There might be some limit to the underlying IP but we wouldn=E2=80=99t kn=
-ow.
-> What we know about the hardware comes from blackbox reversing, and that
-> doesn't suggest a particular limit to the number of channels we might
-> see on the SoC block in future.
+On 09/12/2021 11:11, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2021-12-08 09:54:25)
+>> If all parents are specified as clk_hw, we can use parent_hws instead of
+>> parent_data.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+> 
+> Is the code size smaller? Would be nice to add that detail.
 
-All the more reason to not put the size in the DT, but imply from the
-compatible. Unless it varies by instance...
+The bloat-o-meter reports zero size difference.
 
-Though I guess you would need DT updates anyways to use the new clock.
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-> > Do you really need to know this? If this is just to validate the clock
-> > cell values are less than this, then just drop that and the property.
-> > It's not the kernel's job to validate the DT.
->
-> Well strictly speaking the driver could do clock registration on-demand
-> at the cost of additional book-keeping, in which case we could drop
-> the property, but I would prefer we don=E2=80=99t do that. Rather than pr=
-oviding
-> validation the property simplifies drivers.
->
-> Another option is calculating the no. of channels from size of the reg
-> range, but I assume that=E2=80=99s worse than having the nchannels proper=
-ty.
->
-> >> +
-> >> +    nco: clock-generator@23b044000 {
-> >
-> > clock-controller@...
->
-> Okay, will change.
->
-> >
-> >> +      compatible =3D "apple,t8103-nco", "apple,nco";
-> >> +      reg =3D <0x3b044000 0x14000>;
-> >
-> > You really have 0x14000 worth of registers here because all of that
-> > will be mapped into virtual memory? Doesn't matter so much on 64-bit,
-> > but it did for 32-bit.
->
-> There is about 5 registers per channel with 0x4000 stride between them,
-> blame Apple (or Samsung? I don=E2=80=99t know...).
 
-I would think you could walk the 0x4000 until you hit registers that
-behave differently.
-
-The register size / 0x4000 gives you the number of channels, too.
-
-Another question, how do you know this is 1 block with N channels vs.
-N blocks just happening to be next to each other in the memory map?
-
-Rob
+-- 
+With best wishes
+Dmitry
