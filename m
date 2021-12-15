@@ -2,53 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14ADC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 16:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31982C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 16:11:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238150AbhLOQJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 11:09:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244238AbhLOQJP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 11:09:15 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A59FC061759
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:13 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id d198-20020a1c1dcf000000b0034569cdd2a2so1365503wmd.5
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=u4zZ+z1pGP+Htk3E+7BpOhHUxDFBFodnyOqMJFTyq+8=;
-        b=oYZR9hF/CodulLOtmAdszrJJnJs/Ny9cc6G7wkr6zvqlQgG3/n8IDv0ZAhHEwF2pYn
-         k2YUqoxHDs2QsdWTBgG9BTgI5B7XYcaO7qX3xbY4Ue+E5ERkAoJdhA5UKGyGAFXAm5j3
-         viYtFHYPw7sJmwt2iGdabMirVEItKAybcnfwOFXDwZo9kv/pRJ3eVk7RUT0BbQE5Cp5a
-         Jhm/5wd3U0jRAVtDHfyblnc7ET6dtJpiphJxApUGm0LmDGJ65YjKx+YIawE70E3cxqxd
-         Ou8FtpLxlNXUsHDplUriMcmOtYHB7J+rnH80g2SJbelkI8niO8RQ6F4R/dndd3keTgzs
-         A4WQ==
+        id S244328AbhLOQLv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 11:11:51 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49734
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238089AbhLOQLu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 11:11:50 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B1401402FC
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 16:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1639584709;
+        bh=HEryT/59cwIP/SgJfqP9kYNmdFO5OiSXHgK40bkLxdM=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=O0X4MFdfW9C0nCwVLfHaZBjMBz+yS0FwF5ARgxIANy1Jxaqto9ooU2VAMZmS6Ibaa
+         02DSTgQ5ixGykP5PbiCokQpgczADv4u+qL//oR0dVTAOG1kMyPuxGqg2CsjfmchS1f
+         QU49CwIgmshFW+hFQ8SUeX4AFT4Q49yYoazYJBUHU6pmR7fjR5RbUoi7bWGJ0CTh4F
+         lIredh6VIAhol1EmXWkPwNp9qLpr5bJKuwIfpKq+mJuxTXYwgpYu5Bnpc7V0LaVh69
+         waMNM+Hb4MU7iIJmmDxfzyS+GHOmKRToYPB8IhFrYeU2nLEJPX/8nOvH6CMZjVfAiy
+         4X32xDBNuyDlw==
+Received: by mail-lf1-f69.google.com with SMTP id z30-20020a0565120c1e00b0041fcb7eaff3so7544890lfu.12
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:11:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=u4zZ+z1pGP+Htk3E+7BpOhHUxDFBFodnyOqMJFTyq+8=;
-        b=XTXJmgCttY2tl0+K86VLO9Jm7KxM6j9gPj3OMSKmq2ghUCSUwNqJqsn5wcf5jZaQU/
-         yc9iR0aY7KOx2vXY2NXuq6LRLEAEbgG9fOhfC+uOH6KppSpYoeMMM/P5ek3DFWsd36ga
-         tEUpmUFcVdSZjqdF0JaSkJebI/sK198MbTThkyUnlEWP+FvzPiy8eBcs0zhw8DLmtge5
-         /8x4IA1HF/xOz+gmwJDF2agl7HGSKsS0is6M/vSv770Q9Qj9HGtkmzv/oUPTzUqjOSXG
-         gNJLDJ7uIPImP55IIJuC7hg50ozfTH59Q/ce5oM7q6MxmV6Z3z6WmRnYQA2HjzeGg3YI
-         Rz+w==
-X-Gm-Message-State: AOAM532RENzJt3ROxqrwE4SvX8AjL72QHvUhCbe2i2XG9tLIARtdfMtt
-        mpalJm17fcSNaUaoIkAR++bOxQ==
-X-Google-Smtp-Source: ABdhPJzGSJCvZ0o2lhXsioS+2QTFi++7SI1Tfu2g1ePTsn+jn9X2ZXiEPV5u98fsYf4jsKpaPwqz2g==
-X-Received: by 2002:a7b:cb55:: with SMTP id v21mr504663wmj.45.1639584552115;
-        Wed, 15 Dec 2021 08:09:12 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id 10sm3034006wrb.75.2021.12.15.08.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 08:09:11 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=HEryT/59cwIP/SgJfqP9kYNmdFO5OiSXHgK40bkLxdM=;
+        b=v18QMPWY/fibh7trA2CJhAFoEyWvAKUBD7h91OiPxa5B4k4TDf0wQmr2/1bStcNF20
+         XTnJHOSLNvXgT9YXnhsq19G/bWPHSb99AV4LcfTkUQqsYni+uLRDqiBfxov6M1xjantc
+         PUdZ9gIdap5C+W1ES92cqjUD+5JStStsU6htIwJiGTx2k3x2dRJnMyjv5eRN077XPCHL
+         faznR8IQkEmxkGeZ3kgiupuJaSByElnj/DxfQNQQ+tFF6KaXm6pRMIMt8ZPMjbWzLVi8
+         BRPD6jtQ2yAwwjmABVRw1MG3rTy8VEakOCGN2StOAzm1pfQQ+/I38jBgArcpQDuX8VEp
+         hT5g==
+X-Gm-Message-State: AOAM531vMx+sT3lKR9JGuMkGVJ6tllUmXEr0zGf3HlAe3M70WOG5z6AG
+        ZzvybpnuAX53VbJZyrMtqG2lT+YYNr4Ui9zyYAtOowcSGHwH8boJw73kbxlyUZEVbxyV/HRKFcu
+        CgTBqrNg4TZM7ZjcK6UqNyeNR0gK+INI3VrJgmg==
+X-Received: by 2002:a05:6512:3fa:: with SMTP id n26mr10779804lfq.369.1639584709155;
+        Wed, 15 Dec 2021 08:11:49 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJw1QHtNZSWhWsx7d0Gr+L7f/sF8couHjZyoyUMKUsr2/tG2om/weSyMTpr4+BviHq0uyXtW0w==
+X-Received: by 2002:a05:6512:3fa:: with SMTP id n26mr10779784lfq.369.1639584708997;
+        Wed, 15 Dec 2021 08:11:48 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id m3sm522157lji.112.2021.12.15.08.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 08:11:48 -0800 (PST)
+Message-ID: <6b5fd3fd-18cf-3b6d-934b-11a82cf404dd@canonical.com>
+Date:   Wed, 15 Dec 2021 17:11:47 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
@@ -65,41 +79,33 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 3/7] dt-bindings: Add vendor prefix for WinLink
-Date:   Wed, 15 Dec 2021 18:09:02 +0200
-Message-Id: <20211215160906.17451-4-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211215160906.17451-1-semen.protsenko@linaro.org>
 References: <20211215160906.17451-1-semen.protsenko@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20211215160906.17451-2-semen.protsenko@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20211215160906.17451-2-semen.protsenko@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-WinLink Co., Ltd is a hardware design and manufacturing company based in
-South Korea. Official web-site: [1].
+On 15/12/2021 17:09, Sam Protsenko wrote:
+> System Register is used to configure system behavior, like USI protocol,
+> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> make it possible to modify SYSREG registers.
+> 
+> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> and might be needed for corresponding Exynos850 features soon.
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
+>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
 
-[1] http://win-link.net/
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 932c5ded6c00..83f6b484997c 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -1326,6 +1326,8 @@ patternProperties:
-     description: Wiligear, Ltd.
-   "^winbond,.*":
-     description: Winbond Electronics corp.
-+  "^winlink,.*":
-+    description: WinLink Co., Ltd
-   "^winstar,.*":
-     description: Winstar Display Corp.
-   "^wits,.*":
--- 
-2.30.2
 
+Best regards,
+Krzysztof
