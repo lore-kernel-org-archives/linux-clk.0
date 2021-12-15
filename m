@@ -2,105 +2,196 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E81EC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 20:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137AAC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 21:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235748AbhLOUYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 15:24:36 -0500
-Received: from relay04.th.seeweb.it ([5.144.164.165]:43159 "EHLO
-        relay04.th.seeweb.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235696AbhLOUYg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 15:24:36 -0500
-Received: from SoMainline.org (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 1695A20473;
-        Wed, 15 Dec 2021 21:24:34 +0100 (CET)
-Date:   Wed, 15 Dec 2021 21:24:32 +0100
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+        id S229627AbhLOVOz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 16:14:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33478 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229555AbhLOVOz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 16:14:55 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47D1C061574
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 13:14:54 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id bn20so35310237ljb.8
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 13:14:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=6+hLkG5lH/kaUWgpFIbohOH0LsJRkK94UjAK3/LnKG8=;
+        b=fkqqZNELKykn+rbm/yy5CJ22azGd6Dtg7XH9k3MINFGprRvc6wkYCuEMLxSlQPXXsO
+         RhoPqECGLlOe646CS7jBiv+4m7Jox/w9w3ytMp8XWZebUdsFCsX4C5Mw7CsEBMFmDaoC
+         V/NddGfd1D/YIiq7JMOgkwcnryN05Fa6JjkdRfiKqcmHKC1bOVAxOQ7ZlKOXfs36MQ3A
+         ufvF16Sawb2oui+oGOEGdX27CKB5cnBxREslvUuFkZOoQpdikkWLvCtDL5LOl5Hgd9hl
+         heulQ6INZAj7M3UoPdG5fgWbzV0HiDkNqPcN6FVb9l5cmlslevk3S8xwwZdFrgN7lBYw
+         6jew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=6+hLkG5lH/kaUWgpFIbohOH0LsJRkK94UjAK3/LnKG8=;
+        b=5URtPSV1BTKe+9A/XZPK13bXxhDHEX6qw/m//XmkHqK3m9qYZD238+CPNnt8ghAT4V
+         +VMYAoyFBMDZx7RjYURMSI3MdI8ZCu+eZ0TUrvnLt6OYTlwEIXmkgw7yz85CoMbM0Mjg
+         s7luJsadzrJoUszILq2IdiNZ9izcxUnmZMQqhWrNhiSu6Dtg9fMCiKq6/qMwGabvm1BS
+         jIcCoKqvLLAj5ZDe1MpNDMRAKCC41ZTBe9Jt89G/m0gu4v+Ay9ZaGfShjuB7/NPV0vzV
+         2xHyjgnizBmNmz3M533D3+OxKeHMtTNW0BM60ocsN5SEyIphLwxvoNOTjNd6ODDPZQ6A
+         3Hkw==
+X-Gm-Message-State: AOAM5336ZfDFafIqgzF2DjgJwk98Z1hz9QlmUnTCnwNOhbomnyppYM8r
+        BA6rzaKaN/PiOZziKnYH4TQxQw==
+X-Google-Smtp-Source: ABdhPJzaNhCPg5W4BFNY/qx3VY7VsPJzhzwVPZn2AG7tVRIuHe1xveicxU/+IGyVFVhqSmUMhdaP4g==
+X-Received: by 2002:a05:651c:a04:: with SMTP id k4mr11893366ljq.421.1639602892273;
+        Wed, 15 Dec 2021 13:14:52 -0800 (PST)
+Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id bj11sm647603ljb.62.2021.12.15.13.14.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Dec 2021 13:14:51 -0800 (PST)
+Message-ID: <995c66b7-ef69-56a4-93cc-59be52977972@linaro.org>
+Date:   Thu, 16 Dec 2021 00:14:49 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.2
+Subject: Re: [PATCH 1/2] clk: qcom: add API to safely park RCG2 sources
+Content-Language: en-GB
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 09/16] clk: qcom: camcc-sdm845: move clock parent
- tables down
-Message-ID: <20211215202432.hdjntlglgolld6nw@SoMainline.org>
-References: <20211215193704.2821775-1-dmitry.baryshkov@linaro.org>
- <20211215193704.2821775-10-dmitry.baryshkov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211215193704.2821775-10-dmitry.baryshkov@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mike Tipton <quic_mdtipton@quicinc.com>
+References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
+ <20211208022210.1300773-2-dmitry.baryshkov@linaro.org>
+ <20211209083727.30DD2C004DD@smtp.kernel.org> <YbJMnvg/IDwHNeWS@ripper>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <YbJMnvg/IDwHNeWS@ripper>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2021-12-15 22:36:57, Dmitry Baryshkov wrote:
-> Move clock parent tables down, after the PLL declrataions, so that we
-> can use pll hw clock fields in the next commit.
+On 09/12/2021 21:36, Bjorn Andersson wrote:
+> On Thu 09 Dec 00:37 PST 2021, Stephen Boyd wrote:
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Quoting Dmitry Baryshkov (2021-12-07 18:22:09)
+>>> Some of RCG2 clocks can become stuck during the boot process, when
+>>> device drivers are enabling and disabling the RCG2's parent clocks.
+>>> To prevernt such outcome of driver probe sequences, add API to park
+>>
+>> s/prevernt/prevent/
+>>
+>>> clocks to the safe clock source (typically TCXO).
+>>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> I'd prefer this approach vs. adding a new clk flag. The clk framework
+>> doesn't handle handoff properly today so we shouldn't try to bandage
+>> that in the core.
+>>
+> 
+> I'm not against putting this responsibility in the drivers, but I don't
+> think we can blindly park all the RCGs that may or may not be used.
+> 
+> Note that we should do this for all RCGs that downstream are marked as
+> enable_safe_config (upstream should be using clk_rcg2_shared_ops)
+> and disabling some of those probe time won't be appreciated by the
+> hardware.
 
-Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+Only for the hardware as crazy, as displays. And maybe gmu_clk_src. I 
+don't think we expect venus or camcc to be really clocking when kernel 
+boots.
 
-> ---
->  drivers/clk/qcom/camcc-sdm845.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/camcc-sdm845.c b/drivers/clk/qcom/camcc-sdm845.c
-> index 6210b0fb7eac..fd01ea53a07f 100644
-> --- a/drivers/clk/qcom/camcc-sdm845.c
-> +++ b/drivers/clk/qcom/camcc-sdm845.c
-> @@ -25,22 +25,6 @@ enum {
->  	P_CAM_CC_PLL3_OUT_EVEN,
->  };
->  
-> -static const struct parent_map cam_cc_parent_map_0[] = {
-> -	{ P_BI_TCXO, 0 },
-> -	{ P_CAM_CC_PLL2_OUT_EVEN, 1 },
-> -	{ P_CAM_CC_PLL1_OUT_EVEN, 2 },
-> -	{ P_CAM_CC_PLL3_OUT_EVEN, 5 },
-> -	{ P_CAM_CC_PLL0_OUT_EVEN, 6 },
-> -};
-> -
-> -static const char * const cam_cc_parent_names_0[] = {
-> -	"bi_tcxo",
-> -	"cam_cc_pll2_out_even",
-> -	"cam_cc_pll1_out_even",
-> -	"cam_cc_pll3_out_even",
-> -	"cam_cc_pll0_out_even",
-> -};
-> -
->  static struct clk_alpha_pll cam_cc_pll0 = {
->  	.offset = 0x0,
->  	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-> @@ -159,6 +143,22 @@ static struct clk_alpha_pll_postdiv cam_cc_pll3_out_even = {
->  	},
->  };
->  
-> +static const struct parent_map cam_cc_parent_map_0[] = {
-> +	{ P_BI_TCXO, 0 },
-> +	{ P_CAM_CC_PLL2_OUT_EVEN, 1 },
-> +	{ P_CAM_CC_PLL1_OUT_EVEN, 2 },
-> +	{ P_CAM_CC_PLL3_OUT_EVEN, 5 },
-> +	{ P_CAM_CC_PLL0_OUT_EVEN, 6 },
-> +};
-> +
-> +static const char * const cam_cc_parent_names_0[] = {
-> +	"bi_tcxo",
-> +	"cam_cc_pll2_out_even",
-> +	"cam_cc_pll1_out_even",
-> +	"cam_cc_pll3_out_even",
-> +	"cam_cc_pll0_out_even",
-> +};
-> +
->  static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
->  	F(19200000, P_BI_TCXO, 1, 0, 0),
->  	F(100000000, P_CAM_CC_PLL0_OUT_EVEN, 6, 0, 0),
-> -- 
-> 2.33.0
 > 
+> If you don't like the flag passed to clk_disable_unused (which is like a
+> very reasonable objection to have), we need to make progress towards a
+> proper solution that replaces clk_disable_unused().
+
+The issue is that at the time of clk_disable_unused() it can be too 
+late, for example because msm being built-in into the kernel has already 
+tried to play with PLLs/GDSCs and thus made RCG stuck. This is what I 
+was observing on RB3 if the msm driver is built in and the splash screen 
+is enabled.
+
+> 
+>>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>>> index e1b1b426fae4..230b04a7427c 100644
+>>> --- a/drivers/clk/qcom/clk-rcg2.c
+>>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>>> @@ -1036,6 +1036,40 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+>>>          regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
+>>>   }
+>>>   
+>>> +int clk_rcg2_park_safely(struct regmap *regmap, u32 offset, unsigned int safe_src)
+> 
+> This seems to just duplicate clk_rcg2_shared_disable()?
+
+A light version of it. It does not do force_on/_off. And also it can not 
+rely on clkr->regmap or clock name being set. Initially I used 
+clk_rcg2_shared_disable + several patches to stop it from crashing if it 
+is used on the non-registered clock. Then I just decided to write 
+special helper.
+
+> 
+> Regards,
+> Bjorn
+> 
+>>
+>> Please add kernel doc as it's an exported symbol.
+
+Ack
+
+>>
+>>> +{
+>>> +       unsigned int val, ret, count;
+>>> +
+>>> +       ret = regmap_read(regmap, offset + CFG_REG, &val);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>> +       /* assume safe source is 0 */
+>>
+>> Are we assuming safe source is 0 here? It looks like we pass it in now?
+
+Leftover, will remove if/when posting v2.
+
+>>
+>>> +       if ((val & CFG_SRC_SEL_MASK) == (safe_src << CFG_SRC_SEL_SHIFT))
+>>> +               return 0;
+>>> +
+>>> +       regmap_write(regmap, offset + CFG_REG, safe_src << CFG_SRC_SEL_SHIFT);
+>>> +
+>>> +       ret = regmap_update_bits(regmap, offset + CMD_REG,
+>>> +                                CMD_UPDATE, CMD_UPDATE);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>> +       /* Wait for update to take effect */
+>>> +       for (count = 500; count > 0; count--) {
+>>> +               ret = regmap_read(regmap, offset + CMD_REG, &val);
+>>> +               if (ret)
+>>> +                       return ret;
+>>> +               if (!(val & CMD_UPDATE))
+>>> +                       return 0;
+>>> +               udelay(1);
+>>> +       }
+>>> +
+>>> +       WARN(1, "the rcg didn't update its configuration.");
+>>
+>> Add a newline?
+
+Ack.
+
+>>
+>>> +       return -EBUSY;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(clk_rcg2_park_safely);
+>>> +
+
+
+-- 
+With best wishes
+Dmitry
