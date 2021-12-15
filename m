@@ -2,71 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490F0C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 11:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB41C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 12:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242152AbhLOLio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 06:38:44 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:36160 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242168AbhLOLin (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 06:38:43 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2F73DCE1CDB;
-        Wed, 15 Dec 2021 11:38:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52E9C34603;
-        Wed, 15 Dec 2021 11:38:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639568317;
-        bh=QFzqr1T641gUeilQG0Yx+YDcgXpXPUpklimCWNpXOUQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FkvWV5UemwFnt/5MAmSx1AkvF6on1SC6ciJ5T4c0MuBtKhi8oDrXjTV2SfPaRQ5+K
-         /Q/NnG+5y7j4jDXZMHk3b667YLOVHJO+0ZnojdBPHpkVICJpI/HHWZx4M/6v+ogG7W
-         9ptBaqCNHeh2q84C4+5nSpxDPkGgRb2If9ppj9EszMHKfioHKA72vai4ozUBkpVG5N
-         Bhg46H84VTNZewlYv9TcUG7J3S7GKbFXmdLcvSj6o/HcPTDvBbA4VXonzUlTJuothu
-         pyhMFQTTU/UNs51slsQeSgrmPNaRvz0UpSS/uxAK+Bkex87w6xCsGsPt1N85VuEI0/
-         OmrwSndI7Qtvg==
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        id S237094AbhLOMQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 07:16:04 -0500
+Received: from mail-4322.protonmail.ch ([185.70.43.22]:47885 "EHLO
+        mail-4322.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229441AbhLOMQE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 07:16:04 -0500
+Date:   Wed, 15 Dec 2021 12:15:53 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=protonmail2; t=1639570562;
+        bh=C2Esh76nKJPiqYXPTDJuFHL8WTuB99uBX0WaROHo7AY=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
+         References:From:To:Cc;
+        b=sAZxmMQ1Wqw5kp+rEShZ05LyAVDheN/fSbl9tMq9zvd0HWROfTslOSdusekCypE4y
+         F27RGrvzK4SKZVQVuxI3GkW65WKC/9ybOlZsXtQFyGQJqzqK0nIrL0RynjHmimvhRY
+         mDCCye0rfBpsDx3hFx9tCyvT1N7BRDX0iJ3SFx//EJlNX4LR1OKABS7CXbCbYibPi6
+         FJaGzL76jXHb1Wg/3I8iw1Jsu0Do15+/yvkyuMLbgkTBgHxCnBNibbQsGa7/Gps4Mn
+         Eg/GC480CWuBwqZH0uy9HociajjVbSVqWpzVMuXzfNTlC1reDlfLU2QVrqsyZPPBTF
+         IyzEkaFL9AYLA==
+To:     Sven Peter <sven@svenpeter.dev>
+From:   =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Cc:     Rob Herring <robh@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] clk: qcom: turingcc-qcs404: explicitly include clk-provider.h
-Date:   Wed, 15 Dec 2021 17:08:03 +0530
-Message-Id: <20211215113803.620032-9-vkoul@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211215113803.620032-1-vkoul@kernel.org>
-References: <20211215113803.620032-1-vkoul@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Kettenis <kettenis@openbsd.org>,
+        Hector Martin <marcan@marcan.st>
+Reply-To: =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Apple NCO
+Message-ID: <97B86688-DE6C-4AC2-BFBE-0BB2488C9ED5@protonmail.com>
+In-Reply-To: <0be8517e-a488-4203-9941-b43eac3d8f24@www.fastmail.com>
+References: <20211214120213.15649-1-povik@protonmail.com> <20211214120213.15649-2-povik@protonmail.com> <Ybi61fzpOV7CumtR@robh.at.kernel.org> <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com> <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com> <F62225F0-C9C6-4E39-9163-B125A7253733@protonmail.com> <0be8517e-a488-4203-9941-b43eac3d8f24@www.fastmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Per Stephen, clk providers need to include clk-provider.h, so include in
-this driver as well
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/turingcc-qcs404.c | 1 +
- 1 file changed, 1 insertion(+)
+> On 15. 12. 2021, at 9:43, Sven Peter <sven@svenpeter.dev> wrote:
+>
 
-diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-index 4543bda793f4..43184459228f 100644
---- a/drivers/clk/qcom/turingcc-qcs404.c
-+++ b/drivers/clk/qcom/turingcc-qcs404.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
- #include <linux/module.h>
--- 
-2.31.1
+> Are there any dependencies between these individual channels?
+> Is there some common initialization required for all of them?
+>
+> From a quick glance and my uninformed opinion it looks like these are
+> separate to me. They only all need this LSFR table which could still be
+> shared.
+
+That=E2=80=99s right.
+
+>
+> Sven
+
+Martin
+
 
