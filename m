@@ -2,171 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26183C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 22:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EA9C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 22:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231249AbhLOWRt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 17:17:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47914 "EHLO
+        id S231304AbhLOW1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 17:27:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbhLOWRp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 17:17:45 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B02D0C061574
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:17:43 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id cf39so33741361lfb.8
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:17:43 -0800 (PST)
+        with ESMTP id S231297AbhLOW1s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 17:27:48 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1002C061574
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:27:47 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id o4so33726512oia.10
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:27:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2YGK1SC+xWb+9Z9L9UEJlhFA9/RdQekg4puqfKk8Z1I=;
-        b=ct3Q/vOfcHMM1bDY/loexbKo8ySotM3UPz2U++MTiII8XcM6hzGFQxGZ62pKdF8I+D
-         pgXILP91HRFBrMETswjFER37UuVzgBIOj5vjZZNVGsGa5xgMQx8F3oHarHEiaDvwTI3s
-         WHsIg0yvphvuHj1eZ7sU4CMTEjCw5+vn5k6wt2BTl1ZmS9/P3aefNU+e4ITNXcOYH17y
-         FgCP2+qBIOUUUth4THllN4Uxm0C8S7nnnZX3AlXs9sP2iURUCM/cokpadJNiiarvV8Ep
-         KxWup+8b7xgUOPFTrkC7wiMP/VfFZzipcSf4tZz0pRrRgd6zvhE0g0OaCjtHs4v5MVXD
-         FnVg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bld1Dt00srE7jX5jMOg7BAwJ9u0A/uVswTCtlo7qPT4=;
+        b=v3/Z4YA1w7OaM3Ln/mKV6ioyWZPM74mMTmt99ZICa/p75vJTmsiZQouvEPIY1wZfCP
+         Ef31YSm1xZC2f9eND79xCIiiE2WS5Jk4eaEdvEwTTraSiRdZrpBIlqAjKkRSdMqK5JuH
+         9XW/dqluFN+t2cUCXYqLqImYXFZ8vcZjwlLCCY3onjwdnazsZgluBVDQuMHLrh6kdlrW
+         g/u5Y9NZGGD3tCXVsi2pyu1F8ev0FTW4uz5VZGwAGKKFdRw5NsuPXGl0HeXTPXQWBSGY
+         0MOnjJIrWh8MdkBuUvk3FDvyRBrgLrHWSrW3lpdy3P2Vujh8zJIEMmKQLFQCJh5QEC02
+         bYgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=2YGK1SC+xWb+9Z9L9UEJlhFA9/RdQekg4puqfKk8Z1I=;
-        b=uaKlzgw4yduh4HS7uGphSfXmxL8FPN6BDw9jCkSwjRmGAiKds/e4keKgYAGkZQow9+
-         wf10uqV95+4cvjeN8xcpqoZwdtXkr3kIG7lSThQb8UclBRxILzgkwkA+5eNhAWvttk9G
-         hgQWsJLKAJEIKDzKfiXRPm/lOEHiy/C4privuqIgv06YP9QhhOf7gsh464xX9coXMz+N
-         KKBsXiqOBmu2zXavCsL071zwnY1Ttc5WvT/ym9dyk0N5soUHgzY9bBrfVpUABKs5K26q
-         A1jH0ZYljO2f7UScKcJjIF6XgGycuqYYENoE7YKfxqOcWmCNFeeScH1yl9Y265IIIN1b
-         v0Ng==
-X-Gm-Message-State: AOAM532wAe1S2bZLCJws0XLawieesypKBdiIAAOpGtoBsSe7E+Atpo+P
-        N/LqCYI1kw7vx8KhhpoVZKRMM4dhf8fvYtup
-X-Google-Smtp-Source: ABdhPJwDNVUsqxySfVM/vXdnbEjyDNTC0XxHA8RRJsBQ13TG3+QC5k7jVhVgWfeLLHwz4OQx1LEz3g==
-X-Received: by 2002:ac2:55b7:: with SMTP id y23mr894959lfg.251.1639606661960;
-        Wed, 15 Dec 2021 14:17:41 -0800 (PST)
-Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
-        by smtp.gmail.com with ESMTPSA id m20sm515220lfu.241.2021.12.15.14.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Dec 2021 14:17:41 -0800 (PST)
-Message-ID: <a4f7d300-90c2-7dda-5cda-5e2763a94912@linaro.org>
-Date:   Thu, 16 Dec 2021 01:17:40 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH 2/2] clk: qcom: dispcc-sdm845: park
- disp_cc_mdss_mdp_clk_src
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bld1Dt00srE7jX5jMOg7BAwJ9u0A/uVswTCtlo7qPT4=;
+        b=IYBLyChRT9V2kqTI7qtn6qFJaKQ3URT0h+buCvpovn1sGcA7pYVQLC3VGyBHjd1fBh
+         lF8t6N1mfHzuwmihfU2JliV6kZdwzIofYl941a1DOjusRy4A+7sgTaTS8hq5lag4Zbej
+         XgBzWi1WLDwjVBC+/B7i5mKBX+nq1iQ9Q2Y3YsJ7V/IcHqb/bDY6xgq7Nc2fJvoUGUIR
+         pq4/z61EfEiyFe/G0ReAL6KgKpcTh75PJlLzJNK5TiQ5Jh8u55h+0pFpr/dyUhQoHu6U
+         hivrgUASKI2W904p6zjTCTkWY4ak9w6Pe3GYX2PveM2wfZ8QBNvleQJMZ1+cjRsyMKNN
+         9tmA==
+X-Gm-Message-State: AOAM5306ALgGz+1DrWzTl32q1yR3TOENhA0at1wBwVzLZqjX2w81pyw4
+        Bz21MZ5qzBKTGAzX9LMENDyfhQ==
+X-Google-Smtp-Source: ABdhPJyVgSE3f72HaVlVawNNx0CFaEeE4nXpIHy+ZeOnxtJofO4CF4mIdFgCoaxGst5P+9KqH0FMuw==
+X-Received: by 2002:a05:6808:1396:: with SMTP id c22mr1908401oiw.59.1639607267024;
+        Wed, 15 Dec 2021 14:27:47 -0800 (PST)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id t14sm700500oth.81.2021.12.15.14.27.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 14:27:46 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
- <20211208022210.1300773-3-dmitry.baryshkov@linaro.org>
- <YbJNp+tnD6kEQAzt@ripper>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <YbJNp+tnD6kEQAzt@ripper>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
+Date:   Wed, 15 Dec 2021 16:27:18 -0600
+Message-Id: <163960723734.3062250.10537942428901701374.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/12/2021 21:40, Bjorn Andersson wrote:
-> On Tue 07 Dec 18:22 PST 2021, Dmitry Baryshkov wrote:
+On Thu, 2 Dec 2021 19:56:01 -0800, Bjorn Andersson wrote:
+> As GDSCs are turned on and off some associated clocks are momentarily
+> enabled for house keeping purposes. Failure to enable these clocks seems
+> to have been silently ignored in the past, but starting in SM8350 this
+> failure will prevent the GDSC to turn on.
 > 
->> To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
->> was enabled by the bootloader, part it to the TCXO clock source.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/dispcc-sdm845.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
->> index 735adfefc379..f2afbba7bc72 100644
->> --- a/drivers/clk/qcom/dispcc-sdm845.c
->> +++ b/drivers/clk/qcom/dispcc-sdm845.c
->> @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
->>   
->>   	clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
->>   
->> +	/* Park disp_cc_mdss_mdp_clk_src */
->> +	clk_rcg2_park_safely(regmap, 0x2088, 0);
+> At least on SM8350 this operation will enable the RCG per the
+> configuration in CFG_REG. This means that the current model where the
+> current configuration is written back to CF_REG immediately after
+> parking the RCG doesn't work.
 > 
-> Today booting the system with "clk_ignore_unused" will give you a
-> working efifb up until the point where the display driver kicks in and
-> reinitializes the hardware state - which during development might be
-> indefinite.
+> [...]
 
-During development one can introduce a dispcc parameter. Maybe we should 
-add qcom-common parameter telling dispcc drivers to skip parking these 
-clocks.
+Applied, thanks!
 
-> 
-> If we blindly cut the mdp_clk_src here that will no longer be possible.
+[1/1] clk: qcom: rcg2: Cache rate changes for parked RCGs
+      commit: ce4981ad69145d7444a5cf4fef2e29442aee60dc
 
-I think we have several separate tasks here:
-
-1) Support developing code. This is what you have in mind with EFIFB + 
-clk_ignore_unused.
-
-2) Get display to work stable and rock solid. This can include 
-completely tearing down the display pipeline for the sake of getting 
-MDP/MDSS/DSI to work with as few hacks as possible.
-
-3) Gracious handover of display/framebuffer from bootloader to the Linux 
-kernel.
-
-For the task #1, you can hack the dispcc as you wish or set any 
-additional parameters, as you are already passing clk_ignore_unused. 
-This will all end up as #1 transitions to #2.
-
-I was targetting task#2. Disable everything to let dpu/dsi/dp start from 
-the scratch. If I understand correctly, this approach would also help 
-you with your boot-clock-too-high-for-the-minimum-opp issue. Is my 
-assumption correct?
-
-For the task #3 we need collaboration between dispcc, clock core and 
-dpu/dsi drivers. Just marking the clocks for the clk_disable_unused() is 
-the least of the problems that we have here. I think [1] is a bit closer 
-to what I'd expect.
-
-I have a similar but slightly different idea of how this can be made to 
-work. I'd do the following (excuse me for the hand waving, no code at hand):
-
-- Add clk_ops->inherit_state callback, which can check if the clock is 
-enabled already or not. If it is, set the enable_count to 1, set special 
-CLOCK_INHERITED flag, read back the state, etc.
-
-- Make of_clk_set_defaults() ignore clocks with CLOCK_INHERITED flag. 
-Maybe it should return special status telling that some of the clocks 
-were not updated.
-
-- Add clk_get_inherit() call, which would drop the CLOCK_INHERITED flag 
-and return previous flag state to calling driver. The driver now assumes 
-ownership of this clock with the enable_count of 1. This way the driver 
-can adjust itself to the current clock state (e.g. drop the frequency, 
-disable the clock and then call of_clk_set_defaults() again to 
-reparent/reclock clocks as necessary, etc). If the parent chain is not 
-fully available, clk_get_inherit must return an error for INHERITED 
-clocks, so that the driver will not cause reparenting of the orphaned 
-clocks.
-
-- If the driver decides for some reason to abandon the device for some 
-reason (because of the probe() failure or because of the remove() 
-callback being called) it will disable all clocks as expected, 
-effectively parking them (but not marking them as inherited). This way 
-next driver probe() attempt will start from the scratch, without 
-inherited state.
-
-But as this is a complex solution and will take several iterations, I 
-suggest teaching dispcc to park clocks at boot.
-
-
-[1] 
-https://lore.kernel.org/linux-arm-msm/20190630150230.7878-1-robdclark@gmail.com/
-
+Best regards,
 -- 
-With best wishes
-Dmitry
+Bjorn Andersson <bjorn.andersson@linaro.org>
