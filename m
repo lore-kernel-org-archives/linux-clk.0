@@ -2,91 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58D4C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 00:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68232C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 00:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235195AbhLOAMj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Dec 2021 19:12:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54222 "EHLO
+        id S235476AbhLOAyq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Dec 2021 19:54:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbhLOAMi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 19:12:38 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A853C061574
-        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:12:38 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id z8so30756645ljz.9
-        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:12:38 -0800 (PST)
+        with ESMTP id S235267AbhLOAyq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Dec 2021 19:54:46 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36694C06173E
+        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:54:46 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id d10so40061290lfg.6
+        for <linux-clk@vger.kernel.org>; Tue, 14 Dec 2021 16:54:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zAjAMQVShjcCOaBYyRGNXKWRjBrsW1noh9beLLTMUjc=;
-        b=cAGK2Y7u94l/HgJW5AdpmzrUdVP1cp5+tjGnMGvpBNSMuA75MW5jJF53/tRbNip6UX
-         3Eymtg+5WcTuF6KBM05gm87AezSTEY9QNdjuRUEiXC/bxuirGKFNXvIp/aFfDoFbT8xR
-         vR85cNI//yCA1xHMxNYiP1TKxExx/AdsTORGv6ttnq2IRhj+YdcCDYwQCTCunJRS33fM
-         GJuFrjrktAGa2f4VOOMcI+jconsCcku1/6a4lUxXLjdr57x2hmX4w9PkPUqP32bGoQy8
-         blzgWazw+mYTRV101YvEc8Jc4pEVfYrglxt2f171d5ZT/ujGFNq3ZtiITkojt2zFtJV9
-         +TeQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NVgkiLE97N0iul+V2pjFMo/DYrLzQeV66i7a5YrCjf0=;
+        b=SC9cJJyv201rprwgWDGqOFW4MN8UqCAWK/1aWF+0cFtIP9bK3/EZ+djmXSDHHCxQ5k
+         kl4YtzyT06v+oAaCv0cE8js0fdMEZdj3vbk3L1eNFSbaDfmwrgwTSs+TQfAsUnhFZxhD
+         2XuK5fh8K9rkC2WVulpnG5IS14nduwjQiUtwaZepmOHy6NcomUpHZNF8U0ZkAfv9UZ+V
+         Y2PypOwOufYvnNKRsnbM1tf3RKigKfRxmQK1VcZ3zy5c3RVkZTnCaRl7vtLEWN7GyNwf
+         q4p7oMTMJ/k0uXVHhj5VLnIkI+8XiI7ytvADPBfhv//EVlLQ0jajPSEdxqsxWW5QcUJ1
+         WW5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=zAjAMQVShjcCOaBYyRGNXKWRjBrsW1noh9beLLTMUjc=;
-        b=PnsyW8R4L6hLunnnnh+Sr9iwzKxFNQ/4Le/69d9a9gCgbk86e/3oKgxrsDtNLyOUv+
-         W3dXhnmQWK2Q8WvQZRYg90aOOk2M8obn7gXpc8VyrySPcwKTsd8dyZwkwqNDUqvmVR/l
-         VJtpWp1oH/zOG45FGo0rBwJiq7mwGrvPeiYKchZi6HMP/qRmm5HOkO26vmclpkvePLwH
-         1hP+8DV8vsIpbUFWiScFpB+e5jKCO3W8/1/JExWEwNmlHUfjDr9ODxYNz9FilAPYmciH
-         ZtsjnfDvp1f5N93OE1ms4zmlILtc8FGTyC0V8ryJgkW5ercYzPNdB3jYekldOVkO/zAx
-         bOsg==
-X-Gm-Message-State: AOAM531tTONPtpd24vlKEAu+pU0cspTXLX5z8ieRdCl5NZQqJ5b3awor
-        kRQGuW502RSi5xLrRuP5o93k3X7f6DfbrQkV
-X-Google-Smtp-Source: ABdhPJxGjxdHWEJWsOj5EGq6SS5HKquCVaUC/ZfjhceiK9vwnOdy7xxROfSJOSLOlCg8n7ZLwjLnvw==
-X-Received: by 2002:a2e:e1a:: with SMTP id 26mr7758125ljo.199.1639527156576;
-        Tue, 14 Dec 2021 16:12:36 -0800 (PST)
-Received: from ?IPV6:2001:470:dd84:abc0::8a5? ([2001:470:dd84:abc0::8a5])
-        by smtp.gmail.com with ESMTPSA id x25sm40690lfe.69.2021.12.14.16.12.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Dec 2021 16:12:35 -0800 (PST)
-Message-ID: <0750dd24-1e84-6fb7-eb4e-9ab07d05ec62@linaro.org>
-Date:   Wed, 15 Dec 2021 03:12:34 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.2
-Subject: Re: [PATCH 06/11] clk: qcom: camcc-sc7180: use parent_hws instead of
- parent_data
-Content-Language: en-GB
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        bh=NVgkiLE97N0iul+V2pjFMo/DYrLzQeV66i7a5YrCjf0=;
+        b=vQBi9ms09DagQhQ4WCI0wlPM48QKNHfNdrYPHElrb99VXq3EeoRXNolRUHV1Lh7dRU
+         Lu1dvEcZ+KMr4FgoqHkgUyH5HxUMLRDeGmd9gFIOjW40eyFgsS9i2/JODHwj0cwOE46U
+         TYf6oEJIX1WoDtSfZ/IzyW999tbjdfVX6u4fLHqjk08PEA3KsstBfsMsJEQfZfe/Xfaa
+         O/aHZjJfDUbbcxjHVOMBayYYgxextrOn2U/fnoWrkKeIm19NdIgz1wkUYE7he0+KfHtU
+         Ic3Y6A1l/w6VP7nlyVp4BqpS3Rr6PNAQ59WJ1E9+vwhIiB0XDu9UdVM7ueEdtudDom4D
+         mhLg==
+X-Gm-Message-State: AOAM532kShhharsEhQpp8OCUo614f+WNLV4jO/hTO4GPeUCf/ZuDgTzr
+        ydFK7FyNziduSAoZfMEKxLZmug==
+X-Google-Smtp-Source: ABdhPJz4KwJr3b3GP9C1jHKVUmhvSsvAfDAAUb+A9DpT91Oixkc/zayHc204KGVc9H3I4Ol6hwml5Q==
+X-Received: by 2002:a05:6512:344d:: with SMTP id j13mr8013031lfr.347.1639529684239;
+        Tue, 14 Dec 2021 16:54:44 -0800 (PST)
+Received: from eriador.lan ([2001:470:dd84:abc0::8a5])
+        by smtp.gmail.com with ESMTPSA id b12sm53022lfb.146.2021.12.14.16.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Dec 2021 16:54:43 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20211208175430.1333594-1-dmitry.baryshkov@linaro.org>
- <20211208175430.1333594-7-dmitry.baryshkov@linaro.org>
- <20211209081131.8D886C004DD@smtp.kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20211209081131.8D886C004DD@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 00/15] clk: qcom: another round of clock drivers cleanup
+Date:   Wed, 15 Dec 2021 03:54:08 +0300
+Message-Id: <20211215005423.2114261-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.33.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/12/2021 11:11, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2021-12-08 09:54:25)
->> If all parents are specified as clk_hw, we can use parent_hws instead of
->> parent_data.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
-> 
-> Is the code size smaller? Would be nice to add that detail.
+Another bunch of updates for Qualcomm clock controller driver, removing
+unused enum values, test clock, using parent_data, parent_hws and
+ARRAY_SIZE.
 
-The bloat-o-meter reports zero size difference.
+Changes since v1:
+ - convert two parent_names in gpucc-sdm660
+ - split camcc-sc7180 patch into logical chunks
+ - split camcc-sdm845 patch into logical chinks
+ - reorder gcc-msm8996 patches to put ARRAY_SIZE in front of the rest of
+   patches
 
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+
+are available in the Git repository at:
+
+  https://git.linaro.org/people/dmitry.baryshkov/kernel.git msm-clocks-bulk-2
+
+for you to fetch changes up to b8d6e03173f2945c62d200257ed28f74b09403b5:
+
+  clk: qcom: gcc-msm8996: use parent_hws/_data instead of parent_names (2021-12-15 03:33:53 +0300)
+
+----------------------------------------------------------------
+Dmitry Baryshkov (15):
+      clk: qcom: gpucc-sdm660: fix two clocks with parent_names
+      clk: qcom: gpucc-sdm660: get rid of the test clock
+      clk: qcom: gpucc-sdm660: use parent_hws instead of parent_data
+      clk: qcom: camcc-sc7180: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: camcc-sc7180: get rid of the test clock
+      clk: qcom: camcc-sc7180: use parent_hws instead of parent_data
+      clk: qcom: camcc-sdm845: get rid of the test clock
+      clk: qcom: camcc-sdm845: move clock parent tables down
+      clk: qcom: camcc-sdm845: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: camcc-sdm845: convert to parent_hws/_data
+      clk: qcom: videocc-sc7180: use parent_hws instead of parent_data
+      clk: qcom: gcc-msm8996: use ARRAY_SIZE instead of specifying num_parents
+      clk: qcom: gcc-msm8996: drop unsupported clock sources
+      clk: qcom: gcc-msm8996: move clock parent tables down
+      clk: qcom: gcc-msm8996: use parent_hws/_data instead of parent_names
+
+ drivers/clk/qcom/camcc-sc7180.c   | 221 ++++-----
+ drivers/clk/qcom/camcc-sdm845.c   | 323 +++++++------
+ drivers/clk/qcom/gcc-msm8996.c    | 971 +++++++++++++++++++++++---------------
+ drivers/clk/qcom/gpucc-sdm660.c   |  21 +-
+ drivers/clk/qcom/videocc-sc7180.c |   8 +-
+ 5 files changed, 874 insertions(+), 670 deletions(-)
 
 
--- 
-With best wishes
-Dmitry
