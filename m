@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C623DC43219
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 16:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14ADC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 16:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244489AbhLOQJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 11:09:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45588 "EHLO
+        id S238150AbhLOQJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 11:09:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244407AbhLOQJR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 11:09:17 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56522C06175E
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:16 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id z4-20020a1c7e04000000b0032fb900951eso1801311wmc.4
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:16 -0800 (PST)
+        with ESMTP id S244238AbhLOQJP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 11:09:15 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A59FC061759
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:13 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id d198-20020a1c1dcf000000b0034569cdd2a2so1365503wmd.5
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 08:09:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XyUPK5oGUcP/HrMf/GM7b7nDYwN4yorA9vguK3F3yGE=;
-        b=veKA+/Yiqp9+4bkat66Iy8BK4lpAZbakowoIgHdXjQOmiOUFga4nrBzpJK7hwJ3oal
-         I69YKE5QGJTlbESciVuXrRk93QbN2flSBdZ51RZCGYfw7zUwAlhjeogeDTC5Q3UwGQwc
-         vnrc7lZSVbwfpBseM4tDm/A7Aj5gOwjyA1C3XK9uf+droavbD9AJ1GBREJzyT24sYlkr
-         uF4lULL9ouu3t1nlFLcezHCi5w8JeRTkmfFnsKFbMjLsEanxnW1eRRE38N0kMUsvTfSN
-         fvVnvZg+UuZDxU2KO5+8etXssdUFlJHbtXU+45yPFw3VSn5+OLLLCmXk06A98ue4eDxH
-         8tcg==
+        bh=u4zZ+z1pGP+Htk3E+7BpOhHUxDFBFodnyOqMJFTyq+8=;
+        b=oYZR9hF/CodulLOtmAdszrJJnJs/Ny9cc6G7wkr6zvqlQgG3/n8IDv0ZAhHEwF2pYn
+         k2YUqoxHDs2QsdWTBgG9BTgI5B7XYcaO7qX3xbY4Ue+E5ERkAoJdhA5UKGyGAFXAm5j3
+         viYtFHYPw7sJmwt2iGdabMirVEItKAybcnfwOFXDwZo9kv/pRJ3eVk7RUT0BbQE5Cp5a
+         Jhm/5wd3U0jRAVtDHfyblnc7ET6dtJpiphJxApUGm0LmDGJ65YjKx+YIawE70E3cxqxd
+         Ou8FtpLxlNXUsHDplUriMcmOtYHB7J+rnH80g2SJbelkI8niO8RQ6F4R/dndd3keTgzs
+         A4WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XyUPK5oGUcP/HrMf/GM7b7nDYwN4yorA9vguK3F3yGE=;
-        b=vPs7UMm467oiBoFN9b0SKwjxTcarYrnFx2+2ee3J0bpeJLvA8oStTIB6i450xWS7AH
-         vJW4zpTOlWoEoPs6gpjynfAuNP4TdLSLSHUVaYFx/47iMGoJtD25zBfDhT9Yh2ksI1s+
-         NrVR7M5wmx/AuWKSekmOZOxfxfOeUtmICuHZhRohcDlzbr3Oq0B3cMhkC2sdqtXVi5Se
-         zQzWaQGd3vscz/tTMtpwFC4yJtUMWGAKEF3pCE0dFLxafnilS6Q9uYvIL+N3wTA7OuL+
-         WnNZgTXhbtwtgI9u/SR09QIHYHmWHBvDuRA+955+hQzeYomH9l/eLe5pYECpNFro3pPb
-         8RLA==
-X-Gm-Message-State: AOAM531/tJmU4NnuamrZI61BPcx2SxZmfSPgSploCXI0NLB9/Cfmr66L
-        Ul5toIMZkmQ3+HvSHDCaEwDKPg==
-X-Google-Smtp-Source: ABdhPJx5uy/42LpyPG2TBIVJjk/xEkq7+9Y3BItPABNV1xkLczWxvRcOp7vIjtbb8EE9hQXCzMGdpw==
-X-Received: by 2002:a05:600c:2295:: with SMTP id 21mr496406wmf.187.1639584554980;
-        Wed, 15 Dec 2021 08:09:14 -0800 (PST)
+        bh=u4zZ+z1pGP+Htk3E+7BpOhHUxDFBFodnyOqMJFTyq+8=;
+        b=XTXJmgCttY2tl0+K86VLO9Jm7KxM6j9gPj3OMSKmq2ghUCSUwNqJqsn5wcf5jZaQU/
+         yc9iR0aY7KOx2vXY2NXuq6LRLEAEbgG9fOhfC+uOH6KppSpYoeMMM/P5ek3DFWsd36ga
+         tEUpmUFcVdSZjqdF0JaSkJebI/sK198MbTThkyUnlEWP+FvzPiy8eBcs0zhw8DLmtge5
+         /8x4IA1HF/xOz+gmwJDF2agl7HGSKsS0is6M/vSv770Q9Qj9HGtkmzv/oUPTzUqjOSXG
+         gNJLDJ7uIPImP55IIJuC7hg50ozfTH59Q/ce5oM7q6MxmV6Z3z6WmRnYQA2HjzeGg3YI
+         Rz+w==
+X-Gm-Message-State: AOAM532RENzJt3ROxqrwE4SvX8AjL72QHvUhCbe2i2XG9tLIARtdfMtt
+        mpalJm17fcSNaUaoIkAR++bOxQ==
+X-Google-Smtp-Source: ABdhPJzGSJCvZ0o2lhXsioS+2QTFi++7SI1Tfu2g1ePTsn+jn9X2ZXiEPV5u98fsYf4jsKpaPwqz2g==
+X-Received: by 2002:a7b:cb55:: with SMTP id v21mr504663wmj.45.1639584552115;
+        Wed, 15 Dec 2021 08:09:12 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id 8sm2762633wrb.49.2021.12.15.08.09.14
+        by smtp.gmail.com with ESMTPSA id 10sm3034006wrb.75.2021.12.15.08.09.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 08:09:14 -0800 (PST)
+        Wed, 15 Dec 2021 08:09:11 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 5/7] dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
-Date:   Wed, 15 Dec 2021 18:09:04 +0200
-Message-Id: <20211215160906.17451-6-semen.protsenko@linaro.org>
+Subject: [PATCH 3/7] dt-bindings: Add vendor prefix for WinLink
+Date:   Wed, 15 Dec 2021 18:09:02 +0200
+Message-Id: <20211215160906.17451-4-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211215160906.17451-1-semen.protsenko@linaro.org>
 References: <20211215160906.17451-1-semen.protsenko@linaro.org>
@@ -77,46 +77,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All Exynos850 GPIO blocks can use EXYNOS5420_PIN_DRV* definitions,
-except GPIO_HSI block. Add pin drive strength definitions for GPIO_HSI
-block correspondingly.
+WinLink Co., Ltd is a hardware design and manufacturing company based in
+South Korea. Official web-site: [1].
+
+[1] http://win-link.net/
 
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
- include/dt-bindings/pinctrl/samsung.h | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
-index b1832506b923..950970634dfe 100644
---- a/include/dt-bindings/pinctrl/samsung.h
-+++ b/include/dt-bindings/pinctrl/samsung.h
-@@ -36,7 +36,10 @@
- #define EXYNOS5260_PIN_DRV_LV4		2
- #define EXYNOS5260_PIN_DRV_LV6		3
- 
--/* Drive strengths for Exynos5410, Exynos542x and Exynos5800 */
-+/*
-+ * Drive strengths for Exynos5410, Exynos542x, Exynos5800 and Exynos850 (except
-+ * GPIO_HSI block)
-+ */
- #define EXYNOS5420_PIN_DRV_LV1		0
- #define EXYNOS5420_PIN_DRV_LV2		1
- #define EXYNOS5420_PIN_DRV_LV3		2
-@@ -56,6 +59,14 @@
- #define EXYNOS5433_PIN_DRV_SLOW_SR5	0xc
- #define EXYNOS5433_PIN_DRV_SLOW_SR6	0xf
- 
-+/* Drive strengths for Exynos850 GPIO_HSI block */
-+#define EXYNOS850_HSI_PIN_DRV_LV1	0	/* 1x   */
-+#define EXYNOS850_HSI_PIN_DRV_LV1_5	1	/* 1.5x */
-+#define EXYNOS850_HSI_PIN_DRV_LV2	2	/* 2x   */
-+#define EXYNOS850_HSI_PIN_DRV_LV2_5	3	/* 2.5x */
-+#define EXYNOS850_HSI_PIN_DRV_LV3	4	/* 3x   */
-+#define EXYNOS850_HSI_PIN_DRV_LV4	5	/* 4x   */
-+
- #define EXYNOS_PIN_FUNC_INPUT		0
- #define EXYNOS_PIN_FUNC_OUTPUT		1
- #define EXYNOS_PIN_FUNC_2		2
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 932c5ded6c00..83f6b484997c 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1326,6 +1326,8 @@ patternProperties:
+     description: Wiligear, Ltd.
+   "^winbond,.*":
+     description: Winbond Electronics corp.
++  "^winlink,.*":
++    description: WinLink Co., Ltd
+   "^winstar,.*":
+     description: Winstar Display Corp.
+   "^wits,.*":
 -- 
 2.30.2
 
