@@ -2,146 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7C3C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F080C433FE
 	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 08:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240810AbhLOI2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 03:28:55 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:64122 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235926AbhLOI2y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 03:28:54 -0500
-Date:   Wed, 15 Dec 2021 08:28:32 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail2; t=1639556928;
-        bh=5N280dBocJg74e5F/vSISE7EffqnCBdn+052s+S8NFo=;
-        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
-         References:From:To:Cc;
-        b=VEQIE20/F9fTnC8R/++pVnhcDtgwv6VWLHjoeyu0TchlkBwJNFulPKRjkul7yxCj/
-         OTUbHC3cJvB+SvWWPzknkOocNIgh0ZxNxxNyiJJNNvzK65JJm7kWWluCwxou0f1Ffc
-         wa2SgiQItoi9E40pVlzyP4dpfqZL8/rqTD3KDBFl5BQhlVI8CzPK3OlovAHPmKQTGP
-         WLDysfaZMkosAdvROuZTvitmkEG4wem8xaCiSxaUpLYTfisV8G5PlDkYya6lkvX0tf
-         ptBFcKQWupLOJEZY4Czv+Md7DEP9ENCOBEDSEAmYXmxE1iRwdfi6vdi2VPhGFvChn3
-         FQry6UgYBvCiw==
-To:     Rob Herring <robh@kernel.org>
-From:   =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mark Kettenis <kettenis@openbsd.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>
-Reply-To: =?utf-8?Q?Martin_Povi=C5=A1er?= <povik@protonmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add Apple NCO
-Message-ID: <F62225F0-C9C6-4E39-9163-B125A7253733@protonmail.com>
-In-Reply-To: <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
-References: <20211214120213.15649-1-povik@protonmail.com> <20211214120213.15649-2-povik@protonmail.com> <Ybi61fzpOV7CumtR@robh.at.kernel.org> <3F145763-2774-4569-B9B7-A03CFE002E94@protonmail.com> <CAL_Jsq+STG7=H_B3VwNp1V4OSCvKat2FUJhtzi_1t_UbMnOUfw@mail.gmail.com>
+        id S231658AbhLOI24 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 03:28:56 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:11970 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240809AbhLOI2z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 03:28:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1639556935; x=1671092935;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TO4VsffB4nRVgSGQ1EANC3QB3+awSEtN8OJYwX+VVRY=;
+  b=EGjG2Ddjz+Qp9AkWobHegIzefzjNUMtVc3m+uS9zoS/wQ5cDPnNvGJpV
+   HmdWisPgfyBOWneoLRXBL8/EybHHuRP/wkwd+/1g0ohYjiP3OehwUg+ut
+   +CbdUqrm56OLLOyBaSb8HMzyvQiOe8ikBpxrp3Segp1QVKlDj0qn+Z3m2
+   E96LVGZZ51Kv6P0IeZ9L1/EfGP/lgjeXcfoUIQCGwc7QRPnVeoWi8VKYV
+   gJwKVJEvzaIMIxnXw1Cj8eTolpRqo82sJBBDnVC2RuFgW1VW+4nCh0j5p
+   4W18Vy5lfkRx9XiHWOZplxG4z9b46RVNy9qopYCE889EfutumPpGWAKOj
+   Q==;
+IronPort-SDR: X8DM+lVFi5bvayoI2SipJAuZLKvYDv6qqIm1pNVwW8L+a9fh+3uleuyiChHX/h0kc3m/coEdda
+ Po1X3nkblJPqlCp9dwvIdOQbb2XcFq3vnJfnktZG63PBO+eUq42zeFC5ghr8NPbPllPS2WUCAX
+ kjoe+3cmhDXry3oxRxtHwoO2ScJQLDtY5KNmFVOrR5AdNJne+dQXJGSGC3vuoplKx4SI+04qjc
+ e0wA4GWFUbE6B2F0M0AXjZsCKRZwk4NYa2+4Qa/H+HljEDZTO3tDHmNXDMGmzAViW+5xi4w/Hf
+ /f0TZox2vF/L6WAUofE5VB88
+X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
+   d="scan'208";a="155546371"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Dec 2021 01:28:54 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Wed, 15 Dec 2021 01:28:53 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Wed, 15 Dec 2021 01:28:51 -0700
+From:   <conor.dooley@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
+        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
+        <daire.mcnamara@microchip.com>, <cyril.jean@microchip.com>,
+        <conor.dooley@microchip.com>
+Subject: [PATCH v7 0/2] CLK: microchip: Add clkcfg driver for Microchip PolarFire SoC
+Date:   Wed, 15 Dec 2021 08:30:00 +0000
+Message-ID: <20211215083002.1353-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Conor Dooley <conor.dooley@microchip.com>
 
-> On 15. 12. 2021, at 0:53, Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Dec 14, 2021 at 2:08 PM Martin Povi=C5=A1er <povik@protonmail.com=
-> wrote:
->>
->> Hi Rob,
->>
->>> On 14. 12. 2021, at 16:40, Rob Herring <robh@kernel.org> wrote:
->>>
->>> On Tue, Dec 14, 2021 at 12:02:48PM +0000, Martin Povi=C5=A1er wrote:
->>>> The NCO block found on Apple SoCs is a programmable clock generator
->>>> performing fractional division of a high frequency input clock.
->>>>
->>>> Signed-off-by: Martin Povi=C5=A1er <povik@protonmail.com>
->>>> ---
->>>> .../devicetree/bindings/clock/apple,nco.yaml  | 70 +++++++++++++++++++
->>>> 1 file changed, 70 insertions(+)
->>>> create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.y=
-aml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/apple,nco.yaml b/=
-Documentation/devicetree/bindings/clock/apple,nco.yaml
->>>> new file mode 100644
->>>> index 000000000000..5029824ab179
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/apple,nco.yaml
->>>> @@ -0,0 +1,70 @@
->>
->>>> +
->>>> +  apple,nchannels:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    description:
->>>> +      The number of output channels the NCO block has been
->>>> +      synthesized for.
->>>
->>> I'd assume there is some max number?
->>
->> There might be some limit to the underlying IP but we wouldn=E2=80=99t k=
-now.
->> What we know about the hardware comes from blackbox reversing, and that
->> doesn't suggest a particular limit to the number of channels we might
->> see on the SoC block in future.
->
-> All the more reason to not put the size in the DT, but imply from the
-> compatible. Unless it varies by instance...
->
-> Though I guess you would need DT updates anyways to use the new clock.
->
->>> Do you really need to know this? If this is just to validate the clock
->>> cell values are less than this, then just drop that and the property.
->>> It's not the kernel's job to validate the DT.
->>
->> Well strictly speaking the driver could do clock registration on-demand
->> at the cost of additional book-keeping, in which case we could drop
->> the property, but I would prefer we don=E2=80=99t do that. Rather than p=
-roviding
->> validation the property simplifies drivers.
->>
->> Another option is calculating the no. of channels from size of the reg
->> range, but I assume that=E2=80=99s worse than having the nchannels prope=
-rty.
->>
->>>> +
->>>> +    nco: clock-generator@23b044000 {
->>>
->>> clock-controller@...
->>
->> Okay, will change.
->>
->>>
->>>> +      compatible =3D "apple,t8103-nco", "apple,nco";
->>>> +      reg =3D <0x3b044000 0x14000>;
->>>
->>> You really have 0x14000 worth of registers here because all of that
->>> will be mapped into virtual memory? Doesn't matter so much on 64-bit,
->>> but it did for 32-bit.
->>
->> There is about 5 registers per channel with 0x4000 stride between them,
->> blame Apple (or Samsung? I don=E2=80=99t know...).
->
-> I would think you could walk the 0x4000 until you hit registers that
-> behave differently.
->
-> The register size / 0x4000 gives you the number of channels, too.
+This patchset adds support for the Microchip PolarFire clkcfg
+hardware block.
 
-Right now that=E2=80=99s what I am inclined to use in v2.
+Changes since v6:
+* Dropped clock-output-names *as a required property*
+* Dropped if(lock) check on spinlocks, added spinlocks to all
+  read-modify-write register access
+* Removed kfree()s on non-dynamically allocated variables
+* Use devm_clk_get to get the reference clock
+* Account for reserved clock when calculating the size of num_clks
 
-> Another question, how do you know this is 1 block with N channels vs.
-> N blocks just happening to be next to each other in the memory map?
+Changes since v5:
+* Dropped clock-output-names property
 
-We don=E2=80=99t. We only see Apple describe it as such in their devicetree=
-, and
-so far for all practical purposes it could be one block.
+Major changes since v4:
+* Adjusted license for microchip,mpfs-clock.h to match microchip,mpfs.yaml
+* Corrected the number of clocks to 33 from 32
 
-I guess if we derive the number of channels from register size, there=
-=E2=80=99s
-the fallback of breaking up the nodes per channel in future.
+Major changes since v3:
+* Patch reformatted so microchip,mpfs-clock.h is part of device-tree patch
 
-Martin
+Major changes since v2:
+* In mpfs_cfg_clk_set_rate, return immediately if divider_get_val
+    returns <0 
+* rebased to v5.12-rc1
 
+Major changes since v1:
+ * Dependency on SOC_MICROCHIP_POLARFIRE
+ * All references to PFSOC/pfsoc changed to MPFS/mpfs
+ * Cleaned error handling in _probe
+ * Re-ordered code to place structs et al at top
+
+Daire McNamara (2):
+  dt-bindings: clk: microchip: Add Microchip PolarFire host binding
+  clk: microchip: Add driver for Microchip PolarFire SoC
+
+ .../bindings/clock/microchip,mpfs.yaml        |  61 +++
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/microchip/Kconfig                 |   7 +
+ drivers/clk/microchip/Makefile                |   6 +-
+ drivers/clk/microchip/clk-mpfs.c              | 447 ++++++++++++++++++
+ .../dt-bindings/clock/microchip,mpfs-clock.h  |  45 ++
+ 7 files changed, 566 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/microchip,mpfs.yaml
+ create mode 100644 drivers/clk/microchip/Kconfig
+ create mode 100644 drivers/clk/microchip/clk-mpfs.c
+ create mode 100644 include/dt-bindings/clock/microchip,mpfs-clock.h
+
+-- 
+2.33.1
 
