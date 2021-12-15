@@ -2,140 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82427C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 21:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC33DC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 22:05:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbhLOVw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 16:52:28 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55892 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230182AbhLOVw1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 16:52:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1639605147;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=d8Xx3zTekrihbvJfhZhhSli7JDX8raqst1ZSqjxf0vI=;
-        b=VyAnZa5Ea2e6Tvem5EeUyB/Ln5eecw4ryau+VGyce+TL+Rf8ocMmrDs4/GEJRGRKoM88gg
-        FML1z97KpCOSLyTSYLsd06CTDjAFDvK3qJZh0Ja/lgphy9b+5oJiPkl8RkzrL61X61hgTK
-        0rY5w3VYozSlJh4aDpzzG3WmH+V86UI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-604-PMyltjrkMS6PmpVo4bzuhQ-1; Wed, 15 Dec 2021 16:52:23 -0500
-X-MC-Unique: PMyltjrkMS6PmpVo4bzuhQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D18E7190B2A3;
-        Wed, 15 Dec 2021 21:52:20 +0000 (UTC)
-Received: from shalem.redhat.com (unknown [10.39.192.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D67DF78DE6;
-        Wed, 15 Dec 2021 21:52:13 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mark Gross <markgross@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Daniel Scally <djrscally@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Kate Hsuan <hpa@redhat.com>, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [GIT PULL] Immutable branch with INT3472 ACPI/i2c + pdx86 patches
-Date:   Wed, 15 Dec 2021 22:52:12 +0100
-Message-Id: <20211215215212.321235-1-hdegoede@redhat.com>
+        id S230371AbhLOWFn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 17:05:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230022AbhLOWFm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 17:05:42 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E893C061574;
+        Wed, 15 Dec 2021 14:05:42 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id m192so21558051qke.2;
+        Wed, 15 Dec 2021 14:05:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=82TjwUfk9T2/ds3Ciyj/zGT4kaKZHzrrPS0KAqF4ALY=;
+        b=Vw4Ln5z5bJ1z4j37TQH8Minz9tGBBCeVuWNd1Zp92mp05MfCGPJyyfL9T2gzSFrVuA
+         L5I/AE2EXSJ7/+1dwo2uE/6OeXAfmOlCKXAQUoaw3GGQXJHgE9trosGjCuj0XIhYVgDM
+         vVdmAsbqu+MYJkM1Nn3Nof6BeNvrOfLUPUDxYY83n+YeJyJXukMZPPivAnsSQDGwWYH2
+         k3cDEkw6XaLun4Oa+uCzy/U8TxzJYd8pVqi3Xzz35P/kNXrXFbC85WWeShHcHorfrgqo
+         zgBWO+yUUyBLJ6uV2MV2XzIVwZAXev3QfxK4zlMIz0Cx9ktR3kHUM1VOjI9hhcgfBNfz
+         16Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=82TjwUfk9T2/ds3Ciyj/zGT4kaKZHzrrPS0KAqF4ALY=;
+        b=B523/dQWDbD41kjfaUWCCsh0wlcr0o7b7nNcGYOKz3y4ErMmMjs9pXw0qHlsqG3aeh
+         v5l0P1aBuB51xuUuqeIN6lveDfDeYHKf5MB0LWjJynEZBcUUFTa7N1HD3aWvcAtlp4rS
+         cq57T7kfh8h2xLSS3dO81BDuLMjd6MEOt2cM2hkWKQVTBM24N4tyy6EBvz3IAN+jqzSx
+         6oDb5PeBBf+y3RnEgBw9EIeQOdU4ltamDVYyIMVqXZOSry0yHkox64EVcfJlxr7Nj8WM
+         tcDrX2bUfLXm+ORKLvmnMbOKsEdxOXLXhunInmRlxcfXP2wwKVP28N5leNwCh0f3iNOF
+         bVGw==
+X-Gm-Message-State: AOAM532l1A/F1qM7Ln/8WUGn7cGBoF48D2nToV7vNpvm2YKpTcm8i+g5
+        h+3aLo/qRaW/rLiZdQNCn30=
+X-Google-Smtp-Source: ABdhPJy6zw4A2uEDI0uCUlM5KpQmgZDOHGlxjcoHCdvjCKDQYGLWVUUcTm5W6ciyxP6apXSAQr1dJQ==
+X-Received: by 2002:a37:9ed5:: with SMTP id h204mr10494788qke.35.1639605941389;
+        Wed, 15 Dec 2021 14:05:41 -0800 (PST)
+Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id s20sm2471592qtc.75.2021.12.15.14.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Dec 2021 14:05:40 -0800 (PST)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
+        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
+        adrian.hunter@intel.com, jirislaby@kernel.org,
+        giulio.benetti@benettiengineering.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, Mr.Bossman075@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH v5 0/9]  Add initial support for the i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
+Date:   Wed, 15 Dec 2021 17:05:29 -0500
+Message-Id: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello clk, regulator and media maintainers,
+This patchset contains:
+- i.MXRT10xx family infrastructure
+- i.MXRT1050 pinctrl driver adaption
+- i.MXRT1050 clock driver adaption
+- i.MXRT1050 sd-card driver adaption
+- i.MXRT1050 uart driver adaption
+- i.MXRT1050-evk basic support
 
-As discussed here is a pull-req from an immutable branch based on 5.16-rc1
-with the ACPI/i2c, tps68470 and pdx86/INT3472 changes necessary as a base
-to merge the remaining clk / regulator / media changes from my
-[PATCH v7 00/14] Add support for X86/ACPI camera sensor/PMIC setup with clk and regulator platform data
-series. The remaining changes are:
+The i.MXRTxxxx family that could have support by Linux actually spreads
+from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
+100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
+with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
+2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
+STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
+less layer PCBs. Seeing that these chips are comparable to the
+STM32F7XXs which have linux ported to them it seems reasonable to add
+support for them.
 
-[PATCH v7 05/14] regulator: Introduce tps68470-regulator driver
-[PATCH v7 06/14] clk: Introduce clk-tps68470 driver
-[PATCH v7 12/14] media: ipu3-cio2: Defer probing until the PMIC is fully setup
-[PATCH v7 13/14] media: ipu3-cio2: Call cio2_bridge_init() before anything else
-[PATCH v7 14/14] media: ipu3-cio2: Add support for instantiating i2c-clients for VCMs
+Giving Linux support to this family should ease the development process,
+instead of using a RTOS they could use Embedded Linux allowing for more
+portability, ease of design and will broaden the scope of people using
+embedded linux.
 
-Please pull this immutable branch into your tree and then merge the
-remaining patches relevant for your tree on top.
+The EVK has very little SDRAM, generally 32MB starting from
+i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
+64MB of SDRAM for more functionality.
 
-Regards,
+At the moment we do not support XIP for either u-boot or Linux but it
+should be done in the future. XIP will also save SDRAM.
 
-Hans
+Another interesting fact is the amount of internal SRAM, as the P/N
+increases the SRAM will reach up to 2MB(some could be for cache and
+some would be for video).
 
+Also, some parts have embed flash of 4MB that can be used for
+u-boot/Linux, if both correctly sized it will leave the SDRAM free.
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+External flash can be Quad SPI and HyperFlash, so throughput would be
+decent.
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+The i.MXRT11xx series supports MIPI interface too.
 
-are available in the Git repository at:
+The family in general provide CAN bus, audio I/O, 1 or more
+USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-int3472-1
+All this can be used for simple GUIs, web-servers, point-of-sale
+stations, etc.
 
-for you to fetch changes up to 97c2259ec7757ec24a90f0ef8fc5ea7fa1c6acca:
+Giulio Benetti (4):
+  ARM: imx: Add initial support for i.MXRT10xx family
+  dt-bindings: imx: Add clock binding for i.MXRT1050
+  ARM: dts: imx: Add i.MXRT1050-EVK support
+  ARM: imxrt_defconfig: Add i.MXRT family defconfig
 
-  platform/x86: int3472: Deal with probe ordering issues (2021-12-13 11:44:51 +0100)
+Jesse Taube (5):
+  ARM: dts: imxrt1050-pinfunc: Add pinctrl binding header
+  dt-bindings: clock: imx: Add documentation for i.MXRT1050 clock
+  clk: imx: Add initial support for i.MXRT1050 clock driver
+  dt-bindings: serial: fsl-lpuart: add i.MXRT1050 compatible
+  tty: serial: fsl_lpuart: Add i.MXRT1050 support
 
-----------------------------------------------------------------
-Signed tag for the immutable platform-drivers-x86-int3472 branch
+ .../bindings/clock/imxrt1050-clock.yaml       |  66 ++
+ .../bindings/serial/fsl-lpuart.yaml           |   1 +
+ arch/arm/boot/dts/Makefile                    |   2 +
+ arch/arm/boot/dts/imxrt1050-evk.dts           |  72 ++
+ arch/arm/boot/dts/imxrt1050-pinfunc.h         | 993 ++++++++++++++++++
+ arch/arm/boot/dts/imxrt1050.dtsi              | 154 +++
+ arch/arm/configs/imxrt_defconfig              |  35 +
+ arch/arm/mach-imx/Kconfig                     |   7 +
+ arch/arm/mach-imx/Makefile                    |   2 +
+ arch/arm/mach-imx/mach-imxrt.c                |  19 +
+ drivers/clk/imx/Kconfig                       |   5 +
+ drivers/clk/imx/Makefile                      |   1 +
+ drivers/clk/imx/clk-imxrt1050.c               | 181 ++++
+ drivers/tty/serial/fsl_lpuart.c               |   8 +
+ include/dt-bindings/clock/imxrt1050-clock.h   |  73 ++
+ 15 files changed, 1619 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
+ create mode 100644 arch/arm/boot/dts/imxrt1050-evk.dts
+ create mode 100644 arch/arm/boot/dts/imxrt1050-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imxrt1050.dtsi
+ create mode 100644 arch/arm/configs/imxrt_defconfig
+ create mode 100644 arch/arm/mach-imx/mach-imxrt.c
+ create mode 100644 drivers/clk/imx/clk-imxrt1050.c
+ create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
 
-This branch contains 5.16-rc1 + the pending ACPI/i2c, tps68570 platform_data
-and INT3472 driver patches.
-
-----------------------------------------------------------------
-Hans de Goede (9):
-      ACPI: delay enumeration of devices with a _DEP pointing to an INT3472 device
-      i2c: acpi: Use acpi_dev_ready_for_enumeration() helper
-      i2c: acpi: Add i2c_acpi_new_device_by_fwnode() function
-      platform_data: Add linux/platform_data/tps68470.h file
-      platform/x86: int3472: Split into 2 drivers
-      platform/x86: int3472: Add get_sensor_adev_and_name() helper
-      platform/x86: int3472: Pass tps68470_clk_platform_data to the tps68470-regulator MFD-cell
-      platform/x86: int3472: Pass tps68470_regulator_platform_data to the tps68470-regulator MFD-cell
-      platform/x86: int3472: Deal with probe ordering issues
-
- drivers/acpi/scan.c                                |  37 +++++-
- drivers/i2c/i2c-core-acpi.c                        |  22 +++-
- drivers/platform/x86/intel/int3472/Makefile        |   9 +-
- ...472_clk_and_regulator.c => clk_and_regulator.c} |   2 +-
- drivers/platform/x86/intel/int3472/common.c        |  82 ++++++++++++
- .../{intel_skl_int3472_common.h => common.h}       |   6 +-
- .../{intel_skl_int3472_discrete.c => discrete.c}   |  51 +++++---
- .../x86/intel/int3472/intel_skl_int3472_common.c   | 106 ---------------
- .../{intel_skl_int3472_tps68470.c => tps68470.c}   |  92 +++++++++++--
- drivers/platform/x86/intel/int3472/tps68470.h      |  25 ++++
- .../x86/intel/int3472/tps68470_board_data.c        | 145 +++++++++++++++++++++
- include/acpi/acpi_bus.h                            |   5 +-
- include/linux/i2c.h                                |  17 ++-
- include/linux/platform_data/tps68470.h             |  35 +++++
- 14 files changed, 473 insertions(+), 161 deletions(-)
- rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_clk_and_regulator.c => clk_and_regulator.c} (99%)
- create mode 100644 drivers/platform/x86/intel/int3472/common.c
- rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_common.h => common.h} (94%)
- rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_discrete.c => discrete.c} (91%)
- delete mode 100644 drivers/platform/x86/intel/int3472/intel_skl_int3472_common.c
- rename drivers/platform/x86/intel/int3472/{intel_skl_int3472_tps68470.c => tps68470.c} (56%)
- create mode 100644 drivers/platform/x86/intel/int3472/tps68470.h
- create mode 100644 drivers/platform/x86/intel/int3472/tps68470_board_data.c
- create mode 100644 include/linux/platform_data/tps68470.h
+-- 
+2.34.1
 
