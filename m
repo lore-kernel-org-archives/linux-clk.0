@@ -2,110 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13539C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 09:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A946BC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 10:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241380AbhLOJz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 04:55:59 -0500
-Received: from mga12.intel.com ([192.55.52.136]:44332 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241373AbhLOJz6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Dec 2021 04:55:58 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10198"; a="219207381"
-X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
-   d="scan'208";a="219207381"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2021 01:55:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,207,1635231600"; 
-   d="scan'208";a="567876247"
-Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 15 Dec 2021 01:55:56 -0800
-Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mxR0t-0001a9-B5; Wed, 15 Dec 2021 09:55:55 +0000
-Date:   Wed, 15 Dec 2021 17:55:23 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+        id S241443AbhLOKD4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 05:03:56 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36368 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S241442AbhLOKD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 05:03:56 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 1BF9HdE0011435;
+        Wed, 15 Dec 2021 11:03:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=XDbBfWq1pa6USW4iwV0flc6AzPb7FyOd+jYnPDnNvZk=;
+ b=2r9nEVGNX9Tml+Z+VbD8eOIOsfLdY6SR6TGmux4hqocfo+7hsyvyNSTDpusWrVVMPOq2
+ pmru9H9Ymmefgy6/9xsgUCf8qADPCTqmPqt/Hb9nHgK+lkHzCbqynjjGuNN6MqlHTKMw
+ utdezBWWDgk3+a3pZmjhGhjBPFJUCcPnk3bc6YpRo0nxxa1fxChhkeXreVIkjNNtM7Db
+ qYGoiPM9PmiJ8KSHLzDlRg/NqareGiEKTHJUhUP6uV1DF6ZMxhPtEKlOp+206bTVMf5/
+ 572DlpxBFN0Xm9eD89WnxGc0s+Pj4bWjLyZWvkfS07WleDpbnsepZP/2Agz7qk6rBPb7 ag== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3cy79j2pdw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Dec 2021 11:03:34 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B2E4810002A;
+        Wed, 15 Dec 2021 11:03:33 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9C69F22DC0C;
+        Wed, 15 Dec 2021 11:03:33 +0100 (CET)
+Received: from lmecxl0573.lme.st.com (10.75.127.50) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 15 Dec
+ 2021 11:03:33 +0100
+Subject: Re: [PATCH 1/2] clk: st: clkgen-fsyn: search reg within node or
+ parent
+To:     Alain Volmat <avolmat@me.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 01/15] clk: qcom: gpucc-sdm660: fix two clocks with
- parent_names
-Message-ID: <202112151703.HPWFiC3t-lkp@intel.com>
-References: <20211215005423.2114261-2-dmitry.baryshkov@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Lee Jones <lee.jones@linaro.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20211202072850.194314-1-avolmat@me.com>
+ <20211202072850.194314-2-avolmat@me.com>
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+Message-ID: <0759650c-7e56-4af5-6957-ac0055341d93@foss.st.com>
+Date:   Wed, 15 Dec 2021 11:03:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211215005423.2114261-2-dmitry.baryshkov@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211202072850.194314-2-avolmat@me.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-15_07,2021-12-14_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+Hi Alain
 
-Thank you for the patch! Yet something to improve:
+On 12/2/21 8:28 AM, Alain Volmat wrote:
+> In order to avoid having duplicated addresses within the DT,
+> only have one unit-address per clockgen and each driver within
+> the clockgen should look at the parent node (overall clockgen)
+> to figure out the reg property.  Such behavior is already in
+> place in other STi platform clock drivers such as clk-flexgen
+> and clkgen-pll.  Keep backward compatibility by first looking
+> at reg within the node before looking into the parent node.
+> 
+> Signed-off-by: Alain Volmat <avolmat@me.com>
+> ---
+>  drivers/clk/st/clkgen-fsyn.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
+> index 164285d6be97..0d41164f2c7f 100644
+> --- a/drivers/clk/st/clkgen-fsyn.c
+> +++ b/drivers/clk/st/clkgen-fsyn.c
+> @@ -988,9 +988,16 @@ static void __init st_of_quadfs_setup(struct device_node *np,
+>  	void __iomem *reg;
+>  	spinlock_t *lock;
+>  
+> +	/*
+> +	 * First check for reg property within the node to keep backward
+> +	 * compatibility, then if reg doesn't exist look at the parent node
+> +	 */
+>  	reg = of_iomap(np, 0);
+> -	if (!reg)
+> -		return;
+> +	if (!reg) {
+> +		reg = of_iomap(of_get_parent(np), 0);
+> +		if (!reg)
+> +			return;
+> +	}
+>  
+>  	clk_parent_name = of_clk_get_parent_name(np, 0);
+>  	if (!clk_parent_name)
+> 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on v5.16-rc5 next-20211214]
-[cannot apply to agross-msm/qcom/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Dmitry-Baryshkov/clk-qcom-another-round-of-clock-drivers-cleanup/20211215-085637
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: nios2-buildonly-randconfig-r005-20211214 (https://download.01.org/0day-ci/archive/20211215/202112151703.HPWFiC3t-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/a93be2f54e6825699913bbe0aab77dd7e4837fde
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Dmitry-Baryshkov/clk-qcom-another-round-of-clock-drivers-cleanup/20211215-085637
-        git checkout a93be2f54e6825699913bbe0aab77dd7e4837fde
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash drivers/clk/qcom/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> drivers/clk/qcom/gpucc-sdm660.c:208:52: error: 'struct clk_rcg2' has no member named 'clr'; did you mean 'clkr'?
-     208 |                                 &rbbmtimer_clk_src.clr.hw,
-         |                                                    ^~~
-         |                                                    clkr
-
-
-vim +208 drivers/clk/qcom/gpucc-sdm660.c
-
-   198	
-   199	static struct clk_branch gpucc_rbbmtimer_clk = {
-   200		.halt_reg = 0x10d0,
-   201		.halt_check = BRANCH_HALT,
-   202		.clkr = {
-   203			.enable_reg = 0x10d0,
-   204			.enable_mask = BIT(0),
-   205			.hw.init = &(struct clk_init_data){
-   206				.name = "gpucc_rbbmtimer_clk",
-   207				.parent_hws = (const struct clk_hw*[]){
- > 208					&rbbmtimer_clk_src.clr.hw,
-   209				},
-   210				.num_parents = 1,
-   211				.flags = CLK_SET_RATE_PARENT,
-   212				.ops = &clk_branch2_ops,
-   213			},
-   214		},
-   215	};
-   216	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Thanks
+Patrice
