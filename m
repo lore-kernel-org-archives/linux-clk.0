@@ -2,98 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF01C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Dec 2021 22:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C719C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 00:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231422AbhLOW26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 17:28:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50256 "EHLO
+        id S232206AbhLPAns (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 19:43:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231466AbhLOW16 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 17:27:58 -0500
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6CC0C061799
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:27:57 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id t19so33749502oij.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 14:27:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dIWHsocWhNzHpMIBX1OQ+sZEosNoFwmP0CG+wQ9sIW8=;
-        b=a7tXULw/Y0Ks7AVUJX+VepzbeZG9pbW0ucTLKjAiRKJ9pOtGgwRyIZrYaOwaWBqKel
-         CIJz0I7bzFdUGrnDUNoui/KTByhB+UAhw60QmXQ9ACs4CZ3JSpuOTSo4W77I6wO34AuM
-         Id8mQ2dfn5vcWvQPKzSMANzXyUdbe8/uRyVFrGlIEfX0PjEFjr2Li5BXzdtkja77oC39
-         E8i77I65sBcU68d984IL+PH8YwepLipxaKPYBDcExjbFURuOdaGCJ2nHRHg1yiNgrWrC
-         9Gw6vN2bWNFZIj7YDS7CwNin3uXRnhd7OY7WRbixzjGVc4r7UPqdHrZciM4toBSzzhBu
-         laLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dIWHsocWhNzHpMIBX1OQ+sZEosNoFwmP0CG+wQ9sIW8=;
-        b=DiW71ZHk4DWIrpgKRTUBSPXmejBkwV47MRXKoIAAooFjdxsiavgv8gd2fG5jy9qWWB
-         qaDN9WqRBQT8/vDiHf8XvvO0RtgrBfwJuBXXEHZbcnUUSOpsY9glBqW8Io32FtQNdWd1
-         wbTuJS8BHsi1h1itycxFUiuQkA2WZlnyPEx5gUlgmh3PPa9V/5g7MlywwrXJkBaHxNET
-         sETfz3TeUyG9lTQlahk5nDQ5Uqf35y0hUO20/4NqWP63Zk9a3wGxwvxcHcEdmUdNfpUm
-         624ArP/Or4QH0FJiaTtulgaIthgg4gcTKUex4oADI7dHGAUwg6mhNmLtKapEGlf7iPA+
-         SzYA==
-X-Gm-Message-State: AOAM532jUuGS0qzcz9HCO19wdMqvUM0L1HM7kFP9UWWtctEnk0OOEyD4
-        nD64/Q8E8FfZkrmgG0KwiGR8kQ==
-X-Google-Smtp-Source: ABdhPJzaotb8BvwvYTRxvwt71utR6gzPfqmBXdd1mswAxbskGys7pe68pNKcSsoIAjm/Mjql+sJoDQ==
-X-Received: by 2002:aca:1b15:: with SMTP id b21mr1833979oib.64.1639607277330;
-        Wed, 15 Dec 2021 14:27:57 -0800 (PST)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id t14sm700500oth.81.2021.12.15.14.27.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 14:27:56 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     phone-devel@vger.kernel.org,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Pavel Dubrova <pashadubrova@gmail.com>,
+        with ESMTP id S231771AbhLPAns (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 19:43:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08105C061574;
+        Wed, 15 Dec 2021 16:43:47 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 391DC61BA2;
+        Thu, 16 Dec 2021 00:43:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77383C36AE1;
+        Thu, 16 Dec 2021 00:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639615426;
+        bh=0a0+jjKb223PJQa3TiWBP7QgKr5ZKDUK1W5ZPLWni6Q=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=Rapx9OBhWmNGrOE6j9ZULoqvZo1LX2XmHvIcYR9DUGdb8iP7pxyPZTXZu7XvwRJjm
+         gmyRgheUUr8YCeUyhrOphJfp4xlfjED3phY/27+yNsptx45EMnQbdF7A+CftEiW1QK
+         QRTlGGU70Cuu59De/0AoZEjvNCQXD1AdbaN42roDp/J9SHNIoKygReTZp7c3ThnLH5
+         uBBOmTpQxzbXecoCegGbwHoVxD/+2o3JUKrzmorVUXRAxxTNynqmEX9uOyVy/ShTjt
+         uv1oTa1oAavVJ3INQaZsueIfWNT7ZQPTTMF9dMivWByM4E3kNZ3gM4bZoFLWFm6BU9
+         sWuVKBeI+M26g==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <69e44191-201f-8714-8a83-1a65a7026b54@linaro.org>
+References: <20210911131922.387964-1-marijn.suijten@somainline.org> <163165584152.763609.4056232270079096475@swboyd.mtv.corp.google.com> <20210918144038.6q352hzqopx7vvdu@SoMainline.org> <20211214194656.mayiy4xhcshjluwf@SoMainline.org> <69e44191-201f-8714-8a83-1a65a7026b54@linaro.org>
+Subject: Re: [PATCH v3 0/2] Use "ref" clocks from firmware for DSI PLL VCO parent
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Abhinav Kumar <abhinavk@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
+        Jonathan Marek <jonathan@marek.ca>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
         Martin Botka <martin.botka@somainline.org>,
-        Andy Gross <agross@kernel.org>
-Subject: Re: [PATCH v6 0/2] Global Clock Controller driver for MSM8976/56
-Date:   Wed, 15 Dec 2021 16:27:29 -0600
-Message-Id: <163960723735.3062250.6885330646115264163.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211208091036.132334-1-marijn.suijten@somainline.org>
-References: <20211208091036.132334-1-marijn.suijten@somainline.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Date:   Wed, 15 Dec 2021 16:43:45 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211216004346.77383C36AE1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 8 Dec 2021 10:10:34 +0100, Marijn Suijten wrote:
-> This is the Global Clock Controller (GCC) driver for MSM8956, MSM8976
-> and APQ variants and it has been tested on two Sony phones featuring the
-> Qualcomm MSM8956 SoC.
-> 
-> In addition to GCC this driver is also responsible for providing MDSS
-> and GFX3D clocks which reside in the same register space.
-> 
-> [...]
+Quoting Dmitry Baryshkov (2021-12-15 12:02:37)
+> On 14/12/2021 22:46, Marijn Suijten wrote:
+> > Hi all,
+> >=20
+> > On 2021-09-18 16:40:38, Marijn Suijten wrote:
+> >> On 2021-09-14 14:44:01, Stephen Boyd wrote:
+> >>> Quoting Marijn Suijten (2021-09-11 06:19:19)
+> >>>> All DSI PHY/PLL drivers were referencing their VCO parent clock by a
+> >>>> global name, most of which don't exist or have been renamed.  These
+> >>>> clock drivers seem to function fine without that except the 14nm dri=
+ver
+> >>>> for sdm6xx [1].
+> >>>>
+> >>>> At the same time all DTs provide a "ref" clock as per the requiremen=
+ts
+> >>>> of dsi-phy-common.yaml, but the clock is never used.  This patchset =
+puts
+> >>>> that clock to use without relying on a global clock name, so that all
+> >>>> dependencies are explicitly defined in DT (the firmware) in the end.
+> >>>
+> >>> I can take this through clk tree if it helps avoid conflicts. There a=
+re
+> >>> some other patches to sdm660.c in the clk tree already.
+> >>
+> >> Might be useful to maintain proper ordering of these dependent patches
+> >> but it's up to Dmitry and Rob to decide, whom I'm sending this mail
+> >> directly to so that they can chime in.
+> >=20
+> > Dependent patch [3] landed in 5.15 and [2] made it into 5.16 rc's - is
+> > it time to pick this series up and if so through what tree?
+>=20
+> I'd also second the idea of merging these two patches into 5.17.
+> Most probably it'd be easier to merge both of them through the clk tree. =
 
-Applied, thanks!
+> Or we can take the first patch into drm-msm (but then we'd have a=20
+> dependency between msm-next and clk-qcom-next).
+>=20
+> Bjorn, Stephen?
+>=20
 
-[1/2] dt-bindings: clk: qcom: Document MSM8976 Global Clock Controller
-      commit: 13feb2093984625dbece6f1657867c84d45b76de
-[2/2] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
-      commit: b577c7e6a63f4dd3b55ccc5c828175995beae66b
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Sounds fine to take through clk tree.
