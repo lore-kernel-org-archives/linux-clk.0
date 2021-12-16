@@ -2,105 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A9DC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 08:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257DCC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 08:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbhLPIMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 03:12:31 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:36439 "EHLO
+        id S231689AbhLPI0k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 03:26:40 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:55689 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229947AbhLPIMb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 03:12:31 -0500
-Received: from mail-wr1-f53.google.com ([209.85.221.53]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MBBCI-1mnIH51hMs-00ChmN; Thu, 16 Dec 2021 09:12:29 +0100
-Received: by mail-wr1-f53.google.com with SMTP id t26so6292350wrb.4;
-        Thu, 16 Dec 2021 00:12:29 -0800 (PST)
-X-Gm-Message-State: AOAM532jBxpQm9ksWTOw8+xqpY5m8BYgCXecQ+hPxaINLRGRn96+9Vb4
-        UjgK+glJtyv4jFSi1K90GrZ5dwGUEj9knRmzBwM=
-X-Google-Smtp-Source: ABdhPJwYtMqPfFg9GzXhBmcOdn3sobd8196nSbV6WVDDL6Nge+uAQIhproVVltF/DqDDBiffqjQeaiRNaadsUjb/qKo=
-X-Received: by 2002:a5d:6989:: with SMTP id g9mr653391wru.12.1639642348958;
- Thu, 16 Dec 2021 00:12:28 -0800 (PST)
+        with ESMTP id S229471AbhLPI0i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 03:26:38 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MfZ9C-1mHoZA3V96-00fwe0; Thu, 16 Dec 2021 09:26:36 +0100
+Received: by mail-wr1-f47.google.com with SMTP id a18so42699166wrn.6;
+        Thu, 16 Dec 2021 00:26:36 -0800 (PST)
+X-Gm-Message-State: AOAM531KJO7e/MqIUf6Wc+wrAxyUbtDlXDyIap8iZbApYqoovSFKGyR5
+        77oCibEiPKGT9Na7CxNhjUJUd6+yuFj2aaPBq+o=
+X-Google-Smtp-Source: ABdhPJyiLKlnSiH9vlPQZqdh0l7qGixC2KbAXZ0E4zRdJ5+BDdSdAxMn6Pdgjctlm5ImC6il7N2keNj/IR12pl1ESbs=
+X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr8136773wry.407.1639643196246;
+ Thu, 16 Dec 2021 00:26:36 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1639560427.git.qinjian@cqplus1.com>
-In-Reply-To: <cover.1639560427.git.qinjian@cqplus1.com>
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+In-Reply-To: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Dec 2021 09:12:13 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1Doh8GY9iFZsvmd6wASHoPqyR+roXx0G5XidnmHNkGaA@mail.gmail.com>
-Message-ID: <CAK8P3a1Doh8GY9iFZsvmd6wASHoPqyR+roXx0G5XidnmHNkGaA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add Sunplus SP7021 SoC Support
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Date:   Thu, 16 Dec 2021 09:26:20 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+Message-ID: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+Subject: Re: [PATCH v5 0/9] Add initial support for the i.MXRTxxxx SoC family
+ starting from i.IMXRT1050 SoC.
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        SoC Team <soc@kernel.org>,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        giulio.benetti@benettiengineering.com,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
         linux-clk <linux-clk@vger.kernel.org>,
-        =?UTF-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:VHBQGMx5BnEGZ2O1OFfBBwmcuSZLc/m3GiIghGM6bV3Mcn9QVnM
- SskyLOGbhEPurF0ZNNk8H3dVvLIV4lIRAiy0AnzWvbuAtSP/AM/lRuSp8nnfyzTbnWW+qR4
- pDlpsFoGU0yPLE4tdFCU1juXj1dOBv3veKT+iqmd7hP7HH0F0s8CcWRMxBqgoDiBqzdkJVE
- Cx6sm0kycPDxbBK8X3udA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ABBbp6E+X8c=:W/6H1wkZsMHq2Nvgw57WMQ
- Lap7/jmIIS5gC1LMYiEtRAY1T0WaMOijuZZJ2sQdvcl3bWyfDDcrwyXwTy4Xlwffkj87d+oWd
- qxTMPF30w/l8JjA3stM4ayXDRuAz6GbHA7JT8Sd4Rb/FnAwVQAdTeZquPP9R8Kcs7O6C6XoTl
- 4j2wTWt07IOJp8EGFN+M8r9t0K749IDX5CLeQ9Qq4QmUA90Z2IzLGG6ueYa485aP0f4864KG9
- gBRPEdTSnd4Y0FC69ZkQpJKadYF5N24B6Lf7pl+//WLLKNh3Yme33ZvyPO5KVzynv7RhKjn78
- 5bLtp3PNBlOb7ctv9b5UMG1nVjLhEdZ7siG2QNYW0GbB33HkBNwz7adXslzNSm38tcHwOQy8d
- Ux4O6r1bBL5R6aTdiAcStWiD86kTTaplZ6OpOEhxS9ofbQKcxBwOq1hVmcXSh45wECCwB7A90
- bx8I0CP7n65c8NSMslaAcyHvKE3tu4WVx/sUUJ0WVwvapwM2b1Y7pIBdMR+VEHunrKvEBuJj1
- Cen4NzM406ad639kOpcWaWrc8IhkbVNAN43dnYeav1vgZGn/av7ojiuzTv9dhvDKiqwoT2hFa
- 99RkQD+YSi6EFVvJ4obyLuq1VHTRkg2g152updp7UkpZpOhktBXZm4ByuA+e6gIccHayDOoXk
- RnlFX+SxrgC/HB/eUGDvNoKoTbBRLEJnkuDK7kocjWwtMfRRcH5R69elyVs7zqvMOWMuNX+bi
- SJOIfOykiweIM7v0/z6gLdAV8wJj910DDvdrKoWHDa3Hf+pLeDjLA6JAxEG1Iixm6+dugRRnI
- Jw1dU2Elc9IBRLMh4R+W+ok4YHI6aX6pK8DmALbBvMBMhemr38=
+X-Provags-ID: V03:K1:QBDvdpVZRYwgd33nAN4CfoFwm1HFf7vJzA/alTSuDVcCc5W5Xdy
+ sXLy96U3PRgf0dNF5j3wsdSblEN3Od4AAef0+nhTy6emfOFXR6u6OewrIZ5zYjEOCjNQOzX
+ bHnouCRB0tF+FCUztiK40xzdTrzWomWcOcnxWuvTA+04zSlD9kyqFeQ/GYUrCW0FbkHxOHW
+ Bhqd6UsSL7O4C73UcBwcg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Md8i5SUA8FA=:Z6Q7AYFIbM7m6Rx5PHAXS9
+ KLFz/MCcZ5cvtc3JPWV907nRyLz4alSzd4rfBlLe1+jCi4ijLNTMpP9vUxRzvYnLZplgMs+9k
+ 7831wmEe4/65YyJUXKEOw+q/XPgCbS3kH9ao3wqju6aHmatw9UqRCFwLOg7cBl7rp5sWbvxuP
+ ng2/26cRM/Dxzf56vTIOQL1IR41RRyiTx6Ql2tr8vFuuYE66fQBlRfRSeBmb944vkWXs5NBIH
+ JKGmkqvIPmxrTHKbk29j0i/dv5QZloGFZG4xvdwZXMOMtADYlHMOc5mwiKSk/IIyMqIwMzmvl
+ 8dVxV5OAAJnkVX7aL4gKN/Y6eQ2TJlJ0q4uM1/Eu3NZrWbHU+mlOJEZy3lRpiOqq5ttTxKFI7
+ 0GXzqsCMzc8ymEF8m2uvSZ+DAvBbChq/pS+HK24JkAWDk6CKU1EarD5VyweIVbY/bf9pqg8YT
+ U/bXSava4bI6H8OMaofLJ9UFaN4nCv9A34QeuH0Pw8GQUd9w7swoZ6/tKmnQNatIohlsrLlVq
+ 4z4i3NVrkd/Mw1gPvPYtHtzhMHvweTeZk+epfDgIb1nAKlm5jaMKKWqyFFZ/K0/VD3PNNjEMM
+ 9QIzzwcnh3sBTWTXOQQssAU7R615k6bcFAUYcxfVRWUIF+gCNomBc1mioOTLG10EXxpzKmGfN
+ 5oYSgPPeW7TeyDuke07ox8UHgQqBuQIpeqPhwTqsBzWcy1qhQcmV0kYiIUevUYbquYCUsm4ZQ
+ L/fq0FAZIJjtO8oTAbaMqQGpEaPBeRi5V4XvjLloX65y6mYKRzi/pC2rQWK1gHlmurniccfM5
+ LuUZ05vW9FhsPNQFSOeKb3OqgpH3Yv7wavSXXv5DprNZ98fyaE=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 8:08 AM Qin Jian <qinjian@cqplus1.com> wrote:
+On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
 >
-> This patch series add Sunplus SP7021 SoC support.
+> This patchset contains:
+> - i.MXRT10xx family infrastructure
+> - i.MXRT1050 pinctrl driver adaption
+> - i.MXRT1050 clock driver adaption
+> - i.MXRT1050 sd-card driver adaption
+> - i.MXRT1050 uart driver adaption
+> - i.MXRT1050-evk basic support
 >
-> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
-> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
-> single chip. It is designed for industrial control.
+> The i.MXRTxxxx family that could have support by Linux actually spreads
+> from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
+> 100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
+> with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
+> 2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
+> STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
+> less layer PCBs. Seeing that these chips are comparable to the
+> STM32F7XXs which have linux ported to them it seems reasonable to add
+> support for them.
 >
-> SP7021 consists of two chips (dies) in a package. One is called C-chip
-> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
-> process (22 nm) for high performance computing. The other is called P-
-> chip (peripheral chip). It has many peripherals and an ARM A926 added
-> especially for real-time control. P-chip is made for customers. It adopts
-> low-level process (ex: 0.11 um) to reduce cost.
+> Giving Linux support to this family should ease the development process,
+> instead of using a RTOS they could use Embedded Linux allowing for more
+> portability, ease of design and will broaden the scope of people using
+> embedded linux.
 >
-> Refer to (for documentations):
-> https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+> The EVK has very little SDRAM, generally 32MB starting from
+> i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
+> 64MB of SDRAM for more functionality.
 >
-> Refer to (applications):
-> https://tibbo.com/store/plus1.html
+> At the moment we do not support XIP for either u-boot or Linux but it
+> should be done in the future. XIP will also save SDRAM.
 >
-> Refer to (applications):
-> http://www.sinovoip.com.cn/ecp_view.asp?id=586
+> Another interesting fact is the amount of internal SRAM, as the P/N
+> increases the SRAM will reach up to 2MB(some could be for cache and
+> some would be for video).
+>
+> Also, some parts have embed flash of 4MB that can be used for
+> u-boot/Linux, if both correctly sized it will leave the SDRAM free.
+>
+> External flash can be Quad SPI and HyperFlash, so throughput would be
+> decent.
+>
+> The i.MXRT11xx series supports MIPI interface too.
+>
+> The family in general provide CAN bus, audio I/O, 1 or more
+> USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
+>
+> All this can be used for simple GUIs, web-servers, point-of-sale
+> stations, etc.
 
-This looks all good to me now, it just needs a review for the clk,
-reset  and irqchip drivers. I'll won't be pulling any further branches
-after the 23rd for this release, so it appears unlikely to still make it
-into v5.17, but please keep going anyway. Either Olof will be able
-to take the series when I'm gone, or we can do it early for v5.18.
+This looks all good to me now, but the drivers need to be reviewed by the
+respective subsystem maintainers before we can merge it into the soc
+tree. As with other new SoCs, I'm happy to merge the support as a combined
+pull request that includes the drivers provided that the driver subsystem
+maintainers have reviewed them.
 
-Ideally this should come as a pull request to soc@kernel.org once
-you have the remaining Reviewed-by tags, with the text above copied
-into the (signed) tag description. If you send it as patches, I'd suggest
-adding the text to the description of patch 9/10 instead, where
-you add the board code. This way it still becomes part of the git
-history for reference.
+Ideally the i.MX maintainers would pick up your series into a separate
+branch and send that to soc@kernel.org the same way as the other topic
+branches that are usually split out between DT, drivers, soc code etc.
 
-        Arnd
+With the Christmas break coming up, the timing may not be sufficient
+before I'm off next week, so it may end up too late for 5.17 but should
+be fine for 5.18.
+
+As a more general comment, it's always nice to see newly added SoC
+platforms, especially when they are this well implemented and done
+by hobbyists. However, I do think you are being overly optimistic
+as to how useful this is going to be to other people: interest in NOMMU
+ARM platforms has dropped a lot over the past 5 years, and as far as I
+can tell, it is only being kept alive for existing stm32 customers
+as the economics do not favor Linux on Cortex-M for new products
+compare to Linux on Cortex-A or some RTOS on Cortex-M.
+
+The existing users will inevitably stop updating their kernels at some
+point, and then it's most likely just you and Vladimir Murzin that care.
+
+       Arnd
