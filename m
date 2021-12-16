@@ -2,182 +2,203 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EF8C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 02:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90AEC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 03:34:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233064AbhLPCrN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 21:47:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51932 "EHLO
+        id S231213AbhLPDeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 22:34:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233067AbhLPCrN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 21:47:13 -0500
-Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E53C06173E
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 18:47:13 -0800 (PST)
-Received: by mail-ot1-x331.google.com with SMTP id v15-20020a9d604f000000b0056cdb373b82so27295422otj.7
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 18:47:13 -0800 (PST)
+        with ESMTP id S229905AbhLPDeX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 22:34:23 -0500
+Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D93CC06173E
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 19:34:23 -0800 (PST)
+Received: by mail-qv1-xf2a.google.com with SMTP id m6so5056572qvh.10
+        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 19:34:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TRWP49lUW96ocvMhTXoGModsLPQrvGdeEfB58QJjSHw=;
-        b=EayF8bdaNsHlRtAHP7evxUR+y9IPOGVKOafnT4sH/QpQRP1Mya47p8avlra3MTxt4l
-         FeOfd2YEYTdiGvzXAewm0uFdyydLLdI7f8zWOLnS8L47167FuBLW7a/1kLwNIj0/XcgA
-         3/YkxhrPh3XPAK03IGLCqA4GiJq0CjYuUUpE71H6xyLikyUDZctu6OjkVHe63XGje6nK
-         YGwz4qum+4oCUqeMUvaxIUeQzuT/DnknbMeDv5Gw9QQJ9NkUxZLgnZAJWOZSNg1vL0Wq
-         QgAtw+H0aaD8hYleYdwQ4Xehwo7G1QYFuXQdg8m+Tx4e05qCcRtaBt5oMkFd8yLUmeBL
-         1twg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XXq/mnzKEeEf2jtp4IALqH0LZ08PZLALzoToYrf2550=;
+        b=Q1287qr+WDQI6zubBsJgUT2ILale5Nyt8XjOyU4w3YzO0qLNCthdRQsswyFSfRtcRV
+         3i6QifkByAq4rof5B5g3E3xa3uos0LA2OmElqiNmO7DKxeXKKKu3bAj3Nijvt5Na8Tis
+         Jq2ElTPjCv5bomjpXNLwq/4NHR/SHjKUWS7LcyT6sCG6TaIzr/gdya1YyHB9gZwRMZKA
+         jgcgETAe2Ex8Qmvral7SnP2+CWu2PLzV5mJAJB4NF3MnjCN6aJqpKmImCgEIg3oLjfiV
+         N1K979IkcSpw6zq812rd/UqDmUoz8NJPZ5xOWOK2H5IfmLd8cV91TSJhHPVfhOFIxoOB
+         na8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TRWP49lUW96ocvMhTXoGModsLPQrvGdeEfB58QJjSHw=;
-        b=j3Kaz08NkE1fRrw6lwe739Vo0l1hdk7pul/MOwke6kgkYnRHLZaEaLOg3az3pJfHMi
-         6X98PvEM7G0Wbn1lerho5XbVEF/6ULttnD+LNa7LUUiXnSHuCv4cYRay+JC7GhGFtCOb
-         WAkpfPM2pcq0RaxUl/xUMtzeyv39ddGjxRzbmmkbdL4g89T6dpI276LUTkBNH+AtcnFq
-         lkMSUQ/MzMjYXzZzXCdoPRpiErj6cfpW8GshFey3/ZJB5/+AcginpqOn8izG/047ENqS
-         V5nMAwVMyjws7GJKsakiv6k3NcFgBZiN2edBBEp0XuZo1GBsISD6w2xRkqEEMS1fRzAI
-         gecQ==
-X-Gm-Message-State: AOAM531cCqZ8tBYoXi8jXBRyPTz3II83fvDR0JbWb8kHU2efsQYDjxub
-        400eoKfIVi/PY0HvfL4Hln0/zw==
-X-Google-Smtp-Source: ABdhPJy3XoI/plV53gwj7OghHZJWYSUUb46rj5f3xLUMg2Pw8HEzn6oc35QxQoFn5evD49S2pqX9Dg==
-X-Received: by 2002:a05:6830:1e77:: with SMTP id m23mr11126632otr.370.1639622832549;
-        Wed, 15 Dec 2021 18:47:12 -0800 (PST)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r10sm894063ool.1.2021.12.15.18.47.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 18:47:12 -0800 (PST)
-Date:   Wed, 15 Dec 2021 18:48:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XXq/mnzKEeEf2jtp4IALqH0LZ08PZLALzoToYrf2550=;
+        b=KHZ9TyR2dicXs5ErmsdJp4dG6I45QzjTrZuIA/tzTtflMHMD/myck4L7AARHKtRFDK
+         cOtaxXL/vPbZPmWSyte+wxjzmKQXElc3161fYra8iRqBnh7WNoKqJdOpzuPyDGKZg78a
+         qAlD1X/MU0kPbXVSZC54AARomHpfFIIKcGEFSJL+pn5RFgsG/HZo0Hz77q7J/EY0xBxB
+         ssR/p+x4pwBB9MR7iqEajp5KIhZeLVPRt9PYRfWQaBnOGEqo4yVafD1K8ed12bwmaaaT
+         jNkV8RyzrTEx8yVR9Ms7+yXUydLb+pq9AvQv+buHvuqZtZCtTP9KPYb4lrH3Zl2CDSKI
+         jeLg==
+X-Gm-Message-State: AOAM530Gmtn5hSvyaT2uVFaWhsGxPPqf9cOYSlp1Nz+qT3FQslCUFi65
+        u8CBMVshFqmgYL3bR2sLzzs7W1ykOtEygi1Q/xjJbw==
+X-Google-Smtp-Source: ABdhPJxehRW3d3qckDGFz7/BtxWeamZWW8u+3pJxfYP1TddA0KULl+D3bS2Ke7jC5v/OCUgii5E0I/DS49haFRU8HgQ=
+X-Received: by 2002:a05:6214:83:: with SMTP id n3mr14206495qvr.122.1639625662551;
+ Wed, 15 Dec 2021 19:34:22 -0800 (PST)
+MIME-Version: 1.0
+References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
+ <20211208022210.1300773-3-dmitry.baryshkov@linaro.org> <YbJNp+tnD6kEQAzt@ripper>
+ <a4f7d300-90c2-7dda-5cda-5e2763a94912@linaro.org> <20211216013849.69747C36AE1@smtp.kernel.org>
+In-Reply-To: <20211216013849.69747C36AE1@smtp.kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 16 Dec 2021 06:34:11 +0300
+Message-ID: <CAA8EJpokxg6Urjfm6J0xvbGOCRK2goX94=+awZ8OEW4fv-EoWQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: qcom: dispcc-sdm845: park disp_cc_mdss_mdp_clk_src
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Amit Nischal <anischal@codeaurora.org>,
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-Message-ID: <Ybqo+wUv6lNT75tJ@ripper>
-References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
- <20211216015136.96AD3C36AE1@smtp.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211216015136.96AD3C36AE1@smtp.kernel.org>
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 15 Dec 17:51 PST 2021, Stephen Boyd wrote:
+On Thu, 16 Dec 2021 at 04:38, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dmitry Baryshkov (2021-12-15 14:17:40)
+> > On 09/12/2021 21:40, Bjorn Andersson wrote:
+> > > On Tue 07 Dec 18:22 PST 2021, Dmitry Baryshkov wrote:
+> > >
+> > >> To stop disp_cc_mdss_mdp_clk_src from getting stuck during boot if it
+> > >> was enabled by the bootloader, part it to the TCXO clock source.
+> > >>
+> > >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >> ---
+> > >>   drivers/clk/qcom/dispcc-sdm845.c | 3 +++
+> > >>   1 file changed, 3 insertions(+)
+> > >>
+> > >> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-sdm845.c
+> > >> index 735adfefc379..f2afbba7bc72 100644
+> > >> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> > >> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> > >> @@ -858,6 +858,9 @@ static int disp_cc_sdm845_probe(struct platform_device *pdev)
+> > >>
+> > >>      clk_fabia_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
+> > >>
+> > >> +    /* Park disp_cc_mdss_mdp_clk_src */
+> > >> +    clk_rcg2_park_safely(regmap, 0x2088, 0);
+> > >
+> > > Today booting the system with "clk_ignore_unused" will give you a
+> > > working efifb up until the point where the display driver kicks in and
+> > > reinitializes the hardware state - which during development might be
+> > > indefinite.
+> >
+> > During development one can introduce a dispcc parameter. Maybe we should
+> > add qcom-common parameter telling dispcc drivers to skip parking these
+> > clocks.
+> >
+> > >
+> > > If we blindly cut the mdp_clk_src here that will no longer be possible.
+> >
+> > I think we have several separate tasks here:
+> >
+> > 1) Support developing code. This is what you have in mind with EFIFB +
+> > clk_ignore_unused.
+> >
+> > 2) Get display to work stable and rock solid. This can include
+> > completely tearing down the display pipeline for the sake of getting
+> > MDP/MDSS/DSI to work with as few hacks as possible.
+> >
+> > 3) Gracious handover of display/framebuffer from bootloader to the Linux
+> > kernel.
+> >
+> > For the task #1, you can hack the dispcc as you wish or set any
+> > additional parameters, as you are already passing clk_ignore_unused.
+> > This will all end up as #1 transitions to #2.
+> >
+> > I was targetting task#2. Disable everything to let dpu/dsi/dp start from
+> > the scratch. If I understand correctly, this approach would also help
+> > you with your boot-clock-too-high-for-the-minimum-opp issue. Is my
+> > assumption correct?
+> >
+> > For the task #3 we need collaboration between dispcc, clock core and
+> > dpu/dsi drivers. Just marking the clocks for the clk_disable_unused() is
+> > the least of the problems that we have here. I think [1] is a bit closer
+> > to what I'd expect.
+> >
+> > I have a similar but slightly different idea of how this can be made to
+> > work. I'd do the following (excuse me for the hand waving, no code at hand):
+> >
+> > - Add clk_ops->inherit_state callback, which can check if the clock is
+> > enabled already or not. If it is, set the enable_count to 1, set special
+> > CLOCK_INHERITED flag, read back the state, etc.
+> >
+> > - Make of_clk_set_defaults() ignore clocks with CLOCK_INHERITED flag.
+> > Maybe it should return special status telling that some of the clocks
+> > were not updated.
+>
+> This sounds an awful lot like the CLK_HANDOFF flag that never
+> materialized. We know we have a problem where the enable state of a clk
+> isn't understood at registration time (although we do know the frequency
+> of the clk). So far it's been put largely on clk providers to figure out
+> that their clk is enabled and avoid doing something if it is. But that's
+> run into problems where clk flags that want us to not do something if
+> the clk is enabled fail to detect this, see CLK_SET_RATE_GATE for
+> example. This should be fixed; patches welcome.
+>
+> Within the clk framework we don't really want to care about a clk already
+> being enabled and keeping track of that via the enable_count. Trying to
+> figure out when to "hand that off" is complex, and what exactly is the
+> point to it? Drivers still need to call clk_enable to enable the clk, so
+> all that really matters is that we know the clk is on at boot and to
+> respect the clk flags.
 
-> Quoting Bjorn Andersson (2021-12-02 19:56:01)
-> > As GDSCs are turned on and off some associated clocks are momentarily
-> > enabled for house keeping purposes. Failure to enable these clocks seems
-> > to have been silently ignored in the past, but starting in SM8350 this
-> > failure will prevent the GDSC to turn on.
-> > 
-> > At least on SM8350 this operation will enable the RCG per the
-> > configuration in CFG_REG. This means that the current model where the
-> > current configuration is written back to CF_REG immediately after
-> > parking the RCG doesn't work.
-> 
-> Just to clarify, is the RCG off and "parked" at XO with the config
-> register dirty and set to the desired frequency and then the RCG is
-> turned on by the GDSC?
-> 
+It's a pity. Tracking the pre-enabled clocks status would keep the
+clock running till the driver is actually able to pick it up.
 
-Correct, that's exactly what I'm observing.
+> > - Add clk_get_inherit() call, which would drop the CLOCK_INHERITED flag
+> > and return previous flag state to calling driver. The driver now assumes
+> > ownership of this clock with the enable_count of 1. This way the driver
+> > can adjust itself to the current clock state (e.g. drop the frequency,
+> > disable the clock and then call of_clk_set_defaults() again to
+> > reparent/reclock clocks as necessary, etc). If the parent chain is not
+> > fully available, clk_get_inherit must return an error for INHERITED
+> > clocks, so that the driver will not cause reparenting of the orphaned
+> > clocks.
+>
+> Please god no more clk_get() APIs! The driver shouldn't care that the
+> clk is already enabled when clk_get() returns. The driver must call
+> clk_enable() if it wants the clk to be enabled.
 
-> > 
-> > Instead, keep track of the currently requested rate of the clock and
-> > upon enabling the clock reapply the configuration per the saved rate.
-> 
-> We already keep track of the requested rate and reapply it on enable,
-> just we're lazy and stash that information in the hardware and not the
-> software. I didn't think the gdsc would be turned on and ruin that all,
-> but it's fair.
-> 
+What about clk_get returning the clock and clk_enable transferring the
+ownership?
+I see that Michael Turquette had more or less the same ideas in 2015-2016.
 
-Up until SM8350 I see no evidence that this has been a problem, but now
-it is. So there's likely some changes in the hardware there...
+It would ensure that the clock chain stays on till msm takes over the
+efifb/splash/etc.
 
-> > 
-> > Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  drivers/clk/qcom/clk-rcg.h  |  2 ++
-> >  drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
-> >  2 files changed, 19 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> > index 99efcc7f8d88..6939f4e62768 100644
-> > --- a/drivers/clk/qcom/clk-rcg.h
-> > +++ b/drivers/clk/qcom/clk-rcg.h
-> > @@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-> >   * @freq_tbl: frequency table
-> >   * @clkr: regmap clock handle
-> >   * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-> > + * @current_rate: cached rate for parked RCGs
-> >   */
-> >  struct clk_rcg2 {
-> >         u32                     cmd_rcgr;
-> > @@ -149,6 +150,7 @@ struct clk_rcg2 {
-> >         const struct freq_tbl   *freq_tbl;
-> >         struct clk_regmap       clkr;
-> >         u8                      cfg_off;
-> > +       unsigned long           current_rate;
-> >  };
-> >  
-> >  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-> > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > index e1b1b426fae4..b574b38dcbd5 100644
-> > --- a/drivers/clk/qcom/clk-rcg2.c
-> > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> >  {
-> >         struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> >         u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
-> > +       unsigned long rate;
-> >  
-> >         regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-> >  
-> > @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> >         hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-> >         hid_div &= mask;
-> >  
-> > -       return calc_rate(parent_rate, m, n, mode, hid_div);
-> > +       rate = calc_rate(parent_rate, m, n, mode, hid_div);
-> > +       if (!rcg->current_rate)
-> > +               rcg->current_rate = rate;
-> 
-> Instead of doing this in recalc_rate, all the time, why not make an init
-> clk op that does it once during registration? The other problem I see is
-> that the rate we calculate may be wrong if the parent is registered
-> after this clk. I think this came up originally when the patch this is
-> fixing was discussed.
-> 
+>
+> Buried in here is the question of if we should allow clk_get() to
+> succeed if the clk is an orphan. I recall that rockchip had some problem
+> if we didn't allow orphans to be handed out but it's been years and I've
+> forgotten the details. But from a purely high-level we should definitely not
+> hand out orphan clks via clk_get() because the clk isn't operable
+> outside of clk_set_rate() or clk_set_parent().
+>
+> And there's more work to do here first by getting rid of the .get_parent
+> clk_op and having it return a clk_hw pointer (see my two or three year
+> old clk_get_hw series).
 
-I would need to go back and reproduce the issue I saw, but I had to add
-this because I ended up in clk_rcg2_shared_enable() with current_rate =
-0, which I think would be equally bad to just committing the dirty
-configuration.
+Could you please point me to it?
 
-> So instead of saving the current_rate can we save the cfg register value
-> (or however many registers we need) to put back the frequency of the clk
-> to what we want on enable? The other thing is that we made recalc_rate()
-> work "seamlessly" here by stashing the frequency into the register but
-> leaving it uncommitted until enable. We may need to now look at the
-> software copy of the registers in the shared rcg recalc rate operation
-> to figure out what the frequency is.
-> 
+> Once we do that we'll know if we can hand out an
+> orphan clk because it may one day be reparented via clk_set_parent() or
+> clk_set_rate() vs. the case where we shouldn't hand it out via clk_get()
+> because we'll never be able to parent it because the parent(s) doesn't
+> exist.
 
-I made an attempt at this, the problem I had was to come up within
-something sane for how to deal with set_rate on parked clocks; because
-we need to re-generate the register contents, without writing out the
-value - and that got messy.
 
-So stashing the frequency turned out to be much cleaner. I believe that
-this is also what they do downstream...
 
-Regards,
-Bjorn
+-- 
+With best wishes
+Dmitry
