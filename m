@@ -2,59 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36043C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 06:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AB3C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 07:15:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232052AbhLPGsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 01:48:46 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:38716 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbhLPGsq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 01:48:46 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 448B8B8220A;
-        Thu, 16 Dec 2021 06:48:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02AD7C36AE4;
-        Thu, 16 Dec 2021 06:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639637324;
-        bh=m5vS1HxsTPT0xOHjuF/PpXUmvflQ2rhqdTD07eZ9ZMY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=THf9PKLwUtd/Yuv7bkKpf3yjfQE/UGTgfp6NXrD9xUJokhhNasudxxL0ktKGvcCsK
-         ATS5t36Tp1ihLKAGOXZnTRdLjRFAOT+OAsNb/FVSI5GwhubXPJjQNAUbk1x8Xx/zQS
-         y+mQ+jCkuJi6hMS1I2yx18UQLQ7We1bgmFnvZSUMFfNBsLhARPSbs+3JHBxVbSvbMR
-         /+6RkBZRqUSAOsWqSGcVnHaL4DqGICGT+CZu+4fABNyfBN4xvqK2P5gsbx79eoz5Mv
-         hUrC3dFJzE2Aj34hs084DQq9qqtISzRTgxtU1DLbmv3PYaQTw18D5BevcNIiLXmd7F
-         WPpSBhNh/ZM7w==
-Content-Type: text/plain; charset="utf-8"
+        id S234430AbhLPHPf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 02:15:35 -0500
+Received: from mx1.cqplus1.com ([113.204.237.245]:52226 "EHLO test.cqplus1.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234540AbhLPHPa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Dec 2021 02:15:30 -0500
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 172.28.114.216
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(4825:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Thu, 16 Dec 2021 15:08:24 +0800 (CST)
+From:   Qin Jian <qinjian@cqplus1.com>
+To:     robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        broonie@kernel.org, arnd@arndb.de, stefan.wahren@i2se.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v6 02/10] dt-bindings: arm: sunplus: Add bindings for Sunplus SP7021 SoC boards
+Date:   Thu, 16 Dec 2021 15:08:04 +0800
+Message-Id: <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1639560427.git.qinjian@cqplus1.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1639560427.git.qinjian@cqplus1.com>
+References: <cover.1639560427.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211126221239.1100960-1-colin.i.king@gmail.com>
-References: <20211126221239.1100960-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] clk: stm32mp1: remove redundant assignment to pointer data
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Colin Ian King <colin.i.king@googlemail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Date:   Wed, 15 Dec 2021 22:48:42 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211216064844.02AD7C36AE4@smtp.kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Colin Ian King (2021-11-26 14:12:39)
-> The pointer data is being initialized with a value and a few lines
-> later on being re-assigned the same value, so this re-assignment is
-> redundant. Clean up the code and remove it.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+This introduces bindings for boards based Sunplus SP7021 SoC.
 
-Applied to clk-next
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+---
+ .../bindings/arm/sunplus,sp7021.yaml          | 27 +++++++++++++++++++
+ MAINTAINERS                                   |  7 +++++
+ 2 files changed, 34 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+
+diff --git a/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+new file mode 100644
+index 000000000..5b9985b73
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+@@ -0,0 +1,27 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright (C) Sunplus Co., Ltd. 2021
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/sunplus,sp7021.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sunplus SP7021 Boards Device Tree Bindings
++
++maintainers:
++  - qinjian <qinjian@cqplus1.com>
++
++description: |
++  ARM platforms using Sunplus SP7021, an ARM Cortex A7 (4-cores) based SoC.
++  Wiki: https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
++
++properties:
++  $nodename:
++    const: '/'
++  compatible:
++    oneOf:
++      - items:
++          - const: sunplus,sp7021-achip
++
++additionalProperties: true
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e0bca0de0..6a5422f10 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2655,6 +2655,13 @@ F:	drivers/clocksource/armv7m_systick.c
+ N:	stm32
+ N:	stm
+ 
++ARM/SUNPLUS SP7021 SOC SUPPORT
++M:	Qin Jian <qinjian@cqplus1.com>
++L:	linux-arm-kernel@lists.infradead.org (moderated for mon-subscribers)
++S:	Maintained
++W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
++F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
++
+ ARM/Synaptics SoC support
+ M:	Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+ M:	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+-- 
+2.33.1
+
