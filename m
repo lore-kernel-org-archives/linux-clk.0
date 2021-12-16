@@ -2,77 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D352BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 14:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF5BC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 15:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231523AbhLPO0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 09:26:01 -0500
-Received: from mail-4022.proton.ch ([185.70.40.22]:61817 "EHLO
-        mail-4022.proton.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbhLPO0B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 09:26:01 -0500
-Date:   Thu, 16 Dec 2021 14:25:58 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wujek.eu;
-        s=protonmail; t=1639664759;
-        bh=g/fz5cZVneyfqlIcRWWPmLRxRAIAuLd0ulxsixOUGj4=;
-        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
-         References:From:To:Cc;
-        b=YoJNwKlAe5BvMbnoeluITxJQx6W3VkVfWkXF9sNG9TZlBeE2fbyH2kimJ4VNQlicg
-         YMEXgfUEIM0cm8ineFW0/1vhQ2IRNIEjPbIOf/zBVNJasIqwoh+6GSgA/Wf2ECHWB7
-         uw3JbZxsLVjjMHPzP/54xJYIJ82jc79E5mhdY8kxzgGsu/dXLdEvMe7T2bWawkVm4t
-         2UBWpGhj86eb1y0Nm8C4wAcSOZGv6MMf7hX8XwYJDxgEoNHPzK3hBWW5Wql4VPRUp9
-         ODBmMEAucI1VVqpnu4WngO78ZaUHC24UDN2Z2fxdUbeK09BG2x2MYLr6uedBpmPUfw
-         XsY8+M7wMcA4w==
-To:     Stephen Boyd <sboyd@kernel.org>
-From:   wujek dev <dev_public@wujek.eu>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Reply-To: wujek dev <dev_public@wujek.eu>
-Subject: Re: [PATCH] clk: si5341: Add sysfs property to check selected input
-Message-ID: <Qk2RUY9T8QCX1un25vsEYOAnlYlkMQpywbz05_FpVSYq8Lek4EStNPkA_vt_BBH1HKuwsbNw_F8Ec73fM2Kk9Zdl1wvjLtwaHE5QKSvV6Hs=@wujek.eu>
-In-Reply-To: <20211216063245.603F1C36AE4@smtp.kernel.org>
-References: <20211203141515.2448129-1-dev_public@wujek.eu> <20211206225354.BF0AFC341C6@smtp.kernel.org> <jgJW1u3RfTQcv5ZBcVQt4fz8_sA4gvyXsN5x18zzLo_nTR5nfLpZtdAjy-WlEaCMnmnPGZjeFGV5OoiWNtA4Tn5wLhqNJdQEvPw5Cqs1z3I=@wujek.eu> <20211208043054.CEFD6C00446@smtp.kernel.org> <XedF_WXH1abo9n2bzY4gaRIjq-R1O6ha5QedK8e1W9-R_1p_zo90aAgaKSSfDYMW3WUaMdY0pjONnKWj4zNMh5TbHlbZbAVAe4KG_Zq8Vvk=@wujek.eu> <20211216063245.603F1C36AE4@smtp.kernel.org>
+        id S232948AbhLPP6I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 10:58:08 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:38501 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230358AbhLPP6I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 10:58:08 -0500
+Received: by mail-oi1-f169.google.com with SMTP id r26so37017582oiw.5;
+        Thu, 16 Dec 2021 07:58:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+fzbfD0CHCHcZI8DY35QBo25aGSKtXHSKqSLSMk0x8w=;
+        b=uc7xpUmocjS3gvRMwY9H5w7HnnYfokVjLuAIUPyVuFBT1u+XCd8oqzYaC2JLQdioEs
+         lhDy9KEIAeCeGOTxetg/NL/iWTsHNDjokcJVD1fy4QNwGwgdj+m1lobQW0XNJS5ZcycM
+         qKYIXnFvv/VycfmwIUo8XhLQQ1m+BTT1Jrr2uUvrieoZOZzCgOLArW/tjVgjA0uPIwmo
+         Kirx83pn6WNiyAWXWUp3UEI/1qPH93tH9FAFkbIdWVKaC1n2RI2Qb2vf/5PPFsjaWbri
+         SzpT4nQvCOQe4wrSuA4ESyDIJXav27ZSCCFN+rLN6qTReNqEMClUy82sQr0qhJno93UT
+         XEYQ==
+X-Gm-Message-State: AOAM5337I1duHd2B3VX9BzK8Io89EPaev/KSlen1eVpVH/4C3sbOfaSo
+        eBGkZLCzElNZkk3mCWw31Q==
+X-Google-Smtp-Source: ABdhPJwR/W9c0idlUUFwTUnVK1aHR+vR6mP87PEAo+XWvtX5jqFfuKZ69KQePrNkBHEO052l92GdjA==
+X-Received: by 2002:a05:6808:15a:: with SMTP id h26mr4515968oie.123.1639670287583;
+        Thu, 16 Dec 2021 07:58:07 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id e14sm1027527oie.7.2021.12.16.07.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 07:58:06 -0800 (PST)
+Received: (nullmailer pid 293314 invoked by uid 1000);
+        Thu, 16 Dec 2021 15:58:05 -0000
+Date:   Thu, 16 Dec 2021 09:58:05 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     linux-imx@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
+        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
+        adrian.hunter@intel.com, jirislaby@kernel.org,
+        giulio.benetti@benettiengineering.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] dt-bindings: clock: imx: Add documentation for
+ i.MXRT1050 clock
+Message-ID: <YbtiDa3CpVmiCkto@robh.at.kernel.org>
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+ <20211215220538.4180616-5-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211215220538.4180616-5-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Dec 15, 2021 at 05:05:33PM -0500, Jesse Taube wrote:
+> From: Jesse Taube <mr.bossman075@gmail.com>
+> 
+> Add DT binding documentation for i.MXRT1050 clock driver.
+> 
+> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> ---
+> V1->V2:
+> * Replace macros with values
+> V2->V3:
+> * Remove anatop
+> * Use lpuart not gpt
+> * include imxrt1050-clock.h
+> * 2 space tabs to 4
+> * Remove oneOf enum
+> * Change maxItems to 2
+> V3->V4:
+> * Nothing done
+> V4->V5:
+> * Remove extra newline
+> * Rename ccm to clock-controller
+> * Change minItems to const
+> * Change minItems to description
+> * Rename file to add 1050
+> * Change commit description to just 1050
+> ---
+>  .../bindings/clock/imxrt1050-clock.yaml       | 66 +++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml b/Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
+> new file mode 100644
+> index 000000000000..8caf0572733b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/imxrt1050-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Clock bindings for Freescale i.MXRT
+> +
+> +maintainers:
+> +  - Giulio Benetti <giulio.benetti@benettiengineering.com>
+> +  - Jesse Taube <Mr.Bossman075@gmail.com>
+> +
+> +description: |
+> +  The clock consumer should specify the desired clock by having the clock
+> +  ID in its "clocks" phandle cell. See include/dt-bindings/clock/imxrt*-clock.h
+> +  for the full list of i.MXRT clock IDs.
+> +
+> +properties:
+> +  compatible:
+> +    const: fsl,imxrt1050-ccm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 2
+> +
+> +  clocks:
+> +    description: 24m osc
 
+maxItems: 1
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+With that,
 
-On Thursday, December 16th, 2021 at 07:32, Stephen Boyd <sboyd@kernel.org> =
-wrote:
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-> Quoting wujek dev (2021-12-09 04:04:48)
->
-> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
-l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
-=90
-> >
-> > On Wednesday, December 8th, 2021 at 05:30, Stephen Boyd sboyd@kernel.or=
-g wrote:
-> >
-> > > Quoting wujek dev (2021-12-06 15:08:03)
-> > >
-> > > > Other sysfs properties used by this driver are not documented so I =
-didn't add for this one. Even more not a single property from clk subsystem=
- is described. Shall I the add description of this single property?
-> > >
-> > > Please don't top post. sysfs properties are supposed to be single val=
-ue
-> > >
-> > > and for machine consumption. Is this a debugfs property?
-> > >
-> > > No, I think this is rather sysfs than debugfs. The type of informatio=
-n is similar to other reported by this driver. The values in the added prop=
-erty are the same, this is just a different representation (input selected =
-as an int, as string based on manual and as string as described in the DTB)=
-.
->
-> Ok what program is going to check the selected input?
-So far, only the project specific program. I'm not aware about a standard t=
-ool that check other (already available) properties from this driver.
+> +
+> +  clock-names:
+> +    const: osc
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imxrt1050-clock.h>
+> +
+> +    clks: clock-controller@400fc000 {
+> +        compatible = "fsl,imxrt1050-ccm";
+> +        reg = <0x400fc000 0x4000>;
+> +        interrupts = <95>, <96>;
+> +        clocks = <&osc>;
+> +        clock-names = "osc";
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +    lpuart1: serial@40184000 {
+> +        compatible = "fsl,imxrt1050-lpuart";
+> +        reg = <0x40184000 0x4000>;
+> +        interrupts = <20>;
+> +        clocks = <&clks IMXRT1050_CLK_LPUART1>;
+> +        clock-names = "ipg";
+> +    };
+> -- 
+> 2.34.1
+> 
+> 
