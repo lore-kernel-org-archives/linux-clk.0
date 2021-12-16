@@ -2,212 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9FDC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 20:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9417C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 20:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241326AbhLPU2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 15:28:16 -0500
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:42525 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236123AbhLPU2Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 15:28:16 -0500
-Received: by mail-ot1-f54.google.com with SMTP id 47-20020a9d0332000000b005798ac20d72so296113otv.9;
-        Thu, 16 Dec 2021 12:28:16 -0800 (PST)
+        id S241303AbhLPUbr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 15:31:47 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:46826 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236123AbhLPUbr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 15:31:47 -0500
+Received: by mail-ot1-f44.google.com with SMTP id x3-20020a05683000c300b0057a5318c517so282985oto.13;
+        Thu, 16 Dec 2021 12:31:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=AO8yVk6YsnLAOq3nx3IX0S/yRBN2b0mdknY2Goacoi8=;
-        b=USth6OSSI8mWO87sh3Wy/bbmZsqXoTBwDasqn8UlAyOFsSQA9FjnGQPWkb7++Rzra1
-         Rts5xe77MryR88QDOx2YUhNQhO+K04Nzq6DEY95WtpB2uzffH985ux6hxGsUfUmPoMAM
-         axxsIy+gUGSiLD+X+De2TVTY2Udg4VJn71UOcRo+0Ni6m7mS+2fxnFeNWRZqJ+4cwmL3
-         3udF5jRVGuqOtbbFUy7NfPeEg9LaKObtph/z2VYS+sj1wM3rYWxCvrOPgWToWeWYm3pa
-         LnYJ88hIwKHrfB4g8EOIx2EPQn8uFCbYJ5zsLe372frWWEEjYqG3Mbi5DYtr9u5LS2te
-         zSBQ==
-X-Gm-Message-State: AOAM530X6BohXvl13ayetfAoAyA0aiAUNWUWG0KaolZMAGojbV9T2uXE
-        3xOs/1Xudbn36S0+AJ3beG5Iudfavw==
-X-Google-Smtp-Source: ABdhPJwzQ8PU9ZECNXXI8fwurbIf7QMqxdT9M40sNriX45MKv9U1l1MnN9Ln9EHTowGniivNpLm8pA==
-X-Received: by 2002:a05:6830:1681:: with SMTP id k1mr14667637otr.242.1639686495697;
-        Thu, 16 Dec 2021 12:28:15 -0800 (PST)
+        bh=/WZk6rTknr9ohPbMfgyEB9lTmn2kskX3wnXdJpxoO54=;
+        b=xxDciDiEjcMe8H0Qqc3ZRcX3iRQvIYBqjSdJMgEJXfQKSK9Bh15tLHWEDSgl/HCnsO
+         I1YfQYTtKZxxq/Inq3LEr8QSY9tZI4GqlxbeEDXF+VNm0j2cVWHYh2kA/Jgnshe+jqho
+         zEe2J6zp2QV546JTofpV9vsXkcnqYVX5z4CGMG+f8H/S7er8v0wstXxBoHLMhEYJzKLf
+         f83mxEOny7CDjhjndETGnMpX9T/ftj/tyqIuI+ipbOZBykUytfAEYu6eLlc2KuMq2Yfh
+         TgXdZY8BSpENfFYD3eznYnMejvEPiW9EXQmFagXkNBmklyB1HHB3sOC4eh25+ooME83O
+         M9ew==
+X-Gm-Message-State: AOAM5334PaleF3liw6iTMRm4n0N8NlXHYz7Q/T7d40BwmTQhZr1l4Non
+        Etmnh99UQyBfGXM7RnlYwg==
+X-Google-Smtp-Source: ABdhPJxolUuSHrXvVWwD1DwilZGwq7k1Tjchu9lac4l0lol5CTbTY9vjTqv4KL+RF7m1rNgxNg36Gg==
+X-Received: by 2002:a05:6830:1617:: with SMTP id g23mr13541257otr.117.1639686706300;
+        Thu, 16 Dec 2021 12:31:46 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id m2sm1271538oop.12.2021.12.16.12.28.14
+        by smtp.gmail.com with ESMTPSA id d12sm1196566otq.67.2021.12.16.12.31.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 12:28:15 -0800 (PST)
-Received: (nullmailer pid 700433 invoked by uid 1000);
-        Thu, 16 Dec 2021 20:28:14 -0000
-Date:   Thu, 16 Dec 2021 14:28:14 -0600
+        Thu, 16 Dec 2021 12:31:45 -0800 (PST)
+Received: (nullmailer pid 705688 invoked by uid 1000);
+        Thu, 16 Dec 2021 20:31:44 -0000
+Date:   Thu, 16 Dec 2021 14:31:44 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, shawn.guo@linaro.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add qualcomm QCM2290 DISPCC
- bindings
-Message-ID: <YbuhXocF5DtBWlUT@robh.at.kernel.org>
-References: <1639588180-32454-1-git-send-email-loic.poulain@linaro.org>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     nobuhiro1.iwamatsu@toshiba.co.jp, abel.vesa@nxp.com,
+        ulf.hansson@linaro.org, stefan@agner.ch, sboyd@kernel.org,
+        soc@kernel.org, linux-serial@vger.kernel.org,
+        adrian.hunter@intel.com, aisheng.dong@nxp.com,
+        linux@armlinux.org.uk, shawnguo@kernel.org,
+        giulio.benetti@benettiengineering.com,
+        linux-kernel@vger.kernel.org, s.hauer@pengutronix.de,
+        gregkh@linuxfoundation.org, kernel@pengutronix.de,
+        robh+dt@kernel.org, mturquette@baylibre.com,
+        linux-mmc@vger.kernel.org, Mr.Bossman075@gmail.com, olof@lixom.net,
+        linus.walleij@linaro.org, jirislaby@kernel.org,
+        devicetree@vger.kernel.org, festevam@gmail.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        arnd@arndb.de
+Subject: Re: [PATCH v5 6/9] dt-bindings: serial: fsl-lpuart: add i.MXRT1050
+ compatible
+Message-ID: <YbuiMIfmBGIc/vao@robh.at.kernel.org>
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+ <20211215220538.4180616-7-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1639588180-32454-1-git-send-email-loic.poulain@linaro.org>
+In-Reply-To: <20211215220538.4180616-7-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 15, 2021 at 06:09:39PM +0100, Loic Poulain wrote:
-> Add device tree bindings for display clock controller on QCM2290 SoCs.
+On Wed, 15 Dec 2021 17:05:35 -0500, Jesse Taube wrote:
+> From: Jesse Taube <mr.bossman075@gmail.com>
 > 
-> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Add i.MXRT1050 documentation for compatible string.
+> 
+> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
 > ---
->  v2: no change
->  v3: Include dt-bindings header (qcom,dispcc-qcm2290.h) in that commit
->  
->  .../bindings/clock/qcom,qcm2290-dispcc.yaml        | 87 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,dispcc-qcm2290.h    | 34 +++++++++
->  2 files changed, 121 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,dispcc-qcm2290.h
+> V1->V2:
+> * Nothing done
+> V2->V3:
+> * Rename imxrt to imxrt1050
+> V3->V4:
+> * Nothing done
+> V4->V5:
+> * Change commit description to just 1050
+> ---
+>  Documentation/devicetree/bindings/serial/fsl-lpuart.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
-> new file mode 100644
-> index 00000000..44d5ce7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,qcm2290-dispcc.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
 
-dual license
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,qcm2290-dispcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Display Clock & Reset Controller Binding for qcm2290
-> +
-> +maintainers:
-> +  - Loic Poulain <loic.poulain@linaro.org>
-> +
-> +description: |
-> +  Qualcomm display clock control module which supports the clocks, resets and
-> +  power domains on qcm2290.
-> +
-> +  See also dt-bindings/clock/qcom,dispcc-qcm2290.h.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,qcm2290-dispcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board active-only XO source
-> +      - description: GPLL0 source from GCC
-> +      - description: GPLL0 div source from GCC
-> +      - description: Byte clock from DSI PHY
-> +      - description: Pixel clock from DSI PHY
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: bi_tcxo_ao
-> +      - const: gcc_disp_gpll0_clk_src
-> +      - const: gcc_disp_gpll0_div_clk_src
-> +      - const: dsi0_phy_pll_out_byteclk
-> +      - const: dsi0_phy_pll_out_dsiclk
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,dispcc-qcm2290.h>
-> +    #include <dt-bindings/clock/qcom,gcc-qcm2290.h>
-> +    #include <dt-bindings/clock/qcom,rpmcc.h>
-> +    clock-controller@5f00000 {
-> +            compatible = "qcom,qcm2290-dispcc";
-> +            reg = <0x5f00000 0x20000>;
-> +            clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> +                     <&rpmcc RPM_SMD_XO_A_CLK_SRC>,
-> +                     <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-> +                     <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
-> +                     <&dsi0_phy 0>,
-> +                     <&dsi0_phy 1>;
-> +            clock-names = "bi_tcxo",
-> +                          "bi_tcxo_ao",
-> +                          "gcc_disp_gpll0_clk_src",
-> +                          "gcc_disp_gpll0_div_clk_src",
-> +                          "dsi0_phy_pll_out_byteclk",
-> +                          "dsi0_phy_pll_out_dsiclk";
-> +            #clock-cells = <1>;
-> +            #reset-cells = <1>;
-> +            #power-domain-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,dispcc-qcm2290.h b/include/dt-bindings/clock/qcom,dispcc-qcm2290.h
-> new file mode 100644
-> index 00000000..5b20fb0
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,dispcc-qcm2290.h
-> @@ -0,0 +1,34 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-
-dual license
-
-> +/*
-> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_DISP_CC_QCM2290_H
-> +#define _DT_BINDINGS_CLK_QCOM_DISP_CC_QCM2290_H
-> +
-> +/* DISP_CC clocks */
-> +#define DISP_CC_PLL0				0
-> +#define DISP_CC_MDSS_AHB_CLK			1
-> +#define DISP_CC_MDSS_AHB_CLK_SRC		2
-> +#define DISP_CC_MDSS_BYTE0_CLK			3
-> +#define DISP_CC_MDSS_BYTE0_CLK_SRC		4
-> +#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC		5
-> +#define DISP_CC_MDSS_BYTE0_INTF_CLK		6
-> +#define DISP_CC_MDSS_ESC0_CLK			7
-> +#define DISP_CC_MDSS_ESC0_CLK_SRC		8
-> +#define DISP_CC_MDSS_MDP_CLK			9
-> +#define DISP_CC_MDSS_MDP_CLK_SRC		10
-> +#define DISP_CC_MDSS_MDP_LUT_CLK		11
-> +#define DISP_CC_MDSS_NON_GDSC_AHB_CLK		12
-> +#define DISP_CC_MDSS_PCLK0_CLK			13
-> +#define DISP_CC_MDSS_PCLK0_CLK_SRC		14
-> +#define DISP_CC_MDSS_VSYNC_CLK			15
-> +#define DISP_CC_MDSS_VSYNC_CLK_SRC		16
-> +#define DISP_CC_SLEEP_CLK			17
-> +#define DISP_CC_SLEEP_CLK_SRC			18
-> +#define DISP_CC_XO_CLK				19
-> +#define DISP_CC_XO_CLK_SRC			20
-> +
-> +#define MDSS_GDSC				0
-> +
-> +#endif
-> -- 
-> 2.7.4
-> 
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
