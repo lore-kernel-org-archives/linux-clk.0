@@ -2,245 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB1DC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 16:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 846B0C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 17:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239167AbhLPQOS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 11:14:18 -0500
-Received: from mail-am6eur05on2044.outbound.protection.outlook.com ([40.107.22.44]:27809
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239193AbhLPQOQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Dec 2021 11:14:16 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KKXRRQyLi3W1CK3nA385gNL+nTrvpHwDcDoZgVs1wUj8US2rrcGV7SM72HL8uUUE3Ui1EJRhS/FSm0oYUQwepqYC4Crh3O7pugVPs7yp9saQxL8MNDUntHh8UIrKTtQIuTQkrCyrzzX1uPff3arxXCs1Q26Gvnfu4H8YCa4/hUP2ifwPPd66NvjRP0Xugm0GeFybhMABowge8s1ELUzT1mO7tlokkuLX3DqarvusScm+l/1URWVwtB6zXhPUcvUR0BUMrGG9nwJHHSXf9yK/4isq+eALf/UZbUTBTCcbwktPI3sowiyAvguoshRT7jrp8DVB5hQ1VqBcpTpqn5ju/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fcXAnV/jwrAxwJEUK6xw8nA7Bc5tYzFR9/a13pYAxao=;
- b=d3zBkyZp5nVAeqPmjPwBbIOm6PaEypK4vo/t9+3e5zOkfL+QGxRaP/wpY9PzZobBLFI+kKqQAcubqAffLwPmOdRzm5CW7/FKFRmm5YN8pDz8621F8gtOYEZA7iwy6xx9+pkWSNspoVzsR69IWRgoYbqv4I+SlQRYcNC5VcW7aNcHiAxBd1ZDMm+O0vRGT/DEBaaKavnx7US+LP0rlWGFM3w/hjaOq5oz5vXH8OpnrtQnBExULSdjONSfjN0P/6o842Z2GdJZ4aRoBK3OSml6f8/cQy30Y/b8OX9pMKHYVFt93KTRcbde31r+86N8g9KjIEGS1rjo3nBvDSUkmMk3Rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fcXAnV/jwrAxwJEUK6xw8nA7Bc5tYzFR9/a13pYAxao=;
- b=SfUTxCcHMERopsdxNx1waZ3ZKlYufQqzpSwPmqFWT+rJWJP2Fz8TRDMHiZLC+XTXsGe8J9OqwdfsIP5TSsaTFh0KOiRBDdo3POxwdOXBvyfkRU6MTzK3nQnmrDDQCmZPghU/TO1cm3PbvnqkJu/v4dS5zV9TN/eaLEEX3AeGugM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by VI1PR04MB5693.eurprd04.prod.outlook.com (2603:10a6:803:e2::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4778.12; Thu, 16 Dec
- 2021 16:14:11 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::4c4c:f2b2:addb:841]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::4c4c:f2b2:addb:841%6]) with mapi id 15.20.4778.018; Thu, 16 Dec 2021
- 16:14:11 +0000
-Date:   Thu, 16 Dec 2021 18:14:09 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S240253AbhLPRdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 12:33:37 -0500
+Received: from smtpweb146.aruba.it ([62.149.158.146]:52173 "EHLO
+        smtpweb146.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234903AbhLPRdh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 12:33:37 -0500
+Received: from [192.168.50.18] ([146.241.138.59])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id xudJmDZ2Fcwd9xudKmYmm2; Thu, 16 Dec 2021 18:33:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1639676015; bh=A8eMZCtxOA9Ba5uPd7vUcY0GtY/sLZiclhzdTw82N8Q=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=S/vw1/ZNYB91iYK4VSL1R4rTuOK3zASjeHdT6Q+hTKNqx65Y4v0QxkyefjnZtl4JN
+         Q1juvDREmGhO7JHYaYUOPYE628c42o6Tl1KzmnUgwDuyBq1kQlIbghCIFM3ubPvvGT
+         UmbKUzQTUk7DC2/ORtrwQBQD+x0msqTDCR8oLuBfgXQC6H2amlg8WZEXWYodXrLIgU
+         XD6ENrq5f4DXFS/+E3KfaxDIT7Pmm3impjViha/r9CRqH1qgK/gF5qOpasyEYqKCFI
+         0zdEkWfzqODSdHYJQX5lQQktUrZzkVd0sVgA82g2KvGej9Aq/np8eY8PY997G7Rc53
+         p2WGB+cRBQQyA==
+Subject: [RESEND in plain-test] Re: [PATCH v5 0/9] Add initial support for the
+ i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Jesse Taube <mr.bossman075@gmail.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH] clk: imx: Add imx8dxl clk driver
-Message-ID: <Ybtl0cnd5nY1RsTp@ryzen>
-References: <1636567000-24145-1-git-send-email-abel.vesa@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1636567000-24145-1-git-send-email-abel.vesa@nxp.com>
-X-ClientProxiedBy: VI1PR07CA0193.eurprd07.prod.outlook.com
- (2603:10a6:802:3f::17) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+ <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+Message-ID: <1360c4fe-4a09-a8a1-3224-7f1d4af59f6f@benettiengineering.com>
+Date:   Thu, 16 Dec 2021 18:33:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: eb66c0c5-3ba3-491f-0536-08d9c0af1895
-X-MS-TrafficTypeDiagnostic: VI1PR04MB5693:EE_
-X-Microsoft-Antispam-PRVS: <VI1PR04MB5693D0DDF3820AD5C50B63A2F6779@VI1PR04MB5693.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1284;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: fDOzZ+VHDPhWEZ3+1NWrcPE14jwMXpFKrJCy61vo7+60eMX8focQmC/Sg2g0Bp130O9rQeVbvhYFvq2sTOwuXGo1P53eOzvNosURg/zr5LWyYxVvNGR7yVjE2OGBsM2yaCJvL1HbJdfmGCFW4LfB0w4rmV1Sp2gKeBig8f0gvqNx1Wrpj5dfZpqVxYbuiu23IrF1WAIyaasbPqhklLdWqPGDONnUZ3mTSt71GwN0D5eafOfjjreTEpyOd9fbu5jja8kme3u4wcs5WL784/IIbA0bnJVGiz+0VKjBxSNgi0Q/NDW2Ei3n6pW3VRExMytAn1VBJBSgyKVU++Kxfb1t/qmxaw26m3BhsNfvS9V2mF20pA4glbyfTz/N1lgRIYnXKUsWSyez3lZBuu6D2sPSULD4Khnz1HQ7XpZKGvEtfWeq3Xb+saclkbrqQs9j0WvQ93tLk0RwYF/CQzIs/wirfta5uDYo/IF/NeVUCYCw3XH4bofC9NIw8tLw1zHYaEmplQAoEtWJmDvLtCfPPL+eneadjrXyW3hYoe0wC+uCG2wLQjsIvA0DU6c3iz2bI1Vvu9vbX3UqH6vqWAXherUniRWfG+csUmTwJt2nVdYD2oSFVplHHTRawyTk936UIt6elIvMXQIqFBghdKmK2ULrg357Twz7SfvEG9/NjIwqeShNUPx9JC1pAHXtJvwSYhTqRmWtLB3/nOhzYTWTj6kZQFiK723bFAMZa4JME4pVOJQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(4636009)(366004)(66556008)(38100700002)(8676002)(6512007)(110136005)(508600001)(186003)(33716001)(83380400001)(66946007)(2906002)(316002)(38350700002)(6486002)(9686003)(8936002)(66476007)(86362001)(6506007)(53546011)(44832011)(5660300002)(26005)(52116002)(4326008)(54906003)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wf+6iQaeTFiDeoEoUs0tDrUdb0m6cl3g9YeN0pd1crxturaaC5SUYawMTiwf?=
- =?us-ascii?Q?cPBMuZT0kC9hmhn26wPtbdfUAuKiDSryzBKKvRssyCwsOs1BfqozEG5jc0YL?=
- =?us-ascii?Q?zZ/uzVSUmB3n8d6DKL5OiYIB2RXfJcvZAaVgZZaFLOd2hWehxUrFXnVeJfYS?=
- =?us-ascii?Q?3FAmcNMUrm0Ql18YTfvJY4LnX64QkaQIWzOETG+N0sTKmmbNhtxGZzJXlhmw?=
- =?us-ascii?Q?I33UPyh2M8yMsEob+af7xOMtLjc5mKRZMXFcBFdg2D0sc9v3ZdsMQIMbqttH?=
- =?us-ascii?Q?UZvXzRXEBdmSAKNDm3szXIE/Fqj3xmplaY5VWo/XDKzoewbRngL7ddR/P78i?=
- =?us-ascii?Q?XqBTmxD4UOub7MQ/5QD5mWz0SXYSpWpDW0vn73j1lUCrALkrTW2+U2mr4+HB?=
- =?us-ascii?Q?GNTIK5jc25Dp6Dp/UdJXT9XL2r0HECQMY6531DjOa28gsJXF/tvNfAFHm4Rt?=
- =?us-ascii?Q?Km+nWAakLkAALIExkCQmVtcyOiHO0gTKrrGZlDyA5RHMs2r55oNla3b0lYgS?=
- =?us-ascii?Q?wJtVW0K5egdCtkVAsY2FCzjreeZN6A1TaoiumboYCAXzLicpSqWs6ooKhqcy?=
- =?us-ascii?Q?MPqauE6RnD0D9vYZfNI+kEx+Lnfsbk0rXVZ5j9Q0qeXq7AqMFOZmOaL2bX/s?=
- =?us-ascii?Q?fokF2NteA6L2ESGdWa95bL+DJ+o5tf4lokLLbjuia7JIAaCOSsFFjP8KD7Ua?=
- =?us-ascii?Q?LzI4nN9wMOOErBGYpbqCUq2nSIH+3bUDgTsAOGm3OdB26+MC9ZHnGbNTWyPb?=
- =?us-ascii?Q?s1FoSO79OZO9kDlF9XeTQD50pYUybE0jW4KoDKX5XpEls65cn+RZaOV87Rgd?=
- =?us-ascii?Q?jagqftZdNfGQieVVXK+EqHaqSmfHOonr2VXyPNHc4DJSW45OWrPVsm03/kPX?=
- =?us-ascii?Q?sGoaXLPBZ4qa1IaNhTpKOQagGs3DNNguRrkIpZKoqFErHbt1pW0lXpUZ7JIM?=
- =?us-ascii?Q?M0h8JsZmxWLvnCv6Tdh8YdcNWCLAW133/vfLDaXLQ6oyAdbwO3MVdlsds3mR?=
- =?us-ascii?Q?54Jynkna/BvR2NTAFbm1fWa3rbo7kteq8jtnZetMwtProF+r1isMz3211ZfO?=
- =?us-ascii?Q?j+AEzfbKQivHB1DqYyO1QQaWd+poN8/apn7xySbxVSPj4tWc+fO6Mfu3QIZl?=
- =?us-ascii?Q?h58qUciQkkxJpASPCf3JC0KdUDK1PBsRPyETMJvhfAdwbn8DBxPzDiMH8Xg4?=
- =?us-ascii?Q?kDQ67LNHcNR6CCHRbu/U7FUrSqexhyAvvZJ4NsaMD9P3s3p865ME8XOufKSQ?=
- =?us-ascii?Q?xrmfPLiXa7IeYjXZ7yhbLUv9s3n8yN+MV72WEhW04WQqWIYA/Eh9zUECAk4t?=
- =?us-ascii?Q?QYCmYZfXjn8Sj72emWOCfJ/pMlmBpvypouYlkQ/EpoEvfaA7FcTDL2TCDRh5?=
- =?us-ascii?Q?IQL4h9adZ8bj4FgQc1wDOpU0JeJq7FXL1Se263YsK7wTSnTEbMkyHzRCnCOi?=
- =?us-ascii?Q?kOI8DHEZBYVEr6YybMiwh0yGg8NpgWt23sIfoA25rgw5gKxM/ok1zQ84nlei?=
- =?us-ascii?Q?A7XvsY5VVLKBIqhgxo4liZrPALAqm6h224Pmoc2rZ6t1hzo20Cgn9K6SPikt?=
- =?us-ascii?Q?HySjqWSMfO1wV8CWXJu/6bs70TIX4LDbkKMeutOe60ZLYnF2Hv8TUHY0h0hn?=
- =?us-ascii?Q?Pi+jlte+o5OXNNm1PYIpdjs=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb66c0c5-3ba3-491f-0536-08d9c0af1895
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2021 16:14:11.5803
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wTADqe/qtGtSKGGGbe3aAd6OpTeJUTn7Yht4rFV5nRS1aYrEdVZNiQNAdihLLckNjeDpxMZk7lMKD1TYXmZjrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5693
+In-Reply-To: <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfAKLbP6Es9h/dlQpArqdvaYAmRkL+39EPSYjSfBt4bKPMLTLfg/QQqj4PLOESjv/btMzHCOslpjxEiyQIp9bnudTd5MLSzGt5nna0qdrnDKPfDA1Wu5D
+ TG5iaTdC2iIplr+Or/i7Qz2cpFSyIA5My6HqtBQ8mGcCIm9bzdzTkhy0k2c2hJLBz/KpuDdDmHoYzZXTobfjRV2ZVTG4xtUKfIzgYm/fzaFuusNZFR0356Gv
+ dFr0lCxPG6XFU/2Yi72xA9SOwFzrs6pIsvd6Ru+93WD5DCOfLaJ3XWRmptmbNe+FLFEwo/tL/Bge41BlGenDru2BWjrCYj4gaYpSIcK/hgxGt7UmOivsMVCd
+ nmFHYK5sVz8XSZBwbqf8/JwHOA4v26vCAEOLGdNsxrKjmG3OD+7YMofPLkKgl++eNkEq381tXi4Z2g94yvmmwJCXNU4r2P11fSYyZYfoCprAOCW2z1InGLN2
+ 3cHbNYuvz4QfvPqhttat3bK/lFhYD9bwsYMzVUnyiSvpNx0XG+7PaVrPqgkn8T294miP9eQjAWd9Psm5C37obMSC06cwPWViFFG9ZPv2oqsd6HqtguYUNoIQ
+ MC9a5BFtUNpptAwy6o430bIFdVANiaIlqlpsgLsfZwedfDKqCQK6qVrNS/C2ng+oEqNUB3+vtWypssp48tRPqqsxuL/ypuPV9rdjnO+VLwil3YeNVghkfGqc
+ h4he/yBBxlkWH2YuXkvwuLfxJ4AXNeIutJU6wQsOYG1Gxd86RvTp7wsAu2eBYujeWEsPwXSapIId/aj7aGdZ1gqUgiMXGXnHNb59Hb1n/DvCWHi57XWcZ6Z2
+ nF2dxo4eQ9UTY4LGojYmpHVy2C4vn/DcgwGvNxE3TumDVzEnyLK8M2Hpg9Psdq6gpaZdkAhDy/1D8M30lJ1UZJzAvRpkTSYu45GMrdauscaz2HKzjjj6rE1+
+ cF2kRMmb4Zc2FEYQ+Y3LX1KvMpVscIe7UI180M2omrBwKSw1DCGpCBRSB8pp2kkbKuvRjBZCGukk7pyxWPoFnH21C+REKFN1XW27+iuKhNthGfPXH/j/fRmz
+ XGfvqgAAfY6uMJdQtzA8wnODk26IcmRMoxvAfcmAlbMgRWhz9RFie2/+VfFNa53GPnEnpW+8S7eY4iWuL3asQLMqR0h+PeZomys=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-11-10 19:56:40, Abel Vesa wrote:
-> From: Jacky Bai <ping.bai@nxp.com>
-> 
-> Add files for imx8dxl clk driver which is based on imx8qxp clock driver.
-> 
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Hi Arnd, Jesse, All,
 
-Gentle ping.
+sorry for previous HTML e-mail(I was on mobile phone),
 
-> ---
->  drivers/clk/imx/Makefile           |  3 +-
->  drivers/clk/imx/clk-imx8dxl-rsrc.c | 66 ++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk-imx8qxp.c      |  1 +
->  drivers/clk/imx/clk-scu.h          |  1 +
->  4 files changed, 70 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/imx/clk-imx8dxl-rsrc.c
+On 16/12/21 09:26, Arnd Bergmann wrote:
+> On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+>>
+>> This patchset contains:
+>> - i.MXRT10xx family infrastructure
+>> - i.MXRT1050 pinctrl driver adaption
+>> - i.MXRT1050 clock driver adaption
+>> - i.MXRT1050 sd-card driver adaption
+>> - i.MXRT1050 uart driver adaption
+>> - i.MXRT1050-evk basic support
+>>
+>> The i.MXRTxxxx family that could have support by Linux actually spreads
+>> from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
+>> 100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
+>> with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
+>> 2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
+>> STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
+>> less layer PCBs. Seeing that these chips are comparable to the
+>> STM32F7XXs which have linux ported to them it seems reasonable to add
+>> support for them.
+>>
+>> Giving Linux support to this family should ease the development process,
+>> instead of using a RTOS they could use Embedded Linux allowing for more
+>> portability, ease of design and will broaden the scope of people using
+>> embedded linux.
+>>
+>> The EVK has very little SDRAM, generally 32MB starting from
+>> i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
+>> 64MB of SDRAM for more functionality.
+>>
+>> At the moment we do not support XIP for either u-boot or Linux but it
+>> should be done in the future. XIP will also save SDRAM.
+>>
+>> Another interesting fact is the amount of internal SRAM, as the P/N
+>> increases the SRAM will reach up to 2MB(some could be for cache and
+>> some would be for video).
+>>
+>> Also, some parts have embed flash of 4MB that can be used for
+>> u-boot/Linux, if both correctly sized it will leave the SDRAM free.
+>>
+>> External flash can be Quad SPI and HyperFlash, so throughput would be
+>> decent.
+>>
+>> The i.MXRT11xx series supports MIPI interface too.
+>>
+>> The family in general provide CAN bus, audio I/O, 1 or more
+>> USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
+>>
+>> All this can be used for simple GUIs, web-servers, point-of-sale
+>> stations, etc.
 > 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index b5e040026dfb..f8a44c4ca94a 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -28,7 +28,8 @@ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
->  
->  obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
->  clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
-> -				     clk-imx8qxp-rsrc.o clk-imx8qm-rsrc.o
-> +				     clk-imx8qxp-rsrc.o clk-imx8qm-rsrc.o \
-> +				     clk-imx8dxl-rsrc.o
->  clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
->  
->  obj-$(CONFIG_CLK_IMX8ULP) += clk-imx8ulp.o
-> diff --git a/drivers/clk/imx/clk-imx8dxl-rsrc.c b/drivers/clk/imx/clk-imx8dxl-rsrc.c
-> new file mode 100644
-> index 000000000000..69b7aa34fff5
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx8dxl-rsrc.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2019~2020 NXP
-> + */
-> +
-> +#include <dt-bindings/firmware/imx/rsrc.h>
-> +
-> +#include "clk-scu.h"
-> +
-> +/* Keep sorted in the ascending order */
-> +static u32 imx8dxl_clk_scu_rsrc_table[] = {
-> +	IMX_SC_R_SPI_0,
-> +	IMX_SC_R_SPI_1,
-> +	IMX_SC_R_SPI_2,
-> +	IMX_SC_R_SPI_3,
-> +	IMX_SC_R_UART_0,
-> +	IMX_SC_R_UART_1,
-> +	IMX_SC_R_UART_2,
-> +	IMX_SC_R_UART_3,
-> +	IMX_SC_R_I2C_0,
-> +	IMX_SC_R_I2C_1,
-> +	IMX_SC_R_I2C_2,
-> +	IMX_SC_R_I2C_3,
-> +	IMX_SC_R_ADC_0,
-> +	IMX_SC_R_FTM_0,
-> +	IMX_SC_R_FTM_1,
-> +	IMX_SC_R_CAN_0,
-> +	IMX_SC_R_LCD_0,
-> +	IMX_SC_R_LCD_0_PWM_0,
-> +	IMX_SC_R_PWM_0,
-> +	IMX_SC_R_PWM_1,
-> +	IMX_SC_R_PWM_2,
-> +	IMX_SC_R_PWM_3,
-> +	IMX_SC_R_PWM_4,
-> +	IMX_SC_R_PWM_5,
-> +	IMX_SC_R_PWM_6,
-> +	IMX_SC_R_PWM_7,
-> +	IMX_SC_R_GPT_0,
-> +	IMX_SC_R_GPT_1,
-> +	IMX_SC_R_GPT_2,
-> +	IMX_SC_R_GPT_3,
-> +	IMX_SC_R_GPT_4,
-> +	IMX_SC_R_FSPI_0,
-> +	IMX_SC_R_FSPI_1,
-> +	IMX_SC_R_SDHC_0,
-> +	IMX_SC_R_SDHC_1,
-> +	IMX_SC_R_SDHC_2,
-> +	IMX_SC_R_ENET_0,
-> +	IMX_SC_R_ENET_1,
-> +	IMX_SC_R_MLB_0,
-> +	IMX_SC_R_USB_1,
-> +	IMX_SC_R_NAND,
-> +	IMX_SC_R_M4_0_I2C,
-> +	IMX_SC_R_M4_0_UART,
-> +	IMX_SC_R_ELCDIF_PLL,
-> +	IMX_SC_R_AUDIO_PLL_0,
-> +	IMX_SC_R_AUDIO_PLL_1,
-> +	IMX_SC_R_AUDIO_CLK_0,
-> +	IMX_SC_R_AUDIO_CLK_1,
-> +	IMX_SC_R_A35
-> +};
-> +
-> +const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8dxl = {
-> +	.rsrc = imx8dxl_clk_scu_rsrc_table,
-> +	.num = ARRAY_SIZE(imx8dxl_clk_scu_rsrc_table),
-> +};
-> diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-> index c53a688d8ccc..7f4893706cc2 100644
-> --- a/drivers/clk/imx/clk-imx8qxp.c
-> +++ b/drivers/clk/imx/clk-imx8qxp.c
-> @@ -297,6 +297,7 @@ static const struct of_device_id imx8qxp_match[] = {
->  	{ .compatible = "fsl,scu-clk", },
->  	{ .compatible = "fsl,imx8qxp-clk", &imx_clk_scu_rsrc_imx8qxp, },
->  	{ .compatible = "fsl,imx8qm-clk", &imx_clk_scu_rsrc_imx8qm, },
-> +	{ .compatible = "fsl,imx8dxl-clk", &imx_clk_scu_rsrc_imx8dxl, },
->  	{ /* sentinel */ }
->  };
->  
-> diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
-> index 22156e93b85d..7d8069886b0c 100644
-> --- a/drivers/clk/imx/clk-scu.h
-> +++ b/drivers/clk/imx/clk-scu.h
-> @@ -23,6 +23,7 @@ extern struct list_head imx_scu_clks[];
->  extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
->  extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qxp;
->  extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8qm;
-> +extern const struct imx_clk_scu_rsrc_table imx_clk_scu_rsrc_imx8dxl;
->  
->  int imx_clk_scu_init(struct device_node *np,
->  		     const struct imx_clk_scu_rsrc_table *data);
-> -- 
-> 2.31.1
->
+> This looks all good to me now, but the drivers need to be reviewed by the
+> respective subsystem maintainers before we can merge it into the soc
+> tree. As with other new SoCs, I'm happy to merge the support as a combined
+> pull request that includes the drivers provided that the driver subsystem
+> maintainers have reviewed them.
+> 
+> Ideally the i.MX maintainers would pick up your series into a separate
+> branch and send that to soc@kernel.org the same way as the other topic
+> branches that are usually split out between DT, drivers, soc code etc.
+> 
+> With the Christmas break coming up, the timing may not be sufficient
+> before I'm off next week, so it may end up too late for 5.17 but should
+> be fine for 5.18.
+> 
+> As a more general comment, it's always nice to see newly added SoC
+> platforms, especially when they are this well implemented and done
+> by hobbyists. However, I do think you are being overly optimistic
+> as to how useful this is going to be to other people: interest in NOMMU
+> ARM platforms has dropped a lot over the past 5 years, and as far as I
+> can tell, it is only being kept alive for existing stm32 customers
+> as the economics do not favor Linux on Cortex-M for new products
+> compare to Linux on Cortex-A or some RTOS on Cortex-M.
+> 
+> The existing users will inevitably stop updating their kernels at some
+> point, and then it's most likely just you and Vladimir Murzin that care.
+
+
+About this will you accept support for the other SoCs in the family?
+We would like to add in the near future:
+- i.MXRT1020(uboot support is already upstreamed)
+- i.MXRT1024(almost equal to 1020)
+- i.MXRT1060(almost equal to 1050)
+- i.MXRT1064(almost equal to 1060)
+And
+- i.MXRT1160/70 new family with faster core clock(1Ghz) and a cortex M4
+
+We need to add missing lcd(uboot upstreamed), usb(uboot upstreamed), 
+ethernet(wip) supports for i.MXRT10xx family.
+
+This is to organize with Jesse also about buying evaluation boards and 
+timing.
+
+We’ve meant this porting also as an exercise to deal with Linux deeper 
+for us and for the other newbies.
+
+We’ve been also asked about a possible support for s32s(quad cortex-R52) 
+on initial emails but it has no mmu too.
+While I’m seeing that some cortex-R is landing inside Linux.
+Would it be interesting anyway?
+
+Best regards
+—-
+Giulio Benetti
+Benetti Engineering sas
