@@ -2,159 +2,221 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1C2C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 21:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB90C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 23:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbhLPVOT convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 16:14:19 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:54953 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbhLPVOS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 16:14:18 -0500
-Received: from mail-wr1-f51.google.com ([209.85.221.51]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MpUIW-1mAIuo1K1s-00pt2F; Thu, 16 Dec 2021 22:14:14 +0100
-Received: by mail-wr1-f51.google.com with SMTP id u17so371147wrt.3;
-        Thu, 16 Dec 2021 13:14:14 -0800 (PST)
-X-Gm-Message-State: AOAM530PkeRe7zhgh9Vlocxcwd5jIJhdtIs1chKw1wQHdBotE+eFAsKN
-        E6INXH95RVH0wUcvICfb+SJeGRVPxAR2uuHG9HY=
-X-Google-Smtp-Source: ABdhPJx5ftEfPH4qvIzikYkTAI2QfNEBmismxp18qt3xtWOd9p6RwUc2SZYuv+4lj5MKuQ7wJcPfZffT71zk71LPRZ8=
-X-Received: by 2002:a05:6000:1aca:: with SMTP id i10mr10867640wry.407.1639689253768;
- Thu, 16 Dec 2021 13:14:13 -0800 (PST)
-MIME-Version: 1.0
-References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
- <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com> <1360c4fe-4a09-a8a1-3224-7f1d4af59f6f@benettiengineering.com>
-In-Reply-To: <1360c4fe-4a09-a8a1-3224-7f1d4af59f6f@benettiengineering.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Dec 2021 22:13:57 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a1oZK1qMRBE3D8otCTY6Lg4jMXxVpAZHQzLTA8woA3_UQ@mail.gmail.com>
-Message-ID: <CAK8P3a1oZK1qMRBE3D8otCTY6Lg4jMXxVpAZHQzLTA8woA3_UQ@mail.gmail.com>
-Subject: Re: [RESEND in plain-test] Re: [PATCH v5 0/9] Add initial support for
- the i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
-To:     Giulio Benetti <giulio.benetti@benettiengineering.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jesse Taube <mr.bossman075@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        id S237114AbhLPXbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 18:31:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237027AbhLPXbU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 18:31:20 -0500
+Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0533DC06173E
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 15:31:19 -0800 (PST)
+Received: by mail-ot1-x332.google.com with SMTP id i5-20020a05683033e500b0057a369ac614so757777otu.10
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 15:31:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NXP5aZIeipXTUi98du3BOF/PkToplyAfCgzX8CANNdQ=;
+        b=zFKdJmuecI72DotbzBckf7qeXzkcTKD+nGjYIEKibmNcyUgZxg+6KuEFFZcd+do1MC
+         44PNU6KqyaSlhEL7ew/u3e91AJFyCaBBnZeToKl4PrD0reR/1dCnRpTDQlAoRdpfN1Z+
+         LiSXhmO24W1NyyNSHQWI8lU5LnhkEqTaVI1woRGfzG6OOV9rKc+cwGR7EF8Z0wBf3Lc/
+         hFOgtUxWcfJnuY1kM/vbo+/yx1V7ikqFdQ1YPhUrHluDgJ9S2eIffby7X0Wc5v/dgvfX
+         BjTrWikZ59iRC8yX2nJ+LYR4WvJg76RE0qLI4u82mKoF8kRkysN5HhPnnW5Akn79gFLI
+         evug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NXP5aZIeipXTUi98du3BOF/PkToplyAfCgzX8CANNdQ=;
+        b=c4mZEknjeqVOlRNz6RNm5i+ZG8T6pK7hr+Vl5Mp+md0ZAWSgVDmmILX8HplrLkfqdk
+         DxrVzLslY95kVlgyFEAnzXcYMr8AQJvj7uBP0X6SFqzTgv4NOHpvIY6fCzS87mJ8ezDl
+         qw6RQmC+zYBKqcknAzCtP3l0CjVsihL2tvrhHxUxV73CnG5bOhAiKprUbnMRAW2ypWxI
+         /MCokLqUxajUDxamQxbtslNMhNq0KiE0jz6JMq5UUyI9g4DMI+mIZ+/oBxtzw0R33Thv
+         Ef5ZkQ57clH4gbBnu3UXr1m6+YqEo7bDZNrync+5reAbIzDd/307bzdiC8ZVCapiwoRX
+         BE0g==
+X-Gm-Message-State: AOAM531ZtBJvahku9kqKHnHP/n5waajpp6v+xZgFqHddV5ll0pyYcBNN
+        qOZBPc97VD/6u9+uozFZTGw5tw==
+X-Google-Smtp-Source: ABdhPJx/NpkKAmabEITTnvIJ5WsOnzArrDjDEsBnlWblCgVJ+Hxk8mVhpGbmPRyJrNWtK6Oodd0Xrg==
+X-Received: by 2002:a9d:7548:: with SMTP id b8mr338973otl.92.1639697479143;
+        Thu, 16 Dec 2021 15:31:19 -0800 (PST)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id g17sm1266613oiy.14.2021.12.16.15.31.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 15:31:18 -0800 (PST)
+Date:   Thu, 16 Dec 2021 15:32:32 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Amit Nischal <anischal@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Vladimir Murzin <vladimir.murzin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:jLcfKWuFEKdB88gRT6zG+WNsy+2D4zMGcg9vmzSiKMpG4GXwiHA
- TZ3Mod5cZQg9ulqi6UikNcrt3jaz1VE+NWg4wqwrTHPpjw0c6kkKEO11y3p2tcAj8fbzPRZ
- yRH+Z+gDtqDy16EgfNJc1Cz7xLy9taRKNvTbR14ZrJrk8+/Dc3TNL+kTIEarR5LENeKDMuE
- k7Gl/EGFBNgEmg3ndaWxQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Z/D4V6ISYL4=:swO45RG2EqZcuUukJekSUQ
- ZCPRAjKX7GuMlkxZdBlPUxtXKnqYmJYkIYAjnemcueOrpTKtEh0xwApd+O4q1XrMsx/vTYU+j
- WUeAf59gRSlIn/J4O0o6iW1QAwuKDH+K4NOD/alhj7/g2UZxs9QEeW/kx6CDpOT8RUNneiP7X
- maTFLoumWOXvRhRgPQxC109YEtPGQ7ABThgDaxTeJ7AjqQV2GA45Gtb5Of2rzEN8yOHkp9WJC
- EFyn59AUyJx82p+arn6cbwNUaRMKoHxy+Mfjoc43jAsjLC5a5mxw8DL986mtlNKt2BfUaZHyb
- Yf6WEOZClGTDYG9gtO4XudZw9vOcDTiw5SfHKZhYmd5PpW3hsaAxdINlqnCxgZ5h+ybYD1lQ7
- V+BWjLzfxDAyT+OcZuHrau+R3L2M+t3RsGZyzCRVoEFP21ubA1R5B1HTbPCZJzaxSrD5eWOcO
- XbIUfV6Aq7Nrp6ffXVGw0HKB3QuP/ldQfsihvjSiZdVmufpGK4RT7d4pxHw13WBkSpRdJBLJY
- onG6zFCoUt25pWYVpv9TfWPd0RTDIbdYWJ+E/ko0Xl7e++cjBOT+3MEApGSOX6DGFFE0bOlWr
- r3VrGLRnNyG2G9PvObId3SMOcCnUZiOImcnO8N+xJJ9NMGPIEwmQlE4LZupP4G7YYvs1oZlup
- z8/4vax5s1BpCj4G40rYaGM2eb2A1lJrb5UL0IQBATLkRqyVPQcXLsQ4r/YPoGmMTk0JTAR2N
- QraYHtKXw8kEDmD1CHoOzFjZ7Yi106LGkBKKalTUCiGI7aAMMFrZNkH+boqUlMwJKS7vQxKOE
- wPzvxJ8K7Nu+Gd8MdMPoKN7tyUassekAK+XRq8GzHmAdGfFcTs=
+        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
+Message-ID: <YbvMkIhdsGdCfvFV@ripper>
+References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
+ <20211216015136.96AD3C36AE1@smtp.kernel.org>
+ <Ybqo+wUv6lNT75tJ@ripper>
+ <20211216185856.27406C36AE2@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211216185856.27406C36AE2@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 16, 2021 at 6:33 PM Giulio Benetti
-<giulio.benetti@benettiengineering.com> wrote:
-> On 16/12/21 09:26, Arnd Bergmann wrote:
-> > On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+On Thu 16 Dec 10:58 PST 2021, Stephen Boyd wrote:
 
-> > As a more general comment, it's always nice to see newly added SoC
-> > platforms, especially when they are this well implemented and done
-> > by hobbyists. However, I do think you are being overly optimistic
-> > as to how useful this is going to be to other people: interest in NOMMU
-> > ARM platforms has dropped a lot over the past 5 years, and as far as I
-> > can tell, it is only being kept alive for existing stm32 customers
-> > as the economics do not favor Linux on Cortex-M for new products
-> > compare to Linux on Cortex-A or some RTOS on Cortex-M.
-> >
-> > The existing users will inevitably stop updating their kernels at some
-> > point, and then it's most likely just you and Vladimir Murzin that care.
->
->
-> About this will you accept support for the other SoCs in the family?
-> We would like to add in the near future:
-> - i.MXRT1020(uboot support is already upstreamed)
-> - i.MXRT1024(almost equal to 1020)
-> - i.MXRT1060(almost equal to 1050)
-> - i.MXRT1064(almost equal to 1060)
-> And
-> - i.MXRT1160/70 new family with faster core clock(1Ghz) and a cortex M4
->
-> We need to add missing lcd(uboot upstreamed), usb(uboot upstreamed),
-> ethernet(wip) supports for i.MXRT10xx family.
+> Quoting Bjorn Andersson (2021-12-15 18:48:27)
+> > On Wed 15 Dec 17:51 PST 2021, Stephen Boyd wrote:
+> > 
+> > > Quoting Bjorn Andersson (2021-12-02 19:56:01)
+> > > > As GDSCs are turned on and off some associated clocks are momentarily
+> > > > enabled for house keeping purposes. Failure to enable these clocks seems
+> > > > to have been silently ignored in the past, but starting in SM8350 this
+> > > > failure will prevent the GDSC to turn on.
+> > > > 
+> > > > At least on SM8350 this operation will enable the RCG per the
+> > > > configuration in CFG_REG. This means that the current model where the
+> > > > current configuration is written back to CF_REG immediately after
+> > > > parking the RCG doesn't work.
+> > > 
+> > > Just to clarify, is the RCG off and "parked" at XO with the config
+> > > register dirty and set to the desired frequency and then the RCG is
+> > > turned on by the GDSC?
+> > > 
+> > 
+> > Correct, that's exactly what I'm observing.
+> 
+> Cool can you add that detail to the commit message?
+> 
 
-Sure, anything you want to work on supporting can be added to the kernel,
-the important bit is that it's well written and can be maintained going forward.
+Sure.
 
-My best guess is that we'll end up ripping out all NOMMU support in
-a few years, when we get to a point when both of these things happen:
+> > 
+> > > > 
+> > > > Instead, keep track of the currently requested rate of the clock and
+> > > > upon enabling the clock reapply the configuration per the saved rate.
+> > > 
+> > > We already keep track of the requested rate and reapply it on enable,
+> > > just we're lazy and stash that information in the hardware and not the
+> > > software. I didn't think the gdsc would be turned on and ruin that all,
+> > > but it's fair.
+> > > 
+> > 
+> > Up until SM8350 I see no evidence that this has been a problem, but now
+> > it is. So there's likely some changes in the hardware there...
+> > 
+> > > > 
+> > > > Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
+> > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > > ---
+> > > >  drivers/clk/qcom/clk-rcg.h  |  2 ++
+> > > >  drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
+> > > >  2 files changed, 19 insertions(+), 15 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> > > > index 99efcc7f8d88..6939f4e62768 100644
+> > > > --- a/drivers/clk/qcom/clk-rcg.h
+> > > > +++ b/drivers/clk/qcom/clk-rcg.h
+> > > > @@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+> > > >   * @freq_tbl: frequency table
+> > > >   * @clkr: regmap clock handle
+> > > >   * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
+> > > > + * @current_rate: cached rate for parked RCGs
+> > > >   */
+> > > >  struct clk_rcg2 {
+> > > >         u32                     cmd_rcgr;
+> > > > @@ -149,6 +150,7 @@ struct clk_rcg2 {
+> > > >         const struct freq_tbl   *freq_tbl;
+> > > >         struct clk_regmap       clkr;
+> > > >         u8                      cfg_off;
+> > > > +       unsigned long           current_rate;
+> > > >  };
+> > > >  
+> > > >  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+> > > > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> > > > index e1b1b426fae4..b574b38dcbd5 100644
+> > > > --- a/drivers/clk/qcom/clk-rcg2.c
+> > > > +++ b/drivers/clk/qcom/clk-rcg2.c
+> > > > @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> > > >  {
+> > > >         struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> > > >         u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
+> > > > +       unsigned long rate;
+> > > >  
+> > > >         regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+> > > >  
+> > > > @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+> > > >         hid_div = cfg >> CFG_SRC_DIV_SHIFT;
+> > > >         hid_div &= mask;
+> > > >  
+> > > > -       return calc_rate(parent_rate, m, n, mode, hid_div);
+> > > > +       rate = calc_rate(parent_rate, m, n, mode, hid_div);
+> > > > +       if (!rcg->current_rate)
+> > > > +               rcg->current_rate = rate;
+> > > 
+> > > Instead of doing this in recalc_rate, all the time, why not make an init
+> > > clk op that does it once during registration? The other problem I see is
+> > > that the rate we calculate may be wrong if the parent is registered
+> > > after this clk. I think this came up originally when the patch this is
+> > > fixing was discussed.
+> > > 
+> > 
+> > I would need to go back and reproduce the issue I saw, but I had to add
+> > this because I ended up in clk_rcg2_shared_enable() with current_rate =
+> > 0, which I think would be equally bad to just committing the dirty
+> > configuration.
+> 
+> Alright.
+> 
+> > 
+> > > So instead of saving the current_rate can we save the cfg register value
+> > > (or however many registers we need) to put back the frequency of the clk
+> > > to what we want on enable? The other thing is that we made recalc_rate()
+> > > work "seamlessly" here by stashing the frequency into the register but
+> > > leaving it uncommitted until enable. We may need to now look at the
+> > > software copy of the registers in the shared rcg recalc rate operation
+> > > to figure out what the frequency is.
+> > > 
+> > 
+> > I made an attempt at this, the problem I had was to come up within
+> > something sane for how to deal with set_rate on parked clocks; because
+> > we need to re-generate the register contents, without writing out the
+> > value - and that got messy.
+> 
+> Looking back on the introduction of this code[1] I see that it's not
+> about the rate but more about the parent. i.e. we park the clk on the XO
+> parent but don't care about the m/n values or pre divider because it
+> doesn't really matter if the clk is running slowly. So nothing needs to
+> be saved except for the cfg register, and we can do that in software
+> with a single u32 instead of using a rate and looking it up and then
+> reprogramming the other values. We should be able to cache the register
+> content with an init clk_op.
+> 
 
-- the number of actual users that still update their kernels becomes
-  really low
+So you're suggesting that, in clk_rcg2_shared_set_rate(), when the RCG
+is found to be disabled, I should write out M, N, D and calculate a new
+cfg value which I stash until the next enable?
 
-- There is some treewide refactoring that isn't easily supportable without an
-   MMU unless someone puts extra work into it.
+Looks a little bit messy, but I will give it a try.
 
-At the moment, we still support NOMMU kernels on a bunch of architectures
-(Arm, riscv/k210, sh/j2, m68k/coldfire, xtensa and h8300). Out of these,
-Arm is by far the most active, and if Arm NOMMU support was to go away
-for some reason, the others would likely follow.
+> > 
+> > So stashing the frequency turned out to be much cleaner. I believe that
+> > this is also what they do downstream...
+> > 
+> 
+> Downstream doing something isn't a great reason.
+> 
 
-> This is to organize with Jesse also about buying evaluation boards and
-> timing.
->
-> We’ve meant this porting also as an exercise to deal with Linux deeper
-> for us and for the other newbies.
->
-> We’ve been also asked about a possible support for s32s(quad cortex-R52)
-> on initial emails but it has no mmu too.
-> While I’m seeing that some cortex-R is landing inside Linux.
-> Would it be interesting anyway?
+:)
 
-I brought that up during the initial review, but I think this is even
-less interesting
-than Cortex-M support from the perspective of potential use cases. While
-Cortex-M MCUs have some advantages over larger SoCs in terms of
-power consumption and cost, this is generally not true for running Linux
-on Cortex-R. The Cortex-R and Cortex-A cores are closely related, so
-they tend have similar power/performance/area characteristics, but
-the lack of an MMU makes the Cortex-R much less useful. If there was
-an advantage to running with the MMU disabled, you could actually do that
-on a Cortex-A as well, but clearly nobody does that either.
+> [1] https://lore.kernel.org/r/07dbf890975c1178bc4cc2360c25526a@codeaurora.org
 
-Vladimir has put some work into making Cortex-R work in the kernel, and
-he may have some other thoughts on this question.
-
-          Arnd
+Regards,
+Bjorn
