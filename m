@@ -2,221 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BDBC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 04:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9969EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 04:35:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbhLPEXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 23:23:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44708 "EHLO
+        id S233538AbhLPEfk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Dec 2021 23:35:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230222AbhLPEXA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 23:23:00 -0500
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8775EC06173E
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 20:23:00 -0800 (PST)
-Received: by mail-ot1-x332.google.com with SMTP id x3-20020a05683000c300b0057a5318c517so27414186oto.13
-        for <linux-clk@vger.kernel.org>; Wed, 15 Dec 2021 20:23:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GDdv/EeBUFLk3bv9K+cRCt6BYkbbDx2RqVmNewbZxFw=;
-        b=Ieq4eq6kQDwb37q6f2KGArlHmOblH6W/9exjQQ8JlVElP5O8MfHHM8kNcrk+MJT7El
-         JSVHUV/Y9VNwNGou7UidGHL4sYBz3+rdrQFbuFqmSTSbhTaVVj1hYfKHrzVOdO3KyG25
-         pY3wWDGkY2Ty7YTo+VmkXoSUa92YxGDTYdfsRsn9LyuuT+tH2d9G5SWHd78nGwF5xmYI
-         s7acF/FpGYeS6pAnaxIqrkB8beG4BRcjEWKWOrx3rwkwMhxof6TnRfp/uzvbSLMmTZOK
-         hK/fvgRGaZ/ceKyIrmtOZVwNWV6+b1nEY6hGcRQ+QUYN9Q4cT33m+zVDBgyFfsD6y36X
-         c2yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GDdv/EeBUFLk3bv9K+cRCt6BYkbbDx2RqVmNewbZxFw=;
-        b=1X/3Sj5isZkmqrJjJRvHsRci7J2e521huQZjs9nRWhNaNNZGcKWa/d3lYdglxecowP
-         799PceSwjb5Y/BMzeDtZ2rWVkNBPGqglxODbAAqFMu7xpFFmW/rsNqFElhGMKQ7GcclW
-         DMNB0tsvDh4YxMCVxSRFjhao4NbP4Su+09eEDSjmRrkWAvp+6IaCjwd7A1Esib5JnXmF
-         4oDpE7gLkdj3Bn1hS+weyKy+gOreQBiDfzRVd8l729umu5KMN+JSZb6JApFl1NRCK5Ag
-         FaH4bzD6X5PV0tqz3shcawUXRNRTp2Ixq0Eo3A/fkrFPGoMrNvDEYK8ljxI0Iet3Uk/q
-         4GcA==
-X-Gm-Message-State: AOAM531+Yw4PdXWbVAun21bJAU+Sxe1bRZC5kcpos8hdPDkzPkvC0mKq
-        A8mvTyEqZ7F4G5H6iYhyY+DUCA==
-X-Google-Smtp-Source: ABdhPJyXSvtJiilAgiFt5npZLoQVuJqbM9RSKg7ZvlUVhEiW49q8q7GVeSTsr2LFhhzV5WXWaeNchA==
-X-Received: by 2002:a9d:578a:: with SMTP id q10mr11102993oth.149.1639628579733;
-        Wed, 15 Dec 2021 20:22:59 -0800 (PST)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 69sm839183otf.33.2021.12.15.20.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Dec 2021 20:22:59 -0800 (PST)
-Date:   Wed, 15 Dec 2021 20:24:14 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Mike Tipton <quic_mdtipton@quicinc.com>
-Subject: Re: [PATCH 1/2] clk: qcom: add API to safely park RCG2 sources
-Message-ID: <Ybq/brI4mMHv3/kn@ripper>
-References: <20211208022210.1300773-1-dmitry.baryshkov@linaro.org>
- <20211208022210.1300773-2-dmitry.baryshkov@linaro.org>
- <20211209083727.30DD2C004DD@smtp.kernel.org>
- <YbJMnvg/IDwHNeWS@ripper>
- <995c66b7-ef69-56a4-93cc-59be52977972@linaro.org>
+        with ESMTP id S233525AbhLPEfj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 23:35:39 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A813C061574;
+        Wed, 15 Dec 2021 20:35:39 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 525F661B97;
+        Thu, 16 Dec 2021 04:35:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5ABAC36AE3;
+        Thu, 16 Dec 2021 04:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639629336;
+        bh=y9QOFaHTSntjEd1BcEK7/c1Zltf72qo8zEU0NPs5vVg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gfyhz1hDgi7s41XdwKJJvPdJiT3I/+kzGCkoFWphA+s/PSWz1E/1L5kwF0rb9XBvp
+         24Q3+h3bU1o3lTWb6Y8K4N9RCsOGS4RIV+PX/yVfbxaUeMC5n5Yei/1oAVg6CIL2qO
+         rCmObBbNzrzH4ZzfzVxldVZzI6LAj3IvjnTLJ3d+H7ySqQEr2SrA2HTk/MCpnXGmXD
+         Dxc2VT/Ni12LHvBY4vS5vpNAcpozAUMj2zk1F6/tMlu+8IDmdQXxbJN0ZTFPSjtQq4
+         T3NLD3RAPiEKpanDRkp8fBOkcdX8OSFhbJ9ddUjaxSxKn5ynQVrkGE6GFXAcVV37W0
+         Z680YFEL7o2ig==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <995c66b7-ef69-56a4-93cc-59be52977972@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20211116150119.2171-5-kernel@esmil.dk>
+References: <20211116150119.2171-1-kernel@esmil.dk> <20211116150119.2171-5-kernel@esmil.dk>
+Subject: Re: [PATCH v4 04/16] dt-bindings: clock: starfive: Add JH7100 clock definitions
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Maximilian Luz <luzmaximilian@gmail.com>,
+        Sagar Kadam <sagar.kadam@sifive.com>,
+        Drew Fustini <drew@beagleboard.org>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        Fu Wei <tekkamanninja@gmail.com>,
+        Anup Patel <anup.patel@wdc.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Matteo Croce <mcroce@microsoft.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh@kernel.org>
+To:     Emil Renner Berthing <kernel@esmil.dk>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org
+Date:   Wed, 15 Dec 2021 20:35:35 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211216043536.A5ABAC36AE3@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 15 Dec 13:14 PST 2021, Dmitry Baryshkov wrote:
+Quoting Emil Renner Berthing (2021-11-16 07:01:07)
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+>=20
+> Add all clock outputs for the StarFive JH7100 clock generator.
+>=20
+> Based on work by Ahmad Fatoum for Barebox, with "JH7100_" prefixes added
+> to all definitions.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-> On 09/12/2021 21:36, Bjorn Andersson wrote:
-> > On Thu 09 Dec 00:37 PST 2021, Stephen Boyd wrote:
-> > 
-> > > Quoting Dmitry Baryshkov (2021-12-07 18:22:09)
-> > > > Some of RCG2 clocks can become stuck during the boot process, when
-> > > > device drivers are enabling and disabling the RCG2's parent clocks.
-> > > > To prevernt such outcome of driver probe sequences, add API to park
-> > > 
-> > > s/prevernt/prevent/
-> > > 
-> > > > clocks to the safe clock source (typically TCXO).
-> > > > 
-> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > 
-> > > I'd prefer this approach vs. adding a new clk flag. The clk framework
-> > > doesn't handle handoff properly today so we shouldn't try to bandage
-> > > that in the core.
-> > > 
-> > 
-> > I'm not against putting this responsibility in the drivers, but I don't
-> > think we can blindly park all the RCGs that may or may not be used.
-> > 
-> > Note that we should do this for all RCGs that downstream are marked as
-> > enable_safe_config (upstream should be using clk_rcg2_shared_ops)
-> > and disabling some of those probe time won't be appreciated by the
-> > hardware.
-> 
-> Only for the hardware as crazy, as displays. And maybe gmu_clk_src. I don't
-> think we expect venus or camcc to be really clocking when kernel boots.
-> 
-
-SM8350 GCC has 44 clocks marked as such downstream.
-
-> > 
-> > 
-> > If you don't like the flag passed to clk_disable_unused (which is like a
-> > very reasonable objection to have), we need to make progress towards a
-> > proper solution that replaces clk_disable_unused().
-> 
-> The issue is that at the time of clk_disable_unused() it can be too late,
-> for example because msm being built-in into the kernel has already tried to
-> play with PLLs/GDSCs and thus made RCG stuck.
-
-Makes sense, so this logic will have to consider both the hardware state
-(or make assumptions thereof) and the clock votes in the kernel.
-
-> This is what I was observing
-> on RB3 if the msm driver is built in and the splash screen is enabled.
-> 
-
-Which clock was this?
-
-We should be able to assume that the bootloader will hand us a clock
-tree that's functionally configured, so reparenting etc of the RCGs
-should not cause issues because the old parent will be ticking and we
-will explicitly start the new parent.
-
-One case that might not be handled though is the externally sourced
-clocks, where if you reconfigure the DSI phy without first parking the
-RCG you might lock up the RCG. So I think that whenever we mess with
-those clocks we need to make sure that the downstream RCGs are not
-ticking off them.
-
-> > 
-> > > > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > > > index e1b1b426fae4..230b04a7427c 100644
-> > > > --- a/drivers/clk/qcom/clk-rcg2.c
-> > > > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > > > @@ -1036,6 +1036,40 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
-> > > >          regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
-> > > >   }
-> > > > +int clk_rcg2_park_safely(struct regmap *regmap, u32 offset, unsigned int safe_src)
-> > 
-> > This seems to just duplicate clk_rcg2_shared_disable()?
-> 
-> A light version of it. It does not do force_on/_off. And also it can not
-> rely on clkr->regmap or clock name being set. Initially I used
-> clk_rcg2_shared_disable + several patches to stop it from crashing if it is
-> used on the non-registered clock. Then I just decided to write special
-> helper.
-> 
-
-Okay, makes sense then. But I don't think we want to shoot down clocks
-at clock probe time.
-
-Regards,
-Bjorn
-
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> > > 
-> > > Please add kernel doc as it's an exported symbol.
-> 
-> Ack
-> 
-> > > 
-> > > > +{
-> > > > +       unsigned int val, ret, count;
-> > > > +
-> > > > +       ret = regmap_read(regmap, offset + CFG_REG, &val);
-> > > > +       if (ret)
-> > > > +               return ret;
-> > > > +
-> > > > +       /* assume safe source is 0 */
-> > > 
-> > > Are we assuming safe source is 0 here? It looks like we pass it in now?
-> 
-> Leftover, will remove if/when posting v2.
-> 
-> > > 
-> > > > +       if ((val & CFG_SRC_SEL_MASK) == (safe_src << CFG_SRC_SEL_SHIFT))
-> > > > +               return 0;
-> > > > +
-> > > > +       regmap_write(regmap, offset + CFG_REG, safe_src << CFG_SRC_SEL_SHIFT);
-> > > > +
-> > > > +       ret = regmap_update_bits(regmap, offset + CMD_REG,
-> > > > +                                CMD_UPDATE, CMD_UPDATE);
-> > > > +       if (ret)
-> > > > +               return ret;
-> > > > +
-> > > > +       /* Wait for update to take effect */
-> > > > +       for (count = 500; count > 0; count--) {
-> > > > +               ret = regmap_read(regmap, offset + CMD_REG, &val);
-> > > > +               if (ret)
-> > > > +                       return ret;
-> > > > +               if (!(val & CMD_UPDATE))
-> > > > +                       return 0;
-> > > > +               udelay(1);
-> > > > +       }
-> > > > +
-> > > > +       WARN(1, "the rcg didn't update its configuration.");
-> > > 
-> > > Add a newline?
-> 
-> Ack.
-> 
-> > > 
-> > > > +       return -EBUSY;
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(clk_rcg2_park_safely);
-> > > > +
-> 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Acked-by: Stephen Boyd <sboyd@kernel.org>
