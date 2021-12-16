@@ -2,82 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E45FC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 04:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE3CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 06:32:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233535AbhLPEgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Dec 2021 23:36:07 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:34428 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233525AbhLPEgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Dec 2021 23:36:07 -0500
+        id S234104AbhLPGcs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 01:32:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231462AbhLPGcs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 01:32:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A813C061574;
+        Wed, 15 Dec 2021 22:32:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EA8E761B97;
-        Thu, 16 Dec 2021 04:36:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 494C6C36AE0;
-        Thu, 16 Dec 2021 04:36:06 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B1617B81E01;
+        Thu, 16 Dec 2021 06:32:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 603F1C36AE4;
+        Thu, 16 Dec 2021 06:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639629366;
-        bh=iTPhelKYVuiYtgSv4risiaN2muO295q58+hWF8wJec8=;
+        s=k20201202; t=1639636365;
+        bh=6XOCiDrxaA6TA1b5jACdNt8JfeRkOYMHwm8TD7N8ocw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Wg/wA9qF99lzo1Tr7OEsbGggT0XjMUaFnxz/w6bl+1AB6BGCc0ovCtfoHYPNql2eW
-         3RgaiIOSekITC2GNEJ3POBFSwO95d4EcLFgPJ0TxFnyCxA7CG3F6y5NLWewmn3l7jk
-         +1E8iPiWotmfM3Q/3MnZ2QqiVlpzSriOTcm18JER9TZphqtjAK96qW7yQLVKXcwGiA
-         14gKUWHA6QUleNQxD0vGcjYfZlMLRlvf4hZWWDGP9kwnAAFmDB/EP3X7+mb1/rLL63
-         rtBR9kKbJWCtytTkySBLkcrXbXmncxwfkxEEp0q29Yz3De0rMTk0fZw3YLWxQC8zFi
-         sxInC2R82o5UA==
+        b=Qh+pqiqPf2Nij1IuzOHnVux0LXehqEUTBI0VVUYbVMxQzFKYf7OEDZg0kZxcV3/4d
+         QrpJ/ms2fppwIluHdcPjg0ic4l5E/zJvl67uhvrdh+2Q0D69M5jxstpIBu3RanWHZ4
+         vAuaex7fcgfqZcBxBX2kCE5TjWI4bsxqgjKR2/uVQxJI/V3WDAiQmA4NOFG5SLwRc3
+         GHE9O82kuF28OwWI7u34uETLTtvwKCGcNvH2yjwmiR3kv3wRGHxyHaKBGIsYFfwkkn
+         P3+1HNbU8aJ7EOy7oF6xI/XMRKBomZ4/nCJ3TNsw282r7dO5YvXKGoKD2z4iKpwZO6
+         B6l13FWlHAfHA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211116150119.2171-7-kernel@esmil.dk>
-References: <20211116150119.2171-1-kernel@esmil.dk> <20211116150119.2171-7-kernel@esmil.dk>
-Subject: Re: [PATCH v4 06/16] clk: starfive: Add JH7100 clock generator driver
+In-Reply-To: <XedF_WXH1abo9n2bzY4gaRIjq-R1O6ha5QedK8e1W9-R_1p_zo90aAgaKSSfDYMW3WUaMdY0pjONnKWj4zNMh5TbHlbZbAVAe4KG_Zq8Vvk=@wujek.eu>
+References: <20211203141515.2448129-1-dev_public@wujek.eu> <20211206225354.BF0AFC341C6@smtp.kernel.org> <jgJW1u3RfTQcv5ZBcVQt4fz8_sA4gvyXsN5x18zzLo_nTR5nfLpZtdAjy-WlEaCMnmnPGZjeFGV5OoiWNtA4Tn5wLhqNJdQEvPw5Cqs1z3I=@wujek.eu> <20211208043054.CEFD6C00446@smtp.kernel.org> <XedF_WXH1abo9n2bzY4gaRIjq-R1O6ha5QedK8e1W9-R_1p_zo90aAgaKSSfDYMW3WUaMdY0pjONnKWj4zNMh5TbHlbZbAVAe4KG_Zq8Vvk=@wujek.eu>
+Subject: Re: [PATCH] clk: si5341: Add sysfs property to check selected input
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Maximilian Luz <luzmaximilian@gmail.com>,
-        Sagar Kadam <sagar.kadam@sifive.com>,
-        Drew Fustini <drew@beagleboard.org>,
-        Michael Zhu <michael.zhu@starfivetech.com>,
-        Fu Wei <tekkamanninja@gmail.com>,
-        Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-To:     Emil Renner Berthing <kernel@esmil.dk>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org
-Date:   Wed, 15 Dec 2021 20:36:05 -0800
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     wujek dev <dev_public@wujek.eu>
+Date:   Wed, 15 Dec 2021 22:32:44 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211216043606.494C6C36AE0@smtp.kernel.org>
+Message-Id: <20211216063245.603F1C36AE4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Emil Renner Berthing (2021-11-16 07:01:09)
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
+Quoting wujek dev (2021-12-09 04:04:48)
 >=20
-> Add a driver for the StarFive JH7100 clock generator.
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Co-developed-by: Emil Renner Berthing <kernel@esmil.dk>
-> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
+> =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original =
+Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+>=20
+> On Wednesday, December 8th, 2021 at 05:30, Stephen Boyd <sboyd@kernel.org=
+> wrote:
+>=20
+> > Quoting wujek dev (2021-12-06 15:08:03)
+> >
+> > > Other sysfs properties used by this driver are not documented so I di=
+dn't add for this one. Even more not a single property from clk subsystem i=
+s described. Shall I the add description of this single property?
+> >
+> > Please don't top post. sysfs properties are supposed to be single value
+> >
+> > and for machine consumption. Is this a debugfs property?
+> No, I think this is rather sysfs than debugfs. The type of information is=
+ similar to other reported by this driver. The values in the added property=
+ are the same, this is just a different representation (input selected as a=
+n int, as string based on manual and as string as described in the DTB).
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Ok what program is going to check the selected input?
