@@ -2,245 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558D0C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 04:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D097C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 08:21:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231484AbhLQEF5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 23:05:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231481AbhLQEF5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 23:05:57 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E9DC061574
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 20:05:57 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id t23so1872452oiw.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 20:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nX0nqwthhMxawiv2VKLzc/QeElJp3Cn2bdOP+1tkjes=;
-        b=FDHi0y6033nCq1UC8OxRibTVkJ2F2b8ik7B8KTwPiOvG7I6vkjnLe5VmV4QIHaTzO1
-         eTNHNOKs4sI5nLOSH102TagmIFKyhcVP3rufHNWostfZI5Ek5oe0bRRz/+p7z3J51X6j
-         pRAb9BwK/R2bmC48+Zk7RUlP8nSi8exh7PMsz1HvTf1OhDUv4j1IDDE50sqpQoDH6Dj3
-         cfx7hjAywq2/t1VAAJ3QtDQG8iDJhGz2lJDmwpXQ6DWcs8M+ze32baXuXmR3aVbpGREj
-         E7t6n3eVbZvJxq8NxqznTIonHttWqHAup222Uj8gX5ipBVt/MiPtMWFtV/+tF8melwE+
-         og7g==
+        id S233779AbhLQIVy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 03:21:54 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:45350
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233775AbhLQIVx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 03:21:53 -0500
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com [209.85.167.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 9EF163FFDB
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1639729311;
+        bh=xfmZvtdVL4Nqs/cnkKhKrTzxRXy+hfPyDSZiWdGZz7I=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=U/nMHyDa1jkKhZJ1AIVtnYFZ+KxBdPcU0/dLq/NBPNvaIbRNaStql0+hEtUUDG3vF
+         UnFoU4fcfglS9HR8SVJBJR2MR1im49jKfY+gwqqs/92Bd7tmto9NpXRo9Nhp2LZUL+
+         o85FmdXuVexbkmvi3KIS7TvAxDZ8dTjP9tga9R/5OJLzFx3BU1soOXtT8sbu6N3Btn
+         qSno9g5n77lEqKNHDVD3xMTuMnlgQBkL09zwWlmEDoTLX2YrXJ0lgaW92/sDuMu/Zr
+         Xn/J/XniPflCrDebNMJFpH4BzWpkyEU2jdnQgk4jvdkNq982buSWYMZGkX1PBjrABM
+         OlDILNsf8yRuw==
+Received: by mail-lf1-f69.google.com with SMTP id m2-20020a056512014200b0041042b64791so739316lfo.6
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 00:21:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nX0nqwthhMxawiv2VKLzc/QeElJp3Cn2bdOP+1tkjes=;
-        b=lVbervexN5ItGGFk2p/bTmOZMjCeTVlY/cYXvVbWYQiNA+Jhme1Vas3GvoRVwifYqP
-         cLP37aSz9CMiN7XEcKbMBN2T47Djx8pz17x8uoZooP9ooWITTHjsU/LMXP05mO9MP3Xi
-         rrB/SgeRh0NpcEzZIZ3gvG0KYrGTTFUKx/ejbDBnSbhrbHJebmzF2JHPi08Dp+fwbJcE
-         DBmPDYXUD28+HJXUf76BoH/MAvKaDZsMpHZVhqs/vi9dLhfUE7Lnm3AyvaWidJVjRFTS
-         bNiDSzFq2pmS7wpyJwhdpWDWuIJMq3QdlEXKYcMnq4ehsPDs+YlTFvQ4lgKQghnke2bx
-         qyoQ==
-X-Gm-Message-State: AOAM531xs/FpRcKoYpfbcKNcAVs2GBRI9kvgO6cqiIwcihWV7BY5E4as
-        oA7czAW5WBUdE9kZT6dShX9B7g==
-X-Google-Smtp-Source: ABdhPJy8h7Mk4MQUV9yigyT8Z+XXvWAAh4Ul/5BBkl5ZGVExBKEaMzSUOlJTsqmqd+sqYulh0r7o3w==
-X-Received: by 2002:aca:3a44:: with SMTP id h65mr6559170oia.17.1639713956400;
-        Thu, 16 Dec 2021 20:05:56 -0800 (PST)
-Received: from yoga (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id r5sm1382360oiw.20.2021.12.16.20.05.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 20:05:55 -0800 (PST)
-Date:   Thu, 16 Dec 2021 22:05:52 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Amit Nischal <anischal@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-Message-ID: <YbwMoIybSUAteBzV@yoga>
-References: <20211203035601.3505780-1-bjorn.andersson@linaro.org>
- <20211216015136.96AD3C36AE1@smtp.kernel.org>
- <Ybqo+wUv6lNT75tJ@ripper>
- <20211216185856.27406C36AE2@smtp.kernel.org>
- <YbvMkIhdsGdCfvFV@ripper>
- <20211217014521.55CD4C36AE0@smtp.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=xfmZvtdVL4Nqs/cnkKhKrTzxRXy+hfPyDSZiWdGZz7I=;
+        b=EX0sEWWatVy6SdLXja0w+hkvC4cRhboQ8ZVkmAUP993CwEl7WovFEwKalF2mMFYSIy
+         L14EpcXX+JdbvlyGCwhtesIiUmvDN3kelfY3rHbHLhD9buz04tDZ30ULWdwYx9xt2SWn
+         pZDPTVk2c/08t6UfU7Ps9Dhsn9zb43Jr/tgUnHDlFgHOIBhagqAk35F6YRkwrBtKb3OS
+         B0z8ll8D2Ym/ef4wMLCEwBhebwKuABclsHFNanEIjDP8XfR9AuxExjs6oKT78JLRqQTV
+         we/CQEKXrvlcPOq5kvEfWw+xfECy3WLyAKGFBmVDsX3M5bl4lPaFKsv/+3PlT05iu1Rr
+         zJnw==
+X-Gm-Message-State: AOAM532ZZ1gtwiDp9naOQAxb01iJKTGcgFeNcdhMEROdMSWXJyaQXIa8
+        mU5eBAkYFsL4ssDWyWFiASZnXYMBNzEQ3dcF61EfK2YEiiOJeJ2ZdwENUGrSFnzeJpSLVl5W/qW
+        iybcDOGWwK2cvbbEelR4dJUsoM3QxJ2hDQ0wRUQ==
+X-Received: by 2002:a05:6512:3c9e:: with SMTP id h30mr1919901lfv.212.1639729311088;
+        Fri, 17 Dec 2021 00:21:51 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwfMYzlQckD0Wb0EtQqx2AZ0wkcSDj7w3Z/nn8EeyMb/BCnVstW2Dbq/zvfD5jISNkS6mUEQA==
+X-Received: by 2002:a05:6512:3c9e:: with SMTP id h30mr1919870lfv.212.1639729310766;
+        Fri, 17 Dec 2021 00:21:50 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id a24sm119818lff.207.2021.12.17.00.21.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 00:21:49 -0800 (PST)
+Message-ID: <73c5a527-2d5d-8524-b067-f9128055ff10@canonical.com>
+Date:   Fri, 17 Dec 2021 09:21:48 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211217014521.55CD4C36AE0@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH 6/7] arm64: dts: exynos: Add initial Exynos850 SoC support
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211215160906.17451-1-semen.protsenko@linaro.org>
+ <20211215160906.17451-7-semen.protsenko@linaro.org>
+ <8c1dbcda-ce01-81c9-b34a-f64b6f61c868@canonical.com>
+ <CAPLW+4ndeokx3WiYaK_3ooe0J+BQe8Dx7QCecA7Deowk0AdxnA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4ndeokx3WiYaK_3ooe0J+BQe8Dx7QCecA7Deowk0AdxnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 16 Dec 19:45 CST 2021, Stephen Boyd wrote:
+On 16/12/2021 20:40, Sam Protsenko wrote:
+> On Wed, 15 Dec 2021 at 18:47, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
 
-> Quoting Bjorn Andersson (2021-12-16 15:32:32)
-> > On Thu 16 Dec 10:58 PST 2021, Stephen Boyd wrote:
-> > 
-> > > Quoting Bjorn Andersson (2021-12-15 18:48:27)
-> > > > On Wed 15 Dec 17:51 PST 2021, Stephen Boyd wrote:
-> > > > 
-> > > > > Quoting Bjorn Andersson (2021-12-02 19:56:01)
-> > > > > > As GDSCs are turned on and off some associated clocks are momentarily
-> > > > > > enabled for house keeping purposes. Failure to enable these clocks seems
-> > > > > > to have been silently ignored in the past, but starting in SM8350 this
-> > > > > > failure will prevent the GDSC to turn on.
-> > > > > > 
-> > > > > > At least on SM8350 this operation will enable the RCG per the
-> > > > > > configuration in CFG_REG. This means that the current model where the
-> > > > > > current configuration is written back to CF_REG immediately after
-> > > > > > parking the RCG doesn't work.
-> > > > > 
-> > > > > Just to clarify, is the RCG off and "parked" at XO with the config
-> > > > > register dirty and set to the desired frequency and then the RCG is
-> > > > > turned on by the GDSC?
-> > > > > 
-> > > > 
-> > > > Correct, that's exactly what I'm observing.
-> > > 
-> > > Cool can you add that detail to the commit message?
-> > > 
-> > 
-> > Sure.
-> > 
-> > > > 
-> > > > > > 
-> > > > > > Instead, keep track of the currently requested rate of the clock and
-> > > > > > upon enabling the clock reapply the configuration per the saved rate.
-> > > > > 
-> > > > > We already keep track of the requested rate and reapply it on enable,
-> > > > > just we're lazy and stash that information in the hardware and not the
-> > > > > software. I didn't think the gdsc would be turned on and ruin that all,
-> > > > > but it's fair.
-> > > > > 
-> > > > 
-> > > > Up until SM8350 I see no evidence that this has been a problem, but now
-> > > > it is. So there's likely some changes in the hardware there...
-> > > > 
-> > > > > > 
-> > > > > > Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as needed")
-> > > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > > > ---
-> > > > > >  drivers/clk/qcom/clk-rcg.h  |  2 ++
-> > > > > >  drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
-> > > > > >  2 files changed, 19 insertions(+), 15 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> > > > > > index 99efcc7f8d88..6939f4e62768 100644
-> > > > > > --- a/drivers/clk/qcom/clk-rcg.h
-> > > > > > +++ b/drivers/clk/qcom/clk-rcg.h
-> > > > > > @@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-> > > > > >   * @freq_tbl: frequency table
-> > > > > >   * @clkr: regmap clock handle
-> > > > > >   * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-> > > > > > + * @current_rate: cached rate for parked RCGs
-> > > > > >   */
-> > > > > >  struct clk_rcg2 {
-> > > > > >         u32                     cmd_rcgr;
-> > > > > > @@ -149,6 +150,7 @@ struct clk_rcg2 {
-> > > > > >         const struct freq_tbl   *freq_tbl;
-> > > > > >         struct clk_regmap       clkr;
-> > > > > >         u8                      cfg_off;
-> > > > > > +       unsigned long           current_rate;
-> > > > > >  };
-> > > > > >  
-> > > > > >  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-> > > > > > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > > > > > index e1b1b426fae4..b574b38dcbd5 100644
-> > > > > > --- a/drivers/clk/qcom/clk-rcg2.c
-> > > > > > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > > > > > @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> > > > > >  {
-> > > > > >         struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > > > > >         u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
-> > > > > > +       unsigned long rate;
-> > > > > >  
-> > > > > >         regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-> > > > > >  
-> > > > > > @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-> > > > > >         hid_div = cfg >> CFG_SRC_DIV_SHIFT;
-> > > > > >         hid_div &= mask;
-> > > > > >  
-> > > > > > -       return calc_rate(parent_rate, m, n, mode, hid_div);
-> > > > > > +       rate = calc_rate(parent_rate, m, n, mode, hid_div);
-> > > > > > +       if (!rcg->current_rate)
-> > > > > > +               rcg->current_rate = rate;
-> > > > > 
-> > > > > Instead of doing this in recalc_rate, all the time, why not make an init
-> > > > > clk op that does it once during registration? The other problem I see is
-> > > > > that the rate we calculate may be wrong if the parent is registered
-> > > > > after this clk. I think this came up originally when the patch this is
-> > > > > fixing was discussed.
-> > > > > 
-> > > > 
-> > > > I would need to go back and reproduce the issue I saw, but I had to add
-> > > > this because I ended up in clk_rcg2_shared_enable() with current_rate =
-> > > > 0, which I think would be equally bad to just committing the dirty
-> > > > configuration.
-> > > 
-> > > Alright.
-> > > 
-> > > > 
-> > > > > So instead of saving the current_rate can we save the cfg register value
-> > > > > (or however many registers we need) to put back the frequency of the clk
-> > > > > to what we want on enable? The other thing is that we made recalc_rate()
-> > > > > work "seamlessly" here by stashing the frequency into the register but
-> > > > > leaving it uncommitted until enable. We may need to now look at the
-> > > > > software copy of the registers in the shared rcg recalc rate operation
-> > > > > to figure out what the frequency is.
-> > > > > 
-> > > > 
-> > > > I made an attempt at this, the problem I had was to come up within
-> > > > something sane for how to deal with set_rate on parked clocks; because
-> > > > we need to re-generate the register contents, without writing out the
-> > > > value - and that got messy.
-> > > 
-> > > Looking back on the introduction of this code[1] I see that it's not
-> > > about the rate but more about the parent. i.e. we park the clk on the XO
-> > > parent but don't care about the m/n values or pre divider because it
-> > > doesn't really matter if the clk is running slowly. So nothing needs to
-> > > be saved except for the cfg register, and we can do that in software
-> > > with a single u32 instead of using a rate and looking it up and then
-> > > reprogramming the other values. We should be able to cache the register
-> > > content with an init clk_op.
-> > > 
-> > 
-> > So you're suggesting that, in clk_rcg2_shared_set_rate(), when the RCG
-> > is found to be disabled, I should write out M, N, D and calculate a new
-> > cfg value which I stash until the next enable?
-> > 
-> > Looks a little bit messy, but I will give it a try.
+(...)
+
+>>> +             serial0 = &serial_0;
+>>> +             serial1 = &serial_1;
+>>> +             serial2 = &serial_2;
+>>> +             i2c0 = &i2c_0;
+>>> +             i2c1 = &i2c_1;
+>>> +             i2c2 = &i2c_2;
+>>> +             i2c3 = &i2c_3;
+>>> +             i2c4 = &i2c_4;
+>>> +             i2c5 = &i2c_5;
+>>> +             i2c6 = &i2c_6;
+>>> +             i2c7 = &hsi2c_0;
+>>> +             i2c8 = &hsi2c_1;
+>>> +             i2c9 = &hsi2c_2;
+>>> +             i2c10 = &hsi2c_3;
+>>> +             i2c11 = &hsi2c_4;
+>>> +     };
+>>> +
+>>> +     arm-pmu {
+>>> +             compatible = "arm,cortex-a55-pmu";
+>>> +             interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 91 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
+>>> +             interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
+>>> +                                  <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
+>>> +     };
+>>> +
+>>> +     /* Main system clock (XTCXO); external, must be 26 MHz */
+>>> +     oscclk: clock-oscclk {
+>>> +             compatible = "fixed-clock";
+>>> +             clock-output-names = "oscclk";
+>>> +             #clock-cells = <0>;
+>>> +     };
+>>> +
+>>> +     /* RTC clock (XrtcXTI); external, must be 32.768 kHz */
+>>
+>> This clock is usually provided by PMIC, so instead I expect updating
+>> s2mps11-clk driver. It's not correct to mock it with fixed-clock, but in
+>> some cases might be needed. Then I would need an explanation and maybe a
+>> TODO note.
+>>
+>> I wonder if we already discussed this...
+>>
 > 
-> No. I don't see where clk_rcg2_shared_set_rate() needs to change.
+> Don't really remember discussing that. That's actually something new
+> for me :) I was planning to add PMIC support as a part of separate
+> activity later, it might not be so easy: S2MPU12 uses I3C connection.
+> And RTC clock is not handled even in downstream kernel. So I'll have
+> to implement that by PMIC datasheet. I'll keep some TODO comment for
+> now, hope it's ok with you?
+
+Assuming it is really coming from the PMIC (should be visible in the
+board schematics), it should be using s2mps11-clk. I am fine with
+keeping fixed-clock now + TODO note, but please move it to the board
+DTS. It's not the property of the SoC.
+
 > 
-> I'm suggesting we cache the config register on disable so it can be
-> restored on enable. Basically everything is the same except now we don't
-> write the cfg register and leave it dirty in the hardware. We need a
-> shared rcg version of recalc rate that looks at the shadow cfg register
-> instead of reading the hardware because we've changed the parent behind
-> the back of the framework and we want to make it look like nothing has
-> changed. 
-> 
-
-I see, that was my first attempt of an implementation as well.
-
-The problem I ran into right away was that i had something that did
-disable(), set_rate(), enable() and I would restore the wrong settings.
-
-So clk_rcg2_shared_set_rate() needs to update the stashed cfg value -
-and it needs to write out M, N and D if we're not caching those.
-
-> This is all based on my understanding that the problem is the RCG is
-> changing rate due to the gdsc turning on the clk for us. So we can't
-> leave anything dirty in the hardware and have to keep it in software.
-> I hope the change is minimal.
-
-That's my understanding as well.
+>>> +     rtcclk: clock-rtcclk {> +               compatible = "fixed-clock";
+>>> +             clock-output-names = "rtcclk";
+>>> +             #clock-cells = <0>;
+>>> +     };
+>>> +
 
 
-Looking more at the code I think it's possible that we get disable(),
-set_parent(), enable() as well; which if that's the case would result
-in the same problem, so I assume I need to tend to that as well.
-
-Regards,
-Bjorn
+Best regards,
+Krzysztof
