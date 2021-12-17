@@ -2,304 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BCCC43219
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF90BC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231942AbhLQBaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231922AbhLQBaV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:30:21 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB71C061748
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:30:20 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id m6so1502795lfu.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:30:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0EaeJHVapfeG+0ow4kbqvK0MBEVKM2dNg2z2A86xtXI=;
-        b=qCLFxkn1Oxg3mgj5UDpi8TECWroR+JgiKV/Js3+lYAk4UXybclOAziiyNnicrX+o36
-         7pHNQjXCJ949VL0WqCUY7MSS7YZGOLGcO4gy+FwwBzGJC5CGVPH+tJzYHOTN7c/PwraY
-         /cco9CyY3KAmBLWmz+G6u9R+SyQ5iOP1IsajXVzwTLFQeVO2C838MXr4wQUhfmhUUiRP
-         KXyCmus6zkuhS9bzdTDlJEIJ2gojIXNR2bThpq4SI9dqkhSh6IiLnNhxrx7U58839XGY
-         5iqjUTHj8H18ESB2zxnZUh2MsX+LScrjHpw9sFtf3IQJVgyHdLIpGQpbpqg8qtN6HUCo
-         4YMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0EaeJHVapfeG+0ow4kbqvK0MBEVKM2dNg2z2A86xtXI=;
-        b=wG5lWYpOJl8S93K6qdAM3+M4aXQereavM+oBxQIP1lJ+V0vY4al1XBaqKHgFvR/W4h
-         UE95FV6Csxsp6xwFogSOrQp622YKs34GOo/O+lfIoatvDQ4Vod36k/7ph5fc3T/jZZjB
-         Ih+m8Mm9LrnpOXFPiB4KitM2Nu9OISaduR5YftKE62iwkJVuqaPH5onhniRfGDIApoVB
-         wOzooshCgaS/uaNh3As2+ETDYb1e8W9qFOLvk6OuIIgO6ka4kRqmAn9GdZVTwbLhvWNM
-         of3bGgdQfHO1VvqlVBRjkZriqeXIBzuuH7blA4saUyQ9mEHnMzXJaSvkGAEqTSovWksm
-         +uhg==
-X-Gm-Message-State: AOAM53236kffbwJkCcF1dMWwzgz88vtVcnaDkLkd8hwL7N9zT40QkcmE
-        f40eQEO/Tijls7bHtcDbKe9l8g==
-X-Google-Smtp-Source: ABdhPJyBeQGZz7+zmb0FO0BdsfqamVmyBShDesR+suzc3yUz9WoSpS+we4qdDYL/DsrOkkvER/cBQQ==
-X-Received: by 2002:a05:6512:c0b:: with SMTP id z11mr721871lfu.343.1639704619194;
-        Thu, 16 Dec 2021 17:30:19 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id bt18sm53317lfb.50.2021.12.16.17.30.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 17:30:18 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: exynos: Add initial E850-96 board support
-Date:   Fri, 17 Dec 2021 03:30:05 +0200
-Message-Id: <20211217013005.16646-8-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211217013005.16646-1-semen.protsenko@linaro.org>
-References: <20211217013005.16646-1-semen.protsenko@linaro.org>
+        id S229604AbhLQBhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:37:09 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53838 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229652AbhLQBhE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:37:04 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 176CE61FAA;
+        Fri, 17 Dec 2021 01:37:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A46C36AE0;
+        Fri, 17 Dec 2021 01:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1639705023;
+        bh=HtZK35Q77J2ggC6JSdCXmyFWJJEb2I5V/TuEKluUYDM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hjgSpLZRdT5dy2dM/SH3QevcooamN6+NopxhrM3byPlp6lyuFAHXpwOmUV1tK5n0J
+         WZdrI7wKsr6aP4KI5Q+JbuLOoh44/Em1To3Tgjww69bFoKonXQM9/W5/OavR6I1RX2
+         QknhlogWuDAQt0NFoQsuOINSSgz0hMxD1KgcbqhgzbL8V1+Lr7Qh5X9F2ua3kp3K46
+         NkzKTmYgaGUcXZODeRjGEwgs4cgACjSJojRzcsa04l2krC220ZAZ5s4zKIMJPDWnpd
+         1nlbxZt3Aoj0jrJiczvBAvWOOISLfCcQ4rr7fkVgTm3KomylfQciNhOq49HJn385dN
+         HkZoJGp992MwQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMZdPi9eAFaExcTTgOt6TFE37EA-bb9xSy3nq9=nKYd5kqwmfQ@mail.gmail.com>
+References: <1639058951-12660-1-git-send-email-loic.poulain@linaro.org> <20211216034909.3EFCBC36AE0@smtp.kernel.org> <CAMZdPi9eAFaExcTTgOt6TFE37EA-bb9xSy3nq9=nKYd5kqwmfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: qcom: Add display clock controller driver for QCM2290
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, shawn.guo@linaro.org
+To:     Loic Poulain <loic.poulain@linaro.org>
+Date:   Thu, 16 Dec 2021 17:37:01 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211217013703.63A46C36AE0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-E850-96 is a 96boards development board manufactured by WinLink. It
-incorporates Samsung Exynos850 SoC, and is compatible with 96boards
-mezzanine boards [1], as it follows 96boards standards.
+Quoting Loic Poulain (2021-12-16 11:21:51)
+> Hi Stephen,
+>=20
+>=20
+> On Thu, 16 Dec 2021 at 04:49, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Loic Poulain (2021-12-09 06:09:10)
+> > > diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dis=
+pcc-qcm2290.c
+> > > new file mode 100644
+> > > index 00000000..8aa5d31
+> > > --- /dev/null
+> > > +++ b/drivers/clk/qcom/dispcc-qcm2290.c
+> > > @@ -0,0 +1,602 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> > > + * Copyright (c) 2021, Linaro Ltd.
+> > > + */
+> > > +
+> [...]
+> > > +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src =3D {
+> > > +       .cmd_rcgr =3D 0x205c,
+> > > +       .mnd_width =3D 8,
+> > > +       .hid_width =3D 5,
+> > > +       .parent_map =3D disp_cc_parent_map_4,
+> > > +       .clkr.hw.init =3D &(struct clk_init_data){
+> > > +               .name =3D "disp_cc_mdss_pclk0_clk_src",
+> > > +               .parent_data =3D disp_cc_parent_data_4,
+> > > +               .num_parents =3D ARRAY_SIZE(disp_cc_parent_data_4),
+> > > +               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE=
+ | CLK_OPS_PARENT_ENABLE,
+> >
+> > These last two flags are needed for what?
+>=20
+> NOCACHE is probably useless with mainline.
 
-This patch adds minimal support for E850-96 board. Next features are
-enabled in board dts file and verified with minimal BusyBox rootfs:
+Ok then please remove it.
 
- * User buttons
- * LEDs
- * Serial console
- * Watchdog timers
- * RTC
- * eMMC
+>=20
+> I've added OPS_PARENT_ENABLE because AFAIU changing clock rate can
+> lead to parent switch, and parent switch can only be done if parent
+> clocks are enabled for rcg2 clocks. Otherwise the update fails and we
+> get the following:
+>     disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
+>     WARNING: CPU: 2 PID: 77 at drivers/clk/qcom/clk-rcg2.c:122
+> update_config+0xe0/0xf0
+>=20
+> I'm a bit surprised other similar dispcc drivers don't use the same
+> flags though.
 
-[1] https://www.96boards.org/products/mezzanine/
-
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v2:
-  - Removed board_id and board_rev properties
-  - Removed BOARD_ID and BOARD_REV constants
-  - Put dtb in alphabetical order in Makefile
-  - Added "color" and "function" properties to LED nodes
-  - Sorted all phandle overrides by phandle name
-  - Removed 'broken-cd' property in eMMC node
-  - Added memory node
-
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos850-e850-96.dts     | 175 ++++++++++++++++++
- 2 files changed, 176 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index b41e86df0a84..be9df8e85c59 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2.dtb	\
- 	exynos5433-tm2e.dtb	\
- 	exynos7-espresso.dtb	\
-+	exynos850-e850-96.dtb	\
- 	exynosautov9-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-new file mode 100644
-index 000000000000..952a47c417d4
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * WinLink E850-96 board device tree source
-+ *
-+ * Copyright (C) 2018 Samsung Electronics Co., Ltd.
-+ * Copyright (C) 2021 Linaro Ltd.
-+ *
-+ * Device tree source file for WinLink's E850-96 board which is based on
-+ * Samsung Exynos850 SoC.
-+ */
-+
-+/dts-v1/;
-+
-+#include "exynos850.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "WinLink E850-96 board";
-+	compatible = "winlink,e850-96", "samsung,exynos850";
-+
-+	chosen {
-+		stdout-path = &serial_0;
-+	};
-+
-+	/*
-+	 * 4 GiB eMCP:
-+	 *   - 2 GiB at 0x80000000
-+	 *   - 2 GiB at 0x880000000
-+	 *
-+	 * 0xbab00000..0xbfffffff: secure memory (85 MiB).
-+	 */
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3ab00000>,
-+		      <0x0 0xc0000000 0x40000000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&key_voldown_pins &key_volup_pins>;
-+
-+		volume-down-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volume-up-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		/* HEART_BEAT_LED */
-+		user_led1: led-1 {
-+			label = "yellow:user1";
-+			gpios = <&gpg2 2 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		/* eMMC_LED */
-+		user_led2: led-2 {
-+			label = "yellow:user2";
-+			gpios = <&gpg2 3 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		/* SD_LED */
-+		user_led3: led-3 {
-+			label = "white:user3";
-+			gpios = <&gpg2 4 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_SD;
-+			linux,default-trigger = "mmc2";
-+		};
-+
-+		/* WIFI_LED */
-+		wlan_active_led: led-4 {
-+			label = "yellow:wlan";
-+			gpios = <&gpg2 6 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_WLAN;
-+			linux,default-trigger = "phy0tx";
-+			default-state = "off";
-+		};
-+
-+		/* BLUETOOTH_LED */
-+		bt_active_led: led-5 {
-+			label = "blue:bt";
-+			gpios = <&gpg2 7 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_BLUETOOTH;
-+			linux,default-trigger = "hci0rx";
-+			default-state = "off";
-+		};
-+	};
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	mmc-hs400-enhanced-strobe;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	bus-width = <8>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
-+		     &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&rtc {
-+	status = "okay";
-+};
-+
-+&rtcclk {
-+	clock-frequency = <32768>;
-+};
-+
-+&serial_0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+};
-+
-+&usi_uart {
-+	samsung,clkreq-on; /* needed for UART mode */
-+	status = "okay";
-+};
-+
-+&watchdog_cl0 {
-+	status = "okay";
-+};
-+
-+&watchdog_cl1 {
-+	status = "okay";
-+};
-+
-+&pinctrl_alive {
-+	key_voldown_pins: key-voldown-pins {
-+		samsung,pins = "gpa1-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup_pins: key-volup-pins {
-+		samsung,pins = "gpa0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
--- 
-2.30.2
-
+That's quite odd. We migrate the prepare and enable count to the new
+parent in the core framework so is the rcg on, but doesn't look like it
+is on to the core and set_rate is being called?
