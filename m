@@ -2,90 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA738C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DAEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:59:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232126AbhLQBu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:50:57 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:41990 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232120AbhLQBux (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:50:53 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0912DB82654;
-        Fri, 17 Dec 2021 01:50:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE640C36AE0;
-        Fri, 17 Dec 2021 01:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639705850;
-        bh=aR2Eao80We00IU9v5oEODCWJIe6zdbSBL1Fw4RhpzJA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rZAylsL6AtVOlxwg73P3yRKzMfnxvEiytsvT0h5LsxIKE5HrPRS6cPAU3ayN7uNLf
-         tZdvy6F0rRS/Nd4OXAPXiCgevNv4ob0nzjjZu+i4DiZsvkwlwijQqXXZw1Ct2vAQuM
-         t2f5TrhRwLuLY5RL8g1TTVjFcJTjq/3aSbRjhx74AHz7lb0rEy9edEn3DwJpE5UemG
-         t7neOCnGLr9YQCpWdyxguK/NvS77CW5BWFvdbbpfua15iAWudvwytEIw9ASeGh3RCq
-         7t/edO7YDNaqVMmuPYDAZ/FrZ6UKRJyM7UDJaJpknMf4Tj5BDxl+xii/NCd4Ai55j4
-         fsdYQgjUuxULQ==
-Content-Type: text/plain; charset="utf-8"
+        id S231203AbhLQB7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:59:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230322AbhLQB7H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:59:07 -0500
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9B4AC061574
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:59:07 -0800 (PST)
+Received: by mail-qk1-x730.google.com with SMTP id d2so741144qki.12
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:59:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TQ25XqHkVHVxnm4IFzuK36OkNgtpTvvhGDr2LW7KSZ8=;
+        b=zO+OyUuQr5ZJI+J++rfcEwNwLAoq/MtY3zQrf3jzBECZQX3hVWrpzQ+BREgcJqazOt
+         tdbyV2J8TGXIVRYSFiEmYlFLkox2ASeqfOWrVCs2AZEP/rwDyUGNd1FQ3hNKUhOmSEwI
+         oaJBbKCw4qCRGKN+tR2v3IQ6OkMh208lL9JNXipE/Li3inWJX17F5lWhCwloIEoFtF8i
+         uy3SxS4yJGEnbka3RnhPlDul5pJ1IBODiHeQetLfU0ReTNf2cYOQ2MH5nwi3qg7aPsaK
+         rPjn1Yksb2RAtSK4G1DY/Jqxo2TiDiSJHpzB1pqqMWOEjMf5LIh5OISJ59f4L/qI/kLF
+         4NXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TQ25XqHkVHVxnm4IFzuK36OkNgtpTvvhGDr2LW7KSZ8=;
+        b=yZoDleq8zNPUiuJGx0VsRjlTRCLXW2vIYYQj+VlsVxqh0QMGE/h+LLq5Fygy0uT4/L
+         DiVv8Sd33oK5f6I6YeblZwjM1eY7PS6MDQciJej/0l2DO42BTt9YKGmEpgLGmr0QmSsX
+         AO3CSpLM+GdhHEWwUXDsdAKup/wFGsqebc+ONi1rGnSiKcYxEteyDjLJ8FgC6Qn3sNQO
+         jWam1Ytx5obcQGYJG+caiOTk8tIHzEazy1uNuzvVeiCSa3x3+qGRlHfoSkmIcdidi1do
+         XOi2CjT5co7Y226JwOCvW8V85WXlmqiPobmf5W7lqQgEZVkdOwqEIv8UR7t0cfLMoRmq
+         jDYw==
+X-Gm-Message-State: AOAM532jbaZxQqU1upevVn6Wu6FNhGAQOGsbkpeVajdElPBlZyaq5xXL
+        7aYS3brL0qyCBqR2Yy1y1ip/gAf7ES4vZ5drGtpQcw==
+X-Google-Smtp-Source: ABdhPJwnVR4B9Za7Fc3uQDylj0rJV/xIt9n5N/enR0nsVSrtdu8af5nF/x4sy8ScybZik+6cDg02n/f1IQbxeMuoMvQ=
+X-Received: by 2002:a05:620a:4101:: with SMTP id j1mr510379qko.593.1639706346910;
+ Thu, 16 Dec 2021 17:59:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211208154535.72286-1-renner@efe-gmbh.de>
-References: <20211208154440.72087-1-renner@efe-gmbh.de> <20211208154535.72286-1-renner@efe-gmbh.de>
-Subject: Re: [PATCH v2 1/2] clk: si5351: Add DT property for phase offset
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
-        s.hauer@pengutronix.de, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, renner@efe-gmbh.de
-To:     Jens Renner <renner@efe-gmbh.de>, linux-clk@vger.kernel.org
-Date:   Thu, 16 Dec 2021 17:50:49 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211217015050.BE640C36AE0@smtp.kernel.org>
+References: <1639058951-12660-1-git-send-email-loic.poulain@linaro.org>
+ <20211216034909.3EFCBC36AE0@smtp.kernel.org> <CAMZdPi9eAFaExcTTgOt6TFE37EA-bb9xSy3nq9=nKYd5kqwmfQ@mail.gmail.com>
+ <20211217013703.63A46C36AE0@smtp.kernel.org>
+In-Reply-To: <20211217013703.63A46C36AE0@smtp.kernel.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 17 Dec 2021 04:58:56 +0300
+Message-ID: <CAA8EJpqN=MVbhSB=4V2RE6ywbPYAJ1tC1qNwnZh00_yQ0+RLNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: qcom: Add display clock controller driver for QCM2290
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Loic Poulain <loic.poulain@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, shawn.guo@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jens Renner (2021-12-08 07:45:35)
-> Add optional output clock DT property "silabs,clock-phase" to configure
-> the phase offset in degrees with respect to other clock outputs.
-> Add missing description for related optional output clock DT property
-> "clock-frequency".
->=20
-> Signed-off-by: Jens Renner <renner@efe-gmbh.de>
-> ---
-> Changes in v2:
->   - Use vendor-specific DT property silabs,clock-phase
->=20
->  .../devicetree/bindings/clock/silabs,si5351.txt        | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/=
-Documentation/devicetree/bindings/clock/silabs,si5351.txt
-> index bfda6af76..0f4e4f41f 100644
-> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
-> @@ -50,11 +50,17 @@ Optional child node properties:
->    divider.
->  - silabs,pll-master: boolean, multisynth can change pll frequency.
->  - silabs,pll-reset: boolean, clock output can reset its pll.
-> -- silabs,disable-state : clock output disable state, shall be
-> +- silabs,disable-state: clock output disable state, shall be
->    0 =3D clock output is driven LOW when disabled
->    1 =3D clock output is driven HIGH when disabled
->    2 =3D clock output is FLOATING (HIGH-Z) when disabled
->    3 =3D clock output is NEVER disabled
-> +- clock-frequency: integer in Hz, output frequency to generate (2500-200=
-000000)
+On Fri, 17 Dec 2021 at 04:37, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Loic Poulain (2021-12-16 11:21:51)
+> > Hi Stephen,
+> >
+> >
+> > On Thu, 16 Dec 2021 at 04:49, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Loic Poulain (2021-12-09 06:09:10)
+> > > > diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
+> > > > new file mode 100644
+> > > > index 00000000..8aa5d31
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/qcom/dispcc-qcm2290.c
+> > > > @@ -0,0 +1,602 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > +/*
+> > > > + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> > > > + * Copyright (c) 2021, Linaro Ltd.
+> > > > + */
+> > > > +
+> > [...]
+> > > > +static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
+> > > > +       .cmd_rcgr = 0x205c,
+> > > > +       .mnd_width = 8,
+> > > > +       .hid_width = 5,
+> > > > +       .parent_map = disp_cc_parent_map_4,
+> > > > +       .clkr.hw.init = &(struct clk_init_data){
+> > > > +               .name = "disp_cc_mdss_pclk0_clk_src",
+> > > > +               .parent_data = disp_cc_parent_data_4,
+> > > > +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_4),
+> > > > +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_OPS_PARENT_ENABLE,
+> > >
+> > > These last two flags are needed for what?
+> >
+> > NOCACHE is probably useless with mainline.
+>
+> Ok then please remove it.
+>
+> >
+> > I've added OPS_PARENT_ENABLE because AFAIU changing clock rate can
+> > lead to parent switch, and parent switch can only be done if parent
+> > clocks are enabled for rcg2 clocks. Otherwise the update fails and we
+> > get the following:
+> >     disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
+> >     WARNING: CPU: 2 PID: 77 at drivers/clk/qcom/clk-rcg2.c:122
+> > update_config+0xe0/0xf0
+> >
+> > I'm a bit surprised other similar dispcc drivers don't use the same
+> > flags though.
+>
+> That's quite odd. We migrate the prepare and enable count to the new
+> parent in the core framework so is the rcg on, but doesn't look like it
+> is on to the core and set_rate is being called?
 
-Is this assigned-clock-rates?
+It's a part of a typical problem for some clocks (that we were
+discussing in a thread regarding Bjorn's ASSUME_ENABLED and my 'park
+clocks' proposal). For set_rate and set_parent to succeed, both old
+and new parrents must be running at the time of the operation/
 
-> +  This defines the output frequency set during boot. It can be reprogram=
-med
-> +  duing runtime through the common clock framework.
-> +- silabs,clock-phase: integer, phase shift in degrees (0-359), using the
 
-Do we need an assigned-clock-phase property?
 
-> +  multisynth initial phase offset register (depends on the clock source /
-> +  output ratio) and the clock output inverter (180 deg. only).
+-- 
+With best wishes
+Dmitry
