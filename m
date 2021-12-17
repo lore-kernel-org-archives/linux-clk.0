@@ -2,169 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB650C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 09:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD610C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 09:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234093AbhLQJXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Dec 2021 04:23:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55790 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234088AbhLQJXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 04:23:23 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D79C061574
-        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 01:23:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7347862086
-        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 09:23:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA26C36AE5;
-        Fri, 17 Dec 2021 09:23:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639733001;
-        bh=AvRt0DMIoh9fgqBQ3OwSZEq5js55F2MDHQa7OduvRnU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pAI1PllpGWl9ZF78d8aKGUNtFu6XIRthQJN2jAd8D2EcQdoGOOm7V87svIroQXVvG
-         8aChg6AguLJTiKrmJ1cSSItOk49+4bkmsc9fgJIHBLnzrx+lOZKSShmmyXC+hISFTd
-         EvolqzaJdROPVP4tB20Fo3qxai83sF/lm1TyHaZWXeUdaJD8b1S4+ZW5O0sFZWzO1c
-         sQZVJXP9ZbLqHfPEcUd84LhWxZUwvW9U+4s/rhRp4EBxqDmGLvd8iMT0m7Mw3+7tyM
-         zZtR9Q+kfReLVNSixqV+G8zzRv+tPZ9f7+fMw4sosnaTeVm7f124CpUr0el1qP3AcK
-         BqBcd/AH52vhg==
-Date:   Fri, 17 Dec 2021 10:23:19 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: [GIT PULL] Allwinner Clock Changes for 5.17
-Message-ID: <3c4863eb-9bad-43e4-81bd-3b659616e59c.lettre@localhost>
+        id S234609AbhLQJyt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 04:54:49 -0500
+Received: from smtpcmd0871.aruba.it ([62.149.156.71]:59142 "EHLO
+        smtpcmd0871.aruba.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234598AbhLQJyt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 04:54:49 -0500
+Received: from [192.168.50.18] ([146.241.138.59])
+        by Aruba Outgoing Smtp  with ESMTPSA
+        id y9wmmE4RXAiELy9wmmiOfW; Fri, 17 Dec 2021 10:54:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+        t=1639734887; bh=SZpxkK7voOVV6I9udbetrLHOGGCCs8Xt0yuASUFvYww=;
+        h=Subject:To:From:Date:MIME-Version:Content-Type;
+        b=VYOwqyw+gYObPpq5d0SwF1zxdtyJ2bR9+h9nHOW/BpYCwPu1u9f58uB9lioNjxORH
+         upzt4BP8Mvma18ZqTivxKzdDyUCmxS7s/K2Wn08QgSXpFqdhzoBEFt9Kw8fu1qUgHF
+         NlhFcMQ7YnEwP9w83AJmAOOZxUNW+YZesus1sDPJFa9a45jbIXpnHKiFnH5ofs0cCx
+         nl1Lwnz8DRV0/rY6P8pvnEVNrONfvJT2Bxo30LOHiC60PCIQbRo3CVBN1Iu8rkkpFm
+         oorf/K9I1O29cIOar84O3jC2clxKj8uMOCaonhoVd1D5nnI8H44nKPWlhqXbLPpDxM
+         TZrkcOMYdzh3w==
+Subject: Re: [RESEND in plain-test] Re: [PATCH v5 0/9] Add initial support for
+ the i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jesse Taube <mr.bossman075@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>
+References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
+ <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
+ <1360c4fe-4a09-a8a1-3224-7f1d4af59f6f@benettiengineering.com>
+ <CAK8P3a1oZK1qMRBE3D8otCTY6Lg4jMXxVpAZHQzLTA8woA3_UQ@mail.gmail.com>
+From:   Giulio Benetti <giulio.benetti@benettiengineering.com>
+Message-ID: <634e9304-2eba-4ea9-65ac-5d4f5d011b70@benettiengineering.com>
+Date:   Fri, 17 Dec 2021 10:54:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BWhZCh2u7Mlx/RXt"
-Content-Disposition: inline
+In-Reply-To: <CAK8P3a1oZK1qMRBE3D8otCTY6Lg4jMXxVpAZHQzLTA8woA3_UQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfCO5ZxBkSOe6VyonaZaERyIFPW9nQXKE7kgm/BIFTSsLWOxmM3ufVMlenl7VhAwO/hNSogkLP9ETYHuxlCP8ovNM+DsknmjkKeRS6OoClIrA/Cje3uBR
+ iUktLT8tvgvm3O5Zmac+WtEVC/ukanqHnUyB00NA4bFw6753FaUxo/FOZtlp5KPYOkFGIWPNFwt96L2n1J7AH1rcyZbkOaTt+Z59xYp60J1se8IO1kXxkzEM
+ et3ySZ4h6VK+MhuKaI3+drInuvkSbbiCIAVNfFuWEf1PiMiwDn537NT9WDQD208VrLZkfdm2t0ZB5vTMWj4We/mpRQDQmyV8c3N70B0UyHih0BJjzNMQVPo0
+ Ydt6oz8csA0Vgqbc0m0KuDARJojBOe7GIzu9nwHYr3qhRFcyKR4OQZ8UFABASZ3C96D0p/1ALHmYzSs0IWOPAb60+3HGp1lDrO9BjMHvcM4T0vc29jOBw0UL
+ veqYMBar0zXMBY6FREn2I+MswhfeMG4EmwE2hAj/wPXTlpiRpJ33nh4TKnxc9PEsY7cfKrLBRFW18bhJj15CHCGHihVV/+/RUwKHY6zPFJCj0iq6gMYwJfDm
+ loYYHz6P1Ya0G77HVeGL4f0yUWMR8Xitrx/o/G7jRiwooqIhAyctSvquOcpjuN6H2EajrnzdxwGCJokRX3xOjYzXPEhCap18dec3z6oLaeswj+FksC/mwqOf
+ hZfTT4ohICqxAz3RNQMVUpNcVFNI8Ggp2sq51fP983x2r3v4fgM9DmqBqrAgjp1TB89ieG0J5ybGNiMVysjrrqtOM6+uBqWRHrOG9NPjoBsyH2N+Q4SWJnJh
+ 5+XzBQwJF6VLbNDw10MJQmpaXjKAc9pwIP8RqByFSUeAJKVr0hPsXKEn8Ga6QrR6g3fnbjpou7uq9d8HhzfNRpsozQMF23rS9wWSU3m9SCrEldyMIVuk+iUk
+ fVUu8U63Eflmn80WncPSUwRiIfvxDvNGfvhAu/IMI2xDw+5XnkOPKU33F6A0j9K/dfiTTonoJZtAuy/eVfdaKzW3uievQ/Kx66D49emKSU37TYYVS/nKiDgs
+ E1iakE8DA7DplABPwW/yjgiXFwwF/MW+93IOac97O7zTLRChCS2gZwNAao2gxXMhoEMag7fxWNT3aZ/eIT5BxBjG8SExyN3qqPIsNosVYVr7SnFdaxAjF3Nr
+ rMeXuCZwap3Q0w5jOUMa5w==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Arnd,
 
---BWhZCh2u7Mlx/RXt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 16/12/21 22:13, Arnd Bergmann wrote:
+> On Thu, Dec 16, 2021 at 6:33 PM Giulio Benetti
+> <giulio.benetti@benettiengineering.com> wrote:
+>> On 16/12/21 09:26, Arnd Bergmann wrote:
+>>> On Wed, Dec 15, 2021 at 11:05 PM Jesse Taube <mr.bossman075@gmail.com> wrote:
+> 
+>>> As a more general comment, it's always nice to see newly added SoC
+>>> platforms, especially when they are this well implemented and done
+>>> by hobbyists. However, I do think you are being overly optimistic
+>>> as to how useful this is going to be to other people: interest in NOMMU
+>>> ARM platforms has dropped a lot over the past 5 years, and as far as I
+>>> can tell, it is only being kept alive for existing stm32 customers
+>>> as the economics do not favor Linux on Cortex-M for new products
+>>> compare to Linux on Cortex-A or some RTOS on Cortex-M.
+>>>
+>>> The existing users will inevitably stop updating their kernels at some
+>>> point, and then it's most likely just you and Vladimir Murzin that care.
+>>
+>>
+>> About this will you accept support for the other SoCs in the family?
+>> We would like to add in the near future:
+>> - i.MXRT1020(uboot support is already upstreamed)
+>> - i.MXRT1024(almost equal to 1020)
+>> - i.MXRT1060(almost equal to 1050)
+>> - i.MXRT1064(almost equal to 1060)
+>> And
+>> - i.MXRT1160/70 new family with faster core clock(1Ghz) and a cortex M4
+>>
+>> We need to add missing lcd(uboot upstreamed), usb(uboot upstreamed),
+>> ethernet(wip) supports for i.MXRT10xx family.
+> 
+> Sure, anything you want to work on supporting can be added to the kernel,
+> the important bit is that it's well written and can be maintained going forward.
+> 
+> My best guess is that we'll end up ripping out all NOMMU support in
+> a few years, when we get to a point when both of these things happen:
+> 
+> - the number of actual users that still update their kernels becomes
+>    really low
+> 
+> - There is some treewide refactoring that isn't easily supportable without an
+>     MMU unless someone puts extra work into it.
+> 
+> At the moment, we still support NOMMU kernels on a bunch of architectures
+> (Arm, riscv/k210, sh/j2, m68k/coldfire, xtensa and h8300). Out of these,
+> Arm is by far the most active, and if Arm NOMMU support was to go away
+> for some reason, the others would likely follow.
 
-Hi,
+Ok, I understad now.
 
-Please pull the following changes for the next release.
+>> This is to organize with Jesse also about buying evaluation boards and
+>> timing.
+>>
+>> We’ve meant this porting also as an exercise to deal with Linux deeper
+>> for us and for the other newbies.
+>>
+>> We’ve been also asked about a possible support for s32s(quad cortex-R52)
+>> on initial emails but it has no mmu too.
+>> While I’m seeing that some cortex-R is landing inside Linux.
+>> Would it be interesting anyway?
+> 
+> I brought that up during the initial review, but I think this is even
+> less interesting
+> than Cortex-M support from the perspective of potential use cases. While
+> Cortex-M MCUs have some advantages over larger SoCs in terms of
+> power consumption and cost, this is generally not true for running Linux
+> on Cortex-R. The Cortex-R and Cortex-A cores are closely related, so
+> they tend have similar power/performance/area characteristics, but
+> the lack of an MMU makes the Cortex-R much less useful. If there was
+> an advantage to running with the MMU disabled, you could actually do that
+> on a Cortex-A as well, but clearly nobody does that either.
 
-Thanks!
-Maxime
+Yes
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+Thank you for the answer
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+> Vladimir has put some work into making Cortex-R work in the kernel, and
+> he may have some other thoughts on this question.
 
-are available in the Git repository at:
+I'm curious if he has something specific to Cortex-R to tell.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-for-5.17-1
+I've found that Cortex-R82 has a MMU:
+https://www.arm.com/products/silicon-ip-cpu/cortex-r/cortex-r82
+but I can't find any SoC that uses it. Also, I don't know how many 
+people could use it honestly.
 
-for you to fetch changes up to 35b97bb941110a20fea1f3125837a98fdf8de054:
-
-  clk: sunxi-ng: Add support for the D1 SoC clocks (2021-11-23 10:29:05 +0100)
-
-----------------------------------------------------------------
-Our usual PR for the Allwinner SoCs, this time enabling our
-sub-framework to be built as a module, converting most drivers to
-platform drivers and allow them to be built as modules, and support for
-the Allwinner D1
-
-----------------------------------------------------------------
-Samuel Holland (10):
-      clk: sunxi-ng: Export symbols used by CCU drivers
-      clk: sunxi-ng: Allow drivers to be built as modules
-      clk: sunxi-ng: Convert early providers to platform drivers
-      clk: sunxi-ng: Allow the CCU core to be built as a module
-      dt-bindings: clk: Add compatibles for D1 CCUs
-      clk: sunxi-ng: div: Add macros using clk_parent_data and clk_hw
-      clk: sunxi-ng: mp: Add macros using clk_parent_data and clk_hw
-      clk: sunxi-ng: mux: Add macros using clk_parent_data and clk_hw
-      clk: sunxi-ng: gate: Add macros for gates with fixed dividers
-      clk: sunxi-ng: Add support for the D1 SoC clocks
-
-
- Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml |    4 +-
- drivers/clk/Makefile                                                 |    2 +-
- drivers/clk/sunxi-ng/Kconfig                                         |   49 +-
- drivers/clk/sunxi-ng/Makefile                                        |  101 +-
- drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c                               |  140 +-
- drivers/clk/sunxi-ng/ccu-sun20i-d1-r.h                               |   17 +-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c                                 | 1390 +++++++-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.h                                 |   15 +-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c                                 |   58 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c                             |    4 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a100.c                               |    4 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c                                |    7 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c                               |   56 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c                                 |    7 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c                               |   33 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c                                 |   40 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c                                 |   35 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c                                 |   40 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c                                |    7 +-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c                                 |    9 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c                                  |   62 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r.c                                   |   65 +-
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c                                 |    6 +-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c                                 |   57 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c                              |    7 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c                             |    7 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c                                 |    7 +-
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c                             |   40 +-
- drivers/clk/sunxi-ng/ccu_common.c                                    |    6 +-
- drivers/clk/sunxi-ng/ccu_div.c                                       |    1 +-
- drivers/clk/sunxi-ng/ccu_div.h                                       |   78 +-
- drivers/clk/sunxi-ng/ccu_frac.c                                      |    6 +-
- drivers/clk/sunxi-ng/ccu_gate.c                                      |    4 +-
- drivers/clk/sunxi-ng/ccu_gate.h                                      |   32 +-
- drivers/clk/sunxi-ng/ccu_mp.c                                        |    2 +-
- drivers/clk/sunxi-ng/ccu_mp.h                                        |   49 +-
- drivers/clk/sunxi-ng/ccu_mult.c                                      |    1 +-
- drivers/clk/sunxi-ng/ccu_mux.c                                       |    6 +-
- drivers/clk/sunxi-ng/ccu_mux.h                                       |   33 +-
- drivers/clk/sunxi-ng/ccu_nk.c                                        |    1 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                                       |    1 +-
- drivers/clk/sunxi-ng/ccu_nkmp.c                                      |    1 +-
- drivers/clk/sunxi-ng/ccu_nm.c                                        |    1 +-
- drivers/clk/sunxi-ng/ccu_phase.c                                     |    1 +-
- drivers/clk/sunxi-ng/ccu_reset.c                                     |    1 +-
- drivers/clk/sunxi-ng/ccu_sdm.c                                       |    6 +-
- drivers/mmc/host/Kconfig                                             |    1 +-
- include/dt-bindings/clock/sun20i-d1-ccu.h                            |  156 +-
- include/dt-bindings/clock/sun20i-d1-r-ccu.h                          |   19 +-
- include/dt-bindings/reset/sun20i-d1-ccu.h                            |   77 +-
- include/dt-bindings/reset/sun20i-d1-r-ccu.h                          |   16 +-
- include/linux/clk/sunxi-ng.h                                         |   15 +-
- 52 files changed, 2530 insertions(+), 253 deletions(-)
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun20i-d1-r.h
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun20i-d1.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun20i-d1.h
- create mode 100644 include/dt-bindings/clock/sun20i-d1-ccu.h
- create mode 100644 include/dt-bindings/clock/sun20i-d1-r-ccu.h
- create mode 100644 include/dt-bindings/reset/sun20i-d1-ccu.h
- create mode 100644 include/dt-bindings/reset/sun20i-d1-r-ccu.h
-
-
-
---BWhZCh2u7Mlx/RXt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYbxXBgAKCRDj7w1vZxhR
-xaGQAQCL2Y87Y1PxcFjr6hzUCaQLIxTZtg5dZleJHtSLdvci6QEAiZXYGjDgIZoW
-MHSpvZlNz8oKecXmnwusVXKXZgT+Dgc=
-=Gtxv
------END PGP SIGNATURE-----
-
---BWhZCh2u7Mlx/RXt--
+Best regards
+-- 
+Giulio Benetti
+Benetti Engineering sas
