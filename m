@@ -2,85 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217B9C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA738C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbhLQBri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:47:38 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:59800 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbhLQBri (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:47:38 -0500
+        id S232126AbhLQBu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:50:57 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:41990 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232120AbhLQBux (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:50:53 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0457D61FEA;
-        Fri, 17 Dec 2021 01:47:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA49C36AE0;
-        Fri, 17 Dec 2021 01:47:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0912DB82654;
+        Fri, 17 Dec 2021 01:50:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE640C36AE0;
+        Fri, 17 Dec 2021 01:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639705657;
-        bh=3J8k33CQTphuVW6PtLpiYVzbqWIK8XVYiqNdZ/Wqjbk=;
+        s=k20201202; t=1639705850;
+        bh=aR2Eao80We00IU9v5oEODCWJIe6zdbSBL1Fw4RhpzJA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qZiUtiqag4yxjqQ/EgPVH+LZ6O77oY9pmdkO6acsaIJ4FSxmUcAS7Bo/uVZK5lF2V
-         JZomFcK99OQlod2gI3WVuS27ac+DJ7Gq7aLC3k/YPFQ+IEyCvY7jUrbVwOWzs2v5J4
-         7hNbDlcBagh4pw6jY1DhNM4oJ1b2QRRw/plMuGMMh15PVqV0rZGJz3zxhBJHCyOPud
-         Y4hpnR3inlfFsJzwVEBt0pjR32jeA9JdwfbGnhXDKNpC9cgCRJM/E9ntt9bQ6iqjPD
-         g4VshzeAhDMVt3j8DhRr7aGPwgtbKZLGUEHkvaXaNcz6MJlxCaoPnXmnoIVQCFWBen
-         9AaQAuOnshJ/g==
+        b=rZAylsL6AtVOlxwg73P3yRKzMfnxvEiytsvT0h5LsxIKE5HrPRS6cPAU3ayN7uNLf
+         tZdvy6F0rRS/Nd4OXAPXiCgevNv4ob0nzjjZu+i4DiZsvkwlwijQqXXZw1Ct2vAQuM
+         t2f5TrhRwLuLY5RL8g1TTVjFcJTjq/3aSbRjhx74AHz7lb0rEy9edEn3DwJpE5UemG
+         t7neOCnGLr9YQCpWdyxguK/NvS77CW5BWFvdbbpfua15iAWudvwytEIw9ASeGh3RCq
+         7t/edO7YDNaqVMmuPYDAZ/FrZ6UKRJyM7UDJaJpknMf4Tj5BDxl+xii/NCd4Ai55j4
+         fsdYQgjUuxULQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Qk2RUY9T8QCX1un25vsEYOAnlYlkMQpywbz05_FpVSYq8Lek4EStNPkA_vt_BBH1HKuwsbNw_F8Ec73fM2Kk9Zdl1wvjLtwaHE5QKSvV6Hs=@wujek.eu>
-References: <20211203141515.2448129-1-dev_public@wujek.eu> <20211206225354.BF0AFC341C6@smtp.kernel.org> <jgJW1u3RfTQcv5ZBcVQt4fz8_sA4gvyXsN5x18zzLo_nTR5nfLpZtdAjy-WlEaCMnmnPGZjeFGV5OoiWNtA4Tn5wLhqNJdQEvPw5Cqs1z3I=@wujek.eu> <20211208043054.CEFD6C00446@smtp.kernel.org> <XedF_WXH1abo9n2bzY4gaRIjq-R1O6ha5QedK8e1W9-R_1p_zo90aAgaKSSfDYMW3WUaMdY0pjONnKWj4zNMh5TbHlbZbAVAe4KG_Zq8Vvk=@wujek.eu> <20211216063245.603F1C36AE4@smtp.kernel.org> <Qk2RUY9T8QCX1un25vsEYOAnlYlkMQpywbz05_FpVSYq8Lek4EStNPkA_vt_BBH1HKuwsbNw_F8Ec73fM2Kk9Zdl1wvjLtwaHE5QKSvV6Hs=@wujek.eu>
-Subject: Re: [PATCH] clk: si5341: Add sysfs property to check selected input
+In-Reply-To: <20211208154535.72286-1-renner@efe-gmbh.de>
+References: <20211208154440.72087-1-renner@efe-gmbh.de> <20211208154535.72286-1-renner@efe-gmbh.de>
+Subject: Re: [PATCH v2 1/2] clk: si5351: Add DT property for phase offset
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     wujek dev <dev_public@wujek.eu>
-Date:   Thu, 16 Dec 2021 17:47:36 -0800
+Cc:     mturquette@baylibre.com, sebastian.hesselbarth@gmail.com,
+        s.hauer@pengutronix.de, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, renner@efe-gmbh.de
+To:     Jens Renner <renner@efe-gmbh.de>, linux-clk@vger.kernel.org
+Date:   Thu, 16 Dec 2021 17:50:49 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211217014737.4BA49C36AE0@smtp.kernel.org>
+Message-Id: <20211217015050.BE640C36AE0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting wujek dev (2021-12-16 06:25:58)
+Quoting Jens Renner (2021-12-08 07:45:35)
+> Add optional output clock DT property "silabs,clock-phase" to configure
+> the phase offset in degrees with respect to other clock outputs.
+> Add missing description for related optional output clock DT property
+> "clock-frequency".
 >=20
+> Signed-off-by: Jens Renner <renner@efe-gmbh.de>
+> ---
+> Changes in v2:
+>   - Use vendor-specific DT property silabs,clock-phase
 >=20
-> =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original =
-Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+>  .../devicetree/bindings/clock/silabs,si5351.txt        | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 >=20
-> On Thursday, December 16th, 2021 at 07:32, Stephen Boyd <sboyd@kernel.org=
-> wrote:
->=20
-> > Quoting wujek dev (2021-12-09 04:04:48)
-> >
-> > > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origi=
-nal Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-> > >
-> > > On Wednesday, December 8th, 2021 at 05:30, Stephen Boyd sboyd@kernel.=
-org wrote:
-> > >
-> > > > Quoting wujek dev (2021-12-06 15:08:03)
-> > > >
-> > > > > Other sysfs properties used by this driver are not documented so =
-I didn't add for this one. Even more not a single property from clk subsyst=
-em is described. Shall I the add description of this single property?
-> > > >
-> > > > Please don't top post. sysfs properties are supposed to be single v=
-alue
-> > > >
-> > > > and for machine consumption. Is this a debugfs property?
-> > > >
-> > > > No, I think this is rather sysfs than debugfs. The type of informat=
-ion is similar to other reported by this driver. The values in the added pr=
-operty are the same, this is just a different representation (input selecte=
-d as an int, as string based on manual and as string as described in the DT=
-B).
-> >
-> > Ok what program is going to check the selected input?
-> So far, only the project specific program. I'm not aware about a standard=
- tool that check other (already available) properties from this driver.
+> diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/=
+Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> index bfda6af76..0f4e4f41f 100644
+> --- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> +++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+> @@ -50,11 +50,17 @@ Optional child node properties:
+>    divider.
+>  - silabs,pll-master: boolean, multisynth can change pll frequency.
+>  - silabs,pll-reset: boolean, clock output can reset its pll.
+> -- silabs,disable-state : clock output disable state, shall be
+> +- silabs,disable-state: clock output disable state, shall be
+>    0 =3D clock output is driven LOW when disabled
+>    1 =3D clock output is driven HIGH when disabled
+>    2 =3D clock output is FLOATING (HIGH-Z) when disabled
+>    3 =3D clock output is NEVER disabled
+> +- clock-frequency: integer in Hz, output frequency to generate (2500-200=
+000000)
 
-Why doesn't clk debugfs that indicates the parents of a clk work here?
+Is this assigned-clock-rates?
+
+> +  This defines the output frequency set during boot. It can be reprogram=
+med
+> +  duing runtime through the common clock framework.
+> +- silabs,clock-phase: integer, phase shift in degrees (0-359), using the
+
+Do we need an assigned-clock-phase property?
+
+> +  multisynth initial phase offset register (depends on the clock source /
+> +  output ratio) and the clock output inverter (180 deg. only).
