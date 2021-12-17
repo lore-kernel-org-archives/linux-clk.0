@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD7EC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A34C43219
 	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbhLQBqY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:46:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60486 "EHLO
+        id S232014AbhLQBqZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:46:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231972AbhLQBqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:46:18 -0500
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48188C061746
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:18 -0800 (PST)
-Received: by mail-lj1-x22e.google.com with SMTP id 207so904274ljf.10
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:18 -0800 (PST)
+        with ESMTP id S231992AbhLQBqW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:46:22 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15547C061751
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:21 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id bi37so1502945lfb.5
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wPYKsc8hcAcKM9XkSJHD3tyTG5SQVtY0a/Z6LIBZghA=;
-        b=QGvC3xOyql4NDBA6cTKXRHgndFdXiBo5Or3c7LvJJcY3Md4xyI6swTam7aRSXilDUX
-         rBtuF2rq7iv3YnwzUb6/5yz6WFFDHpTLJFUzrUpd/mHi8pbedp1wcINONNimvqPNlJSb
-         t0SmFrpxou3/InfrTDxq+C4UW5T96h0avXH+6A/5a4IEdyRoZVYzw5pZKZGMmlk+x0oz
-         Hc5WbC0MX3uK3P1MIvY/xHvUPrBV1o9IAk0/er8v7H6qU+l6yPSCkmHDlJimb2zQ2+xB
-         YUahyyH78GSS4eDSjpFFqQ7GnCp7Luk3CEGRtBPfG/PabYPmCRhs4+N9i10hzn8a+hjL
-         4zYg==
+        bh=cxvNEtCPBXzjljfYxRKeW/Fan3oOoMNu2DZyjmhfjvA=;
+        b=J2cmMX9yPq/Ya7mojZVUDevjq9DPnp9gmygKFrXo4+8Lbp6Y30nK3Os3dMx3BjYL4W
+         ZUO5ZZURskVs7Oe6xseXFUyy3+Z3Ow4Lx06Z0guEYJUPZIz2Fjx+XoVgfQAT4mUs+8QR
+         ppb0M7NixWLO3PffJ4j2H+ACbL5w7xEMO1yDIXyPm6WkDUk/gTNkcBbACPBjevtsf/7r
+         rksTvt/RSOxmwSE8NaVdGllK28XKotYt99OfphVMts39W/m+DnSEj8KiDVgYZhJnAx4w
+         kp4OJtae2qPnRaAtJs7VvTIoi/Rs/wiXNSTV6JWl/vpaVynTKV8BrLGGuZSXIJtleaxD
+         WaMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wPYKsc8hcAcKM9XkSJHD3tyTG5SQVtY0a/Z6LIBZghA=;
-        b=B1Wuj+rGaH1YwtLP6NTOxpYAxCSSCFAfYhKgfxeOOOv3EJp6EayeXZKDteXrsnhcSw
-         YnWjBVNyiRO2R3SZl7+g/4yovMWkF6jxTYA6hFQsnHaomZOQgft2fG2ZtbnFC3IwlX34
-         ANR2FwcBuE9hZ87EsnC56SSOHJSKbSOElMoa4HEB82Hbrp+J1NydV36ZfZLkwW2HrLsi
-         NUNLUHSNJw40fV+esgGjKb6oaCvLjtAQRP70QOniUsM1bSHBQNPEH0HRiTE6tk+E2pbi
-         jqxQNR9O2yo8NOBWk69jPxx7MI5BemHGClvteJIibQ6vGN+TBjNPN/uyQWXwkDuE+uq8
-         FA9g==
-X-Gm-Message-State: AOAM530kT0GYoIPhtQ0TKkbIUHS++uVgqeodP1latfFav5Ff2RNrmJQz
-        42RHoJJna0ymdkvPYAuyj3PhuA==
-X-Google-Smtp-Source: ABdhPJwJb6DTzGCHn/WXRc1Rc5MCy/Rjaj87m356hD+6H10qL8vzYfafwcWdiA97udrqHv9pKyDcxQ==
-X-Received: by 2002:a2e:bc10:: with SMTP id b16mr701256ljf.247.1639705576507;
-        Thu, 16 Dec 2021 17:46:16 -0800 (PST)
+        bh=cxvNEtCPBXzjljfYxRKeW/Fan3oOoMNu2DZyjmhfjvA=;
+        b=IbXveSr2WfqH+jZXPPsAc4IS12TwbqJWsrVEdMa+NEpoqFpXh5gIAvNA0VgsLa7EQY
+         Szt+X3N9hdwHqU/VJhPRY1RkZivPYluCHb1SqvRi0ntFvbzqoEQ5WlRuDHefrLFncjyi
+         6ch/EFHl48pIL/MaKGlJ+9Vs4dg0Ugi+joI3hoH7s95EckegUyWz4xYFmVKGmjeTfAcn
+         FPhxPBX02AU9ZQGSRm6Q0jAnbFIpY6LUzxrUUplT+VVcTrXiGxtC4nDpExg/MkhOrRZY
+         WU3yEZiIvywyUa5HSPiQ/USAHNZzScEjxNPHrx04nUw/J7dvQ9MAV69mlQ4TkO/z6mT0
+         EBsw==
+X-Gm-Message-State: AOAM532fLp3EscRO0BeT9kiofjYmDf7gUFKFjwnQUG/VJO6AeY9Uacpe
+        HqZInTDApL9A5EoTIGs8u/v/ow==
+X-Google-Smtp-Source: ABdhPJzAwjbT//kCiYNb9F5m6aaC2cNrCdyFupPxliFHi8QSIQiEBD1odDhPdbAaJERTspo4oW9jSA==
+X-Received: by 2002:a05:6512:3b11:: with SMTP id f17mr845275lfv.374.1639705579331;
+        Thu, 16 Dec 2021 17:46:19 -0800 (PST)
 Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id h24sm1386438ljg.106.2021.12.16.17.46.15
+        by smtp.gmail.com with ESMTPSA id r10sm1431021ljg.116.2021.12.16.17.46.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 17:46:16 -0800 (PST)
+        Thu, 16 Dec 2021 17:46:18 -0800 (PST)
 From:   Sam Protsenko <semen.protsenko@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 1/7] dt-bindings: clock: exynos850: Add bindings for Exynos850 sysreg clocks
-Date:   Fri, 17 Dec 2021 03:46:07 +0200
-Message-Id: <20211217014613.15203-2-semen.protsenko@linaro.org>
+Subject: [PATCH v3 3/7] dt-bindings: Add vendor prefix for WinLink
+Date:   Fri, 17 Dec 2021 03:46:09 +0200
+Message-Id: <20211217014613.15203-4-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211217014613.15203-1-semen.protsenko@linaro.org>
 References: <20211217014613.15203-1-semen.protsenko@linaro.org>
@@ -77,66 +77,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-System Register is used to configure system behavior, like USI protocol,
-etc. SYSREG clocks should be provided to corresponding syscon nodes, to
-make it possible to modify SYSREG registers.
+WinLink Co., Ltd is a hardware design and manufacturing company based in
+South Korea. Official web-site: [1].
 
-While at it, add also missing PMU and GPIO clocks, which looks necessary
-and might be needed for corresponding Exynos850 features soon.
+[1] http://win-link.net/
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
 Changes in v3:
   - (none)
 
 Changes in v2:
-  - Added R-b tag by Krzysztof Kozlowski
   - Added Ack tag by Rob Herring
-  - Added Ack tag by Chanwoo Choi
 
- include/dt-bindings/clock/exynos850.h | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
-index 8aa5e82af0d3..0b6a3c6a7c90 100644
---- a/include/dt-bindings/clock/exynos850.h
-+++ b/include/dt-bindings/clock/exynos850.h
-@@ -82,7 +82,10 @@
- #define CLK_GOUT_I3C_PCLK		19
- #define CLK_GOUT_I3C_SCLK		20
- #define CLK_GOUT_SPEEDY_PCLK		21
--#define APM_NR_CLK			22
-+#define CLK_GOUT_GPIO_ALIVE_PCLK	22
-+#define CLK_GOUT_PMU_ALIVE_PCLK		23
-+#define CLK_GOUT_SYSREG_APM_PCLK	24
-+#define APM_NR_CLK			25
- 
- /* CMU_CMGP */
- #define CLK_RCO_CMGP			1
-@@ -99,7 +102,8 @@
- #define CLK_GOUT_CMGP_USI0_PCLK		12
- #define CLK_GOUT_CMGP_USI1_IPCLK	13
- #define CLK_GOUT_CMGP_USI1_PCLK		14
--#define CMGP_NR_CLK			15
-+#define CLK_GOUT_SYSREG_CMGP_PCLK	15
-+#define CMGP_NR_CLK			16
- 
- /* CMU_HSI */
- #define CLK_MOUT_HSI_BUS_USER		1
-@@ -167,7 +171,9 @@
- #define CLK_GOUT_MMC_EMBD_SDCLKIN	10
- #define CLK_GOUT_SSS_ACLK		11
- #define CLK_GOUT_SSS_PCLK		12
--#define CORE_NR_CLK			13
-+#define CLK_GOUT_GPIO_CORE_PCLK		13
-+#define CLK_GOUT_SYSREG_CORE_PCLK	14
-+#define CORE_NR_CLK			15
- 
- /* CMU_DPU */
- #define CLK_MOUT_DPU_USER		1
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 4698213611db..25f94c723cbc 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1328,6 +1328,8 @@ patternProperties:
+     description: Wiligear, Ltd.
+   "^winbond,.*":
+     description: Winbond Electronics corp.
++  "^winlink,.*":
++    description: WinLink Co., Ltd
+   "^winstar,.*":
+     description: Winstar Display Corp.
+   "^wits,.*":
 -- 
 2.30.2
 
