@@ -2,334 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9E1C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 16:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5713CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 16:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239033AbhLQQQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:16:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40614 "EHLO
+        id S238963AbhLQQRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 11:17:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239003AbhLQQQE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 11:16:04 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C0DC06175A
-        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:16:03 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id v15so4245600ljc.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:16:03 -0800 (PST)
+        with ESMTP id S235552AbhLQQQ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 11:16:59 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C959AC06173E
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:16:58 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id t19so4346961oij.1
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:16:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AGJMeiOUT5EAa7p/t2no99UvrcKFkTeRZrArWF0eXgU=;
-        b=dw12q6WLyAAnrdexTnghrgA2/fuQrQLnsq5p2hDsVX0yp9RVhiN2vlyx/34EcXevWV
-         xs753mxfnqY+ehsf1XW34MtyCP3SRJmuuQ9bdhlORqUBbb6hyS13KjJImJQoFB88C7v8
-         6W/bwU6oS2LtkD+hWso6VT0Vli6yU2Amz7Q5SEjGbb3YCyc/sfpksW4T0MUNccKdL1/U
-         1jvSTuR5kYZzKF7n9I83i6fScHpXsOuNVmVdMWKclkN/CS6ZEpRvHeR9ULZbgRWeUF3M
-         dHe9NqTVApmn4DBY2MgGx7zQX9QKmWp8Bp+0xMYpC3JeXlYFthvRWXDZbSHsOvmXhKWQ
-         ERMg==
+        d=kali.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=7Wq4MgxHkO+MaOw126YWWMoQhIngGsKaWJCKmLC5qco=;
+        b=OeZ4L8IaoKd27I02/ySpc8uOVaMNGfmBx3WzRrCeZsBdhhJX+mna/MicXwFZXRTtEx
+         lOVmgq0s4GCej8uME0PkntFRM045oWiT/EWdvzjvwPGc00ppuAB+aBv2v9E874G3c2wh
+         t5BPoQmpjKRcsXcpyIxhUGoxnrHcn2sq1jNMPcEECd6Bkn1+3B00OgEoHyDFGn3ZJGHa
+         Kjx5LzaiJNTrmTHshq51RrJGppXF/B+Z2GesC+tNzXnkIheup5kWSCSb+/T3XzHEo1kg
+         fJ8dYT+VmEhST+oXR3KsIwvQruihW9ghwXm1QJw9cvH982SreoMjLC9EA7YVTvjoWGSZ
+         /GFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AGJMeiOUT5EAa7p/t2no99UvrcKFkTeRZrArWF0eXgU=;
-        b=w2kvqFlxnp+a6skJ2aasAaVc3FTdhHgh1e2xTAaCISt5xx9Rvfvx3qy+RgF+Y9yl8J
-         4PXPOx9KiIee4sFA8rZmDIeFBjg6l9CUJT0pnukVN01WtANdBXBOPLDNyj2XccU/LwrP
-         k9IIO50PwtN9yCSn4V6ZnfAgJXNcSNBgw5MCj4WxRKiw/WscpTOhqMQy1N0+dhY4rgij
-         EKPyxwuMDpbSdU8FEsaqh0AQ2UHuLRM+DiG8hPj0ksu/Z7R6z3iKk3MT4yA+ittsPK8u
-         jgKmU+51bGyB32U7BoT4tafshDhj1hoXifI3ReCGE/3KV7994OsCeTLYSe83JGYjQgy5
-         RVkQ==
-X-Gm-Message-State: AOAM5321XzAj6Tq68nAcb3LbvyGrKlA/CWTZxow5iZmXSExN5yffMH6d
-        378aiGuYEuJ74ZpZTbOumU8ykQ==
-X-Google-Smtp-Source: ABdhPJw1DamsgUMvN5CEgLlSMoetBbjWx1x7A06Nf9fF6HLqisRNVLz5UnyKlspuOukgv/eWbITnIw==
-X-Received: by 2002:a2e:a78e:: with SMTP id c14mr3497687ljf.162.1639757761985;
-        Fri, 17 Dec 2021 08:16:01 -0800 (PST)
-Received: from localhost ([31.134.121.151])
-        by smtp.gmail.com with ESMTPSA id k5sm1457148lfj.112.2021.12.17.08.16.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:16:01 -0800 (PST)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v4 7/7] arm64: dts: exynos: Add initial E850-96 board support
-Date:   Fri, 17 Dec 2021 18:15:49 +0200
-Message-Id: <20211217161549.24836-8-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211217161549.24836-1-semen.protsenko@linaro.org>
-References: <20211217161549.24836-1-semen.protsenko@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7Wq4MgxHkO+MaOw126YWWMoQhIngGsKaWJCKmLC5qco=;
+        b=qXC9vLLssRqrJpnNCO9bBIe/MjUEY8qyujjQOE+wcRQJAsRpdc6dVkhKKmaTstB3OF
+         S0gFcgic62IWCMQIYKR8glgREN/zr4NRkzHwYOdIq+/qT80MEOIN9oZeoCusP9Q8AwCk
+         0dUtsFPB7EWfjzrh+spOdyo/R9n1M82wcksyXpcpHqVHpy9J3vPjQBhCZZjF/EPTIjrh
+         LtYnHcBwl90InI4K4cX794vnr0oQ4iOtGUDd9IJAU9C/VVIZor0ZkU9donu2yG0SOnNX
+         T+XEqspKhRdpahGxmt7utUIb6DUEmbrgD0FtxN4ULSKFcdoIw1vkIaMppwcwd4egH4jD
+         Vsxg==
+X-Gm-Message-State: AOAM530O270dSyFG2l8iURDN/XQDFOjRTrQAd7hlAV1kesF2DryLSFC3
+        fDSlxQ1pJeknfP4jKTA9l0qea5E52qxlL9OS+Xo=
+X-Google-Smtp-Source: ABdhPJyQ3wcKOplQsq/kToioZLkAQUcZsk3CXTKtqip9/DVAJHUV/jwFuMRvm9C6NGIFuJj7fcXQqQ==
+X-Received: by 2002:a54:4791:: with SMTP id o17mr2724827oic.114.1639757818136;
+        Fri, 17 Dec 2021 08:16:58 -0800 (PST)
+Received: from [192.168.11.48] (cpe-173-173-107-246.satx.res.rr.com. [173.173.107.246])
+        by smtp.gmail.com with ESMTPSA id k24sm1716178otl.31.2021.12.17.08.16.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 Dec 2021 08:16:57 -0800 (PST)
+Message-ID: <7e2502ac-10c6-32e5-369c-260d19d7c225@kali.org>
+Date:   Fri, 17 Dec 2021 10:16:56 -0600
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.4.0
+Subject: Re: [PATCH v2 1/2] clk: qcom: Add display clock controller driver for
+ QCM2290
+Content-Language: en-US
+To:     Loic Poulain <loic.poulain@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, shawn.guo@linaro.org
+References: <1639058951-12660-1-git-send-email-loic.poulain@linaro.org>
+ <20211216034909.3EFCBC36AE0@smtp.kernel.org>
+ <CAMZdPi9eAFaExcTTgOt6TFE37EA-bb9xSy3nq9=nKYd5kqwmfQ@mail.gmail.com>
+From:   Steev Klimaszewski <steev@kali.org>
+In-Reply-To: <CAMZdPi9eAFaExcTTgOt6TFE37EA-bb9xSy3nq9=nKYd5kqwmfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-E850-96 is a 96boards development board manufactured by WinLink. It
-incorporates Samsung Exynos850 SoC, and is compatible with 96boards
-mezzanine boards [1], as it follows 96boards standards.
+Hi Loic,
 
-This patch adds minimal support for E850-96 board. Next features are
-enabled in board dts file and verified with minimal BusyBox rootfs:
 
- * User buttons
- * LEDs
- * Serial console
- * Watchdog timers
- * RTC
- * eMMC
+>>> +       .cmd_rcgr = 0x205c,
+>>> +       .mnd_width = 8,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_4,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_pclk0_clk_src",
+>>> +               .parent_data = disp_cc_parent_data_4,
+>>> +               .num_parents = ARRAY_SIZE(disp_cc_parent_data_4),
+>>> +               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE | CLK_OPS_PARENT_ENABLE,
+>> These last two flags are needed for what?
+> NOCACHE is probably useless with mainline.
+>
+> I've added OPS_PARENT_ENABLE because AFAIU changing clock rate can
+> lead to parent switch, and parent switch can only be done if parent
+> clocks are enabled for rcg2 clocks. Otherwise the update fails and we
+> get the following:
+>      disp_cc_mdss_pclk0_clk_src: rcg didn't update its configuration.
+>      WARNING: CPU: 2 PID: 77 at drivers/clk/qcom/clk-rcg2.c:122
+> update_config+0xe0/0xf0
+>
+> I'm a bit surprised other similar dispcc drivers don't use the same
+> flags though.
+>
+So, we do actually see this on other devices - in particular, on the 
+Lenovo Yoga C630, and people have been trying to track down the initial 
+cause for a while.  I tried here adding CLK_OPS_PARENT_ENABLE to both 
+disp_cc_mdss_mdp_clk and disp_cc_mdss_pclk0_clk in dispcc-sdm845.c as 
+well as for video_cc_venus_clk_src in videocc-sdm845.c and while it does 
+seem to cause the messages to go away for disp_cc_mdss_mdp_clk and 
+disp_cc_mdss_pclk0_clk, the one for venus seems to continue to show up here.
 
-[1] https://www.96boards.org/products/mezzanine/
+video_cc_venus_clk_src: rcg didn't update its configuration. WARNING: 
+CPU: 1 PID: 404 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xd0/0xe0
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
-Changes in v4:
-  - Moved "rtcclk" clock to board dts file
-    - Specified "rtc_src" clock for rtc node in board dts file
-    - Specified "rtcclk" clock for cmu_hsi node in board dts file
-  - Improved comment for RAM memory node
+I'm not sure if this is due to venus being a module and not built-in.
 
-Changes in v3:
-  - Ordered the pinctrl_alive phandle alphabetically (forgot to do so in
-    v2)
-
-Changes in v2:
-  - Removed board_id and board_rev properties
-  - Removed BOARD_ID and BOARD_REV constants
-  - Put dtb in alphabetical order in Makefile
-  - Added "color" and "function" properties to LED nodes
-  - Sorted all phandle overrides by phandle name
-  - Removed 'broken-cd' property in eMMC node
-  - Added memory node
-
- arch/arm64/boot/dts/exynos/Makefile           |   1 +
- .../boot/dts/exynos/exynos850-e850-96.dts     | 195 ++++++++++++++++++
- 2 files changed, 196 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index b41e86df0a84..be9df8e85c59 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -3,4 +3,5 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos5433-tm2.dtb	\
- 	exynos5433-tm2e.dtb	\
- 	exynos7-espresso.dtb	\
-+	exynos850-e850-96.dtb	\
- 	exynosautov9-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-new file mode 100644
-index 000000000000..7b5a61d22cc5
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
-@@ -0,0 +1,195 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * WinLink E850-96 board device tree source
-+ *
-+ * Copyright (C) 2018 Samsung Electronics Co., Ltd.
-+ * Copyright (C) 2021 Linaro Ltd.
-+ *
-+ * Device tree source file for WinLink's E850-96 board which is based on
-+ * Samsung Exynos850 SoC.
-+ */
-+
-+/dts-v1/;
-+
-+#include "exynos850.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	model = "WinLink E850-96 board";
-+	compatible = "winlink,e850-96", "samsung,exynos850";
-+
-+	chosen {
-+		stdout-path = &serial_0;
-+	};
-+
-+	/*
-+	 * RAM: 4 GiB (eMCP):
-+	 *   - 2 GiB at 0x80000000
-+	 *   - 2 GiB at 0x880000000
-+	 *
-+	 * 0xbab00000..0xbfffffff: secure memory (85 MiB).
-+	 */
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x3ab00000>,
-+		      <0x0 0xc0000000 0x40000000>,
-+		      <0x8 0x80000000 0x80000000>;
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&key_voldown_pins &key_volup_pins>;
-+
-+		volume-down-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volume-up-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		/* HEART_BEAT_LED */
-+		user_led1: led-1 {
-+			label = "yellow:user1";
-+			gpios = <&gpg2 2 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		/* eMMC_LED */
-+		user_led2: led-2 {
-+			label = "yellow:user2";
-+			gpios = <&gpg2 3 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		/* SD_LED */
-+		user_led3: led-3 {
-+			label = "white:user3";
-+			gpios = <&gpg2 4 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_SD;
-+			linux,default-trigger = "mmc2";
-+		};
-+
-+		/* WIFI_LED */
-+		wlan_active_led: led-4 {
-+			label = "yellow:wlan";
-+			gpios = <&gpg2 6 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_WLAN;
-+			linux,default-trigger = "phy0tx";
-+			default-state = "off";
-+		};
-+
-+		/* BLUETOOTH_LED */
-+		bt_active_led: led-5 {
-+			label = "blue:bt";
-+			gpios = <&gpg2 7 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_BLUE>;
-+			function = LED_FUNCTION_BLUETOOTH;
-+			linux,default-trigger = "hci0rx";
-+			default-state = "off";
-+		};
-+	};
-+
-+	/*
-+	 * RTC clock (XrtcXTI); external, must be 32.768 kHz.
-+	 *
-+	 * TODO: Remove this once RTC clock is implemented properly as part of
-+	 *       PMIC driver.
-+	 */
-+	rtcclk: clock-rtcclk {
-+		compatible = "fixed-clock";
-+		clock-output-names = "rtcclk";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+};
-+
-+&cmu_hsi {
-+	clocks = <&oscclk>, <&rtcclk>,
-+		 <&cmu_top CLK_DOUT_HSI_BUS>,
-+		 <&cmu_top CLK_DOUT_HSI_MMC_CARD>,
-+		 <&cmu_top CLK_DOUT_HSI_USB20DRD>;
-+	clock-names = "oscclk", "rtcclk", "dout_hsi_bus",
-+		      "dout_hsi_mmc_card", "dout_hsi_usb20drd";
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	mmc-hs400-enhanced-strobe;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	bus-width = <8>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <2 4>;
-+	samsung,dw-mshc-hs400-timing = <0 2>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
-+		     &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_voldown_pins: key-voldown-pins {
-+		samsung,pins = "gpa1-0";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup_pins: key-volup-pins {
-+		samsung,pins = "gpa0-7";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
-+
-+&rtc {
-+	status = "okay";
-+	clocks = <&cmu_apm CLK_GOUT_RTC_PCLK>, <&rtcclk>;
-+	clock-names = "rtc", "rtc_src";
-+};
-+
-+&serial_0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+};
-+
-+&usi_uart {
-+	samsung,clkreq-on; /* needed for UART mode */
-+	status = "okay";
-+};
-+
-+&watchdog_cl0 {
-+	status = "okay";
-+};
-+
-+&watchdog_cl1 {
-+	status = "okay";
-+};
--- 
-2.30.2
+-- steev
 
