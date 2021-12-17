@@ -2,86 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A84CFC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 10:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D88C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 10:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234740AbhLQKM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Dec 2021 05:12:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39274 "EHLO
+        id S234776AbhLQKNB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 05:13:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234738AbhLQKM4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 05:12:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BEAAC06173E;
-        Fri, 17 Dec 2021 02:12:56 -0800 (PST)
+        with ESMTP id S234738AbhLQKM6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 05:12:58 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D12DCC061574;
+        Fri, 17 Dec 2021 02:12:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 06DB6620E5;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 96E48B82787;
         Fri, 17 Dec 2021 10:12:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C8ECC36AEA;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4747BC36AE1;
         Fri, 17 Dec 2021 10:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1639735975;
-        bh=dH8n7XUB1hLxYi6SAGbwQxNYY+TqA+ySoHz3F9+B+do=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cQzyhvI5KJkFziFEyLauhMS8wcVOFeE007vOX8MrViQtCpyuUd2WxMSDRRuxWxBuW
-         D9MrOGC82RmQ4bhs3j3XMObXD0DExnJD4XnxjYOaeaUSwKoIw0fPjhGqNSX9u+FIqC
-         j+DvpSymDKCjsd9AyIRF7Fnz05sCmLm7VHdIKV5eAYDsep5DB18sYr+9cOk0katxM1
-         z0v6LrnOLGHczpW3Pc+2aeiSOfoZQEJ/WgHQOyvE1mTt+/tn4/tpIwMfWuKBKofUQp
-         1TPxz95FZimnV9CDD6nlf7VJM7zvw1uWK8RyxPdzanaDN1GP4zEqfbmTLbPcno88uD
-         Ef4hxz57kyE5Q==
+        bh=Vj3Lsqq1DMV8v0b3cbSCA7WL/NE5Wa/pI0kYsoHgxrY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sik4rgSqEFFom+xJPuVwcQLCuGPlL1e8xemVbEA6+U85WXcwzqrR8I4nH07JPkQ4G
+         RkE9J51Imxu3jjP/rZXF+Ono79/ZxNYteOcDg6gK7tlBopCvmR63MnbV4exYhpWPpK
+         6sVLjRwcoov+iHTg2jCuvLSwzbiFXwNAOz1Y8A5OMYApFC085PMCZS/XkuomRpoumD
+         DtrlIz/cfJMwWdWNzIndkgzZlKr1t+Coe2f7VVv/lrj8f1i60YLwKc3n5kXy8VBxFN
+         s0fHwdTO8m4uFNaiJwp6vNkRXX+F7MvLzjSAIeRi4NBzb7mmQcW/0dy5PsHiKLVza4
+         5tR2DH2m662yQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.94.2)
         (envelope-from <mchehab@kernel.org>)
-        id 1myAEP-000g6B-6k; Fri, 17 Dec 2021 11:12:53 +0100
+        id 1myAEP-000g65-4M; Fri, 17 Dec 2021 11:12:53 +0100
 From:   Mauro Carvalho Chehab <mchehab@kernel.org>
 To:     Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, Yu Chen <chenyu56@huawei.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v2 2/7] dt-bindings: clock: hi3670-clock.txt: add pmctrl compatible
-Date:   Fri, 17 Dec 2021 11:12:46 +0100
-Message-Id: <3495df40d10eecb2326cd0ef002cc708244c0fd8.1639735742.git.mchehab@kernel.org>
+        linux-usb@vger.kernel.org
+Subject: [PATCH v2 0/7] DT bindings for Hikey960/970 USB/PCI
+Date:   Fri, 17 Dec 2021 11:12:44 +0100
+Message-Id: <cover.1639735742.git.mchehab@kernel.org>
 X-Mailer: git-send-email 2.33.1
-In-Reply-To: <cover.1639735742.git.mchehab@kernel.org>
-References: <cover.1639735742.git.mchehab@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Thosre are the only missing parts for PCI to work on HiKey970 and
+for USB on HiKey960 and HiKey 970 boards.
 
-Add a compatible for the Power Management domain controller,
-which is needed in order to control power for the PCI devices
-on HiKey 970.
+-
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
----
+v2:
+  - patch 1: fixed port description for the USB hub;
+  - patch 2: added an ack;
+  - patch 3: is now dual-licensed, and had some renames;
+  - patch 4: changed accordingly.
 
-See [PATCH v2 0/7] at: https://lore.kernel.org/all/cover.1639735742.git.mchehab@kernel.org/
+John Stultz (1):
+  arm64: dts: hisilicon: Add usb mux hub for hikey960
 
- Documentation/devicetree/bindings/clock/hi3670-clock.txt | 1 +
- 1 file changed, 1 insertion(+)
+Manivannan Sadhasivam (1):
+  arm64: dts: HiSilicon: Add support for HiKey 970 PCIe controller
+    hardware
 
-diff --git a/Documentation/devicetree/bindings/clock/hi3670-clock.txt b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-index 66f3697eca78..8e9f12a3ba5b 100644
---- a/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/hi3670-clock.txt
-@@ -15,6 +15,7 @@ Required Properties:
- 	- "hisilicon,hi3670-iomcu"
- 	- "hisilicon,hi3670-media1-crg"
- 	- "hisilicon,hi3670-media2-crg"
-+	- "hisilicon,hi3670-pmctrl"
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
+Mauro Carvalho Chehab (4):
+  dt-bindings: clock: hi3670-clock.txt: add pmctrl compatible
+  dt-bindings: usb: hisilicon,hi3670-dwc3: add binding for Kirin970
+  arm64: dts: hisilicon: Add support for Hikey 970 USB3 PHY
+  arm64: dts: hisilicon: Add usb mux hub for hikey970
+
+Yu Chen (1):
+  dt-bindings: misc: add schema for USB hub on Kirin devices
+
+ .../bindings/clock/hi3670-clock.txt           |   1 +
+ .../bindings/misc/hisilicon,hikey-usb.yaml    |  84 +++++++++
+ .../bindings/usb/hisilicon,hi3670-dwc3.yaml   | 105 +++++++++++
+ .../boot/dts/hisilicon/hi3660-hikey960.dts    |  35 +++-
+ .../boot/dts/hisilicon/hi3670-hikey970.dts    | 106 ++++++++++++
+ arch/arm64/boot/dts/hisilicon/hi3670.dtsi     | 163 ++++++++++++++++++
+ 6 files changed, 492 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/misc/hisilicon,hikey-usb.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/hisilicon,hi3670-dwc3.yaml
+
 -- 
 2.33.1
+
 
