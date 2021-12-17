@@ -2,228 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50B2C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5A2C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 01:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbhLQBpY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 20:45:24 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:39802 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbhLQBpY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:45:24 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B5578B80B8A;
-        Fri, 17 Dec 2021 01:45:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CD4C36AE0;
-        Fri, 17 Dec 2021 01:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639705521;
-        bh=daQtaubSj1CShpr7MeB1121A3xqNkveGCGv+naWwWEg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XWzKWirecBC/wLx3Kpm3Wgw0wlotDgM66Bj+0cEH5ioDZ8MXuNHM76eQziOfeCVtc
-         ZTVpemi08uoxqZi9QpJXEHBckwZCTiywv4+YBXlUe4OTcu5aswvuEke60GI9fBKDiP
-         kXaou+JDwB+OHlDgrB7XD3IDAnMssxCMPYl720r91y1ExFQz772Q5K3F5V6HILvNBC
-         SYlMEAQxYb4aAvmkqIzVzYb9BOK9moD5useuNcWqqnERbcKL312lVTddX6XCX8ekwT
-         BFiH8ItyqbET90IXCbjc9NRnB4IYaflGVr3wEkH5G8uuf4/unzBXuuVJ+gg+uzrM90
-         mkJfn1TUn0vcQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YbvMkIhdsGdCfvFV@ripper>
-References: <20211203035601.3505780-1-bjorn.andersson@linaro.org> <20211216015136.96AD3C36AE1@smtp.kernel.org> <Ybqo+wUv6lNT75tJ@ripper> <20211216185856.27406C36AE2@smtp.kernel.org> <YbvMkIhdsGdCfvFV@ripper>
-Subject: Re: [PATCH] clk: qcom: rcg2: Cache rate changes for parked RCGs
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Amit Nischal <anischal@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
+        id S231947AbhLQBqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 20:46:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231965AbhLQBqR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 20:46:17 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC42EC061401
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:16 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id u22so926679lju.7
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 17:46:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1+A8y/ivr44BnX1V6wtimd44XZ8qKCTqhJv4qwuRTXQ=;
+        b=GQmwXqURYeoXihrPdmq6zV2xgjfD8rHD4WLhhs+8ow8yJ463jXj9dd3YgarWTfofw4
+         u6T41MIWx2j/n0nht+tgJnd1i5ofVUdREt9W01IC29zllzCDK4MZjharB1uYrHWY25TN
+         mLy9h3NqH+3fQIt4UxvEkqxxxAcdlmwEMh6v9IgZJ8z6cIEQ8EXsyVWvXEsmvs9gnnEy
+         lHu7A5Uro/6xWGr8i0KXJJPu9vRB6ogYPIw6exJkGYqdb2rLiU2tMffINYjn5hkeJAKf
+         qkToet0P3rvBq5NA5HZGPpT4lkU0fSKSsob4EPhN+c4+frwbPXRDh9Qm4WFEskS30E4X
+         FZPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1+A8y/ivr44BnX1V6wtimd44XZ8qKCTqhJv4qwuRTXQ=;
+        b=wjbxixdCtvwavIm+vfaml2D9ZmyH4xzx8P1vZ9axNwv+DeVoOeki2dDIOYzJjErIIx
+         ET0jXgNgshesYrQL/YUnkxtZPJXIreekNVFNs7JejAvT1RRDS9MH14lx76K8cV0/lvVq
+         DZNEajv2piIYOT9Pgq60sHTrpYFH6fkQIuq/pQzNAUlIS8BgBMlO+D8qOAd9KlQ4hCeD
+         8xKkaLE4H61jcKPcdSczHUthV7AU2nNlbOXltA+iCM3M0uycKub6Cvz9NzAf1hwuj6fE
+         /FouqfaCDrvPw5FSctnjgh0OHOaMwOmEqK2vr9TM1bMx7lR6SxAX//PpGA0B+ebTUKNL
+         s3Kg==
+X-Gm-Message-State: AOAM531yWYNkGBp/KzONWt6zSDpvppNGRaplTAU+WvVBy2165+fXr34M
+        LalG7WBWJEbLb/1DY0frs/HUGA==
+X-Google-Smtp-Source: ABdhPJzrKyurNAGxwCw/Em4HH2vg7qswqnOiuJQJb16rlsrAasj3b56NrclMQcJ5AoeJJ6nNCUZASA==
+X-Received: by 2002:a2e:a4b0:: with SMTP id g16mr767297ljm.462.1639705575004;
+        Thu, 16 Dec 2021 17:46:15 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id bp41sm1139098lfb.129.2021.12.16.17.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Dec 2021 17:46:14 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, dmitry.baryshkov@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Thu, 16 Dec 2021 17:45:19 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20211217014521.55CD4C36AE0@smtp.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v3 0/7] arm64: dts: exynos: Add E850-96 board support
+Date:   Fri, 17 Dec 2021 03:46:06 +0200
+Message-Id: <20211217014613.15203-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2021-12-16 15:32:32)
-> On Thu 16 Dec 10:58 PST 2021, Stephen Boyd wrote:
->=20
-> > Quoting Bjorn Andersson (2021-12-15 18:48:27)
-> > > On Wed 15 Dec 17:51 PST 2021, Stephen Boyd wrote:
-> > >=20
-> > > > Quoting Bjorn Andersson (2021-12-02 19:56:01)
-> > > > > As GDSCs are turned on and off some associated clocks are momenta=
-rily
-> > > > > enabled for house keeping purposes. Failure to enable these clock=
-s seems
-> > > > > to have been silently ignored in the past, but starting in SM8350=
- this
-> > > > > failure will prevent the GDSC to turn on.
-> > > > >=20
-> > > > > At least on SM8350 this operation will enable the RCG per the
-> > > > > configuration in CFG_REG. This means that the current model where=
- the
-> > > > > current configuration is written back to CF_REG immediately after
-> > > > > parking the RCG doesn't work.
-> > > >=20
-> > > > Just to clarify, is the RCG off and "parked" at XO with the config
-> > > > register dirty and set to the desired frequency and then the RCG is
-> > > > turned on by the GDSC?
-> > > >=20
-> > >=20
-> > > Correct, that's exactly what I'm observing.
-> >=20
-> > Cool can you add that detail to the commit message?
-> >=20
->=20
-> Sure.
->=20
-> > >=20
-> > > > >=20
-> > > > > Instead, keep track of the currently requested rate of the clock =
-and
-> > > > > upon enabling the clock reapply the configuration per the saved r=
-ate.
-> > > >=20
-> > > > We already keep track of the requested rate and reapply it on enabl=
-e,
-> > > > just we're lazy and stash that information in the hardware and not =
-the
-> > > > software. I didn't think the gdsc would be turned on and ruin that =
-all,
-> > > > but it's fair.
-> > > >=20
-> > >=20
-> > > Up until SM8350 I see no evidence that this has been a problem, but n=
-ow
-> > > it is. So there's likely some changes in the hardware there...
-> > >=20
-> > > > >=20
-> > > > > Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe sou=
-rce as needed")
-> > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > > ---
-> > > > >  drivers/clk/qcom/clk-rcg.h  |  2 ++
-> > > > >  drivers/clk/qcom/clk-rcg2.c | 32 +++++++++++++++++---------------
-> > > > >  2 files changed, 19 insertions(+), 15 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rc=
-g.h
-> > > > > index 99efcc7f8d88..6939f4e62768 100644
-> > > > > --- a/drivers/clk/qcom/clk-rcg.h
-> > > > > +++ b/drivers/clk/qcom/clk-rcg.h
-> > > > > @@ -139,6 +139,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-> > > > >   * @freq_tbl: frequency table
-> > > > >   * @clkr: regmap clock handle
-> > > > >   * @cfg_off: defines the cfg register offset from the CMD_RCGR +=
- CFG_REG
-> > > > > + * @current_rate: cached rate for parked RCGs
-> > > > >   */
-> > > > >  struct clk_rcg2 {
-> > > > >         u32                     cmd_rcgr;
-> > > > > @@ -149,6 +150,7 @@ struct clk_rcg2 {
-> > > > >         const struct freq_tbl   *freq_tbl;
-> > > > >         struct clk_regmap       clkr;
-> > > > >         u8                      cfg_off;
-> > > > > +       unsigned long           current_rate;
-> > > > >  };
-> > > > > =20
-> > > > >  #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct=
- clk_rcg2, clkr)
-> > > > > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-r=
-cg2.c
-> > > > > index e1b1b426fae4..b574b38dcbd5 100644
-> > > > > --- a/drivers/clk/qcom/clk-rcg2.c
-> > > > > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > > > > @@ -167,6 +167,7 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsig=
-ned long parent_rate)
-> > > > >  {
-> > > > >         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> > > > >         u32 cfg, hid_div, m =3D 0, n =3D 0, mode =3D 0, mask;
-> > > > > +       unsigned long rate;
-> > > > > =20
-> > > > >         regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-> > > > > =20
-> > > > > @@ -186,7 +187,11 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsi=
-gned long parent_rate)
-> > > > >         hid_div =3D cfg >> CFG_SRC_DIV_SHIFT;
-> > > > >         hid_div &=3D mask;
-> > > > > =20
-> > > > > -       return calc_rate(parent_rate, m, n, mode, hid_div);
-> > > > > +       rate =3D calc_rate(parent_rate, m, n, mode, hid_div);
-> > > > > +       if (!rcg->current_rate)
-> > > > > +               rcg->current_rate =3D rate;
-> > > >=20
-> > > > Instead of doing this in recalc_rate, all the time, why not make an=
- init
-> > > > clk op that does it once during registration? The other problem I s=
-ee is
-> > > > that the rate we calculate may be wrong if the parent is registered
-> > > > after this clk. I think this came up originally when the patch this=
- is
-> > > > fixing was discussed.
-> > > >=20
-> > >=20
-> > > I would need to go back and reproduce the issue I saw, but I had to a=
-dd
-> > > this because I ended up in clk_rcg2_shared_enable() with current_rate=
- =3D
-> > > 0, which I think would be equally bad to just committing the dirty
-> > > configuration.
-> >=20
-> > Alright.
-> >=20
-> > >=20
-> > > > So instead of saving the current_rate can we save the cfg register =
-value
-> > > > (or however many registers we need) to put back the frequency of th=
-e clk
-> > > > to what we want on enable? The other thing is that we made recalc_r=
-ate()
-> > > > work "seamlessly" here by stashing the frequency into the register =
-but
-> > > > leaving it uncommitted until enable. We may need to now look at the
-> > > > software copy of the registers in the shared rcg recalc rate operat=
-ion
-> > > > to figure out what the frequency is.
-> > > >=20
-> > >=20
-> > > I made an attempt at this, the problem I had was to come up within
-> > > something sane for how to deal with set_rate on parked clocks; because
-> > > we need to re-generate the register contents, without writing out the
-> > > value - and that got messy.
-> >=20
-> > Looking back on the introduction of this code[1] I see that it's not
-> > about the rate but more about the parent. i.e. we park the clk on the XO
-> > parent but don't care about the m/n values or pre divider because it
-> > doesn't really matter if the clk is running slowly. So nothing needs to
-> > be saved except for the cfg register, and we can do that in software
-> > with a single u32 instead of using a rate and looking it up and then
-> > reprogramming the other values. We should be able to cache the register
-> > content with an init clk_op.
-> >=20
->=20
-> So you're suggesting that, in clk_rcg2_shared_set_rate(), when the RCG
-> is found to be disabled, I should write out M, N, D and calculate a new
-> cfg value which I stash until the next enable?
->=20
-> Looks a little bit messy, but I will give it a try.
+WinLink's E850-96 is a dev board based on Exynos850 SoC [1]. The board's
+design follows 96boards specifications, hence it's compatible with
+96boards mezzanines [2].
 
-No. I don't see where clk_rcg2_shared_set_rate() needs to change.
+This patch series adds the initial support for E850-96 board and
+Exynos850 SoC, along with corresponding bindings. Only basic platform
+components are enabled at the moment (like serial, I2C, eMMC, RTC, WDT,
+clock driver, etc). Right now with this patch series it's possible to
+run the kernel with BusyBox rootfs as a RAM disk. More features are
+coming soon.
 
-I'm suggesting we cache the config register on disable so it can be
-restored on enable. Basically everything is the same except now we don't
-write the cfg register and leave it dirty in the hardware. We need a
-shared rcg version of recalc rate that looks at the shadow cfg register
-instead of reading the hardware because we've changed the parent behind
-the back of the framework and we want to make it look like nothing has
-changed.=20
+[1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
+[2] https://www.96boards.org/products/mezzanine/
 
-This is all based on my understanding that the problem is the RCG is
-changing rate due to the gdsc turning on the clk for us. So we can't
-leave anything dirty in the hardware and have to keep it in software.
-I hope the change is minimal.
+Changes in v3:
+  - Ordered the pinctrl_alive phandle alphabetically (patch 7/7)
+  - No other changes in v3
+
+Changes in v2:
+  - Rebased on krzk/linux.git (for-next), to account for Exynos7885
+    changes
+  - Added missing and new tags (R-b and Ack)
+  - Addressed all comments for v1
+
+Sam Protsenko (7):
+  dt-bindings: clock: exynos850: Add bindings for Exynos850 sysreg
+    clocks
+  clk: samsung: exynos850: Add missing sysreg clocks
+  dt-bindings: Add vendor prefix for WinLink
+  dt-bindings: arm: samsung: Document E850-96 board binding
+  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
+  arm64: dts: exynos: Add initial Exynos850 SoC support
+  arm64: dts: exynos: Add initial E850-96 board support
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../boot/dts/exynos/exynos850-e850-96.dts     | 175 ++++
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 713 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     | 753 ++++++++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  29 +
+ include/dt-bindings/clock/exynos850.h         |  12 +-
+ include/dt-bindings/pinctrl/samsung.h         |  13 +-
+ 9 files changed, 1700 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
+
+-- 
+2.30.2
+
