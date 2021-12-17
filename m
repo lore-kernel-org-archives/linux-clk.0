@@ -2,102 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F4EC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 16:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5565C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 16:15:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235057AbhLQQDb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Dec 2021 11:03:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37508 "EHLO
+        id S238926AbhLQQPx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 11:15:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235165AbhLQQDa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 11:03:30 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E23C06173F;
-        Fri, 17 Dec 2021 08:03:29 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id d198-20020a1c1dcf000000b0034569cdd2a2so1836285wmd.5;
-        Fri, 17 Dec 2021 08:03:29 -0800 (PST)
+        with ESMTP id S238302AbhLQQPx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 11:15:53 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD04C06173F
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:15:52 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id cf39so5662811lfb.8
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 08:15:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BbxL+1YwSZqSNgh0PXdSZOr3fXboEtkYJo+qZ4UYg3A=;
-        b=F5EtOt6fwchXPBYYKV76XXa6rlSfGJEd8p+/R3OGJH9ckCQg4Lisms2g1XjgrR8NRp
-         MMSIu7bxq3xlbjjnYKrMdKB5ERfz6GdXYYAf6l7+gLHSM91FwZWBuk3H2we4oWeEUI1g
-         GP8FYinpCoOhzPNzLWhuG6/07CJwYbtkDd3JdQ58heIrQo3+Hxh6ssfr3QLpWkxmdeLW
-         UwJCgOXXe1gCev5w+oSgGqWFA8lZURQNutHs/F+J9bNHBVum+Dsct0+BoL5X1c79/3fl
-         v0BJq838m16MATM2huO+hT7klkexO1CZu6+Wxa4jzTtSK/btinD9myT1Wl9fb+M8S2G/
-         19qw==
+        bh=SGIO3bUbOyLAGLDGNDrVtdjpSJVfbgrhp+VoDayZdrk=;
+        b=TmoqaDCxyyJi03kZKNb6qgmFdHHqq0uvGuzh+zRXdJf+NIPgakylfVxINqTUj0gWnr
+         irgX8tiRgh8EaQRfjyGBCNLuJNWSjlonyJBfAXjptr8JRmP4pNee5UpL2DvUYbyuTUo9
+         pBRKmQTCYVObcdWYI82YWG7CHpgJsMHY1AnD35R1fpggwg1Q7og49BLXnu76zCz4ROmO
+         9bYsLy2/6n3wicuHVvUOXI09qMN1Ybj+G8dkexO3ab6rKle8YKqijJH0kayHaXBnE7VV
+         yoPiT0Nzq/k+sd8YyW31/38GJC6mfj7HcivceXBpoKjjXZgIdvjNzIbW0XjIYqGmuzqp
+         FS/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BbxL+1YwSZqSNgh0PXdSZOr3fXboEtkYJo+qZ4UYg3A=;
-        b=JsQm/qAjLca4NUbaQIWf2MPiI/+WM56flM8+Nod/tl6hRiIXl0lTSc/BJjgwvtbhna
-         VKTFPeZkoAPrkufWN1dIMJbmExGILL8q19HBlVz+sbZhtvCOLAJcVP28k0ogu65mrMUX
-         4FsaKZV2j6Gd3U6u6qVhBXnujlEWBDcue2BpDoUTsfQ8+esFcP5uGh2vAXR+sH+uUiqn
-         kwkFryOhx9nocv49PS1GShJt9S6f/Auu/Owx+Zkep718ADy7ykDUcPLK/6fYX/0MYpYJ
-         Srzd2jXpB3zTc9bUGiDtju6NYJLvMH4GjTGFXgJF4xVkZQRFUb3Fxv+d9tXtZ/s8BAHm
-         6qkQ==
-X-Gm-Message-State: AOAM530hVMTmfN00FV0J+rrwHiKBzqHmLJ2UCppL7zOWmnprhrr2GHwk
-        WjBJkRR5LSlIHiexGtgXLn0=
-X-Google-Smtp-Source: ABdhPJzvbqMteZh1nEl0y77TRDimsVRh4rvInAU/UyNutqZ8CdKlnH53yu3duvHqtTYzGi5GIM+KRA==
-X-Received: by 2002:a7b:c76e:: with SMTP id x14mr3301650wmk.27.1639757008439;
-        Fri, 17 Dec 2021 08:03:28 -0800 (PST)
-Received: from localhost ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id j17sm10500040wmq.41.2021.12.17.08.03.27
+        bh=SGIO3bUbOyLAGLDGNDrVtdjpSJVfbgrhp+VoDayZdrk=;
+        b=u/0V2QcpsjpujOCX1IpktCAMNDutMNPn9GeCbF+v3Fi0NmpIyq0MpTxpXoY4BKsmXG
+         bYNXXqrYwbirHMVbMAofBG38+uPUUtnO+Lnl6Dl5MeFwJVJf2L2fH2++zQ/UHStLV+RU
+         Y0hUZRaw7JkoDkCQm73K9OCX6GNPPyQQUzBNrXiBIBRFksEgls0mvCjbfpHns6Lr22YJ
+         X8Jx3INVu4AeY2zkFQoVBZRriqD7wP8Xmnj3ycXQDmDqMANg43Pd51HG0XL6y2dMKdOU
+         Vgb8DeXmzRLxJZaLTEUFxHazwOjOxgPwuBH/lbXRGgjr/wfw71SSgS7MLKlREvVemTlN
+         EauA==
+X-Gm-Message-State: AOAM533swwg+4FnFf1kNI1TQGFqEDWCDP610QPJjQ/omvjBIuhPA7NPE
+        7E/fIJQobJg7Fl/FLXm9NxB+Gg==
+X-Google-Smtp-Source: ABdhPJwAkXX5v3eIXx7quTKRqHz6jqdTRtrSxcGiIlzEa97n8FLx2pK0A1N73AVgaI9SOjje9iGvcg==
+X-Received: by 2002:a19:fc01:: with SMTP id a1mr3369591lfi.594.1639757750762;
+        Fri, 17 Dec 2021 08:15:50 -0800 (PST)
+Received: from localhost ([31.134.121.151])
+        by smtp.gmail.com with ESMTPSA id t4sm1452171lfe.220.2021.12.17.08.15.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Dec 2021 08:03:27 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v5.17-rc1
-Date:   Fri, 17 Dec 2021 17:03:22 +0100
-Message-Id: <20211217160322.1157799-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.34.1
-Content-Type: text/plain; charset="utf-8"
+        Fri, 17 Dec 2021 08:15:50 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v4 0/7] arm64: dts: exynos: Add E850-96 board support
+Date:   Fri, 17 Dec 2021 18:15:42 +0200
+Message-Id: <20211217161549.24836-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+WinLink's E850-96 is a dev board based on Exynos850 SoC [1]. The board's
+design follows 96boards specifications, hence it's compatible with
+96boards mezzanines [2].
 
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+This patch series adds the initial support for E850-96 board and
+Exynos850 SoC, along with corresponding bindings. Only basic platform
+components are enabled at the moment (like serial, I2C, eMMC, RTC, WDT,
+clock driver, etc). Right now with this patch series it's possible to
+run the kernel with BusyBox rootfs as a RAM disk. More features are
+coming soon.
 
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+[1] https://www.samsung.com/semiconductor/minisite/exynos/products/mobileprocessor/exynos-850/
+[2] https://www.96boards.org/products/mezzanine/
 
-are available in the Git repository at:
+Changes in v4:
+  - Removed slew_rate pin nodes
+  - Moved rtcclk clock to board dts file
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.17-clk
+Changes in v3:
+  - Ordered the pinctrl_alive phandle alphabetically (patch 7/7)
+  - No other changes in v3
 
-for you to fetch changes up to b1bc04a2ac5b15e0b681228376664671fc2f2017:
+Changes in v2:
+  - Rebased on krzk/linux.git (for-next), to account for Exynos7885
+    changes
+  - Added missing and new tags (R-b and Ack)
+  - Addressed all comments for v1
 
-  clk: tegra: Support runtime PM and power domain (2021-12-15 18:55:21 +0100)
+Sam Protsenko (7):
+  dt-bindings: clock: exynos850: Add bindings for Exynos850 sysreg
+    clocks
+  clk: samsung: exynos850: Add missing sysreg clocks
+  dt-bindings: Add vendor prefix for WinLink
+  dt-bindings: arm: samsung: Document E850-96 board binding
+  dt-bindings: pinctrl: samsung: Add pin drive definitions for Exynos850
+  arm64: dts: exynos: Add initial Exynos850 SoC support
+  arm64: dts: exynos: Add initial E850-96 board support
 
-Thanks,
-Thierry
+ .../bindings/arm/samsung/samsung-boards.yaml  |   6 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ .../boot/dts/exynos/exynos850-e850-96.dts     | 195 +++++
+ .../boot/dts/exynos/exynos850-pinctrl.dtsi    | 643 +++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos850.dtsi     | 741 ++++++++++++++++++
+ drivers/clk/samsung/clk-exynos850.c           |  29 +
+ include/dt-bindings/clock/exynos850.h         |  12 +-
+ include/dt-bindings/pinctrl/samsung.h         |  13 +-
+ 9 files changed, 1638 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos850.dtsi
 
-----------------------------------------------------------------
-clk: tegra: Changes for v5.17-rc1
+-- 
+2.30.2
 
-This contains a simple fix for the VDE clock on Tegra114 and some
-preparation work to support runtime PM and generic power domains.
-
-----------------------------------------------------------------
-Dmitry Osipenko (2):
-      clk: tegra: Make vde a child of pll_p on tegra114
-      clk: tegra: Support runtime PM and power domain
-
- drivers/clk/tegra/Makefile       |   1 +
- drivers/clk/tegra/clk-device.c   | 199 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-pll.c      |   2 +-
- drivers/clk/tegra/clk-super.c    |   2 +-
- drivers/clk/tegra/clk-tegra114.c |   2 +-
- drivers/clk/tegra/clk-tegra20.c  |  77 +++++++++++----
- drivers/clk/tegra/clk-tegra30.c  | 116 +++++++++++++++++------
- drivers/clk/tegra/clk.c          |  75 ++++++++++++++-
- drivers/clk/tegra/clk.h          |   2 +
- 9 files changed, 421 insertions(+), 55 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-device.c
