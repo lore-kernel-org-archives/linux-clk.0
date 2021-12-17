@@ -2,103 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B95CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 10:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2E2C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 11:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235005AbhLQK3I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Dec 2021 05:29:08 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:43735 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbhLQK3C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 05:29:02 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1M3DBd-1mv9H70c1t-003cnj; Fri, 17 Dec 2021 11:29:00 +0100
-Received: by mail-wm1-f50.google.com with SMTP id o19-20020a1c7513000000b0033a93202467so1275980wmc.2;
-        Fri, 17 Dec 2021 02:28:59 -0800 (PST)
-X-Gm-Message-State: AOAM530TIWsOjX56L5p48423QNaanac0qxcA9nMJBgwtpgl1S2w4O6L5
-        dMonB9WfKEi4m4IpWug4Q3eDoYD3Zjvmh6/+d1c=
-X-Google-Smtp-Source: ABdhPJzt5zYuPDN2kyerQhSiMM2qDbHR33/fmfF5ts41gKt3J8mLkHRysVIEdlJk2pNUlh3mDSd/3MBFVv8V8UNy0j0=
-X-Received: by 2002:a05:600c:6d2:: with SMTP id b18mr2096113wmn.98.1639736939561;
- Fri, 17 Dec 2021 02:28:59 -0800 (PST)
+        id S235249AbhLQLHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Dec 2021 06:07:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235248AbhLQLHe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Dec 2021 06:07:34 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F2C7C061574
+        for <linux-clk@vger.kernel.org>; Fri, 17 Dec 2021 03:07:34 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d13f:527c:5504:a743])
+        by baptiste.telenet-ops.be with bizsmtp
+        id XP7Y26010250X3001P7Ycf; Fri, 17 Dec 2021 12:07:33 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1myB5I-005Y9T-HW; Fri, 17 Dec 2021 12:07:32 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1myB5H-00AQUP-VA; Fri, 17 Dec 2021 12:07:31 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.17 (take two)
+Date:   Fri, 17 Dec 2021 12:07:30 +0100
+Message-Id: <cover.1639736964.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20211215220538.4180616-1-Mr.Bossman075@gmail.com>
- <CAK8P3a29tzgd_4WncippZBEJra9n0bQTysBkPBp_WA0sb28gTg@mail.gmail.com>
- <1360c4fe-4a09-a8a1-3224-7f1d4af59f6f@benettiengineering.com>
- <CAK8P3a1oZK1qMRBE3D8otCTY6Lg4jMXxVpAZHQzLTA8woA3_UQ@mail.gmail.com> <634e9304-2eba-4ea9-65ac-5d4f5d011b70@benettiengineering.com>
-In-Reply-To: <634e9304-2eba-4ea9-65ac-5d4f5d011b70@benettiengineering.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 17 Dec 2021 11:28:43 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3kpzi6ozLkTH9GtWqvs=JHkm6mp=dLs2vOHjrW=FoYdw@mail.gmail.com>
-Message-ID: <CAK8P3a3kpzi6ozLkTH9GtWqvs=JHkm6mp=dLs2vOHjrW=FoYdw@mail.gmail.com>
-Subject: Re: [RESEND in plain-test] Re: [PATCH v5 0/9] Add initial support for
- the i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
-To:     Giulio Benetti <giulio.benetti@benettiengineering.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jesse Taube <mr.bossman075@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Olof Johansson <olof@lixom.net>, SoC Team <soc@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Vladimir Murzin <vladimir.murzin@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:WK5VepgWAxnURy8YRejIh8hTkw5BVDQTSGj/3hPn3SfcZcCrTNG
- lyrjT7Khp69AhFY2gmWBqy8B7mI0u376qu/e8G+ii1vIN8sgfc/1+L3rjj94EI3UnaG0z57
- RO+Pq9Xqvyn/wjbT7TA9Te2G/+YJro8CWVtmzVrYJxaS1Z5N6psweEF9CjLox9uW8fNy32M
- GbCTb7+MTwkGrVS+vq8ww==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lLY2FP303Ug=:MZPZYIsXwYO/ZM4ROB9bVL
- ek+5PS1T7DfV9tiQ87KICIi9k6x4nuPH98rqb0m7oJUEJWrPLc2ez8ADmiMGAyYwyC8pv1AAy
- xya0TCnN5uypyLGXuGqcxBeQcKTGk1FHhTaiW5o7ohDxUPljwJ/lnLJk1XlfmaFbJ+ffXmz3X
- n8KrmA2dUCShP1GgdHOZVG/09ZNaTw7t3VcQws87+YsdmR6tMyfOS0B4iMv2h0HqqdKg6EpNr
- 4C4VpPGy5Z1sc1fTDgaFrb+tfiFu88DMyb3gv0EU/6MpzBfBSa9RUQupHb4llGvYJL6sqQsIw
- M5bODNoegAojZzX9YZxk4DqT19BmGrsGEsvvp9EgOU4rd3+mq5etrOVaPre9w6YkJEuG9oSRP
- U9F+WsDgBJNkfoolfjYhu5Jz3Jim8au0jpykcloY6yE7iLL+CQ2H7Z27p1OyJidBRmZB1Yunn
- wDlOCeCCDsKpMisu6DMCIfzT+vwyA5+fyJ9RGWXOH0oSy4ar0+IawfV80JEMp7mjOvQu+eNir
- oO3OiwkaTYaDkPZ7muehPSYq0Po6AcHR4fA3H69wKOaIbq058nkE6Fi49b0d/cLymY/q6cfVV
- 4mzsltuA093tdpFohN4LP9Rk3Jb1Bq2lN1LdApMefoWcniNQDghB3pZ5J8XIXWUqRs2N7PX5o
- CWJ1F1IGni4qppXt7S1SD0jXlbNKuJ62jmwzE+R7VqLFp1zm3ruQ5/uncYdUf9Lcwkq8=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 10:54 AM Giulio Benetti
-<giulio.benetti@benettiengineering.com> wrote:
-> On 16/12/21 22:13, Arnd Bergmann wrote:
->
-> > Vladimir has put some work into making Cortex-R work in the kernel, and
-> > he may have some other thoughts on this question.
->
-> I'm curious if he has something specific to Cortex-R to tell.
->
-> I've found that Cortex-R82 has a MMU:
-> https://www.arm.com/products/silicon-ip-cpu/cortex-r/cortex-r82
-> but I can't find any SoC that uses it. Also, I don't know how many
-> people could use it honestly.
+	Hi Mike, Stephen,
 
-R82 is fairly new, but I expect that we will see support in Linux in the
-future. Aside from having an MMU, it also 64-bit-only, so we'd treat
-it like a normal ARMv8-A core in arch/arm64.
+The following changes since commit 33b22d9c3272003a525ba2d6b7b851f3d4f30574:
 
-        Arnd
+  clk: renesas: r9a07g044: Add TSU clock and reset entry (2021-11-26 14:06:16 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.17-tag2
+
+for you to fetch changes up to f0b62b0bbedcdfde18116080605cebd9beec4ee9:
+
+  clk: renesas: r9a07g044: Add GPU clock and reset entries (2021-12-08 10:05:56 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.17 (take two)
+
+  - Add support for the new R-Car S4-8 (R8A779F0) SoC,
+  - Add GPU clock and resets on RZ/G2L,
+  - Miscellaneous fixes and improvements.
+
+Note that the new Renesas R-Car S4-8 DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.17 (take two)" (for soc),
+  - "[GIT PULL 3/4] Renesas driver updates for v5.17 (take two)" (for soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.17 (take two)" (for clk).
+
+Thanks for pulling!
+----------------------------------------------------------------
+Biju Das (3):
+      clk: renesas: r9a07g044: Rename CLK_PLL3_DIV4 macro
+      clk: renesas: r9a07g044: Add mux and divider for G clock
+      clk: renesas: r9a07g044: Add GPU clock and reset entries
+
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r8a779f0-dt-binding-defs-tag' into HEAD
+
+Yoshihiro Shimoda (4):
+      dt-bindings: power: Add r8a779f0 SYSC power domain definitions
+      dt-bindings: clock: Add r8a779f0 CPG Core Clock Definitions
+      clk: renesas: rcar-gen4: Introduce R-Car Gen4 CPG driver
+      clk: renesas: cpg-mssr: Add support for R-Car S4-8
+
+ drivers/clk/renesas/Kconfig                   |  13 +-
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       | 350 ++------------------------
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c       | 183 ++++++++++++++
+ drivers/clk/renesas/r9a07g044-cpg.c           |  19 +-
+ drivers/clk/renesas/rcar-gen4-cpg.c           | 305 ++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen4-cpg.h           |  76 ++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  42 ++--
+ drivers/clk/renesas/renesas-cpg-mssr.h        |   3 +-
+ drivers/clk/renesas/rzg2l-cpg.h               |   4 +
+ include/dt-bindings/clock/r8a779f0-cpg-mssr.h |  64 +++++
+ include/dt-bindings/power/r8a779f0-sysc.h     |  30 +++
+ 12 files changed, 748 insertions(+), 343 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a779f0-cpg-mssr.c
+ create mode 100644 drivers/clk/renesas/rcar-gen4-cpg.c
+ create mode 100644 drivers/clk/renesas/rcar-gen4-cpg.h
+ create mode 100644 include/dt-bindings/clock/r8a779f0-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a779f0-sysc.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
