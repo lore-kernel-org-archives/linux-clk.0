@@ -2,54 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F7C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Dec 2021 23:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660F7C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Dec 2021 00:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhLPXjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Dec 2021 18:39:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59566 "EHLO
+        id S231293AbhLQAuF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Dec 2021 19:50:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229676AbhLPXjR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 18:39:17 -0500
-Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7E7EC061574
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 15:39:16 -0800 (PST)
-Received: by mail-vk1-xa32.google.com with SMTP id o2so478705vkn.0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 15:39:16 -0800 (PST)
+        with ESMTP id S231271AbhLQAuE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Dec 2021 19:50:04 -0500
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEE45C06173F
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 16:50:03 -0800 (PST)
+Received: by mail-vk1-xa2a.google.com with SMTP id s20so523496vkm.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Dec 2021 16:50:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=43o4wlr1IkiAU6zQKaIE6WugMg6KsgM5BbH78Jvij0o=;
-        b=HB+qq10OML7ZwC1o7HMfLZN4yFllE4yDSe5F+YbzSPwkzJUex9pTjIxPjVSlJAXR+R
-         TGqgohg+ALvNQ5TX22/tFkra8T1/GBsvqrb60u/rDp9rmJElzb6mtmSsg6txYChGvGST
-         2ZYWCdrEKaMsT+2oXmvQVUEZ9HxlWogkJ2TQ/BpWE/mO6e3mBF9ryAV007njMT0kQdN0
-         XIw05SsDe/5f6d9UboYjwepxBFgw+VpX3dpBZeWubuceQFVVLITQ0PxEdg8PMQcY6SHp
-         jBg2qSTT6ckdin2YAr6YphjH5MnBR5AVolzlGOb5KYjOlMXu99GdQw2GDMB92WPasGUT
-         sspw==
+        bh=Vl85UXIit3TIRb2ymMVxHwpC9u9xdrSW91+paUDgSN0=;
+        b=duqyeaUHQBzLD52wIiydGrGC2oyy4uqZrpPOBRN+8H1AO5vvXpVvIkGli6XtP8P3TI
+         1S2fndLHDjBje3AfMdJ3LHxJMhFyu4suQR78Gcx2NLSl+Bb5niwRt9P9LqS8CXaHmDi4
+         5iNZMpDXDgfaJ7TbYKb/NFN25Vqw+t836zpMiuUoljxUo3pNn1yowcMq8WVMZski45y4
+         tOR+mM9WhflisonozTdmAeNV4EKKBZb3p3u6E2k3maI7jtXGtVwR8ko9648AFUA+a5bE
+         +2rdOVvhbTZkCVgeYVV8XtLYLq+mCm6IExP3JnvaV3jNS5/yUVP4jZcf/dNik7QG8DAF
+         XGyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=43o4wlr1IkiAU6zQKaIE6WugMg6KsgM5BbH78Jvij0o=;
-        b=Uq+rE/U7UXcKiFNs5h771u4HRS8fzQoGc49xUxAkzbiwSYrTDtxwTH2ZHV95Xvz1o2
-         TihpqVqSuno0RfYJIYEfudC6mfiJeatpItsj3NCC+a7YqopDOQlgmLRwZ1b0YKLtteIn
-         sZscBLz+KSkl6wyYsLt1p/nDVf5b31+k//fh3T+LtKK4WYO9vdgM9wWR4HhYhZY7lmpA
-         bYwxs3iI3gNv/3NQ12BEv/JrhBGzZkr/S0JgBJCNqXFjVthEx/g3BeVv+H57SE9NeAFZ
-         NoWAvFPcJ/I0Cjdgg3HPq40pj6lZz9WY+9ZIhCKsUSc5eu+dStOas0sETHFX67BCQIUc
-         +MjQ==
-X-Gm-Message-State: AOAM5338FJYVCwicjYFDZBwThtS0eTf+CTZR7OzZaNdKs9gS97HCyT9n
-        d+EvMVTOgXN80J4SfWaRGnyGOuJhAFODf6MweAnsPQ==
-X-Google-Smtp-Source: ABdhPJzp16pmobRMKBbx935rBJUh4NWI//WbgPPhjLN9j6aWH5GwJmzTWm6uqTBPwfplsvBVNP362rJ+P+2ebgD0jtQ=
-X-Received: by 2002:a05:6122:2158:: with SMTP id m24mr173726vkd.1.1639697955495;
- Thu, 16 Dec 2021 15:39:15 -0800 (PST)
+        bh=Vl85UXIit3TIRb2ymMVxHwpC9u9xdrSW91+paUDgSN0=;
+        b=elKr7ry7n+lYb33NAoTJg8vd8ys1bI9wzwRSc25Hnx013N+mCxHdTt4ou97Xo+4EZt
+         d9L43iptwACeSYqjwN4Ase8uu8ZEhxKoH69Jmor+zvToXid064IEmlFFa5rnn/gY8gyu
+         RmYlWe1N4MgSlIRMVuV2f5LU9Ytc7Lrkm2hrE0Tc5SX6sV3pWmifSsIhiQ238RLpVWEQ
+         F+ZeZCLm8/XgDAZiIezVszUbZVF89pvyjj3tTZdPw9jkQdk3sD4IHqS93016ljLvyYum
+         rJeAh9CRhrlV68W8UbpE4/7xTHzbybBhy0fYc1B8ibeJ1kFILmV/HRLLHtQKdiYxR9Ga
+         QuOg==
+X-Gm-Message-State: AOAM533gNe/QoAIXRGs9/fFTz/MDadeQDexOJN3W6K313hYN3IxEHMu9
+        gb2+fxFLx96F4Il3N+Sooc3G3Q7hS23x9Xy9ycqYkg==
+X-Google-Smtp-Source: ABdhPJwnNXczPxAyQGL0JVZoJtWfIEz5rAUElbIOw96rnz1W3Cel/D7Jq+MOvVqHlEcF5howTnnC7fxOVXRdJ4C7ECo=
+X-Received: by 2002:a05:6122:2158:: with SMTP id m24mr256841vkd.1.1639702202870;
+ Thu, 16 Dec 2021 16:50:02 -0800 (PST)
 MIME-Version: 1.0
 References: <20211215160906.17451-1-semen.protsenko@linaro.org>
- <20211215160906.17451-8-semen.protsenko@linaro.org> <239e30fa-7994-fcb2-5b83-27ae00ca8cbc@canonical.com>
-In-Reply-To: <239e30fa-7994-fcb2-5b83-27ae00ca8cbc@canonical.com>
+ <20211215160906.17451-8-semen.protsenko@linaro.org> <b998809c-9d33-cd42-ebfd-7cce620a6ed8@canonical.com>
+In-Reply-To: <b998809c-9d33-cd42-ebfd-7cce620a6ed8@canonical.com>
 From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Fri, 17 Dec 2021 01:39:03 +0200
-Message-ID: <CAPLW+4m1PsbpOUpAEtdNkGX76aO7oN4TRjnQ89ocd3u2DZDL5Q@mail.gmail.com>
+Date:   Fri, 17 Dec 2021 02:49:51 +0200
+Message-ID: <CAPLW+4=KLUnNo1xYqqiZqi2+QPi0mKgFmnRk3+1Tw-OS_Bb03w@mail.gmail.com>
 Subject: Re: [PATCH 7/7] arm64: dts: exynos: Add initial E850-96 board support
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -73,7 +73,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Dec 2021 at 19:01, Krzysztof Kozlowski
+On Wed, 15 Dec 2021 at 19:04, Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
 > On 15/12/2021 17:09, Sam Protsenko wrote:
@@ -111,9 +111,6 @@ On Wed, 15 Dec 2021 at 19:01, Krzysztof Kozlowski
 > > -     exynosautov9-sadk.dtb
 > > +     exynosautov9-sadk.dtb   \
 > > +     exynos850-e850-96.dtb
->
-> Alphabetical order please, so before autov9.
->
 > > diff --git a/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts b/arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
 > > new file mode 100644
 > > index 000000000000..fd611906d81c
@@ -139,169 +136,25 @@ On Wed, 15 Dec 2021 at 19:01, Krzysztof Kozlowski
 > > +
 > > +#define BOARD_ID     0x0
 > > +#define BOARD_REV    0x2
->
-> No need for define for single-used constant.
->
 > > +
 > > +/ {
 > > +     model = "WinLink E850-96 board";
 > > +     compatible = "winlink,e850-96", "samsung,exynos850";
 > > +     board_id = <BOARD_ID>;
 > > +     board_rev = <BOARD_REV>;
->
-> Unknown properties. They need dtschema.
->
-
-Those are not really needed in case of upstream linux (only one board
-revision is added and no dtbo to merge in bootloader). Will remove
-those in v2.
-
 > > +
 > > +     chosen {
 > > +             stdout-path = &serial_0;
 > > +     };
 > > +
-> > +     gpio-keys {
-> > +             compatible = "gpio-keys";
-> > +             pinctrl-names = "default";
-> > +             pinctrl-0 = <&key_voldown_pins &key_volup_pins>;
-> > +
-> > +             volume-down-key {
-> > +                     label = "Volume Down";
-> > +                     linux,code = <KEY_VOLUMEDOWN>;
-> > +                     gpios = <&gpa1 0 GPIO_ACTIVE_LOW>;
-> > +             };
-> > +
-> > +             volume-up-key {
-> > +                     label = "Volume Up";
-> > +                     linux,code = <KEY_VOLUMEUP>;
-> > +                     gpios = <&gpa0 7 GPIO_ACTIVE_LOW>;
-> > +             };
-> > +     };
-> > +
-> > +     leds {
-> > +             compatible = "gpio-leds";
-> > +
-> > +             /* HEART_BEAT_LED */
-> > +             user_led1: led-1 {
-> > +                     label = "yellow:user1";
 >
-> Add where applicable:
-> 1. function, e.g. LED_FUNCTION_HEARTBEAT, LED_FUNCTION_WLAN, etc,
-> 2. color constants.
+> You did not define memory node. Do you expect bootloader to fill it?
+> Does it change between different boards?
 >
 
-I actually had those defined initially :) But then specifically
-decided to remove those, as those are not very helpful when "label"
-and "linux,default-trigger" are already defined (and not many other
-boards seem to provide it). But ok, I'll pull those back in v2.
+Yeah, bootloader fills it. But now I can see it's probably better to
+specify it explicitly specify it in dts. Will do in v2.
 
-> > +                     gpios = <&gpg2 2 GPIO_ACTIVE_HIGH>;
-> > +                     linux,default-trigger = "heartbeat";
-> > +             };
-> > +
-> > +             /* eMMC_LED */
-> > +             user_led2: led-2 {
-> > +                     label = "yellow:user2";
-> > +                     gpios = <&gpg2 3 GPIO_ACTIVE_HIGH>;
-> > +                     linux,default-trigger = "mmc0";
-> > +             };
-> > +
-> > +             /* SD_LED */
-> > +             user_led3: led-3 {
-> > +                     label = "white:user3";
-> > +                     gpios = <&gpg2 4 GPIO_ACTIVE_HIGH>;
-> > +                     linux,default-trigger = "mmc2";
-> > +             };
-> > +
-> > +             /* WIFI_LED */
-> > +             wlan_active_led: led-4 {
-> > +                     label = "yellow:wlan";
-> > +                     gpios = <&gpg2 6 GPIO_ACTIVE_HIGH>;
-> > +                     linux,default-trigger = "phy0tx";
-> > +                     default-state = "off";
-> > +             };
-> > +
-> > +             /* BLUETOOTH_LED */
-> > +             bt_active_led: led-5 {
-> > +                     label = "blue:bt";
-> > +                     gpios = <&gpg2 7 GPIO_ACTIVE_HIGH>;
-> > +                     linux,default-trigger = "hci0rx";
-> > +                     default-state = "off";
-> > +             };
-> > +     };
-> > +};
-> > +
-> > +&oscclk {> + clock-frequency = <26000000>;
-> > +};
-> > +
-> > +&rtcclk {
-> > +     clock-frequency = <32768>;
-> > +};
-> > +
-> > +&usi_uart {
-> > +     samsung,clkreq-on; /* needed for UART mode */
-> > +     status = "okay";
-> > +};
-> > +
-> > +&serial_0 {
->
-> Order all phandle overrides by phandle name, so:
-> &oscclk
-> &rtcclk
-> &serial_0
-> &usi_uart
-> ...
->
-> > +     status = "okay";
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&uart1_pins>;
-> > +};
-> > +
-> > +&watchdog_cl0 {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&watchdog_cl1 {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&rtc {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&mmc_0 {
-> > +     status = "okay";
-> > +     mmc-hs200-1_8v;
-> > +     mmc-hs400-1_8v;
-> > +     cap-mmc-highspeed;
-> > +     non-removable;
-> > +     broken-cd;
->
-> Is it correct to have non-removable (typical for eMMC) and broken CD?
->
-
-Nice catch, not sure how I missed that. It's just ignored in dw_mmc
-driver in case of "non-removable", but that property just doesn't make
-any sense here.
-
-This and all above comments will be addressed in v2.
-
-> > +     mmc-hs400-enhanced-strobe;
-> > +     card-detect-delay = <200>;
-> > +     clock-frequency = <800000000>;
-> > +     bus-width = <8>;
-> > +     samsung,dw-mshc-ciu-div = <3>;
-> > +     samsung,dw-mshc-sdr-timing = <0 4>;
-> > +     samsung,dw-mshc-ddr-timing = <2 4>;
-> > +     samsung,dw-mshc-hs400-timing = <0 2>;
-> > +
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&sd0_clk_pins &sd0_cmd_pins &sd0_rdqs_pins &sd0_nreset_pins
-> > +                  &sd0_bus1_pins &sd0_bus4_pins &sd0_bus8_pins>;
-> > +};
-> > +
->
 >
 > Best regards,
 > Krzysztof
