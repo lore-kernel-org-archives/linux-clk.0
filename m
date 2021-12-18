@@ -2,92 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91698C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Dec 2021 21:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF10BC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Dec 2021 22:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234241AbhLRVMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Dec 2021 16:12:51 -0500
-Received: from st43p00im-zteg10062001.me.com ([17.58.63.166]:45220 "EHLO
-        st43p00im-zteg10062001.me.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234245AbhLRVMu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Dec 2021 16:12:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
-        t=1639861969; bh=v0/e1LR3GG6zYqcCoBHl7uIVUQ4dGVk6xV1W5S/bfJc=;
-        h=From:To:Subject:Date:Message-Id:MIME-Version;
-        b=RF17Z9+pzbKvz0uZtf8HS8CPwLe3cazlZ0DIf8jVcvVr6bUEzA5IdZox8wjT1wZUJ
-         owcMoxR/zFzbakpqtZvYQI10zEVr5PcEoWczBt9fD1IAUtYDoIiCWLcS8oWL/2vMdZ
-         K6f2fd5Iaznic5iEwk1rROuMi6gWJxnmhfH4clOUYt8yc01ruN9hBiOcaGe7KKCuTV
-         Zfqkqw6NlHmFM/YcJ8Qv6KZmpzPYtR+o/NCAtPVSJcTN54TAKJ0UBnsIA8JFDcOzeF
-         xesu/yBMob4aQE3/1KpuOb9wfDyfJ4D2WlOx99m9iMRvVRZwsJhJc9hfI4r4f8aVK/
-         VYax2WosbHuBA==
-Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
-        by st43p00im-zteg10062001.me.com (Postfix) with ESMTPSA id 779D080077C;
-        Sat, 18 Dec 2021 21:12:48 +0000 (UTC)
-From:   Alain Volmat <avolmat@me.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
-Subject: [PATCH v2 2/2] clk: st: clkgen-mux: search reg within node or parent
-Date:   Sat, 18 Dec 2021 22:11:57 +0100
-Message-Id: <20211218211157.188214-3-avolmat@me.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211218211157.188214-1-avolmat@me.com>
-References: <20211218211157.188214-1-avolmat@me.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.790
- definitions=2021-12-18_08:2021-12-15,2021-12-18 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-2009150000 definitions=main-2112180129
+        id S229722AbhLRWfJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Dec 2021 17:35:09 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:39498 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229473AbhLRWfI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 18 Dec 2021 17:35:08 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7EED01A06E1;
+        Sat, 18 Dec 2021 23:35:07 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 72E1C1A06FF;
+        Sat, 18 Dec 2021 23:35:07 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1114020304;
+        Sat, 18 Dec 2021 23:35:06 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] clk: imx: Updates for v5.17
+Date:   Sun, 19 Dec 2021 00:34:42 +0200
+Message-Id: <1639866882-9578-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to avoid having duplicated addresses within the DT,
-only have one unit-address per clockgen and each driver within
-the clockgen should look at the parent node (overall clockgen)
-to figure out the reg property.  Such behavior is already in
-place in other STi platform clock drivers such as clk-flexgen
-and clkgen-pll.  Keep backward compatibility by first looking
-at reg within the node before looking into the parent node.
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
-Signed-off-by: Alain Volmat <avolmat@me.com>
----
-v2: identical to v1
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
 
- drivers/clk/st/clkgen-mux.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/clk/st/clkgen-mux.c b/drivers/clk/st/clkgen-mux.c
-index ce583ded968a..ee39af7a0b72 100644
---- a/drivers/clk/st/clkgen-mux.c
-+++ b/drivers/clk/st/clkgen-mux.c
-@@ -57,10 +57,17 @@ static void __init st_of_clkgen_mux_setup(struct device_node *np,
- 	const char **parents;
- 	int num_parents = 0;
- 
-+	/*
-+	 * First check for reg property within the node to keep backward
-+	 * compatibility, then if reg doesn't exist look at the parent node
-+	 */
- 	reg = of_iomap(np, 0);
- 	if (!reg) {
--		pr_err("%s: Failed to get base address\n", __func__);
--		return;
-+		reg = of_iomap(of_get_parent(np), 0);
-+		if (!reg) {
-+			pr_err("%s: Failed to get base address\n", __func__);
-+			return;
-+		}
- 	}
- 
- 	parents = clkgen_mux_get_parents(np, &num_parents);
--- 
-2.25.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-5.17
 
+for you to fetch changes up to 9dd81021084ff22cf88a180d720f4f4b47392059:
+
+  clk: imx8mp: Fix the parent clk of the audio_root_clk (2021-11-22 17:33:12 +0200)
+
+----------------------------------------------------------------
+i.MX clock changes for 5.17
+
+- Set suppress_bind_attrs to true for i.MX8ULP driver
+- Switch from do_div to div64_ul for throughout all drivers
+- Fix imx8mn_clko1_sels for i.MX8MN
+- Remove unused IPG_AUDIO_ROOT from i.MX8MP
+- Switch parent for audio_root_clk to audio ahb in i.MX8MP driver
+
+----------------------------------------------------------------
+Adam Ford (1):
+      clk: imx8mn: Fix imx8mn_clko1_sels
+
+Changcheng Deng (1):
+      clk: imx: Use div64_ul instead of do_div
+
+Hui Wang (2):
+      clk: imx8mp: Remove IPG_AUDIO_ROOT from imx8mp-clock.h
+      clk: imx8mp: Fix the parent clk of the audio_root_clk
+
+Peng Fan (1):
+      clk: imx: imx8ulp: set suppress_bind_attrs to true
+
+ drivers/clk/imx/clk-imx8mn.c             | 6 +++---
+ drivers/clk/imx/clk-imx8mp.c             | 2 +-
+ drivers/clk/imx/clk-imx8ulp.c            | 1 +
+ drivers/clk/imx/clk-pllv3.c              | 6 +++---
+ include/dt-bindings/clock/imx8mp-clock.h | 1 -
+ 5 files changed, 8 insertions(+), 8 deletions(-)
