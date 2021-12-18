@@ -2,133 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417F2C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Dec 2021 10:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02586C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 18 Dec 2021 21:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbhLRKuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Dec 2021 05:50:54 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:41296
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231744AbhLRKuy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Dec 2021 05:50:54 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 3317940036
-        for <linux-clk@vger.kernel.org>; Sat, 18 Dec 2021 10:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1639824653;
-        bh=Wa9ILGMaRHRGBy0aLVrTaW+lHyiaTJlPeVGkAqUVXAA=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=eyaMlDydNFdKarqgfHMjOPQAyYlqUCOSzWfK816ES8G/0agnxMyZWUTfBPQIQEUDu
-         GCOYGaYpuQOFUVryDoKLU0PHwANrzqkSy2TR13Wfpx0Vcd6undnwTVE1c+UsHXcZqh
-         i9ZYvSPJy4CP3qFGfj1/Knd32PLRwPQWxPCQlozW8Ow/gy1+mi+IEGxcbuRvB+TYyp
-         JjJUKgEhiAysiytfyQ6u/48Ug1xjzkwa37TBis/0kGYiB2CqEMi8XCnxPgDrXgqDxu
-         8MtuN/0j6hf43NyF6Yz7II+aAZQbp4lsq0vZnKz8gVXi8JkGK2o5IPeOcd8Siu5qZS
-         IkBuRQDUEKiow==
-Received: by mail-lf1-f72.google.com with SMTP id h40-20020a0565123ca800b00402514d959fso2162695lfv.7
-        for <linux-clk@vger.kernel.org>; Sat, 18 Dec 2021 02:50:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=Wa9ILGMaRHRGBy0aLVrTaW+lHyiaTJlPeVGkAqUVXAA=;
-        b=eKhG0yGWFqIl8k9YAZnx2rHQRXN3Xmv8VRwBcbGzMa0huD204WgQRC6RSmWItmiOsx
-         B9197DrmcpVfLar4i+dqElQEa0b1D6fXFu0gzbsgS0d+JyDsrnU4J3QmBzNm6ZX1eb0T
-         iZiG+XGGbYyYbg/yvAKuQZFmc3qwGn+6myyBwJj+3T31oOVX0dIl5HlMHDVCl7e2frMO
-         o0iKSD3FodFPBWrxYvl6yM30qhkR0mmtNNyExQFOMhEolKXEy4Twml/OECkPe4CJoU8h
-         bpRaZ8iGHrmZ5OZKU7J5KOOYTCBtfC5clyg1rPFoBxUWHq0CkDeiu4O9sCJcQp+yqOai
-         29AQ==
-X-Gm-Message-State: AOAM531Nzkk2bISr9bDITnaRLHeSfuiplobaTWSDcznky+YqO0tO+G3B
-        nPNk/lDeYudRy9hGRTF4hWEgGp34HNCpq0U5ljT3C0pgAETnEDQrknXHecTs+GUnuGemLiQaMgU
-        jVNezJ7kieYj3G3AtOgHoCn05Kgc4RmuGllMT3Q==
-X-Received: by 2002:a05:6512:33a6:: with SMTP id i6mr5149395lfg.663.1639824652342;
-        Sat, 18 Dec 2021 02:50:52 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzI58O3aQ14JoDf1qzpEQ5Fr4XSXIQcCangkv6BKEfjOW3enxwPtjDy0n9OK2tsKPthEVp8EA==
-X-Received: by 2002:a05:6512:33a6:: with SMTP id i6mr5149381lfg.663.1639824652175;
-        Sat, 18 Dec 2021 02:50:52 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id s4sm1676721lfp.198.2021.12.18.02.50.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 18 Dec 2021 02:50:51 -0800 (PST)
-Message-ID: <5ad0b0e7-1c09-b7eb-87a3-e62e9e3d12af@canonical.com>
-Date:   Sat, 18 Dec 2021 11:50:50 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        David Virag <virag.david003@gmail.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        id S231240AbhLRVMl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Dec 2021 16:12:41 -0500
+Received: from st43p00im-ztfb10063301.me.com ([17.58.63.179]:55513 "EHLO
+        st43p00im-ztfb10063301.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234217AbhLRVMl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Dec 2021 16:12:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1639861960; bh=y1Q4So049yY6R/vuf+Xi1DcTVKT0QzoZ7rCKMVlWz0s=;
+        h=From:To:Subject:Date:Message-Id:MIME-Version;
+        b=jZObGqznkU6EM8+xJ1gdnGbLADC5MC6RVoYsfiVuQTyVMBfAcXJxTQPb79/sXDQaP
+         kAnJb0KJKjybiPsdyXce7+5Z1v9SEvuOBk8uWZicw6wYohi1guIbiUr5P8B/Em9YA6
+         Isa5xEWJi4ofup1cN1WQwz8FrdG1J+Zftwr4cEA59WoN6jzB87LI3/dlkmNAeNLoHa
+         mPrHrHxZkmRaHuNFaJ8Cx8+W/16pJLbK1DCVnWmSFOXYQTDQX4BjwUwRbvSwqsE+pg
+         xOTHL9heqWKhZGnFreqXlyxC/Os5YSuRw0xJqqGOyiJszAENTBW5YHmycBpv8VqyuG
+         4xFRJ2sc+hgtQ==
+Received: from localhost (101.220.150.77.rev.sfr.net [77.150.220.101])
+        by st43p00im-ztfb10063301.me.com (Postfix) with ESMTPSA id 356F0A40137;
+        Sat, 18 Dec 2021 21:12:38 +0000 (UTC)
+From:   Alain Volmat <avolmat@me.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sam Protsenko <semen.protsenko@linaro.org>,
-        Rob Herring <robh@kernel.org>
-References: <20211126203641.24005-1-semen.protsenko@linaro.org>
- <YagPWOj0CLxE/+ER@robh.at.kernel.org>
- <CAPLW+4=LTd8i2Tqr7Wa0NDRTJ5mRJXP=EvRCx84WxnwCDQ1eVg@mail.gmail.com>
- <CAPLW+4nk7Y8Psg9ZVacvzJeAV3VAGWfi+9hTPWgTeAWqh67AKQ@mail.gmail.com>
- <146b173e-f445-bebc-d44c-afd41123eb80@canonical.com>
-In-Reply-To: <146b173e-f445-bebc-d44c-afd41123eb80@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Patrice Chotard <patrice.chotard@foss.st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Alain Volmat <avolmat@me.com>
+Subject: [PATCH v2 0/2] clk: st: update to avoid DT warnings
+Date:   Sat, 18 Dec 2021 22:11:55 +0100
+Message-Id: <20211218211157.188214-1-avolmat@me.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.790
+ definitions=2021-12-18_08:2021-12-15,2021-12-18 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ mlxlogscore=560 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-2009150000 definitions=main-2112180129
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/12/2021 17:20, Krzysztof Kozlowski wrote:
-> On 14/12/2021 17:15, Sam Protsenko wrote:
->> On Tue, 7 Dec 2021 at 22:54, Sam Protsenko <semen.protsenko@linaro.org> wrote:
->>>
->>> On Thu, 2 Dec 2021 at 02:12, Rob Herring <robh@kernel.org> wrote:
->>>>
->>>> On Fri, 26 Nov 2021 22:36:40 +0200, Sam Protsenko wrote:
->>>>> System Register is used to configure system behavior, like USI protocol,
->>>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->>>>> make it possible to modify SYSREG registers.
->>>>>
->>>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
->>>>> and might be needed for corresponding Exynos850 features soon.
->>>>>
->>>>> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->>>>> ---
->>>>>  include/dt-bindings/clock/exynos850.h | 12 +++++++++---
->>>>>  1 file changed, 9 insertions(+), 3 deletions(-)
->>>>>
->>>>
->>>> Acked-by: Rob Herring <robh@kernel.org>
->>>
->>> Hi Sylwester,
->>>
->>> Can you please review and apply this series, if it's ok?
->>>
->>
->> Hi Krzysztof,
->>
->> Do you think it's possible to take this series in your tree? Once it's
->> applied, I can send the board support (dts) series -- this is the only
->> remaining blocker for that right now.
-> 
-> I would need an Ack from Sylwester anyway. If you have dependencies (the
-> DTS), you should send them together with it. Once Sylwester applies this
-> patch, the DTS either waits till next release or it has to be modified
-> to not depend on this patch.
+The serie contains 2 updates within clkgen-fsyn and clkgen-mux
+in order to allow those drivers to pick up the reg property
+within their parent node instead of their own node.  Such
+behavior is already in place for the other st clk drivers and
+to allow to not have several time the same reg value within
+the device tree.
+Those changes are also done in order to avoid DT warning seen
+when compiling with W=1 and indicating unique-unit-address issues.
 
-Sylwester,
+v2: update clkgen-fsyn patch to add a pr_err
 
-We need decision from your side. The apply-window is slowly closing, so
-at least take it so DTSI will be free to go next cycle.
+Alain Volmat (2):
+  clk: st: clkgen-fsyn: search reg within node or parent
+  clk: st: clkgen-mux: search reg within node or parent
 
-Best regards,
-Krzysztof
+ drivers/clk/st/clkgen-fsyn.c | 13 +++++++++++--
+ drivers/clk/st/clkgen-mux.c  | 11 +++++++++--
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+-- 
+2.25.1
+
