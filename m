@@ -2,119 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65DAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Dec 2021 08:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DE8C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Dec 2021 09:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234576AbhLTIoq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Dec 2021 03:44:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232711AbhLTIon (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Dec 2021 03:44:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E01DC061574;
-        Mon, 20 Dec 2021 00:44:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S229554AbhLTJbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Dec 2021 04:31:46 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59332
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229617AbhLTJbp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Dec 2021 04:31:45 -0500
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com [209.85.167.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 12846B80E18;
-        Mon, 20 Dec 2021 08:44:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61C2C36AE5;
-        Mon, 20 Dec 2021 08:44:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1639989880;
-        bh=farAOHRUHkY4wn804J1CSpMeG8tLSsZob7VAzmnxDZo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=A8F4gCVLwVXcC3HCPVniyIOekYCDtvujNFZdCQY+6yr2h6NDKiVic5H8ZWBW5z9Il
-         8naEN6RmlxNKQS510YquSqeSVA9u+ri+srdN9Emz6gOg0QD00V+fWPr7doCdKNk1TE
-         mLs3p9jf459rJMpnzrNlvFfsqC98LjmgBAhC78/H0ObnRES/raXoFclhoUJD7+U0x0
-         zWdN/tF9eRVJ50TzCBl34/+i9r6fjrJWJCFY6Om0TAJ+Kce7WLhtvHEcQfabiW2tnX
-         CueK0nmyi0/aD9k1NJIwdAc1zLOg+/m/WaGI1Icb2GSF5sgqWQa+0n8n7gtwxysrMD
-         wQqko2de+bOXw==
-Received: from cfbb000407.r.cam.camfibre.uk ([185.219.108.64] helo=why.misterjones.org)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1mzEHe-00DEvk-E9; Mon, 20 Dec 2021 08:44:38 +0000
-Date:   Mon, 20 Dec 2021 08:44:37 +0000
-Message-ID: <87o85bwtqi.wl-maz@kernel.org>
-From:   Marc Zyngier <maz@kernel.org>
-To:     David Virag <virag.david003@gmail.com>
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CB8BC4000E
+        for <linux-clk@vger.kernel.org>; Mon, 20 Dec 2021 09:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1639992702;
+        bh=q7I5LUCu0tEwQU8mlJ01Zkswbw7h7CV+lz20uT47oA0=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=vj+//xh4noKEGlaAHi/wf7nXYbygH1ZIOWRgEACtCbu45VEpxlFo6V6RAfB9P/23E
+         HSsB3UVZri9YU4zoG+OP+YkL3o4VFVZAELHZQnAilv/ic30Bxu+9UbrctiZfpx5hpP
+         JFfXG2gboB18qnq8z6yu+3s0xJf+FCv450NYUjh6lPw00zr3cXTSHl/tm6s0fWSRcH
+         Ag/6Kl0XADA1ZegFY8tAiuZ13v2wf6rugvte8Lll5arKd3hTdIg5nfMDuUwwOYUEQC
+         3D6HbtDGbNZZD9dUkF6Bn0IBZQpCOmoW3gRuOAWzs19eiXgCKOI2RSKallNuiJiEs5
+         JwObScGz2Eq/w==
+Received: by mail-lf1-f71.google.com with SMTP id e2-20020ac25ca2000000b00425a11d14a1so1951368lfq.11
+        for <linux-clk@vger.kernel.org>; Mon, 20 Dec 2021 01:31:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=q7I5LUCu0tEwQU8mlJ01Zkswbw7h7CV+lz20uT47oA0=;
+        b=qTUy1p7P5dZFgjMnN3IC7fnnHYINQHRmZkU/wBCJpxgvTgBzp+oVZZfV4cZR8TRv8B
+         EmwBX3BAHj8yYUodwIweG41VIx2odMPOTQdWHlonMFDmSYO3nLmWN0hPLC/cUdlZWwbf
+         iMdXY4uDr8fAcNXUp89f01pyTxzibxzd3UovCpJ9a6VRMk9BXWTseKQDzg+OD4YbsFFv
+         T4ZEFB6V1R1dbQPbztCfX4ZSzCa4d5erJXH9BfTCOHybN2m4NxoGS9SzPiW+6ilOBVwB
+         vVEFhDaYzgtwpgryxo2yC8IWxA+qME+GdZzLsFOkFNX7mTSWH8lD/nas2E64Vm6msfZb
+         hbeA==
+X-Gm-Message-State: AOAM530h0t7Ay2h/lmFugW9kcvZqeAPVGo23dNfyWSL//E9BLYOV7usV
+        g/PTTm/rUBLyye+mFYwv9mXye7Yrh3x5NZDf2d90mBtpKoWZqKK8ks7bTZn6WEexf2IUueRMnPc
+        TUGn+UFiiNqqX9ind9Fwz2eZISQD7z8iOwVghLw==
+X-Received: by 2002:a05:651c:503:: with SMTP id o3mr14038822ljp.249.1639992696191;
+        Mon, 20 Dec 2021 01:31:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzgVVgGiKkGKbx4ide5sjyVaqJ3UmUjO0Zkflx9HK1jDuh36xwydUtGqYdkrGBefX8MPBCelg==
+X-Received: by 2002:a05:651c:503:: with SMTP id o3mr14038784ljp.249.1639992695825;
+        Mon, 20 Dec 2021 01:31:35 -0800 (PST)
+Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id j19sm2466716lji.94.2021.12.20.01.31.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Dec 2021 01:31:34 -0800 (PST)
+Message-ID: <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
+Date:   Mon, 20 Dec 2021 10:31:33 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+Content-Language: en-US
+To:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] arm64: dts: exynos: Add initial device tree support for Exynos7885 SoC
-In-Reply-To: <cc27e22d9945b1ab5ccc7ef20eb36af63402ef54.camel@gmail.com>
-References: <20211206153124.427102-1-virag.david003@gmail.com>
-        <20211206153124.427102-8-virag.david003@gmail.com>
-        <b0f95b77e335596ee567ae83c1cbe549@misterjones.org>
-        <cc27e22d9945b1ab5ccc7ef20eb36af63402ef54.camel@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/27.1
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20211217161549.24836-1-semen.protsenko@linaro.org>
+ <20211217161549.24836-2-semen.protsenko@linaro.org>
+ <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: virag.david003@gmail.com, semen.protsenko@linaro.org, krzysztof.kozlowski@canonical.com, robh+dt@kernel.org, s.nawrocki@samsung.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 19 Dec 2021 14:36:20 +0000,
-David Virag <virag.david003@gmail.com> wrote:
->=20
-> On Tue, 2021-12-07 at 19:42 +0000, Marc Zyngier wrote:
-> > On 2021-12-06 15:31, David Virag wrote:
-> > > Add initial Exynos7885 device tree nodes with dts for the Samsung=20
-> > > Galaxy
-> > > A8 (2018), a.k.a. "jackpotlte", with model number "SM-A530F".
-> > > Currently this includes some clock support, UART support, and I2C=20
-> > > nodes.
-> > >=20
-> > > Signed-off-by: David Virag <virag.david003@gmail.com>
-> >=20
-> > [...]
-> >=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0psci {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0compatible =3D "arm,psci";
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0method =3D "smc";
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0cpu_suspend =3D <0xc4000001>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0cpu_off =3D <0x84000002>;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0cpu_on =3D <0xc4000003>;
-> >=20
-> > Aren't these the standard PSCI 0.2 function numbers? Can't you
-> > make the compatible "arm,psci-0.2" instead?
->=20
-> This is not a proper PSCI 0.2 implementation. For example 0.2 has a get
-> version call which is definitely not implemented properly as after
-> setting the compatible to 0.2 I get the following:
->=20
-> [    0.000000] psci: PSCIv65535.65535 detected in firmware.
->=20
-> Which is obviously not right.
+On 19/12/2021 23:29, Sylwester Nawrocki wrote:
+> On 17.12.2021 17:15, Sam Protsenko wrote:
+>> System Register is used to configure system behavior, like USI protocol,
+>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+>> make it possible to modify SYSREG registers.
+>>
+>> While at it, add also missing PMU and GPIO clocks, which looks necessary
+>> and might be needed for corresponding Exynos850 features soon.
+>>
+>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+>> Acked-by: Rob Herring<robh@kernel.org>
+>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
+>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+> 
+> Apologies for late reply, this patch is applied now.
+> 
 
-Indeed. That's a bloody -1 returned by the firmware. Quality
-implementation, as usual...
+Sam,
 
-Thanks,
+The clock is used in the DTSI, so since this was applied, there are only
+two choices now:
+1. wait for next cycle with DTSI and DTS,
+2. Resubmit with replacing the newly added clocks in DTSI/DTS with
+numbers and a TODO note.
 
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+Best regards,
+Krzysztof
