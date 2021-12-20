@@ -2,450 +2,277 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBFCC4321E
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Dec 2021 21:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0767C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Dec 2021 23:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230487AbhLTVTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Dec 2021 16:19:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39062 "EHLO
+        id S231852AbhLTXk1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Dec 2021 18:40:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230460AbhLTVTO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Dec 2021 16:19:14 -0500
-Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31720C06173E;
-        Mon, 20 Dec 2021 13:19:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-         s=20160729; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=/S9JxZ9sXF/7ep+LcG1ZWqE+PDcuY6kcgBg3LjCLV0M=; b=MCd4mfxFzwEx2XrKLOsWLj7guc
-        Hkltql1qHzw3l+/H9cyb+OMq3sc5talXBRZ3zIg69j2bdESpQzLVi8469ImdXL96ZvdXZCL9PZcjJ
-        c/S/Q5qow4E1DUx+yxlG4KRYDsIAIWmLpXE/kOrAs+tU00tUD8t8u5PcD+KsKtiGgBZc=;
-Received: from p54ae911a.dip0.t-ipconnect.de ([84.174.145.26] helo=localhost.localdomain)
-        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <nbd@nbd.name>)
-        id 1mzQ3o-0000zo-ET; Mon, 20 Dec 2021 22:19:08 +0100
-From:   Felix Fietkau <nbd@nbd.name>
-To:     linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     john@phrozen.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v8 07/14] clk: en7523: Add clock driver for Airoha EN7523 SoC
-Date:   Mon, 20 Dec 2021 22:18:47 +0100
-Message-Id: <20211220211854.89452-8-nbd@nbd.name>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20211220211854.89452-1-nbd@nbd.name>
-References: <20211220211854.89452-1-nbd@nbd.name>
+        with ESMTP id S229690AbhLTXk1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Dec 2021 18:40:27 -0500
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06A32C06173E
+        for <linux-clk@vger.kernel.org>; Mon, 20 Dec 2021 15:40:27 -0800 (PST)
+Received: by mail-oo1-xc35.google.com with SMTP id d1-20020a4a3c01000000b002c2612c8e1eso3535616ooa.6
+        for <linux-clk@vger.kernel.org>; Mon, 20 Dec 2021 15:40:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=IfBD0poswQleNgL1djW83bNzCVv6Q/P4s8iNGStEPw8=;
+        b=fi1gtgXVSQc1lAAMPzRv/NLfrbeTm3UfyRL3sbNtFSO5QosYVI/HnSyjvVq10TisG6
+         sRm5juw3M7Jfv8dBG/VhScPlfJgAtD0Tw0QRXYMuU+bg0+9/KvJdWl6LmQs9o05ogDEY
+         PD4rcIuL4mSJXxiHQsCCOSVvzGrUH9Ozwc6EGgARmCjNGrZoaer8/embc0iR6F7+CaOm
+         WbecrNLy74w7hqiGBG66Y4NBOAdWGHeH7mQI41Agw6aAvr9T6s/8pVQ2N4cCJngJJBLH
+         jN0BjgQDtv4C65Oi09MzYxUBGzquLhgNQdWT987Lx9TGxfnfv+5K66h+os1EL8HeQKPM
+         0QsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IfBD0poswQleNgL1djW83bNzCVv6Q/P4s8iNGStEPw8=;
+        b=zISDSqlUt+A6/g9FuwsxTuIGsAIX5Uqrk2WufIC1IPn+t9RN1ol0mWMtD1sZb8AE2Q
+         fZBM8Oo9PEkvhEglNWGEFuqv9EPNU7QHzrhlViKdWwn/q9BOyiDcSvRXspRh011AMFOZ
+         Jq8halPeIu88Rfz+38pbxUg7js2Do4+O6SGSQxIlV/UId4ZgC8weELe9a0IR9k34BabV
+         AVPLWRQexMIC/NwADmMyaK4MjkZcYbEfvBLbO9fJfs+XzEUUH5aXlisWwP7Cyb6NvdCN
+         PULRgb7ZNSuqsgCe/yB622gST+jjWbMhNTMiwKpyYggcjkzfTmimrMNekPBklWiPB0Vg
+         9QtQ==
+X-Gm-Message-State: AOAM533BWyr0XXlBiktJnHkmN2PpObVd1ecJkZqb78dcnEezHHINY7FA
+        QPVxCWmTLOTylE5K+GZ7hcDbeg==
+X-Google-Smtp-Source: ABdhPJwh53hhyKKfomXWnVYDN2dH7I0RVMHHKs61Qk8CtgZkZCgQGGB2P6zYoGJPCd042CYzKMqNtw==
+X-Received: by 2002:a4a:8701:: with SMTP id z1mr322018ooh.68.1640043626248;
+        Mon, 20 Dec 2021 15:40:26 -0800 (PST)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id j13sm3731715oil.42.2021.12.20.15.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Dec 2021 15:40:25 -0800 (PST)
+Date:   Mon, 20 Dec 2021 15:41:34 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Loic Poulain <loic.poulain@linaro.org>,
+        Mike Tipton <quic_mdtipton@quicinc.com>
+Cc:     agross@kernel.org, sboyd@kernel.org, shawn.guo@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: CLK_OPS_PARENT_ENABLE flag for
+ rcg2 clocks
+Message-ID: <YcEUrtQuJ5CGF2RW@ripper>
+References: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver only registers fixed rate clocks, since the clocks are fully
-initialized by the boot loader and should not be changed later, according
-to Airoha.
+On Mon 20 Dec 01:54 PST 2021, Loic Poulain wrote:
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
----
- drivers/clk/Kconfig      |   9 +
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-en7523.c | 350 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 360 insertions(+)
- create mode 100644 drivers/clk/clk-en7523.c
+> When a rcg2 clock migrates to a new parent, both the old and new
+> parent clocks must be enabled to complete the transition. This can
+> be automatically performed by the clock core when a clock is flagged
+> with CLK_OPS_PARENT_ENABLE.
+> 
+> Without this, we may hit rate update failures:
+> gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
+> WARNING: CPU: 1 PID: 82 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xe0/0xf0
+> 
+> Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+> Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-qcm2290.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+> index b6fa7b8..9e1d88e 100644
+> --- a/drivers/clk/qcom/gcc-qcm2290.c
+> +++ b/drivers/clk/qcom/gcc-qcm2290.c
+> @@ -674,6 +674,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+>  		.name = "gcc_usb30_prim_mock_utmi_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c5b3dc97396a..c973ac1a4890 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -192,6 +192,15 @@ config COMMON_CLK_CS2000_CP
- 	help
- 	  If you say yes here you get support for the CS2000 clock multiplier.
- 
-+config COMMON_CLK_EN7523
-+	bool "Clock driver for Airoha EN7523 SoC system clocks"
-+	depends on OF
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	default ARCH_AIROHA
-+	help
-+	  This driver provides the fixed clocks and gates present on Airoha
-+	  ARM silicon.
-+
- config COMMON_CLK_FSL_FLEXSPI
- 	tristate "Clock driver for FlexSPI on Layerscape SoCs"
- 	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e42312121e51..be11d88c1603 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
- obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
-+obj-$(CONFIG_COMMON_CLK_EN7523)		+= clk-en7523.o
- obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
- obj-$(CONFIG_COMMON_CLK_FSL_FLEXSPI)	+= clk-fsl-flexspi.o
- obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-new file mode 100644
-index 000000000000..0ee44f6538e6
---- /dev/null
-+++ b/drivers/clk/clk-en7523.c
-@@ -0,0 +1,350 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/regmap.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/en7523-clk.h>
-+
-+#define REG_PCI_CONTROL			0x88
-+#define   REG_PCI_CONTROL_PERSTOUT	BIT(29)
-+#define   REG_PCI_CONTROL_PERSTOUT1	BIT(26)
-+#define   REG_PCI_CONTROL_REFCLK_EN1	BIT(22)
-+#define REG_GSW_CLK_DIV_SEL		0x1b4
-+#define REG_EMI_CLK_DIV_SEL		0x1b8
-+#define REG_BUS_CLK_DIV_SEL		0x1bc
-+#define REG_SPI_CLK_DIV_SEL		0x1c4
-+#define REG_SPI_CLK_FREQ_SEL		0x1c8
-+#define REG_NPU_CLK_DIV_SEL		0x1fc
-+#define REG_CRYPTO_CLKSRC		0x200
-+#define REG_RESET_CONTROL		0x834
-+#define   REG_RESET_CONTROL_PCIEHB	BIT(29)
-+#define   REG_RESET_CONTROL_PCIE1	BIT(27)
-+#define   REG_RESET_CONTROL_PCIE2	BIT(26)
-+
-+struct en_clk_desc {
-+	int id;
-+	const char *name;
-+	u32 base_reg;
-+	u32 base_bits;
-+	u32 base_shift;
-+	union {
-+		const u32 *base_values;
-+		u32 base_value;
-+	};
-+	int n_base_values;
-+
-+	u32 div_reg;
-+	u32 div_bits;
-+	u32 div_shift;
-+	u32 div_val0;
-+	u32 div_step;
-+};
-+
-+struct en_clk_gate {
-+	void __iomem *base;
-+	struct clk_hw hw;
-+};
-+
-+static const u32 gsw_base[] = { 400000000, 500000000 };
-+static const u32 emi_base[] = { 333000000, 400000000 };
-+static const u32 bus_base[] = { 500000000, 540000000 };
-+static const u32 slic_base[] = { 100000000, 3125000 };
-+static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
-+
-+static const struct en_clk_desc en7523_base_clks[] = {
-+	{
-+		.id = EN7523_CLK_GSW,
-+		.name = "gsw",
-+
-+		.base_reg = REG_GSW_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = gsw_base,
-+		.n_base_values = ARRAY_SIZE(gsw_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_EMI,
-+		.name = "emi",
-+
-+		.base_reg = REG_EMI_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = emi_base,
-+		.n_base_values = ARRAY_SIZE(emi_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_BUS,
-+		.name = "bus",
-+
-+		.base_reg = REG_BUS_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = bus_base,
-+		.n_base_values = ARRAY_SIZE(bus_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_SLIC,
-+		.name = "slic",
-+
-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
-+		.base_bits = 1,
-+		.base_shift = 0,
-+		.base_values = slic_base,
-+		.n_base_values = ARRAY_SIZE(slic_base),
-+
-+		.div_reg = REG_SPI_CLK_DIV_SEL,
-+		.div_bits = 5,
-+		.div_shift = 24,
-+		.div_val0 = 20,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_SPI,
-+		.name = "spi",
-+
-+		.base_reg = REG_SPI_CLK_DIV_SEL,
-+
-+		.base_value = 400000000,
-+
-+		.div_bits = 5,
-+		.div_shift = 8,
-+		.div_val0 = 40,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_NPU,
-+		.name = "npu",
-+
-+		.base_reg = REG_NPU_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 8,
-+		.base_values = npu_base,
-+		.n_base_values = ARRAY_SIZE(npu_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_CRYPTO,
-+		.name = "crypto",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = emi_base,
-+		.n_base_values = ARRAY_SIZE(emi_base),
-+	}
-+};
-+
-+static const struct of_device_id of_match_clk_en7523[] = {
-+	{ .compatible = "airoha,en7523-scu", },
-+	{ /* sentinel */ }
-+};
-+
-+static u32 en7523_get_base_rate(void __iomem *base, int i)
-+{
-+	const struct en_clk_desc *desc = &en7523_base_clks[i];
-+	u32 val;
-+
-+	if (!desc->base_bits)
-+		return desc->base_value;
-+
-+	val = readl(base + desc->base_reg);
-+	val >>= desc->base_shift;
-+	val &= (1 << desc->base_bits) - 1;
-+
-+	if (val >= desc->n_base_values)
-+		return 0;
-+
-+	return desc->base_values[val];
-+}
-+
-+static u32 en7523_get_div(void __iomem *base, int i)
-+{
-+	const struct en_clk_desc *desc = &en7523_base_clks[i];
-+	u32 reg, val;
-+
-+	if (!desc->div_bits)
-+		return 1;
-+
-+	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-+	val = readl(base + reg);
-+	val >>= desc->div_shift;
-+	val &= (1 << desc->div_bits) - 1;
-+
-+	if (!val && desc->div_val0)
-+		return desc->div_val0;
-+
-+	return (val + 1) * desc->div_step;
-+}
-+
-+static int en7523_pci_is_enabled(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+
-+	return !!(readl(cg->base + REG_PCI_CONTROL) & REG_PCI_CONTROL_REFCLK_EN1);
-+}
-+
-+static int en7523_pci_enable(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val, mask;
-+
-+	/* Need to pull device low before reset */
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	val &= ~(REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT);
-+	writel(val, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+
-+	/* Enable PCIe port 1 */
-+	val |= REG_PCI_CONTROL_REFCLK_EN1;
-+	writel(val, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+
-+	/* Reset to default */
-+	val = readl(np_base + REG_RESET_CONTROL);
-+	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
-+	       REG_RESET_CONTROL_PCIEHB;
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	usleep_range(1000, 2000);
-+	writel(val | mask, np_base + REG_RESET_CONTROL);
-+	msleep(100);
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	usleep_range(5000, 10000);
-+
-+	/* Release device */
-+	mask = REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT;
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	writel(val & ~mask, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+	writel(val | mask, np_base + REG_PCI_CONTROL);
-+	msleep(250);
-+
-+	return 0;
-+}
-+
-+static void en7523_pci_disable(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val;
-+
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	val &= ~REG_PCI_CONTROL_REFCLK_EN1;
-+	writel(val, np_base + REG_PCI_CONTROL);
-+}
-+
-+static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
-+					       void __iomem *np_base)
-+{
-+	static const struct clk_ops pcie_gate_ops = {
-+		.is_enabled = en7523_pci_is_enabled,
-+		.enable = en7523_pci_enable,
-+		.disable = en7523_pci_disable,
-+	};
-+	struct clk_init_data init = {
-+		.name = "pcie",
-+		.ops = &pcie_gate_ops,
-+	};
-+	struct en_clk_gate *cg;
-+
-+	cg = devm_kzalloc(dev, sizeof(*cg), GFP_KERNEL);
-+	if (!cg)
-+		return NULL;
-+
-+	cg->base = np_base;
-+	cg->hw.init = &init;
-+	en7523_pci_disable(&cg->hw);
-+
-+	if (clk_hw_register(NULL, &cg->hw))
-+		return NULL;
-+
-+	return &cg->hw;
-+}
-+
-+static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
-+				   void __iomem *base, void __iomem *np_base)
-+{
-+	struct clk_hw *hw;
-+	u32 rate;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(en7523_base_clks); i++) {
-+		const struct en_clk_desc *desc = &en7523_base_clks[i];
-+
-+		rate = en7523_get_base_rate(base, i);
-+		rate /= en7523_get_div(base, i);
-+
-+		hw = clk_hw_register_fixed_rate(NULL, desc->name, NULL, 0, rate);
-+		if (IS_ERR(hw)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+			       desc->name, PTR_ERR(hw));
-+			continue;
-+		}
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	hw = en7523_register_pcie_clk(dev, np_base);
-+	clk_data->hws[EN7523_CLK_PCIE] = hw;
-+
-+	clk_data->num = EN7523_NUM_CLOCKS;
-+}
-+
-+static int en7523_clk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct clk_hw_onecell_data *clk_data;
-+	void __iomem *base, *np_base;
-+	int r;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	np_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(base))
-+		return PTR_ERR(np_base);
-+
-+	clk_data = devm_kzalloc(&pdev->dev,
-+				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
-+
-+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
-+
-+	return r;
-+}
-+
-+static struct platform_driver clk_en7523_drv = {
-+	.probe = en7523_clk_probe,
-+	.driver = {
-+		.name = "clk-en7523",
-+		.of_match_table = of_match_clk_en7523,
-+	},
-+};
-+
-+static int clk_en7523_init(void)
-+{
-+	return platform_driver_register(&clk_en7523_drv);
-+}
-+
-+arch_initcall(clk_en7523_init);
--- 
-2.34.1
+This seems like a correct fix for the obvious problem that we might end
+up invoking clk_set_rate() and clk_set_parent() for these clocks while
+their (and thereby themselves - in a software sense) are disabled.
 
+
+However, clocks that downstream are marked "enable_safe_config", may in
+addition be enabled by the hardware, behind out back. As such we must
+ensure that they always have a valid configuration, we do this by
+"parking" them on CXO whenever we're going to disable their parent
+clocks.
+
+Upstream we handle this by using the clk_rcg2_shared_ops, which will do
+exactly this.
+
+
+PS. Unfortunately these RCGs doesn't allow us to reliably implement
+is_enabled() and as such clk_disable_unused() will skip parking the
+unused clocks and continue to disable the PLLs feeding them (if they are
+unused). I don't think this is a problem for the clocks you list here,
+but we certainly have a problem with this in the dispcc. So this is
+currently being discussed. For now it's expected that booting without
+"clk_ignore_unused" is "broken".
+
+Regards,
+Bjorn
+
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -710,6 +711,7 @@ static struct clk_rcg2 gcc_camss_axi_clk_src = {
+>  		.name = "gcc_camss_axi_clk_src",
+>  		.parent_data = gcc_parents_4,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_4),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -730,6 +732,7 @@ static struct clk_rcg2 gcc_camss_cci_clk_src = {
+>  		.name = "gcc_camss_cci_clk_src",
+>  		.parent_data = gcc_parents_9,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_9),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -752,6 +755,7 @@ static struct clk_rcg2 gcc_camss_csi0phytimer_clk_src = {
+>  		.name = "gcc_camss_csi0phytimer_clk_src",
+>  		.parent_data = gcc_parents_5,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_5),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -766,6 +770,7 @@ static struct clk_rcg2 gcc_camss_csi1phytimer_clk_src = {
+>  		.name = "gcc_camss_csi1phytimer_clk_src",
+>  		.parent_data = gcc_parents_5,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_5),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -854,6 +859,7 @@ static struct clk_rcg2 gcc_camss_ope_ahb_clk_src = {
+>  		.name = "gcc_camss_ope_ahb_clk_src",
+>  		.parent_data = gcc_parents_6,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_6),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -912,6 +918,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_clk_src = {
+>  		.name = "gcc_camss_tfe_0_clk_src",
+>  		.parent_data = gcc_parents_7,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_7),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -936,6 +943,7 @@ static struct clk_rcg2 gcc_camss_tfe_0_csid_clk_src = {
+>  		.name = "gcc_camss_tfe_0_csid_clk_src",
+>  		.parent_data = gcc_parents_8,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_8),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -950,6 +958,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_clk_src = {
+>  		.name = "gcc_camss_tfe_1_clk_src",
+>  		.parent_data = gcc_parents_7,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_7),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -964,6 +973,7 @@ static struct clk_rcg2 gcc_camss_tfe_1_csid_clk_src = {
+>  		.name = "gcc_camss_tfe_1_csid_clk_src",
+>  		.parent_data = gcc_parents_8,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_8),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1008,6 +1018,7 @@ static struct clk_rcg2 gcc_camss_top_ahb_clk_src = {
+>  		.name = "gcc_camss_top_ahb_clk_src",
+>  		.parent_data = gcc_parents_4,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_4),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1030,6 +1041,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+>  		.name = "gcc_gp1_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1044,6 +1056,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+>  		.name = "gcc_gp2_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1058,6 +1071,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+>  		.name = "gcc_gp3_clk_src",
+>  		.parent_data = gcc_parents_2,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_2),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1078,6 +1092,7 @@ static struct clk_rcg2 gcc_pdm2_clk_src = {
+>  		.name = "gcc_pdm2_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1220,6 +1235,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
+>  		.name = "gcc_sdcc1_apps_clk_src",
+>  		.parent_data = gcc_parents_1,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_1),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_floor_ops,
+>  	},
+>  };
+> @@ -1243,6 +1259,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+>  		.name = "gcc_sdcc1_ice_core_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1267,6 +1284,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+>  		.name = "gcc_sdcc2_apps_clk_src",
+>  		.parent_data = gcc_parents_12,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_12),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1289,6 +1307,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
+>  		.name = "gcc_usb30_prim_master_clk_src",
+>  		.parent_data = gcc_parents_0,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_0),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> @@ -1303,6 +1322,7 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src = {
+>  		.name = "gcc_usb3_prim_phy_aux_clk_src",
+>  		.parent_data = gcc_parents_13,
+>  		.num_parents = ARRAY_SIZE(gcc_parents_13),
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  		.ops = &clk_rcg2_ops,
+>  	},
+>  };
+> -- 
+> 2.7.4
+> 
