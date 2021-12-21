@@ -2,135 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D200C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 12:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A861DC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 14:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237420AbhLUMKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 07:10:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41608 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbhLUMKJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 07:10:09 -0500
-Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A80C061574
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 04:10:09 -0800 (PST)
-Received: by mail-vk1-xa2a.google.com with SMTP id g65so5111368vkf.4
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 04:10:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ywE2wpW05e6e2QZaQTpP58GvLD74b2rkAJqlWUowmCc=;
-        b=QbBRef6nW930vco2pV2wG94SZ1qWOjymi1QT8iGl9e263UDkeJe9IGCvKaeU8bQRCd
-         eNYPgChVVVtngwS0c7Ne/r5KqoPgN5ciSAbOy5i3v8Fpa7Pou6sWseMYr/vDxFjbuKF8
-         zS2YbUnDO4qh0Vk82+SY9vMuKZzQxGEWgdXhQ/77QfQ+dsZPyxUW7GTpe4a38jXQQ0+I
-         Y/eSMiCyFWyqRy6My34oIbwdNHb4X3NDgDl1bPkoXJLR08ng1wuXfJKcnYQiB7f3Ffsh
-         dLM7iYf1GaKv3ohqAsQO34oQnaFkHrYdJET7HTDjWite8ncZWyr41csQglY+zfAxBusu
-         s6oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ywE2wpW05e6e2QZaQTpP58GvLD74b2rkAJqlWUowmCc=;
-        b=IEDM1x8b+MO7eSOTyOUxnqr+BrFJDgRIyZ77/gVOpPXqT4uCcTDR7GeJoVrwNxIi1T
-         sbTB6CVsq403PGEC+p68LYEYggcCY40E7k2YZoLVadxA26l38tSACcS8ruS+YaQAlOCg
-         t06MEa11Kq5wea/ayAOEoNWm5TUGWenCqjwTncAiR6/7ilWGjn4Sq9IFFjTAMkADL/HK
-         iuBXm5GkZ+tAV1wm7RBxEUQafjEJUAGYA2h21C0JgOSPxwEe68e+YcYA+QeXsf+2EYVH
-         UpYuX3qlAmeZIdgE2ADzkfznWyJ21cLpOz/IxCBgRsPgYUGVxvJziS6a0jdmv1iIs7x3
-         t6vQ==
-X-Gm-Message-State: AOAM530IBQspdxX2jtb1MXPu7F+18XJwsZ5chcpyrNvhTBICN19iAYcm
-        9bCRQXyTASvYm873iLLHmVgMf8HRbTqAwk1H0m4BeQ==
-X-Google-Smtp-Source: ABdhPJzPkIG0HQ2hdBNtswKDaMWmHQN7fmzn9zABEvpB4VQXYtrRqfmUsSSalENZnUPxHjjWEz8LBANx+HOfpCMlso4=
-X-Received: by 2002:a1f:b20b:: with SMTP id b11mr1044228vkf.13.1640088608342;
- Tue, 21 Dec 2021 04:10:08 -0800 (PST)
+        id S238339AbhLUOGm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 09:06:42 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:44935 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237747AbhLUOGm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 09:06:42 -0500
+Received: from mail-wr1-f43.google.com ([209.85.221.43]) by
+ mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MTiLj-1mtqk120hJ-00U5ht; Tue, 21 Dec 2021 15:06:40 +0100
+Received: by mail-wr1-f43.google.com with SMTP id i22so27127046wrb.13;
+        Tue, 21 Dec 2021 06:06:40 -0800 (PST)
+X-Gm-Message-State: AOAM533EreKVYHRdsOqxdu2CfSM+jfTWJ8CoIzQj63yzl6Hg830IIZag
+        64jl4sYYM4AedDiG6jS+ZalVB6CDTghYEmneBu4=
+X-Google-Smtp-Source: ABdhPJyzvQ/1QAK1GqHOaaSnEoVf7yge/oTnq2f+7MJ+Itino1uirIiewhJO40OrvktYWj5bEn5HdqsDGLHkkhTqttQ=
+X-Received: by 2002:a5d:6d0e:: with SMTP id e14mr2899826wrq.407.1640095600018;
+ Tue, 21 Dec 2021 06:06:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20211217161549.24836-1-semen.protsenko@linaro.org>
- <20211217161549.24836-2-semen.protsenko@linaro.org> <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
- <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com> <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
- <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-In-Reply-To: <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 21 Dec 2021 14:09:56 +0200
-Message-ID: <CAPLW+4kJP5pnrg+Nbi=b6p_RBDb+JFcdLk9Ep2JeVg=z7dvCkw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+References: <20211220211854.89452-1-nbd@nbd.name> <20211220211854.89452-8-nbd@nbd.name>
+In-Reply-To: <20211220211854.89452-8-nbd@nbd.name>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 21 Dec 2021 15:06:23 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3Qy8FJpACTqt85Enm72aJ=vzUfiEMZ4=dRqFmunyOm1Q@mail.gmail.com>
+Message-ID: <CAK8P3a3Qy8FJpACTqt85Enm72aJ=vzUfiEMZ4=dRqFmunyOm1Q@mail.gmail.com>
+Subject: Re: [PATCH v8 07/14] clk: en7523: Add clock driver for Airoha EN7523 SoC
+To:     Felix Fietkau <nbd@nbd.name>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
+        John Crispin <john@phrozen.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:ljYAPtxMHXEoMGCbEbbHrv5+Aa9r4tC90wLiKFQ/bmUyETO2HF0
+ MoiLw0SvuWF8r0IxWuwrrwhyyPdC0SiqxYTJEd0GdF3hFCMIkJgrwIg1hjhhbk4FH0/1ea+
+ QyDZuFCe2nPqEIDM5w+OhEv7Lrinuv6n4jR3TlQC1ityPh66H2XC/OMuwgn+X5FMJFsblne
+ HmSzMrz4tzIvQzfnw8Qvw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WZq3tfczVnw=:+T+xC3CFS0KAkR58yvALwm
+ urm0yX6vC6/NeBf8vqBT678Gvx0oJS9MzbE17yWjfIhU/HrgPNBRRceWpayVglFfHB3canvxC
+ OoycIMAnSBlhLOSMM5kptXWOKxfALyfDhETRub9IeWWYXFHZRsiAu8gCIu9t3Voy6dXY3sI49
+ fQc0LhhbaroGGsH8V63D1C59kRwN2USs1/LSPvoWXgTfsKZsqV03Scb39g8X8CXoVf6xfM8f+
+ exvq07D3iocqgcLcPTYHhMzB8jT50DvUadVPyR002iZ7hwzLccxWm+BzS0h7qZrJh3p7lBRdI
+ gBpwjTKikBnNldy7luGvskUhPQco0dxSV9RIuY25z88IzsYCp6bIY6i+igJym210DsGXXcR3e
+ 1FTmWl/4i+EFMyMDiWtZxL/QaLPMtR1y6u/+b/9gq6wYirzQ1Fx3II9vVBvPJhUsu4ZLpbTC9
+ 2iKIw5HUGgvi7Z5znKQ0GnP0nqhQXKpVmJMBKvTcn2gkTxTBWrENq/CaJCohJaW6LTOZm/1yJ
+ pBwfi7iWcyupzogNbZuGmAQrjE1pdJwh3t7wAdkhF8lQh8td0wtJ/IsveCtOtvMAxhRHPxr4L
+ QziH36W5laidt27LUh11GbOFWVkj+5p+hI6kBF3WOTPfrT9Blans6o3UcIacLK9DBAxe95MKA
+ RSdKJTMHdWWDW0WrdnmUR0OhfIngDpSWAIE6e2TaAQWSGvrwq5l71lbiyld/zSoc+rq1MmPs2
+ PdRj4YksasiSotdZHfsOy6xi+XlSL9T/RGA5G/r9JbfHFQabrYvrq5PuS3DMcIIJgd9OXVPZr
+ 8eotii0EsCZ9UZRP4RuCfvwaizk+PjkroU1/5aq5wiL2KcyiZI=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Dec 2021 at 10:19, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
+On Mon, Dec 20, 2021 at 10:18 PM Felix Fietkau <nbd@nbd.name> wrote:
 >
-> On 20/12/2021 15:55, Sam Protsenko wrote:
-> > On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
-> > <krzysztof.kozlowski@canonical.com> wrote:
-> >>
-> >> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
-> >>> On 17.12.2021 17:15, Sam Protsenko wrote:
-> >>>> System Register is used to configure system behavior, like USI protocol,
-> >>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
-> >>>> make it possible to modify SYSREG registers.
-> >>>>
-> >>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
-> >>>> and might be needed for corresponding Exynos850 features soon.
-> >>>>
-> >>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
-> >>>> Acked-by: Rob Herring<robh@kernel.org>
-> >>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
-> >>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
-> >>>
-> >>> Apologies for late reply, this patch is applied now.
-> >>>
-> >>
-> >> Sam,
-> >>
-> >> The clock is used in the DTSI, so since this was applied, there are only
-> >> two choices now:
-> >> 1. wait for next cycle with DTSI and DTS,
-> >> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
-> >> numbers and a TODO note.
-> >>
-> >
-> > But why? I thought because Sylwester applied my clock patches, those
-> > will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
-> > get it wrong, please let me know why, and I'll go with item (2) you
-> > suggested.
+> This driver only registers fixed rate clocks, since the clocks are fully
+> initialized by the boot loader and should not be changed later, according
+> to Airoha.
 >
-> If I apply the DTSI+DTS, all my builds will start failing. The
-> linux-next (since Sylwester's tree is included) should build fine, but
-> my tree won't be buildable anymore. Then arm-soc pulls my tree and gets
-> said because it does not build. Later, Linus will be unhappy if he pulls
-> arm-soc (thus mine) before clock tree.
->
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
 
-I see. Thanks for the explanation!
+I don't have any particular comments on the driver itself. I'm happy
+to merge it through
+the soc tree for the initial support of the clk maintainers are ok
+with it and have reviewed
+the actual code.
 
-> Other solution, instead of using raw numbers, is to copy-paste the clock
-> macros you use directly in DTSI and do not include the clock header.
-> This actually might be cleaner choice - changes will be limited to one
-> place in DTSI.
->
+>  drivers/clk/Kconfig      |   9 +
+>  drivers/clk/Makefile     |   1 +
+>  drivers/clk/clk-en7523.c | 350 +++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 360 insertions(+)
+>  create mode 100644 drivers/clk/clk-en7523.c
 
-Will do so in v5.
+I think this should go into drivers/clk/mediatek, as it probably shares
+some of the logic with the mt762x drivers in there. I'd suggest adding the
+maintainers for those drivers to Cc for additional review.
 
-> Best regards,
-> Krzysztof
+       Arnd
