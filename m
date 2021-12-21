@@ -2,127 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1643C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 10:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D200C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 12:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233429AbhLUKj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 05:39:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
+        id S237420AbhLUMKJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 07:10:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbhLUKj2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 05:39:28 -0500
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB525C061574
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 02:39:27 -0800 (PST)
-Received: by mail-pl1-x635.google.com with SMTP id y7so10461568plp.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 02:39:27 -0800 (PST)
+        with ESMTP id S229579AbhLUMKJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 07:10:09 -0500
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A80C061574
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 04:10:09 -0800 (PST)
+Received: by mail-vk1-xa2a.google.com with SMTP id g65so5111368vkf.4
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 04:10:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OKwtJBcsU+KGenhnkPUish86uil7JAo87n3Fj1EyeVU=;
-        b=VvezOSjPnpJorYhv7DNh8w4QJoPnmnM6MTc8XB0eWK/BPS1hMEV7GCb13xCvWTh/tH
-         J11G2G2zw60qufmBOoUnXGnpyae4YLpCI8kCDaliNTqTQmMGvEAN5L7VqQ3++KaDrCUc
-         6qD6CNmebCVofzrOWvhisphqeLy3lotjq2GrqMjo5fC8aPEsXktHMYAg93HxYUqo0BIM
-         dc8Yn+czwZBBTMlDSee2lnm2Siiqu4c7Muqn0EkW/TwMuo+5cZG+qztRKhVrtkGi+acr
-         G9xDd4B79r4VzZ15uo3CSD2Ktx6pJuXUbh8GILR8PyK4dJM84t8gmIp69mNaC36fJuM3
-         tpfw==
+        bh=ywE2wpW05e6e2QZaQTpP58GvLD74b2rkAJqlWUowmCc=;
+        b=QbBRef6nW930vco2pV2wG94SZ1qWOjymi1QT8iGl9e263UDkeJe9IGCvKaeU8bQRCd
+         eNYPgChVVVtngwS0c7Ne/r5KqoPgN5ciSAbOy5i3v8Fpa7Pou6sWseMYr/vDxFjbuKF8
+         zS2YbUnDO4qh0Vk82+SY9vMuKZzQxGEWgdXhQ/77QfQ+dsZPyxUW7GTpe4a38jXQQ0+I
+         Y/eSMiCyFWyqRy6My34oIbwdNHb4X3NDgDl1bPkoXJLR08ng1wuXfJKcnYQiB7f3Ffsh
+         dLM7iYf1GaKv3ohqAsQO34oQnaFkHrYdJET7HTDjWite8ncZWyr41csQglY+zfAxBusu
+         s6oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OKwtJBcsU+KGenhnkPUish86uil7JAo87n3Fj1EyeVU=;
-        b=SFgTDUcPTQB1MPLXA8knorWdGh+JXOGkv2J3S7pO7AoP/B50g9vOBPpR9i68Ra2bpN
-         ohMHjiUygvqMYTIc0URSgCAYE8V8SwfJEabMAn8kZCvhSxyv3s7Z6S0pgTfcwuxP+nc7
-         oSlpAuQTHjaLWV307SVOJKooXralf8wdC+0ha72+l1U/PXmR3w9kXSmxaVKqBaE88gjO
-         bVzZ7MQY+o/s1LtFqieWYO+yZ1MBCXUt/i/r5cFWafBQ/8KmNBK+yZE6EVHXxLpMwHhS
-         ndC8zFubxf/TMOCJjLw5NqErdmkDJKAQKdT7kyFwANQRwB72xR2pD4f095ET3MtRyz/1
-         18Dg==
-X-Gm-Message-State: AOAM530rWoGlk3qDVgV6EpyeDjc66gfYBC1lkUD9I+8mW1mYi2mbRAxw
-        gtsppbS7NfKMGhmAz3c7lUH/vl1dU56jxVHS4KONvw==
-X-Google-Smtp-Source: ABdhPJyWyxk6opdxp188WP0pJhEVQ+v4B+km1duz3n74xfRqoSLa7QkUJq0CnRr2c2KGWlpBamMdnlIsKPuH60nme2c=
-X-Received: by 2002:a17:902:9349:b0:148:b21c:5875 with SMTP id
- g9-20020a170902934900b00148b21c5875mr2508439plp.51.1640083167188; Tue, 21 Dec
- 2021 02:39:27 -0800 (PST)
+        bh=ywE2wpW05e6e2QZaQTpP58GvLD74b2rkAJqlWUowmCc=;
+        b=IEDM1x8b+MO7eSOTyOUxnqr+BrFJDgRIyZ77/gVOpPXqT4uCcTDR7GeJoVrwNxIi1T
+         sbTB6CVsq403PGEC+p68LYEYggcCY40E7k2YZoLVadxA26l38tSACcS8ruS+YaQAlOCg
+         t06MEa11Kq5wea/ayAOEoNWm5TUGWenCqjwTncAiR6/7ilWGjn4Sq9IFFjTAMkADL/HK
+         iuBXm5GkZ+tAV1wm7RBxEUQafjEJUAGYA2h21C0JgOSPxwEe68e+YcYA+QeXsf+2EYVH
+         UpYuX3qlAmeZIdgE2ADzkfznWyJ21cLpOz/IxCBgRsPgYUGVxvJziS6a0jdmv1iIs7x3
+         t6vQ==
+X-Gm-Message-State: AOAM530IBQspdxX2jtb1MXPu7F+18XJwsZ5chcpyrNvhTBICN19iAYcm
+        9bCRQXyTASvYm873iLLHmVgMf8HRbTqAwk1H0m4BeQ==
+X-Google-Smtp-Source: ABdhPJzPkIG0HQ2hdBNtswKDaMWmHQN7fmzn9zABEvpB4VQXYtrRqfmUsSSalENZnUPxHjjWEz8LBANx+HOfpCMlso4=
+X-Received: by 2002:a1f:b20b:: with SMTP id b11mr1044228vkf.13.1640088608342;
+ Tue, 21 Dec 2021 04:10:08 -0800 (PST)
 MIME-Version: 1.0
-References: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org> <YcEUrtQuJ5CGF2RW@ripper>
-In-Reply-To: <YcEUrtQuJ5CGF2RW@ripper>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Tue, 21 Dec 2021 11:50:55 +0100
-Message-ID: <CAMZdPi9g9x0Rn4YUwcLrZ5M23i3EzJOuUfh3MXFVM7pscQx5Tw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: CLK_OPS_PARENT_ENABLE flag for
- rcg2 clocks
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Mike Tipton <quic_mdtipton@quicinc.com>, agross@kernel.org,
-        sboyd@kernel.org, shawn.guo@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20211217161549.24836-1-semen.protsenko@linaro.org>
+ <20211217161549.24836-2-semen.protsenko@linaro.org> <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+ <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com> <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
+ <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
+In-Reply-To: <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+Date:   Tue, 21 Dec 2021 14:09:56 +0200
+Message-ID: <CAPLW+4kJP5pnrg+Nbi=b6p_RBDb+JFcdLk9Ep2JeVg=z7dvCkw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
-
-On Tue, 21 Dec 2021 at 00:40, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Tue, 21 Dec 2021 at 10:19, Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 >
-> On Mon 20 Dec 01:54 PST 2021, Loic Poulain wrote:
->
-> > When a rcg2 clock migrates to a new parent, both the old and new
-> > parent clocks must be enabled to complete the transition. This can
-> > be automatically performed by the clock core when a clock is flagged
-> > with CLK_OPS_PARENT_ENABLE.
+> On 20/12/2021 15:55, Sam Protsenko wrote:
+> > On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@canonical.com> wrote:
+> >>
+> >> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
+> >>> On 17.12.2021 17:15, Sam Protsenko wrote:
+> >>>> System Register is used to configure system behavior, like USI protocol,
+> >>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+> >>>> make it possible to modify SYSREG registers.
+> >>>>
+> >>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
+> >>>> and might be needed for corresponding Exynos850 features soon.
+> >>>>
+> >>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+> >>>> Acked-by: Rob Herring<robh@kernel.org>
+> >>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
+> >>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+> >>>
+> >>> Apologies for late reply, this patch is applied now.
+> >>>
+> >>
+> >> Sam,
+> >>
+> >> The clock is used in the DTSI, so since this was applied, there are only
+> >> two choices now:
+> >> 1. wait for next cycle with DTSI and DTS,
+> >> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
+> >> numbers and a TODO note.
+> >>
 > >
-> > Without this, we may hit rate update failures:
-> > gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
-> > WARNING: CPU: 1 PID: 82 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xe0/0xf0
-> >
-> > Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
-> > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> > ---
-> >  drivers/clk/qcom/gcc-qcm2290.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
-> > index b6fa7b8..9e1d88e 100644
-> > --- a/drivers/clk/qcom/gcc-qcm2290.c
-> > +++ b/drivers/clk/qcom/gcc-qcm2290.c
-> > @@ -674,6 +674,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
-> >               .name = "gcc_usb30_prim_mock_utmi_clk_src",
-> >               .parent_data = gcc_parents_0,
-> >               .num_parents = ARRAY_SIZE(gcc_parents_0),
-> > +             .flags = CLK_OPS_PARENT_ENABLE,
+> > But why? I thought because Sylwester applied my clock patches, those
+> > will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
+> > get it wrong, please let me know why, and I'll go with item (2) you
+> > suggested.
 >
-> This seems like a correct fix for the obvious problem that we might end
-> up invoking clk_set_rate() and clk_set_parent() for these clocks while
-> their (and thereby themselves - in a software sense) are disabled.
+> If I apply the DTSI+DTS, all my builds will start failing. The
+> linux-next (since Sylwester's tree is included) should build fine, but
+> my tree won't be buildable anymore. Then arm-soc pulls my tree and gets
+> said because it does not build. Later, Linus will be unhappy if he pulls
+> arm-soc (thus mine) before clock tree.
 >
+
+I see. Thanks for the explanation!
+
+> Other solution, instead of using raw numbers, is to copy-paste the clock
+> macros you use directly in DTSI and do not include the clock header.
+> This actually might be cleaner choice - changes will be limited to one
+> place in DTSI.
 >
-> However, clocks that downstream are marked "enable_safe_config", may in
-> addition be enabled by the hardware, behind out back. As such we must
-> ensure that they always have a valid configuration, we do this by
-> "parking" them on CXO whenever we're going to disable their parent
-> clocks.
->
-> Upstream we handle this by using the clk_rcg2_shared_ops, which will do
-> exactly this.
 
-Ok, thanks for the explanation, so we actually need both
-clk_rcg2_shared_ops and CLK_OPS_PARENT_ENABLE, the former parking the
-clock under always-on CXO (safe source), allowing hardware to toggle it
-on its own. The latter allows safe parent switching by enabling the
-new parent clock before update (and old parent, but we don't care
-since we are actually parked on CXO) . Is that correct?
+Will do so in v5.
 
-> PS. Unfortunately these RCGs doesn't allow us to reliably implement
-> is_enabled() and as such clk_disable_unused() will skip parking the
-> unused clocks and continue to disable the PLLs feeding them (if they are
-> unused). I don't think this is a problem for the clocks you list here,
-> but we certainly have a problem with this in the dispcc. So this is
-> currently being discussed. For now it's expected that booting without
-> "clk_ignore_unused" is "broken".
-
-Ok, understood thanks.
-
-
-Loic
+> Best regards,
+> Krzysztof
