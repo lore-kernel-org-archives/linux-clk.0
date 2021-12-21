@@ -2,152 +2,264 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B6AC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 08:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD3EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 09:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234183AbhLUIVE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:21:04 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:55930
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235543AbhLUIVD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 03:21:03 -0500
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 1D395406EC
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 08:21:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640074862;
-        bh=v0pYSSp/PcIv+PEuO43VB0PAVYtz/J9iayLFB3j6wVE=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=rDCvEK6W4+NlPszo+x5i9Fy0tiRvVV8vYo4voLv0mmnbgfN3Jir77czW/tEdnmGvQ
-         4OymUXXH/Ef2xVEw2C/drshuMQC2xzKQtZFuSC35eOkcLMxL5LQat43eGLFXhzLON0
-         7jGS0tvVjbExmId/blDRdS1+VDLOo4fEWzzB3aFcUf6XSL9+oEjt/RpcVvZ2fCH1St
-         HIr51HVCgAToiS9lpxcJ2aEnfa7yTS8BNc8JJ1/6Zq9xZ8ilQb4YUHu4dhBlpwTOAH
-         XV3PVYYaBnkxOeonpgUxiH3WfZxfjsWq7wIJrapatJgxhS7Ge0r1OdfXoxT7RlvMFE
-         OXddt64zuDlhA==
-Received: by mail-lf1-f72.google.com with SMTP id k30-20020a0565123d9e00b0042633ae1b8eso616205lfv.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 00:21:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=v0pYSSp/PcIv+PEuO43VB0PAVYtz/J9iayLFB3j6wVE=;
-        b=C7MCdNCpqFB/O7UmoQdGWkrfxD9qPqvjtOtJ6BmPKYo92IoTAm0WwynIeaupC+foq6
-         LBvZ+dXTNWcGsWVACp4iEHomwDZzqXHUJY+OJQPXyqzWiUSl1+7yEF9jiAdKLXuH9XU+
-         zRoW/A7i7SekZzZ9mEMwk5dcIeMnYycb0T1NNn5GyFOBenVSKqg4q3FzxzJGO+B7HrqQ
-         EbtzKr9OGodNi9XL5NAclyL6WYCti/CszyEkE7ZPqudwf828ft37KFoWcl90xByBEBnN
-         wxvMp+2IH3sFoNgJH0rTFZPz5FqBht41uSI8j0miiGIBGxZX6erHuYoGkUmbD1tza2l2
-         890Q==
-X-Gm-Message-State: AOAM533+n4qztpNSYZhyoVO4KcoHOCFHIfH7S2wIbtak64m8QaWbKUcd
-        3hGM8gTM7lPW+hyS8MWdqxADrxOocuZn8Wbuv1bocWeDjg6eObKiSfkkAkuU59CDI/4b0D7/AG/
-        K4kl5YvK3N8sn0RDkK5Sow2tGyri1tSYK25Nj0g==
-X-Received: by 2002:a2e:9003:: with SMTP id h3mr1760370ljg.68.1640074858379;
-        Tue, 21 Dec 2021 00:20:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy0OZUFkiXcgS9OL3e05QKQSZ+sUUPAqqBNMDEDrcXVHl2uJzLoQrvQudPyTdiPoAXlwrDzKA==
-X-Received: by 2002:a2e:9003:: with SMTP id h3mr1760338ljg.68.1640074858075;
-        Tue, 21 Dec 2021 00:20:58 -0800 (PST)
-Received: from [192.168.3.67] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id w12sm881619lfe.256.2021.12.21.00.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 00:20:57 -0800 (PST)
-Message-ID: <d10584ac-9ce6-9f8d-aeb9-8497e32f1661@canonical.com>
-Date:   Tue, 21 Dec 2021 09:20:56 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
- Exynos850 sysreg clocks
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S236587AbhLUJrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 04:47:42 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:46908 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S236559AbhLUJrl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 04:47:41 -0500
+X-IronPort-AV: E=Sophos;i="5.88,223,1635174000"; 
+   d="scan'208";a="104224983"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2021 18:47:39 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D2A454004D02;
+        Tue, 21 Dec 2021 18:47:34 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20211217161549.24836-1-semen.protsenko@linaro.org>
- <20211217161549.24836-2-semen.protsenko@linaro.org>
- <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
- <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
- <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
- <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-In-Reply-To: <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        dmaengine@vger.kernel.org, netdev@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH 00/16] Add new Renesas RZ/V2L SoC and Renesas RZ/V2L SMARC EVK support
+Date:   Tue, 21 Dec 2021 09:47:01 +0000
+Message-Id: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/12/2021 09:19, Krzysztof Kozlowski wrote:
-> On 20/12/2021 15:55, Sam Protsenko wrote:
->> On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
->> <krzysztof.kozlowski@canonical.com> wrote:
->>>
->>> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
->>>> On 17.12.2021 17:15, Sam Protsenko wrote:
->>>>> System Register is used to configure system behavior, like USI protocol,
->>>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
->>>>> make it possible to modify SYSREG registers.
->>>>>
->>>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
->>>>> and might be needed for corresponding Exynos850 features soon.
->>>>>
->>>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
->>>>> Acked-by: Rob Herring<robh@kernel.org>
->>>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
->>>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
->>>>
->>>> Apologies for late reply, this patch is applied now.
->>>>
->>>
->>> Sam,
->>>
->>> The clock is used in the DTSI, so since this was applied, there are only
->>> two choices now:
->>> 1. wait for next cycle with DTSI and DTS,
->>> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
->>> numbers and a TODO note.
->>>
->>
->> But why? I thought because Sylwester applied my clock patches, those
->> will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
->> get it wrong, please let me know why, and I'll go with item (2) you
->> suggested.
-> 
-> If I apply the DTSI+DTS, all my builds will start failing. The
-> linux-next (since Sylwester's tree is included) should build fine, but
-> my tree won't be buildable anymore. Then arm-soc pulls my tree and gets
-> said because it does not build. Later, Linus will be unhappy if he pulls
+Hi All,
 
-s/said/sad/ obviously :)
+RZ/V2L is equipped with a Cortex-A55 (1.2 GHz) CPU and built-in AI
+accelerator "DRP-AI" for vision, which is Renesas' original technology.
+It also has a 16-bit DDR3L/DDR4 interface and a built-in 3D graphics
+engine with Arm Mali-G31 and video codec (H.264).
 
-> arm-soc (thus mine) before clock tree.
-> 
-> Other solution, instead of using raw numbers, is to copy-paste the clock
-> macros you use directly in DTSI and do not include the clock header.
-> This actually might be cleaner choice - changes will be limited to one
-> place in DTSI.
-> 
-> Best regards,
-> Krzysztof
-> 
+The RZ/V2L is also package- and pin-compatible with the RZ/G2L. This
+allows RZ/G2L users to easily upgrade to the RZ/V2L for additional AI
+functions without needing to modify the system configuration, keeping
+migration costs low.
 
+Initial patches enables minimal peripherals on Renesas RZ/V2L SMARC EVK
+and booted via initramfs/nfs. Below blocks are enabled on Renesas RZ/V2L
+SMARC EVK:
+- memory
+- External input clock
+- CPG
+- Pin controller
+- SCIF
+- GbEthernet
+- Audio Clock
 
-Best regards,
-Krzysztof
+Links for SoC and EVK:
+[*] https://www.renesas.com/us/en/products/microcontrollers-microprocessors/
+rz-arm-based-high-end-32-64-bit-mpus/rzv2l-general-purpose-microprocessor-
+equipped-renesas-original-ai-dedicated-accelerator-drp-ai-12ghz-dual
+[*] https://www.renesas.com/us/en/products/microcontrollers-microprocessors/
+rz-arm-based-high-end-32-64-bit-mpus/rtk9744l23s01000be-rzg2l-evaluation-board-kit
+
+This patch series is dependent on [0] & [1]
+
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+20211216114305.5842-1-biju.das.jz@bp.renesas.com/
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/
+patch/20211220170357.7899-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Sorry for cross posting the patches to multiple subsystems, as these are
+just the dt-binding patches included as part of initial bringup patches.
+
+Test Logs on Renesas RZ/V2L SMARC EVK:
+
+/ # cat /proc/cpuinfo
+processor       : 0
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+processor       : 1
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+/ # cat /proc/meminfo
+MemTotal:        1897380 kB
+MemFree:         1811032 kB
+MemAvailable:    1788712 kB
+Buffers:               0 kB
+Cached:            38408 kB
+SwapCached:            0 kB
+Active:                4 kB
+Inactive:             32 kB
+Active(anon):          4 kB
+Inactive(anon):       32 kB
+Active(file):          0 kB
+Inactive(file):        0 kB
+Unevictable:       38404 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:            68 kB
+Mapped:             1356 kB
+Shmem:                 0 kB
+KReclaimable:      22940 kB
+Slab:              33192 kB
+SReclaimable:      22940 kB
+SUnreclaim:        10252 kB
+KernelStack:        1088 kB
+PageTables:           28 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:      948688 kB
+Committed_AS:        664 kB
+VmallocTotal:   133143461888 kB
+VmallocUsed:        1396 kB
+VmallocChunk:          0 kB
+Percpu:              240 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+CmaTotal:         131072 kB
+CmaFree:          130304 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+/ #
+/ #
+/ #
+/ # cat /proc/interrupts
+           CPU0       CPU1
+ 11:        814        896     GICv3  27 Level     arch_timer
+ 13:          0          0     GICv3 412 Level     1004b800.serial:rx err
+ 14:          6          0     GICv3 414 Level     1004b800.serial:rx full
+ 15:        368          0     GICv3 415 Level     1004b800.serial:tx empty
+ 16:          0          0     GICv3 413 Level     1004b800.serial:break
+ 17:         11          0     GICv3 416 Level     1004b800.serial:rx ready
+ 23:          0          0     GICv3 173 Edge      error
+ 24:          0          0     GICv3 157 Edge      11820000.dma-controller:0
+ 25:          0          0     GICv3 158 Edge      11820000.dma-controller:1
+ 26:          0          0     GICv3 159 Edge      11820000.dma-controller:2
+ 27:          0          0     GICv3 160 Edge      11820000.dma-controller:3
+ 28:          0          0     GICv3 161 Edge      11820000.dma-controller:4
+ 29:          0          0     GICv3 162 Edge      11820000.dma-controller:5
+ 30:          0          0     GICv3 163 Edge      11820000.dma-controller:6
+ 31:          0          0     GICv3 164 Edge      11820000.dma-controller:7
+ 32:          0          0     GICv3 165 Edge      11820000.dma-controller:8
+ 33:          0          0     GICv3 166 Edge      11820000.dma-controller:9
+ 34:          0          0     GICv3 167 Edge      11820000.dma-controller:10
+ 35:          0          0     GICv3 168 Edge      11820000.dma-controller:11
+ 36:          0          0     GICv3 169 Edge      11820000.dma-controller:12
+ 37:          0          0     GICv3 170 Edge      11820000.dma-controller:13
+ 38:          0          0     GICv3 171 Edge      11820000.dma-controller:14
+ 39:          0          0     GICv3 172 Edge      11820000.dma-controller:15
+IPI0:       251        253       Rescheduling interrupts
+IPI1:        36         33       Function call interrupts
+IPI2:         0          0       CPU stop interrupts
+IPI3:         0          0       CPU stop (for crash dump) interrupts
+IPI4:         0          0       Timer broadcast interrupts
+IPI5:         0          0       IRQ work interrupts
+IPI6:         0          0       CPU wake-up interrupts
+Err:          0
+/ #
+/ #
+/ #
+/ # for i in machine family soc_id revision; do echo -n "$i: ";cat /sys/devices/
+soc0/$i; done
+machine: Renesas SMARC EVK based on r9a07g054l2
+family: RZ/V2L
+soc_id: r9a07g054
+revision: Rev 0
+/ #
+/ #
+/ #
+
+Cheers,
+Prabhakar
+
+Biju Das (16):
+  dt-bindings: arm: renesas: Document Renesas RZ/V2L SoC
+  dt-bindings: arm: renesas: Document SMARC EVK
+  dt-bindings: power: renesas,rzg2l-sysc: Document RZ/V2L SoC
+  soc: renesas: Identify RZ/V2L SoC
+  arm64: renesas_defconfig: Enable ARCH_R9A07G054
+  dt-bindings: serial: renesas,scif: Document RZ/V2L SoC
+  dt-bindings: serial: renesas,sci: Document RZ/V2L SoC
+  dt-bindings: clock: Add R9A07G054 CPG Clock and Reset Definitions
+  dt-bindings: clock: renesas: Document RZ/V2L SoC
+  clk: renesas: Add support for RZ/V2L SoC
+  dt-bindings: pinctrl: renesas: Document RZ/V2L pinctrl
+  pinctrl: renesas: Kconfig: Select PINCTRL_RZG2L if RZ/V2L SoC is
+    enabled
+  dt-bindings: dma: rz-dmac: Document RZ/V2L SoC
+  dt-bindings: net: renesas,etheravb: Document RZ/V2L SoC
+  arm64: dts: renesas: Add initial DTSI for RZ/V2L SoC
+  arm64: dts: renesas: Add initial device tree for RZ/V2L SMARC EVK
+
+ .../devicetree/bindings/arm/renesas.yaml      |   9 +
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |  14 +-
+ .../bindings/dma/renesas,rz-dmac.yaml         |   3 +-
+ .../bindings/net/renesas,etheravb.yaml        |   3 +-
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |  15 +-
+ .../bindings/power/renesas,rzg2l-sysc.yaml    |   7 +-
+ .../bindings/serial/renesas,sci.yaml          |   2 +
+ .../bindings/serial/renesas,scif.yaml         |   7 +
+ arch/arm64/boot/dts/renesas/Makefile          |   1 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    | 486 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi  |  25 +
+ .../boot/dts/renesas/r9a07g054l2-smarc.dts    |  25 +
+ arch/arm64/boot/dts/renesas/r9a07g054l2.dtsi  |  13 +
+ .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  |   2 +-
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |   2 +-
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |   2 +-
+ arch/arm64/configs/renesas_defconfig          |   1 +
+ drivers/clk/renesas/Kconfig                   |   7 +-
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a07g054-cpg.c           | 184 +++++++
+ drivers/clk/renesas/rzg2l-cpg.c               |   6 +
+ drivers/clk/renesas/rzg2l-cpg.h               |   1 +
+ drivers/pinctrl/renesas/Kconfig               |   1 +
+ drivers/soc/renesas/Kconfig                   |   5 +
+ drivers/soc/renesas/renesas-soc.c             |  13 +
+ include/dt-bindings/clock/r9a07g054-cpg.h     | 226 ++++++++
+ 26 files changed, 1042 insertions(+), 19 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054l2.dtsi
+ create mode 100644 drivers/clk/renesas/r9a07g054-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a07g054-cpg.h
+
+-- 
+2.17.1
+
