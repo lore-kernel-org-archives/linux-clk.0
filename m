@@ -2,73 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBB9C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 08:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975A2C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 08:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235383AbhLUIKO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 03:10:14 -0500
-Received: from mail-ua1-f53.google.com ([209.85.222.53]:40759 "EHLO
-        mail-ua1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234701AbhLUIKO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 03:10:14 -0500
-Received: by mail-ua1-f53.google.com with SMTP id y23so22264844uay.7;
-        Tue, 21 Dec 2021 00:10:14 -0800 (PST)
+        id S234213AbhLUITu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 03:19:50 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:53774
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233050AbhLUITt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 03:19:49 -0500
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 8990E3F207
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 08:19:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640074788;
+        bh=AmwBkgsCQBlvy6a8IJhNBe3rHFIw/oazUsEvZEPNdNw=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=p0gp1Ub/qBL4Lo0HnHH0ySOaLrz2zHVSV+jPW6Nlzta9gdEaA0qt7fumUtBmKfRlL
+         gAhkExfiWqLj5PTHrZzK4gQlBtwyNldRXIBzT9EQTwWI7dMfYBcXb+apTs2RmOFW3y
+         XJQ6ujOMPbTi0SOFjwd9DIl1nal4zEr2NHgAlr1s3RTMt1gHDKOaHI4FmapOarKb/O
+         rWX/HxroBATh69wF58tn3VYjyKSKt4uk9xdTzhbRvTyoVX5H98u2NC2+GlmdQcMDYK
+         PICxzYkZmjCg/b8Dp7ok6kW9e1ZZwEkruh9VpkuVCg4F/iACBKIneR8lFjmcf1/sTH
+         6lRtxU9REfh/A==
+Received: by mail-lj1-f197.google.com with SMTP id u28-20020a2ea17c000000b0021126b5cca2so1972894ljl.19
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 00:19:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HKbsUsTWg5rR37I9v1ro7oc9SV5nTeoertYyKpAWEiI=;
-        b=aVloi6JHVrmKJ7rdCXH8SI0VeR57hifRtNN0/SXniBP++Z+VT43uuppBdaioAMo8L8
-         wPOyu8iHSllSmpI/dKVLJ1LF7mVmCPBR835fDXseHXs+SjDSWeKMexH+XHJqka1I+iJV
-         DECQFSaR8g3TYA7/6dQWxSR8D4R74ACp/8fK+NKXmycDh63NFjzNye7qz/n1Q+VZfyHu
-         aPDPU/VFfL/eYUawOPzTJDMPD5gi2AUI7cMpIdtyb0xmqwpCaZ6B7qDZeTreRvQy7GKO
-         iOagRRZj3TyApKQdvXxoMKGeOqZsUEuifHYj46L1wenyQiMXt2tEb4NskYGKlxoTsE7Q
-         hHXg==
-X-Gm-Message-State: AOAM530LqEUmpwWk1qEe0ehyS0UFvCzO7RRNbmbOEAum46lsOdtbZGmf
-        uGzd5gursW8rAZRMMH5jUozUX3JW12H3OQ==
-X-Google-Smtp-Source: ABdhPJyz/UDz5E1/agrjv31fPxfaJfVjXpvzLImApt4ylVnG6f5Dh27nyzAcSwzzZSelRuqV+XyKYg==
-X-Received: by 2002:a05:6102:903:: with SMTP id x3mr798646vsh.41.1640074213575;
-        Tue, 21 Dec 2021 00:10:13 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id p46sm3747696uad.16.2021.12.21.00.10.13
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=AmwBkgsCQBlvy6a8IJhNBe3rHFIw/oazUsEvZEPNdNw=;
+        b=bktXj4IjU6ryKKqwcrK7P73GM7I9fIKX7NRJFIzMyizItFcOVQ/1NnqcL4CfsfAuEh
+         zfsOHSQVCKrC/YfrmxTgJfQdyloXn6cStuhbm7ev5QSTTLdOnfQ1n42xP4012hl+fNTq
+         UgrQ6vUp1SAkzE/2vnp2oDiKjfnbemlCAYUeHJpmiHxTy4A4qnta2vY7WRBIzzk40Azx
+         T/RZtXLn78EFPVEzLBiXKfAW23hmaY1XoC8mWmg4GscQyC3mfpW+eTmn9n8EIT4GqH6L
+         9o/jjEq63AJz36cJC5rknmSVJLMTWDauc7pzwXUOpqq9n2vx2ZXcEtJEiQmHzyFfs7Se
+         oYRQ==
+X-Gm-Message-State: AOAM532/3HvDnD5SLcWOnAvGZ8rKoITrYvJCtKCRghl0pO/jnnFujKJI
+        GDJlhXzYFDuLVYLiNu/0dHIesSTZDD0Q1/yHS5ZY4ntD8Bqu3+7GWHvUVZ1C++bU1x/9vj7aliY
+        q+j7GATpv0nkTMWV+k4HaDKAgF+5AZM5C2a6suw==
+X-Received: by 2002:a2e:b177:: with SMTP id a23mr1708961ljm.168.1640074787849;
+        Tue, 21 Dec 2021 00:19:47 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxy/XhlYssCNLAWRYkWoIWMzAeGZqkYE+7VzTrmhujnAacn27xoPqnMQ2uSgBrGs8xv+IeKow==
+X-Received: by 2002:a2e:b177:: with SMTP id a23mr1708948ljm.168.1640074787666;
+        Tue, 21 Dec 2021 00:19:47 -0800 (PST)
+Received: from [192.168.0.27] (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id z26sm2654830lja.48.2021.12.21.00.19.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Dec 2021 00:10:13 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id i6so22298698uae.6;
-        Tue, 21 Dec 2021 00:10:13 -0800 (PST)
-X-Received: by 2002:ab0:3b06:: with SMTP id n6mr101595uaw.14.1640074213057;
- Tue, 21 Dec 2021 00:10:13 -0800 (PST)
+        Tue, 21 Dec 2021 00:19:47 -0800 (PST)
+Message-ID: <edd828b4-66ad-1c1e-4332-e1b05931e92a@canonical.com>
+Date:   Tue, 21 Dec 2021 09:19:45 +0100
 MIME-Version: 1.0
-References: <20211221052423.597283-1-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <20211221052423.597283-1-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 Dec 2021 09:10:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXYJ2NyZYHC-Zi=yC1dCNYiDSkqG04C=54mxKH4e14d3g@mail.gmail.com>
-Message-ID: <CAMuHMdXYJ2NyZYHC-Zi=yC1dCNYiDSkqG04C=54mxKH4e14d3g@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a779f0: add sys-dmac clocks
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: exynos850: Add bindings for
+ Exynos850 sysreg clocks
+Content-Language: en-US
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Jaewon Kim <jaewon02.kim@samsung.com>,
+        Chanho Park <chanho61.park@samsung.com>,
+        David Virag <virag.david003@gmail.com>,
+        Youngmin Nam <youngmin.nam@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Palmer <daniel@0x0f.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20211217161549.24836-1-semen.protsenko@linaro.org>
+ <20211217161549.24836-2-semen.protsenko@linaro.org>
+ <2fdc5c97-6c19-8e70-d717-28b29d86160c@kernel.org>
+ <5bd5c0bf-4390-22c2-e4e0-cb02b80dfb9c@canonical.com>
+ <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <CAPLW+4msw_yeG4uDbS9mMULOuc43MK9O6Paya_Z2jBj2t6ZTiA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 21, 2021 at 6:24 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Add sys-dmac clocks on r8a779f0.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+On 20/12/2021 15:55, Sam Protsenko wrote:
+> On Mon, 20 Dec 2021 at 11:31, Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 19/12/2021 23:29, Sylwester Nawrocki wrote:
+>>> On 17.12.2021 17:15, Sam Protsenko wrote:
+>>>> System Register is used to configure system behavior, like USI protocol,
+>>>> etc. SYSREG clocks should be provided to corresponding syscon nodes, to
+>>>> make it possible to modify SYSREG registers.
+>>>>
+>>>> While at it, add also missing PMU and GPIO clocks, which looks necessary
+>>>> and might be needed for corresponding Exynos850 features soon.
+>>>>
+>>>> Reviewed-by: Krzysztof Kozlowski<krzysztof.kozlowski@canonical.com>
+>>>> Acked-by: Rob Herring<robh@kernel.org>
+>>>> Acked-by: Chanwoo Choi<cw00.choi@samsung.com>
+>>>> Signed-off-by: Sam Protsenko<semen.protsenko@linaro.org>
+>>>
+>>> Apologies for late reply, this patch is applied now.
+>>>
+>>
+>> Sam,
+>>
+>> The clock is used in the DTSI, so since this was applied, there are only
+>> two choices now:
+>> 1. wait for next cycle with DTSI and DTS,
+>> 2. Resubmit with replacing the newly added clocks in DTSI/DTS with
+>> numbers and a TODO note.
+>>
+> 
+> But why? I thought because Sylwester applied my clock patches, those
+> will get into v5.17, and so DTSI/DTS might rely on those clocks? If I
+> get it wrong, please let me know why, and I'll go with item (2) you
+> suggested.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.18.
+If I apply the DTSI+DTS, all my builds will start failing. The
+linux-next (since Sylwester's tree is included) should build fine, but
+my tree won't be buildable anymore. Then arm-soc pulls my tree and gets
+said because it does not build. Later, Linus will be unhappy if he pulls
+arm-soc (thus mine) before clock tree.
 
-Gr{oetje,eeting}s,
+Other solution, instead of using raw numbers, is to copy-paste the clock
+macros you use directly in DTSI and do not include the clock header.
+This actually might be cleaner choice - changes will be limited to one
+place in DTSI.
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
