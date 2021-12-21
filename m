@@ -2,152 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E011C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 09:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1643C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Dec 2021 10:39:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234286AbhLUJtP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 04:49:15 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:6254 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236910AbhLUJs5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 04:48:57 -0500
-X-IronPort-AV: E=Sophos;i="5.88,223,1635174000"; 
-   d="scan'208";a="104225128"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2021 18:48:53 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5CB394006199;
-        Tue, 21 Dec 2021 18:48:49 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dmaengine@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 16/16] arm64: dts: renesas: Add initial device tree for RZ/V2L SMARC EVK
-Date:   Tue, 21 Dec 2021 09:47:17 +0000
-Message-Id: <20211221094717.16187-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        id S233429AbhLUKj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 05:39:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229925AbhLUKj2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 05:39:28 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB525C061574
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 02:39:27 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id y7so10461568plp.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 02:39:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OKwtJBcsU+KGenhnkPUish86uil7JAo87n3Fj1EyeVU=;
+        b=VvezOSjPnpJorYhv7DNh8w4QJoPnmnM6MTc8XB0eWK/BPS1hMEV7GCb13xCvWTh/tH
+         J11G2G2zw60qufmBOoUnXGnpyae4YLpCI8kCDaliNTqTQmMGvEAN5L7VqQ3++KaDrCUc
+         6qD6CNmebCVofzrOWvhisphqeLy3lotjq2GrqMjo5fC8aPEsXktHMYAg93HxYUqo0BIM
+         dc8Yn+czwZBBTMlDSee2lnm2Siiqu4c7Muqn0EkW/TwMuo+5cZG+qztRKhVrtkGi+acr
+         G9xDd4B79r4VzZ15uo3CSD2Ktx6pJuXUbh8GILR8PyK4dJM84t8gmIp69mNaC36fJuM3
+         tpfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OKwtJBcsU+KGenhnkPUish86uil7JAo87n3Fj1EyeVU=;
+        b=SFgTDUcPTQB1MPLXA8knorWdGh+JXOGkv2J3S7pO7AoP/B50g9vOBPpR9i68Ra2bpN
+         ohMHjiUygvqMYTIc0URSgCAYE8V8SwfJEabMAn8kZCvhSxyv3s7Z6S0pgTfcwuxP+nc7
+         oSlpAuQTHjaLWV307SVOJKooXralf8wdC+0ha72+l1U/PXmR3w9kXSmxaVKqBaE88gjO
+         bVzZ7MQY+o/s1LtFqieWYO+yZ1MBCXUt/i/r5cFWafBQ/8KmNBK+yZE6EVHXxLpMwHhS
+         ndC8zFubxf/TMOCJjLw5NqErdmkDJKAQKdT7kyFwANQRwB72xR2pD4f095ET3MtRyz/1
+         18Dg==
+X-Gm-Message-State: AOAM530rWoGlk3qDVgV6EpyeDjc66gfYBC1lkUD9I+8mW1mYi2mbRAxw
+        gtsppbS7NfKMGhmAz3c7lUH/vl1dU56jxVHS4KONvw==
+X-Google-Smtp-Source: ABdhPJyWyxk6opdxp188WP0pJhEVQ+v4B+km1duz3n74xfRqoSLa7QkUJq0CnRr2c2KGWlpBamMdnlIsKPuH60nme2c=
+X-Received: by 2002:a17:902:9349:b0:148:b21c:5875 with SMTP id
+ g9-20020a170902934900b00148b21c5875mr2508439plp.51.1640083167188; Tue, 21 Dec
+ 2021 02:39:27 -0800 (PST)
+MIME-Version: 1.0
+References: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org> <YcEUrtQuJ5CGF2RW@ripper>
+In-Reply-To: <YcEUrtQuJ5CGF2RW@ripper>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Tue, 21 Dec 2021 11:50:55 +0100
+Message-ID: <CAMZdPi9g9x0Rn4YUwcLrZ5M23i3EzJOuUfh3MXFVM7pscQx5Tw@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: CLK_OPS_PARENT_ENABLE flag for
+ rcg2 clocks
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mike Tipton <quic_mdtipton@quicinc.com>, agross@kernel.org,
+        sboyd@kernel.org, shawn.guo@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Bjorn,
 
-Add basic support for RZ/V2L SMARC EVK (based on R9A07G054L2):
-- memory
-- External input clock
-- CPG
-- Pin controller
-- SCIF
-- GbEthernet
-- Audio Clock
+On Tue, 21 Dec 2021 at 00:40, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Mon 20 Dec 01:54 PST 2021, Loic Poulain wrote:
+>
+> > When a rcg2 clock migrates to a new parent, both the old and new
+> > parent clocks must be enabled to complete the transition. This can
+> > be automatically performed by the clock core when a clock is flagged
+> > with CLK_OPS_PARENT_ENABLE.
+> >
+> > Without this, we may hit rate update failures:
+> > gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
+> > WARNING: CPU: 1 PID: 82 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xe0/0xf0
+> >
+> > Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+> > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> > ---
+> >  drivers/clk/qcom/gcc-qcm2290.c | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+> > index b6fa7b8..9e1d88e 100644
+> > --- a/drivers/clk/qcom/gcc-qcm2290.c
+> > +++ b/drivers/clk/qcom/gcc-qcm2290.c
+> > @@ -674,6 +674,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+> >               .name = "gcc_usb30_prim_mock_utmi_clk_src",
+> >               .parent_data = gcc_parents_0,
+> >               .num_parents = ARRAY_SIZE(gcc_parents_0),
+> > +             .flags = CLK_OPS_PARENT_ENABLE,
+>
+> This seems like a correct fix for the obvious problem that we might end
+> up invoking clk_set_rate() and clk_set_parent() for these clocks while
+> their (and thereby themselves - in a software sense) are disabled.
+>
+>
+> However, clocks that downstream are marked "enable_safe_config", may in
+> addition be enabled by the hardware, behind out back. As such we must
+> ensure that they always have a valid configuration, we do this by
+> "parking" them on CXO whenever we're going to disable their parent
+> clocks.
+>
+> Upstream we handle this by using the clk_rcg2_shared_ops, which will do
+> exactly this.
 
-It shares the same carrier board with RZ/G2L with the same pin mapping.
-Delete the gpio-hog nodes from pinctrl as this will be added later when
-the functionality has been tested.
+Ok, thanks for the explanation, so we actually need both
+clk_rcg2_shared_ops and CLK_OPS_PARENT_ENABLE, the former parking the
+clock under always-on CXO (safe source), allowing hardware to toggle it
+on its own. The latter allows safe parent switching by enabling the
+new parent clock before update (and old parent, but we don't care
+since we are actually parked on CXO) . Is that correct?
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile          |  1 +
- .../boot/dts/renesas/r9a07g054l2-smarc.dts    | 25 +++++++++++++++++++
- .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  |  2 +-
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |  2 +-
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  2 +-
- 5 files changed, 29 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+> PS. Unfortunately these RCGs doesn't allow us to reliably implement
+> is_enabled() and as such clk_disable_unused() will skip parking the
+> unused clocks and continue to disable the PLLs feeding them (if they are
+> unused). I don't think this is a problem for the clocks you list here,
+> but we certainly have a problem with this in the dispcc. So this is
+> currently being discussed. For now it's expected that booting without
+> "clk_ignore_unused" is "broken".
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8e696a38c560..2daba38d1161 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -77,3 +77,4 @@ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs.dtb
- 
- dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
- dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
-+dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
-new file mode 100644
-index 000000000000..39ef55bfe0c3
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L SMARC EVK board
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g054l2.dtsi"
-+#include "rzg2l-smarc-som.dtsi"
-+#include "rzg2l-smarc-pinfunction.dtsi"
-+#include "rzg2l-smarc.dtsi"
-+
-+/ {
-+	model = "Renesas SMARC EVK based on r9a07g054l2";
-+	compatible = "renesas,smarc-evk", "renesas,r9a07g054l2", "renesas,r9a07g054";
-+};
-+
-+&pinctrl {
-+	/delete-node/ can0-stb;
-+	/delete-node/ can1-stb;
-+	/delete-node/ gpio-sd0-pwr-en-hog;
-+	/delete-node/ sd0-dev-sel-hog;
-+	/delete-node/ sd1-pwr-en-hog;
-+};
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-index 71d83e447670..2ef217445f72 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2L SMARC pincontrol parts
-+ * Device Tree Source for the RZ/{G2L,V2L} SMARC pincontrol parts
-  *
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-index 41fdae7ba66b..879375c0395e 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2L SMARC SOM common parts
-+ * Device Tree Source for the RZ/{G2L,V2L} SMARC SOM common parts
-  *
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-index 46abb29718cc..78034f36156d 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2L SMARC EVK common parts
-+ * Device Tree Source for the RZ/{G2L,V2L} SMARC EVK common parts
-  *
-  * Copyright (C) 2021 Renesas Electronics Corp.
-  */
--- 
-2.17.1
+Ok, understood thanks.
 
+
+Loic
