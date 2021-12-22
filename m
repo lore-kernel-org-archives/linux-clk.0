@@ -2,154 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AD9C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 00:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70175C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 01:52:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239237AbhLVAU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Dec 2021 19:20:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41056 "EHLO
+        id S241385AbhLVBwt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Dec 2021 20:52:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbhLVAU7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 19:20:59 -0500
-Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D57CC061574
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 16:20:59 -0800 (PST)
-Received: by mail-ot1-x32f.google.com with SMTP id v22-20020a9d4e96000000b005799790cf0bso608225otk.5
-        for <linux-clk@vger.kernel.org>; Tue, 21 Dec 2021 16:20:59 -0800 (PST)
+        with ESMTP id S241343AbhLVBwt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Dec 2021 20:52:49 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467C4C061574;
+        Tue, 21 Dec 2021 17:52:48 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id l17so607536qtk.7;
+        Tue, 21 Dec 2021 17:52:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jbfOD5CFsxRJOwQM/rjR3cxXxZ9C6XulxtRYL9VjoJU=;
-        b=aHWRaPaJlTJX2cwcz9+HsPGcPadxRTU5wvHZZrGdIog0hX7z7wEt4ypKqwH66ppM0T
-         5FZ2HvlNDFNKpVCFR8dgkmUBOa08WODjmPGCPyY6n3mtWxNiWd0PTzrT6WejFYfMW9du
-         TK3gyVTrb9ycwTNVkGh9ffIzZ4MQiY3CPrfIr/vf60ncBGpWdColSZjNxZ3d+BIMDpPP
-         K3ws0WqkwCx9bmS5uthYXALsP/FfxO5iMHmdhjP5gpsREaWsCO4hjLrlGuFq9bj6B1Vt
-         vS8G2A+k1HwnmcC7WNTXlTWmY65f4702LnrYBlIefWVtcq2aanMwLzmpQZSFnpgK1Nle
-         2EzQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Lc/MTdHw8w2hgosWEnakgoAuLPp1GXkSGiA0tQorVkU=;
+        b=R7ellObNYoZZhvSi6Mj5U2BzNlr1It4Z0+HoNASJv0BPyN4haouDVv7tXJwYPeQtGq
+         EuWGiiWognusoqwStq9drFuQWE2J1h7QlW2YncGZsiNnGGwultWA0aq6vGIoSBnGCAjm
+         2kSNtbKnepWHq0lBEY+MQMOziDJMOhmSFkHO1dgE0aOzc/YmMKgZUmD1hakUHizfILMQ
+         IqJRefyOEtdpv58OcdjC0mSn1Ja4Y01ANYuHvYbVyW4eHbujzPIyK/hpkbtPHKKfwBjn
+         mMdy5GvMXJR7I54vNfPIzhngDVUDWHKCgjUIwqKNKUN4yRopyY3PY1XHExYTznO7KgZp
+         m+kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jbfOD5CFsxRJOwQM/rjR3cxXxZ9C6XulxtRYL9VjoJU=;
-        b=sfR3KRI0G/bt756kjNCnMlfZQvWI8OiMmI0zpAa4X5IuonHc7zBYbBJHARScDl3Tam
-         O3b6FxRSoVlPcue9ssv/gcPij5txzXQv3hAWfOJcKfKiEeQGeldvGof6SbWzEkWTNBBh
-         myNPYUuQ+J9udcFdMxQViVYTTRDaNraxTy7YyVQWTapc8Y08Becllp0dyTAnIfrkreZz
-         pzEydus8nLr6a8iqf8VvxPFjrXFB/TQdEBA5pP0X8LXC4AWtbh52GLoDYrsQgvu2Uppp
-         4HtMZuLxlsuqgWOC4Ra+JvSR01qGclE0UgYDH5G7+X37l4Sp3ssc2kA7t7hol+nktHtS
-         1aZA==
-X-Gm-Message-State: AOAM531zjQ5acHFsBAelV9WNFbUOriZOVXo7speOL7jCwizyX+TUAx87
-        FhcIMR+OvglpSzHjMy01k4WHew==
-X-Google-Smtp-Source: ABdhPJzH5bBLDKvNaOhu6/mVwMqLJrfN6ZQ8W9tgqIlq0cZMX4K1p08Iyzj2TPDFELNHltkKlQgWTQ==
-X-Received: by 2002:a05:6830:1551:: with SMTP id l17mr513037otp.335.1640132458641;
-        Tue, 21 Dec 2021 16:20:58 -0800 (PST)
-Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id h3sm100978oon.34.2021.12.21.16.20.57
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Lc/MTdHw8w2hgosWEnakgoAuLPp1GXkSGiA0tQorVkU=;
+        b=PV8WOLtbKH9iH90gbz5g2f0JZKiB0zoLh316NmjX8r3nJNEomKHTO2PhFixc0yoW4p
+         dASMmCfj6h5a26x/GtA+DMTV3ydGhTUcQB26DFIxLcsIZeNiHnmu5i6X8zy5BJj52qYv
+         8GMlmxZvp/nm94LU0erTachcfb6O6ju0hYeBEAjtJ5KsUJ/wQN261gnp7X/YMymEbe1s
+         44kbQ1VUrVJEycxGpgnOcugeZojkMFzk5F5/fz+2tcx2U1xTp9UWMbVfKNH2TrUrFl3T
+         HsE5N6od9dBIp2IurAt7Q1NPnKmff73S/xS7CGTfvyzMb0K3ehBsaz4Ieh4cLtpBWbsf
+         f/mg==
+X-Gm-Message-State: AOAM531ejEMFNXpToyKKwfSUzKhlgU+RMzZJXwh8WrX9VSQEulXaL/6N
+        MXv96wjRnpCxIN6AMXhcnK4=
+X-Google-Smtp-Source: ABdhPJw30wTn59z1W6Nzm0yuguVm/dcUmBERaT67Mf7UsZAWyRvBWggsNidAzER7qvfjCZIsAz/Gig==
+X-Received: by 2002:a05:622a:590:: with SMTP id c16mr741519qtb.289.1640137966915;
+        Tue, 21 Dec 2021 17:52:46 -0800 (PST)
+Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id d4sm658161qkn.79.2021.12.21.17.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Dec 2021 16:20:58 -0800 (PST)
-Date:   Tue, 21 Dec 2021 16:22:08 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     Mike Tipton <quic_mdtipton@quicinc.com>, agross@kernel.org,
-        sboyd@kernel.org, shawn.guo@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: CLK_OPS_PARENT_ENABLE flag for
- rcg2 clocks
-Message-ID: <YcJvsEFXPPVI+GZi@ripper>
-References: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org>
- <YcEUrtQuJ5CGF2RW@ripper>
- <CAMZdPi9g9x0Rn4YUwcLrZ5M23i3EzJOuUfh3MXFVM7pscQx5Tw@mail.gmail.com>
+        Tue, 21 Dec 2021 17:52:46 -0800 (PST)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
+        stefan@agner.ch, linus.walleij@linaro.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
+        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
+        adrian.hunter@intel.com, jirislaby@kernel.org,
+        giulio.benetti@benettiengineering.com,
+        nobuhiro1.iwamatsu@toshiba.co.jp, Mr.Bossman075@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH v6 0/7] dd initial support for the i.MXRTxxxx SoC family starting from i.IMXRT1050 SoC.
+Date:   Tue, 21 Dec 2021 20:52:37 -0500
+Message-Id: <20211222015244.2464671-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMZdPi9g9x0Rn4YUwcLrZ5M23i3EzJOuUfh3MXFVM7pscQx5Tw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 21 Dec 02:50 PST 2021, Loic Poulain wrote:
+This patchset contains:
+- i.MXRT10xx family infrastructure
+- i.MXRT1050 pinctrl driver adaption
+- i.MXRT1050 clock driver adaption
+- i.MXRT1050 sd-card driver adaption
+- i.MXRT1050 uart driver adaption
+- i.MXRT1050-evk basic support
 
-> Hi Bjorn,
-> 
-> On Tue, 21 Dec 2021 at 00:40, Bjorn Andersson
-> <bjorn.andersson@linaro.org> wrote:
-> >
-> > On Mon 20 Dec 01:54 PST 2021, Loic Poulain wrote:
-> >
-> > > When a rcg2 clock migrates to a new parent, both the old and new
-> > > parent clocks must be enabled to complete the transition. This can
-> > > be automatically performed by the clock core when a clock is flagged
-> > > with CLK_OPS_PARENT_ENABLE.
-> > >
-> > > Without this, we may hit rate update failures:
-> > > gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
-> > > WARNING: CPU: 1 PID: 82 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xe0/0xf0
-> > >
-> > > Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
-> > > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> > > ---
-> > >  drivers/clk/qcom/gcc-qcm2290.c | 20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
-> > > index b6fa7b8..9e1d88e 100644
-> > > --- a/drivers/clk/qcom/gcc-qcm2290.c
-> > > +++ b/drivers/clk/qcom/gcc-qcm2290.c
-> > > @@ -674,6 +674,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
-> > >               .name = "gcc_usb30_prim_mock_utmi_clk_src",
-> > >               .parent_data = gcc_parents_0,
-> > >               .num_parents = ARRAY_SIZE(gcc_parents_0),
-> > > +             .flags = CLK_OPS_PARENT_ENABLE,
-> >
-> > This seems like a correct fix for the obvious problem that we might end
-> > up invoking clk_set_rate() and clk_set_parent() for these clocks while
-> > their (and thereby themselves - in a software sense) are disabled.
-> >
-> >
-> > However, clocks that downstream are marked "enable_safe_config", may in
-> > addition be enabled by the hardware, behind out back. As such we must
-> > ensure that they always have a valid configuration, we do this by
-> > "parking" them on CXO whenever we're going to disable their parent
-> > clocks.
-> >
-> > Upstream we handle this by using the clk_rcg2_shared_ops, which will do
-> > exactly this.
-> 
-> Ok, thanks for the explanation, so we actually need both
-> clk_rcg2_shared_ops and CLK_OPS_PARENT_ENABLE, the former parking the
-> clock under always-on CXO (safe source), allowing hardware to toggle it
-> on its own. The latter allows safe parent switching by enabling the
-> new parent clock before update (and old parent, but we don't care
-> since we are actually parked on CXO) . Is that correct?
-> 
+The i.MXRTxxxx family that could have support by Linux actually spreads
+from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
+100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
+with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
+2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
+STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
+less layer PCBs. Seeing that these chips are comparable to the
+STM32F7XXs which have linux ported to them it seems reasonable to add
+support for them.
 
-If a clock is parked and we get a request to change its rate, then the
-old parent doesn't matter (as you say). But as we are done with the
-set_rate the new parent will be turned off, as such as soon as we've
-changed the parent we must park the RCG again.
+Giving Linux support to this family should ease the development process,
+instead of using a RTOS they could use Embedded Linux allowing for more
+portability, ease of design and will broaden the scope of people using
+embedded linux.
 
-So for parked shared_ops RCGs we simply remember the new configuration
-of the set_rate until it's time to enable the RCG again.
+The EVK has very little SDRAM, generally 32MB starting from
+i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
+64MB of SDRAM for more functionality.
 
-As such I don't think that CLK_OPS_PARENT_ENABLE adds any value (for the
-shared_ops RCGs), only a bit of overhead.
+At the moment we do not support XIP for either u-boot or Linux but it
+should be done in the future. XIP will also save SDRAM.
 
+Another interesting fact is the amount of internal SRAM, as the P/N
+increases the SRAM will reach up to 2MB(some could be for cache and
+some would be for video).
 
-That said, if I read the code correctly don't think we properly handles
-a clk_set_parent() of a parked shared RCGs today...
+Also, some parts have embed flash of 4MB that can be used for
+u-boot/Linux, if both correctly sized it will leave the SDRAM free.
 
-Regards,
-Bjorn
+External flash can be Quad SPI and HyperFlash, so throughput would be
+decent.
 
-> > PS. Unfortunately these RCGs doesn't allow us to reliably implement
-> > is_enabled() and as such clk_disable_unused() will skip parking the
-> > unused clocks and continue to disable the PLLs feeding them (if they are
-> > unused). I don't think this is a problem for the clocks you list here,
-> > but we certainly have a problem with this in the dispcc. So this is
-> > currently being discussed. For now it's expected that booting without
-> > "clk_ignore_unused" is "broken".
-> 
-> Ok, understood thanks.
-> 
-> 
-> Loic
+The i.MXRT11xx series supports MIPI interface too.
+
+The family in general provide CAN bus, audio I/O, 1 or more
+USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
+
+All this can be used for simple GUIs, web-servers, point-of-sale
+stations, etc.
+
+Giulio Benetti (4):
+  ARM: imx: Add initial support for i.MXRT10xx family
+  dt-bindings: imx: Add clock binding for i.MXRT1050
+  ARM: dts: imx: Add i.MXRT1050-EVK support
+  ARM: imxrt_defconfig: Add i.MXRT family defconfig
+
+Jesse Taube (3):
+  ARM: dts: imxrt1050-pinfunc: Add pinctrl binding header
+  dt-bindings: clock: imx: Add documentation for i.MXRT1050 clock
+  clk: imx: Add initial support for i.MXRT1050 clock driver
+
+ .../bindings/clock/imxrt1050-clock.yaml       |  67 ++
+ arch/arm/boot/dts/Makefile                    |   2 +
+ arch/arm/boot/dts/imxrt1050-evk.dts           |  72 ++
+ arch/arm/boot/dts/imxrt1050-pinfunc.h         | 993 ++++++++++++++++++
+ arch/arm/boot/dts/imxrt1050.dtsi              | 154 +++
+ arch/arm/configs/imxrt_defconfig              |  35 +
+ arch/arm/mach-imx/Kconfig                     |   7 +
+ arch/arm/mach-imx/Makefile                    |   2 +
+ arch/arm/mach-imx/mach-imxrt.c                |  19 +
+ drivers/clk/imx/Kconfig                       |   5 +
+ drivers/clk/imx/Makefile                      |   1 +
+ drivers/clk/imx/clk-imxrt1050.c               | 181 ++++
+ include/dt-bindings/clock/imxrt1050-clock.h   |  73 ++
+ 13 files changed, 1611 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
+ create mode 100644 arch/arm/boot/dts/imxrt1050-evk.dts
+ create mode 100644 arch/arm/boot/dts/imxrt1050-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imxrt1050.dtsi
+ create mode 100644 arch/arm/configs/imxrt_defconfig
+ create mode 100644 arch/arm/mach-imx/mach-imxrt.c
+ create mode 100644 drivers/clk/imx/clk-imxrt1050.c
+ create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
+
+-- 
+2.34.1
+
