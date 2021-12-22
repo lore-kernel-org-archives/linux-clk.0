@@ -2,136 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A108C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 19:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA84C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 19:37:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345229AbhLVTbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Dec 2021 14:31:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46374 "EHLO
+        id S1345282AbhLVThw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Dec 2021 14:37:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345206AbhLVTbd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 14:31:33 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67750C061574;
-        Wed, 22 Dec 2021 11:31:33 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id a37so5356700ljq.13;
-        Wed, 22 Dec 2021 11:31:33 -0800 (PST)
+        with ESMTP id S232808AbhLVThv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 14:37:51 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7323EC061574;
+        Wed, 22 Dec 2021 11:37:51 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id q74so9639404ybq.11;
+        Wed, 22 Dec 2021 11:37:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UWoUyTKuCZBPTUWhT4JDOJqnu500xgBuHlWsCulVizk=;
-        b=c67/4h+IbZqTrY6VpgQDBqvTDORUmjxz5PuQFbzOb8h6CTGOMmAJth5gzc+C8JbWPQ
-         2ihYecoc2Q0UoVe859s8GGOvOWFAoWc8AqLS+WuHNuL7F44YYEJgC8ZwMJ8uSfmqNcrO
-         ylPbfoXFXr9pVBOTzRp+Dyz4Cwlu7Nnzw1lpBGGz7s0/XNBghnJeG9duEF4uisvpLD34
-         69RK0hU/i5Eie/4QF7tzDaBGpK0vVr8/aLXZEvBQGmJAFP5CroY6qbipQC2t85Ms+Xc2
-         T8xab18TQMMjYS587kdP8Cl+RLxnmmbhPSRGQyY3mmXUNfKPnIYwmxpy8x14K5404Q3L
-         o9eA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JdkYvs20BpJlttg/sO+h+d7jCfULBOe8+I92ZlF90H0=;
+        b=Q1SAHaetYjQ/EOwOdwCaMPzNpCC+yMulPpy3xC4P1n19cq+11tylhwX0k6W8UYmDEB
+         qJG3I7vxY3wzMJ9uCaj3zIrN7J93ORZKhnFpqpUaUK0hklS7plLdvDwdhP5WBiwtaYPz
+         CyyAkv4ltoO09LoarJUNRgGQW2vpi2PucDuLFLyfrXv2v8WGI2UMC5Oh09LslXPY/cMk
+         9kjVER97cD+wAeNdu3Xx2lH2SZeOKDlLO3Upv/1uW3Ya1MvNwgP3UIMZAMN2qILUuiYR
+         8gKNpomh6OKHjbCMWpCK1W2kK3fcMXcEf2pPNUpWEhhYc/eADZNhg5E2ZRiSia6njllX
+         QVbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UWoUyTKuCZBPTUWhT4JDOJqnu500xgBuHlWsCulVizk=;
-        b=baACjWPHLD/j3vkYlntSyv6RDnZyGncVCvHP/NJyfj6zA1V1oID+L5mBvbdnuGTVYY
-         ZHh7qybuKRkyStHDaOhBb34gWfQ/shfv1y0vUKFShuOboXIFtpf4qJjC421xXLuzoDt3
-         EiawrbzxRJKnjfdGJUBVUdjUKSxElc5Dp25nj+axConPm4vfeYNX44eorLiLuy6iCE1/
-         b3Oo09OYydXcH6JxdoMXZxv8+e1KCk+UL83WUtBjJn3vChNfc7fJiyPNGj4KGAKN0HzE
-         61FuK37wqlBI323WLNU+LAkD6ZuKXKfnDEWiniNBKd0HiOI89g6SoMquFiDgiJhSvoIp
-         0uCQ==
-X-Gm-Message-State: AOAM533JSiFAwT5dH1d29lFVuIUueEPV5yHlcyNGt7JhdKjbVT2o0a83
-        bqKJla1g1CL0dJlpE3HxzjU=
-X-Google-Smtp-Source: ABdhPJx+htWwi+v3AtjfsW4JydR93mF82QsXr8O0IkG6rltx1oU1VGhRQ2z9X1SX8wNh1+xujo7/WA==
-X-Received: by 2002:a05:651c:199f:: with SMTP id bx31mr591962ljb.109.1640201491742;
-        Wed, 22 Dec 2021 11:31:31 -0800 (PST)
-Received: from [192.168.2.145] (46-138-43-24.dynamic.spd-mgts.ru. [46.138.43.24])
-        by smtp.googlemail.com with ESMTPSA id bn30sm262179ljb.29.2021.12.22.11.31.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Dec 2021 11:31:31 -0800 (PST)
-Subject: Re: [PATCH v16 08/40] gpu: host1x: Add initial runtime PM and OPP
- support
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-9-digetx@gmail.com>
- <21212ddb-205f-71d6-0199-d75768eaf32c@nvidia.com>
- <41edc53b-5ed1-d524-2546-c3d1ee6cdea4@gmail.com>
- <6652ac84-36f5-0e43-65fa-04786f384f21@nvidia.com>
- <56dce9c7-397d-75b0-b5b8-18ce1084e72b@nvidia.com>
- <6dbc8205-5669-8b08-16b8-fe5e1acdd06f@gmail.com>
- <796eb3f7-80e2-bc55-fd52-43e76220f8c2@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <40983f6e-92ee-40d4-861f-06faea0113fc@gmail.com>
-Date:   Wed, 22 Dec 2021 22:31:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JdkYvs20BpJlttg/sO+h+d7jCfULBOe8+I92ZlF90H0=;
+        b=WclQ4xllO6XTd1+Yk0uqVyhVcRGCTORLVTO3ayrQfNeLU8iSmjTn56LOQNVyHqYn77
+         pkWcqqNSCgV9qZaz/IH54m+/kWsnTpmpciS4TqjoD4d364ZeSakj1nC1Vba5uPJSsHyT
+         CrLuiOHU2lsw9viqsBty6pEj+QLFX/qG3YtZVs/eqbUol5FegIDA45T2GM74t9B+ekDb
+         XvzQFxde9SQwvA+tw8qfgx9MNDiY+qP90sbB1O63f9cyybdGCuwHEAkkpLZniubzYS1v
+         nFV/xHsUdEoez9hFkQgzyL17lokvdObUnBFUeYW2MxUpHMGYf/BT7iwjzeQS3qDCtTkw
+         GeWg==
+X-Gm-Message-State: AOAM531AJ4Hef8fdw3YeQwTtfyiXMiyt5W/9yBohu9XnBWlpOc5xdV6z
+        kNnJx4Eo9jR8ZOaGa8P6GeZCvFp8drGpzGxbwWM=
+X-Google-Smtp-Source: ABdhPJzdVT+SQRtJbDPy9fx/RFt9bR29nRb5pHIcRNYiRMiQ6ON6WRwM9HPCPHaWh3ZtBJTxcH+1lkFSG0nAeaKi6ro=
+X-Received: by 2002:a25:98c4:: with SMTP id m4mr6431027ybo.613.1640201870647;
+ Wed, 22 Dec 2021 11:37:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <796eb3f7-80e2-bc55-fd52-43e76220f8c2@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20211221094717.16187-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <YcNtMMNKHIgGFZ+V@robh.at.kernel.org>
+In-Reply-To: <YcNtMMNKHIgGFZ+V@robh.at.kernel.org>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 22 Dec 2021 19:37:24 +0000
+Message-ID: <CA+V-a8tUyRUaEVhh9_xdHEzYnuYTaj2M6dqqvQGYOgoXOjWxxQ@mail.gmail.com>
+Subject: Re: [PATCH 02/16] dt-bindings: arm: renesas: Document SMARC EVK
+To:     Rob Herring <robh@kernel.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-22.12.2021 22:30, Jon Hunter пишет:
-> 
-> On 22/12/2021 19:01, Dmitry Osipenko wrote:
-> 
-> ...
-> 
->> diff --git a/drivers/gpu/host1x/syncpt.c b/drivers/gpu/host1x/syncpt.c
->> index e08e331e46ae..8194826c9ce3 100644
->> --- a/drivers/gpu/host1x/syncpt.c
->> +++ b/drivers/gpu/host1x/syncpt.c
->> @@ -137,6 +137,15 @@ void host1x_syncpt_restore(struct host1x *host)
->>       struct host1x_syncpt *sp_base = host->syncpt;
->>       unsigned int i;
->>
->> +    for (i = 0; i < host->info->nb_pts; i++) {
->> +        /*
->> +         * Unassign syncpt from channels for purposes of Tegra186
->> +         * syncpoint protection. This prevents any channel from
->> +         * accessing it until it is reassigned.
->> +         */
->> +        host1x_hw_syncpt_assign_to_channel(host, sp_base + i, NULL);
->> +    }
->> +
->>       for (i = 0; i < host1x_syncpt_nb_pts(host); i++)
->>           host1x_hw_syncpt_restore(host, sp_base + i);
->>
->> @@ -352,13 +361,6 @@ int host1x_syncpt_init(struct host1x *host)
->>       for (i = 0; i < host->info->nb_pts; i++) {
->>           syncpt[i].id = i;
->>           syncpt[i].host = host;
->> -
->> -        /*
->> -         * Unassign syncpt from channels for purposes of Tegra186
->> -         * syncpoint protection. This prevents any channel from
->> -         * accessing it until it is reassigned.
->> -         */
->> -        host1x_hw_syncpt_assign_to_channel(host, &syncpt[i], NULL);
->>       }
->>
->>       for (i = 0; i < host->info->nb_bases; i++)
->>
-> 
-> 
-> Thanks! This fixed it!
+Hi Rob,
 
-I'll prepare proper patch with yours t-b, thank you.
+Thank you for the review.
 
+On Wed, Dec 22, 2021 at 6:23 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Dec 21, 2021 at 09:47:03AM +0000, Lad Prabhakar wrote:
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > Document Renesas SMARC EVK board which is based on RZ/V2L (R9A07G054)
+> > SoC. The SMARC EVK consists of RZ/V2L SoM module and SMARC carrier board,
+> > the SoM module sits on top of the carrier board.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
+> > index 55a5aec418ab..fa435d6fda77 100644
+> > --- a/Documentation/devicetree/bindings/arm/renesas.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
+> > @@ -423,6 +423,8 @@ properties:
+> >
+> >        - description: RZ/V2L (R9A07G054)
+> >          items:
+> > +          - enum:
+> > +              - renesas,smarc-evk # SMARC EVK
+>
+> This and patch 1 should be combined. Changing the number of compatible
+> entries doesn't make sense.
+>
+Will merge this with patch 1. Is it OK if I include your Ack when merged?
+
+Cheers,
+Prabhakar
+
+> >            - enum:
+> >                - renesas,r9a07g054l1 # Single Cortex-A55 RZ/V2L
+> >                - renesas,r9a07g054l2 # Dual Cortex-A55 RZ/V2L
+> > --
+> > 2.17.1
+> >
+> >
