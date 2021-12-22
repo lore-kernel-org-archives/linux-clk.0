@@ -2,121 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C08C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 12:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BACAC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 15:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244851AbhLVM1u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Dec 2021 07:27:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34262 "EHLO
+        id S241519AbhLVPfL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Dec 2021 10:35:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244839AbhLVM1u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 07:27:50 -0500
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5741C06173F
-        for <linux-clk@vger.kernel.org>; Wed, 22 Dec 2021 04:27:49 -0800 (PST)
-Received: by mail-ua1-x934.google.com with SMTP id 107so3806152uaj.10
-        for <linux-clk@vger.kernel.org>; Wed, 22 Dec 2021 04:27:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vWIn7DqMi3kQvGD1nq8ewu/kj9KQkXIbVF5Cm+xtQ2Y=;
-        b=EfCcn1YAi8swpK0iRrvnWzMKC0v4ae9dWrX2VJGNMaOny/xgr746v3cXfBn9kTKAsX
-         smfPkNAUqIAYJNJWcf1ExIJYHltl4dZeJd1Cam25d3VV8/BUHMxBkpH8fpS2J4c428Nq
-         +U7FepJiAIVo5qsl+Tlkh8SSzTm/jxIvKFKsVQ+UT7RiJgvhbD/qxO5NcgQsXCUII6T6
-         MKqBdJoJE9/WjUR5GYyS7Z6NVA9kpKYBRUajhXxjte5XyfPmNA4umdqr1ryYxzFxI22I
-         X45DE7VpLaagRadxgu4GD8/ong1o2qvhHY4B9kTNvhUfL1HVkJ6d6VkaU2zbTdNhvEOb
-         7RMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vWIn7DqMi3kQvGD1nq8ewu/kj9KQkXIbVF5Cm+xtQ2Y=;
-        b=HMo3vmmDl3QBfLsso/BWazm97sy0wbD3IHpIRC60B1X+J4r4KqX3ihjeG8qKKfyBSS
-         u1DlZ7yj6SGkqdtT8UlqOBD+4/yzlZz+MXua7zXx35otZTBsDKxjyHuYDmfME7lFN2ju
-         n3t3PBHIgx9T8atiolW+eOdPr/qzl8t1+IZUEBIaYq+KotbXYzy/vX4QMczycAcgP9Aw
-         2f0hpbvm+AfscLCSNVGIBcPlZo+IOHDpWGBtmpZjDmTPifXWfi8/ErI4fzQ/yCoQP9Zd
-         PHDPdaL4iaWEM909WMk1Fbw+amXyjkUW7qe33SghSXLvLoPFotxhoJD2TbQqh3Kh3hoM
-         /yzw==
-X-Gm-Message-State: AOAM533HS9g/BBpjHj7vwMdb5PrL1qa/FOx90wcmrg2A0jB+r4EoPZHK
-        Vzbx2pscjthG9Eyij4kR2SMytmwsvTj9gUkBe1F0Sw==
-X-Google-Smtp-Source: ABdhPJxKY+P+vGn1YCRVEj+exphuI0iOafF9v4XDnGg3QV0axcb5QfeqI//+4F354PM2SSPrhYgvZJ1MR93s8AmhIHI=
-X-Received: by 2002:ab0:274:: with SMTP id 107mr840354uas.9.1640176068904;
- Wed, 22 Dec 2021 04:27:48 -0800 (PST)
+        with ESMTP id S237263AbhLVPfK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 10:35:10 -0500
+Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7582EC061574;
+        Wed, 22 Dec 2021 07:35:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=h5i8KRIE8OYinv9bsFSJNG/XPwR7FEMtMz3XKW3+hSQ=; b=SshfVUbtz9+IGFncIYN6ul9FxD
+        7LhKdU2vjy5pkti8aS3YyKWlSTKXzL915GApT8MOIosXl08VBY7y7TDzK+FM2mcQzPkkPXwASDqVv
+        vWkEUoBec8MLEOtldC1SFAKz49N8oZ16itrjbgntrVlBWJbmIIpy0IyYkvcQBraCIDig=;
+Received: from p54ae97a7.dip0.t-ipconnect.de ([84.174.151.167] helo=nf.local)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1n03dv-0002Wy-Bl; Wed, 22 Dec 2021 16:35:03 +0100
+Message-ID: <7ae0494f-438e-f147-913f-e0f28eb5b3bf@nbd.name>
+Date:   Wed, 22 Dec 2021 16:35:02 +0100
 MIME-Version: 1.0
-References: <20211221142417.19312-1-semen.protsenko@linaro.org>
- <20211221142417.19312-2-semen.protsenko@linaro.org> <CAPLW+4=B2DU7SedxfKyFBDH=6ZqiJVVNCNbMH3wmVuedFk_YnQ@mail.gmail.com>
- <414faffd-cbe3-a784-1f6f-4e2eb325be58@canonical.com>
-In-Reply-To: <414faffd-cbe3-a784-1f6f-4e2eb325be58@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Wed, 22 Dec 2021 14:27:36 +0200
-Message-ID: <CAPLW+4nZVT6fFLxOHJYmMVSKhPiM3_qWRY8aDhbv9ZXOF6P+BA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] arm64: dts: exynos: Add initial Exynos850 SoC support
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Jaewon Kim <jaewon02.kim@samsung.com>,
-        Chanho Park <chanho61.park@samsung.com>,
-        David Virag <virag.david003@gmail.com>,
-        Youngmin Nam <youngmin.nam@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.4.1
+Subject: Re: [PATCH v8 07/14] clk: en7523: Add clock driver for Airoha EN7523
+ SoC
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Palmer <daniel@0x0f.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        John Crispin <john@phrozen.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20211220211854.89452-1-nbd@nbd.name>
+ <20211220211854.89452-8-nbd@nbd.name>
+ <CAK8P3a3Qy8FJpACTqt85Enm72aJ=vzUfiEMZ4=dRqFmunyOm1Q@mail.gmail.com>
+From:   Felix Fietkau <nbd@nbd.name>
+In-Reply-To: <CAK8P3a3Qy8FJpACTqt85Enm72aJ=vzUfiEMZ4=dRqFmunyOm1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 22 Dec 2021 at 13:33, Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
->
-> On 21/12/2021 15:30, Sam Protsenko wrote:
-> > On Tue, 21 Dec 2021 at 16:24, Sam Protsenko <semen.protsenko@linaro.org> wrote:
-> >>
->
-> (...)
->
-> >> diff --git a/arch/arm64/boot/dts/exynos/exynos850.dtsi b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> >> new file mode 100644
-> >> index 000000000000..2abbb972b610
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/exynos/exynos850.dtsi
-> >> @@ -0,0 +1,759 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Samsung Exynos850 SoC device tree source
-> >> + *
-> >> + * Copyright (C) 2018 Samsung Electronics Co., Ltd.
-> >> + * Copyright (C) 2021 Linaro Ltd.
-> >> + *
-> >> + * Samsung Exynos850 SoC device nodes are listed in this file.
-> >> + * Exynos850 based board files can include this file and provide
-> >> + * values for board specific bindings.
-> >> + */
-> >> +
-> >> +#include <dt-bindings/clock/exynos850.h>
-> >> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> +#include <dt-bindings/soc/samsung,exynos-usi.h>
-> >> +
-> >> +/* TODO: Remove this once corresponding clock bindings are added */
-> >
-> > Krzysztof,
-> >
-> > What would be the best time for me to send the removal of this
-> > workaround? Is it right after v5.17 release?
->
-> The best time is after the merge window, so when v5.17-rc1 is released.
->
+On 2021-12-21 15:06, Arnd Bergmann wrote:
+> On Mon, Dec 20, 2021 at 10:18 PM Felix Fietkau <nbd@nbd.name> wrote:
+>>
+>> This driver only registers fixed rate clocks, since the clocks are fully
+>> initialized by the boot loader and should not be changed later, according
+>> to Airoha.
+>>
+>> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> 
+> I don't have any particular comments on the driver itself. I'm happy
+> to merge it through
+> the soc tree for the initial support of the clk maintainers are ok
+> with it and have reviewed
+> the actual code.
+> 
+>>  drivers/clk/Kconfig      |   9 +
+>>  drivers/clk/Makefile     |   1 +
+>>  drivers/clk/clk-en7523.c | 350 +++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 360 insertions(+)
+>>  create mode 100644 drivers/clk/clk-en7523.c
+> 
+> I think this should go into drivers/clk/mediatek, as it probably shares
+> some of the logic with the mt762x drivers in there. I'd suggest adding the
+> maintainers for those drivers to Cc for additional review.
+I don't think it shares any logic with the other drivers, but since 
+Airoha is a subsidiary of Mediatek, I guess it makes sense to move it there.
 
-Will do. Thanks for handling this, Krzysztof!
-
->
-> Best regards,
-> Krzysztof
+- Felix
