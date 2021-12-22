@@ -2,80 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88612C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 18:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62202C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 18:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235045AbhLVSLL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Dec 2021 13:11:11 -0500
-Received: from mail-qt1-f181.google.com ([209.85.160.181]:40746 "EHLO
-        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344507AbhLVSLK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 13:11:10 -0500
-Received: by mail-qt1-f181.google.com with SMTP id l17so2675799qtk.7;
-        Wed, 22 Dec 2021 10:11:09 -0800 (PST)
+        id S1344576AbhLVSUy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Dec 2021 13:20:54 -0500
+Received: from mail-qt1-f174.google.com ([209.85.160.174]:42948 "EHLO
+        mail-qt1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233546AbhLVSUy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 13:20:54 -0500
+Received: by mail-qt1-f174.google.com with SMTP id z9so2698045qtj.9;
+        Wed, 22 Dec 2021 10:20:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Il/qIXEpM0k/r83Hkz4DiWBovhWj2kmv+y71DSrCm8c=;
-        b=OwrAUZb5StnHhcO28cBmna5iii7ghZZG+ogdQcsCILcswmI13LLALDrRpWEiFshe7Y
-         tYCsPe+Y/KrQxXeFnOe5jV8sEbIghTOA4wQtuxPsn7F+/Mos/ORxqksALw029It3ZFCI
-         oNzCYUqBXbLY3Ybg/UFxKw06RUMLTusVRm3wcCDaLuMZAsnrODjiKkOLbBfHZUW2V2En
-         QzGA+aagftw+IZxrYvhgVhoAWOeny3xb74rcsUbIDHIVSj9GuZS+I9pgw6d88Ifs7UmZ
-         mhB3b7RJj2EBwv2xzzc81vBJVJEmhzLvQ/f1cc+YGiKRFiuNORjmk9HN0Sy/MWzHRX56
-         IUEg==
-X-Gm-Message-State: AOAM531D8QGLcB5x7UEVS8K/neW5LEntHdmReZyFcTTEapJ5PTwFSeiM
-        5Az9QFV2rRbwGulBT7kO/g==
-X-Google-Smtp-Source: ABdhPJw47NUTqeOoKpNDgF7NJg6QIbxE7QNiZXBbjqvRNsib5jawU+pweuawJYm1Hu7bbr9h2qzQFA==
-X-Received: by 2002:a05:622a:1813:: with SMTP id t19mr2115869qtc.256.1640196669405;
-        Wed, 22 Dec 2021 10:11:09 -0800 (PST)
+        bh=XRcKcj+cA5XUzfaaLDrt+fgsCeFBFXEbRB10f73PiyY=;
+        b=HpQkxD8PFEW1pXKzrcbAq4JNa/CYjCzCyVbK/FeoAPuu+lI2G4CORO39HWa77WlXJ5
+         KuQV0zWDfTz55rXrNGljIuVnqgH8ppTXTxjNqIjTr5am9uOTaQJjGXen45Eq4nLvixUV
+         JCpEBsaNaDyWif/zPbdJN8GQVYzahE9kSDGThS9e0PtPTmMTtHcUEp8mHUkJw4yn9NQg
+         76+RHoo/j0DcPhnVkLToNa542R5AapmPdzs7JsBtDajybkjRXeFEXEjCNSYkSoMQvgU8
+         Q+kQEkAWsq/EKUzVcgMEMi7ZRWITpz0/1ZF38hFNRREoBfKEjU/g8866AWZAeLx8YnET
+         e/mQ==
+X-Gm-Message-State: AOAM530+CgEbBBEvJ2AO2riZMibE5SLLHYm+A/i/T0MFsU8//gjvSZ/R
+        tmeZkF+BvX1CI73hnXYnTg==
+X-Google-Smtp-Source: ABdhPJzBkXsa+9kAJPWbu/0STBGBkUvlqE6y6OnQfmhaZwkNESHTX36Exuu8bQZ3A42RH4J1RtvjSA==
+X-Received: by 2002:a05:622a:43:: with SMTP id y3mr3143240qtw.575.1640197252979;
+        Wed, 22 Dec 2021 10:20:52 -0800 (PST)
 Received: from robh.at.kernel.org ([24.55.105.145])
-        by smtp.gmail.com with ESMTPSA id g12sm2279193qtk.69.2021.12.22.10.11.08
+        by smtp.gmail.com with ESMTPSA id t3sm2256640qtc.7.2021.12.22.10.20.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Dec 2021 10:11:08 -0800 (PST)
-Received: (nullmailer pid 2435332 invoked by uid 1000);
-        Wed, 22 Dec 2021 18:11:07 -0000
-Date:   Wed, 22 Dec 2021 14:11:07 -0400
+        Wed, 22 Dec 2021 10:20:52 -0800 (PST)
+Received: (nullmailer pid 2451021 invoked by uid 1000);
+        Wed, 22 Dec 2021 18:20:50 -0000
+Date:   Wed, 22 Dec 2021 14:20:50 -0400
 From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     linux-clk@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        list@opendingux.net, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, netdev@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clk/ingenic: Add MDMA and BDMA clocks
-Message-ID: <YcNqOwjYQT8GTwqD@robh.at.kernel.org>
-References: <20211220193319.114974-1-paul@crapouillou.net>
- <20211220193319.114974-2-paul@crapouillou.net>
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 01/16] dt-bindings: arm: renesas: Document Renesas RZ/V2L
+ SoC
+Message-ID: <YcNsggkexM75uxni@robh.at.kernel.org>
+References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20211221094717.16187-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211220193319.114974-2-paul@crapouillou.net>
+In-Reply-To: <20211221094717.16187-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 20 Dec 2021 19:33:18 +0000, Paul Cercueil wrote:
-> The Ingenic JZ4760 and JZ4770 both have an extra DMA core named BDMA
-> dedicated to the NAND and BCH controller, but which can also do
-> memory-to-memory transfers. The JZ4760 additionally has a DMA core named
-> MDMA dedicated to memory-to-memory transfers. The programming manual for
-> the JZ4770 does have a bit for a MDMA clock, but does not seem to have
-> the hardware wired in.
+On Tue, 21 Dec 2021 09:47:02 +0000, Lad Prabhakar wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 > 
-> Add macros for the MDMA and BDMA clocks to the dt-bindings include
-> files, so that they can be used within Device Tree files.
+> Document Renesas RZ/V2L SoC.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> 
-> Notes:
->     v3: New patch
-> 
->  include/dt-bindings/clock/ingenic,jz4760-cgu.h | 2 ++
->  include/dt-bindings/clock/ingenic,jz4770-cgu.h | 1 +
->  2 files changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/arm/renesas.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
