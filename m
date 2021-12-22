@@ -2,220 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E6DC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 09:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB683C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 10:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbhLVJrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Dec 2021 04:47:49 -0500
-Received: from mail-bn8nam11on2074.outbound.protection.outlook.com ([40.107.236.74]:28480
-        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S232246AbhLVJrt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Dec 2021 04:47:49 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bzMPpclO24NQMyQ+IpSoV1swk5+ND8D+o1bR+Y4BEAzGdn3d3Z3NujoBVR+vUH7vYoMCYyzdbfKbqhJNJolBjwxJTXEtm/W55442jUdpzWW8g3vMVfOmbzAjjGWZeQKHlL/EWrN/ruytBivv55WAQUkRGYcDY7Ik/M8jjm57EDn7F1iJiuB3TlJNfXfizynHHMP7zitw+K35wVo11N4y6CIjHlys55oxQaIqFmqBW3x8MIWe0KILkZ4P2ZswQ2gO1vylsRW3tQLbZdma/EdaM6kuQ8G0hiMa7XS2Qz4ELyuxWTw4PlWIamDq/CyqC9mFhPgzdEehTj5k3nJgMl8wrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S6/H1GKg53NZy7qRcixvZWSQFRsR3KPuySnYlDm85/Q=;
- b=nCWfaQ6HwmouGQRuzsN5Zz63RQBqW/Jkrne5Dfib5Q+nwsxo3Pa9C4b7yGvFJEQpd6EbxhjDNltkRjVl6ovZwEtP2A/5k1kwShaHshZ5ttt7Y3Au3Hm/Hrl7NLt4srvnCFoMKmevXVAAeNdQ9rW6UoMepPGQ1qBRSBMkQn8TVy3EprPUG3Hqc1URIG9S55/KeXjHv2jW8DCmycK8myoB1Ls/zHkYdTuC74jTVtisOpDKmzTw/S3U87bme1Nfa/Fmm8m5kXtMtIivnSjOjgGJSeonnKgjtm+VGoMfLXE/dAb0Vi425tSy8qv8fAYC5YXaIkCxf/YAlqgxJkM+8NpxYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S6/H1GKg53NZy7qRcixvZWSQFRsR3KPuySnYlDm85/Q=;
- b=tNZMDmpKMNX+GL36wH3Kw3DZTcB6K8zmrzucVOmWOjbgg+mpTI2bPEcPJTY1lIDZh3S/Mov3Ch3HxVu6jX4yAN00eFZzJB6p/R4U9qRPdno5FYE8Td3JJBpukFZe96TkQRrdrk/AJvqjILDr5czPS25Zh27qjGXNvE2UNpwfGa+MhQ8Vpx1inYY+T1+h8HkHu5q2zl86Z8aPcLJxm7KM5R1O1g79Z7oKADHPIOE2FPOOQDdq5sUhAIIsCrK2anokFsecuOjiiujJ1QMIdqeufaWaQMcSDEaKF/y1Dxs53sv8VZYYeLUh/D/0gO50r6jWFWWSv/NK6RSByt9duLKzTw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- CO6PR12MB5443.namprd12.prod.outlook.com (2603:10b6:303:13a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4823.17; Wed, 22 Dec
- 2021 09:47:46 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ecac:528f:e36c:39d0]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ecac:528f:e36c:39d0%5]) with mapi id 15.20.4801.020; Wed, 22 Dec 2021
- 09:47:46 +0000
-Subject: Re: [PATCH v16 08/40] gpu: host1x: Add initial runtime PM and OPP
- support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-9-digetx@gmail.com>
- <21212ddb-205f-71d6-0199-d75768eaf32c@nvidia.com>
- <41edc53b-5ed1-d524-2546-c3d1ee6cdea4@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <6652ac84-36f5-0e43-65fa-04786f384f21@nvidia.com>
-Date:   Wed, 22 Dec 2021 09:47:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-In-Reply-To: <41edc53b-5ed1-d524-2546-c3d1ee6cdea4@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS9PR04CA0065.eurprd04.prod.outlook.com
- (2603:10a6:20b:48b::21) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+        id S234996AbhLVKhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Dec 2021 05:37:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244209AbhLVKhB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 05:37:01 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD94C06173F
+        for <linux-clk@vger.kernel.org>; Wed, 22 Dec 2021 02:37:00 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id jw3so1896795pjb.4
+        for <linux-clk@vger.kernel.org>; Wed, 22 Dec 2021 02:37:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mBwaXNnQSWivoIpUpqJ2THr2W4AaaOSx8nauhWoHDzE=;
+        b=FYpuN3haxvSOkvrbvlUzLTKvbLcwu2Lzk8RLyLVOahduPY+VV4fHXvzjcxE8ahsHNf
+         Y4qy7BfKnLphLxcJbtkPrRL/3BRx8GRLVT60Bp4xyI1GIFkh87hQqKdhfAdAEIADBijH
+         nIOoCBEAQIvzMCWuhWcz0Y3WOXfyxX86WDr6uBxNEXK5HKnLkNprfDr3HgeBRcl7P7ro
+         dTr98/HpOpqGd9GrfgakSZbVLryZV9vsq24uitdB4b2BG9DUuLpF3qZeIVsbHy+H0491
+         riw14nE7WKXp+Ei3zBsF+7+aFXGbWjgykolRYW47Z3Svu6uJqdaty2q38++YcLgVq05u
+         TL9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mBwaXNnQSWivoIpUpqJ2THr2W4AaaOSx8nauhWoHDzE=;
+        b=zHh0E0vW83zpkXcNuOqIzlpkrs9SqVcOIW2ffPhxtVtCS7T0jhM9T2qpvvIhS3r4Zf
+         fu47H3zIALMFC0mE/uWHlazypx0KERJ64CIDnmz3lALLWUnDpDpmpVoBOcbNq47sZIhV
+         CHMMqpPU9zqKWxT23KAKPh/rPqh4zAVzKg74u54iIaiEmI6FAmR/lgUVkbRAumzoOh0o
+         fvhVT+iVC8NUVr5vOVp3GhxII5LYhL28idYp+hKrWQp0hm6lmv2Q4EjmTKV9H950Ng7l
+         ipwjFbDnvtyztJOfBl/e//2fTWHMJtqOHDvQ59Il25wK0Y47tCz3EjRfoUAPvDEY+sFB
+         NgSg==
+X-Gm-Message-State: AOAM532RtYgVG0sI3uagAji+gS5tTylSCIBIrbG23l8ivKxMSsb94p4j
+        rMV332GHKFIoKNRzqDp+yM8vcr0whgs0z1xscjm1bA==
+X-Google-Smtp-Source: ABdhPJy62MHWbQBAsnjb0KzXd8rE0HxrIy3+ZZoH5Uaws33M2M9boyX9AppkwmV9rc2gMq4yh84H0COlnUKONBUuH4M=
+X-Received: by 2002:a17:90a:740e:: with SMTP id a14mr635337pjg.40.1640169420035;
+ Wed, 22 Dec 2021 02:37:00 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9f6d0281-5ac9-44f4-b857-08d9c5301b7a
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5443:EE_
-X-Microsoft-Antispam-PRVS: <CO6PR12MB54434E63AFFA38C746AE11B4D97D9@CO6PR12MB5443.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: jveoNZaxXnq3H9x2n1adaiVOgNwvxG2vJ8NdhoVyVMVJYVLoP4dJRgZeAvTAI/r6950MRTrgAy9Ivl7oOly2dYK3KgxTntJqb8Bxk/JNfRl9iJHRbKS3la17laWBylZz3syD/Y/tr1zu6G25rA1pfgRI6bqTTLW2yJl3xpp3vMFIISZRZDagML2LIcD4zDHPDcrbfsrKAkQPWJ6QniUiT6jPNLgmCp+tS84pXI6gcEo0izukigmli6AnjBtjXLzGBnNULsgDOlR7nR9+QjpqnO5KPw23i2X/hV5ZRAYoE78J/FlTcRcYNV2644o2qxwGpK3EoCCRkNsUb6KpwXfpQoZA72R3lENScgm5s/W/WlypYjkdHzkmYn57VQFX08NkETQ39tA4hsRfZxV6ZcliL110kP6Yr+E01GglYTPdh9wVs6g/zrfU1GDQuGK5sayD8WYXa0SntFWkQHgrX30WkyUcpipJgREtWkj3UNYDNIL9IH3sSdk35WlrZYFNF3nhm7yCYFC51dv5jyXQ8EUHPjN6tC7WnQhRWoqQ/P7mcAcpp9ju9kNtHk8/gIicF5SIoA6OWcWJIQFgcdT9ttnosIvOMQ5XqObEiTC6a7GstKEZqNO2xlA2bS5Qv1s47aYeoLfRKmEpoUeatPsBTYQSSq6rEp1t8WQCcBkUOTjcXsi9ax3X5kGOr8mqnVDUUoHGJyOcNW1MpAB0cLhrnsfpZG6iKq4udbSzSv4jbpsQDnCsTvi1SjjSEGNjxWsKXmlOHp2fC0M7w/1gY5sun0Vpm86BrsiXa+KyeniHmXm4TQv2z3KWlBphKazhKeq6TKld
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(316002)(38100700002)(4326008)(66476007)(110136005)(53546011)(66946007)(6512007)(86362001)(8936002)(55236004)(31686004)(921005)(508600001)(66556008)(6506007)(6666004)(2906002)(36756003)(186003)(6486002)(7416002)(83380400001)(8676002)(2616005)(26005)(31696002)(5660300002)(32563001)(45980500001)(43740500002)(357404004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YUZ6WnZPZFFOSlUxc1llaFpuaFU4SSt2K2RVQkRvVjBWS0dhbWFlN2xZVlFp?=
- =?utf-8?B?d3lMTUhFVnRWQUFhbWN1UklrQnMydzhDWHp5blBaQ3NsS0NaWDR4NUtVeVll?=
- =?utf-8?B?b09hcmdYS1MrR3dFaHNqSXhva0JocDhBZy9UcGpTZ1FsYVN4UkROUitWdGRY?=
- =?utf-8?B?eGdYVUtoVytBNk93WkhaSFhNVFhweERYcHYrbTVFKzRTamZ5eHFuZ0ZDdkFp?=
- =?utf-8?B?Sk4vWStFc3BrOExDTTR6Q2t0c0drUFlwWnZ1VmdITGlkcUZhcGY2TncxKzZq?=
- =?utf-8?B?YmlmQ1I5VU9QQmFkUVd1QzFHdEVSVjFsRE00RGNSdjloNWpwakpZRFhvWDE5?=
- =?utf-8?B?ZmFINnhRdFRpa0VJZTNBNUNIWHBtRmYyYzJCcVVxbXBBYUg4dEkwVE5mNzRV?=
- =?utf-8?B?b240QjZSNnJ1ZTBNbG96ZHdjaUlPU2RaMmxESk8rbWZRMUtlMTM2Y0YwbTA5?=
- =?utf-8?B?TVNOekdIcmM3enVnVHZ5RVR6bVo4SlFwZVhJcS9Nbld1bkFySTEwd3Voa1dK?=
- =?utf-8?B?Y2x4Ny9XeU9LQVdBVW9IY2tjSmdUMzN4Q1owTUpobWJ5eWdHaUxaZEduTFFS?=
- =?utf-8?B?aFcwRmRhc3RENytNYjQ0aDVGS3I2TWM2WjY4UmdwQ2xCMXlWdEtPQjZERDJZ?=
- =?utf-8?B?Y0Vlb0x3b20vSjJTVTVlTmx1cUkxNEs4VmlIQWVVdThaQzdzalBaUnNjenR3?=
- =?utf-8?B?cGVpNDZ1cTQzV2kyWDRwUE1zMHQ0Q0hKNmtOUmxEVFpYdysrcmN1cVp4dVh0?=
- =?utf-8?B?OUpBSCtJdVlqTVBVdjNiTmNiQnViMmZ2WUlrSFA0ZVBnWFJIeWVXVk9vRStj?=
- =?utf-8?B?cFZVMU95ZThBWWtmZ0d4Z2p5T3FqU3lxMU9Xc2kyU0JxVFhCUFZoMWRWT25n?=
- =?utf-8?B?aUZSZjZadE4yaGN5Z2VxdDN4eW5ITVp1OEZhckJhMGJPZmJROUpxR05Db2ly?=
- =?utf-8?B?OFViMHdMYnFsYTVoa3BURmN4cko3T2FZM2ZnMi80NjNxL2ZWSGtMalI4R2xa?=
- =?utf-8?B?RUNKdS9ycTZweHR4aHZGaHoxL2krMUlQYkkxY20vNFFhRldiVVpiQnNXRG9n?=
- =?utf-8?B?THNYUTdFaXAzLzlmeXlNTldwRnY5bXJTbnRZeUFQZjI1bEliMjd4V21pdmg1?=
- =?utf-8?B?VjZYYm1vbXVLdlRsQzI4cXdHUFFWMUo4dGVuVTJYc0U1aXdwWWtYRXBjUi8w?=
- =?utf-8?B?eVpidjBIK3B1NDRpMFdQZjdDQlMzMkpyQzFwOE5YUS9nWlVMbDhoYm5jVWFF?=
- =?utf-8?B?Q2NPWVVDMXRNNkVNd2RTc0JsTURqMllPUnhLa0w3QXZ6WGF6Tk4xc0VpN25R?=
- =?utf-8?B?UG1mSEFnWXJRczZkQjhwOU5udnlSaktvSU1pS3VOaGlYd0FXazR0dDRjUzcz?=
- =?utf-8?B?Nk84QzROOXVTVWU5b1hZbVRzemlkOFlmYzFVd25kQko1MGd4eTNKdGE5YkRq?=
- =?utf-8?B?azM2UU5UWVR5dS9ZNmwvQXdKaWFwWVZFUUZJdFFiRG4xRS9wZkpOT2RjMEtt?=
- =?utf-8?B?TWFBYXFBL0hZQU9yTUhONHdKcTZwcVF0ckZnM2cydkoxWFQ3TTllQmFLOUNv?=
- =?utf-8?B?UDBxS3lEeS9ZVFJPbnQ4R1UzQlkvVmRvM2Q5VDducjMza2pkS29BZHFaSitL?=
- =?utf-8?B?UXBwQzg2VzZyRkhOOFpyMHBpYmdWQ1pTdVNORFZWR0w2c3g2RllhWWlBeUdl?=
- =?utf-8?B?UEloaEx4Mzh0TjR3ZGJqOTB4SVdYcjBLMlYxN0lHY2c4L2UrTXpMejJtaFY2?=
- =?utf-8?B?dUdIMXR4WFRUYzNJOGN4dW9KelpvNEF5ZE1TVURkVkt3UmlXWFNLaWczc1FP?=
- =?utf-8?B?YnY5ZFd0Rjg2QXZRTmxTc01JVXBFeXh6T0QxNHJndmRET0tJWDJjKzZSemFY?=
- =?utf-8?B?WVBBOWpzRHYvRVdxYlJxeTBVLzhadEQrd1AvZThRRGV0TUpSQTAzQjZCZFBk?=
- =?utf-8?B?VUdZNkJ3SndnRnp5QVNRT3Z1ZitHdytXc0wvRmNUNUJXbG03bEJkQXB2b1V2?=
- =?utf-8?B?djB4MmtaeFJWOUczV1doMzdGRVZXN3A5TG1QcDJvUUxYUXNDeU9hYXl5SG94?=
- =?utf-8?B?NmVnMnI0MC9LRkh1djhvdFVJR1pwcXZIbDF2L2Q0enpQT3dWVXo5dFNRZ0VI?=
- =?utf-8?B?VkVLWjE5d3pBN3ZGb09MOS9GSzcxSlpnTkpKQmh5cFRsOW4ySFVjNTBXWldO?=
- =?utf-8?Q?CQj+yUjcdbL26oT8KzZXU8s=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f6d0281-5ac9-44f4-b857-08d9c5301b7a
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Dec 2021 09:47:46.4106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TfcngIYu/3z1iepuyxGiewWriAKBLluLYsWRV3rXvKJKr0T2px1OB0YHd9omFomuQWQQ5hskQEwnP0zWi/HULw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5443
+References: <1639994084-25447-1-git-send-email-loic.poulain@linaro.org>
+ <YcEUrtQuJ5CGF2RW@ripper> <CAMZdPi9g9x0Rn4YUwcLrZ5M23i3EzJOuUfh3MXFVM7pscQx5Tw@mail.gmail.com>
+ <YcJvsEFXPPVI+GZi@ripper>
+In-Reply-To: <YcJvsEFXPPVI+GZi@ripper>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Wed, 22 Dec 2021 11:48:27 +0100
+Message-ID: <CAMZdPi_5ygZiWo53R2V=s3MHiYs=+ddAdvyzc1X7GtMcwmriYw@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: gcc-qcm2290: CLK_OPS_PARENT_ENABLE flag for
+ rcg2 clocks
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mike Tipton <quic_mdtipton@quicinc.com>, agross@kernel.org,
+        sboyd@kernel.org, shawn.guo@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Bjorn,
 
-On 21/12/2021 20:58, Dmitry Osipenko wrote:
-> Hi,
-> 
-> Thank you for testing it all.
-> 
-> 21.12.2021 21:55, Jon Hunter пишет:
->> Hi Dmitry, Thierry,
->>
->> On 30/11/2021 23:23, Dmitry Osipenko wrote:
->>> Add runtime PM and OPP support to the Host1x driver. For the starter we
->>> will keep host1x always-on because dynamic power management require a
->>> major
->>> refactoring of the driver code since lot's of code paths are missing the
->>> RPM handling and we're going to remove some of these paths in the future.
->>
->>
->> Unfortunately, this change is breaking boot on Tegra186. Bisect points
->> to this and reverting on top of -next gets the board booting again.
->> Sadly, there is no panic or error reported, it is just a hard hang. I
->> will not have time to look at this this week and so we may need to
->> revert for the moment.
-> 
-> Only T186 broken? What about T194?
+On Wed, 22 Dec 2021 at 01:20, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 
-Yes interestingly only Tegra186 and no other board.
+> > > > When a rcg2 clock migrates to a new parent, both the old and new
+> > > > parent clocks must be enabled to complete the transition. This can
+> > > > be automatically performed by the clock core when a clock is flagged
+> > > > with CLK_OPS_PARENT_ENABLE.
+> > > >
+> > > > Without this, we may hit rate update failures:
+> > > > gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
+> > > > WARNING: CPU: 1 PID: 82 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xe0/0xf0
+> > > >
+> > > > Fixes: 496d1a13d405 ("clk: qcom: Add Global Clock Controller driver for QCM2290")
+> > > > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> > > > ---
+> > > >  drivers/clk/qcom/gcc-qcm2290.c | 20 ++++++++++++++++++++
+> > > >  1 file changed, 20 insertions(+)
+> > > >
+> > > > diff --git a/drivers/clk/qcom/gcc-qcm2290.c b/drivers/clk/qcom/gcc-qcm2290.c
+> > > > index b6fa7b8..9e1d88e 100644
+> > > > --- a/drivers/clk/qcom/gcc-qcm2290.c
+> > > > +++ b/drivers/clk/qcom/gcc-qcm2290.c
+> > > > @@ -674,6 +674,7 @@ static struct clk_rcg2 gcc_usb30_prim_mock_utmi_clk_src = {
+> > > >               .name = "gcc_usb30_prim_mock_utmi_clk_src",
+> > > >               .parent_data = gcc_parents_0,
+> > > >               .num_parents = ARRAY_SIZE(gcc_parents_0),
+> > > > +             .flags = CLK_OPS_PARENT_ENABLE,
+> > >
+> > > This seems like a correct fix for the obvious problem that we might end
+> > > up invoking clk_set_rate() and clk_set_parent() for these clocks while
+> > > their (and thereby themselves - in a software sense) are disabled.
+> > >
+> > >
+> > > However, clocks that downstream are marked "enable_safe_config", may in
+> > > addition be enabled by the hardware, behind out back. As such we must
+> > > ensure that they always have a valid configuration, we do this by
+> > > "parking" them on CXO whenever we're going to disable their parent
+> > > clocks.
+> > >
+> > > Upstream we handle this by using the clk_rcg2_shared_ops, which will do
+> > > exactly this.
+> >
+> > Ok, thanks for the explanation, so we actually need both
+> > clk_rcg2_shared_ops and CLK_OPS_PARENT_ENABLE, the former parking the
+> > clock under always-on CXO (safe source), allowing hardware to toggle it
+> > on its own. The latter allows safe parent switching by enabling the
+> > new parent clock before update (and old parent, but we don't care
+> > since we are actually parked on CXO) . Is that correct?
+> >
+>
+> If a clock is parked and we get a request to change its rate, then the
+> old parent doesn't matter (as you say). But as we are done with the
+> set_rate the new parent will be turned off, as such as soon as we've
+> changed the parent we must park the RCG again.
+>
+> So for parked shared_ops RCGs we simply remember the new configuration
+> of the set_rate until it's time to enable the RCG again.
+>
+> As such I don't think that CLK_OPS_PARENT_ENABLE adds any value (for the
+> shared_ops RCGs), only a bit of overhead.
+>
+>
+> That said, if I read the code correctly don't think we properly handles
+> a clk_set_parent() of a parked shared RCGs today...
 
-> Which board model fails to boot? Is it running in hypervisor mode?
+Indeed, but most of the time, clk_rcg2_set_rate_and_parent is used,
+and seems correctly implemented for shared case. But in case of e.g.
+assigned-parent from dts, the clk_set_parent may indeed fail. So we
+need a dedicated clk_rcg2_shared_set_parent function, maybe something
+like:
 
-This is Jetson TX2. No hypervisor.
++static int clk_rcg2_shared_set_parent(struct clk_hw *hw, u8 index)
++{
++       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++       int ret;
++       u32 cfg = rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++       /*
++        * In case clock is disabled, update the CFG and don't hit the
++        * update bit of CMD register, which will be done in next enable().
++        */
++       ret = regmap_update_bits(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg),
++                                CFG_SRC_SEL_MASK, cfg);
++       if (ret || !__clk_is_enabled(hw->clk))
++               return ret;
++
++       return update_config(rcg);
++}
 
-> Do you use any additional patches?
-
-No just plain -next. The tests run every day on top of tree.
-
-> Could you please test the below diff? I suspect that
-> host1x_syncpt_save/restore may be entirely broken for T186 since we
-> never used these funcs before.
-> 
-> --- >8 ---
-> 
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> index f5b4dcded088..fd5dfb875422 100644
-> --- a/drivers/gpu/host1x/dev.c
-> +++ b/drivers/gpu/host1x/dev.c
-> @@ -580,7 +580,6 @@ static int __maybe_unused
-> host1x_runtime_suspend(struct device *dev)
->   	int err;
-> 
->   	host1x_intr_stop(host);
-> -	host1x_syncpt_save(host);
-> 
->   	err = reset_control_bulk_assert(host->nresets, host->resets);
->   	if (err) {
-> @@ -596,9 +595,8 @@ static int __maybe_unused
-> host1x_runtime_suspend(struct device *dev)
->   	return 0;
-> 
->   resume_host1x:
-> -	host1x_setup_sid_table(host);
-> -	host1x_syncpt_restore(host);
->   	host1x_intr_start(host);
-> +	host1x_setup_sid_table(host);
-> 
->   	return err;
->   }
-> @@ -626,9 +624,8 @@ static int __maybe_unused
-> host1x_runtime_resume(struct device *dev)
->   		goto disable_clk;
->   	}
-> 
-> -	host1x_setup_sid_table(host);
-> -	host1x_syncpt_restore(host);
->   	host1x_intr_start(host);
-> +	host1x_setup_sid_table(host);
-
-
-Thanks! Will try this later, once the next bisect is finished :-)
-
-Jon
-
--- 
-nvpublic
+Regards,
+Loic
