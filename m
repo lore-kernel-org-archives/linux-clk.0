@@ -2,122 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA84C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Dec 2021 19:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C8FC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Dec 2021 08:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345282AbhLVThw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Dec 2021 14:37:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47846 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232808AbhLVThv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Dec 2021 14:37:51 -0500
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7323EC061574;
-        Wed, 22 Dec 2021 11:37:51 -0800 (PST)
-Received: by mail-yb1-xb36.google.com with SMTP id q74so9639404ybq.11;
-        Wed, 22 Dec 2021 11:37:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JdkYvs20BpJlttg/sO+h+d7jCfULBOe8+I92ZlF90H0=;
-        b=Q1SAHaetYjQ/EOwOdwCaMPzNpCC+yMulPpy3xC4P1n19cq+11tylhwX0k6W8UYmDEB
-         qJG3I7vxY3wzMJ9uCaj3zIrN7J93ORZKhnFpqpUaUK0hklS7plLdvDwdhP5WBiwtaYPz
-         CyyAkv4ltoO09LoarJUNRgGQW2vpi2PucDuLFLyfrXv2v8WGI2UMC5Oh09LslXPY/cMk
-         9kjVER97cD+wAeNdu3Xx2lH2SZeOKDlLO3Upv/1uW3Ya1MvNwgP3UIMZAMN2qILUuiYR
-         8gKNpomh6OKHjbCMWpCK1W2kK3fcMXcEf2pPNUpWEhhYc/eADZNhg5E2ZRiSia6njllX
-         QVbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JdkYvs20BpJlttg/sO+h+d7jCfULBOe8+I92ZlF90H0=;
-        b=WclQ4xllO6XTd1+Yk0uqVyhVcRGCTORLVTO3ayrQfNeLU8iSmjTn56LOQNVyHqYn77
-         pkWcqqNSCgV9qZaz/IH54m+/kWsnTpmpciS4TqjoD4d364ZeSakj1nC1Vba5uPJSsHyT
-         CrLuiOHU2lsw9viqsBty6pEj+QLFX/qG3YtZVs/eqbUol5FegIDA45T2GM74t9B+ekDb
-         XvzQFxde9SQwvA+tw8qfgx9MNDiY+qP90sbB1O63f9cyybdGCuwHEAkkpLZniubzYS1v
-         nFV/xHsUdEoez9hFkQgzyL17lokvdObUnBFUeYW2MxUpHMGYf/BT7iwjzeQS3qDCtTkw
-         GeWg==
-X-Gm-Message-State: AOAM531AJ4Hef8fdw3YeQwTtfyiXMiyt5W/9yBohu9XnBWlpOc5xdV6z
-        kNnJx4Eo9jR8ZOaGa8P6GeZCvFp8drGpzGxbwWM=
-X-Google-Smtp-Source: ABdhPJzdVT+SQRtJbDPy9fx/RFt9bR29nRb5pHIcRNYiRMiQ6ON6WRwM9HPCPHaWh3ZtBJTxcH+1lkFSG0nAeaKi6ro=
-X-Received: by 2002:a25:98c4:: with SMTP id m4mr6431027ybo.613.1640201870647;
- Wed, 22 Dec 2021 11:37:50 -0800 (PST)
+        id S242764AbhLWIA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Dec 2021 03:00:59 -0500
+Received: from mail.BETTERBIZ.PL ([45.86.209.138]:59510 "EHLO
+        mail.betterbiz.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242724AbhLWIA7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Dec 2021 03:00:59 -0500
+X-Greylist: delayed 587 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Dec 2021 03:00:59 EST
+Received: by mail.betterbiz.pl (Postfix, from userid 1001)
+        id 7EC7B82EAD; Thu, 23 Dec 2021 02:45:52 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=betterbiz.pl; s=mail;
+        t=1640245865; bh=07NAgW1e0WiNB9zqagiM2BnwZfWBCpNa2E4+ccxBPgw=;
+        h=Date:From:To:Subject:From;
+        b=uPNQrvSPwppwgbF+K4jeeg3mR0VLj0OW+SHnn1Z8Tu/MYWmug45Rj6Ohq7M9b7JID
+         90vNJGz78vjGpmivZ3nDXJn6BYuSSpQ17I8VqNle3z2MbrY7x+H3RKTCcLRSdusvn/
+         PlG6BKzZGrVtLR3dkb67PbjXN4Vj+ReXy6+k7fVZ4vwmygsX9zwHAsS1he+00OLHqv
+         sIe4nZv/cZbHxGWLA0bOWSSQ2AlIrG7JmBz8olIPaz6yLLKTkbOU2r4Oq01edREsbT
+         QIeal5L7BjWnHZP5sAcxaCPhlgYgqCP2cCzpseKYp5Hdp7EQtccVr7nljatbDg+cE+
+         p8wKEXNe1Girg==
+Received: by mail.betterbiz.pl for <linux-clk@vger.kernel.org>; Thu, 23 Dec 2021 07:45:46 GMT
+Message-ID: <20211223024500-0.1.f.100e.0.4qq4yo5x8p@betterbiz.pl>
+Date:   Thu, 23 Dec 2021 07:45:46 GMT
+From:   "Jakub Daroch" <jakub.daroch@betterbiz.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Wycena paneli fotowoltaicznych
+X-Mailer: mail.betterbiz.pl
 MIME-Version: 1.0
-References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20211221094717.16187-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <YcNtMMNKHIgGFZ+V@robh.at.kernel.org>
-In-Reply-To: <YcNtMMNKHIgGFZ+V@robh.at.kernel.org>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 22 Dec 2021 19:37:24 +0000
-Message-ID: <CA+V-a8tUyRUaEVhh9_xdHEzYnuYTaj2M6dqqvQGYOgoXOjWxxQ@mail.gmail.com>
-Subject: Re: [PATCH 02/16] dt-bindings: arm: renesas: Document SMARC EVK
-To:     Rob Herring <robh@kernel.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+Dzie=C5=84 dobry,
 
-Thank you for the review.
+dostrzegam mo=C5=BCliwo=C5=9B=C4=87 wsp=C3=B3=C5=82pracy z Pa=C5=84stwa f=
+irm=C4=85.
 
-On Wed, Dec 22, 2021 at 6:23 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Dec 21, 2021 at 09:47:03AM +0000, Lad Prabhakar wrote:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > Document Renesas SMARC EVK board which is based on RZ/V2L (R9A07G054)
-> > SoC. The SMARC EVK consists of RZ/V2L SoM module and SMARC carrier board,
-> > the SoM module sits on top of the carrier board.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-> > index 55a5aec418ab..fa435d6fda77 100644
-> > --- a/Documentation/devicetree/bindings/arm/renesas.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-> > @@ -423,6 +423,8 @@ properties:
-> >
-> >        - description: RZ/V2L (R9A07G054)
-> >          items:
-> > +          - enum:
-> > +              - renesas,smarc-evk # SMARC EVK
->
-> This and patch 1 should be combined. Changing the number of compatible
-> entries doesn't make sense.
->
-Will merge this with patch 1. Is it OK if I include your Ack when merged?
+=C5=9Awiadczymy kompleksow=C4=85 obs=C5=82ug=C4=99 inwestycji w fotowolta=
+ik=C4=99, kt=C3=B3ra obni=C5=BCa koszty energii elektrycznej nawet o 90%.
 
-Cheers,
-Prabhakar
+Czy s=C4=85 Pa=C5=84stwo zainteresowani weryfikacj=C4=85 wst=C4=99pnych p=
+ropozycji?
 
-> >            - enum:
-> >                - renesas,r9a07g054l1 # Single Cortex-A55 RZ/V2L
-> >                - renesas,r9a07g054l2 # Dual Cortex-A55 RZ/V2L
-> > --
-> > 2.17.1
-> >
-> >
+
+Pozdrawiam,
+Jakub Daroch
