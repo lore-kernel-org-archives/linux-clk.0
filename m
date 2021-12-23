@@ -2,107 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0D1C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Dec 2021 09:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D785C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Dec 2021 15:41:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347465AbhLWJc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Dec 2021 04:32:28 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:16249 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234179AbhLWJc2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Dec 2021 04:32:28 -0500
-X-IronPort-AV: E=Sophos;i="5.88,229,1635174000"; 
-   d="scan'208";a="104472104"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Dec 2021 18:32:26 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A765C4012B0D;
-        Thu, 23 Dec 2021 18:32:24 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH] clk: renesas: r9a07g044: Update multiplier and divider values for PLL2/3
-Date:   Thu, 23 Dec 2021 09:32:23 +0000
-Message-Id: <20211223093223.4725-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        id S1349059AbhLWPly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Dec 2021 10:41:54 -0500
+Received: from esa.microchip.iphmx.com ([68.232.154.123]:29127 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349058AbhLWPkw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Dec 2021 10:40:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1640274051; x=1671810051;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YcN1nSjIyeMlPtXRTSvXWfI2gE85Pz9oyuBbS0L9t3o=;
+  b=jEVztBzvEVMQVvkknXoHfNteTPEMiRl4DF9oxReKTW89uittrEklt8mV
+   MJoQ9hnBjcLPYjFvZR5+2svVdZ/vDaeWgNzBnAL8JRZXoXYzim02p6r8J
+   zmBNUik5iauYf1L4g5BHAY0Lemsae3jY4mIIgErC8ohH3mykdtsmjtpgc
+   q4v66UISPHZvJPaHi9G2ghsm2n/+DUOZqBL5SBHMPgaiQ7nVaht9I0PdK
+   GPKgWMALf3l9f41JenEq9I7dzEV60o9tevKDEGAyNye1LqhhXNpv4X9My
+   I4Ost7Jd7pgrDJXz56GziEqxmP6cc4AttXKxMq07nYX0t99jRMLv2B1RG
+   Q==;
+IronPort-SDR: 0a4KLaVZrN1JIu1Ug/vccFTYr2vwezpVcKJMBevxA2bKYV8aihzvV2pCCE612j4nGy/q/abjem
+ yNDOpvQXvIc8AQW8i/SPJzlKtZn367ufgX8EyGMiT3Cve142VanXM1Ugu5BQAwEJ8PJ9bjS6vx
+ Vxka0pr6tWiupKti87yictTNSbJPNHOc9XLuvLDagUf5kOhzoi8/wtpCMIsbwOKUNt7i0ePTI5
+ aPlZu8RD0SjPNNwfj/LXqJpzRnuIyCaeoNFCIB3T0uuQ0UYmRz4g9aeiCJDEpDmzsHkv6hXe+1
+ RQQgrAwNpsxeaEMqUX9xsAkB
+X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
+   d="scan'208";a="140721431"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Dec 2021 08:40:51 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 23 Dec 2021 08:40:50 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Thu, 23 Dec 2021 08:40:49 -0700
+From:   <conor.dooley@microchip.com>
+To:     <mani@kernel.org>, <Mmturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daire.mcnamara@microchip.com>,
+        <mail@conchuod.ie>, Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH] clk: bm1880: remove kfrees on static allocations
+Date:   Thu, 23 Dec 2021 15:42:44 +0000
+Message-ID: <20211223154244.1024062-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As per the HW manual (Rev.1.00 Sep, 2021) PLL2 and PLL3 should be 1600MHz,
-but with current multiplier and divider values this resulted to 1596MHz.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-This patch updates the multiplier and divider values for PLL2 and PLL3
-so that we get the exact (1600MHz) values.
+bm1880_clk_unregister_pll & bm1880_clk_unregister_div both try to
+free statically allocated variables, so remove those kfrees.
 
-Fixes: 17f0ff3d49ff1 ("clk: renesas: Add support for R9A07G044 SoC")
-Suggested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+For example, if we take L703 kfree(div_hw):
+- div_hw is a bm1880_div_hw_clock pointer
+- in bm1880_clk_register_plls this is pointed to an element of arg1:
+  struct bm1880_div_hw_clock *clks
+- in the probe, where bm1880_clk_register_plls is called arg1 is
+  bm1880_div_clks, defined on L371:
+  static struct bm1880_div_hw_clock bm1880_div_clks[]
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-Hi,
+ drivers/clk/clk-bm1880.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-Below is the log for before and after this patch.
-
-Clock output before the patch:
-root@smarc-rzg2l:~# cat /sys/kernel/debug/clk/clk_summary | grep -E 'pll1|pll2|pll3'
-    .pll3                             1        2        0  1596000000          0     0  50000         Y
-       .pll3_div2                     1        1        0   798000000          0     0  50000         Y
-          .pll3_div2_4                3        3        0   199500000          0     0  50000         Y
-             .pll3_div2_4_2           2        2        0    99750000          0     0  50000         Y
-          .pll3_div2_2                0        0        0   399000000          0     0  50000         Y
-       .pll3_533                      0        2        0   532000000          0     0  50000         Y
-          .sel_pll3_3                 0        1        0   532000000          0     0  50000         Y
-       .pll3_400                      0        0        0   399000000          0     0  50000         Y
-    .pll2                             2        2        0  1596000000          0     0  50000         Y
-       .pll2_div2                     1        2        0   798000000          0     0  50000         Y
-          .pll2_div2_10               0        1        0    79800000          0     0  50000         Y
-          .pll2_div2_8                1        1        0    99750000          0     0  50000         Y
-    .pll1                             0        0        0  1200000000          0     0  50000         Y
-root@smarc-rzg2l:~#
-
-Clock output after the patch:
-root@smarc-rzg2l:~# cat /sys/kernel/debug/clk/clk_summary | grep -E 'pll1|pll2|pll3'
-    .pll3                             1        2        0  1600000000          0     0  50000         Y
-       .pll3_div2                     1        1        0   800000000          0     0  50000         Y
-          .pll3_div2_4                3        3        0   200000000          0     0  50000         Y
-             .pll3_div2_4_2           2        2        0   100000000          0     0  50000         Y
-          .pll3_div2_2                0        0        0   400000000          0     0  50000         Y
-       .pll3_533                      0        2        0   533333333          0     0  50000         Y
-          .sel_pll3_3                 0        1        0   533333333          0     0  50000         Y
-       .pll3_400                      0        0        0   400000000          0     0  50000         Y
-    .pll2                             2        2        0  1600000000          0     0  50000         Y
-       .pll2_div2                     1        2        0   800000000          0     0  50000         Y
-          .pll2_div2_10               0        1        0    80000000          0     0  50000         Y
-          .pll2_div2_8                1        1        0   100000000          0     0  50000         Y
-    .pll1                             0        0        0  1200000000          0     0  50000         Y
-root@smarc-rzg2l:~#
-
-Cheers,
-Prabhakar
----
- drivers/clk/renesas/r9a07g044-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index f4537345126d..22923f8949b1 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -89,8 +89,8 @@ static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
- 	DEF_FIXED(".osc", R9A07G044_OSCCLK, CLK_EXTAL, 1, 1),
- 	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
- 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
--	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
--	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
-+	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
-+	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
- 	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
+diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+index e6d6599d310a..fad78a22218e 100644
+--- a/drivers/clk/clk-bm1880.c
++++ b/drivers/clk/clk-bm1880.c
+@@ -522,14 +522,6 @@ static struct clk_hw *bm1880_clk_register_pll(struct bm1880_pll_hw_clock *pll_cl
+ 	return hw;
+ }
  
+-static void bm1880_clk_unregister_pll(struct clk_hw *hw)
+-{
+-	struct bm1880_pll_hw_clock *pll_hw = to_bm1880_pll_clk(hw);
+-
+-	clk_hw_unregister(hw);
+-	kfree(pll_hw);
+-}
+-
+ static int bm1880_clk_register_plls(struct bm1880_pll_hw_clock *clks,
+ 				    int num_clks,
+ 				    struct bm1880_clock_data *data)
+@@ -555,7 +547,7 @@ static int bm1880_clk_register_plls(struct bm1880_pll_hw_clock *clks,
+ 
+ err_clk:
+ 	while (i--)
+-		bm1880_clk_unregister_pll(data->hw_data.hws[clks[i].pll.id]);
++		clk_hw_unregister(data->hw_data.hws[clks[i].pll.id]);
+ 
+ 	return PTR_ERR(hw);
+ }
+@@ -695,14 +687,6 @@ static struct clk_hw *bm1880_clk_register_div(struct bm1880_div_hw_clock *div_cl
+ 	return hw;
+ }
+ 
+-static void bm1880_clk_unregister_div(struct clk_hw *hw)
+-{
+-	struct bm1880_div_hw_clock *div_hw = to_bm1880_div_clk(hw);
+-
+-	clk_hw_unregister(hw);
+-	kfree(div_hw);
+-}
+-
+ static int bm1880_clk_register_divs(struct bm1880_div_hw_clock *clks,
+ 				    int num_clks,
+ 				    struct bm1880_clock_data *data)
+@@ -729,7 +713,7 @@ static int bm1880_clk_register_divs(struct bm1880_div_hw_clock *clks,
+ 
+ err_clk:
+ 	while (i--)
+-		bm1880_clk_unregister_div(data->hw_data.hws[clks[i].div.id]);
++		clk_hw_unregister(data->hw_data.hws[clks[i].div.id]);
+ 
+ 	return PTR_ERR(hw);
+ }
 -- 
-2.17.1
+2.30.2
 
