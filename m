@@ -2,131 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D785C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Dec 2021 15:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA59FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Dec 2021 14:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349059AbhLWPly (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Dec 2021 10:41:54 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:29127 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349058AbhLWPkw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Dec 2021 10:40:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1640274051; x=1671810051;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YcN1nSjIyeMlPtXRTSvXWfI2gE85Pz9oyuBbS0L9t3o=;
-  b=jEVztBzvEVMQVvkknXoHfNteTPEMiRl4DF9oxReKTW89uittrEklt8mV
-   MJoQ9hnBjcLPYjFvZR5+2svVdZ/vDaeWgNzBnAL8JRZXoXYzim02p6r8J
-   zmBNUik5iauYf1L4g5BHAY0Lemsae3jY4mIIgErC8ohH3mykdtsmjtpgc
-   q4v66UISPHZvJPaHi9G2ghsm2n/+DUOZqBL5SBHMPgaiQ7nVaht9I0PdK
-   GPKgWMALf3l9f41JenEq9I7dzEV60o9tevKDEGAyNye1LqhhXNpv4X9My
-   I4Ost7Jd7pgrDJXz56GziEqxmP6cc4AttXKxMq07nYX0t99jRMLv2B1RG
-   Q==;
-IronPort-SDR: 0a4KLaVZrN1JIu1Ug/vccFTYr2vwezpVcKJMBevxA2bKYV8aihzvV2pCCE612j4nGy/q/abjem
- yNDOpvQXvIc8AQW8i/SPJzlKtZn367ufgX8EyGMiT3Cve142VanXM1Ugu5BQAwEJ8PJ9bjS6vx
- Vxka0pr6tWiupKti87yictTNSbJPNHOc9XLuvLDagUf5kOhzoi8/wtpCMIsbwOKUNt7i0ePTI5
- aPlZu8RD0SjPNNwfj/LXqJpzRnuIyCaeoNFCIB3T0uuQ0UYmRz4g9aeiCJDEpDmzsHkv6hXe+1
- RQQgrAwNpsxeaEMqUX9xsAkB
-X-IronPort-AV: E=Sophos;i="5.88,229,1635231600"; 
-   d="scan'208";a="140721431"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Dec 2021 08:40:51 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 23 Dec 2021 08:40:50 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Thu, 23 Dec 2021 08:40:49 -0700
-From:   <conor.dooley@microchip.com>
-To:     <mani@kernel.org>, <Mmturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <daire.mcnamara@microchip.com>,
-        <mail@conchuod.ie>, Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH] clk: bm1880: remove kfrees on static allocations
-Date:   Thu, 23 Dec 2021 15:42:44 +0000
-Message-ID: <20211223154244.1024062-1-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.30.2
+        id S231835AbhLXOcN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Dec 2021 09:32:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231265AbhLXOcM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Dec 2021 09:32:12 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86AFFC061401
+        for <linux-clk@vger.kernel.org>; Fri, 24 Dec 2021 06:32:12 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id g7-20020a7bc4c7000000b00345c4bb365aso4665812wmk.4
+        for <linux-clk@vger.kernel.org>; Fri, 24 Dec 2021 06:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=user-agent:from:to:cc:cc:subject:date:message-id:mime-version;
+        bh=J/sv0TNCM9qhpmuWLLjcw321btDF9NYLzz+0+v/rVkY=;
+        b=Ikaxk4kRWp4PpqKW5C3ydChMKXHguNjcmX6LJJP9b5DNCRq0Tfatz3s9ZNuDs/4gKm
+         45Qb6bYc8SKqgsP6lA8RisrDX2ymvdfl0lrFwWHc859ANlTu/suJhEH1nlF72sM7wyDv
+         cgTOmytcKqpteLv35kXO0ReqPxVLohucthJ2waT5JrAnwsWLClzVpveD/etX9IDfXbnB
+         r4qMeAYEzbBqAPp5sor8UZEHKvYi65tosjZtdHRKEi7b1KA1niY18q0N9YNzZ8/ZVSGG
+         KtzdQNR8wqmbkFAfUz4fAODzvEPfQfin46m6/wCYkZpQogu6RNW3fn06ds6x7Uzm1Qzd
+         sjvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:user-agent:from:to:cc:cc:subject:date:message-id
+         :mime-version;
+        bh=J/sv0TNCM9qhpmuWLLjcw321btDF9NYLzz+0+v/rVkY=;
+        b=gF6fa2BKMuc41mEsOEuWl8GpmemQEq5VzKMld/tey8Ha5W0R0OFMJE1sei5zT3ZPmQ
+         /+maX8jvV+4DMYUaGJNFK5cl3mjuTkgq1Zm/GJcQQofPywvEXtPa9EZBCdl0qg1lzbWE
+         WwUVpJNexHC8ZC2IOyq/WTjpILdMwX6OfHt/nFpvzaKo9eBEpzrQ8eCdQwcLZ9yylcgM
+         HlSS/L4TTwbeNeSegLFh4GWr5JKO3c4EqghGflm6RFmsOyJEhe1TMRZoq1rUot1hslz7
+         K4CqZUGMAGjba2DwfKsrRi5UGFHdCVNIInukYHJsIvGA5L17X9rpYV8KcrbLNVvl+QIY
+         oydw==
+X-Gm-Message-State: AOAM533IwqpDF/yJBGpxZyoOtJHe3eUrPWkgBUW8Pgzd4uCHcEIN5iGo
+        CZrd8r1B+ZBDG5EIx/JQ+mLV0g==
+X-Google-Smtp-Source: ABdhPJzGVqOsXGzYJm90HcX971AuK9CKo0663Sce/buXN8Zo0HNnK3lLg3vPNUena2m2PfJVI/wEfQ==
+X-Received: by 2002:a1c:1d17:: with SMTP id d23mr5094399wmd.105.1640356331093;
+        Fri, 24 Dec 2021 06:32:11 -0800 (PST)
+Received: from localhost ([2a01:e0a:1a5:7ee0:ef0c:e38f:5a0f:262f])
+        by smtp.gmail.com with ESMTPSA id c7sm8992009wri.21.2021.12.24.06.32.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Dec 2021 06:32:10 -0800 (PST)
+User-agent: mu4e 1.6.10; emacs 27.1
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     sboyd@kernel.org
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: [GIT PULL] clk: meson: amlogic update for v5.17
+Date:   Fri, 24 Dec 2021 15:27:48 +0100
+Message-ID: <1ja6gqhy52.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
 
-bm1880_clk_unregister_pll & bm1880_clk_unregister_div both try to
-free statically allocated variables, so remove those kfrees.
+Hi Stephen,
 
-For example, if we take L703 kfree(div_hw):
-- div_hw is a bm1880_div_hw_clock pointer
-- in bm1880_clk_register_plls this is pointed to an element of arg1:
-  struct bm1880_div_hw_clock *clks
-- in the probe, where bm1880_clk_register_plls is called arg1 is
-  bm1880_div_clks, defined on L371:
-  static struct bm1880_div_hw_clock bm1880_div_clks[]
+Here is the amlogic clock update for v5.17. Just a single fix this time
+Please pull
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/clk-bm1880.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+Happy Holidays
+Cheers
 
-diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-index e6d6599d310a..fad78a22218e 100644
---- a/drivers/clk/clk-bm1880.c
-+++ b/drivers/clk/clk-bm1880.c
-@@ -522,14 +522,6 @@ static struct clk_hw *bm1880_clk_register_pll(struct bm1880_pll_hw_clock *pll_cl
- 	return hw;
- }
- 
--static void bm1880_clk_unregister_pll(struct clk_hw *hw)
--{
--	struct bm1880_pll_hw_clock *pll_hw = to_bm1880_pll_clk(hw);
--
--	clk_hw_unregister(hw);
--	kfree(pll_hw);
--}
--
- static int bm1880_clk_register_plls(struct bm1880_pll_hw_clock *clks,
- 				    int num_clks,
- 				    struct bm1880_clock_data *data)
-@@ -555,7 +547,7 @@ static int bm1880_clk_register_plls(struct bm1880_pll_hw_clock *clks,
- 
- err_clk:
- 	while (i--)
--		bm1880_clk_unregister_pll(data->hw_data.hws[clks[i].pll.id]);
-+		clk_hw_unregister(data->hw_data.hws[clks[i].pll.id]);
- 
- 	return PTR_ERR(hw);
- }
-@@ -695,14 +687,6 @@ static struct clk_hw *bm1880_clk_register_div(struct bm1880_div_hw_clock *div_cl
- 	return hw;
- }
- 
--static void bm1880_clk_unregister_div(struct clk_hw *hw)
--{
--	struct bm1880_div_hw_clock *div_hw = to_bm1880_div_clk(hw);
--
--	clk_hw_unregister(hw);
--	kfree(div_hw);
--}
--
- static int bm1880_clk_register_divs(struct bm1880_div_hw_clock *clks,
- 				    int num_clks,
- 				    struct bm1880_clock_data *data)
-@@ -729,7 +713,7 @@ static int bm1880_clk_register_divs(struct bm1880_div_hw_clock *clks,
- 
- err_clk:
- 	while (i--)
--		bm1880_clk_unregister_div(data->hw_data.hws[clks[i].div.id]);
-+		clk_hw_unregister(data->hw_data.hws[clks[i].div.id]);
- 
- 	return PTR_ERR(hw);
- }
--- 
-2.30.2
+Jerome
 
+The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
+
+  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.17-1
+
+for you to fetch changes up to ff54938dd190d85f740b9bf9dde59b550936b621:
+
+  clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB (2021-11-30 10:28:52 +0100)
+
+----------------------------------------------------------------
+Amlogic clock updates for v5.17
+
+* Fix MPLL0 gxbb SDM enable
+
+----------------------------------------------------------------
+Martin Blumenstingl (1):
+      clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
+
+ drivers/clk/meson/gxbb.c | 44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
