@@ -2,106 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C932C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Dec 2021 19:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E576FC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Dec 2021 09:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbhLYTkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Dec 2021 14:40:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60634 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbhLYTkF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Dec 2021 14:40:05 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2DC7C061759
-        for <linux-clk@vger.kernel.org>; Sat, 25 Dec 2021 11:40:04 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id x7so25798771lfu.8
-        for <linux-clk@vger.kernel.org>; Sat, 25 Dec 2021 11:40:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=utZQk+YAS+lttlxaMRyQE1cFX9Jp4Ov9ojeopJCh7uI=;
-        b=Wd3AacrH6s5n2taBGC+tJ6yNLrTDYcTI7eOpuN2zs3OW/HhDK5waZkZFaZjteX/oul
-         ihTzVEJt3/Haasb4hEbD7NkTUdpYO9zWQDUQLAPVX9K1I50xx+ONjrbVqKMpRnvF3waS
-         CsnbJhRhm75SmScsXkzuUlasLxTWqu4rM0qcaAXfkBKApK9oL7SAhZ1bE9iT+YzNWMSV
-         FEVrCwfyaglpoMnqkMgRtntMIGadmCFMKutAO/tYgdQWSvBGLXjSoZQk55U6+swcB08Y
-         hmWr25gt4bd5i/xbhwbUV+d1xYHRfeS7Kxb++tNs6atbwlyq7wUs8MTuOH5XGd4KjcoU
-         wXZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=utZQk+YAS+lttlxaMRyQE1cFX9Jp4Ov9ojeopJCh7uI=;
-        b=1FF1C2sNLt+Wq/bk1L8SEV5xi9MqkKMIEDBd0aaXHCx36EHjkw/WoyLeE/7qs+r1Vq
-         daouqXL0gdwD7jFu39gXqerK+LmTvluJPqTYc2Ug2KoowS+ob3wAp/wMWiBeKEUnqiWf
-         JHVUrY1R1B0xekffjOAzE+o3YhrKtqbEBAtKb0Tro7R9t94VpZ0bQJ9BurvFBoXXjGS8
-         CbhizEd8/nWCvJsnTZm8Fmiktn9juAyvC1Qg52ekeTJoCA+3j8QWRUCfOJ4BwaY7XJSq
-         ABI0Zo78hQUWwQIvgxQN6KzikwlGInmPZ5+kqkTqhQgwQdi+kiS1X0NQRxUs/9rtL2G6
-         mieQ==
-X-Gm-Message-State: AOAM532fIj3OMgXLI98RAGj0qhduJ6yTKyEOCqckrOdd6wpyZluQgLhw
-        7gg0HWu83uK4Dso61GqStaijFQ==
-X-Google-Smtp-Source: ABdhPJxP1+SYZzDAxVSRFg6mJq7fmO8QMzdK5G5U+AcBQvNk5Gln0Z8/wTiy/F5IWhhMzrKrLSNV2g==
-X-Received: by 2002:ac2:52b1:: with SMTP id r17mr9311884lfm.425.1640461202952;
-        Sat, 25 Dec 2021 11:40:02 -0800 (PST)
-Received: from cobook.home (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id b20sm1185161lfi.185.2021.12.25.11.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Dec 2021 11:40:02 -0800 (PST)
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a7799[05]: Add MLP clocks
-Date:   Sat, 25 Dec 2021 22:39:57 +0300
-Message-Id: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.30.2
+        id S231587AbhLZJmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Dec 2021 04:42:03 -0500
+Received: from slot0.jllresort.com ([62.197.136.5]:40630 "EHLO
+        slot0.jllresort.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233172AbhLZJmD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Dec 2021 04:42:03 -0500
+X-Greylist: delayed 719 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Dec 2021 04:42:02 EST
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=jllresort.com;
+ h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ele.mon@jllresort.com;
+ bh=OtSDbmMX/Dvdsw/+k+pm3qq81CA=;
+ b=Ph7BDZAsJ41LN3bWgfxsnd0X7Gj2FVa7LralPr+CCreLgD+MHn/dHuW52bpfR0x4MyuaXgzZS9Cj
+   K5kFEjKtAnOnSpo/V17xaA0ztw3tsTAdqONsO8MV+3R02Zj7TNKtXr/O05D/HIVmch54lFoawPL7
+   kWMXaGREi5QLGWXq5pknY+2eXdkd1BNrOCBu8vAq4rIqAbKKARqF8n2Rcnkzu2E+MhbIpX/h1uIE
+   QT/U4b8XeCvqxFEHw51I0YUm08ArGPH5sD5t+o6S8bEfsB2/fX6KRoGtHgXp+DPylywMH2v8wZX8
+   1io37ch1kxSEKUWbK09bOioMTYxNO6sEGUOubA==
+DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=jllresort.com;
+ b=W0uDf2uGLxO2yqtq605LW9kV19j8zFBvltRPBW9xbUyeGIwuQvgtcInseALX0nGU5trkP63M65ep
+   YevFwn81zWmNLVQPXzLDEd0FNAxC1/OCKI9fHX4DXwV4XTNwCBHx9RpSorK700i7xKo0DBuNWsif
+   6K2wDZ4ZcfhzuQ5Q4qZp0kKOm+MxSpHqrrjwlcKfs0XNNdaBoleGHYY/Kn04e+yKkydiHyz+NpNW
+   cGqktNiFGBhjtaHT7cNI64OQua/LUwnB0pA/L47bfV3X5w5c6nViOQBjSPn80QebHr1NcY2imcR0
+   iTAs+da2zFzRGurh1Tv8xCy05pmSwWVcDaAaAA==;
+Reply-To: mustafa.ayvaz@ayvazburosu.com
+From:   ele.mon@jllresort.com
+To:     linux-clk@vger.kernel.org
+Subject: Happy Weekend:
+Date:   26 Dec 2021 10:29:28 +0100
+Message-ID: <20211226102855.5F805AFA7D7D3864@jllresort.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks for MLP modules on Renesas R-Car E3 and D3 SoCs.
+Greetings to you linux-clk,
 
-Similar to other R-Car Gen3 SoC, exact information on parent for MLP
-clock on E3 and D3 is not available. However, since parent for this
-clocl is not anyhow software-controllable, the only harm from this
-is inexact information exported via debugfs. So just keep the parent
-set in the same way as with other Gen3 SoCs.
+I was wondering if you got my previous email? I have been trying=20
+to reach you by email linux-clk@vger.kernel.org, kindly get back=20
+to me swiftly, it is very important and urgent.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index a582f2ec3294..aaa4eaab9cc3 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -197,6 +197,7 @@ static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
- 	DEF_MOD("du0",			 724,	R8A77990_CLK_S1D1),
- 	DEF_MOD("lvds",			 727,	R8A77990_CLK_S2D1),
- 
-+	DEF_MOD("mlp",			 802,	R8A77990_CLK_S2D1),
- 	DEF_MOD("vin5",			 806,	R8A77990_CLK_S1D2),
- 	DEF_MOD("vin4",			 807,	R8A77990_CLK_S1D2),
- 	DEF_MOD("etheravb",		 812,	R8A77990_CLK_S3D2),
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 81c0bc1e78af..480c130d2b1b 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -159,6 +159,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
- 	DEF_MOD("du1",			 723,	R8A77995_CLK_S1D1),
- 	DEF_MOD("du0",			 724,	R8A77995_CLK_S1D1),
- 	DEF_MOD("lvds",			 727,	R8A77995_CLK_S2D1),
-+	DEF_MOD("mlp",			 802,	R8A77995_CLK_S2D1),
- 	DEF_MOD("vin4",			 807,	R8A77995_CLK_S1D2),
- 	DEF_MOD("etheravb",		 812,	R8A77995_CLK_S3D2),
- 	DEF_MOD("imr0",			 823,	R8A77995_CLK_S1D2),
--- 
-2.30.2
-
+Thanks
+Mustafa Ayvaz
+Email: mustafa.ayvaz@ayvazburosu.com
