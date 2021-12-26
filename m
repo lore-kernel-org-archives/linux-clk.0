@@ -2,50 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E576FC433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Dec 2021 09:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5317AC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Dec 2021 17:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbhLZJmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Dec 2021 04:42:03 -0500
-Received: from slot0.jllresort.com ([62.197.136.5]:40630 "EHLO
-        slot0.jllresort.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233172AbhLZJmD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Dec 2021 04:42:03 -0500
-X-Greylist: delayed 719 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 Dec 2021 04:42:02 EST
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=dkim; d=jllresort.com;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding; i=ele.mon@jllresort.com;
- bh=OtSDbmMX/Dvdsw/+k+pm3qq81CA=;
- b=Ph7BDZAsJ41LN3bWgfxsnd0X7Gj2FVa7LralPr+CCreLgD+MHn/dHuW52bpfR0x4MyuaXgzZS9Cj
-   K5kFEjKtAnOnSpo/V17xaA0ztw3tsTAdqONsO8MV+3R02Zj7TNKtXr/O05D/HIVmch54lFoawPL7
-   kWMXaGREi5QLGWXq5pknY+2eXdkd1BNrOCBu8vAq4rIqAbKKARqF8n2Rcnkzu2E+MhbIpX/h1uIE
-   QT/U4b8XeCvqxFEHw51I0YUm08ArGPH5sD5t+o6S8bEfsB2/fX6KRoGtHgXp+DPylywMH2v8wZX8
-   1io37ch1kxSEKUWbK09bOioMTYxNO6sEGUOubA==
-DomainKey-Signature: a=rsa-sha1; c=nofws; q=dns; s=dkim; d=jllresort.com;
- b=W0uDf2uGLxO2yqtq605LW9kV19j8zFBvltRPBW9xbUyeGIwuQvgtcInseALX0nGU5trkP63M65ep
-   YevFwn81zWmNLVQPXzLDEd0FNAxC1/OCKI9fHX4DXwV4XTNwCBHx9RpSorK700i7xKo0DBuNWsif
-   6K2wDZ4ZcfhzuQ5Q4qZp0kKOm+MxSpHqrrjwlcKfs0XNNdaBoleGHYY/Kn04e+yKkydiHyz+NpNW
-   cGqktNiFGBhjtaHT7cNI64OQua/LUwnB0pA/L47bfV3X5w5c6nViOQBjSPn80QebHr1NcY2imcR0
-   iTAs+da2zFzRGurh1Tv8xCy05pmSwWVcDaAaAA==;
-Reply-To: mustafa.ayvaz@ayvazburosu.com
-From:   ele.mon@jllresort.com
-To:     linux-clk@vger.kernel.org
-Subject: Happy Weekend:
-Date:   26 Dec 2021 10:29:28 +0100
-Message-ID: <20211226102855.5F805AFA7D7D3864@jllresort.com>
+        id S233093AbhLZRq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Dec 2021 12:46:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230484AbhLZRq5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Dec 2021 12:46:57 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5765C06173E;
+        Sun, 26 Dec 2021 09:46:56 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id bq20so30249967lfb.4;
+        Sun, 26 Dec 2021 09:46:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=1w90fj4mBw0ATe2jw+OEN+E/mxrPl/6mvO0lB1elWYw=;
+        b=NhelbEc7H25j4w4qqmn1ZesJ/IXwasoOkXAE4oe0kZiPgWYOwPpbwD06+S1fAlo8hX
+         1Qux5McMz+OwHDoItUKob6/hDqqXYTFrENaD5/mNALjRcZZvCj5jxR4N8SvmZRZTPMfZ
+         l5Lsmqe5h6C2OhRz90l34/LcGs4rr4XE6uaUsm0I/3Mu8OBIoriEki7CNhCOg5yU0ex0
+         YWlML6ikurmBlFTnpRDm/VDZHLt71PR64NI27fKj6nNll5wq5LP8gRjQLKLSjyiU7J0k
+         z3srxtrF1KltKXCTh659Z5FZqnYzSDzeqZ/QB7C5b4kI0X5AVRDupd/jxtP1Rvx/Od0S
+         aFuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=1w90fj4mBw0ATe2jw+OEN+E/mxrPl/6mvO0lB1elWYw=;
+        b=rmooN1DIatom91C+mtcufT9eiaxnywYTsyMJDl5HnLmOAfkiMXGQrtIoDNAwCMKO+G
+         ajp4/YkaidUGjC/yeutL9iWHPfsjZp7YWPrh0uHZ4xiryMqbW6DUNIfEq+2F86deQ1Cu
+         M8NCYo31apRxiNaOJxAul6eP/6ODXWHs0+wcqunwTsnK3wYbZ2QL52ktY6BWCtLHyfSn
+         FpuUZ59q+EHqvhVTjR/Qv75AS4wDKsz5XJmx3pV6wMCznrO8F/KqPospimfYHHVHSMKq
+         M2YokLCT/aaIh6bY7lQ19PXfR16bFHCx1MH5CSO1Y9XwVicX5acAmNuv9HtXGtvi7qmV
+         yIEA==
+X-Gm-Message-State: AOAM531vsz4qUdR6L8KeU4voMFagbK+yqWeDbHnXlHg/2TH+gRmiNp4c
+        JJXramrPJLRpmdYT0XWv7XM=
+X-Google-Smtp-Source: ABdhPJwGbMTS2uWuY4yPIEhkOprjE/nskYYB4CkNKpfaTldSDtEP89dPvQTKl/OeIjTgRx8CTq+ujg==
+X-Received: by 2002:a19:644f:: with SMTP id b15mr12241624lfj.76.1640540814978;
+        Sun, 26 Dec 2021 09:46:54 -0800 (PST)
+Received: from [192.168.1.100] ([178.176.72.233])
+        by smtp.gmail.com with ESMTPSA id by8sm181807ljb.106.2021.12.26.09.46.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 26 Dec 2021 09:46:54 -0800 (PST)
+Message-ID: <e0a56147-e800-914b-1df3-51ca7003a69d@gmail.com>
+Date:   Sun, 26 Dec 2021 20:46:50 +0300
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.1
+Subject: Re: [PATCH] clk: renesas: r8a7799[05]: Add MLP clocks
+Content-Language: en-US
+To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Organization: Brain-dead Software
+In-Reply-To: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Greetings to you linux-clk,
+On 25.12.2021 22:39, Nikita Yushchenko wrote:
 
-I was wondering if you got my previous email? I have been trying=20
-to reach you by email linux-clk@vger.kernel.org, kindly get back=20
-to me swiftly, it is very important and urgent.
+> Add clocks for MLP modules on Renesas R-Car E3 and D3 SoCs.
+> 
+> Similar to other R-Car Gen3 SoC, exact information on parent for MLP
+> clock on E3 and D3 is not available. However, since parent for this
+> clocl is not anyhow software-controllable, the only harm from this
 
-Thanks
-Mustafa Ayvaz
-Email: mustafa.ayvaz@ayvazburosu.com
+    s/clocl/clock/. :-)
+
+> is inexact information exported via debugfs. So just keep the parent
+> set in the same way as with other Gen3 SoCs.
+> 
+> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+[...]
+
+MBR, Sergey
