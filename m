@@ -2,57 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E50C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 13:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE8BC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 13:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237120AbhL0Nga (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Dec 2021 08:36:30 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:54802
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237008AbhL0NgU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 08:36:20 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        id S236988AbhL0Ngc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Dec 2021 08:36:32 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:39758
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237031AbhL0NgV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 08:36:21 -0500
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com [209.85.208.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 36312402E2
-        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 13:36:19 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BF0A33F32C
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 13:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640612179;
-        bh=qeUVo4OnQnEXa4nRM+7z4OtDYprQ+PGgnySdBFiipc4=;
+        s=20210705; t=1640612176;
+        bh=JFavKQ4EpkcOZ7wQmRTeTvx/mZGmly/qZElot/QHLH0=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=CYea4KZ31hAkjDgt0+PlIfGNFqxFTdF7u3go8iGnUwcceFR/9cLVAdqY0iwkzrlXe
-         YkwYi6Rf3GGalqXNy+semRP9yRErp3vGhsrOikBCH3Az54Q4A70qhBtzqQ4LED5cNj
-         CrchDmOXmVIoqupF6HMINJIdaRngqNEwltBzZi1uK7tVBRiZThszS5UGNvV7+U7hBE
-         8oAIlI4NaBFcGtHDYfMBqMA+3fTeOyX7BaSt3Yznmg7i1lxwXyG8ukB9LPcMbrbS7p
-         0NafaxFlhnHCqWNFUqZzQfksiwHAqapSLTQfwstbU5lMSZvieBvl4C/1/LgVjtmYk4
-         bZXsBN4ccMzXA==
-Received: by mail-lj1-f199.google.com with SMTP id v19-20020a2e87d3000000b0022dbe4687f1so2193786ljj.7
-        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 05:36:19 -0800 (PST)
+        b=Z9U5rdJcOtHe9DMjh0otK6nZ77vPGZNAQQ15NecpofHYh+qJ796act2dZv2mc9Qbx
+         iVCBrfHGutb8zATIMRwlxEVW9gAprFZ8GbsGjOqekF8MJnjJb0iuOlbjBctl622wUq
+         u18x/LVEJ0KADUl7eY9n4v3IbzEwQpkTRUgFhaNVZHyyodIGPuYySo9t+eGRtYI9Vm
+         bR4ALx1VygOi+jFmeZNBkGEiENovx74yetlmfZxvczSXH5vRLlbj3C0IC+PNIWgNGu
+         mCD/0z/H59fmXfy8MNLQKHM9eTo4DjXPHvrZ2iac8rrMckGcyoBh35nWVlNMV7r6ST
+         g59QiQL5Brl5w==
+Received: by mail-lj1-f200.google.com with SMTP id s19-20020a2eb8d3000000b0022d8722e7b5so3971781ljp.23
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 05:36:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qeUVo4OnQnEXa4nRM+7z4OtDYprQ+PGgnySdBFiipc4=;
-        b=yIJFpPAt3DyCDRlHlKrD3QYfLNukUGQwzaZ0tzryW/8FwxtF9Vmsw/5PcoSWzVk7oW
-         zFI5I/AyJccIWkC7r72odANsaXiGgRG3U1kjrJReIEweXmAaLn9xlM3f7nzhHFgsc1Fo
-         hc/yJFmE20tTQRVZOx3JmWANcM0wzndVU5NS6Qz42SNDFKpQi0CnEDJMws0NjhGxRXNZ
-         yaCSRKP5Rtt80TvWOYM6FbTeH6F9k7wTZyyv1+gaL1SYogk9JABCP3VWQg9uY7OVZYdX
-         YhhDuueKupUeZINsI8GVlKjzUcZN0oOvihwt+vFjaQXZ6H8t4NZBtBUjGd7i6Px0QxOt
-         TurQ==
-X-Gm-Message-State: AOAM5339WhagbBDIREdMArMAMv4v/Cj5BHVMTB/T0ItXbbYostSvZSCS
-        Jr8DVuVReML83ZrLwJHd2k0k5n9/dznsQrZxTKFEQgvQW+8TdXTRm9c/ykGtQgLGMz3dpUj65j5
-        g1DJBvo84uyyQkZN+GMg7p9tiZev5rqdh+iMvug==
-X-Received: by 2002:a2e:96c2:: with SMTP id d2mr8014835ljj.440.1640612177477;
-        Mon, 27 Dec 2021 05:36:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxowczEi1Ufuu3a5uE9n7r+scZ4hrAOHPBdBSBWoRBxEBxNhEbBQq3slkbnAQ2d3v3tOxf9Og==
-X-Received: by 2002:a2e:96c2:: with SMTP id d2mr8014815ljj.440.1640612177153;
-        Mon, 27 Dec 2021 05:36:17 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id g18sm800107ljj.124.2021.12.27.05.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=JFavKQ4EpkcOZ7wQmRTeTvx/mZGmly/qZElot/QHLH0=;
+        b=hkKxSWeG34ac+e7GNsNnwp0Us6Lr2lf0Y4Z07Q98KRwnryEPC+ehFV8qS6RcQn1J6l
+         bjSVwq6za0wbl5DOefq35S+MaA996uTqZ5aT5WV1JtB1MD5GHCPPG+a/cC18U+bKIAfW
+         9eZE5WSsW3/Mj1P9rYgkvAoYXgxpvQ3oc7ON6CyXwoeBoCkbKfQFAyjqloIOAoyFgg3b
+         YMhmblzVya+nSJ81oCCs2UwNwDZ9jAjwid/NDKs/BTn2WX4fqK4m0pEeAFHvGMlx0nD1
+         dz3gjPim9CGbwsE810hZcNvNuQTIotHCSJWFVmpiUPgCbX3ZBE38gNQRLNlggDP5cF1e
+         ln0g==
+X-Gm-Message-State: AOAM532dhgTtR0wOKHcpu78hvkByb/9GVR9WhBw5l1rZAMIUpeSG7tf6
+        6Jes/3a6iueazTzgSbm9xQTYVSrDp+k21rB8hEy1H4D2MWsR63iqYIKXq5PkK4F+Z4EG29/2O7F
+        qfv9GH1Xwxy5C3rKS9vHakdOReVXGA8QZ5gLE0w==
+X-Received: by 2002:a05:651c:612:: with SMTP id k18mr14341420lje.383.1640612176049;
         Mon, 27 Dec 2021 05:36:16 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyigWSTBhHMTJw9c+BMRCCqABSOCIw31rtBFtt3dBgwEbcNUZTxOPbnbqo+v1WaY9WCE71FlQ==
+X-Received: by 2002:a05:651c:612:: with SMTP id k18mr14341415lje.383.1640612175896;
+        Mon, 27 Dec 2021 05:36:15 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id g18sm800107ljj.124.2021.12.27.05.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Dec 2021 05:36:15 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -62,9 +62,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-mmc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH 19/19] arm64: dts: agilex: align mmc node names with dtschema
-Date:   Mon, 27 Dec 2021 14:35:58 +0100
-Message-Id: <20211227133558.135185-13-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 18/19] arm64: dts: agilex: add board compatible for N5X DK
+Date:   Mon, 27 Dec 2021 14:35:57 +0100
+Message-Id: <20211227133558.135185-12-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
 References: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
@@ -74,28 +74,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Synopsys DW MSHC bindings require node name to be 'mmc':
-
-  dwmmc0@ff808000: $nodename:0: 'dwmmc0@ff808000' does not match '^mmc(@.*)?$'
+The Intel SoCFPGA N5X SoC Development Kit is a board with
+Agilex, so it needs its own compatible.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-index 163f33b46e4f..0a37821af9aa 100644
---- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-+++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
-@@ -300,7 +300,7 @@ i2c4: i2c@ffc02c00 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts b/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
+index f3c1310dae0a..5609d8df6729 100644
+--- a/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
++++ b/arch/arm64/boot/dts/intel/socfpga_n5x_socdk.dts
+@@ -6,6 +6,7 @@
  
--		mmc: dwmmc0@ff808000 {
-+		mmc: mmc@ff808000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			compatible = "altr,socfpga-dw-mshc";
+ / {
+ 	model = "eASIC N5X SoCDK";
++	compatible = "intel,n5x-socdk", "intel,socfpga-agilex";
+ 
+ 	aliases {
+ 		serial0 = &uart0;
 -- 
 2.32.0
 
