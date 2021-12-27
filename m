@@ -2,90 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5317AC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Dec 2021 17:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88B2C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 10:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233093AbhLZRq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Dec 2021 12:46:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34278 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230484AbhLZRq5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Dec 2021 12:46:57 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5765C06173E;
-        Sun, 26 Dec 2021 09:46:56 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id bq20so30249967lfb.4;
-        Sun, 26 Dec 2021 09:46:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=1w90fj4mBw0ATe2jw+OEN+E/mxrPl/6mvO0lB1elWYw=;
-        b=NhelbEc7H25j4w4qqmn1ZesJ/IXwasoOkXAE4oe0kZiPgWYOwPpbwD06+S1fAlo8hX
-         1Qux5McMz+OwHDoItUKob6/hDqqXYTFrENaD5/mNALjRcZZvCj5jxR4N8SvmZRZTPMfZ
-         l5Lsmqe5h6C2OhRz90l34/LcGs4rr4XE6uaUsm0I/3Mu8OBIoriEki7CNhCOg5yU0ex0
-         YWlML6ikurmBlFTnpRDm/VDZHLt71PR64NI27fKj6nNll5wq5LP8gRjQLKLSjyiU7J0k
-         z3srxtrF1KltKXCTh659Z5FZqnYzSDzeqZ/QB7C5b4kI0X5AVRDupd/jxtP1Rvx/Od0S
-         aFuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=1w90fj4mBw0ATe2jw+OEN+E/mxrPl/6mvO0lB1elWYw=;
-        b=rmooN1DIatom91C+mtcufT9eiaxnywYTsyMJDl5HnLmOAfkiMXGQrtIoDNAwCMKO+G
-         ajp4/YkaidUGjC/yeutL9iWHPfsjZp7YWPrh0uHZ4xiryMqbW6DUNIfEq+2F86deQ1Cu
-         M8NCYo31apRxiNaOJxAul6eP/6ODXWHs0+wcqunwTsnK3wYbZ2QL52ktY6BWCtLHyfSn
-         FpuUZ59q+EHqvhVTjR/Qv75AS4wDKsz5XJmx3pV6wMCznrO8F/KqPospimfYHHVHSMKq
-         M2YokLCT/aaIh6bY7lQ19PXfR16bFHCx1MH5CSO1Y9XwVicX5acAmNuv9HtXGtvi7qmV
-         yIEA==
-X-Gm-Message-State: AOAM531vsz4qUdR6L8KeU4voMFagbK+yqWeDbHnXlHg/2TH+gRmiNp4c
-        JJXramrPJLRpmdYT0XWv7XM=
-X-Google-Smtp-Source: ABdhPJwGbMTS2uWuY4yPIEhkOprjE/nskYYB4CkNKpfaTldSDtEP89dPvQTKl/OeIjTgRx8CTq+ujg==
-X-Received: by 2002:a19:644f:: with SMTP id b15mr12241624lfj.76.1640540814978;
-        Sun, 26 Dec 2021 09:46:54 -0800 (PST)
-Received: from [192.168.1.100] ([178.176.72.233])
-        by smtp.gmail.com with ESMTPSA id by8sm181807ljb.106.2021.12.26.09.46.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 26 Dec 2021 09:46:54 -0800 (PST)
-Message-ID: <e0a56147-e800-914b-1df3-51ca7003a69d@gmail.com>
-Date:   Sun, 26 Dec 2021 20:46:50 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
-Subject: Re: [PATCH] clk: renesas: r8a7799[05]: Add MLP clocks
-Content-Language: en-US
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S236093AbhL0Kit (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Dec 2021 05:38:49 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:58322 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236006AbhL0Kis (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 05:38:48 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8D904B80E99;
+        Mon, 27 Dec 2021 10:38:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C336EC36AEA;
+        Mon, 27 Dec 2021 10:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1640601526;
+        bh=UlDl5CMBP4L/4kL0fP6+x1xKyPQKmZc9Cz+U98mFgKA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YI6AsOhUMo8c1MCRqdlRqyTmSsm8pl76ossGnZBHzeiiM+HMwVmF4uttGqSiTegvy
+         njOfbEkqzn5zISphv/phQ4wujEp4QPo3YLzOI97jhtr5D04G6N8TcFf1GUCvNNClO5
+         Mz5RG96Y4hZ6Bzin3hl0eNjtE03CVJofGr+5YM/oSMlWRoWPQyX0vfFahnOxaQl4ia
+         jUlaYOhAczH645/uw9/UeAUEKg4zhMq9lLbQRkhHsXeBmgPm+LFss4ksl8GoR1tf0f
+         NQou49FkWKN+kCO7aexHao/YdcFOO2Kmopej+4exEXQxCufostO6pGwcF2VubJNBoT
+         qYCQXEG/LHLHw==
+Subject: Re: [PATCH] clk: socfpga: remove redundant assignment on division
+To:     Colin Ian King <colin.i.king@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-In-Reply-To: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211221003750.212780-1-colin.i.king@gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <1ad78a3b-3faa-c6fe-be6e-d518eeadea50@kernel.org>
+Date:   Mon, 27 Dec 2021 04:38:44 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <20211221003750.212780-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25.12.2021 22:39, Nikita Yushchenko wrote:
 
-> Add clocks for MLP modules on Renesas R-Car E3 and D3 SoCs.
+
+On 12/20/21 6:37 PM, Colin Ian King wrote:
+> The variable parent_rate is being divided by div and the result
+> is re-assigned to parent_rate before being returned. The assignment
+> is redundant, replace /= operator with just / operator.
 > 
-> Similar to other R-Car Gen3 SoC, exact information on parent for MLP
-> clock on E3 and D3 is not available. However, since parent for this
-> clocl is not anyhow software-controllable, the only harm from this
-
-    s/clocl/clock/. :-)
-
-> is inexact information exported via debugfs. So just keep the parent
-> set in the same way as with other Gen3 SoCs.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/clk/socfpga/clk-pll-s10.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-[...]
+> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+> index 70076a80149d..e444e4a0ee53 100644
+> --- a/drivers/clk/socfpga/clk-pll-s10.c
+> +++ b/drivers/clk/socfpga/clk-pll-s10.c
+> @@ -113,7 +113,7 @@ static unsigned long clk_boot_clk_recalc_rate(struct clk_hw *hwclk,
+>   		SWCTRLBTCLKSEL_MASK) >>
+>   		SWCTRLBTCLKSEL_SHIFT);
+>   	div += 1;
+> -	return parent_rate /= div;
+> +	return parent_rate / div;
+>   }
+>   
 
-MBR, Sergey
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
