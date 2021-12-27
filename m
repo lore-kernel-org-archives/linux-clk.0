@@ -2,75 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88B2C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 10:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C2CC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 13:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236093AbhL0Kit (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Dec 2021 05:38:49 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:58322 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236006AbhL0Kis (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 05:38:48 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S234032AbhL0NcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Dec 2021 08:32:09 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:54426
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234008AbhL0NcI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 08:32:08 -0500
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8D904B80E99;
-        Mon, 27 Dec 2021 10:38:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C336EC36AEA;
-        Mon, 27 Dec 2021 10:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640601526;
-        bh=UlDl5CMBP4L/4kL0fP6+x1xKyPQKmZc9Cz+U98mFgKA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YI6AsOhUMo8c1MCRqdlRqyTmSsm8pl76ossGnZBHzeiiM+HMwVmF4uttGqSiTegvy
-         njOfbEkqzn5zISphv/phQ4wujEp4QPo3YLzOI97jhtr5D04G6N8TcFf1GUCvNNClO5
-         Mz5RG96Y4hZ6Bzin3hl0eNjtE03CVJofGr+5YM/oSMlWRoWPQyX0vfFahnOxaQl4ia
-         jUlaYOhAczH645/uw9/UeAUEKg4zhMq9lLbQRkhHsXeBmgPm+LFss4ksl8GoR1tf0f
-         NQou49FkWKN+kCO7aexHao/YdcFOO2Kmopej+4exEXQxCufostO6pGwcF2VubJNBoT
-         qYCQXEG/LHLHw==
-Subject: Re: [PATCH] clk: socfpga: remove redundant assignment on division
-To:     Colin Ian King <colin.i.king@gmail.com>,
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 904533FFD2
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 13:32:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1640611922;
+        bh=DQgu+c4s6Y8JybTg+Dkanjn2+HAERoucENiRdMztxAI=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=AB5CxL2Tv006+n7YL0/Sj8CjOlhCEFIpZ3yXZIfmOviIi0IgabgpnNVSnWn13H4XD
+         umxrzjIL19yDaEdFwocaZtrl5ZZ2DL+9gWpSKUKDWKlwBmw57d4DF4pGyKL8+Aws66
+         HsaO9oHJzUBVCpmFL5mmkgeqndJEhbJxKba+LBNMqgovyRsAoV5do2r6iETSsZg/Pw
+         rQvjMlq5DjMCetDRxAMThODI19DhVv75cuJhQTYEYVv0/mK8yiUWGZDTUnXGA/bJ/r
+         ZYHqivllWI797plJ0oogHyJ/TR3HCUW/rco87q7QtyHXMtTJDIcymudNJx8tLxEVIJ
+         5o1Mm80Jy3Tjg==
+Received: by mail-lj1-f198.google.com with SMTP id u8-20020a05651c130800b0022d6dad0418so4968990lja.11
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 05:32:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DQgu+c4s6Y8JybTg+Dkanjn2+HAERoucENiRdMztxAI=;
+        b=OL00VorMG70KsRGJMRZ5mu13oWWL89wwLVUDycvILNb45yiBPhOlkUuTEBTaA0NnO2
+         VvvENtjGdwUXp7+KdNCPYtWQaChuULE0f+Sh3cHqMoW6R2rhCYa17zlP3DDerqxYOdmg
+         4BS0tQ46WbkqnH+m7Cs+5ajV+H/hw9Gk/Qx5dCj9QYx1SFpAViqdBtMNuYmPVToXHXHM
+         J43EEM/0dPnmOVJKkDjdRUfUuxqmenY3OT8iTi/9fxscCJL2qBFz7uXFSqv+Z5ZDj5Ki
+         E6nfx+f+1FesORGswSzBGccOJEj5Bi9wZWidUMPCfRfZ9eEOgno0avrrsZusKVdwXrNW
+         tmcg==
+X-Gm-Message-State: AOAM533XXyiX3GtIKchSajZPDkqoZNgASk5tRZVkvVOrAa/dqVRf8Zaj
+        axCkwl0HCBEW0OKh9H5r1RmjGSd4nH64Q6V2im81DaCbfo2cfcAKcN4kitsqnI1p0L8ZmXM81hQ
+        0qF897CfPFV6Ub8bbBuCHqTm1wtK5iFVhhsrGUQ==
+X-Received: by 2002:a19:ad41:: with SMTP id s1mr8236564lfd.169.1640611921853;
+        Mon, 27 Dec 2021 05:32:01 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz0Q4U7LIWpMdBq7LHQ60Uwk0l50gaJJ6gA+g47QhV12twTncFZtNPYDuX5cQQqf0Bn6AzCCA==
+X-Received: by 2002:a19:ad41:: with SMTP id s1mr8236549lfd.169.1640611921619;
+        Mon, 27 Dec 2021 05:32:01 -0800 (PST)
+Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
+        by smtp.gmail.com with ESMTPSA id d14sm1433510lfg.18.2021.12.27.05.32.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Dec 2021 05:32:00 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211221003750.212780-1-colin.i.king@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <1ad78a3b-3faa-c6fe-be6e-d518eeadea50@kernel.org>
-Date:   Mon, 27 Dec 2021 04:38:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 00/19] arm/arm64/dt-bindings: altera/intel: fix DTS and dtschema
+Date:   Mon, 27 Dec 2021 14:31:12 +0100
+Message-Id: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-In-Reply-To: <20211221003750.212780-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
+Partial cleanup of Altera/Intel ARMv7 and ARMv8 DTS and bindings.
 
-On 12/20/21 6:37 PM, Colin Ian King wrote:
-> The variable parent_rate is being divided by div and the result
-> is re-assigned to parent_rate before being returned. The assignment
-> is redundant, replace /= operator with just / operator.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/clk/socfpga/clk-pll-s10.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-> index 70076a80149d..e444e4a0ee53 100644
-> --- a/drivers/clk/socfpga/clk-pll-s10.c
-> +++ b/drivers/clk/socfpga/clk-pll-s10.c
-> @@ -113,7 +113,7 @@ static unsigned long clk_boot_clk_recalc_rate(struct clk_hw *hwclk,
->   		SWCTRLBTCLKSEL_MASK) >>
->   		SWCTRLBTCLKSEL_SHIFT);
->   	div += 1;
-> -	return parent_rate /= div;
-> +	return parent_rate / div;
->   }
->   
+The patches are independent, unless touching same files (e.g.
+bindings/arm/altera.yaml).
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (19):
+  dt-bindings: vendor-prefixes: add Enclustra
+  dt-bindings: altera: document existing Cyclone 5 board compatibles
+  dt-bindings: altera: document Arria 5 based board compatibles
+  dt-bindings: altera: document Arria 10 based board compatibles
+  dt-bindings: altera: document VT compatibles
+  dt-bindings: altera: document Stratix 10 based board compatibles
+  dt-bindings: intel: document Agilex based board compatibles
+  dt-bindings: clock: intel,stratix10: convert to dtschema
+  dt-bindings: mmc: synopsys-dw-mshc: integrate Altera and Imagination
+  ARM: dts: arria5: add board compatible for SoCFPGA DK
+  ARM: dts: arria10: add board compatible for Mercury AA1
+  ARM: dts: arria10: add board compatible for SoCFPGA DK
+  arm64: dts: stratix10: add board compatible for SoCFPGA DK
+  arm64: dts: stratix10: move ARM timer out of SoC node
+  arm64: dts: stratix10: align mmc node names with dtschema
+  arm64: dts: stratix10: align regulator node names with dtschema
+  arm64: dts: agilex: add board compatible for SoCFPGA DK
+  arm64: dts: agilex: add board compatible for N5X DK
+  arm64: dts: agilex: align mmc node names with dtschema
+
+ .../devicetree/bindings/arm/altera.yaml       | 46 ++++++++++++++++---
+ .../bindings/arm/intel,socfpga.yaml           | 26 +++++++++++
+ .../bindings/clock/intc_stratix10.txt         | 20 --------
+ .../bindings/clock/intel,stratix10.yaml       | 35 ++++++++++++++
+ .../devicetree/bindings/mmc/img-dw-mshc.txt   | 28 -----------
+ .../bindings/mmc/socfpga-dw-mshc.txt          | 23 ----------
+ .../bindings/mmc/synopsys-dw-mshc.yaml        |  5 +-
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+ .../boot/dts/socfpga_arria10_mercury_aa1.dts  |  2 +-
+ arch/arm/boot/dts/socfpga_arria10_socdk.dtsi  |  2 +-
+ arch/arm/boot/dts/socfpga_arria5_socdk.dts    |  2 +-
+ .../boot/dts/altera/socfpga_stratix10.dtsi    | 21 +++++----
+ .../dts/altera/socfpga_stratix10_socdk.dts    |  3 +-
+ .../altera/socfpga_stratix10_socdk_nand.dts   |  3 +-
+ arch/arm64/boot/dts/intel/socfpga_agilex.dtsi |  2 +-
+ .../boot/dts/intel/socfpga_agilex_socdk.dts   |  1 +
+ .../dts/intel/socfpga_agilex_socdk_nand.dts   |  1 +
+ .../boot/dts/intel/socfpga_n5x_socdk.dts      |  1 +
+ 18 files changed, 129 insertions(+), 94 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/intel,socfpga.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,stratix10.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mmc/img-dw-mshc.txt
+ delete mode 100644 Documentation/devicetree/bindings/mmc/socfpga-dw-mshc.txt
+
+-- 
+2.32.0
+
