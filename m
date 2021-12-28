@@ -2,114 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6F5C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Dec 2021 13:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE29C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Dec 2021 04:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237168AbhL0Ngk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Dec 2021 08:36:40 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:54722
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236898AbhL0NgP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 08:36:15 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 29DC53FFDA
-        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 13:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1640612174;
-        bh=kkUdeG5ceHrjuSuIkqkE8YNWyxg2eHSHTjUTr9KxZzk=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=gm5bSJsa2DGV+Mhjm2yc7yWjzUs/JfnDEcQNcRRReIkGMRReLYQyoLMstOJ7bbfQP
-         Q2IOhTtJZhyafx21tB41GdvcpLk/6BsT4RufC6SdWYfLf09CFsasD/Zp5kUPoq3jo1
-         waUWDGWiRlE9+m3ovuufn/Dxzk1WSiTbVci7um8RkEUlleI57A9wYsNV37mwmIIwUC
-         hVdoRWT0SQKrWDf+3k4Xbxq38IuAOTkIY3ZqKLUE8SdtWOvrDDW7BF30U4Twy8otE3
-         AYvpZBtdPgm3IJGPnV0HzruuW6EmzTaEQBoFlwgTePvEUiikRP3aMpC7Y0JWB/F/s4
-         g9Sd63gDwhSyA==
-Received: by mail-lj1-f199.google.com with SMTP id d12-20020a05651c088c00b0022d989d91caso4021136ljq.20
-        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 05:36:14 -0800 (PST)
+        id S231917AbhL1EyV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Dec 2021 23:54:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231518AbhL1EyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Dec 2021 23:54:20 -0500
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 120B9C06173E
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 20:54:20 -0800 (PST)
+Received: by mail-lj1-x22a.google.com with SMTP id h21so16887056ljh.3
+        for <linux-clk@vger.kernel.org>; Mon, 27 Dec 2021 20:54:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NhhTB4bMtGMIPsjhSujSoDBT7+XKc5HHDwK6CwdMVeQ=;
+        b=nnD7oIpNxKxNlJ0AIU0NB/6mILY179+iNjh1nG6TCVkd/N18PejpC6yAZKU55REOnT
+         d5fRnYEBLgmN/165XN7trMNsTosgDJgqcaS/CUIyomm5LmAvr3dZO7v6fXot3Imk1Jb0
+         azjvcHdx1+LFEUR7O3UFBI3WI+7lEvlSsXj6jHNSygeq65kEBuu6rCyuDFhsZN8hY+0k
+         EYLYvM7dMZXytqZ5BdVy7Lyw+c+YfH91RlwmJAqw6BiaHBGh3iH7vUbx1gAyROKezJt7
+         a6AHyQMTQN718AzxC31VM0zfGXdmp/M8IK11uBuD5CehITCL1FlycXtCfGkzcTGXwMz4
+         DiNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kkUdeG5ceHrjuSuIkqkE8YNWyxg2eHSHTjUTr9KxZzk=;
-        b=0pxm1VvHou6an564BvRLyr+FCa9Ncgv3kduFYa9BN/RTqp3fxpbDGDttAFD4YZsknq
-         OZ5T23f8CMuiSWABRrIx8QBueu7WX8zStTP8QLd1ogknRT9/1nsd75JNr+yXDeznu6ah
-         zLvsVk3FhD470kTpQ7P+O1nyoBVq8/tbcfUPNsfIuPOuqeZzwGH0yNnhJ+9V01N6/7j5
-         w/XE3d13xv24PC2sbZupDY+dnG6w11mvXvO+oZRHmiFL5rS2kj3TqvtPiHYROYbueaY9
-         3NZuZSNgyIiH+dRRgKGSz4cul2/xvXKWqB8b76+O4OmHaITfm5Fa9j5/L0LFW3s0bDLt
-         TrUQ==
-X-Gm-Message-State: AOAM5304G55hoYImTGC5hGMTstLfZUK8LAV+BnLDM+UeKSOQkcMaz10I
-        NcdKbPYZVZbXMXSpzufrGKoVdYulxcpUC47L31LS4i9Agea4Gl6zZ1UeRP6GBrkO8HiUFrc7has
-        G659KOUUdTNLd6EipfHiUzHJ0/O6SITeJ6Fo2og==
-X-Received: by 2002:a05:651c:511:: with SMTP id o17mr8667369ljp.374.1640612173658;
-        Mon, 27 Dec 2021 05:36:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzfa+8FB77JaX0hFBrtXh+MFcMU59EojnWCqXY8eabSSi6JcvyGPGjrWdRPz/yX/6OB1oYZEA==
-X-Received: by 2002:a05:651c:511:: with SMTP id o17mr8667351ljp.374.1640612173507;
-        Mon, 27 Dec 2021 05:36:13 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id g18sm800107ljj.124.2021.12.27.05.36.11
+        bh=NhhTB4bMtGMIPsjhSujSoDBT7+XKc5HHDwK6CwdMVeQ=;
+        b=2GODaehb4FeizvisPCIXKCo9FioBFhbbEuHGG+QvFjm7ibHqv6XjhUTOBmu4+FTzJN
+         BNmqrs/OKu8fUbeyFV/qSNy/kRuo5ES1Sua4WP+AQTu2x4di1OwrwIIiZpSUK0xHUy1m
+         tDHeElPL9D/gtZ9FuZ2uiTXhRmZaB+MW0VZLaUjfT/b9/15C4gabFPsFXCqgun3EPqJ2
+         DdobjTfUBoZLADVQ/XyB7OEmMtBKSrjbJ7qHFvFfayvwyXJeJENXoVsWl8Tg9WmrZVYH
+         t8yhhIsVq+/IbTY5JrrGQAuaCLu4xS+uyxWl7XWhuhmVmhindivk5t+1cb37X1/bonM+
+         qHyg==
+X-Gm-Message-State: AOAM530I/pQlig6AqL0gONtNivaasotunFMmmYNV7JV0tzDkAr+oVvyp
+        xOqHbtEjDIOzqJUWK9DChY78pQ==
+X-Google-Smtp-Source: ABdhPJweAvFgXWD1wzZXHwFd74+Q8gQ+ztADAsaAx2G40zsbDPM5BHy4II4ytlT1kUD7aFTuNs4gbg==
+X-Received: by 2002:a05:651c:996:: with SMTP id b22mr16267874ljq.139.1640667258269;
+        Mon, 27 Dec 2021 20:54:18 -0800 (PST)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id cf3sm1822685lfb.22.2021.12.27.20.54.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Dec 2021 05:36:12 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 27 Dec 2021 20:54:17 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH 16/19] arm64: dts: stratix10: align regulator node names with dtschema
-Date:   Mon, 27 Dec 2021 14:35:55 +0100
-Message-Id: <20211227133558.135185-10-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
-References: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
+        Taniya Das <tdas@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>
+Subject: [PATCH v4 01/16] clk: qcom: gpucc-sdm660: fix two clocks with parent_names
+Date:   Tue, 28 Dec 2021 07:54:00 +0300
+Message-Id: <20211228045415.20543-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20211228045415.20543-1-dmitry.baryshkov@linaro.org>
+References: <20211228045415.20543-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The devicetree specification requires that node name should be generic.
-The dtschema complains if name does not match pattern, so make the
-0.33 V regulator node name more generic.
+Two clocks are still using parent_names, use parent_hws instead.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts      | 2 +-
- arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dts | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gpucc-sdm660.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 12392292c62c..5159cd5771dc 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -44,7 +44,7 @@ memory {
- 		reg = <0 0 0 0>;
- 	};
- 
--	ref_033v: 033-v-ref {
-+	ref_033v: regulator-v-ref {
- 		compatible = "regulator-fixed";
- 		regulator-name = "0.33V";
- 		regulator-min-microvolt = <330000>;
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dts
-index 2d53a06deab5..0ab676c639a1 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk_nand.dts
-@@ -44,7 +44,7 @@ memory {
- 		reg = <0 0 0 0>;
- 	};
- 
--	ref_033v: 033-v-ref {
-+	ref_033v: regulator-v-ref {
- 		compatible = "regulator-fixed";
- 		regulator-name = "0.33V";
- 		regulator-min-microvolt = <330000>;
+diff --git a/drivers/clk/qcom/gpucc-sdm660.c b/drivers/clk/qcom/gpucc-sdm660.c
+index 41bba96a08b3..d170353eccf6 100644
+--- a/drivers/clk/qcom/gpucc-sdm660.c
++++ b/drivers/clk/qcom/gpucc-sdm660.c
+@@ -204,8 +204,8 @@ static struct clk_branch gpucc_rbbmtimer_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpucc_rbbmtimer_clk",
+-			.parent_names = (const char *[]){
+-				"rbbmtimer_clk_src",
++			.parent_hws = (const struct clk_hw*[]){
++				&rbbmtimer_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -222,8 +222,8 @@ static struct clk_branch gpucc_rbcpr_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpucc_rbcpr_clk",
+-			.parent_names = (const char *[]){
+-				"rbcpr_clk_src",
++			.parent_hws = (const struct clk_hw*[]){
++				&rbcpr_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
 -- 
-2.32.0
+2.34.1
 
