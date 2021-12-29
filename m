@@ -2,71 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0DEC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Dec 2021 05:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FF3C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Dec 2021 05:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234507AbhL2FqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Dec 2021 00:46:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
+        id S234442AbhL2FsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Dec 2021 00:48:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234367AbhL2FqM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Dec 2021 00:46:12 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41908C061574;
-        Tue, 28 Dec 2021 21:46:12 -0800 (PST)
+        with ESMTP id S234367AbhL2FsV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Dec 2021 00:48:21 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F33C061574;
+        Tue, 28 Dec 2021 21:48:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4E6E1B81163;
-        Wed, 29 Dec 2021 05:46:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED4EFC36AEA;
-        Wed, 29 Dec 2021 05:46:08 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 67062CE16F6;
+        Wed, 29 Dec 2021 05:48:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E38C36AEA;
+        Wed, 29 Dec 2021 05:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640756769;
-        bh=1ejfQas/1sDzUkShrgS8N90I0EJpkguUz1hjxLKBvfg=;
+        s=k20201202; t=1640756897;
+        bh=TtBgLq6hDWFPnsf4+2MurwdAWMiOw+TH5Y9QBT1S8o0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=W3MX1QLyx5FYDf9sqaqLfGB7Y37wS4a6dVSHjacGAw6mQB3NJPAnQomQS7n1FIjf4
-         A09j0DfdKpmMhpEXPYyZ2U7MZiRNPyLEsQHVmgTCHcHRjiAcZkKEJ4DX2QgnQ9BdHM
-         xUcHW+UMN6nWM9aJZjzSm2v9W9tVIJW4b2NPHRm1YXYqJna4RBJnVura+IP7p6F1II
-         OI1Z1Lk3t/eXMl5n9nzrVzdpzpClFeNthvB1ejAx6QCTE+vIsfHJs3JPPZMmlj9BkV
-         GH2hkj7J3hC5frAfjhe52Jz67rih2mPyaDfA7yN86TzgMg+PfNDZaR+RlNZSTjaHnD
-         2O5ZYwZWenYaw==
+        b=XOVdMdPmFqzlEDgaDifLXIPBL3AppjMPQdNvjrrLOEp/xfbqwaiefIxpOvkSmSUkn
+         0Gtg9H1awRhhM5zw9JtcSEsKyUMolYd4nphOYIctAuXrTizNNTu0Ha2jJ8xGrqF+yH
+         0hrtlwUSrEtIuo7aJ/iTALOYMfeRG/C8d/olAtcXjRp7kFWY/1Fe1SMcUhaGhCWexA
+         +/RhI3I16P8iNl0KWellhT2h3icctalAKLZZWTf3WdMtqFwbzoT3vd5KgSfgjBBAAY
+         kndrlvHYa2HNYNyfcLgGEkdi1tpUDuDRyRlANceh6TqSREDnEkg6Gs6skWDA5nWXUu
+         /JllV1uP0Z0Jw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1639736964.git.geert+renesas@glider.be>
-References: <cover.1639736964.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.17 (take two)
+In-Reply-To: <20211217160322.1157799-1-thierry.reding@gmail.com>
+References: <20211217160322.1157799-1-thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v5.17-rc1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 28 Dec 2021 21:46:07 -0800
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Tue, 28 Dec 2021 21:48:16 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20211229054608.ED4EFC36AEA@smtp.kernel.org>
+Message-Id: <20211229054817.66E38C36AEA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-12-17 03:07:30)
->         Hi Mike, Stephen,
+Quoting Thierry Reding (2021-12-17 08:03:22)
+> Hi Mike, Stephen,
 >=20
-> The following changes since commit 33b22d9c3272003a525ba2d6b7b851f3d4f305=
-74:
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
+bf:
 >=20
->   clk: renesas: r9a07g044: Add TSU clock and reset entry (2021-11-26 14:0=
-6:16 +0100)
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.17-tag2
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-=
+5.17-clk
 >=20
-> for you to fetch changes up to f0b62b0bbedcdfde18116080605cebd9beec4ee9:
+> for you to fetch changes up to b1bc04a2ac5b15e0b681228376664671fc2f2017:
 >=20
->   clk: renesas: r9a07g044: Add GPU clock and reset entries (2021-12-08 10=
-:05:56 +0100)
+>   clk: tegra: Support runtime PM and power domain (2021-12-15 18:55:21 +0=
+100)
+>=20
+> Thanks,
+> Thierry
 >=20
 > ----------------------------------------------------------------
 
