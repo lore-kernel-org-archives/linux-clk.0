@@ -2,32 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82764C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Dec 2021 14:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851F2C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Dec 2021 14:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240060AbhL3O36 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Dec 2021 09:29:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39406 "EHLO
+        id S240363AbhL3Omm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Dec 2021 09:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240077AbhL3O36 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Dec 2021 09:29:58 -0500
-Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E59DDC061574
-        for <linux-clk@vger.kernel.org>; Thu, 30 Dec 2021 06:29:57 -0800 (PST)
-Received: from [192.168.1.101] (83.6.168.106.neoplus.adsl.tpnet.pl [83.6.168.106])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 638393F3F5;
-        Thu, 30 Dec 2021 15:29:55 +0100 (CET)
-Message-ID: <5543bdad-3518-fe20-d755-69ebac4ddd69@somainline.org>
-Date:   Thu, 30 Dec 2021 15:29:54 +0100
+        with ESMTP id S240375AbhL3Oml (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Dec 2021 09:42:41 -0500
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC51C06173F
+        for <linux-clk@vger.kernel.org>; Thu, 30 Dec 2021 06:42:41 -0800 (PST)
+Received: by mail-qv1-xf2e.google.com with SMTP id kd9so22192218qvb.11
+        for <linux-clk@vger.kernel.org>; Thu, 30 Dec 2021 06:42:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/lKISuKQSLJq7W846wWyQPT/02yK4dCfDutUdXbJUE8=;
+        b=y9GwPrdNAQFLG/s5DqEEynU9lk8S/zqa5e6AdqR3bbHQh+HBCIe3Olv0DXAR4+aF+S
+         ssTo31FCoWMnUvKW9GA/+RdbfW+IjIS7cYi0x0MH6WBFzbWWhmcQ80ULhE4CaSZHjDTJ
+         prnIYo8oH+A9pLL/p0hNgA+IilgY2tJ8xFWSJwaNFG8V6IDiXCUoI+15/VRGgCO7TzWn
+         PPIDZXKjcRFYG1HyATVt+Z2aDTsulaP3morwG98dkGg1YjDx34vnc70nHhybhWv7vFMj
+         dmY7yCFdbBweVZCzLMh4Rn9Uh9TPUenCVsRgInK4ZLa7FVA8A9X5DnlR4EDg3KtGgfaX
+         0ZZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/lKISuKQSLJq7W846wWyQPT/02yK4dCfDutUdXbJUE8=;
+        b=2RzbYMB8D9WwTTdQyGtS4SKb1Zd0inQqBu6GmyLj+Z2EF50qKXnkZkkISkYr8EroX4
+         JEf5D06/0xjH9/56jOqpn4tEshjnu190I3Uk++FB1MNuZskvVOUOlbQ8nIM66zH1jash
+         1nRd57KKVPEm+xAwMP0QSf6w7z1ytKsFZJb8peb/yokzEHAHXP6KVIneFwvl8iv08vZz
+         sUg+fT0/P+oZOQ/nWU8B9JvQ/Pp5w+8Q70O+JDB4B4AYQ/16Y87dLyqkU39purEBBqJ7
+         pZL+8st8o1FAwnb3dmUX1T8U44cxZ/zawiQUCQdv4Diw5iH/0/D8bSn6+notCqY7ew7m
+         Y/ug==
+X-Gm-Message-State: AOAM530pxNLX9V0gOGpZPeTOmv/AzwibG2cdKF5J0tMwaC/jBMy59Nbq
+        BVVL79c3a5iN6IeVKcWIYN/sHBAaSul5kgArcjei2w==
+X-Google-Smtp-Source: ABdhPJzJuu40611h0P8gpEq2A1hMiIaXCb1nTVZL3xZi8wKhm6cKrO+ixRJE9sSU773pYMI6ZOlBsjki8tq1vohgACw=
+X-Received: by 2002:a05:6214:248a:: with SMTP id gi10mr27557554qvb.115.1640875360837;
+ Thu, 30 Dec 2021 06:42:40 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.1
+References: <20211230023101.1122588-1-konrad.dybcio@somainline.org>
+ <CAA8EJprR_eNiRTXOLnHzztbdH_RYj-+Po99b=7c2Asxvop+jtQ@mail.gmail.com> <5543bdad-3518-fe20-d755-69ebac4ddd69@somainline.org>
+In-Reply-To: <5543bdad-3518-fe20-d755-69ebac4ddd69@somainline.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 30 Dec 2021 17:42:29 +0300
+Message-ID: <CAA8EJpq_T0tR=zN8G43otsWEqgkfqV0egrAtfG-VJMib6ZtEHA@mail.gmail.com>
 Subject: Re: [PATCH] clk: qcom: gcc-msm8994: Remove NoC clocks
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>
 Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
         angelogioacchino.delregno@somainline.org,
         marijn.suijten@somainline.org, jamipkettunen@somainline.org,
@@ -36,29 +60,33 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20211230023101.1122588-1-konrad.dybcio@somainline.org>
- <CAA8EJprR_eNiRTXOLnHzztbdH_RYj-+Po99b=7c2Asxvop+jtQ@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <CAA8EJprR_eNiRTXOLnHzztbdH_RYj-+Po99b=7c2Asxvop+jtQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-> You don't have to init array entries with NULL values (if it's not for
-> the documentation purposes). Uninitialized entries will get NULL value
-> anyway.
+On Thu, 30 Dec 2021 at 17:29, Konrad Dybcio
+<konrad.dybcio@somainline.org> wrote:
 >
-Forgot to address this in my previous message, but I think it may be a
-
-good indicator for the next person that decides this would be a good idea
-
-that they should probably stay away from it.. If it's really bad, then sure, I
-
-can remove it..
+>
+> > You don't have to init array entries with NULL values (if it's not for
+> > the documentation purposes). Uninitialized entries will get NULL value
+> > anyway.
+> >
 
 
-Konrad
+> Forgot to address this in my previous message, but I think it may be a
+>
+> good indicator for the next person that decides this would be a good idea
+>
+> that they should probably stay away from it.. If it's really bad, then sure, I
+>
+> can remove it..
 
+You can add a comment on top of those assignments telling this, so
+that the next person doing the semi-auto cleanup wouldn't delete the
+assignments.
+
+-- 
+With best wishes
+Dmitry
