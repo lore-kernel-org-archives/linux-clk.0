@@ -2,91 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851F2C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Dec 2021 14:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE76BC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Dec 2021 15:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240363AbhL3Omm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Dec 2021 09:42:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
+        id S240570AbhL3PDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Dec 2021 10:03:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240375AbhL3Oml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Dec 2021 09:42:41 -0500
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC51C06173F
-        for <linux-clk@vger.kernel.org>; Thu, 30 Dec 2021 06:42:41 -0800 (PST)
-Received: by mail-qv1-xf2e.google.com with SMTP id kd9so22192218qvb.11
-        for <linux-clk@vger.kernel.org>; Thu, 30 Dec 2021 06:42:41 -0800 (PST)
+        with ESMTP id S241158AbhL3PD0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Dec 2021 10:03:26 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29002C061756;
+        Thu, 30 Dec 2021 07:03:24 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id s1so51052595wrg.1;
+        Thu, 30 Dec 2021 07:03:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/lKISuKQSLJq7W846wWyQPT/02yK4dCfDutUdXbJUE8=;
-        b=y9GwPrdNAQFLG/s5DqEEynU9lk8S/zqa5e6AdqR3bbHQh+HBCIe3Olv0DXAR4+aF+S
-         ssTo31FCoWMnUvKW9GA/+RdbfW+IjIS7cYi0x0MH6WBFzbWWhmcQ80ULhE4CaSZHjDTJ
-         prnIYo8oH+A9pLL/p0hNgA+IilgY2tJ8xFWSJwaNFG8V6IDiXCUoI+15/VRGgCO7TzWn
-         PPIDZXKjcRFYG1HyATVt+Z2aDTsulaP3morwG98dkGg1YjDx34vnc70nHhybhWv7vFMj
-         dmY7yCFdbBweVZCzLMh4Rn9Uh9TPUenCVsRgInK4ZLa7FVA8A9X5DnlR4EDg3KtGgfaX
-         0ZZQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=38/yrVuWSAfCYSbaKGGrfM8L6s+RDj4K4yPYyiKvNiI=;
+        b=GWLNgiwUblJV0XxdpM0BHtrR0T9SWGhFZtuJgSIJR00tliSRguVOWwfqB8AofC4QZJ
+         IeiQLrtSxAuIEB7fZqlWNnYHWW9qXaeUCTIdoAo3VjDs4EZGEKNsVKyT3dF5q+gX1jGN
+         Yg1l1FjIXh0lfthfcQKf0fqnb7QXWUK+c0plhJ6tFzq8w78GUfVf6mohUfCKKh7LW9dV
+         TF/SRfhTA0IbZnGeB55ogvoN16amdo+ZGS4UDevb7KW5FmP8UY8pAeWjxXA+taDm0XXw
+         Vgdj7wNDWkC8sQPZxA9O+3Q5P32s4e/+lLmZwd9egvY39GeCZ5LQSR7ydeCe1V4VtRdC
+         7KNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/lKISuKQSLJq7W846wWyQPT/02yK4dCfDutUdXbJUE8=;
-        b=2RzbYMB8D9WwTTdQyGtS4SKb1Zd0inQqBu6GmyLj+Z2EF50qKXnkZkkISkYr8EroX4
-         JEf5D06/0xjH9/56jOqpn4tEshjnu190I3Uk++FB1MNuZskvVOUOlbQ8nIM66zH1jash
-         1nRd57KKVPEm+xAwMP0QSf6w7z1ytKsFZJb8peb/yokzEHAHXP6KVIneFwvl8iv08vZz
-         sUg+fT0/P+oZOQ/nWU8B9JvQ/Pp5w+8Q70O+JDB4B4AYQ/16Y87dLyqkU39purEBBqJ7
-         pZL+8st8o1FAwnb3dmUX1T8U44cxZ/zawiQUCQdv4Diw5iH/0/D8bSn6+notCqY7ew7m
-         Y/ug==
-X-Gm-Message-State: AOAM530pxNLX9V0gOGpZPeTOmv/AzwibG2cdKF5J0tMwaC/jBMy59Nbq
-        BVVL79c3a5iN6IeVKcWIYN/sHBAaSul5kgArcjei2w==
-X-Google-Smtp-Source: ABdhPJzJuu40611h0P8gpEq2A1hMiIaXCb1nTVZL3xZi8wKhm6cKrO+ixRJE9sSU773pYMI6ZOlBsjki8tq1vohgACw=
-X-Received: by 2002:a05:6214:248a:: with SMTP id gi10mr27557554qvb.115.1640875360837;
- Thu, 30 Dec 2021 06:42:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20211230023101.1122588-1-konrad.dybcio@somainline.org>
- <CAA8EJprR_eNiRTXOLnHzztbdH_RYj-+Po99b=7c2Asxvop+jtQ@mail.gmail.com> <5543bdad-3518-fe20-d755-69ebac4ddd69@somainline.org>
-In-Reply-To: <5543bdad-3518-fe20-d755-69ebac4ddd69@somainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 30 Dec 2021 17:42:29 +0300
-Message-ID: <CAA8EJpq_T0tR=zN8G43otsWEqgkfqV0egrAtfG-VJMib6ZtEHA@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-msm8994: Remove NoC clocks
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=38/yrVuWSAfCYSbaKGGrfM8L6s+RDj4K4yPYyiKvNiI=;
+        b=MpNm14b/KXgRbDdmmKPp+olgkhTf/u5Igq9WRgZqnwTNTDsU7MDcDi4rBrQd2wpXYl
+         Utt6pscWbhX5GhHziG66zZ+Z2aMaIuqCc7ibfWVxZvvVblxbzgBGhv3Zg7wGP9ohf19Y
+         NPdUWzcx98E6a3ZEfBNVB9ofNRCXnJDlYSrzR1tnA7CjYXR925MZ+rzzlaFz05ijGri6
+         PuulG2okAw9QM5edYsUlJbcDf26dZ0Vu5LLE+jQ//Ik+9sZNx0uFO2TO8PHjSFD9PLk1
+         szuGvddBoAQYCm9dQvOHWlei0FNDp0/BwD58AFpWp0EGm4R57bqVl7NY9f/QOn3Bj1f8
+         zJ0w==
+X-Gm-Message-State: AOAM532QUgwD1h5UNB+U/1vo2Et5Zu8LboWDjEDSN3gFcVi9dfURh+Aa
+        DLOP3atDd+Ibyc7j0QyUF2c=
+X-Google-Smtp-Source: ABdhPJzJFblslRqe6k6soT6bYdtvRM6FNykV+vZhVFF5Q6xgwEU2Lbu9NgObdfMxP3WnVFj4GCN+YQ==
+X-Received: by 2002:adf:aa93:: with SMTP id h19mr25146605wrc.293.1640876602739;
+        Thu, 30 Dec 2021 07:03:22 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id bg12sm30555171wmb.5.2021.12.30.07.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Dec 2021 07:03:22 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: socfpga: remove redundant assignment after a mask operation
+Date:   Thu, 30 Dec 2021 15:03:21 +0000
+Message-Id: <20211230150321.167576-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 30 Dec 2021 at 17:29, Konrad Dybcio
-<konrad.dybcio@somainline.org> wrote:
->
->
-> > You don't have to init array entries with NULL values (if it's not for
-> > the documentation purposes). Uninitialized entries will get NULL value
-> > anyway.
-> >
+The assignment operation after a & mask operation is redundant, the
+variables being assigned are not used afterwards. Replace the &=
+operator with just & operator.
 
+Cleans up two clang-scan warnings:
+drivers/clk/socfpga/clk-gate.c:37:10: warning: Although the value stored
+to 'l4_src' is used in the enclosing expression, the value is never
+actually read from 'l4_src' [deadcode.DeadStores]
+                return l4_src &= 0x1;
+                       ^         ~~~
+drivers/clk/socfpga/clk-gate.c:46:10: warning: Although the value stored
+to 'perpll_src' is used in the enclosing expression, the value is never
+actually read from 'perpll_src' [deadcode.DeadStores]
+                return perpll_src &= 0x3;
 
-> Forgot to address this in my previous message, but I think it may be a
->
-> good indicator for the next person that decides this would be a good idea
->
-> that they should probably stay away from it.. If it's really bad, then sure, I
->
-> can remove it..
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/clk/socfpga/clk-gate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-You can add a comment on top of those assignments telling this, so
-that the next person doing the semi-auto cleanup wouldn't delete the
-assignments.
-
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index 1ec9678d8cd3..53d6e3ec4309 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -34,7 +34,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+ 
+ 	if (streq(name, SOCFPGA_L4_MP_CLK)) {
+ 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+-		return l4_src &= 0x1;
++		return l4_src & 0x1;
+ 	}
+ 	if (streq(name, SOCFPGA_L4_SP_CLK)) {
+ 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+@@ -43,7 +43,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+ 
+ 	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
+ 	if (streq(name, SOCFPGA_MMC_CLK))
+-		return perpll_src &= 0x3;
++		return perpll_src & 0x3;
+ 	if (streq(name, SOCFPGA_NAND_CLK) ||
+ 	    streq(name, SOCFPGA_NAND_X_CLK))
+ 		return (perpll_src >> 2) & 3;
 -- 
-With best wishes
-Dmitry
+2.33.1
+
