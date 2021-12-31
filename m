@@ -2,102 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D313DC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Dec 2021 18:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B442C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Dec 2021 02:18:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236542AbhL3SKo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Dec 2021 13:10:44 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:58722 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbhL3SKo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Dec 2021 13:10:44 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8739661705;
-        Thu, 30 Dec 2021 18:10:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04439C36AE9;
-        Thu, 30 Dec 2021 18:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1640887842;
-        bh=wl13idcBH22Q98gEtmxIacxmyis+T8ZRvfxttNaeonI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=qm0aWo61gjrsc6uZGJHbroRrWXDZG2l+ccokx6g7SL/wTs5B6cBWKsbKI+xFxjmnJ
-         F6lBANDMVUaLvBjCSlW5ORtXSYuPXNvj9oLMr2DX/w2OwCFR91mg0xnlXisD/p2Atp
-         /kKgschEwantvmMUyPNvDhZ04RR2f4v41Ymp4I4MA9KWx2P6oX0nREMeRv3GbxTk+8
-         rjeEeH+RtY6qrU7HrGpL79CFHQ1ivZsjtsByWT7g2VjiwqBzyMIptD8HlLTNUSJCdB
-         8j/EA+2YFmgjsULkgR++mtGYnniek6k7to7UMc3CY2kvNNM6qkP6Ni0oV2JqKTAOlB
-         7BzUFKIrGhbwA==
-Subject: Re: [PATCH] clk: socfpga: remove redundant assignment after a mask
- operation
-To:     Colin Ian King <colin.i.king@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, llvm@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-References: <20211230150321.167576-1-colin.i.king@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Message-ID: <7f5f8143-3eae-424f-b857-b57f66c96f65@kernel.org>
-Date:   Thu, 30 Dec 2021 12:10:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S242064AbhLaCSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Dec 2021 21:18:45 -0500
+Received: from mga14.intel.com ([192.55.52.115]:41960 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230097AbhLaCSp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Dec 2021 21:18:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1640917125; x=1672453125;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wtEJ0zWFCIg9b5L8s1KYkJATOZKPuIOSMQp1wVJxQgk=;
+  b=BNXCkTO0ljN8zYQqphbPNng89CX+h6E1k9CgZEpZK+D4i6zlv3/dw+vW
+   GKe4/sIAEnp12FjsipfL8LGqnXQ5SmKi4BA7H/wXSJ+SAKu4YjIJgZp4m
+   uLV6EROgYM5Xv+i6gmFOH86XakS0ToVTi2RctGluuTdnLo88kyl9rqkMx
+   M4l6Tk64CM3+Fodk5pzNKwbBxDw1MiRHPfjr4QpYUjnwdECfXHxpL1Eqv
+   1BTtCuUNCOf+/xAcLtNjZJTwXTjNxwW3YDXrJfjiQNzu6wO1i58+xaORZ
+   r6jh6isow2Yhxj/6qcG90KuxaNsPBF6F/kDPlIfyztmfAbO6mGSx4cgD/
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10213"; a="241969845"
+X-IronPort-AV: E=Sophos;i="5.88,250,1635231600"; 
+   d="scan'208";a="241969845"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2021 18:18:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,250,1635231600"; 
+   d="scan'208";a="687376744"
+Received: from lkp-server01.sh.intel.com (HELO e357b3ef1427) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 30 Dec 2021 18:18:40 -0800
+Received: from kbuild by e357b3ef1427 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1n37V9-000ArO-75; Fri, 31 Dec 2021 02:18:39 +0000
+Date:   Fri, 31 Dec 2021 10:17:38 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>
+Cc:     kbuild-all@lists.01.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v2 5/5] clk: qcom: lpass: Add support for LPASS clock
+ controller for SC7280
+Message-ID: <202112311037.baApS5Qa-lkp@intel.com>
+References: <1640018638-19436-6-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20211230150321.167576-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1640018638-19436-6-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Taniya,
+
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next linus/master v5.16-rc7 next-20211224]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Taniya-Das/Add-support-for-LPASS-Core-and-Audio-Clock-for-SC7280/20211221-004818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: alpha-allmodconfig (https://download.01.org/0day-ci/archive/20211231/202112311037.baApS5Qa-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/fec640fab5ec498e79475ecd4b15bc95035a76b1
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Taniya-Das/Add-support-for-LPASS-Core-and-Audio-Clock-for-SC7280/20211221-004818
+        git checkout fec640fab5ec498e79475ecd4b15bc95035a76b1
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=alpha SHELL=/bin/bash drivers/clk/qcom/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:6,
+                    from include/linux/of.h:14,
+                    from include/linux/clk-provider.h:9,
+                    from drivers/clk/qcom/lpassaudiocc-sc7280.c:6:
+   drivers/clk/qcom/lpassaudiocc-sc7280.c: In function 'lpass_audio_cc_sc7280_probe':
+>> include/linux/stddef.h:8:14: error: called object is not a function or function pointer
+       8 | #define NULL ((void *)0)
+         |              ^
+   include/linux/pm_clock.h:82:25: note: in expansion of macro 'NULL'
+      82 | #define pm_clk_suspend  NULL
+         |                         ^~~~
+   drivers/clk/qcom/lpassaudiocc-sc7280.c:740:9: note: in expansion of macro 'pm_clk_suspend'
+     740 |         pm_clk_suspend(&pdev->dev);
+         |         ^~~~~~~~~~~~~~
+   drivers/clk/qcom/lpassaudiocc-sc7280.c: In function 'lpass_aon_cc_sc7280_probe':
+>> include/linux/stddef.h:8:14: error: called object is not a function or function pointer
+       8 | #define NULL ((void *)0)
+         |              ^
+   include/linux/pm_clock.h:82:25: note: in expansion of macro 'NULL'
+      82 | #define pm_clk_suspend  NULL
+         |                         ^~~~
+   drivers/clk/qcom/lpassaudiocc-sc7280.c:798:9: note: in expansion of macro 'pm_clk_suspend'
+     798 |         pm_clk_suspend(&pdev->dev);
+         |         ^~~~~~~~~~~~~~
 
 
-On 12/30/21 9:03 AM, Colin Ian King wrote:
-> The assignment operation after a & mask operation is redundant, the
-> variables being assigned are not used afterwards. Replace the &=
-> operator with just & operator.
-> 
-> Cleans up two clang-scan warnings:
-> drivers/clk/socfpga/clk-gate.c:37:10: warning: Although the value stored
-> to 'l4_src' is used in the enclosing expression, the value is never
-> actually read from 'l4_src' [deadcode.DeadStores]
->                  return l4_src &= 0x1;
->                         ^         ~~~
-> drivers/clk/socfpga/clk-gate.c:46:10: warning: Although the value stored
-> to 'perpll_src' is used in the enclosing expression, the value is never
-> actually read from 'perpll_src' [deadcode.DeadStores]
->                  return perpll_src &= 0x3;
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/clk/socfpga/clk-gate.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 1ec9678d8cd3..53d6e3ec4309 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -34,7 +34,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
->   
->   	if (streq(name, SOCFPGA_L4_MP_CLK)) {
->   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
-> -		return l4_src &= 0x1;
-> +		return l4_src & 0x1;
->   	}
->   	if (streq(name, SOCFPGA_L4_SP_CLK)) {
->   		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
-> @@ -43,7 +43,7 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
->   
->   	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
->   	if (streq(name, SOCFPGA_MMC_CLK))
-> -		return perpll_src &= 0x3;
-> +		return perpll_src & 0x3;
->   	if (streq(name, SOCFPGA_NAND_CLK) ||
->   	    streq(name, SOCFPGA_NAND_X_CLK))
->   		return (perpll_src >> 2) & 3;
-> 
+vim +8 include/linux/stddef.h
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+^1da177e4c3f41 Linus Torvalds   2005-04-16  6  
+^1da177e4c3f41 Linus Torvalds   2005-04-16  7  #undef NULL
+^1da177e4c3f41 Linus Torvalds   2005-04-16 @8  #define NULL ((void *)0)
+6e218287432472 Richard Knutsson 2006-09-30  9  
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
