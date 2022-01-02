@@ -2,57 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096D9C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E153BC43219
 	for <linux-clk@archiver.kernel.org>; Sun,  2 Jan 2022 11:54:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233006AbiABLyO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jan 2022 06:54:14 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39956
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233010AbiABLyJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 06:54:09 -0500
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+        id S233010AbiABLyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jan 2022 06:54:36 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:59618
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233038AbiABLyM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 06:54:12 -0500
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 32F83402E7
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jan 2022 11:54:05 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 6DDE34074F
+        for <linux-clk@vger.kernel.org>; Sun,  2 Jan 2022 11:54:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641124445;
-        bh=6MziEDmxDLLq7dpcXtr5w/qlbjRnfWWI7dqaJWWHokU=;
+        s=20210705; t=1641124451;
+        bh=dVLQ1qN9FW9xMlqjzpYbQn0o4kW0DEZo+VJEeUILFvE=;
         h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=Xbv5pQbyVnZFG1Mesxn4+Pag5JZFjBEBsH8cQICTV5MPBCA3EHTIOOherHrLBtIb2
-         VqaZGMqtqKzA7qA0A3tx0Ff2KzkeT+mgbWrMP1nle6YqRrqlHD8Uk7a/eQBbRb5K5s
-         O2YuhwFyE6Gh+kTuQZQX9i42giqnrCyDhPV97xaLyrYQAp3QduaOqvlWiBFIHU5vyx
-         YzrC1dSwIADZTFRuEOge4Z1uAulh2mz2x5qiIlGHPAiWS+FwGFF2ieDzRRYuBVH88L
-         fx92nDgw6rceO1IHOc6n2dHKQYjFWi19f9tKcG150nF8H7X4a6RIa7p7eeqTWtrwkt
-         5+A2DaMgzgIJA==
-Received: by mail-lj1-f199.google.com with SMTP id v19-20020a2e87d3000000b0022dbe4687f1so7988944ljj.7
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jan 2022 03:54:05 -0800 (PST)
+        b=VkLTfxrgohixGnpnF0OPndUnuhRSxZhbLqtQjwMxZS+6a7h/g2XDd0VmNyFdkixbR
+         7KPvvkbejWO4TUWsznr9JI3fGpj7vkfmqRpQKQAu7FFWAaK+STxC5wr1Le0nz/VwTi
+         5IIq+1KT6YdaVEEL/Pz7XgwiHFRwsI4aVZVFi9HAxjdhJd7XgUN0eAUq7az08j8qPr
+         ZpKVtQ2YTZ7bZG2eYL/QU3qKQ8ZIB4FKbTe9jRAgQuo77Ep74H2Mx0zRiM7u/1w/AP
+         7ZSoOo0XNnstQT+rr3HZm5T+jHtnRrKpKIRJ6Xogxlo+RnxbATKJn5HJY2Scg0SCeT
+         PYKPetxIAy94g==
+Received: by mail-lf1-f70.google.com with SMTP id h7-20020ac24da7000000b0042521f16f1fso5757385lfe.21
+        for <linux-clk@vger.kernel.org>; Sun, 02 Jan 2022 03:54:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6MziEDmxDLLq7dpcXtr5w/qlbjRnfWWI7dqaJWWHokU=;
-        b=8N93kNCQYjdURmUGTf3IeOWOSFnd8gyq5m20HlLcKxX6MrgpvezEVxYm/hwYzr+dMi
-         +HQvLpIR3sJFyg75h15J8JR1n+hZfPWOEPaySjx2fNtN76gCmYGpszXbVdi8sIMyqgR9
-         059hu7pSwS/rAAWpjcVHCN2NBxyzTn2tvs7IpOUcxTXBIZrgzbca/DuvXVJe8E2xyqa6
-         TQQLpvo6xwdtb7zjd+7f70bgw8JULCb2BnunKv4eUsYdeshCzjDyjtKuLZtLMYn4H/BA
-         xhTk3BIqmwLknubS1EabKw+BDqbkxYnDL7Bx0fHhd1OZSRvEXw+kjrRfG8mwnNl8vdWm
-         ztKg==
-X-Gm-Message-State: AOAM5307dbEqEOjP3p7xeM1ogt96No/f96rvisZp6FevM4JXZrkOqhk5
-        1RywUEugyg0Jv8r62uo5BKOZoSXLqJDBKDpfV7q+IQ0RgbGokFZ/LF/5wjDorUDI0FZ1zUEqgQS
-        fozLwHu7Wt7A00ZninkCQj61gJS6QbQQHWu/rxw==
-X-Received: by 2002:a05:6512:3c9f:: with SMTP id h31mr38088191lfv.334.1641124444398;
-        Sun, 02 Jan 2022 03:54:04 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxo80y7gqQgbsygu/GP4o2FHWOa/oS3yhGl52Nvj2Alj7wN7WyHOnWpKsRZDHFXhj+29X0ojw==
-X-Received: by 2002:a05:6512:3c9f:: with SMTP id h31mr38088175lfv.334.1641124444168;
-        Sun, 02 Jan 2022 03:54:04 -0800 (PST)
+        bh=dVLQ1qN9FW9xMlqjzpYbQn0o4kW0DEZo+VJEeUILFvE=;
+        b=uQURFUEkbYGiiqea/fJLGUEwbCUWQJH2XPD3v0zymSM4JAaMagMERcrPYKHrKmn8sU
+         LvQUSv1oQrEA/YsUzSUtIykdhe6Hquzc0OGIc3zpQB2cIH8r3GhCuUxHfMBf2A/qmsvz
+         wFH7Yjn0hc67p3YKA941VtFBy2m9sHBMJJ7120RVz5hJhrFF5q2dKZ9xoiDyFBEnC498
+         ugs8PIoh/Fk88U3Xkkxo0mu00ZotAQVD2hbzO9974wdUrEg5adMw22pYFK3E4P1amS7I
+         boNuuHyByoVEQQbahBdj5GlB5u6qTQWVOdjC2t0oLkPAdTjH2VF1BH0EtoBJqvDEXDC9
+         7p9A==
+X-Gm-Message-State: AOAM5311ENirihpjTA8cVXQA7lWq2zHf6VEKlBdXb8OlyNDfFCXLa4kR
+        fo/N9PYLPsBhZGgjlPcCAKEmzS2If3oO/noFoOD8hkRc33jVFPbD/plR1gjxwhEVoW1+fqggCX/
+        ntabP+kBTqXdwxW6bgVnE11LMfAosmpnPBjRlXg==
+X-Received: by 2002:a05:6512:3054:: with SMTP id b20mr37114358lfb.359.1641124450734;
+        Sun, 02 Jan 2022 03:54:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzPGbVl4ddCFrxN4q2rhTZV7vAxvBmnmt840AkVm4ahxLYb5H0jNIPb/mo9eB4T4/WQgDZERQ==
+X-Received: by 2002:a05:6512:3054:: with SMTP id b20mr37114349lfb.359.1641124450547;
+        Sun, 02 Jan 2022 03:54:10 -0800 (PST)
 Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id l2sm2368014lja.51.2022.01.02.03.54.03
+        by smtp.gmail.com with ESMTPSA id l2sm2368014lja.51.2022.01.02.03.54.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jan 2022 03:54:03 -0800 (PST)
+        Sun, 02 Jan 2022 03:54:09 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -64,9 +64,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] dt-bindings: clock: samsung: convert Exynos7 to dtschema
-Date:   Sun,  2 Jan 2022 12:53:52 +0100
-Message-Id: <20220102115356.75796-4-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 7/8] dt-bindings: clock: samsung: convert Exynos5410 to dtschema
+Date:   Sun,  2 Jan 2022 12:53:55 +0100
+Message-Id: <20220102115356.75796-7-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
 References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
@@ -76,144 +76,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung Exynos7 SoC clock controller bindings to DT schema
+Convert Samsung Exynos5410 SoC clock controller bindings to DT schema
 format.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- .../bindings/clock/exynos7-clock.txt          | 108 -------
- .../bindings/clock/samsung,exynos7-clock.yaml | 269 ++++++++++++++++++
- 2 files changed, 269 insertions(+), 108 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
+ .../bindings/clock/exynos5410-clock.txt       | 50 --------------
+ .../clock/samsung,exynos5410-clock.yaml       | 66 +++++++++++++++++++
+ MAINTAINERS                                   |  1 -
+ 3 files changed, 66 insertions(+), 51 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
 deleted file mode 100644
-index 6bf1e7493f61..000000000000
---- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+index 217beb27c30e..000000000000
+--- a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
 +++ /dev/null
-@@ -1,108 +0,0 @@
--* Samsung Exynos7 Clock Controller
+@@ -1,50 +0,0 @@
+-* Samsung Exynos5410 Clock Controller
 -
--Exynos7 clock controller has various blocks which are instantiated
--independently from the device-tree. These clock controllers
--generate and supply clocks to various hardware blocks within
--the SoC.
+-The Exynos5410 clock controller generates and supplies clock to various
+-controllers within the Exynos5410 SoC.
 -
--Each clock is assigned an identifier and client nodes can use
--this identifier to specify the clock which they consume. All
--available clocks are defined as preprocessor macros in
--dt-bindings/clock/exynos7-clk.h header and can be used in
--device tree sources.
+-Required Properties:
 -
--External clocks:
+-- compatible: should be "samsung,exynos5410-clock"
 -
--There are several clocks that are generated outside the SoC. It
--is expected that they are defined using standard clock bindings
--with following clock-output-names:
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
 -
-- - "fin_pll" - PLL input clock from XXTI
+-- #clock-cells: should be 1.
 -
--Required Properties for Clock Controller:
+-- clocks: should contain an entry specifying the root clock from external
+-  oscillator supplied through XXTI or XusbXTI pin.  This clock should be
+-  defined using standard clock bindings with "fin_pll" clock-output-name.
+-  That clock is being passed internally to the 9 PLLs.
 -
-- - compatible: clock controllers will use one of the following
--	compatible strings to indicate the clock controller
--	functionality.
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/exynos5410.h header and can be used in device
+-tree sources.
 -
--	- "samsung,exynos7-clock-topc"
--	- "samsung,exynos7-clock-top0"
--	- "samsung,exynos7-clock-top1"
--	- "samsung,exynos7-clock-ccore"
--	- "samsung,exynos7-clock-peric0"
--	- "samsung,exynos7-clock-peric1"
--	- "samsung,exynos7-clock-peris"
--	- "samsung,exynos7-clock-fsys0"
--	- "samsung,exynos7-clock-fsys1"
--	- "samsung,exynos7-clock-mscl"
--	- "samsung,exynos7-clock-aud"
+-Example 1: An example of a clock controller node is listed below.
 -
-- - reg: physical base address of the controller and the length of
--	memory mapped region.
+-	fin_pll: xxti {
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-		clock-output-names = "fin_pll";
+-		#clock-cells = <0>;
+-	};
 -
-- - #clock-cells: should be 1.
+-	clock: clock-controller@10010000 {
+-		compatible = "samsung,exynos5410-clock";
+-		reg = <0x10010000 0x30000>;
+-		#clock-cells = <1>;
+-		clocks = <&fin_pll>;
+-	};
 -
-- - clocks: list of clock identifiers which are fed as the input to
--	the given clock controller. Please refer the next section to
--	find the input clocks for a given controller.
+-Example 2: UART controller node that consumes the clock generated by the clock
+-	   controller. Refer to the standard clock bindings for information
+-	   about 'clocks' and 'clock-names' property.
 -
--- clock-names: list of names of clocks which are fed as the input
--	to the given clock controller.
--
--Input clocks for top0 clock controller:
--	- fin_pll
--	- dout_sclk_bus0_pll
--	- dout_sclk_bus1_pll
--	- dout_sclk_cc_pll
--	- dout_sclk_mfc_pll
--	- dout_sclk_aud_pll
--
--Input clocks for top1 clock controller:
--	- fin_pll
--	- dout_sclk_bus0_pll
--	- dout_sclk_bus1_pll
--	- dout_sclk_cc_pll
--	- dout_sclk_mfc_pll
--
--Input clocks for ccore clock controller:
--	- fin_pll
--	- dout_aclk_ccore_133
--
--Input clocks for peric0 clock controller:
--	- fin_pll
--	- dout_aclk_peric0_66
--	- sclk_uart0
--
--Input clocks for peric1 clock controller:
--	- fin_pll
--	- dout_aclk_peric1_66
--	- sclk_uart1
--	- sclk_uart2
--	- sclk_uart3
--	- sclk_spi0
--	- sclk_spi1
--	- sclk_spi2
--	- sclk_spi3
--	- sclk_spi4
--	- sclk_i2s1
--	- sclk_pcm1
--	- sclk_spdif
--
--Input clocks for peris clock controller:
--	- fin_pll
--	- dout_aclk_peris_66
--
--Input clocks for fsys0 clock controller:
--	- fin_pll
--	- dout_aclk_fsys0_200
--	- dout_sclk_mmc2
--
--Input clocks for fsys1 clock controller:
--	- fin_pll
--	- dout_aclk_fsys1_200
--	- dout_sclk_mmc0
--	- dout_sclk_mmc1
--
--Input clocks for aud clock controller:
--	- fin_pll
--	- fout_aud_pll
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
+-	serial@12c20000 {
+-		compatible = "samsung,exynos4210-uart";
+-		reg = <0x12C00000 0x100>;
+-		interrupts = <0 51 0>;
+-		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+-		clock-names = "uart", "clk_uart_baud0";
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
 new file mode 100644
-index 000000000000..f3fa6c7ef48b
+index 000000000000..032862e9f55b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos7-clock.yaml
-@@ -0,0 +1,269 @@
++++ b/Documentation/devicetree/bindings/clock/samsung,exynos5410-clock.yaml
+@@ -0,0 +1,66 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/samsung,exynos7-clock.yaml#
++$id: http://devicetree.org/schemas/clock/samsung,exynos5410-clock.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung Exynos7 SoC clock controller
++title: Samsung Exynos5410 SoC clock controller
 +
 +maintainers:
 +  - Chanwoo Choi <cw00.choi@samsung.com>
@@ -227,30 +170,21 @@ index 000000000000..f3fa6c7ef48b
 +    - "fin_pll" - PLL input clock from XXTI
 +
 +  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/exynos7-clk.h header.
++  include/dt-bindings/clock/exynos5410.h header.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - samsung,exynos7-clock-topc
-+      - samsung,exynos7-clock-top0
-+      - samsung,exynos7-clock-top1
-+      - samsung,exynos7-clock-ccore
-+      - samsung,exynos7-clock-peric0
-+      - samsung,exynos7-clock-peric1
-+      - samsung,exynos7-clock-peris
-+      - samsung,exynos7-clock-fsys0
-+      - samsung,exynos7-clock-fsys1
-+      - samsung,exynos7-clock-mscl
-+      - samsung,exynos7-clock-aud
++    oneOf:
++      - enum:
++          - samsung,exynos5410-clock
 +
 +  clocks:
-+    minItems: 1
-+    maxItems: 13
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 13
++    description:
++      Should contain an entry specifying the root clock from external
++      oscillator supplied through XXTI or XusbXTI pin.  This clock should be
++      defined using standard clock bindings with "fin_pll" clock-output-name.
++      That clock is being passed internally to the 9 PLLs.
++    maxItems: 1
 +
 +  "#clock-cells":
 +    const: 1
@@ -263,219 +197,37 @@ index 000000000000..f3fa6c7ef48b
 +  - "#clock-cells"
 +  - reg
 +
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-top0
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 6
-+          maxItems: 6
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_sclk_bus0_pll
-+            - const: dout_sclk_bus1_pll
-+            - const: dout_sclk_cc_pll
-+            - const: dout_sclk_mfc_pll
-+            - const: dout_sclk_aud_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-top1
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 5
-+          maxItems: 5
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_sclk_bus0_pll
-+            - const: dout_sclk_bus1_pll
-+            - const: dout_sclk_cc_pll
-+            - const: dout_sclk_mfc_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-ccore
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_ccore_133
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-peric0
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_peric0_66
-+            - const: sclk_uart0
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-peric1
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 13
-+          maxItems: 13
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_peric1_66
-+            - const: sclk_uart1
-+            - const: sclk_uart2
-+            - const: sclk_uart3
-+            - const: sclk_spi0
-+            - const: sclk_spi1
-+            - const: sclk_spi2
-+            - const: sclk_spi3
-+            - const: sclk_spi4
-+            - const: sclk_i2s1
-+            - const: sclk_pcm1
-+            - const: sclk_spdif
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-peris
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_peris_66
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-fsys0
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_fsys0_200
-+            - const: dout_sclk_mmc2
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-fsys1
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_fsys1_200
-+            - const: dout_sclk_mmc0
-+            - const: dout_sclk_mmc1
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos7-clock-aud
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: fout_aud_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/exynos7-clk.h>
++    #include <dt-bindings/clock/exynos5410.h>
 +
-+    fin_pll: clock {
++    fin_pll: osc-clock {
 +        compatible = "fixed-clock";
++        clock-frequency = <24000000>;
 +        clock-output-names = "fin_pll";
 +        #clock-cells = <0>;
-+        clock-frequency = <24000000>;
 +    };
 +
-+    clock-controller@105e0000 {
-+        compatible = "samsung,exynos7-clock-top1";
-+        reg = <0x105e0000 0xb000>;
++    clock-controller@10010000 {
++        compatible = "samsung,exynos5410-clock";
++        reg = <0x10010000 0x30000>;
 +        #clock-cells = <1>;
-+        clocks = <&fin_pll>,
-+                 <&clock_topc DOUT_SCLK_BUS0_PLL>,
-+                 <&clock_topc DOUT_SCLK_BUS1_PLL>,
-+                 <&clock_topc DOUT_SCLK_CC_PLL>,
-+                 <&clock_topc DOUT_SCLK_MFC_PLL>;
-+        clock-names = "fin_pll",
-+                      "dout_sclk_bus0_pll",
-+                      "dout_sclk_bus1_pll",
-+                      "dout_sclk_cc_pll",
-+                      "dout_sclk_mfc_pll";
++        clocks = <&fin_pll>;
 +    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5ea5655a29c3..0aa6a2728a7c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17036,7 +17036,6 @@ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+-F:	Documentation/devicetree/bindings/clock/exynos*.txt
+ F:	Documentation/devicetree/bindings/clock/samsung,*.yaml
+ F:	Documentation/devicetree/bindings/clock/samsung,s3c*
+ F:	Documentation/devicetree/bindings/clock/samsung,s5p*
 -- 
 2.32.0
 
