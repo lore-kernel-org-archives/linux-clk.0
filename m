@@ -2,675 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C31FC43217
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jan 2022 11:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5045C433FE
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jan 2022 16:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233069AbiABLyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jan 2022 06:54:15 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:39986
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232994AbiABLyL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 06:54:11 -0500
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com [209.85.167.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EBF393FFD0
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jan 2022 11:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1641124450;
-        bh=KIxBSAYY9IqHDkOmzn3EFzKfJVtsFPivkGmJz7iSA7I=;
-        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=npMF+Mzo6U9au5VQcKOQvLytCOcewJvHvmRzuaZ/tm1rsi7eTIo5bLTQ3pkNSroF8
-         1vS1IBcw92FoJ0ibewyllq2O8flgk2aeCEXvKvTabJ1WTwKVcjACbJ3KZZc0iRRArD
-         lHCNPeC0FNtew+4SuRGUuarPyq1VGPZdZKP6XHXah1hiN8+NdApIwXdOfsHGfixSjH
-         dIfwB1rBvvXmmIj/ixWLKGgLuOeu82dCVff3UWMZVIEvU9rbr8IkIqZ5yWshG4TN85
-         p5GJhx4JqzwnGJMOHuYqdiM7K7KNQegrZq1+CUIzhf0DvGoy2b0UhQJt8FXzly+lqI
-         9AUlYTPpfq9mQ==
-Received: by mail-lf1-f70.google.com with SMTP id v139-20020a194891000000b0042a2927eaa8so1460564lfa.3
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jan 2022 03:54:09 -0800 (PST)
+        id S229553AbiABQ5h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jan 2022 11:57:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229515AbiABQ5h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 11:57:37 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C29C061761;
+        Sun,  2 Jan 2022 08:57:36 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id s1so65680746wra.6;
+        Sun, 02 Jan 2022 08:57:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=25JkROX6gojJhcdHgWizUk7fewqW48hRlaaUSldwQSI=;
+        b=jL2f9pfGvgy8SroBc5A0PM/XjnmhAXbMbFpGuHnoiSG1dguRez9b5xHOX3RXzKbrI2
+         Ml0pcNy41928o/e7IAQAosJPIgFOhwSjtXHv6FlyEuHRGigyCZmQnHVnQISvRcfV0Fv5
+         r9oJBW9YjaWDKlyiE6K4JkA6byL/KcFN3OK35LsRgAZ1IL+xMArCe6+I3IBAi7wdZNld
+         nnIiVAidP+X5Obu8eqazXBNK8i1vakwD8tgjyEaL2Z2RlZsvy0q69CQ3KyDvIp+CPGFG
+         5S7OntyQ+RjCch9RgOYb9KxoTpwafUdRr5vH9I28NhyuBBkZuYMs52CyQk40xdoIIlWl
+         Htqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KIxBSAYY9IqHDkOmzn3EFzKfJVtsFPivkGmJz7iSA7I=;
-        b=q83Sj+h2kUTGuToI6n0KE4c3/WbVeueG6qt63AFtzTShpnwKzZFY0e0Y+zoaTtK4kZ
-         r39r0W8g60TSg9+ebErDLaKxahXCGbNwmI8OXA4VWmub9vUkdZ5fAIAGc9wx2BCB7/gi
-         gq4aVD2MMEN8H81bWdUHowSZu/g2G8bjZSx5LP2y2Vr4RumTy2GAz+rOGFo0wsZ+c128
-         IsiriybgSE4v28AfEL7fn63I8nOWxR9mHTv7PN3CDhUGvLLC04m8x49oZn9TgnV/J76h
-         qFwexPtcBExxtKgFgqh6BVz160R0aR4jnQQSCLinHi+vDLS7YcwKFldHmpuCDgzzjne7
-         PUhA==
-X-Gm-Message-State: AOAM530p4cGhMsRlZVrsBPSd0lugV25PTTyvJNgZvXmwsnv4f1/33cwf
-        EBmmIiMm19PnxUeX1edFNjMyqChm/LNp7fLV1lTKxYKJMLz1hzitWceid//bgEH5ELuWvy5M6DG
-        YSkhAyI4MG+UGJDVAepBS0t1x+JnAH0i7RqIYCw==
-X-Received: by 2002:ac2:5fcd:: with SMTP id q13mr36839866lfg.621.1641124449277;
-        Sun, 02 Jan 2022 03:54:09 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwpFCU5rwJi7xsFey45le1mAfkA3wRrJGD2HDoKzfwvWT66Jbcr71hp0La6/clqGGilJxcwLg==
-X-Received: by 2002:ac2:5fcd:: with SMTP id q13mr36839853lfg.621.1641124449020;
-        Sun, 02 Jan 2022 03:54:09 -0800 (PST)
-Received: from krzk-bin.lan (89-77-68-124.dynamic.chello.pl. [89.77.68.124])
-        by smtp.gmail.com with ESMTPSA id l2sm2368014lja.51.2022.01.02.03.54.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=25JkROX6gojJhcdHgWizUk7fewqW48hRlaaUSldwQSI=;
+        b=DvrhT2XVczblKfkb4vJ3HCvRN2mKaGG7gQNbg1EcV81Ah+hPJhgfYiBr0Ee2eTilHs
+         DjAJfkhNXJFGdJMJiyQ4dSvUtJaYezYzMGOVrSGfJjZHEsyMd/MG5463JSx2vuc5pnHz
+         SRPVlTVqdqOGPzcwQIYAVE/nSWtoQB1cXH5oX7YaqzviCihyyT/B+UBoAw9QwBBlgdeX
+         nlutB6c2wo1AII08WiapnT345Hz3HyaOu3ZmKfq3V0H0++3lkme0uZUlU8k9hbS49Wa6
+         XsXwxz3UQJ/B9CUUDKfFXcvh6kpnq7py1WCVKCNtxtS5fknyW8xDr4pFOoBcyJrbmSkl
+         Fskw==
+X-Gm-Message-State: AOAM531e9JPDwpdDxqADs0y9RQwvsiyCFVtYjCRpM7cqi6LfuYXrSD8+
+        2FaTZCCzbDAeY930bH6l2DUX+mbgOVGmXQ==
+X-Google-Smtp-Source: ABdhPJxGwq1Y7VN8FC0d/3vmrGWOxmgJl9QgbHs6TBo9OgfpAG06Jxsn3mPHPcS9QIPjtyACqA08IA==
+X-Received: by 2002:adf:eb12:: with SMTP id s18mr5174441wrn.717.1641142654717;
+        Sun, 02 Jan 2022 08:57:34 -0800 (PST)
+Received: from debby ([2a01:e0a:a6d:a8d0:7ff4:8f61:5574:9f95])
+        by smtp.gmail.com with ESMTPSA id m5sm31153335wml.48.2022.01.02.08.57.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jan 2022 03:54:08 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+        Sun, 02 Jan 2022 08:57:34 -0800 (PST)
+From:   Romain Perier <romain.perier@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] dt-bindings: clock: samsung: convert Exynos5260 to dtschema
-Date:   Sun,  2 Jan 2022 12:53:54 +0100
-Message-Id: <20220102115356.75796-6-krzysztof.kozlowski@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
-References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Daniel Palmer <daniel@0x0f.com>,
+        Romain Perier <romain.perier@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/9] ARM: mstar: cpupll
+Date:   Sun,  2 Jan 2022 17:57:21 +0100
+Message-Id: <20220102165730.50190-1-romain.perier@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung Exynos5260 SoC clock controller bindings to DT schema
-format.
+This series adds a basic driver for the PLL that generates
+the cpu clock on MStar/SigmaStar ARMv7 SoCs.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
----
- .../bindings/clock/exynos5260-clock.txt       | 190 ---------
- .../clock/samsung,exynos5260-clock.yaml       | 382 ++++++++++++++++++
- 2 files changed, 382 insertions(+), 190 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
+Unfortunately there isn't much documentation for this thing
+so there are few magic values and guesses.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5260-clock.txt b/Documentation/devicetree/bindings/clock/exynos5260-clock.txt
-deleted file mode 100644
-index c79d31f7f66e..000000000000
---- a/Documentation/devicetree/bindings/clock/exynos5260-clock.txt
-+++ /dev/null
-@@ -1,190 +0,0 @@
--* Samsung Exynos5260 Clock Controller
--
--Exynos5260 has 13 clock controllers which are instantiated
--independently from the device-tree. These clock controllers
--generate and supply clocks to various hardware blocks within
--the SoC.
--
--Each clock is assigned an identifier and client nodes can use
--this identifier to specify the clock which they consume. All
--available clocks are defined as preprocessor macros in
--dt-bindings/clock/exynos5260-clk.h header and can be used in
--device tree sources.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It
--is expected that they are defined using standard clock bindings
--with following clock-output-names:
--
-- - "fin_pll" - PLL input clock from XXTI
-- - "xrtcxti" - input clock from XRTCXTI
-- - "ioclk_pcm_extclk" - pcm external operation clock
-- - "ioclk_spdif_extclk" - spdif external operation clock
-- - "ioclk_i2s_cdclk" - i2s0 codec clock
--
--Phy clocks:
--
--There are several clocks which are generated by specific PHYs.
--These clocks are fed into the clock controller and then routed to
--the hardware blocks. These clocks are defined as fixed clocks in the
--driver with following names:
--
-- - "phyclk_dptx_phy_ch3_txd_clk" - dp phy clock for channel 3
-- - "phyclk_dptx_phy_ch2_txd_clk" - dp phy clock for channel 2
-- - "phyclk_dptx_phy_ch1_txd_clk" - dp phy clock for channel 1
-- - "phyclk_dptx_phy_ch0_txd_clk" - dp phy clock for channel 0
-- - "phyclk_hdmi_phy_tmds_clko" - hdmi phy tmds clock
-- - "phyclk_hdmi_phy_pixel_clko" - hdmi phy pixel clock
-- - "phyclk_hdmi_link_o_tmds_clkhi" - hdmi phy for hdmi link
-- - "phyclk_dptx_phy_o_ref_clk_24m" - dp phy reference clock
-- - "phyclk_dptx_phy_clk_div2"
-- - "phyclk_mipi_dphy_4l_m_rxclkesc0"
-- - "phyclk_usbhost20_phy_phyclock" - usb 2.0 phy clock
-- - "phyclk_usbhost20_phy_freeclk"
-- - "phyclk_usbhost20_phy_clk48mohci"
-- - "phyclk_usbdrd30_udrd30_pipe_pclk"
-- - "phyclk_usbdrd30_udrd30_phyclock" - usb 3.0 phy clock
--
--Required Properties for Clock Controller:
--
-- - compatible: should be one of the following.
--	1) "samsung,exynos5260-clock-top"
--	2) "samsung,exynos5260-clock-peri"
--	3) "samsung,exynos5260-clock-egl"
--	4) "samsung,exynos5260-clock-kfc"
--	5) "samsung,exynos5260-clock-g2d"
--	6) "samsung,exynos5260-clock-mif"
--	7) "samsung,exynos5260-clock-mfc"
--	8) "samsung,exynos5260-clock-g3d"
--	9) "samsung,exynos5260-clock-fsys"
--	10) "samsung,exynos5260-clock-aud"
--	11) "samsung,exynos5260-clock-isp"
--	12) "samsung,exynos5260-clock-gscl"
--	13) "samsung,exynos5260-clock-disp"
--
-- - reg: physical base address of the controller and the length of
--	memory mapped region.
--
-- - #clock-cells: should be 1.
--
-- - clocks: list of clock identifiers which are fed as the input to
--	the given clock controller. Please refer the next section to find
--	the input clocks for a given controller.
--
-- - clock-names: list of names of clocks which are fed as the input
--	to the given clock controller.
--
--Input clocks for top clock controller:
--	- fin_pll
--	- dout_mem_pll
--	- dout_bus_pll
--	- dout_media_pll
--
--Input clocks for peri clock controller:
--	- fin_pll
--	- ioclk_pcm_extclk
--	- ioclk_i2s_cdclk
--	- ioclk_spdif_extclk
--	- phyclk_hdmi_phy_ref_cko
--	- dout_aclk_peri_66
--	- dout_sclk_peri_uart0
--	- dout_sclk_peri_uart1
--	- dout_sclk_peri_uart2
--	- dout_sclk_peri_spi0_b
--	- dout_sclk_peri_spi1_b
--	- dout_sclk_peri_spi2_b
--	- dout_aclk_peri_aud
--	- dout_sclk_peri_spi0_b
--
--Input clocks for egl clock controller:
--	- fin_pll
--	- dout_bus_pll
--
--Input clocks for kfc clock controller:
--	- fin_pll
--	- dout_media_pll
--
--Input clocks for g2d clock controller:
--	- fin_pll
--	- dout_aclk_g2d_333
--
--Input clocks for mif clock controller:
--	- fin_pll
--
--Input clocks for mfc clock controller:
--	- fin_pll
--	- dout_aclk_mfc_333
--
--Input clocks for g3d clock controller:
--	- fin_pll
--
--Input clocks for fsys clock controller:
--	- fin_pll
--	- phyclk_usbhost20_phy_phyclock
--	- phyclk_usbhost20_phy_freeclk
--	- phyclk_usbhost20_phy_clk48mohci
--	- phyclk_usbdrd30_udrd30_pipe_pclk
--	- phyclk_usbdrd30_udrd30_phyclock
--	- dout_aclk_fsys_200
--
--Input clocks for aud clock controller:
--	- fin_pll
--	- fout_aud_pll
--	- ioclk_i2s_cdclk
--	- ioclk_pcm_extclk
--
--Input clocks for isp clock controller:
--	- fin_pll
--	- dout_aclk_isp1_266
--	- dout_aclk_isp1_400
--	- mout_aclk_isp1_266
--
--Input clocks for gscl clock controller:
--	- fin_pll
--	- dout_aclk_gscl_400
--	- dout_aclk_gscl_333
--
--Input clocks for disp clock controller:
--	- fin_pll
--	- phyclk_dptx_phy_ch3_txd_clk
--	- phyclk_dptx_phy_ch2_txd_clk
--	- phyclk_dptx_phy_ch1_txd_clk
--	- phyclk_dptx_phy_ch0_txd_clk
--	- phyclk_hdmi_phy_tmds_clko
--	- phyclk_hdmi_phy_ref_clko
--	- phyclk_hdmi_phy_pixel_clko
--	- phyclk_hdmi_link_o_tmds_clkhi
--	- phyclk_mipi_dphy_4l_m_txbyte_clkhs
--	- phyclk_dptx_phy_o_ref_clk_24m
--	- phyclk_dptx_phy_clk_div2
--	- phyclk_mipi_dphy_4l_m_rxclkesc0
--	- phyclk_hdmi_phy_ref_cko
--	- ioclk_spdif_extclk
--	- dout_aclk_peri_aud
--	- dout_aclk_disp_222
--	- dout_sclk_disp_pixel
--	- dout_aclk_disp_333
--
--Example 1: An example of a clock controller node is listed below.
--
--	clock_mfc: clock-controller@11090000 {
--		compatible = "samsung,exynos5260-clock-mfc";
--		clock = <&fin_pll>, <&clock_top TOP_DOUT_ACLK_MFC_333>;
--		clock-names = "fin_pll", "dout_aclk_mfc_333";
--		reg = <0x11090000 0x10000>;
--		#clock-cells = <1>;
--	};
--
--Example 2: UART controller node that consumes the clock generated by the
--		peri clock controller. Refer to the standard clock bindings for
--		information about 'clocks' and 'clock-names' property.
--
--	serial@12c00000 {
--		compatible = "samsung,exynos4210-uart";
--		reg = <0x12C00000 0x100>;
--		interrupts = <0 146 0>;
--		clocks = <&clock_peri PERI_PCLK_UART0>, <&clock_peri PERI_SCLK_UART0>;
--		clock-names = "uart", "clk_uart_baud0";
--	};
--
-diff --git a/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
-new file mode 100644
-index 000000000000..a3fac5c6809d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/samsung,exynos5260-clock.yaml
-@@ -0,0 +1,382 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/samsung,exynos5260-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos5260 SoC clock controller
-+
-+maintainers:
-+  - Chanwoo Choi <cw00.choi@samsung.com>
-+  - Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-+  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-+  - Tomasz Figa <tomasz.figa@gmail.com>
-+
-+description: |
-+  Expected external clocks, defined in DTS as fixed-rate clocks with a matching
-+  name::
-+    - "fin_pll" - PLL input clock from XXTI
-+    - "xrtcxti" - input clock from XRTCXTI
-+    - "ioclk_pcm_extclk" - pcm external operation clock
-+    - "ioclk_spdif_extclk" - spdif external operation clock
-+    - "ioclk_i2s_cdclk" - i2s0 codec clock
-+
-+  Phy clocks::
-+  There are several clocks which are generated by specific PHYs.  These clocks
-+  are fed into the clock controller and then routed to the hardware blocks.
-+  These clocks are defined as fixed clocks in the driver with following names::
-+    - "phyclk_dptx_phy_ch3_txd_clk" - dp phy clock for channel 3
-+    - "phyclk_dptx_phy_ch2_txd_clk" - dp phy clock for channel 2
-+    - "phyclk_dptx_phy_ch1_txd_clk" - dp phy clock for channel 1
-+    - "phyclk_dptx_phy_ch0_txd_clk" - dp phy clock for channel 0
-+    - "phyclk_hdmi_phy_tmds_clko" - hdmi phy tmds clock
-+    - "phyclk_hdmi_phy_pixel_clko" - hdmi phy pixel clock
-+    - "phyclk_hdmi_link_o_tmds_clkhi" - hdmi phy for hdmi link
-+    - "phyclk_dptx_phy_o_ref_clk_24m" - dp phy reference clock
-+    - "phyclk_dptx_phy_clk_div2"
-+    - "phyclk_mipi_dphy_4l_m_rxclkesc0"
-+    - "phyclk_usbhost20_phy_phyclock" - usb 2.0 phy clock
-+    - "phyclk_usbhost20_phy_freeclk"
-+    - "phyclk_usbhost20_phy_clk48mohci"
-+    - "phyclk_usbdrd30_udrd30_pipe_pclk"
-+    - "phyclk_usbdrd30_udrd30_phyclock" - usb 3.0 phy clock
-+
-+  All available clocks are defined as preprocessor macros in
-+  include/dt-bindings/clock/exynos5260-clk.h header.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5260-clock-top
-+      - samsung,exynos5260-clock-peri
-+      - samsung,exynos5260-clock-egl
-+      - samsung,exynos5260-clock-kfc
-+      - samsung,exynos5260-clock-g2d
-+      - samsung,exynos5260-clock-mif
-+      - samsung,exynos5260-clock-mfc
-+      - samsung,exynos5260-clock-g3d
-+      - samsung,exynos5260-clock-fsys
-+      - samsung,exynos5260-clock-aud
-+      - samsung,exynos5260-clock-isp
-+      - samsung,exynos5260-clock-gscl
-+      - samsung,exynos5260-clock-disp
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 19
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 19
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-top
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_mem_pll
-+            - const: dout_bus_pll
-+            - const: dout_media_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-peri
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 13
-+          maxItems: 13
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: ioclk_pcm_extclk
-+            - const: ioclk_i2s_cdclk
-+            - const: ioclk_spdif_extclk
-+            - const: phyclk_hdmi_phy_ref_cko
-+            - const: dout_aclk_peri_66
-+            - const: dout_sclk_peri_uart0
-+            - const: dout_sclk_peri_uart1
-+            - const: dout_sclk_peri_uart2
-+            - const: dout_sclk_peri_spi0_b
-+            - const: dout_sclk_peri_spi1_b
-+            - const: dout_sclk_peri_spi2_b
-+            - const: dout_aclk_peri_aud
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-egl
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_bus_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-kfc
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_media_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-g2d
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_g2d_333
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-mif
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 1
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-mfc
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+          maxItems: 2
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_mfc_333
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-g3d
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 1
-+          maxItems: 1
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-fsys
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 7
-+          maxItems: 7
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: phyclk_usbhost20_phy_phyclock
-+            - const: phyclk_usbhost20_phy_freeclk
-+            - const: phyclk_usbhost20_phy_clk48mohci
-+            - const: phyclk_usbdrd30_udrd30_pipe_pclk
-+            - const: phyclk_usbdrd30_udrd30_phyclock
-+            - const: dout_aclk_fsys_200
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-aud
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: fout_aud_pll
-+            - const: ioclk_i2s_cdclk
-+            - const: ioclk_pcm_extclk
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-isp
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+          maxItems: 4
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_isp1_266
-+            - const: dout_aclk_isp1_400
-+            - const: mout_aclk_isp1_266
-+
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-gscl
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: dout_aclk_gscl_400
-+            - const: dout_aclk_gscl_333
-+      required:
-+        - clock-names
-+        - clocks
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: samsung,exynos5260-clock-disp
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 19
-+          maxItems: 19
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: phyclk_dptx_phy_ch3_txd_clk
-+            - const: phyclk_dptx_phy_ch2_txd_clk
-+            - const: phyclk_dptx_phy_ch1_txd_clk
-+            - const: phyclk_dptx_phy_ch0_txd_clk
-+            - const: phyclk_hdmi_phy_tmds_clko
-+            - const: phyclk_hdmi_phy_ref_clko
-+            - const: phyclk_hdmi_phy_pixel_clko
-+            - const: phyclk_hdmi_link_o_tmds_clkhi
-+            - const: phyclk_mipi_dphy_4l_m_txbyte_clkhs
-+            - const: phyclk_dptx_phy_o_ref_clk_24m
-+            - const: phyclk_dptx_phy_clk_div2
-+            - const: phyclk_mipi_dphy_4l_m_rxclkesc0
-+            - const: phyclk_hdmi_phy_ref_cko
-+            - const: ioclk_spdif_extclk
-+            - const: dout_aclk_peri_aud
-+            - const: dout_aclk_disp_222
-+            - const: dout_sclk_disp_pixel
-+            - const: dout_aclk_disp_333
-+      required:
-+        - clock-names
-+        - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5260-clk.h>
-+
-+    fin_pll: clock {
-+        compatible = "fixed-clock";
-+        clock-output-names = "fin_pll";
-+        #clock-cells = <0>;
-+        clock-frequency = <24000000>;
-+    };
-+
-+    clock-controller@10010000 {
-+        compatible = "samsung,exynos5260-clock-top";
-+        reg = <0x10010000 0x10000>;
-+        #clock-cells = <1>;
-+        clocks = <&fin_pll>,
-+                 <&clock_mif MIF_DOUT_MEM_PLL>,
-+                 <&clock_mif MIF_DOUT_BUS_PLL>,
-+                 <&clock_mif MIF_DOUT_MEDIA_PLL>;
-+        clock-names = "fin_pll",
-+                      "dout_mem_pll",
-+                      "dout_bus_pll",
-+                      "dout_media_pll";
-+    };
+This needs to come after the MPLL DT changes.
+
+Changes since v2:
+- Re-worked the series and ensure that 'make dt_binding_check' passes.
+  The required commit is merged now, so it is okay.
+- Fixed coding style issues in the driver and makes check_patch.pl happy
+- Added one more commit for extending the opp_table for infinity2m.
+
+Daniel Palmer (8):
+  dt-bindings: clk: mstar msc313 cpupll binding description
+  clk: mstar: msc313 cpupll clk driver
+  ARM: mstar: Add cpupll to base dtsi
+  ARM: mstar: Link cpupll to cpu
+  ARM: mstar: Link cpupll to second core
+  ARM: mstar: Add OPP table for infinity
+  ARM: mstar: Add OPP table for infinity3
+  ARM: mstar: Add OPP table for mercury5
+
+Romain Perier (1):
+  ARM: mstar: Extend opp_table for infinity2m
+
+ .../bindings/clock/mstar,msc313-cpupll.yaml   |  45 ++++
+ arch/arm/boot/dts/mstar-infinity.dtsi         |  34 +++
+ arch/arm/boot/dts/mstar-infinity2m.dtsi       |  17 ++
+ arch/arm/boot/dts/mstar-infinity3.dtsi        |  58 +++++
+ arch/arm/boot/dts/mstar-mercury5.dtsi         |  36 +++
+ arch/arm/boot/dts/mstar-v7.dtsi               |   9 +
+ drivers/clk/mstar/Kconfig                     |   7 +
+ drivers/clk/mstar/Makefile                    |   1 +
+ drivers/clk/mstar/clk-msc313-cpupll.c         | 227 ++++++++++++++++++
+ 9 files changed, 434 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-cpupll.yaml
+ create mode 100644 drivers/clk/mstar/clk-msc313-cpupll.c
+
 -- 
-2.32.0
+2.34.1
 
