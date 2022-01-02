@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F750C2BB1D
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jan 2022 16:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CB4C433FE
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jan 2022 16:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbiABQ5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jan 2022 11:57:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41536 "EHLO
+        id S229737AbiABQ5s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jan 2022 11:57:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbiABQ5q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 11:57:46 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B09E5C061761;
-        Sun,  2 Jan 2022 08:57:45 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id k18so28949042wrg.11;
-        Sun, 02 Jan 2022 08:57:45 -0800 (PST)
+        with ESMTP id S229794AbiABQ5p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jan 2022 11:57:45 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DA1C061785;
+        Sun,  2 Jan 2022 08:57:44 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id k18so28948982wrg.11;
+        Sun, 02 Jan 2022 08:57:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iD/CADMJmjE6Wqsta+zyCvYv9Ey28eqoIb5w5xoLVEA=;
-        b=KrQgZJjucRqLWk+uOuwmX5KyeIny71EXNyuDW5ReDsZDQxPfLsy3zaKJYjLQzayvdK
-         DJBbN3/N8uKBoiET37O5zrKeQbO4oD1UFT+tIleBFO1GoaPkFTFciqkwhrMctHecf1XZ
-         Q93NH8X+a8Vm3ZAL95VYsrR1Aqf5p9yBBj5AUGa+fGNgtmzohz1Me4NUhIrVVruAIYYQ
-         c0nF3nxZjgMwaugVzcNcQCmf/+38sJMikHYG5D7O7LIKcWGxkYffWTZVibveR8cGx18q
-         NRRti0YYARTQxsyca/tWjZY9dJtwdp2qoGGumBL5yU3PNTbORCeo8ecKekeyfyTF9D9u
-         TaNQ==
+        bh=StcZHqzmvLp6v5k+mwDmcDs/ahnsoFhEqrHgEMI6OjQ=;
+        b=j2xcZ3VS6TFIJjYJ+vmRZezy9qn60VUnG3E/ECjUl4HCPj0rBPuLzDzMwAufGOjAKy
+         Oc9fg2uOo+kWqurnFvUrgF26zLYYowfHO3ANqzWXX80wan7+eMy5pqMsOqkVRRPwPzdi
+         XdVqBYXHiOcxHy45XTI1f2dIu738oghcXKciM3thU+SRfmrDsc+LJGWCiC2VD/ljdQmt
+         e0nEOtz4zLqOcHEyGCOrqkgPaaJh1e9wAqF2j16kVREALD44gYROXkYmCmtk0wyVyx21
+         K/+IJnM5CcXakBi+Q4J4VB4gesigSf+DFXkLOVmT92RIHvk7bPWah40RihYdXsnCSfHA
+         kwBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iD/CADMJmjE6Wqsta+zyCvYv9Ey28eqoIb5w5xoLVEA=;
-        b=JdH5LmY7b8hMwvj1aUuakmG1pzG+xA9jS/BkeGQtSYPvUkNeBDSaf2uMU6IlmRIgHP
-         rn94g4BXpvpLL9Deg8i5yHUZI0CZqqtK5yPotoyy9YDkISvLT2Dzf4HoPTSOe02u50xw
-         wrKvTOqtd2iXHGxpdETPlBhJLNpaOMFsvCtywmvOd0KIfPf/9NWoPCyDPbeNAjzHGj3C
-         UTwm9QVi2HeiMIOKp0ZdeXNfS0NDQa6fK7C0fMfA0H4+NDVy78qOFIQGQP8d84qRcg2q
-         vnxrY0XL0DbvYSPwJIEc4sGckNnBEPLVZEO8m9Y7Qn1WfitpFo8Hnpl2I3f1dJ0sbt2J
-         qhIw==
-X-Gm-Message-State: AOAM531JheNPHPka+HkxnMWbzIIC7Skoad0wZ2UqSssVaa8lgx5UBdIr
-        XpIwUqhPZx71w8nhOGKkOjE4i3sniHSxMA==
-X-Google-Smtp-Source: ABdhPJx779LWBPXjfsrLOgJIV4ApKAEJ67RdpJ7OhOntFNmIMbXueBJBbQk7NNU/oCrZOuXcDHQV7w==
-X-Received: by 2002:adf:f384:: with SMTP id m4mr14509211wro.524.1641142663994;
-        Sun, 02 Jan 2022 08:57:43 -0800 (PST)
+        bh=StcZHqzmvLp6v5k+mwDmcDs/ahnsoFhEqrHgEMI6OjQ=;
+        b=xwbfDDZeiwkRmyxlRMija+Y2vGyvTHDdF6kJz629VTJq03z2DU+B57/9OTL4XTKg1E
+         vdiqa54rrxMoc70XGQMA27oL5yJb9DHac0xZl0bPgvCtF1DwGitoCK34vPjgNWQisWlL
+         muFhoIeXVaNrfOyn4C3mzPjCHr5qKmQTvBHqS2ktzUYj01MfVzEtiLwn0U6DessTJwn0
+         AuGU/GGHYI7dAP0DG+oNS0LpFQ+dvaSeDevN/Lcri3/v1tL7Htx2jZrsGRM29GPVfQZ2
+         P+GeAMfAmqxDqCxnajig5FUbbjAvWGf0MWL/HH4bGudX8B80znG/duySNi6So7mtMQHB
+         G1Ow==
+X-Gm-Message-State: AOAM533bFGW+JP/xSkiIE2OQVfRpToH0oFV7TyQx9Q3c5dtzXIvF9iBN
+        CiGQE+0gASnXRnH0y4RztDhpfZncFqSasw==
+X-Google-Smtp-Source: ABdhPJx4Dxr2RaztEoTqjlm4Ao926l9evgTdBBN+vsLJtkzj0doTCeZAZdeT9CKRktC4SnKfnHmUYQ==
+X-Received: by 2002:adf:dc12:: with SMTP id t18mr36990100wri.566.1641142662958;
+        Sun, 02 Jan 2022 08:57:42 -0800 (PST)
 Received: from debby ([2a01:e0a:a6d:a8d0:7ff4:8f61:5574:9f95])
-        by smtp.gmail.com with ESMTPSA id bk17sm2095664wrb.105.2022.01.02.08.57.43
+        by smtp.gmail.com with ESMTPSA id p13sm25787035wrs.54.2022.01.02.08.57.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jan 2022 08:57:43 -0800 (PST)
+        Sun, 02 Jan 2022 08:57:42 -0800 (PST)
 From:   Romain Perier <romain.perier@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
@@ -55,9 +55,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] ARM: mstar: Extend opp_table for infinity2m
-Date:   Sun,  2 Jan 2022 17:57:30 +0100
-Message-Id: <20220102165730.50190-10-romain.perier@gmail.com>
+Subject: [PATCH v2 8/9] ARM: mstar: Add OPP table for mercury5
+Date:   Sun,  2 Jan 2022 17:57:29 +0100
+Message-Id: <20220102165730.50190-9-romain.perier@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220102165730.50190-1-romain.perier@gmail.com>
 References: <20220102165730.50190-1-romain.perier@gmail.com>
@@ -67,44 +67,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-infinity2m are running up to 1.2Ghz, this extends opp_table with the
-corresponding frequencies and enable operating-points table for cpu1
+From: Daniel Palmer <daniel@0x0f.com>
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
+Add an OPP table for mercury5 so that cpu frequency scaling can
+happen.
+
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
 ---
- arch/arm/boot/dts/mstar-infinity2m.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/arm/boot/dts/mstar-mercury5.dtsi | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mstar-infinity2m.dtsi b/arch/arm/boot/dts/mstar-infinity2m.dtsi
-index dc339cd29778..1b485efd7156 100644
---- a/arch/arm/boot/dts/mstar-infinity2m.dtsi
-+++ b/arch/arm/boot/dts/mstar-infinity2m.dtsi
-@@ -6,10 +6,25 @@
+diff --git a/arch/arm/boot/dts/mstar-mercury5.dtsi b/arch/arm/boot/dts/mstar-mercury5.dtsi
+index a7d0dd9d6132..80a19bd23c9c 100644
+--- a/arch/arm/boot/dts/mstar-mercury5.dtsi
++++ b/arch/arm/boot/dts/mstar-mercury5.dtsi
+@@ -6,6 +6,42 @@
  
- #include "mstar-infinity.dtsi"
+ #include "mstar-v7.dtsi"
  
-+&cpu0_opp_table {
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1000000>;
++/ {
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-100000000 {
++			opp-hz = /bits/ 64 <100000000>;
++			opp-microvolt = <800000 800000 850000>;
 +			clock-latency-ns = <300000>;
 +		};
 +
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1000000>;
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <850000 850000 880000>;
 +			clock-latency-ns = <300000>;
 +		};
++
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <880000 880000 890000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <900000 900000 1000000>;
++			clock-latency-ns = <300000>;
++		};
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <900000 900000 1000000>;
++			clock-latency-ns = <300000>;
++		};
++	};
 +};
 +
- &cpus {
- 	cpu1: cpu@1 {
- 		device_type = "cpu";
- 		compatible = "arm,cortex-a7";
-+		operating-points-v2 = <&cpu0_opp_table>;
- 		reg = <0x1>;
- 		clocks = <&cpupll>;
- 		clock-names = "cpuclk";
+ &imi {
+ 	reg = <0xa0000000 0x20000>;
+ };
 -- 
 2.34.1
 
