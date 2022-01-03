@@ -2,95 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98442C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jan 2022 14:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3451FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jan 2022 16:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233812AbiACOjK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jan 2022 09:39:10 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47774 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235920AbiACOh0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jan 2022 09:37:26 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id F2CF71F41FC7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1641220641;
-        bh=qSvITlSu/EuyG+NjQRmV2sMPNmQCjRo2UzY7HOf2Nho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=f/uhrvzMZjOrwsczlBf18PrfUJE/YL1OYGyZTyvSisSGMvRgJDPZJ+jnilDvi+vGG
-         b59GQfaZ6JKukfLnVudHm0Vw27rDee2Jy4JzP7ywCDXovQNUkkVTJBccjBiHAp+DEE
-         CaziJL8QXJcnqKd+au8Dx9HklGAe5rS6d82IQWjoSU3xcIiD0yhHSVts6vpvmBsoFi
-         GZMtEsK7f6qisXmc+cyBwhJE6LVTJiHH54tDYNObW2o7w3L6XidoufnrP27X4KSRpc
-         Q/c3OuxBOJmSYNZu91PYCI2/7OGaWfh1cUgWt3Y+kk3l7p9crtBvruF7UwtXiX8ywZ
-         pH34lc3lUc7oQ==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, miles.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: [PATCH 1/2] clk: mediatek: clk-gate: Shrink by adding clockgating bit check helper
-Date:   Mon,  3 Jan 2022 15:37:11 +0100
-Message-Id: <20220103143712.46675-1-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.33.1
+        id S232911AbiACQGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jan 2022 11:06:36 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:50254 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231648AbiACQGg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jan 2022 11:06:36 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B0B3D6115F;
+        Mon,  3 Jan 2022 16:06:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7806EC36AEB;
+        Mon,  3 Jan 2022 16:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641225995;
+        bh=DKwn2a4a8WstTrBz3YaW8iPlQgOGN/W5/nC7S2XFzZQ=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=Ynx9sCgtfBebo4tJlZiZKh0DkYZfGghQtMTz2vqmRzJbhuYU5Q2dSJMYKIbJ8i5sn
+         3nDeJDMCXg/jmxxFz/YY7YUUbQ5XfLTq5u1SZBBGb4HGvZtiWOlfpiUkHinsp2p5OJ
+         qrmXJsWNtkcTcgELDlHql50PV6PSfOnRynQbifGOXtK7GaLsUD6J8isnXK1ffazq+4
+         HMNeueW1n/hCAK1v8ilC5EztFgSGVRQUcbQDnBCEhBaWAgC38G6qS2SsNB3VlzMWwZ
+         c/QwuDjzZAxYrJzrbOaJsO/o2DNM11IRt17XGaaeuJOQk1Igtv2awQ5h+7QYmOEptl
+         uTKl/1G+H3kpg==
+Subject: Re: [PATCH 00/19] arm/arm64/dt-bindings: altera/intel: fix DTS and
+ dtschema
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org
+References: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Message-ID: <32990891-1378-d20e-7caa-a807964aab36@kernel.org>
+Date:   Mon, 3 Jan 2022 10:06:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a clockgating bit check helper and use it in functions
-mtk_cg_bit_is_cleared(), mtk_cg_bit_is_set() to shrink the
-file size.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-gate.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index b02d2f74dd0d..957fa1d68f07 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -16,28 +16,24 @@
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
--static int mtk_cg_bit_is_cleared(struct clk_hw *hw)
-+static u32 mtk_get_clockgating(struct clk_hw *hw)
- {
- 	struct mtk_clk_gate *cg = to_mtk_clk_gate(hw);
- 	u32 val;
- 
- 	regmap_read(cg->regmap, cg->sta_ofs, &val);
- 
--	val &= BIT(cg->bit);
-+	return val & BIT(cg->bit);
-+}
- 
--	return val == 0;
-+static int mtk_cg_bit_is_cleared(struct clk_hw *hw)
-+{
-+	return mtk_get_clockgating(hw) == 0;
- }
- 
- static int mtk_cg_bit_is_set(struct clk_hw *hw)
- {
--	struct mtk_clk_gate *cg = to_mtk_clk_gate(hw);
--	u32 val;
--
--	regmap_read(cg->regmap, cg->sta_ofs, &val);
--
--	val &= BIT(cg->bit);
--
--	return val != 0;
-+	return mtk_get_clockgating(hw) != 0;
- }
- 
- static void mtk_cg_set_bit(struct clk_hw *hw)
--- 
-2.33.1
+On 12/27/21 7:31 AM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Partial cleanup of Altera/Intel ARMv7 and ARMv8 DTS and bindings.
+> 
+> The patches are independent, unless touching same files (e.g.
+> bindings/arm/altera.yaml).
+> 
+> Best regards,
+> Krzysztof
+> 
+> Krzysztof Kozlowski (19):
+>    dt-bindings: vendor-prefixes: add Enclustra
+>    dt-bindings: altera: document existing Cyclone 5 board compatibles
+>    dt-bindings: altera: document Arria 5 based board compatibles
+>    dt-bindings: altera: document Arria 10 based board compatibles
+>    dt-bindings: altera: document VT compatibles
+>    dt-bindings: altera: document Stratix 10 based board compatibles
+>    dt-bindings: intel: document Agilex based board compatibles
+>    dt-bindings: clock: intel,stratix10: convert to dtschema
+>    dt-bindings: mmc: synopsys-dw-mshc: integrate Altera and Imagination
+>    ARM: dts: arria5: add board compatible for SoCFPGA DK
+>    ARM: dts: arria10: add board compatible for Mercury AA1
+>    ARM: dts: arria10: add board compatible for SoCFPGA DK
+>    arm64: dts: stratix10: add board compatible for SoCFPGA DK
+>    arm64: dts: stratix10: move ARM timer out of SoC node
+>    arm64: dts: stratix10: align mmc node names with dtschema
+>    arm64: dts: stratix10: align regulator node names with dtschema
+>    arm64: dts: agilex: add board compatible for SoCFPGA DK
+>    arm64: dts: agilex: add board compatible for N5X DK
+>    arm64: dts: agilex: align mmc node names with dtschema
+> 
+>   .../devicetree/bindings/arm/altera.yaml       | 46 ++++++++++++++++---
+>   .../bindings/arm/intel,socfpga.yaml           | 26 +++++++++++
+>   .../bindings/clock/intc_stratix10.txt         | 20 --------
+>   .../bindings/clock/intel,stratix10.yaml       | 35 ++++++++++++++
+>   .../devicetree/bindings/mmc/img-dw-mshc.txt   | 28 -----------
+>   .../bindings/mmc/socfpga-dw-mshc.txt          | 23 ----------
+>   .../bindings/mmc/synopsys-dw-mshc.yaml        |  5 +-
+>   .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
+>   .../boot/dts/socfpga_arria10_mercury_aa1.dts  |  2 +-
+>   arch/arm/boot/dts/socfpga_arria10_socdk.dtsi  |  2 +-
+>   arch/arm/boot/dts/socfpga_arria5_socdk.dts    |  2 +-
+>   .../boot/dts/altera/socfpga_stratix10.dtsi    | 21 +++++----
+>   .../dts/altera/socfpga_stratix10_socdk.dts    |  3 +-
+>   .../altera/socfpga_stratix10_socdk_nand.dts   |  3 +-
+>   arch/arm64/boot/dts/intel/socfpga_agilex.dtsi |  2 +-
+>   .../boot/dts/intel/socfpga_agilex_socdk.dts   |  1 +
+>   .../dts/intel/socfpga_agilex_socdk_nand.dts   |  1 +
+>   .../boot/dts/intel/socfpga_n5x_socdk.dts      |  1 +
+>   18 files changed, 129 insertions(+), 94 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/arm/intel,socfpga.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/clock/intc_stratix10.txt
+>   create mode 100644 Documentation/devicetree/bindings/clock/intel,stratix10.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/mmc/img-dw-mshc.txt
+>   delete mode 100644 Documentation/devicetree/bindings/mmc/socfpga-dw-mshc.txt
+> 
 
+Applied for all SoCFPGA patches.
+
+Thanks,
+Dinh
