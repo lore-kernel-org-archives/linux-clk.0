@@ -2,103 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB93C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jan 2022 04:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A3DC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jan 2022 08:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231560AbiADEzX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jan 2022 23:55:23 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:43930 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231536AbiADEzX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jan 2022 23:55:23 -0500
-X-UUID: b3df56c9e49644eb80781541af80aa7a-20220104
-X-UUID: b3df56c9e49644eb80781541af80aa7a-20220104
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 512780051; Tue, 04 Jan 2022 12:55:18 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 4 Jan 2022 12:55:16 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 4 Jan 2022 12:55:17 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Ryder Lee <ryder.lee@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     John Crispin <john@phrozen.org>, Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH v8 0/3] Mediatek MT7986 basic clock support
-Date:   Tue, 4 Jan 2022 12:55:08 +0800
-Message-ID: <20220104045508.21614-1-sam.shih@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        id S232604AbiADIG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jan 2022 03:06:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232428AbiADIGw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jan 2022 03:06:52 -0500
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE8AC061761
+        for <linux-clk@vger.kernel.org>; Tue,  4 Jan 2022 00:06:52 -0800 (PST)
+Received: by mail-lj1-x22b.google.com with SMTP id u22so59345216lju.7
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jan 2022 00:06:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OFt24hZdmLGBoCAYYI7T4sXVcct/Z/1btjjZtC3SaEk=;
+        b=JHCZ1jlAjkhd6dHGLCwhkYZP51ipfK7egRYiv0m/LWibZyiBUZWF2UrS+L0ciOOD84
+         DcHwR2c/sCT+nBsKci37WgxNafQ7YdifqUOvxRWw5UdE/dmVL+23yBXabTSTCLkV4CjO
+         71Bukk9tt/qPLBfSYyc/W9cczGfHyfD6MzdHk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OFt24hZdmLGBoCAYYI7T4sXVcct/Z/1btjjZtC3SaEk=;
+        b=DSfipt2AUSqE8K/ip/NdldaM4se3XbvxzA1s09v0bTG6ynpUz7GMzJvcv9mMUqrxi3
+         jgPLu65I8+kwwPcbShQn3UR8UozdRMjO8Hdpa/zsNnQn6HP7khS6FA4gEi17haMMbEAU
+         vL6A8fb+4RvFO3TAcvq0cLa0OqlU4uMrS8SRRB5ECYUfiSfKLHHKKxDkt7mY0OUbRLdW
+         TdvrZLDBzrOSXocK6NqqaKuRV3TxnelWaoasQntLNWXEZkZ9FK+/UEXb3dOqT60Xf8Yn
+         6e2tjyt0vMuWoMq20hHEsTqp3DfxQMkvvRzLGCkxlGESUmr6PcILU0+qPaxZ72QKx8EA
+         DjzQ==
+X-Gm-Message-State: AOAM533bolGhWDdskB9m0gDH2zC0zYihjWjcyuaaq59Cc51W8Yjkp3Xt
+        g/H5hvE/JA+UMyQDB6kWfkX7/YFaYRSxDFc6f2oGaQ==
+X-Google-Smtp-Source: ABdhPJyDWPb1tmSlbkoDWfLqNb8n+G5kXWkiZum/N3TQDjsU7yZm39wuLSP0bo2TErL1wUNKZBQWNuR7Metm6xYrieg=
+X-Received: by 2002:a2e:2a84:: with SMTP id q126mr36158428ljq.457.1641283610448;
+ Tue, 04 Jan 2022 00:06:50 -0800 (PST)
 MIME-Version: 1.0
+References: <20220103143712.46675-1-angelogioacchino.delregno@collabora.com> <20220103143712.46675-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220103143712.46675-2-angelogioacchino.delregno@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 4 Jan 2022 16:06:39 +0800
+Message-ID: <CAGXv+5FPG=cRmDzo5P7axHuV22RA0UNBJr3KtjZ5ThYw8XVB0g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: mediatek: clk-gate: Use regmap_{set/clear}_bits helpers
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series add basic clock support for mediatek mt7986 SoC.
-It is based on patch series "Add basic SoC support for mediatek mt7986"
-https://lore.kernel.org/all/20211018114009.13350-1-sam.shih@mediatek.com/
-that has been merged into matthias's tree recently:
-https://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.git/log/?h=v5.16-next/dts64
+On Mon, Jan 3, 2022 at 10:38 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Appropriately change calls to regmap_update_bits() with regmap_set_bits()
+> and regmap_clear_bits() for improved readability.
+>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
----
-v8: update the git message, and add a Reviewed-by tag for this series 
-v7: exclude DTS changes in the patch series
-v5: used builtin_platform_driver instead of CLK_OF_DECLARE
-    follow recent clk-mt8195 clock patch series:
-    https://lore.kernel.org/linux-arm-kernel/20210914021633.26377-1-chun-jie.chen@mediatek.com/
-
-v4:
-According to the maintainer¡¦s suggestion, this patch splits the previous
-thread into independent patch series.
-This patch include clock driver and device tree update
-
-Original thread:
-https://lore.kernel.org/all/20210914085137.31761-1-sam.shih@mediatek.com/
-https://lore.kernel.org/linux-arm-kernel/20210914085137.31761-2-sam.shih@mediatek.com/
----
-
-Sam Shih (3):
-  dt-bindings: clock: mediatek: document clk bindings for mediatek
-    mt7986 SoC
-  clk: mediatek: add mt7986 clock IDs
-  clk: mediatek: add mt7986 clock support
-
- .../arm/mediatek/mediatek,apmixedsys.txt      |   1 +
- .../bindings/arm/mediatek/mediatek,ethsys.txt |   1 +
- .../arm/mediatek/mediatek,infracfg.txt        |   1 +
- .../arm/mediatek/mediatek,sgmiisys.txt        |   2 +
- .../arm/mediatek/mediatek,topckgen.txt        |   1 +
- drivers/clk/mediatek/Kconfig                  |  17 +
- drivers/clk/mediatek/Makefile                 |   4 +
- drivers/clk/mediatek/clk-mt7986-apmixed.c     | 100 +++++
- drivers/clk/mediatek/clk-mt7986-eth.c         | 132 +++++++
- drivers/clk/mediatek/clk-mt7986-infracfg.c    | 224 ++++++++++++
- drivers/clk/mediatek/clk-mt7986-topckgen.c    | 342 ++++++++++++++++++
- include/dt-bindings/clock/mt7986-clk.h        | 169 +++++++++
- 12 files changed, 994 insertions(+)
- create mode 100644 drivers/clk/mediatek/clk-mt7986-apmixed.c
- create mode 100644 drivers/clk/mediatek/clk-mt7986-eth.c
- create mode 100644 drivers/clk/mediatek/clk-mt7986-infracfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt7986-topckgen.c
- create mode 100644 include/dt-bindings/clock/mt7986-clk.h
-
--- 
-2.29.2
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
