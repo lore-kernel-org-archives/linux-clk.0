@@ -2,110 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06090C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jan 2022 19:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFE9C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jan 2022 21:05:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236469AbiADTIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jan 2022 14:08:01 -0500
-Received: from mail-ot1-f47.google.com ([209.85.210.47]:39574 "EHLO
-        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234842AbiADTIA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jan 2022 14:08:00 -0500
-Received: by mail-ot1-f47.google.com with SMTP id r10-20020a056830080a00b0055c8fd2cebdso48394529ots.6;
-        Tue, 04 Jan 2022 11:08:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Zol8RqhcqrOeExkKxHD6i/0eMcZgg4YGQ9xIXDGBZL0=;
-        b=PjW3z79RptREbGLfbP+x+XsFuASMO38iK4GD+0s8viJLQg73kyiDYHo7ueIu+LciFO
-         PNGK1YqTJOvhOiVI7gufSf6vw0l1cuGm/5Vk9WZoSY1v2LDE8GuA96PCS2oIEgK0whRG
-         dSglLdpMuQzCebFqhRkiRIV4wfjklJTcqHppZ4PHjITrkVs7YJmY/PSsSS9wM08ahFUL
-         zni7nUylYa8seGCosDSVne8jobjcf7QYzPmK/msVsPvXPNCp5g33tOxNapk8g+e9DqQV
-         6Fyu5fQxMrBTVjRJLiN0C9ywaKdZCRN23jUUPFcG/l+kQjcvPqDDefmgxav302ArcK/z
-         3TFg==
-X-Gm-Message-State: AOAM532Nb31/airPzf6jy9jxlzK9zoG3FDTHcldZ85/aXfxfpWmbFvIu
-        P04aJxwV3RgYtfuJdpxatT87Pls4ZQ==
-X-Google-Smtp-Source: ABdhPJwD6As9c1PJJ5b5sN3V+8tRevP6v+G+WluIcZqLUbDDpYLuCj4xh6m/A3masXZmj4ALYIcjWg==
-X-Received: by 2002:a9d:a55:: with SMTP id 79mr37401880otg.275.1641323279784;
-        Tue, 04 Jan 2022 11:07:59 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id x4sm10005968oiv.35.2022.01.04.11.07.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jan 2022 11:07:59 -0800 (PST)
-Received: (nullmailer pid 1229576 invoked by uid 1000);
-        Tue, 04 Jan 2022 19:07:57 -0000
-Date:   Tue, 4 Jan 2022 13:07:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jesse Taube <mr.bossman075@gmail.com>
-Cc:     linux@armlinux.org.uk, jirislaby@kernel.org,
-        linux-kernel@vger.kernel.org, festevam@gmail.com,
-        abel.vesa@nxp.com, olof@lixom.net, kernel@pengutronix.de,
-        stefan@agner.ch, ulf.hansson@linaro.org,
-        linux-gpio@vger.kernel.org, linux-imx@nxp.com,
-        Mr.Bossman075@gmail.com, linux-mmc@vger.kernel.org,
-        shawnguo@kernel.org, mturquette@baylibre.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp,
-        linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
-        soc@kernel.org, gregkh@linuxfoundation.org, sboyd@kernel.org,
-        devicetree@vger.kernel.org, s.hauer@pengutronix.de,
-        adrian.hunter@intel.com, linus.walleij@linaro.org,
-        linux-serial@vger.kernel.org, robh+dt@kernel.org,
-        giulio.benetti@benettiengineering.com, linux-clk@vger.kernel.org,
-        aisheng.dong@nxp.com
-Subject: Re: [PATCH v7 4/7] dt-bindings: clock: imx: Add documentation for
- i.MXRT1050 clock
-Message-ID: <YdSbDTcA6qyZdJJv@robh.at.kernel.org>
-References: <20220103233948.198119-1-Mr.Bossman075@gmail.com>
- <20220103233948.198119-5-Mr.Bossman075@gmail.com>
+        id S232391AbiADVFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jan 2022 16:05:02 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:56686 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233823AbiADVFB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jan 2022 16:05:01 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 09392614B6;
+        Tue,  4 Jan 2022 21:05:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59ADFC36AE0;
+        Tue,  4 Jan 2022 21:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641330300;
+        bh=UqJw3mKeb1L+ok0+XSeNdOLrQu68Adeve9BZkDGU/gA=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=PnDkNfCkv+YJUUt+W4jQGo70zl4lsWo6YsvNXaq1Tz6e4MdalqkVKejvQljRJsVz3
+         +OPSP1wP5XD5F+lpgCrINcyW4XH6CILXbFC5NHfIZJBiIRbCaEAe+6F1BLAt9kEQaW
+         bquYv+kE5p+KOwJYfBGToixAPHuYi+ckNoiN1+O20a4C0jToM9uMBIE75OqhkWmL0+
+         40AwNChXURGuzBrElIyDoQUU0zKLO7+LxB5eodquZFvboLfnmxz1SznBCwUII4mxfJ
+         ErpxG7UgReCbbbrk4fr5EKJxOoOi7oYDgb67uL0bHYlcwgBLGagE2KeFEKEkgGnX04
+         7umGUseh4zWyA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220103233948.198119-5-Mr.Bossman075@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1639866882-9578-1-git-send-email-abel.vesa@nxp.com>
+References: <1639866882-9578-1-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [GIT PULL] clk: imx: Updates for v5.17
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>
+Date:   Tue, 04 Jan 2022 13:04:59 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20220104210500.59ADFC36AE0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 03 Jan 2022 18:39:45 -0500, Jesse Taube wrote:
-> From: Jesse Taube <mr.bossman075@gmail.com>
-> 
-> Add DT binding documentation for i.MXRT1050 clock driver.
-> 
-> Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-> ---
-> V1->V2:
-> * Replace macros with values
-> V2->V3:
-> * Remove anatop
-> * Use lpuart not gpt
-> * include imxrt1050-clock.h
-> * 2 space tabs to 4
-> * Remove oneOf enum
-> * Change maxItems to 2
-> V3->V4:
-> * Nothing done
-> V4->V5:
-> * Remove extra newline
-> * Rename ccm to clock-controller
-> * Change minItems to const
-> * Change minItems to description
-> * Rename file to add 1050
-> * Change commit description to just 1050
-> V5->V6:
-> * Add maxItems for clocks description
-> V6->V7:
-> * Nothing done
-> ---
->  .../bindings/clock/imxrt1050-clock.yaml       | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
-> 
+Quoting Abel Vesa (2021-12-18 14:34:42)
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
+bf:
+>=20
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-5.17
+>=20
+> for you to fetch changes up to 9dd81021084ff22cf88a180d720f4f4b47392059:
+>=20
+>   clk: imx8mp: Fix the parent clk of the audio_root_clk (2021-11-22 17:33=
+:12 +0200)
+>=20
+> ----------------------------------------------------------------
 
-
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
-
+Thanks. Pulled into clk-next
