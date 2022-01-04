@@ -2,185 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28FBC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jan 2022 23:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58477C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jan 2022 04:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231251AbiACXkC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jan 2022 18:40:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231217AbiACXj6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jan 2022 18:39:58 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49662C061799;
-        Mon,  3 Jan 2022 15:39:58 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id kc16so32829482qvb.3;
-        Mon, 03 Jan 2022 15:39:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3lXlQAu485z2WfBBkz9sVBnGI0wODXH7Vuh2L7xNU2I=;
-        b=jjxEoACa3/rrcz8Kr5YWdbzXsbMleKqVK1aYfsta/o0VttLBbhavWPPzyM5n19sqbF
-         UYUvMZOLuxZQsqbXxuOwlxNB/uMoTUAPGDQkPACSMksfGeGEULTX1VVnr9UKp2/CwJEG
-         QMuKjJf2JtTWrvKxnhAJnuol6IKbCa0yflkt5lk6hReM70okU9vio3lQV0fcr6kB1vA1
-         Og6dNqkf5EkvLRZfrA5vLaTtpIeEyjHpddwUu/iPogYjrn7Dh3DIuhzRDwIn86W3i0QL
-         179J8m1JD0qaInjSUsC409WPHu7HslRagBUP9+0pq9GybQf9mh13yInidoynXxYXbOlA
-         zcQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3lXlQAu485z2WfBBkz9sVBnGI0wODXH7Vuh2L7xNU2I=;
-        b=8AmMYRmnIWRgNVnyc7TObNiod58cgr9iJirE+0/EcxKJKYPZhpwZ1OrF9CpbPIRiBt
-         6E+g++c2oIn75hejWodBHjxutJQ9GoFNnlC8goeV11exh6Yta/yRHYZn6w23YG43cFyE
-         MsNj0CF9aH1/HA1uRqPb+L55VuoaprAsn8CpZqdD0Jxk2BSdtr4bYXX/ruXNTYZisCKq
-         HTFpRipagyf+Sz2XTbjQ7UnkcCK35flOiPZ5iVSCpcb7MrTnKGFjVxEEwxShPXAT1BvB
-         WmtQBf/8h7qLUVc+J9T2/3J657UiBbzXEaHrhvEC6XrLtG7sFWb6kO4aZ/HBNwFdD7W6
-         Uo/A==
-X-Gm-Message-State: AOAM531teqRxqfBx62MKavdi4+CInrBLfusBHKANe7MHbCA2xxS3Z1Q2
-        4Wu/s3eGMXNwQ/J6MbQ9Kjg=
-X-Google-Smtp-Source: ABdhPJwFqKdXCKTcnh6Z+ZCnHlgGpSavEkzoKNRzWy0dgXJOIj+X9n4NylWY0hoD3u5tRldmKrU4hQ==
-X-Received: by 2002:a05:6214:5285:: with SMTP id kj5mr44118411qvb.107.1641253197430;
-        Mon, 03 Jan 2022 15:39:57 -0800 (PST)
-Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id o5sm26965991qkp.132.2022.01.03.15.39.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jan 2022 15:39:57 -0800 (PST)
-From:   Jesse Taube <mr.bossman075@gmail.com>
-X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
-To:     linux-imx@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, Mr.Bossman075@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v7 3/7] dt-bindings: imx: Add clock binding for i.MXRT1050
-Date:   Mon,  3 Jan 2022 18:39:44 -0500
-Message-Id: <20220103233948.198119-4-Mr.Bossman075@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220103233948.198119-1-Mr.Bossman075@gmail.com>
-References: <20220103233948.198119-1-Mr.Bossman075@gmail.com>
+        id S232864AbiADExa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jan 2022 23:53:30 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:40548 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232860AbiADExa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jan 2022 23:53:30 -0500
+X-UUID: 0f55ffbb5e0f45cb9774ee8122d98023-20220104
+X-UUID: 0f55ffbb5e0f45cb9774ee8122d98023-20220104
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 2129823383; Tue, 04 Jan 2022 12:53:26 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Tue, 4 Jan 2022 12:53:25 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 4 Jan 2022 12:53:24 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        "Weiyi Lu" <weiyi.lu@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Ryder Lee <ryder.lee@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     John Crispin <john@phrozen.org>, Sam Shih <sam.shih@mediatek.com>
+Subject: [PATCH v8 1/3] dt-bindings: clock: mediatek: document clk bindings for mediatek mt7986 SoC
+Date:   Tue, 4 Jan 2022 12:52:41 +0800
+Message-ID: <20220104045243.21521-2-sam.shih@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220104045243.21521-1-sam.shih@mediatek.com>
+References: <20220104045243.21521-1-sam.shih@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+This patch adds the binding documentation for topckgen, apmixedsys,
+infracfg, and ethernet subsystem clocks.
 
-Add the clock binding doc for i.MXRT1050.
-
-Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-[Giulio: added all clocks up to IMXRT1050_CLK_USBOH3]
-Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
-[Jesse: added clocks from IMXRT1050_CLK_IPG_PDOF to
-IMXRT1050_CLK_DMA_MUX and moved IMXRT1050_CLK_END on]
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Ryder Lee <ryder.lee@kernel.org>
 ---
-V1->V2:
-* Nothing done
-V2->V3:
-* Added GPT binding
-V3->V4:
-* Change License to MIT or GPL-2
-V4->V5:
-* Nothing done
-V5->V6:
-* Nothing done
-V6->V7:
-* Fix typo in numbering
-* Remove GPT
----
- include/dt-bindings/clock/imxrt1050-clock.h | 72 +++++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
+v8: add a Reviewed-by tag
+v7: exclude DTS changes in the patch series
+v4: separate clock part into a single patch series
 
-diff --git a/include/dt-bindings/clock/imxrt1050-clock.h b/include/dt-bindings/clock/imxrt1050-clock.h
-new file mode 100644
-index 000000000000..93bef0832d16
---- /dev/null
-+++ b/include/dt-bindings/clock/imxrt1050-clock.h
-@@ -0,0 +1,72 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright(C) 2019
-+ * Author(s): Giulio Benetti <giulio.benetti@benettiengineering.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMXRT1050_H
-+#define __DT_BINDINGS_CLOCK_IMXRT1050_H
-+
-+#define IMXRT1050_CLK_DUMMY			0
-+#define IMXRT1050_CLK_CKIL			1
-+#define IMXRT1050_CLK_CKIH			2
-+#define IMXRT1050_CLK_OSC			3
-+#define IMXRT1050_CLK_PLL2_PFD0_352M		4
-+#define IMXRT1050_CLK_PLL2_PFD1_594M		5
-+#define IMXRT1050_CLK_PLL2_PFD2_396M		6
-+#define IMXRT1050_CLK_PLL3_PFD0_720M		7
-+#define IMXRT1050_CLK_PLL3_PFD1_664_62M		8
-+#define IMXRT1050_CLK_PLL3_PFD2_508_24M		9
-+#define IMXRT1050_CLK_PLL3_PFD3_454_74M		10
-+#define IMXRT1050_CLK_PLL2_198M			11
-+#define IMXRT1050_CLK_PLL3_120M			12
-+#define IMXRT1050_CLK_PLL3_80M			13
-+#define IMXRT1050_CLK_PLL3_60M			14
-+#define IMXRT1050_CLK_PLL1_BYPASS		15
-+#define IMXRT1050_CLK_PLL2_BYPASS		16
-+#define IMXRT1050_CLK_PLL3_BYPASS		17
-+#define IMXRT1050_CLK_PLL5_BYPASS		19
-+#define IMXRT1050_CLK_PLL1_REF_SEL		20
-+#define IMXRT1050_CLK_PLL2_REF_SEL		21
-+#define IMXRT1050_CLK_PLL3_REF_SEL		22
-+#define IMXRT1050_CLK_PLL5_REF_SEL		23
-+#define IMXRT1050_CLK_PRE_PERIPH_SEL		24
-+#define IMXRT1050_CLK_PERIPH_SEL		25
-+#define IMXRT1050_CLK_SEMC_ALT_SEL		26
-+#define IMXRT1050_CLK_SEMC_SEL			27
-+#define IMXRT1050_CLK_USDHC1_SEL		28
-+#define IMXRT1050_CLK_USDHC2_SEL		29
-+#define IMXRT1050_CLK_LPUART_SEL		30
-+#define IMXRT1050_CLK_LCDIF_SEL			31
-+#define IMXRT1050_CLK_VIDEO_POST_DIV_SEL	32
-+#define IMXRT1050_CLK_VIDEO_DIV			33
-+#define IMXRT1050_CLK_ARM_PODF			34
-+#define IMXRT1050_CLK_LPUART_PODF		35
-+#define IMXRT1050_CLK_USDHC1_PODF		36
-+#define IMXRT1050_CLK_USDHC2_PODF		37
-+#define IMXRT1050_CLK_SEMC_PODF			38
-+#define IMXRT1050_CLK_AHB_PODF			39
-+#define IMXRT1050_CLK_LCDIF_PRED		40
-+#define IMXRT1050_CLK_LCDIF_PODF		41
-+#define IMXRT1050_CLK_USDHC1			42
-+#define IMXRT1050_CLK_USDHC2			43
-+#define IMXRT1050_CLK_LPUART1			44
-+#define IMXRT1050_CLK_SEMC			45
-+#define IMXRT1050_CLK_LCDIF_APB			46
-+#define IMXRT1050_CLK_PLL1_ARM			47
-+#define IMXRT1050_CLK_PLL2_SYS			48
-+#define IMXRT1050_CLK_PLL3_USB_OTG		49
-+#define IMXRT1050_CLK_PLL4_AUDIO		50
-+#define IMXRT1050_CLK_PLL5_VIDEO		51
-+#define IMXRT1050_CLK_PLL6_ENET			52
-+#define IMXRT1050_CLK_PLL7_USB_HOST		53
-+#define IMXRT1050_CLK_LCDIF_PIX			54
-+#define IMXRT1050_CLK_USBOH3			55
-+#define IMXRT1050_CLK_IPG_PDOF			56
-+#define IMXRT1050_CLK_PER_CLK_SEL		57
-+#define IMXRT1050_CLK_PER_PDOF			58
-+#define IMXRT1050_CLK_DMA			59
-+#define IMXRT1050_CLK_DMA_MUX			60
-+#define IMXRT1050_CLK_END			61
-+
-+#endif /* __DT_BINDINGS_CLOCK_IMXRT1050_H */
+Original thread:
+https://lore.kernel.org/linux-arm-kernel/20210914085137.31761-2-sam.shih@mediatek.com/
+
+v3: Added an Acked-by tag
+v2: remove compatiable string 'mt7986-sgmiisys'
+---
+---
+ .../devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt    | 1 +
+ .../devicetree/bindings/arm/mediatek/mediatek,ethsys.txt        | 1 +
+ .../devicetree/bindings/arm/mediatek/mediatek,infracfg.txt      | 1 +
+ .../devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt      | 2 ++
+ .../devicetree/bindings/arm/mediatek/mediatek,topckgen.txt      | 1 +
+ 5 files changed, 6 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index ea827e8763de..3fa755866528 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -14,6 +14,7 @@ Required Properties:
+ 	- "mediatek,mt7622-apmixedsys"
+ 	- "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt7629-apmixedsys"
++	- "mediatek,mt7986-apmixedsys"
+ 	- "mediatek,mt8135-apmixedsys"
+ 	- "mediatek,mt8167-apmixedsys", "syscon"
+ 	- "mediatek,mt8173-apmixedsys"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+index 6b7e8067e7aa..0502db73686b 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ethsys.txt
+@@ -10,6 +10,7 @@ Required Properties:
+ 	- "mediatek,mt7622-ethsys", "syscon"
+ 	- "mediatek,mt7623-ethsys", "mediatek,mt2701-ethsys", "syscon"
+ 	- "mediatek,mt7629-ethsys", "syscon"
++	- "mediatek,mt7986-ethsys", "syscon"
+ - #clock-cells: Must be 1
+ - #reset-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index eb3523c7a7be..f66bd720571d 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -15,6 +15,7 @@ Required Properties:
+ 	- "mediatek,mt7622-infracfg", "syscon"
+ 	- "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt7629-infracfg", "syscon"
++	- "mediatek,mt7986-infracfg", "syscon"
+ 	- "mediatek,mt8135-infracfg", "syscon"
+ 	- "mediatek,mt8167-infracfg", "syscon"
+ 	- "mediatek,mt8173-infracfg", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+index 30cb645c0e54..29ca7a10b315 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,sgmiisys.txt
+@@ -8,6 +8,8 @@ Required Properties:
+ - compatible: Should be:
+ 	- "mediatek,mt7622-sgmiisys", "syscon"
+ 	- "mediatek,mt7629-sgmiisys", "syscon"
++	- "mediatek,mt7986-sgmiisys_0", "syscon"
++	- "mediatek,mt7986-sgmiisys_1", "syscon"
+ - #clock-cells: Must be 1
+ 
+ The SGMIISYS controller uses the common clk binding from
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index 5ce7578cf274..b82422bb717f 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -14,6 +14,7 @@ Required Properties:
+ 	- "mediatek,mt7622-topckgen"
+ 	- "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt7629-topckgen"
++	- "mediatek,mt7986-topckgen", "syscon"
+ 	- "mediatek,mt8135-topckgen"
+ 	- "mediatek,mt8167-topckgen", "syscon"
+ 	- "mediatek,mt8173-topckgen"
 -- 
-2.34.1
+2.29.2
 
