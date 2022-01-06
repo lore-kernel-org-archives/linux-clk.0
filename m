@@ -2,83 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1430C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 01:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587A3C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 01:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344180AbiAFBRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jan 2022 20:17:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49526 "EHLO
+        id S1344254AbiAFBTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jan 2022 20:19:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344162AbiAFBRT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 20:17:19 -0500
+        with ESMTP id S1344233AbiAFBTt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 20:19:49 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707DEC061245;
-        Wed,  5 Jan 2022 17:17:19 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CB2C061245;
+        Wed,  5 Jan 2022 17:19:49 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D265E61989;
-        Thu,  6 Jan 2022 01:17:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28688C36AE3;
-        Thu,  6 Jan 2022 01:17:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E319A619D7;
+        Thu,  6 Jan 2022 01:19:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A0E5C36AE9;
+        Thu,  6 Jan 2022 01:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641431838;
-        bh=C9DJbx1jyTAdcd6/2nGN1NMoyhjr2dFB0KEldiDjXTk=;
+        s=k20201202; t=1641431988;
+        bh=aEDBbucQ9AxwVaz+N6CkVDfFDXcSJb9PzV8k9ssp5sM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jnH26uJMnogWLPVGyd4A1TMIy0WVnUVd+dYK/p8eQAbX5yCt/6twc0LUJmJiN80Vt
-         at56NwYXO00D/PsNkULJteXHjohwQzQUSx/nsuIpfBRYRxb9hJIxDFjsbWk5WrMc5U
-         cJ3flBvEXjSgAEs2xM+weEEbKJ8rG67phIN/YZyHwrp1BV8N50O6WZ+Kp/AtP7ABAp
-         wgn/1S3tvXX3rL6ljVM4x0FXhV2zXdF8ClMpfQo73bPvYdBpQsJ7yOs0AiEDOvjM7I
-         y0iryBcBrBxOy5vgVWFHvIAJFKRu2/13K1Bslhe7AxQAyBX7RMemG2rfDEP2SyhFwQ
-         FOgWl0QCjo/3w==
+        b=kpfIPKTIAaeOY/GqoTBlMdCK77j4F6XmT6jmQiN3vA95FR8BmKmgo2TuYKfnkzVYO
+         CpcoaKlIEvoHB3jRmLKi3FZGGVpBpbWnOCtbM2Y/xtaA1xMPKS683Fn1BMFFkPJp9Y
+         iDp3b3Mu7ZExHS9AsJHRpKOuDqe2BJ9mHBepMS0JWHxgrasERcKIgmuzz3LEsoMbCH
+         +7MDekYBRrSPPAQpZSiM22If52VV+Oj4C1bZcRr0MUyVLg/Pw6IUo06vboI52318fE
+         RfKBOTyqyuM7tQIvSh5N1qv0trXnAdV/zTQzKmSR6PMmM7tOzur4cXAtfxMR18E32u
+         80qyIdrrNMZgw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211221031638.3499920-1-peng.fan@oss.nxp.com>
-References: <20211221031638.3499920-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH] clk: bulk: export of_clk_bulk_get_all
+In-Reply-To: <1640018638-19436-2-git-send-email-tdas@codeaurora.org>
+References: <1640018638-19436-1-git-send-email-tdas@codeaurora.org> <1640018638-19436-2-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v2 1/5] clk: qcom: clk-alpha-pll: Increase PLL lock detect poll time
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, van.freenix@gmail.com,
-        Peng Fan <peng.fan@nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, aisheng.dong@nxp.com,
-        bjorn.andersson@linaro.org, jbrunet@baylibre.com,
-        linux-clk@vger.kernel.org, s.nawrocki@samsung.com,
-        shawn.lin@rock-chips.com, ulf.hansson@linaro.org
-Date:   Wed, 05 Jan 2022 17:17:16 -0800
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Wed, 05 Jan 2022 17:19:46 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220106011718.28688C36AE3@smtp.kernel.org>
+Message-Id: <20220106011948.3A0E5C36AE9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2021-12-20 19:16:38)
-> From: Peng Fan <peng.fan@nxp.com>
+Quoting Taniya Das (2021-12-20 08:43:54)
+> PLL poll for lock detection can take more than 100us for certain type
+> of Lucid PLLs and also the new PLLs types(Lucid EVO), thus update to 200u=
+s.
 >=20
-> There are cases that need to get the bulk clks of a device_node which not
-> has device created, so export of_clk_bulk_get_all to let consumers could
-> use it.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->=20
-> V1:
->      An example here, mediamix node has clocks property, but it will not
 
-Sorry I don't get the example. What does a DT snippet have to do with
-modular kernel code? What specific kernel module is calling this API?
-
->      have device of it, so we need of_X api to get the clks.
->      src: src@0x30390000 {
->           compatible =3D "fsl,imx[X]-src";
->           reg =3D <0x30390000 0x10000>;
->=20
->           slice {
-
-Is this upstream?
-
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
->=20
->                 mediamix: slice@2400 {
->                    reg =3D <IMX93_POWER_DOMAIN_MEDIAMIX>;
->                    #power-domain-cells =3D <0>;
+Applied to clk-next
