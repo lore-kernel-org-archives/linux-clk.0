@@ -2,89 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACB5C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 00:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6DBC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 00:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343724AbiAFA0R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jan 2022 19:26:17 -0500
-Received: from sin.source.kernel.org ([145.40.73.55]:47788 "EHLO
-        sin.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343700AbiAFA0A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 19:26:00 -0500
+        id S1343778AbiAFAc4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jan 2022 19:32:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230152AbiAFAcx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 19:32:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85BA2C061245;
+        Wed,  5 Jan 2022 16:32:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id DAA26CE2107;
-        Thu,  6 Jan 2022 00:25:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C34CC36AE9;
-        Thu,  6 Jan 2022 00:25:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D3E24619D3;
+        Thu,  6 Jan 2022 00:32:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D3FC36AEB;
+        Thu,  6 Jan 2022 00:32:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641428756;
-        bh=wA9iOtpjnhQVhGnW0oaGpuCdHikM6l2sCclZWGyYrmc=;
+        s=k20201202; t=1641429172;
+        bh=V0E1Vi6eoT/8T2lzM0MtFPIKX6KXXRYMF2uQa+0xsgM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZWcuHAeyEQnUOvKG4bJBPH69iNDJVDJMtkUdXuLYRZnOyrACs4HqFRi7fgTx60pt2
-         zeDa6jFtLZRgu7UMGVYt2lz5WkcffhXe3z3RA219shGFo0aP7NdT6/cVD6mpxejW5v
-         MBzgKX2PmeywES/eYkyKTuigJGTdEqFqf/Vt3VudMIOCd0vjSwBQqdMzWZCSSpr0ms
-         yuUsph+70/kbRi3BGQOTgRKkXq5Yy9TAMkdSOiUTPx69eNlY6kkmCgWH/nPjdtwK5v
-         oe2Xn6rcMZfkHC3aRAmsiDrGaZIU3U3BavMSnEdYGsWH21FxS8vuc8Xc+8kzuyOxdH
-         sB8qOxmKTIMtQ==
+        b=OPeqf6GuNcMFHlzZJ9H027b7YGbIj4wuuVhQcfe0xyGCXwsVyrkodRMBe2MZFkPGf
+         17aGsRIyKwYtEQBACiJavfTW3UdraoVVXTWUfB6jT5eikmzyjJ6mN3sENrmAsE84/P
+         NFO8qV1mYv11UaJ/rWUgwUyGSP+WmeuJQoBoGNVDb/FQxqJhFhPRfPa+fpFC0qUEzt
+         WXmgSS6CHQO+j0Zo0mlrYiC/wnMzTYL+TaRSQ3Wx9WQvTVzdpKdfc61reCFhCKn/Yp
+         RFHxMx/uDaIN7Hp+S9UL8mb9b3X2TSIiBS8kDYu6K4u+1oblqLFSlQr2sQKzqdxE5o
+         Z2VJAAZOjOLfg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220105155705.698463-1-bjorn.andersson@linaro.org>
-References: <20220105155705.698463-1-bjorn.andersson@linaro.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for v5.17
+In-Reply-To: <20211221003750.212780-1-colin.i.king@gmail.com>
+References: <20211221003750.212780-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk: socfpga: remove redundant assignment on division
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Wed, 05 Jan 2022 16:25:54 -0800
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Colin Ian King <colin.i.king@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Wed, 05 Jan 2022 16:32:50 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220106002556.1C34CC36AE9@smtp.kernel.org>
+Message-Id: <20220106003252.29D3FC36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-01-05 07:57:05)
-> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
-bf:
+Quoting Colin Ian King (2021-12-20 16:37:50)
+> The variable parent_rate is being divided by div and the result
+> is re-assigned to parent_rate before being returned. The assignment
+> is redundant, replace /=3D operator with just / operator.
 >=20
->   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-5.17
->=20
-> for you to fetch changes up to 96ea2a4291343613a7c2da03c03f23dc259171ff:
->=20
->   clk: qcom: turingcc-qcs404: explicitly include clk-provider.h (2021-12-=
-20 23:14:50 -0600)
->=20
-> ----------------------------------------------------------------
-> Qualcomm clock updates for v5.17
->=20
-> This introduces bindings and drivers for the global clock controllers
-> found in SDX65, SM8450 and MSM8976, as well as RPMh clock support for
-> SDX65 and SM8450.
->=20
-> It cleans up the SMD RPM clock driver and it adds includes for
-> clk-provider.h throughout the clock providers that was lacking this.
->=20
-> ----------------------------------------------------------------
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Please Cc linux-clk@ next time. I almost missed this.
-
-
-> AngeloGioacchino Del Regno (1):
->       clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
->=20
-> Bjorn Andersson (3):
->       MAINTAINERS: Add entry for Qualcomm clock drivers
->       Merge tag 'e15509b2b7c9b600ab38c5269d4fac609c077b5b.1638861860.git.=
-quic_vamslank@quicinc.com' into clk-for-5.17
->       Merge tag '20211207114003.100693-2-vkoul@kernel.org' into clk-for-5=
-.17
-
-Next time can you merge branches with yourself instead of tags?
-
-Otherwise, I pulled it into clk-next. Thanks.
+Applied to clk-next
