@@ -2,62 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB973C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 00:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E7BC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 00:37:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343836AbiAFAeR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jan 2022 19:34:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39678 "EHLO
+        id S1343865AbiAFAhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jan 2022 19:37:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343830AbiAFAeN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 19:34:13 -0500
+        with ESMTP id S1343872AbiAFAgu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 19:36:50 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70380C061245;
-        Wed,  5 Jan 2022 16:34:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99997C061245;
+        Wed,  5 Jan 2022 16:36:50 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10D216193C;
-        Thu,  6 Jan 2022 00:34:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E81C36AE9;
-        Thu,  6 Jan 2022 00:34:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 37AEE616BE;
+        Thu,  6 Jan 2022 00:36:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA94C36AEB;
+        Thu,  6 Jan 2022 00:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641429251;
-        bh=jMICUvfWqDl6yU+e1z03F+e1bc2tGxcy1cr8nmpYT9s=;
+        s=k20201202; t=1641429409;
+        bh=Dqfz3to/SPUN1BLKQ2pKBuJ9N0GmOk3juh+/9wSH7YE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=V7sw9/ItzULOjdm7rsvyOr+0aqNy0gBiS2gW2BvNiAbEwpXBTUJc5gFgRVeLTdYfF
-         GaTJ/J1S4cagCkxUS8Y8X6UWWLZ+td6NUyTHHbdhyB3E11GsFQjpHpe61kW8ji+3iY
-         eFVqSFfIOkR1VgrnE8jfx9/sRR3CgZepKrTj03RxgslpyLGzHYeWz7IurSx2h4Pr0e
-         7G7g8aeFqqRuoXhGTaNflOkBjoUCs36DB2z0Dg4675TGIW7KvUnCvOd166zAnpeRB7
-         UZbaJnqWRp9nGAmyjf2zQAgLjNBgejNCci4qCj3LM/YbLc63ojF7ahB2bS4cyBAS8T
-         WEQvDRANotLKA==
+        b=RCEPFSquOanEPqGcyt58HdHoigp94N8izOOnMJ93j7pJjbt18LqUtVEkHmbLE0T7F
+         yR6B+Q4xgCCJQv3M2E542fJ+yvr6BRy2TJCK7VxDmILcedA4I/0W1CX4Dku9wPgsMM
+         7DWgWzaXdn2zjVY/CL5o4Bb7ieStFb/Hl7Y0I7GeXGDaOAE7af45+eByQKQzLOSBjV
+         1VlINLNC5ZLCk/YHGsdk4oV5ZAIrxszgBjMuLYsBJyFPwlUykopozk7fzzb7KYH1+L
+         8EWs8rP+dDl8vDQx8Drhxfi2bb3K4l/4FPvS+Nb0b5f4EF9tWTdPVD+y0vg/UeAmB5
+         Ak0MBvArXsDEQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211227133558.135185-2-krzysztof.kozlowski@canonical.com>
-References: <20211227133131.134369-1-krzysztof.kozlowski@canonical.com> <20211227133558.135185-2-krzysztof.kozlowski@canonical.com>
-Subject: Re: [PATCH 08/19] dt-bindings: clock: intel,stratix10: convert to dtschema
+In-Reply-To: <504303c7cf92af8368dcda0cdde3b9c15a833418.1640154492.git.qinjian@cqplus1.com>
+References: <cover.1640154492.git.qinjian@cqplus1.com> <504303c7cf92af8368dcda0cdde3b9c15a833418.1640154492.git.qinjian@cqplus1.com>
+Subject: Re: [PATCH v7 05/10] dt-bindings: clock: Add bindings for SP7021 clock driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Dinh Nguyen <dinguyen@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Date:   Wed, 05 Jan 2022 16:34:10 -0800
+Cc:     mturquette@baylibre.com, tglx@linutronix.de, maz@kernel.org,
+        p.zabel@pengutronix.de, linux@armlinux.org.uk, broonie@kernel.org,
+        arnd@arndb.de, stefan.wahren@i2se.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
+To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
+Date:   Wed, 05 Jan 2022 16:36:48 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220106003411.66E81C36AE9@smtp.kernel.org>
+Message-Id: <20220106003649.7FA94C36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2021-12-27 05:35:47)
-> Convert the Intel Stratix 10 clock controller bindings to DT schema forma=
-t.
+Quoting Qin Jian (2021-12-21 23:06:01)
+> Add documentation to describe Sunplus SP7021 clock driver bindings.
 >=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
