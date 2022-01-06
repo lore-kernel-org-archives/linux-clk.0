@@ -2,123 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8E5C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 01:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFF3C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jan 2022 01:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344400AbiAFBbG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jan 2022 20:31:06 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:47150 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344399AbiAFBbC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 20:31:02 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2E6726198A;
-        Thu,  6 Jan 2022 01:31:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842FCC36AEB;
-        Thu,  6 Jan 2022 01:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641432660;
-        bh=Iwj05aKWewpLNoRYcVUDH50+c9SAsTaThMF89Too084=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=k6Wa1JAm5YH23lmwEFAtDilxCcHgNO8f1s1PYsky5OlqA8D4nfl/DUiDE7wn8onv3
-         HSVWhRMX7/wxPwJwQNWTDT5/Xw2H8ygCXUsmVRYu5WfUZr8/R3YcO1Pa/N/prEwmad
-         Sjis1vI5JrDP2BAVhLaw2vYm3XrMKzmyDF/gU/V4FRslmpDyjzUlvytr7dfzguFY3N
-         UhQL3SOjGkAP29Wf9WwXT9Z5U2Ay3Hm+6HnzogXemAdW0nqN8K1zy600LUE+ZP3j4j
-         k8PX7gXhC0ulF9K2Jgy5fJ6oqiL2DHEk9qtNfJNWx/7Jsa0vsdcSkWMtOefX1BGEg4
-         7XVANSC83e22g==
-Content-Type: text/plain; charset="utf-8"
+        id S1344427AbiAFBzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jan 2022 20:55:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57922 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344457AbiAFBzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jan 2022 20:55:37 -0500
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA9DC061245
+        for <linux-clk@vger.kernel.org>; Wed,  5 Jan 2022 17:55:36 -0800 (PST)
+Received: by mail-lf1-x133.google.com with SMTP id o12so1898513lfk.1
+        for <linux-clk@vger.kernel.org>; Wed, 05 Jan 2022 17:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OY3uWewQtYqbmVzvOMrfMhsghQBKU5B87qtjpHzkHwM=;
+        b=ipUfJrPtuoM3OX+8XpUGTuzwp8LIrxnrnVTCz/NKRTFLj0eDItJI7MINOV2zCJh4fP
+         DUBDZ5m8TOKZUoat+Zen2mZLg4iwATK4/TJ8oLpzCYdJDwzIOephdvB2QCmrmbdnET3w
+         t2pzXnxwlHCX06cLahqhBDjbwBeAxW2KUAPXgGX1rnTpvBRDzHUtNNFJVUyjr7/kgF+p
+         sZxWdQP4r9PAFgBmZobrpKewDOjY2CyFHi9mf+Wb/TiVoOEQG/X4et0ZajC9Mt2d2zM4
+         m2QmFoKsHMYZzptDMyHI8PE0L+rF/Icb/slVZUei4K/YTUoFNBAvqFWPjsyM8f/4VBpw
+         ZGqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OY3uWewQtYqbmVzvOMrfMhsghQBKU5B87qtjpHzkHwM=;
+        b=PB1ALoFMepZXD2cnCXNlr4ZLtxz+mE2zVhbz9MbV5E2U/Qhi2OEEEq9ry9abC0cay8
+         NLSNjGoyAQbZg5pbGPjtHplwqznd/l7nqgPQXeQ69/h5oLc1tsL3s7O33bKn16gLq03V
+         I66So9PpHf3c5XVo0f5pfwl3aHLlOYFPSpVfD3ey1I0smCMzmF1q78Jac8m9jVGNN6Kj
+         2PVyCLl+vN0DDhVcdbiboD3J/Vpxczr/JidBmko4UMVV1Q7+MgCABO9dAW2w31INgTK0
+         mt6NJYYe7o/HN7q4QDKiiUH2llbK8v4t1jKKzL4NGBjieAk4X1dJ8fSJOoYbEC+76MeQ
+         xrZQ==
+X-Gm-Message-State: AOAM531jS/KIo+t1osZ9qSy73yJUatvKfZyTK3GAOgiW/J8wS2Ppu4tH
+        h5p1L3IgaJAcRZX3BE3YndF2t7DKEbx3uI9WCj9Fag==
+X-Google-Smtp-Source: ABdhPJwpOpaROeBcJuF5ML+cbQJ+6ZpxXluAtT9hh8WQwOGx1lb+lORNlbJeI+rM8pjhVvPrEb8pwtAYLIOeVAUeufk=
+X-Received: by 2002:a05:6512:10cc:: with SMTP id k12mr44602930lfg.5.1641434134779;
+ Wed, 05 Jan 2022 17:55:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211217112345.14029-7-nbd@nbd.name>
-References: <20211217112345.14029-1-nbd@nbd.name> <20211217112345.14029-7-nbd@nbd.name>
-Subject: Re: [PATCH v7 06/14] dt-bindings: Add en7523-scu device tree binding documentation
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     john@phrozen.org, linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Felix Fietkau <nbd@nbd.name>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 05 Jan 2022 17:30:58 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20220106013100.842FCC36AEB@smtp.kernel.org>
+References: <7823666b57c105aee8323e6896f83f3ed249d9ee.1638957553.git.zong.li@sifive.com>
+ <CANXhq0qdNxxi=jmrpMO-NKbxbHwaqoj=VGqphCw8cz+9DAyBDw@mail.gmail.com> <20220105234103.D597CC36AE9@smtp.kernel.org>
+In-Reply-To: <20220105234103.D597CC36AE9@smtp.kernel.org>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Thu, 6 Jan 2022 09:55:24 +0800
+Message-ID: <CANXhq0qVsgposTnYQStHGP6c0NTgZP7W_QpzzG54kKwRqr=72g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] clk: sifive: Fix W=1 kernel build warning
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>, lee.jones@linaro.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Felix Fietkau (2021-12-17 03:23:36)
-> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.ya=
-ml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> new file mode 100644
-> index 000000000000..79660f8126fa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/airoha,en7523-scu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: EN7523 Clock Device Tree Bindings
-> +
-> +maintainers:
-> +  - Felix Fietkau <nbd@nbd.name>
-> +  - John Crispin <nbd@nbd.name>
-> +
-> +description: |
-> +  This node defines the System Control Unit of the EN7523 SoC,
-> +  a collection of registers configuring many different aspects of the So=
-C.
-> +
-> +  The clock driver uses it to read and configure settings of the
-> +  PLL controller, which provides clocks for the CPU, the bus and
-> +  other SoC internal peripherals.
-> +
-> +  Each clock is assigned an identifier and client nodes use this identif=
-ier
-> +  to specify which clock they consume.
-> +
-> +  All these identifiers can be found in:
-> +  [1]: <include/dt-bindings/clock/en7523-clk.h>.
-> +
-> +  The clocks are provided inside a system controller node.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: airoha,en7523-scu
-> +
-> +  reg:
-> +    maxItems: 2
-> +
-> +  "#clock-cells":
-> +    description:
-> +      The first cell indicates the clock number, see [1] for available
-> +      clocks.
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +
+On Thu, Jan 6, 2022 at 7:41 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Zong Li (2022-01-04 20:24:28)
+> > On Wed, Dec 8, 2021 at 6:06 PM Zong Li <zong.li@sifive.com> wrote:
+> > >
+> > > This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+> >
+> > ping
+>
+> Please don't send "ping" at the very end of the mail and trim nothing
+> else. It wastes time.
 
-Any input clocks?
-
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/en7523-clk.h>
-> +    scu: scu@1fa20000 {
-
-Maybe that should be system-controller@1fa20000 instead?
-
-> +      compatible =3D "airoha,en7523-scu";
-> +      reg =3D <0x1fa20000 0x400>,
-> +            <0x1fb00000 0x1000>;
-> +      #clock-cells =3D <1>;
-> +    };
+I got it. Thanks. Let me resend the patch with the change information.
