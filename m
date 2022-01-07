@@ -2,67 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9FEC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 01:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B48C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 01:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344510AbiAGBwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jan 2022 20:52:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344429AbiAGBwH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 20:52:07 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4741C0611FD;
-        Thu,  6 Jan 2022 17:52:06 -0800 (PST)
+        id S1344602AbiAGB7A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jan 2022 20:59:00 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:48318 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344533AbiAGB67 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 20:58:59 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A02F9B824A3;
-        Fri,  7 Jan 2022 01:52:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AACFC36AE5;
-        Fri,  7 Jan 2022 01:52:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7140F61D99;
+        Fri,  7 Jan 2022 01:58:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE163C36AE0;
+        Fri,  7 Jan 2022 01:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641520324;
-        bh=8aNMSd2LjTF1fT1O87x/hjzHQzOifUmvU82cq4e1PiM=;
+        s=k20201202; t=1641520738;
+        bh=8Ijx8ZyT8dEygn6iwCg9DUdEOIDqEPhPd7GJ7L9oovs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=e+C1JuNtmxO1Oh6o8u89tQZQmtbZcFpg89UQ+938qT3Res9XRoHc+ctOmI4VgqsQJ
-         ZkdEthZ9mD1ZnCFjyHuFj8sWiqwKFH5Ps0HjYJ+wApUVGLuX7oNPedmtNB70584uag
-         0pfR75L1SLKc/t3WJNHkl0KWW9FHSEh88Eh/TIbSaUQRdw9qfNrkmqysikkZmIleBv
-         kZc9XTvKVwuetTAC8lScpEEssRg0GGmQiQ9Xt854GQ0Md/5KHYdUt5AVw2zLko5fs/
-         pwnXYtmUd4lfuHbloMQfkXRi8DKWxwwuIr225sQz+J+P3N7Xjw3Glnjn7pcXZB1BbV
-         tN+zS4s6SwyIQ==
+        b=VSGZO9QSmdLy8TfiZ8boLxqj5oYpOFFJUbz91drbiv1mpvx7U6QvJ0+gkmTEwMs56
+         oSng3x1Ecy1w20+KnryDPl+1+2I42URILz4wbB8NeYk0W2xVPBA3RnHayrIPwLKRtD
+         GQg8ss4qtBcZUas9kxN7p0UHmC/DGzTyu2npj6BXsxykFB9NQeaHsaR/wj5uKlKd6d
+         IXwEuMmewFpJGw+InK2IKf6Ck0ViTN6QcWvb8C96tFqI3SpG4sSUwUkSUH/U/WzWHN
+         zKp61+XEdmXzAyZZaCErdTZKW6fe4a68boit34JiOxuer8sMR1fp36RUFmVnCehCMv
+         khk3288hubWrg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211220193319.114974-3-paul@crapouillou.net>
-References: <20211220193319.114974-1-paul@crapouillou.net> <20211220193319.114974-3-paul@crapouillou.net>
-Subject: Re: [PATCH v3 2/2] clk: ingenic: Add MDMA and BDMA clocks
+In-Reply-To: <20211212180527.1641362-2-AjitKumar.Pandey@amd.com>
+References: <20211212180527.1641362-1-AjitKumar.Pandey@amd.com> <20211212180527.1641362-2-AjitKumar.Pandey@amd.com>
+Subject: Re: [PATCH v5 1/5] x86: clk: clk-fch: Add support for newer family of AMD's SOC
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     list@opendingux.net, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 06 Jan 2022 17:52:03 -0800
+Cc:     Vijendar.Mukunda@amd.com, Alexander.Deucher@amd.com,
+        Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+        Mario.Limonciello@amd.com,
+        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>
+To:     Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+        linux-clk@vger.kernel.org
+Date:   Thu, 06 Jan 2022 17:58:57 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220107015204.4AACFC36AE5@smtp.kernel.org>
+Message-Id: <20220107015858.BE163C36AE0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2021-12-20 11:33:19)
-> The Ingenic JZ4760 and JZ4770 both have an extra DMA core named BDMA
-> dedicated to the NAND and BCH controller, but which can also do
-> memory-to-memory transfers. The JZ4760 additionally has a DMA core named
-> MDMA dedicated to memory-to-memory transfers. The programming manual for
-> the JZ4770 does have a bit for a MDMA clock, but does not seem to have
-> the hardware wired in.
+Quoting Ajit Kumar Pandey (2021-12-12 10:05:23)
+> FCH controller clock configuration slightly differs across AMD's
+> SOC architectures. Newer family of SOC only support a 48MHz fix
+> clock while stoney SOC family has a clk_mux to choose 48MHz and
+> 25 MHz clk. At present fixed clk support is only enabled for RV
+> architecture using "is-rv" device property initialized from boot
+> loader. This limit 48MHz fixed clock gate support to RV platform
+> unless we add similar device property in boot loader for other
+> architectures.
 >=20
-> Add the BDMA and MDMA clocks to the JZ4760 CGU code, and the BDMA clock
-> to the JZ4770 code, so that the BDMA and MDMA controllers can be used.
+> Add pci_device_id table with Stoney platform id and replace "is-rv"
+> device property check with pci id match to add clk mux support with
+> 25MHz and 48MHz clk support based on clk mux selection. This enable
+> 48Mhz fixed fch clock support by default on all newer SOC's except
+> stoney. Also replace RV with FIXED as a generic naming conventions
+> across all platforms and changed module description.
 >=20
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>
+> Reviewed-by: Mario Limonciello <Mario.Limonciello@amd.com>
 > ---
 
 Applied to clk-next
