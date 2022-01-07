@@ -2,81 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CEFC4332F
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 08:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79098C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 08:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345196AbiAGICd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 03:02:33 -0500
-Received: from mx1.cqplus1.com ([113.204.237.245]:58684 "EHLO mx1.cqplus1.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345253AbiAGICc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Jan 2022 03:02:32 -0500
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(24938:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 07 Jan 2022 15:55:16 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 7 Jan 2022 15:55:18 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.017; Fri, 7 Jan 2022 15:55:18 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
-Subject: RE: [PATCH v7 06/10] clk: Add Sunplus SP7021 clock driver
-Thread-Topic: [PATCH v7 06/10] clk: Add Sunplus SP7021 clock driver
-Thread-Index: AQHX9wMzddZ4i1EhDk6U/miEAgqwiKxUuIQAgAKMxIA=
-Date:   Fri, 7 Jan 2022 07:55:18 +0000
-Message-ID: <51a2cbddc978400086271fc735493566@cqplus1.com>
-References: <cover.1640154492.git.qinjian@cqplus1.com>
- <7f8302e2c1d02141dd69d2524eaa857d6494fdc7.1640154492.git.qinjian@cqplus1.com>
- <20220106004249.90484C36AEB@smtp.kernel.org>
-In-Reply-To: <20220106004249.90484C36AEB@smtp.kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S236161AbiAGIYo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jan 2022 03:24:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235528AbiAGIYm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 03:24:42 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 993DFC061245;
+        Fri,  7 Jan 2022 00:24:42 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id g2so4870593pgo.9;
+        Fri, 07 Jan 2022 00:24:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=WtLGsCrs6oaOhLe+VQXDzRq71v+rbr11qctVh2htIKQ=;
+        b=ap1tO93bDo/S+bcu3kEQrSkXl6lnnIRmFxbM+zZDOXWU8oo54hF8M/a6q7S8a34AMg
+         Fvb0xvnSZGYCudIr4eHfVVFYzuOHoN52x/tsv+KdelRC4TPIMJr5LtJq2YKpS3rAi5gW
+         Y2TekZv4L9usC+UbUB1jPnWiXJlxEMx60I0sec9TlwiRYRaIGDa1GAGZWh6dkJVqj9Sq
+         Sr1RPbS3N5XLiCcDzb/ork4RozS0t4KYD5c8O504pDm9IiBNN43jM7PaD9jcML+D7xta
+         /yG5nOnR2l4CCvY7EAKgGI9qtDCOyhhSdR+a36szDupj4vSZEn8hbB3g9PFTV5R6JUsg
+         W4rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WtLGsCrs6oaOhLe+VQXDzRq71v+rbr11qctVh2htIKQ=;
+        b=Iy2w0ZHy2QYii1i7F1Ta/yk/RuwM5/GAua1JgDLEY2E/wAbmaxrLasY3BrYobb53kG
+         XbPXb9iXM12WqbA4jGH5tDQwRsmRNSoXkTsrDKDC4IXEMawVnjl3AYVXYebecstpLGUp
+         SAGYlDr82kXQ0+kKKlybogyCIYW7HuSTyKuB9QoqGPrtWt8ro9Uubx/aoTUBAAjXgDuI
+         AdWZhxyMVj28p9bgiWV5ETXwNt1T0YYhUG0YsRwbqFjYlgk8ox9dZx6rdj3NGl2vUlXb
+         EKgjX5Jpwv9emJ101uoc7N/zPb6QLHDEu0/uLOfl2ODOhSV7wEM8j0/v2FfWe/hn8tLK
+         qgag==
+X-Gm-Message-State: AOAM5300O5KUdQFyM16ydcSqSV8+JouBVY/3IdePATo2gZa4+tdw+qAT
+        PsrkSaO/FCEO0uckYByltzQ=
+X-Google-Smtp-Source: ABdhPJzhPWaoKFfZ/MO94DlOUAHangb0E+B7CpDDTc3L95JGqdzIUy87aLS15WukZj2GRH3xIhvx3w==
+X-Received: by 2002:a05:6a00:16c7:b0:4a5:d9c1:89da with SMTP id l7-20020a056a0016c700b004a5d9c189damr63875071pfc.34.1641543882138;
+        Fri, 07 Jan 2022 00:24:42 -0800 (PST)
+Received: from localhost.localdomain ([159.226.95.43])
+        by smtp.googlemail.com with ESMTPSA id k6sm5107471pfu.96.2022.01.07.00.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jan 2022 00:24:41 -0800 (PST)
+From:   Miaoqian Lin <linmq006@gmail.com>
+Cc:     linmq006@gmail.com, Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tegra: tegra124-emc: Fix missing put_device() call in emc_ensure_emc_driver
+Date:   Fri,  7 Jan 2022 08:24:36 +0000
+Message-Id: <20220107082436.17716-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICsNCj4gPiArQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKHNwX2Nsa2MsICJzdW5wbHVzLHNwNzAy
-MS1jbGtjIiwgc3BfY2xrX3NldHVwKTsNCj4gDQo+IFdoeSBDTEtfT0ZfREVDTEFSRV9EUklWRVI/
-IFRoZXJlIHNob3VsZCBiZSBhIGNvbW1lbnQgYnV0IGJldHRlciB3b3VsZCBiZQ0KPiB0byBtYWtl
-IGEgcGxhdGZvcm0gZHJpdmVyIGluc3RlYWQuIElmIHRoZSBwbGF0Zm9ybSBkcml2ZXIgY2FuJ3Qg
-YmUgdXNlZCwNCj4gd2UgbmVlZCB0byBrbm93IHdoYXQgb3RoZXIgZGV2aWNlIGRyaXZlciBpcyBw
-cm9iaW5nIGJhc2VkIG9uIHRoaXMgY2xrYw0KPiBjb21wYXRpYmxlIHN0cmluZy4NCg0KRGVhciBT
-dGVwaGVuLA0KDQpTb3JyeSwgSSBkb24ndCB1bmRlcnN0YW5kIHlvdXIgY29tbWVudC4NCkRpZCB5
-b3UgbWVhbiwgbGlrZSBiZWxvdzoNCg0Kc3RhdGljIGludCBzcDcwMjFfY2xrX3Byb2JlKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQp7DQoJLi4uLi4uDQoJc3BfY2xrX2RhdGEtPm51bSA9
-IENMS19NQVg7DQoJcmV0dXJuIGRldm1fb2ZfY2xrX2FkZF9od19wcm92aWRlcihkZXYsIG9mX2Ns
-a19od19vbmVjZWxsX2dldCwgc3BfY2xrX2RhdGEpOw0KfQ0KDQpzdGF0aWMgY29uc3Qgc3RydWN0
-IG9mX2RldmljZV9pZCBzcDcwMjFfY2xrX2R0X2lkc1tdID0gew0KCXsgLmNvbXBhdGlibGUgPSAi
-c3VucGx1cyxzcDcwMjEtY2xrYyIsIH0sDQoJeyB9DQp9Ow0KTU9EVUxFX0RFVklDRV9UQUJMRShv
-Ziwgc3A3MDIxX2Nsa19kdF9pZHMpOw0KDQpzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBz
-cDcwMjFfY2xrX2RyaXZlciA9IHsNCgkucHJvYmUgID0gc3A3MDIxX2Nsa19wcm9iZSwNCgkuZHJp
-dmVyID0gew0KCQkubmFtZSA9ICJzcDcwMjEtY2xrIiwNCgkJLm9mX21hdGNoX3RhYmxlID0gc3A3
-MDIxX2Nsa19kdF9pZHMsDQoJfSwNCn07DQpidWlsdGluX3BsYXRmb3JtX2RyaXZlcihzcDcwMjFf
-Y2xrX2RyaXZlcik7DQoNCg0KQnV0LCBJdCdzIGRvZXNuJ3Qgd29yay4gDQpNb3N0IG90aGVyIGNs
-ayBkcml2ZXJzIHVzZWQgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSIG9yIENMS19PRl9ERUNMQVJFLg0K
-SSBqdXN0IHRha2UgdGhlc2UgYXMgdGhlIHJlZmVyZW5jZSBhbmQgaXQncyB3b3JraW5nLg0K
+The reference taken by 'of_find_device_by_node()' must be released when
+not needed anymore.
+Add the corresponding 'put_device()' in the error handling path.
+
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/clk/tegra/clk-tegra124-emc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra124-emc.c b/drivers/clk/tegra/clk-tegra124-emc.c
+index 74c1d894cca8..219c80653dbd 100644
+--- a/drivers/clk/tegra/clk-tegra124-emc.c
++++ b/drivers/clk/tegra/clk-tegra124-emc.c
+@@ -198,6 +198,7 @@ static struct tegra_emc *emc_ensure_emc_driver(struct tegra_clk_emc *tegra)
+ 
+ 	tegra->emc = platform_get_drvdata(pdev);
+ 	if (!tegra->emc) {
++		put_device(&pdev->dev);
+ 		pr_err("%s: cannot find EMC driver\n", __func__);
+ 		return NULL;
+ 	}
+-- 
+2.17.1
+
