@@ -2,70 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1628FC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 02:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F8CC43217
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 02:34:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344708AbiAGCc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jan 2022 21:32:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52986 "EHLO
+        id S1344775AbiAGCey (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jan 2022 21:34:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345462AbiAGCcS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 21:32:18 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6486EC061201;
-        Thu,  6 Jan 2022 18:32:17 -0800 (PST)
+        with ESMTP id S1344761AbiAGCey (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 21:34:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23C06C061245;
+        Thu,  6 Jan 2022 18:34:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0CB7261D15;
-        Fri,  7 Jan 2022 02:32:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EC7C36AE3;
-        Fri,  7 Jan 2022 02:32:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DECEAB824B9;
+        Fri,  7 Jan 2022 02:34:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C52CC36AEB;
+        Fri,  7 Jan 2022 02:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641522736;
-        bh=GZT+2y9W/LYKIckQ7nhu2pQ5tWSH9XoDLshaOtLjGNc=;
+        s=k20201202; t=1641522891;
+        bh=v/UysLRyR3ZSlYOfKYLwtg+YpmYmJmwLdARF6BhGaVY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pyfq7/1O89rNncSYEcXLRgjsE/P/68+/hCrrvqC+nqxqdtLZJllHj2T0mz+U+O7or
-         h7b/6iABs3FE+867qfKAV4m5sQfMRgahCdqqSrKEr5lrCCz7dE2MlF9fq7nYyIZ8xO
-         AreYkjov9GhNlknMXzU7c3K5g0tLgdvKfRcb3xpf+WKyxaj2nSvyxFFjCrEMJ1aZi1
-         qA16l7RmMwnA3pSxsPpPgSI6xf+3cEV3MurBkAiv1xjouFmEXPNrBaya7YfyBQws4j
-         W/q1eS9jGwguUAqbs592JXbp10KphiMGz/v8mnSYpoBnsaUKCv8osgH2fKNhBsP01s
-         SzungOWx4FyDw==
+        b=LfXDDepduhcDgcZ7TXNP2BmPlFyOTDxDpJ5agIb2ONPXGQ0jBrC7FFhXa7ddDXQLT
+         XxKIvKxLkPYR0mxTRNSC7FdgiEDvoLcArfcJmQ5crc/p+d33RaH/whKTW4Uj8Kg+Ql
+         GOpIVeaL/+ufR9dHez029Bm65QIihOsDb8tMcirq7zY2YJiJHX4I3endUqNYze+ZJK
+         6vQGD+54lZRXQO05QSP6BFG8yAW+OXxAbzJjoqR5uH8a8WBW7UlNZRO6Su5KDSKt/9
+         0SNRf+kxtULLtaXruJSGWoP8f7MyL/hVhNTRhyBPyHg3It7edBq05hkKBJa49ZETIA
+         P9GHYClRv+Onw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211217121148.6753-4-sam.shih@mediatek.com>
-References: <20211217121148.6753-1-sam.shih@mediatek.com> <20211217121148.6753-4-sam.shih@mediatek.com>
-Subject: Re: [PATCH v7 3/3] clk: mediatek: add mt7986 clock support
+In-Reply-To: <CAGXv+5G5vnOuW46q7b7m6BDS+R4vCLJehrofjfv95uOFbwyzEg@mail.gmail.com>
+References: <20211110022258.2358-1-chun-jie.chen@mediatek.com> <CAGXv+5G5vnOuW46q7b7m6BDS+R4vCLJehrofjfv95uOFbwyzEg@mail.gmail.com>
+Subject: Re: [v1] clk: mediatek: use en_mask as a pure div_en_mask
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     John Crispin <john@phrozen.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        YH Chen <yh.chen@mediatek.com>,
-        Sam Shih <sam.shih@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
 To:     Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sam Shih <sam.shih@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Date:   Thu, 06 Jan 2022 18:32:15 -0800
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Date:   Thu, 06 Jan 2022 18:34:50 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220107023216.64EC7C36AE3@smtp.kernel.org>
+Message-Id: <20220107023451.7C52CC36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sam Shih (2021-12-17 04:11:48)
-> Add MT7986 clock support, include topckgen, apmixedsys,
-> infracfg, and ethernet subsystem clocks.
+Quoting Chen-Yu Tsai (2021-11-09 22:59:37)
+> Hi,
 >=20
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> ---
+> On Wed, Nov 10, 2021 at 10:23 AM Chun-Jie Chen
+> <chun-jie.chen@mediatek.com> wrote:
+> >
+> > We no longer allow en_mask to be a combination of
+> > pll_en_bit and div_en_mask, so remove pll_en_bit(bit0)
+> > from en_mask to make en_mask a pure en_mask that only
+> > used for pll dividers.
+>=20
+> AFAICT this looks like it continues the work done in commit 7cc4e1bbe300
+> ("clk: mediatek: Fix asymmetrical PLL enable and disable control") and
+> commit f384c44754b7 ("clk: mediatek: Add configurable enable control to
+> mtk_pll_data").
+>=20
+> It would be nice if you could mention this in your commit log to provide
+> more context.
 
-Applied to clk-next
+Please resend.
