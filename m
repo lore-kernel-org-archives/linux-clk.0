@@ -2,77 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A17FC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 00:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2417C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 01:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344049AbiAGAVj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jan 2022 19:21:39 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:54208 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344074AbiAGAVg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 19:21:36 -0500
+        id S1344384AbiAGBqz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jan 2022 20:46:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42626 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344368AbiAGBqy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jan 2022 20:46:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80180C061245;
+        Thu,  6 Jan 2022 17:46:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F4B861E16
-        for <linux-clk@vger.kernel.org>; Fri,  7 Jan 2022 00:21:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6397C36AE0;
-        Fri,  7 Jan 2022 00:21:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A6C5F61EA5;
+        Fri,  7 Jan 2022 01:46:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7FB7C36AE0;
+        Fri,  7 Jan 2022 01:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641514895;
-        bh=rTyEa7BxzW7vXGzxnTzq6mIOCIByq0fmnlYF1ivc89g=;
+        s=k20201202; t=1641520013;
+        bh=9Kg5n4ZOUJTxXcMjPnNz9VtaD4O7j1UtUbFnhINlySU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WJHCCLp9K8Dvs8uGvdfmZi7BI5i8ebM1ssP6jiZ4Ll/ePiDFoUcjfRRPrw2+7OZXT
-         XIDeYObPjJ1GBIvLKgSnYCNQyf67JC7Hddn8pjpdDf/bSi+RpuZbtjgl/zhlyI58vk
-         xvG+HSpL7FZ79xZnfhc8Y3xM3OYc+AcLiW0WosDshGFA3yr2h9rynGrAIIFlD1OqpG
-         z5rDmK0VMPQAMXAkpMLLYDwE937BMUZ9r7o1HKA62+bvDqtpsThVHW0JbSgMgN8nEw
-         Vh4bZH9dp6Xhv6lKYg4238TaULc2rViXBR2AUciO8hRSIvZnZ6B9RN1FoV5/BVlknW
-         HTF1x0iV54Lsg==
+        b=tx/K4xmqIjfZ3ybLw+8BpMjCt7U5jESX2rHUxQUkarENciQQIsHcbVhjkWPHFz2Yk
+         wlgWWP7sBSDlAtlqEcXKvs5HcyIUKsdGbE0G0QhSfEF0PLkL2UL5+vXMsXke1DmW4E
+         ofMB/B5ZTxgrUvjkcMy6Ni4BZwWwfBeUwiRCf7LC1pQT/OM4TpBnvCFAmDi9/RnLby
+         Z72ycqtIvIXwTIqz4zYkZzNAK9B55LisSeQBJOw4ZM7HHejrxPFivXRHD1GogoTqkO
+         mhUgedK+FZmGKeax+hxXTCAPeAUvxrEEg9sSiqkE2SEeAVrY0fFVqTL8/+qa4Sb/tK
+         dGLfGWICYuXmw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a298286a42461e07c92e282224f469d84344feac.1641434305.git.zong.li@sifive.com>
-References: <a298286a42461e07c92e282224f469d84344feac.1641434305.git.zong.li@sifive.com>
-Subject: Re: [PATCH v3] clk: sifive: Fix W=1 kernel build warning
+In-Reply-To: <20211223154244.1024062-1-conor.dooley@microchip.com>
+References: <20211223154244.1024062-1-conor.dooley@microchip.com>
+Subject: Re: [PATCH] clk: bm1880: remove kfrees on static allocations
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Zong Li <zong.li@sifive.com>
-To:     Zong Li <zong.li@sifive.com>, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        mturquette@baylibre.com, palmer@dabbelt.com,
-        paul.walmsley@sifive.com
-Date:   Thu, 06 Jan 2022 16:21:34 -0800
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        daire.mcnamara@microchip.com, mail@conchuod.ie,
+        Conor Dooley <conor.dooley@microchip.com>
+To:     Mmturquette@baylibre.com, conor.dooley@microchip.com,
+        linux-clk@vger.kernel.org, mani@kernel.org
+Date:   Thu, 06 Jan 2022 17:46:51 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220107002135.B6397C36AE0@smtp.kernel.org>
+Message-Id: <20220107014652.E7FB7C36AE0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2022-01-05 21:58:28)
-> This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
-> Declare static const variable 'prci_clk_fu540' where it's used").
-> For fixing W=3D1 kernel build warning(s) about =E2=80=98prci_clk_fu540=E2=
-=80=99 defined
-> but not used [-Wunused-const-variable=3D], the problem is that the C file
-> of fu540 and fu740 doesn't use these variables, but they includes the
-> header files. We could refine the code by moving the definition of these
-> variables into fu540 and fu740 implementation respectively instead of
-> common core code, then we could still separate the SoCs-dependent data
-> in their own implementation.
+Quoting conor.dooley@microchip.com (2021-12-23 07:42:44)
+> From: Conor Dooley <conor.dooley@microchip.com>
 >=20
-> Changed in v3:
->  - Rebase on v5.16-rc8
->  - Add fixes tag
-
-Where?
-
+> bm1880_clk_unregister_pll & bm1880_clk_unregister_div both try to
+> free statically allocated variables, so remove those kfrees.
 >=20
-> Changed in v2:
->  - Move definition of variable to C file from header
-
-Please remove the changelog by putting it below the triple dash.
-
+> For example, if we take L703 kfree(div_hw):
+> - div_hw is a bm1880_div_hw_clock pointer
+> - in bm1880_clk_register_plls this is pointed to an element of arg1:
+>   struct bm1880_div_hw_clock *clks
+> - in the probe, where bm1880_clk_register_plls is called arg1 is
+>   bm1880_div_clks, defined on L371:
+>   static struct bm1880_div_hw_clock bm1880_div_clks[]
 >=20
-> Signed-off-by: Zong Li <zong.li@sifive.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  drivers/clk/sifive/fu540-prci.c  |  6 +++++-
->  drivers/clk/sifive/fu540-prci.h  |  6 +-----
+
+Applied to clk-next
