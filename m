@@ -2,70 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0251CC433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 00:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED39AC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 00:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229460AbiAHApQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 19:45:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229868AbiAHApP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 19:45:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F0DC061574
-        for <linux-clk@vger.kernel.org>; Fri,  7 Jan 2022 16:45:15 -0800 (PST)
+        id S229522AbiAHAsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jan 2022 19:48:11 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:34310 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229514AbiAHAsL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 19:48:11 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 75A6C6204B
-        for <linux-clk@vger.kernel.org>; Sat,  8 Jan 2022 00:45:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C331AC36AE9;
-        Sat,  8 Jan 2022 00:45:14 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DCF1F62044;
+        Sat,  8 Jan 2022 00:48:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC10C36AEB;
+        Sat,  8 Jan 2022 00:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641602714;
-        bh=dUWN3mVrxOEErbJ6o4JMx/VEB9lx/aE7w+sbf0AOXtQ=;
+        s=k20201202; t=1641602890;
+        bh=IM6DZCckcai0O2zZ0JKkNbO8kDDl9nphrbzpRK7mZkU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hmn0TWaH7ZvGwpnXaB2vwQ+3Tf+V69zsButjd64DIO7LTsT+HHIHbAtRZOcDFbIP7
-         Sf5UyYonN5WRDGpnMd5p+kgKy4J9qbivxrqiROBU7UpH9nbuEXNHn8n/m7DI9fOszO
-         aF5oM9wF01STq88gVbksW4/o73YFEMH+78fMuXDX7VCA+QCY+0orUFrOkoGdhNa3WV
-         /brbmmZNY6hiN8LPlydKQwIXKWyPNU3Gd4s/iMJ1tFo+nhaU6so2CpXbSjq/oQS3+Q
-         rkOTk4VVX6wkXRsX5u806tSTx+JimgRj/+cn3bAgfDnek5Tycxz0KR2NcXioxT20GQ
-         fjEesRdRTyKiA==
+        b=hRgf0+44YcCLZH6OJyklfqSBa7ERMz5knw7OMaZ6EPRhUU4JQ9HJX8CiucqRqRc3Q
+         TVzngM+/OeudjjWI9mvdt55lJg1r6yN4NYrqa3NFhhxZejXlACsLkoen9sPYXgLsnz
+         qe9SmcNVyOqZZuStRqsAWJb6PCFUGHoQ/4z40IQqoU1LIno7j/vFXscerQmA4RFUYj
+         FMn65FzRj/ZgOMouSodkatRVBI3cmFRQEi0bbsBU6etrL3SqxMzLd6irBmF6X7mjn8
+         bfBMqYTOuv0assn9wGzU+VArUSegZuRVPxX7EEpJQpMboH21s+2C8+VI1l7PsaEdF/
+         jg77iz+xTorXQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220107090715.2601-1-zong.li@sifive.com>
-References: <20220107090715.2601-1-zong.li@sifive.com>
-Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
+In-Reply-To: <20211216141338.35144-5-claudiu.beznea@microchip.com>
+References: <20211216141338.35144-1-claudiu.beznea@microchip.com> <20211216141338.35144-5-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH 4/8] ARM: at91: PM: add cpu idle support for sama7g5
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Zong Li <zong.li@sifive.com>
-To:     Zong Li <zong.li@sifive.com>, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        mturquette@baylibre.com, palmer@dabbelt.com,
-        paul.walmsley@sifive.com
-Date:   Fri, 07 Jan 2022 16:45:13 -0800
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        alexandre.belloni@bootlin.com, linux@armlinux.org.uk,
+        ludovic.desroches@microchip.com, mturquette@baylibre.com,
+        nicolas.ferre@microchip.com, robh+dt@kernel.org
+Date:   Fri, 07 Jan 2022 16:48:08 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220108004514.C331AC36AE9@smtp.kernel.org>
+Message-Id: <20220108004810.3DC10C36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2022-01-07 01:07:15)
-> This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
-> Declare static const variable 'prci_clk_fu540' where it's used").
-> For fixing W=3D1 kernel build warning(s) about =E2=80=98prci_clk_fu540=E2=
-=80=99 defined
-> but not used [-Wunused-const-variable=3D], the problem is that the C file
-> of fu540 and fu740 doesn't use these variables, but they includes the
-> header files. We could refine the code by moving the definition of these
-> variables into fu540 and fu740 implementation respectively instead of
-> common core code, then we could still separate the SoCs-dependent data
-> in their own implementation.
+Quoting Claudiu Beznea (2021-12-16 06:13:34)
+> Add CPU idle support for SAMA7G5. Support will make use of PMC_CPU_RATIO
+> register to divide the CPU clock by 16 before switching it to idle and
+> use automatic self-refresh option of DDR controller.
 >=20
-> Fixes: 487dc7bb6a0c ("clk: sifive: fu540-prci: Declare static
-> const variable 'prci_clk_fu540' where it's used")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
 
-The fixes tag should be on one line, not split across two.
-
-> Signed-off-by: Zong Li <zong.li@sifive.com>
->
+Acked-by: Stephen Boyd <sboyd@kernel.org>
