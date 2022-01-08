@@ -2,62 +2,109 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77A7C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 01:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D829CC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 07:25:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232381AbiAHB1m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 20:27:42 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:54124 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230061AbiAHB1m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 20:27:42 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S233699AbiAHHZ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Jan 2022 02:25:26 -0500
+Received: from box.trvn.ru ([194.87.146.52]:56037 "EHLO box.trvn.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233484AbiAHHZZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Jan 2022 02:25:25 -0500
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C555CB827BF;
-        Sat,  8 Jan 2022 01:27:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8091EC36AEB;
-        Sat,  8 Jan 2022 01:27:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641605259;
-        bh=KeI8RnfgfEQEdVg9X/nT0Z288YrE9gljUBDI7bfI//I=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KkwDtrORgFmcvs8c7t5b+VeDnBQ9pEOkRPNZX2m8y4ecqscEqpnCLSodtgA7OkbTA
-         G7ZAT7JgXhXQ2unjQYCmZHPHcBNnBXIbB6/CFwATC4hHPprA8nm5Tfh+1fJUk5ML4l
-         SJbXvdx3Z0yWQP8PbYeGJCQhD+GgATdLJgn2ZS0SDZ0SPpTvZx8W2KS5Wd4/ZfT2XN
-         9XAKYgo32PQ8ulklxHZOIsz8ftlIXyPWXDr/AypaqZdukYjFy3DgY2Opem9azCnjhK
-         a93qi5JIyqUVHmDvekRu4HQh89jfW20Qxv86LrWY5/mvugkUOZ60I22xgLFcohkAkS
-         yYBpCEI9/8cWw==
-Content-Type: text/plain; charset="utf-8"
+        by box.trvn.ru (Postfix) with ESMTPSA id 513EC4038B;
+        Sat,  8 Jan 2022 12:25:19 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1641626721; bh=xSTjwXWm03zXFQo0llbV1rDWCB+tlvOs66q7D/jrNgg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=epAcW3haHkcxECO4fhpYKScBgMXqNlBNUG2+cW5jDomY+kcf0MDNq3gAPA6UuyXM+
+         yKTgRwUYchNnwuexw8rggh7wSOkYc3Y9+bpc88nQd0ApHcJGU83jR2Sr0VFOtBljH7
+         cX1o/eGahOki14stGjyeiRwDZNNms7owI7d4I/GVPv2IDaPLKRZp2sEeXv/HwQezBK
+         fBujLPdT6vZNaoTMQ53mVYlaK3tvHE1r3HWMvb3vl5NM+L+vPrDCAVHjY8JRTYavWw
+         hkSreKo+bgTthBvEbg+LMs6JYtRDbPAuECg5n1ZbNa0j1Cx0gf7Es7N4DRTiUUsPUe
+         65q5iO/G5lgWA==
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1639747533-9778-1-git-send-email-abel.vesa@nxp.com>
-References: <1639747533-9778-1-git-send-email-abel.vesa@nxp.com>
-Subject: Re: [PATCH v2] clk: imx: Add imx8dxl clk driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Date:   Fri, 07 Jan 2022 17:27:38 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20220108012739.8091EC36AEB@smtp.kernel.org>
+Date:   Sat, 08 Jan 2022 12:25:19 +0500
+From:   Nikita Travkin <nikita@trvn.ru>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
+        bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
+        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 1/4] clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if
+ MND divider is not enabled.
+In-Reply-To: <20220108005209.5140EC36AEB@smtp.kernel.org>
+References: <20211209163720.106185-1-nikita@trvn.ru>
+ <20211209163720.106185-2-nikita@trvn.ru>
+ <20220108005209.5140EC36AEB@smtp.kernel.org>
+Message-ID: <991533e0fddd6999c8a06a536ae57999@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2021-12-17 05:25:33)
-> From: Jacky Bai <ping.bai@nxp.com>
->=20
-> Add files for imx8dxl clk driver which is based on imx8qxp clock driver.
->=20
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
+Hi,
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Stephen Boyd писал(а) 08.01.2022 05:52:
+> Quoting Nikita Travkin (2021-12-09 08:37:17)
+>> In cases when MND is not enabled (e.g. when only Half Integer Divider is
+>> used), setting D registers makes no effect. Fail instead of making
+>> ineffective write.
+>>
+>> Fixes: 7f891faf596e ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
+>> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+>> ---
+>>  drivers/clk/qcom/clk-rcg2.c | 7 ++++++-
+>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index e1b1b426fae4..6964cf914b60 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -396,7 +396,7 @@ static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+>>  static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+>>  {
+>>         struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> -       u32 notn_m, n, m, d, not2d, mask, duty_per;
+>> +       u32 notn_m, n, m, d, not2d, mask, duty_per, cfg;
+>>         int ret;
+>>
+>>         /* Duty-cycle cannot be modified for non-MND RCGs */
+>> @@ -407,6 +407,11 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+>>
+>>         regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &notn_m);
+>>         regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
+>> +       regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
+>> +
+>> +       /* Duty-cycle cannot be modified if MND divider is in bypass mode. */
+>> +       if (!(cfg & CFG_MODE_MASK))
+>> +               return -EINVAL;
+> 
+> Should we still allow 50% duty cycle to succeed?
+
+*Technically* setting 50% duty cycle works since it's the default,
+but how I understand it, the main way to get there is to call
+clk_set_duty_cycle() which implies that it's caller intends
+to control duty cycle specifically but the call doesn't actually
+control anything as the hardware block is disabled.
+
+I'm adding this error here primarily to bring attention of the
+user (e.g. developer enabling some peripheral that needs
+duty cycle control) who might have to change their clock tree
+to make this control effective. So, assuming that if someone
+sets the duty cycle to 50% then they might set it to some other
+value later, it makes sense to fail the first call anyway.
+
+If you think there are some other possibilities for this call
+to happen specifically with 50% duty cycle (e.g. some
+preparations or cleanups in the clk subsystem or some drivers
+that I'm not aware of) then I can make an exemption in the check
+for that.
+
+Thanks,
+Nikita
