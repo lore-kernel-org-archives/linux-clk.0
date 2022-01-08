@@ -2,72 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B4CC433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 00:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0251CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 00:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbiAHAIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 19:08:14 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:57562 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229703AbiAHAIO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 19:08:14 -0500
+        id S229460AbiAHApQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jan 2022 19:45:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229868AbiAHApP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 19:45:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F0DC061574
+        for <linux-clk@vger.kernel.org>; Fri,  7 Jan 2022 16:45:15 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 126CEB827B9;
-        Sat,  8 Jan 2022 00:08:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8373C36AE5;
-        Sat,  8 Jan 2022 00:08:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 75A6C6204B
+        for <linux-clk@vger.kernel.org>; Sat,  8 Jan 2022 00:45:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C331AC36AE9;
+        Sat,  8 Jan 2022 00:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641600491;
-        bh=eRTFqRjFRgCxvmbchANikxM/bE3d5Z9QWcoIjpeA9No=;
+        s=k20201202; t=1641602714;
+        bh=dUWN3mVrxOEErbJ6o4JMx/VEB9lx/aE7w+sbf0AOXtQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=q7NbhrGKV6ToLJTDT/XYgUGwPUbhiN8AEtI6Wg693M0CZuPXWEVz+MgWoYAq2hIkt
-         ogidsf6NW0emarxkW/WFsbpWzrFGw/Yaf3ATe9pbnv8xa5RB2j/BgGZypx3IwkPJx4
-         Aae+3HWZ1Qo08Gp5Nz1RJClmeqAT29g4jYvtnVqQTa3pr6Yc+6ALJL6/3DxbVj8JBq
-         RX0O+cFzp5j0UbKezAbDODbsuh1S7E0/Loumw/xUsELKpifGrCQLIX+LB67RZoLbdR
-         I/uMVLX4zaG6CJ3ECT7lMhwvFVyIWY/NoHU94bmqAD+HCHwR2GN57RQzizf1Lqw1HT
-         f3xD1828e65xw==
+        b=hmn0TWaH7ZvGwpnXaB2vwQ+3Tf+V69zsButjd64DIO7LTsT+HHIHbAtRZOcDFbIP7
+         Sf5UyYonN5WRDGpnMd5p+kgKy4J9qbivxrqiROBU7UpH9nbuEXNHn8n/m7DI9fOszO
+         aF5oM9wF01STq88gVbksW4/o73YFEMH+78fMuXDX7VCA+QCY+0orUFrOkoGdhNa3WV
+         /brbmmZNY6hiN8LPlydKQwIXKWyPNU3Gd4s/iMJ1tFo+nhaU6so2CpXbSjq/oQS3+Q
+         rkOTk4VVX6wkXRsX5u806tSTx+JimgRj/+cn3bAgfDnek5Tycxz0KR2NcXioxT20GQ
+         fjEesRdRTyKiA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220107183303.2337676-1-nathan@kernel.org>
-References: <20220107183303.2337676-1-nathan@kernel.org>
-Subject: Re: [PATCH] clk: visconti: Remove pointless NULL check in visconti_pll_add_lookup()
+In-Reply-To: <20220107090715.2601-1-zong.li@sifive.com>
+References: <20220107090715.2601-1-zong.li@sifive.com>
+Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        Nathan Chancellor <nathan@kernel.org>,
-        kernel test robot <lkp@intel.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Date:   Fri, 07 Jan 2022 16:08:10 -0800
+Cc:     Zong Li <zong.li@sifive.com>
+To:     Zong Li <zong.li@sifive.com>, lee.jones@linaro.org,
+        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+        mturquette@baylibre.com, palmer@dabbelt.com,
+        paul.walmsley@sifive.com
+Date:   Fri, 07 Jan 2022 16:45:13 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220108000811.B8373C36AE5@smtp.kernel.org>
+Message-Id: <20220108004514.C331AC36AE9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Chancellor (2022-01-07 10:33:03)
-> Clang warns:
+Quoting Zong Li (2022-01-07 01:07:15)
+> This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+> Declare static const variable 'prci_clk_fu540' where it's used").
+> For fixing W=3D1 kernel build warning(s) about =E2=80=98prci_clk_fu540=E2=
+=80=99 defined
+> but not used [-Wunused-const-variable=3D], the problem is that the C file
+> of fu540 and fu740 doesn't use these variables, but they includes the
+> header files. We could refine the code by moving the definition of these
+> variables into fu540 and fu740 implementation respectively instead of
+> common core code, then we could still separate the SoCs-dependent data
+> in their own implementation.
 >=20
-> drivers/clk/visconti/pll.c:292:20: warning: address of array 'ctx->clk_da=
-ta.hws' will always evaluate to 'true' [-Wpointer-bool-conversion]
->         if (ctx->clk_data.hws && id)
->             ~~~~~~~~~~~~~~^~~ ~~
-> 1 warning generated.
->=20
-> This array cannot be NULL if ctx is not NULL, which is allocated in
-> visconti_init_pll(), so just remove the check, which matches other clk
-> drivers.
->=20
-> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and =
-reset driver")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1564
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+> Fixes: 487dc7bb6a0c ("clk: sifive: fu540-prci: Declare static
+> const variable 'prci_clk_fu540' where it's used")
 
-Applied to clk-next
+The fixes tag should be on one line, not split across two.
+
+> Signed-off-by: Zong Li <zong.li@sifive.com>
+>
