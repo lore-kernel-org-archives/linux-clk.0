@@ -2,421 +2,375 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4F5C433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 01:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB74DC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 01:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229949AbiAHBGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 20:06:10 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:47768 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229990AbiAHBGK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 20:06:10 -0500
+        id S230040AbiAHBZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jan 2022 20:25:17 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53170 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229933AbiAHBZR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 20:25:17 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2C28BB827B9;
-        Sat,  8 Jan 2022 01:06:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D40C36AEB;
-        Sat,  8 Jan 2022 01:06:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7AE5362067;
+        Sat,  8 Jan 2022 01:25:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1213C36AEB;
+        Sat,  8 Jan 2022 01:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1641603966;
-        bh=Bqhbr8068qZCYO2lyleN+FcwCvwVL+rmswn5Uy4qlzs=;
+        s=k20201202; t=1641605115;
+        bh=v1vebky/9GnLagkGynvqtgjDpMQBlowovWEx91dudUY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZLsb5TdyxTqfWqZz4Q7FLWBHbTeCxaHPtkRVZwb/RcXi74s4kZH4f/240I1nAuW8A
-         RYhQiFQ+eTKx+Axpxsi4ntlkxY4kngrfiRMKdPG9UcVQtfWBw7OeKmXrGorxJzl8tn
-         ZB14VUdHMYFd+//IU9oek+LanoIYKnEjMRdWdRoaUJRRpS5hggJrU7YCrXvbsLwDxU
-         oYoCQd2vWwbQmEnZ9+GBL9bHeBy3/k5FJ/s4z20pPNeOwW5pwiGwetPUVYdQtwSBtU
-         gM9tuyu48rjbEnmNLzqHu+AKxMsE7Cznv0N8AgjsDSSP7JgxV+WO/WgI1mztdxrttx
-         0UgJHo942BZ2g==
+        b=mRLHPB4X3kKqnucf9F9fRj4EXY+Y4mtUwNFWFobH1SHDxgJ/VSLFRxeToOYkKxqbe
+         ajOZBSlMV+BCTSb7kmQ3akR2Xw3qobBsPb86Ma9or+o+lJbwYiEwHfD2di9U2RDy6z
+         eFemUPkYzlRBn/zbDyuHNz9+6JwYLELybr9PrtyNANGXbGQeY/o2sDLvbEM1FYe9Ng
+         1NA/0xHiBSlxfmPJNgLa8Oq9jog4PS4nrLlnb7oDiNLojhf3urnO2LotFWx2Y822Nu
+         huBGfOr1akH7vayogXJcMNODYfz80t9DkhdAdPIEFKfSH+2+ztm4o96cjsQ5Ljh11p
+         s+F7ygQjNjeIQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211214120213.15649-3-povik@protonmail.com>
-References: <20211214120213.15649-1-povik@protonmail.com> <20211214120213.15649-3-povik@protonmail.com>
-Subject: Re: [PATCH 2/2] clk: clk-apple-nco: Add driver for Apple NCO
+In-Reply-To: <20220102165730.50190-3-romain.perier@gmail.com>
+References: <20220102165730.50190-1-romain.perier@gmail.com> <20220102165730.50190-3-romain.perier@gmail.com>
+Subject: Re: [PATCH v2 2/9] clk: mstar: msc313 cpupll clk driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        kettenis@openbsd.org, marcan@marcan.st, sven@svenpeter.dev,
-        Martin =?utf-8?q?Povi=C5=A1er?= <povik@protonmail.com>
-To:     Martin =?utf-8?q?Povi=C5=A1er?= <povik@protonmail.com>
-Date:   Fri, 07 Jan 2022 17:06:05 -0800
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>
+To:     Arnd Bergmann <arnd@arndb.de>, Daniel Palmer <daniel@0x0f.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Romain Perier <romain.perier@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Fri, 07 Jan 2022 17:25:14 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220108010606.D0D40C36AEB@smtp.kernel.org>
+Message-Id: <20220108012515.D1213C36AEB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Povi=C5=A1er (2021-12-14 04:02:55)
-> Add a common clock driver for NCO blocks found on Apple SoCs where they
-> are typically the generators of audio clocks.
->=20
-> Signed-off-by: Martin Povi=C5=A1er <povik@protonmail.com>
-> ---
->  drivers/clk/Kconfig         |   9 ++
->  drivers/clk/Makefile        |   1 +
->  drivers/clk/clk-apple-nco.c | 299 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 309 insertions(+)
->  create mode 100644 drivers/clk/clk-apple-nco.c
->=20
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c5b3dc97396a..d2b3d40de29d 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -390,6 +390,15 @@ config COMMON_CLK_K210
+Quoting Romain Perier (2022-01-02 08:57:23)
+> diff --git a/drivers/clk/mstar/Kconfig b/drivers/clk/mstar/Kconfig
+> index de37e1bce2d2..a44ca2b180ff 100644
+> --- a/drivers/clk/mstar/Kconfig
+> +++ b/drivers/clk/mstar/Kconfig
+> @@ -7,3 +7,10 @@ config MSTAR_MSC313_MPLL
 >         help
->           Support for the Canaan Kendryte K210 RISC-V SoC clocks.
->=20
-> +config COMMON_CLK_APPLE_NCO
-
-Please try to keep this sorted by Kconfig name. I know it isn't very
-well done right now but it would be better than adding it here at the
-end.
-
-> +       bool "Clock driver for Apple SoC NCOs"
-> +       depends on ARCH_APPLE || COMPILE_TEST
-> +       default ARCH_APPLE
-> +       help
-> +         This driver supports NCO (Numerically Controlled Oscillator) bl=
-ocks
-> +         found on Apple SoCs such as t8103 (M1). The blocks are typically
-> +         generators of audio clocks.
+>           Support for the MPLL PLL and dividers block present on
+>           MStar/Sigmastar SoCs.
 > +
->  source "drivers/clk/actions/Kconfig"
->  source "drivers/clk/analogbits/Kconfig"
->  source "drivers/clk/baikal-t1/Kconfig"
-> diff --git a/drivers/clk/clk-apple-nco.c b/drivers/clk/clk-apple-nco.c
+> +config MSTAR_MSC313_CPUPLL
+
+Can this file be sorted on Kconfig name?
+
+> +       bool "MStar CPUPLL driver"
+> +       depends on ARCH_MSTARV7 || COMPILE_TEST
+> +       default ARCH_MSTARV7
+> +       help
+> +         Support for the CPU PLL present on MStar/Sigmastar SoCs.
+> diff --git a/drivers/clk/mstar/Makefile b/drivers/clk/mstar/Makefile
+> index f8dcd25ede1d..9f05b73a0619 100644
+> --- a/drivers/clk/mstar/Makefile
+> +++ b/drivers/clk/mstar/Makefile
+> @@ -4,3 +4,4 @@
+>  #
+> =20
+>  obj-$(CONFIG_MSTAR_MSC313_MPLL) +=3D clk-msc313-mpll.o
+> +obj-$(CONFIG_MSTAR_MSC313_CPUPLL) +=3D clk-msc313-cpupll.o
+> diff --git a/drivers/clk/mstar/clk-msc313-cpupll.c b/drivers/clk/mstar/cl=
+k-msc313-cpupll.c
 > new file mode 100644
-> index 000000000000..152901f6a40d
+> index 000000000000..2229b16475eb
 > --- /dev/null
-> +++ b/drivers/clk/clk-apple-nco.c
-> @@ -0,0 +1,299 @@
-> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +++ b/drivers/clk/mstar/clk-msc313-cpupll.c
+> @@ -0,0 +1,227 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Apple NCO (Numerically Controlled Oscillator) clock driver
-> + *
-> + * Driver for an SoC block found on t8103 (M1) and other Apple chips
-> + *
-> + * Copyright (C) The Asahi Linux Contributors
+> + * Copyright (C) 2019 Daniel Palmer <daniel@thingy.jp>
 > + */
 > +
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/math64.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_clk.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clkdev.h>
+
+Is this include used? Please drop unused includes.
+
+> +#include <linux/of_address.h>
+> +#include <linux/module.h>
+
+It isn't a module though.
+
+> +#include <linux/kernel.h>
+
+Preferably sort includes alphabetically too.
+
 > +
-> +#define NCO_CHANNEL_STRIDE     0x4000
+> +/*
+> + * This IP is not documented outside of the messy vendor driver.
+> + * Below is what we think the registers look like based on looking at
+> + * the vendor code and poking at the hardware:
+> + *
+> + * 0x140 -- LPF low. Seems to store one half of the clock transition
+> + * 0x144 /
+> + * 0x148 -- LPF high. Seems to store one half of the clock transition
+> + * 0x14c /
+> + * 0x150 -- vendor code says "toggle lpf enable"
+> + * 0x154 -- mu?
+> + * 0x15c -- lpf_update_count?
+> + * 0x160 -- vendor code says "switch to LPF". Clock source config? Regis=
+ter bank?
+> + * 0x164 -- vendor code says "from low to high" which seems to mean tran=
+sition from LPF low to
+> + * LPF high.
+> + * 0x174 -- Seems to be the PLL lock status bit
+> + * 0x180 -- Seems to be the current frequency, this might need to be pop=
+ulated by software?
+> + * 0x184 /  The vendor driver uses these to set the initial value of LPF=
+ low
+> + *
+> + * Frequency seems to be calculated like this:
+> + * (parent clock (432mhz) / register_magic_value) * 16 * 524288
+> + * Only the lower 24 bits of the resulting value will be used. In additi=
+on, the
+> + * PLL doesn't seem to be able to lock on frequencies lower than 220 MHz=
+, as
+> + * divisor 0xfb586f (220 MHz) works but 0xfb7fff locks up.
+> + *
+> + * Vendor values:
+> + * frequency - register value
+> + *
+> + * 400000000  - 0x0067AE14
+> + * 600000000  - 0x00451EB8,
+> + * 800000000  - 0x0033D70A,
+> + * 1000000000 - 0x002978d4,
+> + */
 > +
-> +#define REG_CTRL       0
-> +#define CTRL_ENABLE    BIT(31)
-> +#define REG_DIV                4
-> +#define DIV_FINE       GENMASK(1, 0)
-> +#define DIV_COARSE     GENMASK(12, 2)
-> +#define REG_INC1       8
-> +#define REG_INC2       12
-> +#define REG_ACCINIT    16
+> +#define REG_LPF_LOW_L          0x140
+> +#define REG_LPF_LOW_H          0x144
+> +#define REG_LPF_HIGH_BOTTOM    0x148
+> +#define REG_LPF_HIGH_TOP       0x14c
+> +#define REG_LPF_TOGGLE         0x150
+> +#define REG_LPF_MYSTERYTWO     0x154
+> +#define REG_LPF_UPDATE_COUNT   0x15c
+> +#define REG_LPF_MYSTERYONE     0x160
+> +#define REG_LPF_TRANSITIONCTRL 0x164
+> +#define REG_LPF_LOCK           0x174
+> +#define REG_CURRENT            0x180
 > +
-> +struct nco_tables;
+> +#define MULTIPLIER_1           16
+> +#define MULTIPLIER_2           524288
+> +#define MULTIPLIER             (MULTIPLIER_1 * MULTIPLIER_2)
 > +
-> +struct nco_channel {
+> +struct msc313_cpupll {
 > +       void __iomem *base;
-> +       struct nco_tables *tbl;
-> +       struct clk_hw hw;
+> +       struct clk_hw clk_hw;
 > +};
 > +
-> +#define to_nco_channel(_hw) container_of(_hw, struct nco_channel, hw)
+> +#define to_cpupll(_hw) container_of(_hw, struct msc313_cpupll, clk_hw)
 > +
-> +#define LFSR_POLY      0xa01
-> +#define LFSR_INIT      0x7ff
-> +#define LFSR_LEN       11
-> +#define LFSR_PERIOD    ((1 << LFSR_LEN) - 1)
-> +#define LFSR_TBLSIZE   (1 << LFSR_LEN)
-> +
-> +/* The minimal attainable coarse divisor (first value in table) */
-> +#define COARSE_DIV_OFFSET 2
-> +
-> +struct nco_tables {
-> +       u16 fwd[LFSR_TBLSIZE];
-> +       u16 inv[LFSR_TBLSIZE];
-> +};
-> +
-> +static int nco_enable(struct clk_hw *hw);
-> +static void nco_disable(struct clk_hw *hw);
-> +static int nco_is_enabled(struct clk_hw *hw);
-> +
-> +static void nco_compute_tables(struct nco_tables *tbl)
+> +static u32 msc313_cpupll_reg_read32(struct msc313_cpupll *cpupll, unsign=
+ed int reg)
 > +{
-> +       int i;
-> +       u32 state =3D LFSR_INIT;
+> +       u32 value;
 > +
-> +       /*
-> +        * Go through the states of a galois LFSR and build
-> +        * a coarse divisor translation table.
-> +        */
-> +       for (i =3D LFSR_PERIOD; i > 0; i--) {
-> +               if (state & 1)
-> +                       state =3D (state >> 1) ^ (LFSR_POLY >> 1);
-> +               else
-> +                       state =3D (state >> 1);
-> +               tbl->fwd[i] =3D state;
-> +               tbl->inv[state] =3D i;
-> +       }
+> +       value =3D ioread16(cpupll->base + reg + 4) << 16;
+> +       value |=3D ioread16(cpupll->base + reg);
 > +
-> +       /* Zero value is special-cased */
-> +       tbl->fwd[0] =3D 0;
-> +       tbl->inv[0] =3D 0;
+> +       return value;
 > +}
 > +
-> +static bool nco_div_check(int div)
-
-Maybe nco_div_out_of_range()? And then invert the logic below.
-
+> +static void msc313_cpupll_reg_write32(struct msc313_cpupll *cpupll, unsi=
+gned int reg, u32 value)
 > +{
-> +       int coarse =3D div / 4;
-> +       return coarse >=3D COARSE_DIV_OFFSET &&
-> +               coarse < COARSE_DIV_OFFSET + LFSR_TBLSIZE;
+> +       u16 l =3D value & 0xffff, h =3D (value >> 16) & 0xffff;
+> +
+> +       iowrite16(l, cpupll->base + reg);
+
+We don't usually see 16-bit accesses but if that's what the hardware
+wants then OK.
+
+> +       iowrite16(h, cpupll->base + reg + 4);
 > +}
 > +
-> +static u32 nco_div_translate(struct nco_tables *tbl, int div)
+> +static void msc313_cpupll_setfreq(struct msc313_cpupll *cpupll, u32 regv=
+alue)
 > +{
-> +       int coarse =3D div / 4;
+> +       msc313_cpupll_reg_write32(cpupll, REG_LPF_HIGH_BOTTOM, regvalue);
+> +
+> +       iowrite16(0x1, cpupll->base + REG_LPF_MYSTERYONE);
+> +       iowrite16(0x6, cpupll->base + REG_LPF_MYSTERYTWO);
+> +       iowrite16(0x8, cpupll->base + REG_LPF_UPDATE_COUNT);
+> +       iowrite16(BIT(12), cpupll->base + REG_LPF_TRANSITIONCTRL);
+> +
+> +       iowrite16(0, cpupll->base + REG_LPF_TOGGLE);
+> +       iowrite16(1, cpupll->base + REG_LPF_TOGGLE);
+> +
+> +       while (!(ioread16(cpupll->base + REG_LPF_LOCK)))
+> +               cpu_relax();
 
-Why signed types?
+Any timeout? Can this use the io read timeout APIs?
 
 > +
-> +       if (WARN_ON(!nco_div_check(div)))
+> +       iowrite16(0, cpupll->base + REG_LPF_TOGGLE);
+> +
+> +       msc313_cpupll_reg_write32(cpupll, REG_LPF_LOW_L, regvalue);
+> +}
+> +
+> +static unsigned long msc313_cpupll_frequencyforreg(u32 reg, unsigned lon=
+g parent_rate)
+> +{
+> +       unsigned long long prescaled =3D ((unsigned long long)parent_rate=
+) * MULTIPLIER;
+> +       unsigned long long scaled;
+> +
+> +       if (prescaled =3D=3D 0 || reg =3D=3D 0)
+> +               return 0;
+> +       scaled =3D DIV_ROUND_DOWN_ULL(prescaled, reg);
+> +
+> +       return scaled;
+
+Just
+
+	return DIV_ROUND_DOWN_ULL(...);
+
+> +}
+> +
+> +static u32 msc313_cpupll_regforfrequecy(unsigned long rate, unsigned lon=
+g parent_rate)
+> +{
+> +       unsigned long long prescaled =3D ((unsigned long long)parent_rate=
+) * MULTIPLIER;
+> +       unsigned long long scaled;
+> +       u32 reg;
+> +
+> +       if (prescaled =3D=3D 0 || rate =3D=3D 0)
 > +               return 0;
 > +
-> +       return FIELD_PREP(DIV_COARSE, tbl->fwd[coarse - COARSE_DIV_OFFSET=
-]) |
-> +                       FIELD_PREP(DIV_FINE, div % 4);
+> +       scaled =3D DIV_ROUND_UP_ULL(prescaled, rate);
+> +       reg =3D scaled;
+> +
+> +       return reg;
+
+Just
+
+	return DIV_ROUND_UP_ULL(...);
+
 > +}
 > +
-> +static int nco_div_translate_inv(struct nco_tables *tbl, int regval)
+> +static unsigned long msc313_cpupll_recalc_rate(struct clk_hw *hw, unsign=
+ed long parent_rate)
 > +{
-> +       int coarse, fine;
-
-Why signed types?
-
+> +       struct msc313_cpupll *cpupll =3D to_cpupll(hw);
 > +
-> +       coarse =3D tbl->inv[FIELD_GET(DIV_COARSE, regval)] + COARSE_DIV_O=
-FFSET;
-> +       fine =3D FIELD_GET(DIV_FINE, regval);
-> +
-> +       return coarse * 4 + fine;
+> +       return msc313_cpupll_frequencyforreg(msc313_cpupll_reg_read32(cpu=
+pll, REG_LPF_LOW_L),
+> +                                            parent_rate);
 > +}
 > +
-> +static int nco_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long parent_rate)
+> +static long msc313_cpupll_round_rate(struct clk_hw *hw, unsigned long ra=
+te,
+> +                                    unsigned long *parent_rate)
 > +{
-> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> +       u32 div;
-> +       s32 inc1, inc2;
-> +       bool was_enabled;
+> +       u32 reg =3D msc313_cpupll_regforfrequecy(rate, *parent_rate);
+> +       long rounded =3D msc313_cpupll_frequencyforreg(reg, *parent_rate);
 > +
-> +       was_enabled =3D nco_is_enabled(hw);
-> +       nco_disable(hw);
+> +       /*
+> +        * This is my poor attempt at making sure the resulting
+> +        * rate doesn't overshoot the requested rate.
 
-Does anything prevent a clk_enable() call from racing with this?
+If you want better bounds you can use determine_rate and then look at
+the min/max constraints to make sure you don't overshoot. But otherwise
+round_rate implementation is up to the provider to figure out what
+should happen, i.e. overshooting could be OK if the provider intends for
+it.
 
+> +        */
+> +       for (; rounded >=3D rate && reg > 0; reg--)
+> +               rounded =3D msc313_cpupll_frequencyforreg(reg, *parent_ra=
+te);
 > +
-> +       div =3D 2 * parent_rate / rate;
-> +       inc1 =3D 2 * parent_rate - div * rate;
-> +       inc2 =3D -((s32) (rate - inc1));
+> +       return rounded;
+> +}
 > +
-> +       if (!nco_div_check(div))
-> +               return -EINVAL;
-
-Did we just fail and leave the clk disabled?
-
+> +static int msc313_cpupll_set_rate(struct clk_hw *hw, unsigned long rate,=
+ unsigned long parent_rate)
+> +{
+> +       struct msc313_cpupll *cpupll =3D to_cpupll(hw);
+> +       u32 reg =3D msc313_cpupll_regforfrequecy(rate, parent_rate);
 > +
-> +       div =3D nco_div_translate(chan->tbl, div);
-> +
-> +       writel_relaxed(div,  chan->base + REG_DIV);
-> +       writel_relaxed(inc1, chan->base + REG_INC1);
-> +       writel_relaxed(inc2, chan->base + REG_INC2);
-> +       writel_relaxed(1 << 31, chan->base + REG_ACCINIT);
-> +
-> +       if (was_enabled)
-> +               nco_enable(hw);
+> +       msc313_cpupll_setfreq(cpupll, reg);
 > +
 > +       return 0;
 > +}
 > +
-> +static unsigned long nco_recalc_rate(struct clk_hw *hw,
-> +                               unsigned long parent_rate)
-> +{
-> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> +       u32 div;
-> +       s32 inc1, inc2, incbase;
-> +
-> +       div =3D nco_div_translate_inv(chan->tbl,
-> +                       readl_relaxed(chan->base + REG_DIV));
-> +
-> +       inc1 =3D readl_relaxed(chan->base + REG_INC1);
-> +       inc2 =3D readl_relaxed(chan->base + REG_INC2);
-> +
-> +       /*
-> +        * We don't support wraparound of accumulator
-> +        * nor the edge case of both increments being zero
-> +        */
-> +       if (inc1 < 0 || inc2 > 0 || (inc1 =3D=3D 0 && inc2 =3D=3D 0))
-> +               return 0;
-> +
-> +       /* Scale both sides of division by incbase to maintain precision =
-*/
-> +       incbase =3D inc1 - inc2;
-> +
-> +       return div_u64(((u64) parent_rate) * 2 * incbase,
-> +                       ((u64) div) * incbase + inc1);
-> +}
-> +
-> +static long nco_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                               unsigned long *parent_rate)
-> +{
-> +       unsigned long lo =3D *parent_rate / (COARSE_DIV_OFFSET + LFSR_TBL=
-SIZE) + 1;
-> +       unsigned long hi =3D *parent_rate / COARSE_DIV_OFFSET;
-> +
-> +       return clamp(rate, lo, hi);
-> +}
-> +
-> +static int nco_enable(struct clk_hw *hw)
-> +{
-> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(chan->base + REG_CTRL);
-> +       writel_relaxed(val | CTRL_ENABLE, chan->base + REG_CTRL);
-
-Nitpick, newline here.
-
-> +       return 0;
-> +}
-> +
-> +static void nco_disable(struct clk_hw *hw)
-> +{
-> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> +       u32 val;
-> +
-> +       val =3D readl_relaxed(chan->base + REG_CTRL);
-> +       writel_relaxed(val & ~CTRL_ENABLE, chan->base + REG_CTRL);
-> +}
-> +
-> +static int nco_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> +
-> +       return (readl_relaxed(chan->base + REG_CTRL) & CTRL_ENABLE) !=3D =
-0;
-> +}
-> +
-> +static const struct clk_ops nco_ops =3D {
-> +       .set_rate =3D nco_set_rate,
-> +       .recalc_rate =3D nco_recalc_rate,
-> +       .round_rate =3D nco_round_rate,
-> +       .enable =3D nco_enable,
-> +       .disable =3D nco_disable,
-> +       .is_enabled =3D nco_is_enabled,
+> +static const struct clk_ops msc313_cpupll_ops =3D {
+> +       .recalc_rate    =3D msc313_cpupll_recalc_rate,
+> +       .round_rate     =3D msc313_cpupll_round_rate,
+> +       .set_rate       =3D msc313_cpupll_set_rate,
 > +};
 > +
-> +static int apple_nco_probe(struct platform_device *pdev)
+> +static const struct of_device_id msc313_cpupll_of_match[] =3D {
+> +       {
+> +               .compatible =3D "mstar,msc313-cpupll",
+> +       },
+> +       {}
+
+This can and should be less lines
+
+	{ .compatible =3D "mstar,msc313-cpupll", },
+	{}
+
+> +};
+> +
+> +static const struct clk_parent_data cpupll_parent =3D {
+> +       .index  =3D 0,
+> +};
+> +
+> +static int msc313_cpupll_probe(struct platform_device *pdev)
 > +{
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +       struct clk_init_data init;
-> +       struct clk_hw_onecell_data *onecell_data;
-> +       const char *parent_name;
-> +       void __iomem *regs;
-> +       struct nco_tables *tbl;
-> +       int nchannels;
-> +       int ret, i;
+> +       struct clk_init_data clk_init =3D {};
+> +       struct device *dev =3D &pdev->dev;
+> +       struct msc313_cpupll *cpupll;
+> +       int ret;
 > +
-> +       ret =3D of_property_read_u32(np, "apple,nchannels", &nchannels);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "missing or invalid apple,nchannels p=
-roperty\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       regs =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(regs))
-> +               return PTR_ERR(regs);
-> +
-> +       if (of_clk_get_parent_count(np) !=3D 1)
-> +               return -EINVAL;
-> +       parent_name =3D of_clk_get_parent_name(np, 0);
-
-Use clk_parent_data instead please.
-
-> +       if (!parent_name)
-> +               return -EINVAL;
-> +
-> +       onecell_data =3D devm_kzalloc(&pdev->dev, struct_size(onecell_dat=
-a, hws,
-> +                                                       nchannels), GFP_K=
-ERNEL);
-> +       if (!onecell_data)
+> +       cpupll =3D devm_kzalloc(&pdev->dev, sizeof(*cpupll), GFP_KERNEL);
+> +       if (!cpupll)
 > +               return -ENOMEM;
-> +       onecell_data->num =3D nchannels;
 > +
-> +       tbl =3D devm_kzalloc(&pdev->dev, sizeof(*tbl), GFP_KERNEL);
-> +       if (!tbl)
-> +               return -ENOMEM;
-> +       nco_compute_tables(tbl);
+> +       cpupll->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(cpupll->base))
+> +               return PTR_ERR(cpupll->base);
 > +
-> +       for (i =3D 0; i < nchannels; i++) {
-> +               struct nco_channel *chan;
+> +       /* LPF might not contain the current frequency so fix that up */
+> +       msc313_cpupll_reg_write32(cpupll, REG_LPF_LOW_L,
+> +                                 msc313_cpupll_reg_read32(cpupll, REG_CU=
+RRENT));
 > +
-> +               chan =3D devm_kzalloc(&pdev->dev, sizeof(*chan), GFP_KERN=
-EL);
-> +               if (!chan)
-> +                       return -ENOMEM;
-> +               chan->base =3D regs + NCO_CHANNEL_STRIDE*i;
-> +               chan->tbl =3D tbl;
+> +       clk_init.name =3D dev_name(dev);
+> +       clk_init.ops =3D &msc313_cpupll_ops;
+> +       clk_init.flags =3D CLK_IS_CRITICAL;
+
+Why is it critical? Can we have a comment? The clk ops don't have enable
+or disable so it seems like the flag won't do anything.
+
+> +       clk_init.parent_data =3D &cpupll_parent;
+> +       clk_init.num_parents =3D 1;
+> +       cpupll->clk_hw.init =3D &clk_init;
 > +
-> +               memset(&init, 0, sizeof(init));
-> +               init.name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL,
-> +                                               "%s-%d", np->name, i);
-> +               init.ops =3D &nco_ops;
-> +               init.num_parents =3D 1;
-> +               init.parent_names =3D &parent_name;
-> +               init.flags =3D 0;
-> +
-> +               chan->hw.init =3D &init;
-> +               ret =3D devm_clk_hw_register(&pdev->dev, &chan->hw);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               onecell_data->hws[i] =3D &chan->hw;
-> +       }
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell=
-_get,
-> +                                                       onecell_data);
+> +       ret =3D devm_clk_hw_register(dev, &cpupll->clk_hw);
 > +       if (ret)
 > +               return ret;
 > +
-> +       return 0;
+> +       return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_simple=
+_get, &cpupll->clk_hw);
 > +}
 > +
-> +static const struct of_device_id apple_nco_ids[] =3D {
-> +       { .compatible =3D "apple,nco" },
-> +       { },
-
-Nitpick, drop the comma so nothing can come after.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, apple_nco_ids)
-> +
-> +static struct platform_driver apple_nco_driver =3D {
+> +static struct platform_driver msc313_cpupll_driver =3D {
 > +       .driver =3D {
-> +               .name =3D "apple-nco",
-> +               .of_match_table =3D apple_nco_ids,
+> +               .name =3D "mstar-msc313-cpupll",
+> +               .of_match_table =3D msc313_cpupll_of_match,
 > +       },
-> +       .probe =3D apple_nco_probe,
+> +       .probe =3D msc313_cpupll_probe,
 > +};
-> +module_platform_driver(apple_nco_driver);
+> +builtin_platform_driver(msc313_cpupll_driver);
