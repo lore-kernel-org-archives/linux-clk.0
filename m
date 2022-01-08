@@ -2,105 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9901CC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jan 2022 20:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B4CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 00:08:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbiAGUts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jan 2022 15:49:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:40184 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229452AbiAGUts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 15:49:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1641588586;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=rFO4WJY3j7pAXTu1RPPXXQTX/D3JtAjVln6pv17Se70=;
-        b=fr4BjV9YAlPLtiR/YM39o8LC+bQqU5dR2YqshHCMYCoVOiJHYapnmIl2Dc0/8R7in2Cbj/
-        RpOQLKM0TYO8u09+pYTWyJyFbGSY9cTms8SaofNJsSPBdP6hQFBugVvDoKedj8XhOluVux
-        S+gSJ+XH2dmuBUfanWgFAQmuUqQ6Vfk=
-Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com
- [209.85.210.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-617-UZG1BwXKMN6q3PJh0_qf5A-1; Fri, 07 Jan 2022 15:49:45 -0500
-X-MC-Unique: UZG1BwXKMN6q3PJh0_qf5A-1
-Received: by mail-ot1-f69.google.com with SMTP id v22-20020a0568301bd600b00590a8d65e0fso241160ota.4
-        for <linux-clk@vger.kernel.org>; Fri, 07 Jan 2022 12:49:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rFO4WJY3j7pAXTu1RPPXXQTX/D3JtAjVln6pv17Se70=;
-        b=Jk1+Kl02KZuR1OAQfoB1bhAGUGicM2DxNylAsuC6IfrdcETLqtMUGOi9FGCcV732NO
-         0UzJs73Ud56mS910WCw/dtZ79vj1ZVs2AcOsedqqf/UQH+Rjv5yuCncufAOmcvA58pvL
-         4mVCzmWq6EDt87QzOb9hXSdKBR5+4b9fzGGaW2Iz+Ch+eoy8FNtNznKVmKtI1BIFKx/q
-         ppI02z+9cc2JKHEmwDhjPS2Hp4XAeWoGHGJFWZN0QnOYUV+zQYIQvD+h5v0QKXjh/kZd
-         mElReg7cWgkqG33qKPaOwhf+2jCCF2OgpJPwrjl+KHuQVO/LJShpSZHO/Frd30X3yZWe
-         wTog==
-X-Gm-Message-State: AOAM5304yCqiqfNCTqKHDwfRuVoJ7CeDKKo2Epe8zeYgqK2FN58trRIE
-        BznSW3w5t+gq8w9qfpdVIhCqCCA5U4k/fpSnaueSdLgFHvUPqwXmBsGLbQp1OMRJpvF9wXq2z+2
-        AMWeNgF6bHeecnKLl4N9u
-X-Received: by 2002:a05:6830:2b14:: with SMTP id l20mr47451464otv.42.1641588585254;
-        Fri, 07 Jan 2022 12:49:45 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxoF/ZqeM2gXeI5h7MGTxjtgzAX2We+Kfkvc0DuwXwOA198L3Mc61AmDSUseGbyUBDzv34mkA==
-X-Received: by 2002:a05:6830:2b14:: with SMTP id l20mr47451453otv.42.1641588585073;
-        Fri, 07 Jan 2022 12:49:45 -0800 (PST)
-Received: from localhost.localdomain.com (024-205-208-113.res.spectrum.com. [24.205.208.113])
-        by smtp.gmail.com with ESMTPSA id e4sm1133222oiy.12.2022.01.07.12.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jan 2022 12:49:44 -0800 (PST)
-From:   trix@redhat.com
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        nobuhiro1.iwamatsu@toshiba.co.jp, nathan@kernel.org,
-        ndesaulniers@google.com
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        Tom Rix <trix@redhat.com>
-Subject: [PATCH] clk: visconti: fix array's data insert check
-Date:   Fri,  7 Jan 2022 12:49:39 -0800
-Message-Id: <20220107204939.3939151-1-trix@redhat.com>
-X-Mailer: git-send-email 2.26.3
+        id S229797AbiAHAIO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jan 2022 19:08:14 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:57562 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229703AbiAHAIO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jan 2022 19:08:14 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 126CEB827B9;
+        Sat,  8 Jan 2022 00:08:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8373C36AE5;
+        Sat,  8 Jan 2022 00:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1641600491;
+        bh=eRTFqRjFRgCxvmbchANikxM/bE3d5Z9QWcoIjpeA9No=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=q7NbhrGKV6ToLJTDT/XYgUGwPUbhiN8AEtI6Wg693M0CZuPXWEVz+MgWoYAq2hIkt
+         ogidsf6NW0emarxkW/WFsbpWzrFGw/Yaf3ATe9pbnv8xa5RB2j/BgGZypx3IwkPJx4
+         Aae+3HWZ1Qo08Gp5Nz1RJClmeqAT29g4jYvtnVqQTa3pr6Yc+6ALJL6/3DxbVj8JBq
+         RX0O+cFzp5j0UbKezAbDODbsuh1S7E0/Loumw/xUsELKpifGrCQLIX+LB67RZoLbdR
+         I/uMVLX4zaG6CJ3ECT7lMhwvFVyIWY/NoHU94bmqAD+HCHwR2GN57RQzizf1Lqw1HT
+         f3xD1828e65xw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220107183303.2337676-1-nathan@kernel.org>
+References: <20220107183303.2337676-1-nathan@kernel.org>
+Subject: Re: [PATCH] clk: visconti: Remove pointless NULL check in visconti_pll_add_lookup()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Nathan Chancellor <nathan@kernel.org>,
+        kernel test robot <lkp@intel.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Date:   Fri, 07 Jan 2022 16:08:10 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20220108000811.B8373C36AE5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tom Rix <trix@redhat.com>
+Quoting Nathan Chancellor (2022-01-07 10:33:03)
+> Clang warns:
+>=20
+> drivers/clk/visconti/pll.c:292:20: warning: address of array 'ctx->clk_da=
+ta.hws' will always evaluate to 'true' [-Wpointer-bool-conversion]
+>         if (ctx->clk_data.hws && id)
+>             ~~~~~~~~~~~~~~^~~ ~~
+> 1 warning generated.
+>=20
+> This array cannot be NULL if ctx is not NULL, which is allocated in
+> visconti_init_pll(), so just remove the check, which matches other clk
+> drivers.
+>=20
+> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and =
+reset driver")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/1564
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
 
-Clang build fails with
-pll.c:292:20: error: address of array 'ctx->clk_data.hws' will
-  always evaluate to 'true'
-        if (ctx->clk_data.hws && id)
-            ~~~~~~~~~~~~~~^~~ ~~
-
-This check protects inserting into the clk_data.hws array.
-clk_data is allocated a trailing element of the ctx struct.
-If the ctx is ok, the ctx->clk_data.hws will be ok.
-
-Change to checking if 'id' falls outside of the array
-bounds.
-
-Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and reset driver")
-Signed-off-by: Tom Rix <trix@redhat.com>
----
- drivers/clk/visconti/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/visconti/pll.c b/drivers/clk/visconti/pll.c
-index 3b6e88bb73d5b..7f2e1016536ab 100644
---- a/drivers/clk/visconti/pll.c
-+++ b/drivers/clk/visconti/pll.c
-@@ -289,7 +289,7 @@ static void visconti_pll_add_lookup(struct visconti_pll_provider *ctx,
- 				    struct clk_hw *hw_clk,
- 				    unsigned int id)
- {
--	if (ctx->clk_data.hws && id)
-+	if (id < ctx->clk_data.num)
- 		ctx->clk_data.hws[id] = hw_clk;
- }
- 
--- 
-2.26.3
-
+Applied to clk-next
