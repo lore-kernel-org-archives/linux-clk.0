@@ -2,96 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC40C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 07:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63918C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Jan 2022 11:50:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233719AbiAHH3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Jan 2022 02:29:44 -0500
-Received: from box.trvn.ru ([194.87.146.52]:33981 "EHLO box.trvn.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233484AbiAHH3o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Jan 2022 02:29:44 -0500
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 70BE04038B;
-        Sat,  8 Jan 2022 12:29:42 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1641626982; bh=BDOoNJU08j6Y2WEJp0zPmdWV3cy+R14uzOjvfVoYobE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=AUOQ+gqvtUCYb1LjGXJSlpNtbrLaEZzscSnETqamvKwkD6s5NjDFWNlB7x1YTejYx
-         gl1wDsoOyTQ6L529MLDd0DLDiVY6LrRD5hev3Bh1lVQtWXiBtWOVbDVaoC3wibp/A5
-         +YIwa2htCHL+PMlzZtF4exfv2VPwK7YXqEfoFiPNFJJoQT/ucmbkyXGYpiULemyZhf
-         JKoEEXLNohpEgIFSBFNrDjdKN6OzRy/0XS6gcqCTeIxs5IBZ6KKdvc387oQrOMl1ZI
-         ovvHE3q5L8gQJm177nLVfvTch/nq8gGxZRZ5GeY4IkSXCXMOSqBgPyCA1tVBSXr1dK
-         nP0xnzJXdPTiQ==
+        id S234129AbiAHLuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Jan 2022 06:50:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45324 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234122AbiAHLuB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Jan 2022 06:50:01 -0500
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DA9C06173F
+        for <linux-clk@vger.kernel.org>; Sat,  8 Jan 2022 03:50:01 -0800 (PST)
+Received: by mail-vk1-xa35.google.com with SMTP id j4so5243313vkr.12
+        for <linux-clk@vger.kernel.org>; Sat, 08 Jan 2022 03:50:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jT+rZ6KhWgyOiP8gxdO8rfmpX6djtwY+FUwd5SZNm1o=;
+        b=ACIzHwB/Ky1kjBSFyQgqEhnsE3Obu0izZaLSJnESASh5JGs1J3mR65xCNqsyDpXyJk
+         0sJL5/uYRWDUaH+7J9ZO9s8a1AS0rGrvpdtcn3wd2mfJCyRA3gCo1DGzAkX12HgYjI9d
+         yrjO9tJLtxprk9m7ELO5gr4jMN/nfpTxbIiR0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jT+rZ6KhWgyOiP8gxdO8rfmpX6djtwY+FUwd5SZNm1o=;
+        b=c+jl/KuOMz5EqEzBbc1ogj6t5dK5G8GLS+Lo9qVAGsMOodu1+wSvgXLGBcTEXIETof
+         ZpTuiaGnfZNR26bHPzrYxl52Ln0lIabINt3W95XNjDOr677eAin7KJa8WXBtexlHN7A5
+         5jZtb2r1FpN88PdjvrPJZcSFEfn/sVOx/3puai7DrdD0E8PJtI/dFESdn2doVUyly2YJ
+         f9+//4r/pCdG/PFd1wqISXgMq+OtId/WppbYK5qKnDX4jDuKFt/hALZge+BqvRHwexVK
+         3oQQ23+fu2UYCYuAWe8d2Z1Ici67Byr4WrpSi5IIplW6QRJyOL4fn2n9cKQ05W5GSgE+
+         HbKA==
+X-Gm-Message-State: AOAM533JLNJP6NYECM34J+0weUI28jfQRlr9sVexdK/dISnrT4r7+3Dm
+        ccIyYwRX20ct/UAee/C3iEQ1tU5cJJy7AUCLNFvHuw==
+X-Google-Smtp-Source: ABdhPJysus5Yn/PoxPLFBsNV4aVDh5kZHK4M1irFeEkdg+EXrcz9VCeGuicFabTl+uMRLKeeDpbKaMsEn1lMI2wcD3o=
+X-Received: by 2002:a05:6122:788:: with SMTP id k8mr21980762vkr.39.1641642600543;
+ Sat, 08 Jan 2022 03:50:00 -0800 (PST)
 MIME-Version: 1.0
-Date:   Sat, 08 Jan 2022 12:29:42 +0500
-From:   Nikita Travkin <nikita@trvn.ru>
+References: <20220102165730.50190-1-romain.perier@gmail.com>
+ <20220102165730.50190-3-romain.perier@gmail.com> <20220108012515.D1213C36AEB@smtp.kernel.org>
+In-Reply-To: <20220108012515.D1213C36AEB@smtp.kernel.org>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Sat, 8 Jan 2022 20:49:49 +0900
+Message-ID: <CAFr9PX=PvqTtueB9Mi_hZWaUvwfQWhm9Z2D+VtiJcnjzZSxH9w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] clk: mstar: msc313 cpupll clk driver
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
-        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 2/4] clk: qcom: clk-rcg2: Make sure to not write d=0 to
- the NMD register
-In-Reply-To: <20220108005604.05575C36AEB@smtp.kernel.org>
-References: <20211209163720.106185-1-nikita@trvn.ru>
- <20211209163720.106185-3-nikita@trvn.ru>
- <20220108005604.05575C36AEB@smtp.kernel.org>
-Message-ID: <b55dc8e9ec0e8549fe61e6439a02f912@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Romain Perier <romain.perier@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Stephen,
 
-Stephen Boyd писал(а) 08.01.2022 05:56:
-> Quoting Nikita Travkin (2021-12-09 08:37:18)
->> Sometimes calculation of d value may result in 0 because of the
->> rounding after integer division. This causes the following error:
->>
->> [  113.969689] camss_gp1_clk_src: rcg didn't update its configuration.
->> [  113.969754] WARNING: CPU: 3 PID: 35 at drivers/clk/qcom/clk-rcg2.c:122 update_config+0xc8/0xdc
->>
->> Make sure that D value is never zero.
->>
->> Fixes: 7f891faf596e ("clk: qcom: clk-rcg2: Add support for duty-cycle for RCG")
->> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
->> ---
->>  drivers/clk/qcom/clk-rcg2.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
->> index 6964cf914b60..fdfd43e2a01b 100644
->> --- a/drivers/clk/qcom/clk-rcg2.c
->> +++ b/drivers/clk/qcom/clk-rcg2.c
->> @@ -424,6 +424,10 @@ static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
->>         if (d > mask)
->>                 d = mask;
->>
->> +       /* Hardware can't handle d=0, make sure it's at least 1 */
->> +       if (!d)
->> +               d = 1;
-> 
-> Maybe clamp() would be better
-> 
-> 	/*
->  	 * Check bit widths of 2d. If D is too big reduce duty cycle and
-> 	 * ensure it is non-zero.
-> 	 */
-> 	clamp(d, 1, mask);
-> 
+Thank you for looking at this for us.
 
-Yes, this looks nicer, will use it in v2. Thanks for the suggestion!
+On Sat, 8 Jan 2022 at 10:25, Stephen Boyd <sboyd@kernel.org> wrote:
 
-Nikita
+> > +static void msc313_cpupll_reg_write32(struct msc313_cpupll *cpupll, unsigned int reg, u32 value)
+> > +{
+> > +       u16 l = value & 0xffff, h = (value >> 16) & 0xffff;
+> > +
+> > +       iowrite16(l, cpupll->base + reg);
+>
+> We don't usually see 16-bit accesses but if that's what the hardware
+> wants then OK.
 
->> +
->>         if ((d / 2) > (n - m))
->>                 d = (n - m) * 2;
->>         else if ((d / 2) < (m / 2))
+This hardware is weird and most of the registers are like this where
+they are 32bit spaced but only 16 bits are used in each.
+32bit registers are split across 2 16 bit registers spaced 32bits
+apart. Writing the two parts has to be in the right order to get the
+right result.
+
+> > +       iowrite16(h, cpupll->base + reg + 4);
+> > +}
+> > +
+> > +static void msc313_cpupll_setfreq(struct msc313_cpupll *cpupll, u32 regvalue)
+> > +{
+> > +       msc313_cpupll_reg_write32(cpupll, REG_LPF_HIGH_BOTTOM, regvalue);
+> > +
+> > +       iowrite16(0x1, cpupll->base + REG_LPF_MYSTERYONE);
+> > +       iowrite16(0x6, cpupll->base + REG_LPF_MYSTERYTWO);
+> > +       iowrite16(0x8, cpupll->base + REG_LPF_UPDATE_COUNT);
+> > +       iowrite16(BIT(12), cpupll->base + REG_LPF_TRANSITIONCTRL);
+> > +
+> > +       iowrite16(0, cpupll->base + REG_LPF_TOGGLE);
+> > +       iowrite16(1, cpupll->base + REG_LPF_TOGGLE);
+> > +
+> > +       while (!(ioread16(cpupll->base + REG_LPF_LOCK)))
+> > +               cpu_relax();
+>
+> Any timeout? Can this use the io read timeout APIs?
+
+Good point. I never saw a situation where the lock didn't happen but I
+think Willy did when he was poking at it.
+I guess if it doesn't lock we should timeout, warn that something
+isn't working and return an error.
+
+> > +static long msc313_cpupll_round_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                    unsigned long *parent_rate)
+> > +{
+> > +       u32 reg = msc313_cpupll_regforfrequecy(rate, *parent_rate);
+> > +       long rounded = msc313_cpupll_frequencyforreg(reg, *parent_rate);
+> > +
+> > +       /*
+> > +        * This is my poor attempt at making sure the resulting
+> > +        * rate doesn't overshoot the requested rate.
+>
+> If you want better bounds you can use determine_rate and then look at
+> the min/max constraints to make sure you don't overshoot. But otherwise
+> round_rate implementation is up to the provider to figure out what
+> should happen, i.e. overshooting could be OK if the provider intends for
+> it.
+
+This clock is basically only used by cpufreq-dt. I'm not sure what it
+would do with determine_rate. I'll take a look.
+The main thing I wanted to do here was make sure the resulting clock
+wasn't higher than what we have in the opp table and end up with the
+CPU locking up.
+
+> > +       clk_init.name = dev_name(dev);
+> > +       clk_init.ops = &msc313_cpupll_ops;
+> > +       clk_init.flags = CLK_IS_CRITICAL;
+>
+> Why is it critical? Can we have a comment? The clk ops don't have enable
+> or disable so it seems like the flag won't do anything.
+
+This clock is critical in the sense that once the DDR memory is setup
+by the bootloader you must not turn it off even if you switch the CPU
+to the other clock source. If you disable it the system locks up.
+I think it can be dropped as does nothing without enable or disable
+like you wrote.
+
+Cheers,
+
+Daniel
