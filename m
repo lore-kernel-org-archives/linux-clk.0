@@ -2,69 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89318C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 00:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D690C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 00:59:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232158AbiAJA4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Jan 2022 19:56:33 -0500
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:36769 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232114AbiAJA4c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jan 2022 19:56:32 -0500
-Received: by mail-ot1-f52.google.com with SMTP id s21-20020a05683004d500b0058f585672efso13587596otd.3;
-        Sun, 09 Jan 2022 16:56:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=8dmC09EiRPoAEtD5j7hv6yre/JW8aQu59sHFW+QrEpg=;
-        b=ksdrY7CV+bOq+p5X1iRfFiOmffrbCZcUVCfVEvOnNTLCupmmmR1klW8v2447sHe29Y
-         LL3UuyOS6w1GEpCczV/p5ip7xtDV6e8MJgGLe181PhlzXYaJoQNA4LrJJzRSPNDCtCXP
-         GKJB4Y6OWmRlLzNZiSgovjNi5gfntFGHlpFCLAYvwObRf+f/3h9enZas6gKj+1skmDk8
-         +ijzmME47p4PWLK0Mg5GL1ay7actbpvd6t1X5Ti1VbV20KIvMSeO1CrOf4tzdtrPqVe5
-         EIDw0j9HJ31Qm6C7vhUFAcP2jmEV9v979dE/8E9NjSbEKGDOFW23DpBBMmk+UrkYedv0
-         gxzA==
-X-Gm-Message-State: AOAM5324RUGLgh+ItndA03Oei4/Pdoua1Xv5x95jELERsjLN6KQV4jLZ
-        MAxyFgSg44KLDgSG2rYplQ==
-X-Google-Smtp-Source: ABdhPJyJ2SijgS3bWm2elHfdJ984rDl5g4FQIsaX+vfPHIpNe+6toryIbLDyunrUMSVRL1HMrGXXCQ==
-X-Received: by 2002:a9d:7295:: with SMTP id t21mr14116494otj.230.1641776192088;
-        Sun, 09 Jan 2022 16:56:32 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id 5sm955286oip.17.2022.01.09.16.56.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Jan 2022 16:56:31 -0800 (PST)
-Received: (nullmailer pid 3946821 invoked by uid 1000);
-        Mon, 10 Jan 2022 00:56:30 -0000
-Date:   Sun, 9 Jan 2022 18:56:30 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        broonie@kernel.org, arnd@arndb.de, stefan.wahren@i2se.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        wells.lu@sunplus.com
-Subject: Re: [PATCH v7 01/10] dt-bindings: vendor-prefixes: Add Sunplus
-Message-ID: <YduEPlMoAR9KXoaa@robh.at.kernel.org>
-References: <cover.1640154492.git.qinjian@cqplus1.com>
- <2e74a1339a5ea54d92fdc4d1998a2b169e23b82b.1640154492.git.qinjian@cqplus1.com>
+        id S232114AbiAJA70 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Jan 2022 19:59:26 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41196 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S237643AbiAJA7Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jan 2022 19:59:25 -0500
+X-UUID: 81431f3ba0ab4c5d960a72f087e75100-20220110
+X-UUID: 81431f3ba0ab4c5d960a72f087e75100-20220110
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 2072794757; Mon, 10 Jan 2022 08:59:20 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Mon, 10 Jan 2022 08:59:18 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 10 Jan 2022 08:59:18 +0800
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [v2 0/3] Integrate vppsys with mtk-mmsys in MT8195
+Date:   Mon, 10 Jan 2022 08:58:59 +0800
+Message-ID: <20220110005902.27148-1-chun-jie.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e74a1339a5ea54d92fdc4d1998a2b169e23b82b.1640154492.git.qinjian@cqplus1.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 22, 2021 at 03:05:57PM +0800, Qin Jian wrote:
-> Add vendor prefix for Sunplus Technology Co., Ltd. (http://www.sunplus.com)
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+This patch series is based on 5.16-rc6.
 
-As this one is a dependency for other series, applied for 5.17.
+change since v1:
+- remove vppsys in clock document
+- unregister clock when fail to add clock provider
 
-Rob
+Chun-Jie Chen (3):
+  clk: mediatek: Add error handle when fail to register clock provider
+  dt-bindings: ARM: Mediatek: Remove vppsys in MT8195 clock document
+  clk: mediatek: Integrate vppsys with mtk-mmsys in MT8195
+
+ .../arm/mediatek/mediatek,mt8195-clock.yaml   | 16 -------
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c  |  5 ++-
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c  |  5 ++-
+ drivers/clk/mediatek/clk-mt8195-topckgen.c    |  5 ++-
+ drivers/clk/mediatek/clk-mt8195-vdo0.c        |  5 ++-
+ drivers/clk/mediatek/clk-mt8195-vdo1.c        |  5 ++-
+ drivers/clk/mediatek/clk-mt8195-vpp0.c        | 42 ++++++++++++-------
+ drivers/clk/mediatek/clk-mt8195-vpp1.c        | 42 ++++++++++++-------
+ drivers/clk/mediatek/clk-mtk.c                | 14 ++++++-
+ drivers/clk/mediatek/clk-mtk.h                |  1 +
+ 10 files changed, 89 insertions(+), 51 deletions(-)
+
+--
+2.18.0
+
