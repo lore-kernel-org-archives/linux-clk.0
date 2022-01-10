@@ -2,130 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70E9C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 18:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 757DFC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 18:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238833AbiAJSNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 13:13:44 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40012 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238832AbiAJSNn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 13:13:43 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: alyssa)
-        with ESMTPSA id 2303F1F43C00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1641838422;
-        bh=n0yhSvOkX/YKC7+yMoQzR39vuDC3gvq+odokEEpUJsU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UfwLa9pS96C0zv1QZY/++AXY94AyamKlGmfT3IF9e9Nax7zwzTpQeMvcYwkwYbHHV
-         QjLqfBshb82Gx4oWg+Q406eKOeBEy+/OwEameJjxutbBsWVVUqDFgD1muVnOLhFHeq
-         v0Ik7dxGWkWVVRgBnc7jVbxStjRlYU4gY7itLPMekzVk52Q6xIzWIZoKFNDvr1U63F
-         Vw8yuxoXxostFP5PYTKZq6Mbc3sNhGMc+STLbo/OSzRzLfoojrbL3mmWar5kbbot1P
-         TS59unKOYv/5NBdOo259M6ovHf7b4ZRg9NMx9NAwnVupRHpuFT6nVXvKdTPmM1Dxgg
-         BtI8bWSknfltg==
-From:   Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
-To:     linux-mediatek@lists.infradead.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S241435AbiAJSkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 13:40:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18445 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238734AbiAJSkN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jan 2022 13:40:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1641840013; x=1673376013;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U+Glj/h5tYRthQXKeKVdr/rRhv+kw5dVVIG5/MTuWRQ=;
+  b=BWzqYv+/Gx/9ySS1uKc7g105Qhg0GhGlDz8hOnH1FL56dMNsmA//bdRF
+   f/XH7y4XcHBcAoRYZljiZ0yAviW1EHT39Q0VYX1rPmI7UiKYQeiPqt3U7
+   Kq0oBMPn82oskIXq1rZJMWtiYmHw5MwSvH77BbETMNV2Ux61fd2mjQC3h
+   6qFRMCKHZPh7CWbn+ny7B4Za/GyQ9YmScuv6BcCfehorTnYMVBJz0pnMv
+   SoI3mombkGss6ruyBfPRvJweQwn3Ivd+XSW8UbiidokiZ/lvQt0Y9YR3J
+   InchGmmkUVbofzEhJYVfH24zfsVwqtaL3AIhnUwhDfi2CZOuGH3QS3T3e
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10223"; a="306649253"
+X-IronPort-AV: E=Sophos;i="5.88,277,1635231600"; 
+   d="scan'208";a="306649253"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2022 10:40:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,277,1635231600"; 
+   d="scan'208";a="690672972"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga005.jf.intel.com with ESMTP; 10 Jan 2022 10:40:09 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1n6zaS-0003px-HT; Mon, 10 Jan 2022 18:40:08 +0000
+Date:   Tue, 11 Jan 2022 02:39:17 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Nick Fan <Nick.Fan@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Subject: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
-Date:   Mon, 10 Jan 2022 13:13:30 -0500
-Message-Id: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     kbuild-all@lists.01.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        srv_heupstream@mediatek.com
+Subject: Re: [v1 03/16] clk: mediatek: Add MT8186 mcusys clock support
+Message-ID: <202201110231.DNu9pn4H-lkp@intel.com>
+References: <20220110134416.5191-4-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220110134416.5191-4-chun-jie.chen@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Set a mysterious chicken bit in the MT8192 clock driver (!) to get the
-Mali GPU on MT8192 to work. This workaround is from the downstream Mali
-driver shipped in ChromeOS. The change there is unsuitable for mainline
-but good as a reference for the hardware behaviour:
+Hi Chun-Jie,
 
-https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
+Thank you for the patch! Yet something to improve:
 
-That links to an internal Google issue tracker which I assume has more
-information on the bug. I would appreciate if someone from Google or
-MediaTek could explain what this change actually does and why it's
-necessary on MT8192.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next v5.16 next-20220110]
+[cannot apply to mbgg-mediatek/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-At any rate, this register logically belongs to the MT8192 "infra" clock
-device, so it makes sense to set it there too. This avoids adding any
-platform-specific hacks to the 3D driver, either mainline (Panfrost) or
-legacy (kbase).
+url:    https://github.com/0day-ci/linux/commits/Chun-Jie-Chen/dt-bindings-ARM-Mediatek-Add-new-document-bindings-of-MT8186-clock/20220110-224451
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220111/202201110231.DNu9pn4H-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/d28b64e80990fd336192ccdd31676120bf4e2696
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Chun-Jie-Chen/dt-bindings-ARM-Mediatek-Add-new-document-bindings-of-MT8186-clock/20220110-224451
+        git checkout d28b64e80990fd336192ccdd31676120bf4e2696
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash
 
-Signed-off-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
-Cc: Nick Fan <Nick.Fan@mediatek.com>
-Cc: Nicolas Boichat <drinkcat@chromium.org>
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/mediatek/clk-mt8186-mcu.c: In function 'clk_mt8186_mcu_probe':
+>> drivers/clk/mediatek/clk-mt8186-mcu.c:74:9: error: implicit declaration of function 'mtk_clk_unregister'; did you mean 'devm_clk_unregister'? [-Werror=implicit-function-declaration]
+      74 |         mtk_clk_unregister(clk_data);
+         |         ^~~~~~~~~~~~~~~~~~
+         |         devm_clk_unregister
+   cc1: some warnings being treated as errors
+
+
+vim +74 drivers/clk/mediatek/clk-mt8186-mcu.c
+
+    48	
+    49	static int clk_mt8186_mcu_probe(struct platform_device *pdev)
+    50	{
+    51		struct clk_onecell_data *clk_data;
+    52		struct device_node *node = pdev->dev.of_node;
+    53		int r;
+    54		void __iomem *base;
+    55	
+    56		base = devm_platform_ioremap_resource(pdev, 0);
+    57		if (IS_ERR(base))
+    58			return PTR_ERR(base);
+    59	
+    60		clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
+    61		if (!clk_data)
+    62			return -ENOMEM;
+    63	
+    64		mtk_clk_register_composites(mcu_muxes, ARRAY_SIZE(mcu_muxes), base,
+    65					    &mt8186_clk_lock, clk_data);
+    66	
+    67		r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+    68		if (r)
+    69			goto unregister_clk;
+    70	
+    71		return r;
+    72	
+    73	unregister_clk:
+  > 74		mtk_clk_unregister(clk_data);
+    75		mtk_free_clk_data(clk_data);
+    76		return r;
+    77	}
+    78	
+
 ---
- drivers/clk/mediatek/clk-mt8192.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index cbc7c6dbe0f4..e3673494d08d 100644
---- a/drivers/clk/mediatek/clk-mt8192.c
-+++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -1179,6 +1179,10 @@ static const struct mtk_pll_data plls[] = {
- 
- static struct clk_onecell_data *top_clk_data;
- 
-+/* Control registers in the infra block used to set a chicken bit */
-+#define INFRA_CTRL 0x290
-+#define INFRA_CTRL_DISABLE_MFG2ACP BIT(9)
-+
- static void clk_mt8192_top_init_early(struct device_node *node)
- {
- 	int i;
-@@ -1224,6 +1228,29 @@ static int clk_mt8192_top_probe(struct platform_device *pdev)
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
- }
- 
-+/*
-+ * Disable ACP on the infra clock. Setting this quirk is required for 3D to
-+ * work correctly. Without this quirk, any work queued to the Mali GPU faults,
-+ * for example raising a Data Invalid Fault. This suggests the GPU is failing
-+ * to read back the contents of shared CPU/GPU memory correctly, perhaps due to
-+ * a MT8192 platform integration issue breaking memory or caches.
-+ *
-+ * Relevant downstream change:
-+ * https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
-+ */
-+static int clk_mt8192_infra_disable_mfg2acp(struct platform_device *pdev)
-+{
-+	void __iomem *base = devm_platform_ioremap_resource(pdev, 0);
-+	void __iomem *infra_ctrl = base + INFRA_CTRL;
-+
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	writel(readl(infra_ctrl) | INFRA_CTRL_DISABLE_MFG2ACP, infra_ctrl);
-+
-+	return 0;
-+}
-+
- static int clk_mt8192_infra_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -1238,6 +1265,10 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
- 	if (r)
- 		return r;
- 
-+	r = clk_mt8192_infra_disable_mfg2acp(pdev);
-+	if (r)
-+		return r;
-+
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
--- 
-2.30.2
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
