@@ -2,417 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D08C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 17:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70E9C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 18:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237976AbiAJRKT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 12:10:19 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:53570 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S237934AbiAJRKP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 12:10:15 -0500
-X-UUID: 219266a0adf046259f1f7bfeeb831682-20220111
-X-UUID: 219266a0adf046259f1f7bfeeb831682-20220111
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 701850342; Tue, 11 Jan 2022 01:10:12 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 11 Jan 2022 01:10:11 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 11 Jan 2022 01:10:10 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S238833AbiAJSNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 13:13:44 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40012 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238832AbiAJSNn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 13:13:43 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: alyssa)
+        with ESMTPSA id 2303F1F43C00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1641838422;
+        bh=n0yhSvOkX/YKC7+yMoQzR39vuDC3gvq+odokEEpUJsU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UfwLa9pS96C0zv1QZY/++AXY94AyamKlGmfT3IF9e9Nax7zwzTpQeMvcYwkwYbHHV
+         QjLqfBshb82Gx4oWg+Q406eKOeBEy+/OwEameJjxutbBsWVVUqDFgD1muVnOLhFHeq
+         v0Ik7dxGWkWVVRgBnc7jVbxStjRlYU4gY7itLPMekzVk52Q6xIzWIZoKFNDvr1U63F
+         Vw8yuxoXxostFP5PYTKZq6Mbc3sNhGMc+STLbo/OSzRzLfoojrbL3mmWar5kbbot1P
+         TS59unKOYv/5NBdOo259M6ovHf7b4ZRg9NMx9NAwnVupRHpuFT6nVXvKdTPmM1Dxgg
+         BtI8bWSknfltg==
+From:   Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+To:     linux-mediatek@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Miles Chen <miles.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 3/3] clk: mediatek: support COMMON_CLK_MT8192 module build
-Date:   Tue, 11 Jan 2022 01:09:59 +0800
-Message-ID: <20220110171000.24316-4-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220110171000.24316-1-miles.chen@mediatek.com>
-References: <20220110171000.24316-1-miles.chen@mediatek.com>
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>
+Subject: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+Date:   Mon, 10 Jan 2022 13:13:30 -0500
+Message-Id: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To support COMMON_CLK_MT8192* module build,
-add MODULE_LICENSE and include module.h.
+Set a mysterious chicken bit in the MT8192 clock driver (!) to get the
+Mali GPU on MT8192 to work. This workaround is from the downstream Mali
+driver shipped in ChromeOS. The change there is unsuitable for mainline
+but good as a reference for the hardware behaviour:
 
-Cc: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
+
+That links to an internal Google issue tracker which I assume has more
+information on the bug. I would appreciate if someone from Google or
+MediaTek could explain what this change actually does and why it's
+necessary on MT8192.
+
+At any rate, this register logically belongs to the MT8192 "infra" clock
+device, so it makes sense to set it there too. This avoids adding any
+platform-specific hacks to the 3D driver, either mainline (Panfrost) or
+legacy (kbase).
+
+Signed-off-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+Cc: Nick Fan <Nick.Fan@mediatek.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
 ---
- drivers/clk/mediatek/Kconfig                  | 26 +++++++++----------
- drivers/clk/mediatek/clk-mt8192-aud.c         |  4 ++-
- drivers/clk/mediatek/clk-mt8192-cam.c         |  4 ++-
- drivers/clk/mediatek/clk-mt8192-img.c         |  4 ++-
- .../clk/mediatek/clk-mt8192-imp_iic_wrap.c    |  4 ++-
- drivers/clk/mediatek/clk-mt8192-ipe.c         |  4 ++-
- drivers/clk/mediatek/clk-mt8192-mdp.c         |  4 ++-
- drivers/clk/mediatek/clk-mt8192-mfg.c         |  4 ++-
- drivers/clk/mediatek/clk-mt8192-mm.c          |  4 ++-
- drivers/clk/mediatek/clk-mt8192-msdc.c        |  4 ++-
- drivers/clk/mediatek/clk-mt8192-scp_adsp.c    |  4 ++-
- drivers/clk/mediatek/clk-mt8192-vdec.c        |  4 ++-
- drivers/clk/mediatek/clk-mt8192-venc.c        |  4 ++-
- drivers/clk/mediatek/clk-mt8192.c             |  2 ++
- 14 files changed, 51 insertions(+), 25 deletions(-)
+ drivers/clk/mediatek/clk-mt8192.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 3ce6fb04d8ff..b2205caf673f 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -496,7 +496,7 @@ config COMMON_CLK_MT8183_VENCSYS
- 	  This driver supports MediaTek MT8183 vencsys clocks.
- 
- config COMMON_CLK_MT8192
--	bool "Clock driver for MediaTek MT8192"
-+	tristate "Clock driver for MediaTek MT8192"
- 	depends on ARM64 || COMPILE_TEST
- 	select COMMON_CLK_MEDIATEK
- 	default ARM64
-@@ -504,73 +504,73 @@ config COMMON_CLK_MT8192
- 	  This driver supports MediaTek MT8192 basic clocks.
- 
- config COMMON_CLK_MT8192_AUDSYS
--	bool "Clock driver for MediaTek MT8192 audsys"
-+	tristate "Clock driver for MediaTek MT8192 audsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 audsys clocks.
- 
- config COMMON_CLK_MT8192_CAMSYS
--	bool "Clock driver for MediaTek MT8192 camsys"
-+	tristate "Clock driver for MediaTek MT8192 camsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 camsys and camsys_raw clocks.
- 
- config COMMON_CLK_MT8192_IMGSYS
--	bool "Clock driver for MediaTek MT8192 imgsys"
-+	tristate "Clock driver for MediaTek MT8192 imgsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imgsys and imgsys2 clocks.
- 
- config COMMON_CLK_MT8192_IMP_IIC_WRAP
--	bool "Clock driver for MediaTek MT8192 imp_iic_wrap"
-+	tristate "Clock driver for MediaTek MT8192 imp_iic_wrap"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imp_iic_wrap clocks.
- 
- config COMMON_CLK_MT8192_IPESYS
--	bool "Clock driver for MediaTek MT8192 ipesys"
-+	tristate "Clock driver for MediaTek MT8192 ipesys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 ipesys clocks.
- 
- config COMMON_CLK_MT8192_MDPSYS
--	bool "Clock driver for MediaTek MT8192 mdpsys"
-+	tristate "Clock driver for MediaTek MT8192 mdpsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mdpsys clocks.
- 
- config COMMON_CLK_MT8192_MFGCFG
--	bool "Clock driver for MediaTek MT8192 mfgcfg"
-+	tristate "Clock driver for MediaTek MT8192 mfgcfg"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mfgcfg clocks.
- 
- config COMMON_CLK_MT8192_MMSYS
--	bool "Clock driver for MediaTek MT8192 mmsys"
-+	tristate "Clock driver for MediaTek MT8192 mmsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mmsys clocks.
- 
- config COMMON_CLK_MT8192_MSDC
--	bool "Clock driver for MediaTek MT8192 msdc"
-+	tristate "Clock driver for MediaTek MT8192 msdc"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
- 
- config COMMON_CLK_MT8192_SCP_ADSP
--	bool "Clock driver for MediaTek MT8192 scp_adsp"
-+	tristate "Clock driver for MediaTek MT8192 scp_adsp"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 scp_adsp clocks.
- 
- config COMMON_CLK_MT8192_VDECSYS
--	bool "Clock driver for MediaTek MT8192 vdecsys"
-+	tristate "Clock driver for MediaTek MT8192 vdecsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
- 
- config COMMON_CLK_MT8192_VENCSYS
--	bool "Clock driver for MediaTek MT8192 vencsys"
-+	tristate "Clock driver for MediaTek MT8192 vencsys"
- 	depends on COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vencsys clocks.
-diff --git a/drivers/clk/mediatek/clk-mt8192-aud.c b/drivers/clk/mediatek/clk-mt8192-aud.c
-index f28d56628045..ea512fa3d4b9 100644
---- a/drivers/clk/mediatek/clk-mt8192-aud.c
-+++ b/drivers/clk/mediatek/clk-mt8192-aud.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- 
-@@ -115,4 +116,5 @@ static struct platform_driver clk_mt8192_aud_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_aud_drv);
-+module_platform_driver(clk_mt8192_aud_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-cam.c b/drivers/clk/mediatek/clk-mt8192-cam.c
-index fc74cd80b4b0..04a0de364408 100644
---- a/drivers/clk/mediatek/clk-mt8192-cam.c
-+++ b/drivers/clk/mediatek/clk-mt8192-cam.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -104,4 +105,5 @@ static struct platform_driver clk_mt8192_cam_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_cam_drv);
-+module_platform_driver(clk_mt8192_cam_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-img.c b/drivers/clk/mediatek/clk-mt8192-img.c
-index 7ce3abe42577..54713a5f3dfc 100644
---- a/drivers/clk/mediatek/clk-mt8192-img.c
-+++ b/drivers/clk/mediatek/clk-mt8192-img.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -67,4 +68,5 @@ static struct platform_driver clk_mt8192_img_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_img_drv);
-+module_platform_driver(clk_mt8192_img_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-index 700356ac6a58..94fdb3c1a963 100644
---- a/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-+++ b/drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -116,4 +117,5 @@ static struct platform_driver clk_mt8192_imp_iic_wrap_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_imp_iic_wrap_drv);
-+module_platform_driver(clk_mt8192_imp_iic_wrap_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-ipe.c b/drivers/clk/mediatek/clk-mt8192-ipe.c
-index 730d91b64b3f..7f8a7a60e2bd 100644
---- a/drivers/clk/mediatek/clk-mt8192-ipe.c
-+++ b/drivers/clk/mediatek/clk-mt8192-ipe.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -54,4 +55,5 @@ static struct platform_driver clk_mt8192_ipe_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_ipe_drv);
-+module_platform_driver(clk_mt8192_ipe_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-mdp.c b/drivers/clk/mediatek/clk-mt8192-mdp.c
-index 93c87ae2f332..9eab7337fabe 100644
---- a/drivers/clk/mediatek/clk-mt8192-mdp.c
-+++ b/drivers/clk/mediatek/clk-mt8192-mdp.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -79,4 +80,5 @@ static struct platform_driver clk_mt8192_mdp_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_mdp_drv);
-+module_platform_driver(clk_mt8192_mdp_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-mfg.c b/drivers/clk/mediatek/clk-mt8192-mfg.c
-index 3bbc7469f0e4..8b44f0779a8c 100644
---- a/drivers/clk/mediatek/clk-mt8192-mfg.c
-+++ b/drivers/clk/mediatek/clk-mt8192-mfg.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -47,4 +48,5 @@ static struct platform_driver clk_mt8192_mfg_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_mfg_drv);
-+module_platform_driver(clk_mt8192_mfg_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-mm.c b/drivers/clk/mediatek/clk-mt8192-mm.c
-index 4a0b4c4bc06a..506beb5a410d 100644
---- a/drivers/clk/mediatek/clk-mt8192-mm.c
-+++ b/drivers/clk/mediatek/clk-mt8192-mm.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/platform_device.h>
- 
- #include "clk-mtk.h"
-@@ -105,4 +106,5 @@ static struct platform_driver clk_mt8192_mm_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_mm_drv);
-+module_platform_driver(clk_mt8192_mm_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-msdc.c b/drivers/clk/mediatek/clk-mt8192-msdc.c
-index 87c3b79b79cf..a467885abbf8 100644
---- a/drivers/clk/mediatek/clk-mt8192-msdc.c
-+++ b/drivers/clk/mediatek/clk-mt8192-msdc.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -82,4 +83,5 @@ static struct platform_driver clk_mt8192_msdc_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_msdc_drv);
-+module_platform_driver(clk_mt8192_msdc_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-scp_adsp.c b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-index 58725d79dd13..87fbd0131aed 100644
---- a/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-+++ b/drivers/clk/mediatek/clk-mt8192-scp_adsp.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -47,4 +48,5 @@ static struct platform_driver clk_mt8192_scp_adsp_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_scp_adsp_drv);
-+module_platform_driver(clk_mt8192_scp_adsp_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-vdec.c b/drivers/clk/mediatek/clk-mt8192-vdec.c
-index b1d95cfbf22a..4d223ecca2c8 100644
---- a/drivers/clk/mediatek/clk-mt8192-vdec.c
-+++ b/drivers/clk/mediatek/clk-mt8192-vdec.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -91,4 +92,5 @@ static struct platform_driver clk_mt8192_vdec_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_vdec_drv);
-+module_platform_driver(clk_mt8192_vdec_drv);
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mt8192-venc.c b/drivers/clk/mediatek/clk-mt8192-venc.c
-index c0d867bff09e..0e8092802771 100644
---- a/drivers/clk/mediatek/clk-mt8192-venc.c
-+++ b/drivers/clk/mediatek/clk-mt8192-venc.c
-@@ -4,6 +4,7 @@
- // Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
- 
- #include <linux/clk-provider.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
-@@ -50,4 +51,5 @@ static struct platform_driver clk_mt8192_venc_drv = {
- 	},
- };
- 
--builtin_platform_driver(clk_mt8192_venc_drv);
-+module_platform_driver(clk_mt8192_venc_drv);
-+MODULE_LICENSE("GPL");
 diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
-index 552fae4f0fd5..a221834db347 100644
+index cbc7c6dbe0f4..e3673494d08d 100644
 --- a/drivers/clk/mediatek/clk-mt8192.c
 +++ b/drivers/clk/mediatek/clk-mt8192.c
-@@ -6,6 +6,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -1313,3 +1314,4 @@ static int __init clk_mt8192_init(void)
+@@ -1179,6 +1179,10 @@ static const struct mtk_pll_data plls[] = {
+ 
+ static struct clk_onecell_data *top_clk_data;
+ 
++/* Control registers in the infra block used to set a chicken bit */
++#define INFRA_CTRL 0x290
++#define INFRA_CTRL_DISABLE_MFG2ACP BIT(9)
++
+ static void clk_mt8192_top_init_early(struct device_node *node)
+ {
+ 	int i;
+@@ -1224,6 +1228,29 @@ static int clk_mt8192_top_probe(struct platform_device *pdev)
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
  }
  
- arch_initcall(clk_mt8192_init);
-+MODULE_LICENSE("GPL");
++/*
++ * Disable ACP on the infra clock. Setting this quirk is required for 3D to
++ * work correctly. Without this quirk, any work queued to the Mali GPU faults,
++ * for example raising a Data Invalid Fault. This suggests the GPU is failing
++ * to read back the contents of shared CPU/GPU memory correctly, perhaps due to
++ * a MT8192 platform integration issue breaking memory or caches.
++ *
++ * Relevant downstream change:
++ * https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
++ */
++static int clk_mt8192_infra_disable_mfg2acp(struct platform_device *pdev)
++{
++	void __iomem *base = devm_platform_ioremap_resource(pdev, 0);
++	void __iomem *infra_ctrl = base + INFRA_CTRL;
++
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	writel(readl(infra_ctrl) | INFRA_CTRL_DISABLE_MFG2ACP, infra_ctrl);
++
++	return 0;
++}
++
+ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+@@ -1238,6 +1265,10 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+ 	if (r)
+ 		return r;
+ 
++	r = clk_mt8192_infra_disable_mfg2acp(pdev);
++	if (r)
++		return r;
++
+ 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ }
+ 
 -- 
-2.18.0
+2.30.2
 
