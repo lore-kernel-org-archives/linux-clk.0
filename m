@@ -2,28 +2,28 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D26C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 13:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD74C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 13:45:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233669AbiAJNpI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 08:45:08 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:39352 "EHLO
+        id S233514AbiAJNpV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 08:45:21 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:39516 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S233442AbiAJNow (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 08:44:52 -0500
-X-UUID: 1227e3009ec24ad387a96a208ba316e5-20220110
-X-UUID: 1227e3009ec24ad387a96a208ba316e5-20220110
+        with ESMTP id S233800AbiAJNo6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 08:44:58 -0500
+X-UUID: f555394e5b734373bf2c0afb68cbddec-20220110
+X-UUID: f555394e5b734373bf2c0afb68cbddec-20220110
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1217269402; Mon, 10 Jan 2022 21:44:48 +0800
+        with ESMTP id 560027406; Mon, 10 Jan 2022 21:44:56 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Mon, 10 Jan 2022 21:44:47 +0800
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Mon, 10 Jan 2022 21:44:55 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 10 Jan 2022 21:44:46 +0800
+ Transport; Mon, 10 Jan 2022 21:44:54 +0800
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -35,9 +35,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v1 09/16] clk: mediatek: Add MT8186 mmsys clock support
-Date:   Mon, 10 Jan 2022 21:44:09 +0800
-Message-ID: <20220110134416.5191-10-chun-jie.chen@mediatek.com>
+Subject: [v1 12/16] clk: mediatek: Add MT8186 vdecsys clock support
+Date:   Mon, 10 Jan 2022 21:44:12 +0800
+Message-ID: <20220110134416.5191-13-chun-jie.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220110134416.5191-1-chun-jie.chen@mediatek.com>
 References: <20220110134416.5191-1-chun-jie.chen@mediatek.com>
@@ -48,134 +48,122 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MT8186 mmsys clock controller which provides clock gate
-control in video system. This is integrated with mtk-mmsys
-driver which will populate device by platform_device_register_data
-to start mmsys clock driver.
+Add MT8186 vdec clock controller which provide clock gate
+control for video decoder.
 
 Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 ---
- drivers/clk/mediatek/Makefile        |  2 +-
- drivers/clk/mediatek/clk-mt8186-mm.c | 97 ++++++++++++++++++++++++++++
- 2 files changed, 98 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mt8186-mm.c
+ drivers/clk/mediatek/Makefile          |  2 +-
+ drivers/clk/mediatek/clk-mt8186-vdec.c | 87 ++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-vdec.c
 
 diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index 9477b5694c32..b34d89e757cb 100644
+index 9f89e36d9ddf..e29e6a661115 100644
 --- a/drivers/clk/mediatek/Makefile
 +++ b/drivers/clk/mediatek/Makefile
-@@ -69,7 +69,7 @@ obj-$(CONFIG_COMMON_CLK_MT8183_VDECSYS) += clk-mt8183-vdec.o
- obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
+@@ -70,7 +70,7 @@ obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
  obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o clk-mt8186-topckgen.o clk-mt8186-infra_ao.o \
  				   clk-mt8186-apmixedsys.o clk-mt8186-imp_iic_wrap.o \
--				   clk-mt8186-mfg.o
-+				   clk-mt8186-mfg.o clk-mt8186-mm.o
+ 				   clk-mt8186-mfg.o clk-mt8186-mm.o clk-mt8186-wpe.o \
+-				   clk-mt8186-img.o
++				   clk-mt8186-img.o clk-mt8186-vdec.o
  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
  obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
  obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-diff --git a/drivers/clk/mediatek/clk-mt8186-mm.c b/drivers/clk/mediatek/clk-mt8186-mm.c
+diff --git a/drivers/clk/mediatek/clk-mt8186-vdec.c b/drivers/clk/mediatek/clk-mt8186-vdec.c
 new file mode 100644
-index 000000000000..1c1a9ae1d0c2
+index 000000000000..f0aa2c491a32
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mt8186-mm.c
-@@ -0,0 +1,97 @@
++++ b/drivers/clk/mediatek/clk-mt8186-vdec.c
+@@ -0,0 +1,87 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
 +// Copyright (c) 2022 MediaTek Inc.
 +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 +
-+#include "clk-gate.h"
-+#include "clk-mtk.h"
-+
-+#include <dt-bindings/clock/mt8186-clk.h>
 +#include <linux/clk-provider.h>
++#include <linux/module.h>
 +#include <linux/platform_device.h>
 +
-+static const struct mtk_gate_regs mm0_cg_regs = {
-+	.set_ofs = 0x104,
-+	.clr_ofs = 0x108,
-+	.sta_ofs = 0x100,
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt8186-clk.h>
++
++static const struct mtk_gate_regs vdec0_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x4,
++	.sta_ofs = 0x0,
 +};
 +
-+static const struct mtk_gate_regs mm1_cg_regs = {
-+	.set_ofs = 0x1a4,
-+	.clr_ofs = 0x1a8,
-+	.sta_ofs = 0x1a0,
++static const struct mtk_gate_regs vdec1_cg_regs = {
++	.set_ofs = 0x190,
++	.clr_ofs = 0x190,
++	.sta_ofs = 0x190,
 +};
 +
-+#define GATE_MM0(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &mm0_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+#define GATE_MM1(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &mm1_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-+
-+static const struct mtk_gate mm_clks[] = {
-+	/* MM0 */
-+	GATE_MM0(CLK_MM_DISP_MUTEX0, "mm_disp_mutex0", "top_disp", 0),
-+	GATE_MM0(CLK_MM_APB_MM_BUS, "mm_apb_mm_bus", "top_disp", 1),
-+	GATE_MM0(CLK_MM_DISP_OVL0, "mm_disp_ovl0", "top_disp", 2),
-+	GATE_MM0(CLK_MM_DISP_RDMA0, "mm_disp_rdma0", "top_disp", 3),
-+	GATE_MM0(CLK_MM_DISP_OVL0_2L, "mm_disp_ovl0_2l", "top_disp", 4),
-+	GATE_MM0(CLK_MM_DISP_WDMA0, "mm_disp_wdma0", "top_disp", 5),
-+	GATE_MM0(CLK_MM_DISP_RSZ0, "mm_disp_rsz0", "top_disp", 7),
-+	GATE_MM0(CLK_MM_DISP_AAL0, "mm_disp_aal0", "top_disp", 8),
-+	GATE_MM0(CLK_MM_DISP_CCORR0, "mm_disp_ccorr0", "top_disp", 9),
-+	GATE_MM0(CLK_MM_DISP_COLOR0, "mm_disp_color0", "top_disp", 10),
-+	GATE_MM0(CLK_MM_SMI_INFRA, "mm_smi_infra", "top_disp", 11),
-+	GATE_MM0(CLK_MM_DISP_DSC_WRAP0, "mm_disp_dsc_wrap0", "top_disp", 12),
-+	GATE_MM0(CLK_MM_DISP_GAMMA0, "mm_disp_gamma0", "top_disp", 13),
-+	GATE_MM0(CLK_MM_DISP_POSTMASK0, "mm_disp_postmask0", "top_disp", 14),
-+	GATE_MM0(CLK_MM_DISP_DITHER0, "mm_disp_dither0", "top_disp", 16),
-+	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "top_disp", 17),
-+	GATE_MM0(CLK_MM_DSI0, "mm_dsi0", "top_disp", 19),
-+	GATE_MM0(CLK_MM_DISP_FAKE_ENG0, "mm_disp_fake_eng0", "top_disp", 20),
-+	GATE_MM0(CLK_MM_DISP_FAKE_ENG1, "mm_disp_fake_eng1", "top_disp", 21),
-+	GATE_MM0(CLK_MM_SMI_GALS, "mm_smi_gals", "top_disp", 22),
-+	GATE_MM0(CLK_MM_SMI_IOMMU, "mm_smi_iommu", "top_disp", 24),
-+	GATE_MM0(CLK_MM_DISP_RDMA1, "mm_disp_rdma1", "top_disp", 25),
-+	GATE_MM0(CLK_MM_DISP_DPI, "mm_disp_dpi", "top_disp", 26),
-+	/* MM1 */
-+	GATE_MM1(CLK_MM_DSI0_DSI_CK_DOMAIN, "mm_dsi0_dsi_domain", "top_disp", 0),
-+	GATE_MM1(CLK_MM_DISP_26M, "mm_disp_26m_ck", "top_disp", 10),
++static const struct mtk_gate_regs vdec2_cg_regs = {
++	.set_ofs = 0x200,
++	.clr_ofs = 0x204,
++	.sta_ofs = 0x200,
 +};
 +
-+static int clk_mt8186_mm_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data;
-+	int r;
++static const struct mtk_gate_regs vdec3_cg_regs = {
++	.set_ofs = 0x8,
++	.clr_ofs = 0xc,
++	.sta_ofs = 0x8,
++};
 +
-+	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
++#define GATE_VDEC0(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
 +
-+	r = mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks), clk_data);
-+	if (r)
-+		goto free_mm_data;
++#define GATE_VDEC1(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vdec1_cg_regs, _shift, &mtk_clk_gate_ops_no_setclr_inv)
 +
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		goto unregister_clk;
++#define GATE_VDEC2(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vdec2_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
 +
-+	return r;
++#define GATE_VDEC3(_id, _name, _parent, _shift)			\
++	GATE_MTK(_id, _name, _parent, &vdec3_cg_regs, _shift, &mtk_clk_gate_ops_setclr_inv)
 +
-+unregister_clk:
-+	mtk_clk_unregister(clk_data);
++static const struct mtk_gate vdec_clks[] = {
++	/* VDEC0 */
++	GATE_VDEC0(CLK_VDEC_CKEN, "vdec_cken", "top_vdec", 0),
++	GATE_VDEC0(CLK_VDEC_ACTIVE, "vdec_active", "top_vdec", 4),
++	GATE_VDEC0(CLK_VDEC_CKEN_ENG, "vdec_cken_eng", "top_vdec", 8),
++	/* VDEC1 */
++	GATE_VDEC1(CLK_VDEC_MINI_MDP_CKEN_CFG_RG, "vdec_mini_mdp_cken_cfg_rg", "top_vdec", 0),
++	/* VDEC2 */
++	GATE_VDEC2(CLK_VDEC_LAT_CKEN, "vdec_lat_cken", "top_vdec", 0),
++	GATE_VDEC2(CLK_VDEC_LAT_ACTIVE, "vdec_lat_active", "top_vdec", 4),
++	GATE_VDEC2(CLK_VDEC_LAT_CKEN_ENG, "vdec_lat_cken_eng", "top_vdec", 8),
++	/* VDEC3 */
++	GATE_VDEC3(CLK_VDEC_LARB1_CKEN, "vdec_larb1_cken", "top_vdec", 0),
++};
 +
-+free_mm_data:
-+	mtk_free_clk_data(clk_data);
-+	return r;
-+}
++static const struct mtk_clk_desc vdec_desc = {
++	.clks = vdec_clks,
++	.num_clks = ARRAY_SIZE(vdec_clks),
++};
 +
++static const struct of_device_id of_match_clk_mt8186_vdec[] = {
++	{
++		.compatible = "mediatek,mt8186-vdecsys",
++		.data = &vdec_desc,
++	}, {
++		/* sentinel */
++	}
++};
 +
-+static struct platform_driver clk_mt8186_mm_drv = {
-+	.probe = clk_mt8186_mm_probe,
++static struct platform_driver clk_mt8186_vdec_drv = {
++	.probe = mtk_clk_simple_probe,
 +	.driver = {
-+		.name = "clk-mt8186-mm",
++		.name = "clk-mt8186-vdec",
++		.of_match_table = of_match_clk_mt8186_vdec,
 +	},
 +};
-+builtin_platform_driver(clk_mt8186_mm_drv);
++builtin_platform_driver(clk_mt8186_vdec_drv);
 -- 
 2.18.0
 
