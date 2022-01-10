@@ -2,134 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95817C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 06:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A71C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 06:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239019AbiAJGbu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 01:31:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234930AbiAJGbu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 01:31:50 -0500
-Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46B77C06173F;
-        Sun,  9 Jan 2022 22:31:50 -0800 (PST)
-Received: by mail-vk1-xa35.google.com with SMTP id bj47so2477223vkb.13;
-        Sun, 09 Jan 2022 22:31:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hZzd9srfJg0sRysUCYuH0L2R2O31L83ni9EMVLSvk6o=;
-        b=CK57ykFCY0qvPnBtUyV62MrYaX3TXTcUB6bsUUIT4lIFv5DN2PGAZj4SupJUfjSq2s
-         DRANo9MnDw3s4V7ic+SUCvFFg/EUri6QUIUC6KLVR7WWAic+hV5PwtSm5ixGQl2kHv0B
-         q4ZpO/4DEruQAHdfnkg1pLi4EtnpPwnS2sQ03A8PEcu2FmX3lRvNctNxnJvdkYslp52I
-         WtL9Ac9e4PC46vNQbWOTkZTrrMq6sWu85fhigyewQvl46qe8rjD7wYBFuK5wjXICk2nq
-         Mw4DnTJT1anZ7aQMzgdl+yPGDKhb+op8PbrVCEmmvC0ZJWdAZA9QMZ36y4EDjm1JHM/m
-         UB9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hZzd9srfJg0sRysUCYuH0L2R2O31L83ni9EMVLSvk6o=;
-        b=mRKAazGjq9BGeLHhfZImFsWXE+IEa1R8lGkE1C0fyUxcgvF6WsDyPj+ARpygdVZGA1
-         U/HyXVvzryRn86SSu0aTXYdfgm5VutlPUy6GdVzVBE6vWkknoNBDJ0D2eetqYkrPgYKc
-         xjBD3iYmgnhxmS2nDL5M7OymMPpNo76Ie9iz0ZTmoUG9kBL7AqrozV/OIeRcTxEFC0uV
-         y7mVNoeRcpuwKn8pviDOxCToVOD7X+RA3hFE80uFWfzPJMxW0VD23y3fheUvkLnlq2g8
-         bgYBgtjMcShz/U4X2XjyNRf2NyAxsyhFoFhhMnSXgbxG9fD5w5SbgZqz+p1kcF1U5pjB
-         6tkg==
-X-Gm-Message-State: AOAM530LdKjWdw6Hot8PQXJYtju3MkhdCvYP+hqccejMcQFSpz1Ed+EH
-        FysG+la3t3LIoQJQs0XZvKhMjPGDwxW5uN1ZR9s=
-X-Google-Smtp-Source: ABdhPJwIxdDHtNSAl0aUtbd6IW+MthJ3qEfuhE9cVqBxFzEgncOmC0MEsw2sNo4twwWvQ18b1lmDcuS5brOiTlyTRvI=
-X-Received: by 2002:a05:6122:2009:: with SMTP id l9mr27528442vkd.4.1641796309392;
- Sun, 09 Jan 2022 22:31:49 -0800 (PST)
+        id S231561AbiAJGkQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 01:40:16 -0500
+Received: from mx1.cqplus1.com ([113.204.237.245]:35916 "EHLO mx1.cqplus1.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231182AbiAJGkP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Jan 2022 01:40:15 -0500
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(24953:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Mon, 10 Jan 2022 14:36:57 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Mon, 10 Jan 2022 14:37:01 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.017; Mon, 10 Jan 2022 14:37:01 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>
+Subject: RE: [PATCH v7 06/10] clk: Add Sunplus SP7021 clock driver
+Thread-Topic: [PATCH v7 06/10] clk: Add Sunplus SP7021 clock driver
+Thread-Index: AQHX9wMzddZ4i1EhDk6U/miEAgqwiKxUuIQAgAKMxICAAJdxAIAEBmcQ
+Date:   Mon, 10 Jan 2022 06:37:01 +0000
+Message-ID: <739d561357814c31a530b327480e1212@cqplus1.com>
+References: <cover.1640154492.git.qinjian@cqplus1.com>
+ <7f8302e2c1d02141dd69d2524eaa857d6494fdc7.1640154492.git.qinjian@cqplus1.com>
+ <20220106004249.90484C36AEB@smtp.kernel.org>
+ <51a2cbddc978400086271fc735493566@cqplus1.com>
+ <20220108004112.2AB34C36AE9@smtp.kernel.org>
+In-Reply-To: <20220108004112.2AB34C36AE9@smtp.kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20211107074200.18911-1-sergio.paracuellos@gmail.com>
- <CAMhs-H81xnaFqgTJT3jiNy_BBCuHhrA-t0A+0wMnp5Y0kFjGUQ@mail.gmail.com> <20220107021030.E932AC36AE3@smtp.kernel.org>
-In-Reply-To: <20220107021030.E932AC36AE3@smtp.kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 10 Jan 2022 07:31:38 +0100
-Message-ID: <CAMhs-H9SHk8aMm2RX0sA9zC3ktHQSmCtNbKe2ERg0Fg7-Tdk3Q@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] clk: ralink: make system controller a reset provider
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     COMMON CLK FRAMEWORK <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
-        Greg KH <gregkh@linuxfoundation.org>,
-        NeilBrown <neil@brown.name>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On Fri, Jan 7, 2022 at 3:10 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Sergio Paracuellos (2021-12-13 04:00:17)
-> > Hi Stephen,
-> >
-> > On Sun, Nov 7, 2021 at 8:42 AM Sergio Paracuellos
-> > <sergio.paracuellos@gmail.com> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > This patch series add minimal change to provide mt7621 resets properly
-> > > defining them in the 'mediatek,mt7621-sysc' node which is the system
-> > > controller of the SoC and is already providing clocks to the rest of
-> > > the world.
-> > >
-> > > There is shared architecture code for all ralink platforms in 'reset.c'
-> > > file located in 'arch/mips/ralink' but the correct thing to do to align
-> > > hardware with software seems to define and add related reset code to the
-> > > already mainlined clock driver.
-> > >
-> > > After this changes, we can get rid of the useless reset controller node
-> > > in the device tree and use system controller node instead where the property
-> > > '#reset-cells' has been added. Binding documentation for this nodeq has
-> > > been updated with the new property accordly.
-> > >
-> > > This series also provide a bindings include header where all related
-> > > reset bits for the MT7621 SoC are defined.
-> > >
-> > > Also, please take a look to this review [0] to understand better motivation
->
-> Is [0] a link?
-
-Yes, sorry it was not included:
-
-[0]: https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20210926145931.14603-3-sergio.paracuellos@gmail.com/
-
->
-> > > for this series.
-> > >
-> > > Regarding the way of merging this:
-> > >  - I'd like patches 1 and 4 which are related going through staging tree.
-> > >  - The other two (patches 2 and 3) can perfectly go through the clock tree.
-> > >
-> > > Thanks in advance for your feedback.
-> > >
-> > > Changes in v5:
-> > >  - Move platform driver init process into 'arch_initcall' to be sure the
-> > >    rest of the world can get the resets available when needed (since PCIe
-> > >    controller driver has been moved from staging into 'drivers/pci/controller'
-> > >    is probed earlier and reset was not available so it was returning
-> > >    -EPROBE_DEFER on firt try. Moving into 'arch_initcall' avoids the 'a bit
-> > >    anoying' PCI first failed log trace.
-> >
-> > Gentle ping on this series.
-> >
->
-> It looks to largely be a reset controller patch series. Can you get
-> review from the reset maintainer?
->
-> RESET CONTROLLER FRAMEWORK
-> M:      Philipp Zabel <p.zabel@pengutronix.de>
-> S:      Maintained
-
-Ok, I'll rebase and resend the series including Philipp Zabel for
-reviewing this.
-
-Thanks,
-    Sergio Paracuellos
+PiA+ID4gPiArDQo+ID4gPiA+ICtDTEtfT0ZfREVDTEFSRV9EUklWRVIoc3BfY2xrYywgInN1bnBs
+dXMsc3A3MDIxLWNsa2MiLCBzcF9jbGtfc2V0dXApOw0KPiA+ID4NCj4gPiA+IFdoeSBDTEtfT0Zf
+REVDTEFSRV9EUklWRVI/IFRoZXJlIHNob3VsZCBiZSBhIGNvbW1lbnQgYnV0IGJldHRlciB3b3Vs
+ZCBiZQ0KPiA+ID4gdG8gbWFrZSBhIHBsYXRmb3JtIGRyaXZlciBpbnN0ZWFkLiBJZiB0aGUgcGxh
+dGZvcm0gZHJpdmVyIGNhbid0IGJlIHVzZWQsDQo+ID4gPiB3ZSBuZWVkIHRvIGtub3cgd2hhdCBv
+dGhlciBkZXZpY2UgZHJpdmVyIGlzIHByb2JpbmcgYmFzZWQgb24gdGhpcyBjbGtjDQo+ID4gPiBj
+b21wYXRpYmxlIHN0cmluZy4NCj4gPg0KPiA+IERlYXIgU3RlcGhlbiwNCj4gPg0KPiA+IFNvcnJ5
+LCBJIGRvbid0IHVuZGVyc3RhbmQgeW91ciBjb21tZW50Lg0KPiA+IERpZCB5b3UgbWVhbiwgbGlr
+ZSBiZWxvdzoNCj4gPg0KPiA+IHN0YXRpYyBpbnQgc3A3MDIxX2Nsa19wcm9iZShzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+IHsNCj4gPiAgICAgICAgIC4uLi4uLg0KPiA+ICAgICAg
+ICAgc3BfY2xrX2RhdGEtPm51bSA9IENMS19NQVg7DQo+ID4gICAgICAgICByZXR1cm4gZGV2bV9v
+Zl9jbGtfYWRkX2h3X3Byb3ZpZGVyKGRldiwgb2ZfY2xrX2h3X29uZWNlbGxfZ2V0LCBzcF9jbGtf
+ZGF0YSk7DQo+ID4gfQ0KPiA+DQo+ID4gc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
+c3A3MDIxX2Nsa19kdF9pZHNbXSA9IHsNCj4gPiAgICAgICAgIHsgLmNvbXBhdGlibGUgPSAic3Vu
+cGx1cyxzcDcwMjEtY2xrYyIsIH0sDQo+ID4gICAgICAgICB7IH0NCj4gPiB9Ow0KPiA+IE1PRFVM
+RV9ERVZJQ0VfVEFCTEUob2YsIHNwNzAyMV9jbGtfZHRfaWRzKTsNCj4gPg0KPiA+IHN0YXRpYyBz
+dHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHNwNzAyMV9jbGtfZHJpdmVyID0gew0KPiA+ICAgICAgICAg
+LnByb2JlICA9IHNwNzAyMV9jbGtfcHJvYmUsDQo+ID4gICAgICAgICAuZHJpdmVyID0gew0KPiA+
+ICAgICAgICAgICAgICAgICAubmFtZSA9ICJzcDcwMjEtY2xrIiwNCj4gPiAgICAgICAgICAgICAg
+ICAgLm9mX21hdGNoX3RhYmxlID0gc3A3MDIxX2Nsa19kdF9pZHMsDQo+ID4gICAgICAgICB9LA0K
+PiA+IH07DQo+ID4gYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIoc3A3MDIxX2Nsa19kcml2ZXIpOw0K
+PiA+DQo+ID4NCj4gPiBCdXQsIEl0J3MgZG9lc24ndCB3b3JrLg0KPiANCj4gV2h5IGRvZXNuJ3Qg
+aXQgd29yaz8NCj4gDQo+ID4gTW9zdCBvdGhlciBjbGsgZHJpdmVycyB1c2VkIENMS19PRl9ERUNM
+QVJFX0RSSVZFUiBvciBDTEtfT0ZfREVDTEFSRS4NCj4gPiBJIGp1c3QgdGFrZSB0aGVzZSBhcyB0
+aGUgcmVmZXJlbmNlIGFuZCBpdCdzIHdvcmtpbmcuDQo+IA0KPiBDTEtfT0ZfREVDTEFSRSBpcyBm
+b3IgY2xrcyB0aGF0IG5lZWQgdG8gYmUgcmVnaXN0ZXJlZCBzbyB0aGUgbWFpbg0KPiBpcnFjaGlw
+IGFuZC9vciBjbG9ja3NvdXJjZS9jbG9ja2V2ZW50IGNhbiBvcGVyYXRlIHByb3Blcmx5Lg0KPiBD
+TEtfT0ZfREVDTEFSRV9EUklWRVIgaXMgZm9yIHRoZSBjYXNlIHRoYXQgdGhlcmUncyBhbm90aGVy
+IGRyaXZlciB0aGF0DQo+IHdpbGwgYXR0YWNoIHRvIHRoZSBkZXZpY2Ugbm9kZSB0aGF0IGhhcyB0
+aGUgY29tcGF0aWJsZSBzdHJpbmcuDQoNCkFmdGVyIHNvbWUgdHJhY2UsIEkgZm91bmQ6DQpJbiBv
+dXIgZHRzLCAnY2xrYycgbm9kZSBkZWZpbmVkIEAgY2xvY2tzOg0KCWNsb2NrcyB7DQoJCS4uLg0K
+CQljbGtjOiBjbG9jay1jb250cm9sbGVyQDljMDAwMDAwIHsNCgkJCSNjbG9jay1jZWxscyA9IDwx
+PjsNCgkJCWNvbXBhdGlibGUgPSAic3VucGx1cyxzcDcwMjEtY2xrYyI7DQoJCQlyZWcgPSA8MHg5
+YzAwMDAwMCAweDI4MD47IC8vIEcwOkNMS0VOIH4gRzQ6UExMDQoJCQljbG9ja3MgPSA8JmV4dGNs
+az4sIDwmY2xrYyBQTExfU1lTPjsNCgkJCWNsb2NrLW5hbWVzID0gImV4dGNsayIsICJwbGxzeXMi
+Ow0KCQl9Ow0KCX07DQoJc29jIHsNCgkJLi4uDQoJfQ0KSW4gdGhpcyBjYXNlLCBjbGsgZHJpdmVy
+IHdyaXRlIGFzIHBsYXRmb3JtIGRyaXZlciBub3Qgd29yayAoc3A3MDIxX2Nsa19wcm9iZSBub3Qg
+Y2FsbGVkKQ0KQnV0LCBDTEtfT0ZfREVDTEFSRSBhbmQgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSIGJv
+dGggd29ya2VkIChjYWxsZWQgZnJvbSBjbGtfb2ZfaW5pdCkNCg0KVGhlbiwgSSBtb3ZlIHRoZSAn
+Y2xrYycgbW9kZSBmcm9tICdjbG9ja3MnIHRvICdzb2MnOg0KCWNsb2NrcyB7DQoJCS4uLg0KCX07
+DQoJc29jIHsNCgkJLi4uDQoJCWNsa2M6IGNsb2NrLWNvbnRyb2xsZXJAOWMwMDAwMDAgew0KCQkJ
+I2Nsb2NrLWNlbGxzID0gPDE+Ow0KCQkJY29tcGF0aWJsZSA9ICJzdW5wbHVzLHNwNzAyMS1jbGtj
+IjsNCgkJCXJlZyA9IDwweDljMDAwMDAwIDB4MjgwPjsgLy8gRzA6Q0xLRU4gfiBHNDpQTEwNCgkJ
+CWNsb2NrcyA9IDwmZXh0Y2xrPiwgPCZjbGtjIFBMTF9TWVM+Ow0KCQkJY2xvY2stbmFtZXMgPSAi
+ZXh0Y2xrIiwgInBsbHN5cyI7DQoJCX07DQoJfQ0KSW4gdGhpcyBjYXNlLCBjbGsgZHJpdmVyIHdy
+aXRlIGFzIHBsYXRmb3JtIGRyaXZlciB3b3JrZWQgKGNhbGxlZCBmcm9tIHBsYXRmb3JtX3Byb2Jl
+KQ0KQ0xLX09GX0RFQ0xBUkUgYW5kIENMS19PRl9ERUNMQVJFX0RSSVZFUiBhbHNvIGJvdGggd29y
+a2VkLiAoc3RpbGwgY2FsbGVkIGZyb20gY2xrX29mX2luaXQsIG1vcmUgZWFybHkgdGhhbiBwbGF0
+Zm9ybV9wcm9iZSkNCg0KSXQgbG9va3MgbGlrZSBDTEtfT0ZfREVDTEFSRS9DTEtfT0ZfREVDTEFS
+RV9EUklWRVIgaXMgYmV0dGVyIHRoYW4gcGxhdGZvcm0gZHJpdmVyLg0KV2h5IHlvdSBwcmVmZXIg
+cGxhdGZvcm0gZHJpdmVyPw0KDQoNCg==
