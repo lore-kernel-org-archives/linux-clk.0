@@ -2,107 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B1FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 10:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36018C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 11:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244362AbiAJK7h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 05:59:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41888 "EHLO
+        id S244473AbiAJLKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 06:10:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244347AbiAJK7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 05:59:35 -0500
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF389C06173F;
-        Mon, 10 Jan 2022 02:59:34 -0800 (PST)
-Received: by mail-ua1-x92f.google.com with SMTP id h11so703100uar.5;
-        Mon, 10 Jan 2022 02:59:34 -0800 (PST)
+        with ESMTP id S244454AbiAJLKl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 06:10:41 -0500
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E52C061748;
+        Mon, 10 Jan 2022 03:10:40 -0800 (PST)
+Received: by mail-wr1-x432.google.com with SMTP id a5so22086507wrh.5;
+        Mon, 10 Jan 2022 03:10:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pyr2Zb4j02PsgvvNoNyOvWlod9U9+4JSnC74+5rak8Q=;
-        b=YyQ506hwqXXe8clqnSFa983M9zu/XTmA4qYrFQNJpM+4qoeJFvFIvdzPLl4VJVyctv
-         QqAXW2hrYyksTQGMFAXkpU91IH/VLZihHw79TpCMMAMgMJco1v9puEJXk7+lhemAKas1
-         V+NeVQ0iZyy7rRoR/Zu8CKDxjLP64FPfc8jbDNYsSqLD9XsXEEPtkOjoSyuGM9fkiS6u
-         Cy0LEZSSUmzaABRV0HfjrGMB30xYKwUSiksibyHJ29eQpavDM7+do/jySLVE5MIjOkDf
-         FowiZnoXk6zgwYHZvit5AxB0G83ZXFa3rmK5VmxrpfBGz+QK5Ol9Q7XUHMcfIl4kHSgH
-         jKIw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hZgEF3a2cVPPnAn+Sv90zHeceQXR4/tutb38weJ7N6M=;
+        b=lDOIZjh9fNoHufgFTYc4oRDdLFKYF4jZL5ZYjuOIjS4aIMgS95OVrnozxdBDhX83vR
+         fro6oRqqt27vr1xpRgsi7xFBu9uPw972TFeNW6+RS2ajtFCLzaufJrGIdxS+QGW/nnAY
+         mGQdR0SUZWjQkDrXpPgE0cY0Pu9vR85t8wBhEv2eUnkmFpKtBfb8r7QX76jGDZ+reN/Q
+         opp10wv7TgBzUGseENNb0u6S4fM9kTk17wZxxHuku5wDimCrDjzOYiB2jSXCnC/Ls9C2
+         YJiKxxGPpXWIbpyWIV2QM/4BdkvQxFGtUAtcBIWlulsnJpQnQIjm8Q8TXSZEQ82UetuT
+         cRjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pyr2Zb4j02PsgvvNoNyOvWlod9U9+4JSnC74+5rak8Q=;
-        b=1wlWjF0H7I9wTaE9qgc0JuNvTAC9bGumZCibpWEwPRmsmJ0/rMt7PHoupSVVME/HHf
-         /h8FRcMsJR1gCyRpEF657aFsC+if9ujL71bTffGD/89V7I91jfANptHUxuQCZD55ieep
-         O87TE0U/WC5B8lJJKdFUhskU6h0F0vkumbro/JFb5xP7YWKsTm2QdbaiWMxibOje4nqw
-         DaAj6AwgBIScdN5RlHYCMngfRVKYontS3uO+lrkc8DCc2JUrOdAfPcI+4TiPlJ9RG7PH
-         5j1F+KhyQFL2EXhkS0wce9YMsW37uOreJOi6SHtGMJRoH+KZKpr1vbbFW0tuXA9WKKTg
-         RcDg==
-X-Gm-Message-State: AOAM530sGryHtKbI0yUHMA92b+oNKqfsG6K0L6pK+w3sXOoRt/dCetlg
-        T1xUQ/9BWxq7nWQSZU1yZoEy/F9iJqfo19R521U=
-X-Google-Smtp-Source: ABdhPJzNC5Xto+6tTHLSaWjQV0UE4a2ufJIsEM38VWdwK4FT0ZrmU5mE9sbtMvpdllGygej3DVycShZmNO0+zFIeetc=
-X-Received: by 2002:a05:6102:dc9:: with SMTP id e9mr24288454vst.17.1641812374133;
- Mon, 10 Jan 2022 02:59:34 -0800 (PST)
-MIME-Version: 1.0
-References: <20220110083910.1351020-1-sergio.paracuellos@gmail.com>
- <20220110083910.1351020-4-sergio.paracuellos@gmail.com> <5368e89c391e1329ed2be6496655f1bb50acfd19.camel@pengutronix.de>
- <CAMhs-H_gjW_6p6yBWf+k2PBym4N+k+rBEXR9S8c13NU-UWD4VQ@mail.gmail.com> <12b7e367e8323f6da7bb548dbbae0d342608e52b.camel@pengutronix.de>
-In-Reply-To: <12b7e367e8323f6da7bb548dbbae0d342608e52b.camel@pengutronix.de>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hZgEF3a2cVPPnAn+Sv90zHeceQXR4/tutb38weJ7N6M=;
+        b=L07LXZnY20yYerSBEvLbgsEYhOzVMCiDYJenfWwcVvY5SwfDrdTV4jxvVnjLhjsrPF
+         /C6imnkKfmMr+BTc2ZjSuARsgtVh8ftyFhn33F47o9k25mBzhdh3lQcoBmQae+5nBV05
+         cZwoSaiVl+sHPuvarXqHEXgsaBJLiOYfOVyGZCtwSylZVD5M9/KGG4oDt1tuvA4RKZTr
+         UdDtC3s6u3B9jjRBk+JVCXJPDG4WMKBLEb3IZ8UTAfLT+WoPOVuoi9QbH6hrYRxW2UYS
+         eb8xTlR0KHI8tXhNdOmfRb5aa4OLlawZJ+OwvDTM6Tyqwmc9L8PgHXdyTu3keiO2VUhO
+         Z3vg==
+X-Gm-Message-State: AOAM5301sSYBL1HJZkzAqAYtOkql+8oaIPcq2bFwUQ0vBrJd8MALN5WG
+        f7Hj/1UTAfIGnFCzC9lF79zwwUbg1q7Egw==
+X-Google-Smtp-Source: ABdhPJzy9BKgLEwVK49M6ASBXzOAKjQbHw7f8ApABrhBPNGAQZix9tsOTdrVD1fTfkDkLekTuif5Lw==
+X-Received: by 2002:a5d:4a8c:: with SMTP id o12mr8461683wrq.229.1641813039280;
+        Mon, 10 Jan 2022 03:10:39 -0800 (PST)
+Received: from localhost.localdomain (198.red-81-44-130.dynamicip.rima-tde.net. [81.44.130.198])
+        by smtp.gmail.com with ESMTPSA id x8sm6256733wmj.44.2022.01.10.03.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 03:10:38 -0800 (PST)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Mon, 10 Jan 2022 11:59:22 +0100
-Message-ID: <CAMhs-H_cCFsMs5VTrrNROBpfnwsXNLGGCFHSu2sJ8N-cxYV8aA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/4] clk: ralink: make system controller node a reset provider
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
-        Greg KH <gregkh@linuxfoundation.org>,
-        NeilBrown <neil@brown.name>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     linux-clk@vger.kernel.org
+Cc:     john@phrozen.org, linux-staging@lists.linux.dev,
+        gregkh@linuxfoundation.org, neil@brown.name,
+        p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org
+Subject: [PATCH v7 0/4] clk: ralink: make system controller a reset provider
+Date:   Mon, 10 Jan 2022 12:10:32 +0100
+Message-Id: <20220110111036.1380288-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 10, 2022 at 11:23 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
->
-> On Mon, 2022-01-10 at 10:39 +0100, Sergio Paracuellos wrote:
-> [...]
-> > > Is this known to work for all possible users, without delay between
-> > > assert and deassert?
-> >
-> > It seems it is. This is based on the original reset implementation for
-> > ralink. See:
-> >
-> > https://elixir.bootlin.com/linux/v5.16/source/arch/mips/ralink/reset.c#L55
-> >
-> > > Are there any users of the reset_control_reset() API at all? This API
-> > > was added for self-clearing reset bits, so if there are no users that
-> > > need to pretend this is a reset pulse at the hardware level (there may
-> > > be), I'd prefer if this was just left out.
-> >
-> > I am not following you here. What do you mean?
->
-> Looking at drivers/staging/mt7621-dts/mt7621.dtsi, it appears the
-> current reset users are:
->   mediatek,mt7621-i2c
->   ralink,mt7621-spi
->   ralink,rt3883-gdma
->   mediatek,mt7621-hsdma
->   mediatek,mt7621-eth
->   mediatek,mt7621
->   mediatek,mt7621-pci
->
-> Many of the corresponding drivers use device_reset(), which is a
-> shorthand for requesting a reset control and calling
-> reset_control_reset() on it. That will call mt7621_reset_device, so it
-> is indeed used.
->
+Hi all,
 
-Ok, pretty clear now, thanks for clarification :).
+This patch series add minimal change to provide mt7621 resets properly
+defining them in the 'mediatek,mt7621-sysc' node which is the system
+controller of the SoC and is already providing clocks to the rest of
+the world.
 
-> regards
-> Philipp
+There is shared architecture code for all ralink platforms in 'reset.c'
+file located in 'arch/mips/ralink' but the correct thing to do to align
+hardware with software seems to define and add related reset code to the
+already mainlined clock driver.
+
+After this changes, we can get rid of the useless reset controller node
+in the device tree and use system controller node instead where the property
+'#reset-cells' has been added. Binding documentation for this nodeq has
+been updated with the new property accordly.
+
+This series also provide a bindings include header where all related
+reset bits for the MT7621 SoC are defined.
+
+Also, please take a look to this review [0] to understand better motivation
+for this series.
+
+Regarding the way of merging this:
+ - I'd like patches 1 and 4 which are related going through staging tree.
+ - The other two (patches 2 and 3) can perfectly go through the clock tree.
+
+Thanks in advance for your feedback.
+
+Changes in v7:
+ - PATCH 3/4: make use of '.of_xlate' callback as per Philipp v6 review.
+
+Changes in v6:
+ - Rebased on the top of last changes of staging-testing to properly
+   update dtsi file (PATCH 4/4).
+ - Send a copy of this to reset provider maintainer Philipp as per Stephen's sugestion
+   to get changes added through the clk tree (Philipp, thanks in advance for reviewing
+   this).
+
+Changes in v5:
+ - Move platform driver init process into 'arch_initcall' to be sure the
+   rest of the world can get the resets available when needed (since PCIe
+   controller driver has been moved from staging into 'drivers/pci/controller'
+   is probed earlier and reset was not available so it was returning 
+   -EPROBE_DEFER on firt try. Moving into 'arch_initcall' avoids the 'a bit
+   anoying' PCI first failed log trace.
+
+Changes in v4:
+ - I sent wrong patch 3 accidentaly so now include the good version, sorry.
+
+Changes in v3:
+ - Collect Rob's Acked-by for patches 1 and 2. 
+ - Rebase on the top of staging-next since there were already many
+   changes there and PATCH 4 of the series didn't apply cleanly.
+
+Changes in v2:
+ - Address review comments of Dan Carpenter [1]:
+ - Avoid 'inline' in function definition.
+ - Return proper error codes (-EINVAL) instead of '-1'.
+ - Make use of 'devm_kzalloc' instead of 'kzalloc'.
+
+[0]: https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20210926145931.14603-3-sergio.paracuellos@gmail.com/
 
 Best regards,
-    Sergio Paracuellos
+   Sergio Paracuellos
+
+Sergio Paracuellos (4):
+  dt-bindings: reset: add dt binding header for Mediatek MT7621 resets
+  dt-bindings: clock: mediatek,mt7621-sysc: add '#reset-cells' property
+  clk: ralink: make system controller node a reset provider
+  staging: mt7621-dts: align resets with binding documentation
+
+ .../bindings/clock/mediatek,mt7621-sysc.yaml  | 12 +++
+ drivers/clk/ralink/clk-mt7621.c               | 92 ++++++++++++++++++-
+ drivers/staging/mt7621-dts/mt7621.dtsi        | 21 ++---
+ include/dt-bindings/reset/mt7621-reset.h      | 37 ++++++++
+ 4 files changed, 149 insertions(+), 13 deletions(-)
+ create mode 100644 include/dt-bindings/reset/mt7621-reset.h
+
+-- 
+2.25.1
+
