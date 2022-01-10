@@ -2,80 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C20C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 15:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2ADC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 15:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235883AbiAJPGn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 10:06:43 -0500
-Received: from mail-vk1-f172.google.com ([209.85.221.172]:40897 "EHLO
-        mail-vk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbiAJPGn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 10:06:43 -0500
-Received: by mail-vk1-f172.google.com with SMTP id 78so8300248vkz.7;
-        Mon, 10 Jan 2022 07:06:42 -0800 (PST)
+        id S235248AbiAJPVI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 10:21:08 -0500
+Received: from mail-vk1-f178.google.com ([209.85.221.178]:46746 "EHLO
+        mail-vk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232628AbiAJPVI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 10:21:08 -0500
+Received: by mail-vk1-f178.google.com with SMTP id bj47so3316372vkb.13;
+        Mon, 10 Jan 2022 07:21:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=V+BiFjhsdJsmZj3IB08JxzjBxA3eHZEDoGBJZsUKmVc=;
-        b=6NV+2GdEyer3B2rBsJFyYcTNt8chCWafbKK11crKSTwJsNe3nUkng3zd98+dwbANNV
-         6hR46V1XLdbEzFhJyLbZ4IpSvFd+yFWscr2Px1ayNvweUE8x8wlr1NVUrY93ki/w1ETE
-         l1MsZhWX4lt0ecZ/WOpv88TDNk/zy3VCltKLNVljk5jchFdA/aqBkD3X6/vWvsTFlgkq
-         4NdMmEgvUFh90q5CeuO9eurAv+U2Ob45O+wqoQNbxuR9H4QBG1KJXCJiQThOxAy7KO+O
-         XQP4ABbt0ZNSKPFDIq7JFkgBYfgg738+RmMF8y/uJFx3snbDF/xqk0MDCVf4mbtsYq/z
-         nC4Q==
-X-Gm-Message-State: AOAM530B3xp7KUBD7IrT2iDVLyo5L6c6+pD01jTeOdOGZmTT0gUwNkFK
-        lbn5tfvZJnTbrv/S09FI5bFhOQUZfulMlQ==
-X-Google-Smtp-Source: ABdhPJxgdJ74v5mez/T8LFjrLizbS7ikPsCkSj9YKesyJd07L/N5eeKBdmj0sFhCtKty2MuGYTKxhg==
-X-Received: by 2002:a05:6122:d9b:: with SMTP id bc27mr121830vkb.14.1641827202206;
-        Mon, 10 Jan 2022 07:06:42 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id d198sm1789655vke.44.2022.01.10.07.06.41
+        bh=RHoZwCluZfMUknGNKqv0BYdg2CB9aEvZ6eS7Anw0XMY=;
+        b=I5lpoNo76BFzYQ/KtyHKg/FytyrIjassh27JP8G2romvBYudwMscSs3lhAzAEUT7sD
+         FrqcUj3G6dulJx2PlG6aTMqLOyU2kSbd16Lg3zPMxo0uiY4szrsRxjmTwF8hZyVJcOIa
+         vcjWYcT1zuP0W/FavaD2OoQVCWHrfzQVbzbljaU0cDkawzn07xjvINIxgPgbr9bAJVrT
+         tl1BiwTy7nBzcA+sjDV+rEGb2Winq7MzaDK08+acUdyRd2cxmByEvHf4HTnYCsMRSnE/
+         f5laiRr6o6hoK9olj/r5YENNHz4UP038LA5pl5ySa9zs/awarw0kW9GxjyY0V8te6eYw
+         Selg==
+X-Gm-Message-State: AOAM532Q7bKqaW8wpHCYJyaW1GhePIUQJ10G9oOnpP2icG2syGjPSCY3
+        88M71kLHicawpjGHSukoMPittQIu5V6xnQ==
+X-Google-Smtp-Source: ABdhPJw4g4HCOGD9jjqM/WaUwFB81rJx55FNrvih3n89zBDmbW4AnFGEn9plYWe/OcMnF4Zd3McCPg==
+X-Received: by 2002:a1f:2bc7:: with SMTP id r190mr163015vkr.0.1641828067093;
+        Mon, 10 Jan 2022 07:21:07 -0800 (PST)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id y8sm3156313vsj.12.2022.01.10.07.21.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 07:06:41 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id x33so22600571uad.12;
-        Mon, 10 Jan 2022 07:06:41 -0800 (PST)
-X-Received: by 2002:a67:c81c:: with SMTP id u28mr58550vsk.38.1641827201048;
- Mon, 10 Jan 2022 07:06:41 -0800 (PST)
+        Mon, 10 Jan 2022 07:21:06 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id m15so9664621uap.6;
+        Mon, 10 Jan 2022 07:21:06 -0800 (PST)
+X-Received: by 2002:ab0:1861:: with SMTP id j33mr102620uag.14.1641828066157;
+ Mon, 10 Jan 2022 07:21:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20211225193957.2195012-1-nikita.yoush@cogentembedded.com> <e0a56147-e800-914b-1df3-51ca7003a69d@gmail.com>
-In-Reply-To: <e0a56147-e800-914b-1df3-51ca7003a69d@gmail.com>
+References: <20211223093223.4725-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20211223093223.4725-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Jan 2022 16:06:30 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW-S_SPgQmY6kxweNy4sYYKBorxnytk9c8101q7K2KB-w@mail.gmail.com>
-Message-ID: <CAMuHMdW-S_SPgQmY6kxweNy4sYYKBorxnytk9c8101q7K2KB-w@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a7799[05]: Add MLP clocks
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
+Date:   Mon, 10 Jan 2022 16:20:54 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXCcgG3ArRjiSAhKNdCbFV3ip7aAboWPKsZt2aeG6z7MA@mail.gmail.com>
+Message-ID: <CAMuHMdXCcgG3ArRjiSAhKNdCbFV3ip7aAboWPKsZt2aeG6z7MA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g044: Update multiplier and divider
+ values for PLL2/3
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 26, 2021 at 6:46 PM Sergei Shtylyov
-<sergei.shtylyov@gmail.com> wrote:
-> On 25.12.2021 22:39, Nikita Yushchenko wrote:
-> > Add clocks for MLP modules on Renesas R-Car E3 and D3 SoCs.
-> >
-> > Similar to other R-Car Gen3 SoC, exact information on parent for MLP
-> > clock on E3 and D3 is not available. However, since parent for this
-> > clocl is not anyhow software-controllable, the only harm from this
+On Thu, Dec 23, 2021 at 10:32 AM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> As per the HW manual (Rev.1.00 Sep, 2021) PLL2 and PLL3 should be 1600MHz,
+> but with current multiplier and divider values this resulted to 1596MHz.
 >
->     s/clocl/clock/. :-)
+> This patch updates the multiplier and divider values for PLL2 and PLL3
+> so that we get the exact (1600MHz) values.
 >
-> > is inexact information exported via debugfs. So just keep the parent
-> > set in the same way as with other Gen3 SoCs.
-> >
-> > Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> Fixes: 17f0ff3d49ff1 ("clk: renesas: Add support for R9A07G044 SoC")
+> Suggested-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.18, with the typos fixed.
+i.e. will queue in renesas-clk-for-v5.18.
 
 Gr{oetje,eeting}s,
 
