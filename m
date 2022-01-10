@@ -2,111 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B335C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 09:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E24B8C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 10:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243228AbiAJJvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 04:51:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54478 "EHLO
+        id S243866AbiAJKXo convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 05:23:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243278AbiAJJvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 04:51:04 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4143AC061748
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jan 2022 01:51:04 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id a5so21661340wrh.5
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jan 2022 01:51:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=XjI+RU6al+oJtSFSee741SP13qfOGtttOWkUcj1LQbs=;
-        b=NJNPlDAKDl2C2HGO2BkBNbWyUWBNgBf4Oexcyn7jonBhZWZkxiVpbc9Y/lmcqGfeDu
-         j6VC91aakYpMEYfH6wrbmBRAT+0i2jyghqDxaF+dAe2mbq5P2dlZrPD7jIJ7nx8kNGdj
-         /fZJrxOXgDir2hBvS70ZyJ+z8SOQm2e5hvG2Zxusl+pptxOn+7a4oAPyunZml4It7xN2
-         zmOgEIUPU/RrzsJXwGvx22joHp/70vWUmycVInyKYhqXnbiTlXWhIEaD0LS4j6U0Cw5x
-         XWARprNFPcmfqfg7mti+cG0SJ+J3J2nqtHI8R4HTKdSjqY3sdRY+WQK8/aQ9HiooUlWv
-         4HBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=XjI+RU6al+oJtSFSee741SP13qfOGtttOWkUcj1LQbs=;
-        b=QnoLnRMgWeevj/Bw9hpDHLlA+1TqlGpeJW+2GyqepJsgeZqdwYEwBySMDWmJPb7sPA
-         npzvSD3EMVzE3tZFluztwUnZhvjJHLoM23Hazj13Wz0Dwvef4fa7nP58VD4qxG4wUJu8
-         7nnXdTsmyGv1dfeWn2kIwYIo0X7y5ZQivCHWS4aIpSRaWtLE5Y3pqIPdnJ0eRiNsVV/9
-         mLB6R5VM1IEhwxVYDItyM3FiwVEoSEFSta3XhRXu9k4tg5F5WrEJlQWZFExj+vgwotqP
-         4uf0j47Lo+x5OTlq9eL+y/aF0RMCXbnZx84Iu+edSgJnst6nNencKbqBdYPXABL4lhFB
-         fJqQ==
-X-Gm-Message-State: AOAM531GK2HGanF+g9QUEBAWwB6Inr8f4rqaYNkugKJTPdVV30YDbQai
-        kub1JIVqPussAJkwO4j8OG2cZg==
-X-Google-Smtp-Source: ABdhPJy64z5uatD6yk6wqa3/5nkEpQ5brCeZ12/zFKyWtXxSGP2vBqwJk7aMZd00MBcF6osrGLJ8kg==
-X-Received: by 2002:a05:6000:c8:: with SMTP id q8mr2089490wrx.611.1641808262884;
-        Mon, 10 Jan 2022 01:51:02 -0800 (PST)
-Received: from google.com ([31.124.24.179])
-        by smtp.gmail.com with ESMTPSA id k33sm6296470wms.21.2022.01.10.01.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jan 2022 01:51:02 -0800 (PST)
-Date:   Mon, 10 Jan 2022 09:51:07 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Zong Li <zong.li@sifive.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, linux-clk@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4] clk: sifive: Fix W=1 kernel build warning
-Message-ID: <YdwBi7uwH4NHi0GD@google.com>
-References: <20220110065536.11451-1-zong.li@sifive.com>
+        with ESMTP id S239415AbiAJKXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 05:23:39 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E99BC06173F
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jan 2022 02:23:38 -0800 (PST)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1n6rpu-0005kw-Eo; Mon, 10 Jan 2022 11:23:34 +0100
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1n6rpt-0007w9-86; Mon, 10 Jan 2022 11:23:33 +0100
+Message-ID: <12b7e367e8323f6da7bb548dbbae0d342608e52b.camel@pengutronix.de>
+Subject: Re: [PATCH v6 3/4] clk: ralink: make system controller node a reset
+ provider
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
+        Greg KH <gregkh@linuxfoundation.org>,
+        NeilBrown <neil@brown.name>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Mon, 10 Jan 2022 11:23:33 +0100
+In-Reply-To: <CAMhs-H_gjW_6p6yBWf+k2PBym4N+k+rBEXR9S8c13NU-UWD4VQ@mail.gmail.com>
+References: <20220110083910.1351020-1-sergio.paracuellos@gmail.com>
+         <20220110083910.1351020-4-sergio.paracuellos@gmail.com>
+         <5368e89c391e1329ed2be6496655f1bb50acfd19.camel@pengutronix.de>
+         <CAMhs-H_gjW_6p6yBWf+k2PBym4N+k+rBEXR9S8c13NU-UWD4VQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220110065536.11451-1-zong.li@sifive.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 10 Jan 2022, Zong Li wrote:
-
-> This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
-> Declare static const variable 'prci_clk_fu540' where it's used").
-> For fixing W=1 kernel build warning(s) about ‘prci_clk_fu540’ defined
-> but not used [-Wunused-const-variable=], the problem is that the C file
-> of fu540 and fu740 doesn't use these variables, but they include the
-> header files. We could refine the code by moving the definition of these
-> variables into fu540 and fu740 implementation respectively instead of
-> common core code, then we could still separate the SoCs-dependent data
-> in their own implementation.
+On Mon, 2022-01-10 at 10:39 +0100, Sergio Paracuellos wrote:
+[...]
+> > Is this known to work for all possible users, without delay between
+> > assert and deassert?
 > 
-> Fixes: 487dc7bb6a0c ("clk: sifive: fu540-prci: Declare static const variable 'prci_clk_fu540' where it's used")
-
-Okay, that's good.
-
-My other comments still apply here though.
-
-> Signed-off-by: Zong Li <zong.li@sifive.com>
+> It seems it is. This is based on the original reset implementation for
+> ralink. See:
 > 
-> ---
-> Changed in v4:
->  - Rebase on v5.16
->  - Modify fixes tag
+> https://elixir.bootlin.com/linux/v5.16/source/arch/mips/ralink/reset.c#L55
+>
+> > Are there any users of the reset_control_reset() API at all? This API
+> > was added for self-clearing reset bits, so if there are no users that
+> > need to pretend this is a reset pulse at the hardware level (there may
+> > be), I'd prefer if this was just left out.
 > 
-> Changed in v3:
->  - Rebase on v5.16-rc8
->  - Add fixes tag
-> 
-> Changed in v2:
->  - Move definition of variable to C file from header
-> ---
->  drivers/clk/sifive/fu540-prci.c  |  6 +++++-
->  drivers/clk/sifive/fu540-prci.h  |  6 +-----
->  drivers/clk/sifive/fu740-prci.c  |  6 +++++-
->  drivers/clk/sifive/fu740-prci.h  | 11 +----------
->  drivers/clk/sifive/sifive-prci.c |  5 -----
->  5 files changed, 12 insertions(+), 22 deletions(-)
+> I am not following you here. What do you mean?
 
--- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Looking at drivers/staging/mt7621-dts/mt7621.dtsi, it appears the
+current reset users are:
+  mediatek,mt7621-i2c
+  ralink,mt7621-spi
+  ralink,rt3883-gdma
+  mediatek,mt7621-hsdma
+  mediatek,mt7621-eth
+  mediatek,mt7621
+  mediatek,mt7621-pci
+
+Many of the corresponding drivers use device_reset(), which is a
+shorthand for requesting a reset control and calling
+reset_control_reset() on it. That will call mt7621_reset_device, so it
+is indeed used.
+
+regards
+Philipp
