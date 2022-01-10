@@ -2,178 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127D5C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 00:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC318C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 01:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237655AbiAJA7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Jan 2022 19:59:46 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41348 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S237665AbiAJA7b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jan 2022 19:59:31 -0500
-X-UUID: 0eace77e04f34a8a9c97eb8f3321413c-20220110
-X-UUID: 0eace77e04f34a8a9c97eb8f3321413c-20220110
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 266559539; Mon, 10 Jan 2022 08:59:28 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Mon, 10 Jan 2022 08:59:26 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 10 Jan 2022 08:59:26 +0800
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>
-Subject: [v2 3/3] clk: mediatek: Integrate vppsys with mtk-mmsys in MT8195
-Date:   Mon, 10 Jan 2022 08:59:02 +0800
-Message-ID: <20220110005902.27148-4-chun-jie.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220110005902.27148-1-chun-jie.chen@mediatek.com>
-References: <20220110005902.27148-1-chun-jie.chen@mediatek.com>
+        id S234958AbiAJBwm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Jan 2022 20:52:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231486AbiAJBwk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jan 2022 20:52:40 -0500
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6564C06173F
+        for <linux-clk@vger.kernel.org>; Sun,  9 Jan 2022 17:52:39 -0800 (PST)
+Received: by mail-lf1-x12d.google.com with SMTP id m1so5791079lfq.4
+        for <linux-clk@vger.kernel.org>; Sun, 09 Jan 2022 17:52:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PAmvDjOQprSLqp3N1+fz5g6MUD0+lASiAhwymAYrtVM=;
+        b=TTA3x5DgsSIXAhRr84LY9zUjOch1cXk659M5mY85o3HhpJCosqz035iFXGHImoBLrL
+         npwUPI0VKeyoAJmeclRznjI0GNeiZkj+qn9o4d+dhkqRCe+lTj7bDxg1GfD43zm2vN7V
+         4TsHxbRcnmXXNtKFVpxNOYx4np7GnFZVIL/0NwlNs6IJlWCHkWY2EvZX5BFI2+H/2dzK
+         6jopjdilMadSNzvzNDfApcSD4xXc5ERIl5T2mX77GvVUJO3Et1rrk6OTinWJuu7DY7qR
+         myich9mgF+4x1SRliu/WXPJW3gwZs9A0FOnziI0Gypk8jYurXTHazn0w+JudkvfyhiWL
+         JUKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PAmvDjOQprSLqp3N1+fz5g6MUD0+lASiAhwymAYrtVM=;
+        b=BKcSCbeLNuq0Yu5bvT0jJFtvjPaihQWNhGZt3s1JCFNbpDjjI6o5ox6Pv2PS7xPvuP
+         Xm3eK8U08dL/wu222bku022hULha3BdmjYoAixYF7x3i+99gf2xnEmAJmiDJNQObGg+c
+         GBUGB8a0tUbgoq7Yqip6LqjVkW5Jr5SvNdJdubGzYtGRUoKNU8BP0CmbpWBEMYsnqZgu
+         mcguKLz97XYoyhMgteGgcwS3WcUIy8jtu+ai3d4B+djeHtttQ20Y1a6HK6KFWhMuajKf
+         zP+saHSOiVUlWKESUOj4x+qZOed++f305JpEGkgDnYoWBG5KshPX9DtvDYH10YETh4n7
+         PlXA==
+X-Gm-Message-State: AOAM533YxrL7xIYCXdIDHhAlsr9dKPgaOmlnNorbZBnM7xTxnxcBHEfT
+        quHr2BykfSKeZw1/nOLEIe9zttYoLWT6AVeQmyrHtmuZfDn5tQ==
+X-Google-Smtp-Source: ABdhPJzMPmTi/ANQ/Ww5I/fTF/P9J0QbJtUOem/3EUzfHpLTjXLP4Uu9/jvj83SJc6SXf62ESEAmBEJcZB2S/vNG0qM=
+X-Received: by 2002:a05:6512:280c:: with SMTP id cf12mr988837lfb.5.1641779556910;
+ Sun, 09 Jan 2022 17:52:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20220107090715.2601-1-zong.li@sifive.com> <20220108004514.C331AC36AE9@smtp.kernel.org>
+In-Reply-To: <20220108004514.C331AC36AE9@smtp.kernel.org>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Mon, 10 Jan 2022 09:52:27 +0800
+Message-ID: <CANXhq0qQO9K0j5OaB2U3jJi+4V1tcDpf9Pu+yrcqBtdZ-Q5Z1A@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     lee.jones@linaro.org, linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Integrate vpp0 and vpp1 with mtk-mmsys driver which
-will populate device by platform_device_register_data
-to start vppsys clock driver.
+On Sat, Jan 8, 2022 at 8:45 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Zong Li (2022-01-07 01:07:15)
+> > This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+> > Declare static const variable 'prci_clk_fu540' where it's used").
+> > For fixing W=3D1 kernel build warning(s) about =E2=80=98prci_clk_fu540=
+=E2=80=99 defined
+> > but not used [-Wunused-const-variable=3D], the problem is that the C fi=
+le
+> > of fu540 and fu740 doesn't use these variables, but they includes the
+> > header files. We could refine the code by moving the definition of thes=
+e
+> > variables into fu540 and fu740 implementation respectively instead of
+> > common core code, then we could still separate the SoCs-dependent data
+> > in their own implementation.
+> >
+> > Fixes: 487dc7bb6a0c ("clk: sifive: fu540-prci: Declare static
+> > const variable 'prci_clk_fu540' where it's used")
+>
+> The fixes tag should be on one line, not split across two.
+>
 
-Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8195-vpp0.c | 42 +++++++++++++++++---------
- drivers/clk/mediatek/clk-mt8195-vpp1.c | 42 +++++++++++++++++---------
- 2 files changed, 56 insertions(+), 28 deletions(-)
+Ok, let me fix it in the v4 patch. Thanks
 
-diff --git a/drivers/clk/mediatek/clk-mt8195-vpp0.c b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-index c3241466a8d0..68c375bfce8b 100644
---- a/drivers/clk/mediatek/clk-mt8195-vpp0.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vpp0.c
-@@ -86,25 +86,39 @@ static const struct mtk_gate vpp0_clks[] = {
- 	GATE_VPP0_2(CLK_VPP0_WARP1_MDP_DL_ASYNC, "vpp0_warp1_mdp_dl_async", "top_wpe_vpp", 3),
- };
- 
--static const struct mtk_clk_desc vpp0_desc = {
--	.clks = vpp0_clks,
--	.num_clks = ARRAY_SIZE(vpp0_clks),
--};
-+static int clk_mt8195_vpp0_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data;
-+	int r;
- 
--static const struct of_device_id of_match_clk_mt8195_vpp0[] = {
--	{
--		.compatible = "mediatek,mt8195-vppsys0",
--		.data = &vpp0_desc,
--	}, {
--		/* sentinel */
--	}
--};
-+	clk_data = mtk_alloc_clk_data(CLK_VPP0_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	r = mtk_clk_register_gates(node, vpp0_clks, ARRAY_SIZE(vpp0_clks), clk_data);
-+	if (r)
-+		goto free_vpp0_data;
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		goto unregister_clk;
-+
-+	return r;
-+
-+unregister_clk:
-+	mtk_clk_unregister(clk_data);
-+
-+free_vpp0_data:
-+	mtk_free_clk_data(clk_data);
-+	return r;
-+}
- 
- static struct platform_driver clk_mt8195_vpp0_drv = {
--	.probe = mtk_clk_simple_probe,
-+	.probe = clk_mt8195_vpp0_probe,
- 	.driver = {
- 		.name = "clk-mt8195-vpp0",
--		.of_match_table = of_match_clk_mt8195_vpp0,
- 	},
- };
- builtin_platform_driver(clk_mt8195_vpp0_drv);
-diff --git a/drivers/clk/mediatek/clk-mt8195-vpp1.c b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-index ce0b9a40a179..237077c60f54 100644
---- a/drivers/clk/mediatek/clk-mt8195-vpp1.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vpp1.c
-@@ -84,25 +84,39 @@ static const struct mtk_gate vpp1_clks[] = {
- 	GATE_VPP1_1(CLK_VPP1_VPP_SPLIT_26M, "vpp1_vpp_split_26m", "clk26m", 26),
- };
- 
--static const struct mtk_clk_desc vpp1_desc = {
--	.clks = vpp1_clks,
--	.num_clks = ARRAY_SIZE(vpp1_clks),
--};
-+static int clk_mt8195_vpp1_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data;
-+	int r;
- 
--static const struct of_device_id of_match_clk_mt8195_vpp1[] = {
--	{
--		.compatible = "mediatek,mt8195-vppsys1",
--		.data = &vpp1_desc,
--	}, {
--		/* sentinel */
--	}
--};
-+	clk_data = mtk_alloc_clk_data(CLK_VPP1_NR_CLK);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	r = mtk_clk_register_gates(node, vpp1_clks, ARRAY_SIZE(vpp1_clks), clk_data);
-+	if (r)
-+		goto free_vpp1_data;
-+
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (r)
-+		goto unregister_clk;
-+
-+	return r;
-+
-+unregister_clk:
-+	mtk_clk_unregister(clk_data);
-+
-+free_vpp1_data:
-+	mtk_free_clk_data(clk_data);
-+	return r;
-+}
- 
- static struct platform_driver clk_mt8195_vpp1_drv = {
--	.probe = mtk_clk_simple_probe,
-+	.probe = clk_mt8195_vpp1_probe,
- 	.driver = {
- 		.name = "clk-mt8195-vpp1",
--		.of_match_table = of_match_clk_mt8195_vpp1,
- 	},
- };
- builtin_platform_driver(clk_mt8195_vpp1_drv);
--- 
-2.18.0
-
+> > Signed-off-by: Zong Li <zong.li@sifive.com>
+> >
