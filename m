@@ -2,145 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F84C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 21:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F9BC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jan 2022 21:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241160AbiAJVOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 16:14:16 -0500
-Received: from mga03.intel.com ([134.134.136.65]:9708 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240545AbiAJVOQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Jan 2022 16:14:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1641849256; x=1673385256;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=07J0kEnUclvM6FnzQLBdbihjujxj/fW7+ovEwmxMxl4=;
-  b=TAHPi+xfL0NzNJvcQqmQ4ds/fyy2pHpb9oHP6UQInI/tTxru3zoLKu8Q
-   5JRLXqmHS02rIAxGgWV1TnsK5l360kT4vJimwwEARcElPEvmtiydI1Tqh
-   MeGu0Dg+7MwWxLgei7LDLG6naF8OwouhWknxik9icV06s8pzVIJKJbOey
-   sohGtatTvg3I35lM1Yx0i7MMQwR32tS1hUR9rB2YRdVMUw5DP1iomKYFv
-   gCvTFtbh3dj/BjyQ8QzlkqL2VR4+xXyKj4rfSkhr2+5alcQ6FOapJvnGA
-   tIP4FX6yKZor/ic1n37jj4qgpH/oIpcO+jj1EfWbZDBDOtbxt5ICXpnEO
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10223"; a="243276703"
-X-IronPort-AV: E=Sophos;i="5.88,278,1635231600"; 
-   d="scan'208";a="243276703"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jan 2022 13:14:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,278,1635231600"; 
-   d="scan'208";a="490133756"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jan 2022 13:14:12 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1n71zY-0003yB-7m; Mon, 10 Jan 2022 21:14:12 +0000
-Date:   Tue, 11 Jan 2022 05:13:59 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     kbuild-all@lists.01.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        srv_heupstream@mediatek.com
-Subject: Re: [v1 04/16] clk: mediatek: Add MT8186 topckgen clock support
-Message-ID: <202201110556.oB2sYNXm-lkp@intel.com>
-References: <20220110134416.5191-5-chun-jie.chen@mediatek.com>
+        id S1345065AbiAJVyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 16:54:24 -0500
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:37623 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244626AbiAJVyX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 16:54:23 -0500
+Received: by mail-ot1-f51.google.com with SMTP id 45-20020a9d0a30000000b0058f1a6df088so16595683otg.4;
+        Mon, 10 Jan 2022 13:54:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Nbuo4ro3nzdD0IScMxSgtEVRAPGYV0jGC/KSnm0R3QE=;
+        b=i+69Ut3WIQoXrpFhslzhYazV9DvOCNQgJ6tc9nPFMIkNgup77b926mUS+zRl9mIQNw
+         /R62Y4DNCo0eJ/NJGfqWeatKNTEXHz34Yho4Y0Ep6UgzkH9LO72AM5zUWEPU18z2z1nd
+         ok0dLTAPutYBIFon/9iRx4gQ7IfHmpDTPfKAAjPUpuBwdr/vKIkCXmxTiU51wuM8gwf5
+         ZFeZtluX5Oj5jVhWLdHFYHnhPWS4oBTWN1k6vjwqUL9HeGDreKA3QBXGo4ZDXMrv5tML
+         b6mtwL6ojI92ZykfUB/7ArTtC6t6gUmTljwU3y17zoY87kNxVsfqgNNnB/Z4XMA0Oeqk
+         doYA==
+X-Gm-Message-State: AOAM532w9yWCXT2oCl5Dw7lLF5RRtpvFpB6Kniy2v2PuJ7CgpdCn5cs4
+        LC/AZIqRzRO6rSJJnTLrr+cDM9Qn/g==
+X-Google-Smtp-Source: ABdhPJxL5pmGClVVTEktJZZ8xhwU086xb1sB6DaYPpS+F0RIUXPR6B4sF0m3hHh63RnijGv3hzlfBw==
+X-Received: by 2002:a9d:814:: with SMTP id 20mr1333098oty.253.1641851662790;
+        Mon, 10 Jan 2022 13:54:22 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id f12sm1669988ote.75.2022.01.10.13.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jan 2022 13:54:21 -0800 (PST)
+Received: (nullmailer pid 1583061 invoked by uid 1000);
+        Mon, 10 Jan 2022 21:54:20 -0000
+Date:   Mon, 10 Jan 2022 15:54:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 3/8] dt-bindings: clock: samsung: convert Exynos5433 to
+ dtschema
+Message-ID: <YdyrDKivO+Jj/Ae/@robh.at.kernel.org>
+References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
+ <20220102115356.75796-3-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220110134416.5191-5-chun-jie.chen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20220102115356.75796-3-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chun-Jie,
+On Sun, 02 Jan 2022 12:53:51 +0100, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos5433 SoC clock controller bindings to DT schema
+> format.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  .../bindings/clock/exynos5433-clock.txt       | 507 -----------------
+>  .../clock/samsung,exynos5433-clock.yaml       | 524 ++++++++++++++++++
+>  2 files changed, 524 insertions(+), 507 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynos5433-clock.yaml
+> 
 
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next v5.16 next-20220110]
-[cannot apply to mbgg-mediatek/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/0day-ci/linux/commits/Chun-Jie-Chen/dt-bindings-ARM-Mediatek-Add-new-document-bindings-of-MT8186-clock/20220110-224451
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: nios2-allyesconfig (https://download.01.org/0day-ci/archive/20220111/202201110556.oB2sYNXm-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/265a72ef3e3b41a62f280049219cf4efe1d79171
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Chun-Jie-Chen/dt-bindings-ARM-Mediatek-Add-new-document-bindings-of-MT8186-clock/20220110-224451
-        git checkout 265a72ef3e3b41a62f280049219cf4efe1d79171
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nios2 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/mediatek/clk-mt8186-topckgen.c: In function 'clk_mt8186_topck_probe':
->> drivers/clk/mediatek/clk-mt8186-topckgen.c:725:9: error: implicit declaration of function 'mtk_clk_unregister'; did you mean 'devm_clk_unregister'? [-Werror=implicit-function-declaration]
-     725 |         mtk_clk_unregister(clk_data);
-         |         ^~~~~~~~~~~~~~~~~~
-         |         devm_clk_unregister
-   cc1: some warnings being treated as errors
-
-
-vim +725 drivers/clk/mediatek/clk-mt8186-topckgen.c
-
-   691	
-   692	static int clk_mt8186_topck_probe(struct platform_device *pdev)
-   693	{
-   694		struct clk_onecell_data *clk_data;
-   695		struct device_node *node = pdev->dev.of_node;
-   696		int r;
-   697		void __iomem *base;
-   698	
-   699		base = devm_platform_ioremap_resource(pdev, 0);
-   700		if (IS_ERR(base))
-   701			return PTR_ERR(base);
-   702	
-   703		clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
-   704		if (!clk_data)
-   705			return -ENOMEM;
-   706	
-   707		mtk_clk_register_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks),
-   708					    clk_data);
-   709		mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs), clk_data);
-   710		mtk_clk_register_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), node,
-   711				       &mt8186_clk_lock, clk_data);
-   712	
-   713		mtk_clk_register_composites(top_muxes, ARRAY_SIZE(top_muxes), base,
-   714					    &mt8186_clk_lock, clk_data);
-   715		mtk_clk_register_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), base,
-   716					    &mt8186_clk_lock, clk_data);
-   717	
-   718		r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-   719		if (r)
-   720			goto unregister_clk;
-   721	
-   722		return r;
-   723	
-   724	unregister_clk:
- > 725		mtk_clk_unregister(clk_data);
-   726		mtk_free_clk_data(clk_data);
-   727		return r;
-   728	}
-   729	
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Applied, thanks!
