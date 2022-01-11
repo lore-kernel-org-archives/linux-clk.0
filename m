@@ -2,116 +2,177 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6018EC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 00:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E04AC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 00:48:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242888AbiAKATD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 19:19:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242788AbiAKATD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 19:19:03 -0500
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C33FC06173F;
-        Mon, 10 Jan 2022 16:19:03 -0800 (PST)
-Received: by mail-qk1-x72b.google.com with SMTP id e25so17342009qkl.12;
-        Mon, 10 Jan 2022 16:19:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=RUJ7uJMEeEhsJoqBp40ayA1X7yhjrJAzeMDsVRChGZU=;
-        b=S6pPOW4QL+gADjyZhSQ9f0IUmKgK/8rGcICxVWY1hIAGpa9wuBatdW6lYt1nEa0UlE
-         mDzKqhzoatwOPQwaPvreH7iQp9mB2vEeDnF6pXl7puDwL/xce+DDcFsms2WRLYOas/TD
-         z5h2BTDCmUp2v05SCtkfsbRUG9lktvgSfu1Lb5LCWxHvRohz6t7ZZ3dPDgfgwa76c5n0
-         Fasnpn8H5S8L3AIu+Zn/B+ZDCqccxHbtlNyVwJ3WdjyILO9wp2+55cnmP25l9T5IIWPg
-         rwbqOazU/Am/6t184ernOkHTgmCVWVzyCmr9XGSWVlLWmnbuBIA9b+ibXunj77DMUeoc
-         RYzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=RUJ7uJMEeEhsJoqBp40ayA1X7yhjrJAzeMDsVRChGZU=;
-        b=wcxYG06iJ3lyJBjO7Waepw9+H2SbxorKpF3hDjslKUePYJjdtc8kz9EwWf/WTw47en
-         2O15HcbVb7PEUahXFjVhOjXQ3CxEfXhjEQeQIxjeOjzE6zhApA2T8UUN0qs+2ycd9kvg
-         VTaK/FbRtoyYSAoUwOZfdpc5If4qLHrIJNJBcxcHNjyCeZwn6l2VV02AmHZBePV8Qod9
-         PwMTGhlPYLw83WTkd/9B8qe8KsuqmUsUZ8rvdbqMdBDEAvwBXEBkFzmW4uiuOp/mU5+o
-         O2auqKhltTCe/VQBreJr8kEZOl/9OKq/9F6Kp7F65l5QKLXRXV86z3XTs4r98tnegRmT
-         08HQ==
-X-Gm-Message-State: AOAM530IuI3HMsrL3siEw/oi//EoN9FnfSvPwrLr3HdN0wCDjMNw0625
-        zKDJheqAhe37sQkl6EoOPTY=
-X-Google-Smtp-Source: ABdhPJwa41EczwvAQUKQdQ5jTpSkuQyZia7x61pNiOQzsbpG8FVGVnyZLnHaVs6mR7StpIpb0pY1mQ==
-X-Received: by 2002:a05:620a:2942:: with SMTP id n2mr1665704qkp.340.1641860342256;
-        Mon, 10 Jan 2022 16:19:02 -0800 (PST)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id a3sm5784796qtx.66.2022.01.10.16.19.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 16:19:01 -0800 (PST)
-Message-ID: <baa991a5-31d8-80fb-faf0-b443626030d4@gmail.com>
-Date:   Mon, 10 Jan 2022 19:18:58 -0500
+        id S1345756AbiAKAsb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 19:48:31 -0500
+Received: from mo-csw-fb1114.securemx.jp ([210.130.202.173]:34622 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242961AbiAKAs3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 19:48:29 -0500
+X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jan 2022 19:48:29 EST
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1114) id 20B0dGOd015559; Tue, 11 Jan 2022 09:39:16 +0900
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 20B0cYlr010679; Tue, 11 Jan 2022 09:38:34 +0900
+X-Iguazu-Qid: 2wHHuLLro5QHItghXv
+X-Iguazu-QSIG: v=2; s=0; t=1641861513; q=2wHHuLLro5QHItghXv; m=kk9PjMuJYwSzBJHZeWOkVjnfSZBkFIW+JUaF3tSPePU=
+Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
+        by relay.securemx.jp (mx-mr1112) id 20B0cVfc026424
+        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 11 Jan 2022 09:38:33 +0900
+Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id 99DAF1000DB;
+        Tue, 11 Jan 2022 09:38:31 +0900 (JST)
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by enc02.toshiba.co.jp  with ESMTP id 20B0cVgv024067;
+        Tue, 11 Jan 2022 09:38:31 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H4LCPQRnQSsLsTTqJn1bUDLG13hyy5BgU1TDp7Mm3KUbNCABc70HnNwhPplT+PZABe+LwHEl2g4FexPdm5Ak8a0uYUvLjIgW+1imGbWMJ7qoKD5HmAA8Jd87fYoPrPCJOG/krMubNikZWJ6EjCiUBEviHSJD7ng1Gbh17f4t4A4w6hXBZoFcdevpWu9lN9umhGigk4ApWovkGkKkt2DQYSCVJ/Cr/Pp6Ni9WueWUUd6gE5CdpTaSXU4fHXG0KoWOLLCNVBlE+8WGsakb9h7A7qDkMJo4s9hg75JgxgpEklKjgeD3SSqsX5hinf7M2Kq3LFzttCsLXoAVSRwAbjyf6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hjZcViRFaCBCjB9mfrfBqO5O2lvpCFsoSs07ZoOQnaY=;
+ b=TRuLrpIF2HCDHYmLKHlL7eK2wYmhgdrMyb8MaoPsvujbf/8AropnYuM8c0hnD++Ox6NBlguoHtTDYgtWcjxAnbwiCddvBB1k+WfwIOMUGkk4ngQTaaMa0Tx1/CjI2G9BtH8yITrqj7UaU2Wwzxx+BijnD3tTzPtJnSPmHW7ZnSyS9HZp/C1If1M9GOqQn8HzOCyQxx71T9O1i2nxTc49PpUMtTGfhkXG3VSZi4hxATEp4mYB2TPhFeF2FoiYhSH9uZg6XejBmj6qkBVqKwF8msk1gOqGK2nydkg1Fl5AQCQCCMYB4Ku2KB19sJBDbNTmzYNpN5ANJHX+uDV6C23/PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From:   <nobuhiro1.iwamatsu@toshiba.co.jp>
+To:     <nathan@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <ndesaulniers@google.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+        <lkp@intel.com>
+Subject: RE: [PATCH] clk: visconti: Remove pointless NULL check in
+ visconti_pll_add_lookup()
+Thread-Topic: [PATCH] clk: visconti: Remove pointless NULL check in
+ visconti_pll_add_lookup()
+Thread-Index: AQHYA/UaNwDsjYuXGUKN4WQKUOMmI6xc/r1g
+Date:   Tue, 11 Jan 2022 00:38:29 +0000
+X-TSB-HOP: ON
+Message-ID: <TYAPR01MB6252818ED275BCE2035C52E292519@TYAPR01MB6252.jpnprd01.prod.outlook.com>
+References: <20220107183303.2337676-1-nathan@kernel.org>
+In-Reply-To: <20220107183303.2337676-1-nathan@kernel.org>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f81d673c-6a4e-46f2-466b-08d9d49aaff6
+x-ms-traffictypediagnostic: TY2PR01MB3065:EE_
+x-microsoft-antispam-prvs: <TY2PR01MB3065DF6ED43BE1E263CB88BD92519@TY2PR01MB3065.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: JVw//j2EK8Q4mAzWFDKw8eD1IMMApRvYa0v3dfAorayfoMZ5hBxLl1K/EomFi9jQ5EvSWySXcfWkB3U6RXtyPlFkj4xNVix/YK0dmyU7iqnBwZ9WdcW/zpPPqJ+8OmQSHVthNAXse86ynI/bi7IJAP+yJh2aLd54wHo7VZ24Qa2wVZ0SiD59FOfKau1p42uK0KCGoIw0YhRu4zbKCNmlQpKZYYwQy8SAGS8GueCvgwihsIvxUpIdM/FGeX+xIF8xouB4ep31m9ADwdegQt8il76Y4HrYVwd3YWeACCx3R+lhrwAQJYbVJNwoAjBjQvDEyJ7hI9KMcOks+qo6XI1f4cePrYMLNSbF6+R+DyP2DL/X4dqCJGBmq5CklIe3ghGkKw8qeAfhat43TUz6ltkCXF0WMq1nuWbBpGuZlYEd2hfsOWt+aosQQMaz4JF+L6gIxo8orsakxkvyBNhe5rYW48twETJZPzwE/3uauDmhAJr0INrh/zH25UQWkTB23F+ivxbQySEV4MQVz7vhfWt1nETAPJxo8wRdawqUm/ZwuOpua3Q8aMGprzmKQBQZVWylfa/Fk4pSi5+pgAfaw7MwVNvS77iBWZB1xtLdoSULWXASysjj+9wBTMxVAiQQOSt0hmt56/qjNMr1VpRU5diDdEdMgsK2oEjbpmNEaDXJEV+evVKnTvxB5AVvI0eCA2tmnt4pMzaob8QSIO7Tx1QH0X4/bUGlsfuibAautkgws9XrOE5az31Ef55CBHVW5a2Rg67etzQFQL3i45xWGt2QUXcBtXys0rt7BuiFXMyZ7+E=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(66946007)(9686003)(64756008)(66446008)(66556008)(2906002)(54906003)(6506007)(86362001)(26005)(5660300002)(508600001)(83380400001)(76116006)(53546011)(110136005)(966005)(7696005)(71200400001)(55016003)(186003)(38070700005)(38100700002)(33656002)(122000001)(8676002)(4326008)(52536014)(8936002)(316002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?WnYyOXNqdFJJVFNtQ2dSeFBmNmhLSVZrSlpOZi9NdXp3c1ZZaVVtNEpI?=
+ =?iso-2022-jp?B?d2tYb1ZaTTVpTFpFajY3MnpZQW1VazhXSHJDeE9udXJxM1p4Q3gwcVFp?=
+ =?iso-2022-jp?B?alk2QTdiM3pycnBmRmwrK0VrOXpTV1YxWUdnc1kyOWpCbHFidjlQMnJ0?=
+ =?iso-2022-jp?B?OWIreWRQM0JoMDhWc1l1Z1lhVzdEL2Yra0dCMWxFMXFDSWpwdkh0Kzc5?=
+ =?iso-2022-jp?B?bXhvSHFvWmpkM1B0VnRITU9xeGh4SWI2d00rK0FnQjBrRlRDaURIY1ZW?=
+ =?iso-2022-jp?B?M1JlcW5HOHNPeFlLclVWQU9ZaHNDaHYwNjdnSThLMkR3OGNTQ0wzRy8v?=
+ =?iso-2022-jp?B?N1hmUGhaVTZiclZhbk9lL3JuMjJoVmY5MzlPYitRZVk3MC9ELzY5cUpE?=
+ =?iso-2022-jp?B?YWRjcFFmYU8xTU1YK21sckc2eWY4OUgwTGV2Sm4wRXQyQ1Q1VFRMazNF?=
+ =?iso-2022-jp?B?TzJqTWFqK3l1aEx3SzVGRDRMRFhwU0hPVlV2bU95R0d4YUQ0bE4xV0k0?=
+ =?iso-2022-jp?B?M2NjZnoraTJ2QUVIN2xOeG8xdjVBMkVXdWcyb0ZydG4zOUYxMHA2SXgy?=
+ =?iso-2022-jp?B?MThPSlhHcHlJengrUXVWSmFzamJOKzFMMGtCUWpWTzdSSmcyQnQ4RDR5?=
+ =?iso-2022-jp?B?U0dLRndSQXlnV1d5clN4Y2xLamVGT3ZqdHRKSWpkZlFrZmVrNnRJVFhs?=
+ =?iso-2022-jp?B?NlNITW00WTFtd1l6L2xCZEhtYStranZqVlZKYzV5M3g2NmJ1MUhSZW9o?=
+ =?iso-2022-jp?B?RDRzc2JYTWttSm1TeDVlMlhXblo0NHlQUVFkanFZK3AwSzhXTndKVzRX?=
+ =?iso-2022-jp?B?N29DcnZlUFo0Tkcwc3JGUkFjRUUrUENXenZVbHI1Ui92U29aNE1XTFpu?=
+ =?iso-2022-jp?B?RWEwMXR0T0pweFhqeXgwT3dGUUsyZHpycnNKWGJnaFBVd0lHd0VRbzRR?=
+ =?iso-2022-jp?B?ZTN6UFdWaUN5ckdURGNuK29QeVFvem5uVCtjVTltMTYvRmp2NnQvd01E?=
+ =?iso-2022-jp?B?Q2JJTFFQNGFiU29OWWxHbSs1b0t6d1Y4aVhKNitMVGNHek9yYlJpL2tK?=
+ =?iso-2022-jp?B?aXVzNWJHcHduSW9McGhNeDE4R0Q0bTlPaW5FczdwOWFweituNlNXdmYw?=
+ =?iso-2022-jp?B?QzNSZFliblYvdHpMS3RqaEpkbDVjUTRKT3NpSzBiSVhKWVlSZGtIeW93?=
+ =?iso-2022-jp?B?RzZHNlBBRkdSd1NVWFJTUmVvc0RzemluK0dXQlZjNUdTencrUmNiNUk2?=
+ =?iso-2022-jp?B?UjFKdXkzRW9wMmFCZUUvU291emU4SXd0UFEzaGpHZDdYbXBhSWdDc1Jz?=
+ =?iso-2022-jp?B?aE1ZSC8vakNzZHNSQlNhWHM1ODJhN3hpU3k2Q1JKWjYyVHJBRG9TbWRM?=
+ =?iso-2022-jp?B?WktXU0xJUkZzZ0UxNVlRdzcwRFdFZisxZkZkckFGM0grWk5DMGF3dmxI?=
+ =?iso-2022-jp?B?K0RlYjNVMGxEbWJGWTNoMisxWms2Tk9vRVNJcmZEa3d4N2tFR3hCMHVs?=
+ =?iso-2022-jp?B?MDF4d3JVK1pqMFJPN2ZBTzJ4YWdQNmtVdlNXRzZGanFXMHcyejhQSGtB?=
+ =?iso-2022-jp?B?bHZ4VHk3WlFVVDZCQWxDU1VVLzJRSVphblNKWmFwY01sRm0wZDNaN0ln?=
+ =?iso-2022-jp?B?REt2TXJjbW1rT1JjNXVNS3MrWms0QWdDUzQvbFlrakcyaFkvSXg5ZG5t?=
+ =?iso-2022-jp?B?RHFjQWFtTklEZG1ZT0l0aHlRY0FBcnBDSXhrWGVLRVhNdnp1c2hBeW5h?=
+ =?iso-2022-jp?B?RWg2LzViODYvNVhCK01sT0FpdzFETlFRNjJOQVB0alN1VWpJcGtobWpX?=
+ =?iso-2022-jp?B?S0tPdWlJWVEvWEVObFhaM0c4NFpGSmJvdGpnYnZnQTVqTjE0OUo3cnRx?=
+ =?iso-2022-jp?B?RVlJbEtHRXlXSm16ZHpiYVBHYUtCU2I4U0psbmQ2NWdmakVxTjY1U2Vt?=
+ =?iso-2022-jp?B?dmF6TEJFQ2w4RVE1d21Cay9pZjRhOE1BRjk5cytEbnUxSEVIT3hGNU0w?=
+ =?iso-2022-jp?B?NEdrNEV3YVMwbWNWK3BLVVVST3dnSDVnTDhrdHE2YVJ3ZWc3V05WREZH?=
+ =?iso-2022-jp?B?ZmIzOVo0L1JsZXFhUXJya3B4VVdZVlNkc0ZNN0t5S0UrZTVxT01LZVdH?=
+ =?iso-2022-jp?B?QnU4NGpaTmY1bFE0SHhOdEN1aHo5dnhmcysvNVVYeFE2TjRyQkFFRUtv?=
+ =?iso-2022-jp?B?TFlzNXc4UUlTTVdZUGYxNnZ4SXBvSnhBZmY2dVFCL2pjdkVTMEtNZFN1?=
+ =?iso-2022-jp?B?c0pSNEszTldIM3lRUWlIOG42TElYN2w2MzE1VXJJWjhmTGl5NnphWHZE?=
+ =?iso-2022-jp?B?eVFlOTk1Y1Q0SlZ5QlpPa2pXZFh0bFZ3eGU3RjEyMUROVmZHbVpBL01D?=
+ =?iso-2022-jp?B?M3lBZHNLbUFQV0o3OEREdzRQdEZORldTV0J2Nm5HSmNwMmpTZkNXWEFi?=
+ =?iso-2022-jp?B?QW5OVmpDYUtlMXRJWGtpSjY4aTN1R3VqTUpFZG04bXlDUTFGbmhGWVoz?=
+ =?iso-2022-jp?B?dFRpNzlvZmt6VjBRQ3pGMnU0c0lLODNvdEx4QT09?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v7 5/7] clk: imx: Add initial support for i.MXRT1050 clock
- driver
-Content-Language: en-US
-To:     Abel Vesa <abel.vesa@nxp.com>, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-imx@nxp.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, adrian.hunter@intel.com,
-        jirislaby@kernel.org, giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20220103233948.198119-1-Mr.Bossman075@gmail.com>
- <20220103233948.198119-6-Mr.Bossman075@gmail.com>
- <20220105235157.8ED80C36AEB@smtp.kernel.org>
- <89046151-e44e-6828-ad76-8574fba4fca8@gmail.com>
- <20220110201201.C1E37C36AE9@smtp.kernel.org> <Ydy3qvT5w6IWnR7s@abelvesa>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <Ydy3qvT5w6IWnR7s@abelvesa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f81d673c-6a4e-46f2-466b-08d9d49aaff6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2022 00:38:29.1059
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OKgjctWsH6467ZPqloDK6PdIRsJ14lhtlx+iFNsuhNRUxT+yZCVpebQ4l1y/iAaZOtTNt/dOeJvwqBUPfbDEPZmtntga75q8U2ikr6+ebjqnQdRv3NGb5ZGiughZ05At
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3065
+MSSCP.TransferMailToMossAgent: 103
+X-OriginatorOrg: toshiba.co.jp
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Nathan,
 
+Thanks for your patch.
 
-On 1/10/22 17:48, Abel Vesa wrote:
-> On 22-01-10 12:12:00, Stephen Boyd wrote:
->> Quoting Jesse Taube (2022-01-09 11:07:42)
->>>>> +
->>>>> +       clk_hw_data->num = IMXRT1050_CLK_END;
->>>>> +       hws = clk_hw_data->hws;
->>>>> +
->>>>> +       hws[IMXRT1050_CLK_OSC] = __clk_get_hw(of_clk_get_by_name(np, "osc"));
->>>>
->>>> Use clk_parent_data instead and reference the binding name with .fw_name
->>>
->>> Hi Stephen, sorry to bother you again.
->>> I'm wondering if adding `clk_parent_data` is necessary as it seems like
->>> it wold be a big change and the other IMX boards haven't implemented
->>> this yet would it be okay if I don't do this, or if it is necessary
->>> could you link to a patch set to change it.
->>>
->>
->> Is it a big change because the imx_clk_hw*() APIs aren't prepared for
->> non-string parents? Can you make some clk_parent_data based APIs and
->> migrate things over gradually? This is really a question for i.MX folks
->> to see if anyone is working on moving away from the string names.
+> -----Original Message-----
+> From: Nathan Chancellor <nathan@kernel.org>
+> Sent: Saturday, January 8, 2022 3:33 AM
+> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>; iwamatsu nobuhiro(岩松 信洋 □ＳＷＣ◯ＡＣＴ)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>; linux-clk@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> llvm@lists.linux.dev; Nathan Chancellor <nathan@kernel.org>; kernel test
+> robot <lkp@intel.com>
+> Subject: [PATCH] clk: visconti: Remove pointless NULL check in
+> visconti_pll_add_lookup()
 > 
-> I'm currently looking into it. I would suggest we take this patch as is
-> and I'll switch it later on to clk_parent_data.
-Thanks so much that would be great!
+> Clang warns:
+> 
+> drivers/clk/visconti/pll.c:292:20: warning: address of array 'ctx->clk_data.hws'
+> will always evaluate to 'true' [-Wpointer-bool-conversion]
+>         if (ctx->clk_data.hws && id)
+>             ~~~~~~~~~~~~~~^~~ ~~
+> 1 warning generated.
+> 
+> This array cannot be NULL if ctx is not NULL, which is allocated in
+> visconti_init_pll(), so just remove the check, which matches other clk drivers.
+> 
+> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and
+> reset driver")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/1564
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  drivers/clk/visconti/pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Should I sent the other changes requested I have them ready? Or should i 
-wait.
+Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
-Best regards
-	Jesse Taube
+Best regards,
+  Nobuhiro
+
+
