@@ -2,177 +2,237 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E04AC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 00:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8DEC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 03:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345756AbiAKAsb convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jan 2022 19:48:31 -0500
-Received: from mo-csw-fb1114.securemx.jp ([210.130.202.173]:34622 "EHLO
-        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242961AbiAKAs3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 19:48:29 -0500
-X-Greylist: delayed 554 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Jan 2022 19:48:29 EST
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1114) id 20B0dGOd015559; Tue, 11 Jan 2022 09:39:16 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 20B0cYlr010679; Tue, 11 Jan 2022 09:38:34 +0900
-X-Iguazu-Qid: 2wHHuLLro5QHItghXv
-X-Iguazu-QSIG: v=2; s=0; t=1641861513; q=2wHHuLLro5QHItghXv; m=kk9PjMuJYwSzBJHZeWOkVjnfSZBkFIW+JUaF3tSPePU=
-Received: from imx12-a.toshiba.co.jp (imx12-a.toshiba.co.jp [61.202.160.135])
-        by relay.securemx.jp (mx-mr1112) id 20B0cVfc026424
-        (version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 11 Jan 2022 09:38:33 +0900
-Received: from enc02.toshiba.co.jp (enc02.toshiba.co.jp [61.202.160.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by imx12-a.toshiba.co.jp (Postfix) with ESMTPS id 99DAF1000DB;
-        Tue, 11 Jan 2022 09:38:31 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id 20B0cVgv024067;
-        Tue, 11 Jan 2022 09:38:31 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H4LCPQRnQSsLsTTqJn1bUDLG13hyy5BgU1TDp7Mm3KUbNCABc70HnNwhPplT+PZABe+LwHEl2g4FexPdm5Ak8a0uYUvLjIgW+1imGbWMJ7qoKD5HmAA8Jd87fYoPrPCJOG/krMubNikZWJ6EjCiUBEviHSJD7ng1Gbh17f4t4A4w6hXBZoFcdevpWu9lN9umhGigk4ApWovkGkKkt2DQYSCVJ/Cr/Pp6Ni9WueWUUd6gE5CdpTaSXU4fHXG0KoWOLLCNVBlE+8WGsakb9h7A7qDkMJo4s9hg75JgxgpEklKjgeD3SSqsX5hinf7M2Kq3LFzttCsLXoAVSRwAbjyf6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hjZcViRFaCBCjB9mfrfBqO5O2lvpCFsoSs07ZoOQnaY=;
- b=TRuLrpIF2HCDHYmLKHlL7eK2wYmhgdrMyb8MaoPsvujbf/8AropnYuM8c0hnD++Ox6NBlguoHtTDYgtWcjxAnbwiCddvBB1k+WfwIOMUGkk4ngQTaaMa0Tx1/CjI2G9BtH8yITrqj7UaU2Wwzxx+BijnD3tTzPtJnSPmHW7ZnSyS9HZp/C1If1M9GOqQn8HzOCyQxx71T9O1i2nxTc49PpUMtTGfhkXG3VSZi4hxATEp4mYB2TPhFeF2FoiYhSH9uZg6XejBmj6qkBVqKwF8msk1gOqGK2nydkg1Fl5AQCQCCMYB4Ku2KB19sJBDbNTmzYNpN5ANJHX+uDV6C23/PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From:   <nobuhiro1.iwamatsu@toshiba.co.jp>
-To:     <nathan@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <ndesaulniers@google.com>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-        <lkp@intel.com>
-Subject: RE: [PATCH] clk: visconti: Remove pointless NULL check in
- visconti_pll_add_lookup()
-Thread-Topic: [PATCH] clk: visconti: Remove pointless NULL check in
- visconti_pll_add_lookup()
-Thread-Index: AQHYA/UaNwDsjYuXGUKN4WQKUOMmI6xc/r1g
-Date:   Tue, 11 Jan 2022 00:38:29 +0000
-X-TSB-HOP: ON
-Message-ID: <TYAPR01MB6252818ED275BCE2035C52E292519@TYAPR01MB6252.jpnprd01.prod.outlook.com>
-References: <20220107183303.2337676-1-nathan@kernel.org>
-In-Reply-To: <20220107183303.2337676-1-nathan@kernel.org>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f81d673c-6a4e-46f2-466b-08d9d49aaff6
-x-ms-traffictypediagnostic: TY2PR01MB3065:EE_
-x-microsoft-antispam-prvs: <TY2PR01MB3065DF6ED43BE1E263CB88BD92519@TY2PR01MB3065.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3968;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JVw//j2EK8Q4mAzWFDKw8eD1IMMApRvYa0v3dfAorayfoMZ5hBxLl1K/EomFi9jQ5EvSWySXcfWkB3U6RXtyPlFkj4xNVix/YK0dmyU7iqnBwZ9WdcW/zpPPqJ+8OmQSHVthNAXse86ynI/bi7IJAP+yJh2aLd54wHo7VZ24Qa2wVZ0SiD59FOfKau1p42uK0KCGoIw0YhRu4zbKCNmlQpKZYYwQy8SAGS8GueCvgwihsIvxUpIdM/FGeX+xIF8xouB4ep31m9ADwdegQt8il76Y4HrYVwd3YWeACCx3R+lhrwAQJYbVJNwoAjBjQvDEyJ7hI9KMcOks+qo6XI1f4cePrYMLNSbF6+R+DyP2DL/X4dqCJGBmq5CklIe3ghGkKw8qeAfhat43TUz6ltkCXF0WMq1nuWbBpGuZlYEd2hfsOWt+aosQQMaz4JF+L6gIxo8orsakxkvyBNhe5rYW48twETJZPzwE/3uauDmhAJr0INrh/zH25UQWkTB23F+ivxbQySEV4MQVz7vhfWt1nETAPJxo8wRdawqUm/ZwuOpua3Q8aMGprzmKQBQZVWylfa/Fk4pSi5+pgAfaw7MwVNvS77iBWZB1xtLdoSULWXASysjj+9wBTMxVAiQQOSt0hmt56/qjNMr1VpRU5diDdEdMgsK2oEjbpmNEaDXJEV+evVKnTvxB5AVvI0eCA2tmnt4pMzaob8QSIO7Tx1QH0X4/bUGlsfuibAautkgws9XrOE5az31Ef55CBHVW5a2Rg67etzQFQL3i45xWGt2QUXcBtXys0rt7BuiFXMyZ7+E=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB6252.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66476007)(66946007)(9686003)(64756008)(66446008)(66556008)(2906002)(54906003)(6506007)(86362001)(26005)(5660300002)(508600001)(83380400001)(76116006)(53546011)(110136005)(966005)(7696005)(71200400001)(55016003)(186003)(38070700005)(38100700002)(33656002)(122000001)(8676002)(4326008)(52536014)(8936002)(316002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?WnYyOXNqdFJJVFNtQ2dSeFBmNmhLSVZrSlpOZi9NdXp3c1ZZaVVtNEpI?=
- =?iso-2022-jp?B?d2tYb1ZaTTVpTFpFajY3MnpZQW1VazhXSHJDeE9udXJxM1p4Q3gwcVFp?=
- =?iso-2022-jp?B?alk2QTdiM3pycnBmRmwrK0VrOXpTV1YxWUdnc1kyOWpCbHFidjlQMnJ0?=
- =?iso-2022-jp?B?OWIreWRQM0JoMDhWc1l1Z1lhVzdEL2Yra0dCMWxFMXFDSWpwdkh0Kzc5?=
- =?iso-2022-jp?B?bXhvSHFvWmpkM1B0VnRITU9xeGh4SWI2d00rK0FnQjBrRlRDaURIY1ZW?=
- =?iso-2022-jp?B?M1JlcW5HOHNPeFlLclVWQU9ZaHNDaHYwNjdnSThLMkR3OGNTQ0wzRy8v?=
- =?iso-2022-jp?B?N1hmUGhaVTZiclZhbk9lL3JuMjJoVmY5MzlPYitRZVk3MC9ELzY5cUpE?=
- =?iso-2022-jp?B?YWRjcFFmYU8xTU1YK21sckc2eWY4OUgwTGV2Sm4wRXQyQ1Q1VFRMazNF?=
- =?iso-2022-jp?B?TzJqTWFqK3l1aEx3SzVGRDRMRFhwU0hPVlV2bU95R0d4YUQ0bE4xV0k0?=
- =?iso-2022-jp?B?M2NjZnoraTJ2QUVIN2xOeG8xdjVBMkVXdWcyb0ZydG4zOUYxMHA2SXgy?=
- =?iso-2022-jp?B?MThPSlhHcHlJengrUXVWSmFzamJOKzFMMGtCUWpWTzdSSmcyQnQ4RDR5?=
- =?iso-2022-jp?B?U0dLRndSQXlnV1d5clN4Y2xLamVGT3ZqdHRKSWpkZlFrZmVrNnRJVFhs?=
- =?iso-2022-jp?B?NlNITW00WTFtd1l6L2xCZEhtYStranZqVlZKYzV5M3g2NmJ1MUhSZW9o?=
- =?iso-2022-jp?B?RDRzc2JYTWttSm1TeDVlMlhXblo0NHlQUVFkanFZK3AwSzhXTndKVzRX?=
- =?iso-2022-jp?B?N29DcnZlUFo0Tkcwc3JGUkFjRUUrUENXenZVbHI1Ui92U29aNE1XTFpu?=
- =?iso-2022-jp?B?RWEwMXR0T0pweFhqeXgwT3dGUUsyZHpycnNKWGJnaFBVd0lHd0VRbzRR?=
- =?iso-2022-jp?B?ZTN6UFdWaUN5ckdURGNuK29QeVFvem5uVCtjVTltMTYvRmp2NnQvd01E?=
- =?iso-2022-jp?B?Q2JJTFFQNGFiU29OWWxHbSs1b0t6d1Y4aVhKNitMVGNHek9yYlJpL2tK?=
- =?iso-2022-jp?B?aXVzNWJHcHduSW9McGhNeDE4R0Q0bTlPaW5FczdwOWFweituNlNXdmYw?=
- =?iso-2022-jp?B?QzNSZFliblYvdHpMS3RqaEpkbDVjUTRKT3NpSzBiSVhKWVlSZGtIeW93?=
- =?iso-2022-jp?B?RzZHNlBBRkdSd1NVWFJTUmVvc0RzemluK0dXQlZjNUdTencrUmNiNUk2?=
- =?iso-2022-jp?B?UjFKdXkzRW9wMmFCZUUvU291emU4SXd0UFEzaGpHZDdYbXBhSWdDc1Jz?=
- =?iso-2022-jp?B?aE1ZSC8vakNzZHNSQlNhWHM1ODJhN3hpU3k2Q1JKWjYyVHJBRG9TbWRM?=
- =?iso-2022-jp?B?WktXU0xJUkZzZ0UxNVlRdzcwRFdFZisxZkZkckFGM0grWk5DMGF3dmxI?=
- =?iso-2022-jp?B?K0RlYjNVMGxEbWJGWTNoMisxWms2Tk9vRVNJcmZEa3d4N2tFR3hCMHVs?=
- =?iso-2022-jp?B?MDF4d3JVK1pqMFJPN2ZBTzJ4YWdQNmtVdlNXRzZGanFXMHcyejhQSGtB?=
- =?iso-2022-jp?B?bHZ4VHk3WlFVVDZCQWxDU1VVLzJRSVphblNKWmFwY01sRm0wZDNaN0ln?=
- =?iso-2022-jp?B?REt2TXJjbW1rT1JjNXVNS3MrWms0QWdDUzQvbFlrakcyaFkvSXg5ZG5t?=
- =?iso-2022-jp?B?RHFjQWFtTklEZG1ZT0l0aHlRY0FBcnBDSXhrWGVLRVhNdnp1c2hBeW5h?=
- =?iso-2022-jp?B?RWg2LzViODYvNVhCK01sT0FpdzFETlFRNjJOQVB0alN1VWpJcGtobWpX?=
- =?iso-2022-jp?B?S0tPdWlJWVEvWEVObFhaM0c4NFpGSmJvdGpnYnZnQTVqTjE0OUo3cnRx?=
- =?iso-2022-jp?B?RVlJbEtHRXlXSm16ZHpiYVBHYUtCU2I4U0psbmQ2NWdmakVxTjY1U2Vt?=
- =?iso-2022-jp?B?dmF6TEJFQ2w4RVE1d21Cay9pZjRhOE1BRjk5cytEbnUxSEVIT3hGNU0w?=
- =?iso-2022-jp?B?NEdrNEV3YVMwbWNWK3BLVVVST3dnSDVnTDhrdHE2YVJ3ZWc3V05WREZH?=
- =?iso-2022-jp?B?ZmIzOVo0L1JsZXFhUXJya3B4VVdZVlNkc0ZNN0t5S0UrZTVxT01LZVdH?=
- =?iso-2022-jp?B?QnU4NGpaTmY1bFE0SHhOdEN1aHo5dnhmcysvNVVYeFE2TjRyQkFFRUtv?=
- =?iso-2022-jp?B?TFlzNXc4UUlTTVdZUGYxNnZ4SXBvSnhBZmY2dVFCL2pjdkVTMEtNZFN1?=
- =?iso-2022-jp?B?c0pSNEszTldIM3lRUWlIOG42TElYN2w2MzE1VXJJWjhmTGl5NnphWHZE?=
- =?iso-2022-jp?B?eVFlOTk1Y1Q0SlZ5QlpPa2pXZFh0bFZ3eGU3RjEyMUROVmZHbVpBL01D?=
- =?iso-2022-jp?B?M3lBZHNLbUFQV0o3OEREdzRQdEZORldTV0J2Nm5HSmNwMmpTZkNXWEFi?=
- =?iso-2022-jp?B?QW5OVmpDYUtlMXRJWGtpSjY4aTN1R3VqTUpFZG04bXlDUTFGbmhGWVoz?=
- =?iso-2022-jp?B?dFRpNzlvZmt6VjBRQ3pGMnU0c0lLODNvdEx4QT09?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        id S244792AbiAKDVu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jan 2022 22:21:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233848AbiAKDVu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jan 2022 22:21:50 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF963C061748
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jan 2022 19:21:49 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id d3so25177407lfv.13
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jan 2022 19:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KfU7miV0uOjRWcNpVnQz4f+FJoHgEBgdho8tmS6nsfo=;
+        b=KmGHSbHmSJgY+7pMcppIHWNFbaXw045712/Mf9tiHgUXluw5Z23uDoqgc28RKVF6/s
+         Fry3q47gty8KC80gXjcPhH7jjfuPVjmI8/VxbnTmkcNhdjLv7fL7Eq98rdJF7C0tPxnD
+         4ZukbOQVIy6F7Rr/UJ0f79P29WAKtedwsHoa2zfEmdk+ZCpck6bVWh/YCl162LkBKzMH
+         uYFSFz8u+huvUfXFRhrksBWrcWnD2sVJhhKlDnUd+UBdbiJ0EzLA5fEwOUWtnvbeu7Cg
+         IXWTJ9wsDG7kAVgUStj08LJz5YAfkAaj2iXysQklAdI9ZnTTzq/UuEIXV0jE9frGpIeC
+         ZZOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KfU7miV0uOjRWcNpVnQz4f+FJoHgEBgdho8tmS6nsfo=;
+        b=KPzf52cSNpKIwqT9dqqJM4IDEkyWslm9Svxc//Xq1kjnvKJKHMZjn3YNqM5bXJYycL
+         so15Wib5OTXzzgk2kOfa2XBMlU7lpmctDuuY8JABmabmKw6TDN81fa81zJJsSlpfi1Km
+         8VImXRamWQ5DLgmpYI4KLCjmxfBFO66eJu/kBPejBUtNjQwKisOq26KoG0dZK5dJm2+Z
+         Msf29l6D55s/tIjoL9aGKx5+TLd4wjFPvJFYuwZOn0OR4B0PV31hmmmqV0oAM7QI7o7Z
+         ztEy27apI1gXSBVM54Ahyi1vFTM2e5QJWGZui72xt7RjqWb6ieJ34R1PiM+KB8qvOOzb
+         V8eA==
+X-Gm-Message-State: AOAM532Be9EvCuT5q2+4OHluTDBe1YyqfmPod5GwUu4FeU3oVoHvXSl+
+        p6hVDxAvW7wFhRfi1Ifa6G7X6rATiF0cOqMjzpAHTIG6cgia4wb9
+X-Google-Smtp-Source: ABdhPJxc2eSZgvuT7K2GkzKA9fRUl+Z+Z6vYLSVVcj3xCfFVpMwJRW26tIt173G49SpLoUQtxFZznCWR9Ts7qnLzjjM=
+X-Received: by 2002:a05:6512:15a6:: with SMTP id bp38mr2014273lfb.116.1641871307866;
+ Mon, 10 Jan 2022 19:21:47 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB6252.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f81d673c-6a4e-46f2-466b-08d9d49aaff6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2022 00:38:29.1059
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OKgjctWsH6467ZPqloDK6PdIRsJ14lhtlx+iFNsuhNRUxT+yZCVpebQ4l1y/iAaZOtTNt/dOeJvwqBUPfbDEPZmtntga75q8U2ikr6+ebjqnQdRv3NGb5ZGiughZ05At
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3065
-MSSCP.TransferMailToMossAgent: 103
-X-OriginatorOrg: toshiba.co.jp
+References: <20220107090715.2601-1-zong.li@sifive.com> <YdwBWmF8OJYab7qS@google.com>
+In-Reply-To: <YdwBWmF8OJYab7qS@google.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Tue, 11 Jan 2022 11:21:37 +0800
+Message-ID: <CANXhq0ookagQTZZrNduP5DjXs2awQdRkUxNzTWU=-dz+TVuUwg@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nathan,
+On Mon, Jan 10, 2022 at 5:50 PM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> Please improve the subject line.
+>
+> If this is a straight revert, the subject line should reflect that.
+>
+> If not, you need to give us specific information regarding the purpose
+> of this patch.  Please read the Git log for better, more forthcoming
+> examples.
+>
 
-Thanks for your patch.
+It seems to me that this patch is not a straight revert, it provides
+another way to fix the original build warnings, just like
+'487dc7bb6a0c' tried to do. I guess the commit message has described
+what the original warnings is and what the root cause is, it also
+mentioned what is changed in this patch. I'm a bit confused whether we
+need to add fixes tag, it looks like that it might cause some
+misunderstanding?
 
-> -----Original Message-----
-> From: Nathan Chancellor <nathan@kernel.org>
-> Sent: Saturday, January 8, 2022 3:33 AM
-> To: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>; iwamatsu nobuhiro(岩松 信洋 □ＳＷＣ◯ＡＣＴ)
-> <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>; linux-clk@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
-> llvm@lists.linux.dev; Nathan Chancellor <nathan@kernel.org>; kernel test
-> robot <lkp@intel.com>
-> Subject: [PATCH] clk: visconti: Remove pointless NULL check in
-> visconti_pll_add_lookup()
-> 
-> Clang warns:
-> 
-> drivers/clk/visconti/pll.c:292:20: warning: address of array 'ctx->clk_data.hws'
-> will always evaluate to 'true' [-Wpointer-bool-conversion]
->         if (ctx->clk_data.hws && id)
->             ~~~~~~~~~~~~~~^~~ ~~
-> 1 warning generated.
-> 
-> This array cannot be NULL if ctx is not NULL, which is allocated in
-> visconti_init_pll(), so just remove the check, which matches other clk drivers.
-> 
-> Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and
-> reset driver")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1564
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> ---
->  drivers/clk/visconti/pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-
-Best regards,
-  Nobuhiro
-
-
+> On Fri, 07 Jan 2022, Zong Li wrote:
+>
+> > This commit reverts commit 487dc7bb6a0c ("clk: sifive: fu540-prci:
+> > Declare static const variable 'prci_clk_fu540' where it's used").
+> > For fixing W=3D1 kernel build warning(s) about =E2=80=98prci_clk_fu540=
+=E2=80=99 defined
+> > but not used [-Wunused-const-variable=3D], the problem is that the C fi=
+le
+> > of fu540 and fu740 doesn't use these variables, but they includes the
+> > header files.
+>
+> What exactly does this patch fix?  Does it fix a build warning?
+>
+> If so, please provide the line you are seeing.
+>
+> > We could refine the code by moving the definition of these
+> > variables into fu540 and fu740 implementation respectively instead of
+> > common core code, then we could still separate the SoCs-dependent data
+> > in their own implementation.
+> >
+> > Fixes: 487dc7bb6a0c ("clk: sifive: fu540-prci: Declare static
+> > const variable 'prci_clk_fu540' where it's used")
+>
+> This should be on one line.
+>
+> What exactly does it fix though?  Please provide more details.
+>
+> What about the warning that this patch was designed to fix?  Doesn't
+> that return after this patch has been applied?
+>
+> > Signed-off-by: Zong Li <zong.li@sifive.com>
+> >
+> > ---
+> > Changed in v3:
+> >  - Rebase on v5.16-rc8
+> >  - Add fixes tag
+> >
+> > Changed in v2:
+> >  - Move definition of variable to C file from header
+> > ---
+> >  drivers/clk/sifive/fu540-prci.c  |  6 +++++-
+> >  drivers/clk/sifive/fu540-prci.h  |  6 +-----
+> >  drivers/clk/sifive/fu740-prci.c  |  6 +++++-
+> >  drivers/clk/sifive/fu740-prci.h  | 11 +----------
+> >  drivers/clk/sifive/sifive-prci.c |  5 -----
+> >  5 files changed, 12 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540=
+-prci.c
+> > index 29bab915003c..5568bc26e36f 100644
+> > --- a/drivers/clk/sifive/fu540-prci.c
+> > +++ b/drivers/clk/sifive/fu540-prci.c
+> > @@ -20,7 +20,6 @@
+> >
+> >  #include <dt-bindings/clock/sifive-fu540-prci.h>
+> >
+> > -#include "fu540-prci.h"
+> >  #include "sifive-prci.h"
+> >
+> >  /* PRCI integration data for each WRPLL instance */
+> > @@ -87,3 +86,8 @@ struct __prci_clock __prci_init_clocks_fu540[] =3D {
+> >               .ops =3D &sifive_fu540_prci_tlclksel_clk_ops,
+> >       },
+> >  };
+> > +
+> > +struct prci_clk_desc prci_clk_fu540 =3D {
+> > +     .clks =3D __prci_init_clocks_fu540,
+> > +     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > +};
+> > diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540=
+-prci.h
+> > index c220677dc010..931d6cad8c1c 100644
+> > --- a/drivers/clk/sifive/fu540-prci.h
+> > +++ b/drivers/clk/sifive/fu540-prci.h
+> > @@ -7,10 +7,6 @@
+> >  #ifndef __SIFIVE_CLK_FU540_PRCI_H
+> >  #define __SIFIVE_CLK_FU540_PRCI_H
+> >
+> > -#include "sifive-prci.h"
+> > -
+> > -#define NUM_CLOCK_FU540      4
+> > -
+> > -extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
+> > +extern struct prci_clk_desc prci_clk_fu540;
+> >
+> >  #endif /* __SIFIVE_CLK_FU540_PRCI_H */
+> > diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740=
+-prci.c
+> > index 53f6e00a03b9..0ade3dcd24ed 100644
+> > --- a/drivers/clk/sifive/fu740-prci.c
+> > +++ b/drivers/clk/sifive/fu740-prci.c
+> > @@ -8,7 +8,6 @@
+> >
+> >  #include <dt-bindings/clock/sifive-fu740-prci.h>
+> >
+> > -#include "fu540-prci.h"
+> >  #include "sifive-prci.h"
+> >
+> >  /* PRCI integration data for each WRPLL instance */
+> > @@ -132,3 +131,8 @@ struct __prci_clock __prci_init_clocks_fu740[] =3D =
+{
+> >               .ops =3D &sifive_fu740_prci_pcie_aux_clk_ops,
+> >       },
+> >  };
+> > +
+> > +struct prci_clk_desc prci_clk_fu740 =3D {
+> > +     .clks =3D __prci_init_clocks_fu740,
+> > +     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu740),
+> > +};
+> > diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740=
+-prci.h
+> > index 511a0bf7ba2b..5bc0e18f058c 100644
+> > --- a/drivers/clk/sifive/fu740-prci.h
+> > +++ b/drivers/clk/sifive/fu740-prci.h
+> > @@ -7,15 +7,6 @@
+> >  #ifndef __SIFIVE_CLK_FU740_PRCI_H
+> >  #define __SIFIVE_CLK_FU740_PRCI_H
+> >
+> > -#include "sifive-prci.h"
+> > -
+> > -#define NUM_CLOCK_FU740      9
+> > -
+> > -extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
+> > -
+> > -static const struct prci_clk_desc prci_clk_fu740 =3D {
+> > -     .clks =3D __prci_init_clocks_fu740,
+> > -     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu740),
+> > -};
+> > +extern struct prci_clk_desc prci_clk_fu740;
+> >
+> >  #endif /* __SIFIVE_CLK_FU740_PRCI_H */
+> > diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifi=
+ve-prci.c
+> > index 80a288c59e56..916d2fc28b9c 100644
+> > --- a/drivers/clk/sifive/sifive-prci.c
+> > +++ b/drivers/clk/sifive/sifive-prci.c
+> > @@ -12,11 +12,6 @@
+> >  #include "fu540-prci.h"
+> >  #include "fu740-prci.h"
+> >
+> > -static const struct prci_clk_desc prci_clk_fu540 =3D {
+> > -     .clks =3D __prci_init_clocks_fu540,
+> > -     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > -};
+> > -
+> >  /*
+> >   * Private functions
+> >   */
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Principal Technical Lead - Developer Services
+> Linaro.org =E2=94=82 Open source software for Arm SoCs
+> Follow Linaro: Facebook | Twitter | Blog
