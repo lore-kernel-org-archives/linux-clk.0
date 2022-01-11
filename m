@@ -2,135 +2,117 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2433EC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 12:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE75C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 14:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238950AbiAKMxR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jan 2022 07:53:17 -0500
-Received: from esa.microchip.iphmx.com ([68.232.154.123]:50956 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbiAKMxR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jan 2022 07:53:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1641905597; x=1673441597;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=GPP2NwXKguVvQqgSRdC4tryu6NqbYiCAp/eYy5ky3f4=;
-  b=kGDhSY0icPySHXB59YmTZBjjy9wBBvLk6U2ywfSWkBM+w1RNIBU/h3mR
-   G54DROBJPl4XgH8fwC+bTyHR/65beRUJNzLDNR44QulDyZ29/LHrGjHi6
-   xOkfQ7EYkodCdd6WH5rGqWiPBU772Ex7ANHb22eNV15gtVn1JsZRpRxDi
-   kkVJRq5y4wsZh7uA7qr35/ueCw239OjUlsZucTQ5nl7+Yi2Ffi5hrNNtV
-   6XZhprX4d0kZuh0GMxJ3M2BcBpMUBpTGEmaqoW+wdZwm+VNE85y/WikfA
-   X4hsQV6u1e71AIiZTOPBRGVWT+5yDBimvP+UQKmI1uqlGnBzdV7gPZ0SL
-   w==;
-IronPort-SDR: SQxFJ4aFg5UtQOLBuS2YHAJgSeBvTIon2ycxzjn1Ukw+3k6NDK/SHZ2ezG+FPILV93VB5hZaOa
- aeQcYYtwjBgO8HC6act/hAipfDK8cuYRT8FBntQHcjQgpHniHVDzWxjERPr9G4sZMZlJKYpRdA
- gGHpSsOzgrKEIiPJYeMPDV0cudZwZuX7URF8VNaQrk93JNOoeLfHT5yAgoqcslyYI724Ppz2ZU
- mWyZJ0hV44QfoXAY0I7/tmW4VGSajhQkKXD1MTr8lK/KIN1Fh+DewaU8sBo+cGcJzPrpIdD48y
- xrAK+5zBwLTvif54I8Lap8F/
-X-IronPort-AV: E=Sophos;i="5.88,279,1635231600"; 
-   d="scan'208";a="142326214"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 Jan 2022 05:53:16 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 11 Jan 2022 05:53:16 -0700
-Received: from ROB-ULT-M18064N.mchp-main.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Tue, 11 Jan 2022 05:53:12 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <claudiu.beznea@microchip.com>
-CC:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>,
-        <rdunlap@infradead.org>, <unixbhaskar@gmail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH] clk: at91: sama7g5: Allow MCK1 to be exported and referenced in DT
-Date:   Tue, 11 Jan 2022 14:53:10 +0200
-Message-ID: <20220111125310.902856-1-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.25.1
+        id S241565AbiAKOVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jan 2022 09:21:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241535AbiAKOVt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jan 2022 09:21:49 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1646C06173F
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jan 2022 06:21:48 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id x4so8093991wru.7
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jan 2022 06:21:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=hifiphile-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qfsEiqeTzL+rxl2EJnRIMYOkFM+p+zinSPSBDNmPksQ=;
+        b=sBorI1N01iKAcaLF9K6kB5yXg0/hD6Q3DQNaJqXVyXSSMVxsrWpJqjfctKDslV0OQZ
+         nbNB9hUxiiRwQhmCdkuKA6uz0i5jFB9ZsoCtrRn3zBJyaZsMw35x1pnKcJWHte5tX6sp
+         wnYjf9BZhpFbuGtD+46w85vR/qiBMAOADhVZtLavRLeAKLh1A7Jijr7dvcm9FQjM/Fzp
+         JMQCeXJ/Z+ttdsiszC1+S6ymyu1ExTZXDBwLu4361YKl5mEOY+7055lGocxXAZdLdTvE
+         lIG0tpWo7RXxa9Lu9ljnu/6/PkUuvfprSWc6odp2V5jzcpjIA7DTIzoRwh+Od85l3BN6
+         7hBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qfsEiqeTzL+rxl2EJnRIMYOkFM+p+zinSPSBDNmPksQ=;
+        b=1tGzgyJS3ZZNXEL+Z3lGZwlhIeZ/zNY9hoQnXqQfuDiHE5fvgp0DsLKNjOH5jV7UAT
+         xSsLfuA08SQtp/g9peAT55VWQsM0nLyhXuvDd2G+gdChRuQ3somppBwzU53EYluCg5Ju
+         t/+8Z6rnnyerVvJca7+TPxrV176o5IOzJ/5MymQtu0N1hpeRmdYhQEZeAbW723hO+ICG
+         kMocLPNl8qMmZN/LhpIRYVj696NdTCb8T6luWe1JfvfYqrc5JdoQzcL/UZ/xtTeJ2gxh
+         t7ooczBFrZqAdDMLR4bjbFBu6Tt4P07j9oTfZOHpxahh4I+Ew+jSQOWOGhQP7VUYGV4e
+         j3pQ==
+X-Gm-Message-State: AOAM5310ffipTRJawceoHfywGyHpIy23NPkFRZObyawCMIFX6eaMvu2b
+        0PEPyqPzFXCFbtHV+/f73IX7VA==
+X-Google-Smtp-Source: ABdhPJyZqcc0cseZTyeYELMHJhhL0T8eB4Z8OK3FvdmmqljGxALydejQGmQu/SYbSMZv6Nl6UFrzug==
+X-Received: by 2002:a5d:678e:: with SMTP id v14mr2424291wru.254.1641910907489;
+        Tue, 11 Jan 2022 06:21:47 -0800 (PST)
+Received: from vbuilder.hifiphile.com ([2a01:e34:ec1a:b010:28b2:58ff:fe32:748e])
+        by smtp.googlemail.com with ESMTPSA id u16sm9280157wrn.24.2022.01.11.06.21.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jan 2022 06:21:46 -0800 (PST)
+From:   Zixun LI <admin@hifiphile.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Zixun LI <admin@hifiphile.com>,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH] clk: at91: allow setting PMC_AUDIOPINCK clock parents via DT
+Date:   Tue, 11 Jan 2022 14:20:50 +0000
+Message-Id: <20220111142051.37957-1-admin@hifiphile.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MCK1 feeds the External Bus Interface (EBI). EBI's clock rate is used
-to translate EBI's timmings to SMC timings, thus we need to handle MCK1
-in the EBI driver. Allow MCK1 to be referenced as a PMC_TYPE_CORE clock
-from phandle in DT.
+Make AUDIOPINCK accessible via phandle to select it
+as peripheral clock parent using assigned-clock-parents in DT
+where available.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Zixun LI <admin@hifiphile.com>
+Reviewed-by: Claudiu Beznea <Claudiu.Beznea@microchip.com>
 ---
- drivers/clk/at91/sama7g5.c       | 8 +++++++-
+ drivers/clk/at91/sama5d2.c       | 4 +++-
  include/dt-bindings/clock/at91.h | 1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index 369dfafabbca..e43458673afb 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -302,6 +302,7 @@ static const struct {
-  * @ep_count:		extra parents count
-  * @ep_mux_table:	mux table for extra parents
-  * @id:			clock id
-+ * @eid:		export index in sama7g5->chws[] array
-  * @c:			true if clock is critical and cannot be disabled
-  */
- static const struct {
-@@ -311,6 +312,7 @@ static const struct {
- 	u8 ep_count;
- 	u8 ep_mux_table[4];
- 	u8 id;
-+	u8 eid;
- 	u8 c;
- } sama7g5_mckx[] = {
- 	{ .n = "mck1",
-@@ -319,6 +321,7 @@ static const struct {
- 	  .ep_mux_table = { 5, },
- 	  .ep_count = 1,
- 	  .ep_chg_id = INT_MIN,
-+	  .eid = PMC_MCK1,
- 	  .c = 1, },
- 
- 	{ .n = "mck2",
-@@ -913,7 +916,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index d027294a0089..f479e39e3bb2 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -168,7 +168,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
  	if (IS_ERR(regmap))
  		return;
  
--	sama7g5_pmc = pmc_data_allocate(PMC_CPU + 1,
-+	sama7g5_pmc = pmc_data_allocate(PMC_MCK1 + 1,
- 					nck(sama7g5_systemck),
- 					nck(sama7g5_periphck),
- 					nck(sama7g5_gck), 8);
-@@ -1027,6 +1030,9 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 			goto err_free;
+-	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
++	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPINCK + 1,
+ 					nck(sama5d2_systemck),
+ 					nck(sama5d2_periph32ck),
+ 					nck(sama5d2_gck), 3);
+@@ -216,6 +216,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	if (IS_ERR(hw))
+ 		goto err_free;
  
- 		alloc_mem[alloc_mem_size++] = mux_table;
++	sama5d2_pmc->chws[PMC_AUDIOPINCK] = hw;
 +
-+		if (sama7g5_mckx[i].eid)
-+			sama7g5_pmc->chws[sama7g5_mckx[i].eid] = hw;
- 	}
- 
- 	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", "main_xtal");
+ 	hw = at91_clk_register_audio_pll_pmc(regmap, "audiopll_pmcck",
+ 					     "audiopll_fracck");
+ 	if (IS_ERR(hw))
 diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index 98e1b2ab6403..8498c0cd95fe 100644
+index 98e1b2ab6403..573cf8c25eb4 100644
 --- a/include/dt-bindings/clock/at91.h
 +++ b/include/dt-bindings/clock/at91.h
-@@ -35,6 +35,7 @@
- #define PMC_AUDIOIOPLL		(PMC_MAIN + 7)
- #define PMC_ETHPLL		(PMC_MAIN + 8)
- #define PMC_CPU			(PMC_MAIN + 9)
-+#define PMC_MCK1		(PMC_MAIN + 10)
+@@ -24,6 +24,7 @@
+ #define PMC_PLLACK		7
+ #define PMC_PLLBCK		8
+ #define PMC_AUDIOPLLCK		9
++#define PMC_AUDIOPINCK		10
  
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
+ /* SAMA7G5 */
+ #define PMC_CPUPLL		(PMC_MAIN + 1)
 -- 
-2.25.1
+2.30.2
 
