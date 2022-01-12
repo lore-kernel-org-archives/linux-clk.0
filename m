@@ -2,60 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1391C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 20:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1307FC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 20:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357677AbiALUlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jan 2022 15:41:03 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:54444 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357682AbiALUk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 15:40:58 -0500
+        id S1357700AbiALUnc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jan 2022 15:43:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50224 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242076AbiALUn3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 15:43:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAD1C06173F;
+        Wed, 12 Jan 2022 12:43:29 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 74E8A6173F;
-        Wed, 12 Jan 2022 20:40:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF098C36AE9;
-        Wed, 12 Jan 2022 20:40:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD8CC61997;
+        Wed, 12 Jan 2022 20:43:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354DCC36AE9;
+        Wed, 12 Jan 2022 20:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642020055;
-        bh=5kA6B5XXa0Vtj9s858sVvMwlFnSTWQ7WiPBnw4ZOkf0=;
+        s=k20201202; t=1642020208;
+        bh=Ac7uCpPE99DsSqddUNSny/kXs/+W3vMP+9SzM1bqi5Y=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rzK2cMIlhCNsnf9awyfyBOuoDzUzJbm4kaB8bm4femolKF+3CzukgrIQAVnMJ5xYf
-         46JLdSLR7ErX80r0T3HGbutaQwwkfq4oXgCydPI8XrKczTkJzKlCcx1Zv7RMDfm/oc
-         aTZ1W+L3OnCOV02KJ7wy4WhiKK7lp1ffocUeFNKx49jf7J6uVRdZyOtC21A5Y5JFVK
-         EAEtZAzxDBRJfuQ+eHZokJNHADrypGHD1OSrEKLIuvSDRQ3HPO3sPXfhAWXGgQxI3F
-         JDJITKtT9xm7EnTT7mGfs3tcfTiB7WxRoVcj0U/Tdb+4YgSkDSaYJFBAEp+gyZzmwS
-         fX4BTrmtKaW2g==
+        b=KvltawUOr6vMDJKKeqdbhvC9zFgQ9x13wrlLoHrp7wdqTbt/r2BGtNHmxUuIoDdcd
+         XjP+voQsPddNiYsdKxKcEBTFTTmeBeJZEyYahCS9hZKwYRuLAEUmYEzrJF96qedEni
+         evXKJKMGxDt8iiBAGXFUaA0UIPrxJ4ExI4Ik6wqN/jkm7/aJ6CRkEpn4FpAVN1bQ0K
+         hMLxVwNokR9tTO6nGCtQtVAvCvSycyYqnSl7Hw8b2nXZGvDl1owyPX7+ix4tmSDTQU
+         tOkbNk1zekdWfVziiBaSdSRTwn1WFZ+nc2VO8Aj6E7Vk2oNYeD1DB85GXrgPueS5d2
+         AhZtzJ+IUOzEQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAKfKVtGGsw10RAzowZdGmuu-5ABsnfOWhR-Sxnoymc4QiqvCPA@mail.gmail.com>
-References: <cover.1631623906.git.shubhrajyoti.datta@xilinx.com> <CAKfKVtGGsw10RAzowZdGmuu-5ABsnfOWhR-Sxnoymc4QiqvCPA@mail.gmail.com>
-Subject: Re: [PATCH v13 0/5] clk: clocking-wizard: Driver updates
+In-Reply-To: <20211215060019.441549-1-chi.minghao@zte.com.cn>
+References: <20211215060019.441549-1-chi.minghao@zte.com.cn>
+Subject: Re: [PATCH clk-next] drivers/clk: remove redundant result variable
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, open list:
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>, linux-staging@lists.linux.dev,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        git@xilinx.com, ;
-Illegal-Object: Syntax error in Cc: address found on vger.kernel.org:
-        Cc:     ;
-                        ^-missing semicolon to end mail group, extraneous tokens in mailbox, missing end of mailbox
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Date:   Wed, 12 Jan 2022 12:40:53 -0800
+Cc:     pgaikwad@nvidia.com, mturquette@baylibre.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+To:     cgel.zte@gmail.com, pdeschrijver@nvidia.com
+Date:   Wed, 12 Jan 2022 12:43:25 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220112204055.CF098C36AE9@smtp.kernel.org>
+Message-Id: <20220112204328.354DCC36AE9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shubhrajyoti Datta (2021-11-14 21:31:10)
-> Hi ,
-> Could this patch series be merged if there are not further comments.
+Please fix the subject to include tegra
 
-I'll merge it after the merge window closes. One comment on the
-location. Also, the subject would be better as "move out of staging" and
-ideally an Ack from Greg on that patch.
+$ git log --oneline -2 -- drivers/clk/tegra
+b1bc04a2ac5b clk: tegra: Support runtime PM and power domain
+e360e116a0ee clk: tegra: Make vde a child of pll_p on tegra114
+
+Quoting cgel.zte@gmail.com (2021-12-14 22:00:19)
+> From: Minghao Chi <chi.minghao@zte.com.cn>
+>=20
+> Return value from FIELD_GET() directly instead
+> of taking this in another redundant variable.
+>=20
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
