@@ -2,139 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83ECC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 14:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5CEC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 17:46:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353980AbiALONK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jan 2022 09:13:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43616 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353961AbiALONH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 09:13:07 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8326BC06173F;
-        Wed, 12 Jan 2022 06:13:07 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id s30so8584069lfo.7;
-        Wed, 12 Jan 2022 06:13:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FZO7GH1VAP3gSHj6yutdiODbC5oJX0jySmLnQ+aEZjQ=;
-        b=S2lAPi1WJQbC/HEbdwHo2alb0WAeNMwyaDCAGarVnoSS5VbXmaYWRaWxrj0uZRQym7
-         WdaldxxcSmISYa/iiXZBt/xCXueESue0xrZafJxUG4F0h7YkK11dO5J1GK8jznyJIgA5
-         lMUbY6uCQiBL1p0sZUSqdjVUFEx3D2XOlvlzAE8uqMmaK5Q1NyT9LiKtX2TYh/HHLhdj
-         Okv9m+HMoxtHuRJ+MlOicPXiG/5hDrwkJGQ3CNUs2rILI6pmZVUfP69uESnIoUlmqKSq
-         AJsER2ZAL3DYZ69rLSpg0cj+uzWjzYiT/T2I+XF5Q5IhTjRrlJnxsyDymywu9iDZ7iov
-         UyXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FZO7GH1VAP3gSHj6yutdiODbC5oJX0jySmLnQ+aEZjQ=;
-        b=vu7R4qWq97/bJ62e1ASvFxl/yLHgMnx4ZgzGCknHVByT9vS7jb9sdmgtpyFRb/hyHc
-         /L178ouwbEjeQFN8z4fmJQQgTxB+daAcJMKJvawO4ceEc1dW+ee7XXmyJ9DfXgTqm4ci
-         1Oqqi1gawJ9l/+qAQ2ifOI6fHGYzbQObpi3YMi8W7SU/irfzkOm1fDp8ZhHCu48erUSH
-         Kgwge8X5pNTYsbULnpBp3UBxdf3R2mX2vc4/QM+wM41WPzOdtCSUI/EU2X9B8D8Ywx7f
-         OzkuoGvLvHJh4ddHB4V670V6LO11t0ZNCQ0bSN1R6hGTE203fSB7NuJJ9Q7tggO5nUVL
-         m4JQ==
-X-Gm-Message-State: AOAM531PLROCoL/gIUpCZiunfkemH/fzzLX8d7l6a+p8Y1sHYxeZ+lie
-        +Pqwyeyl67FDjxATS1SxU8o=
-X-Google-Smtp-Source: ABdhPJy4lr99ztyBa2kSA3shxOrQgi4BCovoR/p0JF4BQpd8xxVBVzq3w2HMuEnQ81LnX0RG0k3PxA==
-X-Received: by 2002:a05:6512:159d:: with SMTP id bp29mr3863011lfb.645.1641996785910;
-        Wed, 12 Jan 2022 06:13:05 -0800 (PST)
-Received: from [192.168.2.145] (94-29-62-108.dynamic.spd-mgts.ru. [94.29.62.108])
-        by smtp.googlemail.com with ESMTPSA id m1sm761824lfh.212.2022.01.12.06.13.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jan 2022 06:13:05 -0800 (PST)
-Subject: Re: [PATCH v2 0/3] clk: Implement a clock request API
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-References: <20210914093515.260031-1-maxime@cerno.tech>
- <a5400ae3-f181-91fc-bc35-db989584c70b@gmail.com>
- <20220112135147.dbkmsnlqyipq7urq@houat>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d5dbdd71-d5db-53d1-176a-812c908f1abf@gmail.com>
-Date:   Wed, 12 Jan 2022 17:13:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-MIME-Version: 1.0
-In-Reply-To: <20220112135147.dbkmsnlqyipq7urq@houat>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1355920AbiALRqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jan 2022 12:46:20 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:16306 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S240289AbiALRqU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 12:46:20 -0500
+X-IronPort-AV: E=Sophos;i="5.88,282,1635174000"; 
+   d="scan'208";a="106270320"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Jan 2022 02:46:18 +0900
+Received: from localhost.localdomain (unknown [10.226.92.38])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 09C604005E1F;
+        Thu, 13 Jan 2022 02:46:14 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC 00/28] Add RZ/G2L Display support
+Date:   Wed, 12 Jan 2022 17:45:44 +0000
+Message-Id: <20220112174612.10773-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-12.01.2022 16:51, Maxime Ripard пишет:
-> Hi Dmitry,
-> 
-> On Wed, Jan 12, 2022 at 04:28:41PM +0300, Dmitry Osipenko wrote:
->> 14.09.2021 12:35, Maxime Ripard пишет:
->>> Hi,
->>>
->>> This is a follow-up of the discussion here:
->>> https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmour/
->>>
->>> This implements a mechanism to raise and lower clock rates based on consumer
->>> workloads, with an example of such an implementation for the RaspberryPi4 HDMI
->>> controller.
->>>
->>> There's a couple of things worth discussing:
->>>
->>>   - The name is in conflict with clk_request_rate, and even though it feels
->>>     like the right name to me, we should probably avoid any confusion
->>>
->>>   - The code so far implements a policy of always going for the lowest rate
->>>     possible. While we don't have an use-case for something else, this should
->>>     maybe be made more flexible?
->>
->> Hello Maxime,
->>
->> On NVIDIA Tegra we use interconnect framework for converting of
->> workload-based memory bandwidth requirement to the memory clock rate
->> [1]. All Tegra SoCs have two display controllers and other memory
->> clients, ICC takes care of summing and updating memory bandwidth for us,
->> which in the end results in a freq change of the shared memory controller.
->>
->> [1] https://git.kernel.org/linus/04d5d5df9
->>
->> Not so long time ago me and Thierry Reding were looking at yours v1 and
->> back then Thierry suggested that the same ICC approach might work for
->> yours case. I'm now looking at the v2 and yours discussion with Stephen
->> Boyd, and it appears that ICC is indeed what you really need. Have you
->> considered to use ICC?
-> 
-> The goals seem to be similar indeed, but most of these clocks feed some
-> internal state machine in those devices and are not related to the
-> memory bandwidth at all. So there's no real interconnect to model there :/
+RZ/G2L LCD controller composed of Frame compression Processor(FCPVD),
+Video signal processor (VSPD) and Display unit(DU). The output of
+LCDC is connected to Display parallel interface and MIPI link video
+interface. 
 
-If you could convert resolution/pclk to BW and BW to the clock rates,
-then it should be possible to model ICC. BW doesn't necessarily need to
-be "memory" bandwidth, bandwidth is abstract value expressed in kbytes/sec.
+This patch series aims to add basic display support on RZ/G2L SMARC
+EVK platform. The output from DSI is connected to ADV7535.
 
-The state machine will be ICC provider then, although you'll need to
-model that machine as a separate device somehow. For example, on Tegra
-we needed to specify clocks as separate devices to model GENPD [2][3].
+Implemntation details:-
 
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=b1bc04a2ac5
+Clock:-
 
-[3]
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm/boot/dts/tegra30.dtsi?h=next-20220112#n394
+PLL5 generates 2 clock sources, FOUTPOSTDIV and FOUT1PH0
+and vclk is sourced through DSI divider which is connected
+to a mux with the above clock sources.
+
+Pll5-->Mux->DSI divider--> vclk.
+
+The parameters used for generating PLL5 frequency is based on
+a LUT[1] from the bsp release.
+
+DSI mode and DPI mode needs different set of PLL5 parameters
+for generating the video clock. Currently we support only
+DSI mode. later extend this to support DPI mode.
+
+LCDC:
+
+DU shares same clocks and reset line with VSPD and FCPVD.
+it does not have DU group and plane registers like R-Car.
+it supports FHD@60 for DSI interface.
+
+VSPD:
+ 
+VSPD does not have version register, so a new compatible
+introduced to get version string.
+
+Please share your valuable comments on this patch series.
+
+[1]https://github.com/renesas-rz/rz_linux-cip/tree/rzg2l-cip41/drivers/gpu/drm/rcar-du
+
+Biju Das (28):
+  clk: renesas: rzg2l: Add FOUTPOSTDIV clk support
+  clk: renesas: rzg2l: Add PLL5_4 clk mux support
+  clk: renesas: rzg2l: Add DSI divider clk support
+  clk: renesas: r9a07g044: Add M1 clock support
+  clk: renesas: r9a07g044: Add {M2, M2_DIV2} Clocks support
+  clk: renesas: r9a07g044: Add M3 Clock support
+  clk: renesas: r9a07g044: Add M4 Clock support
+  clk: renesas: r9a07g044: Add LCDC clock and reset entries
+  clk: renesas: r9a07g044: Add DSI clock and reset entries
+  drm: rcar-du: of: Increase buff size for compatible variable
+  drm: rcar-du: Add num_rpf to struct rcar_du_device_info
+  drm: rcar-du: Add max_width and max_height to struct
+    rcar_du_device_info
+  drm: rcar-du: Add RCAR_DU_FEATURE_PLANE feature bit
+  drm: rcar-du: Allow DU plane feature based on DU feature bit
+  drm: rcar_du: Add RCAR_DU_FEATURE_GROUP feature bit
+  drm: rcar-du: Allow DU group feature based on feature bit
+  dt-bindings: display: renesas,du: Document r9a07g044l bindings
+  drm: rcar-du: Add RZ/G2L LCDC Support
+  media: dt-bindings: media: renesas,vsp1: Document RZ/{G2L,V2L} VSPD
+    bindings
+  media: vsp1: Add support for the RZ/G2L VSPD
+  dt-bindings: display: bridge: Document RZ/G2L MIPI DSI TX bindings
+  drm: rcar-du: Add RZ/G2L DSI driver
+  arm64: dts: renesas: r9a07g044: Add fcpvd node
+  arm64: dts: renesas: r9a07g044: Add vspd node
+  arm64: dts: renesas: r9a07g044: Add DU node
+  arm64: dts: renesas: r9a07g044: Add dsi node
+  arm64: dts: renesas: r9a07g044: Link DSI with DU node
+  arm64: dts: renesas: rzg2l-smarc: Enable Display on carrier board
+
+ .../bindings/display/bridge/renesas,dsi.yaml  | 143 ++++
+ .../bindings/display/renesas,du.yaml          |  54 ++
+ .../bindings/media/renesas,vsp1.yaml          |   4 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  94 +++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  61 ++
+ drivers/clk/renesas/r9a07g044-cpg.c           |  57 ++
+ drivers/clk/renesas/rzg2l-cpg.c               | 426 +++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h               |  31 +
+ drivers/gpu/drm/rcar-du/Kconfig               |   7 +
+ drivers/gpu/drm/rcar-du/Makefile              |   1 +
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c        | 151 +++-
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   2 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c         | 144 +++-
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   9 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.c       |  15 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  17 +-
+ drivers/gpu/drm/rcar-du/rcar_du_of.c          |   2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h        |  52 ++
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c         |   9 +-
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c      | 676 ++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h | 151 ++++
+ drivers/media/platform/vsp1/vsp1.h            |   1 +
+ drivers/media/platform/vsp1/vsp1_drv.c        |  31 +-
+ drivers/media/platform/vsp1/vsp1_lif.c        |   7 +-
+ drivers/media/platform/vsp1/vsp1_regs.h       |   1 +
+ 25 files changed, 2070 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
+
+-- 
+2.17.1
+
