@@ -2,172 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064E7C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jan 2022 21:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D6AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 02:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245649AbiAKV5r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jan 2022 16:57:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49686 "EHLO
+        id S236678AbiALCrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jan 2022 21:47:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230508AbiAKV5q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jan 2022 16:57:46 -0500
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF443C06173F;
-        Tue, 11 Jan 2022 13:57:46 -0800 (PST)
-Received: by mail-qk1-x731.google.com with SMTP id h16so406144qkp.3;
-        Tue, 11 Jan 2022 13:57:46 -0800 (PST)
+        with ESMTP id S236450AbiALCrX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jan 2022 21:47:23 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 145CDC06173F
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jan 2022 18:47:22 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id g11so3306149lfu.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jan 2022 18:47:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=tAICFwgK+5loeH6T2WZmu2JcAthYSYGSu13AnEoNjNo=;
-        b=fu4Ru7hpqv2MN1GE7X5Z3Yv5Iy511hZj7DD6BAf57927si2x3BZBW2nMIeOvUGbBUc
-         rGsNOTrsbFcKZaoopAV518MvWttifE9a7k43KazdqQeoWPpfs/oAE3tZoOrRnbya0QgT
-         CBrnkz08m0SVDhNBAVVepWaL6YOI7BHez6Y9I83lGBNT/+KPkSDzlHrcfLvK11OikIPy
-         1COTr9fJev3Ak4Afq+vFvAApjPWYn8HGdcGzxpBYXmHRjQicFA5rDUmgsS9pkieQubar
-         fO7DsnREFVGz2mKFKCxZiF2HU6JA/6bqKaByttjUC3IAtDs1R2Un9I4LmRd1PSfnQH+R
-         +E4w==
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9h8RrxrLrGfAoig5CzbnoZVT45pfxdSprD8t2BD+og0=;
+        b=f14U+/r3vVy+0H0xi4EdR7uTzna3DaR1Ny7njiV7ekxtpZoY3SIDGM0ItHJL4dAZmF
+         9uvaQFJTt+kP1H9WF9kB8dMvbBSJm3DuNLhOrAjdJ4p2vbSqxIHX6lfGcHf/fmu2gC0R
+         tXoORim/OpT2ruh73Fn7YGs83QIQ/HscBR0d+Ec+4lrA5gqubymjtHVpFyBXynKffWZh
+         6d2GnJxJCDboYk9bcyDM54KtVW5GVX12WMzQ49/MkVFQeSUV5LanNB7afnVzlOc+4VVx
+         PYwioJI02WBm4JmC2JpxIurlqQloy/wnVTierXvd+JBY2Fl5Ks7w9PzREhxuHbCa69Jl
+         fTOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=tAICFwgK+5loeH6T2WZmu2JcAthYSYGSu13AnEoNjNo=;
-        b=eJTtGYWPemRpS2jl8J256moWewny6zBYBhuw3rAuVd4KJ9Vg2aOkjwCWha8gIUIgdG
-         uvEAsMuj8FIpiS2fB+bv2jNpf6L4sVhTGqC3kkI4Vkdw/4MUJgF05yfdwUGnlAhNUAZc
-         MqoNUNFg+/JvCAAd48pLh3X4M+04CLjHfoJitRPFi8DiBr8ONdIJrSquodZFFhlFt+yu
-         4/WxEl/ZEiVgYd37iXtvkg5l/YUJkksbNgG3ZkkABwHjecEK4YXTinyWnrpPUTR+ezW9
-         WG3bBSjGjAb28wHGvT9jiTShqW7aDzGWXPkx+oN8eeYumxcbjbBP93vyMZcAfEUvcZU7
-         cuUw==
-X-Gm-Message-State: AOAM53090kinnDkjralEYghbcJbUnOZHkQiYnCIJIwkuobvE/RI4ItlE
-        FFMWkdSlm4zkiaZ26xcxakw=
-X-Google-Smtp-Source: ABdhPJxGF2boBf45RLlVY7W/rjQ/EenPnnKU3Yl1sJb7Tyb7flGCBD30h037BkXfrIZQB0I1TRKIMQ==
-X-Received: by 2002:a05:620a:1b:: with SMTP id j27mr4553408qki.308.1641938265879;
-        Tue, 11 Jan 2022 13:57:45 -0800 (PST)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id n129sm7050881qkn.64.2022.01.11.13.57.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jan 2022 13:57:45 -0800 (PST)
-Message-ID: <fc0169c3-eea7-e067-784b-eebeccee13b8@gmail.com>
-Date:   Tue, 11 Jan 2022 16:57:42 -0500
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9h8RrxrLrGfAoig5CzbnoZVT45pfxdSprD8t2BD+og0=;
+        b=UnP5DrssSSk1fWoyyP5mdMgD8sT8tw+JzRM5WoX/Fnrg5LqLMwzmtnxX3AnBlrf6bi
+         p3HZRMGUrYc0FN0l+sWmLVVm6+QClqPw59H5mipwO4bFXppGALfcHfsQFlikLtkkX96e
+         tyHmfGuXPa5D1VAAVY2cPJY6FUp+lkbc8+D2wUcjyS91Pe+vYZjbNTTc+L7G7lfmqMRO
+         CbVvkZ79QP9j2ufi/Hz7Paf0gpmbTv7WEQRTUGN48VzYTxCvE9rvojgU9cf+ko5PzJpw
+         egtUATSiq7de+HnaGeXGe7XqyX6X5VTMKs5HpOifjwYoMStoMakvSPdl2sjVQk4y89+Q
+         nbiQ==
+X-Gm-Message-State: AOAM531HkWu8pAFmpNFNGoH3j5qZEFZ3NPbdHQeNx72J9zrs67GWtPpC
+        s1f+XqJn+akjar4sW0MuF7CERiRIKI5842GtcAhM5A==
+X-Google-Smtp-Source: ABdhPJwhqy2ej44d/EZpTsHzZrwRPWxHt++5EAxncMr4zCSgUycrj1TLuaKU455Ay1wbh9o3cP8dpWQS4roHNtAZZEY=
+X-Received: by 2002:a05:6512:280c:: with SMTP id cf12mr5527764lfb.5.1641955639490;
+ Tue, 11 Jan 2022 18:47:19 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH v7 0/7] Add initial support for the i.MXRTxxxx SoC family
- starting from i.IMXRT1050 SoC.
-Content-Language: en-US
-To:     linux-imx@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, ulf.hansson@linaro.org, aisheng.dong@nxp.com,
-        stefan@agner.ch, linus.walleij@linaro.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, olof@lixom.net,
-        soc@kernel.org, linux@armlinux.org.uk, abel.vesa@nxp.com,
-        adrian.hunter@intel.com, jirislaby@kernel.org,
-        giulio.benetti@benettiengineering.com,
-        nobuhiro1.iwamatsu@toshiba.co.jp, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20220111212606.2072669-1-Mr.Bossman075@gmail.com>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20220111212606.2072669-1-Mr.Bossman075@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220107090715.2601-1-zong.li@sifive.com> <YdwBWmF8OJYab7qS@google.com>
+ <CANXhq0ookagQTZZrNduP5DjXs2awQdRkUxNzTWU=-dz+TVuUwg@mail.gmail.com> <Yd1OvFZ4pKw+aTgv@google.com>
+In-Reply-To: <Yd1OvFZ4pKw+aTgv@google.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Wed, 12 Jan 2022 10:47:09 +0800
+Message-ID: <CANXhq0oK-NewS9mn-b4a60D7t+fMSbT6=Mnw7st_njxGY1DJCg@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Jan 11, 2022 at 5:32 PM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Tue, 11 Jan 2022, Zong Li wrote:
+>
+> > On Mon, Jan 10, 2022 at 5:50 PM Lee Jones <lee.jones@linaro.org> wrote:
+> > >
+> > > Please improve the subject line.
+> > >
+> > > If this is a straight revert, the subject line should reflect that.
+> > >
+> > > If not, you need to give us specific information regarding the purpos=
+e
+> > > of this patch.  Please read the Git log for better, more forthcoming
+> > > examples.
+> > >
+> >
+> > It seems to me that this patch is not a straight revert, it provides
+> > another way to fix the original build warnings, just like
+> > '487dc7bb6a0c' tried to do. I guess the commit message has described
+> > what the original warnings is and what the root cause is, it also
+> > mentioned what is changed in this patch. I'm a bit confused whether we
+> > need to add fixes tag, it looks like that it might cause some
+> > misunderstanding?
+>
+> I think it's the patch description and subject that is causing the
+> misunderstanding.
+>
 
+Yes, the subject should be made better.
 
-On 1/11/22 16:25, Jesse Taube wrote:
-> This patchset contains:
-> - i.MXRT10xx family infrastructure
-> - i.MXRT1050 pinctrl driver adaption
-> - i.MXRT1050 clock driver adaption
-> - i.MXRT1050 sd-card driver adaption
-> - i.MXRT1050 uart driver adaption
-> - i.MXRT1050-evk basic support
-> 
-> The i.MXRTxxxx family that could have support by Linux actually spreads
-> from i.MXRT1020 to i.MXRT1170 with the first one supporting 1 USB OTG &
-> 100M ethernet with a cortex-M7@500Mhz up to the latter with i.MXRT1170
-> with cortex-M7@1Ghz and cortex-M4@400Mhz, 2MB of internal SRAM, 2D GPU,
-> 2x 1Gb and 1x 100Mb ENET. The i.MXRT family is NXP's answer to
-> STM32F7XX, as it uses only simple SDRAM, it gives the chance of a 4 or
-> less layer PCBs. Seeing that these chips are comparable to the
-> STM32F7XXs which have linux ported to them it seems reasonable to add
-> support for them.
-> 
-> Giving Linux support to this family should ease the development process,
-> instead of using a RTOS they could use Embedded Linux allowing for more
-> portability, ease of design and will broaden the scope of people using
-> embedded linux.
-> 
-> The EVK has very little SDRAM, generally 32MB starting from
-> i.MXRT1020(the lowest P/N), although the i.MXRT1160/70 provide instead
-> 64MB of SDRAM for more functionality.
-> 
-> At the moment we do not support XIP for either u-boot or Linux but it
-> should be done in the future. XIP will also save SDRAM.
-> 
-> Another interesting fact is the amount of internal SRAM, as the P/N
-> increases the SRAM will reach up to 2MB(some could be for cache and
-> some would be for video).
-> 
-> Also, some parts have embed flash of 4MB that can be used for
-> u-boot/Linux, if both correctly sized it will leave the SDRAM free.
-> 
-> External flash can be Quad SPI and HyperFlash, so throughput would be
-> decent.
-> 
-> The i.MXRT11xx series supports MIPI interface too.
-> 
-> The family in general provide CAN bus, audio I/O, 1 or more
-> USB(otg/host), 1 or more 100Mb/1Gb ethernet, camera interface, sd-card.
-> 
-> All this can be used for simple GUIs, web-servers, point-of-sale
-> stations, etc.
-> 
-> 
-> Giulio Benetti (4):
->    ARM: imx: Add initial support for i.MXRT10xx family
->    dt-bindings: imx: Add clock binding for i.MXRT1050
->    ARM: dts: imx: Add i.MXRT1050-EVK support
->    ARM: imxrt_defconfig: Add i.MXRT family defconfig
-> 
-> Jesse Taube (3):
->    ARM: dts: imxrt1050-pinfunc: Add pinctrl binding header
->    dt-bindings: clock: imx: Add documentation for i.MXRT1050 clock
->    clk: imx: Add initial support for i.MXRT1050 clock driver
-> 
->   .../bindings/clock/imxrt1050-clock.yaml       |  67 ++
->   arch/arm/boot/dts/Makefile                    |   2 +
->   arch/arm/boot/dts/imxrt1050-evk.dts           |  72 ++
->   arch/arm/boot/dts/imxrt1050-pinfunc.h         | 993 ++++++++++++++++++
->   arch/arm/boot/dts/imxrt1050.dtsi              | 160 +++
->   arch/arm/configs/imxrt_defconfig              |  35 +
->   arch/arm/mach-imx/Kconfig                     |   7 +
->   arch/arm/mach-imx/Makefile                    |   2 +
->   arch/arm/mach-imx/mach-imxrt.c                |  19 +
->   drivers/clk/imx/Kconfig                       |   7 +
->   drivers/clk/imx/Makefile                      |   1 +
->   drivers/clk/imx/clk-imxrt1050.c               | 168 +++
->   include/dt-bindings/clock/imxrt1050-clock.h   |  72 ++
->   13 files changed, 1605 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/imxrt1050-clock.yaml
->   create mode 100644 arch/arm/boot/dts/imxrt1050-evk.dts
->   create mode 100644 arch/arm/boot/dts/imxrt1050-pinfunc.h
->   create mode 100644 arch/arm/boot/dts/imxrt1050.dtsi
->   create mode 100644 arch/arm/configs/imxrt_defconfig
->   create mode 100644 arch/arm/mach-imx/mach-imxrt.c
->   create mode 100644 drivers/clk/imx/clk-imxrt1050.c
->   create mode 100644 include/dt-bindings/clock/imxrt1050-clock.h
-> 
+> Please help me with a couple of points and I'll help you draft
+> something up.
+>
+> Firstly, what alerted you to the problem you're attempting to solve?
+>
 
-Oh No!
-I'm very sorry I sent v8 under the wrong version number. I sent it again...
+I recently noticed the code was changed, I guess that I was missing
+something there. After tracking the log, I found that there is a build
+warning in the original implementation, and it was already fixed, but
+it seems to me that there are still some situations there, please help
+me to see the following illustration.
 
-Sincerely,
-	Jesse Taube
+> > > > --- a/drivers/clk/sifive/fu540-prci.c
+> > > > +++ b/drivers/clk/sifive/fu540-prci.c
+> > > > @@ -20,7 +20,6 @@
+> > > >
+> > > >  #include <dt-bindings/clock/sifive-fu540-prci.h>
+> > > >
+> > > > -#include "fu540-prci.h"
+>
+> How is this related to the issue/patch?
+>
 
+Let's go back to the version without '487dc7bb6a0c' fix. The
+prci_clk_fu540 variable is defined in sifive-fu540-prci.h header,
+however, fu540-prci.c includes this header but doesn't use this
+variable, so the warnings happen.
+
+The easiest way to do it is just removing this line, then the warning
+could be fixed. But as the '487dc7bb6a0c' or this patch does, the code
+should be improved, the prci_clk_fu540 variable shouldn't be defined
+in the header, it should be moved somewhere.
+
+> > > > +struct prci_clk_desc prci_clk_fu540 =3D {
+> > > > +     .clks =3D __prci_init_clocks_fu540,
+> > > > +     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > > > +};
+>
+> > > > diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/f=
+u540-prci.h
+> > > > index c220677dc010..931d6cad8c1c 100644
+> > > > --- a/drivers/clk/sifive/fu540-prci.h
+> > > > +++ b/drivers/clk/sifive/fu540-prci.h
+> > > > @@ -7,10 +7,6 @@
+> > > > +extern struct prci_clk_desc prci_clk_fu540;
+>
+> > > > diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/=
+sifive-prci.c
+> > > > index 80a288c59e56..916d2fc28b9c 100644
+> > > > --- a/drivers/clk/sifive/sifive-prci.c
+> > > > +++ b/drivers/clk/sifive/sifive-prci.c
+> > > > @@ -12,11 +12,6 @@
+> > > >  #include "fu540-prci.h"
+> > > >  #include "fu740-prci.h"
+> > > >
+> > > > -static const struct prci_clk_desc prci_clk_fu540 =3D {
+> > > > -     .clks =3D __prci_init_clocks_fu540,
+> > > > -     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > > > -};
+> > > > -
+>
+> I'm not sure if it's you or I that is missing the point here, but
+> prci_clk_fu540 is used within *this* file itself:
+>
+
+Here is another situation I mentioned at the beginning, if we'd like
+to put prci_clk_fu540 here, prci_clk_fu740 should be put here as well.
+I guess you didn't do that because there is a bug in the original
+code, fu740-prci.c misused the fu540-prci.h, so there is no build
+warning on fu740. FU740 still works correctly by misusing the
+fu540-prci.h header because fu740-prci.c doesn't actually use the
+prci_clk_fu740 variable, like fu540 we talked about earlier.
+
+>  static const struct of_device_id sifive_prci_of_match[] =3D {
+>          {.compatible =3D "sifive,fu540-c000-prci", .data =3D &prci_clk_f=
+u540},
+>          {.compatible =3D "sifive,fu740-c000-prci", .data =3D &prci_clk_f=
+u740},
+>          {}
+>  };
+>
+> So why are you moving it out to somewhere it is *not* used and making
+> it an extern?  This sounds like the opposite to what you'd want?
+
+The idea is that sifive-prci.c is the core and common part of PRCI,
+and I'd like to separate the SoCs-dependent part into SoCs-dependent
+files, such as fu540-prci.c and fu740-prci.c. The goal is if we add
+new SoCs in the future, we can just put the SoCs-dependent data
+structure in the new C file, and do as minimum modification as
+possible in the core file (i.e. sifive-prci.c). It might also help us
+to see all SoCs-dependent data in one file, then we don't need to
+cross many files. Putting these two variables in sifive-pric.c is the
+right thing to do, but that is why I separate them and make them
+extern in this patch.
+
+Many thanks for your reply.
+
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Principal Technical Lead - Developer Services
+> Linaro.org =E2=94=82 Open source software for Arm SoCs
+> Follow Linaro: Facebook | Twitter | Blog
