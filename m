@@ -2,154 +2,255 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA643C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 13:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C5EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jan 2022 14:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232784AbiALNvv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jan 2022 08:51:51 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:55829 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238942AbiALNvu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 08:51:50 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 135C35801F7;
-        Wed, 12 Jan 2022 08:51:50 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 12 Jan 2022 08:51:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=MLA47hZB1A4Qpb5hssg01vfnJip
-        n57xpzNo0zfRv1Sk=; b=E/XE/OAvd6p+HarUW+eHIk4TKY23snVAEnbwHiOLYoV
-        F9CJsAVNntW0Tumzl13g3HkVg4r0e60Vz+FGtjIWfBLBdCfTE8b1Ge9BN8IVdpJY
-        Eiu6eYfCNBgzDxa+I8mxP88eN7uPfhv4KzE7cR38v2umqePMcdcSvL+ePY2gGvUT
-        TlKSYH6efZmw9GzX5+ida3qBKcscmtXn2g0o28c10/usUGDoUtE/Y3B4A64qvTne
-        MDzPEyQ1nSxG2sN7VcvnLZZqBFtQPof2kGA5A6S/CrrLvbirjHnxJyFy2GYopxVQ
-        xFGmhw74Z3dkiRV+Y+0JkG7ewUTgT0QZ2Apfb4B8ndg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=MLA47h
-        ZB1A4Qpb5hssg01vfnJipn57xpzNo0zfRv1Sk=; b=GXJV4rmfo/RafX/62NIGNT
-        MQPluOvANwW2ld6EUeie+B0Jrv72rav5xYIvVAH6Gyq+dryBz9usv0Qo2zSgOMKY
-        kGTLNhdo/otTORQyq5/xOICBlruF2X4vtFH0c+AEwn8gyhM7LzEZ94oorRPIzz9H
-        HXv1F5894Rn+eCBSc4mhBFcTDCuQoTy09pc/mqWm0VwEFjeGtQZkZpfynB8PPcnW
-        e+7+/OnIhZLjvc8npJgPxnmTsazbPTdvpVApR8pj4BXccZv58SdSrjekpMyWf1QF
-        Vr7PH9Y0q4uhbSiaLIVdEe+kD7OaaoRlq1/qK4x1YrKgkqBqSY7JgDGw60ALGYoQ
-        ==
-X-ME-Sender: <xms:9dzeYUT59e-PAk2Qsb4jP6YUOCwRNbzBiq26eAVHZKc7nnWVV6_quQ>
-    <xme:9dzeYRxWVDS3h-bxENOSEyJQCFeMatNALanLOYkc_XQlE6nBv_29nqt9r5QbBAoph
-    9EbIS2mx445acbCalc>
-X-ME-Received: <xmr:9dzeYR0qdq7ImNfEpmxvgp46pjJHktMZe_8cVkR4M3rO3h9TBS5Z5EZhnBHK99XkyAOGIg52sYX4qv1B0iAepLDlyjhXrZjUUiBOmH0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrtddugdefudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelgefhjeefjeduudduffejheehtefguedvieejjedvfefhkeevtedthedvhfek
-    vdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:9dzeYYBoxa9ihjQQQ_3rxSeJW9KRF1LOMmdfI_LwfM1sWwmCGCuoYQ>
-    <xmx:9dzeYdhCNMUL1gxuDrdCC5_xUMz6GbGiFQCU9i5Q5xJBpz5CByu00Q>
-    <xmx:9dzeYUoiVVtsIZuJHN-QPErqyql5e7R0NdLghIZ6eN5Quf-uEWrxHw>
-    <xmx:9tzeYVw-sdptMcAwBDDL214Ex6VA-HuT1YetBEUp9rqQWltcLFq--Q>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jan 2022 08:51:48 -0500 (EST)
-Date:   Wed, 12 Jan 2022 14:51:47 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-Subject: Re: [PATCH v2 0/3] clk: Implement a clock request API
-Message-ID: <20220112135147.dbkmsnlqyipq7urq@houat>
-References: <20210914093515.260031-1-maxime@cerno.tech>
- <a5400ae3-f181-91fc-bc35-db989584c70b@gmail.com>
+        id S240903AbiALOMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jan 2022 09:12:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1353961AbiALOMd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jan 2022 09:12:33 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A462C06173F
+        for <linux-clk@vger.kernel.org>; Wed, 12 Jan 2022 06:12:33 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1n7eMZ-0003i3-Nx; Wed, 12 Jan 2022 15:12:31 +0100
+Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1n7eMZ-009tqe-7w; Wed, 12 Jan 2022 15:12:30 +0100
+Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1n7eMX-002wJk-Rn; Wed, 12 Jan 2022 15:12:29 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
+        rajan.vaja@xilinx.com, kernel@pengutronix.de,
+        m.tretter@pengutronix.de
+Subject: [PATCH] clk: zynqmp: warn always when a clock op fails
+Date:   Wed, 12 Jan 2022 15:12:29 +0100
+Message-Id: <20220112141229.700708-1-m.tretter@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t2qv6kke3mwujz2s"
-Content-Disposition: inline
-In-Reply-To: <a5400ae3-f181-91fc-bc35-db989584c70b@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The warning that a clock operation failed is only printed once. However,
+the function is called for various different clocks. The limit hides
+warnings if different clock are affected by the failures.
 
---t2qv6kke3mwujz2s
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Print the warning every time when a clock operation fails.
 
-Hi Dmitry,
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+---
+ drivers/clk/zynqmp/clk-gate-zynqmp.c | 12 +++++------
+ drivers/clk/zynqmp/clk-mux-zynqmp.c  |  8 +++----
+ drivers/clk/zynqmp/divider.c         | 12 +++++------
+ drivers/clk/zynqmp/pll.c             | 32 ++++++++++++++--------------
+ 4 files changed, 32 insertions(+), 32 deletions(-)
 
-On Wed, Jan 12, 2022 at 04:28:41PM +0300, Dmitry Osipenko wrote:
-> 14.09.2021 12:35, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hi,
-> >=20
-> > This is a follow-up of the discussion here:
-> > https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmo=
-ur/
-> >=20
-> > This implements a mechanism to raise and lower clock rates based on con=
-sumer
-> > workloads, with an example of such an implementation for the RaspberryP=
-i4 HDMI
-> > controller.
-> >=20
-> > There's a couple of things worth discussing:
-> >=20
-> >   - The name is in conflict with clk_request_rate, and even though it f=
-eels
-> >     like the right name to me, we should probably avoid any confusion
-> >=20
-> >   - The code so far implements a policy of always going for the lowest =
-rate
-> >     possible. While we don't have an use-case for something else, this =
-should
-> >     maybe be made more flexible?
->=20
-> Hello Maxime,
->=20
-> On NVIDIA Tegra we use interconnect framework for converting of
-> workload-based memory bandwidth requirement to the memory clock rate
-> [1]. All Tegra SoCs have two display controllers and other memory
-> clients, ICC takes care of summing and updating memory bandwidth for us,
-> which in the end results in a freq change of the shared memory controller.
->=20
-> [1] https://git.kernel.org/linus/04d5d5df9
->=20
-> Not so long time ago me and Thierry Reding were looking at yours v1 and
-> back then Thierry suggested that the same ICC approach might work for
-> yours case. I'm now looking at the v2 and yours discussion with Stephen
-> Boyd, and it appears that ICC is indeed what you really need. Have you
-> considered to use ICC?
+diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+index 565ed67a0430..0d9a39110f29 100644
+--- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+@@ -41,8 +41,8 @@ static int zynqmp_clk_gate_enable(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_enable(clk_id);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() clock enabled failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock enable failed for %s (id %d), ret = %d\n",
++			__func__, clk_name, clk_id, ret);
+ 
+ 	return ret;
+ }
+@@ -61,8 +61,8 @@ static void zynqmp_clk_gate_disable(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_disable(clk_id);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() clock disable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock disable failed for %s (id %d), ret = %d\n",
++			__func__, clk_name, clk_id, ret);
+ }
+ 
+ /**
+@@ -80,8 +80,8 @@ static int zynqmp_clk_gate_is_enabled(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getstate(clk_id, &state);
+ 	if (ret) {
+-		pr_warn_once("%s() clock get state failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock get state failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 		return -EIO;
+ 	}
+ 
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 17afce594f28..6bc16500231e 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -51,8 +51,8 @@ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_getparent(clk_id, &val);
+ 
+ 	if (ret) {
+-		pr_warn_once("%s() getparent failed for clock: %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() getparent failed for clock: %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 		/*
+ 		 * clk_core_get_parent_by_index() takes num_parents as incorrect
+ 		 * index which is exactly what I want to return here
+@@ -80,8 +80,8 @@ static int zynqmp_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	ret = zynqmp_pm_clock_setparent(clk_id, index);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() set parent failed for clock: %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() set parent failed for clock: %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+index cb49281f9cf9..c6d6a2fb5866 100644
+--- a/drivers/clk/zynqmp/divider.c
++++ b/drivers/clk/zynqmp/divider.c
+@@ -89,8 +89,8 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &div);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() get divider failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 
+ 	if (div_type == TYPE_DIV1)
+ 		value = div & 0xFFFF;
+@@ -177,8 +177,8 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
+ 		ret = zynqmp_pm_clock_getdivider(clk_id, &bestdiv);
+ 
+ 		if (ret)
+-			pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-				     __func__, clk_name, ret);
++			pr_warn("%s() get divider failed for %s, ret = %d\n",
++				__func__, clk_name, ret);
+ 		if (div_type == TYPE_DIV1)
+ 			bestdiv = bestdiv & 0xFFFF;
+ 		else
+@@ -244,8 +244,8 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	ret = zynqmp_pm_clock_setdivider(clk_id, div);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() set divider failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 036e4ff64a2f..6c4dfae3df1d 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -56,8 +56,8 @@ static inline enum pll_mode zynqmp_pll_get_mode(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_get_pll_frac_mode(clk_id, ret_payload);
+ 	if (ret) {
+-		pr_warn_once("%s() PLL get frac mode failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() PLL get frac mode failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 		return PLL_MODE_ERROR;
+ 	}
+ 
+@@ -84,8 +84,8 @@ static inline void zynqmp_pll_set_mode(struct clk_hw *hw, bool on)
+ 
+ 	ret = zynqmp_pm_set_pll_frac_mode(clk_id, mode);
+ 	if (ret)
+-		pr_warn_once("%s() PLL set frac mode failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() PLL set frac mode failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 	else
+ 		clk->set_pll_mode = true;
+ }
+@@ -145,8 +145,8 @@ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &fbdiv);
+ 	if (ret) {
+-		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() get divider failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 		return 0ul;
+ 	}
+ 
+@@ -200,8 +200,8 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			WARN(1, "More than allowed devices are using the %s, which is forbidden\n",
+ 			     clk_name);
+ 		else if (ret)
+-			pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-				     __func__, clk_name, ret);
++			pr_warn("%s() set divider failed for %s, ret = %d\n",
++				__func__, clk_name, ret);
+ 		zynqmp_pm_set_pll_frac_data(clk_id, f);
+ 
+ 		return rate + frac;
+@@ -211,8 +211,8 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
+ 	ret = zynqmp_pm_clock_setdivider(clk_id, fbdiv);
+ 	if (ret)
+-		pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() set divider failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 
+ 	return parent_rate * fbdiv;
+ }
+@@ -233,8 +233,8 @@ static int zynqmp_pll_is_enabled(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getstate(clk_id, &state);
+ 	if (ret) {
+-		pr_warn_once("%s() clock get state failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock get state failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 		return -EIO;
+ 	}
+ 
+@@ -265,8 +265,8 @@ static int zynqmp_pll_enable(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_enable(clk_id);
+ 	if (ret)
+-		pr_warn_once("%s() clock enable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock enable failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+@@ -287,8 +287,8 @@ static void zynqmp_pll_disable(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_disable(clk_id);
+ 	if (ret)
+-		pr_warn_once("%s() clock disable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_warn("%s() clock disable failed for %s, ret = %d\n",
++			__func__, clk_name, ret);
+ }
+ 
+ static const struct clk_ops zynqmp_pll_ops = {
+-- 
+2.30.2
 
-The goals seem to be similar indeed, but most of these clocks feed some
-internal state machine in those devices and are not related to the
-memory bandwidth at all. So there's no real interconnect to model there :/
-
-Maxime
-
---t2qv6kke3mwujz2s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYd7c8wAKCRDj7w1vZxhR
-xVuPAP9/9WqdgEDuYNDuYiROyAiSVfLJJPhtDldKsoecRjwokgD/ZDi8CesqnZXj
-fnIDTx+JuQiyTMzhpUz/iwl0Lx+NSQE=
-=mcMz
------END PGP SIGNATURE-----
-
---t2qv6kke3mwujz2s--
