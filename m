@@ -2,409 +2,223 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23798C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 21:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC84C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 21:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232580AbiAMVfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 16:35:16 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:58390 "EHLO
+        id S236079AbiAMVoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 16:44:30 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:33760 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232075AbiAMVfQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 16:35:16 -0500
+        with ESMTP id S233007AbiAMVo3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 16:44:29 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E2997B822C8;
-        Thu, 13 Jan 2022 21:35:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9819AC36AEA;
-        Thu, 13 Jan 2022 21:35:13 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F2351B8239D;
+        Thu, 13 Jan 2022 21:44:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95292C36AEA;
+        Thu, 13 Jan 2022 21:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642109713;
-        bh=kBzzd4YU14o+Y5Yg58a6FnXb4N5XBBZe+VK8mCrDl00=;
+        s=k20201202; t=1642110266;
+        bh=9f4pER1EuDbwag5Si4PfYatM5rJz9h3g9M3ZIfhUhBQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SePOwZPgneYtIm/CvArHR98JFE2W+OWmNtUAgFOLfnqlkd4qrBUUQM5QMItyVjEsF
-         eZncjxMMu4Wz+AosNcYldGSauLzS3Q93BIWkIfAjg0MF9mVHNyq0miM1UEyxKGUmAb
-         Wec2NCWYymQWueb9cWusUrtOm0uWCe6TRgCIEgnNmuiW6xFTlAlF6Z3wzfqr+GCjBu
-         cH2eZ6rw3ql+Qugnsvt8e8QQunSOoglsG4IBIWXOt4RCof/7UyYVkQeN7/V9WBYU/u
-         abJjdej14Yml8HNa3diXqBqeE+zOYmu6Rlfaxxkcv9rBv9TYoCL+eEVBKuMOWdfmFI
-         nVb9lE1lno8Pw==
+        b=fQus3Ie+WJB1Um+S0EEXE8L78sVxgEQok9HYXMzxUxW81RlzWJHN2EhwdnWtzPoiM
+         oXBHkz2SIZLl0exHs6uVsKzNHVqCWpN1jJb0cENqw+s1ahro1kmeNfGfr5rlAVWJke
+         083kWT8Wf4nPoFnl07YBMm9IW9241iRjY0qKMcuWAmYH6hQ+BtLLK/sKGu7bXYIxVt
+         OkIz6kXsBTxo2nY/1Jk2diBRFQ+ZZ8uYnqlcbsgOs419vMo+ktfwmIAKJMX/vvauCp
+         Ex4RaFKnECi9DWGAfGXtex/AZWrtAqPWTIRJKegVGoQDzki75atrWXPuI3y9u5qPbT
+         G6M724eYOIfAA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220113115745.45826-5-liang.yang@amlogic.com>
-References: <20220113115745.45826-1-liang.yang@amlogic.com> <20220113115745.45826-5-liang.yang@amlogic.com>
-Subject: Re: [PATCH v9 4/4] clk: meson: add sub MMC clock controller driver
+In-Reply-To: <20220112114652.hmfdcpqil5jg2vz6@houat>
+References: <20210914093515.260031-1-maxime@cerno.tech> <20210914093515.260031-2-maxime@cerno.tech> <20220112033716.63631C36AEA@smtp.kernel.org> <20220112114652.hmfdcpqil5jg2vz6@houat>
+Subject: Re: [PATCH v2 1/3] clk: Introduce a clock request API
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Liang Yang <liang.yang@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Date:   Thu, 13 Jan 2022 13:35:12 -0800
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel@lists.freedesktop.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Thu, 13 Jan 2022 13:44:25 -0800
 User-Agent: alot/0.9.1
-Message-Id: <20220113213513.9819AC36AEA@smtp.kernel.org>
+Message-Id: <20220113214426.95292C36AEA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Liang Yang (2022-01-13 03:57:45)
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index bb0f59eea366..3de6f3b24461 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -39,6 +39,20 @@ config COMMON_CLK_MESON_AO_CLKC
->         select COMMON_CLK_MESON_REGMAP
->         select RESET_CONTROLLER
-> =20
-> +config COMMON_CLK_MMC_MESON
-> +       tristate "Meson MMC Sub Clock Controller Driver"
-> +       depends on ARCH_MESON || COMPILE_TEST
-> +       select MFD_SYSCON
-> +       select COMMON_CLK_AMLOGIC
-> +       select COMMON_CLK_MESON_PHASE
-> +       select COMMON_CLK_MESON_PHASE_DELAY
-> +       select COMMON_CLK_MESON_SCLK_DIV
-> +       help
-> +         Support for the MMC sub clock controller on
-> +         Amlogic Meson Platform, which includes S905 (GXBB, GXL),
-> +         A113D/X (AXG) devices . Say Y if you want this
+Quoting Maxime Ripard (2022-01-12 03:46:52)
+> Hi Stephen,
+>=20
+> Thanks for your answer
+>=20
+> On Tue, Jan 11, 2022 at 07:37:15PM -0800, Stephen Boyd wrote:
+> > Sorry for being super delayed on response here. I'm buried in other
+> > work. +Jerome for exclusive clk API.
+> >=20
+> > Quoting Maxime Ripard (2021-09-14 02:35:13)
+> > > It's not unusual to find clocks being shared across multiple devices
+> > > that need to change the rate depending on what the device is doing at=
+ a
+> > > given time.
+> > >=20
+> > > The SoC found on the RaspberryPi4 (BCM2711) is in such a situation
+> > > between its two HDMI controllers that share a clock that needs to be
+> > > raised depending on the output resolution of each controller.
+> > >=20
+> > > The current clk_set_rate API doesn't really allow to support that case
+> > > since there's really no synchronisation between multiple users, it's
+> > > essentially a fire-and-forget solution.
+> >=20
+> > I'd also say a "last caller wins"
+> >=20
+> > >=20
+> > > clk_set_min_rate does allow for such a synchronisation, but has anoth=
+er
+> > > drawback: it doesn't allow to reduce the clock rate once the work is
+> > > over.
+> >=20
+> > What does "work over" mean specifically? Does it mean one of the clk
+> > consumers has decided to stop using the clk?
+>=20
+> That, or it doesn't need to enforce that minimum anymore. We have
+> several cases like this on the RPi. For example, during a change of
+> display mode a (shared) clock needs to be raised to a minimum, but
+> another shared one needs to raise its minimum based on the resolution.
+>=20
+> In the former case, we only need the minimum to be enforced during the
+> resolution change, so it's fairly quick, but the latter requires its
+> minimum for as long as the display is on.
+>=20
+> > Why doesn't clk_set_rate_range() work? Or clk_set_rate_range() combined
+> > with clk_set_rate_exclusive()?
+>=20
+> clk_set_rate_range could work (it's what we have right now in mainline
+> after all), but it's suboptimal since the clock is never scaled down.
 
-s/devices /devices/
+Alright, I didn't see any mention of clk_set_rate_range() in the commit
+text so did I miss it? Maybe it's used interchangeably with
+clk_set_min_rate()?
 
-> +         clock enabled.
-> +
->  config COMMON_CLK_MESON_EE_CLKC
->         tristate
->         select COMMON_CLK_MESON_REGMAP
-> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-> new file mode 100644
-> index 000000000000..f53977f61390
-> --- /dev/null
-> +++ b/drivers/clk/meson/mmc-clkc.c
-> @@ -0,0 +1,300 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +#include <linux/of_device.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/platform_device.h>
-> +#include <dt-bindings/clock/amlogic,mmc-clkc.h>
-> +
-> +#include "sclk-div.h"
-> +#include "clk-phase-delay.h"
-> +#include "clk-regmap.h"
-> +#include "clk-phase.h"
-> +
-> +/* clock ID used by internal driver */
-> +
-> +#define SD_EMMC_CLOCK          0
-> +#define CLK_DELAY_STEP_PS_GX   200
-> +#define CLK_DELAY_STEP_PS_AXG  78
-> +#define MUX_CLK_NUM_PARENTS    2
-> +#define MMC_MAX_CLKS           4
-> +
-> +struct mmc_clkc_data {
-> +       struct meson_clk_phase_delay_data tx;
-> +       struct meson_clk_phase_delay_data rx;
-> +};
-> +
-> +static struct clk_regmap_mux_data mmc_clkc_mux_data =3D {
-> +       .offset =3D SD_EMMC_CLOCK,
-> +       .mask   =3D 0x3,
-> +       .shift  =3D 6,
-> +};
-> +
-> +static const struct meson_sclk_div_data mmc_clkc_div_data =3D {
-> +       .div =3D {
-> +               .reg_off =3D SD_EMMC_CLOCK,
-> +               .width   =3D 6,
-> +       },
-> +       .flags =3D MESON_SCLK_ONE_BASED,
-> +};
-> +
-> +static struct meson_clk_phase_data mmc_clkc_core_phase =3D {
-> +       .ph =3D {
-> +               .reg_off =3D SD_EMMC_CLOCK,
-> +               .shift   =3D 8,
-> +               .width   =3D 2,
-> +       }
-> +};
-> +
-> +static const struct mmc_clkc_data mmc_clkc_gx_data =3D {
-> +       .tx =3D {
-> +               .phase =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 10,
-> +                       .width   =3D 2,
-> +               },
-> +               .delay =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 16,
-> +                       .width   =3D 4,
-> +               },
-> +               .delay_step_ps =3D CLK_DELAY_STEP_PS_GX,
-> +       },
-> +       .rx =3D {
-> +               .phase =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 12,
-> +                       .width   =3D 2,
-> +               },
-> +               .delay =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 20,
-> +                       .width   =3D 4,
-> +               },
-> +               .delay_step_ps   =3D CLK_DELAY_STEP_PS_GX,
-> +       },
-> +};
-> +
-> +static const struct mmc_clkc_data mmc_clkc_axg_data =3D {
-> +       .tx =3D {
-> +               .phase =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 10,
-> +                       .width   =3D 2,
-> +               },
-> +               .delay =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 16,
-> +                       .width   =3D 6,
-> +               },
-> +               .delay_step_ps   =3D CLK_DELAY_STEP_PS_AXG,
-> +       },
-> +       .rx =3D {
-> +               .phase =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 12,
-> +                       .width   =3D 2,
-> +               },
-> +               .delay =3D {
-> +                       .reg_off =3D SD_EMMC_CLOCK,
-> +                       .shift   =3D 22,
-> +                       .width   =3D 6,
-> +               },
-> +               .delay_step_ps   =3D CLK_DELAY_STEP_PS_AXG,
-> +       },
-> +};
-> +
-> +static const struct of_device_id mmc_clkc_match_table[] =3D {
-> +       {
-> +               .compatible     =3D "amlogic,gx-mmc-clkc",
-> +               .data           =3D &mmc_clkc_gx_data
-> +       },
-> +       {
-> +               .compatible     =3D "amlogic,axg-mmc-clkc",
-> +               .data           =3D &mmc_clkc_axg_data
-> +       },
-> +       {}
-> +};
-> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-> +
-> +static struct clk_regmap *
-> +mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-> +                     struct clk_init_data *init,
-> +                     const char *suffix, void *data)
-> +{
-> +       struct clk_regmap *clk;
-> +       char *name;
-> +       int ret;
-> +
-> +       clk =3D devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-> +       if (!clk)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       name =3D kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-> +       if (!name)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init->name =3D name;
-> +       clk->map =3D map;
-> +       clk->data =3D data;
-> +       clk->hw.init =3D init;
-> +       ret =3D devm_clk_hw_register(dev, &clk->hw);
-> +       if (ret)
-> +               clk =3D ERR_PTR(ret);
-> +
-> +       kfree(name);
-> +       return clk;
-> +}
-> +
-> +static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-> +                                               struct regmap *map)
-> +{
-> +       const char *parent_names[MUX_CLK_NUM_PARENTS];
-> +       struct clk_init_data init;
-> +       struct clk_regmap *mux;
-> +       struct clk *clk;
-> +       int i;
-> +
-> +       for (i =3D 0; i < MUX_CLK_NUM_PARENTS; i++) {
-> +               char name[8];
-> +
-> +               snprintf(name, sizeof(name), "clkin%d", i);
-> +               clk =3D devm_clk_get(dev, name);
-> +               if (IS_ERR(clk)) {
-> +                       if (clk !=3D ERR_PTR(-EPROBE_DEFER))
-> +                               dev_err(dev, "Missing clock %s\n", name);
+>=20
+> It's especially showing in my first example where we need to raise the
+> clock only for the duration of the resolution change. Using
+> clk_set_min_rate works but we end up with that fairly high clock (at
+> least 500MHz) for the rest of the system life even though we usually can
+> get away with using a clock around 200MHz outside of that (short) window.
+>=20
+> This is fairly inefficient, and is mostly what I'm trying to address.
 
-Use dev_err_probe()?
+Got it!
 
-> +                       return ERR_CAST(clk);
-> +               }
-> +
-> +               parent_names[i] =3D __clk_get_name(clk);
+>=20
+> > > In our previous example, this means that if we were to raise the
+> > > resolution of one HDMI controller to the largest resolution and then
+> > > changing for a smaller one, we would still have the clock running at =
+the
+> > > largest resolution rate resulting in a poor power-efficiency.
+> >=20
+> > Does this example have two HDMI controllers where they share one clk and
+> > want to use the most efficient frequency for both of the HDMI devices? I
+> > think I'm following along but it's hard. It would be clearer if there
+> > was some psuedo-code explaining how it is both non-workable with current
+> > APIs and workable with the new APIs.
+>=20
+> The fact that we have two HDMI controllers that share one clock is why
+> we use clk_set_min_rate in the first place, but you can have that
+> behavior with clk_set_min_rate only with a single user.
+>=20
+> With pseudo-code, if you do something like
+>=20
+> clk =3D clk_get(NULL);
+> clk_set_min_rate(600 * 1000 * 1000);
+> clk_set_min_rate(1000);
+>=20
+> The clock will still remain at 600MHz, even though you would be totally
+> fine with the clock running at 1kHz.
 
-Why can't we use clk_parent_data?
+That looks like a bug. While we could happily ignore the rate floor
+being lowered because we're still within constraints, it looks like we
+should always re-evaluate the constraints when they change.
 
-> +       }
-> +
-> +       init.ops =3D &clk_regmap_mux_ops;
-> +       init.flags =3D CLK_SET_RATE_PARENT;
-> +       init.parent_names =3D parent_names;
-> +       init.num_parents =3D MUX_CLK_NUM_PARENTS;
-> +
-> +       mux =3D mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_m=
-ux_data);
-> +       if (IS_ERR(mux))
-> +               dev_err(dev, "Mux clock registration failed\n");
-> +
-> +       return mux;
-> +}
-> +
-> +static struct clk_regmap *
-> +mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-> +                                 char *suffix, const struct clk_hw *hw,
-> +                                 unsigned long flags,
-> +                                 const struct clk_ops *ops, void *data)
-> +{
-> +       struct clk_init_data init;
-> +       struct clk_regmap *clk;
-> +       const char *parent_name =3D clk_hw_get_name(hw);
-> +
-> +       init.ops =3D ops;
-> +       init.flags =3D flags;
-> +       init.parent_names =3D &parent_name;
-> +       init.num_parents =3D 1;
-> +
-> +       clk =3D mmc_clkc_register_clk(dev, map, &init, suffix, data);
-> +       if (IS_ERR(clk))
-> +               dev_err(dev, "%s clock registration failed\n", suffix);
-> +
-> +       return clk;
-> +}
-> +
-> +static int mmc_clkc_probe(struct platform_device *pdev)
-> +{
-> +       struct clk_hw_onecell_data *onecell_data;
-> +       struct device *dev =3D &pdev->dev;
-> +       struct mmc_clkc_data *data;
-> +       struct regmap *map;
-> +       struct clk_regmap *clk, *core;
-> +       struct meson_sclk_div_data *div_data;
-> +
-> +       /*cast to drop the const in match->data*/
+>=20
+> If you really wanted to make the clock run at 1kHz, you'd need to have:
+>=20
+> clk =3D clk_get(NULL);
+> clk_set_min_rate(600 * 1000 * 1000);
+> clk_set_min_rate(1000);
+> clk_set_rate(1000);
+>=20
+> And that works fine for a single user.
+>=20
+> If you have a clock shared by multiple drivers though, things get
+> tricky. Indeed, you can't really find out what the minimum for that
+> clock is, so figuring out the rate to pass to the clk_set_rate call
+> would be difficult already. And it wouldn't be atomic anyway.
 
-Space after *, also why do we need to cast away const? The user of this
-pointer passes it all the way down to mmc_clkc_register_clk() which
-could take the data as const void pointer and decide to cast away const
-there.
+Right.
 
-> +       data =3D (struct mmc_clkc_data *)of_device_get_match_data(dev);
-> +       if (!data)
-> +               return -ENODEV;
-> +
-> +       map =3D syscon_node_to_regmap(dev->of_node);
-> +       if (IS_ERR(map)) {
-> +               dev_err(dev, "could not find mmc clock controller\n");
-> +               return PTR_ERR(map);
-> +       }
-> +
-> +       onecell_data =3D devm_kzalloc(dev,
-> +                                   struct_size(onecell_data, hws,
-> +                                               MMC_MAX_CLKS),
-> +                                   GFP_KERNEL);
-> +       if (!onecell_data)
-> +               return -ENOMEM;
-> +
-> +       clk =3D mmc_clkc_register_mux(dev, map);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-> +
-> +       div_data =3D devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
-> +       if (!div_data)
-> +               return -ENOMEM;
-> +
-> +       memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
-> +       clk =3D mmc_clkc_register_clk_with_parent(dev, map, "div",
-> +                                               &clk->hw,
-> +                                               CLK_SET_RATE_PARENT,
-> +                                               &meson_sclk_div_ops,
-> +                                               div_data);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-> +
-> +       onecell_data->hws[CLKID_MMC_DIV] =3D &clk->hw;
-> +       core =3D mmc_clkc_register_clk_with_parent(dev, map, "core",
-> +                                                &clk->hw,
-> +                                                CLK_SET_RATE_PARENT,
-> +                                                &meson_clk_phase_ops,
-> +                                                &mmc_clkc_core_phase);
-> +       if (IS_ERR(core))
-> +               return PTR_ERR(core);
-> +
-> +       onecell_data->hws[CLKID_MMC_PHASE_CORE] =3D &core->hw;
-> +       clk =3D mmc_clkc_register_clk_with_parent(dev, map, "rx",
-> +                                               &core->hw,  0,
-> +                                               &meson_clk_phase_delay_op=
-s,
-> +                                               &data->rx);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-> +
-> +       onecell_data->hws[CLKID_MMC_PHASE_RX] =3D &clk->hw;
-> +       clk =3D mmc_clkc_register_clk_with_parent(dev, map, "tx",
-> +                                               &core->hw,  0,
-> +                                               &meson_clk_phase_delay_op=
-s,
-> +                                               &data->tx);
-> +       if (IS_ERR(clk))
-> +               return PTR_ERR(clk);
-> +
-> +       onecell_data->hws[CLKID_MMC_PHASE_TX] =3D &clk->hw;
-> +       onecell_data->num =3D MMC_MAX_CLKS;
-> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +                                          onecell_data);
-> +}
-> +
-> +static struct platform_driver mmc_clkc_driver =3D {
-> +       .probe          =3D mmc_clkc_probe,
-> +       .driver         =3D {
-> +               .name   =3D "meson-mmc-clkc",
-> +               .of_match_table =3D of_match_ptr(mmc_clkc_match_table),
-> +       },
-> +};
-> +
-> +module_platform_driver(mmc_clkc_driver);
-> +
-> +MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-> +MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-> +MODULE_LICENSE("GPL v2");
+>=20
+> It's made even more difficult since in clk_calc_new_rates the core
+> checks that the rate is within the boundaries and will error out if it
+> isn't, so even using clk_set_rate(0) wouldn't work.
+
+clk_set_rate(0) is pretty gross!
+
+>=20
+> It could work if the clock driver makes sure in round/determine_rate
+> that the rate passed in within the boundaries of the clock, but then you
+> start working around the core and relying on the behavior of clock
+> drivers, which is a fairly significant abstraction violation.
+>=20
+> > > In order to address both issues, let's create an API that allows user=
+ to
+> > > create temporary requests to increase the rate to a minimum, before
+> > > going back to the initial rate once the request is done.
+> > >=20
+> > > This introduces mainly two side-effects:
+> > >=20
+> > >   * There's an interaction between clk_set_rate and requests. This has
+> > >     been addressed by having clk_set_rate increasing the rate if it's
+> > >     greater than what the requests asked for, and in any case changing
+> > >     the rate the clock will return to once all the requests are done.
+> > >=20
+> > >   * Similarly, clk_round_rate has been adjusted to take the requests
+> > >     into account and return a rate that will be greater or equal to t=
+he
+> > >     requested rates.
+> > >=20
+> >=20
+> > I believe clk_set_rate_range() is broken but it can be fixed. I'm
+> > forgetting the details though. If the intended user of this new API
+> > can't use that range API then it would be good to understand why it
+> > can't be used. I imagine it would be something like
+> >=20
+> >       struct clk *clk_hdmi1, *clk_hdmi2;
+> >=20
+> >       clk_set_rate_range(&clk_hdmi1, HDMI1_MIN, HDMI1_MAX);
+> >       clk_set_rate_range(&clk_hdmi2, HDMI2_MIN, HDMI2_MAX);
+> >       clk_set_rate_range(&clk_hdmi2, 0, UINT_MAX);
+> >=20
+> > and then the goal would be for HDMI1_MIN to be used, or at the least for
+> > the last call to clk_set_rate_range() to drop the rate constraint and
+> > re-evaluate the frequency of the clk again based on hdmi1's rate range.
+>=20
+> This is pretty much what this series was doing. I was being conservative
+> and didn't really want to modify the behavior of existing functions, but
+> that will work fine.
+>=20
+
+I don't see a problem with re-evaluating the rate every time we call
+clk_set_rate_range(). That's probably the bug that I can't recall. Can
+you fix the API so it works that way?
