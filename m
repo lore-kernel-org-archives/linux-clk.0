@@ -2,64 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0600C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BB3C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:50:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234681AbiAMMkj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 07:40:39 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:50822
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232931AbiAMMki (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:40:38 -0500
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        id S234723AbiAMMuB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 07:50:01 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:54312
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234721AbiAMMuA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:50:00 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D96D63F1C5
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 12:40:37 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 733C9402A9
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 12:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642077637;
-        bh=NtF9Qcv8dCyv4imQqdPZ0gphBbiJgf6BkMwibu0qdek=;
+        s=20210705; t=1642078199;
+        bh=tnCA4HRIcZvjskoSMkqJWo8kfiQaZS4+GQyiSop+DyI=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=FylfRzFpYWYgd4WO09AQsPJqT5Q1Ge7coeHBZga3wuxwXc2pUqBtINPpHyQkh5mbF
-         Q2hmNQOuK7lk6TAJ0wVYyPnJCmJ3PRV2QilTTkRgDU8Xn6oPKKTYP/dHXw3FcT7wvV
-         KgiP0gTBbg/AcgEGSwu4FTriqdMU1Nl46Wcql9FomQViOjrThtg1EBARDEJndnH0nL
-         LlZNysBO3TuD9KHm52N6FAr8Qhje1+5ihw0yCJ5cL7+LEeSr3gF3Vj0xvr2zzu439J
-         0ZDTKrNbv53U7UhsyUCNQu1Q7yp4/VLJgNppWQuEtA547Jx3Y75VIaTzk8leaS+2yg
-         MqsxOSBIo5sqg==
-Received: by mail-ed1-f71.google.com with SMTP id z10-20020a05640235ca00b003f8efab3342so5250545edc.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 04:40:37 -0800 (PST)
+        b=ReQJIthL4k4uPa7DmcHUFzmc+J92246+elVCDzJXUHRU9IaNnLQ7HNf9Csr98CfSa
+         nkh9DF3eqlpTIh2IOJZvdNbkr7ZCiG6qHS8267lc0n+k6e8vlCIw/ELCyh9COng+Zt
+         NT5gQoRfFJPWBD8aJ8ngiQVY9238Dnpmyow1SPRUMFDEIUSClMKqJNjszDhHUGWyqj
+         bEO2Mz6LKpu23Dwd81jn6hZqgh+oMmj1KCQSy99oXjalTiwNpV9k7J9rKhuGB3qZy9
+         B5Yd0NLgeSayiE6eeiNpCLY5ln04MgPitBV7QwJ5DLwN8igJHbGYifbat8X0hSNyC1
+         0g0tuEH5sv1hA==
+Received: by mail-ed1-f72.google.com with SMTP id i9-20020a05640242c900b003fe97faab62so5214074edc.9
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 04:49:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=NtF9Qcv8dCyv4imQqdPZ0gphBbiJgf6BkMwibu0qdek=;
-        b=avT9soUAnCqQeCOn7Vv4697/kxJzqJdhpZ4hhOQU4PUlfjUQSyL1ANEA6FzqNTco1B
-         pP9o77tZz8wM9R80D2Cc/BwFjE+z0gBz4ojFclFs2UXuZTMZlQno+cnH9+A4xjLdQkAf
-         /vFgZI4PYLDpfz5g0DdR0NB8EB8OkmqRFDKcSG8fuVhxzP+VaeXKb+S39JVFSkPFcEzo
-         Rx03uWec1RHZnTRhM3ykZavzVGF89/6eHwgYKoI1tZzxKWELRPR2O6tIwoACwj/+1gi+
-         nEZ7hWKaHJqiD0blxlYgTp5l38z97EQgI2W575Eca7IAxpRzdA/cSxN1GohEEjoCiegY
-         AmYw==
-X-Gm-Message-State: AOAM532P56jDyMrPL3iywcF65gLVRIatfrl7Xq4nn5eYCdccAlx18BVE
-        1WGS+PK309c8z4t9Kcop/8exPutA6FjldsinI7WzERGwvyiqvaceTGcK4LPzLjpvcZLkElmAUrC
-        cN0wN2OvYO9ChpEjP3algClg/L84UacIQR0/npA==
-X-Received: by 2002:a05:6402:655:: with SMTP id u21mr4010426edx.30.1642077637575;
-        Thu, 13 Jan 2022 04:40:37 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzysO4hAvoMYoJ/ruIH66z8VzH4bfZ21Ozb1u+/RRfHvZ0YP4DJm75J85RG/HrmE+6HlqV7UQ==
-X-Received: by 2002:a05:6402:655:: with SMTP id u21mr4010406edx.30.1642077637409;
-        Thu, 13 Jan 2022 04:40:37 -0800 (PST)
+        bh=tnCA4HRIcZvjskoSMkqJWo8kfiQaZS4+GQyiSop+DyI=;
+        b=SYZBkrZnAIbu4hyvT8UThGTNGrRorx1rPLvXUHUV7fzWbvQ4COUqY3lBxTFF4UtdQz
+         +VCo1BcupmttDs5d3ZjFiPV3U+7N900Mwsv8FLYmrNdu6p1hWS5W9LK+JcT0lS88EF/z
+         /9Fl/5hImFsLxYUeoXI+UTNzBAz9fS7JubuLAxBb2y3oPREOYIIJ88Bqa/SVxDOSiSb4
+         cbGcNK3fDA6VB26xIRBka6yLuKSs85ilNocsNxDh4hAxlzG4K18pkOXtLHbyFYf1W5lT
+         pt++52+oc3tcpr7c6JqBqZ8m4lM3W3/O8EDPshQ5jnHWJsTFNW1b+QGsjFfX6aAPt5Ke
+         qGCA==
+X-Gm-Message-State: AOAM531DPQSuYopbmc1oHdLZwESjZgb5sEghe5Nvs2FJ4j2/pKlyOV08
+        PXldkkO0GuqzS+g7XheUSIv2VIJz9xXFYjnMelvsw9LmfV9JLfhRMEVlfZwKAZvcvXbFKZ/p4qD
+        hXIivbTKsxCn+NszHZKs8Um1+E7x80DN8trEC3Q==
+X-Received: by 2002:a17:906:4317:: with SMTP id j23mr3386181ejm.748.1642078198630;
+        Thu, 13 Jan 2022 04:49:58 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxnkCV8uVHvDvXo+BCsjQfovQrpVX/2Vi4aZsv65zQFi8pZnKx+YHr+3j+KDUCy3wNPScYbjQ==
+X-Received: by 2002:a17:906:4317:: with SMTP id j23mr3386170ejm.748.1642078198466;
+        Thu, 13 Jan 2022 04:49:58 -0800 (PST)
 Received: from [192.168.0.29] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id sa13sm858440ejc.28.2022.01.13.04.40.36
+        by smtp.gmail.com with ESMTPSA id hq35sm849073ejc.54.2022.01.13.04.49.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jan 2022 04:40:37 -0800 (PST)
-Message-ID: <c87f500e-e43e-465c-94fa-050c2b0de083@canonical.com>
-Date:   Thu, 13 Jan 2022 13:40:36 +0100
+        Thu, 13 Jan 2022 04:49:58 -0800 (PST)
+Message-ID: <b9fac286-9227-b26b-221b-7f54b63e6b0b@canonical.com>
+Date:   Thu, 13 Jan 2022 13:49:57 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH 01/23] dt-bindings: clock: Document FSD CMU bindings
+Subject: Re: [PATCH 03/23] clk: samsung: fsd: Add initial clock support
 Content-Language: en-US
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -68,12 +68,13 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
         robh+dt@kernel.org, s.nawrocki@samsung.com,
         linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        linux-fsd@tesla.com
+        linux-fsd@tesla.com, Jayati Sahu <jayati.sahu@samsung.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>
 References: <20220113121143.22280-1-alim.akhtar@samsung.com>
- <CGME20220113122311epcas5p4b7c253b49dce3bd3580407fcf312e70e@epcas5p4.samsung.com>
- <20220113121143.22280-2-alim.akhtar@samsung.com>
+ <CGME20220113122324epcas5p105c53b448b5801813a02a88c6107a2f3@epcas5p1.samsung.com>
+ <20220113121143.22280-4-alim.akhtar@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220113121143.22280-2-alim.akhtar@samsung.com>
+In-Reply-To: <20220113121143.22280-4-alim.akhtar@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,87 +82,69 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 13/01/2022 13:11, Alim Akhtar wrote:
-> Add dt-schema documentation for Tesla FSD SoC clock controller.
+> Add initial clock support for FSD (Full Self-Driving) SoC
+> which is required to bring-up platforms based on this SoC.
 > 
 > Cc: linux-fsd@tesla.com
+> Signed-off-by: Jayati Sahu <jayati.sahu@samsung.com>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
->  .../bindings/clock/tesla,fsd-clock.yaml       | 212 ++++++++++++++++++
->  1 file changed, 212 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+>  drivers/clk/samsung/Makefile  |   1 +
+>  drivers/clk/samsung/clk-fsd.c | 308 ++++++++++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-pll.c |   1 +
+>  drivers/clk/samsung/clk-pll.h |   1 +
+>  4 files changed, 311 insertions(+)
+>  create mode 100644 drivers/clk/samsung/clk-fsd.c
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml b/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index c46cf11e4d0b..d66b2ede004c 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_EXYNOS_AUDSS_CLK_CON) += clk-exynos-audss.o
+>  obj-$(CONFIG_EXYNOS_CLKOUT)	+= clk-exynos-clkout.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos7.o
+>  obj-$(CONFIG_EXYNOS_ARM64_COMMON_CLK)	+= clk-exynos850.o
+> +obj-$(CONFIG_ARCH_TESLA_FSD)         += clk-fsd.o
+
+It should be rather it's own CONFIG_TESLA_FSD_CLK option, just like
+other Exynos designs. This keeps unified approach with existing Samsung
+clock Kconfig.
+
+>  obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
+>  obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
+>  obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
+> diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
 > new file mode 100644
-> index 000000000000..58f341e5004d
+> index 000000000000..e47523106d9e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
-> @@ -0,0 +1,212 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/tesla,fsd-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tesla FSD (Full Self-Driving) SoC clock controller
-> +
-> +maintainers:
-> +  - Alim Akhtar <alim.akhtar@samsung.com>
-> +  - linux-fsd@tesla.com
-> +
-> +description: |
-> +  FSD clock controller consist of several clock management unit
-> +  (CMU), which generates clocks for various inteernal SoC blocks.
-> +  The root clock comes from external OSC clock (24 MHz).
-> +
-> +  All available clocks are defined as preprocessor macros in
-> +  'dt-bindings/clock/fsd-clk.h' header.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - tesla,fsd-clock-cmu
-> +      - tesla,fsd-clock-imem
-> +      - tesla,fsd-clock-peric
-> +      - tesla,fsd-clock-fsys0
-> +      - tesla,fsd-clock-fsys1
-> +      - tesla,fsd-clock-mfc
-> +      - tesla,fsd-clock-cam_csi
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 6
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 6
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: tesla,fsd-clock-cmu
-> +
+> +++ b/drivers/clk/samsung/clk-fsd.c
+> @@ -0,0 +1,308 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Common Clock Framework support for FSD SoC.
+> + *
+> + * Copyright (c) 2017-2022 Samsung Electronics Co., Ltd.
+> + *             https://www.samsung.com
+> + * Copyright (c) 2017-2022 Tesla, Inc.
+> + *             https://www.tesla.com
+> + *
 
-Nitpick: Drop the white-spaces between if-then. It's easier to spot the
-if-blocks if they are together.
-
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (24 MHz)
+Drop the line break with empty * comment.
+> + */
 > +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +
+> +#include "clk.h"
+> +#include <dt-bindings/clock/fsd-clk.h>
 
-Drop this whitespace as well.
+dt-bindings headers before local clk.h.
 
-Rest looks good to me, except the discussion about the compatible.
+> +
+> +/* Register Offset definitions for CMU_CMU (0x11c10000) */
+
 
 
 Best regards,
