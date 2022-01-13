@@ -2,410 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53EFC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE92C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234327AbiAMMNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 07:13:09 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:61548 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230310AbiAMMNJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:13:09 -0500
-Received: from droid11-sz.amlogic.com (10.28.8.21) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.2176.2; Thu, 13 Jan 2022
- 19:58:03 +0800
-From:   Liang Yang <liang.yang@amlogic.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Liang Yang <liang.yang@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v9 4/4] clk: meson: add sub MMC clock controller driver
-Date:   Thu, 13 Jan 2022 19:57:45 +0800
-Message-ID: <20220113115745.45826-5-liang.yang@amlogic.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220113115745.45826-1-liang.yang@amlogic.com>
-References: <20220113115745.45826-1-liang.yang@amlogic.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.8.21]
+        id S232856AbiAMMXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 07:23:13 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:58714 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231173AbiAMMXN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:23:13 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220113122311epoutp041a99643acc8a59edd31e90381877e89c~J0-XGcjbi2323623236epoutp04K
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 12:23:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220113122311epoutp041a99643acc8a59edd31e90381877e89c~J0-XGcjbi2323623236epoutp04K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642076591;
+        bh=f2jeQ0YdCrDx1DRJgpdBMus0XrvXmwz726NZp51/TAo=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=p9ZSFNjXLWbzJqhcYtnK7afdWpDofA4vhZAfnYRHfKOCT6P9/miXwUqzIUbNdnW1F
+         3w7WNEQGC8ojsNVna8EcW75oDo+nrPdHsyYwvNFaZN6CiFXHs3VAKkhn4FGMDmAuwu
+         1b6pXIr+PcX506ldiYwdNH0mfJuS/2BOXows6Nn8=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220113122310epcas5p3f5eae1624d297ef13f8dee0d34f13273~J0-WY_tM31599415994epcas5p3j;
+        Thu, 13 Jan 2022 12:23:10 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JZNqr0n5fz4x9Px; Thu, 13 Jan
+        2022 12:23:04 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.21.05590.7A910E16; Thu, 13 Jan 2022 21:23:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4~J0-O9iT1H0848308483epcas5p1o;
+        Thu, 13 Jan 2022 12:23:02 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220113122302epsmtrp2f88be838e6f95b4079030f95d5f872ae~J0-O8Vik93027830278epsmtrp25;
+        Thu, 13 Jan 2022 12:23:02 +0000 (GMT)
+X-AuditID: b6c32a4b-739ff700000015d6-5f-61e019a745cd
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E0.99.08738.6A910E16; Thu, 13 Jan 2022 21:23:02 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220113122300epsmtip2cbdf8491e4b5dc362dabbd687259cd22~J0-Mr3ZbO0676806768epsmtip2j;
+        Thu, 13 Jan 2022 12:23:00 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+Date:   Thu, 13 Jan 2022 17:41:20 +0530
+Message-Id: <20220113121143.22280-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCKsWRmVeSWpSXmKPExsWy7bCmuu5yyQeJBpdb1CwezNvGZvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx+PofNgc+jzXz1jB6zGroZfPYtKqTzePOtT1sHpuX1HtcOdHE6tG3ZRWjx+dNcgEc
+        Udk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUB3KymU
+        JeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz0vXyUkusDA0MjEyBChOy
+        M9bPjirYKVuxv3EqWwPjDrEuRg4OCQETifvnmboYuTiEBHYzSnzfvoe1i5ETyPnEKPHpqzNE
+        4jOjRMv2cywgCZCGGVP7mSGKdjFKzPptDVHUwiTRd6oDrIhNQFvi7vQtTCC2iICbxI3GDrAV
+        zALHmST2t29gBEkIC3hInJg7HayBRUBVYtuCo2CreQVsJJat/M8MsU1eYvWGA8wgzRICX9kl
+        XnTPYoRIuEgsnHKJDcIWlnh1fAs7hC0l8fndXjaI37IlenYZQ4RrJJbOOwb1gb3EgStzWEBK
+        mAU0Jdbv0gcJMwvwSfT+fsIE0ckr0dEmBFGtKtH87ipUp7TExO5uVgjbQ2LrrfnQwIqVmPxs
+        EdsERplZCEMXMDKuYpRMLSjOTU8tNi0wzksth0dMcn7uJkZw8tPy3sH46MEHvUOMTByMhxgl
+        OJiVRHj7i+4nCvGmJFZWpRblxxeV5qQWH2I0BYbSRGYp0eR8YPrNK4k3NLE0MDEzMzOxNDYz
+        VBLnPZW+IVFIID2xJDU7NbUgtQimj4mDU6qBaf/tVHOh99UBnO3+a3ILphz4+iKp+bNnRUxZ
+        qN/M+gRWeSX1g+pykTsWR7m9ur0zJ/AAb8D8vlJhlZp7nz33G93bcODwg53hZyaEJCg9WXcj
+        OufU6eTzU85+2r+m3vVYSg3T7VSGzD9qXbPuLz3xrfnQnjs6kh9fLmE4lb5RI3zOkspURrOZ
+        185cPDPLL0Gw30x9Zsy08g35Emd/7S21STzUpzCpK99h9/mbOzJeBArsvdI2p5RHgdF/N0tI
+        toVoE/vqsNvzd4qlyQlm/TX+drqy6779on8tnNLaqQslhAtUGU43X39RdPCDfcO0htbLP7s5
+        xYKlK/bx7DRUVY7saLIW3HbtgsS9JSaLFy28p8RSnJFoqMVcVJwIAJ3DeOAHBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsWy7bCSvO4yyQeJBh97RC0ezNvGZvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx+PofNgc+jzXz1jB6zGroZfPYtKqTzePOtT1sHpuX1HtcOdHE6tG3ZRWjx+dNcgEc
+        UVw2Kak5mWWpRfp2CVwZ62dHFeyUrdjfOJWtgXGHWBcjJ4eEgInEjKn9zF2MXBxCAjsYJQ40
+        PGWGSEhLXN84gR3CFpZY+e85O0RRE5PEjW0nGEESbALaEnenb2ECsUUEPCTa/t0Dm8QscJVJ
+        4sfmeWAJYaDEibnTWUBsFgFViW0LjrKC2LwCNhLLVv6H2iYvsXrDAeYJjDwLGBlWMUqmFhTn
+        pucWGxYY5aWW6xUn5haX5qXrJefnbmIEB6qW1g7GPas+6B1iZOJgPMQowcGsJMLbX3Q/UYg3
+        JbGyKrUoP76oNCe1+BCjNAeLkjjvha6T8UIC6YklqdmpqQWpRTBZJg5OqQYmUa79NWEGZU9j
+        Fb8vVD5UzbpQ6UnlLOGJ38Of7BLXz/aTX6qz551mQcTbCdPMeoVkp1zsrmaddSilI931lv2M
+        SqlJl1edfLM47PH0npVhunqZOs9v7bzCLly6Sbk0/6eH2dILdfMX97gtXZawp0uqZ/FaLdes
+        K/v866b3BBvwbG5JCciPiV1XzXna2PgZn+jLiR55LQE7P00TeGNjtKMjMPKOtK/TSrPPasrX
+        umurC9cdS17SUzE/jpPv+FOGhe+PWxekXyi7WcM1j/OKwrNi/SsW1pURR3f+k7ks5CPJu6bh
+        aOetY6xMxocOyhyu5k7Q02G+dUZYe77c8he61TvyXXc15ay7vbV/cWhKyTQlluKMREMt5qLi
+        RAC5UrUdwwIAAA==
+X-CMS-MailID: 20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4
+References: <CGME20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The patch will add a MMC clock controller driver which used by MMC or NAND,
-It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+This patch set adds basic support for the Tesla Full Self-Driving (FSD)
+SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+as well as several IPs.
 
-Two clocks are provided as the parent of MMC clock controller from
-upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
+Patches 1 to 8 provide support for the clock controller
+(which is designed similarly to Exynos SoCs).
 
-To specify which clock the MMC or NAND driver may consume,
-the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-can be used in the device tree sources.
+The remaining changes provide pinmux support, initial device tree support,
+and SPI, ADC, and MCT IP functionality.
 
-Signed-off-by: Liang Yang <liang.yang@amlogic.com>
----
- drivers/clk/meson/Kconfig    |  14 ++
- drivers/clk/meson/Makefile   |   1 +
- drivers/clk/meson/mmc-clkc.c | 300 +++++++++++++++++++++++++++++++++++
- 3 files changed, 315 insertions(+)
- create mode 100644 drivers/clk/meson/mmc-clkc.c
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index bb0f59eea366..3de6f3b24461 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -39,6 +39,20 @@ config COMMON_CLK_MESON_AO_CLKC
- 	select COMMON_CLK_MESON_REGMAP
- 	select RESET_CONTROLLER
- 
-+config COMMON_CLK_MMC_MESON
-+	tristate "Meson MMC Sub Clock Controller Driver"
-+	depends on ARCH_MESON || COMPILE_TEST
-+	select MFD_SYSCON
-+	select COMMON_CLK_AMLOGIC
-+	select COMMON_CLK_MESON_PHASE
-+	select COMMON_CLK_MESON_PHASE_DELAY
-+	select COMMON_CLK_MESON_SCLK_DIV
-+	help
-+	  Support for the MMC sub clock controller on
-+	  Amlogic Meson Platform, which includes S905 (GXBB, GXL),
-+	  A113D/X (AXG) devices . Say Y if you want this
-+	  clock enabled.
-+
- config COMMON_CLK_MESON_EE_CLKC
- 	tristate
- 	select COMMON_CLK_MESON_REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index c450f38d3801..f7a94a33e789 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_PHASE_DELAY) += clk-phase-delay.o
- 
- obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_MMC_MESON) += mmc-clkc.o
- obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
- obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
-diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
-new file mode 100644
-index 000000000000..f53977f61390
---- /dev/null
-+++ b/drivers/clk/meson/mmc-clkc.c
-@@ -0,0 +1,300 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/amlogic,mmc-clkc.h>
-+
-+#include "sclk-div.h"
-+#include "clk-phase-delay.h"
-+#include "clk-regmap.h"
-+#include "clk-phase.h"
-+
-+/* clock ID used by internal driver */
-+
-+#define SD_EMMC_CLOCK		0
-+#define CLK_DELAY_STEP_PS_GX	200
-+#define CLK_DELAY_STEP_PS_AXG	78
-+#define MUX_CLK_NUM_PARENTS	2
-+#define MMC_MAX_CLKS		4
-+
-+struct mmc_clkc_data {
-+	struct meson_clk_phase_delay_data tx;
-+	struct meson_clk_phase_delay_data rx;
-+};
-+
-+static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-+	.offset = SD_EMMC_CLOCK,
-+	.mask   = 0x3,
-+	.shift  = 6,
-+};
-+
-+static const struct meson_sclk_div_data mmc_clkc_div_data = {
-+	.div = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.width   = 6,
-+	},
-+	.flags = MESON_SCLK_ONE_BASED,
-+};
-+
-+static struct meson_clk_phase_data mmc_clkc_core_phase = {
-+	.ph = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.shift   = 8,
-+		.width   = 2,
-+	}
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_gx_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 4,
-+		},
-+		.delay_step_ps = CLK_DELAY_STEP_PS_GX,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 20,
-+			.width   = 4,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_GX,
-+	},
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_axg_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 22,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
-+	},
-+};
-+
-+static const struct of_device_id mmc_clkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,gx-mmc-clkc",
-+		.data		= &mmc_clkc_gx_data
-+	},
-+	{
-+		.compatible	= "amlogic,axg-mmc-clkc",
-+		.data		= &mmc_clkc_axg_data
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-+		      struct clk_init_data *init,
-+		      const char *suffix, void *data)
-+{
-+	struct clk_regmap *clk;
-+	char *name;
-+	int ret;
-+
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-+	if (!name)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init->name = name;
-+	clk->map = map;
-+	clk->data = data;
-+	clk->hw.init = init;
-+	ret = devm_clk_hw_register(dev, &clk->hw);
-+	if (ret)
-+		clk = ERR_PTR(ret);
-+
-+	kfree(name);
-+	return clk;
-+}
-+
-+static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-+						struct regmap *map)
-+{
-+	const char *parent_names[MUX_CLK_NUM_PARENTS];
-+	struct clk_init_data init;
-+	struct clk_regmap *mux;
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-+		char name[8];
-+
-+		snprintf(name, sizeof(name), "clkin%d", i);
-+		clk = devm_clk_get(dev, name);
-+		if (IS_ERR(clk)) {
-+			if (clk != ERR_PTR(-EPROBE_DEFER))
-+				dev_err(dev, "Missing clock %s\n", name);
-+			return ERR_CAST(clk);
-+		}
-+
-+		parent_names[i] = __clk_get_name(clk);
-+	}
-+
-+	init.ops = &clk_regmap_mux_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_names = parent_names;
-+	init.num_parents = MUX_CLK_NUM_PARENTS;
-+
-+	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
-+	if (IS_ERR(mux))
-+		dev_err(dev, "Mux clock registration failed\n");
-+
-+	return mux;
-+}
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-+				  char *suffix, const struct clk_hw *hw,
-+				  unsigned long flags,
-+				  const struct clk_ops *ops, void *data)
-+{
-+	struct clk_init_data init;
-+	struct clk_regmap *clk;
-+	const char *parent_name = clk_hw_get_name(hw);
-+
-+	init.ops = ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-+	if (IS_ERR(clk))
-+		dev_err(dev, "%s clock registration failed\n", suffix);
-+
-+	return clk;
-+}
-+
-+static int mmc_clkc_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *onecell_data;
-+	struct device *dev = &pdev->dev;
-+	struct mmc_clkc_data *data;
-+	struct regmap *map;
-+	struct clk_regmap *clk, *core;
-+	struct meson_sclk_div_data *div_data;
-+
-+	/*cast to drop the const in match->data*/
-+	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "could not find mmc clock controller\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	onecell_data = devm_kzalloc(dev,
-+				    struct_size(onecell_data, hws,
-+						MMC_MAX_CLKS),
-+				    GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	clk = mmc_clkc_register_mux(dev, map);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
-+	if (!div_data)
-+		return -ENOMEM;
-+
-+	memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
-+						&clk->hw,
-+						CLK_SET_RATE_PARENT,
-+						&meson_sclk_div_ops,
-+						div_data);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_DIV] = &clk->hw;
-+	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
-+						 &clk->hw,
-+						 CLK_SET_RATE_PARENT,
-+						 &meson_clk_phase_ops,
-+						 &mmc_clkc_core_phase);
-+	if (IS_ERR(core))
-+		return PTR_ERR(core);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_CORE] = &core->hw;
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->rx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_RX] = &clk->hw;
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						&data->tx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_TX] = &clk->hw;
-+	onecell_data->num = MMC_MAX_CLKS;
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   onecell_data);
-+}
-+
-+static struct platform_driver mmc_clkc_driver = {
-+	.probe		= mmc_clkc_probe,
-+	.driver		= {
-+		.name	= "meson-mmc-clkc",
-+		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-+	},
-+};
-+
-+module_platform_driver(mmc_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-+MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-+MODULE_LICENSE("GPL v2");
+Alim Akhtar (21):
+  dt-bindings: clock: Document FSD CMU bindings
+  dt-bindings: clock: Add bindings definitions for FSD CMU blocks
+  clk: samsung: fsd: Add initial clock support
+  clk: samsung: fsd: Add cmu_peric block clock information
+  clk: samsung: fsd: Add cmu_fsys0 clock information
+  clk: samsung: fsd: Add cmu_fsys1 clock information
+  clk: samsung: fsd: Add cmu_imem block clock information
+  clk: samsung: fsd: Add cmu_mfc block clock information
+  clk: samsung: fsd: Add cam_csi block clock information
+  dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
+  pinctrl: samsung: add FSD SoC specific data
+  dt-bindings: add vendor prefix for Tesla
+  dt-bindings: arm: add Tesla FSD ARM SoC
+  arm64: dts: fsd: Add initial device tree support
+  arm64: dts: fsd: Add initial pinctrl support
+  arm64: defconfig: Enable Tesla FSD SoC
+  Documentation: bindings: Add fsd spi compatible in dt-bindings
+    document
+  spi: s3c64xx: Add spi port configuration for Tesla FSD SoC
+  dt-bindings: iio: adc: exynos-adc: Add ADC-V3 variant
+  iio: adc: exynos-adc: Add support for ADC V3 controller
+  arm64: dts: fsd: Add ADC device tree node
+
+Aswani Reddy (2):
+  arm64: dts: fsd: Add SPI device nodes
+  clocksource: exynos_mct: Add support for handling three clusters
+
+ .../devicetree/bindings/arm/tesla.yaml        |   25 +
+ .../bindings/clock/tesla,fsd-clock.yaml       |  212 ++
+ .../bindings/iio/adc/samsung,exynos-adc.yaml  |    1 +
+ .../bindings/pinctrl/samsung-pinctrl.txt      |    1 +
+ .../devicetree/bindings/spi/spi-samsung.txt   |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/Kconfig.platforms                  |    6 +
+ arch/arm64/boot/dts/Makefile                  |    1 +
+ arch/arm64/boot/dts/tesla/Makefile            |    3 +
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    |  338 +++
+ arch/arm64/boot/dts/tesla/fsd.dts             |  156 ++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  805 +++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 | 1858 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    1 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ drivers/clocksource/exynos_mct.c              |    6 +-
+ drivers/iio/adc/exynos_adc.c                  |   74 +-
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |   71 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ drivers/spi/spi-s3c64xx.c                     |   13 +
+ include/dt-bindings/clock/fsd-clk.h           |  146 ++
+ 25 files changed, 3731 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/tesla/Makefile
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dts
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dtsi
+ create mode 100644 drivers/clk/samsung/clk-fsd.c
+ create mode 100644 include/dt-bindings/clock/fsd-clk.h
+
+
+base-commit: c9e6606c7fe92b50a02ce51dda82586ebdf99b48
 -- 
-2.34.1
+2.17.1
 
