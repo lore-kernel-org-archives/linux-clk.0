@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F74C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6E1C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 12:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbiAMMZx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 07:25:53 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:34405 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234789AbiAMMZH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:25:07 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220113122506epoutp013f645c4fe48e8e8f5bd4bf319f733764~J1BBvLLdp1892918929epoutp01I
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 12:25:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220113122506epoutp013f645c4fe48e8e8f5bd4bf319f733764~J1BBvLLdp1892918929epoutp01I
+        id S229572AbiAMM02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 07:26:28 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:22206 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234667AbiAMMYM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 07:24:12 -0500
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220113122404epoutp02f6d3f7786d2d93f54fb7785713363279~J1AIXEZkG2781727817epoutp02_
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 12:24:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220113122404epoutp02f6d3f7786d2d93f54fb7785713363279~J1AIXEZkG2781727817epoutp02_
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642076706;
-        bh=K8vTbIvFIBqHtyyqH6gBJua5O8SlNOOefAJIAr14Cl8=;
+        s=mail20170921; t=1642076644;
+        bh=mmh5VRk/Dl9IQw+U5cIxsY0TlsOQzZEFLN9GUflgjf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHNBy2aKz0QjFpiYdBn3z76ataNtd5dBWQbkKH8wnTW5I74A5vNhfqsOALjjb0LDC
-         btar4iYmPSrOtzQtuHNdQI16jE8CTk3Jftm41Qvso9hQMy4s9O4TXcR/r/e15WMrQR
-         r808U/IIrf1Xz9PpW/BDgDaz1VJFdwirL5yqwbQ8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        b=EAbek/2Ow39qVtShnXqonZfQIvqP07JQVx5yMPH3KAQnBPVvTSGWM23FxuUDBu9iq
+         ft+lu3rz8N5l0JmMWeqHvFhMwprN7ayrqdNHwHumXmpULJxCuuS1lKzu1/OA7s5i2d
+         GfeyX+K03vSJvVsXslMcT658b1z+W3dxCm3jIfHs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
         epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220113122505epcas5p1c815dc2d2ae118cae897ce96e82e58b7~J1BBNhJCe2652426524epcas5p1g;
-        Thu, 13 Jan 2022 12:25:05 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.178]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4JZNt65JQYz4x9Pp; Thu, 13 Jan
-        2022 12:25:02 +0000 (GMT)
+        20220113122404epcas5p1279cf6cef52d26c7c5afeb8836e3f7e2~J1AH7kFcy2652426524epcas5p1B;
+        Thu, 13 Jan 2022 12:24:04 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4JZNrw6gWXz4x9Q6; Thu, 13 Jan
+        2022 12:24:00 +0000 (GMT)
 Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.D6.06423.E1A10E16; Thu, 13 Jan 2022 21:25:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.11.46822.0E910E16; Thu, 13 Jan 2022 21:24:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c~J1A94d_951006210062epcas5p3p;
-        Thu, 13 Jan 2022 12:25:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220113122502epsmtrp28d725e966cfd99cee4a4c476022a6bf5~J1A95ADUY3235332353epsmtrp2d;
-        Thu, 13 Jan 2022 12:25:02 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-3d-61e01a1ee6cf
+        20220113122400epcas5p34363ba8f477b4c273d601d0b64324afa~J1AEOlJUB2339223392epcas5p3y;
+        Thu, 13 Jan 2022 12:24:00 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220113122400epsmtrp1bb5dd1f8bb669c6da92e08696df7cada~J1AENAUvo1911119111epsmtrp1N;
+        Thu, 13 Jan 2022 12:24:00 +0000 (GMT)
+X-AuditID: b6c32a4a-de5ff7000000b6e6-6d-61e019e0600b
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C2.B8.29871.D1A10E16; Thu, 13 Jan 2022 21:25:01 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        33.A9.08738.FD910E16; Thu, 13 Jan 2022 21:23:59 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220113122459epsmtip2e5b4002f52af13c0bc060d4cb53c7683~J1A7RzPuN1246812468epsmtip2J;
-        Thu, 13 Jan 2022 12:24:59 +0000 (GMT)
+        20220113122356epsmtip2f3a3294d6d6b19894d6e7424a91f856a~J1AAdgRU01245812458epsmtip2p;
+        Thu, 13 Jan 2022 12:23:55 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
@@ -55,96 +55,176 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         linus.walleij@linaro.org, catalin.marinas@arm.com,
         robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
         s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, Aswani Reddy <aswani.reddy@samsung.com>,
-        linux-fsd@tesla.com, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 23/23] clocksource: exynos_mct: Add support for handling
- three clusters
-Date:   Thu, 13 Jan 2022 17:41:43 +0530
-Message-Id: <20220113121143.22280-24-alim.akhtar@samsung.com>
+        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-fsd@tesla.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 11/23] pinctrl: samsung: add FSD SoC specific data
+Date:   Thu, 13 Jan 2022 17:41:31 +0530
+Message-Id: <20220113121143.22280-12-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220113121143.22280-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAJsWRmVeSWpSXmKPExsWy7bCmlq6c1INEg/VfRCwezNvGZnFo81Z2
-        i/fLehgt5h85x2qx8e0PJospf5YzWWx6fI3V4mPPPVaLh6/CLS7vmsNmMeP8PiaLU9c/s1ks
-        2vqF3aJ17xF2i8Nv2lktHl//w+Yg4LFm3hpGj1kNvWwem1Z1snncubaHzWPzknqPKyeaWD36
-        tqxi9PjXNJfd4/MmuQDOqGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTc
-        VFslF58AXbfMHKAvlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFJgV6xYm5xaV5
-        6Xp5qSVWhgYGRqZAhQnZGTeXv2cqeMJeseXdDtYGxn1sXYycHBICJhK7p/eygthCArsZJT7N
-        re5i5AKyPzFKtK34ygzhfGOU+DF9GSNMx7PDG9khEnsZJe6+7IFyWpgkVrW3soBUsQloS9yd
-        voUJxBYRcJO40djBBFLELNDOLHFnwl4gh4NDWCBS4tgqc5AaFgFViUu7v4HdwStgK/Fx2SGo
-        bfISqzccYAYp5wSK312VBzJGQmAph8Sir5dZIWpcJM5s3swCYQtLvDq+hR3ClpL4/G4vG0iv
-        hEC2RM8uY4hwjcTSecegyu0lDlyZwwJSwiygKbF+lz5ImFmAT6L39xMmiE5eiY42IYhqVYnm
-        d1ehOqUlJnZ3Qx3gITGpYys0FCYwShw+e419AqPsLISpCxgZVzFKphYU56anFpsWGOallsOj
-        KTk/dxMjOGlqee5gvPvgg94hRiYOxkOMEhzMSiK8/UX3E4V4UxIrq1KL8uOLSnNSiw8xmgJD
-        bCKzlGhyPjBt55XEG5pYGpiYmZmZWBqbGSqJ855O35AoJJCeWJKanZpakFoE08fEwSnVwNSv
-        NeNB7xGtNb7FB1o3Tvt7YPPEVVFNN6b3HGBTWc6437VJTGWmMjPvC8aNSuFLyh7siAyxzpNI
-        6MwX/3S+w3+zv8GKxPlxNb/38Mr9Y+Xx2SfI8OxH3NrMvhmdrw9X5hycHPlXnuEOR4tfZaT5
-        x45VJrnZ55/ZPLOZwhInxmTEIece9Mpb4FbcFm+dOeuYeHZqGSZqhdotrGMKyZzje9hn6cGL
-        eY/0WPa/3ZLyJVRq62GTLIZzj/5zznp5vo3zuRbrnAdtfiVv1x5iyUv6osnRFtaq7SQZ7bm5
-        6r/omtWzzBLS7LJeZ8qaBu2/tKBMdEdRX9VDWbfX226fk33m9yElUWrada438+sKFzRzKbEU
-        ZyQaajEXFScCAPi3N+0jBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSvK6s1INEg32zVC0ezNvGZnFo81Z2
-        i/fLehgt5h85x2qx8e0PJospf5YzWWx6fI3V4mPPPVaLh6/CLS7vmsNmMeP8PiaLU9c/s1ks
-        2vqF3aJ17xF2i8Nv2lktHl//w+Yg4LFm3hpGj1kNvWwem1Z1snncubaHzWPzknqPKyeaWD36
-        tqxi9PjXNJfd4/MmuQDOKC6blNSczLLUIn27BK6Mm8vfMxU8Ya/Y8m4HawPjPrYuRk4OCQET
-        iWeHN7J3MXJxCAnsZpR4cfAfVEJa4vrGCewQtrDEyn/PwWwhgSYmia+7TEBsNgFtibvTtzCB
-        2CICHhJt/+4xgwxiFpjOLHFg2zeWLkYODmGBcIn9fZ4gNSwCqhKXdn9jBbF5BWwlPi47xAgx
-        X15i9YYDzCDlnEDxu6vyIFbZSJx7tZ5tAiPfAkaGVYySqQXFuem5xYYFhnmp5XrFibnFpXnp
-        esn5uZsYwQGvpbmDcfuqD3qHGJk4GA8xSnAwK4nw9hfdTxTiTUmsrEotyo8vKs1JLT7EKM3B
-        oiTOe6HrZLyQQHpiSWp2ampBahFMlomDU6qBKVtCMUj4/q1jm4O6V9st4F3CH1lg3CARo/FO
-        Jy013OjaW8fFFftlHos+u5bFsHSDFFdfnG3U3s7FvK3T0n+7nzSMuBWspW77sXu+/7LLU36L
-        Hk566KD5beua4FVfBJJ/CkvFS3IY3WEIanbeJ/Poh9PZvO//2q8v2cFpsqE/yv5U7I2mvnmW
-        Z0Kskq5Es6eFm8yblnWa50Lb96abbE/abh1JfX/5lZF77ZXeQxskgpMlg91P/apP6hafL/++
-        8/n0J1krjz/ZqGi8SLZUXH/67Ls2zyz37b+yzGAOv9viWX71nOdXRz4ra/KSramsnXFiy1TG
-        WVb68yNLuW559Xoz+t7/HDNxO9OUlcopfUttlFiKMxINtZiLihMBC8F3kOcCAAA=
-X-CMS-MailID: 20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIJsWRmVeSWpSXmKPExsWy7bCmlu4DyQeJBkdX2VgceH+QxeLBvG1s
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
+        tPULu0Xr3iPsFofftLNaPL7+h81BwGPNvDWMHrMaetk8Nq3qZPO4c20Pm8fmJfUeV040sXr0
+        bVnF6PGvaS67x+dNcgGcUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5
+        qbZKLj4Bum6ZOUBfKCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNzi0vz
+        0vXyUkusDA0MjEyBChOyMw6smMtScEajonfHNPYGxunKXYycHBICJhKzfv9g7WLk4hAS2M0o
+        cWDDbmYI5xOjxL/+5UwQzmdGiY2zFjDCtDzq3gzVsotRYt776+wgCSGBFiaJL6dkQWw2AW2J
+        u9O3MIHYIgJuEjcaO8AmMQu0MkvMb93ODJIQFnCS2PHyPRuIzSKgKvH39DmwDbwCthJT+jZB
+        bZOXWL3hAFA9BwcnUPzuqjyQORICKzkkzkx/wAJR4yLRfPU9K4QtLPHq+BZ2CFtK4mV/GztI
+        r4RAtkTPLmOIcI3E0nnHoFrtJQ5cmcMCUsIsoCmxfpc+SJhZgE+i9/cTJohOXomONiGIalWJ
+        5ndXoTqlJSZ2d0Mt9ZD4vqqBBRIkExglNr95zTyBUXYWwtQFjIyrGCVTC4pz01OLTQuM8lLL
+        4fGUnJ+7iRGcNrW8djA+fPBB7xAjEwfjIUYJDmYlEd7+ovuJQrwpiZVVqUX58UWlOanFhxhN
+        gSE2kVlKNDkfmLjzSuINTSwNTMzMzEwsjc0MlcR5T6dvSBQSSE8sSc1OTS1ILYLpY+LglGpg
+        6rsVqsAraFe7Z67Ax2XlSqee6D6sX/Zn88cdc0+JB1Q/k10T1Pen6u61Q1/ZAmfIuhSvrL3d
+        9GibeslxlUPNtevF3vbbX5d/NW2JOOMVHreOV8e9PQ7IH16oob3k6f1YLwb+NcX6mparFv94
+        U11SmeY+fU7VbdkW42n2cyUuC5q/K9ru3te1ZRHfy53290OeMT57sMJ7v93F4GsPvl3/naOY
+        5+6XlasYNK2kMJ+xJ8Ko+IEIo8XNj1m3bkTs8636O3nt0YwdrPxcLHcSM/MjizY1ycqEH19a
+        XZpT2597eOka5ycdyQefl/Ty6mtLrZt4bOommZK85GsmLacUqhWDdBTE5R53uV5fdFL6wKkF
+        SizFGYmGWsxFxYkAcfvH/SQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsWy7bCSvO59yQeJBiefqFgceH+QxeLBvG1s
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
+        tPULu0Xr3iPsFofftLNaPL7+h81BwGPNvDWMHrMaetk8Nq3qZPO4c20Pm8fmJfUeV040sXr0
+        bVnF6PGvaS67x+dNcgGcUVw2Kak5mWWpRfp2CVwZB1bMZSk4o1HRu2MaewPjdOUuRk4OCQET
+        iUfdm1m7GLk4hAR2MEp07drBBpGQlri+cQI7hC0ssfLfc3aIoiYmial3pjCCJNgEtCXuTt/C
+        BGKLCHhItP27xwxSxCwwlVli1YYuZpCEsICTxI6X78GmsgioSvw9fQ6smVfAVmJK3yZGiA3y
+        Eqs3HACq5+DgBIrfXZUHEhYSsJE492o92wRGvgWMDKsYJVMLinPTc4sNC4zyUsv1ihNzi0vz
+        0vWS83M3MYKDXktrB+OeVR/0DjEycTAeYpTgYFYS4e0vup8oxJuSWFmVWpQfX1Sak1p8iFGa
+        g0VJnPdC18l4IYH0xJLU7NTUgtQimCwTB6dUA9P+veujmV7lW0zMTRfMOL4y+czebMfoFV4Z
+        3R/Wi3daz+nZXrqb52KK+u2ZVx/FXNOIes27Kj/3wME3u5o+Wi7q63+df/WEAPu88/b3GDS9
+        i3g4+CT+6vtYBW2INmj4+EXC5EdsxofnFkviuxoNbh23W72INyZQwPPZDZat11NeqzTf+b65
+        Zcq1I4zZPpPvvYw/YHg+68rLk0eYdi8qPf2z76XGhWu3zlopBTXc/GL7as/ujJRrj6OF2wvL
+        BBg6Py7lYGZxEuObcOP38mzlLt/TbCnnJxZsjT8Tcf4Ff5xZ0599DnuOyx+PniHIZPVHffrG
+        aUY7zqss6U0wmMG9bI1xxsyjkjVJm6b9OJyZ+S9UiaU4I9FQi7moOBEA+ndbjukCAAA=
+X-CMS-MailID: 20220113122400epcas5p34363ba8f477b4c273d601d0b64324afa
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c
+X-CMS-RootMailID: 20220113122400epcas5p34363ba8f477b4c273d601d0b64324afa
 References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122502epcas5p37747b0c5c242c0571d294b9245963a1c@epcas5p3.samsung.com>
+        <CGME20220113122400epcas5p34363ba8f477b4c273d601d0b64324afa@epcas5p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Aswani Reddy <aswani.reddy@samsung.com>
-
-This patch adds support for handling thress clusters
-(upto 12 CPUs)
+This patch adds Tesla FSD SoC specific data to enable pinctrl.
+FSD SoC has similar pinctrl controller as found in the most
+samsung/exynos SoCs.
 
 Cc: linux-fsd@tesla.com
-Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    | 71 +++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |  2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |  1 +
+ 3 files changed, 74 insertions(+)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 5e3e96d3d1b9..ba3af940a687 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -78,6 +78,10 @@ enum {
- 	MCT_L5_IRQ,
- 	MCT_L6_IRQ,
- 	MCT_L7_IRQ,
-+	MCT_L8_IRQ,
-+	MCT_L9_IRQ,
-+	MCT_L10_IRQ,
-+	MCT_L11_IRQ,
- 	MCT_NR_IRQS,
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+index 6b77fd24571e..b9175b4911ac 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
+@@ -646,3 +646,74 @@ const struct samsung_pinctrl_of_match_data exynosautov9_of_data __initconst = {
+ 	.ctrl		= exynosautov9_pin_ctrl,
+ 	.num_ctrl	= ARRAY_SIZE(exynosautov9_pin_ctrl),
  };
- 
-@@ -89,7 +93,7 @@ static int mct_irqs[MCT_NR_IRQS];
- struct mct_clock_event_device {
- 	struct clock_event_device evt;
- 	unsigned long base;
--	char name[10];
-+	char name[11];
- };
- 
- static void exynos4_mct_write(unsigned int value, unsigned long offset)
++
++/*
++ * Pinctrl driver data for Tesla FSD SoC. FSD SoC includes three
++ * gpio/pin-mux/pinconfig controllers.
++ */
++
++/* pin banks of FSD pin-controller 0 (FSYS) */
++static const struct samsung_pin_bank_data fsd_pin_banks0[] __initconst = {
++	EXYNOS850_PIN_BANK_EINTG(7, 0x00, "gpf0", 0x00),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x20, "gpf1", 0x04),
++	EXYNOS850_PIN_BANK_EINTG(3, 0x40, "gpf6", 0x08),
++	EXYNOS850_PIN_BANK_EINTG(2, 0x60, "gpf4", 0x0c),
++	EXYNOS850_PIN_BANK_EINTG(6, 0x80, "gpf5", 0x10),
++};
++
++/* pin banks of FSD pin-controller 1 (PERIC) */
++static const struct samsung_pin_bank_data fsd_pin_banks1[] __initconst = {
++	EXYNOS850_PIN_BANK_EINTG(4, 0x000, "gpc8", 0x00),
++	EXYNOS850_PIN_BANK_EINTG(7, 0x020, "gpf2", 0x04),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x040, "gpf3", 0x08),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x060, "gpd0", 0x0c),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x080, "gpb0", 0x10),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x0a0, "gpb1", 0x14),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x0c0, "gpb4", 0x18),
++	EXYNOS850_PIN_BANK_EINTG(4, 0x0e0, "gpb5", 0x1c),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x100, "gpb6", 0x20),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x120, "gpb7", 0x24),
++	EXYNOS850_PIN_BANK_EINTG(5, 0x140, "gpd1", 0x28),
++	EXYNOS850_PIN_BANK_EINTG(5, 0x160, "gpd2", 0x2c),
++	EXYNOS850_PIN_BANK_EINTG(7, 0x180, "gpd3", 0x30),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x1a0, "gpg0", 0x34),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x1c0, "gpg1", 0x38),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x1e0, "gpg2", 0x3c),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x220, "gpg4", 0x44),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x240, "gpg5", 0x48),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x260, "gpg6", 0x4c),
++	EXYNOS850_PIN_BANK_EINTG(8, 0x280, "gpg7", 0x50),
++};
++
++/* pin banks of FSD pin-controller 2 (PMU) */
++static const struct samsung_pin_bank_data fsd_pin_banks2[] __initconst = {
++	EXYNOS850_PIN_BANK_EINTN(3, 0x00, "gpq0"),
++};
++
++const struct samsung_pin_ctrl fsd_pin_ctrl[] __initconst = {
++	{
++		/* pin-controller instance 0 FSYS0 data */
++		.pin_banks	= fsd_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(fsd_pin_banks0),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++	}, {
++		/* pin-controller instance 1 PERIC data */
++		.pin_banks	= fsd_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(fsd_pin_banks1),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++	}, {
++		/* pin-controller instance 2 PMU data */
++		.pin_banks	= fsd_pin_banks2,
++		.nr_banks	= ARRAY_SIZE(fsd_pin_banks2),
++	},
++};
++
++const struct samsung_pinctrl_of_match_data fsd_of_data __initconst = {
++	.ctrl		= fsd_pin_ctrl,
++	.num_ctrl	= ARRAY_SIZE(fsd_pin_ctrl),
++};
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 23f355ae9ca0..4b348c038f7a 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1268,6 +1268,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = &exynos850_of_data },
+ 	{ .compatible = "samsung,exynosautov9-pinctrl",
+ 		.data = &exynosautov9_of_data },
++	{ .compatible = "tesla,fsd-pinctrl",
++		.data = &fsd_of_data },
+ #endif
+ #ifdef CONFIG_PINCTRL_S3C64XX
+ 	{ .compatible = "samsung,s3c64xx-pinctrl",
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 547968a31aed..43d8a8a139c3 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -341,6 +341,7 @@ extern const struct samsung_pinctrl_of_match_data exynos5433_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynos7_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynos850_of_data;
+ extern const struct samsung_pinctrl_of_match_data exynosautov9_of_data;
++extern const struct samsung_pinctrl_of_match_data fsd_of_data;
+ extern const struct samsung_pinctrl_of_match_data s3c64xx_of_data;
+ extern const struct samsung_pinctrl_of_match_data s3c2412_of_data;
+ extern const struct samsung_pinctrl_of_match_data s3c2416_of_data;
 -- 
 2.17.1
 
