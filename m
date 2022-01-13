@@ -2,223 +2,186 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC84C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 21:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D684C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 22:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236079AbiAMVoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 16:44:30 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:33760 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233007AbiAMVo3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 16:44:29 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F2351B8239D;
-        Thu, 13 Jan 2022 21:44:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95292C36AEA;
-        Thu, 13 Jan 2022 21:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642110266;
-        bh=9f4pER1EuDbwag5Si4PfYatM5rJz9h3g9M3ZIfhUhBQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fQus3Ie+WJB1Um+S0EEXE8L78sVxgEQok9HYXMzxUxW81RlzWJHN2EhwdnWtzPoiM
-         oXBHkz2SIZLl0exHs6uVsKzNHVqCWpN1jJb0cENqw+s1ahro1kmeNfGfr5rlAVWJke
-         083kWT8Wf4nPoFnl07YBMm9IW9241iRjY0qKMcuWAmYH6hQ+BtLLK/sKGu7bXYIxVt
-         OkIz6kXsBTxo2nY/1Jk2diBRFQ+ZZ8uYnqlcbsgOs419vMo+ktfwmIAKJMX/vvauCp
-         Ex4RaFKnECi9DWGAfGXtex/AZWrtAqPWTIRJKegVGoQDzki75atrWXPuI3y9u5qPbT
-         G6M724eYOIfAA==
+        id S237549AbiAMW3v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 17:29:51 -0500
+Received: from mx0d-0054df01.pphosted.com ([67.231.150.19]:56720 "EHLO
+        mx0d-0054df01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237543AbiAMW3v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 17:29:51 -0500
+Received: from pps.filterd (m0209000.ppops.net [127.0.0.1])
+        by mx0c-0054df01.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 20DLOiTf013714;
+        Thu, 13 Jan 2022 17:29:45 -0500
+Received: from can01-to1-obe.outbound.protection.outlook.com (mail-to1can01lp2054.outbound.protection.outlook.com [104.47.61.54])
+        by mx0c-0054df01.pphosted.com (PPS) with ESMTPS id 3dj2j2gsth-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 17:29:45 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hs3EKMOu+fv9IN9G5/baNuMmLxFqDw1Vtv5vv7TI8k7XqvggbTxq8/65v1grthR5L997CvfflRSoE4xuk6pU8lqR3Zce4FPsaaGt69pmcTlyj+/8em5EZhtzsgZfPvhcfO47WRTwZqxXGKiyiwo6uEJzTAisu1BVEAoJgZjN4zSi5SUixU5DupBULiI1PMjBG9hpkADSL0N2tmMMh6GkYuFIfmL4kFoiPd4SFhGNjO0H7IBqBB+WT9hG631m0SwRH8y01RD3stY8J71Zk0iB2tDr+O+qn2KIt5KBccM0QvhxxodFnJ92ejDQcW+TzTul/LY+Qz2DLJbi6O2eBkNbug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fG4RjOh9IPxcngzifos01wolQfyNoffKSL4Vdbz+whA=;
+ b=IEQKxL77KC1Yazqf/UKyfaGbGOZLxPAaqLWDE+euGORYIXjbJEzPU5+GQSYoEsZxitIVxUHwJ+/nmyDh289qPRLko8KIIm9KHKjpzZnnjB8CuwnybO54iMOLSH6X1NMf9++3PtgbHl7jqTJZS+tS3X5wNsu5jyk3YMWiHT1TgtwMat/iSJw+XExR0F2+2Z24SgzQPtp2w2/guZYQ2Le9JjbwxX+K7cuwF8o5ySQkJOx83NU1qp/hbuT0Qkv8fLTFxC4cYLjC/n6zTYKd4ob8NSMpUDZH9kIExX5qN+mZ38yCrcxOrlntsI8+a0XoKQ23sloj15mNI2pYWJSJ0dQelA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=calian.com; dmarc=pass action=none header.from=calian.com;
+ dkim=pass header.d=calian.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=calian.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fG4RjOh9IPxcngzifos01wolQfyNoffKSL4Vdbz+whA=;
+ b=dh2BUwTdv5P5T1FdK/KfPzuffNO6OuUQdqQwWaFCGFZPXw/yRWkpSJ1gI3DNDKL28/gNV92hD+FJw907k2KPH0zxPhVShQZDgNR+6+VE91p1Ch04+akZMDeZKossYsvEX7ku8mxwqq8TR7DtLH3mPYBN7Ysu3alXuCpwhUrTPSA=
+Received: from YT3PR01MB6274.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:6a::19)
+ by YQXPR01MB4593.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:1c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4888.9; Thu, 13 Jan
+ 2022 22:29:41 +0000
+Received: from YT3PR01MB6274.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::6929:c39f:d893:b6c8]) by YT3PR01MB6274.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::6929:c39f:d893:b6c8%2]) with mapi id 15.20.4888.011; Thu, 13 Jan 2022
+ 22:29:41 +0000
+From:   Robert Hancock <robert.hancock@calian.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "dev_public@wujek.eu" <dev_public@wujek.eu>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: si5341: fix reported clk_rate when output divider is
+ 2
+Thread-Topic: [PATCH] clk: si5341: fix reported clk_rate when output divider
+ is 2
+Thread-Index: AQHYCMPJU/oLPOr4NU+Vf4USoaiCyKxhiJMA
+Date:   Thu, 13 Jan 2022 22:29:41 +0000
+Message-ID: <d36fbe1176fd6182bd65c9a995fbf4614a112597.camel@calian.com>
+References: <20211203141125.2447520-1-dev_public@wujek.eu>
+         <20220113212312.19D85C36AE3@smtp.kernel.org>
+In-Reply-To: <20220113212312.19D85C36AE3@smtp.kernel.org>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9367febf-1543-4e09-b0dd-08d9d6e43105
+x-ms-traffictypediagnostic: YQXPR01MB4593:EE_
+x-microsoft-antispam-prvs: <YQXPR01MB4593B5C881ECABA5F0A0C106EC539@YQXPR01MB4593.CANPRD01.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: M7UhXpogMwUDe+stvPuXtU1SGFa0yQIp+3OJ+qIpScy1qxRcLH/OrgejtFjPnqXVX9ReEByjRj7QNVJ2aB1PwRkAcDxnEO9l0txNOEZT8tkxj8UUWUegwkgZiMmQsZa/1LBX6rPEraq3OXKEM78hZ9BknoukMhjRvmWjng8D9UFY7rQiJgjIKm4wy1Qw/pxwCfTpCDqPALO89IuxW8Vc28xCxtyYafMcNdDsZ2l+ayqjzqNkS6QOkaGBkogUbIq4QvymMc0oHpk05GdYwSOhhAOLso1RmgTmE1T5w3yfS5L+2UL6EZMwfwoet0e1Q6OVLIogoG12Uuh6f479Wm0bXxuOHGQ8vjaxkTdsXLr3xUANFdlt0qhEB7udrROErm1GeuImuhJzfZJ5/dzQvC3HoqzOsqjthTRzO3cNDdxeR0rGTPCQADPlSwbX/42SO1mtves54vHUtviH4TI+slfJRF9fP4Fk4PWOP9hvmkkiJfwru46U2tLmovpPGZeitYSUVr/RSYtlbs9awV48AJ5hroy6yL6MitC1DVDv3aHoKImUB6yITBDFFss4QZRTvr13conA4QE3a9wu739YZjANXWsCWqliCoRWV4xBh992W1zrZGpYdBMzXQkiaid32jqqEiWF6ben1SXmaZ1R4aHt9wfOvlqD8TmWNEzFzdUNfL8Lxtuz+7f3E3lDkEXFqGggpKMFNgRgWPjpXAteDZMrJS3VeE+kcOX+LPylU+ZHh+Vpuu+8YchHiWd7jViRsYjkHKkRtSnf/ewafJGLS+ypfaS9MHwDcSghDZnc7N075QkdGdj25VwnMbobaNMmdfVQUQzS5LybznGDXf1hxECwb8WAuTP1+OrRwuz82p9/8LI=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB6274.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(366004)(8936002)(38100700002)(66476007)(66446008)(86362001)(64756008)(36756003)(8676002)(66556008)(44832011)(6486002)(186003)(2616005)(54906003)(15974865002)(4326008)(38070700005)(110136005)(122000001)(316002)(71200400001)(5660300002)(66946007)(91956017)(76116006)(6506007)(6512007)(83380400001)(2906002)(26005)(508600001)(99106002)(18886075002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UGNSK1VkMEduUE8rRm5NLzMrMVZmeHp2WHp4TU10a1dySmMzZVVqWXpHdmJh?=
+ =?utf-8?B?MWxUMGExUHNxT2hsbnd6ZXAxUUo5U09zYUxmWEhQUW1JNFJkY1E4ck5VYlJ0?=
+ =?utf-8?B?R21CTThpUFF6cDRVN2FVV2pIMkpYbUZHaVJZV01XMUwrN2ttOUV3aVJOdk1k?=
+ =?utf-8?B?YkJsbGZzNzN4VSs1blNuOGRacStQRjRZbEd6eCt2enFtS216WTBFTFVXOEF5?=
+ =?utf-8?B?dStpYUtkc1lnWkYrcUdHZDlNVWRsVkR5bzAwYjV6ZlhxL2gwZVYvRTdYZkFW?=
+ =?utf-8?B?QUtaNzhaaUtTajNCaGdzOFdNTjNTV3FSK3l1ZkRLVVdUZmExRFR5YmRaaFFs?=
+ =?utf-8?B?K2JFWEs5ZzMwckJHZEk2dzNxN2F1dWs1dGJmM2NCb0gvN3p2ZGJFcm9oY3g1?=
+ =?utf-8?B?ekIrTFFRWkRqaGwxWldUcHpGbVM0Vy9DeHNxNGNLd3RnSU5CREc3dEZFVElj?=
+ =?utf-8?B?OVdIVkxqWmVIV1NlanBxVmY1MElheE04TEJEWDBDU3M4ZGkwdS9GZ3JrVkNH?=
+ =?utf-8?B?YU5taXBWZkFZY0Q1UGQ3OS83STZMWFlJV1V6ODdXL2Y2MUkrMWZBUEs2WTB5?=
+ =?utf-8?B?KzFiaWlRdTNjTXJXTFJVWFBYZUlOUkFFaGhSQy9hWkdUcVczTGZxN2ZjdFQr?=
+ =?utf-8?B?SUh6YVk4elhKd1NISUZKTWtHV0hpL3c0L2xLVVdIZkM3WHNoT1pWL3NOQ2RK?=
+ =?utf-8?B?SkdOTkw2dmhNTHJteExVWGRNQlJrSEt5ZktZRnhVWEZ2TE5qRDZNOHkzVVRB?=
+ =?utf-8?B?V3IzSiswbjZqVXFpditjenhIT2ZJd2tPZ3UrcVdFQjFxUzdZQ1NuTFZFYnNq?=
+ =?utf-8?B?YWVzampWSHNWTUlSSkJiUXVjQWxpNW0vQVFNQTFqOHg2L2FsemhqU2pTckVt?=
+ =?utf-8?B?S05ORkJrdzRKaDQ2WFNsWnNYdVhxRFRTSmpxem8rVlJ2Sk5KTE9rUkQvUHhv?=
+ =?utf-8?B?VUpSK2RtV1dEbmswRFVzTlNKWko3blkwNUl4dkZLc1BLcUliQk9oZXN1VXdz?=
+ =?utf-8?B?anl0djZXQTd3TW5EUzFiSmZ3Uk54ZUJHZDd0azhZYXlmZDF1OThsSVNRUSsv?=
+ =?utf-8?B?YmIyRitQODFRaDVoYS9MaEJQQ29DTWN6M09BTWJrYTlVNHltRnRsRVJsU1hS?=
+ =?utf-8?B?M2MvMmlTVFFoYnVYY08xeURxSDBGOWNrTEZpNlhPMlNkZmlOYXdSeTBKSW4z?=
+ =?utf-8?B?SWRuSGZCRTZXRFpqbUJIdmtTdXN5ekJ0U09kODZmRzNpQnJYNmxQbmZONk9i?=
+ =?utf-8?B?SXZudlZ4OWR2NDZ2YTFteHNkWUd5RjRxaldNRkNlSmpHZE04dnNPOURXNnVv?=
+ =?utf-8?B?anJ0a3d1S3pQTlN5MVNyNzZDZzhhR1cvQmw4eFhITjN2NWF1aHpuUjRUTHVS?=
+ =?utf-8?B?Y1FEWW15THQwWHhKcDc5bGJjQmNYRFNFT3ZTSFJnR1hmZHlsQmJ3UmkrOHpQ?=
+ =?utf-8?B?cnAydWxZSmdjanhmQWxFcHQ2S0xGRlVnaW1qK0dPM3UwdGcxcjNkc1RTMFk0?=
+ =?utf-8?B?cjYzcUxQZXh0ZThaWEZkMFlRdnpqVWxqZ01GaDhOQzdIb2JRV0FKdy9DdXoy?=
+ =?utf-8?B?Zno1ZGR5THBkKzEzTzNkTG5kZ0NqUTVtSVgxcmUwNzk5blNyVVFFekVkcnRo?=
+ =?utf-8?B?cXF1a0hENEdwYTZZNitKelROaElmbEt2Q2ZxYVd6S0hrZFArakt0YTUrYzJk?=
+ =?utf-8?B?ZlBuT3ZuZkdURFpXSVR6NHpKeUV0NXduMXBFOEVOeGxGS2VTV0FleDZqSVE5?=
+ =?utf-8?B?QUN0dHBHL0FRc0N6R3pRaWU1VGEvTjVIZkNESDZCdUtxaUtySVVicnEya3ds?=
+ =?utf-8?B?THYycm1UUE05b3g4THQxUVNtSFVNQld5QTRlZ00zeVl5ZkJ1dkpocFI5bXhF?=
+ =?utf-8?B?WTFsdnFjQWtqaUo2QUxEeGZ6SmdZOXdPZ3krMEJSMWhqZEJDdElPM2ordHly?=
+ =?utf-8?B?QXByZUZCQjVhZ0w4U0hvYlQzQy85VU1Cb1RzeHZOSDBhU3pwYnovTlVRMTM3?=
+ =?utf-8?B?M1pOYkdVd1JvdE80NkorQUFFY1BXWUJHblhXTnFtakwwVG1taDhORjhsNHlD?=
+ =?utf-8?B?K25XNjgyNVJETXNZTTYyRzN1dEFCRzJDYnVJd0xNbmtzRDJaQTA4Y055Y1Ay?=
+ =?utf-8?B?VVRqNW5xSlh3WmtTbGhpZWVDMFI4dnFJRnE1OGRwM09RaW5POHE5NUVyeW95?=
+ =?utf-8?B?WnhLdnF0SDFqc05VVjlCS3UzQ0FNeU14aDhkMnNFUjEzVC9zYWU2bWs3N2Jx?=
+ =?utf-8?Q?EjAc4MPAbz/u7MPvfYzksWv4eHrnCDp2w1XOocySQQ=3D?=
 Content-Type: text/plain; charset="utf-8"
+Content-ID: <74EC58ACAE4DB44DA5C2DF55E8BF9BB4@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220112114652.hmfdcpqil5jg2vz6@houat>
-References: <20210914093515.260031-1-maxime@cerno.tech> <20210914093515.260031-2-maxime@cerno.tech> <20220112033716.63631C36AEA@smtp.kernel.org> <20220112114652.hmfdcpqil5jg2vz6@houat>
-Subject: Re: [PATCH v2 1/3] clk: Introduce a clock request API
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-To:     Maxime Ripard <maxime@cerno.tech>
-Date:   Thu, 13 Jan 2022 13:44:25 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20220113214426.95292C36AEA@smtp.kernel.org>
+X-OriginatorOrg: calian.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB6274.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9367febf-1543-4e09-b0dd-08d9d6e43105
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2022 22:29:41.2199
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 23b57807-562f-49ad-92c4-3bb0f07a1fdf
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3JJ+1Ux1k13L0qmoj9JaFvTRFCM4ZAocVbpqDgSMo+LPtFKbLcsFrMHNhKpLiceYWxiawJy1m9AFz59AZ5ip/J669QuXKkKKnjkRNcHgWs8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB4593
+X-Proofpoint-GUID: XVV5hveQhDpLVxvVMZiDnReOtUhphlkH
+X-Proofpoint-ORIG-GUID: XVV5hveQhDpLVxvVMZiDnReOtUhphlkH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-13_10,2022-01-13_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 phishscore=0 adultscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201130138
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-01-12 03:46:52)
-> Hi Stephen,
->=20
-> Thanks for your answer
->=20
-> On Tue, Jan 11, 2022 at 07:37:15PM -0800, Stephen Boyd wrote:
-> > Sorry for being super delayed on response here. I'm buried in other
-> > work. +Jerome for exclusive clk API.
-> >=20
-> > Quoting Maxime Ripard (2021-09-14 02:35:13)
-> > > It's not unusual to find clocks being shared across multiple devices
-> > > that need to change the rate depending on what the device is doing at=
- a
-> > > given time.
-> > >=20
-> > > The SoC found on the RaspberryPi4 (BCM2711) is in such a situation
-> > > between its two HDMI controllers that share a clock that needs to be
-> > > raised depending on the output resolution of each controller.
-> > >=20
-> > > The current clk_set_rate API doesn't really allow to support that case
-> > > since there's really no synchronisation between multiple users, it's
-> > > essentially a fire-and-forget solution.
-> >=20
-> > I'd also say a "last caller wins"
-> >=20
-> > >=20
-> > > clk_set_min_rate does allow for such a synchronisation, but has anoth=
-er
-> > > drawback: it doesn't allow to reduce the clock rate once the work is
-> > > over.
-> >=20
-> > What does "work over" mean specifically? Does it mean one of the clk
-> > consumers has decided to stop using the clk?
->=20
-> That, or it doesn't need to enforce that minimum anymore. We have
-> several cases like this on the RPi. For example, during a change of
-> display mode a (shared) clock needs to be raised to a minimum, but
-> another shared one needs to raise its minimum based on the resolution.
->=20
-> In the former case, we only need the minimum to be enforced during the
-> resolution change, so it's fairly quick, but the latter requires its
-> minimum for as long as the display is on.
->=20
-> > Why doesn't clk_set_rate_range() work? Or clk_set_rate_range() combined
-> > with clk_set_rate_exclusive()?
->=20
-> clk_set_rate_range could work (it's what we have right now in mainline
-> after all), but it's suboptimal since the clock is never scaled down.
-
-Alright, I didn't see any mention of clk_set_rate_range() in the commit
-text so did I miss it? Maybe it's used interchangeably with
-clk_set_min_rate()?
-
->=20
-> It's especially showing in my first example where we need to raise the
-> clock only for the duration of the resolution change. Using
-> clk_set_min_rate works but we end up with that fairly high clock (at
-> least 500MHz) for the rest of the system life even though we usually can
-> get away with using a clock around 200MHz outside of that (short) window.
->=20
-> This is fairly inefficient, and is mostly what I'm trying to address.
-
-Got it!
-
->=20
-> > > In our previous example, this means that if we were to raise the
-> > > resolution of one HDMI controller to the largest resolution and then
-> > > changing for a smaller one, we would still have the clock running at =
-the
-> > > largest resolution rate resulting in a poor power-efficiency.
-> >=20
-> > Does this example have two HDMI controllers where they share one clk and
-> > want to use the most efficient frequency for both of the HDMI devices? I
-> > think I'm following along but it's hard. It would be clearer if there
-> > was some psuedo-code explaining how it is both non-workable with current
-> > APIs and workable with the new APIs.
->=20
-> The fact that we have two HDMI controllers that share one clock is why
-> we use clk_set_min_rate in the first place, but you can have that
-> behavior with clk_set_min_rate only with a single user.
->=20
-> With pseudo-code, if you do something like
->=20
-> clk =3D clk_get(NULL);
-> clk_set_min_rate(600 * 1000 * 1000);
-> clk_set_min_rate(1000);
->=20
-> The clock will still remain at 600MHz, even though you would be totally
-> fine with the clock running at 1kHz.
-
-That looks like a bug. While we could happily ignore the rate floor
-being lowered because we're still within constraints, it looks like we
-should always re-evaluate the constraints when they change.
-
->=20
-> If you really wanted to make the clock run at 1kHz, you'd need to have:
->=20
-> clk =3D clk_get(NULL);
-> clk_set_min_rate(600 * 1000 * 1000);
-> clk_set_min_rate(1000);
-> clk_set_rate(1000);
->=20
-> And that works fine for a single user.
->=20
-> If you have a clock shared by multiple drivers though, things get
-> tricky. Indeed, you can't really find out what the minimum for that
-> clock is, so figuring out the rate to pass to the clk_set_rate call
-> would be difficult already. And it wouldn't be atomic anyway.
-
-Right.
-
->=20
-> It's made even more difficult since in clk_calc_new_rates the core
-> checks that the rate is within the boundaries and will error out if it
-> isn't, so even using clk_set_rate(0) wouldn't work.
-
-clk_set_rate(0) is pretty gross!
-
->=20
-> It could work if the clock driver makes sure in round/determine_rate
-> that the rate passed in within the boundaries of the clock, but then you
-> start working around the core and relying on the behavior of clock
-> drivers, which is a fairly significant abstraction violation.
->=20
-> > > In order to address both issues, let's create an API that allows user=
- to
-> > > create temporary requests to increase the rate to a minimum, before
-> > > going back to the initial rate once the request is done.
-> > >=20
-> > > This introduces mainly two side-effects:
-> > >=20
-> > >   * There's an interaction between clk_set_rate and requests. This has
-> > >     been addressed by having clk_set_rate increasing the rate if it's
-> > >     greater than what the requests asked for, and in any case changing
-> > >     the rate the clock will return to once all the requests are done.
-> > >=20
-> > >   * Similarly, clk_round_rate has been adjusted to take the requests
-> > >     into account and return a rate that will be greater or equal to t=
-he
-> > >     requested rates.
-> > >=20
-> >=20
-> > I believe clk_set_rate_range() is broken but it can be fixed. I'm
-> > forgetting the details though. If the intended user of this new API
-> > can't use that range API then it would be good to understand why it
-> > can't be used. I imagine it would be something like
-> >=20
-> >       struct clk *clk_hdmi1, *clk_hdmi2;
-> >=20
-> >       clk_set_rate_range(&clk_hdmi1, HDMI1_MIN, HDMI1_MAX);
-> >       clk_set_rate_range(&clk_hdmi2, HDMI2_MIN, HDMI2_MAX);
-> >       clk_set_rate_range(&clk_hdmi2, 0, UINT_MAX);
-> >=20
-> > and then the goal would be for HDMI1_MIN to be used, or at the least for
-> > the last call to clk_set_rate_range() to drop the rate constraint and
-> > re-evaluate the frequency of the clk again based on hdmi1's rate range.
->=20
-> This is pretty much what this series was doing. I was being conservative
-> and didn't really want to modify the behavior of existing functions, but
-> that will work fine.
->=20
-
-I don't see a problem with re-evaluating the rate every time we call
-clk_set_rate_range(). That's probably the bug that I can't recall. Can
-you fix the API so it works that way?
+T24gVGh1LCAyMDIyLTAxLTEzIGF0IDEzOjIzIC0wODAwLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+
+ICtSb2JlcnQNCj4gDQo+IFBsZWFzZSByZXZpZXcNCj4gDQo+IFF1b3RpbmcgQWRhbSBXdWplayAo
+MjAyMS0xMi0wMyAwNjoxMjowNykNCj4gPiBTSTUzNDFfT1VUX0NGR19SRElWX0ZPUkNFMiBzaGFs
+bCBiZSBjaGVja2VkIGZpcnN0IHRvIGRpc3Rpbmd1aXNoIHdoZXRoZXINCj4gPiBhIGRpdmlkZXIg
+Zm9yIGEgZ2l2ZW4gb3V0cHV0IGlzIHNldCB0byAyIChTSTUzNDFfT1VUX0NGR19SRElWX0ZPUkNF
+Mg0KPiA+IGlzIHNldCkgb3IgdGhlIG91dHB1dCBpcyBkaXNhYmxlZCAoU0k1MzQxX09VVF9DRkdf
+UkRJVl9GT1JDRTIgbm90IHNldCwNCj4gPiBTSTUzNDFfT1VUX1JfUkVHIGlzIHNldCAwKS4NCj4g
+PiBCZWZvcmUgdGhlIGNoYW5nZSwgZGl2aWRlciBzZXQgdG8gMiAoU0k1MzQxX09VVF9SX1JFRyBz
+ZXQgdG8gMCkgd2FzDQo+ID4gaW50ZXJwcmV0ZWQgYXMgb3V0cHV0IGlzIGRpc2FibGVkLg0KPiA+
+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEFkYW0gV3VqZWsgPGRldl9wdWJsaWNAd3VqZWsuZXU+DQo+
+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL2Nsay1zaTUzNDEuYyB8IDE2ICsrKysrKysrKy0tLS0t
+LS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkN
+Cj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLXNpNTM0MS5jIGIvZHJpdmVy
+cy9jbGsvY2xrLXNpNTM0MS5jDQo+ID4gaW5kZXggYjc2NDFhYmU2NzQ3Li4xNWIxYzkwY2FmZTUg
+MTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXNpNTM0MS5jDQo+ID4gKysrIGIvZHJp
+dmVycy9jbGsvY2xrLXNpNTM0MS5jDQo+ID4gQEAgLTc5OCw2ICs3OTgsMTUgQEAgc3RhdGljIHVu
+c2lnbmVkIGxvbmcNCj4gPiBzaTUzNDFfb3V0cHV0X2Nsa19yZWNhbGNfcmF0ZShzdHJ1Y3QgY2xr
+X2h3ICpodywNCj4gPiAgICAgICAgIHUzMiByX2RpdmlkZXI7DQo+ID4gICAgICAgICB1OCByWzNd
+Ow0KPiA+IA0KPiA+ICsgICAgICAgZXJyID0gcmVnbWFwX3JlYWQob3V0cHV0LT5kYXRhLT5yZWdt
+YXAsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgU0k1MzQxX09VVF9DT05GSUcob3V0cHV0
+KSwgJnZhbCk7DQo+ID4gKyAgICAgICBpZiAoZXJyIDwgMCkNCj4gPiArICAgICAgICAgICAgICAg
+cmV0dXJuIGVycjsNCj4gPiArDQo+ID4gKyAgICAgICAvKiBJZiBTSTUzNDFfT1VUX0NGR19SRElW
+X0ZPUkNFMiBpcyBzZXQsIHJfZGl2aWRlciBpcyAyICovDQo+ID4gKyAgICAgICBpZiAodmFsICYg
+U0k1MzQxX09VVF9DRkdfUkRJVl9GT1JDRTIpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBw
+YXJlbnRfcmF0ZSAvIDI7DQo+ID4gKw0KPiA+ICAgICAgICAgZXJyID0gcmVnbWFwX2J1bGtfcmVh
+ZChvdXRwdXQtPmRhdGEtPnJlZ21hcCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBTSTUz
+NDFfT1VUX1JfUkVHKG91dHB1dCksIHIsIDMpOw0KPiA+ICAgICAgICAgaWYgKGVyciA8IDApDQo+
+ID4gQEAgLTgxNCwxMyArODIzLDYgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcNCj4gPiBzaTUzNDFf
+b3V0cHV0X2Nsa19yZWNhbGNfcmF0ZShzdHJ1Y3QgY2xrX2h3ICpodywNCj4gPiAgICAgICAgIHJf
+ZGl2aWRlciArPSAxOw0KPiA+ICAgICAgICAgcl9kaXZpZGVyIDw8PSAxOw0KPiA+IA0KPiA+IC0g
+ICAgICAgZXJyID0gcmVnbWFwX3JlYWQob3V0cHV0LT5kYXRhLT5yZWdtYXAsDQo+ID4gLSAgICAg
+ICAgICAgICAgICAgICAgICAgU0k1MzQxX09VVF9DT05GSUcob3V0cHV0KSwgJnZhbCk7DQo+ID4g
+LSAgICAgICBpZiAoZXJyIDwgMCkNCj4gPiAtICAgICAgICAgICAgICAgcmV0dXJuIGVycjsNCj4g
+PiAtDQo+ID4gLSAgICAgICBpZiAodmFsICYgU0k1MzQxX09VVF9DRkdfUkRJVl9GT1JDRTIpDQo+
+ID4gLSAgICAgICAgICAgICAgIHJfZGl2aWRlciA9IDI7DQo+ID4gDQo+ID4gICAgICAgICByZXR1
+cm4gcGFyZW50X3JhdGUgLyByX2RpdmlkZXI7DQo+ID4gIH0NCg0KTG9va3MgcmVhc29uYWJsZSB0
+byBtZS4gSSBndWVzcyB0aGlzIGJ1ZyBkb2Vzbid0IGFmZmVjdCByZWdpc3RlciBzZXR0aW5ncyB0
+aGF0DQp3ZXJlIHByZXZpb3VzbHkgYXBwbGllZCBieSB0aGlzIGRyaXZlciwgYXMgaXQgYWx3YXlz
+IHNldHMgdGhlIFJESVYgdG8gMSB3aGVuDQpzZXR0aW5nIHRoZSBGT1JDRTIgZmxhZywgYnV0IGlm
+IHRoZSBjaGlwIGhhcyBwb3dlci11cCBOVk0gY29uZmlndXJhdGlvbg0KZ2VuZXJhdGVkIGJ5IENs
+b2NrQnVpbGRlciBldGMuIHRoZW4gdGhpcyBwcm9ibGVtIGNvdWxkIHNob3cgdXAuDQoNClJldmll
+d2VkLWJ5OiBSb2JlcnQgSGFuY29jayA8cm9iZXJ0LmhhbmNvY2tAY2FsaWFuLmNvbT4NCg0KLS0g
+DQpSb2JlcnQgSGFuY29jaw0KU2VuaW9yIEhhcmR3YXJlIERlc2lnbmVyLCBDYWxpYW4gQWR2YW5j
+ZWQgVGVjaG5vbG9naWVzDQp3d3cuY2FsaWFuLmNvbQ0K
