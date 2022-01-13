@@ -2,107 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6115C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 14:24:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586FEC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 14:47:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235630AbiAMOYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 09:24:16 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:42539 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbiAMOYP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 09:24:15 -0500
-Received: from mail-wr1-f48.google.com ([209.85.221.48]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MBjA4-1n2UBW0DSm-00C9MI; Thu, 13 Jan 2022 15:24:14 +0100
-Received: by mail-wr1-f48.google.com with SMTP id k18so10355889wrg.11;
-        Thu, 13 Jan 2022 06:24:13 -0800 (PST)
-X-Gm-Message-State: AOAM533tEZAwRlPx4iIUeWVpit2fa8o/mS27pINOdlThUZ7S/RiVKHz2
-        V8MmMrWiunOqBsZrvU8fCzADPvgD4hXe2W2szV4=
-X-Google-Smtp-Source: ABdhPJzwdYNeuVL1yYVlSfvEK+FTNzOKpNJueoBQfapcDBGMQlXdww3vJ6mdjQ5Vf5ltdNIbHFcn1y8+QiEEWUP219Q=
-X-Received: by 2002:a5d:6ac7:: with SMTP id u7mr4238291wrw.219.1642083853640;
- Thu, 13 Jan 2022 06:24:13 -0800 (PST)
+        id S233774AbiAMOr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 09:47:57 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:19844 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233723AbiAMOr4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 09:47:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1642085276; x=1673621276;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TLoVJGu9GzlLqKVezijYXBP2bSWqSRzeqtsZirqCtfY=;
+  b=E25WB7AiudMMNmayLU7gctQZQjxreBvRsPoqsc4Oq4E/zG5HWiDU4qyT
+   mwBiqAkd2R41lOHGdzQsLsde4vipGPFxEv36f8n34Pnw7vCcnKgwds4Un
+   uBPhPiAcVipkBsdPLHmJxEYgPDhstkQmf9cPEIVZ/68Aa25A8SH6lcy/5
+   sX4awTwa/g40w7cAt0sGegEQ0uoQ/JAHQ2Uti3GLQDrDfAfrOwau/Eqyd
+   YkKlB+lxydYMLixdLea9GzYK+I9DGlnfH/7pRpBE4h4bcXsdrdl6EMlbz
+   41MvezxXiclq8OHTXp4qTA2pN7ObscCmJlIlbayc3qA8zN/2ZdLIfQNBE
+   w==;
+IronPort-SDR: QFiaa1iUfXWBgE8mciayo9eSGbKgzyb6pAieAOJ+r3KJmW/KO3mwJJBmoRDJfb5iXQo09Rshn/
+ NW1+qdydp8KeuqQ7GDmp7B3EJF7B6NJJZCgFECErKPELyQZkqnWABfZkNoT7dvsfgp9ADaRX37
+ I3Jq4XNenOhk2WZeCQ1TWT9wgQJa39J+szRb8oQ4OTNlD7CRXLvp8pV5MG3kaHxlFFVMW9FSvR
+ /n4B4DwhMFZJ10sDs2xS3RREswHv8nRxuccRvCRg9D9dfbgiPyfcCo4VxPjKDDkF1p7pAkJTqp
+ R4e+sGbO+EevflI6StxxbRzI
+X-IronPort-AV: E=Sophos;i="5.88,286,1635231600"; 
+   d="scan'208";a="150108148"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Jan 2022 07:47:56 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 13 Jan 2022 07:47:55 -0700
+Received: from localhost.localdomain (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2375.17 via Frontend Transport; Thu, 13 Jan 2022 07:47:52 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <robh+dt@kernel.org>,
+        <linux@armlinux.org.uk>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 00/10] ARM: at91: add cpu idle and cpufreq opps for sama7g5
+Date:   Thu, 13 Jan 2022 16:48:50 +0200
+Message-ID: <20220113144900.906370-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>
- <CGME20220113122413epcas5p46cb2cafb73936c423017240f98f72845@epcas5p4.samsung.com>
- <20220113121143.22280-15-alim.akhtar@samsung.com> <55c22c3a-57ea-3320-ccb9-f03643563235@canonical.com>
-In-Reply-To: <55c22c3a-57ea-3320-ccb9-f03643563235@canonical.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 13 Jan 2022 15:23:57 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0etf+AybUe5O9uRLAbo4J145t0-ThkEccNtKzue+0-qA@mail.gmail.com>
-Message-ID: <CAK8P3a0etf+AybUe5O9uRLAbo4J145t0-ThkEccNtKzue+0-qA@mail.gmail.com>
-Subject: Re: [PATCH 14/23] arm64: dts: fsd: Add initial device tree support
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SoC Team <soc@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>, linux-fsd@tesla.com,
-        Arjun K V <arjun.kv@samsung.com>,
-        Aswani Reddy <aswani.reddy@samsung.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Sriranjani P <sriranjani.p@samsung.com>,
-        Chandrasekar R <rcsekar@samsung.com>,
-        Shashank Prashar <s.prashar@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:7BPRVd2KsOfp6FWr24wAaVhirUW9rNpHQv7NpYpVUsp7tt30Dha
- j23Kxt68dpwB+bLGGHBrcSzKIQ4yWozz8SrjACzkvHE+i6sYk/WuegjVFQk/clMoW+sBV66
- dxzEdNexgwNZQOZc72vSJlCuhYLKhfGujPiZx9AcNC8A8Yz3AQ25InyytdgH2u9UdAJ1Cnw
- HoL0wZwLRKqo1TtUXoTOQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/Lf+mNMsya4=:ODGibD+HcJW7nRTYSF9hYn
- NnndQEhNXlcWzFS0FC5kjCBHUwmGWi3JBWpP4E3ojJjycuh+WQZF2dZ3X8pM5G1PW/Pa2q4mz
- h7CvoTb8whYSKYbWpcf2GqqyJS63UbdJwfrQgY+RmljmcL8O+ubi1+FLTmxAU8GKMJbZ5Y+Oe
- jkRpXagkJ1FvcD7T0FYD6/utdUIrsAQ0DHWmh1Q7SJ1ZGnkMwW0GQ6YB1kx9uf1nZykkBSZiq
- OD9S2iP4reWW7HrhZxog69dGoG1VqSNQTFBzyND4NXwwjsmmtVdhIwp3jS0P7v84rKOO0xbnT
- DSw8vmVMXFNXk9ND7OSCuc1t++ZuVpGN8VEA+ue4IXzXYDTWMjfIWIRRcxB572mad4LzX15UO
- +L26WPBEnftclnZB1FO71dq5yejhJtHOSdZygvNlpIDsg9GdN8AFCPI6wEKGbU3oCWI4ivB7J
- v33R/zIKq4Nd3u8NE2J+vphKXc6p8kSjoV9b/HF2v16fo7lwX5Cdw5YEw0hoezzFHnnnLpfrY
- H6gq2ioZCCLqyzqCuXllY7rlzZcU8AsZLigNpjUHFH6QlCjr08jeuf1re8ngqSVT6sK216tuP
- dyP0c+3Rxdg2tNh+0beQxAk6sact2u9B/MU9JoHthtNeHoE+DbvFdWXmvP4ssDlxaQBVv/UIL
- JYe2Xl10EUnvLI8wkRwVb/B/M+7d6gWPoOtWUX6Cc7Z03k4OigwIfSTUy7knrxki2fJ4=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 13, 2022 at 2:16 PM Krzysztof Kozlowski
-<krzysztof.kozlowski@canonical.com> wrote:
-> >  ARM/TETON BGA MACHINE SUPPORT
-> >  M:   "Mark F. Brown" <mark.brown314@gmail.com>
-> >  L:   linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> > index 54e3910e8b9b..bb8a047c2359 100644
-> > --- a/arch/arm64/Kconfig.platforms
-> > +++ b/arch/arm64/Kconfig.platforms
-> > @@ -267,6 +267,12 @@ config ARCH_TEGRA
-> >       help
-> >         This enables support for the NVIDIA Tegra SoC family.
-> >
-> > +config ARCH_TESLA_FSD
-> > +     bool "ARMv8 based Tesla platform"
-> > +     select ARCH_EXYNOS
->
-> How similar it is? I think it is better to duplicate Exynos
-> selections/options here, instead of selecting entire ARCH. If this would
-> require "depends on ARCH_EXYNOS || ARCH_TESLA_FSD" everywhere in the
-> drivers, it's a hint that it is not a separate SoC but it is an Exynos,
-> so it might not need a new sub-architecture.
 
-Agreed, the SoC family options mainly exist so we can quickly enable or
-disable drivers based on what a kernel is built for. If most of the drivers
-for this SoC are shared with Exynos, I think having a single option is
-sufficient, but it may be worth pointing out both in the help text.
+Hi,
 
-If we want to have a separate option (mainly to help users find it), maybe
-a 'depends on ARCH_EXYNOS' would be better. How many uses of
-ARCH_TESLA_FSD are there?
+This series adds CPU idle support for SAMA7G5. Along with this the
+CPUFreq OPPs for SAMA7G5 and proper config has been added.
 
-        Arnd
+Thank you,
+Claudiu Beznea
+
+Changes in v2:
+- collected tags
+- add "opp-suspend" to 600MHz OPP on patch "ARM: dts: at91: sama7g5: add opps"
+- add patches:
+	ARM: dts: at91: fix low limit for CPU regulator
+	ARM: dts: at91: sama7g5ek: set regulator voltages for standby state
+
+Claudiu Beznea (10):
+  ARM: at91: ddr: remove CONFIG_SOC_SAMA7 dependency
+  ARM: at91: ddr: align macro definitions
+  ARM: at91: ddr: fix typo to align with datasheet naming
+  ARM: at91: PM: add cpu idle support for sama7g5
+  ARM: at91: Kconfig: select PM_OPP
+  ARM: dts: at91: fix low limit for CPU regulator
+  ARM: dts: at91: sama7g5ek: set regulator voltages for standby state
+  ARM: dts: at91: sama7g5: add opps
+  ARM: configs: at91: sama7: enable cpu idle
+  ARM: configs: at91: sama7: add config for cpufreq
+
+ arch/arm/boot/dts/at91-sama7g5ek.dts |  7 ++++-
+ arch/arm/boot/dts/sama7g5.dtsi       | 38 ++++++++++++++++++++++++++++
+ arch/arm/configs/sama7_defconfig     |  9 ++++++-
+ arch/arm/mach-at91/Kconfig           |  1 +
+ arch/arm/mach-at91/pm.c              | 27 +++++++++++++++++++-
+ arch/arm/mach-at91/pm_suspend.S      |  4 +--
+ include/linux/clk/at91_pmc.h         |  4 +++
+ include/soc/at91/sama7-ddr.h         | 15 +++++------
+ 8 files changed, 91 insertions(+), 14 deletions(-)
+
+-- 
+2.32.0
+
