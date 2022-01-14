@@ -2,94 +2,87 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EF4C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 22:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3236C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 22:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbiANWze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 17:55:34 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:53932 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbiANWzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 17:55:33 -0500
+        id S230445AbiANW5C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 17:57:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229905AbiANW5B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 17:57:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11608C061574;
+        Fri, 14 Jan 2022 14:57:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5695862047
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 22:55:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C6DC36AEA;
-        Fri, 14 Jan 2022 22:55:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8004D61FBB;
+        Fri, 14 Jan 2022 22:57:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D79C36AE9;
+        Fri, 14 Jan 2022 22:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642200932;
-        bh=M532S7NuMc5guV+TrEqveWTIocIumpQzI6P1DHrrZQU=;
+        s=k20201202; t=1642201019;
+        bh=mSHMa56m6QrDlNOS78VQ+F4YIisxhlLmSPa8G3JzpKQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QyvA0f0qY8QqYZAbFV5Wq3fsZiJDeU8KPnsow24DmPU8jvx14aHeNQg0j43ajNB1p
-         1YONEyYEnDapqSU03zz0pTXoGuAzazVB43mPssU0R1YMRJAFXQ2TrolvckB3m93tUL
-         xdmf7oosQeSw+6r1S1OR+P/gHkZrK/RqCHVeOZMAOOmi0DIIK9WqcgsG37sOefnbri
-         FudkYswGSXsBWn1gGnyxeh4NT2s2WPusa14xJXrePX6zrKrEwIiI0LDaZ6MtFeS+6W
-         lWaU7H3iw28P4FlAwNNjsnhxF5mH6CehCndbXcz+lmNWHFx5rUSkOik9aZ4hNjPeRW
-         RPt44RAJSd2Mg==
+        b=Hvf0/9Wl1naogft9BYGLGXy/yU3H5yh9dDc+JPMuxrIXXdGMYKqwvwJOwRO3S8tth
+         tg31cmRgEq2Lz6iSByiqxVDr7WfN6VurlpeoqfNfc7g6KbDkddTGvy4Vno5NNN6y7h
+         n3W8SjfulhieBbiOoNGXeVtQyN0iRrB4iTVb6RsDwWM99jwjPXgRj1Xbi9jEZV7Atv
+         /ZDwXrhf9CRPHKdbK1581ObI95yCKd49Xxeidqu1Mr/sh01vQnnFgEyeZORoDSdv9P
+         SHtXbSIi76rF6EEvEGDY5PkaTLbAdgBJr9FgtYSr4JC5ue7kkvbngj9+1oprJ81Vbb
+         FrZdZjL/a9S2g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com>
-References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com> <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com>
-Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+In-Reply-To: <20220114105100.im6gmkt6fjl2aiwl@pali>
+References: <20210930095838.28145-1-pali@kernel.org> <20211103214209.azo2z3z4gy7aj5hu@pali> <87ee6bm9hn.fsf@BL-laptop> <20220114105100.im6gmkt6fjl2aiwl@pali>
+Subject: Re: [PATCH v7 0/6] serial: mvebu-uart: Support for higher baudrates
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Nick Fan <Nick.Fan@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-To:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-mediatek@lists.infradead.org
-Date:   Fri, 14 Jan 2022 14:55:30 -0800
+Cc:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Vladimir Vid <vladimir.vid@sartura.hr>,
+        Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+To:     Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
+Date:   Fri, 14 Jan 2022 14:56:58 -0800
 User-Agent: alot/0.10
-Message-Id: <20220114225532.B0C6DC36AEA@smtp.kernel.org>
+Message-Id: <20220114225659.D5D79C36AE9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Robin Murphy (2022-01-14 05:23:51)
-> On 2022-01-10 18:13, Alyssa Rosenzweig wrote:
-> > Set a mysterious chicken bit in the MT8192 clock driver (!) to get the
-> > Mali GPU on MT8192 to work. This workaround is from the downstream Mali
-> > driver shipped in ChromeOS. The change there is unsuitable for mainline
-> > but good as a reference for the hardware behaviour:
-> >=20
-> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
-l/+/2781271/5
-> >=20
-> > That links to an internal Google issue tracker which I assume has more
-> > information on the bug. I would appreciate if someone from Google or
-> > MediaTek could explain what this change actually does and why it's
-> > necessary on MT8192.
-> >=20
-> > At any rate, this register logically belongs to the MT8192 "infra" clock
-> > device, so it makes sense to set it there too. This avoids adding any
-> > platform-specific hacks to the 3D driver, either mainline (Panfrost) or
-> > legacy (kbase).
+Quoting Pali Roh=C3=A1r (2022-01-14 02:51:00)
+> Hello Stephen!
 >=20
-> Does this really have anything to do with clocks? My (uninformed)=20
-> impression is that the infracfg blocks are general amalgamations of=20
-> configuration registers that simply happen to contain clock and reset=20
-> controls among other functionality. In particular, "ACP" usually refers=20
-> to the Accelerator Coherency Port of a CPU cluster or DSU, and given the =
-
-> stated symptom of the issue affected by it, my first guess would be that =
-
-> this bit might indeed control routing of GPU traffic either to the ACP=20
-> or the (presumably non-coherent) main interconnect.
+> On Friday 17 December 2021 18:23:00 Gregory CLEMENT wrote:
+> > Hello Pali,
+> >=20
+> > > On Thursday 30 September 2021 11:58:32 Pali Roh=C3=A1r wrote:
+> > >> This patch series add support for baudrates higher than 230400 on
+> > >> Marvell Armada 37xx boards.
+> > >
+> > > Stephen, Gregory, are there any issues with this patch series?
+> >=20
+> > I am not found of these changes but let's apply it as I didn't take time
+> > to do a better review.
+> >=20
+> > However I can't apply the dt part if the driver is not merged.
 >=20
-> If that is the case, I think this would logically belong as a=20
-> SoC-specific quirk in panfrost, where we'd need to retrieve the syscon=20
-> regmap for ourselves (see around line 800 of drivers/iommu/mtk_iommu.c=20
-> for a similar example).
+> Stephen, are there any issues with driver (non-DT) part changes in this
+> patch series? If not, could you please merge them? This patch series is
+> here on the list since September without any request for change...
 
-What's the benefit of putting this into the GPU driver? Is it going to
-be runtime managed? It seems most logically related to the SoC or
-interconnect, for which there isn't any device driver but there could
-be.
+Oh I missed this thread. I thought it was going to be resent.
+
+>=20
+> We would really like to see support for higher baudrates for Armada 3720
+> platforms in mainline kernel.
+
+If we're adding new support why can't we break with backwards
+compatibility for the binding and do it a different way?
