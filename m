@@ -2,26 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D32C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 03:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97157C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 03:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238973AbiANDGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 22:06:10 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:63627 "EHLO
+        id S236212AbiANDHT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 22:07:19 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:6168 "EHLO
         mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238972AbiANDGK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 22:06:10 -0500
+        with ESMTP id S236150AbiANDHT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 22:07:19 -0500
 Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
  (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 14 Jan
- 2022 11:06:08 +0800
-Message-ID: <5d99ac02-a246-5bcc-2ecb-371b0d193537@amlogic.com>
-Date:   Fri, 14 Jan 2022 11:06:07 +0800
+ 2022 11:07:17 +0800
+Message-ID: <98619eef-8b51-c138-e98d-39fdbe4c9ebb@amlogic.com>
+Date:   Fri, 14 Jan 2022 11:07:17 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v9 3/4] clk: meson: add DT documentation for emmc clock
- controller
+Subject: Re: [PATCH v9 1/4] clk: meson: add one based divider support for sclk
 Content-Language: en-US
 To:     Stephen Boyd <sboyd@kernel.org>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -37,12 +36,13 @@ CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         BiChao Zheng <bichao.zheng@amlogic.com>,
         YongHui Yu <yonghui.yu@amlogic.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
 References: <20220113115745.45826-1-liang.yang@amlogic.com>
- <20220113115745.45826-4-liang.yang@amlogic.com>
- <20220113212957.768FFC36AE3@smtp.kernel.org>
+ <20220113115745.45826-2-liang.yang@amlogic.com>
+ <20220113212801.E88BFC36AE3@smtp.kernel.org>
 From:   Liang Yang <liang.yang@amlogic.com>
-In-Reply-To: <20220113212957.768FFC36AE3@smtp.kernel.org>
+In-Reply-To: <20220113212801.E88BFC36AE3@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.28.39.106]
@@ -54,51 +54,46 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Stephen,
 
-Thanks for your quick response.
-
-On 2022/1/14 5:29, Stephen Boyd wrote:
+On 2022/1/14 5:28, Stephen Boyd wrote:
 > [ EXTERNAL EMAIL ]
 > 
-> Quoting Liang Yang (2022-01-13 03:57:44)
->> Document the MMC sub clock controller driver, the potential consumer
->> of this driver is MMC or NAND. Also add four clock bindings IDs which
->> provided by this driver.
->>
->> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
->> ---
->>   .../bindings/clock/amlogic,mmc-clkc.yaml      | 64 +++++++++++++++++++
->>   include/dt-bindings/clock/amlogic,mmc-clkc.h  | 14 ++++
->>   2 files changed, 78 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->>   create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->> new file mode 100644
->> index 000000000000..a274c3d5fc2e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->> @@ -0,0 +1,64 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/amlogic,mmc-clkc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Amlogic MMC Sub Clock Controller Driver Device Tree Bindings
->> +
->> +maintainers:
->> +  - jianxin.pan@amlogic.com
->> +  - liang.yang@amlogic.com
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - "amlogic,axg-mmc-clkc", "syscon"
+> Quoting Liang Yang (2022-01-13 03:57:42)
+>> diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+>> index 76d31c0a3342..79c9efd28115 100644
+>> --- a/drivers/clk/meson/sclk-div.c
+>> +++ b/drivers/clk/meson/sclk-div.c
+>> @@ -28,22 +29,39 @@ meson_sclk_div_data(struct clk_regmap *clk)
+>>          return (struct meson_sclk_div_data *)clk->data;
+>>   }
+>>   
+>> -static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
+>> +static inline int sclk_get_reg(int val, unsigned char flag)
+>>   {
+>> -       return (1 << sclk->div.width) - 1;
+>> +       if ((flag & MESON_SCLK_ONE_BASED) || !val)
+>> +               return val;
+>> +       else
+>> +               return val - 1;
 > 
-> Why is it a syscon?
-
-The register documented by reg is shared with SD/eMMC controller port C, 
-and it need to be ops on NFC driver.
-
+> Please drop the else
+ok
+> 
+>> +}
+>> +
+>> +static inline int sclk_get_divider(int reg, unsigned char flag)
+>> +{
+>> +       if (flag & MESON_SCLK_ONE_BASED)
+>> +               return reg;
+>> +       else
+> 
+> Please drop the else
+ok
+> 
+>> +               return reg + 1;
+>>   }
+>>   
+>>   static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
+>>   {
+>> -       return sclk_div_maxval(sclk) + 1;
 > 
 > .
