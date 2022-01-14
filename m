@@ -2,63 +2,101 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D293C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 01:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E791C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 02:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238580AbiANBpc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 20:45:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47532 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233397AbiANBpc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 20:45:32 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2DFC061574;
-        Thu, 13 Jan 2022 17:45:32 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9779361DBC;
-        Fri, 14 Jan 2022 01:45:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E127FC36AEA;
-        Fri, 14 Jan 2022 01:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642124731;
-        bh=pBKJYbtzsoBjwRvqujAPXh3tzGQAMKSejZM0stQ83b4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hdjP56UUNvO45mGOQaKBcLVqzkJfvtq0DUQypiH85brKACUYo979cnumocERQ5wKB
-         uBybsQ0cOaixYOVUZtj/jEioEUDwgMyq5Jn+azextgjrlQi/OpRJJBTMBaTpghPJrJ
-         as6vL4p6Rrr5J0waI3G0pdrE7hcjG75JCOfpopBqRPdPE98aH6n8AqbpYViQV+noXY
-         Ix9Zs0WNaTofDOHNc7MSGH6tkcCTEzzwRNqQ48+MBKlYmpb8fON3t8yqPD3Q+0juHH
-         dZCH022DEYwKYvKboOvnm6oJOlrAaRnKVpEJ2K6fWLxYXPBpMV70wgbLrbpecD2Vg3
-         s3azhKSOCELOA==
-Content-Type: text/plain; charset="utf-8"
+        id S238421AbiANCIZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 21:08:25 -0500
+Received: from mga14.intel.com ([192.55.52.115]:7258 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235713AbiANCIY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Jan 2022 21:08:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642126104; x=1673662104;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ghBSgNiMzX0EVCLVUvRgnSDfTK4GjS2KttxsrSC72TQ=;
+  b=bfFSx3HrZcXMX0/OpF57bZyZdGWVAROC+Q8UN7MczC4HcvYu+H0NELR8
+   LZcdAHTUhYN1BmbpzV+nTkoMoDR7hpAeoMQSeCL4C1h9aMa9eE6jKzVbT
+   GJUHDcz3KuaTDGRhL0Sknq4OFI0nLvucXldraSy8Bh830SCQq99TTfn5f
+   jfSCcOyXNtG1kqCE7xgzj4gPm/5TWk8HjqRxAV9SmqGAl+DNZeLoEWMm1
+   Nh9Bze/jOmomQKyTdoy66NW/JziDs9XivNeCe4UWYBd2hOxx564CzRhvZ
+   FIhjzoKtxsJgAvLysmmpw6OzkF6KI+JsK/aYy+PgIGCuhGr674D4UfoMz
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10226"; a="244367404"
+X-IronPort-AV: E=Sophos;i="5.88,287,1635231600"; 
+   d="scan'208";a="244367404"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2022 18:08:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,287,1635231600"; 
+   d="scan'208";a="624177682"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 13 Jan 2022 18:08:20 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1n8C0p-0007xW-G0; Fri, 14 Jan 2022 02:08:19 +0000
+Date:   Fri, 14 Jan 2022 10:08:09 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com
+Subject: Re: [PATCH 14/23] arm64: dts: fsd: Add initial device tree support
+Message-ID: <202201141032.5xT5iNdz-lkp@intel.com>
+References: <20220113121143.22280-15-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220107182451.139456-1-jose.exposito89@gmail.com>
-References: <20220107182451.139456-1-jose.exposito89@gmail.com>
-Subject: Re: [PATCH RESEND v2] clk: mediatek: Fix memory leaks on probe
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     matthias.bgg@gmail.com, ikjn@chromium.org,
-        chun-jie.chen@mediatek.com, weiyi.lu@mediatek.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
-        Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org
-To:     =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
-        mturquette@baylibre.com
-Date:   Thu, 13 Jan 2022 17:45:29 -0800
-User-Agent: alot/0.9.1
-Message-Id: <20220114014530.E127FC36AEA@smtp.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220113121143.22280-15-alim.akhtar@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Please Cc the clk mailing list on clk driver patches.
+Hi Alim,
 
-Quoting Jos=C3=A9 Exp=C3=B3sito (2022-01-07 10:24:51)
-> Handle the error branches to free memory where required.
->=20
-> Addresses-Coverity-ID: 1491825 ("Resource leak")
-> Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->
+I love your patch! Yet something to improve:
+
+[auto build test ERROR on v5.16]
+[also build test ERROR on next-20220113]
+[cannot apply to clk/clk-next robh/for-next pinctrl-samsung/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Alim-Akhtar/dt-bindings-clock-Document-FSD-CMU-bindings/20220113-211129
+base:    df0cc57e057f18e44dac8e6c18aba47ab53202f9
+config: arm64-randconfig-r014-20220113 (https://download.01.org/0day-ci/archive/20220114/202201141032.5xT5iNdz-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/7edcfae09ff2aa85ae39f2240b13ea17eac8be94
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Alim-Akhtar/dt-bindings-clock-Document-FSD-CMU-bindings/20220113-211129
+        git checkout 7edcfae09ff2aa85ae39f2240b13ea17eac8be94
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/arm64/boot/dts/tesla/fsd.dtsi:11,
+                    from arch/arm64/boot/dts/tesla/fsd.dts:12:
+>> scripts/dtc/include-prefixes/dt-bindings/clock/fsd-clk.h:12: error: unterminated #ifndef
+      12 | #ifndef _DT_BINDINGS_CLOCK_FSD_H
+         | 
+
+
+vim +12 scripts/dtc/include-prefixes/dt-bindings/clock/fsd-clk.h
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
