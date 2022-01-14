@@ -2,94 +2,63 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DA5C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jan 2022 23:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D293C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 01:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235557AbiAMXd5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jan 2022 18:33:57 -0500
-Received: from mail-oi1-f178.google.com ([209.85.167.178]:42873 "EHLO
-        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiAMXd5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 18:33:57 -0500
-Received: by mail-oi1-f178.google.com with SMTP id y14so10030719oia.9;
-        Thu, 13 Jan 2022 15:33:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=nnDiZcTRb0Vq5tmUrkIdnau18hy40OrJF8krgzeHM4s=;
-        b=XQz6Z4t+F3adhTYOXt0nwVLR33gepgs6+MGttHR8b5LmIwWgoyPXy0p70UCjphieTh
-         5MJzQDVgIfqBjo3+RcSMAdX9gPWyojBSpNCn3ddA92e8E7H+eWXCufB+H/eRQ8MgntMw
-         fqDqhyncKrKkVyr4RT7QvtbhnYaIIugqtFOS56+9ZHnHZSOPi2GTJg83Tjq31Loug4Us
-         8gGLlh+O1cr9UN2fydJiNxgDCuwOlelg08RLyRSLtAMSKuqKmGzFgJWFnTM++EzpZOcK
-         aiIBRRS5Q3aJVxKip4A+pmMzsWalqfvUEmO7FWVHQU2XWkDDoj0nKg8musqQRw69sqo4
-         ++8g==
-X-Gm-Message-State: AOAM533TzdRrSyLQn/XwHYf0TrUwDA3c61pRQm3qZimvdj/oFvy9cDCU
-        JtwASTXP8HC2G5+1L8ZOWA==
-X-Google-Smtp-Source: ABdhPJx0Y77Qvs2DmF3Cj72zTuxyrO8FZtkPJTHmtmi99ENq20DZ3v9GIO8BFW0+Lhurn8Yq7qzA/g==
-X-Received: by 2002:a05:6808:15a0:: with SMTP id t32mr4881818oiw.60.1642116836724;
-        Thu, 13 Jan 2022 15:33:56 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id j77sm1154569oih.35.2022.01.13.15.33.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jan 2022 15:33:56 -0800 (PST)
-Received: (nullmailer pid 374229 invoked by uid 1000);
-        Thu, 13 Jan 2022 23:33:55 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        s.nawrocki@samsung.com, linus.walleij@linaro.org, soc@kernel.org,
-        olof@lixom.net, pankaj.dubey@samsung.com, linux-fsd@tesla.com,
-        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        catalin.marinas@arm.com
-In-Reply-To: <20220113121143.22280-2-alim.akhtar@samsung.com>
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>        <CGME20220113122311epcas5p4b7c253b49dce3bd3580407fcf312e70e@epcas5p4.samsung.com> <20220113121143.22280-2-alim.akhtar@samsung.com>
-Subject: Re: [PATCH 01/23] dt-bindings: clock: Document FSD CMU bindings
-Date:   Thu, 13 Jan 2022 17:33:55 -0600
-Message-Id: <1642116835.548930.374228.nullmailer@robh.at.kernel.org>
+        id S238580AbiANBpc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jan 2022 20:45:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233397AbiANBpc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jan 2022 20:45:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D2DFC061574;
+        Thu, 13 Jan 2022 17:45:32 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9779361DBC;
+        Fri, 14 Jan 2022 01:45:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E127FC36AEA;
+        Fri, 14 Jan 2022 01:45:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642124731;
+        bh=pBKJYbtzsoBjwRvqujAPXh3tzGQAMKSejZM0stQ83b4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=hdjP56UUNvO45mGOQaKBcLVqzkJfvtq0DUQypiH85brKACUYo979cnumocERQ5wKB
+         uBybsQ0cOaixYOVUZtj/jEioEUDwgMyq5Jn+azextgjrlQi/OpRJJBTMBaTpghPJrJ
+         as6vL4p6Rrr5J0waI3G0pdrE7hcjG75JCOfpopBqRPdPE98aH6n8AqbpYViQV+noXY
+         Ix9Zs0WNaTofDOHNc7MSGH6tkcCTEzzwRNqQ48+MBKlYmpb8fON3t8yqPD3Q+0juHH
+         dZCH022DEYwKYvKboOvnm6oJOlrAaRnKVpEJ2K6fWLxYXPBpMV70wgbLrbpecD2Vg3
+         s3azhKSOCELOA==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220107182451.139456-1-jose.exposito89@gmail.com>
+References: <20220107182451.139456-1-jose.exposito89@gmail.com>
+Subject: Re: [PATCH RESEND v2] clk: mediatek: Fix memory leaks on probe
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     matthias.bgg@gmail.com, ikjn@chromium.org,
+        chun-jie.chen@mediatek.com, weiyi.lu@mediatek.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
+        Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org
+To:     =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
+        mturquette@baylibre.com
+Date:   Thu, 13 Jan 2022 17:45:29 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20220114014530.E127FC36AEA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 13 Jan 2022 17:41:21 +0530, Alim Akhtar wrote:
-> Add dt-schema documentation for Tesla FSD SoC clock controller.
-> 
-> Cc: linux-fsd@tesla.com
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../bindings/clock/tesla,fsd-clock.yaml       | 212 ++++++++++++++++++
->  1 file changed, 212 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
-> 
+Please Cc the clk mailing list on clk driver patches.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/clock/tesla,fsd-clock.example.dts:19:18: fatal error: dt-bindings/clock/fsd-clk.h: No such file or directory
-   19 |         #include <dt-bindings/clock/fsd-clk.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[1]: *** [scripts/Makefile.lib:373: Documentation/devicetree/bindings/clock/tesla,fsd-clock.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1413: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1579595
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Quoting Jos=C3=A9 Exp=C3=B3sito (2022-01-07 10:24:51)
+> Handle the error branches to free memory where required.
+>=20
+> Addresses-Coverity-ID: 1491825 ("Resource leak")
+> Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>
