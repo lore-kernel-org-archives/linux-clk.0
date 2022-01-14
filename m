@@ -2,211 +2,301 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB78C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 08:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A087C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 09:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237029AbiANIie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 03:38:34 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:24402 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235882AbiANIib (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 03:38:31 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220114083828epoutp01bf2ec6fb24aba7921fbe3b31be1e1308~KFkb2zDoy2750927509epoutp01q
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 08:38:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220114083828epoutp01bf2ec6fb24aba7921fbe3b31be1e1308~KFkb2zDoy2750927509epoutp01q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642149508;
-        bh=Cur3k3PauERrmtbJjvVcmmykkWyBSqOEzneFlcppSiQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=fDIzBD/sL0mG9dUyL1LBxkLW+BVw72tjSljgyCm/xmBA7p6JlbZdzNyOmgNpAGZDv
-         hmfj4EEMeq/Ymyl/KPj7843TUgszIgd8/ZlAJKeRlxmCKZAGX08vfUhWse9Xr8SH86
-         U9rQLC6sIfEH61ce/ZosRMxx6cli8xJsopEjGELw=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220114083827epcas5p4d0a7eda942f2c4d90ccec6b5dafaaff7~KFkbT-Z-p1922119221epcas5p4U;
-        Fri, 14 Jan 2022 08:38:27 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JZvp73rQmz4x9QJ; Fri, 14 Jan
-        2022 08:38:23 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        43.9D.06423.F7631E16; Fri, 14 Jan 2022 17:38:23 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220114083822epcas5p38a563af3d5a7f69c8e9679730ad2afcf~KFkW7-Hky1707817078epcas5p3E;
-        Fri, 14 Jan 2022 08:38:22 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220114083822epsmtrp2387b14fdd2e60ea5bef119a514cb1a40~KFkW7MsGl0182601826epsmtrp2g;
-        Fri, 14 Jan 2022 08:38:22 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-49-61e1367fa364
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BB.7A.29871.E7631E16; Fri, 14 Jan 2022 17:38:22 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220114083820epsmtip2e14daa3e6cc08874d42134b1db68b8bf~KFkU3C67R3017630176epsmtip2d;
-        Fri, 14 Jan 2022 08:38:20 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <olof@lixom.net>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <robh+dt@kernel.org>, <s.nawrocki@samsung.com>,
-        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
-        <linux-fsd@tesla.com>
-In-Reply-To: <65e6f034-278a-81fa-844d-10a1865a25a4@canonical.com>
-Subject: RE: [PATCH 10/23] dt-bindings: pinctrl: samsung: Add compatible for
- Tesla FSD SoC
-Date:   Fri, 14 Jan 2022 14:08:19 +0530
-Message-ID: <07cf01d80922$16d7f760$4487e620$@samsung.com>
+        id S239643AbiANJpn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 04:45:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41956 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229785AbiANJpn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 04:45:43 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA116C061574
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 01:45:42 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id x11so2715079lfa.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 01:45:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=a2l4P3W9CR1K5J7PLgT36ikvS9uajSneo1Al15/HZQE=;
+        b=NgmfhEAmXOMsqouy0HSBgQ3YuAQ2rSrDkv38pmVF8kI6Gpwm5t5rVewcE3DPAShTLp
+         XWiSy72FN6zqH+COip7WdnQsUw/i8wAQDuO48Rg4otjy5v9GpzwfJoFm2v3wTh5CECMf
+         zxcOrY2KpSqoe/h/uo4s0x4F8UhTuY+le6/phFzjofWWcUJncB40kJFp6OcMuD+CmF1s
+         yvShFAFHz2D/qX9lQsyX7IgffyDENHoxv6Vj9IDSip0S3/HNX4LC6cTOZoWRfqsSM/mo
+         lYa/O7EFKHu5T8QbqNmkPaTMBRskgtZTGN7Mf/bHzcCQK4f+FYY6MSZUsHYegkaRRg7S
+         3aHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=a2l4P3W9CR1K5J7PLgT36ikvS9uajSneo1Al15/HZQE=;
+        b=zRcSIR3deACOtIza3WIHu7lETEwlfEeS/4pzufz+xQVvMLuAE3mJQDs7bkfkn0xhyL
+         KFn82CFiaLSYDEyf9XnIO+8uqLerBSKHvsVFkJEFZ8PlXt7Cw47/2j7DALLERRbkt8PO
+         kXi9ZO7EmcS1gThWXgoTZqGcoSDE/fERrJRnFjsneEvyOATOecnOIdCm7cXOv7vd8JPK
+         86PwSRI3kykYShrMLXQJlNSOBKKlWqbnWXcg1jlWp8i3WF81Vk1XaAEjL8NR8ECmvHsV
+         GY/mCd67pycAVY3M47B2CuUA4fyVVzOkClXuvZnMwgK4cCf6GzLqV6JMBFTJE2LBwytQ
+         eh3A==
+X-Gm-Message-State: AOAM530EgYHibSyQKPiQYborhV7fUnLOrDnDQTXkzy3e45wZMIWGT+Zw
+        cxvvukY6DN9HKF78TT5ileibhj6dGmNTMLuB7FDjR1NvU6jqTg==
+X-Google-Smtp-Source: ABdhPJzbOWlJcwWDSW51HmnDZKd1o967Hg5oPhByByXADHBFLjzpOkO6wiwcF4CMlmG+WJpdL/1zOty2qTtVYweDJp8=
+X-Received: by 2002:a05:6512:280c:: with SMTP id cf12mr6450814lfb.5.1642153540785;
+ Fri, 14 Jan 2022 01:45:40 -0800 (PST)
 MIME-Version: 1.0
+References: <20220107090715.2601-1-zong.li@sifive.com> <YdwBWmF8OJYab7qS@google.com>
+ <CANXhq0ookagQTZZrNduP5DjXs2awQdRkUxNzTWU=-dz+TVuUwg@mail.gmail.com>
+ <Yd1OvFZ4pKw+aTgv@google.com> <CANXhq0oK-NewS9mn-b4a60D7t+fMSbT6=Mnw7st_njxGY1DJCg@mail.gmail.com>
+ <Yd6a3Gnmv2ox+Sec@google.com> <CANXhq0oTyHGOUTgLk2HWpSYurUKuz5SvuaF6C5xKjn5Frswayw@mail.gmail.com>
+ <YeBftQu9YgfFelmw@google.com> <F0F4C6FB-2340-4ED1-921A-800795B298E7@jrtc27.com>
+ <YeBr45vcM6woAKlc@google.com>
+In-Reply-To: <YeBr45vcM6woAKlc@google.com>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Fri, 14 Jan 2022 17:45:28 +0800
+Message-ID: <CANXhq0r1LO1--C7DOzTT5q-1PoALq0G_-itOjcMfM0VjC_T9eg@mail.gmail.com>
+Subject: Re: [PATCH v3 RESEND] clk: sifive: Fix W=1 kernel build warning
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Jessica Clarke <jrtc27@jrtc27.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKuNmZ/+9PJHbdzezyQqzGEXzr0sgL8ryguAaBfAcEA6PFKowJzFa60ASXzfreqbN6UUA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmlm692cNEgym/xS3eL+thtJh/5Byr
-        xca3P5gspvxZzmSx6fE1VouPPfdYLR6+Cre4vGsOm8WM8/uYLE5d/8xmsWjrF3aL1r1H2C0O
-        v2lntXh8/Q+bA5/HmnlrGD1mNfSyeWxa1cnmcefaHjaPzUvqPa6caGL16NuyitHjX9Ncdo/P
-        m+QCOKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA
-        bldSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZ
-        AhUmZGecnHCYsWCLbMXKfdNZGxjfSnYxcnJICJhIrO/sYe9i5OIQEtjNKHFh73w2COcTo8Tt
-        xY2sEM43Ron22SeZYFo2zZ3CApHYyyjR/HseVNVLRonO5leMIFVsAroSOxa3gc0SEehklFj9
-        /ScTiMMssIJJYv6pu0D9HBycAo4SzScdQBqEBWIktn29xw4SZhFQlbjQ7gYS5hWwlHj+bjob
-        hC0ocXLmExYQm1lAW2LZwtfMEBcpSPx8uowVxBYRCJNY+OswO0SNuMTLo0fAnpMQeMEhsW/z
-        CzaQ+RICLhJnDopD9ApLvDq+hR3ClpL4/G4vVEm2RM8uY4hwjcTSecdYIGx7iQNX5oAdzyyg
-        KbF+lz7EJj6J3t9PmCA6eSU62oQgqlUlmt9dheqUlpjY3c0KYXtIHL3RzDaBUXEWkr9mIflr
-        FpL7ZyEsW8DIsopRMrWgODc9tdi0wDAvtRwe3cn5uZsYwQlby3MH490HH/QOMTJxMB5ilOBg
-        VhLh7S+6nyjEm5JYWZValB9fVJqTWnyI0RQY1hOZpUST84E5I68k3tDE0sDEzMzMxNLYzFBJ
-        nPd0+oZEIYH0xJLU7NTUgtQimD4mDk6pBiax3qTZhvzRz3Psc9rSjvfM/ZbFFX/h9VwJqVgx
-        t759+S/Zo7ddvM1R9GmCzHKfE0+7iqyzVKZdV705+c+sPWZlFXzzvpuYnC+c5qq3K3CZ6Ktk
-        xad9bhvsJLed/bRkQQ7r/2u39B7FLX4Ud31bIrf1zLAOj48X9ygpTF395WHQai1R9e/Wwtv/
-        1r1Z2bR4gpvPI2Ge9hstc3ZkOthe+iCy4civuqC5/6fcfCjRKmvrpniqyL3tXKSu41qvpn2b
-        mmYFdm6czq8qfXnm1DK1siQpgyUPl7sskeX/kzx/a2vF/AfrOyauyXGUmLhXaNOEb9VfYzhe
-        Bd9Y8/rc2cVCli1Gm7mKFl/Ou/Wx6HfhhB1vlFiKMxINtZiLihMBIOFSxmEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsWy7bCSvG6d2cNEg/mzdCzeL+thtJh/5Byr
-        xca3P5gspvxZzmSx6fE1VouPPfdYLR6+Cre4vGsOm8WM8/uYLE5d/8xmsWjrF3aL1r1H2C0O
-        v2lntXh8/Q+bA5/HmnlrGD1mNfSyeWxa1cnmcefaHjaPzUvqPa6caGL16NuyitHjX9Ncdo/P
-        m+QCOKO4bFJSczLLUov07RK4Mlomn2YsOCtTcfzVX9YGxhbJLkZODgkBE4lNc6ewdDFycQgJ
-        7GaUWNBykhUiIS1xfeMEdghbWGLlv+fsEEXPGSV+bpvGDJJgE9CV2LG4jQ0kISLQzShxpWcm
-        I4jDLLCFSaLzxRlmiJYbTBING/YxdTFycHAKOEo0n3QA6RYWiJI4/fYWWJhFQFXiQrsbSJhX
-        wFLi+bvpbBC2oMTJmU9YQGxmAW2J3oetjDD2soWvmSGuU5D4+XQZ2NUiAmESC38dZoeoEZd4
-        efQI+wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kR
-        HLtamjsYt6/6oHeIkYmD8RCjBAezkghvf9H9RCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pO
-        xgsJpCeWpGanphakFsFkmTg4pRqYinb9TN88OeD6ohti7U9mTpkf4Kz7e5VqIJf0/7bwM/JN
-        KWoaJ+8eE7+9I6Q/Jdt5QuwXXZ/tx1f45pc4ZB8xmLBjn5lMgP6JnHTrhS28jTcvbPT42c26
-        +utX97b+tfFpBkKFFS7Py3OaTtc5zV4h3zf/UbOZ4omsdwq8dd+vhiy4eXJXA1+7lHb4Ik31
-        MAHVqC8iGyw/z076/CzD/p7Rrv2d/eKpxwwitq0qXOFQcOJoTaD2p4ObtbWYt8zddYvvx93H
-        DPkGT6+77/URMT3Kp6btn/dKxsftPUNmu4plQZ/prsbV5049Ojul7/jLK+z7P3zwj9HisLH7
-        Htbx0v+zgN2Eq0+EVmtOXpWcz1qnxFKckWioxVxUnAgAv3K7u0wDAAA=
-X-CMS-MailID: 20220114083822epcas5p38a563af3d5a7f69c8e9679730ad2afcf
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220113122354epcas5p19e5cebe9e85e9ba1758fa0b9d7d1ef75
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122354epcas5p19e5cebe9e85e9ba1758fa0b9d7d1ef75@epcas5p1.samsung.com>
-        <20220113121143.22280-11-alim.akhtar@samsung.com>
-        <849c7772-0f7e-32ff-6ea6-c46aa6837bb4@canonical.com>
-        <076101d80909$d5849060$808db120$@samsung.com>
-        <65e6f034-278a-81fa-844d-10a1865a25a4@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
->-----Original Message-----
->From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=5D
->Sent: Friday, January 14, 2022 1:20 PM
->To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
->kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
->Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
-l.org;
->olof=40lixom.net; linus.walleij=40linaro.org; catalin.marinas=40arm.com;
->robh+dt=40kernel.org; s.nawrocki=40samsung.com; linux-samsung-
->soc=40vger.kernel.org; pankaj.dubey=40samsung.com; linux-fsd=40tesla.com
->Subject: Re: =5BPATCH 10/23=5D dt-bindings: pinctrl: samsung: Add compatib=
-le for
->Tesla FSD SoC
+On Fri, Jan 14, 2022 at 2:13 AM Lee Jones <lee.jones@linaro.org> wrote:
 >
->On 14/01/2022 06:44, Alim Akhtar wrote:
->>
->>
->>> -----Original Message-----
->>> From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=
-=5D
->>> Sent: Thursday, January 13, 2022 5:57 PM
->>> To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
->>> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
->>> Cc: soc=40kernel.org; linux-clk=40vger.kernel.org;
->>> devicetree=40vger.kernel.org; olof=40lixom.net; linus.walleij=40linaro.=
-org;
->>> catalin.marinas=40arm.com;
->>> robh+dt=40kernel.org; s.nawrocki=40samsung.com; linux-samsung-
->>> soc=40vger.kernel.org; pankaj.dubey=40samsung.com; linux-fsd=40tesla.co=
-m
->>> Subject: Re: =5BPATCH 10/23=5D dt-bindings: pinctrl: samsung: Add
->>> compatible for Tesla FSD SoC
->>>
->>> On 13/01/2022 13:11, Alim Akhtar wrote:
->>>> Add compatible for Tesla Full Self-Driving SoC. The pinctrl hardware
->>>> IP is similar to what found on most of the exynos series of SoC, so
->>>> this new compatible is added in samsung pinctrl binding.
->>>>
->>>> Cc: linux-fsd=40tesla.com
->>>> Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt =7C 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> index b8b475967ff9..ba972998a0e4 100644
->>>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->>>> =40=40 -24,6 +24,7 =40=40 Required Properties:
->>>>    - =22samsung,exynos7-pinctrl=22: for Exynos7 compatible pin-control=
-ler.
->>>>    - =22samsung,exynos850-pinctrl=22: for Exynos850 compatible pin-con=
-troller.
->>>>    - =22samsung,exynosautov9-pinctrl=22: for ExynosAutov9 compatible
->>>> pin-
->>> controller.
->>>> +  - =22tesla,fsd-pinctrl=22: for Tesla FSD SoC compatible pin-control=
-ler.
->>>>
->>>
->>> Please rebase this on my latest Samsung pinctrl dtschema patches. You
->>> also need a tesla vendor prefix patch (separate).
->>>
->> Sure will rebase when sending v2, your latest patches are in Linux-next =
-or
->still in your tree?
+> On Thu, 13 Jan 2022, Jessica Clarke wrote:
 >
->The SPI (v3) and pinctrl (v2) dtschema patches are on mailing lists.
->They seem to be done, so after merge window they will make to linux-next. =
-If
->you want earlier, grab them from mailing list or from
->branches:
->https://protect2.fireeye.com/v1/url?k=3D78372ba7-27ac12a5-7836a0e8-
->0cc47a31381a-987e4f8740569613&q=3D1&e=3D8e15033d-ca15-4f1f-b463-
->adce6ebe65ef&u=3Dhttps%3A%2F%2Fgithub.com%2Fkrzk%2Flinux%2Ftree%2F
->n%2Fdt-bindings-samsung-spi-schema-v3
->https://protect2.fireeye.com/v1/url?k=3D32fb0ddf-6d6034dd-32fa8690-
->0cc47a31381a-a7fe8cfb89319cf3&q=3D1&e=3D8e15033d-ca15-4f1f-b463-
->adce6ebe65ef&u=3Dhttps%3A%2F%2Fgithub.com%2Fkrzk%2Flinux%2Ftree%2F
->n%2Fdt-bindings-samsung-pinctrl-schema-v2
+> > On 13 Jan 2022, at 17:21, Lee Jones <lee.jones@linaro.org> wrote:
+> > >
+> > > On Thu, 13 Jan 2022, Zong Li wrote:
+> > >
+> > >> On Wed, Jan 12, 2022 at 5:09 PM Lee Jones <lee.jones@linaro.org> wro=
+te:
+> > >>>
+> > >>> On Wed, 12 Jan 2022, Zong Li wrote:
+> > >>>
+> > >>>> On Tue, Jan 11, 2022 at 5:32 PM Lee Jones <lee.jones@linaro.org> w=
+rote:
+> > >>>>>
+> > >>>>> On Tue, 11 Jan 2022, Zong Li wrote:
+> > >>>>>
+> > >>>>>> On Mon, Jan 10, 2022 at 5:50 PM Lee Jones <lee.jones@linaro.org>=
+ wrote:
+> > >>>>>>>
+> > >>>>>>> Please improve the subject line.
+> > >>>>>>>
+> > >>>>>>> If this is a straight revert, the subject line should reflect t=
+hat.
+> > >>>>>>>
+> > >>>>>>> If not, you need to give us specific information regarding the =
+purpose
+> > >>>>>>> of this patch.  Please read the Git log for better, more forthc=
+oming
+> > >>>>>>> examples.
+> > >>>>>>>
+> > >>>>>>
+> > >>>>>> It seems to me that this patch is not a straight revert, it prov=
+ides
+> > >>>>>> another way to fix the original build warnings, just like
+> > >>>>>> '487dc7bb6a0c' tried to do. I guess the commit message has descr=
+ibed
+> > >>>>>> what the original warnings is and what the root cause is, it als=
+o
+> > >>>>>> mentioned what is changed in this patch. I'm a bit confused whet=
+her we
+> > >>>>>> need to add fixes tag, it looks like that it might cause some
+> > >>>>>> misunderstanding?
+> > >>>>>
+> > >>>>> I think it's the patch description and subject that is causing th=
+e
+> > >>>>> misunderstanding.
+> > >>>>>
+> > >>>>
+> > >>>> Yes, the subject should be made better.
+> > >>>>
+> > >>>>> Please help me with a couple of points and I'll help you draft
+> > >>>>> something up.
+> > >>>>>
+> > >>>>> Firstly, what alerted you to the problem you're attempting to sol=
+ve?
+> > >>>>>
+> > >>>>
+> > >>>> I recently noticed the code was changed, I guess that I was missin=
+g
+> > >>>> something there. After tracking the log, I found that there is a b=
+uild
+> > >>>> warning in the original implementation, and it was already fixed, =
+but
+> > >>>> it seems to me that there are still some situations there, please =
+help
+> > >>>> me to see the following illustration.
+> > >>>>
+> > >>>>>>>> --- a/drivers/clk/sifive/fu540-prci.c
+> > >>>>>>>> +++ b/drivers/clk/sifive/fu540-prci.c
+> > >>>>>>>> @@ -20,7 +20,6 @@
+> > >>>>>>>>
+> > >>>>>>>> #include <dt-bindings/clock/sifive-fu540-prci.h>
+> > >>>>>>>>
+> > >>>>>>>> -#include "fu540-prci.h"
+> > >>>>>
+> > >>>>> How is this related to the issue/patch?
+> > >>>>>
+> > >>>>
+> > >>>> Let's go back to the version without '487dc7bb6a0c' fix. The
+> > >>>> prci_clk_fu540 variable is defined in sifive-fu540-prci.h header,
+> > >>>> however, fu540-prci.c includes this header but doesn't use this
+> > >>>> variable, so the warnings happen.
+> > >>>>
+> > >>>> The easiest way to do it is just removing this line, then the warn=
+ing
+> > >>>> could be fixed. But as the '487dc7bb6a0c' or this patch does, the =
+code
+> > >>>> should be improved, the prci_clk_fu540 variable shouldn't be defin=
+ed
+> > >>>> in the header, it should be moved somewhere.
+> > >>>>
+> > >>>>>>>> +struct prci_clk_desc prci_clk_fu540 =3D {
+> > >>>>>>>> +     .clks =3D __prci_init_clocks_fu540,
+> > >>>>>>>> +     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > >>>>>>>> +};
+> > >>>>>
+> > >>>>>>>> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sif=
+ive/fu540-prci.h
+> > >>>>>>>> index c220677dc010..931d6cad8c1c 100644
+> > >>>>>>>> --- a/drivers/clk/sifive/fu540-prci.h
+> > >>>>>>>> +++ b/drivers/clk/sifive/fu540-prci.h
+> > >>>>>>>> @@ -7,10 +7,6 @@
+> > >>>>>>>> +extern struct prci_clk_desc prci_clk_fu540;
+> > >>>>>
+> > >>>>>>>> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/si=
+five/sifive-prci.c
+> > >>>>>>>> index 80a288c59e56..916d2fc28b9c 100644
+> > >>>>>>>> --- a/drivers/clk/sifive/sifive-prci.c
+> > >>>>>>>> +++ b/drivers/clk/sifive/sifive-prci.c
+> > >>>>>>>> @@ -12,11 +12,6 @@
+> > >>>>>>>> #include "fu540-prci.h"
+> > >>>>>>>> #include "fu740-prci.h"
+> > >>>>>>>>
+> > >>>>>>>> -static const struct prci_clk_desc prci_clk_fu540 =3D {
+> > >>>>>>>> -     .clks =3D __prci_init_clocks_fu540,
+> > >>>>>>>> -     .num_clks =3D ARRAY_SIZE(__prci_init_clocks_fu540),
+> > >>>>>>>> -};
+> > >>>>>>>> -
+> > >>>>>
+> > >>>>> I'm not sure if it's you or I that is missing the point here, but
+> > >>>>> prci_clk_fu540 is used within *this* file itself:
+> > >>>>>
+> > >>>>
+> > >>>> Here is another situation I mentioned at the beginning, if we'd li=
+ke
+> > >>>> to put prci_clk_fu540 here, prci_clk_fu740 should be put here as w=
+ell.
+> > >>>> I guess you didn't do that because there is a bug in the original
+> > >>>> code, fu740-prci.c misused the fu540-prci.h, so there is no build
+> > >>>> warning on fu740. FU740 still works correctly by misusing the
+> > >>>> fu540-prci.h header because fu740-prci.c doesn't actually use the
+> > >>>> prci_clk_fu740 variable, like fu540 we talked about earlier.
+> > >>>>
+> > >>>>> static const struct of_device_id sifive_prci_of_match[] =3D {
+> > >>>>>         {.compatible =3D "sifive,fu540-c000-prci", .data =3D &prc=
+i_clk_fu540},
+> > >>>>>         {.compatible =3D "sifive,fu740-c000-prci", .data =3D &prc=
+i_clk_fu740},
+> > >>>>>         {}
+> > >>>>> };
+> > >>>>>
+> > >>>>> So why are you moving it out to somewhere it is *not* used and ma=
+king
+> > >>>>> it an extern?  This sounds like the opposite to what you'd want?
+> > >>>>
+> > >>>> The idea is that sifive-prci.c is the core and common part of PRCI=
+,
+> > >>>> and I'd like to separate the SoCs-dependent part into SoCs-depende=
+nt
+> > >>>> files, such as fu540-prci.c and fu740-prci.c. The goal is if we ad=
+d
+> > >>>> new SoCs in the future, we can just put the SoCs-dependent data
+> > >>>> structure in the new C file, and do as minimum modification as
+> > >>>> possible in the core file (i.e. sifive-prci.c). It might also help=
+ us
+> > >>>> to see all SoCs-dependent data in one file, then we don't need to
+> > >>>> cross many files. Putting these two variables in sifive-pric.c is =
+the
+> > >>>> right thing to do, but that is why I separate them and make them
+> > >>>> extern in this patch.
+> > >>>
+> > >>> I can see what you are doing, but I don't think this is the right
+> > >>> thing to do.  Please put the struct in the same location as it's
+> > >>> referenced.
+> > >>
+> > >> If we decide to move them into sifive-prci.c (i.e. put it in where
+> > >> it's referenced.), I worried that we might need to move all stuff
+> > >> which are in fu540-prci.c and fu740-prci.c. Because 'prci_clk_fu540'
+> > >> is referenced in sifive-prci.c, whereas '__prci_init_clocks_fu540' i=
+s
+> > >> used by 'prci_clk_fu540', and the almost things in fu540-prci.c are
+> > >> used by '__prci_init_clocks_fu540'. It seems to be a little bit
+> > >> difficult to clearly decouple it for modularization which I want to
+> > >> do. What this patch does might be a accepted way, I hope that you ca=
+n
+> > >> consider it again.
+> > >>
+> > >>>
+> > >>> And yes that should also be the case for prci_clk_fu740 and yes, it
+> > >>> was over-looked because it wasn't causing warnings at build time fo=
+r
+> > >>> whatever reason.
+> > >>>
+> > >>> IMHO, placing 'struct of_device_id' match tables in headers is also
+> > >>> odd and is likely the real cause of this strange situation.
+> > >>
+> > >> I couldn't see what are you pointing, do you mind give more details
+> > >> about it? It seems to me that the match table is put in C file (i.e.
+> > >> sifive-prci.c).
+> > >
+> > > Oh, sorry, it's a common source file, rather than a header.
+> > >
+> > > Okay, so I went and actually looked at the code this time.
+> > >
+> > > If I were you I would move all of the device specific structs and
+> > > tables into the device specific header files, then delete the device
+> > > specific source (C) files entirely.
+> > >
+> > > There seems to be no good reason for carrying a common source file as
+> > > well as a source file AND header file for each supported device.
+> > > IMHO, that's over-complicating things for no apparent gain.
+> >
+> > The reason it exists the way it does is that the driver uses the header
+> > files shipped and used for the device tree bindings, and they give the
+> > same names to different constants (the first three constants are in
+> > fact the same so don=E2=80=99t clash, but PRCI_CLK_TLCLK is different b=
+etween
+> > the two), so can=E2=80=99t both be in the same translation unit (at lea=
+st not
+> > without some gross #undef=E2=80=99ing). In FreeBSD I took the alternate
+> > approach of just defining our own FU540_ and FU740_ namespaced copies
+> > of the constants, as drivers do for most things anyway.
 >
-Thanks Krzysztof, will take them for addressing FSD comments.
+> That's a sensible approach.
+>
+> One which we use in Linux extensively.
+
+Thanks all for the review and suggestions, it is great to me to move
+all stuff into the specific headers, I only have one question there,
+is it ok to put the definition of those data structures in header
+files? That is one of the changes we had done in v2 patch. If it's
+good to you, I will do it in the next version. Thanks.
 
 >
->Best regards,
->Krzysztof
-
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Principal Technical Lead - Developer Services
+> Linaro.org =E2=94=82 Open source software for Arm SoCs
+> Follow Linaro: Facebook | Twitter | Blog
