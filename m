@@ -2,137 +2,143 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DA0C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 10:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC129C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 13:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231365AbiANKvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 05:51:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56772 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbiANKvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 05:51:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBBBC061574;
-        Fri, 14 Jan 2022 02:51:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0555561EDC;
-        Fri, 14 Jan 2022 10:51:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D30C36AEA;
-        Fri, 14 Jan 2022 10:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642157463;
-        bh=bwrKb5nAY1yxA7hO1VfpRRfXBzaaN35Y7HZsuMZ/sQA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AroH/H9LPZJM5aRxed34qf1Wxr4EkTk9guDLhEoBlZWeTLfpwb4Vbw266zUyaf1UG
-         iAaAgZU01LvZnWwimunky3+Z2UFB1OiVtLkrTW9pJiDC7F/eMJXZCPz210Q55U+ftv
-         qLwPa6zLtdy+67nABXZ631xy0e8itMSmn2/nW9toG7FSDsuGSaE3q7frpa8Vt5xg9z
-         BATbOHb+iSz08HU3nySD8uw6HxURgTAoJU5n3ucfTOASa0PdlJXd/qSyrK5CE/cks1
-         WWN6AOP4Xy+XHBLUsyCAtBLknQ8BaLBd77/43tQmniFddyyJNXITf+uhiX2bt5dVXw
-         KVJppvIThR4wQ==
-Received: by pali.im (Postfix)
-        id DF3EC7D1; Fri, 14 Jan 2022 11:51:00 +0100 (CET)
-Date:   Fri, 14 Jan 2022 11:51:00 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Vladimir Vid <vladimir.vid@sartura.hr>,
-        Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 0/6] serial: mvebu-uart: Support for higher baudrates
-Message-ID: <20220114105100.im6gmkt6fjl2aiwl@pali>
-References: <20210930095838.28145-1-pali@kernel.org>
- <20211103214209.azo2z3z4gy7aj5hu@pali>
- <87ee6bm9hn.fsf@BL-laptop>
+        id S241204AbiANNYA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 08:24:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:33256 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235222AbiANNX6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Jan 2022 08:23:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BBF1ED1;
+        Fri, 14 Jan 2022 05:23:58 -0800 (PST)
+Received: from [10.57.67.190] (unknown [10.57.67.190])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 516313F774;
+        Fri, 14 Jan 2022 05:23:56 -0800 (PST)
+Message-ID: <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com>
+Date:   Fri, 14 Jan 2022 13:23:51 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ee6bm9hn.fsf@BL-laptop>
-User-Agent: NeoMutt/20180716
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+Content-Language: en-GB
+To:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        linux-mediatek@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>
+References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen!
+On 2022-01-10 18:13, Alyssa Rosenzweig wrote:
+> Set a mysterious chicken bit in the MT8192 clock driver (!) to get the
+> Mali GPU on MT8192 to work. This workaround is from the downstream Mali
+> driver shipped in ChromeOS. The change there is unsuitable for mainline
+> but good as a reference for the hardware behaviour:
+> 
+> https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
+> 
+> That links to an internal Google issue tracker which I assume has more
+> information on the bug. I would appreciate if someone from Google or
+> MediaTek could explain what this change actually does and why it's
+> necessary on MT8192.
+> 
+> At any rate, this register logically belongs to the MT8192 "infra" clock
+> device, so it makes sense to set it there too. This avoids adding any
+> platform-specific hacks to the 3D driver, either mainline (Panfrost) or
+> legacy (kbase).
 
-On Friday 17 December 2021 18:23:00 Gregory CLEMENT wrote:
-> Hello Pali,
-> 
-> > On Thursday 30 September 2021 11:58:32 Pali Rohár wrote:
-> >> This patch series add support for baudrates higher than 230400 on
-> >> Marvell Armada 37xx boards.
-> >
-> > Stephen, Gregory, are there any issues with this patch series?
-> 
-> I am not found of these changes but let's apply it as I didn't take time
-> to do a better review.
-> 
-> However I can't apply the dt part if the driver is not merged.
+Does this really have anything to do with clocks? My (uninformed) 
+impression is that the infracfg blocks are general amalgamations of 
+configuration registers that simply happen to contain clock and reset 
+controls among other functionality. In particular, "ACP" usually refers 
+to the Accelerator Coherency Port of a CPU cluster or DSU, and given the 
+stated symptom of the issue affected by it, my first guess would be that 
+this bit might indeed control routing of GPU traffic either to the ACP 
+or the (presumably non-coherent) main interconnect.
 
-Stephen, are there any issues with driver (non-DT) part changes in this
-patch series? If not, could you please merge them? This patch series is
-here on the list since September without any request for change...
+If that is the case, I think this would logically belong as a 
+SoC-specific quirk in panfrost, where we'd need to retrieve the syscon 
+regmap for ourselves (see around line 800 of drivers/iommu/mtk_iommu.c 
+for a similar example).
 
-We would really like to see support for higher baudrates for Armada 3720
-platforms in mainline kernel.
+Cheers,
+Robin.
 
-> Gregory
+> Signed-off-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+> Cc: Nick Fan <Nick.Fan@mediatek.com>
+> Cc: Nicolas Boichat <drinkcat@chromium.org>
+> ---
+>   drivers/clk/mediatek/clk-mt8192.c | 31 +++++++++++++++++++++++++++++++
+>   1 file changed, 31 insertions(+)
 > 
-> > If not, could you take them?
-> >
-> >> Changes in v7:
-> >> * fixed lint errors in yaml binding file
-> >> 
-> >> Changes in v6:
-> >> * fixed yaml binding file and dts files
-> >> 
-> >> Changes in v5:
-> >> * fixed yaml binding file
-> >> 
-> >> Changes in v4:
-> >> * converted armada3700-uart-clock documentation to YAML
-> >> * split documentation changes into two commits:
-> >>   - first which adds clock documentation
-> >>   - second which updates UART documentation
-> >> 
-> >> Changes in v3:
-> >> v3 is rebased on top of Linus master branch and all already applied patches
-> >> were dropped. There are no changes in patches itself since v2.
-> >> 
-> >> Pali Rohár (6):
-> >>   math64: New DIV_U64_ROUND_CLOSEST helper
-> >>   serial: mvebu-uart: implement UART clock driver for configuring UART
-> >>     base clock
-> >>   dt-bindings: mvebu-uart: document DT bindings for
-> >>     marvell,armada-3700-uart-clock
-> >>   dt-bindings: mvebu-uart: update information about UART clock
-> >>   arm64: dts: marvell: armada-37xx: add device node for UART clock and
-> >>     use it
-> >>   serial: mvebu-uart: implement support for baudrates higher than 230400
-> >> 
-> >>  .../clock/marvell,armada-3700-uart-clock.yaml |  59 ++
-> >>  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
-> >>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  14 +-
-> >>  drivers/tty/serial/Kconfig                    |   1 +
-> >>  drivers/tty/serial/mvebu-uart.c               | 592 +++++++++++++++++-
-> >>  include/linux/math64.h                        |  13 +
-> >>  6 files changed, 667 insertions(+), 21 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
-> >> 
-> >> -- 
-> >> 2.20.1
-> >> 
-> 
-> -- 
-> Gregory Clement, Bootlin
-> Embedded Linux and Kernel engineering
-> http://bootlin.com
+> diff --git a/drivers/clk/mediatek/clk-mt8192.c b/drivers/clk/mediatek/clk-mt8192.c
+> index cbc7c6dbe0f4..e3673494d08d 100644
+> --- a/drivers/clk/mediatek/clk-mt8192.c
+> +++ b/drivers/clk/mediatek/clk-mt8192.c
+> @@ -1179,6 +1179,10 @@ static const struct mtk_pll_data plls[] = {
+>   
+>   static struct clk_onecell_data *top_clk_data;
+>   
+> +/* Control registers in the infra block used to set a chicken bit */
+> +#define INFRA_CTRL 0x290
+> +#define INFRA_CTRL_DISABLE_MFG2ACP BIT(9)
+> +
+>   static void clk_mt8192_top_init_early(struct device_node *node)
+>   {
+>   	int i;
+> @@ -1224,6 +1228,29 @@ static int clk_mt8192_top_probe(struct platform_device *pdev)
+>   	return of_clk_add_provider(node, of_clk_src_onecell_get, top_clk_data);
+>   }
+>   
+> +/*
+> + * Disable ACP on the infra clock. Setting this quirk is required for 3D to
+> + * work correctly. Without this quirk, any work queued to the Mali GPU faults,
+> + * for example raising a Data Invalid Fault. This suggests the GPU is failing
+> + * to read back the contents of shared CPU/GPU memory correctly, perhaps due to
+> + * a MT8192 platform integration issue breaking memory or caches.
+> + *
+> + * Relevant downstream change:
+> + * https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/2781271/5
+> + */
+> +static int clk_mt8192_infra_disable_mfg2acp(struct platform_device *pdev)
+> +{
+> +	void __iomem *base = devm_platform_ioremap_resource(pdev, 0);
+> +	void __iomem *infra_ctrl = base + INFRA_CTRL;
+> +
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	writel(readl(infra_ctrl) | INFRA_CTRL_DISABLE_MFG2ACP, infra_ctrl);
+> +
+> +	return 0;
+> +}
+> +
+>   static int clk_mt8192_infra_probe(struct platform_device *pdev)
+>   {
+>   	struct clk_onecell_data *clk_data;
+> @@ -1238,6 +1265,10 @@ static int clk_mt8192_infra_probe(struct platform_device *pdev)
+>   	if (r)
+>   		return r;
+>   
+> +	r = clk_mt8192_infra_disable_mfg2acp(pdev);
+> +	if (r)
+> +		return r;
+> +
+>   	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+>   }
+>   
