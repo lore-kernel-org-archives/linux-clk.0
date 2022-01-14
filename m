@@ -2,74 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7606C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 22:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EF4C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 22:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbiANWle (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 17:41:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiANWld (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 17:41:33 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F045C061574;
-        Fri, 14 Jan 2022 14:41:33 -0800 (PST)
+        id S230367AbiANWze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 17:55:34 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53932 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229905AbiANWzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 17:55:33 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 05BBC6202D;
-        Fri, 14 Jan 2022 22:41:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9E5C36AE9;
-        Fri, 14 Jan 2022 22:41:32 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5695862047
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 22:55:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C6DC36AEA;
+        Fri, 14 Jan 2022 22:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642200092;
-        bh=1yWWNTr99SbOPjD2CMX1nN1AHYuz4jAl1o3plfsU8Qw=;
+        s=k20201202; t=1642200932;
+        bh=M532S7NuMc5guV+TrEqveWTIocIumpQzI6P1DHrrZQU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DQ95m8RY/VQl+X8/9LMhRNDHTtvWR7AbG/jMSS8cCUOJiiQgVvg+xfPsZTw2wu1aJ
-         MwNOtD9TU682Yq4W+wYEAgPNpE/YV2rTrSurI2K2envtiHM0ogm1gN9uMy63T1yLEd
-         JpyvN8ZVScLt6ttXk2+RsI7azU48uThwyHweRcFvBHyU926X0majFC8X+Xj0km8Vl2
-         jF/WFllLL1zW+Nm1+BGeQPnq3CzyG0+B6S0dziQgKGCE4nlJpepcywFUTeamZHybxS
-         xttFnaHh2K5UJF+0D7gn2dMb5IvWOhITIl198j8udzrwDDTlkhfDdX6CQX4xQ15wiY
-         tfzR6fbRYrdvg==
+        b=QyvA0f0qY8QqYZAbFV5Wq3fsZiJDeU8KPnsow24DmPU8jvx14aHeNQg0j43ajNB1p
+         1YONEyYEnDapqSU03zz0pTXoGuAzazVB43mPssU0R1YMRJAFXQ2TrolvckB3m93tUL
+         xdmf7oosQeSw+6r1S1OR+P/gHkZrK/RqCHVeOZMAOOmi0DIIK9WqcgsG37sOefnbri
+         FudkYswGSXsBWn1gGnyxeh4NT2s2WPusa14xJXrePX6zrKrEwIiI0LDaZ6MtFeS+6W
+         lWaU7H3iw28P4FlAwNNjsnhxF5mH6CehCndbXcz+lmNWHFx5rUSkOik9aZ4hNjPeRW
+         RPt44RAJSd2Mg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220114161556.vgxhetm4ccokik4b@houat>
-References: <20210914093515.260031-1-maxime@cerno.tech> <20210914093515.260031-2-maxime@cerno.tech> <20220112033716.63631C36AEA@smtp.kernel.org> <20220112114652.hmfdcpqil5jg2vz6@houat> <20220113214426.95292C36AEA@smtp.kernel.org> <20220114161556.vgxhetm4ccokik4b@houat>
-Subject: Re: [PATCH v2 1/3] clk: Introduce a clock request API
+In-Reply-To: <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com>
+References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com> <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com>
+Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel@lists.freedesktop.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Emma Anholt <emma@anholt.net>, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-To:     Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 14 Jan 2022 14:41:30 -0800
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>
+To:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-mediatek@lists.infradead.org
+Date:   Fri, 14 Jan 2022 14:55:30 -0800
 User-Agent: alot/0.10
-Message-Id: <20220114224132.4F9E5C36AE9@smtp.kernel.org>
+Message-Id: <20220114225532.B0C6DC36AEA@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-01-14 08:15:56)
-> On Thu, Jan 13, 2022 at 01:44:25PM -0800, Stephen Boyd wrote:
-> >
-> > I don't see a problem with re-evaluating the rate every time we call
-> > clk_set_rate_range(). That's probably the bug that I can't recall. Can
-> > you fix the API so it works that way?
+Quoting Robin Murphy (2022-01-14 05:23:51)
+> On 2022-01-10 18:13, Alyssa Rosenzweig wrote:
+> > Set a mysterious chicken bit in the MT8192 clock driver (!) to get the
+> > Mali GPU on MT8192 to work. This workaround is from the downstream Mali
+> > driver shipped in ChromeOS. The change there is unsuitable for mainline
+> > but good as a reference for the hardware behaviour:
+> >=20
+> > https://chromium-review.googlesource.com/c/chromiumos/third_party/kerne=
+l/+/2781271/5
+> >=20
+> > That links to an internal Google issue tracker which I assume has more
+> > information on the bug. I would appreciate if someone from Google or
+> > MediaTek could explain what this change actually does and why it's
+> > necessary on MT8192.
+> >=20
+> > At any rate, this register logically belongs to the MT8192 "infra" clock
+> > device, so it makes sense to set it there too. This avoids adding any
+> > platform-specific hacks to the 3D driver, either mainline (Panfrost) or
+> > legacy (kbase).
 >=20
-> Yep, I'll work on it next week.
+> Does this really have anything to do with clocks? My (uninformed)=20
+> impression is that the infracfg blocks are general amalgamations of=20
+> configuration registers that simply happen to contain clock and reset=20
+> controls among other functionality. In particular, "ACP" usually refers=20
+> to the Accelerator Coherency Port of a CPU cluster or DSU, and given the =
 
+> stated symptom of the issue affected by it, my first guess would be that =
 
-BTW, this is an area that's easily tested with kunit. I'm going to
-re-post kunit tests for clk-gate.c today. We should add unit tests for
-this and other parts of clk.c so that future changes don't break this.
+> this bit might indeed control routing of GPU traffic either to the ACP=20
+> or the (presumably non-coherent) main interconnect.
+>=20
+> If that is the case, I think this would logically belong as a=20
+> SoC-specific quirk in panfrost, where we'd need to retrieve the syscon=20
+> regmap for ourselves (see around line 800 of drivers/iommu/mtk_iommu.c=20
+> for a similar example).
+
+What's the benefit of putting this into the GPU driver? Is it going to
+be runtime managed? It seems most logically related to the SoC or
+interconnect, for which there isn't any device driver but there could
+be.
