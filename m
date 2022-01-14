@@ -2,419 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB336C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 05:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB8AC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 05:41:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbiANFOs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 00:14:48 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:35843 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiANFOs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 00:14:48 -0500
-Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 14 Jan
- 2022 13:14:46 +0800
-Message-ID: <09ff9044-9abc-d1ad-26c1-5e6ece56d30c@amlogic.com>
-Date:   Fri, 14 Jan 2022 13:14:46 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v9 4/4] clk: meson: add sub MMC clock controller driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
+        id S236261AbiANFl0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 00:41:26 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:32670 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235931AbiANFl0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 00:41:26 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220114054124epoutp01d478fd91b01fb4e240e359ecf74d1d75~KDJ1q2xxU2433424334epoutp01T
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 05:41:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220114054124epoutp01d478fd91b01fb4e240e359ecf74d1d75~KDJ1q2xxU2433424334epoutp01T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642138884;
+        bh=/FXwud78es4MBfO4UlGQ8wrQ9YewPJ+B5Vg8EYAyvwg=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=kho3NqH+6VDx9ihmSW6c9S5xd3O/10NwENSMDwKsspzD3STZxeVotrd0KbrV6n+40
+         qsqBah7MbfXiiLq2fbSYkIwyVcr8QnySX6PHl0WSjciIv3qf5VSlWXJvZfvv9QQPtW
+         Z4zF1pMtACxOd1aovJ1M/3fPa0wgAHLYupKL0w/I=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220114054123epcas5p264312a7e9c511f6e74ded4f800d1ebc3~KDJ1CeeqH0611706117epcas5p2z;
+        Fri, 14 Jan 2022 05:41:23 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4JZqsn0y3Gz4x9Pw; Fri, 14 Jan
+        2022 05:41:17 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A3.5A.06423.2FC01E16; Fri, 14 Jan 2022 14:41:06 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220114054105epcas5p3299919dbc06f7f81c47823f9ec1f9fa5~KDJkfL9Y31145711457epcas5p3O;
+        Fri, 14 Jan 2022 05:41:05 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220114054105epsmtrp108cc8d570ebc84bc8ce09faf10ac046d~KDJkeKdNy1627616276epsmtrp1E;
+        Fri, 14 Jan 2022 05:41:05 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-02-61e10cf2f38c
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        82.BA.08738.1FC01E16; Fri, 14 Jan 2022 14:41:05 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220114054103epsmtip251180e9bce2eb4746163fc82b77ad6e4~KDJieLVaC2037520375epsmtip2d;
+        Fri, 14 Jan 2022 05:41:03 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20220113115745.45826-1-liang.yang@amlogic.com>
- <20220113115745.45826-5-liang.yang@amlogic.com>
- <20220113213513.9819AC36AEA@smtp.kernel.org>
-From:   Liang Yang <liang.yang@amlogic.com>
-In-Reply-To: <20220113213513.9819AC36AEA@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.39.106]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+        <linux-kernel@vger.kernel.org>
+Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <olof@lixom.net>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <robh+dt@kernel.org>, <s.nawrocki@samsung.com>,
+        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+        <arnd@arndb.de>
+In-Reply-To: <d1a852e1-c4c2-b7c4-ddeb-7fbcfd9b4e58@canonical.com>
+Subject: RE: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+Date:   Fri, 14 Jan 2022 11:11:02 +0530
+Message-ID: <076001d80909$52d201c0$f8760540$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGkSwuX8HmyDmPKQ23UdXg863/rMwKuNmZ/AtfuwUqsnUcFMA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxjOd057WtSSQ2Hzk13smigTUqD2woHQ3WDbIZiAmb/mEnYGZwUp
+        bXPaKm4zgotsBZRLcEJx1MukiGWyjttAnAF0ji5cBCosKgOUrKjgqApoXdb2sI1/z/t8z/O9
+        z/td+KhwAAvn52iNNKOlNGJsHaetd1ukZHHDFBVrfxhCPK+8yiMW6ksBYe0b4BI/PFhGiCqv
+        DSEcMy4u8VfpbS4x0nkCI6oHLyFE/w0PRpxufcQjDnf38Yje+19xiZkbXuytYNJeZwfks6eV
+        gLQUHMFIR6MZI2+6LmLkj98dJEevHeKSR1saAelxvJoe9GFuYjZNZdGMiNZm6rJytGqVOPWD
+        jKQMhTJWKpHGE3FikZbKo1Xi5B3pkvdyNL7wYtFeSmPyUemUwSCOeSOR0ZmMtChbZzCqxLQ+
+        S6OX66MNVJ7BpFVHa2ljgjQ2drvCJ/w4N3vBOQ30NkF+k7MWKwDH1xcDPh/icnjWpigG6/hC
+        vAvAc4s3EbZYBHCq6hGHLTwAPnY08YpBUMAxUTiKsQudAM46S1C2cANYN/098KswXAI7zhQF
+        VGG4GcDzSyuBjVH8NAKHzA2IXxWEvw3dS5Mcf5JQfAecbX7dT3PwLfBYSw3qpwV4PBxw5ftp
+        AR4Cf625w/FjFI+C9afuoWwiEVy5W8/14zD8Hfhk+ijCajZC95W+1dT3+fA3B5/FyfCk5x5g
+        cSic+6VlVRMO3WVFPPZccmFpp4ylv4Bn665yWPwmvDx6IhAYxbfBC50xbKdgeOTZHYR1CuDX
+        RUJWvQV+OT+26nwJVpSUcFlMwtbfrdxy8JplzVyWNXNZ1uS3/N/sJOA0gk203pCnpg0KvVRL
+        7/vvtjN1eQ4QeNiRKR3g1h8Po3sAwgc9APJRcZigjJmkhIIsav9nNKPLYEwa2tADFL6zrkDD
+        X8jU+X6G1pghlcfHypVKpTxeppSKNwqc6mZKiKspI51L03qa+deH8IPCC5CuMFuEMsLROzPX
+        HffymYPP+11Pq4ZcB/CxivZdOfbZfNfxd5etyeM7VxSH0DlJc1b/Jy9aHpgqPQnWT/90jjkT
+        W283XQlPddS9P64fb96tc0V7vlWkPbnA1IscE6rr3WnztT0Rqu17nPsbE9t0FcxS2d7yoaT8
+        TeqUqHMhIybXhq3VYzXW+YTBV1IW5vbggtT1URcVl9DKhp+u75YdSB6MImTnlzUlDcGbucPt
+        S5tDZT87LqeIQrlJ7iatMO6jql1/20MnhocPm7pFhd90rZR6q2XW9llL+bWiSVkMY/v81jEh
+        2bJzZF9tZBrP2x5cyDHPdD0eGZpsy/FO3U0353eIOYZsShqJMgbqH/9TB+xhBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCSvO5HnoeJBleWmVj8nXSM3eL9sh5G
+        i/lHzrFabHz7g8liyp/lTBabHl9jtfjYc4/V4vKuOWwWM87vY7I4df0zm8WirV/YLVr3HmG3
+        OPymndXi8fU/bA58HmvmrWH0+P1rEqPHrIZeNo9NqzrZPO5c28PmsXlJvceVE02sHn1bVjF6
+        fN4kF8AZxWWTkpqTWZZapG+XwJWxrH8DU0Ebb8XPuYsZGxi/cHUxcnJICJhI3Gy8wtbFyMUh
+        JLCDUWLmkSfMEAlpiesbJ7BD2MISK/89Z4coes4osWvXXTaQBJuArsSOxW1g3SIC3YwSV3pm
+        MoI4zALrmCRW7JjDBNFymFHiTNsKRpAWTgFHiZff77N0MXJwCAv4SDzboAESZhFQlZi6ZSYz
+        SJhXwFLi3LUKkDCvgKDEyZlPWEBsZgFtid6HrYww9rKFr6EuVZD4+XQZK4gtIuAk8e1RHxNE
+        jbjEy6NH2CcwCs9CMmoWklGzkIyahaRlASPLKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT8
+        3E2M4OjV0trBuGfVB71DjEwcjIcYJTiYlUR4+4vuJwrxpiRWVqUW5ccXleakFh9ilOZgURLn
+        vdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXA1P2udpLXih0/qhN+Spq+L9hWOiNnp0IXq0FG+Tn2
+        /9px+jU8Swuf3jG6tXiDY/4DNqkLsQaR373enljxZOoU2SsH1ezaf3xUueTQlPj6bs99PuH6
+        s/4G+7zSt8l+t5NtD7rc3rd9e9gprezePwH3O7r22on7W+iuiK3PUDl1OePqDYHmkulxwfa/
+        NmvpvzuVO2uH9nxn09OsL+LDpxX7Rk7SNJhpX7RAZH/YdunkSxbeRib/mjbPfhDzo7bgWd3+
+        zap98e79LseFAi8L1yx5dU3O9xzfgcnfXrD68Wwq3bKqcXbE0vIK4Szt1dsPVR8L5Z66+L2p
+        0d4T9cpR+s43Lwu8+aujkj9f6sC8C+/dlViKMxINtZiLihMBzChR500DAAA=
+X-CMS-MailID: 20220114054105epcas5p3299919dbc06f7f81c47823f9ec1f9fa5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4
+References: <CGME20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4@epcas5p1.samsung.com>
+        <20220113121143.22280-1-alim.akhtar@samsung.com>
+        <d1a852e1-c4c2-b7c4-ddeb-7fbcfd9b4e58@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Krzysztof,
 
-On 2022/1/14 5:35, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Quoting Liang Yang (2022-01-13 03:57:45)
->> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->> index bb0f59eea366..3de6f3b24461 100644
->> --- a/drivers/clk/meson/Kconfig
->> +++ b/drivers/clk/meson/Kconfig
->> @@ -39,6 +39,20 @@ config COMMON_CLK_MESON_AO_CLKC
->>          select COMMON_CLK_MESON_REGMAP
->>          select RESET_CONTROLLER
->>   
->> +config COMMON_CLK_MMC_MESON
->> +       tristate "Meson MMC Sub Clock Controller Driver"
->> +       depends on ARCH_MESON || COMPILE_TEST
->> +       select MFD_SYSCON
->> +       select COMMON_CLK_AMLOGIC
->> +       select COMMON_CLK_MESON_PHASE
->> +       select COMMON_CLK_MESON_PHASE_DELAY
->> +       select COMMON_CLK_MESON_SCLK_DIV
->> +       help
->> +         Support for the MMC sub clock controller on
->> +         Amlogic Meson Platform, which includes S905 (GXBB, GXL),
->> +         A113D/X (AXG) devices . Say Y if you want this
-> 
-> s/devices /devices/
-ok, i will fix it
-> 
->> +         clock enabled.
->> +
->>   config COMMON_CLK_MESON_EE_CLKC
->>          tristate
->>          select COMMON_CLK_MESON_REGMAP
->> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
->> new file mode 100644
->> index 000000000000..f53977f61390
->> --- /dev/null
->> +++ b/drivers/clk/meson/mmc-clkc.c
->> @@ -0,0 +1,300 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +#include <linux/of_device.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/platform_device.h>
->> +#include <dt-bindings/clock/amlogic,mmc-clkc.h>
->> +
->> +#include "sclk-div.h"
->> +#include "clk-phase-delay.h"
->> +#include "clk-regmap.h"
->> +#include "clk-phase.h"
->> +
->> +/* clock ID used by internal driver */
->> +
->> +#define SD_EMMC_CLOCK          0
->> +#define CLK_DELAY_STEP_PS_GX   200
->> +#define CLK_DELAY_STEP_PS_AXG  78
->> +#define MUX_CLK_NUM_PARENTS    2
->> +#define MMC_MAX_CLKS           4
->> +
->> +struct mmc_clkc_data {
->> +       struct meson_clk_phase_delay_data tx;
->> +       struct meson_clk_phase_delay_data rx;
->> +};
->> +
->> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
->> +       .offset = SD_EMMC_CLOCK,
->> +       .mask   = 0x3,
->> +       .shift  = 6,
->> +};
->> +
->> +static const struct meson_sclk_div_data mmc_clkc_div_data = {
->> +       .div = {
->> +               .reg_off = SD_EMMC_CLOCK,
->> +               .width   = 6,
->> +       },
->> +       .flags = MESON_SCLK_ONE_BASED,
->> +};
->> +
->> +static struct meson_clk_phase_data mmc_clkc_core_phase = {
->> +       .ph = {
->> +               .reg_off = SD_EMMC_CLOCK,
->> +               .shift   = 8,
->> +               .width   = 2,
->> +       }
->> +};
->> +
->> +static const struct mmc_clkc_data mmc_clkc_gx_data = {
->> +       .tx = {
->> +               .phase = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 10,
->> +                       .width   = 2,
->> +               },
->> +               .delay = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 16,
->> +                       .width   = 4,
->> +               },
->> +               .delay_step_ps = CLK_DELAY_STEP_PS_GX,
->> +       },
->> +       .rx = {
->> +               .phase = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 12,
->> +                       .width   = 2,
->> +               },
->> +               .delay = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 20,
->> +                       .width   = 4,
->> +               },
->> +               .delay_step_ps   = CLK_DELAY_STEP_PS_GX,
->> +       },
->> +};
->> +
->> +static const struct mmc_clkc_data mmc_clkc_axg_data = {
->> +       .tx = {
->> +               .phase = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 10,
->> +                       .width   = 2,
->> +               },
->> +               .delay = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 16,
->> +                       .width   = 6,
->> +               },
->> +               .delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
->> +       },
->> +       .rx = {
->> +               .phase = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 12,
->> +                       .width   = 2,
->> +               },
->> +               .delay = {
->> +                       .reg_off = SD_EMMC_CLOCK,
->> +                       .shift   = 22,
->> +                       .width   = 6,
->> +               },
->> +               .delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
->> +       },
->> +};
->> +
->> +static const struct of_device_id mmc_clkc_match_table[] = {
->> +       {
->> +               .compatible     = "amlogic,gx-mmc-clkc",
->> +               .data           = &mmc_clkc_gx_data
->> +       },
->> +       {
->> +               .compatible     = "amlogic,axg-mmc-clkc",
->> +               .data           = &mmc_clkc_axg_data
->> +       },
->> +       {}
->> +};
->> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
->> +
->> +static struct clk_regmap *
->> +mmc_clkc_register_clk(struct device *dev, struct regmap *map,
->> +                     struct clk_init_data *init,
->> +                     const char *suffix, void *data)
->> +{
->> +       struct clk_regmap *clk;
->> +       char *name;
->> +       int ret;
->> +
->> +       clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
->> +       if (!clk)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
->> +       if (!name)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       init->name = name;
->> +       clk->map = map;
->> +       clk->data = data;
->> +       clk->hw.init = init;
->> +       ret = devm_clk_hw_register(dev, &clk->hw);
->> +       if (ret)
->> +               clk = ERR_PTR(ret);
->> +
->> +       kfree(name);
->> +       return clk;
->> +}
->> +
->> +static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
->> +                                               struct regmap *map)
->> +{
->> +       const char *parent_names[MUX_CLK_NUM_PARENTS];
->> +       struct clk_init_data init;
->> +       struct clk_regmap *mux;
->> +       struct clk *clk;
->> +       int i;
->> +
->> +       for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
->> +               char name[8];
->> +
->> +               snprintf(name, sizeof(name), "clkin%d", i);
->> +               clk = devm_clk_get(dev, name);
->> +               if (IS_ERR(clk)) {
->> +                       if (clk != ERR_PTR(-EPROBE_DEFER))
->> +                               dev_err(dev, "Missing clock %s\n", name);
-> 
-> Use dev_err_probe()?
-ok
-> 
->> +                       return ERR_CAST(clk);
->> +               }
->> +
->> +               parent_names[i] = __clk_get_name(clk);
-> 
-> Why can't we use clk_parent_data?
+>-----Original Message-----
+>From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=5D
+>Sent: Thursday, January 13, 2022 6:02 PM
+>To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
+>kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+>Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
+l.org;
+>olof=40lixom.net; linus.walleij=40linaro.org; catalin.marinas=40arm.com;
+>robh+dt=40kernel.org; s.nawrocki=40samsung.com; linux-samsung-
+>soc=40vger.kernel.org; pankaj.dubey=40samsung.com
+>Subject: Re: =5BPATCH 00/23=5D Add support for Tesla Full Self-Driving (FS=
+D) SoC
+>
+>On 13/01/2022 13:11, Alim Akhtar wrote:
+>> This patch set adds basic support for the Tesla Full Self-Driving
+>> (FSD) SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+>> as well as several IPs.
+>>
+>> Patches 1 to 8 provide support for the clock controller (which is
+>> designed similarly to Exynos SoCs).
+>>
+>> The remaining changes provide pinmux support, initial device tree
+>> support, and SPI, ADC, and MCT IP functionality.
+>
+>Does FSD have some version number? The FDS, especially in compatibles,
+>looks quite generic, so what will happen if a newer SoC comes later? You
+>would have:
+> - tesla,fsd-pinctrl
+> - tesla,fsd-xxxx-pinctrl (where xxxx could be some new version)
+>
+>This will be extra confusing, because fsd-pinctrl looks like the generic o=
+ne,
+>while it is specific...
+>
+AFAIK, there is no version for FSD SoC (like we see on Exynos or any other =
+SoC)
+In case something comes in future, may be just adopt as Olof suggested in t=
+he other thread like fsd2 etc..
+>Best regards,
+>Krzysztof
 
-ok, i will try clk_parent_data.
-
-> 
->> +       }
->> +
->> +       init.ops = &clk_regmap_mux_ops;
->> +       init.flags = CLK_SET_RATE_PARENT;
->> +       init.parent_names = parent_names;
->> +       init.num_parents = MUX_CLK_NUM_PARENTS;
->> +
->> +       mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
->> +       if (IS_ERR(mux))
->> +               dev_err(dev, "Mux clock registration failed\n");
->> +
->> +       return mux;
->> +}
->> +
->> +static struct clk_regmap *
->> +mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
->> +                                 char *suffix, const struct clk_hw *hw,
->> +                                 unsigned long flags,
->> +                                 const struct clk_ops *ops, void *data)
->> +{
->> +       struct clk_init_data init;
->> +       struct clk_regmap *clk;
->> +       const char *parent_name = clk_hw_get_name(hw);
->> +
->> +       init.ops = ops;
->> +       init.flags = flags;
->> +       init.parent_names = &parent_name;
->> +       init.num_parents = 1;
->> +
->> +       clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
->> +       if (IS_ERR(clk))
->> +               dev_err(dev, "%s clock registration failed\n", suffix);
->> +
->> +       return clk;
->> +}
->> +
->> +static int mmc_clkc_probe(struct platform_device *pdev)
->> +{
->> +       struct clk_hw_onecell_data *onecell_data;
->> +       struct device *dev = &pdev->dev;
->> +       struct mmc_clkc_data *data;
->> +       struct regmap *map;
->> +       struct clk_regmap *clk, *core;
->> +       struct meson_sclk_div_data *div_data;
->> +
->> +       /*cast to drop the const in match->data*/
-> 
-> Space after *, also why do we need to cast away const? The user of this
-> pointer passes it all the way down to mmc_clkc_register_clk() which
-> could take the data as const void pointer and decide to cast away const
-> there.
-
-if use 'const' here, it will report a warning:
-drivers/clk/meson/mmc-clkc.c:224:7: error: assignment discards ‘const’ 
-qualifier from pointer targe
-t type [-Werror=discarded-qualifiers] 
-
-   data = (const struct mmc_clkc_data *)of_device_get_match_data(dev);
-
-> 
->> +       data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
->> +       if (!data)
->> +               return -ENODEV;
->> +
->> +       map = syscon_node_to_regmap(dev->of_node);
->> +       if (IS_ERR(map)) {
->> +               dev_err(dev, "could not find mmc clock controller\n");
->> +               return PTR_ERR(map);
->> +       }
->> +
->> +       onecell_data = devm_kzalloc(dev,
->> +                                   struct_size(onecell_data, hws,
->> +                                               MMC_MAX_CLKS),
->> +                                   GFP_KERNEL);
->> +       if (!onecell_data)
->> +               return -ENOMEM;
->> +
->> +       clk = mmc_clkc_register_mux(dev, map);
->> +       if (IS_ERR(clk))
->> +               return PTR_ERR(clk);
->> +
->> +       div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
->> +       if (!div_data)
->> +               return -ENOMEM;
->> +
->> +       memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
->> +       clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
->> +                                               &clk->hw,
->> +                                               CLK_SET_RATE_PARENT,
->> +                                               &meson_sclk_div_ops,
->> +                                               div_data);
->> +       if (IS_ERR(clk))
->> +               return PTR_ERR(clk);
->> +
->> +       onecell_data->hws[CLKID_MMC_DIV] = &clk->hw;
->> +       core = mmc_clkc_register_clk_with_parent(dev, map, "core",
->> +                                                &clk->hw,
->> +                                                CLK_SET_RATE_PARENT,
->> +                                                &meson_clk_phase_ops,
->> +                                                &mmc_clkc_core_phase);
->> +       if (IS_ERR(core))
->> +               return PTR_ERR(core);
->> +
->> +       onecell_data->hws[CLKID_MMC_PHASE_CORE] = &core->hw;
->> +       clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
->> +                                               &core->hw,  0,
->> +                                               &meson_clk_phase_delay_ops,
->> +                                               &data->rx);
->> +       if (IS_ERR(clk))
->> +               return PTR_ERR(clk);
->> +
->> +       onecell_data->hws[CLKID_MMC_PHASE_RX] = &clk->hw;
->> +       clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
->> +                                               &core->hw,  0,
->> +                                               &meson_clk_phase_delay_ops,
->> +                                               &data->tx);
->> +       if (IS_ERR(clk))
->> +               return PTR_ERR(clk);
->> +
->> +       onecell_data->hws[CLKID_MMC_PHASE_TX] = &clk->hw;
->> +       onecell_data->num = MMC_MAX_CLKS;
->> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> +                                          onecell_data);
->> +}
->> +
->> +static struct platform_driver mmc_clkc_driver = {
->> +       .probe          = mmc_clkc_probe,
->> +       .driver         = {
->> +               .name   = "meson-mmc-clkc",
->> +               .of_match_table = of_match_ptr(mmc_clkc_match_table),
->> +       },
->> +};
->> +
->> +module_platform_driver(mmc_clkc_driver);
->> +
->> +MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
->> +MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
->> +MODULE_LICENSE("GPL v2");
-> 
-> .
