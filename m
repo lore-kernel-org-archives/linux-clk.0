@@ -2,130 +2,139 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00299C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 07:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10199C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jan 2022 07:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236764AbiANHeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 02:34:31 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52818
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236800AbiANHea (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 02:34:30 -0500
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        id S230300AbiANHtn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 02:49:43 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:60768
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233871AbiANHtk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 02:49:40 -0500
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 424DF3F1AF
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 07:34:29 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 69F7E402A4
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jan 2022 07:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642145669;
-        bh=mteS+HvR1DGukuOVJN2MZ0A5d8t+icrvQbG1zYE72KQ=;
+        s=20210705; t=1642146578;
+        bh=OfGvrCtC8xlimA6cEB+wdrguTqUYJCj+ZRy5BPwVdRo=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=NVKxByARpkK5AkUDkqdkURIyhrQFd+IwUlD1IrFX23UoxTCKFwEKYrHnEHDW84H+b
-         GGLdixG3NeFAhTdUeGRaID8J117NOrKalAt9ZsW3QNw38jFZFzA+UKwlR84ZCyApOS
-         2x0aNHF2EouexbGVX6hxJkTftGN/ygrp+SvhijLjPOqy33qFYOi+pGMTmcFkaTuvEV
-         t4dUnbWjnJQb4UAIyPaQ8hFtvGgWOTwhmm6vHhS88idbGTCD5awMSAe+Vx3pwGgDOo
-         B6Pe9gIpP90zgSkI7B20EDfndfmqDV9xuysR1xqdmcRKqG1wN72GpI0nsfYKzKdLnh
-         lTIGR3Ys89vxw==
-Received: by mail-ed1-f70.google.com with SMTP id z8-20020a056402274800b003f8580bfb99so7607425edd.11
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 23:34:29 -0800 (PST)
+        b=L/EgHIHbJdR8oHWtWf3LqUEgvfA86riHomk6b0iBFStDGkxfG35H4H8dfnBR6Pq1u
+         INQ6IFWKTdyK5FMN+okz3qQBFsUaSeHBHMpoMqKzoli09WvF9UkQumFydLHHF6Od4k
+         pF98S5YJNr247xBtWqrvVJqrb6ZTVb5GBdixRTxk5+b8bTx8gvFKq94FQmxpLm80zi
+         jerHUaDo4MSiiKPlecMiFK+w+Q/wYbZtKT3B9NUGhomgiNyUotRLWEg8FRhP2Zw4dE
+         p7ZDEaBsfWnezruJmFKcnuBn0c45mHEVIZTqBIP32XVUCC7+tVxiXfYGFaHOEb73vC
+         XpEFBO1mNuFqQ==
+Received: by mail-ed1-f71.google.com with SMTP id z10-20020a05640235ca00b003f8efab3342so7655739edc.2
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jan 2022 23:49:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=mteS+HvR1DGukuOVJN2MZ0A5d8t+icrvQbG1zYE72KQ=;
-        b=V537S/5GoHwp02HiLTcq3F8ipG6eXKqK/JJ42qzuVDBCiAoaMQgPCKDTJC5irisfgy
-         7PxOe55GV0qo/bKtAweaRjvPPZ6LA/ZxMtqPVLcPsCHHG43Ze1Gj3dayqdA9Nbkv5TZU
-         Sab/SFL1Q8EaH3qib4loTNqRbF9N4npLpfIVYSjbM3QIl/sA4G+QotV5984DU+PUKzsr
-         2S0EHBTw2reL6gKLBmGDErLVHdC8foEYazS/iythRAWStrR0qFR4BkH+tPlSPFV02zTO
-         xRthZ9aZ+wBy3bfme9CC+b5EXPch8hj0Pe9MIDkjrOL/OIwg1SGZN0QoytZOR1rR+4vO
-         buEw==
-X-Gm-Message-State: AOAM532caRRIziH32zx56J71vCd4sKJh6PCGRB1w7l5sEKi/P7VOrQIO
-        LXIVTdv+CZHKf+6NM9QoG+kN2XNVWD8ZRqznv+t8vFPizZy76ygCbmGrUJMEx5U8qaEykqzzDp0
-        6/pSQsivHtg0oK5iC7fzW12chaNiGVng/c4IddQ==
-X-Received: by 2002:a17:907:6e02:: with SMTP id sd2mr6286810ejc.276.1642145668307;
-        Thu, 13 Jan 2022 23:34:28 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzPYpFBXNfBuxsoAXAMpsTbqNgiDwQGWbcN8/zT8+trFSXbW3w4GwrSWxUCYjfS0jRzR3y3XA==
-X-Received: by 2002:a17:907:6e02:: with SMTP id sd2mr6286798ejc.276.1642145668097;
-        Thu, 13 Jan 2022 23:34:28 -0800 (PST)
+        bh=OfGvrCtC8xlimA6cEB+wdrguTqUYJCj+ZRy5BPwVdRo=;
+        b=4bffexyBNFVM9o9Fam9qBN9NKHxU5wbccHhF0IVmCuIvMRd470MUSurZqUdwXsK8T0
+         Y05w/06+TVLlrdDzu0vke1EuJYO1fqBBvLkcGSU9WeNZ4EhEngSoL+jI1wIrHY+5pyLr
+         8mtb4u+PAi5f1tETdkdyzi0eqGvNGH3hfgZuTroZ6HtR8ML/magKHZV0z9M726leFo/V
+         4bJ66I9+P2XVNz00oSh3tBAUNB5BIHxZkZB6/k948dxt/A5E9OpJ0BI2IPaejGjoZXZl
+         6TilmFcYqwmSiClGThDtVvToNpB+JsGX3Sd0PHPsJSi5W7CIxwE3VxrUSL708kk97X2T
+         1IVA==
+X-Gm-Message-State: AOAM531CUMk8f9EMiwMyOUaUfwyrK+IbaOTRu5qasJOIYzByZ758EZCN
+        nHXdbzlcANP1q9hxjWsWHzogyT7Dl+B+lXpb8Iw7OQ/dbef9B47EDlAptGhK3xB544KSErZ5Qb0
+        8pSl8DZB5aym4gGk8F2lEr3wbmw7ZKoEcEoG3Yg==
+X-Received: by 2002:a05:6402:2685:: with SMTP id w5mr7710432edd.151.1642146578016;
+        Thu, 13 Jan 2022 23:49:38 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJx28rjBXLGcKe6hIBmUk/lmPK/ygVLWajiItPMzl6kJqav/dcWM9ZuCOshtlFa/+UuDpfMTkw==
+X-Received: by 2002:a05:6402:2685:: with SMTP id w5mr7710414edd.151.1642146577885;
+        Thu, 13 Jan 2022 23:49:37 -0800 (PST)
 Received: from [192.168.0.30] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id ky10sm1567611ejc.151.2022.01.13.23.34.27
+        by smtp.gmail.com with ESMTPSA id jg41sm1602954ejc.101.2022.01.13.23.49.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jan 2022 23:34:27 -0800 (PST)
-Message-ID: <5e3f84e0-7b91-8eac-1643-d44f61a47620@canonical.com>
-Date:   Fri, 14 Jan 2022 08:34:26 +0100
+        Thu, 13 Jan 2022 23:49:37 -0800 (PST)
+Message-ID: <65e6f034-278a-81fa-844d-10a1865a25a4@canonical.com>
+Date:   Fri, 14 Jan 2022 08:49:36 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.3.1
-Subject: Re: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+Subject: Re: [PATCH 10/23] dt-bindings: pinctrl: samsung: Add compatible for
+ Tesla FSD SoC
 Content-Language: en-US
 To:     Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        olof@lixom.net
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linus.walleij@linaro.org,
-        catalin.marinas@arm.com, robh+dt@kernel.org,
-        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
-        pankaj.dubey@samsung.com, arnd@arndb.de,
-        Arnd Bergmann <arnd@arndb.de>
-References: <CGME20220113122302epcas5p1d45c0714fe286f8f91d0f28c3fad86e4@epcas5p1.samsung.com>
- <20220113121143.22280-1-alim.akhtar@samsung.com>
- <d1a852e1-c4c2-b7c4-ddeb-7fbcfd9b4e58@canonical.com>
- <076001d80909$52d201c0$f8760540$@samsung.com>
+        devicetree@vger.kernel.org, olof@lixom.net,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, s.nawrocki@samsung.com,
+        linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
+        linux-fsd@tesla.com
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+ <CGME20220113122354epcas5p19e5cebe9e85e9ba1758fa0b9d7d1ef75@epcas5p1.samsung.com>
+ <20220113121143.22280-11-alim.akhtar@samsung.com>
+ <849c7772-0f7e-32ff-6ea6-c46aa6837bb4@canonical.com>
+ <076101d80909$d5849060$808db120$@samsung.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <076001d80909$52d201c0$f8760540$@samsung.com>
+In-Reply-To: <076101d80909$d5849060$808db120$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/01/2022 06:41, Alim Akhtar wrote:
-> Hi Krzysztof,
+On 14/01/2022 06:44, Alim Akhtar wrote:
+> 
 > 
 >> -----Original Message-----
 >> From: Krzysztof Kozlowski [mailto:krzysztof.kozlowski@canonical.com]
->> Sent: Thursday, January 13, 2022 6:02 PM
+>> Sent: Thursday, January 13, 2022 5:57 PM
 >> To: Alim Akhtar <alim.akhtar@samsung.com>; linux-arm-
 >> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
 >> Cc: soc@kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org;
 >> olof@lixom.net; linus.walleij@linaro.org; catalin.marinas@arm.com;
 >> robh+dt@kernel.org; s.nawrocki@samsung.com; linux-samsung-
->> soc@vger.kernel.org; pankaj.dubey@samsung.com
->> Subject: Re: [PATCH 00/23] Add support for Tesla Full Self-Driving (FSD) SoC
+>> soc@vger.kernel.org; pankaj.dubey@samsung.com; linux-fsd@tesla.com
+>> Subject: Re: [PATCH 10/23] dt-bindings: pinctrl: samsung: Add compatible for
+>> Tesla FSD SoC
 >>
 >> On 13/01/2022 13:11, Alim Akhtar wrote:
->>> This patch set adds basic support for the Tesla Full Self-Driving
->>> (FSD) SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
->>> as well as several IPs.
+>>> Add compatible for Tesla Full Self-Driving SoC. The pinctrl hardware
+>>> IP is similar to what found on most of the exynos series of SoC, so
+>>> this new compatible is added in samsung pinctrl binding.
 >>>
->>> Patches 1 to 8 provide support for the clock controller (which is
->>> designed similarly to Exynos SoCs).
+>>> Cc: linux-fsd@tesla.com
+>>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt | 1 +
+>>>  1 file changed, 1 insertion(+)
 >>>
->>> The remaining changes provide pinmux support, initial device tree
->>> support, and SPI, ADC, and MCT IP functionality.
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> index b8b475967ff9..ba972998a0e4 100644
+>>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>>> @@ -24,6 +24,7 @@ Required Properties:
+>>>    - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
+>>>    - "samsung,exynos850-pinctrl": for Exynos850 compatible pin-controller.
+>>>    - "samsung,exynosautov9-pinctrl": for ExynosAutov9 compatible pin-
+>> controller.
+>>> +  - "tesla,fsd-pinctrl": for Tesla FSD SoC compatible pin-controller.
+>>>
 >>
->> Does FSD have some version number? The FDS, especially in compatibles,
->> looks quite generic, so what will happen if a newer SoC comes later? You
->> would have:
->> - tesla,fsd-pinctrl
->> - tesla,fsd-xxxx-pinctrl (where xxxx could be some new version)
+>> Please rebase this on my latest Samsung pinctrl dtschema patches. You also
+>> need a tesla vendor prefix patch (separate).
 >>
->> This will be extra confusing, because fsd-pinctrl looks like the generic one,
->> while it is specific...
->>
-> AFAIK, there is no version for FSD SoC (like we see on Exynos or any other SoC)
-> In case something comes in future, may be just adopt as Olof suggested in the other thread like fsd2 etc..
->> Best regards,
->> Krzysztof
+> Sure will rebase when sending v2, your latest patches are in Linux-next or still in your tree?
 
-The naming is still confusing. The SoC is FSD, compatible is "fsd" but
-entire sub-architecture is also FSD called. Therefore it looks like
-creating entire sub-architecture for only one SoC, which actually in
-multiple pieces is or looks like Samsung Exynos (designed by Samsung,
-using several blocks from Exynos SoC).
+The SPI (v3) and pinctrl (v2) dtschema patches are on mailing lists.
+They seem to be done, so after merge window they will make to
+linux-next. If you want earlier, grab them from mailing list or from
+branches:
+https://github.com/krzk/linux/tree/n/dt-bindings-samsung-spi-schema-v3
+https://github.com/krzk/linux/tree/n/dt-bindings-samsung-pinctrl-schema-v2
+
 
 Best regards,
 Krzysztof
