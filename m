@@ -2,105 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30855C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jan 2022 00:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D19C4332F
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jan 2022 01:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbiAOAJY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jan 2022 19:09:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41842 "EHLO
+        id S232066AbiAOBqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jan 2022 20:46:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230283AbiAOAJY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 19:09:24 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDA66C061574;
-        Fri, 14 Jan 2022 16:09:23 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id m4so39626224edb.10;
-        Fri, 14 Jan 2022 16:09:23 -0800 (PST)
+        with ESMTP id S231781AbiAOBqr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jan 2022 20:46:47 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84F54C061574;
+        Fri, 14 Jan 2022 17:46:47 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id v186so28686783ybg.1;
+        Fri, 14 Jan 2022 17:46:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6WxgRspTa9pdiuAuq6uLhSBKFJubCNNBfbR5oS90b7o=;
-        b=KGoHG6HXMM7jvUx9Y8QNcz74un6IlPxstlSzzYzk0AqnYszuBg3SIHArvidcgByuHl
-         hAq5pioMPEYm8hHK3OkUNrVgG0pm8sGjWfg4+VRLWkL22CmDLbZPWnED0dd5FDFDdI/M
-         wiWRzLFfCT+1vc/fOjXgPAMczpnR8Z7JA/ml8GBsi+eqQlnCIYxoqvujlXRF2L1g3b0s
-         dyMJn2Ua7jG4GkPUjeqJLLqoaPw/w8m3d7BvIcxznrNayIyytxDYkbFTjAnXnBJP01D9
-         UbPe/sN7t+prvljMu/y+9zm3SYsNtDddNe4E60G4q5dvVKSY2WiaZDJZlqLICyyOKAID
-         wKOQ==
+        bh=tWKYqjMToQiYNKjbuCtLFgDL3xooRgPiVQeOXmHwMgs=;
+        b=nwt9fdkM8Jjyr8Qk9lQ3nikJt45z3ZIWItehvNMCq582HhZP8/Oh6b6RjDfJmYArPe
+         ieCs/E6lFaO4d6AriWHvI+bzTth+kfSwjf1RnbHxYyyUKCIpNxKoe/QHJ9Q5jzcdFpfd
+         FbGlZuzaiA44s0JyKbeHGe8aFfrl4DydWRmdRXsCOFni4zYlF/L493G0jeeKCEW+f/o2
+         shvM/YO1PgtuMiXhu5GPDb4eobmjPwBx/YQMSvNEwy99/99y3mPq1RpE+EI9V9Zyoqe+
+         I5XffLZuCwrZ2TllmVItNccGKkOw8Ve/hLX7dU2qKMm6ar7xWxxke9c9amp96VLpnUB5
+         u7ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6WxgRspTa9pdiuAuq6uLhSBKFJubCNNBfbR5oS90b7o=;
-        b=lVtMVTm9k4TUb9CC89KAN1h+iS4kENJFHGR6BGPzhJCAwKO+ZI/LNgh/rBPaP3OuSi
-         hiOA4QCLyumloRSTA/q/3OwO7og1rEZR//uKolgX0Y3lLlvC/Nc7grqz5F3ocQW3S3B+
-         zF2CT+gdISpwVJbTolfuSmTyC6nHIBdDAKq58VHvHzN4svecgFNQkLpgw6+N7onRNlaI
-         9/U8R3R4mF+ZmYuHvX0xzfIb5NHFSGY7jguZh3Mnbn1Y9b0As9somd2Ekkd8ZTy59DJi
-         HmamFcrAMrYZyZ3kzT0kbucZB8FVPBzGtSRs58KF7U3dato8jkfsVjA8Wl94gGXAutR3
-         wELg==
-X-Gm-Message-State: AOAM530/FiI6lYYf/H8oXNV82lrC6zaPm/CRxPSPKLq1isOJjg2LAL3A
-        ypqh8JlmpQDaLSjWE8FAwvm9vkAe9J4WRqtr5Y6fKa0773A=
-X-Google-Smtp-Source: ABdhPJz9ZyGviTxwAhE2hO5kJPWpzDkAuJFLi1AhPe5xXLp16SMB9TUcenUz5Eb6OensaynZMbCWU9gUo24uUxm9Qws=
-X-Received: by 2002:a05:6402:518a:: with SMTP id q10mr10857118edd.29.1642205362382;
- Fri, 14 Jan 2022 16:09:22 -0800 (PST)
+        bh=tWKYqjMToQiYNKjbuCtLFgDL3xooRgPiVQeOXmHwMgs=;
+        b=JzZDj96o6lX7kNjMFDSNhC0z3/j9GYl/544DuqZ5NEisNAU9C5ZTcnOTudbYWOjOkw
+         dbjRaYeRAI0d2BfC4LaZAJQjWM+tazgs3JhRpvKSZyE/TEY+6dhMA8+2EwEc06pg1O5Q
+         qdnke2dQg4dmyJdUWAjjrU7nPsjN1FO6Z8l+Lw7XdVRfbYQfi481AbhgOUCfXQ2d+w5N
+         DEOiPIC+FyuKNNL1MNkIOjzNn/1PIYhSPI3wVif17g/5cOsHi/6aTOaHmi2mtn88+wot
+         Vlw+Gik8QAmR6RE5tb4QFRPIwa4M9Dv88mPacmIRrx2OV4leY8nrurIKEJ6S3yCfGHRC
+         OKoA==
+X-Gm-Message-State: AOAM531/z/2M8M8qurQz34LOI9os+2GDjkx4N0xBpOrywUlAVYgtxdMA
+        mQD2xoAPBjrQFpu6VbStbJvjAIGI9DPcUKyafaU=
+X-Google-Smtp-Source: ABdhPJwgzZLZHSnjfCYS1rIjQLZjd5tRg1w+jXNopdsIY1kj6ZrznRiU7nGR8CaxCU3f3tXLpA+HKePIHs69ZRR2jjU=
+X-Received: by 2002:a25:874a:: with SMTP id e10mr16006654ybn.422.1642211206642;
+ Fri, 14 Jan 2022 17:46:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20220113115745.45826-1-liang.yang@amlogic.com>
- <20220113115745.45826-4-liang.yang@amlogic.com> <20220113212957.768FFC36AE3@smtp.kernel.org>
- <5d99ac02-a246-5bcc-2ecb-371b0d193537@amlogic.com>
-In-Reply-To: <5d99ac02-a246-5bcc-2ecb-371b0d193537@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 15 Jan 2022 01:09:11 +0100
-Message-ID: <CAFBinCDkNk+Ba340vshhL2rE76U9qb_dZ5ZsgWnMgFYpL6i1jA@mail.gmail.com>
-Subject: Re: [PATCH v9 3/4] clk: meson: add DT documentation for emmc clock controller
-To:     Liang Yang <liang.yang@amlogic.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20211221094717.16187-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUB-wK_0Vqn4fmqQ0jaHWmo9OTRPT1bwWsZh76U1J729A@mail.gmail.com>
+In-Reply-To: <CAMuHMdUB-wK_0Vqn4fmqQ0jaHWmo9OTRPT1bwWsZh76U1J729A@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Sat, 15 Jan 2022 01:46:20 +0000
+Message-ID: <CA+V-a8sMfAT8DAxQJeAM6BvGOvrBE5sqVfm6ErS4y3wqT-UwVQ@mail.gmail.com>
+Subject: Re: [PATCH 06/16] dt-bindings: serial: renesas,scif: Document RZ/V2L SoC
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Liang,
+Hi Geert,
 
-On Fri, Jan 14, 2022 at 4:06 AM Liang Yang <liang.yang@amlogic.com> wrote:
-[...]
-> >> +properties:
-> >> +  compatible:
-> >> +    enum:
-> >> +      - "amlogic,axg-mmc-clkc", "syscon"
-> >
-> > Why is it a syscon?
+Thank you for the review.
+
+On Tue, Jan 11, 2022 at 4:23 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> The register documented by reg is shared with SD/eMMC controller port C,
-> and it need to be ops on NFC driver.
-Can you please share an example how the .dts would look like in the
-end for two example cases:
-1) using the sd_emmc_c MMC interface
-2) not using the MMC interface of sd_emmc_c but only using it's clocks
-for the NFC
+> Hi Prabhakar,
+>
+> On Tue, Dec 21, 2021 at 10:48 AM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> >
+> > Add SCIF binding documentation for Renesas RZ/V2L SoC. SCIF block on RZ/V2L
+> > is identical to one found on the RZ/G2L SoC. No driver changes are required
+> > as RZ/G2L compatible string "renesas,scif-r9a07g044" will be used as a
+> > fallback.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+> > +++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+> > @@ -67,6 +67,12 @@ properties:
+> >        - items:
+> >            - enum:
+> >                - renesas,scif-r9a07g044      # RZ/G2{L,LC}
+> > +              - renesas,scif-r9a07g054      # RZ/V2L
+>
+> As the idea is to rely on the RZ/G2L fallback for matching, cfr. below,
+> the above addition is not needed or wanted.
+>
+Agreed I will drop that.
 
-Initially I wanted to suggest the usage of a sub-node with compatible
-= "mmc-slot" (see
-Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.txt for an
-example) to decide whether the MMC controller is registered or whether
-just the clock controller is registered.
-However, the mmc-slot compatible string is not documented in
-Documentation/devicetree/bindings/mmc/mmc-controller.yaml currently.
-Maybe the MMC maintainers have any suggestions if other IPs have
-similar requirements (for IPs with shared parts).
+> > +
+> > +      - items:
+> > +          - enum:
+> > +              - renesas,scif-r9a07g054      # RZ/V2L
+> > +          - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback for RZ/V2L
+> >
+> >    reg:
+> >      maxItems: 1
+> > @@ -154,6 +160,7 @@ if:
+> >            - renesas,rcar-gen2-scif
+> >            - renesas,rcar-gen3-scif
+> >            - renesas,scif-r9a07g044
+> > +          - renesas,scif-r9a07g054
+>
+> This addition is not needed if the fallback is always present.
+>
+Ditto.
+> >  then:
+> >    required:
+> >      - resets
+>
+> Given Greg already applied your patch, I think you have to send a
+> follow-up patch.
+Will do.
 
-
-Best regards,
-Martin
+Cheers,
+Prabhakar
