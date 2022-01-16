@@ -2,55 +2,56 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D18C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jan 2022 12:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A618C4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jan 2022 12:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235040AbiAPMJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jan 2022 07:09:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56122 "EHLO
+        id S229584AbiAPMMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Jan 2022 07:12:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbiAPMJT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jan 2022 07:09:19 -0500
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD3FC061574
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jan 2022 04:09:18 -0800 (PST)
-Received: by mail-ot1-x329.google.com with SMTP id m8-20020a9d4c88000000b00592bae7944bso13042267otf.1
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jan 2022 04:09:18 -0800 (PST)
+        with ESMTP id S232970AbiAPMMe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jan 2022 07:12:34 -0500
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D898C061401
+        for <linux-clk@vger.kernel.org>; Sun, 16 Jan 2022 04:12:34 -0800 (PST)
+Received: by mail-ot1-x330.google.com with SMTP id c3-20020a9d6c83000000b00590b9c8819aso16218732otr.6
+        for <linux-clk@vger.kernel.org>; Sun, 16 Jan 2022 04:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nzQepfLL+SGjYE7/8X4gZEz0wVEIHbxydae1Vjcfelg=;
-        b=li4eNDHzmKQPKXQH9EPaZqkg3ZKafq+S1WNXBl3larEL7wbJLhx1iOgVLhJe5+whhW
-         OIrZ2I4haacmN/3uAP8Z+Mut0w9Vhfkw5m1nPc99SKrZTx1xG0aoJVm/cLQ3e87lnZ5M
-         sNCasYAPmabIQgdb0WZwoqslm11l0s1jXFEw6SKs5pOw3tQqNWEKaBX4RpyoBe+AqTd6
-         2RHoNLI7t35r9z+5UZLLqSSRJQh45vK+9aQ+DI/ws9+dDnPEkYnr6yh9EhwPcSc4S/jR
-         ZGbrEdSUbUFFEC1IWfPqt5VozKeCJopfPE0wZWxmyE57gHz7LD+3WoOKDdEaGZe4Avfg
-         +/3Q==
+        bh=dN4hyAkZ1Miqzb3/QhoFsGXlrqJg5gaQIvzhl2DDXYI=;
+        b=CPNaiXWo2pnIicCgCE4TOFjmWNuRA9dzQpr3F9MQWVZndQVObEbrqc0LkwEobvrbAm
+         b6jkPIJMdB2Xorzqzp3V0BiqMe5ONj9bKIWeOOKnukHWMiMqb9y3m4SwNrdoQkHfxhXq
+         CDquO4Y5+rWhQ+usux8FaGzPpZ95FJFNAJGvYvwxZ9I3+VcEl9PH/Pvh6d4vmzz5tDtF
+         V/8iIeMg4OwY/XNOgqmwFtCvGlXid6h50FVXjS+tHS/Kzh585Uwe2iOovV48wXEuLeyt
+         nSve4ONIxR8/CbPDzw/rOM9rrux2qd5frYCAqc10IqjcAEKiOuYUepeHxW4aqbyBlcZl
+         bWvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nzQepfLL+SGjYE7/8X4gZEz0wVEIHbxydae1Vjcfelg=;
-        b=N0Eas33wawbRCyp9BeWCpTznKaA6k18kN3+tLSzEpFH/k/rWZJo7SYckq93Cwy0w7R
-         XyUUcBkENthhpR7m7Dx9Et43OevEkjLL+KnIqmKYdTQJz8O8iLHHCMgtCd09s/U4r4L2
-         3DG8Bh6GJa5Er4k9UV9Cuj0LMTtmASok7wFjPyt+PfeGEpAF/AqUchKakt1ihWdXNLBL
-         2Q/OKnmFjZJ4726SJapvvjdYFIl0i/5o6wCi6S2s7imptXpqtpDIw/A7cPnYk++dbkou
-         sw86sb/zxASI19rdBcVdnkQEL/VE42UgJfINq1Z+XxB8sccchPJp7nl5QrAdJVQLVr4r
-         tRHw==
-X-Gm-Message-State: AOAM530DJAoezF/5nNNpmKMV0MMfptLAxSuiTX/IYdPT9Fs46oF8HerT
-        r/TUGNV7P8OdWJTrzFWL3DuLcfCWS2XM6mRAIqj9DQ==
-X-Google-Smtp-Source: ABdhPJwa04h4sD14vv2Z/CGZajhxLfFbKVOadbmybRdvY888f4W2fEZ/uIH7hFe02AlyoMGqWsll6X2tNHCd6NvGZqo=
-X-Received: by 2002:a05:6830:4:: with SMTP id c4mr1427187otp.237.1642334957532;
- Sun, 16 Jan 2022 04:09:17 -0800 (PST)
+        bh=dN4hyAkZ1Miqzb3/QhoFsGXlrqJg5gaQIvzhl2DDXYI=;
+        b=5HHQ8DTr0gkGOElgZ6LhdwvY6pXW/ufK3icARBfjmkObnSmapDzUXCx3409GyQy6SU
+         IeXwcZ+tvcJrzgjgpeMBoP/viLulUzuYLj2IQWsF9VrhLt9H2sxgtnqFEH19ViNUWQ4G
+         l59FBJ6czmzGrhcjcAe819c+ARY3tHkRoVjnqTyomyfKweWYDgTz+bIWp1VIIbZpJSlT
+         BYOT1CKgD8C4Fcecpxdqr9Zpp+7qQgRP29HkP9sIpKyF5S8Z5BbCN0YeoCOuYlUZCJS4
+         IhDBEY41mXoaKG1rBBHGXGXDwC6xgzl+69N9Qi4pR1E9/F473BkEOdBiFSulfg1Ybjxk
+         WANA==
+X-Gm-Message-State: AOAM531oZzivy7emS8PnTReCEBs9mrPQwx872ftER7SJBtruEwaegqRw
+        aLzF0OFUknB7jIcgHeeRv6o5Z1+DCIhADwWaIajZuw==
+X-Google-Smtp-Source: ABdhPJy8usbAaNUR44V9Qk15vyIj3ak49FQUUJBJouk/HUiIm/veRgYnOMPkzs5+HmpbNVpOzFFdybTHvuzzOVkJiXc=
+X-Received: by 2002:a9d:465:: with SMTP id 92mr12902887otc.35.1642335153484;
+ Sun, 16 Jan 2022 04:12:33 -0800 (PST)
 MIME-Version: 1.0
-References: <CGME20220113122404epcas5p4aa1c3ac09510eb55cce5fdd0791993a6@epcas5p4.samsung.com>
- <20220113121143.22280-1-alim.akhtar@samsung.com> <20220113121143.22280-13-alim.akhtar@samsung.com>
-In-Reply-To: <20220113121143.22280-13-alim.akhtar@samsung.com>
+References: <CGME20220113122435epcas5p18e6a2699f193b9e1287588278a570235@epcas5p1.samsung.com>
+ <20220113121143.22280-1-alim.akhtar@samsung.com> <20220113121143.22280-19-alim.akhtar@samsung.com>
+In-Reply-To: <20220113121143.22280-19-alim.akhtar@samsung.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 16 Jan 2022 13:09:05 +0100
-Message-ID: <CACRpkdZkc9ShabhKoVnXMfQp3M7siYUYirBFVBP8y3dLEw5azA@mail.gmail.com>
-Subject: Re: [PATCH 12/23] dt-bindings: add vendor prefix for Tesla
+Date:   Sun, 16 Jan 2022 13:12:21 +0100
+Message-ID: <CACRpkdYSR5hiVKoZTffxudNOUQCNFqX-yuys-xgeocn2vG_ecg@mail.gmail.com>
+Subject: Re: [PATCH 18/23] spi: s3c64xx: Add spi port configuration for Tesla
+ FSD SoC
 To:     Alim Akhtar <alim.akhtar@samsung.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         soc@kernel.org, linux-clk@vger.kernel.org,
@@ -58,7 +59,8 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         catalin.marinas@arm.com, robh+dt@kernel.org,
         krzysztof.kozlowski@canonical.com, s.nawrocki@samsung.com,
         linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com,
-        linux-fsd@tesla.com
+        linux-fsd@tesla.com, broonie@kernel.org, linux-spi@vger.kernel.org,
+        Aswani Reddy <aswani.reddy@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -66,13 +68,19 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Jan 13, 2022 at 1:24 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
 
-> Add vendor prefix for the Tesla (https://www.tesla.com)
+> This patch adds compatible and port configuration for
+> spi controller for Tesla Full Self-Driving SoC.
 >
 > Cc: linux-fsd@tesla.com
+> Cc: broonie@kernel.org
+> Cc: linux-spi@vger.kernel.org
+> Signed-off-by: Aswani Reddy <aswani.reddy@samsung.com>
 > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-That's an interesting new SoC vendor...
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Note to self: now that I see that the Samsung "S3C" SPI controller,
+which I was thinking of as "some kind of early 2000s legacy" is used
+by the very latest silicon I bumped up fixing it to use GPIO descriptors
+a bit on my TODO list.
 
 Yours,
 Linus Walleij
