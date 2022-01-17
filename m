@@ -2,35 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2805C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2267DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241693AbiAQREH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 12:04:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241347AbiAQRCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:02:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7FD5C0617AB;
-        Mon, 17 Jan 2022 09:01:52 -0800 (PST)
+        id S242777AbiAQRFv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 12:05:51 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:50204 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242350AbiAQRDw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:03:52 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A6CA1611E0;
-        Mon, 17 Jan 2022 17:01:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C223BC36AE7;
-        Mon, 17 Jan 2022 17:01:50 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5FB04B8113E;
+        Mon, 17 Jan 2022 17:03:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C178DC36AEC;
+        Mon, 17 Jan 2022 17:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642438912;
-        bh=lwk4z1qF/+7RF7Vl9dzFXszBwZQtFzeHpBCcrjjmNeI=;
+        s=k20201202; t=1642439030;
+        bh=GnC4qoc3qNiPeEEPfhsgJBYgncJZP5nIfaEdUe0w6x0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k5G2NxgI5a3ilb2QjzYL0xph1/f0/kbgy3XvE1P31JL4pgNd1X/7mnWcBkvyUanxm
-         J8EY/IV6c5rXxEadz/XOXKsoVk781AP1fTpE8rvCTeYfr7aI4LbI//TsFTQDGOkubV
-         EnS4s4rufWG51C9iS0zgW/0SyiB+T99b4W9gMSgYqKsYvDwnfol8tIwXLv3iYhnQ4W
-         t8BsJU0EocM0FW4XPw2FyR/yixht3mnB77hEz6xkRSI2rBpzxwcz7zM7slGgXCLims
-         5WraWBgmtLnvXp1KpUEsGH77ZBSHVIy/fwe57UFBDabKeR8OCZ9d8zL+tLtOnOQ/mP
-         AcLXtGEH8BnOw==
+        b=ZWmBINbiIDoDcKkL+Vkin3SPiX8wID05i6kVA7cgLwmBh/dCq9Qz8GyXWtyr8SEdG
+         k2SbdPZIQgAC85+xucyOoq/IedlljdZ0D8h2IbRWb3lNLL28nQUcPc0jf2EMWnaQVO
+         17yOLFn0R9Izqrb/WLxbAXJY/69r3ZVeh0VY4sFoBfPJ3Fkck2LAadyX1XtP3yiL0M
+         jvNPeZgM/yTStomS/m1JNLOjeV/+psKHYijSE/w4sS6Nx55mcXuOu1r5ejhFVNXd1R
+         yv1xupfXI+ogC81Yp3NfeWzt++shtH3NpX7y2U4P98Leg+i4f9nzeNk8fyx67OquM9
+         LXX2jFzFB7dRA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -40,12 +37,12 @@ Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.15 11/44] clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
-Date:   Mon, 17 Jan 2022 12:00:54 -0500
-Message-Id: <20220117170127.1471115-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 11/34] clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
+Date:   Mon, 17 Jan 2022 12:03:01 -0500
+Message-Id: <20220117170326.1471712-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220117170127.1471115-1-sashal@kernel.org>
-References: <20220117170127.1471115-1-sashal@kernel.org>
+In-Reply-To: <20220117170326.1471712-1-sashal@kernel.org>
+References: <20220117170326.1471712-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -115,10 +112,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 41 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index d6eed760327d0..608e0e8ca49a8 100644
+index 0a68af6eec3dd..d42551a46ec91 100644
 --- a/drivers/clk/meson/gxbb.c
 +++ b/drivers/clk/meson/gxbb.c
-@@ -713,6 +713,35 @@ static struct clk_regmap gxbb_mpll_prediv = {
+@@ -712,6 +712,35 @@ static struct clk_regmap gxbb_mpll_prediv = {
  };
  
  static struct clk_regmap gxbb_mpll0_div = {
@@ -154,7 +151,7 @@ index d6eed760327d0..608e0e8ca49a8 100644
  	.data = &(struct meson_clk_mpll_data){
  		.sdm = {
  			.reg_off = HHI_MPLL_CNTL7,
-@@ -749,7 +778,16 @@ static struct clk_regmap gxbb_mpll0 = {
+@@ -748,7 +777,16 @@ static struct clk_regmap gxbb_mpll0 = {
  	.hw.init = &(struct clk_init_data){
  		.name = "mpll0",
  		.ops = &clk_regmap_gate_ops,
@@ -172,7 +169,7 @@ index d6eed760327d0..608e0e8ca49a8 100644
  		.num_parents = 1,
  		.flags = CLK_SET_RATE_PARENT,
  	},
-@@ -3044,7 +3082,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+@@ -3043,7 +3081,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
  		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
  		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
  		[CLKID_VAPB]		    = &gxbb_vapb.hw,
@@ -181,7 +178,7 @@ index d6eed760327d0..608e0e8ca49a8 100644
  		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
  		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
  		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
-@@ -3439,7 +3477,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
+@@ -3438,7 +3476,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
  	&gxbb_mpll0,
  	&gxbb_mpll1,
  	&gxbb_mpll2,
