@@ -2,148 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9716FC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 15:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6A7C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 16:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234854AbiAQPAs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 10:00:48 -0500
-Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:47472
-        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234686AbiAQPAs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 10:00:48 -0500
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S237727AbiAQQ67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 11:58:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44458 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237741AbiAQQ65 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 11:58:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F0FC061574;
+        Mon, 17 Jan 2022 08:58:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EED993F1E8
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 15:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1642431646;
-        bh=P1t3TusiuWvEJQvj6KQ3UI4zLwE3rcF19O3O8iabinU=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=S+hn/P/+ORd5yFuloev1kgWwDaFAaeiN7nXsJ/Qp+89KwtPN2IBixal8kgeBesRlT
-         JuMKK4SrCzKujGFYUxxNKQOm0z40SXJhTOLhDq6j0VDJeJCpv8mH7761XWr1F55ZmH
-         hJ6gp4DxAbO+DO2M4AqyUubDXzpV8h+tekH2Au09TTKSWGEiW3p+iDEQWOH4Oa52oQ
-         Te3cUZi13alBYA2rH2c53+6rO+sWQgDlZw+xmz1+DhnLX3WgX7EiPopvGNz/ix18YE
-         oGpKWMwnMk5fZO+SJ/inzEoQh6y3cF13LtsklT1mh+862F2jLFwWz2QhcrJ7wYrqwZ
-         qQnXAJqSWbkpA==
-Received: by mail-ed1-f72.google.com with SMTP id p14-20020aa7c88e000000b0040240401a02so3594391eds.14
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 07:00:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=P1t3TusiuWvEJQvj6KQ3UI4zLwE3rcF19O3O8iabinU=;
-        b=c6e+Eay+YNSeprjECMwCiUNpyPyISGaRSKcYJXzUY/0E+nK/Rz3r7PdB2iEZ5xF5wN
-         M14KR9PLWNydBQr5taSZxhJaI2NCdixUE4zxFHxGV9De/14HpkpGg90SRrGiZVrONqf0
-         6sxxo2X6nEadBDsdyJmiNEm5up8opoPukxT0PUup2hEisKKcWjapB+VsaHLoskwLMJob
-         Qq1piXsgAbX3wJ5Tbs9cpkEX//BonzONowL94YfQjhZckqf2T27OvtCJt0C3E8mbkzlc
-         +C1ySvRXRCCJQD08i3Ci8RdQ56u/bNTryddoAD0NBiXGp8zO8EwQuIV/hAGYWaZBwqiR
-         q15g==
-X-Gm-Message-State: AOAM530u/EmUe6ZvwwXQFEMGGCKMEvYJMScyFkYcGAXhCqS2vuu3gOx4
-        HCmOWYVX4ZhNW/GIMDVV9J8GrJtjiD3e0r0LczTfRdjKXDBFgwTzDcZjfDsB5Euelofu1lh8wvr
-        2VlOhFhUAW7Gtk31q5tcWAtelGbm4q2UhnvzcrQ==
-X-Received: by 2002:a17:906:8053:: with SMTP id x19mr11918939ejw.485.1642431646539;
-        Mon, 17 Jan 2022 07:00:46 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwi5fMBz8oaksx3ekbOg74TUZaXBrRwCj5lzvu6SsBncvDyD0ZOfpPjH3B+rGmVa8PY2miIKA==
-X-Received: by 2002:a17:906:8053:: with SMTP id x19mr11918904ejw.485.1642431646225;
-        Mon, 17 Jan 2022 07:00:46 -0800 (PST)
-Received: from [192.168.0.39] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id bg20sm3958261ejb.59.2022.01.17.07.00.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jan 2022 07:00:45 -0800 (PST)
-Message-ID: <9b98fd89-87b5-5026-fb0c-16bb956801ea@canonical.com>
-Date:   Mon, 17 Jan 2022 16:00:44 +0100
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2599B61196;
+        Mon, 17 Jan 2022 16:58:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 557D6C36AE3;
+        Mon, 17 Jan 2022 16:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642438736;
+        bh=jMvOlTe10aiL8xVey/HFWpKZibYbbP0tunjN77I5CEA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=H9Y43t1tmAXNYlc//esilVi2HvXiRWDQ0sSUipvB08xhigdJpOWH4JmVufwTmt7Ge
+         z1fmrq3zLZUqqdb6QdP2jBAbNHlpAy/nCPzRNqBIVdWjfrN8JO78tOGLS+ZepU7Ruc
+         Xgdshv6/XV5JY3u4/iVkZKzt0e9C00TsJk3J9p4jLUKmfWD+j0q7HwI2piFC2poJTw
+         l/Z+7VHXafimMl1BOpKmaDEbe+Z28m7vZj3DabFMLjnI0lOdID3H6Rt6c2UA6yMzD9
+         E2jD40O3LLfXLv2/U0WA8k1jKVsrJUFAkTfUuVUews9JrHHgFCA2lFt+V430SO3zmf
+         13NIjEX1gAICg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Changcheng Deng <deng.changcheng@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>, Abel Vesa <abel.vesa@nxp.com>,
+        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, shawnguo@kernel.org, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.16 01/52] clk: imx: Use div64_ul instead of do_div
+Date:   Mon, 17 Jan 2022 11:58:02 -0500
+Message-Id: <20220117165853.1470420-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH 13/23] dt-bindings: arm: add Tesla FSD ARM SoC
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SoC Team <soc@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>, linux-fsd@tesla.com
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>
- <CGME20220113122408epcas5p45053d1bf0acf2d8233a98b6c1abab6eb@epcas5p4.samsung.com>
- <20220113121143.22280-14-alim.akhtar@samsung.com>
- <53c17ddc-a049-72ed-7237-de23db7889da@canonical.com>
- <085801d80967$e4b8fe00$ae2afa00$@samsung.com>
- <5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com>
- <00c901d80ba5$c9ae6ab0$5d0b4010$@samsung.com>
- <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/01/2022 15:14, Arnd Bergmann wrote:
-> On Mon, Jan 17, 2022 at 2:26 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
->>
->>> I cannot judge how different this is from Exynos subarchitecture - looking at
->>> patches it is not different - so I could understand a FSD sub-arch with only one
->>> SoC.
->>>
->> I understand, it is a bit difficult to visualize it with the current patch set.
->> As discuss on the other thread, FSD is different, more over the vendor is different, internal design is different.
-> 
-> Is it based on another SoC design then? Most new SoCs are derived from
-> some other
-> one, so it makes sense to put it into the same family. E.g. the Apple
-> M1 takes bits from
-> both Exynos and PA-Semi SoCs but has more newly added components than
-> either one.
+From: Changcheng Deng <deng.changcheng@zte.com.cn>
 
-It seems Apple M1 shares only few bits with SoC. I am aware of only UART
-driver as directly re-usable.
+[ Upstream commit c1b6ad9a902539f9c037b6b3c35cb134c5724022 ]
 
-> 
-> I would argue that if this SoC shares the pinctrl, clock, spi, adc,
-> and timer implementation
+do_div() does a 64-by-32 division. Here the divisor is an unsigned long
+which on some platforms is 64 bit wide. So use div64_ul instead of do_div
+to avoid a possible truncation.
 
-Plus: UART, watchdog, PWM, I2C, I2S, USB PHY, DWC3 USB (in Exynos
-flavor), UFS (also in Exynos-looking flavor), MFC (video codec), some
-similarities in DW PCIe, TMU (thermal). Looking at DTS there are
-differences but just few comparing to most of shared blocks.
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Changcheng Deng <deng.changcheng@zte.com.cn>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+Link: https://lore.kernel.org/r/20211118080634.165275-1-deng.changcheng@zte.com.cn
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/imx/clk-pllv3.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Additionally SoC BSP (and maybe SoC itself...) was actually developed or
-co-developed by Samsung, judging by copyrights in the BSP code. Even the
-original DTSI has:
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index 20ee9611ba6e3..eea32f87c60aa 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -247,7 +247,7 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	div = rate / parent_rate;
+ 	temp64 = (u64) (rate - div * parent_rate);
+ 	temp64 *= mfd;
+-	do_div(temp64, parent_rate);
++	temp64 = div64_ul(temp64, parent_rate);
+ 	mfn = temp64;
+ 
+ 	temp64 = (u64)parent_rate;
+@@ -277,7 +277,7 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	div = rate / parent_rate;
+ 	temp64 = (u64) (rate - div * parent_rate);
+ 	temp64 *= mfd;
+-	do_div(temp64, parent_rate);
++	temp64 = div64_ul(temp64, parent_rate);
+ 	mfn = temp64;
+ 
+ 	val = readl_relaxed(pll->base);
+@@ -334,7 +334,7 @@ static struct clk_pllv3_vf610_mf clk_pllv3_vf610_rate_to_mf(
+ 		/* rate = parent_rate * (mfi + mfn/mfd) */
+ 		temp64 = rate - parent_rate * mf.mfi;
+ 		temp64 *= mf.mfd;
+-		do_div(temp64, parent_rate);
++		temp64 = div64_ul(temp64, parent_rate);
+ 		mf.mfn = temp64;
+ 	}
+ 
+-- 
+2.34.1
 
-	TURBO TRAV SoC device tree source
-	Copyright (c) 2017 Samsung Electronics Co., Ltd.
-
-
-Tesla could still customize it a lot, but it is a strong hint that most
-of it came from Samsung LSI and shares with existing Samsung designs.
-
-Have in mind that recent Exynos chips are significantly different than
-early ARMv7 or ARMv8 designs and we still consider them part of Exynos
-family.
-
-> with Exynos, we should consider it part of the Exynos family,
-> regardless of what other
-> blocks may exist next to those.
-
-Yes. I don't see the benefit of keeping it outside of Exynos. It will
-sprinkle "depends on ARCH_EXYNOS || ARCH_FSD" all over (or depend on
-Exynos like you suggested).
-
-
-Best regards,
-Krzysztof
