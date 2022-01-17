@@ -2,97 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 087C1C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 09:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB09C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 10:31:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235980AbiAQJr3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 04:47:29 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4415 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbiAQJr2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 04:47:28 -0500
-Received: from fraeml744-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JcnBC5TTSz67jnf;
-        Mon, 17 Jan 2022 17:47:15 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml744-chm.china.huawei.com (10.206.15.225) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Mon, 17 Jan 2022 10:47:26 +0100
-Received: from localhost (10.47.77.46) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.21; Mon, 17 Jan
- 2022 09:47:25 +0000
-Date:   Mon, 17 Jan 2022 09:47:28 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-CC:     Alim Akhtar <alim.akhtar@samsung.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <olof@lixom.net>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <robh+dt@kernel.org>,
-        <s.nawrocki@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
-        <pankaj.dubey@samsung.com>, <linux-fsd@tesla.com>,
-        Tamseel Shams <m.shams@samsung.com>
-Subject: Re: [PATCH 20/23] dt-bindings: iio: adc: exynos-adc: Add ADC-V3
- variant
-Message-ID: <20220117094728.000051b8@Huawei.com>
-In-Reply-To: <75ae8b8c-e416-5007-b995-f1317ef207d4@canonical.com>
-References: <20220113121143.22280-1-alim.akhtar@samsung.com>
-        <CGME20220113122447epcas5p266d44c8df143229d22dfa700c285a786@epcas5p2.samsung.com>
-        <20220113121143.22280-21-alim.akhtar@samsung.com>
-        <75ae8b8c-e416-5007-b995-f1317ef207d4@canonical.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
+        id S238618AbiAQKbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 05:31:22 -0500
+Received: from foss.arm.com ([217.140.110.172]:56348 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238606AbiAQKbV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Jan 2022 05:31:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D1A96D;
+        Mon, 17 Jan 2022 02:31:20 -0800 (PST)
+Received: from bogus (unknown [10.57.38.209])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7C0D3F73D;
+        Mon, 17 Jan 2022 02:31:17 -0800 (PST)
+Date:   Mon, 17 Jan 2022 10:31:00 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Cristian Marussi <cristian.marussi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        james.quinlan@broadcom.com, Jonathan.Cameron@Huawei.com,
+        f.fainelli@gmail.com, etienne.carriere@linaro.org,
+        vincent.guittot@linaro.org, souvik.chakravarty@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v8 11/11] clk: scmi: Support atomic clock enable/disable
+ API
+Message-ID: <20220117103100.c6ltxnz4iqmbc4b5@bogus>
+References: <20211220195646.44498-1-cristian.marussi@arm.com>
+ <20211220195646.44498-12-cristian.marussi@arm.com>
+ <20220114230839.ABD63C36AE9@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.77.46]
-X-ClientProxiedBy: lhreml709-chm.china.huawei.com (10.201.108.58) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220114230839.ABD63C36AE9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 13 Jan 2022 14:32:12 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com> wrote:
-
-> On 13/01/2022 13:11, Alim Akhtar wrote:
-> > This patch adds a new compatible string for exynos's ADC-V3 variant.
+On Fri, Jan 14, 2022 at 03:08:37PM -0800, Stephen Boyd wrote:
+> Quoting Cristian Marussi (2021-12-20 11:56:46)
+> > Support also atomic enable/disable clk_ops beside the bare non-atomic one
+> > (prepare/unprepare) when the underlying SCMI transport is configured to
+> > support atomic transactions for synchronous commands.
 > > 
-> > Cc: linux-fsd@tesla.com
-> > Signed-off-by: Tamseel Shams <m.shams@samsung.com>
-> > Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-
-Please cc linux-iio@vger.kernel.org for next version...
-
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 > > ---
-> >  .../devicetree/bindings/iio/adc/samsung,exynos-adc.yaml          | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> > index 81c87295912c..9303053759ca 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.yaml
-> > @@ -14,6 +14,7 @@ properties:
-> >      enum:
-> >        - samsung,exynos-adc-v1                 # Exynos5250
-> >        - samsung,exynos-adc-v2
-> > +      - samsung,exynos-adc-v3  
+> > NOTE THAT STILL THERE'S NO FINE GRAIN CONTROL OVER SELECTION
+> > OF WHICH CLOCK DEVICES CAN SUPPORT ATOMIC AND WHICH SHOULD NOT
+> > BASED ON CLOCK DEVICES ENABLE LATENCY.
+> > THIS HAS STILL TO BE ADDED IN SCMI PROTOCOL SPEC.
 > 
-> Please use SoC-specific compatible. IP block versions are tricky because:
-> 1. Documentation/datasheet mentioning which SoC has which block version
-> are not public.
-> 2. Neither are public the datasheets for ADC blocks.
-> 3. The versioning of IP blocks can be inaccurate.
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Why are you yelling on the internet? :-) I guess I need to ack this.
+>
 
+It is for the partners who request such changes. We are trying to prototype
+and share the code and ask for feedback before we finalise the specification.
+
+In fact it is other way around for you 😁. Not to ack as it is not yet final
+😉. At least I need to wait until the spec contents are finalised before I
+can merge with your ack 😁. But I agree RFC would have indicated that along
+with the above background instead of *yelling*. Cristian assumed everyone
+is aware of the content as quite a few are involved in offline discussions.
+
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+
+Thanks anyways, will use it if nothing changes.
+
+-- 
+Regards,
+Sudeep
