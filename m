@@ -2,104 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47ECC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 07:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB46C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 09:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235094AbiAQHDv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 02:03:51 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:31416 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234938AbiAQHDs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 02:03:48 -0500
-Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Mon, 17 Jan
- 2022 15:03:47 +0800
-Message-ID: <8783eb66-16ee-3b8b-5d55-73b49deab3a2@amlogic.com>
-Date:   Mon, 17 Jan 2022 15:03:47 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v9 3/4] clk: meson: add DT documentation for emmc clock
- controller
-Content-Language: en-US
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
+        id S233477AbiAQJAf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 04:00:35 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:59142 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229484AbiAQJAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 04:00:34 -0500
+X-UUID: ec0394411d204e49978411e812a1d059-20220117
+X-UUID: ec0394411d204e49978411e812a1d059-20220117
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1176267212; Mon, 17 Jan 2022 17:00:32 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 17 Jan 2022 17:00:30 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 17 Jan 2022 17:00:30 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+CC:     Miles Chen <miles.chen@mediatek.com>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20220113115745.45826-1-liang.yang@amlogic.com>
- <20220113115745.45826-4-liang.yang@amlogic.com>
- <20220113212957.768FFC36AE3@smtp.kernel.org>
- <5d99ac02-a246-5bcc-2ecb-371b0d193537@amlogic.com>
- <CAFBinCDkNk+Ba340vshhL2rE76U9qb_dZ5ZsgWnMgFYpL6i1jA@mail.gmail.com>
-From:   Liang Yang <liang.yang@amlogic.com>
-In-Reply-To: <CAFBinCDkNk+Ba340vshhL2rE76U9qb_dZ5ZsgWnMgFYpL6i1jA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.106]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: mediatek: add unregister logic to mtk_clk_simple_probe error path
+Date:   Mon, 17 Jan 2022 17:00:29 +0800
+Message-ID: <20220117090030.13064-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Martin,
+Stephen pointed out that there is no unregister logic in
+mtk_clk_simple_probe() error path [1].
+Fix it by adding unregister logic to mtk_clk_simple_probe().
 
-On 2022/1/15 8:09, Martin Blumenstingl wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> Hi Liang,
-> 
-> On Fri, Jan 14, 2022 at 4:06 AM Liang Yang <liang.yang@amlogic.com> wrote:
-> [...]
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - "amlogic,axg-mmc-clkc", "syscon"
->>>
->>> Why is it a syscon?
->>
->> The register documented by reg is shared with SD/eMMC controller port C,
->> and it need to be ops on NFC driver.
-> Can you please share an example how the .dts would look like in the
-> end for two example cases:
-> 1) using the sd_emmc_c MMC interface > 2) not using the MMC interface of sd_emmc_c but only using it's clocks
-> for the NFC
-I think both EMMC(although it is not implemented by 'axg-mmc-clkc'  yet) 
-and NAND clock have the same way in dts:
-		......
-		clocks = <&clkc CLKID_SD_EMMC_C>,
-			<&sd_emmc_c_clkc CLKID_MMC_DIV>,
-			<&sd_emmc_c_clkc CLKID_MMC_PHASE_RX>,
-			<&sd_emmc_c_clkc CLKID_MMC_PHASE_TX>;
-		clock-names = "core", "device", "rx", "tx";
-		amlogic,mmc-syscon = <&sd_emmc_c_clkc>;
-		......
+[1] https://lore.kernel.org/linux-mediatek/20220114221930.660B5C36AE9@smtp.kernel.org/
 
-> 
-> Initially I wanted to suggest the usage of a sub-node with compatible
-> = "mmc-slot" (see
-> Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.txt for an
-> example) to decide whether the MMC controller is registered or whether
-> just the clock controller is registered.
-> However, the mmc-slot compatible string is not documented in
-> Documentation/devicetree/bindings/mmc/mmc-controller.yaml currently.
-> Maybe the MMC maintainers have any suggestions if other IPs have
-> similar requirements (for IPs with shared parts).
-> 
-> 
-> Best regards,
-> Martin
-> 
-> .
+Fixes: c58cd0e40ffa ("clk: mediatek: Add mtk_clk_simple_probe() to simplify clock providers")
+Cc: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 8d5791b3f460..edf21975cb4d 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -161,6 +161,22 @@ int mtk_clk_register_gates(struct device_node *node,
+ }
+ EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
+ 
++static void mtk_clk_unregister_gates(const struct mtk_gate *clks,
++		int num, struct clk_onecell_data *clk_data)
++{
++	int i;
++	const struct mtk_gate *gate;
++	struct clk *clk;
++
++	for (i = 0; i < num; i++) {
++		gate = &clks[i];
++		clk = clk_data->clks[gate->id];
++
++		if (!IS_ERR_OR_NULL(clk))
++			clk_unregister(clk);
++	}
++}
++
+ struct clk *mtk_clk_register_composite(const struct mtk_composite *mc,
+ 		void __iomem *base, spinlock_t *lock)
+ {
+@@ -320,15 +336,17 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 
+ 	r = mtk_clk_register_gates(node, mcd->clks, mcd->num_clks, clk_data);
+ 	if (r)
+-		goto free_data;
++		goto err_free_data;
+ 
+ 	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
+ 	if (r)
+-		goto free_data;
++		goto err_unregister_gates;
+ 
+ 	return r;
+ 
+-free_data:
++err_unregister_gates:
++	mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_data);
++err_free_data:
+ 	mtk_free_clk_data(clk_data);
+ 	return r;
+ }
+-- 
+2.18.0
+
