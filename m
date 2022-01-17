@@ -2,26 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743D6C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 02:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DE4C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 06:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236774AbiAQCnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jan 2022 21:43:04 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:21845 "EHLO
+        id S234655AbiAQGYd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 01:24:33 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:60889 "EHLO
         mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232774AbiAQCnD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jan 2022 21:43:03 -0500
+        with ESMTP id S234661AbiAQGYc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 01:24:32 -0500
 Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
  (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Mon, 17 Jan
- 2022 10:43:01 +0800
-Message-ID: <d6933fd7-ec4c-aee1-5cf4-9cbcf881a33d@amlogic.com>
-Date:   Mon, 17 Jan 2022 10:43:01 +0800
+ 2022 14:24:28 +0800
+Message-ID: <fe77fd6b-788f-1694-f260-f95e54cf4ef3@amlogic.com>
+Date:   Mon, 17 Jan 2022 14:24:28 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v9 3/4] clk: meson: add DT documentation for emmc clock
- controller
+Subject: Re: [PATCH v9 4/4] clk: meson: add sub MMC clock controller driver
 Content-Language: en-US
 To:     Stephen Boyd <sboyd@kernel.org>,
         Jerome Brunet <jbrunet@baylibre.com>,
@@ -39,14 +38,14 @@ CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 References: <20220113115745.45826-1-liang.yang@amlogic.com>
- <20220113115745.45826-4-liang.yang@amlogic.com>
- <20220113212957.768FFC36AE3@smtp.kernel.org>
- <5d99ac02-a246-5bcc-2ecb-371b0d193537@amlogic.com>
- <20220114225957.285ADC36AE7@smtp.kernel.org>
+ <20220113115745.45826-5-liang.yang@amlogic.com>
+ <20220113213513.9819AC36AEA@smtp.kernel.org>
+ <09ff9044-9abc-d1ad-26c1-5e6ece56d30c@amlogic.com>
+ <20220114230130.35EAAC36AE7@smtp.kernel.org>
 From:   Liang Yang <liang.yang@amlogic.com>
-In-Reply-To: <20220114225957.285ADC36AE7@smtp.kernel.org>
+In-Reply-To: <20220114230130.35EAAC36AE7@smtp.kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.28.39.106]
 X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
  (10.28.11.5)
@@ -56,64 +55,54 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 2022/1/15 6:59, Stephen Boyd wrote:
+On 2022/1/15 7:01, Stephen Boyd wrote:
 > [ EXTERNAL EMAIL ]
 > 
-> Quoting Liang Yang (2022-01-13 19:06:07)
->> Hi Stephen,
->>
->> Thanks for your quick response.
->>
->> On 2022/1/14 5:29, Stephen Boyd wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> Quoting Liang Yang (2022-01-13 03:57:44)
->>>> Document the MMC sub clock controller driver, the potential consumer
->>>> of this driver is MMC or NAND. Also add four clock bindings IDs which
->>>> provided by this driver.
->>>>
->>>> Signed-off-by: Liang Yang <liang.yang@amlogic.com>
->>>> ---
->>>>    .../bindings/clock/amlogic,mmc-clkc.yaml      | 64 +++++++++++++++++++
->>>>    include/dt-bindings/clock/amlogic,mmc-clkc.h  | 14 ++++
->>>>    2 files changed, 78 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->>>>    create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
+> Quoting Liang Yang (2022-01-13 21:14:46)
+>> On 2022/1/14 5:35, Stephen Boyd wrote:
+>>> Quoting Liang Yang (2022-01-13 03:57:45)
+>>>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
 >>>> new file mode 100644
->>>> index 000000000000..a274c3d5fc2e
+>>>> index 000000000000..f53977f61390
 >>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->>>> @@ -0,0 +1,64 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/amlogic,mmc-clkc.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +++ b/drivers/clk/meson/mmc-clkc.c
+>>>> @@ -0,0 +1,300 @@
+> [..]
 >>>> +
->>>> +title: Amlogic MMC Sub Clock Controller Driver Device Tree Bindings
+>>>> +static int mmc_clkc_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +       struct clk_hw_onecell_data *onecell_data;
+>>>> +       struct device *dev = &pdev->dev;
+>>>> +       struct mmc_clkc_data *data;
+>>>> +       struct regmap *map;
+>>>> +       struct clk_regmap *clk, *core;
+>>>> +       struct meson_sclk_div_data *div_data;
 >>>> +
->>>> +maintainers:
->>>> +  - jianxin.pan@amlogic.com
->>>> +  - liang.yang@amlogic.com
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - "amlogic,axg-mmc-clkc", "syscon"
+>>>> +       /*cast to drop the const in match->data*/
 >>>
->>> Why is it a syscon?
+>>> Space after *, also why do we need to cast away const? The user of this
+>>> pointer passes it all the way down to mmc_clkc_register_clk() which
+>>> could take the data as const void pointer and decide to cast away const
+>>> there.
 >>
->> The register documented by reg is shared with SD/eMMC controller port C,
->> and it need to be ops on NFC driver.
+>> if use 'const' here, it  will report a warning:
+>> drivers/clk/meson/mmc-clkc.c:224:7: error: assignment discards ‘const’
+>> qualifier from pointer targe
+>> t type [-Werror=discarded-qualifiers]
 >>
+>>     data = (const struct mmc_clkc_data *)of_device_get_match_data(dev);
 > 
-> Is this the case where the clk is inside the SD/eMMC controller? Can the
-yes.
-> mmc driver register the clk controller from there and pass it an iomem
-> pointer to poke clks?
-we can't do that since EMMC and NAND is mutually exclusivem. both of 
-them share the same data pins.
+> Of course. The type declaration up above needs const added to it.The parm of mmc_clkc_register_clk_with_parent(...., void *data) does not 
+have 'const', so make the type declaration cause a further 'const' cast 
+warning. Could i copy these infos just like below:
+
+struct mmc_clkc_data *data_clkc;
+......
+data = of_device_get_match_data(dev);
+data_clkc = devm_kmalloc(dev, sizeof(*data_clkc), GFP_KERNEL);
+memcpy(data_clkc, data, sizeof(*data_clkc));
+......
+clk = mmc_clkc_register_clk_with_parent(...., &data_clkc->rx);
+
 > 
 > .
