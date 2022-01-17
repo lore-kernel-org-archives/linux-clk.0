@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5BEC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9764FC4167B
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:11:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242350AbiAQRIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 12:08:01 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:55978 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235530AbiAQRF4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:05:56 -0500
+        id S242943AbiAQRLV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 12:11:21 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:53986 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241509AbiAQRGn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:06:43 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ABE661287;
-        Mon, 17 Jan 2022 17:05:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DEBC36AE3;
-        Mon, 17 Jan 2022 17:05:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3F3F3B81131;
+        Mon, 17 Jan 2022 17:06:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9DEC36AE3;
+        Mon, 17 Jan 2022 17:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642439154;
+        s=k20201202; t=1642439201;
         bh=VXoP1pDXXdxKyJvKkkNho3VgJCeVldHfGQGr+ET3sW0=;
         h=From:To:Cc:Subject:Date:From;
-        b=VEPKC6s3u8lGXu+64CZ9yc5optP4axtoyXwaYCQu19CPS0/xXm80J/JFG0TL2sCh9
-         dlTYJOKZzTmnYb/DIBLK2IZ8RlhO+Efg4lvUPK+Ja4YzCDZYAQRUsyoHllNKlKOOXi
-         97G5GhU8byHa1LuRqppmIDE01jfyXsO6Na2eKmsAFyy8pjzRfRsC3WOvBRfsnRQUyb
-         JiJtg4lB4g1Z9ALIAx8VLR4GhxBkbo3ON3sNQIAqrjOGrOk/xN1spgKU/3rMwXF3NC
-         OGkF7cIrng0JdPzGx2uox1k93FLPRrufoYBiuTj3+hmDurPT7tjw4gmXl3j1TYcoMv
-         hTjk6RY7aMjUQ==
+        b=tTwzhv4QfSw1DeYHeyIooOso2eUlgzVBngVgeX90WsksSA9w7gwxD9ygGranhVAg/
+         Jvhb4PNV42AHddo3iVd2LXiV/qiitvkZbjwc/GRQv7Ee47z90xQcVTuosDACzBj0PR
+         F0HAfCfBDMBTnGJ9p9p1WOLnWa7iwu3AqywCXQUM1xRlSCElfkXbVjR0USgqgqPzUV
+         PhrWP4dJ6o1IhFjqApUENDsqsYd1xrzWaFzbCx0j0KVVF1+0vArK8nFbsnhIQHgEcB
+         gfHjqALvd1KpOjOzIpD8ll930ee0qMLtq4hSgUbM4SKNTUMpLyHlBUVnx79Fgiy0ZU
+         sNU8jGHHm1nVw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Changcheng Deng <deng.changcheng@zte.com.cn>,
@@ -35,9 +35,9 @@ Cc:     Changcheng Deng <deng.changcheng@zte.com.cn>,
         Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
         sboyd@kernel.org, shawnguo@kernel.org, linux-clk@vger.kernel.org,
         linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 01/17] clk: imx: Use div64_ul instead of do_div
-Date:   Mon, 17 Jan 2022 12:05:35 -0500
-Message-Id: <20220117170551.1472640-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/16] clk: imx: Use div64_ul instead of do_div
+Date:   Mon, 17 Jan 2022 12:06:23 -0500
+Message-Id: <20220117170638.1472900-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 X-stable: review
