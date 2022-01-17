@@ -2,127 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 137D3C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 19:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4358BC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 20:41:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229843AbiAQTS4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 14:18:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49090 "EHLO
+        id S235618AbiAQUlY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 15:41:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242636AbiAQTS4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 14:18:56 -0500
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D572CC06173E
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 11:18:55 -0800 (PST)
-Received: by mail-ua1-x92c.google.com with SMTP id h11so32309219uar.5
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 11:18:55 -0800 (PST)
+        with ESMTP id S231432AbiAQUlY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 15:41:24 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1D3C06173F
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 12:41:23 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id l16so11957074pjl.4
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 12:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=lixom-net.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vjIp+UiqOSyx1wj8+g5PpQdrfx2cigslZ1HN9GuuKpo=;
-        b=k0CQ2BuChSX3ouSjKHcFaRNDMkbsOesrlL29L5az9lJ9/1ktY84vG3+v/Lakm4jKNU
-         RliGgEg4I/c0G7Bug565ulDJPXP7R7FM/LLuzVJ2HigfhjyaIYIPO23tPUZhLS5abj+p
-         fTblXAD6q3hh7vYlCJefU4J56xQD0qNNeebT56o4fGsz4t6gUaftpaHUYTb6oTQMrePc
-         tEgxcPmTMeqJXBMA7mRlpLUiprlfkPN3tyOlDVmxHXQiluax8S7Mh9bU+9gJ+wDZOMmc
-         3XV3wJgaxlujBi9H/Eikg8Jl5eztQ5mz4dM6XJ6GTFF93WjRIvY7NdjA75RPK6mDBG/J
-         ABcw==
+        bh=DaEW+T1OlYjEvgl1v+fiAGbi9cgefd6M15EmTSYK7p8=;
+        b=qL+9oymID13l5leI9oL2NXeoWZDZS0FnLGl7BaAsfC/9si8ozIDAt8ZIV7tc5iA1o2
+         Br2Qr3OkBwB+nNW4I4tX432o/2CvCNlJydzyByC1DG5NlyTyDPYf+cg9VcYsDwUocI4O
+         JBsIy0WWuiwggkFd88mJ94QQSrxUEc9kfkVaZzYCt2/9bcN54FX4s24tbsCp6Gx+7ID+
+         +1HVrrdvbuBG9PdlQNiOcrdvwH6Ir+aW51KKprc9yP1DTcvoLL3xPYbtxQzVDiu/F6Mq
+         6s+yGQFUqij7Q12adcg76wW6B3GFphK/zzKD3LtUfOuoa5JfjIiaVSB8p46MFjNS9e4t
+         8DRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vjIp+UiqOSyx1wj8+g5PpQdrfx2cigslZ1HN9GuuKpo=;
-        b=Y3Cc0LrZ6xcByDMLc7fIcLQ2SlxFIbQ738ltG2I6dnjTo8DptKJEPk5mJDNtsMcTXC
-         BbhQpADkOFZlJNFwPJYnA0th98ijG52OEPFDWCz9zGnraTx5wLzySFMLOJfp4DIELmW+
-         pPVxcf5vmFAvqGLT9W7GnUdPW9jLpJMsxHuNCxHMmK1a9ZoqigSuK2lzXX3lOZQZFVT1
-         bvTGL/IAm8970jUZ5RMs4VikrsW+BGHoDFG+ploq9LGf09G6wUjYnaLa4GpMI0CWS3t8
-         GyvnlRR3gdpRxMyxAEo0AzBP06syfanSinFH5uleWZgnatcIIwJAkKdf3ENriwJqeG6v
-         IvBw==
-X-Gm-Message-State: AOAM531wV2pqAwL2Xdfm9M92foHsVHFMpzaaDYBmjhkfHSzhqQcf/Aun
-        7OIjQ5DxP0ZKdZtKZbNnsYWw/9wlLQBG0BxAMmzyXw==
-X-Google-Smtp-Source: ABdhPJz+X5MWtFkAgJasTOUIrA63AKIAhp56lHfcVLzDXVRUTOiKujTw8cigGH8PWhBTGZvMxIIzXHwASWHW+A1Toz4=
-X-Received: by 2002:a67:dd90:: with SMTP id i16mr8097549vsk.86.1642447134814;
- Mon, 17 Jan 2022 11:18:54 -0800 (PST)
+        bh=DaEW+T1OlYjEvgl1v+fiAGbi9cgefd6M15EmTSYK7p8=;
+        b=IiG6TdtPsc8GL2myYl5SX/mh8Nga6+m/jOOTFt7I+1GkuOMje5oMKI52Hd+r2+EJ2y
+         xqNSqKDsfMSqwPid39v/H13ebfXODhuH+cKSQBsDvjRdiXE+9uw39kQvyGsWvJvJTKIY
+         Js7pLKh0gz4M0l941DFFJNX7G8Ow5NHPgArqKoj3smquewVRABHm+OTelsaOFCQLrMNY
+         aS2qaf0bdK8qYEECnlnDJaMt39PJExynzfFz+H46NcBf+keP0ihZlm+cPw1VvToVXtla
+         u+k3QWDY0StCNDCP9sOGh2PqsU0c52uGfWNbCs5layDgJYjVsByuo327IxIFlpuOLZBk
+         xKbQ==
+X-Gm-Message-State: AOAM530M/Vd6pE11y5a3ZG5HU90Uy+JECi3Tw/0BMnobdI8cEE+ZOxbR
+        RaRSEmQ2LhyrOP9cei2d43RsGpsSpLTLaVRX9Bc/cg==
+X-Google-Smtp-Source: ABdhPJwE7UeFIDS9E9xTFIUTi44uAthZAhCX33RElPAXvziM5JWtThj7gcSv/uSFe6j4ZU6h4munX3s1YH0wzzKyUfk=
+X-Received: by 2002:a17:902:e54f:b0:14a:1bbf:9cf0 with SMTP id
+ n15-20020a170902e54f00b0014a1bbf9cf0mr24490160plf.158.1642452082991; Mon, 17
+ Jan 2022 12:41:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20220117165853.1470420-1-sashal@kernel.org> <20220117165853.1470420-2-sashal@kernel.org>
- <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
-In-Reply-To: <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Mon, 17 Jan 2022 21:18:43 +0200
-Message-ID: <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
- clocks early
+References: <20220113121143.22280-1-alim.akhtar@samsung.com>
+ <CGME20220113122408epcas5p45053d1bf0acf2d8233a98b6c1abab6eb@epcas5p4.samsung.com>
+ <20220113121143.22280-14-alim.akhtar@samsung.com> <53c17ddc-a049-72ed-7237-de23db7889da@canonical.com>
+ <085801d80967$e4b8fe00$ae2afa00$@samsung.com> <5ab62673-8d46-ec1d-1c80-696421ab69ca@canonical.com>
+ <00c901d80ba5$c9ae6ab0$5d0b4010$@samsung.com> <CAK8P3a31bCHNcNWrLX+QW+4RuK=DBpxLA_j5BFKxXxXKCT8PFQ@mail.gmail.com>
+ <9b98fd89-87b5-5026-fb0c-16bb956801ea@canonical.com>
+In-Reply-To: <9b98fd89-87b5-5026-fb0c-16bb956801ea@canonical.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Mon, 17 Jan 2022 12:41:11 -0800
+Message-ID: <CAOesGMi8EBFGGj7sQsPZfDh=AhpPCBYFazb9yRYdEVX=MO7tog@mail.gmail.com>
+Subject: Re: [PATCH 13/23] dt-bindings: arm: add Tesla FSD ARM SoC
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        SoC Team <soc@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>, linux-fsd@tesla.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Jan 2022 at 19:11, Krzysztof Kozlowski
+On Mon, Jan 17, 2022 at 7:00 AM Krzysztof Kozlowski
 <krzysztof.kozlowski@canonical.com> wrote:
 >
-> On 17/01/2022 17:58, Sasha Levin wrote:
-> > From: Sam Protsenko <semen.protsenko@linaro.org>
+> On 17/01/2022 15:14, Arnd Bergmann wrote:
+> > On Mon, Jan 17, 2022 at 2:26 PM Alim Akhtar <alim.akhtar@samsung.com> wrote:
+> >>
+> >>> I cannot judge how different this is from Exynos subarchitecture - looking at
+> >>> patches it is not different - so I could understand a FSD sub-arch with only one
+> >>> SoC.
+> >>>
+> >> I understand, it is a bit difficult to visualize it with the current patch set.
+> >> As discuss on the other thread, FSD is different, more over the vendor is different, internal design is different.
 > >
-> > [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
-> >
-> > Some clocks must be registered before init calls. For example MCT clock
-> > (from CMU_PERI) is needed for MCT timer driver, which is registered
-> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-> > clk-exynos850 platform driver init, it's already too late. Inability to
-> > get "mct" clock in MCT driver leads to kernel panic, as functions
-> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-> > can't be fixed either, as it's acting as a clock source and it's
-> > essential to register it in start_kernel() -> time_init().
-> >
-> > Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
-> > generates clocks needed for CMU_PERI, but it's already registered early.
-> >
-> > While at it, let's cleanup the code a bit, by extracting everything
-> > related to CMU initialization and registration to the separate function.
-> >
-> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-> > drivers/clk/mediatek/clk-mt2712.c.
-> >
-> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
-> >
-> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> > Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
-> >  1 file changed, 49 insertions(+), 21 deletions(-)
-> >
->
-> I propose to skip this one.
->
-> Backporting it to v5.16 does not hurt but also does not bring any
-> benefits for the upstream kernel users. There is no support for
-> mentioned Exynos850 in v5.16.
->
-> It could have only meaning for some downstream, out-of-tree kernels
-> which apply Exynos850 support on top of v5.16, but then they can just
-> take this patch as well.
->
+> > Is it based on another SoC design then? Most new SoCs are derived from
+> > some other
+> > one, so it makes sense to put it into the same family. E.g. the Apple
+> > M1 takes bits from
+> > both Exynos and PA-Semi SoCs but has more newly added components than
+> > either one.
 
-Agreed. DTS patches will be merged only in v5.17, hopefully. Till that
-time the whole clock driver is floating with no users. That's
-historical thing -- I didn't have "Ack" to submit board dts at the
-time, and SoC dts couldn't be applied without users (board dts). So I
-focused on driver work, isolated. Not much sense to backport something
-without having real users.
+I think it's a misnomer to call SoCs like these "based on each other".
+What often happens is that a manufacturer reuses IPs between designs
+since they're there, they're available and they work and there's
+little reason to redo it, etc.
 
+For cases such as a vendor building a custom SoC for a specific
+customer (which, from the looks of this patchset seems to be the case
+-- this is not something I say with insider information :-), it makes
+sense to reuse IP blocks in the same way. It's actually a competitive
+benefit of the vendor to have silicon-proven IPs in this manner.
+
+Does this mean that this custom-built product is a part of a product
+family? I don't think that's the primary conclusion I would make --
+it's more complex than that. And it also doesn't make all that much of
+a difference whether it's considered a family member or not. I would
+be very surprised if this SoC had a Samsung marketing name, since to
+my knowledge it's not sold to any other customer.
+
+If all we're arguing here about is a toplevel compatible and a Kconfig
+variable, then I don't see a need to spend a whole lot of time on this
+-- as long as it's not a change that ends up proliferating the whole
+source tree. I.e. if you want to create a new sub-arch, make sure it
+selects or depends on EXYNOS so you don't need to sprinkle a lot of
+"EXYNOS" -> "EXYNOS || TESLA" edits in the tree (as per below in the
+email).
+
+Same with the DT bindings. Can you just augment to make the tesla
+vendor prefix an allowed one for the exynos bindings where it makes
+sense?  Toplevel board (and SoC) compats can of course still be
+independent.
+
+> It seems Apple M1 shares only few bits with SoC. I am aware of only UART
+> driver as directly re-usable.
 >
-> Best regards,
-> Krzysztof
+> >
+> > I would argue that if this SoC shares the pinctrl, clock, spi, adc,
+> > and timer implementation
+>
+> Plus: UART, watchdog, PWM, I2C, I2S, USB PHY, DWC3 USB (in Exynos
+> flavor), UFS (also in Exynos-looking flavor), MFC (video codec), some
+> similarities in DW PCIe, TMU (thermal). Looking at DTS there are
+> differences but just few comparing to most of shared blocks.
+>
+> Additionally SoC BSP (and maybe SoC itself...) was actually developed or
+> co-developed by Samsung, judging by copyrights in the BSP code. Even the
+> original DTSI has:
+>
+>         TURBO TRAV SoC device tree source
+>         Copyright (c) 2017 Samsung Electronics Co., Ltd.
+>
+>
+> Tesla could still customize it a lot, but it is a strong hint that most
+> of it came from Samsung LSI and shares with existing Samsung designs.
+>
+> Have in mind that recent Exynos chips are significantly different than
+> early ARMv7 or ARMv8 designs and we still consider them part of Exynos
+> family.
+>
+> > with Exynos, we should consider it part of the Exynos family,
+> > regardless of what other
+> > blocks may exist next to those.
+>
+> Yes. I don't see the benefit of keeping it outside of Exynos. It will
+> sprinkle "depends on ARCH_EXYNOS || ARCH_FSD" all over (or depend on
+> Exynos like you suggested).
+
+Depend or select (but select is a slippery slope so might be better
+avoided) seems like a pretty good option here to me.
+
+
+-Olof
