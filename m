@@ -2,48 +2,44 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30BAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 16:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27689C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 16:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235338AbiAQQ7E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 11:59:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44474 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241154AbiAQQ7B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 11:59:01 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08EFEC061574;
-        Mon, 17 Jan 2022 08:59:01 -0800 (PST)
+        id S241290AbiAQQ7s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 11:59:48 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:48622 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241264AbiAQQ7W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 11:59:22 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5E85B81131;
-        Mon, 17 Jan 2022 16:58:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EDFBC36AF2;
-        Mon, 17 Jan 2022 16:58:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 000A1611B9;
+        Mon, 17 Jan 2022 16:59:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223C9C36AE3;
+        Mon, 17 Jan 2022 16:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642438738;
-        bh=yXNyj5w8WPn/dUWK5qhdWXLoj5pVBSY3hqJPXa2z4tY=;
+        s=k20201202; t=1642438761;
+        bh=lwk4z1qF/+7RF7Vl9dzFXszBwZQtFzeHpBCcrjjmNeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pBwFXJh7I16xBKBvnY+P0MEHpQd4FRruBXzAXY0H0plMkUA4lqc5VfMIk41ZkTo5C
-         SvwfhaUiuo2P5DPau2sO5fGMQpvsXTN1H2XnllfW6ECAGii6CKl5Y2TVS6h2T9cp+d
-         untEUPcrBZncXnhTGR2HlMZtAy6/SGwMJLGki+HVQKbu3s7w5ypwXmnsxA8ITHL3Sw
-         rxIzSX6DoReIMths0NjnGSJ4tYg9IvBXpuSBVn3UwA0q/lzBV8x7PmP8sGboydpubH
-         JucI1OLtnHps2XYHTGyerFgaqemjfu/0Mf+Urd6EJA/5B+GlUMYwUP2IWIbjgBXwY3
-         WtIhbR97U6jCg==
+        b=fqqvIy8tlFcmUrDGy8Wdogvdd/lR/vSCmO9uYF9FGiA6WdZCg6I5Mg1rtnSsRqO4Q
+         bZK4mxVyBAMXYn2fYMoK2p+hoqeRR8ZHoWTTC2lQ8vEh1Qkz0nSMv98JCsqlfp80/u
+         0NnyoMql9jsbzvN8vz1hhErbRsYUPa5egqDszTlcYCl345dvLIr9NFLBqJgK0Y5fio
+         Oh/EYUJyN1SvM65UtcPeiGQ+x7BnNDbSnB4xNkfhCx3idDP1cWszJAFBCzsrccdf/p
+         Vuf9GYY0lTDXSFXZMPMmRu8DhQXQlDFltqwB1QXTBOxPkhBXEvvH7AVxnAuTXTRbU9
+         HfwJsDYA0XRTw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Sasha Levin <sashal@kernel.org>, tomasz.figa@gmail.com,
-        cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-        matthias.bgg@gmail.com, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register clocks early
-Date:   Mon, 17 Jan 2022 11:58:03 -0500
-Message-Id: <20220117165853.1470420-2-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>, narmstrong@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.16 12/52] clk: meson: gxbb: Fix the SDM_EN bit for MPLL0 on GXBB
+Date:   Mon, 17 Jan 2022 11:58:13 -0500
+Message-Id: <20220117165853.1470420-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220117165853.1470420-1-sashal@kernel.org>
 References: <20220117165853.1470420-1-sashal@kernel.org>
@@ -55,153 +51,142 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sam Protsenko <semen.protsenko@linaro.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
+[ Upstream commit ff54938dd190d85f740b9bf9dde59b550936b621 ]
 
-Some clocks must be registered before init calls. For example MCT clock
-(from CMU_PERI) is needed for MCT timer driver, which is registered
-with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
-clk-exynos850 platform driver init, it's already too late. Inability to
-get "mct" clock in MCT driver leads to kernel panic, as functions
-registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
-can't be fixed either, as it's acting as a clock source and it's
-essential to register it in start_kernel() -> time_init().
+There are reports that 48kHz audio does not work on the WeTek Play 2
+(which uses a GXBB SoC), while 44.1kHz audio works fine on the same
+board. There are also reports of 48kHz audio working fine on GXL and
+GXM SoCs, which are using an (almost) identical AIU (audio controller).
 
-Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
-generates clocks needed for CMU_PERI, but it's already registered early.
+Experimenting has shown that MPLL0 is causing this problem. In the .dts
+we have by default:
+	assigned-clocks = <&clkc CLKID_MPLL0>,
+			  <&clkc CLKID_MPLL1>,
+			  <&clkc CLKID_MPLL2>;
+	assigned-clock-rates = <294912000>,
+			       <270950400>,
+			       <393216000>;
+The MPLL0 rate is divisible by 48kHz without remainder and the MPLL1
+rate is divisible by 44.1kHz without remainder. Swapping these two clock
+rates "fixes" 48kHz audio but breaks 44.1kHz audio.
 
-While at it, let's cleanup the code a bit, by extracting everything
-related to CMU initialization and registration to the separate function.
+Everything looks normal when looking at the info provided by the common
+clock framework while playing 48kHz audio (via I2S with mclk-fs = 256):
+        mpll_prediv                 1        1        0  2000000000
+           mpll0_div                1        1        0   294909641
+              mpll0                 1        1        0   294909641
+                 cts_amclk_sel       1        1        0   294909641
+                    cts_amclk_div       1        1        0    12287902
+                       cts_amclk       1        1        0    12287902
 
-Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
-("clk: renesas: cpg-mssr: Add early clock support"), as well as in
-drivers/clk/mediatek/clk-mt2712.c.
+meson-clk-msr however shows that the actual MPLL0 clock is off by more
+than 38MHz:
+        mp0_out               333322917    +/-10416Hz
 
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+The rate seen by meson-clk-msr is very close to what we would get when
+SDM (the fractional part) was ignored:
+  (2000000000Hz * 16384) / ((16384 * 6) = 333.33MHz
+If SDM was considered the we should get close to:
+  (2000000000Hz * 16384) / ((16384 * 6) + 12808) = 294.9MHz
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
+Further experimenting shows that HHI_MPLL_CNTL7[15] does not have any
+effect on the rate of MPLL0 as seen my meson-clk-msr (regardless of
+whether that bit is zero or one the rate is always the same according to
+meson-clk-msr). Using HHI_MPLL_CNTL[25] on the other hand as SDM_EN
+results in SDM being considered for the rate output by the hardware. The
+rate - as seen by meson-clk-msr - matches with what we expect when
+SDM_EN is enabled (fractional part is being considered, resulting in a
+294.9MHz output) or disable (fractional part being ignored, resulting in
+a 333.33MHz output).
+
+Reported-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20211031135006.1508796-1-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 21 deletions(-)
+ drivers/clk/meson/gxbb.c | 44 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 2294989e244c5..79cce8ba88831 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -60,6 +60,43 @@ static void __init exynos850_init_clocks(struct device_node *np,
- 	iounmap(reg_base);
- }
- 
-+/**
-+ * exynos850_register_cmu - Register specified Exynos850 CMU domain
-+ * @dev:	Device object; may be NULL if this function is not being
-+ *		called from platform driver probe function
-+ * @np:		CMU device tree node
-+ * @cmu:	CMU data
-+ *
-+ * Register specified CMU domain, which includes next steps:
-+ *
-+ * 1. Enable parent clock of @cmu CMU
-+ * 2. Set initial registers configuration for @cmu CMU clocks
-+ * 3. Register @cmu CMU clocks using Samsung clock framework API
-+ */
-+static void __init exynos850_register_cmu(struct device *dev,
-+		struct device_node *np, const struct samsung_cmu_info *cmu)
-+{
-+	/* Keep CMU parent clock running (needed for CMU registers access) */
-+	if (cmu->clk_name) {
-+		struct clk *parent_clk;
-+
-+		if (dev)
-+			parent_clk = clk_get(dev, cmu->clk_name);
-+		else
-+			parent_clk = of_clk_get_by_name(np, cmu->clk_name);
-+
-+		if (IS_ERR(parent_clk)) {
-+			pr_err("%s: could not find bus clock %s; err = %ld\n",
-+			       __func__, cmu->clk_name, PTR_ERR(parent_clk));
-+		} else {
-+			clk_prepare_enable(parent_clk);
-+		}
-+	}
-+
-+	exynos850_init_clocks(np, cmu->clk_regs, cmu->nr_clk_regs);
-+	samsung_cmu_register_one(np, cmu);
-+}
-+
- /* ---- CMU_TOP ------------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_TOP (0x120e0000) */
-@@ -347,10 +384,10 @@ static const struct samsung_cmu_info top_cmu_info __initconst = {
- 
- static void __init exynos850_cmu_top_init(struct device_node *np)
- {
--	exynos850_init_clocks(np, top_clk_regs, ARRAY_SIZE(top_clk_regs));
--	samsung_cmu_register_one(np, &top_cmu_info);
-+	exynos850_register_cmu(NULL, np, &top_cmu_info);
- }
- 
-+/* Register CMU_TOP early, as it's a dependency for other early domains */
- CLK_OF_DECLARE(exynos850_cmu_top, "samsung,exynos850-cmu-top",
- 	       exynos850_cmu_top_init);
- 
-@@ -615,6 +652,15 @@ static const struct samsung_cmu_info peri_cmu_info __initconst = {
- 	.clk_name		= "dout_peri_bus",
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index d6eed760327d0..608e0e8ca49a8 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -713,6 +713,35 @@ static struct clk_regmap gxbb_mpll_prediv = {
  };
  
-+static void __init exynos850_cmu_peri_init(struct device_node *np)
-+{
-+	exynos850_register_cmu(NULL, np, &peri_cmu_info);
-+}
+ static struct clk_regmap gxbb_mpll0_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = HHI_MPLL_CNTL7,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = HHI_MPLL_CNTL,
++			.shift   = 25,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = HHI_MPLL_CNTL7,
++			.shift   = 16,
++			.width   = 9,
++		},
++		.lock = &meson_clk_lock,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&gxbb_mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
 +
-+/* Register CMU_PERI early, as it's needed for MCT timer */
-+CLK_OF_DECLARE(exynos850_cmu_peri, "samsung,exynos850-cmu-peri",
-+	       exynos850_cmu_peri_init);
-+
- /* ---- CMU_CORE ------------------------------------------------------------ */
- 
- /* Register Offset definitions for CMU_CORE (0x12000000) */
-@@ -779,24 +825,9 @@ static int __init exynos850_cmu_probe(struct platform_device *pdev)
- {
- 	const struct samsung_cmu_info *info;
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 
- 	info = of_device_get_match_data(dev);
--	exynos850_init_clocks(np, info->clk_regs, info->nr_clk_regs);
--	samsung_cmu_register_one(np, info);
--
--	/* Keep bus clock running, so it's possible to access CMU registers */
--	if (info->clk_name) {
--		struct clk *bus_clk;
--
--		bus_clk = clk_get(dev, info->clk_name);
--		if (IS_ERR(bus_clk)) {
--			pr_err("%s: could not find bus clock %s; err = %ld\n",
--			       __func__, info->clk_name, PTR_ERR(bus_clk));
--		} else {
--			clk_prepare_enable(bus_clk);
--		}
--	}
-+	exynos850_register_cmu(dev, dev->of_node, info);
- 
- 	return 0;
- }
-@@ -806,9 +837,6 @@ static const struct of_device_id exynos850_cmu_of_match[] = {
- 	{
- 		.compatible = "samsung,exynos850-cmu-hsi",
- 		.data = &hsi_cmu_info,
--	}, {
--		.compatible = "samsung,exynos850-cmu-peri",
--		.data = &peri_cmu_info,
- 	}, {
- 		.compatible = "samsung,exynos850-cmu-core",
- 		.data = &core_cmu_info,
++static struct clk_regmap gxl_mpll0_div = {
+ 	.data = &(struct meson_clk_mpll_data){
+ 		.sdm = {
+ 			.reg_off = HHI_MPLL_CNTL7,
+@@ -749,7 +778,16 @@ static struct clk_regmap gxbb_mpll0 = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "mpll0",
+ 		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) { &gxbb_mpll0_div.hw },
++		.parent_data = &(const struct clk_parent_data) {
++			/*
++			 * Note:
++			 * GXL and GXBB have different SDM_EN registers. We
++			 * fallback to the global naming string mechanism so
++			 * mpll0_div picks up the appropriate one.
++			 */
++			.name = "mpll0_div",
++			.index = -1,
++		},
+ 		.num_parents = 1,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+@@ -3044,7 +3082,7 @@ static struct clk_hw_onecell_data gxl_hw_onecell_data = {
+ 		[CLKID_VAPB_1]		    = &gxbb_vapb_1.hw,
+ 		[CLKID_VAPB_SEL]	    = &gxbb_vapb_sel.hw,
+ 		[CLKID_VAPB]		    = &gxbb_vapb.hw,
+-		[CLKID_MPLL0_DIV]	    = &gxbb_mpll0_div.hw,
++		[CLKID_MPLL0_DIV]	    = &gxl_mpll0_div.hw,
+ 		[CLKID_MPLL1_DIV]	    = &gxbb_mpll1_div.hw,
+ 		[CLKID_MPLL2_DIV]	    = &gxbb_mpll2_div.hw,
+ 		[CLKID_MPLL_PREDIV]	    = &gxbb_mpll_prediv.hw,
+@@ -3439,7 +3477,7 @@ static struct clk_regmap *const gxl_clk_regmaps[] = {
+ 	&gxbb_mpll0,
+ 	&gxbb_mpll1,
+ 	&gxbb_mpll2,
+-	&gxbb_mpll0_div,
++	&gxl_mpll0_div,
+ 	&gxbb_mpll1_div,
+ 	&gxbb_mpll2_div,
+ 	&gxbb_cts_amclk_div,
 -- 
 2.34.1
 
