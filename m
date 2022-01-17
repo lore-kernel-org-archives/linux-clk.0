@@ -2,100 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9764FC4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D78C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jan 2022 17:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242943AbiAQRLV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 12:11:21 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:53986 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241509AbiAQRGn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:06:43 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S243283AbiAQRN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 12:13:26 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:52676
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242896AbiAQRLU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 12:11:20 -0500
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3F3F3B81131;
-        Mon, 17 Jan 2022 17:06:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9DEC36AE3;
-        Mon, 17 Jan 2022 17:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642439201;
-        bh=VXoP1pDXXdxKyJvKkkNho3VgJCeVldHfGQGr+ET3sW0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=tTwzhv4QfSw1DeYHeyIooOso2eUlgzVBngVgeX90WsksSA9w7gwxD9ygGranhVAg/
-         Jvhb4PNV42AHddo3iVd2LXiV/qiitvkZbjwc/GRQv7Ee47z90xQcVTuosDACzBj0PR
-         F0HAfCfBDMBTnGJ9p9p1WOLnWa7iwu3AqywCXQUM1xRlSCElfkXbVjR0USgqgqPzUV
-         PhrWP4dJ6o1IhFjqApUENDsqsYd1xrzWaFzbCx0j0KVVF1+0vArK8nFbsnhIQHgEcB
-         gfHjqALvd1KpOjOzIpD8ll930ee0qMLtq4hSgUbM4SKNTUMpLyHlBUVnx79Fgiy0ZU
-         sNU8jGHHm1nVw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Changcheng Deng <deng.changcheng@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>, Abel Vesa <abel.vesa@nxp.com>,
-        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, shawnguo@kernel.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 01/16] clk: imx: Use div64_ul instead of do_div
-Date:   Mon, 17 Jan 2022 12:06:23 -0500
-Message-Id: <20220117170638.1472900-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B51D93F17B
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 17:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642439478;
+        bh=rYVFCe9pl7AFup8bHTYfW3/P3SXGC/+nyEtQsAxutfY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=Oac+hn9eUEvafikHjXR4nfWdTPZdIab1KyPdEB2QFpwtztZoIG/giJc6lXC2AJjsU
+         Ktqz/LAqJyLgDCdL83SEend9MBm16b49OoN01EYRTRW2VlCQ6eXdVpMDrvMx2A4ikL
+         0TI1nyzxC12/bgqXDuT7Lhg/bqAfl1I/S7VERyFM9iwpmbsX/U2MLqshK0QcNF6ybl
+         Kf2qTrI/fkPWsXlpRzuK6lg9j7Sk+LD7rVhe8M41xkApcac74af0K0EbCpCcacs+B7
+         ocqVWCl0+8E+dho1gKsALjBVEIQOitXwueJSK8kjtQN8JopStSX8ir8eE0O0vEWwTx
+         FIB9qiVgyqgZA==
+Received: by mail-ed1-f70.google.com with SMTP id ej6-20020a056402368600b00402b6f12c3fso3268654edb.8
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jan 2022 09:11:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=rYVFCe9pl7AFup8bHTYfW3/P3SXGC/+nyEtQsAxutfY=;
+        b=quJNGNVxuT5mhGQ7ZEwgaYrmFpC4b6UpskGGRWZKB0rKx0tg5lidvuzDolC2kFm+xI
+         ZxUjb7YnmIsio5Zjvy+zTtuTUMCEmwAkJoGIJRwd+YbKUutZi4kpceVLP48LwMFji8jX
+         aRChzjmhF3ptmZs4KjHHzD3ATwKCwuplF2nE102DKmqWDr8mYCyZvQSp8xxmeYw6/mhb
+         henBD+gGd4TsoWYCYggjdEczkHIIx9ywoHYJCuzqSIC9LzNaZb6dHoMTF8b74Q8t7UpW
+         V6dM1d7TlAe+B/Hd1aFjdlPhezbdbqrJs4H/l94Wxuxt6Z4LIuhLQGuFHP4AwUipldbQ
+         C6DQ==
+X-Gm-Message-State: AOAM530Y+SXr0O6NwtjFIFUV8e/onRx0x1MPM2qEqzp/yTI0BmEL0892
+        3oUCYGWWzv1np7cufhV9KyIfjXybRyVlMOfYNn5sBqL5W3L9rfO6Zdx+dFtOQo4yILVUkz8rMEm
+        L7/4bBe+avp80WdzGHM1p/oqRmGJz+eYv6xwuIA==
+X-Received: by 2002:a17:907:16a9:: with SMTP id hc41mr17076999ejc.706.1642439478427;
+        Mon, 17 Jan 2022 09:11:18 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwdCubmpUIIeWiYR7npGWGTb6d6igWjY9M7lKb/sdt4nQUU2xIQTqvtVmX1TQrgDksa1opr+A==
+X-Received: by 2002:a17:907:16a9:: with SMTP id hc41mr17076989ejc.706.1642439478199;
+        Mon, 17 Jan 2022 09:11:18 -0800 (PST)
+Received: from [192.168.0.40] (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id i16sm6191119edu.29.2022.01.17.09.11.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jan 2022 09:11:17 -0800 (PST)
+Message-ID: <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
+Date:   Mon, 17 Jan 2022 18:11:16 +0100
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
+ clocks early
+Content-Language: en-US
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20220117165853.1470420-1-sashal@kernel.org>
+ <20220117165853.1470420-2-sashal@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220117165853.1470420-2-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Changcheng Deng <deng.changcheng@zte.com.cn>
+On 17/01/2022 17:58, Sasha Levin wrote:
+> From: Sam Protsenko <semen.protsenko@linaro.org>
+> 
+> [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
+> 
+> Some clocks must be registered before init calls. For example MCT clock
+> (from CMU_PERI) is needed for MCT timer driver, which is registered
+> with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
+> clk-exynos850 platform driver init, it's already too late. Inability to
+> get "mct" clock in MCT driver leads to kernel panic, as functions
+> registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
+> can't be fixed either, as it's acting as a clock source and it's
+> essential to register it in start_kernel() -> time_init().
+> 
+> Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
+> generates clocks needed for CMU_PERI, but it's already registered early.
+> 
+> While at it, let's cleanup the code a bit, by extracting everything
+> related to CMU initialization and registration to the separate function.
+> 
+> Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
+> ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
+> drivers/clk/mediatek/clk-mt2712.c.
+> 
+> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+> 
+> Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
+>  1 file changed, 49 insertions(+), 21 deletions(-)
+> 
 
-[ Upstream commit c1b6ad9a902539f9c037b6b3c35cb134c5724022 ]
+I propose to skip this one.
 
-do_div() does a 64-by-32 division. Here the divisor is an unsigned long
-which on some platforms is 64 bit wide. So use div64_ul instead of do_div
-to avoid a possible truncation.
+Backporting it to v5.16 does not hurt but also does not bring any
+benefits for the upstream kernel users. There is no support for
+mentioned Exynos850 in v5.16.
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Changcheng Deng <deng.changcheng@zte.com.cn>
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-Link: https://lore.kernel.org/r/20211118080634.165275-1-deng.changcheng@zte.com.cn
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imx/clk-pllv3.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+It could have only meaning for some downstream, out-of-tree kernels
+which apply Exynos850 support on top of v5.16, but then they can just
+take this patch as well.
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index 9af62ee8f347a..325a03e89cf8d 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -252,7 +252,7 @@ static long clk_pllv3_av_round_rate(struct clk_hw *hw, unsigned long rate,
- 	div = rate / parent_rate;
- 	temp64 = (u64) (rate - div * parent_rate);
- 	temp64 *= mfd;
--	do_div(temp64, parent_rate);
-+	temp64 = div64_ul(temp64, parent_rate);
- 	mfn = temp64;
- 
- 	temp64 = (u64)parent_rate;
-@@ -282,7 +282,7 @@ static int clk_pllv3_av_set_rate(struct clk_hw *hw, unsigned long rate,
- 	div = rate / parent_rate;
- 	temp64 = (u64) (rate - div * parent_rate);
- 	temp64 *= mfd;
--	do_div(temp64, parent_rate);
-+	temp64 = div64_ul(temp64, parent_rate);
- 	mfn = temp64;
- 
- 	val = readl_relaxed(pll->base);
-@@ -339,7 +339,7 @@ static struct clk_pllv3_vf610_mf clk_pllv3_vf610_rate_to_mf(
- 		/* rate = parent_rate * (mfi + mfn/mfd) */
- 		temp64 = rate - parent_rate * mf.mfi;
- 		temp64 *= mf.mfd;
--		do_div(temp64, parent_rate);
-+		temp64 = div64_ul(temp64, parent_rate);
- 		mf.mfn = temp64;
- 	}
- 
--- 
-2.34.1
 
+Best regards,
+Krzysztof
