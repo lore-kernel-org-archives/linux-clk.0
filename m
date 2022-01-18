@@ -2,110 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E466C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jan 2022 15:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76693C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jan 2022 15:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345936AbiARPCQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jan 2022 10:02:16 -0500
-Received: from foss.arm.com ([217.140.110.172]:58848 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345584AbiARPBz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Jan 2022 10:01:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0D0B1FB;
-        Tue, 18 Jan 2022 07:01:54 -0800 (PST)
-Received: from [10.57.67.190] (unknown [10.57.67.190])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 723883F766;
-        Tue, 18 Jan 2022 07:01:52 -0800 (PST)
-Message-ID: <69525223-7d90-5714-bbe9-4d7f0b9a293d@arm.com>
-Date:   Tue, 18 Jan 2022 15:01:46 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
-Content-Language: en-GB
-To:     Chen-Yu Tsai <wenst@chromium.org>,
-        Alyssa Rosenzweig <alyssa@collabora.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Nick Fan <Nick.Fan@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>
-References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
- <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com> <YeF/AYZ0DuKGwLLk@maud>
- <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        id S1346072AbiARPCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jan 2022 10:02:17 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:46695 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345979AbiARPB4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jan 2022 10:01:56 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220118150123epoutp02f28dc4b9e79b5df3f1a302d433ff8dbb~LZX58NVBs2350223502epoutp02Q
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jan 2022 15:01:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220118150123epoutp02f28dc4b9e79b5df3f1a302d433ff8dbb~LZX58NVBs2350223502epoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642518083;
+        bh=cDzU9XPSHyqNaH4M/h3DMF34FfVxlA1olgy2CMDDxG0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gddQ2jI1KAouQePhCJVLMYLVcPE0xmjs/67PTxhavVC8OFwNpGfMaGJXJQZsi3DXG
+         Vu/cjsM/g4J/aFIu+aM3Q8IeXTqI41xd/lb5luAVl1NzcUkajYmOCf5JMjEjLIfAD7
+         VBNpweth8IZheQiTaK13Y0z+r8kywYUe/tDwJjSQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220118150122epcas5p352b0adde5cc2ab507bf2e15329c92a81~LZX4_5vHW0676106761epcas5p3E;
+        Tue, 18 Jan 2022 15:01:22 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JdX646441z4x9Pt; Tue, 18 Jan
+        2022 15:01:16 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7D.29.06423.C36D6E16; Wed, 19 Jan 2022 00:01:16 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220118150116epcas5p415b4b658b3ca3fe5e52e11a33546b926~LZXzfNSlp1276312763epcas5p4M;
+        Tue, 18 Jan 2022 15:01:16 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220118150116epsmtrp20c26a06e9e08a384894795fafd4e8b86~LZXzeXnTn2220222202epsmtrp2W;
+        Tue, 18 Jan 2022 15:01:16 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-75-61e6d63cdda6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BB.F0.08738.B36D6E16; Wed, 19 Jan 2022 00:01:15 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220118150113epsmtip141d860c53dc5dbb6c894d36d8f6808fb~LZXxS7_hk0520405204epsmtip1Z;
+        Tue, 18 Jan 2022 15:01:13 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-fsd@tesla.com
+Subject: [PATCH v2 16/16] arm64: defconfig: Enable Tesla FSD SoC
+Date:   Tue, 18 Jan 2022 20:18:51 +0530
+Message-Id: <20220118144851.69537-17-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220118144851.69537-1-alim.akhtar@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBJsWRmVeSWpSXmKPExsWy7bCmpq7NtWeJBsvm6Vk8mLeNzeLvpGPs
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
+        tPULu0Xr3iPsFofftLNaPL7+h81BwGPNvDWMHr9/TWL0mNXQy+axaVUnm8eda3vYPDYvqfe4
+        cqKJ1aNvyypGj39Nc9k9Pm+SC+CKyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQw
+        V1LIS8xNtVVy8QnQdcvMAXpFSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBX
+        nJhbXJqXrpeXWmJlaGBgZApUmJCdMfNxH1PBT5aKOd9WsTUwLmbpYuTkkBAwkdj3/zNrFyMX
+        h5DAbkaJc7/bmCCcT4wSi/8vg8p8ZpRY9ayTEaZl8tYTjBCJXYwSHRf+sUA4LUwSu5a8YQep
+        YhPQlrg7fQsTiC0i4CZxo7EDbC6zwFsmien7vrOBJIQFHCQeXJoGNpZFQFViQeNqsAZeAVuJ
+        NXu6mCDWyUus3nCAGcTmBIpPbZjKBjJIQmAth0TrigNQN7lI7F1yhx3CFpZ4dXwLlC0l8fnd
+        XqAGDiA7W6JnlzFEuEZi6bxj0BCwlzhwZQ4LSAmzgKbE+l36IGFmAT6J3t9PmCA6eSU62oQg
+        qlUlmt9dheqUlpjY3c0KYXtIbLn6BBpaExglpk5/wzqBUXYWwtQFjIyrGCVTC4pz01OLTQsM
+        81LL4TGVnJ+7iRGcRLU8dzDeffBB7xAjEwfjIUYJDmYlEV6p+meJQrwpiZVVqUX58UWlOanF
+        hxhNgUE2kVlKNDkfmMbzSuINTSwNTMzMzEwsjc0MlcR5T6dvSBQSSE8sSc1OTS1ILYLpY+Lg
+        lGpgEpGSPKLMa2XHWP7XO03oWv7uC8JbPwlU9P3Lmjhn63LPaH6rB5cc11YeerjRs9pwkqb1
+        7H0+vhmCp2YV3Hwl9s4s7Lr9fpu9r3Ky0necWVvomSZmLRCa5TLbc73vwe/1U9aF8gScs1Pq
+        VIl2ftcYxKq+W132loG5xcuo/ElTuz4vfWn1/LvERcVrqx+VSjKorN+uWrxt+YVJZtGx26Vy
+        bT7faAzarXpil9qZSRMVrmgfPXyMZ+ukye6eJ03Yi4/VvdF8+uE5w/qLW2WNMic9f7GQ/1oL
+        e/c3VgmPxvTpcyu8vY+ssbK3NXO+IpNx7tSn2yprtrEHnE2Pbloepa0/I7vOxuX/nsmv19gd
+        MPhyRYmlOCPRUIu5qDgRAFClocorBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsWy7bCSnK7NtWeJBtdPM1o8mLeNzeLvpGPs
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWD1+FW1zeNYfNYsb5fUwWp65/ZrNY
+        tPULu0Xr3iPsFofftLNaPL7+h81BwGPNvDWMHr9/TWL0mNXQy+axaVUnm8eda3vYPDYvqfe4
+        cqKJ1aNvyypGj39Nc9k9Pm+SC+CK4rJJSc3JLEst0rdL4MqY+biPqeAnS8Wcb6vYGhgXs3Qx
+        cnJICJhITN56grGLkYtDSGAHo8T31T8YIRLSEtc3TmCHsIUlVv57zg5R1MQk0bVpLTNIgk1A
+        W+Lu9C1MILaIgIdE2797zCBFzAJ/mSS+vn4INklYwEHiwaVpYDaLgKrEgsbVYA28ArYSa/Z0
+        MUFskJdYveEA2FBOoPjUhqlsILaQgI3ExZXTmCcw8i1gZFjFKJlaUJybnltsWGCUl1quV5yY
+        W1yal66XnJ+7iREcAVpaOxj3rPqgd4iRiYPxEKMEB7OSCK9U/bNEId6UxMqq1KL8+KLSnNTi
+        Q4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGpj6e26EpB27Wvjl4e+Z/zZItUxK3cq1
+        9gfrP5HHeRFpefqRUecm5NnlLvZRY7tkNtfwM6/Ii8hLbKWacze2seyU3Bay8XgWl27kydLV
+        sfkapy6+O7qoQ+Ti3lpz4RW9Wut4V1o7m8TzPl8+wcb9ePHnhaZOm5qnP1S2vRS+mXvX7qjo
+        qov3p/J8r5n1WzhN1GhfqKXjWsbyPXUqP0Pv/xRwT5nd7dzQN/UJx4MLr944JT/7y/AxdE7N
+        USdvtd0G6lv3evkmzrm8L2GF4g1uJ93S6eEOt7yXrGu/M9PyS77fyhtXZmhMvHK56OHTta0i
+        1sG8PNfn/76wQFl263Fux1qvtwon+WJNEjZ1MfkFqk5TYinOSDTUYi4qTgQAAtDPke8CAAA=
+X-CMS-MailID: 20220118150116epcas5p415b4b658b3ca3fe5e52e11a33546b926
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220118150116epcas5p415b4b658b3ca3fe5e52e11a33546b926
+References: <20220118144851.69537-1-alim.akhtar@samsung.com>
+        <CGME20220118150116epcas5p415b4b658b3ca3fe5e52e11a33546b926@epcas5p4.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2022-01-18 07:19, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Fri, Jan 14, 2022 at 9:47 PM Alyssa Rosenzweig <alyssa@collabora.com> wrote:
->>
->>>> That links to an internal Google issue tracker which I assume has more
->>>> information on the bug. I would appreciate if someone from Google or
->>>> MediaTek could explain what this change actually does and why it's
->>>> necessary on MT8192.
->>>>
->>>> At any rate, this register logically belongs to the MT8192 "infra" clock
->>>> device, so it makes sense to set it there too. This avoids adding any
->>>> platform-specific hacks to the 3D driver, either mainline (Panfrost) or
->>>> legacy (kbase).
->>>
->>> Does this really have anything to do with clocks?
->>
->> I have no idea. MediaTek, Google, please explain.
->>
->>> In particular, "ACP" usually refers to the Accelerator Coherency Port
->>> of a CPU cluster or DSU, and given the stated symptom of the issue
->>> affected by it, my first guess would be that this bit might indeed
->>> control routing of GPU traffic either to the ACP or the (presumably
->>> non-coherent) main interconnect.
->>
->> I'd easily believe that.
-> 
-> As Robin guessed, "ACP" here does refer to the Accelerator Coherency Port.
-> And the bit in infracfg toggles whether ACP is used or not.
-> 
-> Explanation from MediaTek in verbatim:
-> 
-> -------------------------------------------------------------------------
-> The ACP path on MT8192 is just for experimental only.
-> We are not intended to enable ACP by design.
-> 
-> But due to an unexpected operation, it was accidently opened by default.
-> So we need a patch to disable the ACP for MT8192.
-> -------------------------------------------------------------------------
+This patch enables the Tesla FSD SoC in arm64 defconfig.
 
-Aha! That's great, thanks ChenYu!
+Cc: linux-fsd@tesla.com
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Stephen, my thinking here is that if this feature controls the GPU 
-interconnect, and only matters when the GPU is going to be used (as 
-strongly implied by the downstream implementation), then the GPU driver 
-is the only interested party and may as well take responsibility if 
-there's no better alternative.
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index ee4bd7710a0d..7dd0693a233e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -54,6 +54,7 @@ CONFIG_ARCH_SEATTLE=y
+ CONFIG_ARCH_INTEL_SOCFPGA=y
+ CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_TEGRA=y
++CONFIG_ARCH_TESLA_FSD=y
+ CONFIG_ARCH_SPRD=y
+ CONFIG_ARCH_THUNDER=y
+ CONFIG_ARCH_THUNDER2=y
+-- 
+2.25.1
 
-I'd agree that if there was already a "base" infracfg driver doing 
-general system-wide set-and-forget configuration then it would equally 
-well fit in there, but that doesn't seem to be the case. Short of trying 
-to abuse the bp_infracfg data in the mtk-pm-domains driver (which 
-doesn't seem like a particularly pleasant idea), the code to poke a bit 
-into a syscon regmap is going to be pretty much the same wherever we add 
-it. There's already a bit of a pattern for MTK drivers to look up and 
-poke their own infracfg bits directly as needed, so between that and the 
-downstream implementation for this particular bit, leaving it to 
-Panfrost seems like the least surprising option.
-
-Cheers,
-Robin.
