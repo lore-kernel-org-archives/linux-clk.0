@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A37C4167B
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jan 2022 01:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EC4C43217
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jan 2022 01:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244012AbiARBCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jan 2022 20:02:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39062 "EHLO
+        id S244014AbiARBCO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jan 2022 20:02:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238683AbiARBBz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 20:01:55 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68E36C061574;
-        Mon, 17 Jan 2022 17:01:55 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id q25so72652355edb.2;
-        Mon, 17 Jan 2022 17:01:55 -0800 (PST)
+        with ESMTP id S243993AbiARBCE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jan 2022 20:02:04 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8BE0C061574;
+        Mon, 17 Jan 2022 17:02:03 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id 30so72680267edv.3;
+        Mon, 17 Jan 2022 17:02:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=wlPGztyCglYvRuLUlqRz5tHJBkS2fLA0AOcHKOEzeZA=;
-        b=Tg5/HL6RuF0u+pFSo8jDHr92zFaEckK5slFfbo/rjYssifQc4WCkWQAI74QeC3kyCJ
-         tz7d2QiqQUYgJvP59Xn8s1+xp5N/iLyXZqLpqa5F//IwwElr5g3zunEK7VJio9kFc+aE
-         q2s6HVdx0U8ouT7L/m8gWS36vQGMMPgIK7W7hVLCzJdZiFYoG3xHkI/sEajqtGUmxBUC
-         4USoyH6455GDleXLcnDRUyX+wBU/usE2sXynmAXmdBL3H2s/dXE4c77/QuBW7jdVeqCw
-         OEwOIzvGgul71yQj7YH6JhM/DWnSLgzijr9kRBIYTCP/KRtmt14rRmCmCcPJVZHnfp71
-         Q+ig==
+        bh=CXVZRlEKPP4hcCweUpH3JuNpFEE+gl2M3UXNpQ3IHj0=;
+        b=ZKRD2QhSN8Ds7tSnS8enr3uAt/NjQva6NIkkOknlj5OszLfPQsZR/ijsyWJ9fc2WLk
+         uplnrJY3ZAREamzZ4Dcwfkp7nNxQdNm6CKdDi7mZjTLcqkFQm3QiCmm1KhrMQpA7nRiU
+         OOtbFGIMy0+EWerZrExY3I7HcDhaUx7WDkN26yqNipdBfkNFCGYOfNe5ZbGKa/W/ay8J
+         rlICGXR0po/frBL7YyPIipvshTTZoULIqLgS+Yy5wCfWDywC4+Cvht4aXZIWTPcTI9Mq
+         QR3TpOIQQue0Q3i0vlt7aYIne1HcDDFEtVoEabqfioezw65Zb2yWMOPJiePQB/S/uL1V
+         s4aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wlPGztyCglYvRuLUlqRz5tHJBkS2fLA0AOcHKOEzeZA=;
-        b=GpbAaKOQdkw4sAQ0TF6RGZczeneIYbFgPGBaG9JBk99Ws/Wox3OeMFcJwYvYveXy61
-         yrr0EtdrAlYj5zuU7fuyHuNBgzAdQMtyuR3X2MhpEYZh2ym1Z84Ie2v+m0BFSgZS01tg
-         WQ+riAVNA3XO34U+VdTx+TZYen4cx1LocbCc5JuU1e6NfSgHV/6dJ4sR6tCbVfzYwVu5
-         dhFuE4Pbk0HadluUTEZKDj/+hGY7YyYhEvT3UCT1LzQA9SkNICZ5VN4tC+M9nYhKPc0n
-         OE9XMn7P+X2kLX4Klq2Qb4T0e1fard2NemDvgrn0huZR2hxf9RBMrPWIL2hCz0MgCe3U
-         CxKg==
-X-Gm-Message-State: AOAM533F9BVLsZ9qMMCF8rzTfmpd5zxi0p0GLEsgGzZ2WisH84cutL0m
-        B9dNvsYMmDYAG9ZsuOgAOVNM/EKVG0w=
-X-Google-Smtp-Source: ABdhPJwhHv1mJNexDLPa1Tz9S1m32K+gy7UG3OJlmciHbMZcUHiclw9c49rRU7mHOqe42QUcFJgrgg==
-X-Received: by 2002:a17:907:2da3:: with SMTP id gt35mr18833052ejc.493.1642467713880;
-        Mon, 17 Jan 2022 17:01:53 -0800 (PST)
+        bh=CXVZRlEKPP4hcCweUpH3JuNpFEE+gl2M3UXNpQ3IHj0=;
+        b=A8V+3+XrX5rz8FVhzQVGw59aVK+ifYeNz4T9RN/V0yJnY3/pXmp32OdTFrcwukZcJ7
+         seFMgFQ3uAn5kGFNpD6oBv/zvzKBqStEdTlgNcNmsMwAKVsem4ohR11dHutcbeksdxTm
+         dHN9vhYrHsFz1dunSrIo0/4L6FfaK5dh8W6/lkCTpFEYBzKjWiFFTXqMtm7fQDapSLUf
+         ALgYBixGDKlAg2k3RVjACq7Eufm4NAUrP3UHhr3ugDLx29EI6vjyuCBH6x8qUaWgjW8U
+         ObhIxEu0aBiSKWhpRCxBB2MGYJdFgXjMDWDhMKDxDE71xxb+zeZdIaJ9Eaz8ouQsgH6j
+         sKuQ==
+X-Gm-Message-State: AOAM530JgfwsiYSFZyob/t6GHJ5Sc0pZGo3pADVmDmJDSOHIY8weTRYX
+        URZU8qNO5R5I0NRcwcbHW0Y=
+X-Google-Smtp-Source: ABdhPJzmraW03nyXQa7eHj0BHSKZoBUEYfqBf7IaDSvinDs2ioZsDB8+ygHWlvmLbW3+6GhNAq4TQA==
+X-Received: by 2002:a05:6402:c12:: with SMTP id co18mr14364166edb.246.1642467722156;
+        Mon, 17 Jan 2022 17:02:02 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id 24sm4892127ejg.47.2022.01.17.17.01.52
+        by smtp.googlemail.com with ESMTPSA id 24sm4892127ejg.47.2022.01.17.17.02.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jan 2022 17:01:53 -0800 (PST)
+        Mon, 17 Jan 2022 17:02:01 -0800 (PST)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         Ansuel Smith <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/14] drivers: clk: qcom: gcc-ipq806x: fix wrong naming for gcc_pxo_pll8_pll0
-Date:   Tue, 18 Jan 2022 01:44:22 +0100
-Message-Id: <20220118004434.17095-3-ansuelsmth@gmail.com>
+Subject: [PATCH 10/14] dt-bindings: clock: add ipq8064 ce5 clk define
+Date:   Tue, 18 Jan 2022 01:44:30 +0100
+Message-Id: <20220118004434.17095-11-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20220118004434.17095-1-ansuelsmth@gmail.com>
 References: <20220118004434.17095-1-ansuelsmth@gmail.com>
@@ -69,106 +69,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Parent gcc_pxo_pll8_pll0 had the parent definition and parent map
-swapped. Fix this naming error.
+Add ipq8064 ce5 clk define needed for CryptoEngine in gcc driver.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- drivers/clk/qcom/gcc-ipq806x.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ include/dt-bindings/clock/qcom,gcc-ipq806x.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index d6b7adb4be38..34cddf461dba 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -291,13 +291,13 @@ static const char * const gcc_pxo_pll3[] = {
- 	"pll3",
- };
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
+index 7deec14a6dee..02262d2ac899 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
+@@ -240,7 +240,7 @@
+ #define PLL14					232
+ #define PLL14_VOTE				233
+ #define PLL18					234
+-#define CE5_SRC					235
++#define CE5_A_CLK				235
+ #define CE5_H_CLK				236
+ #define CE5_CORE_CLK				237
+ #define CE3_SLEEP_CLK				238
+@@ -283,5 +283,8 @@
+ #define EBI2_AON_CLK				281
+ #define NSSTCM_CLK_SRC				282
+ #define NSSTCM_CLK				283
++#define CE5_A_CLK_SRC				285
++#define CE5_H_CLK_SRC				286
++#define CE5_CORE_CLK_SRC			287
  
--static const struct parent_map gcc_pxo_pll8_pll0[] = {
-+static const struct parent_map gcc_pxo_pll8_pll0_map[] = {
- 	{ P_PXO, 0 },
- 	{ P_PLL8, 3 },
- 	{ P_PLL0, 2 }
- };
- 
--static const char * const gcc_pxo_pll8_pll0_map[] = {
-+static const char * const gcc_pxo_pll8_pll0[] = {
- 	"pxo",
- 	"pll8_vote",
- 	"pll0_vote",
-@@ -1993,7 +1993,7 @@ static struct clk_rcg usb30_master_clk_src = {
- 	},
- 	.s = {
- 		.src_sel_shift = 0,
--		.parent_map = gcc_pxo_pll8_pll0,
-+		.parent_map = gcc_pxo_pll8_pll0_map,
- 	},
- 	.freq_tbl = clk_tbl_usb30_master,
- 	.clkr = {
-@@ -2001,7 +2001,7 @@ static struct clk_rcg usb30_master_clk_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb30_master_ref_src",
--			.parent_names = gcc_pxo_pll8_pll0_map,
-+			.parent_names = gcc_pxo_pll8_pll0,
- 			.num_parents = 3,
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -2063,7 +2063,7 @@ static struct clk_rcg usb30_utmi_clk = {
- 	},
- 	.s = {
- 		.src_sel_shift = 0,
--		.parent_map = gcc_pxo_pll8_pll0,
-+		.parent_map = gcc_pxo_pll8_pll0_map,
- 	},
- 	.freq_tbl = clk_tbl_usb30_utmi,
- 	.clkr = {
-@@ -2071,7 +2071,7 @@ static struct clk_rcg usb30_utmi_clk = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb30_utmi_clk",
--			.parent_names = gcc_pxo_pll8_pll0_map,
-+			.parent_names = gcc_pxo_pll8_pll0,
- 			.num_parents = 3,
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -2133,7 +2133,7 @@ static struct clk_rcg usb_hs1_xcvr_clk_src = {
- 	},
- 	.s = {
- 		.src_sel_shift = 0,
--		.parent_map = gcc_pxo_pll8_pll0,
-+		.parent_map = gcc_pxo_pll8_pll0_map,
- 	},
- 	.freq_tbl = clk_tbl_usb,
- 	.clkr = {
-@@ -2141,7 +2141,7 @@ static struct clk_rcg usb_hs1_xcvr_clk_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hs1_xcvr_src",
--			.parent_names = gcc_pxo_pll8_pll0_map,
-+			.parent_names = gcc_pxo_pll8_pll0,
- 			.num_parents = 3,
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -2197,7 +2197,7 @@ static struct clk_rcg usb_fs1_xcvr_clk_src = {
- 	},
- 	.s = {
- 		.src_sel_shift = 0,
--		.parent_map = gcc_pxo_pll8_pll0,
-+		.parent_map = gcc_pxo_pll8_pll0_map,
- 	},
- 	.freq_tbl = clk_tbl_usb,
- 	.clkr = {
-@@ -2205,7 +2205,7 @@ static struct clk_rcg usb_fs1_xcvr_clk_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_fs1_xcvr_src",
--			.parent_names = gcc_pxo_pll8_pll0_map,
-+			.parent_names = gcc_pxo_pll8_pll0,
- 			.num_parents = 3,
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
+ #endif
 -- 
 2.33.1
 
