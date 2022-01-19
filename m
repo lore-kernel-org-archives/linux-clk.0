@@ -2,245 +2,257 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19448C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 01:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51673C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 01:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350614AbiASBUy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jan 2022 20:20:54 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:35770 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238605AbiASBUy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jan 2022 20:20:54 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4A3CBB81888;
-        Wed, 19 Jan 2022 01:20:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3738C340E0;
-        Wed, 19 Jan 2022 01:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642555252;
-        bh=IdKEiKpGHXzv1BpSQvf0H/cY6Y+Lf9aU6BjdVqTjtXA=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VAOADwpenDmbm3NYL3N/LZ8k7ITTxcXGKcf+ourxpmgOZ7BpgCS2Wah6QnKru5tMq
-         4E6U9UxkwbocpNU0sjOZP1BQHlb0aw4n1pAQx4hH8SmbtEiwz+jquvhIuZkFgoq1N/
-         tz69w/fYZemPgswMjd8+W7H2OQonHP35ECxMOyB3QHRULQMH7z/UCLHU/JsPKH8nhI
-         fK5u+f0wkh9xDu04of7bG76f411T5ycS3bQ0lTcQIPq0lSFGgip5u84t81Z2cYIAVF
-         jywBzwOwO2Rs8PKZkZs53xvNZAYSsUN7UUeNvW5RZRLpUK5OGSNhOpFB7BNfXHpEfo
-         RMkWobWcWdtNA==
-Content-Type: text/plain; charset="utf-8"
+        id S1350681AbiASBax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jan 2022 20:30:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38688 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344934AbiASBaw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jan 2022 20:30:52 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116A4C061574
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jan 2022 17:30:51 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id a18so3569802edj.7
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jan 2022 17:30:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ObzWOFozxlrYSTqy3Vly2Oy/aim15nW57FvB/rEORCI=;
+        b=rrKJfAqvrVA47ByhBSqJQSdawaCBuK8ZON1w8xmGXpZDGYgXclWgZGeI56VRHDzvM6
+         Soldo6cqw5VdRU8wITrFF2SSoOK/ipoEEjdeHC4k1Gq+qt7z1Naf9A/YNLGQdrKlapCc
+         gZD7l+1ksWg0+5M28eITncO3RprOCZGr9SUlLk1mR4XM1eK8Ccxi3ElPAVgSe+diCe4C
+         0ukOsehEz6X54k8WxFPcbUvV1EnS70GRNv8b2Q5THdbL/KemKiTtuoBrzTPff5zTmVtx
+         tB0gW7HOo5U4Hl/SkXRu9HMSUKImUAFrW10E0y+S6/X/ZpnpYbwmOGIYVgT9LxuTf6Dl
+         whUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ObzWOFozxlrYSTqy3Vly2Oy/aim15nW57FvB/rEORCI=;
+        b=Xy4pPDOdgEjkfdOc55aBk8q6rRhHM5ra+Rd+pLw71tMQ5ptJNGfJUo3UEhdyVfKte7
+         ot+Dl9psbie8CUNztgIU6sP/dlFvwqyrA5c/PzCsrvQ96ISUU4EpX4uFPgC9a3tPM6r4
+         /d9aKthTjaezxqJljX9bW11untIFbrjp117RLBdgzaijoTwsDqC2b32AZRvh9og0rfXD
+         tVpcSQOZByExIBPgkVxoHQqwMdIXk9CxQP4z5+rYkNCF9MKDNw7hCLS6IpSa+7MAymS7
+         yqcK4Qx3mXbNq2q9j3msXDgShA6nHJmp4Y7wNBurL2JbuTJ0WVYNs7t3CeEIKjo8xl7x
+         NHgQ==
+X-Gm-Message-State: AOAM532K6xkDDGwUEdV9D34EAQneWF6hjKG6k0tUbTV29FkqFEwp4W68
+        CtkSlyKVsfbFQugE2IKqSJhFR1aqZ6L/VyXkG0LzeA==
+X-Google-Smtp-Source: ABdhPJw8FgRwtjJo/mUrHumHyy+5UgblK4uNn9ooMNerZhb50kaYpgW5QuemaW4CsmPJqOMuXQXorYQj+BhKWkFEtIc=
+X-Received: by 2002:a17:907:6da5:: with SMTP id sb37mr22217371ejc.631.1642555849271;
+ Tue, 18 Jan 2022 17:30:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAGS_qxpbOM4KuRe_SZ+es7K49_dV+2A1rwKX9bvjeGfSn04s6w@mail.gmail.com>
 References: <20220115080657.2780989-1-sboyd@kernel.org> <CAGS_qxpbOM4KuRe_SZ+es7K49_dV+2A1rwKX9bvjeGfSn04s6w@mail.gmail.com>
+ <20220119012051.E3738C340E0@smtp.kernel.org>
+In-Reply-To: <20220119012051.E3738C340E0@smtp.kernel.org>
+From:   Daniel Latypov <dlatypov@google.com>
+Date:   Tue, 18 Jan 2022 17:30:37 -0800
+Message-ID: <CAGS_qxqzHq4ZQeSFg-Uxg30x70v5sCu23zooYNHFm9cX-XyPTQ@mail.gmail.com>
 Subject: Re: [PATCH] clk: gate: Add some kunit test suites
-From:   Stephen Boyd <sboyd@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Brendan Higgins <brendanhiggins@google.com>,
         kunit-dev@googlegroups.com
-To:     Daniel Latypov <dlatypov@google.com>
-Date:   Tue, 18 Jan 2022 17:20:50 -0800
-User-Agent: alot/0.10
-Message-Id: <20220119012051.E3738C340E0@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Latypov (2022-01-15 13:48:42)
-> On Sat, Jan 15, 2022 at 12:07 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Tue, Jan 18, 2022 at 5:20 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Daniel Latypov (2022-01-15 13:48:42)
+> > On Sat, Jan 15, 2022 at 12:07 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Test various parts of the clk gate implementation with the kunit testing
+> > > framework.
+> > >
+> > > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+> > > Cc: <kunit-dev@googlegroups.com>
+> > > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > >
-> > Test various parts of the clk gate implementation with the kunit testing
-> > framework.
+> > Nice!
+> > Some minor nits and suggestions re kunit usage below.
 > >
-> > Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> > Cc: <kunit-dev@googlegroups.com>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
->=20
-> Nice!
-> Some minor nits and suggestions re kunit usage below.
->=20
-> Acked-by: Daniel Latypov <dlatypov@google.com>
->=20
-> > ---
+> > Acked-by: Daniel Latypov <dlatypov@google.com>
 > >
-> > This is a resend of the RFC[1] from almost two years ago! It will be
-> > merged after the merge window closes.
+> > > ---
+> > >
+> > > This is a resend of the RFC[1] from almost two years ago! It will be
+> > > merged after the merge window closes.
+> > >
+> > > [1] https://lore.kernel.org/r/20200408035637.110858-1-sboyd@kernel.org
+> > >
+> > >  drivers/clk/Kconfig         |   8 +
+> > >  drivers/clk/Makefile        |   1 +
+> > >  drivers/clk/clk-gate-test.c | 481 ++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 490 insertions(+)
+> > >  create mode 100644 drivers/clk/clk-gate-test.c
+> > >
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index c5b3dc97396a..41e560249370 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -421,4 +421,12 @@ source "drivers/clk/x86/Kconfig"
+> > >  source "drivers/clk/xilinx/Kconfig"
+> > >  source "drivers/clk/zynqmp/Kconfig"
+> > >
+> > > +# Kunit test cases
+> > > +config CLK_GATE_TEST
+> > > +       tristate "Basic gate type Kunit test"
+> > > +       depends on KUNIT
+> > > +       default KUNIT
+> > > +       help
+> > > +         Kunit test for the basic clk gate type.
 > >
-> > [1] https://lore.kernel.org/r/20200408035637.110858-1-sboyd@kernel.org
+> > minor nit: since the previous version, there is now
+> > https://www.kernel.org/doc/html/latest/dev-tools/kunit/style.html#test-kconfig-entries
 > >
-> >  drivers/clk/Kconfig         |   8 +
-> >  drivers/clk/Makefile        |   1 +
-> >  drivers/clk/clk-gate-test.c | 481 ++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 490 insertions(+)
-> >  create mode 100644 drivers/clk/clk-gate-test.c
+> > so something like:
+> > config CLK_GATE_KUNIT_TEST
+> >   tristate "Basic gate type KUnit test" if !KUNIT_ALL_TESTS
+> >   depends on KUNIT
+> >   default KUNIT_ALL_TESTS
+> > ...
 > >
-> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > index c5b3dc97396a..41e560249370 100644
-> > --- a/drivers/clk/Kconfig
-> > +++ b/drivers/clk/Kconfig
-> > @@ -421,4 +421,12 @@ source "drivers/clk/x86/Kconfig"
-> >  source "drivers/clk/xilinx/Kconfig"
-> >  source "drivers/clk/zynqmp/Kconfig"
+> > would be the way to go.
+>
+> Got it. Thanks!
+>
 > >
-> > +# Kunit test cases
-> > +config CLK_GATE_TEST
-> > +       tristate "Basic gate type Kunit test"
-> > +       depends on KUNIT
-> > +       default KUNIT
-> > +       help
-> > +         Kunit test for the basic clk gate type.
->=20
-> minor nit: since the previous version, there is now
-> https://www.kernel.org/doc/html/latest/dev-tools/kunit/style.html#test-kc=
-onfig-entries
->=20
-> so something like:
-> config CLK_GATE_KUNIT_TEST
->   tristate "Basic gate type KUnit test" if !KUNIT_ALL_TESTS
->   depends on KUNIT
->   default KUNIT_ALL_TESTS
-> ...
->=20
-> would be the way to go.
+> > On a related note, you could add a .kunitconfig file to make running
+> > this easier:
+> > $ cat drivers/clk/.kunitconfig
+> > CONFIG_KUNIT=y
+> > CONFIG_COMMON_CLK=y
+> > CONFIG_CLK_GATE_TEST=y
+>
+> Sure that works for me. I was using my own kunitconfig file and then
+> running all 'clk*' tests. This would make it easier I suppose. Too bad
+> the pattern match can't figure out what dependencies to enable.
+>
+> >
+> > $ ./tools/testing/kunit/kunit.py run --kunitconfig=drivers/clk
+> > ...
+> > Testing complete. Passed: 17, Failed: 0, Crashed: 0, Skipped: 0, Errors: 0
+> >
+> > There's not much in the way of dependencies here so it doesn't help that much.
+> > But it is an option if you want a one-liner way to be able to run the test.
+> >
+> > > +
+> > >  endif
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index e42312121e51..dcdb75712940 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -6,6 +6,7 @@ obj-$(CONFIG_COMMON_CLK)        += clk-divider.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-fixed-factor.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-fixed-rate.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-gate.o
+> > > +obj-$(CONFIG_CLK_GATE_TEST)    += clk-gate-test.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-multiplier.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-mux.o
+> > >  obj-$(CONFIG_COMMON_CLK)       += clk-composite.o
+> > > diff --git a/drivers/clk/clk-gate-test.c b/drivers/clk/clk-gate-test.c
+> > > new file mode 100644
+> > > index 000000000000..b499c2ffa815
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-gate-test.c
+> >
+> > again a minor nit: clk_gate_test.c or clk_gate_kunit.c would be the
+> > preferred names now:
+> > https://www.kernel.org/doc/html/latest/dev-tools/kunit/style.html#test-kconfig-entries
+> >
+> > Note that KUnit itself doesn't follow its own naming guidelines unfortunately.
+>
+> How about clk-gate_test.c then? I'd like it to match the clk-gate.c
+> file but can support the _test suffix.
 
-Got it. Thanks!
+That sounds completely reasonable to me.
+I'd say go for it, if no one chimes in w/ any objections.
 
->=20
-> On a related note, you could add a .kunitconfig file to make running
-> this easier:
-> $ cat drivers/clk/.kunitconfig
-> CONFIG_KUNIT=3Dy
-> CONFIG_COMMON_CLK=3Dy
-> CONFIG_CLK_GATE_TEST=3Dy
-
-Sure that works for me. I was using my own kunitconfig file and then
-running all 'clk*' tests. This would make it easier I suppose. Too bad
-the pattern match can't figure out what dependencies to enable.
-
->=20
-> $ ./tools/testing/kunit/kunit.py run --kunitconfig=3Ddrivers/clk
-> ...
-> Testing complete. Passed: 17, Failed: 0, Crashed: 0, Skipped: 0, Errors: 0
->=20
-> There's not much in the way of dependencies here so it doesn't help that =
-much.
-> But it is an option if you want a one-liner way to be able to run the tes=
-t.
->=20
-> > +
-> >  endif
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index e42312121e51..dcdb75712940 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -6,6 +6,7 @@ obj-$(CONFIG_COMMON_CLK)        +=3D clk-divider.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-factor.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-rate.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-gate.o
-> > +obj-$(CONFIG_CLK_GATE_TEST)    +=3D clk-gate-test.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-multiplier.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-mux.o
-> >  obj-$(CONFIG_COMMON_CLK)       +=3D clk-composite.o
-> > diff --git a/drivers/clk/clk-gate-test.c b/drivers/clk/clk-gate-test.c
-> > new file mode 100644
-> > index 000000000000..b499c2ffa815
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-gate-test.c
->=20
-> again a minor nit: clk_gate_test.c or clk_gate_kunit.c would be the
-> preferred names now:
-> https://www.kernel.org/doc/html/latest/dev-tools/kunit/style.html#test-kc=
-onfig-entries
->=20
-> Note that KUnit itself doesn't follow its own naming guidelines unfortuna=
-tely.
-
-How about clk-gate_test.c then? I'd like it to match the clk-gate.c
-file but can support the _test suffix.
-
->=20
-> > @@ -0,0 +1,481 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Kunit test for clk gate basic type
-> > + */
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +#include <kunit/test.h>
-> > +
-> > +static void clk_gate_register_test_dev(struct kunit *test)
-> > +{
-> > +       struct clk_hw *ret;
-> > +       struct platform_device *pdev;
-> > +
-> > +       pdev =3D platform_device_register_simple("test_gate_device", -1=
-, NULL, 0);
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-> > +
-> > +       ret =3D clk_hw_register_gate(&pdev->dev, "test_gate", NULL, 0, =
-NULL,
-> > +                                  0, 0, NULL);
-> > +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, ret);
->=20
-> I think we want ASSERT here, otherwise we segfault below.
-
-Fixed.
-
->=20
-> > +       KUNIT_EXPECT_STREQ(test, "test_gate", clk_hw_get_name(ret));
-> > +       KUNIT_EXPECT_EQ(test, 0UL, clk_hw_get_flags(ret));
-> > +
-[...]
-> > +
-> > +static struct clk_gate_test_context *clk_gate_test_alloc_ctx(struct ku=
-nit *test)
-> > +{
-> > +       struct clk_gate_test_context *ctx;
-> > +
-> > +       test->priv =3D ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
->=20
-> It looks like kunit_kzalloc() here would work as well.
-> It should also be a bit safer, i.e. we won't leak ctx if
-> clk_hw_register_fixed_rate() errors out in the init func.
-
-Ok.=20
-
->=20
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-> > +       ctx->fake_mem =3D (void __force __iomem *)&ctx->fake_reg;
-> > +
-> > +       return ctx;
-> > +}
-> > +
-> > +static void clk_gate_test_parent_rate(struct kunit *test)
-> > +{
-> > +       struct clk_gate_test_context *ctx =3D test->priv;
-> > +       struct clk_hw *parent =3D ctx->parent;
-> > +       struct clk_hw *hw =3D ctx->hw;
-> > +       unsigned long prate =3D clk_hw_get_rate(parent);
-> > +       unsigned long rate =3D clk_hw_get_rate(hw);
-> > +
-> > +       KUNIT_EXPECT_EQ(test, prate, rate);
-> > +}
-> > +
-> > +static void clk_gate_test_enable(struct kunit *test)
-> > +{
-> > +       struct clk_gate_test_context *ctx =3D test->priv;
-> > +       struct clk_hw *parent =3D ctx->parent;
-> > +       struct clk_hw *hw =3D ctx->hw;
-> > +       struct clk *clk =3D hw->clk;
-> > +       int ret;
-> > +       u32 enable_val =3D BIT(5);
-> > +
-> > +       ret =3D clk_prepare_enable(clk);
-> > +       KUNIT_ASSERT_EQ(test, ret, 0);
->=20
-> optional: in the cases where it's short enough, I'd personally favor
-> KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
->=20
-> That way we get more context in the assertion failure messages.
-
-Makes sense.
+>
+> >
+> > > @@ -0,0 +1,481 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Kunit test for clk gate basic type
+> > > + */
+> > > +#include <linux/clk.h>
+> > > +#include <linux/clk-provider.h>
+> > > +#include <linux/platform_device.h>
+> > > +
+> > > +#include <kunit/test.h>
+> > > +
+> > > +static void clk_gate_register_test_dev(struct kunit *test)
+> > > +{
+> > > +       struct clk_hw *ret;
+> > > +       struct platform_device *pdev;
+> > > +
+> > > +       pdev = platform_device_register_simple("test_gate_device", -1, NULL, 0);
+> > > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
+> > > +
+> > > +       ret = clk_hw_register_gate(&pdev->dev, "test_gate", NULL, 0, NULL,
+> > > +                                  0, 0, NULL);
+> > > +       KUNIT_EXPECT_NOT_ERR_OR_NULL(test, ret);
+> >
+> > I think we want ASSERT here, otherwise we segfault below.
+>
+> Fixed.
+>
+> >
+> > > +       KUNIT_EXPECT_STREQ(test, "test_gate", clk_hw_get_name(ret));
+> > > +       KUNIT_EXPECT_EQ(test, 0UL, clk_hw_get_flags(ret));
+> > > +
+> [...]
+> > > +
+> > > +static struct clk_gate_test_context *clk_gate_test_alloc_ctx(struct kunit *test)
+> > > +{
+> > > +       struct clk_gate_test_context *ctx;
+> > > +
+> > > +       test->priv = ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+> >
+> > It looks like kunit_kzalloc() here would work as well.
+> > It should also be a bit safer, i.e. we won't leak ctx if
+> > clk_hw_register_fixed_rate() errors out in the init func.
+>
+> Ok.
+>
+> >
+> > > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
+> > > +       ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
+> > > +
+> > > +       return ctx;
+> > > +}
+> > > +
+> > > +static void clk_gate_test_parent_rate(struct kunit *test)
+> > > +{
+> > > +       struct clk_gate_test_context *ctx = test->priv;
+> > > +       struct clk_hw *parent = ctx->parent;
+> > > +       struct clk_hw *hw = ctx->hw;
+> > > +       unsigned long prate = clk_hw_get_rate(parent);
+> > > +       unsigned long rate = clk_hw_get_rate(hw);
+> > > +
+> > > +       KUNIT_EXPECT_EQ(test, prate, rate);
+> > > +}
+> > > +
+> > > +static void clk_gate_test_enable(struct kunit *test)
+> > > +{
+> > > +       struct clk_gate_test_context *ctx = test->priv;
+> > > +       struct clk_hw *parent = ctx->parent;
+> > > +       struct clk_hw *hw = ctx->hw;
+> > > +       struct clk *clk = hw->clk;
+> > > +       int ret;
+> > > +       u32 enable_val = BIT(5);
+> > > +
+> > > +       ret = clk_prepare_enable(clk);
+> > > +       KUNIT_ASSERT_EQ(test, ret, 0);
+> >
+> > optional: in the cases where it's short enough, I'd personally favor
+> > KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
+> >
+> > That way we get more context in the assertion failure messages.
+>
+> Makes sense.
