@@ -2,70 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA67C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 14:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45958C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 14:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346148AbiASOBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jan 2022 09:01:19 -0500
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:38658 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345358AbiASOBT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 09:01:19 -0500
-Received: by mail-oi1-f182.google.com with SMTP id g205so4244328oif.5;
-        Wed, 19 Jan 2022 06:01:18 -0800 (PST)
+        id S1355021AbiASOFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jan 2022 09:05:33 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:36445 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350177AbiASOFd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 09:05:33 -0500
+Received: by mail-ot1-f42.google.com with SMTP id l64-20020a9d1b46000000b005983a0a8aaaso3234801otl.3;
+        Wed, 19 Jan 2022 06:05:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ARj/rMuy56bxjprWvVLBFVaJVeVw8x7Y++0Vstg9VtM=;
-        b=dc33UQbudIOhkZESVWYjuphLA1HUom/Xt+EVnOqBM2huyGVEa68l4NjYZB7F5Zmkn4
-         lAIOsRQIzP/SXZOGbyIXiYJV9R5L/HxuUQ4mp1jF515l436pWbIpMtl9Bt95pjFkPy5V
-         9vU1S8SDUSwGnrgG0ABx/Nr8f4JmVNRO1meovvnfIbGytW1wg62dfrYy+yYVAKAlLzCN
-         N6vNHGvjOOv1vdS1W37EqD4JjoCplZltIbpz1ph+9wS6X66sDO4DIShZL4AItBsCAa3R
-         ztOKGJA3DKSbG348haBZxSz7RrI3WDAsIIWB+QJxYSOAGzlQO8XjRMKusUpBEgch9etx
-         LxvQ==
-X-Gm-Message-State: AOAM531kBVV5zpVWYCLvrZuq5vpFbMQVFLnxE0+Tj9ow8t7r4+ADilm1
-        wirU6+7yR+z7OrAW1IFhfYudGnIjnA==
-X-Google-Smtp-Source: ABdhPJyfkEZIsBZOimsuhEvrQhDzihwQnP8qX6b5zgZKTUYkxVTRQhhgi7Xf+lTe4qcR+UB1xFEeog==
-X-Received: by 2002:a05:6808:aa7:: with SMTP id r7mr3049862oij.47.1642600878543;
-        Wed, 19 Jan 2022 06:01:18 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to;
+        bh=bA4lXk3bs4g992PO5jXPShXJCU4RdXIJFPt9TWuZvi8=;
+        b=Lo6knvrEtX/KFxyzA+UatqyecN5QpsDx2jKbnR1JQMxQ3bcNJo2x7FK73GNXu5GXKJ
+         yYKgWYLv3Bat1xQyACduvR5yesnyxdLIJfPRBbevYtjGJsI8kYT/DOOYXjL4eHBBbO+R
+         PLniaDtYQ3EnG1myqvhtQ9umRFjZiBTV9NmLO55lvCDwusqs/bUeElRp1FFgrQfTDGdY
+         8TLqyog2EgnFi0R7fgBlahwrkhILuvZfoneSBbGHBwdr49kCMrv9LuLonkP8wmVhid9G
+         LrC4t4Vfu7eWUshQDt5zg/W0OFja7Agx6wEVdsLyyXhbsHORSnKbbu/FijTfSa3Q8HTv
+         jOHg==
+X-Gm-Message-State: AOAM533yzZCwRxbFMdylPqi/P2zCj4YKcGZvxEJierkhhM8qc7yIHZyq
+        DfAcTMxlnUx7ejQu/JXr8w==
+X-Google-Smtp-Source: ABdhPJz+nPpKZ1wx/9MZBe3c2PWe70YAUIasbvLv9Mx8j0isWcefeBYdwrdxEdCzSxpX+Pr8JGIYZw==
+X-Received: by 2002:a9d:e88:: with SMTP id 8mr6044843otj.276.1642601132546;
+        Wed, 19 Jan 2022 06:05:32 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id t14sm8735342oth.81.2022.01.19.06.01.16
+        by smtp.gmail.com with ESMTPSA id 186sm10018818oig.28.2022.01.19.06.05.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 06:01:17 -0800 (PST)
-Received: (nullmailer pid 3470881 invoked by uid 1000);
-        Wed, 19 Jan 2022 14:01:16 -0000
-Date:   Wed, 19 Jan 2022 08:01:16 -0600
+        Wed, 19 Jan 2022 06:05:31 -0800 (PST)
+Received: (nullmailer pid 3480173 invoked by uid 1000);
+        Wed, 19 Jan 2022 14:05:27 -0000
+Date:   Wed, 19 Jan 2022 08:05:27 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@protonmail.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, marcan@marcan.st,
-        sven@svenpeter.dev, alyssa@rosenzweig.io,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kettenis@openbsd.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add Apple NCO
-Message-ID: <YegZrPh0GSSzFZ91@robh.at.kernel.org>
-References: <20220118191839.64086-1-povik+lin@protonmail.com>
- <20220118191839.64086-2-povik+lin@protonmail.com>
+To:     Jesse Taube <mr.bossman075@gmail.com>
+Cc:     aisheng.dong@nxp.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+        Mr.Bossman075@gmail.com, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        arnd@arndb.de, gregkh@linuxfoundation.org, adrian.hunter@intel.com,
+        abel.vesa@nxp.com, linux-serial@vger.kernel.org,
+        shawnguo@kernel.org, olof@lixom.net,
+        giulio.benetti@benettiengineering.com, linux-gpio@vger.kernel.org,
+        linux-clk@vger.kernel.org, linus.walleij@linaro.org,
+        festevam@gmail.com, sboyd@kernel.org, linux@armlinux.org.uk,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        ulf.hansson@linaro.org, stefan@agner.ch, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, soc@kernel.org, jirislaby@kernel.org,
+        linux-imx@nxp.com, s.hauer@pengutronix.de
+Subject: Re: [PATCH v8 2/7] ARM: dts: imxrt1050-pinfunc: Add pinctrl binding
+ header
+Message-ID: <YegapycPxDdgTlXQ@robh.at.kernel.org>
+References: <20220111212606.2072669-1-Mr.Bossman075@gmail.com>
+ <20220111215415.2075257-1-Mr.Bossman075@gmail.com>
+ <20220111215415.2075257-3-Mr.Bossman075@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220118191839.64086-2-povik+lin@protonmail.com>
+In-Reply-To: <20220111215415.2075257-3-Mr.Bossman075@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 18, 2022 at 07:21:03PM +0000, Martin Povišer wrote:
-> The NCO block found on Apple SoCs is a programmable clock generator
-> performing fractional division of a high frequency input clock.
+On Tue, 11 Jan 2022 16:54:10 -0500, Jesse Taube wrote:
+> From: Jesse Taube <mr.bossman075@gmail.com>
 > 
-> Signed-off-by: Martin Povišer <povik+lin@protonmail.com>
+> Add binding header for i.MXRT1050 pinctrl device tree.
+> 
+> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
+> [Jesse: move pinfunc from dt-bindings to dts folder]
 > ---
->  .../devicetree/bindings/clock/apple,nco.yaml  | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.yaml
+> V1->V2:
+> * Move pinfunc from dt-binding to dts
+> * Change subject and description
+> * Change licence to "GPL-2.0+ OR MIT"
+> V2->V3:
+> * Change License comment style
+> V3->V4:
+> * Nothing done
+> V4->V5:
+> * Nothing done
+> V5->V6:
+> * Nothing done
+> V6->V7:
+> * Nothing done
+> V7->V8:
+> * Nothing done
+> ---
+>  arch/arm/boot/dts/imxrt1050-pinfunc.h | 993 ++++++++++++++++++++++++++
+>  1 file changed, 993 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imxrt1050-pinfunc.h
+> 
 
-With the indentation fix,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
