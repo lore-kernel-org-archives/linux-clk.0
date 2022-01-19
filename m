@@ -2,65 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED1C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 13:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B33C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 13:55:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354885AbiASNm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jan 2022 08:42:56 -0500
-Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17411 "EHLO
-        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354866AbiASNmu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 08:42:50 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jan 2022 08:42:50 EST
-ARC-Seal: i=1; a=rsa-sha256; t=1642598848; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=n7KdY5O1IbkTGFTFg/xlnfZdjpPH5GaTWxvNfw4i1t+32loGtX+GAERcljh3UIUbKF7UX8tbKhfAmdUsf5mv/VXKW0SH8EiCemqY4H6eWD33C64wNOMikfHa9cNTDg9nnC5PYGJ0+5eJkK2JuTJml/5cCYqLKrf/u9lxXXirbAI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1642598848; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=vYkKrZxCG/cKt6+IIDyfS1RNbgmwpgZCPpOYO0clTEo=; 
-        b=Gc/LqWYOFdrhAhVTy+Libkdux8VwDwDeWdBZREpUm2FDF3wJK5c75miXorRp6t9th9ZcLy89sUwD+EfjEY5EPJPHf3Sd/xhiwgBEC+6KXRMcW8DczAip64KQmJLI+g/m7vyOX029hp8kpuUhXEySNWGidEj8+b1SKy2l9AclwLQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=arinc9.com;
-        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
-        dmarc=pass header.from=<arinc.unal@arinc9.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1642598848;
-        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=vYkKrZxCG/cKt6+IIDyfS1RNbgmwpgZCPpOYO0clTEo=;
-        b=ZAGDQczAj1fTsc5MR8Nkb36EgQSc5u+YHbIGUPTUIFPQaYIvaLuTKqjqL5i2varu
-        WudQAAJOca0zc9SQbAGb7qt+SL+52gwh8DPPssC+2Zlp50r5cS+fUJ07CqeYXxZMBV1
-        fqCw8SNNq4s8jz7z4NRoXldsabFr3tBcj2dP59YI=
-Received: from [10.10.10.216] (85.117.236.245 [85.117.236.245]) by mx.zohomail.com
-        with SMTPS id 1642598845836963.4816161923367; Wed, 19 Jan 2022 05:27:25 -0800 (PST)
-Message-ID: <d46fcc03-40f1-edbf-e966-e35aabf84111@arinc9.com>
-Date:   Wed, 19 Jan 2022 16:27:21 +0300
+        id S1354911AbiASNzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jan 2022 08:55:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37244 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354896AbiASNzw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 08:55:52 -0500
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2319C061574;
+        Wed, 19 Jan 2022 05:55:51 -0800 (PST)
+Received: by mail-ua1-x933.google.com with SMTP id r15so4642315uao.3;
+        Wed, 19 Jan 2022 05:55:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SKB+2gqwkmhRtvujHObAiP9QZA52p+CI6WHOcuhFGvs=;
+        b=eUmHCDw3wkS0lUrAB+dFozV67Z/lrxEZLfdOsHGpbjZjf/IGmx4wrYpyfYNb8b/n0U
+         wsQljeZuQsKBFT+WEsz5my5qMD+P3YaU4uOwq9YrVW8yNIow2nsrFZyu2O05i244dHk9
+         Dqa7CBlNQpqftWj2tfUzOUmVGA3cNrmBpHru4/6ar2KKmtY58jN7SqAvg/m9cKXaU/BY
+         Zg+DkyqTi/cBEVzUW9abyDk28qh14oTPk6AeqziJLLgdDxOMYRCsAQYPa9Tf3w4ZuhT7
+         W+ZjndhlALXtwXaS5/aBNk/lJisvMPxu3kdnLncL060EX83mSEEg8m8/2SWR+Y2GkwY0
+         3ubg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SKB+2gqwkmhRtvujHObAiP9QZA52p+CI6WHOcuhFGvs=;
+        b=CmzluWE/+EerR+lgsjMulrYOCGrOTi/cl/siHLQWVbPumtiDdWEJBlmW5a5XTVtIeI
+         xPn44GojQ2UVmeGrMT/DilRxZXQg8qerGLQPWCjMBiuOcuTmI7T0y+gyVoRShlYYEmJW
+         vxE4/G4+b6TqKYlIFt6syuuwYxGmS8whxOTRIe2as6eUzgh96QoQAR9zYwFo2Nj7X9IW
+         2VWZQYa/hNlUXEMwGrJgRMRuOFwSf1rnLxP0eT6KTMGILpXHiTIJjfz2+8DAS/8jzc/5
+         h4Ontvwu4Or7YAnKMgDSjq/cgUah17Pg8neJx0XbMeUeOd0LKKbkhcpTUrxbMkk7xdfP
+         Jfaw==
+X-Gm-Message-State: AOAM533ZFaJV5mBXteOMgzIMstAJ/G0oT9DQS01aOcSElbXzqdts4mqA
+        jEKT5hgM0Osll+fCVSq+F2HJ6e1wkun0fDGAnCo=
+X-Google-Smtp-Source: ABdhPJwMAzx9yjy9ZymirKauhj5j++PmaIjJ6L+QWvrMT9gAYuDon288paA6SJNFakl9aTsokpI9doq/OxtxK5AOQ8k=
+X-Received: by 2002:a9f:31cc:: with SMTP id w12mr12500442uad.46.1642600550848;
+ Wed, 19 Jan 2022 05:55:50 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset
- provider
-Content-Language: en-US
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-clk@vger.kernel.org
-Cc:     john@phrozen.org, linux-staging@lists.linux.dev,
-        gregkh@linuxfoundation.org, neil@brown.name,
-        p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, erkin.bozoglu@xeront.com,
+References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com> <d46fcc03-40f1-edbf-e966-e35aabf84111@arinc9.com>
+In-Reply-To: <d46fcc03-40f1-edbf-e966-e35aabf84111@arinc9.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Wed, 19 Jan 2022 14:55:39 +0100
+Message-ID: <CAMhs-H9j+0F_9GgTfFfPP=br61pZ9PX=ndu9apnA_Fn9k7JEog@mail.gmail.com>
+Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset provider
+To:     =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
+        Greg KH <gregkh@linuxfoundation.org>,
+        NeilBrown <neil@brown.name>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, erkin.bozoglu@xeront.com,
         Luiz Angelo Daros de Luca <luizluca@gmail.com>
-References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
-From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series fixes the SPI & MDIO probing issues we were having with our 
-mt7621 board.
+On Wed, Jan 19, 2022 at 2:27 PM Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.unal@arinc=
+9.com> wrote:
+>
+> This series fixes the SPI & MDIO probing issues we were having with our
+> mt7621 board.
+>
+> Tested-by: Ar=C4=B1n=C3=A7 =C3=9CNAL <arinc.unal@arinc9.com>
 
-Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
+Thanks for testing this!
 
-Cheers.
-Arınç
+Best regards,
+    Sergio Paracuellos
+>
+> Cheers.
+> Ar=C4=B1n=C3=A7
+>
