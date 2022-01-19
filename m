@@ -2,104 +2,270 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAECFC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 11:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30724C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 11:54:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354007AbiASLDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jan 2022 06:03:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54388 "EHLO
+        id S1354405AbiASLym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jan 2022 06:54:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353971AbiASLCz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 06:02:55 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAEA1C06173E
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jan 2022 03:02:54 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id p18so4602284wmg.4
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jan 2022 03:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=y3GaD+SwN8APMQh031bGmSeVhkIovJ6kmTWH0X4e1qs=;
-        b=a6dQ+O363irHUe/2uR6WdKPelWnbsGOe88aYXZJWYu3+R/9z0BBECAZLkfcQyAIb7K
-         BuOGMmgyUuAsXMLD7g/PBRldy0iYCslevoNDB9GKInXvWMHAp9ZpbtfoWkVgiRq8np+a
-         ES/7nyOiJGW1FiUwq2GKq3n87Nw1OyOCNaLqzWUa6al8gXCelS4Stk4LNgzahgmTLHCP
-         tYsEFbjLqH5RqCAkUCl37Y/xgoU7XN4N1rgBXThWeRkntCS8B+51Fjil534FR2DQbH7Y
-         3Oukbh2d5EilpYtLc4uiRsX7txttv8BHU5O4v9HhcdNmd5bP4hg5nDZ8sBD5ykU9e1Vz
-         dUCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=y3GaD+SwN8APMQh031bGmSeVhkIovJ6kmTWH0X4e1qs=;
-        b=uTphQ3QDK5AXDaQHy8vez0D471YkKBJ6HhENXLHEBS322XFMtfeKZyfveZZwxSu4Dc
-         r81gsqRxNrUmW7JOEW5cKPiQJPIst9aj2AcTGxpBT3ckHGAIR4wvLeQUMA2rzliw+6rJ
-         GzKC04Nd8ykUTMNaQfpzFLyWz48du7WTwQ5fzoBTEATcE2YVeg3yfuTnRw/jKcBXNkux
-         MKTtK6yu/70P59CUhynXl4YTFPpxoKHOSl48oRC9J6HcfnlXEsFT5+PQCkIsMhnVOuf0
-         OeJjptkqDfhLswoqm2HkjeiapG7mUfoVcbR9R1xKBT5ScEmXCQ4Y1+Yh5KO7nztcCksb
-         X8og==
-X-Gm-Message-State: AOAM533w6nwZoL6mmoF5aQCbOE7RFbHe5lq4frT/PyiNtrYt1fdLhId0
-        wiNe/qIe7a2CM0SotnxLoLWeEg==
-X-Google-Smtp-Source: ABdhPJxX7fgAprwygcmLbv/bWso8tv6+jbaJ2Y6smRT4U6jn90jPf3xZUhJtuZxCXWHTGChun0sZpw==
-X-Received: by 2002:a1c:a102:: with SMTP id k2mr2688174wme.78.1642590173201;
-        Wed, 19 Jan 2022 03:02:53 -0800 (PST)
-Received: from google.com (cpc106310-bagu17-2-0-cust853.1-3.cable.virginm.net. [86.15.223.86])
-        by smtp.gmail.com with ESMTPSA id bj6sm313517wrb.48.2022.01.19.03.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jan 2022 03:02:52 -0800 (PST)
-Date:   Wed, 19 Jan 2022 11:02:50 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Zong Li <zong.li@sifive.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: sifive: Move all stuff into SoCs header files
- from C files
-Message-ID: <Yefv2uFYme4+GDdL@google.com>
-References: <cover.1642582832.git.zong.li@sifive.com>
- <70c9317814b06c7ce37688b158178b188d3fd604.1642582832.git.zong.li@sifive.com>
+        with ESMTP id S1354382AbiASLyh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 06:54:37 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C42C061574
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jan 2022 03:54:37 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1nA9Xv-0003Ru-Ui; Wed, 19 Jan 2022 12:54:36 +0100
+Received: from [2a0a:edc0:0:1101:1d::39] (helo=dude03.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1nA9Xv-00BAa2-M5; Wed, 19 Jan 2022 12:54:34 +0100
+Received: from mtr by dude03.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1nA9Xu-008ZEW-5w; Wed, 19 Jan 2022 12:54:34 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
+        rajan.vaja@xilinx.com, kernel@pengutronix.de,
+        m.tretter@pengutronix.de
+Subject: [PATCH v2] clk: zynqmp: replace warn_once with pr_debug for failed clock ops
+Date:   Wed, 19 Jan 2022 12:54:34 +0100
+Message-Id: <20220119115434.2042017-1-m.tretter@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <70c9317814b06c7ce37688b158178b188d3fd604.1642582832.git.zong.li@sifive.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 Jan 2022, Zong Li wrote:
+The warning that a clock operation failed is only printed once. However,
+the function is called for various different clocks. The limit hides the
+warnings if different clocks are affected by the failures.
 
-> Improve PRCI driver to reduce the complexity, we remove the SoCs C files
-> by putting all stuff in each SoCs header files, and include these
-> SoCs-specific header files in core of PRCI. It can also avoid the W=1
-> kernel build warnings about variable defined but not used
-> [-Wunused-const-variable=], like commit 487dc7bb6a0c ("clk: sifive:
-> fu540-prci: Declare static const variable 'prci_clk_fu540' where it's
-> used") does.
-> 
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/clk/sifive/Makefile      |   2 +-
->  drivers/clk/sifive/fu540-prci.c  |  89 --------------------
->  drivers/clk/sifive/fu540-prci.h  |  91 ++++++++++++++++++++-
->  drivers/clk/sifive/fu740-prci.c  | 134 -------------------------------
->  drivers/clk/sifive/fu740-prci.h  | 130 +++++++++++++++++++++++++++++-
->  drivers/clk/sifive/sifive-prci.c |   5 --
->  6 files changed, 214 insertions(+), 237 deletions(-)
->  delete mode 100644 drivers/clk/sifive/fu540-prci.c
->  delete mode 100644 drivers/clk/sifive/fu740-prci.c
+The clock ops might fail if the firmware that handles the clocks is
+misconfigured. Therefore, replace the pr_warn_once with pr_debug to
+allow the user to see all errors if necessary. By default, hide the
+error messages and let drivers handle the errors.
 
-This is the sort of thing I was after.
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+---
+This is v2 of the patch to improve the error messages of the ZynqMP
+clock driver [0].
 
-This patch at least LGTM.
+[0] https://lore.kernel.org/all/20220112141229.700708-1-m.tretter@pengutronix.de/
 
-Reviewed-by: Lee Jones <lee.jones@linaro.org>
+Changelog:
 
+v2:
+
+- Update commit message
+- Use pr_debug instead of pr_warn
+---
+ drivers/clk/zynqmp/clk-gate-zynqmp.c | 12 +++++------
+ drivers/clk/zynqmp/clk-mux-zynqmp.c  |  8 +++----
+ drivers/clk/zynqmp/divider.c         | 12 +++++------
+ drivers/clk/zynqmp/pll.c             | 32 ++++++++++++++--------------
+ 4 files changed, 32 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+index 565ed67a0430..b89e55737198 100644
+--- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+@@ -41,8 +41,8 @@ static int zynqmp_clk_gate_enable(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_enable(clk_id);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() clock enabled failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock enable failed for %s (id %d), ret = %d\n",
++			 __func__, clk_name, clk_id, ret);
+ 
+ 	return ret;
+ }
+@@ -61,8 +61,8 @@ static void zynqmp_clk_gate_disable(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_disable(clk_id);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() clock disable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock disable failed for %s (id %d), ret = %d\n",
++			 __func__, clk_name, clk_id, ret);
+ }
+ 
+ /**
+@@ -80,8 +80,8 @@ static int zynqmp_clk_gate_is_enabled(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getstate(clk_id, &state);
+ 	if (ret) {
+-		pr_warn_once("%s() clock get state failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock get state failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 		return -EIO;
+ 	}
+ 
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 17afce594f28..60359333f26d 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -51,8 +51,8 @@ static u8 zynqmp_clk_mux_get_parent(struct clk_hw *hw)
+ 	ret = zynqmp_pm_clock_getparent(clk_id, &val);
+ 
+ 	if (ret) {
+-		pr_warn_once("%s() getparent failed for clock: %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() getparent failed for clock: %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 		/*
+ 		 * clk_core_get_parent_by_index() takes num_parents as incorrect
+ 		 * index which is exactly what I want to return here
+@@ -80,8 +80,8 @@ static int zynqmp_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	ret = zynqmp_pm_clock_setparent(clk_id, index);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() set parent failed for clock: %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() set parent failed for clock: %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+index cb49281f9cf9..422ea79907dd 100644
+--- a/drivers/clk/zynqmp/divider.c
++++ b/drivers/clk/zynqmp/divider.c
+@@ -89,8 +89,8 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &div);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() get divider failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 
+ 	if (div_type == TYPE_DIV1)
+ 		value = div & 0xFFFF;
+@@ -177,8 +177,8 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
+ 		ret = zynqmp_pm_clock_getdivider(clk_id, &bestdiv);
+ 
+ 		if (ret)
+-			pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-				     __func__, clk_name, ret);
++			pr_debug("%s() get divider failed for %s, ret = %d\n",
++				 __func__, clk_name, ret);
+ 		if (div_type == TYPE_DIV1)
+ 			bestdiv = bestdiv & 0xFFFF;
+ 		else
+@@ -244,8 +244,8 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	ret = zynqmp_pm_clock_setdivider(clk_id, div);
+ 
+ 	if (ret)
+-		pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() set divider failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 036e4ff64a2f..91a6b4cc910e 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -56,8 +56,8 @@ static inline enum pll_mode zynqmp_pll_get_mode(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_get_pll_frac_mode(clk_id, ret_payload);
+ 	if (ret) {
+-		pr_warn_once("%s() PLL get frac mode failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() PLL get frac mode failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 		return PLL_MODE_ERROR;
+ 	}
+ 
+@@ -84,8 +84,8 @@ static inline void zynqmp_pll_set_mode(struct clk_hw *hw, bool on)
+ 
+ 	ret = zynqmp_pm_set_pll_frac_mode(clk_id, mode);
+ 	if (ret)
+-		pr_warn_once("%s() PLL set frac mode failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() PLL set frac mode failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 	else
+ 		clk->set_pll_mode = true;
+ }
+@@ -145,8 +145,8 @@ static unsigned long zynqmp_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	ret = zynqmp_pm_clock_getdivider(clk_id, &fbdiv);
+ 	if (ret) {
+-		pr_warn_once("%s() get divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() get divider failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 		return 0ul;
+ 	}
+ 
+@@ -200,8 +200,8 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			WARN(1, "More than allowed devices are using the %s, which is forbidden\n",
+ 			     clk_name);
+ 		else if (ret)
+-			pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-				     __func__, clk_name, ret);
++			pr_debug("%s() set divider failed for %s, ret = %d\n",
++				 __func__, clk_name, ret);
+ 		zynqmp_pm_set_pll_frac_data(clk_id, f);
+ 
+ 		return rate + frac;
+@@ -211,8 +211,8 @@ static int zynqmp_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	fbdiv = clamp_t(u32, fbdiv, PLL_FBDIV_MIN, PLL_FBDIV_MAX);
+ 	ret = zynqmp_pm_clock_setdivider(clk_id, fbdiv);
+ 	if (ret)
+-		pr_warn_once("%s() set divider failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() set divider failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 
+ 	return parent_rate * fbdiv;
+ }
+@@ -233,8 +233,8 @@ static int zynqmp_pll_is_enabled(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_getstate(clk_id, &state);
+ 	if (ret) {
+-		pr_warn_once("%s() clock get state failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock get state failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 		return -EIO;
+ 	}
+ 
+@@ -265,8 +265,8 @@ static int zynqmp_pll_enable(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_enable(clk_id);
+ 	if (ret)
+-		pr_warn_once("%s() clock enable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock enable failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ 
+ 	return ret;
+ }
+@@ -287,8 +287,8 @@ static void zynqmp_pll_disable(struct clk_hw *hw)
+ 
+ 	ret = zynqmp_pm_clock_disable(clk_id);
+ 	if (ret)
+-		pr_warn_once("%s() clock disable failed for %s, ret = %d\n",
+-			     __func__, clk_name, ret);
++		pr_debug("%s() clock disable failed for %s, ret = %d\n",
++			 __func__, clk_name, ret);
+ }
+ 
+ static const struct clk_ops zynqmp_pll_ops = {
 -- 
-Lee Jones [李琼斯]
-Principal Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.30.2
+
