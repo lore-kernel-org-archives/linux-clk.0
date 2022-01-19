@@ -2,89 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7A6C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 12:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED1C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jan 2022 13:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354662AbiASMhl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jan 2022 07:37:41 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:54034 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1347480AbiASMhT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 07:37:19 -0500
-X-UUID: f599c721178142498a9791e33a340fae-20220119
-X-UUID: f599c721178142498a9791e33a340fae-20220119
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 2019721483; Wed, 19 Jan 2022 20:37:15 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 19 Jan 2022 20:37:14 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 19 Jan 2022 20:37:14 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     John Crispin <john@phrozen.org>, Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH 1/1] clk: mediatek: relicense mt7986 clock driver to GPL-2.0
-Date:   Wed, 19 Jan 2022 20:36:58 +0800
-Message-ID: <20220119123658.10095-2-sam.shih@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220119123658.10095-1-sam.shih@mediatek.com>
-References: <20220119123658.10095-1-sam.shih@mediatek.com>
+        id S1354885AbiASNm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jan 2022 08:42:56 -0500
+Received: from sender4-op-o14.zoho.com ([136.143.188.14]:17411 "EHLO
+        sender4-op-o14.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354866AbiASNmu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jan 2022 08:42:50 -0500
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Jan 2022 08:42:50 EST
+ARC-Seal: i=1; a=rsa-sha256; t=1642598848; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=n7KdY5O1IbkTGFTFg/xlnfZdjpPH5GaTWxvNfw4i1t+32loGtX+GAERcljh3UIUbKF7UX8tbKhfAmdUsf5mv/VXKW0SH8EiCemqY4H6eWD33C64wNOMikfHa9cNTDg9nnC5PYGJ0+5eJkK2JuTJml/5cCYqLKrf/u9lxXXirbAI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1642598848; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=vYkKrZxCG/cKt6+IIDyfS1RNbgmwpgZCPpOYO0clTEo=; 
+        b=Gc/LqWYOFdrhAhVTy+Libkdux8VwDwDeWdBZREpUm2FDF3wJK5c75miXorRp6t9th9ZcLy89sUwD+EfjEY5EPJPHf3Sd/xhiwgBEC+6KXRMcW8DczAip64KQmJLI+g/m7vyOX029hp8kpuUhXEySNWGidEj8+b1SKy2l9AclwLQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=arinc9.com;
+        spf=pass  smtp.mailfrom=arinc.unal@arinc9.com;
+        dmarc=pass header.from=<arinc.unal@arinc9.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1642598848;
+        s=zmail; d=arinc9.com; i=arinc.unal@arinc9.com;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=vYkKrZxCG/cKt6+IIDyfS1RNbgmwpgZCPpOYO0clTEo=;
+        b=ZAGDQczAj1fTsc5MR8Nkb36EgQSc5u+YHbIGUPTUIFPQaYIvaLuTKqjqL5i2varu
+        WudQAAJOca0zc9SQbAGb7qt+SL+52gwh8DPPssC+2Zlp50r5cS+fUJ07CqeYXxZMBV1
+        fqCw8SNNq4s8jz7z4NRoXldsabFr3tBcj2dP59YI=
+Received: from [10.10.10.216] (85.117.236.245 [85.117.236.245]) by mx.zohomail.com
+        with SMTPS id 1642598845836963.4816161923367; Wed, 19 Jan 2022 05:27:25 -0800 (PST)
+Message-ID: <d46fcc03-40f1-edbf-e966-e35aabf84111@arinc9.com>
+Date:   Wed, 19 Jan 2022 16:27:21 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset
+ provider
+Content-Language: en-US
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        linux-clk@vger.kernel.org
+Cc:     john@phrozen.org, linux-staging@lists.linux.dev,
+        gregkh@linuxfoundation.org, neil@brown.name,
+        p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, erkin.bozoglu@xeront.com,
+        Luiz Angelo Daros de Luca <luizluca@gmail.com>
+References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
+From:   =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The previous mt7986 clock drivers were incorrectly marked as GPL-1.0.
-This patch changes the driver to the standard GPL-2.0 license.
+This series fixes the SPI & MDIO probing issues we were having with our 
+mt7621 board.
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- drivers/clk/mediatek/clk-mt7986-apmixed.c  | 2 +-
- drivers/clk/mediatek/clk-mt7986-infracfg.c | 2 +-
- drivers/clk/mediatek/clk-mt7986-topckgen.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Tested-by: Arınç ÜNAL <arinc.unal@arinc9.com>
 
-diff --git a/drivers/clk/mediatek/clk-mt7986-apmixed.c b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-index 76c8ebdeae96..98ec3887585f 100644
---- a/drivers/clk/mediatek/clk-mt7986-apmixed.c
-+++ b/drivers/clk/mediatek/clk-mt7986-apmixed.c
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-1.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2021 MediaTek Inc.
-  * Author: Sam Shih <sam.shih@mediatek.com>
-diff --git a/drivers/clk/mediatek/clk-mt7986-infracfg.c b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-index 3be168c34fc0..f209c559fbc3 100644
---- a/drivers/clk/mediatek/clk-mt7986-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7986-infracfg.c
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-1.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2021 MediaTek Inc.
-  * Author: Sam Shih <sam.shih@mediatek.com>
-diff --git a/drivers/clk/mediatek/clk-mt7986-topckgen.c b/drivers/clk/mediatek/clk-mt7986-topckgen.c
-index 8550e2be7773..8f6f79b6e31e 100644
---- a/drivers/clk/mediatek/clk-mt7986-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt7986-topckgen.c
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-1.0
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2021 MediaTek Inc.
-  * Author: Sam Shih <sam.shih@mediatek.com>
--- 
-2.29.2
-
+Cheers.
+Arınç
