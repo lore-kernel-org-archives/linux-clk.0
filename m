@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27076C4321E
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 23:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7048C4332F
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 23:21:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378169AbiATXVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 18:21:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39682 "EHLO
+        id S1378208AbiATXVX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 18:21:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378232AbiATXUu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 18:20:50 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 127B9C061574;
-        Thu, 20 Jan 2022 15:20:50 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id f202-20020a1c1fd3000000b0034dd403f4fbso14390158wmf.1;
-        Thu, 20 Jan 2022 15:20:50 -0800 (PST)
+        with ESMTP id S1378187AbiATXUp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 18:20:45 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D631C061748;
+        Thu, 20 Jan 2022 15:20:44 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id o7-20020a05600c510700b00347e10f66d1so8046630wms.0;
+        Thu, 20 Jan 2022 15:20:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=70y9nP+1TJuyoQVHWKHYrgk62/1kbAozVgHhQoGQnWU=;
-        b=W9FIXQ88UaSTP59Qi7+oime1sFU7XPsBBr+GgtIZuDCxabPolRSg0UVB57+j7xn3TL
-         L4J7c3XN5cVXU9vUf/jC5K7uxhGch/2CdvfibqBaKT5alYLpdgoGJC0Sechz5wI13ueW
-         yz1HoXFN/s6m+/l2+I2rKH/GFcdU6pu9U14eRH0Vb4jaqUZSyKndqo0sqB3evNjZHBfe
-         9MgvwW7Su+DfBOpYp0wZpCnECInP2+66b0NQDJscSnZgYRNWUL8Bs3pua9a6K1rwKdtY
-         TTyirOIfrj5QFrdL/rS8eb23El1xVwL1JItJRWwdE30ei42exZSy7tk421zuJVgwzPRz
-         gavQ==
+        bh=EXW/q6yX9wxCGxkY1EpqijRPyr0+7BNt2tp7DEwa3FY=;
+        b=CLcuoxP7b2nyCEsoGcgJWSzkusmI6fi81voE1CX+UPLwCpqi5JWmVP1EN/HbrCfJah
+         nrEOTgfUf0VutgmSUPMDek+PoTsnuIU0y4awxxHslUeOrG3bSrhjxtS1HlT69p0ZlMb2
+         b3YQhKcYg25PHFhTrOSq8eoTtuy2cpNUgTUxsDW3wp216GAj5a/zW6E21Umo5UZVATTy
+         ipSfjQlwP2kDJCx82oB4SbWZFlWNpPHTGuFo+kYsf/zz8D7iH2Ehiif1TEpfvi4X0RHL
+         vysCd+E6G2CNi+f6nUqq930dP8fpEvbkuQJGRcl5v3ABCy4cuEgsBDIRHMQ0g7uO10WH
+         330Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=70y9nP+1TJuyoQVHWKHYrgk62/1kbAozVgHhQoGQnWU=;
-        b=ryWacxUS5gcpzIpAapqVN/nXu+mTYaCl07RCEn222HIN73nJ8anwgGJtOQDJxRvRWK
-         yKR4eX97TNvuCSLfXOyCwwxbraHHAkGRnfNf3Y1itRpsUsrWPugps/RLGLL8gOJKWw9k
-         t1vNnn21+A3fqfxfRbv46TmYE1mMlsvng/aEyPna7HkSe6l20Yd1zQvNA+VLxZhgoYkj
-         6giLeHjOCuixBtCeQm02RV8bIPkIjwjoHl5xGZhx9dGBVIha8SDfVQDBcJBeTZIH1JSL
-         RsrNr5O8Tqk7RJk/zeK6Sq7jMslwXunUibh+1+Jixgmb64s8oHgfTuZI8nABF7Ml9WtN
-         ilCA==
-X-Gm-Message-State: AOAM533jLCkXh2hQCvUNuC97ObA1SPjKLzcf8Eo4JkOI1zUuhiZeKRir
-        lpzOJiW8gMB0zKiEWMciGak=
-X-Google-Smtp-Source: ABdhPJy2EAGYqEGxCHtEc43zDu9wvxI6e81Sk5trFgKtuU1q9UCCbNWoXPBJztPhW8RkxnbwpfmtgQ==
-X-Received: by 2002:a05:600c:5125:: with SMTP id o37mr1107030wms.161.1642720848419;
-        Thu, 20 Jan 2022 15:20:48 -0800 (PST)
+        bh=EXW/q6yX9wxCGxkY1EpqijRPyr0+7BNt2tp7DEwa3FY=;
+        b=fKrHPF/+kKheSvhuIHoHLpiWj222GV/6FOrFFJLTV3qteFFA5iQeGCAetLQRUR1gGO
+         L+wTImK62M9y7pVDuOUftdOTc1fAZveNMIw9VBTiktPd5NA5JJcdFSLiiYLIKTx9EoBi
+         Ux9or6WsHzH0BxAY8vhCSQ2RF/V/ivPHOYADasxrXsPsZ60xNcHDCMgQg2G9CgQOBC1S
+         INKga4meDxMUmz38lplnTr5UiTxTMBB1SQ45pmpbgP1HECqSTjXyftz0t//2kGUG9quc
+         YcoGUPfBM/1pGKMmBOqGWDOSO2p+3AofvgQoXJD/8M6gq3HPwEDHzDXb2VciYDcboQXj
+         NAXQ==
+X-Gm-Message-State: AOAM531Ta6svEjnpH0aWz7csknXh+KZyyue6W0r0OGtmmbWqeVffj1KL
+        U4FAcgJAKHCXtsWDZpOi8EE=
+X-Google-Smtp-Source: ABdhPJyuS982P3dJ+9/hHjPwlCWgs1xqXBuft+Q47eoy8lSRRAPlhuDfLZ82NRh9r1IW7XzYUW6wYA==
+X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr1285241wrx.278.1642720843117;
+        Thu, 20 Jan 2022 15:20:43 -0800 (PST)
 Received: from localhost.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id a9sm3939283wmm.32.2022.01.20.15.20.47
+        by smtp.googlemail.com with ESMTPSA id a9sm3939283wmm.32.2022.01.20.15.20.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 15:20:48 -0800 (PST)
+        Thu, 20 Jan 2022 15:20:42 -0800 (PST)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         Ansuel Smith <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/15] ARM: dts: qcom: Add syscon and cxo/pxo clock to gcc node for ipq8064
-Date:   Fri, 21 Jan 2022 00:20:28 +0100
-Message-Id: <20220120232028.6738-16-ansuelsmth@gmail.com>
+Subject: [PATCH v2 10/15] drivers: clk: qcom: gcc-ipq806x: add additional freq for sdc table
+Date:   Fri, 21 Jan 2022 00:20:23 +0100
+Message-Id: <20220120232028.6738-11-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <20220120232028.6738-1-ansuelsmth@gmail.com>
 References: <20220120232028.6738-1-ansuelsmth@gmail.com>
@@ -70,46 +70,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add syscon compatible required for tsens driver to correctly probe driver
-and access the reg. Also add cxo and pxo tag and declare them as gcc clock
-now requires them for the ipq8064 gcc driver that has now been modernized.
+Add additional freq supported for the sdc table.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- arch/arm/boot/dts/qcom-ipq8064.dtsi | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-ipq806x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index 11481313bdb6..5524a68cf3d1 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -298,13 +298,13 @@ smem: smem@41000000 {
- 	};
- 
- 	clocks {
--		cxo_board {
-+		cxo_board: cxo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <25000000>;
- 		};
- 
--		pxo_board {
-+		pxo_board: pxo_board {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <25000000>;
-@@ -736,7 +736,9 @@ tsens_calib_backup: calib_backup@410 {
- 		};
- 
- 		gcc: clock-controller@900000 {
--			compatible = "qcom,gcc-ipq8064";
-+			compatible = "qcom,gcc-ipq8064", "syscon";
-+			clocks = <&pxo_board>, <&cxo_board>;
-+			clock-names = "pxo", "cxo";
- 			reg = <0x00900000 0x4000>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index 77bc3d94f580..dbd61e4844b0 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -1292,6 +1292,7 @@ static const struct freq_tbl clk_tbl_sdc[] = {
+ 	{  20210000, P_PLL8,  1, 1,  19 },
+ 	{  24000000, P_PLL8,  4, 1,   4 },
+ 	{  48000000, P_PLL8,  4, 1,   2 },
++	{  52000000, P_PLL8,  1, 2,  15 }, /* 51.2 Mhz */
+ 	{  64000000, P_PLL8,  3, 1,   2 },
+ 	{  96000000, P_PLL8,  4, 0,   0 },
+ 	{ 192000000, P_PLL8,  2, 0,   0 },
 -- 
 2.33.1
 
