@@ -2,29 +2,28 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9E3C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 12:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6170AC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 12:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242487AbiATMb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S242538AbiATMb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 20 Jan 2022 07:31:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33170 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242545AbiATMbn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 07:31:43 -0500
-X-Greylist: delayed 502 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 20 Jan 2022 04:31:42 PST
+        with ESMTP id S232606AbiATMbu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 07:31:50 -0500
 Received: from mx2.securetransport.de (mx2.securetransport.de [IPv6:2a03:4000:13:6c7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF1E2C061574
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 04:31:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42238C061401
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 04:31:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dh-electronics.com;
-        s=dhelectronicscom; t=1642681412;
-        bh=cjP1hY/gV6YI+gSva1g8dPyS/nmv5JYe3LAPaeC17Hk=;
+        s=dhelectronicscom; t=1642681353;
+        bh=haRx+ubYjgsAVsAb5w88a4ry5nJOF4pa9uDRBaSa44w=;
         h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=OP3b4icjGxSyzvXTdlJniHzinTA1Gf42AT0/x/Es7MDpZ0PHzqCPPfOO3naV9YDMw
-         T/EzdPiIu8fsHUbINNqoqowyaIWlXd9sRFulcP/EACUpChSg6sC6gtO19CN6MzFUBz
-         Ce/jgR2JA2n6or0kWVmNNI8iucWKRWhDvefNYMLVNW4c+X3x/K6KOoOJNxld6LUyHW
-         F2c4FLNzVQvT/gRqre81jTOcfwWVso6pHJ0S/1ekvrnEeCaY2S2UtKwJso16VlrdTx
-         yJj4LURKjbm7vl7rUkxKlXEg7gZSzkRv8l0/hCHlW012SpSYmFQcu/XXWi8XgLMnZJ
-         p0j32DBc5T6cA==
+        b=cZ5qJEyS/orQOOU91nKcQhTSnJqYqW7MXnegpOI2sZxzeTyUWheyJn69wWnBRMAoS
+         ML7stLZ1yUp6fcc/ShECchfssFyh9abrZB2Gsj9rBreYZnwMtGbX1s38egRMmS+MHt
+         0oGdzVe/NFSFqJ5VjsYtWMfOQuOqkyQlgkOwUBtZOnl5bQTXAmlzizfHZcsv/IPxEs
+         Poe9/AhaOweMNNX9sglE/i7nh8U9FkBBQnOSFn+DytYy8in4s2+/gk1dccEfzuIFcI
+         nPu6Xc4WHRUGY8zFuN7UrbHL/b081G05arw0ZVNvIv+4ZGeTu73SVUTvZAgcErmDW6
+         pYhz/rsO+BB6Q==
 X-secureTransport-forwarded: yes
 From:   Johann Neuhauser <jneuhauser@dh-electronics.com>
 Complaints-To: abuse@cubewerk.de
@@ -41,94 +40,196 @@ CC:     "Marek MV. Vasut" <marex@denx.de>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-stm32@st-md-mailman.stormreply.com" 
         <linux-stm32@st-md-mailman.stormreply.com>
-Subject: RE: [PATCH 5/5] ARM: dts: stm32: Switch DWMAC RMII clock to MCO2 on
- DHCOM
-Thread-Topic: [PATCH 5/5] ARM: dts: stm32: Switch DWMAC RMII clock to MCO2 on
- DHCOM
-Thread-Index: AQHYDKoxtzPgICVgbEyNJNP9H9TX9Kxr02Ow
-Date:   Thu, 20 Jan 2022 12:08:13 +0000
-Message-ID: <5dde4cf58557485790bb7c14497e8cd1@dh-electronics.com>
+Subject: RE: [PATCH 2/5] clk: stm32mp1: Add parent_data to ETHRX clock
+Thread-Topic: [PATCH 2/5] clk: stm32mp1: Add parent_data to ETHRX clock
+Thread-Index: AQHYDKowBbptfmImJ0K3nNIY0Ny5waxr0veA
+Date:   Thu, 20 Jan 2022 12:07:12 +0000
+Message-ID: <ddf6afba3fd2402a8b3f60fe30bbdbba@dh-electronics.com>
 References: <20220118202958.1840431-1-marex@denx.de>
- <20220118202958.1840431-5-marex@denx.de>
-In-Reply-To: <20220118202958.1840431-5-marex@denx.de>
+ <20220118202958.1840431-2-marex@denx.de>
+In-Reply-To: <20220118202958.1840431-2-marex@denx.de>
 Accept-Language: de-DE, en-US
 Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBGcm9tOiBNYXJlayBWYXN1dCBbbWFpbHRvOm1hcmV4QGRlbnguZGVdDQo+IFNlbnQ6IFR1ZXNk
-YXksIEphbnVhcnkgMTgsIDIwMjIgOTozMCBQTQ0KPiANCj4gVGhlIERIQ09NIFNvTSBoYXMgdHdv
-IG9wdGlvbnMgZm9yIHN1cHBseWluZyBFVEhSWCBjbG9jayB0byB0aGUgRFdNQUMNCj4gYmxvY2sg
-YW5kIFBIWS4gRWl0aGVyICgxKSBFVEhDS19LIGdlbmVyYXRlcyA1MCBNSHogY2xvY2sgb24gRVRI
-X0NMSw0KPiBwYWQgZm9yIHRoZSBQSFkgYW5kIHRoZSBzYW1lIDUwIE1IeiBjbG9jayBhcmUgZmVk
-IGJhY2sgdG8gRVRIUlggdmlhDQo+IGludGVybmFsIGV0aF9jbGtfZmIgY2xvY2sgY29ubmVjdGlv
-biBPUiAoMikgRVRIX0NMSyBpcyBub3QgdXNlZCBhdA0KPiBhbGwsIE1DTzIgZ2VuZXJhdGVzIDUw
-IE1IeiBjbG9jayBvbiBNQ08yIG91dHB1dCBwYWQgZm9yIHRoZSBQSFkgYW5kDQo+IHRoZSBzYW1l
-IE1DTzIgY2xvY2sgYXJlIGZlZCBiYWNrIGludG8gRVRIUlggdmlhIEVUSF9SWF9DTEsgaW5wdXQg
-cGFkDQo+IHVzaW5nIGV4dGVybmFsIHBhZC10by1wYWQgY29ubmVjdGlvbi4NCj4gDQo+IE9wdGlv
-biAoMSkgaGFzIHR3byBkb3duc2lkZXMuIEVUSENLX0sgaXMgc3VwcGxpZWQgZGlyZWN0bHkgZnJv
-bSBlaXRoZXINCj4gUExMM19RIG9yIFBMTDRfUCwgaGVuY2UgdGhlIFBMTCBvdXRwdXQgaXMgbGlt
-aXRlZCB0byBleGFjdGx5IDUwIE1IeiBhbmQNCj4gc2luY2UgdGhlIHNhbWUgUExMIG91dHB1dCBp
-cyBhbHNvIHVzZWQgdG8gc3VwcGx5IFNETU1DIGJsb2NrcywgdGhlDQo+IHBlcmZvcm1hbmNlIG9m
-IFNEIGFuZCBlTU1DIGFjY2VzcyBpcyBhZmZlY3RlZC4gVGhlIHNlY29uZCBkb3duc2lkZSBpcw0K
-PiB0aGF0IHVzaW5nIHRoaXMgb3B0aW9uLCB0aGUgRU1JIG9mIHRoZSBTb00gaXMgaGlnaGVyLg0K
-PiANCj4gT3B0aW9uICgyKSBzb2x2ZXMgYm90aCBvZiB0aG9zZSBwcm9ibGVtcywgc28gaW1wbGVt
-ZW50IGl0IGhlcmUuIEluIHRoaXMNCj4gY2FzZSwgdGhlIFBMTDRfUCBpcyBubyBsb25nZXIgbGlt
-aXRlZCBhbmQgY2FuIGJlIG9wZXJhdGVkIGZhc3RlciwgYXQNCj4gMTAwIE1Ieiwgd2hpY2ggaW1w
-cm92ZXMgU0RNTUMgcGVyZm9ybWFuY2UgKHJlYWQgcGVyZm9ybWFuY2UgaXMgaW1wcm92ZWQNCj4g
-ZnJvbSB+NDEgTWlCL3MgdG8gfjU3IE1pQi9zIHdpdGggZGQgaWY9L2Rldi9tbWNibGsxIG9mPS9k
-ZXYvbnVsbCBicz02NE0NCj4gY291bnQ9MSkuIFRoZSBFTUkgaW50ZXJmZXJlbmNlIGFsc28gZGVj
-cmVhc2VzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWFyZWsgVmFzdXQgPG1hcmV4QGRlbnguZGU+
-DQo+IENjOiBBbGV4YW5kcmUgVG9yZ3VlIDxhbGV4YW5kcmUudG9yZ3VlQGZvc3Muc3QuY29tPg0K
-PiBDYzogQ2hyaXN0b3BoZSBSb3VsbGllciA8Y2hyaXN0b3BoZS5yb3VsbGllckBmb3NzLnN0LmNv
-bT4NCj4gQ2M6IEdhYnJpZWwgRmVybmFuZGV6IDxnYWJyaWVsLmZlcm5hbmRlekBmb3NzLnN0LmNv
-bT4NCj4gQ2M6IFBhdHJpY2UgQ2hvdGFyZCA8cGF0cmljZS5jaG90YXJkQGZvc3Muc3QuY29tPg0K
-PiBDYzogUGF0cmljayBEZWxhdW5heSA8cGF0cmljay5kZWxhdW5heUBmb3NzLnN0LmNvbT4NCj4g
-Q2M6IFN0ZXBoZW4gQm95ZCA8c2JveWRAa2VybmVsLm9yZz4NCj4gQ2M6IGxpbnV4LWNsa0B2Z2Vy
-Lmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LXN0bTMyQHN0LW1kLW1haWxtYW4uc3Rvcm1yZXBseS5j
-b20NCj4gVG86IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiAtLS0NCj4g
-IGFyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNXh4LWRoY29tLXNvbS5kdHNpIHwgMjIgKysrKysr
-KysrKysrKysrKy0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCA0IGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAx
-NXh4LWRoY29tLXNvbS5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1eHgtZGhjb20t
-c29tLmR0c2kNCj4gaW5kZXggOGM0MWY4MTlmNzc2OS4uYjA5MWQ5OTAxZTk3NiAxMDA2NDQNCj4g
-LS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1eHgtZGhjb20tc29tLmR0c2kNCj4gKysr
-IGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1eHgtZGhjb20tc29tLmR0c2kNCj4gQEAgLTEx
-NiwxNSArMTE2LDI5IEBAICZkdHMgew0KPiAgICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gIH07
-DQo+IA0KPiArJnJjYyB7DQo+ICsgICAgICAgLyogQ29ubmVjdCBNQ08yIG91dHB1dCB0byBFVEhf
-UlhfQ0xLIGlucHV0IHZpYSBwYWQtcGFkIGNvbm5lY3Rpb24gKi8NCj4gKyAgICAgICBjbG9ja3Mg
-PSA8JnJjYyBDS19NQ08yPjsNCj4gKyAgICAgICBjbG9jay1uYW1lcyA9ICJFVEhfUlhfQ0xLL0VU
-SF9SRUZfQ0xLIjsNCj4gKw0KPiArICAgICAgIC8qDQo+ICsgICAgICAgICogU2V0IFBMTDRQIG91
-dHB1dCB0byAxMDAgTUh6IHRvIHN1cHBseSBTRE1NQyB3aXRoIGZhc3RlciBjbG9jaywNCj4gKyAg
-ICAgICAgKiBzZXQgTUNPMiBvdXRwdXQgdG8gNTAgTUh6IHRvIHN1cHBseSBFVEhSWCBjbG9jayB3
-aXRoIFBMTDRQLzIsDQo+ICsgICAgICAgICogc28gdGhhdCBNQ08yIGJlaGF2ZXMgYXMgYSBkaXZp
-ZGVyIGZvciB0aGUgRVRIUlggY2xvY2sgaGVyZS4NCj4gKyAgICAgICAgKi8NCj4gKyAgICAgICBh
-c3NpZ25lZC1jbG9ja3MgPSA8JnJjYyBDS19NQ08yPiwgPCZyY2MgUExMNF9QPjsNCj4gKyAgICAg
-ICBhc3NpZ25lZC1jbG9jay1wYXJlbnRzID0gPCZyY2MgUExMNF9QPjsNCj4gKyAgICAgICBhc3Np
-Z25lZC1jbG9jay1yYXRlcyA9IDw1MDAwMDAwMD4sIDwxMDAwMDAwMDA+Ow0KPiArfTsNCj4gKw0K
-PiAgJmV0aGVybmV0MCB7DQo+ICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiAtICAgICAgIHBp
-bmN0cmwtMCA9IDwmZXRoZXJuZXQwX3JtaWlfcGluc19hPjsNCj4gLSAgICAgICBwaW5jdHJsLTEg
-PSA8JmV0aGVybmV0MF9ybWlpX3NsZWVwX3BpbnNfYT47DQo+ICsgICAgICAgcGluY3RybC0wID0g
-PCZldGhlcm5ldDBfcm1paV9waW5zX2IgJm1jbzJfcGluc19hPjsNCj4gKyAgICAgICBwaW5jdHJs
-LTEgPSA8JmV0aGVybmV0MF9ybWlpX3NsZWVwX3BpbnNfYiAmbWNvMl9zbGVlcF9waW5zX2E+Ow0K
-PiAgICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCIsICJzbGVlcCI7DQo+ICAgICAgICAg
-cGh5LW1vZGUgPSAicm1paSI7DQo+ICAgICAgICAgbWF4LXNwZWVkID0gPDEwMD47DQo+ICAgICAg
-ICAgcGh5LWhhbmRsZSA9IDwmcGh5MD47DQo+IC0gICAgICAgc3QsZXRoLXJlZi1jbGstc2VsOw0K
-PiANCj4gICAgICAgICBtZGlvMCB7DQo+ICAgICAgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9
-IDwxPjsNCj4gQEAgLTEzNiw3ICsxNTAsNyBAQCBwaHkwOiBldGhlcm5ldC1waHlAMSB7DQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIC8qIExBTjg3MTBBaSAqLw0KPiAgICAgICAgICAgICAgICAg
-ICAgICAgICBjb21wYXRpYmxlID0gImV0aGVybmV0LXBoeS1pZDAwMDcuYzBmMCIsDQo+ICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZXRoZXJuZXQtcGh5LWllZWU4MDIuMy1j
-MjIiOw0KPiAtICAgICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JnJjYyBFVEhDS19LPjsN
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZyY2MgQ0tfTUNPMj47DQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIHJlc2V0LWdwaW9zID0gPCZncGlvaCAzIEdQSU9fQUNUSVZF
-X0xPVz47DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIHJlc2V0LWFzc2VydC11cyA9IDw1MDA+
-Ow0KPiAgICAgICAgICAgICAgICAgICAgICAgICByZXNldC1kZWFzc2VydC11cyA9IDw1MDA+Ow0K
-PiAtLQ0KPiAyLjM0LjENClRlc3RlZC1ieTogSm9oYW5uIE5ldWhhdXNlciA8am5ldWhhdXNlckBk
-aC1lbGVjdHJvbmljcy5jb20+DQo=
+> From: Marek Vasut [mailto:marex@denx.de]
+> Sent: Tuesday, January 18, 2022 9:30 PM
+>=20
+> Pass parent_data to ETHRX clock with new fw_name =3D "ETH_RX_CLK/ETH_REF_=
+CLK".
+> By default, this change has no impact on the operation of the clock drive=
+r.
+> However, due to the fw_name, it permits DT to override ETHRX clock parent=
+,
+> which might be needed in case the ETHRX clock are supplied by external cl=
+ock
+> source.
+>=20
+> Example of MCO2 supplying clock to ETH_RX_CLK via external pad-to-pad wir=
+e:
+> &rcc {
+>          clocks =3D <&rcc CK_MCO2>;
+>          clock-names =3D "ETH_RX_CLK/ETH_REF_CLK";
+> };
+>=20
+> Note that while this patch permits to implement this rare usecase, the is=
+sue
+> with ethernet RX and TX input clock modeling on MP1 is far more complex a=
+nd
+> requires more core plumbing.
+>=20
+> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
+>     Figure 83. Peripheral clock distribution for Ethernet
+>     https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157=
+-advanced-armbased-32bit-mpus-
+> stmicroelectronics.pdf
+>=20
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
+> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> To: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/clk/clk-stm32mp1.c | 36 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 32 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+> index 23a34ab459a3b..7ad2e6203baef 100644
+> --- a/drivers/clk/clk-stm32mp1.c
+> +++ b/drivers/clk/clk-stm32mp1.c
+> @@ -155,6 +155,10 @@ static const char * const eth_src[] =3D {
+>         "pll4_p", "pll3_q"
+>  };
+>=20
+> +const struct clk_parent_data ethrx_src[] =3D {
+> +       { .name =3D "ethck_k", .fw_name =3D "ETH_RX_CLK/ETH_REF_CLK" },
+> +};
+> +
+>  static const char * const rng_src[] =3D {
+>         "ck_csi", "pll4_r", "ck_lse", "ck_lsi"
+>  };
+> @@ -317,6 +321,7 @@ struct clock_config {
+>         const char *name;
+>         const char *parent_name;
+>         const char * const *parent_names;
+> +       const struct clk_parent_data *parent_data;
+>         int num_parents;
+>         unsigned long flags;
+>         void *cfg;
+> @@ -576,6 +581,7 @@ static struct clk_hw *
+>  clk_stm32_register_gate_ops(struct device *dev,
+>                             const char *name,
+>                             const char *parent_name,
+> +                           const struct clk_parent_data *parent_data,
+>                             unsigned long flags,
+>                             void __iomem *base,
+>                             const struct stm32_gate_cfg *cfg,
+> @@ -586,7 +592,10 @@ clk_stm32_register_gate_ops(struct device *dev,
+>         int ret;
+>=20
+>         init.name =3D name;
+> -       init.parent_names =3D &parent_name;
+> +       if (parent_name)
+> +               init.parent_names =3D &parent_name;
+> +       if (parent_data)
+> +               init.parent_data =3D parent_data;
+>         init.num_parents =3D 1;
+>         init.flags =3D flags;
+>=20
+> @@ -611,6 +620,7 @@ clk_stm32_register_gate_ops(struct device *dev,
+>  static struct clk_hw *
+>  clk_stm32_register_composite(struct device *dev,
+>                              const char *name, const char * const *parent=
+_names,
+> +                            const struct clk_parent_data *parent_data,
+>                              int num_parents, void __iomem *base,
+>                              const struct stm32_composite_cfg *cfg,
+>                              unsigned long flags, spinlock_t *lock)
+> @@ -1135,6 +1145,7 @@ _clk_stm32_register_gate(struct device *dev,
+>         return clk_stm32_register_gate_ops(dev,
+>                                     cfg->name,
+>                                     cfg->parent_name,
+> +                                   cfg->parent_data,
+>                                     cfg->flags,
+>                                     base,
+>                                     cfg->cfg,
+> @@ -1148,8 +1159,8 @@ _clk_stm32_register_composite(struct device *dev,
+>                               const struct clock_config *cfg)
+>  {
+>         return clk_stm32_register_composite(dev, cfg->name, cfg->parent_n=
+ames,
+> -                                           cfg->num_parents, base, cfg->=
+cfg,
+> -                                           cfg->flags, lock);
+> +                                           cfg->parent_data, cfg->num_pa=
+rents,
+> +                                           base, cfg->cfg, cfg->flags, l=
+ock);
+>  }
+>=20
+>  #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags=
+)\
+> @@ -1258,6 +1269,16 @@ _clk_stm32_register_composite(struct device *dev,
+>         .func           =3D _clk_stm32_register_gate,\
+>  }
+>=20
+> +#define STM32_GATE_PDATA(_id, _name, _parent, _flags, _gate)\
+> +{\
+> +       .id             =3D _id,\
+> +       .name           =3D _name,\
+> +       .parent_data    =3D _parent,\
+> +       .flags          =3D _flags,\
+> +       .cfg            =3D (struct stm32_gate_cfg *) {_gate},\
+> +       .func           =3D _clk_stm32_register_gate,\
+> +}
+> +
+>  #define _STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags, _mgate, _o=
+ps)\
+>         (&(struct stm32_gate_cfg) {\
+>                 &(struct gate_cfg) {\
+> @@ -1291,6 +1312,10 @@ _clk_stm32_register_composite(struct device *dev,
+>         STM32_GATE(_id, _name, _parent, _flags,\
+>                    _STM32_MGATE(_mgate))
+>=20
+> +#define MGATE_MP1_PDATA(_id, _name, _parent, _flags, _mgate)\
+> +       STM32_GATE_PDATA(_id, _name, _parent, _flags,\
+> +                  _STM32_MGATE(_mgate))
+> +
+>  #define _STM32_DIV(_div_offset, _div_shift, _div_width,\
+>                    _div_flags, _div_table, _ops)\
+>         .div =3D &(struct stm32_div_cfg) {\
+> @@ -1354,6 +1379,9 @@ _clk_stm32_register_composite(struct device *dev,
+>  #define PCLK(_id, _name, _parent, _flags, _mgate)\
+>         MGATE_MP1(_id, _name, _parent, _flags, _mgate)
+>=20
+> +#define PCLK_PDATA(_id, _name, _parent, _flags, _mgate)\
+> +       MGATE_MP1_PDATA(_id, _name, _parent, _flags, _mgate)
+> +
+>  #define KCLK(_id, _name, _parents, _flags, _mgate, _mmux)\
+>              COMPOSITE(_id, _name, _parents, CLK_OPS_PARENT_ENABLE |\
+>                        CLK_SET_RATE_NO_REPARENT | _flags,\
+> @@ -1951,7 +1979,7 @@ static const struct clock_config stm32mp1_clock_cfg=
+[] =3D {
+>         PCLK(MDMA, "mdma", "ck_axi", 0, G_MDMA),
+>         PCLK(GPU, "gpu", "ck_axi", 0, G_GPU),
+>         PCLK(ETHTX, "ethtx", "ck_axi", 0, G_ETHTX),
+> -       PCLK(ETHRX, "ethrx", "ck_axi", 0, G_ETHRX),
+> +       PCLK_PDATA(ETHRX, "ethrx", ethrx_src, 0, G_ETHRX),
+>         PCLK(ETHMAC, "ethmac", "ck_axi", 0, G_ETHMAC),
+>         PCLK(FMC, "fmc", "ck_axi", CLK_IGNORE_UNUSED, G_FMC),
+>         PCLK(QSPI, "qspi", "ck_axi", CLK_IGNORE_UNUSED, G_QSPI),
+> --
+> 2.34.1
+Tested-by: Johann Neuhauser <jneuhauser@dh-electronics.com>
