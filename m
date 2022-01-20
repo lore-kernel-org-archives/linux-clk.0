@@ -2,591 +2,442 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B31C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 05:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39329C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 05:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236480AbiATFXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 00:23:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48558 "EHLO
+        id S236673AbiATFiM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 00:38:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236406AbiATFXH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 00:23:07 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA0BC061574;
-        Wed, 19 Jan 2022 21:23:06 -0800 (PST)
+        with ESMTP id S229989AbiATFiM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 00:38:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA148C061574;
+        Wed, 19 Jan 2022 21:38:11 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5ACAAB81A7F;
-        Thu, 20 Jan 2022 05:23:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF4E3C340E0;
-        Thu, 20 Jan 2022 05:23:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 30C93610E8;
+        Thu, 20 Jan 2022 05:38:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71C17C340E0;
+        Thu, 20 Jan 2022 05:38:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642656184;
-        bh=GMuCIX9M1dkV+7hodC+6sJPsSwJVn4rR3g//sqz8eHk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AQKLjZkTl5KmwBuycDwhRqPRh2oiaPwpisI/6JvizoNSCg/rMktsdimeduxITIBlu
-         UWXF6WCnC5ThXlzFtSyzTLqIJX3K3UJjQ2oBs2x96cThgOFMRcq5LpWA+TaUAdLElO
-         pH+uW0KYlyVHjGILqapWJNUd3ixwykwEZaYiJItt4GOMWm+K9qCNmkSbpr3n3amhrk
-         N6xQG4olDSYazSpGADoJIGtboj+oQ/KDFxe2kxT1xe8oiVZnszz9T4tvy/gCR0A3Qh
-         fRuVmZmXQ0v08GG0Vs6TJZx7Ul8VrKX6dPn00Y7lcO9CJh/FZnGPOaMjOB34jnCesN
-         57R97XUxpgj6Q==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        kunit-dev@googlegroups.com
-Subject: [PATCH v2] clk: gate: Add some kunit test suites
-Date:   Wed, 19 Jan 2022 21:23:03 -0800
-Message-Id: <20220120052303.2098394-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.34.1.703.g22d0c6ccf7-goog
+        s=k20201202; t=1642657090;
+        bh=krlYkHrswJrLWdvAVEVUNEkGSQeLkLwmuTkvBa6OJYM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Iwtfpy94QA2FGa/t8fhAYL79dun1O2tuURscaQ6ETfUVyP+1S00BMp69WNqCRxWnA
+         RNb6dLSB3I3OAKnGR2MSkC4/Tj6rob+FA+5ayZzW05q7HItH2zuPzr6qfK/aRhOYU5
+         b045RPYQ58cqJX28BpKy5rz2HSrVMKZryfQ/4HwrX9oKG5U8sN2lFfCUl437SOiouc
+         l8pLrnZpn/Rtuk/dsZ6L4ejPXRly8l0oFRAHoCEK156Lx5wS8KhzRSNUSGMJeHzgyw
+         Orpk1HkwjgqJdFDb3UHMwEthaKaHyBZogLXo2zTfoTplYFSKkhc2Y3TCoikg6QAqWN
+         PZBeu4jL+g0hw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220118191839.64086-3-povik+lin@protonmail.com>
+References: <20220118191839.64086-1-povik+lin@protonmail.com> <20220118191839.64086-3-povik+lin@protonmail.com>
+Subject: Re: [PATCH v2 2/3] clk: clk-apple-nco: Add driver for Apple NCO
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kettenis@openbsd.org,
+        Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@protonmail.com>
+To:     Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@protonmail.com>,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Date:   Wed, 19 Jan 2022 21:38:08 -0800
+User-Agent: alot/0.10
+Message-Id: <20220120053810.71C17C340E0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Test various parts of the clk gate implementation with the kunit testing
-framework.
+Quoting Martin Povi=C5=A1er (2022-01-18 11:21:10)
+> diff --git a/drivers/clk/clk-apple-nco.c b/drivers/clk/clk-apple-nco.c
+> new file mode 100644
+> index 000000000000..593f5b5ce5b7
+> --- /dev/null
+> +++ b/drivers/clk/clk-apple-nco.c
+> @@ -0,0 +1,340 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * Driver for an SoC block (Numerically Controlled Oscillator)
+> + * found on t8103 (M1) and other Apple chips
+> + *
+> + * Copyright (C) The Asahi Linux Contributors
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/io.h>
+> +#include <linux/math64.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_clk.h>
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-Acked-by: Daniel Latypov <dlatypov@google.com>
-Cc: <kunit-dev@googlegroups.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+Is this include used? If not, please drop it.
 
-Changes from v1 (https://lore.kernel.org/r/20220115080657.2780989-1-sboyd@kernel.org):
- * Changed file name to semi-match convention
- * Changed Kconfig symbol name to match convention
- * Changed kzalloc to test managed allocation
- * Inlined check for ret where possible
+Please include kernel.h for container_of() usage.
 
- drivers/clk/.kunitconfig    |   3 +
- drivers/clk/Kconfig         |   8 +
- drivers/clk/Makefile        |   1 +
- drivers/clk/clk-gate_test.c | 469 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 481 insertions(+)
- create mode 100644 drivers/clk/.kunitconfig
- create mode 100644 drivers/clk/clk-gate_test.c
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define NCO_CHANNEL_STRIDE     0x4000
+> +#define NCO_CHANNEL_REGSIZE    20
+> +
+> +#define REG_CTRL       0
+> +#define CTRL_ENABLE    BIT(31)
+> +#define REG_DIV                4
+> +#define DIV_FINE       GENMASK(1, 0)
+> +#define DIV_COARSE     GENMASK(12, 2)
+> +#define REG_INC1       8
+> +#define REG_INC2       12
+> +#define REG_ACCINIT    16
+> +
+> +/*
+> + * Theory of operation (postulated)
+> + *
+> + * The REG_DIV register indirectly expresses a base integer divisor, rou=
+ghly
+> + * corresponding to twice the desired ratio of input to output clock. Th=
+is
+> + * base divisor is adjusted on a cycle-by-cycle basis based on the state=
+ of a
+> + * 32-bit phase accumulator to achieve a desired precise clock ratio ove=
+r the
+> + * long term.
+> + *
+> + * Specifically an output clock cycle is produced after (REG_DIV divisor=
+)/2
+> + * or (REG_DIV divisor + 1)/2 input cycles, the latter taking effect whe=
+n top
+> + * bit of the 32-bit accumulator is set. The accumulator is incremented =
+each
+> + * produced output cycle, by the value from either REG_INC1 or REG_INC2,=
+ which
+> + * of the two is selected depending again on the accumulator's current t=
+op bit.
+> + *
+> + * Because the NCO hardware implements counting of input clock cycles in=
+ part
+> + * in a Galois linear-feedback shift register, the higher bits of divisor
+> + * are programmed into REG_DIV by picking an appropriate LFSR state. See
+> + * nco_compute_tables/nco_div_translate for details on this.
+> + */
+> +
+> +struct nco_tables;
 
-diff --git a/drivers/clk/.kunitconfig b/drivers/clk/.kunitconfig
-new file mode 100644
-index 000000000000..3754fdb9485a
---- /dev/null
-+++ b/drivers/clk/.kunitconfig
-@@ -0,0 +1,3 @@
-+CONFIG_KUNIT=y
-+CONFIG_COMMON_CLK=y
-+CONFIG_CLK_GATE_KUNIT_TEST=y
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c5b3dc97396a..947cd0b12dbd 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -421,4 +421,12 @@ source "drivers/clk/x86/Kconfig"
- source "drivers/clk/xilinx/Kconfig"
- source "drivers/clk/zynqmp/Kconfig"
- 
-+# Kunit test cases
-+config CLK_GATE_KUNIT_TEST
-+	tristate "Basic gate type Kunit test" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Kunit test for the basic clk gate type.
-+
- endif
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index e42312121e51..52faef37bc9b 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-gate.o
-+obj-$(CONFIG_CLK_GATE_KUNIT_TEST) += clk-gate_test.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
-diff --git a/drivers/clk/clk-gate_test.c b/drivers/clk/clk-gate_test.c
-new file mode 100644
-index 000000000000..2448ff0d1d68
---- /dev/null
-+++ b/drivers/clk/clk-gate_test.c
-@@ -0,0 +1,469 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Kunit test for clk gate basic type
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include <kunit/test.h>
-+
-+static void clk_gate_register_test_dev(struct kunit *test)
-+{
-+	struct clk_hw *ret;
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_simple("test_gate_device", -1, NULL, 0);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-+
-+	ret = clk_hw_register_gate(&pdev->dev, "test_gate", NULL, 0, NULL,
-+				   0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_STREQ(test, "test_gate", clk_hw_get_name(ret));
-+	KUNIT_EXPECT_EQ(test, 0UL, clk_hw_get_flags(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	platform_device_put(pdev);
-+}
-+
-+static void clk_gate_register_test_parent_names(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ret = clk_hw_register_gate(NULL, "test_gate", "test_parent", 0, NULL,
-+				   0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_data(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+	struct clk_parent_data pdata = { };
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+	pdata.hw = parent;
-+
-+	ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
-+					       NULL, 0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_data_legacy(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+	struct clk_parent_data pdata = { };
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+	pdata.name = "test_parent";
-+
-+	ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
-+					       NULL, 0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_hw(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ret = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0, NULL,
-+					     0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_hiword_invalid(struct kunit *test)
-+{
-+	struct clk_hw *ret;
-+
-+	ret = clk_hw_register_gate(NULL, "test_gate", NULL, 0, NULL,
-+				   20, CLK_GATE_HIWORD_MASK, NULL);
-+
-+	KUNIT_EXPECT_TRUE(test, IS_ERR(ret));
-+}
-+
-+static struct kunit_case clk_gate_register_test_cases[] = {
-+	KUNIT_CASE(clk_gate_register_test_dev),
-+	KUNIT_CASE(clk_gate_register_test_parent_names),
-+	KUNIT_CASE(clk_gate_register_test_parent_data),
-+	KUNIT_CASE(clk_gate_register_test_parent_data_legacy),
-+	KUNIT_CASE(clk_gate_register_test_parent_hw),
-+	KUNIT_CASE(clk_gate_register_test_hiword_invalid),
-+	{}
-+};
-+
-+static struct kunit_suite clk_gate_register_test_suite = {
-+	.name = "clk-gate-register-test",
-+	.test_cases = clk_gate_register_test_cases,
-+};
-+
-+struct clk_gate_test_context {
-+	void __iomem *fake_mem;
-+	struct clk_hw *hw;
-+	struct clk_hw *parent;
-+	u32 fake_reg; /* Keep at end, KASAN can detect out of bounds */
-+};
-+
-+static struct clk_gate_test_context *clk_gate_test_alloc_ctx(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx;
-+
-+	test->priv = ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-+	ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-+
-+	return ctx;
-+}
-+
-+static void clk_gate_test_parent_rate(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	unsigned long prate = clk_hw_get_rate(parent);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	KUNIT_EXPECT_EQ(test, prate, rate);
-+}
-+
-+static void clk_gate_test_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = BIT(5);
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = BIT(5);
-+	u32 disable_val = 0;
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_cases[] = {
-+	KUNIT_CASE(clk_gate_test_parent_rate),
-+	KUNIT_CASE(clk_gate_test_enable),
-+	KUNIT_CASE(clk_gate_test_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 5, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static void clk_gate_test_exit(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+
-+	clk_hw_unregister_gate(ctx->hw);
-+	clk_hw_unregister_fixed_rate(ctx->parent);
-+	kfree(ctx);
-+}
-+
-+static struct kunit_suite clk_gate_test_suite = {
-+	.name = "clk-gate-test",
-+	.init = clk_gate_test_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_cases,
-+};
-+
-+static void clk_gate_test_invert_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = 0;
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_invert_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = 0;
-+	u32 disable_val = BIT(15);
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_invert_cases[] = {
-+	KUNIT_CASE(clk_gate_test_invert_enable),
-+	KUNIT_CASE(clk_gate_test_invert_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_invert_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ctx->fake_reg = BIT(15); /* Default to off */
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 15,
-+					    CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static struct kunit_suite clk_gate_test_invert_suite = {
-+	.name = "clk-gate-invert-test",
-+	.init = clk_gate_test_invert_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_invert_cases,
-+};
-+
-+static void clk_gate_test_hiword_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = BIT(9) | BIT(9 + 16);
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_hiword_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	u32 enable_val = BIT(9) | BIT(9 + 16);
-+	u32 disable_val = BIT(9 + 16);
-+
-+	KUNIT_ASSERT_EQ(test, clk_prepare_enable(clk), 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_hiword_cases[] = {
-+	KUNIT_CASE(clk_gate_test_hiword_enable),
-+	KUNIT_CASE(clk_gate_test_hiword_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_hiword_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 9,
-+					    CLK_GATE_HIWORD_MASK, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static struct kunit_suite clk_gate_test_hiword_suite = {
-+	.name = "clk-gate-hiword-test",
-+	.init = clk_gate_test_hiword_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_hiword_cases,
-+};
-+
-+static void clk_gate_test_is_enabled(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(7);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 7,
-+				  0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_TRUE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_disabled(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(4);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 7,
-+				  0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_FALSE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_enabled_inverted(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(31);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 2,
-+				  CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_TRUE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_disabled_inverted(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(29);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 29,
-+				  CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_FALSE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static struct kunit_case clk_gate_test_enabled_cases[] = {
-+	KUNIT_CASE(clk_gate_test_is_enabled),
-+	KUNIT_CASE(clk_gate_test_is_disabled),
-+	KUNIT_CASE(clk_gate_test_is_enabled_inverted),
-+	KUNIT_CASE(clk_gate_test_is_disabled_inverted),
-+	{}
-+};
-+
-+static struct kunit_suite clk_gate_test_enabled_suite = {
-+	.name = "clk-gate-is_enabled-test",
-+	.test_cases = clk_gate_test_enabled_cases,
-+};
-+
-+kunit_test_suites(
-+	&clk_gate_register_test_suite,
-+	&clk_gate_test_suite,
-+	&clk_gate_test_invert_suite,
-+	&clk_gate_test_hiword_suite,
-+	&clk_gate_test_enabled_suite
-+);
-+MODULE_LICENSE("GPL v2");
+Please declare the struct here.
 
-base-commit: fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+> +
+> +struct nco_channel {
+> +       void __iomem *base;
+> +       struct nco_tables *tbl;
+> +       struct clk_hw hw;
+> +
+> +       spinlock_t lock;
+> +};
+> +
+> +#define to_nco_channel(_hw) container_of(_hw, struct nco_channel, hw)
+> +
+> +#define LFSR_POLY      0xa01
+> +#define LFSR_INIT      0x7ff
+> +#define LFSR_LEN       11
+> +#define LFSR_PERIOD    ((1 << LFSR_LEN) - 1)
+> +#define LFSR_TBLSIZE   (1 << LFSR_LEN)
+> +
+> +/* The minimal attainable coarse divisor (first value in table) */
+> +#define COARSE_DIV_OFFSET 2
+> +
+> +struct nco_tables {
+> +       u16 fwd[LFSR_TBLSIZE];
+> +       u16 inv[LFSR_TBLSIZE];
+> +};
 
+Or put struct nco_channel here.
+
+> +
+> +static void nco_enable_nolock(struct clk_hw *hw);
+> +static void nco_disable_nolock(struct clk_hw *hw);
+> +static int nco_is_enabled(struct clk_hw *hw);
+
+Define the functions here so we don't need forward declarations.
+
+> +
+> +static void nco_compute_tables(struct nco_tables *tbl)
+> +{
+> +       int i;
+> +       u32 state =3D LFSR_INIT;
+> +
+> +       /*
+> +        * Go through the states of a Galois LFSR and build
+> +        * a coarse divisor translation table.
+> +        */
+> +       for (i =3D LFSR_PERIOD; i > 0; i--) {
+> +               if (state & 1)
+> +                       state =3D (state >> 1) ^ (LFSR_POLY >> 1);
+> +               else
+> +                       state =3D (state >> 1);
+> +               tbl->fwd[i] =3D state;
+> +               tbl->inv[state] =3D i;
+> +       }
+> +
+> +       /* Zero value is special-cased */
+> +       tbl->fwd[0] =3D 0;
+> +       tbl->inv[0] =3D 0;
+> +}
+> +
+> +static bool nco_div_out_of_range(unsigned int div)
+> +{
+> +       unsigned int coarse =3D div / 4;
+
+Nitpick: Newline here
+
+> +       return coarse < COARSE_DIV_OFFSET ||
+> +               coarse >=3D COARSE_DIV_OFFSET + LFSR_TBLSIZE;
+> +}
+> +
+> +static u32 nco_div_translate(struct nco_tables *tbl, unsigned int div)
+> +{
+> +       unsigned int coarse =3D div / 4;
+> +
+> +       if (WARN_ON(nco_div_out_of_range(div)))
+
+Maybe worth knowing which clk is out of range?
+
+> +               return 0;
+> +
+> +       return FIELD_PREP(DIV_COARSE, tbl->fwd[coarse - COARSE_DIV_OFFSET=
+]) |
+> +                       FIELD_PREP(DIV_FINE, div % 4);
+> +}
+> +
+> +static unsigned int nco_div_translate_inv(struct nco_tables *tbl, u32 re=
+gval)
+> +{
+> +       unsigned int coarse, fine;
+> +
+> +       coarse =3D tbl->inv[FIELD_GET(DIV_COARSE, regval)] + COARSE_DIV_O=
+FFSET;
+> +       fine =3D FIELD_GET(DIV_FINE, regval);
+> +
+> +       return coarse * 4 + fine;
+> +}
+> +
+> +static int nco_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                               unsigned long parent_rate)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       unsigned long flags;
+> +       u32 div;
+> +       s32 inc1, inc2;
+> +       bool was_enabled;
+> +
+> +       div =3D 2 * parent_rate / rate;
+> +       inc1 =3D 2 * parent_rate - div * rate;
+> +       inc2 =3D -((s32) (rate - inc1));
+
+Is the cast necessary?
+
+> +
+> +       if (nco_div_out_of_range(div))
+> +               return -EINVAL;
+> +
+> +       div =3D nco_div_translate(chan->tbl, div);
+> +
+> +       spin_lock_irqsave(&chan->lock, flags);
+> +       was_enabled =3D nco_is_enabled(hw);
+> +       nco_disable_nolock(hw);
+> +
+> +       writel_relaxed(div,  chan->base + REG_DIV);
+> +       writel_relaxed(inc1, chan->base + REG_INC1);
+> +       writel_relaxed(inc2, chan->base + REG_INC2);
+> +
+> +       /* Presumably a neutral initial value for accumulator */
+> +       writel_relaxed(1 << 31, chan->base + REG_ACCINIT);
+> +
+> +       if (was_enabled)
+> +               nco_enable_nolock(hw);
+> +       spin_unlock_irqrestore(&chan->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static unsigned long nco_recalc_rate(struct clk_hw *hw,
+> +                               unsigned long parent_rate)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       u32 div;
+> +       s32 inc1, inc2, incbase;
+> +
+> +       div =3D nco_div_translate_inv(chan->tbl,
+> +                       readl_relaxed(chan->base + REG_DIV));
+> +
+> +       inc1 =3D readl_relaxed(chan->base + REG_INC1);
+> +       inc2 =3D readl_relaxed(chan->base + REG_INC2);
+> +
+> +       /*
+> +        * We don't support wraparound of accumulator
+> +        * nor the edge case of both increments being zero
+> +        */
+> +       if (inc1 < 0 || inc2 > 0 || (inc1 =3D=3D 0 && inc2 =3D=3D 0))
+> +               return 0;
+> +
+> +       /* Scale both sides of division by incbase to maintain precision =
+*/
+> +       incbase =3D inc1 - inc2;
+> +
+> +       return div_u64(((u64) parent_rate) * 2 * incbase,
+> +                       ((u64) div) * incbase + inc1);
+
+Why is the divisor casted to 64 bits? div_u64() takes a u32 divisor so
+if it's going to overflow 32 bits we're in trouble.
+> +}
+> +
+> +static long nco_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                               unsigned long *parent_rate)
+> +{
+> +       unsigned long lo =3D *parent_rate / (COARSE_DIV_OFFSET + LFSR_TBL=
+SIZE) + 1;
+> +       unsigned long hi =3D *parent_rate / COARSE_DIV_OFFSET;
+> +
+> +       return clamp(rate, lo, hi);
+> +}
+> +
+> +static void nco_enable_nolock(struct clk_hw *hw)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(chan->base + REG_CTRL);
+> +       writel_relaxed(val | CTRL_ENABLE, chan->base + REG_CTRL);
+> +}
+> +
+> +static void nco_disable_nolock(struct clk_hw *hw)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(chan->base + REG_CTRL);
+> +       writel_relaxed(val & ~CTRL_ENABLE, chan->base + REG_CTRL);
+> +}
+> +
+> +static int nco_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +
+> +       return (readl_relaxed(chan->base + REG_CTRL) & CTRL_ENABLE) !=3D =
+0;
+> +}
+> +
+> +static int nco_enable(struct clk_hw *hw)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&chan->lock, flags);
+> +       nco_enable_nolock(hw);
+> +       spin_unlock_irqrestore(&chan->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static void nco_disable(struct clk_hw *hw)
+> +{
+> +       struct nco_channel *chan =3D to_nco_channel(hw);
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&chan->lock, flags);
+> +       nco_disable_nolock(hw);
+> +       spin_unlock_irqrestore(&chan->lock, flags);
+> +}
+> +
+> +static const struct clk_ops nco_ops =3D {
+
+Perhaps apple_nco_ops (and apple_ prefix for the functions) so that tags
+in the global namespace don't conflict.
+
+> +       .set_rate =3D nco_set_rate,
+> +       .recalc_rate =3D nco_recalc_rate,
+> +       .round_rate =3D nco_round_rate,
+> +       .enable =3D nco_enable,
+> +       .disable =3D nco_disable,
+> +       .is_enabled =3D nco_is_enabled,
+> +};
+> +
+> +static int apple_nco_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np =3D pdev->dev.of_node;
+> +       struct clk_parent_data pdata =3D { .index =3D 0 };
+> +       struct clk_init_data init;
+> +       struct clk_hw_onecell_data *onecell_data;
+> +       void __iomem *regs;
+
+Usually it's called 'base'
+
+> +       struct resource *regs_res;
+
+Usually it's called 'res'
+
+> +       struct nco_tables *tbl;
+> +       unsigned int nchannels;
+> +       int ret, i;
+> +
+> +       regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &regs_re=
+s);
+> +       if (IS_ERR(regs))
+> +               return PTR_ERR(regs);
+> +
+> +       if (resource_size(regs_res) < NCO_CHANNEL_REGSIZE)
+> +               return -EINVAL;
+> +       nchannels =3D (resource_size(regs_res) - NCO_CHANNEL_REGSIZE)
+> +                       / NCO_CHANNEL_STRIDE + 1;
+
+Is this some sort of DIV_ROUND_UP()?
+
+> +
+> +       onecell_data =3D devm_kzalloc(&pdev->dev, struct_size(onecell_dat=
+a, hws,
+> +                                                       nchannels), GFP_K=
+ERNEL);
+> +       if (!onecell_data)
+> +               return -ENOMEM;
+> +       onecell_data->num =3D nchannels;
+> +
+> +       tbl =3D devm_kzalloc(&pdev->dev, sizeof(*tbl), GFP_KERNEL);
+> +       if (!tbl)
+> +               return -ENOMEM;
+> +       nco_compute_tables(tbl);
+> +
+> +       for (i =3D 0; i < nchannels; i++) {
+> +               struct nco_channel *chan;
+> +
+> +               chan =3D devm_kzalloc(&pdev->dev, sizeof(*chan), GFP_KERN=
+EL);
+> +               if (!chan)
+> +                       return -ENOMEM;
+> +               chan->base =3D regs + NCO_CHANNEL_STRIDE*i;
+
+Please add space around * above.
+
+> +               chan->tbl =3D tbl;
+> +               spin_lock_init(&chan->lock);
+> +
+> +               memset(&init, 0, sizeof(init));
+> +               init.name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL,
+> +                                               "%s-%d", np->name, i);
+> +               init.ops =3D &nco_ops;
+> +               init.parent_data =3D &pdata;
+> +               init.num_parents =3D 1;
+> +               init.flags =3D 0;
+> +
+> +               chan->hw.init =3D &init;
+> +               ret =3D devm_clk_hw_register(&pdev->dev, &chan->hw);
+> +               if (ret)
+> +                       return ret;
+> +
+> +               onecell_data->hws[i] =3D &chan->hw;
+> +       }
+> +
+> +       return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_=
+get,
+> +                                                       onecell_data);
