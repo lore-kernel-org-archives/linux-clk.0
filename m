@@ -2,104 +2,389 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168C4C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 20:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E7CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 21:31:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377648AbiATU7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 15:59:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347149AbiATU7K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 15:59:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E19DC061574;
-        Thu, 20 Jan 2022 12:59:10 -0800 (PST)
+        id S1377939AbiATVbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 16:31:22 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:40142 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1377944AbiATVbT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 16:31:19 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B731AB81E56;
-        Thu, 20 Jan 2022 20:59:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E365C340E0;
-        Thu, 20 Jan 2022 20:59:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E654761715
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 21:31:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F0AC340E3;
+        Thu, 20 Jan 2022 21:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642712347;
-        bh=AXnm+3K3zDwYn92rKnkPLA0D2Ce/nV/QIzKpRqu+jsY=;
+        s=k20201202; t=1642714278;
+        bh=w4KknEB25vhzusDTKTx09THhG0azhgBC3uwxP0DQsh4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZIL3wvPghrImgw2nHgfxH/wu0YlBX6OouWGe/CZczepfVPVnCqnB+Q/MZDWoFxkYF
-         6g+0i7pLkHGurxX9bGx3OErHL8y9fKKQHdVow1/vOsGOQIMHa8eiZvNcjIERV5EXkG
-         T3z5evnrZoZJ8xGmFEwhMSbGzUJPmJ38Oe7p/DwlZfig2WgRDGE/g2n0VuwFQlwzh1
-         7OObWyc7b6Ny+9PJSz0OTKsHO+k6Sg+BJZ//vOlAmvb2fctYsq2APSLH7KYFsY81Fj
-         QwItlWsP8DVNQdthE5bMaEvtkL9ov9PM/Rjw4EkDYK0DmgEbtQ0TvLIc77QK0WlFH9
-         NNk7a5H8rTwOw==
+        b=a0E1dWGOkyDgvP3ChDIdkzmuCUmWv+hP2ESrYZGXX5jZGmk16r1caNrVl4f4ZGWRH
+         IcOyZqghOd8P8lCXDE/+Brkz99U3DlsoXLohOlYnThC8d+MLEICdyPCSedamW/gVWq
+         7YXIItNw+Vo+OAhpU665/SA5NXVKoXem1qe4b5bDl6O+5RmH+BFACx5b/c5kTIcMHh
+         ZNyL+9hCPYWF+gf3bbYKCMQZC1Ma35EMg29Yum9h8o96VDkmSYtA1rFZzNVU/V+lhu
+         y87uRhEB1wFOGGx5BIl8zNvGRg+Gs1R3nrU0j2BtNkcunuCLe7vbLuAUTP8PCRIBnf
+         NxNkuQzGnv3oQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ED361B6C-0BE2-4FDD-AF29-497E14A183A6@protonmail.com>
-References: <20220118191839.64086-1-povik+lin@protonmail.com> <20220118191839.64086-3-povik+lin@protonmail.com> <20220120053810.71C17C340E0@smtp.kernel.org> <ED361B6C-0BE2-4FDD-AF29-497E14A183A6@protonmail.com>
-Subject: Re: [PATCH v2 2/3] clk: clk-apple-nco: Add driver for Apple NCO
+In-Reply-To: <20220120143417.543744-2-maxime@cerno.tech>
+References: <20220120143417.543744-1-maxime@cerno.tech> <20220120143417.543744-2-maxime@cerno.tech>
+Subject: Re: [PATCH v3 01/10] clk: Add Kunit tests for rate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@protonmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Hector Martin <marcan@marcan.st>,
-        Sven Peter <sven@svenpeter.dev>, alyssa@rosenzweig.io,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Kettenis <kettenis@openbsd.org>
-To:     Martin =?utf-8?q?Povi=C5=A1er?= <povik@protonmail.com>
-Date:   Thu, 20 Jan 2022 12:59:05 -0800
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>, kunit-dev@googlegroups.com
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Daniel Latypov <dlatypov@google.com>
+Date:   Thu, 20 Jan 2022 13:31:16 -0800
 User-Agent: alot/0.10
-Message-Id: <20220120205907.4E365C340E0@smtp.kernel.org>
+Message-Id: <20220120213118.40F0AC340E3@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Povi=C5=A1er (2022-01-20 04:11:34)
+Quoting Maxime Ripard (2022-01-20 06:34:08)
+> Let's test various parts of the rate-related clock API with the kunit
+> testing framework.
 >=20
-> > On 20. 1. 2022, at 6:38, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Martin Povi=C5=A1er (2022-01-18 11:21:10)
-> >> +
-> >> +static int nco_set_rate(struct clk_hw *hw, unsigned long rate,
-> >> +                               unsigned long parent_rate)
-> >> +{
-> >> +       struct nco_channel *chan =3D to_nco_channel(hw);
-> >> +       unsigned long flags;
-> >> +       u32 div;
-> >> +       s32 inc1, inc2;
-> >> +       bool was_enabled;
-> >> +
-> >> +       div =3D 2 * parent_rate / rate;
-> >> +       inc1 =3D 2 * parent_rate - div * rate;
-> >> +       inc2 =3D -((s32) (rate - inc1));
-> >
-> > Is the cast necessary?
+> Cc: kunit-dev@googlegroups.com
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+
+This is great! Thanks for doing this.
+
+>  drivers/clk/Kconfig         |   7 +
+>  drivers/clk/Makefile        |   1 +
+>  drivers/clk/clk-rate-test.c | 278 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 286 insertions(+)
+>  create mode 100644 drivers/clk/clk-rate-test.c
+
+I was thinking this would be more generic so that one file tests clk.c
+and all the code in there, but I guess there may be config dependencies
+like CONFIG_OF that we may want to extract out and depend on
+differently. I'm not sure how kunit will handle testing different paths
+depending on build configuration so this approach may head off future
+problems. If it doesn't then we can always slam the test together.
+
 >=20
-> Answering that prompted me to get back to reading some C specification an=
-d now
-> I am confident in moving away from signed types here and in nco_recalc_ra=
-te
-> altogether.
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index f5807d190ba2..7ae48a91f738 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -436,4 +436,11 @@ config CLK_GATE_TEST
+>         help
+>           Kunit test for the basic clk gate type.
+> =20
+> +config CLK_RATE_TEST
 
-Great! Operating with only unsigned types makes this easier to
-understand.
+See v3 here[1] and have it follow that.
 
-> >> +       struct nco_tables *tbl;
-> >> +       unsigned int nchannels;
-> >> +       int ret, i;
-> >> +
-> >> +       regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &regs=
-_res);
-> >> +       if (IS_ERR(regs))
-> >> +               return PTR_ERR(regs);
-> >> +
-> >> +       if (resource_size(regs_res) < NCO_CHANNEL_REGSIZE)
-> >> +               return -EINVAL;
-> >> +       nchannels =3D (resource_size(regs_res) - NCO_CHANNEL_REGSIZE)
-> >> +                       / NCO_CHANNEL_STRIDE + 1;
-> >
-> > Is this some sort of DIV_ROUND_UP()?
->=20
-> Almost. I will shop around for a macro replacement.
+> +       tristate "Basic Core Rate Kunit Tests"
+> +       depends on KUNIT
+> +       default KUNIT
+> +       help
+> +         Kunit test for the basic clock rate management.
+> +
+>  endif
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index b940c6d35922..0238a595167a 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -2,6 +2,7 @@
+>  # common clock types
+>  obj-$(CONFIG_HAVE_CLK)         +=3D clk-devres.o clk-bulk.o clkdev.o
+>  obj-$(CONFIG_COMMON_CLK)       +=3D clk.o
+> +obj-$(CONFIG_CLK_RATE_TEST)    +=3D clk-rate-test.o
+>  obj-$(CONFIG_COMMON_CLK)       +=3D clk-divider.o
+>  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-factor.o
+>  obj-$(CONFIG_COMMON_CLK)       +=3D clk-fixed-rate.o
+> diff --git a/drivers/clk/clk-rate-test.c b/drivers/clk/clk-rate-test.c
+> new file mode 100644
+> index 000000000000..f2d3df791b5a
+> --- /dev/null
+> +++ b/drivers/clk/clk-rate-test.c
+> @@ -0,0 +1,278 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Kunit test for clk rate management
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/slab.h>
+> +
+> +#include <kunit/test.h>
+> +
+> +#define DUMMY_CLOCK_INIT_RATE  (42 * 1000 * 1000)
+> +#define DUMMY_CLOCK_RATE_1     (142 * 1000 * 1000)
+> +#define DUMMY_CLOCK_RATE_2     (242 * 1000 * 1000)
+> +
+> +struct clk_dummy_rate_context {
+> +       struct clk_hw hw;
+> +       unsigned long rate;
+> +};
+> +
+> +static unsigned long clk_dummy_rate_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long parent_rate)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D
+> +               container_of(hw, struct clk_dummy_rate_context, hw);
+> +
+> +       return ctx->rate;
+> +}
+> +
+> +static int clk_dummy_rate_determine_rate(struct clk_hw *hw,
+> +                                        struct clk_rate_request *req)
+> +{
+> +       /* Just return the same rate without modifying it */
+> +       return 0;
+> +}
+> +
+> +static int clk_dummy_rate_set_rate(struct clk_hw *hw,
+> +                                  unsigned long rate,
+> +                                  unsigned long parent_rate)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D
+> +               container_of(hw, struct clk_dummy_rate_context, hw);
+> +
+> +       ctx->rate =3D rate;
+> +       return 0;
+> +}
+> +
+> +const static struct clk_ops clk_dummy_rate_ops =3D {
 
-Alright.
+static const?
+
+> +       .recalc_rate =3D clk_dummy_rate_recalc_rate,
+> +       .determine_rate =3D clk_dummy_rate_determine_rate,
+> +       .set_rate =3D clk_dummy_rate_set_rate,
+> +};
+> +
+> +static int clk_rate_test_init_with_ops(struct kunit *test,
+> +                                      const struct clk_ops *ops)
+> +{
+> +       struct clk_dummy_rate_context *ctx;
+> +       struct clk_init_data init =3D { };
+> +       int ret;
+> +
+> +       ctx =3D kzalloc(sizeof(*ctx), GFP_KERNEL);
+
+Use kunit_kzalloc() here
+
+> +       if (!ctx)
+> +               return -ENOMEM;
+> +       ctx->rate =3D DUMMY_CLOCK_INIT_RATE;
+> +       test->priv =3D ctx;
+> +
+> +       init.name =3D "test_dummy_rate";
+> +       init.ops =3D ops;
+> +       ctx->hw.init =3D &init;
+> +
+> +       ret =3D clk_hw_register(NULL, &ctx->hw);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_rate_test_init(struct kunit *test)
+> +{
+> +       return clk_rate_test_init_with_ops(test, &clk_dummy_rate_ops);
+> +}
+> +
+> +static void clk_rate_test_exit(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +
+> +       clk_hw_unregister(&ctx->hw);
+> +       kfree(ctx);
+
+And drop the kfree as it is now test managed.
+
+> +}
+> +
+> +/*
+> + * Test that the actual rate matches what is returned by clk_get_rate()
+> + */
+> +static void clk_rate_test_get_rate(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       unsigned long rate;
+> +
+> +       rate =3D clk_get_rate(clk);
+> +       KUNIT_ASSERT_TRUE(test, rate > 0);
+> +       KUNIT_ASSERT_EQ(test, rate, ctx->rate);
+
+These should be KUNIT_EXPECT_*() as we don't want to stop the test if
+the rate is wrong, we want to check that the rate is what we expected it
+to be. Assertions are about making sure things are sane and if not we
+should stop testing, whereas expectations are about testing the code. A
+test must have an EXPECT while it can have an ASSERT.
+
+Maybe kunit should check that there was an EXPECT on return from the
+test. Daniel?
+
+> +}
+> +
+> +/*
+> + * Test that, after a call to clk_set_rate(), the rate returned by
+> + * clk_get_rate() matches.
+> + *
+> + * This assumes that clk_ops.determine_rate or clk_ops.round_rate won't
+> + * modify the requested rate, which is our case in clk_dummy_rate_ops.
+> + */
+> +static void clk_rate_test_set_get_rate(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       unsigned long rate;
+> +       int ret;
+> +
+> +       ret =3D clk_set_rate(clk, DUMMY_CLOCK_RATE_1);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+
+I'd like to throw the ret check directly into KUNIT_ASSERT_EQ() here.
+
+	KUNIT_ASSERT_EQ(test, clk_set_rate(clk, DUMMY_CLOCK_RATE_1), 0);
+
+so we can easily see if something goes wrong that the set rate failed.
+Good use of assert here, we don't want to continue with the test unless
+the set rate actually worked.
+
+> +
+> +       rate =3D clk_get_rate(clk);
+> +       KUNIT_ASSERT_TRUE(test, rate > 0);
+> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> +}
+> +
+> +/*
+> + * Test that, after several calls to clk_set_rate(), the rate returned
+> + * by clk_get_rate() matches the last one.
+> + *
+> + * This assumes that clk_ops.determine_rate or clk_ops.round_rate won't
+> + * modify the requested rate, which is our case in clk_dummy_rate_ops.
+> + */
+> +static void clk_rate_test_set_set_get_rate(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       unsigned long rate;
+> +       int ret;
+> +
+> +       ret =3D clk_set_rate(clk, DUMMY_CLOCK_RATE_1);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +       ret =3D clk_set_rate(clk, DUMMY_CLOCK_RATE_2);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +       rate =3D clk_get_rate(clk);
+> +       KUNIT_ASSERT_TRUE(test, rate > 0);
+> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
+> +}
+> +
+> +static struct kunit_case clk_rate_test_cases[] =3D {
+> +       KUNIT_CASE(clk_rate_test_get_rate),
+> +       KUNIT_CASE(clk_rate_test_set_get_rate),
+> +       KUNIT_CASE(clk_rate_test_set_set_get_rate),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite clk_rate_test_suite =3D {
+> +       .name =3D "clk-rate-test",
+> +       .init =3D clk_rate_test_init,
+> +       .exit =3D clk_rate_test_exit,
+> +       .test_cases =3D clk_rate_test_cases,
+> +};
+> +
+> +/*
+> + * Test that clk_set_rate_range won't return an error for a valid range.
+> + */
+> +static void clk_rate_range_test_set_range(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       int ret;
+> +
+> +       ret =3D clk_set_rate_range(clk,
+> +                                DUMMY_CLOCK_RATE_1,
+> +                                DUMMY_CLOCK_RATE_2);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+
+Also make sure that the rate is within the bounds of rate_1 and rate_2?
+
+> +}
+> +
+> +/*
+> + * Test that calling clk_set_rate_range with a minimum rate higher than
+> + * the maximum rate returns an error.
+> + */
+> +static void clk_rate_range_test_set_range_invalid(struct kunit *test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       int ret;
+> +
+> +       ret =3D clk_set_rate_range(clk,
+> +                                DUMMY_CLOCK_RATE_1 + 1000,
+> +                                DUMMY_CLOCK_RATE_1);
+> +       KUNIT_ASSERT_EQ(test, ret, -EINVAL);
+
+Let's not check for a specific error, but a negative value instead. I'd
+rather not encode particular error values unless we need them to be
+particular.
+
+> +}
+> +
+> +/*
+> + * Test that if our clock has a rate lower than the minimum set by a
+> + * call to clk_set_rate_range(), the rate will be raised to match the
+> + * new minimum.
+> + *
+> + * This assumes that clk_ops.determine_rate or clk_ops.round_rate won't
+> + * modify the requested rate, which is our case in clk_dummy_rate_ops.
+> + */
+> +static void clk_rate_range_test_set_range_get_rate_raised(struct kunit *=
+test)
+> +{
+> +       struct clk_dummy_rate_context *ctx =3D test->priv;
+> +       struct clk_hw *hw =3D &ctx->hw;
+> +       struct clk *clk =3D hw->clk;
+> +       unsigned long rate;
+> +       int ret;
+> +
+> +       ret =3D clk_set_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +       ret =3D clk_set_rate_range(clk,
+> +                                DUMMY_CLOCK_RATE_1,
+> +                                DUMMY_CLOCK_RATE_2);
+> +       KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +       rate =3D clk_get_rate(clk);
+> +       KUNIT_ASSERT_TRUE(test, rate > 0);
+
+KUNIT_EXPECT_LE(test, clk_get_rate(clk), DUMMY_CLOCK_RATE_2);
+
+Or just drop it entirely as DUMMY_CLOCK_RATE_1 is greater than 0 and
+it's tested next.
+
+> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+
+KUNIT_EXPECT_EQ(test, clk_get_rate(clk), DUMMY_CLOCK_RATE_1);
+
+> +}
+> +
