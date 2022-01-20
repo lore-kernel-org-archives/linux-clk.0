@@ -2,234 +2,172 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6170AC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 12:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF4DC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 13:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242538AbiATMb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 07:31:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33200 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232606AbiATMbu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 07:31:50 -0500
-Received: from mx2.securetransport.de (mx2.securetransport.de [IPv6:2a03:4000:13:6c7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42238C061401
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 04:31:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dh-electronics.com;
-        s=dhelectronicscom; t=1642681353;
-        bh=haRx+ubYjgsAVsAb5w88a4ry5nJOF4pa9uDRBaSa44w=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=cZ5qJEyS/orQOOU91nKcQhTSnJqYqW7MXnegpOI2sZxzeTyUWheyJn69wWnBRMAoS
-         ML7stLZ1yUp6fcc/ShECchfssFyh9abrZB2Gsj9rBreYZnwMtGbX1s38egRMmS+MHt
-         0oGdzVe/NFSFqJ5VjsYtWMfOQuOqkyQlgkOwUBtZOnl5bQTXAmlzizfHZcsv/IPxEs
-         Poe9/AhaOweMNNX9sglE/i7nh8U9FkBBQnOSFn+DytYy8in4s2+/gk1dccEfzuIFcI
-         nPu6Xc4WHRUGY8zFuN7UrbHL/b081G05arw0ZVNvIv+4ZGeTu73SVUTvZAgcErmDW6
-         pYhz/rsO+BB6Q==
-X-secureTransport-forwarded: yes
-From:   Johann Neuhauser <jneuhauser@dh-electronics.com>
-Complaints-To: abuse@cubewerk.de
-To:     "Marek MV. Vasut" <marex@denx.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     "Marek MV. Vasut" <marex@denx.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: RE: [PATCH 2/5] clk: stm32mp1: Add parent_data to ETHRX clock
-Thread-Topic: [PATCH 2/5] clk: stm32mp1: Add parent_data to ETHRX clock
-Thread-Index: AQHYDKowBbptfmImJ0K3nNIY0Ny5waxr0veA
-Date:   Thu, 20 Jan 2022 12:07:12 +0000
-Message-ID: <ddf6afba3fd2402a8b3f60fe30bbdbba@dh-electronics.com>
-References: <20220118202958.1840431-1-marex@denx.de>
- <20220118202958.1840431-2-marex@denx.de>
-In-Reply-To: <20220118202958.1840431-2-marex@denx.de>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S241787AbiATNx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 08:53:57 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:48139 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241622AbiATNxz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 08:53:55 -0500
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220120135352epoutp034367d9399b51525199f4b9d67e87dd5e~L-vh9wii-1565015650epoutp03S
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 13:53:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220120135352epoutp034367d9399b51525199f4b9d67e87dd5e~L-vh9wii-1565015650epoutp03S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642686832;
+        bh=KcyGdBpSaKaQSjJ7fDTMhH5pkAuLFaMd8lCusKp395U=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=RdtCAT9LilWezt+DMDOBBU6Oqe6R6wFxO3gK79Ty1BTW8RmyzO/ttoqd21NODX3pn
+         KnFGiopyk9WuGgiWX4TqVO3LVxJtSify/zmsEYkwysqjW9Yey9Exxpzfl+IUTES3EU
+         UD0Wq+4ZYLCIdQtGBv/pS0nbGEz8sdJMRsKOXdFY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220120135351epcas5p462e91cb86b07474e96a2ad8a52a56699~L-vhSAwHb2046820468epcas5p4I;
+        Thu, 20 Jan 2022 13:53:51 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4JfkWD3YhMz4x9Q3; Thu, 20 Jan
+        2022 13:53:44 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BD.19.06423.16969E16; Thu, 20 Jan 2022 22:53:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220120135336epcas5p21de42bca056514ee41e99a2e381be469~L-vThugtQ0641106411epcas5p2F;
+        Thu, 20 Jan 2022 13:53:36 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220120135336epsmtrp26e656074511da4279d1b3ff0ad2cbdf3~L-vTguOai0495704957epsmtrp2E;
+        Thu, 20 Jan 2022 13:53:36 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-17-61e96961f8cb
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5F.CB.08738.06969E16; Thu, 20 Jan 2022 22:53:36 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220120135333epsmtip17a8e4ddd413a1619f009d90ce7bd0764~L-vQVb5dL2897428974epsmtip1W;
+        Thu, 20 Jan 2022 13:53:33 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Stephen Boyd'" <sboyd@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <olof@lixom.net>, <arnd@arndb.de>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski@canonical.com>,
+        <s.nawrocki@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
+        <pankaj.dubey@samsung.com>, <linux-fsd@tesla.com>,
+        "'Jayati Sahu'" <jayati.sahu@samsung.com>,
+        "'Ajay Kumar'" <ajaykumar.rs@samsung.com>
+In-Reply-To: <20220119201509.6220FC004E1@smtp.kernel.org>
+Subject: RE: [PATCH v2 04/16] clk: samsung: fsd: Add initial clock support
+Date:   Thu, 20 Jan 2022 19:23:31 +0530
+Message-ID: <016c01d80e05$1ef9eab0$5cedc010$@samsung.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJMmkM0C21BpYmk5XGVS3CIVixL0wHiE8L7AdsaVJIB7iMiVatVehWw
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJsWRmVeSWpSXmKPExsWy7bCmpm5i5stEgzevOCwOvD/IYvF30jF2
+        i/fLehgt5h85x2px5NQSJouNb38wWUz5s5zJYtPja6wWH3vusVo8fBVucXnXHDaLGef3MVmc
+        uv6ZzWLR1i/sFq17j7BbHH7Tzmrx79pGFovH1/+wOQh5rJm3htHj969JjB6zGnrZPDat6mTz
+        uHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fnTXIBXFHZNhmpiSmpRQqpecn5KZl56bZK3sHx
+        zvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlATykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otL
+        bJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjPuXXjKWLCbr+LE3YusDYyLeLoYOTgk
+        BEwk3q5X62Lk4hAS2M0osXbVNVYI5xOjxNmuPewQzmdGiUvvHrF1MXKCdfROvQlVtYtRomdh
+        NwuE85JRYsX9FiaQKjYBXYkdi9vAOkQECiUOL/oBVsQssINZYuXzaYwgCU4BS4mmx1PBGoQF
+        vCRaD20As1kEVCV6/21lAbF5gWpObfzNDGELSpyc+QQsziygLbFs4WtmiJMUJH4+XcYKscxN
+        Yv2lP0wQNeISL48eAftBQqCZU2L5nQ4miAYXifl9PVDNwhKvjm9hh7ClJD6/28sGCZlsiZ5d
+        xhDhGoml846xQNj2EgeuzGEBKWEW0JRYv0sfYhWfRO/vJ0wQnbwSHW1CENWqEs3vrkJ1SktM
+        7O5mhbA9JFYdf84+gVFxFpLHZiF5bBaSB2YhLFvAyLKKUTK1oDg3PbXYtMAwL7UcHt/J+bmb
+        GMFJXstzB+PdBx/0DjEycTAeYpTgYFYS4ZWqf5YoxJuSWFmVWpQfX1Sak1p8iNEUGNoTmaVE
+        k/OBeSavJN7QxNLAxMzMzMTS2MxQSZz3dPqGRCGB9MSS1OzU1ILUIpg+Jg5OqQYmq4TYg87P
+        nI3Kq0yWfP7k5RU7908S61ojU5Ywu0VeGfNKC7kFDn9axvYouN094v/U25WL1POm8cwz1RdX
+        ntBcP3lXnN8v4WPT3SVKVT8tOBCncH+nVoPZZvbLsVc4VgWGheTN2DE9edIlZ95992bWLk+9
+        N3faZjErjr6rMvYLLVVvLRVIXfZlXVNu/bZ1C7/oPDV9d0TBxnRFrYjw11M+UV4mDMvfndF/
+        fvBQ+ulfJafKp2b7nJm2J2LTNe378cnFZT7BzrzWVzzfvRD7FaN703i1FOPLhxLLJeRvtL46
+        vSPh4o1FFp3OqnFPxDff6Ep7/ok7SiAj8pC+2dkDC3S3zV+2cvp6Ts0JX7InnkvoUGIpzkg0
+        1GIuKk4EAHtSQHt7BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsWy7bCSnG5C5stEg8VHNC0OvD/IYvF30jF2
+        i/fLehgt5h85x2px5NQSJouNb38wWUz5s5zJYtPja6wWH3vusVo8fBVucXnXHDaLGef3MVmc
+        uv6ZzWLR1i/sFq17j7BbHH7Tzmrx79pGFovH1/+wOQh5rJm3htHj969JjB6zGnrZPDat6mTz
+        uHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fnTXIBXFFcNimpOZllqUX6dglcGcuXzmEs+M5b
+        ceXyMeYGxnvcXYycHBICJhK9U2+ydjFycQgJ7GCU2Nq/gwUiIS1xfeMEdghbWGLlv+fsEEXP
+        GSU+LHjKBpJgE9CV2LG4DcwWESiWWNH2F6yIWeAEs8S8GZsYITreMEqsPnOJGaSKU8BSounx
+        VCYQW1jAS6L10AYwm0VAVaL331aw1bxANac2/maGsAUlTs58AhZnFtCWeHrzKZy9bOFrZojz
+        FCR+Pl3GCnGFm8T6S3+YIGrEJV4ePcI+gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYWFOem5xYb
+        FhjlpZbrFSfmFpfmpesl5+duYgTHu5bWDsY9qz7oHWJk4mA8xCjBwawkwitV/yxRiDclsbIq
+        tSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqbNvYxT7SZI+SeXrz3b
+        JX/IP+5thDXfvzBB6QWxRXdTt77/e2jDdvPElpz3ASLR3mJPdB9ZKV5W1mecJGXVIMl7aovy
+        Yc0SmciMDUoTXzDftNArvhMyvVRSac0FUZnbTjNy3mxZekRna4L0ocUimRdZU6UFWb9ZV/yR
+        uXi2eWqzbJ575psNOzl3cGuvv1Vwx90t236/1R0LR8FVFrFt77OOlydV6JfMTn61ZfVG6SXX
+        9P69vK5Z99V14r1Tl/r2uJ1s2fxNUle6QtzmoOnRCzpr5GM85vh4vRUomFNxzZGneHeX6e87
+        Vp6JnFvn34jzvvv8obWf/0FfrRdS4s5S5omFCVYP7u+4cSi9jzfyrhJLcUaioRZzUXEiAEc8
+        c/RmAwAA
+X-CMS-MailID: 20220120135336epcas5p21de42bca056514ee41e99a2e381be469
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220118150028epcas5p282c05b78f28a9b11d46da94e78330f0c
+References: <20220118144851.69537-1-alim.akhtar@samsung.com>
+        <CGME20220118150028epcas5p282c05b78f28a9b11d46da94e78330f0c@epcas5p2.samsung.com>
+        <20220118144851.69537-5-alim.akhtar@samsung.com>
+        <20220119201509.6220FC004E1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> From: Marek Vasut [mailto:marex@denx.de]
-> Sent: Tuesday, January 18, 2022 9:30 PM
->=20
-> Pass parent_data to ETHRX clock with new fw_name =3D "ETH_RX_CLK/ETH_REF_=
-CLK".
-> By default, this change has no impact on the operation of the clock drive=
-r.
-> However, due to the fw_name, it permits DT to override ETHRX clock parent=
-,
-> which might be needed in case the ETHRX clock are supplied by external cl=
-ock
-> source.
->=20
-> Example of MCO2 supplying clock to ETH_RX_CLK via external pad-to-pad wir=
-e:
-> &rcc {
->          clocks =3D <&rcc CK_MCO2>;
->          clock-names =3D "ETH_RX_CLK/ETH_REF_CLK";
-> };
->=20
-> Note that while this patch permits to implement this rare usecase, the is=
-sue
-> with ethernet RX and TX input clock modeling on MP1 is far more complex a=
-nd
-> requires more core plumbing.
->=20
-> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
->     Figure 83. Peripheral clock distribution for Ethernet
->     https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157=
--advanced-armbased-32bit-mpus-
-> stmicroelectronics.pdf
->=20
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
-> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> To: linux-arm-kernel@lists.infradead.org
-> ---
->  drivers/clk/clk-stm32mp1.c | 36 ++++++++++++++++++++++++++++++++----
->  1 file changed, 32 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
-> index 23a34ab459a3b..7ad2e6203baef 100644
-> --- a/drivers/clk/clk-stm32mp1.c
-> +++ b/drivers/clk/clk-stm32mp1.c
-> @@ -155,6 +155,10 @@ static const char * const eth_src[] =3D {
->         "pll4_p", "pll3_q"
->  };
->=20
-> +const struct clk_parent_data ethrx_src[] =3D {
-> +       { .name =3D "ethck_k", .fw_name =3D "ETH_RX_CLK/ETH_REF_CLK" },
-> +};
-> +
->  static const char * const rng_src[] =3D {
->         "ck_csi", "pll4_r", "ck_lse", "ck_lsi"
->  };
-> @@ -317,6 +321,7 @@ struct clock_config {
->         const char *name;
->         const char *parent_name;
->         const char * const *parent_names;
-> +       const struct clk_parent_data *parent_data;
->         int num_parents;
->         unsigned long flags;
->         void *cfg;
-> @@ -576,6 +581,7 @@ static struct clk_hw *
->  clk_stm32_register_gate_ops(struct device *dev,
->                             const char *name,
->                             const char *parent_name,
-> +                           const struct clk_parent_data *parent_data,
->                             unsigned long flags,
->                             void __iomem *base,
->                             const struct stm32_gate_cfg *cfg,
-> @@ -586,7 +592,10 @@ clk_stm32_register_gate_ops(struct device *dev,
->         int ret;
->=20
->         init.name =3D name;
-> -       init.parent_names =3D &parent_name;
-> +       if (parent_name)
-> +               init.parent_names =3D &parent_name;
-> +       if (parent_data)
-> +               init.parent_data =3D parent_data;
->         init.num_parents =3D 1;
->         init.flags =3D flags;
->=20
-> @@ -611,6 +620,7 @@ clk_stm32_register_gate_ops(struct device *dev,
->  static struct clk_hw *
->  clk_stm32_register_composite(struct device *dev,
->                              const char *name, const char * const *parent=
-_names,
-> +                            const struct clk_parent_data *parent_data,
->                              int num_parents, void __iomem *base,
->                              const struct stm32_composite_cfg *cfg,
->                              unsigned long flags, spinlock_t *lock)
-> @@ -1135,6 +1145,7 @@ _clk_stm32_register_gate(struct device *dev,
->         return clk_stm32_register_gate_ops(dev,
->                                     cfg->name,
->                                     cfg->parent_name,
-> +                                   cfg->parent_data,
->                                     cfg->flags,
->                                     base,
->                                     cfg->cfg,
-> @@ -1148,8 +1159,8 @@ _clk_stm32_register_composite(struct device *dev,
->                               const struct clock_config *cfg)
->  {
->         return clk_stm32_register_composite(dev, cfg->name, cfg->parent_n=
-ames,
-> -                                           cfg->num_parents, base, cfg->=
-cfg,
-> -                                           cfg->flags, lock);
-> +                                           cfg->parent_data, cfg->num_pa=
-rents,
-> +                                           base, cfg->cfg, cfg->flags, l=
-ock);
->  }
->=20
->  #define GATE(_id, _name, _parent, _flags, _offset, _bit_idx, _gate_flags=
-)\
-> @@ -1258,6 +1269,16 @@ _clk_stm32_register_composite(struct device *dev,
->         .func           =3D _clk_stm32_register_gate,\
->  }
->=20
-> +#define STM32_GATE_PDATA(_id, _name, _parent, _flags, _gate)\
-> +{\
-> +       .id             =3D _id,\
-> +       .name           =3D _name,\
-> +       .parent_data    =3D _parent,\
-> +       .flags          =3D _flags,\
-> +       .cfg            =3D (struct stm32_gate_cfg *) {_gate},\
-> +       .func           =3D _clk_stm32_register_gate,\
-> +}
-> +
->  #define _STM32_GATE(_gate_offset, _gate_bit_idx, _gate_flags, _mgate, _o=
-ps)\
->         (&(struct stm32_gate_cfg) {\
->                 &(struct gate_cfg) {\
-> @@ -1291,6 +1312,10 @@ _clk_stm32_register_composite(struct device *dev,
->         STM32_GATE(_id, _name, _parent, _flags,\
->                    _STM32_MGATE(_mgate))
->=20
-> +#define MGATE_MP1_PDATA(_id, _name, _parent, _flags, _mgate)\
-> +       STM32_GATE_PDATA(_id, _name, _parent, _flags,\
-> +                  _STM32_MGATE(_mgate))
-> +
->  #define _STM32_DIV(_div_offset, _div_shift, _div_width,\
->                    _div_flags, _div_table, _ops)\
->         .div =3D &(struct stm32_div_cfg) {\
-> @@ -1354,6 +1379,9 @@ _clk_stm32_register_composite(struct device *dev,
->  #define PCLK(_id, _name, _parent, _flags, _mgate)\
->         MGATE_MP1(_id, _name, _parent, _flags, _mgate)
->=20
-> +#define PCLK_PDATA(_id, _name, _parent, _flags, _mgate)\
-> +       MGATE_MP1_PDATA(_id, _name, _parent, _flags, _mgate)
-> +
->  #define KCLK(_id, _name, _parents, _flags, _mgate, _mmux)\
->              COMPOSITE(_id, _name, _parents, CLK_OPS_PARENT_ENABLE |\
->                        CLK_SET_RATE_NO_REPARENT | _flags,\
-> @@ -1951,7 +1979,7 @@ static const struct clock_config stm32mp1_clock_cfg=
-[] =3D {
->         PCLK(MDMA, "mdma", "ck_axi", 0, G_MDMA),
->         PCLK(GPU, "gpu", "ck_axi", 0, G_GPU),
->         PCLK(ETHTX, "ethtx", "ck_axi", 0, G_ETHTX),
-> -       PCLK(ETHRX, "ethrx", "ck_axi", 0, G_ETHRX),
-> +       PCLK_PDATA(ETHRX, "ethrx", ethrx_src, 0, G_ETHRX),
->         PCLK(ETHMAC, "ethmac", "ck_axi", 0, G_ETHMAC),
->         PCLK(FMC, "fmc", "ck_axi", CLK_IGNORE_UNUSED, G_FMC),
->         PCLK(QSPI, "qspi", "ck_axi", CLK_IGNORE_UNUSED, G_QSPI),
-> --
-> 2.34.1
-Tested-by: Johann Neuhauser <jneuhauser@dh-electronics.com>
+Hi Stephen
+
+>-----Original Message-----
+>From: Stephen Boyd =5Bmailto:sboyd=40kernel.org=5D
+>Sent: Thursday, January 20, 2022 1:45 AM
+>To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
+>kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+>Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
+l.org;
+>olof=40lixom.net; arnd=40arndb.de; linus.walleij=40linaro.org;
+>catalin.marinas=40arm.com; robh+dt=40kernel.org;
+>krzysztof.kozlowski=40canonical.com; s.nawrocki=40samsung.com; linux-
+>samsung-soc=40vger.kernel.org; pankaj.dubey=40samsung.com; Alim Akhtar
+><alim.akhtar=40samsung.com>; linux-fsd=40tesla.com; Jayati Sahu
+><jayati.sahu=40samsung.com>; Ajay Kumar <ajaykumar.rs=40samsung.com>
+>Subject: Re: =5BPATCH v2 04/16=5D clk: samsung: fsd: Add initial clock sup=
+port
+>
+>Quoting Alim Akhtar (2022-01-18 06:48:39)
+>> diff --git a/drivers/clk/samsung/clk-fsd.c
+>> b/drivers/clk/samsung/clk-fsd.c new file mode 100644 index
+>> 000000000000..2669396d81b9
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-fsd.c
+>> =40=40 -0,0 +1,308 =40=40
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2017-2022 Samsung Electronics Co., Ltd.
+>> + *             https://www.samsung.com
+>> + * Copyright (c) 2017-2022 Tesla, Inc.
+>> + *             https://www.tesla.com
+>> + *
+>> + * Common Clock Framework support for FSD SoC.
+>> + */
+>> +
+>> +=23include <linux/clk-provider.h>
+>> +=23include <linux/of.h>
+>
+>include init.h for __initconst and kernel.h for ARRAY_SIZE
+>
+I did not face any compilation error.
+Do I need to explicitly add these header files in driver? I see clk.h impli=
+citly includes kernel.h
+Same is the case of other driver in this directory.
+
+>> +
+>> +=23include <dt-bindings/clock/fsd-clk.h>
+>> +
+>> +=23include =22clk.h=22
+>> +
+
