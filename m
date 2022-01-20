@@ -2,108 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937CCC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 22:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A17C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 23:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378094AbiATWkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 17:40:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59000 "EHLO
+        id S1378151AbiATXUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 18:20:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233963AbiATWkE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 17:40:04 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78BD5C061574
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 14:40:03 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 85501836E6;
-        Thu, 20 Jan 2022 23:39:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1642718400;
-        bh=nMXU4nFL9yVrMj/CnHo6j6d2jD8UXK2gYXYrCUSDAfg=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=qvoBCqBIApnpqjlmN+aJ8WDd6RQ2w1mZtXD22WizWcC6iE8R/He9kZqE3mo7PPyLz
-         IgIw67cQ/SsQh58ik28lkfRUWTGYupRe5fnjrq7C0i7p31cY13K/K03aQcrwzMQEU6
-         bcx7RrwvEnCj+2BpZK89SH8R5lXB4H9571bEH1tKiOc7eoiwpXSPqXPKMR9S+np2TS
-         fhjbvRr8Dasqret3vEII56lwkeCF5tyEYoHkyeQs99EAaqZKVxiMu4a3HTbcWLaliG
-         B/HuPb6JByz0ymRvnebC+BwFbghydc/7uBPSqhqWfzU0rwBvRmnJFxe2RAZtGVo9UX
-         NTzCnWGtDW1Uw==
-Message-ID: <2752700e-83ec-d844-e99e-73be8ff87ee9@denx.de>
-Date:   Thu, 20 Jan 2022 23:39:58 +0100
+        with ESMTP id S1378150AbiATXUe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 18:20:34 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25A82C061574;
+        Thu, 20 Jan 2022 15:20:34 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id c2so14917452wml.1;
+        Thu, 20 Jan 2022 15:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UcYnZJXwLc4lqt61bDMxR0ZCzh1Cztx6cNOepvk0MLY=;
+        b=nTTF8cYS2m6KU1k6dDIAzQbGDUksZ5cKjfvNW29C0S2hzZ1W01qXV1KRIXsmmNYiXW
+         PdiY8uwWqR7otOigA/UA/SGWOS6cNZXorhI6NtQ9SwqxmYTECjjAHmc44+d5LAxOEKTm
+         BKUXfynB6E+GNcQuCOtPuLt3qRbq73N998WSH0NF8PBFZ9ftoRFLZ75V1WRe/iN5vJAG
+         utPb4je50FojpMVbii3D9cN3guQzwKV/E4FqiUxISeDuNtEpzQXBjVxkZP4FNrC8lgiJ
+         3pCeAlILnMG9oA0UXZET7V9zgl/+JqD/VNxb29G2y7cghOE9ioCKQYSM16m4p1t9KwYq
+         cvSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UcYnZJXwLc4lqt61bDMxR0ZCzh1Cztx6cNOepvk0MLY=;
+        b=5AJ2aeofEuhVQFNyhdP295JCmw+fR/RoVq4YWnh7IAKiF7dvJxQuELG0ODzl+2JXnS
+         8fjPujgVrxhkgElet2Y6UBWlyaWR4DDvZkTy6SuMaV9BkrfkccitIxh4SjRDTpQ3CfxW
+         xb4LnhZcC/lH8G+QKMqMz7zOeS/qFjkTQVCjj5P6Ide88qOXcwzXaY/J3lSjpEycBLuz
+         YyC1niAfm9czmNcnDbEbvX4YgQ4Kdtgm1x0jhmZSlIfB4L8la7Wxo18iUu+mu6X3gYVj
+         BMjrjuCylVRgJojA4DwnSNL0aX91c2ZmHaCj/l6H8Z5SEpGXAx5wXIyPH/3oCe2bHleA
+         IgHQ==
+X-Gm-Message-State: AOAM533B6T+eH87Lg+j8HS6GRmAwfsYKuxWmKeYWT3z5/Th8avzUlTcD
+        yZUK6ybt3d3gEyhTXxg/i9+qbbLv4Qo=
+X-Google-Smtp-Source: ABdhPJzDbjksy4Dl+Wf8rgiRdVl1Eoz4qUD4mBjgoaOMNROY12cBUof5no8oj1J7KSBssDI+9j163Q==
+X-Received: by 2002:a1c:1982:: with SMTP id 124mr7154025wmz.50.1642720832322;
+        Thu, 20 Jan 2022 15:20:32 -0800 (PST)
+Received: from localhost.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
+        by smtp.googlemail.com with ESMTPSA id a9sm3939283wmm.32.2022.01.20.15.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jan 2022 15:20:31 -0800 (PST)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/15] Multiple addition and improvement to ipq8064 gcc
+Date:   Fri, 21 Jan 2022 00:20:13 +0100
+Message-Id: <20220120232028.6738-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 1/5] clk: stm32mp1: Split ETHCK_K into separate MUX and
- GATE clock
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     jneuhauser@dh-electronics.com,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20220118202958.1840431-1-marex@denx.de>
- <20220120220356.79C3CC340E0@smtp.kernel.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20220120220356.79C3CC340E0@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.2 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/20/22 23:03, Stephen Boyd wrote:
-> Quoting Marek Vasut (2022-01-18 12:29:54)
->> The ETHCK_K are modeled as composite clock of MUX and GATE, however per
->> STM32MP1 Reference Manual RM0436 Rev 3, Page 574, Figure 83. Peripheral
->> clock distribution for Ethernet, ETHPTPDIV divider is attached past the
->> ETHCK_K mux, and ETH_CLK/eth_clk_fb clock are output past ETHCKEN gate.
->> Therefore, in case ETH_CLK/eth_clk_fb are not in use AND PTP clock are
->> in use, ETHCKEN gate can be turned off. Current driver does not permit
->> that, fix it.
->>
->> This patch converts ETHCK_K from composite clock into a ETHCKEN gate,
->> ETHPTP_K from composite clock into ETHPTPDIV divider, and adds another
->> NO_ID clock "ck_ker_eth" which models the ETHSRC mux and is parent clock
->> to both ETHCK_K and ETHPTP_K. Therefore, all references to ETHCK_K and
->> ETHPTP_K remain functional as before.
->>
->> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
->>      Figure 83. Peripheral clock distribution for Ethernet
->>      https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157-advanced-armbased-32bit-mpus-stmicroelectronics.pdf
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
->> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
->> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
->> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
->> Cc: Stephen Boyd <sboyd@kernel.org>
->> Cc: linux-clk@vger.kernel.org
->> Cc: linux-stm32@st-md-mailman.stormreply.com
->> To: linux-arm-kernel@lists.infradead.org
->> ---
-> 
-> Any cover letter?
+This is an attempt in making the ipq8064 SoC actually usable. Currently
+many feature are missing for this SoC and devs user off-the-tree patches
+to make it work (example patch for missing clock, patch for cpufreq
+driver, patch to add missing node in the dts)
 
-If there is a need for V2, I will send one. Admittedly, I forgot one here.
+I notice there was some work in modernizing the gcc driver for other
+qcom target but this wasn't done for ipq806x. This does exactly this, we
+drop any parent_names stuff and we switch to the parent_data way. We
+also drop the pxo and cxo source clk from gcc driver and we refer to the
+dts for it.
 
-> What is the merge strategy of this patch series?
+This also add all the missing feature for the nss cores and the
+cryptoengine in them. It does also introduce the required flags to make
+the RPM actually work and NOT reject any command. There was an attempt
+in declaring these clock as core clock in the dts but this ends up in no
+serial as the kernel makes these clock not accessible. We just want to
+make the kernel NOT disable them if unused nothing more.
 
-Clock bits 1/5 and 2/5 can go through clock tree, DT bits through Alex's 
-ST tree.
+At the end we update the ipq8064 dtsi to add the pxo and cxo tag and
+declare them in gcc and also fix a problem with tsens probe.
 
-> Do I need to ack the patches?
+v2:
+- Fix error from Rob bot.
+- Add additional commits to make qcom,gcc.yaml a template
+- Squash parent_hws patch with the modernize patch
+- Create gcc_pxo instead of using long define.
 
-I am waiting for AB/RB from ST, then they can be merged.
+Ansuel Smith (15):
+  dt-bindings: clock: permit additionalProprieties to qcom,gcc
+  dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
+  dt-bindings: clock: Document qcom,gcc-ipq8064 binding
+  drivers: clk: qcom: gcc-ipq806x: fix wrong naming for
+    gcc_pxo_pll8_pll0
+  drivers: clk: qcom: gcc-ipq806x: convert parent_names to parent_data
+  drivers: clk: qcom: gcc-ipq806x: use ARRAY_SIZE for num_parents
+  drivers: clk: qcom: gcc-ipq806x: drop hardcoded pxo and cxo source clk
+  drivers: clk: qcom: gcc-ipq806x: add additional freq nss cores
+  drivers: clk: qcom: gcc-ipq806x: add unusued flag for critical clock
+  drivers: clk: qcom: gcc-ipq806x: add additional freq for sdc table
+  dt-bindings: clock: add ipq8064 ce5 clk define
+  drivers: clk: qcom: gcc-ipq806x: add CryptoEngine clocks
+  dt-bindings: reset: add ipq8064 ce5 resets
+  drivers: clk: qcom: gcc-ipq806x: add CryptoEngine resets
+  ARM: dts: qcom: Add syscon and cxo/pxo clock to gcc node for ipq8064
 
-If you want to review the first two patches, sure, the top half of 2/5 
-is probably the most interesting part, based on your suggestion from 
-almost a year ago. The rest are clock controller hardware details.
+ .../bindings/clock/qcom,gcc-apq8064.yaml      |  27 +-
+ .../bindings/clock/qcom,gcc-ipq8064.yaml      |  70 ++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |  41 +-
+ arch/arm/boot/dts/qcom-ipq8064.dtsi           |   8 +-
+ drivers/clk/qcom/gcc-ipq806x.c                | 638 +++++++++++++-----
+ include/dt-bindings/clock/qcom,gcc-ipq806x.h  |   5 +-
+ include/dt-bindings/reset/qcom,gcc-ipq806x.h  |   5 +
+ 7 files changed, 581 insertions(+), 213 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+
+-- 
+2.33.1
+
