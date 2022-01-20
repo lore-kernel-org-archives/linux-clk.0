@@ -2,113 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B21A5C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 14:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5784C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 17:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351432AbiATOe4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 09:34:56 -0500
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:36363 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1351156AbiATOe4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 09:34:56 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id F106F3201F4E;
-        Thu, 20 Jan 2022 09:34:54 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 20 Jan 2022 09:34:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; bh=wBu9J7wxuK4z+ljHUb05tznQulJ5zH
-        VjzKdqXqasOyQ=; b=Xa3sTsKAk+TBDKa/QK2yzcaU34qpFxkV0wkwR395SckcVJ
-        Hp2Nkm1AgqlET6F04brUHop6lo4tlF6RtBu2JEJbNi+jk5DO7SEMhgqbG3XidfNd
-        oONOPeCNGK3lK2lVfZUaek8nbhgKoxjUutRlrr3ga2yJO/C9MALj8uFTmHYLg/lR
-        LUL/pMqRTb1hMeku7eUFjaXgcwi958hL+ZAPpunh2FI2XbPrfhpSZ2P/pZZuc/NZ
-        IMtPU+2SzZ6pLsaQc5/+PwMaKjQ8L/s9EwiWRzJARKyGJFnqWo2S7K/ljXcg7R2l
-        WR07p0+OUkedoNRjF4fCz8Zx2DfV88QIIgPnqIHA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=wBu9J7
-        wxuK4z+ljHUb05tznQulJ5zHVjzKdqXqasOyQ=; b=Ey1rXe0cynh5c95c8SsAYh
-        sktDMNYziMOr5SQ0dZm0C+4EubbgL8whUo5huHqAR0zzKGiGnhyg5BoDAM9ivXvs
-        1A2uErbeQdgL9R07GJeT+1n1r1uON4MF6IQEnGSqVbjok2uyM4ZZW6F5gdUT/jGx
-        rBV4VSMkm1Gr+ktlEEJLHweCPrnH35BNfdyJKvQnGVzX5vErVjXB4lYprYJmPXeq
-        N4HFkbDHpfkE+iZhFnhiVEn39jlFDakdoOH+c5f9+dzcOkcZ44jTRmsWishDiHrW
-        ynJaJduHUT3oBCbMzxj9/HII2Hdi4fA/6dQiHGHNf6v8vUBNozHpsur7kOVIUdAQ
-        ==
-X-ME-Sender: <xms:DnPpYfZrM-NRmtVk2UOT9CWM5KCSox15U9iwsqumOHnhufuxsvEtww>
-    <xme:DnPpYeYXohLMwyBnhlwEhoYuw_MXVsV6Zhu-pV9zHIbjCXDTPJWIMa3ZIBRw4wGHU
-    kjbntUNwh9XeXGQP5E>
-X-ME-Received: <xmr:DnPpYR8p5QO7w0YiQBVmym3JrnhPxvk4y6etfK8a0sVOHSR2uxSf8UfC6EPkmIbgxqDHkm9ybis903fueOJXBPl3M7Gstv7n5Mh7wAY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekgdeifecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:DnPpYVrI-5pkbv4J7qfOVQGysAQD1jHevr52zEE1HhEAnmo7COvsRg>
-    <xmx:DnPpYarucC4IhV-w1LXcIRLl9jC3F1NSdJRjz1f9Xijp4n0LcKZivw>
-    <xmx:DnPpYbT2IC46MJ5Bf-VYavW1MkSW8ZL8HJzI_mwc--ZlrNCMw9MJtQ>
-    <xmx:DnPpYaJn-QXCDZkMh2V7iAQ5sk-FLKz7OXeGGaoOYlFmfXdB9HLQwA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Jan 2022 09:34:53 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v3 10/10] drm/vc4: hdmi: Remove clock rate initialization
-Date:   Thu, 20 Jan 2022 15:34:17 +0100
-Message-Id: <20220120143417.543744-11-maxime@cerno.tech>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220120143417.543744-1-maxime@cerno.tech>
-References: <20220120143417.543744-1-maxime@cerno.tech>
+        id S231994AbiATRvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 12:51:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230477AbiATRvm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 12:51:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5649C061574;
+        Thu, 20 Jan 2022 09:51:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 825616170C;
+        Thu, 20 Jan 2022 17:51:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8989C340E3;
+        Thu, 20 Jan 2022 17:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642701101;
+        bh=bm38eXYxmLEzcgTe+zpSIq3GwobhEX1p5CEOe0aqQP8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Qu9nhmnB0R+jfggGDA2GbYU0O6LZgQHhpTBLoesO90woOn/ouEJELZvNWD1HCkZUV
+         1kpHfGbp8CdCejEuB5tEmyYkF0/WsFiJCT+FmpvV3CECVmpmYyoYjJGmETqSKOoiu4
+         ysu9RaqWm5ABSdRQhbgF9PaprJE0tMvHNjCoLfIhbZ3Df+QX2db/j5E/rhZk/rD6Nb
+         0sPtiHB9bt3tP3WaYInQ7S1KT5VKfg9G41MRIvESY9T1UqQtsx0WcUfCwMoRn8vp1I
+         ZMG2TseWL12lV1MgCj19AFrvZrOT2V58MH6M2g0qL0mkb26qe/zkCfOAzBEaYoip9t
+         uVEIdACnRCEMQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGS_qxoMRsvx8HDex9Aq9KUALAQrdNe3VVYikyzT59TEYfbLdg@mail.gmail.com>
+References: <20220120052303.2098394-1-sboyd@kernel.org> <CAGS_qxoMRsvx8HDex9Aq9KUALAQrdNe3VVYikyzT59TEYfbLdg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: gate: Add some kunit test suites
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        kunit-dev@googlegroups.com
+To:     Daniel Latypov <dlatypov@google.com>
+Date:   Thu, 20 Jan 2022 09:51:39 -0800
+User-Agent: alot/0.10
+Message-Id: <20220120175140.D8989C340E3@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the clock driver makes sure we never end up with a rate of 0,
-the HDMI driver doesn't need to care anymore.
+Quoting Daniel Latypov (2022-01-19 22:26:50)
+>  On Wed, Jan 19, 2022 at 9:23 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > +
+> > +static void clk_gate_test_exit(struct kunit *test)
+> > +{
+> > +       struct clk_gate_test_context *ctx =3D test->priv;
+> > +
+> > +       clk_hw_unregister_gate(ctx->hw);
+> > +       clk_hw_unregister_fixed_rate(ctx->parent);
+> > +       kfree(ctx);
+>=20
+> I think we forgot to drop some kfree's now that we're using
+> test->priv =3D ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
+>=20
+> This will result in duplicate kfree's.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 13 -------------
- 1 file changed, 13 deletions(-)
+Good catch! I forgot that it was a managed allocation like that. Doesn't
+help that I had to go all the way to the kunit_kmalloc_array()
+kernel-doc to read that test managed means it is freed when the test is
+done.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 053fbaf765ca..43aced269082 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -2543,19 +2543,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 			vc4_hdmi->disable_4kp60 = true;
- 	}
- 
--	/*
--	 * If we boot without any cable connected to the HDMI connector,
--	 * the firmware will skip the HSM initialization and leave it
--	 * with a rate of 0, resulting in a bus lockup when we're
--	 * accessing the registers even if it's enabled.
--	 *
--	 * Let's put a sensible default at runtime_resume so that we
--	 * don't end up in this situation.
--	 */
--	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, HSM_MIN_CLOCK_FREQ);
--	if (ret)
--		goto err_put_ddc;
--
- 	/*
- 	 * We need to have the device powered up at this point to call
- 	 * our reset hook and for the CEC init.
--- 
-2.34.1
+> > +
+> > +static void clk_gate_test_is_enabled(struct kunit *test)
+> > +{
+> > +       struct clk_hw *hw;
+> > +       struct clk_gate_test_context *ctx;
+> > +
+> > +       ctx =3D clk_gate_test_alloc_ctx(test);
+> > +       ctx->fake_reg =3D BIT(7);
+> > +       hw =3D clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fa=
+ke_mem, 7,
+> > +                                 0, NULL);
+> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> > +       KUNIT_ASSERT_TRUE(test, clk_hw_is_enabled(hw));
+> > +
+> > +       clk_hw_unregister_gate(hw);
+> > +       kfree(ctx);
+>=20
+> ditto
+>=20
+>=20
 
+Thanks! Next time can you trim your mails? It's quite long and I have to
+scroll down to find everything.
