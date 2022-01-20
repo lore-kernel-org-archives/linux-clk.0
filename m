@@ -2,172 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF4DC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 13:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F565C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 14:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241787AbiATNx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 08:53:57 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:48139 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241622AbiATNxz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 08:53:55 -0500
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220120135352epoutp034367d9399b51525199f4b9d67e87dd5e~L-vh9wii-1565015650epoutp03S
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jan 2022 13:53:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220120135352epoutp034367d9399b51525199f4b9d67e87dd5e~L-vh9wii-1565015650epoutp03S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1642686832;
-        bh=KcyGdBpSaKaQSjJ7fDTMhH5pkAuLFaMd8lCusKp395U=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=RdtCAT9LilWezt+DMDOBBU6Oqe6R6wFxO3gK79Ty1BTW8RmyzO/ttoqd21NODX3pn
-         KnFGiopyk9WuGgiWX4TqVO3LVxJtSify/zmsEYkwysqjW9Yey9Exxpzfl+IUTES3EU
-         UD0Wq+4ZYLCIdQtGBv/pS0nbGEz8sdJMRsKOXdFY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220120135351epcas5p462e91cb86b07474e96a2ad8a52a56699~L-vhSAwHb2046820468epcas5p4I;
-        Thu, 20 Jan 2022 13:53:51 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JfkWD3YhMz4x9Q3; Thu, 20 Jan
-        2022 13:53:44 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.19.06423.16969E16; Thu, 20 Jan 2022 22:53:37 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220120135336epcas5p21de42bca056514ee41e99a2e381be469~L-vThugtQ0641106411epcas5p2F;
-        Thu, 20 Jan 2022 13:53:36 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220120135336epsmtrp26e656074511da4279d1b3ff0ad2cbdf3~L-vTguOai0495704957epsmtrp2E;
-        Thu, 20 Jan 2022 13:53:36 +0000 (GMT)
-X-AuditID: b6c32a49-b01ff70000001917-17-61e96961f8cb
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5F.CB.08738.06969E16; Thu, 20 Jan 2022 22:53:36 +0900 (KST)
-Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220120135333epsmtip17a8e4ddd413a1619f009d90ce7bd0764~L-vQVb5dL2897428974epsmtip1W;
-        Thu, 20 Jan 2022 13:53:33 +0000 (GMT)
-From:   "Alim Akhtar" <alim.akhtar@samsung.com>
-To:     "'Stephen Boyd'" <sboyd@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <olof@lixom.net>, <arnd@arndb.de>,
-        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski@canonical.com>,
-        <s.nawrocki@samsung.com>, <linux-samsung-soc@vger.kernel.org>,
-        <pankaj.dubey@samsung.com>, <linux-fsd@tesla.com>,
-        "'Jayati Sahu'" <jayati.sahu@samsung.com>,
-        "'Ajay Kumar'" <ajaykumar.rs@samsung.com>
-In-Reply-To: <20220119201509.6220FC004E1@smtp.kernel.org>
-Subject: RE: [PATCH v2 04/16] clk: samsung: fsd: Add initial clock support
-Date:   Thu, 20 Jan 2022 19:23:31 +0530
-Message-ID: <016c01d80e05$1ef9eab0$5cedc010$@samsung.com>
+        id S1345786AbiATOWV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 09:22:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:39876 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1345742AbiATOWT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Jan 2022 09:22:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C83DA1FB;
+        Thu, 20 Jan 2022 06:22:18 -0800 (PST)
+Received: from [10.57.68.26] (unknown [10.57.68.26])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DD693F766;
+        Thu, 20 Jan 2022 06:22:16 -0800 (PST)
+Message-ID: <5d839338-6072-9c52-1893-2f804d937ea1@arm.com>
+Date:   Thu, 20 Jan 2022 14:22:10 +0000
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJMmkM0C21BpYmk5XGVS3CIVixL0wHiE8L7AdsaVJIB7iMiVatVehWw
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBJsWRmVeSWpSXmKPExsWy7bCmpm5i5stEgzevOCwOvD/IYvF30jF2
-        i/fLehgt5h85x2px5NQSJouNb38wWUz5s5zJYtPja6wWH3vusVo8fBVucXnXHDaLGef3MVmc
-        uv6ZzWLR1i/sFq17j7BbHH7Tzmrx79pGFovH1/+wOQh5rJm3htHj969JjB6zGnrZPDat6mTz
-        uHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fnTXIBXFHZNhmpiSmpRQqpecn5KZl56bZK3sHx
-        zvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlATykplCXmlAKFAhKLi5X07WyK8ktLUhUy8otL
-        bJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjPuXXjKWLCbr+LE3YusDYyLeLoYOTgk
-        BEwk3q5X62Lk4hAS2M0osXbVNVYI5xOjxNmuPewQzmdGiUvvHrF1MXKCdfROvQlVtYtRomdh
-        NwuE85JRYsX9FiaQKjYBXYkdi9vAOkQECiUOL/oBVsQssINZYuXzaYwgCU4BS4mmx1PBGoQF
-        vCRaD20As1kEVCV6/21lAbF5gWpObfzNDGELSpyc+QQsziygLbFs4WtmiJMUJH4+XcYKscxN
-        Yv2lP0wQNeISL48eAftBQqCZU2L5nQ4miAYXifl9PVDNwhKvjm9hh7ClJD6/28sGCZlsiZ5d
-        xhDhGoml846xQNj2EgeuzGEBKWEW0JRYv0sfYhWfRO/vJ0wQnbwSHW1CENWqEs3vrkJ1SktM
-        7O5mhbA9JFYdf84+gVFxFpLHZiF5bBaSB2YhLFvAyLKKUTK1oDg3PbXYtMAwL7UcHt/J+bmb
-        GMFJXstzB+PdBx/0DjEycTAeYpTgYFYS4ZWqf5YoxJuSWFmVWpQfX1Sak1p8iNEUGNoTmaVE
-        k/OBeSavJN7QxNLAxMzMzMTS2MxQSZz3dPqGRCGB9MSS1OzU1ILUIpg+Jg5OqQYmq4TYg87P
-        nI3Kq0yWfP7k5RU7908S61ojU5Ywu0VeGfNKC7kFDn9axvYouN094v/U25WL1POm8cwz1RdX
-        ntBcP3lXnN8v4WPT3SVKVT8tOBCncH+nVoPZZvbLsVc4VgWGheTN2DE9edIlZ95992bWLk+9
-        N3faZjErjr6rMvYLLVVvLRVIXfZlXVNu/bZ1C7/oPDV9d0TBxnRFrYjw11M+UV4mDMvfndF/
-        fvBQ+ulfJafKp2b7nJm2J2LTNe378cnFZT7BzrzWVzzfvRD7FaN703i1FOPLhxLLJeRvtL46
-        vSPh4o1FFp3OqnFPxDff6Ep7/ok7SiAj8pC+2dkDC3S3zV+2cvp6Ts0JX7InnkvoUGIpzkg0
-        1GIuKk4EAHtSQHt7BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRmVeSWpSXmKPExsWy7bCSnG5C5stEg8VHNC0OvD/IYvF30jF2
-        i/fLehgt5h85x2px5NQSJouNb38wWUz5s5zJYtPja6wWH3vusVo8fBVucXnXHDaLGef3MVmc
-        uv6ZzWLR1i/sFq17j7BbHH7Tzmrx79pGFovH1/+wOQh5rJm3htHj969JjB6zGnrZPDat6mTz
-        uHNtD5vH5iX1HldONLF69G1Zxejxr2kuu8fnTXIBXFFcNimpOZllqUX6dglcGcuXzmEs+M5b
-        ceXyMeYGxnvcXYycHBICJhK9U2+ydjFycQgJ7GCU2Nq/gwUiIS1xfeMEdghbWGLlv+fsEEXP
-        GSU+LHjKBpJgE9CV2LG4DcwWESiWWNH2F6yIWeAEs8S8GZsYITreMEqsPnOJGaSKU8BSounx
-        VCYQW1jAS6L10AYwm0VAVaL331aw1bxANac2/maGsAUlTs58AhZnFtCWeHrzKZy9bOFrZojz
-        FCR+Pl3GCnGFm8T6S3+YIGrEJV4ePcI+gVF4FpJRs5CMmoVk1CwkLQsYWVYxSqYWFOem5xYb
-        FhjlpZbrFSfmFpfmpesl5+duYgTHu5bWDsY9qz7oHWJk4mA8xCjBwawkwitV/yxRiDclsbIq
-        tSg/vqg0J7X4EKM0B4uSOO+FrpPxQgLpiSWp2ampBalFMFkmDk6pBqbNvYxT7SZI+SeXrz3b
-        JX/IP+5thDXfvzBB6QWxRXdTt77/e2jDdvPElpz3ASLR3mJPdB9ZKV5W1mecJGXVIMl7aovy
-        Yc0SmciMDUoTXzDftNArvhMyvVRSac0FUZnbTjNy3mxZekRna4L0ocUimRdZU6UFWb9ZV/yR
-        uXi2eWqzbJ575psNOzl3cGuvv1Vwx90t236/1R0LR8FVFrFt77OOlydV6JfMTn61ZfVG6SXX
-        9P69vK5Z99V14r1Tl/r2uJ1s2fxNUle6QtzmoOnRCzpr5GM85vh4vRUomFNxzZGneHeX6e87
-        Vp6JnFvn34jzvvv8obWf/0FfrRdS4s5S5omFCVYP7u+4cSi9jzfyrhJLcUaioRZzUXEiAEc8
-        c/RmAwAA
-X-CMS-MailID: 20220120135336epcas5p21de42bca056514ee41e99a2e381be469
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220118150028epcas5p282c05b78f28a9b11d46da94e78330f0c
-References: <20220118144851.69537-1-alim.akhtar@samsung.com>
-        <CGME20220118150028epcas5p282c05b78f28a9b11d46da94e78330f0c@epcas5p2.samsung.com>
-        <20220118144851.69537-5-alim.akhtar@samsung.com>
-        <20220119201509.6220FC004E1@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alyssa Rosenzweig <alyssa@collabora.com>
+Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Chen-Yu Tsai <wenst@chromium.org>
+References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
+ <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com> <YeF/AYZ0DuKGwLLk@maud>
+ <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com>
+ <69525223-7d90-5714-bbe9-4d7f0b9a293d@arm.com>
+ <20220119021844.3C225C340E5@smtp.kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20220119021844.3C225C340E5@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen
+On 2022-01-19 02:18, Stephen Boyd wrote:
+> Quoting Robin Murphy (2022-01-18 07:01:46)
+>> On 2022-01-18 07:19, Chen-Yu Tsai wrote:
+>>> Hi,
+>>>
+>>> On Fri, Jan 14, 2022 at 9:47 PM Alyssa Rosenzweig <alyssa@collabora.com> wrote:
+>>>>
+>>>>>> That links to an internal Google issue tracker which I assume has more
+>>>>>> information on the bug. I would appreciate if someone from Google or
+>>>>>> MediaTek could explain what this change actually does and why it's
+>>>>>> necessary on MT8192.
+>>>>>>
+>>>>>> At any rate, this register logically belongs to the MT8192 "infra" clock
+>>>>>> device, so it makes sense to set it there too. This avoids adding any
+>>>>>> platform-specific hacks to the 3D driver, either mainline (Panfrost) or
+>>>>>> legacy (kbase).
+>>>>>
+>>>>> Does this really have anything to do with clocks?
+>>>>
+>>>> I have no idea. MediaTek, Google, please explain.
+>>>>
+>>>>> In particular, "ACP" usually refers to the Accelerator Coherency Port
+>>>>> of a CPU cluster or DSU, and given the stated symptom of the issue
+>>>>> affected by it, my first guess would be that this bit might indeed
+>>>>> control routing of GPU traffic either to the ACP or the (presumably
+>>>>> non-coherent) main interconnect.
+>>>>
+>>>> I'd easily believe that.
+>>>
+>>> As Robin guessed, "ACP" here does refer to the Accelerator Coherency Port.
+>>> And the bit in infracfg toggles whether ACP is used or not.
+>>>
+>>> Explanation from MediaTek in verbatim:
+>>>
+>>> -------------------------------------------------------------------------
+>>> The ACP path on MT8192 is just for experimental only.
+>>> We are not intended to enable ACP by design.
+>>>
+>>> But due to an unexpected operation, it was accidently opened by default.
+>>> So we need a patch to disable the ACP for MT8192.
+>>> -------------------------------------------------------------------------
+>>
+>> Aha! That's great, thanks ChenYu!
+>>
+>> Stephen, my thinking here is that if this feature controls the GPU
+>> interconnect, and only matters when the GPU is going to be used (as
+>> strongly implied by the downstream implementation), then the GPU driver
+>> is the only interested party and may as well take responsibility if
+>> there's no better alternative.
+>>
+>> I'd agree that if there was already a "base" infracfg driver doing
+>> general system-wide set-and-forget configuration then it would equally
+>> well fit in there, but that doesn't seem to be the case.
+> 
+> Wouldn't this first set-and-forget configuration fit that bill? We can't
+> have a "base" driver because why?
 
->-----Original Message-----
->From: Stephen Boyd =5Bmailto:sboyd=40kernel.org=5D
->Sent: Thursday, January 20, 2022 1:45 AM
->To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
->kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
->Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
-l.org;
->olof=40lixom.net; arnd=40arndb.de; linus.walleij=40linaro.org;
->catalin.marinas=40arm.com; robh+dt=40kernel.org;
->krzysztof.kozlowski=40canonical.com; s.nawrocki=40samsung.com; linux-
->samsung-soc=40vger.kernel.org; pankaj.dubey=40samsung.com; Alim Akhtar
-><alim.akhtar=40samsung.com>; linux-fsd=40tesla.com; Jayati Sahu
-><jayati.sahu=40samsung.com>; Ajay Kumar <ajaykumar.rs=40samsung.com>
->Subject: Re: =5BPATCH v2 04/16=5D clk: samsung: fsd: Add initial clock sup=
-port
->
->Quoting Alim Akhtar (2022-01-18 06:48:39)
->> diff --git a/drivers/clk/samsung/clk-fsd.c
->> b/drivers/clk/samsung/clk-fsd.c new file mode 100644 index
->> 000000000000..2669396d81b9
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-fsd.c
->> =40=40 -0,0 +1,308 =40=40
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2017-2022 Samsung Electronics Co., Ltd.
->> + *             https://www.samsung.com
->> + * Copyright (c) 2017-2022 Tesla, Inc.
->> + *             https://www.tesla.com
->> + *
->> + * Common Clock Framework support for FSD SoC.
->> + */
->> +
->> +=23include <linux/clk-provider.h>
->> +=23include <linux/of.h>
->
->include init.h for __initconst and kernel.h for ARRAY_SIZE
->
-I did not face any compilation error.
-Do I need to explicitly add these header files in driver? I see clk.h impli=
-citly includes kernel.h
-Same is the case of other driver in this directory.
+Sure, everything has a starting point somewhere, it just means more work 
+for someone to have to do. I'm not that person - I'm just here as a 
+curious reviewer asking questions to help refine the abstraction - so I 
+chose to lean towards the pragmatic side here given what I know about 
+how much Alyssa enjoys kernel development ;)
 
->> +
->> +=23include <dt-bindings/clock/fsd-clk.h>
->> +
->> +=23include =22clk.h=22
->> +
+>> Short of trying
+>> to abuse the bp_infracfg data in the mtk-pm-domains driver (which
+>> doesn't seem like a particularly pleasant idea), the code to poke a bit
+>> into a syscon regmap is going to be pretty much the same wherever we add
+>> it. There's already a bit of a pattern for MTK drivers to look up and
+>> poke their own infracfg bits directly as needed, so between that and the
+>> downstream implementation for this particular bit, leaving it to
+>> Panfrost seems like the least surprising option.
+>>
+> 
+> I'd prefer we leave the SoC glue out of device drivers for subsystems
+> that really don't want to or need to know about the SoC level details.
+> The GPU driver wants to live life drawing triangles! :) It doesn't want
+> to know that the ACP path didn't work out on some SoC it got plopped
+> down into. And of course GPU is the only interested party, because the
+> SoC glue for the GPU is all messed up so GPU can't operate properly
+> without this bit toggled. I wonder where the fix would end up if this
+> port was shared by more than one driver. Probably back here in the
+> closest thing there is to the SoC driver.
 
+As I hoped to imply, I agree that that's a perfectly valid line of 
+reasoning too. However it does gloss over certain other considerations 
+like managing dependencies between the drivers such that it's not too 
+cryptic for a user to configure a kernel that actually works as 
+expected, and the GPU driver has a guarantee that the configuration 
+really has been done by the point that it wants to start DMA, for instance.
+
+> It's not as simple as poking bits in some SoC glue IO space
+> unconditionally either. The GPU driver will need to know which SoC is
+> being used and then only poke the bits if the affected SoC is in use. Or
+> we'll have some DT binding update to poke the bit if some syscon
+> property is present in the DT node. Either way, it's a set-and-forget
+> thing, so the GPU driver will now have some set-and-forget logic for one
+> SoC out of many that it supports; do it once at boot, grab a regmap,
+> parse some more stuff to make sure it's needed, poke the bit, release
+> the regmap, finally start drawing.
+
+In this case we do happen to have this handy function called 
+panfrost_probe() which already deals with one-off startup stuff :P
+
+We also already have SoC-specific GPU compatibles because even without 
+experimental interconnect easter eggs, people integrate these IPs in 
+fairly involved ways and there's a fair degree of variety. However 
+unless we want to be super-strict it's also not too hard to simply 
+assume that if we can find a "mediatek,mt8192-infracfg" syscon then we 
+set the MT8192 magic bit within it, and if we can't then we don't.
+
+> Of course, I won't oppose the mess being moved somewhere outside of the
+> subsystem I maintain ;-) I was mainly curious to understand why the
+> regmap path is proposed.
+
+Well, regmap because it's a syscon, so whoever's accessing it that 
+should be via its existing regmap rather than going behind its back. To 
+be fair, there is a nascent infracfg "driver" already (even if it's just 
+two helper functions), so adding some new infrastructure in there is a 
+clear possibility - the functionally-similar Rockchip GRF already has 
+something comparable, for example - it's just somewhat more code and 
+more work thinking through the additional reasoning, compared to piling 
+SoC-specific GPU-related stuff into the place that already knows about 
+SoC-specific GPU stuff. As things stand, if someone *is* prepared to 
+take that on then it's fine by me!
+
+FWIW, I have no desire to look more closely at the downstream driver, 
+but I did notice in the context of the linked patch that there appeared 
+to be some power-management-looking stuff as well as this magic bit, so 
+if it's possible that that might be something we care about in future 
+and mean we end up needing to poke syscons from Panfrost anyway, it 
+might want factoring in to the decision.
+
+Cheers,
+Robin.
