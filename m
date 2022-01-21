@@ -2,412 +2,232 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A582C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 07:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0754C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 07:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379124AbiAUHpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jan 2022 02:45:30 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:15143 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379136AbiAUHp2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 02:45:28 -0500
-Received: from droid11-sz.amlogic.com (10.28.8.21) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.2176.2; Fri, 21 Jan 2022
- 15:45:22 +0800
-From:   Liang Yang <liang.yang@amlogic.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Liang Yang <liang.yang@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v10 4/4] clk: meson: add sub MMC clock controller driver
-Date:   Fri, 21 Jan 2022 15:45:08 +0800
-Message-ID: <20220121074508.42168-5-liang.yang@amlogic.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220121074508.42168-1-liang.yang@amlogic.com>
-References: <20220121074508.42168-1-liang.yang@amlogic.com>
+        id S1349157AbiAUH4c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jan 2022 02:56:32 -0500
+Received: from mx1.cqplus1.com ([113.204.237.245]:55592 "EHLO mx1.cqplus1.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1379290AbiAUH4T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Jan 2022 02:56:19 -0500
+X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
+        LIVER,40,3)
+Received: from 172.28.114.216
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(24938:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 21 Jan 2022 15:53:24 +0800 (CST)
+From:   Qin Jian <qinjian@cqplus1.com>
+To:     robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        broonie@kernel.org, arnd@arndb.de, stefan.wahren@i2se.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com, Qin Jian <qinjian@cqplus1.com>
+Subject: [PATCH v8 04/10] reset: Add Sunplus SP7021 reset driver
+Date:   Fri, 21 Jan 2022 15:53:12 +0800
+Message-Id: <d962524ec4379482740caa45fc7605747de3b4b1.1642751015.git.qinjian@cqplus1.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <cover.1642751015.git.qinjian@cqplus1.com>
+References: <cover.1642751015.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.8.21]
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The patch will add a MMC clock controller driver which used by MMC or NAND,
-It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+Add reset driver for Sunplus SP7021 SoC.
 
-Two clocks are provided as the parent of MMC clock controller from
-upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
-
-To specify which clock the MMC or NAND driver may consume,
-the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
-can be used in the device tree sources.
-
-Signed-off-by: Liang Yang <liang.yang@amlogic.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- drivers/clk/meson/Kconfig    |  14 ++
- drivers/clk/meson/Makefile   |   1 +
- drivers/clk/meson/mmc-clkc.c | 302 +++++++++++++++++++++++++++++++++++
- 3 files changed, 317 insertions(+)
- create mode 100644 drivers/clk/meson/mmc-clkc.c
+ MAINTAINERS                   |   1 +
+ drivers/reset/Kconfig         |   9 +++
+ drivers/reset/Makefile        |   1 +
+ drivers/reset/reset-sunplus.c | 130 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 141 insertions(+)
+ create mode 100644 drivers/reset/reset-sunplus.c
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index bb0f59eea366..5f344a0892cb 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -39,6 +39,20 @@ config COMMON_CLK_MESON_AO_CLKC
- 	select COMMON_CLK_MESON_REGMAP
- 	select RESET_CONTROLLER
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 652f42cab..6caffd6d0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2662,6 +2662,7 @@ S:	Maintained
+ W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+ F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
++F:	drivers/reset/reset-sunplus.c
+ F:	include/dt-bindings/reset/sp-sp7021.h
  
-+config COMMON_CLK_MMC_MESON
-+	tristate "Meson MMC Sub Clock Controller Driver"
-+	depends on ARCH_MESON || COMPILE_TEST
-+	select MFD_SYSCON
-+	select COMMON_CLK_AMLOGIC
-+	select COMMON_CLK_MESON_PHASE
-+	select COMMON_CLK_MESON_PHASE_DELAY
-+	select COMMON_CLK_MESON_SCLK_DIV
+ ARM/Synaptics SoC support
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index be799a5ab..fb14456a8 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -224,6 +224,15 @@ config RESET_SOCFPGA
+ 	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
+ 	  driver gets initialized early during platform init calls.
+ 
++config RESET_SUNPLUS
++	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
++	default ARCH_SUNPLUS
 +	help
-+	  Support for the MMC sub clock controller on
-+	  Amlogic Meson Platform, which includes S905 (GXBB, GXL),
-+	  A113D/X (AXG) devices. Say Y if you want this
-+	  clock enabled.
++	  This enables the reset driver support for Sunplus SoCs.
++	  The reset lines that can be asserted and deasserted by toggling bits
++	  in a contiguous, exclusive register space. The register is HIWORD_MASKED,
++	  which means each register hold 16 reset lines.
 +
- config COMMON_CLK_MESON_EE_CLKC
- 	tristate
- 	select COMMON_CLK_MESON_REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 99fe4eeed000..7a7ffb37a726 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -17,6 +17,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
- 
- obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_MMC_MESON) += mmc-clkc.o
- obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
- obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
-diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+ config RESET_SUNXI
+ 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+ 	default ARCH_SUNXI
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index 21d46d886..f03403e97 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -29,6 +29,7 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
+ obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+ obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
++obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
 new file mode 100644
-index 000000000000..e42c4015c7a3
+index 000000000..113b36b57
 --- /dev/null
-+++ b/drivers/clk/meson/mmc-clkc.c
-@@ -0,0 +1,302 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++++ b/drivers/reset/reset-sunplus.c
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
++ * SP7021 reset driver
++ *
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/of_device.h>
-+#include <linux/mfd/syscon.h>
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/mod_devicetable.h>
 +#include <linux/platform_device.h>
-+#include <dt-bindings/clock/amlogic,mmc-clkc.h>
++#include <linux/reset-controller.h>
++#include <linux/reboot.h>
 +
-+#include "sclk-div.h"
-+#include "clk-phase-delay.h"
-+#include "clk-regmap.h"
-+#include "clk-phase.h"
++/* HIWORD_MASK_REG BITS */
++#define BITS_PER_HWM_REG	16
 +
-+/* clock ID used by internal driver */
-+
-+#define SD_EMMC_CLOCK		0
-+#define CLK_DELAY_STEP_PS_GX	200
-+#define CLK_DELAY_STEP_PS_AXG	78
-+#define MUX_CLK_NUM_PARENTS	2
-+#define MMC_MAX_CLKS		4
-+
-+static struct clk_parent_data mmc_clkc_parent_data[MUX_CLK_NUM_PARENTS];
-+
-+struct mmc_clkc_data {
-+	struct meson_clk_phase_delay_data tx;
-+	struct meson_clk_phase_delay_data rx;
++struct sp_reset {
++	struct reset_controller_dev rcdev;
++	struct notifier_block notifier;
++	void __iomem *base;
 +};
 +
-+static struct clk_regmap_mux_data mmc_clkc_mux_data = {
-+	.offset = SD_EMMC_CLOCK,
-+	.mask   = 0x3,
-+	.shift  = 6,
-+};
-+
-+static const struct meson_sclk_div_data mmc_clkc_div_data = {
-+	.div = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.width   = 6,
-+	},
-+	.flags = MESON_SCLK_ONE_BASED,
-+};
-+
-+static struct meson_clk_phase_data mmc_clkc_core_phase = {
-+	.ph = {
-+		.reg_off = SD_EMMC_CLOCK,
-+		.shift   = 8,
-+		.width   = 2,
-+	}
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_gx_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 4,
-+		},
-+		.delay_step_ps = CLK_DELAY_STEP_PS_GX,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 20,
-+			.width   = 4,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_GX,
-+	},
-+};
-+
-+static const struct mmc_clkc_data mmc_clkc_axg_data = {
-+	.tx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 10,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 16,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
-+	},
-+	.rx = {
-+		.phase = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 12,
-+			.width   = 2,
-+		},
-+		.delay = {
-+			.reg_off = SD_EMMC_CLOCK,
-+			.shift   = 22,
-+			.width   = 6,
-+		},
-+		.delay_step_ps   = CLK_DELAY_STEP_PS_AXG,
-+	},
-+};
-+
-+static const struct of_device_id mmc_clkc_match_table[] = {
-+	{
-+		.compatible	= "amlogic,gx-mmc-clkc",
-+		.data		= &mmc_clkc_gx_data
-+	},
-+	{
-+		.compatible	= "amlogic,axg-mmc-clkc",
-+		.data		= &mmc_clkc_axg_data
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk(struct device *dev, struct regmap *map,
-+		      struct clk_init_data *init,
-+		      const char *suffix, void *data)
++static inline struct sp_reset *to_sp_reset(struct reset_controller_dev *rcdev)
 +{
-+	struct clk_regmap *clk;
-+	char *name;
++	return container_of(rcdev, struct sp_reset, rcdev);
++}
++
++static int sp_reset_update(struct reset_controller_dev *rcdev,
++			   unsigned long id, bool assert)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = id / BITS_PER_HWM_REG;
++	int shift = id % BITS_PER_HWM_REG;
++	u32 val;
++
++	val = (1 << (16 + shift)) | (assert << shift);
++	writel(val, reset->base + (index * 4));
++
++	return 0;
++}
++
++static int sp_reset_assert(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	return sp_reset_update(rcdev, id, true);
++}
++
++static int sp_reset_deassert(struct reset_controller_dev *rcdev,
++			     unsigned long id)
++{
++	return sp_reset_update(rcdev, id, false);
++}
++
++static int sp_reset_status(struct reset_controller_dev *rcdev,
++			   unsigned long id)
++{
++	struct sp_reset *reset = to_sp_reset(rcdev);
++	int index = id / BITS_PER_HWM_REG;
++	int shift = id % BITS_PER_HWM_REG;
++	u32 reg;
++
++	reg = readl(reset->base + (index * 4));
++
++	return !!(reg & BIT(shift));
++}
++
++static const struct reset_control_ops sp_reset_ops = {
++	.assert   = sp_reset_assert,
++	.deassert = sp_reset_deassert,
++	.status   = sp_reset_status,
++};
++
++static int sp_restart(struct notifier_block *nb, unsigned long mode,
++		      void *cmd)
++{
++	struct sp_reset *reset = container_of(nb, struct sp_reset, notifier);
++
++	sp_reset_assert(&reset->rcdev, 0);
++	sp_reset_deassert(&reset->rcdev, 0);
++
++	return NOTIFY_DONE;
++}
++
++static int sp_reset_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct sp_reset *reset;
++	struct resource *res;
 +	int ret;
 +
-+	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
++	reset = devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
 +
-+	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
-+	if (!name)
-+		return ERR_PTR(-ENOMEM);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reset->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(reset->base))
++		return PTR_ERR(reset->base);
 +
-+	init->name = name;
-+	clk->map = map;
-+	clk->data = data;
-+	clk->hw.init = init;
-+	ret = devm_clk_hw_register(dev, &clk->hw);
++	reset->rcdev.ops = &sp_reset_ops;
++	reset->rcdev.owner = THIS_MODULE;
++	reset->rcdev.of_node = dev->of_node;
++	reset->rcdev.nr_resets = resource_size(res) / 4 * BITS_PER_HWM_REG;
++
++	ret = devm_reset_controller_register(dev, &reset->rcdev);
 +	if (ret)
-+		clk = ERR_PTR(ret);
++		return ret;
 +
-+	kfree(name);
-+	return clk;
++	reset->notifier.notifier_call = sp_restart;
++	reset->notifier.priority = 192;
++
++	return register_restart_handler(&reset->notifier);
 +}
 +
-+static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
-+						struct regmap *map)
-+{
-+	struct clk_init_data init = {0};
-+	struct clk_regmap *mux;
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
-+		char name[8];
-+
-+		snprintf(name, sizeof(name), "clkin%d", i);
-+		clk = devm_clk_get(dev, name);
-+		if (IS_ERR(clk)) {
-+			if (clk != ERR_PTR(-EPROBE_DEFER))
-+				dev_err_probe(dev, PTR_ERR(clk),
-+					      "Missing clock\n");
-+			return ERR_CAST(clk);
-+		}
-+
-+		mmc_clkc_parent_data[i].fw_name = __clk_get_name(clk);
-+	}
-+
-+	init.ops = &clk_regmap_mux_ops;
-+	init.flags = CLK_SET_RATE_PARENT;
-+	init.parent_data = mmc_clkc_parent_data;
-+	init.num_parents = MUX_CLK_NUM_PARENTS;
-+
-+	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
-+	if (IS_ERR(mux))
-+		dev_err(dev, "Mux clock registration failed\n");
-+
-+	return mux;
-+}
-+
-+static struct clk_regmap *
-+mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
-+				  char *suffix, const struct clk_hw *hw,
-+				  unsigned long flags,
-+				  const struct clk_ops *ops, void *data)
-+{
-+	struct clk_init_data init;
-+	struct clk_regmap *clk;
-+	const char *parent_name = clk_hw_get_name(hw);
-+
-+	init.ops = ops;
-+	init.flags = flags;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
-+	if (IS_ERR(clk))
-+		dev_err(dev, "%s clock registration failed\n", suffix);
-+
-+	return clk;
-+}
-+
-+static int mmc_clkc_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *onecell_data;
-+	struct device *dev = &pdev->dev;
-+	const struct mmc_clkc_data *data;
-+	struct regmap *map;
-+	struct clk_regmap *clk, *core;
-+	struct meson_sclk_div_data *div_data, *tx, *rx;
-+
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return -ENODEV;
-+
-+	/* cast to drop the const */
-+	tx = (struct meson_sclk_div_data *)&data->tx;
-+	rx = (struct meson_sclk_div_data *)&data->rx;
-+
-+	map = syscon_node_to_regmap(dev->of_node);
-+	if (IS_ERR(map)) {
-+		dev_err(dev, "could not find mmc clock controller\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	onecell_data = devm_kzalloc(dev,
-+				    struct_size(onecell_data, hws,
-+						MMC_MAX_CLKS),
-+				    GFP_KERNEL);
-+	if (!onecell_data)
-+		return -ENOMEM;
-+
-+	clk = mmc_clkc_register_mux(dev, map);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
-+	if (!div_data)
-+		return -ENOMEM;
-+
-+	memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
-+						&clk->hw,
-+						CLK_SET_RATE_PARENT,
-+						&meson_sclk_div_ops,
-+						div_data);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_DIV] = &clk->hw;
-+	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
-+						 &clk->hw,
-+						 CLK_SET_RATE_PARENT,
-+						 &meson_clk_phase_ops,
-+						 &mmc_clkc_core_phase);
-+	if (IS_ERR(core))
-+		return PTR_ERR(core);
-+	onecell_data->hws[CLKID_MMC_PHASE_CORE] = &core->hw;
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						rx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	onecell_data->hws[CLKID_MMC_PHASE_RX] = &clk->hw;
-+	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
-+						&core->hw,  0,
-+						&meson_clk_phase_delay_ops,
-+						tx);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	onecell_data->hws[CLKID_MMC_PHASE_TX] = &clk->hw;
-+	onecell_data->num = MMC_MAX_CLKS;
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					   onecell_data);
-+}
-+
-+static struct platform_driver mmc_clkc_driver = {
-+	.probe		= mmc_clkc_probe,
-+	.driver		= {
-+		.name	= "meson-mmc-clkc",
-+		.of_match_table = of_match_ptr(mmc_clkc_match_table),
-+	},
++static const struct of_device_id sp_reset_dt_ids[] = {
++	{.compatible = "sunplus,sp7021-reset",},
++	{ /* sentinel */ },
 +};
 +
-+module_platform_driver(mmc_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
-+MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
-+MODULE_LICENSE("GPL v2");
++static struct platform_driver sp_reset_driver = {
++	.probe = sp_reset_probe,
++	.driver = {
++		.name			= "sunplus-reset",
++		.of_match_table		= sp_reset_dt_ids,
++		.suppress_bind_attrs	= true,
++	},
++};
++builtin_platform_driver(sp_reset_driver);
 -- 
-2.34.1
+2.33.1
 
