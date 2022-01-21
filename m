@@ -2,371 +2,142 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 236B8C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 21:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A71C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 21:14:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231154AbiAUVGX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jan 2022 16:06:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49458 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233315AbiAUVEG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 16:04:06 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C30C06173B;
-        Fri, 21 Jan 2022 13:04:05 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id j2so3315671ejk.6;
-        Fri, 21 Jan 2022 13:04:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=vaOb6lzR+ohDnwzAKg4t+EygQuxBAzQ4LziIApjliUg=;
-        b=iwMy/bvTpkMwewugrerKyOEO3KydgN75A7zThNxfNUZSkukoizcNQScynIEINLb6ZQ
-         fzjM1FZql4ZKwW+whmzdQYbXKYv5gT9GCUEpw0kpy5KA+w8LQWKB5gBaaVn2ipdfBREx
-         MgDiKSUzV2IgPILR5EVp+8oeYnvGkAdTw3SoRZ+mNdtP3lpy7kjMUGwHx9nWZG9Q8hLw
-         kcfPi6g2SMA5P7Zd3HEziwFL8f+3Bg6WkoTlvwXrgvHGXi4/GR+KnK7EmOMrd6L4HtoE
-         YFsi1UH1+ClEYWASnDG2rqEGw4IKQkE3xKRFdgU7ag3wYpBovJtrlbDFF7NernlNVQo5
-         eePw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vaOb6lzR+ohDnwzAKg4t+EygQuxBAzQ4LziIApjliUg=;
-        b=nFWgR+j0CGdK8hnfA90QKjsdqhyYU9JBqeUjKG38G/Qx+tPIUps5fSz07D219toJ27
-         EWCvpbudGZzy+2F08rzlj/9u055YMqClJ3oDxgIR6IXAlRCJ4VIzaDVUKxUCTIA9U+H7
-         htZQGA1Cat9N4uaXAABCD6SdiZo+S6B5+8MXmFUXj493kXNIowxKMhADBCxBWdeASk3j
-         t1q18RZ2UpMxfdkpdZPUi51DcJbDSet/t9lnVvb1Wi4mPqhVsoIlFRsnvvts7qAHuaBA
-         NrWndC5YVEMurMyHhBgQyQGVEJGG/rlExIE99GmX/kjyLbTNz294ty7N6Hf9ugxlGwi6
-         VIXg==
-X-Gm-Message-State: AOAM531479LQFD8x1YGx0KvH5ZUSYnO47CwZ0B79/2ixSC6xuffcgGk2
-        YH2b9pUBPQR1lRuUd8nIat4=
-X-Google-Smtp-Source: ABdhPJzvPXcJMXAZk8tvx8Q6lU8Aka+RDfQIAUpNWzpccNHVGgoGEx9vvyDKN5vw7w4t4JxbukWPyg==
-X-Received: by 2002:a17:907:d24:: with SMTP id gn36mr4645255ejc.324.1642799044024;
-        Fri, 21 Jan 2022 13:04:04 -0800 (PST)
-Received: from localhost.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id p23sm2898595edx.86.2022.01.21.13.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jan 2022 13:04:03 -0800 (PST)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 12/15] drivers: clk: qcom: gcc-ipq806x: add CryptoEngine clocks
-Date:   Fri, 21 Jan 2022 22:03:37 +0100
-Message-Id: <20220121210340.32362-13-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20220121210340.32362-1-ansuelsmth@gmail.com>
-References: <20220121210340.32362-1-ansuelsmth@gmail.com>
+        id S230274AbiAUVOK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jan 2022 16:14:10 -0500
+Received: from mga14.intel.com ([192.55.52.115]:47885 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229520AbiAUVOI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Jan 2022 16:14:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1642799648; x=1674335648;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V6H2UckBLCuDWmdCe+Xs89o2UseA1Ut2QW+oJkT+t3Y=;
+  b=PhFAWM9dQMnpk9ZTxS9HoZy5XxhXkk+lGPkOz4Im+k7zGCjUOBAMpPk5
+   hebTfsdE8qiG2t8nEAdb/XvDzvjRUiUWLSxFYogJ0/bzxQh1wQSq37BP/
+   ac/cHprgfYjWECQJWLyIMJb+6GbQV6CHw9YErUsh4k1tohi0aZJvSU2tJ
+   7pP4zmz9EwyuhWmowJ9ElU5OAOZgw5rCcueCuL15K/xdIzi/HlVjGa9pk
+   esEnDBzTrseVshZ53BtVn0bfbAFs5du+IwQI95bU3XqMMRqpdHLi1om70
+   pApBOZfJKEkWyPrNmWXCD+n8gHx5rBQ0rfd6tpdclD3N5LnjBmc/hRZPA
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10234"; a="245965779"
+X-IronPort-AV: E=Sophos;i="5.88,306,1635231600"; 
+   d="scan'208";a="245965779"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2022 13:14:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,306,1635231600"; 
+   d="scan'208";a="626862833"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 21 Jan 2022 13:14:04 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nB1ER-000Ffd-Sb; Fri, 21 Jan 2022 21:14:03 +0000
+Date:   Sat, 22 Jan 2022 05:13:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org
+Subject: Re: [PATCH v3 04/16] clk: samsung: fsd: Add initial clock support
+Message-ID: <202201220550.FSQ6N02X-lkp@intel.com>
+References: <20220121172840.12121-5-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220121172840.12121-5-alim.akhtar@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing CryptoEngine clocks and pll11 required clock.
+Hi Alim,
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on next-20220121]
+[also build test WARNING on v5.16]
+[cannot apply to clk/clk-next robh/for-next pinctrl-samsung/for-next v5.16 v5.16-rc8 v5.16-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Alim-Akhtar/dt-bindings-add-vendor-prefix-for-Tesla/20220122-022924
+base:    c94951012a748a0f8ed77cd8fc25640c6fe198f9
+config: mips-allmodconfig (https://download.01.org/0day-ci/archive/20220122/202201220550.FSQ6N02X-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/69b6b21ebabb149c1c07d83376e9c08a582c6423
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Alim-Akhtar/dt-bindings-add-vendor-prefix-for-Tesla/20220122-022924
+        git checkout 69b6b21ebabb149c1c07d83376e9c08a582c6423
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=mips SHELL=/bin/bash drivers/clk/samsung/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/samsung/clk-fsd.c:150:9: warning: this decimal constant is unsigned only in ISO C90
+     150 |         PLL_35XX_RATE(24 * MHZ, 2400000000, 200, 2, 0),
+         |         ^~~~~~~~~~~~~
+   In file included from include/linux/bits.h:22,
+                    from include/linux/bitops.h:6,
+                    from include/linux/of.h:15,
+                    from include/linux/clk-provider.h:9,
+                    from drivers/clk/samsung/clk-fsd.c:11:
+>> include/linux/build_bug.h:16:51: warning: this decimal constant is unsigned only in ISO C90
+      16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+         |                                                   ^
+   drivers/clk/samsung/clk-pll.h:48:9: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+      48 |         BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
+         |         ^~~~~~~~~~~~~~~~~
+   drivers/clk/samsung/clk-pll.h:52:33: note: in expansion of macro 'PLL_VALID_RATE'
+      52 |                 .rate   =       PLL_VALID_RATE(_fin, _rate,     \
+         |                                 ^~~~~~~~~~~~~~
+   drivers/clk/samsung/clk-fsd.c:150:9: note: in expansion of macro 'PLL_35XX_RATE'
+     150 |         PLL_35XX_RATE(24 * MHZ, 2400000000, 200, 2, 0),
+         |         ^~~~~~~~~~~~~
+   drivers/clk/samsung/clk-fsd.c:154:9: warning: this decimal constant is unsigned only in ISO C90
+     154 |         PLL_35XX_RATE(24 * MHZ, 2400000000, 200, 2, 0),
+         |         ^~~~~~~~~~~~~
+   In file included from include/linux/bits.h:22,
+                    from include/linux/bitops.h:6,
+                    from include/linux/of.h:15,
+                    from include/linux/clk-provider.h:9,
+                    from drivers/clk/samsung/clk-fsd.c:11:
+>> include/linux/build_bug.h:16:51: warning: this decimal constant is unsigned only in ISO C90
+      16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+         |                                                   ^
+   drivers/clk/samsung/clk-pll.h:48:9: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+      48 |         BUILD_BUG_ON_ZERO(PLL_RATE(_fin, _m, _p, _s, _k, _ks) != (_fout)))
+         |         ^~~~~~~~~~~~~~~~~
+   drivers/clk/samsung/clk-pll.h:52:33: note: in expansion of macro 'PLL_VALID_RATE'
+      52 |                 .rate   =       PLL_VALID_RATE(_fin, _rate,     \
+         |                                 ^~~~~~~~~~~~~~
+   drivers/clk/samsung/clk-fsd.c:154:9: note: in expansion of macro 'PLL_35XX_RATE'
+     154 |         PLL_35XX_RATE(24 * MHZ, 2400000000, 200, 2, 0),
+         |         ^~~~~~~~~~~~~
+
+
+vim +150 drivers/clk/samsung/clk-fsd.c
+
+   148	
+   149	static const struct samsung_pll_rate_table pll_shared1_rate_table[] __initconst = {
+ > 150		PLL_35XX_RATE(24 * MHZ, 2400000000, 200, 2, 0),
+   151	};
+   152	
+
 ---
- drivers/clk/qcom/gcc-ipq806x.c | 244 +++++++++++++++++++++++++++++++++
- 1 file changed, 244 insertions(+)
-
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index dbd61e4844b0..a86d1504a149 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -256,6 +256,24 @@ static struct clk_pll pll18 = {
- 	},
- };
- 
-+static struct clk_pll pll11 = {
-+	.l_reg = 0x3184,
-+	.m_reg = 0x3188,
-+	.n_reg = 0x318c,
-+	.config_reg = 0x3194,
-+	.mode_reg = 0x3180,
-+	.status_reg = 0x3198,
-+	.status_bit = 16,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pll11",
-+		.parent_data = &(const struct clk_parent_data){
-+			.fw_name = "pxo",
-+		},
-+		.num_parents = 1,
-+		.ops = &clk_pll_ops,
-+	},
-+};
-+
- enum {
- 	P_PXO,
- 	P_PLL8,
-@@ -264,6 +282,7 @@ enum {
- 	P_CXO,
- 	P_PLL14,
- 	P_PLL18,
-+	P_PLL11,
- };
- 
- static const struct parent_map gcc_pxo_pll8_map[] = {
-@@ -331,6 +350,44 @@ static const struct clk_parent_data gcc_pxo_pll8_pll14_pll18_pll0[] = {
- 	{ .hw = &pll18.clkr.hw },
- };
- 
-+static const struct parent_map gcc_pxo_pll8_pll0_pll14_pll18_pll11_map[] = {
-+	{ P_PXO, 0 },
-+	{ P_PLL8, 4 },
-+	{ P_PLL0, 2 },
-+	{ P_PLL14, 5 },
-+	{ P_PLL18, 1 },
-+	{ P_PLL11, 3 },
-+};
-+
-+static const struct clk_parent_data gcc_pxo_pll8_pll0_pll14_pll18_pll11[] = {
-+	{ .fw_name = "pxo" },
-+	{ .hw = &pll8_vote.hw },
-+	{ .hw = &pll0_vote.hw },
-+	{ .hw = &pll14.clkr.hw },
-+	{ .hw = &pll18.clkr.hw },
-+	{ .hw = &pll11.clkr.hw },
-+
-+};
-+
-+static const struct parent_map gcc_pxo_pll3_pll0_pll14_pll18_pll11_map[] = {
-+	{ P_PXO, 0 },
-+	{ P_PLL3, 6 },
-+	{ P_PLL0, 2 },
-+	{ P_PLL14, 5 },
-+	{ P_PLL18, 1 },
-+	{ P_PLL11, 3 },
-+};
-+
-+static const struct clk_parent_data gcc_pxo_pll3_pll0_pll14_pll18_pll11[] = {
-+	{ .fw_name = "pxo" },
-+	{ .hw = &pll3.clkr.hw },
-+	{ .hw = &pll0_vote.hw },
-+	{ .hw = &pll14.clkr.hw },
-+	{ .hw = &pll18.clkr.hw },
-+	{ .hw = &pll11.clkr.hw },
-+
-+};
-+
- static struct freq_tbl clk_tbl_gsbi_uart[] = {
- 	{  1843200, P_PLL8, 2,  6, 625 },
- 	{  3686400, P_PLL8, 2, 12, 625 },
-@@ -2818,6 +2875,186 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
- 	},
- };
- 
-+static const struct freq_tbl clk_tbl_ce5_core[] = {
-+	{ 150000000, P_PLL3, 8, 1, 1 },
-+	{ 213200000, P_PLL11, 5, 1, 1 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg ce5_core_src = {
-+	.ns_reg[0] = 0x36C4,
-+	.ns_reg[1] = 0x36C8,
-+	.bank_reg = 0x36C0,
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll3_pll0_pll14_pll18_pll11_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll3_pll0_pll14_pll18_pll11_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_ce5_core,
-+	.clkr = {
-+		.enable_reg = 0x36C0,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_core_src",
-+			.parent_data = gcc_pxo_pll3_pll0_pll14_pll18_pll11,
-+			.num_parents = ARRAY_SIZE(gcc_pxo_pll3_pll0_pll14_pll18_pll11),
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ce5_core_clk = {
-+	.halt_reg = 0x2FDC,
-+	.halt_bit = 5,
-+	.hwcg_reg = 0x36CC,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x36CC,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_core_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&ce5_core_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_ce5_a_clk[] = {
-+	{ 160000000, P_PLL0, 5, 1, 1 },
-+	{ 213200000, P_PLL11, 5, 1, 1 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg ce5_a_clk_src = {
-+	.ns_reg[0] = 0x3d84,
-+	.ns_reg[1] = 0x3d88,
-+	.bank_reg = 0x3d80,
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll0_pll14_pll18_pll11_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll0_pll14_pll18_pll11_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_ce5_a_clk,
-+	.clkr = {
-+		.enable_reg = 0x3d80,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_a_clk_src",
-+			.parent_data = gcc_pxo_pll8_pll0_pll14_pll18_pll11,
-+			.num_parents = ARRAY_SIZE(gcc_pxo_pll8_pll0_pll14_pll18_pll11),
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ce5_a_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 12,
-+	.hwcg_reg = 0x3d8c,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3d8c,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_a_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&ce5_a_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
-+static const struct freq_tbl clk_tbl_ce5_h_clk[] = {
-+	{ 160000000, P_PLL0, 5, 1, 1 },
-+	{ 213200000, P_PLL11, 5, 1, 1 },
-+	{ }
-+};
-+
-+static struct clk_dyn_rcg ce5_h_clk_src = {
-+	.ns_reg[0] = 0x3c64,
-+	.ns_reg[1] = 0x3c68,
-+	.bank_reg = 0x3c60,
-+	.s[0] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll0_pll14_pll18_pll11_map,
-+	},
-+	.s[1] = {
-+		.src_sel_shift = 0,
-+		.parent_map = gcc_pxo_pll8_pll0_pll14_pll18_pll11_map,
-+	},
-+	.p[0] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.p[1] = {
-+		.pre_div_shift = 3,
-+		.pre_div_width = 4,
-+	},
-+	.mux_sel_bit = 0,
-+	.freq_tbl = clk_tbl_ce5_h_clk,
-+	.clkr = {
-+		.enable_reg = 0x3c60,
-+		.enable_mask = BIT(1),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_h_clk_src",
-+			.parent_data = gcc_pxo_pll8_pll0_pll14_pll18_pll11,
-+			.num_parents = ARRAY_SIZE(gcc_pxo_pll8_pll0_pll14_pll18_pll11),
-+			.ops = &clk_dyn_rcg_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch ce5_h_clk = {
-+	.halt_reg = 0x3c20,
-+	.halt_bit = 11,
-+	.hwcg_reg = 0x3c6c,
-+	.hwcg_bit = 6,
-+	.clkr = {
-+		.enable_reg = 0x3c6c,
-+		.enable_mask = BIT(4),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "ce5_h_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&ce5_h_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_branch_ops,
-+			.flags = CLK_SET_RATE_PARENT,
-+		},
-+	},
-+};
-+
- static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL0] = &pll0.clkr,
- 	[PLL0_VOTE] = &pll0_vote,
-@@ -2825,6 +3062,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL4_VOTE] = &pll4_vote,
- 	[PLL8] = &pll8.clkr,
- 	[PLL8_VOTE] = &pll8_vote,
-+	[PLL11] = &pll11.clkr,
- 	[PLL14] = &pll14.clkr,
- 	[PLL14_VOTE] = &pll14_vote,
- 	[PLL18] = &pll18.clkr,
-@@ -2939,6 +3177,12 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
- 	[PLL9] = &hfpll0.clkr,
- 	[PLL10] = &hfpll1.clkr,
- 	[PLL12] = &hfpll_l2.clkr,
-+	[CE5_A_CLK_SRC] = &ce5_a_clk_src.clkr,
-+	[CE5_A_CLK] = &ce5_a_clk.clkr,
-+	[CE5_H_CLK_SRC] = &ce5_h_clk_src.clkr,
-+	[CE5_H_CLK] = &ce5_h_clk.clkr,
-+	[CE5_CORE_CLK_SRC] = &ce5_core_src.clkr,
-+	[CE5_CORE_CLK] = &ce5_core_clk.clkr,
- };
- 
- static const struct qcom_reset_map gcc_ipq806x_resets[] = {
--- 
-2.33.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
