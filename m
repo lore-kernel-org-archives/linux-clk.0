@@ -2,74 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE87C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 17:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C37AC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 19:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351809AbiAUR4e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jan 2022 12:56:34 -0500
-Received: from mail-4316.protonmail.ch ([185.70.43.16]:30619 "EHLO
-        mail-4316.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351802AbiAUR4c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 12:56:32 -0500
-Date:   Fri, 21 Jan 2022 17:56:25 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail2; t=1642787789;
-        bh=L3GPP4BYomCCX59iwTHBksw8cVdhg6JC4KAsswidStE=;
-        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
-         References:From:To:Cc;
-        b=sXUZbx3R8Fcg+QFzkN8yZlMX7rIwNBCBqVA2imLaVJcrN8sqpYCQye+32mCbRjr7B
-         30aIYRitdXeIfJ+yohARUU1HRRFqrYGSJF9Ef8t9XdIcWjl3E9Wvs7k7aHSfRcB/z9
-         3PLfSgvmtUTVCB9hB6yRfq2dEZyMKS+2rQN9628Mc9BvhShuHzRIk3LvbIC6sTG5Ih
-         PEPvssEqwIO0ou5oJ42TMWlnfT+lXoBXeU2nLEUlL3WGkwJ0QXK+ardZn+T2fCa62r
-         uPP8sc/574+v5l6CpIsMt3QkngvpKD3jaP+qlJdxGq3U35lz2axPqAxZOidkjpals6
-         vXb4Qi7n9+U/g==
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
-From:   =?utf-8?Q?Martin_Povi=C5=A1er?= <povik+lin@protonmail.com>
-Cc:     marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kettenis@openbsd.org,
-        =?utf-8?Q?Martin_Povi=C5=A1er?= <povik+lin@protonmail.com>
-Reply-To: =?utf-8?Q?Martin_Povi=C5=A1er?= <povik+lin@protonmail.com>
-Subject: [PATCH v3 3/3] MAINTAINERS: Add clk-apple-nco under ARM/APPLE MACHINE
-Message-ID: <20220121175441.9944-4-povik+lin@protonmail.com>
-In-Reply-To: <20220121175441.9944-1-povik+lin@protonmail.com>
-References: <20220121175441.9944-1-povik+lin@protonmail.com>
+        id S231795AbiAUTHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jan 2022 14:07:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230329AbiAUTHy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 14:07:54 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431C0C06173B;
+        Fri, 21 Jan 2022 11:07:54 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id jx6so2647362ejb.0;
+        Fri, 21 Jan 2022 11:07:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NXJWnollkpJvI1aepiBIBMujy+bg/gCa9e9nqfwYgA0=;
+        b=kjEAeSKxvQVjnf9hGnoDkajMluX7s5BTbxn+7H14vx7dKaSTk4BSHwuxFJ1CF7jMRt
+         /oFo4c0v/kKQtj2pLVjE2uAaK24i/O8Bex8nqEvw92K3UvMm170Qc8pVsRGuFHTvx/xN
+         HmdiEXGWE1uctMnc3AmvLqv+2IRj9qzrhr3VTbW8fCpKfP+JzUUK+ai6STwgGPtGCoGl
+         aDwB5dm6Sgrhjtbm5HfCraDjEet673mDm0TUoGMUZRdatYc2z1Dvu6XVO3yWsXYKmJtN
+         iuuBTMC2k7fm69KjcW1VsKDttH7u1g+KHq5wQwx/+lRVOu7XvH8kz24Gj/3MbS+3BZgr
+         zmiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NXJWnollkpJvI1aepiBIBMujy+bg/gCa9e9nqfwYgA0=;
+        b=wVzIywdjpUbfHRFlbxjNfvhto9OWD++W2C+0iwZubLHcU6FPKnHj0DDGZjVyTyFAea
+         DAxZAg/K9hcVVwa4+Xwk2KyO11e0hkIzg+V+JdbGZGXjCbxGQ5W5n3w4OxytEqhLr0NK
+         C+dnqDToGOGNyJa63jZNRCb39P6jVPvCl5t4zguGpWwkPTS/f5XSheU5EJUfBa4I5s3K
+         EWCKMgW8ZoS2VCYgkCHHw5wCyO3Z3R+EEsYY9RVR5m8UbvqTXN5/owTmo4xsdyVtu1AC
+         W32WvyHC0DVIvugWcFUAPQ5IuIdEFaUa1hMXiccBS/sCCOQ3YK5WSKCLdQuc5FsFrLl1
+         Hd4g==
+X-Gm-Message-State: AOAM530ZmZZrxqLCmdB8/M6/cle4iiZ4m9MD44j5W5cWFs71iJyq1M/k
+        ja02EjD8VEUisTPGS/Hgw3o=
+X-Google-Smtp-Source: ABdhPJwTFte3UxKMd9TLrKA5gvTz0mtaMMwNW6kVsYHvFyNaXb9g/4ldqgN4MJtanX1lR4GrWmFZ2g==
+X-Received: by 2002:a17:907:7e85:: with SMTP id qb5mr204538ejc.557.1642792072551;
+        Fri, 21 Jan 2022 11:07:52 -0800 (PST)
+Received: from Ansuel-xps. (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
+        by smtp.gmail.com with ESMTPSA id zm17sm712255ejb.213.2022.01.21.11.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jan 2022 11:07:52 -0800 (PST)
+Message-ID: <61eb0488.1c69fb81.d267e.3b1f@mx.google.com>
+X-Google-Original-Message-ID: <YesEhlF2q76/NjU2@Ansuel-xps.>
+Date:   Fri, 21 Jan 2022 20:07:50 +0100
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/15] dt-bindings: clock: Document qcom,gcc-ipq8064
+ binding
+References: <20220120232028.6738-1-ansuelsmth@gmail.com>
+ <20220120232028.6738-4-ansuelsmth@gmail.com>
+ <YeoUk3t2iVbQwj5s@robh.at.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YeoUk3t2iVbQwj5s@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Acked-by: Sven Peter <sven@svenpeter.dev>
-Acked-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Martin Povi=C5=A1er <povik+lin@protonmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jan 20, 2022 at 08:04:03PM -0600, Rob Herring wrote:
+> On Fri, Jan 21, 2022 at 12:20:16AM +0100, Ansuel Smith wrote:
+> > Document qcom,gcc-ipq8064 binding needed to declare pxo and cxo source
+> > clocks. The gcc node is also used by the tsens driver, already documented,
+> > to get the calib nvmem cells and the base reg from gcc.
+> > 
+> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > ---
+> >  .../bindings/clock/qcom,gcc-ipq8064.yaml      | 70 +++++++++++++++++++
+> >  1 file changed, 70 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+> > new file mode 100644
+> > index 000000000000..abc76a46b2ca
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+> > @@ -0,0 +1,70 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-ipq8064.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Qualcomm Global Clock & Reset Controller Binding for IPQ8064
+> > +
+> > +allOf:
+> > +  - $ref: qcom,gcc.yaml#
+> > +
+> > +maintainers:
+> > +  - Ansuel Smith <ansuelsmth@gmail.com>
+> > +
+> > +description: |
+> > +  Qualcomm global clock control module which supports the clocks, resets and
+> > +  power domains on IPQ8064.
+> > +
+> > +  See also:
+> > +  - dt-bindings/clock/qcom,gcc-ipq806x.h
+> > +  - dt-bindings/reset/qcom,gcc-ipq806x.h
+> > +
+> > +properties:
+> 
+> This schema will never be applied because there is not a compatible 
+> property to use for matching. The base/common schema is the one that 
+> shouldn't have a compatible and then the specific schemas like this 
+> one do.
+>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 086f37a4763f..d6323083b695 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1765,6 +1765,7 @@ C:=09irc://irc.oftc.net/asahi-dev
- T:=09git https://github.com/AsahiLinux/linux.git
- F:=09Documentation/devicetree/bindings/arm/apple.yaml
- F:=09Documentation/devicetree/bindings/arm/apple/*
-+F:=09Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:=09Documentation/devicetree/bindings/i2c/apple,i2c.yaml
- F:=09Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
- F:=09Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
-@@ -1776,6 +1777,7 @@ F:=09Documentation/devicetree/bindings/spi/apple,spi.=
-yaml
- F:=09Documentation/devicetree/bindings/usb/apple,dwc3.yaml
- F:=09Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:=09arch/arm64/boot/dts/apple/
-+F:=09drivers/clk/clk-apple-nco.c
- F:=09drivers/i2c/busses/i2c-pasemi-core.c
- F:=09drivers/i2c/busses/i2c-pasemi-platform.c
- F:=09drivers/irqchip/irq-apple-aic.c
---
-2.33.0
+Just to make things clear. To fix things up, what changes should I do?
+- I should remove the compatible from the base schema qcom,gcc.yaml
+- Add the compatible to this schema
+- Create another schema that includes all the others compatible?
 
+Can I instead:
+- Create a qcom,gcc-common.yaml schema
+- Modify the qcom,gcc.yaml schema to ref the common one and drop the
+  other binding.
+- Fix this schema with the missing compatible?
 
+Tell me how I should proceed since it looks to me that all the
+Documentation for the gcc driver looks a bit mess and full of
+duplicated stuff.
+
+> > +  clocks:
+> > +    items:
+> > +      - description: PXO source
+> > +      - description: CXO source
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: pxo
+> > +      - const: cxo
+> > +
+> > +  thermal-sensor:
+> > +    type: object
+> > +
+> > +    allOf:
+> > +      - $ref: /schemas/thermal/qcom-tsens.yaml#
+> > +
+> > +required:
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    gcc: clock-controller@900000 {
+> > +      compatible = "qcom,gcc-ipq8064", "syscon";
+> > +      reg = <0x00900000 0x4000>;
+> > +      clocks = <&pxo_board>, <&cxo_board>;
+> > +      clock-names = "pxo", "cxo";
+> > +      #clock-cells = <1>;
+> > +      #reset-cells = <1>;
+> > +      #power-domain-cells = <1>;
+> > +
+> > +      tsens: thermal-sensor {
+> > +        compatible = "qcom,ipq8064-tsens";
+> > +
+> > +        nvmem-cells = <&tsens_calib>, <&tsens_calib_backup>;
+> > +        nvmem-cell-names = "calib", "calib_backup";
+> > +        interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
+> > +        interrupt-names = "uplow";
+> > +
+> > +        #qcom,sensors = <11>;
+> > +        #thermal-sensor-cells = <1>;
+> > +      };
+> > +    };
+> > -- 
+> > 2.33.1
+> > 
+> > 
+
+-- 
+	Ansuel
