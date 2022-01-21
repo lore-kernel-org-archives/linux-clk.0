@@ -2,93 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7048C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jan 2022 23:21:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36A5C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 01:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378208AbiATXVX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 18:21:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378187AbiATXUp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 18:20:45 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D631C061748;
-        Thu, 20 Jan 2022 15:20:44 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id o7-20020a05600c510700b00347e10f66d1so8046630wms.0;
-        Thu, 20 Jan 2022 15:20:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=EXW/q6yX9wxCGxkY1EpqijRPyr0+7BNt2tp7DEwa3FY=;
-        b=CLcuoxP7b2nyCEsoGcgJWSzkusmI6fi81voE1CX+UPLwCpqi5JWmVP1EN/HbrCfJah
-         nrEOTgfUf0VutgmSUPMDek+PoTsnuIU0y4awxxHslUeOrG3bSrhjxtS1HlT69p0ZlMb2
-         b3YQhKcYg25PHFhTrOSq8eoTtuy2cpNUgTUxsDW3wp216GAj5a/zW6E21Umo5UZVATTy
-         ipSfjQlwP2kDJCx82oB4SbWZFlWNpPHTGuFo+kYsf/zz8D7iH2Ehiif1TEpfvi4X0RHL
-         vysCd+E6G2CNi+f6nUqq930dP8fpEvbkuQJGRcl5v3ABCy4cuEgsBDIRHMQ0g7uO10WH
-         330Q==
+        id S239140AbiAUBhl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 20:37:41 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:38624 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232540AbiAUBhl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 20:37:41 -0500
+Received: by mail-oi1-f177.google.com with SMTP id g205so11559536oif.5;
+        Thu, 20 Jan 2022 17:37:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EXW/q6yX9wxCGxkY1EpqijRPyr0+7BNt2tp7DEwa3FY=;
-        b=fKrHPF/+kKheSvhuIHoHLpiWj222GV/6FOrFFJLTV3qteFFA5iQeGCAetLQRUR1gGO
-         L+wTImK62M9y7pVDuOUftdOTc1fAZveNMIw9VBTiktPd5NA5JJcdFSLiiYLIKTx9EoBi
-         Ux9or6WsHzH0BxAY8vhCSQ2RF/V/ivPHOYADasxrXsPsZ60xNcHDCMgQg2G9CgQOBC1S
-         INKga4meDxMUmz38lplnTr5UiTxTMBB1SQ45pmpbgP1HECqSTjXyftz0t//2kGUG9quc
-         YcoGUPfBM/1pGKMmBOqGWDOSO2p+3AofvgQoXJD/8M6gq3HPwEDHzDXb2VciYDcboQXj
-         NAXQ==
-X-Gm-Message-State: AOAM531Ta6svEjnpH0aWz7csknXh+KZyyue6W0r0OGtmmbWqeVffj1KL
-        U4FAcgJAKHCXtsWDZpOi8EE=
-X-Google-Smtp-Source: ABdhPJyuS982P3dJ+9/hHjPwlCWgs1xqXBuft+Q47eoy8lSRRAPlhuDfLZ82NRh9r1IW7XzYUW6wYA==
-X-Received: by 2002:a05:6000:1184:: with SMTP id g4mr1285241wrx.278.1642720843117;
-        Thu, 20 Jan 2022 15:20:43 -0800 (PST)
-Received: from localhost.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id a9sm3939283wmm.32.2022.01.20.15.20.42
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=lwx/3sI/jAgnGg6BbYNTq2g4K7zJzyk25fhYkr3exC0=;
+        b=t8VFvFhmokBMq5hdyD47XrcVaaRq9Blc6EZwVd2Mckp3jhx+LodO6HWZSIQnrQq3wL
+         3pewnyc7SdBo/iPhkNu3t33cF7eh34HUKLZF66ErQx7hLP0jC1ym2gvy7ao4dHa5ZrBC
+         2/l/Zk6VMu0V3YTKydLL3TcWZW1soN0aAQZQD2haK55S/Vj9r1wTRaV8dmhg4msbE/dH
+         V3O7/G/n3EQQjERTSCLG7BRJGXSeTTblICulS+cTuxw2jBzlCYdW/By32LirEiPk9+RM
+         gzG5WASeOFl4VUoin7QlvrTtQOywTB5iFPR6E2LROy/LtRZHMrcHvAcH++TOJTeaHTtm
+         Z2+g==
+X-Gm-Message-State: AOAM5319yGRvILIv0c+R+pQE2qzqUcX/M+qdyP51Xf73ZZdYMuBM988u
+        LqQoS+jGYeb/g8Y0lrzVsA==
+X-Google-Smtp-Source: ABdhPJxw18vz18oJhNnQmNv3Pg97sN04HSdTjldQBZY7zJAkoFUNRxgJGeo1b/7bNUVA/HdTHKyzKw==
+X-Received: by 2002:a05:6808:aa7:: with SMTP id r7mr1447327oij.47.1642729060372;
+        Thu, 20 Jan 2022 17:37:40 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id o21sm440941ote.4.2022.01.20.17.37.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 15:20:42 -0800 (PST)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
+        Thu, 20 Jan 2022 17:37:39 -0800 (PST)
+Received: (nullmailer pid 2314865 invoked by uid 1000);
+        Fri, 21 Jan 2022 01:37:38 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     devicetree@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/15] drivers: clk: qcom: gcc-ipq806x: add additional freq for sdc table
-Date:   Fri, 21 Jan 2022 00:20:23 +0100
-Message-Id: <20220120232028.6738-11-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20220120232028.6738-1-ansuelsmth@gmail.com>
-References: <20220120232028.6738-1-ansuelsmth@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+In-Reply-To: <20220120232028.6738-3-ansuelsmth@gmail.com>
+References: <20220120232028.6738-1-ansuelsmth@gmail.com> <20220120232028.6738-3-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 02/15] dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
+Date:   Thu, 20 Jan 2022 19:37:38 -0600
+Message-Id: <1642729058.530862.2314864.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add additional freq supported for the sdc table.
+On Fri, 21 Jan 2022 00:20:15 +0100, Ansuel Smith wrote:
+> Simplify qcon,gcc-apq8064 Documentation by using qcom,gcc.yaml as a
+> template.
+> 
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-apq8064.yaml      | 27 +++----------------
+>  1 file changed, 3 insertions(+), 24 deletions(-)
+> 
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/gcc-ipq806x.c | 1 +
- 1 file changed, 1 insertion(+)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index 77bc3d94f580..dbd61e4844b0 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -1292,6 +1292,7 @@ static const struct freq_tbl clk_tbl_sdc[] = {
- 	{  20210000, P_PLL8,  1, 1,  19 },
- 	{  24000000, P_PLL8,  4, 1,   4 },
- 	{  48000000, P_PLL8,  4, 1,   2 },
-+	{  52000000, P_PLL8,  1, 2,  15 }, /* 51.2 Mhz */
- 	{  64000000, P_PLL8,  3, 1,   2 },
- 	{  96000000, P_PLL8,  4, 0,   0 },
- 	{ 192000000, P_PLL8,  2, 0,   0 },
--- 
-2.33.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.example.dt.yaml:0:0: /example-0/clock-controller@900000: failed to match any schema with compatible: ['qcom,gcc-apq8064']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1582347
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
