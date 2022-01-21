@@ -2,157 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56448C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 02:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5F8C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 04:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378128AbiAUCEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jan 2022 21:04:08 -0500
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:41901 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244655AbiAUCEG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 21:04:06 -0500
-Received: by mail-ot1-f44.google.com with SMTP id a12-20020a0568301dcc00b005919e149b4cso9984477otj.8;
-        Thu, 20 Jan 2022 18:04:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cc9spV2rl91I9rwf82cjdmxiDdvU2PQSZIfY9wtAWls=;
-        b=U6DoSu80jhgFNVuQVuz7DGAKLf9ODcCP/W99pL+ugMijtg270QDZlbkds5CaBcYLyB
-         tEANdX3OrlhaUnBzOkSsVKStbQyicd0ZpAibmYWZb1k9gIaEGljNn06cOeVpBOGSv9jM
-         GA9B3br5FIdlceOf7UiQuxgDq6vgNGhq85yL/r5wN4xpuvgNF7FtW3NiZ/EHjTlgnhfb
-         l+KTc+YvQ8DVVz0LBeSwSZD0440ubu58P6D69DQNaunNjJ6KjKjkv4iQ8A+O1e+Yf/zW
-         O4cu9KAjqUYxzwbPyg34PfAJ5p2RZWv+xOuWcHbsNKTberHp/h8LByiDSzrSfxTowcIm
-         d4aA==
-X-Gm-Message-State: AOAM531z3QKr7dRvjEhXDYwwI7AnfzMGQkKnny2H7KPt0/m0DNwPqNY6
-        yWZeypd1Hx4ON+9CBiWQFA==
-X-Google-Smtp-Source: ABdhPJyXsWWXP3WL+rZIhDhbXXvKSwhl2JYfvg4bHVYzTOylDX0xUyIJnLUnJktOahWMVf4xcy9iAQ==
-X-Received: by 2002:a9d:5c04:: with SMTP id o4mr1265326otk.339.1642730645739;
-        Thu, 20 Jan 2022 18:04:05 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id h65sm511679oia.56.2022.01.20.18.04.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jan 2022 18:04:04 -0800 (PST)
-Received: (nullmailer pid 2351938 invoked by uid 1000);
-        Fri, 21 Jan 2022 02:04:03 -0000
-Date:   Thu, 20 Jan 2022 20:04:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/15] dt-bindings: clock: Document qcom,gcc-ipq8064
- binding
-Message-ID: <YeoUk3t2iVbQwj5s@robh.at.kernel.org>
-References: <20220120232028.6738-1-ansuelsmth@gmail.com>
- <20220120232028.6738-4-ansuelsmth@gmail.com>
+        id S231241AbiAUEeL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jan 2022 23:34:11 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:34116 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230192AbiAUEeK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jan 2022 23:34:10 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C6337B81D84
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jan 2022 04:34:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C186C340E1;
+        Fri, 21 Jan 2022 04:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642739648;
+        bh=smguCCpDFjKrkhpoCN9F1T+vPwz8XFk3dC5dlOpzYE0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YH77BMEHg7zok8UWCXIPd8kdnV8ReEG+qHvt7YS4NQuquwFfaeA9Q+dKFSiFO/vb1
+         YfCOqAxGzsERop0F8fhX8Cnmd4bIrl13087wch6xtz2lbiQezsIx/1xGRjXR3XeKpx
+         rqJWDBZKKsUjfgSG3JSstS+qkOo7k7eT1JkKdgPOp+qs4ASH1uuWdjbvXFjppDA5MJ
+         v1I4R0s7DvALzqmbHuy0WyYCIxYOqyT/kjfd1xTYsa954dIHEvAgvKw7+N52Lr1i2f
+         i81JIRA3pFTQHQBvxd1phCU6sviO/H0kOoOHaV6l64V+1d+Qx9PPVlMCDOztGypgRx
+         GgIOJCHkD4qTw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220120232028.6738-4-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGS_qxq9qFjx+Su_E5sQF5tsgPCyhzGMFEMZbVqPN=N6U+s+9g@mail.gmail.com>
+References: <20220120143417.543744-1-maxime@cerno.tech> <20220120143417.543744-2-maxime@cerno.tech> <20220120213118.40F0AC340E3@smtp.kernel.org> <CAGS_qxq9qFjx+Su_E5sQF5tsgPCyhzGMFEMZbVqPN=N6U+s+9g@mail.gmail.com>
+Subject: Re: [PATCH v3 01/10] clk: Add Kunit tests for rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>, kunit-dev@googlegroups.com
+To:     Daniel Latypov <dlatypov@google.com>
+Date:   Thu, 20 Jan 2022 20:34:06 -0800
+User-Agent: alot/0.10
+Message-Id: <20220121043408.6C186C340E1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 21, 2022 at 12:20:16AM +0100, Ansuel Smith wrote:
-> Document qcom,gcc-ipq8064 binding needed to declare pxo and cxo source
-> clocks. The gcc node is also used by the tsens driver, already documented,
-> to get the calib nvmem cells and the base reg from gcc.
-> 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/clock/qcom,gcc-ipq8064.yaml      | 70 +++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
-> new file mode 100644
-> index 000000000000..abc76a46b2ca
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc-ipq8064.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller Binding for IPQ8064
-> +
-> +allOf:
-> +  - $ref: qcom,gcc.yaml#
-> +
-> +maintainers:
-> +  - Ansuel Smith <ansuelsmth@gmail.com>
-> +
-> +description: |
-> +  Qualcomm global clock control module which supports the clocks, resets and
-> +  power domains on IPQ8064.
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,gcc-ipq806x.h
-> +  - dt-bindings/reset/qcom,gcc-ipq806x.h
-> +
-> +properties:
+Quoting Daniel Latypov (2022-01-20 13:56:39)
+> On Thu, Jan 20, 2022 at 1:31 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > I was thinking this would be more generic so that one file tests clk.c
+> > and all the code in there, but I guess there may be config dependencies
+> > like CONFIG_OF that we may want to extract out and depend on
+> > differently. I'm not sure how kunit will handle testing different paths
+> > depending on build configuration so this approach may head off future
+> > problems. If it doesn't then we can always slam the test together.
+>=20
+> KUnit doesn't have hard technical limitations in this regard.
+>=20
+> You could have something like this
+>=20
+> static void my_optional_kunit_test(struct kunit *test)
+> {
+> #ifdef CONFIG_OPTIONAL_FEATURE
+>=20
+> # else
+>   kunit_skip(test, "CONFIG_OPTIONAL_FEATURE is not enabled");
+> #endif
+> }
+>=20
+> I think it's just a matter of what's least confusing to users.
 
-This schema will never be applied because there is not a compatible 
-property to use for matching. The base/common schema is the one that 
-shouldn't have a compatible and then the specific schemas like this 
-one do.
+Ok, I see. Is there some way to have multiple configs checked into the
+tree so we can test different kernel configuration code paths? This
+discussion isn't really relevant to this patch so we can take this up in
+another thread if you like.
 
-> +  clocks:
-> +    items:
-> +      - description: PXO source
-> +      - description: CXO source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pxo
-> +      - const: cxo
-> +
-> +  thermal-sensor:
-> +    type: object
-> +
-> +    allOf:
-> +      - $ref: /schemas/thermal/qcom-tsens.yaml#
-> +
-> +required:
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    gcc: clock-controller@900000 {
-> +      compatible = "qcom,gcc-ipq8064", "syscon";
-> +      reg = <0x00900000 0x4000>;
-> +      clocks = <&pxo_board>, <&cxo_board>;
-> +      clock-names = "pxo", "cxo";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +
-> +      tsens: thermal-sensor {
-> +        compatible = "qcom,ipq8064-tsens";
-> +
-> +        nvmem-cells = <&tsens_calib>, <&tsens_calib_backup>;
-> +        nvmem-cell-names = "calib", "calib_backup";
-> +        interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names = "uplow";
-> +
-> +        #qcom,sensors = <11>;
-> +        #thermal-sensor-cells = <1>;
-> +      };
-> +    };
-> -- 
-> 2.33.1
-> 
-> 
+>=20
+> >
+> > Maybe kunit should check that there was an EXPECT on return from the
+> > test. Daniel?
+>=20
+> Sorry, I'm not sure I understand the question.
+>=20
+> Are you saying you want kunit to flag cases like
+>   static void empty_test(struct kunit *) {}
+> ?
+
+Yes. I'd like kunit to enforce that all tests have at least one
+EXPECT_*() in them.
