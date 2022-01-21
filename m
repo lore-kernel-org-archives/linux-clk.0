@@ -2,68 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDAFC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 07:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40331C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jan 2022 07:45:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348932AbiAUHiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jan 2022 02:38:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35838 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349100AbiAUHiF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 02:38:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35CBC061574;
-        Thu, 20 Jan 2022 23:38:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 450B0617B8;
-        Fri, 21 Jan 2022 07:38:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ADC09C340E1;
-        Fri, 21 Jan 2022 07:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642750684;
-        bh=IhR4gGamsSozOTTS9oSA3rLyrSVHqdC6bwMCVoXTykI=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=FvK5iWbrUe56LdrLXO/FhrTsH6X1pZOn2bNArqxGFPYouUv7dmPfe80o1WMFokpCg
-         zQns1KP1rolnIstSSwbeG2YAtsYdgrwopdQpE+sqz+V+kxqxDGvCJNMAKSQRx6I3Xn
-         G2tMZA3FJAzoQwGCDMh/UgqHoYk9pSGV398xWYq42n6S1bmcBbvSyK1lIKsn00Pq+R
-         lwEENMCRkYDbzcFTnxM6KRKz+EJSlIWrX6NySxwUKlL2x3fpF9LRdWvVGbYOrkzbHr
-         PpisXyNbRykoR1KZ4oI+d9vY3y5iBJLeO5IVBrja9zvgoGpojZNF2RN03itBKsmwIw
-         jxCWSy21L3vtQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9CAC4F60795;
-        Fri, 21 Jan 2022 07:38:04 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220120205637.2234852-1-sboyd@kernel.org>
-References: <20220120205637.2234852-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220120205637.2234852-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: b4966a7dc0725b2baa12b0aeb1489d52568a2aad
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 39e77c484bcd1865ff6abdbde6b36eb91ee1ff33
-Message-Id: <164275068462.15932.15816793662328397684.pr-tracker-bot@kernel.org>
-Date:   Fri, 21 Jan 2022 07:38:04 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1343795AbiAUHpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jan 2022 02:45:14 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:14996 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234478AbiAUHpO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jan 2022 02:45:14 -0500
+Received: from droid11-sz.amlogic.com (10.28.8.21) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.2176.2; Fri, 21 Jan 2022
+ 15:45:11 +0800
+From:   Liang Yang <liang.yang@amlogic.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>
+CC:     Liang Yang <liang.yang@amlogic.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        XianWei Zhao <xianwei.zhao@amlogic.com>,
+        Kelvin Zhang <kelvin.zhang@amlogic.com>,
+        BiChao Zheng <bichao.zheng@amlogic.com>,
+        YongHui Yu <yonghui.yu@amlogic.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v10 0/4] clk: meson: add a sub EMMC clock controller support
+Date:   Fri, 21 Jan 2022 15:45:04 +0800
+Message-ID: <20220121074508.42168-1-liang.yang@amlogic.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.28.8.21]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Thu, 20 Jan 2022 12:56:37 -0800:
+This driver will add a MMC clock controller driver support.
+The original idea about adding a clock controller is during the
+discussion in the NAND driver mainline effort[1].
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/39e77c484bcd1865ff6abdbde6b36eb91ee1ff33
+Changes since v9 [10]
+ - use clk_parent_data instead of parent_names
 
-Thank you!
+Changes since v8 [9]
+ - use MESON_SCLK_ONE_BASED instead of CLK_DIVIDER_ONE_BASED
+ - use struct_size to caculate onecell_data
+ - add clk-phase-delay.h
+ - define CLK_DELAY_STEP_PS_GX and CLK_DELAY_STEP_PS_AXG
+
+Changes since v7 [8]
+ - move meson_clk_get_phase_delay_data() from header to driver
+ - CONFIG sclk-div with COMMON_CLK_AMLOGIC instead of COMMON_CLK_AMLOGIC_AUDIO
+ - remove onecell date and ID for internal MUX clk
+ - use helper for functions for ONE_BASED in sclk-div
+ - add ONE_BASED support for duty cycle
+
+Changes since v6 [7]:
+ - add one based support for sclk divier
+ - alloc sclk in probe for multiple instance
+ - fix coding styles
+
+Changes since v5 [6]:
+ - remove divider ops with .init and use sclk_div instead
+ - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+ - drop the useless type cast 
+
+Changes since v4 [5]:
+ - use struct parm in phase delay driver
+ - remove 0 delay releted part in phase delay driver
+ - don't rebuild the parent name once again
+ - add divider ops with .init
+
+Changes since v3 [4]:
+ - separate clk-phase-delay driver
+ - replace clk_get_rate() with clk_hw_get_rate()
+ - collect Rob's R-Y
+ - drop 'meson-' prefix from compatible string
+
+ Changes since v2 [3]:
+ - squash dt-binding clock-id patch
+ - update license
+ - fix alignment
+ - construct a clk register helper() function
+
+Changes since v1 [2]:
+ - implement phase clock
+ - update compatible name
+ - adjust file name
+ - divider probe() into small functions, and re-use them
+
+[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+[6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+[8] https://lkml.kernel.org/r/1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com
+[9] https://lkml.kernel.org/r/1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com
+[10] https://lore.kernel.org/all/20220113115745.45826-1-liang.yang@amlogic.com/
+Liang Yang (4):
+  clk: meson: add one based divider support for sclk
+  clk: meson: add emmc sub clock phase delay driver
+  clk: meson: add DT documentation for emmc clock controller
+  clk: meson: add sub MMC clock controller driver
+
+ .../bindings/clock/amlogic,mmc-clkc.yaml      |  64 ++++
+ drivers/clk/meson/Kconfig                     |  18 ++
+ drivers/clk/meson/Makefile                    |   2 +
+ drivers/clk/meson/clk-phase-delay.c           |  69 ++++
+ drivers/clk/meson/clk-phase-delay.h           |  20 ++
+ drivers/clk/meson/mmc-clkc.c                  | 302 ++++++++++++++++++
+ drivers/clk/meson/sclk-div.c                  |  59 ++--
+ drivers/clk/meson/sclk-div.h                  |   3 +
+ include/dt-bindings/clock/amlogic,mmc-clkc.h  |  14 +
+ 9 files changed, 529 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
+ create mode 100644 drivers/clk/meson/clk-phase-delay.h
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
