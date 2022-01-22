@@ -2,263 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B0DC4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Jan 2022 09:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C8CC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Jan 2022 18:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234427AbiAVJUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Jan 2022 04:20:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233392AbiAVJT4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Jan 2022 04:19:56 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4825C06178C
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 01:18:51 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id 133so10297380pgb.0
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 01:18:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2tVyD3kCR8VI41xLDJPrU9Qy3ho9fuGcyr93woETCtQ=;
-        b=eOG+9BqGEp9yE6If/djlk8qPoDc9YyJud438PAYl0npRctcACveC92QRCKlaJfRRwK
-         FhJoFkugw+IrHJljeBXz1R046xaB4XIpF0OrsCUYkk2Ma/RPDluCpN4Yw/8R6z6O39wq
-         ls1PrMpFi6S6SnEVEQDTNxg2gdKqWj4Ior96s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2tVyD3kCR8VI41xLDJPrU9Qy3ho9fuGcyr93woETCtQ=;
-        b=zyCBUXFh4z9+RKG87NxwTkWpdRljqS0R1JbO/UICOdTqzyCO75cSVK+oSt//PK2jyg
-         6o5MaJ9v/NVlwly/ft/mI9EKfe5/CTFfw/jJ9h7SJLCrOaJ+W8mq/lJmcHu0NGp/2DGL
-         FrzC7XPQDiJF/uH4yK+fhP+yE4TYwbmMBc7JHAmTO/38pdqPnWztjfmqH8joBVDIoK5C
-         6oichbA0nzzwpFU9x5XlhsweepLs/JAQrgfCb8xL966SkMC1ksr96Zb7AlRSBQFPAIOH
-         da67VM2cj5oPCAbzq1jleNMroVz0BR+FgwRPl5Zv4XPMhYlHzFHvPZlnnVvuAYk1efBB
-         XWYQ==
-X-Gm-Message-State: AOAM530kFnSv4Aj0fRiT9ocRIzjuPx9Gf4pS4vVhNbI2HkTDST04/f0j
-        E48kXMEYdoAHTt5kANFAHpZAGrVL1aMe7Q==
-X-Google-Smtp-Source: ABdhPJw3ygJrl6yteSRDfjOvQdB2WYEUn+GrOoTwni+HNy/7bK2tJUwjJ+Tq1xzBp18rW197UKqTfQ==
-X-Received: by 2002:a05:6a00:2186:b0:4c6:50ea:6701 with SMTP id h6-20020a056a00218600b004c650ea6701mr6649364pfi.12.1642843131254;
-        Sat, 22 Jan 2022 01:18:51 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:349f:9373:45d9:eb26])
-        by smtp.gmail.com with ESMTPSA id s1sm1608100pjn.42.2022.01.22.01.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Jan 2022 01:18:50 -0800 (PST)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 30/31] clk: mediatek: mt8195: Implement remove functions
-Date:   Sat, 22 Jan 2022 17:17:30 +0800
-Message-Id: <20220122091731.283592-31-wenst@chromium.org>
-X-Mailer: git-send-email 2.35.0.rc0.227.g00780c9af4-goog
-In-Reply-To: <20220122091731.283592-1-wenst@chromium.org>
-References: <20220122091731.283592-1-wenst@chromium.org>
+        id S230484AbiAVSjf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Jan 2022 13:39:35 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:53950 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229379AbiAVSje (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Jan 2022 13:39:34 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 58D4C60EA1;
+        Sat, 22 Jan 2022 18:39:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A4FC004E1;
+        Sat, 22 Jan 2022 18:39:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1642876773;
+        bh=n/B1FmyEoA1G3JCa6y+KvNFQMmHR9BMvLjaGYR7WJAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pz/YJD7W27+/z+O5KGHaCzHgh/dhwn9TP0dG8pYxyvv1ELB8OMLl+otmXC3zKiD3t
+         nHHKotzH6ewZmjHh55JM4Jr6lHTKDMrhYyh8M0zA3zJmUUe4KD74HWcyNEaoTsKsEk
+         EvIlYldlhW5vvP7iHpz69Ae6SKezkRcAO+7o+6d5BIAXjrOk/bT6lVCp8Nhu1ndDq6
+         z4FsozrFXyc0kYctK+o44AzkfdK3b7Db1bHwfPaVRDCCzcBjJbmIxZalMw/xZYXHg+
+         xfhU8fMj9KMrMSLKGBKhWvYilMStz50N3YRQi/gH2w/HDHTU7muhuOgGxQLTGfJTGt
+         I7kiMvZLFMAJQ==
+Date:   Sat, 22 Jan 2022 13:39:30 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
+ clocks early
+Message-ID: <YexPYoPd5CTfNuId@sashalap>
+References: <20220117165853.1470420-1-sashal@kernel.org>
+ <20220117165853.1470420-2-sashal@kernel.org>
+ <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
+ <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Until now the mediatek clk driver library did not have any way to
-unregister clks, and so none of the drivers implemented remove
-functions.
+On Mon, Jan 17, 2022 at 09:18:43PM +0200, Sam Protsenko wrote:
+>On Mon, 17 Jan 2022 at 19:11, Krzysztof Kozlowski
+><krzysztof.kozlowski@canonical.com> wrote:
+>>
+>> On 17/01/2022 17:58, Sasha Levin wrote:
+>> > From: Sam Protsenko <semen.protsenko@linaro.org>
+>> >
+>> > [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
+>> >
+>> > Some clocks must be registered before init calls. For example MCT clock
+>> > (from CMU_PERI) is needed for MCT timer driver, which is registered
+>> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
+>> > clk-exynos850 platform driver init, it's already too late. Inability to
+>> > get "mct" clock in MCT driver leads to kernel panic, as functions
+>> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
+>> > can't be fixed either, as it's acting as a clock source and it's
+>> > essential to register it in start_kernel() -> time_init().
+>> >
+>> > Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
+>> > generates clocks needed for CMU_PERI, but it's already registered early.
+>> >
+>> > While at it, let's cleanup the code a bit, by extracting everything
+>> > related to CMU initialization and registration to the separate function.
+>> >
+>> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
+>> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
+>> > drivers/clk/mediatek/clk-mt2712.c.
+>> >
+>> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
+>> >
+>> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+>> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> > Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
+>> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> > ---
+>> >  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
+>> >  1 file changed, 49 insertions(+), 21 deletions(-)
+>> >
+>>
+>> I propose to skip this one.
+>>
+>> Backporting it to v5.16 does not hurt but also does not bring any
+>> benefits for the upstream kernel users. There is no support for
+>> mentioned Exynos850 in v5.16.
+>>
+>> It could have only meaning for some downstream, out-of-tree kernels
+>> which apply Exynos850 support on top of v5.16, but then they can just
+>> take this patch as well.
+>>
+>
+>Agreed. DTS patches will be merged only in v5.17, hopefully. Till that
+>time the whole clock driver is floating with no users. That's
+>historical thing -- I didn't have "Ack" to submit board dts at the
+>time, and SoC dts couldn't be applied without users (board dts). So I
+>focused on driver work, isolated. Not much sense to backport something
+>without having real users.
 
-Now that the library does have APIs to unregister clks, use them
-to implement remove functions for the mt8195 clk drivers.
+Dropped, thanks!
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c | 16 ++++++++++++++++
- drivers/clk/mediatek/clk-mt8195-apusys_pll.c | 13 +++++++++++++
- drivers/clk/mediatek/clk-mt8195-topckgen.c   | 20 ++++++++++++++++++++
- drivers/clk/mediatek/clk-mt8195-vdo0.c       | 16 ++++++++++++++++
- drivers/clk/mediatek/clk-mt8195-vdo1.c       | 16 ++++++++++++++++
- 5 files changed, 81 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-index af8d80f25f30..29cac3cf5f53 100644
---- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-+++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-@@ -132,6 +132,8 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_gates;
- 
-+	platform_set_drvdata(pdev, clk_data);
-+
- 	return r;
- 
- unregister_gates:
-@@ -143,8 +145,22 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt8195_apmixed_remove(struct platform_device *pdev)
-+{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
-+	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-+	mtk_free_clk_data(clk_data);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt8195_apmixed_drv = {
- 	.probe = clk_mt8195_apmixed_probe,
-+	.remove = clk_mt8195_apmixed_remove,
- 	.driver = {
- 		.name = "clk-mt8195-apmixed",
- 		.of_match_table = of_match_clk_mt8195_apmixed,
-diff --git a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-index 1fff6f3d2dc7..8cd88dfc3283 100644
---- a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-+++ b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-@@ -85,6 +85,18 @@ static int clk_mt8195_apusys_pll_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt8195_apusys_pll_remove(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-+	struct device_node *node = pdev->dev.of_node;
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_plls(apusys_plls, ARRAY_SIZE(apusys_plls), clk_data);
-+	mtk_free_clk_data(clk_data);
-+
-+	return 0;
-+}
-+
- static const struct of_device_id of_match_clk_mt8195_apusys_pll[] = {
- 	{ .compatible = "mediatek,mt8195-apusys_pll", },
- 	{}
-@@ -92,6 +104,7 @@ static const struct of_device_id of_match_clk_mt8195_apusys_pll[] = {
- 
- static struct platform_driver clk_mt8195_apusys_pll_drv = {
- 	.probe = clk_mt8195_apusys_pll_probe,
-+	.remove = clk_mt8195_apusys_pll_remove,
- 	.driver = {
- 		.name = "clk-mt8195-apusys_pll",
- 		.of_match_table = of_match_clk_mt8195_apusys_pll,
-diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-index 3631f49a5e5a..b602fcd7f1d1 100644
---- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
-+++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-@@ -1271,6 +1271,8 @@ static int clk_mt8195_topck_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_gates;
- 
-+	platform_set_drvdata(pdev, top_clk_data);
-+
- 	return r;
- 
- unregister_gates:
-@@ -1290,8 +1292,26 @@ static int clk_mt8195_topck_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt8195_topck_remove(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *top_clk_data = platform_get_drvdata(pdev);
-+	struct device_node *node = pdev->dev.of_node;
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_gates(top_clks, ARRAY_SIZE(top_clks), top_clk_data);
-+	mtk_clk_unregister_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), top_clk_data);
-+	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), top_clk_data);
-+	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), top_clk_data);
-+	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
-+	mtk_clk_unregister_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), top_clk_data);
-+	mtk_free_clk_data(top_clk_data);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt8195_topck_drv = {
- 	.probe = clk_mt8195_topck_probe,
-+	.remove = clk_mt8195_topck_remove,
- 	.driver = {
- 		.name = "clk-mt8195-topck",
- 		.of_match_table = of_match_clk_mt8195_topck,
-diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-index af34eb564b1d..3bc7ed19d550 100644
---- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-@@ -107,6 +107,8 @@ static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_gates;
- 
-+	platform_set_drvdata(pdev, clk_data);
-+
- 	return r;
- 
- unregister_gates:
-@@ -116,8 +118,22 @@ static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt8195_vdo0_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_gates(vdo0_clks, ARRAY_SIZE(vdo0_clks), clk_data);
-+	mtk_free_clk_data(clk_data);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt8195_vdo0_drv = {
- 	.probe = clk_mt8195_vdo0_probe,
-+	.remove = clk_mt8195_vdo0_remove,
- 	.driver = {
- 		.name = "clk-mt8195-vdo0",
- 	},
-diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-index 6b502bbc730c..90c738a85ff1 100644
---- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
-+++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-@@ -124,6 +124,8 @@ static int clk_mt8195_vdo1_probe(struct platform_device *pdev)
- 	if (r)
- 		goto unregister_gates;
- 
-+	platform_set_drvdata(pdev, clk_data);
-+
- 	return r;
- 
- unregister_gates:
-@@ -133,8 +135,22 @@ static int clk_mt8195_vdo1_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt8195_vdo1_remove(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
-+	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_gates(vdo1_clks, ARRAY_SIZE(vdo1_clks), clk_data);
-+	mtk_free_clk_data(clk_data);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt8195_vdo1_drv = {
- 	.probe = clk_mt8195_vdo1_probe,
-+	.remove = clk_mt8195_vdo1_remove,
- 	.driver = {
- 		.name = "clk-mt8195-vdo1",
- 	},
 -- 
-2.35.0.rc0.227.g00780c9af4-goog
-
+Thanks,
+Sasha
