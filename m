@@ -2,450 +2,190 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B1C433FE
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jan 2022 17:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D513FC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jan 2022 19:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231822AbiAWRxY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jan 2022 12:53:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43000 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239366AbiAWRxX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jan 2022 12:53:23 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1BAC06173B
-        for <linux-clk@vger.kernel.org>; Sun, 23 Jan 2022 09:53:23 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nBh2H-0007aG-Mg; Sun, 23 Jan 2022 18:52:17 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nBh28-00BycE-Ac; Sun, 23 Jan 2022 18:52:07 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nBh26-000tzT-Dk; Sun, 23 Jan 2022 18:52:06 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     =?utf-8?q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Markuss Broks <markuss.broks@gmail.com>,
-        Emma Anholt <emma@anholt.net>,
-        David Lechner <david@lechnology.com>,
-        Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
-        =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dan Robertson <dan@dlrobertson.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Charles-Antoine Couret <charles-antoine.couret@nexvision.fr>,
-        Antti Palosaari <crope@iki.fi>,
-        Lee Jones <lee.jones@linaro.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Eric Piel <eric.piel@tremplin-utc.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Thomas Kopp <thomas.kopp@microchip.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Woojung Huh <woojung.huh@microchip.com>,
-        UNGLinuxDriver@microchip.com,
-        =?utf-8?q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Harry Morris <h.morris@cascoda.com>,
-        Varka Bhadram <varkabhadram@gmail.com>,
-        Xue Liu <liuxuenetmail@gmail.com>, Alan Ott <alan@signal11.us>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Ajay Singh <ajay.kathat@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Solomon Peachy <pizza@shaftnet.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Benson Leung <bleung@chromium.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?utf-8?b?SsOpcsO0bWUgUG91aWxsZXI=?= <jerome.pouiller@silabs.com>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Helge Deller <deller@gmx.de>,
-        James Schulman <james.schulman@cirrus.com>,
-        David Rhodes <david.rhodes@cirrus.com>,
-        Lucas Tanure <tanureal@opensource.cirrus.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <mripard@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Alexandru Ardelean <ardeleanalex@gmail.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Cai Huoqing <caihuoqing@baidu.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Julia Lawall <Julia.Lawall@inria.fr>,
-        =?utf-8?q?Ronald_Tschal=C3=A4r?= <ronald@innovation.ch>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Heiko Schocher <hs@denx.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Colin Ian King <colin.king@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Matt Kline <matt@bitbashing.io>,
-        Torin Cooper-Bennun <torin@maxiluxsystems.com>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        =?utf-8?q?Stefan_M=C3=A4tje?= <stefan.maetje@esd.eu>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Nanyong Sun <sunnanyong@huawei.com>,
-        Yang Shen <shenyang39@huawei.com>,
-        dingsenjie <dingsenjie@yulong.com>,
-        Aditya Srivastava <yashsri421@gmail.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Walle <michael@walle.cc>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        wengjianfeng <wengjianfeng@yulong.com>,
-        Sidong Yang <realwakka@gmail.com>,
-        Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>,
-        Zhang Qilong <zhangqilong3@huawei.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>,
-        Davidlohr Bueso <dbueso@suse.de>, Claudius Heine <ch@denx.de>,
-        Jiri Prchal <jiri.prchal@aksignal.cz>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
-        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wpan@vger.kernel.org,
-        linux-wireless@vger.kernel.org, libertas-dev@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        kernel@pengutronix.de, Noralf Tronnes <notro@tronnes.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH 0/5] spi: make remove callback a void function
-Date:   Sun, 23 Jan 2022 18:51:56 +0100
-Message-Id: <20220123175201.34839-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13159; h=from:subject; bh=owUsrJiUxQg0WH9JiyxXcWg2QcQX/yEwEp5ObL2T9n0=; b=owGbwMvMwMV48I9IxdpTbzgZT6slMSS+nbpcuF1aSOHc7VvcKru0ItTvBT39tGSS6+W7Qqqsga+6 XV/1dDIaszAwcjHIiimy1BVpiU2QWPPfrmQJN8wgViaQKQxcnAIwkQJ1DoZJL1o6pbJMnj7jmr4qUS z5cENAvodiUGgJM7vdWk2x1lkXfyiGhedIbP/1ivHDvGRTmXL/wIg7PG/WnKtj3+Cxw3vSTCnTOzOd yi9M2O48eVabWmdxdar48r4nD8SX8C08EDSTi+vRDt+c6nvV3NfNWBp1n+gr+KXecpB0EyurXNg2We Uo48mJf1OlAs7efhjiFRf3rvCxJsfV54c496b3NyuWHJzSmuayo0HlZt6l61nCfqtvRPNVJB6OfXdb hs8hRbB7TVzWu4TqJTmrVkWmKp/49rnOYBtTkkTTztLDU1/M/GPS5CYxR5hB+kNfXS1Xv6L8fpUOs7 C3m3IdIjib3pfmHW2edIvrx04rAA==
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        id S233294AbiAWTTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jan 2022 14:19:41 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:41207 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232410AbiAWTTk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jan 2022 14:19:40 -0500
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220123191938epoutp034d2eca8090189829a97533f17a2c8108~M-H0TbCsM2554925549epoutp03g
+        for <linux-clk@vger.kernel.org>; Sun, 23 Jan 2022 19:19:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220123191938epoutp034d2eca8090189829a97533f17a2c8108~M-H0TbCsM2554925549epoutp03g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1642965578;
+        bh=DsFfey4DK3A1Ho//27/+z58DaPrEa27+FlwKXNLvWtU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=a26iAg40lQi8X+Nq97GbIwXF6r8pBfDy+dIlyn6M857y/6A0+8Q07+bQ1hVRZdoPN
+         dsECBmP5CTrBTj3TVWCvuY/uzZ9bfFdZIw0VdnTg8TG4c1KSvXPkeCZNHoTWW8U2qy
+         ks+uYZQoTPaJGrYGYY6J6gJksE3PKkUMLI6RrCjM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220123191936epcas5p26c1115af494c399f05bf1d753a4029ac~M-HyvKOc82292122921epcas5p2g;
+        Sun, 23 Jan 2022 19:19:36 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4Jhjbl2g0yz4x9Pp; Sun, 23 Jan
+        2022 19:19:31 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2B.37.06423.34AADE16; Mon, 24 Jan 2022 04:19:31 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220123191930epcas5p2572d936fab64a86238cab945171037d7~M-HssVdrh1893418934epcas5p2h;
+        Sun, 23 Jan 2022 19:19:30 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220123191930epsmtrp266334ddc0e2bbd3cfaea1c1d4a301748~M-HsrVOpm2018820188epsmtrp2M;
+        Sun, 23 Jan 2022 19:19:30 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-54-61edaa43355b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.C9.08738.14AADE16; Mon, 24 Jan 2022 04:19:29 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220123191927epsmtip150bc9d9804b88892e59871dc8d37c825~M-Hqi3Ecg0799807998epsmtip1D;
+        Sun, 23 Jan 2022 19:19:27 +0000 (GMT)
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de,
+        linus.walleij@linaro.org, catalin.marinas@arm.com,
+        robh+dt@kernel.org, krzysztof.kozlowski@canonical.com,
+        s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
+        pankaj.dubey@samsung.com, sboyd@kernel.org,
+        Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v4 00/16] Add support for Tesla Full Self-Driving (FSD) SoC
+Date:   Mon, 24 Jan 2022 00:37:13 +0530
+Message-Id: <20220123190729.1852-1-alim.akhtar@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplk+LIzCtJLcpLzFFi42LZdlhTQ9d51dtEg84lfBYP5m1js/g76Ri7
+        xftlPYwW84+cY7XY+PYHk8WUP8uZLDY9vsZq8bHnHqvF5V1z2CxmnN/HZHHq+mc2i0Vbv7Bb
+        tO49wm5x+E07q8W/axtZLB5f/8PmIOCxZt4aRo/fvyYxesxq6GXz2LSqk83jzrU9bB6bl9R7
+        XDnRxOrRt2UVo8fnTXIBnFHZNhmpiSmpRQqpecn5KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJ
+        uam2Si4+AbpumTlAbygplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVSC1JyCkwK9IoTc4tL
+        89L18lJLrAwNDIxMgQoTsjP2XTvAXHBftuLS7n62BsZm8S5GTg4JAROJJ9uus4HYQgK7GSXm
+        TNeBsD8xSpydzdjFyAVkf2aU2HFpOQtMw+ymdjaIxC5Gia2nJzFBOC1MEitPtYGNYhPQlrg7
+        fQsTiC0i4CZxo7EDrIhZ4BWTxPV/q8GKhAW8JU7d/csKYrMIqEo0794L1sArYC2xYHMnM8Q6
+        eYnVGw4wgzRLCPRySDzp7WaFSLhIvJ2+D8oWlnh1fAs7hC0l8fndXqAFHEB2tkTPLmOIcI3E
+        0nnHoF6wlzhwZQ4LSAmzgKbE+l36IGFmAT6J3t9PmCA6eSU62oQgqoEue3cVqlNaYmI3zAEe
+        Els+HYKGXKxE47rVzBMYZWYhDF3AyLiKUTK1oDg3PbXYtMAwL7UcHjXJ+bmbGMHpUctzB+Pd
+        Bx/0DjEycTAeYpTgYFYS4S3If5UoxJuSWFmVWpQfX1Sak1p8iNEUGEoTmaVEk/OBCTqvJN7Q
+        xNLAxMzMzMTS2MxQSZz3dPqGRCGB9MSS1OzU1ILUIpg+Jg5OqQYmXXmWe1tXOO09LzfrU/r/
+        zXXH/+1cUmNuvEU1dYVSUdt50VWzw7TCSs635irHNT9pvpMzN9en0PyK4tbwtrz2Qpfbs3Zk
+        bHtSMeuDSpK+pGPBvtWbNbu3t5as4o/3bGVZFP22i1dufWMpU82S+kilE9GPbtUZ9E/SVq+f
+        4+p2ikO7YPLUmlbO61mKJZNdVucXtiuLGv9PzrDfsyGxtqP+2WlRdX6zK6/VO9ctsnYXkxTS
+        WF5ZsVSuYW3hm31+Z5k4+VYXKU7kqi7Ydm5jSaNfpvxkzeONa+su1ORmv20O9XKwni1w5urt
+        oOYTmgmHdLVDPuhGMm7y/22xRnHBJKlP+y9d9tvMsFFkV8buYCWW4oxEQy3mouJEALro2MQY
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsWy7bCSnK7jqreJBs/PW1g8mLeNzeLvpGPs
+        Fu+X9TBazD9yjtVi49sfTBZT/ixnstj0+Bqrxceee6wWl3fNYbOYcX4fk8Wp65/ZLBZt/cJu
+        0br3CLvF4TftrBb/rm1ksXh8/Q+bg4DHmnlrGD1+/5rE6DGroZfNY9OqTjaPO9f2sHlsXlLv
+        ceVEE6tH35ZVjB6fN8kFcEZx2aSk5mSWpRbp2yVwZey7doC54L5sxaXd/WwNjM3iXYycHBIC
+        JhKzm9rZQGwhgR2MEs2n5SHi0hLXN05gh7CFJVb+ew5kcwHVNDFJXNw8GayBTUBb4u70LUwg
+        toiAh0Tbv3vMIEXMAr+YJPb9vcEIkhAW8JY4dfcvK4jNIqAq0bx7L1gDr4C1xILNncwQG+Ql
+        Vm84wDyBkWcBI8MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgMNbS2sG4Z9UHvUOM
+        TByMhxglOJiVRHgL8l8lCvGmJFZWpRblxxeV5qQWH2KU5mBREue90HUyXkggPbEkNTs1tSC1
+        CCbLxMEp1cCk9W/irYuqG1c2fbpsE1/uIfV+luAqIYebdV1nF9XLv7H/r3dxr3jWNNa6B04y
+        ey9cOjtj4Qe1RObEDytW1W3/MCnJgCv85fEp2nV8ng94HvIcLviqeeE2l2rJK+9Z83uYs97u
+        ZFBXS71qb7c/TYDv0zoDg+PxT+aem8d7Mijd6+VB1gPrVnoJf3m97sOMuvozL2Ntrxy0Src/
+        sHXTp85P/Geuaz52nzSh5e+r87Oneavn7GHyz9gsKOl6SmbB4fS5++dq3eHlYe696sKUceHx
+        iY3KeaFWybM7VZ+wSNizLHnKJvT/UOKUrowYTu93qWaKm1lClu24Wv288JL9jcCzXlOVpn2I
+        rKs+Pi1+3w3rKCWW4oxEQy3mouJEABd1kKbSAgAA
+X-CMS-MailID: 20220123191930epcas5p2572d936fab64a86238cab945171037d7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220123191930epcas5p2572d936fab64a86238cab945171037d7
+References: <CGME20220123191930epcas5p2572d936fab64a86238cab945171037d7@epcas5p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Adds basic support for the Tesla Full Self-Driving (FSD)
+SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+as well as several IPs.
 
-this series goal is to change the spi remove callback's return value to void.
-After numerous patches nearly all drivers already return 0 unconditionally.
-The four first patches in this series convert the remaining three drivers to
-return 0, the final patch changes the remove prototype and converts all
-implementers.
+Patches 1 to 9 provide support for the clock controller
+(which is designed similarly to Exynos SoCs).
 
-The driver core doesn't support error handling on remove, the spi core issues
-only a very generic warning when a remove callback returns an error. If there
-is really the need for a function call that can fail, the driver can issue a
-more helpful error message. I didn't find a single driver where returning
-an error code and error handling in the spi core would have been helpful.
+The remaining changes provide pinmux support, initial device tree support.
 
-So change the prototype of the remove function to make it obvious for driver
-authors that there is no error handling in the spi core.
+- Changes since v3
+* Addressed Stefen's review comments on patch 14/16
+* Fixed kernel test robot warning on patch 04/16
+* rebsaed this series on Krzysztof's pinmux new binding schema work [1]
 
-The four preparatory patches were already send out, but not yet taken into
-next.
+- Changes since v2
+* Addressed Krzysztof's and Stephen's review comments
+* Added Reviewed-by and Acked-by tags
+* Rebased on next-20220120
 
-Assuming Mark is fine with this change I'd like to have this go in during the
-next merge window. I guess we need a tag that can be pulled into trees that add
-a new driver in the next cycle. I can provide such a tag, but I'm open to
-alternatives.
+- Changes since v1
+* fixed make dt_binding_check error as pointed by Rob
+* Addressed Krzysztof's and Rob's review comments
+* Added Reviewed-by and Acked-by tags
+* Dropped SPI, MCT and ADC from this series (to be posted in small sets)
 
-The patch set survived an allmodconfig build on various archs (arm64 m68k
-powerpc riscv s390 sparc64 x86_64) after the following two commits from
-next-20220121 were added to fix an unrelated build problem:
+NOTE: These patches are based on Krzysztof's pinmux for-next branch
+      commit = 832ae134ccc1 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git/log/?h=for-next
 
-        be973481daaa ("pinctrl: thunderbay: rework loops looking for groups names")
-        8687999e47d4 ("pinctrl: thunderbay: comment process of building functions a bit")
+Alim Akhtar (16):
+  dt-bindings: add vendor prefix for Tesla
+  dt-bindings: clock: Add bindings definitions for FSD CMU blocks
+  dt-bindings: clock: Document FSD CMU bindings
+  clk: samsung: fsd: Add initial clock support
+  clk: samsung: fsd: Add cmu_peric block clock information
+  clk: samsung: fsd: Add cmu_fsys0 clock information
+  clk: samsung: fsd: Add cmu_fsys1 clock information
+  clk: samsung: fsd: Add cmu_imem block clock information
+  clk: samsung: fsd: Add cmu_mfc block clock information
+  clk: samsung: fsd: Add cam_csi block clock information
+  dt-bindings: pinctrl: samsung: Add compatible for Tesla FSD SoC
+  pinctrl: samsung: add FSD SoC specific data
+  dt-bindings: arm: add Tesla FSD ARM SoC
+  arm64: dts: fsd: Add initial device tree support
+  arm64: dts: fsd: Add initial pinctrl support
+  arm64: defconfig: Enable Tesla FSD SoC
 
-Best regards
-Uwe
-
-Uwe Kleine-König (5):
-  staging: fbtft: Fix error path in fbtft_driver_module_init()
-  staging: fbtft: Deduplicate driver registration macros
-  tpm: st33zp24: Make st33zp24_remove() a void function
-  platform/chrome: cros_ec: Make cros_ec_unregister() return void
-  spi: make remove callback a void function
-
- drivers/bus/moxtet.c                          |  4 +-
- drivers/char/tpm/st33zp24/i2c.c               |  5 +-
- drivers/char/tpm/st33zp24/spi.c               |  9 +-
- drivers/char/tpm/st33zp24/st33zp24.c          |  3 +-
- drivers/char/tpm/st33zp24/st33zp24.h          |  2 +-
- drivers/char/tpm/tpm_tis_spi_main.c           |  3 +-
- drivers/clk/clk-lmk04832.c                    |  4 +-
- drivers/gpio/gpio-74x164.c                    |  4 +-
- drivers/gpio/gpio-max3191x.c                  |  4 +-
- drivers/gpio/gpio-max7301.c                   |  4 +-
- drivers/gpio/gpio-mc33880.c                   |  4 +-
- drivers/gpio/gpio-pisosr.c                    |  4 +-
- drivers/gpu/drm/panel/panel-abt-y030xx067a.c  |  4 +-
- drivers/gpu/drm/panel/panel-ilitek-ili9322.c  |  4 +-
- drivers/gpu/drm/panel/panel-ilitek-ili9341.c  |  3 +-
- drivers/gpu/drm/panel/panel-innolux-ej030na.c |  4 +-
- drivers/gpu/drm/panel/panel-lg-lb035q02.c     |  4 +-
- drivers/gpu/drm/panel/panel-lg-lg4573.c       |  4 +-
- drivers/gpu/drm/panel/panel-nec-nl8048hl11.c  |  4 +-
- drivers/gpu/drm/panel/panel-novatek-nt39016.c |  4 +-
- drivers/gpu/drm/panel/panel-samsung-db7430.c  |  3 +-
- drivers/gpu/drm/panel/panel-samsung-ld9040.c  |  4 +-
- drivers/gpu/drm/panel/panel-samsung-s6d27a1.c |  3 +-
- .../gpu/drm/panel/panel-samsung-s6e63m0-spi.c |  3 +-
- .../gpu/drm/panel/panel-sitronix-st7789v.c    |  4 +-
- drivers/gpu/drm/panel/panel-sony-acx565akm.c  |  4 +-
- drivers/gpu/drm/panel/panel-tpo-td028ttec1.c  |  4 +-
- drivers/gpu/drm/panel/panel-tpo-td043mtea1.c  |  4 +-
- drivers/gpu/drm/panel/panel-tpo-tpg110.c      |  3 +-
- .../gpu/drm/panel/panel-widechips-ws2401.c    |  3 +-
- drivers/gpu/drm/tiny/hx8357d.c                |  4 +-
- drivers/gpu/drm/tiny/ili9163.c                |  4 +-
- drivers/gpu/drm/tiny/ili9225.c                |  4 +-
- drivers/gpu/drm/tiny/ili9341.c                |  4 +-
- drivers/gpu/drm/tiny/ili9486.c                |  4 +-
- drivers/gpu/drm/tiny/mi0283qt.c               |  4 +-
- drivers/gpu/drm/tiny/repaper.c                |  4 +-
- drivers/gpu/drm/tiny/st7586.c                 |  4 +-
- drivers/gpu/drm/tiny/st7735r.c                |  4 +-
- drivers/hwmon/adcxx.c                         |  4 +-
- drivers/hwmon/adt7310.c                       |  3 +-
- drivers/hwmon/max1111.c                       |  3 +-
- drivers/hwmon/max31722.c                      |  4 +-
- drivers/iio/accel/bma400_spi.c                |  4 +-
- drivers/iio/accel/bmc150-accel-spi.c          |  4 +-
- drivers/iio/accel/bmi088-accel-spi.c          |  4 +-
- drivers/iio/accel/kxsd9-spi.c                 |  4 +-
- drivers/iio/accel/mma7455_spi.c               |  4 +-
- drivers/iio/accel/sca3000.c                   |  4 +-
- drivers/iio/adc/ad7266.c                      |  4 +-
- drivers/iio/adc/ltc2496.c                     |  4 +-
- drivers/iio/adc/mcp320x.c                     |  4 +-
- drivers/iio/adc/mcp3911.c                     |  4 +-
- drivers/iio/adc/ti-adc12138.c                 |  4 +-
- drivers/iio/adc/ti-ads7950.c                  |  4 +-
- drivers/iio/adc/ti-ads8688.c                  |  4 +-
- drivers/iio/adc/ti-tlc4541.c                  |  4 +-
- drivers/iio/amplifiers/ad8366.c               |  4 +-
- drivers/iio/common/ssp_sensors/ssp_dev.c      |  4 +-
- drivers/iio/dac/ad5360.c                      |  4 +-
- drivers/iio/dac/ad5380.c                      |  4 +-
- drivers/iio/dac/ad5446.c                      |  4 +-
- drivers/iio/dac/ad5449.c                      |  4 +-
- drivers/iio/dac/ad5504.c                      |  4 +-
- drivers/iio/dac/ad5592r.c                     |  4 +-
- drivers/iio/dac/ad5624r_spi.c                 |  4 +-
- drivers/iio/dac/ad5686-spi.c                  |  4 +-
- drivers/iio/dac/ad5761.c                      |  4 +-
- drivers/iio/dac/ad5764.c                      |  4 +-
- drivers/iio/dac/ad5791.c                      |  4 +-
- drivers/iio/dac/ad8801.c                      |  4 +-
- drivers/iio/dac/ltc1660.c                     |  4 +-
- drivers/iio/dac/ltc2632.c                     |  4 +-
- drivers/iio/dac/mcp4922.c                     |  4 +-
- drivers/iio/dac/ti-dac082s085.c               |  4 +-
- drivers/iio/dac/ti-dac7311.c                  |  3 +-
- drivers/iio/frequency/adf4350.c               |  4 +-
- drivers/iio/gyro/bmg160_spi.c                 |  4 +-
- drivers/iio/gyro/fxas21002c_spi.c             |  4 +-
- drivers/iio/health/afe4403.c                  |  4 +-
- drivers/iio/magnetometer/bmc150_magn_spi.c    |  4 +-
- drivers/iio/magnetometer/hmc5843_spi.c        |  4 +-
- drivers/iio/potentiometer/max5487.c           |  4 +-
- drivers/iio/pressure/ms5611_spi.c             |  4 +-
- drivers/iio/pressure/zpa2326_spi.c            |  4 +-
- drivers/input/keyboard/applespi.c             |  4 +-
- drivers/input/misc/adxl34x-spi.c              |  4 +-
- drivers/input/touchscreen/ads7846.c           |  4 +-
- drivers/input/touchscreen/cyttsp4_spi.c       |  4 +-
- drivers/input/touchscreen/tsc2005.c           |  4 +-
- drivers/leds/leds-cr0014114.c                 |  4 +-
- drivers/leds/leds-dac124s085.c                |  4 +-
- drivers/leds/leds-el15203000.c                |  4 +-
- drivers/leds/leds-spi-byte.c                  |  4 +-
- drivers/media/spi/cxd2880-spi.c               |  4 +-
- drivers/media/spi/gs1662.c                    |  4 +-
- drivers/media/tuners/msi001.c                 |  3 +-
- drivers/mfd/arizona-spi.c                     |  4 +-
- drivers/mfd/da9052-spi.c                      |  3 +-
- drivers/mfd/ezx-pcap.c                        |  4 +-
- drivers/mfd/madera-spi.c                      |  4 +-
- drivers/mfd/mc13xxx-spi.c                     |  3 +-
- drivers/mfd/rsmu_spi.c                        |  4 +-
- drivers/mfd/stmpe-spi.c                       |  4 +-
- drivers/mfd/tps65912-spi.c                    |  4 +-
- drivers/misc/ad525x_dpot-spi.c                |  3 +-
- drivers/misc/eeprom/eeprom_93xx46.c           |  4 +-
- drivers/misc/lattice-ecp3-config.c            |  4 +-
- drivers/misc/lis3lv02d/lis3lv02d_spi.c        |  4 +-
- drivers/mmc/host/mmc_spi.c                    |  3 +-
- drivers/mtd/devices/mchp23k256.c              |  4 +-
- drivers/mtd/devices/mchp48l640.c              |  4 +-
- drivers/mtd/devices/mtd_dataflash.c           |  4 +-
- drivers/mtd/devices/sst25l.c                  |  4 +-
- drivers/net/can/m_can/tcan4x5x-core.c         |  4 +-
- drivers/net/can/spi/hi311x.c                  |  4 +-
- drivers/net/can/spi/mcp251x.c                 |  4 +-
- .../net/can/spi/mcp251xfd/mcp251xfd-core.c    |  4 +-
- drivers/net/dsa/b53/b53_spi.c                 |  4 +-
- drivers/net/dsa/microchip/ksz8795_spi.c       |  4 +-
- drivers/net/dsa/microchip/ksz9477_spi.c       |  4 +-
- drivers/net/dsa/sja1105/sja1105_main.c        |  6 +-
- drivers/net/dsa/vitesse-vsc73xx-spi.c         |  6 +-
- drivers/net/ethernet/asix/ax88796c_main.c     |  4 +-
- drivers/net/ethernet/micrel/ks8851_spi.c      |  4 +-
- drivers/net/ethernet/microchip/enc28j60.c     |  4 +-
- drivers/net/ethernet/microchip/encx24j600.c   |  4 +-
- drivers/net/ethernet/qualcomm/qca_spi.c       |  4 +-
- drivers/net/ethernet/vertexcom/mse102x.c      |  4 +-
- drivers/net/ethernet/wiznet/w5100-spi.c       |  4 +-
- drivers/net/ieee802154/adf7242.c              |  4 +-
- drivers/net/ieee802154/at86rf230.c            |  4 +-
- drivers/net/ieee802154/ca8210.c               |  6 +-
- drivers/net/ieee802154/cc2520.c               |  4 +-
- drivers/net/ieee802154/mcr20a.c               |  4 +-
- drivers/net/ieee802154/mrf24j40.c             |  4 +-
- drivers/net/phy/spi_ks8995.c                  |  4 +-
- drivers/net/wan/slic_ds26522.c                |  3 +-
- drivers/net/wireless/intersil/p54/p54spi.c    |  4 +-
- .../net/wireless/marvell/libertas/if_spi.c    |  4 +-
- drivers/net/wireless/microchip/wilc1000/spi.c |  4 +-
- drivers/net/wireless/st/cw1200/cw1200_spi.c   |  4 +-
- drivers/net/wireless/ti/wl1251/spi.c          |  4 +-
- drivers/net/wireless/ti/wlcore/spi.c          |  4 +-
- drivers/nfc/nfcmrvl/spi.c                     |  3 +-
- drivers/nfc/st-nci/spi.c                      |  4 +-
- drivers/nfc/st95hf/core.c                     |  4 +-
- drivers/nfc/trf7970a.c                        |  4 +-
- drivers/platform/chrome/cros_ec.c             |  4 +-
- drivers/platform/chrome/cros_ec.h             |  2 +-
- drivers/platform/chrome/cros_ec_i2c.c         |  4 +-
- drivers/platform/chrome/cros_ec_lpc.c         |  4 +-
- drivers/platform/chrome/cros_ec_spi.c         |  4 +-
- drivers/platform/olpc/olpc-xo175-ec.c         |  4 +-
- drivers/rtc/rtc-ds1302.c                      |  3 +-
- drivers/rtc/rtc-ds1305.c                      |  4 +-
- drivers/rtc/rtc-ds1343.c                      |  4 +-
- drivers/spi/spi-mem.c                         |  6 +-
- drivers/spi/spi-slave-system-control.c        |  3 +-
- drivers/spi/spi-slave-time.c                  |  3 +-
- drivers/spi/spi-tle62x0.c                     |  3 +-
- drivers/spi/spi.c                             | 11 +--
- drivers/spi/spidev.c                          |  4 +-
- drivers/staging/fbtft/fbtft.h                 | 97 ++++++++-----------
- drivers/staging/pi433/pi433_if.c              |  4 +-
- drivers/staging/wfx/bus_spi.c                 |  3 +-
- drivers/tty/serial/max3100.c                  |  5 +-
- drivers/tty/serial/max310x.c                  |  3 +-
- drivers/tty/serial/sc16is7xx.c                |  4 +-
- drivers/usb/gadget/udc/max3420_udc.c          |  4 +-
- drivers/usb/host/max3421-hcd.c                |  3 +-
- drivers/video/backlight/ams369fg06.c          |  3 +-
- drivers/video/backlight/corgi_lcd.c           |  3 +-
- drivers/video/backlight/ili922x.c             |  3 +-
- drivers/video/backlight/l4f00242t03.c         |  3 +-
- drivers/video/backlight/lms501kf03.c          |  3 +-
- drivers/video/backlight/ltv350qv.c            |  3 +-
- drivers/video/backlight/tdo24m.c              |  3 +-
- drivers/video/backlight/tosa_lcd.c            |  4 +-
- drivers/video/backlight/vgg2432a4.c           |  4 +-
- drivers/video/fbdev/omap/lcd_mipid.c          |  4 +-
- .../displays/panel-lgphilips-lb035q02.c       |  4 +-
- .../omapfb/displays/panel-nec-nl8048hl11.c    |  4 +-
- .../omapfb/displays/panel-sony-acx565akm.c    |  4 +-
- .../omapfb/displays/panel-tpo-td028ttec1.c    |  4 +-
- .../omapfb/displays/panel-tpo-td043mtea1.c    |  4 +-
- include/linux/spi/spi.h                       |  2 +-
- sound/pci/hda/cs35l41_hda_spi.c               |  4 +-
- sound/soc/codecs/adau1761-spi.c               |  3 +-
- sound/soc/codecs/adau1781-spi.c               |  3 +-
- sound/soc/codecs/cs35l41-spi.c                |  4 +-
- sound/soc/codecs/pcm3168a-spi.c               |  4 +-
- sound/soc/codecs/pcm512x-spi.c                |  3 +-
- sound/soc/codecs/tlv320aic32x4-spi.c          |  4 +-
- sound/soc/codecs/tlv320aic3x-spi.c            |  4 +-
- sound/soc/codecs/wm0010.c                     |  4 +-
- sound/soc/codecs/wm8804-spi.c                 |  3 +-
- sound/spi/at73c213.c                          |  4 +-
- 198 files changed, 248 insertions(+), 617 deletions(-)
+ .../devicetree/bindings/arm/tesla.yaml        |   27 +
+ .../bindings/clock/tesla,fsd-clock.yaml       |  198 ++
+ .../bindings/pinctrl/samsung,pinctrl.yaml     |    1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/Kconfig.platforms                  |    6 +
+ arch/arm64/boot/dts/Makefile                  |    1 +
+ arch/arm64/boot/dts/tesla/Makefile            |    3 +
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         |   39 +
+ arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi    |  335 +++
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  673 ++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/Kconfig                   |    8 +
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 | 1803 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |    1 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../pinctrl/samsung/pinctrl-exynos-arm64.c    |   71 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c     |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h     |    1 +
+ include/dt-bindings/clock/fsd-clk.h           |  150 ++
+ 21 files changed, 3332 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/tesla,fsd-clock.yaml
+ create mode 100644 arch/arm64/boot/dts/tesla/Makefile
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-evb.dts
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/tesla/fsd.dtsi
+ create mode 100644 drivers/clk/samsung/clk-fsd.c
+ create mode 100644 include/dt-bindings/clock/fsd-clk.h
 
 
-base-commit: e783362eb54cd99b2cac8b3a9aeac942e6f6ac07
+base-commit: 832ae134ccc1c78a2f5ec81b7010dd24c3c49535
 -- 
-2.34.1
+2.25.1
 
