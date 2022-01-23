@@ -2,118 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C8CC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Jan 2022 18:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870A4C433FE
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jan 2022 05:10:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbiAVSjf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Jan 2022 13:39:35 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:53950 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiAVSje (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Jan 2022 13:39:34 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 58D4C60EA1;
-        Sat, 22 Jan 2022 18:39:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A4FC004E1;
-        Sat, 22 Jan 2022 18:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642876773;
-        bh=n/B1FmyEoA1G3JCa6y+KvNFQMmHR9BMvLjaGYR7WJAo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Pz/YJD7W27+/z+O5KGHaCzHgh/dhwn9TP0dG8pYxyvv1ELB8OMLl+otmXC3zKiD3t
-         nHHKotzH6ewZmjHh55JM4Jr6lHTKDMrhYyh8M0zA3zJmUUe4KD74HWcyNEaoTsKsEk
-         EvIlYldlhW5vvP7iHpz69Ae6SKezkRcAO+7o+6d5BIAXjrOk/bT6lVCp8Nhu1ndDq6
-         z4FsozrFXyc0kYctK+o44AzkfdK3b7Db1bHwfPaVRDCCzcBjJbmIxZalMw/xZYXHg+
-         xfhU8fMj9KMrMSLKGBKhWvYilMStz50N3YRQi/gH2w/HDHTU7muhuOgGxQLTGfJTGt
-         I7kiMvZLFMAJQ==
-Date:   Sat, 22 Jan 2022 13:39:30 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 5.16 02/52] clk: samsung: exynos850: Register
- clocks early
-Message-ID: <YexPYoPd5CTfNuId@sashalap>
-References: <20220117165853.1470420-1-sashal@kernel.org>
- <20220117165853.1470420-2-sashal@kernel.org>
- <b75a0bc9-0423-83cc-11e1-d5e08952cc93@canonical.com>
- <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
+        id S230091AbiAWFK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jan 2022 00:10:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229776AbiAWFK0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jan 2022 00:10:26 -0500
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99CBC061401
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 21:10:25 -0800 (PST)
+Received: by mail-ua1-x92b.google.com with SMTP id m90so24758837uam.2
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 21:10:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0x0f.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L0I9JpiDO39RUjCBeN2pfI72csyh/weIor+yFnevV54=;
+        b=YeLxWALEglUczTZRa4Qdnktyv387v83n4okwro11MxhmoOuV/QEX4DuqGa7wJqdUXd
+         NscwOiySXq3uwDRcImlB06aI4ZVloEPKq1gNq9aqZpNU+CVgIb43rknAbqqhSWt3aokq
+         cFhtGyhQGdXkU41m9mNgiBwn8zn0wj157CiXQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L0I9JpiDO39RUjCBeN2pfI72csyh/weIor+yFnevV54=;
+        b=lgJLwWhbYC5GJbDfXCn/ifoHs4r96kaQxRiUat0GdmaZ46WhIkrhx+djniLGflTf5D
+         ePyVqnKnJYVS0mRQVBydm/Ue9UuFnJ4Q6RA59lIR22x0oRNTGQYcpOfH+IgfvsRD0uti
+         7LlXdhlQ3NsD0ovOvcMR4yB7Sjua/j/wBRISTshkgrHsOnWuZyv3qBAriozAwmw6rN3r
+         NhDCd6HyxYKES8KpNX9NfQKLQdBCjuj4/pxRD7FyWxCvyVUQnadxP/Q824fp78RP8Vtj
+         f4kbAhINEJGnw0+T6tKjdUiJ1qd4EugCKBwHdCtuoSEr873RbYxmIMxRsZvrMup2j06P
+         bNvw==
+X-Gm-Message-State: AOAM530yOyvpg6q1CyL6IQBHU64uofQF4NULdQ7UxGDua/HCbOmpyb4c
+        saPLNGOTYXkC4bOiBYNVlGML0+aKWXwUZtcLI6YYhQ==
+X-Google-Smtp-Source: ABdhPJyqefgEWiUZuQRUr5p43Mx2YS3LrVPhG7vsnbKEMI2TMaFUiz9EolrL5Rd4KlI5keraJKKs5KwekYydKSA1Y5w=
+X-Received: by 2002:a67:d983:: with SMTP id u3mr1114253vsj.55.1642914623709;
+ Sat, 22 Jan 2022 21:10:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4mPnktJTBeokhbmSGTZTqOa3-rkpThYHZ-Y0=_40bbLtA@mail.gmail.com>
+References: <20220121193544.23231-1-romain.perier@gmail.com> <20220121193544.23231-4-romain.perier@gmail.com>
+In-Reply-To: <20220121193544.23231-4-romain.perier@gmail.com>
+From:   Daniel Palmer <daniel@0x0f.com>
+Date:   Sun, 23 Jan 2022 14:10:12 +0900
+Message-ID: <CAFr9PXkWpQqgnNV4+6s-ENwRepHxxm6R0htHkoVYEgjZN5nGkQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/9] ARM: mstar: Add cpupll to base dtsi
+To:     Romain Perier <romain.perier@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 17, 2022 at 09:18:43PM +0200, Sam Protsenko wrote:
->On Mon, 17 Jan 2022 at 19:11, Krzysztof Kozlowski
-><krzysztof.kozlowski@canonical.com> wrote:
->>
->> On 17/01/2022 17:58, Sasha Levin wrote:
->> > From: Sam Protsenko <semen.protsenko@linaro.org>
->> >
->> > [ Upstream commit bcda841f9bf2cddcf2f000cba96f2e27f6f2bdbf ]
->> >
->> > Some clocks must be registered before init calls. For example MCT clock
->> > (from CMU_PERI) is needed for MCT timer driver, which is registered
->> > with TIMER_OF_DECLARE(). By the time we get to core_initcall() used for
->> > clk-exynos850 platform driver init, it's already too late. Inability to
->> > get "mct" clock in MCT driver leads to kernel panic, as functions
->> > registered with *_OF_DECLARE() can't do deferred calls. MCT timer driver
->> > can't be fixed either, as it's acting as a clock source and it's
->> > essential to register it in start_kernel() -> time_init().
->> >
->> > Let's register CMU_PERI clocks early, using CLK_OF_DECLARE(). CMU_TOP
->> > generates clocks needed for CMU_PERI, but it's already registered early.
->> >
->> > While at it, let's cleanup the code a bit, by extracting everything
->> > related to CMU initialization and registration to the separate function.
->> >
->> > Similar issue was discussed at [1] and addressed in commit 1f7db7bbf031
->> > ("clk: renesas: cpg-mssr: Add early clock support"), as well as in
->> > drivers/clk/mediatek/clk-mt2712.c.
->> >
->> > [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20180829132954.64862-2-chris.brandt@renesas.com/
->> >
->> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> > Link: https://lore.kernel.org/r/20211122144206.23134-1-semen.protsenko@linaro.org
->> > Signed-off-by: Sasha Levin <sashal@kernel.org>
->> > ---
->> >  drivers/clk/samsung/clk-exynos850.c | 70 ++++++++++++++++++++---------
->> >  1 file changed, 49 insertions(+), 21 deletions(-)
->> >
->>
->> I propose to skip this one.
->>
->> Backporting it to v5.16 does not hurt but also does not bring any
->> benefits for the upstream kernel users. There is no support for
->> mentioned Exynos850 in v5.16.
->>
->> It could have only meaning for some downstream, out-of-tree kernels
->> which apply Exynos850 support on top of v5.16, but then they can just
->> take this patch as well.
->>
+Hi Romain,
+
+On Sat, 22 Jan 2022 at 04:35, Romain Perier <romain.perier@gmail.com> wrote:
 >
->Agreed. DTS patches will be merged only in v5.17, hopefully. Till that
->time the whole clock driver is floating with no users. That's
->historical thing -- I didn't have "Ack" to submit board dts at the
->time, and SoC dts couldn't be applied without users (board dts). So I
->focused on driver work, isolated. Not much sense to backport something
->without having real users.
+> From: Daniel Palmer <daniel@0x0f.com>
+>
+> All MStar/SigmaStar ARMv7 SoCs have the CPU PLL at the same
+> place so add it to the base dtsi.
+>
+> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+> ---
+>  arch/arm/boot/dts/mstar-v7.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/mstar-v7.dtsi b/arch/arm/boot/dts/mstar-v7.dtsi
+> index 89ebfe4f29da..2249faaa3aa7 100644
+> --- a/arch/arm/boot/dts/mstar-v7.dtsi
+> +++ b/arch/arm/boot/dts/mstar-v7.dtsi
+> @@ -155,6 +155,13 @@ mpll: mpll@206000 {
+>                                 clocks = <&xtal>;
+>                         };
+>
+> +                       cpupll: cpupll@206400 {
+> +                               compatible = "mstar,msc313-cpupll";
+> +                               reg = <0x206400 0x200>;
+> +                               #clock-cells = <0>;
+> +                               clocks = <&mpll MSTAR_MSC313_MPLL_DIV2>;
+> +                       };
+> +
+>                         gpio: gpio@207800 {
+>                                 #gpio-cells = <2>;
+>                                 reg = <0x207800 0x200>;
+> --
+> 2.34.1
+>
 
-Dropped, thanks!
+I guess I can't add a reviewed by for my own commit but this looks good to me.
+The same CPUPLL is present on all of the chips seen so far so this is
+the right place for this.
 
--- 
-Thanks,
-Sasha
+Cheers,
+
+Daniel
