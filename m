@@ -2,134 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD02AC433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jan 2022 05:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDABFC4321E
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jan 2022 17:09:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231696AbiAWFMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jan 2022 00:12:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44824 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbiAWFMT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jan 2022 00:12:19 -0500
-Received: from mail-vk1-xa2c.google.com (mail-vk1-xa2c.google.com [IPv6:2607:f8b0:4864:20::a2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15D82C06173D
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 21:12:19 -0800 (PST)
-Received: by mail-vk1-xa2c.google.com with SMTP id b77so8064662vka.11
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jan 2022 21:12:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sV5/zsVQ9W5YHObVzBiwKq568WngDohUQy31mRglxWI=;
-        b=Fy17yNS7qU0UurQUefh5Oj8BZDHtILqI9uLVnodEwN8kY8KKZdUpMvotIssRvj0a0O
-         IogRyB4qXlQUP0iRGvT3nQSPcpW9FoXR3bMJovq5Y0vYljfjTnE1XRXaXDW79zx2TUXK
-         7smviGpR9gHztmPWoNYBVateyTsK0qlm7n52g=
+        id S239130AbiAWRJq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jan 2022 12:09:46 -0500
+Received: from smtp-relay-internal-1.canonical.com ([185.125.188.123]:59150
+        "EHLO smtp-relay-internal-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236887AbiAWRJo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jan 2022 12:09:44 -0500
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 3A01F3F1BE
+        for <linux-clk@vger.kernel.org>; Sun, 23 Jan 2022 17:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1642957783;
+        bh=bAB2fSeFXr1iDyEioRuZfgxzqfQwxPJErMMQv+8KHJM=;
+        h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=ao+WLHt+s0YLzobdySvBBk4AxnzPF336fUg+UgDojEs+rO6HRNXWGUHv3Az5F3b3f
+         JUByNSCDLVyRb2Yz8pYGaQEUs861WTTayzkAWVq0wmKIq8YAcVIMd40PSPVGpqptjH
+         A45ChSQZUoKT6ZSUFECHLu5xfIzCxysvlS2/0lTeNzQmajSraT8o2PW5edBK+boQfU
+         e7V4DU3EQ669K3DhCVQ8r0NbOrmwo7neluPXTNHOrsHSbV+8ahwLNjS4kIEPfcLzj1
+         2A1ECep0OvMuLiAZ/SKLkB71wZhPI7KTWmp2PToip8A4hW5Qaecl/kvajbiIUzScZI
+         JptZ77xnokWfg==
+Received: by mail-ed1-f72.google.com with SMTP id w23-20020a50d797000000b00406d33c039dso4089978edi.11
+        for <linux-clk@vger.kernel.org>; Sun, 23 Jan 2022 09:09:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sV5/zsVQ9W5YHObVzBiwKq568WngDohUQy31mRglxWI=;
-        b=KweWR3DxCDbTooen2xlt1u3qH0loyidPJdr221j1+kpz+ODRrYb8rHQWr1ZS/XNMcv
-         ewlx8QwXiGOkiPpQKZb6YWCF+WisDdWOyAUi7PIRtG6tQN8/267BLDbf1DC/irwHg9q0
-         5DPW/AdaiSacJBWNUubjYlmdUqvAcdORuFtAte95vz1H1A+c/7Cl5sn0sua7jfxha8Dw
-         21RmdU2HrJWfit9YluCj7RBlG3xzx6VicXNDcnLNE4OP5ny3TYu4yAHD3OTEcGj5Zjga
-         43+/HGh1Vsg2NdxqPQIh7YKatSTwMm9TGAA1IvnzhIySlMTy5lguiuwEEgn9uKp0WAeo
-         PvQw==
-X-Gm-Message-State: AOAM531SDFeVl8jGolVmuLN9JLiIzyzpvlPsnHyIGwMBJ1VWkfMuC7wg
-        nXrzYlOg179kz52ynNedrbFhS+tY0hR5u75SgaFsdA==
-X-Google-Smtp-Source: ABdhPJxQbDhgagJOEoacTsnBOmnvqzQJBTerbM4mHQrW0myOKWXrAt9QHxugz6DwehjoM8NkiRaVPbUIUhndFUf/53A=
-X-Received: by 2002:a05:6122:887:: with SMTP id 7mr4029514vkf.34.1642914738231;
- Sat, 22 Jan 2022 21:12:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20220121193544.23231-1-romain.perier@gmail.com> <20220121193544.23231-9-romain.perier@gmail.com>
-In-Reply-To: <20220121193544.23231-9-romain.perier@gmail.com>
-From:   Daniel Palmer <daniel@0x0f.com>
-Date:   Sun, 23 Jan 2022 14:12:07 +0900
-Message-ID: <CAFr9PXki+_qsPiX90ZaLcJeQhdo-rfUDMTL2D5Zv8Pk=G0Lo+w@mail.gmail.com>
-Subject: Re: [PATCH v3 8/9] ARM: mstar: Add OPP table for mercury5
-To:     Romain Perier <romain.perier@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bAB2fSeFXr1iDyEioRuZfgxzqfQwxPJErMMQv+8KHJM=;
+        b=HyYhXw5dpB/cCybeQolk3h4WmLb1veQ8O2rvMNhRasy28dp2EJtiHoFyQht0GNS80m
+         y8Nqj/ULmSmeYNZxVH/rmCtB3+z0hmpoyHCUTehVJ+reXU+CTqm3BsTLQAu/ItfmphNf
+         sQUMPlq6bifkLFFB6pbotdjEzq6SFt/wCTLdVxE7D52ms2OLcpNXg5MEci9yQ83OaDDT
+         0ESxGorA4CHvpMCAFxSPFxbhq1dDUIFhdayWKMqwRWdFKIGFGLbE5WDNKI08ecQDL5pJ
+         bODnYvE4j0klY06LnOGy5L4SOk9vn78wW+uhhVEsXVRiGlYqGerNrURv8B5k09kT30Bk
+         mm8w==
+X-Gm-Message-State: AOAM533aFNBxA6oApkPEisTka2RQEQu9ikbfpggMsKGsYnjBzJYuPfq6
+        p5ynoZti3bRo7ahyiBQVkgr6dy5jLSOU8I7a3uUvA9Gqe9O56OHv/Hg5zorZjxHEMrkBaJD1VVB
+        pL2IQ++Kor5hoagCp+otOTJSTjuT4L+5zwv9rfQ==
+X-Received: by 2002:aa7:db82:: with SMTP id u2mr12000657edt.49.1642957782255;
+        Sun, 23 Jan 2022 09:09:42 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJym4mMqq/tFhaDkWmk/qI/ha0u380SHusDsVSKwDK+WyJY+R2Os4Cbut38vPBr5J6Sm+KuHRg==
+X-Received: by 2002:aa7:db82:: with SMTP id u2mr12000636edt.49.1642957782086;
+        Sun, 23 Jan 2022 09:09:42 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id o11sm5268176edh.75.2022.01.23.09.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jan 2022 09:09:41 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        linux-samsung-soc@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-clk@vger.kernel.org,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 1/8] arm64: dts: exynos: add necessary clock inputs in Exynos7
+Date:   Sun, 23 Jan 2022 18:09:31 +0100
+Message-Id: <164295777264.25838.3443202173947810601.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
+References: <20220102115356.75796-1-krzysztof.kozlowski@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Romain,
+On Sun, 2 Jan 2022 12:53:49 +0100, Krzysztof Kozlowski wrote:
+> Exynos7 devicetree bindings require more input clocks for TOP0 and
+> PERIC1 clock controllers, than already provided.  Existing DTS was not
+> matching the bindings, so let's update the DTS, even though the error
+> could be in the bindings.
+> 
+> 
 
-On Sat, 22 Jan 2022 at 04:35, Romain Perier <romain.perier@gmail.com> wrote:
->
-> From: Daniel Palmer <daniel@0x0f.com>
->
-> Add an OPP table for mercury5 so that cpu frequency scaling can
-> happen.
->
-> Signed-off-by: Daniel Palmer <daniel@0x0f.com>
-> ---
->  arch/arm/boot/dts/mstar-mercury5.dtsi | 36 +++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/mstar-mercury5.dtsi b/arch/arm/boot/dts/mstar-mercury5.dtsi
-> index a7d0dd9d6132..80a19bd23c9c 100644
-> --- a/arch/arm/boot/dts/mstar-mercury5.dtsi
-> +++ b/arch/arm/boot/dts/mstar-mercury5.dtsi
-> @@ -6,6 +6,42 @@
->
->  #include "mstar-v7.dtsi"
->
-> +/ {
-> +       cpu0_opp_table: opp_table0 {
-> +               compatible = "operating-points-v2";
-> +               opp-shared;
-> +
-> +               opp-100000000 {
-> +                       opp-hz = /bits/ 64 <100000000>;
-> +                       opp-microvolt = <800000 800000 850000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +
-> +               opp-200000000 {
-> +                       opp-hz = /bits/ 64 <200000000>;
-> +                       opp-microvolt = <850000 850000 880000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +
-> +               opp-400000000 {
-> +                       opp-hz = /bits/ 64 <400000000>;
-> +                       opp-microvolt = <880000 880000 890000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +               opp-600000000 {
-> +                       opp-hz = /bits/ 64 <600000000>;
-> +                       opp-microvolt = <900000 900000 1000000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +
-> +               opp-800000000 {
-> +                       opp-hz = /bits/ 64 <800000000>;
-> +                       opp-microvolt = <900000 900000 1000000>;
-> +                       clock-latency-ns = <300000>;
-> +               };
-> +       };
-> +};
-> +
->  &imi {
->         reg = <0xa0000000 0x20000>;
->  };
-> --
-> 2.34.1
->
+Applied, thanks!
 
-I think we should drop this one when applying as the frequencies need
-to be checked on the hardware again.
-I think they should probably match the msc313e settings that Willy verified.
+[1/8] arm64: dts: exynos: add necessary clock inputs in Exynos7
+      commit: 372d171cd9b472cff7852211195f211150bc27d2
 
-Cheers,
-
-Daniel
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
