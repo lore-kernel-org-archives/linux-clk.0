@@ -2,31 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4997CC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 16:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2AFC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 16:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238391AbiAXQEp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 11:04:45 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:57166 "EHLO
+        id S243471AbiAXQJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 11:09:57 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:34296 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S243600AbiAXQEp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 11:04:45 -0500
-X-UUID: 096e2fd673ca47d6876c55c3244089c0-20220125
-X-UUID: 096e2fd673ca47d6876c55c3244089c0-20220125
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        with ESMTP id S243513AbiAXQJh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 11:09:37 -0500
+X-UUID: aa821c234d584349811beeeaf3c2cabe-20220125
+X-UUID: aa821c234d584349811beeeaf3c2cabe-20220125
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1048090109; Tue, 25 Jan 2022 00:04:40 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 25 Jan 2022 00:04:39 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 25 Jan
- 2022 00:04:39 +0800
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 201213848; Tue, 25 Jan 2022 00:09:35 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 25 Jan 2022 00:09:33 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 25 Jan 2022 00:04:38 +0800
+ Transport; Tue, 25 Jan 2022 00:09:33 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <wenst@chromium.org>
 CC:     <chun-jie.chen@mediatek.com>,
@@ -34,12 +30,12 @@ CC:     <chun-jie.chen@mediatek.com>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 02/31] clk: mediatek: gate: Consolidate gate type clk related code
-Date:   Tue, 25 Jan 2022 00:04:38 +0800
-Message-ID: <20220124160438.17755-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 03/31] clk: mediatek: gate: Internalize clk implementation
+Date:   Tue, 25 Jan 2022 00:09:33 +0800
+Message-ID: <20220124160933.17955-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-3-wenst@chromium.org>
-References: <20220122091731.283592-3-wenst@chromium.org>
+In-Reply-To: <20220122091731.283592-4-wenst@chromium.org>
+References: <20220122091731.283592-4-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -47,17 +43,11 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Right now some bits of the gate type clk code are in clk-gate.[ch], but
-> other bits are in clk-mtk.[ch]. This is different from the cpumux and
-> mux type clks, for which all of the code are found in the same files.
+> struct mtk_clk_gate and mtk_clk_register_gate() are not used outside of
+> the gate clk library. Only the API that handles a list of clks is used
+> by the individual platform clk drivers.
 > 
-> Move the functions that register multiple clks from a given list,
-> mtk_clk_register_gates_with_dev() and mtk_clk_register_gates(), to
-> clk-gate.[ch] to consolidate all the code for the gate type clks.
-> 
-> This commit only moves code with minor whitespace fixups to correct
-> the code style. Further improvements, such as internalizing various
-> functions and structures will be done in later commits.
+> Internalize the parts that aren't used outside of the implementation.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 >
