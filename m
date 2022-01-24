@@ -2,75 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20E5C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 20:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705A0C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 03:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442141AbiAXUxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 15:53:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        id S237856AbiAYDZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 22:25:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358210AbiAXUn6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 15:43:58 -0500
+        with ESMTP id S1355504AbiAXUWc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 15:22:32 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E270EC04188A;
-        Mon, 24 Jan 2022 11:53:43 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B4DC0417D0;
+        Mon, 24 Jan 2022 11:40:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AA40CB810BD;
-        Mon, 24 Jan 2022 19:53:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C97C340E5;
-        Mon, 24 Jan 2022 19:53:41 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9C95EB81239;
+        Mon, 24 Jan 2022 19:40:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44297C340E5;
+        Mon, 24 Jan 2022 19:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643054021;
-        bh=yLbz/AC2wjap7OdNsxdmDXBEPOrm5DJ62HNkpKHDaRE=;
+        s=k20201202; t=1643053216;
+        bh=5d1KiOyv52f+/wbMD2uRsiNtmxj6WuPrFFJ1Ny+tHaI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YqP+5Pu8CLPGLQYonv8c5mI2Wp6Turrr2DjU4sM5owJF/mETT2Y3RvkrrfSMAhUK3
-         QcCdA7tDxRBj6ZBuxFD315wp5Hsv+1lPeSvDH2xoHVGtOXwFhpFEyjMZbLWr3TX+gZ
-         AaJ+6bctkogAfKT2Q4HXAnzAdbeRHEA9uZ+hnt163ovtT2IwYFCruVHwMq59L4WYst
-         vEos8xNT4eX7/HE8IHVMQFU7TKiZyHTWc82s4kIRkIeyTiSe49MaLVqLwM7BOm69Nb
-         5MmcjYS6JFe3icdc9Lvanvyju1XBpw15/OZX/HNxXMCphCIVSb6yuT2RkhoFUE9/0P
-         u3vWaw7IKw94A==
+        b=tv1dOZ6nWTTYKVQE3WBOun88z3a7NKEHWdsILR7FQSWt/fS9wEKsPaZDmi/9/dp3E
+         emcPhSKCjrZ3WoAYJ+Kgu5Zw7/Rh0P0HzmDta0HNlJDbGxTQ4ZoGc3Ne+yJSxXrh4K
+         wNVWWnTCnYhoLqAP9Afw3lB3wduPyr5R64qurcdMgUMeHQzUeBTYoFNNrbZembJFFC
+         wtsD++vu/0rX/RDvkTJi8T+PC3p0KB9otRV+WG+y4xgoQqRc+HkTv2qp4eSQcykmhb
+         MdWJgMPtcyfNoIOpKiBBTVWD7qUkAa7kZHlqjrLD/bG+MF715pu+kTnTVV9nl/kB1W
+         SVoX62lyjRf4Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220124165316.55449-1-zhou1615@umn.edu>
-References: <20220124165316.55449-1-zhou1615@umn.edu>
-Subject: Re: [PATCH] clk: socfpga: Fix a memory leak bug in socfpga_gate_init()
+In-Reply-To: <20220124174805.31021-1-tdas@codeaurora.org>
+References: <20220124174805.31021-1-tdas@codeaurora.org>
+Subject: Re: [PATCH v1] clk qcom: clk-alpha-pll: Update to use determine rate ops for PLL
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kjlu@umn.edu, Dinh Nguyen <dinguyen@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     zhou1615@umn.edu
-Date:   Mon, 24 Jan 2022 11:53:39 -0800
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Mon, 24 Jan 2022 11:40:14 -0800
 User-Agent: alot/0.10
-Message-Id: <20220124195341.50C97C340E5@smtp.kernel.org>
+Message-Id: <20220124194016.44297C340E5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhou Qingyang (2022-01-24 08:53:16)
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gat=
-e.c
-> index 53d6e3ec4309..0ca5e0000925 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -188,8 +188,10 @@ void __init socfpga_gate_init(struct device_node *no=
-de)
->                 return;
-> =20
->         ops =3D kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
-> -       if (WARN_ON(!ops))
-> +       if (WARN_ON(!ops)) {
+Quoting Taniya Das (2022-01-24 09:48:05)
+> On 32 bit devices, where the PLL requires to support the frequency
+> beyond the range of the `long int` the round rate ops cannot support.
+> Thus update the clk_ops to use determine rate instead.
+>=20
+> While at it also fix the code in RCG.
 
-A WARN_ON() after an allocation failure will lead to double stacktraces.
-Can you remove the WARN_ON()?
-
-Furthermore, it looks like 'ops' is never freed on failure in this
-function. Did the SA tool figure that out? There are more problems with
-this function and error paths. Seems like nobody cares.
-
-> +               kfree(socfpga_clk);
->                 return;
-> +       }
->
+Please split this into two patches, and tag with Fixes
