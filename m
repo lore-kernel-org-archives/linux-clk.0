@@ -2,56 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33E1C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 05:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6487DC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 09:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236092AbiAXFUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 00:20:44 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:52406 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229505AbiAXFUo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 00:20:44 -0500
-X-UUID: c5fbe735f43a44eaa7e4570e7da97fac-20220124
-X-UUID: c5fbe735f43a44eaa7e4570e7da97fac-20220124
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 2101492939; Mon, 24 Jan 2022 13:20:40 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Mon, 24 Jan 2022 13:20:38 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 24 Jan 2022 13:20:38 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <sboyd@kernel.org>
-CC:     <chun-jie.chen@mediatek.com>, <ikjn@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <mturquette@baylibre.com>, <weiyi.lu@mediatek.com>
-Subject: Re: [PATCH] clk: mediatek: add unregister logic to mtk_clk_simple_probe error path
-Date:   Mon, 24 Jan 2022 13:20:38 +0800
-Message-ID: <20220124052038.6242-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220117090030.13064-1-miles.chen@mediatek.com>
-References: <20220117090030.13064-1-miles.chen@mediatek.com>
+        id S231217AbiAXJQq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 04:16:46 -0500
+Received: from mail.portyid.pl ([192.36.61.58]:54848 "EHLO mail.portyid.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229759AbiAXJQp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Jan 2022 04:16:45 -0500
+Received: by mail.portyid.pl (Postfix, from userid 1001)
+        id 9A32741466; Mon, 24 Jan 2022 10:16:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=portyid.pl; s=mail;
+        t=1643015804; bh=+PMi7irkA4XlRgpdW2HqpqcJeZNxKGysf407T0katTE=;
+        h=Date:From:To:Subject:From;
+        b=y8JIst+A4TeZjpxNNcuFC/okE+8O33hlhv9h2QgRVprLtKq3JB4zdkymcjMe5299g
+         fQGcenHZodua4IueQv3prTX+eIEEvHNDdlnWitzu2O8EwhwynWNb4TV+8GO4B/1rDm
+         TEAP4onxCC0lgSEJFG7P64IpxzfTGXIHh5bOS2srjOU5BGVLBWtt6SVNUpv6ZYrVKg
+         +EHEfsMpsSFUYSgzBeo2UVLrJYZrWjupw6R42LR+8Nh0ppDBc+YNx74v29g58K0IAm
+         XxLaAas6w+LAOmysw8L5sOwzl3TpsTsOnTG8+FPFpZvSNoLmulWoTjATmlJSHVIeBm
+         RqKfBXNk7Actw==
+Received: by mail.portyid.pl for <linux-clk@vger.kernel.org>; Mon, 24 Jan 2022 09:16:23 GMT
+Message-ID: <20220124084500-0.1.1b.5fz1.0.3fwgck7lvm@portyid.pl>
+Date:   Mon, 24 Jan 2022 09:16:23 GMT
+From:   =?UTF-8?Q? "Pawe=C5=82_Jasi=C5=84ski" ?= 
+        <pawel.jasinski@portyid.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Fotowoltaika - nowe warunki
+X-Mailer: mail.portyid.pl
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Dzie=C5=84 dobry,
 
-> Stephen pointed out that there is no unregister logic in
-> mtk_clk_simple_probe() error path [1].
-> Fix it by adding unregister logic to mtk_clk_simple_probe().
+jeszcze w pierwszej po=C5=82owie 2022 roku wzrosn=C4=85 ceny za wykup ene=
+rgii dla posiadaczy fotowoltaiki.=20
 
-Chen-Yu's work [1] already addresses this problem. So please ignore
-this patch.
+Aby unikn=C4=85=C4=87 umowy na nowych zasadach trzeba zdecydowa=C4=87 si=C4=
+=99 na instalacj=C4=99 paneli PV do ko=C5=84ca marca.=20
 
-[1] https://lore.kernel.org/lkml/20220122091731.283592-1-wenst@chromium.org/
+Jako firma specjalizuj=C4=85ca si=C4=99 w monta=C5=BCu i serwisie fotowol=
+taiki ch=C4=99tnie podejmiemy si=C4=99 realizacji ca=C5=82ego projektu. S=
+=C4=85 Pa=C5=84stwo zainteresowani?
 
+
+Pozdrawiam
+Pawe=C5=82 Jasi=C5=84ski
