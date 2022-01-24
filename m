@@ -2,94 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA607C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 19:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20E5C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 20:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231414AbiAXTwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 14:52:47 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:36996 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356415AbiAXTqM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 14:46:12 -0500
+        id S1442141AbiAXUxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 15:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358210AbiAXUn6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 15:43:58 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E270EC04188A;
+        Mon, 24 Jan 2022 11:53:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1E598B8121C;
-        Mon, 24 Jan 2022 19:46:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB7EC340E7;
-        Mon, 24 Jan 2022 19:46:07 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AA40CB810BD;
+        Mon, 24 Jan 2022 19:53:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C97C340E5;
+        Mon, 24 Jan 2022 19:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643053567;
-        bh=gJlHbxnMW0wTSxm4hKs/P78n5KAVQuBy0pzkZMpkAGQ=;
+        s=k20201202; t=1643054021;
+        bh=yLbz/AC2wjap7OdNsxdmDXBEPOrm5DJ62HNkpKHDaRE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pBLf/juVpsFO6ypTkWqRMy7awwXjZ8Rw3n3NDnpqdQKeMJ2cgvfQLL0GpUqvtulR+
-         bmo/qL875hJXqkr81U3qQrQyZ5F5D8Jyzdc5HuVrYZyuTlaU1tRRH075D6tlF9Z7yu
-         vsY/HEQSCUklTYdk89aYoyEc7/7AcqfhvgEJk6fBGMHQMkIkc3yUqVOreEUWcwq0+j
-         QJjAbkykYxXP2DL9/i1fPlNuezzba0ip2ANz3M3yC8Bc/07GKj4wGg9z5l+Fo9JiLZ
-         6rAjcIZjA9t0P2KKfQ5Ni3rLGfv9fm3mDEPQGkLcOzqJR2FtIeiFs+i2iVeep0n3+7
-         WBkVgCU05PHgw==
+        b=YqP+5Pu8CLPGLQYonv8c5mI2Wp6Turrr2DjU4sM5owJF/mETT2Y3RvkrrfSMAhUK3
+         QcCdA7tDxRBj6ZBuxFD315wp5Hsv+1lPeSvDH2xoHVGtOXwFhpFEyjMZbLWr3TX+gZ
+         AaJ+6bctkogAfKT2Q4HXAnzAdbeRHEA9uZ+hnt163ovtT2IwYFCruVHwMq59L4WYst
+         vEos8xNT4eX7/HE8IHVMQFU7TKiZyHTWc82s4kIRkIeyTiSe49MaLVqLwM7BOm69Nb
+         5MmcjYS6JFe3icdc9Lvanvyju1XBpw15/OZX/HNxXMCphCIVSb6yuT2RkhoFUE9/0P
+         u3vWaw7IKw94A==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220124162442.29497-3-tdas@codeaurora.org>
-References: <20220124162442.29497-1-tdas@codeaurora.org> <20220124162442.29497-3-tdas@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] clk: qcom: lpass: Add support for LPASS clock controller for SC7280
+In-Reply-To: <20220124165316.55449-1-zhou1615@umn.edu>
+References: <20220124165316.55449-1-zhou1615@umn.edu>
+Subject: Re: [PATCH] clk: socfpga: Fix a memory leak bug in socfpga_gate_init()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 24 Jan 2022 11:46:05 -0800
+Cc:     kjlu@umn.edu, Dinh Nguyen <dinguyen@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     zhou1615@umn.edu
+Date:   Mon, 24 Jan 2022 11:53:39 -0800
 User-Agent: alot/0.10
-Message-Id: <20220124194607.BCB7EC340E7@smtp.kernel.org>
+Message-Id: <20220124195341.50C97C340E5@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2022-01-24 08:24:42)
-> diff --git a/drivers/clk/qcom/lpasscorecc-sc7280.c b/drivers/clk/qcom/lpa=
-sscorecc-sc7280.c
-> new file mode 100644
-> index 000000000000..3ac62ea5767e
-> --- /dev/null
-> +++ b/drivers/clk/qcom/lpasscorecc-sc7280.c
-> @@ -0,0 +1,430 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of.h>
+Quoting Zhou Qingyang (2022-01-24 08:53:16)
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gat=
+e.c
+> index 53d6e3ec4309..0ca5e0000925 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -188,8 +188,10 @@ void __init socfpga_gate_init(struct device_node *no=
+de)
+>                 return;
+> =20
+>         ops =3D kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
+> -       if (WARN_ON(!ops))
+> +       if (WARN_ON(!ops)) {
 
-Is the of.h include used?
+A WARN_ON() after an allocation failure will lead to double stacktraces.
+Can you remove the WARN_ON()?
 
-> +#include <linux/pm_clock.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,lpasscorecc-sc7280.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "common.h"
-> +#include "gdsc.h"
-> +
-[...]
-> +
-> +static struct regmap_config lpass_core_cc_sc7280_regmap_config =3D {
-> +       .reg_bits =3D 32,
-> +       .reg_stride =3D 4,
-> +       .val_bits =3D 32,
-> +       .fast_io =3D true,
+Furthermore, it looks like 'ops' is never freed on failure in this
+function. Did the SA tool figure that out? There are more problems with
+this function and error paths. Seems like nobody cares.
 
-What's the max_register? Please set it so that debugfs works.
+> +               kfree(socfpga_clk);
+>                 return;
+> +       }
+>
