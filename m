@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D748C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 14:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB45C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jan 2022 14:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240082AbiAXOay (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 09:30:54 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:48074 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239078AbiAXO37 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 09:29:59 -0500
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220124142957epoutp04205a7caa33952f705270d946715bd66f~NO0L5WQ5S2185021850epoutp04W
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jan 2022 14:29:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220124142957epoutp04205a7caa33952f705270d946715bd66f~NO0L5WQ5S2185021850epoutp04W
+        id S231690AbiAXObE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 09:31:04 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:42888 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238902AbiAXOae (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 09:30:34 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220124143009epoutp02b11da9102f878931cca7874e27a3478e~NO0W0OJ2H0050500505epoutp02T
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jan 2022 14:30:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220124143009epoutp02b11da9102f878931cca7874e27a3478e~NO0W0OJ2H0050500505epoutp02T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1643034597;
-        bh=YgW3z7lJwg3J4ZCyoIc9l5itBRt/WiMPVpw0oj8secs=;
+        s=mail20170921; t=1643034609;
+        bh=20DD9ZfqdzeIRvLdgr8SyGYaXTaluXzTMYIGxQu91xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uoYeOLglT4LQLNVfn7yofo6KlWqwZTMSNUi3bwv9c7Po0HAU2jF3AqQPVKZ45YJx8
-         iSBz5kuUg9oMbUcLR2n/KJHpAIi/RMqSuh9d+E06cKNCta75EMWskH8CCDeG1TEv08
-         ZgwMFb3y3I1oBsdKzHIsB27li2YVz1/PWfbusEYY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20220124142956epcas5p13f8f378e6195f7b833834ac16fbe0d94~NO0Kmysh_3199131991epcas5p1d;
-        Mon, 24 Jan 2022 14:29:56 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4JjC734gFWz4x9Pv; Mon, 24 Jan
-        2022 14:29:51 +0000 (GMT)
+        b=cZhxuCjnNYa6gOhdz+dKCKRatBrxxO2dzd0pSeIG6gAggVbrHJwM3XoFrrX1sdYkA
+         90iKUqB/30U3lQfJ2qWmFu1YBSRoByzOsKfyojN7Zz8oWoKsxqgT3YG/R/o+JfOLRv
+         Mv7olzN+Orf3nGsO9g8wtBEdOYTHc0cLxj/ax2R0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220124143008epcas5p2bb837ff8cf602145bc5c095dda672815~NO0V9kiRs2966029660epcas5p2L;
+        Mon, 24 Jan 2022 14:30:08 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.176]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4JjC7K4qdqz4x9Pp; Mon, 24 Jan
+        2022 14:30:05 +0000 (GMT)
 Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C9.34.05590.FD7BEE16; Mon, 24 Jan 2022 23:29:51 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220124142951epcas5p255712c3a9e37b9542687587d8114bda3~NO0FgkVJt0974809748epcas5p2R;
-        Mon, 24 Jan 2022 14:29:51 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220124142951epsmtrp2cdf004ff545797c11fa797684604776d~NO0Ffs9YI1656816568epsmtrp2Q;
-        Mon, 24 Jan 2022 14:29:51 +0000 (GMT)
-X-AuditID: b6c32a4b-723ff700000015d6-d9-61eeb7df3ed8
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A3.AE.06423.DE7BEE16; Mon, 24 Jan 2022 23:30:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220124143005epcas5p103598aa358ac35fe5e1ee762faf508b0~NO0SsNLtz2099820998epcas5p10;
+        Mon, 24 Jan 2022 14:30:05 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220124143005epsmtrp1037a66a6b091dfba90a2804bc822bad1~NO0SrVxqR2824028240epsmtrp1A;
+        Mon, 24 Jan 2022 14:30:05 +0000 (GMT)
+X-AuditID: b6c32a49-b01ff70000001917-d6-61eeb7ed8a7d
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3C.EA.29871.ED7BEE16; Mon, 24 Jan 2022 23:29:50 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        87.BB.08738.DE7BEE16; Mon, 24 Jan 2022 23:30:05 +0900 (KST)
 Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
         [107.108.73.139]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220124142947epsmtip10fef31641485ff0029b48b28d32a719c~NO0CTiTtM2189021890epsmtip1E;
-        Mon, 24 Jan 2022 14:29:47 +0000 (GMT)
+        20220124143002epsmtip143653e4940264b251bcd9b8d509793be~NO0QdrvR92189021890epsmtip1H;
+        Mon, 24 Jan 2022 14:30:02 +0000 (GMT)
 From:   Alim Akhtar <alim.akhtar@samsung.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
@@ -57,101 +57,79 @@ Cc:     soc@kernel.org, linux-clk@vger.kernel.org,
         s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org,
         pankaj.dubey@samsung.com, sboyd@kernel.org,
         Alim Akhtar <alim.akhtar@samsung.com>, linux-fsd@tesla.com
-Subject: [PATCH v5 13/16] dt-bindings: arm: add Tesla FSD ARM SoC
-Date:   Mon, 24 Jan 2022 19:46:41 +0530
-Message-Id: <20220124141644.71052-14-alim.akhtar@samsung.com>
+Subject: [PATCH v5 16/16] arm64: defconfig: Enable Tesla FSD SoC
+Date:   Mon, 24 Jan 2022 19:46:44 +0530
+Message-Id: <20220124141644.71052-17-alim.akhtar@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220124141644.71052-1-alim.akhtar@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmhu797e8SDRbMU7B4MG8bm8XfScfY
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmhu7b7e8SDc7tVLR4MG8bm8XfScfY
         Ld4v62G0mH/kHKvFxrc/mCym/FnOZLHp8TVWi48991gtHr4Kt7i8aw6bxYzz+5gsTl3/zGax
         aOsXdovWvUfYLQ6/aWe1+HdtI4vF4+t/2BwEPdbMW8Po8fvXJEaPWQ29bB6bVnWyedy5tofN
         Y/OSeo8rJ5pYPfq2rGL0+Nc0l93j8ya5AK6obJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMD
         Q11DSwtzJYW8xNxUWyUXnwBdt8wcoH+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUp
-        OQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZq640sRf0clV86zjG1sA4l6OLkZNDQsBEYt2L
-        6yxdjFwcQgK7GSV235jGDOF8YpSY+bGNEcL5xigxY9ofNpiW3Y+mgNlCAnsZJd7Py4coamGS
-        uPboJDNIgk1AW+Lu9C1MILaIgJvEjcYOJpAiZoH/TBIbe5YBdXNwCAs4ShxaUwxSwyKgKvFo
-        /10WEJtXwFZi8vsuVohl8hKrNxwAm8kJFJ+38BvYHAmBHRwSXeePMEIUuUi8u32NGcIWlnh1
-        fAs7hC0l8fndXrBdEgLZEj27jCHCNRJL5x1jgbDtJQ5cmcMCUsIsoCmxfpc+SJhZgE+i9/cT
-        JohOXomONiGIalWJ5ndXoTqlJSZ2d0Nd6SEx+eIpaMBNYJRo/DuDeQKj7CyEqQsYGVcxSqYW
-        FOempxabFhjnpZbD4yk5P3cTIziVannvYHz04IPeIUYmDsZDjBIczEoivFUp7xKFeFMSK6tS
-        i/Lji0pzUosPMZoCg2wis5Rocj4wmeeVxBuaWBqYmJmZmVgamxkqifOeSt+QKCSQnliSmp2a
-        WpBaBNPHxMEp1cC0ODxHWNlL+mLug4vcIVqPz+46u/ybsvTMiwUSIkV+ltPDApesq3rInX5+
-        88Utqm9T/h982PDx5bZPLqHeX1urWW57bO483HZj21Trn2ZBwb9mcq/9UJU5p+xSjItg77dS
-        g8WPfvbHM1U+2HVJ/pXqqnTHvOf/C77qBM9Mj3a6mtZ99TlH0or2Bb9V/d/Irzgf/Jbp0jdf
-        qbtv2Qp8Fj7qlzGX1buxfW8b99xzfAwrLpUztp7h2XGm8PoEJcZ/Rue8D0+cy6Fw74x7Iutu
-        5d7NJXPc/xw7LDJ/7t70P29b814n7ll/xF+ixHD5o7IV0fMPT+CUWe/28mzaBf9N+uwXa67p
-        vA2eInOoxDxr4x3uciWW4oxEQy3mouJEAB98laMuBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnO697e8SDR6stbR4MG8bm8XfScfY
+        OQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZZ/4uZi3Yz1oxbf155gbGJyxdjJwcEgImEiv2
+        TAeyuTiEBHYzSmxrmMgG4XxilJj04DIThPOZUeLUhPXMMC2zJ85ghUjsYpT4/2sjM4TTwiTx
+        8vk/NpAqNgFtibvTtzCB2CICbhI3GjvARjEL/GeS2NizDKxIWMBB4kVLP1A3BweLgKrE8+vJ
+        IGFeAVuJTyfWskJsk5dYveEA2GZOoPi8hd/A5kgI7OGQuNBxhwWkV0LARWL2zRCIemGJV8e3
+        sEPYUhIv+9vYIUqyJXp2GUOEaySWzjsG9b+9xIErc8CmMAtoSqzfpQ8SZhbgk+j9/YQJopNX
+        oqNNCKJaVaL53VWoTmmJid3dUEd6SLy42g0NxQmMEnundTFOYJSdhTB1ASPjKkbJ1ILi3PTU
+        YtMCw7zUcng8JefnbmIEp1Itzx2Mdx980DvEyMTBeIhRgoNZSYS3KuVdohBvSmJlVWpRfnxR
+        aU5q8SFGU2CATWSWEk3OBybzvJJ4QxNLAxMzMzMTS2MzQyVx3tPpGxKFBNITS1KzU1MLUotg
+        +pg4OKUamNbuj1CzTLb2257mpVWo0vN6Sr314WvnrlsI5kZq131Ojf7s+0TlV+Pi1T81z5fu
+        evmXxX1lZ0DruYLTV798zHjmWsKTP5PhtolKxzVFPa5f3WeTL/5wefPhs8CiV0n16Y11rA+e
+        rVp/tsJdwPW4i8gc/v/Smw7uWvpn2j1//8dL2eV9bnFuCamW+H1jsbTwa/G9ufP273KJP/DF
+        9c98jWYdMfX289eDlL/36D3/UyU4S+3LP45jKj/faoYdrjjlcJHpi1GCG3uX+OmNYe8spzY+
+        vbqsIfaZ+VWRnQE5KRcS07fJ/N5wgv2ufNOEv8/6K0v8Nng28G8Titmq+CUgyILl77UfM5tL
+        xC5O6nyQ0qbEUpyRaKjFXFScCADzD9EoLgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPLMWRmVeSWpSXmKPExsWy7bCSnO7b7e8SDaZdYbV4MG8bm8XfScfY
         Ld4v62G0mH/kHKvFxrc/mCym/FnOZLHp8TVWi48991gtHr4Kt7i8aw6bxYzz+5gsTl3/zGax
         aOsXdovWvUfYLQ6/aWe1+HdtI4vF4+t/2BwEPdbMW8Po8fvXJEaPWQ29bB6bVnWyedy5tofN
-        Y/OSeo8rJ5pYPfq2rGL0+Nc0l93j8ya5AK4oLpuU1JzMstQifbsEroxVV5rYC3q5Kr51HGNr
-        YJzL0cXIySEhYCKx+9EUti5GLg4hgd2MEg9uNbBAJKQlrm+cwA5hC0us/PecHaKoiUniatsV
-        VpAEm4C2xN3pW5hAbBEBD4m2f/eYQYqYBSYyS2zcexZoEgeHsICjxKE1xSA1LAKqEo/23wVb
-        wCtgKzH5fRcrxAJ5idUbDjCD2JxA8XkLvzGBtAoJ2Eic+60ygZFvASPDKkbJ1ILi3PTcYsMC
-        w7zUcr3ixNzi0rx0veT83E2M4DjQ0tzBuH3VB71DjEwcjIcYJTiYlUR4q1LeJQrxpiRWVqUW
-        5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAJOWaKfLbov1ZMyvXzle+
-        3foC6/c3vXPw+b+koTGpSl7w9pHohRMat5RcUntx49VJ7S7e3PwZvH6a1iEWfOotgdLqbS8i
-        vSSPiah/dYm8/zdcgG9Cnvs8kx88s06fidsdkqoRUVEUWBNZvvnCNIlZTBVXTqzafeHigayj
-        WQZptlG/9z8Tb98us+6NeruTNjt7cQvXiehVL9LuNQQaVM+SjLPd5mI6j3FbPcu5R7Uhglk3
-        17BxVB/mm3M/9STPt3K3hVo/30WkHfY/kGuvbuu28f2MXW6+idpqT1as8XC+lRynzn/yx8Kr
-        WnfWzlp1ZV/Yp/s9Yf47BK9b3QkzfrPiZPzXSxsDT2iLLIuSnGynxFKckWioxVxUnAgAWNXU
-        MPICAAA=
-X-CMS-MailID: 20220124142951epcas5p255712c3a9e37b9542687587d8114bda3
+        Y/OSeo8rJ5pYPfq2rGL0+Nc0l93j8ya5AK4oLpuU1JzMstQifbsErowzfxezFuxnrZi2/jxz
+        A+MTli5GTg4JAROJ2RNnsHYxcnEICexglPj24gEbREJa4vrGCewQtrDEyn/P2SGKmpgkTvY8
+        ZAVJsAloS9ydvoUJxBYR8JBo+3ePGaSIWWAis8TGvWfBVggLOEi8aOkHSnBwsAioSjy/ngwS
+        5hWwlfh0Yi0rxAJ5idUbDjCD2JxA8XkLvzGBlAsJ2Eic+60ygZFvASPDKkbJ1ILi3PTcYsMC
+        o7zUcr3ixNzi0rx0veT83E2M4DjQ0trBuGfVB71DjEwcjIcYJTiYlUR4q1LeJQrxpiRWVqUW
+        5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TBKdXAJPbs2cP3es0LuTcu5mRs
+        VC6SiGx7vrHMq67ulS7j0X3fy9hvKixttp0S0TmFa/OaM5P7biU80dHiFou85h/ozLvrS+vr
+        hMlqNi+5C4MnfzT/l7rZbfpDzuPzjuqnJc19ujiDe4PPyd8+V7StTy7ZriF2dF/qypnB1368
+        k1e7NfnXLb3jsl8Xz7luFv0zN8tw7drzYsq1ASLnA3bL2qh+D/2Y+fzmGn7FUB1jjVIhjsnX
+        BV+KKD3oaU6wSC0Rz2DZbFf/XHJtnYzUlCffH/ZZ/xJ7e6ntjWXwu6SDmQmr7hSd67nNeGdR
+        2kJ7vd6yiaLdG+6+erigc+mOw4dviMye+MI0f1XgyjtZ5YujGTrttymxFGckGmoxFxUnAgB7
+        h8ho8gIAAA==
+X-CMS-MailID: 20220124143005epcas5p103598aa358ac35fe5e1ee762faf508b0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220124142951epcas5p255712c3a9e37b9542687587d8114bda3
+X-CMS-RootMailID: 20220124143005epcas5p103598aa358ac35fe5e1ee762faf508b0
 References: <20220124141644.71052-1-alim.akhtar@samsung.com>
-        <CGME20220124142951epcas5p255712c3a9e37b9542687587d8114bda3@epcas5p2.samsung.com>
+        <CGME20220124143005epcas5p103598aa358ac35fe5e1ee762faf508b0@epcas5p1.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for the Tesla FSD ARM SoC.
+This patch enables the Tesla FSD SoC in arm64 defconfig.
 
 Cc: linux-fsd@tesla.com
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- .../devicetree/bindings/arm/tesla.yaml        | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/tesla.yaml
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/tesla.yaml b/Documentation/devicetree/bindings/arm/tesla.yaml
-new file mode 100644
-index 000000000000..09856da657dc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tesla.yaml
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/tesla.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tesla Full Self Driving(FSD) platforms device tree bindings
-+
-+maintainers:
-+  - Alim Akhtar <alim.akhtar@samsung.com>
-+  - linux-fsd@tesla.com
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+
-+      - description: FSD SoC board
-+        items:
-+          - enum:
-+              - tesla,fsd-evb   # Tesla FSD Evaluation
-+          - const: tesla,fsd
-+
-+additionalProperties: true
-+
-+...
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 30516dc0b70e..415fb3aca4b3 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -54,6 +54,7 @@ CONFIG_ARCH_SEATTLE=y
+ CONFIG_ARCH_INTEL_SOCFPGA=y
+ CONFIG_ARCH_SYNQUACER=y
+ CONFIG_ARCH_TEGRA=y
++CONFIG_ARCH_TESLA_FSD=y
+ CONFIG_ARCH_SPRD=y
+ CONFIG_ARCH_THUNDER=y
+ CONFIG_ARCH_THUNDER2=y
 -- 
 2.25.1
 
