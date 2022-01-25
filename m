@@ -2,87 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C880C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDD9C43219
 	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 03:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1323400AbiAYD2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 22:28:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
+        id S1323404AbiAYD2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 22:28:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3416476AbiAYCDw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 21:03:52 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D32C09B048
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jan 2022 17:16:44 -0800 (PST)
+        with ESMTP id S3419045AbiAYCP7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 21:15:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FFBC0619CF
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jan 2022 16:54:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D998961212
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jan 2022 01:16:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C7F1C340E4;
-        Tue, 25 Jan 2022 01:16:42 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 747D2B810A8
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jan 2022 00:54:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC361C340E4;
+        Tue, 25 Jan 2022 00:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643073402;
-        bh=ko+yNlpEZakOjE9e9H7Tws2prldYC7Nn2VWMGiNYTdk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=swrFoe1utzTpBq4k1cPNyuE9zM6SmaoyyjRvOJH91LHz3Zv/zBKhS8e0aG6Q29y5Y
-         +ACMOAwjhzTsRy7vPwb+HJOI9XrwvkwFyXE1Y48/tvQZ1hGEYnImBXaskErKHU/an9
-         zaqv9sIRSOoeXRfz461kB6Nu+NwfWDX/7vedfUE/kWIsGEakt9/o7jWE/V5SPJnDJX
-         9tyqLcW3qdoezaNKdbGLf3duWDf/YRIXY4GII1VqBwAhEMT98QJtyVNbhnL9MOv246
-         CP6Zjoz6ArHK/QM1hEWSAnOLcaqMZZMTK9xuGQuBYu9rMO1V8OoL2McSDHOeYa1ucw
-         UhAr65Uhg1mOw==
+        s=k20201202; t=1643072077;
+        bh=+C+h5euVFwJEnfRdppa3tzVMb1Z2AHmtHRCN2LwWY3o=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=I/cb/YrcLbwwNRfUsoY4tfbTrPUw3FmnbO09+hTVdD6fk9NO0HzUcxt8/IDsolqGk
+         C3QlAeYoVEvQ4rVCH9L26YXLJPFStarc3BxGWaI7DmzhUI/hNWHl73J2p+RIJ1va5y
+         vgDjAJG8bPBeYueTnTVS3EprqL95GoPYQLaZPuth08NtbvjyLB6HwNAS0HKx4aOxjB
+         QZcgN3TpmrCxXj7nc3SWYpmtZ1dFnbbxhk3GcWAAmbgJgVC8d/OjmLKXxXh4Lc0bba
+         I/EhW2ULwzj1r1FYdmRF558VTjrBAxsulTbAaFI0XOpEbs3+dHHy4nMtEwWjoTrNw7
+         wrdexT5ppHzAw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220118202958.1840431-1-marex@denx.de>
-References: <20220118202958.1840431-1-marex@denx.de>
-Subject: Re: [PATCH 1/5] clk: stm32mp1: Split ETHCK_K into separate MUX and GATE clock
+In-Reply-To: <20220115183059.GA10809@elementary>
+References: <20220115183059.GA10809@elementary>
+Subject: Re: [PATCH v2] clk: mediatek: Fix memory leaks on probe
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     jneuhauser@dh-electronics.com, Marek Vasut <marex@denx.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-To:     Marek Vasut <marex@denx.de>, linux-arm-kernel@lists.infradead.org
-Date:   Mon, 24 Jan 2022 17:16:40 -0800
+To:     =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Mon, 24 Jan 2022 16:54:35 -0800
 User-Agent: alot/0.10
-Message-Id: <20220125011642.3C7F1C340E4@smtp.kernel.org>
+Message-Id: <20220125005436.EC361C340E4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2022-01-18 12:29:54)
-> The ETHCK_K are modeled as composite clock of MUX and GATE, however per
-> STM32MP1 Reference Manual RM0436 Rev 3, Page 574, Figure 83. Peripheral
-> clock distribution for Ethernet, ETHPTPDIV divider is attached past the
-> ETHCK_K mux, and ETH_CLK/eth_clk_fb clock are output past ETHCKEN gate.
-> Therefore, in case ETH_CLK/eth_clk_fb are not in use AND PTP clock are
-> in use, ETHCKEN gate can be turned off. Current driver does not permit
-> that, fix it.
->=20
-> This patch converts ETHCK_K from composite clock into a ETHCKEN gate,
-> ETHPTP_K from composite clock into ETHPTPDIV divider, and adds another
-> NO_ID clock "ck_ker_eth" which models the ETHSRC mux and is parent clock
-> to both ETHCK_K and ETHPTP_K. Therefore, all references to ETHCK_K and
-> ETHPTP_K remain functional as before.
->=20
-> [1] STM32MP1 Reference Manual RM0436 Rev 3, Page 574,
->     Figure 83. Peripheral clock distribution for Ethernet
->     https://www.st.com/resource/en/reference_manual/dm00327659-stm32mp157=
--advanced-armbased-32bit-mpus-stmicroelectronics.pdf
->=20
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
-> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> To: linux-arm-kernel@lists.infradead.org
-> ---
+Quoting Jos=C3=A9 Exp=C3=B3sito (2022-01-15 10:30:59)
+> ----- Forwarded message from Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gma=
+il.com> -----
 
 Applied to clk-next
