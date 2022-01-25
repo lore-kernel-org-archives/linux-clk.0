@@ -2,64 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B73C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 03:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99BCC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 03:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356211AbiAYD0I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jan 2022 22:26:08 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:33202 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3409514AbiAYA0h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 19:26:37 -0500
+        id S1356774AbiAYD0b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jan 2022 22:26:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S3415412AbiAYBqM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jan 2022 20:46:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AEA5C06E00F;
+        Mon, 24 Jan 2022 17:05:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 68338B81229;
-        Tue, 25 Jan 2022 00:26:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C42C340E4;
-        Tue, 25 Jan 2022 00:26:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 38EF9B81603;
+        Tue, 25 Jan 2022 01:05:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5B04C340E4;
+        Tue, 25 Jan 2022 01:05:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643070393;
-        bh=aoKzkc7anyXT7Y6fKPYFjdWVeGFeRLKDqWmnSy5nbHU=;
+        s=k20201202; t=1643072738;
+        bh=C4zBnJsZ2BHLB/IT2MtkBDaS9vKy5lnt6zqu9oZCg5w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aXAQ4slrDeQlo0cHfxwvpUdn5I/krO3FaZtb3J1TNMPJGwcyL50e1GXx2/f7PJqKr
-         U66wRnMe9UG/SsytAz6RzrM9giaMBWF6eJkbsxx8+ZEF/XOeSCWCDCU8N07bG7RtsQ
-         1hQ7t1B6CRGq8VY9H4WLEzRSWb6i83dXQ4Paurd6FKSvawJUqQjcGk0gd/xgcmJU+P
-         c/hXW3VpXZAYOzBJfYUd6nLK/d4BeU1bRbQmpm/ZrWq8njnyAlbsTeTOw2W1JIx9RU
-         R/RyQOhshJ4KRf1zI42S/PKG6FTbQVw2MD6lMlLL06/oLOpxageV7w6DSxbkF0nh4+
-         k936vaTwGOiaA==
+        b=D1Mcqa6whk00jKaF4NhYbHl8B6iOCcajCt8d70fLrBNeBDOzt0Aj80tTqnrF+cATi
+         DyiVZZp9YkybjBeFeJzaHeFGzlYB2KarenVKdjIOJiaq5BRY1WjSyPYeQO6KsvIsRy
+         JFiOBrpv6J/2M7iH9ijM+1R5Faobo+Xb1HX2yzgX6oLY7MiitYFQhZHjWJhgTinQ5B
+         KWZho5ddeaTJDOPW8Zr5DtlsrfQj0XdIQiTrXSsZFF5ey8DwSRSIZafVy0v4SVX4QH
+         XqFHbSoqsNtSBqEUfrwasAauTmFYu8MYq2M/GPduujD7mO61dvz0Q3JFmOGsHt4Q/s
+         wR9vmep6Ao3NQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20211216140022.16146-2-conor.dooley@microchip.com>
-References: <20211216140022.16146-1-conor.dooley@microchip.com> <20211216140022.16146-2-conor.dooley@microchip.com>
-Subject: Re: [PATCH v9 1/2] dt-bindings: clk: microchip: Add Microchip PolarFire host binding
+In-Reply-To: <20220111142051.37957-1-admin@hifiphile.com>
+References: <20220111142051.37957-1-admin@hifiphile.com>
+Subject: Re: [PATCH] clk: at91: allow setting PMC_AUDIOPINCK clock parents via DT
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     krzysztof.kozlowski@canonical.com, geert@linux-m68k.org,
-        david.abdurachmanov@gmail.com, palmer@dabbelt.com,
-        daire.mcnamara@microchip.com, cyril.jean@microchip.com,
-        conor.dooley@microchip.com, Rob Herring <robh@kernel.org>
-To:     conor.dooley@microchip.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Mon, 24 Jan 2022 16:26:31 -0800
+Cc:     Zixun LI <admin@hifiphile.com>,
+        Claudiu Beznea <Claudiu.Beznea@microchip.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zixun LI <admin@hifiphile.com>
+Date:   Mon, 24 Jan 2022 17:05:37 -0800
 User-Agent: alot/0.10
-Message-Id: <20220125002633.16C42C340E4@smtp.kernel.org>
+Message-Id: <20220125010538.D5B04C340E4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting conor.dooley@microchip.com (2021-12-16 06:00:21)
-> From: Daire McNamara <daire.mcnamara@microchip.com>
+Quoting Zixun LI (2022-01-11 06:20:50)
+> Make AUDIOPINCK accessible via phandle to select it
+> as peripheral clock parent using assigned-clock-parents in DT
+> where available.
 >=20
-> Add device tree bindings for the Microchip PolarFire system
-> clock controller
->=20
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
->=20
-> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Zixun LI <admin@hifiphile.com>
+> Reviewed-by: Claudiu Beznea <Claudiu.Beznea@microchip.com>
 > ---
 
 Applied to clk-next
