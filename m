@@ -2,149 +2,171 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F202C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 13:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955C0C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 14:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383559AbiAYNkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 08:40:25 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:16368 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387491AbiAYNiF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 08:38:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1643117885; x=1674653885;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4XsaF876U/hgEJKu54gwoJY3UnWMir4ZSlxRuPkHNO4=;
-  b=CwxtDVi3HTZ0KY7Ykt84tLDuashAVMIAfZAIgHfWE2Jv9/z873R2qp9c
-   VXanhkNTF5PD4rKGD99nsGYZtzbPQ0wrxZgUZaNOGZT8K5FEw4dNvPL5d
-   FHUmOIAgjttBPb+RB8sVrpozlAzdlfd9wzn7kgYQhXxN2wZxjl+LgAEOx
-   6IgvTmDSAtC0A6Go3zZ63dUrSOI/rkXyB4i6PRNw/oE9H0N+XxvDOBUY0
-   MAfo2oX6+tyuKrmAey10RsM84fBI0LVfRVMBaT6zFfhHjU6Wv9mj42oR1
-   lY2aq0pI2kbCLN7yJrDlyV9iMd5m0utJlWIZysd+P9mwdB0SaJ9tgsgDp
-   Q==;
-IronPort-SDR: jrYpXM4lm/0/X2wdLxFXy0yAE9ciDzvfx/iWDgev0vqLQFsAT0fbYyM4pWvmzZFrpTrS7d5H2y
- /iThcaqTiik7xdKBOExTNXv7lZFDBRjw+OvMiNT5bXzamX0J+2TKAK5SMOqzixWlQRakTCrGuG
- l2wnJ0+O5TQ72AsiyyCQPDOONC/PEPy4RlaRdDZ0/Y23e5YIrj9L9zZYRBYeLjGVFvDhFQMqwK
- QAptWyWgRSE/g5lXvNhW0aJfTDMTEzzQmFdPpyeflkhZC7USUoaW08NT8XcXURXoitIgrKL0kP
- U+PZAq27gwZ+f63z0k9Grono
-X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
-   d="scan'208";a="151360551"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jan 2022 06:38:02 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 25 Jan 2022 06:38:02 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Tue, 25 Jan 2022 06:38:00 -0700
-From:   <conor.dooley@microchip.com>
-To:     <sboyd@kernel.org>
-CC:     <conor.dooley@microchip.com>, <cyril.jean@microchip.com>,
-        <daire.mcnamara@microchip.com>, <david.abdurachmanov@gmail.com>,
-        <devicetree@vger.kernel.org>, <geert@linux-m68k.org>,
-        <krzysztof.kozlowski@canonical.com>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>, <padmarao.begari@microchip.com>,
-        <palmer@dabbelt.com>, <robh+dt@kernel.org>
-Subject: Re: [PATCH v9 2/2] clk: microchip: Add driver for Microchip PolarFire SoC
-Date:   Tue, 25 Jan 2022 13:40:11 +0000
-Message-ID: <20220125134010.2528785-1-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220125004818.83E27C340E4@smtp.kernel.org>
-References: <20220125004818.83E27C340E4@smtp.kernel.org>
+        id S1578185AbiAYOSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jan 2022 09:18:49 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:56341 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1451519AbiAYOP6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 09:15:58 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 02AA95C0151;
+        Tue, 25 Jan 2022 09:15:53 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 25 Jan 2022 09:15:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm1; bh=GThzqVct1ecqk2q3drmmDLq6ji2AfvsEb9Eaew
+        0Hd70=; b=XET9TqPDlbHkrowxZFiWAt1ARfjUpEGmhqDNhA9Dclc7ARx/ToOF+7
+        OZg3jr5hPrq9CYruqewlZMREF3+iEiQOxkdA04zgFBJetJGCvgsfISdF4oHB+rh7
+        IamXmfnyBtsOPa22pvy2RoLrCm/5yFaE7+aK7RMMlmQLF80W08MykMqUA8V9y2I7
+        feWide97BmFihS5tUfhuKwFCsHS2UmJNbpjjxtXP9L5ZnADDJHgbNAtMqqNoXNu/
+        BPd5fixw6G5gF+JSObb6I4ehma3g7qXJxLqb+PTKxaMiRPfr6nzfao/BPmFKf+DN
+        NrsOsRnW0dD2+MmxlOLg4QzrTnQB5ktw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=GThzqV
+        ct1ecqk2q3drmmDLq6ji2AfvsEb9Eaew0Hd70=; b=HK3sN0RVIvcuJsN9etslcn
+        tq6c0+13RqqUh8ppcj0FQW2GIe7CkNWyzhMLSxmfdJdG+3ToKUSTjeN0WLr78OlK
+        L7vZFIYpqUDwfaGd+5ayf1fat5aI9qnsGXg/kMSrgr8+x6n5KbpVbB06+G5DV/Y5
+        338itNvpMzg3VQMi5AgLLGdzPzPU5DQgiTPjD1e5E9myD+S+Z4/PYZ1aHoZ2Z66Y
+        qPDKH9OjpSP/Pi77gjCPHayqP+s1Pr1AhS2ajS3CQTHPELX7gnnX/wYKvu2At6zN
+        buDoX6zlcsuU84elDOCA2xaayPpVmdV9LA9dDWaljZGy/y0ct3wDOdC+XWfFkldw
+        ==
+X-ME-Sender: <xms:GAbwYQCBv9qxM0Dx5EVGsmVG5bb0coCDmOAoglO_NUNqRwGJkEg8cQ>
+    <xme:GAbwYSgJZmUh7c84Eyl3qzBKSOg5-B66jqyFzBRhF0JJ8CgI-kmlDuuNmQOmHoa2d
+    zq_gAsAwaiwgieFdsw>
+X-ME-Received: <xmr:GAbwYTku7PDIJ6CQBYxymXq_mV5cWvonh7g-AVvWai1j5LyvImdnkFUrckeVZy0CXYbUPtud_39YPhNL15VvnXil6tDfrc56AFGq--M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrvdelgdeitdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgtggfgsehtqhertdertdejnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnhepteetledtudejhffftdeugfduffelleelheejgeegffduvddvgfdvhffhlefgteff
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:GAbwYWxQhhVWDqLdgyu7IYkEoU8jzz3onDMQeVQrqjnF-CIlybY-ZA>
+    <xmx:GAbwYVQKRd7aOCgAlr1WVPSL_heUS-n2d-ejpx8G4IS9WwqIh1ezQQ>
+    <xmx:GAbwYRZ6A4mZB2LcTP63r1Ydg1uWFzukLBFZyKN_ytifX-b_4BkiuA>
+    <xmx:GAbwYWQthKPOyRx3aX4xKN8OwlS3SEQ_bERkbJWd1c3ud9Nh-iU3xw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Jan 2022 09:15:51 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v4 00/10] clk: Improve clock range handling
+Date:   Tue, 25 Jan 2022 15:15:39 +0100
+Message-Id: <20220125141549.747889-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Quoting conor.dooley@microchip.com (2021-12-16 06:00:22)
-> > diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
-> > index f34b247e870f..0dce0b12eac4 100644
-> > --- a/drivers/clk/microchip/Makefile
-> > +++ b/drivers/clk/microchip/Makefile
-
-Snipping the rest, will/have addressed them.
-
-> > +static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
-> > +                                 unsigned int num_clks, struct mpfs_clock_data *data,
-> > +                                 struct clk *clk_parent)
-> > +{
-> > +       struct clk_hw *hw;
-> > +       void __iomem *sys_base = data->base;
-> > +       unsigned int i, id;
-> > +
-> > +       for (i = 0; i < num_clks; i++) {
-> > +               struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
-> > +
-> > +               cfg_hw->cfg.parent = __clk_get_hw(clk_parent);
-> > +               cfg_hw->hw.init = CLK_HW_INIT_HW(cfg_hw->cfg.name, cfg_hw->cfg.parent,
-> > +                                                &mpfs_clk_cfg_ops, cfg_hw->cfg.flags);
-> > +               hw = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
-> > +               if (IS_ERR(hw)) {
-> > +                       dev_err(dev, "failed to register clock %s\n", cfg_hw->cfg.name);
-> > +                       goto err_clk;
-> > +               }
-> > +
-> > +               id = cfg_hws[i].cfg.id;
-> > +               data->hw_data.hws[id] = hw;
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +err_clk:
-> > +       while (i--)
-> > +               devm_clk_hw_unregister(dev, data->hw_data.hws[cfg_hws[i].cfg.id]);
-> 
-> > +       clk_parent = devm_clk_get(dev, NULL);
-> 
-> Use clk_parent_data instead please.
-> 
-> > +       if (IS_ERR(clk_parent))
-> > +               return PTR_ERR(clk_parent);
-
-
-Please correct me if I am misinterpreting:
-I had the devm_clk_get() in there to pickup the refclk from the device
-tree as a result of previous feedback. I have replaced this with the
-following, which I have found in several other drivers - does it achieve
-the same thing?
-If it does, all of the args to CLK_HW_INIT_PARENTS_DATA are now set at
-compile time & I will take CLK_HW_INIT_PARENTS_DATA back out of this
-function.
-
-static struct clk_parent_data mpfs_cfg_parent[] = {
-	{ .index = 0 },
-};
-
-static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
-				  unsigned int num_clks, struct mpfs_clock_data *data)
-{
-	void __iomem *sys_base = data->base;
-	unsigned int i, id;
-	int ret;
-
-	for (i = 0; i < num_clks; i++) {
-		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
-
-		cfg_hw->hw.init = CLK_HW_INIT_PARENTS_DATA(cfg_hw->cfg.name, mpfs_cfg_parent,
-						 &mpfs_clk_cfg_ops, cfg_hw->cfg.flags);
-
-		ret = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
-		if (ret) {
-			dev_err_probe(dev, ret, "failed to register clock %s\n",
-				      cfg_hw->cfg.name);
-			return ret;
-		}
-
-		id = cfg_hws[i].cfg.id;
-		data->hw_data.hws[id] = &cfg_hw->hw;
-	}
-
-	return 0;
-}
+Hi,=0D
+=0D
+This is a follow-up of the discussion here:=0D
+https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmour/=
+=0D
+=0D
+and here:=0D
+https://lore.kernel.org/all/20210914093515.260031-1-maxime@cerno.tech/=0D
+=0D
+While the initial proposal implemented a new API to temporarily raise and l=
+ower=0D
+clock rates based on consumer workloads, Stephen suggested an=0D
+alternative approach implemented here.=0D
+=0D
+The main issue that needed to be addressed in our case was that in a=0D
+situation where we would have multiple calls to clk_set_rate_range, we=0D
+would end up with a clock at the maximum of the minimums being set. This=0D
+would be expected, but the issue was that if one of the users was to=0D
+relax or drop its requirements, the rate would be left unchanged, even=0D
+though the ideal rate would have changed.=0D
+=0D
+So something like=0D
+=0D
+clk_set_rate(user1_clk, 1000);=0D
+clk_set_min_rate(user1_clk, 2000);=0D
+clk_set_min_rate(user2_clk, 3000);=0D
+clk_set_min_rate(user2_clk, 1000);=0D
+=0D
+Would leave the clock running at 3000Hz, while the minimum would now be=0D
+2000Hz.=0D
+=0D
+This was mostly due to the fact that the core only triggers a rate=0D
+change in clk_set_rate_range() if the current rate is outside of the=0D
+boundaries, but not if it's within the new boundaries.=0D
+=0D
+That series changes that and will trigger a rate change on every call,=0D
+with the former rate being tried again. This way, providers have a=0D
+chance to follow whatever policy they see fit for a given clock each=0D
+time the boundaries change.=0D
+=0D
+This series also implements some kunit tests, first to test a few rate=0D
+related functions in the CCF, and then extends it to make sure that=0D
+behaviour has some test coverage.=0D
+=0D
+Let me know what you think=0D
+Maxime=0D
+=0D
+Changes from v3:=0D
+  - Renamed the test file and Kconfig option=0D
+  - Add option to .kunitconfig=0D
+  - Switch to kunit_kzalloc=0D
+  - Use KUNIT_EXPECT_* instead of KUNIT_ASSERT_* where relevant=0D
+  - Test directly relevant calls instead of going through a temporary varia=
+ble=0D
+  - Switch to more precise KUNIT_ASSERT_* macros where relevant=0D
+=0D
+Changes from v2:=0D
+  - Rebased on current next=0D
+  - Rewrote the whole thing according to Stephen reviews=0D
+  - Implemented some kunit tests=0D
+=0D
+Changes from v1:=0D
+  - Return NULL in clk_request_start if clk pointer is NULL=0D
+  - Test for clk_req pointer in clk_request_done=0D
+  - Add another user in vc4=0D
+  - Rebased on top of v5.15-rc1=0D
+=0D
+Maxime Ripard (10):=0D
+  clk: Introduce Kunit Tests for the framework=0D
+  clk: Always clamp the rounded rate=0D
+  clk: Use clamp instead of open-coding our own=0D
+  clk: Always set the rate on clk_set_range_rate=0D
+  clk: Add clk_drop_range=0D
+  clk: bcm: rpi: Add variant structure=0D
+  clk: bcm: rpi: Set a default minimum rate=0D
+  clk: bcm: rpi: Run some clocks at the minimum rate allowed=0D
+  drm/vc4: Add logging and comments=0D
+  drm/vc4: hdmi: Remove clock rate initialization=0D
+=0D
+ drivers/clk/.kunitconfig          |   1 +=0D
+ drivers/clk/Kconfig               |   7 +=0D
+ drivers/clk/Makefile              |   1 +=0D
+ drivers/clk/bcm/clk-raspberrypi.c | 125 +++++-=0D
+ drivers/clk/clk-test.c            | 621 ++++++++++++++++++++++++++++++=0D
+ drivers/clk/clk.c                 |  51 ++-=0D
+ drivers/gpu/drm/vc4/vc4_hdmi.c    |  13 -=0D
+ drivers/gpu/drm/vc4/vc4_kms.c     |  11 +=0D
+ include/linux/clk.h               |  11 +=0D
+ 9 files changed, 786 insertions(+), 55 deletions(-)=0D
+ create mode 100644 drivers/clk/clk-test.c=0D
+=0D
+-- =0D
+2.34.1=0D
+=0D
