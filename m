@@ -2,27 +2,28 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874A2C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 17:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B15EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 17:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1587298AbiAYRTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 12:19:31 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:57506 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1356093AbiAYROP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 12:14:15 -0500
-X-UUID: 52745c4973ec4f9a8683bfd2748ab433-20220126
-X-UUID: 52745c4973ec4f9a8683bfd2748ab433-20220126
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        id S1381461AbiAYRZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jan 2022 12:25:30 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54282 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1588141AbiAYRXE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 12:23:04 -0500
+X-UUID: 4c06a835d9d14ecfb5cacbb2e45661db-20220126
+X-UUID: 4c06a835d9d14ecfb5cacbb2e45661db-20220126
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1341138552; Wed, 26 Jan 2022 01:14:08 +0800
+        with ESMTP id 963116520; Wed, 26 Jan 2022 01:22:59 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 26 Jan 2022 01:14:07 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Wed, 26 Jan 2022 01:22:58 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 26 Jan 2022 01:14:07 +0800
+ Transport; Wed, 26 Jan 2022 01:22:58 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <wenst@chromium.org>
 CC:     <chun-jie.chen@mediatek.com>,
@@ -30,12 +31,12 @@ CC:     <chun-jie.chen@mediatek.com>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 07/31] clk: mediatek: cpumux: Internalize struct mtk_clk_cpumux
-Date:   Wed, 26 Jan 2022 01:14:07 +0800
-Message-ID: <20220125171407.32525-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 10/31] clk: mediatek: mux: Internalize struct mtk_clk_mux
+Date:   Wed, 26 Jan 2022 01:22:58 +0800
+Message-ID: <20220125172258.5469-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-8-wenst@chromium.org>
-References: <20220122091731.283592-8-wenst@chromium.org>
+In-Reply-To: <20220122091731.283592-11-wenst@chromium.org>
+References: <20220122091731.283592-11-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -43,8 +44,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> struct mtk_clk_cpumux is an implementation detail of the cpumux clk
-> type, and is not used outside of the implementation.
+> struct mtk_clk_mux is an implementation detail of the mux clk type,
+> and is not used outside of the implementation.
 > 
 > Internalize the definition to minimize leakage of details and shrink
 > the header file.
@@ -53,48 +54,48 @@ X-Mailing-List: linux-clk@vger.kernel.org
 >
 Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 > ---
->  drivers/clk/mediatek/clk-cpumux.c | 8 ++++++++
->  drivers/clk/mediatek/clk-cpumux.h | 8 --------
+>  drivers/clk/mediatek/clk-mux.c | 8 ++++++++
+>  drivers/clk/mediatek/clk-mux.h | 8 --------
 >  2 files changed, 8 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-> index 99a819e3673f..344c6399b22f 100644
-> --- a/drivers/clk/mediatek/clk-cpumux.c
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -12,6 +12,14 @@
+> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> index 6f0c22a699c3..2d4d8dc0120a 100644
+> --- a/drivers/clk/mediatek/clk-mux.c
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -13,6 +13,14 @@
 >  #include "clk-mtk.h"
->  #include "clk-cpumux.h"
+>  #include "clk-mux.h"
 >  
-> +struct mtk_clk_cpumux {
-> +	struct clk_hw	hw;
-> +	struct regmap	*regmap;
-> +	u32		reg;
-> +	u32		mask;
-> +	u8		shift;
+> +struct mtk_clk_mux {
+> +	struct clk_hw hw;
+> +	struct regmap *regmap;
+> +	const struct mtk_mux *data;
+> +	spinlock_t *lock;
+> +	bool reparent;
 > +};
 > +
->  static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
+>  static inline struct mtk_clk_mux *to_mtk_clk_mux(struct clk_hw *hw)
 >  {
->  	return container_of(_hw, struct mtk_clk_cpumux, hw);
-> diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-> index fda7770fd803..a538f2bbef0d 100644
-> --- a/drivers/clk/mediatek/clk-cpumux.h
-> +++ b/drivers/clk/mediatek/clk-cpumux.h
-> @@ -7,14 +7,6 @@
->  #ifndef __DRV_CLK_CPUMUX_H
->  #define __DRV_CLK_CPUMUX_H
+>  	return container_of(hw, struct mtk_clk_mux, hw);
+> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> index cb2ac4f04c58..38a2b6014b08 100644
+> --- a/drivers/clk/mediatek/clk-mux.h
+> +++ b/drivers/clk/mediatek/clk-mux.h
+> @@ -9,14 +9,6 @@
 >  
-> -struct mtk_clk_cpumux {
-> -	struct clk_hw	hw;
-> -	struct regmap	*regmap;
-> -	u32		reg;
-> -	u32		mask;
-> -	u8		shift;
+>  #include <linux/clk-provider.h>
+>  
+> -struct mtk_clk_mux {
+> -	struct clk_hw hw;
+> -	struct regmap *regmap;
+> -	const struct mtk_mux *data;
+> -	spinlock_t *lock;
+> -	bool reparent;
 > -};
 > -
->  int mtk_clk_register_cpumuxes(struct device_node *node,
->  			      const struct mtk_composite *clks, int num,
->  			      struct clk_onecell_data *clk_data);
+>  struct mtk_mux {
+>  	int id;
+>  	const char *name;
 > -- 
 > 2.35.0.rc0.227.g00780c9af4-goog
 
