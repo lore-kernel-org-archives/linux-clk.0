@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1FEC4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 14:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9568BC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 14:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1578545AbiAYOUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 09:20:14 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51015 "EHLO
+        id S1578558AbiAYOUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jan 2022 09:20:16 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:54255 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1578305AbiAYOSC (ORCPT
+        by vger.kernel.org with ESMTP id S1578310AbiAYOSC (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 09:18:02 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3CDA35C00E1;
-        Tue, 25 Jan 2022 09:16:06 -0500 (EST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 536115C011C;
+        Tue, 25 Jan 2022 09:16:10 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 25 Jan 2022 09:16:06 -0500
+  by compute4.internal (MEProxy); Tue, 25 Jan 2022 09:16:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; bh=4lZDmwL7uIwTDjbUfihdBqpVRMxP4F
-        BdhG+gR+SfQCk=; b=VrfQ1LhVlMG9EnVjtjoHWlZZ8HlG6CfVWGiggvdwFEXbN1
-        QOqQV1iJJK8nWO3En2NftrSTvILqvMqh/DHRl55QK8oNP4Dii8o/Yx6BtJUXw/+X
-        SOAbY1Xc+Bg7eD2RZQbaYEEUczEJSFYOODdvKkF1awGvjxS65pLonKbFoh/dFAFP
-        AxcrAxEPOdeNrd0/aXgjCnGwlPFwypbbBJUxrgfCIcss0hjzYHBuHROp2/o+29g7
-        SW9kkAwUgwaV7dvQmGo/pXtfE0nF76/XSWEdk46xvuPYAIfo0gXlesTnfFOJzTQB
-        vIVG9+XZIq0MzsFhbPsc+S/uk3PLJ+HYRQ0qlLYg==
+        :subject:subject:to:to; s=fm1; bh=wkyNpQaqe/5yqepEtzW1vHU0+7nQsE
+        z2kObpQxckMxk=; b=OPiAbWEHEEuQZcvJ3cMKeWIJz9MEvoOsekJRy31/2TrIAO
+        myFc+RFM6FqP7bVvv6jh/DTcLvhvPxR1gXWkPexyOAM8lw8Riu2iLtt/cuPJExSD
+        fCqjYVsJDMlAUoiI4tm/NlfGEZ/DkNJgBDPB6GdtpugRnB7WMrvNWwuNeRiQZ0YQ
+        I5xxS1WvZfwTUHI5yIjGDTRr7XgBIZr7lWqddrv+Gq1KTyhgHFXRewXaQO/6PoJS
+        P7z0fwv1PUmGX0vMCdAd5Z+5o99Cw9OjKcNrW/JQfLtL//Hls5xhiqHf2H0SfmUO
+        r21hHRNxgh6k/xEZ3P64GERGbTHqFy9AGI8bj2Bw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=4lZDmw
-        L7uIwTDjbUfihdBqpVRMxP4FBdhG+gR+SfQCk=; b=EVJ2TS7+237nSKit5jpK5q
-        mm8C/wjFOi+jVZ+LSSU5NPgqfzuYT4eu21llHOCd27DHqVTDkBH+qOtg6LT4lMfJ
-        fxWwC5OE+QizFPA9u50lRYQvQieX2E8S70TgrOn903WPeh46HWppeUQ4h//qO1tA
-        DhhM/Iv9PXJrxRD+a9x/xCITeHxo3Pn2WijacVZ5uumpK3zcL+PFItPoWzy8bTSU
-        3nlu6KYUORxAryIsxbHZsrM/e/iT7WDl85AwkootmYiS2/LAkOM6o06xogWPefvh
-        XpqiB+xekS0AYerSC+e9tBsy9hqX+JkM4fDkKMoENJ0BKzhOfOC0/ddwQfzdhuEw
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=wkyNpQ
+        aqe/5yqepEtzW1vHU0+7nQsEz2kObpQxckMxk=; b=TTs9K+69Lh8MoEwc75VF+I
+        UXk1rPeqdQdVOaPxYZPwoaTj5+3mm1Dlbea0Tn0jW4bIWB5Rd/jdYesdyXUZOADY
+        VliCM86hFx+pcS5CqfozRbjYwOewKNgKYNeTjmf8ttr+QoF8MwtFEAd97oGbYWUY
+        wtxbXAlYEQ9DRv7Bfzze/sbzuyR5eGES8oUSmiapfWY9Y7IjqBADZhcpmM7cF+LD
+        x0iN/L5FdpSUX2pb1UCrlPtljCG6FRWOAIZhFS0rDrNT2ONtZEDysHETpcg6w3U9
+        fPK3up0fFXgPFSpdfz3xm6TqEXsx9i+49pRoxZRzVWGaU5wUTQPGhaChx+tKaHzA
         ==
-X-ME-Sender: <xms:JQbwYXWeASKSQNPLkVasfma-kfJW3r4Bp1gI3w3F-NiDuN_3XozGQA>
-    <xme:JQbwYfmx38DE_esiqd6TEUqKvzmMszDSSunhCpwTXnLqeT7kDwvk7p6qyK4WR3TbY
-    0jYHRE23s5lloKmpmg>
-X-ME-Received: <xmr:JQbwYTbVEBCMV-lfTzrUlsBx3vszwFyEhhvk2g54I2RDb6uV16jU1itoFeFOL9pMKpefOn2AZs7hz7L0F7iexhjep4ulTY7wIK6_Lgc>
+X-ME-Sender: <xms:KgbwYelGVAvbG9QkEkbqW08HfsaEs2P3BahQZ_qUq8dt2nN6LJ04wg>
+    <xme:KgbwYV2jWT9Sm6SHDM_Pqcsw6tuRHfi4AM-29AWT5jAma7sb7_zhVPYdGqmR_VbnO
+    YtOP03NSpm0FCW5Zvs>
+X-ME-Received: <xmr:KgbwYcp0DLmyVKHLdAeRp7UPrvHpHtrdvZFyvzcHaHNpUUv4ndamI8d5LqLQvayCzvoVSBd67NtbBkzwYQMfWYlfVXe02JF5A1SiM4Q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrvdelgdeitdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
     ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
     gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    vdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
     igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:JQbwYSW4ZJ3wEpjl_CZs-k86fGg0um8w6F-vBNDyP-dj3g9cFm9zHg>
-    <xmx:JQbwYRlqs5V7KHv3BD-KgacTza2CJ6NYSTfPTbetQ53gsP5AUEhNcg>
-    <xmx:JQbwYfc-qex9UsnIQSTw__-d3HFNYNdiulGC3nSh6jikY_C-AVpCmQ>
-    <xmx:JgbwYXWsba-Hsi67WLV9xkSEatpQrQf4NXF35gAhf_7z84fvLibxgw>
+X-ME-Proxy: <xmx:KgbwYSmiVhZWxzwnbKce35bQDtu8jyP40DisIhUC45QQeIdl9xTycQ>
+    <xmx:KgbwYc2lo6CrwwMSyjwEqm4f9t6ghnxE-0XZrrONTqOqKNFzqqJ6EQ>
+    <xmx:KgbwYZtihoy0YJMafSja7vSxK_oVe6hOemzHY2yw0ZKbJrPZ6-2YDA>
+    <xmx:KgbwYdm-lqEX4fIRpSJh2QJbFOoHqKodj5ocvM566zQkqOCU4i9S-w>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Jan 2022 09:16:05 -0500 (EST)
+ 25 Jan 2022 09:16:09 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -65,9 +65,9 @@ Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Tim Gover <tim.gover@raspberrypi.com>,
         Dom Cobley <dom@raspberrypi.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v4 06/10] clk: bcm: rpi: Add variant structure
-Date:   Tue, 25 Jan 2022 15:15:45 +0100
-Message-Id: <20220125141549.747889-7-maxime@cerno.tech>
+Subject: [PATCH v4 08/10] clk: bcm: rpi: Run some clocks at the minimum rate allowed
+Date:   Tue, 25 Jan 2022 15:15:47 +0100
+Message-Id: <20220125141549.747889-9-maxime@cerno.tech>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220125141549.747889-1-maxime@cerno.tech>
 References: <20220125141549.747889-1-maxime@cerno.tech>
@@ -77,142 +77,100 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We only export a bunch of firmware clocks, and some of them require
-special treatment.
+The core clock and M2MC clocks are shared between some devices (Unicam
+controllers and the HVS, and the HDMI controllers, respectively) that
+will have various, varying, requirements depending on their current work
+load.
 
-This has been do so far using some tests on the clock id in various
-places, but this is fairly hard to extend and doesn't scale very well.
+Since those loads can require a fairly high clock rate in extreme
+conditions (up to ~600MHz), we can end up running those clocks at their
+maximum frequency even though we no longer require such a high rate.
 
-Since we'll need some more cases in the next patches, let's switch to a
-variant structure that defines the behaviour we need to have for a given
-clock.
+Fortunately, those devices don't require an exact rate but a minimum
+rate, and all the drivers are using clk_set_min_rate. Thus, we can just
+rely on the fact that the clk_request minimum (which is the aggregated
+minimum of all the clock users) is what we want at all times.
 
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/bcm/clk-raspberrypi.c | 62 +++++++++++++++++++++++--------
- 1 file changed, 46 insertions(+), 16 deletions(-)
+ drivers/clk/bcm/clk-raspberrypi.c | 37 +++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
 diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index dd3b71eafabf..f7185d421085 100644
+index c879f2e9a4a7..9d09621549b9 100644
 --- a/drivers/clk/bcm/clk-raspberrypi.c
 +++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -56,6 +56,8 @@ static char *rpi_firmware_clk_names[] = {
- #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
- #define RPI_FIRMWARE_STATE_WAIT_BIT	BIT(1)
- 
-+struct raspberrypi_clk_variant;
-+
- struct raspberrypi_clk {
- 	struct device *dev;
- 	struct rpi_firmware *firmware;
-@@ -66,10 +68,36 @@ struct raspberrypi_clk_data {
- 	struct clk_hw hw;
- 
- 	unsigned int id;
-+	struct raspberrypi_clk_variant *variant;
- 
- 	struct raspberrypi_clk *rpi;
+@@ -77,6 +77,7 @@ struct raspberrypi_clk_variant {
+ 	bool		export;
+ 	char		*clkdev;
+ 	unsigned long	min_rate;
++	bool		minimize;
  };
  
-+struct raspberrypi_clk_variant {
-+	bool		export;
-+	char		*clkdev;
-+};
+ static struct raspberrypi_clk_variant
+@@ -87,6 +88,18 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	},
+ 	[RPI_FIRMWARE_CORE_CLK_ID] = {
+ 		.export = true,
 +
-+static struct raspberrypi_clk_variant
-+raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
-+	[RPI_FIRMWARE_ARM_CLK_ID] = {
-+		.export = true,
-+		.clkdev = "cpu0",
-+	},
-+	[RPI_FIRMWARE_CORE_CLK_ID] = {
-+		.export = true,
-+	},
-+	[RPI_FIRMWARE_M2MC_CLK_ID] = {
-+		.export = true,
-+	},
-+	[RPI_FIRMWARE_V3D_CLK_ID] = {
-+		.export = true,
-+	},
-+	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
-+		.export = true,
-+	},
-+};
++		/*
++		 * The clock is shared between the HVS and the CSI
++		 * controllers, on the BCM2711 and will change depending
++		 * on the pixels composited on the HVS and the capture
++		 * resolution on Unicam.
++		 *
++		 * Since the rate can get quite large, and we need to
++		 * coordinate between both driver instances, let's
++		 * always use the minimum the drivers will let us.
++		 */
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_M2MC_CLK_ID] = {
+ 		.export = true,
+@@ -102,6 +115,16 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 		 * in this situation.
+ 		 */
+ 		.min_rate = 120000000,
 +
- /*
-  * Structure of the message passed to Raspberry Pi's firmware in order to
-  * change clock rates. The 'disable_turbo' option is only available to the ARM
-@@ -183,7 +211,8 @@ static const struct clk_ops raspberrypi_firmware_clk_ops = {
- 
- static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
- 					       unsigned int parent,
--					       unsigned int id)
-+					       unsigned int id,
-+					       struct raspberrypi_clk_variant *variant)
++		/*
++		 * The clock is shared between the two HDMI controllers
++		 * on the BCM2711 and will change depending on the
++		 * resolution output on each. Since the rate can get
++		 * quite large, and we need to coordinate between both
++		 * driver instances, let's always use the minimum the
++		 * drivers will let us.
++		 */
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_V3D_CLK_ID] = {
+ 		.export = true,
+@@ -206,12 +229,26 @@ static int raspberrypi_fw_set_rate(struct clk_hw *hw, unsigned long rate,
+ static int raspberrypi_fw_dumb_determine_rate(struct clk_hw *hw,
+ 					      struct clk_rate_request *req)
  {
- 	struct raspberrypi_clk_data *data;
- 	struct clk_init_data init = {};
-@@ -195,6 +224,7 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
- 		return ERR_PTR(-ENOMEM);
- 	data->rpi = rpi;
- 	data->id = id;
-+	data->variant = variant;
- 
- 	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
- 				   "fw-clk-%s",
-@@ -228,9 +258,9 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
- 
- 	clk_hw_set_rate_range(&data->hw, min_rate, max_rate);
- 
--	if (id == RPI_FIRMWARE_ARM_CLK_ID) {
-+	if (variant->clkdev) {
- 		ret = devm_clk_hw_register_clkdev(rpi->dev, &data->hw,
--						  NULL, "cpu0");
-+						  NULL, variant->clkdev);
- 		if (ret) {
- 			dev_err(rpi->dev, "Failed to initialize clkdev\n");
- 			return ERR_PTR(ret);
-@@ -264,27 +294,27 @@ static int raspberrypi_discover_clocks(struct raspberrypi_clk *rpi,
- 		return ret;
- 
- 	while (clks->id) {
--		struct clk_hw *hw;
-+		struct raspberrypi_clk_variant *variant;
++	struct raspberrypi_clk_data *data =
++		container_of(hw, struct raspberrypi_clk_data, hw);
++	struct raspberrypi_clk_variant *variant = data->variant;
 +
-+		if (clks->id > RPI_FIRMWARE_NUM_CLK_ID) {
-+			dev_err(rpi->dev, "Unknown clock id: %u", clks->id);
-+			return -EINVAL;
-+		}
+ 	/*
+ 	 * The firmware will do the rounding but that isn't part of
+ 	 * the interface with the firmware, so we just do our best
+ 	 * here.
+ 	 */
 +
-+		variant = &raspberrypi_clk_variants[clks->id];
-+		if (variant->export) {
-+			struct clk_hw *hw;
- 
--		switch (clks->id) {
--		case RPI_FIRMWARE_ARM_CLK_ID:
--		case RPI_FIRMWARE_CORE_CLK_ID:
--		case RPI_FIRMWARE_M2MC_CLK_ID:
--		case RPI_FIRMWARE_V3D_CLK_ID:
--		case RPI_FIRMWARE_PIXEL_BVB_CLK_ID:
- 			hw = raspberrypi_clk_register(rpi, clks->parent,
--						      clks->id);
-+						      clks->id, variant);
- 			if (IS_ERR(hw))
- 				return PTR_ERR(hw);
- 
- 			data->hws[clks->id] = hw;
- 			data->num = clks->id + 1;
--			fallthrough;
--
--		default:
--			clks++;
--			break;
- 		}
+ 	req->rate = clamp(req->rate, req->min_rate, req->max_rate);
 +
-+		clks++;
- 	}
- 
++	/*
++	 * We want to aggressively reduce the clock rate here, so let's
++	 * just ignore the requested rate and return the bare minimum
++	 * rate we can get away with.
++	 */
++	if (variant->minimize && req->min_rate > 0)
++		req->rate = req->min_rate;
++
  	return 0;
+ }
+ 
 -- 
 2.34.1
 
