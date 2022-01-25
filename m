@@ -2,141 +2,204 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F51C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 14:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E96C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 15:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1580661AbiAYOvf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 09:51:35 -0500
-Received: from mail-db8eur05on2110.outbound.protection.outlook.com ([40.107.20.110]:53501
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1580353AbiAYOs1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Jan 2022 09:48:27 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CFTaCluS5o8rQnfeRpl9GPolXaajW+sck2f05H8MwGAid9FAhXV4jL2yB3E0fg7upKO7+2U9RoAIRQrOinBMl1O6+h3iHDdLO7HtY+XiseQk0PWzQCicoK4wU6VvSdb9wGnWC19oSSMzh3C3IZWq0yDk0RxdL6//mwoUUlcrRbXBQyzGWDRGKnwZzypop+laus1B5q06QlOofQVit7yG7bU59tsEHEhKueWRsCrlPtDdEii7T85rgE8o258PdeduXf7mXEvvE7O6R0bCPSdxRFoT4hLT+zkL45KM1F6CezNXdwhlC8sp9KZS0u1r9DkfY9V11lIQ6Xnbjho4Et+qBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4MUXi3GP3jwU117h9vbCj7WYECEimyoTDiQdzXMRMSY=;
- b=NPrgocyYrdkX36sJALUUf0ksFymvKvEFNV6Lyg9sWJSGzzrGGWuFQzGBM4QujQ2zcfSgYGttk5LolyRnJSaeVfi93LXDBWOz/Tt35ihGo9jmP1d9y1fLwm0MbzPOdEyZaj23D10MMX+nV1ne6j4rKm0QW7Ctx3eZ7MJewOsYLryB1gsRYDjDlyH0lsDL8eKBIfUp/SF67HggB0qlVBF52VG6u5DVNbmd03aZWz3xMwUFukOtpdzGEYz8wgvIXIn5IUOyvkcI4Q8p+TvJE/Tv/ZTs3x7LmMHrubdk17jGlju71OYPvsIg+4w0rKUf1J+hsCvuG2TRNPoxxPlRWKeWZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 217.111.95.66) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arri.de;
- dmarc=none action=none header.from=arri.de; dkim=none (message not signed);
- arc=none
+        id S1379974AbiAYPAh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jan 2022 10:00:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1581058AbiAYOyi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 09:54:38 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14C17C06173D
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jan 2022 06:54:37 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id e2so4994142wra.2
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jan 2022 06:54:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=arrigroup.onmicrosoft.com; s=selector1-arrigroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4MUXi3GP3jwU117h9vbCj7WYECEimyoTDiQdzXMRMSY=;
- b=mZDW33RNafee50b+cSL30S3DRNlbBGVhiZylKELWr9S/84xjjhCgH27Q9PwXyO0dawFf38U4vR7bBsZ4t6YFFbDCKpchISRgrNptejcexbcinKY3NZQ6Og7e5AolPmgpiR5Ftr0hNH7ox1BAzCIAIgqbcutSJ9WEnvagSPbjIlU=
-Received: from AS8P250CA0006.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:330::11)
- by AS8PR07MB7687.eurprd07.prod.outlook.com (2603:10a6:20b:25d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.2; Tue, 25 Jan
- 2022 14:48:18 +0000
-Received: from VE1EUR02FT050.eop-EUR02.prod.protection.outlook.com
- (2603:10a6:20b:330:cafe::fc) by AS8P250CA0006.outlook.office365.com
- (2603:10a6:20b:330::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.17 via Frontend
- Transport; Tue, 25 Jan 2022 14:48:18 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 217.111.95.66)
- smtp.mailfrom=arri.de; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arri.de;
-Received-SPF: Fail (protection.outlook.com: domain of arri.de does not
- designate 217.111.95.66 as permitted sender) receiver=protection.outlook.com;
- client-ip=217.111.95.66; helo=mta.arri.de;
-Received: from mta.arri.de (217.111.95.66) by
- VE1EUR02FT050.mail.protection.outlook.com (10.152.13.198) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4909.7 via Frontend Transport; Tue, 25 Jan 2022 14:48:18 +0000
-Received: from localhost.de (192.168.54.129) by mta.arri.de (192.168.100.104)
- with Microsoft SMTP Server (TLS) id 14.3.498.0; Tue, 25 Jan 2022 15:48:09
- +0100
-From:   Christian Eggers <ceggers@arri.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L4EjSQRW8FE0Hy1a1OCObXW1JPeDhbxfCUQxQfcGCdA=;
+        b=PdWSH25XO3nst6j4LhWnxbuH6rcneAReUC+ulVlbs4Mn+5m+zvlBtMxnpsqbYWvNpt
+         QREr+1C4LTD/cQKwvU7FvyGRsnILtoIFcP4S+OMzNhBcxv7HgVj8Jf+JEAGrOzOVsc03
+         0qbP+JM2T3BVds+4LoRvEQY9TWUbDX3Kj19RLWTNnZADdPdp1hjVOC5H83Kx/KVlsg6D
+         OJlqN77co5fKXAhBxX6+VyZGR+MxsIoO36/VU+uRMcS30WV4mfvD73bU8Xl5esjmOkV2
+         r5RhTdqmNV+1QTjK76qxgxHwL7IN1AgD5GeeBY58Zbh9ijFPT96ny/JBAzfY0bPkzQU+
+         K+SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=L4EjSQRW8FE0Hy1a1OCObXW1JPeDhbxfCUQxQfcGCdA=;
+        b=f117BomIbVzXJd/clGXkdS/cUvmdThup3fcQM5qgK+XfjmaFcigUyRR2XSQtgyvCw9
+         earGDnHuERf4VypwawfmNbKnAN2di9jfEaQBtcK1EIKIZGEBQg3uI2LW+18FxjrDWAek
+         fCNX5UXG4flemMvDqw1fE7nTtN10AJGqmClLZYxYn0GYUimhxe/DoEvuZ/JNKf9PkdHc
+         e754te3HjhntHkYwaISAsJkF0j9O+GizfZqlDgopE9TkpM7j1240iHv3UuMkoOmmujv+
+         5JhGB6Z2bhoVTYjtz51P/PSALeN015EH5bWSNLjsuBQ2mgyStnZrQxRFw+Px6hKf3X6y
+         XZiw==
+X-Gm-Message-State: AOAM531eugxKHUNGiJVrKo6fPuROfz/fUDVyr9SRQQflG9HljHVs/6BE
+        Bqf3FhmBNjJE6VCPgx9krkEPuw==
+X-Google-Smtp-Source: ABdhPJzumuKere4mTeyM17OgS2jGkO+i0UITKhP0vksIIJO0J6DMs4WkxBnFoLezAGiFq2bQUyIbxw==
+X-Received: by 2002:a5d:64e2:: with SMTP id g2mr5117625wri.22.1643122475496;
+        Tue, 25 Jan 2022 06:54:35 -0800 (PST)
+Received: from ?IPv6:2001:861:44c0:66c0:e03f:56c1:665f:b320? ([2001:861:44c0:66c0:e03f:56c1:665f:b320])
+        by smtp.gmail.com with ESMTPSA id z17sm526375wmf.47.2022.01.25.06.54.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jan 2022 06:54:34 -0800 (PST)
+Subject: Re: [PATCH v10 0/4] clk: meson: add a sub EMMC clock controller
+ support
+To:     Liang Yang <liang.yang@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Stefan Riedmueller <s.riedmueller@phytec.de>,
-        Christian Eggers <ceggers@arri.de>
-Subject: [PATCH RESEND 6/6] clk: imx6sx: enforce gating of gpmi_io clock
-Date:   Tue, 25 Jan 2022 15:48:01 +0100
-Message-ID: <20220125144801.18158-1-ceggers@arri.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220125144441.17750-1-ceggers@arri.de>
-References: <20220125144441.17750-1-ceggers@arri.de>
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        XianWei Zhao <xianwei.zhao@amlogic.com>,
+        Kelvin Zhang <kelvin.zhang@amlogic.com>,
+        BiChao Zheng <bichao.zheng@amlogic.com>,
+        YongHui Yu <yonghui.yu@amlogic.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220121074508.42168-1-liang.yang@amlogic.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Organization: Baylibre
+Message-ID: <f5a429f2-ffbc-ea03-810a-45a0f90959a2@baylibre.com>
+Date:   Tue, 25 Jan 2022 15:54:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [192.168.54.129]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 29754e65-6799-4362-dd80-08d9e011b9a6
-X-MS-TrafficTypeDiagnostic: AS8PR07MB7687:EE_
-X-Microsoft-Antispam-PRVS: <AS8PR07MB768730DCF1F231AC71382E8BBF5F9@AS8PR07MB7687.eurprd07.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:655;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: u/gctByeXbyyScdxoOIpSDoMN+n7UR6OSDN8p9W0rSujNjqIapoTr8stzN9gOBUbzqZnFVobf1nF/Islm8HoTYMgfop7ZEmRL/1OLQypsk8RnFJ7qOaW0jgwIboGbtYYcNZKlzP7FmjN0ue3iQjFO5FKl8Vjg+GhiRbV+i567AIKyRJuFMF86NLOszOWhknBFlqxNeIMxWhuGdKzQcw4jTzysoq9oS1Mygf3ijfC7p/dl757fSLnf5zlumbGb8bqFYB05m7w2Af+vpKPpLhTtuUMYXjSE8eEJ+M2N64I/7hR4IxIYdnut5A8sn4pr+nIXPBrPJ54KN/sqDOn0AcC10khT3TP3JegQPF5XBqOZpD1GmgV/jIUyfi+j3ykNrxwqeQkCpZwzRHPb7KpWUKliEojpW+ZwBKME62lPLCASwauecnaicoI0509jyExcNE+DeEpq7YVpbVZ9CtZmEOtvcHoTpQoZNVBnMHTlyhmiwi1T7UDsfMDmeZkfEQSx0S0JMQ64AhuzudZhk5a9jr/zKBBkqpFSznmOlhDdtPzCcLSP2ea6vWB7LJv9yCDYrFbnE5lRHqnifdhOPzH14BWpH287eliN50/MWuN74uUSGrRWLngjTw0lMmC5kggxxS4HAPHDr3+rK55DR6UeUeDsnVDcOKF4qFun9DFvR2BMakBLiQlziMRcQYyqgte9S5CQkmfNMKQB0IlNHVN9aqnNikb2p4pKOFEtQ5es0p+0TA0cjvN4oktvv+uX6ysKUmDBCkynN/Hsu7Q1FlBWBoqcLU5f/XlO2i3R06Yrx71jeA=
-X-Forefront-Antispam-Report: CIP:217.111.95.66;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mta.arri.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(316002)(86362001)(186003)(54906003)(36860700001)(426003)(336012)(16526019)(5660300002)(107886003)(2616005)(1076003)(8936002)(82310400004)(26005)(6862004)(47076005)(83380400001)(2906002)(8676002)(4326008)(70206006)(70586007)(6666004)(81166007)(356005)(40460700003)(508600001)(36756003)(32563001)(36900700001)(20210929001);DIR:OUT;SFP:1102;
-X-OriginatorOrg: arri.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2022 14:48:18.0766
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29754e65-6799-4362-dd80-08d9e011b9a6
-X-MS-Exchange-CrossTenant-Id: e6a73a5a-614d-4c51-b3e3-53b660a9433a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e6a73a5a-614d-4c51-b3e3-53b660a9433a;Ip=[217.111.95.66];Helo=[mta.arri.de]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR02FT050.eop-EUR02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB7687
+In-Reply-To: <20220121074508.42168-1-liang.yang@amlogic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clock parent and divider changes are both glitchy for qspi2_clock_root.
-Enforce that the child clock is gated.
+Hi Liang,
 
-Signed-off-by: Christian Eggers <ceggers@arri.de>
----
- drivers/clk/imx/clk-imx6sx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 21/01/2022 08:45, Liang Yang wrote:
+> This driver will add a MMC clock controller driver support.
+> The original idea about adding a clock controller is during the
+> discussion in the NAND driver mainline effort[1].
+> 
+> This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index cf1c1fad45f9..023a18594ebe 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -286,7 +286,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6SX_CLK_ESAI_SEL]           = imx_clk_hw_mux("esai_sel",         base + 0x20,  19,     2,      audio_sels,        ARRAY_SIZE(audio_sels));
- 	hws[IMX6SX_CLK_CAN_SEL]            = imx_clk_hw_mux("can_sel",          base + 0x20,  8,      2,      can_sels,          ARRAY_SIZE(can_sels));
- 	hws[IMX6SX_CLK_UART_SEL]           = imx_clk_hw_mux("uart_sel",         base + 0x24,  6,      1,      uart_sels,         ARRAY_SIZE(uart_sels));
--	hws[IMX6SX_CLK_QSPI2_SEL]          = imx_clk_hw_mux_flags("qspi2_sel", base + 0x2c, 15, 3, qspi2_sels, ARRAY_SIZE(qspi2_sels), CLK_SET_RATE_PARENT);
-+	hws[IMX6SX_CLK_QSPI2_SEL]          = imx_clk_hw_mux_flags("qspi2_sel", base + 0x2c, 15, 3, qspi2_sels, ARRAY_SIZE(qspi2_sels), CLK_SET_RATE_PARENT | CLK_SET_PARENT_GATE);
- 	hws[IMX6SX_CLK_SPDIF_SEL]          = imx_clk_hw_mux("spdif_sel",        base + 0x30,  20,     2,      audio_sels,        ARRAY_SIZE(audio_sels));
- 	hws[IMX6SX_CLK_AUDIO_SEL]          = imx_clk_hw_mux("audio_sel",        base + 0x30,  7,      2,      audio_sels,        ARRAY_SIZE(audio_sels));
- 	hws[IMX6SX_CLK_ENET_PRE_SEL]       = imx_clk_hw_mux("enet_pre_sel",     base + 0x34,  15,     3,      enet_pre_sels,     ARRAY_SIZE(enet_pre_sels));
-@@ -441,7 +441,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6SX_CLK_PWM4]         = imx_clk_hw_gate2("pwm4",          "perclk",            base + 0x78, 22);
- 	hws[IMX6SX_CLK_GPMI_BCH_APB] = imx_clk_hw_gate2("gpmi_bch_apb",  "usdhc3",            base + 0x78, 24);
- 	hws[IMX6SX_CLK_GPMI_BCH]     = imx_clk_hw_gate2("gpmi_bch",      "usdhc4",            base + 0x78, 26);
--	hws[IMX6SX_CLK_GPMI_IO]      = imx_clk_hw_gate2("gpmi_io",       "qspi2_podf",        base + 0x78, 28);
-+	hws[IMX6SX_CLK_GPMI_IO]      = imx_clk_hw_gate2_flags("gpmi_io",       "qspi2_podf",        base + 0x78, 28, CLK_SET_RATE_GATE);
- 	hws[IMX6SX_CLK_GPMI_APB]     = imx_clk_hw_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
- 
- 	/* CCGR5 */
--- 
-Christian Eggers
-Embedded software developer
+Thanks a lot for providing a fixed and updated version of this serie.
 
-Arnold & Richter Cine Technik GmbH & Co. Betriebs KG
-Sitz: Muenchen - Registergericht: Amtsgericht Muenchen - Handelsregisternummer: HRA 57918
-Persoenlich haftender Gesellschafter: Arnold & Richter Cine Technik GmbH
-Sitz: Muenchen - Registergericht: Amtsgericht Muenchen - Handelsregisternummer: HRB 54477
-Geschaeftsfuehrer: Dr. Michael Neuhaeuser; Stephan Schenk; Walter Trauninger; Markus Zeiler
+After some chat with Jerome and Kevin, it seems the way the eMMC clock reuse
+for NAND was designed nearly 4 years doesn't look accurate anymore.
+
+Having a separate clk driver designed to replace the eMMC node when NAND is
+used on the board seems over engineered.
+
+Actually having the clock code you add in this serie _but_ directly in
+the NAND looks far better, and more coherent since having Linux runtime
+detection of eMMC vs NAND will never happen and even this serie required
+some DT modification from the bootloader.
+
+I'll let Jerome or Kevin add more details if they want, but I think you should resurrect
+the work you pushed in [1] & [2] but:
+- passing the eMMC clk registers as a third "reg" cell
+- passing the same "clocks" phandle as the eMMC node
+- adding the eMMC clock code in the NAND driver directly
+
+I'm open to discussions if you consider the current approach is still superior.
+
+Thanks,
+Neil
+
+[1] https://lore.kernel.org/r/20220106033130.37623-1-liang.yang@amlogic.com
+[2] https://lore.kernel.org/r/20220106032504.23310-1-liang.yang@amlogic.com
+
+> 
+> Changes since v9 [10]
+>  - use clk_parent_data instead of parent_names
+> 
+> Changes since v8 [9]
+>  - use MESON_SCLK_ONE_BASED instead of CLK_DIVIDER_ONE_BASED
+>  - use struct_size to caculate onecell_data
+>  - add clk-phase-delay.h
+>  - define CLK_DELAY_STEP_PS_GX and CLK_DELAY_STEP_PS_AXG
+> 
+> Changes since v7 [8]
+>  - move meson_clk_get_phase_delay_data() from header to driver
+>  - CONFIG sclk-div with COMMON_CLK_AMLOGIC instead of COMMON_CLK_AMLOGIC_AUDIO
+>  - remove onecell date and ID for internal MUX clk
+>  - use helper for functions for ONE_BASED in sclk-div
+>  - add ONE_BASED support for duty cycle
+> 
+> Changes since v6 [7]:
+>  - add one based support for sclk divier
+>  - alloc sclk in probe for multiple instance
+>  - fix coding styles
+> 
+> Changes since v5 [6]:
+>  - remove divider ops with .init and use sclk_div instead
+>  - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+>  - drop the useless type cast 
+> 
+> Changes since v4 [5]:
+>  - use struct parm in phase delay driver
+>  - remove 0 delay releted part in phase delay driver
+>  - don't rebuild the parent name once again
+>  - add divider ops with .init
+> 
+> Changes since v3 [4]:
+>  - separate clk-phase-delay driver
+>  - replace clk_get_rate() with clk_hw_get_rate()
+>  - collect Rob's R-Y
+>  - drop 'meson-' prefix from compatible string
+> 
+>  Changes since v2 [3]:
+>  - squash dt-binding clock-id patch
+>  - update license
+>  - fix alignment
+>  - construct a clk register helper() function
+> 
+> Changes since v1 [2]:
+>  - implement phase clock
+>  - update compatible name
+>  - adjust file name
+>  - divider probe() into small functions, and re-use them
+> 
+> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+> [2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+> [7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+> [8] https://lkml.kernel.org/r/1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com
+> [9] https://lkml.kernel.org/r/1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com
+> [10] https://lore.kernel.org/all/20220113115745.45826-1-liang.yang@amlogic.com/
+> Liang Yang (4):
+>   clk: meson: add one based divider support for sclk
+>   clk: meson: add emmc sub clock phase delay driver
+>   clk: meson: add DT documentation for emmc clock controller
+>   clk: meson: add sub MMC clock controller driver
+> 
+>  .../bindings/clock/amlogic,mmc-clkc.yaml      |  64 ++++
+>  drivers/clk/meson/Kconfig                     |  18 ++
+>  drivers/clk/meson/Makefile                    |   2 +
+>  drivers/clk/meson/clk-phase-delay.c           |  69 ++++
+>  drivers/clk/meson/clk-phase-delay.h           |  20 ++
+>  drivers/clk/meson/mmc-clkc.c                  | 302 ++++++++++++++++++
+>  drivers/clk/meson/sclk-div.c                  |  59 ++--
+>  drivers/clk/meson/sclk-div.h                  |   3 +
+>  include/dt-bindings/clock/amlogic,mmc-clkc.h  |  14 +
+>  9 files changed, 529 insertions(+), 22 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
+>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+>  create mode 100644 drivers/clk/meson/clk-phase-delay.h
+>  create mode 100644 drivers/clk/meson/mmc-clkc.c
+>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+> 
 
