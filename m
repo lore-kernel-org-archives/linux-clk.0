@@ -2,104 +2,149 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 145B4C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 13:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F202C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 13:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384038AbiAYNO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 08:14:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47926 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1575767AbiAYNLn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 08:11:43 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356FEC061772;
-        Tue, 25 Jan 2022 05:11:30 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id w14so9642212edd.10;
-        Tue, 25 Jan 2022 05:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/8kXB8Jvsf5emlSsCDXGO/3PDa7GmKokwIjfKKGh1fM=;
-        b=aDip0h+8v8iAk9XjOinn9q6DgtgcwkxeyUxnDvg55aTDwwpgfJdyDDV9tFYidAIfJL
-         lZcPo1O7Vhz2Zgwcd4r8YWeE/1ZWaSlcNbOYVf6SJsAWAc4zpnvOcQct5tVUGXOCRFOC
-         JJtqf+XhAaIX4i4FtuQAtTNT4MSuU+/4FNqiPVYzB60Y7uLQAhmPli1OZsg9o//EUSkU
-         Tz7MlT7bZojw/Z9uuUu0GVElMEtda0On0/QDVEKyYBfgoxJ/aCoct9FGzyQ2YpRu6mO9
-         ZfotZYk6KN4+fzA6NjJWZge4bU8mDr60VBg3HHYg9l9nRbFaWwOcN2aWBMmh1pVpIVk1
-         9uhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/8kXB8Jvsf5emlSsCDXGO/3PDa7GmKokwIjfKKGh1fM=;
-        b=PJ5GLodum514Wb3No59CqjFb4XpFtIYhroSQT9dtfZyih1nG0bPqdFQRRRog7PL/3B
-         JzLtTs+u7JGYXb+qDvrtF9eb5nyITDJoJxxqTQMQ9hihkHRgKxHdqVdATOD+kUL2S6KW
-         GAetRihb8cssl3KULQYquU9DbYTSzTyMOSlVFEzz2LdYb4svukgCVMfzNwezTPRrJU5J
-         wJ++twt9kbskO11IjQPEKT/5reAXmVL66qSdpBFBatGugttGkGqEVmZbtHcXnnv5nnuL
-         lepnXR2rOxbePR+6BY227GEBt8cSDF5dikKqPW2yGs6sSD7I71get4XpNv9IdVPYRZdd
-         KhHQ==
-X-Gm-Message-State: AOAM533rIxwD2uB6UFst/AjleDvQBXXxPTVZhXTga66Ey+hwNmxWvK4A
-        3Gg+G1out+ETi7PPZi3YEJhPtOq9eyOT2sm7O5uYK3dVF6A=
-X-Google-Smtp-Source: ABdhPJzrRWjfMe+b4bzYurtS0s1oDB0hjK68R0oYUz01FkfrBT7Gs8YP+Q/r0N6L9FVvYOiT7kp8W5KQixW8tcDvsmU=
-X-Received: by 2002:a50:d709:: with SMTP id t9mr11768142edi.50.1643116288702;
- Tue, 25 Jan 2022 05:11:28 -0800 (PST)
+        id S1383559AbiAYNkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jan 2022 08:40:25 -0500
+Received: from esa.microchip.iphmx.com ([68.232.153.233]:16368 "EHLO
+        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1387491AbiAYNiF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 08:38:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1643117885; x=1674653885;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=4XsaF876U/hgEJKu54gwoJY3UnWMir4ZSlxRuPkHNO4=;
+  b=CwxtDVi3HTZ0KY7Ykt84tLDuashAVMIAfZAIgHfWE2Jv9/z873R2qp9c
+   VXanhkNTF5PD4rKGD99nsGYZtzbPQ0wrxZgUZaNOGZT8K5FEw4dNvPL5d
+   FHUmOIAgjttBPb+RB8sVrpozlAzdlfd9wzn7kgYQhXxN2wZxjl+LgAEOx
+   6IgvTmDSAtC0A6Go3zZ63dUrSOI/rkXyB4i6PRNw/oE9H0N+XxvDOBUY0
+   MAfo2oX6+tyuKrmAey10RsM84fBI0LVfRVMBaT6zFfhHjU6Wv9mj42oR1
+   lY2aq0pI2kbCLN7yJrDlyV9iMd5m0utJlWIZysd+P9mwdB0SaJ9tgsgDp
+   Q==;
+IronPort-SDR: jrYpXM4lm/0/X2wdLxFXy0yAE9ciDzvfx/iWDgev0vqLQFsAT0fbYyM4pWvmzZFrpTrS7d5H2y
+ /iThcaqTiik7xdKBOExTNXv7lZFDBRjw+OvMiNT5bXzamX0J+2TKAK5SMOqzixWlQRakTCrGuG
+ l2wnJ0+O5TQ72AsiyyCQPDOONC/PEPy4RlaRdDZ0/Y23e5YIrj9L9zZYRBYeLjGVFvDhFQMqwK
+ QAptWyWgRSE/g5lXvNhW0aJfTDMTEzzQmFdPpyeflkhZC7USUoaW08NT8XcXURXoitIgrKL0kP
+ U+PZAq27gwZ+f63z0k9Grono
+X-IronPort-AV: E=Sophos;i="5.88,315,1635231600"; 
+   d="scan'208";a="151360551"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jan 2022 06:38:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Tue, 25 Jan 2022 06:38:02 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Tue, 25 Jan 2022 06:38:00 -0700
+From:   <conor.dooley@microchip.com>
+To:     <sboyd@kernel.org>
+CC:     <conor.dooley@microchip.com>, <cyril.jean@microchip.com>,
+        <daire.mcnamara@microchip.com>, <david.abdurachmanov@gmail.com>,
+        <devicetree@vger.kernel.org>, <geert@linux-m68k.org>,
+        <krzysztof.kozlowski@canonical.com>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>, <padmarao.begari@microchip.com>,
+        <palmer@dabbelt.com>, <robh+dt@kernel.org>
+Subject: Re: [PATCH v9 2/2] clk: microchip: Add driver for Microchip PolarFire SoC
+Date:   Tue, 25 Jan 2022 13:40:11 +0000
+Message-ID: <20220125134010.2528785-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220125004818.83E27C340E4@smtp.kernel.org>
+References: <20220125004818.83E27C340E4@smtp.kernel.org>
 MIME-Version: 1.0
-References: <20220125085206.8508-1-ceggers@arri.de> <20220125085206.8508-2-ceggers@arri.de>
-In-Reply-To: <20220125085206.8508-2-ceggers@arri.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 25 Jan 2022 10:11:17 -0300
-Message-ID: <CAOMZO5A2c1seLDHzb3HL58_cThM5LGB7n0Atywu_BhTCXAThyg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: imx6ul: disable gpmi_io clock before changing
- parent clock
-To:     Christian Eggers <ceggers@arri.de>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stefan Riedmueller <s.riedmueller@phytec.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Christian,
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Quoting conor.dooley@microchip.com (2021-12-16 06:00:22)
+> > diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
+> > index f34b247e870f..0dce0b12eac4 100644
+> > --- a/drivers/clk/microchip/Makefile
+> > +++ b/drivers/clk/microchip/Makefile
 
-On Tue, Jan 25, 2022 at 5:53 AM Christian Eggers <ceggers@arri.de> wrote:
->
-> gpmi_io clock may have been enabled by the boot loader. All children of
-> enfc_clk_root must be gated in order to prevent glitches during parent
-> change.
->
-> Signed-off-by: Christian Eggers <ceggers@arri.de>
-> ---
-> drivers/clk/imx/clk-imx6ul.c | 9 +++++++++
-> 1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-> index 520b100bff4b..f599ae50dd9f 100644
-> --- a/drivers/clk/imx/clk-imx6ul.c
-> +++ b/drivers/clk/imx/clk-imx6ul.c
-> @@ -514,6 +514,15 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
-> else if (clk_on_imx6ull())
-> clk_set_parent(hws[IMX6ULL_CLK_EPDC_PRE_SEL]->clk, hws[IMX6UL_CLK_PLL3_PFD2]->clk);
->
-> + /*
-> + * gpmi_io clock may have been enabled by the boot loader. All children of
-> + * enfc_clk_root must be gated in order to prevent glitches during parent
-> + * change. The task of re-enabling is left to the gpmi-nand driver.
-> + */
-> + if (clk_hw_is_enabled(hws[IMX6UL_CLK_GPMI_IO])) {
-> + clk_prepare_enable(hws[IMX6UL_CLK_GPMI_IO]->clk);
-> + clk_disable_unprepare(hws[IMX6UL_CLK_GPMI_IO]->clk);
-> + }
+Snipping the rest, will/have addressed them.
 
-It seems your patch series was corrupted.
+> > +static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
+> > +                                 unsigned int num_clks, struct mpfs_clock_data *data,
+> > +                                 struct clk *clk_parent)
+> > +{
+> > +       struct clk_hw *hw;
+> > +       void __iomem *sys_base = data->base;
+> > +       unsigned int i, id;
+> > +
+> > +       for (i = 0; i < num_clks; i++) {
+> > +               struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
+> > +
+> > +               cfg_hw->cfg.parent = __clk_get_hw(clk_parent);
+> > +               cfg_hw->hw.init = CLK_HW_INIT_HW(cfg_hw->cfg.name, cfg_hw->cfg.parent,
+> > +                                                &mpfs_clk_cfg_ops, cfg_hw->cfg.flags);
+> > +               hw = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
+> > +               if (IS_ERR(hw)) {
+> > +                       dev_err(dev, "failed to register clock %s\n", cfg_hw->cfg.name);
+> > +                       goto err_clk;
+> > +               }
+> > +
+> > +               id = cfg_hws[i].cfg.id;
+> > +               data->hw_data.hws[id] = hw;
+> > +       }
+> > +
+> > +       return 0;
+> > +
+> > +err_clk:
+> > +       while (i--)
+> > +               devm_clk_hw_unregister(dev, data->hw_data.hws[cfg_hws[i].cfg.id]);
+> 
+> > +       clk_parent = devm_clk_get(dev, NULL);
+> 
+> Use clk_parent_data instead please.
+> 
+> > +       if (IS_ERR(clk_parent))
+> > +               return PTR_ERR(clk_parent);
 
-Could you please try sending it via git send-mail?
+
+Please correct me if I am misinterpreting:
+I had the devm_clk_get() in there to pickup the refclk from the device
+tree as a result of previous feedback. I have replaced this with the
+following, which I have found in several other drivers - does it achieve
+the same thing?
+If it does, all of the args to CLK_HW_INIT_PARENTS_DATA are now set at
+compile time & I will take CLK_HW_INIT_PARENTS_DATA back out of this
+function.
+
+static struct clk_parent_data mpfs_cfg_parent[] = {
+	{ .index = 0 },
+};
+
+static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
+				  unsigned int num_clks, struct mpfs_clock_data *data)
+{
+	void __iomem *sys_base = data->base;
+	unsigned int i, id;
+	int ret;
+
+	for (i = 0; i < num_clks; i++) {
+		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
+
+		cfg_hw->hw.init = CLK_HW_INIT_PARENTS_DATA(cfg_hw->cfg.name, mpfs_cfg_parent,
+						 &mpfs_clk_cfg_ops, cfg_hw->cfg.flags);
+
+		ret = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
+		if (ret) {
+			dev_err_probe(dev, ret, "failed to register clock %s\n",
+				      cfg_hw->cfg.name);
+			return ret;
+		}
+
+		id = cfg_hws[i].cfg.id;
+		data->hw_data.hws[id] = &cfg_hw->hw;
+	}
+
+	return 0;
+}
