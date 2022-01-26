@@ -2,109 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46329C63686
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 17:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D031AC2BA4C
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 18:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244040AbiAZR4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 12:56:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51398 "EHLO
+        id S231153AbiAZShu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 13:37:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244028AbiAZR4X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 12:56:23 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3468C061747;
-        Wed, 26 Jan 2022 09:56:22 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id s9so409598wrb.6;
-        Wed, 26 Jan 2022 09:56:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=iD/CADMJmjE6Wqsta+zyCvYv9Ey28eqoIb5w5xoLVEA=;
-        b=flYDVQBDLjA81NHjPaYBppGWq5mETdHWxrDTn3Dbnwln9/TBEzkdnKZDe7RG6nPKOd
-         dHm3QNW2gGkyIwMoF8vs2rh40atl12yYEhFFUDnianqHAJUMceTYtMvgVLPRuNO5CRec
-         hKgzSLm/l07nkz05/TF82VbNTOvWiNSdQNjJl5j17UiPZRvKj0EqYvqxsispKvD5ztHF
-         1e4kP81VTp35dGpp+8iiVnOxitL9I3EUn9EeIInYr5yL6RvEEXPFJneJwlO6h+ci4VxG
-         zNaTTdqo46RePFXDCgZcmzELi3j6+sVk91frZNSRY0G9V0PhGTG2evKsCwmzgsaUpEmh
-         8rbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=iD/CADMJmjE6Wqsta+zyCvYv9Ey28eqoIb5w5xoLVEA=;
-        b=IokXJ+Sd7zVJhW/NGvHvMgHEKRX89nevswGdxP0k8fBFGogYfAOmmiZxAPh85bfO4x
-         M5EInlTFiATnpQeMasTjFLSkVfdxIyC8QdKVg1gyfQttLoruT2rfmMIhbLWhQt0MqWBd
-         s7ohWyKePDINRm1u2fidsrh9ShdiAXB4oEgoSEEuDjODa6o3odajxuUI36e7iL5e+6fo
-         9ACJzWQk0JV6/JiL0XeO87qDB1lTlAL8fljYFJ7hzQAHLP3ltAgDazpHkjhvR8giiear
-         e3/lASxLcUPBuU4lEs+x72xvs259Xk4gtyXEQ7WB72d/S3nV8u5oM2k85ayzh3zA61KX
-         qtMg==
-X-Gm-Message-State: AOAM533dwjI8Bl/MlkpGvpEcs1MP/4WykL+wE4L2DN6RYgdrfpyiXh5V
-        opPwQTgZW/VqgRn601ZVuqH2gstaAApVQw==
-X-Google-Smtp-Source: ABdhPJw8fPH9A4/VhWfdDH8hu/O77mu+3yiNPKg2taaBwgHgn2QguKRql4XLNDPx64znUUkGamzang==
-X-Received: by 2002:a5d:4288:: with SMTP id k8mr23087912wrq.657.1643219781128;
-        Wed, 26 Jan 2022 09:56:21 -0800 (PST)
-Received: from debby ([2a01:e0a:a6d:a8d0:7ff4:8f61:5574:9f95])
-        by smtp.gmail.com with ESMTPSA id d2sm19935638wru.40.2022.01.26.09.56.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jan 2022 09:56:20 -0800 (PST)
-From:   Romain Perier <romain.perier@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Palmer <daniel@0x0f.com>,
-        Romain Perier <romain.perier@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/8] ARM: mstar: Extend opp_table for infinity2m
-Date:   Wed, 26 Jan 2022 18:56:04 +0100
-Message-Id: <20220126175604.17919-9-romain.perier@gmail.com>
+        with ESMTP id S230210AbiAZSht (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 13:37:49 -0500
+X-Greylist: delayed 117 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 26 Jan 2022 10:37:49 PST
+Received: from mxd1.seznam.cz (mxd1.seznam.cz [IPv6:2a02:598:a::78:210])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68A05C06161C
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jan 2022 10:37:49 -0800 (PST)
+Received: from email.seznam.cz
+        by email-smtpc26b.ko.seznam.cz (email-smtpc26b.ko.seznam.cz [10.53.18.37])
+        id 37f13abf6cff6ed63658f6e1;
+        Wed, 26 Jan 2022 19:37:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1643222267; bh=N7Z0TgBqcMlNBuyZQo/fdQSFLPZ4eH8wQaILENj49WE=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding:X-szn-frgn:
+         X-szn-frgc;
+        b=EfR5kGOmXy429GwnKStSD0LKxPuqfi0i0oExBUqC0y6eVGQ1ima1XfivdjXGPA7+4
+         cJXwzScqwlgpKzAqYoyXKR0/mQrHTRNX/+ddRKdyi+1FtBzBTjLhUp7QPr6OL6aN4P
+         Xqv7qCq8S8wztdFK8rwa4IhjskVdHKahWmiaiMXQ=
+Received: from localhost.localdomain (ip-244-214.dynamic.ccinternet.cz [185.148.214.244])
+        by email-relay21.ko.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
+        Wed, 26 Jan 2022 19:35:27 +0100 (CET)  
+From:   michael.srba@seznam.cz
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Michael Srba <michael.srba@seznam.cz>,
+        Michael Srba <Michael.Srba@seznam.cz>
+Subject: [PATCH v4 5/5] arm64: dts: qcom: msm8998: reserve potentially inaccessible clocks
+Date:   Wed, 26 Jan 2022 19:32:50 +0100
+Message-Id: <20220126183250.11924-5-michael.srba@seznam.cz>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220126175604.17919-1-romain.perier@gmail.com>
-References: <20220126175604.17919-1-romain.perier@gmail.com>
+In-Reply-To: <20220126183250.11924-1-michael.srba@seznam.cz>
+References: <20220126183250.11924-1-michael.srba@seznam.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-szn-frgn: <ca8c4a70-7e2b-42fd-9f40-80c58c1e4f75>
+X-szn-frgc: <0>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-infinity2m are running up to 1.2Ghz, this extends opp_table with the
-corresponding frequencies and enable operating-points table for cpu1
+From: Michael Srba <michael.srba@seznam.cz>
 
-Signed-off-by: Romain Perier <romain.perier@gmail.com>
+With the gcc driver now being more complete and describing clocks which
+might not always be write-accessible to the OS, conservatively specify
+all such clocks as protected in the SoC dts.
+The board dts - or even user-supplied dts - can override this property
+to reflect the actual configuration.
+
+Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
 ---
- arch/arm/boot/dts/mstar-infinity2m.dtsi | 15 +++++++++++++++
+ CHANGES:
+ - v2: add this patch
+ - v3: fix missing Signed-off-by
+ - v4: add a proper explanation as per review, (hopefully) fix the subject and commit message
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
  1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mstar-infinity2m.dtsi b/arch/arm/boot/dts/mstar-infinity2m.dtsi
-index dc339cd29778..1b485efd7156 100644
---- a/arch/arm/boot/dts/mstar-infinity2m.dtsi
-+++ b/arch/arm/boot/dts/mstar-infinity2m.dtsi
-@@ -6,10 +6,25 @@
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index f273bc1ff629..16dccf9d881e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -863,6 +863,21 @@ gcc: clock-controller@100000 {
  
- #include "mstar-infinity.dtsi"
+ 			clock-names = "xo", "sleep_clk";
+ 			clocks = <&xo>, <&sleep_clk>;
++
++			/*
++			 * The hypervisor typically configures the memory region where these clocks
++			 * reside as read-only for the HLOS. If the HLOS tried to enable or disable
++			 * these clocks on a device with such configuration (e.g. because they are
++			 * enabled but unused during boot-up), the device will most likely decide
++			 * to reboot.
++			 * In light of that, we are conservative here and we list all such clocks
++			 * as protected. The board dts (or a user-supplied dts) can override the
++			 * list of protected clocks if it differs from the norm, and it is in fact
++			 * desired for the HLOS to manage these clocks
++			 */
++			protected-clocks = <AGGRE2_SNOC_NORTH_AXI>,
++					   <SSC_XO>,
++					   <SSC_CNOC_AHBS_CLK>;
+ 		};
  
-+&cpu0_opp_table {
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <300000>;
-+		};
-+};
-+
- &cpus {
- 	cpu1: cpu@1 {
- 		device_type = "cpu";
- 		compatible = "arm,cortex-a7";
-+		operating-points-v2 = <&cpu0_opp_table>;
- 		reg = <0x1>;
- 		clocks = <&cpupll>;
- 		clock-names = "cpuclk";
+ 		rpm_msg_ram: sram@778000 {
 -- 
 2.34.1
 
