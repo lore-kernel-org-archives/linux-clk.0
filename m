@@ -2,86 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2491C2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 11:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD76C2BA4C
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 12:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234105AbiAZLqz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 06:46:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48494 "EHLO
+        id S241077AbiAZMGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 07:06:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234071AbiAZLqz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 06:46:55 -0500
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DDF1C06161C;
-        Wed, 26 Jan 2022 03:46:55 -0800 (PST)
-Received: by mail-ua1-x934.google.com with SMTP id u6so42948367uaq.0;
-        Wed, 26 Jan 2022 03:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N4CNUTqSVWn9bXn7l88zPRdfRlbtM6HbzeC8ZWljLDY=;
-        b=kZlc5lyneJxcG3mgrIIsGcOndeVBblAK0nKqJSIxp5XBRMZDtyWdX5FBwuNfSIkm9a
-         KEa3BbUfSUgVIEcWlYs98e72BJkdt70ayYnbXgyYLT2AGf8mBiDWdNBn4GM7fs4t9y7s
-         tv9chq0HqYSR4PmevC7Ay1dz4ZgO1zXBQaak7iVtaAqHzINmLVcIHjWHrY4iC9LBEQ1z
-         NvtFXX/fQh2btOfQHsd9ie7Hq9Jk9xKK8Yp+oomhROlf1ZbDVzK+Ph9Ciprme7e2np4f
-         a0Ioc50iPwG018CiaEhUt+3VNIM+BzYZITkX0FfQdiQ7uu7jlOfQGewH2itZbhggiEL2
-         z+Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N4CNUTqSVWn9bXn7l88zPRdfRlbtM6HbzeC8ZWljLDY=;
-        b=G+1nTM3BJ8Ay/6RvEYKzXjeYvPqlV24W3+Xruzcvc8a2kQDYyWPieLE4kHnwp6hrzh
-         gRCewYPva2lk94zzrDTjo4/5sTe+7/7ys4qX6IEkDjX0eYNPYD3QYxF/W+V3aPQE6Ffu
-         Kv2mR2bBmtLzx1QX6pRz0QKIEwBMhDxEhdzFPiCAN9xpBdaNABTGeuQQKXpR0idatfpU
-         zO49aDGp6rwmMDZzEi8iK6SKbRZQIa7+q3Jh6QN2FAupZ0S0kjoStEqM345YiVlS8IrR
-         58w9anhBVUSVKiQBm+uzwEfUIfYQFFziigYpzbMwcD/uL5H18WRXrtwyqwNOHiiU+jQL
-         nT0Q==
-X-Gm-Message-State: AOAM530TaFb7LcMq//RBnEBvwBpXhDA3wyyoON2D6+7D5AP+UE3nTv+c
-        K+E1GGlswn3xFF6nyA1AGviGNfdthaPPAdkCcxc=
-X-Google-Smtp-Source: ABdhPJwZR3GhqHW6vVDPMdvc5RfjPrPxRISo7AxE0yRaHiKPCLToutmaZ91KccUpC53UUHP3+xvCW8VUf4CPP4L+I4g=
-X-Received: by 2002:a67:c98d:: with SMTP id y13mr3479175vsk.43.1643197614279;
- Wed, 26 Jan 2022 03:46:54 -0800 (PST)
-MIME-Version: 1.0
+        with ESMTP id S241072AbiAZMGM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 07:06:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31740C06161C;
+        Wed, 26 Jan 2022 04:06:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C77AE619AC;
+        Wed, 26 Jan 2022 12:06:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBE72C340E8;
+        Wed, 26 Jan 2022 12:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1643198771;
+        bh=wBuUv2urNmkd6B7YiVdXQn3atD/cdJFkM+tiso+uQ4E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r3FrCtAYS5xIhjHWzlg3RBJ7tWHuB9zz3QQI0i2vIkIlT+j1/dZkgkT/UhaRWjChG
+         nYCT0cTZh/16lpfuxFbjMRiikUStCKIPtk7XZHn4Dk6BZntyOoqyAIGcbac9zbOURR
+         uoeNVWkNKSbgGFXVe8hFlyvb5j2d1Je38zAExUi8=
+Date:   Wed, 26 Jan 2022 13:06:08 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     linux-clk@vger.kernel.org, john@phrozen.org,
+        linux-staging@lists.linux.dev, neil@brown.name,
+        p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org
+Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset
+ provider
+Message-ID: <YfE5MOkQRoHQV7Wf@kroah.com>
 References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
- <20220110114930.1406665-5-sergio.paracuellos@gmail.com> <d62d838872d26201b04a1014a925738d29ff3e48.camel@pengutronix.de>
-In-Reply-To: <d62d838872d26201b04a1014a925738d29ff3e48.camel@pengutronix.de>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Wed, 26 Jan 2022 12:46:43 +0100
-Message-ID: <CAMhs-H__SxEZ4OtdN_PFf4g+joWBRgRR0q7hHkZX3d=qZtpxUQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] staging: mt7621-dts: align resets with binding documentation
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
-        Greg KH <gregkh@linuxfoundation.org>,
-        NeilBrown <neil@brown.name>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Greg,
+On Mon, Jan 10, 2022 at 12:49:26PM +0100, Sergio Paracuellos wrote:
+> Hi all,
+> 
+> This patch series add minimal change to provide mt7621 resets properly
+> defining them in the 'mediatek,mt7621-sysc' node which is the system
+> controller of the SoC and is already providing clocks to the rest of
+> the world.
+> 
+> There is shared architecture code for all ralink platforms in 'reset.c'
+> file located in 'arch/mips/ralink' but the correct thing to do to align
+> hardware with software seems to define and add related reset code to the
+> already mainlined clock driver.
+> 
+> After this changes, we can get rid of the useless reset controller node
+> in the device tree and use system controller node instead where the property
+> '#reset-cells' has been added. Binding documentation for this nodeq has
+> been updated with the new property accordly.
+> 
+> This series also provide a bindings include header where all related
+> reset bits for the MT7621 SoC are defined.
+> 
+> Also, please take a look to this review [0] to understand better motivation
+> for this series.
+> 
+> Regarding the way of merging this:
+>  - I'd like patches 1 and 4 which are related going through staging tree.
 
-On Mon, Jan 10, 2022 at 12:54 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
->
-> On Mon, 2022-01-10 at 12:49 +0100, Sergio Paracuellos wrote:
-> > Binding documentation for compatible 'mediatek,mt7621-sysc' has been updated
-> > to be used as a reset provider. Align reset related bits and system controller
-> > node with binding documentation along the dtsi file.
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
->
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
->
-> regards
-> Philipp
+Patches 1 and 4 now in the staging tree, thanks.
 
-Can I get your Acked-by on this patch to apply this series through the clk tree?
-
-Thanks in advance for your time.
-
-Best regards,
-    Sergio Paracuellos
+greg k-h
