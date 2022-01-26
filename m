@@ -2,97 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C918C2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 08:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1662C28CF5
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 08:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238131AbiAZIJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 03:09:52 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:42894 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230220AbiAZIJv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 03:09:51 -0500
-X-UUID: cb8c71d7f21b49d5a170c1b7167e5c0e-20220126
-X-UUID: cb8c71d7f21b49d5a170c1b7167e5c0e-20220126
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 853508631; Wed, 26 Jan 2022 16:09:47 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 26 Jan 2022 16:09:46 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 26 Jan 2022 16:09:45 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <chun-jie.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 24/31] clk: mediatek: mux: Implement error handling in register API
-Date:   Wed, 26 Jan 2022 16:09:45 +0800
-Message-ID: <20220126080946.1836-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-25-wenst@chromium.org>
-References: <20220122091731.283592-25-wenst@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S238206AbiAZIMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 03:12:49 -0500
+Received: from so254-9.mailgun.net ([198.61.254.9]:41928 "EHLO
+        so254-9.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230202AbiAZIMs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 03:12:48 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1643184768; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=QZIdWUM7EPihOXq4BzDQyWtb+54DT11WKYyYespSlLk=; b=mgXX6Ua9JI1oaFKKpB12EFqmw8JfNbFW++5SIXtGTD+3YvtTG5hjDYVkWexHFcVpxxBEN6aJ
+ h5Znuw6/Oa2UEgJCrj3rB0rGVt/x472kzq/DzASQ+UmSDjj/pMbuYoWtRvdPtOhc9FaIopyA
+ KAv2cE+MEphaLq1GCs75Ue9oyUU=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 61f1027f62864ab10185f248 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 26 Jan 2022 08:12:47
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0C7EBC4360C; Wed, 26 Jan 2022 08:12:47 +0000 (UTC)
+Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D56E1C4360D;
+        Wed, 26 Jan 2022 08:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org D56E1C4360D
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v4 0/2] Add support for LPASS Core and Audio Clock for SC7280
+Date:   Wed, 26 Jan 2022 13:42:34 +0530
+Message-Id: <20220126081236.25255-1-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> The mux clk type registration function does not stop or return errors
-> if any clk failed to be registered, nor does it implement an error
-> handling path. This may result in a partially working device if any
-> step failed.
-> 
-> Make the register function return proper error codes, and bail out if
-> errors occur. Proper cleanup, i.e. unregister any clks that were
-> successfully registered, is done in the new error path.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+[v4]
+ * Cleanup header file inclusion in the clock controller files.
+ * Update the regmap_config max_registers in all clock controller
+   probes.
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-mux.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
-> index 70aa42144632..f51e67650f03 100644
-> --- a/drivers/clk/mediatek/clk-mux.c
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -215,13 +215,26 @@ int mtk_clk_register_muxes(const struct mtk_mux *muxes,
->  
->  		if (IS_ERR(clk)) {
->  			pr_err("Failed to register clk %s: %pe\n", mux->name, clk);
-> -			continue;
-> +			goto err;
->  		}
->  
->  		clk_data->clks[mux->id] = clk;
->  	}
->  
->  	return 0;
-> +
-> +err:
-> +	while (--i >= 0) {
-> +		const struct mtk_mux *mux = &muxes[i];
-> +
-> +		if (IS_ERR_OR_NULL(clk_data->clks[mux->id]))
-> +			continue;
-> +
-> +		mtk_clk_unregister_mux(clk_data->clks[mux->id]);
-> +		clk_data->clks[mux->id] = ERR_PTR(-ENOENT);
-> +	}
-> +
-> +	return PTR_ERR(clk);
->  }
->  EXPORT_SYMBOL_GPL(mtk_clk_register_muxes);
->  
-> -- 
-> 2.35.0.rc0.227.g00780c9af4-goog
-> 
-> 
+[v3]
+ * Fix 'pm_clk_suspend' expansion warning in lpass_audio_cc_sc7280_probe
+   and lpass_aon_cc_sc7280_probe.
+ * Update the vco table frequencies.
+ * Update 'regmap_config' name for all clock controllers.
+ * Fix the missing 'const' for clk_init_data.
+ * Update the binding for 'lpass_aon' CC.
+
+[v2]
+ * Drop code for "Add support for clock voting from GDSC" from
+   drivers/clk/qcom/gdsc.c
+ * Add support for runtime PM get/put from clk_summary.
+ * Update commit message for PLL detect lock timeout increase.
+ * Fix documentation bindings errors reported by DT_CHECKER_FLAGS.
+ * Update the driver code to take care of the following
+    - KCONFIG to add "select QCOM_GDSC"
+    - Use of "const" for pll_vco and clk_init_data
+    - Use of index instead of fw_name.
+    - Fix extra space, remove 'lpass_create_pm_clks' and corresponding code.
+    - cleanup 'lpass_hm_core_probe' and 'lpass_hm_sc7280_match_table'.
+
+[v1]
+This patchset supports the following.
+- Few PLLs might require to a higher time to detect lock, thus increase the
+  polling time.
+- GDSC which require clocks to be explicitly enabled before access.
+- LPASS core and audio clock driver support for SC7280.
+
+
+
+*** BLURB HERE ***
+
+Taniya Das (2):
+  dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
+  clk: qcom: lpass: Add support for LPASS clock controller for SC7280
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        | 172 ++++
+ drivers/clk/qcom/Kconfig                      |  10 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 838 ++++++++++++++++++
+ drivers/clk/qcom/lpasscorecc-sc7280.c         | 431 +++++++++
+ .../clock/qcom,lpassaudiocc-sc7280.h          |  43 +
+ .../clock/qcom,lpasscorecc-sc7280.h           |  26 +
+ 7 files changed, 1521 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+ create mode 100644 drivers/clk/qcom/lpassaudiocc-sc7280.c
+ create mode 100644 drivers/clk/qcom/lpasscorecc-sc7280.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
+ create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
