@@ -2,58 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5669AC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jan 2022 22:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E33DC2BA4C
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 06:04:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233861AbiAYWah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jan 2022 17:30:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233824AbiAYWah (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jan 2022 17:30:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5973DC06173B;
-        Tue, 25 Jan 2022 14:30:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 176EEB81B81;
-        Tue, 25 Jan 2022 22:30:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B319EC340E0;
-        Tue, 25 Jan 2022 22:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643149834;
-        bh=DfeAcVSHh0D/zOGjKbpcXxRj2uI6oo/nO/77qFXGj+g=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jQrshj8vNJjmBMnHQ11PMeAFIR/LprUxiDCryjDO9ZHI7FsN28kAt8h/6tFmOH97m
-         mskf0pIW/ZXKPvWDfhRK0lN/33rNob56FS4SQv7kLGke5fEin+mmJdWi+qcoDRKtvZ
-         jhbJjr0rj/Q2ho6OPlbHsbvV9E09WQzWIN6C7K1If+RV+ROQEClR9P2GVxjyZaNRwu
-         NAmFmd+RiceaohBs38/bUtkSnrGgO0/SfuDe9b1VC5T6UfkL7kUTTV9jy7HylsIwYu
-         /re0ch1iEt647p93DUM2kQAWuqqmKyb9XwCHngV7iTyZ5PlyxXiFuohdIRAjRAoBVI
-         6yZr+VCYWhJBA==
-Content-Type: text/plain; charset="utf-8"
+        id S233524AbiAZGEy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 01:04:54 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:46726 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234569AbiAZGEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 01:04:54 -0500
+X-UUID: f96c7f052f7b4840ba58f443d510bc82-20220126
+X-UUID: f96c7f052f7b4840ba58f443d510bc82-20220126
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1330849330; Wed, 26 Jan 2022 14:04:50 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 26 Jan 2022 14:04:48 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 26 Jan 2022 14:04:48 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <wenst@chromium.org>
+CC:     <chun-jie.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>
+Subject: Re: [PATCH 13/31] clk: mediatek: pll: Implement unregister API
+Date:   Wed, 26 Jan 2022 14:04:49 +0800
+Message-ID: <20220126060449.24874-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220122091731.283592-10-wenst@chromium.org>
+References: <20220122091731.283592-10-wenst@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220125093336.226787-10-daniel@zonque.org>
-References: <20220125093336.226787-1-daniel@zonque.org> <20220125093336.226787-10-daniel@zonque.org>
-Subject: Re: [PATCH RESEND v4 9/9] clk: cs2000-cp: convert driver to regmap
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        Daniel Mack <daniel@zonque.org>
-To:     Daniel Mack <daniel@zonque.org>, mturquette@baylibre.com
-Date:   Tue, 25 Jan 2022 14:30:33 -0800
-User-Agent: alot/0.10
-Message-Id: <20220125223034.B319EC340E0@smtp.kernel.org>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Mack (2022-01-25 01:33:36)
-> Regmap gives us caching, debugging infrastructure and other things for
-> free and does away with open-coded bit-fiddling implementations.
->=20
-> Signed-off-by: Daniel Mack <daniel@zonque.org>
-> ---
+> +static void mtk_clk_unregister_pll(struct clk *clk)
+> +{
+> +	struct clk_hw *hw = __clk_get_hw(clk);
+> +	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> +
+> +	clk_unregister(clk);
+> +	kfree(pll);
+> +}
+> +
 
-Applied to clk-next
+mtk_clk_unregister_pll() looks different. 
+Do we need to check hw before passing it to to_mtk_clk_pll(hw), like
+mtk_clk_unregister_mux()?
+
+>  void mtk_clk_register_plls(struct device_node *node,
+>  		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
+>  {
+> @@ -388,4 +397,44 @@ void mtk_clk_register_plls(struct device_node *node,
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_plls);
+>  
+> +static __iomem void *mtk_clk_pll_get_base(struct clk *clk,
+> +					  const struct mtk_pll_data *data)
+> +{
+> +	struct clk_hw *hw = __clk_get_hw(clk);
+> +	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> +
+> +	return pll->base_addr - data->reg;
+> +}
+> +
+> +void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
+> +			     struct clk_onecell_data *clk_data)
+> +{
+> +	__iomem void *base = NULL;
+> +	int i;
+> +
+> +	if (!clk_data)
+> +		return;
+> +
+> +	for (i = num_plls; i > 0; i--) {
+> +		const struct mtk_pll_data *pll = &plls[i - 1];
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->clks[pll->id]))
+> +			continue;
+> +
+> +		/*
+> +		 * This is quite ugly but unfortunately the clks don't have
+> +		 * any device tied to them, so there's no place to store the
+> +		 * pointer to the I/O region base address. We have to fetch
+> +		 * it from one of the registered clks.
+> +		 */
+> +		base = mtk_clk_pll_get_base(clk_data->clks[pll->id], pll);
+> +
+> +		mtk_clk_unregister_pll(clk_data->clks[pll->id]);
+> +		clk_data->clks[pll->id] = ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	iounmap(base);
+> +}
+> +EXPORT_SYMBOL_GPL(mtk_clk_unregister_plls);
+> +
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
+> index d01b0c38311d..a889b1e472e7 100644
+> --- a/drivers/clk/mediatek/clk-pll.h
+> +++ b/drivers/clk/mediatek/clk-pll.h
+> @@ -51,5 +51,7 @@ struct mtk_pll_data {
+>  void mtk_clk_register_plls(struct device_node *node,
+>  			   const struct mtk_pll_data *plls, int num_plls,
+>  			   struct clk_onecell_data *clk_data);
+> +void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
+> +			     struct clk_onecell_data *clk_data);
+>  
+>  #endif /* __DRV_CLK_MTK_PLL_H */
+> -- 
+> 2.35.0.rc0.227.g00780c9af4-goog
+
+
