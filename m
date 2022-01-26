@@ -2,28 +2,27 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2C6C2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 08:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFE5C2BA4C
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 08:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbiAZIki (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 03:40:38 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40768 "EHLO
+        id S238657AbiAZI7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 03:59:54 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41962 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230519AbiAZIki (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 03:40:38 -0500
-X-UUID: 29c83b0b7f444af6a02331b618126f4d-20220126
-X-UUID: 29c83b0b7f444af6a02331b618126f4d-20220126
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        with ESMTP id S238653AbiAZI7x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 03:59:53 -0500
+X-UUID: 49444759154247c9bd22bfdb75bf04ad-20220126
+X-UUID: 49444759154247c9bd22bfdb75bf04ad-20220126
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1909331291; Wed, 26 Jan 2022 16:40:35 +0800
+        with ESMTP id 649423601; Wed, 26 Jan 2022 16:59:48 +0800
 Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 26 Jan 2022 16:40:33 +0800
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 26 Jan 2022 16:59:47 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 26 Jan 2022 16:40:33 +0800
+ Transport; Wed, 26 Jan 2022 16:59:47 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <wenst@chromium.org>
 CC:     <chun-jie.chen@mediatek.com>,
@@ -31,12 +30,12 @@ CC:     <chun-jie.chen@mediatek.com>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 30/31] clk: mediatek: mt8195: Implement remove functions
-Date:   Wed, 26 Jan 2022 16:40:33 +0800
-Message-ID: <20220126084033.20234-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 31/31] clk: mediatek: Warn if clk IDs are duplicated
+Date:   Wed, 26 Jan 2022 16:59:47 +0800
+Message-ID: <20220126085947.31507-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-31-wenst@chromium.org>
-References: <20220122091731.283592-31-wenst@chromium.org>
+In-Reply-To: <20220122091731.283592-32-wenst@chromium.org>
+References: <20220122091731.283592-32-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -44,205 +43,152 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Until now the mediatek clk driver library did not have any way to
-> unregister clks, and so none of the drivers implemented remove
-> functions.
+>The Mediatek clk driver library handles duplicate clock IDs in two
+>different ways: either ignoring the duplicate entry, or overwriting
+>the old clk. Either way may cause unexpected behavior, and the latter
+>also causes an orphan clk that cannot be cleaned up.
+>
+>Align the behavior so that later duplicate entries are ignored, and
+>a warning printed. The warning will also aid in making the issue
+>noticeable.
+>
+>Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>---
+> drivers/clk/mediatek/clk-cpumux.c |  6 ++++++
+> drivers/clk/mediatek/clk-gate.c   |  5 ++++-
+> drivers/clk/mediatek/clk-mtk.c    | 18 ++++++++++++++----
+> drivers/clk/mediatek/clk-mux.c    |  5 ++++-
+> drivers/clk/mediatek/clk-pll.c    |  6 ++++++
+> 5 files changed, 34 insertions(+), 6 deletions(-)
+>
+>diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+>index 499c60432280..c11b3fae622e 100644
+>--- a/drivers/clk/mediatek/clk-cpumux.c
+>+++ b/drivers/clk/mediatek/clk-cpumux.c
+>@@ -120,6 +120,12 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_composite *mux = &clks[i];
 > 
-> Now that the library does have APIs to unregister clks, use them
-> to implement remove functions for the mt8195 clk drivers.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+>+			pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
+>+				node, mux->id);
+>+			continue;
+
+%pOF is an useful information when this happens.
 
 Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 
-> ---
->  drivers/clk/mediatek/clk-mt8195-apmixedsys.c | 16 ++++++++++++++++
->  drivers/clk/mediatek/clk-mt8195-apusys_pll.c | 13 +++++++++++++
->  drivers/clk/mediatek/clk-mt8195-topckgen.c   | 20 ++++++++++++++++++++
->  drivers/clk/mediatek/clk-mt8195-vdo0.c       | 16 ++++++++++++++++
->  drivers/clk/mediatek/clk-mt8195-vdo1.c       | 16 ++++++++++++++++
->  5 files changed, 81 insertions(+)
+>+		}
+>+
+> 		clk = mtk_clk_register_cpumux(mux, regmap);
+> 		if (IS_ERR(clk)) {
+> 			pr_err("Failed to register clk %s: %pe\n", mux->name, clk);
+>diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+>index 631ff170b7b9..da52023f8455 100644
+>--- a/drivers/clk/mediatek/clk-gate.c
+>+++ b/drivers/clk/mediatek/clk-gate.c
+>@@ -224,8 +224,11 @@ int mtk_clk_register_gates_with_dev(struct device_node *node,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_gate *gate = &clks[i];
 > 
-> diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-> index af8d80f25f30..29cac3cf5f53 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
-> @@ -132,6 +132,8 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_gates;
->  
-> +	platform_set_drvdata(pdev, clk_data);
-> +
->  	return r;
->  
->  unregister_gates:
-> @@ -143,8 +145,22 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
->  	return r;
->  }
->  
-> +static int clk_mt8195_apmixed_remove(struct platform_device *pdev)
-> +{
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(apmixed_clks, ARRAY_SIZE(apmixed_clks), clk_data);
-> +	mtk_clk_unregister_plls(plls, ARRAY_SIZE(plls), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver clk_mt8195_apmixed_drv = {
->  	.probe = clk_mt8195_apmixed_probe,
-> +	.remove = clk_mt8195_apmixed_remove,
->  	.driver = {
->  		.name = "clk-mt8195-apmixed",
->  		.of_match_table = of_match_clk_mt8195_apmixed,
-> diff --git a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-> index 1fff6f3d2dc7..8cd88dfc3283 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-apusys_pll.c
-> @@ -85,6 +85,18 @@ static int clk_mt8195_apusys_pll_probe(struct platform_device *pdev)
->  	return r;
->  }
->  
-> +static int clk_mt8195_apusys_pll_remove(struct platform_device *pdev)
-> +{
-> +	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +	struct device_node *node = pdev->dev.of_node;
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_plls(apusys_plls, ARRAY_SIZE(apusys_plls), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
-> +
->  static const struct of_device_id of_match_clk_mt8195_apusys_pll[] = {
->  	{ .compatible = "mediatek,mt8195-apusys_pll", },
->  	{}
-> @@ -92,6 +104,7 @@ static const struct of_device_id of_match_clk_mt8195_apusys_pll[] = {
->  
->  static struct platform_driver clk_mt8195_apusys_pll_drv = {
->  	.probe = clk_mt8195_apusys_pll_probe,
-> +	.remove = clk_mt8195_apusys_pll_remove,
->  	.driver = {
->  		.name = "clk-mt8195-apusys_pll",
->  		.of_match_table = of_match_clk_mt8195_apusys_pll,
-> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> index 3631f49a5e5a..b602fcd7f1d1 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> @@ -1271,6 +1271,8 @@ static int clk_mt8195_topck_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_gates;
->  
-> +	platform_set_drvdata(pdev, top_clk_data);
-> +
->  	return r;
->  
->  unregister_gates:
-> @@ -1290,8 +1292,26 @@ static int clk_mt8195_topck_probe(struct platform_device *pdev)
->  	return r;
->  }
->  
-> +static int clk_mt8195_topck_remove(struct platform_device *pdev)
-> +{
-> +	struct clk_onecell_data *top_clk_data = platform_get_drvdata(pdev);
-> +	struct device_node *node = pdev->dev.of_node;
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(top_clks, ARRAY_SIZE(top_clks), top_clk_data);
-> +	mtk_clk_unregister_composites(top_adj_divs, ARRAY_SIZE(top_adj_divs), top_clk_data);
-> +	mtk_clk_unregister_composites(top_muxes, ARRAY_SIZE(top_muxes), top_clk_data);
-> +	mtk_clk_unregister_muxes(top_mtk_muxes, ARRAY_SIZE(top_mtk_muxes), top_clk_data);
-> +	mtk_clk_unregister_factors(top_divs, ARRAY_SIZE(top_divs), top_clk_data);
-> +	mtk_clk_unregister_fixed_clks(top_fixed_clks, ARRAY_SIZE(top_fixed_clks), top_clk_data);
-> +	mtk_free_clk_data(top_clk_data);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver clk_mt8195_topck_drv = {
->  	.probe = clk_mt8195_topck_probe,
-> +	.remove = clk_mt8195_topck_remove,
->  	.driver = {
->  		.name = "clk-mt8195-topck",
->  		.of_match_table = of_match_clk_mt8195_topck,
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo0.c b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> index af34eb564b1d..3bc7ed19d550 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vdo0.c
-> @@ -107,6 +107,8 @@ static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_gates;
->  
-> +	platform_set_drvdata(pdev, clk_data);
-> +
->  	return r;
->  
->  unregister_gates:
-> @@ -116,8 +118,22 @@ static int clk_mt8195_vdo0_probe(struct platform_device *pdev)
->  	return r;
->  }
->  
-> +static int clk_mt8195_vdo0_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(vdo0_clks, ARRAY_SIZE(vdo0_clks), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver clk_mt8195_vdo0_drv = {
->  	.probe = clk_mt8195_vdo0_probe,
-> +	.remove = clk_mt8195_vdo0_remove,
->  	.driver = {
->  		.name = "clk-mt8195-vdo0",
->  	},
-> diff --git a/drivers/clk/mediatek/clk-mt8195-vdo1.c b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-> index 6b502bbc730c..90c738a85ff1 100644
-> --- a/drivers/clk/mediatek/clk-mt8195-vdo1.c
-> +++ b/drivers/clk/mediatek/clk-mt8195-vdo1.c
-> @@ -124,6 +124,8 @@ static int clk_mt8195_vdo1_probe(struct platform_device *pdev)
->  	if (r)
->  		goto unregister_gates;
->  
-> +	platform_set_drvdata(pdev, clk_data);
-> +
->  	return r;
->  
->  unregister_gates:
-> @@ -133,8 +135,22 @@ static int clk_mt8195_vdo1_probe(struct platform_device *pdev)
->  	return r;
->  }
->  
-> +static int clk_mt8195_vdo1_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->parent->of_node;
-> +	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-> +
-> +	of_clk_del_provider(node);
-> +	mtk_clk_unregister_gates(vdo1_clks, ARRAY_SIZE(vdo1_clks), clk_data);
-> +	mtk_free_clk_data(clk_data);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver clk_mt8195_vdo1_drv = {
->  	.probe = clk_mt8195_vdo1_probe,
-> +	.remove = clk_mt8195_vdo1_remove,
->  	.driver = {
->  		.name = "clk-mt8195-vdo1",
->  	},
-> -- 
-> 2.35.0.rc0.227.g00780c9af4-goog
+>-		if (!IS_ERR_OR_NULL(clk_data->clks[gate->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[gate->id])) {
+>+			pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
+>+				node, gate->id);
+> 			continue;
+>+		}
 > 
+> 		clk = mtk_clk_register_gate(gate->name, gate->parent_name,
+> 					    regmap,
+>diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+>index 6d0b8842971b..b2a3568922b2 100644
+>--- a/drivers/clk/mediatek/clk-mtk.c
+>+++ b/drivers/clk/mediatek/clk-mtk.c
+>@@ -65,8 +65,10 @@ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_fixed_clk *rc = &clks[i];
 > 
+>-		if (!IS_ERR_OR_NULL(clk_data->clks[rc->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[rc->id])) {
+>+			pr_warn("Trying to register duplicate clock ID: %d\n", rc->id);
+> 			continue;
+>+		}
+> 
+> 		clk = clk_register_fixed_rate(NULL, rc->name, rc->parent, 0,
+> 					      rc->rate);
+>@@ -128,8 +130,10 @@ int mtk_clk_register_factors(const struct mtk_fixed_factor *clks, int num,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_fixed_factor *ff = &clks[i];
+> 
+>-		if (!IS_ERR_OR_NULL(clk_data->clks[ff->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[ff->id])) {
+>+			pr_warn("Trying to register duplicate clock ID: %d\n", ff->id);
+> 			continue;
+>+		}
+> 
+> 		clk = clk_register_fixed_factor(NULL, ff->name, ff->parent_name,
+> 				CLK_SET_RATE_PARENT, ff->mult, ff->div);
+>@@ -300,8 +304,11 @@ int mtk_clk_register_composites(const struct mtk_composite *mcs, int num,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_composite *mc = &mcs[i];
+> 
+>-		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mc->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[mc->id])) {
+>+			pr_warn("Trying to register duplicate clock ID: %d\n",
+>+				mc->id);
+> 			continue;
+>+		}
+> 
+> 		clk = mtk_clk_register_composite(mc, base, lock);
+> 
+>@@ -363,8 +370,11 @@ int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds, int num,
+> 	for (i = 0; i <  num; i++) {
+> 		const struct mtk_clk_divider *mcd = &mcds[i];
+> 
+>-		if (!IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[mcd->id])) {
+>+			pr_warn("Trying to register duplicate clock ID: %d\n",
+>+				mcd->id);
+> 			continue;
+>+		}
+> 
+> 		clk = clk_register_divider(NULL, mcd->name, mcd->parent_name,
+> 			mcd->flags, base +  mcd->div_reg, mcd->div_shift,
+>diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+>index f51e67650f03..21ad5a4afd65 100644
+>--- a/drivers/clk/mediatek/clk-mux.c
+>+++ b/drivers/clk/mediatek/clk-mux.c
+>@@ -208,8 +208,11 @@ int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+> 	for (i = 0; i < num; i++) {
+> 		const struct mtk_mux *mux = &muxes[i];
+> 
+>-		if (!IS_ERR_OR_NULL(clk_data->clks[mux->id]))
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+>+			pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
+>+				node, mux->id);
+> 			continue;
+>+		}
+> 
+> 		clk = mtk_clk_register_mux(mux, regmap, lock);
+> 
+>diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+>index 1dd15f560659..e5e9c188be99 100644
+>--- a/drivers/clk/mediatek/clk-pll.c
+>+++ b/drivers/clk/mediatek/clk-pll.c
+>@@ -386,6 +386,12 @@ int mtk_clk_register_plls(struct device_node *node,
+> 	for (i = 0; i < num_plls; i++) {
+> 		const struct mtk_pll_data *pll = &plls[i];
+> 
+>+		if (!IS_ERR_OR_NULL(clk_data->clks[pll->id])) {
+>+			pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
+>+				node, pll->id);
+>+			continue;
+>+		}
+>+
+> 		clk = mtk_clk_register_pll(pll, base);
+> 
+> 		if (IS_ERR(clk)) {
+>-- 
+>2.35.0.rc0.227.g00780c9af4-goog
+>
+>
