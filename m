@@ -2,203 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34527C28CF5
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 09:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89160C63684
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 10:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbiAZJmT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 04:42:19 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:35074 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230306AbiAZJmT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 04:42:19 -0500
-Received: from [10.28.39.106] (10.28.39.106) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 26 Jan
- 2022 17:42:17 +0800
-Message-ID: <27bf78f7-23b9-d759-28eb-0594006a30c6@amlogic.com>
-Date:   Wed, 26 Jan 2022 17:42:17 +0800
+        id S232925AbiAZKGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 05:06:30 -0500
+Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:49680
+        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239578AbiAZKG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 05:06:29 -0500
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BB8BE40045
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jan 2022 10:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1643191588;
+        bh=Sjgv+P4vErk8QuuLdD8vbkXOQssB6budl50epcjkaFo=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=rW7i2C6jloutFrUOacLtFWon3OEOleGF+7qSxmApWn3bQ9ilqik/3CzErTE5DpGS0
+         VdL4cULBlqiMRYE5hID7mpmJYHTbXecisLbpr3UE7BRJmvGcwxPp8OY5VIvtgPkbmX
+         AUjSrIP6rg0rO1xRbmRkzPXbCXSi6PZFxrM9YKBsPLp1d+dlmZLByXMvhMw11OBdrQ
+         E12wQiC8MCraC9sP4NXrzH8NsZD9OKtiBUm9Vpld6eL3s8CrXm6spuSbwZSWj4At9v
+         cX9jRh+qMKW+rHqWpAYcJcorhV8zOWWE1nK1uowod/UF7bXuQ7Qt1p7BpPPS9G6WKa
+         n3/7DixGdvM/Q==
+Received: by mail-wm1-f70.google.com with SMTP id z2-20020a05600c220200b0034d2eb95f27so3036837wml.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jan 2022 02:06:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Sjgv+P4vErk8QuuLdD8vbkXOQssB6budl50epcjkaFo=;
+        b=COg10a/B3vaKwvTyZGKiSFvseYvF2LMiCP2JP32vKPTqH5MReyzCVV0irCW8zg7qGI
+         MtDkhSgJ1N3tS0eTpcJbRL1deowL53vD4VusTvAq+KawVbv4g0nOftKmYWsiuDvmPC+W
+         LQ0jgUXExrmokd3uki532HxAUd5zMHvvQOkbGOuVNfV3ZXzpejpQpDvB+4cTXJJb0cFP
+         BEvssHa3JxfPd3muUaz5/0etcfO38wPUHfn2RaiYFTyL8ZyRsz2AgVJD1v2hNB46e8mk
+         h2dvtG6E5y3IOVYod9rxzo92YRMSmS8fPJE5NI6vdJop6sYotLAbtrpgbSIEIN7winjG
+         gPaQ==
+X-Gm-Message-State: AOAM531pC9F5WZFVkpqRNl508T1ZPXwfhuu668ZExUwZEF99DMC0uXXU
+        wKuePeq9VdH8yWCZPec1qecnnNi9vbm1iRPlyn1q4YNMgd5ebK3GfFhxg0TQgiU6xBMpiq440fQ
+        DQD9mM0Wz5O+cb+NVrzvNLUkTUCg3tzPKXQLg+g==
+X-Received: by 2002:a5d:6f08:: with SMTP id ay8mr6187692wrb.296.1643191586473;
+        Wed, 26 Jan 2022 02:06:26 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxQWxymgwDG/P6gJ5lAlxBJfkupquZBQk77a4LSrbyGJvYoG0Zub8FJabFUyrBLH4OAJL4WfQ==
+X-Received: by 2002:a5d:6f08:: with SMTP id ay8mr6187677wrb.296.1643191586317;
+        Wed, 26 Jan 2022 02:06:26 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
+        by smtp.gmail.com with ESMTPSA id m8sm10165544wrn.106.2022.01.26.02.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jan 2022 02:06:25 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     linux-arm-kernel@lists.infradead.org,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        soc@kernel.org, devicetree@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org,
+        catalin.marinas@arm.com, s.nawrocki@samsung.com, arnd@arndb.de,
+        pankaj.dubey@samsung.com, linux-clk@vger.kernel.org,
+        linus.walleij@linaro.org, olof@lixom.net, sboyd@kernel.org
+Subject: Re: [PATCH v5 00/16] Add support for Tesla Full Self-Driving (FSD) SoC (clock parts)
+Date:   Wed, 26 Jan 2022 11:05:49 +0100
+Message-Id: <164319151879.214823.14786470465879458997.b4-ty@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220124141644.71052-1-alim.akhtar@samsung.com>
+References: <CGME20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b@epcas5p2.samsung.com> <20220124141644.71052-1-alim.akhtar@samsung.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v10 0/4] clk: meson: add a sub EMMC clock controller
- support
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        XianWei Zhao <xianwei.zhao@amlogic.com>,
-        Kelvin Zhang <kelvin.zhang@amlogic.com>,
-        BiChao Zheng <bichao.zheng@amlogic.com>,
-        YongHui Yu <yonghui.yu@amlogic.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20220121074508.42168-1-liang.yang@amlogic.com>
- <f5a429f2-ffbc-ea03-810a-45a0f90959a2@baylibre.com>
- <6eb4f247-367b-d460-6314-fc94ccd00b89@amlogic.com>
- <1jy23226sa.fsf@starbuckisacylon.baylibre.com>
-From:   Liang Yang <liang.yang@amlogic.com>
-In-Reply-To: <1jy23226sa.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.106]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+On Mon, 24 Jan 2022 19:46:28 +0530, Alim Akhtar wrote:
+> Adds basic support for the Tesla Full Self-Driving (FSD)
+> SoC. This SoC contains three clusters of four Cortex-A72 CPUs,
+> as well as several IPs.
+> 
+> Patches 1 to 9 provide support for the clock controller
+> (which is designed similarly to Exynos SoCs).
+> 
+> [...]
 
-On 2022/1/26 17:14, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> 
-> On Wed 26 Jan 2022 at 17:08, Liang Yang <liang.yang@amlogic.com> wrote:
-> 
->> Hi Neil,
->>
->> On 2022/1/25 22:54, Neil Armstrong wrote:
->>> [ EXTERNAL EMAIL ]
->>> Hi Liang,
->>> On 21/01/2022 08:45, Liang Yang wrote:
->>>> This driver will add a MMC clock controller driver support.
->>>> The original idea about adding a clock controller is during the
->>>> discussion in the NAND driver mainline effort[1].
->>>>
->>>> This driver is tested in the S400 board (AXG platform) with NAND driver.
->>> Thanks a lot for providing a fixed and updated version of this serie.
->>> After some chat with Jerome and Kevin, it seems the way the eMMC clock
->>> reuse
->>> for NAND was designed nearly 4 years doesn't look accurate anymore.
->>> Having a separate clk driver designed to replace the eMMC node when NAND
->>> is
->>> used on the board seems over engineered.
->>> Actually having the clock code you add in this serie _but_ directly in
->>> the NAND looks far better, and more coherent since having Linux runtime
->>> detection of eMMC vs NAND will never happen and even this serie required
->>> some DT modification from the bootloader.
->>> I'll let Jerome or Kevin add more details if they want, but I think you
->>> should resurrect
->>> the work you pushed in [1] & [2] but:
->>> - passing the eMMC clk registers as a third "reg" cell
->> Does it just need to define a 'reg' resource in NFC node and not 'syscon'
->> here?
-> 
-> Yes
-> 
->>> - passing the same "clocks" phandle as the eMMC node
->>> - adding the eMMC clock code in the NAND driver directly
->>> I'm open to discussions if you consider the current approach is still
->>> superior.
->>
->> I don't have persuasive ideas, but really it shares the common clock
->> implementation for both NFC and EMMC. and we don't need to paste the
->> same code in NFC and EMMC.
-> 
-> You don't need to copy everything. If I understood correctly, all the
-> Rx/Tx should not be needed. Yes, there is some duplication as it stands but
-> it allows to avoid coupling the MMC and NAND driver. We can still think
-> about optimizing things later on. Let's get something simply working
-> first.
-ok. i will do it. thank you.
-> 
->>
->>> Thanks,
->>> Neil
->>> [1]
->>> https://lore.kernel.org/r/20220106033130.37623-1-liang.yang@amlogic.com
->>> [2] https://lore.kernel.org/r/20220106032504.23310-1-liang.yang@amlogic.com
->>>
->>>>
->>>> Changes since v9 [10]
->>>>    - use clk_parent_data instead of parent_names
->>>>
->>>> Changes since v8 [9]
->>>>    - use MESON_SCLK_ONE_BASED instead of CLK_DIVIDER_ONE_BASED
->>>>    - use struct_size to caculate onecell_data
->>>>    - add clk-phase-delay.h
->>>>    - define CLK_DELAY_STEP_PS_GX and CLK_DELAY_STEP_PS_AXG
->>>>
->>>> Changes since v7 [8]
->>>>    - move meson_clk_get_phase_delay_data() from header to driver
->>>>    - CONFIG sclk-div with COMMON_CLK_AMLOGIC instead of COMMON_CLK_AMLOGIC_AUDIO
->>>>    - remove onecell date and ID for internal MUX clk
->>>>    - use helper for functions for ONE_BASED in sclk-div
->>>>    - add ONE_BASED support for duty cycle
->>>>
->>>> Changes since v6 [7]:
->>>>    - add one based support for sclk divier
->>>>    - alloc sclk in probe for multiple instance
->>>>    - fix coding styles
->>>>
->>>> Changes since v5 [6]:
->>>>    - remove divider ops with .init and use sclk_div instead
->>>>    - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
->>>>    - drop the useless type cast
->>>>
->>>> Changes since v4 [5]:
->>>>    - use struct parm in phase delay driver
->>>>    - remove 0 delay releted part in phase delay driver
->>>>    - don't rebuild the parent name once again
->>>>    - add divider ops with .init
->>>>
->>>> Changes since v3 [4]:
->>>>    - separate clk-phase-delay driver
->>>>    - replace clk_get_rate() with clk_hw_get_rate()
->>>>    - collect Rob's R-Y
->>>>    - drop 'meson-' prefix from compatible string
->>>>
->>>>    Changes since v2 [3]:
->>>>    - squash dt-binding clock-id patch
->>>>    - update license
->>>>    - fix alignment
->>>>    - construct a clk register helper() function
->>>>
->>>> Changes since v1 [2]:
->>>>    - implement phase clock
->>>>    - update compatible name
->>>>    - adjust file name
->>>>    - divider probe() into small functions, and re-use them
->>>>
->>>> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
->>>> [2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
->>>> [3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
->>>> [4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
->>>> [5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
->>>> [6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
->>>> [7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
->>>> [8] https://lkml.kernel.org/r/1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com
->>>> [9] https://lkml.kernel.org/r/1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com
->>>> [10] https://lore.kernel.org/all/20220113115745.45826-1-liang.yang@amlogic.com/
->>>> Liang Yang (4):
->>>>     clk: meson: add one based divider support for sclk
->>>>     clk: meson: add emmc sub clock phase delay driver
->>>>     clk: meson: add DT documentation for emmc clock controller
->>>>     clk: meson: add sub MMC clock controller driver
->>>>
->>>>    .../bindings/clock/amlogic,mmc-clkc.yaml      |  64 ++++
->>>>    drivers/clk/meson/Kconfig                     |  18 ++
->>>>    drivers/clk/meson/Makefile                    |   2 +
->>>>    drivers/clk/meson/clk-phase-delay.c           |  69 ++++
->>>>    drivers/clk/meson/clk-phase-delay.h           |  20 ++
->>>>    drivers/clk/meson/mmc-clkc.c                  | 302 ++++++++++++++++++
->>>>    drivers/clk/meson/sclk-div.c                  |  59 ++--
->>>>    drivers/clk/meson/sclk-div.h                  |   3 +
->>>>    include/dt-bindings/clock/amlogic,mmc-clkc.h  |  14 +
->>>>    9 files changed, 529 insertions(+), 22 deletions(-)
->>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.yaml
->>>>    create mode 100644 drivers/clk/meson/clk-phase-delay.c
->>>>    create mode 100644 drivers/clk/meson/clk-phase-delay.h
->>>>    create mode 100644 drivers/clk/meson/mmc-clkc.c
->>>>    create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
->>>>
->>> .
-> 
-> .
+Applied also clock parts, thanks!
+
+[01/16] dt-bindings: add vendor prefix for Tesla
+        commit: a5a93e9b9ab9b4f367a773b32bbe1687006d75b7
+[02/16] dt-bindings: clock: Add bindings definitions for FSD CMU blocks
+        commit: d6dc675377261472adda696da456b4ebcc5bb9d9
+[03/16] dt-bindings: clock: Document FSD CMU bindings
+        commit: ed68db7b7f2fd01e930fa3e6fbb75954dc25e41c
+[04/16] clk: samsung: fsd: Add initial clock support
+        commit: 4f346005aaed641042ca18171c4383a6a85f6a8b
+[05/16] clk: samsung: fsd: Add cmu_peric block clock information
+        commit: e3f3dc3810d3765128d28b241f4afb761d81678a
+[06/16] clk: samsung: fsd: Add cmu_fsys0 clock information
+        commit: a15e367b02543f96ae845baf7be4526080437305
+[07/16] clk: samsung: fsd: Add cmu_fsys1 clock information
+        commit: bfbce52e4649b9a2c7296a6296ffbdfc3b07de2e
+[08/16] clk: samsung: fsd: Add cmu_imem block clock information
+        commit: ca0fdfd131c7d33984d8feeda23a99e883ffb0cb
+[09/16] clk: samsung: fsd: Add cmu_mfc block clock information
+        commit: 75c50afaa0d9a3e8f96940451bed6d0ccc6a0a03
+[10/16] clk: samsung: fsd: Add cam_csi block clock information
+        commit: b826c3e4de1a44ad8e5536d86d5ef062a54ed2b2
+[13/16] dt-bindings: arm: add Tesla FSD ARM SoC
+        commit: d25c5eb511df3439cd91517bcbce4b274f8972b9
+[14/16] arm64: dts: fsd: Add initial device tree support
+        commit: 18b1db6a162c29695920fdf212ccb8d7d5c07e9a
+[15/16] arm64: dts: fsd: Add initial pinctrl support
+        commit: 684dac402f212d8ededbe7d97bc42a5e49533f40
+[16/16] arm64: defconfig: Enable Tesla FSD SoC
+        commit: 0d525a653b03a25190650f783026c8e655268b48
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
