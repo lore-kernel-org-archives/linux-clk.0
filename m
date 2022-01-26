@@ -2,28 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877CBC2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 07:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E38FC28CF5
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 07:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbiAZH0u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 02:26:50 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:59284 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229611AbiAZH0t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 02:26:49 -0500
-X-UUID: 574cc1b3af99408e9e28e990f9345e1a-20220126
-X-UUID: 574cc1b3af99408e9e28e990f9345e1a-20220126
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        id S229779AbiAZH33 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 02:29:29 -0500
+Received: from mailgw01.mediatek.com ([60.244.123.138]:57690 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229681AbiAZH33 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 02:29:29 -0500
+X-UUID: 9c06bc2794244621985796a3c8538f65-20220126
+X-UUID: 9c06bc2794244621985796a3c8538f65-20220126
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1880652506; Wed, 26 Jan 2022 15:26:48 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Wed, 26 Jan 2022 15:26:47 +0800
+        with ESMTP id 448908259; Wed, 26 Jan 2022 15:29:24 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 26 Jan 2022 15:29:23 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 26 Jan
+ 2022 15:29:23 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 26 Jan 2022 15:26:47 +0800
+ Transport; Wed, 26 Jan 2022 15:29:23 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <wenst@chromium.org>
 CC:     <chun-jie.chen@mediatek.com>,
@@ -31,12 +33,12 @@ CC:     <chun-jie.chen@mediatek.com>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 20/31] clk: mediatek: mtk: Clean up included headers
-Date:   Wed, 26 Jan 2022 15:26:47 +0800
-Message-ID: <20220126072647.8794-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 21/31] clk: mediatek: cpumux: Implement error handling in register API
+Date:   Wed, 26 Jan 2022 15:29:23 +0800
+Message-ID: <20220126072923.10391-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-21-wenst@chromium.org>
-References: <20220122091731.283592-21-wenst@chromium.org>
+In-Reply-To: <20220122091731.283592-22-wenst@chromium.org>
+References: <20220122091731.283592-22-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -44,84 +46,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Some included headers aren't actually used anywhere, while other headers
-> with the declaration of functions and structures aren't directly
-> included.
+> The cpumux clk type registration function does not stop or return errors
+> if any clk failed to be registered, nor does it implement an error
+> handling path. This may result in a partially working device if any
+> step failed.
 > 
-> Get rid of the unused ones, and add the ones that should be included
-> directly.
-> 
-> On the header side, replace headers that are included purely for data
-> structure definitions with forward declarations. This decreases the
-> amount of preprocessing and compilation effort required for each
-> inclusion.
+> Make the register function return proper error codes, and bail out if
+> errors occur. Proper cleanup, i.e. unregister any clks that were
+> successfully registered, is done in the new error path.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+
 > ---
->  drivers/clk/mediatek/clk-mtk.c | 13 ++++++-------
->  drivers/clk/mediatek/clk-mtk.h | 12 ++++++------
->  2 files changed, 12 insertions(+), 13 deletions(-)
+>  drivers/clk/mediatek/clk-cpumux.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-> index cd76e1d80242..d2c50186cceb 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -4,17 +4,16 @@
->   * Author: James Liao <jamesjj.liao@mediatek.com>
->   */
+> diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+> index 658aee789f44..499c60432280 100644
+> --- a/drivers/clk/mediatek/clk-cpumux.c
+> +++ b/drivers/clk/mediatek/clk-cpumux.c
+> @@ -123,13 +123,26 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
+>  		clk = mtk_clk_register_cpumux(mux, regmap);
+>  		if (IS_ERR(clk)) {
+>  			pr_err("Failed to register clk %s: %pe\n", mux->name, clk);
+> -			continue;
+> +			goto err;
+>  		}
 >  
-> -#include <linux/of.h>
-> -#include <linux/of_address.h>
-> +#include <linux/bitops.h>
-> +#include <linux/clk-provider.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> -#include <linux/slab.h>
-> -#include <linux/delay.h>
-> -#include <linux/clkdev.h>
-> -#include <linux/module.h>
->  #include <linux/mfd/syscon.h>
-> -#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
+>  		clk_data->clks[mux->id] = clk;
+>  	}
 >  
->  #include "clk-mtk.h"
->  #include "clk-gate.h"
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-> index 4fa658f5d934..7f902581a115 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -7,19 +7,19 @@
->  #ifndef __DRV_CLK_MTK_H
->  #define __DRV_CLK_MTK_H
->  
-> -#include <linux/regmap.h>
-> -#include <linux/bitops.h>
->  #include <linux/clk-provider.h>
-> -#include <linux/platform_device.h>
-> -
-> -struct clk;
-> -struct clk_onecell_data;
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
->  
->  #define MAX_MUX_GATE_BIT	31
->  #define INVALID_MUX_GATE_BIT	(MAX_MUX_GATE_BIT + 1)
->  
->  #define MHZ (1000 * 1000)
->  
-> +struct platform_device;
+>  	return 0;
 > +
->  struct mtk_fixed_clk {
->  	int id;
->  	const char *name;
+> +err:
+> +	while (--i >= 0) {
+> +		const struct mtk_composite *mux = &clks[i];
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->clks[mux->id]))
+> +			continue;
+> +
+> +		mtk_clk_unregister_cpumux(clk_data->clks[mux->id]);
+> +		clk_data->clks[mux->id] = ERR_PTR(-ENOENT);
+> +	}
+> +
+> +	return PTR_ERR(clk);
+>  }
+>  
+>  void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
 > -- 
 > 2.35.0.rc0.227.g00780c9af4-goog
 
