@@ -2,537 +2,227 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FC5C2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 15:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58746C63686
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 16:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242999AbiAZPht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 10:37:49 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:30281 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242985AbiAZPht (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 10:37:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1643211469; x=1674747469;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qYQL/2vLasMvQaOGDiMD2exx1N8juhfE8Ppak7zURa8=;
-  b=jXOz/ICIDR4W1sQdy91nbrt6BETtXyIFptobAEtHaRcwdedOQru/sue2
-   0nJIbp785S4JZMpetw+1/FljVqEVkLn4iaWL4x/FNsXh8vNCmOitCstm8
-   FeG/N8u2HSq3WXsqiFYrQJxHhZ6dk60YFPV2X11jOGCGZIQRt/hy+QWgA
-   UTu8UBj5CEkRAGTJGKDUvPGM9UTLkUdO8gQHgXkNc1H1q1VpVBEj1d2qf
-   CjAwQDJZSrNX6t5evoh2aw9hge7jotf/4iBhnL3nzfF/zn/74DCB/b+2E
-   kIexsTbIyL400vomRF/Vu2Ra8+ezPC1t4vAFV17mJTH/2QOsq97CBKexX
-   A==;
-IronPort-SDR: AGQUCIZKcXpZ5HxdkfWWRvFtBFoDIuag+97yFDm46L8Z8wvxofUGSGrdpsrvrutbwxnjNqxL14
- S7/MaeoY2O0pF4VYHctYQnWMTRKPhpr6HrZlcv6RLtR6v6FHkHjgeYE9NpMPZpK5LH0YsmuxfB
- HTgJ6ugnyI80BApum9Qa0SPVzUoMHNFmDWLn7Jz8GMmjfhVZchSY0mA0nGhwT+R5RYZgVSq7wY
- F6KY7nN8qQ+gi8FTNGrmKkwTwcK23mbfmR6OYGn97jHBP0VMLDl/joYgoMBrdiHd7RR9CbTyyN
- alesffdCrI9fh3r7rcMn4vp1
-X-IronPort-AV: E=Sophos;i="5.88,318,1635231600"; 
-   d="scan'208";a="151513893"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Jan 2022 08:37:48 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 26 Jan 2022 08:37:48 -0700
-Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Wed, 26 Jan 2022 08:37:45 -0700
-From:   <conor.dooley@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
-        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
-        <daire.mcnamara@microchip.com>, <cyril.jean@microchip.com>,
-        <conor.dooley@microchip.com>,
-        Padmarao Bengari <padmarao.begari@microchip.com>
-Subject: [PATCH v10 1/1] clk: microchip: Add driver for Microchip PolarFire SoC
-Date:   Wed, 26 Jan 2022 15:40:05 +0000
-Message-ID: <20220126154003.3797323-2-conor.dooley@microchip.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220126154003.3797323-1-conor.dooley@microchip.com>
-References: <20220126154003.3797323-1-conor.dooley@microchip.com>
+        id S243272AbiAZQrP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 11:47:15 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:16837 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243269AbiAZQrO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 11:47:14 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220126164712epoutp01628757831efee6c24a86ca9fc722d0a9~N3_l0MuXr0724107241epoutp01k
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jan 2022 16:47:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220126164712epoutp01628757831efee6c24a86ca9fc722d0a9~N3_l0MuXr0724107241epoutp01k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1643215632;
+        bh=ZtgZPXdL+8x4QpMXp+vZXFLyV/9tqK5mOhEfGc4FZjY=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=bWHcJQI2qS+2YcemvekO6Bt81cKnUIWGamic6IBCkNCTCQ4DHJfrye4CCqxClY9b1
+         g+uebeEiKts1ZkQ5I/QLaf4d/+jhaWLZXG6WVHle5k+/tPdvXY3PBdeNhg0XrGxsTV
+         3IQ6lGxWCpXZI+BTNWULl1ol+cli58BfSIaiqqWA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220126164712epcas5p400b35bf4c2a37a677564921d4e7b8e13~N3_lHXZr11109511095epcas5p4R;
+        Wed, 26 Jan 2022 16:47:12 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4JkV4W0xy6z4x9Pw; Wed, 26 Jan
+        2022 16:47:07 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A3.61.05590.B0B71F16; Thu, 27 Jan 2022 01:47:07 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220126164706epcas5p422e2fd79a3054926f2ff123e764ce1e5~N3_gCgtjW1109511095epcas5p4Q;
+        Wed, 26 Jan 2022 16:47:06 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220126164706epsmtrp1c9e0e9a1c97c963a92d5036f9136c5ad~N3_gBjBc33079530795epsmtrp1O;
+        Wed, 26 Jan 2022 16:47:06 +0000 (GMT)
+X-AuditID: b6c32a4b-739ff700000015d6-89-61f17b0b5358
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F5.D5.08738.A0B71F16; Thu, 27 Jan 2022 01:47:06 +0900 (KST)
+Received: from alimakhtar03 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220126164703epsmtip2115a528a41bfdf1db9fd02f53aea60f1~N3_dMsc0b0140201402epsmtip22;
+        Wed, 26 Jan 2022 16:47:03 +0000 (GMT)
+From:   "Alim Akhtar" <alim.akhtar@samsung.com>
+To:     "'Krzysztof Kozlowski'" <krzysztof.kozlowski@canonical.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Cc:     <soc@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <olof@lixom.net>, <arnd@arndb.de>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <robh+dt@kernel.org>, <s.nawrocki@samsung.com>,
+        <linux-samsung-soc@vger.kernel.org>, <pankaj.dubey@samsung.com>,
+        <sboyd@kernel.org>
+In-Reply-To: <4c029f92-ece7-78c1-e64b-cbe438b45a5f@canonical.com>
+Subject: RE: [PATCH v5 00/16] Add support for Tesla Full Self-Driving (FSD)
+ SoC
+Date:   Wed, 26 Jan 2022 22:17:02 +0530
+Message-ID: <067001d812d4$5a26ab40$0e7401c0$@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH3x/DHpHRz6vxyIYATeg+eWAbDkwGsWw0jAU7CzZABPsnnMgNDCrFWAhwoLwSr6U+vMA==
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEJsWRmVeSWpSXmKPExsWy7bCmhi539cdEgzW3WSz+TjrGbvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx79pGFovH1/+wOfB7rJm3htHj969JjB6zGnrZPDat6mTzuHNtD5vH5iX1HldONLF6
+        9G1ZxejxeZNcAGdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
+        T4CuW2YO0AdKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKTAr3ixNzi0rx0vbzU
+        EitDAwMjU6DChOyMfztvshaskq84dPcNYwPjWakuRg4OCQETiceTOLoYOTmEBHYzSnz8Kw5h
+        f2KU2PAnuouRC8j+zCjx+kEHO0gCpP7f9V9sEIldjBIN3S0sEM5LRonGDQuZQKrYBHQldixu
+        A6sSEehklFj9/SdYgllgG5PE7onaIDangKNE78xNjCC2sECgxI1Ld1lBbBYBVYllM2ezgdi8
+        ApYSly/MZYawBSVOznzCAjFHW2LZwtfMECcpSPx8ugysV0QgTGLD1eXsEDXiEi+PHmEHOUJC
+        4AOHxJJNs6F+cJHYcGE5VLOwxKvjW6DiUhIv+9vYIeGSLdGzyxgiXCOxdN4xFgjbXuLAlTks
+        ICXMApoS63fpQ6zik+j9/YQJopNXoqNNCKJaVaL53VWoTmmJid3drBAlHhLftrNMYFScheSv
+        WUj+moXk/lkIuxYwsqxilEwtKM5NTy02LTDOSy2HR3Zyfu4mRnDi1vLewfjowQe9Q4xMHIyH
+        GCU4mJVEeIW0PiYK8aYkVlalFuXHF5XmpBYfYjQFBvZEZinR5Hxg7sgriTc0sTQwMTMzM7E0
+        NjNUEuc9lb4hUUggPbEkNTs1tSC1CKaPiYNTqoFJfGKD6F4T66qjDzN2ZCk3hMav0JM99azf
+        Z8mWBwLuVn85dr9+Pyf83nmLm23y1maiCyT7/5yZo53jcUXQgj9VzcuzIuhr98noh3FzGg4F
+        zb26/rbRxWm/9P5Xx3pd7LlnN4PttY5Kc/pXrZoji77EVUWYPohJStiUteB9juxJubmXVvD2
+        NXhfebUwor5+Wk3i4vvtb+TC6u945WqelWNPPtvQoeFQsMDe6ZDorLuVV9fs8Q4+bGuhE/ql
+        Qr210zhYIj/6eFPehlqTi6tC+i4qPZK/aTShc7/S8rs7X5qsMhQ395rwWF194b2dJ8rstuQd
+        tk3h/7ZAbv30upsZHJHszH5lkuZzyrRK1urO9lRiKc5INNRiLipOBABdY6+MZQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsWy7bCSvC5X9cdEgw0nZSz+TjrGbvF+WQ+j
+        xfwj51gtNr79wWQx5c9yJotNj6+xWnzsucdqcXnXHDaLGef3MVmcuv6ZzWLR1i/sFq17j7Bb
+        HH7Tzmrx79pGFovH1/+wOfB7rJm3htHj969JjB6zGnrZPDat6mTzuHNtD5vH5iX1HldONLF6
+        9G1ZxejxeZNcAGcUl01Kak5mWWqRvl0CV0bfhCPsBQ/kKpbtmMjUwPhdsouRk0NCwETi3/Vf
+        bF2MXBxCAjsYJVb8XsQEkZCWuL5xAjuELSyx8t9zMFtI4DmjxLXn9iA2m4CuxI7FbWDNIgLd
+        jBJXemYygjjMAkeYJH7u38QMMfY2k8T85ptsIC2cAo4SvTM3MYLYwgL+EmsfvGcBsVkEVCWW
+        zZwNVsMrYClx+cJcZghbUOLkzCdgNcwC2hJPbz6Fs5ctfM0McZ6CxM+ny1hBbBGBMIkNV5ez
+        Q9SIS7w8eoR9AqPwLCSjZiEZNQvJqFlIWhYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dL
+        zs/dxAiOZC2tHYx7Vn3QO8TIxMF4iFGCg1lJhFdI62OiEG9KYmVValF+fFFpTmrxIUZpDhYl
+        cd4LXSfjhQTSE0tSs1NTC1KLYLJMHJxSDUzKfc+fbLFJV++ecDTy2/6KpQdnJ0eKVLdsE3/X
+        bSl1RP/Ehq93F9zd3bQ7q86j53b69G+vXqksfBRiVF/cXWZyoqt37ROz+ZxOW222HWh/aNeU
+        seS0wCJdPYlXL9pOioVWa8dJS1zwqH8orayyb3mFVUlJ6JOms2rpYbufiBWLdYS/e2ZUVrni
+        9srvf9gXPz+99Hn22gAH21cb3sTs8Sr1Y3u/9d583qv9vbwWR384rotLWLpTJ5p9n+QK2ffn
+        uEU+Si9OTXNcmfnz/FHZZQ67+r0uFphEbLc/8SpwM+NCrrvhrEVn/B5ZfHPpvM3/8p1xOU8o
+        77f7pvb7l759tzHiV96q2y7JR91dH9xsvS6oxFKckWioxVxUnAgA6cN0GFMDAAA=
+X-CMS-MailID: 20220126164706epcas5p422e2fd79a3054926f2ff123e764ce1e5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b
+References: <CGME20220124142850epcas5p2f82243b87386b3d49a9302c87e015d6b@epcas5p2.samsung.com>
+        <20220124141644.71052-1-alim.akhtar@samsung.com>
+        <d9682f16-13b7-b6dc-5afd-b2d319143de5@canonical.com>
+        <4cfcde38-50cb-646a-0d17-c2cb2977a2e4@canonical.com>
+        <063501d81281$10e5b3c0$32b11b40$@samsung.com>
+        <4c029f92-ece7-78c1-e64b-cbe438b45a5f@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Daire McNamara <daire.mcnamara@microchip.com>
 
-Add support for clock configuration on Microchip PolarFire SoC
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>-----Original Message-----
+>From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=5D
+>Sent: Wednesday, January 26, 2022 2:50 PM
+>To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
+>kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+>Cc: soc=40kernel.org; linux-clk=40vger.kernel.org; devicetree=40vger.kerne=
+l.org;
+>olof=40lixom.net; arnd=40arndb.de; linus.walleij=40linaro.org;
+>catalin.marinas=40arm.com; robh+dt=40kernel.org; s.nawrocki=40samsung.com;
+>linux-samsung-soc=40vger.kernel.org; pankaj.dubey=40samsung.com;
+>sboyd=40kernel.org
+>Subject: Re: =5BPATCH v5 00/16=5D Add support for Tesla Full Self-Driving =
+(FSD) SoC
+>
+>On 26/01/2022 07:50, Alim Akhtar wrote:
+>> Hi Krzysztof
+>>
+>>> -----Original Message-----
+>>> From: Krzysztof Kozlowski =5Bmailto:krzysztof.kozlowski=40canonical.com=
+=5D
+>>> Sent: Tuesday, January 25, 2022 10:56 PM
+>>> To: Alim Akhtar <alim.akhtar=40samsung.com>; linux-arm-
+>>> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
+>>> Cc: soc=40kernel.org; linux-clk=40vger.kernel.org;
+>>> devicetree=40vger.kernel.org; olof=40lixom.net; arnd=40arndb.de;
+>>> linus.walleij=40linaro.org; catalin.marinas=40arm.com;
+>>> robh+dt=40kernel.org; s.nawrocki=40samsung.com;
+>>> linux-samsung-soc=40vger.kernel.org; pankaj.dubey=40samsung.com;
+>>> sboyd=40kernel.org
+>>> Subject: Re: =5BPATCH v5 00/16=5D Add support for Tesla Full Self-Drivi=
+ng
+>>> (FSD) SoC
+>>>
+>>> On 25/01/2022 18:12, Krzysztof Kozlowski wrote:
+>>>> On 24/01/2022 15:16, Alim Akhtar wrote:
+>>>>> Adds basic support for the Tesla Full Self-Driving (FSD) SoC. This
+>>>>> SoC contains three clusters of four Cortex-A72 CPUs, as well as
+>>>>> several IPs.
+>>>>>
+>>>>> Patches 1 to 9 provide support for the clock controller (which is
+>>>>> designed similarly to Exynos SoCs).
+>>>>>
+>>>>> The remaining changes provide pinmux support, initial device tree
+>support.
+>>>>>
+>>>>> - Changes since v4
+>>>>> * fixed 'make dtbs_check' warnings on patch 14/16
+>>>>>
+>>>>> - Changes since v3
+>>>>> * Addressed Stefen's review comments on patch 14/16
+>>>>> * Fixed kernel test robot warning on patch 04/16
+>>>>> * rebsaed this series on Krzysztof's pinmux new binding schema work
+>>>>> =5B1=5D
+>>>>>
+>>>>> - Changes since v2
+>>>>> * Addressed Krzysztof's and Stephen's review comments
+>>>>> * Added Reviewed-by and Acked-by tags
+>>>>> * Rebased on next-20220120
+>>>>>
+>>>>> - Changes since v1
+>>>>> * fixed make dt_binding_check error as pointed by Rob
+>>>>> * Addressed Krzysztof's and Rob's review comments
+>>>>> * Added Reviewed-by and Acked-by tags
+>>>>> * Dropped SPI, MCT and ADC from this series (to be posted in small
+>>>>> sets)
+>>>>>
+>>>>> NOTE: These patches are based on Krzysztof's pinmux for-next branch
+>>>>> commit 832ae134ccc1 (=22pinctrl: samsung: add support for Exynos850
+>>>>> and
+>>>>> ExynosAutov9 wake-ups=22) =5B1=5D
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+>>>>> /l
+>>>>> og/?h=3Dfor-next
+>>>>>
+>>>>>
+>>>>
+>>>> Thanks, applied DTS/soc and pinctrl patches.
+>>>>
+>>>> I expect Sylwester will pick up the clock ones. Otherwise please let
+>>>> me know to pick it up as well.
+>>>
+>>> I forgot that clock macros are used in DTS. This does not compile and
+>>> I cannot take drivers into DTS branch.
+>>>
+>>> Alim,
+>>> DTS changes dropped. Please resend with the same trick we did for
+>>> Exynos850 board - hard-coded clock IDs as defines. See:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/diff/a
+>>> rch/arm6
+>>> 4/boot/dts/exynos/exynos850.dtsi?h=3Dsamsung-dt64-5.17-
+>>> 2&id=3De3493220fd3e474abcdcefbe14fb60485097ce06
+>>>
+>> Ok, I will resend patch 14 and 15 (DTS changes) only as suggested above.
+>
+>I see Sylwester acked clock patches, so I will take them. No need to resen=
+d, I'll
+>organize the patches so they will compile.
+>
+Awesome, thanks Krzysztof and Sylwester
 
-Co-developed-by: Padmarao Bengari <padmarao.begari@microchip.com>
-Signed-off-by: Padmarao Bengari <padmarao.begari@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/Kconfig              |   4 +-
- drivers/clk/Makefile             |   2 +-
- drivers/clk/microchip/Kconfig    |  10 +
- drivers/clk/microchip/Makefile   |   1 +
- drivers/clk/microchip/clk-mpfs.c | 382 +++++++++++++++++++++++++++++++
- 5 files changed, 395 insertions(+), 4 deletions(-)
- create mode 100644 drivers/clk/microchip/Kconfig
- create mode 100644 drivers/clk/microchip/clk-mpfs.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index ad4256d54361..678a865021e2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -330,9 +330,6 @@ config COMMON_CLK_PXA
- 	help
- 	  Support for the Marvell PXA SoC.
- 
--config COMMON_CLK_PIC32
--	def_bool COMMON_CLK && MACH_PIC32
--
- config COMMON_CLK_OXNAS
- 	bool "Clock driver for the OXNAS SoC Family"
- 	depends on ARCH_OXNAS || COMPILE_TEST
-@@ -407,6 +404,7 @@ source "drivers/clk/keystone/Kconfig"
- source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/meson/Kconfig"
- source "drivers/clk/mstar/Kconfig"
-+source "drivers/clk/microchip/Kconfig"
- source "drivers/clk/mvebu/Kconfig"
- source "drivers/clk/pistachio/Kconfig"
- source "drivers/clk/qcom/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 16e588630472..61271926b16b 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -91,7 +91,7 @@ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-y					+= mediatek/
- obj-$(CONFIG_ARCH_MESON)		+= meson/
--obj-$(CONFIG_MACH_PIC32)		+= microchip/
-+obj-y					+= microchip/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
- endif
-diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
-new file mode 100644
-index 000000000000..e1af380d8c9c
---- /dev/null
-+++ b/drivers/clk/microchip/Kconfig
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config COMMON_CLK_PIC32
-+	def_bool COMMON_CLK && MACH_PIC32
-+
-+config MCHP_CLK_MPFS
-+	bool "Clk driver for PolarFire SoC"
-+	depends on (RISCV && SOC_MICROCHIP_POLARFIRE) || COMPILE_TEST
-+	help
-+	  Supports Clock Configuration for PolarFire SoC
-\ No newline at end of file
-diff --git a/drivers/clk/microchip/Makefile b/drivers/clk/microchip/Makefile
-index f34b247e870f..5fa6dcf30a9a 100644
---- a/drivers/clk/microchip/Makefile
-+++ b/drivers/clk/microchip/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-$(CONFIG_COMMON_CLK_PIC32) += clk-core.o
- obj-$(CONFIG_PIC32MZDA) += clk-pic32mzda.o
-+obj-$(CONFIG_MCHP_CLK_MPFS) += clk-mpfs.o
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-new file mode 100644
-index 000000000000..eec461b906d8
---- /dev/null
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -0,0 +1,382 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Daire McNamara,<daire.mcnamara@microchip.com>
-+ * Copyright (C) 2020 Microchip Technology Inc.  All rights reserved.
-+ */
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <dt-bindings/clock/microchip,mpfs-clock.h>
-+
-+/* address offset of control registers */
-+#define REG_CLOCK_CONFIG_CR	0x08u
-+#define REG_SUBBLK_CLOCK_CR	0x84u
-+#define REG_SUBBLK_RESET_CR	0x88u
-+
-+struct mpfs_clock_data {
-+	void __iomem *base;
-+	struct clk_hw_onecell_data hw_data;
-+};
-+
-+struct mpfs_cfg_clock {
-+	const struct clk_div_table *table;
-+	unsigned int id;
-+	u8 shift;
-+	u8 width;
-+};
-+
-+struct mpfs_cfg_hw_clock {
-+	struct mpfs_cfg_clock cfg;
-+	void __iomem *sys_base;
-+	struct clk_hw hw;
-+	struct clk_init_data init;
-+};
-+
-+#define to_mpfs_cfg_clk(_hw) container_of(_hw, struct mpfs_cfg_hw_clock, hw)
-+
-+struct mpfs_periph_clock {
-+	unsigned int id;
-+	u8 shift;
-+};
-+
-+struct mpfs_periph_hw_clock {
-+	struct mpfs_periph_clock periph;
-+	void __iomem *sys_base;
-+	struct clk_hw hw;
-+};
-+
-+#define to_mpfs_periph_clk(_hw) container_of(_hw, struct mpfs_periph_hw_clock, hw)
-+
-+/*
-+ * mpfs_clk_lock prevents anything else from writing to the
-+ * mpfs clk block while a software locked register is being written.
-+ */
-+static DEFINE_SPINLOCK(mpfs_clk_lock);
-+
-+static const struct clk_parent_data mpfs_cfg_parent[] = {
-+	{ .index = 0 },
-+};
-+
-+static const struct clk_div_table mpfs_div_cpu_axi_table[] = {
-+	{ 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 8 },
-+	{ 0, 0 }
-+};
-+
-+static const struct clk_div_table mpfs_div_ahb_table[] = {
-+	{ 1, 2 }, { 2, 4}, { 3, 8 },
-+	{ 0, 0 }
-+};
-+
-+static unsigned long mpfs_cfg_clk_recalc_rate(struct clk_hw *hw, unsigned long prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+	void __iomem *base_addr = cfg_hw->sys_base;
-+	u32 val;
-+
-+	val = readl_relaxed(base_addr + REG_CLOCK_CONFIG_CR) >> cfg->shift;
-+	val &= clk_div_mask(cfg->width);
-+
-+	return prate / (1u << val);
-+}
-+
-+static long mpfs_cfg_clk_round_rate(struct clk_hw *hw, unsigned long rate, unsigned long *prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+
-+	return divider_round_rate(hw, rate, prate, cfg->table, cfg->width, CLK_DIVIDER_ONE_BASED);
-+}
-+
-+static int mpfs_cfg_clk_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long prate)
-+{
-+	struct mpfs_cfg_hw_clock *cfg_hw = to_mpfs_cfg_clk(hw);
-+	struct mpfs_cfg_clock *cfg = &cfg_hw->cfg;
-+	void __iomem *base_addr = cfg_hw->sys_base;
-+	unsigned long flags;
-+	u32 val;
-+	int divider_setting;
-+
-+	divider_setting = divider_get_val(rate, prate, cfg->table, cfg->width,
-+					  CLK_DIVIDER_ONE_BASED);
-+
-+	if (divider_setting < 0)
-+		return divider_setting;
-+
-+	spin_lock_irqsave(&mpfs_clk_lock, flags);
-+
-+	val = readl_relaxed(base_addr + REG_CLOCK_CONFIG_CR);
-+	val &= ~(clk_div_mask(cfg->width) << cfg_hw->cfg.shift);
-+	val |= divider_setting << cfg->shift;
-+	writel_relaxed(val, base_addr + REG_CLOCK_CONFIG_CR);
-+
-+	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops mpfs_clk_cfg_ops = {
-+	.recalc_rate = mpfs_cfg_clk_recalc_rate,
-+	.round_rate = mpfs_cfg_clk_round_rate,
-+	.set_rate = mpfs_cfg_clk_set_rate,
-+};
-+
-+#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags) {		\
-+	.cfg.id = _id,								\
-+	.cfg.shift = _shift,							\
-+	.cfg.width = _width,							\
-+	.cfg.table = _table,							\
-+	.hw.init = CLK_HW_INIT_PARENTS_DATA(_name, _parent, &mpfs_clk_cfg_ops,	\
-+					    _flags),				\
-+}
-+
-+static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
-+	CLK_CFG(CLK_CPU, "clk_cpu", mpfs_cfg_parent, 0, 2, mpfs_div_cpu_axi_table, 0),
-+	CLK_CFG(CLK_AXI, "clk_axi", mpfs_cfg_parent, 2, 2, mpfs_div_cpu_axi_table, 0),
-+	CLK_CFG(CLK_AHB, "clk_ahb", mpfs_cfg_parent, 4, 2, mpfs_div_ahb_table, 0),
-+};
-+
-+static int mpfs_clk_register_cfg(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hw,
-+				 void __iomem *sys_base)
-+{
-+	cfg_hw->sys_base = sys_base;
-+
-+	return devm_clk_hw_register(dev, &cfg_hw->hw);
-+}
-+
-+static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *cfg_hws,
-+				  unsigned int num_clks, struct mpfs_clock_data *data)
-+{
-+	void __iomem *sys_base = data->base;
-+	unsigned int i, id;
-+	int ret;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
-+
-+		ret = mpfs_clk_register_cfg(dev, cfg_hw, sys_base);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
-+					     cfg_hw->cfg.id);
-+
-+		id = cfg_hws[i].cfg.id;
-+		data->hw_data.hws[id] = &cfg_hw->hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mpfs_periph_clk_enable(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg, val;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&mpfs_clk_lock, flags);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	val = reg & ~(1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+	val = reg | (1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
-+
-+	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
-+
-+	return 0;
-+}
-+
-+static void mpfs_periph_clk_disable(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg, val;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&mpfs_clk_lock, flags);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	val = reg | (1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_RESET_CR);
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+	val = reg & ~(1u << periph->shift);
-+	writel_relaxed(val, base_addr + REG_SUBBLK_CLOCK_CR);
-+
-+	spin_unlock_irqrestore(&mpfs_clk_lock, flags);
-+}
-+
-+static int mpfs_periph_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct mpfs_periph_hw_clock *periph_hw = to_mpfs_periph_clk(hw);
-+	struct mpfs_periph_clock *periph = &periph_hw->periph;
-+	void __iomem *base_addr = periph_hw->sys_base;
-+	u32 reg;
-+
-+	reg = readl_relaxed(base_addr + REG_SUBBLK_RESET_CR);
-+	if ((reg & (1u << periph->shift)) == 0u) {
-+		reg = readl_relaxed(base_addr + REG_SUBBLK_CLOCK_CR);
-+		if (reg & (1u << periph->shift))
-+			return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops mpfs_periph_clk_ops = {
-+	.enable = mpfs_periph_clk_enable,
-+	.disable = mpfs_periph_clk_disable,
-+	.is_enabled = mpfs_periph_clk_is_enabled,
-+};
-+
-+#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {			\
-+	.periph.id = _id,							\
-+	.periph.shift = _shift,							\
-+	.hw.init = CLK_HW_INIT_HW(_name, _parent, &mpfs_periph_clk_ops,		\
-+				  _flags),					\
-+}
-+
-+#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT].hw)
-+
-+/*
-+ * Critical clocks:
-+ * - CLK_ENVM: reserved by hart software services (hss) superloop monitor/m mode interrupt
-+ *   trap handler
-+ * - CLK_MMUART0: reserved by the hss
-+ * - CLK_DDRC: provides clock to the ddr subsystem
-+ * - CLK_FICx: these provide clocks for sections of the fpga fabric, disabling them would
-+ *   cause the fabric to go into reset
-+ */
-+
-+static struct mpfs_periph_hw_clock mpfs_periph_clks[] = {
-+	CLK_PERIPH(CLK_ENVM, "clk_periph_envm", PARENT_CLK(AHB), 0, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_MAC0, "clk_periph_mac0", PARENT_CLK(AHB), 1, 0),
-+	CLK_PERIPH(CLK_MAC1, "clk_periph_mac1", PARENT_CLK(AHB), 2, 0),
-+	CLK_PERIPH(CLK_MMC, "clk_periph_mmc", PARENT_CLK(AHB), 3, 0),
-+	CLK_PERIPH(CLK_TIMER, "clk_periph_timer", PARENT_CLK(AHB), 4, 0),
-+	CLK_PERIPH(CLK_MMUART0, "clk_periph_mmuart0", PARENT_CLK(AHB), 5, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_MMUART1, "clk_periph_mmuart1", PARENT_CLK(AHB), 6, 0),
-+	CLK_PERIPH(CLK_MMUART2, "clk_periph_mmuart2", PARENT_CLK(AHB), 7, 0),
-+	CLK_PERIPH(CLK_MMUART3, "clk_periph_mmuart3", PARENT_CLK(AHB), 8, 0),
-+	CLK_PERIPH(CLK_MMUART4, "clk_periph_mmuart4", PARENT_CLK(AHB), 9, 0),
-+	CLK_PERIPH(CLK_SPI0, "clk_periph_spi0", PARENT_CLK(AHB), 10, 0),
-+	CLK_PERIPH(CLK_SPI1, "clk_periph_spi1", PARENT_CLK(AHB), 11, 0),
-+	CLK_PERIPH(CLK_I2C0, "clk_periph_i2c0", PARENT_CLK(AHB), 12, 0),
-+	CLK_PERIPH(CLK_I2C1, "clk_periph_i2c1", PARENT_CLK(AHB), 13, 0),
-+	CLK_PERIPH(CLK_CAN0, "clk_periph_can0", PARENT_CLK(AHB), 14, 0),
-+	CLK_PERIPH(CLK_CAN1, "clk_periph_can1", PARENT_CLK(AHB), 15, 0),
-+	CLK_PERIPH(CLK_USB, "clk_periph_usb", PARENT_CLK(AHB), 16, 0),
-+	CLK_PERIPH(CLK_RTC, "clk_periph_rtc", PARENT_CLK(AHB), 18, 0),
-+	CLK_PERIPH(CLK_QSPI, "clk_periph_qspi", PARENT_CLK(AHB), 19, 0),
-+	CLK_PERIPH(CLK_GPIO0, "clk_periph_gpio0", PARENT_CLK(AHB), 20, 0),
-+	CLK_PERIPH(CLK_GPIO1, "clk_periph_gpio1", PARENT_CLK(AHB), 21, 0),
-+	CLK_PERIPH(CLK_GPIO2, "clk_periph_gpio2", PARENT_CLK(AHB), 22, 0),
-+	CLK_PERIPH(CLK_DDRC, "clk_periph_ddrc", PARENT_CLK(AHB), 23, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_FIC0, "clk_periph_fic0", PARENT_CLK(AHB), 24, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_FIC1, "clk_periph_fic1", PARENT_CLK(AHB), 25, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_FIC2, "clk_periph_fic2", PARENT_CLK(AHB), 26, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_FIC3, "clk_periph_fic3", PARENT_CLK(AHB), 27, CLK_IS_CRITICAL),
-+	CLK_PERIPH(CLK_ATHENA, "clk_periph_athena", PARENT_CLK(AHB), 28, 0),
-+	CLK_PERIPH(CLK_CFM, "clk_periph_cfm", PARENT_CLK(AHB), 29, 0),
-+};
-+
-+static int mpfs_clk_register_periph(struct device *dev, struct mpfs_periph_hw_clock *periph_hw,
-+				    void __iomem *sys_base)
-+{
-+	periph_hw->sys_base = sys_base;
-+
-+	return devm_clk_hw_register(dev, &periph_hw->hw);
-+}
-+
-+static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_clock *periph_hws,
-+				     int num_clks, struct mpfs_clock_data *data)
-+{
-+	void __iomem *sys_base = data->base;
-+	unsigned int i, id;
-+	int ret;
-+
-+	for (i = 0; i < num_clks; i++) {
-+		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
-+
-+		ret = mpfs_clk_register_periph(dev, periph_hw, sys_base);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
-+					     periph_hw->periph.id);
-+
-+		id = periph_hws[i].periph.id;
-+		data->hw_data.hws[id] = &periph_hw->hw;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mpfs_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct mpfs_clock_data *clk_data;
-+	unsigned int num_clks;
-+	int ret;
-+
-+	/* CLK_RESERVED is not part of cfg_clks nor periph_clks, so add 1 */
-+	num_clks = ARRAY_SIZE(mpfs_cfg_clks) + ARRAY_SIZE(mpfs_periph_clks) + 1;
-+
-+	clk_data = devm_kzalloc(dev, struct_size(clk_data, hw_data.hws, num_clks), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(clk_data->base))
-+		return PTR_ERR(clk_data->base);
-+
-+	clk_data->hw_data.num = num_clks;
-+
-+	ret = mpfs_clk_register_cfgs(dev, mpfs_cfg_clks, ARRAY_SIZE(mpfs_cfg_clks), clk_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = mpfs_clk_register_periphs(dev, mpfs_periph_clks, ARRAY_SIZE(mpfs_periph_clks),
-+					clk_data);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id mpfs_clk_of_match_table[] = {
-+	{ .compatible = "microchip,mpfs-clkcfg", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mpfs_clk_match_table);
-+
-+static struct platform_driver mpfs_clk_driver = {
-+	.probe = mpfs_clk_probe,
-+	.driver	= {
-+		.name = "microchip-mpfs-clkcfg",
-+		.of_match_table = mpfs_clk_of_match_table,
-+	},
-+};
-+
-+static int __init clk_mpfs_init(void)
-+{
-+	return platform_driver_register(&mpfs_clk_driver);
-+}
-+core_initcall(clk_mpfs_init);
-+
-+static void __exit clk_mpfs_exit(void)
-+{
-+	platform_driver_unregister(&mpfs_clk_driver);
-+}
-+module_exit(clk_mpfs_exit);
-+
-+MODULE_DESCRIPTION("Microchip PolarFire SoC Clock Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.32.0
+>
+>Best regards,
+>Krzysztof
 
