@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A174EC2BA4C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 07:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163F7C28CF5
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 08:08:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238025AbiAZHmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 02:42:47 -0500
-Received: from mailgw01.mediatek.com ([60.244.123.138]:52184 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S238104AbiAZHmq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 02:42:46 -0500
-X-UUID: 03a15b6a7ae742919c2bd10d56a0946d-20220126
-X-UUID: 03a15b6a7ae742919c2bd10d56a0946d-20220126
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        id S230011AbiAZIIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 03:08:40 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43536 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S238131AbiAZIIk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Jan 2022 03:08:40 -0500
+X-UUID: 4ca71b6cea074c898b00582c1f7c8774-20220126
+X-UUID: 4ca71b6cea074c898b00582c1f7c8774-20220126
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
         (envelope-from <miles.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 586552892; Wed, 26 Jan 2022 15:42:43 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+        with ESMTP id 2052481523; Wed, 26 Jan 2022 16:08:37 +0800
+Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
  mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 26 Jan 2022 15:42:42 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 26 Jan
- 2022 15:42:42 +0800
+ 15.0.1497.2; Wed, 26 Jan 2022 16:08:36 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 26 Jan
+ 2022 16:08:36 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 26 Jan 2022 15:42:42 +0800
+ Transport; Wed, 26 Jan 2022 16:08:36 +0800
 From:   Miles Chen <miles.chen@mediatek.com>
 To:     <wenst@chromium.org>
 CC:     <chun-jie.chen@mediatek.com>,
@@ -33,12 +33,12 @@ CC:     <chun-jie.chen@mediatek.com>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>
-Subject: Re: [PATCH 22/31] clk: mediatek: gate: Implement error handling in register API
-Date:   Wed, 26 Jan 2022 15:42:42 +0800
-Message-ID: <20220126074242.18291-1-miles.chen@mediatek.com>
+Subject: Re: [PATCH 23/31] clk: mediatek: mux: Reverse check for existing clk to reduce nesting level
+Date:   Wed, 26 Jan 2022 16:08:36 +0800
+Message-ID: <20220126080836.1148-1-miles.chen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220122091731.283592-23-wenst@chromium.org>
-References: <20220122091731.283592-23-wenst@chromium.org>
+In-Reply-To: <20220122091731.283592-24-wenst@chromium.org>
+References: <20220122091731.283592-24-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -46,55 +46,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> The gate clk type registration function does not stop or return errors
-> if any clk failed to be registered, nor does it implement an error
-> handling path. This may result in a partially working device if any
-> step failed.
+> The clk registration code here currently does:
 > 
-> Make the register function return proper error codes, and bail out if
-> errors occur. Proper cleanup, i.e. unregister any clks that were
-> successfully registered, is done in the new error path.
+>     if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+>             ... do clk registration ...
+>     }
+> 
+> This extra level of nesting wastes screen real estate.
+> 
+> Reduce the nesting level by reversing the conditional shown above.
+> Other than that, functionality is not changed.
+>
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
 Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-
 > ---
->  drivers/clk/mediatek/clk-gate.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  drivers/clk/mediatek/clk-mux.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-> index e8881ae1489a..631ff170b7b9 100644
-> --- a/drivers/clk/mediatek/clk-gate.c
-> +++ b/drivers/clk/mediatek/clk-gate.c
-> @@ -237,13 +237,26 @@ int mtk_clk_register_gates_with_dev(struct device_node *node,
+> Diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> Index 01af6a52711a..70aa42144632 100644
+> --- a/drivers/clk/mediatek/clk-mux.c
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -208,16 +208,17 @@ int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+>  	for (i = 0; i < num; i++) {
+>  		const struct mtk_mux *mux = &muxes[i];
 >  
->  		if (IS_ERR(clk)) {
->  			pr_err("Failed to register clk %s: %pe\n", gate->name, clk);
-> -			continue;
-> +			goto err;
+> -		if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+> -			clk = mtk_clk_register_mux(mux, regmap, lock);
+> +		if (!IS_ERR_OR_NULL(clk_data->clks[mux->id]))
+> +			continue;
+>  
+> -			if (IS_ERR(clk)) {
+> -				pr_err("Failed to register clk %s: %pe\n", mux->name, clk);
+> -				continue;
+> -			}
+> +		clk = mtk_clk_register_mux(mux, regmap, lock);
+>  
+> -			clk_data->clks[mux->id] = clk;
+> +		if (IS_ERR(clk)) {
+> +			pr_err("Failed to register clk %s: %pe\n", mux->name, clk);
+> +			continue;
 >  		}
->  
->  		clk_data->clks[gate->id] = clk;
+> +
+> +		clk_data->clks[mux->id] = clk;
 >  	}
 >  
 >  	return 0;
-> +
-> +err:
-> +	while (--i >= 0) {
-> +		const struct mtk_gate *gate = &clks[i];
-> +
-> +		if (IS_ERR_OR_NULL(clk_data->clks[gate->id]))
-> +			continue;
-> +
-> +		mtk_clk_unregister_gate(clk_data->clks[gate->id]);
-> +		clk_data->clks[gate->id] = ERR_PTR(-ENOENT);
-> +	}
-> +
-> +	return PTR_ERR(clk);
->  }
->  
->  int mtk_clk_register_gates(struct device_node *node,
 > -- 
 > 2.35.0.rc0.227.g00780c9af4-goog
 
