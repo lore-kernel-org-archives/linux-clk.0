@@ -2,113 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21360C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Jan 2022 22:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23004C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Jan 2022 00:07:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbiAZWrc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Jan 2022 17:47:32 -0500
-Received: from mail.z3ntu.xyz ([128.199.32.197]:43332 "EHLO mail.z3ntu.xyz"
+        id S233739AbiA0AHn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Jan 2022 19:07:43 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:56598 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230125AbiAZWrb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Jan 2022 17:47:31 -0500
-X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Wed, 26 Jan 2022 17:47:31 EST
-Received: from g550jk.localnet (ip-213-127-106-2.ip.prioritytelecom.net [213.127.106.2])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 9A474C5811;
-        Wed, 26 Jan 2022 22:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1643236836; bh=30PYBiUXaYsqcqhi5/zLJAyf4JS6d9jdtTqTbDhdWws=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Zsi74eCrawSXfVgUD63F4bgrcWAtunjuUXMbzJO1Xc51zSytG8tQjFc6NKexJNuoB
-         yP+JE+CVhx3d4sRWkW+6O8nI91Bs3gT9ea9k1t3TXILtDiluJfV6chice+J0QjBvvy
-         YrhN3QhEYSs8gp48tgxrmKAA7HAD++Ge653jBBN0=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
-        ~postmarketos/upstreaming@lists.sr.ht
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Add MSM8226 Multimedia Clock Controller support
-Date:   Wed, 26 Jan 2022 23:40:36 +0100
-Message-ID: <6707575.DvuYhMxLoT@g550jk>
-In-Reply-To: <Ya42ZAKupwKiWpJf@builder.lan>
-References: <20211113015844.92762-1-bartosz.dudziak@snejp.pl> <20211113015844.92762-2-bartosz.dudziak@snejp.pl> <Ya42ZAKupwKiWpJf@builder.lan>
+        id S233418AbiA0AHh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 26 Jan 2022 19:07:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=J0yHmzr7Bes1AQyZcP7Txq+9cpESQjph6YFpeH3l8Ug=; b=0VDrWO+BT42h67xlYtGTodPhBo
+        VmN6BdIbOVDuzY6vALbfR19NYqiT9lxjVT2sIvV8U/kMoBh7dJWTzFLffNTH3069NyKrXPPLKaces
+        GS9qFfMIp+Gv8lg6qQbBZ7361KQTmg2wzHZLQikJpFqyDRadtm3Yhk7FuMkXRbLPGNF8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1nCsK1-002sZ3-V0; Thu, 27 Jan 2022 01:07:29 +0100
+Date:   Thu, 27 Jan 2022 01:07:29 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, agross@kernel.org, sboyd@kernel.org,
+        tdas@codeaurora.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, bjorn.andersson@linaro.org,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH 5/8] arm64: dts: qcom: sa8155p-adp: Enable ethernet node
+Message-ID: <YfHiQYkeQYwjl3G7@lunn.ch>
+References: <20220126221725.710167-1-bhupesh.sharma@linaro.org>
+ <20220126221725.710167-6-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220126221725.710167-6-bhupesh.sharma@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bartosz,
+> +&ethernet {
+> +	status = "okay";
+> +
+> +	snps,reset-gpio = <&tlmm 79 GPIO_ACTIVE_LOW>;
+> +	snps,reset-active-low;
+> +	snps,reset-delays-us = <0 11000 70000>;
+> +
+> +	snps,ptp-ref-clk-rate = <250000000>;
+> +	snps,ptp-req-clk-rate = <96000000>;
+> +
+> +	snps,mtl-rx-config = <&mtl_rx_setup>;
+> +	snps,mtl-tx-config = <&mtl_tx_setup>;
+> +
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&ethernet_defaults>;
+> +
+> +	phy-handle = <&rgmii_phy>;
+> +	phy-mode = "rgmii";
 
-are you planning to work on this? If not I can pick it up and make a v2.
-Please let me know!
+Where are the rgmii delays being added for this board?
 
-Regards
-Luca
-
-On Montag, 6. Dezember 2021 17:12:20 CET Bjorn Andersson wrote:
-> On Fri 12 Nov 19:58 CST 2021, Bartosz Dudziak wrote:
-> > diff --git a/drivers/clk/qcom/mmcc-msm8974.c
-> > b/drivers/clk/qcom/mmcc-msm8974.c
-> [..]
-> 
-> >  static int mmcc_msm8974_probe(struct platform_device *pdev)
-> >  {
-> >  
-> >  	struct regmap *regmap;
-> > 
-> > +	const struct of_device_id *match;
-> > +
-> > +	match = of_match_device(mmcc_msm8974_match_table, &pdev->dev);
-> 
-> Could you please use of_device_get_match_data() instead?
-> 
-> > +	if (!match)
-> 
-> As a general suggestion; I don't see how we would end up here with
-> !match, but if we somehow do it would be during development and you
-> would have an easier time debugging this by hitting a NULL pointer
-> dereference with a callstack, than tracking down why your clocks are
-> missing...
-> 
-> Thanks,
-> Bjorn
-> 
-> > +		return -ENODEV;
-> > 
-> > -	regmap = qcom_cc_map(pdev, &mmcc_msm8974_desc);
-> > +	regmap = qcom_cc_map(pdev, match->data);
-> > 
-> >  	if (IS_ERR(regmap))
-> >  	
-> >  		return PTR_ERR(regmap);
-> > 
-> > -	clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, &mmpll1_config, true);
-> > -	clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, &mmpll3_config, false);
-> > +	if (match->data == &mmcc_msm8974_desc) {
-> > +		clk_pll_configure_sr_hpm_lp(&mmpll1, regmap, 
-&mmpll1_config, true);
-> > +		clk_pll_configure_sr_hpm_lp(&mmpll3, regmap, 
-&mmpll3_config, false);
-> > +	} else {
-> > +		msm8226_clock_override();
-> > +	}
-> > 
-> > -	return qcom_cc_really_probe(pdev, &mmcc_msm8974_desc, regmap);
-> > +	return qcom_cc_really_probe(pdev, match->data, regmap);
-> > 
-> >  }
-> >  
-> >  static struct platform_driver mmcc_msm8974_driver = {
-
-
-
-
+      Andrew
