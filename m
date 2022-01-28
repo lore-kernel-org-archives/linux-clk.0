@@ -2,188 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9646CC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 10:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2D4C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 13:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244213AbiA1KUS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jan 2022 05:20:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41054 "EHLO
+        id S235421AbiA1NrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jan 2022 08:47:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347823AbiA1KUR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 05:20:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DF6C06173B;
-        Fri, 28 Jan 2022 02:20:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9854DB82513;
-        Fri, 28 Jan 2022 10:20:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA18C340E0;
-        Fri, 28 Jan 2022 10:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1643365214;
-        bh=Ri15rNc/3mLfG4njoUOcHSEpoSDJCBH9sXE5sSDw1BA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KcmnsRG9M+MeKrDeGvT6z9uuzzkczZz3BGu2IXotIifQquqHIXlKi9UQvzsuxLyNj
-         EjIesN6oqFVJhbKnYyqSO7qTDaJkJbglJ9c4Y988ujd3yywtUQmV8WKTJxykt/vGSI
-         qLsW350ybaCpUE5HqmgvS1Ovu8NLf0KC3cRcFHSY=
-Date:   Fri, 28 Jan 2022 11:20:11 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Zhou Qingyang <zhou1615@umn.edu>
-Cc:     kjlu@umn.edu, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: x86: Fix a wild pointer dereference in
- fch_clk_probe()
-Message-ID: <YfPDW1oCw2Dfyiws@kroah.com>
-References: <20220107015744.22C22C36AE3@smtp.kernel.org>
- <20220107071559.65843-1-zhou1615@umn.edu>
+        with ESMTP id S234242AbiA1NrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 08:47:20 -0500
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81B55C061714;
+        Fri, 28 Jan 2022 05:47:19 -0800 (PST)
+Received: by mail-ej1-x629.google.com with SMTP id o12so16125279eju.13;
+        Fri, 28 Jan 2022 05:47:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kC5o2fNLt6ygrhXBorsw5Jbr7rYM1p4JZsABmYPmJrA=;
+        b=eTKsnP/JHqCfDd19XPQdmmxRphUFecDk1mzHJ9/Vcyhx5Gh7sysyZgR43BDJPcphYA
+         ra03ixyetH7qYRDfmfgQlhr8QC+sG1XPMci+8lfU33boBieCQzv+uKphLCcdUcee8c/n
+         yiUAeMDsQ0P66Hz1u6YRikXSGoHpAq5RPNxkjhEdbPH3wRDTlBzyAnc7GzDJEefx+rxt
+         6jXJsPXuj1r6lAqQbzTgr5MApt6Qqcnj9lelN2laHFj4+ykOpy8onyQfohADpE0YLDr5
+         RcaB9gFXrEnoVbcFE+EIJw1lrfb6jj4UQZ+uBOi7d3oRwLg4VkLUTkZFeUQKgOeeqdpx
+         TW8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kC5o2fNLt6ygrhXBorsw5Jbr7rYM1p4JZsABmYPmJrA=;
+        b=OyxzrO/lpEh+roRTnmsp3X71AkZ3wD4FT4mMl7mVQkrEhkeglONX1y9rD917OSU9mF
+         XnfppszVRmWTDHeVxCJawxNW49pmwxEaz2cMuT5xW1qq5Jb/x6fktea6B411eMosoQ6m
+         h96GDa/9Cj9nEIe7g2twG3JlL/842oGjB/K8nGxa+3kezsKC5iJ6sSkM3km68Y7GBaxt
+         lW9qayEoGP50eS7urBtX96QhCjzhhZCNolgJs0YATzU1lOtRqbYCYFpDvKHPtqhDIjhy
+         3FhYztDURfPjbW4DecapBBquo3Nx4xzdm+SnRBTC/Ci74BZcoOXXe6IaP9cMVCl++oZv
+         ckbQ==
+X-Gm-Message-State: AOAM533l+/jAfji04Zsd/kcvE7zV9ShdyygT28XNBgA0kZRgpw+AzqyQ
+        OuiWqO7lErjqN2069FqOIouVwzlx8qZjrgAwEWs=
+X-Google-Smtp-Source: ABdhPJzLW6Dz5jckH3hcEqbdz8uz9Y3Mwk4ir9/MbzB6WF6CfSQQn8d61hI/Vm2s9Xd7Xo+PHjcDHvDMqB+A8YgnEj8=
+X-Received: by 2002:a17:907:3f99:: with SMTP id hr25mr6889917ejc.588.1643377637845;
+ Fri, 28 Jan 2022 05:47:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220107071559.65843-1-zhou1615@umn.edu>
+References: <20220124165206.55059-1-zhou1615@umn.edu> <YfPCdPuoB3RYgzL8@kroah.com>
+In-Reply-To: <YfPCdPuoB3RYgzL8@kroah.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 28 Jan 2022 07:47:06 -0600
+Message-ID: <CAHCN7x+bvC70Y18j8tvSVZNjwipYu3xTvFo=AjKvYnmaucBiGg@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: Fix a NULL pointer dereference in imx_register_uart_clocks()
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Zhou Qingyang <zhou1615@umn.edu>, kjlu@umn.edu,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 07, 2022 at 03:15:58PM +0800, Zhou Qingyang wrote:
-> In fch_clk_probe(), the return value of clk_hw_register_mux() is
-> assigned to hws[ST_CLK_MUX] and there is a dereference of it in
-> fch_clk_probe(), which could lead to a wild pointer dereference on
-> failure of clk_hw_register_mux().
-> 
-> Fix this bug by adding a check of hws[ST_CLK_MUX].
-> 
-> This bug was found by a static analyzer.
-> 
-> Builds with CONFIG_X86_AMD_PLATFORM_DEVICE=y show no new warnings, and
-> our static analyzer no longer warns about this code.
-> 
-> Fixes: 19fe87fd854a ("clk: x86: Support RV architecture")
-> Signed-off-by: Zhou Qingyang <zhou1615@umn.edu>
-> --- 
-> The analysis employs differential checking to identify inconsistent 
-> security operations (e.g., checks or kfrees) between two code paths
-> and confirms that the inconsistent operations are not recovered in 
-> the current function or the callers, so they constitute bugs.
-> 
-> Note that, as a bug found by static analysis, it can be a false
-> positive or hard to trigger. Multiple researchers have cross-reviewed
-> the bug.
-> 
-> Changes in v2:
->   -  Add error check to every register function calls.
->   -  Add error handling logic to every error path.
->   -  Turn clk_hw_register_mux to devm_clk_hw_register_mux.
->   -  Add error check of clk_set_parent().
-> 
->  drivers/clk/x86/clk-fch.c | 53 ++++++++++++++++++++++++++++++++++++---
->  1 file changed, 49 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/x86/clk-fch.c b/drivers/clk/x86/clk-fch.c
-> index 8f7c5142b0f0..47754761b19c 100644
-> --- a/drivers/clk/x86/clk-fch.c
-> +++ b/drivers/clk/x86/clk-fch.c
-> @@ -36,6 +36,7 @@ static struct clk_hw *hws[ST_MAX_CLKS];
->  static int fch_clk_probe(struct platform_device *pdev)
->  {
->  	struct fch_clk_data *fch_data;
-> +	int ret;
->  
->  	fch_data = dev_get_platdata(&pdev->dev);
->  	if (!fch_data || !fch_data->base)
-> @@ -44,35 +45,79 @@ static int fch_clk_probe(struct platform_device *pdev)
->  	if (!fch_data->is_rv) {
->  		hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
->  			NULL, 0, 48000000);
-> +		if (IS_ERR(hws[ST_CLK_48M]))
-> +			return PTR_ERR(hws[ST_CLK_48M]);
-> +
->  		hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz",
->  			NULL, 0, 25000000);
-> +		if (IS_ERR(hws[ST_CLK_25M])) {
-> +			ret = PTR_ERR(hws[ST_CLK_25M]);
-> +			goto err_st_clk_25m;
-> +		}
->  
-> -		hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-> +		hws[ST_CLK_MUX] = devm_clk_hw_register_mux(NULL, "oscout1_mux",
->  			clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
->  			0, fch_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0,
->  			NULL);
-> +		if (IS_ERR(hws[ST_CLK_MUX])) {
-> +			ret = PTR_ERR(hws[ST_CLK_MUX]);
-> +			goto err_st_clk_mux;
-> +		}
->  
-> -		clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
-> +		ret = clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
-> +		if (ret)
-> +			goto err_clk_set_parent;
->  
->  		hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1",
->  			"oscout1_mux", 0, fch_data->base + MISCCLKCNTL1,
->  			OSCCLKENB, CLK_GATE_SET_TO_DISABLE, NULL);
-> +		if (IS_ERR(hws[ST_CLK_GATE])) {
-> +			ret = PTR_ERR(hws[ST_CLK_GATE]);
-> +			goto err_st_clk_gate;
-> +		}
->  
-> -		devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE],
-> +		ret = devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE],
->  			"oscout1", NULL);
-> +		if (ret)
-> +			goto err_register_st_clk_gate;
->  	} else {
->  		hws[RV_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
->  			NULL, 0, 48000000);
-> +		if (IS_ERR(hws[RV_CLK_48M]))
-> +			return PTR_ERR(hws[RV_CLK_48M]);
->  
->  		hws[RV_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1",
->  			"clk48MHz", 0, fch_data->base + MISCCLKCNTL1,
->  			OSCCLKENB, CLK_GATE_SET_TO_DISABLE, NULL);
-> +		if (IS_ERR(hws[RV_CLK_GATE])) {
-> +			ret = PTR_ERR(hws[RV_CLK_GATE]);
-> +			goto err_rv_clk_gate;
-> +		}
->  
-> -		devm_clk_hw_register_clkdev(&pdev->dev, hws[RV_CLK_GATE],
-> +		ret = devm_clk_hw_register_clkdev(&pdev->dev, hws[RV_CLK_GATE],
->  			"oscout1", NULL);
-> +		if (ret)
-> +			goto err_register_rv_clk_gate;
->  	}
->  
->  	return 0;
-> +
-> +err_register_st_clk_gate:
-> +	clk_hw_unregister_gate(hws[ST_CLK_GATE]);
-> +err_st_clk_gate:
-> +err_clk_set_parent:
-> +	clk_hw_unregister_mux(hws[ST_CLK_MUX]);
-> +err_st_clk_mux:
-> +	clk_hw_unregister_fixed_rate(hws[ST_CLK_25M]);
-> +err_st_clk_25m:
-> +	clk_hw_unregister_fixed_rate(hws[ST_CLK_48M]);
-> +	return ret;
-> +
-> +err_register_rv_clk_gate:
-> +	clk_hw_unregister_gate(hws[RV_CLK_GATE]);
-> +err_rv_clk_gate:
-> +	clk_hw_unregister_fixed_rate(hws[RV_CLK_48M]);
-> +	return ret;
->  }
->  
->  static int fch_clk_remove(struct platform_device *pdev)
-> -- 
-> 2.25.1
-> 
+On Fri, Jan 28, 2022 at 4:16 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Jan 25, 2022 at 12:52:06AM +0800, Zhou Qingyang wrote:
+> > In imx_register_uart_clocks(), the global variable imx_uart_clocks is
+> > assigned by kcalloc() and there is a dereference of in the next for loop,
+> > which could introduce a NULL pointer dereference on failure of kcalloc().
+> >
+> > Fix this by adding a NULL check of imx_uart_clocks.
+> >
+> > This bug was found by a static analyzer.
+> >
+> > Builds with 'make allyesconfig' show no new warnings,
+> > and our static analyzer no longer warns about this code.
+> >
+> > Fixes: 379c9a24cc23 ("clk: imx: Fix reparenting of UARTs not associated with stdout")
+> > Signed-off-by: Zhou Qingyang <zhou1615@umn.edu>
+> > ---
+> > The analysis employs differential checking to identify inconsistent
+> > security operations (e.g., checks or kfrees) between two code paths
+> > and confirms that the inconsistent operations are not recovered in the
+> > current function or the callers, so they constitute bugs.
+> >
+> > Note that, as a bug found by static analysis, it can be a false
+> > positive or hard to trigger. Multiple researchers have cross-reviewed
+> > the bug.
+> >
+> >  drivers/clk/imx/clk.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> > index 7cc669934253..99249ab361d2 100644
+> > --- a/drivers/clk/imx/clk.c
+> > +++ b/drivers/clk/imx/clk.c
+> > @@ -173,6 +173,8 @@ void imx_register_uart_clocks(unsigned int clk_count)
+> >               int i;
+> >
+> >               imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
+> > +             if (!imx_uart_clocks)
+> > +                     return;
+> >
+> >               if (!of_stdout)
+> >                       return;
+> > --
+> > 2.25.1
+> >
+>
+> As stated before, umn.edu is still not allowed to contribute to the
+> Linux kernel.  Please work with your administration to resolve this
+> issue.
 
-As stated before, umn.edu is still not allowed to contribute to the
-Linux kernel.  Please work with your administration to resolve this
-issue.
+Greg,
 
+In the interest of safety, I believe this patch is reasonable.  I
+wrote the original patch that is being fixed by this.  Would it be
+acceptable if I submitted the same patch with "suggested-by"
+associated with Zhou @ umn.edu?  I want to give credit where credit is
+due while still maintaining the rule that patches are not actually
+being accepted by umn.edu.
+
+adam
