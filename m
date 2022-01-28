@@ -2,90 +2,197 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F006C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 10:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED83C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 10:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346937AbiA1KTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jan 2022 05:19:16 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:57596 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244074AbiA1KTQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 05:19:16 -0500
+        id S244160AbiA1KUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jan 2022 05:20:08 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:40712 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347832AbiA1KUH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 05:20:07 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A99E761E68;
-        Fri, 28 Jan 2022 10:19:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81342C340E0;
-        Fri, 28 Jan 2022 10:19:14 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A975AB82519;
+        Fri, 28 Jan 2022 10:20:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADECCC340E6;
+        Fri, 28 Jan 2022 10:20:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1643365155;
-        bh=aRjNrr6JfZGMor2sYsrMy3B0FPYOJjTbnEogKUClVis=;
+        s=korg; t=1643365205;
+        bh=bkei2eb19WMisDwh+tZOKfVPJ+LMN4YoDDIADFBqrxw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Msuo97Xu9roIczJKbLy7DLCJ9O6J75VpJINVZMjPkdwvfkdAW3MYmFoX51F7PJrwj
-         eeHVmvu9sUfAO8pWxEtxH7VQRyHc6G7kxZvxB8sifRlQ6cZ70nk83yPpJQmKC7dwIw
-         w9zyhmHtZ08shYZisR8AaNUXv4xmguWePLZe7muA=
-Date:   Fri, 28 Jan 2022 11:19:12 +0100
+        b=NevbnbCGOUuaDu7DEzF9IUux0W/+b0Ikw3sxb8xA2bX4+9C72TCrmZFiOWYx4p9y3
+         zJCM7mDOaNlkiF32Ax1+vcyPwB9GOSPb+Ynid7rYgszeUstzww+ieWj7zGQ3lb+fVe
+         D8OcHpOlE9+nF3zUpat+hSnLWmcjxXjmTxrgvP34=
+Date:   Fri, 28 Jan 2022 11:20:02 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Zhou Qingyang <zhou1615@umn.edu>
-Cc:     kjlu@umn.edu, Dinh Nguyen <dinguyen@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: socfpga: Fix a memory leak bug in
- socfpga_gate_init()
-Message-ID: <YfPDINOCa5jLx+a+@kroah.com>
-References: <20220124165316.55449-1-zhou1615@umn.edu>
+Cc:     kjlu@umn.edu, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mario Limonciello <Mario.Limonciello@amd.com>,
+        Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk: x86: Fix a wild pointer dereference in
+ fch_clk_probe()
+Message-ID: <YfPDUgE0+vUyQQFl@kroah.com>
+References: <20220111051022.98479-1-zhou1615@umn.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220124165316.55449-1-zhou1615@umn.edu>
+In-Reply-To: <20220111051022.98479-1-zhou1615@umn.edu>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 12:53:16AM +0800, Zhou Qingyang wrote:
-> In socfpga_gate_init(), when ops fails, socfpga_clk is not released or
-> passed out, which could lead to a memleak.
+On Tue, Jan 11, 2022 at 01:10:21PM +0800, Zhou Qingyang wrote:
+> In fch_clk_probe(), the return value of clk_hw_register_mux() is
+> assigned to hws[ST_CLK_MUX] and there is a dereference of it in
+> fch_clk_probe(), which could lead to a wild pointer dereference on
+> failure of clk_hw_register_mux().
 > 
-> Fix this bug by adding a kfree of socfpga_clk on the failure path of ops.
+> Fix this bug by adding a check of hws[ST_CLK_MUX].
 > 
 > This bug was found by a static analyzer.
 > 
-> Builds with 'make allyesconfig' show no new warnings,
-> and our static analyzer no longer warns about this code.
+> Builds with CONFIG_X86_AMD_PLATFORM_DEVICE=y show no new warnings, and
+> our static analyzer no longer warns about this code.
 > 
-> Fixes: a30a67be7b6e ("clk: socfpga: Don't have get_parent for single parent ops")
+> Fixes: 19fe87fd854a ("clk: x86: Support RV architecture")
 > Signed-off-by: Zhou Qingyang <zhou1615@umn.edu>
 > ---
 > The analysis employs differential checking to identify inconsistent 
-> security operations (e.g., checks or kfrees) between two code paths 
-> and confirms that the inconsistent operations are not recovered in the
-> current function or the callers, so they constitute bugs. 
+> security operations (e.g., checks or kfrees) between two code paths
+> and confirms that the inconsistent operations are not recovered in 
+> the current function or the callers, so they constitute bugs.
 > 
 > Note that, as a bug found by static analysis, it can be a false
 > positive or hard to trigger. Multiple researchers have cross-reviewed
 > the bug.
 > 
->  drivers/clk/socfpga/clk-gate.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Changes in v3:
+>   -  Rebase this based on clk-next.
 > 
-> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-> index 53d6e3ec4309..0ca5e0000925 100644
-> --- a/drivers/clk/socfpga/clk-gate.c
-> +++ b/drivers/clk/socfpga/clk-gate.c
-> @@ -188,8 +188,10 @@ void __init socfpga_gate_init(struct device_node *node)
->  		return;
+> Changes in v2:
+>   -  Add error check to every register function calls.
+>   -  Add error handling logic to every error path.
+>   -  Turn clk_hw_register_mux to devm_clk_hw_register_mux.
+>   -  Add error check of clk_set_parent().
+> 
+>  drivers/clk/x86/clk-fch.c | 69 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 61 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/x86/clk-fch.c b/drivers/clk/x86/clk-fch.c
+> index fdc060e75839..bb0ed6b2a126 100644
+> --- a/drivers/clk/x86/clk-fch.c
+> +++ b/drivers/clk/x86/clk-fch.c
+> @@ -46,6 +46,7 @@ static int fch_clk_probe(struct platform_device *pdev)
+>  {
+>  	struct fch_clk_data *fch_data;
+>  	struct pci_dev *rdev;
+> +	int ret;
 >  
->  	ops = kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
-> -	if (WARN_ON(!ops))
-> +	if (WARN_ON(!ops)) {
-> +		kfree(socfpga_clk);
->  		return;
-> +	}
+>  	fch_data = dev_get_platdata(&pdev->dev);
+>  	if (!fch_data || !fch_data->base)
+> @@ -60,36 +61,88 @@ static int fch_clk_probe(struct platform_device *pdev)
+>  	if (pci_match_id(fch_pci_ids, rdev)) {
+>  		hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
+>  			NULL, 0, 48000000);
+> +		if (IS_ERR(hws[ST_CLK_48M])) {
+> +			ret = PTR_ERR(hws[ST_CLK_48M]);
+> +			goto err_st_clk_48m;
+> +		}
+> +
+>  		hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz",
+>  			NULL, 0, 25000000);
+> +		if (IS_ERR(hws[ST_CLK_25M])) {
+> +			ret = PTR_ERR(hws[ST_CLK_25M]);
+> +			goto err_st_clk_25m;
+> +		}
 >  
->  	rc = of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
->  	if (rc)
+> -		hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
+> +		hws[ST_CLK_MUX] = devm_clk_hw_register_mux(NULL, "oscout1_mux",
+>  			clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
+>  			0, fch_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0,
+>  			NULL);
+> +		if (IS_ERR(hws[ST_CLK_MUX])) {
+> +			ret = PTR_ERR(hws[ST_CLK_MUX]);
+> +			goto err_st_clk_mux;
+> +		}
+>  
+> -		clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
+> +		ret = clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
+> +		if (ret)
+> +			goto err_clk_set_parent;
+>  
+>  		hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1",
+>  			"oscout1_mux", 0, fch_data->base + MISCCLKCNTL1,
+>  			OSCCLKENB, CLK_GATE_SET_TO_DISABLE, NULL);
+> -
+> -		devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE],
+> -					    fch_data->name, NULL);
+> +		if (IS_ERR(hws[ST_CLK_GATE])) {
+> +			ret = PTR_ERR(hws[ST_CLK_GATE]);
+> +			goto err_st_clk_gate;
+> +		}
+> +
+> +		ret = devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE],
+> +			fch_data->name, NULL);
+> +		if (ret)
+> +			goto err_register_st_clk_gate;
+>  	} else {
+>  		hws[CLK_48M_FIXED] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
+>  			NULL, 0, 48000000);
+> +		if (IS_ERR(hws[CLK_48M_FIXED])) {
+> +			ret = PTR_ERR(hws[CLK_48M_FIXED]);
+> +			goto err_clk_48m_fixed;
+> +		}
+>  
+>  		hws[CLK_GATE_FIXED] = clk_hw_register_gate(NULL, "oscout1",
+>  			"clk48MHz", 0, fch_data->base + MISCCLKCNTL1,
+>  			OSCCLKENB, 0, NULL);
+> -
+> -		devm_clk_hw_register_clkdev(&pdev->dev, hws[CLK_GATE_FIXED],
+> -					    fch_data->name, NULL);
+> +		if (IS_ERR(hws[CLK_GATE_FIXED])) {
+> +			ret = PTR_ERR(hws[CLK_GATE_FIXED]);
+> +			goto err_clk_gate_fixed;
+> +		}
+> +
+> +		ret = devm_clk_hw_register_clkdev(&pdev->dev, hws[CLK_GATE_FIXED],
+> +			fch_data->name, NULL);
+> +		if (ret)
+> +			goto err_register_gate_fixed;
+>  	}
+>  
+>  	pci_dev_put(rdev);
+>  	return 0;
+> +
+> +err_register_st_clk_gate:
+> +	clk_hw_unregister_gate(hws[ST_CLK_GATE]);
+> +err_st_clk_gate:
+> +err_clk_set_parent:
+> +	clk_hw_unregister_mux(hws[ST_CLK_MUX]);
+> +err_st_clk_mux:
+> +	clk_hw_unregister_fixed_rate(hws[ST_CLK_25M]);
+> +err_st_clk_25m:
+> +	clk_hw_unregister_fixed_rate(hws[ST_CLK_48M]);
+> +err_st_clk_48m:
+> +	pci_dev_put(rdev);
+> +	return ret;
+> +
+> +err_register_gate_fixed:
+> +	clk_hw_unregister_gate(hws[CLK_GATE_FIXED]);
+> +err_clk_gate_fixed:
+> +	clk_hw_unregister_fixed_rate(hws[CLK_48M_FIXED]);
+> +err_clk_48m_fixed:
+> +	pci_dev_put(rdev);
+> +	return ret;
+>  }
+>  
+>  static int fch_clk_remove(struct platform_device *pdev)
 > -- 
 > 2.25.1
 > 
