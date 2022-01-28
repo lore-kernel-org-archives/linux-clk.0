@@ -2,140 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3E9C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 15:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD64C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 16:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbiA1PvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jan 2022 10:51:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33742 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349686AbiA1PvA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 10:51:00 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E63C061714;
-        Fri, 28 Jan 2022 07:50:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9592AB80D5F;
-        Fri, 28 Jan 2022 15:50:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C049C340E6;
-        Fri, 28 Jan 2022 15:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1643385057;
-        bh=dHqKFVDo8/TjjOkINPkqqECV8kHJmc9ubDxhkDsKCRA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UIgn+uYaIcZnrR3GGRYpPs9PW6Z1jWKIYs0QDXBkwYkumMfftCcyJFOPvS1SHGgY9
-         TSbIG/p3kqKO1Xu80pNP/vh0TLex+Fw7YNdDY+AGe0c2DzHy2kwWTRnbZKzRJCUwCz
-         KayXZKOHERpEOvHwSeSMCCTuIGIGuH3j1ATxeaOs=
-Date:   Fri, 28 Jan 2022 16:50:54 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Zhou Qingyang <zhou1615@umn.edu>, kjlu@umn.edu,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1350068AbiA1Qf6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Jan 2022 11:35:58 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37996 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350067AbiA1Qf5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Jan 2022 11:35:57 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: usama.anjum)
+        with ESMTPSA id C990F1F46300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1643387755;
+        bh=S4Z9IVyEDWl5NFUhRrfhKWpv39Y/h9ZoEjs/1KHozrI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=akyfuuwp7yF5ZmP+FMZrRp8amwzILjjcWdkGPxvtVaKcXNQkFn0p9W9xtg+JcOLLy
+         nYpd6Pv7Il5ewKvnsxEY4jdo/CxchOZ0RGtSL0DKSKHneAwyKdqGIHybQAMk+9qK4K
+         bptyaGaQcGhB3j2/eD5Upv7o8HJA40ik7zd3fAe164EhYcwqdsi6qRrLUel9+i69uR
+         M7KF17DfyAIVAgNGpBIEcv/PO2MFpiFso+ttLqXrUOEUwHGle4tjBp4CQhzbIOb+oL
+         mATjdnOtTn0riKxVWnZOwggBqifwk1APp+Eh3nJ/vMgkqj/uaU81QOqU9fqDoesFZD
+         VUOaizw9THSXA==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: Fix a NULL pointer dereference in
- imx_register_uart_clocks()
-Message-ID: <YfQQ3iQhSxCiUQ2U@kroah.com>
-References: <20220124165206.55059-1-zhou1615@umn.edu>
- <YfPCdPuoB3RYgzL8@kroah.com>
- <CAHCN7x+bvC70Y18j8tvSVZNjwipYu3xTvFo=AjKvYnmaucBiGg@mail.gmail.com>
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com, kernel-janitors@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: visconti: Remove dead code
+Date:   Fri, 28 Jan 2022 21:35:27 +0500
+Message-Id: <20220128163527.1587325-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHCN7x+bvC70Y18j8tvSVZNjwipYu3xTvFo=AjKvYnmaucBiGg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 28, 2022 at 07:47:06AM -0600, Adam Ford wrote:
-> On Fri, Jan 28, 2022 at 4:16 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Jan 25, 2022 at 12:52:06AM +0800, Zhou Qingyang wrote:
-> > > In imx_register_uart_clocks(), the global variable imx_uart_clocks is
-> > > assigned by kcalloc() and there is a dereference of in the next for loop,
-> > > which could introduce a NULL pointer dereference on failure of kcalloc().
-> > >
-> > > Fix this by adding a NULL check of imx_uart_clocks.
-> > >
-> > > This bug was found by a static analyzer.
-> > >
-> > > Builds with 'make allyesconfig' show no new warnings,
-> > > and our static analyzer no longer warns about this code.
-> > >
-> > > Fixes: 379c9a24cc23 ("clk: imx: Fix reparenting of UARTs not associated with stdout")
-> > > Signed-off-by: Zhou Qingyang <zhou1615@umn.edu>
-> > > ---
-> > > The analysis employs differential checking to identify inconsistent
-> > > security operations (e.g., checks or kfrees) between two code paths
-> > > and confirms that the inconsistent operations are not recovered in the
-> > > current function or the callers, so they constitute bugs.
-> > >
-> > > Note that, as a bug found by static analysis, it can be a false
-> > > positive or hard to trigger. Multiple researchers have cross-reviewed
-> > > the bug.
-> > >
-> > >  drivers/clk/imx/clk.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> > > index 7cc669934253..99249ab361d2 100644
-> > > --- a/drivers/clk/imx/clk.c
-> > > +++ b/drivers/clk/imx/clk.c
-> > > @@ -173,6 +173,8 @@ void imx_register_uart_clocks(unsigned int clk_count)
-> > >               int i;
-> > >
-> > >               imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
-> > > +             if (!imx_uart_clocks)
-> > > +                     return;
-> > >
-> > >               if (!of_stdout)
-> > >                       return;
-> > > --
-> > > 2.25.1
-> > >
-> >
-> > As stated before, umn.edu is still not allowed to contribute to the
-> > Linux kernel.  Please work with your administration to resolve this
-> > issue.
-> 
-> Greg,
-> 
-> In the interest of safety, I believe this patch is reasonable.
+rs_id is of unsigned type, u8. The condition rs_id >= 0 will always be
+true. Remove the if-else condition and the dead code.
 
-How can kcalloc really fail here?  Seriously, this is an impossible
-thing to happen in real-world situations, you have to have special
-fault-injection tooling to ever hit this in a system that is not just
-frozen due to other problems.
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ drivers/clk/visconti/clkc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-> I
-> wrote the original patch that is being fixed by this.  Would it be
-> acceptable if I submitted the same patch with "suggested-by"
-> associated with Zhou @ umn.edu?  I want to give credit where credit is
-> due while still maintaining the rule that patches are not actually
-> being accepted by umn.edu.
+diff --git a/drivers/clk/visconti/clkc.c b/drivers/clk/visconti/clkc.c
+index 56a8a4ffebca8..5ccf771d05985 100644
+--- a/drivers/clk/visconti/clkc.c
++++ b/drivers/clk/visconti/clkc.c
+@@ -147,13 +147,9 @@ int visconti_clk_register_gates(struct visconti_clk_provider *ctx,
+ 		if (!dev_name)
+ 			return -ENOMEM;
+ 
+-		if (clks[i].rs_id >= 0) {
+-			rson_offset = reset[clks[i].rs_id].rson_offset;
+-			rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
+-			rs_idx = reset[clks[i].rs_id].rs_idx;
+-		} else {
+-			rson_offset = rsoff_offset = rs_idx = -1;
+-		}
++		rson_offset = reset[clks[i].rs_id].rson_offset;
++		rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
++		rs_idx = reset[clks[i].rs_id].rs_idx;
+ 
+ 		div_clk = devm_clk_hw_register_fixed_factor(dev,
+ 							    dev_name,
+-- 
+2.30.2
 
-If you think this really is needed, then yes, feel free to rewrite it.
-
-But rewrite it to be correct.  As it is, this is not correct.  If an
-error happens because we are out of memory, actually handle that and do
-not just return as if everything worked properly like this patch is
-doing here.
-
-The "suggestion" here is incorrect, which is the big problem here.
-Whatever tool this group is using is wrong, and as a few people have
-hinted to me offline, maybe they are just still messing around with us
-and seeing how we behave.  Personally, I'm starting to get mad.
-
-thanks,
-
-greg k-h
