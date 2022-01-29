@@ -2,97 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C10C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Jan 2022 23:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6AAC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Jan 2022 09:52:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349679AbiA1XKV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Jan 2022 18:10:21 -0500
-Received: from mout.gmx.net ([212.227.15.19]:33977 "EHLO mout.gmx.net"
+        id S234124AbiA2JwK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 Jan 2022 04:52:10 -0500
+Received: from mout.gmx.net ([212.227.17.22]:58109 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348632AbiA1XKT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Jan 2022 18:10:19 -0500
+        id S231812AbiA2JwJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 29 Jan 2022 04:52:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1643411408;
-        bh=XTOsqOf/WkGgWaJmFVDvq2fS2L0XA1LpZOg14b+J6aU=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=YygBBZ5iScRMA4AoV+o8J1pCELgFolYTdMG0CXcTGMyp8/+ubYh3kbQ9k36F3UcKP
-         KCN1BNRJ5iegdnG04f6lllXOAkttkbQC+55yf2za2x4oVHjcT01gbyURNwyTYsfZ3X
-         RtgRouHJbEBmtM6muTqziQ9Oo4jJiTBAf6MqfCBY=
+        s=badeba3b8450; t=1643449927;
+        bh=7txWuC+cxLDcHk5GOkyqFF+HK5YNAy2EVa4xiw1MfaY=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=S5KaH4mX/syRN0z4KBxI5n99XBBGLaFONztzXq0kfvIiQS558ECiciNRMNyJvSn6h
+         hiCFBFV8F1SeUA6/gx2IeR0dtZUTKLdmxFMoVjq6wzAOePS8/RXTvJAza4dhqKvNLU
+         2yOVGC005H2YRKlWiVJbKkuWmKjYSvayXe4E8Mnw=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([89.0.80.162]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MUXpK-1mn5Hc0zMO-00QU3d; Sat, 29
- Jan 2022 00:10:08 +0100
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MYeR1-1mjLMK3DxD-00VdZd; Sat, 29
+ Jan 2022 10:52:07 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>
-Subject: [PATCH 3/4] clk: hisilicon: Terminate clk_div_table with sentinel element
-Date:   Sat, 29 Jan 2022 00:09:21 +0100
-Message-Id: <20220128230922.2047140-4-j.neuschaefer@gmx.net>
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH 0/5] clk: Declare mux tables as const u32[]
+Date:   Sat, 29 Jan 2022 10:51:53 +0100
+Message-Id: <20220129095159.2202366-1-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220128230922.2047140-1-j.neuschaefer@gmx.net>
-References: <20220128230922.2047140-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kONIbwxFhEejB7eJDZdPACNkE1PmoNbMHGkDDbM7hjzeR9BZCnw
- HeWjmYbc2kqd+twNi5vIC1S4pneVR3PUqxtyQJxQKsjfrBlEmAkySZ3fJFcHHq/wnCeXBom
- CCH7rgkIvsYUpfXTbgNq3m/LRkuCUWahy1w9srDTICMSOzVZlsTCp9exjVsc5GF3jWCepv+
- ARL1GfZNlgsMSl+S2Aulw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nZ/aFuC7uE4=:OGCoIazl94MmvwSxlI+Oc1
- QiuIsuRNCfBh9ItVQVQOQiHhNaxBWGrosw806SpSd+llxe03npVOFKBmnmBqazWq2EivnHWsI
- Uc5ZY/jwPPyn6Rzu0HJcZh8t5DAerYvQsi+2TQbTvYvymkf/4a+GJxxRJU0gcd8ip3kaczkWl
- lH5YCYrjdVMS2v5lDT9aVOLA/O35oM79ahgg39F61Sqe3EhFwT/mHSKSX695AYBAt9mmFFTvb
- jAo7kfLdO3bavKHsT1xOiP4DN79Bw97PF60wWjCfl+eoF1cUuNNg9iOYQaWSlhyU/NXxiAdM9
- noRqCT8eT95t+9/+Cj1uZdcxkobcwMHkc5sFHf4ccOarZXkk98YyhMcawn8pZ7eig82I+xQ57
- zfOVbjXIg8VUPFCIapdcu49fGhiFdLz1jYlpS9UjSCJT2OLfgks5XYtH/FIWVWxYj0ZZd8ATW
- LEjbRayw/nHDnHXFNfTkwOm9gObvUFQJ/UW/TdLXMKKVzPPaTWWb2QjG3E3VGlgC6Mi2NEAR+
- Ei8b6xKSNxABVR+GbNmFJq5zGXLuS1qcSAytM2XkOe8O86NVpuk0Xr49g8IpE+fWdtCwpAbRF
- 7087BSIiO865SyvapTBhOlnsOlqbPZE+GcHtGJCjjd2B+KO/Mhd8juu8OPE+OxJUS8iGGzMTH
- YN1qX2SbizsacCmoTsVHpvJ0tCIuOp17YtCaHv/eYub2JVXVhZFWQiYhZpsxkr2chq90i0ltO
- SQL6vXsh+zlUzipXyfZJt8339GilzA7DY0re+s88J9digLdK5e3f7yXpzBUeRmeFsb6JYqCh6
- HFbGz9LtgzsXXX+eTLmvI1ycNWn/Q07WDkbNCOql+zl59yWhWpLgyVnheHK72xTxxlaSwizUL
- ASyxUzpDr2R5E+rF2DhTnkkYMleJWOzWXAHWPqJiZmY1TB2S5rCMpjwCiHg0DtAGYXDGpIOey
- 6mO3pT0ryPKf0n2OgbNVTs8rWJC2ZxJD7qaerpKF63utBiSDaBdtpMCpll9R4K4ygimzaPcq8
- 0Aj3nuEBR0pGBS9/Alh/OV+8tqkHfPbWEZMMmahEySeonRYmCMBgE50N0XUYQs2IFAadoIcdv
- nhQp9PQTdWC+ao=
+X-Provags-ID: V03:K1:VMtroBv0nDy70kKkvtsscxItTZO+E/vHQlpHdQejS/3+/+SaWBb
+ MU2GNTHebaxr0JhwnlK7BayTm9zNyTloxTzgzELfm3iRzdVgI2J8P96zR+QGyXOsSfo84pp
+ NcrcQtEzwD367B9yimU1yqlJveI9INZD3Ri7rMCwDqD69IQ3u7Fj213TAdKwTWIRUiCRkbA
+ nQwF4kWu3/KzgwXPkv96w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PmWkQYuZqNw=:nGhauw4gD3+PyjJvPeLWPx
+ yYMYzWaRtFuaHiToQy0l/v7D6I3/TT5lEaKX791YEPzW8MA1dJPsNR50AjltVX/ZlBlDEaf96
+ K80QhzlgpED4m3dBkhoKfejpClwmepf9cAgbEWRiOebrfY60sO/zH4kyxAN17X10jZUBlt85c
+ GziofarXEId+QbII+ut4nlo1+m6LWQ2JIMMjEyA3A6ssUj01bhrPbByqKYfaJDcawAtvjxb4Z
+ AxBmT16y6uP/bFGLiTDYnPLFO73NPYIM55ji2vh/91ZXhEBbWPaJooy6oeGpmmZA/2HH4oQkS
+ LoFoiwj4kcackCToqaRxCps/qsCi/JgaymRo2yPyy0yp5hy/aAUja5SSK3Xh9gFhsst6u9xPH
+ 1kOxMpv/cgyoXA96TLNqAD6ye77QVT/lBut02wseFMbVEbgBODEHD4wqxMHHkeNJqup55/+Wm
+ Rl0kO8ZGcj6p2vgRGimPQ+ZPAdv0v/P07Rf04jqFFWg4mvM1calfVeN5VCCOkbVhuQ5AWzFTl
+ 5Nt2L5v3jQXIOnl90fu79nKudkPjRpKxx0asdzVCDxlepYJJvjDaygcxy4uyh7yUYqTEhJ7z2
+ s0QM3PeaJH1Td3U4oohD0rNdniubLUcJlHRTc47CeWn+BH4/D5J5drNQPZZOhctb2wVtDcttu
+ 9OGIUch0EiCtLbB3N37cLIcZhtRfZJhz71/cmtk0vxAkmncgaLQnFd8fFgtAUzK9MnzayV+HC
+ wbxHs2G8RRSMPIKJozWhTASxJ9342DxzBCNNSpXZnId8ym7nOquG8nh+k82fEDrazXC7+pZTd
+ RDxyq+Fidw6Fciu4fmv1CTWs5InHTp+lnWpijjb92BtF7IkmRBFuNASmgq4YOa4UWOMpYwxIV
+ RL9Vzt21POK5ycdxZKnwW5NT2wHbG8XC3Lx0pcgsLQb/9vWFlNxvrhGvlgx8WpLx5Am2Laf4V
+ mEya1CCBb6M/38R2/ovuovJ7v7gu8AgkQwELfYwfl9o77nOBT4mV3tTdpNg+uRJdwMe0XXG22
+ POZhYZTah86lozEMWllwymV8RD6WU5MA7NiWanWJp3J8TunkMRopkKDAvv2uNS7qZc8Bp85+J
+ 4fYa7S3qAVGfgY=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order that the end of a clk_div_table can be detected, it must be
-terminated with a sentinel element (.div =3D 0).
+I noticed that the 'table' parameter to clk_register_mux_table is never
+used for modifying the table elements, and so it can be declared const.
 
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
- drivers/clk/hisilicon/clk-hi3559a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Jonathan Neusch=C3=A4fer (5):
+  clk: mux: Declare u32 *table parameter as const
+  clk: hisilicon: Remove unnecessary cast of mux table to u32 *
+  clk: mmp: Declare mux tables as const u32[]
+  clk: qcom: Declare mux table as const u32[]
+  clk: pistachio: Declare mux table as const u32[]
 
-diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/c=
-lk-hi3559a.c
-index 56012a3d02192..28c2a0630474d 100644
-=2D-- a/drivers/clk/hisilicon/clk-hi3559a.c
-+++ b/drivers/clk/hisilicon/clk-hi3559a.c
-@@ -611,8 +611,8 @@ static struct hisi_mux_clock hi3559av100_shub_mux_clks=
-[] =3D {
+ drivers/clk/clk-mux.c                 | 10 +++++-----
+ drivers/clk/hisilicon/clk.c           |  2 +-
+ drivers/clk/mmp/clk-of-mmp2.c         |  4 ++--
+ drivers/clk/pistachio/clk-pistachio.c |  2 +-
+ drivers/clk/qcom/kpss-xcc.c           |  2 +-
+ include/linux/clk-provider.h          | 12 ++++++------
+ 6 files changed, 16 insertions(+), 16 deletions(-)
 
-
- /* shub div clk */
--static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}};
--static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-};
-+static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}, {}};
-+static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-, {}};
-
- static struct hisi_divider_clock hi3559av100_shub_div_clks[] =3D {
- 	{ HI3559AV100_SHUB_SPI_SOURCE_CLK, "clk_spi_clk", "shub_clk", 0, 0x20, 2=
-4, 2,
 =2D-
 2.34.1
 
