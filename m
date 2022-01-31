@@ -2,450 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AABC43217
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Jan 2022 14:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA1CC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jan 2022 03:45:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355214AbiA3Ovh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Jan 2022 09:51:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355210AbiA3Ovg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 30 Jan 2022 09:51:36 -0500
-Received: from nbd.name (nbd.name [IPv6:2a01:4f8:221:3d45::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79C34C061714;
-        Sun, 30 Jan 2022 06:51:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-         s=20160729; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=NQBNbDPyPZ1+5f9bS9s0FP2rooGy9B28fEgHod1gizs=; b=ASOGBR6PvWEZhwX2w0ljxKoHLU
-        OizEfPfVggL1ayMvhktcJ+ZkDCr/v9lU4DYRF39829P+QzcCGOMn48Wt93gZrDYPg0DbrrEvqP/5r
-        4DmBxx8kxBCb+u6yHkH0i69u3nIlHYvwwrO1ZRbWpLEAdx80BSagkHPykpVdgyYbUvl4=;
-Received: from p200300daa716f900d40f7dfd86c385e0.dip0.t-ipconnect.de ([2003:da:a716:f900:d40f:7dfd:86c3:85e0] helo=Maecks.lan)
-        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <nbd@nbd.name>)
-        id 1nEBY9-0002if-8T; Sun, 30 Jan 2022 15:51:29 +0100
-From:   Felix Fietkau <nbd@nbd.name>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S233742AbiAaDpH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Jan 2022 22:45:07 -0500
+Received: from mga17.intel.com ([192.55.52.151]:57758 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229885AbiAaDpH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 30 Jan 2022 22:45:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643600707; x=1675136707;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kxqSaxQ7Gb04Bz5NI2oVNABfZy4bSZKSXQz6fiilRDA=;
+  b=IywJ94Ct7QYhpkuKD/BQ13a5Sx00q6/+2xL1fnphyKCXjcUXoGSnv1UB
+   87icgkENEJcScKeaZqddqpw0A7T6TwVBknTNDIrFfRkJ6F37sxKpYsmZj
+   5vJ7BaVO7EpYVwOQ6F/Nrq7a+JYlEhRX8FFNfel8jRRy9o25ldlNHNMYA
+   rQm8qdwvSFPelwErhWXlE4bsCRbthNrtYhR48gT+TDhQHKjzXoC1H0h91
+   m2Csfe4O/F9tQ/3voeI7k492Fbic2ySwf6+UYmrIAYS59UGeboK+HGyvp
+   eDFWVelq2QfIPi10+5K+2usFpdD1EqnUbKn0mAoTAfAKWHgCbvIxP/EIq
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10243"; a="228059215"
+X-IronPort-AV: E=Sophos;i="5.88,329,1635231600"; 
+   d="scan'208";a="228059215"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jan 2022 19:45:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,329,1635231600"; 
+   d="scan'208";a="481549194"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 30 Jan 2022 19:45:04 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nENcl-000RLP-Sw; Mon, 31 Jan 2022 03:45:03 +0000
+Date:   Mon, 31 Jan 2022 11:44:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     soc@kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, john@phrozen.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v9 06/13] clk: en7523: Add clock driver for Airoha EN7523 SoC
-Date:   Sun, 30 Jan 2022 15:51:09 +0100
-Message-Id: <20220130145116.88406-7-nbd@nbd.name>
-X-Mailer: git-send-email 2.32.0 (Apple Git-132)
-In-Reply-To: <20220130145116.88406-1-nbd@nbd.name>
-References: <20220130145116.88406-1-nbd@nbd.name>
+Subject: Re: [PATCH 1/5] clk: mux: Declare u32 *table parameter as const
+Message-ID: <202201311102.kgy44sMD-lkp@intel.com>
+References: <20220129095159.2202366-2-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220129095159.2202366-2-j.neuschaefer@gmx.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver only registers fixed rate clocks, since the clocks are fully
-initialized by the boot loader and should not be changed later, according
-to Airoha.
+Hi "Jonathan,
 
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linux/master linus/master v5.17-rc2 next-20220128]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Jonathan-Neusch-fer/clk-Declare-mux-tables-as-const-u32/20220129-175243
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: arm-buildonly-randconfig-r002-20220131 (https://download.01.org/0day-ci/archive/20220131/202201311102.kgy44sMD-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/b97ffeed127cccf9159b9de1e9a1527b963460c4
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Jonathan-Neusch-fer/clk-Declare-mux-tables-as-const-u32/20220129-175243
+        git checkout b97ffeed127cccf9159b9de1e9a1527b963460c4
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/nxp/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   drivers/clk/nxp/clk-lpc18xx-cgu.c: In function 'lpc18xx_pll1_recalc_rate':
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:460:13: warning: variable 'stat' set but not used [-Wunused-but-set-variable]
+     460 |         u32 stat, ctrl;
+         |             ^~~~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c: In function 'lpc18xx_cgu_register_div':
+>> drivers/clk/nxp/clk-lpc18xx-cgu.c:545:52: warning: passing argument 2 of 'lpc18xx_fill_parent_names' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     545 |         lpc18xx_fill_parent_names(parents, clk->mux.table, clk->n_parents);
+         |                                            ~~~~~~~~^~~~~~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:526:65: note: expected 'u32 *' {aka 'unsigned int *'} but argument is of type 'const u32 *' {aka 'const unsigned int *'}
+     526 | static void lpc18xx_fill_parent_names(const char **parent, u32 *id, int size)
+         |                                                            ~~~~~^~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c: In function 'lpc18xx_register_base_clk':
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:567:52: warning: passing argument 2 of 'lpc18xx_fill_parent_names' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     567 |         lpc18xx_fill_parent_names(parents, clk->mux.table, clk->n_parents);
+         |                                            ~~~~~~~~^~~~~~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:526:65: note: expected 'u32 *' {aka 'unsigned int *'} but argument is of type 'const u32 *' {aka 'const unsigned int *'}
+     526 | static void lpc18xx_fill_parent_names(const char **parent, u32 *id, int size)
+         |                                                            ~~~~~^~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c: In function 'lpc18xx_cgu_register_pll':
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:592:52: warning: passing argument 2 of 'lpc18xx_fill_parent_names' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+     592 |         lpc18xx_fill_parent_names(parents, clk->mux.table, clk->n_parents);
+         |                                            ~~~~~~~~^~~~~~
+   drivers/clk/nxp/clk-lpc18xx-cgu.c:526:65: note: expected 'u32 *' {aka 'unsigned int *'} but argument is of type 'const u32 *' {aka 'const unsigned int *'}
+     526 | static void lpc18xx_fill_parent_names(const char **parent, u32 *id, int size)
+         |                                                            ~~~~~^~
+
+
+vim +545 drivers/clk/nxp/clk-lpc18xx-cgu.c
+
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  533  
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  534  static struct clk *lpc18xx_cgu_register_div(struct lpc18xx_cgu_src_clk_div *clk,
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  535  					    void __iomem *base, int n)
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  536  {
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  537  	void __iomem *reg = base + LPC18XX_CGU_IDIV_CTRL(n);
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  538  	const char *name = clk_src_names[clk->clk_id];
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  539  	const char *parents[CLK_SRC_MAX];
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  540  
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  541  	clk->div.reg = reg;
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  542  	clk->mux.reg = reg;
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  543  	clk->gate.reg = reg;
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  544  
+b04e0b8fd5443b Joachim Eastwood 2015-05-28 @545  	lpc18xx_fill_parent_names(parents, clk->mux.table, clk->n_parents);
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  546  
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  547  	return clk_register_composite(NULL, name, parents, clk->n_parents,
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  548  				      &clk->mux.hw, &clk_mux_ops,
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  549  				      &clk->div.hw, &clk_divider_ops,
+c23a5847695dbd Joachim Eastwood 2015-10-24  550  				      &clk->gate.hw, &lpc18xx_gate_ops, 0);
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  551  }
+b04e0b8fd5443b Joachim Eastwood 2015-05-28  552  
+
 ---
- drivers/clk/Kconfig      |   9 +
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-en7523.c | 350 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 360 insertions(+)
- create mode 100644 drivers/clk/clk-en7523.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c91931c94888..4614d6452fb7 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -192,6 +192,15 @@ config COMMON_CLK_CS2000_CP
- 	help
- 	  If you say yes here you get support for the CS2000 clock multiplier.
- 
-+config COMMON_CLK_EN7523
-+	bool "Clock driver for Airoha EN7523 SoC system clocks"
-+	depends on OF
-+	depends on ARCH_AIROHA || COMPILE_TEST
-+	default ARCH_AIROHA
-+	help
-+	  This driver provides the fixed clocks and gates present on Airoha
-+	  ARM silicon.
-+
- config COMMON_CLK_FSL_FLEXSPI
- 	tristate "Clock driver for FlexSPI on Layerscape SoCs"
- 	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index a9bb2478fbdd..da1e2ac2dfc1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
- obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
-+obj-$(CONFIG_COMMON_CLK_EN7523)		+= clk-en7523.o
- obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
- obj-$(CONFIG_COMMON_CLK_FSL_FLEXSPI)	+= clk-fsl-flexspi.o
- obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-new file mode 100644
-index 000000000000..137e13520ad9
---- /dev/null
-+++ b/drivers/clk/clk-en7523.c
-@@ -0,0 +1,350 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/delay.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/en7523-clk.h>
-+
-+#define REG_PCI_CONTROL			0x88
-+#define   REG_PCI_CONTROL_PERSTOUT	BIT(29)
-+#define   REG_PCI_CONTROL_PERSTOUT1	BIT(26)
-+#define   REG_PCI_CONTROL_REFCLK_EN1	BIT(22)
-+#define REG_GSW_CLK_DIV_SEL		0x1b4
-+#define REG_EMI_CLK_DIV_SEL		0x1b8
-+#define REG_BUS_CLK_DIV_SEL		0x1bc
-+#define REG_SPI_CLK_DIV_SEL		0x1c4
-+#define REG_SPI_CLK_FREQ_SEL		0x1c8
-+#define REG_NPU_CLK_DIV_SEL		0x1fc
-+#define REG_CRYPTO_CLKSRC		0x200
-+#define REG_RESET_CONTROL		0x834
-+#define   REG_RESET_CONTROL_PCIEHB	BIT(29)
-+#define   REG_RESET_CONTROL_PCIE1	BIT(27)
-+#define   REG_RESET_CONTROL_PCIE2	BIT(26)
-+
-+struct en_clk_desc {
-+	int id;
-+	const char *name;
-+	u32 base_reg;
-+	u32 base_bits;
-+	u32 base_shift;
-+	union {
-+		const u32 *base_values;
-+		u32 base_value;
-+	};
-+	int n_base_values;
-+
-+	u32 div_reg;
-+	u32 div_bits;
-+	u32 div_shift;
-+	u32 div_val0;
-+	u32 div_step;
-+};
-+
-+struct en_clk_gate {
-+	void __iomem *base;
-+	struct clk_hw hw;
-+};
-+
-+static const u32 gsw_base[] = { 400000000, 500000000 };
-+static const u32 emi_base[] = { 333000000, 400000000 };
-+static const u32 bus_base[] = { 500000000, 540000000 };
-+static const u32 slic_base[] = { 100000000, 3125000 };
-+static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
-+
-+static const struct en_clk_desc en7523_base_clks[] = {
-+	{
-+		.id = EN7523_CLK_GSW,
-+		.name = "gsw",
-+
-+		.base_reg = REG_GSW_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = gsw_base,
-+		.n_base_values = ARRAY_SIZE(gsw_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_EMI,
-+		.name = "emi",
-+
-+		.base_reg = REG_EMI_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = emi_base,
-+		.n_base_values = ARRAY_SIZE(emi_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_BUS,
-+		.name = "bus",
-+
-+		.base_reg = REG_BUS_CLK_DIV_SEL,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = bus_base,
-+		.n_base_values = ARRAY_SIZE(bus_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_SLIC,
-+		.name = "slic",
-+
-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
-+		.base_bits = 1,
-+		.base_shift = 0,
-+		.base_values = slic_base,
-+		.n_base_values = ARRAY_SIZE(slic_base),
-+
-+		.div_reg = REG_SPI_CLK_DIV_SEL,
-+		.div_bits = 5,
-+		.div_shift = 24,
-+		.div_val0 = 20,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_SPI,
-+		.name = "spi",
-+
-+		.base_reg = REG_SPI_CLK_DIV_SEL,
-+
-+		.base_value = 400000000,
-+
-+		.div_bits = 5,
-+		.div_shift = 8,
-+		.div_val0 = 40,
-+		.div_step = 2,
-+	}, {
-+		.id = EN7523_CLK_NPU,
-+		.name = "npu",
-+
-+		.base_reg = REG_NPU_CLK_DIV_SEL,
-+		.base_bits = 2,
-+		.base_shift = 8,
-+		.base_values = npu_base,
-+		.n_base_values = ARRAY_SIZE(npu_base),
-+
-+		.div_bits = 3,
-+		.div_shift = 0,
-+		.div_step = 1,
-+	}, {
-+		.id = EN7523_CLK_CRYPTO,
-+		.name = "crypto",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC,
-+		.base_bits = 1,
-+		.base_shift = 8,
-+		.base_values = emi_base,
-+		.n_base_values = ARRAY_SIZE(emi_base),
-+	}
-+};
-+
-+static const struct of_device_id of_match_clk_en7523[] = {
-+	{ .compatible = "airoha,en7523-scu", },
-+	{ /* sentinel */ }
-+};
-+
-+static u32 en7523_get_base_rate(void __iomem *base, int i)
-+{
-+	const struct en_clk_desc *desc = &en7523_base_clks[i];
-+	u32 val;
-+
-+	if (!desc->base_bits)
-+		return desc->base_value;
-+
-+	val = readl(base + desc->base_reg);
-+	val >>= desc->base_shift;
-+	val &= (1 << desc->base_bits) - 1;
-+
-+	if (val >= desc->n_base_values)
-+		return 0;
-+
-+	return desc->base_values[val];
-+}
-+
-+static u32 en7523_get_div(void __iomem *base, int i)
-+{
-+	const struct en_clk_desc *desc = &en7523_base_clks[i];
-+	u32 reg, val;
-+
-+	if (!desc->div_bits)
-+		return 1;
-+
-+	reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-+	val = readl(base + reg);
-+	val >>= desc->div_shift;
-+	val &= (1 << desc->div_bits) - 1;
-+
-+	if (!val && desc->div_val0)
-+		return desc->div_val0;
-+
-+	return (val + 1) * desc->div_step;
-+}
-+
-+static int en7523_pci_is_enabled(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+
-+	return !!(readl(cg->base + REG_PCI_CONTROL) & REG_PCI_CONTROL_REFCLK_EN1);
-+}
-+
-+static int en7523_pci_prepare(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val, mask;
-+
-+	/* Need to pull device low before reset */
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	val &= ~(REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT);
-+	writel(val, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+
-+	/* Enable PCIe port 1 */
-+	val |= REG_PCI_CONTROL_REFCLK_EN1;
-+	writel(val, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+
-+	/* Reset to default */
-+	val = readl(np_base + REG_RESET_CONTROL);
-+	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
-+	       REG_RESET_CONTROL_PCIEHB;
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	usleep_range(1000, 2000);
-+	writel(val | mask, np_base + REG_RESET_CONTROL);
-+	msleep(100);
-+	writel(val & ~mask, np_base + REG_RESET_CONTROL);
-+	usleep_range(5000, 10000);
-+
-+	/* Release device */
-+	mask = REG_PCI_CONTROL_PERSTOUT1 | REG_PCI_CONTROL_PERSTOUT;
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	writel(val & ~mask, np_base + REG_PCI_CONTROL);
-+	usleep_range(1000, 2000);
-+	writel(val | mask, np_base + REG_PCI_CONTROL);
-+	msleep(250);
-+
-+	return 0;
-+}
-+
-+static void en7523_pci_unprepare(struct clk_hw *hw)
-+{
-+	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-+	void __iomem *np_base = cg->base;
-+	u32 val;
-+
-+	val = readl(np_base + REG_PCI_CONTROL);
-+	val &= ~REG_PCI_CONTROL_REFCLK_EN1;
-+	writel(val, np_base + REG_PCI_CONTROL);
-+}
-+
-+static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
-+					       void __iomem *np_base)
-+{
-+	static const struct clk_ops pcie_gate_ops = {
-+		.is_enabled = en7523_pci_is_enabled,
-+		.prepare = en7523_pci_prepare,
-+		.unprepare = en7523_pci_unprepare,
-+	};
-+	struct clk_init_data init = {
-+		.name = "pcie",
-+		.ops = &pcie_gate_ops,
-+	};
-+	struct en_clk_gate *cg;
-+
-+	cg = devm_kzalloc(dev, sizeof(*cg), GFP_KERNEL);
-+	if (!cg)
-+		return NULL;
-+
-+	cg->base = np_base;
-+	cg->hw.init = &init;
-+	en7523_pci_unprepare(&cg->hw);
-+
-+	if (clk_hw_register(NULL, &cg->hw))
-+		return NULL;
-+
-+	return &cg->hw;
-+}
-+
-+static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
-+				   void __iomem *base, void __iomem *np_base)
-+{
-+	struct clk_hw *hw;
-+	u32 rate;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(en7523_base_clks); i++) {
-+		const struct en_clk_desc *desc = &en7523_base_clks[i];
-+
-+		rate = en7523_get_base_rate(base, i);
-+		rate /= en7523_get_div(base, i);
-+
-+		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
-+		if (IS_ERR(hw)) {
-+			pr_err("Failed to register clk %s: %ld\n",
-+			       desc->name, PTR_ERR(hw));
-+			continue;
-+		}
-+
-+		clk_data->hws[desc->id] = hw;
-+	}
-+
-+	hw = en7523_register_pcie_clk(dev, np_base);
-+	clk_data->hws[EN7523_CLK_PCIE] = hw;
-+
-+	clk_data->num = EN7523_NUM_CLOCKS;
-+}
-+
-+static int en7523_clk_probe(struct platform_device *pdev)
-+{
-+	struct device_node *node = pdev->dev.of_node;
-+	struct clk_hw_onecell_data *clk_data;
-+	void __iomem *base, *np_base;
-+	int r;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	np_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(base))
-+		return PTR_ERR(np_base);
-+
-+	clk_data = devm_kzalloc(&pdev->dev,
-+				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
-+
-+	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-+	if (r)
-+		dev_err(&pdev->dev,
-+			"could not register clock provider: %s: %d\n",
-+			pdev->name, r);
-+
-+	return r;
-+}
-+
-+static struct platform_driver clk_en7523_drv = {
-+	.probe = en7523_clk_probe,
-+	.driver = {
-+		.name = "clk-en7523",
-+		.of_match_table = of_match_clk_en7523,
-+	},
-+};
-+
-+static int __init clk_en7523_init(void)
-+{
-+	return platform_driver_register(&clk_en7523_drv);
-+}
-+
-+arch_initcall(clk_en7523_init);
--- 
-2.32.0 (Apple Git-132)
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
