@@ -2,141 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07605C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Jan 2022 20:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F01C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Jan 2022 23:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376852AbiAaUji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jan 2022 15:39:38 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:37656 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343999AbiAaUjh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jan 2022 15:39:37 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D4412614C2;
-        Mon, 31 Jan 2022 20:39:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D95C340E8;
-        Mon, 31 Jan 2022 20:39:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643661576;
-        bh=LlCWcmjo9XBLXtkZjmaUu+sQAjNy8t3wD356RhDm6+8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dbIvvaZtUtglyEdPJeUXqJeRCSK+nQ6All4q5LCLeHNekPbJGzAd5HBkBDMUdPyEX
-         aLGoz9yVDcpb77joBuHGnfcQ20RTksmJJA8Y7SrJ9Rew6tW4rcMIZRXV5cttCSPQ0D
-         HkEINXYQFrsUCNmd3iD1ToriUf9adNj2trOKs5EHQpQh2ZgYg2jkD+SsyjO4qmwmJU
-         upmD5OlqmrXdrSY7oYrS3dOZxgV98KvJJ3JFZxzIEf0AVbUnMz0iuLBk8UlKNXkBOk
-         lpi4tu/p3npuGwGoPD/pO37vgzqDNONpZMMhn8MfAwiO9zjbATlOiIceIevlZ9aNye
-         Lvr+4f0EY7Kbg==
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <maz@kernel.org>)
-        id 1nEdSX-004Ugn-LI; Mon, 31 Jan 2022 20:39:33 +0000
-MIME-Version: 1.0
-Date:   Mon, 31 Jan 2022 20:39:33 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?UTF-8?Q?U?= =?UTF-8?Q?we_Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        id S237372AbiAaXLs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jan 2022 18:11:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237127AbiAaXLs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jan 2022 18:11:48 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02BFAC06173B
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 15:11:48 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id m10so4814961oie.2
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 15:11:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=BEp1YW6cXZjOzQZ2AT1X2T5G6w7sQ/rQe7vI6oRyACg=;
+        b=aufXy6V/hF3UwWmb051IYrOsjd77oVt4OlkZKiwzaXUqeQaM+/5wnV5hmFJV1oicEA
+         ZiXzYgKFARloxCYbXsPdhddJ6cXwdTwWQq4THKHH/5xmq8eQ8BNJU7FQGTmLNRJ1BaDw
+         3yX+xsDGTTJf4P4+HAstY5Sr7d8O5XIp/wc1DwGg3RhkuqrAzEoz11V8I2IIe68oCp/0
+         fLq9q6CRADErInCsOORTG3CQIh6UEYJBkdspR9iiRwp5fr7hiP9r1DLfQrmm6nNhf5Lp
+         e05hCWWHxwRwsZdrOi+M16KHWq2JMbzbMkfBuS4uUG1pHlo9kHMUOIuZkpMEBj+cDzap
+         ubsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=BEp1YW6cXZjOzQZ2AT1X2T5G6w7sQ/rQe7vI6oRyACg=;
+        b=vq7q+WCjjDzq4VgQxr5g6vaho53RmFsPUgVo0SEqGcdcpjHfuz7GZu5i+132CWuyD/
+         QItK1+P3Lq7QVpd7uHlM+PJ2QPFzcrPn6420dxN/a3CCI4vfCwdcq1ByJ4nYl80nY2in
+         hoj1otrZHD3lnmOwUNLZBTqTnAH/Igdxk/a1kxZgAyfMDKYWCLHs7kS0gZX/sSCfvDVG
+         hZCjJz6DL34EFLzUn2fKaEKGzQZYBpHW4pYhs8uY4e4JjBoKZw8GzAo5oYfUQvEJ+vuM
+         No5JOjxQcAEBrPAoDhi5CicGOj2rHdV23bC8EpPGak6hK6Ij6SUetwh0D+Zo539RH9jX
+         +SIw==
+X-Gm-Message-State: AOAM531ySs0tvz3gSfvPQsHyGQxuXSCwTT7clHybFoZEBAJ2L7TnuxlY
+        ghyGKwZI+5+w5TAUZk/2x9vHgA==
+X-Google-Smtp-Source: ABdhPJzLH6uiNREJQvFo0wBCG2+uRxrUSQoGGMYpP0QdizGoFNpt2f+xqN2YsgC+siyrZMusvqf9JQ==
+X-Received: by 2002:a05:6808:5d2:: with SMTP id d18mr14389237oij.93.1643670707385;
+        Mon, 31 Jan 2022 15:11:47 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id o12sm15181247ooi.18.2022.01.31.15.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Jan 2022 15:11:46 -0800 (PST)
+Date:   Mon, 31 Jan 2022 17:11:44 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v16 08/40] gpu: host1x: Add initial runtime PM and OPP
- support
-In-Reply-To: <40983f6e-92ee-40d4-861f-06faea0113fc@gmail.com>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-9-digetx@gmail.com>
- <21212ddb-205f-71d6-0199-d75768eaf32c@nvidia.com>
- <41edc53b-5ed1-d524-2546-c3d1ee6cdea4@gmail.com>
- <6652ac84-36f5-0e43-65fa-04786f384f21@nvidia.com>
- <56dce9c7-397d-75b0-b5b8-18ce1084e72b@nvidia.com>
- <6dbc8205-5669-8b08-16b8-fe5e1acdd06f@gmail.com>
- <796eb3f7-80e2-bc55-fd52-43e76220f8c2@nvidia.com>
- <40983f6e-92ee-40d4-861f-06faea0113fc@gmail.com>
-User-Agent: Roundcube Webmail/1.4.13
-Message-ID: <6adda63b4de6b55d11426ecbb08d6c51@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: digetx@gmail.com, jonathanh@nvidia.com, thierry.reding@gmail.com, ulf.hansson@linaro.org, vireshk@kernel.org, sboyd@kernel.org, pdeschrijver@nvidia.com, mperttunen@nvidia.com, lee.jones@linaro.org, u.kleine-koenig@pengutronix.de, nm@ti.com, adrian.hunter@intel.com, mturquette@baylibre.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org, linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org, david@ixit.cz
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/15] dt-bindings: clock: split qcom,gcc.yaml to
+ common and specific schema
+Message-ID: <YfhssKqI5U8X+Akn@builder.lan>
+References: <20220121210340.32362-1-ansuelsmth@gmail.com>
+ <20220121210340.32362-2-ansuelsmth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220121210340.32362-2-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
+On Fri 21 Jan 15:03 CST 2022, Ansuel Smith wrote:
 
-On 2021-12-22 19:31, Dmitry Osipenko wrote:
-> 22.12.2021 22:30, Jon Hunter пишет:
->> 
->> On 22/12/2021 19:01, Dmitry Osipenko wrote:
->> 
->> ...
->> 
->>> diff --git a/drivers/gpu/host1x/syncpt.c 
->>> b/drivers/gpu/host1x/syncpt.c
->>> index e08e331e46ae..8194826c9ce3 100644
->>> --- a/drivers/gpu/host1x/syncpt.c
->>> +++ b/drivers/gpu/host1x/syncpt.c
->>> @@ -137,6 +137,15 @@ void host1x_syncpt_restore(struct host1x *host)
->>>       struct host1x_syncpt *sp_base = host->syncpt;
->>>       unsigned int i;
->>> 
->>> +    for (i = 0; i < host->info->nb_pts; i++) {
->>> +        /*
->>> +         * Unassign syncpt from channels for purposes of Tegra186
->>> +         * syncpoint protection. This prevents any channel from
->>> +         * accessing it until it is reassigned.
->>> +         */
->>> +        host1x_hw_syncpt_assign_to_channel(host, sp_base + i, NULL);
->>> +    }
->>> +
->>>       for (i = 0; i < host1x_syncpt_nb_pts(host); i++)
->>>           host1x_hw_syncpt_restore(host, sp_base + i);
->>> 
->>> @@ -352,13 +361,6 @@ int host1x_syncpt_init(struct host1x *host)
->>>       for (i = 0; i < host->info->nb_pts; i++) {
->>>           syncpt[i].id = i;
->>>           syncpt[i].host = host;
->>> -
->>> -        /*
->>> -         * Unassign syncpt from channels for purposes of Tegra186
->>> -         * syncpoint protection. This prevents any channel from
->>> -         * accessing it until it is reassigned.
->>> -         */
->>> -        host1x_hw_syncpt_assign_to_channel(host, &syncpt[i], NULL);
->>>       }
->>> 
->>>       for (i = 0; i < host->info->nb_bases; i++)
->>> 
->> 
->> 
->> Thanks! This fixed it!
+> Split qcom,gcc.yaml to common and specific schema to use it as a
+> template for schema that needs to use the gcc bindings and require
+> to add additional bindings.
 > 
-> I'll prepare proper patch with yours t-b, thank you.
 
-The fix has been in -next for some time now, but it still hasn't
-made it into Linus' tree (at least not in -rc2).
+Nice!
 
-Any hope for this to land -rc3?
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-common.yaml       | 42 +++++++++++++++++++
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   | 25 ++---------
+>  2 files changed, 46 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
+> new file mode 100644
+> index 000000000000..ea1dd94d8bf1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
 
-Thanks,
+It seems reasonable to expect that qcom,gcc.yaml should be split out in
+a number of trivial qcom,gcc-platform.yaml files to define input clock
+etc. So how about using qcom,gcc.yaml for the common properties and for
+now rename the existing file to something like qcom,gcc-others.yaml
+?
 
-      M.
--- 
-Jazz is not dead. It just smells funny...
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-common.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding Common Bindings
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+
+No need to preserve the formatting here, so the pipe can go.
+
+Regards,
+Bjorn
+
+> +  Common bindings for Qualcomm global clock control module which supports
+> +  the clocks, resets and power domains.
+> +
+> +properties:
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  protected-clocks:
+> +    description:
+> +      Protected clock specifier list as per common clock binding.
+> +
+> +required:
+> +  - reg
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: true
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> index f66d703bd913..73e3ff4979c6 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> @@ -34,6 +34,9 @@ description: |
+>    - dt-bindings/reset/qcom,gcc-mdm9615.h
+>    - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
+>  
+> +allOf:
+> +  - $ref: "qcom,gcc-common.yaml#"
+> +
+>  properties:
+>    compatible:
+>      enum:
+> @@ -55,30 +58,10 @@ properties:
+>        - qcom,gcc-sdm630
+>        - qcom,gcc-sdm660
+>  
+> -  '#clock-cells':
+> -    const: 1
+> -
+> -  '#reset-cells':
+> -    const: 1
+> -
+> -  '#power-domain-cells':
+> -    const: 1
+> -
+> -  reg:
+> -    maxItems: 1
+> -
+> -  protected-clocks:
+> -    description:
+> -      Protected clock specifier list as per common clock binding.
+> -
+>  required:
+>    - compatible
+> -  - reg
+> -  - '#clock-cells'
+> -  - '#reset-cells'
+> -  - '#power-domain-cells'
+>  
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>  
+>  examples:
+>    # Example for GCC for MSM8960:
+> -- 
+> 2.33.1
+> 
