@@ -2,88 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7192AC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 13:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489DEC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 14:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238865AbiBAN5Q convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Feb 2022 08:57:16 -0500
-Received: from mail-yb1-f177.google.com ([209.85.219.177]:45691 "EHLO
-        mail-yb1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237337AbiBAN5Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 08:57:16 -0500
-Received: by mail-yb1-f177.google.com with SMTP id w81so28907853ybg.12;
-        Tue, 01 Feb 2022 05:57:16 -0800 (PST)
+        id S239334AbiBAOdd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Feb 2022 09:33:33 -0500
+Received: from mail-vk1-f169.google.com ([209.85.221.169]:36823 "EHLO
+        mail-vk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239320AbiBAOdd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 09:33:33 -0500
+Received: by mail-vk1-f169.google.com with SMTP id u25so7249821vkk.3;
+        Tue, 01 Feb 2022 06:33:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cxZAumcJuLiwqLQLmbuj01UQ98nceFhPCqwJGs4n/8E=;
-        b=s11Ht9ScQLIqCvcZtPNay70w1++z670vfGn8Js1sUkCEpAYxayfCw6gFrSj2E0Jwur
-         mudiigbUa4fAzD9opBGcP6EIu4/X2CaKZ8Ar1XoRZz75+9nyCMCnev0bqdhcfg+RNLsd
-         aINz3EJTyotynjkY1sfWZ9FGISSJQwbV83Quw4l1nckicFOEM63yXbRkYZSLf8BvVvP3
-         MVMItIs9NJBueMboYFj5p7jMuTyyUFx8Ct1ZzoBy6AzgGt19xQJ5mXLEUAZUn5FGhLVe
-         Q89ALHYsju39BAY9RIy57H+mZR8rQQXBCmaOV3/565FStC5W51/oF/WaMWbLuSgfj/iA
-         bmaw==
-X-Gm-Message-State: AOAM530Kqan1LPhy9DrzM+8brqq4+ee5sZnKy7JmYjFgZ8+kbBV3hza9
-        kDEGTx9tThkdMoH59naKyK6aI9OlZZKZGCOIbHI=
-X-Google-Smtp-Source: ABdhPJxy1AxzzrLoxM0IIRnSEh35W34PwsOn6LOwMVWbdd95KFpYr12dqhFgEyOQHXkg+Lmi+2MtnRaRKUb7hlUs0pU=
-X-Received: by 2002:a25:b114:: with SMTP id g20mr21276348ybj.259.1643723835720;
- Tue, 01 Feb 2022 05:57:15 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=1V2WoxcDe5Gs2O3zMc7b/Bf3Xc+KPhypjkD8ZA3lAhU=;
+        b=zX+eEz6K6th9EtHgTWfwbWo2VlhLwSBMUgD6eRxlM6YV3TT3St8OiinZ3jKelVsKei
+         59ClHpn5yNh0NaSc9nhjXiSSn2e4wEg1PaS35hTdUPTx7x6XBoqTPuBvgrWDC906MJ0W
+         795PJXVfMYqm3EJe+ueR5qk+l6Z2sm67DsSZL8Z4ynBkve08sK70y42RuYi8UfH2q9Ww
+         QjyHYi1XjuyIOPQ0X4xoJ93Tpl4GwypGWSpPTuTOKimdntFVp/MJmtKg2oli9fsHIerS
+         iSyTl0zNYRj80astAuCIq1Gzb/MqEae8ESknbxhP7HDw8o4sLodtqUOo2Bh/s47/DZR9
+         33/g==
+X-Gm-Message-State: AOAM5314phisckGmuPiPOGzJ6xBFuHRIhYeheVAxZRn0m97ICJuLr9hV
+        kzXyn4lS+6O/z/Wm5G2/xcqiSotmpeqIow==
+X-Google-Smtp-Source: ABdhPJxtSBL0QrEkNaOS7a2FYqaEErpUVAqnqzaziAgWMfz9lMk/RWBDrt+wBWsbVojj3EBPgW0Y6A==
+X-Received: by 2002:a1f:914f:: with SMTP id t76mr10533814vkd.17.1643726012785;
+        Tue, 01 Feb 2022 06:33:32 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id j37sm5085134vka.45.2022.02.01.06.33.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Feb 2022 06:33:31 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id g23so16312483vsf.7;
+        Tue, 01 Feb 2022 06:33:31 -0800 (PST)
+X-Received: by 2002:a67:fd63:: with SMTP id h3mr9048152vsa.77.1643726011426;
+ Tue, 01 Feb 2022 06:33:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20220128230922.2047140-1-j.neuschaefer@gmx.net> <20220128230922.2047140-3-j.neuschaefer@gmx.net>
-In-Reply-To: <20220128230922.2047140-3-j.neuschaefer@gmx.net>
-From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
-Date:   Tue, 1 Feb 2022 14:57:03 +0100
-Message-ID: <CAAdtpL5xVjiKSFVcdFiMQHrki2bDSbDppP65QDC5ybBp3u-kMw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: loongson1: Terminate clk_div_table with sentinel element
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220112174612.10773-1-biju.das.jz@bp.renesas.com> <20220112174612.10773-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220112174612.10773-3-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 1 Feb 2022 15:33:20 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXJ_BtGHeFBMaqZe7pAHrVHK=rvKiRKn7UZa1PVGrMS8w@mail.gmail.com>
+Message-ID: <CAMuHMdXJ_BtGHeFBMaqZe7pAHrVHK=rvKiRKn7UZa1PVGrMS8w@mail.gmail.com>
+Subject: Re: [RFC 02/28] clk: renesas: rzg2l: Add PLL5_4 clk mux support
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 12:48 PM Jonathan Neuschäfer
-<j.neuschaefer@gmx.net> wrote:
->
-> In order that the end of a clk_div_table can be detected, it must be
-> terminated with a sentinel element (.div = 0).
->
-> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
-> ---
->  drivers/clk/loongson1/clk-loongson1c.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/clk/loongson1/clk-loongson1c.c b/drivers/clk/loongson1/clk-loongson1c.c
-> index 703f87622cf5f..6b29ae9ede3e5 100644
-> --- a/drivers/clk/loongson1/clk-loongson1c.c
-> +++ b/drivers/clk/loongson1/clk-loongson1c.c
-> @@ -37,6 +37,7 @@ static const struct clk_div_table ahb_div_table[] = {
->         [1] = { .val = 1, .div = 4 },
->         [2] = { .val = 2, .div = 3 },
->         [3] = { .val = 3, .div = 3 },
-> +       [4] = { .val = 0, .div = 0 },
+Hi Biju,
 
-Easier to review when self-explicit:
+Thanks for your patch!
 
-        [4] = { /* sentinel */ }
-
-Preferably updated:
-Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
-
-And eventually:
-Fixes: b4626a7f4892 ("CLK: Add Loongson1C clock support")
-
->  };
+On Wed, Jan 12, 2022 at 6:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add PLL5_4 clk mux support to select clock from different clock
+> sources FOUTPOSTDIV and FOUT1PH0.
 >
->  void __init ls1x_clk_init(void)
-> --
-> 2.34.1
->
+> This patch uses the LUT to select the source based on DSI/DPI mode
+> and frequencies.
+
+And that's why you can't use DEF_MUX(), but need a new clock type...
+Do you need to use the LUT? ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
