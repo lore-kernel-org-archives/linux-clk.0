@@ -2,190 +2,261 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9364EC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 17:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1018FC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 17:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241159AbiBARQq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Feb 2022 12:16:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:53184 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241207AbiBARQc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 1 Feb 2022 12:16:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86A441424;
-        Tue,  1 Feb 2022 09:16:32 -0800 (PST)
-Received: from e120937-lin.home (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 947B43F40C;
-        Tue,  1 Feb 2022 09:16:30 -0800 (PST)
-From:   Cristian Marussi <cristian.marussi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
-        Jonathan.Cameron@Huawei.com, f.fainelli@gmail.com,
-        etienne.carriere@linaro.org, vincent.guittot@linaro.org,
-        souvik.chakravarty@arm.com, peter.hilber@opensynergy.com,
-        igor.skalkin@opensynergy.com, cristian.marussi@arm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 9/9] [RFC] clk: scmi: Support atomic clock enable/disable API
-Date:   Tue,  1 Feb 2022 17:16:01 +0000
-Message-Id: <20220201171601.53316-10-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220201171601.53316-1-cristian.marussi@arm.com>
-References: <20220201171601.53316-1-cristian.marussi@arm.com>
+        id S241483AbiBAR0d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Feb 2022 12:26:33 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:41497 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239385AbiBAR0d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 12:26:33 -0500
+Received: by mail-ot1-f53.google.com with SMTP id b12-20020a9d754c000000b0059eb935359eso16911953otl.8;
+        Tue, 01 Feb 2022 09:26:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1YcJgZXSFgUR1P0H/Wki7WoVkcK8z8lEiCx4ovxrYG0=;
+        b=235jEODplqwj1qViLA8rV9Xy49jUYe3hN7u585MfBNIvBKZGlDB5Ps4PYuKOnPYO1S
+         etpluQt8enmwBIeDi3HN92ZWPm8k9v1uIfCrXnVOh9/P5i8w8Vikj5ZgDbHaRddRWzuL
+         tBg6cpjmSku5dRgO+ioWhOaX+34y8Xmy/cAjGHcHkhriaEPhhXIvcL+NUObECpN5JXqv
+         vbXpVwECqCokKw2+YBfB2o9FMJaWuaezRnOsABf8wXybrSCNV8ZjVmAgAqxJ90d7BbFM
+         LlzLaj4uXLrniK67264dyfTfyjhFUii4wPK8+xrTr6pp3YS9Ymu6PoxuaBNn2LhjzGP/
+         Ia0A==
+X-Gm-Message-State: AOAM533n4XoBlafwTbLAIx1ErS/KFNBUzu33pv40juXnqWxQt79m1H0S
+        Zwrokt4p5Zg3PRthVNwmDw==
+X-Google-Smtp-Source: ABdhPJyjuh3yIT85q6AkZ0Qo13CZn2i3dA2wkW/+fujtm0WB9mvm/QuDRweI4A2wxBBN13YX5pT1yw==
+X-Received: by 2002:a9d:67d0:: with SMTP id c16mr14536009otn.270.1643736392153;
+        Tue, 01 Feb 2022 09:26:32 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id j3sm12707868oig.37.2022.02.01.09.26.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Feb 2022 09:26:31 -0800 (PST)
+Received: (nullmailer pid 240619 invoked by uid 1000);
+        Tue, 01 Feb 2022 17:26:30 -0000
+Date:   Tue, 1 Feb 2022 11:26:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     michael.srba@seznam.cz
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/5] dt-bindings: bus: add device tree bindings for
+ qcom,ssc-block-bus
+Message-ID: <YfltRkup8QhY2Tar@robh.at.kernel.org>
+References: <20220126183250.11924-1-michael.srba@seznam.cz>
+ <20220126183250.11924-3-michael.srba@seznam.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220126183250.11924-3-michael.srba@seznam.cz>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support also atomic enable/disable clk_ops beside the bare non-atomic one
-(prepare/unprepare) when the underlying SCMI transport is configured to
-support atomic transactions for synchronous commands.
+On Wed, Jan 26, 2022 at 07:32:48PM +0100, michael.srba@seznam.cz wrote:
+> From: Michael Srba <Michael.Srba@seznam.cz>
+> 
+> This patch adds bindings for the AHB bus which exposes the SCC block in
+> the global address space. This bus (and the SSC block itself) is present
+> on certain qcom SoCs.
+> 
+> In typical configuration, this bus (as some of the clocks and registers
+> that we need to manipulate) is not accessible to the OS, and the
+> resources on this bus are indirectly accessed by communicating with a
+> hexagon CPU core residing in the SSC block. In this configuration, the
+> hypervisor is the one performing the bus initialization for the purposes
+> of bringing the haxagon CPU core out of reset.
+> 
+> However, it is possible to change the configuration, in which case this
+> binding serves to allow the OS to initialize the bus.
+> 
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+> ---
+>  CHANGES:
+>  - v2: fix issues caught by by dt-schema
+>  - v3: none
+>  - v4: address the issues pointed out in the review
+> ---
+>  .../bindings/bus/qcom,ssc-block-bus.yaml      | 150 ++++++++++++++++++
+>  1 file changed, 150 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml b/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> new file mode 100644
+> index 000000000000..4bde169b1a19
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> @@ -0,0 +1,150 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bus/qcom,ssc-block-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: The AHB Bus Providing a Global View of the SSC Block on (some) qcom SoCs
+> +
+> +maintainers:
+> +  - Michael Srba <Michael.Srba@seznam.cz>
+> +
+> +description: |
+> +  This binding describes the dependencies (clocks, resets, power domains) which
+> +  need to be turned on in a sequence before communication over the AHB bus
+> +  becomes possible.
+> +
+> +  Additionally, the reg property is used to pass to the driver the location of
+> +  two sadly undocumented registers which need to be poked as part of the sequence.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: qcom,msm8998-ssc-block-bus
+> +      - const: qcom,ssc-block-bus
+> +
+> +  reg:
+> +    description: |
+> +      Shall contain the addresses of the SSCAON_CONFIG0 and SSCAON_CONFIG1
+> +      registers
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: mpm_sscaon_config0
+> +      - const: mpm_sscaon_config1
+> +
+> +  '#address-cells':
+> +    enum: [ 1, 2 ]
+> +
+> +  '#size-cells':
+> +    enum: [ 1, 2 ]
+> +
+> +  ranges: true
+> +
+> +  clocks:
+> +    minItems: 6
+> +    maxItems: 6
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +      - const: aggre2
+> +      - const: gcc_im_sleep
+> +      - const: aggre2_north
+> +      - const: ssc_xo
+> +      - const: ssc_ahbs
+> +
+> +  power-domains:
+> +    description: Power domain phandles for the ssc_cx and ssc_mx power domains
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: ssc_cx
+> +      - const: ssc_mx
+> +
+> +  resets:
+> +    description: |
+> +      Reset phandles for the ssc_reset and ssc_bcr resets (note: ssc_bcr is the
+> +      branch control register associated with the ssc_xo and ssc_ahbs clocks)
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    items:
+> +      - const: ssc_reset
+> +      - const: ssc_bcr
+> +
+> +  qcom,halt-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: describes how to locate the ssc AXI halt register
+> +    items:
+> +      - items:
+> +        - description: Phandle reference to a syscon representing TCSR
+> +        - description: offset for the ssc AXI halt register
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +  - ranges
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - power-domain-names
+> +  - resets
+> +  - reset-names
+> +  - qcom,halt-regs
+> +
+> +additionalProperties: true
 
-Compare the SCMI system-wide configured atomic threshold latency time and
-the per-clock advertised enable latency (if any) to choose whether to
-provide sleeping prepare/unprepare vs atomic enable/disable.
+To say anything else should be a node:
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
-Tagged as RFC since dependent on a previous RFC patch
----
- drivers/clk/clk-scmi.c | 71 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 60 insertions(+), 11 deletions(-)
+additionalProperties:
+  type: object
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 1e357d364ca2..2c7a830ce308 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -2,7 +2,7 @@
- /*
-  * System Control and Power Interface (SCMI) Protocol based clock driver
-  *
-- * Copyright (C) 2018-2021 ARM Ltd.
-+ * Copyright (C) 2018-2022 ARM Ltd.
-  */
- 
- #include <linux/clk-provider.h>
-@@ -88,21 +88,51 @@ static void scmi_clk_disable(struct clk_hw *hw)
- 	scmi_proto_clk_ops->disable(clk->ph, clk->id);
- }
- 
-+static int scmi_clk_atomic_enable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	return scmi_proto_clk_ops->enable_atomic(clk->ph, clk->id);
-+}
-+
-+static void scmi_clk_atomic_disable(struct clk_hw *hw)
-+{
-+	struct scmi_clk *clk = to_scmi_clk(hw);
-+
-+	scmi_proto_clk_ops->disable_atomic(clk->ph, clk->id);
-+}
-+
-+/*
-+ * We can provide enable/disable atomic callbacks only if the underlying SCMI
-+ * transport for an SCMI instance is configured to handle SCMI commands in an
-+ * atomic manner.
-+ *
-+ * When no SCMI atomic transport support is available we instead provide only
-+ * the prepare/unprepare API, as allowed by the clock framework when atomic
-+ * calls are not available.
-+ *
-+ * Two distinct sets of clk_ops are provided since we could have multiple SCMI
-+ * instances with different underlying transport quality, so they cannot be
-+ * shared.
-+ */
- static const struct clk_ops scmi_clk_ops = {
- 	.recalc_rate = scmi_clk_recalc_rate,
- 	.round_rate = scmi_clk_round_rate,
- 	.set_rate = scmi_clk_set_rate,
--	/*
--	 * We can't provide enable/disable callback as we can't perform the same
--	 * in atomic context. Since the clock framework provides standard API
--	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
--	 * context, it should be fine providing prepare/unprepare.
--	 */
- 	.prepare = scmi_clk_enable,
- 	.unprepare = scmi_clk_disable,
- };
- 
--static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-+static const struct clk_ops scmi_atomic_clk_ops = {
-+	.recalc_rate = scmi_clk_recalc_rate,
-+	.round_rate = scmi_clk_round_rate,
-+	.set_rate = scmi_clk_set_rate,
-+	.enable = scmi_clk_atomic_enable,
-+	.disable = scmi_clk_atomic_disable,
-+};
-+
-+static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
-+			     const struct clk_ops *scmi_ops)
- {
- 	int ret;
- 	unsigned long min_rate, max_rate;
-@@ -110,7 +140,7 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
- 	struct clk_init_data init = {
- 		.flags = CLK_GET_RATE_NOCACHE,
- 		.num_parents = 0,
--		.ops = &scmi_clk_ops,
-+		.ops = scmi_ops,
- 		.name = sclk->info->name,
- 	};
- 
-@@ -139,6 +169,8 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
- static int scmi_clocks_probe(struct scmi_device *sdev)
- {
- 	int idx, count, err;
-+	unsigned int atomic_threshold;
-+	bool is_atomic;
- 	struct clk_hw **hws;
- 	struct clk_hw_onecell_data *clk_data;
- 	struct device *dev = &sdev->dev;
-@@ -168,8 +200,11 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 	clk_data->num = count;
- 	hws = clk_data->hws;
- 
-+	is_atomic = handle->is_transport_atomic(handle, &atomic_threshold);
-+
- 	for (idx = 0; idx < count; idx++) {
- 		struct scmi_clk *sclk;
-+		const struct clk_ops *scmi_ops;
- 
- 		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
- 		if (!sclk)
-@@ -184,13 +219,27 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- 		sclk->id = idx;
- 		sclk->ph = ph;
- 
--		err = scmi_clk_ops_init(dev, sclk);
-+		/*
-+		 * Note that when transport is atomic but SCMI protocol did not
-+		 * specify (or support) an enable_latency associated with a
-+		 * clock, we default to use atomic operations mode.
-+		 */
-+		if (is_atomic &&
-+		    sclk->info->enable_latency <= atomic_threshold)
-+			scmi_ops = &scmi_atomic_clk_ops;
-+		else
-+			scmi_ops = &scmi_clk_ops;
-+
-+		err = scmi_clk_ops_init(dev, sclk, scmi_ops);
- 		if (err) {
- 			dev_err(dev, "failed to register clock %d\n", idx);
- 			devm_kfree(dev, sclk);
- 			hws[idx] = NULL;
- 		} else {
--			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
-+			dev_dbg(dev, "Registered clock:%s%s\n",
-+				sclk->info->name,
-+				scmi_ops == &scmi_atomic_clk_ops ?
-+				" (atomic ops)" : "");
- 			hws[idx] = &sclk->hw;
- 		}
- 	}
--- 
-2.17.1
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-msm8998.h>
+> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    soc {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +
+> +        // devices under this node are physically located in the SSC block, connected to an ssc-internal bus;
+> +        ssc_ahb_slave: bus@10ac008 {
+> +            #address-cells = <1>;
+> +            #size-cells = <1>;
+> +            ranges;
+> +
+> +            compatible = "qcom,msm8998-ssc-block-bus", "qcom,ssc-block-bus";
+> +            reg = <0x10ac008 0x4>, <0x10ac010 0x4>;
+> +            reg-names = "mpm_sscaon_config0", "mpm_sscaon_config1";
+> +
+> +            clocks = <&xo>,
+> +                     <&rpmcc RPM_SMD_AGGR2_NOC_CLK>,
+> +                     <&gcc GCC_IM_SLEEP>,
+> +                     <&gcc AGGRE2_SNOC_NORTH_AXI>,
+> +                     <&gcc SSC_XO>,
+> +                     <&gcc SSC_CNOC_AHBS_CLK>;
+> +            clock-names = "xo", "aggre2", "gcc_im_sleep", "aggre2_north", "ssc_xo", "ssc_ahbs";
+> +
+> +            resets = <&gcc GCC_SSC_RESET>, <&gcc GCC_SSC_BCR>;
+> +            reset-names = "ssc_reset", "ssc_bcr";
+> +
+> +            power-domains = <&rpmpd MSM8998_SSCCX>, <&rpmpd MSM8998_SSCMX>;
+> +            power-domain-names = "ssc_cx", "ssc_mx";
+> +
+> +            qcom,halt-regs = <&tcsr_mutex_regs 0x26000>;
+> +
+> +            ssc_tlmm: pinctrl@5e10000 {
+> +                compatible = "qcom,msm8998-ssc-tlmm-pinctrl";
 
+If you don't want to define a schema for this, pick another node that 
+has a schema already.
+
+> +                reg = <0x5E10000 0x10000>;
+> +                gpio-controller;
+> +                #gpio-cells = <2>;
+> +                gpio-ranges = <&ssc_tlmm 0 0 20>;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.34.1
+> 
+> 
