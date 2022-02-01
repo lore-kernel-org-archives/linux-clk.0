@@ -2,96 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29B9C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 08:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F012C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 09:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235373AbiBAIRO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Feb 2022 03:17:14 -0500
-Received: from smtp-relay-internal-0.canonical.com ([185.125.188.122]:56640
-        "EHLO smtp-relay-internal-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230491AbiBAIRN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 03:17:13 -0500
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D1C8B3F1E9
-        for <linux-clk@vger.kernel.org>; Tue,  1 Feb 2022 08:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1643703432;
-        bh=MItxx70iFew0YeZnNA7KR41aDD2ctvR1pwd1gDOLhyA=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=Tm1S1RX3m60vqmp22giAGAedklWaPt52ITGPg36DVgtAvr0wwbSslsdP05MimRfj8
-         alVzG47Rpqy2kFnyAh624KkOnVaqH3wZ6gJ+zMRzFT3IFwsPxzthFJQZmJboSyD3a/
-         DqO4MburIeBAshMEuJ1W1gpVxcQ83pNyCb+GXASAKxO4S5ze25PtpIFSznKRgSp1/L
-         AAQjUzrpKKOCegaCRtuIjL3bflhViz+oEk5vNKrXYuZy7zJX97XfSQaZt11L/kajsw
-         Pt5xCu/JSNaFuw5UBETGqMEogpa8F9rqWEWRHr+dIqAb/CSsAv9VTNei1yW52fl5Ey
-         0kuahVoUdn4Dg==
-Received: by mail-ed1-f69.google.com with SMTP id l14-20020aa7cace000000b003f7f8e1cbbdso8251957edt.20
-        for <linux-clk@vger.kernel.org>; Tue, 01 Feb 2022 00:17:12 -0800 (PST)
+        id S234633AbiBAJT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Feb 2022 04:19:26 -0500
+Received: from mail-ua1-f45.google.com ([209.85.222.45]:33355 "EHLO
+        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232795AbiBAJTZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 04:19:25 -0500
+Received: by mail-ua1-f45.google.com with SMTP id r8so429516uaj.0;
+        Tue, 01 Feb 2022 01:19:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MItxx70iFew0YeZnNA7KR41aDD2ctvR1pwd1gDOLhyA=;
-        b=q+cVjPdIo5X3peCDOi9vd1TrUe21URg7DSRK1jtr1mkXr7zeOpvmlOTqUb+9ppmsaa
-         wOf1Ps4iuQ1zmOSxK4bO1izdetK8d/bwP8E/b+8TGqh5ohDM657tW/lnO9lbE1Lr84Wo
-         UeRAFR0IhcE3U41uFcBoGberPAj2nvbbaT/NstWy6bViaNLB3RHJkdtCay+fLm3ktqjo
-         dl67GbFQ7/L3TFje7o4dnaO0gNpRx8wRd67pIoyZgfgHWgO2kLsNiTfP7CIZ1cVmubZI
-         BDa6VM0B15YLXO2x1DesIbdZicqKruN3s0M60AOAoz53Y5k3JkLNjSwkkox/3TXv/OPZ
-         Gseg==
-X-Gm-Message-State: AOAM530R7I/GJv41k675kgc/nNm47qISbq0Z/piXeimXxskmWEkv9rVC
-        LYZIZ1q6GegUCYiRjfKtTiFeDqcV1CYRHcy8VWXLO4VwKWfKhSXe9jtGFuir+JTAg4sqATS6dMc
-        uhZW6q62X4+xmyKYwYVAkpCm6dfBb7GVa4DK/0g==
-X-Received: by 2002:a17:907:7e82:: with SMTP id qb2mr19890308ejc.496.1643703432588;
-        Tue, 01 Feb 2022 00:17:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwhOxyC/yzDk+upGVDMqjGzeMIciEE57Rpod35Osx007NQEYEitTAQ3J3/YfgtY6KfuQqdjZA==
-X-Received: by 2002:a17:907:7e82:: with SMTP id qb2mr19890296ejc.496.1643703432455;
-        Tue, 01 Feb 2022 00:17:12 -0800 (PST)
-Received: from localhost.localdomain (xdsl-188-155-168-84.adslplus.ch. [188.155.168.84])
-        by smtp.gmail.com with ESMTPSA id v8sm14179485eju.57.2022.02.01.00.17.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 00:17:11 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] clk: samsung: fix missing Tesla FSD dependency on Exynos
-Date:   Tue,  1 Feb 2022 09:16:36 +0100
-Message-Id: <164370330545.12265.2531636049712194501.b4-ty@canonical.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220129173407.278591-1-krzysztof.kozlowski@canonical.com>
-References: <20220129173407.278591-1-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AAj/SCAqug0uHxi3aj3zWdBdV6BKFubOWZxEj9a715U=;
+        b=706oNn889ZJzUFXs/l55PsoFMdignJhGts/ueCP2ne4vwgFMSpaphqqKiCZ4G4s+lo
+         FBcXN4QYFpHBuTVB0drOu3xUD5CVQd3rBM4qHC8VNrxfVZjcL8HUd9cMeaR2LsvlPQw3
+         UImVuisp1vdykkfPSgXx8hmMZEOvFhPCYE5r7+Qx0L8qQEppjgpYlkjTz8ozPcmWFmrT
+         xjr6jfyBW6TpnLVkYsHCI3uvciJl/LMvvVzJpJLAvKStE9jJwpHxjK01UA1xLAnMHY1u
+         B8v/O7RzyF7m664RYyE+4J5LRPuTZljOgxRsIuZe2KucddPbXgNwEqNUkH0MQvlK5jFE
+         1j/g==
+X-Gm-Message-State: AOAM532XyTbZ5OUMFhsm/tKhvPualUXJ6ulbl35k/VpHW+0TBhSucCl2
+        TsljUDAogjOwy28z74iwQfctzEB8YvCkkw==
+X-Google-Smtp-Source: ABdhPJx+KgP//6Bxk41XwkZ7cgKsu4aZVlKAwTCw8B4VNa143O2jdD9Uyp4LAfOl2dNJAjMwQBaToA==
+X-Received: by 2002:ab0:2411:: with SMTP id f17mr4827083uan.125.1643707164942;
+        Tue, 01 Feb 2022 01:19:24 -0800 (PST)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id q68sm4024040vsa.30.2022.02.01.01.19.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Feb 2022 01:19:24 -0800 (PST)
+Received: by mail-vs1-f51.google.com with SMTP id g23so15226717vsf.7;
+        Tue, 01 Feb 2022 01:19:24 -0800 (PST)
+X-Received: by 2002:a67:a401:: with SMTP id n1mr8881586vse.38.1643707163968;
+ Tue, 01 Feb 2022 01:19:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20220112174612.10773-1-biju.das.jz@bp.renesas.com> <20220112174612.10773-9-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220112174612.10773-9-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 1 Feb 2022 10:19:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU0L1tsyV80PF8jQb1DdcUk8c1LA-87sskqieeWS7Yk8A@mail.gmail.com>
+Message-ID: <CAMuHMdU0L1tsyV80PF8jQb1DdcUk8c1LA-87sskqieeWS7Yk8A@mail.gmail.com>
+Subject: Re: [RFC 08/28] clk: renesas: r9a07g044: Add LCDC clock and reset entries
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 29 Jan 2022 18:34:07 +0100, Krzysztof Kozlowski wrote:
-> The Tesla FSD clock controller driver uses shared parts from Exynos
-> ARM64 clock drivers, so add proper dependency to fix COMPILE_TEST build
-> errors like:
-> 
->   /usr/bin/aarch64-linux-gnu-ld: drivers/clk/samsung/clk-fsd.o: in function `fsd_cmu_probe':
->   clk-fsd.c:(.init.text+0x9c): undefined reference to `exynos_arm64_register_cmu'
-> 
-> [...]
+On Wed, Jan 12, 2022 at 6:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add LCDC clock and reset entries to CPG driver.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Applied, thanks!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[1/1] clk: samsung: fix missing Tesla FSD dependency on Exynos
-      commit: 0b59bc00a6936e8670b58d4307a2cfba341d40d0
+Gr{oetje,eeting}s,
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
