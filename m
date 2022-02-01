@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B3CC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 00:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E460C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 00:07:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbiBAAFW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Jan 2022 19:05:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56914 "EHLO
+        id S230113AbiBAAHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Jan 2022 19:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbiBAAFV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jan 2022 19:05:21 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F80C061401
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 16:05:21 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id x193so30178784oix.0
-        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 16:05:21 -0800 (PST)
+        with ESMTP id S230103AbiBAAHK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Jan 2022 19:07:10 -0500
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46BAC061401
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 16:07:09 -0800 (PST)
+Received: by mail-oi1-x235.google.com with SMTP id e81so30065480oia.6
+        for <linux-clk@vger.kernel.org>; Mon, 31 Jan 2022 16:07:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=QCKQVmWjPU4am1IB1HRTAad0UyZsM4M4bXE/0UUx4OM=;
-        b=ZOsDyVe4kvHNWs+NjElecOefo43rUIcSYceYGyffNEVqkgimTqiLvUy/3P3Yr8oucy
-         8s462v5f8sZJOkzaHiF5SI/cyQH9j45zVcu+BmeIErRPoKC86N8jBGrm2mG9E6vuYdtP
-         bcIBwtvUTs8xR3fj5dsQtlnzjHwV13y/5uRzans16PSihGQfZwbnvg5+8V/kVDONYm9S
-         rnMhoPeB3Ki2rqeYvmXkwYyRn9xETNkEmA9g4CEBjCPzJqiRIjgttmRmJ8uziIjnbbli
-         nIfo8B80kaWuCpQP0D2ruzkQ4euxJX5cgkd2py3KqJzXBdryz05iIYLcJu0C+GRYw/bg
-         JqQg==
+        bh=etN/F/33nyG7XjKahm9y0BQjMlDg0tr31SIo/26P8fo=;
+        b=YhTr5miT/Oj2D1T11IjOg1Ck8aQM7Lpldcb+wAsy24c8e6GhVURiho/gjVEeM1MPR4
+         WdFR/o6SOmUR+vn+xMYSfUfOmACpDF0JQCXn+aL72bMYRxBkUMkiXUkCBB6zlbpO5h5o
+         rBeIyjbo/mEcKVQd/onmO1Emuv+9oSshAD70gNT37e5nD7rtHTXKy0zFdxTm1cMK0AEB
+         tp89L4s7zeVY2s8/hu3VdH/twhbsWX9Yl7y013dg15tEKa0TASRLxCfpI4lT2xouRaxw
+         HMSDOVisOE9uEfpECxWTeVWacgp9+75OSUs9yC6vUXaqEt4HJmOv6Oa3Xl4Zw6TwV+3B
+         9LtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=QCKQVmWjPU4am1IB1HRTAad0UyZsM4M4bXE/0UUx4OM=;
-        b=osNiQE7cQmC2tby/fj15UYCmchcLK8W0B2IXcDm1FEvlZ3BmfMI6ZEz4He0CHdw5MX
-         rNIgPQZ186yzGVlAs4L37LKhlfM3qPkgxuTbG2hu2mAL3o0zmjUPAaC2t7TTw/MqSaBh
-         eBC980fJJHzPAQdNP5gp/qvCFrml8J+qF/EGTGL+cxfvwXdU+IqyIQjSKexqMexDuc5W
-         kmPW3xZzK/D7lXFcXBt5UT1shKsHo+CLaxbUHuXjtGC7aFfxvmxKKOSvvx0OPyHu/3He
-         aaqGSpfMzdKuhPvsW1evV9jB8U101xh9BIMN+icqAD82oHjBWWkmYwEiFpVc/HVYX+lO
-         w6dw==
-X-Gm-Message-State: AOAM530kmuqDys/0zmNGLTXsEofHhRYZP9J0JRhIwAnKHmuHZoGeQOAz
-        URWuF5ZgoCOQ+6YGZV6pEkY5Ow==
-X-Google-Smtp-Source: ABdhPJzDPBkWMgsXGrWZrHMyZ9FYC3vx4V73mxgp7I0v3jdShKDLw/XSDUwTYo9OPTqIHeFAfH185w==
-X-Received: by 2002:a05:6808:354:: with SMTP id j20mr14958946oie.130.1643673920773;
-        Mon, 31 Jan 2022 16:05:20 -0800 (PST)
+        bh=etN/F/33nyG7XjKahm9y0BQjMlDg0tr31SIo/26P8fo=;
+        b=UyTGsjiGYWZS8UTBp3kS+ElwFuRSAWLoOu/H5VAOLuJBwdPSk2yGUsfGECUWkag5WY
+         g9bcSQ7Nq8lqiKQ7fh87dREpm5CkbjdObvYzKl4Yo78eiRqsRSMKVJZReDKyMSp3bI4u
+         9xUme8KRUO4sMXV+lqInz3uoLji22XdU2q/F8wqbP4SlmNU4beJaQeZqhcvKVzhSun1I
+         mxO3Lbw1XnMaG8hoN3jHppfQarxnNlpYImREtYdq35KOLX2gXpKdD/zVIzzByd6OKB/O
+         Cp8bqMqNnwrZGZInqGFtMtmy6+1MRHoVMrbQlmQaJNfjtDkTx5VcgJ6yCgkU2tGrxkf3
+         EHCw==
+X-Gm-Message-State: AOAM530yV+sEYP+YHZ6DVPKrB87sKPrE3GbopYd9g2F5UqVUQGMb1V2S
+        +RXtRmTjJZpPlhCSGmtS2SiJBw==
+X-Google-Smtp-Source: ABdhPJw+RXbE69BLQesPDpbW6Gf9TBeWq/C1I/hrqxma9k+U23KJoH5J2P3RSmgEQOUjO1xaK8gZmg==
+X-Received: by 2002:a05:6808:1481:: with SMTP id e1mr19871361oiw.217.1643674029182;
+        Mon, 31 Jan 2022 16:07:09 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id d23sm8656828ote.35.2022.01.31.16.05.19
+        by smtp.gmail.com with ESMTPSA id v78sm7103115oie.18.2022.01.31.16.07.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 16:05:20 -0800 (PST)
-Date:   Mon, 31 Jan 2022 18:05:18 -0600
+        Mon, 31 Jan 2022 16:07:08 -0800 (PST)
+Date:   Mon, 31 Jan 2022 18:07:06 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
@@ -55,69 +55,77 @@ Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
         robh+dt@kernel.org, agross@kernel.org, sboyd@kernel.org,
         tdas@codeaurora.org, mturquette@baylibre.com,
         linux-clk@vger.kernel.org, davem@davemloft.net,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 8/8] clk: qcom: gcc-sm8150: Use PWRSTS_ON (only) as a
- workaround for emac gdsc
-Message-ID: <Yfh5Pjpw693ZMteC@builder.lan>
+        netdev@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH 2/8] net: stmmac: Add support for SM8150
+Message-ID: <Yfh5qrT2dAMpFk2s@builder.lan>
 References: <20220126221725.710167-1-bhupesh.sharma@linaro.org>
- <20220126221725.710167-9-bhupesh.sharma@linaro.org>
+ <20220126221725.710167-3-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220126221725.710167-9-bhupesh.sharma@linaro.org>
+In-Reply-To: <20220126221725.710167-3-bhupesh.sharma@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed 26 Jan 16:17 CST 2022, Bhupesh Sharma wrote:
 
-> EMAC GDSC currently has issues (seen on SA8155p-ADP) when its
-> turn'ed ON, once its already in OFF state. So, use PWRSTS_ON
-> state (only) as a workaround for now.
+> From: Vinod Koul <vkoul@kernel.org>
 > 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
+> This adds compatible, POR config & driver data for ethernet controller
+> found in SM8150 SoC.
+> 
+> Cc: David S. Miller <davem@davemloft.net>
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> [bhsharma: Massage the commit log and other cosmetic changes]
 > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-sm8150.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> index 2e71afed81fd..fd7e931d3c09 100644
-> --- a/drivers/clk/qcom/gcc-sm8150.c
-> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> @@ -3449,12 +3449,16 @@ static struct clk_branch gcc_video_xo_clk = {
->  	},
->  };
->  
-> +/* To Do: EMAC GDSC currently has issues when its turn'ed ON, once
-> + * its already in OFF state. So use PWRSTS_ON state (only) as a
-> + * workaround for now.
 
-So you're not able to turn on the GDSC after turning it off?
+The series can be picked up by 3 different maintainers and e.g. the
+network patches seems ready to be merged.
 
-> + */
->  static struct gdsc emac_gdsc = {
->  	.gdscr = 0x6004,
->  	.pd = {
->  		.name = "emac_gdsc",
->  	},
-> -	.pwrsts = PWRSTS_OFF_ON,
-> +	.pwrsts = PWRSTS_ON,
-
-Doesn't this tell the gdsc driver that the only state supported is "on"
-and hence prohibit you from turning it on in the first place?
-
->  	.flags = POLL_CFG_GDSCR,
-
-You could add ALWAYS_ON to .flags, but we need a better description of
-the actual problem that you're working around.
+Please facilitate this by sending it in 3 different series (you may
+combine clock and dts in one series, as I merge both).
 
 Regards,
 Bjorn
 
+> ---
+>  .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c   | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index 2ffa0a11eea5..8cdba9d521ec 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -183,6 +183,20 @@ static const struct ethqos_emac_driver_data emac_v2_3_0_data = {
+>  	.num_por = ARRAY_SIZE(emac_v2_3_0_por),
 >  };
 >  
+> +static const struct ethqos_emac_por emac_v2_1_0_por[] = {
+> +	{ .offset = RGMII_IO_MACRO_CONFIG,	.value = 0x40C01343 },
+> +	{ .offset = SDCC_HC_REG_DLL_CONFIG,	.value = 0x2004642C },
+> +	{ .offset = SDCC_HC_REG_DDR_CONFIG,	.value = 0x00000000 },
+> +	{ .offset = SDCC_HC_REG_DLL_CONFIG2,	.value = 0x00200000 },
+> +	{ .offset = SDCC_USR_CTL,		.value = 0x00010800 },
+> +	{ .offset = RGMII_IO_MACRO_CONFIG2,	.value = 0x00002060 },
+> +};
+> +
+> +static const struct ethqos_emac_driver_data emac_v2_1_0_data = {
+> +	.por = emac_v2_1_0_por,
+> +	.num_por = ARRAY_SIZE(emac_v2_1_0_por),
+> +};
+> +
+>  static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
+>  {
+>  	unsigned int val;
+> @@ -558,6 +572,7 @@ static int qcom_ethqos_remove(struct platform_device *pdev)
+>  
+>  static const struct of_device_id qcom_ethqos_match[] = {
+>  	{ .compatible = "qcom,qcs404-ethqos", .data = &emac_v2_3_0_data},
+> +	{ .compatible = "qcom,sm8150-ethqos", .data = &emac_v2_1_0_data},
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, qcom_ethqos_match);
 > -- 
 > 2.34.1
 > 
