@@ -2,210 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B0EC433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 21:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2416C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 22:01:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236753AbiBAVxc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Feb 2022 16:53:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44530 "EHLO
+        id S235245AbiBAWB6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Feb 2022 17:01:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236700AbiBAVxb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 16:53:31 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CD8C061714;
-        Tue,  1 Feb 2022 13:53:31 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id a13so34633254wrh.9;
-        Tue, 01 Feb 2022 13:53:31 -0800 (PST)
+        with ESMTP id S231178AbiBAWB5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 17:01:57 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE7BC061714;
+        Tue,  1 Feb 2022 14:01:56 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id s5so58305909ejx.2;
+        Tue, 01 Feb 2022 14:01:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=xO39BmkI2FGjUMBOjrgQHT01JzWS5Ploj3Qtkh1kqM8=;
-        b=LbtPvwiUa0ZBOZVtQKYrWwxUBVRuktbH/zhVkCPg1VMuhzoiQlij0/4WvK4duTmS/J
-         pwfS5qbR3InvFv8va8K9f5Axvm+dNkAnrUTaW+gAgWqMzNiVwYINEV3fX9y9kgriqcKa
-         vDVFUhSZPE84JQtm0mJEc9jUmVE621/5BvhcTuiUWMDTeuLlImcTjo8ySxAdoQ2ioC35
-         nOz+bCYrCxq8m3Shd9Ljj5tqQaqf/eg0Ygp+rndTW8VTzPtMZapDR0hUC+hhUcNg9Uk7
-         AOnJM611js4IISbS/sUguO3WksWXpslAGVAanuNc6YSbcmvILqvH04Yz+j4UeBh0VGza
-         eM7w==
+        bh=R0oDzW7lZxNMxzwEYgDFNIULTJR1H9xhIVSMbpB3qcA=;
+        b=fJCdTh+YjknsFqCDTMy+q5FI1q66I6hRN4ZtCkjnV8PaagCwxNmRNnnmYgBnEmCBWu
+         wcywL6zZXQ7rKLlxASmrJa3SU4ML0xad0IkQZEf3edOKHed0in2e9pJPAEh73zyW9xu/
+         hxXtBD+DEOsZcJGLSg9s1v5aNhONzlv03vNWYuuesXIS/wszp/uLezpSMh9RUb3cq4Nx
+         42FDjX2tcZ6UIBxl7zJraGY7G9imZ1uOztNsMl/FAy1Bvy2a90yEZdltJk/r4wGS7SwZ
+         78vxsssOfmi7N3aO/7SM4U2TlAmSm9E2O+UGkar5n6/spqOb+hYh2nrtDxCeU8CQPqwI
+         e2gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xO39BmkI2FGjUMBOjrgQHT01JzWS5Ploj3Qtkh1kqM8=;
-        b=LXdAbVIMELJ9WFbWW78MT1+vljg2zysl9wpnzJcf4hhql5FAZhmdYEDs313nnsXj+m
-         i5sd9gH1dn1cuTBm+LS1WO+zIuuw/b+RTnCZs4uHToX5TW/rV8nCQ6HiiycKYg385rV6
-         QoU14ORb/T0nyPjyQiYwL1ilRkvOo9bAV9Gvr2LTB1c9DX/TmkweWXzm2zwNUWqlKbz2
-         wn94Pjjq/3R1hEq3Gl3K/s5BNpyIx0sStscpSqi0nZZhDGglNx9bXVZA1znPUUu5B8WX
-         k8+QOeOJ6zZWyp7crLPv44MPSp7mLctv85iW6yglnJA4GQhf6BO71LVEfSnIM95sFeyN
-         M0rQ==
-X-Gm-Message-State: AOAM532fb9p7Q197ZMHcMhxAk42PQ7m1nPOARuI+cfuOxc2/X7sHtvMs
-        yriq99CSG9lAjBXJLtOvTAA=
-X-Google-Smtp-Source: ABdhPJzEkqh/6jLqdmWjCaDnCRG8wWWukjaLy2m4mvM9Bt8sevDDg82ArhnDf23q8Ji3zwt1tCW5hQ==
-X-Received: by 2002:adf:ffce:: with SMTP id x14mr23213863wrs.128.1643752408921;
-        Tue, 01 Feb 2022 13:53:28 -0800 (PST)
+        bh=R0oDzW7lZxNMxzwEYgDFNIULTJR1H9xhIVSMbpB3qcA=;
+        b=Dy0+MfEGsdpGHtj9DJmnmgYU+a7vnXW5d+AvRLzvZvZtQKDfXXLSSmXSR4TwKyyLED
+         i4468g9Du8R51+mxzsAv9lf8SiUW8evuoV/FPsQ/sUM08j93iGJ45yL9zfRrUCMxTy2P
+         eLBtFjMOEYz8kSnhlB8ukLD+g1Io3gr+3FKopbcP861wno84T5TyThFJzk7YKdWP0K/n
+         jE2NNHg6S5FX1q0xnJqv9pcjU5PMDKKZRS2OnbGbo8WNDuqdzeugZdXztZ6JMuaiI5DN
+         oMqchqjLjziRUS+lBzCppHPbcAgRB0jYD3uWjDusqdAMNSNNmKBxBILRJH/owR31Scaw
+         uftw==
+X-Gm-Message-State: AOAM530HqOX93Z/piK1I0iGcovIoJNp2NeS1euuV3+oHGCI2PfOa3z8K
+        mcsm/B5VuSyr0hrS/4ZOyeU=
+X-Google-Smtp-Source: ABdhPJweuW5z5eu2VjtEooGH/3nczS+igDkKrvIc6alNaQ0j8cRGUn88XlXSTEeXk7AWD/OKkseT9Q==
+X-Received: by 2002:a17:906:bc97:: with SMTP id lv23mr23155487ejb.154.1643752914767;
+        Tue, 01 Feb 2022 14:01:54 -0800 (PST)
 Received: from Ansuel-xps.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.gmail.com with ESMTPSA id l4sm16808867wrs.6.2022.02.01.13.53.25
+        by smtp.gmail.com with ESMTPSA id r3sm15103499ejd.129.2022.02.01.14.01.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 13:53:28 -0800 (PST)
-Date:   Tue, 1 Feb 2022 22:53:26 +0100
+        Tue, 01 Feb 2022 14:01:54 -0800 (PST)
+Date:   Tue, 1 Feb 2022 23:01:40 +0100
 From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/15] dt-bindings: clock: split qcom,gcc.yaml to
- common and specific schema
-Message-ID: <Yfmr1kNGIN9OMiz5@Ansuel-xps.localdomain>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 10/15] drivers: clk: qcom: gcc-ipq806x: add additional
+ freq for sdc table
+Message-ID: <YfmtxA7fCmbBWK0Z@Ansuel-xps.localdomain>
 References: <20220121210340.32362-1-ansuelsmth@gmail.com>
- <20220121210340.32362-2-ansuelsmth@gmail.com>
- <YfhssKqI5U8X+Akn@builder.lan>
+ <20220121210340.32362-11-ansuelsmth@gmail.com>
+ <20220125204555.91DB4C340E0@smtp.kernel.org>
+ <61f065b9.1c69fb81.ed14d.b9e2@mx.google.com>
+ <20220125221825.D9B78C340E0@smtp.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YfhssKqI5U8X+Akn@builder.lan>
+In-Reply-To: <20220125221825.D9B78C340E0@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 31, 2022 at 05:11:44PM -0600, Bjorn Andersson wrote:
-> On Fri 21 Jan 15:03 CST 2022, Ansuel Smith wrote:
-> 
-> > Split qcom,gcc.yaml to common and specific schema to use it as a
-> > template for schema that needs to use the gcc bindings and require
-> > to add additional bindings.
+On Tue, Jan 25, 2022 at 02:18:24PM -0800, Stephen Boyd wrote:
+> Quoting Ansuel Smith (2022-01-25 13:03:52)
+> > On Tue, Jan 25, 2022 at 12:45:53PM -0800, Stephen Boyd wrote:
+> > > Quoting Ansuel Smith (2022-01-21 13:03:35)
+> > > > Add additional freq supported for the sdc table.
+> > > > 
+> > > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > > > ---
+> > > >  drivers/clk/qcom/gcc-ipq806x.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+> > > > index 77bc3d94f580..dbd61e4844b0 100644
+> > > > --- a/drivers/clk/qcom/gcc-ipq806x.c
+> > > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> > > > @@ -1292,6 +1292,7 @@ static const struct freq_tbl clk_tbl_sdc[] = {
+> > > >         {  20210000, P_PLL8,  1, 1,  19 },
+> > > >         {  24000000, P_PLL8,  4, 1,   4 },
+> > > >         {  48000000, P_PLL8,  4, 1,   2 },
+> > > > +       {  52000000, P_PLL8,  1, 2,  15 }, /* 51.2 Mhz */
+> > > 
+> > > Why the comment and fake rate? Can it be 51200000 instead and drop the
+> > > comment?
 > > 
-> 
-> Nice!
-> 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >  .../bindings/clock/qcom,gcc-common.yaml       | 42 +++++++++++++++++++
-> >  .../devicetree/bindings/clock/qcom,gcc.yaml   | 25 ++---------
-> >  2 files changed, 46 insertions(+), 21 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
+> > I will add the related reason in the commit.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
-> > new file mode 100644
-> > index 000000000000..ea1dd94d8bf1
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-common.yaml
+> > We cannot achieve exact 52Mhz(jitter free) clock using PLL8.
+> > As per the MND calculator the closest possible jitter free clock
+> > using PLL8 is 51.2Mhz. This patch adds the values, which will provide
+> > jitter free 51.2Mhz when the requested frequency is 52mhz.
 > 
-> It seems reasonable to expect that qcom,gcc.yaml should be split out in
-> a number of trivial qcom,gcc-platform.yaml files to define input clock
-> etc. So how about using qcom,gcc.yaml for the common properties and for
-> now rename the existing file to something like qcom,gcc-others.yaml
-> ?
->
+> Sounds like this clk should use the round down clk_ops instead of the
+> round up ones. Then the actual frequency can be in the table.
 
-Ok, just to make sure.
-gcc-common.yaml -> gcc.yaml (the template)
-gcc.yaml -> gcc-others.yaml (the generic gcc schema)
-
-Correct?
-
-> > @@ -0,0 +1,42 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,gcc-common.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Global Clock & Reset Controller Binding Common Bindings
-> > +
-> > +maintainers:
-> > +  - Stephen Boyd <sboyd@kernel.org>
-> > +  - Taniya Das <tdas@codeaurora.org>
-> > +
-> > +description: |
-> 
-> No need to preserve the formatting here, so the pipe can go.
-> 
-> Regards,
-> Bjorn
-> 
-> > +  Common bindings for Qualcomm global clock control module which supports
-> > +  the clocks, resets and power domains.
-> > +
-> > +properties:
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +  '#power-domain-cells':
-> > +    const: 1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  protected-clocks:
-> > +    description:
-> > +      Protected clock specifier list as per common clock binding.
-> > +
-> > +required:
-> > +  - reg
-> > +  - '#clock-cells'
-> > +  - '#reset-cells'
-> > +  - '#power-domain-cells'
-> > +
-> > +additionalProperties: true
-> > +
-> > +...
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > index f66d703bd913..73e3ff4979c6 100644
-> > --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> > @@ -34,6 +34,9 @@ description: |
-> >    - dt-bindings/reset/qcom,gcc-mdm9615.h
-> >    - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
-> >  
-> > +allOf:
-> > +  - $ref: "qcom,gcc-common.yaml#"
-> > +
-> >  properties:
-> >    compatible:
-> >      enum:
-> > @@ -55,30 +58,10 @@ properties:
-> >        - qcom,gcc-sdm630
-> >        - qcom,gcc-sdm660
-> >  
-> > -  '#clock-cells':
-> > -    const: 1
-> > -
-> > -  '#reset-cells':
-> > -    const: 1
-> > -
-> > -  '#power-domain-cells':
-> > -    const: 1
-> > -
-> > -  reg:
-> > -    maxItems: 1
-> > -
-> > -  protected-clocks:
-> > -    description:
-> > -      Protected clock specifier list as per common clock binding.
-> > -
-> >  required:
-> >    - compatible
-> > -  - reg
-> > -  - '#clock-cells'
-> > -  - '#reset-cells'
-> > -  - '#power-domain-cells'
-> >  
-> > -additionalProperties: false
-> > +unevaluatedProperties: false
-> >  
-> >  examples:
-> >    # Example for GCC for MSM8960:
-> > -- 
-> > 2.33.1
-> > 
+Some hint on how to do that? This use the rcg generic ops that doesn't
+use any round. Should I crate some special ops in the rcg driver to
+implement the round ops?
 
 -- 
 	Ansuel
