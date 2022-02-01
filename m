@@ -2,115 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2416C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Feb 2022 22:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438CCC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 11:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235245AbiBAWB6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Feb 2022 17:01:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231178AbiBAWB5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Feb 2022 17:01:57 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE7BC061714;
-        Tue,  1 Feb 2022 14:01:56 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id s5so58305909ejx.2;
-        Tue, 01 Feb 2022 14:01:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=R0oDzW7lZxNMxzwEYgDFNIULTJR1H9xhIVSMbpB3qcA=;
-        b=fJCdTh+YjknsFqCDTMy+q5FI1q66I6hRN4ZtCkjnV8PaagCwxNmRNnnmYgBnEmCBWu
-         wcywL6zZXQ7rKLlxASmrJa3SU4ML0xad0IkQZEf3edOKHed0in2e9pJPAEh73zyW9xu/
-         hxXtBD+DEOsZcJGLSg9s1v5aNhONzlv03vNWYuuesXIS/wszp/uLezpSMh9RUb3cq4Nx
-         42FDjX2tcZ6UIBxl7zJraGY7G9imZ1uOztNsMl/FAy1Bvy2a90yEZdltJk/r4wGS7SwZ
-         78vxsssOfmi7N3aO/7SM4U2TlAmSm9E2O+UGkar5n6/spqOb+hYh2nrtDxCeU8CQPqwI
-         e2gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=R0oDzW7lZxNMxzwEYgDFNIULTJR1H9xhIVSMbpB3qcA=;
-        b=Dy0+MfEGsdpGHtj9DJmnmgYU+a7vnXW5d+AvRLzvZvZtQKDfXXLSSmXSR4TwKyyLED
-         i4468g9Du8R51+mxzsAv9lf8SiUW8evuoV/FPsQ/sUM08j93iGJ45yL9zfRrUCMxTy2P
-         eLBtFjMOEYz8kSnhlB8ukLD+g1Io3gr+3FKopbcP861wno84T5TyThFJzk7YKdWP0K/n
-         jE2NNHg6S5FX1q0xnJqv9pcjU5PMDKKZRS2OnbGbo8WNDuqdzeugZdXztZ6JMuaiI5DN
-         oMqchqjLjziRUS+lBzCppHPbcAgRB0jYD3uWjDusqdAMNSNNmKBxBILRJH/owR31Scaw
-         uftw==
-X-Gm-Message-State: AOAM530HqOX93Z/piK1I0iGcovIoJNp2NeS1euuV3+oHGCI2PfOa3z8K
-        mcsm/B5VuSyr0hrS/4ZOyeU=
-X-Google-Smtp-Source: ABdhPJweuW5z5eu2VjtEooGH/3nczS+igDkKrvIc6alNaQ0j8cRGUn88XlXSTEeXk7AWD/OKkseT9Q==
-X-Received: by 2002:a17:906:bc97:: with SMTP id lv23mr23155487ejb.154.1643752914767;
-        Tue, 01 Feb 2022 14:01:54 -0800 (PST)
-Received: from Ansuel-xps.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.gmail.com with ESMTPSA id r3sm15103499ejd.129.2022.02.01.14.01.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Feb 2022 14:01:54 -0800 (PST)
-Date:   Tue, 1 Feb 2022 23:01:40 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 10/15] drivers: clk: qcom: gcc-ipq806x: add additional
- freq for sdc table
-Message-ID: <YfmtxA7fCmbBWK0Z@Ansuel-xps.localdomain>
-References: <20220121210340.32362-1-ansuelsmth@gmail.com>
- <20220121210340.32362-11-ansuelsmth@gmail.com>
- <20220125204555.91DB4C340E0@smtp.kernel.org>
- <61f065b9.1c69fb81.ed14d.b9e2@mx.google.com>
- <20220125221825.D9B78C340E0@smtp.kernel.org>
+        id S1343637AbiBBLCK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Feb 2022 06:02:10 -0500
+Received: from mail.profitfirm24.com.pl ([212.237.10.110]:58656 "EHLO
+        mail.profitfirm24.com.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343629AbiBBLCJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 06:02:09 -0500
+Received: by mail.profitfirm24.com.pl (Postfix, from userid 1001)
+        id 86B60AAD67; Tue,  1 Feb 2022 09:17:26 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitfirm24.com.pl;
+        s=mail; t=1643707872;
+        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
+        h=Date:From:To:Subject:From;
+        b=pgaOtasgCoKirvg2U0P6BKz3JKkWKtHfIH5M2L8PG1GYlf+y53f0cVoPH2UqYGHKE
+         UVEYvR+3mT36G9DaOSd4xvL/hh8EGnCktdMvhxfENGJpmXF1GTkUHAy+zn9gei/G18
+         cZYPsQk8hK0cxmFxWEh1U8gi+TOJ0rP5MVliidKXoQ1Su0K6Vqe1BziwWSq67upsgM
+         aOVOOYvsttx3fmXidLehKvJUDyjxZoj6ANdFuaOoBfjSr0dmOgqnCtqgPNF7vsezYE
+         dydJULX+dk4Ij4agA3DgisDwfUXkO4SRo7mNDSUdtcFxV2mF6jziS6ye3fY1XCKdbp
+         R6p+QaLyzCwwQ==
+Received: by profitfirm24.com.pl for <linux-clk@vger.kernel.org>; Tue,  1 Feb 2022 09:17:20 GMT
+Message-ID: <20220201074652-0.1.b.2yhd.0.k2r9nz18f2@profitfirm24.com.pl>
+Date:   Tue,  1 Feb 2022 09:17:20 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@profitfirm24.com.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.profitfirm24.com.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220125221825.D9B78C340E0@smtp.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 02:18:24PM -0800, Stephen Boyd wrote:
-> Quoting Ansuel Smith (2022-01-25 13:03:52)
-> > On Tue, Jan 25, 2022 at 12:45:53PM -0800, Stephen Boyd wrote:
-> > > Quoting Ansuel Smith (2022-01-21 13:03:35)
-> > > > Add additional freq supported for the sdc table.
-> > > > 
-> > > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > > ---
-> > > >  drivers/clk/qcom/gcc-ipq806x.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> > > > index 77bc3d94f580..dbd61e4844b0 100644
-> > > > --- a/drivers/clk/qcom/gcc-ipq806x.c
-> > > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> > > > @@ -1292,6 +1292,7 @@ static const struct freq_tbl clk_tbl_sdc[] = {
-> > > >         {  20210000, P_PLL8,  1, 1,  19 },
-> > > >         {  24000000, P_PLL8,  4, 1,   4 },
-> > > >         {  48000000, P_PLL8,  4, 1,   2 },
-> > > > +       {  52000000, P_PLL8,  1, 2,  15 }, /* 51.2 Mhz */
-> > > 
-> > > Why the comment and fake rate? Can it be 51200000 instead and drop the
-> > > comment?
-> > 
-> > I will add the related reason in the commit.
-> > 
-> > We cannot achieve exact 52Mhz(jitter free) clock using PLL8.
-> > As per the MND calculator the closest possible jitter free clock
-> > using PLL8 is 51.2Mhz. This patch adds the values, which will provide
-> > jitter free 51.2Mhz when the requested frequency is 52mhz.
-> 
-> Sounds like this clk should use the round down clk_ops instead of the
-> round up ones. Then the actual frequency can be in the table.
+Dzie=C5=84 dobry,
 
-Some hint on how to do that? This use the rcg generic ops that doesn't
-use any round. Should I crate some special ops in the rcg driver to
-implement the round ops?
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
 
--- 
-	Ansuel
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
+
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
+
+
+Pozdrawiam
+Arkadiusz Soko=C5=82owski
