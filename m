@@ -2,39 +2,39 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4699C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 18:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F307C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 18:37:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346601AbiBBSX2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Feb 2022 13:23:28 -0500
-Received: from m43-7.mailgun.net ([69.72.43.7]:24802 "EHLO m43-7.mailgun.net"
+        id S239846AbiBBShv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Feb 2022 13:37:51 -0500
+Received: from m43-7.mailgun.net ([69.72.43.7]:11023 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346620AbiBBSX2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Feb 2022 13:23:28 -0500
+        id S231772AbiBBShu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Feb 2022 13:37:50 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1643826207; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1643827070; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=00lZqAy3JgHwy8QZ/4SSrtFd9A6S8UTHdA19weFzwNs=; b=SaKgnWIZykdFdn6IjohQiPBq+URMAA1Rsjdu3mTHlKCwJfQ2DyQuNfRmme60kUbfrLydWzBC
- CgiLCr2vYV1PsH96JXwzWRj7jzsuvXlX019ne8WNiBMEN6VubebdS80c5bl0qxp2WWVSM1Q+
- ubRmDzc2JMpkqTLMAblWO2OL+BY=
+ bh=00lZqAy3JgHwy8QZ/4SSrtFd9A6S8UTHdA19weFzwNs=; b=SMj3MkmhNrIFu03glqfZLgqZCBSbreUXwsr0yr83uAjyGhAdGSf7gcOLRV0E/hVKzyKPyWHI
+ 2dXyMaDYFZSXkYyolRtUuBVs9l9UXg2Fvj0Rlshi63T3yAc//+S0dTKQv+wl63qQZNt0lT4k
+ GN/10Lw1YmaNhUBkl/J4RTPUCqY=
 X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
- 61facb99e0d9ede916180c49 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 02 Feb 2022 18:21:13
+ smtp-out-n02.prod.us-west-2.postgun.com with SMTP id
+ 61facf0c39713d071270e8a1 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 02 Feb 2022 18:35:56
  GMT
 Sender: tdas=codeaurora.org@mg.codeaurora.org
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 69304C4360D; Wed,  2 Feb 2022 18:21:12 +0000 (UTC)
+        id 14F53C43619; Wed,  2 Feb 2022 18:35:56 +0000 (UTC)
 Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 033DFC4360C;
-        Wed,  2 Feb 2022 18:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 033DFC4360C
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 081C5C43616;
+        Wed,  2 Feb 2022 18:35:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 081C5C43616
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -44,12 +44,12 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 2/2] clk: qcom: sc7280: Update clk_init_data to const for clock controllers
-Date:   Wed,  2 Feb 2022 23:50:53 +0530
-Message-Id: <20220202182053.22925-2-tdas@codeaurora.org>
+Subject: [PATCH v1 4/4] clk: qcom: sc7280: Update clk_init_data to const for clock controllers
+Date:   Thu,  3 Feb 2022 00:05:28 +0530
+Message-Id: <20220202183528.3911-4-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220202182053.22925-1-tdas@codeaurora.org>
-References: <20220202182053.22925-1-tdas@codeaurora.org>
+In-Reply-To: <20220202183528.3911-1-tdas@codeaurora.org>
+References: <20220202183528.3911-1-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
