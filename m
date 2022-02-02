@@ -2,103 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67D9C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 11:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E1BC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 12:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343944AbiBBLkl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:40:41 -0500
-Received: from mxd2.seznam.cz ([77.75.76.210]:9835 "EHLO mxd2.seznam.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233698AbiBBLkk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Feb 2022 06:40:40 -0500
-Received: from email.seznam.cz
-        by email-smtpc21a.ng.seznam.cz (email-smtpc21a.ng.seznam.cz [10.23.18.26])
-        id 5c6f5da1076109c85dc691ff;
-        Wed, 02 Feb 2022 12:40:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1643802031; bh=02935uyFlquI0a4iDdhDg5jx81ktMgh7hUVtFT1zXbw=;
-        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Transfer-Encoding:X-szn-frgn:
-         X-szn-frgc;
-        b=DWzDVIrpD6b9nOplggA/JtU0A23MqTrYHVMaY63n4BgeRQ60riTuQkPvzEfUryXY5
-         b44ijX1qbhQ6RpKDPPbeEn14hy9e7DLJWPHe1Oce6KK3ZFxez1qt4TAC1wLkTZu2pA
-         j9/4FZODB4/4JyN1mEs4u5sGFnIngZzBmN4IJkYo=
-Received: from localhost.localdomain (ip-111-27.static.ccinternet.cz [147.161.27.111])
-        by email-relay25.ng.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
-        Wed, 02 Feb 2022 12:39:52 +0100 (CET)  
-From:   michael.srba@seznam.cz
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Michael Srba <michael.srba@seznam.cz>,
-        Michael Srba <Michael.Srba@seznam.cz>
-Subject: [PATCH v5 5/5] arm64: dts: qcom: msm8998: reserve potentially inaccessible clocks
-Date:   Wed,  2 Feb 2022 12:37:22 +0100
-Message-Id: <20220202113722.7550-5-michael.srba@seznam.cz>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220202113722.7550-1-michael.srba@seznam.cz>
-References: <20220202113722.7550-1-michael.srba@seznam.cz>
+        id S229889AbiBBM6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Feb 2022 07:58:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229504AbiBBM6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 07:58:20 -0500
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD78C06173B
+        for <linux-clk@vger.kernel.org>; Wed,  2 Feb 2022 04:58:19 -0800 (PST)
+Received: by mail-yb1-xb2d.google.com with SMTP id m6so60660531ybc.9
+        for <linux-clk@vger.kernel.org>; Wed, 02 Feb 2022 04:58:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dU/z995NUTHrMzTqiAvkMkdF79WLwDMcbs55TIijfcE=;
+        b=fHDdFC5FWRcThCd0Tfbp/dR2XIbwHtRs9H3VgjSuG/yWGDTofEDHUBZnWEJs5mh1uT
+         Doh4KUlfwdcL923Pp48pI6OQf4MfQ1kFgpj5kywLiYCCot7ZS/7GM4UexJ8o91/sRPcr
+         kyLnSvmRXg0QtssqbGSnERTChrpShqxV90zKo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dU/z995NUTHrMzTqiAvkMkdF79WLwDMcbs55TIijfcE=;
+        b=DXkbNKbBOyl12VNlIKa0BlJYxGIctXryANnm184okiSQerWX6lmERDdjhnnSurl39C
+         PBkQCzed8V7RrV+gKr+lyfcaAtMIw056V3XgUPFQuH6hno07UJhsLkmBku4mTEpSj48G
+         +qkk6ApzENxJXK9e0vfQfSnOu6nMyNmnLsAjn/5C/59V8pwlZigJ2nS8pcRPPnvm3Aew
+         5z8QccbppUgEYhFsauioCJJV/op96ig8QgB0ZSVxJsckgLW2anCGn2J3M34qow9bGMef
+         AyhLm1Bnq3UvgtPPkqMoYh2WhcFGsAtn1qhPXo8rj3+RE8Q8UzuZhtUVQfXtx1Ql3eyS
+         wlaQ==
+X-Gm-Message-State: AOAM530oUwaqkRh7i3NUhWXNoDEKaYUgARF/HyChajqLYjivJUZjywm2
+        KqB14J3+Zn1SP5/woN4/KnBXR/Yp7m/GM6T/Z+7g5g==
+X-Google-Smtp-Source: ABdhPJxOekHpFlkiPIYTTgHOA7chVTJIdKfOU7Gx9z5sD2o1KBdROJnYT6/dSYpbYolgkvDYcwWRm5+E1jZer/H+E00=
+X-Received: by 2002:a81:1458:: with SMTP id 85mr937225ywu.199.1643806699120;
+ Wed, 02 Feb 2022 04:58:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-szn-frgn: <9991ae1e-5145-46dc-b41e-c462e151b124>
-X-szn-frgc: <0>
+References: <20220122091731.283592-15-wenst@chromium.org> <20220126063643.11544-1-miles.chen@mediatek.com>
+In-Reply-To: <20220126063643.11544-1-miles.chen@mediatek.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Wed, 2 Feb 2022 20:58:08 +0800
+Message-ID: <CAGXv+5HH0gsjNJcLoig=wt+QfjfJ7E9r8UAxm2PFjsR09x9NmQ@mail.gmail.com>
+Subject: Re: [PATCH 14/31] clk: mediatek: pll: Clean up included headers
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     chun-jie.chen@mediatek.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, matthias.bgg@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Michael Srba <michael.srba@seznam.cz>
+On Wed, Jan 26, 2022 at 2:36 PM Miles Chen <miles.chen@mediatek.com> wrote:
+>
+> > Some included headers aren't actually used anywhere, while other headers
+> > with the declaration of functions and structures aren't directly
+> > included.
+> >
+> > Get rid of the unused ones, and add the ones that should be included
+> > directly.
+> >
+> > Also, expand the MHZ macro with spelled-out "1000 * 1000" to be able
+> > to not include clk-mtk.h. The existing ternary operator is rewritten
+> > in a shortened form to accommodate the expanded macro.
+>
+> I think MHZ is more human readable than 1000*1000,
+> like SZ_4K in linux/sizes.h.
+>
+> MHZ is also use by other clk-mtxxxx.c (by including clk-mtk.h)
+> , so maybe we should keep clk-mtk.h?
 
-With the gcc driver now being more complete and describing clocks which
-might not always be write-accessible to the OS, conservatively specify
-all such clocks as protected in the SoC dts.
-The board dts - or even user-supplied dts - can override this property
-to reflect the actual configuration.
+This seems like overkill. I'll define MHZ in the file instead.
 
-Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
----
- CHANGES:
- - v2: add this patch
- - v3: fix missing Signed-off-by
- - v4: add a proper explanation as per review, (hopefully) fix the subject and commit message
- - v5: none
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ChenYu
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index f273bc1ff629..16dccf9d881e 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -863,6 +863,21 @@ gcc: clock-controller@100000 {
- 
- 			clock-names = "xo", "sleep_clk";
- 			clocks = <&xo>, <&sleep_clk>;
-+
-+			/*
-+			 * The hypervisor typically configures the memory region where these clocks
-+			 * reside as read-only for the HLOS. If the HLOS tried to enable or disable
-+			 * these clocks on a device with such configuration (e.g. because they are
-+			 * enabled but unused during boot-up), the device will most likely decide
-+			 * to reboot.
-+			 * In light of that, we are conservative here and we list all such clocks
-+			 * as protected. The board dts (or a user-supplied dts) can override the
-+			 * list of protected clocks if it differs from the norm, and it is in fact
-+			 * desired for the HLOS to manage these clocks
-+			 */
-+			protected-clocks = <AGGRE2_SNOC_NORTH_AXI>,
-+					   <SSC_XO>,
-+					   <SSC_CNOC_AHBS_CLK>;
- 		};
- 
- 		rpm_msg_ram: sram@778000 {
--- 
-2.34.1
-
+> Miles
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >  drivers/clk/mediatek/clk-pll.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > index 081e0df8203e..9698d1c97cd6 100644
+> > --- a/drivers/clk/mediatek/clk-pll.c
+> > +++ b/drivers/clk/mediatek/clk-pll.c
+> > @@ -4,15 +4,15 @@
+> >   * Author: James Liao <jamesjj.liao@mediatek.com>
+> >   */
+> >
+> > -#include <linux/of.h>
+> > -#include <linux/of_address.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/container_of.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/err.h>
+> >  #include <linux/io.h>
+> >  #include <linux/module.h>
+> > +#include <linux/of_address.h>
+> >  #include <linux/slab.h>
+> > -#include <linux/clkdev.h>
+> > -#include <linux/delay.h>
+> >
+> > -#include "clk-mtk.h"
+> >  #include "clk-pll.h"
+> >
+> >  #define REG_CON0             0
+> > @@ -162,7 +162,7 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+> >  static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
+> >               u32 freq, u32 fin)
+> >  {
+> > -     unsigned long fmin = pll->data->fmin ? pll->data->fmin : (1000 * MHZ);
+> > +     unsigned long fmin = pll->data->fmin ?: (1000 * 1000 * 1000);
+> >       const struct mtk_pll_div_table *div_table = pll->data->div_table;
+> >       u64 _pcw;
+> >       int ibits;
+> > --
+> > 2.35.0.rc0.227.g00780c9af4-goog
+>
+>
