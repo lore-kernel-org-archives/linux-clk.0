@@ -2,58 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 438CCC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 11:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610E9C4167E
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 11:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343637AbiBBLCK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Feb 2022 06:02:10 -0500
-Received: from mail.profitfirm24.com.pl ([212.237.10.110]:58656 "EHLO
-        mail.profitfirm24.com.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343629AbiBBLCJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 06:02:09 -0500
-Received: by mail.profitfirm24.com.pl (Postfix, from userid 1001)
-        id 86B60AAD67; Tue,  1 Feb 2022 09:17:26 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitfirm24.com.pl;
-        s=mail; t=1643707872;
-        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
-        h=Date:From:To:Subject:From;
-        b=pgaOtasgCoKirvg2U0P6BKz3JKkWKtHfIH5M2L8PG1GYlf+y53f0cVoPH2UqYGHKE
-         UVEYvR+3mT36G9DaOSd4xvL/hh8EGnCktdMvhxfENGJpmXF1GTkUHAy+zn9gei/G18
-         cZYPsQk8hK0cxmFxWEh1U8gi+TOJ0rP5MVliidKXoQ1Su0K6Vqe1BziwWSq67upsgM
-         aOVOOYvsttx3fmXidLehKvJUDyjxZoj6ANdFuaOoBfjSr0dmOgqnCtqgPNF7vsezYE
-         dydJULX+dk4Ij4agA3DgisDwfUXkO4SRo7mNDSUdtcFxV2mF6jziS6ye3fY1XCKdbp
-         R6p+QaLyzCwwQ==
-Received: by profitfirm24.com.pl for <linux-clk@vger.kernel.org>; Tue,  1 Feb 2022 09:17:20 GMT
-Message-ID: <20220201074652-0.1.b.2yhd.0.k2r9nz18f2@profitfirm24.com.pl>
-Date:   Tue,  1 Feb 2022 09:17:20 GMT
-From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
-        <arkadiusz.sokolowski@profitfirm24.com.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Koszty instalacji fotowoltaicznej
-X-Mailer: mail.profitfirm24.com.pl
+        id S243265AbiBBLk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Feb 2022 06:40:26 -0500
+Received: from mxd2.seznam.cz ([77.75.76.210]:20285 "EHLO mxd2.seznam.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1343947AbiBBLk0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Feb 2022 06:40:26 -0500
+Received: from email.seznam.cz
+        by email-smtpc10a.ng.seznam.cz (email-smtpc10a.ng.seznam.cz [10.23.11.45])
+        id 080311cb530d45a209aadd95;
+        Wed, 02 Feb 2022 12:39:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1643801995; bh=lcWtxjBZ/ky2n+XCOFxmYKxg759yKJ9QaI12guWnqt4=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+         Content-Transfer-Encoding:X-szn-frgn:X-szn-frgc;
+        b=Fpi60mEGS+ZHj15xFAlQeCxP4IL6iD4h+XpSOrQ3dRlwMb7xsSIqfSUa8dQnkM3jo
+         p/+1gu5BICvr8h8/XCtxc8cEsvjwGk4BKU4AgFBme8XGjAYbZ/iALt3VhfZKgdeufL
+         6Y2YIBghOmbXJFmIZHjflWxKvMfPtnz/if605tk8=
+Received: from localhost.localdomain (ip-111-27.static.ccinternet.cz [147.161.27.111])
+        by email-relay25.ng.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
+        Wed, 02 Feb 2022 12:39:50 +0100 (CET)  
+From:   michael.srba@seznam.cz
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>
+Subject: [PATCH v5 1/5] dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
+Date:   Wed,  2 Feb 2022 12:37:18 +0100
+Message-Id: <20220202113722.7550-1-michael.srba@seznam.cz>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-szn-frgn: <a23e33da-055f-4e03-bf6d-6629398bbb70>
+X-szn-frgc: <0>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+From: Michael Srba <Michael.Srba@seznam.cz>
 
-stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
- obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
+This patch adds definitions of four clocks which need to be manipulated
+in order to initialize the AHB bus which exposes the SCC block in the
+global address space.
 
-Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
-acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
-ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+---
+ CHANGES:
+ - v2: none
+ - v3: none
+ - v4: none
+ - v5: none
+---
+ include/dt-bindings/clock/qcom,gcc-msm8998.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
-=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
-=2E
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index 72c99e486d86..1badb4f9c58f 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -186,6 +186,10 @@
+ #define UFS_UNIPRO_CORE_CLK_SRC					177
+ #define GCC_MMSS_GPLL0_CLK					178
+ #define HMSS_GPLL0_CLK_SRC					179
++#define GCC_IM_SLEEP						180
++#define AGGRE2_SNOC_NORTH_AXI					181
++#define SSC_XO							182
++#define SSC_CNOC_AHBS_CLK					183
+ 
+ #define PCIE_0_GDSC						0
+ #define UFS_GDSC						1
+-- 
+2.34.1
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
-
-
-Pozdrawiam
-Arkadiusz Soko=C5=82owski
