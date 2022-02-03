@@ -2,492 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F90C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Feb 2022 22:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8851BC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 02:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347919AbiBBWe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Feb 2022 17:34:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235260AbiBBWeX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 17:34:23 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BEBC061714
-        for <linux-clk@vger.kernel.org>; Wed,  2 Feb 2022 14:34:23 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id 200so1042688qki.2
-        for <linux-clk@vger.kernel.org>; Wed, 02 Feb 2022 14:34:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X1V8DE0Ku28hciWaqKV70UHjnsuP1wsl0fwvfIUT1QM=;
-        b=fwcHlRJYWNeBJc83Xv3kWElEbZdkPvUddtgwgErkxt4JWXWUVg+JWaDt8uNOjrE1U0
-         NkPnBgLHLAvnk/qMrRwrbsBR5wbspfpbFKF/op+yDh4QyVGFtGHLha7AinKkXUb+sdNp
-         6uOqbsr+sotlfTjQtebNYncBbBTj7heG+3ymFkBTAm6uT2FU7JWZzykA4fMO4lqPeJqb
-         O/ehSsCeQRiCOtc4oxNIyhVd72HFRD8XHnv4VtUgB69XtmrN+m5TrzHT9fJU3wZonv7D
-         PtUtkweAplL5QfDie+VRDFJLMxHhoidrGIIRNdJC5F1pdq7hW3QTvI/CVHD8M/GOjUSP
-         Sa4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X1V8DE0Ku28hciWaqKV70UHjnsuP1wsl0fwvfIUT1QM=;
-        b=yYHEs9mbY4w+qEx0KFxeEIfYTqGftFMGtRaO1RZK5VoFL1eUX/RfO8EJZakyKqc1hn
-         3+fWsVEVpbawbFTMPMS2CZU0XBVGph/hTKINu4Fyw6kJlcJ1UKOlRKMG6MakpSP6meSt
-         dZCqIBH4+dKt1ReQtzPSi2v1xKl0SJdiP9mCFPczuSVo/B2szUlf3ID3V4raOnf1+vFN
-         Rv+2CRgiBH3T4/Q8utrOLa6jLSejYUwIORffbDb2DRxfoFp85hGUXcmQ5PkLC1Mv3QSJ
-         pEwFps0OFCufHpxynSgJt6Sw6/JK2da1/xjW4ArYBPGY6BYOLlR7mFlN2uMMHLIN2EfH
-         ohWQ==
-X-Gm-Message-State: AOAM531RkIRX81MX7pDSCFURopezo08/L7LlnHsbZdKSfpjysRZtqPwO
-        pgF1govrzbsVDmU0Ut0K8xlcPODymdeGVWiNY65dYw==
-X-Google-Smtp-Source: ABdhPJzKMjY0yLA3UG5bGmLXKRo45byzLIQ6tQd7LGVUC1fL/bLOmE/ODBoowQv2lg+Bz8lxmtM8QvL2nXf/wD6BhmE=
-X-Received: by 2002:a05:620a:280b:: with SMTP id f11mr21398426qkp.59.1643841262124;
- Wed, 02 Feb 2022 14:34:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20220202182053.22925-1-tdas@codeaurora.org> <20220202182053.22925-2-tdas@codeaurora.org>
-In-Reply-To: <20220202182053.22925-2-tdas@codeaurora.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 3 Feb 2022 01:34:11 +0300
-Message-ID: <CAA8EJpqWUm5C5nc3fZzjF4XfAEZo8m=PY0Rj6WeDgSJEey=D_A@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] clk: qcom: sc7280: Update clk_init_data to const
- for clock controllers
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+        id S1346562AbiBCCRl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Feb 2022 21:17:41 -0500
+Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:58871 "EHLO
+        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239177AbiBCCRl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 21:17:41 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id 8CF9E2B0019A;
+        Wed,  2 Feb 2022 21:17:39 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 02 Feb 2022 21:17:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :message-id:mime-version:reply-to:sender:subject:subject:to:to;
+         s=fm1; bh=RytlSUaDRmapV5YwWfkzWD1+yC9W9mp9nHm/VpHru/A=; b=bE4CU
+        dLZC5ycYQ29W6w7WmkiyDhRYKTMXe3ExKn1iFR4QopansEIHFClcQWxukboGv6VF
+        5Nn7F6J7ZRN624YP/IRJtbrZ+xjL4tBYLsDbx5sxvZXTKbQcpv9xqNAzQOfvA0Fk
+        UwkTqEVQLxqZ/QkFpy1YdzsZ+IjHUYvNkbHf+ne0EXHAzPRAZM+GG252HJX3VBKS
+        T+H0OuqawOwYT17AOx1C+jvPvFb7G9M9ixDWaOgGyT0ExM21EPyCnsm7KjlhyEig
+        CzH6qmk4fkKMh+tMjWRrXqsh+XeWeqq4qs9MrYBNOQNN9AOk86nsjed6SRpmegEr
+        TIolgIvcM5z7/BI2w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:message-id:mime-version:reply-to:sender
+        :subject:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; bh=RytlSUaDRmapV5YwWfkzWD1+yC9W9
+        mp9nHm/VpHru/A=; b=hmnkszU4kAAenV+yP1A3wbLJxeLZ6oKIftjRrKcHNMg6P
+        H7woqqxXDgwNbMWGqEaEB9YX78Trk6QLzfq/JdiTYvednxiV1OvCQD1SFoD88TM3
+        JVHk7ZarPiQWX3tN2lPo75KYPqPf7SLmJA0mP9uBPxN6hZM8KEOrG/PCYp2cqh+f
+        Emltupdy0+4ifCeUqPuZ+6NgmVSRTHiVBAPedO5VcOiHouoB9aPVnToxqXjawLgD
+        SVhrFriMEw5MrIuTyYImV9uKfB4quXEtgBhrTa9BWSsOJrAts2ErfYC/oKzCf7+t
+        8gTTlyb2jbXwA0KRWQPRImY6V7BIRuIqIyP3drMJw==
+X-ME-Sender: <xms:Qjv7YRAuNLQDjAwe3_tyNU40Pc5u_XjVQ-PDqeCcHH9fW2KEPNpXPw>
+    <xme:Qjv7YfgYUDrohcDJFZ--Pn5xjV5c5wCDPUluWw5iq8fhNOnWCzEowIPwfZqfC0-8y
+    29cDgdlOdFVD-20Jw>
+X-ME-Received: <xmr:Qjv7YcnJidYN444D5mCA7QmUBBOBOnJWAqj84jQvplS1HDWTv3kJAucxcP7-Ypxi5WjW0Y0XOCPQwZg7pZ_JXroPAik3OYAX1eoitcW680u9kPgxJOA6T4VwwIA4yzXgkuIJBg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrgeeigdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
+    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuggftrfgrth
+    htvghrnhepieetkefhheduudfgledtudefjeejfeegveehkeeufffhhfejkeehiefftdev
+    tdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsh
+    grmhhuvghlsehshhholhhlrghnugdrohhrgh
+X-ME-Proxy: <xmx:Qjv7YbzsJLyggIFRfv_r1J4PYohbE5yLUQoLlqV0RPZsmflwyqqUoA>
+    <xmx:Qjv7YWR4_cmdqjjeuDQLV29pq3WAMXlee447PfjXouEBxoD6j0IP6A>
+    <xmx:Qjv7Yea2LPDaeZV-VpqF9H07aScCg4Xh6XOLX5YCkcAg0wk1AtH56g>
+    <xmx:Qzv7YQDTDvxON9ldrBrwAKd6Xo-VXQZl3Odpe4vJdUxI476cnmx-gThNRhc>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Feb 2022 21:17:37 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-sunxi@lists.linux.dev
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v3 0/6] clk: sunxi-ng: Add a RTC CCU driver
+Date:   Wed,  2 Feb 2022 20:17:30 -0600
+Message-Id: <20220203021736.13434-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.33.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Feb 2022 at 21:23, Taniya Das <tdas@codeaurora.org> wrote:
->
-> Update clk_init_data to const and also use index instead of fw_name for
-> graphics, lpasscc and video clock controller.
+This patch series adds a CCU driver for the RTC in the H616, R329 and
+D1. The extra patch at the end of this series shows how it would be
+explanded to additional hardware variants.
 
-What is the benefit from using indices here? In my opinion the code
-becomes more fragile with such a change.
+The driver is intended to support the existing binding used for the H6,
+but also an updated binding which includes all RTC input clocks.
 
->
-> Fixes: 3e0f01d6c7e74 ("clk: qcom: Add graphics clock controller driver for SC7280")
-> Fixes: 4ab43d171181d ("clk: qcom: Add lpass clock controller driver for SC7280")
-> Fixes: fae7617bb1428 ("clk: qcom: Add video clock controller driver for SC7280")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/gpucc-sc7280.c   | 56 +++++++++++++++----------------
->  drivers/clk/qcom/lpasscc-sc7280.c | 14 ++++----
->  drivers/clk/qcom/videocc-sc7280.c | 26 +++++++-------
->  3 files changed, 48 insertions(+), 48 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
-> index 9a832f2bcf49..e8f6abc5261f 100644
-> --- a/drivers/clk/qcom/gpucc-sc7280.c
-> +++ b/drivers/clk/qcom/gpucc-sc7280.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2021-2022, The Linux Foundation. All rights reserved.
->   */
->
->  #include <linux/clk-provider.h>
-> @@ -36,10 +36,10 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
->         .num_vco = ARRAY_SIZE(lucid_vco),
->         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
->         .clkr = {
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_pll0",
->                         .parent_data = &(const struct clk_parent_data){
-> -                               .fw_name = "bi_tcxo",
-> +                               .index = 0,
->                         },
->                         .num_parents = 1,
->                         .ops = &clk_alpha_pll_lucid_ops,
-> @@ -65,10 +65,10 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
->         .num_vco = ARRAY_SIZE(lucid_vco),
->         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
->         .clkr = {
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_pll1",
->                         .parent_data = &(const struct clk_parent_data){
-> -                               .fw_name = "bi_tcxo",
-> +                               .index = 0,
->                         },
->                         .num_parents = 1,
->                         .ops = &clk_alpha_pll_lucid_ops,
-> @@ -85,11 +85,11 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
->  };
->
->  static const struct clk_parent_data gpu_cc_parent_data_0[] = {
-> -       { .fw_name = "bi_tcxo" },
-> +       { .index = 0 },
->         { .hw = &gpu_cc_pll0.clkr.hw },
->         { .hw = &gpu_cc_pll1.clkr.hw },
-> -       { .fw_name = "gcc_gpu_gpll0_clk_src" },
-> -       { .fw_name = "gcc_gpu_gpll0_div_clk_src" },
-> +       { .index = 1 }, /* gcc_gpu_gpll0_clk_src */
-> +       { .index = 2 }, /* gcc_gpu_gpll0_div_clk_src */
->  };
->
->  static const struct parent_map gpu_cc_parent_map_1[] = {
-> @@ -100,10 +100,10 @@ static const struct parent_map gpu_cc_parent_map_1[] = {
->  };
->
->  static const struct clk_parent_data gpu_cc_parent_data_1[] = {
-> -       { .fw_name = "bi_tcxo", },
-> +       { .index = 0, },
->         { .hw = &gpu_cc_pll1.clkr.hw },
-> -       { .fw_name = "gcc_gpu_gpll0_clk_src", },
-> -       { .fw_name = "gcc_gpu_gpll0_div_clk_src", },
-> +       { .index = 1 }, /* gcc_gpu_gpll0_clk_src */
-> +       { .index = 2 }, /* gcc_gpu_gpll0_div_clk_src */
->  };
->
->  static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
-> @@ -119,7 +119,7 @@ static struct clk_rcg2 gpu_cc_gmu_clk_src = {
->         .hid_width = 5,
->         .parent_map = gpu_cc_parent_map_0,
->         .freq_tbl = ftbl_gpu_cc_gmu_clk_src,
-> -       .clkr.hw.init = &(struct clk_init_data){
-> +       .clkr.hw.init = &(const struct clk_init_data){
->                 .name = "gpu_cc_gmu_clk_src",
->                 .parent_data = gpu_cc_parent_data_0,
->                 .num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
-> @@ -140,7 +140,7 @@ static struct clk_rcg2 gpu_cc_hub_clk_src = {
->         .hid_width = 5,
->         .parent_map = gpu_cc_parent_map_1,
->         .freq_tbl = ftbl_gpu_cc_hub_clk_src,
-> -       .clkr.hw.init = &(struct clk_init_data){
-> +       .clkr.hw.init = &(const struct clk_init_data){
->                 .name = "gpu_cc_hub_clk_src",
->                 .parent_data = gpu_cc_parent_data_1,
->                 .num_parents = ARRAY_SIZE(gpu_cc_parent_data_1),
-> @@ -152,7 +152,7 @@ static struct clk_regmap_div gpu_cc_hub_ahb_div_clk_src = {
->         .reg = 0x11c0,
->         .shift = 0,
->         .width = 4,
-> -       .clkr.hw.init = &(struct clk_init_data) {
-> +       .clkr.hw.init = &(const struct clk_init_data) {
->                 .name = "gpu_cc_hub_ahb_div_clk_src",
->                 .parent_hws = (const struct clk_hw*[]){
->                         &gpu_cc_hub_clk_src.clkr.hw,
-> @@ -167,7 +167,7 @@ static struct clk_regmap_div gpu_cc_hub_cx_int_div_clk_src = {
->         .reg = 0x11bc,
->         .shift = 0,
->         .width = 4,
-> -       .clkr.hw.init = &(struct clk_init_data) {
-> +       .clkr.hw.init = &(const struct clk_init_data) {
->                 .name = "gpu_cc_hub_cx_int_div_clk_src",
->                 .parent_hws = (const struct clk_hw*[]){
->                         &gpu_cc_hub_clk_src.clkr.hw,
-> @@ -184,7 +184,7 @@ static struct clk_branch gpu_cc_ahb_clk = {
->         .clkr = {
->                 .enable_reg = 0x1078,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_ahb_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_hub_ahb_div_clk_src.clkr.hw,
-> @@ -202,7 +202,7 @@ static struct clk_branch gpu_cc_crc_ahb_clk = {
->         .clkr = {
->                 .enable_reg = 0x107c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_crc_ahb_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_hub_ahb_div_clk_src.clkr.hw,
-> @@ -220,7 +220,7 @@ static struct clk_branch gpu_cc_cx_gmu_clk = {
->         .clkr = {
->                 .enable_reg = 0x1098,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_cx_gmu_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_gmu_clk_src.clkr.hw,
-> @@ -238,7 +238,7 @@ static struct clk_branch gpu_cc_cx_snoc_dvm_clk = {
->         .clkr = {
->                 .enable_reg = 0x108c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_cx_snoc_dvm_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -251,7 +251,7 @@ static struct clk_branch gpu_cc_cxo_aon_clk = {
->         .clkr = {
->                 .enable_reg = 0x1004,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_cxo_aon_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -264,7 +264,7 @@ static struct clk_branch gpu_cc_cxo_clk = {
->         .clkr = {
->                 .enable_reg = 0x109c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_cxo_clk",
->                         .ops = &clk_branch2_aon_ops,
->                 },
-> @@ -277,7 +277,7 @@ static struct clk_branch gpu_cc_gx_gmu_clk = {
->         .clkr = {
->                 .enable_reg = 0x1064,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_gx_gmu_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_gmu_clk_src.clkr.hw,
-> @@ -295,7 +295,7 @@ static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
->         .clkr = {
->                 .enable_reg = 0x5000,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_hlos1_vote_gpu_smmu_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -308,7 +308,7 @@ static struct clk_branch gpu_cc_hub_aon_clk = {
->         .clkr = {
->                 .enable_reg = 0x1178,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_hub_aon_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_hub_clk_src.clkr.hw,
-> @@ -326,7 +326,7 @@ static struct clk_branch gpu_cc_hub_cx_int_clk = {
->         .clkr = {
->                 .enable_reg = 0x1204,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_hub_cx_int_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &gpu_cc_hub_cx_int_div_clk_src.clkr.hw,
-> @@ -344,7 +344,7 @@ static struct clk_branch gpu_cc_mnd1x_0_gfx3d_clk = {
->         .clkr = {
->                 .enable_reg = 0x802c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_mnd1x_0_gfx3d_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -357,7 +357,7 @@ static struct clk_branch gpu_cc_mnd1x_1_gfx3d_clk = {
->         .clkr = {
->                 .enable_reg = 0x8030,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_mnd1x_1_gfx3d_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -370,7 +370,7 @@ static struct clk_branch gpu_cc_sleep_clk = {
->         .clkr = {
->                 .enable_reg = 0x1090,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "gpu_cc_sleep_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-> index b39ee1c9647b..ef055706b442 100644
-> --- a/drivers/clk/qcom/lpasscc-sc7280.c
-> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /*
-> - * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2021-2022, The Linux Foundation. All rights reserved.
->   */
->
->  #include <linux/clk-provider.h>
-> @@ -23,7 +23,7 @@ static struct clk_branch lpass_q6ss_ahbm_clk = {
->         .clkr = {
->                 .enable_reg = 0x1c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_q6ss_ahbm_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -36,7 +36,7 @@ static struct clk_branch lpass_q6ss_ahbs_clk = {
->         .clkr = {
->                 .enable_reg = 0x20,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_q6ss_ahbs_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -49,7 +49,7 @@ static struct clk_branch lpass_top_cc_lpi_q6_axim_hs_clk = {
->         .clkr = {
->                 .enable_reg = 0x0,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_top_cc_lpi_q6_axim_hs_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -63,7 +63,7 @@ static struct clk_branch lpass_qdsp6ss_core_clk = {
->         .clkr = {
->                 .enable_reg = 0x20,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_qdsp6ss_core_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -77,7 +77,7 @@ static struct clk_branch lpass_qdsp6ss_xo_clk = {
->         .clkr = {
->                 .enable_reg = 0x38,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_qdsp6ss_xo_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -91,7 +91,7 @@ static struct clk_branch lpass_qdsp6ss_sleep_clk = {
->         .clkr = {
->                 .enable_reg = 0x3c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "lpass_qdsp6ss_sleep_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> diff --git a/drivers/clk/qcom/videocc-sc7280.c b/drivers/clk/qcom/videocc-sc7280.c
-> index 615695d82319..ba192ce6163e 100644
-> --- a/drivers/clk/qcom/videocc-sc7280.c
-> +++ b/drivers/clk/qcom/videocc-sc7280.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2021-2022, The Linux Foundation. All rights reserved.
->   */
->
->  #include <linux/clk-provider.h>
-> @@ -45,10 +45,10 @@ static struct clk_alpha_pll video_pll0 = {
->         .num_vco = ARRAY_SIZE(lucid_vco),
->         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
->         .clkr = {
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_pll0",
->                         .parent_data = &(const struct clk_parent_data){
-> -                               .fw_name = "bi_tcxo",
-> +                               .index = 0,
->                         },
->                         .num_parents = 1,
->                         .ops = &clk_alpha_pll_lucid_ops,
-> @@ -62,7 +62,7 @@ static const struct parent_map video_cc_parent_map_0[] = {
->  };
->
->  static const struct clk_parent_data video_cc_parent_data_0[] = {
-> -       { .fw_name = "bi_tcxo" },
-> +       { .index = 0 },
->         { .hw = &video_pll0.clkr.hw },
->  };
->
-> @@ -89,7 +89,7 @@ static struct clk_rcg2 video_cc_iris_clk_src = {
->         .hid_width = 5,
->         .parent_map = video_cc_parent_map_0,
->         .freq_tbl = ftbl_video_cc_iris_clk_src,
-> -       .clkr.hw.init = &(struct clk_init_data){
-> +       .clkr.hw.init = &(const struct clk_init_data){
->                 .name = "video_cc_iris_clk_src",
->                 .parent_data = video_cc_parent_data_0,
->                 .num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-> @@ -109,7 +109,7 @@ static struct clk_rcg2 video_cc_sleep_clk_src = {
->         .hid_width = 5,
->         .parent_map = video_cc_parent_map_1,
->         .freq_tbl = ftbl_video_cc_sleep_clk_src,
-> -       .clkr.hw.init = &(struct clk_init_data){
-> +       .clkr.hw.init = &(const struct clk_init_data){
->                 .name = "video_cc_sleep_clk_src",
->                 .parent_data = video_cc_parent_data_1,
->                 .num_parents = ARRAY_SIZE(video_cc_parent_data_1),
-> @@ -123,7 +123,7 @@ static struct clk_branch video_cc_iris_ahb_clk = {
->         .clkr = {
->                 .enable_reg = 0x5004,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_iris_ahb_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &video_cc_iris_clk_src.clkr.hw,
-> @@ -141,7 +141,7 @@ static struct clk_branch video_cc_mvs0_axi_clk = {
->         .clkr = {
->                 .enable_reg = 0x800c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_mvs0_axi_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -156,7 +156,7 @@ static struct clk_branch video_cc_mvs0_core_clk = {
->         .clkr = {
->                 .enable_reg = 0x3010,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_mvs0_core_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &video_cc_iris_clk_src.clkr.hw,
-> @@ -174,7 +174,7 @@ static struct clk_branch video_cc_mvsc_core_clk = {
->         .clkr = {
->                 .enable_reg = 0x2014,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_mvsc_core_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &video_cc_iris_clk_src.clkr.hw,
-> @@ -192,7 +192,7 @@ static struct clk_branch video_cc_mvsc_ctl_axi_clk = {
->         .clkr = {
->                 .enable_reg = 0x8004,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_mvsc_ctl_axi_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> @@ -205,7 +205,7 @@ static struct clk_branch video_cc_sleep_clk = {
->         .clkr = {
->                 .enable_reg = 0x7034,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_sleep_clk",
->                         .parent_hws = (const struct clk_hw*[]){
->                                 &video_cc_sleep_clk_src.clkr.hw,
-> @@ -223,7 +223,7 @@ static struct clk_branch video_cc_venus_ahb_clk = {
->         .clkr = {
->                 .enable_reg = 0x801c,
->                 .enable_mask = BIT(0),
-> -               .hw.init = &(struct clk_init_data){
-> +               .hw.init = &(const struct clk_init_data){
->                         .name = "video_cc_venus_ahb_clk",
->                         .ops = &clk_branch2_ops,
->                 },
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
->
+A future patch series could add functionality to the driver to manage
+IOSC calibration at boot and during suspend/resume.
 
+It may be possible to support all of these hardware variants without
+adding this new driver, by adding them to the existing RTC clock
+provider, but I'm concerned about the complexity there, without any of
+the CCU abstraction.
+
+Changes in v3:
+ - Add/fix several maxItems attributes for clocks and clock-items
+ - Drop the SUNXI_CCU_MUX_HW_WITH_KEY macro, since it is no longer used.
+ - Also drop the patch adding the SUNXI_CCU_MUX_DATA_WITH_GATE macro.
+ - Rebase on v5.17-rc2 (CCU module support series was merged).
+ - Move IOSC calibration control to prepare/unprepare operations.
+ - Declare several `struct clk_init_data`s as static variables (instead
+   of as anonymous) so they can be modified from the probe function
+   without casting away const.
+ - Instead of creating two copies of clocks which may or may not have
+   muxes, change the number of parents to 1 in the non-mux case.
+ - Use a single CCU description for all variants.
+ - Use IS_REACHABLE to guard the call to sun6i_rtc_ccu_probe.
+ - Allow the driver to be built on !ARM64 (i.e. RISCV).
+ - Rebase example on top of driver changes, and drop the second example.
+
+Changes in v2:
+ - Combine "const"s to "enum" in the DT binding compatible property.
+ - Properly update the DT binding clocks and clock-names properties.
+ - Rebase on v2 of the CCU module support series.
+ - Load the CCU driver from the RTC driver, not as an OF provider.
+
+Samuel Holland (6):
+  dt-bindings: rtc: sun6i: Clean up repetition
+  dt-bindings: rtc: sun6i: Add H616, R329, and D1 support
+  rtc: sun6i: Enable the bus clock when provided
+  clk: sunxi-ng: mux: Allow muxes to have keys
+  clk: sunxi-ng: Add support for the sun6i RTC clocks
+  [DO NOT MERGE] clk: sunxi-ng: sun6i-rtc: Add support for H6
+
+ .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml |  84 +++-
+ drivers/clk/sunxi-ng/Kconfig                  |   5 +
+ drivers/clk/sunxi-ng/Makefile                 |   2 +
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.c          | 393 ++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun6i-rtc.h          |  15 +
+ drivers/clk/sunxi-ng/ccu_common.h             |   1 +
+ drivers/clk/sunxi-ng/ccu_mux.c                |   7 +
+ drivers/rtc/rtc-sun6i.c                       |  48 ++-
+ include/dt-bindings/clock/sun6i-rtc.h         |  10 +
+ include/linux/clk/sunxi-ng.h                  |   2 +
+ 10 files changed, 538 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun6i-rtc.h
+ create mode 100644 include/dt-bindings/clock/sun6i-rtc.h
 
 -- 
-With best wishes
-Dmitry
+2.33.1
+
