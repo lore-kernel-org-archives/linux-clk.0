@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394F6C4332F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 09:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E55C433FE
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 09:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349797AbiBCJrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Feb 2022 04:47:35 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42436 "EHLO
+        id S1349823AbiBCJrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Feb 2022 04:47:42 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42452 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349810AbiBCJrf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Feb 2022 04:47:35 -0500
+        with ESMTP id S230151AbiBCJri (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Feb 2022 04:47:38 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: kholk11)
-        with ESMTPSA id ABC8A1F45306
+        with ESMTPSA id DA3221F45305
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1643881654;
-        bh=0eDqvPEflRo8g7k3cDJMFx8JuULFPhHFEmjsSyhm084=;
+        s=mail; t=1643881657;
+        bh=JwV0A7bKfw2t49I+q52URU9G7qRHadOUm5Qr7PbD0Gk=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=BBHdCm7Q+XivOugEvd2+n8ApYZ1sJ/TyA2i6A2UqlsWvDeM7JDXpniybzWgddoEYF
-         kLb9pQpAaXK5iM/cP6f5yjzlzqScmYk3ymayuWKHAWrnsMGO9KvfAZGrqtZ9rO/AzN
-         bGyZXmcRH17SUM6d6dldRoLUhfh9ui08ygXvIwH46EOcngfMlMGZDuW6lWFcyyHzDG
-         Do5407jRemG3N0ReXbigjyVLKy8JXXBzQ3Dp+vQkvO5KeKuZD1IqgholWW9FgkWyC5
-         NezgXw9gtpinb559RAIjFWvfrqF5LnCXwu+UYT0iUEvQgKyWHCYiDuzaxlBmbkNfaZ
-         NicALLfEKO1GQ==
-Message-ID: <91d99498-be0c-41ea-8465-03cf5eecdf62@collabora.com>
-Date:   Thu, 3 Feb 2022 10:47:30 +0100
+        b=d1UzUIZvHUO59Gd/9Jqnj9c4N0bc3XXx/fnTcvlluuX743InESwIVwHI0WkfJcJLq
+         rwxiksuHSDqcn79L6PuxK7t3GmbqMl+vuNID+A3MF/Hd55hlQp95sn+eoPRCXs1RkP
+         EsaHTnlE0AaJkl9H0TrvZVTU4yFdEX+JgQwBSHgisBTaqXOVJLmoKRr6jc1f4WKvCh
+         K+RXKJNspFSx0uhbPxbo4xj7Z4tNgLWNdC6YBaoPhUHjDd4T4r2Pt4so+G21rX5LgL
+         p9QbTj9q/BxWBDHKSRig7k1KVXcf1DTbrhdElGGLMzr6ke1hM+uAEcth4xwfJcRfMo
+         mrB5VuJzapRDA==
+Message-ID: <ae5874a7-aa2f-e738-1d2d-884011d824b2@collabora.com>
+Date:   Thu, 3 Feb 2022 10:47:34 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.1
-Subject: Re: [PATCH v2 27/31] clk: mediatek: Unregister clks in
- mtk_clk_simple_probe() error path
+Subject: Re: [PATCH v2 25/31] clk: mediatek: pll: Implement error handling in
+ register API
 Content-Language: en-US
 To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -40,10 +40,10 @@ Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20220202134834.690675-1-wenst@chromium.org>
- <20220202134834.690675-28-wenst@chromium.org>
+ <20220202134834.690675-26-wenst@chromium.org>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220202134834.690675-28-wenst@chromium.org>
+In-Reply-To: <20220202134834.690675-26-wenst@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -51,14 +51,18 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Il 02/02/22 14:48, Chen-Yu Tsai ha scritto:
-> Until now the mediatek clk driver library did not have any way to
-> unregister clks, and so all drivers did not do proper cleanup in
-> their error paths.
+> The pll clk type registration function does not stop or return errors
+> if any clk failed to be registered, nor does it implement an error
+> handling path. This may result in a partially working device if any
+> step failed.
 > 
-> Now that the library does have APIs to unregister clks, use them
-> in the error path of mtk_clk_simple_probe() to do proper cleanup.
+> Make the register function return proper error codes, and bail out if
+> errors occur. Proper cleanup, i.e. unregister any clks that were
+> successfully registered, and unmap the I/O space, is done in the new
+> error path.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
