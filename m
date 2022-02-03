@@ -2,168 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE26C43217
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 02:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B41C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 08:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349013AbiBCCSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Feb 2022 21:18:07 -0500
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:43337 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349021AbiBCCSD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Feb 2022 21:18:03 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.west.internal (Postfix) with ESMTP id 8BFB72B001C0;
-        Wed,  2 Feb 2022 21:18:01 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 02 Feb 2022 21:18:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; bh=maCEeMW114688LGhZUXh1aNyGAyiVI
-        HXt4rdxe/VoDw=; b=F+f5FK5qTyyMNgna3BSpVupfP0HYFclzdKXQKrMVVA+a4P
-        j6+Vg/yo/jrfjO+uaIOrzkaGOx3vTCpe3Kk/BlY1oK/hQr6coWQc5jijJAS//vQ7
-        BnsBfCeSUeY6Le8JvQX7oh4hn2AbjqKO6x9nDInlVmxXYygCQHVglsQ9H/7whKDl
-        v3D0zfgAp4KH4UC5IjqAkjrWngLFe4lz/k6bPRyhdkOm09wB3F/1IGVpEGMwXiOV
-        Cn8kSXMVetdrrKA5Y4XyKuBrJSoV8mjTZnOkSQzycZ9/pb7IpeFt+nJyZGY4nWE7
-        QgQ527H6S46yNgE+9aQtb0GlUDpGfWyYOu8ZZ8JA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=maCEeM
-        W114688LGhZUXh1aNyGAyiVIHXt4rdxe/VoDw=; b=YVZe1VLXX/Fug6Q6vVzQdl
-        2R13W8v2rmw24HtGJjF9i0R7rNXlkjU+4MpRaD05ffvyyyrIAQ7lhiqioGZ+xFk1
-        B3KgN8j0p+Ho6Yijv2OEUbP4uDZQmB0XV86o4mN7hhrkdlcWSGlvWjtz5wCtxWDu
-        9xXaQDZkTXjVBXUh99UlE0VGeRiPzVyA1oWsDFFcb/HKm3cTwnHkjpy534nnYpTT
-        Kj0ehBpfGnWMLNJmkK5eTcyNDKwHd8Xi5fgbTCUJADNM48FfrT0eag0rerYZdLbT
-        xMeO0z5wTKffC1JBcXT/idK8QFl60sWC56zOnV4DIDVxKc1mwosGvXbeO4rWk9Yw
-        ==
-X-ME-Sender: <xms:WDv7YYKL2jNz8tJ2C_1X-hpsf2Y7kEYwzuT3MtX5TneCnmGrc4xyDQ>
-    <xme:WDv7YYJOMg0YzG1e_zXzW60gl1Xt3XklaAWVg7aDqpZVAk3qcaPeFkZuvHO7W1Zrl
-    YfnMETI0UY8A3DHkQ>
-X-ME-Received: <xmr:WDv7YYuRLOTEAv-8HCQ-0qrP0FMfhNHdubhkojehTEX-K9_x-j8k28DREsFq5dh2J-sFiIOOmHnayS1VjB6s8CEVoUgbwWiQOz0JjOPDcT8Oj3QgS-7KFWPbYPxnTuIU1zNzhw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrgeeigdeggecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghl
-    ucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuggftrf
-    grthhtvghrnhepudfhjeefvdfhgfefheetgffhieeigfefhefgvddvveefgeejheejvdfg
-    jeehueeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
-    epshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-X-ME-Proxy: <xmx:WTv7YVZGxCxTxui2FqdkoinOZUFanasEzrdy-eKTu1nXMdOsr6ISPQ>
-    <xmx:WTv7Yfb6Tg5a-pyKqGiDdUdS25Mw7I_yo2PWhQd1bDVh9o5uGQKqFw>
-    <xmx:WTv7YRB7yDxskKrWEkHIdWuGnC-jiz_fqBpkfl_fdiTS7oQE34SOng>
-    <xmx:WTv7YbquHLHHS8c6QCMF8feKGk63iSBQM8Q37KsDElQRENH0vBrzS0uQDJU>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 2 Feb 2022 21:18:00 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-sunxi@lists.linux.dev
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v3 6/6] [DO NOT MERGE] clk: sunxi-ng: sun6i-rtc: Add support for H6
-Date:   Wed,  2 Feb 2022 20:17:36 -0600
-Message-Id: <20220203021736.13434-7-samuel@sholland.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20220203021736.13434-1-samuel@sholland.org>
-References: <20220203021736.13434-1-samuel@sholland.org>
+        id S1349636AbiBCI4c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Feb 2022 03:56:32 -0500
+Received: from muru.com ([72.249.23.125]:45842 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1349628AbiBCI4b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Feb 2022 03:56:31 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 606BB80EE;
+        Thu,  3 Feb 2022 08:56:15 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH 0/3] Drop TI compatibility clocks
+Date:   Thu,  3 Feb 2022 10:56:15 +0200
+Message-Id: <20220203085618.16043-1-tony@atomide.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-H6 supports IOSC calibration and an ext-osc32k input. Unlike newer SoCs,
-it has a single parent for its fanout clock.
+Hi all,
 
-Add support for H6 in the CCU driver, replacing the support in the
-existing early OF clock provider.
+In order to prepare the TI clocks for fixing lots of devicetree warnings,
+let's first drop the now unused compatibility clocks.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
+The dra7 changes depend on my still pending omap-for-v5.17/fixes-not-urgent
+pull request that did not make it for v5.17-rc series so far.
 
-Changes in v3:
- - Rebase example on top of driver changes, and drop the second example.
+Regards,
 
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 15 +++++++++++++++
- drivers/rtc/rtc-sun6i.c              | 17 -----------------
- 2 files changed, 15 insertions(+), 17 deletions(-)
+Tony
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index a39670a7c446..712fda22efd5 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -295,6 +295,10 @@ static const struct sunxi_ccu_desc sun6i_rtc_ccu_desc = {
- 	.hw_clks	= &sun6i_rtc_ccu_hw_clks,
- };
- 
-+static const struct clk_parent_data sun50i_h6_osc32k_fanout_parents[] = {
-+	{ .hw = &osc32k_clk.common.hw },
-+};
-+
- static const struct clk_parent_data sun50i_h616_osc32k_fanout_parents[] = {
- 	{ .hw = &osc32k_clk.common.hw },
- 	{ .fw_name = "pll-32k" },
-@@ -307,6 +311,13 @@ static const struct clk_parent_data sun50i_r329_osc32k_fanout_parents[] = {
- 	{ .hw = &osc24M_32k_clk.common.hw }
- };
- 
-+static const struct sun6i_rtc_match_data sun50i_h6_rtc_ccu_data = {
-+	.have_ext_osc32k	= true,
-+	.have_iosc_calibration	= true,
-+	.osc32k_fanout_parents	= sun50i_h6_osc32k_fanout_parents,
-+	.osc32k_fanout_nparents	= ARRAY_SIZE(sun50i_h6_osc32k_fanout_parents),
-+};
-+
- static const struct sun6i_rtc_match_data sun50i_h616_rtc_ccu_data = {
- 	.have_iosc_calibration	= true,
- 	.rtc_32k_single_parent	= true,
-@@ -321,6 +332,10 @@ static const struct sun6i_rtc_match_data sun50i_r329_rtc_ccu_data = {
- };
- 
- static const struct of_device_id sun6i_rtc_ccu_match[] = {
-+	{
-+		.compatible	= "allwinner,sun50i-h6-rtc",
-+		.data		= &sun50i_h6_rtc_ccu_data,
-+	},
- 	{
- 		.compatible	= "allwinner,sun50i-h616-rtc",
- 		.data		= &sun50i_h616_rtc_ccu_data,
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index 35b34d14a1db..1a875a32357d 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -364,23 +364,6 @@ CLK_OF_DECLARE_DRIVER(sun8i_h3_rtc_clk, "allwinner,sun8i-h3-rtc",
- CLK_OF_DECLARE_DRIVER(sun50i_h5_rtc_clk, "allwinner,sun50i-h5-rtc",
- 		      sun8i_h3_rtc_clk_init);
- 
--static const struct sun6i_rtc_clk_data sun50i_h6_rtc_data = {
--	.rc_osc_rate = 16000000,
--	.fixed_prescaler = 32,
--	.has_prescaler = 1,
--	.has_out_clk = 1,
--	.export_iosc = 1,
--	.has_losc_en = 1,
--	.has_auto_swt = 1,
--};
--
--static void __init sun50i_h6_rtc_clk_init(struct device_node *node)
--{
--	sun6i_rtc_clk_init(node, &sun50i_h6_rtc_data);
--}
--CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_clk, "allwinner,sun50i-h6-rtc",
--		      sun50i_h6_rtc_clk_init);
--
- /*
-  * The R40 user manual is self-conflicting on whether the prescaler is
-  * fixed or configurable. The clock diagram shows it as fixed, but there
+
+Tony Lindgren (3):
+  clk: ti: Drop legacy compatibility clocks for am3
+  clk: ti: Drop legacy compatibility clocks for am4
+  clk: ti: Drop legacy compatibility clocks for dra7
+
+ drivers/clk/ti/Makefile          |   9 +-
+ drivers/clk/ti/clk-33xx-compat.c | 218 --------
+ drivers/clk/ti/clk-33xx.c        |   5 +-
+ drivers/clk/ti/clk-43xx-compat.c | 225 ---------
+ drivers/clk/ti/clk-43xx.c        |   5 +-
+ drivers/clk/ti/clk-7xx-compat.c  | 820 -------------------------------
+ drivers/clk/ti/clk-7xx.c         |   5 +-
+ drivers/clk/ti/clkctrl.c         |  33 +-
+ drivers/clk/ti/clock.h           |   3 -
+ include/dt-bindings/clock/am3.h  |  93 ----
+ include/dt-bindings/clock/am4.h  |  98 ----
+ include/dt-bindings/clock/dra7.h | 168 -------
+ 12 files changed, 15 insertions(+), 1667 deletions(-)
+ delete mode 100644 drivers/clk/ti/clk-33xx-compat.c
+ delete mode 100644 drivers/clk/ti/clk-43xx-compat.c
+ delete mode 100644 drivers/clk/ti/clk-7xx-compat.c
+
 -- 
-2.33.1
-
+2.35.1
