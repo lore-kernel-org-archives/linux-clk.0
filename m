@@ -2,444 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C956C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 11:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E35EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 14:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350149AbiBCLPs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Feb 2022 06:15:48 -0500
-Received: from esa.microchip.iphmx.com ([68.232.153.233]:39118 "EHLO
-        esa.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbiBCLPs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Feb 2022 06:15:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1643886948; x=1675422948;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AAcmv2fo6OL75pRx1mfyu3vn0ND8t36se1ZYyiiDvXQ=;
-  b=GUXjiyW0uqdyyYzPu9JMkUPzhfpqeOMCNguKDLdrInq6ExbKzRsd0xQu
-   CG6kkit01Ph6NSF4AVm5ySUVFPRAB/QoUSkUACZOPv8KCM3VF9z+uQxA7
-   R9EzP0fz8xpeM3cB/hdRnWYvAmT+26ka/ROIAJqyY9lazy7EJyL16e/OH
-   ija3IEaHEt6HAoE/BFRcfStrEeFSVCYRgjX2Co1PYnu5kHid6kHugA8lE
-   4hykqzzWoHD/IdrWjA4tAPjU3LO+rx20OZ9Vk0yDUQvYJC8wBI8dJmtwy
-   08TiyFh8XmjgXMfcD4GtrKW/TqlVpsMyHMRnylt9UhRD2veivUiEcDswW
-   A==;
-IronPort-SDR: 00rK0varM+iECrW0c+D6hIQtZLbgm7/K9i8e7b/w5A2WijhqqC/eJ77U7fAAiTquWabYiqAPMq
- M/10HH7mS5J31Zy//T5+qqIVgPSvRJZCKcqfpqisVZV72TWpVjcvfKI30maz6HQNGoInn8y8kx
- X14Tqc2LSO30mrAkDyEjS209lBbi48V9ln+NgOIhiiN2fbhVR2LXfEErsHRI1CQml9IVlSThdR
- VB8wtwlXPWpleU1jtEVjyVmg5Rgm2oyolMX1oZBZOZz44p5GfcEmGGjDgYzhQ/uJoFfs2zsf1y
- NmENMA7CeY0D5mKolUaCEKe6
-X-IronPort-AV: E=Sophos;i="5.88,339,1635231600"; 
-   d="scan'208";a="160966742"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Feb 2022 04:15:47 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 3 Feb 2022 04:15:47 -0700
-Received: from [10.12.82.10] (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Thu, 3 Feb 2022 04:15:45 -0700
-Message-ID: <d6a53528-8913-3655-223b-fa5a5ef3ea5c@microchip.com>
-Date:   Thu, 3 Feb 2022 12:15:45 +0100
+        id S1351113AbiBCOWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Feb 2022 09:22:09 -0500
+Received: from mout.gmx.net ([212.227.17.20]:56763 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235184AbiBCOWJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 3 Feb 2022 09:22:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1643898119;
+        bh=Q95YJP28mZgGg0t6civvU1EikTl0r744xu1IfdZHCAk=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=WqXepv0zrGYmITAccrZjDkqgoJyAwM0+smZ7JTAXMLsV/UeyPl5kBjOM8Wkryjnmf
+         fRS9XIqFmWzY7J0+bY3DH9QdW6nUeY+kv9EyxK0CcSFIomUE7+Mu1/EwW3IXWX2p7B
+         JMM0qmSxt4s4ztFttQCxavuDcNIwYwHoEXRnNUVA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([185.66.193.41]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MQ5vc-1mtZuI3iBE-00M4Sr; Thu, 03
+ Feb 2022 15:21:58 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH v2 0/4] clk drivers: Terminate clk_div_table with sentinel element
+Date:   Thu,  3 Feb 2022 15:21:49 +0100
+Message-Id: <20220203142153.260720-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: at91: clk-master: remove dead code
-Content-Language: en-US
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220203110202.18329-1-claudiu.beznea@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20220203110202.18329-1-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eH8qSdx3Bc59VEMHMpcwL0XOkQsD6fTF5VZ1W4SPuu0K5tdnCbH
+ wzXVCXZwq1kE3p8NZ/7alwh0B1MvhS2YTAuJpuMkG08r7oUDlqpuGfWCmGpFkDb69ifwwdB
+ FMK+60d/o5+qRWy/ykLMbMgJDV7Xcw6x0UfpwrcER82yIZy9LbE9IHLxyJdVqCE+rpV6NoS
+ p1wHA/586wfaNkh+1U7Rw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3+X7+i/f8X0=:h+UCp6V0x1YQB0pMr304Y3
+ DHgvKps8sqDViEf0mXs9C/1mODKHujVvgbzhnK8qSSPDZc2cE7XcPH7wM0nDk6RVAO9QYyC1O
+ Yh6/k1OWuvQC/mpo2KqTlHTkCuXABYaBUBnGivPYEmKRwybIiy81OZK3GRsq9OSxaqXeOOon5
+ cjelSzktJeMP8vCGs4ae0cROnm7t67xqo51qxudWVRM1BxUovymG+tIR7+Ad8iT7OwIcU4HYJ
+ ihLOfGb53t5mX/6TBr+Ds3c3zG7ysYsVRNtGugjsYtSEdQgWlRAvE5mOnZPRB1AYfTk7abT66
+ zNrrQe6gX+5A9T7q1wOuHCrbyxlBU9Q2k8w0dH46LPz3aj9aZTUKFMdLSIOHvx28i2YOGyX81
+ /syqe7Aop70Rd8OcDulX6h51Ihr+scUK9PXHfOUbytns+m8KHn6sn2iPwLt/Ah6FG1tvib7ch
+ XRGMI6ll9Q2rdmExzOxxzssFco04yl1lvN+8EaX1e950J795WmqIHMPpdFwJptxeQqyq76cCn
+ Of6llqQ4xY6zlKtt82QOP7EygfQF+67GJWHBhPyxs0VgKH4QeVssvju+4Hw4p2MhuapvbObpg
+ WapRuuUr/PifSJQGF6vGCqxLwKek3mCJ2otadiPMP3x5GUPlReLulB4LWV2zCZpsiYBkPxSsK
+ K7bh1yHyadMDUA1XL8JQ+D/eipI/yEdMVqL4OJ3SJdJj5w9N8SXGiuRuEIVbgqO/Z8Cf3v+9U
+ LWT8fAHhMcc3eeWSJy4yLnv4VzeX+rOFj3TgJQj8j5LKbkX1FeT+FQAf+HiBMEdhZW2VR7pW4
+ TyqJxvloxQHExsc9G4Hp+ljXsZZhpHfSkBhxhBWkvSVwY0tc+l3FUrkGVMp0eojtaciqxHrMh
+ giWR/+RrylQKk/8esSHWLR2tmCvL9U0MoclUv4ncB+Mxtv1Mh4EDEehcgRUFgKuFgvIxMsE7q
+ VROeuiNHvy6bLJLUC90K4WL4+dd6rco7Yf2Q/EZyoRKxoHYhoJHtuELw065Ryad5NX0/H87WT
+ AFbXYrzm6gtpFUK2kcjP0SzER1cuYHInvd9Q9p903npTIknU57yVGU7aY+o1+eGiVSuGyW8SI
+ 815b535q3a30tk=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/02/2022 at 12:02, Claudiu Beznea wrote:
-> Commit facb87ad7560 ("clk: at91: sama7g5: remove prescaler part of master
-> clock") removed the master clock's prescaler from clock tree of SAMA7G5
-> as it has been discovered that there is a hardware bug when trying to
-> change it at run-time (bug is described in description of
-> commit facb87ad7560 ("clk: at91: sama7g5: remove prescaler part of master
-> clock")). This was previously changed at CPUFreq driver request. Thus, with
-> commit facb87ad7560 ("clk: at91: sama7g5: remove prescaler part of master
-> clock") there is no need of code that handles run-time changes of master
-> clock's prescaler, thus remove this code.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+I noticed that some of the clk_div_tables in different drivers are not
+terminated with a sentinel element. This may cause the code in
+clk-divider.c to read garbage that happens to be beyond the end.
 
-It looks good to me:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+This patchset fixed all instances of this bug that I could find, except
+for a case in drivers/phy/ti/phy-j721e-wiz.c that is already fixed in
+linux-next:
+  https://lore.kernel.org/lkml/20220117110108.4117-1-kishon@ti.com/
 
-Thanks Claudiu.
-Best regards,
-   Nicolas
+v2:
+- Add Fixes tags
 
+Jonathan Neusch=C3=A4fer (4):
+  clk: actions: Terminate clk_div_table with sentinel element
+  clk: loongson1: Terminate clk_div_table with sentinel element
+  clk: hisilicon: Terminate clk_div_table with sentinel element
+  clk: clps711x: Terminate clk_div_table with sentinel element
 
-> ---
->   drivers/clk/at91/at91rm9200.c  |   3 +-
->   drivers/clk/at91/at91sam9260.c |   3 +-
->   drivers/clk/at91/at91sam9g45.c |   3 +-
->   drivers/clk/at91/at91sam9n12.c |   3 +-
->   drivers/clk/at91/at91sam9rl.c  |   3 +-
->   drivers/clk/at91/at91sam9x5.c  |   3 +-
->   drivers/clk/at91/clk-master.c  | 117 ++-------------------------------
->   drivers/clk/at91/dt-compat.c   |   3 +-
->   drivers/clk/at91/pmc.h         |   2 +-
->   drivers/clk/at91/sam9x60.c     |   3 +-
->   drivers/clk/at91/sama5d2.c     |   3 +-
->   drivers/clk/at91/sama5d3.c     |   3 +-
->   drivers/clk/at91/sama5d4.c     |   3 +-
->   13 files changed, 18 insertions(+), 134 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-> index fff4fdda974f..b174f727a8ef 100644
-> --- a/drivers/clk/at91/at91rm9200.c
-> +++ b/drivers/clk/at91/at91rm9200.c
-> @@ -143,8 +143,7 @@ static void __init at91rm9200_pmc_setup(struct device_node *np)
->   					   parent_names,
->   					   &at91rm9200_master_layout,
->   					   &rm9200_mck_characteristics,
-> -					   &rm9200_mck_lock, CLK_SET_RATE_GATE,
-> -					   INT_MIN);
-> +					   &rm9200_mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-> index 79802f864ee5..11550e50cd9f 100644
-> --- a/drivers/clk/at91/at91sam9260.c
-> +++ b/drivers/clk/at91/at91sam9260.c
-> @@ -419,8 +419,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
->   					   parent_names,
->   					   &at91rm9200_master_layout,
->   					   data->mck_characteristics,
-> -					   &at91sam9260_mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &at91sam9260_mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-> index 7ed984f8058c..8c9344451f46 100644
-> --- a/drivers/clk/at91/at91sam9g45.c
-> +++ b/drivers/clk/at91/at91sam9g45.c
-> @@ -154,8 +154,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
->   					   parent_names,
->   					   &at91rm9200_master_layout,
->   					   &mck_characteristics,
-> -					   &at91sam9g45_mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &at91sam9g45_mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
-> index 63cc58944b00..0bb19400d199 100644
-> --- a/drivers/clk/at91/at91sam9n12.c
-> +++ b/drivers/clk/at91/at91sam9n12.c
-> @@ -181,8 +181,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
->   					   parent_names,
->   					   &at91sam9x5_master_layout,
->   					   &mck_characteristics,
-> -					   &at91sam9n12_mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &at91sam9n12_mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-> index 4d4faf6c61d8..b992137bab02 100644
-> --- a/drivers/clk/at91/at91sam9rl.c
-> +++ b/drivers/clk/at91/at91sam9rl.c
-> @@ -123,8 +123,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
->   					   parent_names,
->   					   &at91rm9200_master_layout,
->   					   &sam9rl_mck_characteristics,
-> -					   &sam9rl_mck_lock, CLK_SET_RATE_GATE,
-> -					   INT_MIN);
-> +					   &sam9rl_mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-> index bd8007b4f3e0..3857db2e144b 100644
-> --- a/drivers/clk/at91/at91sam9x5.c
-> +++ b/drivers/clk/at91/at91sam9x5.c
-> @@ -201,8 +201,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
->   					   parent_names,
->   					   &at91sam9x5_master_layout,
-> -					   &mck_characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &mck_characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
-> index b2d0a7f4f7f9..164e2959c7cf 100644
-> --- a/drivers/clk/at91/clk-master.c
-> +++ b/drivers/clk/at91/clk-master.c
-> @@ -374,85 +374,6 @@ static void clk_sama7g5_master_best_diff(struct clk_rate_request *req,
->   	}
->   }
->   
-> -static int clk_master_pres_determine_rate(struct clk_hw *hw,
-> -					  struct clk_rate_request *req)
-> -{
-> -	struct clk_master *master = to_clk_master(hw);
-> -	struct clk_rate_request req_parent = *req;
-> -	const struct clk_master_characteristics *characteristics =
-> -							master->characteristics;
-> -	struct clk_hw *parent;
-> -	long best_rate = LONG_MIN, best_diff = LONG_MIN;
-> -	u32 pres;
-> -	int i;
-> -
-> -	if (master->chg_pid < 0)
-> -		return -EOPNOTSUPP;
-> -
-> -	parent = clk_hw_get_parent_by_index(hw, master->chg_pid);
-> -	if (!parent)
-> -		return -EOPNOTSUPP;
-> -
-> -	for (i = 0; i <= MASTER_PRES_MAX; i++) {
-> -		if (characteristics->have_div3_pres && i == MASTER_PRES_MAX)
-> -			pres = 3;
-> -		else
-> -			pres = 1 << i;
-> -
-> -		req_parent.rate = req->rate * pres;
-> -		if (__clk_determine_rate(parent, &req_parent))
-> -			continue;
-> -
-> -		clk_sama7g5_master_best_diff(req, parent, req_parent.rate,
-> -					     &best_diff, &best_rate, pres);
-> -		if (!best_diff)
-> -			break;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -static int clk_master_pres_set_rate(struct clk_hw *hw, unsigned long rate,
-> -				    unsigned long parent_rate)
-> -{
-> -	struct clk_master *master = to_clk_master(hw);
-> -	unsigned long flags;
-> -	unsigned int pres, mckr, tmp;
-> -	int ret;
-> -
-> -	pres = DIV_ROUND_CLOSEST(parent_rate, rate);
-> -	if (pres > MASTER_PRES_MAX)
-> -		return -EINVAL;
-> -
-> -	else if (pres == 3)
-> -		pres = MASTER_PRES_MAX;
-> -	else if (pres)
-> -		pres = ffs(pres) - 1;
-> -
-> -	spin_lock_irqsave(master->lock, flags);
-> -	ret = regmap_read(master->regmap, master->layout->offset, &mckr);
-> -	if (ret)
-> -		goto unlock;
-> -
-> -	mckr &= master->layout->mask;
-> -	tmp = (mckr >> master->layout->pres_shift) & MASTER_PRES_MASK;
-> -	if (pres == tmp)
-> -		goto unlock;
-> -
-> -	mckr &= ~(MASTER_PRES_MASK << master->layout->pres_shift);
-> -	mckr |= (pres << master->layout->pres_shift);
-> -	ret = regmap_write(master->regmap, master->layout->offset, mckr);
-> -	if (ret)
-> -		goto unlock;
-> -
-> -	while (!clk_master_ready(master))
-> -		cpu_relax();
-> -unlock:
-> -	spin_unlock_irqrestore(master->lock, flags);
-> -
-> -	return ret;
-> -}
-> -
->   static unsigned long clk_master_pres_recalc_rate(struct clk_hw *hw,
->   						 unsigned long parent_rate)
->   {
-> @@ -539,13 +460,6 @@ static void clk_master_pres_restore_context(struct clk_hw *hw)
->   		pr_warn("MCKR PRES was not configured properly by firmware!\n");
->   }
->   
-> -static void clk_master_pres_restore_context_chg(struct clk_hw *hw)
-> -{
-> -	struct clk_master *master = to_clk_master(hw);
-> -
-> -	clk_master_pres_set_rate(hw, master->pms.rate, master->pms.parent_rate);
-> -}
-> -
->   static const struct clk_ops master_pres_ops = {
->   	.prepare = clk_master_prepare,
->   	.is_prepared = clk_master_is_prepared,
-> @@ -555,25 +469,13 @@ static const struct clk_ops master_pres_ops = {
->   	.restore_context = clk_master_pres_restore_context,
->   };
->   
-> -static const struct clk_ops master_pres_ops_chg = {
-> -	.prepare = clk_master_prepare,
-> -	.is_prepared = clk_master_is_prepared,
-> -	.determine_rate = clk_master_pres_determine_rate,
-> -	.recalc_rate = clk_master_pres_recalc_rate,
-> -	.get_parent = clk_master_pres_get_parent,
-> -	.set_rate = clk_master_pres_set_rate,
-> -	.save_context = clk_master_pres_save_context,
-> -	.restore_context = clk_master_pres_restore_context_chg,
-> -};
-> -
->   static struct clk_hw * __init
->   at91_clk_register_master_internal(struct regmap *regmap,
->   		const char *name, int num_parents,
->   		const char **parent_names,
->   		const struct clk_master_layout *layout,
->   		const struct clk_master_characteristics *characteristics,
-> -		const struct clk_ops *ops, spinlock_t *lock, u32 flags,
-> -		int chg_pid)
-> +		const struct clk_ops *ops, spinlock_t *lock, u32 flags)
->   {
->   	struct clk_master *master;
->   	struct clk_init_data init;
-> @@ -599,7 +501,6 @@ at91_clk_register_master_internal(struct regmap *regmap,
->   	master->layout = layout;
->   	master->characteristics = characteristics;
->   	master->regmap = regmap;
-> -	master->chg_pid = chg_pid;
->   	master->lock = lock;
->   
->   	if (ops == &master_div_ops_chg) {
-> @@ -628,19 +529,13 @@ at91_clk_register_master_pres(struct regmap *regmap,
->   		const char **parent_names,
->   		const struct clk_master_layout *layout,
->   		const struct clk_master_characteristics *characteristics,
-> -		spinlock_t *lock, u32 flags, int chg_pid)
-> +		spinlock_t *lock)
->   {
-> -	const struct clk_ops *ops;
-> -
-> -	if (flags & CLK_SET_RATE_GATE)
-> -		ops = &master_pres_ops;
-> -	else
-> -		ops = &master_pres_ops_chg;
-> -
->   	return at91_clk_register_master_internal(regmap, name, num_parents,
->   						 parent_names, layout,
-> -						 characteristics, ops,
-> -						 lock, flags, chg_pid);
-> +						 characteristics,
-> +						 &master_pres_ops,
-> +						 lock, CLK_SET_RATE_GATE);
->   }
->   
->   struct clk_hw * __init
-> @@ -661,7 +556,7 @@ at91_clk_register_master_div(struct regmap *regmap,
->   	hw = at91_clk_register_master_internal(regmap, name, 1,
->   					       &parent_name, layout,
->   					       characteristics, ops,
-> -					       lock, flags, -EINVAL);
-> +					       lock, flags);
->   
->   	if (!IS_ERR(hw) && safe_div) {
->   		master_div = to_clk_master(hw);
-> diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-> index ca2dbb65b9df..8ca8bcacf66d 100644
-> --- a/drivers/clk/at91/dt-compat.c
-> +++ b/drivers/clk/at91/dt-compat.c
-> @@ -392,8 +392,7 @@ of_at91_clk_master_setup(struct device_node *np,
->   
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", num_parents,
->   					   parent_names, layout,
-> -					   characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto out_free_characteristics;
->   
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index 3a1bf6194c28..efe4975bddc3 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -175,7 +175,7 @@ at91_clk_register_master_pres(struct regmap *regmap, const char *name,
->   			      int num_parents, const char **parent_names,
->   			      const struct clk_master_layout *layout,
->   			      const struct clk_master_characteristics *characteristics,
-> -			      spinlock_t *lock, u32 flags, int chg_pid);
-> +			      spinlock_t *lock);
->   
->   struct clk_hw * __init
->   at91_clk_register_master_div(struct regmap *regmap, const char *name,
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index 5c264185f261..9ea4ce501bad 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -271,8 +271,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->   	parent_names[2] = "pllack_divck";
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 3,
->   					   parent_names, &sam9x60_master_layout,
-> -					   &mck_characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &mck_characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> index f479e39e3bb2..cfd0f5e23b99 100644
-> --- a/drivers/clk/at91/sama5d2.c
-> +++ b/drivers/clk/at91/sama5d2.c
-> @@ -242,8 +242,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
->   					   parent_names,
->   					   &at91sam9x5_master_layout,
-> -					   &mck_characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &mck_characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-> index 339d0f382ff0..7e93c6edf305 100644
-> --- a/drivers/clk/at91/sama5d3.c
-> +++ b/drivers/clk/at91/sama5d3.c
-> @@ -175,8 +175,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
->   					   parent_names,
->   					   &at91sam9x5_master_layout,
-> -					   &mck_characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &mck_characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
-> diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-> index 4af75b1e39e9..1a14a9bce308 100644
-> --- a/drivers/clk/at91/sama5d4.c
-> +++ b/drivers/clk/at91/sama5d4.c
-> @@ -190,8 +190,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
->   	hw = at91_clk_register_master_pres(regmap, "masterck_pres", 4,
->   					   parent_names,
->   					   &at91sam9x5_master_layout,
-> -					   &mck_characteristics, &mck_lock,
-> -					   CLK_SET_RATE_GATE, INT_MIN);
-> +					   &mck_characteristics, &mck_lock);
->   	if (IS_ERR(hw))
->   		goto err_free;
->   
+ drivers/clk/actions/owl-s700.c         | 1 +
+ drivers/clk/actions/owl-s900.c         | 4 ++--
+ drivers/clk/clk-clps711x.c             | 2 ++
+ drivers/clk/hisilicon/clk-hi3559a.c    | 4 ++--
+ drivers/clk/loongson1/clk-loongson1c.c | 1 +
+ 5 files changed, 8 insertions(+), 4 deletions(-)
 
+=2D-
+2.34.1
 
--- 
-Nicolas Ferre
