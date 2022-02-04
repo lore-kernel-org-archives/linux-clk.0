@@ -2,207 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D57C3527B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 14:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F9BC43217
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 16:18:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359441AbiBDOq7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 09:46:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359439AbiBDOq6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 09:46:58 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDC0C061714
-        for <linux-clk@vger.kernel.org>; Fri,  4 Feb 2022 06:46:58 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id x23so13230988lfc.0
-        for <linux-clk@vger.kernel.org>; Fri, 04 Feb 2022 06:46:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NscpyK0buF1esZkGVw7YGC7D0IZRioFEiEIVQa9+trk=;
-        b=wbrZgVCHOlYdehazV9tmDN39xAHuYi+3rNFSrkcCq9VN01OvR2OTPSZPG8CyIiKA8G
-         DSNHTLRYtsQvq+cXV+9v4ApX5ffBBzhqWhIG9g0JMz3ekQsAPADL5OifjqkIiA4DVIHN
-         JhJZ0MNFw7g4ChZDDTvbhYvB1wi0/gGciHVY6fUDT/u0J1oAH1IsL+jMy62Zs986z7gq
-         dlS4joOzvAE6h+xri4w9QS2H2/ss2fX1tYkn7aBHojoI0UE/29KAsRa54ZIw2ikpcyJS
-         ySjHb2XHrYO/qSNK0lm01Hi/DYNWQDFBAnb4HJvCO67EuObEL1GumW+C0dnOVfeYW7j6
-         Roiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NscpyK0buF1esZkGVw7YGC7D0IZRioFEiEIVQa9+trk=;
-        b=yCvrr5AWjKWDhpqsYqJXNTGaJ5W7Tjit1m2L0++iZUQbSIKiwF1YOZ2OkWiBRd0Xw9
-         DOoXdqEh6FzJwcrO9h181UEg4kBjVwUdPNcGRQCKdul3guR50sdDWVByYH77JMUvhLBr
-         2g+4u1+MfBOLrXIkY+bKxsEcj6U9+mTic7YUchK2c7GUpYwe/Ywe29B+CEoX0nvXPQF0
-         NcIuilog7aXhDHaLjRVEd+ehFfz/eKgk/KvR5qXFqC45aYuI3p5CI/Jp6JVL4vbfkjog
-         DmVNGg7NJWOsnGSIEj+2yBvpgdeDKQA0/nlBN2XnYEPlGMDM5uhu5CyvFTnXlUH2xqA8
-         LkTg==
-X-Gm-Message-State: AOAM533R+DQtzFtM+HBSzJlkluRywXahb6OirCCbvSGaaXZeh28+7/zW
-        OnmFzruZBJX5++bsWUlL/OVuHA==
-X-Google-Smtp-Source: ABdhPJxS9geMjJJ4T0bw6fthvvK2zsIEnWkglafbati+yS00A5lLdU81L665O92HzIUDSHK+IBye+w==
-X-Received: by 2002:a05:6512:2804:: with SMTP id cf4mr2498975lfb.412.1643986016828;
-        Fri, 04 Feb 2022 06:46:56 -0800 (PST)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id y23sm348222lfb.2.2022.02.04.06.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Feb 2022 06:46:56 -0800 (PST)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        id S1376431AbiBDQST (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 11:18:19 -0500
+Received: from smtpout1.mo3004.mail-out.ovh.net ([79.137.123.219]:48897 "EHLO
+        smtpout1.mo3004.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234695AbiBDQST (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 11:18:19 -0500
+Received: from pro2.mail.ovh.net (unknown [10.109.143.120])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id D1098241C84;
+        Fri,  4 Feb 2022 16:18:14 +0000 (UTC)
+Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
+ (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Fri, 4 Feb
+ 2022 17:18:13 +0100
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <geert+renesas@glider.be>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 11/11] PCI: qcom: Add SM8450 PCIe support
-Date:   Fri,  4 Feb 2022 17:46:45 +0300
-Message-Id: <20220204144645.3016603-12-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
-References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 0/6] ARM: r9a06g032: add support for the watchdogs
+Date:   Fri, 4 Feb 2022 17:17:58 +0100
+Message-ID: <20220204161806.3126321-1-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.125.132.78]
+X-ClientProxiedBy: DAG2EX1.emp2.local (172.16.2.11) To DAG1EX2.emp2.local
+ (172.16.2.2)
+X-Ovh-Tracer-Id: 5892678638484994517
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrgeelgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepjedugfffleelheehveevuedtjeffgfejkedukeekudfguedtfeefuefhueevheeinecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On SM8450 platform PCIe hosts do not use all the clocks (and add several
-additional clocks), so expand the driver to handle these requirements.
+Hi all,
 
-PCIe0 and PCIe1 hosts use different sets of clocks, so separate entries
-are required.
+This series adds support for the watchdog timers of the RZ/N1.
+The watchdog driver (rzn1-wdt.c) is derived from the driver available at
+https://github.com/renesas-rz/rzn1_linux.git with a few modifications
+(devm watchdog API usage and WDIOF_MAGICCLOSE option)
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 55 ++++++++++++++++++++------
- 1 file changed, 42 insertions(+), 13 deletions(-)
+In order to be able to reset the board when a watchdog timer expires,
+the RSTEN register must be configured. This is done in the clock
+driver of the r9a06g032. The rationnal is that this driver is the only one
+that handles the sysctrl for this platform and there are a couple of other
+clock drivers that also handle resets/reboot. I intend to later post
+another patch to add software-triggered reboot capability that will
+leverage this change.
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 6034a933814d..174a650ffbbb 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -160,7 +160,7 @@ struct qcom_pcie_resources_2_3_3 {
- 
- /* 6 clocks typically, 7 for sm8250 */
- struct qcom_pcie_resources_2_7_0 {
--	struct clk_bulk_data clks[7];
-+	struct clk_bulk_data clks[9];
- 	int num_clks;
- 	struct regulator_bulk_data supplies[2];
- 	struct reset_control *pci_reset;
-@@ -189,7 +189,10 @@ struct qcom_pcie_ops {
- 
- struct qcom_pcie_cfg {
- 	const struct qcom_pcie_ops *ops;
-+	bool has_tbu_clk;
- 	bool has_ddrss_sf_tbu_clk;
-+	bool has_aggre0_clk;
-+	bool has_aggre1_clk;
- };
- 
- struct qcom_pcie {
-@@ -1113,6 +1116,7 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
- 	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
- 	struct dw_pcie *pci = pcie->pci;
- 	struct device *dev = pci->dev;
-+	unsigned int idx;
- 	int ret;
- 
- 	res->pci_reset = devm_reset_control_get_exclusive(dev, "pci");
-@@ -1126,18 +1130,22 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
- 	if (ret)
- 		return ret;
- 
--	res->clks[0].id = "aux";
--	res->clks[1].id = "cfg";
--	res->clks[2].id = "bus_master";
--	res->clks[3].id = "bus_slave";
--	res->clks[4].id = "slave_q2a";
--	res->clks[5].id = "tbu";
--	if (pcie->cfg->has_ddrss_sf_tbu_clk) {
--		res->clks[6].id = "ddrss_sf_tbu";
--		res->num_clks = 7;
--	} else {
--		res->num_clks = 6;
--	}
-+	idx = 0;
-+	res->clks[idx++].id = "aux";
-+	res->clks[idx++].id = "cfg";
-+	res->clks[idx++].id = "bus_master";
-+	res->clks[idx++].id = "bus_slave";
-+	res->clks[idx++].id = "slave_q2a";
-+	if (pcie->cfg->has_tbu_clk)
-+		res->clks[idx++].id = "tbu";
-+	if (pcie->cfg->has_ddrss_sf_tbu_clk)
-+		res->clks[idx++].id = "ddrss_sf_tbu";
-+	if (pcie->cfg->has_aggre0_clk)
-+		res->clks[idx++].id = "aggre0";
-+	if (pcie->cfg->has_aggre1_clk)
-+		res->clks[idx++].id = "aggre1";
-+
-+	res->num_clks = idx;
- 
- 	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
- 	if (ret < 0)
-@@ -1178,6 +1186,9 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
- 		goto err_disable_clocks;
- 	}
- 
-+	/* Wait for reset to complete, required on SM8450 */
-+	usleep_range(1000, 1500);
-+
- 	/* configure PCIe to RC mode */
- 	writel(DEVICE_TYPE_RC, pcie->parf + PCIE20_PARF_DEVICE_TYPE);
- 
-@@ -1427,15 +1438,31 @@ static const struct qcom_pcie_cfg ipq4019_cfg = {
- 
- static const struct qcom_pcie_cfg sdm845_cfg = {
- 	.ops = &ops_2_7_0,
-+	.has_tbu_clk = true,
- };
- 
- static const struct qcom_pcie_cfg sm8250_cfg = {
-+	.ops = &ops_1_9_0,
-+	.has_tbu_clk = true,
-+	.has_ddrss_sf_tbu_clk = true,
-+};
-+
-+static const struct qcom_pcie_cfg sm8450_pcie0_cfg = {
-+	.ops = &ops_1_9_0,
-+	.has_ddrss_sf_tbu_clk = true,
-+	.has_aggre0_clk = true,
-+	.has_aggre1_clk = true,
-+};
-+
-+static const struct qcom_pcie_cfg sm8450_pcie1_cfg = {
- 	.ops = &ops_1_9_0,
- 	.has_ddrss_sf_tbu_clk = true,
-+	.has_aggre1_clk = true,
- };
- 
- static const struct qcom_pcie_cfg sc7280_cfg = {
- 	.ops = &ops_1_9_0,
-+	.has_tbu_clk = true,
- };
- 
- static const struct dw_pcie_ops dw_pcie_ops = {
-@@ -1541,6 +1568,8 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-sdm845", .data = &sdm845_cfg },
- 	{ .compatible = "qcom,pcie-sm8250", .data = &sm8250_cfg },
- 	{ .compatible = "qcom,pcie-sc8180x", .data = &sm8250_cfg },
-+	{ .compatible = "qcom,pcie-sm8450-pcie0", .data = &sm8450_pcie0_cfg },
-+	{ .compatible = "qcom,pcie-sm8450-pcie1", .data = &sm8450_pcie1_cfg },
- 	{ .compatible = "qcom,pcie-sc7280", .data = &sc7280_cfg },
- 	{ }
- };
+
+Jean-Jacques Hiblot (5):
+  clk: renesas: r9a06g032: Enable the watchdog reset sources
+  dt-bindings: clock: r9a06g032: Add the definition of the watchdog
+    clock
+  dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
+  ARM: dts: r9a06g032: Add the watchdog nodes
+  ARM: dts: r9a06g032-rzn1d400-db: Enable watchdog0 with a 10s timeout
+
+Phil Edworthy (1):
+  watchdog: Add Renesas RZ/N1 Watchdog driver
+
+ .../bindings/watchdog/renesas,wdt.yaml        |   4 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |   5 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  16 ++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  33 +++
+ drivers/watchdog/Kconfig                      |   8 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/rzn1_wdt.c                   | 197 ++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h |   1 +
+ 8 files changed, 265 insertions(+)
+ create mode 100644 drivers/watchdog/rzn1_wdt.c
+
 -- 
-2.34.1
+2.25.1
 
