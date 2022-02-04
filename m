@@ -2,123 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74EAAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Feb 2022 17:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4FEC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 05:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353435AbiBCRwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Feb 2022 12:52:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48824 "EHLO
+        id S238179AbiBDF04 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 00:26:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344584AbiBCRvl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Feb 2022 12:51:41 -0500
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB4DC061753;
-        Thu,  3 Feb 2022 09:51:10 -0800 (PST)
-Received: by mail-lf1-x135.google.com with SMTP id k13so7571908lfg.9;
-        Thu, 03 Feb 2022 09:51:09 -0800 (PST)
+        with ESMTP id S233178AbiBDF0z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 00:26:55 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8FBC061714;
+        Thu,  3 Feb 2022 21:26:55 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id i187-20020a1c3bc4000000b0034d2ed1be2aso8660623wma.1;
+        Thu, 03 Feb 2022 21:26:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c40bPrHQjIbgf0eWeT2zwsJ4RQU/yT+6ZwMVByjiTgI=;
-        b=VlXK0AMpTH0qhx6en1xgTax8rQm7INYcf+/H+QO1D3+gRrPsazrMxrDydLT42k13jh
-         nUCmQqMtGq8RLgBi06k6w/dUnZR19gpmfZXQSlch7P780eb9z/F+o96bsjDR+6NiJivn
-         FckpEcHjELx1VWq8lM3kw3MKLKlPhZ5IaqC5tNxySysLzAFvekO26FbtyWF8lWov9kYM
-         G/+yq3y98JuD/oxPlc3GQ8QE2XbzxD9k4shlm75Fobkqk1JgCiP+WAlKyVNv6edgsacp
-         BUknqEdlETyXIkqSGsDSU+9/iectZv7PRWhPqNfd/rfvkEimlfDB9WyFAj8MWAcRb1/Q
-         lFeg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sQSTJ/xqHtfSNCK/vEHaXNv6XV+rG+tvRCgBKYP3zfo=;
+        b=Ab3df18tFyMLpT3jEcbWqVztPqkQA6Smrypsare7yX/wecSluDyNHTCUug09Lke/RD
+         zl1uymdkmSQ+UzdqfbMMxNGhJo/MiyV+zjKx9ekWnzsNsQ1SfJYioEJbkrcNq5bhklR/
+         E6TKFkGoGtAKp06/PKb0d7xEZHdGI2Fe6Tefryt5RWdYMJYrqEBweQ6nYXpswE1sw1Vh
+         IdlAG6J2m4m5CrGVZl0H8Tl/+e7/VT88uInRogHYw+H5gvlRZqZPyPa0Yns7t1HaEeyM
+         u4FSpTHnuBpvPY0uvDNIBeQjHblZMYEEuiXIrTpLoB9SZ0whnugIkVsqshejNwmB2XtT
+         I/Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c40bPrHQjIbgf0eWeT2zwsJ4RQU/yT+6ZwMVByjiTgI=;
-        b=bJ/57GxL0zxsgEj9H66RG5WgN0fNaxOFgjVj7lHxQtqT5JwChj//Kdl0FN0sGjnJee
-         7tPCIjUvw/CZNtPFY+XdW0UB8iFkIRxlccNaYCr+wWu+xdxNIFZB1dCw6SXihABvtSHu
-         3wliWMMHfqkM4Lr4O54mJauk+MFsAV3NLeKEm5zh6ZGBLZrinXyjB0DzWlbXEGgT3rYX
-         4VIFSn0RIWQrlv2wKIz9TYMFlRJ4DIwcP8MIge4t53p2BwWlB0b2tle49G+DFrVG56K+
-         5aV8WV4tiSEUg7QopIjVrJnCNVg260m84IKAlenTUiEByC0djPaGSgXkXmv8iuwLNATH
-         m4Lg==
-X-Gm-Message-State: AOAM531s1LhmLgM0ZD+pDQ/SICCes3zBS+/H8MnMoUSC8P4ltC4csUfv
-        9NlP57hKf0lyNQffxNTUEaI=
-X-Google-Smtp-Source: ABdhPJyi9FtMW5FIeWes6Fh5+v4jj6jJF+9c4Bne95ATRab6MsvPKb383kpap7zsh4dEvWwcd9dsBg==
-X-Received: by 2002:a05:6512:68e:: with SMTP id t14mr28263542lfe.366.1643910668248;
-        Thu, 03 Feb 2022 09:51:08 -0800 (PST)
-Received: from orome ([193.209.96.43])
-        by smtp.gmail.com with ESMTPSA id 8sm3857623lfq.200.2022.02.03.09.51.06
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sQSTJ/xqHtfSNCK/vEHaXNv6XV+rG+tvRCgBKYP3zfo=;
+        b=Zm9gNf/OECrWAZYCxywED5DMR0fhHZACgxiTjw9p+T2DRobe+peRlbLCfM41VJ54T4
+         eiweBRd/yXviavYWSa0+GjQnZs2CKxxkYJGLrlBLoaIrDaW7ey0zl+yU89/CLPvZOGuk
+         fC475OHkfRbKAaX7l/9cENIXyDar8ikq/W2tylcDI0tiACnvwplB4MUGnPHFYP7AuKJb
+         AI37Uv60RCEZNxXkhqx+QAE+orZzgqkSdjLaRzqJKUz7xHBhx6tHLKN2D3njkdZKpZZv
+         F+ov6Z+rZe1pU79AhyKJQ8n2WzAIXf1eLivgMaduWhWCWNg9DsZ7L7hBJ/CmbBe2jICD
+         BBMA==
+X-Gm-Message-State: AOAM532RbiygsFh/pLW/nexmx4xE4LJcWjkeZdR+V8hBmLW89/ihJgWb
+        25lD9L4ad4uIwJ6aK3LrjIXLbjmyFo4ZXs7k
+X-Google-Smtp-Source: ABdhPJyjRVjACBFqcbKsVHNb03Pd1eB2QKXzmAdNqYY7Qk+wwuDV1UYLJds8ImGOj774s9MXUIDIbQ==
+X-Received: by 2002:a7b:c929:: with SMTP id h9mr768565wml.176.1643952413713;
+        Thu, 03 Feb 2022 21:26:53 -0800 (PST)
+Received: from hp-power-15.promwad.corp (mm-89-21-212-37.vitebsk.dynamic.pppoe.byfly.by. [37.212.21.89])
+        by smtp.gmail.com with ESMTPSA id n5sm588145wmq.43.2022.02.03.21.26.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Feb 2022 09:51:07 -0800 (PST)
-Date:   Thu, 3 Feb 2022 18:51:04 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v16 33/40] soc/tegra: pmc: Enable core domain support for
- Tegra20 and Tegra30
-Message-ID: <YfwWCBzuN5q0JGm8@orome>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-34-digetx@gmail.com>
+        Thu, 03 Feb 2022 21:26:53 -0800 (PST)
+From:   Siarhei Volkau <lis8215@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org, Siarhei Volkau <lis8215@gmail.com>
+Subject: [PATCH 0/1] clk: jz4725b: fix mmc0 clock gating
+Date:   Fri,  4 Feb 2022 08:26:40 +0300
+Message-Id: <20220204052641.538970-1-lis8215@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="8ffx5k3tX5AIfR+/"
-Content-Disposition: inline
-In-Reply-To: <20211130232347.950-34-digetx@gmail.com>
-User-Agent: Mutt/2.1.5 (31b18ae9) (2021-12-30)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The mmc0 clock gate bit was mistakenly assigned to "i2s" clock.
+You can find that the same bit is assigned to "mmc0" too.
+It leads to mmc0 hang for a long time after any sound activity
+also it  prevented PM_SLEEP to work properly.
+I guess it was introduced by copy-paste from jz4740 driver
+where it is really controls I2S clock gate.
 
---8ffx5k3tX5AIfR+/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Siarhei Volkau (1):
+  clk: jz4725b: fix mmc0 clock gating
 
-On Wed, Dec 01, 2021 at 02:23:40AM +0300, Dmitry Osipenko wrote:
-> All device drivers got runtime PM and OPP support. Flip the core domain
-> support status for Tegra20 and Tegra30 SoCs.
->=20
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/soc/tegra/pmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/ingenic/jz4725b-cgu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Applied now. I'll give it a few days in linux-next and will then send a
-PR with this for ARM SoC.
+-- 
+2.35.1
 
-Thierry
-
---8ffx5k3tX5AIfR+/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmH8FggACgkQ3SOs138+
-s6FO5w//cPW87rvUKeQQiBIG3MKYHivxZPlxXlkfRG5W+Y9oMFE5HyfE03v28G1S
-qcGQX+fjbKaISc+4hOem3NaDKKlpItUVQUD8akNUSHoZLX3SYrNQ/v4ZNqRKjrGg
-bkZTolF7BsabsFq84dlnpUJN6JPIdHaaaPiq2btwqSf1ubAW9JgA613VYHlG/+me
-mVkYI84z2K2kvOevWtk44pubJmfPPea53g4MP2TFtXYtK7NvdX+VWpG89ZazJmUq
-cGJpNrtIDmjL/aYbmxWi0nQvv3JKp4aO2MvjMvV4ZEcl25VccIP4a9NuJXj3kCe3
-P62k+Yv1DJWkTOpSXx7NfzAl3iTkx7hTx6WlNBZDD9uanine+ZGmRZNR17q84zN/
-CJstSdhkyfhWtddP8JV/SEODRUXk936eAk8cQTNPUDtvCGu1Xr43QoYXCFGxpeD6
-MUUeRYyVQDuCo2UmeVqNNXS/5kvyTlE/Qr4xKmw+hLe0fZOVSAUt9o8kqRV6NkMq
-wqremWTw1FmAYzJnsgfDRnY5SlPeCJFBPxH+LkXDzEOsAmIMYeYi0qykqGGkwPQA
-BYOWaXKMggviplovauBvfRKTVCsKnnxgeRDbcwNX8Dn/uwwH4tHHQjzB7A7domEB
-RJkbnuYFInpC7nNrtcT1QedT+G7nVsDLwqW3f682nUcDnq9DYxs=
-=IVU8
------END PGP SIGNATURE-----
-
---8ffx5k3tX5AIfR+/--
