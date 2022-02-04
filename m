@@ -2,199 +2,725 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589F8C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 11:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17733C433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 13:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244661AbiBDLKq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 06:10:46 -0500
-Received: from mail-tycjpn01on2096.outbound.protection.outlook.com ([40.107.114.96]:8451
-        "EHLO JPN01-TYC-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1346662AbiBDLKq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Feb 2022 06:10:46 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dsD9Bul4cCjIlBgJoNltMNtsfkGsS/hqqkp0weG82uewf+mwuh7YGramC6o3Tw5dJiOt+LdWefRTLpusC5FQOTM+G38ZdC3d0vVRh+Exc+T6VYwbp26MmTFN5nlFGLAQAVm4RFGUASFJ+GyrLl6x7UEvh7dVBvjfiyZBtCybXlMDqcfyIGzsalKgIvm53ahnBP9W9KYs7OEOWeyx9D1lSBjvsWhHHvTkqW0/9ZgjM2t0Tw+cpmMcj757xfAcPJienscZij9RnTgkKsnlqfx+9LOjENirhLAZBy2V84G5iFAbbDbamnfcr2wR5q8O4T34Tjd2ROs0oddafVilyoZtJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y15MOwSQWKdD0/e71SE1WZQC8qHUJF5/eMwQr+SGi7A=;
- b=U1OSA749nB74mAmPtZcptVq5jR0nsLRr7zHURVD1Tf4LXRt86J+6Pn92QMYfMj6mpq6Ep45gYgNGXc90JDWSJN5+Dukdw0hwLHp0/X/HcTSiIi6/zIhla0MvntWgCuPMT3Do4AcXXmX1AvqxODNAHlqoa+v64K+cjQGXZPPloFDjlMyq1FdPAbjYh3TcC3a2l3k/j3CAKOlOVJUg1J11kX0v8PoO6WJgBUPwsGyLkh5KEfTk088E2bJ4Of7ZI1pBmcYGIwc/jG+0Pk0NTmzcR2h4E7fk77An/RoN5h8aCsEoXGlZXBChIXUsp1puVfQuWAmEQbxJMoEStHuT7+9QyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y15MOwSQWKdD0/e71SE1WZQC8qHUJF5/eMwQr+SGi7A=;
- b=m5BUXzFA3V0Hmg3/Gy7S18kIkPBoqegpOQkK9AV9dHYquYlhhLkz0dD2mqql9cKhcfWbHSPUJ9OubQDOHv6GWB/k15HByC2ZpaGY/+YnIC93yopyQcqmpCU1I92A56N1GKxcXLRwVPVt1sdQ7Ro5HbOw7UmXgpoCCC08c/whHDU=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TY2PR01MB2012.jpnprd01.prod.outlook.com (2603:1096:404:d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4951.12; Fri, 4 Feb
- 2022 11:10:43 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3847:4115:3fbe:619]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::3847:4115:3fbe:619%8]) with mapi id 15.20.4951.014; Fri, 4 Feb 2022
- 11:10:43 +0000
+        id S230490AbiBDNwa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 08:52:30 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:26533 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S240976AbiBDNw1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 08:52:27 -0500
+X-IronPort-AV: E=Sophos;i="5.88,342,1635174000"; 
+   d="scan'208";a="109503486"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 04 Feb 2022 22:52:26 +0900
+Received: from localhost.localdomain (unknown [10.226.92.77])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2DFE74226EAC;
+        Fri,  4 Feb 2022 22:52:23 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v3] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
-Thread-Topic: [PATCH v3] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
-Thread-Index: AQHYGR5PogGHqzKLYUK0CpovjKFmF6yDJE0AgAAY0tA=
-Date:   Fri, 4 Feb 2022 11:10:43 +0000
-Message-ID: <OS0PR01MB5922BACF003D7DA3B0C967C086299@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20220203165130.7206-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdWahedJivtbT3USgzgmiT-9+hkyvjAPsMNr8jGHt2quPw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWahedJivtbT3USgzgmiT-9+hkyvjAPsMNr8jGHt2quPw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 01f84e75-f799-4817-705c-08d9e7cefc8f
-x-ms-traffictypediagnostic: TY2PR01MB2012:EE_
-x-microsoft-antispam-prvs: <TY2PR01MB20125C7DFFD4199CAA295A7E86299@TY2PR01MB2012.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jTUCNWcER9pLuanqPmR7lIjlohY8HrNgp5H53RcngMy3b6bTG1peIUZKcNYVlh3S/gglcqZxkFWdb5qxNsl8NGTohMLQVo3tdgIazr5VjRAOv6ZhPL/E14kG3V6DQjRULQhUwronq6EHFScgY6tJgicSPfufggnVjch4b/ShGtAY5xlqCEXWKIqMaH0sq/U6nlwMH+QpqMaWqBQ3TucEhsA+Eg8TrMHwH9anNrid9XXclJmjWuSDwO6Qp0cCU/GqDI9fNxpaCtw8eGoiiapqaoCOOkXnQO5iC04zZuwknV2M96Sp7aGrpTgShIAcfaIiC0ZrlerD6DbHmOGxUVCm82ybfG2auo57zLx7omn1ZP4xUOJgflXFFqjZzynJ4JrO7mORu5V9intD7FONGAEjU6L3otwRz/a+/PEie9m2qD5mOU3GM+RdfY7TsEJFonjdoWNQOF6WGv5K8Fv3HQ6sv8HxrxK3em1e3BX2cTVNhf5Wa7XhORnstfLl8PrCH/E0iwfGrNqt9KQsvZSOPldDsoduqbEf9+1hHpS6J3w9b78N+VLpAPL+n6do2ZW8zmdSXeFSJwAQ76bGyG2sH2rpPglGrtD7ZUaOin+3XUrqiiBPbytybMyi/ZobrXPTJAPokHCgAkA6/gVuFulEd4xQxAVvorLqOGbuj6tAd/K+Df53Yf/5xP0EGO6qXTtETl0FEMoY9PoyqK2TL4B5FeU8Wg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(38100700002)(76116006)(52536014)(122000001)(38070700005)(6916009)(66946007)(8676002)(4326008)(5660300002)(83380400001)(54906003)(2906002)(55016003)(8936002)(26005)(86362001)(66556008)(508600001)(9686003)(71200400001)(66446008)(66476007)(64756008)(6506007)(53546011)(7696005)(186003)(33656002)(107886003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VHhSVDZidGFNQmN0VGp3SUlSNnlyTnZSSExacU1IbndmbnlmYm9YcGJwVVh6?=
- =?utf-8?B?TGJuaGZ6NHg4WmRsemhPVm82Ty9BQUpOSXdYYmlMNzAwb3lSWTZxWVBVS3E4?=
- =?utf-8?B?QVZQT0dQcDljWUZPRHFRMVp2Zk1DcEpXUzVLTExxZE90Qm10ZmU2NjV5eDlU?=
- =?utf-8?B?dGhJUWtUVTVXOGEvRU9EMHFMcVhTbFJiZWtPZTdoWGxBVzE1NEpIaGxkNjZX?=
- =?utf-8?B?WUNQeGtEK1dGTWg4eGFuMmtxc003NVdPNUhUMUR4YmxMMjRZM1d3QkR3Ni9r?=
- =?utf-8?B?RkEveVV3QnZjNEdkUk1uQU1XcmdUS3RXYms5SWVlUkNKMDM1R3pZc0ZWL21o?=
- =?utf-8?B?Ny9XOEZENk1IUXZGNkU2Mlc2TlYrNk9XOXhrOEVta1dIdDM3Y0hmMGYyTzZM?=
- =?utf-8?B?Q2FDMHR3WTQwMjQvVmc4YTZGRDlETFg0ZW5iT1NoZjh1WXdza2ltZ3E5blFY?=
- =?utf-8?B?bFY3Y1ZDTGdYWnhHTlNPbG1IMndQNFBpby8vTGtRM2s5a3JFMmxSbEFMVWtO?=
- =?utf-8?B?SmhDTnFBUVJtWGZWMGErcTVFZ04xdEsvNnpSSUxKVlpiWE9VbElFelRxVDl1?=
- =?utf-8?B?aXlhS2JWOWR1d2ptblE4dmh2VGNudVVJTkIwenRncjllUlh2cEVKVUQxWTBy?=
- =?utf-8?B?a2xtUUpmbmhTMVNQMGxBbDQ5RjZTT2pPbUdOYXFReHZyQ2FpSmNuVXBIeWR1?=
- =?utf-8?B?TW1KaDRDaEF6V1JPS3VUb0V4VDhzZERBcUZlU2JQZFY1NHA5cGYxY0hrRkxt?=
- =?utf-8?B?eHArTFdLZ0NESXAwY2IyNFlza1dBc1JpTzBaVlRzSncwUEJhejc1VXhkSHFv?=
- =?utf-8?B?SlZiYmQ3WERJZHgrZDR4OEo2a1lTcysrOTBaWlZGcDl5TTd4VUZIMjR1c1RJ?=
- =?utf-8?B?eStXdGo3SVU4S3BNR1daZ2oyWEhGM25mZnE2S2xkWFdKRkJ4cTZFamxuSnE3?=
- =?utf-8?B?UWdJd0w0dm9VMWdneEQ0QU5kUWxKalBpN1JPWWtSekFsN0dxRUNUTGN0NFRG?=
- =?utf-8?B?QTZXQlpCWi9RYStkbzlHVjhmdDVwQU1lVHZKc2NTbncwRGR0bnlxMDlKSWY4?=
- =?utf-8?B?Y3dsNlhoTG5nUFAzZjgxYmRzbTBGTi95dmlrbzFCR1BmbnRRank0UVN3VXFR?=
- =?utf-8?B?NVYzampDTFc2RzBaSy9rQStPVk9BNUNxTzdxU1lmNEJPYTg0cDZ6VEMwcUxQ?=
- =?utf-8?B?RHZYT2hxQmlDR3FNN2lhRE1xZnptUEoxU2l3QnVSbzVBVU5YTVVpUTN0WFVT?=
- =?utf-8?B?UkZVc1ozNjNsa0hOaVJvdTRQa2VUcTZmTHp1Y3JNdnpJRitzTEJycmhrb2Rv?=
- =?utf-8?B?RGZReFZLVVY2MC9zYTZiay9ya1M3L08xQUR2cmZmaFB4OXhWaElMTkhoTkpF?=
- =?utf-8?B?U2NsVUNBaFZnSEU3aDJIMFBlUmxwemliV2o3bmxCb3pxeVc4SVhLZFFmNDJq?=
- =?utf-8?B?eW5LWXpLSVhOQ3Jwa1VBM2h3SE5zMUkvZjZxMzVKcWU2V0dNTW9xRVNXRkRw?=
- =?utf-8?B?d2JpelQwWjFjWmQ2L1FzQzRhc3dZZXlaSzVxYk5pcUpHcUVXelRqa05uSEtK?=
- =?utf-8?B?Q2VLdWxodzBzUTRsNUsyNkZEVW1ERGwyUlBwdGtuaUFWZ1dVU29xVVh2NGxJ?=
- =?utf-8?B?M21uMWFNKzhiVnViUStjVmhTR0I0N240eVBxWU1uS0NCU3lqZTZrN1EvNnVs?=
- =?utf-8?B?MzhSbW9DdWViQjdQSkJraVcrTUw1RFd5UE5BcnlLaGZhdlQ2THluNEtScHhD?=
- =?utf-8?B?UUZRSE9ROUV3ZUI2dEpnS3p1S3VpMnVTbEwyait4dXg4SXUreWc2R3VoZkVK?=
- =?utf-8?B?QWdiN2VZM3ZiaUljcXpCamNrYktEdUtSRHg5b1VtczlJazYzdXFPYTd0ZHpn?=
- =?utf-8?B?cDFzZE95WlBLYWRXcktiWjBZQjl6a0JkaHZVb0VlZDVZZzE4UEVVdk9MRTl2?=
- =?utf-8?B?aG1qWFU4UkkrRnREa3dPSkx3YmMwV1pjQ0JRK0RBYURHQnFiMkY2dXJYWlFi?=
- =?utf-8?B?bFRFOVF3VW5LNDE2aFRyZnNRdTZRK2I1UGZWMXhWTE02MEZXMzZ6K2hZV1ds?=
- =?utf-8?B?YW1KcEZwaEw3NytJdjRlb2dESTJYazdRTzZJWDF4SjFqL3VkaUJvcHRCdysr?=
- =?utf-8?B?OFVVMTl4TEEzbjZqQWpXRCswSzZmeDU5NDFiVjNOSFd5bXR5MVhLUVBSZHZV?=
- =?utf-8?B?VFI0RWdFZUJLRWUrSFkydjRIcW92VHJuY1VySmpTdGRGV011czNyVk00MW5C?=
- =?utf-8?B?S2dLdzhqYXFWU3A1MHM0bmR6ODl3PT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01f84e75-f799-4817-705c-08d9e7cefc8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2022 11:10:43.5079
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rB02OamTf2F5Q3cV6HkxWlfGec6E0Bqpo4nI1vruCN4aoFm+YzomrpM5aXuRIGsZgGimnosu67x2t5I25gn2bLgenapEyccLE6dIM7eyL9U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2012
+Subject: [PATCH v4] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
+Date:   Fri,  4 Feb 2022 13:52:21 +0000
+Message-Id: <20220204135221.2598-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjNdIGNsazogcmVuZXNhczogcnpnMmwtY3BnOiBBZGQgc3VwcG9ydCBmb3IgUlovVjJM
-DQo+IFNvQw0KPiANCj4gSGkgQmlqdSwNCj4gDQo+IE9uIFRodSwgRmViIDMsIDIwMjIgYXQgNTo1
-MSBQTSBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+
-IFRoZSBjbG9jayBzdHJ1Y3R1cmUgZm9yIFJaL1YyTCBpcyBhbG1vc3QgaWRlbnRpY2FsIHRvIFJa
-L0cyTCBTb0MuIFRoZQ0KPiA+IG9ubHkgZGlmZmVyZW5jZSBiZWluZyBSWi9WMkwgaGFzIGFkZGl0
-aW9uYWwgcmVnaXN0ZXJzIHRvIGNvbnRyb2wgdGhlDQo+ID4gY2xvY2sgYW5kIHJlc2V0IGZvciB0
-aGUgRFJQLUFJIGJsb2NrLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCByZXVzZXMgcjlhMDdnMDQ0LWNw
-Zy5jLCBhcyB0aGUgY29tbW9uIGNsb2NrIElEUyBhcmUgdGhlDQo+ID4gc2FtZSBiZXR3ZWVuIFJa
-L0cyTCBhbmQgUlovVjJMIGFuZCBhZGRpbmcgYSBzZXBhcmF0ZQ0KPiA+IHI5YTA3ZzA1NF9jcGdf
-aW5mbyB0byB0YWtlIGNhcmUgb2YgRFJQLUFJIGNsb2Nrcy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYt
-Ynk6IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gPiBTaWduZWQtb2Zm
-LWJ5OiBMYWQgUHJhYmhha2FyIDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5j
-b20+DQo+ID4gLS0tDQo+ID4gdjItPnYzOg0KPiA+ICogcmV1c2UgcjlhMDdnMDQ0LWNwZy5jIGZv
-ciBSWi9WMkwNCj4gDQo+IFRoYW5rcyBmb3IgdGhlIHVwZGF0ZSENCj4gDQo+ID4gLS0tIGEvZHJp
-dmVycy9jbGsvcmVuZXNhcy9yOWEwN2cwNDQtY3BnLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9y
-ZW5lc2FzL3I5YTA3ZzA0NC1jcGcuYw0KPiA+IEBAIC0xMSwxMiArMTEsMTMgQEANCj4gPiAgI2lu
-Y2x1ZGUgPGxpbnV4L2tlcm5lbC5oPg0KPiA+DQo+ID4gICNpbmNsdWRlIDxkdC1iaW5kaW5ncy9j
-bG9jay9yOWEwN2cwNDQtY3BnLmg+DQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9jbG9jay9y
-OWEwN2cwNTQtY3BnLmg+DQo+ID4NCj4gPiAgI2luY2x1ZGUgInJ6ZzJsLWNwZy5oIg0KPiA+DQo+
-ID4gIGVudW0gY2xrX2lkcyB7DQo+ID4gICAgICAgICAvKiBDb3JlIENsb2NrIE91dHB1dHMgZXhw
-b3J0ZWQgdG8gRFQgKi8NCj4gPiAtICAgICAgIExBU1RfRFRfQ09SRV9DTEsgPSBSOUEwN0cwNDRf
-Q0xLX1AwX0RJVjIsDQo+ID4gKyAgICAgICBMQVNUX0RUX0NPUkVfQ0xLID0gUjlBMDdHMDU0X0NM
-S19EUlBfQSwNCj4gPg0KPiA+ICAgICAgICAgLyogRXh0ZXJuYWwgSW5wdXQgQ2xvY2tzICovDQo+
-ID4gICAgICAgICBDTEtfRVhUQUwsDQo+ID4gQEAgLTE0OSwxMzEgKzE1MCwxNDIgQEAgc3RhdGlj
-IGNvbnN0IHN0cnVjdCBjcGdfY29yZV9jbGsNCj4gcjlhMDdnMDQ0X2NvcmVfY2xrc1tdIF9faW5p
-dGNvbnN0ID0gew0KPiA+ICAgICAgICAgICAgICAgICBDTEtfRElWSURFUl9ISVdPUkRfTUFTSyks
-ICB9Ow0KPiA+DQo+ID4gLXN0YXRpYyBzdHJ1Y3QgcnpnMmxfbW9kX2NsayByOWEwN2cwNDRfbW9k
-X2Nsa3NbXSA9IHsNCj4gDQo+IFsuLi5dDQo+IA0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHsN
-Cj4gPiArICAgICAgIHN0cnVjdCByemcybF9tb2RfY2xrIGNvbW1vbls2Ml07ICNpZmRlZiBDT05G
-SUdfQ0xLX1I5QTA3RzA1NA0KPiA+ICsgICAgICAgc3RydWN0IHJ6ZzJsX21vZF9jbGsgZHJwWzBd
-Ow0KPiA+ICsjZW5kaWYNCj4gPiArfSBtb2RfY2xrcyA9IHsNCj4gDQo+IFsuLi5dDQo+IA0KPiA+
-ICsgICAgICAgfSwNCj4gPiArI2lmZGVmIENPTkZJR19DTEtfUjlBMDdHMDU0DQo+ID4gKyAgICAg
-ICAuZHJwID0gew0KPiA+ICsgICAgICAgfSwNCj4gPiArI2VuZGlmDQo+ID4gIH07DQo+IA0KPiBZ
-b3Ugc2hvdWxkIGRvIHRoZSBjb21tb24vZHJwIHNwbGl0IGZvciBjb3JlIGNsb2NrcyBhbmQgcmVz
-ZXRzLCB0b28uDQo+IEl0IGRvZXNuJ3QgbWF0dGVyIHRoYXQgbXVjaCBub3csIGFzIGN1cnJlbnRs
-eSBubyBkcnAgY2xvY2tzIG9yIHJlc2V0cyBhcmUNCj4gaGFuZGxlZCB5ZXQsIGJ1dCBkb2luZyBp
-dCBub3cgYXZvaWRzIGNvbmZ1c2lvbiwgYW5kIG1ha2VzIGl0IGNsZWFyIHdoYXQgaXMNCj4gdGhl
-IGZ1dHVyZSBwbGFuLg0KDQpBZ3JlZWQuIFdpbGwgZG8gdGhpcyBjaGFuZ2VzIGluIHRoZSBuZXh0
-IHZlcnNpb24uDQoNClJlZ2FyZHMsDQpCaWp1DQoNCj4gDQo+ID4gQEAgLTM0NiwxMSArMzU4LDM0
-IEBAIGNvbnN0IHN0cnVjdCByemcybF9jcGdfaW5mbyByOWEwN2cwNDRfY3BnX2luZm8gPSB7DQo+
-ID4gICAgICAgICAubnVtX2NyaXRfbW9kX2Nsa3MgPSBBUlJBWV9TSVpFKHI5YTA3ZzA0NF9jcml0
-X21vZF9jbGtzKSwNCj4gPg0KPiA+ICAgICAgICAgLyogTW9kdWxlIENsb2NrcyAqLw0KPiA+IC0g
-ICAgICAgLm1vZF9jbGtzID0gcjlhMDdnMDQ0X21vZF9jbGtzLA0KPiA+IC0gICAgICAgLm51bV9t
-b2RfY2xrcyA9IEFSUkFZX1NJWkUocjlhMDdnMDQ0X21vZF9jbGtzKSwNCj4gPiArICAgICAgIC5t
-b2RfY2xrcyA9IG1vZF9jbGtzLmNvbW1vbiwNCj4gPiArICAgICAgIC5udW1fbW9kX2Nsa3MgPSBB
-UlJBWV9TSVpFKG1vZF9jbGtzLmNvbW1vbiksDQo+ID4gICAgICAgICAubnVtX2h3X21vZF9jbGtz
-ID0gUjlBMDdHMDQ0X1RTVV9QQ0xLICsgMSwNCj4gPg0KPiA+ICAgICAgICAgLyogUmVzZXRzICov
-DQo+ID4gICAgICAgICAucmVzZXRzID0gcjlhMDdnMDQ0X3Jlc2V0cywNCj4gPiAgICAgICAgIC5u
-dW1fcmVzZXRzID0gQVJSQVlfU0laRShyOWEwN2cwNDRfcmVzZXRzKSwgIH07DQo+ID4gKw0KPiA+
-ICsjaWZkZWYgQ09ORklHX0NMS19SOUEwN0cwNTQNCj4gPiArY29uc3Qgc3RydWN0IHJ6ZzJsX2Nw
-Z19pbmZvIHI5YTA3ZzA1NF9jcGdfaW5mbyA9IHsNCj4gPiArICAgICAgIC8qIENvcmUgQ2xvY2tz
-ICovDQo+ID4gKyAgICAgICAuY29yZV9jbGtzID0gcjlhMDdnMDQ0X2NvcmVfY2xrcywNCj4gPiAr
-ICAgICAgIC5udW1fY29yZV9jbGtzID0gQVJSQVlfU0laRShyOWEwN2cwNDRfY29yZV9jbGtzKSwN
-Cj4gPiArICAgICAgIC5sYXN0X2R0X2NvcmVfY2xrID0gTEFTVF9EVF9DT1JFX0NMSywNCj4gPiAr
-ICAgICAgIC5udW1fdG90YWxfY29yZV9jbGtzID0gTU9EX0NMS19CQVNFLA0KPiA+ICsNCj4gPiAr
-ICAgICAgIC8qIENyaXRpY2FsIE1vZHVsZSBDbG9ja3MgKi8NCj4gPiArICAgICAgIC5jcml0X21v
-ZF9jbGtzID0gcjlhMDdnMDQ0X2NyaXRfbW9kX2Nsa3MsDQo+ID4gKyAgICAgICAubnVtX2NyaXRf
-bW9kX2Nsa3MgPSBBUlJBWV9TSVpFKHI5YTA3ZzA0NF9jcml0X21vZF9jbGtzKSwNCj4gPiArDQo+
-ID4gKyAgICAgICAvKiBNb2R1bGUgQ2xvY2tzICovDQo+ID4gKyAgICAgICAubW9kX2Nsa3MgPSBt
-b2RfY2xrcy5jb21tb24sDQo+ID4gKyAgICAgICAubnVtX21vZF9jbGtzID0gQVJSQVlfU0laRSht
-b2RfY2xrcy5jb21tb24pICsNCj4gQVJSQVlfU0laRShtb2RfY2xrcy5kcnApLA0KPiA+ICsgICAg
-ICAgLm51bV9od19tb2RfY2xrcyA9IFI5QTA3RzA1NF9TVFBBSV9BQ0xLX0RSUCArIDEsDQo+ID4g
-Kw0KPiA+ICsgICAgICAgLyogUmVzZXRzICovDQo+ID4gKyAgICAgICAucmVzZXRzID0gcjlhMDdn
-MDQ0X3Jlc2V0cywNCj4gPiArICAgICAgIC5udW1fcmVzZXRzID0gQVJSQVlfU0laRShyOWEwN2cw
-NDRfcmVzZXRzKSwgfTsgI2VuZGlmDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2
-ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LQ0K
-PiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNh
-bCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuDQo+IEJ1dCB3aGVuIEknbSB0YWxraW5n
-IHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZw0KPiBs
-aWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9y
-dmFsZHMNCg==
+The clock structure for RZ/V2L is almost identical to RZ/G2L SoC. The only
+difference being RZ/V2L has an additional registers to control clock and
+reset for the DRP-AI block.
+
+This patch reuses r9a07g044-cpg.c, as the common clock IDS and rest IDS are
+same between RZ/G2L and RZ/V2L and adding a separate r9a07g054_cpg_info to
+take care of DRP-AI clocks/resets.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v3->v4:
+* Added common/drp split for core clocks and resets
+v2->v3:
+* reuse r9a07g044-cpg.c for RZ/V2L
+v1->v2
+* Updated divider values for PLL2/3
+---
+ drivers/clk/renesas/Kconfig         |   7 +-
+ drivers/clk/renesas/Makefile        |   1 +
+ drivers/clk/renesas/r9a07g044-cpg.c | 539 +++++++++++++++-------------
+ drivers/clk/renesas/rzg2l-cpg.c     |   6 +
+ drivers/clk/renesas/rzg2l-cpg.h     |   1 +
+ 5 files changed, 312 insertions(+), 242 deletions(-)
+
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index be6e6ae7448c..c281f3af5716 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -34,6 +34,7 @@ config CLK_RENESAS
+ 	select CLK_R8A779F0 if ARCH_R8A779F0
+ 	select CLK_R9A06G032 if ARCH_R9A06G032
+ 	select CLK_R9A07G044 if ARCH_R9A07G044
++	select CLK_R9A07G054 if ARCH_R9A07G054
+ 	select CLK_SH73A0 if ARCH_SH73A0
+ 
+ if CLK_RENESAS
+@@ -163,6 +164,10 @@ config CLK_R9A07G044
+ 	bool "RZ/G2L clock support" if COMPILE_TEST
+ 	select CLK_RZG2L
+ 
++config CLK_R9A07G054
++	bool "RZ/V2L clock support" if COMPILE_TEST
++	select CLK_RZG2L
++
+ config CLK_SH73A0
+ 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSTP
+@@ -195,7 +200,7 @@ config CLK_RCAR_USB2_CLOCK_SEL
+ 	  This is a driver for R-Car USB2 clock selector
+ 
+ config CLK_RZG2L
+-	bool "Renesas RZ/G2L family clock support" if COMPILE_TEST
++	bool "Renesas RZ/{G2L,V2L} family clock support" if COMPILE_TEST
+ 	select RESET_CONTROLLER
+ 
+ # Generic
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 8b34db1a328c..d5e571699a30 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_CLK_R8A779A0)		+= r8a779a0-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A779F0)		+= r8a779f0-cpg-mssr.o
+ obj-$(CONFIG_CLK_R9A06G032)		+= r9a06g032-clocks.o
+ obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
++obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
+ 
+ # Family
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 79042bf46fe8..af2b475d3cad 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -11,12 +11,13 @@
+ #include <linux/kernel.h>
+ 
+ #include <dt-bindings/clock/r9a07g044-cpg.h>
++#include <dt-bindings/clock/r9a07g054-cpg.h>
+ 
+ #include "rzg2l-cpg.h"
+ 
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+-	LAST_DT_CORE_CLK = R9A07G044_CLK_P0_DIV2,
++	LAST_DT_CORE_CLK = R9A07G054_CLK_DRP_A,
+ 
+ 	/* External Input Clocks */
+ 	CLK_EXTAL,
+@@ -80,252 +81,285 @@ static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
+ static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
+ static const char * const sel_gpu2[] = { ".pll6", ".pll3_div2_2" };
+ 
+-static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+-	/* External Clock Inputs */
+-	DEF_INPUT("extal", CLK_EXTAL),
++static struct {
++	const struct cpg_core_clk common[44];
++#ifdef CONFIG_CLK_R9A07G054
++	const struct cpg_core_clk drp[0];
++#endif
++} const core_clks __initconst = {
++	.common = {
++		/* External Clock Inputs */
++		DEF_INPUT("extal", CLK_EXTAL),
+ 
+-	/* Internal Core Clocks */
+-	DEF_FIXED(".osc", R9A07G044_OSCCLK, CLK_EXTAL, 1, 1),
+-	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
+-	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
+-	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
+-	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
+-	DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
+-	DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
++		/* Internal Core Clocks */
++		DEF_FIXED(".osc", R9A07G044_OSCCLK, CLK_EXTAL, 1, 1),
++		DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
++		DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
++		DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 133, 2),
++		DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 133, 2),
++		DEF_FIXED(".pll3_400", CLK_PLL3_400, CLK_PLL3, 1, 4),
++		DEF_FIXED(".pll3_533", CLK_PLL3_533, CLK_PLL3, 1, 3),
+ 
+-	DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
+-	DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
++		DEF_FIXED(".pll5", CLK_PLL5, CLK_EXTAL, 125, 1),
++		DEF_FIXED(".pll5_fout3", CLK_PLL5_FOUT3, CLK_PLL5, 1, 6),
+ 
+-	DEF_FIXED(".pll6", CLK_PLL6, CLK_EXTAL, 125, 6),
++		DEF_FIXED(".pll6", CLK_PLL6, CLK_EXTAL, 125, 6),
+ 
+-	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
+-	DEF_FIXED(".clk_800", CLK_PLL2_800, CLK_PLL2, 1, 2),
+-	DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 1, 3),
+-	DEF_FIXED(".clk_400", CLK_PLL2_SDHI_400, CLK_PLL2_800, 1, 2),
+-	DEF_FIXED(".clk_266", CLK_PLL2_SDHI_266, CLK_PLL2_SDHI_533, 1, 2),
++		DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
++		DEF_FIXED(".clk_800", CLK_PLL2_800, CLK_PLL2, 1, 2),
++		DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 1, 3),
++		DEF_FIXED(".clk_400", CLK_PLL2_SDHI_400, CLK_PLL2_800, 1, 2),
++		DEF_FIXED(".clk_266", CLK_PLL2_SDHI_266, CLK_PLL2_SDHI_533, 1, 2),
+ 
+-	DEF_FIXED(".pll2_div2_8", CLK_PLL2_DIV2_8, CLK_PLL2_DIV2, 1, 8),
+-	DEF_FIXED(".pll2_div2_10", CLK_PLL2_DIV2_10, CLK_PLL2_DIV2, 1, 10),
++		DEF_FIXED(".pll2_div2_8", CLK_PLL2_DIV2_8, CLK_PLL2_DIV2, 1, 8),
++		DEF_FIXED(".pll2_div2_10", CLK_PLL2_DIV2_10, CLK_PLL2_DIV2, 1, 10),
+ 
+-	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
+-	DEF_FIXED(".pll3_div2_2", CLK_PLL3_DIV2_2, CLK_PLL3_DIV2, 1, 2),
+-	DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
+-	DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
+-	DEF_MUX(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3,
+-		sel_pll3_3, ARRAY_SIZE(sel_pll3_3), 0, CLK_MUX_READ_ONLY),
+-	DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3,
+-		DIVPL3C, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
++		DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
++		DEF_FIXED(".pll3_div2_2", CLK_PLL3_DIV2_2, CLK_PLL3_DIV2, 1, 2),
++		DEF_FIXED(".pll3_div2_4", CLK_PLL3_DIV2_4, CLK_PLL3_DIV2, 1, 4),
++		DEF_FIXED(".pll3_div2_4_2", CLK_PLL3_DIV2_4_2, CLK_PLL3_DIV2_4, 1, 2),
++		DEF_MUX(".sel_pll3_3", CLK_SEL_PLL3_3, SEL_PLL3_3,
++			sel_pll3_3, ARRAY_SIZE(sel_pll3_3), 0, CLK_MUX_READ_ONLY),
++		DEF_DIV("divpl3c", CLK_DIV_PLL3_C, CLK_SEL_PLL3_3,
++			DIVPL3C, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+ 
+-	DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
+-	DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
+-	DEF_MUX(".sel_gpu2", CLK_SEL_GPU2, SEL_GPU2,
+-		sel_gpu2, ARRAY_SIZE(sel_gpu2), 0, CLK_MUX_READ_ONLY),
++		DEF_FIXED(".pll5_250", CLK_PLL5_250, CLK_PLL5_FOUT3, 1, 2),
++		DEF_FIXED(".pll6_250", CLK_PLL6_250, CLK_PLL6, 1, 2),
++		DEF_MUX(".sel_gpu2", CLK_SEL_GPU2, SEL_GPU2,
++			sel_gpu2, ARRAY_SIZE(sel_gpu2), 0, CLK_MUX_READ_ONLY),
+ 
+-	/* Core output clk */
+-	DEF_DIV("I", R9A07G044_CLK_I, CLK_PLL1, DIVPL1A, dtable_1_8,
+-		CLK_DIVIDER_HIWORD_MASK),
+-	DEF_DIV("P0", R9A07G044_CLK_P0, CLK_PLL2_DIV2_8, DIVPL2A,
+-		dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+-	DEF_FIXED("P0_DIV2", R9A07G044_CLK_P0_DIV2, R9A07G044_CLK_P0, 1, 2),
+-	DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV2_10, 1, 1),
+-	DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
+-		DIVPL3B, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+-	DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
+-	DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2,
+-		DIVPL3A, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
+-	DEF_FIXED("M0", R9A07G044_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
+-	DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
+-	DEF_MUX("HP", R9A07G044_CLK_HP, SEL_PLL6_2,
+-		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
+-	DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
+-	DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
+-	DEF_SD_MUX("SD0", R9A07G044_CLK_SD0, SEL_SDHI0,
+-		   sel_shdi, ARRAY_SIZE(sel_shdi)),
+-	DEF_SD_MUX("SD1", R9A07G044_CLK_SD1, SEL_SDHI1,
+-		   sel_shdi, ARRAY_SIZE(sel_shdi)),
+-	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G044_CLK_SD0, 1, 4),
+-	DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
+-	DEF_DIV("G", R9A07G044_CLK_G, CLK_SEL_GPU2, DIVGPU, dtable_1_8,
+-		CLK_DIVIDER_HIWORD_MASK),
++		/* Core output clk */
++		DEF_DIV("I", R9A07G044_CLK_I, CLK_PLL1, DIVPL1A, dtable_1_8,
++			CLK_DIVIDER_HIWORD_MASK),
++		DEF_DIV("P0", R9A07G044_CLK_P0, CLK_PLL2_DIV2_8, DIVPL2A,
++			dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
++		DEF_FIXED("P0_DIV2", R9A07G044_CLK_P0_DIV2, R9A07G044_CLK_P0, 1, 2),
++		DEF_FIXED("TSU", R9A07G044_CLK_TSU, CLK_PLL2_DIV2_10, 1, 1),
++		DEF_DIV("P1", R9A07G044_CLK_P1, CLK_PLL3_DIV2_4,
++			DIVPL3B, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
++		DEF_FIXED("P1_DIV2", CLK_P1_DIV2, R9A07G044_CLK_P1, 1, 2),
++		DEF_DIV("P2", R9A07G044_CLK_P2, CLK_PLL3_DIV2_4_2,
++			DIVPL3A, dtable_1_32, CLK_DIVIDER_HIWORD_MASK),
++		DEF_FIXED("M0", R9A07G044_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
++		DEF_FIXED("ZT", R9A07G044_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
++		DEF_MUX("HP", R9A07G044_CLK_HP, SEL_PLL6_2,
++			sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
++		DEF_FIXED("SPI0", R9A07G044_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
++		DEF_FIXED("SPI1", R9A07G044_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
++		DEF_SD_MUX("SD0", R9A07G044_CLK_SD0, SEL_SDHI0,
++			   sel_shdi, ARRAY_SIZE(sel_shdi)),
++		DEF_SD_MUX("SD1", R9A07G044_CLK_SD1, SEL_SDHI1,
++			   sel_shdi, ARRAY_SIZE(sel_shdi)),
++		DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G044_CLK_SD0, 1, 4),
++		DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G044_CLK_SD1, 1, 4),
++		DEF_DIV("G", R9A07G044_CLK_G, CLK_SEL_GPU2, DIVGPU, dtable_1_8,
++			CLK_DIVIDER_HIWORD_MASK),
++	},
++#ifdef CONFIG_CLK_R9A07G054
++	.drp = {
++	},
++#endif
+ };
+ 
+-static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+-	DEF_MOD("gic",		R9A07G044_GIC600_GICCLK, R9A07G044_CLK_P1,
+-				0x514, 0),
+-	DEF_MOD("ia55_pclk",	R9A07G044_IA55_PCLK, R9A07G044_CLK_P2,
+-				0x518, 0),
+-	DEF_MOD("ia55_clk",	R9A07G044_IA55_CLK, R9A07G044_CLK_P1,
+-				0x518, 1),
+-	DEF_MOD("dmac_aclk",	R9A07G044_DMAC_ACLK, R9A07G044_CLK_P1,
+-				0x52c, 0),
+-	DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+-				0x52c, 1),
+-	DEF_MOD("ostm0_pclk",	R9A07G044_OSTM0_PCLK, R9A07G044_CLK_P0,
+-				0x534, 0),
+-	DEF_MOD("ostm1_clk",	R9A07G044_OSTM1_PCLK, R9A07G044_CLK_P0,
+-				0x534, 1),
+-	DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
+-				0x534, 2),
+-	DEF_MOD("wdt0_pclk",	R9A07G044_WDT0_PCLK, R9A07G044_CLK_P0,
+-				0x548, 0),
+-	DEF_MOD("wdt0_clk",	R9A07G044_WDT0_CLK, R9A07G044_OSCCLK,
+-				0x548, 1),
+-	DEF_MOD("wdt1_pclk",	R9A07G044_WDT1_PCLK, R9A07G044_CLK_P0,
+-				0x548, 2),
+-	DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
+-				0x548, 3),
+-	DEF_MOD("wdt2_pclk",	R9A07G044_WDT2_PCLK, R9A07G044_CLK_P0,
+-				0x548, 4),
+-	DEF_MOD("wdt2_clk",	R9A07G044_WDT2_CLK, R9A07G044_OSCCLK,
+-				0x548, 5),
+-	DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
+-				0x550, 0),
+-	DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
+-				0x550, 1),
+-	DEF_MOD("sdhi0_imclk",	R9A07G044_SDHI0_IMCLK, CLK_SD0_DIV4,
+-				0x554, 0),
+-	DEF_MOD("sdhi0_imclk2",	R9A07G044_SDHI0_IMCLK2, CLK_SD0_DIV4,
+-				0x554, 1),
+-	DEF_MOD("sdhi0_clk_hs",	R9A07G044_SDHI0_CLK_HS, R9A07G044_CLK_SD0,
+-				0x554, 2),
+-	DEF_MOD("sdhi0_aclk",	R9A07G044_SDHI0_ACLK, R9A07G044_CLK_P1,
+-				0x554, 3),
+-	DEF_MOD("sdhi1_imclk",	R9A07G044_SDHI1_IMCLK, CLK_SD1_DIV4,
+-				0x554, 4),
+-	DEF_MOD("sdhi1_imclk2",	R9A07G044_SDHI1_IMCLK2, CLK_SD1_DIV4,
+-				0x554, 5),
+-	DEF_MOD("sdhi1_clk_hs",	R9A07G044_SDHI1_CLK_HS, R9A07G044_CLK_SD1,
+-				0x554, 6),
+-	DEF_MOD("sdhi1_aclk",	R9A07G044_SDHI1_ACLK, R9A07G044_CLK_P1,
+-				0x554, 7),
+-	DEF_MOD("gpu_clk",	R9A07G044_GPU_CLK, R9A07G044_CLK_G,
+-				0x558, 0),
+-	DEF_MOD("gpu_axi_clk",	R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
+-				0x558, 1),
+-	DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+-				0x558, 2),
+-	DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
+-				0x570, 0),
+-	DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
+-				0x570, 1),
+-	DEF_MOD("ssi1_pclk",	R9A07G044_SSI1_PCLK2, R9A07G044_CLK_P0,
+-				0x570, 2),
+-	DEF_MOD("ssi1_sfr",	R9A07G044_SSI1_PCLK_SFR, R9A07G044_CLK_P0,
+-				0x570, 3),
+-	DEF_MOD("ssi2_pclk",	R9A07G044_SSI2_PCLK2, R9A07G044_CLK_P0,
+-				0x570, 4),
+-	DEF_MOD("ssi2_sfr",	R9A07G044_SSI2_PCLK_SFR, R9A07G044_CLK_P0,
+-				0x570, 5),
+-	DEF_MOD("ssi3_pclk",	R9A07G044_SSI3_PCLK2, R9A07G044_CLK_P0,
+-				0x570, 6),
+-	DEF_MOD("ssi3_sfr",	R9A07G044_SSI3_PCLK_SFR, R9A07G044_CLK_P0,
+-				0x570, 7),
+-	DEF_MOD("usb0_host",	R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
+-				0x578, 0),
+-	DEF_MOD("usb1_host",	R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
+-				0x578, 1),
+-	DEF_MOD("usb0_func",	R9A07G044_USB_U2P_EXR_CPUCLK, R9A07G044_CLK_P1,
+-				0x578, 2),
+-	DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
+-				0x578, 3),
+-	DEF_COUPLED("eth0_axi",	R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
+-				0x57c, 0),
+-	DEF_COUPLED("eth0_chi",	R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
+-				0x57c, 0),
+-	DEF_COUPLED("eth1_axi",	R9A07G044_ETH1_CLK_AXI, R9A07G044_CLK_M0,
+-				0x57c, 1),
+-	DEF_COUPLED("eth1_chi",	R9A07G044_ETH1_CLK_CHI, R9A07G044_CLK_ZT,
+-				0x57c, 1),
+-	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
+-				0x580, 0),
+-	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
+-				0x580, 1),
+-	DEF_MOD("i2c2",		R9A07G044_I2C2_PCLK, R9A07G044_CLK_P0,
+-				0x580, 2),
+-	DEF_MOD("i2c3",		R9A07G044_I2C3_PCLK, R9A07G044_CLK_P0,
+-				0x580, 3),
+-	DEF_MOD("scif0",	R9A07G044_SCIF0_CLK_PCK, R9A07G044_CLK_P0,
+-				0x584, 0),
+-	DEF_MOD("scif1",	R9A07G044_SCIF1_CLK_PCK, R9A07G044_CLK_P0,
+-				0x584, 1),
+-	DEF_MOD("scif2",	R9A07G044_SCIF2_CLK_PCK, R9A07G044_CLK_P0,
+-				0x584, 2),
+-	DEF_MOD("scif3",	R9A07G044_SCIF3_CLK_PCK, R9A07G044_CLK_P0,
+-				0x584, 3),
+-	DEF_MOD("scif4",	R9A07G044_SCIF4_CLK_PCK, R9A07G044_CLK_P0,
+-				0x584, 4),
+-	DEF_MOD("sci0",		R9A07G044_SCI0_CLKP, R9A07G044_CLK_P0,
+-				0x588, 0),
+-	DEF_MOD("sci1",		R9A07G044_SCI1_CLKP, R9A07G044_CLK_P0,
+-				0x588, 1),
+-	DEF_MOD("rspi0",	R9A07G044_RSPI0_CLKB, R9A07G044_CLK_P0,
+-				0x590, 0),
+-	DEF_MOD("rspi1",	R9A07G044_RSPI1_CLKB, R9A07G044_CLK_P0,
+-				0x590, 1),
+-	DEF_MOD("rspi2",	R9A07G044_RSPI2_CLKB, R9A07G044_CLK_P0,
+-				0x590, 2),
+-	DEF_MOD("canfd",	R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
+-				0x594, 0),
+-	DEF_MOD("gpio",		R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
+-				0x598, 0),
+-	DEF_MOD("adc_adclk",	R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
+-				0x5a8, 0),
+-	DEF_MOD("adc_pclk",	R9A07G044_ADC_PCLK, R9A07G044_CLK_P0,
+-				0x5a8, 1),
+-	DEF_MOD("tsu_pclk",	R9A07G044_TSU_PCLK, R9A07G044_CLK_TSU,
+-				0x5ac, 0),
++static const struct {
++	struct rzg2l_mod_clk common[62];
++#ifdef CONFIG_CLK_R9A07G054
++	struct rzg2l_mod_clk drp[0];
++#endif
++} mod_clks = {
++	.common = {
++		DEF_MOD("gic",		R9A07G044_GIC600_GICCLK, R9A07G044_CLK_P1,
++					0x514, 0),
++		DEF_MOD("ia55_pclk",	R9A07G044_IA55_PCLK, R9A07G044_CLK_P2,
++					0x518, 0),
++		DEF_MOD("ia55_clk",	R9A07G044_IA55_CLK, R9A07G044_CLK_P1,
++					0x518, 1),
++		DEF_MOD("dmac_aclk",	R9A07G044_DMAC_ACLK, R9A07G044_CLK_P1,
++					0x52c, 0),
++		DEF_MOD("dmac_pclk",	R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
++					0x52c, 1),
++		DEF_MOD("ostm0_pclk",	R9A07G044_OSTM0_PCLK, R9A07G044_CLK_P0,
++					0x534, 0),
++		DEF_MOD("ostm1_clk",	R9A07G044_OSTM1_PCLK, R9A07G044_CLK_P0,
++					0x534, 1),
++		DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
++					0x534, 2),
++		DEF_MOD("wdt0_pclk",	R9A07G044_WDT0_PCLK, R9A07G044_CLK_P0,
++					0x548, 0),
++		DEF_MOD("wdt0_clk",	R9A07G044_WDT0_CLK, R9A07G044_OSCCLK,
++					0x548, 1),
++		DEF_MOD("wdt1_pclk",	R9A07G044_WDT1_PCLK, R9A07G044_CLK_P0,
++					0x548, 2),
++		DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
++					0x548, 3),
++		DEF_MOD("wdt2_pclk",	R9A07G044_WDT2_PCLK, R9A07G044_CLK_P0,
++					0x548, 4),
++		DEF_MOD("wdt2_clk",	R9A07G044_WDT2_CLK, R9A07G044_OSCCLK,
++					0x548, 5),
++		DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
++					0x550, 0),
++		DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
++					0x550, 1),
++		DEF_MOD("sdhi0_imclk",	R9A07G044_SDHI0_IMCLK, CLK_SD0_DIV4,
++					0x554, 0),
++		DEF_MOD("sdhi0_imclk2",	R9A07G044_SDHI0_IMCLK2, CLK_SD0_DIV4,
++					0x554, 1),
++		DEF_MOD("sdhi0_clk_hs",	R9A07G044_SDHI0_CLK_HS, R9A07G044_CLK_SD0,
++					0x554, 2),
++		DEF_MOD("sdhi0_aclk",	R9A07G044_SDHI0_ACLK, R9A07G044_CLK_P1,
++					0x554, 3),
++		DEF_MOD("sdhi1_imclk",	R9A07G044_SDHI1_IMCLK, CLK_SD1_DIV4,
++					0x554, 4),
++		DEF_MOD("sdhi1_imclk2",	R9A07G044_SDHI1_IMCLK2, CLK_SD1_DIV4,
++					0x554, 5),
++		DEF_MOD("sdhi1_clk_hs",	R9A07G044_SDHI1_CLK_HS, R9A07G044_CLK_SD1,
++					0x554, 6),
++		DEF_MOD("sdhi1_aclk",	R9A07G044_SDHI1_ACLK, R9A07G044_CLK_P1,
++					0x554, 7),
++		DEF_MOD("gpu_clk",	R9A07G044_GPU_CLK, R9A07G044_CLK_G,
++					0x558, 0),
++		DEF_MOD("gpu_axi_clk",	R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
++					0x558, 1),
++		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
++					0x558, 2),
++		DEF_MOD("ssi0_pclk",	R9A07G044_SSI0_PCLK2, R9A07G044_CLK_P0,
++					0x570, 0),
++		DEF_MOD("ssi0_sfr",	R9A07G044_SSI0_PCLK_SFR, R9A07G044_CLK_P0,
++					0x570, 1),
++		DEF_MOD("ssi1_pclk",	R9A07G044_SSI1_PCLK2, R9A07G044_CLK_P0,
++					0x570, 2),
++		DEF_MOD("ssi1_sfr",	R9A07G044_SSI1_PCLK_SFR, R9A07G044_CLK_P0,
++					0x570, 3),
++		DEF_MOD("ssi2_pclk",	R9A07G044_SSI2_PCLK2, R9A07G044_CLK_P0,
++					0x570, 4),
++		DEF_MOD("ssi2_sfr",	R9A07G044_SSI2_PCLK_SFR, R9A07G044_CLK_P0,
++					0x570, 5),
++		DEF_MOD("ssi3_pclk",	R9A07G044_SSI3_PCLK2, R9A07G044_CLK_P0,
++					0x570, 6),
++		DEF_MOD("ssi3_sfr",	R9A07G044_SSI3_PCLK_SFR, R9A07G044_CLK_P0,
++					0x570, 7),
++		DEF_MOD("usb0_host",	R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
++					0x578, 0),
++		DEF_MOD("usb1_host",	R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
++					0x578, 1),
++		DEF_MOD("usb0_func",	R9A07G044_USB_U2P_EXR_CPUCLK, R9A07G044_CLK_P1,
++					0x578, 2),
++		DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
++					0x578, 3),
++		DEF_COUPLED("eth0_axi",	R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
++					0x57c, 0),
++		DEF_COUPLED("eth0_chi",	R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
++					0x57c, 0),
++		DEF_COUPLED("eth1_axi",	R9A07G044_ETH1_CLK_AXI, R9A07G044_CLK_M0,
++					0x57c, 1),
++		DEF_COUPLED("eth1_chi",	R9A07G044_ETH1_CLK_CHI, R9A07G044_CLK_ZT,
++					0x57c, 1),
++		DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
++					0x580, 0),
++		DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
++					0x580, 1),
++		DEF_MOD("i2c2",		R9A07G044_I2C2_PCLK, R9A07G044_CLK_P0,
++					0x580, 2),
++		DEF_MOD("i2c3",		R9A07G044_I2C3_PCLK, R9A07G044_CLK_P0,
++					0x580, 3),
++		DEF_MOD("scif0",	R9A07G044_SCIF0_CLK_PCK, R9A07G044_CLK_P0,
++					0x584, 0),
++		DEF_MOD("scif1",	R9A07G044_SCIF1_CLK_PCK, R9A07G044_CLK_P0,
++					0x584, 1),
++		DEF_MOD("scif2",	R9A07G044_SCIF2_CLK_PCK, R9A07G044_CLK_P0,
++					0x584, 2),
++		DEF_MOD("scif3",	R9A07G044_SCIF3_CLK_PCK, R9A07G044_CLK_P0,
++					0x584, 3),
++		DEF_MOD("scif4",	R9A07G044_SCIF4_CLK_PCK, R9A07G044_CLK_P0,
++					0x584, 4),
++		DEF_MOD("sci0",		R9A07G044_SCI0_CLKP, R9A07G044_CLK_P0,
++					0x588, 0),
++		DEF_MOD("sci1",		R9A07G044_SCI1_CLKP, R9A07G044_CLK_P0,
++					0x588, 1),
++		DEF_MOD("rspi0",	R9A07G044_RSPI0_CLKB, R9A07G044_CLK_P0,
++					0x590, 0),
++		DEF_MOD("rspi1",	R9A07G044_RSPI1_CLKB, R9A07G044_CLK_P0,
++					0x590, 1),
++		DEF_MOD("rspi2",	R9A07G044_RSPI2_CLKB, R9A07G044_CLK_P0,
++					0x590, 2),
++		DEF_MOD("canfd",	R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
++					0x594, 0),
++		DEF_MOD("gpio",		R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
++					0x598, 0),
++		DEF_MOD("adc_adclk",	R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
++					0x5a8, 0),
++		DEF_MOD("adc_pclk",	R9A07G044_ADC_PCLK, R9A07G044_CLK_P0,
++					0x5a8, 1),
++		DEF_MOD("tsu_pclk",	R9A07G044_TSU_PCLK, R9A07G044_CLK_TSU,
++					0x5ac, 0),
++	},
++#ifdef CONFIG_CLK_R9A07G054
++	.drp = {
++	},
++#endif
+ };
+ 
+-static struct rzg2l_reset r9a07g044_resets[] = {
+-	DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
+-	DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
+-	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
+-	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
+-	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
+-	DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
+-	DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
+-	DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
+-	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
+-	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
+-	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
+-	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
+-	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
+-	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
+-	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
+-	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
+-	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
+-	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
+-	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+-	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
+-	DEF_RST(R9A07G044_SSI3_RST_M2_REG, 0x870, 3),
+-	DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
+-	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
+-	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
+-	DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
+-	DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
+-	DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
+-	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
+-	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
+-	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
+-	DEF_RST(R9A07G044_I2C3_MRST, 0x880, 3),
+-	DEF_RST(R9A07G044_SCIF0_RST_SYSTEM_N, 0x884, 0),
+-	DEF_RST(R9A07G044_SCIF1_RST_SYSTEM_N, 0x884, 1),
+-	DEF_RST(R9A07G044_SCIF2_RST_SYSTEM_N, 0x884, 2),
+-	DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
+-	DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
+-	DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
+-	DEF_RST(R9A07G044_SCI1_RST, 0x888, 1),
+-	DEF_RST(R9A07G044_RSPI0_RST, 0x890, 0),
+-	DEF_RST(R9A07G044_RSPI1_RST, 0x890, 1),
+-	DEF_RST(R9A07G044_RSPI2_RST, 0x890, 2),
+-	DEF_RST(R9A07G044_CANFD_RSTP_N, 0x894, 0),
+-	DEF_RST(R9A07G044_CANFD_RSTC_N, 0x894, 1),
+-	DEF_RST(R9A07G044_GPIO_RSTN, 0x898, 0),
+-	DEF_RST(R9A07G044_GPIO_PORT_RESETN, 0x898, 1),
+-	DEF_RST(R9A07G044_GPIO_SPARE_RESETN, 0x898, 2),
+-	DEF_RST(R9A07G044_ADC_PRESETN, 0x8a8, 0),
+-	DEF_RST(R9A07G044_ADC_ADRST_N, 0x8a8, 1),
+-	DEF_RST(R9A07G044_TSU_PRESETN, 0x8ac, 0),
++static const struct {
++	struct rzg2l_reset common[84];
++#ifdef CONFIG_CLK_R9A07G054
++	struct rzg2l_reset drp[1];
++#endif
++} rzg2l_resets = {
++	.common = {
++		DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
++		DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
++		DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
++		DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
++		DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
++		DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
++		DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
++		DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
++		DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
++		DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
++		DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
++		DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
++		DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
++		DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
++		DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
++		DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
++		DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
++		DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
++		DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
++		DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
++		DEF_RST(R9A07G044_SSI3_RST_M2_REG, 0x870, 3),
++		DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
++		DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
++		DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
++		DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
++		DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
++		DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
++		DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
++		DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
++		DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
++		DEF_RST(R9A07G044_I2C3_MRST, 0x880, 3),
++		DEF_RST(R9A07G044_SCIF0_RST_SYSTEM_N, 0x884, 0),
++		DEF_RST(R9A07G044_SCIF1_RST_SYSTEM_N, 0x884, 1),
++		DEF_RST(R9A07G044_SCIF2_RST_SYSTEM_N, 0x884, 2),
++		DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
++		DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
++		DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
++		DEF_RST(R9A07G044_SCI1_RST, 0x888, 1),
++		DEF_RST(R9A07G044_RSPI0_RST, 0x890, 0),
++		DEF_RST(R9A07G044_RSPI1_RST, 0x890, 1),
++		DEF_RST(R9A07G044_RSPI2_RST, 0x890, 2),
++		DEF_RST(R9A07G044_CANFD_RSTP_N, 0x894, 0),
++		DEF_RST(R9A07G044_CANFD_RSTC_N, 0x894, 1),
++		DEF_RST(R9A07G044_GPIO_RSTN, 0x898, 0),
++		DEF_RST(R9A07G044_GPIO_PORT_RESETN, 0x898, 1),
++		DEF_RST(R9A07G044_GPIO_SPARE_RESETN, 0x898, 2),
++		DEF_RST(R9A07G044_ADC_PRESETN, 0x8a8, 0),
++		DEF_RST(R9A07G044_ADC_ADRST_N, 0x8a8, 1),
++		DEF_RST(R9A07G044_TSU_PRESETN, 0x8ac, 0),
++	},
++#ifdef CONFIG_CLK_R9A07G054
++	.drp = {
++	},
++#endif
+ };
+ 
+ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+@@ -336,8 +370,8 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	/* Core Clocks */
+-	.core_clks = r9a07g044_core_clks,
+-	.num_core_clks = ARRAY_SIZE(r9a07g044_core_clks),
++	.core_clks = core_clks.common,
++	.num_core_clks = ARRAY_SIZE(core_clks.common),
+ 	.last_dt_core_clk = LAST_DT_CORE_CLK,
+ 	.num_total_core_clks = MOD_CLK_BASE,
+ 
+@@ -346,11 +380,34 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	.num_crit_mod_clks = ARRAY_SIZE(r9a07g044_crit_mod_clks),
+ 
+ 	/* Module Clocks */
+-	.mod_clks = r9a07g044_mod_clks,
+-	.num_mod_clks = ARRAY_SIZE(r9a07g044_mod_clks),
++	.mod_clks = mod_clks.common,
++	.num_mod_clks = ARRAY_SIZE(mod_clks.common),
+ 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 
+ 	/* Resets */
+-	.resets = r9a07g044_resets,
+-	.num_resets = ARRAY_SIZE(r9a07g044_resets),
++	.resets = rzg2l_resets.common,
++	.num_resets = ARRAY_SIZE(rzg2l_resets.common),
++};
++
++#ifdef CONFIG_CLK_R9A07G054
++const struct rzg2l_cpg_info r9a07g054_cpg_info = {
++	/* Core Clocks */
++	.core_clks = core_clks.common,
++	.num_core_clks = ARRAY_SIZE(core_clks.common) + ARRAY_SIZE(core_clks.drp),
++	.last_dt_core_clk = LAST_DT_CORE_CLK,
++	.num_total_core_clks = MOD_CLK_BASE,
++
++	/* Critical Module Clocks */
++	.crit_mod_clks = r9a07g044_crit_mod_clks,
++	.num_crit_mod_clks = ARRAY_SIZE(r9a07g044_crit_mod_clks),
++
++	/* Module Clocks */
++	.mod_clks = mod_clks.common,
++	.num_mod_clks = ARRAY_SIZE(mod_clks.common) + ARRAY_SIZE(mod_clks.drp),
++	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
++
++	/* Resets */
++	.resets = rzg2l_resets.common,
++	.num_resets = ARRAY_SIZE(rzg2l_resets.common) + ARRAY_SIZE(rzg2l_resets.drp),
+ };
++#endif
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index edd0abe34a37..486d0656c58a 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -952,6 +952,12 @@ static const struct of_device_id rzg2l_cpg_match[] = {
+ 		.compatible = "renesas,r9a07g044-cpg",
+ 		.data = &r9a07g044_cpg_info,
+ 	},
++#endif
++#ifdef CONFIG_CLK_R9A07G054
++	{
++		.compatible = "renesas,r9a07g054-cpg",
++		.data = &r9a07g054_cpg_info,
++	},
+ #endif
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 5729d102034b..ce657beaf160 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -203,5 +203,6 @@ struct rzg2l_cpg_info {
+ };
+ 
+ extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
++extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
+ 
+ #endif
+-- 
+2.17.1
+
