@@ -2,75 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78282C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 23:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467A2C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 23:57:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378011AbiBDXRl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 18:17:41 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:37772 "EHLO
-        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378008AbiBDXRl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 18:17:41 -0500
-Received: by mail-oi1-f169.google.com with SMTP id r27so10310618oiw.4;
-        Fri, 04 Feb 2022 15:17:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=h80UoHlKwvo3NQa72LtjSndJO3TSfq+x4h8BGbi0L6A=;
-        b=b+7hKxvfFr3/kTRUN7opMyAlzeu1ngY2eZnEYrRLA9Bq1YIzLQQYxrAmBJDYBoCrGm
-         f4Kbt7xWVrCNWN7y6y8ZkEPxEP8jLI3zEUej4jmCEPdDU3ljyhJSb6+AjURFhNqGCpwL
-         sCvJlVt8kZrTkNf3oF7F/FW5YHaZbsnneA3xnqdUEo69Jf/4g+oDMoCbN6dlaDtxC+RI
-         jGuik039k+JicH1QqjuI9yorITg+gXnFI0CohTPTa+Id5MsuCv6085sLXLuPB0KjcOoB
-         RcGZ7+HxhkJ8/YXip0z7lmVjhvvDctO5dy+0JfxGawFMh4KOgMgf4aTMepCGB71/wvjY
-         BEsg==
-X-Gm-Message-State: AOAM532gUnA2IZJ5yrI68FEfOlU+NnlFXYN9lrcIms+Lm8pjesOfqiX4
-        b57tsMJHuFPhh4FgrbAo/w==
-X-Google-Smtp-Source: ABdhPJwXWBWhQCMJVfASwzfKmauHN7xUXSradyKBOHDqIC4tTOWl8ihrLBZI+hSmjfWqGXJM5lhggg==
-X-Received: by 2002:a05:6808:1184:: with SMTP id j4mr2453009oil.119.1644016660453;
-        Fri, 04 Feb 2022 15:17:40 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id w9sm1227614ool.31.2022.02.04.15.17.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Feb 2022 15:17:39 -0800 (PST)
-Received: (nullmailer pid 3367314 invoked by uid 1000);
-        Fri, 04 Feb 2022 23:17:38 -0000
-Date:   Fri, 4 Feb 2022 17:17:38 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add YAML schemas for LPASS
- clocks on SC7280
-Message-ID: <Yf20EjfKhZ2BBZvU@robh.at.kernel.org>
-References: <20220126081236.25255-1-tdas@codeaurora.org>
- <20220126081236.25255-2-tdas@codeaurora.org>
+        id S238541AbiBDX5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 18:57:31 -0500
+Received: from mout.gmx.net ([212.227.17.20]:37375 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241379AbiBDX5b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Feb 2022 18:57:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1644019036;
+        bh=1Kwp7/KAIFTkmXJSYkq3CZKgQvseK9UqHtzpJM2awG8=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=Gsc2nTVAR6tJrqcmCrHJaqNL8pSC8PkENl2iOnfVeB0Xp/WUWa3NUI+yDSjGD8YJF
+         BEvgNziaAJcTZ6FTIzjJ70zIDsBTobPipQrEInniP22+nMiBC+H0lMu3EzyCHg921e
+         /6SkhNvkn4AaVIv/DdjnJLSBzeHkf7DtzM+gAlnE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MPokN-1muSpU36YN-00MuYh; Sat, 05
+ Feb 2022 00:57:15 +0100
+Date:   Sat, 5 Feb 2022 00:57:14 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Saravanan Sekar <sravanhome@gmail.com>,
+        Parthiban Nallathambi <pn@denx.de>,
+        linux-actions@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] clk: actions: Terminate clk_div_table with
+ sentinel element
+Message-ID: <Yf29Wt6DGYxDUlDj@latitude>
+References: <20220203142153.260720-1-j.neuschaefer@gmx.net>
+ <20220203142153.260720-2-j.neuschaefer@gmx.net>
+ <20220203161210.GA138829@thinkpad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rJDN8eL983l7maVq"
 Content-Disposition: inline
-In-Reply-To: <20220126081236.25255-2-tdas@codeaurora.org>
+In-Reply-To: <20220203161210.GA138829@thinkpad>
+X-Provags-ID: V03:K1:qK3ksEUkC4NY6uQA9JGHANigRFTqspIpM3bfrw1t3TfmoxkEnDI
+ xsBoY+yOee54IhFeJG6I0IFn9sBfFDEwbzJdf7reoUgQ5e7koC2AB+BuDkPOC5jw/nuQL2N
+ nyedVTQnXfu/XI0sKaXhr/tPuSKw/M66Ef9yCGWt5Tajsfr9Ys7Pl+Pt7QGc7f4I2zLJtwO
+ ZWbUYKWRBzxmFFP4CssXQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bKGC50lIqqM=:8FZ6ZutMvSeGn8vJnHPVMV
+ RHgaIKaXc8YRAMmCmHSoKSO3yzf8VCDT1Rr68lqnu1fb96T1temqzH2otu2jvvgaS2EOBtLqz
+ N9gjzAug2AMcOcAUgXs8qIVPodcBLAOhbes37nhkgNS3+LYpyzsTvMKLYgw+G0atXBCCTh3kj
+ fmOzOHJA7AzkVP6WZCAYIHMSbkJxk/4xGKI6TwBrcyKMTLt99zF6A25ZcJzwFJkS6r10Iarq/
+ 8J2Z9YhOdSzeF102jNXy+9WldBOeC1ivZlUA396SdTZO9Kb8k/IpP76nKt/3FtSMQBajGN4kA
+ i/K508HzjOpC8pEn8i2/x/m0578cg2pHDDW06/hu0yBBVKNx9yDv06GOZw1jGSikqrhq68+Z+
+ FcuVJ37N1JvYTYxBQI3jOPnUKbdeMuqvMThuaOQTQu344gnA6+OBftpK6iHu+47LIl+KspLkP
+ rxoo1Cxi0AGXouZpn2LIwUOSyC3z5cTiriKEMjPMQ9buoDSIEVKWKZV1O7zh/L3fnX3k8Bvyz
+ wDR/wcgFrXgMT24O/h9JysnWEfqjRTvBIuY90uXaWk8WFZc5KCkIAxzcTooyzZ9jpIRvpMb05
+ MWteaKSWlWkKCxuomCax1z+Ij/5l70LIQ5BkCLkQ9P1MSg0OnL98cCY+jz4mzxfi1oEofyRvD
+ sEF+YYnfafsxaQibpTrB6HUpEZLNGlxJpygyEK2HA8vRhni244yVQ6m057RXqz1oj12J+ecGr
+ XeRBdAAjY8sw1ecZ3ljMDldoENQ10s6mAQyYCclbfwpOeeUANWnzTwWIHspIWHYsFHcL40oHP
+ Zvc7sj86pnt5sVyoxPI4RgxHo/I9MGWsZTA/QIY34QQe0D5f4lkYvt0xLoZruFPaXBe9zH0jA
+ hyN9lvXnvtUuxOOrkmj7LLuc/DqKl0qRVYeccsL3s8rIh6aWpq6EDtTrf0CFzockXWd3i7sJa
+ SPu7vFe3sOnjV+o5u/jFVKnBUhcPQbKqroeqLTxXN7x36IGqsRJfvDsQYyu4ZdVrzEMzdM6kL
+ 0+t1+S9A3ClQEgUqeSGjWtBgboBY4lGiW8DoftpciYRH5LFrwODZTcDoeTdEh4OapuvSnpci2
+ g5eMutVCqY3SPg=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 Jan 2022 13:42:35 +0530, Taniya Das wrote:
-> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
-> properties that are needed in a device tree. Also add clock ids for
-> LPASS core clocks and audio clock IDs for LPASS client to request for
-> the clocks.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../clock/qcom,sc7280-lpasscorecc.yaml        | 172 ++++++++++++++++++
->  .../clock/qcom,lpassaudiocc-sc7280.h          |  43 +++++
->  .../clock/qcom,lpasscorecc-sc7280.h           |  26 +++
->  3 files changed, 241 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,lpassaudiocc-sc7280.h
->  create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7280.h
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--rJDN8eL983l7maVq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Feb 03, 2022 at 09:42:10PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Feb 03, 2022 at 03:21:50PM +0100, Jonathan Neusch=C3=A4fer wrote:
+> > In order that the end of a clk_div_table can be detected, it must be
+> > terminated with a sentinel element (.div =3D 0).
+> >=20
+> > Fixes: d47317ca4ade1 ("clk: actions: Add S700 SoC clock support")
+> > Fixes: d85d20053e195 ("clk: actions: Add S900 SoC clock support")
+> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> > ---
+> >=20
+> > I'm not so sure about usb3_mac_div_table. Maybe the { 0, 8 } element was
+> > meant to be { 0, 0 }? I'd appreciate if someone with access to the
+> > datasheet or hardware could verify what's correct.
+>=20
+> USB3 factor table is not documented in the datasheet I have access to. Bu=
+t by
+> looking at the value, it looks to be a typo. So please change the last en=
+try.
+
+Okay.
+
+> With that,
+>=20
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+
+Thanks!
+
+Jonathan
+
+--rJDN8eL983l7maVq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIyBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmH9vSwACgkQCDBEmo7z
+X9uuyg/413Iw4xZ5o1Tp/qcRiH6I1L+O4tPXbZJS1Oe/YbA96rMszKsKbFuKD93/
+XTGS1UEZBO8QRIT1hHF92JLWIDkCQIofhgsqyKFz7tTGxJ2yj23xszPF8GZvZSl1
+NXnL2CUNcUGq049M3eLJ7tW2x40b2r7ceK+IcsOGeKuCMqqaLFQcCe8yR7PH3Xar
+BkqVP22gj1zcVXfjDKFk9kio9c+uLTTg4r9xH+7ut6F5mXdSt9KW+54UfWcXWEHO
+8fO/NNhHwJ8kl7m3uhcVotEAwcdY4UYUq87qmEAbvB2TdBIgjw2RHP2T4gvUyG26
+HqywQf2oImnrFKGmeCSTkfuHshiRP0C9p5ayz6J2R535sqV7M3t9pOP/QmjdtDfM
+984lc5YNd22V4+rHc7k35UndhL5O6gEF9pMnWDTjxwamRKSehAhDQpNxY9F8JiBi
+UAgv+6Iw51qnI8D3Sugbnr7yAcLhVqUzXAORpUvusZRlaBXSUWWmpVR8Ac+D1yD/
+XYYT4ZdtIDnVPHlpxyU8vA6jmcVMueXBWN89umR/D3eIU25i+gvunf440evHm1PK
+CWaNNl8uxv4u380+BX3GDpgam4mAF2nxnb5z1rnyg1HJSYA4xJVGwyoxacfSoRb4
+9IeQMt76GNfWcxlpmeZWKmWmZQR7TrEBpFj1OqVGasJ52C+RBQ==
+=WP+E
+-----END PGP SIGNATURE-----
+
+--rJDN8eL983l7maVq--
