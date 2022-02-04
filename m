@@ -2,133 +2,110 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF27C4167B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 16:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E046C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 17:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376445AbiBDQSU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 11:18:20 -0500
-Received: from smtpout1.mo3004.mail-out.ovh.net ([79.137.123.219]:32789 "EHLO
-        smtpout1.mo3004.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1355576AbiBDQSU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 11:18:20 -0500
-Received: from pro2.mail.ovh.net (unknown [10.109.146.13])
-        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id C845823D1F7;
-        Fri,  4 Feb 2022 16:18:15 +0000 (UTC)
-Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
- (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Fri, 4 Feb
- 2022 17:18:14 +0100
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <geert+renesas@glider.be>
-CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        id S1346811AbiBDRil (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 12:38:41 -0500
+Received: from mga03.intel.com ([134.134.136.65]:12334 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241090AbiBDRik (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Feb 2022 12:38:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643996320; x=1675532320;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O1t48c17XoJx7EOIIIEmyVVzGAn2IVOrgHRTPrmEe/U=;
+  b=CsSnSB2tqP2z4iqdEwZSSJuf10v8SdLXVz244JmQhdXYtxWvi/JReYvP
+   4vFx1PBSGeuvzviICrlTKiIbBuuBfjjwuhYlncrU33qpeI2JIR+2C9BaP
+   +xXk2Edd24966H/u9a3i4lmlm7PNgE27ugB6qs6rrDGAcKxYtewedGOsq
+   gqlVjk9Q2YB6l65nLVe7H0Mzp6cVhPs5pSuzjuTNi6o5o1X9artneecuX
+   ZSpM7k764U8RMVG7PcTNf52Nf/MF51l19/eufqyV4X9WUbKibeK5t6Ezo
+   +4t4hQ+157oGPd69Ng2jMab9qqzT8FAEKelBymlbQjmS9tj+cVvXRBCne
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10248"; a="248357839"
+X-IronPort-AV: E=Sophos;i="5.88,343,1635231600"; 
+   d="scan'208";a="248357839"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2022 09:38:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,343,1635231600"; 
+   d="scan'208";a="631768511"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2022 09:38:37 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nG2Xc-000Xx0-Li; Fri, 04 Feb 2022 17:38:36 +0000
+Date:   Sat, 5 Feb 2022 01:38:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/6] clk: renesas: r9a06g032: Enable the watchdog reset sources
-Date:   Fri, 4 Feb 2022 17:17:59 +0100
-Message-ID: <20220204161806.3126321-2-jjhiblot@traphandler.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220204161806.3126321-1-jjhiblot@traphandler.com>
-References: <20220204161806.3126321-1-jjhiblot@traphandler.com>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v4] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
+Message-ID: <202202050101.eoVR3IJN-lkp@intel.com>
+References: <20220204135221.2598-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [88.125.132.78]
-X-ClientProxiedBy: DAG2EX1.emp2.local (172.16.2.11) To DAG1EX2.emp2.local
- (172.16.2.2)
-X-Ovh-Tracer-Id: 5892678641497553371
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrgeelgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvffufffkofgjfhgggfgtihesthekredtredttdenucfhrhhomheplfgvrghnqdflrggtqhhuvghsucfjihgslhhothcuoehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomheqnecuggftrfgrthhtvghrnhepfeeugefgieeutdfhvdegveetvdeuvefgveegleeileevveehfeejjeffgfduudeknecukfhppedtrddtrddtrddtpdekkedruddvhedrudefvddrjeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehprhhovddrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220204135221.2598-1-biju.das.jz@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The watchdog reset sources are not enabled by default.
-Enabling them here to make sure that the system resets when the watchdog
-timers expire.
+Hi Biju,
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on v5.17-rc2]
+[cannot apply to geert-renesas-drivers/renesas-clk next-20220204]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Biju-Das/clk-renesas-rzg2l-cpg-Add-support-for-RZ-V2L-SoC/20220204-215327
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: mips-randconfig-r003-20220131 (https://download.01.org/0day-ci/archive/20220205/202202050101.eoVR3IJN-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project a73e4ce6a59b01f0e37037761c1e6889d539d233)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install mips cross compiling tool for clang build
+        # apt-get install binutils-mips-linux-gnu
+        # https://github.com/0day-ci/linux/commit/c10eeae8f76f71a3b6778b816cb18c2db3e917f8
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Biju-Das/clk-renesas-rzg2l-cpg-Add-support-for-RZ-V2L-SoC/20220204-215327
+        git checkout c10eeae8f76f71a3b6778b816cb18c2db3e917f8
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash drivers/clk/renesas/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/renesas/r9a07g044-cpg.c:14:10: fatal error: 'dt-bindings/clock/r9a07g054-cpg.h' file not found
+   #include <dt-bindings/clock/r9a07g054-cpg.h>
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +14 drivers/clk/renesas/r9a07g044-cpg.c
+
+    12	
+    13	#include <dt-bindings/clock/r9a07g044-cpg.h>
+  > 14	#include <dt-bindings/clock/r9a07g054-cpg.h>
+    15	
+
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c99942f0e4d4..57fcad1c8ba2 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
- 
- #define R9A06G032_CLOCK_COUNT		(R9A06G032_UART_GROUP_34567 + 1)
- 
-+#define R9A06G032_SYSCTRL_REG_RSTEN		0x120
-+#define WDA7RST1	BIT(2)
-+#define WDA7RST0	BIT(1)
-+#define MRESET		BIT(0)
-+
- static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 	D_ROOT(CLKOUT, "clkout", 25, 1),
- 	D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
-@@ -893,6 +898,19 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
- 	of_clk_del_provider(data);
- }
- 
-+static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
-+			uint32_t mask, uint32_t value)
-+{
-+	uint32_t rsten;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&clocks->lock, flags);
-+	rsten = readl(clocks->reg);
-+	rsten = (rsten & ~mask) | (value & mask);
-+	writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
-+	spin_unlock_irqrestore(&clocks->lock, flags);
-+}
-+
- static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (!clocks || !clks)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, clocks);
-+
- 	spin_lock_init(&clocks->lock);
- 
- 	clocks->data.clks = clks;
-@@ -963,9 +983,21 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
-+
-+	/* Enable the global system reset and watchdog reset sources */
-+	r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1 | MRESET, MRESET | WDA7RST0 | WDA7RST1);
-+
- 	return r9a06g032_add_clk_domain(dev);
- }
- 
-+static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
-+{
-+	struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
-+
-+	/* Disable the watchdog reset sources */
-+	r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
-+}
-+
- static const struct of_device_id r9a06g032_match[] = {
- 	{ .compatible = "renesas,r9a06g032-sysctrl" },
- 	{ }
-@@ -976,6 +1008,7 @@ static struct platform_driver r9a06g032_clock_driver = {
- 		.name	= "renesas,r9a06g032-sysctrl",
- 		.of_match_table = r9a06g032_match,
- 	},
-+	.shutdown = r9a06g032_clocks_shutdown,
- };
- 
- static int __init r9a06g032_clocks_init(void)
--- 
-2.25.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
