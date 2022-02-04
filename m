@@ -2,93 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B00C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 18:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D9AC433FE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Feb 2022 18:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351887AbiBDSWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 13:22:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44732 "EHLO
+        id S229517AbiBDS7B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 13:59:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237893AbiBDSWR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 13:22:17 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02ABAC061714;
-        Fri,  4 Feb 2022 10:22:17 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id s13so21854351ejy.3;
-        Fri, 04 Feb 2022 10:22:16 -0800 (PST)
+        with ESMTP id S229537AbiBDS40 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 13:56:26 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81926C061714
+        for <linux-clk@vger.kernel.org>; Fri,  4 Feb 2022 10:56:23 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id l24-20020a17090aec1800b001b55738f633so8275776pjy.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Feb 2022 10:56:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=twumIFSTClgcHTdJL0227Nth7t4tlEgqpolAjlDA7EA=;
-        b=HjH26UyHH7jemj9qmDHaVMixNcfaoC7p9J+uxCwZLajdGVBuxHXCojA4ncW6Dbj0px
-         6Y73Y0ZErAJGilz7TALPbJyC+TdOt3fAmOr7f/xWHt74bGGJwBc3CBobfoPel4sk1e1h
-         C+X/g0mBbD9B+DOrsf6QjhGUScqse3PcKE0/Xp3BWZbFzFN8j/hSDOzJdP/Wyh8M/Y6I
-         rBKIyjPG9rxUpFk9QDFyhypmLN25zgyBfg/fjxwCLUBS133M+7qpImfQPPsVKugMbG5N
-         C1q9kDPvkfw874Z8LxAgu6TGKaRnUzR6eLK6sJWuWfpsNS9/iPkFH5vw43je/Zyq87R9
-         OQ6A==
+        d=dabbelt-com.20210112.gappssmtp.com; s=20210112;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Jg17IORQiX50k9hzchIY/5BxWqpFAaTYJl32S7Q4Sbg=;
+        b=uPCBA5viYD0QY7M/Rk2spN+UqATL+2sZOvKQcSrR4zPjEW8JpEMsNra2IDMdJN9IFZ
+         BYaxujrLvUFl/sMTSX2rkGMLjT0+NSDY734GgVVQ4Dsg43Nj2oFOjdRafThSkGAgFH5l
+         mpNkDd2Qa/R25MLGEYLjum9O3COWIlqByeP0h4mvo66JhYflXvWEKPZTxfXDEiCk6KUs
+         9DeKMHJf9vbBqzFVxLRVLBrhtBN3QkkZuEGOzyBDmJDtXWT+0xGI9XxlrhvI1K9dtGfd
+         VU0yIxCI82FBO6Abcczrit4gG0k1Wvvu8R2S5E6dddfzHuv+eaMnjGDAfSxDh1eDN8GN
+         468A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=twumIFSTClgcHTdJL0227Nth7t4tlEgqpolAjlDA7EA=;
-        b=ZqBycdUceCWEsNBTKiaoMHHbCtulbSHoo124AeDiX9/9tyUIA4G1F4K4phHPXqBiO6
-         5280whKcaNOpfCDFYgMwC+gBechqGTcKI4fM/6rjzVIFgqYSQbDCANi1OOEOGPgV+8Y1
-         V2LQRKlPZ595TQcgQdp6IThzFzc1iCOcDA65Y07Hrn9moDpqxg1vRkPTcoLlWgTnp+bs
-         xBKn+fYIGefCVuinN1xaonoB2s029f9GRsLwoVuEbm+pEss8nWJELCSI7EL8ZLF0RUIV
-         P6AceMXmIqKJkZojIUFl+fZgFvhDQ7w7wof3M4RmKLy9USfDcFSj0JJUibjI4DqUH3W3
-         P7rA==
-X-Gm-Message-State: AOAM532Wlv8WsD3W0e+rzO1RugZr/6IAGhG+yEroma0qfnPn/FtAcH7G
-        R4VLMdkm5CExRTkx6A7nNjWdM0vKhxvmiGWjaHI=
-X-Google-Smtp-Source: ABdhPJyOn0RLYwfEOQaJb+TMQN6u3fK3oeQDYMwrQybMiDVSTF8EmTuwNr+UvPC9x6ZvBx/bzru4+gRROBU/Oqd6yRk=
-X-Received: by 2002:a17:907:160c:: with SMTP id hb12mr165834ejc.46.1643998935451;
- Fri, 04 Feb 2022 10:22:15 -0800 (PST)
-MIME-Version: 1.0
-References: <ZFOR6R.SY2BLN8DYNHG3@crapouillou.net> <20220204072141.542909-1-lis8215@gmail.com>
- <QH1S6R.BMH4KZNDZAOO3@crapouillou.net>
-In-Reply-To: <QH1S6R.BMH4KZNDZAOO3@crapouillou.net>
-From:   Siarhei Volkau <lis8215@gmail.com>
-Date:   Fri, 4 Feb 2022 21:22:04 +0300
-Message-ID: <CAKNVLfbeKhcRR1Sc780GU9XvW4ACJRHiy4EHJfsPeqB5Sj9i9A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/1] clk: jz4725b: fix mmc0 clock gating
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=Jg17IORQiX50k9hzchIY/5BxWqpFAaTYJl32S7Q4Sbg=;
+        b=LHen/418PeWudAR5EKeMCscLBzVaOnccceKATEapwzDcnQQfx3y2YP/rjber6PdMhJ
+         nrpOxArcPcBq6q/lnOdoOciUxeO7YT9LC8p2s8fPid7igd9Z8/IKzn4h0cmaHTav9E27
+         cwpmPDACRzsSAFW5EqjwBRD3aBagRawdXa1ucBdGDHozXtcL+x7QC6Q2b3IKGTnjVgs1
+         mqF3jFMRWYCsQo0pKThpt2tY6QEPYtQy78edsMRWpwRF0joP4ajDxKZViJ0moxoepV0v
+         v5DRIP6G98zm+haSv/UEJaAA2DSOGM6zI6GVKnWXq8k+BBx3DA8vM44lds86Czn1//CV
+         ZoxQ==
+X-Gm-Message-State: AOAM532WGVowWjQZoP9ijGCZk2owkZGl4br9h6zM9vZ9jzsr3t8naRAM
+        AcUnnE/agsMCe9+0pBrwfcfMuw==
+X-Google-Smtp-Source: ABdhPJzT7RTMUBVz+1BYpBITNrUEw6VSIBcSnFJFo16PdfPLdPCpcPdkajv5i36AHs82/DM/7IfWOg==
+X-Received: by 2002:a17:90a:d144:: with SMTP id t4mr4663574pjw.18.1644000982761;
+        Fri, 04 Feb 2022 10:56:22 -0800 (PST)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id h3sm3069688pfo.66.2022.02.04.10.56.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Feb 2022 10:56:21 -0800 (PST)
+Date:   Fri, 04 Feb 2022 10:56:21 -0800 (PST)
+X-Google-Original-Date: Fri, 04 Feb 2022 10:46:13 PST (-0800)
+Subject:     Re: [PATCH 0/4] Refactor the PRCI driver to reduce the complexity
+In-Reply-To: <cover.1642582832.git.zong.li@sifive.com>
+CC:     mturquette@baylibre.com, sboyd@kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>, lee.jones@linaro.org,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zong.li@sifive.com
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     zong.li@sifive.com
+Message-ID: <mhng-ffd770d4-8f8a-417a-a589-f14d09f55282@palmer-ri-x1c9>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D0=BF=D1=82, 4 =D1=84=D0=B5=D0=B2=D1=80. 2022 =D0=B3. =D0=B2 14:06, Paul C=
-ercueil <paul@crapouillou.net>:
+On Wed, 19 Jan 2022 01:28:37 PST (-0800), zong.li@sifive.com wrote:
+> This patch set tries to improve the PRCI driver to reduce the
+> complexity, we remove the SoCs C files by putting putting all stuff in
+> each SoCs header file, and include these SoCs-specific header files in
+> core of PRCI. It can also avoid the W=1 kernel build warnings about
+> variable defined but not used [-Wunused-const-variable=], like 'commit
+> 487dc7bb6a0c ("clk: sifive:fu540-prci: Declare static const variable
+> 'prci_clk_fu540' where it's used")' does.
 >
-> Hi,
+> This patch set also contains the dt-bindings and dts change, because
+> we change the macro name for fu540 and fu740 by adding the prefix
+> respectively.
 >
-> Le ven., f=C3=A9vr. 4 2022 at 10:21:40 +0300, Siarhei Volkau
-> <lis8215@gmail.com> a =C3=A9crit :
-> Can you confirm that the MMC0 controller will work even with the bit 6
-> off?
+> Thanks all for your review and suggestions.
 >
-> Do you know if the MMC0 bit has been moved elsewhere, or the MMC0
-> controller is permanently enabled?
+> Zong Li (4):
+>   dt-bindings: change the macro name of prci in header files and example
+>   riscv: dts: Change the macro name of prci in each device node
+>   clk: sifive: Add SoCs prefix in each SoCs-dependent data
+
+IIUC these there aren't bisectable: the bindings change will break 
+builds of the DTs and drivers.  I'm not sure what's generally the way to 
+go with these, but I always try to avoid broken builds in the middle of 
+patch sets.
+
+Aside from that this generally looks good to me, but the DT and clock 
+folks are probably a better bet for a proper review here.  Happy to take 
+this through the RISC-V tree, but IMO it's a better candidate for the 
+clock tree so
+
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # aside from breaking bisect
+
+Thanks!
+
+>   clk: sifive: Move all stuff into SoCs header files from C files
 >
-Do you mean when the clock is off (bit =3D=3D 1) or bit =3D=3D 0 (the clock=
- is on)?
-
-Anyway what I tried:
-I tried not enabling this clock in the UBIBoot - it just works. I guess
-boot ROM enables it earlier.
-But when I explicitly disable the clock it doesn't boot.
-So I assume bit 6 definitely gates the MMC0
-clock, as stated in the jz4725b programmer's manual.
-
-Then I disabled MMC0 in Ubiboot to run Linux from MMC1 and tested
-the audio with disabled MMC0, in dts mmc0 node was disabled as well.
-With this patch applied sound works well. So I guess the bit 6 isn't
-related to the I2S clocking at all.
-
-Hope I answered your questions.
-
-BR, Siarhei
+>  .../devicetree/bindings/gpio/sifive,gpio.yaml |   2 +-
+>  .../bindings/pci/sifive,fu740-pcie.yaml       |   2 +-
+>  .../bindings/serial/sifive-serial.yaml        |   2 +-
+>  arch/riscv/boot/dts/sifive/fu540-c000.dtsi    |  22 +--
+>  arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  26 ++--
+>  drivers/clk/sifive/Makefile                   |   2 +-
+>  drivers/clk/sifive/fu540-prci.c               |  89 ------------
+>  drivers/clk/sifive/fu540-prci.h               |  91 +++++++++++-
+>  drivers/clk/sifive/fu740-prci.c               | 134 ------------------
+>  drivers/clk/sifive/fu740-prci.h               | 130 ++++++++++++++++-
+>  drivers/clk/sifive/sifive-prci.c              |   5 -
+>  include/dt-bindings/clock/sifive-fu540-prci.h |   8 +-
+>  include/dt-bindings/clock/sifive-fu740-prci.h |  18 +--
+>  13 files changed, 254 insertions(+), 277 deletions(-)
+>  delete mode 100644 drivers/clk/sifive/fu540-prci.c
+>  delete mode 100644 drivers/clk/sifive/fu740-prci.c
