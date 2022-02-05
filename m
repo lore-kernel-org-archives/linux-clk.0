@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3630C43219
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD192C4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381483AbiBESz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Feb 2022 13:55:58 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:39641 "EHLO
+        id S1381129AbiBES4C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Feb 2022 13:56:02 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:49191 "EHLO
         relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381189AbiBESz0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:26 -0500
+        with ESMTP id S1381197AbiBESzI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:08 -0500
 Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 46E76240002;
-        Sat,  5 Feb 2022 18:55:23 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id B1A4924000A;
+        Sat,  5 Feb 2022 18:55:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644087324;
+        t=1644087304;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GwbC5gn4h2V2gFK4wGghF7MDfEkNG/IYlc1iEgQerj0=;
-        b=L1JXL3Qty8YbjkBCLhJVJAw9Iqd4UQldBGCTyzEEJkgRDRu2AsUoq3UeW7TuMfbaxUNkwa
-        m7infW20DxJQin+WbsuHe6ut42BABmKqYtmwLcdl+VBCTcFFktcTdJkK6v2rPxSxoBezmP
-        pydAO11+Uh9weVgn9rbYVfZv2SeAv8i0y+pifvy7y8ZqW0/WAqPVzNd6F/RmlyN1lE5E2w
-        bHH8ptkwgdHAqjiat3CtNSiwIVmPcBVI0DJFqBpSVVhvj8CZa4h/q5EuF/zkHeEiy3oQQw
-        uIhGXLGdmytN6Udakwg1xk1B1D7pX6ghmO2Jpuv8BN+St7Tx755v3iKDpTnVzA==
+        bh=uIMPCjtl/VFJr235X/YOqPgWGa/FOuNtQeET3E0lg1s=;
+        b=hpuGgN7NRouDqr2x8yPimsw48LzDcqB53a7KwBHegH7IzA2HPHY0uC6ZI5ClRJt4bMKpFD
+        QItxvOaUOLpFCNBurSZ+yJDuobyRoWgpZLS5q7GUM6yPtq91eVg5Lqj9f4+H+a8YwFVIyO
+        eMlgEuZp1oQhBUsxiyy0MIz1W0MWiKVeB5EX6YuPx3jItsC2fPN9ZS67ChQPAiPAF0Dey7
+        Ko/9EiR338iDLAo09qsV3VO+UchDNRNwgsXHoxt0J6Czmb1J7iy6dSYcg1zRHoTu0laZ+s
+        oieN2cZay41Si2+l7VpoV9seZYRHk527bHngOblBRH9nXEBRIDwwdKLhepj14Q==
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
@@ -44,9 +44,9 @@ Cc:     Yong Deng <yong.deng@magewell.com>,
         Helen Koike <helen.koike@collabora.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 26/66] media: sun6i-csi: Register the media device after creation
-Date:   Sat,  5 Feb 2022 19:53:49 +0100
-Message-Id: <20220205185429.2278860-27-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 14/66] MAINTAINERS: Add entry for the Allwinner A83T MIPI CSI-2 bridge
+Date:   Sat,  5 Feb 2022 19:53:37 +0100
+Message-Id: <20220205185429.2278860-15-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
@@ -56,50 +56,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no particular need to register the media device in the
-subdev notify complete callback.
-
-Register it in the v4l2 code instead where it's more in-context.
+Add myself as maintainer of the Allwinner A83T MIPI CSI-2 bridge media
+driver.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-index 688288afae68..6f04f86504bf 100644
---- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
-@@ -638,7 +638,7 @@ static int sun6i_subdev_notify_complete(struct v4l2_async_notifier *notifier)
- 	if (ret < 0)
- 		return ret;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 040c54b2d767..46582119e767 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -759,6 +759,14 @@ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml
+ F:	drivers/media/platform/sunxi/sun6i-mipi-csi2/
  
--	return media_device_register(&v4l2->media_dev);
-+	return 0;
- }
- 
- static const struct v4l2_async_notifier_operations sun6i_csi_async_ops = {
-@@ -687,6 +687,12 @@ static int sun6i_csi_v4l2_setup(struct sun6i_csi_device *csi_dev)
- 
- 	media_device_init(media_dev);
- 
-+	ret = media_device_register(media_dev);
-+	if (ret) {
-+		dev_err(dev, "failed to register media device: %d\n", ret);
-+		goto error_media;
-+	}
++ALLWINNER A83T MIPI CSI-2 BRIDGE DRIVER
++M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++L:	linux-media@vger.kernel.org
++S:	Maintained
++T:	git git://linuxtv.org/media_tree.git
++F:	Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-mipi-csi2.yaml
++F:	drivers/media/platform/sunxi/sun8i-a83t-mipi-csi2/
 +
- 	/* V4L2 Control Handler */
- 
- 	ret = v4l2_ctrl_handler_init(&v4l2->ctrl_handler, 0);
-@@ -746,6 +752,7 @@ static int sun6i_csi_v4l2_setup(struct sun6i_csi_device *csi_dev)
- 	v4l2_ctrl_handler_free(&v4l2->ctrl_handler);
- 
- error_media:
-+	media_device_unregister(media_dev);
- 	media_device_cleanup(media_dev);
- 
- 	return ret;
+ ALLWINNER CPUFREQ DRIVER
+ M:	Yangtao Li <tiny.windzz@gmail.com>
+ L:	linux-pm@vger.kernel.org
 -- 
 2.34.1
 
