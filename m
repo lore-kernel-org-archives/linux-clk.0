@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9E4C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90495C4167B
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381131AbiBESzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Feb 2022 13:55:22 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:60835 "EHLO
+        id S1381171AbiBESzY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Feb 2022 13:55:24 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:57977 "EHLO
         relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381149AbiBESzC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:02 -0500
+        with ESMTP id S1381106AbiBESzF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:05 -0500
 Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id C4C91240004;
-        Sat,  5 Feb 2022 18:54:55 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 164F8240008;
+        Sat,  5 Feb 2022 18:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644087297;
+        t=1644087300;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=AkCUFwi2J94S15k7JkU9goJLycFgn6HTv5Orvy3MRa0=;
-        b=ZLQdaBZwYXCBbqHkCDF3izo/hbLxX+IM2FQgeAc0oXwkSxqQB7NFNtscrT8M1Tg9XS0nsH
-        OFG5oKC3xe81ceoLlBOcRNa2vuYXuBOUP+XgzbucAwwC1qusTMbbyLxH8H6lHRvCfpsj1b
-        XU+QwJK0bHbAYadoBzLgJvfRdsHDsxaONgYezB7TausHVH4rvvYDYGtXyRBLL5Iwwt94my
-        8J95GDe9YU1ujtN8EMxgf92uJrPZIIlfF/RHJW61AY4WqAPvfn38N04Eox0Mpm1lUWHbBS
-        jBaGNSV7xkA7sbpNrerGzFjGjArITjsp9//nLL0BAn/sz74pFMDRmQ8Uze3W9g==
+        bh=SJXIIRPiADrOm3fQioZmJ3XdeC3XcqI9oqKCgUuUrW0=;
+        b=gjAdfkBv+tmtjny4VpBQ/toS7Rnvq/8JcLvrC/oZfQS1WJbCWOTLMxT/icVT2LxbaURbik
+        NDrDPnSXetJhY/doi64OhpUiGHklacNe0/MyKfKETmtmAxVzJSVbDdT3BmzG8Z7UUluZ98
+        /NDxA433DL5OiF8sjraNL75w9yY2QmoJlVnHUk+f3nSDP9W9vYeeTui/B0ZBXzssaejMun
+        mfFqpXQo2/1qGbgZV3xFLba9Ktey6w61D1hHbt/MRdcFaNXPehJCSjcwgbFw72ar2/8lCh
+        03A+uWS0W2tGH2Fva4UJek1OpvLWOOLw2FoyGwYPDMo+AnnOv5tFQE4y9/O8Zw==
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
@@ -43,10 +43,11 @@ Cc:     Yong Deng <yong.deng@magewell.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Helen Koike <helen.koike@collabora.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 10/66] MAINTAINERS: Add entry for the Allwinner A31 MIPI CSI-2 bridge driver
-Date:   Sat,  5 Feb 2022 19:53:33 +0100
-Message-Id: <20220205185429.2278860-11-paul.kocialkowski@bootlin.com>
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 12/66] dt-bindings: media: Add Allwinner A83T MIPI CSI-2 bindings documentation
+Date:   Sat,  5 Feb 2022 19:53:35 +0100
+Message-Id: <20220205185429.2278860-13-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
@@ -56,33 +57,155 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add myself as maintainer of the Allwinner A31 MIPI CSI-2 bridge media
-driver.
+This introduces YAML bindings documentation for the Allwinner A83T
+MIPI CSI-2 controller.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../media/allwinner,sun8i-a83t-mipi-csi2.yaml | 133 ++++++++++++++++++
+ 1 file changed, 133 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-mipi-csi2.yaml
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 79fd8a012893..040c54b2d767 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -751,6 +751,14 @@ T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
- F:	drivers/media/platform/sunxi/sun4i-csi/
- 
-+ALLWINNER A31 MIPI CSI-2 BRIDGE DRIVER
-+M:	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+T:	git git://linuxtv.org/media_tree.git
-+F:	Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml
-+F:	drivers/media/platform/sunxi/sun6i-mipi-csi2/
+diff --git a/Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-mipi-csi2.yaml
+new file mode 100644
+index 000000000000..0d41681bb8b2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-mipi-csi2.yaml
+@@ -0,0 +1,133 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/allwinner,sun8i-a83t-mipi-csi2.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- ALLWINNER CPUFREQ DRIVER
- M:	Yangtao Li <tiny.windzz@gmail.com>
- L:	linux-pm@vger.kernel.org
++title: Allwinner A83T MIPI CSI-2 Device Tree Bindings
++
++maintainers:
++  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
++
++properties:
++  compatible:
++    const: allwinner,sun8i-a83t-mipi-csi2
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Bus Clock
++      - description: Module Clock
++      - description: MIPI-specific Clock
++      - description: Misc CSI Clock
++
++  clock-names:
++    items:
++      - const: bus
++      - const: mod
++      - const: mipi
++      - const: misc
++
++  resets:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        description: Input port, connect to a MIPI CSI-2 sensor
++
++        properties:
++          reg:
++            const: 0
++
++          endpoint:
++            $ref: video-interfaces.yaml#
++            unevaluatedProperties: false
++
++            properties:
++              clock-lanes:
++                maxItems: 1
++
++              data-lanes:
++                minItems: 1
++                maxItems: 4
++
++            required:
++              - data-lanes
++
++        additionalProperties: false
++
++      port@1:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        description: Output port, connect to a CSI controller
++
++        properties:
++          reg:
++            const: 1
++
++          endpoint:
++            $ref: video-interfaces.yaml#
++            unevaluatedProperties: false
++
++        additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/sun8i-a83t-ccu.h>
++    #include <dt-bindings/reset/sun8i-a83t-ccu.h>
++
++    mipi_csi2: csi@1cb1000 {
++        compatible = "allwinner,sun8i-a83t-mipi-csi2";
++        reg = <0x01cb1000 0x1000>;
++        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&ccu CLK_BUS_CSI>,
++                 <&ccu CLK_CSI_SCLK>,
++                 <&ccu CLK_MIPI_CSI>,
++                 <&ccu CLK_CSI_MISC>;
++        clock-names = "bus", "mod", "mipi", "misc";
++        resets = <&ccu RST_BUS_CSI>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            mipi_csi2_in: port@0 {
++                reg = <0>;
++
++                mipi_csi2_in_ov8865: endpoint {
++                    data-lanes = <1 2 3 4>;
++
++                    remote-endpoint = <&ov8865_out_mipi_csi2>;
++                };
++            };
++
++            mipi_csi2_out: port@1 {
++                reg = <1>;
++
++                mipi_csi2_out_csi: endpoint {
++                    remote-endpoint = <&csi_in_mipi_csi2>;
++                };
++            };
++        };
++    };
++
++...
 -- 
 2.34.1
 
