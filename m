@@ -2,106 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F8BC433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 00:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9784AC433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 02:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378830AbiBEAxG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 19:53:06 -0500
-Received: from mout.gmx.net ([212.227.15.18]:47755 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1378839AbiBEAxB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Feb 2022 19:53:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1644022364;
-        bh=ZInuevHBm/8PJjzn5I6mzT63DgQSEcCynm0dez446Vg=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AFz3bz4QsMm6Q8r7kpvkF8bX4FRk/27eEhF8rfJRqe1Aw0hVzblMbWhFgIbGBqvq7
-         Zg75sYU6LwWfwyVkKdD+OqzZblIdr/H5c8xQnLLg7PyXORU1oTW8Hd8PkHTw3TPTS1
-         rbggH0RnhAubbq4mTHkrheWClibrAg3wXZ0njvyU=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRCK6-1mt0G008Pc-00NEYx; Sat, 05
- Feb 2022 01:52:44 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>
-Subject: [PATCH v3 3/4] clk: hisilicon: Terminate clk_div_table with sentinel element
-Date:   Sat,  5 Feb 2022 01:52:30 +0100
-Message-Id: <20220205005232.772726-4-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220205005232.772726-1-j.neuschaefer@gmx.net>
-References: <20220205005232.772726-1-j.neuschaefer@gmx.net>
+        id S240155AbiBECs3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 21:48:29 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:48094 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233222AbiBECs3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 21:48:29 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3218060C11;
+        Sat,  5 Feb 2022 02:48:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76942C004E1;
+        Sat,  5 Feb 2022 02:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644029308;
+        bh=xd4Zyu6GLGga48XMPzzZETsVpPvBHmt/7qiLH5XsLjs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Vwz3RrYhbnaLJIzz9xaR2kdRLtigmA2VwWtCINvPYtJyYMHHcEEqqbfSAyQLtnEOk
+         +Lfqjz3fckDzbFmiw7qsHUH/VHXSM/GqMvqrYetigdumOXs3sKX80pVRmcIGRAF/iM
+         qILVVglOpExul4jVjCq3TNBGISaNAHC6xqXZ4oEWTAe07l6b7KYk0I1IuN0RxRGAW/
+         a9WBURihskHFUs6krsI2dYr6nOdX+YajJASKGuUEhXzzo2KVr28KNgAW3LXbBUOfo5
+         cuq6nLZ3btSSq2ioHCqPs7Q5Ctkplbv6VScBe/hHyh6LX+I8wk9PMheiFrq5ZZzNEG
+         J3Gcx1p9r0WRw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rbb1pSAhHyuR9YMzqKSJwi5YfC4B+oFbWbLzs/81XvNGTiL1Vc/
- qfxvUqUqbPYSYk5cwhkIH9R4ek6xxjxKvybtFfrQwgIqod3C2BN+lGGTMykeCOuCYK0peiR
- UbmrBs8eury762fSp/gjZgBb3+Ojuvjxv1epvl2kwPbW1nT5hTNGG3wOc/RwjVSc/H/3s/W
- Ag3osKQrhvh28/z/kjnAg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:qqoEMsfYPY4=:7LfRaRTn0/26RCs4FHsHbH
- PWn6fBf23npbfUbMJYDbr2viP1SEddfUCLW4qKgG4ZiOwXGD+siuSvEayjDdW/Yz9jRnARqXC
- XjMzVC3DALcabtOu03SO3F0jg4uK/XTq6/XloFr1TONIQgTPOT2jLcnFlbOOQVHsxbj15E9bu
- fxK102qIycpREeeaDSYGbDXGp6BiiLHyA/LmiVs9TiJM+oRTTgFOXWMJ9zaUHdJGFlsDmxbEG
- b93TiPssh/uTl0CNad6ne+nB6xvcezFYDMHC57MV/WuIY1UXPY97OlMhcT2/E3lGd86ZeXKM+
- aI6CbMISYH0fw1wnlhMOOvpPc07GzoBH9t2i9rbSv1J1uiWgEOQIOz9N/pRQdw3EBj9LUa949
- cZZNbb+B7aVcC3zLSgkGfnfQRl4AqO9TmxuewC9u59yEYJjuDeJyQjwcBiaTFPnFzq6n2/FNw
- FHGSCdvJ/W1HzejFpLXcaoDU+5SWISLDD3xI6gYqz4tNjiYZFWp7j29fijrPNUv0tx7Ra5pT/
- miTqTjAn6LbTsErKZPcWfCvlfOh2Liw4YzlDeJtLIVouEjj90D9fXcmBY4fkB1CZL3j+OaD5o
- KzGscaGDCFjnE+CX1iTbaNfWcb9OK3URZHHiKRRzy8qWdIv0NYtbYtoQ4PM2GFHlGa8nfhs+t
- eYmg3GNsjY4tpaGq+EQXdN/YS/L7yBsqNz9riwTMHt23ZYxg5+Mnxl53vQtvNnz6INFEs06rg
- HEzaEBD+8MN7lRBnY55FSDi2sdC6u/T0U7vV2nyTR6ZPLrYMpTBvGeZ3qR+XmPI87h/t3gmQs
- QE6ZHXSnqhHtAd6Ebi448RZNHxn/jG+n9tTVVxpf32mQSLoU9u27BQjivHj+cbmooAsohUP/8
- Pn6pFaC0SKNjWJtcAvs5fQKW/lLgksRKuv1q+fCozuJUuFQ8sRKgWT6r+lM6DVkiv2+Z/4o9F
- pKisDSTsDa+tAw76DBXjF0P3S0mixK+V/eMNtwQtEUTkKmJLI/casqFSsoW7e9u1E9kPvQxtI
- dcfN9+OeP6CTYjPY6FGrB8AA68qBokrZmLsiDcu0r2eRZ6nR+lNa99lubDRUt/zukVyFOn2RT
- JfynFZRhPllCRI=
+In-Reply-To: <CAA8EJpqWUm5C5nc3fZzjF4XfAEZo8m=PY0Rj6WeDgSJEey=D_A@mail.gmail.com>
+References: <20220202182053.22925-1-tdas@codeaurora.org> <20220202182053.22925-2-tdas@codeaurora.org> <CAA8EJpqWUm5C5nc3fZzjF4XfAEZo8m=PY0Rj6WeDgSJEey=D_A@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] clk: qcom: sc7280: Update clk_init_data to const for clock controllers
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Fri, 04 Feb 2022 18:48:26 -0800
+User-Agent: alot/0.10
+Message-Id: <20220205024828.76942C004E1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order that the end of a clk_div_table can be detected, it must be
-terminated with a sentinel element (.div =3D 0).
+Quoting Dmitry Baryshkov (2022-02-02 14:34:11)
+> On Wed, 2 Feb 2022 at 21:23, Taniya Das <tdas@codeaurora.org> wrote:
+> >
+> > Update clk_init_data to const and also use index instead of fw_name for
+> > graphics, lpasscc and video clock controller.
+>=20
+> What is the benefit from using indices here? In my opinion the code
+> becomes more fragile with such a change.
 
-Fixes: 6c81966107dc0 ("clk: hisilicon: Add clock driver for hi3559A SoC")
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
-
-v3:
-- no changes
-
-v2:
-- Add Fixes tag
-=2D--
- drivers/clk/hisilicon/clk-hi3559a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/c=
-lk-hi3559a.c
-index 56012a3d02192..28c2a0630474d 100644
-=2D-- a/drivers/clk/hisilicon/clk-hi3559a.c
-+++ b/drivers/clk/hisilicon/clk-hi3559a.c
-@@ -611,8 +611,8 @@ static struct hisi_mux_clock hi3559av100_shub_mux_clks=
-[] =3D {
-
-
- /* shub div clk */
--static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}};
--static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-};
-+static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}, {}};
-+static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-, {}};
-
- static struct hisi_divider_clock hi3559av100_shub_div_clks[] =3D {
- 	{ HI3559AV100_SHUB_SPI_SOURCE_CLK, "clk_spi_clk", "shub_clk", 0, 0x20, 2=
-4, 2,
-=2D-
-2.34.1
-
+The benefit is smaller code size. Please run scripts/bloat-o-meter
