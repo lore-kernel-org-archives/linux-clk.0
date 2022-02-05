@@ -2,94 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36818C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 09:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A6CC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 10:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352879AbiBEJ7z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Feb 2022 04:59:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34012 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236982AbiBEJ7z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 04:59:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A52BC061346;
-        Sat,  5 Feb 2022 01:59:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8E3B560ADD;
-        Sat,  5 Feb 2022 09:59:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A91C340E8;
-        Sat,  5 Feb 2022 09:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1644055193;
-        bh=W5YmqexkL6b0U2LlECgOXWwtWCfw0QjpKZw0Ip+T2xI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DL2JNS8XmdlEEPAGoDHitCg7jF06NjQDTc7v8sY7/WebGhFkHaLcUBH5FmC4rDu+Y
-         7c3MVahAfx5OcEP97BuruVwQYciernb6GT0HTiDK54XXBUdQgjmDnxXXP4RjLe/QAO
-         N4IbMQR9nng1/Vd52yglT76E/v9pRWgFClkT5BQ8=
-Date:   Sat, 5 Feb 2022 10:59:50 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Siarhei Volkau <lis8215@gmail.com>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] clk: jz4725b: fix mmc0 clock gating
-Message-ID: <Yf5KlvxlRwM9JsZr@kroah.com>
-References: <4FSS6R.0A48V2ZMZD7X1@crapouillou.net>
- <20220205094531.676371-1-lis8215@gmail.com>
- <20220205094531.676371-2-lis8215@gmail.com>
+        id S233399AbiBEKgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Feb 2022 05:36:38 -0500
+Received: from mout.gmx.net ([212.227.15.15]:43717 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229907AbiBEKgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 5 Feb 2022 05:36:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1644057392;
+        bh=9H7cICTDVgmHRDhmL0NozmHU5f8YJKtTFxCCe/KGh40=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=NVB+fEecn9aD2SjxQUwmZcZP+TKWJOxn+fRuJbLTYMn4Bbrx99P/18MAz0Pb5GmUD
+         E9k5bu5P8tmmrW5FQ7p+xzz4QgqC07h53OuVs3lYa6q4WsFpiXUnDwT1Q3Qqu5zJjm
+         Rs1hRclJX4VDZ34U9yQSZ7qRNusrGXK14xldoh1o=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M42jK-1nGIQi08WW-00035X; Sat, 05
+ Feb 2022 11:36:32 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH v2 0/7] clk: Declare mux tables as const u32[]
+Date:   Sat,  5 Feb 2022 11:36:06 +0100
+Message-Id: <20220205103613.1216218-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220205094531.676371-2-lis8215@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:/h8Kx3Dp4vLgS/DLX4PZl6iFN/6UxoPSJrqjjZuVVAbXZ1DfIzT
+ COIlkuzULvS4se7nqwcHAy4umtKBjWe+edlH7oREVi+hn4q2YU7LmZOJB+ZUD9c43c9qD5A
+ rQ/aCxpAVqCDdiOw4JrCZIkJrUh9eJPXcOrnve/wJmBMQIJ83jnNm97le/CknVgl79i4p3F
+ +6qT9vBp/c6XNJM64CntQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nVrT49EqKyg=:nB/1FQAe4DYQGi5zTS0X8o
+ 8qB7Ctid6Wt6dVwEXoH6gy2kVxVU8crSufb1ixQuYCr6yh4ojo/2nvr5yz08pWptnVg372mFU
+ AdqWEqzq7lzBfvhVrMTXhGdtskURm8N2ahwKK1qgOR2ggw3zwrlfxgxAiUuVvQJQf1MluU0dO
+ xufjQg+7TTO/5AEdDHPYcERV5I4sYgM0LQxETolCifr9bI0Eat03r0IDAuvd289wycEqaXu/d
+ ZRLPbuSYiyvEX/591VStr+NPt/KmJhFLcnKO3g+DvszR0nOS67sXwZJZv8IFlATnlu0XgUXZc
+ NM2DudVYVB+LkCqNUwMLXqam8pJnPihGSkZ0KJmcLElOj9CCwsjy+2cR5S+iFiwp7SmJmQmP4
+ TSDRyCHmunMBLDfkGJumHLsKM0s5Tl2ZKBjE2zBVgt/1tps4Q+JU3NueRzN1T2y3w3qocmoTu
+ M6cnccx6GiLNfAT0aBnPmPmjJ284HOPiAhr+VWOwl+bNJcOHVVjMlgRANIBO6XpF10tuR+0M6
+ kGMbvV8fr4kid2Qy70mTghUHzPY9fX+GaSU5S8wmExEJA1Can7c73fHqOChO7yM0ghQt8tPp0
+ kXkcDlazSXynLiBrT4ydSOewv2mk7kL3MOqjwbQULu6upX2tAEUJIBcqOSCQKLsf6dpT51fSl
+ bVVamMCrZEvs5YqEB1hXFbWPpP2oE3j78DQc1r12/Ci/xMGhBFPXQ1WJUmDrv6esemHbRWqH3
+ YMzwz/ZONDBV4Q16Z8/x/t/v76vOPRvS2Vs7pPL5ZPnItfPb3ruEKQoqZsaVvDGMU7ackOEXF
+ pZHCnSAe+R/DrQjhJqRv0dsitNMm+KkSxnk9f9WolzUtnEZnixJpUskeldkO806CXMzx4UOhz
+ g/Ro8rfGsSKGSWiYm8kAclldord99xGZ4HhtV5PgaGPSsGdnvdl7lD35L+6awmiah4A1D3q9Z
+ 6n46DOfUhj5jbPSRJykr2Zf9+ZevY1/hM4IunA/96xn+hRLXst8WGiud4m+BYfk71aPl3mSTR
+ BTIg0eWEp4yd64dUL/BKnakdfTly/v0814YzPrbnhWWW1boGfhhaaRmAmwk1pTkP9ybH+uXBa
+ 8ufIN/iHZwf3a4=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 05, 2022 at 12:45:31PM +0300, Siarhei Volkau wrote:
-> The mmc0 clock gate bit was mistakenly assigned to "i2s" clock.
-> You can find that the same bit is assigned to "mmc0" too.
-> It leads to mmc0 hang for a long time after any sound activity
-> also it  prevented PM_SLEEP to work properly.
-> I guess it was introduced by copy-paste from jz4740 driver
-> where it is really controls I2S clock gate.
-> 
-> Fixes: 226dfa4726eb ("clk: Add Ingenic jz4725b CGU driver")
-> Signed-off-by: Siarhei Volkau <lis8215@gmail.com>
-> Tested-by: Siarhei Volkau <lis8215@gmail.com>
-> Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->  drivers/clk/ingenic/jz4725b-cgu.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
-> index 744d136..15d6179 100644
-> --- a/drivers/clk/ingenic/jz4725b-cgu.c
-> +++ b/drivers/clk/ingenic/jz4725b-cgu.c
-> @@ -139,11 +139,10 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
->  	},
->  
->  	[JZ4725B_CLK_I2S] = {
-> -		"i2s", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-> +		"i2s", CGU_CLK_MUX | CGU_CLK_DIV,
->  		.parents = { JZ4725B_CLK_EXT, JZ4725B_CLK_PLL_HALF, -1, -1 },
->  		.mux = { CGU_REG_CPCCR, 31, 1 },
->  		.div = { CGU_REG_I2SCDR, 0, 1, 9, -1, -1, -1 },
-> -		.gate = { CGU_REG_CLKGR, 6 },
->  	},
->  
->  	[JZ4725B_CLK_SPI] = {
-> -- 
-> 2.35.1
-> 
+I noticed that the 'table' parameter to clk_register_mux_table is never
+used for modifying the table elements, and so it can be declared const.
 
-<formletter>
+In version 2 I'm addressing two warnings in the clk-lpc18xx-cgu driver
+that I previously missed.
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+Jonathan Neusch=C3=A4fer (7):
+  clk: nxp: Remove unused variable
+  clk: nxp: Declare mux table parameter as const u32 *
+  clk: mux: Declare u32 *table parameter as const
+  clk: hisilicon: Remove unnecessary cast of mux table to u32 *
+  clk: mmp: Declare mux tables as const u32[]
+  clk: qcom: Declare mux table as const u32[]
+  clk: pistachio: Declare mux table as const u32[]
 
-</formletter>
+ drivers/clk/clk-mux.c                 | 10 +++++-----
+ drivers/clk/hisilicon/clk.c           |  2 +-
+ drivers/clk/mmp/clk-of-mmp2.c         |  4 ++--
+ drivers/clk/nxp/clk-lpc18xx-cgu.c     |  5 ++---
+ drivers/clk/pistachio/clk-pistachio.c |  2 +-
+ drivers/clk/qcom/kpss-xcc.c           |  2 +-
+ include/linux/clk-provider.h          | 12 ++++++------
+ 7 files changed, 18 insertions(+), 19 deletions(-)
+
+=2D-
+2.34.1
+
