@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBC8C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA42C4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 18:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381810AbiBES5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Feb 2022 13:57:30 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:39013 "EHLO
+        id S1381850AbiBES5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Feb 2022 13:57:38 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:52145 "EHLO
         relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239403AbiBESzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:49 -0500
+        with ESMTP id S1381289AbiBESzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Feb 2022 13:55:53 -0500
 Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BC4B5240010;
-        Sat,  5 Feb 2022 18:55:46 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 17171240017;
+        Sat,  5 Feb 2022 18:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644087348;
+        t=1644087351;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=h75JqJgq6QG+QOajI+uXIxRh4Nj5dGBymygUtKmDRes=;
-        b=JZzyEEQE91vY0aTTIZs5rZcxQDqtAH20J36gTZWsh2QwLca6y5yIY8WGY/o9R1gKx9gzO/
-        MsfPl91BGIxchRs9ARg8MjkM7QTHsN6yy8gwpP8pLg5mzJageBnvNaZYmagsyqj+K3gm7+
-        vOsSablNoBhsHHjBUmv9arVDe5toKXH+UNFMNr0SNgCnt7PpmI09Cqpz37loFoCVSvzBjZ
-        jlK/DRN52VocOG74Oqw911gR2se7P4FtqzRnS+FwXlRPLcAovQQDm7zHontyyQM9xLWgpJ
-        e8xxFAkxcc23j6b3O77MbmTREs+xwtuplWTPUHXXVqf6VAr6qKibg1cq24OoeA==
+        bh=+0uQL8zzt9MM63qHmYlfeh8zoQTXQD02jc2R4hrTl6Y=;
+        b=jAZ26Kn/ixI32OqgVBT9teyluW05Qy7s7RR6w7ZK7Hpk/egFpRKXzSIiiT/EwgU4FKs2zq
+        RkN8Lc3BMrvM7no/qVnExsHZAJArWicHm7r47opZl/6TEZbl2/sbbj6X7nZb7k+BWW32AV
+        smJE4Aw5CIQqL3fsIuIVF/Wdr1s1RDgkFJn8Kp2jsNElcMwTeFmcEqq44G5ypN3wJuD9/y
+        NN+AxRqOozcjj6Si/BBaHb+oCheG6rAk1LVtSkTHI69ZNHGbimj8F0hkI33q7QRV3G0Vqx
+        QUVdbvC0LA7asQRbHYYvLCEDezDEuQxrPV8FibodR+ShYaM9jlHVCePdaAywCQ==
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
@@ -44,9 +44,9 @@ Cc:     Yong Deng <yong.deng@magewell.com>,
         Helen Koike <helen.koike@collabora.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v2 40/66] media: sun6i-csi: Remove custom format helper and rework configure
-Date:   Sat,  5 Feb 2022 19:54:03 +0100
-Message-Id: <20220205185429.2278860-41-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 42/66] media: sun6i-csi: Get mbus code from bridge instead of storing it
+Date:   Sat,  5 Feb 2022 19:54:05 +0100
+Message-Id: <20220205185429.2278860-43-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
@@ -56,183 +56,94 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove the custom sun6i_csi_get_bpp helper in favor of common v4l2
-infrastructure and rework the related window configuration code.
+Another instance of removing a duplicated variable and using common
+helpers instead.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- .../platform/sunxi/sun6i-csi/sun6i_csi.h      | 49 -------------
- .../sunxi/sun6i-csi/sun6i_csi_capture.c       | 70 +++++++++----------
- 2 files changed, 35 insertions(+), 84 deletions(-)
+ .../sunxi/sun6i-csi/sun6i_csi_capture.c        | 18 +++++-------------
+ .../sunxi/sun6i-csi/sun6i_csi_capture.h        |  1 -
+ 2 files changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-index c37bbab93cd5..c687213924d4 100644
---- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-+++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
-@@ -57,55 +57,6 @@ struct sun6i_csi_device {
- bool sun6i_csi_is_format_supported(struct sun6i_csi_device *csi_dev,
- 				   u32 pixformat, u32 mbus_code);
- 
--/* get bpp form v4l2 pixformat */
--static inline int sun6i_csi_get_bpp(unsigned int pixformat)
--{
--	switch (pixformat) {
--	case V4L2_PIX_FMT_SBGGR8:
--	case V4L2_PIX_FMT_SGBRG8:
--	case V4L2_PIX_FMT_SGRBG8:
--	case V4L2_PIX_FMT_SRGGB8:
--	case V4L2_PIX_FMT_JPEG:
--		return 8;
--	case V4L2_PIX_FMT_SBGGR10:
--	case V4L2_PIX_FMT_SGBRG10:
--	case V4L2_PIX_FMT_SGRBG10:
--	case V4L2_PIX_FMT_SRGGB10:
--		return 10;
--	case V4L2_PIX_FMT_SBGGR12:
--	case V4L2_PIX_FMT_SGBRG12:
--	case V4L2_PIX_FMT_SGRBG12:
--	case V4L2_PIX_FMT_SRGGB12:
--	case V4L2_PIX_FMT_NV12_16L16:
--	case V4L2_PIX_FMT_NV12:
--	case V4L2_PIX_FMT_NV21:
--	case V4L2_PIX_FMT_YUV420:
--	case V4L2_PIX_FMT_YVU420:
--		return 12;
--	case V4L2_PIX_FMT_YUYV:
--	case V4L2_PIX_FMT_YVYU:
--	case V4L2_PIX_FMT_UYVY:
--	case V4L2_PIX_FMT_VYUY:
--	case V4L2_PIX_FMT_NV16:
--	case V4L2_PIX_FMT_NV61:
--	case V4L2_PIX_FMT_YUV422P:
--	case V4L2_PIX_FMT_RGB565:
--	case V4L2_PIX_FMT_RGB565X:
--		return 16;
--	case V4L2_PIX_FMT_RGB24:
--	case V4L2_PIX_FMT_BGR24:
--		return 24;
--	case V4L2_PIX_FMT_RGB32:
--	case V4L2_PIX_FMT_BGR32:
--		return 32;
--	default:
--		WARN(1, "Unsupported pixformat: 0x%x\n", pixformat);
--		break;
--	}
--
--	return 0;
--}
--
- int sun6i_csi_v4l2_complete(struct sun6i_csi_device *csi_dev);
- 
- #endif /* __SUN6I_CSI_H__ */
 diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.c
-index 9c8b33c7e59c..f977b89dcea2 100644
+index f977b89dcea2..12c02408d18e 100644
 --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.c
 +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.c
-@@ -483,68 +483,68 @@ static void sun6i_csi_capture_configure_format(struct sun6i_csi_device *csi_dev)
+@@ -17,6 +17,7 @@
+ #include <media/videobuf2-v4l2.h>
  
- static void sun6i_csi_capture_configure_window(struct sun6i_csi_device *csi_dev)
+ #include "sun6i_csi.h"
++#include "sun6i_csi_bridge.h"
+ #include "sun6i_csi_capture.h"
+ #include "sun6i_csi_reg.h"
+ 
+@@ -455,20 +456,20 @@ sun6i_csi_capture_configure_interface(struct sun6i_csi_device *csi_dev)
+ 
+ static void sun6i_csi_capture_configure_format(struct sun6i_csi_device *csi_dev)
  {
-+	struct regmap *regmap = csi_dev->regmap;
-+	const struct v4l2_format_info *info;
-+	u32 hsize_len, vsize_len;
-+	u32 luma_line, chroma_line = 0;
- 	u32 pixelformat, field;
- 	u32 width, height;
--	u32 bytesperline_y;
--	u32 bytesperline_c;
--	u32 hor_len;
+-	struct sun6i_csi_capture *capture = &csi_dev->capture;
+-	u32 pixelformat, field;
++	u32 mbus_code, pixelformat, field;
+ 	u32 cfg = 0;
+ 	u32 val;
  
- 	sun6i_csi_capture_dimensions(csi_dev, &width, &height);
  	sun6i_csi_capture_format(csi_dev, &pixelformat, &field);
++	sun6i_csi_bridge_format(csi_dev, &mbus_code, NULL);
  
--	hor_len = width;
-+	hsize_len = width;
-+	vsize_len = height;
+-	val = get_csi_input_format(csi_dev, capture->mbus_code, pixelformat);
++	val = get_csi_input_format(csi_dev, mbus_code, pixelformat);
+ 	cfg |= SUN6I_CSI_CH_CFG_INPUT_FMT(val);
  
- 	switch (pixelformat) {
- 	case V4L2_PIX_FMT_YUYV:
- 	case V4L2_PIX_FMT_YVYU:
- 	case V4L2_PIX_FMT_UYVY:
- 	case V4L2_PIX_FMT_VYUY:
--		dev_dbg(csi_dev->dev,
--			"Horizontal length should be 2 times of width for packed YUV formats!\n");
--		hor_len = width * 2;
-+		/*
-+		 * Horizontal length should be 2 times of width for packed
-+		 * YUV formats.
-+		 */
-+		hsize_len *= 2;
- 		break;
- 	default:
- 		break;
+ 	val = get_csi_output_format(csi_dev, pixelformat, field);
+ 	cfg |= SUN6I_CSI_CH_CFG_OUTPUT_FMT(val);
+ 
+-	val = get_csi_input_seq(csi_dev, capture->mbus_code, pixelformat);
++	val = get_csi_input_seq(csi_dev, mbus_code, pixelformat);
+ 	cfg |= SUN6I_CSI_CH_CFG_INPUT_YUV_SEQ(val);
+ 
+ 	if (field == V4L2_FIELD_TOP)
+@@ -739,11 +740,6 @@ static int sun6i_csi_capture_start_streaming(struct vb2_queue *queue,
+ 	if (ret < 0)
+ 		goto error_state;
+ 
+-	if (capture->mbus_code == 0) {
+-		ret = -EINVAL;
+-		goto error_media_pipeline;
+-	}
+-
+ 	subdev = sun6i_csi_capture_remote_subdev(capture, NULL);
+ 	if (!subdev) {
+ 		ret = -EINVAL;
+@@ -1067,8 +1063,6 @@ static int sun6i_csi_capture_link_validate(struct media_link *link)
+ 	struct v4l2_subdev_format source_fmt;
+ 	int ret;
+ 
+-	capture->mbus_code = 0;
+-
+ 	if (!media_entity_remote_pad(link->sink->entity->pads)) {
+ 		dev_info(csi_dev->dev, "capture node %s pad not connected\n",
+ 			 vdev->name);
+@@ -1100,8 +1094,6 @@ static int sun6i_csi_capture_link_validate(struct media_link *link)
+ 		return -EPIPE;
  	}
  
--	regmap_write(csi_dev->regmap, SUN6I_CSI_CH_HSIZE_REG,
--		     SUN6I_CSI_CH_HSIZE_LEN(hor_len) |
-+	regmap_write(regmap, SUN6I_CSI_CH_HSIZE_REG,
-+		     SUN6I_CSI_CH_HSIZE_LEN(hsize_len) |
- 		     SUN6I_CSI_CH_HSIZE_START(0));
--	regmap_write(csi_dev->regmap, SUN6I_CSI_CH_VSIZE_REG,
--		     SUN6I_CSI_CH_VSIZE_LEN(height) |
-+
-+	regmap_write(regmap, SUN6I_CSI_CH_VSIZE_REG,
-+		     SUN6I_CSI_CH_VSIZE_LEN(vsize_len) |
- 		     SUN6I_CSI_CH_VSIZE_START(0));
- 
- 	switch (pixelformat) {
--	case V4L2_PIX_FMT_NV12_16L16:
--	case V4L2_PIX_FMT_NV12:
--	case V4L2_PIX_FMT_NV21:
--	case V4L2_PIX_FMT_NV16:
--	case V4L2_PIX_FMT_NV61:
--		bytesperline_y = width;
--		bytesperline_c = width;
-+	case V4L2_PIX_FMT_RGB565X:
-+		luma_line = width * 2;
- 		break;
--	case V4L2_PIX_FMT_YUV420:
--	case V4L2_PIX_FMT_YVU420:
--		bytesperline_y = width;
--		bytesperline_c = width / 2;
-+	case V4L2_PIX_FMT_NV12_16L16:
-+		luma_line = width;
-+		chroma_line = width;
- 		break;
--	case V4L2_PIX_FMT_YUV422P:
--		bytesperline_y = width;
--		bytesperline_c = width / 2;
-+	case V4L2_PIX_FMT_JPEG:
-+		luma_line = width;
- 		break;
--	default: /* raw */
--		dev_dbg(csi_dev->dev,
--			"Calculating pixelformat(0x%x)'s bytesperline as a packed format\n",
--			pixelformat);
--		bytesperline_y = (sun6i_csi_get_bpp(pixelformat) *
--				  width) / 8;
--		bytesperline_c = 0;
-+	default:
-+		info = v4l2_format_info(pixelformat);
-+		if (WARN_ON(!info))
-+			return;
-+
-+		luma_line = width * info->bpp[0];
-+
-+		if (info->comp_planes > 1)
-+			chroma_line = width * info->bpp[1] / info->hdiv;
- 		break;
- 	}
- 
--	regmap_write(csi_dev->regmap, SUN6I_CSI_CH_BUF_LEN_REG,
--		     SUN6I_CSI_CH_BUF_LEN_CHROMA_LINE(bytesperline_c) |
--		     SUN6I_CSI_CH_BUF_LEN_LUMA_LINE(bytesperline_y));
-+	regmap_write(regmap, SUN6I_CSI_CH_BUF_LEN_REG,
-+		     SUN6I_CSI_CH_BUF_LEN_CHROMA_LINE(chroma_line) |
-+		     SUN6I_CSI_CH_BUF_LEN_LUMA_LINE(luma_line));
+-	capture->mbus_code = source_fmt.format.code;
+-
+ 	return 0;
  }
  
- static void sun6i_csi_capture_configure(struct sun6i_csi_device *csi_dev)
+diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.h b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.h
+index 02bdf45f7ca5..3b9759e1563d 100644
+--- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.h
++++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_capture.h
+@@ -39,7 +39,6 @@ struct sun6i_csi_capture {
+ 	struct media_pad		pad;
+ 
+ 	struct v4l2_format		format;
+-	u32				mbus_code;
+ };
+ 
+ void sun6i_csi_capture_dimensions(struct sun6i_csi_device *csi_dev,
 -- 
 2.34.1
 
