@@ -2,113 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AE5C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 02:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 315C0C433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Feb 2022 03:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238867AbiBECzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Feb 2022 21:55:50 -0500
-Received: from dfw.source.kernel.org ([139.178.84.217]:51762 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbiBECzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 21:55:49 -0500
+        id S1379106AbiBEDD5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Feb 2022 22:03:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233604AbiBEDD5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Feb 2022 22:03:57 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3397C061346;
+        Fri,  4 Feb 2022 19:03:56 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59F8160C55;
-        Sat,  5 Feb 2022 02:55:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1BBC004E1;
-        Sat,  5 Feb 2022 02:55:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8242060C17;
+        Sat,  5 Feb 2022 03:03:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF26FC004E1;
+        Sat,  5 Feb 2022 03:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644029748;
-        bh=BQUS4mKdVMdQIuKV+9qmm5n95QdGCKeA5gbAJQNI5a4=;
+        s=k20201202; t=1644030235;
+        bh=B779VCbNhc940fOx/ZsWJA+XO5L+RfvVX2YwUFvKb/0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=uG+rJszuNbiwN9nUKvB9AHrWF0wucl97LlmgSUSQEEq5PyV981G+OfIz3c3Atba61
-         djk0cQoGfBOaqu2Yn4R7sqUuHXAHGzcXFGMDgVTN1mV74Swe/unZspxgfOEhkrbMrb
-         pSHzBpWHyqt1h8rPjVnyZoCLrplCSwyz9Nf8QIRSGgyRGmO1nBnsDcqthzRd/x5i9r
-         kq1UijJ1KPzqINzfjJR2egFHt8gjXUrRnI+G3AHRiu+pqYK5czmRDhj9ygQa9BbLVt
-         Bwz93TBtA7IthgukYw1IRXJAt5oEd1gtLimfGDo1ehJX2fZSxzSosVHqHuiCHBKbfG
-         KGW9zrHXn0okg==
+        b=NU5XRUF2wnZPyDh8CjvW69c1iV1XyW1i0aVTY+koKIiQJN6rzXd/VDdh68XXSqhsg
+         /kO+LHNQZueeOydiUnzAnm/LtZ6dSizWkEZDr9ZxWSZno7Iz+YY63xd3PemcoqQz4A
+         uW6TKEY29XGJ4pRnga+/zDNOgCVXDUZym3kI16aNlTFFFyxT4g9M6Adh3CVHtlPA1S
+         FWFf7zg43fUs6vY9qowJtoTOnaF0TOi9vHX3AxO/7MHSLA6rqvkcUSJjiWn6EjNSNH
+         awx4ZHrAxMGDOBX+p8TQnoK+ZqlIlW7SJYkzx07yDIGsRrDBx+YSgTtbi6Z6LF7Y79
+         BTy4M+9uZ3Vug==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMhs-H9c8zF=v2tu5Y1OsFRP6esOi5zrUceqS_OUiJ=MSfCvRQ@mail.gmail.com>
-References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com> <YfE5MOkQRoHQV7Wf@kroah.com> <CAMhs-H8s0d=PswQDR86Tq-bQt634Z6rdFYHTE+DFepsthmKAYA@mail.gmail.com> <YfE7LNFuf79i3oAQ@kroah.com> <CAMhs-H9c8zF=v2tu5Y1OsFRP6esOi5zrUceqS_OUiJ=MSfCvRQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset provider
+In-Reply-To: <YfmtxA7fCmbBWK0Z@Ansuel-xps.localdomain>
+References: <20220121210340.32362-1-ansuelsmth@gmail.com> <20220121210340.32362-11-ansuelsmth@gmail.com> <20220125204555.91DB4C340E0@smtp.kernel.org> <61f065b9.1c69fb81.ed14d.b9e2@mx.google.com> <20220125221825.D9B78C340E0@smtp.kernel.org> <YfmtxA7fCmbBWK0Z@Ansuel-xps.localdomain>
+Subject: Re: [PATCH v3 10/15] drivers: clk: qcom: gcc-ipq806x: add additional freq for sdc table
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     <linux-clk@vger.kernel.org>, John Crispin <john@phrozen.org>,
-        linux-staging@lists.linux.dev, NeilBrown <neil@brown.name>,
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Fri, 04 Feb 2022 18:55:46 -0800
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Date:   Fri, 04 Feb 2022 19:03:54 -0800
 User-Agent: alot/0.10
-Message-Id: <20220205025548.AA1BBC004E1@smtp.kernel.org>
+Message-Id: <20220205030355.CF26FC004E1@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergio Paracuellos (2022-01-26 04:45:31)
-> On Wed, Jan 26, 2022 at 1:14 PM Greg KH <gregkh@linuxfoundation.org> wrot=
-e:
-> >
-> > On Wed, Jan 26, 2022 at 01:08:52PM +0100, Sergio Paracuellos wrote:
-> > > On Wed, Jan 26, 2022 at 1:06 PM Greg KH <gregkh@linuxfoundation.org> =
-wrote:
-> > > >
-> > > > On Mon, Jan 10, 2022 at 12:49:26PM +0100, Sergio Paracuellos wrote:
-> > > > > Hi all,
-> > > > >
-> > > > > This patch series add minimal change to provide mt7621 resets pro=
-perly
-> > > > > defining them in the 'mediatek,mt7621-sysc' node which is the sys=
-tem
-> > > > > controller of the SoC and is already providing clocks to the rest=
- of
-> > > > > the world.
-> > > > >
-> > > > > There is shared architecture code for all ralink platforms in 're=
-set.c'
-> > > > > file located in 'arch/mips/ralink' but the correct thing to do to=
- align
-> > > > > hardware with software seems to define and add related reset code=
- to the
-> > > > > already mainlined clock driver.
-> > > > >
-> > > > > After this changes, we can get rid of the useless reset controlle=
-r node
-> > > > > in the device tree and use system controller node instead where t=
-he property
-> > > > > '#reset-cells' has been added. Binding documentation for this nod=
-eq has
-> > > > > been updated with the new property accordly.
-> > > > >
-> > > > > This series also provide a bindings include header where all rela=
-ted
-> > > > > reset bits for the MT7621 SoC are defined.
-> > > > >
-> > > > > Also, please take a look to this review [0] to understand better =
-motivation
-> > > > > for this series.
-> > > > >
-> > > > > Regarding the way of merging this:
-> > > > >  - I'd like patches 1 and 4 which are related going through stagi=
-ng tree.
-> > > >
-> > > > Patches 1 and 4 now in the staging tree, thanks.
-> > >
-> > > Stephen wanted all to go through the CLK tree since PATCH 3 and 1 were
-> > > also a dependency... Can we get all of them through the same tree,
-> > > then? I am ok with both CLK or staging trees.
-> >
-> > That's fine with me if they all go through the CLK tree, but there will
-> > be a merge issue that I already fixed up in my tree.  If you want me to
-> > drop them, just let me know.
+Quoting Ansuel Smith (2022-02-01 14:01:40)
+> On Tue, Jan 25, 2022 at 02:18:24PM -0800, Stephen Boyd wrote:
+> > Quoting Ansuel Smith (2022-01-25 13:03:52)
+> > > On Tue, Jan 25, 2022 at 12:45:53PM -0800, Stephen Boyd wrote:
+> > > > Quoting Ansuel Smith (2022-01-21 13:03:35)
+> > > > > Add additional freq supported for the sdc table.
+> > > > >=20
+> > > > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > > > > ---
+> > > > >  drivers/clk/qcom/gcc-ipq806x.c | 1 +
+> > > > >  1 file changed, 1 insertion(+)
+> > > > >=20
+> > > > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gc=
+c-ipq806x.c
+> > > > > index 77bc3d94f580..dbd61e4844b0 100644
+> > > > > --- a/drivers/clk/qcom/gcc-ipq806x.c
+> > > > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> > > > > @@ -1292,6 +1292,7 @@ static const struct freq_tbl clk_tbl_sdc[] =
+=3D {
+> > > > >         {  20210000, P_PLL8,  1, 1,  19 },
+> > > > >         {  24000000, P_PLL8,  4, 1,   4 },
+> > > > >         {  48000000, P_PLL8,  4, 1,   2 },
+> > > > > +       {  52000000, P_PLL8,  1, 2,  15 }, /* 51.2 Mhz */
+> > > >=20
+> > > > Why the comment and fake rate? Can it be 51200000 instead and drop =
+the
+> > > > comment?
+> > >=20
+> > > I will add the related reason in the commit.
+> > >=20
+> > > We cannot achieve exact 52Mhz(jitter free) clock using PLL8.
+> > > As per the MND calculator the closest possible jitter free clock
+> > > using PLL8 is 51.2Mhz. This patch adds the values, which will provide
+> > > jitter free 51.2Mhz when the requested frequency is 52mhz.
+> >=20
+> > Sounds like this clk should use the round down clk_ops instead of the
+> > round up ones. Then the actual frequency can be in the table.
 >=20
-> Stephen, what do you prefer? Is it better all going through staging-tree =
-then?
+> Some hint on how to do that? This use the rcg generic ops that doesn't
+> use any round. Should I crate some special ops in the rcg driver to
+> implement the round ops?
 >=20
 
-Sure take them through staging tree.
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Use the clk_rcg2_floor_ops, or if this isn't an rcg2 clk, then make a
+duplicate clk_rcg_floor_ops that does the same thing.
