@@ -2,152 +2,141 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7192AC4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 05:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D4EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 08:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240970AbiBGFvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 00:51:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52574 "EHLO
+        id S231447AbiBGIwc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 03:52:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242918AbiBGCwe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Feb 2022 21:52:34 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BD1C061A73;
-        Sun,  6 Feb 2022 18:52:31 -0800 (PST)
-X-UUID: 99c12dbabde24c4f9733a4db35d00fe1-20220207
-X-UUID: 99c12dbabde24c4f9733a4db35d00fe1-20220207
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 488659191; Mon, 07 Feb 2022 10:47:26 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Mon, 7 Feb 2022 10:47:25 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 7 Feb 2022 10:47:24 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <chun-jie.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-Subject: Re: [PATCH v2 13/31] clk: mediatek: pll: Implement unregister API
-Date:   Mon, 7 Feb 2022 10:47:25 +0800
-Message-ID: <20220207024725.14618-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220202134834.690675-14-wenst@chromium.org>
-References: <20220202134834.690675-14-wenst@chromium.org>
+        with ESMTP id S243028AbiBGInx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 03:43:53 -0500
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::224])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CA1C043181;
+        Mon,  7 Feb 2022 00:43:50 -0800 (PST)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7BAC8E000C;
+        Mon,  7 Feb 2022 08:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1644223426;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aqtEkkE4CxAPCqiyjvQlRqA4fyM6M/H+WbMg+4em3bk=;
+        b=b/8uLavJfT0Pt7E5NoIji6JTEqyrnFW8AjRy2crSYjYa2+QxdwCGQc+rmkX8TpLU5/QH2B
+        uXn/ZDuogrQ6mrqVH7TXf8npZfUUAvpaAkd7mavWrTl8CLvuYVYlLmJiQLtaw8z3KSzzHh
+        0dClE6y7UCGqM1NJDXiyE8WDFc/dV6WZNEG7TJBNCL4fJmBdtmMsgNJEB/BHqTf5ryGxfR
+        3y7pKlclTbaRTjTWl94cEd38+jWj3JUtyi6B+JFfjXc/S9vXarXeekHfSn1K95ltQdwScI
+        KtNMhUPRgqM/sKC1j20xCDvOlzNXAmuXMF4bCE3bSsX+SdJGU3T7pWgvuBjZfA==
+Date:   Mon, 7 Feb 2022 09:43:43 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 02/66] dt-bindings: interconnect: sunxi: Add V3s mbus
+ compatible
+Message-ID: <YgDbv8aQEOOjwTb0@aptenodytes>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-3-paul.kocialkowski@bootlin.com>
+ <5386b1f5-9e75-4ce3-6641-bd7667c85d42@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="siWsic/QuhUMqNlN"
+Content-Disposition: inline
+In-Reply-To: <5386b1f5-9e75-4ce3-6641-bd7667c85d42@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> The PLL clk type within the MediaTek clk driver library only has a
-> register function, and no corresponding unregister function. This
-> means there is no way for its users to properly implement cleanup
-> and removal.
-> 
-> Add a matching unregister function for the PLL type clk.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+--siWsic/QuhUMqNlN
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/clk/mediatek/clk-pll.c | 55 ++++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-pll.h |  2 ++
->  2 files changed, 57 insertions(+)
-> 
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index 64f59554bc9b..b54e33b75d4e 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -360,6 +360,21 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
->  	return clk;
->  }
->  
-> +static void mtk_clk_unregister_pll(struct clk *clk)
-> +{
-> +	struct clk_hw *hw;
-> +	struct mtk_clk_pll *pll;
-> +
-> +	hw = __clk_get_hw(clk);
-> +	if (!hw)
-> +		return;
-> +
-> +	pll = to_mtk_clk_pll(hw);
-> +
-> +	clk_unregister(clk);
-> +	kfree(pll);
-> +}
-> +
->  void mtk_clk_register_plls(struct device_node *node,
->  		const struct mtk_pll_data *plls, int num_plls, struct clk_onecell_data *clk_data)
->  {
-> @@ -388,4 +403,44 @@ void mtk_clk_register_plls(struct device_node *node,
->  }
->  EXPORT_SYMBOL_GPL(mtk_clk_register_plls);
->  
-> +static __iomem void *mtk_clk_pll_get_base(struct clk *clk,
-> +					  const struct mtk_pll_data *data)
-> +{
-> +	struct clk_hw *hw = __clk_get_hw(clk);
-> +	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
-> +
-> +	return pll->base_addr - data->reg;
-> +}
-> +
-> +void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
-> +			     struct clk_onecell_data *clk_data)
-> +{
-> +	__iomem void *base = NULL;
-> +	int i;
-> +
-> +	if (!clk_data)
-> +		return;
-> +
-> +	for (i = num_plls; i > 0; i--) {
-> +		const struct mtk_pll_data *pll = &plls[i - 1];
-> +
-> +		if (IS_ERR_OR_NULL(clk_data->clks[pll->id]))
-> +			continue;
-> +
-> +		/*
-> +		 * This is quite ugly but unfortunately the clks don't have
-> +		 * any device tied to them, so there's no place to store the
-> +		 * pointer to the I/O region base address. We have to fetch
-> +		 * it from one of the registered clks.
-> +		 */
-> +		base = mtk_clk_pll_get_base(clk_data->clks[pll->id], pll);
-> +
-> +		mtk_clk_unregister_pll(clk_data->clks[pll->id]);
-> +		clk_data->clks[pll->id] = ERR_PTR(-ENOENT);
-> +	}
-> +
-> +	iounmap(base);
-> +}
-> +EXPORT_SYMBOL_GPL(mtk_clk_unregister_plls);
-> +
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-> index d01b0c38311d..a889b1e472e7 100644
-> --- a/drivers/clk/mediatek/clk-pll.h
-> +++ b/drivers/clk/mediatek/clk-pll.h
-> @@ -51,5 +51,7 @@ struct mtk_pll_data {
->  void mtk_clk_register_plls(struct device_node *node,
->  			   const struct mtk_pll_data *plls, int num_plls,
->  			   struct clk_onecell_data *clk_data);
-> +void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
-> +			     struct clk_onecell_data *clk_data);
->  
->  #endif /* __DRV_CLK_MTK_PLL_H */
-> -- 
-> 2.35.0.rc2.247.g8bbb082509-goog
-> 
-> 
+Hi,
+
+On Sat 05 Feb 22, 14:14, Samuel Holland wrote:
+> On 2/5/22 12:53 PM, Paul Kocialkowski wrote:
+> > Since the V3s uses the internal mbus, document its compatible.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.yaml  | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4=
+i-a10-mbus.yaml b/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun=
+4i-a10-mbus.yaml
+> > index 29c9961ee2d8..b67bf9261a6a 100644
+> > --- a/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-m=
+bus.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-m=
+bus.yaml
+> > @@ -31,6 +31,7 @@ properties:
+> >        - allwinner,sun5i-a13-mbus
+> >        - allwinner,sun8i-h3-mbus
+> >        - allwinner,sun8i-r40-mbus
+> > +      - allwinner,sun8i-v3s-mbus
+>=20
+> Please enable the expanded binding added in commit 245578ba9f03 ("dt-bind=
+ings:
+> arm: sunxi: Expand MBUS binding")[1] by adding the new compatible to the =
+"if"
+> block lower in the file. That way we can add V3S devfreq support in the f=
+uture
+> without changing that binding.
+
+I had missed that new driver but surely I will expand the updated binding.
+
+By the way do you have an explanation about the cell index given to the
+interconnects (after &mbus)?
+
+Paul
+
+> Regards,
+> Samuel
+>=20
+> [1]: https://git.kernel.org/torvalds/c/245578ba9f03
+>=20
+> >        - allwinner,sun50i-a64-mbus
+> > =20
+> >    reg:
+> >=20
+>=20
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--siWsic/QuhUMqNlN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmIA274ACgkQ3cLmz3+f
+v9Hedwf/dd7O5weguOH+OM1fWPM+D01os8bCMg2BVi/eJAzHIsTRwpzNVnuC5GkL
+jEPrckhWzLYI9QVdh9sxYGDe3WtMpG5L0mXxvfM0AruEZ8OA9Up1eZ/4a/pXtjmp
+ge2AkXEcmDd2BbtlMHe8obvpO9se0uDYHjA1MgApK8F5fVwRNn2dmu1zE5dAhufc
+GF3GDEPpS7MLe7ReDnGd9wAt109SEIxDgJ9XeiC1XdumNE5BAnT49+7Qq2Wy4zjf
+HDyDxIoHke+4+66Gf03JpeGikvOIW/8C/rwwh8AWLopLrcNVzyh1AM4BVI83Yaf2
+DMLRURk+Ae/bMrUUReDsYsgpsKZ42w==
+=B81B
+-----END PGP SIGNATURE-----
+
+--siWsic/QuhUMqNlN--
