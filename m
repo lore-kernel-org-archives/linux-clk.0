@@ -2,87 +2,221 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446A8C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 15:46:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5619C433FE
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 15:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236857AbiBGPo6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 10:44:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51854 "EHLO
+        id S238499AbiBGP7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 10:59:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237073AbiBGPfA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 10:35:00 -0500
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F58BC0401C1;
-        Mon,  7 Feb 2022 07:34:58 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id b37so23283292uad.12;
-        Mon, 07 Feb 2022 07:34:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yr/4ROsgOU431C1IiWwLR/syaidumkl+irkvpYDiwSI=;
-        b=bJXmYzmzwSDfgMR1pZL/ZRobj//YHYggW4BxivvYjEKZxP4DFOCTLVZ1lnzRWyb/Y2
-         9JkEoaVJ+B7i1PJ9MSZjisp74wh03A/oIbgEH6SPK8knPo1KP1CWuDOaYxEOQjqEOILt
-         0+Qsyizb0QRlS5+DR01Pf6ygBXhArNJzsNu5irMlCrX+Z7jn3SAcZElMsGwH5yQtcBf5
-         +P+NGaLRXvVGli/HGkDuCG7Y6/5y27+ZJkQv6PfDs8MOwMUWa+yAZE+7Us5149MqZVo6
-         sX3u/9d8WJQayoM2oihanAjSOkC1D3rH89UNsxjoOcdXDnK1ceJS7QqZlwiAlx7ha+4w
-         tANQ==
-X-Gm-Message-State: AOAM530vvXPTdkk5kog3ava3rcTFqnpx443Tf7sAnIZ6ODvFzoQ2ircr
-        5k3rCzlU3zy1PwyhExLd81OnG1OVaCUP7g==
-X-Google-Smtp-Source: ABdhPJxMrIwxEwZadMNHbyaEOfAt8qT7Ifbk5/OuvGu+3OLCP/EFGhigjnyztPKSD8ENauTGHcUSvA==
-X-Received: by 2002:ab0:4d6d:: with SMTP id k45mr56143uag.55.1644248097141;
-        Mon, 07 Feb 2022 07:34:57 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id o16sm2201539vss.9.2022.02.07.07.34.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 07:34:56 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id w21so23313835uan.7;
-        Mon, 07 Feb 2022 07:34:56 -0800 (PST)
-X-Received: by 2002:a67:b00e:: with SMTP id z14mr93827vse.57.1644248096517;
- Mon, 07 Feb 2022 07:34:56 -0800 (PST)
+        with ESMTP id S244086AbiBGPva (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 10:51:30 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6D3C0401C1;
+        Mon,  7 Feb 2022 07:51:29 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 54D34340;
+        Mon,  7 Feb 2022 16:51:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1644249083;
+        bh=Kg8KkyXqodwxnkoOUnTFgILuDislMphNhCMp4Cyt3k0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=d+p/yyLLVWoFHaQMa3PKOYne2f5NsLX/aSXsN5whwh5fbgyeQpYs8XdYey0+Cmdzm
+         wzUhiqC1tH8lsKZPl6Eninn4/oSoKEz/NKHoSjt3wcCtb6Np67rcbw0PDyekIXy8+L
+         kBpaesRvFQGudsLOVg3bNSdwSx4HeFms+1kyhIT4=
+Date:   Mon, 7 Feb 2022 17:51:21 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
+ bindings documentation
+Message-ID: <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-References: <20220204161806.3126321-1-jjhiblot@traphandler.com> <20220204161806.3126321-2-jjhiblot@traphandler.com>
-In-Reply-To: <20220204161806.3126321-2-jjhiblot@traphandler.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Feb 2022 16:34:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
-Message-ID: <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: renesas: r9a06g032: Enable the watchdog reset sources
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jean-Jacques,
+Hi Paul,
 
-On Fri, Feb 4, 2022 at 5:18 PM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
-> The watchdog reset sources are not enabled by default.
-> Enabling them here to make sure that the system resets when the watchdog
-> timers expire.
->
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Thank you for the patch.
 
-Thanks for your patch!
+On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
+> This introduces YAML bindings documentation for the Allwinner A31 Image
+> Signal Processor (ISP).
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++++++++++
+>  1 file changed, 117 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> new file mode 100644
+> index 000000000000..2d87022c43ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> @@ -0,0 +1,117 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-isp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner A31 Image Signal Processor Driver (ISP) Device Tree Bindings
+> +
+> +maintainers:
+> +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - allwinner,sun6i-a31-isp
+> +      - allwinner,sun8i-v3s-isp
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Bus Clock
+> +      - description: Module Clock
+> +      - description: DRAM Clock
 
-R-Car Gen3 and RZ/G2 SoCs have a similar mechanism.
-On these SoCs, the boot loader takes care of the configuration, as this
-is a system policy that goes beyond the Linux realm.
-Perhaps the RZ/N1 boot loader can do the same?
+That's interesting, does the ISP have a dedicated DRAM ?
 
-Gr{oetje,eeting}s,
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bus
+> +      - const: mod
+> +      - const: ram
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        description: CSI0 input port
+> +
+> +        properties:
+> +          reg:
+> +            const: 0
+> +
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
 
-                        Geert
+If no other property than remote-endpoint are allowed, I'd write
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+          endpoint:
+            $ref: video-interfaces.yaml#
+	    remote-endpoint: true
+            additionalProperties: false
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Same below.
+
+> +
+> +        additionalProperties: false
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        description: CSI1 input port
+> +
+> +        properties:
+> +          reg:
+> +            const: 0
+
+This should be 1.
+
+> +
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +        additionalProperties: false
+> +
+> +    anyOf:
+> +      - required:
+> +        - port@0
+> +      - required:
+> +        - port@1
+
+As ports are an intrinsic property of the ISP, both should be required,
+but they don't have to be connected.
+
+By the way, how do you select at runtime which CSI-2 RX the ISP gets its
+image stream from ? Is it configured through registers of the ISP ?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
+> +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
+> +
+> +    isp: isp@1cb8000 {
+> +        compatible = "allwinner,sun8i-v3s-isp";
+> +        reg = <0x01cb8000 0x1000>;
+> +        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&ccu CLK_BUS_CSI>,
+> +             <&ccu CLK_CSI1_SCLK>,
+> +             <&ccu CLK_DRAM_CSI>;
+> +        clock-names = "bus", "mod", "ram";
+> +        resets = <&ccu RST_BUS_CSI>;
+> +
+> +        ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            port@0 {
+> +                reg = <0>;
+> +
+> +                isp_in_csi0: endpoint {
+> +                    remote-endpoint = <&csi0_out_isp>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+
+-- 
+Regards,
+
+Laurent Pinchart
