@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4F3C4332F
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 16:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DADC4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 16:18:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232583AbiBGQRT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:17:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53524 "EHLO
+        id S232653AbiBGQSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 11:18:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387604AbiBGQQJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 11:16:09 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F3EC0401CE;
-        Mon,  7 Feb 2022 08:16:08 -0800 (PST)
+        with ESMTP id S1442655AbiBGQE4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 11:04:56 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C811C0401CC;
+        Mon,  7 Feb 2022 08:04:55 -0800 (PST)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 85524A50;
-        Mon,  7 Feb 2022 17:16:06 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3E872340;
+        Mon,  7 Feb 2022 17:04:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1644250566;
-        bh=aFkueRgWrJNvd3R2K1xflySlUNscsWztv2uokuEkh9I=;
+        s=mail; t=1644249893;
+        bh=EBS3kkJ8BCBs5yuj170BnDdZuFVfeUksdyi/hOkIA0E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nZK1tUgx86ylAnUIWlj2XVGt9I3p8J0h+L4yS9X2FR2ac1TZVfsz+sqmw6q32FLt2
-         XBqJkltHOP84U3EkM6TflyU7nJTEp9yKRVvxoTkwwTap+mD0HWlOmAPjAMPuXn4L/f
-         ACf9R+pOSDDzhStzAqw8cmk9fwefENv7D+vHkZjY=
-Date:   Mon, 7 Feb 2022 18:16:04 +0200
+        b=MvyY9OKI0dHBs/LuDngKy5LRwVmt4U8MI1JrSmzwEUbroZ1j66FdAKeufPHPc7msD
+         NxjUI4SKDw4w34fThGl88PBkP2eV0Y/iGXexOPDFBST9fnesGw30bWNPIqTqgpShzO
+         4YXjESc+sTvUEu1GGJ+aQxB0h7K4mhQSax2L7XJE=
+Date:   Mon, 7 Feb 2022 18:04:51 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -42,111 +42,71 @@ Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Helen Koike <helen.koike@collabora.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 63/66] staging: media: Add support for the Allwinner
- A31 ISP
-Message-ID: <YgFFxMd2htKvX0K1@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 62/66] dt-bindings: media: sun6i-a31-csi: Add ISP
+ output port
+Message-ID: <YgFDI17Q3AlZxaOi@pendragon.ideasonboard.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-64-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-63-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220205185429.2278860-64-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20220205185429.2278860-63-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
-
-Thank you for the patch.
-
-On Sat, Feb 05, 2022 at 07:54:26PM +0100, Paul Kocialkowski wrote:
-> Some Allwinner platforms come with an Image Signal Processor, which
-> supports various features in order to enhance and transform data
-> received by image sensors into good-looking pictures. In most cases,
-> the data is raw bayer, which gets internally converted to RGB and
-> finally YUV, which is what the hardware produces.
+On Sat, Feb 05, 2022 at 07:54:25PM +0100, Paul Kocialkowski wrote:
+> Some Allwinner devices come with an Image Signal Processor (ISP) that
+> allows processing camera data to produce good-looking images,
+> especially from raw bayer representations.
 > 
-> This driver supports ISPs that are similar to the A31 ISP, which was
-> the first standalone ISP found in Allwinner platforms. Simpler ISP
-> blocks were found in the A10 and A20, where they are tied to a CSI
-> controller. Newer generations of Allwinner SoCs (starting with the
-> H6, H616, etc) come with a new camera subsystem and revised ISP.
-> Even though these previous and next-generation ISPs are somewhat
-> similar to the A31 ISP, they have enough significant differences to
-> be out of the scope of this driver.
+> The ISP does not have a dedicated capture path: it is fed directly by
+> one of the CSI controllers, which can be selected at run-time.
 > 
-> While the ISP supports many features, including 3A and many
-> enhancement blocks, this implementation is limited to the following:
-> - V3s (V3/S3) platform support;
-> - Bayer media bus formats as input;
-
-Greyscale formats would also be nice to have, if the hardware can
-support that (it mostly just requires the ability to disable the CFA
-interpolation).
-
-> - Semi-planar YUV (NV12/NV21) as output;
-
-Packed YUV would also be useful if the hardware supports it.
-
-> - Debayering with per-component gain and offset configuration;
-> - 2D noise filtering with configurable coefficients.
-> 
-> Since many features are missing from the associated uAPI, the driver
-> is aimed to integrate staging until all features are properly
-> described.
-> 
-> On the technical side, it uses the v4l2 and media controller APIs,
-> with a video node for capture, a processor subdev and a video node
-> for parameters submission. A specific uAPI structure and associated
-> v4l2 meta format are used to configure parameters of the supported
-> modules.
-> 
-> One particular thing about the hardware is that configuration for
-> module registers needs to be stored in a DMA buffer and gets copied
-> to actual registers by the hardware at the next vsync, when instructed
-> by a flag. This is handled by the "state" mechanism in the driver.
+> Represent this possibility as a graph connection between the CSI
+> controller and the ISP in the device-tree bindings.
 > 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  drivers/staging/media/sunxi/Kconfig           |   1 +
->  drivers/staging/media/sunxi/Makefile          |   1 +
->  drivers/staging/media/sunxi/sun6i-isp/Kconfig |  13 +
->  .../staging/media/sunxi/sun6i-isp/Makefile    |   4 +
->  .../staging/media/sunxi/sun6i-isp/sun6i_isp.c | 572 +++++++++++++
->  .../staging/media/sunxi/sun6i-isp/sun6i_isp.h |  86 ++
->  .../media/sunxi/sun6i-isp/sun6i_isp_capture.c | 751 ++++++++++++++++++
->  .../media/sunxi/sun6i-isp/sun6i_isp_capture.h |  78 ++
->  .../media/sunxi/sun6i-isp/sun6i_isp_params.c  | 573 +++++++++++++
->  .../media/sunxi/sun6i-isp/sun6i_isp_params.h  |  52 ++
->  .../media/sunxi/sun6i-isp/sun6i_isp_proc.c    | 599 ++++++++++++++
->  .../media/sunxi/sun6i-isp/sun6i_isp_proc.h    |  61 ++
->  .../media/sunxi/sun6i-isp/sun6i_isp_reg.h     | 275 +++++++
->  .../sunxi/sun6i-isp/uapi/sun6i-isp-config.h   |  43 +
+>  .../bindings/media/allwinner,sun6i-a31-csi.yaml    | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> index 3cc61866ea89..7952413f98d8 100644
+> --- a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> @@ -83,6 +83,20 @@ properties:
+>  
+>          additionalProperties: false
+>  
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        description: ISP output port
+> +
+> +        properties:
+> +          reg:
+> +            const: 2
+> +
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
 
-Could you add a TODO file to list the issues that need to be fixed for
-the driver to move out of staging ? I'll already propose one entry:
+This could be
 
-- Add support in libcamera
+            $ref: video-interfaces.yaml#
+            remote-endpoint: true
+            additionalProperties: false
 
-This isn't required to merge the driver in staging as long as ABI
-compatibility doesn't need to be preserved until the driver is moved out
-of staging.
+to reject other properties.
 
->  14 files changed, 3109 insertions(+)
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/Kconfig
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/Makefile
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp.c
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp.h
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_capture.c
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_capture.h
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_params.c
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_params.h
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_proc.c
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_proc.h
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_reg.h
->  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/uapi/sun6i-isp-config.h
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[snip]
+> +
+> +        additionalProperties: false
+> +
+>      anyOf:
+>        - required:
+>          - port@0
 
 -- 
 Regards,
