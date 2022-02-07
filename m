@@ -2,62 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AF6C35273
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 05:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2C2C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 05:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229931AbiBGFvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 00:51:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52458 "EHLO
+        id S240929AbiBGFvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 00:51:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349318AbiBGCwC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Feb 2022 21:52:02 -0500
-X-Greylist: delayed 267 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 06 Feb 2022 18:51:57 PST
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769AFC061A73;
-        Sun,  6 Feb 2022 18:51:56 -0800 (PST)
-X-UUID: 7873f860d8cd4d9f9e66329a85ee3cfc-20220207
-X-UUID: 7873f860d8cd4d9f9e66329a85ee3cfc-20220207
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 995789319; Mon, 07 Feb 2022 10:51:51 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 7 Feb 2022 10:51:50 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 7 Feb 2022 10:51:50 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     <wenst@chromium.org>
-CC:     <chun-jie.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
-        <miles.chen@mediatek.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-Subject: Re: [PATCH v2 18/31] clk: mediatek: Implement mtk_clk_unregister_composites() API
-Date:   Mon, 7 Feb 2022 10:51:50 +0800
-Message-ID: <20220207025150.14725-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220202134834.690675-19-wenst@chromium.org>
-References: <20220202134834.690675-19-wenst@chromium.org>
+        with ESMTP id S233113AbiBGFWE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 00:22:04 -0500
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9239BC043181
+        for <linux-clk@vger.kernel.org>; Sun,  6 Feb 2022 21:22:03 -0800 (PST)
+Received: by mail-lf1-x131.google.com with SMTP id z19so24479364lfq.13
+        for <linux-clk@vger.kernel.org>; Sun, 06 Feb 2022 21:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OGto9Xi5kXT109TGKxmESbnUdLkURSUbKuwtAM3GVRY=;
+        b=GJYJs5kr8L0CzbroD4u7gx12y0B2e/A+Jz8EL53bOvsjtCs/mAgZDnq3jzwqzO+xl0
+         06SVvCAQ48ly9xfH1vZ6XttX+BjiM2aLz9J2QV4dBlFL8h/cyY3oUnTdJkio5YwZHtl4
+         lb/EmaT+WIxT2jh5rzhWwHE1Grpz5T517csUsI6DBroXvJtpWzAcLvbv2Ab59sf4IMbI
+         hREJpECLkM3ZhSswZ025QpXrE0kHPdHcqJU8I81V42KTMNbVLg/31QDZzz4XRZ5jNf7q
+         +FnQIDVk2DuB1eCWk9/RjawuZp2iqT8o0aj2dwGZskWk2gLHmX2BG6gkBIN0hXKS/fBu
+         6gLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OGto9Xi5kXT109TGKxmESbnUdLkURSUbKuwtAM3GVRY=;
+        b=yVNtKOnBa8j7BVkHf3ZvV9iaTTXlvkP0vodNKJblFMNBP3jtCrl97yiaZ7qU+sckkh
+         vBe4Z1UWhqGVbJVF0+Pp0Z+0wWYcGFuklTjDCIX3Lq8atoNENiEfbHg/4r8bPbJ7CEcA
+         qX4vMVsFITlE/gKb+iZfKdk2sqIEjGPTPFfXXoP14LgsiKACG1LwlvkdDQgmC5IYRUro
+         pZ4rzxIJqQ88/l2Xe/WDaJsm20WGfg9o5JQTGgTMb+Y918zyjhqrYAUPjRI4fZThsgNy
+         75Zj6cSPuu56owZbbBr7xKQAFFmTXLmJ6AZ+HZB4CxIWQ7LjP7scnhK3RmRcW++0Ew79
+         x4dg==
+X-Gm-Message-State: AOAM533p6uRvR7IAAbvRUz2Jte9i8G+YjjSGDQEtlBy1R6LSVOTdrCin
+        hzJyiZDy5AQ4KqQGDzc5aLHQcmaCMi6TQn/U8fBHxg==
+X-Google-Smtp-Source: ABdhPJxpeJtXFqUmwrOBzOQ8MX54Xs5LsU2VrMor7DxLiCWIdFLgRJ2+sq3U6j9wrfCSu7HJ7TGRQJP+lUaFlqERBQY=
+X-Received: by 2002:a05:6512:3e0b:: with SMTP id i11mr7348588lfv.510.1644211321557;
+ Sun, 06 Feb 2022 21:22:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <cover.1642582832.git.zong.li@sifive.com> <mhng-ffd770d4-8f8a-417a-a589-f14d09f55282@palmer-ri-x1c9>
+In-Reply-To: <mhng-ffd770d4-8f8a-417a-a589-f14d09f55282@palmer-ri-x1c9>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Mon, 7 Feb 2022 13:21:50 +0800
+Message-ID: <CANXhq0pYHfsa4T1t=FK2=jM4OEfgXD=sDS5vVV4EKCpkwTz6og@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Refactor the PRCI driver to reduce the complexity
+To:     Palmer Dabbelt <palmer@dabbelt.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> mtk_clk_register_composites(), as the name suggests, is used to register
-> a given list of composite clks. However it is lacking a counterpart
-> unregister API.
-> 
-> Implement said unregister API so that the various clock platform drivers
-> can utilize it to do proper unregistration, cleanup and removal.
-> 
-> In the header file, the register function's declaration is also
-> reformatted to fit code style guidelines.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+On Sat, Feb 5, 2022 at 2:56 AM Palmer Dabbelt <palmer@dabbelt.com> wrote:
+>
+> On Wed, 19 Jan 2022 01:28:37 PST (-0800), zong.li@sifive.com wrote:
+> > This patch set tries to improve the PRCI driver to reduce the
+> > complexity, we remove the SoCs C files by putting putting all stuff in
+> > each SoCs header file, and include these SoCs-specific header files in
+> > core of PRCI. It can also avoid the W=1 kernel build warnings about
+> > variable defined but not used [-Wunused-const-variable=], like 'commit
+> > 487dc7bb6a0c ("clk: sifive:fu540-prci: Declare static const variable
+> > 'prci_clk_fu540' where it's used")' does.
+> >
+> > This patch set also contains the dt-bindings and dts change, because
+> > we change the macro name for fu540 and fu740 by adding the prefix
+> > respectively.
+> >
+> > Thanks all for your review and suggestions.
+> >
+> > Zong Li (4):
+> >   dt-bindings: change the macro name of prci in header files and example
+> >   riscv: dts: Change the macro name of prci in each device node
+> >   clk: sifive: Add SoCs prefix in each SoCs-dependent data
+>
+> IIUC these there aren't bisectable: the bindings change will break
+> builds of the DTs and drivers.  I'm not sure what's generally the way to
+> go with these, but I always try to avoid broken builds in the middle of
+> patch sets.
+>
+> Aside from that this generally looks good to me, but the DT and clock
+> folks are probably a better bet for a proper review here.  Happy to take
+> this through the RISC-V tree, but IMO it's a better candidate for the
+> clock tree so
+>
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com> # aside from breaking bisect
+>
+> Thanks!
+>
 
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+Many thanks for your review and reminding, and yes, it seems a bit
+hard there since the DT binding docs and includes need to be a
+separate patch.
+
+> >   clk: sifive: Move all stuff into SoCs header files from C files
+> >
+> >  .../devicetree/bindings/gpio/sifive,gpio.yaml |   2 +-
+> >  .../bindings/pci/sifive,fu740-pcie.yaml       |   2 +-
+> >  .../bindings/serial/sifive-serial.yaml        |   2 +-
+> >  arch/riscv/boot/dts/sifive/fu540-c000.dtsi    |  22 +--
+> >  arch/riscv/boot/dts/sifive/fu740-c000.dtsi    |  26 ++--
+> >  drivers/clk/sifive/Makefile                   |   2 +-
+> >  drivers/clk/sifive/fu540-prci.c               |  89 ------------
+> >  drivers/clk/sifive/fu540-prci.h               |  91 +++++++++++-
+> >  drivers/clk/sifive/fu740-prci.c               | 134 ------------------
+> >  drivers/clk/sifive/fu740-prci.h               | 130 ++++++++++++++++-
+> >  drivers/clk/sifive/sifive-prci.c              |   5 -
+> >  include/dt-bindings/clock/sifive-fu540-prci.h |   8 +-
+> >  include/dt-bindings/clock/sifive-fu740-prci.h |  18 +--
+> >  13 files changed, 254 insertions(+), 277 deletions(-)
+> >  delete mode 100644 drivers/clk/sifive/fu540-prci.c
+> >  delete mode 100644 drivers/clk/sifive/fu740-prci.c
