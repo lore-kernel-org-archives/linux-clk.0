@@ -2,119 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07421C4167B
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 10:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E265AC433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 12:58:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351538AbiBGKAK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 05:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41808 "EHLO
+        id S236024AbiBGM5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 07:57:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351034AbiBGJzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 04:55:42 -0500
-Received: from new2-smtp.messagingengine.com (new2-smtp.messagingengine.com [66.111.4.224])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1C6C043181;
-        Mon,  7 Feb 2022 01:55:40 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3A1B65801B4;
-        Mon,  7 Feb 2022 04:55:40 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 07 Feb 2022 04:55:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; bh=LzpW5U29/mV3TnArXep7XidAoi+6P2KaOjL2Uu
-        SGyY8=; b=MwrJLKGMyPYfjGSbDCS1Bf2SMrC4nOsXhJrjqKdZd8qTYTpfxFpND3
-        /gsSGltSjOBoQkC5J+m/YTzVMLI1mmXh+5+Q7mtXzUvgmm7t9V52tqKFcEbkw4O7
-        Q3N7WqUigvXrK/4VjQgdBAvxpcNzTRvBxF2csTyNz68ZthjZ/XEQTPwSXPvXJIQJ
-        vP3qaDy5m0exlpNtsVHI/m6tSUU6yHnYrggo5LX7AAc+Q+FmmNCKwuEWt2KBhEUs
-        9IZiCOxQp1WUR4fMwgFjBTLDbiUmezRa5+S/J/pC1Vh9PKGrplN9PmtuZtUOHz3u
-        LkzM/UkUdr40WIWgRTwBGIDlyoNBmcrg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=LzpW5U29/mV3TnArX
-        ep7XidAoi+6P2KaOjL2UuSGyY8=; b=Y1H9v6AU1pfVmn3nNPk08l9+B0J+9pnKa
-        ZdiHbNsx/uiyxDrhDBw7CzGOtP9+Kb5rwIZviATjfFSqLYnFsw4M1p0KNG0kF3cA
-        nIr35V2XkfxDylGVAmNHwoMXfREpbtbhsj5jJwdTOVj0nUj1p/vQ1RhvkJ8vtsRk
-        glIk5rqme0zB7Zo05AGElNuMItJyD3AWIXQ+IEDb9YqXayoD3ofbrY36N8q3Uxt0
-        afK9Mmb3Pies1SrH2FzMX9hmZ6hguz1aNUpRkh0hlO6ap0HcoRSIdT3Z6K1EODwm
-        74lLGaCBl3U1Os+F1fic0CaLmu0zQ+g9wQW3W0dDGQ4Gq8XxG2TOA==
-X-ME-Sender: <xms:muwAYnnfH21w3ZcYr9vUpgzcYUGx-F97VwZGwYnhXbtwy5sjkbjmlQ>
-    <xme:muwAYq342lI5EVIWLeSOgymB5EkMPpM83WSbTo2S1Ddf1QJ8YI4_vTvy-qqLcqMe5
-    25lNsFX3peeqlY8BSc>
-X-ME-Received: <xmr:muwAYtqngz_qQbtbcklfBTqPSDbjELfpHcmEOdPhIp7zo5lxGBSTdL6SPfFktGE0VAJqm1TRsBCVotVZouaprw9NlmTI9CDbtEgJupw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgddtjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:muwAYvm_t2Eh25_r1lKUHHTlvfu7vKe8Hy4YNn4zFvateXTN_9PEgg>
-    <xmx:muwAYl03htUu29oGMPledVUjxdmcSi0sIAWKVMU18XH9LVClhf96fw>
-    <xmx:muwAYuu8hbBa_2DGNEEwR7-AmlflacezEtyRO2ZJtIF__L1_t4yamQ>
-    <xmx:nOwAYsue7NANvZAY5nXD7ySAL8rq_35RGFbNNtBo5k9smbwHLxm1mg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Feb 2022 04:55:38 -0500 (EST)
-Date:   Mon, 7 Feb 2022 10:55:35 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 23/66] media: sun6i-csi: Tidy up v4l2 code
-Message-ID: <20220207095535.bvkenjwnrawbh66j@houat>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-24-paul.kocialkowski@bootlin.com>
+        with ESMTP id S1390515AbiBGLy4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 06:54:56 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416CEC03FEC0
+        for <linux-clk@vger.kernel.org>; Mon,  7 Feb 2022 03:51:27 -0800 (PST)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2177eodE028141;
+        Mon, 7 Feb 2022 12:49:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=X625PkH7tVgQ0OpW/ae9JenbtwbtxQ43M08JhwRUZPw=;
+ b=bWNj7wpBXzS40BmCgYlyAFExlxr0E9pYrk9toT7r18RBU21prIlAak0U560Si5VV8hW6
+ eK+6NlKq+klZuyv8mnydpbRqu+RLYcENhTMT0yw6UPf7op7jbYsiNfTPYRH3So5DM72J
+ d/eUG/X37rA6b6jGyBnL/1tqz1hceXuWNiUjr9YRoc21uznV/hZJrWWaxZn7dsO+TPSt
+ 97CXxwLi0CuZBGg1c3yRDtGBa7jBGIBE6XvOPIxWNSnyOguvsiEpMFr/7bU5Uu3IgsQK
+ fsdYNoKaDZC0O9UBjpSgfutvf8QMI7b3TcXkQPbQQOsN2zcsFfw1HXtCYwlIUVjYXGpL ZQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e2fg5m0p5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 07 Feb 2022 12:49:09 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 13E3C10002A;
+        Mon,  7 Feb 2022 12:49:09 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0D32E2194C8;
+        Mon,  7 Feb 2022 12:49:09 +0100 (CET)
+Received: from [10.48.0.252] (10.75.127.44) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 7 Feb
+ 2022 12:49:08 +0100
+Message-ID: <477a14e5-2bff-b23f-d361-f7f3289190af@foss.st.com>
+Date:   Mon, 7 Feb 2022 12:49:08 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="z2k626xkldr63pmc"
-Content-Disposition: inline
-In-Reply-To: <20220205185429.2278860-24-paul.kocialkowski@bootlin.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 5/5] ARM: dts: stm32: Switch DWMAC RMII clock to MCO2 on
+ DHCOM
+Content-Language: en-US
+To:     Marek Vasut <marex@denx.de>, <linux-arm-kernel@lists.infradead.org>
+CC:     <jneuhauser@dh-electronics.com>,
+        Christophe Roullier <christophe.roullier@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20220118202958.1840431-1-marex@denx.de>
+ <20220118202958.1840431-5-marex@denx.de>
+From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20220118202958.1840431-5-marex@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-07_04,2022-02-07_01,2021-12-02_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 1/18/22 21:29, Marek Vasut wrote:
+> The DHCOM SoM has two options for supplying ETHRX clock to the DWMAC
+> block and PHY. Either (1) ETHCK_K generates 50 MHz clock on ETH_CLK
+> pad for the PHY and the same 50 MHz clock are fed back to ETHRX via
+> internal eth_clk_fb clock connection OR (2) ETH_CLK is not used at
+> all, MCO2 generates 50 MHz clock on MCO2 output pad for the PHY and
+> the same MCO2 clock are fed back into ETHRX via ETH_RX_CLK input pad
+> using external pad-to-pad connection.
+> 
+> Option (1) has two downsides. ETHCK_K is supplied directly from either
+> PLL3_Q or PLL4_P, hence the PLL output is limited to exactly 50 MHz and
+> since the same PLL output is also used to supply SDMMC blocks, the
+> performance of SD and eMMC access is affected. The second downside is
+> that using this option, the EMI of the SoM is higher.
+> 
+> Option (2) solves both of those problems, so implement it here. In this
+> case, the PLL4_P is no longer limited and can be operated faster, at
+> 100 MHz, which improves SDMMC performance (read performance is improved
+> from ~41 MiB/s to ~57 MiB/s with dd if=/dev/mmcblk1 of=/dev/null bs=64M
+> count=1). The EMI interference also decreases.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
+> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
+> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> To: linux-arm-kernel@lists.infradead.org
+> ---
+>   arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi | 22 ++++++++++++++++----
+>   1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi b/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
+> index 8c41f819f7769..b091d9901e976 100644
+> --- a/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp15xx-dhcom-som.dtsi
+> @@ -116,15 +116,29 @@ &dts {
+>   	status = "okay";
+>   };
+>   
+> +&rcc {
+> +	/* Connect MCO2 output to ETH_RX_CLK input via pad-pad connection */
+> +	clocks = <&rcc CK_MCO2>;
+> +	clock-names = "ETH_RX_CLK/ETH_REF_CLK";
+> +
+> +	/*
+> +	 * Set PLL4P output to 100 MHz to supply SDMMC with faster clock,
+> +	 * set MCO2 output to 50 MHz to supply ETHRX clock with PLL4P/2,
+> +	 * so that MCO2 behaves as a divider for the ETHRX clock here.
+> +	 */
+> +	assigned-clocks = <&rcc CK_MCO2>, <&rcc PLL4_P>;
+> +	assigned-clock-parents = <&rcc PLL4_P>;
+> +	assigned-clock-rates = <50000000>, <100000000>;
+> +};
+> +
+>   &ethernet0 {
+>   	status = "okay";
+> -	pinctrl-0 = <&ethernet0_rmii_pins_a>;
+> -	pinctrl-1 = <&ethernet0_rmii_sleep_pins_a>;
+> +	pinctrl-0 = <&ethernet0_rmii_pins_b &mco2_pins_a>;
+> +	pinctrl-1 = <&ethernet0_rmii_sleep_pins_b &mco2_sleep_pins_a>;
+>   	pinctrl-names = "default", "sleep";
+>   	phy-mode = "rmii";
+>   	max-speed = <100>;
+>   	phy-handle = <&phy0>;
+> -	st,eth-ref-clk-sel;
+>   
+>   	mdio0 {
+>   		#address-cells = <1>;
+> @@ -136,7 +150,7 @@ phy0: ethernet-phy@1 {
+>   			/* LAN8710Ai */
+>   			compatible = "ethernet-phy-id0007.c0f0",
+>   				     "ethernet-phy-ieee802.3-c22";
+> -			clocks = <&rcc ETHCK_K>;
+> +			clocks = <&rcc CK_MCO2>;
+>   			reset-gpios = <&gpioh 3 GPIO_ACTIVE_LOW>;
+>   			reset-assert-us = <500>;
+>   			reset-deassert-us = <500>;
 
---z2k626xkldr63pmc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied on stm32-next using ethernet0_rmii_pins_c instead of 
+ethernet0_rmii_pins_b (same for sleep pins.
 
-On Sat, Feb 05, 2022 at 07:53:46PM +0100, Paul Kocialkowski wrote:
-> Various cosmetic improvements to the v4l2 registration code, with
-> renames, lowerings, etc. The cleanup function is moved down after
-> setup. No functional change intended.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Reviewed-by: Maxime Ripard <maxime@cerno.tech>
-
-Maxime
-
---z2k626xkldr63pmc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYgDslwAKCRDj7w1vZxhR
-xYUzAP0ej+2jY/iJRXJJW8CJHTu9z9F4r55daJfJr9TYHTjmzAD/T7cUtfZlL39G
-0syT9Uej1bcktNVjzCz1cIxmQn9AFAo=
-=3IsS
------END PGP SIGNATURE-----
-
---z2k626xkldr63pmc--
+Cheers
+Alex
