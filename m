@@ -2,142 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C668AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 08:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC241C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 09:02:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234990AbiBGIxO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 03:53:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40210 "EHLO
+        id S240372AbiBGJBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 04:01:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233914AbiBGIuG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 03:50:06 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14DA1C043181;
-        Mon,  7 Feb 2022 00:50:05 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id p24so2216165ejo.1;
-        Mon, 07 Feb 2022 00:50:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=kp8nZg26AuEMvm8QEtueCcP+FrKWg8a9EQmnI5dKMtc=;
-        b=i9NmlbplMBKyJptoV+0Ap8F9ZDNfpzM54h3O+whKY55ghEvHjqUCIQCPE3Vc9y4XfN
-         SdPnc1zwArIgWqV9fIhoPMKyO73MpLg5XV/24wUbnMuveF3DCkgjjXZZPmMZa/BqjdmO
-         kXV+wu2MlLamw4IqRXaFIQ1JWx95IvHQUJhIxh0QUodKAIeE7+qQD86oPdTQjmthaC1n
-         HRl4F/EuM83ftwuIKQORLweYYBiWXs/Nh2Hfj0XuPSy0ehR8X4rCHvMQgct1nulZmpEc
-         PqpRfpNMmc6oH4pKLjFX5f4aSKl/+WKldpaxPh9IP8Oi3H1NC5cP6acRJ5KG4muZ8KwE
-         RayA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kp8nZg26AuEMvm8QEtueCcP+FrKWg8a9EQmnI5dKMtc=;
-        b=Q6eoJDINIMj7XB2oAkUORyeu66MPMYVc/NPPN/yoXpTusTYhcx+SnoCDHO7Tbln33L
-         /cj5gn3KmgdphuXB37zofOszZudMycIqSjn0op5zQiMCZt3j15MCINKkhZNrHkIZbD/b
-         rYnDPnxsg7gtJTOnuTh//yWYB9BWJgApQs7u1wRgM4v2IKI32dc8uTf9kqPEjNv7DZBF
-         IqjXpYe7AgdqkelQ/+htwVafSqktnn2P3Ez5N5AiFj76sTu6t6sRa+ZHnh0N2hGGoGdW
-         xp5Pg3IQrZcTdff9F0ouNLrv+nyx0k1e5rkLN8swlOwWTaOFcDhKrdrvpuBjmUEyohvY
-         K+gw==
-X-Gm-Message-State: AOAM530Jz5Nboawpz9oGhglyJfvCE1/A4s2kInMpR2mnsbIxDR9hLKwa
-        TzWKbD6eZpMKjsQZls1myaI=
-X-Google-Smtp-Source: ABdhPJxIrJn4H6z5Uh+XugYTFQFkEqQT/xm3/GRroGI4nndtytFjOtPRhPBD8MtsV1QLALi1vZOmmQ==
-X-Received: by 2002:a17:906:619:: with SMTP id s25mr9129849ejb.341.1644223803512;
-        Mon, 07 Feb 2022 00:50:03 -0800 (PST)
-Received: from jernej-laptop.localnet (89-212-178-211.dynamic.t-2.net. [89.212.178.211])
-        by smtp.gmail.com with ESMTPSA id hq28sm3417230ejc.204.2022.02.07.00.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Feb 2022 00:50:02 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Samuel Holland <samuel@sholland.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 02/66] dt-bindings: interconnect: sunxi: Add V3s mbus compatible
-Date:   Mon, 07 Feb 2022 09:50:00 +0100
-Message-ID: <8021451.T7Z3S40VBb@jernej-laptop>
-In-Reply-To: <YgDbv8aQEOOjwTb0@aptenodytes>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com> <5386b1f5-9e75-4ce3-6641-bd7667c85d42@sholland.org> <YgDbv8aQEOOjwTb0@aptenodytes>
+        with ESMTP id S1348893AbiBGI4h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 03:56:37 -0500
+Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C28F5C0401C5;
+        Mon,  7 Feb 2022 00:56:36 -0800 (PST)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 1A5DB580150;
+        Mon,  7 Feb 2022 03:56:36 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Mon, 07 Feb 2022 03:56:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=BEewoVma9HXhmdhrD/v/m7pVTmB9jXt2yFyzuP
+        Re66c=; b=FSi8BimzmGAYlUPJ43h3bUAe+OjPK4WRDVu5DpVPMCXDnojl+YQD4j
+        eC6rWJszOwSqDYxPPADu+NHiWRNJsSqvPXIi+VR9mGHCbzfgOdOAIbhZ7RqYpt5u
+        EKumqhX47+7dADXKTb2SZuJd8JX7g2eR7Gsdt9H9GYrNqph7iRR7AZt6f/M9oSFd
+        iWTHmsdsjkMKfP6arYiI0riaFAGlPP+k5RuvCswaPiAJUBEbobG60yX1aihy7hJC
+        C5l/KY9jgibo1DH6lRm5OLli8nHJNdcPluqMyd+wv8C3Oko1mTdWT8zCNzGnbofW
+        iUxav4kM7S8SXUepJmmB2xis78jDo1WA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=BEewoVma9HXhmdhrD
+        /v/m7pVTmB9jXt2yFyzuPRe66c=; b=RMgAJFvB+k0+HLJBsC4gYb7eF+d4+6Kpg
+        MXjZkvrHdRYC9sGSPn3vauHUtiqPb8QnloHpztapfOOQQDlIDTYm3punCJymoYdp
+        mphiZhLU3ciYvQshxpGwnupaGld5A0KtiC1b+vWOoIvpZft8cF934IIAm2QHrZqM
+        N1ofH8MGPpjtkgAuyM6ELzdFeDNsTkZovelUP4qJts4xTi3rLxpXz9m33PVoWMIC
+        hBigMXWGRbYgIpb8wf0szg9ob+a4KGeVBJjFhCJXSFjy69IrJmduTf3Ztzwc6GCh
+        8r/isNF2jGyTgdLeiYsQqmC09WNtqsRiTNgwXkP2cP6UA2wPkTTsQ==
+X-ME-Sender: <xms:w94AYm_1fgUgcVnmmjjXFz1gQdoB32r4hLCo8394u5gEMNFPYV_Ugw>
+    <xme:w94AYmtW2jPp_jN2_9TQRDj76JbYG5v1y9Twh342pnGtR8L9UUN-T9PJpvEWgDuVi
+    2rjPbE1CuFqiFPtakw>
+X-ME-Received: <xmr:w94AYsBFn6l1U-xjzm6WVolKkwOmtP9NwYXK1vWuAqoMP5RyQsvEDYevbtCP8isYT2DU8b66pNoMrcfAWbw28or1YSkeJOLJ4mkR1TY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheeggdduvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:w94AYueeXmMqPMV62AN0i_OQl7Ryxnt0B8I6ubSMxP6HcR_rjdSzLQ>
+    <xmx:w94AYrP2RF0sG_lzLC05Q-9rDMk6xHOKd8JB7VK26iUj2rqzXWxlvw>
+    <xmx:w94AYol47NNFaOrQpaQFsh-ESNhFJ7vRdtykfZ41PihetdYR4cqEJA>
+    <xmx:xN4AYvkmvo30Fxi2J8vew-MTWjnx5jNa98swIh5TU0jTmLA249Q2Hw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 7 Feb 2022 03:56:34 -0500 (EST)
+Date:   Mon, 7 Feb 2022 09:56:33 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-sunxi@lists.linux.dev,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v3 3/6] rtc: sun6i: Enable the bus clock when provided
+Message-ID: <20220207085633.q5ubv4v4iv4rg6rv@houat>
+References: <20220203021736.13434-1-samuel@sholland.org>
+ <20220203021736.13434-4-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="e6ts3zafdzecbmnf"
+Content-Disposition: inline
+In-Reply-To: <20220203021736.13434-4-samuel@sholland.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
 
-Dne ponedeljek, 07. februar 2022 ob 09:43:43 CET je Paul Kocialkowski 
-napisal(a):
-> Hi,
-> 
-> On Sat 05 Feb 22, 14:14, Samuel Holland wrote:
-> > On 2/5/22 12:53 PM, Paul Kocialkowski wrote:
-> > > Since the V3s uses the internal mbus, document its compatible.
-> > > 
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > ---
-> > > 
-> > >  .../devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.yaml  | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.
-> > > yaml
-> > > b/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.
-> > > yaml index 29c9961ee2d8..b67bf9261a6a 100644
-> > > ---
-> > > a/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.
-> > > yaml +++
-> > > b/Documentation/devicetree/bindings/arm/sunxi/allwinner,sun4i-a10-mbus.
-> > > yaml> > 
-> > > @@ -31,6 +31,7 @@ properties:
-> > >        - allwinner,sun5i-a13-mbus
-> > >        - allwinner,sun8i-h3-mbus
-> > >        - allwinner,sun8i-r40-mbus
-> > > 
-> > > +      - allwinner,sun8i-v3s-mbus
-> > 
-> > Please enable the expanded binding added in commit 245578ba9f03
-> > ("dt-bindings: arm: sunxi: Expand MBUS binding")[1] by adding the new
-> > compatible to the "if" block lower in the file. That way we can add V3S
-> > devfreq support in the future without changing that binding.
-> 
-> I had missed that new driver but surely I will expand the updated binding.
-> 
-> By the way do you have an explanation about the cell index given to the
-> interconnects (after &mbus)?
+--e6ts3zafdzecbmnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is mbus channel. You can find appropriate one checking DRAM driver in U-
-Boot, where mbus is configured.
+On Wed, Feb 02, 2022 at 08:17:33PM -0600, Samuel Holland wrote:
+> H6 and newer variants of the RTC hardware have a bus clock gate in the
+> PRCM CCU. This was not known at the time H6 support was added, so it was
+> not included in the H6 RTC binding, nor in the H6 PRCM CCU driver. Now
+> that this clock gate is documented, it is included in the A100 and D1
+> PRCM CCU drivers. Therefore, the RTC driver needs to have a consumer for
+> the clock gate to prevent Linux from disabling it.
+>=20
+> Patch-changes: 3
+>  - New patch for compatibility with new CCU drivers
 
-Best regards,
-Jernej
+Did that creep in? Shouldn't it be in your changelog?
 
-> 
-> Paul
-> 
-> > Regards,
-> > Samuel
-> > 
-> > [1]: https://git.kernel.org/torvalds/c/245578ba9f03
-> > 
-> > >        - allwinner,sun50i-a64-mbus
-> > >    
-> > >    reg:
+With that fixed,
+Reviewed-by: Maxime Ripard <maxime@cerno.tech>
 
+Maxime
 
+--e6ts3zafdzecbmnf
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYgDewQAKCRDj7w1vZxhR
+xbs1AP9OCXqNcbxnEr+NVY47L454dgyjujqAGtd5ZEb99XtJ6AD/QgF3NL4AwVd4
+Dq+JeHsetvY+k2GM6U4CtGoO3FXkLAc=
+=/6TF
+-----END PGP SIGNATURE-----
+
+--e6ts3zafdzecbmnf--
