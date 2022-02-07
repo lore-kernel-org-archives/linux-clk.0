@@ -2,29 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5619C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 15:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4F3C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 16:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238499AbiBGP7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 10:59:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33818 "EHLO
+        id S232583AbiBGQRT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 11:17:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244086AbiBGPva (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 10:51:30 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A6D3C0401C1;
-        Mon,  7 Feb 2022 07:51:29 -0800 (PST)
+        with ESMTP id S1387604AbiBGQQJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 11:16:09 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48F3EC0401CE;
+        Mon,  7 Feb 2022 08:16:08 -0800 (PST)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 54D34340;
-        Mon,  7 Feb 2022 16:51:23 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 85524A50;
+        Mon,  7 Feb 2022 17:16:06 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1644249083;
-        bh=Kg8KkyXqodwxnkoOUnTFgILuDislMphNhCMp4Cyt3k0=;
+        s=mail; t=1644250566;
+        bh=aFkueRgWrJNvd3R2K1xflySlUNscsWztv2uokuEkh9I=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d+p/yyLLVWoFHaQMa3PKOYne2f5NsLX/aSXsN5whwh5fbgyeQpYs8XdYey0+Cmdzm
-         wzUhiqC1tH8lsKZPl6Eninn4/oSoKEz/NKHoSjt3wcCtb6Np67rcbw0PDyekIXy8+L
-         kBpaesRvFQGudsLOVg3bNSdwSx4HeFms+1kyhIT4=
-Date:   Mon, 7 Feb 2022 17:51:21 +0200
+        b=nZK1tUgx86ylAnUIWlj2XVGt9I3p8J0h+L4yS9X2FR2ac1TZVfsz+sqmw6q32FLt2
+         XBqJkltHOP84U3EkM6TflyU7nJTEp9yKRVvxoTkwwTap+mD0HWlOmAPjAMPuXn4L/f
+         ACf9R+pOSDDzhStzAqw8cmk9fwefENv7D+vHkZjY=
+Date:   Mon, 7 Feb 2022 18:16:04 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -42,15 +42,15 @@ Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Helen Koike <helen.koike@collabora.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
- bindings documentation
-Message-ID: <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 63/66] staging: media: Add support for the Allwinner
+ A31 ISP
+Message-ID: <YgFFxMd2htKvX0K1@pendragon.ideasonboard.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-64-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20220205185429.2278860-64-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -59,162 +59,94 @@ Hi Paul,
 
 Thank you for the patch.
 
-On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
-> This introduces YAML bindings documentation for the Allwinner A31 Image
-> Signal Processor (ISP).
+On Sat, Feb 05, 2022 at 07:54:26PM +0100, Paul Kocialkowski wrote:
+> Some Allwinner platforms come with an Image Signal Processor, which
+> supports various features in order to enhance and transform data
+> received by image sensors into good-looking pictures. In most cases,
+> the data is raw bayer, which gets internally converted to RGB and
+> finally YUV, which is what the hardware produces.
+> 
+> This driver supports ISPs that are similar to the A31 ISP, which was
+> the first standalone ISP found in Allwinner platforms. Simpler ISP
+> blocks were found in the A10 and A20, where they are tied to a CSI
+> controller. Newer generations of Allwinner SoCs (starting with the
+> H6, H616, etc) come with a new camera subsystem and revised ISP.
+> Even though these previous and next-generation ISPs are somewhat
+> similar to the A31 ISP, they have enough significant differences to
+> be out of the scope of this driver.
+> 
+> While the ISP supports many features, including 3A and many
+> enhancement blocks, this implementation is limited to the following:
+> - V3s (V3/S3) platform support;
+> - Bayer media bus formats as input;
+
+Greyscale formats would also be nice to have, if the hardware can
+support that (it mostly just requires the ability to disable the CFA
+interpolation).
+
+> - Semi-planar YUV (NV12/NV21) as output;
+
+Packed YUV would also be useful if the hardware supports it.
+
+> - Debayering with per-component gain and offset configuration;
+> - 2D noise filtering with configurable coefficients.
+> 
+> Since many features are missing from the associated uAPI, the driver
+> is aimed to integrate staging until all features are properly
+> described.
+> 
+> On the technical side, it uses the v4l2 and media controller APIs,
+> with a video node for capture, a processor subdev and a video node
+> for parameters submission. A specific uAPI structure and associated
+> v4l2 meta format are used to configure parameters of the supported
+> modules.
+> 
+> One particular thing about the hardware is that configuration for
+> module registers needs to be stored in a DMA buffer and gets copied
+> to actual registers by the hardware at the next vsync, when instructed
+> by a flag. This is handled by the "state" mechanism in the driver.
 > 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++++++++++
->  1 file changed, 117 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> new file mode 100644
-> index 000000000000..2d87022c43ce
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> @@ -0,0 +1,117 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-isp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner A31 Image Signal Processor Driver (ISP) Device Tree Bindings
-> +
-> +maintainers:
-> +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - allwinner,sun6i-a31-isp
-> +      - allwinner,sun8i-v3s-isp
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Bus Clock
-> +      - description: Module Clock
-> +      - description: DRAM Clock
+>  drivers/staging/media/sunxi/Kconfig           |   1 +
+>  drivers/staging/media/sunxi/Makefile          |   1 +
+>  drivers/staging/media/sunxi/sun6i-isp/Kconfig |  13 +
+>  .../staging/media/sunxi/sun6i-isp/Makefile    |   4 +
+>  .../staging/media/sunxi/sun6i-isp/sun6i_isp.c | 572 +++++++++++++
+>  .../staging/media/sunxi/sun6i-isp/sun6i_isp.h |  86 ++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_capture.c | 751 ++++++++++++++++++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_capture.h |  78 ++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_params.c  | 573 +++++++++++++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_params.h  |  52 ++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_proc.c    | 599 ++++++++++++++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_proc.h    |  61 ++
+>  .../media/sunxi/sun6i-isp/sun6i_isp_reg.h     | 275 +++++++
+>  .../sunxi/sun6i-isp/uapi/sun6i-isp-config.h   |  43 +
 
-That's interesting, does the ISP have a dedicated DRAM ?
+Could you add a TODO file to list the issues that need to be fixed for
+the driver to move out of staging ? I'll already propose one entry:
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bus
-> +      - const: mod
-> +      - const: ram
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        description: CSI0 input port
-> +
-> +        properties:
-> +          reg:
-> +            const: 0
-> +
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
+- Add support in libcamera
 
-If no other property than remote-endpoint are allowed, I'd write
+This isn't required to merge the driver in staging as long as ABI
+compatibility doesn't need to be preserved until the driver is moved out
+of staging.
 
-          endpoint:
-            $ref: video-interfaces.yaml#
-	    remote-endpoint: true
-            additionalProperties: false
+>  14 files changed, 3109 insertions(+)
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/Kconfig
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/Makefile
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp.c
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp.h
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_capture.c
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_capture.h
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_params.c
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_params.h
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_proc.c
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_proc.h
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_reg.h
+>  create mode 100644 drivers/staging/media/sunxi/sun6i-isp/uapi/sun6i-isp-config.h
 
-Same below.
-
-> +
-> +        additionalProperties: false
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        description: CSI1 input port
-> +
-> +        properties:
-> +          reg:
-> +            const: 0
-
-This should be 1.
-
-> +
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +        additionalProperties: false
-> +
-> +    anyOf:
-> +      - required:
-> +        - port@0
-> +      - required:
-> +        - port@1
-
-As ports are an intrinsic property of the ISP, both should be required,
-but they don't have to be connected.
-
-By the way, how do you select at runtime which CSI-2 RX the ISP gets its
-image stream from ? Is it configured through registers of the ISP ?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
-> +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
-> +
-> +    isp: isp@1cb8000 {
-> +        compatible = "allwinner,sun8i-v3s-isp";
-> +        reg = <0x01cb8000 0x1000>;
-> +        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&ccu CLK_BUS_CSI>,
-> +             <&ccu CLK_CSI1_SCLK>,
-> +             <&ccu CLK_DRAM_CSI>;
-> +        clock-names = "bus", "mod", "ram";
-> +        resets = <&ccu RST_BUS_CSI>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +
-> +                isp_in_csi0: endpoint {
-> +                    remote-endpoint = <&csi0_out_isp>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
+[snip]
 
 -- 
 Regards,
