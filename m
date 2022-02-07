@@ -2,30 +2,29 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0621DC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255D6C4167B
 	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 16:18:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiBGQSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1345940AbiBGQSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 7 Feb 2022 11:18:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49976 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239346AbiBGQJW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 11:09:22 -0500
-X-Greylist: delayed 1076 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 08:09:21 PST
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58757C0401D2;
-        Mon,  7 Feb 2022 08:09:21 -0800 (PST)
+        with ESMTP id S1387251AbiBGQDL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 11:03:11 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47D9C0401CE;
+        Mon,  7 Feb 2022 08:03:08 -0800 (PST)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95CCC340;
-        Mon,  7 Feb 2022 17:09:19 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DC3CF340;
+        Mon,  7 Feb 2022 17:03:06 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1644250159;
-        bh=4a6oyH40Csn50dUhVk1KKkhWqQ+bT0AQuD8nF5SL40Y=;
+        s=mail; t=1644249787;
+        bh=nfHhY7SAAx/jSa8dp1hMDTzjQj/OuY2kGz3jjvPk5xk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BjnDuSwJb7zSiLkq8jUPy87i86c/x8YPcQgITE7qtB6aMKmQkRGRJBy/mXUrT5wiS
-         UFKmU9sVo1jhp1siSPFBNdhP5/+HTcmDw/ZJG72onGz6ggZMRoSmaOzYuUutBa/+5+
-         TQPkXjgQ4skbl4oTC1mFEoZ3pUrC0BOs7fpCsuW8=
-Date:   Mon, 7 Feb 2022 18:09:17 +0200
+        b=S+CZh0fGXgBerQVwuj4ZfLJQ6bwJ9df1Vzllh4VKcSm+MtCyn0LFsexbZWLsxjcsb
+         2skIMGdk4g0rNN5bgOMEeHnJUPIe4cLJ3I4iUbUt3S9fuywk0x7fmElGrEqbiPZV8J
+         3HmpuM9QGZsrLtswnZ8AtdRp5YENQqjto4nHkQHs=
+Date:   Mon, 7 Feb 2022 18:03:05 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -44,15 +43,15 @@ Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         Helen Koike <helen.koike@collabora.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 08/66] dt-bindings: media: Add Allwinner A31 MIPI
- CSI-2 bindings documentation
-Message-ID: <YgFELcVluEqr9LAH@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v2 07/66] dt-bindings: media: sun6i-a31-csi: Add MIPI
+ CSI-2 input port
+Message-ID: <YgFCuaf007wd8sJy@pendragon.ideasonboard.com>
 References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-9-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-8-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220205185429.2278860-9-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20220205185429.2278860-8-paul.kocialkowski@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -61,99 +60,57 @@ Hi Paul,
 
 Thank you for the patch.
 
-On Sat, Feb 05, 2022 at 07:53:31PM +0100, Paul Kocialkowski wrote:
-> This introduces YAML bindings documentation for the Allwinner A31 MIPI
-> CSI-2 controller.
+On Sat, Feb 05, 2022 at 07:53:30PM +0100, Paul Kocialkowski wrote:
+> The A31 CSI controller supports two distinct input interfaces:
+> parallel and an external MIPI CSI-2 bridge. The parallel interface
+> is often connected to a set of hardware pins while the MIPI CSI-2
+> bridge is an internal FIFO-ish link. As a result, these two inputs
+> are distinguished as two different ports.
+> 
+> Note that only one of the two may be present on a controller instance.
+> For example, the V3s has one controller dedicated to MIPI-CSI2 and one
+> dedicated to parallel.
+
+Is it that only one of the two is present, or only one of the two is
+connected ? In the latter case I'd make both ports required, but with
+only one of them connected.
+
+> Update the binding with an explicit ports node that holds two distinct
+> port nodes: one for parallel input and one for MIPI CSI-2.
+> 
+> This is backward-compatible with the single-port approach that was
+> previously taken for representing the parallel interface port, which
+> stays enumerated as fwnode port 0.
+> 
+> Note that additional ports may be added in the future, especially to
+> support feeding the CSI controller's output to the ISP.
 > 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
 > Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Maxime Ripard <mripard@kernel.org>
 > ---
->  .../media/allwinner,sun6i-a31-mipi-csi2.yaml  | 142 ++++++++++++++++++
->  1 file changed, 142 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml
+>  .../media/allwinner,sun6i-a31-csi.yaml        | 60 +++++++++++++++----
+>  1 file changed, 47 insertions(+), 13 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml
-> new file mode 100644
-> index 000000000000..09207904b6db
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-mipi-csi2.yaml
-> @@ -0,0 +1,142 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-mipi-csi2.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner A31 MIPI CSI-2 Device Tree Bindings
-> +
-> +maintainers:
-> +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: allwinner,sun6i-a31-mipi-csi2
-> +      - items:
-> +          - const: allwinner,sun8i-v3s-mipi-csi2
-> +          - const: allwinner,sun6i-a31-mipi-csi2
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Bus Clock
-> +      - description: Module Clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bus
-> +      - const: mod
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: MIPI D-PHY
-> +
-> +  phy-names:
-> +    items:
-> +      - const: dphy
-> +
-> +  resets:
-> +    maxItems: 1
-> +
+> diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> index 8b568072a069..3cc61866ea89 100644
+> --- a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.yaml
+> @@ -61,6 +61,34 @@ properties:
+>  
+>      additionalProperties: false
+>  
 > +  ports:
 > +    $ref: /schemas/graph.yaml#/properties/ports
 > +
 > +    properties:
 > +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        description: Input port, connect to a MIPI CSI-2 sensor
-> +
-> +        properties:
-> +          reg:
-> +            const: 0
-> +
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +        additionalProperties: false
+> +        $ref: "#/properties/port"
+> +        unevaluatedProperties: false
 > +
 > +      port@1:
 > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        description: Output port, connect to a CSI controller
+> +        description: MIPI CSI-2 bridge input port
 > +
 > +        properties:
 > +          reg:
@@ -164,71 +121,63 @@ On Sat, Feb 05, 2022 at 07:53:31PM +0100, Paul Kocialkowski wrote:
 > +            unevaluatedProperties: false
 > +
 > +        additionalProperties: false
+> +
+> +    anyOf:
+> +      - required:
+> +        - port@0
+> +      - required:
+> +        - port@1
+> +
+>  required:
+>    - compatible
+>    - reg
 
-The two ports should be required.
+Shouldn't you specify that either port or ports is required, but not
+both ? I'd also add a comment in the port node to tell it's deprecated,
+and that ports should be used instead.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - phys
-> +  - phy-names
-
-And ports should be required here.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
-> +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
-> +
-> +    mipi_csi2: csi@1cb1000 {
-> +        compatible = "allwinner,sun8i-v3s-mipi-csi2",
-> +                     "allwinner,sun6i-a31-mipi-csi2";
-> +        reg = <0x01cb1000 0x1000>;
-> +        interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&ccu CLK_BUS_CSI>,
-> +                 <&ccu CLK_CSI1_SCLK>;
-> +        clock-names = "bus", "mod";
-> +        resets = <&ccu RST_BUS_CSI>;
-> +
-> +        phys = <&dphy>;
-> +        phy-names = "dphy";
-> +
+> @@ -89,19 +117,25 @@ examples:
+>                        "ram";
+>          resets = <&ccu RST_BUS_CSI>;
+>  
+> -        port {
+> -            /* Parallel bus endpoint */
+> -            csi1_ep: endpoint {
+> -                remote-endpoint = <&adv7611_ep>;
+> -                bus-width = <16>;
+> -
+> -                /*
+> -                 * If hsync-active/vsync-active are missing,
+> -                 * embedded BT.656 sync is used.
+> -                 */
+> -                 hsync-active = <0>; /* Active low */
+> -                 vsync-active = <0>; /* Active low */
+> -                 pclk-sample = <1>;  /* Rising */
 > +        ports {
 > +            #address-cells = <1>;
 > +            #size-cells = <0>;
 > +
-> +            mipi_csi2_in: port@0 {
+> +            port@0 {
 > +                reg = <0>;
+> +                /* Parallel bus endpoint */
+> +                csi1_ep: endpoint {
+> +                    remote-endpoint = <&adv7611_ep>;
+> +                    bus-width = <16>;
 > +
-> +                mipi_csi2_in_ov5648: endpoint {
-> +                    data-lanes = <1 2 3 4>;
-> +
-> +                    remote-endpoint = <&ov5648_out_mipi_csi2>;
+> +                    /*
+> +                     * If hsync-active/vsync-active are missing,
+> +                     * embedded BT.656 sync is used.
+> +                     */
+> +                     hsync-active = <0>; /* Active low */
+> +                     vsync-active = <0>; /* Active low */
+> +                     pclk-sample = <1>;  /* Rising */
+
+Wrong indentation.
+
 > +                };
-> +            };
-> +
-> +            mipi_csi2_out: port@1 {
-> +                reg = <1>;
-> +
-> +                mipi_csi2_out_csi0: endpoint {
-> +                    remote-endpoint = <&csi0_in_mipi_csi2>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
+>              };
+>          };
+>      };
 
 -- 
 Regards,
