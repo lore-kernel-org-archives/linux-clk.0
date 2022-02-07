@@ -2,49 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68BCC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CA8C43217
 	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 13:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234616AbiBGM6I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 07:58:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60408 "EHLO
+        id S1383214AbiBGM6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 07:58:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382668AbiBGM3J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 07:29:09 -0500
+        with ESMTP id S1442078AbiBGMTB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 07:19:01 -0500
+X-Greylist: delayed 938 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 04:05:51 PST
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0C7FC1DF3CA
-        for <linux-clk@vger.kernel.org>; Mon,  7 Feb 2022 04:19:39 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2179Cq8b017276;
-        Mon, 7 Feb 2022 12:48:12 +0100
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B774C0018CF
+        for <linux-clk@vger.kernel.org>; Mon,  7 Feb 2022 04:05:50 -0800 (PST)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2179FhBL007175;
+        Mon, 7 Feb 2022 12:47:53 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=selector1;
- bh=cJRAOFfgOf9gPaoNLn/6JXn6H8gweIgTFS6SlxTjhx8=;
- b=TkD00dzvWof6J0e5bo3szfMtab8wKVHfMf3gTlz9ZwU6EUWA7Pd2s73e1jWcTkLmRlr1
- o3Z++Qo8CNCD9jt7VzmWZpGQvFbhF4b2l6j/rf91VkGVDLI6xSwhu1sFFwWYpdibMT19
- Glor4B1bNmtQ6E5t9NVZM6aCvMK9tKDpRmKNj0WX/CNyYo+Qj7V2YexT131zXr3p42KT
- /m+VtuItn7Xok/vhuzD2SoMuzaLzWdoRTOEdc/VhGiZSNPKeQAz6NK54U1x0Jrp8M2Mh
- kJZ0jdlhWXli/Ua2r+zSTUbgHgLZC9461ltl3nm1QdfzIqIYSijbUuNxgJ9i4dCPrlPy 4A== 
+ bh=i1S6Xyi98ATR6IX5EqPMjE/h0t3uqWpUnP3nkYvk97g=;
+ b=BsNTyGecD7Pd/+EpeDvQooC4WBe4fv7CQyHkyH4EZPozqrGxRackbgmtZUB8P2ZgmBYl
+ nJaGT4OEw2xhGxjxi0t1yvTcw186OPNt56asdIwivSPq+V1C/2eoKflG/JoUlZI6TNG2
+ VNnhi2mCb6qAM8BTCR5xujMXR1m6Ex5Nvyj3U7Qf73+3iC7PzdY9RucpnUJS7ykr3qKn
+ 9QIWJmrmZHTWOJ2KaJ2Femtf9VnjRHPslmy/0FRadPqAzEfB0jao6g1NGS6FOw7VX6LY
+ KGFlJvNpvHnCdwLaw7xLFa+etBa/PxPmNhvXg9r37qjYHtiYyH+OjMfILtlUHDeZSTlH hg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e30kg0t7k-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e30mxrsfw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Feb 2022 12:48:12 +0100
+        Mon, 07 Feb 2022 12:47:53 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DFA7810002A;
-        Mon,  7 Feb 2022 12:48:11 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5AFEF10002A;
+        Mon,  7 Feb 2022 12:47:52 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D79B1217B9D;
-        Mon,  7 Feb 2022 12:48:11 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4B9C0217B9C;
+        Mon,  7 Feb 2022 12:47:52 +0100 (CET)
 Received: from [10.48.0.252] (10.75.127.46) by SFHDAG2NODE2.st.com
  (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 7 Feb
- 2022 12:48:11 +0100
-Message-ID: <2e41f485-f07a-c9d5-9b0d-cc31d9039962@foss.st.com>
-Date:   Mon, 7 Feb 2022 12:48:11 +0100
+ 2022 12:47:51 +0100
+Message-ID: <c8d6a72b-9031-7b79-ca32-e529e4db307a@foss.st.com>
+Date:   Mon, 7 Feb 2022 12:47:51 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH 4/5] ARM: dts: stm32: Add alternate pinmux for mco2 pins
+Subject: Re: [PATCH 3/5] ARM: dts: stm32: Add alternate pinmux for ethernet0
+ pins
 Content-Language: en-US
 To:     Marek Vasut <marex@denx.de>, <linux-arm-kernel@lists.infradead.org>
 CC:     <jneuhauser@dh-electronics.com>,
@@ -55,9 +57,9 @@ CC:     <jneuhauser@dh-electronics.com>,
         Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
 References: <20220118202958.1840431-1-marex@denx.de>
- <20220118202958.1840431-4-marex@denx.de>
+ <20220118202958.1840431-3-marex@denx.de>
 From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20220118202958.1840431-4-marex@denx.de>
+In-Reply-To: <20220118202958.1840431-3-marex@denx.de>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.75.127.46]
@@ -70,9 +72,12 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Marek
+
 On 1/18/22 21:29, Marek Vasut wrote:
-> Add pinmux option for MCO2 pin. This is used on DHCOM when the
-> ethernet PHY 50 MHz clock is generated by the MCO2 on PG2 pin.
+> Add another mux option for ethernet0 pins, this is used on DHCOM when
+> the ethernet PHY 50 MHz clock is generated by the MCO2 on PG2 pin and
+> then fed back via PA1 pin.
 > 
 > Signed-off-by: Marek Vasut <marex@denx.de>
 > Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
@@ -85,37 +90,58 @@ On 1/18/22 21:29, Marek Vasut wrote:
 > Cc: linux-stm32@st-md-mailman.stormreply.com
 > To: linux-arm-kernel@lists.infradead.org
 > ---
->   arch/arm/boot/dts/stm32mp15-pinctrl.dtsi | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
+>   arch/arm/boot/dts/stm32mp15-pinctrl.dtsi | 34 ++++++++++++++++++++++++
+>   1 file changed, 34 insertions(+)
 > 
 > diff --git a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-> index 2cd2ac9beaf20..6da84e3f05ea3 100644
+> index 3b65130affec8..2cd2ac9beaf20 100644
 > --- a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
 > +++ b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-> @@ -882,6 +882,21 @@ pins {
+> @@ -338,6 +338,40 @@ pins1 {
 >   		};
 >   	};
 >   
-> +	mco2_pins_a: mco2-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('G', 2, AF1)>; /* MCO2 */
+> +	ethernet0_rmii_pins_b: rmii-1 {
+> +		pins1 {
+> +			pinmux = <STM32_PINMUX('G', 13, AF11)>, /* ETH1_RMII_TXD0 */
+> +				 <STM32_PINMUX('G', 14, AF11)>, /* ETH1_RMII_TXD1 */
+> +				 <STM32_PINMUX('B', 11, AF11)>, /* ETH1_RMII_TX_EN */
+> +				 <STM32_PINMUX('A', 1, AF11)>,  /* ETH1_RMII_REF_CLK */
+> +				 <STM32_PINMUX('A', 2, AF11)>,  /* ETH1_MDIO */
+> +				 <STM32_PINMUX('C', 1, AF11)>;  /* ETH1_MDC */
 > +			bias-disable;
 > +			drive-push-pull;
 > +			slew-rate = <2>;
 > +		};
-> +	};
-> +
-> +	mco2_sleep_pins_a: mco2-sleep-0 {
-> +		pins {
-> +			pinmux = <STM32_PINMUX('G', 2, ANALOG)>; /* MCO2 */
+> +		pins2 {
+> +			pinmux = <STM32_PINMUX('C', 4, AF11)>,  /* ETH1_RMII_RXD0 */
+> +				 <STM32_PINMUX('C', 5, AF11)>,  /* ETH1_RMII_RXD1 */
+> +				 <STM32_PINMUX('A', 7, AF11)>;  /* ETH1_RMII_CRS_DV */
+> +			bias-disable;
 > +		};
 > +	};
 > +
->   	m_can1_pins_a: m-can1-0 {
+> +	ethernet0_rmii_sleep_pins_b: rmii-sleep-1 {
+> +		pins1 {
+> +			pinmux = <STM32_PINMUX('G', 13, ANALOG)>, /* ETH1_RMII_TXD0 */
+> +				 <STM32_PINMUX('G', 14, ANALOG)>, /* ETH1_RMII_TXD1 */
+> +				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH1_RMII_TX_EN */
+> +				 <STM32_PINMUX('A', 2, ANALOG)>,  /* ETH1_MDIO */
+> +				 <STM32_PINMUX('C', 1, ANALOG)>,  /* ETH1_MDC */
+> +				 <STM32_PINMUX('C', 4, ANALOG)>,  /* ETH1_RMII_RXD0 */
+> +				 <STM32_PINMUX('C', 5, ANALOG)>,  /* ETH1_RMII_RXD1 */
+> +				 <STM32_PINMUX('A', 1, ANALOG)>,  /* ETH1_RMII_REF_CLK */
+> +				 <STM32_PINMUX('A', 7, ANALOG)>;  /* ETH1_RMII_CRS_DV */
+> +		};
+> +	};
+> +
+>   	fmc_pins_a: fmc-0 {
 >   		pins1 {
->   			pinmux = <STM32_PINMUX('H', 13, AF9)>; /* CAN1_TX */
+>   			pinmux = <STM32_PINMUX('D', 4, AF12)>, /* FMC_NOE */
 
-Applied on stm32-next
+Applied on stm32-next with as discussed small modifications (use 
+xxxx_pins_c instead of xxxx_pins_b) due to conflicts with emSBC-Argon 
+series.
 
-thanks
+cheers
 Alex
