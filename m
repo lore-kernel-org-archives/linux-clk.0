@@ -2,146 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CA8C43217
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 13:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1CFC43217
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Feb 2022 14:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383214AbiBGM6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 07:58:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53552 "EHLO
+        id S240315AbiBGOsu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 09:48:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442078AbiBGMTB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 07:19:01 -0500
-X-Greylist: delayed 938 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 04:05:51 PST
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B774C0018CF
-        for <linux-clk@vger.kernel.org>; Mon,  7 Feb 2022 04:05:50 -0800 (PST)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2179FhBL007175;
-        Mon, 7 Feb 2022 12:47:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=i1S6Xyi98ATR6IX5EqPMjE/h0t3uqWpUnP3nkYvk97g=;
- b=BsNTyGecD7Pd/+EpeDvQooC4WBe4fv7CQyHkyH4EZPozqrGxRackbgmtZUB8P2ZgmBYl
- nJaGT4OEw2xhGxjxi0t1yvTcw186OPNt56asdIwivSPq+V1C/2eoKflG/JoUlZI6TNG2
- VNnhi2mCb6qAM8BTCR5xujMXR1m6Ex5Nvyj3U7Qf73+3iC7PzdY9RucpnUJS7ykr3qKn
- 9QIWJmrmZHTWOJ2KaJ2Femtf9VnjRHPslmy/0FRadPqAzEfB0jao6g1NGS6FOw7VX6LY
- KGFlJvNpvHnCdwLaw7xLFa+etBa/PxPmNhvXg9r37qjYHtiYyH+OjMfILtlUHDeZSTlH hg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3e30mxrsfw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 07 Feb 2022 12:47:53 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5AFEF10002A;
-        Mon,  7 Feb 2022 12:47:52 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4B9C0217B9C;
-        Mon,  7 Feb 2022 12:47:52 +0100 (CET)
-Received: from [10.48.0.252] (10.75.127.46) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 7 Feb
- 2022 12:47:51 +0100
-Message-ID: <c8d6a72b-9031-7b79-ca32-e529e4db307a@foss.st.com>
-Date:   Mon, 7 Feb 2022 12:47:51 +0100
+        with ESMTP id S1392128AbiBGOYB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 09:24:01 -0500
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE5FC0401C8;
+        Mon,  7 Feb 2022 06:24:00 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id g18so12902397uak.5;
+        Mon, 07 Feb 2022 06:24:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tBG65btqjKnrtOXYzj97x0Tpp2FieJYY+mjia0/4uaI=;
+        b=pEB5loNS1akCKmsNwgGN01JFliEJm6zTZWjvLPJE2Oj/+wg1Y38dSykqp9Fx6YpZHd
+         sscLTZF7tTPfp2xDZQLHT8agTrX2WyC9mCLxa0ETqCGZ1vkYRlsBDzoYNKeRRKqRp9QR
+         ITZR7I7LO9UI9UU7jDudi11b/S3BNinsAyI+lpJqg42lSIVQoXoNUo8PgdGIgTZgXB4T
+         0MYeXiRJ9GeLoWeWbphMXNfqwZbDUcwmUsCPcLG/DQ8+c8uNuiiTt60s4uIlpDwJPdOF
+         0kE8zL7psKploGbm/FN65EJ4g+XEOVBWECfISE4dTQod91tF5DA0axHgspkfGq9ZRE4s
+         hsWQ==
+X-Gm-Message-State: AOAM531FNfXzfahbR4p6RA1fX9+RA+kS5iapsS5B2RX0ZfgJYq2+qAZH
+        fPftm0fwhQp5KqTbMBGhDu8rG67mV2NHCA==
+X-Google-Smtp-Source: ABdhPJyQQuEnehO0Njo58qUfgjqu1AS2n2oE/v3a2haJi9HpX8yavLxzFgCItSF0yAsODmraR/9vDw==
+X-Received: by 2002:a67:c58b:: with SMTP id h11mr4360966vsk.82.1644243838964;
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id n10sm2234178vso.34.2022.02.07.06.23.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id u77so9307548uau.6;
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+X-Received: by 2002:a67:c198:: with SMTP id h24mr4664195vsj.5.1644243838027;
+ Mon, 07 Feb 2022 06:23:58 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 3/5] ARM: dts: stm32: Add alternate pinmux for ethernet0
- pins
-Content-Language: en-US
-To:     Marek Vasut <marex@denx.de>, <linux-arm-kernel@lists.infradead.org>
-CC:     <jneuhauser@dh-electronics.com>,
-        Christophe Roullier <christophe.roullier@foss.st.com>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20220118202958.1840431-1-marex@denx.de>
- <20220118202958.1840431-3-marex@denx.de>
-From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20220118202958.1840431-3-marex@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-07_04,2022-02-07_01,2021-12-02_01
+References: <20220205084006.7142-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220205084006.7142-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Feb 2022 15:23:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXqzQOatPXxEPfuSRyzJ81ADX0EhR5xng7XwpoCAh325g@mail.gmail.com>
+Message-ID: <CAMuHMdXqzQOatPXxEPfuSRyzJ81ADX0EhR5xng7XwpoCAh325g@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek
+Hi Biju,
 
-On 1/18/22 21:29, Marek Vasut wrote:
-> Add another mux option for ethernet0 pins, this is used on DHCOM when
-> the ethernet PHY 50 MHz clock is generated by the MCO2 on PG2 pin and
-> then fed back via PA1 pin.
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
-> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> Cc: Patrice Chotard <patrice.chotard@foss.st.com>
-> Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> To: linux-arm-kernel@lists.infradead.org
+On Sat, Feb 5, 2022 at 9:40 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The clock structure for RZ/V2L is almost identical to RZ/G2L SoC. The only
+> difference being RZ/V2L has an additional registers to control clock and
+> reset for the DRP-AI block.
+>
+> This patch reuses r9a07g044-cpg.c, as the common clock IDS and rest IDS are
+> same between RZ/G2L and RZ/V2L and adding a separate r9a07g054_cpg_info to
+> take care of DRP-AI clocks/resets.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->   arch/arm/boot/dts/stm32mp15-pinctrl.dtsi | 34 ++++++++++++++++++++++++
->   1 file changed, 34 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-> index 3b65130affec8..2cd2ac9beaf20 100644
-> --- a/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp15-pinctrl.dtsi
-> @@ -338,6 +338,40 @@ pins1 {
->   		};
->   	};
->   
-> +	ethernet0_rmii_pins_b: rmii-1 {
-> +		pins1 {
-> +			pinmux = <STM32_PINMUX('G', 13, AF11)>, /* ETH1_RMII_TXD0 */
-> +				 <STM32_PINMUX('G', 14, AF11)>, /* ETH1_RMII_TXD1 */
-> +				 <STM32_PINMUX('B', 11, AF11)>, /* ETH1_RMII_TX_EN */
-> +				 <STM32_PINMUX('A', 1, AF11)>,  /* ETH1_RMII_REF_CLK */
-> +				 <STM32_PINMUX('A', 2, AF11)>,  /* ETH1_MDIO */
-> +				 <STM32_PINMUX('C', 1, AF11)>;  /* ETH1_MDC */
-> +			bias-disable;
-> +			drive-push-pull;
-> +			slew-rate = <2>;
-> +		};
-> +		pins2 {
-> +			pinmux = <STM32_PINMUX('C', 4, AF11)>,  /* ETH1_RMII_RXD0 */
-> +				 <STM32_PINMUX('C', 5, AF11)>,  /* ETH1_RMII_RXD1 */
-> +				 <STM32_PINMUX('A', 7, AF11)>;  /* ETH1_RMII_CRS_DV */
-> +			bias-disable;
-> +		};
-> +	};
-> +
-> +	ethernet0_rmii_sleep_pins_b: rmii-sleep-1 {
-> +		pins1 {
-> +			pinmux = <STM32_PINMUX('G', 13, ANALOG)>, /* ETH1_RMII_TXD0 */
-> +				 <STM32_PINMUX('G', 14, ANALOG)>, /* ETH1_RMII_TXD1 */
-> +				 <STM32_PINMUX('B', 11, ANALOG)>, /* ETH1_RMII_TX_EN */
-> +				 <STM32_PINMUX('A', 2, ANALOG)>,  /* ETH1_MDIO */
-> +				 <STM32_PINMUX('C', 1, ANALOG)>,  /* ETH1_MDC */
-> +				 <STM32_PINMUX('C', 4, ANALOG)>,  /* ETH1_RMII_RXD0 */
-> +				 <STM32_PINMUX('C', 5, ANALOG)>,  /* ETH1_RMII_RXD1 */
-> +				 <STM32_PINMUX('A', 1, ANALOG)>,  /* ETH1_RMII_REF_CLK */
-> +				 <STM32_PINMUX('A', 7, ANALOG)>;  /* ETH1_RMII_CRS_DV */
-> +		};
-> +	};
-> +
->   	fmc_pins_a: fmc-0 {
->   		pins1 {
->   			pinmux = <STM32_PINMUX('D', 4, AF12)>, /* FMC_NOE */
+> This patch depend upon [1]
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/include/dt-bindings/clock?h=next-20220204&id=4decd2e54b61686787f36b727d2772e067a46ea5
+> v4->v5:
+> * Rebased on latest clk-driver
+> * Added base commit ID
+> v3->v4:
+> * Added common/drp split for core clocks and resets
 
-Applied on stm32-next with as discussed small modifications (use 
-xxxx_pins_c instead of xxxx_pins_b) due to conflicts with emSBC-Argon 
-series.
+Thanks for the updates!
 
-cheers
-Alex
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -11,12 +11,13 @@
+>  #include <linux/kernel.h>
+>
+>  #include <dt-bindings/clock/r9a07g044-cpg.h>
+> +#include <dt-bindings/clock/r9a07g054-cpg.h>
+>
+>  #include "rzg2l-cpg.h"
+>
+>  enum clk_ids {
+>         /* Core Clock Outputs exported to DT */
+> -       LAST_DT_CORE_CLK = R9A07G044_CLK_P0_DIV2,
+> +       LAST_DT_CORE_CLK = R9A07G054_CLK_DRP_A,
+>
+>         /* External Input Clocks */
+>         CLK_EXTAL,
+> @@ -80,252 +81,285 @@ static const char * const sel_pll6_2[]    = { ".pll6_250", ".pll5_250" };
+>  static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
+>  static const char * const sel_gpu2[] = { ".pll6", ".pll3_div2_2" };
+>
+> -static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+> -       /* External Clock Inputs */
+> -       DEF_INPUT("extal", CLK_EXTAL),
+> +static struct {
+> +       const struct cpg_core_clk common[44];
+> +#ifdef CONFIG_CLK_R9A07G054
+> +       const struct cpg_core_clk drp[0];
+> +#endif
+> +} const core_clks __initconst = {
+
+Having a single "const" between "static" and "struct" is sufficient.
+
+> +       .common = {
+> +               /* External Clock Inputs */
+> +               DEF_INPUT("extal", CLK_EXTAL),
+>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.18, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
