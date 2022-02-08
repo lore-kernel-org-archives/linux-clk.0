@@ -2,25 +2,26 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130B5C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D05FC4321E
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385090AbiBHSlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:41:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36366 "EHLO
+        id S1385104AbiBHSlr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 13:41:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242760AbiBHSlm (ORCPT
+        with ESMTP id S1385079AbiBHSlm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 13:41:42 -0500
-Received: from hutie.ust.cz (hutie.ust.cz [185.8.165.127])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5533EC0613C9;
+X-Greylist: delayed 402 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 10:41:38 PST
+Received: from hutie.ust.cz (unknown [IPv6:2a03:3b40:fe:f0::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48FA4C06157A;
         Tue,  8 Feb 2022 10:41:38 -0800 (PST)
 From:   =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cutebit.org; s=mail;
-        t=1644345292; bh=qwDk3NRHUss8TCYpvU94JsFuSuZCb0TDgOBElpe8C1I=;
-        h=From:To:Cc:Subject:Date;
-        b=qVvJLIiiQ/plel3G1U1sBOEr+yT7cKbrhTU/snWoPZUVRlNlBIyZ0WHJCisZc8zFk
-         IippyJsezK/c/tL8hnvw158TfJBf9tkOAFhd0MWifj3KQCYVxVJqxllObbbrMYkV7l
-         OPSqEIzM7BK1W1VZXwGK4adUv7iX1MRuNxih/77s=
+        t=1644345294; bh=nalpL5PXfzIK2UIFKSiwUgZ+m6XFsf+U367lw7XDLSc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=m15AE0ClOPpIccqAJQ6O935Ffl14jKzA6sTw0XDAC0z2q7dYrKrHS9mJHMJhlW1TX
+         ngL5/5i3uDYsJwU3+oiP+iflFl6/dfGRk+vJTYUeAR+Zfkcu7SOOtJLrqlt9R3rUAJ
+         J4cvt5cLA1xH29AjWVAtD0DBM96Paegsf9K/SiXk=
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -30,60 +31,46 @@ Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Mark Kettenis <kettenis@openbsd.org>,
         =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>
-Subject: [PATCH v4 0/3] Support for Apple SoCs' NCO blocks
-Date:   Tue,  8 Feb 2022 19:34:08 +0100
-Message-Id: <20220208183411.61090-1-povik+lin@cutebit.org>
+Subject: [PATCH v4 3/3] MAINTAINERS: Add clk-apple-nco under ARM/APPLE MACHINE
+Date:   Tue,  8 Feb 2022 19:34:11 +0100
+Message-Id: <20220208183411.61090-4-povik+lin@cutebit.org>
+In-Reply-To: <20220208183411.61090-1-povik+lin@cutebit.org>
+References: <20220208183411.61090-1-povik+lin@cutebit.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam: Yes
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Acked-by: Sven Peter <sven@svenpeter.dev>
+Acked-by: Hector Martin <marcan@marcan.st>
+Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This is v4 of common clock driver for NCO blocks on Apple SoCs. I have to send v4
-because to some people I inadvertently send their copy of v3 PGP-encrypted.
-
-Changes since v3:
-
- - change my email address
- - set MODULE_LICENSE to 'GPL' (was 'GPL v2')
-
-Changes since v2:
-
- - move all under applnco_ prefix
- - move away from signed types in register value calculations
- - other minor things from Stephen's review
-
-Changes since v1:
-
- - drop apple,nchannels property from the binding, rely on size of the register
-   range instead to gauge the number of channels
- - add a lock to guard set_rate from racing with clock disable/enable
- - add short "theory of operation" comment
- - incorporate minor changes from Rob's, Sven's and Stephen's review (thanks!)
-
-Martin
-
-v1: https://lore.kernel.org/linux-clk/20211214120213.15649-1-povik@protonmail.com/
-v2: https://lore.kernel.org/linux-clk/20220118191839.64086-1-povik+lin@protonmail.com/
-v3: https://lore.kernel.org/linux-clk/20220121175441.9944-1-povik+lin@protonmail.com/
-
-Martin Povišer (3):
-  dt-bindings: clock: Add Apple NCO
-  clk: clk-apple-nco: Add driver for Apple NCO
-  MAINTAINERS: Add clk-apple-nco under ARM/APPLE MACHINE
-
- .../devicetree/bindings/clock/apple,nco.yaml  |  62 ++++
- MAINTAINERS                                   |   2 +
- drivers/clk/Kconfig                           |   9 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-apple-nco.c                   | 333 ++++++++++++++++++
- 5 files changed, 407 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/apple,nco.yaml
- create mode 100644 drivers/clk/clk-apple-nco.c
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 35ca7a4a65d8..984613444331 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1769,6 +1769,7 @@ C:	irc://irc.oftc.net/asahi-dev
+ T:	git https://github.com/AsahiLinux/linux.git
+ F:	Documentation/devicetree/bindings/arm/apple.yaml
+ F:	Documentation/devicetree/bindings/arm/apple/*
++F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
+ F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
+ F:	Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
+@@ -1777,6 +1778,7 @@ F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
+ F:	Documentation/devicetree/bindings/power/apple*
+ F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
+ F:	arch/arm64/boot/dts/apple/
++F:	drivers/clk/clk-apple-nco.c
+ F:	drivers/i2c/busses/i2c-pasemi-core.c
+ F:	drivers/i2c/busses/i2c-pasemi-platform.c
+ F:	drivers/irqchip/irq-apple-aic.c
 -- 
 2.33.0
 
