@@ -2,145 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADC4C4321E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D708EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353972AbiBHNQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:16:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
+        id S1355703AbiBHNQe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 08:16:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358139AbiBHMlC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:41:02 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9E5C03FEC0
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:41:02 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id om7so2926001pjb.5
-        for <linux-clk@vger.kernel.org>; Tue, 08 Feb 2022 04:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yu5wC4iGlAJptCPwbvLdBvXWnUX/vMCoe837u17t2vE=;
-        b=WYmMFm75NEaKiAQgXHcNywEYl4EfNKMdlnHmbH+Y/S70IQ6WZ9BTZFIM6qXllePpzx
-         VqxfGa3WakmxF3TFYcuEqxxCXNGBaGXzpSF7WpnjK4acriB5IPWJHkzpCdKwAC2iXA2q
-         MpfJH/5jIsHVddh1YI+t3DBLCwl7un6kbnAxA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yu5wC4iGlAJptCPwbvLdBvXWnUX/vMCoe837u17t2vE=;
-        b=uJv9oEVwH//oEEsqzT0Sy4oulBQHCS3/jrSqFhvcL04wmXNVG/GkTk1D/UTiV+Ghd9
-         M/C2qfcSproiWpQKmge0/MSXptMASoudl+jqXGul8lr8yLkV0aGBL/1dnCUS+qADsvbP
-         I9YNCVxwgGp8qzTdJdxmhbbRAaNbij9YLX3W1lF0n/0QgdaQpoqfQjEFS8b2TjOCpT0n
-         vAf2gZusn6r7ul9B2FkfM16y02sUCsCpQ1XGokTmrlUpsH4D77yMeLU1lqMCx3HYeU00
-         wGJqYE7N5AKaUo/6y2rXFYboF+58ahWQoo1YsW+he8vRTUvaWl6I+1QAFzFCK9Gty8QT
-         BkCQ==
-X-Gm-Message-State: AOAM532jDfiTonYueUCFejo614agMFR5F2UvvbpvRipuw8WhmN2J88oQ
-        F78XgqsXnU8LXiarO7C85Xcm0A==
-X-Google-Smtp-Source: ABdhPJzUeRlYjgcD/Tizn2yiqNMWwskxr1QbMAtRHQShttT8ptqsm5WTOeTXEuEiu4TrR1RbEMFh/Q==
-X-Received: by 2002:a17:902:6b8c:: with SMTP id p12mr4434188plk.51.1644324062033;
-        Tue, 08 Feb 2022 04:41:02 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:41b6:813e:c823:609c])
-        by smtp.gmail.com with ESMTPSA id h11sm15056939pfe.214.2022.02.08.04.41.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 04:41:01 -0800 (PST)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1359425AbiBHMnB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:43:01 -0500
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40125C03FECA
+        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:43:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=Ck6cwa59nGXo7jfN2dFLRXv6E+Un
+        dI4SghImRsPxVzo=; b=BUUhG/j9ushdI2B3Dkou/u0zBKlUf9gw7KY6hR/Krsm6
+        30QmXmnQV6dUtck3k/6NhvzQ2kXPzGerWsOQcc1obZnBMQiU57R5/BZI8JZwkCDX
+        yhwU1XZ5dj3eE4p3zQM+Bp4P5EYqA/Ry/nWPrQhLX4UXca4ezPKOqNNBAdRQ3p8=
+Received: (qmail 253997 invoked from network); 8 Feb 2022 13:42:57 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Feb 2022 13:42:57 +0100
+X-UD-Smtp-Session: l3s3148p1@1xN8DoHXaMkgAQnoAF1FAEKPHF9sYOFO
+Date:   Tue, 8 Feb 2022 13:42:57 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] arm64: dts: renesas: spider-cpu: Enable watchdog
+ timer
+Message-ID: <YgJlUaFqtbxvrfhJ@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/31] clk: mediatek: cpumux: Implement unregister API
-Date:   Tue,  8 Feb 2022 20:40:09 +0800
-Message-Id: <20220208124034.414635-7-wenst@chromium.org>
-X-Mailer: git-send-email 2.35.0.263.gb82422642f-goog
-In-Reply-To: <20220208124034.414635-1-wenst@chromium.org>
-References: <20220208124034.414635-1-wenst@chromium.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1642525158.git.geert+renesas@glider.be>
+ <b36b2bb5770e10d906571721a3d73ca205b6f56e.1642525158.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rr1ahe+uiqjQiwRT"
+Content-Disposition: inline
+In-Reply-To: <b36b2bb5770e10d906571721a3d73ca205b6f56e.1642525158.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The cpumux clk type within the MediaTek clk driver library only has
-a register function, and no corresponding unregister function. This
-means there is no way for its users to properly implement cleanup
-and removal.
 
-Add a matching unregister function for the cpumux type clk.
+--rr1ahe+uiqjQiwRT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-cpumux.c | 31 +++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-cpumux.h |  3 +++
- 2 files changed, 34 insertions(+)
+On Tue, Jan 18, 2022 at 06:09:05PM +0100, Geert Uytterhoeven wrote:
+> Enable the watchdog timer on the Spider board.
+>=20
+> Extracted from a larger patch in the BSP by LUU HOAI.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
-index cab5095416b6..99a819e3673f 100644
---- a/drivers/clk/mediatek/clk-cpumux.c
-+++ b/drivers/clk/mediatek/clk-cpumux.c
-@@ -77,6 +77,21 @@ mtk_clk_register_cpumux(const struct mtk_composite *mux,
- 	return clk;
- }
- 
-+static void mtk_clk_unregister_cpumux(struct clk *clk)
-+{
-+	struct mtk_clk_cpumux *cpumux;
-+	struct clk_hw *hw;
-+
-+	hw = __clk_get_hw(clk);
-+	if (!hw)
-+		return;
-+
-+	cpumux = to_mtk_clk_cpumux(hw);
-+
-+	clk_unregister(clk);
-+	kfree(cpumux);
-+}
-+
- int mtk_clk_register_cpumuxes(struct device_node *node,
- 			      const struct mtk_composite *clks, int num,
- 			      struct clk_onecell_data *clk_data)
-@@ -106,4 +121,20 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
- 	return 0;
- }
- 
-+void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
-+				 struct clk_onecell_data *clk_data)
-+{
-+	int i;
-+
-+	for (i = num; i > 0; i--) {
-+		const struct mtk_composite *mux = &clks[i - 1];
-+
-+		if (IS_ERR_OR_NULL(clk_data->clks[mux->id]))
-+			continue;
-+
-+		mtk_clk_unregister_cpumux(clk_data->clks[mux->id]);
-+		clk_data->clks[mux->id] = ERR_PTR(-ENOENT);
-+	}
-+}
-+
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
-index 2aaf1afd4e5f..fda7770fd803 100644
---- a/drivers/clk/mediatek/clk-cpumux.h
-+++ b/drivers/clk/mediatek/clk-cpumux.h
-@@ -19,4 +19,7 @@ int mtk_clk_register_cpumuxes(struct device_node *node,
- 			      const struct mtk_composite *clks, int num,
- 			      struct clk_onecell_data *clk_data);
- 
-+void mtk_clk_unregister_cpumuxes(const struct mtk_composite *clks, int num,
-+				 struct clk_onecell_data *clk_data);
-+
- #endif /* __DRV_CLK_CPUMUX_H */
--- 
-2.35.0.263.gb82422642f-goog
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+
+--rr1ahe+uiqjQiwRT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmICZVEACgkQFA3kzBSg
+KbZBXRAAqPdtAEeUfW4tit/TvXovUIbZDY1Cp/Wc0wDPVd91on/KRfH4Z4u1nsT1
+BY7XHHEkDkfH6nsUX1Gfv/V+k33xihe14k/nfdBTx+ewp/WkQBkvrajPmgXvUAh1
+8b67apEDWaJo0LTSd1+YyoXlyk6K/1RZ9enVj9ehOnl/T1J9w8B0pI8kyg70hLcK
+Kg39Xqj/22kEbAIW/NglT/JTib60yfSLJLZaUU+rzsC2QU31SE1ZY7gMyhkbPKtv
+fxJraHAYTNc/DgmpeG7RYSfghKqSPi4T4CB+FRDypKuV6T5W3R9ZsUqqf3d0ZcC9
+aaLjNDEEj7YVCuuB3TFQ4ESWFTOB31sqgI2XsVowaE2q50ZNVTAYaPo9lUSasRMr
+fTabzGBFok6uuJ7tqP7B263+8oLG2SNIiFhOtMT17Yf8f+9IfCp26xXdq/r/AhCP
+dm6ks1UVFvvb2rsPKFhEQ6L8oAQhJ6L/7KXrKNyi9CgFVJsjF405SYUZ6o+uj6kg
+ogs7/TOeIMlyQKQRek/cxC8pzo7Twcz63h5bur//kHy/g/z3sO3/NOiacTWhp5DT
+bMzE2XaQksjGjjvWLbHvSuRoeu7/yBgQuUXWemOzMoIez68Mos7LCqHcBSXK0PZI
+Lw2RXAUcfJMUrEIQIvG3rIQtbFJMNBFm96RGwbxUqP7mlifaXoc=
+=2Hxu
+-----END PGP SIGNATURE-----
+
+--rr1ahe+uiqjQiwRT--
