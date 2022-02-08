@@ -2,60 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60520C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B919C4332F
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 15:45:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347519AbiBHNyA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:54:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45952 "EHLO
+        id S1381679AbiBHPpc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 10:45:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233604AbiBHNyA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 08:54:00 -0500
-X-Greylist: delayed 405 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 05:53:59 PST
-Received: from mail.bugwerft.de (mail.bugwerft.de [46.23.86.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 14BCCC03FECE
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 05:53:59 -0800 (PST)
-Received: from [192.168.178.106] (p57bc97a7.dip0.t-ipconnect.de [87.188.151.167])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id A8513501690;
-        Tue,  8 Feb 2022 13:46:42 +0000 (UTC)
-Message-ID: <4a4fce1b-f9a8-27a4-377a-f569277e0f28@zonque.org>
-Date:   Tue, 8 Feb 2022 14:46:42 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH RESEND v4 1/9] dt-bindings: clock: convert cs2000-cp
- bindings to yaml
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com
-References: <20220125093336.226787-1-daniel@zonque.org>
- <20220125093336.226787-2-daniel@zonque.org>
- <20220125222905.14377C340E0@smtp.kernel.org>
-From:   Daniel Mack <daniel@zonque.org>
-In-Reply-To: <20220125222905.14377C340E0@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S1381759AbiBHPp0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 10:45:26 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 98821C0613CA;
+        Tue,  8 Feb 2022 07:45:23 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 661371FB;
+        Tue,  8 Feb 2022 07:45:23 -0800 (PST)
+Received: from e120937-lin.home (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 70D5C3F73B;
+        Tue,  8 Feb 2022 07:45:21 -0800 (PST)
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        Jonathan.Cameron@Huawei.com, f.fainelli@gmail.com,
+        etienne.carriere@linaro.org, vincent.guittot@linaro.org,
+        souvik.chakravarty@arm.com, peter.hilber@opensynergy.com,
+        igor.skalkin@opensynergy.com, cristian.marussi@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v3 8/8] clk: scmi: Support atomic clock enable/disable API
+Date:   Tue,  8 Feb 2022 15:44:52 +0000
+Message-Id: <20220208154452.39428-9-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220208154452.39428-1-cristian.marussi@arm.com>
+References: <20220208154452.39428-1-cristian.marussi@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Support also atomic enable/disable clk_ops beside the bare non-atomic one
+(prepare/unprepare) when the underlying SCMI transport is configured to
+support atomic transactions for synchronous commands.
 
-On 1/25/22 23:29, Stephen Boyd wrote:
-> Quoting Daniel Mack (2022-01-25 01:33:28)
->> The original author of the file was added as maintainer.
->>
->> Signed-off-by: Daniel Mack <daniel@zonque.org>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
-> 
-> Applied to clk-next
+Compare the SCMI system-wide configured atomic threshold latency time and
+the per-clock advertised enable latency (if any) to choose whether to
+provide sleeping prepare/unprepare vs atomic enable/disable.
 
-Thanks for applying!
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+v2 --> v3
+- removed RFC tag
+---
+ drivers/clk/clk-scmi.c | 71 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 60 insertions(+), 11 deletions(-)
 
-I don't see these patches in your tree yet though, probably just a
-missing push?
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 1e357d364ca2..2c7a830ce308 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -2,7 +2,7 @@
+ /*
+  * System Control and Power Interface (SCMI) Protocol based clock driver
+  *
+- * Copyright (C) 2018-2021 ARM Ltd.
++ * Copyright (C) 2018-2022 ARM Ltd.
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -88,21 +88,51 @@ static void scmi_clk_disable(struct clk_hw *hw)
+ 	scmi_proto_clk_ops->disable(clk->ph, clk->id);
+ }
+ 
++static int scmi_clk_atomic_enable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	return scmi_proto_clk_ops->enable_atomic(clk->ph, clk->id);
++}
++
++static void scmi_clk_atomic_disable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
++
++	scmi_proto_clk_ops->disable_atomic(clk->ph, clk->id);
++}
++
++/*
++ * We can provide enable/disable atomic callbacks only if the underlying SCMI
++ * transport for an SCMI instance is configured to handle SCMI commands in an
++ * atomic manner.
++ *
++ * When no SCMI atomic transport support is available we instead provide only
++ * the prepare/unprepare API, as allowed by the clock framework when atomic
++ * calls are not available.
++ *
++ * Two distinct sets of clk_ops are provided since we could have multiple SCMI
++ * instances with different underlying transport quality, so they cannot be
++ * shared.
++ */
+ static const struct clk_ops scmi_clk_ops = {
+ 	.recalc_rate = scmi_clk_recalc_rate,
+ 	.round_rate = scmi_clk_round_rate,
+ 	.set_rate = scmi_clk_set_rate,
+-	/*
+-	 * We can't provide enable/disable callback as we can't perform the same
+-	 * in atomic context. Since the clock framework provides standard API
+-	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
+-	 * context, it should be fine providing prepare/unprepare.
+-	 */
+ 	.prepare = scmi_clk_enable,
+ 	.unprepare = scmi_clk_disable,
+ };
+ 
+-static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
++static const struct clk_ops scmi_atomic_clk_ops = {
++	.recalc_rate = scmi_clk_recalc_rate,
++	.round_rate = scmi_clk_round_rate,
++	.set_rate = scmi_clk_set_rate,
++	.enable = scmi_clk_atomic_enable,
++	.disable = scmi_clk_atomic_disable,
++};
++
++static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
++			     const struct clk_ops *scmi_ops)
+ {
+ 	int ret;
+ 	unsigned long min_rate, max_rate;
+@@ -110,7 +140,7 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+ 	struct clk_init_data init = {
+ 		.flags = CLK_GET_RATE_NOCACHE,
+ 		.num_parents = 0,
+-		.ops = &scmi_clk_ops,
++		.ops = scmi_ops,
+ 		.name = sclk->info->name,
+ 	};
+ 
+@@ -139,6 +169,8 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+ static int scmi_clocks_probe(struct scmi_device *sdev)
+ {
+ 	int idx, count, err;
++	unsigned int atomic_threshold;
++	bool is_atomic;
+ 	struct clk_hw **hws;
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct device *dev = &sdev->dev;
+@@ -168,8 +200,11 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 	clk_data->num = count;
+ 	hws = clk_data->hws;
+ 
++	is_atomic = handle->is_transport_atomic(handle, &atomic_threshold);
++
+ 	for (idx = 0; idx < count; idx++) {
+ 		struct scmi_clk *sclk;
++		const struct clk_ops *scmi_ops;
+ 
+ 		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
+ 		if (!sclk)
+@@ -184,13 +219,27 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		sclk->id = idx;
+ 		sclk->ph = ph;
+ 
+-		err = scmi_clk_ops_init(dev, sclk);
++		/*
++		 * Note that when transport is atomic but SCMI protocol did not
++		 * specify (or support) an enable_latency associated with a
++		 * clock, we default to use atomic operations mode.
++		 */
++		if (is_atomic &&
++		    sclk->info->enable_latency <= atomic_threshold)
++			scmi_ops = &scmi_atomic_clk_ops;
++		else
++			scmi_ops = &scmi_clk_ops;
++
++		err = scmi_clk_ops_init(dev, sclk, scmi_ops);
+ 		if (err) {
+ 			dev_err(dev, "failed to register clock %d\n", idx);
+ 			devm_kfree(dev, sclk);
+ 			hws[idx] = NULL;
+ 		} else {
+-			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
++			dev_dbg(dev, "Registered clock:%s%s\n",
++				sclk->info->name,
++				scmi_ops == &scmi_atomic_clk_ops ?
++				" (atomic ops)" : "");
+ 			hws[idx] = &sclk->hw;
+ 		}
+ 	}
+-- 
+2.17.1
 
-
-Best regards,
-Daniel
