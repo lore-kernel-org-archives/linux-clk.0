@@ -2,103 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AFBC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58708C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 19:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353275AbiBHSn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:43:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
+        id S1386106AbiBHTdB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 14:33:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385391AbiBHSnj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 13:43:39 -0500
-Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210C0C03E943;
-        Tue,  8 Feb 2022 10:43:13 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.108.1.178])
-        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id E50A7246E7F;
-        Tue,  8 Feb 2022 18:35:27 +0000 (UTC)
-Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
- (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 8 Feb
- 2022 19:35:26 +0100
-From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2 0/6] ARM: r9a06g032: add support for the watchdogs
-Date:   Tue, 8 Feb 2022 19:35:04 +0100
-Message-ID: <20220208183511.2925304-1-jjhiblot@traphandler.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1352499AbiBHTdB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 14:33:01 -0500
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 688E5C0613CB;
+        Tue,  8 Feb 2022 11:33:00 -0800 (PST)
+Received: by mail-lf1-x143.google.com with SMTP id z19so35214171lfq.13;
+        Tue, 08 Feb 2022 11:33:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2W7DYXaGXAgPpoGJnP20s2qFgNTqr+6rJEgdlvW7zvU=;
+        b=kMuwFDLTnWORZko26nLUM2LJzxS9SY1CLZqxNW0lzKCV/vmPTR3Xxlgd7np844KD7d
+         PDXePM3TLBe+GmDPUt7xrACd2kmIO70YDoMm1aPRiV2ErFCVkrWWHtkzS0JpAMSI/J9F
+         b1HCDX3RjvFI07siXqPUpvHwawW+3wxh6eZLpaUIBw8m6dR49x8ULFVcgPk3YjSiGD6F
+         XfIR4JSlHIzWOrWZMZZTFswMUs7UMsOqFyM7CUfiKIxJ3ZGflcpYIcVXrr1luVIRPaAn
+         jk/nDRueStbx9blKjvcgfJwL1Q9oLdHQ50vQFBvEklyrfbG1TFENepzWmMrwbrPexK/S
+         NUKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2W7DYXaGXAgPpoGJnP20s2qFgNTqr+6rJEgdlvW7zvU=;
+        b=TcqqT+hkHtMhr57wTe9D+fA05a/Gu3JsSoE8ykHd2e7dYt1RAo9hDwZpcuU6m1w9u3
+         eE5g/XU9OKMNS35utHhF2kvUFZ6hT6vUBSGyWv51FvVLu75d1fX2cOnAX6a8YgriafOn
+         YoAClpu3csULrqxcZgCc7gmbJ9hT/xlmXV9lSOroBE3enfpAqJSA7JsX6RqC5Oa1iYY7
+         99vmAq4/1X6SQEdX+7W3fgrZmisBHo5/baZXv7D0po3tYgNd7KLDg34HUuQTd9KFeC58
+         7MIbCVWZf+13826bCPAkxK2o30HGS+5k+/RNC2vP0ZZZ/hG0Pi1AbsEISU3l1L9php7h
+         9jGQ==
+X-Gm-Message-State: AOAM531fq6Vqeg3tn0an9YryO+ZfdzLhlAOFzay8GqIvxZV4pjCmLl4o
+        SaNhOTLbbcp9f3bPDbuNbj8=
+X-Google-Smtp-Source: ABdhPJwSvHo/X4lCJo2ybTEfnU54vBadmQxXw1Ya2qxlVVCvTSRNJGNpXJNqaYUBwPhLY6F/IWv3+Q==
+X-Received: by 2002:a05:6512:2302:: with SMTP id o2mr3932007lfu.159.1644348778629;
+        Tue, 08 Feb 2022 11:32:58 -0800 (PST)
+Received: from pc ([185.108.107.99])
+        by smtp.gmail.com with ESMTPSA id f22sm484707lfm.72.2022.02.08.11.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Feb 2022 11:32:58 -0800 (PST)
+Date:   Tue, 8 Feb 2022 22:32:52 +0300
+From:   Boris Lysov <arz65xx@gmail.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/31] clk: mediatek: Cleanups and Improvements -
+ Part 1
+Message-ID: <20220208223252.7f179c63@pc>
+In-Reply-To: <20220208124034.414635-1-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [88.125.132.78]
-X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX2.emp2.local
- (172.16.2.2)
-X-Ovh-Tracer-Id: 13254093705174858197
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeejudfgffelleehheevveeutdejfffgjeekudekkedugfeutdeffeeuhfeuveehieenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppedtrddtrddtrddtpdekkedruddvhedrudefvddrjeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehprhhovddrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
+Hi, I couldn't find a particular patch to reply to so I'm replying cover
+letter to give some input on the PLL subsystem.
 
-This series adds support for the watchdog timers of the RZ/N1.
-The watchdog driver (rzn1-wdt.c) is derived from the driver available at
-https://github.com/renesas-rz/rzn1_linux.git with a few modifications
+On Tue,  8 Feb 2022 20:40:03 +0800
+Chen-Yu Tsai <wenst@chromium.org> wrote:
+>  drivers/clk/mediatek/clk-pll.c                | 100 +++++-
+>  drivers/clk/mediatek/clk-pll.h                |  57 ++++
 
-In order to be able to reset the board when a watchdog timer expires,
-the RSTEN register must be configured. it is the responsability of the
-bootloader to set those bits (or not, depending on the chosen policy).
+In clk-pll.c there is an mtk_clk_register_pll function which at some point
+executes this:
 
-If the watchdog reset source is not enabled, an interrupt is triggered
-when the watchdog expires. Currently this interrupt doesn't much apart
-from printing a message.
+> init.ops = &mtk_pll_ops;
 
-Changes v1 -> v2:
-* Modified the clock driver to not enable the watchdog reset sources.
-  On other renesas platforms, those bits are by the bootloader. The
-  watchdog reset sources are still disabled when the platform is halted
-  to prevent a watchdog reset.
-* Added a SOC-specific compatible "renesas,r9a06g032-wdt"
-* reordered the dts/i entries
-* default timeout is 60 seconds
-* reworked the probe function of the wdt driver to better error cases
-* removed the set_timeout() and use a fixed period computed in probe().
-  This removes the confusion and makes it clear that the period defined
-  by the user space in indeed handled by the watchdog core
+In my opinion there should be a possibility to define a custom mtk_pll_ops for a
+given SoC instead of using a hardcoded one because not all Mediatek SoCs share
+the same PLL startup/powerdown flow. For example, the existing mtk_pll_prepare
+implementation won't work for the entire Mediatek Cortex-A9 SoC family (this
+includes but not limited to mt6515, mt6517, mt6575, and mt6577). 
 
-Jean-Jacques Hiblot (5):
-  dt-bindings: clock: r9a06g032: Add the definition of the the watchdog
-    clock
-  dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
-  ARM: dts: r9a06g032: Add the watchdog nodes
-  ARM: dts: r9a06g032-rzn1d400-db: Enable watchdog0 with a 60s timeout
-  clk: renesas: r9a06g032: Disable the watchdog reset sources when
-    halting
+> static int mtk_pll_prepare(struct clk_hw *hw)
+> {
+> 	struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> 	u32 r;
+> 	u32 div_en_mask;
+> 
+> 	r = readl(pll->pwr_addr) | CON0_PWR_ON;
+> 	writel(r, pll->pwr_addr);
 
-Phil Edworthy (1):
-  watchdog: Add Renesas RZ/N1 Watchdog driver
+This code sets a bit to 1 to start a PLL but the SoCs I mentioned above would
+need to have that bit cleared (set to 0) [1] [2].
 
- .../bindings/watchdog/renesas,wdt.yaml        |   6 +
- arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |   5 +
- arch/arm/boot/dts/r9a06g032.dtsi              |  16 ++
- drivers/clk/renesas/r9a06g032-clocks.c        |  30 +++
- drivers/watchdog/Kconfig                      |   8 +
- drivers/watchdog/Makefile                     |   1 +
- drivers/watchdog/rzn1_wdt.c                   | 208 ++++++++++++++++++
- include/dt-bindings/clock/r9a06g032-sysctrl.h |   1 +
- 8 files changed, 275 insertions(+)
- create mode 100644 drivers/watchdog/rzn1_wdt.c
+Another interesting thing in mtk_pll_prepare is
+> 	udelay(20);
+Is 20 ms a settle time for PLL? If yes then it would also be cool to specify an
+arbitrary value easily as some PLLs have longer settle time [3] [4].
 
--- 
-2.25.1
+Worth noting the SoCs I mentioned aren't in mainline yet, and I think there are
+more modern mainline-worthy Mediatek SoCs that might also need these changes in
+the future.
 
+Thanks.
+
+[1] MT6577 HSPA Smartphone Application Processor Datasheet, pages 1212-1227
+(*_CON0 registers).
+[2] MT6515 GSM/EDGE Smartphone Application Processor Datasheet, pages
+1202-1216 (*_CON0 registers).
+[3] pages 1303-1306 of [1]
+[4] MT6589 HSPA+ Smartphone Application Processor Datasheet, page 1344
+(MDPLL1 & MDPLL2)
