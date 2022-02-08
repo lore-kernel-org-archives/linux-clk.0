@@ -2,117 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7431C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 11:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458EBC35272
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 11:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356930AbiBHLbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 06:31:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39916 "EHLO
+        id S1359526AbiBHLbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 06:31:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357022AbiBHLTM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 06:19:12 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D20C03FEC0
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 03:19:12 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id E6A291F40DB2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644319148;
-        bh=YZ4vl5dn4dGgAIbf9dSevrTrJvjW1muxZxlPq1Ez3H0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=b+B+WOsCW8uf+hliLI9pK0Q1jfdIXl1UAKsX71b6kncuJjnC5hvbygSy89Hfgo3Kb
-         DgJr53dAhlbPw1H/rO/I6EE1HDAV00+aUr8DqygFT4eSkvxv3VEBv0+jAPkAVarl+z
-         xAmoAykC6HzAsh3t3MET8KvQNTFjUVXYYSVKm5aFdlnVqngWNmYWj6I7Y0qa0jw3Gk
-         YgAohlu4E3ubs0lMjbJ9eW3Tt5f0WcWMhlo+kbDtdA03rBc8lMreQnxEhQLPJ1H6o4
-         SB3cZnH5wBJ/AlsVysgzXiJSbqk6Pbnc36Ia7CTAd375DumCoVIJm0gE4/s7/QZLYM
-         JdkLaHYo21Jxw==
-Message-ID: <95383ff1-2696-6dac-26ab-1239b5323c8c@collabora.com>
-Date:   Tue, 8 Feb 2022 12:19:04 +0100
+        with ESMTP id S243943AbiBHKfr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 05:35:47 -0500
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C86DC03FEC0;
+        Tue,  8 Feb 2022 02:35:46 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id l14so9464848vko.12;
+        Tue, 08 Feb 2022 02:35:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mQCnieYTAMPEclL2frn3xkAlJaOGccBzHxec4vAosRY=;
+        b=A+5F1kJtFxegZxyohp6kSvs3FBQZM17ZNZXUH9/cYOxfN2OxcgNLeAzb2EHodp7r8h
+         GK9IA1v75pW0OPXksB21vxXcU84PmnRqnyEsa/winrFyMXOvae9u8L7CSeVRgxybBbqi
+         gb3MIpEeThTSg9e3U72QfhUaZ9+vGrm2rjSrubli5nb+dzTl+htrCA6khYGTubH7Vosn
+         Xv4+TfwxO+Lccb0fXYWJEfvQ300PDEQSlb3Ylu0mwtqEDJV+jRtFHw4a7SJGitweLuJb
+         8PeJYFpuJ7AvUYk5upGoBt6bSe7xWlify73Nm1XEvPd8GrEI4lJIGc1ChdPl1rAYNyk3
+         KRwA==
+X-Gm-Message-State: AOAM531iDYlIPtMIHN0LI9QW6UiOskhduRCc4isQK/gDrEvvqBJ13pv5
+        +C32lHszJ/iOdPv2ExCdMa6LoFJG0KT7bg==
+X-Google-Smtp-Source: ABdhPJzM1P4dsJuDJGkXrZGp+EirQ4+TATuxUtO0HtCjV6AlDqM2LBEIKoC7N3DAXTdx8g036BUkRA==
+X-Received: by 2002:a05:6122:50d:: with SMTP id x13mr1494642vko.40.1644316545569;
+        Tue, 08 Feb 2022 02:35:45 -0800 (PST)
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
+        by smtp.gmail.com with ESMTPSA id j8sm2762854vki.48.2022.02.08.02.35.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Feb 2022 02:35:45 -0800 (PST)
+Received: by mail-vs1-f51.google.com with SMTP id m24so2830682vsp.7;
+        Tue, 08 Feb 2022 02:35:45 -0800 (PST)
+X-Received: by 2002:a67:c198:: with SMTP id h24mr1221464vsj.5.1644316545025;
+ Tue, 08 Feb 2022 02:35:45 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v2 15/31] clk: mediatek: Implement
- mtk_clk_unregister_fixed_clks() API
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220202134834.690675-1-wenst@chromium.org>
- <20220202134834.690675-16-wenst@chromium.org>
- <752d5d00-4e05-1bd6-564f-3bce21a35713@collabora.com>
- <CAGXv+5HSLh0OgJc=EU=wvB4DaOMDLjsgJ6qnHY423d1L5+DixQ@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5HSLh0OgJc=EU=wvB4DaOMDLjsgJ6qnHY423d1L5+DixQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20220204161806.3126321-1-jjhiblot@traphandler.com>
+ <20220204161806.3126321-2-jjhiblot@traphandler.com> <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
+ <89c0a032-3124-fc56-607c-5aeaac73fdc4@traphandler.com>
+In-Reply-To: <89c0a032-3124-fc56-607c-5aeaac73fdc4@traphandler.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Feb 2022 11:35:33 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVvrs-p4Tz2m7R8g7gXJRetTGKJNaQPEO_DYKDzu5u64A@mail.gmail.com>
+Message-ID: <CAMuHMdVvrs-p4Tz2m7R8g7gXJRetTGKJNaQPEO_DYKDzu5u64A@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: r9a06g032: Enable the watchdog reset sources
+To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 08/02/22 04:50, Chen-Yu Tsai ha scritto:
-> Hi,
-> 
-> On Thu, Feb 3, 2022 at 5:47 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 02/02/22 14:48, Chen-Yu Tsai ha scritto:
->>> mtk_clk_register_fixed_clks(), as the name suggests, is used to register
->>> a given list of fixed rate clks. However it is lacking a counterpart
->>> unregister API.
->>>
->>> Implement said unregister API so that the various clock platform drivers
->>> can utilize it to do proper unregistration, cleanup and removal.
->>>
->>> In the header file, the register function's declaration is also
->>> reformatted to fit code style guidelines.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
->>
->> Hello Chen-Yu,
->>
->> I like this entire series, but I had to manually apply this patch (and some of
->> the other ones)...
-> 
-> This was based on linux-next, which already has a couple clk patches queued
-> up.
-> 
->> Especially for the ones that will be touching MT8195 clock drivers, can you
->> please rebase over series [1] by Chun-Jie?
-> 
-> I think this series supersedes the first patch in that series? As for the
-> other two, I think the discussion about the bindings is ongoing, which
-> might affect the third patch as well?
+Hi Jean-Jacques,
 
-You're right about that - besides, the mentioned series will take a bit of time to
-get merged in and this cleanup should not be waiting for all that time, as it's
-very, very nice...
-In any case, I don't think that the third patch from that series will be affected,
-as it's a double-definition instance: the vppsys{0,1} are really defined in mmsys
-and they're simply moving it around... The committer forgot to add the two
-properties (the ones that he removed from mt8195-clock) to mediatek,mmsys.yaml,
-I'll send a reply over that thread.
+On Tue, Feb 8, 2022 at 11:25 AM Jean-Jacques Hiblot
+<jjhiblot@traphandler.com> wrote:
+> On 07/02/2022 16:34, Geert Uytterhoeven wrote:
+> > On Fri, Feb 4, 2022 at 5:18 PM Jean-Jacques Hiblot
+> > <jjhiblot@traphandler.com> wrote:
+> >> The watchdog reset sources are not enabled by default.
+> >> Enabling them here to make sure that the system resets when the watchdog
+> >> timers expire.
+> >>
+> >> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> > Thanks for your patch!
+> >
+> > R-Car Gen3 and RZ/G2 SoCs have a similar mechanism.
+> > On these SoCs, the boot loader takes care of the configuration, as this
+> > is a system policy that goes beyond the Linux realm.
+> > Perhaps the RZ/N1 boot loader can do the same?
+> >
+> > Gr{oetje,eeting}s,
+>
+> Thanks for you reviews and comments.
+>
+> I'm not conformable with the idea that the safety induced by the
+> watchdog is removed because the bootloader didn't set the register.
 
-Anyway, yes, this series definitely supersedes patch 1 in that series, so,
-I'm sorry for the noise, and:
+What if the CM33 is the master, and the CM33 just wants to receive an
+interrupt when one of the CA7 watchdog timers times out?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> I'd rather that the kernel is able to enable the watchdog reset source.
+> If it is acceptable, we could use a new DTS entry to force the policy.
 
-> 
-> ChenYu
-> 
->> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=603955
->>
->> Thanks,
->> Angelo
->>
+DT describes hardware. not software policy.
+Although I agree e.g. the watchdog timeout value is software policy.
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
