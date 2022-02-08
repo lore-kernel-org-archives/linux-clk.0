@@ -2,75 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D05FC4321E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DB7C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385104AbiBHSlr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:41:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
+        id S1385449AbiBHSnm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 13:43:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385079AbiBHSlm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 13:41:42 -0500
-X-Greylist: delayed 402 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 10:41:38 PST
-Received: from hutie.ust.cz (unknown [IPv6:2a03:3b40:fe:f0::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48FA4C06157A;
-        Tue,  8 Feb 2022 10:41:38 -0800 (PST)
-From:   =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cutebit.org; s=mail;
-        t=1644345294; bh=nalpL5PXfzIK2UIFKSiwUgZ+m6XFsf+U367lw7XDLSc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=m15AE0ClOPpIccqAJQ6O935Ffl14jKzA6sTw0XDAC0z2q7dYrKrHS9mJHMJhlW1TX
-         ngL5/5i3uDYsJwU3+oiP+iflFl6/dfGRk+vJTYUeAR+Zfkcu7SOOtJLrqlt9R3rUAJ
-         J4cvt5cLA1xH29AjWVAtD0DBM96Paegsf9K/SiXk=
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mark Kettenis <kettenis@openbsd.org>,
-        =?UTF-8?q?Martin=20Povi=C5=A1er?= <povik+lin@cutebit.org>
-Subject: [PATCH v4 3/3] MAINTAINERS: Add clk-apple-nco under ARM/APPLE MACHINE
-Date:   Tue,  8 Feb 2022 19:34:11 +0100
-Message-Id: <20220208183411.61090-4-povik+lin@cutebit.org>
-In-Reply-To: <20220208183411.61090-1-povik+lin@cutebit.org>
-References: <20220208183411.61090-1-povik+lin@cutebit.org>
+        with ESMTP id S1385363AbiBHSnj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 13:43:39 -0500
+X-Greylist: delayed 463 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 10:43:12 PST
+Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA74C03FEFB;
+        Tue,  8 Feb 2022 10:43:12 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.109.138.36])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id 002FD2473F2;
+        Tue,  8 Feb 2022 18:35:33 +0000 (UTC)
+Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
+ (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 8 Feb
+ 2022 19:35:33 +0100
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>
+CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 6/6] clk: renesas: r9a06g032: Disable the watchdog reset sources when halting
+Date:   Tue, 8 Feb 2022 19:35:10 +0100
+Message-ID: <20220208183511.2925304-7-jjhiblot@traphandler.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220208183511.2925304-1-jjhiblot@traphandler.com>
+References: <20220208183511.2925304-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam: Yes
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [88.125.132.78]
+X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX2.emp2.local
+ (172.16.2.2)
+X-Ovh-Tracer-Id: 13255782555140831707
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeggfeiuedthfdvgeevtedvueevgfevgeelieelveevheefjeejfffguddukeenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Acked-by: Sven Peter <sven@svenpeter.dev>
-Acked-by: Hector Martin <marcan@marcan.st>
-Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+The watchdog reset sources must be disabled when the system is halted.
+Otherwise the watchdogs will trigger a reset if they have been armed.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 35ca7a4a65d8..984613444331 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1769,6 +1769,7 @@ C:	irc://irc.oftc.net/asahi-dev
- T:	git https://github.com/AsahiLinux/linux.git
- F:	Documentation/devicetree/bindings/arm/apple.yaml
- F:	Documentation/devicetree/bindings/arm/apple/*
-+F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
- F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,aic.yaml
- F:	Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
-@@ -1777,6 +1778,7 @@ F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	Documentation/devicetree/bindings/power/apple*
- F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:	arch/arm64/boot/dts/apple/
-+F:	drivers/clk/clk-apple-nco.c
- F:	drivers/i2c/busses/i2c-pasemi-core.c
- F:	drivers/i2c/busses/i2c-pasemi-platform.c
- F:	drivers/irqchip/irq-apple-aic.c
+Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 30 ++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index c99942f0e4d4..d96211927a1d 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
+ 
+ #define R9A06G032_CLOCK_COUNT		(R9A06G032_UART_GROUP_34567 + 1)
+ 
++#define R9A06G032_SYSCTRL_REG_RSTEN		0x120
++#define WDA7RST1	BIT(2)
++#define WDA7RST0	BIT(1)
++#define MRESET		BIT(0)
++
+ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+ 	D_ROOT(CLKOUT, "clkout", 25, 1),
+ 	D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
+@@ -893,6 +898,19 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
+ 	of_clk_del_provider(data);
+ }
+ 
++static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
++			uint32_t mask, uint32_t value)
++{
++	uint32_t rsten;
++	unsigned long flags;
++
++	spin_lock_irqsave(&clocks->lock, flags);
++	rsten = readl(clocks->reg);
++	rsten = (rsten & ~mask) | (value & mask);
++	writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
++	spin_unlock_irqrestore(&clocks->lock, flags);
++}
++
+ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (!clocks || !clks)
+ 		return -ENOMEM;
+ 
++	platform_set_drvdata(pdev, clocks);
++
+ 	spin_lock_init(&clocks->lock);
+ 
+ 	clocks->data.clks = clks;
+@@ -963,9 +983,18 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
+ 	if (error)
+ 		return error;
+ 
++
+ 	return r9a06g032_add_clk_domain(dev);
+ }
+ 
++static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
++{
++	struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
++
++	/* Disable the watchdog reset sources */
++	r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
++}
++
+ static const struct of_device_id r9a06g032_match[] = {
+ 	{ .compatible = "renesas,r9a06g032-sysctrl" },
+ 	{ }
+@@ -976,6 +1005,7 @@ static struct platform_driver r9a06g032_clock_driver = {
+ 		.name	= "renesas,r9a06g032-sysctrl",
+ 		.of_match_table = r9a06g032_match,
+ 	},
++	.shutdown = r9a06g032_clocks_shutdown,
+ };
+ 
+ static int __init r9a06g032_clocks_init(void)
 -- 
-2.33.0
+2.25.1
 
