@@ -2,132 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DB7C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AFBC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 18:43:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385449AbiBHSnm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:43:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37750 "EHLO
+        id S1353275AbiBHSn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 13:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385363AbiBHSnj (ORCPT
+        with ESMTP id S1385391AbiBHSnj (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 13:43:39 -0500
-X-Greylist: delayed 463 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 10:43:12 PST
 Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AA74C03FEFB;
-        Tue,  8 Feb 2022 10:43:12 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.109.138.36])
-        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id 002FD2473F2;
-        Tue,  8 Feb 2022 18:35:33 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210C0C03E943;
+        Tue,  8 Feb 2022 10:43:13 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.108.1.178])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id E50A7246E7F;
+        Tue,  8 Feb 2022 18:35:27 +0000 (UTC)
 Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
  (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 8 Feb
- 2022 19:35:33 +0100
+ 2022 19:35:26 +0100
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>
+To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/6] clk: renesas: r9a06g032: Disable the watchdog reset sources when halting
-Date:   Tue, 8 Feb 2022 19:35:10 +0100
-Message-ID: <20220208183511.2925304-7-jjhiblot@traphandler.com>
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 0/6] ARM: r9a06g032: add support for the watchdogs
+Date:   Tue, 8 Feb 2022 19:35:04 +0100
+Message-ID: <20220208183511.2925304-1-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220208183511.2925304-1-jjhiblot@traphandler.com>
-References: <20220208183511.2925304-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.125.132.78]
 X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX2.emp2.local
  (172.16.2.2)
-X-Ovh-Tracer-Id: 13255782555140831707
+X-Ovh-Tracer-Id: 13254093705174858197
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeggfeiuedthfdvgeevtedvueevgfevgeelieelveevheefjeejfffguddukeenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeejudfgffelleehheevveeutdejfffgjeekudekkedugfeutdeffeeuhfeuveehieenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppedtrddtrddtrddtpdekkedruddvhedrudefvddrjeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehprhhovddrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The watchdog reset sources must be disabled when the system is halted.
-Otherwise the watchdogs will trigger a reset if they have been armed.
+Hi all,
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
----
- drivers/clk/renesas/r9a06g032-clocks.c | 30 ++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+This series adds support for the watchdog timers of the RZ/N1.
+The watchdog driver (rzn1-wdt.c) is derived from the driver available at
+https://github.com/renesas-rz/rzn1_linux.git with a few modifications
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c99942f0e4d4..d96211927a1d 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
- 
- #define R9A06G032_CLOCK_COUNT		(R9A06G032_UART_GROUP_34567 + 1)
- 
-+#define R9A06G032_SYSCTRL_REG_RSTEN		0x120
-+#define WDA7RST1	BIT(2)
-+#define WDA7RST0	BIT(1)
-+#define MRESET		BIT(0)
-+
- static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 	D_ROOT(CLKOUT, "clkout", 25, 1),
- 	D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
-@@ -893,6 +898,19 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
- 	of_clk_del_provider(data);
- }
- 
-+static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
-+			uint32_t mask, uint32_t value)
-+{
-+	uint32_t rsten;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&clocks->lock, flags);
-+	rsten = readl(clocks->reg);
-+	rsten = (rsten & ~mask) | (value & mask);
-+	writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
-+	spin_unlock_irqrestore(&clocks->lock, flags);
-+}
-+
- static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (!clocks || !clks)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, clocks);
-+
- 	spin_lock_init(&clocks->lock);
- 
- 	clocks->data.clks = clks;
-@@ -963,9 +983,18 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
-+
- 	return r9a06g032_add_clk_domain(dev);
- }
- 
-+static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
-+{
-+	struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
-+
-+	/* Disable the watchdog reset sources */
-+	r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
-+}
-+
- static const struct of_device_id r9a06g032_match[] = {
- 	{ .compatible = "renesas,r9a06g032-sysctrl" },
- 	{ }
-@@ -976,6 +1005,7 @@ static struct platform_driver r9a06g032_clock_driver = {
- 		.name	= "renesas,r9a06g032-sysctrl",
- 		.of_match_table = r9a06g032_match,
- 	},
-+	.shutdown = r9a06g032_clocks_shutdown,
- };
- 
- static int __init r9a06g032_clocks_init(void)
+In order to be able to reset the board when a watchdog timer expires,
+the RSTEN register must be configured. it is the responsability of the
+bootloader to set those bits (or not, depending on the chosen policy).
+
+If the watchdog reset source is not enabled, an interrupt is triggered
+when the watchdog expires. Currently this interrupt doesn't much apart
+from printing a message.
+
+Changes v1 -> v2:
+* Modified the clock driver to not enable the watchdog reset sources.
+  On other renesas platforms, those bits are by the bootloader. The
+  watchdog reset sources are still disabled when the platform is halted
+  to prevent a watchdog reset.
+* Added a SOC-specific compatible "renesas,r9a06g032-wdt"
+* reordered the dts/i entries
+* default timeout is 60 seconds
+* reworked the probe function of the wdt driver to better error cases
+* removed the set_timeout() and use a fixed period computed in probe().
+  This removes the confusion and makes it clear that the period defined
+  by the user space in indeed handled by the watchdog core
+
+Jean-Jacques Hiblot (5):
+  dt-bindings: clock: r9a06g032: Add the definition of the the watchdog
+    clock
+  dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
+  ARM: dts: r9a06g032: Add the watchdog nodes
+  ARM: dts: r9a06g032-rzn1d400-db: Enable watchdog0 with a 60s timeout
+  clk: renesas: r9a06g032: Disable the watchdog reset sources when
+    halting
+
+Phil Edworthy (1):
+  watchdog: Add Renesas RZ/N1 Watchdog driver
+
+ .../bindings/watchdog/renesas,wdt.yaml        |   6 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |   5 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  16 ++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  30 +++
+ drivers/watchdog/Kconfig                      |   8 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/rzn1_wdt.c                   | 208 ++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h |   1 +
+ 8 files changed, 275 insertions(+)
+ create mode 100644 drivers/watchdog/rzn1_wdt.c
+
 -- 
 2.25.1
 
