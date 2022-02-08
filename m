@@ -2,115 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5615C4167B
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 01:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FFEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 03:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343560AbiBHBGW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:06:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48958 "EHLO
+        id S1344131AbiBHDuz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Feb 2022 22:50:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343872AbiBHAA7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 19:00:59 -0500
-X-Greylist: delayed 406 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 16:00:55 PST
-Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1FCC0612A4;
-        Mon,  7 Feb 2022 16:00:55 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 5FB362B001F4;
-        Mon,  7 Feb 2022 18:54:06 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 07 Feb 2022 18:54:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; bh=7T1gb9q/dG3+e+
-        HVYc4URRtl0zI51K/MI/cYy1EcerM=; b=SDYv224gBZ5TT66LpyAI9ivK3tYsVZ
-        GBDiKxzdAELBE+LHIad5qxjwoVvgShjRZqvs1T+iE1ug4DfXaHnPXWqu3w3dW6iS
-        VWYhOUl/EqRiKCBjT+8acRD/NDUoFmg5rDbRyxEem25KtRpeEtsIn3OmVvQ1o06O
-        /uqL4Hxvu1eOldEvKivAb8tYgEdUAQSxU1Mkq6qXmntsEwnrRGo26NV31u68KB62
-        pUUkKRlaMcTRtlWJ21rw2p46tK/w0LVXTHjN6vY6X7GLaePGA86U3dyc2+cE58bi
-        p4llC4FgLAdhQXgDDIqSD7J/XMQiPkeJqz7AKEjiOTDKs39DBr95K10g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=7T1gb9q/dG3+e+HVYc4URRtl0zI51K/MI/cYy1Ece
-        rM=; b=dLl3ZpuPFU64fHFzudMdRGhNEh23o8k+blqkqXrk485ZDHglhYjDWyueC
-        5REvXvS1FtUvdEeK4if4sRQffIpOKH7TEaO+zUNr+oqz4k5vHKGcV3VWNNpmM1mx
-        NX5EkDA1FyaHWQTEKowbGpsbqvyhCJM9q55+c3e1dOLBzDS4VXQQM2f0ZrUZ3vnL
-        m4BPwW+hlb7MdHrWwZc6R/Pq7jca+ihKDFWK59yYtCMUr5CdDixJsYXdhTX9L/es
-        yqH0pAQTvLaBul6yAU/SIpiJLEYxfAGmIw6zcqG7DMHNGiLMp1yDaSbNwN/o/Gmz
-        H2HlSD5bqBi3RplwL/SnkD0wD0KUQ==
-X-ME-Sender: <xms:HLEBYg6jw33gP6tAXBkbbBPNm4gGLbfE98ysR-hGoL_Ozu60Rylstw>
-    <xme:HLEBYh4dqQ3adV6Qd1t2gCrgiDnlBoAzzy10EMDTx_34cils8jIJ2dFvr7LpOjpgw
-    OkkCQNwtrwns3djTA>
-X-ME-Received: <xmr:HLEBYvexMpT1Ym7Mbdz_UUlt-gJcQg9yRVtICaIGsb8uWm1ySPLnl9dFPKc6UB_tgm8zQRI_kif1DqEn5HzNmLdboZvH6x0-qMysB0BXYv2pXglTTIPAfvhT_w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheeigddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpefgveffteelheffjeeukedvkedviedtheevgeefkeehueeiieeuteeu
-    gfettdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:HLEBYlIcESxYubPnsfJoYBFrpQV7Eca9oPiwAtrBPV0poWN-8a0Tew>
-    <xmx:HLEBYkJ_lpYGg0JrkD8SfUuIEutebjO3VnO7aYSFpLvmu_rCRQzf0w>
-    <xmx:HLEBYmwXKGJNpft6ZS79msn9_tfLg7HwdqRIBM_EBdjbuyZTxtrRXg>
-    <xmx:HbEBYnZPQRdSjNs7ec0qiolHyDVZ8LMFS3OghivBTbNnBGrprWFMS9OcNV8>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Feb 2022 18:54:03 -0500 (EST)
-Subject: Re: (subset) [PATCH v3 5/6] clk: sunxi-ng: Add support for the sun6i
- RTC clocks
-To:     Maxime Ripard <maxime@cerno.tech>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@lists.linux.dev, Maxime Ripard <mripard@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>
-References: <20220203021736.13434-1-samuel@sholland.org>
- <20220203021736.13434-6-samuel@sholland.org>
- <164422443570.21572.13511859513410998733.b4-ty@cerno.tech>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <bb05bc64-2a9e-fe21-5a69-0ea31134e978@sholland.org>
-Date:   Mon, 7 Feb 2022 17:54:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        with ESMTP id S245562AbiBHDuz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Feb 2022 22:50:55 -0500
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D032C0401E5
+        for <linux-clk@vger.kernel.org>; Mon,  7 Feb 2022 19:50:54 -0800 (PST)
+Received: by mail-yb1-xb33.google.com with SMTP id y129so9842792ybe.7
+        for <linux-clk@vger.kernel.org>; Mon, 07 Feb 2022 19:50:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gGJv0AFVdfHzUa0yHqnma3btGQlzXWk1wSqSnWWw9Dk=;
+        b=mJm2SUkp44PAeoyfQimwj06GljPK6ZlqDXI5AuQfTSigjQ8pV5o1ebijkpLq4WG/Gp
+         IMzFiyeYTiPnV9e/8k+G2x9dJnUo4cXsJQZN66aXlRdWYuZXJrMfHg7zybpBtcAi6Xqn
+         kL1U1hw+GGReC6MiCpqdsZ/N7V4pxLg3Zj3Tw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gGJv0AFVdfHzUa0yHqnma3btGQlzXWk1wSqSnWWw9Dk=;
+        b=nowlgbt6z82bH6exDQQe10os+g5/t/OBhMD08bzapSrNremXlXUdC6FsQxAahGu58Q
+         mK8zmGUlKOSOqJnvAm8tXDGyVLmN7MMSW+Xg1mkjnM34u46C7/24d1Lyyk1SKcDwdx89
+         uTtQ3LYopkNZbConw/R2jofqxoKg4rFUYBde8QwizAzKCZf650z1wBXXZlrKdv2I+RCS
+         QssTOV1PIA75SISvmTA13RG1PVZ9v7SSgjgyswqHMdSTJ8Tqgvgv45RnRtsWnzFcRqj2
+         24cJbTrX7BwI2Ram++gAzBU4p6lRUmpTD2j2YCktM8CjhUDxX8KkVWMzN3F3G63goIPv
+         HG/Q==
+X-Gm-Message-State: AOAM5326RkQkDvhHYixUFNAHWgCADsusrD0AIVCyeHpRGiQTVD97CdEi
+        w5vsrKoUrN/W/0eeyo8tZ+jn7ozUfOgrTRacePUx2A==
+X-Google-Smtp-Source: ABdhPJzBnKRYSQxz0sUuAXLlIdIIDiufeVnpjx8TXskOYyz1WTj3X8uhPzwU+v2jw3moTuLJEUn06yrPSPGxjYtAf04=
+X-Received: by 2002:a81:1b4e:: with SMTP id b75mr2986110ywb.295.1644292253418;
+ Mon, 07 Feb 2022 19:50:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <164422443570.21572.13511859513410998733.b4-ty@cerno.tech>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20220202134834.690675-1-wenst@chromium.org> <20220202134834.690675-16-wenst@chromium.org>
+ <752d5d00-4e05-1bd6-564f-3bce21a35713@collabora.com>
+In-Reply-To: <752d5d00-4e05-1bd6-564f-3bce21a35713@collabora.com>
+From:   Chen-Yu Tsai <wenst@chromium.org>
+Date:   Tue, 8 Feb 2022 11:50:42 +0800
+Message-ID: <CAGXv+5HSLh0OgJc=EU=wvB4DaOMDLjsgJ6qnHY423d1L5+DixQ@mail.gmail.com>
+Subject: Re: [PATCH v2 15/31] clk: mediatek: Implement mtk_clk_unregister_fixed_clks()
+ API
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+Hi,
 
-On 2/7/22 3:00 AM, Maxime Ripard wrote:
-> On Wed, 2 Feb 2022 20:17:35 -0600, Samuel Holland wrote:
->> The RTC power domain in sun6i and newer SoCs manages the 16 MHz RC
->> oscillator (called "IOSC" or "osc16M") and the optional 32 kHz crystal
->> oscillator (called "LOSC" or "osc32k"). Starting with the H6, this power
->> domain also handles the 24 MHz DCXO (called variously "HOSC", "dcxo24M",
->> or "osc24M") as well. The H6 also adds a calibration circuit for IOSC.
->>
->> Later SoCs introduce further variations on the design:
->>  - H616 adds an additional mux for the 32 kHz fanout source.
->>  - R329 adds an additional mux for the RTC timekeeping clock, a clock
->>    for the SPI bus between power domains inside the RTC, and removes the
->>    IOSC calibration functionality.
->>
->> [...]
-> 
-> Applied to local tree (sunxi/clk-for-5.18).
+On Thu, Feb 3, 2022 at 5:47 PM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 02/02/22 14:48, Chen-Yu Tsai ha scritto:
+> > mtk_clk_register_fixed_clks(), as the name suggests, is used to register
+> > a given list of fixed rate clks. However it is lacking a counterpart
+> > unregister API.
+> >
+> > Implement said unregister API so that the various clock platform drivers
+> > can utilize it to do proper unregistration, cleanup and removal.
+> >
+> > In the header file, the register function's declaration is also
+> > reformatted to fit code style guidelines.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+>
+> Hello Chen-Yu,
+>
+> I like this entire series, but I had to manually apply this patch (and some of
+> the other ones)...
 
-Part of the build failures were because this patch depends on patch 3. Is that
-okay, or should I update this patch to be independent?
+This was based on linux-next, which already has a couple clk patches queued
+up.
 
-Regards,
-Samuel
+> Especially for the ones that will be touching MT8195 clock drivers, can you
+> please rebase over series [1] by Chun-Jie?
+
+I think this series supersedes the first patch in that series? As for the
+other two, I think the discussion about the bindings is ongoing, which
+might affect the third patch as well?
+
+ChenYu
+
+> [1] https://patchwork.kernel.org/project/linux-mediatek/list/?series=603955
+>
+> Thanks,
+> Angelo
+>
