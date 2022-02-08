@@ -2,103 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F41C1C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9AFC4321E
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233423AbiBHNRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1343791AbiBHNRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 8 Feb 2022 08:17:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58388 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357971AbiBHMj0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:39:26 -0500
-X-Greylist: delayed 66 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 04:39:25 PST
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD62DC03FECA
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:39:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=9smJiqXDXeoe+SY+ky2K+yevWbS3
-        UyGERBjmQzbmvjE=; b=Q2Nbt+4rcsnBl9GGOYdEzjfIzRDRBV2k1d8E/bjmUNvc
-        H8XM3E8A2X3w/B9k4jgiY99RmTzLc6cYdoCCukilGuHcc20u/JydqmEHoUqgF1uk
-        QGEJ87H0T2eY57MyWcCHtdlnWgZMaq9D2ErjMq8UitH38lEFYVIDJ3sXgKmZivE=
-Received: (qmail 251800 invoked from network); 8 Feb 2022 13:39:23 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Feb 2022 13:39:23 +0100
-X-UD-Smtp-Session: l3s3148p1@rkm4AYHXYskgAQnoAF1FAEKPHF9sYOFO
-Date:   Tue, 8 Feb 2022 13:39:23 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Thanh Quan <thanh.quan.xn@renesas.com>
-Subject: Re: [PATCH 2/5] dt-bindings: watchdog: renesas-wdt: Document
- r8a779f0 support
-Message-ID: <YgJke+iXkwn0VSM9@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        with ESMTP id S1358551AbiBHMlb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:41:31 -0500
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E50C03FECA
+        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:41:30 -0800 (PST)
+Received: by mail-pf1-x42d.google.com with SMTP id i30so18632546pfk.8
+        for <linux-clk@vger.kernel.org>; Tue, 08 Feb 2022 04:41:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eHwaFCxTmQBqke38QY+U5TZZstQq9O/KJJL77r3W7Ws=;
+        b=nvJ9cLw2nqPy00A1rg0QyEIyTWd8T9dpFDluSxKOq9Tn01B1Y1MbhjQSTCkrI27lra
+         TPGEARXZUBxH7ykfmmOa39dR6Oy6acq0JeHZz8WIgow8M1VrhGsVwV07krTMrsDqoSNI
+         XG0NVawmgtjcczlzwoL1Zq8zDR39B0P7nUe1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eHwaFCxTmQBqke38QY+U5TZZstQq9O/KJJL77r3W7Ws=;
+        b=WIpIssOjXrXSqJ1Nge459fFPLHxC/kh81oYbMoaYCVotgbrWv5anh8UI00g+OBxNEJ
+         B9VZ3TYPhV+EvSB7c4mOtiQou5rdKxNRyRU+6P/ff5+ZjFJSVej/r08DI0LoskK6ifzB
+         KHghRy4oOiN1FbhXzO04jIrJNFoSKHDo2h3ZjhApXS2Rre75+xFhRDOIHJaMWG/TSbzm
+         wCl4qhyisqPPPwFzfdYuc7oZUjPOBrPRJuPPXCPvy8ImgnhlJI6L7YKGb6nngOmpQk3w
+         tPTZS6i8HeA23JWaGCJ3+JlfEIbnkRogmpHbrUYMRr6eQJhCrjtWh7IH498i+jpErDad
+         Hp/w==
+X-Gm-Message-State: AOAM531mqweIs3skFen2sEbDw/CoLes3CLdw5VAxCBh/15vLjvnaXeu2
+        jMS45HvBEm86peSIKIWAH2o4F2tV/qb6dQ==
+X-Google-Smtp-Source: ABdhPJyYdWVRlyhjrE40StYyFinJI1sYaLoiAb4EohqiUabCdb/YfzS2WfyZVC3UGTCq7xluaPc2Xw==
+X-Received: by 2002:a63:8142:: with SMTP id t63mr3362355pgd.256.1644324090238;
+        Tue, 08 Feb 2022 04:41:30 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:41b6:813e:c823:609c])
+        by smtp.gmail.com with ESMTPSA id h11sm15056939pfe.214.2022.02.08.04.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Feb 2022 04:41:30 -0800 (PST)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Thanh Quan <thanh.quan.xn@renesas.com>
-References: <cover.1642525158.git.geert+renesas@glider.be>
- <cca61a83ae82ecf5c23eb28e30c39f2f661f0e02.1642525158.git.geert+renesas@glider.be>
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 19/31] clk: mediatek: Add mtk_clk_simple_remove()
+Date:   Tue,  8 Feb 2022 20:40:22 +0800
+Message-Id: <20220208124034.414635-20-wenst@chromium.org>
+X-Mailer: git-send-email 2.35.0.263.gb82422642f-goog
+In-Reply-To: <20220208124034.414635-1-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4lz/16p7tLSRDwdp"
-Content-Disposition: inline
-In-Reply-To: <cca61a83ae82ecf5c23eb28e30c39f2f661f0e02.1642525158.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+In commit c58cd0e40ffa ("clk: mediatek: Add mtk_clk_simple_probe() to
+simplify clock providers"), a generic probe function was added to
+simplify clk drivers that only needed to support clk gates. However due
+to the lack of unregister APIs, a corresponding remove function was not
+added.
 
---4lz/16p7tLSRDwdp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Now that the unregister APIs have been implemented, add aforementioned
+remove function to make it complete.
 
-On Tue, Jan 18, 2022 at 06:09:02PM +0100, Geert Uytterhoeven wrote:
-> From: Thanh Quan <thanh.quan.xn@renesas.com>
->=20
-> Document support for the Watchdog Timer (WDT) Controller in the Renesas
-> R-Car S4-8 (R8A779F0) SoC.
->=20
-> Signed-off-by: Thanh Quan <thanh.quan.xn@renesas.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
+ drivers/clk/mediatek/clk-mtk.h |  1 +
+ 2 files changed, 16 insertions(+)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 869e6ae55c82..f108786caeda 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -374,6 +374,8 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 	if (r)
+ 		goto free_data;
+ 
++	platform_set_drvdata(pdev, clk_data);
++
+ 	return r;
+ 
+ free_data:
+@@ -381,4 +383,17 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
+ 	return r;
+ }
+ 
++int mtk_clk_simple_remove(struct platform_device *pdev)
++{
++	const struct mtk_clk_desc *mcd = of_device_get_match_data(&pdev->dev);
++	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
++	struct device_node *node = pdev->dev.of_node;
++
++	of_clk_del_provider(node);
++	mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_data);
++	mtk_free_clk_data(clk_data);
++
++	return 0;
++}
++
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index 3c3a934f53cd..4fa658f5d934 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -202,5 +202,6 @@ struct mtk_clk_desc {
+ };
+ 
+ int mtk_clk_simple_probe(struct platform_device *pdev);
++int mtk_clk_simple_remove(struct platform_device *pdev);
+ 
+ #endif /* __DRV_CLK_MTK_H */
+-- 
+2.35.0.263.gb82422642f-goog
 
-
---4lz/16p7tLSRDwdp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmICZHoACgkQFA3kzBSg
-KbYB5BAAr5DGS+Sh/754QQlhwRYnCKENrRVAFJYuVYROnsSBOwvVTeldZx3IHO3P
-DYt+Ll13SSY0enGextSAzIrHoIVxXOQ524VyZedqmj0mdv3g7mwO98pxDbIAyVFk
-m9Z0u/ECwKRsKu8nZSFVfwN1iMUwBThWk6k6tSZK/OelRQ5M798k7hFsvCRVOXX3
-tvTehufUkFOUVGMP3fKO+BW+iRuqGwwZI1xY07zFIZmiM09bR6NjCTi0JXy6yKWD
-vt2nouZRXWYiWMwSEIf1i3jiF1vRG6uwXbrfpLlZD24OOQpvGV6sAY7GprsK1gBd
-Ti7sph7gfX/Elj9qveo8AoXgfTAmCyVSJ0NJ/V5zMp3qSlHXaQYOfxrmwzSxZv5J
-W1bKOCkfW2w4n/NX7sGqqT3dPfyDLyef7PVtU3/5XDZtq46mIApZpqZnq7xVyHom
-KpQwK0EAYNxCblN9DmtRXRxw8kflFkCMw1XS5g/eo9ds3qfwOsJV2QJrCC4d5FM1
-B5xplsruGT2wW+DbM5fFqPO5uiofO9DRbDhur7ucQGn6OPjcHXK1yLlQFb3S/Ab6
-5iikxxcIqMEu2rjO3+QocQZl/ppXKiI8x4cP7AY//p3bc35DbTd5f9bPUBdC5esQ
-1CxNgry/A4gfEtnJZwk3212shJ96pDb2AFOzsaS8BxIjlw9r6SE=
-=LCvS
------END PGP SIGNATURE-----
-
---4lz/16p7tLSRDwdp--
