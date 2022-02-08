@@ -2,130 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9AFC4321E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900F3C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343791AbiBHNRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:17:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
+        id S1356935AbiBHN16 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 08:27:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358551AbiBHMlb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:41:31 -0500
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E50C03FECA
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:41:30 -0800 (PST)
-Received: by mail-pf1-x42d.google.com with SMTP id i30so18632546pfk.8
-        for <linux-clk@vger.kernel.org>; Tue, 08 Feb 2022 04:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eHwaFCxTmQBqke38QY+U5TZZstQq9O/KJJL77r3W7Ws=;
-        b=nvJ9cLw2nqPy00A1rg0QyEIyTWd8T9dpFDluSxKOq9Tn01B1Y1MbhjQSTCkrI27lra
-         TPGEARXZUBxH7ykfmmOa39dR6Oy6acq0JeHZz8WIgow8M1VrhGsVwV07krTMrsDqoSNI
-         XG0NVawmgtjcczlzwoL1Zq8zDR39B0P7nUe1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eHwaFCxTmQBqke38QY+U5TZZstQq9O/KJJL77r3W7Ws=;
-        b=WIpIssOjXrXSqJ1Nge459fFPLHxC/kh81oYbMoaYCVotgbrWv5anh8UI00g+OBxNEJ
-         B9VZ3TYPhV+EvSB7c4mOtiQou5rdKxNRyRU+6P/ff5+ZjFJSVej/r08DI0LoskK6ifzB
-         KHghRy4oOiN1FbhXzO04jIrJNFoSKHDo2h3ZjhApXS2Rre75+xFhRDOIHJaMWG/TSbzm
-         wCl4qhyisqPPPwFzfdYuc7oZUjPOBrPRJuPPXCPvy8ImgnhlJI6L7YKGb6nngOmpQk3w
-         tPTZS6i8HeA23JWaGCJ3+JlfEIbnkRogmpHbrUYMRr6eQJhCrjtWh7IH498i+jpErDad
-         Hp/w==
-X-Gm-Message-State: AOAM531mqweIs3skFen2sEbDw/CoLes3CLdw5VAxCBh/15vLjvnaXeu2
-        jMS45HvBEm86peSIKIWAH2o4F2tV/qb6dQ==
-X-Google-Smtp-Source: ABdhPJyYdWVRlyhjrE40StYyFinJI1sYaLoiAb4EohqiUabCdb/YfzS2WfyZVC3UGTCq7xluaPc2Xw==
-X-Received: by 2002:a63:8142:: with SMTP id t63mr3362355pgd.256.1644324090238;
-        Tue, 08 Feb 2022 04:41:30 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:41b6:813e:c823:609c])
-        by smtp.gmail.com with ESMTPSA id h11sm15056939pfe.214.2022.02.08.04.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 04:41:30 -0800 (PST)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S1350578AbiBHN1q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 08:27:46 -0500
+X-Greylist: delayed 7442 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 05:23:12 PST
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86D09C0302D4;
+        Tue,  8 Feb 2022 05:23:12 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 86C721F44D84
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1644326591;
+        bh=uJUlKX/iIA11lRA+PlFkLXQAKC4sa9q+whrNfqSm8S8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Xpmcrru8AC8ypC5y8KCIRjU4n+yYy2A42pD1U8MuLpxJLLxbUo3eVUzqXMhfJqXJU
+         EpKVKpxWpJxgxAWZycaYWXiP6e+T+v34lLFIV35rZoAQkbCBx2VngNc2LJH5+60ns7
+         LS5P4f1QVjn85hpDabzVUt5cCnU6DL4pdC4cceSqeM/mpFolOFbXFcsQfks0ABuqVc
+         TQ36fuaQQgu4AU4TdoRricDCKOrslXiIlwovl3fV1py6fNxiPMtGt1+qYSvSQWHyhj
+         jTV/HwbYI5nE25VQ0y3CYYAoY7L7eBNo1i71gNrO3IhHVadHTJxK+fLQTBaGcJ0URK
+         AZkAL2svZe6Zg==
+Message-ID: <9b74cc0b-e4ec-9152-7be2-c20d45cddb10@collabora.com>
+Date:   Tue, 8 Feb 2022 14:23:08 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v3 30/31] clk: mediatek: mt8195: Implement remove
+ functions
+Content-Language: en-US
+To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+Cc:     Chun-Jie Chen <chun-jie.chen@mediatek.com>,
         Miles Chen <miles.chen@mediatek.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 19/31] clk: mediatek: Add mtk_clk_simple_remove()
-Date:   Tue,  8 Feb 2022 20:40:22 +0800
-Message-Id: <20220208124034.414635-20-wenst@chromium.org>
-X-Mailer: git-send-email 2.35.0.263.gb82422642f-goog
-In-Reply-To: <20220208124034.414635-1-wenst@chromium.org>
 References: <20220208124034.414635-1-wenst@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+ <20220208124034.414635-31-wenst@chromium.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220208124034.414635-31-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In commit c58cd0e40ffa ("clk: mediatek: Add mtk_clk_simple_probe() to
-simplify clock providers"), a generic probe function was added to
-simplify clk drivers that only needed to support clk gates. However due
-to the lack of unregister APIs, a corresponding remove function was not
-added.
+Il 08/02/22 13:40, Chen-Yu Tsai ha scritto:
+> Until now the mediatek clk driver library did not have any way to
+> unregister clks, and so none of the drivers implemented remove
+> functions.
+> 
+> Now that the library does have APIs to unregister clks, use them
+> to implement remove functions for the mt8195 clk drivers.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 
-Now that the unregister APIs have been implemented, add aforementioned
-remove function to make it complete.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Miles Chen <miles.chen@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/clk/mediatek/clk-mtk.c | 15 +++++++++++++++
- drivers/clk/mediatek/clk-mtk.h |  1 +
- 2 files changed, 16 insertions(+)
-
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 869e6ae55c82..f108786caeda 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -374,6 +374,8 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 	if (r)
- 		goto free_data;
- 
-+	platform_set_drvdata(pdev, clk_data);
-+
- 	return r;
- 
- free_data:
-@@ -381,4 +383,17 @@ int mtk_clk_simple_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+int mtk_clk_simple_remove(struct platform_device *pdev)
-+{
-+	const struct mtk_clk_desc *mcd = of_device_get_match_data(&pdev->dev);
-+	struct clk_onecell_data *clk_data = platform_get_drvdata(pdev);
-+	struct device_node *node = pdev->dev.of_node;
-+
-+	of_clk_del_provider(node);
-+	mtk_clk_unregister_gates(mcd->clks, mcd->num_clks, clk_data);
-+	mtk_free_clk_data(clk_data);
-+
-+	return 0;
-+}
-+
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 3c3a934f53cd..4fa658f5d934 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -202,5 +202,6 @@ struct mtk_clk_desc {
- };
- 
- int mtk_clk_simple_probe(struct platform_device *pdev);
-+int mtk_clk_simple_remove(struct platform_device *pdev);
- 
- #endif /* __DRV_CLK_MTK_H */
--- 
-2.35.0.263.gb82422642f-goog
 
