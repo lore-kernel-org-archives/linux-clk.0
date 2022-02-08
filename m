@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F29C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E5AC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Feb 2022 13:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350651AbiBHNQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:16:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58722 "EHLO
+        id S1347993AbiBHNQ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 08:16:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358064AbiBHMku (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:40:50 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B9CC03FECA
-        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:40:49 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id 10so5817923plj.1
-        for <linux-clk@vger.kernel.org>; Tue, 08 Feb 2022 04:40:49 -0800 (PST)
+        with ESMTP id S1358145AbiBHMlF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 07:41:05 -0500
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98C8BC03FECA
+        for <linux-clk@vger.kernel.org>; Tue,  8 Feb 2022 04:41:04 -0800 (PST)
+Received: by mail-pl1-x62c.google.com with SMTP id k17so13779370plk.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Feb 2022 04:41:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KMrUAZQe9JUnVj5EUjsHzOkSwiZvLDAMScWPGf0Fm7Y=;
-        b=Tv2sNlDXK1Ko6uI/SUxKmBShnZK1++IAMa8F4Lj3hYheLkNiKldHy6fSEfC2jyv7cp
-         /MnlRv6jwo5QdrgVmIFVlPJWBTP2rY3pR1W9ymm3PL7ZbqftNLKV/+nhZCTFfyRTAzMf
-         C55QO7PkMzxcNnw3dCqFlbGUrymPAr2fd3PhQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=iNXCz8EKk1VR4agv1nk/pR4RM+PZmf+e9yRG2bvKFuM=;
+        b=FaLgS8JBXSx2rVQXT64+Rqa2xv8iXnhXcaxplMpKSmYnFH93Ujylq6y4Cl6nyd/sAH
+         WQfwAS1n/fUwhgBYIe1KmVkTBNXyXUHhRiExOGRjWRVg/4G87sHy17Rcuz1/8y4EO++T
+         6VK2V+jUdpukhI1bpN+MT9dUVWszTMuJ5z9NM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KMrUAZQe9JUnVj5EUjsHzOkSwiZvLDAMScWPGf0Fm7Y=;
-        b=RfgHLH9g5anRww/p7vfXDotthurDpcpy6a9pz9RPV26wcFmTUyhEr+EhSWEZmKX4Ta
-         6MbK9+48Xav0uKdIeC1Jf/iq7oHtatcwvE7Tk6OW7uAS4D/V68mrDKeBuzLH6pVuRfij
-         WrE0gLsNTx0nL80keyZ35Dx/nvHjgngST0nCg48Zem4EUcJ0A4gQlEjzdfT5YJd6jEc8
-         iY6o8zhHZASN4YOtPcOGY/8+CGx9SNUQFn0HYOUA2Gw2Bw3RmLOT4eMpFBj/AjhKO722
-         3HS3QYoUK3fgofdXJ6kuS6hGEfuMftiCXvH0pni2A6zgo8jMyuhZFj9wqYby/F0K/LSS
-         X0+w==
-X-Gm-Message-State: AOAM532b2Zxtvxnkksiqf/TBfgdyQxLzyIwSNGSPh44wQ0UKZ1uCvNKm
-        HYcVBsy3UIqr6qrhKy9XyPh+Ug==
-X-Google-Smtp-Source: ABdhPJy8bQUmp0LwZ6FrJof01Qa1olsgrYoahsed5EV70vn0DwuNDR2d0/b3XFrg2nh3rQtTCRo4HA==
-X-Received: by 2002:a17:90a:780e:: with SMTP id w14mr1195661pjk.42.1644324049220;
-        Tue, 08 Feb 2022 04:40:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=iNXCz8EKk1VR4agv1nk/pR4RM+PZmf+e9yRG2bvKFuM=;
+        b=w7le4sLccqRGPxHAQyUnpQlQjf0LT/zXHfbYlTQD8cMT5RMqt2zMhdIVcOCGH3187p
+         62NxktC1eh2wcMa9TZJaBCbyBdpDL6qEibmHXHAVMDMpXFuH0Ix/hUHaQO0Ti6RosGmd
+         Jy7+b52jXiXYGqnWVf1GyULk7VUWhJulr3nBzqgTK8vBH+aeptevPjLGkCMtKmwDhxlk
+         lLvPQ2WjkLyF0y8qO3Ckmo6yqVitDhKv6iN1cXpQcoc5Do7rTmg3fOWkrpKggc/M+2Ir
+         SCEJBYP9IGnDYiz33+rBNXzLBdYOcG5mEDIkPl4pVejnVJa5hhzUqchWrSYRw21CPeKD
+         3xRQ==
+X-Gm-Message-State: AOAM531PfptqxKEoW8Foc1nva9pmEsxKTpHyZPQI4MNZgl26v/D/CvcU
+        0durpfPTwLlbDl/q9lZoyZ+GSg==
+X-Google-Smtp-Source: ABdhPJxCsDQjhQfSgwvXF6h1UuMsst6PTHnyW2BLFIfU9v0XAu5TwkzHqYQzzLVcalU0yaSD5TQ4Og==
+X-Received: by 2002:a17:902:f651:: with SMTP id m17mr4251259plg.106.1644324064142;
+        Tue, 08 Feb 2022 04:41:04 -0800 (PST)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:41b6:813e:c823:609c])
-        by smtp.gmail.com with ESMTPSA id h11sm15056939pfe.214.2022.02.08.04.40.47
+        by smtp.gmail.com with ESMTPSA id h11sm15056939pfe.214.2022.02.08.04.41.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 04:40:49 -0800 (PST)
+        Tue, 08 Feb 2022 04:41:03 -0800 (PST)
 From:   Chen-Yu Tsai <wenst@chromium.org>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -55,180 +55,70 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         Miles Chen <miles.chen@mediatek.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 00/31] clk: mediatek: Cleanups and Improvements - Part 1
-Date:   Tue,  8 Feb 2022 20:40:03 +0800
-Message-Id: <20220208124034.414635-1-wenst@chromium.org>
+Subject: [PATCH v3 07/31] clk: mediatek: cpumux: Internalize struct mtk_clk_cpumux
+Date:   Tue,  8 Feb 2022 20:40:10 +0800
+Message-Id: <20220208124034.414635-8-wenst@chromium.org>
 X-Mailer: git-send-email 2.35.0.263.gb82422642f-goog
+In-Reply-To: <20220208124034.414635-1-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+struct mtk_clk_cpumux is an implementation detail of the cpumux clk
+type, and is not used outside of the implementation.
 
-This is version 3 of part 1 of planned work to cleanup, improve, and
-modernize the MediaTek clk drivers. The full proposal can be found here:
+Internalize the definition to minimize leakage of details and shrink
+the header file.
 
-https://lore.kernel.org/linux-clk/20220122091731.283592-1-wenst@chromium.org/
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/clk/mediatek/clk-cpumux.c | 8 ++++++++
+ drivers/clk/mediatek/clk-cpumux.h | 8 --------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-
-Changes since version 2:
-
-- Collected review tags
-- Moved platform_set_drvdata() in clk_mt8195_apusys_pll_probe() to the
-  correct patch (patch 30)
-- Corrected error path for clk_mt8195_apmixed_probe() in patch
-  "clk: mediatek: mt8195: Implement error handling in probe functions"
-  - Also dropped review tag for this patch
-
-Changes since version 1:
-
-- Added NULL pointer check against __clk_get_hw() return value in
-  mtk_clk_unregister_pll()
-- Added NULL pointer check against __clk_get_hw() return value in
-  mtk_clk_unregister_composite()
-- Copied MHZ macro into clk-pll.c and restored its usage
-- Dropped extra semicolon in mtk_clk_register_plls()
-  - Reported by kernel test robot <lkp@intel.com>
-
-
-I also wanted to ask, what would be a good way to do the "struct clk" to
-"struct clk_hw" API conversion?
-
-A. Add new register/unregister APIs that use "struct clk_hw" instead of
-   "struct clk". This would result in a lot of patches and a lot of
-   churn though.
-
-B. Replace "struct clk" with "struct clk_hw" (and "struct clk_onecell_data"
-   with "struct clk_hw_onecell_data") and work around existing code with
-   __clk_get_hw() or its opposite. This would result in a few huge
-   pages, as to not break bisection, but would likely cause less churn.
-   And it would cover all existing platforms in one go.
-
-
-Thanks
-ChenYu
-
-
-Original cover letter sans full proposal as follows:
-
-Part 1 involves cleaning up various parts of the MediaTek common clk
-driver library:
-
-- Code style cleanups in places touched by other changes
-- Code for a given clk type that happened to be split between different
-  files is consolidated
-- Parts of the implementation, such as the internal data structures and
-  registration/unregistration of a single clk, are internalized and no
-  longer exported to other parts of the library
-- Unregister APIs for all clk types in the library are added
-- Remove function added for the simple driver case
-- Error handling is added for all clk types
-- MT8195 clk drivers cleaned up with error handling and removal support
-  added
-
-Adding error handling to the clk driver library results is a change in
-its behavior, and might cause some breakage where the affected system
-was originally somewhat working, but not completely. The failure would
-result from a duplicated clk, either in name or ID. Old behavior was to
-skip over these and ignore the error, whereas the new behavior is to
-restore changes and error out.
-
-To detect duplicate IDs, an additional warning will now be printed when
-such occurrences happen. In a correct driver such things should not
-happen though, so maybe we could consider wrapping that in some debug
-Kconfig option. That's why I put it as the last patch in this series.
-
-This series was tested on MT8195 with the series applied on the downstream
-ChromeOS v5.10 kernel. Some other patches were applied to make this
-series apply cleanly, but nothing The cpumux clk type changes were
-not tested due to lack of related hardware. However the changes are
-very similar to the other types, and I am confident there are no issues.
-
-
-Chen-Yu Tsai (31):
-  clk: mediatek: Use %pe to print errors
-  clk: mediatek: gate: Consolidate gate type clk related code
-  clk: mediatek: gate: Internalize clk implementation
-  clk: mediatek: gate: Implement unregister API
-  clk: mediatek: gate: Clean up included headers
-  clk: mediatek: cpumux: Implement unregister API
-  clk: mediatek: cpumux: Internalize struct mtk_clk_cpumux
-  clk: mediatek: cpumux: Clean up included headers
-  clk: mediatek: mux: Implement unregister API
-  clk: mediatek: mux: Internalize struct mtk_clk_mux
-  clk: mediatek: mux: Clean up included headers
-  clk: mediatek: pll: Split definitions into separate header file
-  clk: mediatek: pll: Implement unregister API
-  clk: mediatek: pll: Clean up included headers
-  clk: mediatek: Implement mtk_clk_unregister_fixed_clks() API
-  clk: mediatek: Implement mtk_clk_unregister_factors() API
-  clk: mediatek: Implement mtk_clk_unregister_divider_clks() API
-  clk: mediatek: Implement mtk_clk_unregister_composites() API
-  clk: mediatek: Add mtk_clk_simple_remove()
-  clk: mediatek: mtk: Clean up included headers
-  clk: mediatek: cpumux: Implement error handling in register API
-  clk: mediatek: gate: Implement error handling in register API
-  clk: mediatek: mux: Reverse check for existing clk to reduce nesting
-    level
-  clk: mediatek: mux: Implement error handling in register API
-  clk: mediatek: pll: Implement error handling in register API
-  clk: mediatek: mtk: Implement error handling in register APIs
-  clk: mediatek: Unregister clks in mtk_clk_simple_probe() error path
-  clk: mediatek: mt8195: Hook up mtk_clk_simple_remove()
-  clk: mediatek: mt8195: Implement error handling in probe functions
-  clk: mediatek: mt8195: Implement remove functions
-  clk: mediatek: Warn if clk IDs are duplicated
-
- drivers/clk/mediatek/clk-apmixed.c            |   2 +-
- drivers/clk/mediatek/clk-cpumux.c             |  69 +++-
- drivers/clk/mediatek/clk-cpumux.h             |  13 +-
- drivers/clk/mediatek/clk-gate.c               | 148 +++++++--
- drivers/clk/mediatek/clk-gate.h               |  59 ++--
- drivers/clk/mediatek/clk-mt2701.c             |   5 +-
- drivers/clk/mediatek/clk-mt2712.c             |   3 +-
- drivers/clk/mediatek/clk-mt6765.c             |   3 +-
- drivers/clk/mediatek/clk-mt6779.c             |   3 +-
- drivers/clk/mediatek/clk-mt6797.c             |   3 +-
- drivers/clk/mediatek/clk-mt7622.c             |   5 +-
- drivers/clk/mediatek/clk-mt7629.c             |   5 +-
- drivers/clk/mediatek/clk-mt7986-apmixed.c     |   4 +-
- drivers/clk/mediatek/clk-mt8135.c             |   3 +-
- drivers/clk/mediatek/clk-mt8167.c             |   3 +-
- drivers/clk/mediatek/clk-mt8173.c             |   5 +-
- drivers/clk/mediatek/clk-mt8183.c             |   3 +-
- drivers/clk/mediatek/clk-mt8192.c             |   3 +-
- drivers/clk/mediatek/clk-mt8195-apmixedsys.c  |  30 +-
- drivers/clk/mediatek/clk-mt8195-apusys_pll.c  |  25 +-
- drivers/clk/mediatek/clk-mt8195-cam.c         |   1 +
- drivers/clk/mediatek/clk-mt8195-ccu.c         |   1 +
- drivers/clk/mediatek/clk-mt8195-img.c         |   1 +
- .../clk/mediatek/clk-mt8195-imp_iic_wrap.c    |   1 +
- drivers/clk/mediatek/clk-mt8195-infra_ao.c    |   1 +
- drivers/clk/mediatek/clk-mt8195-ipe.c         |   1 +
- drivers/clk/mediatek/clk-mt8195-mfg.c         |   1 +
- drivers/clk/mediatek/clk-mt8195-peri_ao.c     |   1 +
- drivers/clk/mediatek/clk-mt8195-scp_adsp.c    |   1 +
- drivers/clk/mediatek/clk-mt8195-topckgen.c    |  69 +++-
- drivers/clk/mediatek/clk-mt8195-vdec.c        |   1 +
- drivers/clk/mediatek/clk-mt8195-vdo0.c        |  20 +-
- drivers/clk/mediatek/clk-mt8195-vdo1.c        |  20 +-
- drivers/clk/mediatek/clk-mt8195-venc.c        |   1 +
- drivers/clk/mediatek/clk-mt8195-vpp0.c        |   1 +
- drivers/clk/mediatek/clk-mt8195-vpp1.c        |   1 +
- drivers/clk/mediatek/clk-mt8195-wpe.c         |   1 +
- drivers/clk/mediatek/clk-mt8516.c             |   3 +-
- drivers/clk/mediatek/clk-mtk.c                | 304 +++++++++++++-----
- drivers/clk/mediatek/clk-mtk.h                | 105 ++----
- drivers/clk/mediatek/clk-mux.c                |  89 ++++-
- drivers/clk/mediatek/clk-mux.h                |  17 +-
- drivers/clk/mediatek/clk-pll.c                | 100 +++++-
- drivers/clk/mediatek/clk-pll.h                |  57 ++++
- drivers/clk/mediatek/reset.c                  |   3 +-
- 45 files changed, 903 insertions(+), 292 deletions(-)
- create mode 100644 drivers/clk/mediatek/clk-pll.h
-
+diff --git a/drivers/clk/mediatek/clk-cpumux.c b/drivers/clk/mediatek/clk-cpumux.c
+index 99a819e3673f..344c6399b22f 100644
+--- a/drivers/clk/mediatek/clk-cpumux.c
++++ b/drivers/clk/mediatek/clk-cpumux.c
+@@ -12,6 +12,14 @@
+ #include "clk-mtk.h"
+ #include "clk-cpumux.h"
+ 
++struct mtk_clk_cpumux {
++	struct clk_hw	hw;
++	struct regmap	*regmap;
++	u32		reg;
++	u32		mask;
++	u8		shift;
++};
++
+ static inline struct mtk_clk_cpumux *to_mtk_clk_cpumux(struct clk_hw *_hw)
+ {
+ 	return container_of(_hw, struct mtk_clk_cpumux, hw);
+diff --git a/drivers/clk/mediatek/clk-cpumux.h b/drivers/clk/mediatek/clk-cpumux.h
+index fda7770fd803..a538f2bbef0d 100644
+--- a/drivers/clk/mediatek/clk-cpumux.h
++++ b/drivers/clk/mediatek/clk-cpumux.h
+@@ -7,14 +7,6 @@
+ #ifndef __DRV_CLK_CPUMUX_H
+ #define __DRV_CLK_CPUMUX_H
+ 
+-struct mtk_clk_cpumux {
+-	struct clk_hw	hw;
+-	struct regmap	*regmap;
+-	u32		reg;
+-	u32		mask;
+-	u8		shift;
+-};
+-
+ int mtk_clk_register_cpumuxes(struct device_node *node,
+ 			      const struct mtk_composite *clks, int num,
+ 			      struct clk_onecell_data *clk_data);
 -- 
 2.35.0.263.gb82422642f-goog
 
