@@ -2,131 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36236C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 19:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E26C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 20:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230511AbiBITOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 14:14:43 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:38666 "EHLO
+        id S231518AbiBIUeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 15:34:24 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbiBITOm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 14:14:42 -0500
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1159CC003657
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 11:14:35 -0800 (PST)
-Received: by mail-oi1-x233.google.com with SMTP id 4so3486384oil.11
-        for <linux-clk@vger.kernel.org>; Wed, 09 Feb 2022 11:14:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=i83UrggLqqR8sfxQp+IQdzECOxPCCxqxbgAjSDGHq/Y=;
-        b=n/sSem6NYUo+UdF/1GntVWuR1kT+0OyWraS+6jrUlMW2hux65KDqnHZrEiPE7QEJiF
-         2nftYFoT7AtMqZ+Lsom7cvyvd5bVPwga1sPkB8lAFJ3iSBOB5T7INgDuYFizA0BpSCJO
-         QHtOevRx7L/UmSgNQ4GhitW6+QAx5PAxidzf6PKNPcP4j5ajzKcS7J+/6i/jrZAenNpc
-         4wtyAbAFWqfV0ahtL76JY/9PSGTNOYHroN4nJ42A2O2yOv/sxRkDDNdoWg0ka2etLVNi
-         51OEU7usFE2QMy5FRy+c2EF/dqy4CNz5AAsRY80iCisWg1OTs4YBHrnNqUcmPgzgiJU8
-         yJ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=i83UrggLqqR8sfxQp+IQdzECOxPCCxqxbgAjSDGHq/Y=;
-        b=jCCj7S/zhtKgtfkzEK5V1aa8qCJC9EEI5Bw71BwLpOI1lMoiCdeu1hMxmaIYtLeNi/
-         u+D/mKhRaQWCym9jkOIwrN9nztqV+LgYEONAz1lpse/X4GSE0kj8tpvL1SBLDdmyF37i
-         J533xlrRYX33jUbHXELfl347hcVdzwgw0ZyFEbJ1Sn5d2MA8CZ922Z6tIjU+Foacwk8y
-         enyAVcCsdXWEVV9+n2i0yfsTgmDH+U3WfVfsDgazLSkcSj/VcaTa0zu93dw10PFlzEwB
-         vTf9UjX5jfEdw+5ZK/IgahDvp2bmIDHVxVsr9GlPvUfEiHvcttkDKEpbRgXuxYQ+CEDj
-         cctQ==
-X-Gm-Message-State: AOAM533WKhqfrWBuiv8M7j7gC7/xlBCad2gXdhd/otiBY28B+QWNTzq2
-        vhov956OBpO3ycWCny2NtTwtn6YNBjUpbxLM
-X-Google-Smtp-Source: ABdhPJzNqLMqK731CrdUn6LdyrYJwYcsrQuDHu/wYHmXgCn+SMhJhaGK1IYh4ATk0fCF1/NvdkNh/Q==
-X-Received: by 2002:aca:ab0d:: with SMTP id u13mr2058811oie.138.1644434066754;
-        Wed, 09 Feb 2022 11:14:26 -0800 (PST)
-Received: from [192.168.11.51] (cpe-173-173-107-246.satx.res.rr.com. [173.173.107.246])
-        by smtp.gmail.com with ESMTPSA id a15sm7127523oil.13.2022.02.09.11.14.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Feb 2022 11:14:26 -0800 (PST)
-Message-ID: <72fa3837-1792-9a45-c1c2-7863d3381c31@kali.org>
-Date:   Wed, 9 Feb 2022 13:14:24 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.5.1
-Subject: Re: [v1 2/2] clk: qcom: dispcc: Update gdsc flag for display GDSC
-Content-Language: en-US
-To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220209172513.17873-1-tdas@codeaurora.org>
- <20220209172513.17873-2-tdas@codeaurora.org>
-From:   Steev Klimaszewski <steev@kali.org>
-In-Reply-To: <20220209172513.17873-2-tdas@codeaurora.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229946AbiBIUeT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 15:34:19 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 27B60C102FE5;
+        Wed,  9 Feb 2022 12:34:20 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.88,356,1635174000"; 
+   d="scan'208";a="110043923"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Feb 2022 05:34:20 +0900
+Received: from localhost.localdomain (unknown [10.226.92.190])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EC5D34006DF4;
+        Thu, 10 Feb 2022 05:34:17 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a07g044: Use shared array for resets
+Date:   Wed,  9 Feb 2022 20:34:11 +0000
+Message-Id: <20220209203411.22332-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
+Instead of split resets in common and drp, but using a shared array,
+we can still separate RZ/G2L and RZ/V2L by setting .num_resets to
+the 'highest reset number + 1' for the specific SoC.
 
-On 2/9/22 11:25 AM, Taniya Das wrote:
-> Update the mdss gdsc flag for SC7180/SC7280/SM8150/SM8250
-> to not program the transition delay.
->
-> Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for SC7180")
-> Fixes: 1a00c962f9cd ("clk: qcom: Add display clock controller driver for SC7280")
-> Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for SM8150 and SM8250")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->   drivers/clk/qcom/dispcc-sc7180.c | 2 +-
->   drivers/clk/qcom/dispcc-sc7280.c | 2 +-
->   drivers/clk/qcom/dispcc-sm8250.c | 2 +-
->   3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
-> index 538e4963c915..c203888ab2ca 100644
-> --- a/drivers/clk/qcom/dispcc-sc7180.c
-> +++ b/drivers/clk/qcom/dispcc-sc7180.c
-> @@ -629,7 +629,7 @@ static struct gdsc mdss_gdsc = {
->   		.name = "mdss_gdsc",
->   	},
->   	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL |  DEFAULT_TRANSITION_DELAY,
->   };
-There's an extra space after the |
->   static struct gdsc *disp_cc_sc7180_gdscs[] = {
-> diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
-> index 4ef4ae231794..8e1a2d4a8120 100644
-> --- a/drivers/clk/qcom/dispcc-sc7280.c
-> +++ b/drivers/clk/qcom/dispcc-sc7280.c
-> @@ -791,7 +791,7 @@ static struct gdsc disp_cc_mdss_core_gdsc = {
->   		.name = "disp_cc_mdss_core_gdsc",
->   	},
->   	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-> +	.flags = HW_CTRL | RETAIN_FF_ENABLE | DEFAULT_TRANSITION_DELAY,
->   };
->
->   static struct clk_regmap *disp_cc_sc7280_clocks[] = {
-> diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-> index 566fdfa0a15b..4d64d499a285 100644
-> --- a/drivers/clk/qcom/dispcc-sm8250.c
-> +++ b/drivers/clk/qcom/dispcc-sm8250.c
-> @@ -1130,7 +1130,7 @@ static struct gdsc mdss_gdsc = {
->   		.name = "mdss_gdsc",
->   	},
->   	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = HW_CTRL,
-> +	.flags = HW_CTRL | DEFAULT_TRANSITION_DELAY,
->   	.supply = "mmcx",
->   };
->
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
->
--- steev
+This patch uses shared array and sets .num_resets to the
+'highest reset number + 1' for RZ/G2L and RZ/V2L SoC.
+
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 119 +++++++++++++---------------
+ 1 file changed, 54 insertions(+), 65 deletions(-)
+
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 8817d3838735..bdfabb992a20 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -299,67 +299,56 @@ static const struct {
+ #endif
+ };
+ 
+-static const struct {
+-	struct rzg2l_reset common[84];
+-#ifdef CONFIG_CLK_R9A07G054
+-	struct rzg2l_reset drp[1];
+-#endif
+-} rzg2l_resets = {
+-	.common = {
+-		DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
+-		DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
+-		DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
+-		DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
+-		DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
+-		DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
+-		DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
+-		DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
+-		DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
+-		DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
+-		DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
+-		DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
+-		DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
+-		DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
+-		DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
+-		DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
+-		DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
+-		DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
+-		DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+-		DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
+-		DEF_RST(R9A07G044_SSI3_RST_M2_REG, 0x870, 3),
+-		DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
+-		DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
+-		DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
+-		DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
+-		DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
+-		DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
+-		DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
+-		DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
+-		DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
+-		DEF_RST(R9A07G044_I2C3_MRST, 0x880, 3),
+-		DEF_RST(R9A07G044_SCIF0_RST_SYSTEM_N, 0x884, 0),
+-		DEF_RST(R9A07G044_SCIF1_RST_SYSTEM_N, 0x884, 1),
+-		DEF_RST(R9A07G044_SCIF2_RST_SYSTEM_N, 0x884, 2),
+-		DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
+-		DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
+-		DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
+-		DEF_RST(R9A07G044_SCI1_RST, 0x888, 1),
+-		DEF_RST(R9A07G044_RSPI0_RST, 0x890, 0),
+-		DEF_RST(R9A07G044_RSPI1_RST, 0x890, 1),
+-		DEF_RST(R9A07G044_RSPI2_RST, 0x890, 2),
+-		DEF_RST(R9A07G044_CANFD_RSTP_N, 0x894, 0),
+-		DEF_RST(R9A07G044_CANFD_RSTC_N, 0x894, 1),
+-		DEF_RST(R9A07G044_GPIO_RSTN, 0x898, 0),
+-		DEF_RST(R9A07G044_GPIO_PORT_RESETN, 0x898, 1),
+-		DEF_RST(R9A07G044_GPIO_SPARE_RESETN, 0x898, 2),
+-		DEF_RST(R9A07G044_ADC_PRESETN, 0x8a8, 0),
+-		DEF_RST(R9A07G044_ADC_ADRST_N, 0x8a8, 1),
+-		DEF_RST(R9A07G044_TSU_PRESETN, 0x8ac, 0),
+-	},
+-#ifdef CONFIG_CLK_R9A07G054
+-	.drp = {
+-	},
+-#endif
++static struct rzg2l_reset r9a07g044_resets[] = {
++	DEF_RST(R9A07G044_GIC600_GICRESET_N, 0x814, 0),
++	DEF_RST(R9A07G044_GIC600_DBG_GICRESET_N, 0x814, 1),
++	DEF_RST(R9A07G044_IA55_RESETN, 0x818, 0),
++	DEF_RST(R9A07G044_DMAC_ARESETN, 0x82c, 0),
++	DEF_RST(R9A07G044_DMAC_RST_ASYNC, 0x82c, 1),
++	DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
++	DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
++	DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
++	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
++	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
++	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
++	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
++	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
++	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
++	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
++	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
++	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
++	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
++	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
++	DEF_RST(R9A07G044_SSI2_RST_M2_REG, 0x870, 2),
++	DEF_RST(R9A07G044_SSI3_RST_M2_REG, 0x870, 3),
++	DEF_RST(R9A07G044_USB_U2H0_HRESETN, 0x878, 0),
++	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
++	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
++	DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
++	DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
++	DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
++	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
++	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
++	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
++	DEF_RST(R9A07G044_I2C3_MRST, 0x880, 3),
++	DEF_RST(R9A07G044_SCIF0_RST_SYSTEM_N, 0x884, 0),
++	DEF_RST(R9A07G044_SCIF1_RST_SYSTEM_N, 0x884, 1),
++	DEF_RST(R9A07G044_SCIF2_RST_SYSTEM_N, 0x884, 2),
++	DEF_RST(R9A07G044_SCIF3_RST_SYSTEM_N, 0x884, 3),
++	DEF_RST(R9A07G044_SCIF4_RST_SYSTEM_N, 0x884, 4),
++	DEF_RST(R9A07G044_SCI0_RST, 0x888, 0),
++	DEF_RST(R9A07G044_SCI1_RST, 0x888, 1),
++	DEF_RST(R9A07G044_RSPI0_RST, 0x890, 0),
++	DEF_RST(R9A07G044_RSPI1_RST, 0x890, 1),
++	DEF_RST(R9A07G044_RSPI2_RST, 0x890, 2),
++	DEF_RST(R9A07G044_CANFD_RSTP_N, 0x894, 0),
++	DEF_RST(R9A07G044_CANFD_RSTC_N, 0x894, 1),
++	DEF_RST(R9A07G044_GPIO_RSTN, 0x898, 0),
++	DEF_RST(R9A07G044_GPIO_PORT_RESETN, 0x898, 1),
++	DEF_RST(R9A07G044_GPIO_SPARE_RESETN, 0x898, 2),
++	DEF_RST(R9A07G044_ADC_PRESETN, 0x8a8, 0),
++	DEF_RST(R9A07G044_ADC_ADRST_N, 0x8a8, 1),
++	DEF_RST(R9A07G044_TSU_PRESETN, 0x8ac, 0),
+ };
+ 
+ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+@@ -385,8 +374,8 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 
+ 	/* Resets */
+-	.resets = rzg2l_resets.common,
+-	.num_resets = ARRAY_SIZE(rzg2l_resets.common),
++	.resets = r9a07g044_resets,
++	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
+ };
+ 
+ #ifdef CONFIG_CLK_R9A07G054
+@@ -407,7 +396,7 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
+ 	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
+ 
+ 	/* Resets */
+-	.resets = rzg2l_resets.common,
+-	.num_resets = ARRAY_SIZE(rzg2l_resets.common) + ARRAY_SIZE(rzg2l_resets.drp),
++	.resets = r9a07g044_resets,
++	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
+ };
+ #endif
+-- 
+2.17.1
+
