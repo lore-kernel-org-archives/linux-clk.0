@@ -2,115 +2,98 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A999DC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 17:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E564BC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 17:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238225AbiBIR1q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 12:27:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
+        id S238343AbiBIRac (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 12:30:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238213AbiBIR1n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 12:27:43 -0500
-X-Greylist: delayed 303 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 09:27:44 PST
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 58E9BC05CBB3
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 09:27:44 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.88,356,1635174000"; 
-   d="scan'208";a="110765425"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Feb 2022 02:22:40 +0900
-Received: from localhost.localdomain (unknown [10.226.92.190])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EFC51401071C;
-        Thu, 10 Feb 2022 02:22:38 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: rzg2l-cpg: Add id to struct rzg2l_reset
-Date:   Wed,  9 Feb 2022 17:22:36 +0000
-Message-Id: <20220209172236.21151-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S238346AbiBIRaa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 12:30:30 -0500
+X-Greylist: delayed 301 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 09:30:33 PST
+Received: from so254-9.mailgun.net (so254-9.mailgun.net [198.61.254.9])
+        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id B11E6C0613C9
+        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 09:30:32 -0800 (PST)
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1644427833; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=GlWTbW6rvo3Hk0ZxypwcsZKNboIvUjLB/c6zRebM7KY=; b=Ek8kImPVbckQlS6yHw38S5Kc7nspoNBQGlalx6nThZJ3BxqSiMCMD5Df+YvQGYPi90CWco6X
+ 8lc95GldLFS51Us/QHqyVEXrSpCUpWpEN1Dee7kQ0na87dRPObUBvOdZZzfyXUMf9QWwJsCe
+ tdpuCP8BslbH3KTWf5Jv4cvBgLE=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 6203f90919d16b66a9b9ac5e (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 09 Feb 2022 17:25:29
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DB785C4360C; Wed,  9 Feb 2022 17:25:29 +0000 (UTC)
+Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 74804C4360D;
+        Wed,  9 Feb 2022 17:25:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 74804C4360D
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for GDSCs
+Date:   Wed,  9 Feb 2022 22:55:12 +0530
+Message-Id: <20220209172513.17873-1-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We now have the reset ID split between common and additional entries.
-But the index is hidden inside the DEF_RST macro and this can create
-compilation issue when we add a reset ID on the additional entry
-array.
+Do not update the transition delay and use the default reset values.
 
-This patch adds id to struct rzg2l_reset, so that we can lookup an
-ID entry in the reset table instead of just using the ID as the
-index.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 17 +++++++++++++----
- drivers/clk/renesas/rzg2l-cpg.h |  7 +++++--
- 2 files changed, 18 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/gdsc.c | 6 +++++-
+ drivers/clk/qcom/gdsc.h | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 8c0a6252c984..adb3353a419d 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -760,13 +760,22 @@ static int rzg2l_cpg_reset_xlate(struct reset_controller_dev *rcdev,
- 	struct rzg2l_cpg_priv *priv = rcdev_to_priv(rcdev);
- 	const struct rzg2l_cpg_info *info = priv->info;
- 	unsigned int id = reset_spec->args[0];
-+	unsigned int i;
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 7e1dd8ccfa38..e7b213450640 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
+ 	 */
+ 	mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
+ 	       EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
+-	val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
 +
-+	if (id >= rcdev->nr_resets)
-+		goto err;
- 
--	if (id >= rcdev->nr_resets || !info->resets[id].off) {
--		dev_err(rcdev->dev, "Invalid reset index %u\n", id);
--		return -EINVAL;
-+	for (i = 0; i < rcdev->nr_resets; i++) {
-+		if (info->resets[i].id == id)
-+			break;
- 	}
- 
--	return id;
-+	if (info->resets[i].off)
-+		return i;
++	regmap_read(sc->regmap, sc->gdscr, &val);
 +
-+err:
-+	dev_err(rcdev->dev, "Invalid reset index %u\n", id);
-+	return -EINVAL;
- }
- 
- static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 92c88f42ca7f..fe2bcf9cce5d 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -150,16 +150,19 @@ struct rzg2l_mod_clk {
-  *
-  * @off: register offset
-  * @bit: reset bit
-+ * @id: reset index
-  */
- struct rzg2l_reset {
- 	u16 off;
- 	u8 bit;
-+	u8 id;
- };
- 
- #define DEF_RST(_id, _off, _bit)	\
--	[_id] = { \
-+	{ \
- 		.off = (_off), \
--		.bit = (_bit) \
-+		.bit = (_bit), \
-+		.id = (_id) \
- 	}
- 
- /**
--- 
-2.17.1
++	if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
++		val |= EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+ 	ret = regmap_update_bits(sc->regmap, sc->gdscr, mask, val);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index d7cc4c21a9d4..1bd3ecdd0b0a 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -53,6 +53,7 @@ struct gdsc {
+ #define ALWAYS_ON	BIT(6)
+ #define RETAIN_FF_ENABLE	BIT(7)
+ #define NO_RET_PERIPH	BIT(8)
++#define DEFAULT_TRANSITION_DELAY	BIT(9)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
