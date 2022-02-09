@@ -2,113 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD52CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 22:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF20C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 22:35:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235604AbiBIW2j convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 17:28:39 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:59336 "EHLO
+        id S236065AbiBIWfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 17:35:12 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:49828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235654AbiBIW2Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 17:28:25 -0500
-X-Greylist: delayed 302 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 14:28:05 PST
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 74424E00E277
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 14:28:04 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-66-G1dgHlBaNBupzuHAnSEDBA-1; Wed, 09 Feb 2022 22:21:37 +0000
-X-MC-Unique: G1dgHlBaNBupzuHAnSEDBA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.28; Wed, 9 Feb 2022 22:21:36 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.028; Wed, 9 Feb 2022 22:21:35 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Qing Wang' <wangqing@vivo.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] clk: imx: use div64_u64() instead of do_div()
-Thread-Topic: [PATCH] clk: imx: use div64_u64() instead of do_div()
-Thread-Index: AQHYHZBjXPxrJKPUzEuGCK2WjoSvgayLy2mg
-Date:   Wed, 9 Feb 2022 22:21:35 +0000
-Message-ID: <4f0336b0217f4e7fa9a1a7aa044ee4fe@AcuMS.aculab.com>
-References: <1644395819-3791-1-git-send-email-wangqing@vivo.com>
-In-Reply-To: <1644395819-3791-1-git-send-email-wangqing@vivo.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S232344AbiBIWfK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 17:35:10 -0500
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8F7E019265
+        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 14:35:11 -0800 (PST)
+Received: by mail-oo1-xc31.google.com with SMTP id u47-20020a4a9732000000b00316d0257de0so4199365ooi.7
+        for <linux-clk@vger.kernel.org>; Wed, 09 Feb 2022 14:35:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7sNMbEN2ZWSKBSAKG7biB3FxMf95az/sXODaHaCSWMs=;
+        b=xdcjIPjBdfsq47myDzGlv/zDnSvqcldTrssyKMmoNbBcmUw17fDaGp0J/7YeM0yqmg
+         s8qWJDlGouztaI3L3dssm+Cpw12Gr8ov9SLFvidB+1pfLT8ol8I+JprQAoRBrzqqrboZ
+         nbXLMNrQFM1FxTGR9rCmePKWeLdWhoR/y5dfoPvdJz9aFLZ+TN2pxPw6d9x/VIJuj36Z
+         eNTwsOF1QO3RaM49fcz4iuxlbP58AFsMFNuprEf3paG49jotMgGznnttTKdpyvTJtONz
+         AxIlSS+bv2EvMq+7ollItzv1rZG4cyXWmZORmzxdjX9tjb1Dc0LvVir9lQHsGl0NbMxu
+         dDAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7sNMbEN2ZWSKBSAKG7biB3FxMf95az/sXODaHaCSWMs=;
+        b=qO7qS1ZGxK+hOMCkiSDVEOjnm14Kcg2bwK4Ggv6JJWlUXBgo7Wixl9YiaiocXkp9L4
+         G8F1Fio4X2QNIT5g5PMI3hovzTCYj5hwKsaCQYVluXibh7pvl9PKIqWZcMWmsZ+jzgRn
+         tjtGBWPJ6q5XGaSLbmWn/N1sRe2pIGtRIHE20JM+MxWR+XOaKsKIqYvVPuesifbuKEZQ
+         KVpBIPtB0+cIZM8w1jowpXFfsTO08LjezeunHU9/8Hwd4koh0dnW4d4oiwDD5bOO+gJN
+         aAwQJAmWLFGrWIO4URhvHbooCFDXhBRqZicSmsgUqWRovAizfAOzEgf6hSEaZkWgMyEN
+         WE+Q==
+X-Gm-Message-State: AOAM532Ad+/MtxStFo1AO47IO4jyyzg8FEkcD5ahKVwtG8NkvvqrVa90
+        NjjSPMUgYQQcfZo9+07WD/CSrETi6NlOPA==
+X-Google-Smtp-Source: ABdhPJw6ZCPvGXCBpXm4rynDmp58kloRm/T18gaJuFBSN0X6h1u23KWWxaJ+mFJOT3PwydMvdL4l/A==
+X-Received: by 2002:a4a:e1cb:: with SMTP id n11mr1840337oot.46.1644446111200;
+        Wed, 09 Feb 2022 14:35:11 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id s64sm7233725oos.0.2022.02.09.14.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Feb 2022 14:35:10 -0800 (PST)
+Date:   Wed, 9 Feb 2022 16:35:08 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette ? <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for
+ GDSCs
+Message-ID: <YgRBnExwlzI+lPlR@builder.lan>
+References: <20220209172513.17873-1-tdas@codeaurora.org>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220209172513.17873-1-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Qing Wang <wangqing@vivo.com>
-> Sent: 09 February 2022 08:37
-> 
-> From: Wang Qing <wangqing@vivo.com>
-> 
-> do_div() does a 64-by-32 division.
-> When the divisor is u64, do_div() truncates it to 32 bits, this means it
-> can test non-zero and be truncated to zero for division.
+On Wed 09 Feb 11:25 CST 2022, Taniya Das wrote:
 
-What is the domain of parent_rate?
-
-Unless it can exceed 2^32 do_div() is correct.
-Ignore checkpatch.
-
+> Do not update the transition delay and use the default reset values.
 > 
-> fix do_div.cocci warning:
-> WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
-> 
-> Signed-off-by: Wang Qing <wangqing@vivo.com>
+> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  drivers/clk/imx/clk-frac-pll.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/clk/qcom/gdsc.c | 6 +++++-
+>  drivers/clk/qcom/gdsc.h | 1 +
+>  2 files changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-> index c703056..90b25e3
-> --- a/drivers/clk/imx/clk-frac-pll.c
-> +++ b/drivers/clk/imx/clk-frac-pll.c
-> @@ -129,11 +129,11 @@ static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
->  	parent_rate *= 8;
->  	rate *= 2;
->  	temp64 = rate;
-> -	do_div(temp64, parent_rate);
-> +	div64_u64(temp64, parent_rate);
->  	divfi = temp64;
->  	temp64 = rate - divfi * parent_rate;
->  	temp64 *= PLL_FRAC_DENOM;
-> -	do_div(temp64, parent_rate);
-> +	div64_u64(temp64, parent_rate);
->  	divff = temp64;
-> 
->  	temp64 = parent_rate;
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 7e1dd8ccfa38..e7b213450640 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
+>  	 */
+>  	mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
+>  	       EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
+> -	val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+> +
+> +	regmap_read(sc->regmap, sc->gdscr, &val);
+> +
+> +	if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
+
+I dug a little bit more into this and noticed that on various platforms
+CLK_DIS_WAIT_VAL for the GPU_CX GDSC is supposed to be 8 (whereas both
+hw default and CLK_DIS_WAIT_VAL is 2).
+
+I'm not able to find anything helpful in the git log describing what the
+value does, but it seems that a "just use hw default" flag won't cut it
+for this scenario.
+
+Regards,
+Bjorn
+
+> +		val |= EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+>  	ret = regmap_update_bits(sc->regmap, sc->gdscr, mask, val);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index d7cc4c21a9d4..1bd3ecdd0b0a 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -53,6 +53,7 @@ struct gdsc {
+>  #define ALWAYS_ON	BIT(6)
+>  #define RETAIN_FF_ENABLE	BIT(7)
+>  #define NO_RET_PERIPH	BIT(8)
+> +#define DEFAULT_TRANSITION_DELAY	BIT(9)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
 > --
-> 2.7.4
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
