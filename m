@@ -2,216 +2,105 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058EDC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 22:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A74DC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 23:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233685AbiBIWlq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 17:41:46 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:34932 "EHLO
+        id S236868AbiBIXCX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 18:02:23 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbiBIWlq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 17:41:46 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A77AE04FEFE
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 14:41:47 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id f23so6982673lfe.5
-        for <linux-clk@vger.kernel.org>; Wed, 09 Feb 2022 14:41:47 -0800 (PST)
+        with ESMTP id S236811AbiBIXCW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 18:02:22 -0500
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51210E01976B;
+        Wed,  9 Feb 2022 15:02:21 -0800 (PST)
+Received: by mail-ed1-x536.google.com with SMTP id co28so8046059edb.1;
+        Wed, 09 Feb 2022 15:02:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=xfbJumfno58ziWvDD+Jp7tnvjCMlLu2zll9g2xMdATc=;
-        b=YP+ZirJ6KlzSlxybJyHUL1BcGATx9ofl+4dPCPtEu6/M/tQCGtqMXWebwy2ktLbQMt
-         n+YZyUWUkGjU2CzSzpKQlARxaLoHu4Cycrfs78HMEMXupr9lLfKQUxtxYGrJCBgGZOO1
-         EUrBAjvLrVioSbWgB/JmSoRR7tfcZw0LUnmXDlkAoB9j+ubF++XnbeZ2U7eDtwGmLssY
-         jXtdEVcU1EsGGBnEDq5UuGwCC+X77HUzmgBtDkX5ghyScELg/jmoA1mcJyg1hw4Df9tt
-         QzAdtfsrD0Ioyx+qH+go1YMfU95aVRDq99xlAjBQIBlfYqKKT+9ilwe+t18s4si5ByHU
-         QbkA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WGIEHx+L4uAdTf1VzXQaUpLJlWUcIhu07EIIF1wAFus=;
+        b=maSInnkknThRDgxyUU26cPJ/GRDE224IYjl3dSi18eCKyBLTJ97jIO6112ZO2In8QI
+         x/0TAq3dIe01KVRgLgH5Ah5VOIkLIZdhfS7F3DZVxJBChqQcrScKSEDDnkP6zh+YTMWt
+         n0ReI2QRmnzhetKFakFCSoOLxgjCx0du7xWhy+TWpRC0YJitAneSbEVoKGBOosEWo/ev
+         pGm55G2vxJd6CUpIHFES9oZKgQYbtulzTLYxBeNkMyaAjzUaOHa5uxdk38iFmIUUECtR
+         AZZUOfML8t/FnZnGziM6atPBwFuHuiFJGlbhK2yh0sERjVll1SNPt1sIrPmKxjaNVWWR
+         u+og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xfbJumfno58ziWvDD+Jp7tnvjCMlLu2zll9g2xMdATc=;
-        b=sJlHr6ssLx8AZSx5WGuqzAMw/OJPnFVom97yOtlyWsJnW8odXBwFelQY5esaOO2+zt
-         aoCAOZ3WhvIZfUrh+jshsuu35ujRdvfQZs7gA4pIgoOaqQH3IuNEyEvj00Usr27mWQ+0
-         zmGpEwMBBqv8a25JLYGAEYDg3Kz8w8JVEvs85sn0BoXrh4mxQfgYxWU2K+h1OGnNTd6j
-         DsDWBIp9gveGt0iJHNOj952Rps+7T7gjM5IRvqVpwz1BlGFemDvbeyVYRWq/dc81rdsZ
-         9OEOC/lHaStJYo6x5cGCWlc2HGRxOWSTLfgctFqejqgASJffzlpstNWW8nVt/MlY1S2C
-         I8Xw==
-X-Gm-Message-State: AOAM530fKedDK1etAaU24fBKYcXVsLxmMwtVn165YfOjcNHNZqy2i5f0
-        Vie48e4ectVxNnNwad2u7xAN5A==
-X-Google-Smtp-Source: ABdhPJybdtw8wKhrN+sqYekgmLsbcbynpGit8lsK3XdBoCnH6y+wXxn5BBa+xZEMoPsdr9Wv4CcXOw==
-X-Received: by 2002:a05:6512:22c6:: with SMTP id g6mr3154441lfu.326.1644446505872;
-        Wed, 09 Feb 2022 14:41:45 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id k17sm595492lfv.81.2022.02.09.14.41.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Feb 2022 14:41:45 -0800 (PST)
-Message-ID: <b7e0ad58-b837-7dcf-4386-ab7ff82ee65c@linaro.org>
-Date:   Thu, 10 Feb 2022 01:41:44 +0300
+        bh=WGIEHx+L4uAdTf1VzXQaUpLJlWUcIhu07EIIF1wAFus=;
+        b=6B2wSik8IrG6D4jD9U7IYKRRYdp0IkyZNudsW1CE9uorZL+GFNKnuHsKw8JbXFEZsO
+         pnjAebh8aP9YtBBleXKUZmcU51Au7zh4NDyrAWB4fLrnmBWsRqZx2Yy2kdD5f9FkJL1E
+         i/j+i506sPp5A6mD0//7xS9fRzTuHQXnLw1vn7hu2skPeobRd0rez64hxxsJNGe9DGb2
+         UpQPLX4Lk5Inl8VEBF71cFZS9lx9MDj4PrIWXmT6hhqjh0oNQ2ENuKRQsPH8Dcu7h8Gn
+         7jc79HKphrJkvsqUQoe8vAG2IgEyx647uzuVTNEZdJCQUABBxkGl+Uo+1qTPyII1/G8h
+         K9xw==
+X-Gm-Message-State: AOAM533iBDKoqMAzIutgSUW91Rx7dEc8ZdeK4fWohUv1QbHY/2mBc4AW
+        ZYdTZkBM6jmRiG8f6c8tahI=
+X-Google-Smtp-Source: ABdhPJzlM0o29Q+3zByPxKJEGxnYYWb7oyrYi3rp56w8xk/KHhpxnLk1OPFtL2bTTKxUmi0lbIujIw==
+X-Received: by 2002:aa7:cfcd:: with SMTP id r13mr5265548edy.55.1644447739764;
+        Wed, 09 Feb 2022 15:02:19 -0800 (PST)
+Received: from localhost (92.40.202.147.threembb.co.uk. [92.40.202.147])
+        by smtp.gmail.com with ESMTPSA id z22sm7843198edq.9.2022.02.09.15.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Feb 2022 15:02:19 -0800 (PST)
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     paul@crapouillou.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: ingenic-tcu: Fix missing TCU clock for X1000 SoC
+Date:   Wed,  9 Feb 2022 23:01:47 +0000
+Message-Id: <20220209230145.18943-1-aidanmacdonald.0x0@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tied to
- the GDSC
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Wilczy??ski <kw@linux.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Prasad Malisetty <pmaliset@codeaurora.org>
-References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
- <20220204144645.3016603-4-dmitry.baryshkov@linaro.org>
- <Yf2jRAf5UKYSMYxe@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <Yf2jRAf5UKYSMYxe@builder.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/02/2022 01:05, Bjorn Andersson wrote:
-> On Fri 04 Feb 08:46 CST 2022, Dmitry Baryshkov wrote:
-> 
->> On newer Qualcomm platforms GCC_PCIE_n_PIPE_CLK_SRC should be controlled
->> together with the PCIE_n_GDSC. The clock should be fed from the TCXO
->> before switching the GDSC off and can be fed from PCIE_n_PIPE_CLK once
->> the GDSC is on.
->>
->> Since commit aa9c0df98c29 ("PCI: qcom: Switch pcie_1_pipe_clk_src after
->> PHY init in SC7280") PCIe controller driver tries to manage this on it's
->> own, resulting in the non-optimal code. Furthermore, if the any of the
->> drivers will have the same requirements, the code would have to be
->> dupliacted there.
->>
->> Move handling of such clocks to the GDSC code, providing special GDSC
->> type.
->>
-> 
-> As discussed on IRC, I'm inclined not to take this, because looks to me
-> to be the same situation that we have with all GDSCs in SM8350 and
-> onwards - that some clocks must be parked on a safe parent before the
-> associated GDSC can be toggled.
-> 
-> Prasad, please advice on what the actual requirements are wrt the
-> gcc_pipe_clk_src. When does it need to provide a valid signal and when
-> does it need to be parked?
+The X1000 does have a TCU clock gate, so pass it to the driver.
+Without this the TCU can be gated automatically, which prevents
+timers from running and stops register writes from taking effect.
 
-Prasad, any comments?
+Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+---
+ arch/mips/boot/dts/ingenic/x1000.dtsi | 5 +++--
+ drivers/clk/ingenic/tcu.c             | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-> 
-> Regards,
-> Bjorn
-> 
->> Cc: Prasad Malisetty <pmaliset@codeaurora.org>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/gdsc.c | 41 +++++++++++++++++++++++++++++++++++++++++
->>   drivers/clk/qcom/gdsc.h | 14 ++++++++++++++
->>   2 files changed, 55 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
->> index 7e1dd8ccfa38..9913d1b70947 100644
->> --- a/drivers/clk/qcom/gdsc.c
->> +++ b/drivers/clk/qcom/gdsc.c
->> @@ -45,6 +45,7 @@
->>   #define TIMEOUT_US		500
->>   
->>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
->> +#define domain_to_pipe_clk_gdsc(domain) container_of(domain, struct pipe_clk_gdsc, base.pd)
->>   
->>   enum gdsc_status {
->>   	GDSC_OFF,
->> @@ -549,3 +550,43 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
->>   	return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
->> +
->> +/*
->> + * Special operations for GDSCs with attached pipe clocks.
->> + * The clock should be parked to safe source (tcxo) before turning off the GDSC
->> + * and can be switched on as soon as the GDSC is on.
->> + *
->> + * We remove respective clock sources from clocks map and handle them manually.
->> + */
->> +int gdsc_pipe_enable(struct generic_pm_domain *domain)
->> +{
->> +	struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
->> +	int i, ret;
->> +
->> +	ret = gdsc_enable(domain);
->> +	if (ret)
->> +		return ret;
->> +
->> +	for (i = 0; i< sc->num_clocks; i++)
->> +		regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
->> +				BIT(sc->clocks[i].shift + sc->clocks[i].width) - BIT(sc->clocks[i].shift),
->> +				sc->clocks[i].on_value << sc->clocks[i].shift);
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(gdsc_pipe_enable);
->> +
->> +int gdsc_pipe_disable(struct generic_pm_domain *domain)
->> +{
->> +	struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
->> +	int i;
->> +
->> +	for (i = sc->num_clocks - 1; i >= 0; i--)
->> +		regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
->> +				BIT(sc->clocks[i].shift + sc->clocks[i].width) - BIT(sc->clocks[i].shift),
->> +				sc->clocks[i].off_value << sc->clocks[i].shift);
->> +
->> +	/* In case of an error do not try turning the clocks again. We can not be sure about the GDSC state. */
->> +	return gdsc_disable(domain);
->> +}
->> +EXPORT_SYMBOL_GPL(gdsc_pipe_disable);
->> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
->> index d7cc4c21a9d4..b1a2f0abe41c 100644
->> --- a/drivers/clk/qcom/gdsc.h
->> +++ b/drivers/clk/qcom/gdsc.h
->> @@ -68,11 +68,25 @@ struct gdsc_desc {
->>   	size_t num;
->>   };
->>   
->> +struct pipe_clk_gdsc {
->> +	struct gdsc base;
->> +	int num_clocks;
->> +	struct {
->> +		u32 reg;
->> +		u32 shift;
->> +		u32 width;
->> +		u32 off_value;
->> +		u32 on_value;
->> +	} clocks[];
->> +};
->> +
->>   #ifdef CONFIG_QCOM_GDSC
->>   int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
->>   		  struct regmap *);
->>   void gdsc_unregister(struct gdsc_desc *desc);
->>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
->> +int gdsc_pipe_enable(struct generic_pm_domain *domain);
->> +int gdsc_pipe_disable(struct generic_pm_domain *domain);
->>   #else
->>   static inline int gdsc_register(struct gdsc_desc *desc,
->>   				struct reset_controller_dev *rcdev,
->> -- 
->> 2.34.1
->>
-
-
+diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
+index 8bd27edef216..c69df8eb158e 100644
+--- a/arch/mips/boot/dts/ingenic/x1000.dtsi
++++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+@@ -111,8 +111,9 @@ tcu: timer@10002000 {
+ 
+ 		clocks = <&cgu X1000_CLK_RTCLK>,
+ 			 <&cgu X1000_CLK_EXCLK>,
+-			 <&cgu X1000_CLK_PCLK>;
+-		clock-names = "rtc", "ext", "pclk";
++			 <&cgu X1000_CLK_PCLK>,
++			 <&cgu X1000_CLK_TCU>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
+ 
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
+diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+index 77acfbeb4830..9c86043f673a 100644
+--- a/drivers/clk/ingenic/tcu.c
++++ b/drivers/clk/ingenic/tcu.c
+@@ -320,7 +320,7 @@ static const struct ingenic_soc_info jz4770_soc_info = {
+ static const struct ingenic_soc_info x1000_soc_info = {
+ 	.num_channels = 8,
+ 	.has_ost = false, /* X1000 has OST, but it not belong TCU */
+-	.has_tcu_clk = false,
++	.has_tcu_clk = true,
+ };
+ 
+ static const struct of_device_id __maybe_unused ingenic_tcu_of_match[] __initconst = {
 -- 
-With best wishes
-Dmitry
+2.34.1
+
