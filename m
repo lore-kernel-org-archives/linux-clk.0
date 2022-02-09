@@ -2,124 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3046AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 18:20:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E76C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 18:24:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239233AbiBISUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 13:20:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39780 "EHLO
+        id S238862AbiBISYv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 13:24:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238848AbiBIST6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 13:19:58 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2B0C05CB9B
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 10:19:42 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id g19-20020a9d6213000000b005ab7489371aso2111791otj.6
-        for <linux-clk@vger.kernel.org>; Wed, 09 Feb 2022 10:19:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pU0dqn8lnFCTNLGf/LH82EvPqHzjw/3SXlQybd6OXMg=;
-        b=bgOvEokEIgRc/1F8RRAecOt3Dak+BR1J3f1O0/qQkELU7LCKZWzTk+UwchF5ihpMWK
-         BMI7D4VxOsNfW4EOZyJ0HxKLy93u+eL86RcJ5g5+qK5TL3RjxqhabCR6VHCvyKBT4k1s
-         o98e8kKfprxof12SNhGhWourxwmHQtkPVL9o1IIw5JOQgsX8FTMrfg7hKWe/SiUe9765
-         RIYATVIKX6pvnnAt8WucRowPDtqqcaqtCyzmeXOAx27WtZ52mWRPf353ik1fp7L6DU/V
-         P/3gAwUg52p2cdnqnuyQRG83Wbx77NrsGjiAoUjertMG5NVjlffpmTG+wjQkzbi5GfWX
-         8Tug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pU0dqn8lnFCTNLGf/LH82EvPqHzjw/3SXlQybd6OXMg=;
-        b=XwOEVrxNN0pAV9IOk5LwyfQjdZOJ8RXIAri2j63Upqy3n2/exoXB7a3h0202XK5pfA
-         4tuxy6afQ8cyyXiKfxrwRTrc33Rn89fZScaWcgFU0r0M6bz8hGPjWvlt+V+qMviV/1Jl
-         tw2SiARoipXzS60XeUv/1jckVSf21hChZEJ10LmlwoA1PAnyqx2gp0LjqVHMA046vMrC
-         00I40yrpPzvdg3Ws/UKChfO5+s+0rkFY2VivBPgu5TP/gcyXzuc877VwyJvocqJBMjNs
-         HSNdfEQqEai4uG1+seiqwz0VhDalscFCd2OjQagEd238gI9XXgQA+ZwS06G0ukaRuNHQ
-         A/HQ==
-X-Gm-Message-State: AOAM5326rzYJeGKkTQVZ08SBk6vBRkug5SqgYPJ9mR2Fmnef/einP68Y
-        jPOFJp9UC4inpRkqBuFUMk0P8w==
-X-Google-Smtp-Source: ABdhPJwBnwtWw3FzLlnwKnUqlADNBECdwZMQa9xRDt51B9Sn+3bP3c0oyp8I1OXZFPGcdzON9ZLN3g==
-X-Received: by 2002:a9d:628a:: with SMTP id x10mr1422718otk.264.1644430782236;
-        Wed, 09 Feb 2022 10:19:42 -0800 (PST)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id q11sm6959373oti.3.2022.02.09.10.19.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Feb 2022 10:19:41 -0800 (PST)
-Date:   Wed, 9 Feb 2022 12:19:39 -0600
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette ? <mturquette@baylibre.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for
- GDSCs
-Message-ID: <YgQFu2CkBjx3O2i5@builder.lan>
-References: <20220209172513.17873-1-tdas@codeaurora.org>
+        with ESMTP id S231371AbiBISYu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 13:24:50 -0500
+Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE7BC0613C9;
+        Wed,  9 Feb 2022 10:24:53 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.108.4.23])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id 9152623D181;
+        Wed,  9 Feb 2022 18:24:50 +0000 (UTC)
+Received: from [192.168.1.103] (88.125.132.78) by DAG1EX2.emp2.local
+ (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Wed, 9 Feb
+ 2022 19:24:49 +0100
+Message-ID: <5d21aa14-72fc-1cd9-05b1-6f91c62eb14d@traphandler.com>
+Date:   Wed, 9 Feb 2022 19:24:49 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220209172513.17873-1-tdas@codeaurora.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 1/6] clk: renesas: r9a06g032: Enable the watchdog reset
+ sources
+Content-Language: en-US
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20220204161806.3126321-1-jjhiblot@traphandler.com>
+ <20220204161806.3126321-2-jjhiblot@traphandler.com>
+ <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
+ <89c0a032-3124-fc56-607c-5aeaac73fdc4@traphandler.com>
+ <CAMuHMdVvrs-p4Tz2m7R8g7gXJRetTGKJNaQPEO_DYKDzu5u64A@mail.gmail.com>
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+In-Reply-To: <CAMuHMdVvrs-p4Tz2m7R8g7gXJRetTGKJNaQPEO_DYKDzu5u64A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [88.125.132.78]
+X-ClientProxiedBy: DAG1EX2.emp2.local (172.16.2.2) To DAG1EX2.emp2.local
+ (172.16.2.2)
+X-Ovh-Tracer-Id: 500462510111537627
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheelgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfhisehtjeertddtfeejnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpefhiedthedttdegueeggfdtjeegtdeileeftdegheeutdetjeeuieehtdevvdefieenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 09 Feb 11:25 CST 2022, Taniya Das wrote:
+Hi Geert,
 
-> Do not update the transition delay and use the default reset values.
-> 
+On 08/02/2022 11:35, Geert Uytterhoeven wrote:
+> Hi Jean-Jacques,
+>
+> On Tue, Feb 8, 2022 at 11:25 AM Jean-Jacques Hiblot
+> <jjhiblot@traphandler.com> wrote:
+>> On 07/02/2022 16:34, Geert Uytterhoeven wrote:
+>>> On Fri, Feb 4, 2022 at 5:18 PM Jean-Jacques Hiblot
+>>> <jjhiblot@traphandler.com> wrote:
+>>>> The watchdog reset sources are not enabled by default.
+>>>> Enabling them here to make sure that the system resets when the watchdog
+>>>> timers expire.
+>>>>
+>>>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>>> Thanks for your patch!
+>>>
+>>> R-Car Gen3 and RZ/G2 SoCs have a similar mechanism.
+>>> On these SoCs, the boot loader takes care of the configuration, as this
+>>> is a system policy that goes beyond the Linux realm.
+>>> Perhaps the RZ/N1 boot loader can do the same?
+>>>
+>>> Gr{oetje,eeting}s,
+>> Thanks for you reviews and comments.
+>>
+>> I'm not conformable with the idea that the safety induced by the
+>> watchdog is removed because the bootloader didn't set the register.
+> What if the CM33 is the master, and the CM33 just wants to receive an
+> interrupt when one of the CA7 watchdog timers times out?
 
-Can you help me understand what "the transition delay" is? In particular
-I would like to know which other platforms, past, present and future
-should have this flag set - or not set.
+In the next version of the patch I removed the part that enables the 
+reset source.
 
-> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/gdsc.c | 6 +++++-
->  drivers/clk/qcom/gdsc.h | 1 +
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index 7e1dd8ccfa38..e7b213450640 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
->  	 */
->  	mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
->  	       EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
-> -	val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
-> +
-> +	regmap_read(sc->regmap, sc->gdscr, &val);
-> +
-> +	if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
+However I kept the part that disables the reset source when the system 
+is halted
 
-Why is it a good idea to not have a transition delay other than the
-default one on all the other gdscs?
+because the system would otherwise reboot when a watchdog expires. Do you
 
-Regards,
-Bjorn
+see a scenario where this could be a problem ?
 
-> +		val |= EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
->  	ret = regmap_update_bits(sc->regmap, sc->gdscr, mask, val);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index d7cc4c21a9d4..1bd3ecdd0b0a 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -53,6 +53,7 @@ struct gdsc {
->  #define ALWAYS_ON	BIT(6)
->  #define RETAIN_FF_ENABLE	BIT(7)
->  #define NO_RET_PERIPH	BIT(8)
-> +#define DEFAULT_TRANSITION_DELAY	BIT(9)
->  	struct reset_controller_dev	*rcdev;
->  	unsigned int			*resets;
->  	unsigned int			reset_count;
+JJ
+
+>
+>> I'd rather that the kernel is able to enable the watchdog reset source.
+>> If it is acceptable, we could use a new DTS entry to force the policy.
+> DT describes hardware. not software policy.
+> Although I agree e.g. the watchdog timeout value is software policy.
+
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
+>
 > --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-> 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                  -- Linus Torvalds
