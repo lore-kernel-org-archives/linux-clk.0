@@ -2,115 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CDFC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 17:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3046AC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 18:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238358AbiBIRal (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 12:30:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
+        id S239233AbiBISUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Feb 2022 13:20:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238348AbiBIRak (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 12:30:40 -0500
-X-Greylist: delayed 305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Feb 2022 09:30:43 PST
-Received: from m43-7.mailgun.net (m43-7.mailgun.net [69.72.43.7])
-        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id 88DFAC05CB86
-        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 09:30:43 -0800 (PST)
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1644427843; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=Ba1VoMMEuOPktM9Yg6uFT+fSY9haSWpuSOTs2kbr4zg=; b=X/uNHfHHMHh1l4RGSwC5sauYTemrp3JhnEcQg5knVTwnLtqsyhjegeRrbVOO5jD+w6F+Dazg
- lB1MyVa1E7Ru6XBrxmRMlolrFbbgbM9/RRzZmFue+kRClTp54VC88bJxInCASKyh7JyfXIVU
- aLKe5kZSoCvTLHjpGjgWWJrSiLk=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n06.prod.us-east-1.postgun.com with SMTP id
- 6203f9104bd957b967f5ad5c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 09 Feb 2022 17:25:36
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A8B65C43638; Wed,  9 Feb 2022 17:25:35 +0000 (UTC)
-Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B3E74C43619;
-        Wed,  9 Feb 2022 17:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org B3E74C43619
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        with ESMTP id S238848AbiBIST6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 13:19:58 -0500
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2B0C05CB9B
+        for <linux-clk@vger.kernel.org>; Wed,  9 Feb 2022 10:19:42 -0800 (PST)
+Received: by mail-ot1-x32a.google.com with SMTP id g19-20020a9d6213000000b005ab7489371aso2111791otj.6
+        for <linux-clk@vger.kernel.org>; Wed, 09 Feb 2022 10:19:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pU0dqn8lnFCTNLGf/LH82EvPqHzjw/3SXlQybd6OXMg=;
+        b=bgOvEokEIgRc/1F8RRAecOt3Dak+BR1J3f1O0/qQkELU7LCKZWzTk+UwchF5ihpMWK
+         BMI7D4VxOsNfW4EOZyJ0HxKLy93u+eL86RcJ5g5+qK5TL3RjxqhabCR6VHCvyKBT4k1s
+         o98e8kKfprxof12SNhGhWourxwmHQtkPVL9o1IIw5JOQgsX8FTMrfg7hKWe/SiUe9765
+         RIYATVIKX6pvnnAt8WucRowPDtqqcaqtCyzmeXOAx27WtZ52mWRPf353ik1fp7L6DU/V
+         P/3gAwUg52p2cdnqnuyQRG83Wbx77NrsGjiAoUjertMG5NVjlffpmTG+wjQkzbi5GfWX
+         8Tug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pU0dqn8lnFCTNLGf/LH82EvPqHzjw/3SXlQybd6OXMg=;
+        b=XwOEVrxNN0pAV9IOk5LwyfQjdZOJ8RXIAri2j63Upqy3n2/exoXB7a3h0202XK5pfA
+         4tuxy6afQ8cyyXiKfxrwRTrc33Rn89fZScaWcgFU0r0M6bz8hGPjWvlt+V+qMviV/1Jl
+         tw2SiARoipXzS60XeUv/1jckVSf21hChZEJ10LmlwoA1PAnyqx2gp0LjqVHMA046vMrC
+         00I40yrpPzvdg3Ws/UKChfO5+s+0rkFY2VivBPgu5TP/gcyXzuc877VwyJvocqJBMjNs
+         HSNdfEQqEai4uG1+seiqwz0VhDalscFCd2OjQagEd238gI9XXgQA+ZwS06G0ukaRuNHQ
+         A/HQ==
+X-Gm-Message-State: AOAM5326rzYJeGKkTQVZ08SBk6vBRkug5SqgYPJ9mR2Fmnef/einP68Y
+        jPOFJp9UC4inpRkqBuFUMk0P8w==
+X-Google-Smtp-Source: ABdhPJwBnwtWw3FzLlnwKnUqlADNBECdwZMQa9xRDt51B9Sn+3bP3c0oyp8I1OXZFPGcdzON9ZLN3g==
+X-Received: by 2002:a9d:628a:: with SMTP id x10mr1422718otk.264.1644430782236;
+        Wed, 09 Feb 2022 10:19:42 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id q11sm6959373oti.3.2022.02.09.10.19.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Feb 2022 10:19:41 -0800 (PST)
+Date:   Wed, 9 Feb 2022 12:19:39 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette ? <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [v1 2/2] clk: qcom: dispcc: Update gdsc flag for display GDSC
-Date:   Wed,  9 Feb 2022 22:55:13 +0530
-Message-Id: <20220209172513.17873-2-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220209172513.17873-1-tdas@codeaurora.org>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for
+ GDSCs
+Message-ID: <YgQFu2CkBjx3O2i5@builder.lan>
 References: <20220209172513.17873-1-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220209172513.17873-1-tdas@codeaurora.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the mdss gdsc flag for SC7180/SC7280/SM8150/SM8250
-to not program the transition delay.
+On Wed 09 Feb 11:25 CST 2022, Taniya Das wrote:
 
-Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for SC7180")
-Fixes: 1a00c962f9cd ("clk: qcom: Add display clock controller driver for SC7280")
-Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for SM8150 and SM8250")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/dispcc-sc7180.c | 2 +-
- drivers/clk/qcom/dispcc-sc7280.c | 2 +-
- drivers/clk/qcom/dispcc-sm8250.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> Do not update the transition delay and use the default reset values.
+> 
 
-diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
-index 538e4963c915..c203888ab2ca 100644
---- a/drivers/clk/qcom/dispcc-sc7180.c
-+++ b/drivers/clk/qcom/dispcc-sc7180.c
-@@ -629,7 +629,7 @@ static struct gdsc mdss_gdsc = {
- 		.name = "mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL |  DEFAULT_TRANSITION_DELAY,
- };
+Can you help me understand what "the transition delay" is? In particular
+I would like to know which other platforms, past, present and future
+should have this flag set - or not set.
 
- static struct gdsc *disp_cc_sc7180_gdscs[] = {
-diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
-index 4ef4ae231794..8e1a2d4a8120 100644
---- a/drivers/clk/qcom/dispcc-sc7280.c
-+++ b/drivers/clk/qcom/dispcc-sc7280.c
-@@ -791,7 +791,7 @@ static struct gdsc disp_cc_mdss_core_gdsc = {
- 		.name = "disp_cc_mdss_core_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE | DEFAULT_TRANSITION_DELAY,
- };
+> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 6 +++++-
+>  drivers/clk/qcom/gdsc.h | 1 +
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index 7e1dd8ccfa38..e7b213450640 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
+>  	 */
+>  	mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
+>  	       EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
+> -	val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+> +
+> +	regmap_read(sc->regmap, sc->gdscr, &val);
+> +
+> +	if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
 
- static struct clk_regmap *disp_cc_sc7280_clocks[] = {
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index 566fdfa0a15b..4d64d499a285 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -1130,7 +1130,7 @@ static struct gdsc mdss_gdsc = {
- 		.name = "mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL,
-+	.flags = HW_CTRL | DEFAULT_TRANSITION_DELAY,
- 	.supply = "mmcx",
- };
+Why is it a good idea to not have a transition delay other than the
+default one on all the other gdscs?
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Regards,
+Bjorn
 
+> +		val |= EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+>  	ret = regmap_update_bits(sc->regmap, sc->gdscr, mask, val);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index d7cc4c21a9d4..1bd3ecdd0b0a 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -53,6 +53,7 @@ struct gdsc {
+>  #define ALWAYS_ON	BIT(6)
+>  #define RETAIN_FF_ENABLE	BIT(7)
+>  #define NO_RET_PERIPH	BIT(8)
+> +#define DEFAULT_TRANSITION_DELAY	BIT(9)
+>  	struct reset_controller_dev	*rcdev;
+>  	unsigned int			*resets;
+>  	unsigned int			reset_count;
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
