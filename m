@@ -2,76 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02441C43217
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 04:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E50C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 04:08:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345903AbiBIEH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Feb 2022 23:07:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
+        id S1345983AbiBIEH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Feb 2022 23:07:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347361AbiBIDny (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 22:43:54 -0500
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632E0C0401C0;
-        Tue,  8 Feb 2022 19:34:03 -0800 (PST)
-Received: by mail-oi1-f182.google.com with SMTP id t199so1198072oie.10;
-        Tue, 08 Feb 2022 19:34:03 -0800 (PST)
+        with ESMTP id S1347194AbiBIDjU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Feb 2022 22:39:20 -0500
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58AFC043186;
+        Tue,  8 Feb 2022 19:32:54 -0800 (PST)
+Received: by mail-oi1-f181.google.com with SMTP id ay7so1207959oib.8;
+        Tue, 08 Feb 2022 19:32:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=WAlxN8bgtyXgcYHA0KP+K5lEbx7cfGwSBqWcp3rk/io=;
-        b=GI0UaHL2oOmHj+HzC2uvBS50HiVKqTfCvrgiIOMaUKFXKzNCnC5U8QknzgV659OKwg
-         PYUGuTTDYODGNooElvN5GtxDm9nYUUuah9f9svS6L7j661KaXimOOaTpvgK72LuVA1Ep
-         ACQoCnhuLwNNaas6f6r2pIHtdpvs5S8lE1gNnOSASpltdn3hX+UHmtrKyRmajtSpaPBw
-         UN6iJ5/SruLTCjSVSlZD48nIfOhScYLKLrAQI2L0k0MluBhzwhPZm4uO/fWFgTc+xnW2
-         3UKUyrZMq2vFZu1f4RtP2KVTtAzxJ8CzgPRjbGwKccsEgUW1/YPAnJFE2yCoUoCMJb4i
-         1sIg==
-X-Gm-Message-State: AOAM531Z1Kh2ZsFYa4K43SnX1UamqjXbtAznHKtx7UQnTgE9Pa6z51J7
-        /ZTgG1jU68uELS0EE4GyWg==
-X-Google-Smtp-Source: ABdhPJxEz3ptZ7VgzPkwMka157fr3gyleGSPsZ0XvNL3UkGAdZZgyX9IYK+UR8roZHlem1JQSR50OA==
-X-Received: by 2002:a05:6808:30a3:: with SMTP id bl35mr492059oib.226.1644377642643;
-        Tue, 08 Feb 2022 19:34:02 -0800 (PST)
+        bh=xVw4y7RQcicGcqAuoJIIuX9sgfKI9eeI2fR3E2FgTqw=;
+        b=gZs+UuEGlJxmDKsUbx4WSHZ63bRNA+Z/jXjppVaA9Cs0sBWp5rSHKGuWMWfOUr2Jlz
+         vcaYWSEn5vCirFeElVKG4Z6n04zq3hNlFl/zcHBYZy3+oAV8XNEePxU8Yfym/mdPxXnV
+         +TPlbPJxLzlfLZmYqFbpxZ08QyxhTy78ZOwSEBzdlGMiKqjxqunGvsYptuidZpP7Vvyy
+         iiUXOr4xF5J0AsKy4KukYCPhvtc0VU9d2MeIiezCaoCdCy6bmg+ZQzESBlXhNiFw+sVa
+         aTPMBsXN/sfEFd/7g+A52TYbCO57QSpfJgUu1+ErQFDvW+Q6UHrPp+x7IFpDq5bXXMVy
+         UJ1g==
+X-Gm-Message-State: AOAM533e3iDyDsI//Sq1dBH0iZE4a+LZEAc5sUWKH9P34P4/63t+YwrP
+        voHO5EeSmAPc/TZ92o+nzg==
+X-Google-Smtp-Source: ABdhPJxymnsCCtzX1ASuD0v5iwd+GBNOtOo+3Im/y5HtMBxm3SPRXXSc5a/Bd1zECZyepbo+R32dJQ==
+X-Received: by 2002:aca:3657:: with SMTP id d84mr129368oia.212.1644377573999;
+        Tue, 08 Feb 2022 19:32:53 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id a15sm6348800oil.13.2022.02.08.19.34.01
+        by smtp.gmail.com with ESMTPSA id e9sm6251393oom.8.2022.02.08.19.32.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Feb 2022 19:34:01 -0800 (PST)
-Received: (nullmailer pid 3588896 invoked by uid 1000);
-        Wed, 09 Feb 2022 03:34:00 -0000
-Date:   Tue, 8 Feb 2022 21:34:00 -0600
+        Tue, 08 Feb 2022 19:32:53 -0800 (PST)
+Received: (nullmailer pid 3586969 invoked by uid 1000);
+        Wed, 09 Feb 2022 03:32:52 -0000
+Date:   Tue, 8 Feb 2022 21:32:52 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     sboyd@kernel.org, davem@davemloft.net,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        bjorn.andersson@linaro.org, Vinod Koul <vkoul@kernel.org>,
-        netdev@vger.kernel.org, mturquette@baylibre.com,
-        bhupesh.linux@gmail.com, tdas@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, agross@kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: net: qcom,ethqos: Document SM8150 SoC
- compatible
-Message-ID: <YgM2KDD/oxxC+UKH@robh.at.kernel.org>
-References: <20220126221725.710167-1-bhupesh.sharma@linaro.org>
- <20220126221725.710167-2-bhupesh.sharma@linaro.org>
+To:     Emil Renner Berthing <kernel@esmil.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Zhu <michael.zhu@starfivetech.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Fu Wei <tekkamanninja@gmail.com>, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v1 3/7] dt-bindings: clock: Add JH7100 audio clock
+ definitions
+Message-ID: <YgM15GkF7Fv1y3gE@robh.at.kernel.org>
+References: <20220126173953.1016706-1-kernel@esmil.dk>
+ <20220126173953.1016706-4-kernel@esmil.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220126221725.710167-2-bhupesh.sharma@linaro.org>
+In-Reply-To: <20220126173953.1016706-4-kernel@esmil.dk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 27 Jan 2022 03:47:18 +0530, Bhupesh Sharma wrote:
-> From: Vinod Koul <vkoul@kernel.org>
+On Wed, 26 Jan 2022 18:39:49 +0100, Emil Renner Berthing wrote:
+> Add all clock outputs for the StarFive JH7100 audio clock generator.
 > 
-> SM8150 has a ethernet controller and needs a different configuration so
-> add a new compatible for this
-> 
-> Cc: Rob Herring <robh@kernel.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 > ---
->  Documentation/devicetree/bindings/net/qcom,ethqos.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  .../dt-bindings/clock/starfive-jh7100-audio.h | 41 +++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/starfive-jh7100-audio.h
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
