@@ -2,89 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9039FC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Feb 2022 12:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF90FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Feb 2022 17:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241872AbiBJM7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Feb 2022 07:59:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39598 "EHLO
+        id S235847AbiBJRbG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Feb 2022 12:31:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234200AbiBJM7X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 07:59:23 -0500
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 811811015;
-        Thu, 10 Feb 2022 04:59:24 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id g15so2939290uap.11;
-        Thu, 10 Feb 2022 04:59:24 -0800 (PST)
+        with ESMTP id S229794AbiBJRbF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 12:31:05 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 901A22647;
+        Thu, 10 Feb 2022 09:31:06 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id e7so12967909ejn.13;
+        Thu, 10 Feb 2022 09:31:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3xFsM0nPuhSGSTkyLUY3o2cz0yH3ogdvJBOAYbLu1Hk=;
+        b=NFIqILJvmbmsmCjc0R4PAAQddul5/KzW7LG+BLzvj0/dNZC+u98M4M+qdq+pUjpJ0b
+         Oleu3IvMbux2SiwuAWOR1U9+OsImEvzVVlmPi7m2AlkbsoVc17iLL2VeR4OGeHSauJ3Z
+         /rqv2WzSu8jI0yXOQWXzGDWEiuw19JQe8GtErQMfpZj3RHdSpjzhDZFqd0ZGjC+vzxif
+         RyiMmWlwfe82G51A598rtuz61GRA4dKTTyPOKB9+Vj8byqr+b46L+PNIuHY82wlmKQGr
+         Dqd+YsQKZRXvgSeDj27Y1rWXcEygIphIXIO233dTjpulEvX72YGnb0homEo3zfQeUyMn
+         cerw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4zb7o5Y7Pcwv8ufIfE7tm64mnQ1yV0mw8jO1XtBhS78=;
-        b=EmfAvWSTqOmiv9Lrzfa766JgCdijk4ZqDZeUxuZHGal00/nQCHx73BnUg5rr76kAgP
-         043pSfoDan3RmqrqMu2InIK+SMnQfTalrUVmAfQzDPjKwApFPbvSoej2vCACBZQfRd7u
-         /MtjzjWqD2Ne7lmxKQS591eo4yiMHDwk0AbkbLFbNyPGoqdVuGG0wjcV2rI465woEW0J
-         jIsz+xG2jddIYsZ2ZXQY0ykMpBwqmtpk8sYtC4zaew3wwq4uX8/ecTIoU60xzzVvg5Bp
-         g7p8VDcHXGTYmTlEwJQch9UQExav4bFoYrFlZbZqDSZ175uabL+wQwVVkPFdZFO87JOA
-         3y2w==
-X-Gm-Message-State: AOAM533QrgjjaICZNm6qmlR2y0IrE/IPRvzS9ozVdbBa0iji32CdZjjJ
-        4tb28gUahnqA2wy1MzQcrR9ZaSRIYQeW1Q==
-X-Google-Smtp-Source: ABdhPJxLVtQbO2gTHdJd3FfGhIUdXKXck8wBiDgPutdQR8cW++vvcVYt8UQngy2lFaWwYRYn3o98Vw==
-X-Received: by 2002:ab0:3045:: with SMTP id x5mr2418945ual.17.1644497963534;
-        Thu, 10 Feb 2022 04:59:23 -0800 (PST)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
-        by smtp.gmail.com with ESMTPSA id r26sm1625555uaw.12.2022.02.10.04.59.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Feb 2022 04:59:23 -0800 (PST)
-Received: by mail-ua1-f46.google.com with SMTP id u77so2946493uau.6;
-        Thu, 10 Feb 2022 04:59:23 -0800 (PST)
-X-Received: by 2002:ab0:384c:: with SMTP id h12mr2370963uaw.122.1644497962858;
- Thu, 10 Feb 2022 04:59:22 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3xFsM0nPuhSGSTkyLUY3o2cz0yH3ogdvJBOAYbLu1Hk=;
+        b=SUuxlvnB9MjtMd4szmNey5R8LloXo6YL7VYLMB/Mn9kGt3vWPFpFdYSozWuqd5uYb2
+         XOxjp6PVwnov/icsVnhsP0V8OkaSQKlroyQM/x/ngIVAb7tc/lwg41zQPbCOad8bjP+p
+         IUXwsG2sZ2R+9zNKz5FssOPHXAlp/NDlRt/S5mkdqo+FDiCaG+Z3zjEPqlZPhQRZVChA
+         niZc6MgbnSfwK2fIAF3/zx0tEKGumKvMhLef0SMdUTzHelXgMuwoS+uiXrAGXJNZjVVo
+         7SpsNuz+KALKSP+eYxkwuACdpdmjseg8p/eM8/lzMf51FvmBeYgbSMZepOz+VzbD9let
+         no2Q==
+X-Gm-Message-State: AOAM531pZkoQgeKkKP4njZld5O3jSkepzwQVNx2sNRo+IusxfOVU2D6D
+        GThVKCpgxcCBT4ZZayhtPdY=
+X-Google-Smtp-Source: ABdhPJzW89YoTkdkUobSkVso7mwzeF8VsYtPcaPJp9tjMWbNziQCLa1dhnHIn3Q/S1wWdTW8tG6m3g==
+X-Received: by 2002:a17:907:f9c:: with SMTP id kb28mr7048664ejc.213.1644514265037;
+        Thu, 10 Feb 2022 09:31:05 -0800 (PST)
+Received: from fedora.robimarko.hr (dh207-99-63.xnet.hr. [88.207.99.63])
+        by smtp.googlemail.com with ESMTPSA id m4sm2206551ejl.45.2022.02.10.09.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Feb 2022 09:31:04 -0800 (PST)
+From:   Robert Marko <robimarko@gmail.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, absahu@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Dirk Buchwalder <buchwalder@posteo.de>,
+        Robert Marko <robimarko@gmail.com>
+Subject: [PATCH] clk: qcom: ipq8074: Use floor ops for SDCC1 clock
+Date:   Thu, 10 Feb 2022 18:31:00 +0100
+Message-Id: <20220210173100.505128-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20220209203411.22332-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220209203411.22332-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Feb 2022 13:59:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVv0-Dr6BMyBZTai-SPumQW6iEGzM8qtO-3_=ECmU6gOA@mail.gmail.com>
-Message-ID: <CAMuHMdVv0-Dr6BMyBZTai-SPumQW6iEGzM8qtO-3_=ECmU6gOA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g044: Use shared array for resets
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Biju,
+From: Dirk Buchwalder <buchwalder@posteo.de>
 
-On Wed, Feb 9, 2022 at 9:34 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Instead of split resets in common and drp, but using a shared array,
-> we can still separate RZ/G2L and RZ/V2L by setting .num_resets to
-> the 'highest reset number + 1' for the specific SoC.
->
-> This patch uses shared array and sets .num_resets to the
-> 'highest reset number + 1' for RZ/G2L and RZ/V2L SoC.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Use floor ops on SDCC1 APPS clock in order to round down selected clock
+frequency and avoid overclocking SD/eMMC cards.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will fold into commit 9b90413c0524fc40 ("clk: renesas: rzg2l-cpg:
-Add support for RZ/V2L SoC") in renesas-clk-for-v5.18.
+For example, currently HS200 cards were failling tuning as they were
+actually being clocked at 384MHz instead of 192MHz.
+This caused some boards to disable 1.8V I/O and force the eMMC into the
+standard HS mode (50MHz) and that appeared to work despite the eMMC being
+overclocked to 96Mhz in that case.
 
-Gr{oetje,eeting}s,
+There was a previous commit to use floor ops on SDCC clocks, but it looks
+to have only covered SDCC2 clock.
 
-                        Geert
+Fixes: 9607f6224b39 ("clk: qcom: ipq8074: add PCIE, USB and SDCC clocks")
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Signed-off-by: Dirk Buchwalder <buchwalder@posteo.de>
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq8074.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 1e493f19fa44..c24e33321f72 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -1074,7 +1074,7 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
+ 		.name = "sdcc1_apps_clk_src",
+ 		.parent_names = gcc_xo_gpll0_gpll2_gpll0_out_main_div2,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
+ 
+-- 
+2.35.1
+
