@@ -2,148 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB91CC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Feb 2022 09:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C614C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Feb 2022 10:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239024AbiBJJxD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Feb 2022 04:53:03 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40504 "EHLO
+        id S237520AbiBJKTZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Feb 2022 05:19:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232590AbiBJJxD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 04:53:03 -0500
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92BDE128;
-        Thu, 10 Feb 2022 01:53:04 -0800 (PST)
-Received: by mail-vs1-xe34.google.com with SMTP id j5so2434371vsm.5;
-        Thu, 10 Feb 2022 01:53:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N/o/oEDK6yNA6KzQQ36RhfRwk2uRGWwiWLSILhdKP7k=;
-        b=kqbXjTNyeNaOJPTbZTaTkpLJJbJdJN35K23eEWCPQYQWK5f9EUQMZt1qygDTuXHANb
-         eKBBIx0YJ89trZZabVjK9YltMrTqVuvyv1Ylp3PodeckaKNlcTOeSL9yXkFxFSzGTgAh
-         H8pBwAUYO9ZtYNl+cDM+hoQF5+e7qPVCrP9m+ypCU6QSaM6aJhPPTbvI+q5VexvO8JB9
-         Zxcz/WkbFtMgjuFqe/fJ0OCRz/drMA/0I1Y1siddfF8ocT82IBe1+T2T5mAu60IRbBnc
-         O3Ga+/BrmxDaITxMs1ASPhH9RWURXvloUTyHTxHYO499G+vWQRQwR6pNpWfXdwBztLlZ
-         6VTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N/o/oEDK6yNA6KzQQ36RhfRwk2uRGWwiWLSILhdKP7k=;
-        b=FZ6oaTRlIztaRPzTFBl5zzecNEmgGiuFyzEYj6oRgs/Tn0G0jC7X7Rg1m8n+m25xQ8
-         1dzgMcD+7kiaQgLgQGJAsjih5AlBd088OCBgYAlEU/8YT9QmR65GDqEvYYgbkS0ZPgQN
-         ZAwZ8NoSIQtFDpoCUBog5LOSmhj4Xc/xRmkWpz3i4IXgQqx6a3m9s7E9wORWMDgEhvdu
-         YrIQhh3CVmyQJ8oCrG1rjwXfRHLwetcEawms3U9FMgwWQBh2i8R/KOVfjm9S36vd3cJ5
-         AJ/+J8R4M4v3UM0vMh0sJNMX/Yt2mr3+ghrsyrJTV90nyUJe8IJZRG25h5D7qP7emsx1
-         Y6aA==
-X-Gm-Message-State: AOAM532q/02EAeCEWDHZgDzH+yIebV+zRvUWmU30fJTBA6KkFb3sy7fh
-        6FGUC+gEeuZwj6vIsDhYfjIwmIgU1B7IPVqisos=
-X-Google-Smtp-Source: ABdhPJy3BmfjGBsQ/1m6jTaEjOrRuG/WxuKfSjaUqL39oOImZUuIRENvrfMRIIwP14Pwy6n28CGijThXnVMbZNnA5hE=
-X-Received: by 2002:a67:f890:: with SMTP id h16mr2554081vso.43.1644486783621;
- Thu, 10 Feb 2022 01:53:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
- <YfE5MOkQRoHQV7Wf@kroah.com> <CAMhs-H8s0d=PswQDR86Tq-bQt634Z6rdFYHTE+DFepsthmKAYA@mail.gmail.com>
- <YfE7LNFuf79i3oAQ@kroah.com> <CAMhs-H9c8zF=v2tu5Y1OsFRP6esOi5zrUceqS_OUiJ=MSfCvRQ@mail.gmail.com>
- <20220205025548.AA1BBC004E1@smtp.kernel.org> <CAMhs-H82J5DC+m0V==tQKKYyqsu30kGLkdUbMRU+nsyLb8sL3Q@mail.gmail.com>
- <CAMhs-H9RSjgW1-dafqDqbfBaQ4iH6NFDLoRHqjt=f41zAEcC-g@mail.gmail.com> <YgS26WAtSkQbZam4@kroah.com>
-In-Reply-To: <YgS26WAtSkQbZam4@kroah.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Thu, 10 Feb 2022 10:52:52 +0100
-Message-ID: <CAMhs-H_x0My6ZfnZkyyEiSd+vT66ijf-fPzxxHohD_Yzko4h-Q@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset provider
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
-        NeilBrown <neil@brown.name>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        with ESMTP id S239433AbiBJKTX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 05:19:23 -0500
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EFE1B88
+        for <linux-clk@vger.kernel.org>; Thu, 10 Feb 2022 02:19:22 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 698903201F96;
+        Thu, 10 Feb 2022 05:19:19 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Thu, 10 Feb 2022 05:19:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=FX2U36JUXXXRjbU6eTCsWy4BzX/9SgdVHf9aPv
+        auItc=; b=XLW8COsuN0Y5MFXizfpKSQr1E0hXgY3UHw78q7wnKta9jcB5TfuHt3
+        rwmTuXMkbj2BnY+Cz6/RpCZvAFNxz9j2knviPhKAhRwmurM94fpmcOJ2/1qZuZ5N
+        xveMuSYWw7OheVlQCyhJA8C+PRxmGZ5udr6c7leq3M9VBTpArm1DRDniZZF7vWro
+        AxYy+R9XInokKKCvVqHzn3cVLXKJIyuK0zJiYJZWLlJwfdmQJ8q5B7dRSaGYsJ3D
+        o3rt8FDR+iTHlrCyc6YgF1d0EKjTdM6uJEPS1GCaFZmHlX65PWk2cG79jTppUK79
+        3oJHljoWJfZvBT9KWyN1va41kbKSmEdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=FX2U36JUXXXRjbU6e
+        TCsWy4BzX/9SgdVHf9aPvauItc=; b=doPN5PjkbeOT0QygOZZTDgI/9jcQ4J+BJ
+        PcyaYXNXxGPssslyVf3BcdSY36qrzCCMc23kQL3+GSAKlf/1kwnqOuQuvaquKNsG
+        T705h5FfWoIWvOVy9gcQjPsDxXz6jvMNml/FKkGoHQk8F3NJZEiXJbSgPYuUcHTv
+        YrZ9nNzEiHSXdzXW+IpkfQ5xeA9CRDgTol70IJYf5SvP6Ld5u63dukCJVk4Ajkir
+        f8ft9PT6Soed31AYDq03J/p9cKMzfApR8bmfOUzdCMASeYa/5eiibksuf+zDG/7o
+        onhhuQFjvZqhaYgki4hLoswa5Bj52KD/IYCYZavX9o3cj7Sdr2Brw==
+X-ME-Sender: <xms:puYEYjNoe97vvKYTeDh8wIHpzkPGmZgZbScFKtZJjn_v5W2g8TLI-g>
+    <xme:puYEYt9LIytAB571b7ciKSzuh6n0UHo7cZNjIi9Z3dnId_suXtN7fKUtljFT7igQZ
+    AE1ikryjJXky0MzNjk>
+X-ME-Received: <xmr:puYEYiQAJl_rb43HycYKFfpZezeFOd5zLPu5rQjqqnds1YQRbW6dDBrR7meZKtTGW3zMr4SITpvNCNJmW7Xjf_NKoC0THoYwavoa2g4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddriedugddufecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeevveefffduveeitdegtefhhfetueffteefffdvheevvdehteethedvleffgfej
+    vdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:puYEYnvTYUUhPwiLS2s3MHn_SJxlQQH6xVpXsXgoDyhMu_TyV4JFHA>
+    <xmx:puYEYrdRT0qZ4dgWHWo4I6MWOVhbs0_nPd2yA9ThDtDnCyeGwPK6LA>
+    <xmx:puYEYj3Rym7XGZ4PXEafJUr8aL6NyHrXMN1AA-p6fcotyduJKthIVA>
+    <xmx:puYEYjRAr3aZS8xnedfoKg0ZdPGpDCk6gn2IR3TFsR2Lb9c2-YCkQw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 10 Feb 2022 05:19:18 -0500 (EST)
+Date:   Thu, 10 Feb 2022 11:19:16 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: Re: [PATCH v4 00/10] clk: Improve clock range handling
+Message-ID: <20220210101916.3bsgkbbklyvwowla@houat>
+References: <20220125141549.747889-1-maxime@cerno.tech>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iu2nanqn2witv43w"
+Content-Disposition: inline
+In-Reply-To: <20220125141549.747889-1-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 10, 2022 at 7:55 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Feb 10, 2022 at 07:44:33AM +0100, Sergio Paracuellos wrote:
-> > Hi Greg,
-> >
-> > On Sat, Feb 5, 2022 at 8:31 AM Sergio Paracuellos
-> > <sergio.paracuellos@gmail.com> wrote:
-> > >
-> > > On Sat, Feb 5, 2022 at 3:55 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Sergio Paracuellos (2022-01-26 04:45:31)
-> > > > > On Wed, Jan 26, 2022 at 1:14 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Wed, Jan 26, 2022 at 01:08:52PM +0100, Sergio Paracuellos wrote:
-> > > > > > > On Wed, Jan 26, 2022 at 1:06 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Jan 10, 2022 at 12:49:26PM +0100, Sergio Paracuellos wrote:
-> > > > > > > > > Hi all,
-> > > > > > > > >
-> > > > > > > > > This patch series add minimal change to provide mt7621 resets properly
-> > > > > > > > > defining them in the 'mediatek,mt7621-sysc' node which is the system
-> > > > > > > > > controller of the SoC and is already providing clocks to the rest of
-> > > > > > > > > the world.
-> > > > > > > > >
-> > > > > > > > > There is shared architecture code for all ralink platforms in 'reset.c'
-> > > > > > > > > file located in 'arch/mips/ralink' but the correct thing to do to align
-> > > > > > > > > hardware with software seems to define and add related reset code to the
-> > > > > > > > > already mainlined clock driver.
-> > > > > > > > >
-> > > > > > > > > After this changes, we can get rid of the useless reset controller node
-> > > > > > > > > in the device tree and use system controller node instead where the property
-> > > > > > > > > '#reset-cells' has been added. Binding documentation for this nodeq has
-> > > > > > > > > been updated with the new property accordly.
-> > > > > > > > >
-> > > > > > > > > This series also provide a bindings include header where all related
-> > > > > > > > > reset bits for the MT7621 SoC are defined.
-> > > > > > > > >
-> > > > > > > > > Also, please take a look to this review [0] to understand better motivation
-> > > > > > > > > for this series.
-> > > > > > > > >
-> > > > > > > > > Regarding the way of merging this:
-> > > > > > > > >  - I'd like patches 1 and 4 which are related going through staging tree.
-> > > > > > > >
-> > > > > > > > Patches 1 and 4 now in the staging tree, thanks.
-> > > > > > >
-> > > > > > > Stephen wanted all to go through the CLK tree since PATCH 3 and 1 were
-> > > > > > > also a dependency... Can we get all of them through the same tree,
-> > > > > > > then? I am ok with both CLK or staging trees.
-> > > > > >
-> > > > > > That's fine with me if they all go through the CLK tree, but there will
-> > > > > > be a merge issue that I already fixed up in my tree.  If you want me to
-> > > > > > drop them, just let me know.
-> > > > >
-> > > > > Stephen, what do you prefer? Is it better all going through staging-tree then?
-> > > > >
-> > > >
-> > > > Sure take them through staging tree.
-> > > >
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > >
-> > > Thanks, Stephen.
-> > >
-> > > Greg, can you please take remaining patches 2 and 3 through your tree, then?
-> > >
-> > > Thanks in advance for your time.
-> >
-> > Please, let me know if you prefer me to resend the remaining two
-> > patches with tags added to make this easier for you.
->
-> Please do so, as I can't seem to dig up the remaining ones...
 
-Ok, done. Please check:
-https://lore.kernel.org/linux-staging/20220210094859.927868-1-sergio.paracuellos@gmail.com/T/#t
+--iu2nanqn2witv43w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-    Sergio Paracuellos
+Hi Stephen,
 
->
-> thanks,
->
-> greg k-h
+On Tue, Jan 25, 2022 at 03:15:39PM +0100, Maxime Ripard wrote:
+> Hi,
+>=20
+> This is a follow-up of the discussion here:
+> https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmour/
+>=20
+> and here:
+> https://lore.kernel.org/all/20210914093515.260031-1-maxime@cerno.tech/
+>=20
+> While the initial proposal implemented a new API to temporarily raise and=
+ lower
+> clock rates based on consumer workloads, Stephen suggested an
+> alternative approach implemented here.
+>=20
+> The main issue that needed to be addressed in our case was that in a
+> situation where we would have multiple calls to clk_set_rate_range, we
+> would end up with a clock at the maximum of the minimums being set. This
+> would be expected, but the issue was that if one of the users was to
+> relax or drop its requirements, the rate would be left unchanged, even
+> though the ideal rate would have changed.
+>=20
+> So something like
+>=20
+> clk_set_rate(user1_clk, 1000);
+> clk_set_min_rate(user1_clk, 2000);
+> clk_set_min_rate(user2_clk, 3000);
+> clk_set_min_rate(user2_clk, 1000);
+>=20
+> Would leave the clock running at 3000Hz, while the minimum would now be
+> 2000Hz.
+>=20
+> This was mostly due to the fact that the core only triggers a rate
+> change in clk_set_rate_range() if the current rate is outside of the
+> boundaries, but not if it's within the new boundaries.
+>=20
+> That series changes that and will trigger a rate change on every call,
+> with the former rate being tried again. This way, providers have a
+> chance to follow whatever policy they see fit for a given clock each
+> time the boundaries change.
+>=20
+> This series also implements some kunit tests, first to test a few rate
+> related functions in the CCF, and then extends it to make sure that
+> behaviour has some test coverage.
+
+As far as I know, this should address any concern you had with the
+previous iterations.
+
+Is there something else you'd like to see fixed/improved?
+
+Maxime
+
+--iu2nanqn2witv43w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYgTmpAAKCRDj7w1vZxhR
+xdW5AQCCui8rFtAvdngbW0K1At9OGQIqi1MsIpQC8xHGE/cFiAD8DFYVxFDHIial
+PLZXEiyaWN4TamdW0MCJqrT7/mYhGgc=
+=N/GK
+-----END PGP SIGNATURE-----
+
+--iu2nanqn2witv43w--
