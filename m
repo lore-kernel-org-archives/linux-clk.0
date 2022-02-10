@@ -2,105 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A74DC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Feb 2022 23:02:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C209C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Feb 2022 06:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236868AbiBIXCX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Feb 2022 18:02:23 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:53700 "EHLO
+        id S231878AbiBJGop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Feb 2022 01:44:45 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:51336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236811AbiBIXCW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Feb 2022 18:02:22 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51210E01976B;
-        Wed,  9 Feb 2022 15:02:21 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id co28so8046059edb.1;
-        Wed, 09 Feb 2022 15:02:21 -0800 (PST)
+        with ESMTP id S231362AbiBJGon (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 01:44:43 -0500
+Received: from mail-vk1-xa32.google.com (mail-vk1-xa32.google.com [IPv6:2607:f8b0:4864:20::a32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75BFED6D;
+        Wed,  9 Feb 2022 22:44:45 -0800 (PST)
+Received: by mail-vk1-xa32.google.com with SMTP id l14so2480701vko.12;
+        Wed, 09 Feb 2022 22:44:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WGIEHx+L4uAdTf1VzXQaUpLJlWUcIhu07EIIF1wAFus=;
-        b=maSInnkknThRDgxyUU26cPJ/GRDE224IYjl3dSi18eCKyBLTJ97jIO6112ZO2In8QI
-         x/0TAq3dIe01KVRgLgH5Ah5VOIkLIZdhfS7F3DZVxJBChqQcrScKSEDDnkP6zh+YTMWt
-         n0ReI2QRmnzhetKFakFCSoOLxgjCx0du7xWhy+TWpRC0YJitAneSbEVoKGBOosEWo/ev
-         pGm55G2vxJd6CUpIHFES9oZKgQYbtulzTLYxBeNkMyaAjzUaOHa5uxdk38iFmIUUECtR
-         AZZUOfML8t/FnZnGziM6atPBwFuHuiFJGlbhK2yh0sERjVll1SNPt1sIrPmKxjaNVWWR
-         u+og==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vATQV96HIV875DpM2fnnEa+rKLHrA6ZG+qfAprHu1e8=;
+        b=DCGcZiebBFSTnkF9RGqM9hnYnWCcnAxcDZSEpbKWKeQs1KM3bM00eS9vRY+lkpxjD0
+         GJoLV0IkKyT6IE1DPL0KegouXUMN33zgsVDuDCJ9JSSaoKUNqPsoO+uZmNBpwf3aoZfg
+         Knoa4fPaLPMLT838YRhdjoDyRSH+9CAsKxF9FolpTEOLrM1z5L3VXHROzC1ZtHqrGxJK
+         lRr2MiDnRrx6oaYralUySq+SzFeGN7DMSAUI00EyRefKX6bh3Jfy/13oOneZysryApyp
+         Q0KbB5DIV+5rt8E2mutj+QMH7Z4uistgIpvFzqesllNC7vq+lm8hBVEqKKtyBt7XsVCp
+         XzoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WGIEHx+L4uAdTf1VzXQaUpLJlWUcIhu07EIIF1wAFus=;
-        b=6B2wSik8IrG6D4jD9U7IYKRRYdp0IkyZNudsW1CE9uorZL+GFNKnuHsKw8JbXFEZsO
-         pnjAebh8aP9YtBBleXKUZmcU51Au7zh4NDyrAWB4fLrnmBWsRqZx2Yy2kdD5f9FkJL1E
-         i/j+i506sPp5A6mD0//7xS9fRzTuHQXnLw1vn7hu2skPeobRd0rez64hxxsJNGe9DGb2
-         UpQPLX4Lk5Inl8VEBF71cFZS9lx9MDj4PrIWXmT6hhqjh0oNQ2ENuKRQsPH8Dcu7h8Gn
-         7jc79HKphrJkvsqUQoe8vAG2IgEyx647uzuVTNEZdJCQUABBxkGl+Uo+1qTPyII1/G8h
-         K9xw==
-X-Gm-Message-State: AOAM533iBDKoqMAzIutgSUW91Rx7dEc8ZdeK4fWohUv1QbHY/2mBc4AW
-        ZYdTZkBM6jmRiG8f6c8tahI=
-X-Google-Smtp-Source: ABdhPJzlM0o29Q+3zByPxKJEGxnYYWb7oyrYi3rp56w8xk/KHhpxnLk1OPFtL2bTTKxUmi0lbIujIw==
-X-Received: by 2002:aa7:cfcd:: with SMTP id r13mr5265548edy.55.1644447739764;
-        Wed, 09 Feb 2022 15:02:19 -0800 (PST)
-Received: from localhost (92.40.202.147.threembb.co.uk. [92.40.202.147])
-        by smtp.gmail.com with ESMTPSA id z22sm7843198edq.9.2022.02.09.15.02.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Feb 2022 15:02:19 -0800 (PST)
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     paul@crapouillou.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: ingenic-tcu: Fix missing TCU clock for X1000 SoC
-Date:   Wed,  9 Feb 2022 23:01:47 +0000
-Message-Id: <20220209230145.18943-1-aidanmacdonald.0x0@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vATQV96HIV875DpM2fnnEa+rKLHrA6ZG+qfAprHu1e8=;
+        b=frq8udFHGQvomKBGUP8xJp3jy1OBx1vMr4HWs9Ttjs9XixnMycjLzjO8lY9AqaI5Yq
+         m8qer7Vb5NmwaUHh7N4DO9mdME0FEWJfzOGg/nF/AYw2NXcjl+ozzIfUn9MmaoPNzfoS
+         MzHNL1JA/qNvH2KOUXGCqD23yU6RQkVys3AF3jmEV9riiQAhdZ4BXR8rBKUyxrAmTm3F
+         crPF2BnzPY0jxrBuhZB4t7p8yYtK5Pf8n/Nx66Afxl+VFmNvngJq+kBh1/OCu2XVNoyh
+         Q/SJ8ChqiylS4kmoOC6Wj2ZgHOiFu+Cp0/wSRpR1S3sjtP40pT2PyVfLLwWXMSiHCq4k
+         QceA==
+X-Gm-Message-State: AOAM532m2PkZF/KOCbSCXtq0IH5XeEwf4uvdYjKF3aqU9qBGfY2LmwEX
+        FYiQH0SZZEW4DqCLkH8qJgk3fXQDJR5vrfNPDLk=
+X-Google-Smtp-Source: ABdhPJy4f9xIFUUmiX+BmjO+7FRRofRm71wdEsoGHAiePfWX1OQdeIlGzUShnt/VNT67jJifn+eRplmpDmZ6oamSjDc=
+X-Received: by 2002:a05:6122:17a9:: with SMTP id o41mr2314279vkf.1.1644475484513;
+ Wed, 09 Feb 2022 22:44:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220110114930.1406665-1-sergio.paracuellos@gmail.com>
+ <YfE5MOkQRoHQV7Wf@kroah.com> <CAMhs-H8s0d=PswQDR86Tq-bQt634Z6rdFYHTE+DFepsthmKAYA@mail.gmail.com>
+ <YfE7LNFuf79i3oAQ@kroah.com> <CAMhs-H9c8zF=v2tu5Y1OsFRP6esOi5zrUceqS_OUiJ=MSfCvRQ@mail.gmail.com>
+ <20220205025548.AA1BBC004E1@smtp.kernel.org> <CAMhs-H82J5DC+m0V==tQKKYyqsu30kGLkdUbMRU+nsyLb8sL3Q@mail.gmail.com>
+In-Reply-To: <CAMhs-H82J5DC+m0V==tQKKYyqsu30kGLkdUbMRU+nsyLb8sL3Q@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Thu, 10 Feb 2022 07:44:33 +0100
+Message-ID: <CAMhs-H9RSjgW1-dafqDqbfBaQ4iH6NFDLoRHqjt=f41zAEcC-g@mail.gmail.com>
+Subject: Re: [PATCH v8 0/4] clk: ralink: make system controller a reset provider
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        John Crispin <john@phrozen.org>, linux-staging@lists.linux.dev,
+        NeilBrown <neil@brown.name>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The X1000 does have a TCU clock gate, so pass it to the driver.
-Without this the TCU can be gated automatically, which prevents
-timers from running and stops register writes from taking effect.
+Hi Greg,
 
-Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
----
- arch/mips/boot/dts/ingenic/x1000.dtsi | 5 +++--
- drivers/clk/ingenic/tcu.c             | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+On Sat, Feb 5, 2022 at 8:31 AM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> On Sat, Feb 5, 2022 at 3:55 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Sergio Paracuellos (2022-01-26 04:45:31)
+> > > On Wed, Jan 26, 2022 at 1:14 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Wed, Jan 26, 2022 at 01:08:52PM +0100, Sergio Paracuellos wrote:
+> > > > > On Wed, Jan 26, 2022 at 1:06 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > On Mon, Jan 10, 2022 at 12:49:26PM +0100, Sergio Paracuellos wrote:
+> > > > > > > Hi all,
+> > > > > > >
+> > > > > > > This patch series add minimal change to provide mt7621 resets properly
+> > > > > > > defining them in the 'mediatek,mt7621-sysc' node which is the system
+> > > > > > > controller of the SoC and is already providing clocks to the rest of
+> > > > > > > the world.
+> > > > > > >
+> > > > > > > There is shared architecture code for all ralink platforms in 'reset.c'
+> > > > > > > file located in 'arch/mips/ralink' but the correct thing to do to align
+> > > > > > > hardware with software seems to define and add related reset code to the
+> > > > > > > already mainlined clock driver.
+> > > > > > >
+> > > > > > > After this changes, we can get rid of the useless reset controller node
+> > > > > > > in the device tree and use system controller node instead where the property
+> > > > > > > '#reset-cells' has been added. Binding documentation for this nodeq has
+> > > > > > > been updated with the new property accordly.
+> > > > > > >
+> > > > > > > This series also provide a bindings include header where all related
+> > > > > > > reset bits for the MT7621 SoC are defined.
+> > > > > > >
+> > > > > > > Also, please take a look to this review [0] to understand better motivation
+> > > > > > > for this series.
+> > > > > > >
+> > > > > > > Regarding the way of merging this:
+> > > > > > >  - I'd like patches 1 and 4 which are related going through staging tree.
+> > > > > >
+> > > > > > Patches 1 and 4 now in the staging tree, thanks.
+> > > > >
+> > > > > Stephen wanted all to go through the CLK tree since PATCH 3 and 1 were
+> > > > > also a dependency... Can we get all of them through the same tree,
+> > > > > then? I am ok with both CLK or staging trees.
+> > > >
+> > > > That's fine with me if they all go through the CLK tree, but there will
+> > > > be a merge issue that I already fixed up in my tree.  If you want me to
+> > > > drop them, just let me know.
+> > >
+> > > Stephen, what do you prefer? Is it better all going through staging-tree then?
+> > >
+> >
+> > Sure take them through staging tree.
+> >
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Thanks, Stephen.
+>
+> Greg, can you please take remaining patches 2 and 3 through your tree, then?
+>
+> Thanks in advance for your time.
 
-diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
-index 8bd27edef216..c69df8eb158e 100644
---- a/arch/mips/boot/dts/ingenic/x1000.dtsi
-+++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
-@@ -111,8 +111,9 @@ tcu: timer@10002000 {
- 
- 		clocks = <&cgu X1000_CLK_RTCLK>,
- 			 <&cgu X1000_CLK_EXCLK>,
--			 <&cgu X1000_CLK_PCLK>;
--		clock-names = "rtc", "ext", "pclk";
-+			 <&cgu X1000_CLK_PCLK>,
-+			 <&cgu X1000_CLK_TCU>;
-+		clock-names = "rtc", "ext", "pclk", "tcu";
- 
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index 77acfbeb4830..9c86043f673a 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -320,7 +320,7 @@ static const struct ingenic_soc_info jz4770_soc_info = {
- static const struct ingenic_soc_info x1000_soc_info = {
- 	.num_channels = 8,
- 	.has_ost = false, /* X1000 has OST, but it not belong TCU */
--	.has_tcu_clk = false,
-+	.has_tcu_clk = true,
- };
- 
- static const struct of_device_id __maybe_unused ingenic_tcu_of_match[] __initconst = {
--- 
-2.34.1
+Please, let me know if you prefer me to resend the remaining two
+patches with tags added to make this easier for you.
 
+Best regards,
+    Sergio Paracuellos
+
+>
+> Best regards,
+>     Sergio Paracuellos
