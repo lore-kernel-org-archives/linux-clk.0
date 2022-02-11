@@ -2,120 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EFEC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 15:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C2BC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 15:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344466AbiBKPoD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Feb 2022 10:44:03 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55748 "EHLO
+        id S240140AbiBKPph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 10:45:37 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243944AbiBKPoC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 10:44:02 -0500
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8548FD82;
-        Fri, 11 Feb 2022 07:43:59 -0800 (PST)
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B8D1D240002;
-        Fri, 11 Feb 2022 15:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644594235;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8aMFMOxt3wpyHmG3yssB5XfL03jGxKhpyI3oWsfXL7Y=;
-        b=i4aEFxwFLtu1GXs7z7xfAitkEU3hGcEI+mu83hBlSsl0YRIQugktUhswkyIxTqEbcZzLXZ
-        x39h5ceyKPn8xje/cg/Vm+s8MVXxz6+o57LYVN44VCs6ffEDlLDL4MFPDJBnwSOZ+Yy1MZ
-        K1TYDMG06ztndhrohKC4lSeHy6YQHAir1b++VQJbmjluK2HDsBHntNMEBom2CHIwmHoHhl
-        XMDcGB+ClMTfy40+/kdQxiUng1jvvfnbEapyiWs1WpPJ2jmmf4Lsr+5o+uNe4PEoCCUuDx
-        ++0b15Ag82zDNSnDYRABre6JrCucNWxCSrEzcrE/7gISHB8cyvdW1sTQSh6XFA==
-Date:   Fri, 11 Feb 2022 16:43:51 +0100
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 30/66] media: sun6i-csi: Add bridge v4l2 subdev with
- port management
-Message-ID: <YgaEN0ziZx5X7tQe@aptenodytes>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-31-paul.kocialkowski@bootlin.com>
- <20220209092419.i3kver4f2am7mnow@houat>
+        with ESMTP id S234142AbiBKPpg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 10:45:36 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD3FD83
+        for <linux-clk@vger.kernel.org>; Fri, 11 Feb 2022 07:45:35 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d5d:ef67:a872:c0be])
+        by xavier.telenet-ops.be with bizsmtp
+        id trlY2600Q3ZSXJh01rlYHG; Fri, 11 Feb 2022 16:45:33 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nIY72-000MOQ-4P; Fri, 11 Feb 2022 16:45:32 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nIY71-00GiEd-FH; Fri, 11 Feb 2022 16:45:31 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.18
+Date:   Fri, 11 Feb 2022 16:45:26 +0100
+Message-Id: <cover.1644594116.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XHw3N8UqH38RVSoa"
-Content-Disposition: inline
-In-Reply-To: <20220209092419.i3kver4f2am7mnow@houat>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+	Hi Mike, Stephen,
 
---XHw3N8UqH38RVSoa
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
-Hi,
+  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
 
-On Wed 09 Feb 22, 10:24, Maxime Ripard wrote:
-> On Sat, Feb 05, 2022 at 07:53:53PM +0100, Paul Kocialkowski wrote:
-> > Introduce a bridge v4l2 subdev to prepare for separation between the
-> > processing part (bridge) and the dma engine, which is required to
-> > properly support ths isp workflow later on.
-> >=20
-> > Currently the bridge just manages fwnode mapping to media pads,
-> > using an async notifier (which was previously in the main code).
-> > The s_stream video op just forwards to the connected v4l2 subdev
-> > (sensor or MIPI CSI-2 bridge).
-> >=20
-> > The video capture device is now registered after the bridge and
-> > attaches to it with a media link.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->=20
-> There's a bunch of checkpatch --strict warnings that need to be fixed
+are available in the Git repository at:
 
-Yes so it turns out these are adaptations to the existing video code
-which has these warnings already merged. They are cleaned up later on
-in a dedicated commit, but since it's not the topic of this change
-(which is a logic change) I kept the code as it is.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.18-tag1
 
-What do you think?
+for you to fetch changes up to a1bcf50a99dd1e40f0c6a963bd4f12547a89d4cd:
 
-Cheers,
+  clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC (2022-02-10 14:34:58 +0100)
 
-Paul
+----------------------------------------------------------------
+clk: renesas: Updates for v5.18
 
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+  - Add DMA engine (SYS-DMAC) clocks on R-Car S4-8,
+  - Add MOST (MediaLB I/F) clocks on R-Car E3 and D3,
+  - Add CAN-FD clocks on R-Car V3U,
+  - Add support for the new RZ/V2L SoC,
+  - Miscellaneous fixes and improvements.
 
---XHw3N8UqH38RVSoa
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that the new Renesas RZ/V2L DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.18" (for soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.18" (for clk).
 
------BEGIN PGP SIGNATURE-----
+Thanks for pulling!
 
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmIGhDcACgkQ3cLmz3+f
-v9HxbggAkL1iOyWpL7H+lZcb/umUFS3DskOwQqsJ28ib87Q2czErTSd1f+9YJdCa
-EHq30lRWyVOiGhNk+e2MzCZEEXWs4uwyrzwreGCK/8qHY7Rc4feneC1McKFsqLAP
-k90LC5AwjohCmVpGl6s4AIwoGuqC3sDYkF+My9u22p5I8uCN7FgScIOA7t89vAz3
-W7c/HZvofFbm94MWHksrFVOckKJHU5Ord3hFLZ9aN2WPTtPCtAwno2hU+lXY73BH
-bc6dopUiS4v4G3loMEQRTLhAq+Ni97+dcBR3avT0uHe01PsAd7ftmED1xuCY9thK
-uqhmv8PCDGd011l8Kb6eLcZ1accYnw==
-=xWX0
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Biju Das (3):
+      dt-bindings: clock: Add R9A07G054 CPG Clock and Reset Definitions
+      dt-bindings: clock: renesas: Document RZ/V2L SoC
+      clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
 
---XHw3N8UqH38RVSoa--
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r9a07g054-dt-binding-defs-tag' into renesas-clk-for-v5.18
+
+Lad Prabhakar (1):
+      clk: renesas: r9a07g044: Update multiplier and divider values for PLL2/3
+
+Nikita Yushchenko (1):
+      clk: renesas: r8a7799[05]: Add MLP clocks
+
+Ulrich Hecht (1):
+      clk: renesas: r8a779a0: Add CANFD module clock
+
+Yoshihiro Shimoda (1):
+      clk: renesas: r8a779f0: Add SYS-DMAC clocks
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml          |  14 +-
+ drivers/clk/renesas/Kconfig                        |   7 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c            |   2 +
+ drivers/clk/renesas/r9a07g044-cpg.c                | 426 ++++++++++++---------
+ drivers/clk/renesas/rzg2l-cpg.c                    |   6 +
+ drivers/clk/renesas/rzg2l-cpg.h                    |   1 +
+ include/dt-bindings/clock/r9a07g054-cpg.h          | 229 +++++++++++
+ 11 files changed, 492 insertions(+), 197 deletions(-)
+ create mode 100644 include/dt-bindings/clock/r9a07g054-cpg.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
