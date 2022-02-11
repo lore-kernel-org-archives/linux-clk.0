@@ -2,74 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3783AC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 16:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FD8C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 16:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351483AbiBKQZ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Feb 2022 11:25:59 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54220 "EHLO
+        id S244396AbiBKQ3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 11:29:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351485AbiBKQZ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 11:25:58 -0500
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAFB93AD;
-        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id v67so10066191oie.9;
-        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SNHEpqIX2AMyOXJaqG7yEXFoVSICVPmb7B0ilFWlNec=;
-        b=NITPRY5H7arMQsFaW9G4zKnHf8g3lskbRi216nO6LihTHSNIAj2/NLJof6xdAYorR8
-         QxXSuVrZ3QDuO8fG5v9CFV+bSxwVgK9WCR1tv9jmiPsV0mdXYK+p/xhIVGC8p2kvQiyx
-         x77k9fBYsn71f1Gw9WqIuXzU4XlEscgtnqE2tjrCVl+T/crmVxTiSqaZLSgUoUIimgdY
-         iHFXSt8FG6f695ZUHA+qvmzBMPEWyUphx0yMbGGPT0fktUeTNs8QxtD68mvDeMpmSKNh
-         IT0C1ThrqlgAwjLxkeemaPuxnH0icoCZgjLX+NxLcvsNY/iPiQsFXjSoutrPkNy+JgVK
-         1/+g==
-X-Gm-Message-State: AOAM533ULXE12O45eB0+C6lBWFmvyWe8aj142YVMdFrlFviw+3GPfgI7
-        lNKgA39WlTtROwcjhx/fSQ==
-X-Google-Smtp-Source: ABdhPJw8oaVkgx5Pu3uFJ78qknmKsHlv+NqPM1RqyBvjDOel/OiKPX344OCHUA71kPGl79Oq05bBpw==
-X-Received: by 2002:aca:c056:: with SMTP id q83mr582840oif.294.1644596755317;
-        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
-Received: from robh.at.kernel.org ([2607:fb90:5fee:dfce:b6df:c3e1:b1e5:d6d8])
-        by smtp.gmail.com with ESMTPSA id x16sm9731092ooa.6.2022.02.11.08.25.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Feb 2022 08:25:54 -0800 (PST)
-Received: (nullmailer pid 467504 invoked by uid 1000);
-        Fri, 11 Feb 2022 16:25:52 -0000
-Date:   Fri, 11 Feb 2022 10:25:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Cc:     linux-arm-msm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Jeffrey Hugo <jhugo@codeaurora.org>, linux-clk@vger.kernel.org,
-        Luca Weiss <luca@z3ntu.xyz>, Andy Gross <agross@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add support for the MSM8226
- mmcc
-Message-ID: <YgaOEHwe7DKI6i1N@robh.at.kernel.org>
-References: <20220207185411.19118-1-bartosz.dudziak@snejp.pl>
- <20220207185411.19118-2-bartosz.dudziak@snejp.pl>
+        with ESMTP id S235352AbiBKQ3n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 11:29:43 -0500
+Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 600FDCC9;
+        Fri, 11 Feb 2022 08:29:41 -0800 (PST)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 7AAA9240009;
+        Fri, 11 Feb 2022 16:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1644596980;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4kVSfBMlOpLVxwAYqmjgdSsjcSKy3f9ulmjYySBtivY=;
+        b=T4TSHYvfEdtrIdt54FMQc8fkxl6Sb+6Fb/eoGRfWYgAdoQJkHicqhpsEGSiJd0cHoyQsF0
+        Vfva/O33f9O65QrX1haPnlzjQ2sIPixy0kxvHp+MbuQfN91FPpawkqwPurQIRekmoMFTg5
+        qgKvKxWeNpHSODYhBMZuYE2WpvWAEd3JOjoRKSVqgBQcVuJ4n24mz4t3hrZpjVZ4hHSCFQ
+        bW4jOJBvKyEPdisxxKSIzqqzIB3HyKBI4ApuvsfblSRxCFUi3AWIy4ujaGUzzOyqQFbkTY
+        Lmw/3Fq/7PX7QEpH+8uAap60ARcPDWvaATeXcm8/9Fpz2Nh+MEA1tsWW9xauGA==
+Date:   Fri, 11 Feb 2022 17:29:37 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 21/66] media: sun6i-csi: Always set exclusive module
+ clock rate
+Message-ID: <YgaO8bfP4gKW8BM0@aptenodytes>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-22-paul.kocialkowski@bootlin.com>
+ <20220207091443.cr5udv7fxx65ptty@houat>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Tv5rA21o/SqhzaB6"
 Content-Disposition: inline
-In-Reply-To: <20220207185411.19118-2-bartosz.dudziak@snejp.pl>
+In-Reply-To: <20220207091443.cr5udv7fxx65ptty@houat>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 07 Feb 2022 19:54:10 +0100, Bartosz Dudziak wrote:
-> Document the multimedia clock controller found on MSM8226.
-> 
-> Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+--Tv5rA21o/SqhzaB6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+Thanks for the review,
+
+On Mon 07 Feb 22, 10:14, Maxime Ripard wrote:
+> On Sat, Feb 05, 2022 at 07:53:44PM +0100, Paul Kocialkowski wrote:
+> > In some situations the default rate of the module clock is not the
+> > required one for operation (for example when reconfiguring the clock
+> > tree to use a different parent). As a result, always set the correct
+> > rate for the clock (and take care of cleanup).
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 54 ++++++++++++++-----
+> >  1 file changed, 41 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drive=
+rs/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > index 8155e9560164..2355088fdc37 100644
+> > --- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > +++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+> > @@ -154,9 +154,6 @@ int sun6i_csi_set_power(struct sun6i_csi_device *cs=
+i_dev, bool enable)
+> >  		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, 0);
+> > =20
+> >  		clk_disable_unprepare(csi_dev->clk_ram);
+> > -		if (of_device_is_compatible(dev->of_node,
+> > -					    "allwinner,sun50i-a64-csi"))
+> > -			clk_rate_exclusive_put(csi_dev->clk_mod);
+> >  		clk_disable_unprepare(csi_dev->clk_mod);
+> >  		reset_control_assert(csi_dev->reset);
+> >  		return 0;
+> > @@ -168,9 +165,6 @@ int sun6i_csi_set_power(struct sun6i_csi_device *cs=
+i_dev, bool enable)
+> >  		return ret;
+> >  	}
+> > =20
+> > -	if (of_device_is_compatible(dev->of_node, "allwinner,sun50i-a64-csi"))
+> > -		clk_set_rate_exclusive(csi_dev->clk_mod, 300000000);
+> > -
+> >  	ret =3D clk_prepare_enable(csi_dev->clk_ram);
+> >  	if (ret) {
+> >  		dev_err(csi_dev->dev, "Enable clk_dram_csi clk err %d\n", ret);
+> > @@ -190,8 +184,6 @@ int sun6i_csi_set_power(struct sun6i_csi_device *cs=
+i_dev, bool enable)
+> >  clk_ram_disable:
+> >  	clk_disable_unprepare(csi_dev->clk_ram);
+> >  clk_mod_disable:
+> > -	if (of_device_is_compatible(dev->of_node, "allwinner,sun50i-a64-csi"))
+> > -		clk_rate_exclusive_put(csi_dev->clk_mod);
+> >  	clk_disable_unprepare(csi_dev->clk_mod);
+> >  	return ret;
+> >  }
+> > @@ -819,6 +811,7 @@ static int sun6i_csi_resources_setup(struct sun6i_c=
+si_device *csi_dev,
+> >  				     struct platform_device *platform_dev)
+> >  {
+> >  	struct device *dev =3D csi_dev->dev;
+> > +	unsigned long clk_mod_rate;
+> >  	void __iomem *io_base;
+> >  	int ret;
+> >  	int irq;
+> > @@ -856,28 +849,53 @@ static int sun6i_csi_resources_setup(struct sun6i=
+_csi_device *csi_dev,
+> >  		return PTR_ERR(csi_dev->clk_ram);
+> >  	}
+> > =20
+> > +	if (of_device_is_compatible(dev->of_node, "allwinner,sun50i-a64-csi"))
+> > +		clk_mod_rate =3D 300000000;
+> > +	else
+> > +		clk_mod_rate =3D 297000000;
+> > +
+> > +	ret =3D clk_set_rate_exclusive(csi_dev->clk_mod, clk_mod_rate);
+> > +	if (ret) {
+> > +		dev_err(dev, "failed to set mod clock rate\n");
+> > +		return ret;
+> > +	}
+> > +
+> >  	/* Reset */
+> > =20
+> >  	csi_dev->reset =3D devm_reset_control_get_shared(dev, NULL);
+> >  	if (IS_ERR(csi_dev->reset)) {
+> >  		dev_err(dev, "failed to acquire reset\n");
+> > -		return PTR_ERR(csi_dev->reset);
+> > +		ret =3D PTR_ERR(csi_dev->reset);
+> > +		goto error_clk_rate_exclusive;
+> >  	}
+> > =20
+> >  	/* Interrupt */
+> > =20
+> >  	irq =3D platform_get_irq(platform_dev, 0);
+> > -	if (irq < 0)
+> > -		return -ENXIO;
+> > +	if (irq < 0) {
+> > +		dev_err(dev, "failed to get interrupt\n");
+> > +		ret =3D -ENXIO;
+> > +		goto error_clk_rate_exclusive;
+> > +	}
+> > =20
+> >  	ret =3D devm_request_irq(dev, irq, sun6i_csi_isr, 0, SUN6I_CSI_NAME,
+> >  			       csi_dev);
+> >  	if (ret) {
+> >  		dev_err(dev, "failed to request interrupt\n");
+> > -		return ret;
+> > +		goto error_clk_rate_exclusive;
+> >  	}
+> > =20
+> >  	return 0;
+> > +
+> > +error_clk_rate_exclusive:
+> > +	clk_rate_exclusive_put(csi_dev->clk_mod);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void sun6i_csi_resources_cleanup(struct sun6i_csi_device *csi_d=
+ev)
+> > +{
+> > +	clk_rate_exclusive_put(csi_dev->clk_mod);
+> >  }
+>=20
+> If you're going to have that function anyway, let's use
+> devm_add_action_or_reset, it'll simplify the rest of the patch.
+
+Well, this will cause issues later on when adding runtime pm support to
+sun6i_csi_resources_cleanup: then it will no longer be equivalent
+to the error case label.
+
+Also I feel like making the resources_cleanup call a devm action would not
+help clarify the general flow of the driver, where the matching setup/clean=
+up
+calls are ordered in probe/remove. The driver is quite big with various par=
+ts
+and I'd rather have them behave in a coherent and similar way.
+
+What do you think?
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--Tv5rA21o/SqhzaB6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmIGjvEACgkQ3cLmz3+f
+v9Eq7wf/aVHx73dljDp0YxBy+q2PMLd3CTowE7OvhhXXMz24VfzET01MwXfyxeo0
+IpqwMV0dz5U1iy/ofxtZPJW832v08EZXXCod4h3E+L0lRi/HSkJlW67Gt5z4uZmu
+4tWN4NXJ2hXJlUT717HxRvTD7sl3oGOODuemqyPwmVLp/FJ/8dZZcwz38cyHXdL7
+v1nT9o/Cdpz5Mj1IECQaqEovJ3zU6sTFfd3YAYc4qPYYXmok4mq4GoqChSlB2y4y
+9DxH3t/4vciCVCon1d4Z7gOZML2IdzZBx3NwV+TKVUOBNCsVqz/pl4XVG+ZJ+Lvs
+bQio4a8S1+h+txomzaXIBPr1XlOENg==
+=d+6J
+-----END PGP SIGNATURE-----
+
+--Tv5rA21o/SqhzaB6--
