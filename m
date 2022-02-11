@@ -2,249 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA9DC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 16:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3783AC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 16:26:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350990AbiBKQKb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Feb 2022 11:10:31 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40418 "EHLO
+        id S1351483AbiBKQZ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 11:25:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351110AbiBKQKW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 11:10:22 -0500
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37066E06;
-        Fri, 11 Feb 2022 08:10:09 -0800 (PST)
-Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BDB041BF20E;
-        Fri, 11 Feb 2022 16:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644595808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RUSzj3TUbMF7TmKv+bJklm/0kDLCRAw90iHxpF7FAk4=;
-        b=oG0Nb1UueRz+/N3muogT9xtwBmkNo0QOCIq29+GWycUIpNnSFeefb4J/MbfnHYuTGx8NNK
-        jWvPNJ2WjFEI+sClRGGThmR8P5QGosuLIaQmDikc6BAuoUY32F7klJuNWQnfecNZXaxuop
-        8x3A9o9q0baiyhGQx7uxh2TQcR9C9a1i35V25YIjQvv3dHVrxCUjxIRx+KMesaOMmBHpyc
-        zxSrQN07BFiopT4jQZCMXyqVl8ulBmNkFWxTp1vpeuAc0CkfPw0Nms7pasztSEwq+TWOtG
-        nP+GDVcx5fVQCaw2EwJYMbg/vMEQe6ecyf9EByGBvOM8XVRX4tYJwclzHa7+1g==
-Date:   Fri, 11 Feb 2022 17:10:06 +0100
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 07/66] dt-bindings: media: sun6i-a31-csi: Add MIPI
- CSI-2 input port
-Message-ID: <YgaKXvP3rLOLR9VR@aptenodytes>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-8-paul.kocialkowski@bootlin.com>
- <YgFCuaf007wd8sJy@pendragon.ideasonboard.com>
+        with ESMTP id S1351485AbiBKQZ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 11:25:58 -0500
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAFB93AD;
+        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id v67so10066191oie.9;
+        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SNHEpqIX2AMyOXJaqG7yEXFoVSICVPmb7B0ilFWlNec=;
+        b=NITPRY5H7arMQsFaW9G4zKnHf8g3lskbRi216nO6LihTHSNIAj2/NLJof6xdAYorR8
+         QxXSuVrZ3QDuO8fG5v9CFV+bSxwVgK9WCR1tv9jmiPsV0mdXYK+p/xhIVGC8p2kvQiyx
+         x77k9fBYsn71f1Gw9WqIuXzU4XlEscgtnqE2tjrCVl+T/crmVxTiSqaZLSgUoUIimgdY
+         iHFXSt8FG6f695ZUHA+qvmzBMPEWyUphx0yMbGGPT0fktUeTNs8QxtD68mvDeMpmSKNh
+         IT0C1ThrqlgAwjLxkeemaPuxnH0icoCZgjLX+NxLcvsNY/iPiQsFXjSoutrPkNy+JgVK
+         1/+g==
+X-Gm-Message-State: AOAM533ULXE12O45eB0+C6lBWFmvyWe8aj142YVMdFrlFviw+3GPfgI7
+        lNKgA39WlTtROwcjhx/fSQ==
+X-Google-Smtp-Source: ABdhPJw8oaVkgx5Pu3uFJ78qknmKsHlv+NqPM1RqyBvjDOel/OiKPX344OCHUA71kPGl79Oq05bBpw==
+X-Received: by 2002:aca:c056:: with SMTP id q83mr582840oif.294.1644596755317;
+        Fri, 11 Feb 2022 08:25:55 -0800 (PST)
+Received: from robh.at.kernel.org ([2607:fb90:5fee:dfce:b6df:c3e1:b1e5:d6d8])
+        by smtp.gmail.com with ESMTPSA id x16sm9731092ooa.6.2022.02.11.08.25.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 08:25:54 -0800 (PST)
+Received: (nullmailer pid 467504 invoked by uid 1000);
+        Fri, 11 Feb 2022 16:25:52 -0000
+Date:   Fri, 11 Feb 2022 10:25:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Jeffrey Hugo <jhugo@codeaurora.org>, linux-clk@vger.kernel.org,
+        Luca Weiss <luca@z3ntu.xyz>, Andy Gross <agross@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add support for the MSM8226
+ mmcc
+Message-ID: <YgaOEHwe7DKI6i1N@robh.at.kernel.org>
+References: <20220207185411.19118-1-bartosz.dudziak@snejp.pl>
+ <20220207185411.19118-2-bartosz.dudziak@snejp.pl>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="N1FE44kMl1ZRScRS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YgFCuaf007wd8sJy@pendragon.ideasonboard.com>
+In-Reply-To: <20220207185411.19118-2-bartosz.dudziak@snejp.pl>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, 07 Feb 2022 19:54:10 +0100, Bartosz Dudziak wrote:
+> Document the multimedia clock controller found on MSM8226.
+> 
+> Signed-off-by: Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
---N1FE44kMl1ZRScRS
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Laurent,
-
-Thanks for the review!
-
-On Mon 07 Feb 22, 18:03, Laurent Pinchart wrote:
-> Hi Paul,
->=20
-> Thank you for the patch.
->=20
-> On Sat, Feb 05, 2022 at 07:53:30PM +0100, Paul Kocialkowski wrote:
-> > The A31 CSI controller supports two distinct input interfaces:
-> > parallel and an external MIPI CSI-2 bridge. The parallel interface
-> > is often connected to a set of hardware pins while the MIPI CSI-2
-> > bridge is an internal FIFO-ish link. As a result, these two inputs
-> > are distinguished as two different ports.
-> >=20
-> > Note that only one of the two may be present on a controller instance.
-> > For example, the V3s has one controller dedicated to MIPI-CSI2 and one
-> > dedicated to parallel.
->=20
-> Is it that only one of the two is present, or only one of the two is
-> connected ? In the latter case I'd make both ports required, but with
-> only one of them connected.
-
-There are situations where the actual pins for parallel (port@0) are missing
-and the controller is dedicated to its mipi csi-2 bridge (port@1), cases wh=
-ere
-the two are present and cases where the mipi csi-2 bridge doesn't exist.
-So all in all it's really legit that only one port may be defined.
-
-> > Update the binding with an explicit ports node that holds two distinct
-> > port nodes: one for parallel input and one for MIPI CSI-2.
-> >=20
-> > This is backward-compatible with the single-port approach that was
-> > previously taken for representing the parallel interface port, which
-> > stays enumerated as fwnode port 0.
-> >=20
-> > Note that additional ports may be added in the future, especially to
-> > support feeding the CSI controller's output to the ISP.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Acked-by: Maxime Ripard <mripard@kernel.org>
-> > ---
-> >  .../media/allwinner,sun6i-a31-csi.yaml        | 60 +++++++++++++++----
-> >  1 file changed, 47 insertions(+), 13 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a3=
-1-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-cs=
-i.yaml
-> > index 8b568072a069..3cc61866ea89 100644
-> > --- a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-csi.y=
-aml
-> > @@ -61,6 +61,34 @@ properties:
-> > =20
-> >      additionalProperties: false
-> > =20
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: "#/properties/port"
-> > +        unevaluatedProperties: false
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        description: MIPI CSI-2 bridge input port
-> > +
-> > +        properties:
-> > +          reg:
-> > +            const: 1
-> > +
-> > +          endpoint:
-> > +            $ref: video-interfaces.yaml#
-> > +            unevaluatedProperties: false
-> > +
-> > +        additionalProperties: false
-> > +
-> > +    anyOf:
-> > +      - required:
-> > +        - port@0
-> > +      - required:
-> > +        - port@1
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
->=20
-> Shouldn't you specify that either port or ports is required, but not
-> both ? I'd also add a comment in the port node to tell it's deprecated,
-> and that ports should be used instead.
-
-Yes I agree on both points. I guess that should be a:
-
-oneOf:
-  - required:
-    - ports
-  - required:
-    - port
-
-(but feel free to correct me).
-
-> > @@ -89,19 +117,25 @@ examples:
-> >                        "ram";
-> >          resets =3D <&ccu RST_BUS_CSI>;
-> > =20
-> > -        port {
-> > -            /* Parallel bus endpoint */
-> > -            csi1_ep: endpoint {
-> > -                remote-endpoint =3D <&adv7611_ep>;
-> > -                bus-width =3D <16>;
-> > -
-> > -                /*
-> > -                 * If hsync-active/vsync-active are missing,
-> > -                 * embedded BT.656 sync is used.
-> > -                 */
-> > -                 hsync-active =3D <0>; /* Active low */
-> > -                 vsync-active =3D <0>; /* Active low */
-> > -                 pclk-sample =3D <1>;  /* Rising */
-> > +        ports {
-> > +            #address-cells =3D <1>;
-> > +            #size-cells =3D <0>;
-> > +
-> > +            port@0 {
-> > +                reg =3D <0>;
-> > +                /* Parallel bus endpoint */
-> > +                csi1_ep: endpoint {
-> > +                    remote-endpoint =3D <&adv7611_ep>;
-> > +                    bus-width =3D <16>;
-> > +
-> > +                    /*
-> > +                     * If hsync-active/vsync-active are missing,
-> > +                     * embedded BT.656 sync is used.
-> > +                     */
-> > +                     hsync-active =3D <0>; /* Active low */
-> > +                     vsync-active =3D <0>; /* Active low */
-> > +                     pclk-sample =3D <1>;  /* Rising */
->=20
-> Wrong indentation.
-
-The double-space before /* Rising */ or something with the heading indent?
-
-Thanks,
-
-Paul
-
-> > +                };
-> >              };
-> >          };
-> >      };
->=20
-> --=20
-> Regards,
->=20
-> Laurent Pinchart
-
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---N1FE44kMl1ZRScRS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmIGil4ACgkQ3cLmz3+f
-v9E2OAf+M59HqYo3WH2kb71DPc2RBTe6OgFa2D6dEM/0E8JL5wiYWvOSJADrYUh3
-ym1oUzOSoUsA8YlBPzSQ3oXMtRN3Hzc9sVL8RDmHw1+JhEqFo0nasFjA3UvgFCMp
-frR0s8rvSu4r5bpPQheC1uMcfA0aSHT4W8w8oYJRdGK6nlkPJbQUbg+3jLDvd7pT
-HwJoBd0+0oMuqFg6FdGP/vKt89mqIyl6AmZYnTSeofyX7/x40i1Zdtbvd/pMdYtv
-C9kXGkP5WrXGVwKa3Mn9CMnOFPjNXmL2D56NHzwSagDzZLbscRablKBDBglxfuGa
-dlRvMsPlp7qvlnv9J8aKV9hj/aVIHw==
-=8dSa
------END PGP SIGNATURE-----
-
---N1FE44kMl1ZRScRS--
+Acked-by: Rob Herring <robh@kernel.org>
