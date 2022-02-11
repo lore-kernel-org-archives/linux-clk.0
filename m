@@ -2,218 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2DCC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 19:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72C5C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 20:48:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbiBKTwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Feb 2022 14:52:47 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33146 "EHLO
+        id S1353354AbiBKUsB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 15:48:01 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353008AbiBKTwr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 14:52:47 -0500
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BE518F
-        for <linux-clk@vger.kernel.org>; Fri, 11 Feb 2022 11:52:45 -0800 (PST)
-Received: by mail-lf1-x133.google.com with SMTP id bu29so13351935lfb.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Feb 2022 11:52:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=fp+y6DOsivVL6RhrTrD/vUxmQahZjj9bC6Sr+HW1xsA=;
-        b=s0/lcCFg/cGMV/PachOPe19E/4okmq6zazTrgSBlgf0EeCmMHQqdWPPppv/F2e+KAy
-         u/UeO+4WDlBG1K3pkoaIyteSMdGMiUKklZS59dYDdgN/4aDLQDt9PKDQewCUtILgMG90
-         PfN/MzK8+6N2CBf2tWPw7ndeo7gqZt+QWdR7sIO+rpCUorbWDOg3YCtcKb2EH59zOG1X
-         TBP0FVE4SHODYzCfXyiDA/tl9cmLZGQJkUzzZnMHkwTfwSxY2GL7g42jFhaYx+PBJNnR
-         YexIUMZ4omGjDXXpvE1FqZ2WIVme6oBMrZ4WUZKLJygEZQt6wVyBP/mu6K2Lre4ndIs4
-         /6Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=fp+y6DOsivVL6RhrTrD/vUxmQahZjj9bC6Sr+HW1xsA=;
-        b=B02Sujbx+kAc/3lSzkBjDBZ+LrIL4caxnzoafW4dzX/zwwmLS9ELOBXbFCx63CNpAV
-         TeWHbBOhXGUT9z4pqst1WwvtZOHRERcNcd+fPa1Y1SlFT+gXxkX5IVZBM/OEY9jHGYy9
-         ThFLL3eLh0SstbuN1rztot9MhkDKP0i/voEf56scfNpdz56HzwRiv954vI3jX/dCZsgS
-         mgtoqdRVbId3MCWbgXOFZmVtQZP32OgfFkI2JfdbbK7r2ZMmF95ABeLoEZ3nHt2HRdDB
-         ams1g9Ld+MKqdAa4KazYSFGOtVUf0S6gFydGUaKeAqJt2Ndw0noiqNK9JKAyPIyYb4O5
-         LEPA==
-X-Gm-Message-State: AOAM53389L4PQ8WIZ2g9V84bSr/3seFTNycPxepTvdukToGF91CbKPiR
-        vzK7Wc7J3cKKz8lWV4hMKxrTqlMeB0NHWg==
-X-Google-Smtp-Source: ABdhPJwstj2iq985ZbAIqESpOE2g87yC0N+8Cx4Jdn4ksCj9RhGuX5Uh3kjYp3vDRjBcnZ41CuQ0CA==
-X-Received: by 2002:a05:651c:b12:: with SMTP id b18mr1972242ljr.44.1644609152444;
-        Fri, 11 Feb 2022 11:52:32 -0800 (PST)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id f6sm1060615lfe.182.2022.02.11.11.52.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Feb 2022 11:52:31 -0800 (PST)
-Message-ID: <f521a273-7250-ddca-0e56-b1b27bd75117@linaro.org>
-Date:   Fri, 11 Feb 2022 22:52:31 +0300
+        with ESMTP id S1353360AbiBKUsA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 15:48:00 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2B1CEC;
+        Fri, 11 Feb 2022 12:47:59 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 752CC93;
+        Fri, 11 Feb 2022 21:47:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1644612477;
+        bh=ehf6vTlCeB9+XYe9AmuIirbghRbW0KEWGRwclDo3v5c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IMLv4XNB8rkEmEcFHY5ynpBplZLVhBle485lTzKMlvpAAGn8QYGGIggZx6kaNBarf
+         +6zUn47Uo7bvLS58Y0bNE5kfUt9FKGWXHaOW258MJlIJyhoN7xVL+B77t/BA/yUAfD
+         HSd3OL2ofQH601HhtMr2CDJwBnFFHjt1kybXQLVM=
+Date:   Fri, 11 Feb 2022 22:47:53 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-staging@lists.linux.dev, Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 05/66] dt-bindings: sun6i-a31-mipi-dphy: Add optional
+ direction property
+Message-ID: <YgbLeVchq5IkfnFv@pendragon.ideasonboard.com>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-6-paul.kocialkowski@bootlin.com>
+ <YgZ6qsdO+SfTemPZ@robh.at.kernel.org>
+ <YgZ83To26Dgy+JD4@aptenodytes>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tied to
- the GDSC
-Content-Language: en-GB
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Prasad Malisetty <quic_pmaliset@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Wilczy??ski <kw@linux.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
- <20220204144645.3016603-4-dmitry.baryshkov@linaro.org>
- <Yf2jRAf5UKYSMYxe@builder.lan>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <Yf2jRAf5UKYSMYxe@builder.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YgZ83To26Dgy+JD4@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/02/2022 01:05, Bjorn Andersson wrote:
-> On Fri 04 Feb 08:46 CST 2022, Dmitry Baryshkov wrote:
+On Fri, Feb 11, 2022 at 04:12:29PM +0100, Paul Kocialkowski wrote:
+> Hi Rob,
 > 
->> On newer Qualcomm platforms GCC_PCIE_n_PIPE_CLK_SRC should be controlled
->> together with the PCIE_n_GDSC. The clock should be fed from the TCXO
->> before switching the GDSC off and can be fed from PCIE_n_PIPE_CLK once
->> the GDSC is on.
->>
->> Since commit aa9c0df98c29 ("PCI: qcom: Switch pcie_1_pipe_clk_src after
->> PHY init in SC7280") PCIe controller driver tries to manage this on it's
->> own, resulting in the non-optimal code. Furthermore, if the any of the
->> drivers will have the same requirements, the code would have to be
->> dupliacted there.
->>
->> Move handling of such clocks to the GDSC code, providing special GDSC
->> type.
->>
+> On Fri 11 Feb 22, 09:03, Rob Herring wrote:
+> > On Sat, Feb 05, 2022 at 07:53:28PM +0100, Paul Kocialkowski wrote:
+> > > The Allwinner A31 MIPI D-PHY block supports both tx and rx directions,
+> > > although each instance of the block is meant to be used in one
+> > > direction only. There will typically be one instance for MIPI DSI and
+> > > one for MIPI CSI-2 (it seems unlikely to ever see a shared instance).
+> > > 
+> > > Describe the direction with a new allwinner,direction property.
+> > > For backwards compatibility, the property is optional and tx mode
+> > > should be assumed by default.
+> > > 
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > ---
+> > >  .../bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml  | 12 ++++++++++++
+> > >  1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
+> > > index d0b541a461f3..22636c9fdab8 100644
+> > > --- a/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
+> > > +++ b/Documentation/devicetree/bindings/phy/allwinner,sun6i-a31-mipi-dphy.yaml
+> > > @@ -37,6 +37,18 @@ properties:
+> > >    resets:
+> > >      maxItems: 1
+> > >  
+> > > +  allwinner,direction:
+> > > +    $ref: '/schemas/types.yaml#/definitions/string'
+> > > +    description: |
+> > > +      Direction of the D-PHY:
+> > > +      - "rx" for receiving (e.g. when used with MIPI CSI-2);
+> > > +      - "tx" for transmitting (e.g. when used with MIPI DSI).
+> > > +
+> > > +    enum:
+> > > +      - tx
+> > > +      - rx
+> > > +    default: tx
+> > 
+> > Can you the phy mode to imply the direction?
 > 
-> As discussed on IRC, I'm inclined not to take this, because looks to me
-> to be the same situation that we have with all GDSCs in SM8350 and
-> onwards - that some clocks must be parked on a safe parent before the
-> associated GDSC can be toggled.
-> 
-> Prasad, please advice on what the actual requirements are wrt the
-> gcc_pipe_clk_src. When does it need to provide a valid signal and when
-> does it need to be parked?
+> So there was a first attempt at this which introduced a PHY submode but
+> it was concluded after discussions that the direction is not really a
+> mode of operation choice, in the sense that the D-PHY cannot be reconfigured
+> to behave in Rx or Tx mode: it is instead statically assigned to one role
+> or the other. This is why it feels more appropriate to describe it in the
+> device-tree.
 
-[Excuse me for the duplicate, Prasad's email was bouncing]
+Another option could be different compatible strings, as the RX and TX
+PHYs actually have very little in common. I don't mind much either way.
 
-Prasad, any comments?
-
-> 
-> Regards,
-> Bjorn
-> 
->> Cc: Prasad Malisetty <pmaliset@codeaurora.org>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   drivers/clk/qcom/gdsc.c | 41 +++++++++++++++++++++++++++++++++++++++++
->>   drivers/clk/qcom/gdsc.h | 14 ++++++++++++++
->>   2 files changed, 55 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
->> index 7e1dd8ccfa38..9913d1b70947 100644
->> --- a/drivers/clk/qcom/gdsc.c
->> +++ b/drivers/clk/qcom/gdsc.c
->> @@ -45,6 +45,7 @@
->>   #define TIMEOUT_US		500
->>   
->>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc, pd)
->> +#define domain_to_pipe_clk_gdsc(domain) container_of(domain, struct pipe_clk_gdsc, base.pd)
->>   
->>   enum gdsc_status {
->>   	GDSC_OFF,
->> @@ -549,3 +550,43 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
->>   	return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
->> +
->> +/*
->> + * Special operations for GDSCs with attached pipe clocks.
->> + * The clock should be parked to safe source (tcxo) before turning off the GDSC
->> + * and can be switched on as soon as the GDSC is on.
->> + *
->> + * We remove respective clock sources from clocks map and handle them manually.
->> + */
->> +int gdsc_pipe_enable(struct generic_pm_domain *domain)
->> +{
->> +	struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
->> +	int i, ret;
->> +
->> +	ret = gdsc_enable(domain);
->> +	if (ret)
->> +		return ret;
->> +
->> +	for (i = 0; i< sc->num_clocks; i++)
->> +		regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
->> +				BIT(sc->clocks[i].shift + sc->clocks[i].width) - BIT(sc->clocks[i].shift),
->> +				sc->clocks[i].on_value << sc->clocks[i].shift);
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(gdsc_pipe_enable);
->> +
->> +int gdsc_pipe_disable(struct generic_pm_domain *domain)
->> +{
->> +	struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
->> +	int i;
->> +
->> +	for (i = sc->num_clocks - 1; i >= 0; i--)
->> +		regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
->> +				BIT(sc->clocks[i].shift + sc->clocks[i].width) - BIT(sc->clocks[i].shift),
->> +				sc->clocks[i].off_value << sc->clocks[i].shift);
->> +
->> +	/* In case of an error do not try turning the clocks again. We can not be sure about the GDSC state. */
->> +	return gdsc_disable(domain);
->> +}
->> +EXPORT_SYMBOL_GPL(gdsc_pipe_disable);
->> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
->> index d7cc4c21a9d4..b1a2f0abe41c 100644
->> --- a/drivers/clk/qcom/gdsc.h
->> +++ b/drivers/clk/qcom/gdsc.h
->> @@ -68,11 +68,25 @@ struct gdsc_desc {
->>   	size_t num;
->>   };
->>   
->> +struct pipe_clk_gdsc {
->> +	struct gdsc base;
->> +	int num_clocks;
->> +	struct {
->> +		u32 reg;
->> +		u32 shift;
->> +		u32 width;
->> +		u32 off_value;
->> +		u32 on_value;
->> +	} clocks[];
->> +};
->> +
->>   #ifdef CONFIG_QCOM_GDSC
->>   int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
->>   		  struct regmap *);
->>   void gdsc_unregister(struct gdsc_desc *desc);
->>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
->> +int gdsc_pipe_enable(struct generic_pm_domain *domain);
->> +int gdsc_pipe_disable(struct generic_pm_domain *domain);
->>   #else
->>   static inline int gdsc_register(struct gdsc_desc *desc,
->>   				struct reset_controller_dev *rcdev,
->> -- 
->> 2.34.1
->>
-
+> See this thread from the previous iteration:
+> https://patchwork.linuxtv.org/project/linux-media/patch/20210115200141.1397785-3-paul.kocialkowski@bootlin.com/#128800
 
 -- 
-With best wishes
-Dmitry
+Regards,
+
+Laurent Pinchart
