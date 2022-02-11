@@ -2,69 +2,72 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49165C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 04:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D18C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 09:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241592AbiBKEWX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Feb 2022 23:22:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50846 "EHLO
+        id S229462AbiBKJNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 04:13:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbiBKEWW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Feb 2022 23:22:22 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDDC55A3;
-        Thu, 10 Feb 2022 20:22:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 02048B827CD;
-        Fri, 11 Feb 2022 04:22:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42741C340E9;
-        Fri, 11 Feb 2022 04:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644553339;
-        bh=KCVnkX+Z9cVMrEqCXSKN4Pdp1T9BE5FNaTBzbnXXT8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Nm1F8EKPKvsJqQJZXEdXofOJ+YMwk8VZSzzWbeNCCLIqARqT3UbvrRtdE3NKV5rB8
-         zlxPRfhqaY68rFgbJZ4YmTaCxuH3XtdCpYvSyw4IB9lVnsM2ilMG36kQfo0yX126u/
-         CqYMlRvMAfuShTJA6OfWmNCxodEvUBCsKhlS9Z2RUyU75/5BVijV04B6UaG4EFxuLO
-         ird/ru9AKw7JBD4txaPgiIMrMuRkNZX4OVT2J/FlZnqe1uEPtZsuw9YtCm/A5G10+x
-         ZXA3I01W9FeFgZ8NxUPTGycc8m0UZb+e/z9KKY7nwX2A8nu9M68Mm4gdQqju2v68PM
-         Irrr0/C+HnZPQ==
-Date:   Fri, 11 Feb 2022 12:22:12 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peng Fan <peng.fan@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
+        with ESMTP id S1343598AbiBKJNW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 04:13:22 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15DF11029
+        for <linux-clk@vger.kernel.org>; Fri, 11 Feb 2022 01:13:22 -0800 (PST)
+Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35F0B48A;
+        Fri, 11 Feb 2022 10:13:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1644570799;
+        bh=lL/97hITDnvwgNXyyRZRC0cz2oGmNGp15khoT5iIlT8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T+VFu074JSwb0oIB8Lo5MctMPyglQ/Dse1fj7k2RsDr73olTzxCtAiHsphBL99Lua
+         Zz1lU6FTq+8hUyr1Hx7W68BeMHm7URemC+Txbd9x8jahGMytEGa/bHQKn++2Gwnisq
+         l4ikyQXP7b0Fu+LaAMEAVvMwhLzaMTK7q4abPcUk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Paul Elder <paul.elder@ideasonboard.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Frank Li <frank.li@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] arm: dts: imx7: Use audio_mclk_post_div instead
- audio_mclk_root_clk
-Message-ID: <20220211042212.GM4909@dragon>
-References: <20220127141052.1900174-1-abel.vesa@nxp.com>
+        Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH] clk: imx8mp: Add missing IMX8MP_CLK_MEDIA_MIPI_PHY1_REF_ROOT clock
+Date:   Fri, 11 Feb 2022 11:13:11 +0200
+Message-Id: <20220211091311.28146-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220127141052.1900174-1-abel.vesa@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 27, 2022 at 04:10:51PM +0200, Abel Vesa wrote:
-> The audio_mclk_root_clk was added as a gate with the CCGR121 (0x4790),
-> but according to the reference manual, there is no such gate. Moreover,
-> the consumer driver of the mentioned clock might gate it and leave
-> the ECSPI2 (the true owner of that gate) hanging. So lets use the
-> audio_mclk_post_div, which is the parent.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+The IMX8MP_CLK_MEDIA_MIPI_PHY1_REF_ROOT clock derives from the
+media_mipi_phy1_ref clock and is gated by the shared media clock gate.
+Its identifier is defined in dt-bindings/clock/imx8mp-clock.h but its
+definition is missing from the driver. Add it.
 
-Applied, thanks!
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/clk/imx/clk-imx8mp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index c990ad37882b..f23b92906d3b 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -694,6 +694,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_cam2_pix_root_clk", "media_cam2_pix", ccm_base + 0x45d0, 0, &share_count_media);
+ 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_disp1_pix_root_clk", "media_disp1_pix", ccm_base + 0x45d0, 0, &share_count_media);
+ 	hws[IMX8MP_CLK_MEDIA_DISP2_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_disp2_pix_root_clk", "media_disp2_pix", ccm_base + 0x45d0, 0, &share_count_media);
++	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF_ROOT] = imx_clk_hw_gate2_shared2("media_mipi_phy1_ref_root", "media_mipi_phy1_ref", ccm_base + 0x45d0, 0, &share_count_media);
+ 	hws[IMX8MP_CLK_MEDIA_ISP_ROOT] = imx_clk_hw_gate2_shared2("media_isp_root_clk", "media_isp", ccm_base + 0x45d0, 0, &share_count_media);
+ 
+ 	hws[IMX8MP_CLK_USDHC3_ROOT] = imx_clk_hw_gate4("usdhc3_root_clk", "usdhc3", ccm_base + 0x45e0, 0);
+-- 
+Regards,
+
+Laurent Pinchart
+
