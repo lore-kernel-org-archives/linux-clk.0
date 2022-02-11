@@ -2,116 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C2BC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 15:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5926C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Feb 2022 15:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240140AbiBKPph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Feb 2022 10:45:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56748 "EHLO
+        id S1348855AbiBKPq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Feb 2022 10:46:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234142AbiBKPpg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 10:45:36 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD3FD83
-        for <linux-clk@vger.kernel.org>; Fri, 11 Feb 2022 07:45:35 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d5d:ef67:a872:c0be])
-        by xavier.telenet-ops.be with bizsmtp
-        id trlY2600Q3ZSXJh01rlYHG; Fri, 11 Feb 2022 16:45:33 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nIY72-000MOQ-4P; Fri, 11 Feb 2022 16:45:32 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nIY71-00GiEd-FH; Fri, 11 Feb 2022 16:45:31 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.18
-Date:   Fri, 11 Feb 2022 16:45:26 +0100
-Message-Id: <cover.1644594116.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S234142AbiBKPqz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Feb 2022 10:46:55 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B0C421F;
+        Fri, 11 Feb 2022 07:46:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644594413; x=1676130413;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=pVxiaW+vV0quQ79sfEqbYXTjlLZHvVBgUsqT5Tk+lEY=;
+  b=T9CM3fi5XzxOKxmxDDFxrwCZ/7XfVh0QsmL3voYJQZylHhHJ880b8Shx
+   koP20RAuzPuMChRyjBfHKqZo8dMi60p4EXh2GdWDbwz2pjyOynj31LLs1
+   pAns0uY0l4hUcBuVqJoSDfM4WF6G8+ew4Pt1RGP3f6/Zd3BI9augt+rST
+   scynOEDC8qL0YlcakcUT2elDZmilVwGd+Nm7wewsyz7uAFWl5QNA5UFUi
+   pX+hvRfoyaPIcmSokxNoz1z8/zlQ8qVOUogTNOMJ6hZHYhWbnAGzz24zX
+   DSnDV6ypiojXMvNL8Drzm7IinFHuq9xQSgeLiLHNg5JuXrJ6WCCl5Pn8f
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10254"; a="248584196"
+X-IronPort-AV: E=Sophos;i="5.88,361,1635231600"; 
+   d="scan'208";a="248584196"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2022 07:46:52 -0800
+X-IronPort-AV: E=Sophos;i="5.88,361,1635231600"; 
+   d="scan'208";a="542134195"
+Received: from ankitata-mobl1.amr.corp.intel.com (HELO spandruv-desk1.amr.corp.intel.com) ([10.212.170.20])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Feb 2022 07:46:51 -0800
+Message-ID: <077501bfcb710c66754c61d69e45cac66fccf38a.camel@linux.intel.com>
+Subject: Re: [PATCH V2 5/13] hid: use time_is_after_jiffies() instead of
+ jiffies judgment
+From:   srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Qing Wang <wangqing@vivo.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Roger Pau =?ISO-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "Pan, Xinhui" <Xinhui.Pan@amd.com>, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-input@vger.kernel.org,
+        linux-media@vger.kernel.org
+Date:   Fri, 11 Feb 2022 07:46:51 -0800
+In-Reply-To: <1644546640-23283-6-git-send-email-wangqing@vivo.com>
+References: <1644546640-23283-1-git-send-email-wangqing@vivo.com>
+         <1644546640-23283-6-git-send-email-wangqing@vivo.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+On Thu, 2022-02-10 at 18:30 -0800, Qing Wang wrote:
+> From: Wang Qing <wangqing@vivo.com>
+> 
+> It is better to use time_xxx() directly instead of jiffies judgment
+> for understanding.
+> 
+> Signed-off-by: Wang Qing <wangqing@vivo.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
+> ---
+>  drivers/hid/intel-ish-hid/ipc/ipc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/intel-ish-hid/ipc/ipc.c b/drivers/hid/intel-
+> ish-hid/ipc/ipc.c
+> index 8ccb246..15e1423
+> --- a/drivers/hid/intel-ish-hid/ipc/ipc.c
+> +++ b/drivers/hid/intel-ish-hid/ipc/ipc.c
+> @@ -578,7 +578,7 @@ static void _ish_sync_fw_clock(struct
+> ishtp_device *dev)
+>         static unsigned long    prev_sync;
+>         uint64_t        usec;
+>  
+> -       if (prev_sync && jiffies - prev_sync < 20 * HZ)
+> +       if (prev_sync && time_is_after_jiffies(prev_sync + 20 * HZ))
+>                 return;
+>  
+>         prev_sync = jiffies;
 
-  Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.18-tag1
-
-for you to fetch changes up to a1bcf50a99dd1e40f0c6a963bd4f12547a89d4cd:
-
-  clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC (2022-02-10 14:34:58 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.18
-
-  - Add DMA engine (SYS-DMAC) clocks on R-Car S4-8,
-  - Add MOST (MediaLB I/F) clocks on R-Car E3 and D3,
-  - Add CAN-FD clocks on R-Car V3U,
-  - Add support for the new RZ/V2L SoC,
-  - Miscellaneous fixes and improvements.
-
-Note that the new Renesas RZ/V2L DT Binding Definitions are shared by
-driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.18" (for soc),
-  - "[GIT PULL] clk: renesas: Updates for v5.18" (for clk).
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Biju Das (3):
-      dt-bindings: clock: Add R9A07G054 CPG Clock and Reset Definitions
-      dt-bindings: clock: renesas: Document RZ/V2L SoC
-      clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
-
-Geert Uytterhoeven (1):
-      Merge tag 'renesas-r9a07g054-dt-binding-defs-tag' into renesas-clk-for-v5.18
-
-Lad Prabhakar (1):
-      clk: renesas: r9a07g044: Update multiplier and divider values for PLL2/3
-
-Nikita Yushchenko (1):
-      clk: renesas: r8a7799[05]: Add MLP clocks
-
-Ulrich Hecht (1):
-      clk: renesas: r8a779a0: Add CANFD module clock
-
-Yoshihiro Shimoda (1):
-      clk: renesas: r8a779f0: Add SYS-DMAC clocks
-
- .../bindings/clock/renesas,rzg2l-cpg.yaml          |  14 +-
- drivers/clk/renesas/Kconfig                        |   7 +-
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c            |   1 +
- drivers/clk/renesas/r8a77995-cpg-mssr.c            |   1 +
- drivers/clk/renesas/r8a779a0-cpg-mssr.c            |   1 +
- drivers/clk/renesas/r8a779f0-cpg-mssr.c            |   2 +
- drivers/clk/renesas/r9a07g044-cpg.c                | 426 ++++++++++++---------
- drivers/clk/renesas/rzg2l-cpg.c                    |   6 +
- drivers/clk/renesas/rzg2l-cpg.h                    |   1 +
- include/dt-bindings/clock/r9a07g054-cpg.h          | 229 +++++++++++
- 11 files changed, 492 insertions(+), 197 deletions(-)
- create mode 100644 include/dt-bindings/clock/r9a07g054-cpg.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
