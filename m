@@ -2,82 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E62C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Feb 2022 16:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B17EC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Feb 2022 23:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237020AbiBLQt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Feb 2022 11:49:56 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33576 "EHLO
+        id S230252AbiBLX0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Feb 2022 18:26:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233383AbiBLQtz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Feb 2022 11:49:55 -0500
-X-Greylist: delayed 133 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 12 Feb 2022 08:49:51 PST
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FD32409F;
-        Sat, 12 Feb 2022 08:49:51 -0800 (PST)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 21CGkxsP010096
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 12 Feb 2022 11:47:00 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 1847215C0040; Sat, 12 Feb 2022 11:46:59 -0500 (EST)
-Date:   Sat, 12 Feb 2022 11:46:59 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Qing Wang <wangqing@vivo.com>
-Cc:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S232495AbiBLX0c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Feb 2022 18:26:32 -0500
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619C85FF1A;
+        Sat, 12 Feb 2022 15:26:27 -0800 (PST)
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 0CCE4C7339;
+        Sat, 12 Feb 2022 23:24:11 +0000 (UTC)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E819BC0007;
+        Sat, 12 Feb 2022 23:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1644708244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oFSzZ5yOgdSQAwv0PITlc/tQFNbxlnrDufyb0qNF53Q=;
+        b=T3Nl6zUHyCCqkZ70eVXfYZPR33z37M7lQnQsY+qmZhmbBJnDZ0vkPcvrgeCaDUCrE7XYTG
+        ILeyfuqBi6bYKAeXp/+nAYT3K5KTIk8buMzeNFwPqKGKGGYbtb4y354lm3VK68YPcM9p13
+        GBXHxFZNceYRpbKJBptTKYI+quWgKOkYq3xEOs79KFibZlf/2IxCxTwvRhrawA52lYqw70
+        im16ziLbq8q0e2vjmRtKvYMY6aMLDbypJbYyeDS7ToLhecyaFV97jUE+rQL876R3RI52D9
+        QCqLVoxh7Gfr90O0YJ26z9EbwtX8EIF6afWEBxUKD5ur6J05GKkR6ln6a7XOOw==
+Date:   Sun, 13 Feb 2022 00:24:02 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@lists.linux.dev,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "Pan, Xinhui" <Xinhui.Pan@amd.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH V2 00/13] use time_is_xxx() instead of jiffies judgment
-Message-ID: <Ygfkg0n6RvvJYMJa@mit.edu>
-References: <1644546640-23283-1-git-send-email-wangqing@vivo.com>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>
+Subject: Re: (subset) [PATCH v3 5/6] clk: sunxi-ng: Add support for the sun6i
+ RTC clocks
+Message-ID: <YghBkp/sUHdqSn4G@piout.net>
+References: <20220203021736.13434-1-samuel@sholland.org>
+ <20220203021736.13434-6-samuel@sholland.org>
+ <164422443570.21572.13511859513410998733.b4-ty@cerno.tech>
+ <bb05bc64-2a9e-fe21-5a69-0ea31134e978@sholland.org>
+ <20220211124312.kiw6t25nojvkp2rw@houat>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1644546640-23283-1-git-send-email-wangqing@vivo.com>
+In-Reply-To: <20220211124312.kiw6t25nojvkp2rw@houat>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 10, 2022 at 06:30:23PM -0800, Qing Wang wrote:
-> From: Wang Qing <wangqing@vivo.com>
+On 11/02/2022 13:43:12+0100, Maxime Ripard wrote:
+> Hi Samuel,
 > 
-> It is better to use time_is_xxx() directly instead of jiffies judgment
-> for understanding.
+> On Mon, Feb 07, 2022 at 05:54:02PM -0600, Samuel Holland wrote:
+> > On 2/7/22 3:00 AM, Maxime Ripard wrote:
+> > > On Wed, 2 Feb 2022 20:17:35 -0600, Samuel Holland wrote:
+> > >> The RTC power domain in sun6i and newer SoCs manages the 16 MHz RC
+> > >> oscillator (called "IOSC" or "osc16M") and the optional 32 kHz crystal
+> > >> oscillator (called "LOSC" or "osc32k"). Starting with the H6, this power
+> > >> domain also handles the 24 MHz DCXO (called variously "HOSC", "dcxo24M",
+> > >> or "osc24M") as well. The H6 also adds a calibration circuit for IOSC.
+> > >>
+> > >> Later SoCs introduce further variations on the design:
+> > >>  - H616 adds an additional mux for the 32 kHz fanout source.
+> > >>  - R329 adds an additional mux for the RTC timekeeping clock, a clock
+> > >>    for the SPI bus between power domains inside the RTC, and removes the
+> > >>    IOSC calibration functionality.
+> > >>
+> > >> [...]
+> > > 
+> > > Applied to local tree (sunxi/clk-for-5.18).
+> > 
+> > Part of the build failures were because this patch depends on patch 3. Is that
+> > okay, or should I update this patch to be independent?
+> 
+> We don't have anything queued up yet, so I think the easiest would be to
+> merge this through the RTC tree. So nothing to do on your side yet, we
+> just need Alex to answer :)
+> 
 
-Hi Wang,
+I can take the whole series but I think I would need acks from Stephen
 
-"judgement" doesn't really make sense as a description to an English
-speaker.  The following a commit desription (for all of these series)
-is probably going to be a bit more understable:
 
-Use the helper function time_is_{before,after}_jiffies() to improve
-code readability.
-
-Cheers,
-
-						- Ted
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
