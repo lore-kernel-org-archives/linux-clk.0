@@ -2,97 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B17EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Feb 2022 23:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF31DC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Feb 2022 17:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbiBLX0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Feb 2022 18:26:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44024 "EHLO
+        id S233615AbiBMRdn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Feb 2022 12:33:43 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232495AbiBLX0c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Feb 2022 18:26:32 -0500
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 619C85FF1A;
-        Sat, 12 Feb 2022 15:26:27 -0800 (PST)
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 0CCE4C7339;
-        Sat, 12 Feb 2022 23:24:11 +0000 (UTC)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id E819BC0007;
-        Sat, 12 Feb 2022 23:24:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1644708244;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oFSzZ5yOgdSQAwv0PITlc/tQFNbxlnrDufyb0qNF53Q=;
-        b=T3Nl6zUHyCCqkZ70eVXfYZPR33z37M7lQnQsY+qmZhmbBJnDZ0vkPcvrgeCaDUCrE7XYTG
-        ILeyfuqBi6bYKAeXp/+nAYT3K5KTIk8buMzeNFwPqKGKGGYbtb4y354lm3VK68YPcM9p13
-        GBXHxFZNceYRpbKJBptTKYI+quWgKOkYq3xEOs79KFibZlf/2IxCxTwvRhrawA52lYqw70
-        im16ziLbq8q0e2vjmRtKvYMY6aMLDbypJbYyeDS7ToLhecyaFV97jUE+rQL876R3RI52D9
-        QCqLVoxh7Gfr90O0YJ26z9EbwtX8EIF6afWEBxUKD5ur6J05GKkR6ln6a7XOOw==
-Date:   Sun, 13 Feb 2022 00:24:02 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        with ESMTP id S229581AbiBMRdn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Feb 2022 12:33:43 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD81359A43;
+        Sun, 13 Feb 2022 09:33:36 -0800 (PST)
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 6216983BA7;
+        Sun, 13 Feb 2022 18:33:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1644773614;
+        bh=75DhUpB7jgOf9IW59uamRDTBiLhx1wBa7r1TX/Jvf8w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hNQKxsJki7wVVxK4udMLYH7aUYgH/8Sgt9NkP07+rYkKlDwCRJ5/DpZSGOvTyixqV
+         IspzbdhR4Y2trs43G4qtTa+ea/njbH8M9QS4QIqiy5Vu/jfIP04R+Ip4s8mviBAl2H
+         tOyFtrX8rkZryeraH0wKb85U3kWvQs5No2xRJwmnax9mKYawJWWtGH8j7YFEn7WU0b
+         9qgBoyUz4iML4nylKhraeHGTfJXwwP/n8J4qla+eMK1rjG8UoQ3+Ds79h1IchNmek+
+         JRKhrdBqUO6xUpDOuI/EU0xx+O4WztUnRLT8pvoVvxFCvXu1oeG2JWVw7bllr0dPCt
+         AA1WPvEyJbYgw==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-clk@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>
-Subject: Re: (subset) [PATCH v3 5/6] clk: sunxi-ng: Add support for the sun6i
- RTC clocks
-Message-ID: <YghBkp/sUHdqSn4G@piout.net>
-References: <20220203021736.13434-1-samuel@sholland.org>
- <20220203021736.13434-6-samuel@sholland.org>
- <164422443570.21572.13511859513410998733.b4-ty@cerno.tech>
- <bb05bc64-2a9e-fe21-5a69-0ea31134e978@sholland.org>
- <20220211124312.kiw6t25nojvkp2rw@houat>
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 1/2] dt-bindings: clk: rs9: Add Renesas 9-series I2C PCIe clock generator
+Date:   Sun, 13 Feb 2022 18:33:09 +0100
+Message-Id: <20220213173310.152230-1-marex@denx.de>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220211124312.kiw6t25nojvkp2rw@houat>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/02/2022 13:43:12+0100, Maxime Ripard wrote:
-> Hi Samuel,
-> 
-> On Mon, Feb 07, 2022 at 05:54:02PM -0600, Samuel Holland wrote:
-> > On 2/7/22 3:00 AM, Maxime Ripard wrote:
-> > > On Wed, 2 Feb 2022 20:17:35 -0600, Samuel Holland wrote:
-> > >> The RTC power domain in sun6i and newer SoCs manages the 16 MHz RC
-> > >> oscillator (called "IOSC" or "osc16M") and the optional 32 kHz crystal
-> > >> oscillator (called "LOSC" or "osc32k"). Starting with the H6, this power
-> > >> domain also handles the 24 MHz DCXO (called variously "HOSC", "dcxo24M",
-> > >> or "osc24M") as well. The H6 also adds a calibration circuit for IOSC.
-> > >>
-> > >> Later SoCs introduce further variations on the design:
-> > >>  - H616 adds an additional mux for the 32 kHz fanout source.
-> > >>  - R329 adds an additional mux for the RTC timekeeping clock, a clock
-> > >>    for the SPI bus between power domains inside the RTC, and removes the
-> > >>    IOSC calibration functionality.
-> > >>
-> > >> [...]
-> > > 
-> > > Applied to local tree (sunxi/clk-for-5.18).
-> > 
-> > Part of the build failures were because this patch depends on patch 3. Is that
-> > okay, or should I update this patch to be independent?
-> 
-> We don't have anything queued up yet, so I think the easiest would be to
-> merge this through the RTC tree. So nothing to do on your side yet, we
-> just need Alex to answer :)
-> 
+Add binding for Renesas 9-series PCIe clock generators. This binding
+is designed to support 9FGV/9DBV/9DMV/9FGL/9DML/9QXL/9SQ series I2C
+PCIe clock generators, currently the only tested and supported chip
+is 9FGV0241.
 
-I can take the whole series but I think I would need acks from Stephen
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+To: linux-clk@vger.kernel.org
+---
+ .../bindings/clock/renesas,9series.yaml       | 102 ++++++++++++++++++
+ 1 file changed, 102 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,9series.yaml
 
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,9series.yaml b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+new file mode 100644
+index 0000000000000..774053748d9f0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,9series.yaml
+@@ -0,0 +1,102 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,9series.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Binding for Renesas 9-series I2C PCIe clock generators
++
++description: |
++  The Renesas 9-series are I2C PCIe clock generators providing
++  from 1 to 20 output clocks.
++
++  When referencing the provided clock in the DT using phandle
++  and clock specifier, the following mapping applies:
++
++  - 9FGV0241:
++    0 -- DIF0
++    1 -- DIF1
++
++maintainers:
++  - Marek Vasut <marex@denx.de>
++
++properties:
++  compatible:
++    enum:
++      - renesas,9fgv0241
++
++  reg:
++    description: I2C device address
++    enum: [ 0x68, 0x6a ]
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    items:
++      - description: XTal input clock
++
++  renesas,out-amplitude:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 600000, 700000, 800000, 900000 ]
++    description: Output clock signal amplitude in uV
++
++  renesas,out-spread-spectrum:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 100000, 99750, 99500 ]
++    description: Output clock down spread in pcm
++
++patternProperties:
++  "^DIF[0-19]$":
++    type: object
++    description:
++      Description of one of the outputs (DIF0..DIF19).
++    properties:
++      renesas,slew-rate:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        enum: [ 2000000, 3000000 ]
++        description: Output clock slew rate select in V/ns
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    /* 25MHz reference crystal */
++    ref25: ref25m {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <25000000>;
++    };
++
++    i2c@0 {
++        reg = <0x0 0x100>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        rs9: clock-generator@6a {
++            compatible = "renesas,9fgv0241";
++            reg = <0x6a>;
++            #clock-cells = <1>;
++
++            clocks = <&ref25m>;
++
++            DIF0 {
++                renesas,slew-rate = <3000000>;
++            };
++        };
++    };
++
++    /* Consumer referencing the 9FGV0241 pin DIF0 */
++    consumer {
++        /* ... */
++        clocks = <&rs9 0>;
++        /* ... */
++    };
++
++...
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.34.1
+
