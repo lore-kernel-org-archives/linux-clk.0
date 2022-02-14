@@ -2,97 +2,239 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F4AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Feb 2022 06:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CA4C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Feb 2022 07:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240976AbiBNHAC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Feb 2022 02:00:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52498 "EHLO
+        id S234368AbiBNHE2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Feb 2022 02:04:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240999AbiBNHAA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Feb 2022 02:00:00 -0500
+        with ESMTP id S232616AbiBNHE2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Feb 2022 02:04:28 -0500
 Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB8A57B1C;
-        Sun, 13 Feb 2022 22:59:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1745E192A4;
+        Sun, 13 Feb 2022 23:04:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1644821994; x=1676357994;
+  t=1644822261; x=1676358261;
   h=from:to:cc:subject:date:message-id;
-  bh=17qLKnW6brrbaiSFFp05nCkdgryCUIaBTPLYWbvR+NA=;
-  b=rjJQFJaDDsT1/8kS2ktQ+2zOZQHdULbWKwtaTxsKucX/wv5by4yUke9S
-   77GC+IJs5MD+dUpfqNLyzR3pcazMjQrQdP9Fqss8mtkJpfgWby2H9vocq
-   gAc3wrn0AkGhHrGm0Y6/dHNm7vecxz5qJlw7/yDW4CKhyfcaIIoEAuH4l
-   E=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 13 Feb 2022 22:59:53 -0800
+  bh=a2rqhrwL0QDvqXSOvHL4UMfkkokAk4xYVtEp9iwOwjs=;
+  b=fmkzTAlDStBeB5qeRT+CswXxbxGonIkI4Wrz/YYmiMQZGhEcu3OKbB5j
+   6qzOvEisVHG8Cpgaf9P6LBcbfsyWsSU3JRVMMDWWsICWQ62iILhElRVcM
+   8cH7527tadmGSeINfjUeOWZWjGksBum/gMEmjeHLqfL7sBkGNjWPW4hiG
+   Y=;
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 13 Feb 2022 23:04:21 -0800
 X-QCInternal: smtphost
 Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Feb 2022 22:59:51 -0800
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Feb 2022 23:04:20 -0800
 X-QCInternal: smtphost
 Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 14 Feb 2022 12:29:50 +0530
+  by ironmsg01-blr.qualcomm.com with ESMTP; 14 Feb 2022 12:34:17 +0530
 Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id 1F2C34473; Mon, 14 Feb 2022 12:29:49 +0530 (+0530)
+        id 462B44473; Mon, 14 Feb 2022 12:34:16 +0530 (+0530)
 From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
         Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH 4/8] clk: qcom: Add A7 PLL support for SDX65
-Date:   Mon, 14 Feb 2022 12:29:47 +0530
-Message-Id: <1644821987-27343-1-git-send-email-quic_rohiagar@quicinc.com>
+Subject: [PATCH 7/8] clk: qcom: Add SDX65 APCS clock controller support
+Date:   Mon, 14 Feb 2022 12:34:07 +0530
+Message-Id: <1644822247-27884-1-git-send-email-quic_rohiagar@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for PLL found in Qualcomm SDX65 platforms which is used to
-provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
-frequency clock to the CPU above 1GHz as compared to the other sources
-like GPLL0.
+Add a driver for the SDX65 APCS clock controller. It is part of the APCS
+hardware block, which among other things implements also a combined mux
+and half integer divider functionality. The APCS clock controller has 3
+parent clocks:
 
-In this driver, the power domain is attached to the cpudev. This is
-required for CPUFreq functionality and there seems to be no better place
-to do other than this driver (no dedicated CPUFreq driver).
+1. Board XO
+2. Fixed rate GPLL0
+3. A7 PLL
+
+This is required for enabling CPU frequency scaling on SDX65-based
+platforms.
 
 Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 ---
- drivers/clk/qcom/Kconfig  | 6 +++---
- drivers/clk/qcom/a7-pll.c | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/Kconfig      |   9 +++
+ drivers/clk/qcom/Makefile     |   1 +
+ drivers/clk/qcom/apcs-sdx65.c | 130 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 140 insertions(+)
+ create mode 100644 drivers/clk/qcom/apcs-sdx65.c
 
 diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 6cd0634..1904ba1 100644
+index 1904ba1..49e89f8 100644
 --- a/drivers/clk/qcom/Kconfig
 +++ b/drivers/clk/qcom/Kconfig
-@@ -29,11 +29,11 @@ config QCOM_A53PLL
- 	  devices.
+@@ -63,6 +63,15 @@ config QCOM_CLK_APCS_SDX55
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as SDX55.
  
- config QCOM_A7PLL
--	tristate "SDX55 A7 PLL"
-+	tristate "SDX55 like A7 PLL"
- 	help
--	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
-+	  Support for the A7 PLL on SDX55 like devices. It provides the CPU with
- 	  frequencies above 1GHz.
--	  Say Y if you want to support higher CPU frequencies on SDX55
-+	  Say Y if you want to support higher CPU frequencies on SDX55 like
- 	  devices.
- 
- config QCOM_CLK_APCS_MSM8916
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-index c4a53e5..adb2121 100644
---- a/drivers/clk/qcom/a7-pll.c
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -84,6 +84,7 @@ static int qcom_a7pll_probe(struct platform_device *pdev)
- 
- static const struct of_device_id qcom_a7pll_match_table[] = {
- 	{ .compatible = "qcom,sdx55-a7pll" },
-+	{ .compatible = "qcom,sdx65-a7pll" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_a7pll_match_table);
++config QCOM_CLK_APCS_SDX65
++        tristate "SDX65 APCS Clock Controller"
++        depends on QCOM_APCS_IPC || COMPILE_TEST
++        help
++          Support for the APCS Clock Controller on SDX65 platform. The
++          APCS is managing the mux and divider which feeds the CPUs.
++          Say Y if you want to support CPU frequency scaling on devices
++          such as SDX65.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 3d855c1..f914f31 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -51,6 +51,7 @@ obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
+ obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
++obj-$(CONFIG_QCOM_CLK_APCS_SDX65) += apcs-sdx65.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+diff --git a/drivers/clk/qcom/apcs-sdx65.c b/drivers/clk/qcom/apcs-sdx65.c
+new file mode 100644
+index 0000000..c0cc16a
+--- /dev/null
++++ b/drivers/clk/qcom/apcs-sdx65.c
+@@ -0,0 +1,130 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/cpu.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++
++#include "clk-regmap.h"
++#include "clk-regmap-mux-div.h"
++
++static const u32 apcs_mux_clk_parent_map[] = { 0, 1, 5 };
++
++static const struct clk_parent_data pdata[] = {
++	{ .fw_name = "ref" },
++	{ .fw_name = "aux" },
++	{ .fw_name = "pll" },
++};
++
++static int a7cc_notifier_cb(struct notifier_block *nb, unsigned long event,
++				void *data)
++{
++	int ret = 0;
++	struct clk_regmap_mux_div *md = container_of(nb,
++						struct clk_regmap_mux_div,
++						clk_nb);
++	if (event == PRE_RATE_CHANGE)
++		ret = mux_div_set_src_div(md, 1, 2);
++
++	return notifier_from_errno(ret);
++}
++
++static int qcom_apcs_sdx65_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device *parent = dev->parent;
++	struct device *cpu_dev;
++	struct clk_regmap_mux_div *a7cc;
++	struct regmap *regmap;
++	struct clk_init_data init = { };
++	int ret;
++
++	regmap = dev_get_regmap(parent, NULL);
++	if (!regmap) {
++		dev_err(dev, "Failed to get parent regmap\n");
++		return -ENODEV;
++	}
++
++	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
++	if (!a7cc)
++		return -ENOMEM;
++
++	init.name = "a7mux";
++	init.parent_data = pdata;
++	init.num_parents = ARRAY_SIZE(pdata);
++	init.ops = &clk_regmap_mux_div_ops;
++
++	a7cc->clkr.hw.init = &init;
++	a7cc->clkr.regmap = regmap;
++	a7cc->reg_offset = 0x8;
++	a7cc->hid_width = 5;
++	a7cc->hid_shift = 0;
++	a7cc->src_width = 3;
++	a7cc->src_shift = 8;
++	a7cc->parent_map = apcs_mux_clk_parent_map;
++
++	a7cc->pclk = devm_clk_get(parent, "pll");
++	if (IS_ERR(a7cc->pclk))
++		return dev_err_probe(dev, PTR_ERR(a7cc->pclk),
++					 "Failed to get PLL clk\n");
++
++	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
++	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
++	if (ret)
++		return dev_err_probe(dev, ret,
++					 "Failed to register clock notifier\n");
++
++	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to register regmap clock\n");
++		goto err;
++	}
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					&a7cc->clkr.hw);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to add clock provider\n");
++		goto err;
++	}
++
++	platform_set_drvdata(pdev, a7cc);
++
++	cpu_dev = get_cpu_device(0);
++	dev_pm_domain_attach(cpu_dev, true);
++
++	return 0;
++
++err:
++	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
++	return ret;
++}
++
++static int qcom_apcs_sdx65_clk_remove(struct platform_device *pdev)
++{
++	struct device *cpu_dev = get_cpu_device(0);
++	struct clk_regmap_mux_div *a7cc = platform_get_drvdata(pdev);
++
++	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
++	dev_pm_domain_detach(cpu_dev, true);
++
++	return 0;
++}
++
++static struct platform_driver qcom_apcs_sdx65_clk_driver = {
++	.probe = qcom_apcs_sdx65_clk_probe,
++	.remove = qcom_apcs_sdx65_clk_remove,
++	.driver = {
++		.name = "qcom-sdx65-acps-clk",
++	},
++};
++module_platform_driver(qcom_apcs_sdx65_clk_driver);
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Qualcomm SDX65 APCS Clock driver");
 -- 
 2.7.4
 
