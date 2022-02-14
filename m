@@ -2,187 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9DEC43217
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Feb 2022 11:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68108C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Feb 2022 11:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350498AbiBNLQB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Feb 2022 06:16:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45942 "EHLO
+        id S232042AbiBNLwZ convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Feb 2022 06:52:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350694AbiBNLPu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Feb 2022 06:15:50 -0500
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03496C1FE;
-        Mon, 14 Feb 2022 02:45:48 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id 4so5162217uaf.0;
-        Mon, 14 Feb 2022 02:45:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wpsKiepJz/NjXSBpI+epGj0sOrly3NjEOR9KULzKccQ=;
-        b=bE5DmghwEdFI+7Y7rHMw2XGuNaY5jJtASWRRJ/zwK3nGXgIHodO0GZEd+gU/jSpr2i
-         +3ULrZQXfi4gs6bSodxmPfOvtWToxTr27f/7q9dmxvmmTdIPo4vNTEOGoLvaH9kz4jZe
-         fsdOXo9fmeB078oiU5Pt/FQZgfpIN81tdbi96JKLJD60sahfByHkfznBD9JY5bS8szem
-         HynGVT0OqH83yzp84jvxvpMLiLlOlJQvwh1CYm1JB3zXN5W2BCfY89B9HHQuE+0umdqo
-         m6JN/qnfm07wAOUkeZ9Zryj6v8mEHcAB+HdHxlHVAiB2uoYGPjP+SaDN4Vm1G9o/qHqA
-         TngA==
-X-Gm-Message-State: AOAM533WxwE6PHRT5C7ItEIHCgN641mWkS/q6RtlNGYoyOTeVJDuOHAB
-        quUAgJxDzdSldAz54eG5BL4G9niyafMZlQ==
-X-Google-Smtp-Source: ABdhPJzPHngeLFoB4phNLjn73R4ONFF5aDIHpjpxsEGDZqwGf5TJmsPxWC9P8nsJL0m9WvWPR/aRUg==
-X-Received: by 2002:ab0:7183:: with SMTP id l3mr238501uao.80.1644835547819;
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id v13sm1758493vsr.10.2022.02.14.02.45.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id e26so1915004vso.3;
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-X-Received: by 2002:a05:6102:440d:: with SMTP id df13mr1050592vsb.5.1644835547102;
- Mon, 14 Feb 2022 02:45:47 -0800 (PST)
+        with ESMTP id S235729AbiBNLwZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Feb 2022 06:52:25 -0500
+Received: from aposti.net (aposti.net [89.234.176.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD44C34;
+        Mon, 14 Feb 2022 03:52:17 -0800 (PST)
+Date:   Mon, 14 Feb 2022 11:52:07 +0000
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 2/2] clk: ingenic-tcu: Fix missing TCU clock for X1000
+ SoC
+To:     Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <VAMA7R.PG2P5IFR07772@crapouillou.net>
+In-Reply-To: <20220212150927.39513-2-aidanmacdonald.0x0@gmail.com>
+References: <20220212150927.39513-1-aidanmacdonald.0x0@gmail.com>
+        <20220212150927.39513-2-aidanmacdonald.0x0@gmail.com>
 MIME-Version: 1.0
-References: <20220208183511.2925304-1-jjhiblot@traphandler.com> <20220208183511.2925304-7-jjhiblot@traphandler.com>
-In-Reply-To: <20220208183511.2925304-7-jjhiblot@traphandler.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 14 Feb 2022 11:45:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUCT-qwhN53mRnAUox2pqw+Y5-7Gw5EbC+-HCF054kkgQ@mail.gmail.com>
-Message-ID: <CAMuHMdUCT-qwhN53mRnAUox2pqw+Y5-7Gw5EbC+-HCF054kkgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] clk: renesas: r9a06g032: Disable the watchdog
- reset sources when halting
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jean-Jacques,
+Hi Aidan,
 
-CC watchdog people, who only received some patches.
+Le sam., févr. 12 2022 at 15:09:28 +0000, Aidan MacDonald 
+<aidanmacdonald.0x0@gmail.com> a écrit :
+> The X1000 does have a TCU clock gate, so pass it to the driver.
+> Without this the TCU can be gated automatically, which prevents
+> timers from running.
+> 
+> Fixes: dc6a81c3382f74fe ("clk: Ingenic: Add support for TCU of 
+> X1000.")
+> Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+> ---
+> I've just realized, maybe this is an ABI break. Now that the TCU 
+> clock is
+> required, the driver probe will fail if given an old device tree 
+> which is
+> missing that clock. Is it necessary to add a hack of some sort to 
+> support
+> the old device tree?
 
-On Tue, Feb 8, 2022 at 7:35 PM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
-> The watchdog reset sources must be disabled when the system is halted.
-> Otherwise the watchdogs will trigger a reset if they have been armed.
->
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Yes, that's a valid concern. The driver should then support the TCU 
+clock being missing (but only for the x1000), with a comment that 
+explain why the workaround exists.
 
-Thanks for your patch!
+You can use of_clk_get_by_name(), and if you get -EINVAL and the 
+workaround flag is set, allow the driver to continue. Also change the 
+checks for (tcu->soc_info->has_tcu_clk) in the function's cleanup to 
+checks for (tcu->clk) so that the clk_disable_unprepare/clk_put are 
+only done on a valid pointer.
 
-[inserting changelog]
+Note that the x1830 also has a TCU clock that's not specified in the 
+device tree; so you could add a patch similar to your current [1/2] 
+that adds it to x1830.dtsi as well. It uses the "ingenic,x1000-tcu" 
+string as fallback, so the driver wouldn't have to be modified further.
 
-| Changes v1 -> v2:
-| * Modified the clock driver to not enable the watchdog reset sources.
-|   On other renesas platforms, those bits are by the bootloader. The
-|   watchdog reset sources are still disabled when the platform is halted
-|   to prevent a watchdog reset.
+Cheers,
+-Paul
 
-I still have my doubts about this part. So on halt, you override the
-policy configured by the boot loader, which means the watchdog is no
-longer triggered on halt.
-
-From a system perspective, the system can be in five states:
-  1. Running,
-  2. Crashed/lock-ed up,
-  3. Halt,
-  4. Reboot,
-  5. Poweroff.
-
-Now, from a policy perspective, what is the difference between a
-system that crashes or locks up, and a system that halts?
-I.e. should the system reboot on halt, or not?
-
-I think halting a system where the watchdog has been activated makes
-no sense, and the user either wants to explicitly reboot the system, or
-power it off, but never halt it.  So I think this patch is not needed.
-
-Watchdog people: what is your opinion?
-Thanks!
-
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
->
->  #define R9A06G032_CLOCK_COUNT          (R9A06G032_UART_GROUP_34567 + 1)
->
-> +#define R9A06G032_SYSCTRL_REG_RSTEN            0x120
-> +#define WDA7RST1       BIT(2)
-> +#define WDA7RST0       BIT(1)
-> +#define MRESET         BIT(0)
-> +
->  static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
->         D_ROOT(CLKOUT, "clkout", 25, 1),
->         D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
-> @@ -893,6 +898,19 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
->         of_clk_del_provider(data);
->  }
->
-> +static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
-> +                       uint32_t mask, uint32_t value)
-> +{
-> +       uint32_t rsten;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&clocks->lock, flags);
-> +       rsten = readl(clocks->reg);
-> +       rsten = (rsten & ~mask) | (value & mask);
-> +       writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
-> +       spin_unlock_irqrestore(&clocks->lock, flags);
-> +}
-> +
->  static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> @@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->         if (!clocks || !clks)
->                 return -ENOMEM;
->
-> +       platform_set_drvdata(pdev, clocks);
-> +
->         spin_lock_init(&clocks->lock);
->
->         clocks->data.clks = clks;
-> @@ -963,9 +983,18 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->         if (error)
->                 return error;
->
-> +
->         return r9a06g032_add_clk_domain(dev);
->  }
->
-> +static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
-> +{
-> +       struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
-> +
-> +       /* Disable the watchdog reset sources */
-> +       r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
-> +}
-> +
->  static const struct of_device_id r9a06g032_match[] = {
->         { .compatible = "renesas,r9a06g032-sysctrl" },
->         { }
-> @@ -976,6 +1005,7 @@ static struct platform_driver r9a06g032_clock_driver = {
->                 .name   = "renesas,r9a06g032-sysctrl",
->                 .of_match_table = r9a06g032_match,
->         },
-> +       .shutdown = r9a06g032_clocks_shutdown,
+> 
+>  drivers/clk/ingenic/tcu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+> index 77acfbeb4830..9c86043f673a 100644
+> --- a/drivers/clk/ingenic/tcu.c
+> +++ b/drivers/clk/ingenic/tcu.c
+> @@ -320,7 +320,7 @@ static const struct ingenic_soc_info 
+> jz4770_soc_info = {
+>  static const struct ingenic_soc_info x1000_soc_info = {
+>  	.num_channels = 8,
+>  	.has_ost = false, /* X1000 has OST, but it not belong TCU */
+> -	.has_tcu_clk = false,
+> +	.has_tcu_clk = true,
 >  };
->
->  static int __init r9a06g032_clocks_init(void)
+> 
+>  static const struct of_device_id __maybe_unused 
+> ingenic_tcu_of_match[] __initconst = {
+> --
+> 2.34.1
+> 
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
