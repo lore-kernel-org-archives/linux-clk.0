@@ -2,98 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21627C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 10:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9F5C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 10:04:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230312AbiBOKCo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 05:02:44 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36190 "EHLO
+        id S235660AbiBOKFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 05:05:06 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234175AbiBOKCg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 05:02:36 -0500
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751A010F224;
-        Tue, 15 Feb 2022 02:02:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1644919344; x=1676455344;
-  h=from:to:cc:subject:date:message-id;
-  bh=qPVqXVUN2mGaNrVex8TfRvlY1eCUOH8rfs+vVpRk03Q=;
-  b=Tzp0tX7tcwBQ8GnVZMJ/RaJWW0/saLX4+/xXNMIRc83q3V8Rxdqb5S2D
-   0I/JOA+0CQvi9AZQs+bkxgQxnmcyleqebxJofywP8szWcRvu5vtNmSbFA
-   ksBcCkzViNwYk2+RPx8gZB0Jg6EXz4iJDKwOU7huDH7l4LMGXOc/LMgaB
-   I=;
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 15 Feb 2022 02:02:24 -0800
-X-QCInternal: smtphost
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 15 Feb 2022 02:02:23 -0800
-X-QCInternal: smtphost
-Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 15 Feb 2022 15:32:21 +0530
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
-        id C735D466C; Tue, 15 Feb 2022 15:32:19 +0530 (+0530)
-From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
-To:     manivannan.sadhasivam@linaro.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rohit Agarwal <quic_rohiagar@quicinc.com>
-Subject: [PATCH v2 4/7] clk: qcom: Add A7 PLL support for SDX65
-Date:   Tue, 15 Feb 2022 15:32:18 +0530
-Message-Id: <1644919338-27393-1-git-send-email-quic_rohiagar@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S232405AbiBOKFG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 05:05:06 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55DC24F;
+        Tue, 15 Feb 2022 02:04:56 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 49D92315;
+        Tue, 15 Feb 2022 11:04:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1644919494;
+        bh=KMRUUPC3zf0oe4gWL8qDF9DIC3uliWx9md2lcfBf1H4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XZ2+nH4c/zvYR8pmF4F74hNzJs6/HqrbnBa5xdTfnyW4VV1Hz1u5xXg+d+eNYXx7e
+         jiZfMnkT0EDDGX/IhTrpOQbsh3a6H0zfjdbVKo71lUlWPQr+w5uQTGsjwKJyAziXI2
+         cGrvYei0hJgWr69W9Ra3bUKEoi18Mwb6IBjX3CyI=
+Date:   Tue, 15 Feb 2022 12:04:47 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 37/66] media: sun6i-csi: Move power management to
+ runtime pm in capture
+Message-ID: <Ygt6vwydxg9/WuDH@pendragon.ideasonboard.com>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-38-paul.kocialkowski@bootlin.com>
+ <YgqftcDgfrsZfTdF@paasikivi.fi.intel.com>
+ <Ygt4xh2Mq0qStyKs@aptenodytes>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Ygt4xh2Mq0qStyKs@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for PLL found in Qualcomm SDX65 platforms which is used to
-provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
-frequency clock to the CPU above 1GHz as compared to the other sources
-like GPLL0.
+Hi Paul,
 
-In this driver, the power domain is attached to the cpudev. This is
-required for CPUFreq functionality and there seems to be no better place
-to do other than this driver (no dedicated CPUFreq driver).
+On Tue, Feb 15, 2022 at 10:56:22AM +0100, Paul Kocialkowski wrote:
+> On Mon 14 Feb 22, 20:30, Sakari Ailus wrote:
+> > On Sat, Feb 05, 2022 at 07:54:00PM +0100, Paul Kocialkowski wrote:
+> > > Let's just enable the module when we start using it (at stream on)
+> > > and benefit from runtime pm instead of enabling it at first open.
+> > > 
+> > > Also reorder the call to v4l2_pipeline_pm_get.
+> > > 
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > 
+> > Nice patch!
+> 
+> Thanks!
+> 
+> > Do you still need v4l2_pipeline_pm_put()? Removing it would be a separate
+> > patch of course.
+> 
+> My understanding is that this is still useful if there are drivers in the
+> pipeline that rely on s_power instead of rpm (a typical case could be an
+> old sensor driver). So that's why this is kept around, but all other components
+> of the pipeline (isp/csi/mipi csi-2) are using rpm now.
 
-Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
----
- drivers/clk/qcom/Kconfig  | 6 +++---
- drivers/clk/qcom/a7-pll.c | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+If that's not the case on your test platforms, I think it would be
+better to drop support for this old API, and convert drivers that still
+use .s_power() if someone needs to use one on an Allwinner platform.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 6cd0634..10d75d3 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -29,11 +29,11 @@ config QCOM_A53PLL
- 	  devices.
- 
- config QCOM_A7PLL
--	tristate "SDX55 A7 PLL"
-+	tristate "A7 PLL driver for SDX55 and SDX65"
- 	help
--	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
-+	  Support for the A7 PLL on SDX55 and SDX65 devices. It provides the CPU with
- 	  frequencies above 1GHz.
--	  Say Y if you want to support higher CPU frequencies on SDX55
-+	  Say Y if you want to support higher CPU frequencies on SDX55 and SDX65
- 	  devices.
- 
- config QCOM_CLK_APCS_MSM8916
-diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-index c4a53e5..adb2121 100644
---- a/drivers/clk/qcom/a7-pll.c
-+++ b/drivers/clk/qcom/a7-pll.c
-@@ -84,6 +84,7 @@ static int qcom_a7pll_probe(struct platform_device *pdev)
- 
- static const struct of_device_id qcom_a7pll_match_table[] = {
- 	{ .compatible = "qcom,sdx55-a7pll" },
-+	{ .compatible = "qcom,sdx65-a7pll" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_a7pll_match_table);
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
