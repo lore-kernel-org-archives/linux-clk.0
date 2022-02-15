@@ -2,33 +2,37 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E39DC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 07:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6B0C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 07:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234710AbiBOHGP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 02:06:15 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46072 "EHLO
+        id S231805AbiBOHKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 02:10:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234722AbiBOHGO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 02:06:14 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3171723FB;
-        Mon, 14 Feb 2022 23:06:02 -0800 (PST)
-X-UUID: f5796883f5814dc9ae98d17e31b6d026-20220215
-X-UUID: f5796883f5814dc9ae98d17e31b6d026-20220215
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        with ESMTP id S230054AbiBOHKc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 02:10:32 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323DCA8ED5;
+        Mon, 14 Feb 2022 23:10:19 -0800 (PST)
+X-UUID: 1d5134b350114f69a4f09cb4ee186759-20220215
+X-UUID: 1d5134b350114f69a4f09cb4ee186759-20220215
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1097150039; Tue, 15 Feb 2022 15:05:57 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 15 Feb 2022 15:05:56 +0800
+        with ESMTP id 2011686599; Tue, 15 Feb 2022 15:10:15 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Tue, 15 Feb 2022 15:10:15 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 15 Feb
+ 2022 15:10:11 +0800
 Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 15 Feb 2022 15:05:56 +0800
-Message-ID: <3062ed3573797e18997ac4fc9d37a898056fdf59.camel@mediatek.com>
-Subject: Re: [PATCH v3 25/31] clk: mediatek: pll: Implement error handling
- in register API
+ Transport; Tue, 15 Feb 2022 15:10:11 +0800
+Message-ID: <fc5593073d85e3575993eeb92c546db90730cb23.camel@mediatek.com>
+Subject: Re: [PATCH v3 26/31] clk: mediatek: mtk: Implement error handling
+ in register APIs
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -40,10 +44,10 @@ CC:     AngeloGioacchino Del Regno
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Date:   Tue, 15 Feb 2022 15:05:56 +0800
-In-Reply-To: <20220208124034.414635-26-wenst@chromium.org>
+Date:   Tue, 15 Feb 2022 15:10:11 +0800
+In-Reply-To: <20220208124034.414635-27-wenst@chromium.org>
 References: <20220208124034.414635-1-wenst@chromium.org>
-         <20220208124034.414635-26-wenst@chromium.org>
+         <20220208124034.414635-27-wenst@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -54,15 +58,18 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, 2022-02-08 at 20:40 +0800, Chen-Yu Tsai wrote:
-> The pll clk type registration function does not stop or return errors
-> if any clk failed to be registered, nor does it implement an error
-> handling path. This may result in a partially working device if any
-> step failed.
+> The remaining clk registration functions do not stop or return errors
+> if any clk failed to be registered, nor do they implement error
+> handling paths. This may result in a partially working device if any
+> step fails.
 > 
-> Make the register function return proper error codes, and bail out if
+> Make the register functions return proper error codes, and bail out
+> if
 > errors occur. Proper cleanup, i.e. unregister any clks that were
-> successfully registered, and unmap the I/O space, is done in the new
-> error path.
+> successfully registered, is done in the new error path.
+> 
+> This also makes the |struct clk_data *| argument mandatory, as it is
+> used to track the list of clks registered.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
@@ -71,88 +78,313 @@ On Tue, 2022-02-08 at 20:40 +0800, Chen-Yu Tsai wrote:
 
 Reviewed-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > ---
->  drivers/clk/mediatek/clk-pll.c | 23 +++++++++++++++++++----
->  drivers/clk/mediatek/clk-pll.h |  6 +++---
->  2 files changed, 22 insertions(+), 7 deletions(-)
+>  drivers/clk/mediatek/clk-mtk.c | 118 ++++++++++++++++++++++++++-----
+> --
+>  drivers/clk/mediatek/clk-mtk.h |  20 +++---
+>  2 files changed, 103 insertions(+), 35 deletions(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-pll.c
-> b/drivers/clk/mediatek/clk-pll.c
-> index 8439d37e354d..817a80293bfc 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -377,8 +377,9 @@ static void mtk_clk_unregister_pll(struct clk
-> *clk)
->  	kfree(pll);
+> diff --git a/drivers/clk/mediatek/clk-mtk.c
+> b/drivers/clk/mediatek/clk-mtk.c
+> index 5618c84e4e08..8f15e9de742e 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -53,16 +53,19 @@ void mtk_free_clk_data(struct clk_onecell_data
+> *clk_data)
+>  	kfree(clk_data);
 >  }
 >  
-> -void mtk_clk_register_plls(struct device_node *node,
-> -		const struct mtk_pll_data *plls, int num_plls, struct
-> clk_onecell_data *clk_data)
-> +int mtk_clk_register_plls(struct device_node *node,
-> +			  const struct mtk_pll_data *plls, int
-> num_plls,
-> +			  struct clk_onecell_data *clk_data)
+> -void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+> -		int num, struct clk_onecell_data *clk_data)
+> +int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+> int num,
+> +				struct clk_onecell_data *clk_data)
 >  {
->  	void __iomem *base;
 >  	int i;
-> @@ -387,7 +388,7 @@ void mtk_clk_register_plls(struct device_node
-> *node,
->  	base = of_iomap(node, 0);
->  	if (!base) {
->  		pr_err("%s(): ioremap failed\n", __func__);
-> -		return;
-> +		return -EINVAL;
->  	}
+>  	struct clk *clk;
 >  
->  	for (i = 0; i < num_plls; i++) {
-> @@ -397,11 +398,25 @@ void mtk_clk_register_plls(struct device_node
-> *node,
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i < num; i++) {
+>  		const struct mtk_fixed_clk *rc = &clks[i];
+>  
+> -		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[rc-
+> >id]))
+> +		if (!IS_ERR_OR_NULL(clk_data->clks[rc->id]))
+>  			continue;
+>  
+>  		clk = clk_register_fixed_rate(NULL, rc->name, rc-
+> >parent, 0,
+> @@ -70,12 +73,26 @@ void mtk_clk_register_fixed_clks(const struct
+> mtk_fixed_clk *clks,
 >  
 >  		if (IS_ERR(clk)) {
->  			pr_err("Failed to register clk %s: %pe\n", pll-
+>  			pr_err("Failed to register clk %s: %pe\n", rc-
 > >name, clk);
 > -			continue;
 > +			goto err;
 >  		}
 >  
->  		clk_data->clks[pll->id] = clk;
+> -		if (clk_data)
+> -			clk_data->clks[rc->id] = clk;
+> +		clk_data->clks[rc->id] = clk;
 >  	}
 > +
 > +	return 0;
 > +
 > +err:
 > +	while (--i >= 0) {
-> +		const struct mtk_pll_data *pll = &plls[i];
+> +		const struct mtk_fixed_clk *rc = &clks[i];
 > +
-> +		mtk_clk_unregister_pll(clk_data->clks[pll->id]);
-> +		clk_data->clks[pll->id] = ERR_PTR(-ENOENT);
+> +		if (IS_ERR_OR_NULL(clk_data->clks[rc->id]))
+> +			continue;
+> +
+> +		clk_unregister_fixed_rate(clk_data->clks[rc->id]);
+> +		clk_data->clks[rc->id] = ERR_PTR(-ENOENT);
 > +	}
-> +
-> +	iounmap(base);
 > +
 > +	return PTR_ERR(clk);
 >  }
->  EXPORT_SYMBOL_GPL(mtk_clk_register_plls);
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_fixed_clks);
 >  
-> diff --git a/drivers/clk/mediatek/clk-pll.h
-> b/drivers/clk/mediatek/clk-pll.h
-> index a889b1e472e7..bf06e44caef9 100644
-> --- a/drivers/clk/mediatek/clk-pll.h
-> +++ b/drivers/clk/mediatek/clk-pll.h
-> @@ -48,9 +48,9 @@ struct mtk_pll_data {
->  	u8 pll_en_bit; /* Assume 0, indicates BIT(0) by default */
->  };
+> @@ -99,16 +116,19 @@ void mtk_clk_unregister_fixed_clks(const struct
+> mtk_fixed_clk *clks, int num,
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_unregister_fixed_clks);
 >  
-> -void mtk_clk_register_plls(struct device_node *node,
-> -			   const struct mtk_pll_data *plls, int
-> num_plls,
-> -			   struct clk_onecell_data *clk_data);
-> +int mtk_clk_register_plls(struct device_node *node,
-> +			  const struct mtk_pll_data *plls, int
-> num_plls,
-> +			  struct clk_onecell_data *clk_data);
->  void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int
-> num_plls,
->  			     struct clk_onecell_data *clk_data);
+> -void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+> -		int num, struct clk_onecell_data *clk_data)
+> +int mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+> int num,
+> +			     struct clk_onecell_data *clk_data)
+>  {
+>  	int i;
+>  	struct clk *clk;
+>  
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i < num; i++) {
+>  		const struct mtk_fixed_factor *ff = &clks[i];
+>  
+> -		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[ff-
+> >id]))
+> +		if (!IS_ERR_OR_NULL(clk_data->clks[ff->id]))
+>  			continue;
+>  
+>  		clk = clk_register_fixed_factor(NULL, ff->name, ff-
+> >parent_name,
+> @@ -116,12 +136,26 @@ void mtk_clk_register_factors(const struct
+> mtk_fixed_factor *clks,
+>  
+>  		if (IS_ERR(clk)) {
+>  			pr_err("Failed to register clk %s: %pe\n", ff-
+> >name, clk);
+> -			continue;
+> +			goto err;
+>  		}
+>  
+> -		if (clk_data)
+> -			clk_data->clks[ff->id] = clk;
+> +		clk_data->clks[ff->id] = clk;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (--i >= 0) {
+> +		const struct mtk_fixed_factor *ff = &clks[i];
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->clks[ff->id]))
+> +			continue;
+> +
+> +		clk_unregister_fixed_factor(clk_data->clks[ff->id]);
+> +		clk_data->clks[ff->id] = ERR_PTR(-ENOENT);
+>  	}
+> +
+> +	return PTR_ERR(clk);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_factors);
+>  
+> @@ -258,13 +292,16 @@ static void mtk_clk_unregister_composite(struct
+> clk *clk)
+>  	kfree(mux);
+>  }
+>  
+> -void mtk_clk_register_composites(const struct mtk_composite *mcs,
+> -		int num, void __iomem *base, spinlock_t *lock,
+> -		struct clk_onecell_data *clk_data)
+> +int mtk_clk_register_composites(const struct mtk_composite *mcs, int
+> num,
+> +				void __iomem *base, spinlock_t *lock,
+> +				struct clk_onecell_data *clk_data)
+>  {
+>  	struct clk *clk;
+>  	int i;
+>  
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i < num; i++) {
+>  		const struct mtk_composite *mc = &mcs[i];
+>  
+> @@ -275,12 +312,26 @@ void mtk_clk_register_composites(const struct
+> mtk_composite *mcs,
+>  
+>  		if (IS_ERR(clk)) {
+>  			pr_err("Failed to register clk %s: %pe\n", mc-
+> >name, clk);
+> -			continue;
+> +			goto err;
+>  		}
+>  
+> -		if (clk_data)
+> -			clk_data->clks[mc->id] = clk;
+> +		clk_data->clks[mc->id] = clk;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (--i >= 0) {
+> +		const struct mtk_composite *mc = &mcs[i];
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->clks[mcs->id]))
+> +			continue;
+> +
+> +		mtk_clk_unregister_composite(clk_data->clks[mc->id]);
+> +		clk_data->clks[mc->id] = ERR_PTR(-ENOENT);
+>  	}
+> +
+> +	return PTR_ERR(clk);
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_composites);
+>  
+> @@ -304,17 +355,20 @@ void mtk_clk_unregister_composites(const struct
+> mtk_composite *mcs, int num,
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_unregister_composites);
+>  
+> -void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> -			int num, void __iomem *base, spinlock_t *lock,
+> -				struct clk_onecell_data *clk_data)
+> +int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> int num,
+> +			      void __iomem *base, spinlock_t *lock,
+> +			      struct clk_onecell_data *clk_data)
+>  {
+>  	struct clk *clk;
+>  	int i;
+>  
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i <  num; i++) {
+>  		const struct mtk_clk_divider *mcd = &mcds[i];
+>  
+> -		if (clk_data && !IS_ERR_OR_NULL(clk_data->clks[mcd-
+> >id]))
+> +		if (!IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
+>  			continue;
+>  
+>  		clk = clk_register_divider(NULL, mcd->name, mcd-
+> >parent_name,
+> @@ -323,12 +377,26 @@ void mtk_clk_register_dividers(const struct
+> mtk_clk_divider *mcds,
+>  
+>  		if (IS_ERR(clk)) {
+>  			pr_err("Failed to register clk %s: %pe\n", mcd-
+> >name, clk);
+> -			continue;
+> +			goto err;
+>  		}
+>  
+> -		if (clk_data)
+> -			clk_data->clks[mcd->id] = clk;
+> +		clk_data->clks[mcd->id] = clk;
+> +	}
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (--i >= 0) {
+> +		const struct mtk_clk_divider *mcd = &mcds[i];
+> +
+> +		if (IS_ERR_OR_NULL(clk_data->clks[mcd->id]))
+> +			continue;
+> +
+> +		mtk_clk_unregister_composite(clk_data->clks[mcd->id]);
+> +		clk_data->clks[mcd->id] = ERR_PTR(-ENOENT);
+>  	}
+> +
+> +	return PTR_ERR(clk);
+>  }
+>  
+>  void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds,
+> int num,
+> diff --git a/drivers/clk/mediatek/clk-mtk.h
+> b/drivers/clk/mediatek/clk-mtk.h
+> index 7f902581a115..bf6565aa7319 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -34,8 +34,8 @@ struct mtk_fixed_clk {
+>  		.rate = _rate,				\
+>  	}
+>  
+> -void mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+> int num,
+> -				 struct clk_onecell_data *clk_data);
+> +int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks,
+> int num,
+> +				struct clk_onecell_data *clk_data);
+>  void mtk_clk_unregister_fixed_clks(const struct mtk_fixed_clk *clks,
+> int num,
+>  				   struct clk_onecell_data *clk_data);
+>  
+> @@ -55,8 +55,8 @@ struct mtk_fixed_factor {
+>  		.div = _div,				\
+>  	}
+>  
+> -void mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+> int num,
+> -			      struct clk_onecell_data *clk_data);
+> +int mtk_clk_register_factors(const struct mtk_fixed_factor *clks,
+> int num,
+> +			     struct clk_onecell_data *clk_data);
+>  void mtk_clk_unregister_factors(const struct mtk_fixed_factor *clks,
+> int num,
+>  				struct clk_onecell_data *clk_data);
+>  
+> @@ -150,9 +150,9 @@ struct mtk_composite {
+>  struct clk *mtk_clk_register_composite(const struct mtk_composite
+> *mc,
+>  		void __iomem *base, spinlock_t *lock);
+>  
+> -void mtk_clk_register_composites(const struct mtk_composite *mcs,
+> -		int num, void __iomem *base, spinlock_t *lock,
+> -		struct clk_onecell_data *clk_data);
+> +int mtk_clk_register_composites(const struct mtk_composite *mcs, int
+> num,
+> +				void __iomem *base, spinlock_t *lock,
+> +				struct clk_onecell_data *clk_data);
+>  void mtk_clk_unregister_composites(const struct mtk_composite *mcs,
+> int num,
+>  				   struct clk_onecell_data *clk_data);
+>  
+> @@ -178,9 +178,9 @@ struct mtk_clk_divider {
+>  		.div_width = _width,				\
+>  }
+>  
+> -void mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> int num,
+> -			       void __iomem *base, spinlock_t *lock,
+> -			       struct clk_onecell_data *clk_data);
+> +int mtk_clk_register_dividers(const struct mtk_clk_divider *mcds,
+> int num,
+> +			      void __iomem *base, spinlock_t *lock,
+> +			      struct clk_onecell_data *clk_data);
+>  void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds,
+> int num,
+>  				 struct clk_onecell_data *clk_data);
 >  
 
