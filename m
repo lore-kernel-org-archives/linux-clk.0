@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 501A4C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 06:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F28AC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 06:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233296AbiBOGHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 01:07:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60374 "EHLO
+        id S231971AbiBOGUU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 01:20:20 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbiBOGHU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 01:07:20 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD50D43AF3;
-        Mon, 14 Feb 2022 22:07:02 -0800 (PST)
-X-UUID: a2cb53b2c3f644f8bba8ce770ec60631-20220215
-X-UUID: a2cb53b2c3f644f8bba8ce770ec60631-20220215
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        with ESMTP id S229497AbiBOGUT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 01:20:19 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4382F11B32B;
+        Mon, 14 Feb 2022 22:20:06 -0800 (PST)
+X-UUID: 77a515df3bff4876be66cecc6c162a86-20220215
+X-UUID: 77a515df3bff4876be66cecc6c162a86-20220215
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
         (envelope-from <chun-jie.chen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 609010241; Tue, 15 Feb 2022 14:06:56 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 15 Feb 2022 14:06:54 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+        with ESMTP id 1244512323; Tue, 15 Feb 2022 14:20:03 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 15 Feb 2022 14:20:01 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 15 Feb 2022 14:06:54 +0800
-Message-ID: <5c2b97a1260b9349b151448d09e6308c2a3b252b.camel@mediatek.com>
-Subject: Re: [PATCH v3 01/31] clk: mediatek: Use %pe to print errors
+ Transport; Tue, 15 Feb 2022 14:20:01 +0800
+Message-ID: <e4c71a67d682e4f8f6234651871afc5b36ebf1c6.camel@mediatek.com>
+Subject: Re: [PATCH v3 02/31] clk: mediatek: gate: Consolidate gate type clk
+ related code
 From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
 To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -40,10 +40,10 @@ CC:     AngeloGioacchino Del Regno
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Date:   Tue, 15 Feb 2022 14:06:48 +0800
-In-Reply-To: <20220208124034.414635-2-wenst@chromium.org>
+Date:   Tue, 15 Feb 2022 14:20:01 +0800
+In-Reply-To: <20220208124034.414635-3-wenst@chromium.org>
 References: <20220208124034.414635-1-wenst@chromium.org>
-         <20220208124034.414635-2-wenst@chromium.org>
+         <20220208124034.414635-3-wenst@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -54,10 +54,18 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, 2022-02-08 at 20:40 +0800, Chen-Yu Tsai wrote:
-> If %pe is used to print errors, a string representation of the error
-> would be printed instead of a number as with %ld. Also, all the sites
-> printing errors are deriving the error code from a pointer. Using %pe
-> is more straightforward.
+> Right now some bits of the gate type clk code are in clk-gate.[ch],
+> but
+> other bits are in clk-mtk.[ch]. This is different from the cpumux and
+> mux type clks, for which all of the code are found in the same files.
+> 
+> Move the functions that register multiple clks from a given list,
+> mtk_clk_register_gates_with_dev() and mtk_clk_register_gates(), to
+> clk-gate.[ch] to consolidate all the code for the gate type clks.
+> 
+> This commit only moves code with minor whitespace fixups to correct
+> the code style. Further improvements, such as internalizing various
+> functions and structures will be done in later commits.
 > 
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
@@ -67,200 +75,239 @@ On Tue, 2022-02-08 at 20:40 +0800, Chen-Yu Tsai wrote:
 
 Reviewed-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
 > ---
->  drivers/clk/mediatek/clk-apmixed.c |  2 +-
->  drivers/clk/mediatek/clk-cpumux.c  |  6 ++----
->  drivers/clk/mediatek/clk-mtk.c     | 18 ++++++------------
->  drivers/clk/mediatek/clk-mux.c     |  6 ++----
->  drivers/clk/mediatek/clk-pll.c     |  3 +--
->  drivers/clk/mediatek/reset.c       |  3 +--
->  6 files changed, 13 insertions(+), 25 deletions(-)
+>  drivers/clk/mediatek/clk-gate.c | 53
+> ++++++++++++++++++++++++++++++++-
+>  drivers/clk/mediatek/clk-gate.h | 25 ++++++++++++++++
+>  drivers/clk/mediatek/clk-mtk.c  | 51 -------------------------------
+>  drivers/clk/mediatek/clk-mtk.h  | 25 ----------------
+>  4 files changed, 77 insertions(+), 77 deletions(-)
 > 
-> diff --git a/drivers/clk/mediatek/clk-apmixed.c
-> b/drivers/clk/mediatek/clk-apmixed.c
-> index caa9119413f1..a29339cc26c4 100644
-> --- a/drivers/clk/mediatek/clk-apmixed.c
-> +++ b/drivers/clk/mediatek/clk-apmixed.c
-> @@ -92,7 +92,7 @@ struct clk * __init
-> mtk_clk_register_ref2usb_tx(const char *name,
->  	clk = clk_register(NULL, &tx->hw);
+> diff --git a/drivers/clk/mediatek/clk-gate.c
+> b/drivers/clk/mediatek/clk-gate.c
+> index 5d88b428565b..54921768bfba 100644
+> --- a/drivers/clk/mediatek/clk-gate.c
+> +++ b/drivers/clk/mediatek/clk-gate.c
+> @@ -11,9 +11,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/delay.h>
+>  #include <linux/clkdev.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
 >  
->  	if (IS_ERR(clk)) {
-> -		pr_err("Failed to register clk %s: %ld\n", name,
-> PTR_ERR(clk));
-> +		pr_err("Failed to register clk %s: %pe\n", name, clk);
->  		kfree(tx);
->  	}
+> -#include "clk-mtk.h"
+>  #include "clk-gate.h"
 >  
-> diff --git a/drivers/clk/mediatek/clk-cpumux.c
-> b/drivers/clk/mediatek/clk-cpumux.c
-> index e188018bc906..cab5095416b6 100644
-> --- a/drivers/clk/mediatek/clk-cpumux.c
-> +++ b/drivers/clk/mediatek/clk-cpumux.c
-> @@ -87,8 +87,7 @@ int mtk_clk_register_cpumuxes(struct device_node
-> *node,
+>  static u32 mtk_get_clockgating(struct clk_hw *hw)
+> @@ -182,4 +182,55 @@ struct clk *mtk_clk_register_gate(
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_gate);
 >  
->  	regmap = device_node_to_regmap(node);
->  	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
-> -		       PTR_ERR(regmap));
+> +int mtk_clk_register_gates_with_dev(struct device_node *node,
+> +				    const struct mtk_gate *clks, int
+> num,
+> +				    struct clk_onecell_data *clk_data,
+> +				    struct device *dev)
+> +{
+> +	int i;
+> +	struct clk *clk;
+> +	struct regmap *regmap;
+> +
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	regmap = device_node_to_regmap(node);
+> +	if (IS_ERR(regmap)) {
 > +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
 > regmap);
->  		return PTR_ERR(regmap);
->  	}
->  
-> @@ -97,8 +96,7 @@ int mtk_clk_register_cpumuxes(struct device_node
-> *node,
->  
->  		clk = mtk_clk_register_cpumux(mux, regmap);
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -			       mux->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", mux-
-> >name, clk);
->  			continue;
->  		}
->  
-> diff --git a/drivers/clk/mediatek/clk-mtk.c
-> b/drivers/clk/mediatek/clk-mtk.c
-> index 8d5791b3f460..519a461cbb6f 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -70,8 +70,7 @@ void mtk_clk_register_fixed_clks(const struct
-> mtk_fixed_clk *clks,
->  					      rc->rate);
->  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -					rc->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", rc-
-> >name, clk);
->  			continue;
->  		}
->  
-> @@ -97,8 +96,7 @@ void mtk_clk_register_factors(const struct
-> mtk_fixed_factor *clks,
->  				CLK_SET_RATE_PARENT, ff->mult, ff-
-> >div);
->  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -					ff->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", ff-
-> >name, clk);
->  			continue;
->  		}
->  
-> @@ -122,8 +120,7 @@ int mtk_clk_register_gates_with_dev(struct
-> device_node *node,
->  
->  	regmap = device_node_to_regmap(node);
->  	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
-> -				PTR_ERR(regmap));
-> +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
-> regmap);
->  		return PTR_ERR(regmap);
->  	}
->  
-> @@ -141,8 +138,7 @@ int mtk_clk_register_gates_with_dev(struct
-> device_node *node,
->  				gate->shift, gate->ops, gate->flags,
-> dev);
->  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -					gate->name, PTR_ERR(clk));
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	for (i = 0; i < num; i++) {
+> +		const struct mtk_gate *gate = &clks[i];
+> +
+> +		if (!IS_ERR_OR_NULL(clk_data->clks[gate->id]))
+> +			continue;
+> +
+> +		clk = mtk_clk_register_gate(gate->name, gate-
+> >parent_name,
+> +					    regmap,
+> +					    gate->regs->set_ofs,
+> +					    gate->regs->clr_ofs,
+> +					    gate->regs->sta_ofs,
+> +					    gate->shift, gate->ops,
+> +					    gate->flags, dev);
+> +
+> +		if (IS_ERR(clk)) {
 > +			pr_err("Failed to register clk %s: %pe\n",
 > gate->name, clk);
->  			continue;
->  		}
+> +			continue;
+> +		}
+> +
+> +		clk_data->clks[gate->id] = clk;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int mtk_clk_register_gates(struct device_node *node,
+> +			   const struct mtk_gate *clks, int num,
+> +			   struct clk_onecell_data *clk_data)
+> +{
+> +	return mtk_clk_register_gates_with_dev(node, clks, num,
+> clk_data, NULL);
+> +}
+> +EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
+> +
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/clk/mediatek/clk-gate.h
+> b/drivers/clk/mediatek/clk-gate.h
+> index 3c3329ec54b7..432b571d23b3 100644
+> --- a/drivers/clk/mediatek/clk-gate.h
+> +++ b/drivers/clk/mediatek/clk-gate.h
+> @@ -43,6 +43,22 @@ struct clk *mtk_clk_register_gate(
+>  		unsigned long flags,
+>  		struct device *dev);
 >  
-> @@ -264,8 +260,7 @@ void mtk_clk_register_composites(const struct
+> +struct mtk_gate_regs {
+> +	u32 sta_ofs;
+> +	u32 clr_ofs;
+> +	u32 set_ofs;
+> +};
+> +
+> +struct mtk_gate {
+> +	int id;
+> +	const char *name;
+> +	const char *parent_name;
+> +	const struct mtk_gate_regs *regs;
+> +	int shift;
+> +	const struct clk_ops *ops;
+> +	unsigned long flags;
+> +};
+> +
+>  #define GATE_MTK_FLAGS(_id, _name, _parent, _regs, _shift,	\
+>  			_ops, _flags) {				\
+>  		.id = _id,					\
+> @@ -57,4 +73,13 @@ struct clk *mtk_clk_register_gate(
+>  #define GATE_MTK(_id, _name, _parent, _regs, _shift, _ops)		
+> \
+>  	GATE_MTK_FLAGS(_id, _name, _parent, _regs, _shift, _ops, 0)
+>  
+> +int mtk_clk_register_gates(struct device_node *node,
+> +			   const struct mtk_gate *clks, int num,
+> +			   struct clk_onecell_data *clk_data);
+> +
+> +int mtk_clk_register_gates_with_dev(struct device_node *node,
+> +				    const struct mtk_gate *clks, int
+> num,
+> +				    struct clk_onecell_data *clk_data,
+> +				    struct device *dev);
+> +
+>  #endif /* __DRV_CLK_GATE_H */
+> diff --git a/drivers/clk/mediatek/clk-mtk.c
+> b/drivers/clk/mediatek/clk-mtk.c
+> index 519a461cbb6f..0c5db3c71fdd 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -106,57 +106,6 @@ void mtk_clk_register_factors(const struct
+> mtk_fixed_factor *clks,
+>  }
+>  EXPORT_SYMBOL_GPL(mtk_clk_register_factors);
+>  
+> -int mtk_clk_register_gates_with_dev(struct device_node *node,
+> -		const struct mtk_gate *clks,
+> -		int num, struct clk_onecell_data *clk_data,
+> -		struct device *dev)
+> -{
+> -	int i;
+> -	struct clk *clk;
+> -	struct regmap *regmap;
+> -
+> -	if (!clk_data)
+> -		return -ENOMEM;
+> -
+> -	regmap = device_node_to_regmap(node);
+> -	if (IS_ERR(regmap)) {
+> -		pr_err("Cannot find regmap for %pOF: %pe\n", node,
+> regmap);
+> -		return PTR_ERR(regmap);
+> -	}
+> -
+> -	for (i = 0; i < num; i++) {
+> -		const struct mtk_gate *gate = &clks[i];
+> -
+> -		if (!IS_ERR_OR_NULL(clk_data->clks[gate->id]))
+> -			continue;
+> -
+> -		clk = mtk_clk_register_gate(gate->name, gate-
+> >parent_name,
+> -				regmap,
+> -				gate->regs->set_ofs,
+> -				gate->regs->clr_ofs,
+> -				gate->regs->sta_ofs,
+> -				gate->shift, gate->ops, gate->flags,
+> dev);
+> -
+> -		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %pe\n",
+> gate->name, clk);
+> -			continue;
+> -		}
+> -
+> -		clk_data->clks[gate->id] = clk;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -int mtk_clk_register_gates(struct device_node *node,
+> -		const struct mtk_gate *clks,
+> -		int num, struct clk_onecell_data *clk_data)
+> -{
+> -	return mtk_clk_register_gates_with_dev(node,
+> -		clks, num, clk_data, NULL);
+> -}
+> -EXPORT_SYMBOL_GPL(mtk_clk_register_gates);
+> -
+>  struct clk *mtk_clk_register_composite(const struct mtk_composite
+> *mc,
+>  		void __iomem *base, spinlock_t *lock)
+>  {
+> diff --git a/drivers/clk/mediatek/clk-mtk.h
+> b/drivers/clk/mediatek/clk-mtk.h
+> index 0ff289d93452..bdec7dc5e07a 100644
+> --- a/drivers/clk/mediatek/clk-mtk.h
+> +++ b/drivers/clk/mediatek/clk-mtk.h
+> @@ -150,31 +150,6 @@ void mtk_clk_register_composites(const struct
 > mtk_composite *mcs,
->  		clk = mtk_clk_register_composite(mc, base, lock);
+>  		int num, void __iomem *base, spinlock_t *lock,
+>  		struct clk_onecell_data *clk_data);
 >  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -					mc->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", mc-
-> >name, clk);
->  			continue;
->  		}
->  
-> @@ -293,8 +288,7 @@ void mtk_clk_register_dividers(const struct
-> mtk_clk_divider *mcds,
->  			mcd->div_width, mcd->clk_divider_flags, lock);
->  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -				mcd->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", mcd-
-> >name, clk);
->  			continue;
->  		}
->  
-> diff --git a/drivers/clk/mediatek/clk-mux.c
-> b/drivers/clk/mediatek/clk-mux.c
-> index 6d3a50eb7d6f..89f23e111d91 100644
-> --- a/drivers/clk/mediatek/clk-mux.c
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -175,8 +175,7 @@ int mtk_clk_register_muxes(const struct mtk_mux
-> *muxes,
->  
->  	regmap = device_node_to_regmap(node);
->  	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
-> -		       PTR_ERR(regmap));
-> +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
-> regmap);
->  		return PTR_ERR(regmap);
->  	}
->  
-> @@ -187,8 +186,7 @@ int mtk_clk_register_muxes(const struct mtk_mux
-> *muxes,
->  			clk = mtk_clk_register_mux(mux, regmap, lock);
->  
->  			if (IS_ERR(clk)) {
-> -				pr_err("Failed to register clk %s:
-> %ld\n",
-> -				       mux->name, PTR_ERR(clk));
-> +				pr_err("Failed to register clk %s:
-> %pe\n", mux->name, clk);
->  				continue;
->  			}
->  
-> diff --git a/drivers/clk/mediatek/clk-pll.c
-> b/drivers/clk/mediatek/clk-pll.c
-> index 60d7ffa0b924..f04f724e12e5 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -378,8 +378,7 @@ void mtk_clk_register_plls(struct device_node
-> *node,
->  		clk = mtk_clk_register_pll(pll, base);
->  
->  		if (IS_ERR(clk)) {
-> -			pr_err("Failed to register clk %s: %ld\n",
-> -					pll->name, PTR_ERR(clk));
-> +			pr_err("Failed to register clk %s: %pe\n", pll-
-> >name, clk);
->  			continue;
->  		}
->  
-> diff --git a/drivers/clk/mediatek/reset.c
-> b/drivers/clk/mediatek/reset.c
-> index ffe464ce7ff8..bcec4b89f449 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -100,8 +100,7 @@ static void
-> mtk_register_reset_controller_common(struct device_node *np,
->  
->  	regmap = device_node_to_regmap(np);
->  	if (IS_ERR(regmap)) {
-> -		pr_err("Cannot find regmap for %pOF: %ld\n", np,
-> -				PTR_ERR(regmap));
-> +		pr_err("Cannot find regmap for %pOF: %pe\n", np,
-> regmap);
->  		return;
->  	}
->  
+> -struct mtk_gate_regs {
+> -	u32 sta_ofs;
+> -	u32 clr_ofs;
+> -	u32 set_ofs;
+> -};
+> -
+> -struct mtk_gate {
+> -	int id;
+> -	const char *name;
+> -	const char *parent_name;
+> -	const struct mtk_gate_regs *regs;
+> -	int shift;
+> -	const struct clk_ops *ops;
+> -	unsigned long flags;
+> -};
+> -
+> -int mtk_clk_register_gates(struct device_node *node,
+> -			const struct mtk_gate *clks, int num,
+> -			struct clk_onecell_data *clk_data);
+> -
+> -int mtk_clk_register_gates_with_dev(struct device_node *node,
+> -		const struct mtk_gate *clks,
+> -		int num, struct clk_onecell_data *clk_data,
+> -		struct device *dev);
+> -
+>  struct mtk_clk_divider {
+>  	int id;
+>  	const char *name;
 
