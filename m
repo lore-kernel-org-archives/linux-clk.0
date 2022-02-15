@@ -2,90 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9F5C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 10:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE253C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 10:09:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235660AbiBOKFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 05:05:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41288 "EHLO
+        id S236314AbiBOKJk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 05:09:40 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232405AbiBOKFG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 05:05:06 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55DC24F;
-        Tue, 15 Feb 2022 02:04:56 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 49D92315;
-        Tue, 15 Feb 2022 11:04:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1644919494;
-        bh=KMRUUPC3zf0oe4gWL8qDF9DIC3uliWx9md2lcfBf1H4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XZ2+nH4c/zvYR8pmF4F74hNzJs6/HqrbnBa5xdTfnyW4VV1Hz1u5xXg+d+eNYXx7e
-         jiZfMnkT0EDDGX/IhTrpOQbsh3a6H0zfjdbVKo71lUlWPQr+w5uQTGsjwKJyAziXI2
-         cGrvYei0hJgWr69W9Ra3bUKEoi18Mwb6IBjX3CyI=
-Date:   Tue, 15 Feb 2022 12:04:47 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 37/66] media: sun6i-csi: Move power management to
- runtime pm in capture
-Message-ID: <Ygt6vwydxg9/WuDH@pendragon.ideasonboard.com>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-38-paul.kocialkowski@bootlin.com>
- <YgqftcDgfrsZfTdF@paasikivi.fi.intel.com>
- <Ygt4xh2Mq0qStyKs@aptenodytes>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Ygt4xh2Mq0qStyKs@aptenodytes>
+        with ESMTP id S233726AbiBOKJj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 05:09:39 -0500
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89A1B88B1D;
+        Tue, 15 Feb 2022 02:09:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1644919770; x=1676455770;
+  h=from:to:cc:subject:date:message-id;
+  bh=6AwSMXffc+ZIF68gcqh0h7X3F8Mo1HWIO+7WbtTu0i4=;
+  b=RiIlFbl8L32mEk6Ub85kj8tMvE/5zyiUGuXS3Ighwpl2/DutdLK9r6yN
+   s3l6IIgxbY4G+RaYUqfTsNUHyCnB96WX3i8GE4hbokz+k1Oee40zg60G5
+   0ZrgfKtAIBs9pouixgBo6/5Q9N1zGqmuAI8Ppd3BwK0PVoZMmZQkH3t6N
+   E=;
+Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
+  by alexa-out.qualcomm.com with ESMTP; 15 Feb 2022 02:09:30 -0800
+X-QCInternal: smtphost
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/AES256-SHA; 15 Feb 2022 02:09:28 -0800
+X-QCInternal: smtphost
+Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 15 Feb 2022 15:39:16 +0530
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id 2EC904665; Tue, 15 Feb 2022 15:39:16 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     manivannan.sadhasivam@linaro.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH v2 7/7] clk: qcom: Add SDX65 APCS clock controller support
+Date:   Tue, 15 Feb 2022 15:39:13 +0530
+Message-Id: <1644919753-28855-1-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+Add a driver config support for the SDX65 APCS clock controller. It is part
+of the APCS hardware block, which among other things implements a combined
+mux and half integer divider functionality. The APCS clock controller has 3
+parent clocks:
 
-On Tue, Feb 15, 2022 at 10:56:22AM +0100, Paul Kocialkowski wrote:
-> On Mon 14 Feb 22, 20:30, Sakari Ailus wrote:
-> > On Sat, Feb 05, 2022 at 07:54:00PM +0100, Paul Kocialkowski wrote:
-> > > Let's just enable the module when we start using it (at stream on)
-> > > and benefit from runtime pm instead of enabling it at first open.
-> > > 
-> > > Also reorder the call to v4l2_pipeline_pm_get.
-> > > 
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > 
-> > Nice patch!
-> 
-> Thanks!
-> 
-> > Do you still need v4l2_pipeline_pm_put()? Removing it would be a separate
-> > patch of course.
-> 
-> My understanding is that this is still useful if there are drivers in the
-> pipeline that rely on s_power instead of rpm (a typical case could be an
-> old sensor driver). So that's why this is kept around, but all other components
-> of the pipeline (isp/csi/mipi csi-2) are using rpm now.
+1. Board XO
+2. Fixed rate GPLL0
+3. A7 PLL
 
-If that's not the case on your test platforms, I think it would be
-better to drop support for this old API, and convert drivers that still
-use .s_power() if someone needs to use one on an Allwinner platform.
+This is required for enabling CPU frequency scaling on SDX65-based
+platforms.
 
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
+---
+ drivers/clk/qcom/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 10d75d3..05abf78 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -55,13 +55,13 @@ config QCOM_CLK_APCC_MSM8996
+ 	  drivers for dynamic power management.
+ 
+ config QCOM_CLK_APCS_SDX55
+-	tristate "SDX55 APCS Clock Controller"
++	tristate "SDX55 and SDX65 APCS Clock Controller"
+ 	depends on QCOM_APCS_IPC || COMPILE_TEST
+ 	help
+-	  Support for the APCS Clock Controller on SDX55 platform. The
++	  Support for the APCS Clock Controller on SDX55, SDX65 platform. The
+ 	  APCS is managing the mux and divider which feeds the CPUs.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+-	  such as SDX55.
++	  such as SDX55, SDX65.
+ 
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
