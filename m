@@ -2,119 +2,145 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2FDC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 10:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6E3C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 11:24:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234711AbiBOKot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 05:44:49 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44220 "EHLO
+        id S237129AbiBOLZE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 06:25:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232378AbiBOKos (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 05:44:48 -0500
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CD1AFF5A
-        for <linux-clk@vger.kernel.org>; Tue, 15 Feb 2022 02:44:37 -0800 (PST)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id E7A061F4444B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1644921875;
-        bh=NlOGGbbcK8ckeQdVShKWcQBqzBY0rwwlYoyGhlgbxOU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=hufTTsyzxEcj+Ua3klO7EV71SdcZVFZuhS0xNNOXVIPjgUwxvPByY3+02+hbIAZCG
-         aQL9crO66Y9wj2hvNJ2cGwXlPP0+1Szo0XqvznYogh0BDZVMePEVwGfUPgUcnwNot6
-         R2gDb25G7fDAihTB+h2mLK7mJGD6YzuF1d02ac+hDd1fa6BXIV/c7eH26DcJPb69Y5
-         rD5Tb99ORMDuu8tLT2xM8R4frjMokxj+apn1EzrDRaZtTOtl0iV+eHZEOaNoZUiQoP
-         GEV8DctYvNMsaXtudrZ6ESyN9BE3QgcwaXrz96DouvRZxJMY2Yj0qm+q5q81vHx3UG
-         CAS9c7QaPUgdA==
-Message-ID: <c69fcd5d-a79b-ed0e-e803-63bebe987390@collabora.com>
-Date:   Tue, 15 Feb 2022 11:44:32 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.1
-Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
-Content-Language: en-US
-To:     Alyssa Rosenzweig <alyssa@collabora.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        linux-mediatek@lists.infradead.org,
+        with ESMTP id S237095AbiBOLZA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 06:25:00 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AED10855A;
+        Tue, 15 Feb 2022 03:24:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1644924290; x=1676460290;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=88QwmHFN8Z6K7oOwYMh4aqsIoXvzf3hWSa4cBd71bys=;
+  b=MxfY3XnNR6117+l6QN1lFDyhgs2RaYWes1plX7Ki7M23BinDptVpnv2T
+   r4nlzK1i1dx/H+89AscJWSPQk5xQ3mZUVNRxwS1O6JQ39XdsFI4aLBM8H
+   prS89P96qz+Dm52PeSaPg3+vXYI6GOY6nSrS44u2x8HPlM7zG1an+YCrY
+   K11p6iheMvB9aMMosZgLAQYP9zheB+GnAn96t3jsIR5XVo+n+kA7Qtg8c
+   4Ti41h6OHlOu7AzFy8xNms4pvu6QMcboPV+VcYYGoa7IHQcgFw6BqC0Um
+   LbclriYvJ0CGeiWJjmP6gXQlduSi7CcLVpri4mtfwuXexAevsmJQs/RZQ
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="247926524"
+X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
+   d="scan'208";a="247926524"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2022 03:24:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,370,1635231600"; 
+   d="scan'208";a="528799645"
+Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 15 Feb 2022 03:24:46 -0800
+Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nJvws-0009bb-5o; Tue, 15 Feb 2022 11:24:46 +0000
+Date:   Tue, 15 Feb 2022 19:23:50 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Marek Vasut <marex@denx.de>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ikjoon Jang <ikjn@chromium.org>,
-        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Nick Fan <Nick.Fan@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Chen-Yu Tsai <wenst@chromium.org>
-References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
- <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com> <YeF/AYZ0DuKGwLLk@maud>
- <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com>
- <69525223-7d90-5714-bbe9-4d7f0b9a293d@arm.com>
- <20220119021844.3C225C340E5@smtp.kernel.org>
- <5d839338-6072-9c52-1893-2f804d937ea1@arm.com> <YelxN/zpdkukBBqy@maud>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <YelxN/zpdkukBBqy@maud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-power@fi.rohmeurope.com
+Subject: Re: [PATCH 2/3] clk: Introduce 'critical-clocks' property
+Message-ID: <202202151824.QGNvG2R8-lkp@intel.com>
+References: <20220215084412.8090-2-marex@denx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220215084412.8090-2-marex@denx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 20/01/22 15:27, Alyssa Rosenzweig ha scritto:
->> We also already have SoC-specific GPU compatibles because even without
->> experimental interconnect easter eggs, people integrate these IPs in fairly
->> involved ways and there's a fair degree of variety. However unless we want
->> to be super-strict it's also not too hard to simply assume that if we can
->> find a "mediatek,mt8192-infracfg" syscon then we set the MT8192 magic bit
->> within it, and if we can't then we don't.
-> 
-> We need a MT8192-specific compatible for the GPU anyway due to "unique"
-> power management requirements, this is why the MT8183 before it has a
-> specific GPU compatible. So I'm not worried about the compatible.
-> 
+Hi Marek,
 
-Thing is, as it was explained, this is about a unwanted SoC misconfiguration,
-hence this is very specific to one SoC, which *happens to* integrate a Mali GPU.
+I love your patch! Perhaps something to improve:
 
-I agree with Stephen's reasoning - also in my opinion, the panfrost driver should
-be dedicated to managing the Mali GPUs and *not* the SoCs on which it is present,
-so disabling the Accelerator Coherency Port for MFG should be performed inside of
-files that are dealing with the specific SoC that requires this configuration (or,
-if you want, quirk).
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v5.17-rc4 next-20220214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Simply put, though, as you already perfectly know, there is no driver that is
-dedicated to exclusively manage the "extra" INFRA bits, so here's what I've been
-thinking for a while; my logical reasoning:
-- Doing it in the IOMMU driver may seem at a first glance to make some sense,
-   but then, does this really have anything to do with the IOMMU? I don't think so;
-- Performing the disablement in mtk-pm-domains is very shady... there's nothing
-   that screams "power" in that;
-- This doesn't scream "clocks" either, I understand that;
-- As far as I understand this specific thing won't happen anymore (or at least,
-   not in MediaTek land, but I also don't expect to see this on other SoCs).
+url:    https://github.com/0day-ci/linux/commits/Marek-Vasut/dt-bindings-clk-Introduce-critical-clocks-property/20220215-164757
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: nds32-allnoconfig (https://download.01.org/0day-ci/archive/20220215/202202151824.QGNvG2R8-lkp@intel.com/config)
+compiler: nds32le-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/aded04bc3dec13df3f940621d94d84e32ff8a5ea
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Marek-Vasut/dt-bindings-clk-Introduce-critical-clocks-property/20220215-164757
+        git checkout aded04bc3dec13df3f940621d94d84e32ff8a5ea
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nds32 SHELL=/bin/bash drivers/clk/
 
-Getting back to MediaTek-land, only MT8192 is (and will ever be) affected, from
-what I understand... and there is one driver that is very specific to, targets
-only, and would probe only on MT8192 - which also happens to manage the very same
-iospace that we also want to poke at to disable this bit......
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-... clk-mt8192!
+All warnings (new ones prefixed by >>):
 
-For this reason, I think that (unfortunately, to some extent) the most transparent
-and cleanest approach is the one that Alyssa took, which is to perform this
-set-and-forget operation there - also keeping in mind that panfrost obviously has
-no way to finish probing (hence, no way to actually use the GPU device) *before*
-the driver that provides clocks to it also probes and registers .. the clocks.
+   drivers/clk/clk.c: In function '__clk_register_critical_clock':
+>> drivers/clk/clk.c:3881:13: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+    3881 |         int ret, i, index;
+         |             ^~~
 
-My personal view on this would imply that Alyssa sends a v2 of this commit that
-includes MediaTek's explanation on why the ACP has to be disabled (as much as
-nicely expanding the ACP acronym as a documentation effort).
 
-I'm sorry for this wall of text (and for boring you with it! :P), but I felt like
-giving an extensive personal opinion on this would've been nice.
+vim +/ret +3881 drivers/clk/clk.c
 
-Thank you all!
-Angelo
+  3874	
+  3875	static void
+  3876	__clk_register_critical_clock(struct device_node *np, struct clk_core *core,
+  3877				      struct clk_hw *hw)
+  3878	{
+  3879		struct of_phandle_args clkspec;
+  3880		u32 clksize, clktotal;
+> 3881		int ret, i, index;
+  3882	
+  3883		if (!np)
+  3884			return;
+  3885	
+  3886		if (!core->ops->match_clkspec)
+  3887			return;
+  3888	
+  3889		if (of_property_read_u32(np, "#clock-cells", &clksize))
+  3890			return;
+  3891	
+  3892		/* Clock node with #clock-cells = <0> uses critical-clocks; */
+  3893		if (clksize == 0) {
+  3894			if (of_property_read_bool(np, "critical-clocks") &&
+  3895			    !core->ops->match_clkspec(hw, &clkspec))
+  3896				core->flags |= CLK_IS_CRITICAL;
+  3897			return;
+  3898		}
+  3899	
+  3900		clkspec.np = np;
+  3901		clktotal = of_property_count_u32_elems(np, "critical-clocks");
+  3902		clktotal /= clksize;
+  3903		for (index = 0; index < clktotal; index++) {
+  3904			for (i = 0; i < clksize; i++) {
+  3905				ret = of_property_read_u32_index(np, "critical-clocks",
+  3906								 (index * clksize) + i,
+  3907								 &(clkspec.args[i]));
+  3908			}
+  3909			if (!core->ops->match_clkspec(hw, &clkspec))
+  3910				core->flags |= CLK_IS_CRITICAL;
+  3911		}
+  3912	}
+  3913	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
