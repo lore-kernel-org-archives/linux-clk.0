@@ -2,99 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7F9C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 14:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B60C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 15:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238534AbiBOOJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 09:09:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42136 "EHLO
+        id S232855AbiBOPW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 10:22:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232295AbiBOOJF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 09:09:05 -0500
-Received: from mga06.intel.com (mga06.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB4E74635;
-        Tue, 15 Feb 2022 06:08:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1644934135; x=1676470135;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R65To4o9TE9cJawliYC3L2IrA50D6L/J7joHVO9YWBU=;
-  b=mdMYtWt9WI6lRPDNz2ouj43JXzlkA5rmikTqjjM4PvZiZnCAGOm2mBp+
-   ur4xOp4AJU3YH6JmVSh9683F/Scm/JkIcMPK2Ug1TGcSd4Svhbh6ismSA
-   ObxgYaLp4haJJP5iGZClcEzI57MBSNNnPQgzM93n4rNg4Zn2SP4ZDs78p
-   0+POyLcixwa11MdYyJByq6Srt+U7TcLjNONXmRdyQ8X6SRFX7LZc7Zv4U
-   bMWWPklOf1wIyJ9U5cBoEj7NJe1znxIk4X4jDbHrEUWVvqtid4VfhIAsH
-   tUZBS9wDonWGQdv8cok0t17PBv+JwbcFwSglQCSz5cYeMFFbAWUFy182g
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10258"; a="311095043"
-X-IronPort-AV: E=Sophos;i="5.88,371,1635231600"; 
-   d="scan'208";a="311095043"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2022 06:08:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,371,1635231600"; 
-   d="scan'208";a="502461353"
-Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 15 Feb 2022 06:08:51 -0800
-Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nJyVe-0009jS-Tk; Tue, 15 Feb 2022 14:08:50 +0000
-Date:   Tue, 15 Feb 2022 22:07:49 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, sboyd@kernel.org,
-        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        abel.vesa@nxp.com
-Cc:     kbuild-all@lists.01.org, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 3/4] clk: imx: support fracn gppll
-Message-ID: <202202152209.JA3vtPGE-lkp@intel.com>
-References: <20220215081835.790311-4-peng.fan@oss.nxp.com>
+        with ESMTP id S239112AbiBOPW3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 10:22:29 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 04D4689CF9
+        for <linux-clk@vger.kernel.org>; Tue, 15 Feb 2022 07:22:19 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C16541396;
+        Tue, 15 Feb 2022 07:22:18 -0800 (PST)
+Received: from [10.57.70.89] (unknown [10.57.70.89])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 336CB3F66F;
+        Tue, 15 Feb 2022 07:22:14 -0800 (PST)
+Message-ID: <9f05238c-4649-0673-21eb-7b7562d0d5c1@arm.com>
+Date:   Tue, 15 Feb 2022 15:21:52 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220215081835.790311-4-peng.fan@oss.nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+Content-Language: en-GB
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Alyssa Rosenzweig <alyssa@collabora.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Chen-Yu Tsai <wenst@chromium.org>
+References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com>
+ <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com> <YeF/AYZ0DuKGwLLk@maud>
+ <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com>
+ <69525223-7d90-5714-bbe9-4d7f0b9a293d@arm.com>
+ <20220119021844.3C225C340E5@smtp.kernel.org>
+ <5d839338-6072-9c52-1893-2f804d937ea1@arm.com> <YelxN/zpdkukBBqy@maud>
+ <c69fcd5d-a79b-ed0e-e803-63bebe987390@collabora.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <c69fcd5d-a79b-ed0e-e803-63bebe987390@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi "Peng,
+On 2022-02-15 10:44, AngeloGioacchino Del Regno wrote:
+> Il 20/01/22 15:27, Alyssa Rosenzweig ha scritto:
+>>> We also already have SoC-specific GPU compatibles because even without
+>>> experimental interconnect easter eggs, people integrate these IPs in 
+>>> fairly
+>>> involved ways and there's a fair degree of variety. However unless we 
+>>> want
+>>> to be super-strict it's also not too hard to simply assume that if we 
+>>> can
+>>> find a "mediatek,mt8192-infracfg" syscon then we set the MT8192 magic 
+>>> bit
+>>> within it, and if we can't then we don't.
+>>
+>> We need a MT8192-specific compatible for the GPU anyway due to "unique"
+>> power management requirements, this is why the MT8183 before it has a
+>> specific GPU compatible. So I'm not worried about the compatible.
+>>
+> 
+> Thing is, as it was explained, this is about a unwanted SoC 
+> misconfiguration,
+> hence this is very specific to one SoC, which *happens to* integrate a 
+> Mali GPU.
+> 
+> I agree with Stephen's reasoning - also in my opinion, the panfrost 
+> driver should
+> be dedicated to managing the Mali GPUs and *not* the SoCs on which it is 
+> present,
+> so disabling the Accelerator Coherency Port for MFG should be performed 
+> inside of
+> files that are dealing with the specific SoC that requires this 
+> configuration (or,
+> if you want, quirk).
+> 
+> Simply put, though, as you already perfectly know, there is no driver 
+> that is
+> dedicated to exclusively manage the "extra" INFRA bits, so here's what 
+> I've been
+> thinking for a while; my logical reasoning:
+> - Doing it in the IOMMU driver may seem at a first glance to make some 
+> sense,
+>    but then, does this really have anything to do with the IOMMU? I 
+> don't think so;
+> - Performing the disablement in mtk-pm-domains is very shady... there's 
+> nothing
+>    that screams "power" in that;
+> - This doesn't scream "clocks" either, I understand that;
+> - As far as I understand this specific thing won't happen anymore (or at 
+> least,
+>    not in MediaTek land, but I also don't expect to see this on other 
+> SoCs).
+> 
+> Getting back to MediaTek-land, only MT8192 is (and will ever be) 
+> affected, from
+> what I understand... and there is one driver that is very specific to, 
+> targets
+> only, and would probe only on MT8192 - which also happens to manage the 
+> very same
+> iospace that we also want to poke at to disable this bit......
+> 
+> ... clk-mt8192!
 
-Thank you for the patch! Yet something to improve:
+The only trouble with that argument is that it falls apart under the
+slightest scrutiny ;)
 
-[auto build test ERROR on shawnguo/for-next]
-[also build test ERROR on robh/for-next clk/clk-next v5.17-rc4 next-20220215]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+The relevant parts of the power domain, IOMMU and GPU drivers are every
+bit as SoC-specific as the clock driver, and it is the generic syscon
+driver which owns and manages the actual MMIO space.
 
-url:    https://github.com/0day-ci/linux/commits/Peng-Fan-OSS/imx-add-i-MX93-clk-bindings-and-driver/20220215-162047
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
-config: nds32-randconfig-r001-20220214 (https://download.01.org/0day-ci/archive/20220215/202202152209.JA3vtPGE-lkp@intel.com/config)
-compiler: nds32le-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/37b42f1a06ef92797e800461d1f46e849fa63c91
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Peng-Fan-OSS/imx-add-i-MX93-clk-bindings-and-driver/20220215-162047
-        git checkout 37b42f1a06ef92797e800461d1f46e849fa63c91
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=nds32 SHELL=/bin/bash
+All in all this has now convinced me that it *is* worth the slight extra
+effort to put random infracfg stuff in the random infracfg stuff place.
+And by "slight" I mean it turns out I've spent longer writing this prose
+than bashing out the illustrative diff below, which is the last opinion
+I shall have on this matter. Feel free to take it and fix it, or do 
+anything else if you prefer :)
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Cheers,
+Robin.
 
-All errors (new ones prefixed by >>):
+----->8-----
+diff --git a/drivers/soc/mediatek/mtk-infracfg.c 
+b/drivers/soc/mediatek/mtk-infracfg.c
+index 0590b68e0d78..af22d0f3d547 100644
+--- a/drivers/soc/mediatek/mtk-infracfg.c
++++ b/drivers/soc/mediatek/mtk-infracfg.c
+@@ -72,3 +72,20 @@ int mtk_infracfg_clear_bus_protection(struct regmap 
+*infracfg, u32 mask,
 
-   nds32le-linux-ld: drivers/clk/imx/clk-fracn-gppll.o: in function `clk_fracn_gppll_recalc_rate':
-   clk-fracn-gppll.c:(.text+0x434): undefined reference to `__udivdi3'
->> nds32le-linux-ld: clk-fracn-gppll.c:(.text+0x438): undefined reference to `__udivdi3'
+  	return ret;
+  }
++
++static int __init mtk_infracfg_init(void)
++{
++	struct regmap *infracfg;
++
++	/*
++	 * MT8192 has an experimental path to route GPU traffic to the DSU's
++	 * Accelerator Coherency Port, which is inadvertently enabled by
++	 * default. It turns out not to work very well, so disable it.
++	 */
++	infracfg = syscon_regmap_lookup_by_compatible("mediatek,mt8192-infracfg");
++	if (infracfg)
++		regmap_set_bits(infracfg, MT8192_INFRA_CTRL,
++				MT8192_INFRA_CTRL_DISABLE_MFG2ACP);
++	return 0;
++}
++postcore_initcall(mtk_infracfg_init);
+diff --git a/include/linux/soc/mediatek/infracfg.h 
+b/include/linux/soc/mediatek/infracfg.h
+index 4615a228da51..94f0f338ce49 100644
+--- a/include/linux/soc/mediatek/infracfg.h
++++ b/include/linux/soc/mediatek/infracfg.h
+@@ -147,6 +147,9 @@
+  #define INFRA_TOPAXI_PROTECTEN_SET		0x0260
+  #define INFRA_TOPAXI_PROTECTEN_CLR		0x0264
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
++#define MT8192_INFRA_CTRL			0x290
++#define MT8192_INFRA_CTRL_DISABLE_MFG2ACP	BIT(9)
++
+  #define REG_INFRA_MISC				0xf00
+  #define F_DDR_4GB_SUPPORT_EN			BIT(13)
+
