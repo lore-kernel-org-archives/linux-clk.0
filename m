@@ -2,264 +2,265 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9527C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 05:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501A4C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 06:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234177AbiBOFrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 00:47:02 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57842 "EHLO
+        id S233296AbiBOGHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 01:07:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbiBOFrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 00:47:01 -0500
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 111D365CD;
-        Mon, 14 Feb 2022 21:46:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1644904011; x=1676440011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TvWJh4A1T8qWGMCRPKV1Y35pywluGs/GcJiS0D0Av0Y=;
-  b=D7elmkzKXrY9w47o1aM5TiH6CccQaRYLiI9PTflvnJeWEzraduqO8bVB
-   GSMEkr06BqyA7iPc4ccx96UjK3g+bJ7NF3pvCb44G9SUgGfgmjLsGy670
-   Mw0qXjAHTqnXmgQJu9/G82IkIY15NYc34QkKBXkTIRM7P+hz4J7MNi5Bh
-   4=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 14 Feb 2022 21:46:50 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2022 21:46:49 -0800
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Mon, 14 Feb 2022 21:46:49 -0800
-Received: from [10.216.16.231] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.922.19; Mon, 14 Feb
- 2022 21:46:46 -0800
-Message-ID: <75bcb661-dff2-61e5-3b31-65c4e5aeabb2@quicinc.com>
-Date:   Tue, 15 Feb 2022 11:16:42 +0530
+        with ESMTP id S229773AbiBOGHU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 01:07:20 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD50D43AF3;
+        Mon, 14 Feb 2022 22:07:02 -0800 (PST)
+X-UUID: a2cb53b2c3f644f8bba8ce770ec60631-20220215
+X-UUID: a2cb53b2c3f644f8bba8ce770ec60631-20220215
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 609010241; Tue, 15 Feb 2022 14:06:56 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Tue, 15 Feb 2022 14:06:54 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 15 Feb 2022 14:06:54 +0800
+Message-ID: <5c2b97a1260b9349b151448d09e6308c2a3b252b.camel@mediatek.com>
+Subject: Re: [PATCH v3 01/31] clk: mediatek: Use %pe to print errors
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Tue, 15 Feb 2022 14:06:48 +0800
+In-Reply-To: <20220208124034.414635-2-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org>
+         <20220208124034.414635-2-wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 7/8] clk: qcom: Add SDX65 APCS clock controller support
-Content-Language: en-US
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <1644822247-27884-1-git-send-email-quic_rohiagar@quicinc.com>
- <20220214084839.GG3494@thinkpad>
-From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
-In-Reply-To: <20220214084839.GG3494@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 2022-02-08 at 20:40 +0800, Chen-Yu Tsai wrote:
+> If %pe is used to print errors, a string representation of the error
+> would be printed instead of a number as with %ld. Also, all the sites
+> printing errors are deriving the error code from a pointer. Using %pe
+> is more straightforward.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: Miles Chen <miles.chen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <
+> angelogioacchino.delregno@collabora.com>
+> 
 
-On 2/14/2022 2:18 PM, Manivannan Sadhasivam wrote:
-> On Mon, Feb 14, 2022 at 12:34:07PM +0530, Rohit Agarwal wrote:
->> Add a driver for the SDX65 APCS clock controller. It is part of the APCS
->> hardware block, which among other things implements also a combined mux
->> and half integer divider functionality. The APCS clock controller has 3
->> parent clocks:
->>
->> 1. Board XO
->> 2. Fixed rate GPLL0
->> 3. A7 PLL
->>
->> This is required for enabling CPU frequency scaling on SDX65-based
->> platforms.
->>
->> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> I assume that the SDX65 is alomst a replica of SDX55. So why can't we use
-> "qcom-sdx55-acps-clk"?
-Yes. I will update the patch accordingly. Thanks
->
-> Thanks,
-> Mani
->
->> ---
->>   drivers/clk/qcom/Kconfig      |   9 +++
->>   drivers/clk/qcom/Makefile     |   1 +
->>   drivers/clk/qcom/apcs-sdx65.c | 130 ++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 140 insertions(+)
->>   create mode 100644 drivers/clk/qcom/apcs-sdx65.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 1904ba1..49e89f8 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -63,6 +63,15 @@ config QCOM_CLK_APCS_SDX55
->>   	  Say Y if you want to support CPU frequency scaling on devices
->>   	  such as SDX55.
->>   
->> +config QCOM_CLK_APCS_SDX65
->> +        tristate "SDX65 APCS Clock Controller"
->> +        depends on QCOM_APCS_IPC || COMPILE_TEST
->> +        help
->> +          Support for the APCS Clock Controller on SDX65 platform. The
->> +          APCS is managing the mux and divider which feeds the CPUs.
->> +          Say Y if you want to support CPU frequency scaling on devices
->> +          such as SDX65.
->> +
->>   config QCOM_CLK_RPM
->>   	tristate "RPM based Clock Controller"
->>   	depends on MFD_QCOM_RPM
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index 3d855c1..f914f31 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -51,6 +51,7 @@ obj-$(CONFIG_QCOM_A7PLL) += a7-pll.o
->>   obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
->>   obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
->>   obj-$(CONFIG_QCOM_CLK_APCS_SDX55) += apcs-sdx55.o
->> +obj-$(CONFIG_QCOM_CLK_APCS_SDX65) += apcs-sdx65.o
->>   obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
->>   obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
->>   obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
->> diff --git a/drivers/clk/qcom/apcs-sdx65.c b/drivers/clk/qcom/apcs-sdx65.c
->> new file mode 100644
->> index 0000000..c0cc16a
->> --- /dev/null
->> +++ b/drivers/clk/qcom/apcs-sdx65.c
->> @@ -0,0 +1,130 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/cpu.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_domain.h>
->> +#include <linux/regmap.h>
->> +#include <linux/slab.h>
->> +
->> +#include "clk-regmap.h"
->> +#include "clk-regmap-mux-div.h"
->> +
->> +static const u32 apcs_mux_clk_parent_map[] = { 0, 1, 5 };
->> +
->> +static const struct clk_parent_data pdata[] = {
->> +	{ .fw_name = "ref" },
->> +	{ .fw_name = "aux" },
->> +	{ .fw_name = "pll" },
->> +};
->> +
->> +static int a7cc_notifier_cb(struct notifier_block *nb, unsigned long event,
->> +				void *data)
->> +{
->> +	int ret = 0;
->> +	struct clk_regmap_mux_div *md = container_of(nb,
->> +						struct clk_regmap_mux_div,
->> +						clk_nb);
->> +	if (event == PRE_RATE_CHANGE)
->> +		ret = mux_div_set_src_div(md, 1, 2);
->> +
->> +	return notifier_from_errno(ret);
->> +}
->> +
->> +static int qcom_apcs_sdx65_clk_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct device *parent = dev->parent;
->> +	struct device *cpu_dev;
->> +	struct clk_regmap_mux_div *a7cc;
->> +	struct regmap *regmap;
->> +	struct clk_init_data init = { };
->> +	int ret;
->> +
->> +	regmap = dev_get_regmap(parent, NULL);
->> +	if (!regmap) {
->> +		dev_err(dev, "Failed to get parent regmap\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	a7cc = devm_kzalloc(dev, sizeof(*a7cc), GFP_KERNEL);
->> +	if (!a7cc)
->> +		return -ENOMEM;
->> +
->> +	init.name = "a7mux";
->> +	init.parent_data = pdata;
->> +	init.num_parents = ARRAY_SIZE(pdata);
->> +	init.ops = &clk_regmap_mux_div_ops;
->> +
->> +	a7cc->clkr.hw.init = &init;
->> +	a7cc->clkr.regmap = regmap;
->> +	a7cc->reg_offset = 0x8;
->> +	a7cc->hid_width = 5;
->> +	a7cc->hid_shift = 0;
->> +	a7cc->src_width = 3;
->> +	a7cc->src_shift = 8;
->> +	a7cc->parent_map = apcs_mux_clk_parent_map;
->> +
->> +	a7cc->pclk = devm_clk_get(parent, "pll");
->> +	if (IS_ERR(a7cc->pclk))
->> +		return dev_err_probe(dev, PTR_ERR(a7cc->pclk),
->> +					 "Failed to get PLL clk\n");
->> +
->> +	a7cc->clk_nb.notifier_call = a7cc_notifier_cb;
->> +	ret = clk_notifier_register(a7cc->pclk, &a7cc->clk_nb);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +					 "Failed to register clock notifier\n");
->> +
->> +	ret = devm_clk_register_regmap(dev, &a7cc->clkr);
->> +	if (ret) {
->> +		dev_err_probe(dev, ret, "Failed to register regmap clock\n");
->> +		goto err;
->> +	}
->> +
->> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
->> +					&a7cc->clkr.hw);
->> +	if (ret) {
->> +		dev_err_probe(dev, ret, "Failed to add clock provider\n");
->> +		goto err;
->> +	}
->> +
->> +	platform_set_drvdata(pdev, a7cc);
->> +
->> +	cpu_dev = get_cpu_device(0);
->> +	dev_pm_domain_attach(cpu_dev, true);
->> +
->> +	return 0;
->> +
->> +err:
->> +	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
->> +	return ret;
->> +}
->> +
->> +static int qcom_apcs_sdx65_clk_remove(struct platform_device *pdev)
->> +{
->> +	struct device *cpu_dev = get_cpu_device(0);
->> +	struct clk_regmap_mux_div *a7cc = platform_get_drvdata(pdev);
->> +
->> +	clk_notifier_unregister(a7cc->pclk, &a7cc->clk_nb);
->> +	dev_pm_domain_detach(cpu_dev, true);
->> +
->> +	return 0;
->> +}
->> +
->> +static struct platform_driver qcom_apcs_sdx65_clk_driver = {
->> +	.probe = qcom_apcs_sdx65_clk_probe,
->> +	.remove = qcom_apcs_sdx65_clk_remove,
->> +	.driver = {
->> +		.name = "qcom-sdx65-acps-clk",
->> +	},
->> +};
->> +module_platform_driver(qcom_apcs_sdx65_clk_driver);
->> +MODULE_LICENSE("GPL v2");
->> +MODULE_DESCRIPTION("Qualcomm SDX65 APCS Clock driver");
->> -- 
->> 2.7.4
->>
+Reviewed-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+>  drivers/clk/mediatek/clk-apmixed.c |  2 +-
+>  drivers/clk/mediatek/clk-cpumux.c  |  6 ++----
+>  drivers/clk/mediatek/clk-mtk.c     | 18 ++++++------------
+>  drivers/clk/mediatek/clk-mux.c     |  6 ++----
+>  drivers/clk/mediatek/clk-pll.c     |  3 +--
+>  drivers/clk/mediatek/reset.c       |  3 +--
+>  6 files changed, 13 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-apmixed.c
+> b/drivers/clk/mediatek/clk-apmixed.c
+> index caa9119413f1..a29339cc26c4 100644
+> --- a/drivers/clk/mediatek/clk-apmixed.c
+> +++ b/drivers/clk/mediatek/clk-apmixed.c
+> @@ -92,7 +92,7 @@ struct clk * __init
+> mtk_clk_register_ref2usb_tx(const char *name,
+>  	clk = clk_register(NULL, &tx->hw);
+>  
+>  	if (IS_ERR(clk)) {
+> -		pr_err("Failed to register clk %s: %ld\n", name,
+> PTR_ERR(clk));
+> +		pr_err("Failed to register clk %s: %pe\n", name, clk);
+>  		kfree(tx);
+>  	}
+>  
+> diff --git a/drivers/clk/mediatek/clk-cpumux.c
+> b/drivers/clk/mediatek/clk-cpumux.c
+> index e188018bc906..cab5095416b6 100644
+> --- a/drivers/clk/mediatek/clk-cpumux.c
+> +++ b/drivers/clk/mediatek/clk-cpumux.c
+> @@ -87,8 +87,7 @@ int mtk_clk_register_cpumuxes(struct device_node
+> *node,
+>  
+>  	regmap = device_node_to_regmap(node);
+>  	if (IS_ERR(regmap)) {
+> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
+> -		       PTR_ERR(regmap));
+> +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
+> regmap);
+>  		return PTR_ERR(regmap);
+>  	}
+>  
+> @@ -97,8 +96,7 @@ int mtk_clk_register_cpumuxes(struct device_node
+> *node,
+>  
+>  		clk = mtk_clk_register_cpumux(mux, regmap);
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -			       mux->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", mux-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> diff --git a/drivers/clk/mediatek/clk-mtk.c
+> b/drivers/clk/mediatek/clk-mtk.c
+> index 8d5791b3f460..519a461cbb6f 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -70,8 +70,7 @@ void mtk_clk_register_fixed_clks(const struct
+> mtk_fixed_clk *clks,
+>  					      rc->rate);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -					rc->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", rc-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> @@ -97,8 +96,7 @@ void mtk_clk_register_factors(const struct
+> mtk_fixed_factor *clks,
+>  				CLK_SET_RATE_PARENT, ff->mult, ff-
+> >div);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -					ff->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", ff-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> @@ -122,8 +120,7 @@ int mtk_clk_register_gates_with_dev(struct
+> device_node *node,
+>  
+>  	regmap = device_node_to_regmap(node);
+>  	if (IS_ERR(regmap)) {
+> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
+> -				PTR_ERR(regmap));
+> +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
+> regmap);
+>  		return PTR_ERR(regmap);
+>  	}
+>  
+> @@ -141,8 +138,7 @@ int mtk_clk_register_gates_with_dev(struct
+> device_node *node,
+>  				gate->shift, gate->ops, gate->flags,
+> dev);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -					gate->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n",
+> gate->name, clk);
+>  			continue;
+>  		}
+>  
+> @@ -264,8 +260,7 @@ void mtk_clk_register_composites(const struct
+> mtk_composite *mcs,
+>  		clk = mtk_clk_register_composite(mc, base, lock);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -					mc->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", mc-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> @@ -293,8 +288,7 @@ void mtk_clk_register_dividers(const struct
+> mtk_clk_divider *mcds,
+>  			mcd->div_width, mcd->clk_divider_flags, lock);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -				mcd->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", mcd-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> diff --git a/drivers/clk/mediatek/clk-mux.c
+> b/drivers/clk/mediatek/clk-mux.c
+> index 6d3a50eb7d6f..89f23e111d91 100644
+> --- a/drivers/clk/mediatek/clk-mux.c
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -175,8 +175,7 @@ int mtk_clk_register_muxes(const struct mtk_mux
+> *muxes,
+>  
+>  	regmap = device_node_to_regmap(node);
+>  	if (IS_ERR(regmap)) {
+> -		pr_err("Cannot find regmap for %pOF: %ld\n", node,
+> -		       PTR_ERR(regmap));
+> +		pr_err("Cannot find regmap for %pOF: %pe\n", node,
+> regmap);
+>  		return PTR_ERR(regmap);
+>  	}
+>  
+> @@ -187,8 +186,7 @@ int mtk_clk_register_muxes(const struct mtk_mux
+> *muxes,
+>  			clk = mtk_clk_register_mux(mux, regmap, lock);
+>  
+>  			if (IS_ERR(clk)) {
+> -				pr_err("Failed to register clk %s:
+> %ld\n",
+> -				       mux->name, PTR_ERR(clk));
+> +				pr_err("Failed to register clk %s:
+> %pe\n", mux->name, clk);
+>  				continue;
+>  			}
+>  
+> diff --git a/drivers/clk/mediatek/clk-pll.c
+> b/drivers/clk/mediatek/clk-pll.c
+> index 60d7ffa0b924..f04f724e12e5 100644
+> --- a/drivers/clk/mediatek/clk-pll.c
+> +++ b/drivers/clk/mediatek/clk-pll.c
+> @@ -378,8 +378,7 @@ void mtk_clk_register_plls(struct device_node
+> *node,
+>  		clk = mtk_clk_register_pll(pll, base);
+>  
+>  		if (IS_ERR(clk)) {
+> -			pr_err("Failed to register clk %s: %ld\n",
+> -					pll->name, PTR_ERR(clk));
+> +			pr_err("Failed to register clk %s: %pe\n", pll-
+> >name, clk);
+>  			continue;
+>  		}
+>  
+> diff --git a/drivers/clk/mediatek/reset.c
+> b/drivers/clk/mediatek/reset.c
+> index ffe464ce7ff8..bcec4b89f449 100644
+> --- a/drivers/clk/mediatek/reset.c
+> +++ b/drivers/clk/mediatek/reset.c
+> @@ -100,8 +100,7 @@ static void
+> mtk_register_reset_controller_common(struct device_node *np,
+>  
+>  	regmap = device_node_to_regmap(np);
+>  	if (IS_ERR(regmap)) {
+> -		pr_err("Cannot find regmap for %pOF: %ld\n", np,
+> -				PTR_ERR(regmap));
+> +		pr_err("Cannot find regmap for %pOF: %pe\n", np,
+> regmap);
+>  		return;
+>  	}
+>  
+
