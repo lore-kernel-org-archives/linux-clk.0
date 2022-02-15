@@ -2,132 +2,174 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F46C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 18:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27218C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 20:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236727AbiBOSFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 13:05:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43388 "EHLO
+        id S244061AbiBOURE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 15:17:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236250AbiBOSFe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 13:05:34 -0500
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96C6119410;
-        Tue, 15 Feb 2022 10:05:23 -0800 (PST)
-Received: by mail-vk1-xa2b.google.com with SMTP id f12so3503133vkl.2;
-        Tue, 15 Feb 2022 10:05:23 -0800 (PST)
+        with ESMTP id S235802AbiBOUPx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 15:15:53 -0500
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18686EB16D
+        for <linux-clk@vger.kernel.org>; Tue, 15 Feb 2022 12:15:43 -0800 (PST)
+Received: by mail-lj1-x22f.google.com with SMTP id e17so176164ljk.5
+        for <linux-clk@vger.kernel.org>; Tue, 15 Feb 2022 12:15:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gLFgGT6YwvXW1wx34JstmO2egBx2eW53mLM0rtTg/Sc=;
-        b=KID333ITUi73ySWGz7NI+m+E5EGqFpblrSqIqmNw1gXZev9/XDAyukTbxvSCm4gKSe
-         4hYTBpYMUl4w0qe6b2urizheFZs7flA7mMy2m+0fkW90KTAMc+4l9325zTeoom60nPYs
-         i+UJ1fb2Wu06ksFS/igVcQQwtTeaW27Mni+l43Dx8F84mRa5xhAlk0ArF6LaheuBX6UJ
-         WHqlzTFf2rTWdyR0g6exXoLT4XNmSbbdBXaXd9n+7Gd5TlNR6J7zfjZ5wdPk+lhxINmr
-         oHu0f4OoYTlA1u0+xeryBjS4Nv1D6zvvWZo2zQnWHVoFn8lk/rrpf7ABra2C4cpBlveU
-         hhcA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6GT01Bt5rwCOjSLQQeIHh7n+6HZ2KwW6Q5RymmBrtD0=;
+        b=f6iP67siNjcx4yf58aS3d+F/7nqamMQ2Iv7Kh7Vgbpv2r5Q+9GKaajMbWxgruvrZE4
+         TqQ0Kk2KDAtlddqhBnQvKeevoTL/MtmDEvjs422N7FtzwtMdLeEAujye4R/QwbKP0Yr9
+         +bJKuCae7HBTp/U9v3AyGY3ILnQLMkNnIGu18Y0K1gxL1VlCLn4IRrMaaiXFzQOtvB6r
+         qeLXC0RRiJHuWajGSOARzYciIH1tFm5QhpS/QQLmeEyF3QNM46h1QEKbCcQYouBvPd0E
+         4ouxj8aMjaVa/tWL2MPIR96Man72HZi/YbcqGaSJIY9XK53o0/E6AECsrcQ5HvxnjguB
+         7aAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gLFgGT6YwvXW1wx34JstmO2egBx2eW53mLM0rtTg/Sc=;
-        b=U8jzPXmfTs1E3eZFsBePME+9oxHNW7t85bCsW3NOyYsIVUERF94d2q5gUxqz2iDf8G
-         vXT3p8HGuNNrC7ambIS5pct8R4mFiW8h4zuFns2vDl9rXN7ilAThNSjUVIOsyd5jHuRi
-         9T/rIsG/BXRndmVAVm+YWVsVqmoBrQM/hacUT6aua3Y//YA6606zYv44/pXKiVhZAsqT
-         ZYgt1ZHaUlqcK5ZxL+FLKPOTMc5hP6FDuzX2DgV2wzN/SA7o08sR4hMNdfcopinz9UWV
-         fNZ7j21OeEtvjpvOV7M7yqyggDStLo6TcP7oozLS28h6nbtKImJoHFOdy7Ek+Y5FDpzq
-         l8AA==
-X-Gm-Message-State: AOAM5326sfqanDRs9LTumaCp+0bfmiqAw9HuzRQHvC7OzZZTw3W9ihQt
-        KK8bH4xXFC5uu5TWor9rQ/7yKCkVDVVsdRN8Oco=
-X-Google-Smtp-Source: ABdhPJwZ2c4DluFw+8AgtAZO4eg8n+SwcAKGWvctDBdUls3kAzfoEoE5KmSOu0LxpAWQttLVgi0QdO4HXYfEG/R2j3s=
-X-Received: by 2002:a05:6122:54e:: with SMTP id y14mr63443vko.37.1644948322750;
- Tue, 15 Feb 2022 10:05:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20220126175604.17919-1-romain.perier@gmail.com>
-In-Reply-To: <20220126175604.17919-1-romain.perier@gmail.com>
-From:   Romain Perier <romain.perier@gmail.com>
-Date:   Tue, 15 Feb 2022 19:05:11 +0100
-Message-ID: <CABgxDo+hRsDo-Hmf4TUmuWQFo0+LnWOTrEQQz0beSjBhxkZ6_Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] ARM: mstar: cpupll
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Daniel Palmer <daniel@0x0f.com>,
-        Romain Perier <romain.perier@gmail.com>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6GT01Bt5rwCOjSLQQeIHh7n+6HZ2KwW6Q5RymmBrtD0=;
+        b=jSDAzMrNEh1FNAyOsyPUQTGYPmYqnArrAsY700iUNAXAXcqj36WVhqpOBsKMnPd5i3
+         S+sptO47FQi49gu2HSDHdbJKcfF6ilPNdvzzXNB3ArDqA5O8Hg5NPAPP5WStqcuFdT4P
+         ikfBgWMbe81fqPjwN4zbyfEtctSm0oLUNAjOOvbc8lyNxI7UUIE2FtAGdr8u+X8ATtay
+         L00n9CmOCDUMzKcYH31tuwwaUjaslizARrUvwliT13iq9VhvsyiLzG5ufSJzUQAQkqTD
+         BD33vcqLctCk/LtbVVQY9I5JnZugvCwMXn+Q9Va2kkLpVOw7AzMNRy8pn2hGyhvRMBSs
+         zDsA==
+X-Gm-Message-State: AOAM531pK3pZNinyY5Z6bQ138U0CrZPOx0j2h50mGB+9M+N5JXFlJCwT
+        6qWu1LoEu4Q8FXTvUqJQpIhP2oqwBlrD/A==
+X-Google-Smtp-Source: ABdhPJxH77Emm6xQMmIH2ZeTSqzn+PQxjFppSlngq/qMnP22VuzonAHWZrrMyjop5tWdjKU6LntBkg==
+X-Received: by 2002:a2e:bf1b:: with SMTP id c27mr505719ljr.67.1644956141367;
+        Tue, 15 Feb 2022 12:15:41 -0800 (PST)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id k16sm4548419ljg.111.2022.02.15.12.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Feb 2022 12:15:40 -0800 (PST)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/5] dt-bindings: clocks: convert SDM845 Camera CC bindings to YAML
+Date:   Tue, 15 Feb 2022 23:15:35 +0300
+Message-Id: <20220215201539.3970459-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220215201539.3970459-1-dmitry.baryshkov@linaro.org>
+References: <20220215201539.3970459-1-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Convert clock/qcom,camcc.txt to clock/qcom,sdm845-camcc.yaml.
 
-ping :)
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,camcc.txt  | 18 ------
+ .../bindings/clock/qcom,sdm845-camcc.yaml     | 63 +++++++++++++++++++
+ 2 files changed, 63 insertions(+), 18 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
 
-Regards,
-Romain
+diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc.txt b/Documentation/devicetree/bindings/clock/qcom,camcc.txt
+deleted file mode 100644
+index c5eb6694fda9..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,camcc.txt
++++ /dev/null
+@@ -1,18 +0,0 @@
+-Qualcomm Camera Clock & Reset Controller Binding
+-------------------------------------------------
+-
+-Required properties :
+-- compatible : shall contain "qcom,sdm845-camcc".
+-- reg : shall contain base register location and length.
+-- #clock-cells : from common clock binding, shall contain 1.
+-- #reset-cells : from common reset binding, shall contain 1.
+-- #power-domain-cells : from generic power domain binding, shall contain 1.
+-
+-Example:
+-	camcc: clock-controller@ad00000 {
+-		compatible = "qcom,sdm845-camcc";
+-		reg = <0xad00000 0x10000>;
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-		#power-domain-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
+new file mode 100644
+index 000000000000..c61314caf692
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-camcc.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sdm845-camcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Camera Clock & Reset Controller Binding for SDM845
++
++maintainers:
++  - Bjorn Andersson <bjorn.andersson@linaro.org>
++
++description: |
++  Qualcomm camera clock control module which supports the clocks, resets and
++  power domains on SDM845.
++
++  See also dt-bindings/clock/qcom,camcc-sm845.h
++
++properties:
++  compatible:
++    const: qcom,sdm845-camcc
++
++  clocks:
++    items:
++      - description: Board XO source
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@ad00000 {
++      compatible = "qcom,sdm845-camcc";
++      reg = <0x0ad00000 0x10000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+-- 
+2.34.1
 
-Le mer. 26 janv. 2022 =C3=A0 18:56, Romain Perier <romain.perier@gmail.com>=
- a =C3=A9crit :
->
-> This series adds a basic driver for the PLL that generates
-> the cpu clock on MStar/SigmaStar ARMv7 SoCs.
->
-> Unfortunately there isn't much documentation for this thing
-> so there are few magic values and guesses.
->
-> This needs to come after the MPLL DT changes.
->
-> Changes since v3:
-> - Added Reviewed-by on Daniel's patches
-> - Removed "[PATCH v3 8/9] ARM: mstar: Add OPP table for mercury5"
->
-> Changes since v2:
-> - Re-ordered Kconfig by name
-> - Re-ordered includes alphabetically and removed useless ones
-> - Used timeout for cpu_relax
-> - Returned DIV_ROUND_DOWN_ULL() directly in
->   msc313_cpupll_frequencyforreg()
-> - Returned DIV_ROUND_DOWN_ULL() directly in
->   msc313_cpupll_regforfrequecy()
-> - Reduced the number of lines for msc313_cpupll_of_match
-> - Removed CLK_IS_CRITICAL
->
-> Changes since v1:
-> - Re-worked the series and ensure that 'make dt_binding_check' passes.
->   The required commit is merged now, so it is okay.
-> - Fixed coding style issues in the driver and makes check_patch.pl happy
-> - Added one more commit for extending the opp_table for infinity2m.
->
-> Daniel Palmer (7):
->   dt-bindings: clk: mstar msc313 cpupll binding description
->   clk: mstar: msc313 cpupll clk driver
->   ARM: mstar: Add cpupll to base dtsi
->   ARM: mstar: Link cpupll to cpu
->   ARM: mstar: Link cpupll to second core
->   ARM: mstar: Add OPP table for infinity
->   ARM: mstar: Add OPP table for infinity3
->
-> Romain Perier (1):
->   ARM: mstar: Extend opp_table for infinity2m
->
->  .../bindings/clock/mstar,msc313-cpupll.yaml   |  45 ++++
->  arch/arm/boot/dts/mstar-infinity.dtsi         |  34 +++
->  arch/arm/boot/dts/mstar-infinity2m.dtsi       |  17 ++
->  arch/arm/boot/dts/mstar-infinity3.dtsi        |  58 +++++
->  arch/arm/boot/dts/mstar-v7.dtsi               |   9 +
->  drivers/clk/mstar/Kconfig                     |   8 +
->  drivers/clk/mstar/Makefile                    |   2 +-
->  drivers/clk/mstar/clk-msc313-cpupll.c         | 221 ++++++++++++++++++
->  8 files changed, 393 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/mstar,msc313-=
-cpupll.yaml
->  create mode 100644 drivers/clk/mstar/clk-msc313-cpupll.c
->
-> --
-> 2.34.1
->
