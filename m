@@ -2,142 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BE0C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 09:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADFCC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Feb 2022 09:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234142AbiBOJu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Feb 2022 04:50:29 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38752 "EHLO
+        id S235093AbiBOJ4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Feb 2022 04:56:48 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbiBOJu3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 04:50:29 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05EE0101F16;
-        Tue, 15 Feb 2022 01:50:18 -0800 (PST)
-X-UUID: db98b7930426490f84c54f08a312bf6d-20220215
-X-UUID: db98b7930426490f84c54f08a312bf6d-20220215
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1960818138; Tue, 15 Feb 2022 17:50:13 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 15 Feb 2022 17:50:12 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 15 Feb 2022 17:50:12 +0800
-Message-ID: <d958cc9ab31e387d06bc50a6c7a953e716d53899.camel@mediatek.com>
-Subject: Re: [v2 2/3] dt-bindings: ARM: Mediatek: Remove vppsys in MT8195
- clock document
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 15 Feb 2022 17:50:11 +0800
-In-Reply-To: <YetDNPs8Xo/Alndj@robh.at.kernel.org>
-References: <20220110005902.27148-1-chun-jie.chen@mediatek.com>
-         <20220110005902.27148-3-chun-jie.chen@mediatek.com>
-         <YetDNPs8Xo/Alndj@robh.at.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S229631AbiBOJ4r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Feb 2022 04:56:47 -0500
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D617091D;
+        Tue, 15 Feb 2022 01:56:33 -0800 (PST)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 741E31BF20F;
+        Tue, 15 Feb 2022 09:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1644918992;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=K4eFwye/okRxi/68ri8yTsBWvX0g8mH2JLrxCqUzQBc=;
+        b=Pkgq0hGmhZqbfwp1twud8hwRV3Xuarr8FHjsMyWaqUwul9fbk3t4vO12uPMdpnKoqB3lXK
+        HQIbML8TtlXXedlVag+9NJlfaflzKTnv9pqzoZsTdj7Vnz9/ZJKYAJlFgbjKYqIaCA7Q0A
+        a3QcjuVTrAKiDj0s67KrOgfSKnGQP50Vb8qRoJhrmO22RHhav6FQJLFhEy53bVmhts29Lz
+        3sF7W6vwVVzjBAiw5HzgGZ42tvgIx1FCl9vQpEZvnQCQQucXS60ydZZcvDuKTUdP5RdFom
+        E/3L6/QjdSOJYb6Xv7FzfDMR5HejitXXdQKH0Qqao4ClUDYzlCWSNU4ysNQYVQ==
+Date:   Tue, 15 Feb 2022 10:56:22 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 37/66] media: sun6i-csi: Move power management to
+ runtime pm in capture
+Message-ID: <Ygt4xh2Mq0qStyKs@aptenodytes>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-38-paul.kocialkowski@bootlin.com>
+ <YgqftcDgfrsZfTdF@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tOB2i1/qfUMuc0i4"
+Content-Disposition: inline
+In-Reply-To: <YgqftcDgfrsZfTdF@paasikivi.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2022-01-21 at 17:35 -0600, Rob Herring wrote:
-> On Mon, Jan 10, 2022 at 08:59:01AM +0800, Chun-Jie Chen wrote:
-> > vppsys0 and vppsys1 sub-system are both integrated with mmsys
-> > driver,
-> > should be describe in mediatek,mmsys.yaml
-> 
-> Driver partitioning is not a reason to change the DT. This needs a 
-> better description answering why you are doing this and what are the 
-> implications (is this breaking the ABI?).
 
+--tOB2i1/qfUMuc0i4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Due to the change in [1], vppsys0/vppsys1 are not only clock providers
-and support mm system control. It's better to be described in
-"mediatek,mmsys.yaml" [2] because they are not pure clock providers.
+Hi Sakari,
 
-[1] 
-https://patchwork.kernel.org/project/linux-mediatek/patch/20220117055254.9777-4-roy-cw.yeh@mediatek.com/
-[2] 
-https://patchwork.kernel.org/project/linux-mediatek/patch/20220117055254.9777-15-roy-cw.yeh@mediatek.com/
+On Mon 14 Feb 22, 20:30, Sakari Ailus wrote:
+> Hi Paul,
+>=20
+> On Sat, Feb 05, 2022 at 07:54:00PM +0100, Paul Kocialkowski wrote:
+> > Let's just enable the module when we start using it (at stream on)
+> > and benefit from runtime pm instead of enabling it at first open.
+> >=20
+> > Also reorder the call to v4l2_pipeline_pm_get.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> Nice patch!
 
 Thanks!
-Best Regards,
-Chun-Jie
-> > 
-> > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > ---
-> >  .../arm/mediatek/mediatek,mt8195-clock.yaml      | 16 ------------
-> > ----
-> >  1 file changed, 16 deletions(-)
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-
-> > clock.yaml
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-
-> > clock.yaml
-> > index 17fcbb45d121..d62d60181147 100644
-> > ---
-> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-
-> > clock.yaml
-> > +++
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8195-
-> > clock.yaml
-> > @@ -28,11 +28,9 @@ properties:
-> >            - mediatek,mt8195-imp_iic_wrap_s
-> >            - mediatek,mt8195-imp_iic_wrap_w
-> >            - mediatek,mt8195-mfgcfg
-> > -          - mediatek,mt8195-vppsys0
-> >            - mediatek,mt8195-wpesys
-> >            - mediatek,mt8195-wpesys_vpp0
-> >            - mediatek,mt8195-wpesys_vpp1
-> > -          - mediatek,mt8195-vppsys1
-> >            - mediatek,mt8195-imgsys
-> >            - mediatek,mt8195-imgsys1_dip_top
-> >            - mediatek,mt8195-imgsys1_dip_nr
-> > @@ -92,13 +90,6 @@ examples:
-> >          #clock-cells = <1>;
-> >      };
-> >  
-> > -  - |
-> > -    vppsys0: clock-controller@14000000 {
-> > -        compatible = "mediatek,mt8195-vppsys0";
-> > -        reg = <0x14000000 0x1000>;
-> > -        #clock-cells = <1>;
-> > -    };
-> > -
-> >    - |
-> >      wpesys: clock-controller@14e00000 {
-> >          compatible = "mediatek,mt8195-wpesys";
-> > @@ -120,13 +111,6 @@ examples:
-> >          #clock-cells = <1>;
-> >      };
-> >  
-> > -  - |
-> > -    vppsys1: clock-controller@14f00000 {
-> > -        compatible = "mediatek,mt8195-vppsys1";
-> > -        reg = <0x14f00000 0x1000>;
-> > -        #clock-cells = <1>;
-> > -    };
-> > -
-> >    - |
-> >      imgsys: clock-controller@15000000 {
-> >          compatible = "mediatek,mt8195-imgsys";
-> > -- 
-> > 2.18.0
-> > 
-> > 
 
+> Do you still need v4l2_pipeline_pm_put()? Removing it would be a separate
+> patch of course.
+
+My understanding is that this is still useful if there are drivers in the
+pipeline that rely on s_power instead of rpm (a typical case could be an
+old sensor driver). So that's why this is kept around, but all other compon=
+ents
+of the pipeline (isp/csi/mipi csi-2) are using rpm now.
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--tOB2i1/qfUMuc0i4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmILeMYACgkQ3cLmz3+f
+v9E5sAf/akvNvNPsCxPYxGv+fJr3ZwwX2cWQuFu6Am+wwNsKyXuxoMHRnyG1rANG
+OVaJVCgFR3vPnDKUsTC/grEH/PdeNUHy9DT+gnEnjsIepnMV5/VAG4YBgonHBDoC
+Nk1fMad5oTd+W+kpLqdQ7JEABUhW+TZL9TAv2C24Xg4DupIwH2HDcYCepM83ySy8
+q5Q6Jo8gYGAWzdWJLr5u3Xexgd2W7n4kQ7VBXVNesTQOgvihW8xTFcAft/Sf4Qig
+FHhb+EWRL6Pl9v74gev2rUQMWABOgVFHlcPmHQgrFIHC/u9fHP0auvZzS09i6A0C
+hcYntRVNBMGqmJTHoPZjIucw/JtAgw==
+=CYCh
+-----END PGP SIGNATURE-----
+
+--tOB2i1/qfUMuc0i4--
