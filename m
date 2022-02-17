@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED86C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 11:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5CAC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 11:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239135AbiBQLeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 06:34:15 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34096 "EHLO
+        id S239779AbiBQLeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 06:34:16 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236534AbiBQLeO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 06:34:14 -0500
-X-Greylist: delayed 68 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Feb 2022 03:34:00 PST
+        with ESMTP id S235040AbiBQLeP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 06:34:15 -0500
 Received: from mxd2.seznam.cz (mxd2.seznam.cz [IPv6:2a02:598:2::210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F212278295
-        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 03:33:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57880278298
+        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 03:34:00 -0800 (PST)
 Received: from email.seznam.cz
-        by email-smtpc1a.ng.seznam.cz (email-smtpc1a.ng.seznam.cz [10.23.10.15])
-        id 48b02eac13be7ac54919e2f2;
-        Thu, 17 Feb 2022 12:33:58 +0100 (CET)
+        by email-smtpc28a.ng.seznam.cz (email-smtpc28a.ng.seznam.cz [10.23.18.40])
+        id 60796ccf3b7738a661d0a091;
+        Thu, 17 Feb 2022 12:33:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1645097638; bh=I0huqjO3Ze0Tthxe1VueCZOTHs0UvA6L60KoxxYO8N0=;
-        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-         Content-Transfer-Encoding:X-szn-frgn:X-szn-frgc;
-        b=K6vL939Gz6MsYFQT3Y60jZ8F5nK4idL4s5l0UBbjehij0skQgDef5qlYGvTIw8hDF
-         FscLcfvle7qurVqBJKI4N3+VlY/CBFsuJlwB0jEMd8SCAAMFBYx+XIZKe8p1XUA741
-         xu3SD8ta1wOE5gsG7XlAijjPDDBt9I835deuqUyQ=
+        t=1645097639; bh=OUyasi79Ox50nzN/nFOW3Z5Xbf/pXzHWWvMd9FuZe3I=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding:X-szn-frgn:
+         X-szn-frgc;
+        b=LSz0+xOqCj38uYS5XSISsNulUIe2og/moyuQ77V+X7+RAIwPO7EU+RunknQQeMZwz
+         VmZbadGxTYsVCOSbXt/PKphcEjSZuvuShvi1OuesC37m6EcItRnBhPveI4Q5QGOAAP
+         TALP4b8y7LjxR3QRaY8QE+Nv8MX0L5EVjwmM8lqE=
 Received: from localhost.localdomain (ip-111-27.static.ccinternet.cz [147.161.27.111])
         by email-relay20.ng.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
-        Thu, 17 Feb 2022 12:32:31 +0100 (CET)  
+        Thu, 17 Feb 2022 12:32:38 +0100 (CET)  
 From:   michael.srba@seznam.cz
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -41,54 +41,69 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Saravana Kannan <saravanak@google.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 1/5] dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
-Date:   Thu, 17 Feb 2022 12:30:00 +0100
-Message-Id: <20220217113004.22757-1-michael.srba@seznam.cz>
+        devicetree@vger.kernel.org, Michael Srba <michael.srba@seznam.cz>,
+        Michael Srba <Michael.Srba@seznam.cz>
+Subject: [PATCH v6 5/5] arm64: dts: qcom: msm8998: reserve potentially inaccessible clocks
+Date:   Thu, 17 Feb 2022 12:30:04 +0100
+Message-Id: <20220217113004.22757-5-michael.srba@seznam.cz>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220217113004.22757-1-michael.srba@seznam.cz>
+References: <20220217113004.22757-1-michael.srba@seznam.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-szn-frgn: <beafa1f3-a171-4ad1-9b7a-1724450eefa2>
+X-szn-frgn: <296634cd-0321-4093-8f8c-edfc4ed832ee>
 X-szn-frgc: <0>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Michael Srba <Michael.Srba@seznam.cz>
+From: Michael Srba <michael.srba@seznam.cz>
 
-This patch adds definitions of four clocks which need to be manipulated
-in order to initialize the AHB bus which exposes the SCC block in the
-global address space.
+With the gcc driver now being more complete and describing clocks which
+might not always be write-accessible to the OS, conservatively specify
+all such clocks as protected in the SoC dts.
+The board dts - or even user-supplied dts - can override this property
+to reflect the actual configuration.
 
 Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
  CHANGES:
- - v2: none
- - v3: none
- - v4: none
+ - v2: add this patch
+ - v3: fix missing Signed-off-by
+ - v4: add a proper explanation as per review, (hopefully) fix the subject and commit message
  - v5: none
  - v6: none
 ---
- include/dt-bindings/clock/qcom,gcc-msm8998.h | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-index 72c99e486d86..1badb4f9c58f 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-@@ -186,6 +186,10 @@
- #define UFS_UNIPRO_CORE_CLK_SRC					177
- #define GCC_MMSS_GPLL0_CLK					178
- #define HMSS_GPLL0_CLK_SRC					179
-+#define GCC_IM_SLEEP						180
-+#define AGGRE2_SNOC_NORTH_AXI					181
-+#define SSC_XO							182
-+#define SSC_CNOC_AHBS_CLK					183
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index f273bc1ff629..16dccf9d881e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -863,6 +863,21 @@ gcc: clock-controller@100000 {
  
- #define PCIE_0_GDSC						0
- #define UFS_GDSC						1
+ 			clock-names = "xo", "sleep_clk";
+ 			clocks = <&xo>, <&sleep_clk>;
++
++			/*
++			 * The hypervisor typically configures the memory region where these clocks
++			 * reside as read-only for the HLOS. If the HLOS tried to enable or disable
++			 * these clocks on a device with such configuration (e.g. because they are
++			 * enabled but unused during boot-up), the device will most likely decide
++			 * to reboot.
++			 * In light of that, we are conservative here and we list all such clocks
++			 * as protected. The board dts (or a user-supplied dts) can override the
++			 * list of protected clocks if it differs from the norm, and it is in fact
++			 * desired for the HLOS to manage these clocks
++			 */
++			protected-clocks = <AGGRE2_SNOC_NORTH_AXI>,
++					   <SSC_XO>,
++					   <SSC_CNOC_AHBS_CLK>;
+ 		};
+ 
+ 		rpm_msg_ram: sram@778000 {
 -- 
 2.34.1
 
