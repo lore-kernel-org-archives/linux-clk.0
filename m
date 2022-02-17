@@ -2,73 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006D7C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 22:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEADC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 22:08:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343782AbiBQWGR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 17:06:17 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35140 "EHLO
+        id S238876AbiBQWIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 17:08:46 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343778AbiBQWGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 17:06:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F4B6403FC;
-        Thu, 17 Feb 2022 14:05:58 -0800 (PST)
+        with ESMTP id S230007AbiBQWIp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 17:08:45 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 875E11275A;
+        Thu, 17 Feb 2022 14:08:30 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 473C8B82525;
-        Thu, 17 Feb 2022 22:05:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE725C340ED;
-        Thu, 17 Feb 2022 22:05:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2446761715;
+        Thu, 17 Feb 2022 22:08:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76DB9C340E8;
+        Thu, 17 Feb 2022 22:08:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645135555;
-        bh=xC3sMas1elxgw4kLQbsaL4sAm9oZF/1lhrWsO+BjMh4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dnuDsIo7jyXpfa2RxcQQJmHgLpP+VVvafAXhrBI6jqsLT7JcZc0FQOXhHUSH0IeY3
-         qLiSThNYW5Rt6TrAaTt5h0SwgHCdgBJZMNVu/1P0jfV7bFDizpqvLYrucxOV14X0mt
-         hykTBw4AJ6ctVoZ4x195ufVj/hPoQ4SNoKWNYC0grWyjh73iZg3+2bmOZzCXVdx7wy
-         jrdCi3kFgphSMKniH7PT/5eJj9J9E0dTVqLI+vn1LpIYyuSP67jlb+QGubGGcvMyND
-         gIYIXggiZVmD+khZLPVchhAexej+BwRDDo/MIlgOjwXgrDL8LdnsQZA0iQwN4Pvn0R
-         nEjkJWSy6fYEA==
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: Mark clk_core_evict_parent_cache_subtree() 'target' const
-Date:   Thu, 17 Feb 2022 14:05:54 -0800
-Message-Id: <20220217220554.2711696-3-sboyd@kernel.org>
-X-Mailer: git-send-email 2.35.1.265.g69c8d7142f-goog
-In-Reply-To: <20220217220554.2711696-1-sboyd@kernel.org>
-References: <20220217220554.2711696-1-sboyd@kernel.org>
+        s=k20201202; t=1645135709;
+        bh=k6yECMX/H0ZutK60ykgRkuQjf0ogfls3PRMAvzZfsvY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=RLU/xan9m98c0kkEyQ2m8cYTCFNf5t7ceulsGVIpwUz9ehn6lZdsQF0/ChJnPcAMp
+         7c12uP0zhB8l8NuUhwOny6s4Oeg9TlDn+oxj1Vlu7UtLsAewyOXGtApz9+OGaUg8ru
+         YcBpWa+WgvoFSCMPhH6AxseW0UND3fIeytC6YxiME4zrYFeMhD5+URMBn0cz1yWNIY
+         2tVZEqOBvr2MUINdcgbA9RjGcKwIooYfdH3OB/SaLYh+NpT0oFtgwA+o0/XZL6Z59r
+         RJ5cdUDLnlLAAAUCEI6BYjmZbCgb1OBRY6rr5/U/RsyePGGMfzCQ76G1pwsOyPOAER
+         trmo5q8KgC/uQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1644821540-17928-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1644821540-17928-1-git-send-email-quic_rohiagar@quicinc.com>
+Subject: Re: [PATCH 0/8] Add APCS support for SDX65
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     Rohit Agarwal <quic_rohiagar@quicinc.com>, agross@kernel.org,
+        bjorn.andersson@linaro.org, dianders@chromium.org,
+        jassisinghbrar@gmail.com, linus.walleij@linaro.org,
+        linux@armlinux.org.uk, mani@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Thu, 17 Feb 2022 14:08:26 -0800
+User-Agent: alot/0.10
+Message-Id: <20220217220829.76DB9C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clarify that the 'target' clk isn't being modified, instead it's being
-searched for. Mark it const so the function can't modify it.
+Quoting Rohit Agarwal (2022-02-13 22:52:20)
+> Hello,
+>=20
+> This series adds APCS mailbox and clock support for SDX65. The APCS IP
+> in SDX65 provides IPC and clock functionalities. Hence, mailbox support
+> is added to the "qcom-apcs-ipc-mailbox" driver and a dedicated clock
+> driver "apcs-sdx65" is added.
+>=20
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 16384e9437f5..d15997ea3930 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4079,7 +4079,7 @@ static const struct clk_ops clk_nodrv_ops = {
- };
- 
- static void clk_core_evict_parent_cache_subtree(struct clk_core *root,
--						struct clk_core *target)
-+						const struct clk_core *target)
- {
- 	int i;
- 	struct clk_core *child;
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
-
+Something is wrong with your series. I only see a couple patches and
+they're not threaded.
