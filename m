@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3DFC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 23:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E487C4167B
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 23:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbiBQX5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 18:57:22 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:52248 "EHLO
+        id S229805AbiBQX5Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 18:57:24 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:51444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbiBQX5V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 18:57:21 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2769A42497;
-        Thu, 17 Feb 2022 15:57:05 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id p9so11626808wra.12;
-        Thu, 17 Feb 2022 15:57:04 -0800 (PST)
+        with ESMTP id S229761AbiBQX5W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 18:57:22 -0500
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEEDF41FB9;
+        Thu, 17 Feb 2022 15:57:06 -0800 (PST)
+Received: by mail-wr1-x429.google.com with SMTP id e3so11733548wra.0;
+        Thu, 17 Feb 2022 15:57:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=qVmlOhX5PcDPicm3lYGlBTzA02rk1OQ79iZTV4IdZTk=;
-        b=PMom3qB5NG9d/fWPRASFGft/y5FRfzyyJ6Aepa9redZBO+yJ+8f3QW3tXQuPc3Kx6f
-         Dr++GnvVTGe4/RlRXsKKpLLumvxoR5hDeKKcuG+N2ZsecERGL6kqnuSzHhgZnlBfro5p
-         WJiEPPlVhyzV1Xq4XEs6pZpkEdDkSnBvJLzRM48l6lOn4KaAAKWaf8c1PJocZql1Hk4s
-         ce1dWvwtkpk4E0QHDBsq720a1WsRuGpVtF3wWIKjjiimBthtO8oEG+4pEvfLkHH4kg+N
-         QOTMbsXFhzo8bctTLup81Ie94p24O4nt41TCUWuWhEeduRt4MO0dJhRKM2nGXKV388R2
-         tUaw==
+        bh=CV06hFAyLzn/aD8fnpRK/3zrnOQF9gR6OQsK6DYukNA=;
+        b=V+lwvo1A5Egv+htx60kGvxcifdXTpIa5CBWkt0yJ2FrezM/e/ukiDDbz5qJLekP4zD
+         r7IDssYnvICkxaIvVe/8RBLdmr79Gm3aa0f4WybRMb6Uklz6ZZ0nPE1e5QV11CGmEW5N
+         hZYhccgSpQnYmsUx3C0jPjGteZjYcw0bivgEy7gN1hQJwUeBR7TQwy5t5MYc1mbsBhhE
+         DCBgxmqkyuM8gA7DrUfJ/WTbeZezYFxuj2mGoGTWr9uW71NmS6g6+uQ+DbE+HI+nOGGR
+         y7UoKvKKbC143NUVNwMhxgIPnb8h0uEJkpDvPAv6ZlsufR09MPkhpn/Svvxxp2XkaNe+
+         TobA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qVmlOhX5PcDPicm3lYGlBTzA02rk1OQ79iZTV4IdZTk=;
-        b=EDSyD+HZp6ajeh3p6n136WWrihsisG7Ju0NlxUlZHvYlif2jkY/sFSPorEQuFzvMXG
-         iD+/achMohIPDWrS36d/dCNJISQywvCJ9urGecEVkPQ7e5QQbybPEsi/Kgd1Jwm4UB7Q
-         PM4GoTI1aY1c28ibS5fTvXWxiDXC6gdYf2RjHh4Fyu4/nesQ6LSvAL6xxf1D5qkV5VCa
-         Y8/jJF9lmuuk2V23dcCnpaIFt+6z3TRq/ADP//SjK2RmgP4gfUn7IC/PjfOG6g0fo9QK
-         B5j6+JYCC3ZMsD5giuhOKvfbtAy6E8J0hMeiVlYCHb80b7BiSfKYV7lVKkS9S/Bq/YsI
-         bZrA==
-X-Gm-Message-State: AOAM530R0HlPASYP+H/tWa1bQiI/5uFkhJPKMV6AsQyBvNk2kgoUbCoD
-        UIoQlBLLy8ZnACzud6Yw2Oc=
-X-Google-Smtp-Source: ABdhPJySbGj8fUBmzrgQ2vpc0iEgvmPl8Q+GfLB1uHIRLyg8RiYytQ2fBJzridL03YC+KIQST+YuAg==
-X-Received: by 2002:a5d:518d:0:b0:1e5:8cc9:5aa4 with SMTP id k13-20020a5d518d000000b001e58cc95aa4mr3845386wrv.119.1645142223343;
-        Thu, 17 Feb 2022 15:57:03 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CV06hFAyLzn/aD8fnpRK/3zrnOQF9gR6OQsK6DYukNA=;
+        b=Ol6LGrjcg7/36aFQ6qafVa77hB4In0l24atGloydPSf8PMXHymiULcjez973UVTPsg
+         VE24N1GxBfJPJgDQtDxZpkpMDtIcem0JK8Ag+jJIhOqfXYNPmCQ1xcNVHBlr1Jrl7Gh3
+         tbqf9X3gwTinRDkwRVfXRp8WExHiF9zwpuM6tG9aft63K6EUUN5Wq53yR1PWoIwJ2Bvw
+         nzNXwr6roMJsb9wyx5f776CBBgaXNDGFOygGlb9LcKcRaRJUbVpOm5ijzqVqoxqI6otE
+         bkLGvjXfFUPEhxZRs/glm82syX72guvKzCwbTYxXMsewymoeWSyWG51hohyjV7WXbMa8
+         VwrQ==
+X-Gm-Message-State: AOAM5329k/9N+/R9SxlGSo8RM8LhkbXTjrfQn/kVBvt+Zs+C5WfQ+nmJ
+        N0XC8YgKC0/rW64fR9zDCTw=
+X-Google-Smtp-Source: ABdhPJy6VWta5jhRmRTHLGN5E72tk1P15lUWuXCDDZGvB502jEQ3R/2MXyMRsWOmkV/gQi6qn3GcWg==
+X-Received: by 2002:adf:f14e:0:b0:1e4:a64c:c1f8 with SMTP id y14-20020adff14e000000b001e4a64cc1f8mr4054929wro.512.1645142225355;
+        Thu, 17 Feb 2022 15:57:05 -0800 (PST)
 Received: from Ansuel-xps.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id r2sm3691694wmq.24.2022.02.17.15.57.02
+        by smtp.googlemail.com with ESMTPSA id r2sm3691694wmq.24.2022.02.17.15.57.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Feb 2022 15:57:02 -0800 (PST)
+        Thu, 17 Feb 2022 15:57:04 -0800 (PST)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -58,81 +58,111 @@ To:     Andy Gross <agross@kernel.org>,
         Ansuel Smith <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 00/16] Multiple addition and improvement to ipq8064 gcc
-Date:   Fri, 18 Feb 2022 00:56:47 +0100
-Message-Id: <20220217235703.26641-1-ansuelsmth@gmail.com>
+Subject: [PATCH v4 02/16] dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
+Date:   Fri, 18 Feb 2022 00:56:49 +0100
+Message-Id: <20220217235703.26641-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220217235703.26641-1-ansuelsmth@gmail.com>
+References: <20220217235703.26641-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is an attempt in making the ipq8064 SoC actually usable. Currently
-many feature are missing for this SoC and devs user off-the-tree patches
-to make it work (example patch for missing clock, patch for cpufreq
-driver, patch to add missing node in the dts)
+Simplify qcon,gcc-apq8064 Documentation by using qcom,gcc-common.yaml as a
+template and remove the compatible from qcom,gcc.yaml
 
-I notice there was some work in modernizing the gcc driver for other
-qcom target but this wasn't done for ipq806x. This does exactly this, we
-drop any parent_names stuff and we switch to the parent_data way. We
-also drop the pxo and cxo source clk from gcc driver and we refer to the
-dts for it.
+Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+---
+ .../bindings/clock/qcom,gcc-apq8064.yaml      | 29 +++++--------------
+ .../bindings/clock/qcom,gcc-other.yaml        |  3 --
+ 2 files changed, 7 insertions(+), 25 deletions(-)
 
-This also add all the missing feature for the nss cores and the
-cryptoengine in them. It does also introduce the required flags to make
-the RPM actually work and NOT reject any command. There was an attempt
-in declaring these clock as core clock in the dts but this ends up in no
-serial as the kernel makes these clock not accessible. We just want to
-make the kernel NOT disable them if unused nothing more.
-
-At the end we update the ipq8064 dtsi to add the pxo and cxo tag and
-declare them in gcc and also fix a problem with tsens probe.
-
-v4:
-- Drop drivers in all the patches.
-- Introduce floor ops for sdc
-- gcc.yaml to gcc-other.yaml
-- gcc-common.yaml to gcc.yaml
-v3:
-- Rework Documentation with Rob suggestions
-v2:
-- Fix error from Rob bot.
-- Add additional commits to make qcom,gcc.yaml a template
-- Squash parent_hws patch with the modernize patch
-- Create gcc_pxo instead of using long define.
-
-Ansuel Smith (16):
-  dt-bindings: clock: split qcom,gcc.yaml to common and specific schema
-  dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
-  dt-bindings: clock: Document qcom,gcc-ipq8064 binding
-  clk: qcom: gcc-ipq806x: fix wrong naming for gcc_pxo_pll8_pll0
-  clk: qcom: gcc-ipq806x: convert parent_names to parent_data
-  clk: qcom: gcc-ipq806x: use ARRAY_SIZE for num_parents
-  clk: qcom: gcc-ipq806x: drop hardcoded pxo and cxo source clk
-  clk: qcom: gcc-ipq806x: add additional freq nss cores
-  clk: qcom: gcc-ipq806x: add unusued flag for critical clock
-  clk: qcom: clk-rcg: add clk_rcg_floor_ops ops
-  clk: qcom: gcc-ipq806x: add additional freq for sdc table
-  dt-bindings: clock: add ipq8064 ce5 clk define
-  clk: qcom: gcc-ipq806x: add CryptoEngine clocks
-  dt-bindings: reset: add ipq8064 ce5 resets
-  clk: qcom: gcc-ipq806x: add CryptoEngine resets
-  ARM: dts: qcom: Add syscon and cxo/pxo clock to gcc node for ipq8064
-
- .../bindings/clock/qcom,gcc-apq8064.yaml      |  29 +-
- .../bindings/clock/qcom,gcc-ipq8064.yaml      |  76 +++
- .../bindings/clock/qcom,gcc-other.yaml        |  70 ++
- .../devicetree/bindings/clock/qcom,gcc.yaml   |  63 +-
- arch/arm/boot/dts/qcom-ipq8064.dtsi           |   8 +-
- drivers/clk/qcom/clk-rcg.c                    |  24 +
- drivers/clk/qcom/gcc-ipq806x.c                | 640 +++++++++++++-----
- include/dt-bindings/clock/qcom,gcc-ipq806x.h  |   5 +-
- include/dt-bindings/reset/qcom,gcc-ipq806x.h  |   5 +
- 9 files changed, 670 insertions(+), 250 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+index 8e2eac6cbfb9..97936411b6b4 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+@@ -6,6 +6,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Qualcomm Global Clock & Reset Controller Binding for APQ8064
+ 
++allOf:
++  - $ref: qcom,gcc.yaml#
++
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+   - Taniya Das <tdas@codeaurora.org>
+@@ -17,22 +20,12 @@ description: |
+   See also:
+   - dt-bindings/clock/qcom,gcc-msm8960.h
+   - dt-bindings/reset/qcom,gcc-msm8960.h
++  - dt-bindings/clock/qcom,gcc-apq8084.h
++  - dt-bindings/reset/qcom,gcc-apq8084.h
+ 
+ properties:
+   compatible:
+-    const: qcom,gcc-apq8064
+-
+-  '#clock-cells':
+-    const: 1
+-
+-  '#reset-cells':
+-    const: 1
+-
+-  '#power-domain-cells':
+-    const: 1
+-
+-  reg:
+-    maxItems: 1
++    const: qcom,gcc-apq8084
+ 
+   nvmem-cells:
+     minItems: 1
+@@ -53,21 +46,13 @@ properties:
+   '#thermal-sensor-cells':
+     const: 1
+ 
+-  protected-clocks:
+-    description:
+-      Protected clock specifier list as per common clock binding.
+-
+ required:
+   - compatible
+-  - reg
+-  - '#clock-cells'
+-  - '#reset-cells'
+-  - '#power-domain-cells'
+   - nvmem-cells
+   - nvmem-cell-names
+   - '#thermal-sensor-cells'
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index 824d80530683..2703b53150d8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -15,8 +15,6 @@ description:
+   power domains.
+ 
+   See also:
+-  - dt-bindings/clock/qcom,gcc-apq8084.h
+-  - dt-bindings/reset/qcom,gcc-apq8084.h
+   - dt-bindings/clock/qcom,gcc-ipq4019.h
+   - dt-bindings/clock/qcom,gcc-ipq6018.h
+   - dt-bindings/reset/qcom,gcc-ipq6018.h
+@@ -40,7 +38,6 @@ allOf:
+ properties:
+   compatible:
+     enum:
+-      - qcom,gcc-apq8084
+       - qcom,gcc-ipq4019
+       - qcom,gcc-ipq6018
+       - qcom,gcc-ipq8064
 -- 
 2.34.1
 
