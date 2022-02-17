@@ -2,133 +2,64 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCFAC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 22:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B2EC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 22:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245105AbiBQWhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 17:37:54 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56922 "EHLO
+        id S1343919AbiBQWlN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 17:41:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343912AbiBQWhx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 17:37:53 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1942E169235;
-        Thu, 17 Feb 2022 14:37:38 -0800 (PST)
+        with ESMTP id S1343899AbiBQWlN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 17:41:13 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883A6169222;
+        Thu, 17 Feb 2022 14:40:58 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D84F61755;
-        Thu, 17 Feb 2022 22:37:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC2EC340E8;
-        Thu, 17 Feb 2022 22:37:36 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 04150CE30B9;
+        Thu, 17 Feb 2022 22:40:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B12DC340E8;
+        Thu, 17 Feb 2022 22:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645137457;
-        bh=nYXGEcTwGIOXhjX/wlgdLjWw4uZu5iED6zGc9Z3ENc0=;
+        s=k20201202; t=1645137655;
+        bh=yoTB+6/Yc1ALwNbkIdzFCVW+ORJTwmp5y3hdBLcMKHM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UreO/S9roUEZ7rVE6PFiepDoLKeV+CwRaOXY0jDafGSpUVhFxfdHhwOjjyK3UfdUY
-         UcCnJYF9rftREVlZeXtxoj+TPIb7M0boQB5vBXtgoH2UhhGq2fq4NIt3SQQ34M2OLs
-         9flfR6lWIHfIAeZLAHfYtcVow/62H+y8W1UdhJ4aDMt2JFpDgJ2I+niSNItAWznwOh
-         Jc0D1rOq7jB/mx/sgy863esaG6n62VFH2azV7VcEgFq5fc0VoCv4u+L3EvStSVCBXx
-         BpkfXjFn0n26VdJiqmXSZDMrcuqpFq+qvHMxIwNMboXcORwfwBKOQKL8k/nMLYFDsC
-         bt2IwtlLOvhBg==
+        b=FBis+/IP9pl4fr2BzA6QOFnz5xXZG2wScA6yOJ+bmxwNBtgqRktc7M5HkXrFoKAy+
+         rpCVe02qXyWLBL+38g31Srpk98DFeTGPqf7SCqu9SLJ7xPniz0Lf8194NNbIIlylaU
+         sL4g/L8sUU7QR/vO6xzsyGUSii4FwKU3k6F8+bpIRrcOfuHSgppLJKq2Bw9DORZz1y
+         9JLSrgfE1CM/xLfF51IAOtrp8b+VYLiEh0JEdPv5/KolpYB2vO2VL6xqvmsQV/hx0n
+         uIQfETbClephaK2cPi1HSE1KQ3wI7Nc3Bd6WAm6VGo2/0YkmpPHMIV6JccalPNrNF4
+         hHNBePc8+QbeQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cc4241105bfd2249c1c309a4efa2e6aa@trvn.ru>
-References: <20211209163720.106185-1-nikita@trvn.ru> <20211209163720.106185-2-nikita@trvn.ru> <20220108005209.5140EC36AEB@smtp.kernel.org> <991533e0fddd6999c8a06a536ae57999@trvn.ru> <20220110201452.2B3E4C36AE3@smtp.kernel.org> <cc4241105bfd2249c1c309a4efa2e6aa@trvn.ru>
-Subject: Re: [PATCH 1/4] clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if MND divider is not enabled.
+In-Reply-To: <20220126081236.25255-2-tdas@codeaurora.org>
+References: <20220126081236.25255-1-tdas@codeaurora.org> <20220126081236.25255-2-tdas@codeaurora.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7280
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
-        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-To:     Nikita Travkin <nikita@trvn.ru>
-Date:   Thu, 17 Feb 2022 14:37:35 -0800
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 17 Feb 2022 14:40:53 -0800
 User-Agent: alot/0.10
-Message-Id: <20220217223736.DFC2EC340E8@smtp.kernel.org>
+Message-Id: <20220217224055.5B12DC340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nikita Travkin (2022-01-26 07:14:21)
-> Stephen Boyd =D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0) 11.01.2022 01:14:
-> > Quoting Nikita Travkin (2022-01-07 23:25:19)
-> >> Hi,
-> >>
-> >> Stephen Boyd =D0=BF=D0=B8=D1=81=D0=B0=D0=BB(=D0=B0) 08.01.2022 05:52:
-> >> > Quoting Nikita Travkin (2021-12-09 08:37:17)
-> >> I'm adding this error here primarily to bring attention of the
-> >> user (e.g. developer enabling some peripheral that needs
-> >> duty cycle control) who might have to change their clock tree
-> >> to make this control effective. So, assuming that if someone
-> >> sets the duty cycle to 50% then they might set it to some other
-> >> value later, it makes sense to fail the first call anyway.
-> >>
-> >> If you think there are some other possibilities for this call
-> >> to happen specifically with 50% duty cycle (e.g. some
-> >> preparations or cleanups in the clk subsystem or some drivers
-> >> that I'm not aware of) then I can make an exemption in the check
-> >> for that.
-> >>
-> >=20
-> > I don't see anywhere in clk_set_duty_cycle() where it would bail out
-> > early if the duty cycle was set to what it already is. The default for
-> > these clks is 50%, so I worry that some driver may try to set the duty
-> > cycle to 50% and then fail now. Either we need to check the duty cycle
-> > in the core before calling down into the driver or we need to check it
-> > here in the driver. Can you send a patch to check the current duty cycle
-> > in the core before calling down into the clk ops?
+Quoting Taniya Das (2022-01-26 00:12:35)
+> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of gener=
+ic
+> properties that are needed in a device tree. Also add clock ids for
+> LPASS core clocks and audio clock IDs for LPASS client to request for
+> the clocks.
 >=20
-> Hi, sorry for a rather delayed response,
-> I spent a bit of time looking at how to make the clk core be
-> careful with ineffective duty-cycle calls and I can't find a
-> nice way to do this... My idea was something like this:
->=20
-> static int clk_core_set_duty_cycle_nolock(struct clk_core *core,
->                                           struct clk_duty *duty)
-> {       /* ... */
->=20
->         /* Update core->duty values */
->         clk_core_update_duty_cycle_nolock(core);
->=20
->         if ( /* duty doesn't match core->duty */ ) {
->                 ret =3D core->ops->set_duty_cycle(core->hw, duty);
->         /* ... */
-> }
->=20
-> However there seem to be drawbacks to any variant of the
-> comparison that I could come up with:
->=20
-> Naive one would be to do
->     if (duty->num !=3D core->duty->num || duty->den !=3D core->duty->den)
-> but it won't correctly compare e.g. 1/2 and 10/20.
->=20
-> Other idea was to do
->     if (duty->den / duty->num !=3D core->duty->den / core->duty->num)
-> but it will likely fail with very close values (e.g. 100/500 and 101/500)
->=20
-> I briefly thought of some more sophisticated math but I don't
-> like the idea of complicating this too far.
->=20
-> I briefly grepped the kernel sources for duty-cycle related methods
-> and I saw only one user of the clk_set_duty_cycle:
->     sound/soc/meson/axg-tdm-interface.c
-> Notably it sets the cycle to 1/2 in some cases, though it seems to
-> be tied to the drivers/clk/meson/sclk-div.c clock driver by being
-> the blocks of the same SoC.
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-Indeed, so this patch is untested? I doubt the qcom driver is being used
-with the one caller of clk_set_duty_cycle() in the kernel.
-
->=20
-> Thinking of it a bit more, I saw another approach to the problem
-> I want to solve: Since I just want to make developers aware of the
-> hardware quirk, maybe I don't need to fail the set but just put a
-> WARN or even WARN_ONCE there? This way the behavior will be unchanged.
->=20
-
-I don't like the idea of a WARN or a WARN_ONCE as most likely nobody is
-going to read it or do anything about it. Returning an error should be
-fine then. If the duty cycle call fails for 50% then that's something we
-have to live with.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
