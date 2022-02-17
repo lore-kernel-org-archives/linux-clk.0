@@ -2,126 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5034BC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 20:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0130DC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 21:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243014AbiBQUmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 15:42:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52850 "EHLO
+        id S242901AbiBQVk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 16:40:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229923AbiBQUmN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 15:42:13 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5536274;
-        Thu, 17 Feb 2022 12:41:58 -0800 (PST)
+        with ESMTP id S229755AbiBQVk3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 16:40:29 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F52166E24
+        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 13:40:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2AFB1B821B4;
-        Thu, 17 Feb 2022 20:41:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93071C340ED;
-        Thu, 17 Feb 2022 20:41:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53A3461699
+        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 21:40:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3523C340E8;
+        Thu, 17 Feb 2022 21:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645130515;
-        bh=FfuWLt2qkFo49yUGcc9UTipqYLvnJTGZKpodO+8tvgY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TX9ekv8amg/IDCa7aQx2MypntcxhNwrT8J7EbTTpNFfLxyUfQMs0aRHM6nQpJp7/i
-         0E9/wLSW2xm4sRlDnBrl2w7i0VPLQ+WmKzzU0RFFBaI0PvKfj+xjBVtPkbgdjjrOZk
-         a1wx/EkUwJePsXTNevAQx66lbxucssn74NrM2k+F96fjzLxMZn5QxtjAKxZac67CnF
-         utm/XWfX7WtladfXZfHCbiQCbbBb77nmUI/eBsT7F6cfbPVdzaabuKffADZOzGWae1
-         cNSiwhC/js7yindqN0QLBoNO4CdtxyBvJyrI0oMdB57juTF4LOGn3yjj2JvPmmntdP
-         8pA7bsh1SVe4w==
-Received: by mail-ed1-f48.google.com with SMTP id w3so11795701edu.8;
-        Thu, 17 Feb 2022 12:41:55 -0800 (PST)
-X-Gm-Message-State: AOAM530LczmgtWSrYIoSdj0VpWsh+KlwEYIWSOguzelpCwizedydBsgM
-        oGmcjAplliUw6I8wbYz1wIiTOhN34d2LrUFmdw==
-X-Google-Smtp-Source: ABdhPJxVNuENXfDdPdWGPvTwokJkWjnZtAChSuCjq5CILCN23vtVYVrmGGzs9RIT+XdlpxE7KlkyLI1tVDcs1CD2gbg=
-X-Received: by 2002:a05:6402:5242:b0:40f:6a4f:ff33 with SMTP id
- t2-20020a056402524200b0040f6a4fff33mr4733548edd.30.1645130513931; Thu, 17 Feb
- 2022 12:41:53 -0800 (PST)
+        s=k20201202; t=1645134013;
+        bh=zPrhX6k02e96zl7KllkvOgDxEiUJZNdS53PBR6YrUdw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=OQmR4QkM056D63THM2zznP9VUiTMw4cIvoMui4+aPVzMoiL+2BP7DplXcsBuRDE/0
+         IoBzs1LG82niyUTLVQ/hE/3JTpVY7FynZg1WCUCI0Ln8FE7Uv9KInyEtpQWAfLV0H/
+         EkmYY64GEZBWYLV6nKcn4yiVjRn4uqf4BXIaKGMHNRVIqxIYGrIO0dMT/KrD+ZXop/
+         CW8f6ChbfZoc1j+C8T5hYXcD4Qc/SYfPetO+qaDPxKK6H/b4XqvQ5FRoJRKxNF92+h
+         9JeV8PeytMbDbiEjo3AAUG+zTMHTxdYMwK9W/umZfdciSC7tEDuxdDuSoNPMsxXCJ0
+         CuBUejYjFXeOg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220217113004.22757-1-michael.srba@seznam.cz>
- <20220217113004.22757-3-michael.srba@seznam.cz> <1645130031.752215.3729187.nullmailer@robh.at.kernel.org>
-In-Reply-To: <1645130031.752215.3729187.nullmailer@robh.at.kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 17 Feb 2022 14:41:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJkVmkApJHcXmujW3yx3GVScb-hjN=KTwtpmQYooAKz0g@mail.gmail.com>
-Message-ID: <CAL_JsqJkVmkApJHcXmujW3yx3GVScb-hjN=KTwtpmQYooAKz0g@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] dt-bindings: bus: add device tree bindings for qcom,ssc-block-bus
-To:     Michael Srba <michael.srba@seznam.cz>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9f05238c-4649-0673-21eb-7b7562d0d5c1@arm.com>
+References: <20220110181330.3224-1-alyssa.rosenzweig@collabora.com> <eb6d11af-ff48-a366-d428-77bcaa250a8a@arm.com> <YeF/AYZ0DuKGwLLk@maud> <CAGXv+5H9BsNUdiY6zMH6THKKMvRdPypNtUEVviMHQEjgNGDk_A@mail.gmail.com> <69525223-7d90-5714-bbe9-4d7f0b9a293d@arm.com> <20220119021844.3C225C340E5@smtp.kernel.org> <5d839338-6072-9c52-1893-2f804d937ea1@arm.com> <YelxN/zpdkukBBqy@maud> <c69fcd5d-a79b-ed0e-e803-63bebe987390@collabora.com> <9f05238c-4649-0673-21eb-7b7562d0d5c1@arm.com>
+Subject: Re: [PATCH] clk: mediatek: Disable ACP to fix 3D on MT8192
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Nick Fan <Nick.Fan@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Chen-Yu Tsai <wenst@chromium.org>
+To:     Alyssa Rosenzweig <alyssa@collabora.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Robin Murphy <robin.murphy@arm.com>
+Date:   Thu, 17 Feb 2022 13:40:11 -0800
+User-Agent: alot/0.10
+Message-Id: <20220217214013.A3523C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 2:33 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, 17 Feb 2022 12:30:02 +0100, michael.srba@seznam.cz wrote:
-> > From: Michael Srba <Michael.Srba@seznam.cz>
-> >
-> > This patch adds bindings for the AHB bus which exposes the SCC block in
-> > the global address space. This bus (and the SSC block itself) is present
-> > on certain qcom SoCs.
-> >
-> > In typical configuration, this bus (as some of the clocks and registers
-> > that we need to manipulate) is not accessible to the OS, and the
-> > resources on this bus are indirectly accessed by communicating with a
-> > hexagon CPU core residing in the SSC block. In this configuration, the
-> > hypervisor is the one performing the bus initialization for the purposes
-> > of bringing the haxagon CPU core out of reset.
-> >
-> > However, it is possible to change the configuration, in which case this
-> > binding serves to allow the OS to initialize the bus.
-> >
-> > Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
-> > ---
-> >  NOTE: this applies against v5.17-rc4 just fine; dt_binding_check seems
-> >        to have an issue with indentation, but the indentation looks correct
-> >        to me as well as to local dt_binding_check; also, it seems that the
-> >        rest of this series doesn't get applied before checking for compile
-> >        errors on the example, which results in missing defines for
-> >        GCC_IM_SLEEP, AGGRE2_SNOC_NORTH_AXI, SSC_XO, and SSC_CNOC_AHBS_CLK.
-> >
-> >  CHANGES:
-> >  - v2: fix issues caught by by dt-schema
-> >  - v3: none
-> >  - v4: address the issues pointed out in the review
-> >  - v5: clarify type of additional properties; remove ssc_tlmm node for now
-> >  - v6: none
-> > ---
-> >  .../bindings/bus/qcom,ssc-block-bus.yaml      | 143 ++++++++++++++++++
-> >  1 file changed, 143 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
-> >
->
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml:86:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+Quoting Robin Murphy (2022-02-15 07:21:52)
+> On 2022-02-15 10:44, AngeloGioacchino Del Regno wrote:
+>=20
+> All in all this has now convinced me that it *is* worth the slight extra
+> effort to put random infracfg stuff in the random infracfg stuff place.
+> And by "slight" I mean it turns out I've spent longer writing this prose
+> than bashing out the illustrative diff below, which is the last opinion
+> I shall have on this matter. Feel free to take it and fix it, or do=20
+> anything else if you prefer :)
+>=20
+> Cheers,
+> Robin.
+>=20
 
-Please fix your yamllint install (or lack of).
-
-> dtschema/dtc warnings/errors:
-> Error: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dts:39.32-33 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[1]: *** [scripts/Makefile.lib:378: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dt.yaml] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:1398: dt_binding_check] Error 2
-
-This failure can be ignored. I believe the problem is with my script
-applying series without a cover letter. However, series should have a
-cover letter.
-
-Rob
+Acked-by: Stephen Boyd <sboyd@kernel.org>
