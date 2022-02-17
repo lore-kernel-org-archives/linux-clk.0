@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E4FC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 20:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46BEC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 20:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343630AbiBQU2c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 15:28:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43858 "EHLO
+        id S236655AbiBQU3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 15:29:33 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbiBQU2b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 15:28:31 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D58AC2E77;
-        Thu, 17 Feb 2022 12:28:17 -0800 (PST)
+        with ESMTP id S1343651AbiBQU3d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 15:29:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66485C3302;
+        Thu, 17 Feb 2022 12:29:16 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EE98761E0C;
-        Thu, 17 Feb 2022 20:28:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A77C340E8;
-        Thu, 17 Feb 2022 20:28:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E93B561C27;
+        Thu, 17 Feb 2022 20:29:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42BA2C340E8;
+        Thu, 17 Feb 2022 20:29:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645129696;
-        bh=YP6Tpg4F9lAg6AlLYRmupY/d97PX8JL8bzj+VrF5RCo=;
+        s=k20201202; t=1645129755;
+        bh=MBVB/V4HtFGVcnuF8jusIP3cu1MRbIMiN9GJFCtixlg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kYFlFRp2C1yDjZ4L6kFMYHY1kqIhrcSwxyoge3tS4O2vbSzzMS3PyJMmf2YUxXFRU
-         uh35TcjTvhlsO0s1ih2H1E9GzFYv2i9oiYI2XoMUDNBmYkNpleWeXhFjL/E46wXU7s
-         z2+xCrBSeSAWOaN37S5eUTBymgHXpM3tIuYNP63K2S6Yq5kT1PJzr6JPh9mJmm50Sa
-         CLeunKxJpf71ZEt2AHJMWFVz7+siIKXD57a6XvG/zUrve/UqhgxkkQGKXP5ihFkdyC
-         obMieA6Z/mfhwYC/JHU6RINTq1tkYde3yHBkBIuW86QTc5p248xefqJIbXv6xPtd6d
-         IsTsdID0ntnrQ==
+        b=TmhzH2I+N4ljfo2SVnhoeFHVVt8QPUMXw8I5hTMQ6OC3gayYY1eqiMPpWxrTcDzTR
+         +gOWQZXu9lNoFJfY4y6T9DNCFr+rQml7/+S5VMw4GA/jgVSdP1lnpuM8MdJ3fNqTkW
+         GzJXbIzSX0R4ISIUeeUIqt4Zk3mX3ln1SNmuinaDKuVNnOdgo+uDegXxccCM74286Z
+         SfEVxM0t+nSJ5QtEmEnzePJUh+JY+v70DDlJkG9HyFVHhJhDxjTligB+immW5z1gsK
+         gx9oqiXXXo3WGmQdVSBxoosIkaP74VIwqWBF4Ipy41nA/1nSc1gcPExgPWb783rntK
+         X402nlvGfuatA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220208124034.414635-27-wenst@chromium.org>
-References: <20220208124034.414635-1-wenst@chromium.org> <20220208124034.414635-27-wenst@chromium.org>
-Subject: Re: [PATCH v3 26/31] clk: mediatek: mtk: Implement error handling in register APIs
+In-Reply-To: <20220208124034.414635-28-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org> <20220208124034.414635-28-wenst@chromium.org>
+Subject: Re: [PATCH v3 27/31] clk: mediatek: Unregister clks in mtk_clk_simple_probe() error path
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>,
@@ -48,25 +48,20 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
 To:     Chen-Yu Tsai <wenst@chromium.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 17 Feb 2022 12:28:14 -0800
+Date:   Thu, 17 Feb 2022 12:29:13 -0800
 User-Agent: alot/0.10
-Message-Id: <20220217202816.50A77C340E8@smtp.kernel.org>
+Message-Id: <20220217202915.42BA2C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chen-Yu Tsai (2022-02-08 04:40:29)
-> The remaining clk registration functions do not stop or return errors
-> if any clk failed to be registered, nor do they implement error
-> handling paths. This may result in a partially working device if any
-> step fails.
+Quoting Chen-Yu Tsai (2022-02-08 04:40:30)
+> Until now the mediatek clk driver library did not have any way to
+> unregister clks, and so all drivers did not do proper cleanup in
+> their error paths.
 >=20
-> Make the register functions return proper error codes, and bail out if
-> errors occur. Proper cleanup, i.e. unregister any clks that were
-> successfully registered, is done in the new error path.
->=20
-> This also makes the |struct clk_data *| argument mandatory, as it is
-> used to track the list of clks registered.
+> Now that the library does have APIs to unregister clks, use them
+> in the error path of mtk_clk_simple_probe() to do proper cleanup.
 >=20
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
