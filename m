@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0617BC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 20:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F011C43217
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 20:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234134AbiBQUZE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 15:25:04 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:32912 "EHLO
+        id S245262AbiBQUZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 15:25:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiBQUZE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 15:25:04 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2581B90245;
-        Thu, 17 Feb 2022 12:24:49 -0800 (PST)
+        with ESMTP id S244109AbiBQUZM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 15:25:12 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACB68F9A3;
+        Thu, 17 Feb 2022 12:24:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C70D0B821B1;
-        Thu, 17 Feb 2022 20:24:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68380C340E8;
-        Thu, 17 Feb 2022 20:24:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 53B3B61D5F;
+        Thu, 17 Feb 2022 20:24:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB756C340EB;
+        Thu, 17 Feb 2022 20:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645129486;
-        bh=3LLAv+5AYdopAMuygwfCxsYm6q5pitMBEoimriSUwPY=;
+        s=k20201202; t=1645129496;
+        bh=DnKAXPQhLMpQ6fPVXGirHN4IFHlLR677G67d6iGe+Rc=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ascf3dU0/uOUEeQpF9O+vB3WyZbsUPRDPrQOA+52md2cgYGeqLptM7ThXsnbSImQi
-         VRx30v/sWVMIIy+DsBm7v7SdpdhB8/bNSezEhNwWl7izLqYmJqxKgNsKf7NnVy2xFO
-         +XLiZn3uqTv55odbRaGHU1ssE90IijareLVl/ogviSTtq6JiPUsjFC6ma3C3rLgHc1
-         dCJY9y/ty2sJ7o5Xsl2Uwe3wyTEIZ2/hDkxoycm4cqQ5HUfa/cRb6HeIzJOoeKtXco
-         vpIdnyw+9rZ+1S6UQUD86MEsI/9qYoWea23TBJfaUPu9ILkYwvE6g4warCI8R+bovf
-         Se+7LS1DZc2mg==
+        b=Ng++DHIpj7piXKi5aaQQlALz367dz4xf2frYRfBImQbFytNL/oIjfEkvm0fQLZl4R
+         Hh/0j4/s3ZkOfUKi16FbCKJRaUuYW0KMYuaVBBrSuyvjbNjHqO2yc7Bd6Hh5UsZ+R8
+         Su500G3lY/sA2OK9xPp3SDNpCBe16xslgkkRXj8AE0JrGEjnHEAi1FsMciMXl9sImP
+         SKkJlabVP/rycLa46bnY61vhJZ31q47+HAOcYTCp1dOi4buARVhXNoojl6OE/OAarI
+         milaEB6lQEAi7V8xxuVjsCDzSPH3ieaLB7QxWBcNMu4vHCoilMYhr+SGnonhHiLMlr
+         b+7pl2ykwkxpw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220208124034.414635-10-wenst@chromium.org>
-References: <20220208124034.414635-1-wenst@chromium.org> <20220208124034.414635-10-wenst@chromium.org>
-Subject: Re: [PATCH v3 09/31] clk: mediatek: mux: Implement unregister API
+In-Reply-To: <20220208124034.414635-11-wenst@chromium.org>
+References: <20220208124034.414635-1-wenst@chromium.org> <20220208124034.414635-11-wenst@chromium.org>
+Subject: Re: [PATCH v3 10/31] clk: mediatek: mux: Internalize struct mtk_clk_mux
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Chen-Yu Tsai <wenst@chromium.org>,
         Chun-Jie Chen <chun-jie.chen@mediatek.com>,
@@ -48,20 +48,19 @@ Cc:     Chen-Yu Tsai <wenst@chromium.org>,
 To:     Chen-Yu Tsai <wenst@chromium.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 17 Feb 2022 12:24:44 -0800
+Date:   Thu, 17 Feb 2022 12:24:55 -0800
 User-Agent: alot/0.10
-Message-Id: <20220217202446.68380C340E8@smtp.kernel.org>
+Message-Id: <20220217202456.AB756C340EB@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chen-Yu Tsai (2022-02-08 04:40:12)
-> The mux clk type within the MediaTek clk driver library only has a
-> register function, and no corresponding unregister function. This
-> means there is no way for its users to properly implement cleanup
-> and removal.
+Quoting Chen-Yu Tsai (2022-02-08 04:40:13)
+> struct mtk_clk_mux is an implementation detail of the mux clk type,
+> and is not used outside of the implementation.
 >=20
-> Add a matching unregister function for the mux type clk.
+> Internalize the definition to minimize leakage of details and shrink
+> the header file.
 >=20
 > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > Reviewed-by: Miles Chen <miles.chen@mediatek.com>
