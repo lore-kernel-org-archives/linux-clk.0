@@ -2,519 +2,194 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B880AC433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 11:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39FCC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Feb 2022 13:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239987AbiBQLp7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 06:45:59 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49826 "EHLO
+        id S240720AbiBQNNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 08:13:23 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240160AbiBQLpz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 06:45:55 -0500
-Received: from mxd2.seznam.cz (mxd2.seznam.cz [IPv6:2a02:598:2::210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A98027D695
-        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 03:45:40 -0800 (PST)
-Received: from email.seznam.cz
-        by email-smtpc29b.ng.seznam.cz (email-smtpc29b.ng.seznam.cz [10.23.18.43])
-        id 6e0b153d350541546fa2d963;
-        Thu, 17 Feb 2022 12:45:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1645098339; bh=VD3cEEOkBw2sc1mcTfjsONakIM1gFm8vpwXLE+M1a90=;
-        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Transfer-Encoding:X-szn-frgn:
-         X-szn-frgc;
-        b=LTyDcEbe2VBxTXV8mVNod+cHK5AFDnTnpuXqUtjEWNIAJ6teO7VdWquOpsy3cS/uR
-         YndCjg60JRIPwCgmGcnib/toOYfhfTmjyrZf/6if0WzpvhzhGoJpT0aKhXtNX/AW5w
-         4b+OaAe8gVhbDd7Hjn9JT3IKMQBfSU+5XWg1CD+Y=
-Received: from localhost.localdomain (ip-111-27.static.ccinternet.cz [147.161.27.111])
-        by email-relay20.ng.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
-        Thu, 17 Feb 2022 12:32:37 +0100 (CET)  
-From:   michael.srba@seznam.cz
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>
-Subject: [PATCH v6 4/5] drivers: bus: add driver for initializing the SSC bus on (some) qcom SoCs
-Date:   Thu, 17 Feb 2022 12:30:03 +0100
-Message-Id: <20220217113004.22757-4-michael.srba@seznam.cz>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220217113004.22757-1-michael.srba@seznam.cz>
-References: <20220217113004.22757-1-michael.srba@seznam.cz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-szn-frgn: <4cb72399-da46-4d26-8f81-8242b25a2eda>
-X-szn-frgc: <0>
+        with ESMTP id S240721AbiBQNNW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 08:13:22 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12E3929E956;
+        Thu, 17 Feb 2022 05:13:07 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCA391515;
+        Thu, 17 Feb 2022 05:13:07 -0800 (PST)
+Received: from e120937-lin.home (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAD163F66F;
+        Thu, 17 Feb 2022 05:13:05 -0800 (PST)
+From:   Cristian Marussi <cristian.marussi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     sudeep.holla@arm.com, james.quinlan@broadcom.com,
+        Jonathan.Cameron@Huawei.com, f.fainelli@gmail.com,
+        etienne.carriere@linaro.org, vincent.guittot@linaro.org,
+        souvik.chakravarty@arm.com, peter.hilber@opensynergy.com,
+        igor.skalkin@opensynergy.com, cristian.marussi@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v5 8/8] clk: scmi: Support atomic clock enable/disable API
+Date:   Thu, 17 Feb 2022 13:12:34 +0000
+Message-Id: <20220217131234.50328-9-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220217131234.50328-1-cristian.marussi@arm.com>
+References: <20220217131234.50328-1-cristian.marussi@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Michael Srba <Michael.Srba@seznam.cz>
+Support also atomic enable/disable clk_ops beside the bare non-atomic one
+(prepare/unprepare) when the underlying SCMI transport is configured to
+support atomic transactions for synchronous commands.
 
-This patch adds bindings for the AHB bus which exposes the SCC block in
-the global address space. This bus (and the SSC block itself) is present
-on certain qcom SoCs.
+Compare the SCMI system-wide configured atomic threshold latency time and
+the per-clock advertised enable latency (if any) to choose whether to
+provide sleeping prepare/unprepare vs atomic enable/disable.
 
-In typical configuration, this bus (as some of the clocks and registers
-that we need to manipulate) is not accessible to Linux, and the resources
-on this bus are indirectly accessed by communicating with a hexagon CPU
-core residing in the SSC block. In this configuration, the hypervisor is
-the one performing the bus initialization for the purposes of bringing
-the haxagon CPU core out of reset.
-
-However, it is possible to change the configuration, in which case this
-driver will initialize the bus.
-
-In combination with drivers for resources on the SSC bus, this driver can
-aid in debugging, and for example with a TLMM driver can be used to
-directly access SSC-dedicated GPIO pins, removing the need to commit
-to a particular usecase during hw design.
-
-Finally, until open firmware for the hexagon core is available, this
-approach allows for using sensors hooked up to SSC-dedicated GPIO pins
-on mainline Linux simply by utilizing the existing in-tree drivers for
-these sensors.
-
-Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
- CHANGES:
- - v2: none
- - v3: fix clang warning
- - v4: address the issues pointed out in the review
- - v5: none
- - v6: restore alphabetic ordering in Makefile against v5.17-rc4
+v2 --> v3
+- removed RFC tag
 ---
- drivers/bus/Kconfig              |   6 +
- drivers/bus/Makefile             |   1 +
- drivers/bus/qcom-ssc-block-bus.c | 383 +++++++++++++++++++++++++++++++
- 3 files changed, 390 insertions(+)
- create mode 100644 drivers/bus/qcom-ssc-block-bus.c
+ drivers/clk/clk-scmi.c | 71 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 60 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index 3c68e174a113..9e29d1da9a61 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -152,6 +152,12 @@ config QCOM_EBI2
- 	  Interface 2, which can be used to connect things like NAND Flash,
- 	  SRAM, ethernet adapters, FPGAs and LCD displays.
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 1e357d364ca2..2c7a830ce308 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -2,7 +2,7 @@
+ /*
+  * System Control and Power Interface (SCMI) Protocol based clock driver
+  *
+- * Copyright (C) 2018-2021 ARM Ltd.
++ * Copyright (C) 2018-2022 ARM Ltd.
+  */
  
-+config QCOM_SSC_BLOCK_BUS
-+	bool "Qualcomm SSC Block Bus Init Driver"
-+	  help
-+	  Say y here to enable support for initializing the bus that connects the SSC block's internal
-+	  bus to the cNoC on (some) qcom SoCs
-+
- config SUN50I_DE2_BUS
- 	bool "Allwinner A64 DE2 Bus Driver"
- 	  default ARM64
-diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-index 52c2f35a26a9..e6756e83a9c4 100644
---- a/drivers/bus/Makefile
-+++ b/drivers/bus/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_OMAP_INTERCONNECT)	+= omap_l3_smx.o omap_l3_noc.o
+ #include <linux/clk-provider.h>
+@@ -88,21 +88,51 @@ static void scmi_clk_disable(struct clk_hw *hw)
+ 	scmi_proto_clk_ops->disable(clk->ph, clk->id);
+ }
  
- obj-$(CONFIG_OMAP_OCP2SCP)	+= omap-ocp2scp.o
- obj-$(CONFIG_QCOM_EBI2)		+= qcom-ebi2.o
-+obj-$(CONFIG_QCOM_SSC_BLOCK_BUS)	+= qcom-ssc-block-bus.o
- obj-$(CONFIG_SUN50I_DE2_BUS)	+= sun50i-de2.o
- obj-$(CONFIG_SUNXI_RSB)		+= sunxi-rsb.o
- obj-$(CONFIG_OF)		+= simple-pm-bus.o
-diff --git a/drivers/bus/qcom-ssc-block-bus.c b/drivers/bus/qcom-ssc-block-bus.c
-new file mode 100644
-index 000000000000..e489f5614e90
---- /dev/null
-+++ b/drivers/bus/qcom-ssc-block-bus.c
-@@ -0,0 +1,383 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (c) 2021, Michael Srba
++static int scmi_clk_atomic_enable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
 +
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
++	return scmi_proto_clk_ops->enable_atomic(clk->ph, clk->id);
++}
 +
-+/* AXI Halt Register Offsets */
-+#define AXI_HALTREQ_REG			0x0
-+#define AXI_HALTACK_REG			0x4
-+#define AXI_IDLE_REG			0x8
++static void scmi_clk_atomic_disable(struct clk_hw *hw)
++{
++	struct scmi_clk *clk = to_scmi_clk(hw);
 +
-+static const char *const qcom_ssc_block_pd_names[] = {
-+	"ssc_cx",
-+	"ssc_mx"
++	scmi_proto_clk_ops->disable_atomic(clk->ph, clk->id);
++}
++
++/*
++ * We can provide enable/disable atomic callbacks only if the underlying SCMI
++ * transport for an SCMI instance is configured to handle SCMI commands in an
++ * atomic manner.
++ *
++ * When no SCMI atomic transport support is available we instead provide only
++ * the prepare/unprepare API, as allowed by the clock framework when atomic
++ * calls are not available.
++ *
++ * Two distinct sets of clk_ops are provided since we could have multiple SCMI
++ * instances with different underlying transport quality, so they cannot be
++ * shared.
++ */
+ static const struct clk_ops scmi_clk_ops = {
+ 	.recalc_rate = scmi_clk_recalc_rate,
+ 	.round_rate = scmi_clk_round_rate,
+ 	.set_rate = scmi_clk_set_rate,
+-	/*
+-	 * We can't provide enable/disable callback as we can't perform the same
+-	 * in atomic context. Since the clock framework provides standard API
+-	 * clk_prepare_enable that helps cases using clk_enable in non-atomic
+-	 * context, it should be fine providing prepare/unprepare.
+-	 */
+ 	.prepare = scmi_clk_enable,
+ 	.unprepare = scmi_clk_disable,
+ };
+ 
+-static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
++static const struct clk_ops scmi_atomic_clk_ops = {
++	.recalc_rate = scmi_clk_recalc_rate,
++	.round_rate = scmi_clk_round_rate,
++	.set_rate = scmi_clk_set_rate,
++	.enable = scmi_clk_atomic_enable,
++	.disable = scmi_clk_atomic_disable,
 +};
 +
-+struct qcom_ssc_block_bus_data {
-+	int num_pds;
-+	const char *const *pd_names;
-+	struct device *pds[ARRAY_SIZE(qcom_ssc_block_pd_names)];
-+	char __iomem *reg_mpm_sscaon_config0; // MPM - msm power manager; AON - always-on
-+	char __iomem *reg_mpm_sscaon_config1; // that's as much as we know about these
-+	struct regmap *halt_map;
-+	u32 ssc_axi_halt;
-+	struct clk *xo_clk;
-+	struct clk *aggre2_clk;
-+	struct clk *gcc_im_sleep_clk;
-+	struct clk *aggre2_north_clk;
-+	struct clk *ssc_xo_clk;
-+	struct clk *ssc_ahbs_clk;
-+	struct reset_control *ssc_bcr;
-+	struct reset_control *ssc_reset;
-+};
-+
-+static void reg32_set_bits(char __iomem *reg, u32 value)
-+{
-+	u32 tmp = ioread32(reg);
-+
-+	iowrite32(tmp | value, reg);
-+}
-+
-+static void reg32_clear_bits(char __iomem *reg, u32 value)
-+{
-+	u32 tmp = ioread32(reg);
-+
-+	iowrite32(tmp & (~value), reg);
-+}
-+
-+
-+static int qcom_ssc_block_bus_init(struct device *dev)
-+{
-+	int ret;
-+
-+	struct qcom_ssc_block_bus_data *data = dev_get_drvdata(dev);
-+
-+	ret = clk_prepare_enable(data->xo_clk);
-+	if (ret) {
-+		dev_err(dev, "error enabling xo_clk: %d\n", ret);
-+		goto err_xo_clk;
-+	}
-+
-+	ret = clk_prepare_enable(data->aggre2_clk);
-+	if (ret) {
-+		dev_err(dev, "error enabling aggre2_clk: %d\n", ret);
-+		goto err_aggre2_clk;
-+	}
-+
-+	ret = clk_prepare_enable(data->gcc_im_sleep_clk);
-+	if (ret) {
-+		dev_err(dev, "error enabling gcc_im_sleep_clk: %d\n", ret);
-+		goto err_gcc_im_sleep_clk;
-+	}
-+
-+	reg32_clear_bits(data->reg_mpm_sscaon_config0, BIT(4) | BIT(5));
-+	reg32_clear_bits(data->reg_mpm_sscaon_config1, BIT(31));
-+
-+	ret = clk_prepare_enable(data->aggre2_north_clk);
-+	if (ret) {
-+		dev_err(dev, "error enabling aggre2_north_clk: %d\n", ret);
-+		goto err_aggre2_north_clk;
-+	}
-+
-+	ret = reset_control_deassert(data->ssc_reset);
-+	if (ret) {
-+		dev_err(dev, "error deasserting ssc_reset: %d\n", ret);
-+		goto err_ssc_reset;
-+	}
-+
-+	ret = reset_control_deassert(data->ssc_bcr);
-+	if (ret) {
-+		dev_err(dev, "error deasserting ssc_bcr: %d\n", ret);
-+		goto err_ssc_bcr;
-+	}
-+
-+	regmap_write(data->halt_map, data->ssc_axi_halt + AXI_HALTREQ_REG, 0);
-+
-+	ret = clk_prepare_enable(data->ssc_xo_clk);
-+	if (ret) {
-+		dev_err(dev, "error deasserting ssc_xo_clk: %d\n", ret);
-+		goto err_ssc_xo_clk;
-+	}
-+
-+	ret = clk_prepare_enable(data->ssc_ahbs_clk);
-+	if (ret) {
-+		dev_err(dev, "error deasserting ssc_ahbs_clk: %d\n", ret);
-+		goto err_ssc_ahbs_clk;
-+	}
-+
-+	return 0;
-+
-+err_ssc_ahbs_clk:
-+	clk_disable(data->ssc_xo_clk);
-+
-+err_ssc_xo_clk:
-+	regmap_write(data->halt_map, data->ssc_axi_halt + AXI_HALTREQ_REG, 1);
-+
-+	reset_control_assert(data->ssc_bcr);
-+
-+err_ssc_bcr:
-+	reset_control_assert(data->ssc_reset);
-+
-+err_ssc_reset:
-+	clk_disable(data->aggre2_north_clk);
-+
-+err_aggre2_north_clk:
-+	reg32_set_bits(data->reg_mpm_sscaon_config0, BIT(4) | BIT(5));
-+	reg32_set_bits(data->reg_mpm_sscaon_config1, BIT(31));
-+
-+	clk_disable(data->gcc_im_sleep_clk);
-+
-+err_gcc_im_sleep_clk:
-+	clk_disable(data->aggre2_clk);
-+
-+err_aggre2_clk:
-+	clk_disable(data->xo_clk);
-+
-+err_xo_clk:
-+	return ret;
-+}
-+
-+static void qcom_ssc_block_bus_deinit(struct device *dev)
-+{
-+	int ret;
-+
-+	struct qcom_ssc_block_bus_data *data = dev_get_drvdata(dev);
-+
-+	clk_disable(data->ssc_xo_clk);
-+	clk_disable(data->ssc_ahbs_clk);
-+
-+	ret = reset_control_assert(data->ssc_bcr);
-+	if (ret)
-+		dev_err(dev, "error asserting ssc_bcr: %d\n", ret);
-+
-+	regmap_write(data->halt_map, data->ssc_axi_halt + AXI_HALTREQ_REG, 1);
-+
-+	reg32_set_bits(data->reg_mpm_sscaon_config1, BIT(31));
-+	reg32_set_bits(data->reg_mpm_sscaon_config0, BIT(4) | BIT(5));
-+
-+	ret = reset_control_assert(data->ssc_reset);
-+	if (ret)
-+		dev_err(dev, "error asserting ssc_reset: %d\n", ret);
-+
-+	clk_disable(data->gcc_im_sleep_clk);
-+
-+	clk_disable(data->aggre2_north_clk);
-+
-+	clk_disable(data->aggre2_clk);
-+	clk_disable(data->xo_clk);
-+}
-+
-+
-+static int qcom_ssc_block_bus_pds_attach(struct device *dev, struct device **pds,
-+					 const char *const *pd_names, size_t num_pds)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_pds; i++) {
-+		pds[i] = dev_pm_domain_attach_by_name(dev, pd_names[i]);
-+		if (IS_ERR_OR_NULL(pds[i])) {
-+			ret = PTR_ERR(pds[i]) ? : -ENODATA;
-+			goto unroll_attach;
-+		}
-+	}
-+
-+	return num_pds;
-+
-+unroll_attach:
-+	for (i--; i >= 0; i--)
-+		dev_pm_domain_detach(pds[i], false);
-+
-+	return ret;
-+};
-+
-+static void qcom_ssc_block_bus_pds_detach(struct device *dev, struct device **pds, size_t num_pds)
-+{
-+	int i;
-+
-+	for (i = 0; i < num_pds; i++)
-+		dev_pm_domain_detach(pds[i], false);
-+}
-+
-+static int qcom_ssc_block_bus_pds_enable(struct device **pds, size_t num_pds)
-+{
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_pds; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
-+		ret = pm_runtime_get_sync(pds[i]);
-+		if (ret < 0)
-+			goto unroll_pd_votes;
-+	}
-+
-+	return 0;
-+
-+unroll_pd_votes:
-+	for (i--; i >= 0; i--) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
-+
-+	return ret;
-+};
-+
-+static void qcom_ssc_block_bus_pds_disable(struct device **pds, size_t num_pds)
-+{
-+	int i;
-+
-+	for (i = 0; i < num_pds; i++) {
-+		dev_pm_genpd_set_performance_state(pds[i], 0);
-+		pm_runtime_put(pds[i]);
-+	}
-+}
-+
-+static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
-+{
-+	struct qcom_ssc_block_bus_data *data;
-+	struct device_node *np = pdev->dev.of_node;
-+	struct of_phandle_args halt_args;
-+	struct resource *res;
-+	int ret;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	data->pd_names = qcom_ssc_block_pd_names;
-+	data->num_pds = ARRAY_SIZE(qcom_ssc_block_pd_names);
-+
-+	// power domains
-+	ret = qcom_ssc_block_bus_pds_attach(&pdev->dev, data->pds, data->pd_names, data->num_pds);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "error when attaching power domains\n");
-+
-+	ret = qcom_ssc_block_bus_pds_enable(data->pds, data->num_pds);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "error when enabling power domains\n");
-+
-+	// the meaning of the bits in these two registers is sadly not documented,
-+	// the set/clear operations are just copying what qcom does
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config0");
-+	data->reg_mpm_sscaon_config0 = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(data->reg_mpm_sscaon_config0))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->reg_mpm_sscaon_config0),
-+				     "Failed to ioremap mpm_sscaon_config0\n");
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config1");
-+	data->reg_mpm_sscaon_config1 = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(data->reg_mpm_sscaon_config1))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->reg_mpm_sscaon_config1),
-+				     "Failed to ioremap mpm_sscaon_config1\n");
-+
-+	// resets
-+	data->ssc_bcr = devm_reset_control_get_exclusive(&pdev->dev, "ssc_bcr");
-+	if (IS_ERR(data->ssc_bcr))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->ssc_bcr),
-+				     "Failed to acquire reset: scc_bcr\n");
-+
-+	data->ssc_reset = devm_reset_control_get_exclusive(&pdev->dev, "ssc_reset");
-+	if (IS_ERR(data->ssc_reset))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->ssc_reset),
-+				     "Failed to acquire reset: ssc_reset:\n");
-+
-+	// clocks
-+	data->xo_clk = devm_clk_get(&pdev->dev, "xo");
-+	if (IS_ERR(data->xo_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->xo_clk),
-+				     "Failed to get clock: xo\n");
-+
-+	data->aggre2_clk = devm_clk_get(&pdev->dev, "aggre2");
-+	if (IS_ERR(data->aggre2_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->aggre2_clk),
-+				     "Failed to get clock: aggre2\n");
-+
-+	data->gcc_im_sleep_clk = devm_clk_get(&pdev->dev, "gcc_im_sleep");
-+	if (IS_ERR(data->gcc_im_sleep_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->gcc_im_sleep_clk),
-+				     "Failed to get clock: gcc_im_sleep\n");
-+
-+	data->aggre2_north_clk = devm_clk_get(&pdev->dev, "aggre2_north");
-+	if (IS_ERR(data->aggre2_north_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->aggre2_north_clk),
-+				     "Failed to get clock: aggre2_north\n");
-+
-+	data->ssc_xo_clk = devm_clk_get(&pdev->dev, "ssc_xo");
-+	if (IS_ERR(data->ssc_xo_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->ssc_xo_clk),
-+				     "Failed to get clock: ssc_xo\n");
-+
-+	data->ssc_ahbs_clk = devm_clk_get(&pdev->dev, "ssc_ahbs");
-+	if (IS_ERR(data->ssc_ahbs_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(data->ssc_ahbs_clk),
-+				     "Failed to get clock: ssc_ahbs\n");
-+
-+	ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node, "qcom,halt-regs", 1, 0,
-+					       &halt_args);
-+	if (ret < 0)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to parse qcom,halt-regs\n");
-+
-+	data->halt_map = syscon_node_to_regmap(halt_args.np);
-+	of_node_put(halt_args.np);
-+	if (IS_ERR(data->halt_map))
-+		return PTR_ERR(data->halt_map);
-+
-+	data->ssc_axi_halt = halt_args.args[0];
-+
-+	qcom_ssc_block_bus_init(&pdev->dev);
-+
-+	of_platform_populate(np, NULL, NULL, &pdev->dev);
-+
-+	return 0;
-+}
-+
-+static int qcom_ssc_block_bus_remove(struct platform_device *pdev)
-+{
-+	struct qcom_ssc_block_bus_data *data = platform_get_drvdata(pdev);
-+
-+	qcom_ssc_block_bus_deinit(&pdev->dev);
-+
-+	iounmap(data->reg_mpm_sscaon_config0);
-+	iounmap(data->reg_mpm_sscaon_config1);
-+
-+	qcom_ssc_block_bus_pds_disable(data->pds, data->num_pds);
-+	qcom_ssc_block_bus_pds_detach(&pdev->dev, data->pds, data->num_pds);
-+	pm_runtime_disable(&pdev->dev);
-+	pm_clk_destroy(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qcom_ssc_block_bus_of_match[] = {
-+	{ .compatible = "qcom,ssc-block-bus", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, qcom_ssc_block_bus_of_match);
-+
-+static struct platform_driver qcom_ssc_block_bus_driver = {
-+	.probe = qcom_ssc_block_bus_probe,
-+	.remove = qcom_ssc_block_bus_remove,
-+	.driver = {
-+		.name = "qcom-ssc-block-bus",
-+		.of_match_table = qcom_ssc_block_bus_of_match,
-+	},
-+};
-+
-+module_platform_driver(qcom_ssc_block_bus_driver);
-+
-+MODULE_DESCRIPTION("A driver for handling the init sequence needed for accessing the SSC block on (some) qcom SoCs over AHB");
-+MODULE_AUTHOR("Michael Srba <Michael.Srba@seznam.cz>");
-+MODULE_LICENSE("GPL v2");
++static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
++			     const struct clk_ops *scmi_ops)
+ {
+ 	int ret;
+ 	unsigned long min_rate, max_rate;
+@@ -110,7 +140,7 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+ 	struct clk_init_data init = {
+ 		.flags = CLK_GET_RATE_NOCACHE,
+ 		.num_parents = 0,
+-		.ops = &scmi_clk_ops,
++		.ops = scmi_ops,
+ 		.name = sclk->info->name,
+ 	};
+ 
+@@ -139,6 +169,8 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+ static int scmi_clocks_probe(struct scmi_device *sdev)
+ {
+ 	int idx, count, err;
++	unsigned int atomic_threshold;
++	bool is_atomic;
+ 	struct clk_hw **hws;
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct device *dev = &sdev->dev;
+@@ -168,8 +200,11 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 	clk_data->num = count;
+ 	hws = clk_data->hws;
+ 
++	is_atomic = handle->is_transport_atomic(handle, &atomic_threshold);
++
+ 	for (idx = 0; idx < count; idx++) {
+ 		struct scmi_clk *sclk;
++		const struct clk_ops *scmi_ops;
+ 
+ 		sclk = devm_kzalloc(dev, sizeof(*sclk), GFP_KERNEL);
+ 		if (!sclk)
+@@ -184,13 +219,27 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ 		sclk->id = idx;
+ 		sclk->ph = ph;
+ 
+-		err = scmi_clk_ops_init(dev, sclk);
++		/*
++		 * Note that when transport is atomic but SCMI protocol did not
++		 * specify (or support) an enable_latency associated with a
++		 * clock, we default to use atomic operations mode.
++		 */
++		if (is_atomic &&
++		    sclk->info->enable_latency <= atomic_threshold)
++			scmi_ops = &scmi_atomic_clk_ops;
++		else
++			scmi_ops = &scmi_clk_ops;
++
++		err = scmi_clk_ops_init(dev, sclk, scmi_ops);
+ 		if (err) {
+ 			dev_err(dev, "failed to register clock %d\n", idx);
+ 			devm_kfree(dev, sclk);
+ 			hws[idx] = NULL;
+ 		} else {
+-			dev_dbg(dev, "Registered clock:%s\n", sclk->info->name);
++			dev_dbg(dev, "Registered clock:%s%s\n",
++				sclk->info->name,
++				scmi_ops == &scmi_atomic_clk_ops ?
++				" (atomic ops)" : "");
+ 			hws[idx] = &sclk->hw;
+ 		}
+ 	}
 -- 
-2.34.1
+2.17.1
 
