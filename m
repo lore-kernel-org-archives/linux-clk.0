@@ -2,113 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB7CC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B166FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbiBRAKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 19:10:30 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:42736 "EHLO
+        id S229825AbiBRAKs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 19:10:48 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:44144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiBRAK3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:10:29 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E82A58397;
-        Thu, 17 Feb 2022 16:10:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1645142976;
-        bh=dzJiVygOZA/XkFKLwsRSgIaENO2Mjx5mqLbH784YinQ=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=FCjYPrjopSOTOkN5xkyxo4aMsaqyGSRWBJdVLSZOLMXWhQNGuzqE4ny9YAGF7s1gk
-         /SFkKGh0Po6Pe5tnDfcQWbqpS6TovJUR54TWSr1sHHbeCq0DOmFG90hGcH7/yQAh7b
-         4GHhNfgcy/dCF3zGZvKW5qq5KrGZohHMIY88PM0w=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MD9X9-1nTtGT0vTt-009Cyg; Fri, 18
- Feb 2022 01:09:36 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mips@vger.kernel.org,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>
-Subject: [PATCH v4 3/5] clk: hisilicon: Terminate clk_div_table with sentinel element
-Date:   Fri, 18 Feb 2022 01:09:19 +0100
-Message-Id: <20220218000922.134857-4-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220218000922.134857-1-j.neuschaefer@gmx.net>
-References: <20220218000922.134857-1-j.neuschaefer@gmx.net>
+        with ESMTP id S230089AbiBRAKn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:10:43 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC2B58E5F;
+        Thu, 17 Feb 2022 16:10:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D04ABB81C21;
+        Fri, 18 Feb 2022 00:10:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89820C340E8;
+        Fri, 18 Feb 2022 00:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645143009;
+        bh=X4QUNjFZDS7eesS0XxNkSBjaD94+tYf036hGJWWmKnI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mMmb5SbPH6aJ8F9aYvOlzOn/CGUBCxGjoW4SvVlXZ/Z/1Ov56mIhSM3RdJxKzCD0L
+         lsKLxWG/MBzaUTQo95DsR9oQVrv3UvcDDeB72dPBnUe8NPSteJwVp16dy3GxIUgL2Y
+         s4Uf6qGoX9f0sPVeSkP06knmF9MFFmJhbp5xeVa5nM6gkNgQL9WGelWtt3Dwo0nazm
+         HiocF2lzrFaP9CVLUZRgpe2jHaaxhkqh1OXTzPdYKodfKrgj7fi+w0HbMOM4N7kEOM
+         dVSw2RYK0bfHf/8VtJSE6e0xGtmFbj1OYnrRCP11eYnZgHwcXiu3l4xtav+a5o3SXN
+         tQbCm3/0TQV3A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:96xUFhBHPOxIo5rsl7aBIDVboX7ATG6jjQOvUnqABAZuh+GTOdX
- 8dHXnASXn6cdEmpIzWVB9KiGlYMZs8v/KXblu7IfthqQKw0zC9ZkRaKpFEQITYz8Vd5PXqi
- yNPTcZU2mkWfvM8h746o8fOxWR+yA43l6owwHTDU7PCnx+kNNd2UTMqhXHjF3qsdI9h5vv0
- iKxkTpKL2eK8GUu/vKlhA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ql56313tolk=:Wc9bpvNMS3EcswujPVJEIN
- 1EAiSU9uhRJH9Gra1G+hprLiZ31XYGylZGDcD4PiqvxXvH5xDnL1wZWvREidCkUt/8uF8ZFc8
- vdi+7BGzI7INCxGhGeZIBMkRF7n6UtgXIVP2WRWbhWgJH/qhyX/f9V73502HJjkCHsBQUSlKa
- OfuRAW51ROKeTv81HSEFnaH9IG3d20THDv6c9FLmwTy0Jc6RrImgk2gArGtUFbVrqoUhaxZ3V
- HndtmWSJ2UdFKZCqNO9fGLmgASdlOgI0OyQRxlbP6b9PRIhSIx3GPcrDQurftqdsYgBb7QIpH
- qIjdeC5K2u3//RFe1kJ7MbK0ZbqyXuJyh5wl35rZCumW+5tMHkn20oi10Ygpoihb97tW6uVRT
- zj+jM4jt7hYDbFF7qEXplRdwxHAOZ+lyFcE3SglCYD9Q58KuFLo3oMtwxwucBRm9o7GLoNO++
- WIA90P8t9FvDJnAOL7uLXbbmh6w1OKf8ohC1cav2WFNT23/I9sYErNryZTNYzRDRM0ReE8Tfg
- claIFk1DKNfvB0xvtGxfwRqWRC7Zvy2/3Hx1TldCQOG4rtG6kX+JZ2ygeBKG+8k0ZFRyzB2u2
- zQuvKtuXbZqeN/EHgLoO4mkyk72XcbuBu+LExrwS/Lclz+iQ/pahiUxOolkZW9B0BnR6LVXa4
- NHg5B6SXlO3JA6JhUV2tQhf0hsELDcTMihCQ8SU8IU4RJj03A6iWUo24P4BeflctxgomvlycL
- xeSJROfUs/yQJPVm0qcf1DTq8aZLG/J/rQVxWGwGvBMy8PJjfZUHGHCbGKACX1S8uay66PY5g
- FYwQ8n6ma0STPAlqaCrae4XXFI67Epzot3LuuZFYFzGeZcx9pMIAsnxHXFMqOzX0WQYA4Eytg
- jexRLxH6YIt67hAjYWNmtB5yqaBQhduXclfYNcl56Gi4pW8CFjsb4ccWzowagOyo1HVWUtpx/
- afcMEQKGuhe7YeIll9e3AtQ9WryazgSjDFPvTIdIaYpsaMNQ1f7+936rPVQhoqBQL03FtoiiL
- Fsi5HqeaS+j17U+E2DDlVocvACQ3/+82Y2QJpHdyx3IgaF0EgRsvRtY1SOe1ApIZLZIQcz4RH
- o3r/3cKV3JxE7k=
+In-Reply-To: <20220217113004.22757-2-michael.srba@seznam.cz>
+References: <20220217113004.22757-1-michael.srba@seznam.cz> <20220217113004.22757-2-michael.srba@seznam.cz>
+Subject: Re: [PATCH v6 2/5] clk: qcom: gcc-msm8998: add SSC-related clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, michael.srba@seznam.cz
+Date:   Thu, 17 Feb 2022 16:10:06 -0800
+User-Agent: alot/0.10
+Message-Id: <20220218001009.89820C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order that the end of a clk_div_table can be detected, it must be
-terminated with a sentinel element (.div =3D 0).
+Quoting michael.srba@seznam.cz (2022-02-17 03:30:01)
+> From: Michael Srba <Michael.Srba@seznam.cz>
+>=20
+> This patch adds four clocks which need to be manipulated in order to
+> initialize the AHB bus which exposes the SCC block in the global address
+> space.
+>=20
+> If a device is known to be configured such that writing to these
+> registers from Linux is not permitted, the 'protected-clocks'
+> device tree property must be used to denote that fact.
+>=20
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+> ---
+>  CHANGES:
+>  - v2: none
+>  - v3: none
+>  - v4: reword the commit message
+>  - v5: none
+>  - v6: none
+> ---
+>  drivers/clk/qcom/gcc-msm8998.c | 56 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm899=
+8.c
+> index 407e2c5caea4..2d14c3d672fc 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2833,6 +2833,58 @@ static struct clk_branch gcc_rx1_usb2_clkref_clk =
+=3D {
+>         },
+>  };
+> =20
+> +static struct clk_branch gcc_im_sleep_clk =3D {
+> +       .halt_reg =3D 0x4300C,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x4300C,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
 
-Fixes: 6c81966107dc0 ("clk: hisilicon: Add clock driver for hi3559A SoC")
-Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-=2D--
-
-v4:
-- add /* sentinel */ comment into sentinel element
-
-v3:
-- no changes
-
-v2:
-- Add Fixes tag
-=2D--
- drivers/clk/hisilicon/clk-hi3559a.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/c=
-lk-hi3559a.c
-index 56012a3d02192..9ea1a80acbe8b 100644
-=2D-- a/drivers/clk/hisilicon/clk-hi3559a.c
-+++ b/drivers/clk/hisilicon/clk-hi3559a.c
-@@ -611,8 +611,8 @@ static struct hisi_mux_clock hi3559av100_shub_mux_clks=
-[] =3D {
-
-
- /* shub div clk */
--static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}};
--static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-};
-+static struct clk_div_table shub_spi_clk_table[] =3D {{0, 8}, {1, 4}, {2,=
- 2}, {/*sentinel*/}};
-+static struct clk_div_table shub_uart_div_clk_table[] =3D {{1, 8}, {2, 4}=
-, {/*sentinel*/}};
-
- static struct hisi_divider_clock hi3559av100_shub_div_clks[] =3D {
- 	{ HI3559AV100_SHUB_SPI_SOURCE_CLK, "clk_spi_clk", "shub_clk", 0, 0x20, 2=
-4, 2,
-=2D-
-2.34.1
-
+const struct clk_init_data
