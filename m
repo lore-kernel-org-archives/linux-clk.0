@@ -2,32 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 496DEC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7749C4167D
 	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 18:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239006AbiBRSMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S234881AbiBRSMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 18 Feb 2022 13:12:51 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35026 "EHLO
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234881AbiBRSMu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 13:12:50 -0500
+        with ESMTP id S235805AbiBRSMv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 13:12:51 -0500
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92ECB35DFC;
-        Fri, 18 Feb 2022 10:12:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8FCF36149;
+        Fri, 18 Feb 2022 10:12:33 -0800 (PST)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 8D4FD20005;
-        Fri, 18 Feb 2022 18:12:26 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 9AA482000A;
+        Fri, 18 Feb 2022 18:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645207948;
+        t=1645207952;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=deSZu+qBukwpiSRa2N8bS3T5wydQePa0aCzjNVX3Mw8=;
-        b=Pk8v0BgZwgu65ScCZtPLdmSu9VKd46Fmv9RjfKs1KZNe6+5PXJe4M13835t+vjLhmAIF4m
-        Flioj+nb7zFgTUvdmlsVTY0zLSUhEYJsALxvR+nIxGVtLJvrDqwvZmlC3fHX3+A536xtdB
-        iRgVrJ4t+SnJQ+UzoNEjDT3SM9WI4SfrxD7OGtxb8JdVt/YJzFPe+FxfGOdU1KVd0RZL0e
-        lucOGa0dbYS4pNykS5Tg10x2NMYfXCUAMZheeCfAft5PghrM+a0DoBnV7gWFpzhkdwVjaI
-        KdjDRsBOpyiR33f+0hXS8aiPFhrcHmlQW0o1fLskuviB1sClQknQn4Kn9yd1dA==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sDtK9hjDeoaFWuwGcjB8l+ZpHGIK6PdXu+t6v6YSX+I=;
+        b=nI4sDrdfSrUYVO5GV1lR8ZVV13TVVsWsKvQ2I+3QOsyx6bJ2gj0UxsVEOIdX3ksAwe4fVo
+        VSQ3XJ84IY7Xgsf2Vz14iezvw3Gx2ehxDCovGMXgCwnc2ixVOhd98HDkaXE/Ci1c9QGoc4
+        Oqoc+hvG5is/jhSn3+I1/rOE+mF3T7biqb9xtku+0I9jYrrDTDsU+4Xspqf9md5ouzvaeg
+        XNELQnv2PanFFbkZBSpqs/fZ+kr2EW9mR+eSWFI+0j3Lg5rdaMkRhZa06ay06e7FzLqQKk
+        rFUIhjjTT7vZ5OBEP/N3Zhm8MZ54wpyZXHXPsEmpTiDNzcKjzxuZSYqnI0QmuA==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -44,10 +45,12 @@ Cc:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Laetitia MARIOTTINI <laetitia.mariottini@se.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 0/8] RZN1 DMA support
-Date:   Fri, 18 Feb 2022 19:12:18 +0100
-Message-Id: <20220218181226.431098-1-miquel.raynal@bootlin.com>
+Subject: [PATCH 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+Date:   Fri, 18 Feb 2022 19:12:20 +0100
+Message-Id: <20220218181226.431098-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220218181226.431098-1-miquel.raynal@bootlin.com>
+References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -55,45 +58,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Just like for the NAND controller that is also on this SoC, let's
+provide a SoC generic and a more specific couple of compatibles.
 
-Here is a first series bringing DMA support to RZN1 platforms. I'm not a
-DMA expert at all so criticism is welcome.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Soon a second series will come with changes made to the UART controller
-driver, in order to interact with the RZN1 DMA controller.
-
-Cheers,
-Miquèl
-
-Miquel Raynal (7):
-  dt-bindings: dma: Introduce RZN1 dmamux bindings
-  dt-bindings: dma: Introduce RZN1 DMA compatible
-  soc: renesas: rzn1-sysc: Export function to set dmamux
-  dma: dmamux: Introduce RZN1 DMA router support
-  dma: dw: Add RZN1 compatible
-  ARM: dts: r9a06g032: Add the two DMA nodes
-  ARM: dts: r9a06g032: Describe the DMA router
-
-Phil Edworthy (1):
-  dma: dw: Avoid partial transfers
-
- .../bindings/dma/renesas,rzn1-dmamux.yaml     |  42 +++++
- .../bindings/dma/snps,dma-spear1340.yaml      |   8 +-
- MAINTAINERS                                   |   1 +
- arch/arm/boot/dts/r9a06g032.dtsi              |  37 ++++
- drivers/clk/renesas/r9a06g032-clocks.c        |  27 +++
- drivers/dma/dw/Makefile                       |   2 +-
- drivers/dma/dw/core.c                         |   3 +
- drivers/dma/dw/dmamux.c                       | 175 ++++++++++++++++++
- drivers/dma/dw/platform.c                     |   1 +
- include/dt-bindings/clock/r9a06g032-sysctrl.h |   2 +
- include/linux/soc/renesas/r9a06g032-syscon.h  |  11 ++
- 11 files changed, 307 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
- create mode 100644 drivers/dma/dw/dmamux.c
- create mode 100644 include/linux/soc/renesas/r9a06g032-syscon.h
-
+diff --git a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+index 6b35089ac017..c2e2dc637e0a 100644
+--- a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
++++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+@@ -15,7 +15,13 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: snps,dma-spear1340
++    oneOf:
++      - const: snps,dma-spear1340
++      - items:
++          - enum:
++              - renesas,r9a06g032-nandc
++          - const: renesas,rzn1-nandc
++
+ 
+   "#dma-cells":
+     minimum: 3
 -- 
 2.27.0
 
