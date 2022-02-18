@@ -2,100 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46585C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59311C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbiBRAeF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 19:34:05 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:43956 "EHLO
+        id S230164AbiBRAvo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 19:51:44 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:38224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbiBRAeF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:34:05 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0FC840A09;
-        Thu, 17 Feb 2022 16:33:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S230188AbiBRAvl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:51:41 -0500
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12AA3DF9A
+        for <linux-clk@vger.kernel.org>; Thu, 17 Feb 2022 16:51:21 -0800 (PST)
+Received: from [192.168.1.101] (abxk63.neoplus.adsl.tpnet.pl [83.9.4.63])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39610B819EE;
-        Fri, 18 Feb 2022 00:33:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFE5C340E9;
-        Fri, 18 Feb 2022 00:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645144418;
-        bh=e/znNyDINSmervQbv/vjQdjL+iOg2YVcl9VW/Ak7M34=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=MhnvbVUGqtcfi8MC1zO5YLdbZ9LvVI+GP0ULoeKxwQ9yubWwXRLDaovyn4cEXKkdU
-         b7C3lqMBjLhborfb2ZHKcfC287/fFbhQpPaY+WZpAyX+WM5RE3baErc+FzyvXQyXG8
-         2HEwl6Wujsj+eauQUcFZ+NQTWSUaH6o0g1sIvgjedKlIABrW1aevxwnu+q+q6s/KlC
-         5Ao/1ZEF2M/NjahLNQDRs5Dt73RNlNi1n/4UYRg7XYkEtYJK9IVC3bnrcU9XQdupNM
-         xwbeBZXQN6nw7KyE2LuOefGFgbf4kbKCoIXC7ohkyEyGIbreccfLTUCeihMBDiFh1p
-         pDdjkgWKDDLgQ==
-Content-Type: text/plain; charset="utf-8"
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id D4ABD3F3BC;
+        Fri, 18 Feb 2022 01:51:18 +0100 (CET)
+Message-ID: <0a48c21d-7acc-04cb-208e-68779145883c@somainline.org>
+Date:   Fri, 18 Feb 2022 01:51:18 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YghBkp/sUHdqSn4G@piout.net>
-References: <20220203021736.13434-1-samuel@sholland.org> <20220203021736.13434-6-samuel@sholland.org> <164422443570.21572.13511859513410998733.b4-ty@cerno.tech> <bb05bc64-2a9e-fe21-5a69-0ea31134e978@sholland.org> <20220211124312.kiw6t25nojvkp2rw@houat> <YghBkp/sUHdqSn4G@piout.net>
-Subject: Re: (subset) [PATCH v3 5/6] clk: sunxi-ng: Add support for the sun6i RTC clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@lists.linux.dev,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v2] clk: qcom: gcc-msm8994: Remove NoC clocks
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     martin.botka@somainline.org,
+        angelogioacchino.delregno@somainline.org,
+        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Date:   Thu, 17 Feb 2022 16:33:37 -0800
-User-Agent: alot/0.10
-Message-Id: <20220218003338.DBFE5C340E9@smtp.kernel.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220217232408.78932-1-konrad.dybcio@somainline.org>
+ <20220218001628.3FF4DC340E8@smtp.kernel.org>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <20220218001628.3FF4DC340E8@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandre Belloni (2022-02-12 15:24:02)
-> On 11/02/2022 13:43:12+0100, Maxime Ripard wrote:
-> > Hi Samuel,
-> >=20
-> > On Mon, Feb 07, 2022 at 05:54:02PM -0600, Samuel Holland wrote:
-> > > On 2/7/22 3:00 AM, Maxime Ripard wrote:
-> > > > On Wed, 2 Feb 2022 20:17:35 -0600, Samuel Holland wrote:
-> > > >> The RTC power domain in sun6i and newer SoCs manages the 16 MHz RC
-> > > >> oscillator (called "IOSC" or "osc16M") and the optional 32 kHz cry=
-stal
-> > > >> oscillator (called "LOSC" or "osc32k"). Starting with the H6, this=
- power
-> > > >> domain also handles the 24 MHz DCXO (called variously "HOSC", "dcx=
-o24M",
-> > > >> or "osc24M") as well. The H6 also adds a calibration circuit for I=
-OSC.
-> > > >>
-> > > >> Later SoCs introduce further variations on the design:
-> > > >>  - H616 adds an additional mux for the 32 kHz fanout source.
-> > > >>  - R329 adds an additional mux for the RTC timekeeping clock, a cl=
-ock
-> > > >>    for the SPI bus between power domains inside the RTC, and remov=
-es the
-> > > >>    IOSC calibration functionality.
-> > > >>
-> > > >> [...]
-> > > >=20
-> > > > Applied to local tree (sunxi/clk-for-5.18).
-> > >=20
-> > > Part of the build failures were because this patch depends on patch 3=
-. Is that
-> > > okay, or should I update this patch to be independent?
-> >=20
-> > We don't have anything queued up yet, so I think the easiest would be to
-> > merge this through the RTC tree. So nothing to do on your side yet, we
-> > just need Alex to answer :)
-> >=20
->=20
-> I can take the whole series but I think I would need acks from Stephen
->=20
 
-For the clk patches
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On 18.02.2022 01:16, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2022-02-17 15:24:08)
+>> Just like in commit 05cf3ec00d460b50088d421fb878a0f83f57e262
+>> ("clk: qcom: gcc-msm8996: Drop (again) gcc_aggre1_pnoc_ahb_clk")
+>> adding NoC clocks turned out to be a huge mistake, as they cause a lot of
+>> issues at little benefit (basically letting Linux know about their
+>> children's frequencies), especially when mishandled or misconfigured.
+>>
+>> Adding these ones broke SDCC approx 99 out of 100 times, but that somehow
+>> went unnoticed. To prevent further issues like this one, remove them.
+>>
+>> This commit is effectively a revert of 74a33fac3aab77558ca0d80c9935
+>> (clk: qcom: gcc-msm8994: Add missing NoC clocks) with ABI preservation.
+>>
+>> Fixes: 74a33fac3aab ("clk: qcom: gcc-msm8994: Add missing NoC clocks")
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> 
+> Is boot broken on msm8994? I can take this for clk-fixes then.
+
+It technically boots, but depending on the board (different phones took this differently)
+storage may or may not work.. So I guess picking it up in -fixes would be fair..
+
+Konrad
