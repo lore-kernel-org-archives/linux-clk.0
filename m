@@ -2,125 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 485AAC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 08:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 002C8C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 10:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232739AbiBRIpb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Feb 2022 03:45:31 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56760 "EHLO
+        id S233534AbiBRKMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Feb 2022 05:12:45 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:39388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232720AbiBRIpb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 03:45:31 -0500
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36C1D2B31A6;
-        Fri, 18 Feb 2022 00:45:13 -0800 (PST)
-Received: by mail-wr1-x429.google.com with SMTP id o24so13307646wro.3;
-        Fri, 18 Feb 2022 00:45:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Sr7ZtpXKpXSR3HHhw/hN/uykfNrvRkMr17XVKktgdG8=;
-        b=m0IWxK/45Qx7pGUcJrOeQenjuZ2zyPv1kKRTcJyKCpHtTXH4fEaCi2F2EHTljhftxy
-         Zs9vy+viOeerFVdkAkmGV78xxjBdRKKH96Ocyh2GHY1omXDlFdnlJf46ivWvbqM8fzqL
-         10MSg5y5QGPl4I9myBskqcwoHRUtlyub5TrbkN5mWQJRESuqtlkv7XLtGAeh6GLiN3uK
-         JOV1Z3Ch0+H7qAH+k5sHzuzvTlFuxgbZbUHTUqoAvn4hYegWa6malxdmBa5oSeu+UqL+
-         AU3nDoDRyVNyTA3XsIWPmsqywl9jVfB+sZscVxcCLqR/0m++K4euXVqDO9xZDTqoee1/
-         DC8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Sr7ZtpXKpXSR3HHhw/hN/uykfNrvRkMr17XVKktgdG8=;
-        b=BAP3+qNeRzSoyyVHrDoQjqcvFRn3ASR+3Kxwrlkik5szED1X2QbscCXOen5wjE3lAd
-         AbpyMafJX0SD7Ir3axUn9b5vS1qYZGIw91M1kg9P7GkwissQYcfeg8tBbBVNWXeHsHKL
-         8BwMp38VWGsnGZkTxbOR2k6sVwRJP+ARNTVQKYEzPvYVLQgd8Bk0uoHnCYwBdurmSeBQ
-         ALCTqWUDNg9v1HBFd3PZukSHf5Aln2RB7zfMEUSCyzsO8MRghQPKTzzwXnlM6AGx6leB
-         5zhjxGqJP6Uerh/H9PRDPWcdcc9iJIzt3iWzntcYRGZF2xlp8jaHGNHRZ4qYrSSib2Je
-         jttA==
-X-Gm-Message-State: AOAM5310Soa+pfseymobF5qHI/igpH4ucndttEtQMfFj1+f2/EHBfo75
-        UO5jmZp3obapDLsiMShnOPs=
-X-Google-Smtp-Source: ABdhPJyPud2lA0YJnj3pirn1ww5ilXBn1bqnmQhyDC78BctFCW06uq2qo1/Ijuuj1hJCC8d+wBzw1w==
-X-Received: by 2002:adf:eb89:0:b0:1e4:b8f4:da74 with SMTP id t9-20020adfeb89000000b001e4b8f4da74mr5272178wrn.408.1645173911799;
-        Fri, 18 Feb 2022 00:45:11 -0800 (PST)
-Received: from [192.168.0.14] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net. [86.13.91.161])
-        by smtp.gmail.com with ESMTPSA id o4sm3988275wms.9.2022.02.18.00.45.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Feb 2022 00:45:11 -0800 (PST)
-Message-ID: <e9846ac9-0b61-3c11-8a5c-0dc1dd69e6cf@gmail.com>
-Date:   Fri, 18 Feb 2022 08:45:10 +0000
+        with ESMTP id S233930AbiBRKMp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 05:12:45 -0500
+Received: from mxd1.seznam.cz (mxd1.seznam.cz [IPv6:2a02:598:a::78:210])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E821454BCF;
+        Fri, 18 Feb 2022 02:12:27 -0800 (PST)
+Received: from email.seznam.cz
+        by email-smtpc7b.ko.seznam.cz (email-smtpc7b.ko.seznam.cz [10.53.13.195])
+        id 7bf2bda020fce9c97a5b71fe;
+        Fri, 18 Feb 2022 11:12:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1645179138; bh=fbOE4GUwVnOhJEUysUofaLkOFZu1/QnQGiinJ0luo6o=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
+         Content-Transfer-Encoding:X-szn-frgn:X-szn-frgc;
+        b=CFIDMoRXuCwNtGLIfS7SlldUxpsfdT7aOPOfFtKhfLghU4igdbsE3qYzI8Gm8DpdT
+         ER9gzJ+YQVsiZSdyVqxOr5GBvYBcMgKYoikVn0IaHJvQJ0CWZP/CRwhyXlql9QYEzM
+         v3F4MdvgjI/HTAaHxOg/tAEgDk7RzRW/mVFWIDR0=
+Received: from localhost.localdomain (ip-111-27.static.ccinternet.cz [147.161.27.111])
+        by email-relay21.ko.seznam.cz (Seznam SMTPD 1.3.136) with ESMTP;
+        Fri, 18 Feb 2022 11:12:01 +0100 (CET)  
+From:   michael.srba@seznam.cz
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v7 1/5] dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
+Date:   Fri, 18 Feb 2022 11:09:29 +0100
+Message-Id: <20220218100933.32736-1-michael.srba@seznam.cz>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 0/6] Add multiple-consumer support to int3472-tps68470
- driver
-Content-Language: en-US
-To:     Hans de Goede <hdegoede@redhat.com>, linux-acpi@vger.kernel.org,
-        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
-References: <20220216225304.53911-1-djrscally@gmail.com>
- <f2b58ed6-6c53-42af-6fa1-94b9fd746fc3@redhat.com>
-From:   Daniel Scally <djrscally@gmail.com>
-In-Reply-To: <f2b58ed6-6c53-42af-6fa1-94b9fd746fc3@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-szn-frgn: <bd1a576a-776f-4ecd-bc68-3a2233656d91>
+X-szn-frgc: <0>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hans
+From: Michael Srba <Michael.Srba@seznam.cz>
 
-On 17/02/2022 09:55, Hans de Goede wrote:
-> Hi Dan,
->
-> On 2/16/22 23:52, Daniel Scally wrote:
->> At the moment there are a few places in the int3472-tps68470 driver that are
->> limited to just working with a single consuming device dependent on the PMIC.
->> There are systems where multiple camera sensors share a single TPS68470, so
->> we need to extend the driver to support them. This requires a couple of tweaks
->> to the ACPI functions to fetch dependent devices, which also assumes that only
->> a single dependent will be found.
-> This sounds great, thank you for your work on this. I have a bit of a backlog wrt
-> pdx86 patches to review and I try to through those in FIFO order to keep things fair,
-> so it may be a while (approx. 1-2 weeks) before I get around to reviewing
-> these.
+Add definitions of four clocks which need to be manipulated in order to
+initialize the AHB bus which exposes the SCC block in the global address
+space.
 
+Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+---
+ CHANGES:
+ - v2: none
+ - v3: none
+ - v4: none
+ - v5: none
+ - v6: none
+ - v7: use imperative in commit message
+---
+ include/dt-bindings/clock/qcom,gcc-msm8998.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-No problem, thanks very much
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index 72c99e486d86..1badb4f9c58f 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -186,6 +186,10 @@
+ #define UFS_UNIPRO_CORE_CLK_SRC					177
+ #define GCC_MMSS_GPLL0_CLK					178
+ #define HMSS_GPLL0_CLK_SRC					179
++#define GCC_IM_SLEEP						180
++#define AGGRE2_SNOC_NORTH_AXI					181
++#define SSC_XO							182
++#define SSC_CNOC_AHBS_CLK					183
+ 
+ #define PCIE_0_GDSC						0
+ #define UFS_GDSC						1
+-- 
+2.34.1
 
->
-> Regards,
->
-> Hans
->
->
->> Hans - this (plus a series to media [1]) adds support for the Surface Go 2's
->> IR camera...the regulator settings for the Go1/2/3 world facing camera are the
->> same, so I'd expect them to match for the IR sensor too, which means it should
->> enable support for your Go too.
->>
->> Thanks
->> Dan
->>
->>
->> [1] https://lore.kernel.org/linux-media/20220215230737.1870630-1-djrscally@gmail.com/
->>
->> Daniel Scally (6):
->>   ACPI: scan: Add acpi_dev_get_next_consumer_dev()
->>   ACPI: bus: Add iterator for dependent devices
->>   platform/x86: int3472: Support multiple clock consumers
->>   platform/x86: int3472: Add terminator to gpiod_lookup_table
->>   platform/x86: int3472: Support multiple gpio lookups in board data
->>   platform/x86: int3472: Add board data for Surface Go2 IR camera
->>
->>  drivers/acpi/scan.c                           | 47 +++++++++--
->>  drivers/clk/clk-tps68470.c                    | 13 +++-
->>  drivers/platform/x86/intel/int3472/tps68470.c | 77 +++++++++++++++----
->>  drivers/platform/x86/intel/int3472/tps68470.h |  3 +-
->>  .../x86/intel/int3472/tps68470_board_data.c   | 58 +++++++++++++-
->>  include/acpi/acpi_bus.h                       | 14 ++++
->>  include/linux/platform_data/tps68470.h        |  7 +-
->>  7 files changed, 188 insertions(+), 31 deletions(-)
->>
