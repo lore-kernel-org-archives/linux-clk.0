@@ -2,75 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27492C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33045C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 00:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229782AbiBRAJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Feb 2022 19:09:49 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:38746 "EHLO
+        id S229910AbiBRAKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Feb 2022 19:10:04 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:39622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiBRAJs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:09:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA9F53734;
-        Thu, 17 Feb 2022 16:09:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED7A161A5C;
-        Fri, 18 Feb 2022 00:09:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B55AC340E8;
-        Fri, 18 Feb 2022 00:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645142972;
-        bh=BH9DXFFaHu78iFMg2R2zX1drdgxMPStM36KuqbVE+Wg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VF+MEwuWw7UxpjHxB5DsxJ+3+5Al1c6MXfm2hREpenKqR7L5VSYziZ3K0q2o315dK
-         lf2gllB17kgK/P2qL6zd2ekIzBUSVhNhnvZJKPPSOjwscpiMEDxuQXdmAZ3kZ/ovBw
-         bqvflNZJWoJ+on6qz9k0Uyd21xFaPgtMdqLcEEFBg9lIJ+259UaNgfkTFCjadKrukc
-         53LeGo6sWKpixrz5edFmtufEl9fHMROQxEiRSpf7HC8kNbh1a1zOsdfQrUhEgNdYsj
-         24s9HH7hgYX3edIpDGcDc5jRH+0d/YrTfCUhmzH9xF1jNrAGnk7d1mrB462sLWAp5D
-         Y7VDsyQl5q24g==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229619AbiBRAKD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Feb 2022 19:10:03 -0500
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F3753B46;
+        Thu, 17 Feb 2022 16:09:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1645142966;
+        bh=IUY/Y8Yalj5BX0e49AhUG8NejOzNrCeKKECRLd/cfB0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=g9t0/AtHqGQeNCOHRCB1iLtdV7W+jIgwKvpWXnn4VAaGn53Q+XnyM8NF/GrRhngfz
+         w7vnf9MOomInAvIRDPmNPydwle2NUN8I99hh5sOit2QJt4qIwgTfA3lVaIRE4rlrQS
+         51uOVIiozDxeN4+lgawL/RH7PuOwZ5EKPmTO3PUg=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from longitude ([5.146.194.160]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtOGa-1o7bPE27uo-00uo9K; Fri, 18
+ Feb 2022 01:09:26 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mips@vger.kernel.org,
+        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH v4 0/5] clk drivers: Terminate clk_div_table with sentinel element
+Date:   Fri, 18 Feb 2022 01:09:16 +0100
+Message-Id: <20220218000922.134857-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220217113004.22757-1-michael.srba@seznam.cz>
-References: <20220217113004.22757-1-michael.srba@seznam.cz>
-Subject: Re: [PATCH v6 1/5] dt-bindings: clock: gcc-msm8998: Add definitions of SSC-related clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>,
-        Rob Herring <robh@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, michael.srba@seznam.cz
-Date:   Thu, 17 Feb 2022 16:09:29 -0800
-User-Agent: alot/0.10
-Message-Id: <20220218000932.4B55AC340E8@smtp.kernel.org>
+X-Provags-ID: V03:K1:SwIrvdnd0sbyaueb09YuSqV9exkrua/1OLLW1xmo5FZXWsJlJ4C
+ 0z1YzQNkcy/0Mnt1W7+xQVgNWsCI6GPXEtLKMUqA/ZuozNakH/uO0vTaV7ZlFPE0lwEkCbR
+ sJTq8c0117HHNiI7dvTgKyG62lUPmOySRhWRv33FS0M6xaGzLkV8x8aUo8PH/izU+l5rezL
+ zddUvNna+4bGA2EGZtF9A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:J04z+bzVdxI=:sjCHMbAhVUxarWqNKdoWWO
+ briPaCEnwjbYO9upMLl6Lr+yW6Bm0cSA9DEQrcVYwP0PJ8vPpoNqsKNXYa4esIBYt+V3sEjmP
+ 9ez7fu0Be6vry5zGQLAEgeAoZyhbMK5EmV/WiTKXxodJWjLusVBa5R5QP9zA6dOntGHpoQRN7
+ 3VaSdBywx3FWY3Te+1OQpwndImPHXgFB/AWow5ZJPeC4cvV7G1L2QIOmgC/Qhz77C0UNCNedq
+ SEEHyA/eFiSkwU3ntXSm78w0UXFwpiJQaqCnIeOqFEXudtV/BTbN9F5Hxi2WZ9YupeZCMRNJz
+ rwDBNChhKMONCFMCAaoaW3QYSiKw3sYWqXFUYSVeKYRr0i87h3A6Gq6WX8vFhcl0IRuuNSGsB
+ hivQnQ46QmkyRpgn2VKnPV+x5/kqWfuUcpL9J8jJDq8OCx0ii9Z9YKQhDvjPOxk04bqxAYmIC
+ 0WPYFUCxe5k6w6IAg2cIexUmgpPY+eZJzxsb68d2a4inTcbZSCZUh1tCijxSthbopre4TH9pY
+ PnHXoY0wfzyqB+TnhD0KNZAKyV2QKKQ8dSG6uV/c3shh6MiYBCL3jSqglwSAGPunv7MucsfcR
+ nlJXcQzZtGULTMudQhTh4dT9EhmFdMi4qm5vMeGuUip9KmYVwIDLNCHit/vRatpJQyev9xNam
+ E055/c98Im6fhQlmWeUhSlN0V6YJh/OAELZ/EBefiO6EkQiKlbbiIBrV/d7si0v18sgUwBWpF
+ X0GsFqZmdoK/kFWfpAXHyGKF335B0QAcqpjt9orLwTWUjPBbp5H5Y00IsRLr34WT8O4ZNz+YV
+ AtAzSUau05EZCYmxnQ7NNDPaJkweSQD5tfHZP9GRY6EjltUZlqkq1f7dQlM4vavJdh6rCUyIZ
+ VpVXpvZEZzKlXLkJX6QCyrZEXIyrG4bMkkard/j37lzm6k2ayvWDyHP8yeFPu0XF+1ZIG9I41
+ QQv9TBYojHETIF68kGBtTWNxMVj6peSdaXjO5rX5h8M57MauxgYUx5UmiifGt7kkR31RMNIpY
+ QdKSuYIdqEfpAWkWka1LYNRRx/JwVhQELIXo0gnko4sfSNHW83yBhv+rhVEKCBB8kaiAJitwT
+ pIwLWpUygqmi78=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting michael.srba@seznam.cz (2022-02-17 03:30:00)
-> From: Michael Srba <Michael.Srba@seznam.cz>
->=20
-> This patch adds definitions of four clocks which need to be manipulated
+I noticed that some of the clk_div_tables in different drivers are not
+terminated with a sentinel element. This may cause the code in
+clk-divider.c to read garbage that happens to be beyond the end.
 
-(I need a macro for this)
+This patchset fixed all instances of this bug that I could find, except
+for a case in drivers/phy/ti/phy-j721e-wiz.c that is already fixed in
+linux-next:
+  https://lore.kernel.org/lkml/20220117110108.4117-1-kishon@ti.com/
 
- $ git grep "This patch" -- Documentation/process/
+In this version of the patchset, I addressed Philippe Mathieu-Daud=C3=A9's
+style comments. As far as I found it reasonable, I simply updated the
+existing patches, but in the case of the Actions Semiconductor drivers,
+I made a bigger cleanup in a separate patch.
 
-> in order to initialize the AHB bus which exposes the SCC block in the
-> global address space.
->=20
-> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+v4:
+- Various style fixes
+
+v3:
+- Change the Actions patch according to Mani's comment
+
+v2:
+- Add Fixes tags
+
+
+Jonathan Neusch=C3=A4fer (5):
+  clk: actions: Terminate clk_div_table with sentinel element
+  clk: loongson1: Terminate clk_div_table with sentinel element
+  clk: hisilicon: Terminate clk_div_table with sentinel element
+  clk: clps711x: Terminate clk_div_table with sentinel element
+  clk: actions: Make sentinel elements more obvious
+
+ drivers/clk/actions/owl-s500.c         | 16 ++++++++--------
+ drivers/clk/actions/owl-s700.c         | 17 ++++++++++-------
+ drivers/clk/actions/owl-s900.c         | 26 +++++++++++++-------------
+ drivers/clk/clk-clps711x.c             |  2 ++
+ drivers/clk/hisilicon/clk-hi3559a.c    |  4 ++--
+ drivers/clk/loongson1/clk-loongson1c.c |  1 +
+ 6 files changed, 36 insertions(+), 30 deletions(-)
+
+=2D-
+2.34.1
+
