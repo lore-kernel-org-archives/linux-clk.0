@@ -2,156 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE56C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 19:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787B1C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 22:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235013AbiBRTnW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Feb 2022 14:43:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55356 "EHLO
+        id S240086AbiBRWPZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Feb 2022 17:15:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232313AbiBRTnW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 14:43:22 -0500
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D043D225F
-        for <linux-clk@vger.kernel.org>; Fri, 18 Feb 2022 11:43:03 -0800 (PST)
-Received: from [192.168.1.101] (abxk63.neoplus.adsl.tpnet.pl [83.9.4.63])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S233670AbiBRWPY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 17:15:24 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E93D2838D5;
+        Fri, 18 Feb 2022 14:15:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E5A433F941;
-        Fri, 18 Feb 2022 20:42:58 +0100 (CET)
-Message-ID: <b0ec7470-29f9-255b-1789-d4bd69ff34c1@somainline.org>
-Date:   Fri, 18 Feb 2022 20:42:58 +0100
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD28FB826DB;
+        Fri, 18 Feb 2022 22:15:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F8DC340E9;
+        Fri, 18 Feb 2022 22:15:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645222504;
+        bh=M5dSoVY3d/Xj3lqvCKf5wDOwHEunbF0u54EGJ2hGCU0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gM0+T0vjR9Jk6/5fjNxlyNAAaHWpd+jwzlmkX6cDOCXd6TDZ+Un6BOw4S8crPEVrf
+         WZ5ztiWtO6FC33VyQPNXRrR7vTWVP1TRJSw/6Bbg2Uf/FS0MKrDAbgtfplEhuZqbrU
+         GF4PY/sWX0AGhQZGOTIs0zF5TWWPOfbRLoPaxJwTr1uQfiquTDVcFSIjS0BQbssnyL
+         Aaj0pOW5CbZEMtv2ilsDnVncXnBzIqlUvXe+QvEvsfAwwWwqCSfTesV+b78SZOF7XV
+         Z2Tsd1M26hBDIS1a2nSnyydL7J2g0uvh5FYV9DnRHRlzK9BzzuTd2IVVxOrwrY9zoX
+         w1T+3LJrredLA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v7 2/5] clk: qcom: gcc-msm8998: add SSC-related clocks
-Content-Language: en-US
-To:     michael.srba@seznam.cz, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Saravana Kannan <saravanak@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20220218100933.32736-1-michael.srba@seznam.cz>
- <20220218100933.32736-2-michael.srba@seznam.cz>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220218100933.32736-2-michael.srba@seznam.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <006919c7-74c9-390a-964e-6b76611988e5@denx.de>
+References: <20220213173310.152230-1-marex@denx.de> <20220213173310.152230-2-marex@denx.de> <20220217234539.819AEC340E8@smtp.kernel.org> <006919c7-74c9-390a-964e-6b76611988e5@denx.de>
+Subject: Re: [PATCH 2/2] clk: rs9: Add Renesas 9-series PCIe clock generator driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Fri, 18 Feb 2022 14:15:02 -0800
+User-Agent: alot/0.10
+Message-Id: <20220218221504.54F8DC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Marek Vasut (2022-02-17 17:26:22)
+> On 2/18/22 00:45, Stephen Boyd wrote:
+> > Quoting Marek Vasut (2022-02-13 09:33:10)
+> >> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> >> index 6a98291350b64..3ec27842ec779 100644
+> >> --- a/drivers/clk/Makefile
+> >> +++ b/drivers/clk/Makefile
+> >> @@ -68,6 +68,7 @@ obj-$(CONFIG_COMMON_CLK_STM32MP157)   +=3D clk-stm32=
+mp1.o
+> >>   obj-$(CONFIG_COMMON_CLK_TPS68470)      +=3D clk-tps68470.o
+> >>   obj-$(CONFIG_CLK_TWL6040)              +=3D clk-twl6040.o
+> >>   obj-$(CONFIG_ARCH_VT8500)              +=3D clk-vt8500.o
+> >> +obj-$(CONFIG_COMMON_CLK_RS9_PCIE)      +=3D clk-renesas-pcie.o
+> >=20
+> > Is there a reason it doesn't go into drivers/clk/renesas?
+>=20
+> The drivers/clk/renesas/ is for renesas SoC (R-Car/RZ/...),
+> this chip is different group (it's probably even IDT PLL IP).
 
+Ah ok so it's not a renesas SoC but a renesas IP?
 
-On 18.02.2022 11:09, michael.srba@seznam.cz wrote:
-> From: Michael Srba <Michael.Srba@seznam.cz>
-> 
-> Add four clocks which need to be manipulated in order to initialize the AHB
-> bus which exposes the SCC block in the global address space.
-> 
-> If a device is known to be configured such that writing to these
-> registers from Linux is not permitted, the 'protected-clocks'
-> device tree property must be used to denote that fact.
-> 
-> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
-> ---
->  CHANGES:
->  - v2: none
->  - v3: none
->  - v4: reword the commit message
->  - v5: none
->  - v6: none
->  - v7: change 'struct clk_init_data' to 'const struct clk_init_data', use imperative in commit message
-> ---
->  drivers/clk/qcom/gcc-msm8998.c | 56 ++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> index 407e2c5caea4..2d14c3d672fc 100644
-> --- a/drivers/clk/qcom/gcc-msm8998.c
-> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> @@ -2833,6 +2833,58 @@ static struct clk_branch gcc_rx1_usb2_clkref_clk = {
->  	},
->  };
->  
-> +static struct clk_branch gcc_im_sleep_clk = {
-> +	.halt_reg = 0x4300C,
-Please use lowercase hex to keep things consistent.
+>=20
+> [...]
+>=20
+> >> +#include <linux/mod_devicetable.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_platform.h>
+> >=20
+> > Is this used? If not please remove.
+>=20
+> This one is for of_device_get_match_data()
+>=20
 
+So it's going away?
 
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x4300C,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "gcc_im_sleep_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch aggre2_snoc_north_axi_clk = {
-> +	.halt_reg = 0x83010,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x83010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "aggre2_snoc_north_axi_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch ssc_xo_clk = {
-> +	.halt_reg = 0x63018,
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x63018,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "ssc_xo_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch ssc_cnoc_ahbs_clk = {
-> +	.halt_reg = 0x6300C,
-And here too.
+>=20
+> >> +static int rs9_probe(struct i2c_client *client, const struct i2c_devi=
+ce_id *id)
+> >> +{
+> >> +       struct device_node *np =3D client->dev.of_node;
+> >> +       unsigned char *name =3D "DIF0";
+> >> +       struct rs9_driver_data *rs9;
+> >> +       const char *parent_clk;
+> >> +       struct clk_hw *hw;
+> >> +       int i, ret;
+> >> +
+> >> +       rs9 =3D devm_kzalloc(&client->dev, sizeof(*rs9), GFP_KERNEL);
+> >> +       if (!rs9)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       i2c_set_clientdata(client, rs9);
+> >> +       rs9->client =3D client;
+> >> +       rs9->chip_info =3D of_device_get_match_data(&client->dev);
+> >=20
+> > Check for NULL? Use device_get_match_data()? Or does that not work for
+> > i2c devices?
 
+??
 
-> +	.halt_check = BRANCH_HALT,
-> +	.clkr = {
-> +		.enable_reg = 0x6300C,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "ssc_cnoc_ahbs_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct gdsc pcie_0_gdsc = {
->  	.gdscr = 0x6b004,
->  	.gds_hw_ctrl = 0x0,
-> @@ -3036,6 +3088,10 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
->  	[GCC_MSS_MNOC_BIMC_AXI_CLK] = &gcc_mss_mnoc_bimc_axi_clk.clkr,
->  	[GCC_MMSS_GPLL0_CLK] = &gcc_mmss_gpll0_clk.clkr,
->  	[HMSS_GPLL0_CLK_SRC] = &hmss_gpll0_clk_src.clkr,
-> +	[GCC_IM_SLEEP] = &gcc_im_sleep_clk.clkr,
-> +	[AGGRE2_SNOC_NORTH_AXI] = &aggre2_snoc_north_axi_clk.clkr,
-> +	[SSC_XO] = &ssc_xo_clk.clkr,
-> +	[SSC_CNOC_AHBS_CLK] = &ssc_cnoc_ahbs_clk.clkr,
->  };
->  
->  static struct gdsc *gcc_msm8998_gdscs[] = {
-> 
+> >=20
+> >> +
+> >> +       /* Fetch common configuration from DT (if specified) */
+> >> +       ret =3D rs9_get_common_config(rs9);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       /* Fetch DIFx output configuration from DT (if specified) */
+> >> +       for (i =3D 0; i < rs9->chip_info->num_clks; i++) {
+> >> +               ret =3D rs9_get_output_config(rs9, i);
+> >> +               if (ret)
+> >> +                       return ret;
+> >> +       }
+> >> +
+> >> +       /* Mandatory XTal */
+> >=20
+> > Oh it's mandatory here but not in the binding?
+> >=20
+> >> +       parent_clk =3D of_clk_get_parent_name(np, 0);
+> >=20
+> > Use clk_parent_data please.
+>=20
+> This one line I don't understand -- can you expand on what you expect me =
+
+> to do here ?
+
+Use 'struct clk_parent_data' and set .index to 0 so that when
+registering the clk you don't need to get the parent clk name.
+
+>=20
+> >> +       if (!parent_clk)
+> >> +               return dev_err_probe(&client->dev, -EINVAL,
+> >> +                                    "Missing XTal input clock\n");
+> >> +
+> >> +       rs9->regmap =3D devm_regmap_init_i2c(client, &rs9_regmap_confi=
+g);
+> >> +       if (IS_ERR(rs9->regmap))
+> >> +               return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap=
+),
+> >> +                                    "Failed to allocate register map\=
+n");
+> >> +
+> >> +       /* Register clock */
+> >> +       for (i =3D 0; i < rs9->chip_info->num_clks; i++) {
+> >> +               name[3]++;
+> >> +               hw =3D clk_hw_register_fixed_factor(&client->dev, name,
+> >> +                                                 parent_clk, 0, 4, 1);
+
+To do that it looks like maybe we'll need to export
+__clk_hw_register_fixed_factor() and introduces some sort of
+clk_hw_register_fixed_factor_parent_data() API.
+
+> >> +               if (IS_ERR(hw))
+> >> +                       return PTR_ERR(hw);
+> >> +
+> >> +               rs9->clk_dif[i] =3D hw;
