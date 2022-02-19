@@ -2,86 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8A8C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 14:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA78C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 15:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242387AbiBSONc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Feb 2022 09:13:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60418 "EHLO
+        id S242459AbiBSP0r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Feb 2022 10:26:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:34404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242386AbiBSONb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Feb 2022 09:13:31 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CF648329;
-        Sat, 19 Feb 2022 06:13:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1645279991; x=1676815991;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=l7w+kDiu9ua6ey6n5akjPZ0PY6ySIMf6qO2bjcuckyU=;
-  b=Bhg2h+GwfCOZY3tWLXYVGCo1xxyS4BRT4O84tU6y7QyKGq3cv2PXbrnw
-   eAz+lycwcvTQJQ9bXj7cHDJ7Adsr+0YG9hTfHmVfFQPWKACphnra/O0q/
-   KhDSGaxoFlawIRgYboqR38djFihAwr3hKBcgHPB80CFVTv6ge+YdsBYc2
-   OL7onr3SAmQWKuJQXwyzmuJFT0wsaCgd4Y+b0oRA3s7tu/Qpg7DMM0xah
-   8ZhKkTyykRerAmXXVcRxfCJN+gQo9fifK26RRyqr40g3HXn5NwtsCeAAE
-   hQane4B9XrT3B9DlwKsGMAi0xOqiQIc58pOGPr4smekkOlXBLKYi9uAYq
-   A==;
-X-IronPort-AV: E=Sophos;i="5.88,381,1635231600"; 
-   d="scan'208";a="154162965"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Feb 2022 07:13:10 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Sat, 19 Feb 2022 07:13:10 -0700
-Received: from soft-dev3-1.microsemi.net (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2375.17 via Frontend Transport; Sat, 19 Feb 2022 07:13:09 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <kavyasree.kotagiri@microchip.com>,
-        "Horatiu Vultur" <horatiu.vultur@microchip.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: lan966x: Fix linking error
-Date:   Sat, 19 Feb 2022 15:15:36 +0100
-Message-ID: <20220219141536.460812-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.33.0
+        with ESMTP id S233699AbiBSP0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Feb 2022 10:26:47 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A209553739;
+        Sat, 19 Feb 2022 07:26:27 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 40E31B80B0A;
+        Sat, 19 Feb 2022 15:26:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0396C004E1;
+        Sat, 19 Feb 2022 15:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645284384;
+        bh=6wMy5c40MoeMrkiAC6rmbWKQvU4M2MsxaJOM4WVGgnQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h7zxe6Y1JLH95rcf53kDPoMdpw63zTnIYT280c6n1kibcw4f9if2UA9HaAH59XpdR
+         LctZvLoBDQQtRvmkYMIV3j1Nzn1Tdtsj7WGwFV8NCNLLP+eP+9EorXTbuMN3K4s97+
+         toFAJ4OBGuqBlqFdHBjmaak2kUS+PxX1EcDlxf6Iknxn92bzxM8A7+iUSv/QaMW/Vr
+         o7E219fJW2AbeScZhpo8d0UFpPV107X4fN956XGjuRWcwSCPvmFfID+uzwKjPRC3u2
+         O27OgJTugIQqTpMSnqeScZQFmpzhcLhxooVUyd0oZUZRgV/u5iHQhuuTJYlkJGDuPj
+         m4VZCgyBTdKgg==
+Received: by pali.im (Postfix)
+        id 65F962B70; Sat, 19 Feb 2022 16:26:22 +0100 (CET)
+Date:   Sat, 19 Feb 2022 16:26:22 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 0/6] serial: mvebu-uart: Support for higher baudrates
+Message-ID: <20220219152622.mykr2zl5cl3rgsgx@pali>
+References: <20220211191238.2142-1-kabel@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <20220211191238.2142-1-kabel@kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the config options HAS_IOMEM is not set then the driver fails to link
-with the following error:
-clk-lan966x.c:(.text+0x950): undefined reference to
-`devm_platform_ioremap_resource'
+Hello Stephen!
 
-Therefor add missing dependencies: HAS_IOMEM and OF.
+On Friday 11 February 2022 20:12:32 Marek Behún wrote:
+> Hello Greg, Stephen, Gregory,
+> 
+> at Pali's request I have reviewed, updated and tested his series adding
+> support for higher baudrates on Marvell Armada A37xx boards.
+> 
+> I have updated commit messages, some comments and indentation at some
+> places. As per Stephen Boyd's request, commit message of patch 3 now
+> contains more information about why we need to have UART
+> clock-controller binding defined in such a way (due to backwards
+> compatibility).
 
-Fixes: 54104ee02333 ("clk: lan966x: Add lan966x SoC clock driver")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/clk/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Are updated commit messages better now?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4a8451f61f37..6f03c29c40be 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -232,6 +232,8 @@ config COMMON_CLK_GEMINI
- 
- config COMMON_CLK_LAN966X
- 	bool "Generic Clock Controller driver for LAN966X SoC"
-+	depends on HAS_IOMEM
-+	depends on OF
- 	help
- 	  This driver provides support for Generic Clock Controller(GCK) on
- 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
--- 
-2.33.0
-
+> Marek
+> 
+> Changes in v7:
+> * fixed lint errors in yaml binding file
+> * added Reviewed-by tags
+> * changed commit messages and comments a little
+> * fixed indentation at some places
+> * swapped patch 2 and 3 (dt-binding defining new binding should go
+>   before the driver adding usage of that new binding)
+> 
+> Changes in v6:
+> * fixed yaml binding file and dts files
+> 
+> Changes in v5:
+> * fixed yaml binding file
+> 
+> Changes in v4:
+> * converted armada3700-uart-clock documentation to YAML
+> * split documentation changes into two commits:
+>   - first which adds clock documentation
+>   - second which updates UART documentation
+> 
+> Changes in v3:
+> v3 is rebased on top of Linus master branch and all already applied patches
+> were dropped. There are no changes in patches itself since v2.
+> 
+> Pali Rohár (6):
+>   math64: New DIV_U64_ROUND_CLOSEST helper
+>   dt-bindings: mvebu-uart: document DT bindings for
+>     marvell,armada-3700-uart-clock
+>   serial: mvebu-uart: implement UART clock driver for configuring UART
+>     base clock
+>   dt-bindings: mvebu-uart: update information about UART clock
+>   arm64: dts: marvell: armada-37xx: add device node for UART clock and
+>     use it
+>   serial: mvebu-uart: implement support for baudrates higher than 230400
+>     Bd
+> 
+>  .../clock/marvell,armada-3700-uart-clock.yaml |  59 ++
+>  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  14 +-
+>  drivers/tty/serial/Kconfig                    |   1 +
+>  drivers/tty/serial/mvebu-uart.c               | 596 +++++++++++++++++-
+>  include/linux/math64.h                        |  13 +
+>  6 files changed, 671 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
+> 
+> -- 
+> 2.34.1
+> 
