@@ -2,90 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63110C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 03:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBF0C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 06:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239876AbiBSD2S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Feb 2022 22:28:18 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41732 "EHLO
+        id S237616AbiBSGkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Feb 2022 01:40:25 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230240AbiBSD2R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 22:28:17 -0500
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799D24A928;
-        Fri, 18 Feb 2022 19:27:58 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        with ESMTP id S230412AbiBSGkZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Feb 2022 01:40:25 -0500
+X-Greylist: delayed 465 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Feb 2022 22:40:06 PST
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3333619E72B;
+        Fri, 18 Feb 2022 22:40:06 -0800 (PST)
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 56A9383B9B;
-        Sat, 19 Feb 2022 04:27:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1645241275;
-        bh=aRtziGvGKQ0yJ+NF1mQSSUBxsxlyEIkgVwgL9biQI/k=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=vGHRRaXiPqnHwESIdioo9d5Yp3Msj0yr7Y4bc5y0rKvyErV0GgsfSXGjGBdarpq19
-         XgEEs3BPiFo5c58TaCyZve9RKx60umekJpIj+V5XNkocflL3YuOndiCL9/eCM7FXot
-         inYOBxJ2vG7v61x0OGAxn0Ec9wl9ZZS6t5/ZoKboGQZuiLe3acwcY5qKu79k18yRY5
-         Kg0DDELacf1n1P3oMLaO8cXVhdnmxj2KLxGKzyEubgOnWdoSzup4glt02PXXEMdq5N
-         vHObftsuRnoXDf83FyUoimOgjdq+ChuuXekLvkZYvcdBFOA9Bk65Oso7QOOgOsnIjE
-         jauPpepQFGmBA==
-Message-ID: <0391894f-751c-81ca-c437-8e843874c019@denx.de>
-Date:   Sat, 19 Feb 2022 04:27:54 +0100
+        by box.trvn.ru (Postfix) with ESMTPSA id 749F3403DB;
+        Sat, 19 Feb 2022 11:32:15 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+        t=1645252337; bh=i/Xc3rXnQ31VWvth9DwfVBUyC4C2QCHs5CrNABz1B+g=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PvRkxicWdFiMqfWBz74nha0w4PHEwhZR6tF+ZDG/YTlzojHskGlrFlKuOZCPY38Hv
+         PO+bgGJg9jaFsh/YzW6ZCBvMKBRwUDYCPUmzxFUck0aFWgdnQHVwC0V7QSUEs0yXUs
+         q3W5YjWWXjtmxvTSCfdvWtdQAkzm7vCiardPMfmRY7k5QAZ8CHkgu6MRufc7h+9S60
+         aapOH3eKCgnbfw0KOS2wJlNcIwbw8+Aoso9wtFH8s39LrHawpb1Z09qDkGQu0deBXg
+         DZVh1cKyesH+Ql4Yry6HZqk/4LrdXYJqP7FE8DP4Cejj+rgguo/7vippcA16DMtYA4
+         dKgygWZpkdOGQ==
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 2/2] clk: rs9: Add Renesas 9-series PCIe clock generator
- driver
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20220213173310.152230-1-marex@denx.de>
- <20220213173310.152230-2-marex@denx.de>
- <20220217234539.819AEC340E8@smtp.kernel.org>
- <006919c7-74c9-390a-964e-6b76611988e5@denx.de>
- <20220218221504.54F8DC340E9@smtp.kernel.org>
- <182f1f73-70eb-5811-b3ad-35b6428ed59a@denx.de>
- <20220219030521.0A6B0C340E9@smtp.kernel.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20220219030521.0A6B0C340E9@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Date:   Sat, 19 Feb 2022 11:32:15 +0500
+From:   Nikita Travkin <nikita@trvn.ru>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
+        bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
+        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 1/4] clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if
+ MND divider is not enabled.
+In-Reply-To: <20220217223736.DFC2EC340E8@smtp.kernel.org>
+References: <20211209163720.106185-1-nikita@trvn.ru>
+ <20211209163720.106185-2-nikita@trvn.ru>
+ <20220108005209.5140EC36AEB@smtp.kernel.org>
+ <991533e0fddd6999c8a06a536ae57999@trvn.ru>
+ <20220110201452.2B3E4C36AE3@smtp.kernel.org>
+ <cc4241105bfd2249c1c309a4efa2e6aa@trvn.ru>
+ <20220217223736.DFC2EC340E8@smtp.kernel.org>
+Message-ID: <6c3d2f619b1e87ef21effc02bb6df1cb@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/19/22 04:05, Stephen Boyd wrote:
-> Quoting Marek Vasut (2022-02-18 17:11:04)
->> On 2/18/22 23:15, Stephen Boyd wrote:
->>>>
->>>>>> +       if (!parent_clk)
->>>>>> +               return dev_err_probe(&client->dev, -EINVAL,
->>>>>> +                                    "Missing XTal input clock\n");
->>>>>> +
->>>>>> +       rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
->>>>>> +       if (IS_ERR(rs9->regmap))
->>>>>> +               return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
->>>>>> +                                    "Failed to allocate register map\n");
->>>>>> +
->>>>>> +       /* Register clock */
->>>>>> +       for (i = 0; i < rs9->chip_info->num_clks; i++) {
->>>>>> +               name[3]++;
->>>>>> +               hw = clk_hw_register_fixed_factor(&client->dev, name,
->>>>>> +                                                 parent_clk, 0, 4, 1);
->>>
->>> To do that it looks like maybe we'll need to export
->>> __clk_hw_register_fixed_factor() and introduces some sort of
->>> clk_hw_register_fixed_factor_parent_data() API.
+Hi,
+
+Stephen Boyd писал(а) 18.02.2022 03:37:
+> Quoting Nikita Travkin (2022-01-26 07:14:21)
+>> Stephen Boyd писал(а) 11.01.2022 01:14:
+>> > Quoting Nikita Travkin (2022-01-07 23:25:19)
+>> >> Hi,
+>> >>
+>> >> Stephen Boyd писал(а) 08.01.2022 05:52:
+>> >> > Quoting Nikita Travkin (2021-12-09 08:37:17)
+>> >> I'm adding this error here primarily to bring attention of the
+>> >> user (e.g. developer enabling some peripheral that needs
+>> >> duty cycle control) who might have to change their clock tree
+>> >> to make this control effective. So, assuming that if someone
+>> >> sets the duty cycle to 50% then they might set it to some other
+>> >> value later, it makes sense to fail the first call anyway.
+>> >>
+>> >> If you think there are some other possibilities for this call
+>> >> to happen specifically with 50% duty cycle (e.g. some
+>> >> preparations or cleanups in the clk subsystem or some drivers
+>> >> that I'm not aware of) then I can make an exemption in the check
+>> >> for that.
+>> >>
+>> >
+>> > I don't see anywhere in clk_set_duty_cycle() where it would bail out
+>> > early if the duty cycle was set to what it already is. The default for
+>> > these clks is 50%, so I worry that some driver may try to set the duty
+>> > cycle to 50% and then fail now. Either we need to check the duty cycle
+>> > in the core before calling down into the driver or we need to check it
+>> > here in the driver. Can you send a patch to check the current duty cycle
+>> > in the core before calling down into the clk ops?
 >>
->> Setting parent_clk to NULL should be enough.
+>> Hi, sorry for a rather delayed response,
+>> I spent a bit of time looking at how to make the clk core be
+>> careful with ineffective duty-cycle calls and I can't find a
+>> nice way to do this... My idea was something like this:
+>>
+>> static int clk_core_set_duty_cycle_nolock(struct clk_core *core,
+>>                                           struct clk_duty *duty)
+>> {       /* ... */
+>>
+>>         /* Update core->duty values */
+>>         clk_core_update_duty_cycle_nolock(core);
+>>
+>>         if ( /* duty doesn't match core->duty */ ) {
+>>                 ret = core->ops->set_duty_cycle(core->hw, duty);
+>>         /* ... */
+>> }
+>>
+>> However there seem to be drawbacks to any variant of the
+>> comparison that I could come up with:
+>>
+>> Naive one would be to do
+>>     if (duty->num != core->duty->num || duty->den != core->duty->den)
+>> but it won't correctly compare e.g. 1/2 and 10/20.
+>>
+>> Other idea was to do
+>>     if (duty->den / duty->num != core->duty->den / core->duty->num)
+>> but it will likely fail with very close values (e.g. 100/500 and 101/500)
+>>
+>> I briefly thought of some more sophisticated math but I don't
+>> like the idea of complicating this too far.
+>>
+>> I briefly grepped the kernel sources for duty-cycle related methods
+>> and I saw only one user of the clk_set_duty_cycle:
+>>     sound/soc/meson/axg-tdm-interface.c
+>> Notably it sets the cycle to 1/2 in some cases, though it seems to
+>> be tied to the drivers/clk/meson/sclk-div.c clock driver by being
+>> the blocks of the same SoC.
+> 
+> Indeed, so this patch is untested? I doubt the qcom driver is being used
+> with the one caller of clk_set_duty_cycle() in the kernel.
+> 
+
+While right now, to my knowledge, there is no users of the duty cycle
+control, I'm adding a generic driver that uses it in another series [1]
+with an intention to use it across multiple qcom based devices.
+
+While making it I spent quite a bit of time staring at the oscilloscope
+to figure out that I need changes from patch 4/4 of this series and I'd
+like to make this quirk a bit more obvious to others.
+
+[1] https://lore.kernel.org/linux-pwm/20220212162342.72646-1-nikita@trvn.ru/
+
+>>
+>> Thinking of it a bit more, I saw another approach to the problem
+>> I want to solve: Since I just want to make developers aware of the
+>> hardware quirk, maybe I don't need to fail the set but just put a
+>> WARN or even WARN_ONCE there? This way the behavior will be unchanged.
 >>
 > 
-> Perfect, but also weird. I worry that's a bug that snuck in. Probably a
-> good idea to not rely on that.
+> I don't like the idea of a WARN or a WARN_ONCE as most likely nobody is
+> going to read it or do anything about it. Returning an error should be
+> fine then. If the duty cycle call fails for 50% then that's something we
+> have to live with.
 
-No, I was wrong, the index=0 is right, and it is already fixed in V2.
+I intend this WARN or error to be hit by a person bringing up something
+new, user should never see it. For example a possible story could be:
+
+- Backlight control is connected to the clock on device X
+- Developer adds (future) pwm-clk adapter and pwm-backlight to the DT
+- Backlight slider in UI doesn't work anyway. (don't think UIs show
+  errors here)
+- Developer troubleshoots the thing and either finds WARN in dmesg
+  or that the sysfs write errors out.
+
+In my experience, people bringing devices up pay a very close attention
+to dmesg so I think giving a WARN is fine, but I'm fine with whichever
+approach you prefer.
+
+Nikita
