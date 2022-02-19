@@ -2,168 +2,125 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBF0C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 06:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48915C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 11:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237616AbiBSGkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Feb 2022 01:40:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38506 "EHLO
+        id S238937AbiBSLe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Feb 2022 06:34:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230412AbiBSGkZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Feb 2022 01:40:25 -0500
-X-Greylist: delayed 465 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 18 Feb 2022 22:40:06 PST
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3333619E72B;
-        Fri, 18 Feb 2022 22:40:06 -0800 (PST)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 749F3403DB;
-        Sat, 19 Feb 2022 11:32:15 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1645252337; bh=i/Xc3rXnQ31VWvth9DwfVBUyC4C2QCHs5CrNABz1B+g=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PvRkxicWdFiMqfWBz74nha0w4PHEwhZR6tF+ZDG/YTlzojHskGlrFlKuOZCPY38Hv
-         PO+bgGJg9jaFsh/YzW6ZCBvMKBRwUDYCPUmzxFUck0aFWgdnQHVwC0V7QSUEs0yXUs
-         q3W5YjWWXjtmxvTSCfdvWtdQAkzm7vCiardPMfmRY7k5QAZ8CHkgu6MRufc7h+9S60
-         aapOH3eKCgnbfw0KOS2wJlNcIwbw8+Aoso9wtFH8s39LrHawpb1Z09qDkGQu0deBXg
-         DZVh1cKyesH+Ql4Yry6HZqk/4LrdXYJqP7FE8DP4Cejj+rgguo/7vippcA16DMtYA4
-         dKgygWZpkdOGQ==
+        with ESMTP id S238457AbiBSLe2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Feb 2022 06:34:28 -0500
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12hn2223.outbound.protection.outlook.com [52.100.167.223])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B414F447
+        for <linux-clk@vger.kernel.org>; Sat, 19 Feb 2022 03:34:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N4VqNwe7aQ1AjOFTsDYEuVwd3Afc6/ycOqudb1d3WqA55/sJcdvDQijDdNg5O8ohXKZtYxdRP5TFA+sArGMeUmJyLEgU+pU3xazQuZBXqRyElVrg76jgctzEGno+CynEN7EarDFEwFw8f4Mfx/XVAVUZcobhtU5m850KEffVksoBgapQ2RdoPXZzrHFCf25gz8D2bcrIiV4ph0AHmivdhZaqp077rBLvyTjgcBkJlo9wvbGB5Q/GbH8ZolBIO0C1eDF4EZcNc8UJDatCO+2t2rykc4Cu64GoajlK/bavfBSpGHESb7/ankkfzLcXPHt7E8+2zb4XXn7lQUAR60aiYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5+iJiA0J6jviS6/j+q9zQZlf+odb/fFUug6nr0gp3M4=;
+ b=ganmzJv6ycJ0wt2dult2A10Ns5J92su9HtWeAxQPS74DULwXozwuBfP2sJnOtPidx/OfSz96pCZyVMpmbv7u9OFh5fIx/n2UWQB/uqqi+fWLyP1bWSBJY04p3PjiMGV+TTtk+kvygNSPzuGTHl6OspclmLS/remchLDvgtIDlhWmcKlYQ7/OdiGluDpocqR8j4ZvmVm5KS4pL9gxFjTrtbwlj+yyTZGQA0mnOU8QUM/hJuJEMxmMtxvMB1nvdjgwFolrwsdhvCSa3+OlsydXkIqdNAqThDkZsNBwmgVTiKtH6LphiC8Tr3xdiNh49W5huAXxyfkeaGlJpNLLXlyuDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 216.169.5.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=u-csd.com;
+ dmarc=none action=none header.from=u-csd.com; dkim=none (message not signed);
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucsd4.onmicrosoft.com;
+ s=selector1-ucsd4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5+iJiA0J6jviS6/j+q9zQZlf+odb/fFUug6nr0gp3M4=;
+ b=JETcHuO9kDJTcKZx35h1WIJcWa+a/vz2UNOAxNpK/zcpUwRGfVonGSnSYJVuM/IV3SvhqZS3OSfFtfCjvE7bAOyvEYmAT4R9/IjFo7QRwDR4LSTjHm+7g3tc0dy+uZ18S06emcicwd18PmmEHUwE4t7hRMXNNzUg6NydGYMLQNg=
+Received: from CO2PR04CA0155.namprd04.prod.outlook.com (2603:10b6:104::33) by
+ SJ0PR06MB8595.namprd06.prod.outlook.com (2603:10b6:a03:40e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.16; Sat, 19 Feb
+ 2022 11:34:00 +0000
+Received: from MW2NAM10FT045.eop-nam10.prod.protection.outlook.com
+ (2603:10b6:104:0:cafe::7b) by CO2PR04CA0155.outlook.office365.com
+ (2603:10b6:104::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.17 via Frontend
+ Transport; Sat, 19 Feb 2022 11:34:00 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 216.169.5.195)
+ smtp.mailfrom=u-csd.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=u-csd.com;
+Received-SPF: Fail (protection.outlook.com: domain of u-csd.com does not
+ designate 216.169.5.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.169.5.195; helo=UCSDEX1.u-csd.local;
+Received: from UCSDEX1.u-csd.local (216.169.5.195) by
+ MW2NAM10FT045.mail.protection.outlook.com (10.13.155.45) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.4995.16 via Frontend Transport; Sat, 19 Feb 2022 11:33:59 +0000
+Received: from UCSDEX1.u-csd.local (192.168.16.43) by UCSDEX1.u-csd.local
+ (192.168.16.43) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Sat, 19 Feb
+ 2022 05:25:25 -0600
+Received: from [199.231.186.244] (199.231.186.244) by UCSDEX1.u-csd.local
+ (192.168.16.43) with Microsoft SMTP Server id 15.1.2375.18 via Frontend
+ Transport; Sat, 19 Feb 2022 05:25:25 -0600
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Date:   Sat, 19 Feb 2022 11:32:15 +0500
-From:   Nikita Travkin <nikita@trvn.ru>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linus.walleij@linaro.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org, agross@kernel.org, tdas@codeaurora.org,
-        svarbanov@mm-sol.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH 1/4] clk: qcom: clk-rcg2: Fail Duty-Cycle configuration if
- MND divider is not enabled.
-In-Reply-To: <20220217223736.DFC2EC340E8@smtp.kernel.org>
-References: <20211209163720.106185-1-nikita@trvn.ru>
- <20211209163720.106185-2-nikita@trvn.ru>
- <20220108005209.5140EC36AEB@smtp.kernel.org>
- <991533e0fddd6999c8a06a536ae57999@trvn.ru>
- <20220110201452.2B3E4C36AE3@smtp.kernel.org>
- <cc4241105bfd2249c1c309a4efa2e6aa@trvn.ru>
- <20220217223736.DFC2EC340E8@smtp.kernel.org>
-Message-ID: <6c3d2f619b1e87ef21effc02bb6df1cb@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: HI..
+To:     <linux-clk@vger.kernel.org>
+From:   "Kristina Pia Johansson " <info@u-csd.com>
+Date:   Sat, 19 Feb 2022 06:25:25 -0500
+Reply-To: <piakjp2022@gmail.com>
+Message-ID: <ece3649d-8caf-4220-8e75-28bcd754d33b@UCSDEX1.u-csd.local>
+X-CrossPremisesHeadersFilteredBySendConnector: UCSDEX1.u-csd.local
+X-OrganizationHeadersPreserved: UCSDEX1.u-csd.local
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8dc9e5fb-7b09-4e38-1cb6-08d9f39bb908
+X-MS-TrafficTypeDiagnostic: SJ0PR06MB8595:EE_
+X-Microsoft-Antispam-PRVS: <SJ0PR06MB859521C657046D296272963397389@SJ0PR06MB8595.namprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Forefront-Antispam-Report: CIP:216.169.5.195;CTRY:US;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:UCSDEX1.u-csd.local;PTR:InfoDomainNonexistent;CAT:OSPM;SFS:(13230001)(136003)(39860400002)(376002)(346002)(396003)(40470700004)(46966006)(36840700001)(3480700007)(70206006)(26005)(86362001)(5660300002)(70586007)(2906002)(47076005)(4744005)(2860700004)(8676002)(31696002)(7116003)(40460700003)(8936002)(82310400004)(36860700001)(82740400003)(336012)(31686004)(956004)(6706004)(16576012)(9686003)(81166007)(508600001)(40480700001)(316002)(356005)(186003)(6916009)(16900700008);DIR:OUT;SFP:1501;
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?4TFxO9lB6Ir2s0Ow0jm4UF8sfu1U6gHjapCDQszzOe5FF4fV6Rxz77tUAZ?=
+ =?iso-8859-1?Q?1VpAb6kZO9lk9HQrPDtXw0kNL+O+lc4pIwocKfIj3YxRFwXTi/Vam0zQRV?=
+ =?iso-8859-1?Q?AtTy7dxAFev0OOOQKNqseo1FmvG9OOQvTqglu1au+9tcIX4Zm84bzNsMtW?=
+ =?iso-8859-1?Q?x7eefOxWLCjOmWtwlr8gOIH3m4eWolUMj2l9adIB1TclaQN5/qgNpXYEg5?=
+ =?iso-8859-1?Q?flyuWLKmKs80A4MG0IEZl4GgV+RZmEDG0CuZDD3Pr6NSTSBszYSqEHDiuO?=
+ =?iso-8859-1?Q?YfoNQqa/ANK4YZQbgHczi0rfJKeq/nh9tyWakkpdGY/m8OsyeYriXGtiRv?=
+ =?iso-8859-1?Q?IfoEx3ST+uYLo57GpSXuomb3OnkJhxM6dkCfzqOvmxBIqKyhNpYAKdj1Oj?=
+ =?iso-8859-1?Q?OsM8/30mO1ATk1GOColJ92XpEf74VyLSAv5+Xm7bkZV9Ssbsg/L4dRF3Fy?=
+ =?iso-8859-1?Q?N4B3XOGqPHPPtLW7IGx8/H69V5OrRRxjTDxOVDn7aOUXcTFun2TyN/ps1t?=
+ =?iso-8859-1?Q?klOwUU7eOiXa1paYuP/IM/CGvyDv3f1fEnMLTZ1lq8q0Y/58QKOLTdjpDZ?=
+ =?iso-8859-1?Q?oUMpLVAGWqBM5bVNsaalPCyXK7ZGBpoqg0DfQ5yEMb3kt1ekphNG3IvV0C?=
+ =?iso-8859-1?Q?xWroOh/aNh5ixcrCDi4Gx1yYe6qd8d1fhFXwt8nYeqH8A3Ko2ne5Kv4QU+?=
+ =?iso-8859-1?Q?5ZoFf6S/MAKegRzT4aEF0WBTxpRO3kd6uRBTAekPkcTYPD9HWkxosVuRGf?=
+ =?iso-8859-1?Q?0hV9Uq2n10dTBXxIti70pk3AbZPpoP34fToXpvrZ4PivuAgcSU7vlLm4UA?=
+ =?iso-8859-1?Q?KZR73j5t4oPliv6Fq/TcRTK4yCkpBC4nZYlawqfw7oiPKwRLpD8JTiaYZo?=
+ =?iso-8859-1?Q?4lGSRCc6FkQ4C3d/PBzjWU98GOAsdHOk7A9JvCXWejP9E/cwkQhBF7c4YS?=
+ =?iso-8859-1?Q?J2qrpqkdP66Mcn59IwDrbYI5bCx+ymDMsp9Fqy3ihvx3cEr32+IwQWjafC?=
+ =?iso-8859-1?Q?WXvhlORwhhTh0EKCCeffxby0OKTrhehB3dK5/KOJUYZ2Rjz+HC5+67c0+d?=
+ =?iso-8859-1?Q?bZL+UptmithB7Ekn7LmNWoqCtc3eI94+49fmXjW0KtIIwloa+L1JkwSv+6?=
+ =?iso-8859-1?Q?NDMy68OhLbZa0t2tV7NSix5GmTcK0=3D?=
+X-OriginatorOrg: u-csd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2022 11:33:59.8339
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dc9e5fb-7b09-4e38-1cb6-08d9f39bb908
+X-MS-Exchange-CrossTenant-Id: 663d4886-a028-4654-8be0-f6e600c88247
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=663d4886-a028-4654-8be0-f6e600c88247;Ip=[216.169.5.195];Helo=[UCSDEX1.u-csd.local]
+X-MS-Exchange-CrossTenant-AuthSource: MW2NAM10FT045.eop-nam10.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR06MB8595
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi
 
-Stephen Boyd писал(а) 18.02.2022 03:37:
-> Quoting Nikita Travkin (2022-01-26 07:14:21)
->> Stephen Boyd писал(а) 11.01.2022 01:14:
->> > Quoting Nikita Travkin (2022-01-07 23:25:19)
->> >> Hi,
->> >>
->> >> Stephen Boyd писал(а) 08.01.2022 05:52:
->> >> > Quoting Nikita Travkin (2021-12-09 08:37:17)
->> >> I'm adding this error here primarily to bring attention of the
->> >> user (e.g. developer enabling some peripheral that needs
->> >> duty cycle control) who might have to change their clock tree
->> >> to make this control effective. So, assuming that if someone
->> >> sets the duty cycle to 50% then they might set it to some other
->> >> value later, it makes sense to fail the first call anyway.
->> >>
->> >> If you think there are some other possibilities for this call
->> >> to happen specifically with 50% duty cycle (e.g. some
->> >> preparations or cleanups in the clk subsystem or some drivers
->> >> that I'm not aware of) then I can make an exemption in the check
->> >> for that.
->> >>
->> >
->> > I don't see anywhere in clk_set_duty_cycle() where it would bail out
->> > early if the duty cycle was set to what it already is. The default for
->> > these clks is 50%, so I worry that some driver may try to set the duty
->> > cycle to 50% and then fail now. Either we need to check the duty cycle
->> > in the core before calling down into the driver or we need to check it
->> > here in the driver. Can you send a patch to check the current duty cycle
->> > in the core before calling down into the clk ops?
->>
->> Hi, sorry for a rather delayed response,
->> I spent a bit of time looking at how to make the clk core be
->> careful with ineffective duty-cycle calls and I can't find a
->> nice way to do this... My idea was something like this:
->>
->> static int clk_core_set_duty_cycle_nolock(struct clk_core *core,
->>                                           struct clk_duty *duty)
->> {       /* ... */
->>
->>         /* Update core->duty values */
->>         clk_core_update_duty_cycle_nolock(core);
->>
->>         if ( /* duty doesn't match core->duty */ ) {
->>                 ret = core->ops->set_duty_cycle(core->hw, duty);
->>         /* ... */
->> }
->>
->> However there seem to be drawbacks to any variant of the
->> comparison that I could come up with:
->>
->> Naive one would be to do
->>     if (duty->num != core->duty->num || duty->den != core->duty->den)
->> but it won't correctly compare e.g. 1/2 and 10/20.
->>
->> Other idea was to do
->>     if (duty->den / duty->num != core->duty->den / core->duty->num)
->> but it will likely fail with very close values (e.g. 100/500 and 101/500)
->>
->> I briefly thought of some more sophisticated math but I don't
->> like the idea of complicating this too far.
->>
->> I briefly grepped the kernel sources for duty-cycle related methods
->> and I saw only one user of the clk_set_duty_cycle:
->>     sound/soc/meson/axg-tdm-interface.c
->> Notably it sets the cycle to 1/2 in some cases, though it seems to
->> be tied to the drivers/clk/meson/sclk-div.c clock driver by being
->> the blocks of the same SoC.
-> 
-> Indeed, so this patch is untested? I doubt the qcom driver is being used
-> with the one caller of clk_set_duty_cycle() in the kernel.
-> 
+I hope that you are at your best and doing well. The purpose of this letter=
+ is seeking for a pen pal like friendship and I'd love to and be honored to=
+ be friends with you if you do not mind.. If the Idea sounds OK with you, j=
+ust say yes and we can take it on from there. I look forward to hear hearin=
+g from you.. My name is Kristina From Sweden 36 years , this will mean a lo=
+t to me to hear back from you.
 
-While right now, to my knowledge, there is no users of the duty cycle
-control, I'm adding a generic driver that uses it in another series [1]
-with an intention to use it across multiple qcom based devices.
+Warm Regards.
 
-While making it I spent quite a bit of time staring at the oscilloscope
-to figure out that I need changes from patch 4/4 of this series and I'd
-like to make this quirk a bit more obvious to others.
-
-[1] https://lore.kernel.org/linux-pwm/20220212162342.72646-1-nikita@trvn.ru/
-
->>
->> Thinking of it a bit more, I saw another approach to the problem
->> I want to solve: Since I just want to make developers aware of the
->> hardware quirk, maybe I don't need to fail the set but just put a
->> WARN or even WARN_ONCE there? This way the behavior will be unchanged.
->>
-> 
-> I don't like the idea of a WARN or a WARN_ONCE as most likely nobody is
-> going to read it or do anything about it. Returning an error should be
-> fine then. If the duty cycle call fails for 50% then that's something we
-> have to live with.
-
-I intend this WARN or error to be hit by a person bringing up something
-new, user should never see it. For example a possible story could be:
-
-- Backlight control is connected to the clock on device X
-- Developer adds (future) pwm-clk adapter and pwm-backlight to the DT
-- Backlight slider in UI doesn't work anyway. (don't think UIs show
-  errors here)
-- Developer troubleshoots the thing and either finds WARN in dmesg
-  or that the sysfs write errors out.
-
-In my experience, people bringing devices up pay a very close attention
-to dmesg so I think giving a WARN is fine, but I'm fine with whichever
-approach you prefer.
-
-Nikita
+Kristina
