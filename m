@@ -2,171 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D114C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Feb 2022 23:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3EAC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Feb 2022 01:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235323AbiBRXP2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Feb 2022 18:15:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58058 "EHLO
+        id S240497AbiBSBL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Feb 2022 20:11:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232249AbiBRXP1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 18:15:27 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6CEDB1899
-        for <linux-clk@vger.kernel.org>; Fri, 18 Feb 2022 15:15:09 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S230301AbiBSBL0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Feb 2022 20:11:26 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68743256EDC;
+        Fri, 18 Feb 2022 17:11:07 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F76E61F23
-        for <linux-clk@vger.kernel.org>; Fri, 18 Feb 2022 23:15:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5FCC340E9;
-        Fri, 18 Feb 2022 23:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645226108;
-        bh=mnXS1IyKts+4zhJInJwCnH8tRAZaZSWpc+GpbYbfEoU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GuTAmwGJNxwkYXuhsNzaeapXcJPpeb2XfQnDw2MB4A+QdEttyYVbSVUj+LihggDjl
-         fLsrdkauULbV3v6RdRPL5RE17pM8aG5jT/Gyw9RkZjQC1OyDAFRnHHvwTjpS0J9WfR
-         LmBWo8lXDwPcrK9tVXxLHjIqBE8aZQ3vgR6aekx1g8BJWPpXQ/VKtf/rBedd/ToXmn
-         nq66rAHUIYeq2Vuv5hqAApeem1Sx+UBI3fHTzQXP/L9WGtOoRiJ8SsGKzemX0T/MZc
-         YcA6YhkS0wlS4Lrm+z2o/QNTmenQSd61K37UQTQ8AWg2ExVbpBaw1f0F3m2a/rDT2p
-         zJ/4keXvI19RA==
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id DEA26838FC;
+        Sat, 19 Feb 2022 02:11:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1645233065;
+        bh=4SHsxBH5ZD2zX8xKdgkrtOxu71RgyMGTeNTz+vpWntg=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=TlwLmdUAKmjLJxm5eMMKQOFIwBo6/wv3h6vYARwhRyeF8evHd2mVweCMNx08YDpGw
+         JE3LgB9yP+O7YlR5ylOAtZ0EGdel948SlgZ6iLAuZGp/4/OQAsmRxngUhMyhAs80tH
+         7k+C9bK9bNA0LofPN0RKyWMyQV4UThHs+Jd1vMr8Pp8wHG+XiPBFk8RMu/buZbtxvF
+         tVQMSZdbTDb0JSAR/Sn+F13pGy9FPkVyqtxXFuR6HCnjByFuH7TylsTgKH45YPkKJT
+         xr3YJr2bLPvaQKFI9QPbZVauNk/uS9xl2/7LxK5CVsxSRhki5YwIi9S+BKIFmbJnqQ
+         TdUCXjW3byuTg==
+Message-ID: <182f1f73-70eb-5811-b3ad-35b6428ed59a@denx.de>
+Date:   Sat, 19 Feb 2022 02:11:04 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220125141549.747889-3-maxime@cerno.tech>
-References: <20220125141549.747889-1-maxime@cerno.tech> <20220125141549.747889-3-maxime@cerno.tech>
-Subject: Re: [PATCH v4 02/10] clk: Always clamp the rounded rate
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>
-Date:   Fri, 18 Feb 2022 15:15:06 -0800
-User-Agent: alot/0.10
-Message-Id: <20220218231508.7B5FCC340E9@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 2/2] clk: rs9: Add Renesas 9-series PCIe clock generator
+ driver
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20220213173310.152230-1-marex@denx.de>
+ <20220213173310.152230-2-marex@denx.de>
+ <20220217234539.819AEC340E8@smtp.kernel.org>
+ <006919c7-74c9-390a-964e-6b76611988e5@denx.de>
+ <20220218221504.54F8DC340E9@smtp.kernel.org>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20220218221504.54F8DC340E9@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-01-25 06:15:41)
-> The current core while setting the min and max rate properly in the
-> clk_request structure will not make sure that the requested rate is
-> within these boundaries, leaving it to each and every driver to make
-> sure it is.
+On 2/18/22 23:15, Stephen Boyd wrote:
 
-It would be good to describe why. Or decide that it was an oversight and
-write that down here.
+Hi,
 
->=20
-> Add a clamp call to make sure it's always done, and add a few unit tests
-> to make sure we don't have any regression there.
+>>>> @@ -68,6 +68,7 @@ obj-$(CONFIG_COMMON_CLK_STM32MP157)   += clk-stm32mp1.o
+>>>>    obj-$(CONFIG_COMMON_CLK_TPS68470)      += clk-tps68470.o
+>>>>    obj-$(CONFIG_CLK_TWL6040)              += clk-twl6040.o
+>>>>    obj-$(CONFIG_ARCH_VT8500)              += clk-vt8500.o
+>>>> +obj-$(CONFIG_COMMON_CLK_RS9_PCIE)      += clk-renesas-pcie.o
+>>>
+>>> Is there a reason it doesn't go into drivers/clk/renesas?
+>>
+>> The drivers/clk/renesas/ is for renesas SoC (R-Car/RZ/...),
+>> this chip is different group (it's probably even IDT PLL IP).
+> 
+> Ah ok so it's not a renesas SoC but a renesas IP?
 
-I looked through the per-user constraint patch history on the list but I
-couldn't really figure out why it was done this way. I guess we didn't
-clamp the rate in the core because we wanted to give the clk providers
-all the information, i.e. the rate that was requested and the boundaries
-that the consumers have placed on the rate. With the round_rate() clk_op
-the providers don't know the min/max because the rate request structure
-isn't passed. I think my concern a long time ago was that a consumer
-could call clk_round_rate() and get one frequency and then call
-clk_set_rate() and get another frequency. We need to make sure that
-round_rate and set_rate agree with each other. If we don't do that then
-we don't uphold the contract that clk_round_rate() tells the consumer
-what rate they'll get if they call clk_set_rate() with the same
-frequency.
+I suspect it is IDT IP, since the datasheet looks similar to what 
+versaclock datasheets used to look like, except the register layout is 
+much simpler and the registers are completely different. So it _might_ 
+be some mutation of the IDT PLL, and it is now owned by renesas.
 
->=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/clk-test.c | 46 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/clk.c      |  2 ++
->  2 files changed, 48 insertions(+)
->=20
-> diff --git a/drivers/clk/clk-test.c b/drivers/clk/clk-test.c
-> index 47a600d590c1..28c718ab82e1 100644
-> --- a/drivers/clk/clk-test.c
-> +++ b/drivers/clk/clk-test.c
-> @@ -203,6 +203,50 @@ static void clk_range_test_set_range_invalid(struct =
-kunit *test)
->                         0);
->  }
-> =20
-> +/*
-> + * Test that if our clock has some boundaries and we try to round a rate
-> + * lower than the minimum, the returned rate will be within range.
-> + */
-> +static void clk_range_test_set_range_round_rate_lower(struct kunit *test)
-> +{
-> +       struct clk_dummy_context *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D hw->clk;
-> +       long rate;
-> +
-> +       KUNIT_ASSERT_EQ(test,
-> +                       clk_set_rate_range(clk,
-> +                                          DUMMY_CLOCK_RATE_1,
-> +                                          DUMMY_CLOCK_RATE_2),
-> +                       0);
-> +
-> +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
-> +       KUNIT_ASSERT_GT(test, rate, 0);
-> +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+The renesas SoC clock IP is something entirely different from the IP 
+used here.
 
-The comment says within range but this test says exactly the minimum
-rate. Please change it to test that the rate is within rate 1 and rate
-2. Also, we should call clk_get_rate() here to make sure the rate is
-within the boundaries and matches what clk_round_rate() returned.
+>>>> +#include <linux/mod_devicetable.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/of.h>
+>>>> +#include <linux/of_platform.h>
+>>>
+>>> Is this used? If not please remove.
+>>
+>> This one is for of_device_get_match_data()
+>>
+> 
+> So it's going away?
 
-> +}
-> +
-> +/*
-> + * Test that if our clock has some boundaries and we try to round a rate
-> + * higher than the maximum, the returned rate will be within range.
-> + */
-> +static void clk_range_test_set_range_round_rate_higher(struct kunit *tes=
-t)
-> +{
-> +       struct clk_dummy_context *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D hw->clk;
-> +       long rate;
-> +
-> +       KUNIT_ASSERT_EQ(test,
-> +                       clk_set_rate_range(clk,
-> +                                          DUMMY_CLOCK_RATE_1,
-> +                                          DUMMY_CLOCK_RATE_2),
-> +                       0);
-> +
-> +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_2 + 1000);
-> +       KUNIT_ASSERT_GT(test, rate, 0);
-> +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
+Yes
 
-Same comment about within range.
+[...]
 
-> +}
-> +
->  /*
->   * Test that if our clock has a rate lower than the minimum set by a
->   * call to clk_set_rate_range(), the rate will be raised to match the
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 8de6a22498e7..7bb5ae0fb688 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1330,6 +1330,8 @@ static int clk_core_determine_round_nolock(struct c=
-lk_core *core,
->         if (!core)
->                 return 0;
-> =20
-> +       req->rate =3D clamp(req->rate, req->min_rate, req->max_rate);
-> +
->         /*
->          * At this point, core protection will be disabled
->          * - if the provider is not protected at all
-> --=20
-> 2.34.1
->
+>>> Use clk_parent_data please.
+>>
+>> This one line I don't understand -- can you expand on what you expect me
+>> to do here ?
+> 
+> Use 'struct clk_parent_data' and set .index to 0 so that when
+> registering the clk you don't need to get the parent clk name.
+> 
+>>
+>>>> +       if (!parent_clk)
+>>>> +               return dev_err_probe(&client->dev, -EINVAL,
+>>>> +                                    "Missing XTal input clock\n");
+>>>> +
+>>>> +       rs9->regmap = devm_regmap_init_i2c(client, &rs9_regmap_config);
+>>>> +       if (IS_ERR(rs9->regmap))
+>>>> +               return dev_err_probe(&client->dev, PTR_ERR(rs9->regmap),
+>>>> +                                    "Failed to allocate register map\n");
+>>>> +
+>>>> +       /* Register clock */
+>>>> +       for (i = 0; i < rs9->chip_info->num_clks; i++) {
+>>>> +               name[3]++;
+>>>> +               hw = clk_hw_register_fixed_factor(&client->dev, name,
+>>>> +                                                 parent_clk, 0, 4, 1);
+> 
+> To do that it looks like maybe we'll need to export
+> __clk_hw_register_fixed_factor() and introduces some sort of
+> clk_hw_register_fixed_factor_parent_data() API.
+
+Setting parent_clk to NULL should be enough.
+
+[...]
