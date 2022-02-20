@@ -2,155 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA8EC4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Feb 2022 10:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6EFC433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Feb 2022 18:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231927AbiBTK5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Feb 2022 05:57:22 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38874 "EHLO
+        id S235997AbiBTSRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Feb 2022 13:17:12 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiBTK5V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Feb 2022 05:57:21 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39065340C2;
-        Sun, 20 Feb 2022 02:57:00 -0800 (PST)
+        with ESMTP id S242781AbiBTSRL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Feb 2022 13:17:11 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD1E3135E;
+        Sun, 20 Feb 2022 10:16:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645354620; x=1676890620;
+  t=1645381010; x=1676917010;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=yPqPywbDC7Awr4bHvSEXFevB7s9D3RWFfXlO+8m6W44=;
-  b=grmpciZvqwbTEiQGP9hdwHFo0pb8S43722IJNdUUlq3fSPWP8My02gxc
-   7iizn46btKlUrVSwuKG2Llu0Dy3e6xfBMKhKsYukOe3Y26vRO09mKERDY
-   dQoMSsvmQIHidDUAMXH9qdtZInh/Wk9y8/nVzfnjIQgW2Cx86vyJzDOt5
-   GmQJlQ2Rgr8dt6/0fFC3kvbOchDY4Qc35wpMok+TQP2+apJAylFzX8Xjr
-   jWfARkYVaIONnZWDy84mzpNzYW/W6o6mWhvsE2zmWtUj3PP78WFzEY/wt
-   HsjnMWA2GgRKjgJu8is8RwWejhEvuVkVA9XNnJmTn/VPYm++Uvl3b1hh3
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10263"; a="275951791"
+  bh=lIcyYOwdyn7z2tCHZIyCN4ToCOA0DGhj82Dg+n4foQA=;
+  b=Hes0yJKjPyLIPqTCiWclSBIPvO/9q2DftDffI1cPjc2/YtUM39Gcfz0D
+   EcKPkLiLrEvZejpK/ZeHELoEKtLVgVuyMANSO3c2GEWkLt7eHCUnKX6zk
+   bS9gaM5kTtQM4VV+Pxo1oMHsfDZuJMijwkPcHg0lW6N0u8Mdvf/xdTOVO
+   l2kIJ4UqG3Pj1vMuPVrqIWxh9GwVJ6UjWin8cs1MzcpLw6aN9+lrSixBX
+   OYfacSsWJxurJPcxFmNT4KV5mlmvy2bjwhsOkFdE9KqRkyNm0uHHGsUc9
+   oPb/rANs/29axSuXW+iSfvmhm2v4VQe8R+gR0BZlzhhiik3t61QD78lmA
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10264"; a="337824622"
 X-IronPort-AV: E=Sophos;i="5.88,383,1635231600"; 
-   d="scan'208";a="275951791"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2022 02:56:59 -0800
+   d="scan'208";a="337824622"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2022 10:16:50 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,383,1635231600"; 
-   d="scan'208";a="531490390"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2022 02:56:55 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nLjsp-006UYn-51;
-        Sun, 20 Feb 2022 12:56:03 +0200
-Date:   Sun, 20 Feb 2022 12:56:02 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+   d="scan'208";a="590735033"
+Received: from lkp-server01.sh.intel.com (HELO da3212ac2f54) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 20 Feb 2022 10:16:46 -0800
+Received: from kbuild by da3212ac2f54 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nLqlJ-0000ZK-Jw; Sun, 20 Feb 2022 18:16:45 +0000
+Date:   Mon, 21 Feb 2022 02:16:21 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
-        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
-Subject: Re: [PATCH 4/8] dma: dmamux: Introduce RZN1 DMA router support
-Message-ID: <YhIeQlwmt/yCc8Uu@smile.fi.intel.com>
-References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
- <20220218181226.431098-5-miquel.raynal@bootlin.com>
+        Laetitia MARIOTTINI <laetitia.mariottini@se.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH 3/8] soc: renesas: rzn1-sysc: Export function to set
+ dmamux
+Message-ID: <202202210247.Ul5J6pwr-lkp@intel.com>
+References: <20220218181226.431098-4-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220218181226.431098-5-miquel.raynal@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20220218181226.431098-4-miquel.raynal@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 18, 2022 at 07:12:22PM +0100, Miquel Raynal wrote:
-> The Renesas RZN1 DMA IP is a based on a DW core, with eg. an additional
-> dmamux register located in the system control area which can take up to
-> 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> two different peripherals.
-> 
-> We need two additional information from the 'dmas' property: the channel
-> (bit in the dmamux register) that must be accessed and the value of the
-> mux for this channel.
+Hi Miquel,
 
-...
+I love your patch! Perhaps something to improve:
 
-> +dw_dmac-y			:= platform.o dmamux.o
+[auto build test WARNING on geert-renesas-devel/next]
+[also build test WARNING on geert-renesas-drivers/renesas-clk robh/for-next linus/master v5.17-rc4 next-20220217]
+[cannot apply to vkoul-dmaengine/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-We do not need this on other platforms, please make sure we have no dangling
-code on, e.g., x86.
+url:    https://github.com/0day-ci/linux/commits/Miquel-Raynal/RZN1-DMA-support/20220220-182519
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+config: arc-randconfig-r043-20220220 (https://download.01.org/0day-ci/archive/20220221/202202210247.Ul5J6pwr-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/ed9b880ea7f2b23b42feeed7a6ed898cd09ae2f1
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Miquel-Raynal/RZN1-DMA-support/20220220-182519
+        git checkout ed9b880ea7f2b23b42feeed7a6ed898cd09ae2f1
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arc SHELL=/bin/bash drivers/clk/renesas/ drivers/mtd/spi-nor/
 
-...
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> +	/* The of_node_put() will be done in the core for the node */
-> +	master = map->req_idx < dmamux->dmac_requests ? 0 : 1;
+All warnings (new ones prefixed by >>):
 
-The opposite conditional will be better, no?`
-
-...
-
-> +	dmamux->used_chans |= BIT(map->req_idx);
-> +	ret = r9a06g032_syscon_set_dmamux(BIT(map->req_idx),
-> +					  val ? BIT(map->req_idx) : 0);
-
-
-Cleaner to do
-
-	u32 mask = BIT(...);
-	...
-
-	dmamux->used_chans |= mask;
-	ret = r9a06g032_syscon_set_dmamux(mask, val ? mask : 0);
-
-...
-
-> +static const struct of_device_id rzn1_dmac_match[] __maybe_unused = {
-> +	{ .compatible = "renesas,rzn1-dma", },
-> +	{},
-
-No comma for terminator entry.
-
-> +};
-
-...
-
-> +	if (!node)
-> +		return -ENODEV;
-
-Dup check, why not to simply try for phandle first?
-
-...
-
-> +	if (of_property_read_u32(dmac_node, "dma-requests",
-> +				 &dmamux->dmac_requests)) {
-
-One line?
-
-> +		dev_err(&pdev->dev, "Missing DMAC requests information\n");
-> +		of_node_put(dmac_node);
-> +		return -EINVAL;
-
-First put node, then simply use dev_err_probe().
-
-> +	}
-
-...
-
-> +static const struct of_device_id rzn1_dmamux_match[] = {
-> +	{ .compatible = "renesas,rzn1-dmamux", },
-> +	{},
-
-No comma.
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
+>> drivers/clk/renesas/r9a06g032-clocks.c:320:5: warning: no previous prototype for 'r9a06g032_syscon_set_dmamux' [-Wmissing-prototypes]
+     320 | int r9a06g032_syscon_set_dmamux(u32 mask, u32 val)
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+vim +/r9a06g032_syscon_set_dmamux +320 drivers/clk/renesas/r9a06g032-clocks.c
+
+   317	
+   318	/* Exported helper to access the DMAMUX register */
+   319	static struct r9a06g032_priv *syscon_priv;
+ > 320	int r9a06g032_syscon_set_dmamux(u32 mask, u32 val)
+   321	{
+   322		u32 dmamux;
+   323	
+   324		if (!syscon_priv)
+   325			return -EPROBE_DEFER;
+   326	
+   327		spin_lock(&syscon_priv->lock);
+   328	
+   329		dmamux = readl(syscon_priv->reg + R9A06G032_SYSCON_DMAMUX);
+   330		dmamux &= ~mask;
+   331		dmamux |= val & mask;
+   332		writel(dmamux, syscon_priv->reg + R9A06G032_SYSCON_DMAMUX);
+   333	
+   334		spin_unlock(&syscon_priv->lock);
+   335	
+   336		return 0;
+   337	}
+   338	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
