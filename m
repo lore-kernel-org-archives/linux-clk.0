@@ -2,312 +2,224 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB68C43217
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 08:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21B4C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 09:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231394AbiBUISX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 03:18:23 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58322 "EHLO
+        id S1350308AbiBUJd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 04:33:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234046AbiBUISX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 03:18:23 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E658D52
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 00:18:00 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nM3sw-00047o-3Z; Mon, 21 Feb 2022 09:17:30 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nM3su-000Nwy-FU; Mon, 21 Feb 2022 09:17:27 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nM3st-004YuB-4s; Mon, 21 Feb 2022 09:17:27 +0100
-Date:   Mon, 21 Feb 2022 09:17:27 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>, Nishanth Menon <nm@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
-Subject: Re: [PATCH v16 21/40] pwm: tegra: Add runtime PM and OPP support
-Message-ID: <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
-References: <20211130232347.950-1-digetx@gmail.com>
- <20211130232347.950-22-digetx@gmail.com>
+        with ESMTP id S236978AbiBUJdP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 04:33:15 -0500
+Received: from smtpout1.mo528.mail-out.ovh.net (smtpout1.mo528.mail-out.ovh.net [46.105.34.251])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F13F28997;
+        Mon, 21 Feb 2022 01:13:54 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.109.138.12])
+        by mo528.mail-out.ovh.net (Postfix) with ESMTPS id C3F61E720712;
+        Mon, 21 Feb 2022 10:13:23 +0100 (CET)
+Received: from [192.168.1.103] (88.125.132.78) by DAG1EX2.emp2.local
+ (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Mon, 21 Feb
+ 2022 10:13:22 +0100
+Message-ID: <e4b4fbc7-53ee-987b-7849-bf625fc2155e@traphandler.com>
+Date:   Mon, 21 Feb 2022 10:13:21 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cwoouscqlz5ttj4a"
-Content-Disposition: inline
-In-Reply-To: <20211130232347.950-22-digetx@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 6/6] clk: renesas: r9a06g032: Disable the watchdog
+ reset sources when halting
+Content-Language: en-US
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        <linux-watchdog@vger.kernel.org>
+References: <20220208183511.2925304-1-jjhiblot@traphandler.com>
+ <20220208183511.2925304-7-jjhiblot@traphandler.com>
+ <CAMuHMdUCT-qwhN53mRnAUox2pqw+Y5-7Gw5EbC+-HCF054kkgQ@mail.gmail.com>
+ <4595fbfe-da0b-1b1a-2478-6d537012a2bf@roeck-us.net>
+From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+In-Reply-To: <4595fbfe-da0b-1b1a-2478-6d537012a2bf@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [88.125.132.78]
+X-ClientProxiedBy: CAS4.emp2.local (172.16.1.4) To DAG1EX2.emp2.local
+ (172.16.2.2)
+X-Ovh-Tracer-Id: 6319676177827838292
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfhisehtkeertddtfeejnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeeufeeggeevkefguedtheeufefftdehkeegkeetudetjeehjedtudeuveffkeehteenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqfigrthgthhguohhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---cwoouscqlz5ttj4a
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14/02/2022 16:34, Guenter Roeck wrote:
+> On 2/14/22 02:45, Geert Uytterhoeven wrote:
+>> Hi Jean-Jacques,
+>>
+>> CC watchdog people, who only received some patches.
+>>
+>> On Tue, Feb 8, 2022 at 7:35 PM Jean-Jacques Hiblot
+>> <jjhiblot@traphandler.com> wrote:
+>>> The watchdog reset sources must be disabled when the system is halted.
+>>> Otherwise the watchdogs will trigger a reset if they have been armed.
+>>>
+>>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+>>
+>> Thanks for your patch!
+>>
+>> [inserting changelog]
+>>
+>> | Changes v1 -> v2:
+>> | * Modified the clock driver to not enable the watchdog reset sources.
+>> |   On other renesas platforms, those bits are by the bootloader. The
+>> |   watchdog reset sources are still disabled when the platform is 
+>> halted
+>> |   to prevent a watchdog reset.
+>>
+>> I still have my doubts about this part. So on halt, you override the
+>> policy configured by the boot loader, which means the watchdog is no
+>> longer triggered on halt.
+>>
+>>> From a system perspective, the system can be in five states:
+>>    1. Running,
+>>    2. Crashed/lock-ed up,
+>>    3. Halt,
+>>    4. Reboot,
+>>    5. Poweroff.
+>>
+>> Now, from a policy perspective, what is the difference between a
+>> system that crashes or locks up, and a system that halts?
+>> I.e. should the system reboot on halt, or not?
+>>
+>> I think halting a system where the watchdog has been activated makes
+>> no sense, and the user either wants to explicitly reboot the system, or
+>> power it off, but never halt it.  So I think this patch is not needed.
 
-Hello,
+I don't see halting the machine as a must-have feature either, but it 
+seemed to me
 
-On Wed, Dec 01, 2021 at 02:23:28AM +0300, Dmitry Osipenko wrote:
-> The PWM on Tegra belongs to the core power domain and we're going to
-> enable GENPD support for the core domain. Now PWM must be resumed using
-> runtime PM API in order to initialize the PWM power state. The PWM clock
-> rate must be changed using OPP API that will reconfigure the power domain
-> performance state in accordance to the rate. Add runtime PM and OPP
-> support to the PWM driver.
->=20
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/pwm/pwm-tegra.c | 82 ++++++++++++++++++++++++++++++++---------
->  1 file changed, 64 insertions(+), 18 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-> index 11a10b575ace..18cf974ac776 100644
-> --- a/drivers/pwm/pwm-tegra.c
-> +++ b/drivers/pwm/pwm-tegra.c
-> @@ -42,12 +42,16 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/pm_opp.h>
->  #include <linux/pwm.h>
->  #include <linux/platform_device.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->  #include <linux/reset.h>
-> =20
-> +#include <soc/tegra/common.h>
-> +
->  #define PWM_ENABLE	(1 << 31)
->  #define PWM_DUTY_WIDTH	8
->  #define PWM_DUTY_SHIFT	16
-> @@ -145,7 +149,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->  		required_clk_rate =3D
->  			(NSEC_PER_SEC / period_ns) << PWM_DUTY_WIDTH;
-> =20
-> -		err =3D clk_set_rate(pc->clk, required_clk_rate);
-> +		err =3D dev_pm_opp_set_rate(pc->dev, required_clk_rate);
->  		if (err < 0)
->  			return -EINVAL;
-> =20
-> @@ -181,8 +185,8 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->  	 * before writing the register. Otherwise, keep it enabled.
->  	 */
->  	if (!pwm_is_enabled(pwm)) {
-> -		err =3D clk_prepare_enable(pc->clk);
-> -		if (err < 0)
-> +		err =3D pm_runtime_resume_and_get(pc->dev);
-> +		if (err)
->  			return err;
->  	} else
->  		val |=3D PWM_ENABLE;
-> @@ -193,7 +197,7 @@ static int tegra_pwm_config(struct pwm_chip *chip, st=
-ruct pwm_device *pwm,
->  	 * If the PWM is not enabled, turn the clock off again to save power.
->  	 */
->  	if (!pwm_is_enabled(pwm))
-> -		clk_disable_unprepare(pc->clk);
-> +		pm_runtime_put(pc->dev);
-> =20
->  	return 0;
->  }
-> @@ -204,8 +208,8 @@ static int tegra_pwm_enable(struct pwm_chip *chip, st=
-ruct pwm_device *pwm)
->  	int rc =3D 0;
->  	u32 val;
-> =20
-> -	rc =3D clk_prepare_enable(pc->clk);
-> -	if (rc < 0)
-> +	rc =3D pm_runtime_resume_and_get(pc->dev);
-> +	if (rc)
->  		return rc;
-> =20
->  	val =3D pwm_readl(pc, pwm->hwpwm);
-> @@ -224,7 +228,7 @@ static void tegra_pwm_disable(struct pwm_chip *chip, =
-struct pwm_device *pwm)
->  	val &=3D ~PWM_ENABLE;
->  	pwm_writel(pc, pwm->hwpwm, val);
-> =20
-> -	clk_disable_unprepare(pc->clk);
-> +	pm_runtime_put_sync(pc->dev);
->  }
-> =20
->  static const struct pwm_ops tegra_pwm_ops =3D {
-> @@ -256,11 +260,20 @@ static int tegra_pwm_probe(struct platform_device *=
-pdev)
->  	if (IS_ERR(pwm->clk))
->  		return PTR_ERR(pwm->clk);
-> =20
-> +	ret =3D devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pm_runtime_enable(&pdev->dev);
-> +	ret =3D pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Set maximum frequency of the IP */
-> -	ret =3D clk_set_rate(pwm->clk, pwm->soc->max_frequency);
-> +	ret =3D dev_pm_opp_set_rate(pwm->dev, pwm->soc->max_frequency);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "Failed to set max frequency: %d\n", ret);
-> -		return ret;
-> +		goto put_pm;
->  	}
-> =20
->  	/*
-> @@ -278,7 +291,7 @@ static int tegra_pwm_probe(struct platform_device *pd=
-ev)
->  	if (IS_ERR(pwm->rst)) {
->  		ret =3D PTR_ERR(pwm->rst);
->  		dev_err(&pdev->dev, "Reset control is not found: %d\n", ret);
-> -		return ret;
-> +		goto put_pm;
->  	}
-> =20
->  	reset_control_deassert(pwm->rst);
-> @@ -291,10 +304,16 @@ static int tegra_pwm_probe(struct platform_device *=
-pdev)
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
->  		reset_control_assert(pwm->rst);
-> -		return ret;
-> +		goto put_pm;
->  	}
-> =20
-> +	pm_runtime_put(&pdev->dev);
-> +
->  	return 0;
-> +put_pm:
-> +	pm_runtime_put_sync_suspend(&pdev->dev);
-> +	pm_runtime_force_suspend(&pdev->dev);
-> +	return ret;
->  }
-> =20
->  static int tegra_pwm_remove(struct platform_device *pdev)
-> @@ -305,20 +324,44 @@ static int tegra_pwm_remove(struct platform_device =
-*pdev)
-> =20
->  	reset_control_assert(pc->rst);
-> =20
-> +	pm_runtime_force_suspend(&pdev->dev);
-> +
->  	return 0;
->  }
-> =20
-> -#ifdef CONFIG_PM_SLEEP
-> -static int tegra_pwm_suspend(struct device *dev)
-> +static int __maybe_unused tegra_pwm_runtime_suspend(struct device *dev)
->  {
-> -	return pinctrl_pm_select_sleep_state(dev);
-> +	struct tegra_pwm_chip *pc =3D dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	clk_disable_unprepare(pc->clk);
-> +
-> +	err =3D pinctrl_pm_select_sleep_state(dev);
-> +	if (err) {
-> +		clk_prepare_enable(pc->clk);
-> +		return err;
-> +	}
-> +
-> +	return 0;
->  }
-> =20
-> -static int tegra_pwm_resume(struct device *dev)
-> +static int __maybe_unused tegra_pwm_runtime_resume(struct device *dev)
->  {
-> -	return pinctrl_pm_select_default_state(dev);
-> +	struct tegra_pwm_chip *pc =3D dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	err =3D pinctrl_pm_select_default_state(dev);
-> +	if (err)
-> +		return err;
-> +
-> +	err =3D clk_prepare_enable(pc->clk);
-> +	if (err) {
-> +		pinctrl_pm_select_sleep_state(dev);
-> +		return err;
-> +	}
-> +
-> +	return 0;
->  }
-> -#endif
-> =20
->  static const struct tegra_pwm_soc tegra20_pwm_soc =3D {
->  	.num_channels =3D 4,
-> @@ -344,7 +387,10 @@ static const struct of_device_id tegra_pwm_of_match[=
-] =3D {
->  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
-> =20
->  static const struct dev_pm_ops tegra_pwm_pm_ops =3D {
-> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
-> +	SET_RUNTIME_PM_OPS(tegra_pwm_runtime_suspend, tegra_pwm_runtime_resume,
-> +			   NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +				pm_runtime_force_resume)
->  };
-> =20
->  static struct platform_driver tegra_pwm_driver =3D {
+that there could be other people relying on it. I'll remove this patch 
+from the series.
 
-I admit to not completely understand the effects of this patch, but I
-don't see a problem either. So for me this patch is OK:
+>>
+>> Watchdog people: what is your opinion?
+>
+> In my understanding the shutdown code is always executed, ie also for
+> restarts and poweroff. Disabling the watchdog in that situation is not
+> always desirable, though sometimes necessary depending on the hardware.
+> Disabling it through the backdoor (instead of calling 
+> watchdog_stop_on_reboot)
+> seems odd, though.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
 
-I spot a problem, it's not introduced by this patch however: If the
-consumer of the PWM didn't stop the hardware, the suspend should IMHO be
-prevented.
+Unfortunately, in this case it is not possible to stop the watchdog once 
+started.
 
-I wonder if the patches in this series go in in one go via an ARM or
-Tegra tree, or each patch via its respective maintainer tree.
+The only way to halt the machine is to disable the watchdog reset source.
 
-Best regards
-Uwe
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+JJ
 
---cwoouscqlz5ttj4a
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmITSpMACgkQwfwUeK3K
-7AmZaggAnjKWv6/JVY3Cp1bcb73ZjrS1hecjg6rS92mYnqvqYCbPCvW9u6Ku+IWI
-u/wIClnWJzYXF6ukB9OGBlJox1w6dS/j+LHiqAQw5h4DdWQv0cy27jDTF9lV4r1E
-DQWuKRNPSs/X7nMMIGkJ2UqgyeKw0sfX1cHpiJ8WatkPUwayInGaBfblE0seHIhw
-QUG2NbJtiROV3MgPRpoQWb0+7t9SSw9wxobBva3oaAIMNQLDmi/hcMzJXfXo3uH5
-Nu4PJjXQxnIxTap/ys4sqabTbmIopeHY2WDuuwIxgRqF9O4IRl+ygV05c79HE6mt
-tX1TItqO17EB1/sux6//dOpREBQgQA==
-=cZKl
------END PGP SIGNATURE-----
-
---cwoouscqlz5ttj4a--
+>
+> Guenter
+>
+>> Thanks!
+>>
+>>> --- a/drivers/clk/renesas/r9a06g032-clocks.c
+>>> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
+>>> @@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, 
+>>> K_DUALGATE };
+>>>
+>>>   #define R9A06G032_CLOCK_COUNT (R9A06G032_UART_GROUP_34567 + 1)
+>>>
+>>> +#define R9A06G032_SYSCTRL_REG_RSTEN            0x120
+>>> +#define WDA7RST1       BIT(2)
+>>> +#define WDA7RST0       BIT(1)
+>>> +#define MRESET         BIT(0)
+>>> +
+>>>   static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
+>>>          D_ROOT(CLKOUT, "clkout", 25, 1),
+>>>          D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
+>>> @@ -893,6 +898,19 @@ static void 
+>>> r9a06g032_clocks_del_clk_provider(void *data)
+>>>          of_clk_del_provider(data);
+>>>   }
+>>>
+>>> +static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
+>>> +                       uint32_t mask, uint32_t value)
+>>> +{
+>>> +       uint32_t rsten;
+>>> +       unsigned long flags;
+>>> +
+>>> +       spin_lock_irqsave(&clocks->lock, flags);
+>>> +       rsten = readl(clocks->reg);
+>>> +       rsten = (rsten & ~mask) | (value & mask);
+>>> +       writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
+>>> +       spin_unlock_irqrestore(&clocks->lock, flags);
+>>> +}
+>>> +
+>>>   static int __init r9a06g032_clocks_probe(struct platform_device 
+>>> *pdev)
+>>>   {
+>>>          struct device *dev = &pdev->dev;
+>>> @@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct 
+>>> platform_device *pdev)
+>>>          if (!clocks || !clks)
+>>>                  return -ENOMEM;
+>>>
+>>> +       platform_set_drvdata(pdev, clocks);
+>>> +
+>>>          spin_lock_init(&clocks->lock);
+>>>
+>>>          clocks->data.clks = clks;
+>>> @@ -963,9 +983,18 @@ static int __init r9a06g032_clocks_probe(struct 
+>>> platform_device *pdev)
+>>>          if (error)
+>>>                  return error;
+>>>
+>>> +
+>>>          return r9a06g032_add_clk_domain(dev);
+>>>   }
+>>>
+>>> +static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
+>>> +{
+>>> +       struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
+>>> +
+>>> +       /* Disable the watchdog reset sources */
+>>> +       r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
+>>> +}
+>>> +
+>>>   static const struct of_device_id r9a06g032_match[] = {
+>>>          { .compatible = "renesas,r9a06g032-sysctrl" },
+>>>          { }
+>>> @@ -976,6 +1005,7 @@ static struct platform_driver 
+>>> r9a06g032_clock_driver = {
+>>>                  .name   = "renesas,r9a06g032-sysctrl",
+>>>                  .of_match_table = r9a06g032_match,
+>>>          },
+>>> +       .shutdown = r9a06g032_clocks_shutdown,
+>>>   };
+>>>
+>>>   static int __init r9a06g032_clocks_init(void)
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                          Geert
+>>
+>> -- 
+>> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- 
+>> geert@linux-m68k.org
+>>
+>> In personal conversations with technical people, I call myself a 
+>> hacker. But
+>> when I'm talking to journalists I just say "programmer" or something 
+>> like that.
+>>                                  -- Linus Torvalds
+>
