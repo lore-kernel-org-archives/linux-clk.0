@@ -2,68 +2,114 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0875C4321E
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA1EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380426AbiBUQ05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:26:57 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54718 "EHLO
+        id S243157AbiBUQaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:30:01 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381119AbiBUQ0e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:26:34 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EF9B2A276
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:25:28 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by andre.telenet-ops.be with bizsmtp
-        id xsRN260033YJRAw01sRNEB; Mon, 21 Feb 2022 17:25:22 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nMBV3-001TiC-OG; Mon, 21 Feb 2022 17:25:21 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nMBV3-006G0d-2O; Mon, 21 Feb 2022 17:25:21 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rzg2l: Simplify multiplication/shift logic
-Date:   Mon, 21 Feb 2022 17:25:20 +0100
-Message-Id: <71e1cf2e30fb2d7966fc8ec6bab23eb7e24aa1c4.1645460687.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S232835AbiBUQaA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:30:00 -0500
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841D81D0F0;
+        Mon, 21 Feb 2022 08:29:36 -0800 (PST)
+Received: by mail-ed1-f45.google.com with SMTP id c6so27700208edk.12;
+        Mon, 21 Feb 2022 08:29:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=r60LnpBKJemDpAD/NBoDJDG4Dw1WSf5xzL3nTkd2VXM=;
+        b=Z5hAvtwhcv3gs3Ui4C6fc32tugM1jxPvTAAwhtougNdZuhyS0oBGFRrTJj78PtRye9
+         BHae6b2NKO1M0NrufK66BugjNI2fB/n5/6aGxk5aPo79u1xq+/rwGOBHmdazPz/Wj36K
+         D5EGXZXFCXXSM3x06XI7tRZJSobXLyg1GLxk5eF5gmqsH4c8hgvbqz3E7Ys6C7ZB8dVC
+         l2uAyygYnEz4jziksX9BzlLwDQtKfpHDpfowIwuty/NDRAITTeX4N4Fr+cHgpas1zMNW
+         erWtvFG4XaiwR6idQWS49kFWIGjFIFqvfXBMNgMxVBvVKbQRjNO1YHZDfVt/Kmr7VwCu
+         XraA==
+X-Gm-Message-State: AOAM531ICcDwqzlYb3lUoQ9EtUduveJrMLKCdlpPyem+x3WApIlR755T
+        BDGhqUB31KyDsGtwoO9uGBU=
+X-Google-Smtp-Source: ABdhPJzs6plXAxsbWbLwuDo6hS7fX3fNn/Ze3hNH7xJcp6TT2yB/K+N/T9b7qA32oQipw5gnSo3ycw==
+X-Received: by 2002:a05:6402:268a:b0:410:cc67:e792 with SMTP id w10-20020a056402268a00b00410cc67e792mr22259826edd.218.1645460974857;
+        Mon, 21 Feb 2022 08:29:34 -0800 (PST)
+Received: from [192.168.0.122] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.googlemail.com with ESMTPSA id m7sm3835023eds.104.2022.02.21.08.29.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Feb 2022 08:29:34 -0800 (PST)
+Message-ID: <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
+Date:   Mon, 21 Feb 2022 17:29:32 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Content-Language: en-US
+To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
+        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
+        broonie@kernel.org, arnd@arndb.de, stefan.wahren@i2se.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        wells.lu@sunplus.com, Rob Herring <robh@kernel.org>
+References: <cover.1645413746.git.qinjian@cqplus1.com>
+ <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-"a * (1 << b)" == "a << b".
+On 21/02/2022 04:29, Qin Jian wrote:
+> This introduces bindings for boards based Sunplus SP7021 SoC.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+> ---
+>  .../bindings/arm/sunplus,sp7021.yaml          | 27 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 +++++
+>  2 files changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+> new file mode 100644
+> index 000000000..5b9985b73
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+> @@ -0,0 +1,27 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) Sunplus Co., Ltd. 2021
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/sunplus,sp7021.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sunplus SP7021 Boards Device Tree Bindings
+> +
+> +maintainers:
+> +  - qinjian <qinjian@cqplus1.com>
+> +
+> +description: |
+> +  ARM platforms using Sunplus SP7021, an ARM Cortex A7 (4-cores) based SoC.
+> +  Wiki: https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: sunplus,sp7021-achip
+> +
 
-No change in generated code.
+You did not publish DTS so bigger picture and context are missing here.
+Is it a SoC compatible? A board compatible? Why only one? Against what
+does it validate?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk-for-v5.18.
+This binding looks incomplete.
 
- drivers/clk/renesas/rzg2l-cpg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 486d0656c58ac442..1b4c6782a1e8080c 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -291,7 +291,7 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- 	val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
- 	val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
- 	mult = MDIV(val1) + KDIV(val1) / 65536;
--	div = PDIV(val1) * (1 << SDIV(val2));
-+	div = PDIV(val1) << SDIV(val2);
- 
- 	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
- }
--- 
-2.25.1
-
+Best regards,
+Krzysztof
