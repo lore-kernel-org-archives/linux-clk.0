@@ -2,114 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA1EC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476FEC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243157AbiBUQaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:30:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37140 "EHLO
+        id S231326AbiBUQa2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:30:28 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232835AbiBUQaA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:30:00 -0500
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841D81D0F0;
-        Mon, 21 Feb 2022 08:29:36 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id c6so27700208edk.12;
-        Mon, 21 Feb 2022 08:29:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=r60LnpBKJemDpAD/NBoDJDG4Dw1WSf5xzL3nTkd2VXM=;
-        b=Z5hAvtwhcv3gs3Ui4C6fc32tugM1jxPvTAAwhtougNdZuhyS0oBGFRrTJj78PtRye9
-         BHae6b2NKO1M0NrufK66BugjNI2fB/n5/6aGxk5aPo79u1xq+/rwGOBHmdazPz/Wj36K
-         D5EGXZXFCXXSM3x06XI7tRZJSobXLyg1GLxk5eF5gmqsH4c8hgvbqz3E7Ys6C7ZB8dVC
-         l2uAyygYnEz4jziksX9BzlLwDQtKfpHDpfowIwuty/NDRAITTeX4N4Fr+cHgpas1zMNW
-         erWtvFG4XaiwR6idQWS49kFWIGjFIFqvfXBMNgMxVBvVKbQRjNO1YHZDfVt/Kmr7VwCu
-         XraA==
-X-Gm-Message-State: AOAM531ICcDwqzlYb3lUoQ9EtUduveJrMLKCdlpPyem+x3WApIlR755T
-        BDGhqUB31KyDsGtwoO9uGBU=
-X-Google-Smtp-Source: ABdhPJzs6plXAxsbWbLwuDo6hS7fX3fNn/Ze3hNH7xJcp6TT2yB/K+N/T9b7qA32oQipw5gnSo3ycw==
-X-Received: by 2002:a05:6402:268a:b0:410:cc67:e792 with SMTP id w10-20020a056402268a00b00410cc67e792mr22259826edd.218.1645460974857;
-        Mon, 21 Feb 2022 08:29:34 -0800 (PST)
-Received: from [192.168.0.122] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.googlemail.com with ESMTPSA id m7sm3835023eds.104.2022.02.21.08.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 08:29:34 -0800 (PST)
-Message-ID: <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
-Date:   Mon, 21 Feb 2022 17:29:32 +0100
+        with ESMTP id S233392AbiBUQa1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:30:27 -0500
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 664B71D306
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:30:04 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id C1CB75C0292;
+        Mon, 21 Feb 2022 11:30:03 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 21 Feb 2022 11:30:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=VQ18XQVk9IzSPBm0N4aNJnOzzx5QuoDKxo0tjL
+        ZAUV8=; b=AEdWm2c/V7Nbl9Nv50YTvfCXj+7FTGZXcYdVTgXYzTztcDr44d2SU1
+        jniDjIzf/PE6tZ+W9gaaN9EXBZEUcUcV4VkmcPpmpsPrugOwvkhNrbTzkeM78p9o
+        zpWtYPI9UkN39/JMEW07BPuQQW8wzi59Wg5WXd0o6Qw0jTlCg5YHOKGS4quM/sno
+        1N9zi8IxjeUGaUgW2q34kmRa9tPbrTFQAB8d0n0eXxWwHPghCQL1QHzZ7cnD1EK/
+        0QiXSCvWn0QRXvlD+HplZAw8cGbQP/eJpH/WnTr5KS76l8hGAr1mydooiN2lBrUo
+        J9Hdgk1UsKGV3Str9E6+9m7pBSK+oFpA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=VQ18XQVk9IzSPBm0N
+        4aNJnOzzx5QuoDKxo0tjLZAUV8=; b=HyYHRsX/GaGTbf0CmhgPTcenqAZQ/HghH
+        2qdboX8Xn1A5UP1QeKZNWTISMTpu49jOE4Zn4DTQUAOrtwJMinZ629jPbUgmSN+t
+        TJ192Hppm/CMmhw9QHjoKQ5k/31mx1thojv4JLDRMPH+l12YvJgObB394JNfjipn
+        pNC1Uf+TYo4hTLk+CMeotcorjcl/9V6qmVrVSFBCd9ONVVYsw6/9iPSl/lMcc/vc
+        BDU67+7CPIQf74hCojRPIjlVvDm2Rni8nxxtntxAlNRz0862d9SktnM8n+WOGXTh
+        hPO3OTB7U3LCZimP2+6gKRU+uP9jLXkXFzrpceW0tkdXhcEqnqDMw==
+X-ME-Sender: <xms:C74TYmDdcoNatGfuPO5_fZCFkGy82hqhULEMlDJ7d1MlsgxvsxqUIw>
+    <xme:C74TYgieQsfbwCIA8Yc3awX5g2UHuB1gEM4bV8UYxc_WzAc10rsTKaCNIpfTMW12A
+    SXIPhP2a-0np9hOSm8>
+X-ME-Received: <xmr:C74TYpnRGEjXjA-GWk2hEe8Psa5aAp35hwCy2AbTwgTYFyTDkItvEVqBdT1R2yCnSuc6lLQD3VLWbDm5APKFyyuKCczbck0KLNsQij8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdekjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:C74TYkwg0Cp-4CCJ9IWqrwPXpPguALASQMZfSRs8nA_iYVKedq4IaA>
+    <xmx:C74TYrTM9SGQG0V8Tf8DAPOm81jPfdqQi-rRYdxismFVFvgaBHVoyQ>
+    <xmx:C74TYvZ8aJoKzJQsoDGAZZLvG9RhUh6UChykvDzUNH1KHu0U1Ib24w>
+    <xmx:C74TYqFa0kB0rZzAUmkrUiA7FaTxypxOqSO-m4_M-FKjEcPn0QHUHQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Feb 2022 11:30:03 -0500 (EST)
+Date:   Mon, 21 Feb 2022 17:30:01 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: Re: [PATCH v4 03/10] clk: Use clamp instead of open-coding our own
+Message-ID: <20220221163001.k4nstaxtbmlxgz3j@houat>
+References: <20220125141549.747889-1-maxime@cerno.tech>
+ <20220125141549.747889-4-maxime@cerno.tech>
+ <20220218223422.4FA9DC340E9@smtp.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
-Content-Language: en-US
-To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        broonie@kernel.org, arnd@arndb.de, stefan.wahren@i2se.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        wells.lu@sunplus.com, Rob Herring <robh@kernel.org>
-References: <cover.1645413746.git.qinjian@cqplus1.com>
- <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3ae4nvu5w3r53lvo"
+Content-Disposition: inline
+In-Reply-To: <20220218223422.4FA9DC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/02/2022 04:29, Qin Jian wrote:
-> This introduces bindings for boards based Sunplus SP7021 SoC.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> ---
->  .../bindings/arm/sunplus,sp7021.yaml          | 27 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++++
->  2 files changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-> new file mode 100644
-> index 000000000..5b9985b73
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
-> @@ -0,0 +1,27 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) Sunplus Co., Ltd. 2021
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/arm/sunplus,sp7021.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sunplus SP7021 Boards Device Tree Bindings
-> +
-> +maintainers:
-> +  - qinjian <qinjian@cqplus1.com>
-> +
-> +description: |
-> +  ARM platforms using Sunplus SP7021, an ARM Cortex A7 (4-cores) based SoC.
-> +  Wiki: https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - const: sunplus,sp7021-achip
-> +
 
-You did not publish DTS so bigger picture and context are missing here.
-Is it a SoC compatible? A board compatible? Why only one? Against what
-does it validate?
+--3ae4nvu5w3r53lvo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This binding looks incomplete.
+On Fri, Feb 18, 2022 at 02:34:20PM -0800, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-01-25 06:15:42)
+> > The code in clk_set_rate_range() will, if the current rate is outside of
+> > the new range, will force it to the minimum or maximum. This is
+> > equivalent to using clamp, while being less readable. Let's switch to
+> > using clamp instead.
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  drivers/clk/clk.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 7bb5ae0fb688..150d1bc0985b 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2365,11 +2365,7 @@ int clk_set_rate_range(struct clk *clk, unsigned=
+ long min, unsigned long max)
+> >                  *   this corner case when determining the rate
+> >                  */
+> > =20
+> > -               if (rate < min)
+> > -                       rate =3D min;
+> > -               else
+> > -                       rate =3D max;
+> > -
+> > +               rate =3D clamp(clk->core->req_rate, min, max);
+>=20
+> This isn't equivalent. The else arm is taken if rate >=3D min and rate is
+> set to max, whereas clamp() will leave the rate unchanged if rate >=3D min
+> && rate < max.
 
+This can't happen, since we're in an if block that is (rate < min ||
+rate > max), so at this point if rate is not less than min, it is
+greater than rate. Thus, it's equivalent to clamp.
 
-Best regards,
-Krzysztof
+Still, the commit message could be better, I'll rephrase it.
+
+Maxime
+
+--3ae4nvu5w3r53lvo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhO+CQAKCRDj7w1vZxhR
+xW+JAQD1e5RhceCFxBdY13Gbfb6flQZaIfHnmgTrCSy6p9A4yAEAsnx7qb/QlSfF
+E+eHriTwCohlx5TB/dT4Zkq8kPHgkw0=
+=jdRz
+-----END PGP SIGNATURE-----
+
+--3ae4nvu5w3r53lvo--
