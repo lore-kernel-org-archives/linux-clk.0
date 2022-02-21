@@ -2,100 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B36BC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 02:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6345DC43217
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 02:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235947AbiBUCBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Feb 2022 21:01:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49272 "EHLO
+        id S1343945AbiBUCg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Feb 2022 21:36:58 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234114AbiBUCBg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Feb 2022 21:01:36 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9531517D3;
-        Sun, 20 Feb 2022 18:01:14 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id x3so28177102qvd.8;
-        Sun, 20 Feb 2022 18:01:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L6UJ01aO6yqMFyXgXVkysCIqiLsld/b/1p7hzthZA8U=;
-        b=FV9H/c+eRAbiraRlbbFVbiUpp+PdGevLPwWpXp5zDNgnKnVqO4+fED7zaFyE9HDmpN
-         sH9fo9LkiNQvf+JSp7FIt0dXcZrM8SpUS6013DfVUatIToW0uNqgotay7nH5s+QmgHtf
-         ZKJQl2sitkYGDNKctwH+fS3sNIx+DMsWOmYxst2OBZQGO2S/lpY89MHoOlMDIocPv4vz
-         43t8PxlZR8lDUGouHja3QhGoAHmWXsI2nQOJ5GA4wvEFsLmqsiKV1A/rSCmsmh/i8v3G
-         NUYVz3L7reQ+1IppHRMjhh7Rer6gPXkQsSj7HuZ4zvmJkOkb8gPYF43v98Aket1bna5L
-         CgvA==
+        with ESMTP id S1343938AbiBUCgy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Feb 2022 21:36:54 -0500
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989AF299;
+        Sun, 20 Feb 2022 18:36:31 -0800 (PST)
+Received: by mail-il1-f177.google.com with SMTP id p11so8992040ils.1;
+        Sun, 20 Feb 2022 18:36:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=L6UJ01aO6yqMFyXgXVkysCIqiLsld/b/1p7hzthZA8U=;
-        b=24qBptNL3RcZ9Q4yjJtMY2xB4SGjqK3Ip6KbZChUpXxTR0jopuwOwPpOzDn85MPCeq
-         te8VuP95+2wkYZmZyQH3/kGCFCG7V1aAZ3N4pBGNZPBEAXZfq0/1crUcqsKo95ZXzU9r
-         HLeF7nJoDiiW3LBokaka3niHAkQV+27gF4jGmDbb2pf03ZSv99lu9NhJuoQ70Ip+cRcf
-         ocwwPFdIpLvwe6jUCtupgf874Slhy7XNlyGuYtW3QPTRlovirzniiKsgtPH5H5dIUK/X
-         oDcPGm9PWNcxRT+RrmVUvBvcO6j+HErkKvsfmxaSlTszRzyJiBrZDUCCS+ZwTnpOd4v0
-         A8Eg==
-X-Gm-Message-State: AOAM533ri6EMx6Y5GEE8GvBEyvaPHHiqVKnF+y9HtpAaLRBDmGB3AIeE
-        MhMwNa7ApjO/bhgbC4xphTY=
-X-Google-Smtp-Source: ABdhPJyti2fe/0D7jey1jMV+CH6mSxJq2zIFxoITidmlU76ohHSP58kKVGfznBiNbihuemWWiby6Ww==
-X-Received: by 2002:a05:6214:e6f:b0:431:46cd:dd9a with SMTP id jz15-20020a0562140e6f00b0043146cddd9amr6013348qvb.125.1645408874012;
-        Sun, 20 Feb 2022 18:01:14 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id n19sm19160708qtk.66.2022.02.20.18.01.10
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=QyX/i2/YrR/rW3J3vcQL5VJG0A8Hvyop2ZIeubiA5uY=;
+        b=31BVrDMMHkfUoZhz/E4uchbtevPAmv2DARIy4BG6ZnmCbgdiANjL8c40C2i/jz5HDM
+         4YVT6C6Nqi5eJoPVuBGppH4+QS1PU70XVltW0QNXIigSr6ah8T/qw7gXhAACwmPa86FQ
+         hKFyNYWZ0qNy0IzP95SzszTAwOm9yvTWO44betxNJd5ZGrsJJFNctuQo0WkYbuKvO1JZ
+         XrITdvo9ENscJEhe329jrqL505rYh5yIoBdJCeprqbg4dMV71wO/TzcS4I1NiHZbZDjj
+         ofgjlKu7OvgslbMF3MwPrZA2Iwg+BI4YpcmeapUIm7S2APRBbyzoD1KLtw1pWhETs0oG
+         Tlyw==
+X-Gm-Message-State: AOAM533a+05RkWvkwoe7DpYTJ0ZZfBKQawA9JFkzvZyFSG2fz4S7eFU4
+        DFX4xjRAw6jv5BGXfi3Ayg==
+X-Google-Smtp-Source: ABdhPJzdwNs2TTvMMhPurie/Z2ze3Kaj4Y2IAOi9YjrL1pMLCBZwuYrSXPXRDjt2YTX9QydWacu9Kw==
+X-Received: by 2002:a92:ca0f:0:b0:2bf:56d4:3aec with SMTP id j15-20020a92ca0f000000b002bf56d43aecmr14324732ils.220.1645410990890;
+        Sun, 20 Feb 2022 18:36:30 -0800 (PST)
+Received: from robh.at.kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id h13sm7203330ili.28.2022.02.20.18.36.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Feb 2022 18:01:13 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, heiko@sntech.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] clk/rockchip: Use of_device_get_match_data()
-Date:   Mon, 21 Feb 2022 02:01:03 +0000
-Message-Id: <20220221020103.1925026-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 20 Feb 2022 18:36:30 -0800 (PST)
+Received: (nullmailer pid 2041543 invoked by uid 1000);
+        Mon, 21 Feb 2022 02:36:09 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     linux-clk@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        dmaengine@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Laetitia MARIOTTINI <laetitia.mariottini@se.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+In-Reply-To: <20220218181226.431098-3-miquel.raynal@bootlin.com>
+References: <20220218181226.431098-1-miquel.raynal@bootlin.com> <20220218181226.431098-3-miquel.raynal@bootlin.com>
+Subject: Re: [PATCH 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+Date:   Sun, 20 Feb 2022 20:36:09 -0600
+Message-Id: <1645410969.367667.2041542.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+On Fri, 18 Feb 2022 19:12:20 +0100, Miquel Raynal wrote:
+> Just like for the NAND controller that is also on this SoC, let's
+> provide a SoC generic and a more specific couple of compatibles.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
 
-Use of_device_get_match_data() to simplify the code.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
----
- drivers/clk/rockchip/clk-rk3568.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+yamllint warnings/errors:
 
-diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
-index 69a9e8069a48..9ca1a26a2533 100644
---- a/drivers/clk/rockchip/clk-rk3568.c
-+++ b/drivers/clk/rockchip/clk-rk3568.c
-@@ -1697,14 +1697,12 @@ static const struct of_device_id clk_rk3568_match_table[] = {
- static int __init clk_rk3568_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	const struct of_device_id *match;
- 	const struct clk_rk3568_inits *init_data;
- 
--	match = of_match_device(clk_rk3568_match_table, &pdev->dev);
--	if (!match || !match->data)
-+	init_data = (struct clk_rk3568_inits *)of_device_get_match_data(&pdev->dev);
-+	if (!init_data)
- 		return -EINVAL;
- 
--	init_data = match->data;
- 	if (init_data->inits)
- 		init_data->inits(np);
- 
--- 
-2.25.1
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: '#dma-cells' is a required property
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: $nodename:0: 'nand-controller@40102000' does not match '^dma-controller(@.*)?$'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: clocks: [[4294967295, 117], [4294967295, 37]] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: clock-names: ['hclk', 'eclk'] is too long
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: Unevaluated properties are not allowed ('clocks', 'clock-names', '#address-cells', '#size-cells' were unexpected)
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/mtd/renesas-nandc.example.dt.yaml: nand-controller@40102000: '#dma-cells' is a required property
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1594847
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
