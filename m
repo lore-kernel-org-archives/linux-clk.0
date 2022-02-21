@@ -2,167 +2,208 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D98C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 09:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003ACC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 10:29:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232564AbiBUJiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 04:38:25 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45648 "EHLO
+        id S1354724AbiBUK3i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:29:38 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351879AbiBUJho (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 04:37:44 -0500
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1F6654E;
-        Mon, 21 Feb 2022 01:16:38 -0800 (PST)
-Received: by mail-qv1-f46.google.com with SMTP id e22so30466709qvf.9;
-        Mon, 21 Feb 2022 01:16:38 -0800 (PST)
+        with ESMTP id S1354838AbiBUK3Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 05:29:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D6DD66C97
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:51:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645437008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=88houUaciP/d6/AWIIRoKq1UYLz/KQk9XhKaIcWCOT0=;
+        b=W6KP7FqNEMBdsygW+aMkfnrvLTcXHMwDJeicCZUMStPcrjnB+5Pg6+f0zM6OXKHUdPMfZq
+        3WtrQVBRDETL2trK1PxOP1SHPWDaJcPhDLI51ceNkiOHDJhVY8GTggipjesbeNaxEi5sBV
+        4CeXYyhJ52S3cNZvgxp+IvHpB76ie5Y=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-462-cYgClsfQO8qBZw81h7uwdw-1; Mon, 21 Feb 2022 04:50:06 -0500
+X-MC-Unique: cYgClsfQO8qBZw81h7uwdw-1
+Received: by mail-ej1-f71.google.com with SMTP id m4-20020a170906160400b006be3f85906eso4428384ejd.23
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:50:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SnKbJVLfgaRymluaOH/LPddpZ+bX9fHGr9MZlFjIlxM=;
-        b=xlszHnUJZbhIjq4nQuqRUxIpX+ZfTRCwdPRH6JUb0Rvq9OUyvuK3ao4uGA/qe8YAt9
-         aRwJPJpGq5UYWG41pIYlqXI+Alf5mMVRRK8lxqxiErOY5SU8dManyJI3h3kghACPJqi1
-         kjcSpxFG4FvYcsgEgWdUQplB7rPtBRPfJDnahGtHTo/ABh6ualHu6ho63zODxfTUL5Q9
-         ZTRrxgqrvH78VCUTlzMKMlmnqdaLNY56+45VCLb30IsXhtnawdeAu0NXckEQ/XmFCm0U
-         os2PcoJHR75srE5I9n5PZ7n+laNlBI2fHCy4fURJZlrlCt7ecBEuK6AdzIrVPzwLG8Xa
-         Rj5w==
-X-Gm-Message-State: AOAM533WDul4UqeTa8pSk3g/J6ynjFVoBSQyFWPowC5KGguzwvWCFn2P
-        NFhzQqWl8QV05TL5cwPqSIygnc8p69MgsQ==
-X-Google-Smtp-Source: ABdhPJzHa1YQ0rsQI9qD1uMb+I73idgYRZxjNeFVFO5wfbo/kE8e/gp5ZtX8MxbtRt9LhMOSES8J4Q==
-X-Received: by 2002:ac8:5988:0:b0:2d7:84d6:aee with SMTP id e8-20020ac85988000000b002d784d60aeemr16892128qte.466.1645434997036;
-        Mon, 21 Feb 2022 01:16:37 -0800 (PST)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id y18sm30482997qtj.33.2022.02.21.01.16.36
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=88houUaciP/d6/AWIIRoKq1UYLz/KQk9XhKaIcWCOT0=;
+        b=kSwTqnEf/WCtJ+aVxXVKzVykK4lNG4NdprxQd+0TqN9fkzNzEnTnxFlYnSUMmi3BBk
+         YfO6BjHhLB3e6axkNf1fU52UXv74Sby0ZIPLQ8g1E8Aysl68NMe/sbhoNkFZmuowYpyq
+         lduSJ+Z7ioQu0N5ZrGXI3jtnVrLvtMDfDnP69aIr20I045LV1AeuwMGlX20KizaSKmV7
+         0h3GUIhQXA0MBZjhYeNbpaAdHKwmXmAwz9YBo/5eDvhml+MBT3G/iLG5dnauhMCNzO2W
+         VGhpYA2IOhFm+Rr7RgKiOcLhgkzszXJZRgpdcNmGUGFNagIwVXpfPVWv7ydSGHW8vBDD
+         zI+Q==
+X-Gm-Message-State: AOAM530mWSn48/Rg2Gab3Uv5To1z2i0tImukgL0wMygWM8iDmTKk2IPt
+        GWMWz+eiXY7Bw+e5wWjL2QNGrPgAAJKp3V8xKre/lCKvPlN0sYHpkloFiJ/juHbH0sKbhDqJvF6
+        tSVP6GFnUYgdJOZ2ywo/G
+X-Received: by 2002:aa7:cf06:0:b0:405:e0c8:8b5d with SMTP id a6-20020aa7cf06000000b00405e0c88b5dmr19881055edy.367.1645437005552;
+        Mon, 21 Feb 2022 01:50:05 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwe/A3CAZ8w7GD28jop57j6yBU2x42zArQ2Z28XOB6P9Y6fTKfcqvM4HoYMzXlLYWmQ9dQzxg==
+X-Received: by 2002:aa7:cf06:0:b0:405:e0c8:8b5d with SMTP id a6-20020aa7cf06000000b00405e0c88b5dmr19881029edy.367.1645437005271;
+        Mon, 21 Feb 2022 01:50:05 -0800 (PST)
+Received: from [10.40.98.142] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id x14sm8510811edd.63.2022.02.21.01.50.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 01:16:36 -0800 (PST)
-Received: by mail-yb1-f170.google.com with SMTP id e140so32871434ybh.9;
-        Mon, 21 Feb 2022 01:16:36 -0800 (PST)
-X-Received: by 2002:a25:324c:0:b0:623:fb7d:cbc8 with SMTP id
- y73-20020a25324c000000b00623fb7dcbc8mr17519476yby.397.1645434996064; Mon, 21
- Feb 2022 01:16:36 -0800 (PST)
+        Mon, 21 Feb 2022 01:50:04 -0800 (PST)
+Message-ID: <74f89182-1699-f4a7-85e0-66976021913d@redhat.com>
+Date:   Mon, 21 Feb 2022 10:50:04 +0100
 MIME-Version: 1.0
-References: <20220218181226.431098-1-miquel.raynal@bootlin.com> <20220218181226.431098-4-miquel.raynal@bootlin.com>
-In-Reply-To: <20220218181226.431098-4-miquel.raynal@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Feb 2022 10:16:24 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWBfJSeEOev81WYSEw+9FAcUzBnN2n5BHJ2n0ig=6fxKQ@mail.gmail.com>
-Message-ID: <CAMuHMdWBfJSeEOev81WYSEw+9FAcUzBnN2n5BHJ2n0ig=6fxKQ@mail.gmail.com>
-Subject: Re: [PATCH 3/8] soc: renesas: rzn1-sysc: Export function to set dmamux
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH 1/6] ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+Content-Language: en-US
+To:     Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
+        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
+References: <20220216225304.53911-1-djrscally@gmail.com>
+ <20220216225304.53911-2-djrscally@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220216225304.53911-2-djrscally@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+Hi,
 
-On Fri, Feb 18, 2022 at 7:12 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> The dmamux register is located within the system controller.
->
-> Without syscon, we need an extra helper in order to give write access to
-> this register to a dmamux driver.
->
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-
-Missing #include <linux/soc/renesas/r9a06g032-syscon.h>
-
-> @@ -315,6 +315,27 @@ struct r9a06g032_priv {
->         void __iomem *reg;
->  };
->
-> +/* Exported helper to access the DMAMUX register */
-> +static struct r9a06g032_priv *syscon_priv;
-
-I'd call this sysctrl_priv, as that matches the bindings and
-binding header file name.
-
-> +int r9a06g032_syscon_set_dmamux(u32 mask, u32 val)
-> +{
-> +       u32 dmamux;
+On 2/16/22 23:52, Daniel Scally wrote:
+> In commit b83e2b306736 ("ACPI: scan: Add function to fetch dependent of ACPI
+> device") we added a means of fetching the first device to declare itself
+> dependent on another ACPI device in the _DEP method. One assumption
+> in that patch was that there would only be a single consuming device,
+> but this has not held.
+> 
+> Extend the functionality by adding a new function that fetches the
+> next consumer of a supplier device. We can then simplify the original
+> function by simply calling the new one.
+> 
+> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+> ---
+>  drivers/acpi/scan.c     | 47 ++++++++++++++++++++++++++++++++++-------
+>  include/acpi/acpi_bus.h |  2 ++
+>  2 files changed, 41 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 4463c2eda61e..b3ed664ee1cb 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -2256,9 +2256,21 @@ static void acpi_bus_attach(struct acpi_device *device, bool first_pass)
+>  		device->handler->hotplug.notify_online(device);
+>  }
+>  
+> -static int acpi_dev_get_first_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
+> +static int acpi_dev_get_next_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
+>  {
+> -	struct acpi_device *adev;
+> +	struct acpi_device *adev = *(struct acpi_device **)data;
 > +
-> +       if (!syscon_priv)
-> +               return -EPROBE_DEFER;
+> +	/*
+> +	 * If we're passed a 'previous' consumer device then we need to skip
+> +	 * any consumers until we meet the previous one, and then NULL @data
+> +	 * so the next one can be returned.
+> +	 */
+> +	if (adev) {
+> +		if (dep->consumer == adev->handle)
+> +			*(struct acpi_device **)data = NULL;
 > +
-> +       spin_lock(&syscon_priv->lock);
+> +		return 0;
+> +	}
+>  
+>  	adev = acpi_bus_get_acpi_device(dep->consumer);
+>  	if (adev) {
+> @@ -2389,23 +2401,42 @@ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device)
+>  EXPORT_SYMBOL_GPL(acpi_dev_ready_for_enumeration);
+>  
+>  /**
+> - * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
+> + * acpi_dev_get_next_consumer_dev - Return the next adev dependent on @supplier
+>   * @supplier: Pointer to the dependee device
+> + * @start: Pointer to the current dependent device
+>   *
+> - * Returns the first &struct acpi_device which declares itself dependent on
+> + * Returns the next &struct acpi_device which declares itself dependent on
+>   * @supplier via the _DEP buffer, parsed from the acpi_dep_list.
+>   *
+>   * The caller is responsible for putting the reference to adev when it is no
+>   * longer needed.
 
-This needs propection against interrupts => spin_lock_irqsave().
+This bit of the help text seems to not be entirely correct, since the reference to
+start gets consumed by this, so the caller only needs to put the device when it
+does NOT pass it as start to another acpi_dev_get_next_consumer_dev call.
 
-> +
-> +       dmamux = readl(syscon_priv->reg + R9A06G032_SYSCON_DMAMUX);
-> +       dmamux &= ~mask;
-> +       dmamux |= val & mask;
-> +       writel(dmamux, syscon_priv->reg + R9A06G032_SYSCON_DMAMUX);
-> +
-> +       spin_unlock(&syscon_priv->lock);
-> +
-> +       return 0;
+
+
+>   */
+> -struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier)
+> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
+> +						   struct acpi_device *start)
+>  {
+> -	struct acpi_device *adev = NULL;
+> +	struct acpi_device *adev = start;
+>  
+>  	acpi_walk_dep_device_list(supplier->handle,
+> -				  acpi_dev_get_first_consumer_dev_cb, &adev);
+> +				  acpi_dev_get_next_consumer_dev_cb, &adev);
+>  
+> -	return adev;
+> +	acpi_dev_put(start);
+> +	return adev == start ? NULL : adev;
 > +}
+> +EXPORT_SYMBOL_GPL(acpi_dev_get_next_consumer_dev);
 > +
->  /* register/bit pairs are encoded as an uint16_t */
->  static void
->  clk_rdesc_set(struct r9a06g032_priv *clocks,
+> +/**
+> + * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
+> + * @supplier: Pointer to the dependee device
+> + *
+> + * Returns the first &struct acpi_device which declares itself dependent on
+> + * @supplier via the _DEP buffer, parsed from the acpi_dep_list.
+> + *
+> + * The caller is responsible for putting the reference to adev when it is no
+> + * longer needed.
+> + */
+> +struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier)
+> +{
+> +	return acpi_dev_get_next_consumer_dev(supplier, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_dev_get_first_consumer_dev);
 
-> --- a/include/dt-bindings/clock/r9a06g032-sysctrl.h
-> +++ b/include/dt-bindings/clock/r9a06g032-sysctrl.h
-> @@ -145,4 +145,6 @@
->  #define R9A06G032_CLK_UART6            152
->  #define R9A06G032_CLK_UART7            153
->
-> +#define R9A06G032_SYSCON_DMAMUX                0xA0
+The only caller of this is skl_int3472_get_sensor_adev_and_name() IMHO it would
+be better to just move that over to acpi_dev_get_next_consumer_dev(..., NULL);
+in this same patch and just drop acpi_dev_get_first_consumer_dev() all together.
 
-I don't think this needs to be part of the bindings, so please move
-it to the driver source file.
+I expect this entire series to get merged through the pdx86 tree, so from
+that pov doing this should be fine..
 
-> --- /dev/null
-> +++ b/include/linux/soc/renesas/r9a06g032-syscon.h
+Regards,
 
-r9a06g032-sysctrl.h etc.
+Hans
 
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __LINUX_SOC_RENESAS_R9A06G032_SYSCON_H__
-> +#define __LINUX_SOC_RENESAS_R9A06G032_SYSCON_H__
-> +
-> +#ifdef CONFIG_CLK_R9A06G032
-> +int r9a06g032_syscon_set_dmamux(u32 mask, u32 val);
-> +#else
-> +static inline int r9a06g032_syscon_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
-> +#endif
-> +
-> +#endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCON_H__ */
-> --
-> 2.27.0
 
-Gr{oetje,eeting}s,
 
-                        Geert
+>  
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index ca88c4706f2b..8b06fef04722 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -720,6 +720,8 @@ bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const ch
+>  
+>  void acpi_dev_clear_dependencies(struct acpi_device *supplier);
+>  bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
+> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
+> +						   struct acpi_device *start);
+>  struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
+>  struct acpi_device *
+>  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
