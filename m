@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD475C4332F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 05:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E863EC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 05:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238016AbiBUFlO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 00:41:14 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:59570 "EHLO
+        id S1344649AbiBUFpN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 00:45:13 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238615AbiBUFlO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 00:41:14 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713094AE32
-        for <linux-clk@vger.kernel.org>; Sun, 20 Feb 2022 21:40:51 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id ci24-20020a17090afc9800b001bc3071f921so2022725pjb.5
-        for <linux-clk@vger.kernel.org>; Sun, 20 Feb 2022 21:40:51 -0800 (PST)
+        with ESMTP id S1344651AbiBUFpN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 00:45:13 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E2104AE2A
+        for <linux-clk@vger.kernel.org>; Sun, 20 Feb 2022 21:44:50 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id x11so11998747pll.10
+        for <linux-clk@vger.kernel.org>; Sun, 20 Feb 2022 21:44:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=IaYk0/7MCZS2WivmuGCsvre1k3PlmI9ZSnYN3jlruDA=;
-        b=mtDdWUx7cHaFVR3YSjzA8M74X5/BI99pC5C3bqdO4v4LMhYYovmviuR+BcU+E+yuUc
-         k83y89b+9ZNGcnpN761qDCzm+cLkZLz4v27sf9BKyAbK7BbuPinpypWjWkn553lfVbbP
-         DRET8nrGfewlEqTiPW1NitgcH86ywianPHsA9Fg36M/LN8BS2dfV1Ft7neOayfq8aqo5
-         S5qxA3p31YCBHDG/HGbKLTnPKW2yX/Kvytrxd3rcqzAtfsalo18hAhUlDStunpVSvOOr
-         7L31fGYvp1UL1DU1iYhyFXku9Z72srT4Nbc6agiRcjh3DCJKYdeUCakCW3QSec6g18Yh
-         0buA==
+        bh=NzWld38SFAn0hncCzudzmSq8RQy5woIo/8NaM7ZRlas=;
+        b=Cuwl6GcKQBZCFXxjfMHDQtmUYutqxwKOoNgd+YJ0Crd99cWuxr7geM3pGJEYiAXi7p
+         BzonzPkIAXeCkxsilBTqgjbs2Thbw3zh6zyeFxSqvBKla0rJd8s3xZKAvXPYzUyXqz22
+         cDiiHR+oc7BSDYW7ZE2a7fe26yXEsCLQpOHi57DnqTdrAFbCaiztVpgh6TPT6636tEnJ
+         epphhWJ9sHnmUOo38BOF8NLz5+WSJJces3coennEUFQk8GwhVM2bhtZ7Mte/I1t1IaPZ
+         PP1hYg1gQ+5HbWP7QMusHWZV5rgTiDQhts1DFDJfzx/Bsscm4tWzQwC9uHlaoUbIQKU/
+         JrHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=IaYk0/7MCZS2WivmuGCsvre1k3PlmI9ZSnYN3jlruDA=;
-        b=w2LSsKcDVikZhMyOOcaCbe8ZxddVTgC6+Ec3BmQbALrDw3F8JT/NVWVNdd3KRm4nbm
-         Oam8yXU/D+zvqLw2KcgB5umCFmWZWxpZFl9YkmPIkiXiJlgPdBcS1n4l2+6RV36FUoAS
-         avGz+GeE/LQNsXI/BLLGvo8tskHI0u0RBFUY7UbVi7xifbNxFmvDLAjgjk3owCSSaFN3
-         3rA3Y3FEotL4c0z8MRDPZTbAam5TDoujucqqb+g/3wiEydGYgi7aBkZUnRAMnaUyYem5
-         TIbadIBjUo7pbuuY9UWrOB1ax7xcfFDClf456dA4M9GREda4H1EWdF+OrPhaSrhKtz53
-         VoSw==
-X-Gm-Message-State: AOAM532BqF4toJU9yzItfVpCYoJ1A1b5Dcm1L0YAlynJmNNWn3U5oNS+
-        YoqtTAQn0oOLLxz9FNKXep/P
-X-Google-Smtp-Source: ABdhPJxyJfwFCp1kl1AFx8zZBW1DVRgmS1pydQJuMyELNybiIrdZZrXTyxPgufASVxJNUErxYB55gA==
-X-Received: by 2002:a17:90a:bb8e:b0:1b9:256c:6c3 with SMTP id v14-20020a17090abb8e00b001b9256c06c3mr20023954pjr.16.1645422050950;
-        Sun, 20 Feb 2022 21:40:50 -0800 (PST)
+        bh=NzWld38SFAn0hncCzudzmSq8RQy5woIo/8NaM7ZRlas=;
+        b=0E+1uXEctY3n6TaGar8XOvf9lLZHb66ZitFFxxG9Yn7L7BEAPhKc95xFmL4JoM67Dr
+         Fodz9FcIoQh7pQvRnD4l8/HwizKCOnxuV1JsaBM9j960+9LSbPfZYrk9jxdUp1CgLyHM
+         vQ9CZZylFEQzZ+lYD6LUAqVXsmFWBMnRCBAhjVhojvBKybSKM6Ny1yF+9kGzG1BWnf9C
+         sLLZO8c7p34cCXaS0jqZNLMNzuT0YUhoxYUosENlLhOtBmTcu//HZ65wixAhnB1YB+9F
+         d8h3Neiky/woPZP45NlrODpoBz9ujkPbrCRWuDa6bhPOfA5l7ijkj/KAheIJOVI9PEAY
+         mCpg==
+X-Gm-Message-State: AOAM532tN07iTM+LvM0br2gQqtnA4ttsJxXNWCrWrx7ZRx5cHf9Ngr9c
+        zo95cU26g8uP6/UjBZrvk8Rn
+X-Google-Smtp-Source: ABdhPJybyjPoU57s6j8heaGBbT/bkCBRzKHxWrNmILlk0vP/V+o4r/o0qoyk/eurYtpWcxOGMQ0asQ==
+X-Received: by 2002:a17:902:eb85:b0:14d:b906:cbd3 with SMTP id q5-20020a170902eb8500b0014db906cbd3mr17207331plg.122.1645422289873;
+        Sun, 20 Feb 2022 21:44:49 -0800 (PST)
 Received: from thinkpad ([220.158.158.223])
-        by smtp.gmail.com with ESMTPSA id v3-20020a17090abb8300b001bc0740c35dsm5283533pjr.18.2022.02.20.21.40.47
+        by smtp.gmail.com with ESMTPSA id t7sm10941987pfj.138.2022.02.20.21.44.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Feb 2022 21:40:50 -0800 (PST)
-Date:   Mon, 21 Feb 2022 11:10:45 +0530
+        Sun, 20 Feb 2022 21:44:49 -0800 (PST)
+Date:   Mon, 21 Feb 2022 11:14:45 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Rohit Agarwal <quic_rohiagar@quicinc.com>
 Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
@@ -55,76 +55,59 @@ Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
         jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] clk: qcom: Add A7 PLL support for SDX65
-Message-ID: <20220221054045.GC15108@thinkpad>
+Subject: Re: [PATCH v3 0/7] Add APCS support for SDX65
+Message-ID: <20220221054445.GD15108@thinkpad>
 References: <1645420953-21176-1-git-send-email-quic_rohiagar@quicinc.com>
- <1645420953-21176-5-git-send-email-quic_rohiagar@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1645420953-21176-5-git-send-email-quic_rohiagar@quicinc.com>
+In-Reply-To: <1645420953-21176-1-git-send-email-quic_rohiagar@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 10:52:30AM +0530, Rohit Agarwal wrote:
-> Add support for PLL found in Qualcomm SDX65 platforms which is used to
-> provide clock to the Cortex A7 CPU via a mux. This PLL can provide high
-> frequency clock to the CPU above 1GHz as compared to the other sources
-> like GPLL0.
+On Mon, Feb 21, 2022 at 10:52:26AM +0530, Rohit Agarwal wrote:
+> Hello,
 > 
-> In this driver, the power domain is attached to the cpudev. This is
-> required for CPUFreq functionality and there seems to be no better place
-> to do other than this driver (no dedicated CPUFreq driver).
+> Changes from v2:
+>  - Addressed Stephen's comments and made necessary changes.
+>  - Rebased on top
 > 
-
-This tells what the driver is doing but not essentially what this patch does
-i.e., you need to mention how the SDX65 PLL is added to the driver. Since you
-are reusing the existing driver, this needs to be mentioned.
-
-> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig  | 6 +++---
->  drivers/clk/qcom/a7-pll.c | 1 +
->  2 files changed, 4 insertions(+), 3 deletions(-)
+> Changes from v1:
+>  - Addressed Mani's comments and made necessary changes.
+>  - Removed the last patch from the series as it became redundant after making changes.
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 42c8741..5159a1d 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -29,11 +29,11 @@ config QCOM_A53PLL
->  	  devices.
->  
->  config QCOM_A7PLL
-> -	tristate "SDX55 A7 PLL"
-> +	tristate "A7 PLL driver for SDX55 and SDX65"
->  	help
-> -	  Support for the A7 PLL on SDX55 devices. It provides the CPU with
-> +	  Support for the A7 PLL on SDX55 and SDX65 devices. It provides the CPU with
->  	  frequencies above 1GHz.
-> -	  Say Y if you want to support higher CPU frequencies on SDX55
-> +	  Say Y if you want to support higher CPU frequencies on SDX55 and SDX65
->  	  devices.
->  
->  config QCOM_CLK_APCS_MSM8916
-> diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
-> index c4a53e5..adb2121 100644
-> --- a/drivers/clk/qcom/a7-pll.c
-> +++ b/drivers/clk/qcom/a7-pll.c
-> @@ -84,6 +84,7 @@ static int qcom_a7pll_probe(struct platform_device *pdev)
->  
->  static const struct of_device_id qcom_a7pll_match_table[] = {
->  	{ .compatible = "qcom,sdx55-a7pll" },
-> +	{ .compatible = "qcom,sdx65-a7pll" },
+> This series adds APCS mailbox and clock support for SDX65. The APCS IP
+> in SDX65 provides IPC and clock functionalities. Hence, mailbox support
+> is added to the "qcom-apcs-ipc-mailbox" driver and a dedicated clock
+> driver "apcs-sdx65" is added.
 
-I think here also you can just reuse the "qcom,sdx55-a7pll" compatible.
+You seem to have missed adding r-o-b tags.
 
 Thanks,
 Mani
 
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, qcom_a7pll_match_table);
+> 
+> Thanks,
+> Rohit
+> 
+> Rohit Agarwal (7):
+>   dt-bindings: mailbox: Add binding for SDX65 APCS
+>   mailbox: qcom: Add support for SDX65 APCS IPC
+>   dt-bindings: clock: Add A7 PLL binding for SDX65
+>   clk: qcom: Add A7 PLL support for SDX65
+>   ARM: dts: qcom: sdx65: Add support for A7 PLL clock
+>   ARM: dts: qcom: sdx65: Add support for APCS block
+>   clk: qcom: Add SDX65 APCS clock controller support
+> 
+>  Documentation/devicetree/bindings/clock/qcom,a7pll.yaml |  3 ++-
+>  .../bindings/mailbox/qcom,apcs-kpss-global.yaml         |  1 +
+>  arch/arm/boot/dts/qcom-sdx65.dtsi                       | 17 +++++++++++++++++
+>  drivers/clk/qcom/Kconfig                                | 12 ++++++------
+>  drivers/clk/qcom/a7-pll.c                               |  1 +
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c                 |  5 +++++
+>  6 files changed, 32 insertions(+), 7 deletions(-)
+> 
 > -- 
 > 2.7.4
 > 
