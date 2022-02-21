@@ -2,99 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE305C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 13:12:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA80C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 13:37:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358671AbiBUNNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 08:13:00 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47762 "EHLO
+        id S1359144AbiBUNiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 08:38:10 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350923AbiBUNM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 08:12:58 -0500
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 983371EC73;
-        Mon, 21 Feb 2022 05:12:33 -0800 (PST)
-Received: from relay1-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::221])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id A2DE7D114C;
-        Mon, 21 Feb 2022 12:59:38 +0000 (UTC)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 2BC3024000E;
-        Mon, 21 Feb 2022 12:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645448371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uhTsNJ0kQ/JteUN01wS0pWNvIJDnfr56O80qPFYTQnw=;
-        b=Alwdtw0XSor57w4FVemMV1hXlcsJhPuvWYXPMpOc+ZmsLlD+gUr/85IBzkW4AEh+MpD9Pz
-        GONNuZNjuZiWPr3bNNBzwK6A6XdPiC5plnS8DQk6Bpma9rwYKFVabKt7huyLV0/iL9eENv
-        XZTvGh9ODK0HwLKXHOevSkDK4AAkYqgJdyDnwG/s2XIzRXjZ3MHMi5P2Xf2xZ7g4xnn6M0
-        inB2hbEUozQbq3ZVwUdXus0c9CPEr/xU0GRchwkQNWtDifsCCUeyLDWh/KfuGFRlROY2b+
-        QZGQ7WVCWy42MLbWe+rtfjbu9EK7fsFpxb0w7YF+53H2YJFefrpvR78+xxEuag==
-Date:   Mon, 21 Feb 2022 13:59:27 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        with ESMTP id S1359150AbiBUNiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 08:38:09 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2C313E25
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 05:37:46 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sa-0007tK-MQ; Mon, 21 Feb 2022 14:37:28 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sY-000R0Q-Ao; Mon, 21 Feb 2022 14:37:25 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nM8sX-004bq8-12; Mon, 21 Feb 2022 14:37:25 +0100
+Date:   Mon, 21 Feb 2022 14:37:24 +0100
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Viresh Kumar <vireshk@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
-Subject: Re: [PATCH 5/8] dma: dw: Avoid partial transfers
-Message-ID: <20220221135915.7a441663@xps13>
-In-Reply-To: <TYYPR01MB7086F412B035A09AED2037A9F53A9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
-        <20220218181226.431098-6-miquel.raynal@bootlin.com>
-        <YhIcyyBp53LnMbjU@smile.fi.intel.com>
-        <TYYPR01MB7086F412B035A09AED2037A9F53A9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v16 21/40] pwm: tegra: Add runtime PM and OPP support
+Message-ID: <20220221133724.iusksyn7n7hmxil2@pengutronix.de>
+References: <20211130232347.950-1-digetx@gmail.com>
+ <20211130232347.950-22-digetx@gmail.com>
+ <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
+ <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l5jzzhwrtignnt6r"
+Content-Disposition: inline
+In-Reply-To: <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Andy,
 
-phil.edworthy@renesas.com wrote on Mon, 21 Feb 2022 08:14:47 +0000:
+--l5jzzhwrtignnt6r
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Andy,
->=20
-> I wrote the patch a few years ago, but didn't get the time to upstream it.
->=20
-> I am not aware of a HW integration bug on the RZ/N1 device but can't rule=
- it out. I am struggling to see what kind of HW issue this could be as, iir=
-c, word accesses work fine when the size of the transfer is a multiple of t=
-he MEM width.
->=20
-> I found the issue when testing DMA with the UART transferring different a=
-mounts of data.
->=20
-> > > +		if (sconfig->dst_addr_width && sconfig->dst_addr_width < =20
-> > data_width) =20
-> > > +			data_width =3D sconfig->dst_addr_width; =20
+Hello,
+
+On Mon, Feb 21, 2022 at 12:53:58PM +0300, Dmitry Osipenko wrote:
+> 21.02.2022 11:17, Uwe Kleine-K=C3=B6nig =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> @@ -344,7 +387,10 @@ static const struct of_device_id tegra_pwm_of_mat=
+ch[] =3D {
+> >>  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
+> >> =20
+> >>  static const struct dev_pm_ops tegra_pwm_pm_ops =3D {
+> >> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
+> >> +	SET_RUNTIME_PM_OPS(tegra_pwm_runtime_suspend, tegra_pwm_runtime_resu=
+me,
+> >> +			   NULL)
+> >> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> >> +				pm_runtime_force_resume)
+> >>  };
+> >> =20
+> >>  static struct platform_driver tegra_pwm_driver =3D {
+> > I admit to not completely understand the effects of this patch, but I
+> > don't see a problem either. So for me this patch is OK:
 > >=20
-> > But here no check that you do it for explicitly peripheral to memory, so
-> > this
-> > will affect memory to peripheral transfers as well. =20
-> No, this should be ok as this change is within:
-> 	case DMA_DEV_TO_MEM:
+> > Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> >=20
+> > I spot a problem, it's not introduced by this patch however: If the
+> > consumer of the PWM didn't stop the hardware, the suspend should IMHO be
+> > prevented.
+>=20
+> Why? The PWM driver itself will stop the h/w on suspend.
 
-I will add this to the commit log to clarify.
+Stopping the PWM might be bad. Only the consumer can know if it's ok to
+stop the PWM on suspend. If so the consumer should stop the PWM in their
+suspend callback and the PWM should prevent suspend if it wasn't
+stopped.
 
-Thanks,
-Miqu=C3=A8l
+> > I wonder if the patches in this series go in in one go via an ARM or
+> > Tegra tree, or each patch via its respective maintainer tree.
+>=20
+> This series, including this patch, was already applied to 5.17 via the
+> tegra/soc tree. No action is needed anymore.
+
+Ah, I missed that, thanks.
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig         =
+   |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--l5jzzhwrtignnt6r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmITlYwACgkQwfwUeK3K
+7Ak0Awf7Bng3Bp8dIdZWVJ0IKQy7Zh14yrunKW/TyOp4ENrNgLtH1N+DE2F332Mj
+dYGX26syp+azTB+kvoYCzH3Ro0Cisl+Ssvvm95pL0PiFStqoSwXJgti+dSqIWspK
+bwYm7tYUNcvJecG8YuuCZwSrUC6N15wccUN/VU2i8ZTOWfVAjmAKbxTNj6yLJNIU
+VvWsqthnEOGiHxH6KueZlwL3DRbTZ2QmykKmUaUFAnJwvjH24B6lAFHQnUDOFIQv
+vIbPMFpKTOvm8tOIFpqse8QJLzRAHbu5iuIiZkGnN5MVJg2C6fbo2fYVM1Ya/2c2
+YXsdY3K0KB4X8v/eFrEX5qZdljYVCA==
+=NwNV
+-----END PGP SIGNATURE-----
+
+--l5jzzhwrtignnt6r--
