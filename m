@@ -2,87 +2,202 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F62BC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 15:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A61AC4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379299AbiBUPg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:36:29 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54916 "EHLO
+        id S1380060AbiBUQS4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:18:56 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344576AbiBUPg2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 10:36:28 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12FE1EC6E
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 07:36:01 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id xrby2600B3YJRAw01rbyN8; Mon, 21 Feb 2022 16:35:58 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nMAjF-001TRf-Qz; Mon, 21 Feb 2022 16:35:57 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1nMAjF-006Eaf-Ar; Mon, 21 Feb 2022 16:35:57 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] clk: renesas: r8a779f0: Add PFC clock
-Date:   Mon, 21 Feb 2022 16:35:56 +0100
-Message-Id: <4ef3d3dfe714ad75112e4886efea0b66e40a33bc.1645457502.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S1380080AbiBUQSy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:18:54 -0500
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B0F727154
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:18:27 -0800 (PST)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 488925C023B;
+        Mon, 21 Feb 2022 11:18:24 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Mon, 21 Feb 2022 11:18:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=5q0FhEVXn0snjYY9k75GKqt/XCLzjvbf9XBiZX
+        2tBdg=; b=d78NNd9+MwWCluB6G7hM83wUwUNWJ+PIY5WZrHJjq/Qx28lZ3w8osK
+        lrjGj9zLZuk5te8eszhkJX5BJqzmcaQ1L+aiQfs8vvQmtLRK2FIM65nZgskuSXGt
+        vmdF0DF7PCbzo+nW0kxa8REAFeD85KAy1NSJAUp5zXWWgTwbJAPhwqzrjMaUOJpV
+        unPDyNN+Bhx1Af/xau7DahUrVLpGNarhRTe263Dkw4+IyTaaC3pImyJ3x11SIdGd
+        im7wlucJdfxVmD3gPM6YGzaZ0ZoRffEP8xCciKaGsu7h4vmqT/a239p1vg+BfnQ8
+        +Yv5/bdPIoKLZs3xC7+l/34J+eYRCDcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=5q0FhEVXn0snjYY9k
+        75GKqt/XCLzjvbf9XBiZX2tBdg=; b=iSZHCGpz1mEHuwFnJHmshu0nxS+flokLZ
+        yGUG4mWlpRrKLCrOOKOsl9sBlS+xr8gMK9Z/1MN2jZ2FzTVM8BmwB7v2+G1aK8ex
+        3PM1eMPm0Brxr/p0J57Z4Z/0j1PGfOdGSadjPg6sxK5/NcSnp7jFWkVLfG7KUATc
+        qX1NosBIUs7DSUwbS6XcDktUTW7KNpM+XLBXQAFTF2h/O/syfeRbUbEuvyMHfHlP
+        mYqLvB5EPhGvhpHYNKi5Pl3GdeA3nRpQ3xWPU9yBagwGrzZrmZuJ3YuCUtLODekG
+        dh5qoSVcjWt3dSW6r8qbauSHpWDxncV5xX6Bql/pNkHFRe1j4yrPA==
+X-ME-Sender: <xms:T7sTYu4U9TJYREXe0LuSnCmrG-9gk_1akIr_izKgf6LZOOn8BS0-3Q>
+    <xme:T7sTYn7ZhdpBXANjsRQwKI1WHTqeKC-J0YZh5SH50oEz-0iBQv9mEQk2ou9eRTide
+    4msfgVMPl0G-peJSRo>
+X-ME-Received: <xmr:T7sTYtcm7QcH2ebPJeJImQtR22cASax2DMQpl1R1c7uhFE6bh3mG1RZXKK_5NkbZH2Sj93BpJFIwpABd77b1nZKAK2uvFqwc_heRTAk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdekhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:T7sTYrIf9vWWJyaHu_XqS0DIB0I5rBlLlEI7Kj27viBzoH4q_83rcQ>
+    <xmx:T7sTYiIvoapcbJQKvXaofjt7IiHAquE2KF5EsPPEE5ZHl0D6EIpp3g>
+    <xmx:T7sTYsw5OOc0YM_91o3BXpw5px4RAN5teX4GLbxyCVrVhlRn0_KSGw>
+    <xmx:ULsTYq-RqUFDbgEQl1zGInmGme5oU2o0-JlqTJMCdRgT3mmB6yWq3g>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Feb 2022 11:18:23 -0500 (EST)
+Date:   Mon, 21 Feb 2022 17:18:21 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: Re: [PATCH v4 02/10] clk: Always clamp the rounded rate
+Message-ID: <20220221161821.jbktbgx2t6aaxds3@houat>
+References: <20220125141549.747889-1-maxime@cerno.tech>
+ <20220125141549.747889-3-maxime@cerno.tech>
+ <20220218231508.7B5FCC340E9@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hrhga4ab23qncznd"
+Content-Disposition: inline
+In-Reply-To: <20220218231508.7B5FCC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the module clock used by the Pin Function (PFC/GPIO) controller
-on the Renesas R-Car S4-8 (R8A779F0) SoC.
 
-Extracted from a larger patch in the BSP by LUU HOAI.
+--hrhga4ab23qncznd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-To be queued in renesas-clk-for-v5.18.
+Hi,
 
-v2:
-  - Add Reviewed-by,
-  - Split off from the actual pinctrl patches.
+On Fri, Feb 18, 2022 at 03:15:06PM -0800, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-01-25 06:15:41)
+> > The current core while setting the min and max rate properly in the
+> > clk_request structure will not make sure that the requested rate is
+> > within these boundaries, leaving it to each and every driver to make
+> > sure it is.
+>=20
+> It would be good to describe why. Or decide that it was an oversight and
+> write that down here.
+>=20
+> > Add a clamp call to make sure it's always done, and add a few unit tests
+> > to make sure we don't have any regression there.
+>=20
+> I looked through the per-user constraint patch history on the list but I
+> couldn't really figure out why it was done this way. I guess we didn't
+> clamp the rate in the core because we wanted to give the clk providers
+> all the information, i.e. the rate that was requested and the boundaries
+> that the consumers have placed on the rate.
 
-v1:
-  - https://lore.kernel.org/r/cover.1642599415.git.geert+renesas@glider.be
----
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+I'm not really sure we should really leave it to the users, something like:
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 123c1b01550d97bc..76b441965037798d 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
-+	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- };
- 
- static const unsigned int r8a779f0_crit_mod_clks[] __initconst = {
--- 
-2.25.1
+clk_set_range_rate(clk, 1000, 2000);
+clk_set_rate(clk, 500);
+clk_get_rate(clk) # =3D=3D 500
 
-Gr{oetje,eeting}s,
+Is definitely weird, and would break the least surprise :)
 
-						Geert
+We shouldn't leave that to drivers, especially since close to none of
+them handle this properly.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> With the round_rate() clk_op the providers don't know the min/max
+> because the rate request structure isn't passed. I think my concern a
+> long time ago was that a consumer could call clk_round_rate() and get
+> one frequency and then call clk_set_rate() and get another frequency.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+I'm not sure I follow you there.
+
+The function affected is clk_core_determine_round_nolock(), which is
+called by clk_core_round_rate_nolock() and clk_calc_new_rates(). In
+turn, they will be part of clk(_hw_)_round_clock for the former, and
+clk_core_set_rate_nolock() (and thus clk_set_rate()) for the latter.
+
+I don't see how you can get a discrepancy between clk_round_rate() and
+clk_set_rate().
+
+And yeah, it's true that the round_rate op won't have the min and max
+passed to them, but i'd consider this an argument for doing this check
+here, since you don't have that option at all for those clocks.
+
+> We need to make sure that round_rate and set_rate agree with each
+> other. If we don't do that then we don't uphold the contract that
+> clk_round_rate() tells the consumer what rate they'll get if they call
+> clk_set_rate() with the same frequency.
+>=20
+> >=20
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  drivers/clk/clk-test.c | 46 ++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/clk.c      |  2 ++
+> >  2 files changed, 48 insertions(+)
+> >=20
+> > diff --git a/drivers/clk/clk-test.c b/drivers/clk/clk-test.c
+> > index 47a600d590c1..28c718ab82e1 100644
+> > --- a/drivers/clk/clk-test.c
+> > +++ b/drivers/clk/clk-test.c
+> > @@ -203,6 +203,50 @@ static void clk_range_test_set_range_invalid(struc=
+t kunit *test)
+> >                         0);
+> >  }
+> > =20
+> > +/*
+> > + * Test that if our clock has some boundaries and we try to round a ra=
+te
+> > + * lower than the minimum, the returned rate will be within range.
+> > + */
+> > +static void clk_range_test_set_range_round_rate_lower(struct kunit *te=
+st)
+> > +{
+> > +       struct clk_dummy_context *ctx =3D test->priv;
+> > +       struct clk_hw *hw =3D &ctx->hw;
+> > +       struct clk *clk =3D hw->clk;
+> > +       long rate;
+> > +
+> > +       KUNIT_ASSERT_EQ(test,
+> > +                       clk_set_rate_range(clk,
+> > +                                          DUMMY_CLOCK_RATE_1,
+> > +                                          DUMMY_CLOCK_RATE_2),
+> > +                       0);
+> > +
+> > +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
+> > +       KUNIT_ASSERT_GT(test, rate, 0);
+> > +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>=20
+> The comment says within range but this test says exactly the minimum
+> rate. Please change it to test that the rate is within rate 1 and rate
+> 2. Also, we should call clk_get_rate() here to make sure the rate is
+> within the boundaries and matches what clk_round_rate() returned.
+
+Ok
+
+--hrhga4ab23qncznd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhO7TQAKCRDj7w1vZxhR
+xdDeAPoDyj5uGoplJHMvWi/RM1aNvlBRPBia0DzyZckVW0nVSwEA8o7rGkoIFB6z
+/m4OGazOPs+JLFk/YEvhZD/DvlhonwU=
+=9m2X
+-----END PGP SIGNATURE-----
+
+--hrhga4ab23qncznd--
