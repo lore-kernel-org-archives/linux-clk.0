@@ -2,75 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB06C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 10:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656B4C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 10:32:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354683AbiBUKbh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:31:37 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47804 "EHLO
+        id S1354871AbiBUKcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:32:53 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345191AbiBUKam (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 05:30:42 -0500
+        with ESMTP id S1355001AbiBUKcg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 05:32:36 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 11B9769CC6
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:52:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D33856C952
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:52:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645437075;
+        s=mimecast20190719; t=1645437155;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hB9b8zcCF73wPaCqrb6w4xSegPlVd9cxYTgtjhyicfw=;
-        b=McEW6Q1WXf/kpgWZFcryfOuHoDm14Iec/uXv8x9s1RvhiRwmzfe23lPiKLlvNy0OaOw94z
-        M5PiDnfqCBryIO85xQNOAkp6ipyVqfuuCfLnVSQRIpMbyb9csob5S652eXg3DE+B3iL87P
-        f1YRi7V5HPSN79FjQwotd41UmBrR4g8=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=rWKdB+xdsSGrYxoHd80FLMCMuF8hy6C+CmJuSV61wzE=;
+        b=b8o5PB2mznPuEWmozr9J5d7rpYRGmQdyRxyTWwnNnVTfrxNdjGDB3peHoF8kIlLhzXPKt+
+        irXsjchQURHfV8IcC2yuLbpX83QkbKFRPijOWktYvNYxBio0H5L3ob5YaIOgG9B2sJGF5Z
+        +TF+1s+yFlxsIR9PxRjErH0bM1ZVON4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-517-lHTgmysXNZuPiAJkHA9SiQ-1; Mon, 21 Feb 2022 04:51:14 -0500
-X-MC-Unique: lHTgmysXNZuPiAJkHA9SiQ-1
-Received: by mail-ed1-f71.google.com with SMTP id j9-20020a056402238900b004128085d906so8938736eda.19
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:51:14 -0800 (PST)
+ us-mta-433-ODXyIOVDNRCp0mpeXUT32g-1; Mon, 21 Feb 2022 04:52:34 -0500
+X-MC-Unique: ODXyIOVDNRCp0mpeXUT32g-1
+Received: by mail-ed1-f69.google.com with SMTP id n7-20020a05640205c700b0040b7be76147so9844251edx.10
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:52:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=hB9b8zcCF73wPaCqrb6w4xSegPlVd9cxYTgtjhyicfw=;
-        b=7WGlOiVWjOIcrng4GQlNIgAE4UITJAve6nkl9DFw9XA1jtfAtD+8Mr5+1MRrVkatKl
-         b2EZDiXCjPrWEcSjFt62wfqRkgpYiBBiQZz9rcrt2mRETZ4IOlmAPq9oiJYM7hJ7P3kp
-         JwCKvlPhX4KAnocWWSiFgzYstj06HlBLqN5GHRoOoLxmtQrO2to4DfS+HLqx5hN+h9q8
-         mx6VU/HtJcZAtsYqs2SSoathw5vhBhnOZjeIdMDFG0HtC33sA5Yb0pSFPwsUOdGF3j7n
-         3c/uP7PiEeeNqGFucduk6I8aXNcG2tZfVTjCnGELaaVLIKL53+keSMN5VpV2nHru9V6g
-         8XXQ==
-X-Gm-Message-State: AOAM531uyOal7VM4ias7WfDdIA6kIFJ0TsZJ+wpTCIt0qZgR8MR2jjYs
-        bWXQAul1paxV80VlMHwxligQqym+7flDB7MlKnyv5wyG14DoavbVb2VFc8klm8xaEU7c0X3Un4l
-        RMGxVJ6dsePrnlOrqf9L1
-X-Received: by 2002:a05:6402:11cd:b0:410:d432:2e30 with SMTP id j13-20020a05640211cd00b00410d4322e30mr20320051edw.119.1645437073039;
-        Mon, 21 Feb 2022 01:51:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJye1adEJ8Kmx47qBL6X7KG+mjDUvnk5CjNgYTII8w0TE68ywE4uMzzzWMSbEL0amjS7NvTVDg==
-X-Received: by 2002:a05:6402:11cd:b0:410:d432:2e30 with SMTP id j13-20020a05640211cd00b00410d4322e30mr20320028edw.119.1645437072792;
-        Mon, 21 Feb 2022 01:51:12 -0800 (PST)
+        bh=rWKdB+xdsSGrYxoHd80FLMCMuF8hy6C+CmJuSV61wzE=;
+        b=qmXyHdiFYRv7bNjqR4Fix/gqAVeAKWDqCaTcMnXbtqAN+apvAr7AgIHEgusKSaueZ/
+         KcouSwexuhQ/SF1T1HPQsh4VYnpa/o3BP2rjRcnWOJ9be69EqOtq1pO3Luc6bSw8HLT5
+         6nwI5sC3+6AYBrlWwWFvDUTROVq19U7qr56bSmAN3f4jNwGCS8EjwWOBPQFEidMYkE6v
+         6+uhk+XLeyepbo87/ZSczDBqtqmJePN76LnjP/GN8H9/jc64HwjtLXUGH/oLbrXc+H6u
+         NBrHWCIDH0I5Lm8mOwDxDu6ZtIf5Pu+XERsq/PuUWz0SPlp0v++cUMIi6KF3nuv1RYNa
+         Aadg==
+X-Gm-Message-State: AOAM533R7pVv1dV6BxSZ3fdjee3yOLxPbnAd20H72xCoSJuzU59svzH0
+        RlQQmVukgVivCn/0Kw3V/XKKv9U0FAw0+ST6KvxBSobTGhLeqIpPKJvGqO7DX9koalYsayNo88T
+        WwCgkeWnVSXOLiUr2yqAc
+X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id ek21-20020a056402371500b00410a415fd95mr20619461edb.288.1645437153005;
+        Mon, 21 Feb 2022 01:52:33 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwfjucEjn+NxsIVVAlxvKWSfIUNLfVlNeuy2epy4FKSTUnKHqY117TAezZRujd7MCV1h/QIvA==
+X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id ek21-20020a056402371500b00410a415fd95mr20619452edb.288.1645437152824;
+        Mon, 21 Feb 2022 01:52:32 -0800 (PST)
 Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id c29sm4971862ejj.117.2022.02.21.01.51.12
+        by smtp.gmail.com with ESMTPSA id g11sm5131745ejs.14.2022.02.21.01.52.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 01:51:12 -0800 (PST)
-Message-ID: <26dfe4f3-a9b3-60dc-19a7-7707afea552b@redhat.com>
-Date:   Mon, 21 Feb 2022 10:51:11 +0100
+        Mon, 21 Feb 2022 01:52:32 -0800 (PST)
+Message-ID: <d2bc537d-b311-6fb6-faf1-a847ae3b83be@redhat.com>
+Date:   Mon, 21 Feb 2022 10:52:31 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.0
-Subject: Re: [PATCH 1/6] ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+Subject: Re: [PATCH 2/6] ACPI: bus: Add iterator for dependent devices
 Content-Language: en-US
-From:   Hans de Goede <hdegoede@redhat.com>
 To:     Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
         linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
 Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
 References: <20220216225304.53911-1-djrscally@gmail.com>
- <20220216225304.53911-2-djrscally@gmail.com>
- <74f89182-1699-f4a7-85e0-66976021913d@redhat.com>
-In-Reply-To: <74f89182-1699-f4a7-85e0-66976021913d@redhat.com>
+ <20220216225304.53911-3-djrscally@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20220216225304.53911-3-djrscally@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -79,119 +78,38 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-On 2/21/22 10:50, Hans de Goede wrote:
-> Hi,
+On 2/16/22 23:53, Daniel Scally wrote:
+> Add a helper macro to iterate over ACPI devices that are flagged
+> as consumers of an initial supplier ACPI device.
 > 
-> On 2/16/22 23:52, Daniel Scally wrote:
->> In commit b83e2b306736 ("ACPI: scan: Add function to fetch dependent of ACPI
->> device") we added a means of fetching the first device to declare itself
->> dependent on another ACPI device in the _DEP method. One assumption
->> in that patch was that there would only be a single consuming device,
->> but this has not held.
->>
->> Extend the functionality by adding a new function that fetches the
->> next consumer of a supplier device. We can then simplify the original
->> function by simply calling the new one.
->>
->> Signed-off-by: Daniel Scally <djrscally@gmail.com>
->> ---
->>  drivers/acpi/scan.c     | 47 ++++++++++++++++++++++++++++++++++-------
->>  include/acpi/acpi_bus.h |  2 ++
->>  2 files changed, 41 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->> index 4463c2eda61e..b3ed664ee1cb 100644
->> --- a/drivers/acpi/scan.c
->> +++ b/drivers/acpi/scan.c
->> @@ -2256,9 +2256,21 @@ static void acpi_bus_attach(struct acpi_device *device, bool first_pass)
->>  		device->handler->hotplug.notify_online(device);
->>  }
->>  
->> -static int acpi_dev_get_first_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
->> +static int acpi_dev_get_next_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
->>  {
->> -	struct acpi_device *adev;
->> +	struct acpi_device *adev = *(struct acpi_device **)data;
->> +
->> +	/*
->> +	 * If we're passed a 'previous' consumer device then we need to skip
->> +	 * any consumers until we meet the previous one, and then NULL @data
->> +	 * so the next one can be returned.
->> +	 */
->> +	if (adev) {
->> +		if (dep->consumer == adev->handle)
->> +			*(struct acpi_device **)data = NULL;
->> +
->> +		return 0;
->> +	}
->>  
->>  	adev = acpi_bus_get_acpi_device(dep->consumer);
->>  	if (adev) {
->> @@ -2389,23 +2401,42 @@ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device)
->>  EXPORT_SYMBOL_GPL(acpi_dev_ready_for_enumeration);
->>  
->>  /**
->> - * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
->> + * acpi_dev_get_next_consumer_dev - Return the next adev dependent on @supplier
->>   * @supplier: Pointer to the dependee device
->> + * @start: Pointer to the current dependent device
->>   *
->> - * Returns the first &struct acpi_device which declares itself dependent on
->> + * Returns the next &struct acpi_device which declares itself dependent on
->>   * @supplier via the _DEP buffer, parsed from the acpi_dep_list.
->>   *
->>   * The caller is responsible for putting the reference to adev when it is no
->>   * longer needed.
+> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+> ---
+>  include/acpi/acpi_bus.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> This bit of the help text seems to not be entirely correct, since the reference to
-> start gets consumed by this, so the caller only needs to put the device when it
-> does NOT pass it as start to another acpi_dev_get_next_consumer_dev call.
-> 
-> 
-> 
->>   */
->> -struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier)
->> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
->> +						   struct acpi_device *start)
->>  {
->> -	struct acpi_device *adev = NULL;
->> +	struct acpi_device *adev = start;
->>  
->>  	acpi_walk_dep_device_list(supplier->handle,
->> -				  acpi_dev_get_first_consumer_dev_cb, &adev);
->> +				  acpi_dev_get_next_consumer_dev_cb, &adev);
->>  
->> -	return adev;
->> +	acpi_dev_put(start);
->> +	return adev == start ? NULL : adev;
->> +}
->> +EXPORT_SYMBOL_GPL(acpi_dev_get_next_consumer_dev);
->> +
->> +/**
->> + * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
->> + * @supplier: Pointer to the dependee device
->> + *
->> + * Returns the first &struct acpi_device which declares itself dependent on
->> + * @supplier via the _DEP buffer, parsed from the acpi_dep_list.
->> + *
->> + * The caller is responsible for putting the reference to adev when it is no
->> + * longer needed.
->> + */
->> +struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier)
->> +{
->> +	return acpi_dev_get_next_consumer_dev(supplier, NULL);
->>  }
->>  EXPORT_SYMBOL_GPL(acpi_dev_get_first_consumer_dev);
-> 
-> The only caller of this is skl_int3472_get_sensor_adev_and_name() IMHO it would
-> be better to just move that over to acpi_dev_get_next_consumer_dev(..., NULL);
-> in this same patch and just drop acpi_dev_get_first_consumer_dev() all together.
-> 
-> I expect this entire series to get merged through the pdx86 tree, so from
-> that pov doing this should be fine..
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index 8b06fef04722..72103bcdd5b3 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -723,6 +723,18 @@ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
+>  struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
+>  						   struct acpi_device *start);
+>  struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
+> +
+> +/**
+> + * for_each_acpi_consumer_dev - iterate over the consumer ACPI devices for a
+> + *				given supplier
+> + * @supplier: Pointer to the supplier's ACPI device
+> + * @consumer: Pointer to &struct acpi_device to hold the consumer, initially NULL
+> + */
+> +#define for_each_acpi_consumer_dev(supplier, consumer)			\
+> +	for (consumer = acpi_dev_get_first_consumer_dev(supplier);	\
 
-I forgot to add: that otherwise this looks good to me, so with the above
-addressed you may add my:
+If we drop acpi_dev_get_first_consumer_dev() this needs to be updated to:
+
+	for (consumer = acpi_dev_get_next_consumer_dev(supplier, NULL);  \
+
+Otherwise this looks good to me:
 
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
@@ -199,18 +117,10 @@ Regards,
 
 Hans
 
-
->> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
->> index ca88c4706f2b..8b06fef04722 100644
->> --- a/include/acpi/acpi_bus.h
->> +++ b/include/acpi/acpi_bus.h
->> @@ -720,6 +720,8 @@ bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const ch
->>  
->>  void acpi_dev_clear_dependencies(struct acpi_device *supplier);
->>  bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
->> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
->> +						   struct acpi_device *start);
->>  struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
->>  struct acpi_device *
->>  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
+> +	     consumer;							\
+> +	     consumer = acpi_dev_get_next_consumer_dev(supplier, consumer))
+> +
+>  struct acpi_device *
+>  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
+>  struct acpi_device *
 
