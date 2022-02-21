@@ -2,49 +2,49 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476FEC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA9FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbiBUQa2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:30:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37542 "EHLO
+        id S1380936AbiBUQnu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:43:50 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233392AbiBUQa1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:30:27 -0500
+        with ESMTP id S1357779AbiBUQnu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:43:50 -0500
 Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 664B71D306
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:30:04 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id C1CB75C0292;
-        Mon, 21 Feb 2022 11:30:03 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 21 Feb 2022 11:30:03 -0500
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475E01EC6D
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:43:27 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 99A3C5C026C;
+        Mon, 21 Feb 2022 11:43:26 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 21 Feb 2022 11:43:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; bh=VQ18XQVk9IzSPBm0N4aNJnOzzx5QuoDKxo0tjL
-        ZAUV8=; b=AEdWm2c/V7Nbl9Nv50YTvfCXj+7FTGZXcYdVTgXYzTztcDr44d2SU1
-        jniDjIzf/PE6tZ+W9gaaN9EXBZEUcUcV4VkmcPpmpsPrugOwvkhNrbTzkeM78p9o
-        zpWtYPI9UkN39/JMEW07BPuQQW8wzi59Wg5WXd0o6Qw0jTlCg5YHOKGS4quM/sno
-        1N9zi8IxjeUGaUgW2q34kmRa9tPbrTFQAB8d0n0eXxWwHPghCQL1QHzZ7cnD1EK/
-        0QiXSCvWn0QRXvlD+HplZAw8cGbQP/eJpH/WnTr5KS76l8hGAr1mydooiN2lBrUo
-        J9Hdgk1UsKGV3Str9E6+9m7pBSK+oFpA==
+        :subject:to:to; s=fm2; bh=xhsVqRnfiI/ik+lB3wi0y8rl04cEDc32FCF1xG
+        oPTtQ=; b=e30WPDbqwFkt7bQuFs+JZ97Shvh028Cdq6aaK6VXruPXul5m6Y//Sy
+        SU+Q5a4kg2D9OAw2hXdzJcxM1YhQ+4vumwT+ZrWst4dLgPEEk3XF4KSs8ImnVqoI
+        XndoG5ezhSUb2oM1XUlFUG10apfOaje0tpSomSkk+AXfLaPiW5xSZ10mZ2T/MgEe
+        74D+5ayQsRk3sHuLGtf0xStTFtCMU0QKUEjFsmuz42+X+DdiYJpfpnh6nGTD5RAe
+        shB4VKNV9RZVNvY8xmE+b6115pITPjFm8jGpNxUlFk1pxjap0R8tMNU6cyCNGLlE
+        9OCXBe/yIEBCkui1pu+SVSLD+zNZTXxg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:date:date:from:from
         :in-reply-to:in-reply-to:message-id:mime-version:references
         :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=VQ18XQVk9IzSPBm0N
-        4aNJnOzzx5QuoDKxo0tjLZAUV8=; b=HyYHRsX/GaGTbf0CmhgPTcenqAZQ/HghH
-        2qdboX8Xn1A5UP1QeKZNWTISMTpu49jOE4Zn4DTQUAOrtwJMinZ629jPbUgmSN+t
-        TJ192Hppm/CMmhw9QHjoKQ5k/31mx1thojv4JLDRMPH+l12YvJgObB394JNfjipn
-        pNC1Uf+TYo4hTLk+CMeotcorjcl/9V6qmVrVSFBCd9ONVVYsw6/9iPSl/lMcc/vc
-        BDU67+7CPIQf74hCojRPIjlVvDm2Rni8nxxtntxAlNRz0862d9SktnM8n+WOGXTh
-        hPO3OTB7U3LCZimP2+6gKRU+uP9jLXkXFzrpceW0tkdXhcEqnqDMw==
-X-ME-Sender: <xms:C74TYmDdcoNatGfuPO5_fZCFkGy82hqhULEMlDJ7d1MlsgxvsxqUIw>
-    <xme:C74TYgieQsfbwCIA8Yc3awX5g2UHuB1gEM4bV8UYxc_WzAc10rsTKaCNIpfTMW12A
-    SXIPhP2a-0np9hOSm8>
-X-ME-Received: <xmr:C74TYpnRGEjXjA-GWk2hEe8Psa5aAp35hwCy2AbTwgTYFyTDkItvEVqBdT1R2yCnSuc6lLQD3VLWbDm5APKFyyuKCczbck0KLNsQij8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdekjecutefuodetggdotefrodftvf
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=xhsVqRnfiI/ik+lB3
+        wi0y8rl04cEDc32FCF1xGoPTtQ=; b=ZUnqcB8aP64UyNocgE2UKNwS6XTIaYfF5
+        k0FxrWzGAaJApK0QjgWoIqPEcTCke09WnaCHqpySc+SNjOyWQYPNybNKZelmXU4S
+        Y72Jb8qbpTMrtOqdpoxUsrvnyRMDj6/D/Tn6YEADwf7J1l3Bn5huznnpiD38aFcr
+        ufnFk2pCvTdaldz+Bk+6Fw7s3NoMRr5lmwg6ACgupmVVQwer9C0IAjmFpNYrqgi1
+        S8pDfvvZQaHKeuRwEY5CukcIfvmHIVxM2BHHHQluK8YdIeOOEjXznDtRkrSuE+D5
+        LWcKS1+w8nhkOLNPSHJBqrnGCdpcKN5oHfZuUlrN88r+GOwD/apog==
+X-ME-Sender: <xms:LsETYrzEbYXnpYy8BWvuL9iX1-Um-wGDUiE1lLqb-yBPgxjCa4acHg>
+    <xme:LsETYjTIwxuTVDWNzx1znSCm8HOaa_grvlGvi1r8AM_qBNg1ObZmUXCdzrr9Hp32r
+    _sdA94KEVQc4Jn-N8Q>
+X-ME-Received: <xmr:LsETYlVOi1dSegCKWOAHMIg4MA_zSBj8JTc58OVG-PZfuh9-cLiwg9b0dC2qCVAH0lZnGIQB3jM-tAYtqp0Q4KTM362HA00fFvaQCwE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdeltdcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
@@ -52,13 +52,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdekjecutefuodetggdote
     gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
     udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
     igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:C74TYkwg0Cp-4CCJ9IWqrwPXpPguALASQMZfSRs8nA_iYVKedq4IaA>
-    <xmx:C74TYrTM9SGQG0V8Tf8DAPOm81jPfdqQi-rRYdxismFVFvgaBHVoyQ>
-    <xmx:C74TYvZ8aJoKzJQsoDGAZZLvG9RhUh6UChykvDzUNH1KHu0U1Ib24w>
-    <xmx:C74TYqFa0kB0rZzAUmkrUiA7FaTxypxOqSO-m4_M-FKjEcPn0QHUHQ>
+X-ME-Proxy: <xmx:LsETYlgk8J-MkCjAhKse10HodEHEMzWfPqcQRtoODCSVxnZ4VvUWTQ>
+    <xmx:LsETYtBNSuc-EYh7t4yx7HZNaSbHN6qYNegvApbU2k8YRE_hg64tRQ>
+    <xmx:LsETYuKdMtk-cXG1a_Wra7X4vpTN57Ig4n_BvbmIPRmwzkmYTC4e9w>
+    <xmx:LsETYv3QBQ3DKAWUgUQkezKuEUMXxLkiJlWtYs1EhAmnleKP_hmMXA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Feb 2022 11:30:03 -0500 (EST)
-Date:   Mon, 21 Feb 2022 17:30:01 +0100
+ 21 Feb 2022 11:43:25 -0500 (EST)
+Date:   Mon, 21 Feb 2022 17:43:23 +0100
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Mike Turquette <mturquette@baylibre.com>,
@@ -67,75 +67,77 @@ Cc:     Mike Turquette <mturquette@baylibre.com>,
         Phil Elwell <phil@raspberrypi.com>,
         Tim Gover <tim.gover@raspberrypi.com>,
         Dom Cobley <dom@raspberrypi.com>
-Subject: Re: [PATCH v4 03/10] clk: Use clamp instead of open-coding our own
-Message-ID: <20220221163001.k4nstaxtbmlxgz3j@houat>
+Subject: Re: [PATCH v4 02/10] clk: Always clamp the rounded rate
+Message-ID: <20220221164323.6xacozlk3usiidfy@houat>
 References: <20220125141549.747889-1-maxime@cerno.tech>
- <20220125141549.747889-4-maxime@cerno.tech>
- <20220218223422.4FA9DC340E9@smtp.kernel.org>
+ <20220125141549.747889-3-maxime@cerno.tech>
+ <20220218231508.7B5FCC340E9@smtp.kernel.org>
+ <20220221161821.jbktbgx2t6aaxds3@houat>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3ae4nvu5w3r53lvo"
+        protocol="application/pgp-signature"; boundary="vim6tjiiy5wotyct"
 Content-Disposition: inline
-In-Reply-To: <20220218223422.4FA9DC340E9@smtp.kernel.org>
+In-Reply-To: <20220221161821.jbktbgx2t6aaxds3@houat>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---3ae4nvu5w3r53lvo
+--vim6tjiiy5wotyct
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 18, 2022 at 02:34:20PM -0800, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-01-25 06:15:42)
-> > The code in clk_set_rate_range() will, if the current rate is outside of
-> > the new range, will force it to the minimum or maximum. This is
-> > equivalent to using clamp, while being less readable. Let's switch to
-> > using clamp instead.
+Hi again,
+
+On Mon, Feb 21, 2022 at 05:18:21PM +0100, Maxime Ripard wrote:
+> On Fri, Feb 18, 2022 at 03:15:06PM -0800, Stephen Boyd wrote:
+> > Quoting Maxime Ripard (2022-01-25 06:15:41)
+> > > +/*
+> > > + * Test that if our clock has some boundaries and we try to round a =
+rate
+> > > + * lower than the minimum, the returned rate will be within range.
+> > > + */
+> > > +static void clk_range_test_set_range_round_rate_lower(struct kunit *=
+test)
+> > > +{
+> > > +       struct clk_dummy_context *ctx =3D test->priv;
+> > > +       struct clk_hw *hw =3D &ctx->hw;
+> > > +       struct clk *clk =3D hw->clk;
+> > > +       long rate;
+> > > +
+> > > +       KUNIT_ASSERT_EQ(test,
+> > > +                       clk_set_rate_range(clk,
+> > > +                                          DUMMY_CLOCK_RATE_1,
+> > > +                                          DUMMY_CLOCK_RATE_2),
+> > > +                       0);
+> > > +
+> > > +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
+> > > +       KUNIT_ASSERT_GT(test, rate, 0);
+> > > +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
 > >=20
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/clk/clk.c | 6 +-----
-> >  1 file changed, 1 insertion(+), 5 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 7bb5ae0fb688..150d1bc0985b 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2365,11 +2365,7 @@ int clk_set_rate_range(struct clk *clk, unsigned=
- long min, unsigned long max)
-> >                  *   this corner case when determining the rate
-> >                  */
-> > =20
-> > -               if (rate < min)
-> > -                       rate =3D min;
-> > -               else
-> > -                       rate =3D max;
-> > -
-> > +               rate =3D clamp(clk->core->req_rate, min, max);
+> > The comment says within range but this test says exactly the minimum
+> > rate. Please change it to test that the rate is within rate 1 and rate
+> > 2. Also, we should call clk_get_rate() here to make sure the rate is
+> > within the boundaries and matches what clk_round_rate() returned.
 >=20
-> This isn't equivalent. The else arm is taken if rate >=3D min and rate is
-> set to max, whereas clamp() will leave the rate unchanged if rate >=3D min
-> && rate < max.
+> Ok
 
-This can't happen, since we're in an if block that is (rate < min ||
-rate > max), so at this point if rate is not less than min, it is
-greater than rate. Thus, it's equivalent to clamp.
-
-Still, the commit message could be better, I'll rephrase it.
+Actually, that doesn't work. Calling clk_round_rate() won't affect the
+clock rate, so the rate returned by clk_get_rate() won't match what
+clk_round_rate() will return.
 
 Maxime
 
---3ae4nvu5w3r53lvo
+--vim6tjiiy5wotyct
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhO+CQAKCRDj7w1vZxhR
-xW+JAQD1e5RhceCFxBdY13Gbfb6flQZaIfHnmgTrCSy6p9A4yAEAsnx7qb/QlSfF
-E+eHriTwCohlx5TB/dT4Zkq8kPHgkw0=
-=jdRz
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhPBKwAKCRDj7w1vZxhR
+xQ78AQDEtLblfYMGDqcRFNfjqydpoYdzjhL9Y6Mx5dtOGWmGJQD/XlL1IVl1SD1c
+8fz0VakRzj7A8P/dJdtswEdjNj5QTgY=
+=zque
 -----END PGP SIGNATURE-----
 
---3ae4nvu5w3r53lvo--
+--vim6tjiiy5wotyct--
