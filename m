@@ -2,145 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE372C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 15:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09639C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 15:13:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378881AbiBUPNc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:13:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57552 "EHLO
+        id S1378890AbiBUPNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 10:13:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:57662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378877AbiBUPN1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 10:13:27 -0500
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605391B792
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 07:13:03 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id A629B5C022F;
-        Mon, 21 Feb 2022 10:13:02 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 21 Feb 2022 10:13:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; bh=4kuN6SwYhWH1jp3mcRGG1UgtdIE7Q0R2sgI46+
-        CU+QA=; b=mlqUGsW2uLpowu8d4gx6eCYc5diBj544hX2QVw3ZvLqVqYwlyQ1+bS
-        N1ZUvyyaw1tWTjphZonX+3PjgSri1Ed5Le5OffWXPLCG05BqQfibmg+hBtzzFtEQ
-        hXP6A5+gpNnJH2jLWhCNna3suxm5DZEkcIIil2MRsi5q0Twnp+ujKMP0HIW58/uJ
-        GxNDHLyIvEIYi5cmVjAsH+hatNKGchH+7yhGT/BsoNpM16rmTa1tMPidmuT4AxCq
-        tKFWMHNSAxLcI/89hYEfdI8HCCp/Mo9ogJk72a/frENSvgnQfLhOyHLd7M4Ta4rQ
-        ajYq5xjVagWFtqBBuFbJD0TeJ+yEpfyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=4kuN6SwYhWH1jp3mc
-        RGG1UgtdIE7Q0R2sgI46+CU+QA=; b=BJIxtJOJp1lGicnizM+jXBfio5qfyDOHS
-        kRrS/Eq4KwWy39NImuc0suL3IzC5BIcY5HF4gmN5sYMbBkFFcZGSndhA3+eBLYbU
-        MPOOQGFxqwm6my7JX+L6TsFdDox9lVZxOVHee+Lh+LzGCIEvka/6QuZBOv7uzu/u
-        gjj/toBYVt1IQDTDcdMEhrrztPQi3kLjnfykvh0sLITAeqF8eH+rICPlCA0YP+/D
-        sBQfD4mIdwJQ4njOmNjFh5vPL32ybM+koJrrrlSmNdBJEs3pGO+q+TAhxfp1bhAK
-        ZIZlkftfOXbJq31yBH5zmn5yPZSU9UA00yGx3dz5N3h0XzFRTDPCQ==
-X-ME-Sender: <xms:_qsTYpKE83o9kAkod9x-OU5NMR-rhf22oexubIbiSCCYPiCy0zwa1Q>
-    <xme:_qsTYlK6WD3r0vNarXkqupQXkTqQS-ipJjAiAG-raSAw2V6y98FQsHecT_4Yjfdwu
-    DJl0c3xavWz2Lq5YX4>
-X-ME-Received: <xmr:_qsTYhtZJa2pwXyi4BvDg5ffZZQ8haWEBX51f-RAmbhSOgrVQkC17H3MRAcOmlIHly0_3jFRDYdfW6wKMK9VYPnlvc5yXPW8731BKCE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeeigdejvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:_qsTYqaevBrl3ssOPGFkb8bYOOfqx61R7przKO4YouIz8CttHXq3hg>
-    <xmx:_qsTYgZ1JEptE9RNCLJyBoJUpxf1dakhmVrPxs7yVv3WBXWFn9I_uw>
-    <xmx:_qsTYuDTF-n6NIMeKRkxi8vr5cR7lV-gIDREXLuK0VFQaINK9uWymA>
-    <xmx:_qsTYg59jWS2YRvmv7FT3MGAlsR74j0fyhgYLOzE_ZguWmM1RFIL8w>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Feb 2022 10:13:01 -0500 (EST)
-Date:   Mon, 21 Feb 2022 16:12:59 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v4 01/10] clk: Introduce Kunit Tests for the framework
-Message-ID: <20220221151259.xoiyvafhkfpq5zlt@houat>
-References: <20220125141549.747889-1-maxime@cerno.tech>
- <20220125141549.747889-2-maxime@cerno.tech>
- <20220219022048.19E1BC340E9@smtp.kernel.org>
+        with ESMTP id S233894AbiBUPNu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 10:13:50 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FBF1AF36;
+        Mon, 21 Feb 2022 07:13:26 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id A610F20012;
+        Mon, 21 Feb 2022 15:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645456405;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GKFS4/sethbJ2kNW1esnhR8XeR5VMqXvnzHjinf+IRg=;
+        b=Q/9fdmF42lA4IkUPPaC91Ab+Vnkt+RiFmzxTjFtPC8atPNV5PRNkCu9zVjzxY2Q1jldI4g
+        PiTiifPDM6odmYxFUkNJn6kkIQvMOItoSVGGfJeCKciw5o7rJjETGmt929GS9icII8GWzu
+        zq26M2udbYnD2kbe7y6tcYAGwlQz2wFGO0YUC+g8T0FNrkmCWthZcOgTFP7hCvXMFAUFFW
+        eLXAu0BBVW88p4A0Kk19J41MMpxM9Nqqpn4B1jPcj0y283u+6CEDDjIGpIlxYhF2m/QZMm
+        VqA0skLev7CZz0ceqPOK83iZpM4bi/q0KnWY9p/WZVokLo/OO1NDLAF2emYAwg==
+Date:   Mon, 21 Feb 2022 16:13:20 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
+Subject: Re: [PATCH 4/8] dma: dmamux: Introduce RZN1 DMA router support
+Message-ID: <20220221161320.449b2d4d@xps13>
+In-Reply-To: <YhIeQlwmt/yCc8Uu@smile.fi.intel.com>
+References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
+        <20220218181226.431098-5-miquel.raynal@bootlin.com>
+        <YhIeQlwmt/yCc8Uu@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gnlyikck2xjat746"
-Content-Disposition: inline
-In-Reply-To: <20220219022048.19E1BC340E9@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Andy,
 
---gnlyikck2xjat746
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+andriy.shevchenko@linux.intel.com wrote on Sun, 20 Feb 2022 12:56:02
++0200:
 
-Hi Stephen,
+> On Fri, Feb 18, 2022 at 07:12:22PM +0100, Miquel Raynal wrote:
+> > The Renesas RZN1 DMA IP is a based on a DW core, with eg. an additional
+> > dmamux register located in the system control area which can take up to
+> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> > two different peripherals.
+> >=20
+> > We need two additional information from the 'dmas' property: the channel
+> > (bit in the dmamux register) that must be accessed and the value of the
+> > mux for this channel. =20
+>=20
+> ...
 
-Thanks for your review
+Thanks for the review!
 
-On Fri, Feb 18, 2022 at 06:20:46PM -0800, Stephen Boyd wrote:
-> It would also be good to add a test that tries to set the clk rate with
-> clk_set_rate() after a range has been set that is outside the acceptable
-> range and verify that it fails, and one that tries to set it within the
-> range and make sure it succeeds (and changes it to be exactly what was
-> set).
+>=20
+> > +dw_dmac-y			:=3D platform.o dmamux.o =20
+>=20
+> We do not need this on other platforms, please make sure we have no dangl=
+ing
+> code on, e.g., x86.
+>=20
+> ...
+>=20
+> > +	/* The of_node_put() will be done in the core for the node */
+> > +	master =3D map->req_idx < dmamux->dmac_requests ? 0 : 1; =20
+>=20
+> The opposite conditional will be better, no?`
 
-Do we expect it to fail though?
+I guess this is a matter of taste. I prefer the current writing but I
+will change it.
 
-If we do:
+>=20
+> ...
+>=20
+> > +	dmamux->used_chans |=3D BIT(map->req_idx);
+> > +	ret =3D r9a06g032_syscon_set_dmamux(BIT(map->req_idx),
+> > +					  val ? BIT(map->req_idx) : 0); =20
+>=20
+>=20
+> Cleaner to do
+>=20
+> 	u32 mask =3D BIT(...);
+> 	...
+>=20
+> 	dmamux->used_chans |=3D mask;
+> 	ret =3D r9a06g032_syscon_set_dmamux(mask, val ? mask : 0);
 
-clk_set_range_range(clk, 1000, 2000);
-clk_set_rate(3000);
+Fine.
 
-The current behaviour is that the rate is going to be rounded to 2000,
-but it doesn't fail.
+>=20
+> ...
+>=20
+> > +static const struct of_device_id rzn1_dmac_match[] __maybe_unused =3D {
+> > +	{ .compatible =3D "renesas,rzn1-dma", },
+> > +	{}, =20
+>=20
+> No comma for terminator entry.
 
-Or is it what you meant by fail? ie, that the return code is 0, but the
-rate isn't what we asked for?
+Mmh, ok.
 
-> Similarly, a call to set two disjoint ranges and verify that the call
-> that tries to set the second disjoint range fails.
+>=20
+> > +}; =20
+>=20
+> ...
+>=20
+> > +	if (!node)
+> > +		return -ENODEV; =20
+>=20
+> Dup check, why not to simply try for phandle first?
 
-Ok
+I'll drop it.
 
-> We want to test the failure paths as well, to make sure we don't start
-> causing them to pass, unless it's expected.
+>=20
+> ...
+>=20
+> > +	if (of_property_read_u32(dmac_node, "dma-requests",
+> > +				 &dmamux->dmac_requests)) { =20
+>=20
+> One line?
 
-Do you have any other failure condition you want to test? I already
-tried to come up with those I could think of, but I clearly missed some
-if you said that :)
+Ok.
 
-> This patch could also contain the failure scenario you're experiencing
-> and mark it as expecting to fail. Then the patch that fixes it in the
-> core could mark the test as expecting to pass, which may help us
-> understand more easily what exactly changed instead of having to
-> figure that out after the fact by reading the entire test.>
+>=20
+> > +		dev_err(&pdev->dev, "Missing DMAC requests information\n");
+> > +		of_node_put(dmac_node);
+> > +		return -EINVAL; =20
+>=20
+> First put node, then simply use dev_err_probe().
 
-Ok
+I don't get the point here. dev_err_probe() is useful when -EPROBE_DEFER
+can be returned, right? I don't understand what it would bring here nor
+how I should use it to simplify error handling.
 
-Maxime
+>=20
+> > +	} =20
+>=20
+> ...
+>=20
+> > +static const struct of_device_id rzn1_dmamux_match[] =3D {
+> > +	{ .compatible =3D "renesas,rzn1-dmamux", },
+> > +	{}, =20
+>=20
+> No comma.
 
---gnlyikck2xjat746
-Content-Type: application/pgp-signature; name="signature.asc"
+Ok.
 
------BEGIN PGP SIGNATURE-----
+>=20
+> > +}; =20
+>=20
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhOr+wAKCRDj7w1vZxhR
-xcq+AQDYttqrX+MMbrMwTNw0xMCiNVLqpZp31nrbHfl/94MLmwEAvVZhsur5oyxG
-ekeYX0q5VunoJJn2tWvV/f51KsCsoQw=
-=/v0y
------END PGP SIGNATURE-----
 
---gnlyikck2xjat746--
+Thanks,
+Miqu=C3=A8l
