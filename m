@@ -2,44 +2,44 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B608AC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 11:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A5DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 12:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241057AbiBUL4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 06:56:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54990 "EHLO
+        id S1357514AbiBUMMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 07:12:51 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:41192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357043AbiBUL42 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 06:56:28 -0500
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80042.outbound.protection.outlook.com [40.107.8.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DBCB1EEF2;
-        Mon, 21 Feb 2022 03:56:01 -0800 (PST)
+        with ESMTP id S1357517AbiBUMLu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 07:11:50 -0500
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2075.outbound.protection.outlook.com [40.107.20.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C11720F78;
+        Mon, 21 Feb 2022 04:09:55 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IKX/pECqjQid1sXIGDt+67OGSwW6pLfn9lBfSfCe1xiFVTZ+sKjx56Kn+oNFIVMaXah1BvlXiHOwvRpUFITvTVGwnOHN6LnHYIXfGM00VahSRNY5reitpudjSWf2AZmQ+qw6Y3LujdxMI4/PgzqvIP9Ow76hzlIYyJaV55JEdTPu+L5WqWVVP0WXtS3x4SQyfw/CC/j8rAFHIpUfNW1SE1mpbbWbBLdJstk57eca9JUId2uXnci90NmKEGM4x0xzpUpUx0GDcf9TCqzf151ghnMIiBJEfArOZODfRzoYm6UnZmVxSR4y2NHoC2/fW6nBdo/ZFlR0woozBhaF02NhKA==
+ b=ZdL0YMZjMUDZ2ZdB+yDvG5/aX1/87aWCPBonqt6+2AMoC5JcvUpo0eTsce+fC0Tvl7i/VmLD3i2BEUZtSdSIcn6iS38sbNoGubdyLev8YT008E4NE8X/tX9dpDroQpO7lry3GxIQGONoZecalFTJICMfFmDyVD7OWT2bEJyL2ryq3gPQGvJbCa+CAXQekiZkjHAKK5ePDlTu2zbILEXkmqo937ZhPxNrcYwWH9APr7RDXXHRj5t6Ny8rIPJhiCzRtcGYvtNNxQuQQnIRg6aGdwrojOllxhtzr1u+OhE1F6p0cNIVgI+jNZoTXjW5nPdunOA1Oh7ZcAiLq+lj5FCzww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5al5yQVork/IyD5SvXx0lgCzSBzf2YYNAOQATYGn8EI=;
- b=K2eXosGoeLM9DAcAAUSntyqYkEGmst3RozzN6zM+eqEM6ICp8gFVI52gYCnX2bfzytz2WTrhDXwanvyVtEuqPgFtW4LI5RZ75Ey92g06usbjfrY+Yp90BVn+LVYwruIBeRzqjMVHgfqnjYDsrQHAz2Nt05k8OcrJYXfWtLZ73EdwAzKXmlX4IFFgVxgF4JBiTEMNv24wAIYKytR0od2RifdUZis2sr+V4sk1mJPwdtSGsoHi62v5wu+YrH9/JXDwhTXHRm+xEdX3uCG8DEq9dityzUMTIdqcBfTkzkzqLvD0Eycko/LI7DSe8fBLKYRCdsJjP0kKvjhlHyCPo/hZ/Q==
+ bh=HAVjcRqd9m1BXESvAYqgk5wW+7qWPXaCdEWwUgdnK3Y=;
+ b=HWvpixmN0BWge6brdjhik2mHUZmNzEgFB0JssoqlNbJvMq0ondDVKhvXjgO3UoeVn0X4PG9+OkKJadrtRexYstxFkO++HUKtNfItctE/UXkEfyGjISvxqxAa0FeSMP2kZr4Sa82+iOVPU8ZyFqdLCjb0BugRZjTVQRAR2/Mo9uupnC2N6lnOGkhy+ofZ3dZ3YM3sYX1tFDHzsNOtv8FayXo5yGVIZGNWlt0HHmF20Ygrbb4bj1HTyAVxT5/Kl9iiHjGV3rmv+J0yMdxhwzbEknIlbig6BCpmhoEthWKS2PYc8CVqtxSM3m6SP0fPXBvrbm6XKIs1nZlojM8ZXxQ9ww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5al5yQVork/IyD5SvXx0lgCzSBzf2YYNAOQATYGn8EI=;
- b=pe1UfqchZiC+SWHTJm4UqYZ4OeGTZPQ3qcTdQJFytRfg3tUva02CF51mvjAqrBhODUrX6zidLx5Q9x8lA/EI4MAe8DAmFdwsiepKHbb3kDdgzIUnjaNq9r+oiYHT5RhCLCnJOF2zzSJhZHq9TEyJ/IxvQkiP49YuvHjmwxfLMo0=
+ bh=HAVjcRqd9m1BXESvAYqgk5wW+7qWPXaCdEWwUgdnK3Y=;
+ b=mTFPTVbr5j5M58nO/VGK4lKzBKqlrs6b71lxZJypv7Ci0YIa36cczyhCOkbCF4x92QknNLUxHxpdPEVM7ku+e7sJu/48ATmSD5FRe4uB/hFrbjfK+1mMOPu6DsEi5RGaQmYmX5aVsL0KbTA7l9LYbEH4nhb0za2bWLqpxCqhsLo=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by AM0PR04MB5043.eurprd04.prod.outlook.com (2603:10a6:208:c9::20) with
+ by VI1PR0402MB3423.eurprd04.prod.outlook.com (2603:10a6:803:9::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.27; Mon, 21 Feb
- 2022 11:55:57 +0000
+ 2022 12:09:52 +0000
 Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
  ([fe80::2936:6a6f:6e6f:161f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
  ([fe80::2936:6a6f:6e6f:161f%6]) with mapi id 15.20.4995.026; Mon, 21 Feb 2022
- 11:55:57 +0000
-Date:   Mon, 21 Feb 2022 13:55:54 +0200
+ 12:09:52 +0000
+Date:   Mon, 21 Feb 2022 14:09:48 +0200
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc:     sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
@@ -47,361 +47,221 @@ Cc:     sboyd@kernel.org, robh+dt@kernel.org, shawnguo@kernel.org,
         linux-imx@nxp.com, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clock: Add imx93 clock support
-Message-ID: <YhN9yvmOW2z7sjcW@abelvesa>
+Subject: Re: [PATCH 2/4] clk: imx: add i.MX93 composite clk
+Message-ID: <YhOBDJDdL0Z2tk/j@abelvesa>
 References: <20220215081835.790311-1-peng.fan@oss.nxp.com>
- <20220215081835.790311-2-peng.fan@oss.nxp.com>
+ <20220215081835.790311-3-peng.fan@oss.nxp.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220215081835.790311-2-peng.fan@oss.nxp.com>
-X-ClientProxiedBy: VI1PR10CA0109.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:803:28::38) To VI1PR04MB4688.eurprd04.prod.outlook.com
+In-Reply-To: <20220215081835.790311-3-peng.fan@oss.nxp.com>
+X-ClientProxiedBy: VI1PR0502CA0002.eurprd05.prod.outlook.com
+ (2603:10a6:803:1::15) To VI1PR04MB4688.eurprd04.prod.outlook.com
  (2603:10a6:803:6a::30)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 11c5ff85-37bb-4724-4b1a-08d9f5311f10
-X-MS-TrafficTypeDiagnostic: AM0PR04MB5043:EE_
-X-Microsoft-Antispam-PRVS: <AM0PR04MB50431FB7B3092EDC002CD724F63A9@AM0PR04MB5043.eurprd04.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 1b45c8c4-c7a9-4fec-f371-08d9f5331089
+X-MS-TrafficTypeDiagnostic: VI1PR0402MB3423:EE_
+X-Microsoft-Antispam-PRVS: <VI1PR0402MB34238F55DE0662A39194F633F63A9@VI1PR0402MB3423.eurprd04.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: nfccR/oGGSolezGKhLjeZ6g1oLukDdbxLx3I0JugNaC2tFfKDjDtw4u4/yCu/sPXgx/uoo2BFp/00mApGr0L9OyanrLVrY+c8/WWY4rgIg8F78qjGWLyeLE2eE7leljEs859PVPUFEYeT2audVIlWgs6zus6S2Q726ieVMiWfTaqVfUygzqpquZLcCP/zB00HNCLRAaEcmO7xs0JzBWgI12ysMZ9tzpSj7aqk728pbAW4UKbn8RxvbwnVzkHbPiqBfGzB5sO6CPIsAjDVrlMKzALZnuk6RZxagxW6vZQOFv6Z5fXu59IbQkcCz3m5GZDcF4nHMYnne3DtbemE1ls9a6BdC2+PMgCCn+FUU45T+7TSb3VRNuWzdYthZpRZDrqfdHZfiBkaKUbO4HotQs8X3GrNEtBEoLju39Ui+pF+L+HGQFJUMPt7XI9J4FRMr207iZ5dasBBNtqcY1aEV/qFv+5nueG1WczarKLUERIBFm0nb3ufD3IhpVDXA2Lfnu/a9pbcAusXONdNAOByK7akEsEXTd0qqaIXAoCnNG2taj8gxZtkMsygaHTkTQHANyUf1exkKb+B9ZgINQLjYau+HG1ESY5neywrDYuBj9u/RPv/Q7vMMq+oToWN5LQlaY/rPxZEcGvvm0EkA4pufCUlsdsAgdwOnw9fu+Fahl5F9pgtVpljebY7FOxc6+zRQAW6+M/zxcC89q2VqZxDEt5Chhn5tu7O28u/BYQ6xfjW9wZzoGC9wdlNmIXOSJNAK5AHUkbXJkzmjzvTHTAKzfUY2vURnPhyEKYIRBzHDLcik7mYDaKNGN0+7xSyrueHm8mt0QvH/Ql844wIqicv7ooTQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(186003)(8676002)(4326008)(66556008)(6506007)(6862004)(66476007)(66946007)(38100700002)(52116002)(38350700002)(33716001)(53546011)(6666004)(26005)(6512007)(8936002)(6486002)(966005)(508600001)(9686003)(5660300002)(316002)(44832011)(7416002)(83380400001)(86362001)(2906002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: IZVmFCYVS7Bv7TFUaLDLlb8FAa/j7sGh58UVfW31Y6HzShrLwClZ8c5na81U3kV5q0SKBUYG1pXnqLJ29Cr02JS4o95hvvd6T/4bdVbX7WqDZE5hSvn9E5rd1d0mdnVOFWndAd9SlhinefdIWFYx5pZVKI2BM4WCHX/ai6GMe8DaEYlAjPJ5V+IyeaLfTLEUhheo/6mnlK+ht616wxY5Xu2AQ5PVXh3FA9879MeyzNaeZgiQct8jkZ/7mLZJyurO+ppNxQjpera4xN5R83seEn4td0pEsED5OUyAwpOa0eqEoMADrjTUPVRFXJK/6lXx6589Uv+JEVOiowu4mU0k1NmOY6GdTNSdU4ze04VN9jscN4R6WpBHQr+H6adNeWpA04JhT1Vm82gZ3yCLsiPymUpL6CVbvkhD7tEfzh7UoC571F8z0dn2+ShZOgExRvyfruKoN0MQu+UzJWkoMuG+3KLZCE9/tM1845kA3WsQxBLitK+RIVZwprbnX0yaSWD1tMF08GCma9iOSNtT3wr9wqkveDVYHTWxea0feoh+3nuWeVIJR99hREKK5sW7By8ZAX+n7I038YiLOVfaSVozSmYTfh5isCyLrvDVLTPkVzveBAZBlMj9hp1B4xCQh8XReNLSwuYHh2XZK2eXU0WD6iWysgryTFLyS2hCfplF2jlzGS0g1dBcMh5QkHjQRG9yi2dB8xPfqG8lnsbHiB4RlA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(5660300002)(44832011)(8936002)(26005)(7416002)(66476007)(186003)(6506007)(6512007)(6486002)(9686003)(6666004)(38350700002)(38100700002)(316002)(508600001)(66946007)(66556008)(4326008)(6862004)(83380400001)(86362001)(53546011)(8676002)(33716001)(52116002)(2906002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cxfgroiUK06P7hoQcexHTglGwGhHYoFL6mBz7F59q3IYoJYqf15rmw3KopUB?=
- =?us-ascii?Q?qgFaQ7haX4sYVslqE2FuhiKfoSs7Q7UyqyQALjgqcmMpM2NBaQw9LezfDhRC?=
- =?us-ascii?Q?e7JwvknnDkOzs5ZN8H4amMNZYKKoxENcR1aZbHbYxFCCZS70QQCQ8ZjnzL89?=
- =?us-ascii?Q?VC0FUXZrj+9T4MpwzSHznW4w2l2OGG2tIarkjxMtYaaI5NC9Lyv0szmZuxnb?=
- =?us-ascii?Q?Oqr8JTl8bbOFNJBw4bTwemTd6fpck79a4m1dMhXwKE2n7pPJNOwrPufsj80k?=
- =?us-ascii?Q?IT7jHrcAHe19htjm0hFbf/+I3qXOG8pLa0uDbSMHsRR1dendsEvRyX8CEehS?=
- =?us-ascii?Q?mtSHgTDePi/Nzk7++yYBJsOqZ5VHSWdoAo80Eis5p6I+V7oKeO4jj8MhH31q?=
- =?us-ascii?Q?CRXKSG69ykjDKd72QqMFzPtVHjDX8/e0/Z0BZmTordOIXtqff0chK+4UzTG6?=
- =?us-ascii?Q?0wTG87jzueW4Kdhyl6beOveI9m35/9hXUUELHD87qEAzzoL68wPAD0f90jBV?=
- =?us-ascii?Q?QbUOQom5rgv1rROwqHZaLHLDxspgJne/lw7yrT3eSiqf5NxO8MZu5L20T7+Q?=
- =?us-ascii?Q?MZkFpl62a7Rz23U7LZKYMZk5K09jOhT1NF8xDPdRXqmyW0BcxXJ4FDj379MP?=
- =?us-ascii?Q?9jpHW4BdCgC90WBlJjX4hf8kcdb2HIjVOEE5a/kHi+jd4mldUWeHuLdkajEO?=
- =?us-ascii?Q?p5n0p4d50OOFlNViaPgk/VTkXmo3Nht8+ib+pz/k7dxxs2mKVSgc9FQX6wWH?=
- =?us-ascii?Q?QGrb+y1IU7q3Qs7WLu3+R+l+WlCjxSQX7AKldC+SAr0AgSC5BiOHZoasWMZi?=
- =?us-ascii?Q?vmljSsBmsOSjefOlr0ZH0K6hXtWxFwNP3pen2I30qMzDV9mdGQf2gKHRj7Ce?=
- =?us-ascii?Q?Lu3l75DrEXCml8OtJOPjZAZ88xp719NMro7LfGOQsMMD9iIbHCBgaxhnQUDY?=
- =?us-ascii?Q?dc3dnF8R207Qo1sYzvCaTSxDg8kCEWAO40kFdXUYFk9uNTMu/E+3fqOXQ6LC?=
- =?us-ascii?Q?iCDOzLTr/jbffTQakunEM0NuinoN7kQmq89npibRM50xY60+y4wMsaxtW4Bx?=
- =?us-ascii?Q?WjdnOi6woVudueN4MuVY1TJdotqlYFMnglIxeJoKEtOtjNOmwzds1kcdijhi?=
- =?us-ascii?Q?6hRw9uwWVKmHpvgOWxUFSlMpegvYyf694A9F8TBV6HNhYi7JL7bfinHk/Aas?=
- =?us-ascii?Q?lHSAPF4TzDRibeMF3oQA9tvjvj8nM+I0WM75x1I2IImJMBv1ae4je3SEfpo3?=
- =?us-ascii?Q?Wk7hb0DaqOWq6hOt4ZuSa4M9aPkc0Cxeaq1rlqTlXXjgSO37EUqjCabummhA?=
- =?us-ascii?Q?PU8l1cm2Mw2LobAvekuFrZv9vhuPFoQS71Dn/vRkHkrNswZc3kbgWaUEA9EV?=
- =?us-ascii?Q?/keXqq44m0bJz0OAybM/i4yYZfozByq7XbFGoFY0aJOJcuItWCX2Wr312e6O?=
- =?us-ascii?Q?M4Px8tgRI/32zWCmC4EM4xM5Y/wkG2RdDbyqQLLjAji1gxHB+0IYC/vdvi5j?=
- =?us-ascii?Q?MY18ImGtyZfE2azd2SfNlmd2+QnGE3o/OOVbV/hcOydh/Z7Wx5uGFBnrEKND?=
- =?us-ascii?Q?0UGl+CKGKQw97+GQXN1Z+eTf9mMl0Ba4eduln2QJDAOcn5N0/jOqFFnS0fs/?=
- =?us-ascii?Q?PCCfwgG+nhIgjJ0rBS5yEPo=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?d2spoNgtq3LpmwheoxAz3MoQf3EI80AAgGpRQJLNHET4uNPwsDHsX4BzSsAw?=
+ =?us-ascii?Q?tTpSE9eRkniAYW+GREmc04dXTO3Ice3FkSqu97hCjJ6cKMh3A3wAf2ahQ4nM?=
+ =?us-ascii?Q?gQpOrGxRa3ov1gzYill8E3JZqB7BE0vymDDMM8VP0M9g6YF0R6wUH8XcjUFD?=
+ =?us-ascii?Q?zSx4MLAd9+Ll7YBMLT1w4e+SDL8IxYM75+jQWJ3DOcP1VTH/NE11izAXMQjP?=
+ =?us-ascii?Q?HHxqdN0CeT1ljAluzLUurNI3r2vxctQENAVBTKsiTIRhyqZydIAiJBJvEgkT?=
+ =?us-ascii?Q?5jx38a8w0ih6SAOkMnbYNiaxlOxOraFAW3mCOPAxRfI6Tb283MvFrX3WMUIV?=
+ =?us-ascii?Q?rx5I8e3wyOaqGmSoyiMGkDd3509aJsL32grqN7Cr5rJYtIueyKITh/cYmDUz?=
+ =?us-ascii?Q?f4vX/0YiaYuvkhJVs7dmlKIzSVObuqknxLOUAENiDl4ZD9866US2fKibGHA9?=
+ =?us-ascii?Q?/AjU/AzEesRErpKoigVzULfDBXaqciFI+D8ZJge+dFqBt+WDOGOoe787zUq5?=
+ =?us-ascii?Q?OJrvQzBRJ2uPu9DWRtHgCPHDzjWL2sXu9hX+O5REo8YsxzJOQh3AL2ir2Wq7?=
+ =?us-ascii?Q?FbnXaI2zf6UkUehRhoSoMVRoIPvE1Pgky4BzGp7xwhHIz52fKiCq/LZrep6J?=
+ =?us-ascii?Q?axRQEhS92j/ZoH59gdfYYZ2/I/Tr2ErlA1rj2iXoNLyT601MHRJS69OmuEFf?=
+ =?us-ascii?Q?R5js1Hv6+MK3IDgtph3ANb7Bw/1CFGQMXU0056hZZF+lXd8kuYIXTW986G1q?=
+ =?us-ascii?Q?1PwUMVJN3Ihn53c7sTjtK6ztblK1b7njk9213YVouyNxkjWkJhwkf8IWOfGf?=
+ =?us-ascii?Q?fQkxLJNkG+WQRZtFqNzhotbiRaifvRdw4JOa2A1dF5T5HCYHtGHIlSbp1vZB?=
+ =?us-ascii?Q?hY31oTNtR3Cu0dgOo8X7AAZg30z+221xkLTV7Tj/mOPFTFrNZa21/qEb1arY?=
+ =?us-ascii?Q?32DYFze8t6TtL35j+ggW5hq9RzRuCF1pyzglVueJmdxZWNfK8kfSIMjirDaw?=
+ =?us-ascii?Q?zQa7OEYuXdofY6uRUOzk5Nsc4SWkJPszpkRF5tJszD9hS4c1UEzMTgm4ZY2n?=
+ =?us-ascii?Q?dU6SWdDRSwzkWSJda4X0hHhMWel5PP/0fXdj+fhqL6fqPb35RY+yvBdZmgtw?=
+ =?us-ascii?Q?qTltyZKV9cGlHe0y9Jin65J2+WJeotlMSi+s6c3FXFzAFXgdiBl+a62YDmyD?=
+ =?us-ascii?Q?dzaXnXND8ETrUEht1klZ26Ohn8H02/gf7Q72UwoxqnFUqJHpjuS7+dnog7ju?=
+ =?us-ascii?Q?OvbrOslpvG8iAzdLIuVbVwcxyEeR8yFBN9gkWfvLl+RFcUN1xSGhZg/ZxcNx?=
+ =?us-ascii?Q?Kl78KwaRaqbhhOlCYGq1zMSEkW1UblXA06BrFWtXEv58XaPQaSJ7SnP4xOTD?=
+ =?us-ascii?Q?d6T+/xBn+7o2BjqjzVJideeGjdgu3lIVVco1239a1UsO5VgaQPou3NLi27ir?=
+ =?us-ascii?Q?rzJSpuj4m166LV56r/qX1HSnjJ1lMGXevAonm/ylUOnx0eHzjGbhhsIYVoOI?=
+ =?us-ascii?Q?hybD+csA6b5dCuY5x7lu7OH+V/4sEOxTzpRAi1jGipKLMU+Ejt82WiiHvS3T?=
+ =?us-ascii?Q?dE02i9kkNf78qL7t4r4mHYHpOWK27yr3ukGus2mqDuB08kamU5jcBg9lsuk8?=
+ =?us-ascii?Q?jx5a4HwkcqjG8P74Grhrlpk=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11c5ff85-37bb-4724-4b1a-08d9f5311f10
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b45c8c4-c7a9-4fec-f371-08d9f5331089
 X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2022 11:55:57.5187
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Feb 2022 12:09:52.0967
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CYvfwLww5bdyc8w8f5F8VNLrvxvgM7lU3eHkSBkv1358Nw97GE9ufaPQlLcaTN1bO++CTlEivr0qU9lvPLznew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5043
+X-MS-Exchange-CrossTenant-UserPrincipalName: o5ghqAuj/0/5SUyWK0btWY26jC55RMBIB8OGCxJh3YfKONKkV1/ymsU1hd3vx7n6dH1C5H82lUA+oBp2wdIVQA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3423
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-02-15 16:18:32, Peng Fan (OSS) wrote:
+On 22-02-15 16:18:33, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> Add the clock dt-binding file for i.MX93.
+> i.MX93 CCM ROOT clock has a mux, gate and divider in one register, here
+> is to combine all these into one composite clk and simplify clk tree.
+> i.MX93 CCM is a new IP compared with i.MX8M, so introduce a new file.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  .../bindings/clock/imx93-clock.yaml           |  63 ++++++
->  include/dt-bindings/clock/imx93-clock.h       | 200 ++++++++++++++++++
->  2 files changed, 263 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx93-clock.yaml
->  create mode 100644 include/dt-bindings/clock/imx93-clock.h
+>  drivers/clk/imx/Makefile           |  1 +
+>  drivers/clk/imx/clk-composite-93.c | 93 ++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h              |  9 +++
+>  3 files changed, 103 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite-93.c
 > 
-
-Put the documentation part in a separate patch please.
-
-> diff --git a/Documentation/devicetree/bindings/clock/imx93-clock.yaml b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b5e040026dfb..15549a1c332f 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -4,6 +4,7 @@ mxc-clk-objs += clk.o
+>  mxc-clk-objs += clk-busy.o
+>  mxc-clk-objs += clk-composite-7ulp.o
+>  mxc-clk-objs += clk-composite-8m.o
+> +mxc-clk-objs += clk-composite-93.o
+>  mxc-clk-objs += clk-cpu.o
+>  mxc-clk-objs += clk-divider-gate.o
+>  mxc-clk-objs += clk-fixup-div.o
+> diff --git a/drivers/clk/imx/clk-composite-93.c b/drivers/clk/imx/clk-composite-93.c
 > new file mode 100644
-> index 000000000000..a4c3ae23b8c3
+> index 000000000000..b44619aa5ca5
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/imx93-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX93 Clock Control Module Binding
-> +
-> +maintainers:
-> +  - Peng Fan <peng.fan@nxp.com>
-> +
-> +description: |
-> +  i.MX93 clock control module is an integrated clock controller, which
-> +  includes clock generator, clock gate and supplies to all modules.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,imx93-ccm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description:
-> +      specify the external clocks used by the CCM module.
-> +    items:
-> +      - description: 32k osc
-> +      - description: 24m osc
-> +      - description: ext1 clock input
-> +
-> +  clock-names:
-> +    description:
-> +      specify the external clocks names used by the CCM module.
-> +    items:
-> +      - const: osc_32k
-> +      - const: osc_24m
-> +      - const: clk_ext1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      The clock consumer should specify the desired clock by having the clock
-> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx93-clock.h
-> +      for the full list of i.MX93 clock IDs.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Clock Control Module node:
-> +  - |
-> +    clock-controller@44450000 {
-> +        compatible = "fsl,imx93-ccm";
-> +        reg = <0x44450000 0x10000>;
-> +        #clock-cells = <1>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/imx93-clock.h b/include/dt-bindings/clock/imx93-clock.h
-> new file mode 100644
-> index 000000000000..416e6fd7856d
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/imx93-clock.h
-> @@ -0,0 +1,200 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ OR MIT */
+> +++ b/drivers/clk/imx/clk-composite-93.c
+> @@ -0,0 +1,93 @@
+> +// SPDX-License-Identifier: GPL-2.0+
 > +/*
 > + * Copyright 2021 NXP
+> + *
+> + * Peng Fan <peng.fan@nxp.com>
 > + */
 > +
-> +#ifndef __DT_BINDINGS_CLOCK_IMX93_CLK_H
-> +#define __DT_BINDINGS_CLOCK_IMX93_CLK_H
+> +#include <linux/clk-provider.h>
+> +#include <linux/errno.h>
+> +#include <linux/export.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
 > +
-> +#define IMX93_CLK_DUMMY			0
-> +#define IMX93_CLK_24M			1
-> +#define IMX93_CLK_EXT1			2
-> +#define IMX93_CLK_SYS_PLL_PFD0		3
-> +#define IMX93_CLK_SYS_PLL_PFD0_DIV2	4
-> +#define IMX93_CLK_SYS_PLL_PFD1		5
-> +#define IMX93_CLK_SYS_PLL_PFD1_DIV2	6
-> +#define IMX93_CLK_SYS_PLL_PFD2		7
-> +#define IMX93_CLK_SYS_PLL_PFD2_DIV2	8
-> +#define IMX93_CLK_AUDIO_PLL		9
-> +#define IMX93_CLK_VIDEO_PLL		10
-> +#define IMX93_CLK_A55_PERIPH		11
-> +#define IMX93_CLK_A55_MTR_BUS		12
-> +#define IMX93_CLK_A55			13
-> +#define IMX93_CLK_M33			14
-> +#define IMX93_CLK_BUS_WAKEUP		15
-> +#define IMX93_CLK_BUS_AON		16
-> +#define IMX93_CLK_WAKEUP_AXI		17
-> +#define IMX93_CLK_SWO_TRACE		18
-> +#define IMX93_CLK_M33_SYSTICK		19
-> +#define IMX93_CLK_FLEXIO1		20
-> +#define IMX93_CLK_FLEXIO2		21
-> +#define IMX93_CLK_LPIT1			22
-> +#define IMX93_CLK_LPIT2			23
-> +#define IMX93_CLK_LPTMR1		24
-> +#define IMX93_CLK_LPTMR2		25
-> +#define IMX93_CLK_TPM1			26
-> +#define IMX93_CLK_TPM2			27
-> +#define IMX93_CLK_TPM3			28
-> +#define IMX93_CLK_TPM4			29
-> +#define IMX93_CLK_TPM5			30
-> +#define IMX93_CLK_TPM6			31
-> +#define IMX93_CLK_FLEXSPI1		32
-> +#define IMX93_CLK_CAN1			33
-> +#define IMX93_CLK_CAN2			34
-> +#define IMX93_CLK_LPUART1		35
-> +#define IMX93_CLK_LPUART2		36
-> +#define IMX93_CLK_LPUART3		37
-> +#define IMX93_CLK_LPUART4		38
-> +#define IMX93_CLK_LPUART5		39
-> +#define IMX93_CLK_LPUART6		40
-> +#define IMX93_CLK_LPUART7		41
-> +#define IMX93_CLK_LPUART8		42
-> +#define IMX93_CLK_LPI2C1		43
-> +#define IMX93_CLK_LPI2C2		44
-> +#define IMX93_CLK_LPI2C3		45
-> +#define IMX93_CLK_LPI2C4		46
-> +#define IMX93_CLK_LPI2C5		47
-> +#define IMX93_CLK_LPI2C6		48
-> +#define IMX93_CLK_LPI2C7		49
-> +#define IMX93_CLK_LPI2C8		50
-> +#define IMX93_CLK_LPSPI1		51
-> +#define IMX93_CLK_LPSPI2		52
-> +#define IMX93_CLK_LPSPI3		53
-> +#define IMX93_CLK_LPSPI4		54
-> +#define IMX93_CLK_LPSPI5		55
-> +#define IMX93_CLK_LPSPI6		56
-> +#define IMX93_CLK_LPSPI7		57
-> +#define IMX93_CLK_LPSPI8		58
-> +#define IMX93_CLK_I3C1			59
-> +#define IMX93_CLK_I3C2			60
-> +#define IMX93_CLK_USDHC1		61
-> +#define IMX93_CLK_USDHC2		62
-> +#define IMX93_CLK_USDHC3		63
-> +#define IMX93_CLK_SAI1			64
-> +#define IMX93_CLK_SAI2			65
-> +#define IMX93_CLK_SAI3			66
-> +#define IMX93_CLK_CCM_CKO1		67
-> +#define IMX93_CLK_CCM_CKO2		68
-> +#define IMX93_CLK_CCM_CKO3		69
-> +#define IMX93_CLK_CCM_CKO4		70
-> +#define IMX93_CLK_HSIO			71
-> +#define IMX93_CLK_HSIO_USB_TEST_60M	72
-> +#define IMX93_CLK_HSIO_ACSCAN_80M	73
-> +#define IMX93_CLK_HSIO_ACSCAN_480M	74
-> +#define IMX93_CLK_ML_APB		75
-> +#define IMX93_CLK_ML			76
-> +#define IMX93_CLK_MEDIA_AXI		77
-> +#define IMX93_CLK_MEDIA_APB		78
-> +#define IMX93_CLK_MEDIA_LDB		79
-> +#define IMX93_CLK_MEDIA_DISP_PIX	80
-> +#define IMX93_CLK_CAM_PIX		81
-> +#define IMX93_CLK_MIPI_TEST_BYTE	82
-> +#define IMX93_CLK_MIPI_PHY_CFG		83
-> +#define IMX93_CLK_ADC			84
-> +#define IMX93_CLK_PDM			85
-> +#define IMX93_CLK_TSTMR1		86
-> +#define IMX93_CLK_TSTMR2		87
-> +#define IMX93_CLK_MQS1			88
-> +#define IMX93_CLK_MQS2			89
-> +#define IMX93_CLK_AUDIO_XCVR		90
-> +#define IMX93_CLK_SPDIF			91
-> +#define IMX93_CLK_ENET			92
-> +#define IMX93_CLK_ENET_TIMER1		93
-> +#define IMX93_CLK_ENET_TIMER2		94
-> +#define IMX93_CLK_ENET_REF		95
-> +#define IMX93_CLK_ENET_REF_PHY		96
-> +#define IMX93_CLK_I3C1_SLOW		97
-> +#define IMX93_CLK_I3C2_SLOW		98
-> +#define IMX93_CLK_USB_PHY_BURUNIN	99
-> +#define IMX93_CLK_PAL_CAME_SCAN		100
-> +#define IMX93_CLK_A55_GATE		101
-> +#define IMX93_CLK_CM33_GATE		102
-> +#define IMX93_CLK_ADC1_GATE		103
-> +#define IMX93_CLK_WDOG1_GATE		104
-> +#define IMX93_CLK_WDOG2_GATE		105
-> +#define IMX93_CLK_WDOG3_GATE		106
-> +#define IMX93_CLK_WDOG4_GATE		107
-> +#define IMX93_CLK_WDOG5_GATE		108
-> +#define IMX93_CLK_SEMA1_GATE		109
-> +#define IMX93_CLK_SEMA2_GATE		110
-> +#define IMX93_CLK_MU_A_GATE		111
-> +#define IMX93_CLK_MU_B_GATE		112
-> +#define IMX93_CLK_EDMA1_GATE		113
-> +#define IMX93_CLK_EDMA2_GATE		114
-> +#define IMX93_CLK_FLEXSPI1_GATE		115
-> +#define IMX93_CLK_GPIO1_GATE		116
-> +#define IMX93_CLK_GPIO2_GATE		117
-> +#define IMX93_CLK_GPIO3_GATE		118
-> +#define IMX93_CLK_GPIO4_GATE		119
-> +#define IMX93_CLK_FLEXIO1_GATE		120
-> +#define IMX93_CLK_FLEXIO2_GATE		121
-> +#define IMX93_CLK_LPIT1_GATE		122
-> +#define IMX93_CLK_LPIT2_GATE		123
-> +#define IMX93_CLK_LPTMR1_GATE		124
-> +#define IMX93_CLK_LPTMR2_GATE		125
-> +#define IMX93_CLK_TPM1_GATE		126
-> +#define IMX93_CLK_TPM2_GATE		127
-> +#define IMX93_CLK_TPM3_GATE		128
-> +#define IMX93_CLK_TPM4_GATE		129
-> +#define IMX93_CLK_TPM5_GATE		130
-> +#define IMX93_CLK_TPM6_GATE		131
-> +#define IMX93_CLK_CAN1_GATE		132
-> +#define IMX93_CLK_CAN2_GATE		133
-> +#define IMX93_CLK_LPUART1_GATE		134
-> +#define IMX93_CLK_LPUART2_GATE		135
-> +#define IMX93_CLK_LPUART3_GATE		136
-> +#define IMX93_CLK_LPUART4_GATE		137
-> +#define IMX93_CLK_LPUART5_GATE		138
-> +#define IMX93_CLK_LPUART6_GATE		139
-> +#define IMX93_CLK_LPUART7_GATE		140
-> +#define IMX93_CLK_LPUART8_GATE		141
-> +#define IMX93_CLK_LPI2C1_GATE		142
-> +#define IMX93_CLK_LPI2C2_GATE		143
-> +#define IMX93_CLK_LPI2C3_GATE		144
-> +#define IMX93_CLK_LPI2C4_GATE		145
-> +#define IMX93_CLK_LPI2C5_GATE		146
-> +#define IMX93_CLK_LPI2C6_GATE		147
-> +#define IMX93_CLK_LPI2C7_GATE		148
-> +#define IMX93_CLK_LPI2C8_GATE		149
-> +#define IMX93_CLK_LPSPI1_GATE		150
-> +#define IMX93_CLK_LPSPI2_GATE		151
-> +#define IMX93_CLK_LPSPI3_GATE		152
-> +#define IMX93_CLK_LPSPI4_GATE		153
-> +#define IMX93_CLK_LPSPI5_GATE		154
-> +#define IMX93_CLK_LPSPI6_GATE		155
-> +#define IMX93_CLK_LPSPI7_GATE		156
-> +#define IMX93_CLK_LPSPI8_GATE		157
-> +#define IMX93_CLK_I3C1_GATE		158
-> +#define IMX93_CLK_I3C2_GATE		159
-> +#define IMX93_CLK_USDHC1_GATE		160
-> +#define IMX93_CLK_USDHC2_GATE		161
-> +#define IMX93_CLK_USDHC3_GATE		162
-> +#define IMX93_CLK_SAI1_GATE		163
-> +#define IMX93_CLK_SAI2_GATE		164
-> +#define IMX93_CLK_SAI3_GATE		165
-> +#define IMX93_CLK_MIPI_CSI_GATE		166
-> +#define IMX93_CLK_MIPI_DSI_GATE		167
-> +#define IMX93_CLK_LVDS_GATE		168
-> +#define IMX93_CLK_LCDIF_GATE		169
-> +#define IMX93_CLK_PXP_GATE		170
-> +#define IMX93_CLK_ISI_GATE		171
-> +#define IMX93_CLK_NIC_MEDIA_GATE	172
-> +#define IMX93_CLK_USB_CONTROLLER_GATE	173
-> +#define IMX93_CLK_USB_TEST_60M_GATE	174
-> +#define IMX93_CLK_HSIO_TROUT_24M_GATE	175
-> +#define IMX93_CLK_PDM_GATE		176
-> +#define IMX93_CLK_MQS1_GATE		177
-> +#define IMX93_CLK_MQS2_GATE		178
-> +#define IMX93_CLK_AUD_XCVR_GATE		179
-> +#define IMX93_CLK_SPDIF_GATE		180
-> +#define IMX93_CLK_HSIO_32K_GATE		181
-> +#define IMX93_CLK_ENET1_GATE		182
-> +#define IMX93_CLK_ENET_QOS_GATE		183
-> +#define IMX93_CLK_SYS_CNT_GATE		184
-> +#define IMX93_CLK_TSTMR1_GATE		185
-> +#define IMX93_CLK_TSTMR2_GATE		186
-> +#define IMX93_CLK_TMC_GATE		187
-> +#define IMX93_CLK_PMRO_GATE		188
-> +#define IMX93_CLK_32K			189
-> +#define IMX93_CLK_END			190
-> +#endif
+> +#include "clk.h"
+> +
+> +#define CCM_DIV_SHIFT	0
+> +#define CCM_DIV_WIDTH	8
+> +#define CCM_MUX_SHIFT	8
+> +#define CCM_MUX_MASK	3
+> +#define CCM_OFF_SHIFT	24
+> +
+> +#define AUTHEN_OFFSET	0x30
+> +#define TZ_NS_SHIFT	9
+> +#define TZ_NS_MASK	BIT(9)
+> +
+> +struct clk_hw *imx93_clk_composite_flags(const char *name, const char * const *parent_names,
+> +					 int num_parents, void __iomem *reg,
+> +					 unsigned long flags)
+> +{
+> +	struct clk_hw *hw = ERR_PTR(-ENOMEM), *mux_hw;
+> +	struct clk_hw *div_hw, *gate_hw;
+> +	struct clk_divider *div = NULL;
+> +	struct clk_gate *gate = NULL;
+> +	struct clk_mux *mux = NULL;
+> +	bool clk_ro = false;
+> +
+> +	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +	if (!mux)
+> +		goto fail;
+> +
+> +	mux_hw = &mux->hw;
+> +	mux->reg = reg;
+> +	mux->shift = CCM_MUX_SHIFT;
+> +	mux->mask = CCM_MUX_MASK;
+> +	mux->lock = &imx_ccm_lock;
+> +
+> +	div = kzalloc(sizeof(*div), GFP_KERNEL);
+> +	if (!div)
+> +		goto fail;
+> +
+> +	div_hw = &div->hw;
+> +	div->reg = reg;
+> +	div->shift = CCM_DIV_SHIFT;
+> +	div->width = CCM_DIV_WIDTH;
+> +	div->lock = &imx_ccm_lock;
+> +	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+> +
+> +	if (!(readl(reg + AUTHEN_OFFSET) & TZ_NS_MASK))
+> +		clk_ro = true;
+> +
+> +	if (clk_ro) {
+> +		hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +					       mux_hw, &clk_mux_ro_ops, div_hw,
+> +					       &clk_divider_ro_ops, NULL, NULL, flags);
+> +	} else {
+> +		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +		if (!gate)
+> +			goto fail;
+> +
+> +		gate_hw = &gate->hw;
+> +		gate->reg = reg;
+> +		gate->bit_idx = CCM_OFF_SHIFT;
+> +		gate->lock = &imx_ccm_lock;
+> +		gate->flags = CLK_GATE_SET_TO_DISABLE;
+> +
+> +		hw = clk_hw_register_composite(NULL, name, parent_names, num_parents,
+> +					       mux_hw, &clk_mux_ops, div_hw,
+> +					       &clk_divider_ops, gate_hw,
+> +					       &clk_gate_ops, flags | CLK_SET_RATE_NO_REPARENT);
+
+Just a thought. Could we just extend the imx8m_composite to do this, instead
+of adding this new one? I mean, just because it is a new SoC, doesn't
+mean we can't reuse the imx8m composite. 
+
+> +	}
+> +
+> +	if (IS_ERR(hw))
+> +		goto fail;
+> +
+> +	return hw;
+> +
+> +fail:
+> +	kfree(gate);
+> +	kfree(div);
+> +	kfree(mux);
+> +	return ERR_CAST(hw);
+> +}
+> +EXPORT_SYMBOL_GPL(imx93_clk_composite_flags);
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 7d220a01de1f..63eb7c53b123 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -419,6 +419,15 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  			IMX_COMPOSITE_FW_MANAGED, \
+>  			IMX_COMPOSITE_CLK_FLAGS_CRITICAL_GET_RATE_NO_CACHE)
+>  
+> +struct clk_hw *imx93_clk_composite_flags(const char *name,
+> +					 const char * const *parent_names,
+> +					 int num_parents,
+> +					 void __iomem *reg,
+> +					 unsigned long flags);
+> +#define imx93_clk_composite(name, parent_names, num_parents, reg) \
+> +	imx93_clk_composite_flags(name, parent_names, num_parents, reg, \
+> +				  CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+> +
+>  struct clk_hw *imx_clk_hw_divider_gate(const char *name, const char *parent_name,
+>  		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
+>  		u8 clk_divider_flags, const struct clk_div_table *table,
 > -- 
 > 2.25.1
 >
