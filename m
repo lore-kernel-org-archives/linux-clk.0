@@ -2,125 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656B4C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 10:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F68C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 10:34:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354871AbiBUKcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 05:32:53 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50606 "EHLO
+        id S1355053AbiBUKe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 05:34:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355001AbiBUKcg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 05:32:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D33856C952
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645437155;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rWKdB+xdsSGrYxoHd80FLMCMuF8hy6C+CmJuSV61wzE=;
-        b=b8o5PB2mznPuEWmozr9J5d7rpYRGmQdyRxyTWwnNnVTfrxNdjGDB3peHoF8kIlLhzXPKt+
-        irXsjchQURHfV8IcC2yuLbpX83QkbKFRPijOWktYvNYxBio0H5L3ob5YaIOgG9B2sJGF5Z
-        +TF+1s+yFlxsIR9PxRjErH0bM1ZVON4=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-433-ODXyIOVDNRCp0mpeXUT32g-1; Mon, 21 Feb 2022 04:52:34 -0500
-X-MC-Unique: ODXyIOVDNRCp0mpeXUT32g-1
-Received: by mail-ed1-f69.google.com with SMTP id n7-20020a05640205c700b0040b7be76147so9844251edx.10
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 01:52:33 -0800 (PST)
+        with ESMTP id S1354936AbiBUKdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 05:33:39 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BF4637030;
+        Mon, 21 Feb 2022 01:54:02 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id i11so17571366lfu.3;
+        Mon, 21 Feb 2022 01:54:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=FBQCAwLGItt59fBHH1fMX/rXCxY4p1v9wuPJWfMr/EE=;
+        b=OMjFpUKSoI/8tDW559i/11H2ijvy+X7Cyy6+WRTh9BpYhAd0ESthUOs21QFcduRLUX
+         tGwZzFtj90IC1hBoKntcyQvsn11UKiofViSoSA/V7l/NNjHPUvvL4b9XTN6qSrbYDpLs
+         gbdjvTfYbe7a8VYjZFTFv0/F88nhCwe5RCFWeRMN79SOD+ga3jJgJPl85LdsYhffSx9O
+         f0KieNs5r3M64JzpMGPsA6JxAEaFgRZUxnb+MT8MmRvmkHQVofikUxrarsiCe+saU+TX
+         qmZ7towRvoIrZdYqqnFpWmWme6fYEZVk2g784cMY0LEkmtGG9Zj/XjfRtzaUPbkWq6VZ
+         9gtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=rWKdB+xdsSGrYxoHd80FLMCMuF8hy6C+CmJuSV61wzE=;
-        b=qmXyHdiFYRv7bNjqR4Fix/gqAVeAKWDqCaTcMnXbtqAN+apvAr7AgIHEgusKSaueZ/
-         KcouSwexuhQ/SF1T1HPQsh4VYnpa/o3BP2rjRcnWOJ9be69EqOtq1pO3Luc6bSw8HLT5
-         6nwI5sC3+6AYBrlWwWFvDUTROVq19U7qr56bSmAN3f4jNwGCS8EjwWOBPQFEidMYkE6v
-         6+uhk+XLeyepbo87/ZSczDBqtqmJePN76LnjP/GN8H9/jc64HwjtLXUGH/oLbrXc+H6u
-         NBrHWCIDH0I5Lm8mOwDxDu6ZtIf5Pu+XERsq/PuUWz0SPlp0v++cUMIi6KF3nuv1RYNa
-         Aadg==
-X-Gm-Message-State: AOAM533R7pVv1dV6BxSZ3fdjee3yOLxPbnAd20H72xCoSJuzU59svzH0
-        RlQQmVukgVivCn/0Kw3V/XKKv9U0FAw0+ST6KvxBSobTGhLeqIpPKJvGqO7DX9koalYsayNo88T
-        WwCgkeWnVSXOLiUr2yqAc
-X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id ek21-20020a056402371500b00410a415fd95mr20619461edb.288.1645437153005;
-        Mon, 21 Feb 2022 01:52:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwfjucEjn+NxsIVVAlxvKWSfIUNLfVlNeuy2epy4FKSTUnKHqY117TAezZRujd7MCV1h/QIvA==
-X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id ek21-20020a056402371500b00410a415fd95mr20619452edb.288.1645437152824;
-        Mon, 21 Feb 2022 01:52:32 -0800 (PST)
-Received: from [10.40.98.142] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id g11sm5131745ejs.14.2022.02.21.01.52.32
+        bh=FBQCAwLGItt59fBHH1fMX/rXCxY4p1v9wuPJWfMr/EE=;
+        b=fzErLDosCq+yQQvdLCzy/3VRe9IRWl+osHQBZeYNE2mQxEv2mE3SyJF+A+oWnqzOPh
+         rM80g//N+ucPKltopcs9e4kc99D9wo4SNF7lJT/gA8TrjOEHr9Ui6G7btCgoXKXmDwcH
+         gYnU3cisUjj/vdlSGE3xN5uirrd+BHkFi8w5UHr0259ii+/u7MOc1FSj/TRcgYgLJikE
+         7haNkEd3+9iEPof8o0nkMECt/+0mfUltTwtJwUhP7kUB7VEq27cXKGpj8PSmVgGJUdRD
+         n2kI/eKV3AeylL/gs5O38eE9lYWtVaMSicpGYRbDWdDqiOPlm/3v+2QfISGd2dXxS6QV
+         or0Q==
+X-Gm-Message-State: AOAM530vmvEOfc/fUZYeXyNYEcIkPmF/AMvup+TQfyBIwa5QJaInCR6A
+        mD2KvR1cku940Ds7rkgbnto=
+X-Google-Smtp-Source: ABdhPJyjpoLC4dkht2ubnC2fLVCm11jEQES+SqN3/jJaPUC4j1RTjBwAfYihJh/DiezuaKLTQVLqDw==
+X-Received: by 2002:a19:4f02:0:b0:441:39df:161c with SMTP id d2-20020a194f02000000b0044139df161cmr13408076lfb.504.1645437240280;
+        Mon, 21 Feb 2022 01:54:00 -0800 (PST)
+Received: from [192.168.2.145] (109-252-138-165.dynamic.spd-mgts.ru. [109.252.138.165])
+        by smtp.googlemail.com with ESMTPSA id q12sm1066973lfr.157.2022.02.21.01.53.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 01:52:32 -0800 (PST)
-Message-ID: <d2bc537d-b311-6fb6-faf1-a847ae3b83be@redhat.com>
-Date:   Mon, 21 Feb 2022 10:52:31 +0100
+        Mon, 21 Feb 2022 01:53:59 -0800 (PST)
+Message-ID: <677beebd-5a16-297f-c09a-fa4b72c001c9@gmail.com>
+Date:   Mon, 21 Feb 2022 12:53:58 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH 2/6] ACPI: bus: Add iterator for dependent devices
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v16 21/40] pwm: tegra: Add runtime PM and OPP support
 Content-Language: en-US
-To:     Daniel Scally <djrscally@gmail.com>, linux-acpi@vger.kernel.org,
-        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Cc:     rafael@kernel.org, lenb@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, markgross@kernel.org, robert.moore@intel.com
-References: <20220216225304.53911-1-djrscally@gmail.com>
- <20220216225304.53911-3-djrscally@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20220216225304.53911-3-djrscally@gmail.com>
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Lee Jones <lee.jones@linaro.org>, Nishanth Menon <nm@ti.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, David Heidelberg <david@ixit.cz>
+References: <20211130232347.950-1-digetx@gmail.com>
+ <20211130232347.950-22-digetx@gmail.com>
+ <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20220221081727.jeq2jff5ewjzubxv@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hello Uwe,
 
-On 2/16/22 23:53, Daniel Scally wrote:
-> Add a helper macro to iterate over ACPI devices that are flagged
-> as consumers of an initial supplier ACPI device.
+21.02.2022 11:17, Uwe Kleine-König пишет:
+>> @@ -344,7 +387,10 @@ static const struct of_device_id tegra_pwm_of_match[] = {
+>>  MODULE_DEVICE_TABLE(of, tegra_pwm_of_match);
+>>  
+>>  static const struct dev_pm_ops tegra_pwm_pm_ops = {
+>> -	SET_SYSTEM_SLEEP_PM_OPS(tegra_pwm_suspend, tegra_pwm_resume)
+>> +	SET_RUNTIME_PM_OPS(tegra_pwm_runtime_suspend, tegra_pwm_runtime_resume,
+>> +			   NULL)
+>> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+>> +				pm_runtime_force_resume)
+>>  };
+>>  
+>>  static struct platform_driver tegra_pwm_driver = {
+> I admit to not completely understand the effects of this patch, but I
+> don't see a problem either. So for me this patch is OK:
 > 
-> Signed-off-by: Daniel Scally <djrscally@gmail.com>
-> ---
->  include/acpi/acpi_bus.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 > 
-> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
-> index 8b06fef04722..72103bcdd5b3 100644
-> --- a/include/acpi/acpi_bus.h
-> +++ b/include/acpi/acpi_bus.h
-> @@ -723,6 +723,18 @@ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
->  struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
->  						   struct acpi_device *start);
->  struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
-> +
-> +/**
-> + * for_each_acpi_consumer_dev - iterate over the consumer ACPI devices for a
-> + *				given supplier
-> + * @supplier: Pointer to the supplier's ACPI device
-> + * @consumer: Pointer to &struct acpi_device to hold the consumer, initially NULL
-> + */
-> +#define for_each_acpi_consumer_dev(supplier, consumer)			\
-> +	for (consumer = acpi_dev_get_first_consumer_dev(supplier);	\
+> I spot a problem, it's not introduced by this patch however: If the
+> consumer of the PWM didn't stop the hardware, the suspend should IMHO be
+> prevented.
 
-If we drop acpi_dev_get_first_consumer_dev() this needs to be updated to:
+Why? The PWM driver itself will stop the h/w on suspend.
 
-	for (consumer = acpi_dev_get_next_consumer_dev(supplier, NULL);  \
+> I wonder if the patches in this series go in in one go via an ARM or
+> Tegra tree, or each patch via its respective maintainer tree.
 
-Otherwise this looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-> +	     consumer;							\
-> +	     consumer = acpi_dev_get_next_consumer_dev(supplier, consumer))
-> +
->  struct acpi_device *
->  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
->  struct acpi_device *
-
+This series, including this patch, was already applied to 5.17 via the
+tegra/soc tree. No action is needed anymore.
