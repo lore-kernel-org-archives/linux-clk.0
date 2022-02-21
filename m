@@ -2,96 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3F5C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC561C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbiBUQoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:44:08 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58346 "EHLO
+        id S1381267AbiBUQtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:49:08 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380940AbiBUQoH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:44:07 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A67220E8;
-        Mon, 21 Feb 2022 08:43:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1645461820; x=1676997820;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HrHAf6gEsOAhEpFdK8CdrZ0sJZ9UBBtJ6ScL1EPZiy0=;
-  b=1SRJSbbTYOY3q9ifajm7BjSJmBvWpraTrmsgqCaYHAZMjQqcmnnAvCha
-   +1pijPaBC9I97Mx8TLLBow+LSJlXfl/X24zl2T1bJuGcq7R4SOUZFwIMo
-   OcdOmx2qeVAGjrRbtvK8Tjo66+NSk5vywecaEO9AYFiQPMwUD44iuHqAI
-   naOHJUGnrYILkKGA784W9gwHxfJASKkM9JBLOFkc5t6qpOsRJD4obnrYA
-   IDq4DsTCvc8zttizvDSR9CpOaSbxlL88zi5LSNZfYtwcVeJmMEU2bO5QG
-   6wAuKGsq+RadtyEcYOS1qX2sSIWQBJqOv04c8PxNOkyV7SmUA6rlMw24P
+        with ESMTP id S1381237AbiBUQs6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:48:58 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E4A237D3;
+        Mon, 21 Feb 2022 08:48:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645462114; x=1676998114;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JMvx6HdjljRIyEJnTyPEGxbsrX44dVlOO6YTuBmXXRM=;
+  b=VrLNDo3tcp2IlRv6CXY3cC1WhaDDsxgQ/ETbaeiCsm06jPXSOPxr+4IP
+   cWyHuNw7I1nN1AlJbvv9Y1iAsr5UK2GcjqwIXW3GbolThkyPnYry2CCwF
+   rj89follcMQVGO18ezEkd4ID5lSqWCuOklsGJCCeGR2AJJiVMV5ku3brf
+   tppQLsdGb69ylHoOH/4mW9RGmmDyQkDInvJLHkgtZeLYjignqCni4V723
+   BElb93z0IaS+tQKG6WjEu1yvY4KdT0JF1GqnPco1aMAYnKEqENfiCJ35Q
+   +403se73nQWCI3Wtqy5xOou5ZIGeGOPTrCe8exuyhY45RgGbPEJCoRKJy
    Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="251492664"
 X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
-   d="scan'208";a="163022563"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 21 Feb 2022 09:43:39 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Mon, 21 Feb 2022 09:43:39 -0700
-Received: from [10.12.68.158] (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Mon, 21 Feb 2022 09:43:38 -0700
-Message-ID: <994b754f-a8b0-2504-0803-d12fa9975ff5@microchip.com>
-Date:   Mon, 21 Feb 2022 17:43:37 +0100
+   d="scan'208";a="251492664"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:48:34 -0800
+X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
+   d="scan'208";a="591017878"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:48:30 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nMBqb-006rBq-PG;
+        Mon, 21 Feb 2022 18:47:37 +0200
+Date:   Mon, 21 Feb 2022 18:47:37 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
+Subject: Re: [PATCH 4/8] dma: dmamux: Introduce RZN1 DMA router support
+Message-ID: <YhPCKbMtB3jnhBo4@smile.fi.intel.com>
+References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
+ <20220218181226.431098-5-miquel.raynal@bootlin.com>
+ <YhIeQlwmt/yCc8Uu@smile.fi.intel.com>
+ <20220221161320.449b2d4d@xps13>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: lan966x: Fix linking error
-Content-Language: en-US
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <kavyasree.kotagiri@microchip.com>,
-        kernel test robot <lkp@intel.com>
-References: <20220219141536.460812-1-horatiu.vultur@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20220219141536.460812-1-horatiu.vultur@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220221161320.449b2d4d@xps13>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/02/2022 at 15:15, Horatiu Vultur wrote:
-> If the config options HAS_IOMEM is not set then the driver fails to link
-> with the following error:
-> clk-lan966x.c:(.text+0x950): undefined reference to
-> `devm_platform_ioremap_resource'
-> 
-> Therefor add missing dependencies: HAS_IOMEM and OF.
-> 
-> Fixes: 54104ee02333 ("clk: lan966x: Add lan966x SoC clock driver")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+On Mon, Feb 21, 2022 at 04:13:20PM +0100, Miquel Raynal wrote:
+> andriy.shevchenko@linux.intel.com wrote on Sun, 20 Feb 2022 12:56:02
+> +0200:
+> > On Fri, Feb 18, 2022 at 07:12:22PM +0100, Miquel Raynal wrote:
 
-Reviewed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+...
 
-> ---
->   drivers/clk/Kconfig | 2 ++
->   1 file changed, 2 insertions(+)
+> > > +		dev_err(&pdev->dev, "Missing DMAC requests information\n");
+> > > +		of_node_put(dmac_node);
+> > > +		return -EINVAL;  
+> > 
+> > First put node, then simply use dev_err_probe().
 > 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 4a8451f61f37..6f03c29c40be 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -232,6 +232,8 @@ config COMMON_CLK_GEMINI
->   
->   config COMMON_CLK_LAN966X
->   	bool "Generic Clock Controller driver for LAN966X SoC"
-> +	depends on HAS_IOMEM
-> +	depends on OF
->   	help
->   	  This driver provides support for Generic Clock Controller(GCK) on
->   	  LAN966X SoC. GCK generates and supplies clock to various peripherals
+> I don't get the point here. dev_err_probe() is useful when -EPROBE_DEFER
+> can be returned, right? I don't understand what it would bring here nor
+> how I should use it to simplify error handling.
 
+Less LOCs, and it's fine to call it here. This usecase is described in the
+dev_err_probe() documentation.
 
 -- 
-Nicolas Ferre
+With Best Regards,
+Andy Shevchenko
+
+
