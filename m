@@ -2,148 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE35C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C63C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Feb 2022 16:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381320AbiBUQyQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 11:54:16 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42334 "EHLO
+        id S1381369AbiBUQ4h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Feb 2022 11:56:37 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236640AbiBUQyP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:54:15 -0500
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4913122534;
-        Mon, 21 Feb 2022 08:53:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645462432; x=1676998432;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jFAKX07sax2uMuZwpnIsQeZvNSQX6LJPr86+iOLPjR4=;
-  b=ZCJ/1rlP/8Z/iiIBndgFo90PRraxskZEkTXvUuVY34Fnin+P6FOYfWzK
-   vKdAUIbP1VBDf9aZ6wjVC+7/uJ2LZYgBCSV21fe/j998iwGLeE7InxWfX
-   rBuskH3Oaclkc+8sGUiCOdIG1nVtjNrMJaLbtrl1IVIYdU0V1EEaFQGkQ
-   zA7aMqur2eubkJ/a04mwMpvczwtuMx/Z0yHYag7d1y2WEZNIDo1EYWuWc
-   0lyO5CSKZcCyqrRs2Dr+hAoTBjdr7RE/wBvvtdCn0GEandSp4GsOgDgWC
-   JAe4XYr8fpDDBHaRVvbFXokEyPatzF7R+piViFyXBO0Dg2C+lXX3FYPZF
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10265"; a="314803674"
-X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
-   d="scan'208";a="314803674"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:53:51 -0800
-X-IronPort-AV: E=Sophos;i="5.88,386,1635231600"; 
-   d="scan'208";a="706312552"
-Received: from smile.fi.intel.com ([10.237.72.59])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2022 08:53:47 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nMBvj-006rFh-Ly;
-        Mon, 21 Feb 2022 18:52:55 +0200
-Date:   Mon, 21 Feb 2022 18:52:55 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Laetitia MARIOTTINI <laetitia.mariottini@se.com>
-Subject: Re: [PATCH 5/8] dma: dw: Avoid partial transfers
-Message-ID: <YhPDZ4yb50sMdVgV@smile.fi.intel.com>
-References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
- <20220218181226.431098-6-miquel.raynal@bootlin.com>
- <YhIcyyBp53LnMbjU@smile.fi.intel.com>
- <TYYPR01MB7086F412B035A09AED2037A9F53A9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
+        with ESMTP id S1381387AbiBUQ4c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 11:56:32 -0500
+Received: from so254-9.mailgun.net (so254-9.mailgun.net [198.61.254.9])
+        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id 80C1522BE2
+        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 08:56:08 -0800 (PST)
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1645462568; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: From: References: Cc: To: Subject: MIME-Version: Date:
+ Message-ID: Sender; bh=DzZH06prTIghA5OnLx3lGCwq5J4ljZ83zScuiDwYEFA=; b=heqxE70vkLmcGXR19iDdjz5Cjx2KHZsz1xQVY20etOVnKj9bg3sQB94RFGSS78AF/HveP8EG
+ ijHF+Dq1ANwJu0Fpr+iU7optawgxR+rAWf4tmpVFbnVOxWmczGFiHyqMmWLuPno5h6mQpAoW
+ /O/qfTuOMclawUPfRyt5GV6vAP0=
+X-Mailgun-Sending-Ip: 198.61.254.9
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n07.prod.us-east-1.postgun.com with SMTP id
+ 6213c4273047cf1c0ae46710 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 21 Feb 2022 16:56:07
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1F121C43618; Mon, 21 Feb 2022 16:56:05 +0000 (UTC)
+Received: from [192.168.0.101] (unknown [49.204.183.73])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DC46C4338F;
+        Mon, 21 Feb 2022 16:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 6DC46C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Message-ID: <9f343332-9a0e-cbf9-9fb1-17127036b0b6@codeaurora.org>
+Date:   Mon, 21 Feb 2022 22:25:58 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TYYPR01MB7086F412B035A09AED2037A9F53A9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for
+ GDSCs
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220209172513.17873-1-tdas@codeaurora.org>
+ <YgRBnExwlzI+lPlR@builder.lan> <20220210072842.3E796C004E1@smtp.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+In-Reply-To: <20220210072842.3E796C004E1@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 08:14:47AM +0000, Phil Edworthy wrote:
-> Hi Andy,
+Hi Stephen, Bjorn,
+
+Thanks for your comments.
+
+On 2/10/2022 12:58 PM, Stephen Boyd wrote:
+> Quoting Bjorn Andersson (2022-02-09 14:35:08)
+>> On Wed 09 Feb 11:25 CST 2022, Taniya Das wrote:
+>>
+>>> Do not update the transition delay and use the default reset values.
+>>>
+>>> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>>> ---
+>>>   drivers/clk/qcom/gdsc.c | 6 +++++-
+>>>   drivers/clk/qcom/gdsc.h | 1 +
+>>>   2 files changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>>> index 7e1dd8ccfa38..e7b213450640 100644
+>>> --- a/drivers/clk/qcom/gdsc.c
+>>> +++ b/drivers/clk/qcom/gdsc.c
+>>> @@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
+>>>         */
+>>>        mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
+>>>               EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
+>>> -     val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+>>> +
+>>> +     regmap_read(sc->regmap, sc->gdscr, &val);
+>>> +
+>>> +     if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
+>>
+>> I dug a little bit more into this and noticed that on various platforms
+>> CLK_DIS_WAIT_VAL for the GPU_CX GDSC is supposed to be 8 (whereas both
+>> hw default and CLK_DIS_WAIT_VAL is 2).
+>>
+
+Yes, only for certain GPU_CC these would be updated and that too in case 
+the design team suggests. Downstream we would set the value from probe 
+itself, or we can pick these from device tree as required and suggested.
+
+>> I'm not able to find anything helpful in the git log describing what the
+>> value does, but it seems that a "just use hw default" flag won't cut it
+>> for this scenario.
+>>
+
+This value is used for the number of clock cycles it would wait before 
+the GDSCR ACK signals/halting the clock.
+
 > 
-> I wrote the patch a few years ago, but didn't get the time to upstream it.
-> 
-> I am not aware of a HW integration bug on the RZ/N1 device but can't rule it
-> out. I am struggling to see what kind of HW issue this could be as, iirc,
-> word accesses work fine when the size of the transfer is a multiple of the
-> MEM width.
-> 
-> I found the issue when testing DMA with the UART transferring different amounts of data.
+> I'd prefer we invert the logic so that we don't need to litter this flag
+> all over the place. I recall that the wait values were incorrect a long
+> time ago on early gdsc using designs but hopefully they've been fixed
+> now and we can simply use the default power on reset (POR) values.
 
-Can you tell more about the setup and test cases?
+I am okay to invert the logic, but I am not sure if they could cause any 
+issues to the older targets. They were broken in HW design long back, 
+but got fixed in most families of target and most GDSCs.
 
-Also, which version of the DW DMAC IP is being used in this SoC?
+As mentioned if explicitly they need to be updated, it is best to do 
+from the probe.
+This was done in SC7180 GPUCC driver.
+         /* Configure clk_dis_wait for gpu_cx_gdsc */
+         regmap_update_bits(regmap, 0x106c, CLK_DIS_WAIT_MASK,
+                                         8 << CLK_DIS_WAIT_SHIFT);
 
-...
 
-> > > +		if (sconfig->dst_addr_width && sconfig->dst_addr_width <
-> > data_width)
-> > > +			data_width = sconfig->dst_addr_width;
-> > 
-> > But here no check that you do it for explicitly peripheral to memory, so
-> > this
-> > will affect memory to peripheral transfers as well.
-> No, this should be ok as this change is within:
-> 	case DMA_DEV_TO_MEM:
-
-Ah, it's better. But still unclear to me why we need this.
-
-P.S. Please avoid top-postings.
-
-> > -----Original Message-----
-> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Sent: 20 February 2022 10:50
-> > On Fri, Feb 18, 2022 at 07:12:23PM +0100, Miquel Raynal wrote:
-
-> > > Pausing a partial transfer only causes data to be written to mem that is
-> > > a multiple of the memory width setting.
-> > >
-> > > However, when a DMA client driver finishes DMA early, e.g. due to UART
-> > > char timeout interrupt, all data read from the DEV must be written to
-> > MEM.
-> > >
-> > > Therefore, allow the slave to limit the memory width to ensure all data
-> > > read from the DEV is written to MEM when DMA is paused.
-> > 
-> > Is this a fix?
-> > What happens to the data if you don't do this?
-> > As far as I understood the Synopsys DesignWare specification the DMA
-> > controller
-> > is capable of flushing FIFO in that case on byte-by-byte basis. Do you
-> > have an
-> > HW integration bug?
-> > 
-> > TL;DR: tell us more about this.
-> > 
-> > ...
-> > 
-> > > +		if (sconfig->dst_addr_width && sconfig->dst_addr_width <
-> > data_width)
-> > > +			data_width = sconfig->dst_addr_width;
-> > 
-> > But here no check that you do it for explicitly peripheral to memory, so
-> > this
-> > will affect memory to peripheral transfers as well.
+Please let me know if we are okay to add the invert logic.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-
+--
