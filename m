@@ -2,33 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC0CC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 06:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B52C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 07:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbiBVGUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 01:20:36 -0500
-Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:34098 "EHLO
+        id S229481AbiBVHwG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 02:52:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230204AbiBVGUf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 01:20:35 -0500
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D9F3FD21DA
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 22:20:02 -0800 (PST)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26021:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Tue, 22 Feb 2022 14:15:00 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Tue, 22 Feb 2022 14:15:18 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Tue, 22 Feb 2022 14:15:18 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        with ESMTP id S229480AbiBVHwF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 02:52:05 -0500
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D76317A80;
+        Mon, 21 Feb 2022 23:51:39 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id p9so40210140ejd.6;
+        Mon, 21 Feb 2022 23:51:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=F3WbKk5vimbhrQDgdHAazTZndoEQzHfmgGw6RSG9wZM=;
+        b=3d7ryvmcu+zSWqUnELZnP057QpLnw8OEpwpZE4GFsEsnFJB53d8OgUIUlQbHMk3GHt
+         abEnxCitV3MBGPdZFfOV7n51noj4YAhWJrzB+3GUNwSvAkSHNH5NtO399ay7ZoZ1x9Cx
+         ycDLOoV2Q7KIIiwiEYtgS0wFPBTZ56lPf+bI0gQdmh/AsVqRW79QWibs/r4Ws/cYdPGG
+         kVCnMumtWsCW0xzNgr9Brv0Bt0nQ4asM+cMRMutYhDyznODXvxFvMDbpmTob2He1Nqpi
+         RbXopgyd6miDdp2TtD5YwGXPGVmWENvOMQ3YRNllRylbZ0fHxR6Zy1qJXFIqN+GmBBL8
+         H5UA==
+X-Gm-Message-State: AOAM530YkE9TIxJ8nO7zf+O4pNDAne4hl057XFhJnrElqTcwE2TudyZP
+        v8YhgxlP+mM/vkx4twMedos=
+X-Google-Smtp-Source: ABdhPJxpu/V0BvmnL6Gj9apR6o1rnAVPW2zXbVxfOJJpHy66Yspt3UgACkgnHKoxUsWvYzJMLlAP2g==
+X-Received: by 2002:a17:906:d047:b0:6c8:185c:aad with SMTP id bo7-20020a170906d04700b006c8185c0aadmr18708547ejb.341.1645516297709;
+        Mon, 21 Feb 2022 23:51:37 -0800 (PST)
+Received: from [192.168.0.122] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.googlemail.com with ESMTPSA id fx2sm5892678ejb.59.2022.02.21.23.51.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Feb 2022 23:51:35 -0800 (PST)
+Message-ID: <8ce8a3db-0f42-0b30-6688-01c1ea905425@kernel.org>
+Date:   Tue, 22 Feb 2022 08:51:33 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Content-Language: en-US
+To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
         "maz@kernel.org" <maz@kernel.org>,
@@ -42,38 +61,47 @@ CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
+        =?UTF-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
         Rob Herring <robh@kernel.org>
-Subject: RE: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
-Thread-Topic: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
-Thread-Index: AQHYJtRL7BpgMun7wkSEmTd5rYSoP6ydrKQAgAFsZ7A=
-Date:   Tue, 22 Feb 2022 06:15:18 +0000
-Message-ID: <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
 References: <cover.1645413746.git.qinjian@cqplus1.com>
  <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
  <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
-In-Reply-To: <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICsNCj4gPiArcHJvcGVydGllczoNCj4gPiArICAkbm9kZW5hbWU6DQo+ID4gKyAgICBjb25z
-dDogJy8nDQo+ID4gKyAgY29tcGF0aWJsZToNCj4gPiArICAgIG9uZU9mOg0KPiA+ICsgICAgICAt
-IGl0ZW1zOg0KPiA+ICsgICAgICAgICAgLSBjb25zdDogc3VucGx1cyxzcDcwMjEtYWNoaXANCj4g
-PiArDQo+IA0KPiBZb3UgZGlkIG5vdCBwdWJsaXNoIERUUyBzbyBiaWdnZXIgcGljdHVyZSBhbmQg
-Y29udGV4dCBhcmUgbWlzc2luZyBoZXJlLg0KPiBJcyBpdCBhIFNvQyBjb21wYXRpYmxlPyBBIGJv
-YXJkIGNvbXBhdGlibGU/IFdoeSBvbmx5IG9uZT8gQWdhaW5zdCB3aGF0DQo+IGRvZXMgaXQgdmFs
-aWRhdGU/DQo+IA0KPiBUaGlzIGJpbmRpbmcgbG9va3MgaW5jb21wbGV0ZS4NCg0KU3VucGx1cyBT
-UDcwMjEgaXMgYW4gQVJNIENvcnRleCBBNyBiYXNlZCBTb0MuDQpUaGUgcGF0Y2ggaXMgZm9yIFNQ
-NzAyMSBTb0MgYW5kIFNQNzAyMSBiYXNlZCBib2FyZHMuDQpTb3JyeSwgSSBkb24ndCB1bmRlcnN0
-YW5kIHlvdXIgcXVlc3Rpb25zLg0KQ291bGQgeW91IGV4cGxhaW4gbW9yZT8NCiANCg==
+On 22/02/2022 07:15, qinjian[覃健] wrote:
+>>> +
+>>> +properties:
+>>> +  $nodename:
+>>> +    const: '/'
+>>> +  compatible:
+>>> +    oneOf:
+>>> +      - items:
+>>> +          - const: sunplus,sp7021-achip
+>>> +
+>>
+>> You did not publish DTS so bigger picture and context are missing here.
+>> Is it a SoC compatible? A board compatible? Why only one? Against what
+>> does it validate?
+>>
+>> This binding looks incomplete.
+> 
+> Sunplus SP7021 is an ARM Cortex A7 based SoC.
+> The patch is for SP7021 SoC and SP7021 based boards.
+> Sorry, I don't understand your questions.
+> Could you explain more?
+
+You have there only one compatible but if I would expect at least two.
+One for SoC and one for board. Something like this:
+Documentation/devicetree/bindings/arm/rda.yaml
+but in your case enum would have only one entry.
+
+
+Best regards,
+Krzysztof
