@@ -2,130 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86FB8C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 08:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC54C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 08:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbiBVIWw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 03:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49516 "EHLO
+        id S229620AbiBVIY6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 03:24:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiBVIWv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 03:22:51 -0500
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2063.outbound.protection.outlook.com [40.107.21.63])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F221052B9;
-        Tue, 22 Feb 2022 00:22:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eX3RTIPV1yOvNd6Q8nOWHsl/py7V49S/ZhKT4Zn5D3c/CGc9vlASVvIPslhKJ5tsyW89qcwBKL1SdFEV2b4NTYF5WVE4xxHO7g1H1Yv8jorkmnTWqVwFRUgQ+8NwwZKQdetSh/V4mtwWIq4YLzv7nuFOPFcavUry1Uly9bISb2HPjZtkya3Xq48dhL3daj9L4FEeeUP2uFfeUvDE1AHpzRdthI2aMA8Ty2dOTJtS5yQeVvjiuBzZT4jq/bSa0GkUx2r/ApamDj48vTo2JimWSSPxtjATYjerEWsllhst9aXmB1yWREjHp2YCrEDQ0YRAECay1kg2wr7jl34pj1uz3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2GblK9vEJ3wuarum9FCfhp/4OB0820V+zt5x09SvKRE=;
- b=N03yLnJSyTo7PjOyvu/KfQ1Te3UvnFN2F5ksEzQqhZnTZJx6e6a20VpMlFxsK0jC/SKdcJgLizVXeTJ0z5PTqB2OADFYU8/kXCdJfK98D2vMeaWFuOXplBHmKq9Pn9fFNxnFbX713/BaOeCClUx8dOpmXG4MPZsiTcbHHATlF1EXLjxqhRL/a3ViN0a7QFp6ifYAM/4w80HvCRWLaM20YJx+DhRnjv9YaVSPHDkrW/m0/Yt6I5OF+P8PHEOcHXLVnxzD20AY9MSYiSzHINyVEze4xGG59k3GV3rtTJLRubUwd15cA3Zw2b1OZW7ZsHYFZLFTw7BVju3qPzHZZn+P9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2GblK9vEJ3wuarum9FCfhp/4OB0820V+zt5x09SvKRE=;
- b=QuDq1+0Q1szukY+Yu1rmBM8ZH7CTxZbhq+v7yZDzX9SNByMGYR3k0x6SIv59RWvImvE92/FrTBQJuQA2X+NyS3HyV4wGPvoAEaMlKaaihx3aHBXs9CBC3h+n1LMnB7oIWYOER79JA/rSF27MiMa2KhQX/9ohoJgcUalizqnZmVE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by VI1PR04MB3984.eurprd04.prod.outlook.com (2603:10a6:803:4e::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.27; Tue, 22 Feb
- 2022 08:22:24 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::2936:6a6f:6e6f:161f]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::2936:6a6f:6e6f:161f%6]) with mapi id 15.20.4995.026; Tue, 22 Feb 2022
- 08:22:23 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Rob Herring <robh@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org
-Subject: [PATCH] dt-bindings: fsl: scu: add imx8dxl scu clock support
-Date:   Tue, 22 Feb 2022 10:21:40 +0200
-Message-Id: <20220222082140.2073629-1-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S229524AbiBVIY5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 03:24:57 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA99C156C5B;
+        Tue, 22 Feb 2022 00:24:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1645518271; x=1677054271;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BmcoNaaaXaTPZppWjE0Q138HyVLxEI8C4NAO/ka5L7Y=;
+  b=jlQ7+tASnLYG66jWDMGNx9oDlNvVhm5bB9vxBSmXTKhTANbz5iD1J9Fl
+   G7CvbIvERyS48GLk6VIDcPJSIEM92MthgpGS54xl/TUvTNf3WXAInF21Q
+   8IHZ3BI6YgqC9333MN+nLlJRjKqwk3AgichKKIelWSSV/9XSjjCd1jCV1
+   woxDzFpdnM8cjOltdt3juUwgCOwDLIF3ZlSZIyqG2yDbNlv+yxCtkLBRb
+   ZurOJD3Advv89z76a+sMtVqKb4qS3079C1JSCU6IqoZ5c8/Dx75hLK5k7
+   ofti43g7iSZ4XlOzOwMw8VkXEQ/45lx+UuGhxfZ6rhg8whV7l0l+Wrnf9
+   g==;
+X-IronPort-AV: E=Sophos;i="5.88,387,1635231600"; 
+   d="scan'208";a="86553620"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Feb 2022 01:24:30 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Tue, 22 Feb 2022 01:24:30 -0700
+Received: from wendy.microchip.com (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Tue, 22 Feb 2022 01:24:27 -0700
+From:   <conor.dooley@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+CC:     <krzysztof.kozlowski@canonical.com>, <geert@linux-m68k.org>,
+        <david.abdurachmanov@gmail.com>, <palmer@dabbelt.com>,
+        <daire.mcnamara@microchip.com>, <cyril.jean@microchip.com>,
+        <conor.dooley@microchip.com>
+Subject: [PATCH v11 0/1]  Add clkcfg driver for Microchip PolarFire SoC
+Date:   Tue, 22 Feb 2022 08:27:06 +0000
+Message-ID: <20220222082706.3044572-1-conor.dooley@microchip.com>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: VI1P195CA0023.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:800:d0::33) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a34cfc15-c93e-43d3-cda6-08d9f5dc73fb
-X-MS-TrafficTypeDiagnostic: VI1PR04MB3984:EE_
-X-Microsoft-Antispam-PRVS: <VI1PR04MB39846726A49F00480C397B89F63B9@VI1PR04MB3984.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tlDIonAlvLV5Wb1SWya0ZvqNy5ZX6EdiR6l3aqIuacbK2P1aoA8MAzdELuEwMz1+8UYUfNobCjs6zapBy9pxQg40m/5ZI5NsEpb5W6+vEkK//3qUzznhiscBFKkGBmfmEACdizM1ns7p7gNd1m83U7iWrO49jpbMogAHEosZgEaErAOH7fznFHFfiS2RhbDbPVbT0929+HkG6MBZ6EVnLpk+wfbQ8lpSNE+53joRIVHXh67JUUio1Da5gmMyqnlgnqTHz2fzWKcs0csqUDfJoIkZ3/6LFcKb8KHUvhVIL2h58ZrigTFIMIzVryuyF/Ji75M44AqOJGraHOIxlRuLPvTCQKiddkQVk0Wm/gydcmK3nYlWt16aXOaP5UCJ+Y7Vg0imKLbbp7YA5MScJrFmogoNGdAEiCHMJiYP/RasbQ0TA/bb7XeH2kplVYjzxE9+LCxkCzAmSfbspUPFLNEd8Ac0E3L169zQ5TcsfrmE0igvgZeMupS8aKt4Q55T6n8NpW5hYfTrwy32jN9XPpFAU3kWCpuDsDkrQa4agxUG48SQw56NSbs49p1eubYlbuXvkVUqY375B5CJ1U6njLBu3KBlfOqRyAIPYpwU42cFHqh9VtSFPco3z9FC91UKAEoErLmM3TJ8u4Ke879cEubA5duBWRtitjnO7q7t029fCRbzR571W/zYSlX1RxoILuFk66t8ncWeiFnuq8tbpuD2BMjhFrDc3ifmGEeFeLu9d28=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(4326008)(8676002)(66946007)(66476007)(66556008)(316002)(6636002)(6486002)(110136005)(54906003)(508600001)(86362001)(36756003)(38350700002)(38100700002)(4744005)(186003)(26005)(1076003)(2616005)(6666004)(6506007)(52116002)(6512007)(44832011)(2906002)(5660300002)(83380400001)(8936002)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?twavRBIk7E6azikYx/Iq6GL7+Zbii0r2sXntouQ/B8YyxLOM63eTD6+ov8gw?=
- =?us-ascii?Q?9xq3zmhUzo5PQP7s6Yl+T/NPu9Ic08eiS/qg84aEMlIkMEDyqJO8jEJLZXkB?=
- =?us-ascii?Q?U2pXVol9RCweiw9bfhuJC36Zg5PrNLjHt9SHLyGgf7aGk8k1njE5gMZq4ppz?=
- =?us-ascii?Q?aSB1SKzkAVdShXrpFHUHvGzJKArL7RitRJs6QScV0bq7v+ZOI2rWSUwdYzcY?=
- =?us-ascii?Q?ziVrpDJ2qKiwwyxs31YwwTYtbsMHmzLRi+709jJjpz1tmVqhxxNxeyohJT1R?=
- =?us-ascii?Q?n1sq/YeeXl6bzsQK0ZCmUob196sWKRoWsma6u94LKPlH0FMKuhdCywe4hRkf?=
- =?us-ascii?Q?Cg+iviYmJZ5L9lPmgeJb4GyqliOuyB/vAF8iDTWCRJ9mhuPotyVDfLskgQmG?=
- =?us-ascii?Q?T8xenFxB3tXw4L63MJ+s7S1b8R9+55i14ntp2uYDO2iI+c2c5g+xJJfnph59?=
- =?us-ascii?Q?EQ/K/H0+6bmzFpKfnmygGizI2lX7VKlJqR77BRypRlhzEFmS9lUmxHVBNGV4?=
- =?us-ascii?Q?QpVhqiVfHYh+ckD4DFy5JMwybPBcNxk++gBSHSVLfzjIsEARGxfvjwYaGB+l?=
- =?us-ascii?Q?SxQf6XzOQC4TomY7cZTPO/wJjiyWohlb/yxE2vHo58Yg1ZJw2lCywdHvcFUR?=
- =?us-ascii?Q?XVxBIXjEZejQ99a6pBylsJ2qusrCEoC9Y7G3ozmANEWqSYKzM3kMlH3dckFh?=
- =?us-ascii?Q?gvry6XIezG4Y+BCMPhL6J7c2v8hdKFSEqks4+eU1apWuXzwn15qBWBJkhv1c?=
- =?us-ascii?Q?/ctVSNgs8pUbEiu86FEI2va++ZbJ6kiqbBGiYMrlfv8cEUxBsgbnYt41PmRT?=
- =?us-ascii?Q?9dfUos/NuYw3P0ArPjDM9PIIj4opQb5ngiD0x4tx2kEI+IyXaPi34VDh3H0t?=
- =?us-ascii?Q?GXbOjpn8Ge1XO4oxYGtCrLeLzFEK45TIVMpnoxezdcL8R6vpGgD7il0rWw+L?=
- =?us-ascii?Q?BOGvwddNyng5X0438+EVUkgsZyPFwOS2hHKeDHjEJxPYocJUu3oFA8wUJ4z1?=
- =?us-ascii?Q?TRu+0TrSHhFxCVcnkEIVfG8aAU9gNsn5MOEo3CNGisUu5fzOcXLitTkOB/uk?=
- =?us-ascii?Q?WObRFNY/ZrhUhjCa5DzJgjK37ROp/NEg8ItPm3qxsZGzyWD9+zoDi1ROCfhh?=
- =?us-ascii?Q?chuVlgKvzgop9XucSNi2xBBdCe8I+Clx5P17f05uuUZCBIroxLQ5JByjgmWN?=
- =?us-ascii?Q?VaH21gZizULJc/AolG+M7XF8czTO6yh9wMvRs2Mmhx+LrbB7oqcTGYOm/G6W?=
- =?us-ascii?Q?y2SMI4iyeucejq4yTSYUP8zaSGEwzUioghneebfLWjle4OjnmxSGNFK4w9ag?=
- =?us-ascii?Q?E0v2UK0nRKFQZS4oFwZSOXiVmojJgWfkSNQdKlcGAiDfiO90vsxljBkFLrK9?=
- =?us-ascii?Q?lvxYC1ENmTsNTWEGm75sDrFScrf6lw3OEuTBzOK3a8lkm1++g6/GmmfPsxuY?=
- =?us-ascii?Q?6wZC6yHfJn6BiW2ybTZT8MqaTqqhRHEL3wc0eZ4HtVMrd5mwBAmx5/O+WiQc?=
- =?us-ascii?Q?M5Vozr58hPEns4B81OvshRRYRzbau5tSlMHiJF34/YOX6Z+CNtUVvLD57LG5?=
- =?us-ascii?Q?2oeWJrZ5CHx7YIVJGkA5bLMmLl8/N3WUfrKHLnAzDdLotTDxH4J5b6BfXbmA?=
- =?us-ascii?Q?ZTRWa5cNShdr58pV0BF1R9I=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a34cfc15-c93e-43d3-cda6-08d9f5dc73fb
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 08:22:23.9002
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FCNrLNJblNEnzl/ZpVhzO756WOjs5D7hbS/mn2F0ts6wY31HVeavIG1JQ0yVS7UZVFHHb9EsTQArQVsNjP7nmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3984
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add imx8dxl scu clock support.
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 1 +
- 1 file changed, 1 insertion(+)
+This patch adds support for the clkcfg hardware block on the Microchip
+PolarFire SoC
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-index fd0061712443..a87ec15e28d2 100644
---- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-@@ -86,6 +86,7 @@ This binding uses the common clock binding[1].
- 
- Required properties:
- - compatible:		Should be one of:
-+			  "fsl,imx8dxl-clk"
- 			  "fsl,imx8qm-clk"
- 			  "fsl,imx8qxp-clk"
- 			followed by "fsl,scu-clk"
+Change since v10:
+* clks are not one based, don't use the CLK_DIVIDER_ONE_BASED flag
+
+Changes since v9:
+* removed devm_clk_get, replaced by index 0 clk_parent_data
+* moved CLK_HW_INIT_x out of register functions
+* dropped no longer needed name/flags/parent struct members
+* added CLK_DIVIDER_ONE_BASED flags
+* added rationale for critical clocks
+* use lock directly
+* dropped mpfs_periph_clk_recalc_rate
+* dropped manual devm_ _unregisters
+* dropped goto err in probe function
+* dropped dt-binding (already in clk-next)
+
+Changes since v8:
+* Use devm_clk_hw_unregister directly
+* Get parent clk in probe rather than register function
+
+Changes since v7:
+* Dropped clock-output-names again (oops)
+
+Changes since v6:
+* Dropped clock-output-names *as a required property*
+* Dropped if(lock) check on spinlocks, added spinlocks to all
+  read-modify-write register access
+* Removed kfree()s on non-dynamically allocated variables
+* Use devm_clk_get to get the reference clock
+* Account for reserved clock when calculating the size of num_clks
+
+Changes since v5:
+* Dropped clock-output-names property
+
+Major changes since v4:
+* Adjusted license for microchip,mpfs-clock.h to match microchip,mpfs.yaml
+* Corrected the number of clocks to 33 from 32
+
+Major changes since v3:
+* Patch reformatted so microchip,mpfs-clock.h is part of device-tree patch
+
+Major changes since v2:
+* In mpfs_cfg_clk_set_rate, return immediately if divider_get_val
+    returns <0 
+* rebased to v5.12-rc1
+
+Major changes since v1:
+ * Dependency on SOC_MICROCHIP_POLARFIRE
+ * All references to PFSOC/pfsoc changed to MPFS/mpfs
+ * Cleaned error handling in _probe
+ * Re-ordered code to place structs et al at top
+
+
+Daire McNamara (1):
+  clk: microchip: Add driver for Microchip PolarFire SoC
+
+ drivers/clk/Kconfig              |   4 +-
+ drivers/clk/Makefile             |   2 +-
+ drivers/clk/microchip/Kconfig    |  10 +
+ drivers/clk/microchip/Makefile   |   1 +
+ drivers/clk/microchip/clk-mpfs.c | 381 +++++++++++++++++++++++++++++++
+ 5 files changed, 394 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/microchip/Kconfig
+ create mode 100644 drivers/clk/microchip/clk-mpfs.c
+
 -- 
-2.34.1
+2.35.1
 
