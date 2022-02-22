@@ -2,140 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2709C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 13:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A8EC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 13:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbiBVNLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 08:11:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43736 "EHLO
+        id S229867AbiBVNT1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 08:19:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232259AbiBVNKE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 08:10:04 -0500
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2074.outbound.protection.outlook.com [40.107.237.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75301533BB;
-        Tue, 22 Feb 2022 05:09:27 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X5jfkoAVeLUAf7mGS8yqZW0DqDBbBdYgC9chpZ/RP83RXQvy2GeIMPpCcX2v+jS/NW8Swauy4tnC+s7IPUrjjrCc7Q135u/XBOpKE9fEzXmis8lhBIiskUSW/EZGDGAyAxpN18G3FJLgEaKaCi73MzQqQdUz6Xj7eMAJInzvn0rQLLqfsgJ1Fl/UoZTJingMp25bUVtzKD3wPSesiKPkZA2TXnxmwAxDnGikRvOWHNIkqTijhRUj9Fimp/gVCE4rdB24XNijDofmeZ1Y91HKxOS8t+TFx2LSWv7YFO73icHS1pBNtpsJ0jk0r5tNYMkAWBpwjOGj5eF3O0/Fm02MTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6vfXcr536bemeh81FHzrlNim153nDcqpdr7jFH1GHMQ=;
- b=m+Q0uspoS+cPuQaZAqf8nEmmY8Kp8w5t8UVezHeZQvjAroMg6ZAvAOkjSzNm7Kp0tV3NutiIi0Wybx3Fj1VTH9kRvoEiWUCXBkaO1cO8ePcfVzhRiqlwP/YpHRZw7gdq0Ues6/2RdNBA8ozERVfmcdNvi1kWmlKKmzu6PX635jsO38FS+tNErQUAHnTpd7gYfPQMaR9/3WH4wQWd4AnwkH0Ust+zmgIDsFdzlP6dEoq5jr56fe+iwQmh74VDrbGXkSPAgGZFxv8kxJT/so4IKWQ2gki8JvAJbkeF4lPL1SQyuqw7HY/ZzFyVB/6muzHR3S3GRBSklvQ98k+YYNVC4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6vfXcr536bemeh81FHzrlNim153nDcqpdr7jFH1GHMQ=;
- b=Em7M+jvnt7iHkgbaOnVGWDrJhYEiKa6i+cLKKWo+n8p+VYCA2e+z9EweO/Kf3f6uqEut/ViAHeeR36P4qsKoZFIK4j1UUmS5gSzVDeYYm598Xzo+PORnqNT7aPV54kzM9XiKUz0IuulwlyeUDj9UC4zVKY1vgJz3mUQOh7QWxuY=
-Received: from DS7PR05CA0085.namprd05.prod.outlook.com (2603:10b6:8:56::15) by
- BY5PR02MB7026.namprd02.prod.outlook.com (2603:10b6:a03:23d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4995.16; Tue, 22 Feb
- 2022 13:09:25 +0000
-Received: from DM3NAM02FT037.eop-nam02.prod.protection.outlook.com
- (2603:10b6:8:56:cafe::75) by DS7PR05CA0085.outlook.office365.com
- (2603:10b6:8:56::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.9 via Frontend
- Transport; Tue, 22 Feb 2022 13:09:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT037.mail.protection.outlook.com (10.13.4.166) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4995.19 via Frontend Transport; Tue, 22 Feb 2022 13:09:25 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 22 Feb 2022 05:09:24 -0800
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 22 Feb 2022 05:09:24 -0800
-Envelope-to: git@xilinx.com,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Received: from [10.140.6.59] (port=35690 helo=xhdshubhraj40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1nMUux-000Eql-K8; Tue, 22 Feb 2022 05:09:24 -0800
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-clk@vger.kernel.org>
-CC:     <git@xilinx.com>, <michal.simek@xilinx.com>,
-        <linux-kernel@vger.kernel.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH 2/2] clk: zynq: Update the parameters to zynq_clk_register_periph_clk
-Date:   Tue, 22 Feb 2022 18:39:03 +0530
-Message-ID: <20220222130903.17235-3-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220222130903.17235-1-shubhrajyoti.datta@xilinx.com>
-References: <20220222130903.17235-1-shubhrajyoti.datta@xilinx.com>
+        with ESMTP id S230429AbiBVNT0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 08:19:26 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29EB5C335D
+        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 05:18:59 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id BC1805C02A4;
+        Tue, 22 Feb 2022 08:18:56 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 22 Feb 2022 08:18:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=NhouQ8zFFLXM6fQxEYaRibPb/klm5aDtf6cnEq
+        ltKhg=; b=mT0jGuRhnUJcIF1TDWOh5ishORVi6t2ILq63oNhbdjF2eurQXOQQzt
+        Kc15SF/oBoAXcFb7+PVyMSgYws4J7x9vN5YVMBnfNwzX3NgnkJPnNHPSR6Ek0f2A
+        8bmRPvRkOxw6Xo0dHA8Dw7WSowDqZneHK6UgHpQE3of7aW59i+thZ+viFdjgL+gK
+        De0IKTBYWrMu+Mb7i1Eigzk57FLFM3KDYa6XIs9BFuBQtmDsHG2QAxwBYzIxNouV
+        mdw76MItH85MF1YmCuzMzjA7cqK9fCPXLRTXK+XBVB0uvyHdV3Pyi2nD+IWsD/KH
+        Sx0LdG1G6LcLGb5wpeu2zyJOogoBd2tw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=NhouQ8
+        zFFLXM6fQxEYaRibPb/klm5aDtf6cnEqltKhg=; b=gsz+ogFUB0PYqGp5t9IsOv
+        d4kqJE72K+9SULIXDYsQYqlI6TL5BgCUuSa3sRQBvsfeKP+s9LDTmA7B8SYflDY/
+        rgA9sHn6oQQmnfyZJ8ahWrgICbNkKhfEyDuKVEyJ+Q8JkEwNiIjOj1wVR6L3/4hm
+        JR+O/Huitl7I4krUvlwYxoVLtvfDEbAEA4pbAB3cQQDIysfPn3Nh1FtnzZOAXCC/
+        HkFzqKHY7h/NPwC2vyRjN4WOf1ayRxdf+Udsl+7J/PTxVHeF1R8hu8rUEY0i/e0y
+        WWYUvo3Y2yg4y8aQxgX5yoDZ65KXheQYughfdSSG/yICPLx0hBdbv+F6PNX0OmIg
+        ==
+X-ME-Sender: <xms:v-IUYhd-hXil5qFa3uLt195vIigmaPG4xsJbBbWvlzhvTIOpstqqpQ>
+    <xme:v-IUYvN1Sbebs4t5_UFeeoJWZbEfrnqrt2QTktvS5I77UXfzmGRIZgD6MNh4LiU8d
+    uKkmXH1hRAkjt-54jc>
+X-ME-Received: <xmr:v-IUYqjio3c-LoBldWIxvtdcmWi14ZIqm7NwRZIjZgukoGeXeJtcM7h_qTXo7EYrPKxP6JJ3KnjFTQbTxyL1e7hl1gRMUR3Mve6yGCo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeekgdeglecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhvffufffkofgtggfgsehtqhertdertdejnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnhepteetledtudejhffftdeugfduffelleelheejgeegffduvddvgfdvhffhlefgteff
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:v-IUYq_dLRZ6gZdN6BXWzWsvE5ITpOXVC6xThGeR7-fbDDcjPmXY2w>
+    <xmx:v-IUYtthSgINy0qEzXlHYMjibQx9TwgPBZ8_CHVQi0hiIaEWR_xRag>
+    <xmx:v-IUYpEIYW5qPuWEu-AWefBhYeww6OxqM6Q5HuUfKXyV-dKL2aJgYQ>
+    <xmx:wOIUYu9iGKEf9G5HWj1ynJTv6uVIX3kpc6aGhPsn5fjrOaWmIbOGpg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 22 Feb 2022 08:18:55 -0500 (EST)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v5 00/11] clk: Improve clock range handling
+Date:   Tue, 22 Feb 2022 14:18:42 +0100
+Message-Id: <20220222131853.198625-1-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1994d895-6f7e-4db8-e567-08d9f6048cde
-X-MS-TrafficTypeDiagnostic: BY5PR02MB7026:EE_
-X-Microsoft-Antispam-PRVS: <BY5PR02MB7026C9C2A15323375D9005CBAA3B9@BY5PR02MB7026.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: M3mbS1x9XA4rLwSrHDMlNUzHpiEFFp+RslrfPMiJaeQv4mKa1bkP08+rMoJzatGzK5zAoGi+eZgTVfeKNg1qFjxDr7vUtMsd5D2FGwekyPOOwe5B2u29GrgwAniLg2TnFHIyHgs+PDjqpsFvxh6hEmh5e65DjvtAvDo1ccTmaa7t30r11+MuAjyQ9IIIJid71e+KX6vTAdiD/txSE85vd/x7DcCzcJ9Toc3eN4vQJ8OmJPv/z0vqJNqXfTuy+6Z3ngzigzMw74y3TksDDGIgVi0WNmcphxZKhGh4L8dCagAIgNoJjeoHYgxzE5m+UaUhC8fOYL3wgoQXTqDOtbIQyceBbLvMwAPLpXiddPySAaJXNS2Be5DFOm6UKH5dCaIFAHPgmrkyBQ6RfmUHZF52fm/8wSbmJ2JMzKpj75tuqWmei8rMBI/uP87gQ3vI6SZdVk9D/bYUpOsPU6X7t5iHyFIn4oRXW/v1dfHEQPS5i63zbUGcok4/oxTXFC2exb3zrcZ/wFduvErd9sniLFpsBaDGWJSGDfhrb/UhjQxOcZhq4l8kw47NshQvF1aYoWbbQnMctC9NUZNGJBlrrheJG5ftLaLU6RA1YFXlTwOQSh07OPV23pbfT1PvId4iuIUZ9pqAn5OjsiToJS0egkK/h8jZTSG4+xPh2D7VmhNL9LfKqj6kd0LNTqWH9K5pdYm4
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(4326008)(426003)(47076005)(336012)(83380400001)(44832011)(36756003)(5660300002)(9786002)(2906002)(8936002)(26005)(7696005)(2616005)(107886003)(36860700001)(186003)(70586007)(70206006)(1076003)(356005)(7636003)(54906003)(8676002)(508600001)(316002)(6916009)(82310400004)(6666004)(450100002)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 13:09:25.2417
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1994d895-6f7e-4db8-e567-08d9f6048cde
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT037.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB7026
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In case there are only one gate or the two_gate is 0 the clk1 clock
-passed is not used. We are passing 0 which is arm_pll.
-Pass a invalid clock instead.
-
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
- drivers/clk/zynq/clkc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
-index 434511dcf5cb..7bdeaff2bfd6 100644
---- a/drivers/clk/zynq/clkc.c
-+++ b/drivers/clk/zynq/clkc.c
-@@ -355,14 +355,14 @@ static void __init zynq_clk_setup(struct device_node *np)
- 				periph_parents, enable);
- 	}
- 
--	zynq_clk_register_periph_clk(lqspi, 0, clk_output_name[lqspi], NULL,
--			SLCR_LQSPI_CLK_CTRL, periph_parents, 0);
-+	zynq_clk_register_periph_clk(lqspi, clk_max, clk_output_name[lqspi], NULL,
-+				     SLCR_LQSPI_CLK_CTRL, periph_parents, 0);
- 
--	zynq_clk_register_periph_clk(smc, 0, clk_output_name[smc], NULL,
--			SLCR_SMC_CLK_CTRL, periph_parents, 0);
-+	zynq_clk_register_periph_clk(smc, clk_max, clk_output_name[smc], NULL,
-+				     SLCR_SMC_CLK_CTRL, periph_parents, 0);
- 
--	zynq_clk_register_periph_clk(pcap, 0, clk_output_name[pcap], NULL,
--			SLCR_PCAP_CLK_CTRL, periph_parents, 0);
-+	zynq_clk_register_periph_clk(pcap, clk_max, clk_output_name[pcap], NULL,
-+				     SLCR_PCAP_CLK_CTRL, periph_parents, 0);
- 
- 	zynq_clk_register_periph_clk(sdio0, sdio1, clk_output_name[sdio0],
- 			clk_output_name[sdio1], SLCR_SDIO_CLK_CTRL,
--- 
-2.17.1
-
+Hi,=0D
+=0D
+This is a follow-up of the discussion here:=0D
+https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmour/=
+=0D
+=0D
+and here:=0D
+https://lore.kernel.org/all/20210914093515.260031-1-maxime@cerno.tech/=0D
+=0D
+While the initial proposal implemented a new API to temporarily raise and l=
+ower=0D
+clock rates based on consumer workloads, Stephen suggested an=0D
+alternative approach implemented here.=0D
+=0D
+The main issue that needed to be addressed in our case was that in a=0D
+situation where we would have multiple calls to clk_set_rate_range, we=0D
+would end up with a clock at the maximum of the minimums being set. This=0D
+would be expected, but the issue was that if one of the users was to=0D
+relax or drop its requirements, the rate would be left unchanged, even=0D
+though the ideal rate would have changed.=0D
+=0D
+So something like=0D
+=0D
+clk_set_rate(user1_clk, 1000);=0D
+clk_set_min_rate(user1_clk, 2000);=0D
+clk_set_min_rate(user2_clk, 3000);=0D
+clk_set_min_rate(user2_clk, 1000);=0D
+=0D
+Would leave the clock running at 3000Hz, while the minimum would now be=0D
+2000Hz.=0D
+=0D
+This was mostly due to the fact that the core only triggers a rate=0D
+change in clk_set_rate_range() if the current rate is outside of the=0D
+boundaries, but not if it's within the new boundaries.=0D
+=0D
+That series changes that and will trigger a rate change on every call,=0D
+with the former rate being tried again. This way, providers have a=0D
+chance to follow whatever policy they see fit for a given clock each=0D
+time the boundaries change.=0D
+=0D
+This series also implements some kunit tests, first to test a few rate=0D
+related functions in the CCF, and then extends it to make sure that=0D
+behaviour has some test coverage.=0D
+=0D
+Let me know what you think=0D
+Maxime=0D
+=0D
+Changes from v4:=0D
+  - Rename the test file=0D
+  - Move all the tests to the first patch, and fix them up as fixes are don=
+e=0D
+  - Improved the test conditions=0D
+  - Added more tests=0D
+  - Improved commit messages=0D
+  - Fixed a regression where two disjoints clock ranges would now be accept=
+ed=0D
+=0D
+Changes from v3:=0D
+  - Renamed the test file and Kconfig option=0D
+  - Add option to .kunitconfig=0D
+  - Switch to kunit_kzalloc=0D
+  - Use KUNIT_EXPECT_* instead of KUNIT_ASSERT_* where relevant=0D
+  - Test directly relevant calls instead of going through a temporary varia=
+ble=0D
+  - Switch to more precise KUNIT_ASSERT_* macros where relevant=0D
+=0D
+Changes from v2:=0D
+  - Rebased on current next=0D
+  - Rewrote the whole thing according to Stephen reviews=0D
+  - Implemented some kunit tests=0D
+=0D
+Changes from v1:=0D
+  - Return NULL in clk_request_start if clk pointer is NULL=0D
+  - Test for clk_req pointer in clk_request_done=0D
+  - Add another user in vc4=0D
+  - Rebased on top of v5.15-rc1=0D
+=0D
+Maxime Ripard (11):=0D
+  clk: Introduce Kunit Tests for the framework=0D
+  clk: Enforce that disjoints limits are invalid=0D
+  clk: Always clamp the rounded rate=0D
+  clk: Use clamp instead of open-coding our own=0D
+  clk: Always set the rate on clk_set_range_rate=0D
+  clk: Add clk_drop_range=0D
+  clk: bcm: rpi: Add variant structure=0D
+  clk: bcm: rpi: Set a default minimum rate=0D
+  clk: bcm: rpi: Run some clocks at the minimum rate allowed=0D
+  drm/vc4: Add logging and comments=0D
+  drm/vc4: hdmi: Remove clock rate initialization=0D
+=0D
+ drivers/clk/.kunitconfig          |   1 +=0D
+ drivers/clk/Kconfig               |   7 +=0D
+ drivers/clk/Makefile              |   1 +=0D
+ drivers/clk/bcm/clk-raspberrypi.c | 125 ++++-=0D
+ drivers/clk/clk.c                 |  73 ++-=0D
+ drivers/clk/clk_test.c            | 790 ++++++++++++++++++++++++++++++=0D
+ drivers/gpu/drm/vc4/vc4_hdmi.c    |  13 -=0D
+ drivers/gpu/drm/vc4/vc4_kms.c     |  11 +=0D
+ include/linux/clk.h               |  11 +=0D
+ 9 files changed, 978 insertions(+), 54 deletions(-)=0D
+ create mode 100644 drivers/clk/clk_test.c=0D
+=0D
+-- =0D
+2.35.1=0D
+=0D
