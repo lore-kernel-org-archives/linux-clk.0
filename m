@@ -2,89 +2,201 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF158C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 10:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DFDC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 11:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiBVKfz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 05:35:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34058 "EHLO
+        id S231682AbiBVLYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 06:24:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbiBVKfy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 05:35:54 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 965F815B98A;
-        Tue, 22 Feb 2022 02:35:27 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 4743CFF80C;
-        Tue, 22 Feb 2022 10:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645526126;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9DmvAJFX2U0qo86wiZbyP/58xIuEhZNsNjvYfvIL0Zw=;
-        b=NY1vFjchNlrsA1wW/HjOQ7VpnvrTJeEV9oC5Pd2LnpAka8eopqNv/11cFCxRLBYSjupEJU
-        2SzanQqqsgWknJt1xDsbwFMyj5NmDx+Q6KoSxfSStvq3uE9AlDJ7nWuTrezrXsX9BwzlZh
-        X/+e0i3Fh6iJBw4lKwp/fpiRDS3qLf6z66YjgEPKW1ubXc68+q5VOVL+eflMnG3gyqw4Q2
-        EU3vyzm5n2E0lhTSX4aOSifQ6G6p9W0n8F/sWPuyqzPV2Wdfr9jB2LfTns6cFzSZCi62of
-        IWkSwT0INDDq/l8tvVjTSMecVCuq578IlZqknk9VP8wPbBqIjjdA/8Uru0pmdQ==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     dmaengine@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 8/8] ARM: dts: r9a06g032: Describe the DMA router
-Date:   Tue, 22 Feb 2022 11:34:37 +0100
-Message-Id: <20220222103437.194779-9-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220222103437.194779-1-miquel.raynal@bootlin.com>
-References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+        with ESMTP id S231690AbiBVLYD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 06:24:03 -0500
+Received: from m43-7.mailgun.net (m43-7.mailgun.net [69.72.43.7])
+        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id AE0EE131962
+        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 03:23:38 -0800 (PST)
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1645529018; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: From: References: Cc: To: Subject: MIME-Version: Date:
+ Message-ID: Sender; bh=ykOz9QTcSokzbehPDZ8vrVEtjNsi5wpt4JO8Bvanv2M=; b=ZkdRZdQsB/dIHM5/n8+TnP/4qhjMr9VTe/ERht3V+izx1/UUPmBJJXHnh7hlaTaVNEeHEoHD
+ NUWYrSg4EnpjlDJR+3ymZOn6WRowSazw4qBFJrDY+u5MOS6UUH+YjzGI/glrekEExKUf+4f+
+ EUWrbKUh6fStvL9RvaV7xjPPlac=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n03.prod.us-west-2.postgun.com with SMTP id
+ 6214c7b8afeb9481f5366977 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 22 Feb 2022 11:23:36
+ GMT
+Sender: tdas=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8958BC4361A; Tue, 22 Feb 2022 11:23:36 +0000 (UTC)
+Received: from [192.168.0.102] (unknown [49.204.183.34])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CFFD8C4338F;
+        Tue, 22 Feb 2022 11:23:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org CFFD8C4338F
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
+Message-ID: <99454f74-9166-b20a-cb3a-44bad30eed1b@codeaurora.org>
+Date:   Tue, 22 Feb 2022 16:53:29 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [v1 1/2] clk: qcom: gdsc: Use the default transition delay for
+ GDSCs
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220209172513.17873-1-tdas@codeaurora.org>
+ <YgRBnExwlzI+lPlR@builder.lan> <20220210072842.3E796C004E1@smtp.kernel.org>
+ <9f343332-9a0e-cbf9-9fb1-17127036b0b6@codeaurora.org>
+ <YhP5MD+d8btWBUl8@ripper>
+From:   Taniya Das <tdas@codeaurora.org>
+In-Reply-To: <YhP5MD+d8btWBUl8@ripper>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a dmamux on this SoC which allows picking two different sources
-for a single DMA request.
+Hello Bjorn,
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks for your comments.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 640c3eb4bbcd..0eb12c3d9cfd 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -59,6 +59,13 @@ ext_rtc_clk: extrtcclk {
- 		clock-frequency = <0>;
- 	};
- 
-+	dmamux: dma-router {
-+		compatible = "renesas,rzn1-dmamux";
-+		#dma-cells = <6>;
-+		dma-requests = <32>;
-+		dma-masters = <&dma0 &dma1>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+On 2/22/2022 2:12 AM, Bjorn Andersson wrote:
+> On Mon 21 Feb 08:55 PST 2022, Taniya Das wrote:
+> 
+>> Hi Stephen, Bjorn,
+>>
+>> Thanks for your comments.
+>>
+>> On 2/10/2022 12:58 PM, Stephen Boyd wrote:
+>>> Quoting Bjorn Andersson (2022-02-09 14:35:08)
+>>>> On Wed 09 Feb 11:25 CST 2022, Taniya Das wrote:
+>>>>
+>>>>> Do not update the transition delay and use the default reset values.
+>>>>>
+>>>>> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+>>>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>>>>> ---
+>>>>>    drivers/clk/qcom/gdsc.c | 6 +++++-
+>>>>>    drivers/clk/qcom/gdsc.h | 1 +
+>>>>>    2 files changed, 6 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>>>>> index 7e1dd8ccfa38..e7b213450640 100644
+>>>>> --- a/drivers/clk/qcom/gdsc.c
+>>>>> +++ b/drivers/clk/qcom/gdsc.c
+>>>>> @@ -380,7 +380,11 @@ static int gdsc_init(struct gdsc *sc)
+>>>>>          */
+>>>>>         mask = HW_CONTROL_MASK | SW_OVERRIDE_MASK |
+>>>>>                EN_REST_WAIT_MASK | EN_FEW_WAIT_MASK | CLK_DIS_WAIT_MASK;
+>>>>> -     val = EN_REST_WAIT_VAL | EN_FEW_WAIT_VAL | CLK_DIS_WAIT_VAL;
+>>>>> +
+>>>>> +     regmap_read(sc->regmap, sc->gdscr, &val);
+>>>>> +
+>>>>> +     if (!(sc->flags & DEFAULT_TRANSITION_DELAY))
+>>>>
+>>>> I dug a little bit more into this and noticed that on various platforms
+>>>> CLK_DIS_WAIT_VAL for the GPU_CX GDSC is supposed to be 8 (whereas both
+>>>> hw default and CLK_DIS_WAIT_VAL is 2).
+>>>>
+>>
+>> Yes, only for certain GPU_CC these would be updated and that too in case the
+>> design team suggests. Downstream we would set the value from probe itself,
+>> or we can pick these from device tree as required and suggested.
+>>
+> 
+> I don't expect that value to be "configurable", so pushing it to DT
+> doesn't seem like the proper solution.
+> 
+>>>> I'm not able to find anything helpful in the git log describing what the
+>>>> value does, but it seems that a "just use hw default" flag won't cut it
+>>>> for this scenario.
+>>>>
+>>
+>> This value is used for the number of clock cycles it would wait before the
+>> GDSCR ACK signals/halting the clock.
+>>
+> 
+> That makes sense.
+> 
+>>>
+>>> I'd prefer we invert the logic so that we don't need to litter this flag
+>>> all over the place. I recall that the wait values were incorrect a long
+>>> time ago on early gdsc using designs but hopefully they've been fixed
+>>> now and we can simply use the default power on reset (POR) values.
+>>
+>> I am okay to invert the logic, but I am not sure if they could cause any
+>> issues to the older targets. They were broken in HW design long back, but
+>> got fixed in most families of target and most GDSCs.
+>>
+> 
+> I don't fancy us having a flag with the purpose of "don't set the
+> timings to 2, 8 and 2" and then rely on open coded writes in probe to
+> set it to something else where needed.
+> 
+> So I definitely would prefer to flip this around, to make the cases
+> where we want to write different values explicit.
+> 
+> But as you say, unless we make sure that all existing platforms do write
+> 2, 8 and 2 we risk introducing regressions from the current behavior.
+> 
+>> As mentioned if explicitly they need to be updated, it is best to do from
+>> the probe.
+>> This was done in SC7180 GPUCC driver.
+>>          /* Configure clk_dis_wait for gpu_cx_gdsc */
+>>          regmap_update_bits(regmap, 0x106c, CLK_DIS_WAIT_MASK,
+>>                                          8 << CLK_DIS_WAIT_SHIFT);
+> 
+> But we call regmap_update_bits() from probe, which sets the CLK_DIS_WAIT
+> to 8, then we call qcom_cc_really_probe() which will end up in
+> gdsc_init() which replaces that with a 2.
+> 
+> Perhaps I'm missing something?
+> 
+
+It was my miss when I did a cleanup to move the DIS_WAIT_VAL before 
+registering the clocks.
+
+>>
+>>
+>> Please let me know if we are okay to add the invert logic.
+>>
+> 
+> I'm still favoring a scheme where we add 3 integers to struct gdsc and
+> in gdsc_init() we check if they are non-zero we write the value to the
+> register.
+> 
+Sure, will update the gdsc_init() to default "2, 8, 2" in case of 
+non-zero value.
+
+> Although being a big patch, we could maintain the existing behaviour by
+> giving all existing struct gdsc definitions the values 2, 8 and 2 to
+> avoid regressions and we (everyone) can then go through the platforms
+> one by one and remove the unnecessary assignments - but more
+> importantly, double check with downstream if they need a different
+> value.
+> 
+
+Sure, that would help.
+
+> This will also have the side effect going forward that it will be more
+> explicit and people writing gdsc definitions should double check these
+> values.
+> 
+> Regards,
+> Bjorn
+
 -- 
-2.27.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
