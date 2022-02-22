@@ -2,109 +2,126 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA63C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 20:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4A8C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 22:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235475AbiBVU2d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 15:28:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36720 "EHLO
+        id S236067AbiBVWah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 17:30:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231694AbiBVU2d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 15:28:33 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B9FB153A;
-        Tue, 22 Feb 2022 12:28:07 -0800 (PST)
+        with ESMTP id S236065AbiBVWag (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 17:30:36 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9757A107A80;
+        Tue, 22 Feb 2022 14:30:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645561687; x=1677097687;
+  t=1645569010; x=1677105010;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=4jxp5Mg8uxJI/IXPsPKFUQEHG9hiu8FZCtEBbIRMLu8=;
-  b=c1dEjXSog6SuJu8nzQ5emFHZWfa1QmaVtK7AJsNMe6QnYDyuC3O78j3F
-   2VALdVFl+b8ihtjrFVeF/+RCXPm13Szaxec4qDKOWm34QTEUtES0SqLZF
-   z4hvfQCqK2VAVuuhNo6lifH6xUkND7eT0lLbsUia3R/8V3JYt2E8Q4njn
-   yXaEN5OLqUUX3aS/A5fG0mZAtuDXf3PTKGvARaXmsxYb2zeVmqfnZVQwH
-   wSPSzKCm9ZbK1Fc45kjAUSi1UU59dGnr96+L358ivGvs9CLMUOCUHhZun
-   t/i5iFQtKDT4Gs1hPI2kjJcxXchwKgLswleh6Q0hV74fTew82huwZ3Xgs
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="251725028"
+  bh=xNrJu+yqd7ua9/SEuv5UXQMlKTb2A3rhgHibGD43eDA=;
+  b=fwFbKn2EdqS4n+FSU3xwEEEWMu6Ss65sEKQ13ZUMXLDq8Q+sn2rG+iWi
+   HjjHPszovfFdetBosQnPf0IAG2ZtrlMEKzSCMAjSQ70Su1ivqVmDZaTdt
+   vpLANBKXaMhttM0hK2ZMH+7LCwmxjMC59u1ojB0YAZP5TyaTf8tKT6LyK
+   hzRlNrNNmNX24lGsNFOZ3C9j0RZU6fnump7w2zQbMfRIMPFwYc/gFXU+K
+   Rw/ryqjY0QP1sqYIo4M9NMhE5ACGCunsNmtd92bDuLeH7V1IFKvMNSKCm
+   RfJ2uH3mlXeX4g7c5k7MNIxamLYXazZPhpGfpdX97rz3Jmj1Ha2CjLkIP
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="252017977"
 X-IronPort-AV: E=Sophos;i="5.88,389,1635231600"; 
-   d="scan'208";a="251725028"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 12:28:06 -0800
+   d="scan'208";a="252017977"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 14:30:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,389,1635231600"; 
-   d="scan'208";a="627825309"
+   d="scan'208";a="505699824"
 Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 22 Feb 2022 12:28:02 -0800
+  by orsmga002.jf.intel.com with ESMTP; 22 Feb 2022 14:30:06 -0800
 Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nMblR-0000bD-9X; Tue, 22 Feb 2022 20:28:01 +0000
-Date:   Wed, 23 Feb 2022 04:27:05 +0800
+        id 1nMdfZ-0000gI-9L; Tue, 22 Feb 2022 22:30:05 +0000
+Date:   Wed, 23 Feb 2022 06:29:11 +0800
 From:   kernel test robot <lkp@intel.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     kbuild-all@lists.01.org, dmaengine@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+To:     michael.srba@seznam.cz, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
-Message-ID: <202202230444.xjzzeOlo-lkp@intel.com>
-References: <20220222103437.194779-5-miquel.raynal@bootlin.com>
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     kbuild-all@lists.01.org, Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Michael Srba <Michael.Srba@seznam.cz>
+Subject: Re: [PATCH v8 4/5] drivers: bus: add driver for initializing the SSC
+ bus on (some) qcom SoCs
+Message-ID: <202202230613.3K7X7na5-lkp@intel.com>
+References: <20220220212034.9152-4-michael.srba@seznam.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220222103437.194779-5-miquel.raynal@bootlin.com>
+In-Reply-To: <20220220212034.9152-4-michael.srba@seznam.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+Hi,
 
-I love your patch! Yet something to improve:
+Thank you for the patch! Yet something to improve:
 
-[auto build test ERROR on geert-renesas-devel/next]
-[also build test ERROR on geert-renesas-drivers/renesas-clk robh/for-next linus/master v5.17-rc5 next-20220217]
-[cannot apply to vkoul-dmaengine/next]
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on clk/clk-next linus/master v5.17-rc5 next-20220217]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch]
 
-url:    https://github.com/0day-ci/linux/commits/Miquel-Raynal/RZN1-DMA-support/20220222-183549
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20220223/202202230444.xjzzeOlo-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 11.2.0
+url:    https://github.com/0day-ci/linux/commits/michael-srba-seznam-cz/dt-bindings-clock-gcc-msm8998-Add-definitions-of-SSC-related-clocks/20220221-052431
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20220223/202202230613.3K7X7na5-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 11.2.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/b62059e893c7e3779b96e1c69ae6818260d352de
+        # https://github.com/0day-ci/linux/commit/33b907599d7992605f1cdd439529acd9bb8a8e2b
         git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Miquel-Raynal/RZN1-DMA-support/20220222-183549
-        git checkout b62059e893c7e3779b96e1c69ae6818260d352de
+        git fetch --no-tags linux-review michael-srba-seznam-cz/dt-bindings-clock-gcc-msm8998-Add-definitions-of-SSC-related-clocks/20220221-052431
+        git checkout 33b907599d7992605f1cdd439529acd9bb8a8e2b
         # save the config file to linux build tree
         mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=m68k SHELL=/bin/bash
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=s390 SHELL=/bin/bash
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+All errors (new ones prefixed by >>):
 
-ERROR: modpost: missing MODULE_LICENSE() in drivers/dma/dw/dmamux.o
->> ERROR: modpost: "r9a06g032_sysctrl_set_dmamux" [drivers/dma/dw/dmamux.ko] undefined!
+   s390-linux-ld: kernel/dma/coherent.o: in function `dma_init_coherent_memory':
+   coherent.c:(.text+0x122): undefined reference to `memremap'
+   s390-linux-ld: coherent.c:(.text+0x230): undefined reference to `memunmap'
+   s390-linux-ld: kernel/dma/coherent.o: in function `dma_declare_coherent_memory':
+   coherent.c:(.text+0x69c): undefined reference to `memunmap'
+   s390-linux-ld: drivers/irqchip/irq-al-fic.o: in function `al_fic_init_dt':
+   irq-al-fic.c:(.init.text+0x7a): undefined reference to `of_iomap'
+   s390-linux-ld: irq-al-fic.c:(.init.text+0x4f4): undefined reference to `iounmap'
+   s390-linux-ld: drivers/bus/qcom-ssc-block-bus.o: in function `qcom_ssc_block_bus_remove':
+>> qcom-ssc-block-bus.c:(.text+0x1ac): undefined reference to `iounmap'
+>> s390-linux-ld: qcom-ssc-block-bus.c:(.text+0x1c2): undefined reference to `iounmap'
+   s390-linux-ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
+   clk-fixed-mmio.c:(.text+0x90): undefined reference to `of_iomap'
+   s390-linux-ld: clk-fixed-mmio.c:(.text+0xcc): undefined reference to `iounmap'
+   s390-linux-ld: drivers/clk/clk-lan966x.o: in function `lan966x_clk_probe':
+   clk-lan966x.c:(.text+0x5d4): undefined reference to `devm_platform_ioremap_resource'
+   s390-linux-ld: clk-lan966x.c:(.text+0x748): undefined reference to `devm_ioremap_resource'
+   s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_init':
+   timer-of.c:(.init.text+0x152): undefined reference to `of_iomap'
+   s390-linux-ld: timer-of.c:(.init.text+0x77e): undefined reference to `iounmap'
+   s390-linux-ld: drivers/clocksource/timer-of.o: in function `timer_of_cleanup':
+   timer-of.c:(.init.text+0x968): undefined reference to `iounmap'
+   s390-linux-ld: drivers/clocksource/timer-microchip-pit64b.o: in function `mchp_pit64b_dt_init_timer':
+   timer-microchip-pit64b.c:(.init.text+0x6a6): undefined reference to `of_iomap'
+   s390-linux-ld: timer-microchip-pit64b.c:(.init.text+0xd04): undefined reference to `iounmap'
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
