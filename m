@@ -2,25 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A321C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 13:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BDAC433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 13:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbiBVNJo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 08:09:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42760 "EHLO
+        id S232227AbiBVNJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 08:09:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232169AbiBVNJo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 08:09:44 -0500
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2072.outbound.protection.outlook.com [40.107.212.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9872151D37;
-        Tue, 22 Feb 2022 05:09:17 -0800 (PST)
+        with ESMTP id S232214AbiBVNJ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 08:09:58 -0500
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6675C1520DF;
+        Tue, 22 Feb 2022 05:09:24 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=in7e2hBlQnwHx9qZVHRwdC90HWlCM2YeT+fc+Lo+YyiM6s/C23NAJ8CJWQ90l8TDJ8/4XcNisTTrHOKXDEE6YoqKHljQtUACW1dHw+7q3UfHegBFMaHbtmYhigtHwoMkj3JnGAchTkPnY4JWla5N371+I4lyXx5LYVU9keB9lMxo/ybRbdmt6FWLWXtGPA2hazDMC/jyfu5vL7YxtaEUQ9w0yVVbFFisI2VCGTeDi2dvqnXFMStgN5yRs67VKkXeMCjR/dhB+83SVPo76q6zuqy92bS3ZGVhvwhc5nbRLXxAxObh1HBpUMpDdAGh0jaMuYT06aMK4+RBjj0tN5Fwhw==
+ b=iS9R9VCp7qb+mzZhJLjWubQiW5JptMgKaWK69lLfLQt69Ai4j79PwWpgbuapM/vPe7hGLuYjGhInapWRpdC/Yh5af5qTrujoiJYqeJ3HEewKtVVJb3/BDn3+lAAjKT/OJewF3xVxLAvljZGWXlH8BRySxpatYW2qszoKoADbG98ltI6ymXWXbwF1TbNo2dohBR9W8rDiFyiQ4h70eS/V/Gnd8l9uI/blCNPus/tkyi8gE6ttmxx/fYRrtAWwGJKmh0BcQXg+5bKH6meHYc7ksP7F/ZLEgSv0DS+u2kUvWrjfcZZDDQppU9c2riCDu0hXfJ6eZHVZJN9XkvfaYHZqDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V/Z3fEjKOKMW0QkQ3btV11c3rlHNFDZO5/ZL6qw9eNU=;
- b=Xe5qTxECUkCBRbKaBkSY6qKjKVG47DohMWrCX+5/TXo/mChDbHuW9JzSEnMrlMVBTNtZUUctGlpUgoFby0wggbW84/lrovPA/d25HVjFmEf+XFebi205pMnHYFqqtJYFEci2m3MfrCWI0bRt46RCkf48arb/m7W6lXl3sNAdBrdSv+jAdCF+0dcmvJGBrrtmIYz3hwhFo6tC/gJ6u2ID3YaZkT1MDmA+fdhvIep4e8gx1pryCDF3eTk1Jl/yR6b+gTQ7WSxAks3VWBvpl9BZnlpNsZaOdM6W6p1uCnHFaY73t8havUnSxgehg+OmcyGLX9Nyj9z59/Qokn+E6rm42A==
+ bh=+bxMI2TyLPQoMRYxAZ0w5ehWzJpBjH+Ba6t2LrRFs4g=;
+ b=hopS6cbT5/jlGjCl6rdHzgoPyieT9qV55jVyx4QdYye7qyjKJLCPh6X9E36X8AoJ2k4rHitHaaawHS3OJL1DRfR4gWRJwC8DC7OJ090P60AbBwe1w9A9990G+8pue32XV+RqDYUA2GwOR9WMZBCkZvj7Ov/DY8kDX/hcWWgAZ3rHgyFPmjVHG1gYHytj7ts3+0PW/XYf0cnue5MxzmJz3x8m9hMj5Xrm+XUTQHmNa6LBouXJQsXLXnHjUUO1glejvut/eUgTxAzzrkcsrj6HHnfCd+vHgSSH5f/5zNiuJl8wBUL40tPzHsQI94MpcmBTuz2enaakoWF0NT4xycwQRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -28,88 +28,102 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V/Z3fEjKOKMW0QkQ3btV11c3rlHNFDZO5/ZL6qw9eNU=;
- b=kOI3V2gmzeS7RuKmTWwEaAFh7Me52d3r/mcHWMGJt/HqE8DRMSOfkIxxlMzlcdZPRgjrbNwFegQ2Gm40eIxQlp9Id6gQLy/EgYy9l0aXA7uz/jXgZC4otn4mP3a2eFsG8VBgN28ZA/fKXRFeEUvShUZL8FAVRl1+99lPWZMbzbU=
-Received: from DS7PR03CA0127.namprd03.prod.outlook.com (2603:10b6:5:3b4::12)
- by SA1PR02MB8350.namprd02.prod.outlook.com (2603:10b6:806:1e5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.21; Tue, 22 Feb
- 2022 13:09:14 +0000
-Received: from DM3NAM02FT006.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:3b4:cafe::7c) by DS7PR03CA0127.outlook.office365.com
- (2603:10b6:5:3b4::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.22 via Frontend
- Transport; Tue, 22 Feb 2022 13:09:14 +0000
+ bh=+bxMI2TyLPQoMRYxAZ0w5ehWzJpBjH+Ba6t2LrRFs4g=;
+ b=kXtQNU4PfEKEKOiq2okUPR4sW2TrJC6WOszStJblnoEy459LAVNkuZILVI2m1/yao7uVF95u5V5D04Pj8tnG6vRCOmRABy9v+ekSWwHPT2GbAeaFRd+Kgs7E22CJjFlmn1YKkVCxo0ALhDj29/f/nt4B4o07i+R6fcBr2NRlfR8=
+Received: from DS7PR05CA0100.namprd05.prod.outlook.com (2603:10b6:8:56::23) by
+ BL3PR02MB8161.namprd02.prod.outlook.com (2603:10b6:208:35c::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4995.24; Tue, 22 Feb 2022 13:09:22 +0000
+Received: from DM3NAM02FT037.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:8:56:cafe::22) by DS7PR05CA0100.outlook.office365.com
+ (2603:10b6:8:56::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.7 via Frontend
+ Transport; Tue, 22 Feb 2022 13:09:22 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT006.mail.protection.outlook.com (10.13.4.251) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com;
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT037.mail.protection.outlook.com (10.13.4.166) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.4995.19 via Frontend Transport; Tue, 22 Feb 2022 13:09:14 +0000
+ 15.20.4995.19 via Frontend Transport; Tue, 22 Feb 2022 13:09:22 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 22 Feb 2022 05:09:08 -0800
+ 15.1.2176.14; Tue, 22 Feb 2022 05:09:20 -0800
 Received: from smtp.xilinx.com (172.19.127.96) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 22 Feb 2022 05:09:08 -0800
+ 15.1.2176.14 via Frontend Transport; Tue, 22 Feb 2022 05:09:20 -0800
 Envelope-to: git@xilinx.com,
  linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 Received: from [10.140.6.59] (port=35690 helo=xhdshubhraj40.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1nMUuh-000Eql-3Q; Tue, 22 Feb 2022 05:09:07 -0800
+        id 1nMUut-000Eql-T9; Tue, 22 Feb 2022 05:09:20 -0800
 From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 To:     <linux-clk@vger.kernel.org>
 CC:     <git@xilinx.com>, <michal.simek@xilinx.com>,
         <linux-kernel@vger.kernel.org>,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH 0/2] clk: zynq: trivial fixes
-Date:   Tue, 22 Feb 2022 18:39:01 +0530
-Message-ID: <20220222130903.17235-1-shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH 1/2] clk: zynq: trivial warning fix
+Date:   Tue, 22 Feb 2022 18:39:02 +0530
+Message-ID: <20220222130903.17235-2-shubhrajyoti.datta@xilinx.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220222130903.17235-1-shubhrajyoti.datta@xilinx.com>
+References: <20220222130903.17235-1-shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 79786b65-9d0c-4a92-6462-08d9f604867c
-X-MS-TrafficTypeDiagnostic: SA1PR02MB8350:EE_
-X-Microsoft-Antispam-PRVS: <SA1PR02MB83508586CB0928CF5E597CD1AA3B9@SA1PR02MB8350.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 8aaa6c4c-959e-457a-8d83-08d9f6048b17
+X-MS-TrafficTypeDiagnostic: BL3PR02MB8161:EE_
+X-Microsoft-Antispam-PRVS: <BL3PR02MB81619224F5D2B1CD70593086AA3B9@BL3PR02MB8161.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4ATcseBI5epKMnSO87i7wnq8b7jC/ymjV9icbcs7/IDs0y54XL2wSu9Ze4NuTon+wsB6ZJwDlKeAZrzQhpX7sdVntHAdXPqYfeaqtKcVg9+53RLSxDMr4j/sXYgpBLhNv3kFISHAgVgkMB/BsCvqDqa7bWGxgqHg+t8EHhXY0HBOtCM1wQzF3DqxspsqLITXuYIE6CPv6yT27J4T2YUDSfZApxM52a6Q82m4a1b/JSoGE+6NPui8GQeXWSfHSIiVKHBBZalmhlBb5NVmbWEOrsALVvJpF9IGDfdC0ooGfufu5dLD04GGCSRtnoMksqGg0BBp5XM6rbruKFSlCdqUvcTgXYX/xQaTwvlJ0+28QfSieNER1Q8iQHUj6SWkEOq/GSZuLgNE/9X8q4MdVQn4ofIQXekUQEf/XVRL2ocO9n4NlkKQt/ue2tcaF7YozfHWFVwgP59pno0qCwarLKWDLXY5E76V7LbVh/OOG+3k1EipWDhOQJ/Wq8qRoMzNdmztDyYiUSC9E8yCacuDwkEXOet92Q2QbQMfWwRC4wEWsFe8yEMHgBUBJtCLveBzYzN8k+hdvhmaEaa7MPbMpj650fPmnASHPAqtv44dvvK8caUiVGJp/p3cy3IdXQCEs6CMTlwEn/n72ykleYlCA0tOQcY8Rn1JilzLMb6eISMIhKY=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(36860700001)(316002)(356005)(36756003)(6916009)(83380400001)(7636003)(107886003)(47076005)(450100002)(8676002)(54906003)(70206006)(70586007)(4326008)(26005)(508600001)(82310400004)(5660300002)(44832011)(186003)(9786002)(1076003)(426003)(558084003)(2616005)(336012)(8936002)(6666004)(7696005)(2906002)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: YgzIRVeCXASFs9L9etvqCVtV7EBr0z6LgQqdF30MSC4sYEaeLM4ys7YL4Xt72w8O867x5iHHZ+6YXd5kWQvQ3cl5LUTXijVp6dUHiUN9L9fI0OV1IBMa1ZbSOxfsoinVu62zkB6OD66or2uvRSAdYSmYSEl4HIxzI7JL0sEHOFFoSURxvm4EAYXjIu95ysrczZ+fzxGc7Qp6Ggt227DlQzIFhe9v1xek82StP2eG+lqSi63i+qUBsnyCOiV5ZrQfBaSEMqtou9aywldOstbhFzoeiC3FxJrqGnAXRk2kKqagsIbCaOzT0L/NMBIfK8OdVSFBZQOAaA14iIEOTxU34P9rbwAajxiXNfpJXZ52OynobAqi6nBXrzTiKxGqCJNzS2KU84brkG9Qb3gBBD0YL4ncYMEEBOM0GkPvJQa8DBr2sz6ulFJ6C6U0yZ7GHiRrE2h5gWZvDQP9hrcLPNWoC7xRqm6s7ExLU9/0heKmM+4iQU6LjpBJ/RRAO6ZgqWuhPYZvnkWOhxvoppJX4CKwlnBiK32qfanW5vzjXTm5C94FvC4rh69KbbljcLl8SxGNzq7yAO2XKnoX0NhAoYynGkNyXZXH/QDhm6qFnYMTGgsWAvj2pHKDe45VJN5Eau0GUioAxifvjgoT1NlbhhwHcOei2coX8vOQ/pDJs0RDjCpP/QHiz0l9K3xZlcX62Bau
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(47076005)(6916009)(54906003)(6666004)(316002)(8936002)(9786002)(36756003)(107886003)(508600001)(450100002)(2616005)(7696005)(70586007)(336012)(4326008)(82310400004)(426003)(186003)(26005)(1076003)(4744005)(44832011)(36860700001)(8676002)(5660300002)(356005)(7636003)(70206006)(83380400001)(2906002)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 13:09:14.5299
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2022 13:09:22.2577
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79786b65-9d0c-4a92-6462-08d9f604867c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aaa6c4c-959e-457a-8d83-08d9f6048b17
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT006.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT037.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR02MB8350
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR02MB8161
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Trivial patches.
-No functional change inteded.
+Fix the below warning
 
-Shubhrajyoti Datta (2):
-  clk: zynq: trivial warning fix
-  clk: zynq: Update the parameters to zynq_clk_register_periph_clk
+WARNING: Missing a blank line after declarations
++               int enable = !!(fclk_enable & BIT(i - fclk0));
++               zynq_clk_register_fclk(i, clk_output_name[i],
 
- drivers/clk/zynq/clkc.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+---
+ drivers/clk/zynq/clkc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/clk/zynq/clkc.c b/drivers/clk/zynq/clkc.c
+index 204b83d911b9..434511dcf5cb 100644
+--- a/drivers/clk/zynq/clkc.c
++++ b/drivers/clk/zynq/clkc.c
+@@ -349,6 +349,7 @@ static void __init zynq_clk_setup(struct device_node *np)
+ 	/* Peripheral clocks */
+ 	for (i = fclk0; i <= fclk3; i++) {
+ 		int enable = !!(fclk_enable & BIT(i - fclk0));
++
+ 		zynq_clk_register_fclk(i, clk_output_name[i],
+ 				SLCR_FPGA0_CLK_CTRL + 0x10 * (i - fclk0),
+ 				periph_parents, enable);
 -- 
 2.17.1
 
