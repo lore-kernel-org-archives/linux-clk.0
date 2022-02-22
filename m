@@ -2,121 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D15C43219
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 01:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09D5C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Feb 2022 05:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238311AbiBVBQc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Feb 2022 20:16:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52498 "EHLO
+        id S229701AbiBVFhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 00:37:33 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:48430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238203AbiBVBQ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Feb 2022 20:16:26 -0500
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F5A2558B
-        for <linux-clk@vger.kernel.org>; Mon, 21 Feb 2022 17:15:54 -0800 (PST)
-Received: from localhost.localdomain (abxh33.neoplus.adsl.tpnet.pl [83.9.1.33])
-        by m-r2.th.seeweb.it (Postfix) with ESMTPA id BF6EF3F5D8;
-        Tue, 22 Feb 2022 02:15:50 +0100 (CET)
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-To:     ~postmarketos/upstreaming@lists.sr.ht
-Cc:     martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] dt-bindings: clock: add SM6350 QCOM Graphics clock bindings
-Date:   Tue, 22 Feb 2022 02:15:30 +0100
-Message-Id: <20220222011534.3502-3-konrad.dybcio@somainline.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220222011534.3502-1-konrad.dybcio@somainline.org>
-References: <20220222011534.3502-1-konrad.dybcio@somainline.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S229618AbiBVFhS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 00:37:18 -0500
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599AD630B;
+        Mon, 21 Feb 2022 21:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1645508213; x=1677044213;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=c9a7UM3eycakspYO8Qaza117CO9MFjnDGSX8vyBkrj0=;
+  b=W5sTXocC9urbKLI7KZAzMV0zS657pBnNIH2ByXEMd9mNTVwO/6HVhf7z
+   Skm5O5Tfgdm3Adslrf/PYgPeq1NBIP5D16JQxDHj3X+Sku0APzFtYC//c
+   tkfkZ6A1yG+rK5z4BoHAfCPAtLw53GO3xzJfBBEvEWS6k3R7RF2AnFjMb
+   M=;
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 21 Feb 2022 20:56:48 -0800
+X-QCInternal: smtphost
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 21 Feb 2022 20:56:45 -0800
+X-QCInternal: smtphost
+Received: from hu-rohiagar-hyd.qualcomm.com (HELO hu-sgudaval-hyd.qualcomm.com) ([10.213.106.138])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 22 Feb 2022 10:26:32 +0530
+Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3970568)
+        id 0B94144B1; Tue, 22 Feb 2022 10:26:31 +0530 (+0530)
+From:   Rohit Agarwal <quic_rohiagar@quicinc.com>
+To:     bjorn.andersson@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        manivannan.sadhasivam@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rohit Agarwal <quic_rohiagar@quicinc.com>
+Subject: [PATCH v4 5/5] clk: qcom: Add SDX65 APCS clock controller support
+Date:   Tue, 22 Feb 2022 10:26:25 +0530
+Message-Id: <1645505785-2271-6-git-send-email-quic_rohiagar@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1645505785-2271-1-git-send-email-quic_rohiagar@quicinc.com>
+References: <1645505785-2271-1-git-send-email-quic_rohiagar@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for graphics clock controller for
-Qualcomm Technology Inc's SM6350 SoCs.
+Update APCS Kconfig to reflect support for SDX65
+APCS clock controller.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 ---
- .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
- include/dt-bindings/clock/qcom,gpucc-sm6350.h | 37 +++++++++++++++++++
- 2 files changed, 39 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm6350.h
+ drivers/clk/qcom/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-index 46dff46d5760..9ebcb1943b0a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-@@ -17,6 +17,7 @@ description: |
-     dt-bindings/clock/qcom,gpucc-sdm845.h
-     dt-bindings/clock/qcom,gpucc-sc7180.h
-     dt-bindings/clock/qcom,gpucc-sc7280.h
-+    dt-bindings/clock/qcom,gpucc-sm6350.h
-     dt-bindings/clock/qcom,gpucc-sm8150.h
-     dt-bindings/clock/qcom,gpucc-sm8250.h
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 5159a1d..1a641d4 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -55,13 +55,13 @@ config QCOM_CLK_APCC_MSM8996
+ 	  drivers for dynamic power management.
  
-@@ -27,6 +28,7 @@ properties:
-       - qcom,sc7180-gpucc
-       - qcom,sc7280-gpucc
-       - qcom,sc8180x-gpucc
-+      - qcom,sm6350-gpucc
-       - qcom,sm8150-gpucc
-       - qcom,sm8250-gpucc
+ config QCOM_CLK_APCS_SDX55
+-	tristate "SDX55 APCS Clock Controller"
++	tristate "SDX55 and SDX65 APCS Clock Controller"
+ 	depends on QCOM_APCS_IPC || COMPILE_TEST
+ 	help
+-	  Support for the APCS Clock Controller on SDX55 platform. The
++	  Support for the APCS Clock Controller on SDX55, SDX65 platforms. The
+ 	  APCS is managing the mux and divider which feeds the CPUs.
+ 	  Say Y if you want to support CPU frequency scaling on devices
+-	  such as SDX55.
++	  such as SDX55, SDX65.
  
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sm6350.h b/include/dt-bindings/clock/qcom,gpucc-sm6350.h
-new file mode 100644
-index 000000000000..68e814fc8acd
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gpucc-sm6350.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2021, Konrad Dybcio <konrad.dybcio@somainline.org>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM6350_H
-+#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM6350_H
-+
-+/* GPU_CC clocks */
-+#define GPU_CC_PLL0						0
-+#define GPU_CC_PLL1						1
-+#define GPU_CC_ACD_AHB_CLK					2
-+#define GPU_CC_ACD_CXO_CLK					3
-+#define GPU_CC_AHB_CLK						4
-+#define GPU_CC_CRC_AHB_CLK					5
-+#define GPU_CC_CX_GFX3D_CLK					6
-+#define GPU_CC_CX_GFX3D_SLV_CLK					7
-+#define GPU_CC_CX_GMU_CLK					8
-+#define GPU_CC_CX_SNOC_DVM_CLK					9
-+#define GPU_CC_CXO_AON_CLK					10
-+#define GPU_CC_CXO_CLK						11
-+#define GPU_CC_GMU_CLK_SRC					12
-+#define GPU_CC_GX_CXO_CLK					13
-+#define GPU_CC_GX_GFX3D_CLK					14
-+#define GPU_CC_GX_GFX3D_CLK_SRC					15
-+#define GPU_CC_GX_GMU_CLK					16
-+#define GPU_CC_GX_VSENSE_CLK					17
-+
-+/* CLK_HW */
-+#define GPU_CC_CRC_DIV						0
-+
-+/* GDSCs */
-+#define GPU_CX_GDSC						0
-+#define GPU_GX_GDSC						1
-+
-+#endif
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
 -- 
-2.35.1
+2.7.4
 
