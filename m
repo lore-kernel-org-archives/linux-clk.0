@@ -2,104 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB04C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 03:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DB5C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 04:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237497AbiBWD25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 22:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55114 "EHLO
+        id S235885AbiBWEnn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Feb 2022 23:43:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbiBWD24 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 22:28:56 -0500
-Received: from new3-smtp.messagingengine.com (new3-smtp.messagingengine.com [66.111.4.229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9613584A;
-        Tue, 22 Feb 2022 19:28:27 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 584A1580155;
-        Tue, 22 Feb 2022 22:28:27 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 22 Feb 2022 22:28:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm2; bh=JCqBgtNrf0VbGB
-        X+MXj8hMt+8kzvUy1V9drTUch1PIs=; b=GRA1Na8SRlnu6vXXEtILV4NHpyAH7W
-        6WFMOU8GWAQg8hQrP2W1N5r7AtIvHtih9brwtIpXVXtJdJIYYQasI9ewCGennSzf
-        C/txPce6CyOdrtAXfgcYDeusKVEXk+ErM/XrPDQR1x22UlnGSdg1XoOAzGhqxhi+
-        hHGr/difWEtpYlTQYK/z0A0XBn37/zSM9C6VRTElAAPj4eaBf2gY+SB9fKvrhwK9
-        846CCLE4deqJTons7yhCTKDFYfO5yYcJqcPWN8GYJLqVpe2Nef+L1dPwJzKQezAf
-        U+a4abS3yfZbr6yt3QzRjeY2kvFmCbjqHUgG0wA1WU11qw/1QBFIq6cA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; bh=JCqBgtNrf0VbGBX+MXj8hMt+8kzvUy1V9drTUch1P
-        Is=; b=aXtb9lFDfLKP2er/8eZkqMaZq+S8iiOcW8h6tlYrS7+gCvqKO5pyj31bT
-        ffnGu70hMWPKSTnYlbGczEb0JtVWhQeo4RgiiN7dvp0DJZJu+/qF0Olavhao6yYb
-        Sl8JgfTZsCWUdkSoGJ5KzOk2czNZSPQlfM2Xv/2HgknFW2GRJt9+xiSw4dcCjuaA
-        HvMt+9BJo2il2hOWy4MCLVDrC4mdB5UKZhySCRpz7zHmFWS/jhkibdfwtq7iazpN
-        dQ3x3Mbjr1EbOiN0zqRAlMgTXAavTxyAdrMuPc4fBsVe9+cOIlLuDGqckcM+jxWD
-        Yy2XngbmicwpLTNrD9j1CCn0baVvA==
-X-ME-Sender: <xms:2qkVYtCGGwoIoflwmxNEbVKWUAFL652Ok5LSeJ63DVb8SqWr774XdA>
-    <xme:2qkVYrhijfjyo8E3kQiFG3WEGvOpVuJ9IC6PY8V3HzvS8uyyvGF6w90HgoiS1MDPJ
-    E8ObAQrAHa_SVaL2Q>
-X-ME-Received: <xmr:2qkVYomw5GPOyWKnUTKaBnFFzt7sB-w9a2znwQ2BLgZF1uOgy1xxvpjWvz9n1ZXlhQeo-fMBRwkOfmkiy2oD76Y7lETXk-eUHfYdBYDLIS82P6Zywxuz2uD41Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrkeelgdehkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucggtf
-    frrghtthgvrhhnpefgveffteelheffjeeukedvkedviedtheevgeefkeehueeiieeuteeu
-    gfettdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:2qkVYnysKdB8ZV7XdEWMbfsroDCoC-S6BCguClHW2ZiepPVsLx2HOg>
-    <xmx:2qkVYiSdSdmuNokjN7ZOg4DT8GS8GJE5-baE7e9s3ZNJAGi2at1Xhg>
-    <xmx:2qkVYqbcnD1AYmkOlgxCZuGznPASKZrm5uWlHit-wb5ZzSjCsSGumw>
-    <xmx:26kVYuZkW1iVLzPnf_y04a8P8WOe_zxZVT_WPcTMUJilFZ2RpDlTFQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 22 Feb 2022 22:28:26 -0500 (EST)
-Subject: Re: [PATCH v10 02/18] clk: sunxi-ng: h616: Add PLL derived 32KHz
- clock
-To:     Andre Przywara <andre.przywara@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>, Ondrej Jirman <megous@megous.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20220211122643.1343315-1-andre.przywara@arm.com>
- <20220211122643.1343315-3-andre.przywara@arm.com>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <6a70f0fc-ddaf-b9f7-8b04-4544e399c45f@sholland.org>
-Date:   Tue, 22 Feb 2022 21:28:25 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        with ESMTP id S231592AbiBWEnn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 23:43:43 -0500
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93581527DB
+        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 20:43:16 -0800 (PST)
+Received: by mail-oo1-xc31.google.com with SMTP id 189-20020a4a03c6000000b003179d7b30d8so20734417ooi.2
+        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 20:43:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qruHXlRoqxs4+A7Z/lv06mLaqKtVlNGxttTstRQX1hg=;
+        b=ISeOZQlB0FBgBaqDLCT4cl6VnZJABhXAMOxhyE05ncBsuMrHV47NTOIXFB7EHwHQ9Y
+         TEUf3dYSpZa30seLhVIn7vhGW1ROnlEA2JSb0KFZ5sNZpiw1O58ff7yMkvfOBFC0rBdd
+         gis+4EHxWGXthBMzryOd48ebLa2LQfflngCnJuXLGrQ1mSJgTYiMxuBA9h0091F/q7eM
+         yV3TBsfr31KRS3Fk3v2hwMS814eUN3e17cZGvC9Wrng8ktGhIGFpiHAqd64ZCUi//wgU
+         p/87GlZc0LOAsYqVR9/5/YdWUDWtWpZF781Z4qeT9KnQgGS9iwV9Qs46GBtAfoz+eCBL
+         be+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qruHXlRoqxs4+A7Z/lv06mLaqKtVlNGxttTstRQX1hg=;
+        b=rI5OR5dVCKnLgrMPI0WmWw9O045RO4gwlQb0b4EKp8z0rNmV3mrg4ql1RG2mvrtpDA
+         llpJTC6C91++fx8187WpLDjtkrDUvR1v1jtf4LnIeoS1/t1HGlRPt4333J4zOYmAA2+t
+         ZKWY1aL94P+JuntsOmvdyxeuI9mZRpsU/ytO7Di3WZhqOoFWl0l8prNvROzXplUS1ZW/
+         W3le5EQwSnRxC30YCSlKDxGF/xv5tx94gdoQjkvoVV7f7uyHj7wGSWuc/jV6zJfaThPE
+         DN6/pvVxZ08i2PenKqc+UfMVosvcIZ4qLxRXDmctCrifEekAS4XeZhQAXXg7fxTLPo64
+         +Ywg==
+X-Gm-Message-State: AOAM531fk8ord7KoFoMG3bfQLfDSYDR/elvFS/MDZq+GiGAsPivEiy26
+        RoPsQqFJK4co8w6NROfC1qhlVg==
+X-Google-Smtp-Source: ABdhPJx0yjVa5DlqBTrdD3SPtFWf1XrEfBfwWEBc6yO3DINlryP83xOT9gltvKhIBRtr8NYnhgdddA==
+X-Received: by 2002:a05:6870:219b:b0:d0:a3ae:919f with SMTP id l27-20020a056870219b00b000d0a3ae919fmr3138048oae.269.1645591395952;
+        Tue, 22 Feb 2022 20:43:15 -0800 (PST)
+Received: from ripper.. ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id i20sm115251ota.71.2022.02.22.20.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Feb 2022 20:43:15 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: Add sc8280xp to the RPMh clock controller binding
+Date:   Tue, 22 Feb 2022 20:45:15 -0800
+Message-Id: <20220223044516.3776637-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-In-Reply-To: <20220211122643.1343315-3-andre.przywara@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/11/22 6:26 AM, Andre Przywara wrote:
-> The RTC section of the H616 manual mentions in a half-sentence the
-> existence of a clock "32K divided by PLL_PERI(2X)". This is used as
-> one of the possible inputs for the mux that selects the clock for the
-> 32 KHz fanout pad. On the H616 this is routed to pin PG10, and some
-> boards use that clock output to compensate for a missing 32KHz crystal.
-> On the OrangePi Zero2 this is for instance connected to the LPO pin of
-> the WiFi/BT chip.
-> The new RTC clock binding requires this clock to be named as one input
-> clock, so we need to expose this to the DT. In contrast to the D1 SoC
-> there does not seem to be a gate for this clock, so just use a fixed
-> divider clock, using a newly assigned clock number.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+The Qualcomm SC8280XP has a RPMh clock controller, so add a compatible
+for this to the binding.
 
-Reviewed-by: Samuel Holland <samuel@sholland.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 8406dde17937..8fcaf418f84a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -20,6 +20,7 @@ properties:
+       - qcom,sc7180-rpmh-clk
+       - qcom,sc7280-rpmh-clk
+       - qcom,sc8180x-rpmh-clk
++      - qcom,sc8280xp-rpmh-clk
+       - qcom,sdm845-rpmh-clk
+       - qcom,sdx55-rpmh-clk
+       - qcom,sdx65-rpmh-clk
+-- 
+2.33.1
+
