@@ -2,129 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFDEC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 15:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12642C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 15:49:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234957AbiBWPIw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 10:08:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43584 "EHLO
+        id S242208AbiBWPuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 10:50:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230402AbiBWPIv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 10:08:51 -0500
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 68054A6534;
-        Wed, 23 Feb 2022 07:08:22 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1FE2ED1;
-        Wed, 23 Feb 2022 07:08:21 -0800 (PST)
-Received: from [10.57.40.147] (unknown [10.57.40.147])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 083703F5A1;
-        Wed, 23 Feb 2022 07:08:18 -0800 (PST)
-Message-ID: <e0bc8dd2-bea9-354b-3b48-3123e0bbf717@arm.com>
-Date:   Wed, 23 Feb 2022 15:08:14 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [RFT PATCH 0/3] Fix kfree() of const memory on setting
- driver_override
-Content-Language: en-GB
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S236329AbiBWPuY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 10:50:24 -0500
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22490C1CBB;
+        Wed, 23 Feb 2022 07:49:55 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id DF076C000B;
+        Wed, 23 Feb 2022 15:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645631394;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=FRTVVuH7ZkeBO5mQFM5u2bcgAhdzZ/tnO0lfsxfyy+U=;
+        b=h8Qtprw2QHzbk3NUuG8hH8iZh7gRIyaiDuJZhrMY7C1mYqYvGq2r/kpoZKPXzQm8wdN1e7
+        wfZot8j62Cw3VjLlOVuvi3w3UFUfcixDpeCuM2Q2TvxUuWjoWhfGb6crobuKRU+UTfQ9gl
+        bDGJPi/Ht5O2in2JdsdBpBPoR83WXhPqZjVBIsjAIz2r01HfT1m5qwn6pWSEUaRZZn5u3f
+        cQIO3crbh/yLgQWrJxNHMzkFQolBLGn6uM2I530aNnYYMx5eh7cI7xVA+5W7bYNujcx69a
+        f5VWIbI3tlcHiGWJ1g68Pul2DA7rOIPWMd82quAg5zlJHSBubO/0HLqOcDRbLQ==
+Date:   Wed, 23 Feb 2022 16:49:50 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20220222132707.266883-1-krzysztof.kozlowski@canonical.com>
- <708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk>
- <afa7001d-901e-55bf-b8dc-77051b1e7f78@canonical.com>
- <0442526f-b6d9-8868-ac1c-dd11a2d3b2ab@arm.com>
- <636e5b92-8ed8-35a1-d6e9-516d5b35be91@canonical.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <636e5b92-8ed8-35a1-d6e9-516d5b35be91@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+Message-ID: <20220223164950.18de06a8@xps13>
+In-Reply-To: <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+        <20220222103437.194779-3-miquel.raynal@bootlin.com>
+        <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2022-02-23 14:22, Krzysztof Kozlowski wrote:
-> On 23/02/2022 15:04, Robin Murphy wrote:
->> On 2022-02-22 14:06, Krzysztof Kozlowski wrote:
->>> On 22/02/2022 14:51, Rasmus Villemoes wrote:
->>>> On 22/02/2022 14.27, Krzysztof Kozlowski wrote:
->>>>> Hi,
->>>>>
->>>>> Drivers still seem to use driver_override incorrectly. Perhaps my old
->>>>> patch makes sense now?
->>>>> https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
->>>>>
->>>>> Not tested - please review and test (e.g. by writing to dirver_override
->>>>> sysfs entry with KASAN enabled).
->>>>
->>>> Perhaps it would make sense to update the core code to release using
->>>> kfree_const(), allowing drivers to set the initial value with
->>>> kstrdup_const(). Drivers that currently use kstrdup() or kasprintf()
->>>> will continue to work [but if they kstrdup() a string literal they could
->>>> be changed to use kstrdup_const].
->>>
->>> The core here means several buses, so the change would not be that
->>> small. However I don't see the reason why "driver_override" is special
->>> and should be freed with kfree_const() while most of other places don't
->>> use it.
->>>
->>> The driver_override field definition is here obvious: "char *", so any
->>> assignments of "const char *" are logically wrong (although GCC does not
->>> warn of this literal string const discarding). Adding kfree_const() is
->>> hiding the problem - someone did not read the definition of assigned field.
->>
->> That's not the issue, though, is it? If I take the struct
->> platform_device definition at face value, this should be perfectly valid:
->>
->> 	static char foo[] = "foo";
->> 	pdev->driver_override = &foo;
-> 
-> 
-> Yes, that's not the issue. It's rather about the interface. By
-> convention we do not modify string literals but "char *driver_override"
-> indicates that this is modifiable memory. I would argue that it even
-> means that ownership is passed. Therefore passing string literal to
-> "char *driver_override" is wrong from logical point of view.
-> 
-> Plus, as you mentioned later, can lead to undefined behavior.
+Hi Geert,
 
-But does anything actually need to modify a driver_override string? I 
-wouldn't have thought so. I see at least two buses that *do* define 
-theirs as const char *, but still assume to kfree() them.
+geert@linux-m68k.org wrote on Wed, 23 Feb 2022 13:21:47 +0100:
 
->> And in fact that's effectively how the direct assignment form works
->> anyway - string literals are static arrays of type char (or wchar_t),
->> *not* const char, however trying to modify them is undefined behaviour.
->>
->> There's a big difference between "non-const" and "kfree()able", and
->> AFAICS there's no obvious clue that the latter is actually a requirement.
-> 
-> Then maybe kfreeable should be made a requirement? Or at least clearly
-> documented?
+> On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
+> <miquel.raynal@bootlin.com> wrote:
+> > Just like for the NAND controller that is also on this SoC, let's
+> > provide a SoC generic and a more specific couple of compatibles for the
+> > DMA controller.
+> >
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com> =20
+>=20
+> > +++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml =20
+>=20
+> Perhaps you want to add the power-domains property?
+> The RZ/N1 clock driver is also a clock-domain provider.
 
-Indeed, there's clearly some room for improvement still. And I'm not 
-suggesting that these changes aren't already sensible as they are, just 
-that the given justification seems a little unfair :)
+I haven't looked at the power domains yet, but I don't plan to invest
+time on it right now. Unless I don't understand your request, and you
+are telling me that someone else added the description and we should
+now point to the right domain from each new node?
 
-Even kfree_const() can't help if someone has put their string in the 
-middle of some larger block of kmalloc()ed memory, so perhaps 
-encouraging a dedicated setter function rather than just exposing a raw 
-string pointer is the ideal solution in the long term.
+> Apart from that:
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cheers,
-Robin.
+Thanks!
+
+Miqu=C3=A8l
