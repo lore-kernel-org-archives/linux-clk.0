@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E549C3526E
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 19:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D20C4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 19:14:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244274AbiBWTOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 14:14:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56180 "EHLO
+        id S244220AbiBWTOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 14:14:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244231AbiBWTOr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 14:14:47 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75F84161F
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:14:08 -0800 (PST)
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        with ESMTP id S244260AbiBWTOs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 14:14:48 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE34427EC
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:14:15 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BD8AF40306
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 19:13:53 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 18560407C5
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 19:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645643633;
-        bh=HpbyTrdXrFaP+pceEvy/NrkKlPBl1rW1ivTy++yPdQg=;
+        s=20210705; t=1645643654;
+        bh=BfVj2+YbqU03eg9FI58FYBrziSuvlZ92uC4zdqn5CTE=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=lF+u9h7M8SaGGj+BVyjX0jOZumxyccm+OdEcAbmYNGxAwerixclXgNWSgohMe+KOS
-         Z47RNhg+hCoxblhOMU9LreR/HJ+Zn5M7ODjqWJeBuBxeaGwb4nBzg30oV6qCkl050l
-         kjQeCvYrlUhxnEXYiywittN0rtgZ2lBKDITs7P/fE/FuRGqlpNonAbQdG7NCymUF3q
-         aA268kbG940a/TIehbDStEeaE1qBXigBvVvH/iGe2FsRlPNoBYPtW+Ixw3Bc6xHQAm
-         +b8mNNvI7bm3D0CsmZQw1uiYxl4beUlCWgnRlhpyv3S/lQKmPqpvnLZXgnQKU4DRkv
-         yd+GYNWHgLfWQ==
-Received: by mail-ed1-f72.google.com with SMTP id eq13-20020a056402298d00b00412cfa4bb0eso9246990edb.7
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:13:53 -0800 (PST)
+        b=FeQ1H6XC8V3WXfVyoGk/lLB5m9ReO6lba9LpzkGjwMyOlfrfxfTPxGT6h22GmRV1V
+         cBvHex5Xt+wQoQevbJ7KR7tVx09kn4w8R2HK+hV1XwBstjAW1iqImpQJPiCJj7q7a+
+         TsXb2crA3d1UD4+SVhgajTfgIBvPhri11Tp40JtxfQP8/PMdQrqZDqGK9yJyUmBG/k
+         kKcEtvNSdy4GWwXADGBTPT3T29YjHVdQp8/a1PObHsqk6vaQVdT/MzyApG3BxWIc5i
+         Vkn8bPEUc/A9s5PBB17Kz26qx8VEjMph34+oytqhnr2FrjRMJAYnF2Xa/XxLmU99Z5
+         AriCuRiH9kkTw==
+Received: by mail-ed1-f71.google.com with SMTP id d11-20020a50c88b000000b00410ba7a14acso14057684edh.6
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:14:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HpbyTrdXrFaP+pceEvy/NrkKlPBl1rW1ivTy++yPdQg=;
-        b=wGlex9p8WTOlWh4s3JBRixskazz8WgTa6cxNV0QTm0pWXSh2RCFdYw/rpEZfKr+T/H
-         DCd5AZilv0qC8tT5qu6uJ07h/dNrhHYqWRcurcmqJ+C5UWScQdPYYXBg4BB7X5B1H1QT
-         JRIgsdrsy8HlDGz5xZjq+2XM2PjEzDTGqVNj4tgIisQM47aiOcjrITDVHEIAIf7wW2vA
-         7ooAXz2jgPIVLZuNleeYqQ13l/KJoXKYIYELu3OExOZ81YH/23cXnJU9ctTkS3Ds6ZHF
-         PFu3lWid1GzaPWn3BJ2zbChbz2VVN0jv5SwmQcCP0B3H4XLqZkZ2znIguf83dnCWS0Gi
-         bs8g==
-X-Gm-Message-State: AOAM532IawxEX18ZS+BXQdGSjaxzYEPiCB8hvV/sMYUq/MSXVQANnZDc
-        BYDSxzEvj4VTHwry8H8SNqMx12qF+uCGnIiE6Qma6ndEpsdhvqbqnZCx0P/H3JTIV5FOaTeWNc9
-        5XTvrWhvSzcVJMaS1hvXaKegl/buM/wXTzZFg7w==
-X-Received: by 2002:a05:6402:d05:b0:412:e171:28d9 with SMTP id eb5-20020a0564020d0500b00412e17128d9mr848358edb.169.1645643633262;
-        Wed, 23 Feb 2022 11:13:53 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwYG5EE1VK62qsOOiEHtkeJRCih/epa6U/E9Szqr9uJDRTwmiXA+urJE3qxE0O0qjjabVNPNQ==
-X-Received: by 2002:a05:6402:d05:b0:412:e171:28d9 with SMTP id eb5-20020a0564020d0500b00412e17128d9mr848325edb.169.1645643633058;
-        Wed, 23 Feb 2022 11:13:53 -0800 (PST)
+        bh=BfVj2+YbqU03eg9FI58FYBrziSuvlZ92uC4zdqn5CTE=;
+        b=eeTKwrf38o2KUassehYgJ0SBTM5gH9nmCshgjuUEib5vc5yjGVUZKtpSaU9uf+sV1g
+         MISr0mh8C8wZS84uPxDt7puyzqSawUtB7wmkqyVvwoOh2oLIGU2ARUtbzUCL0ADis2cB
+         UuE0UIWNQrPj2uBw+/LT1+0Gw+q/3S6OS+Bo/MgOpKzAItHw/60jpZZ3dVW+nfiDIjdU
+         Oze8imsamjoNCaSDDauICJS3S0udRm0yC5GvLbtx58FETBlrCIILdIeFndS8YHjY3cbJ
+         GglltlPqPL+0gHviQnlPUEUvZ3GUWKhYbL5tU0d2IEVzGOErmsD1PUU+LdjGdGkS5UJ0
+         G7hA==
+X-Gm-Message-State: AOAM533l5gibIuIKasTZo/k8+DeQoRiu5ejcnbxa293I8VPmMk2SUScr
+        714Y6/yjGo2b/9033tPvMm2MJ7iVPZqqZSqSdCVtarVaoyOntxCwEvlDsn5qEk/CoNkW8VdVTrP
+        D5943V7YaAo6dXlHNMe6MTQOS2HgJcAm4KK2IDg==
+X-Received: by 2002:a17:907:271b:b0:6b8:7863:bf3e with SMTP id w27-20020a170907271b00b006b87863bf3emr962559ejk.188.1645643642493;
+        Wed, 23 Feb 2022 11:14:02 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxXMYb4BEMYhrxOu6QSGckuJedkkcxoYAbkZ+2GxGDgO4kr7mPrVFflFNpyN2dv7nSCwE216w==
+X-Received: by 2002:a17:907:271b:b0:6b8:7863:bf3e with SMTP id w27-20020a170907271b00b006b87863bf3emr962519ejk.188.1645643642300;
+        Wed, 23 Feb 2022 11:14:02 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id q5sm212611ejc.115.2022.02.23.11.13.50
+        by smtp.gmail.com with ESMTPSA id q5sm212611ejc.115.2022.02.23.11.14.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Feb 2022 11:13:51 -0800 (PST)
+        Wed, 23 Feb 2022 11:14:01 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -92,9 +92,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v2 02/11] amba: use helper for safer setting of driver_override
-Date:   Wed, 23 Feb 2022 20:13:01 +0100
-Message-Id: <20220223191310.347669-3-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 06/11] s390: cio: use helper for safer setting of driver_override
+Date:   Wed, 23 Feb 2022 20:13:05 +0100
+Message-Id: <20220223191310.347669-7-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
 References: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
@@ -109,17 +109,17 @@ code.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/amba/bus.c | 24 ++++--------------------
+ drivers/s390/cio/css.c | 24 ++++--------------------
  1 file changed, 4 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index e1a5eca3ae3c..12410c05ec70 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -94,31 +94,15 @@ static ssize_t driver_override_store(struct device *_dev,
+diff --git a/drivers/s390/cio/css.c b/drivers/s390/cio/css.c
+index fa8293335077..2ced49be1912 100644
+--- a/drivers/s390/cio/css.c
++++ b/drivers/s390/cio/css.c
+@@ -338,31 +338,15 @@ static ssize_t driver_override_store(struct device *dev,
  				     const char *buf, size_t count)
  {
- 	struct amba_device *dev = to_amba_device(_dev);
+ 	struct subchannel *sch = to_subchannel(dev);
 -	char *driver_override, *old, *cp;
 +	int ret;
  
@@ -135,18 +135,18 @@ index e1a5eca3ae3c..12410c05ec70 100644
 -	if (cp)
 -		*cp = '\0';
 -
--	device_lock(_dev);
--	old = dev->driver_override;
+-	device_lock(dev);
+-	old = sch->driver_override;
 -	if (strlen(driver_override)) {
--		dev->driver_override = driver_override;
+-		sch->driver_override = driver_override;
 -	} else {
 -		kfree(driver_override);
--		dev->driver_override = NULL;
+-		sch->driver_override = NULL;
 -	}
--	device_unlock(_dev);
+-	device_unlock(dev);
 -
 -	kfree(old);
-+	ret = driver_set_override(_dev, &dev->driver_override, buf);
++	ret = driver_set_override(dev, &dev->driver_override, buf);
 +	if (ret)
 +		return ret;
  
