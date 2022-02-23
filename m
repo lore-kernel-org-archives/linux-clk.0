@@ -2,282 +2,185 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB33AC43217
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 16:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F320C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 17:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242995AbiBWQtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 11:49:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33710 "EHLO
+        id S243108AbiBWREw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 12:04:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243002AbiBWQth (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 11:49:37 -0500
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF930E4E;
-        Wed, 23 Feb 2022 08:49:07 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 01073FF802;
-        Wed, 23 Feb 2022 16:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645634946;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xaUb2CD3MY4isvllCC6mNWacyCjvupia9kHICx3QHGA=;
-        b=WMj+HiLMld8KdH1Cakquy9OoT7Ti2J9T9xi2XWITG8ZHQNfPsINGcSL9FrHQMY+NAwrXnM
-        3Sv9H2HeZW33EaqfY3cX0Y3BHG9gFwGo6CF5UG0Vfs2BgMdqZjskQOtST2+B003UadILNa
-        h1EyCDziYyBkdZizUHnadNtktv/G+U8YgwxxdMX8K1LUzxFdrYY3exn2z1BapUIuUZTFIz
-        7cJG2YTlJKqgq1js3tcK3mn/Ip5n356zf6HSWy/cdOB6vha6LS1Cbn3OHkc1FMN3iNQyuK
-        CJy1lyy3GopNEZYQkdQclPSksHopspROIfYSVjyNwpzykHJeQlLBfCWTrjIOnw==
-Date:   Wed, 23 Feb 2022 17:49:02 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>
-Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
-Message-ID: <20220223174902.3a9b85ea@xps13>
-In-Reply-To: <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
-References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
-        <20220222103437.194779-5-miquel.raynal@bootlin.com>
-        <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S242039AbiBWREu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 12:04:50 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7974F473
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 09:04:21 -0800 (PST)
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BCBF83FCAD
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 17:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645635859;
+        bh=RoNX8EzuGJlB3iCJ6r1tFSNiwtZPxPTTbVDAWTvRXkY=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+         In-Reply-To:Content-Type;
+        b=IVzPGSVqOIbQXLJ3sKXrd9cfAykcJ0h/J+9pKozy9QsNXXebGWFTgF+xXsVHcp5Bt
+         6sUpzvivWB/niGnarCpRflburq+aqLRV+w5rX9TOdO4PR/pUsCOa1w3y4dd8KI1u32
+         GlsgZXL2zxv6BPfm7Bq/+jEBh/MQlu3AiYFOpTvUsPhvJQ4CCWJ5Puppjd2UrhYGzt
+         FYrR+zf1NSE3h0MU2nrCWRguob9BUhfJL1610hOkWYihw1RKtTtRaDK9fL3DiWAtpP
+         9ezmQFVol2cRjVOnS+JWUC+7VopNJ/oDJpZy7SOsGi06H8jojVo1YVez2uYfy3089+
+         p2DdpOvgjrKiw==
+Received: by mail-ej1-f69.google.com with SMTP id sa7-20020a170906eda700b006d1b130d65bso3408197ejb.13
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 09:04:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=RoNX8EzuGJlB3iCJ6r1tFSNiwtZPxPTTbVDAWTvRXkY=;
+        b=LyQ06RhTVIT+LW5si6cmYaL6PNG0ymJKi+vsRSm+hgkNLsNMOv/LCpYK5LnLv6vC9S
+         7JvnYuDumuA7AbqNWvv9ehXv4D1XWEimJQpOJKI8hwHT+hvsh0/Qfx/i4YKGQaTd/1Tg
+         WWa/Pu6FauhrV3W48uHiDGnqwSS0aXqHOLXU4zk45I8txU3NvDuEETh698wNEpKDrn7+
+         omnlb7fCoN4jB5LAzLadLBcF72eFJccu7di1Mt1ZX79altTAYTKsqZDmTbw/OKJl2Wz8
+         kfFvddhGhLw6ERN3X1DEt+lhcip/OLQPeK/vy9L0Fim+O7LoHEvRnmEySUfUwTcH32cS
+         K1bw==
+X-Gm-Message-State: AOAM530JibiBtsHF04ARBuiJ/90xW7yXZp/2QT7NdTvEDuJDvPyVyiD4
+        nV8d/gPOMZFi5niT3KNzrbcXFz8J4Lqj0yUq95yCTJZx4J9OEBuMkpEZzGlTVODlvSlEmY0nErB
+        ysSawNf8NT2PWaWwTWgaRVmMCf1vXT3aORkPXdw==
+X-Received: by 2002:a05:6402:5209:b0:412:7cd8:a8fc with SMTP id s9-20020a056402520900b004127cd8a8fcmr343339edd.51.1645635859397;
+        Wed, 23 Feb 2022 09:04:19 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwKr+v6ocNLmVN3Di+yw0uJzDvkvv4Lb5lc33wOhtzJOFkvu7xL2E/jifTka6zh9g0DFLs/uA==
+X-Received: by 2002:a05:6402:5209:b0:412:7cd8:a8fc with SMTP id s9-20020a056402520900b004127cd8a8fcmr343312edd.51.1645635859189;
+        Wed, 23 Feb 2022 09:04:19 -0800 (PST)
+Received: from [192.168.0.126] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id fy37sm73162ejc.219.2022.02.23.09.04.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Feb 2022 09:04:17 -0800 (PST)
+Message-ID: <7fcd5ed9-4577-950a-0cdc-22917e8e26af@canonical.com>
+Date:   Wed, 23 Feb 2022 18:04:16 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [RFT PATCH 0/3] Fix kfree() of const memory on setting
+ driver_override
+Content-Language: en-US
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
+References: <20220222132707.266883-1-krzysztof.kozlowski@canonical.com>
+ <708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk>
+ <afa7001d-901e-55bf-b8dc-77051b1e7f78@canonical.com>
+ <0442526f-b6d9-8868-ac1c-dd11a2d3b2ab@arm.com>
+ <636e5b92-8ed8-35a1-d6e9-516d5b35be91@canonical.com>
+ <e0bc8dd2-bea9-354b-3b48-3123e0bbf717@arm.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <e0bc8dd2-bea9-354b-3b48-3123e0bbf717@arm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On 23/02/2022 16:08, Robin Murphy wrote:
+> On 2022-02-23 14:22, Krzysztof Kozlowski wrote:
+>> On 23/02/2022 15:04, Robin Murphy wrote:
+>>> On 2022-02-22 14:06, Krzysztof Kozlowski wrote:
+>>>> On 22/02/2022 14:51, Rasmus Villemoes wrote:
+>>>>> On 22/02/2022 14.27, Krzysztof Kozlowski wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> Drivers still seem to use driver_override incorrectly. Perhaps my old
+>>>>>> patch makes sense now?
+>>>>>> https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
+>>>>>>
+>>>>>> Not tested - please review and test (e.g. by writing to dirver_override
+>>>>>> sysfs entry with KASAN enabled).
+>>>>>
+>>>>> Perhaps it would make sense to update the core code to release using
+>>>>> kfree_const(), allowing drivers to set the initial value with
+>>>>> kstrdup_const(). Drivers that currently use kstrdup() or kasprintf()
+>>>>> will continue to work [but if they kstrdup() a string literal they could
+>>>>> be changed to use kstrdup_const].
+>>>>
+>>>> The core here means several buses, so the change would not be that
+>>>> small. However I don't see the reason why "driver_override" is special
+>>>> and should be freed with kfree_const() while most of other places don't
+>>>> use it.
+>>>>
+>>>> The driver_override field definition is here obvious: "char *", so any
+>>>> assignments of "const char *" are logically wrong (although GCC does not
+>>>> warn of this literal string const discarding). Adding kfree_const() is
+>>>> hiding the problem - someone did not read the definition of assigned field.
+>>>
+>>> That's not the issue, though, is it? If I take the struct
+>>> platform_device definition at face value, this should be perfectly valid:
+>>>
+>>> 	static char foo[] = "foo";
+>>> 	pdev->driver_override = &foo;
+>>
+>>
+>> Yes, that's not the issue. It's rather about the interface. By
+>> convention we do not modify string literals but "char *driver_override"
+>> indicates that this is modifiable memory. I would argue that it even
+>> means that ownership is passed. Therefore passing string literal to
+>> "char *driver_override" is wrong from logical point of view.
+>>
+>> Plus, as you mentioned later, can lead to undefined behavior.
+> 
+> But does anything actually need to modify a driver_override string? I 
+> wouldn't have thought so. I see at least two buses that *do* define 
+> theirs as const char *, but still assume to kfree() them.
 
-geert@linux-m68k.org wrote on Wed, 23 Feb 2022 13:46:11 +0100:
+I think the drivers/clk/imx/clk-scu.c (fixed here) does not actually
+need it. It uses the feature to create multiple platform devices for
+each clock, with unique names matching the clock (e.g. pwm0_clk,
+pwm1_clk) and then bind all them via common clock driver.
 
-> Hi Miquel,
->=20
-> On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > The Renesas RZN1 DMA IP is a based on a DW core, with eg. an additional
-> > dmamux register located in the system control area which can take up to
-> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> > two different peripherals.
-> >
-> > We need two additional information from the 'dmas' property: the channel
-> > (bit in the dmamux register) that must be accessed and the value of the
-> > mux for this channel.
-> >
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com> =20
->=20
-> Thanks for your patch!
->=20
-> > --- /dev/null
-> > +++ b/drivers/dma/dw/dmamux.c =20
->=20
-> rzn1-dmamux.c?
+It looks therefore like something for convenience of debugging or going
+through sysfs devices.
 
-Ok.
+Removal of driver_override from such drivers is a bit too much here,
+because I would not be able to test it.
 
->=20
-> > @@ -0,0 +1,167 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2022 Schneider-Electric
-> > + * Author: Miquel Raynal <miquel.raynal@bootlin.com
-> > + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalu=
-si@ti.com>
-> > + */
-> > +#include <linux/slab.h>
-> > +#include <linux/err.h>
-> > +#include <linux/init.h>
-> > +#include <linux/list.h>
-> > +#include <linux/io.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/of_dma.h>
-> > +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> > +
-> > +#define RZN1_DMAMUX_LINES      64 =20
->=20
-> Unused. But using it wouldn't hurt, I guess?
->=20
-> > +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_sp=
-ec,
-> > +                                       struct of_dma *ofdma)
-> > +{
-> > +       struct platform_device *pdev =3D of_find_device_by_node(ofdma->=
-of_node);
-> > +       struct rzn1_dmamux_data *dmamux =3D platform_get_drvdata(pdev);
-> > +       struct rzn1_dmamux_map *map;
-> > +       unsigned int master, chan, val;
-> > +       u32 mask;
-> > +       int ret;
-> > +
-> > +       map =3D kzalloc(sizeof(*map), GFP_KERNEL);
-> > +       if (!map)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       if (dma_spec->args_count !=3D 6)
-> > +               return ERR_PTR(-EINVAL);
-> > +
-> > +       chan =3D dma_spec->args[0];
-> > +       map->req_idx =3D dma_spec->args[4];
-> > +       val =3D dma_spec->args[5];
-> > +       dma_spec->args_count -=3D 2;
-> > +
-> > +       if (chan >=3D dmamux->dmac_requests) {
-> > +               dev_err(&pdev->dev, "Invalid DMA request line: %d\n", c=
-han); =20
->=20
-> %u
->=20
-> > +               return ERR_PTR(-EINVAL);
-> > +       }
-> > +
-> > +       if (map->req_idx >=3D dmamux->dmamux_requests ||
-> > +           map->req_idx % dmamux->dmac_requests !=3D chan) { =20
->=20
-> The reliance on .dmac_requests (i.e. "dma-requests" in the parent
-> DMA controller DT node) looks fragile to me.  Currently there are two
-> masters, each providing 16 channels, hence using all 2 x 16 =3D
-> 32 bits in the DMAMUX register.
-> What if a variant used the same mux, and the same 16/16 split, but
-> the parent DMACs don't have all channels available?
-> I think it would be safer to hardcode this as 16 (using a #define, ofc).
+> 
+>>> And in fact that's effectively how the direct assignment form works
+>>> anyway - string literals are static arrays of type char (or wchar_t),
+>>> *not* const char, however trying to modify them is undefined behaviour.
+>>>
+>>> There's a big difference between "non-const" and "kfree()able", and
+>>> AFAICS there's no obvious clue that the latter is actually a requirement.
+>>
+>> Then maybe kfreeable should be made a requirement? Or at least clearly
+>> documented?
+> 
+> Indeed, there's clearly some room for improvement still. And I'm not 
+> suggesting that these changes aren't already sensible as they are, just 
+> that the given justification seems a little unfair :)
 
-That's right, I assumed this was safe but indeed it does not work in
-all cases. I will change the second condition to:
+Yeah, maybe also my "const" in the title and commit is not accurate. I
+think that literal strings are part of .rodata (and objdump confirm)
+thus are considered const.
 
-		map->req_idx % <16> !=3D chan
+> Even kfree_const() can't help if someone has put their string in the 
+> middle of some larger block of kmalloc()ed memory, so perhaps 
+> encouraging a dedicated setter function rather than just exposing a raw 
+> string pointer is the ideal solution in the long term.
 
->=20
-> > +               dev_err(&pdev->dev, "Invalid MUX request line: %d\n", m=
-ap->req_idx); =20
->=20
-> %u
->=20
-> > +               return ERR_PTR(-EINVAL);
-> > +       }
-> > +
-> > +       /* The of_node_put() will be done in the core for the node */
-> > +       master =3D map->req_idx >=3D dmamux->dmac_requests ? 1 : 0; =20
->=20
-> The name "master" confused me: initially I thought it was used as a
-> boolean flag, but it really is the index of the parent DMAC.
 
-I personally prefer using true/false for booleans ;) Whatever, the name
-is badly chosen I agree, I'll switch to "dmac_idx" which seems more
-accurate.
-
->=20
-> > +       dma_spec->np =3D of_parse_phandle(ofdma->of_node, "dma-masters"=
-, master);
-> > +       if (!dma_spec->np) {
-> > +               dev_err(&pdev->dev, "Can't get DMA master\n");
-> > +               return ERR_PTR(-EINVAL);
-> > +       }
-> > +
-> > +       dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u reques=
-t %u\n",
-> > +               map->req_idx, master, chan);
-> > +
-> > +       mask =3D BIT(map->req_idx);
-> > +       mutex_lock(&dmamux->lock);
-> > +       dmamux->used_chans |=3D mask;
-> > +       ret =3D r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
-> > +       mutex_unlock(&dmamux->lock);
-> > +       if (ret) {
-> > +               rzn1_dmamux_free(&pdev->dev, map);
-> > +               return ERR_PTR(ret);
-> > +       }
-> > +
-> > +       return map;
-> > +}
-> > +
-> > +static const struct of_device_id rzn1_dmac_match[] __maybe_unused =3D {
-> > +       { .compatible =3D "renesas,rzn1-dma" },
-> > +       {},
-> > +};
-> > +
-> > +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> > +{
-> > +       struct device_node *mux_node =3D pdev->dev.of_node;
-> > +       const struct of_device_id *match;
-> > +       struct device_node *dmac_node;
-> > +       struct rzn1_dmamux_data *dmamux;
-> > +
-> > +       dmamux =3D devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL=
-);
-> > +       if (!dmamux)
-> > +               return -ENOMEM;
-> > +
-> > +       mutex_init(&dmamux->lock);
-> > +
-> > +       dmac_node =3D of_parse_phandle(mux_node, "dma-masters", 0);
-> > +       if (!dmac_node)
-> > +               return dev_err_probe(&pdev->dev, -ENODEV, "Can't get DM=
-A master node\n");
-> > +
-> > +       match =3D of_match_node(rzn1_dmac_match, dmac_node);
-> > +       if (!match) {
-> > +               of_node_put(dmac_node);
-> > +               return dev_err_probe(&pdev->dev, -EINVAL, "DMA master i=
-s not supported\n");
-> > +       }
-> > +
-> > +       if (of_property_read_u32(dmac_node, "dma-requests", &dmamux->dm=
-ac_requests)) {
-> > +               of_node_put(dmac_node);
-> > +               return dev_err_probe(&pdev->dev, -EINVAL, "Missing DMAC=
- requests information\n");
-> > +       }
-> > +
-> > +       of_node_put(dmac_node); =20
->=20
-> When hardcoding dmac_requests to 16, I guess the whole dmac_node
-> handling can be removed?
-
-Not really, I think the following checks are still valid and fortunate,
-and they need some of_ handling to work properly:
-- verify that the chan requested is within the range of dmac_requests
-  in the _route_allocate() callback
-- ensure the dmamux is wired to a supported DMAC in the DT (this
-  condition might be loosen in the future if needed or dropped entirely
-  if considered useless)
-- I would like to add a check against the number of requests supported
-  by the dmamux and the dmac (not done yet).
-For the record, I've taken inspiration to write these lines on the other
-dma router driver from TI.
-
-Unless, and I know some people think like that, we do not try to
-validate the DT and if the DT is wrong that is none of our business.
-
->=20
-> > +
-> > +       if (of_property_read_u32(mux_node, "dma-requests", &dmamux->dma=
-mux_requests)) { =20
->=20
-> Don't obtain from DT, but fix to 32?
-
-I believe the answer to the previous question should give me a clue
-about why you would prefer hardcoding than reading from the DT such
-an information. Perhaps I should mention that all these properties are
-already part of the bindings, and are not specific to the driver, the
-information will be in the DT anyway.
-
-Thanks,
-Miqu=C3=A8l
+Best regards,
+Krzysztof
