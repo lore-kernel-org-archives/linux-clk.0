@@ -2,117 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0773C43219
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 04:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14D7C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 06:32:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238103AbiBWEnp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Feb 2022 23:43:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54768 "EHLO
+        id S238178AbiBWGcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 01:32:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237933AbiBWEno (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Feb 2022 23:43:44 -0500
-Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14C56582D
-        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 20:43:17 -0800 (PST)
-Received: by mail-oo1-xc2c.google.com with SMTP id i10-20020a4aab0a000000b002fccf890d5fso20721950oon.5
-        for <linux-clk@vger.kernel.org>; Tue, 22 Feb 2022 20:43:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bNhRlACxy2aufThO0hLWVItxYuhke+gYQQ/WXwtufY8=;
-        b=kKPKkb9UWRCXh5s8pqyecoVDUfpJBoEebNDqO5baIS3XHk23sQRMFVGe0Rw0VEOb/9
-         S0hS1nDWtPJEOhX1bcvTF6h2mvbvl7VscbsY3yWY3NWTdlCsiGQ1xRGs4Nqa1wYACqDz
-         ACGFHbXEhWAJ/YycNKOBnUSYUC9eTPrwDSRoJk4cBqONtxfuwS1ndinZfJ9FGctoCeTH
-         weui4mCLY7okSfFEWsfsfc0Qs9ra/WtXIi1PDzlxQAHuF455RiMfzNI1BPA7xT6IhmC2
-         HpfK4BUr6zaZbUZmxtpwZARoe1z09jyLQnfgBD0PttRDo6bfmNg3ncbrPMvUvwIaGBxw
-         5UJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bNhRlACxy2aufThO0hLWVItxYuhke+gYQQ/WXwtufY8=;
-        b=jkb7cyItV1QMDP4i42PBQOJUIkx2hw3ZGsiCxs5gEiFi64UFpZ6dTxPg6k30m1bBQt
-         kWLq9zUqVk74183w/0kcMbthMHLDUd/a+tigP24gL1Q71JalLZfFtSuc3QVP5IJsrLBx
-         wQNS788MYwns/kc8O4y9Q2hR2Z4ixMbLAzpwjAi1k5lde00Wp7yoyyBNHHn88IKWS8pf
-         pDt+gQ2fXXnxPawkecoQomf7EX0jf3g8ZeXESUWaXbTIYcAKBrJf67HS2fI07Xwk5V/i
-         9DwCKfxLt88oxKeFsnxHGYLupDgL8z5MjhDacvEOr9i8BtNgZ9qyfS+1rqEbbuC2xOjc
-         +g9Q==
-X-Gm-Message-State: AOAM532V6vZgynxr7evXCWaPdzwNmBV6GanneUct/6O6ln+p+04yjdcx
-        rihDGT037iKbwzSzyTC5X4CrqPpPYwNuvw==
-X-Google-Smtp-Source: ABdhPJxUmsS7LgM5xfLdKiun0arpDAiRqf3D/VggoI4K08YZqlQqsoAsNP+wfA5swiCyJKdXHewi4w==
-X-Received: by 2002:a05:6870:60a0:b0:d3:a3f7:8b59 with SMTP id t32-20020a05687060a000b000d3a3f78b59mr3056772oae.94.1645591396944;
-        Tue, 22 Feb 2022 20:43:16 -0800 (PST)
-Received: from ripper.. ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id i20sm115251ota.71.2022.02.22.20.43.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Feb 2022 20:43:16 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: rpmhcc: add sc8280xp support to the RPMh clock controller
-Date:   Tue, 22 Feb 2022 20:45:16 -0800
-Message-Id: <20220223044516.3776637-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20220223044516.3776637-1-bjorn.andersson@linaro.org>
-References: <20220223044516.3776637-1-bjorn.andersson@linaro.org>
+        with ESMTP id S235483AbiBWGcv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 01:32:51 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A1F3267D;
+        Tue, 22 Feb 2022 22:32:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645597943; x=1677133943;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t+EWHkxVYiuPqz5bFdNUluXRx58UgyPApSK+jiVbtZw=;
+  b=GkquXK1GV0bmr2G7x1ZI00ZmiCjATypWitLLqUNrh1NVapuDBqaw0iZb
+   66SVLnPMwpGSsRSET2OxCNow9v0G0ip0paJsQUk+8vcv1Mj0cqDPi6BIS
+   Hge1OP/x/V0E7DWPeZrG6i/Hz1tsMeVLRUoAaxRAUPYPgpNfqE0+9aZ0X
+   wBOLEK03GgQjI55XmcYrE2AyuSeK93CSSXsDrA6DoIOdEU50HLvzNLwB6
+   kKOLoEIZpdO9l9CZ5rqoxA4xOoc0SZ7qhzE0FfO1bHopuvXhGarlmgRjd
+   AfI2x0mHw3D4UOmj0GpmGk5MmiQAMqaKue9ve5EWxU943a13Sy+RzTt7D
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="251815156"
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="251815156"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2022 22:32:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="637304237"
+Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Feb 2022 22:32:18 -0800
+Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nMlCD-00014Q-Qt; Wed, 23 Feb 2022 06:32:17 +0000
+Date:   Wed, 23 Feb 2022 14:31:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, sboyd@kernel.org,
+        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        abel.vesa@nxp.com
+Cc:     kbuild-all@lists.01.org, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2 5/5] clk: imx: add i.MX93 clk
+Message-ID: <202202231413.DjpCSE8G-lkp@intel.com>
+References: <20220223011606.3282165-6-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220223011606.3282165-6-peng.fan@oss.nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Qualcomm SC8280XP platform exposes 5 clocks through the RPMh clock
-controller. Add these, and the relates active-only variants, to the RPMh
-clock controller driver.
+Hi "Peng,
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Thank you for the patch! Yet something to improve:
+
+[auto build test ERROR on next-20220217]
+[cannot apply to shawnguo/for-next robh/for-next clk/clk-next v5.17-rc5 v5.17-rc4 v5.17-rc3 v5.17-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/0day-ci/linux/commits/Peng-Fan-OSS/imx-add-i-MX93-clk-bindings-and-driver/20220223-091628
+base:    3c30cf91b5ecc7272b3d2942ae0505dd8320b81c
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20220223/202202231413.DjpCSE8G-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/6af055ecd8262a7ba5aa17d0bde604f63fae465c
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Peng-Fan-OSS/imx-add-i-MX93-clk-bindings-and-driver/20220223-091628
+        git checkout 6af055ecd8262a7ba5aa17d0bde604f63fae465c
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arc SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/imx/clk-imx93.c:17:10: fatal error: soc/imx/soc.h: No such file or directory
+      17 | #include <soc/imx/soc.h>
+         |          ^~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +17 drivers/clk/imx/clk-imx93.c
+
+  > 17	#include <soc/imx/soc.h>
+    18	
+
 ---
- drivers/clk/qcom/clk-rpmh.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 74e57c84f60a..aed907982344 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -512,6 +512,23 @@ static const struct clk_rpmh_desc clk_rpmh_sm8350 = {
- 	.num_clks = ARRAY_SIZE(sm8350_rpmh_clocks),
- };
- 
-+DEFINE_CLK_RPMH_VRM(sc8280xp, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
-+
-+static struct clk_hw *sc8280xp_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK3]       = &sc8280xp_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]     = &sc8280xp_ln_bb_clk3_ao.hw,
-+	[RPMH_IPA_CLK]          = &sdm845_ipa.hw,
-+	[RPMH_PKA_CLK]          = &sm8350_pka.hw,
-+	[RPMH_HWKM_CLK]         = &sm8350_hwkm.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sc8280xp = {
-+	.clks = sc8280xp_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sc8280xp_rpmh_clocks),
-+};
-+
- /* Resource name must match resource id present in cmd-db */
- DEFINE_CLK_RPMH_ARC(sc7280, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 4);
- 
-@@ -691,6 +708,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
- 	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
-+	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
- 	{ .compatible = "qcom,sdx55-rpmh-clk",  .data = &clk_rpmh_sdx55},
- 	{ .compatible = "qcom,sdx65-rpmh-clk",  .data = &clk_rpmh_sdx65},
--- 
-2.33.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
