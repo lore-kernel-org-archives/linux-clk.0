@@ -2,116 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A618EC433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 10:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53EAC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 11:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239723AbiBWK5A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 05:57:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33746 "EHLO
+        id S239669AbiBWLSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 06:18:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239734AbiBWK47 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 05:56:59 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E1F287
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 02:56:31 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 675105C0153;
-        Wed, 23 Feb 2022 05:56:30 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 23 Feb 2022 05:56:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=B/S+5pJTjISbVKXDbmkZvJslRN2Aa6
-        NU173g50j/vbU=; b=GaBwn3jLrwRlgVb3TQnNczA72rlHpkyQuBIEkv9sX+7+wl
-        oD4KZGh3UDnBBcW3yvp9muv7M6ckIGWKlWkixLzm1Gr/9TcD70CiEXDR0fPH7jl+
-        ivhqldwEwCK82doRSk9Ov/mnX3kW0B7jm4Vi8gA8o7tWwsMjCuf9sV6txsQc/MLh
-        rH0gT2z2F0ddu7ma+1hVi/vyEh8YioONK1XNmtRzbQL5/rytoFvEmbY/HjnmuIiO
-        TY2SaztoTbl4IKNXKrt+JJT4cMhJCQ6qvJJskcQhl8xEYt8tTncYrn2HyYK1qBRq
-        Khk9ClPMJiqJCgTHamMV+7uwGyjCQVoOtB9bA8Qw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=B/S+5p
-        JTjISbVKXDbmkZvJslRN2Aa6NU173g50j/vbU=; b=PeJN+GMYjV67kRx++a+UjX
-        NCDcQbR70B0a5owlgPdUX815sHRjgM7VFlSAgoPUjXDib1kHuqXJn5YSYlCiMH5K
-        p97xB/pJyL6zaEczaP2bcEgIHF1M4mp5tCevtv14LoRIs48H4zhCaYCa0ijRHIxV
-        p+rZv8t4AmjIplSWvR594m+XA5fDLU5oXvzTm5GkLpMx8kFr5pFUxfWNoHODFoSh
-        yuWy6JuvU7u2mKjTKWQGG+qIvW7j+W+P6U1sPloxdA98nOaQ9Nde7CQF8mwddyi/
-        UUxHUwGedRsrM9y44fvCvVfTCr4sBm802WBuPvvaMU0AG/2ly18+hngWS4P/DYIQ
-        ==
-X-ME-Sender: <xms:3hIWYq8dBgifeWnOScvPTHx63UTwTheYztYMfg7BBuxwOsP8fqez-A>
-    <xme:3hIWYqv5j1BqQQqggSP07rZpX0RM3McAmyI-zzB9X3vIliu8jIJy70KkeRo2WTrBh
-    G4cgZahUoP7lpSr85I>
-X-ME-Received: <xmr:3hIWYgBIoRK6v0-myzmRRUvuRaMjN0Abw6BkjrUIOnfxTDCjDcqbDJzKA38XDYlIYL4xbkG88VzVYmoKk3z_uDLUt7LxKRhKXIc84X8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrledtgddvtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:3hIWYicUP3qoxkRGYNmyXaBdqm5Qs5o-BZ2vL8C6MY0fN_FThzX3ow>
-    <xmx:3hIWYvNiLlsO2cSEjMmPY-ABCUKATk_sO6jFmagI8-CYVFk_r663Ig>
-    <xmx:3hIWYskPkfLbCybM_Pqio1qMpyLYLFM8v3On4MmIbyGeITsbuKNmxg>
-    <xmx:3hIWYqdEZ8hyByb94gBRJtu6arp4gaZRYPPMpqb4HdATia_9B1DoIg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Feb 2022 05:56:29 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v6 12/12] drm/vc4: hdmi: Remove clock rate initialization
-Date:   Wed, 23 Feb 2022 11:56:00 +0100
-Message-Id: <20220223105600.1132593-13-maxime@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220223105600.1132593-1-maxime@cerno.tech>
-References: <20220223105600.1132593-1-maxime@cerno.tech>
+        with ESMTP id S235110AbiBWLSH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 06:18:07 -0500
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C463B6B09E;
+        Wed, 23 Feb 2022 03:17:39 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id z22so43563169edd.1;
+        Wed, 23 Feb 2022 03:17:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=z9M1ryJc1sezXeZas0y4b6iOkouebmDu8wCXcz+Etrg=;
+        b=S2sZPGi73IE4AWT39prT6q4nx2SmSB2TTx0ZBt67y9Ajbrwzd3TzGEttQaeSs2Jd70
+         3ULkIpM0pqjx8uQI/5AcO1N32GC8dKJ9jaU198guBp8TY3fS9i4Q6rqpMpp1kMJcei6U
+         Sv665nmuzHCiajOUrJg5xU4ptB57Oorn7xNzbyygi9yiM5ZDhQ4MtlVj32ZEDIoePMI+
+         bMoogWRhQtdQ1gdicUNjHiIt6QdzOMR+hrMR8anPFFQA0V7aVfpDhjsMhYp7PUSEElxq
+         hZauwFzOBX7W+rUKMc3kkO70mZawkHPK/Bro8jJdzfhTTHv5Ll89D1zlX5oQSXk6/TYL
+         b/LQ==
+X-Gm-Message-State: AOAM531LjFjDm38wrzfQN8NTQZFQWf8qyyCuSQyWdYc2uIy6DmvEJXZm
+        h+E7NaRWG20jcRBaYC1Wos8=
+X-Google-Smtp-Source: ABdhPJzuE0jkbsdcau6gHGq4StyNhBXCOTJsN4439VeS5atdmF4wV71O2xFVps+cmZtcVPcnxPFbMQ==
+X-Received: by 2002:a50:fd97:0:b0:410:c0be:f4c1 with SMTP id o23-20020a50fd97000000b00410c0bef4c1mr30437571edt.313.1645615058122;
+        Wed, 23 Feb 2022 03:17:38 -0800 (PST)
+Received: from [192.168.0.125] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.googlemail.com with ESMTPSA id i16sm4050917edu.52.2022.02.23.03.17.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Feb 2022 03:17:36 -0800 (PST)
+Message-ID: <fff14463-2cae-c540-e23e-f894a4b76d2c@kernel.org>
+Date:   Wed, 23 Feb 2022 12:17:35 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH V3 1/5] dt-bindings: clock: Add imx93 clock support
+Content-Language: en-US
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, sboyd@kernel.org,
+        robh+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        abel.vesa@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+References: <20220223064358.4097307-1-peng.fan@oss.nxp.com>
+ <20220223064358.4097307-2-peng.fan@oss.nxp.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220223064358.4097307-2-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the clock driver makes sure we never end up with a rate of 0,
-the HDMI driver doesn't need to care anymore.
+On 23/02/2022 07:43, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add the clock dt-binding file for i.MX93.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../bindings/clock/imx93-clock.yaml           | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx93-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx93-clock.yaml b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+> new file mode 100644
+> index 000000000000..a4c3ae23b8c3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/imx93-clock.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/imx93-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX93 Clock Control Module Binding
+> +
+> +maintainers:
+> +  - Peng Fan <peng.fan@nxp.com>
+> +
+> +description: |
+> +  i.MX93 clock control module is an integrated clock controller, which
+> +  includes clock generator, clock gate and supplies to all modules.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx93-ccm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description:
+> +      specify the external clocks used by the CCM module.
+> +    items:
+> +      - description: 32k osc
+> +      - description: 24m osc
+> +      - description: ext1 clock input
+> +
+> +  clock-names:
+> +    description:
+> +      specify the external clocks names used by the CCM module.
+> +    items:
+> +      - const: osc_32k
+> +      - const: osc_24m
+> +      - const: clk_ext1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      The clock consumer should specify the desired clock by having the clock
+> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx93-clock.h
+> +      for the full list of i.MX93 clock IDs.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 13 -------------
- 1 file changed, 13 deletions(-)
+Skip most of this description, it's obvious. Leave only reference to the
+header file, either here or in description of entire file.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 92b1530aa17b..21aff3ad96cf 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -2576,19 +2576,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 			vc4_hdmi->disable_4kp60 = true;
- 	}
- 
--	/*
--	 * If we boot without any cable connected to the HDMI connector,
--	 * the firmware will skip the HSM initialization and leave it
--	 * with a rate of 0, resulting in a bus lockup when we're
--	 * accessing the registers even if it's enabled.
--	 *
--	 * Let's put a sensible default at runtime_resume so that we
--	 * don't end up in this situation.
--	 */
--	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, HSM_MIN_CLOCK_FREQ);
--	if (ret)
--		goto err_put_ddc;
--
- 	/*
- 	 * We need to have the device powered up at this point to call
- 	 * our reset hook and for the CEC init.
--- 
-2.35.1
 
+
+Best regards,
+Krzysztof
