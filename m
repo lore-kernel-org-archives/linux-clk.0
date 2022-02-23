@@ -2,257 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840B6C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 12:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BB5C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 12:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236306AbiBWMqy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 07:46:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32866 "EHLO
+        id S240576AbiBWMsC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 07:48:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235284AbiBWMqx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 07:46:53 -0500
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A00A4199;
-        Wed, 23 Feb 2022 04:46:25 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id u10so2973694vsu.13;
-        Wed, 23 Feb 2022 04:46:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WN9HXFy4O8MWRcFXOM81Swa8FNpMoMf+B3dPA0jmkFc=;
-        b=u+J0CFZOItMTqtP8TTb5gx/dVX+uopXobhJuPDK2rYaKeXqxrAsxwyZvpiyT4AwdFp
-         2ODg3VB6vTI7oO2WjMEwI3pFBlAn8vV6GourXfcypW+SpCFja3rz4NfW5+E7dlHWI3MR
-         PqtQKfIXr5KcUzlPlB2gjfDgNwsTTurW5Klz+lkNqpO07lRrK70fGLTNE5PbkU7GVqlC
-         /5BjvqPgAA3tkcD0fKPi+dyFdmGm3T88/rsRiBkS/DCWjneC9mSm0MoihiiP2Wekbfu/
-         aI4AWwzaQbLjoO28y7KeyCMhsDADBjOQYTACmrekkdt2BPcbO00ig/Obm5FNapv1kDq9
-         sC4A==
-X-Gm-Message-State: AOAM531y0kZ0LfAaReIsgy2sOMcRC4FT42VJE2TuZRX+Vz2QUhh8M4V6
-        JwjlwMG8H8HSiBjEUjplgBJo3awn0M1/kA==
-X-Google-Smtp-Source: ABdhPJyjm7PS+aBMQ/D6GrSN77qYkt0Az0DkUu/yySTZ5n2T3/yJidVJuflNI8V1U70dfxwAoqLpAg==
-X-Received: by 2002:a67:d90b:0:b0:31b:77ac:6eb5 with SMTP id t11-20020a67d90b000000b0031b77ac6eb5mr11376086vsj.22.1645620384692;
-        Wed, 23 Feb 2022 04:46:24 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id u6sm8543114vku.15.2022.02.23.04.46.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Feb 2022 04:46:24 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id 110so1369164uak.4;
-        Wed, 23 Feb 2022 04:46:23 -0800 (PST)
-X-Received: by 2002:a9f:360f:0:b0:341:8a12:8218 with SMTP id
- r15-20020a9f360f000000b003418a128218mr10583982uad.14.1645620383537; Wed, 23
- Feb 2022 04:46:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20220222103437.194779-1-miquel.raynal@bootlin.com> <20220222103437.194779-5-miquel.raynal@bootlin.com>
-In-Reply-To: <20220222103437.194779-5-miquel.raynal@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 23 Feb 2022 13:46:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
-Message-ID: <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S240490AbiBWMsB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 07:48:01 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25755A6537
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 04:47:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645620454; x=1677156454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qR/6K++acmIKyE2EQVqpsJ/8y+Nz1OC3o6JR6GJKQvM=;
+  b=Ek1Y3XoypPbgnDh+S4H3ZXRd7poBa7/lnKZjJSWk77S43vzSkX2YaFGR
+   yTtU2W/yBqSvoBD8qZajjK+yc1HW3sRsa+ri9O46OxSkH3JRzdTBqw5Hg
+   C3pV7e9vpjDgCwAvqtSn01tOPp76UZodDvNCw9+vL0vxvtkd5dSQB92l8
+   RUyTL/Ut7q5G3FH6uBI/QCsXA0ch3nDAFtmvQReqao4dqXvV/oEEQp/iR
+   6AO+HLMyBteNBErwN0VckNgKjmP18ZGimmiZ6wTGvBnyQcah96XLY5DrA
+   4O0WqGhLB4Z8F1T8SOuFaIT5WK8FauMy16k2jrkhHz5vSOrXw+ZLG2BjE
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10266"; a="231927544"
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="231927544"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 04:47:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,390,1635231600"; 
+   d="scan'208";a="639294378"
+Received: from lkp-server01.sh.intel.com (HELO 788b1cd46f0d) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 23 Feb 2022 04:47:30 -0800
+Received: from kbuild by 788b1cd46f0d with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nMr3K-0001Or-0k; Wed, 23 Feb 2022 12:47:30 +0000
+Date:   Wed, 23 Feb 2022 20:47:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sascha Hauer <s.hauer@pengutronix.de>, linux-clk@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Adrian Alonso <adrian.alonso@nxp.com>,
+        Mads Bligaard Nielsen <bli@bang-olufsen.dk>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 7/8] clk: imx: pll14xx: Add pr_fmt
+Message-ID: <202202231803.Xvmq9bEq-lkp@intel.com>
+References: <20220223075601.3652543-8-s.hauer@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220223075601.3652543-8-s.hauer@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+Hi Sascha,
 
-On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
-> The Renesas RZN1 DMA IP is a based on a DW core, with eg. an additional
-> dmamux register located in the system control area which can take up to
-> 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> two different peripherals.
->
-> We need two additional information from the 'dmas' property: the channel
-> (bit in the dmamux register) that must be accessed and the value of the
-> mux for this channel.
->
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+I love your patch! Perhaps something to improve:
 
-Thanks for your patch!
+[auto build test WARNING on shawnguo/for-next]
+[also build test WARNING on clk/clk-next v5.17-rc5 next-20220222]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-> --- /dev/null
-> +++ b/drivers/dma/dw/dmamux.c
+url:    https://github.com/0day-ci/linux/commits/Sascha-Hauer/clk-i-MX-PLL14xx-Support-dynamic-rates/20220223-155846
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20220223/202202231803.Xvmq9bEq-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/0c0c0d808f682f365239da62a5670bbd74275b5f
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Sascha-Hauer/clk-i-MX-PLL14xx-Support-dynamic-rates/20220223-155846
+        git checkout 0c0c0d808f682f365239da62a5670bbd74275b5f
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=alpha SHELL=/bin/bash drivers/clk/imx/
 
-rzn1-dmamux.c?
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> @@ -0,0 +1,167 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2022 Schneider-Electric
-> + * Author: Miquel Raynal <miquel.raynal@bootlin.com
-> + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalusi@ti.com>
-> + */
-> +#include <linux/slab.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_dma.h>
-> +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> +
-> +#define RZN1_DMAMUX_LINES      64
+All warnings (new ones prefixed by >>):
 
-Unused. But using it wouldn't hurt, I guess?
+   drivers/clk/imx/clk-pll14xx.c: In function 'clk_pll14xx_recalc_rate':
+   drivers/clk/imx/clk-pll14xx.c:138:16: error: implicit declaration of function 'FIELD_GET'; did you mean 'FOLL_GET'? [-Werror=implicit-function-declaration]
+     138 |         mdiv = FIELD_GET(MDIV_MASK, pll_div_ctl0);
+         |                ^~~~~~~~~
+         |                FOLL_GET
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/alpha/include/asm/bug.h:23,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/current.h:5,
+                    from ./arch/alpha/include/generated/asm/current.h:1,
+                    from include/linux/mutex.h:14,
+                    from include/linux/kernfs.h:11,
+                    from include/linux/sysfs.h:16,
+                    from include/linux/kobject.h:20,
+                    from include/linux/of.h:17,
+                    from include/linux/clk-provider.h:9,
+                    from drivers/clk/imx/clk-pll14xx.c:9:
+   drivers/clk/imx/clk-pll14xx.c: In function 'clk_pll1416x_set_rate':
+>> include/linux/kern_levels.h:5:25: warning: format '%lu' expects argument of type 'long unsigned int', but argument 2 has type 'const char *' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:418:25: note: in definition of macro 'printk_index_wrap'
+     418 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:489:9: note: in expansion of macro 'printk'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:489:16: note: in expansion of macro 'KERN_ERR'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/clk/imx/clk-pll14xx.c:181:17: note: in expansion of macro 'pr_err'
+     181 |                 pr_err("Invalid rate %lu for pll clk %s\n", __func__,
+         |                 ^~~~~~
+>> include/linux/kern_levels.h:5:25: warning: format '%s' expects argument of type 'char *', but argument 3 has type 'long unsigned int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:418:25: note: in definition of macro 'printk_index_wrap'
+     418 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:489:9: note: in expansion of macro 'printk'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:489:16: note: in expansion of macro 'KERN_ERR'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/clk/imx/clk-pll14xx.c:181:17: note: in expansion of macro 'pr_err'
+     181 |                 pr_err("Invalid rate %lu for pll clk %s\n", __func__,
+         |                 ^~~~~~
+>> include/linux/kern_levels.h:5:25: warning: too many arguments for format [-Wformat-extra-args]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:418:25: note: in definition of macro 'printk_index_wrap'
+     418 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:489:9: note: in expansion of macro 'printk'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:489:16: note: in expansion of macro 'KERN_ERR'
+     489 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/clk/imx/clk-pll14xx.c:181:17: note: in expansion of macro 'pr_err'
+     181 |                 pr_err("Invalid rate %lu for pll clk %s\n", __func__,
+         |                 ^~~~~~
+   drivers/clk/imx/clk-pll14xx.c:190:24: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+     190 |                 tmp |= FIELD_PREP(SDIV_MASK, rate->sdiv);
+         |                        ^~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-> +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
-> +                                       struct of_dma *ofdma)
-> +{
-> +       struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
-> +       struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
-> +       struct rzn1_dmamux_map *map;
-> +       unsigned int master, chan, val;
-> +       u32 mask;
-> +       int ret;
-> +
-> +       map = kzalloc(sizeof(*map), GFP_KERNEL);
-> +       if (!map)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       if (dma_spec->args_count != 6)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       chan = dma_spec->args[0];
-> +       map->req_idx = dma_spec->args[4];
-> +       val = dma_spec->args[5];
-> +       dma_spec->args_count -= 2;
-> +
-> +       if (chan >= dmamux->dmac_requests) {
-> +               dev_err(&pdev->dev, "Invalid DMA request line: %d\n", chan);
 
-%u
+vim +5 include/linux/kern_levels.h
 
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (map->req_idx >= dmamux->dmamux_requests ||
-> +           map->req_idx % dmamux->dmac_requests != chan) {
+314ba3520e513a Joe Perches 2012-07-30   4  
+04d2c8c83d0e3a Joe Perches 2012-07-30  @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
+04d2c8c83d0e3a Joe Perches 2012-07-30   6  #define KERN_SOH_ASCII	'\001'
+04d2c8c83d0e3a Joe Perches 2012-07-30   7  
+04d2c8c83d0e3a Joe Perches 2012-07-30   8  #define KERN_EMERG	KERN_SOH "0"	/* system is unusable */
+04d2c8c83d0e3a Joe Perches 2012-07-30   9  #define KERN_ALERT	KERN_SOH "1"	/* action must be taken immediately */
+04d2c8c83d0e3a Joe Perches 2012-07-30  10  #define KERN_CRIT	KERN_SOH "2"	/* critical conditions */
+04d2c8c83d0e3a Joe Perches 2012-07-30 @11  #define KERN_ERR	KERN_SOH "3"	/* error conditions */
+04d2c8c83d0e3a Joe Perches 2012-07-30  12  #define KERN_WARNING	KERN_SOH "4"	/* warning conditions */
+04d2c8c83d0e3a Joe Perches 2012-07-30  13  #define KERN_NOTICE	KERN_SOH "5"	/* normal but significant condition */
+04d2c8c83d0e3a Joe Perches 2012-07-30  14  #define KERN_INFO	KERN_SOH "6"	/* informational */
+04d2c8c83d0e3a Joe Perches 2012-07-30  15  #define KERN_DEBUG	KERN_SOH "7"	/* debug-level messages */
+04d2c8c83d0e3a Joe Perches 2012-07-30  16  
 
-The reliance on .dmac_requests (i.e. "dma-requests" in the parent
-DMA controller DT node) looks fragile to me.  Currently there are two
-masters, each providing 16 channels, hence using all 2 x 16 =
-32 bits in the DMAMUX register.
-What if a variant used the same mux, and the same 16/16 split, but
-the parent DMACs don't have all channels available?
-I think it would be safer to hardcode this as 16 (using a #define, ofc).
-
-> +               dev_err(&pdev->dev, "Invalid MUX request line: %d\n", map->req_idx);
-
-%u
-
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       /* The of_node_put() will be done in the core for the node */
-> +       master = map->req_idx >= dmamux->dmac_requests ? 1 : 0;
-
-The name "master" confused me: initially I thought it was used as a
-boolean flag, but it really is the index of the parent DMAC.
-
-> +       dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", master);
-> +       if (!dma_spec->np) {
-> +               dev_err(&pdev->dev, "Can't get DMA master\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n",
-> +               map->req_idx, master, chan);
-> +
-> +       mask = BIT(map->req_idx);
-> +       mutex_lock(&dmamux->lock);
-> +       dmamux->used_chans |= mask;
-> +       ret = r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
-> +       mutex_unlock(&dmamux->lock);
-> +       if (ret) {
-> +               rzn1_dmamux_free(&pdev->dev, map);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return map;
-> +}
-> +
-> +static const struct of_device_id rzn1_dmac_match[] __maybe_unused = {
-> +       { .compatible = "renesas,rzn1-dma" },
-> +       {},
-> +};
-> +
-> +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *mux_node = pdev->dev.of_node;
-> +       const struct of_device_id *match;
-> +       struct device_node *dmac_node;
-> +       struct rzn1_dmamux_data *dmamux;
-> +
-> +       dmamux = devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL);
-> +       if (!dmamux)
-> +               return -ENOMEM;
-> +
-> +       mutex_init(&dmamux->lock);
-> +
-> +       dmac_node = of_parse_phandle(mux_node, "dma-masters", 0);
-> +       if (!dmac_node)
-> +               return dev_err_probe(&pdev->dev, -ENODEV, "Can't get DMA master node\n");
-> +
-> +       match = of_match_node(rzn1_dmac_match, dmac_node);
-> +       if (!match) {
-> +               of_node_put(dmac_node);
-> +               return dev_err_probe(&pdev->dev, -EINVAL, "DMA master is not supported\n");
-> +       }
-> +
-> +       if (of_property_read_u32(dmac_node, "dma-requests", &dmamux->dmac_requests)) {
-> +               of_node_put(dmac_node);
-> +               return dev_err_probe(&pdev->dev, -EINVAL, "Missing DMAC requests information\n");
-> +       }
-> +
-> +       of_node_put(dmac_node);
-
-When hardcoding dmac_requests to 16, I guess the whole dmac_node
-handling can be removed?
-
-> +
-> +       if (of_property_read_u32(mux_node, "dma-requests", &dmamux->dmamux_requests)) {
-
-Don't obtain from DT, but fix to 32?
-
-> +               return dev_err_probe(&pdev->dev, -EINVAL, "Missing mux requests information\n");
-> +       }
-> +
-> +       dmamux->dmarouter.dev = &pdev->dev;
-> +       dmamux->dmarouter.route_free = rzn1_dmamux_free;
-> +
-> +       platform_set_drvdata(pdev, dmamux);
-> +
-> +       return of_dma_router_register(mux_node, rzn1_dmamux_route_allocate,
-> +                                     &dmamux->dmarouter);
-> +}
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
