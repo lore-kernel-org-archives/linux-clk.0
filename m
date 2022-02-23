@@ -2,185 +2,146 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F320C433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 17:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F120BC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 17:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243108AbiBWREw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 12:04:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54062 "EHLO
+        id S239937AbiBWRLR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 12:11:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242039AbiBWREu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 12:04:50 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD7974F473
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 09:04:21 -0800 (PST)
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BCBF83FCAD
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 17:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645635859;
-        bh=RoNX8EzuGJlB3iCJ6r1tFSNiwtZPxPTTbVDAWTvRXkY=;
-        h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-         In-Reply-To:Content-Type;
-        b=IVzPGSVqOIbQXLJ3sKXrd9cfAykcJ0h/J+9pKozy9QsNXXebGWFTgF+xXsVHcp5Bt
-         6sUpzvivWB/niGnarCpRflburq+aqLRV+w5rX9TOdO4PR/pUsCOa1w3y4dd8KI1u32
-         GlsgZXL2zxv6BPfm7Bq/+jEBh/MQlu3AiYFOpTvUsPhvJQ4CCWJ5Puppjd2UrhYGzt
-         FYrR+zf1NSE3h0MU2nrCWRguob9BUhfJL1610hOkWYihw1RKtTtRaDK9fL3DiWAtpP
-         9ezmQFVol2cRjVOnS+JWUC+7VopNJ/oDJpZy7SOsGi06H8jojVo1YVez2uYfy3089+
-         p2DdpOvgjrKiw==
-Received: by mail-ej1-f69.google.com with SMTP id sa7-20020a170906eda700b006d1b130d65bso3408197ejb.13
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 09:04:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=RoNX8EzuGJlB3iCJ6r1tFSNiwtZPxPTTbVDAWTvRXkY=;
-        b=LyQ06RhTVIT+LW5si6cmYaL6PNG0ymJKi+vsRSm+hgkNLsNMOv/LCpYK5LnLv6vC9S
-         7JvnYuDumuA7AbqNWvv9ehXv4D1XWEimJQpOJKI8hwHT+hvsh0/Qfx/i4YKGQaTd/1Tg
-         WWa/Pu6FauhrV3W48uHiDGnqwSS0aXqHOLXU4zk45I8txU3NvDuEETh698wNEpKDrn7+
-         omnlb7fCoN4jB5LAzLadLBcF72eFJccu7di1Mt1ZX79altTAYTKsqZDmTbw/OKJl2Wz8
-         kfFvddhGhLw6ERN3X1DEt+lhcip/OLQPeK/vy9L0Fim+O7LoHEvRnmEySUfUwTcH32cS
-         K1bw==
-X-Gm-Message-State: AOAM530JibiBtsHF04ARBuiJ/90xW7yXZp/2QT7NdTvEDuJDvPyVyiD4
-        nV8d/gPOMZFi5niT3KNzrbcXFz8J4Lqj0yUq95yCTJZx4J9OEBuMkpEZzGlTVODlvSlEmY0nErB
-        ysSawNf8NT2PWaWwTWgaRVmMCf1vXT3aORkPXdw==
-X-Received: by 2002:a05:6402:5209:b0:412:7cd8:a8fc with SMTP id s9-20020a056402520900b004127cd8a8fcmr343339edd.51.1645635859397;
-        Wed, 23 Feb 2022 09:04:19 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwKr+v6ocNLmVN3Di+yw0uJzDvkvv4Lb5lc33wOhtzJOFkvu7xL2E/jifTka6zh9g0DFLs/uA==
-X-Received: by 2002:a05:6402:5209:b0:412:7cd8:a8fc with SMTP id s9-20020a056402520900b004127cd8a8fcmr343312edd.51.1645635859189;
-        Wed, 23 Feb 2022 09:04:19 -0800 (PST)
-Received: from [192.168.0.126] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id fy37sm73162ejc.219.2022.02.23.09.04.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Feb 2022 09:04:17 -0800 (PST)
-Message-ID: <7fcd5ed9-4577-950a-0cdc-22917e8e26af@canonical.com>
-Date:   Wed, 23 Feb 2022 18:04:16 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFT PATCH 0/3] Fix kfree() of const memory on setting
- driver_override
-Content-Language: en-US
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S233941AbiBWRLQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 12:11:16 -0500
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A918D6B0AD;
+        Wed, 23 Feb 2022 09:10:44 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 96AE120005;
+        Wed, 23 Feb 2022 17:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645636243;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QSwt/Ot4LoGe9ng93X1S2fF/3zvBslaub0B+kpBf9Lk=;
+        b=KP5j9R+sh7tBnnEV1VureDxXxwSe1t3IF4UUZ74aK5dPlv6YjptgYl17EH0dC9z9wP99Ru
+        /H3oj9P9VI9GN37lF95433bomtcWtIsE/+7k0zEaNFPQVQWdCR+MEQWMwWlOBZG4u/0R1E
+        aW3MII0f2QjzuOAVi55J0/gEPchLRRaOToG13A8XGWtw/nbBcMZdFSa8Zz0v3tGxTC/5VV
+        LDePHNu4DOS6q2T3ZRwmMgqJdsF97X78qADzipGa6BeIqmrGfehbxrgT2ZRUzIwUaRJzCd
+        iOQeA/2Nf5fPHf3JugLQGBgTsYQLe8j6rLEnLD77EqcDQmTUdeDy7xpRH8Km8Q==
+Date:   Wed, 23 Feb 2022 18:10:39 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-References: <20220222132707.266883-1-krzysztof.kozlowski@canonical.com>
- <708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk>
- <afa7001d-901e-55bf-b8dc-77051b1e7f78@canonical.com>
- <0442526f-b6d9-8868-ac1c-dd11a2d3b2ab@arm.com>
- <636e5b92-8ed8-35a1-d6e9-516d5b35be91@canonical.com>
- <e0bc8dd2-bea9-354b-3b48-3123e0bbf717@arm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <e0bc8dd2-bea9-354b-3b48-3123e0bbf717@arm.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+Message-ID: <20220223181039.4052424b@xps13>
+In-Reply-To: <CAMuHMdVN4Xc7Wo_5B7dv3N2wJCWMRQg=Z6Rx2tMrH=OvNO26ew@mail.gmail.com>
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+        <20220222103437.194779-3-miquel.raynal@bootlin.com>
+        <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+        <20220223164950.18de06a8@xps13>
+        <CAMuHMdVN4Xc7Wo_5B7dv3N2wJCWMRQg=Z6Rx2tMrH=OvNO26ew@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/02/2022 16:08, Robin Murphy wrote:
-> On 2022-02-23 14:22, Krzysztof Kozlowski wrote:
->> On 23/02/2022 15:04, Robin Murphy wrote:
->>> On 2022-02-22 14:06, Krzysztof Kozlowski wrote:
->>>> On 22/02/2022 14:51, Rasmus Villemoes wrote:
->>>>> On 22/02/2022 14.27, Krzysztof Kozlowski wrote:
->>>>>> Hi,
->>>>>>
->>>>>> Drivers still seem to use driver_override incorrectly. Perhaps my old
->>>>>> patch makes sense now?
->>>>>> https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
->>>>>>
->>>>>> Not tested - please review and test (e.g. by writing to dirver_override
->>>>>> sysfs entry with KASAN enabled).
->>>>>
->>>>> Perhaps it would make sense to update the core code to release using
->>>>> kfree_const(), allowing drivers to set the initial value with
->>>>> kstrdup_const(). Drivers that currently use kstrdup() or kasprintf()
->>>>> will continue to work [but if they kstrdup() a string literal they could
->>>>> be changed to use kstrdup_const].
->>>>
->>>> The core here means several buses, so the change would not be that
->>>> small. However I don't see the reason why "driver_override" is special
->>>> and should be freed with kfree_const() while most of other places don't
->>>> use it.
->>>>
->>>> The driver_override field definition is here obvious: "char *", so any
->>>> assignments of "const char *" are logically wrong (although GCC does not
->>>> warn of this literal string const discarding). Adding kfree_const() is
->>>> hiding the problem - someone did not read the definition of assigned field.
->>>
->>> That's not the issue, though, is it? If I take the struct
->>> platform_device definition at face value, this should be perfectly valid:
->>>
->>> 	static char foo[] = "foo";
->>> 	pdev->driver_override = &foo;
->>
->>
->> Yes, that's not the issue. It's rather about the interface. By
->> convention we do not modify string literals but "char *driver_override"
->> indicates that this is modifiable memory. I would argue that it even
->> means that ownership is passed. Therefore passing string literal to
->> "char *driver_override" is wrong from logical point of view.
->>
->> Plus, as you mentioned later, can lead to undefined behavior.
-> 
-> But does anything actually need to modify a driver_override string? I 
-> wouldn't have thought so. I see at least two buses that *do* define 
-> theirs as const char *, but still assume to kfree() them.
+Hi Geert,
 
-I think the drivers/clk/imx/clk-scu.c (fixed here) does not actually
-need it. It uses the feature to create multiple platform devices for
-each clock, with unique names matching the clock (e.g. pwm0_clk,
-pwm1_clk) and then bind all them via common clock driver.
+geert@linux-m68k.org wrote on Wed, 23 Feb 2022 17:16:32 +0100:
 
-It looks therefore like something for convenience of debugging or going
-through sysfs devices.
+> Hi Miquel,
+>=20
+> On Wed, Feb 23, 2022 at 4:49 PM Miquel Raynal <miquel.raynal@bootlin.com>=
+ wrote:
+> > geert@linux-m68k.org wrote on Wed, 23 Feb 2022 13:21:47 +0100: =20
+> > > On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
+> > > <miquel.raynal@bootlin.com> wrote: =20
+> > > > Just like for the NAND controller that is also on this SoC, let's
+> > > > provide a SoC generic and a more specific couple of compatibles for=
+ the
+> > > > DMA controller.
+> > > >
+> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com> =20
+> > > =20
+> > > > +++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml=
+ =20
+> > >
+> > > Perhaps you want to add the power-domains property?
+> > > The RZ/N1 clock driver is also a clock-domain provider. =20
+> >
+> > I haven't looked at the power domains yet, but I don't plan to invest
+> > time on it right now. Unless I don't understand your request, and you
+> > are telling me that someone else added the description and we should
+> > now point to the right domain from each new node? =20
+>=20
+> The RZ/N1 System Controller is a clock-domain provider.=20
 
-Removal of driver_override from such drivers is a bit too much here,
-because I would not be able to test it.
+Yes, there are many domains managed there.
 
-> 
->>> And in fact that's effectively how the direct assignment form works
->>> anyway - string literals are static arrays of type char (or wchar_t),
->>> *not* const char, however trying to modify them is undefined behaviour.
->>>
->>> There's a big difference between "non-const" and "kfree()able", and
->>> AFAICS there's no obvious clue that the latter is actually a requirement.
->>
->> Then maybe kfreeable should be made a requirement? Or at least clearly
->> documented?
-> 
-> Indeed, there's clearly some room for improvement still. And I'm not 
-> suggesting that these changes aren't already sensible as they are, just 
-> that the given justification seems a little unfair :)
+> This means
+> it can automatically manage the module clocks of devices that are
+> part of the clock domain, assuming device drivers are using Runtime PM.
+>=20
+> The upstream RZ/N1 DTS doesn't have many devices enabled yet.
+> Most of them are (variants of) Synopsis IP cores, and their drivers
+> manage clocks explicitly, instead of relying on Runtime PM.
+>=20
+> BTW, I have just noticed the system-controller node[1] even lacks
+> the #power-domain-cells property, while the example[2] does have it.
 
-Yeah, maybe also my "const" in the title and commit is not accurate. I
-think that literal strings are part of .rodata (and objdump confirm)
-thus are considered const.
+Yes, that's why I didn't understand the initial remark.
 
-> Even kfree_const() can't help if someone has put their string in the 
-> middle of some larger block of kmalloc()ed memory, so perhaps 
-> encouraging a dedicated setter function rather than just exposing a raw 
-> string pointer is the ideal solution in the long term.
+> When that is added, device nodes can gain "power-domains =3D <&sysctrl>",
+> and module clocks can be managed from Runtime PM.  Perhaps the NAND
+> driver would be a good target for conversion to Runtime PM, as its
+> driver is not shared with SoCs from other vendors yet?
+> Note this is not mandatory, and drivers can keep on using explicit
+> clock handling (until the IP core is reused on an SoC that not only
+> has a clock-domain, but also real power-domains).
+
+Got it, thanks for the details. Indeed it would be interesting to gain
+runtime PM support if this SoC has a good power-domain support.
+
+Power domain cells must first be contributed.
+
+> [1] arch/arm/boot/dts/r9a06g032.dtsi
+> [2] Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>=20
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
 
 
-Best regards,
-Krzysztof
+Thanks,
+Miqu=C3=A8l
