@@ -2,112 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC34C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 11:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACA9C433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 12:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237743AbiBWLrQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 06:47:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
+        id S239543AbiBWMW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 07:22:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236781AbiBWLrQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 06:47:16 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B4621130
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 03:46:46 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nMq6W-0003Xj-Va; Wed, 23 Feb 2022 12:46:44 +0100
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <sha@pengutronix.de>)
-        id 1nMq6V-0000UM-FI; Wed, 23 Feb 2022 12:46:43 +0100
-Date:   Wed, 23 Feb 2022 12:46:43 +0100
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Adrian Alonso <adrian.alonso@nxp.com>,
-        Mads Bligaard Nielsen <bli@bang-olufsen.dk>
-Subject: Re: [PATCH 2/8] clk: imx: pll14xx: Fix masking
-Message-ID: <20220223114643.GP9136@pengutronix.de>
-References: <20220223075601.3652543-1-s.hauer@pengutronix.de>
- <20220223075601.3652543-3-s.hauer@pengutronix.de>
- <YhYa/TWsd9C4ebtX@abelvesa>
+        with ESMTP id S237783AbiBWMW1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 07:22:27 -0500
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311B59AD9B;
+        Wed, 23 Feb 2022 04:22:00 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id e26so2951862vso.3;
+        Wed, 23 Feb 2022 04:22:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BH9kx8uglIy4IymTz3ycr2PEM2TVDcpmS0Wpy32dbbI=;
+        b=7ZL1+71pUijFszLPbokmpDzFI9Vdv+y7l55adoxsO5W3FP2Ey0HSj2INOUUZl0OcgL
+         EE1ythJiv/r5XwZCCCcwpWzwyv4OPwC9bV4EBT9rmUlYqt076lHohAumz35GpoF1Znvj
+         97M+qMdBWEdijf7Q7qwJVPuLfDwg9uS5PYIIR4eHSA+A5JfV9i1DvqY2C5kwFJusaTk/
+         BNFjbOHZ5SlSJF+uhkLl7FHy/GPTWP7H9oku0yD70dPfzznVVy13tGgYkE5prcpzfga3
+         astpFD/tmZPTA+JyFViGeLWZC5wdeXxO43I3C80JFGQs4/kwIttMr7kd9XtqlM3OmJej
+         rzDQ==
+X-Gm-Message-State: AOAM532rrsFim7cBtL7iw400q35mfvrL2tkUlNSz0cY7n6rcavxitfWY
+        EDEWIkHH0JDSBND61VhTiun971dO+rt/hw==
+X-Google-Smtp-Source: ABdhPJzbuskKnYq8oJB/4rObpZcTKXVv2SrEX++zKypPtsZe9cYXvqaaBLAgrxH2Pudvpaq209emOw==
+X-Received: by 2002:a05:6102:3116:b0:31b:f7e2:c504 with SMTP id e22-20020a056102311600b0031bf7e2c504mr11236202vsh.58.1645618919137;
+        Wed, 23 Feb 2022 04:21:59 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id y22sm646492vsi.25.2022.02.23.04.21.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Feb 2022 04:21:58 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id i27so2909504vsr.10;
+        Wed, 23 Feb 2022 04:21:58 -0800 (PST)
+X-Received: by 2002:a05:6102:4411:b0:31b:6df1:3b80 with SMTP id
+ df17-20020a056102441100b0031b6df13b80mr11609191vsb.5.1645618918150; Wed, 23
+ Feb 2022 04:21:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YhYa/TWsd9C4ebtX@abelvesa>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 12:45:11 up 74 days, 20:30, 91 users,  load average: 0.11, 0.16,
- 0.17
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com> <20220222103437.194779-3-miquel.raynal@bootlin.com>
+In-Reply-To: <20220222103437.194779-3-miquel.raynal@bootlin.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Feb 2022 13:21:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+Message-ID: <CAMuHMdVzMiBn-rZgWkp=v7VWqEf1CX9kPTF7qn0cx9va9Z9dWg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/8] dt-bindings: dma: Introduce RZN1 DMA compatible
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 01:31:09PM +0200, Abel Vesa wrote:
-> On 22-02-23 08:55:55, Sascha Hauer wrote:
-> > The code tries to mask the bits in SDIV_MASK from 'tmp'. SDIV_MASK
-> > already contains the shifted value, so shifting it again is wrong.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> 
-> Do we need some fixes tag, maybe?
+On Tue, Feb 22, 2022 at 11:35 AM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+> Just like for the NAND controller that is also on this SoC, let's
+> provide a SoC generic and a more specific couple of compatibles for the
+> DMA controller.
+>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Not really. I just realized that SDIV_SHIFT is 0, so this is really only
-a cosmetic change.
+> +++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
 
-Sascha
+Perhaps you want to add the power-domains property?
+The RZ/N1 clock driver is also a clock-domain provider.
 
-> 
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-> 
-> > ---
-> >  drivers/clk/imx/clk-pll14xx.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> > index cae64d750672e..b295d8a049009 100644
-> > --- a/drivers/clk/imx/clk-pll14xx.c
-> > +++ b/drivers/clk/imx/clk-pll14xx.c
-> > @@ -195,7 +195,7 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
-> >  	tmp = readl_relaxed(pll->base + DIV_CTL0);
-> >  
-> >  	if (!clk_pll14xx_mp_change(rate, tmp)) {
-> > -		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
-> > +		tmp &= ~SDIV_MASK;
-> >  		tmp |= rate->sdiv << SDIV_SHIFT;
-> >  		writel_relaxed(tmp, pll->base + DIV_CTL0);
-> >  
-> > @@ -261,7 +261,7 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
-> >  	tmp = readl_relaxed(pll->base + DIV_CTL0);
-> >  
-> >  	if (!clk_pll14xx_mp_change(rate, tmp)) {
-> > -		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
-> > +		tmp &= ~SDIV_MASK;
-> >  		tmp |= rate->sdiv << SDIV_SHIFT;
-> >  		writel_relaxed(tmp, pll->base + DIV_CTL0);
-> >  
-> > -- 
-> > 2.30.2
-> >
-> 
+Apart from that:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
