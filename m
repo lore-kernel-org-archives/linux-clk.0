@@ -2,146 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC9FC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 18:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB37DC433FE
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Feb 2022 19:14:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244075AbiBWS5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Feb 2022 13:57:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42904 "EHLO
+        id S244186AbiBWTO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Feb 2022 14:14:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244082AbiBWS5G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 13:57:06 -0500
-Received: from m43-7.mailgun.net (m43-7.mailgun.net [69.72.43.7])
-        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id 19492639B
-        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 10:56:36 -0800 (PST)
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1645642596; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=mAAs8h+YuRWo6ZgSk4LFZw8uJ0x4NrY9wyEzkcVXIRQ=; b=DhNOLfDChhoAkytE7obqfuW8Bf74S6+i3wnUWBSKaig7Ka0JZLTK6Em0cRvNtE0FR3laf8tH
- dx4nEtcKb+rIzxIvxLgP/hsZ3JYrFPFVWkVANc4tcmNyIf5Lmk+RWPdozszf9A74JY0tYdZN
- WdQr6QBUTLWnMjav0mgGBBNT5u4=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 62168362d099c7c4e302f86c (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 23 Feb 2022 18:56:34
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 57351C43616; Wed, 23 Feb 2022 18:56:34 +0000 (UTC)
-Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        with ESMTP id S233231AbiBWTO2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Feb 2022 14:14:28 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 651AB3FBCD
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:13:59 -0800 (PST)
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5627EC4338F;
-        Wed, 23 Feb 2022 18:56:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 5627EC4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [v2 2/2] clk: qcom: dispcc: Update the transition delay for MDSS GDSC
-Date:   Thu, 24 Feb 2022 00:26:06 +0530
-Message-Id: <20220223185606.3941-2-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220223185606.3941-1-tdas@codeaurora.org>
-References: <20220223185606.3941-1-tdas@codeaurora.org>
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 41F54407C5
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 19:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645643629;
+        bh=7G3yQO1ggdyvs1MDXGTTghLlHGfX3RftlATUX++IZLE=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=HuslgOBVKpazvs1qEPddJ/Xn52DqkjreMXsOHYPOCc7S2w6GI7c5OYv3W3zJVAS4Q
+         T8lz6y4qojznpimc+MZrbAvpEto6ZCQoKdZm5xU/Aa+Ny0p1rQBI8kjX4aj8/YscpD
+         t9kodaF2sMek+6Tx4bWY+if1vWqI7859wKBKOZjyl/0vD48f9wpRBahE713ff4ins+
+         wmEXrpEfiF1od7dVBr7NPfF46JfOl9ww67zpcBgRaa30a0PoUAjiyV/DYWBgo1on6H
+         Nvhai4DNgg5EAsazAfda/GoEwCwgdfPcVH5KxVW6pB5j23O3XdcaGuV/KrsEnrhKEF
+         xL/ap7DWXcDGA==
+Received: by mail-ej1-f72.google.com with SMTP id sa22-20020a1709076d1600b006ce78cacb85so7514213ejc.2
+        for <linux-clk@vger.kernel.org>; Wed, 23 Feb 2022 11:13:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7G3yQO1ggdyvs1MDXGTTghLlHGfX3RftlATUX++IZLE=;
+        b=yZyWHztwWxLqEHQyO9/kdoJ97tdjzYU35aktYkCFHjlq5YwTFA0XUBAleEdjhXTVVY
+         dOmOvlx6ZcoU+Hx1QHt1Cleyx7Gg7bJXcIpnO46N6a92k8rSkD0ZcMzNBVmZQ1yR58iL
+         IEWrqHxQLcn4VCBGeljmWgY4aY7X74fRbepk+Pl+VSEWAAhdjnG92RZyuYQ43y5bFepc
+         CM10ogDp4a0tD+OWAoxBAbpE/h1yrX6ng939PKnRg4scoohIL31V0kzspq4E4g///Tas
+         XzPLeXbzc/TgVCkUPX5BI1D7y0VtY/t2RvF1fkLjK8K/c2l1aW9EXRThiFzqUvthiKR1
+         DjOQ==
+X-Gm-Message-State: AOAM531b88eQtnnj00ixEw3noVpdOpxZUXJ7NU+NwNmjMYn+naeMuFUf
+        e/0dfbY6U8hAQwp/1DrkDh2TvnKsy5wLhUfytJBACypXlKj9VftOYbady2pvIinSTFEUPLDOGTH
+        x82IWjadDl03pDVsi+VDVYHHozlb4LunnT3Uvbg==
+X-Received: by 2002:a17:907:3e1d:b0:6d1:cb2e:a5f7 with SMTP id hp29-20020a1709073e1d00b006d1cb2ea5f7mr912405ejc.34.1645643627831;
+        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzGBRIhr5hXOOi9m1HuHlbXHVVNJ7NbK5fFuNrM/4KQXFCcM1cXqPM7bQRPgfLpUUwT4AX8Nw==
+X-Received: by 2002:a17:907:3e1d:b0:6d1:cb2e:a5f7 with SMTP id hp29-20020a1709073e1d00b006d1cb2ea5f7mr912389ejc.34.1645643627533;
+        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
+Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id q5sm212611ejc.115.2022.02.23.11.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Feb 2022 11:13:47 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v2 00/11] Fix broken usage of driver_override (and kfree of static memory)
+Date:   Wed, 23 Feb 2022 20:12:59 +0100
+Message-Id: <20220223191310.347669-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On SC7180 we observe black screens because the gdsc is being
-enabled/disabled very rapidly and the GDSC FSM state does not work as
-expected. This is due to the fact that the GDSC reset value is being
-updated from SW.
+Hi,
 
-The recommended transition delay for mdss core gdsc updated for
-SC7180/SC7280/SM8250.
+This is a continuation of my old patchset from 2019. [1]
+Back then, few drivers set driver_override wrong. I fixed Exynos
+in a different way after discussions. QCOM NGD was not fixed
+and a new user appeared - IMX SCU.
 
-Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for SC7180")
-Fixes: 1a00c962f9cd ("clk: qcom: Add display clock controller driver for SC7280")
-Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for SM8150 and SM8250")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/dispcc-sc7180.c | 5 ++++-
- drivers/clk/qcom/dispcc-sc7280.c | 5 ++++-
- drivers/clk/qcom/dispcc-sm8250.c | 5 ++++-
- 3 files changed, 12 insertions(+), 3 deletions(-)
+It seems "char *" in driver_override looks too consty, so we
+tend to make a mistake of storing there string literals.
 
-diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
-index 538e4963c915..0261eb044b7c 100644
---- a/drivers/clk/qcom/dispcc-sc7180.c
-+++ b/drivers/clk/qcom/dispcc-sc7180.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019, 2022, The Linux Foundation. All rights reserved.
-  */
+Changes of latest since v1 (not the old 2019 solution):
+=======================================================
+https://lore.kernel.org/all/708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk/
+1. Add helper for setting driver_override.
+2. Use the helper.
 
- #include <linux/clk-provider.h>
-@@ -625,6 +625,9 @@ static struct clk_branch disp_cc_mdss_vsync_clk = {
+Dependencies (and stable):
+==========================
+1. All patches, including last three fixes, depend on first patch
+   introducing the helper.
+2. The last three commits - fixes - are probably not backportable
+   directly, because of this dependency. I don't know how to express
+   it here, since stable-kernel-rules.rst mentions only commits as
+   possible dependencies.
 
- static struct gdsc mdss_gdsc = {
- 	.gdscr = 0x3000,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xF,
- 	.pd = {
- 		.name = "mdss_gdsc",
- 	},
-diff --git a/drivers/clk/qcom/dispcc-sc7280.c b/drivers/clk/qcom/dispcc-sc7280.c
-index 4ef4ae231794..396339e19f65 100644
---- a/drivers/clk/qcom/dispcc-sc7280.c
-+++ b/drivers/clk/qcom/dispcc-sc7280.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2021-2022, The Linux Foundation. All rights reserved.
-  */
+[1] https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
 
- #include <linux/clk-provider.h>
-@@ -787,6 +787,9 @@ static struct clk_branch disp_cc_sleep_clk = {
+Best regards,
+Krzysztof
 
- static struct gdsc disp_cc_mdss_core_gdsc = {
- 	.gdscr = 0x1004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xF,
- 	.pd = {
- 		.name = "disp_cc_mdss_core_gdsc",
- 	},
-diff --git a/drivers/clk/qcom/dispcc-sm8250.c b/drivers/clk/qcom/dispcc-sm8250.c
-index 566fdfa0a15b..5afa037f77d5 100644
---- a/drivers/clk/qcom/dispcc-sm8250.c
-+++ b/drivers/clk/qcom/dispcc-sm8250.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018-2020, 2022, The Linux Foundation. All rights reserved.
-  */
+Krzysztof Kozlowski (11):
+  driver: platform: add and use helper for safer setting of
+    driver_override
+  amba: use helper for safer setting of driver_override
+  fsl-mc: use helper for safer setting of driver_override
+  hv: vmbus: use helper for safer setting of driver_override
+  pci: use helper for safer setting of driver_override
+  s390: cio: use helper for safer setting of driver_override
+  spi: use helper for safer setting of driver_override
+  vdpa: use helper for safer setting of driver_override
+  clk: imx: scu: fix kfree() of static memory on setting driver_override
+  slimbus: qcom-ngd: fix kfree() of static memory on setting
+    driver_override
+  rpmsg: fix kfree() of static memory on setting driver_override
 
- #include <linux/clk-provider.h>
-@@ -1126,6 +1126,9 @@ static struct clk_branch disp_cc_mdss_vsync_clk = {
+ drivers/amba/bus.c              | 24 +++---------------
+ drivers/base/driver.c           | 44 +++++++++++++++++++++++++++++++++
+ drivers/base/platform.c         | 24 +++---------------
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 22 +++--------------
+ drivers/clk/imx/clk-scu.c       |  7 +++++-
+ drivers/hv/vmbus_drv.c          | 24 +++---------------
+ drivers/pci/pci-sysfs.c         | 24 +++---------------
+ drivers/rpmsg/rpmsg_internal.h  | 13 ++++++++--
+ drivers/rpmsg/rpmsg_ns.c        | 14 +++++++++--
+ drivers/s390/cio/css.c          | 24 +++---------------
+ drivers/slimbus/qcom-ngd-ctrl.c | 12 ++++++++-
+ drivers/spi/spi.c               | 20 +++------------
+ drivers/vdpa/vdpa.c             | 25 +++----------------
+ include/linux/device/driver.h   |  1 +
+ include/linux/platform_device.h |  6 ++++-
+ include/linux/spi/spi.h         |  2 +-
+ 16 files changed, 123 insertions(+), 163 deletions(-)
 
- static struct gdsc mdss_gdsc = {
- 	.gdscr = 0x3000,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xF,
- 	.pd = {
- 		.name = "mdss_gdsc",
- 	},
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+-- 
+2.32.0
 
