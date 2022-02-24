@@ -2,156 +2,70 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4D4C4167B
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104DFC433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235766AbiBXPD7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:03:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54894 "EHLO
+        id S236226AbiBXP34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 10:29:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235692AbiBXPD6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:03:58 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87DF4141FD5;
-        Thu, 24 Feb 2022 07:03:27 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id r10so96587wrp.3;
-        Thu, 24 Feb 2022 07:03:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=08kWMu8EWgkGMNZO7oAp0aMUwUz5/Yejkwq/Vcz2uh0=;
-        b=gTHMAiinkyBPE+VQqjN7qQEaLUqMvBPDz569RmrRaBcRGhzfuC4E62j3ENRvr9mCOC
-         O2MeHYJGRZS1U+ry9PvNBBeg0nN0Qc3QVohtiCIA3fuHDXisivv8qDiLKcXhUviq4qq/
-         8zu/2ru/QQvVas9YGVJ1j4c8CfYOXS2kderdXulmOQR6hGjQL2zyfjcirAd3qyrUHmE8
-         zCyyrmx8A/BpnPpdukQ67gcVxthWmbLjEK5ydiXUGN0iqNt0Z2SqIGslrhzPDISY0w3/
-         NLbNoVgt56xAe2XD5UqPG7HsNTnM+vSiQ9R7L7jD0NRgPR0+eqB0XTj6KuRjK2DRCWes
-         8YmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=08kWMu8EWgkGMNZO7oAp0aMUwUz5/Yejkwq/Vcz2uh0=;
-        b=5CqJZWK8TNDEbHsci0laxQuTVvqLvcMTCAwD0vfX6m+Z/MpGXI5JMijhWCgPaXgA3C
-         kXyfkK3lWU6B+b0k6jESA5LDkcw+qs5I94598YpWuzwdDRjpcMN3duBo2cBvmroMaoTE
-         joBr/7jCs4o9mJixNtJRQxErsBAgubB3wMOhd6wjW6ysX1LRshCcL0WZ+FyMn6N+ws5k
-         cTFb2YZDIMAxVBQ+GWX6YeQq3J/D6DaT9J9c4aVQ0ROjjA9hB1m03Jae1L91vANE1WdH
-         J5cxwsJr1l/Ey4un0rqj2AzLhdddVFl+1klk9/JfFwuourHR+/F0Xw9u4TVp/p39mRwS
-         h4Ow==
-X-Gm-Message-State: AOAM5316J/U7YESHzUog6pDfLd9t/cxzPwJRws37D0oiWYwxJtWI3eiD
-        4qV/dLrMikcNd8GxgfCFNNQ=
-X-Google-Smtp-Source: ABdhPJxtGuHxidUOxzvC+NL9qNBASYdVy+OU8CEHL0/hLOX3ZZRNXnfkO39PVZuIEPbAGiqK0KHvMg==
-X-Received: by 2002:adf:f049:0:b0:1ee:7523:ed53 with SMTP id t9-20020adff049000000b001ee7523ed53mr1477081wro.586.1645715006148;
-        Thu, 24 Feb 2022 07:03:26 -0800 (PST)
-Received: from localhost (92.40.203.111.threembb.co.uk. [92.40.203.111])
-        by smtp.gmail.com with ESMTPSA id w13sm3088645wrv.21.2022.02.24.07.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 07:03:25 -0800 (PST)
-From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
-To:     paul@crapouillou.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] clk: ingenic-tcu: Fix missing TCU clock for X1000 SoC
-Date:   Thu, 24 Feb 2022 15:03:27 +0000
-Message-Id: <20220224150326.525707-3-aidanmacdonald.0x0@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220224150326.525707-1-aidanmacdonald.0x0@gmail.com>
-References: <20220224150326.525707-1-aidanmacdonald.0x0@gmail.com>
+        with ESMTP id S236265AbiBXP3z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:29:55 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A491BE4C3
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 07:29:22 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:598d:7788:288b:e4f])
+        by michel.telenet-ops.be with bizsmtp
+        id z3VK260070fvPgN063VKob; Thu, 24 Feb 2022 16:29:19 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nNG3S-001rz5-NJ; Thu, 24 Feb 2022 16:29:18 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nNG3S-00Ciky-9h; Thu, 24 Feb 2022 16:29:18 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: COMMON_CLK_LAN966X should depend on SOC_LAN966
+Date:   Thu, 24 Feb 2022 16:29:17 +0100
+Message-Id: <eb102eae05e5667b9bd342a0c387f7f262d24bda.1645716471.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The X1000 and X1830 have a TCU clock gate, so pass it to the driver.
-Without this the TCU can be gated automatically, which prevents timers
-from running.
+The LAN966x Generic Clock Controller is only present on Microchip
+LAN966x SoCs.  Hence add a dependency on SOC_LAN966, to prevent asking
+the user about this driver when configuring a kernel without LAN966x SoC
+support.
 
-Add a workaround to allow the driver to probe even if the TCU clock
-is missing on the affected SoCs; in this case the TCU clock is ignored,
-as it was before. With workarounds like "clk_ignore_unused" on the
-kernel command line, this allows users who upgrade the kernel but use
-the old device tree to boot successfully. They will now get a warning
-encouraging them to update the device tree.
-
-Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+Fixes: 54104ee023333e3b ("clk: lan966x: Add lan966x SoC clock driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/ingenic/tcu.c | 37 +++++++++++++++++++++++++++----------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+ drivers/clk/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
-index 77acfbeb4830..03e9553bcac4 100644
---- a/drivers/clk/ingenic/tcu.c
-+++ b/drivers/clk/ingenic/tcu.c
-@@ -31,6 +31,7 @@ struct ingenic_soc_info {
- 	unsigned int num_channels;
- 	bool has_ost;
- 	bool has_tcu_clk;
-+	bool allow_missing_tcu_clk;
- };
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index c390e26dadf471f5..1c82a3e1129d4342 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -232,6 +232,7 @@ config COMMON_CLK_GEMINI
  
- struct ingenic_tcu_clk_info {
-@@ -320,7 +321,8 @@ static const struct ingenic_soc_info jz4770_soc_info = {
- static const struct ingenic_soc_info x1000_soc_info = {
- 	.num_channels = 8,
- 	.has_ost = false, /* X1000 has OST, but it not belong TCU */
--	.has_tcu_clk = false,
-+	.has_tcu_clk = true,
-+	.allow_missing_tcu_clk = true,
- };
- 
- static const struct of_device_id __maybe_unused ingenic_tcu_of_match[] __initconst = {
-@@ -355,14 +357,29 @@ static int __init ingenic_tcu_probe(struct device_node *np)
- 		tcu->clk = of_clk_get_by_name(np, "tcu");
- 		if (IS_ERR(tcu->clk)) {
- 			ret = PTR_ERR(tcu->clk);
--			pr_crit("Cannot get TCU clock\n");
--			goto err_free_tcu;
--		}
- 
--		ret = clk_prepare_enable(tcu->clk);
--		if (ret) {
--			pr_crit("Unable to enable TCU clock\n");
--			goto err_put_clk;
-+			/*
-+			 * Old versions of this driver incorrectly specified
-+			 * some SoCs as not having a TCU clock, so old device
-+			 * trees didn't define one. We try to allow the kernel
-+			 * to boot with an old device tree by just continuing
-+			 * on without the clock and hoping it won't get turned
-+			 * off (eg. with "clk_ignore_unused" kernel argument).
-+			 */
-+			if (ret == -EINVAL &&
-+			    tcu->soc_info->allow_missing_tcu_clk) {
-+				pr_warn("TCU clock missing from device tree, please update your device tree\n");
-+				tcu->clk = NULL;
-+			} else {
-+				pr_crit("Cannot get TCU clock\n");
-+				goto err_free_tcu;
-+			}
-+		} else {
-+			ret = clk_prepare_enable(tcu->clk);
-+			if (ret) {
-+				pr_crit("Unable to enable TCU clock\n");
-+				goto err_put_clk;
-+			}
- 		}
- 	}
- 
-@@ -432,10 +449,10 @@ static int __init ingenic_tcu_probe(struct device_node *np)
- 			clk_hw_unregister(tcu->clocks->hws[i]);
- 	kfree(tcu->clocks);
- err_clk_disable:
--	if (tcu->soc_info->has_tcu_clk)
-+	if (tcu->clk)
- 		clk_disable_unprepare(tcu->clk);
- err_put_clk:
--	if (tcu->soc_info->has_tcu_clk)
-+	if (tcu->clk)
- 		clk_put(tcu->clk);
- err_free_tcu:
- 	kfree(tcu);
+ config COMMON_CLK_LAN966X
+ 	bool "Generic Clock Controller driver for LAN966X SoC"
++	depends on SOC_LAN966 || COMPILE_TEST
+ 	help
+ 	  This driver provides support for Generic Clock Controller(GCK) on
+ 	  LAN966X SoC. GCK generates and supplies clock to various peripherals
 -- 
-2.34.1
+2.25.1
 
