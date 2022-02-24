@@ -2,89 +2,74 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B8EC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 20:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165F2C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 21:55:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234512AbiBXUzN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 15:55:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36188 "EHLO
+        id S233737AbiBXVzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 16:55:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234516AbiBXUzD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 15:55:03 -0500
-Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCB12763C8
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 12:54:23 -0800 (PST)
-Received: by mail-oi1-x235.google.com with SMTP id y7so4941226oih.5
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 12:54:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/3ZWb0FFekjw2ibTg4kgWEENRK4hlj+NVGjtAUq3CDw=;
-        b=Npzj+JuGADa6hvnfHwXDXW0iEuRsaI9pHWwav0O/98KAgTkhK7QNXdzuWvbWxbSapL
-         6puIbuu/3Cj4o0G24Bg8a0pbvGWiCq2F5fmAkyF1sv6xNyB8oKtNx6RZaPCwCZ8xKRiE
-         EAv8BWwriy7lRWcz3QdQSFsGkMcEDDQ0ssUcakIinriD3NB/KkRIBAYaw3wCkeG0bjV7
-         46wfb2hcsnf5mo1HHjM9oUc/UlK//cEmzJpSS8khG789j2jy4SlditAbIG1f7ZQpVmwN
-         laMX5sAS9b+aDA3Gua+n1S8M4uU7fmfN9msYvv8yL1sqP7z9UFdTTSqnLYLr8JALhoQz
-         I0Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/3ZWb0FFekjw2ibTg4kgWEENRK4hlj+NVGjtAUq3CDw=;
-        b=zh4ru/uRgPaStRR/xXcvQpNz+qRxGZQjKFzpG48FvilWgLK+bQZZsRmsPTlavDwEmV
-         EZLXmljNe33a6nr6J2xi5KevOhfB0uYkTgh0N18zTFfLWFrkqak4vjmlRThuNmbsDdV4
-         jG273Oc82q3vkLSLyh/IPeOIKyzCDFHqSxRlX+vkZiaDOc17Q7QyHkxEmc/rP/on1RnA
-         1jF16oIYoh2cObuZfijMGab9Baaq8qwA8VxkEv3W8TPE2H1pWsRH6+AoeJO8cstUMSnM
-         uB+nA/AO46vzgRd5nrkhSpdPo4+OFtG4SX0JfH2GOL0Ft03mDJE7pgNyvo68GwwQUOSO
-         jR4g==
-X-Gm-Message-State: AOAM533LF0pb1C7+9jDlTkpJFuBToOeuP6/aCCFjSkcRqpC/MZcdk9UM
-        guDLBWtY9dOHOy89xaD8FqnwzXKLs4HwtQ==
-X-Google-Smtp-Source: ABdhPJyW4ku0RVOGMXgzI0YkQYBw1UnrD3vG+zyhcVK/D4KzrVzVIcBTyT3SpMwcEAIrWTKTIhsyaw==
-X-Received: by 2002:a05:6870:d78d:b0:d4:4b29:7ccc with SMTP id bd13-20020a056870d78d00b000d44b297cccmr7303374oab.69.1645736062618;
-        Thu, 24 Feb 2022 12:54:22 -0800 (PST)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id c8-20020a4ad788000000b0031ce69b1640sm191259oou.10.2022.02.24.12.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 12:54:21 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     absahu@codeaurora.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, Robert Marko <robimarko@gmail.com>
-Cc:     Dirk Buchwalder <buchwalder@posteo.de>
-Subject: Re: (subset) [PATCH] clk: qcom: ipq8074: Use floor ops for SDCC1 clock
-Date:   Thu, 24 Feb 2022 14:54:07 -0600
-Message-Id: <164573604161.1471031.12357402278173909256.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220210173100.505128-1-robimarko@gmail.com>
-References: <20220210173100.505128-1-robimarko@gmail.com>
-MIME-Version: 1.0
+        with ESMTP id S232307AbiBXVzi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 16:55:38 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90FE12757A4;
+        Thu, 24 Feb 2022 13:55:08 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1F40361A8E;
+        Thu, 24 Feb 2022 21:55:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70999C340EF;
+        Thu, 24 Feb 2022 21:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645739707;
+        bh=sc2xqK9W9vCEKREKGgUUdQGHEqSTFN3CoLmDeODofz4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YLM1DFStydH8hNW/WDDspAwlBPdlEfPzo4fUUc6BdE+DvkXfwN3vRIzTQ5uDlKkCf
+         ICrU1OAmKt5ajs3d6QrR+q1Xb5Tu5xDSl1IHlqdAw0tYNpShagkHgyPFyAEuSxPhH+
+         zP9yu3IHcBvnXGOY6sIZSwsPJTtAWxtULDQLVz93Zi9UAi4C+BZNwNgQJNwwVH+Fbi
+         U6z2FeigJSsuEgfFZsB1FwOAta8vun8myPFcZF1CqTQd48by5LYn8U4TYlSz/3S/hW
+         /gYAjjMF1s4/PGcFCWkskbqEsA487hYQY1M7IM6u1n608v/6pgh4yIntxpdOlwjYHf
+         Pql2UYncVUn0Q==
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220223185606.3941-1-tdas@codeaurora.org>
+References: <20220223185606.3941-1-tdas@codeaurora.org>
+Subject: Re: [v2 1/2] clk: qcom: gdsc: Add support to update GDSC transition delay
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Date:   Thu, 24 Feb 2022 13:55:05 -0800
+User-Agent: alot/0.10
+Message-Id: <20220224215507.70999C340EF@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Feb 2022 18:31:00 +0100, Robert Marko wrote:
-> From: Dirk Buchwalder <buchwalder@posteo.de>
-> 
-> Use floor ops on SDCC1 APPS clock in order to round down selected clock
-> frequency and avoid overclocking SD/eMMC cards.
-> 
-> For example, currently HS200 cards were failling tuning as they were
-> actually being clocked at 384MHz instead of 192MHz.
-> This caused some boards to disable 1.8V I/O and force the eMMC into the
-> standard HS mode (50MHz) and that appeared to work despite the eMMC being
-> overclocked to 96Mhz in that case.
-> 
-> [...]
+Quoting Taniya Das (2022-02-23 10:56:05)
+> GDSCs have multiple transition delays which are used for the GDSC FSM
+> states. Older targets/designs required these values to be updated from
+> gdsc code to certain default values for the FSM state to work as
+> expected. But on the newer targets/designs the values updated from the
+> GDSC driver can hamper the FSM state to not work as expected.
+>=20
+> On SC7180 we observe black screens because the gdsc is being
+> enabled/disabled very rapidly and the GDSC FSM state does not work as
+> expected. This is due to the fact that the GDSC reset value is being
+> updated from SW.
+>=20
+> Thus add support to update the transition delay from the clock
+> controller gdscs as required.
+>=20
+> Fixes: 45dd0e55317cc ("clk: qcom: Add support for GDSCs)
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-Applied, thanks!
-
-[1/1] clk: qcom: ipq8074: Use floor ops for SDCC1 clock
-      commit: b77d8306d84f83d1da68028a68c91da9c867b6f6
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Looks like I need to apply this for clk-fixes. Please keep Bjorn on Cc
+next time for awareness.
