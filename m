@@ -2,131 +2,96 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD6FC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 14:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA02C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:03:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234542AbiBXPAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:00:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44890 "EHLO
+        id S235755AbiBXPD7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 10:03:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234948AbiBXPAD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:00:03 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D243426834C;
-        Thu, 24 Feb 2022 06:59:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1645714769; x=1677250769;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ORDMBlKCGSdSfHM8GA+311LvkiZtIfohu3XDDYVXTUo=;
-  b=avyvOQmmF4BPcZcaesDapZhEzVsXUXhtWe2l+KWfsHByG3VsWz/xiho9
-   orMS5UNJokPWBNN1qxwpmasgdMXkoH6EcnL3PlNCLCxppWsvDnCzJiAW1
-   7hMlI60fhpXPG1L7lT6TIfoIwxm3W7sjc9/fdhtK3ssUsHpjvrM3ErPA9
-   /nJAxxD7vdf9MHdnRAUScamy7Cd0wMQHccULa8hLsiyvjYKKUQ5gTAiK1
-   gPMhgBhbo+VqII3LS/ENTDXCQ0dy7NbhFskK8WzIecVmd0RaC2Oex7j3f
-   Xw7dIIiCPVdcf6G6Rs5r8hcQe1OILPdufaeX10/UXR5YNJ1Sw2lkNRUID
-   w==;
-X-IronPort-AV: E=Sophos;i="5.90,134,1643698800"; 
-   d="scan'208";a="154765321"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Feb 2022 07:59:29 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 24 Feb 2022 07:59:29 -0700
-Received: from [10.12.73.51] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Thu, 24 Feb 2022 07:59:26 -0700
-Message-ID: <d0c4262c-097d-18da-cb51-5409f6e02b61@microchip.com>
-Date:   Thu, 24 Feb 2022 15:59:26 +0100
+        with ESMTP id S232118AbiBXPD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:03:56 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0548213FAFB;
+        Thu, 24 Feb 2022 07:03:25 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id n14so65956wrq.7;
+        Thu, 24 Feb 2022 07:03:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ay7hHiiyWs/Vspu7K7W0oyce1GoH5RAvVwUQfqJxKdw=;
+        b=QE7qSiCRSkNpeioUFowv1w/tMqa+CqBSzJ8cdc7hagydOTeoSgSBg5mTtY2ShLJmyX
+         UFVN3AfQCxZMsCrk8jjKemUEPPKJCmHt9tsAIBJMz2iQlRiKr0yYVQ5wkPYiDE3WGvqF
+         Z+WQ4rFRURUE5JY7P1NkgTBOo7KBC92JQHNGkgYzIkmZNhH3BP5fOltzvXyTFoGx9f6h
+         6gMi3kUxcEeF2IaMoGETmeVNJjY2kcJjX55PSYIoo8d1NhXXVpjI6gkhOAFPhM8LmJfD
+         MyEJhsU6aprqVV/HfZxPtIBLAytYOCwl5EfWf/FhLmSfHo3wGNSo85mj96ywZGeOwj4n
+         IkTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ay7hHiiyWs/Vspu7K7W0oyce1GoH5RAvVwUQfqJxKdw=;
+        b=D4WNien1cFFpY+D8HGwBn/Nc4xGBoojZGhxtMVedKNMKSJQY2nHzOJjyokuxeXMmRt
+         ME+jJIOV9hJVHe1L4Kome5wm11PBpw1FeGZywKF12/ZkF7c0ns4HMgjFqLSGAJDnbRhN
+         7QXoK27EDF1EbIDPXVATp9ExYRlVMTLbh4SsRSIa0jTr5riAab58e3nbJajhKiRG8yF2
+         2DbjOC8p45j2o5MlOHXpTPQfaVvhaj5q4xVjzgIO9lkuebRonfiYl6dXTCNdA9vu75ZE
+         2P/ik4loSfn4h+w/nghJIsEDDNaXlqjLr6FWASzFMlt+SiQXU/CbnfGBf4VPBVJsWfgG
+         9AoA==
+X-Gm-Message-State: AOAM532NC2/BUCkXj9S3aNBYdgYl8yNv/t6Xz+H15X1osEQFbGpAvXV/
+        0UledogHvzimSft+gkXGJi4=
+X-Google-Smtp-Source: ABdhPJx2y+M/VKJ1us6B+6NIX3jANMf2jjeXPdnF2XYwqMhSm+MhoRZohCbTFsnugTJ4/g/NbYnhVA==
+X-Received: by 2002:a5d:6d0e:0:b0:1e2:fa3d:7f22 with SMTP id e14-20020a5d6d0e000000b001e2fa3d7f22mr2593465wrq.142.1645715003444;
+        Thu, 24 Feb 2022 07:03:23 -0800 (PST)
+Received: from localhost (92.40.203.111.threembb.co.uk. [92.40.203.111])
+        by smtp.gmail.com with ESMTPSA id w13sm3088645wrv.21.2022.02.24.07.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 07:03:22 -0800 (PST)
+From:   Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+To:     paul@crapouillou.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] mips: dts: ingenic: x1000: Add TCU clock to tcu device node
+Date:   Thu, 24 Feb 2022 15:03:25 +0000
+Message-Id: <20220224150326.525707-1-aidanmacdonald.0x0@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 6/8] ARM: dts: at91: sama7g5: add opps
-Content-Language: en-US
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <robh+dt@kernel.org>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20211216141338.35144-1-claudiu.beznea@microchip.com>
- <20211216141338.35144-7-claudiu.beznea@microchip.com>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20211216141338.35144-7-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/12/2021 at 15:13, Claudiu Beznea wrote:
-> Add OPPs for SAMA7G5 along with clock for CPU.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+This should've been present all along, but was omitted due to a
+mistake in the driver.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Queued in at91-dt branch.
+Signed-off-by: Aidan MacDonald <aidanmacdonald.0x0@gmail.com>
+---
+v1 -> v2: https://lore.kernel.org/linux-mips/20220209230145.18943-1-aidanmacdonald.0x0@gmail.com/
+ * Split DTS changes to separate patch.
+v2 -> v3: https://lore.kernel.org/linux-mips/20220212150927.39513-1-aidanmacdonald.0x0@gmail.com/
+ * Add fallback code if TCU clock is missing
+ * Update X1830 devicetree
 
-Regards,
-   Nicolas
+ arch/mips/boot/dts/ingenic/x1000.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> ---
->   arch/arm/boot/dts/sama7g5.dtsi | 37 ++++++++++++++++++++++++++++++++++
->   1 file changed, 37 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
-> index 7039311bf678..22352ef5bc72 100644
-> --- a/arch/arm/boot/dts/sama7g5.dtsi
-> +++ b/arch/arm/boot/dts/sama7g5.dtsi
-> @@ -30,6 +30,43 @@ cpu0: cpu@0 {
->   			device_type = "cpu";
->   			compatible = "arm,cortex-a7";
->   			reg = <0x0>;
-> +			clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
-> +			clock-names = "cpu";
-> +			operating-points-v2 = <&cpu_opp_table>;
-> +		};
-> +	};
-> +
-> +	cpu_opp_table: opp-table {
-> +		compatible = "operating-points-v2";
-> +
-> +		opp-90000000 {
-> +			opp-hz = /bits/ 64 <90000000>;
-> +			opp-microvolt = <1050000 1050000 1225000>;
-> +			clock-latency-ns = <320000>;
-> +		};
-> +
-> +		opp-250000000 {
-> +			opp-hz = /bits/ 64 <250000000>;
-> +			opp-microvolt = <1050000 1050000 1225000>;
-> +			clock-latency-ns = <320000>;
-> +		};
-> +
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <1050000 1050000 1225000>;
-> +			clock-latency-ns = <320000>;
-> +		};
-> +
-> +		opp-800000000 {
-> +			opp-hz = /bits/ 64 <800000000>;
-> +			opp-microvolt = <1150000 1125000 1225000>;
-> +			clock-latency-ns = <320000>;
-> +		};
-> +
-> +		opp-1000000002 {
-> +			opp-hz = /bits/ 64 <1000000002>;
-> +			opp-microvolt = <1250000 1225000 1300000>;
-> +			clock-latency-ns = <320000>;
->   		};
->   	};
->   
-
-
+diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
+index 8bd27edef216..c69df8eb158e 100644
+--- a/arch/mips/boot/dts/ingenic/x1000.dtsi
++++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
+@@ -111,8 +111,9 @@ tcu: timer@10002000 {
+ 
+ 		clocks = <&cgu X1000_CLK_RTCLK>,
+ 			 <&cgu X1000_CLK_EXCLK>,
+-			 <&cgu X1000_CLK_PCLK>;
+-		clock-names = "rtc", "ext", "pclk";
++			 <&cgu X1000_CLK_PCLK>,
++			 <&cgu X1000_CLK_TCU>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
+ 
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
 -- 
-Nicolas Ferre
+2.34.1
+
