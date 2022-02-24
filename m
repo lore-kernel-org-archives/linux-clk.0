@@ -2,89 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9536C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 20:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327E5C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 20:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234168AbiBXUF7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 15:05:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        id S234340AbiBXUyo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 15:54:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234163AbiBXUF6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 15:05:58 -0500
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C39A2763E2;
-        Thu, 24 Feb 2022 12:05:28 -0800 (PST)
-Received: by mail-oi1-f182.google.com with SMTP id z7so4655262oid.4;
-        Thu, 24 Feb 2022 12:05:28 -0800 (PST)
+        with ESMTP id S233752AbiBXUyn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 15:54:43 -0500
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D27A1C6EDD
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 12:54:13 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id l25-20020a9d7a99000000b005af173a2875so2216669otn.2
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 12:54:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=/N1WrL28Utrh8BfXfn+pcRHI8/UBv9HnnB4a8HQcyiw=;
+        b=zEWcpsx4YK1p6lsZYtNPdZ/Oe4+gXRXMusfIP437eLHzQ7CCfoDc2Lm7PcpnUvFi5R
+         yNvWUDEFzEqIRAXVAOb+I24Sd2lpGQU2BC2f6I7Q8lrAT3xBBT+g+F+YWWPE2iKJXzFP
+         2/uWLSJKfFyXLVwnxEFF2eUJa8oitfk7ZG+s3c0pnOxSjFNZ++6AX+tf/gvvW2ej1PGt
+         /cI1ddKQSmwpwJOAThJDRL0N4bYiBoL+eIWaazIbh31FGrp1175sOC/rDLCC2Hn1D0/S
+         0Hv4Eoq+1AkZdNGlSR5NxwsTEyX5t/aERagrouAr5+b0S4h88saQk1X5AJwtgirETPNS
+         2M9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=EwIjA2cxi6Zdyhj63jC+/ls8eLXGyDyFeI0zXBrFAkQ=;
-        b=aCkUbo7c+1hJNe75gFl9xCLsIMg62YGtGXguDrLa0lUOCfjMEcPKlBjykEHLHJFkev
-         U5SsHLghXYX61iCJdHxl2Yi0e8p27Dui/adGNG0kRm9SH7O2XRQf9b74ivifisA6azPb
-         98oyfccHHvuxcRyETV1xgr/4Q5yCAcwYAObLT/NcuGrY05S2hhJCLQ5Co1bmFNT6sgLc
-         i2lucYteRdUJjQ/DmbLik8i2OOaYdzO8dXP8boYR9w0TIfpIi+NN1JGMFwCj+wFFI1Si
-         gAiFsEkMEHcxo9Vx66YZ2N64kXMPnTlvZEGUxsBwkn2uTuyN86p6g7SM4b1+AsIDV/D5
-         yNpw==
-X-Gm-Message-State: AOAM532BzqJBfRrNXo8siHY2sA8bBSzjJAZ/JD4ilsFwgoBKHe06pjfM
-        pHPcR+qQmNVKTwYxNBLYRA==
-X-Google-Smtp-Source: ABdhPJyjQU+gebS9JGc2UZ/FTDV4dMqOLrfIbq7JvO5O6KblWMX8vIYvqv+UcWPwoh5gzByfhx3U6w==
-X-Received: by 2002:a05:6871:419c:b0:d6:e34d:b206 with SMTP id lc28-20020a056871419c00b000d6e34db206mr26562oab.170.1645733127913;
-        Thu, 24 Feb 2022 12:05:27 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id ep36-20020a056870a9a400b000d6bd82a92fsm394811oab.18.2022.02.24.12.05.26
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/N1WrL28Utrh8BfXfn+pcRHI8/UBv9HnnB4a8HQcyiw=;
+        b=hdf2Ir0FCw2wCWFDR8xnKeAX5L1FPtJN+K3BkWrq357KjBjKSq91QGp/lZqgEy6dmC
+         rwXOK7TWqAcAhA8N/1QncwxkZrZmrF65vWWfVbcM52Gs7Z2APQN+rQGE3tzOYEaozqnL
+         oBsSaF9BUeC219izcFxYnRI9PbfcEPPQ6KzovR/isauf0hiPvtJi+XRS4A3kaLLkdQjz
+         9jAWfSstu9ZVEw/h5hIzrtFSPy+00N28NYvBs1yPXXKCFhAON43HU2a8U0Ox4nmfQqFH
+         l9U9w9sG05Wov7qjiRLFzOY8twtCMFs0FKdiRoDTeAPOcyRNDQihUbCBhOiVrQee9zfM
+         zw6g==
+X-Gm-Message-State: AOAM532w26tsTYrLj0EPXKvXdRMXxW5tP+gT1R2+zWoloyT5g6CSVs4a
+        Ceyh9hkFIfSteGy6l8/rnDflXw==
+X-Google-Smtp-Source: ABdhPJxeAhHUZN7EK8ykF7DhK96G6gvD71eTymo8p6+778tRD/eZ3mqu8lZX3c23p1LuyQtrYnFMLQ==
+X-Received: by 2002:a05:6830:4119:b0:5af:143c:76ad with SMTP id w25-20020a056830411900b005af143c76admr1649645ott.183.1645736052418;
+        Thu, 24 Feb 2022 12:54:12 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id c8-20020a4ad788000000b0031ce69b1640sm191259oou.10.2022.02.24.12.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 12:05:27 -0800 (PST)
-Received: (nullmailer pid 3498178 invoked by uid 1000);
-        Thu, 24 Feb 2022 20:05:24 -0000
-Date:   Thu, 24 Feb 2022 14:05:24 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rohit Agarwal <quic_rohiagar@quicinc.com>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        jassisinghbrar@gmail.com, manivannan.sadhasivam@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: mailbox: Add binding for SDX65 APCS
-Message-ID: <YhflBNX/iRsC8LBq@robh.at.kernel.org>
-References: <1645420953-21176-1-git-send-email-quic_rohiagar@quicinc.com>
- <1645420953-21176-2-git-send-email-quic_rohiagar@quicinc.com>
+        Thu, 24 Feb 2022 12:54:11 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/5] sdm845 and msm8996 clock updates
+Date:   Thu, 24 Feb 2022 14:53:59 -0600
+Message-Id: <164573604161.1471031.18366594019169463270.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220215201539.3970459-1-dmitry.baryshkov@linaro.org>
+References: <20220215201539.3970459-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1645420953-21176-2-git-send-email-quic_rohiagar@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 21, 2022 at 10:52:27AM +0530, Rohit Agarwal wrote:
-> Add devicetree YAML binding for SDX65 APCS GCC block. The APCS block
-> acts as the mailbox controller and also provides a clock output and
-> takes 3 clock sources (pll, aux, ref) as input.
+On Tue, 15 Feb 2022 23:15:34 +0300, Dmitry Baryshkov wrote:
+> This is a dts (and bindings) counterpart for the
+> https://patchwork.kernel.org/project/linux-arm-msm/list/?series=601612
 > 
-> Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> sdm845.dtsi (camcc) and msm8996.dtsi (gcc) are updated to
+> use DT clock bindings rather than global clock output names.
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> index 01e9d91..688ae8b 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> @@ -91,6 +91,7 @@ allOf:
->          compatible:
->            enum:
->              - qcom,sdx55-apcs-gcc
-> +            - qcom,sdx65-apcs-gcc
+> Dmitry Baryshkov (5):
+>   dt-bindings: clocks: convert SDM845 Camera CC bindings to YAML
+>   dt-bindings: clocks: qcom,sdm845-camcc: add clocks/clock-names
+>   arm64: dts: qcom: sdm845: add bi_tcxo to camcc
+>   arm64: dts: qcom: msm8996: add cxo and sleep-clk to gcc node
+>   arm64: dts: qcom: msm8996: convert xo_board to RPM_SMD_BB_CLK1
+> 
+> [...]
 
-Did you test this on your dts file? This doesn't work. You need to also 
-add the compatible to the main 'compatible' schema.
+Applied, thanks!
 
->      then:
->        properties:
->          clocks:
-> -- 
-> 2.7.4
-> 
-> 
+[1/5] dt-bindings: clocks: convert SDM845 Camera CC bindings to YAML
+      commit: a0d61d02c102d93e8c8f653cbfdc3bf485d45aaf
+[2/5] dt-bindings: clocks: qcom,sdm845-camcc: add clocks/clock-names
+      commit: 2564aa7544f493c64b397e02a2b477591016aa24
+
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
