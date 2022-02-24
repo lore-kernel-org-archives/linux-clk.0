@@ -2,125 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36CEC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF00C43217
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:57:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236625AbiBXP41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:56:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
+        id S234759AbiBXP5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 10:57:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbiBXP40 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:56:26 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 950F41C60D9;
-        Thu, 24 Feb 2022 07:55:56 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id n14so329029wrq.7;
-        Thu, 24 Feb 2022 07:55:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iODWQjpfwDqE/Br8oYICu9NFEv90Of96XMHQf2viFYk=;
-        b=BaYLGMDy19kCChj72sx+54gEnmCzKoIlx6L+PwJ5CIP+h4Fx3csRfKu0xmjT5kGZfG
-         3KM05jWO1oGLjOdImPapWscAH9rAR3OlxSAiVC1T1PT3xqpEx74K7j1WxCFWIMTHeeRp
-         JWZ/Mn9KKFWu/geN3u53JpUN1G+DZJ8wuH/ktcMoWwdinFYGDaRzFVSjp+L2PSpTzWij
-         bR0QYr85BXT9n/2SyGmM/4mxkezupZuP8/r6noPXJn9gM7I1Z4uHW7ufzMXr0qk5OGKz
-         ZK5GWsVxJExuDADqmXhbMVZgAB4EZp2QX1OkG93C2S+TGTkld8YBjIrStmlkR8PjpgSV
-         ilLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iODWQjpfwDqE/Br8oYICu9NFEv90Of96XMHQf2viFYk=;
-        b=PuOCFd+3CeQgas58Ke+rI+7gVBzpwf4mKAZ5ERYmhbV01PdByUWTHbfZxH3SyjESYO
-         USv9wxFUw6a7HV40RQr4z0bmclyQzFsj095l5y09gXB0E2/GJBcLnDU6JszyW5O2gyY9
-         rU011DXLFnQx9l0h9TeKy5AeuGGRCD5yJTvQAmZeKzypIx3v3PnZ/saV+Pl+oIHwaDd6
-         oJEx9p+jC1EoOz/6/LXDRyIxNh/Rjs8LcMfqJ+RD2sXV63XmkCviaoR5Nuoqc0g3ORJI
-         jvG8d0xinuEHRGcnJ+uh35YLE00M0TnYWmnNM2fHMib10p3cRITm1W/0QzX14xGCOTTU
-         msYA==
-X-Gm-Message-State: AOAM530/U/s5cNITvr/nO1icZLj6SF2WqPjlxGLMXtqDcwaAiVe0Mcoz
-        7ybmu6QT8yZvkG9sTlu3Q4o=
-X-Google-Smtp-Source: ABdhPJwWyrnXPCCtbgfwBkH7qs9CtFBC8t1MENopbNRBxP8vKQfIPJ00hnn8jHDBGhSdOM4kHa/jxQ==
-X-Received: by 2002:adf:c00b:0:b0:1ed:a100:d62 with SMTP id z11-20020adfc00b000000b001eda1000d62mr2703962wre.266.1645718154901;
-        Thu, 24 Feb 2022 07:55:54 -0800 (PST)
-Received: from Ansuel-xps.localdomain ([5.170.140.187])
-        by smtp.gmail.com with ESMTPSA id b11sm4089713wrd.31.2022.02.24.07.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 07:55:54 -0800 (PST)
-Date:   Thu, 24 Feb 2022 16:55:17 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S236840AbiBXP5s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:57:48 -0500
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36CC5D644;
+        Thu, 24 Feb 2022 07:56:53 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 91C0810002F;
+        Thu, 24 Feb 2022 15:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645718203;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WVC5Hb4g25SCLSnlfjVTXAofrx2zK62/e4HH3XRyFUU=;
+        b=XeJrFZ1RfxTMcI1LQPhCWXMip6cK1NcwY/MisfO8S/sBqEZTmJa/Nbi+dU5/0msLDud1mO
+        s0oXA+P3JHPPXiVGONryyVE4OHX3aa1nsMa/M/qP/1RGJAHX5yQum3wJW2hpEBU/UXFWeO
+        OtSMX17UKgUfm5SOcy5ClxrNROZRn4PmD/nste9O5M6eA/baGpaBhZe7d5WcoeP/4xVSQc
+        g6YdDfoiZ/gGS6ZOmY1Qycw90v3jd+yDCVV+DPGTQ1gu+KuPocW1x9ofbDY29UKIIyMzu+
+        i5eiMbCHTD4DFycnLo+16zTMMDzWQj8tk5dAohUG+7EOKg6CQbFw7zBNidL1BA==
+Date:   Thu, 24 Feb 2022 16:56:40 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/16] clk: qcom: gcc-ipq806x: add additional freq nss
- cores
-Message-ID: <YheqZag1q6U8Gx8Y@Ansuel-xps.localdomain>
-References: <20220217235703.26641-1-ansuelsmth@gmail.com>
- <20220217235703.26641-9-ansuelsmth@gmail.com>
- <YhcBpBflfTd5/BNF@builder.lan>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>
+Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
+Message-ID: <20220224165640.321d7c56@xps13>
+In-Reply-To: <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
+References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
+        <20220222103437.194779-5-miquel.raynal@bootlin.com>
+        <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
+        <20220223174902.3a9b85ea@xps13>
+        <CAMuHMdVr4tiicEn-BbBnCd-zP6ncr=zKd-eDvPYoYKNWUKsOBw@mail.gmail.com>
+        <20220224102724.74e2c406@xps13>
+        <CAMuHMdWtx5jnyZ0vhCVvM=nTv9H4tD7+g0YTWX8MALc_hR5x4g@mail.gmail.com>
+        <20220224123620.02740e8c@xps13>
+        <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YhcBpBflfTd5/BNF@builder.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 09:55:16PM -0600, Bjorn Andersson wrote:
-> On Thu 17 Feb 17:56 CST 2022, Ansuel Smith wrote:
-> 
-> > Ipq8065 SoC (an evolution of ipq8064 SoC) contains nss cores that can be
-> > clocked to 800MHz. Add these missing freq to the gcc driver.
-> > 
-> 
-> Do we somehow need to ensure that these new frequencies are only
-> available on 8065?
-> 
-> Regards,
-> Bjorn
->
+Hi Geert,
 
-In theory ipq8064 can run the nss cores to this freq. Do you have any
-suggestion on how to limit these 2 clock to the different compatible?
+geert@linux-m68k.org wrote on Thu, 24 Feb 2022 13:16:09 +0100:
 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/qcom/gcc-ipq806x.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> > index a4bf78fe8678..53a61860063d 100644
-> > --- a/drivers/clk/qcom/gcc-ipq806x.c
-> > +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> > @@ -232,7 +232,9 @@ static struct clk_regmap pll14_vote = {
-> >  
-> >  static struct pll_freq_tbl pll18_freq_tbl[] = {
-> >  	NSS_PLL_RATE(550000000, 44, 0, 1, 0x01495625),
-> > +	NSS_PLL_RATE(600000000, 48, 0, 1, 0x01495625),
-> >  	NSS_PLL_RATE(733000000, 58, 16, 25, 0x014b5625),
-> > +	NSS_PLL_RATE(800000000, 64, 0, 1, 0x01495625),
-> >  };
-> >  
-> >  static struct clk_pll pll18 = {
-> > @@ -2702,7 +2704,9 @@ static const struct freq_tbl clk_tbl_nss[] = {
-> >  	{ 110000000, P_PLL18, 1, 1, 5 },
-> >  	{ 275000000, P_PLL18, 2, 0, 0 },
-> >  	{ 550000000, P_PLL18, 1, 0, 0 },
-> > +	{ 600000000, P_PLL18, 1, 0, 0 },
-> >  	{ 733000000, P_PLL18, 1, 0, 0 },
-> > +	{ 800000000, P_PLL18, 1, 0, 0 },
-> >  	{ }
-> >  };
-> >  
-> > -- 
-> > 2.34.1
-> > 
+> Hi Miquel,
+>=20
+> On Thu, Feb 24, 2022 at 12:36 PM Miquel Raynal
+> <miquel.raynal@bootlin.com> wrote:
+> > > > > > > > +static int rzn1_dmamux_probe(struct platform_device *pdev)
+> > > > > > > > +{
+> > > > > > > > +       struct device_node *mux_node =3D pdev->dev.of_node;
+> > > > > > > > +       const struct of_device_id *match;
+> > > > > > > > +       struct device_node *dmac_node;
+> > > > > > > > +       struct rzn1_dmamux_data *dmamux;
+> > > > > > > > +
+> > > > > > > > +       dmamux =3D devm_kzalloc(&pdev->dev, sizeof(*dmamux)=
+, GFP_KERNEL);
+> > > > > > > > +       if (!dmamux)
+> > > > > > > > +               return -ENOMEM;
+> > > > > > > > +
+> > > > > > > > +       mutex_init(&dmamux->lock);
+> > > > > > > > +
+> > > > > > > > +       dmac_node =3D of_parse_phandle(mux_node, "dma-maste=
+rs", 0);
+> > > > > > > > +       if (!dmac_node)
+> > > > > > > > +               return dev_err_probe(&pdev->dev, -ENODEV, "=
+Can't get DMA master node\n");
+> > > > > > > > +
+> > > > > > > > +       match =3D of_match_node(rzn1_dmac_match, dmac_node);
+> > > > > > > > +       if (!match) {
+> > > > > > > > +               of_node_put(dmac_node);
+> > > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "=
+DMA master is not supported\n");
+> > > > > > > > +       }
+> > > > > > > > +
+> > > > > > > > +       if (of_property_read_u32(dmac_node, "dma-requests",=
+ &dmamux->dmac_requests)) {
+> > > > > > > > +               of_node_put(dmac_node);
+> > > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "=
+Missing DMAC requests information\n");
+> > > > > > > > +       }
+> > > > > > > > +
+> > > > > > > > +       of_node_put(dmac_node); =20
+> > > > > > >
+> > > > > > > When hardcoding dmac_requests to 16, I guess the whole dmac_n=
+ode
+> > > > > > > handling can be removed? =20
+> > > > > >
+> > > > > > Not really, I think the following checks are still valid and fo=
+rtunate,
+> > > > > > and they need some of_ handling to work properly:
+> > > > > > - verify that the chan requested is within the range of dmac_re=
+quests
+> > > > > >   in the _route_allocate() callback
+> > > > > > - ensure the dmamux is wired to a supported DMAC in the DT (this
+> > > > > >   condition might be loosen in the future if needed or dropped =
+entirely
+> > > > > >   if considered useless)
+> > > > > > - I would like to add a check against the number of requests su=
+pported
+> > > > > >   by the dmamux and the dmac (not done yet).
+> > > > > > For the record, I've taken inspiration to write these lines on =
+the other
+> > > > > > dma router driver from TI. =20
+> >
+> >         ^^^^^^^^^^^
+> > ... these checks =20
+>=20
+> I don't know. Some of them will be checked when calling into the
+> parent DMAC, right?
 
--- 
-	Ansuel
+Only the first item above will be validated by the DMAC driver. But I
+prefer to error out sooner than later, because getting the mux in
+place while knowing that the request is invalid sounds silly.
+
+Thanks,
+Miqu=C3=A8l
