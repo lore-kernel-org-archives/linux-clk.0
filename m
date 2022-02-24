@@ -2,148 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF00C43217
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 15:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C92AC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234759AbiBXP5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 10:57:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42542 "EHLO
+        id S230081AbiBXQCM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:02:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236840AbiBXP5s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:57:48 -0500
-Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36CC5D644;
-        Thu, 24 Feb 2022 07:56:53 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 91C0810002F;
-        Thu, 24 Feb 2022 15:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645718203;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WVC5Hb4g25SCLSnlfjVTXAofrx2zK62/e4HH3XRyFUU=;
-        b=XeJrFZ1RfxTMcI1LQPhCWXMip6cK1NcwY/MisfO8S/sBqEZTmJa/Nbi+dU5/0msLDud1mO
-        s0oXA+P3JHPPXiVGONryyVE4OHX3aa1nsMa/M/qP/1RGJAHX5yQum3wJW2hpEBU/UXFWeO
-        OtSMX17UKgUfm5SOcy5ClxrNROZRn4PmD/nste9O5M6eA/baGpaBhZe7d5WcoeP/4xVSQc
-        g6YdDfoiZ/gGS6ZOmY1Qycw90v3jd+yDCVV+DPGTQ1gu+KuPocW1x9ofbDY29UKIIyMzu+
-        i5eiMbCHTD4DFycnLo+16zTMMDzWQj8tk5dAohUG+7EOKg6CQbFw7zBNidL1BA==
-Date:   Thu, 24 Feb 2022 16:56:40 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S229660AbiBXQCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:02:12 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3CC193DE;
+        Thu, 24 Feb 2022 08:01:33 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id x15so352553wrg.8;
+        Thu, 24 Feb 2022 08:01:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=y05yvb52Nsp11oYlXTQ2W1T0axwKZmDa9In+lb+g4zo=;
+        b=GnV/17WEDbgkTXw5Szy0hHTJZKC90jXe/+zj3SQueTq7TBeyrs/8twssH/6UgvEWGu
+         pPgsabBuHeUszXbWvLXy/atvo+h9H0fC5fwuRWN62mYXf2UQfXT6VW3H4PLtmrjQGRSc
+         mAvEnyt2IQe7TWSx+uEwkT1FSFXGo+rvonqUhxnXQ7YK/ZBFeaOHR6pE+Bztb17HMaTY
+         33eY9IDdWby1GJpfZDib5RhuFyoG7lAiRK7+OsCBHiGr5ULBD5HHm+kw7qYUn9f5XhRx
+         5iCMR9Fu3kUjdY3/vnGgrvMpr+h2eP2jLs0UZhY79trzcbqYp3NLACDL19mS0FIvKWDa
+         8Cxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=y05yvb52Nsp11oYlXTQ2W1T0axwKZmDa9In+lb+g4zo=;
+        b=RoHFnikPONWlKmrINVZx1RZO+XhP/AFViV5Sn/tjofukfSSnFUs6CIfF2oVg7c9VY+
+         Jkp148Sjb1hwQtzFCSY6DxtHCYJqGCC5GtuemQNhm+OhJ+SY6E+e9WVogQWeZSwyrhsg
+         77zIB9xrj6OrXJ+a7APyK0GdZuz9Dy25rm6wKtuHefLXo8gVg98FLdUVkfspeyb0Trub
+         asxWDkMaI9ecweAXlhZC89YTebPksJOX0aFV/QeotdnU0CUt9CPC68Nz02gXuZC9mKRG
+         fZsYU7RIIMyukY/jrutIkxqWQpbdaCz9B+3NjfWVUWzCZaYPl/by0hhCPOWwF8zS+aHq
+         y4wg==
+X-Gm-Message-State: AOAM532CDcNgdn7gUQ+FFMd57IMnJKCcHhXL/ClVdtFslR3gwElnH/Do
+        WLOBkKF8jQlhQDAMzTQye3o=
+X-Google-Smtp-Source: ABdhPJwbEWyLUPKgPfJM8rbkKwDuyxaneNxCj7/Lstjc1QdxMEN0ykJ1Lu83MJZHWz7N7SoUgv2+Yw==
+X-Received: by 2002:a05:6000:8f:b0:1ed:bb0e:6cbe with SMTP id m15-20020a056000008f00b001edbb0e6cbemr2769902wrx.209.1645718491173;
+        Thu, 24 Feb 2022 08:01:31 -0800 (PST)
+Received: from Ansuel-xps.localdomain ([5.170.140.187])
+        by smtp.gmail.com with ESMTPSA id d13sm3704964wri.38.2022.02.24.08.01.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 08:01:30 -0800 (PST)
+Date:   Thu, 24 Feb 2022 17:01:27 +0100
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>
-Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
-Message-ID: <20220224165640.321d7c56@xps13>
-In-Reply-To: <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
-References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
-        <20220222103437.194779-5-miquel.raynal@bootlin.com>
-        <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
-        <20220223174902.3a9b85ea@xps13>
-        <CAMuHMdVr4tiicEn-BbBnCd-zP6ncr=zKd-eDvPYoYKNWUKsOBw@mail.gmail.com>
-        <20220224102724.74e2c406@xps13>
-        <CAMuHMdWtx5jnyZ0vhCVvM=nTv9H4tD7+g0YTWX8MALc_hR5x4g@mail.gmail.com>
-        <20220224123620.02740e8c@xps13>
-        <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/16] dt-bindings: clock: add ipq8064 ce5 clk define
+Message-ID: <Yher1ybYkFCVLLVt@Ansuel-xps.localdomain>
+References: <20220217235703.26641-1-ansuelsmth@gmail.com>
+ <20220217235703.26641-13-ansuelsmth@gmail.com>
+ <YhcDCnMFRppk3Mo+@builder.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YhcDCnMFRppk3Mo+@builder.lan>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Wed, Feb 23, 2022 at 10:01:14PM -0600, Bjorn Andersson wrote:
+> On Thu 17 Feb 17:56 CST 2022, Ansuel Smith wrote:
+> 
+> > Add ipq8064 ce5 clk define needed for CryptoEngine in gcc driver.
+> > 
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > ---
+> >  include/dt-bindings/clock/qcom,gcc-ipq806x.h | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
+> > index 7deec14a6dee..02262d2ac899 100644
+> > --- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
+> > +++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
+> > @@ -240,7 +240,7 @@
+> >  #define PLL14					232
+> >  #define PLL14_VOTE				233
+> >  #define PLL18					234
+> > -#define CE5_SRC					235
+> > +#define CE5_A_CLK				235
+> >  #define CE5_H_CLK				236
+> >  #define CE5_CORE_CLK				237
+> >  #define CE3_SLEEP_CLK				238
+> > @@ -283,5 +283,8 @@
+> >  #define EBI2_AON_CLK				281
+> >  #define NSSTCM_CLK_SRC				282
+> >  #define NSSTCM_CLK				283
+> 
+> You don't like 284?
+> 
+> Regards,
+> Bjorn
+>
 
-geert@linux-m68k.org wrote on Thu, 24 Feb 2022 13:16:09 +0100:
+In the QSDK 284 is used for a virtual clk used to scale the NSS core.
+I skipped that in case we will implement it and to keep these header
+similar across QSDK and linux.
 
-> Hi Miquel,
->=20
-> On Thu, Feb 24, 2022 at 12:36 PM Miquel Raynal
-> <miquel.raynal@bootlin.com> wrote:
-> > > > > > > > +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> > > > > > > > +{
-> > > > > > > > +       struct device_node *mux_node =3D pdev->dev.of_node;
-> > > > > > > > +       const struct of_device_id *match;
-> > > > > > > > +       struct device_node *dmac_node;
-> > > > > > > > +       struct rzn1_dmamux_data *dmamux;
-> > > > > > > > +
-> > > > > > > > +       dmamux =3D devm_kzalloc(&pdev->dev, sizeof(*dmamux)=
-, GFP_KERNEL);
-> > > > > > > > +       if (!dmamux)
-> > > > > > > > +               return -ENOMEM;
-> > > > > > > > +
-> > > > > > > > +       mutex_init(&dmamux->lock);
-> > > > > > > > +
-> > > > > > > > +       dmac_node =3D of_parse_phandle(mux_node, "dma-maste=
-rs", 0);
-> > > > > > > > +       if (!dmac_node)
-> > > > > > > > +               return dev_err_probe(&pdev->dev, -ENODEV, "=
-Can't get DMA master node\n");
-> > > > > > > > +
-> > > > > > > > +       match =3D of_match_node(rzn1_dmac_match, dmac_node);
-> > > > > > > > +       if (!match) {
-> > > > > > > > +               of_node_put(dmac_node);
-> > > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "=
-DMA master is not supported\n");
-> > > > > > > > +       }
-> > > > > > > > +
-> > > > > > > > +       if (of_property_read_u32(dmac_node, "dma-requests",=
- &dmamux->dmac_requests)) {
-> > > > > > > > +               of_node_put(dmac_node);
-> > > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "=
-Missing DMAC requests information\n");
-> > > > > > > > +       }
-> > > > > > > > +
-> > > > > > > > +       of_node_put(dmac_node); =20
-> > > > > > >
-> > > > > > > When hardcoding dmac_requests to 16, I guess the whole dmac_n=
-ode
-> > > > > > > handling can be removed? =20
-> > > > > >
-> > > > > > Not really, I think the following checks are still valid and fo=
-rtunate,
-> > > > > > and they need some of_ handling to work properly:
-> > > > > > - verify that the chan requested is within the range of dmac_re=
-quests
-> > > > > >   in the _route_allocate() callback
-> > > > > > - ensure the dmamux is wired to a supported DMAC in the DT (this
-> > > > > >   condition might be loosen in the future if needed or dropped =
-entirely
-> > > > > >   if considered useless)
-> > > > > > - I would like to add a check against the number of requests su=
-pported
-> > > > > >   by the dmamux and the dmac (not done yet).
-> > > > > > For the record, I've taken inspiration to write these lines on =
-the other
-> > > > > > dma router driver from TI. =20
-> >
-> >         ^^^^^^^^^^^
-> > ... these checks =20
->=20
-> I don't know. Some of them will be checked when calling into the
-> parent DMAC, right?
+> > +#define CE5_A_CLK_SRC				285
+> > +#define CE5_H_CLK_SRC				286
+> > +#define CE5_CORE_CLK_SRC			287
+> >  
+> >  #endif
+> > -- 
+> > 2.34.1
+> > 
 
-Only the first item above will be validated by the DMAC driver. But I
-prefer to error out sooner than later, because getting the mux in
-place while knowing that the request is invalid sounds silly.
-
-Thanks,
-Miqu=C3=A8l
+-- 
+	Ansuel
