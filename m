@@ -2,81 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55105C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D29C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:48:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229594AbiBXQc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:32:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57216 "EHLO
+        id S230249AbiBXQtH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:49:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbiBXQcZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:32:25 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7F81255A8
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 08:31:48 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1nNH1V-0007S9-Nb; Thu, 24 Feb 2022 17:31:21 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1nNH1V-00136X-AD; Thu, 24 Feb 2022 17:31:20 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1nNH1T-000Bf8-RW; Thu, 24 Feb 2022 17:31:19 +0100
-Message-ID: <234b9fd5d3125e071717b06635ff28afe87b3686.camel@pengutronix.de>
-Subject: Re: [PATCH v4 14/16] dt-bindings: reset: add ipq8064 ce5 resets
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S230239AbiBXQtG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:49:06 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE571EAED;
+        Thu, 24 Feb 2022 08:48:36 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id d3so622629wrf.1;
+        Thu, 24 Feb 2022 08:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qC2mYqGoTXViShZoHr6pbNzwWEUucGHpKFO+l2d+FSc=;
+        b=GQCfUjrlvwHZwuS2Ls1HYWi7rMgl157zJ/2jT9JxGRb35yQqCTKG+ovw3oIQqSaurz
+         aGDTlrKozR9ij/RRdKRsyEgPdv5OSsQ13iNMfgb1rSF7tpDUSrCU7RZoDIPR7UttC9dm
+         +JKIeeL9GlnN6tHuxp9iLXYd5erztc7HScYb8R/OvP8bf/J/Xjb/KMxwe3IrQ4UdKmdd
+         gR58RWry+XD9pb/EASZUhrigRyDi6N1fuxeNoOzxrToPwi7daAo7md8vLlrgYmj05QAt
+         IrRoK7kZBJOq59FXNodteL+LECHsnb0FZjKYDFqrIZAGhfxTuX9nMrv5D97sHPlQYFeV
+         7QSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qC2mYqGoTXViShZoHr6pbNzwWEUucGHpKFO+l2d+FSc=;
+        b=ejadgmiQO7peYSBt/cN0MvfDGvOeuLRtzEqZUs3M52Lzxa5DwNQLrcvjRbzRJtWgjJ
+         d0txg6iAeqPIhR1ip5by9WMJlbRjS9vuEr1CAK2mq7EMNdqwxh5zDUE03Qk+Rp7Lufyg
+         Y9n4bKhAHNbQlZMx9cch68yngWuJZOzIGqPPU6lPtivBU6Z0l76hsUrV8p/m2AV4D7wb
+         pB7DrhADWHvHFZEm0to9AReGbO4bYF/h3MKqOz6YcMHfYsaBsSDIbPzjiHQOWYNmGjhe
+         7383p9ehfEdFSfpGqCFkVr+9vK4wuZPKn8nD+G0LPIAN0e+1Gmsjeg/kIUGI/r62z/Ik
+         KfhQ==
+X-Gm-Message-State: AOAM530dDuRowTUZ5XaHmf9Y5Ed2zP/fzJgCMT9fMH2u6P3lDqgsqKFE
+        DWNrvSZYqLOFxWGP6oPlJhlYsOBisW4=
+X-Google-Smtp-Source: ABdhPJxpg1xF1+bo1D4mqwqNaT6X7tAImJZ02t3T27PDR9rMxt5usC4H9xCNvEFwvyRWkOMGBbIjYg==
+X-Received: by 2002:adf:ec10:0:b0:1e4:b3e3:2ef8 with SMTP id x16-20020adfec10000000b001e4b3e32ef8mr2915883wrn.183.1645721315053;
+        Thu, 24 Feb 2022 08:48:35 -0800 (PST)
+Received: from Ansuel-xps.localdomain ([5.170.140.187])
+        by smtp.googlemail.com with ESMTPSA id k18sm2694095wrp.104.2022.02.24.08.48.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 08:48:34 -0800 (PST)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Taniya Das <tdas@codeaurora.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 24 Feb 2022 17:31:19 +0100
-In-Reply-To: <20220217235703.26641-15-ansuelsmth@gmail.com>
-References: <20220217235703.26641-1-ansuelsmth@gmail.com>
-         <20220217235703.26641-15-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.38.3-1 
+Subject: [PATCH v5 00/15] Multiple addition and improvement to ipq8064 gcc
+Date:   Thu, 24 Feb 2022 17:48:16 +0100
+Message-Id: <20220224164831.21475-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gRnIsIDIwMjItMDItMTggYXQgMDA6NTcgKzAxMDAsIEFuc3VlbCBTbWl0aCB3cm90ZToKPiBB
-ZGQgaXBxODA2NCBjZTUgcmVzZXRzIG5lZWRlZCBmb3IgQ3J5cHRvRW5naW5lIGdjYyBkcml2ZXIu
-Cj4gCj4gU2lnbmVkLW9mZi1ieTogQW5zdWVsIFNtaXRoIDxhbnN1ZWxzbXRoQGdtYWlsLmNvbT4K
-PiAtLS0KPiDCoGluY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQvcWNvbSxnY2MtaXBxODA2eC5oIHwg
-NSArKysrKwo+IMKgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1n
-aXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL3Jlc2V0L3Fjb20sZ2NjLWlwcTgwNnguaAo+IGIvaW5j
-bHVkZS9kdC1iaW5kaW5ncy9yZXNldC9xY29tLGdjYy1pcHE4MDZ4LmgKPiBpbmRleCAyNmI2Zjky
-MDA2MjAuLjAyMGM5Y2YxODc1MSAxMDA2NDQKPiAtLS0gYS9pbmNsdWRlL2R0LWJpbmRpbmdzL3Jl
-c2V0L3Fjb20sZ2NjLWlwcTgwNnguaAo+ICsrKyBiL2luY2x1ZGUvZHQtYmluZGluZ3MvcmVzZXQv
-cWNvbSxnY2MtaXBxODA2eC5oCj4gQEAgLTE2Myw1ICsxNjMsMTAgQEAKPiDCoCNkZWZpbmUgTlNT
-X0NBTF9QUkJTX1JTVF9OX1JFU0VUwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoDE1NAo+IMKgI2RlZmluZSBOU1NfTENLRFRfUlNUX05fUkVTRVTCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMTU1Cj4gwqAjZGVmaW5l
-IE5TU19TUkRTX05fUkVTRVTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoDE1Ngo+ICsjZGVmaW5lIENSWVBUT19FTkcxX1JFU0VUwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-MTU3Cj4gKyNkZWZpbmUgQ1JZUFRPX0VORzJfUkVTRVTCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAxNTgKPiArI2RlZmluZSBDUllQVE9f
-RU5HM19SRVNFVMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoDE1OQo+ICsjZGVmaW5lIENSWVBUT19FTkc0X1JFU0VUwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMTYwCj4gKyNk
-ZWZpbmUgQ1JZUFRPX0FIQl9SRVNFVMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMTYxCj4gwqAKPiDCoCNlbmRpZgoKQWNrZWQtYnk6
-IFBoaWxpcHAgWmFiZWwgPHAuemFiZWxAcGVuZ3V0cm9uaXguZGU+CgpyZWdhcmRzClBoaWxpcHAK
+This is an attempt in making the ipq8064 SoC actually usable. Currently
+many feature are missing for this SoC and devs user off-the-tree patches
+to make it work (example patch for missing clock, patch for cpufreq
+driver, patch to add missing node in the dts)
 
+I notice there was some work in modernizing the gcc driver for other
+qcom target but this wasn't done for ipq806x. This does exactly this, we
+drop any parent_names stuff and we switch to the parent_data way. We
+also drop the pxo and cxo source clk from gcc driver and we refer to the
+dts for it.
+
+This also add all the missing feature for the nss cores and the
+cryptoengine in them. It does also introduce the required flags to make
+the RPM actually work and NOT reject any command. There was an attempt
+in declaring these clock as core clock in the dts but this ends up in no
+serial as the kernel makes these clock not accessible. We just want to
+make the kernel NOT disable them if unused nothing more.
+
+At the end we update the ipq8064 dtsi to add the pxo and cxo tag and
+declare them in gcc and also fix a problem with tsens probe.
+
+v5:
+- Drop patch removing fixed clk
+- Use name in parent_data to keep compatibility with old dtb
+- Fix error in the documentation commits
+- Keep old copyright for gcc documentation
+- Fix an error with the rcg floor ops
+- Set nss clk based on the device compatible
+v4:
+- Drop drivers in all the patches.
+- Introduce floor ops for sdc
+- gcc.yaml to gcc-other.yaml
+- gcc-common.yaml to gcc.yaml
+v3:
+- Rework Documentation with Rob suggestions
+v2:
+- Fix error from Rob bot.
+- Add additional commits to make qcom,gcc.yaml a template
+- Squash parent_hws patch with the modernize patch
+- Create gcc_pxo instead of using long define.
+
+Ansuel Smith (15):
+  dt-bindings: clock: split qcom,gcc.yaml to common and specific schema
+  dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
+  dt-bindings: clock: document qcom,gcc-ipq8064 binding
+  clk: qcom: gcc-ipq806x: fix wrong naming for gcc_pxo_pll8_pll0
+  clk: qcom: gcc-ipq806x: convert parent_names to parent_data
+  clk: qcom: gcc-ipq806x: use ARRAY_SIZE for num_parents
+  clk: qcom: gcc-ipq806x: add additional freq nss cores
+  clk: qcom: gcc-ipq806x: add unusued flag for critical clock
+  clk: qcom: clk-rcg: add clk_rcg_floor_ops ops
+  clk: qcom: gcc-ipq806x: add additional freq for sdc table
+  dt-bindings: clock: add ipq8064 ce5 clk define
+  clk: qcom: gcc-ipq806x: add CryptoEngine clocks
+  dt-bindings: reset: add ipq8064 ce5 resets
+  clk: qcom: gcc-ipq806x: add CryptoEngine resets
+  ARM: dts: qcom: add syscon and cxo/pxo clock to gcc node for ipq8064
+
+ .../bindings/clock/qcom,gcc-apq8064.yaml      |  29 +-
+ .../bindings/clock/qcom,gcc-ipq8064.yaml      |  76 ++
+ .../bindings/clock/qcom,gcc-other.yaml        |  70 ++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |  59 +-
+ arch/arm/boot/dts/qcom-ipq8064.dtsi           |   8 +-
+ drivers/clk/qcom/clk-rcg.c                    |  24 +
+ drivers/clk/qcom/clk-rcg.h                    |   1 +
+ drivers/clk/qcom/gcc-ipq806x.c                | 656 +++++++++++++-----
+ include/dt-bindings/clock/qcom,gcc-ipq806x.h  |   5 +-
+ include/dt-bindings/reset/qcom,gcc-ipq806x.h  |   5 +
+ 10 files changed, 692 insertions(+), 241 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+
+-- 
+2.34.1
 
