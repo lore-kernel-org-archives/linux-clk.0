@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0743C4321E
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6019EC4167E
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232709AbiBXQDe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:03:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45458 "EHLO
+        id S233380AbiBXQDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:03:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbiBXQD2 (ORCPT
+        with ESMTP id S231162AbiBXQD2 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:03:28 -0500
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFBAC1A615F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4CBF192E27;
         Thu, 24 Feb 2022 08:02:46 -0800 (PST)
 Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21OFuelP018339;
-        Thu, 24 Feb 2022 17:02:14 +0100
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21OFkF4N018353;
+        Thu, 24 Feb 2022 17:02:10 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=ttTWXMFriJVCywKTnYHtOeXYaWJ9TXpTQVubwl3aJjQ=;
- b=5qs1J9chv5n5sUcUxA7led3l+2ERXwRz/Z5dQLuQp1SdvpJ2J81xEKDxJItmrY08UY3T
- P8x2aLQIW5Rgvlp1EVBnqhQehfTtZoa10cI9yfv81X1mSTcrRyiJrOdHANwhPw05iR1u
- wXUIDscl1vMDtfb6i6qEikqdk5meAsWd9vAKMyLWhIElUhQQW3ylWAVWAFqB0d2IGIFf
- ycopu+XhntxrKTV7TobtMXy0aJVHyE34rr8xKM2Q7fZ7+88XP5via+jEHevw3ROHqvW1
- ZeLNdLG+7saWWZmCbCnfdNiLZflV3BQLkMqkaOz5VaR5xqYlBj6jcJWxg1UWizyKo4cj Qw== 
+ bh=sDOpcZlmgO4XrCTht9rovp5BeeiyXrHeZ3jH5ESpjk8=;
+ b=LXln4sKI9mUL6yrsy9pDk6Dg5UTOKYqtILyj7GVrMzx1++X4XCipcZG2yoy++W2FlBEf
+ +AY6ANIawjmzyB48xhV3HGBaw7Ft+wYVwxipqJrX27BCev5ZcHV2Rhtk+fAeQhb8WCY4
+ rh6vjCqmy1YP1YlLhGy8jgGGf/Xl2HlGqNr4BHnPDfhEprCAFIjdhavsqf8468At+/OC
+ jmkzrrmfkvM5Be351pk9BXtuPJOiloYyzt6uiZIQahzJo+g/ZrGSA6iwpVBTIsJpuh5a
+ E9LtkDDjkeiXARHZDw+BEPBSXhMDfZZVBOp+6557+gU2hMs4uiU/yCULN+wRZ+czokp0 7A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ee7tka6vr-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ee7tka6v9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Feb 2022 17:02:14 +0100
+        Thu, 24 Feb 2022 17:02:10 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9E3A310002A;
-        Thu, 24 Feb 2022 17:02:13 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C5E8E100034;
+        Thu, 24 Feb 2022 17:02:09 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8AFAD22A6FC;
-        Thu, 24 Feb 2022 17:02:13 +0100 (CET)
-Received: from localhost (10.75.127.51) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb 2022 17:02:13
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BAF1E22A6FC;
+        Thu, 24 Feb 2022 17:02:09 +0100 (CET)
+Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb 2022 17:02:09
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -52,17 +52,17 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 07/13] clk: stm32mp13: manage secured clocks
-Date:   Thu, 24 Feb 2022 17:01:35 +0100
-Message-ID: <20220224160141.455881-8-gabriel.fernandez@foss.st.com>
+Subject: [PATCH 01/13] dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
+Date:   Thu, 24 Feb 2022 17:01:29 +0100
+Message-ID: <20220224160141.455881-2-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220224160141.455881-1-gabriel.fernandez@foss.st.com>
 References: <20220224160141.455881-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
@@ -73,266 +73,378 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Don't register a clock if this clock is secured.
+New compatible to manage clock and reset of STM32MP13 SoC.
 
 Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
- drivers/clk/stm32/clk-stm32-core.c |   4 +
- drivers/clk/stm32/clk-stm32-core.h |  22 +++--
- drivers/clk/stm32/clk-stm32mp13.c  | 152 ++++++++++++++++++++++++++++-
- 3 files changed, 164 insertions(+), 14 deletions(-)
+ .../bindings/clock/st,stm32mp1-rcc.yaml       |   2 +
+ include/dt-bindings/clock/stm32mp13-clks.h    | 229 ++++++++++++++++++
+ include/dt-bindings/reset/stm32mp13-resets.h  | 100 ++++++++
+ 3 files changed, 331 insertions(+)
+ create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
+ create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
 
-diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
-index 3b00918d0753..fc32e62e0b44 100644
---- a/drivers/clk/stm32/clk-stm32-core.c
-+++ b/drivers/clk/stm32/clk-stm32-core.c
-@@ -46,6 +46,10 @@ static int stm32_rcc_clock_init(struct device *dev,
- 		const struct clock_config *cfg_clock = &data->tab_clocks[n];
- 		struct clk_hw *hw = ERR_PTR(-ENOENT);
+diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+index a0ae4867ed27..b758d6b25063 100644
+--- a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
++++ b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
+@@ -41,6 +41,7 @@ description: |
  
-+		if (data->check_security &&
-+		    data->check_security(base, cfg_clock))
-+			continue;
+   The list of valid indices for STM32MP1 is available in:
+   include/dt-bindings/reset-controller/stm32mp1-resets.h
++  include/dt-bindings/reset-controller/stm32mp13-resets.h
+ 
+   This file implements defines like:
+   #define LTDC_R	3072
+@@ -57,6 +58,7 @@ properties:
+       - enum:
+           - st,stm32mp1-rcc-secure
+           - st,stm32mp1-rcc
++          - st,stm32mp13-rcc
+       - const: syscon
+ 
+   reg:
+diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bindings/clock/stm32mp13-clks.h
+new file mode 100644
+index 000000000000..02befd25edce
+--- /dev/null
++++ b/include/dt-bindings/clock/stm32mp13-clks.h
+@@ -0,0 +1,229 @@
++/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
++/*
++ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
++ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ */
 +
- 		if (cfg_clock->func)
- 			hw = (*cfg_clock->func)(dev, data, base, &rlock,
- 						cfg_clock);
-diff --git a/drivers/clk/stm32/clk-stm32-core.h b/drivers/clk/stm32/clk-stm32-core.h
-index 846d063ecc6f..8ffa700323b8 100644
---- a/drivers/clk/stm32/clk-stm32-core.h
-+++ b/drivers/clk/stm32/clk-stm32-core.h
-@@ -46,6 +46,7 @@ struct stm32_composite_cfg {
- 
- struct clock_config {
- 	unsigned long	id;
-+	int		sec_id;
- 	void		*clock_cfg;
- 
- 	struct clk_hw *(*func)(struct device *dev,
-@@ -69,6 +70,8 @@ struct stm32_rcc_match_data {
- 	unsigned int			maxbinding;
- 	struct clk_stm32_clock_data	*clock_data;
- 	u32				clear_offset;
-+	int (*check_security)(void __iomem *base,
-+			      const struct clock_config *cfg);
- };
- 
- int stm32_rcc_reset_init(struct device *dev, const struct of_device_id *match,
-@@ -208,25 +211,26 @@ struct clk_hw *clk_stm32_composite_register(struct device *dev,
- 					    spinlock_t *lock,
- 					    const struct clock_config *cfg);
- 
--#define STM32_CLOCK_CFG(_binding, _clk, _struct, _register)\
-+#define STM32_CLOCK_CFG(_binding, _clk, _sec_id, _struct, _register)\
- {\
- 	.id		= (_binding),\
-+	.sec_id		= (_sec_id),\
- 	.clock_cfg	= (_struct) {_clk},\
- 	.func		= (_register),\
- }
- 
--#define STM32_GATE_CFG(_binding, _clk)\
--	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_gate *,\
-+#define STM32_GATE_CFG(_binding, _clk, _sec_id)\
-+	STM32_CLOCK_CFG(_binding, &(_clk), _sec_id, struct clk_stm32_gate *,\
- 			&clk_stm32_gate_register)
- 
--#define STM32_DIV_CFG(_binding, _clk)\
--	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_div *,\
-+#define STM32_DIV_CFG(_binding, _clk, _sec_id)\
-+	STM32_CLOCK_CFG(_binding, &(_clk), _sec_id, struct clk_stm32_div *,\
- 			&clk_stm32_div_register)
- 
--#define STM32_MUX_CFG(_binding, _clk)\
--	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_mux *,\
-+#define STM32_MUX_CFG(_binding, _clk, _sec_id)\
-+	STM32_CLOCK_CFG(_binding, &(_clk), _sec_id, struct clk_stm32_mux *,\
- 			&clk_stm32_mux_register)
- 
--#define STM32_COMPOSITE_CFG(_binding, _clk)\
--	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_composite *,\
-+#define STM32_COMPOSITE_CFG(_binding, _clk, _sec_id)\
-+	STM32_CLOCK_CFG(_binding, &(_clk), _sec_id, struct clk_stm32_composite *,\
- 			&clk_stm32_composite_register)
-diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
-index 1b27c5d4b97d..7e83204dd405 100644
---- a/drivers/clk/stm32/clk-stm32mp13.c
-+++ b/drivers/clk/stm32/clk-stm32mp13.c
-@@ -400,6 +400,131 @@ static const struct stm32_mux_cfg stm32mp13_muxes[] = {
- 	CFG_MUX(MUX_SDMMC2,	RCC_SDMMC12CKSELR,	3, 3),
- };
- 
-+struct clk_stm32_securiy {
-+	u32	offset;
-+	u8	bit_idx;
-+	unsigned long scmi_id;
-+};
++#ifndef _DT_BINDINGS_STM32MP13_CLKS_H_
++#define _DT_BINDINGS_STM32MP13_CLKS_H_
 +
-+enum securit_clk {
-+	SECF_NONE,
-+	SECF_LPTIM2,
-+	SECF_LPTIM3,
-+	SECF_VREF,
-+	SECF_DCMIPP,
-+	SECF_USBPHY,
-+	SECF_TZC,
-+	SECF_ETZPC,
-+	SECF_IWDG1,
-+	SECF_BSEC,
-+	SECF_STGENC,
-+	SECF_STGENRO,
-+	SECF_USART1,
-+	SECF_USART2,
-+	SECF_SPI4,
-+	SECF_SPI5,
-+	SECF_I2C3,
-+	SECF_I2C4,
-+	SECF_I2C5,
-+	SECF_TIM12,
-+	SECF_TIM13,
-+	SECF_TIM14,
-+	SECF_TIM15,
-+	SECF_TIM16,
-+	SECF_TIM17,
-+	SECF_DMA3,
-+	SECF_DMAMUX2,
-+	SECF_ADC1,
-+	SECF_ADC2,
-+	SECF_USBO,
-+	SECF_TSC,
-+	SECF_PKA,
-+	SECF_SAES,
-+	SECF_CRYP1,
-+	SECF_HASH1,
-+	SECF_RNG1,
-+	SECF_BKPSRAM,
-+	SECF_MCE,
-+	SECF_FMC,
-+	SECF_QSPI,
-+	SECF_SDMMC1,
-+	SECF_SDMMC2,
-+	SECF_ETH1CK,
-+	SECF_ETH1TX,
-+	SECF_ETH1RX,
-+	SECF_ETH1MAC,
-+	SECF_ETH1STP,
-+	SECF_ETH2CK,
-+	SECF_ETH2TX,
-+	SECF_ETH2RX,
-+	SECF_ETH2MAC,
-+	SECF_ETH2STP,
-+	SECF_MCO1,
-+	SECF_MCO2
-+};
++/* OSCILLATOR clocks */
++#define CK_HSE		0
++#define CK_CSI		1
++#define CK_LSI		2
++#define CK_LSE		3
++#define CK_HSI		4
++#define CK_HSE_DIV2	5
 +
-+#define SECF(_sec_id, _offset, _bit_idx)[_sec_id] = {\
-+	.offset	= _offset,\
-+	.bit_idx	= _bit_idx,\
-+	.scmi_id	= -1,\
-+}
++/* PLL */
++#define PLL1		6
++#define PLL2		7
++#define PLL3		8
++#define PLL4		9
 +
-+static const struct clk_stm32_securiy stm32mp13_security[] = {
-+	SECF(SECF_LPTIM2, RCC_APB3SECSR, RCC_APB3SECSR_LPTIM2SECF),
-+	SECF(SECF_LPTIM3, RCC_APB3SECSR, RCC_APB3SECSR_LPTIM3SECF),
-+	SECF(SECF_VREF, RCC_APB3SECSR, RCC_APB3SECSR_VREFSECF),
-+	SECF(SECF_DCMIPP, RCC_APB4SECSR, RCC_APB4SECSR_DCMIPPSECF),
-+	SECF(SECF_USBPHY, RCC_APB4SECSR, RCC_APB4SECSR_USBPHYSECF),
-+	SECF(SECF_TZC, RCC_APB5SECSR, RCC_APB5SECSR_TZCSECF),
-+	SECF(SECF_ETZPC, RCC_APB5SECSR, RCC_APB5SECSR_ETZPCSECF),
-+	SECF(SECF_IWDG1, RCC_APB5SECSR, RCC_APB5SECSR_IWDG1SECF),
-+	SECF(SECF_BSEC, RCC_APB5SECSR, RCC_APB5SECSR_BSECSECF),
-+	SECF(SECF_STGENC, RCC_APB5SECSR, RCC_APB5SECSR_STGENCSECF),
-+	SECF(SECF_STGENRO, RCC_APB5SECSR, RCC_APB5SECSR_STGENROSECF),
-+	SECF(SECF_USART1, RCC_APB6SECSR, RCC_APB6SECSR_USART1SECF),
-+	SECF(SECF_USART2, RCC_APB6SECSR, RCC_APB6SECSR_USART2SECF),
-+	SECF(SECF_SPI4, RCC_APB6SECSR, RCC_APB6SECSR_SPI4SECF),
-+	SECF(SECF_SPI5, RCC_APB6SECSR, RCC_APB6SECSR_SPI5SECF),
-+	SECF(SECF_I2C3, RCC_APB6SECSR, RCC_APB6SECSR_I2C3SECF),
-+	SECF(SECF_I2C4, RCC_APB6SECSR, RCC_APB6SECSR_I2C4SECF),
-+	SECF(SECF_I2C5, RCC_APB6SECSR, RCC_APB6SECSR_I2C5SECF),
-+	SECF(SECF_TIM12, RCC_APB6SECSR, RCC_APB6SECSR_TIM12SECF),
-+	SECF(SECF_TIM13, RCC_APB6SECSR, RCC_APB6SECSR_TIM13SECF),
-+	SECF(SECF_TIM14, RCC_APB6SECSR, RCC_APB6SECSR_TIM14SECF),
-+	SECF(SECF_TIM15, RCC_APB6SECSR, RCC_APB6SECSR_TIM15SECF),
-+	SECF(SECF_TIM16, RCC_APB6SECSR, RCC_APB6SECSR_TIM16SECF),
-+	SECF(SECF_TIM17, RCC_APB6SECSR, RCC_APB6SECSR_TIM17SECF),
-+	SECF(SECF_DMA3, RCC_AHB2SECSR, RCC_AHB2SECSR_DMA3SECF),
-+	SECF(SECF_DMAMUX2, RCC_AHB2SECSR, RCC_AHB2SECSR_DMAMUX2SECF),
-+	SECF(SECF_ADC1, RCC_AHB2SECSR, RCC_AHB2SECSR_ADC1SECF),
-+	SECF(SECF_ADC2, RCC_AHB2SECSR, RCC_AHB2SECSR_ADC2SECF),
-+	SECF(SECF_USBO, RCC_AHB2SECSR, RCC_AHB2SECSR_USBOSECF),
-+	SECF(SECF_TSC, RCC_AHB4SECSR, RCC_AHB4SECSR_TSCSECF),
-+	SECF(SECF_PKA, RCC_AHB5SECSR, RCC_AHB5SECSR_PKASECF),
-+	SECF(SECF_SAES, RCC_AHB5SECSR, RCC_AHB5SECSR_SAESSECF),
-+	SECF(SECF_CRYP1, RCC_AHB5SECSR, RCC_AHB5SECSR_CRYP1SECF),
-+	SECF(SECF_HASH1, RCC_AHB5SECSR, RCC_AHB5SECSR_HASH1SECF),
-+	SECF(SECF_RNG1, RCC_AHB5SECSR, RCC_AHB5SECSR_RNG1SECF),
-+	SECF(SECF_BKPSRAM, RCC_AHB5SECSR, RCC_AHB5SECSR_BKPSRAMSECF),
-+	SECF(SECF_MCE, RCC_AHB6SECSR, RCC_AHB6SECSR_MCESECF),
-+	SECF(SECF_FMC, RCC_AHB6SECSR, RCC_AHB6SECSR_FMCSECF),
-+	SECF(SECF_QSPI, RCC_AHB6SECSR, RCC_AHB6SECSR_QSPISECF),
-+	SECF(SECF_SDMMC1, RCC_AHB6SECSR, RCC_AHB6SECSR_SDMMC1SECF),
-+	SECF(SECF_SDMMC2, RCC_AHB6SECSR, RCC_AHB6SECSR_SDMMC2SECF),
-+	SECF(SECF_ETH1CK, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH1CKSECF),
-+	SECF(SECF_ETH1TX, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH1TXSECF),
-+	SECF(SECF_ETH1RX, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH1RXSECF),
-+	SECF(SECF_ETH1MAC, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH1MACSECF),
-+	SECF(SECF_ETH1STP, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH1STPSECF),
-+	SECF(SECF_ETH2CK, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH2CKSECF),
-+	SECF(SECF_ETH2TX, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH2TXSECF),
-+	SECF(SECF_ETH2RX, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH2RXSECF),
-+	SECF(SECF_ETH2MAC, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH2MACSECF),
-+	SECF(SECF_ETH2STP, RCC_AHB6SECSR, RCC_AHB6SECSR_ETH2STPSECF),
-+	SECF(SECF_MCO1, RCC_SECCFGR, RCC_SECCFGR_MCO1SEC),
-+	SECF(SECF_MCO2, RCC_SECCFGR, RCC_SECCFGR_MCO2SEC),
-+};
++/* ODF */
++#define PLL1_P		10
++#define PLL1_Q		11
++#define PLL1_R		12
++#define PLL2_P		13
++#define PLL2_Q		14
++#define PLL2_R		15
++#define PLL3_P		16
++#define PLL3_Q		17
++#define PLL3_R		18
++#define PLL4_P		19
++#define PLL4_Q		20
++#define PLL4_R		21
 +
- static const char * const eth12_src[] = {
- 	"pll4_p", "pll3_q"
- };
-@@ -448,13 +573,29 @@ static struct clk_stm32_composite ck_mco2 = {
- };
- 
- static const struct clock_config stm32mp13_clock_cfg[] = {
--	STM32_MUX_CFG(NO_ID, ck_ker_eth1),
--	STM32_GATE_CFG(ETH1CK_K, eth1ck_k),
--	STM32_DIV_CFG(ETH1PTP_K, eth1ptp_k),
--	STM32_COMPOSITE_CFG(CK_MCO1, ck_mco1),
--	STM32_COMPOSITE_CFG(CK_MCO2, ck_mco2),
-+	STM32_MUX_CFG(NO_ID, ck_ker_eth1, SECF_ETH1CK),
-+	STM32_GATE_CFG(ETH1CK_K, eth1ck_k, SECF_ETH1CK),
-+	STM32_DIV_CFG(ETH1PTP_K, eth1ptp_k, SECF_ETH1CK),
-+	STM32_COMPOSITE_CFG(CK_MCO1, ck_mco1, SECF_MCO1),
-+	STM32_COMPOSITE_CFG(CK_MCO2, ck_mco2, SECF_MCO2),
- };
- 
-+static int stm32mp13_clock_is_provided_by_secure(void __iomem *base,
-+						 const struct clock_config *cfg)
-+{
-+	int sec_id = cfg->sec_id;
++#define PCLK1		22
++#define PCLK2		23
++#define PCLK3		24
++#define PCLK4		25
++#define PCLK5		26
++#define PCLK6		27
 +
-+	if (sec_id != SECF_NONE) {
-+		const struct clk_stm32_securiy *secf;
++/* SYSTEM CLOCK */
++#define CK_PER		28
++#define CK_MPU		29
++#define CK_AXI		30
++#define CK_MLAHB	31
 +
-+		secf = &stm32mp13_security[sec_id];
++/* BASE TIMER */
++#define CK_TIMG1	32
++#define CK_TIMG2	33
++#define CK_TIMG3	34
 +
-+		return !!(readl(base + secf->offset) & BIT(secf->bit_idx));
-+	}
++/* AUX */
++#define RTC		35
 +
-+	return 0;
-+}
++/* TRACE & DEBUG clocks */
++#define CK_DBG		36
++#define CK_TRACE	37
 +
- u16 stm32mp13_cpt_gate[GATE_NB];
- 
- struct clk_stm32_clock_data stm32mp13_clock_data = {
-@@ -468,6 +609,7 @@ static const struct stm32_rcc_match_data stm32mp13_data = {
- 	.tab_clocks	= stm32mp13_clock_cfg,
- 	.num_clocks	= ARRAY_SIZE(stm32mp13_clock_cfg),
- 	.clock_data	= &stm32mp13_clock_data,
-+	.check_security = &stm32mp13_clock_is_provided_by_secure,
- 	.maxbinding	= STM32MP1_LAST_CLK,
- 	.clear_offset	= RCC_CLR_OFFSET,
- };
++/* MCO clocks */
++#define CK_MCO1		38
++#define CK_MCO2		39
++
++/*  IP clocks */
++#define SYSCFG		40
++#define VREF		41
++#define DTS		42
++#define PMBCTRL		43
++#define HDP		44
++#define IWDG2		45
++#define STGENRO		46
++#define USART1		47
++#define RTCAPB		48
++#define TZC		49
++#define TZPC		50
++#define IWDG1		51
++#define BSEC		52
++#define DMA1		53
++#define DMA2		54
++#define DMAMUX1		55
++#define DMAMUX2		56
++#define GPIOA		57
++#define GPIOB		58
++#define GPIOC		59
++#define GPIOD		60
++#define GPIOE		61
++#define GPIOF		62
++#define GPIOG		63
++#define GPIOH		64
++#define GPIOI		65
++#define CRYP1		66
++#define HASH1		67
++#define BKPSRAM		68
++#define MDMA		69
++#define CRC1		70
++#define USBH		71
++#define DMA3		72
++#define TSC		73
++#define PKA		74
++#define AXIMC		75
++#define MCE		76
++#define ETH1TX		77
++#define ETH2TX		78
++#define ETH1RX		79
++#define ETH2RX		80
++#define ETH1MAC		81
++#define ETH2MAC		82
++#define ETH1STP		83
++#define ETH2STP		84
++
++/* IP clocks with parents */
++#define SDMMC1_K	85
++#define SDMMC2_K	86
++#define ADC1_K		87
++#define ADC2_K		88
++#define FMC_K		89
++#define QSPI_K		90
++#define RNG1_K		91
++#define USBPHY_K	92
++#define STGEN_K		93
++#define SPDIF_K		94
++#define SPI1_K		95
++#define SPI2_K		96
++#define SPI3_K		97
++#define SPI4_K		98
++#define SPI5_K		99
++#define I2C1_K		100
++#define I2C2_K		101
++#define I2C3_K		102
++#define I2C4_K		103
++#define I2C5_K		104
++#define TIM2_K		105
++#define TIM3_K		106
++#define TIM4_K		107
++#define TIM5_K		108
++#define TIM6_K		109
++#define TIM7_K		110
++#define TIM12_K		111
++#define TIM13_K		112
++#define TIM14_K		113
++#define TIM1_K		114
++#define TIM8_K		115
++#define TIM15_K		116
++#define TIM16_K		117
++#define TIM17_K		118
++#define LPTIM1_K	119
++#define LPTIM2_K	120
++#define LPTIM3_K	121
++#define LPTIM4_K	122
++#define LPTIM5_K	123
++#define USART1_K	124
++#define USART2_K	125
++#define USART3_K	126
++#define UART4_K		127
++#define UART5_K		128
++#define USART6_K	129
++#define UART7_K		130
++#define UART8_K		131
++#define DFSDM_K		132
++#define FDCAN_K		133
++#define SAI1_K		134
++#define SAI2_K		135
++#define ADFSDM_K	136
++#define USBO_K		137
++#define LTDC_PX		138
++#define ETH1CK_K	139
++#define ETH1PTP_K	140
++#define ETH2CK_K	141
++#define ETH2PTP_K	142
++#define DCMIPP_K	143
++#define SAES_K		144
++#define DTS_K		145
++
++/* DDR */
++#define DDRC1		146
++#define DDRC1LP		147
++#define DDRC2		148
++#define DDRC2LP		149
++#define DDRPHYC		150
++#define DDRPHYCLP	151
++#define DDRCAPB		152
++#define DDRCAPBLP	153
++#define AXIDCG		154
++#define DDRPHYCAPB	155
++#define DDRPHYCAPBLP	156
++#define DDRPERFM	157
++
++#define ADC1		158
++#define ADC2		159
++#define SAI1		160
++#define SAI2		161
++
++#define STM32MP1_LAST_CLK 162
++
++/* SCMI clock identifiers */
++#define CK_SCMI_HSE		0
++#define CK_SCMI_HSI		1
++#define CK_SCMI_CSI		2
++#define CK_SCMI_LSE		3
++#define CK_SCMI_LSI		4
++#define CK_SCMI_HSE_DIV2	5
++#define CK_SCMI_PLL2_Q		6
++#define CK_SCMI_PLL2_R		7
++#define CK_SCMI_PLL3_P		8
++#define CK_SCMI_PLL3_Q		9
++#define CK_SCMI_PLL3_R		10
++#define CK_SCMI_PLL4_P		11
++#define CK_SCMI_PLL4_Q		12
++#define CK_SCMI_PLL4_R		13
++#define CK_SCMI_MPU		14
++#define CK_SCMI_AXI		15
++#define CK_SCMI_MLAHB		16
++#define CK_SCMI_CKPER		17
++#define CK_SCMI_PCLK1		18
++#define CK_SCMI_PCLK2		19
++#define CK_SCMI_PCLK3		20
++#define CK_SCMI_PCLK4		21
++#define CK_SCMI_PCLK5		22
++#define CK_SCMI_PCLK6		23
++#define CK_SCMI_CKTIMG1		24
++#define CK_SCMI_CKTIMG2		25
++#define CK_SCMI_CKTIMG3		26
++#define CK_SCMI_RTC		27
++#define CK_SCMI_RTCAPB		28
++
++#endif /* _DT_BINDINGS_STM32MP13_CLKS_H_ */
+diff --git a/include/dt-bindings/reset/stm32mp13-resets.h b/include/dt-bindings/reset/stm32mp13-resets.h
+new file mode 100644
+index 000000000000..934864e90da6
+--- /dev/null
++++ b/include/dt-bindings/reset/stm32mp13-resets.h
+@@ -0,0 +1,100 @@
++/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ */
++
++#ifndef _DT_BINDINGS_STM32MP13_RESET_H_
++#define _DT_BINDINGS_STM32MP13_RESET_H_
++
++#define TIM2_R		13568
++#define TIM3_R		13569
++#define TIM4_R		13570
++#define TIM5_R		13571
++#define TIM6_R		13572
++#define TIM7_R		13573
++#define LPTIM1_R	13577
++#define SPI2_R		13579
++#define SPI3_R		13580
++#define USART3_R	13583
++#define UART4_R		13584
++#define UART5_R		13585
++#define UART7_R		13586
++#define UART8_R		13587
++#define I2C1_R		13589
++#define I2C2_R		13590
++#define SPDIF_R		13594
++#define TIM1_R		13632
++#define TIM8_R		13633
++#define SPI1_R		13640
++#define USART6_R	13645
++#define SAI1_R		13648
++#define SAI2_R		13649
++#define DFSDM_R		13652
++#define FDCAN_R		13656
++#define LPTIM2_R	13696
++#define LPTIM3_R	13697
++#define LPTIM4_R	13698
++#define LPTIM5_R	13699
++#define SYSCFG_R	13707
++#define VREF_R		13709
++#define DTS_R		13712
++#define PMBCTRL_R	13713
++#define LTDC_R		13760
++#define DCMIPP_R	13761
++#define DDRPERFM_R	13768
++#define USBPHY_R	13776
++#define STGEN_R		13844
++#define USART1_R	13888
++#define USART2_R	13889
++#define SPI4_R		13890
++#define SPI5_R		13891
++#define I2C3_R		13892
++#define I2C4_R		13893
++#define I2C5_R		13894
++#define TIM12_R		13895
++#define TIM13_R		13896
++#define TIM14_R		13897
++#define TIM15_R		13898
++#define TIM16_R		13899
++#define TIM17_R		13900
++#define DMA1_R		13952
++#define DMA2_R		13953
++#define DMAMUX1_R	13954
++#define DMA3_R		13955
++#define DMAMUX2_R	13956
++#define ADC1_R		13957
++#define ADC2_R		13958
++#define USBO_R		13960
++#define GPIOA_R		14080
++#define GPIOB_R		14081
++#define GPIOC_R		14082
++#define GPIOD_R		14083
++#define GPIOE_R		14084
++#define GPIOF_R		14085
++#define GPIOG_R		14086
++#define GPIOH_R		14087
++#define GPIOI_R		14088
++#define TSC_R		14095
++#define PKA_R		14146
++#define SAES_R		14147
++#define CRYP1_R		14148
++#define HASH1_R		14149
++#define RNG1_R		14150
++#define AXIMC_R		14160
++#define MDMA_R		14208
++#define MCE_R		14209
++#define ETH1MAC_R	14218
++#define FMC_R		14220
++#define QSPI_R		14222
++#define SDMMC1_R	14224
++#define SDMMC2_R	14225
++#define CRC1_R		14228
++#define USBH_R		14232
++#define ETH2MAC_R	14238
++
++/* SCMI reset domain identifiers */
++#define RST_SCMI_LTDC		0
++#define RST_SCMI_MDMA		1
++
++#endif /* _DT_BINDINGS_STM32MP13_RESET_H_ */
 -- 
 2.25.1
 
