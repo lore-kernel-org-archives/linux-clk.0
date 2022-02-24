@@ -2,124 +2,245 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C92AC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C18C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230081AbiBXQCM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:02:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
+        id S231337AbiBXQD2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:03:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbiBXQCM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:02:12 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F3CC193DE;
-        Thu, 24 Feb 2022 08:01:33 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id x15so352553wrg.8;
-        Thu, 24 Feb 2022 08:01:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=y05yvb52Nsp11oYlXTQ2W1T0axwKZmDa9In+lb+g4zo=;
-        b=GnV/17WEDbgkTXw5Szy0hHTJZKC90jXe/+zj3SQueTq7TBeyrs/8twssH/6UgvEWGu
-         pPgsabBuHeUszXbWvLXy/atvo+h9H0fC5fwuRWN62mYXf2UQfXT6VW3H4PLtmrjQGRSc
-         mAvEnyt2IQe7TWSx+uEwkT1FSFXGo+rvonqUhxnXQ7YK/ZBFeaOHR6pE+Bztb17HMaTY
-         33eY9IDdWby1GJpfZDib5RhuFyoG7lAiRK7+OsCBHiGr5ULBD5HHm+kw7qYUn9f5XhRx
-         5iCMR9Fu3kUjdY3/vnGgrvMpr+h2eP2jLs0UZhY79trzcbqYp3NLACDL19mS0FIvKWDa
-         8Cxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y05yvb52Nsp11oYlXTQ2W1T0axwKZmDa9In+lb+g4zo=;
-        b=RoHFnikPONWlKmrINVZx1RZO+XhP/AFViV5Sn/tjofukfSSnFUs6CIfF2oVg7c9VY+
-         Jkp148Sjb1hwQtzFCSY6DxtHCYJqGCC5GtuemQNhm+OhJ+SY6E+e9WVogQWeZSwyrhsg
-         77zIB9xrj6OrXJ+a7APyK0GdZuz9Dy25rm6wKtuHefLXo8gVg98FLdUVkfspeyb0Trub
-         asxWDkMaI9ecweAXlhZC89YTebPksJOX0aFV/QeotdnU0CUt9CPC68Nz02gXuZC9mKRG
-         fZsYU7RIIMyukY/jrutIkxqWQpbdaCz9B+3NjfWVUWzCZaYPl/by0hhCPOWwF8zS+aHq
-         y4wg==
-X-Gm-Message-State: AOAM532CDcNgdn7gUQ+FFMd57IMnJKCcHhXL/ClVdtFslR3gwElnH/Do
-        WLOBkKF8jQlhQDAMzTQye3o=
-X-Google-Smtp-Source: ABdhPJwbEWyLUPKgPfJM8rbkKwDuyxaneNxCj7/Lstjc1QdxMEN0ykJ1Lu83MJZHWz7N7SoUgv2+Yw==
-X-Received: by 2002:a05:6000:8f:b0:1ed:bb0e:6cbe with SMTP id m15-20020a056000008f00b001edbb0e6cbemr2769902wrx.209.1645718491173;
-        Thu, 24 Feb 2022 08:01:31 -0800 (PST)
-Received: from Ansuel-xps.localdomain ([5.170.140.187])
-        by smtp.gmail.com with ESMTPSA id d13sm3704964wri.38.2022.02.24.08.01.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:01:30 -0800 (PST)
-Date:   Thu, 24 Feb 2022 17:01:27 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229807AbiBXQDY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:03:24 -0500
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 214161A270F;
+        Thu, 24 Feb 2022 08:02:45 -0800 (PST)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21OFqe5j018312;
+        Thu, 24 Feb 2022 17:02:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=UIStS2YTt1T7LrNscNo2b+4wp8dBm8Ks5KrvwGSzTzQ=;
+ b=NR5/kCOfpCuAicadTXf2g7fqXp50GxIiKnFwQbGmZ7GXHxUnkLpJu0ybOGIdgCk471W7
+ y9zQSukn5609nkYcVYYMPoUqVqv75z3a3M8jJPAyojZ+swIxBFBv2Vstvyi8kPP97MjY
+ U2/BkmAOMPGYewHCZZfFQPnyzRzKVbMaQS9KzK/nZGLdU5GCZE6K4HTOKr9d7IPTD7zq
+ RZArsaG1ZPOTfGZcj+j8RfWmFQalyfBx243iMoBMxx831ceqR1gSox8/eoG8aSZqMyGU
+ TFk3ZsgqbqDrZsktnG6vQwOZTu8vAyDkzf0P7/ywNCa5s24qJmFhBJKVxZCmN4aiAHy9 Ug== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ee7tka6vf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 24 Feb 2022 17:02:11 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0070A10002A;
+        Thu, 24 Feb 2022 17:02:10 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E143622A6FC;
+        Thu, 24 Feb 2022 17:02:10 +0100 (CET)
+Received: from localhost (10.75.127.51) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Feb 2022 17:02:10
+ +0100
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/16] dt-bindings: clock: add ipq8064 ce5 clk define
-Message-ID: <Yher1ybYkFCVLLVt@Ansuel-xps.localdomain>
-References: <20220217235703.26641-1-ansuelsmth@gmail.com>
- <20220217235703.26641-13-ansuelsmth@gmail.com>
- <YhcDCnMFRppk3Mo+@builder.lan>
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 03/13] clk: stm32mp13: add stm32_mux clock management
+Date:   Thu, 24 Feb 2022 17:01:31 +0100
+Message-ID: <20220224160141.455881-4-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220224160141.455881-1-gabriel.fernandez@foss.st.com>
+References: <20220224160141.455881-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YhcDCnMFRppk3Mo+@builder.lan>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-02-24_03,2022-02-24_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 10:01:14PM -0600, Bjorn Andersson wrote:
-> On Thu 17 Feb 17:56 CST 2022, Ansuel Smith wrote:
-> 
-> > Add ipq8064 ce5 clk define needed for CryptoEngine in gcc driver.
-> > 
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >  include/dt-bindings/clock/qcom,gcc-ipq806x.h | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-> > index 7deec14a6dee..02262d2ac899 100644
-> > --- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-> > +++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-> > @@ -240,7 +240,7 @@
-> >  #define PLL14					232
-> >  #define PLL14_VOTE				233
-> >  #define PLL18					234
-> > -#define CE5_SRC					235
-> > +#define CE5_A_CLK				235
-> >  #define CE5_H_CLK				236
-> >  #define CE5_CORE_CLK				237
-> >  #define CE3_SLEEP_CLK				238
-> > @@ -283,5 +283,8 @@
-> >  #define EBI2_AON_CLK				281
-> >  #define NSSTCM_CLK_SRC				282
-> >  #define NSSTCM_CLK				283
-> 
-> You don't like 284?
-> 
-> Regards,
-> Bjorn
->
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-In the QSDK 284 is used for a virtual clk used to scale the NSS core.
-I skipped that in case we will implement it and to keep these header
-similar across QSDK and linux.
+Just to introduce management of a stm32 mux clock.
 
-> > +#define CE5_A_CLK_SRC				285
-> > +#define CE5_H_CLK_SRC				286
-> > +#define CE5_CORE_CLK_SRC			287
-> >  
-> >  #endif
-> > -- 
-> > 2.34.1
-> > 
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+---
+ drivers/clk/stm32/clk-stm32-core.c | 79 ++++++++++++++++++++++++++++++
+ drivers/clk/stm32/clk-stm32-core.h | 34 +++++++++++++
+ drivers/clk/stm32/clk-stm32mp13.c  | 11 +++++
+ 3 files changed, 124 insertions(+)
 
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index 0fab4a5a8c66..f34659625aff 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -91,3 +91,82 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
+ 
+ 	return 0;
+ }
++
++u8 clk_stm32_get_parent_mux(void __iomem *base,
++			    struct clk_stm32_clock_data *data,
++			    u16 mux_id)
++{
++	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
++	u32 mask = BIT(mux->width) - 1;
++	u32 val;
++
++	val = readl(base + mux->offset) >> mux->shift;
++	val &= mask;
++
++	return val;
++}
++
++int clk_stm32_set_parent_mux(void __iomem *base,
++			     struct clk_stm32_clock_data *data,
++			     u16 mux_id, u8 index)
++{
++	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
++
++	u32 mask = BIT(mux->width) - 1;
++	u32 reg = readl(base + mux->offset);
++	u32 val = index << mux->shift;
++
++	reg &= ~(mask << mux->shift);
++	reg |= val;
++
++	writel(reg, base + mux->offset);
++
++	return 0;
++}
++
++u8 clk_stm32_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
++
++	return clk_stm32_get_parent_mux(mux->base, mux->clock_data, mux->mux_id);
++}
++
++int clk_stm32_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
++	unsigned long flags = 0;
++
++	spin_lock_irqsave(mux->lock, flags);
++
++	clk_stm32_set_parent_mux(mux->base, mux->clock_data, mux->mux_id, index);
++
++	spin_unlock_irqrestore(mux->lock, flags);
++
++	return 0;
++}
++
++const struct clk_ops clk_stm32_mux_ops = {
++	.get_parent	= clk_stm32_mux_get_parent,
++	.set_parent	= clk_stm32_mux_set_parent,
++};
++
++struct clk_hw *clk_stm32_mux_register(struct device *dev,
++				      const struct stm32_rcc_match_data *data,
++				      void __iomem *base,
++				      spinlock_t *lock,
++				      const struct clock_config *cfg)
++{
++	struct clk_stm32_mux *mux = cfg->clock_cfg;
++	struct clk_hw *hw = &mux->hw;
++	int err;
++
++	mux->base = base;
++	mux->lock = lock;
++	mux->clock_data = data->clock_data;
++
++	err = clk_hw_register(dev, hw);
++	if (err)
++		return ERR_PTR(err);
++
++	return hw;
++}
+diff --git a/drivers/clk/stm32/clk-stm32-core.h b/drivers/clk/stm32/clk-stm32-core.h
+index 519723ae97eb..7c9f503d3388 100644
+--- a/drivers/clk/stm32/clk-stm32-core.h
++++ b/drivers/clk/stm32/clk-stm32-core.h
+@@ -83,10 +83,44 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
+ /* DIV define */
+ #define DIV_NO_RDY		0xFF
+ 
++/* Definition of clock structure */
++struct clk_stm32_mux {
++	u16 mux_id;
++	struct clk_hw hw;
++	void __iomem *base;
++	struct clk_stm32_clock_data *clock_data;
++	spinlock_t *lock; /* spin lock */
++};
++
++#define to_clk_stm32_mux(_hw) container_of(_hw, struct clk_stm32_mux, hw)
++
++/* Clock ops */
++u8 clk_stm32_get_parent_mux(void __iomem *base,
++			    struct clk_stm32_clock_data *data, u16 mux_id);
++
++int clk_stm32_set_parent_mux(void __iomem *base,
++			     struct clk_stm32_clock_data *data, u16 mux_id,
++			     u8 index);
++
++u8 clk_stm32_mux_get_parent(struct clk_hw *hw);
++int clk_stm32_mux_set_parent(struct clk_hw *hw, u8 index);
++
++extern const struct clk_ops clk_stm32_mux_ops;
++
+ /* Clock registering */
++struct clk_hw *clk_stm32_mux_register(struct device *dev,
++				      const struct stm32_rcc_match_data *data,
++				      void __iomem *base,
++				      spinlock_t *lock,
++				      const struct clock_config *cfg);
++
+ #define STM32_CLOCK_CFG(_binding, _clk, _struct, _register)\
+ {\
+ 	.id		= (_binding),\
+ 	.clock_cfg	= (_struct) {_clk},\
+ 	.func		= (_register),\
+ }
++
++#define STM32_MUX_CFG(_binding, _clk)\
++	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_mux *,\
++			&clk_stm32_mux_register)
+diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
+index 6908c2fcd594..89d4e039e4e6 100644
+--- a/drivers/clk/stm32/clk-stm32mp13.c
++++ b/drivers/clk/stm32/clk-stm32mp13.c
+@@ -400,7 +400,18 @@ static const struct stm32_mux_cfg stm32mp13_muxes[] = {
+ 	CFG_MUX(MUX_SDMMC2,	RCC_SDMMC12CKSELR,	3, 3),
+ };
+ 
++static const char * const eth12_src[] = {
++	"pll4_p", "pll3_q"
++};
++
++static struct clk_stm32_mux ck_ker_eth1 = {
++	.mux_id = MUX_ETH1,
++	.hw.init = CLK_HW_INIT_PARENTS("ck_ker_eth1", eth12_src, &clk_stm32_mux_ops,
++				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
++};
++
+ static const struct clock_config stm32mp13_clock_cfg[] = {
++	STM32_MUX_CFG(NO_ID, ck_ker_eth1),
+ };
+ 
+ u16 stm32mp13_cpt_gate[GATE_NB];
 -- 
-	Ansuel
+2.25.1
+
