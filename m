@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 510D1C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F33C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 16:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbiBXQJS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 11:09:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45692 "EHLO
+        id S229447AbiBXQZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 11:25:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbiBXQJR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:09:17 -0500
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6730D187E0C
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 08:08:34 -0800 (PST)
-Received: by mail-ot1-f53.google.com with SMTP id j3-20020a9d7683000000b005aeed94f4e9so1578151otl.6
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 08:08:34 -0800 (PST)
+        with ESMTP id S229481AbiBXQZj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 11:25:39 -0500
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63A8A1E015A
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 08:25:01 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id x193so3276179oix.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 08:25:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=JxRxbTHGWpM6LinUy2bx0RAfmxNnmv6jDVYuPv13Y+o=;
-        b=TRzb7c0853MCln/5rUw7eWHXFWjqRLB76I/d2vospZtWGTEtK0SrGv0VIO+RgFw2p9
-         /if2veVvLENpTgXEkAl/rYa6cOvAV816g6f576FUBhtj5Cx0Yxzkk14vgrxbBDh1Riud
-         hJqQemJParbNuTYW/qgoN0ydKS82DxYqoWHZNN1sOOG+S1je4swCNCtWOB+vsb+M1rRX
-         XgGsMamwPvifUO94cxs8uiEWXulBLATjXkb6COoZcXmvemBk0CnzyP/ej3+U8dbWkCyz
-         QNxfI+SRN4Hjf8J4HqbWdmJ8Oz67v2+nt06XvgUeKByENdcudjuyNY2p0p4FfYKAvgDt
-         T5uQ==
+        bh=rKwNr7V3uW8Gv5L5uE2dYixe/ABj2Wzg3cgJbqkHzkw=;
+        b=zIopXaux8buylgS/mMHZWgmjizG0jplQs8WuYQ5OzFEyXnPpgWKNOyXcLU+p3/hBRl
+         vx9xc12pCvRjJwjNTUA4wjFzc0f14UVrk0+2ny2yfQH0Ym1CXGcRXthGMimMYa92kRBv
+         7s13/nHCq3ffzYJvRkajTcVApXX7VgEw9upY4NLrk1rPdwD6Xx6x5Z6r6uPxQ1YaznWp
+         cyaF1WhTvaHQ8BS6WRTjKAl/NKwRT//U5eIFo4LHCBF57MG/YieDl38gAhXY9Nw0OOUz
+         IyXdAf46a0JT/5m/vv7J1T/yFsMXY6z4XuB3xmDuPRPpnhq8AP8rdbCL15J1eEyM8HWe
+         fLAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=JxRxbTHGWpM6LinUy2bx0RAfmxNnmv6jDVYuPv13Y+o=;
-        b=E+g1ODPQ40PMFOfacOZaQO937HQwXSJPr6QCjdNbWyeBYFGhyDI4DhK0eLEQBOHD3y
-         3VLq6ep+p9DlFoVwwznjFZ/6kHdknjRi83zOTrMF+NWURaS9XY4YkJIg53nBiGFeU3Uh
-         ADtiL7I80wnUAoQANmEwfFszUuc/n4za2IW495dN0V/k3KU/nQOW4aya9OjWPo01vxpx
-         B6c15jUlVIhDuK4MQ+FcloguzN1AYUq/DF3NKzE6C/WkA1Yd6dl4jQLLrRGFfrn9Qtiu
-         EHYxzkVKgzshAYoC/89eKLe2tNQDFsMBQ9rAj/GHmK7II4vSl0dDq9DdoLJnrEbybjAb
-         eW2w==
-X-Gm-Message-State: AOAM532OAMlu6RdKPD+wgASEQkTifgMMIvRcFM6uLqvSEiP+UtonyPOg
-        IeMnFry0F8d2KeqjD9mJ0JZebFiIuDIAVQ==
-X-Google-Smtp-Source: ABdhPJzDGApI0w+pifxCK8TLr/4Zs4P8LMKK2l+r4mEIpT7ZbRIx3k2WSHh9sW473rdKuSwPChmMRg==
-X-Received: by 2002:a4a:2714:0:b0:31b:ffc2:cc53 with SMTP id l20-20020a4a2714000000b0031bffc2cc53mr1135382oof.13.1645718805575;
-        Thu, 24 Feb 2022 08:06:45 -0800 (PST)
+        bh=rKwNr7V3uW8Gv5L5uE2dYixe/ABj2Wzg3cgJbqkHzkw=;
+        b=MRMYtpsEGIjqd/2PdRy/2mXOeOzJ5+ddBW4v/elWAIFE54RQkC16B4a8iCSfKu/Xmu
+         xb8KiAWMQC+9kuUeXSBIyJgnnXezb9394Zv/oCBLrOQi4BuSl8AmBFCvyEAIpyKiebVP
+         162+IU8KOVoW4vNazfT5ZY/zM7XqFKvE3kAIu1XtLvlBWKBzpKLIM/8HsJnzucRCy53u
+         FFJQqgasUxl/2hG8yrVYMzNzDxba2A7gDEnUvpmz6eOYjkwQkhm+UaMNDt31Mo/kJxoF
+         ZduHhP2Adl8Vf2uAiqSG7+jlEvm9eFAMCUCqQVaXqSEZZoWeputBW06YpIE5nsTh+ras
+         m7bQ==
+X-Gm-Message-State: AOAM532pnlfFx3bo6N2dpBlo1D0tMNFjAqXEfy+ZuwSarY5gIR+g9Wbm
+        X+1rZ3TH+LgZLVxIF0qkyI4jOtCdqIkEaw==
+X-Google-Smtp-Source: ABdhPJw/GpLCX/lTyPQyMRvaZlzuBOX2VoKZCUHE1DPThnj38YIABagyTXb5Bcj4mZHA/blBVFYYIw==
+X-Received: by 2002:a05:6870:2042:b0:d6:d3e6:ec3 with SMTP id l2-20020a056870204200b000d6d3e60ec3mr1075903oad.315.1645719305760;
+        Thu, 24 Feb 2022 08:15:05 -0800 (PST)
 Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
-        by smtp.gmail.com with ESMTPSA id s9sm1212573ooq.28.2022.02.24.08.06.44
+        by smtp.gmail.com with ESMTPSA id eh38sm1639274oab.36.2022.02.24.08.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 08:06:44 -0800 (PST)
-Date:   Thu, 24 Feb 2022 08:08:43 -0800
+        Thu, 24 Feb 2022 08:15:04 -0800 (PST)
+Date:   Thu, 24 Feb 2022 08:17:03 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Ansuel Smith <ansuelsmth@gmail.com>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -58,225 +58,83 @@ Cc:     Andy Gross <agross@kernel.org>,
         Taniya Das <tdas@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/16] clk: qcom: gcc-ipq806x: convert parent_names to
- parent_data
-Message-ID: <YhetizewLY5SqcJl@ripper>
+Subject: Re: [PATCH v4 08/16] clk: qcom: gcc-ipq806x: add additional freq nss
+ cores
+Message-ID: <Yhevf9f8ghpUWZvZ@ripper>
 References: <20220217235703.26641-1-ansuelsmth@gmail.com>
- <20220217235703.26641-6-ansuelsmth@gmail.com>
- <YhcAHQdtvSeROhT+@builder.lan>
- <Yhen5cLB32wGmhxu@Ansuel-xps.localdomain>
+ <20220217235703.26641-9-ansuelsmth@gmail.com>
+ <YhcBpBflfTd5/BNF@builder.lan>
+ <YheqZag1q6U8Gx8Y@Ansuel-xps.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yhen5cLB32wGmhxu@Ansuel-xps.localdomain>
+In-Reply-To: <YheqZag1q6U8Gx8Y@Ansuel-xps.localdomain>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 24 Feb 07:45 PST 2022, Ansuel Smith wrote:
+On Thu 24 Feb 07:55 PST 2022, Ansuel Smith wrote:
 
-> On Wed, Feb 23, 2022 at 09:48:45PM -0600, Bjorn Andersson wrote:
+> On Wed, Feb 23, 2022 at 09:55:16PM -0600, Bjorn Andersson wrote:
 > > On Thu 17 Feb 17:56 CST 2022, Ansuel Smith wrote:
 > > 
-> > > Convert parent_names to parent_data to modernize the driver.
-> > > Where possible use parent_hws directly.
+> > > Ipq8065 SoC (an evolution of ipq8064 SoC) contains nss cores that can be
+> > > clocked to 800MHz. Add these missing freq to the gcc driver.
 > > > 
 > > 
-> > Really nice to see this kind of cleanup. Unfortunately I have two
-> > comments below.
+> > Do we somehow need to ensure that these new frequencies are only
+> > available on 8065?
 > > 
-> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > ---
-> > >  drivers/clk/qcom/gcc-ipq806x.c | 286 ++++++++++++++++++++-------------
-> > >  1 file changed, 173 insertions(+), 113 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> > > index 34cddf461dba..828383c30322 100644
-> > > --- a/drivers/clk/qcom/gcc-ipq806x.c
-> > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> > > @@ -25,6 +25,10 @@
-> > >  #include "clk-hfpll.h"
-> > >  #include "reset.h"
-> > >  
-> > > +static const struct clk_parent_data gcc_pxo[] = {
-> > > +	{ .fw_name = "pxo" },
-> > 
-> > I expect that this will break booting these boards with existing dtb,
-> > because there's not yet a clocks <&pxo_board> in the gcc node.
+> > Regards,
+> > Bjorn
 > >
 > 
-> Considering the lack of device using ipq806x in the kernel and the fact
-> that we add the clocks to the global dtsi should we care? The breakage
-> will be present on boards that use custom kernel anyway so in theory
-> shouldn't be that hard to refresh the dtsi.
-> 
-> > If you also add .name = "pxo" here that it should still fall back to map
-> > to the board clock registered in gcc_ipq806x_probe() and once we have
-> > passed 1-2 kernel releases we can clean out the old mapping.
-> > 
-> 
-> Just to make sure, you are suggesting to put 2 entry (fw_name AND name)
-> or replace the fw_name with the generic name variable? 
+> In theory ipq8064 can run the nss cores to this freq. Do you have any
+> suggestion on how to limit these 2 clock to the different compatible?
 > 
 
-What you have (.fw_name = "pxo") is perfect looking forward, but if
-nothing else the clock and dts drivers are merged through different
-paths up to Torvalds so merging the set as is in a single go might
-actually break things for a while, even for you.
+What's done in other clock drivers is that we have different
+compatibles and then rewrite the clock definitions at probe before
+registering the clocks.
 
-So if we go { .fw_name = "pxo", .name = "pxo" } we should handle both
-the new and old dts. And I'm fine with saying that as soon as we see the
-dts change landed in a release we drop the .name - if there aren't users
-mixing and matching kernel and dtbs.
-
-> Anyway thanks for the review!
-> 
-
-Thank you for the nice work!
+It sounds like it's the right thing to do here as well, to avoid the
+8064 nss to be overclocked.
 
 Regards,
 Bjorn
 
-> > > +};
-> > > +
-> > >  static struct clk_pll pll0 = {
-> > >  	.l_reg = 0x30c4,
-> > >  	.m_reg = 0x30c8,
-> > > @@ -35,7 +39,7 @@ static struct clk_pll pll0 = {
-> > >  	.status_bit = 16,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll0",
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_ops,
-> > >  	},
-> > > @@ -46,7 +50,9 @@ static struct clk_regmap pll0_vote = {
-> > >  	.enable_mask = BIT(0),
-> > >  	.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll0_vote",
-> > > -		.parent_names = (const char *[]){ "pll0" },
-> > > +		.parent_hws = (const struct clk_hw*[]){
-> > > +			&pll0.clkr.hw,
-> > > +		},
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_vote_ops,
-> > >  	},
-> > > @@ -62,7 +68,7 @@ static struct clk_pll pll3 = {
-> > >  	.status_bit = 16,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll3",
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_ops,
-> > >  	},
-> > > @@ -89,7 +95,7 @@ static struct clk_pll pll8 = {
-> > >  	.status_bit = 16,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll8",
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_ops,
-> > >  	},
-> > > @@ -100,7 +106,9 @@ static struct clk_regmap pll8_vote = {
-> > >  	.enable_mask = BIT(8),
-> > >  	.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll8_vote",
-> > > -		.parent_names = (const char *[]){ "pll8" },
-> > > +		.parent_hws = (const struct clk_hw*[]){
-> > > +			&pll8.clkr.hw,
-> > > +		},
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_vote_ops,
-> > >  	},
-> > > @@ -123,7 +131,7 @@ static struct hfpll_data hfpll0_data = {
-> > >  static struct clk_hfpll hfpll0 = {
-> > >  	.d = &hfpll0_data,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.name = "hfpll0",
-> > >  		.ops = &clk_ops_hfpll,
-> > > @@ -149,7 +157,7 @@ static struct hfpll_data hfpll1_data = {
-> > >  static struct clk_hfpll hfpll1 = {
-> > >  	.d = &hfpll1_data,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.name = "hfpll1",
-> > >  		.ops = &clk_ops_hfpll,
-> > > @@ -175,7 +183,7 @@ static struct hfpll_data hfpll_l2_data = {
-> > >  static struct clk_hfpll hfpll_l2 = {
-> > >  	.d = &hfpll_l2_data,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.name = "hfpll_l2",
-> > >  		.ops = &clk_ops_hfpll,
-> > > @@ -194,7 +202,7 @@ static struct clk_pll pll14 = {
-> > >  	.status_bit = 16,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll14",
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_ops,
-> > >  	},
-> > > @@ -205,7 +213,9 @@ static struct clk_regmap pll14_vote = {
-> > >  	.enable_mask = BIT(14),
-> > >  	.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll14_vote",
-> > > -		.parent_names = (const char *[]){ "pll14" },
-> > > +		.parent_hws = (const struct clk_hw*[]){
-> > > +			&pll14.clkr.hw,
-> > > +		},
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_vote_ops,
-> > >  	},
-> > > @@ -238,7 +248,7 @@ static struct clk_pll pll18 = {
-> > >  	.freq_tbl = pll18_freq_tbl,
-> > >  	.clkr.hw.init = &(struct clk_init_data){
-> > >  		.name = "pll18",
-> > > -		.parent_names = (const char *[]){ "pxo" },
-> > > +		.parent_data = gcc_pxo,
-> > >  		.num_parents = 1,
-> > >  		.ops = &clk_pll_ops,
-> > >  	},
-> > > @@ -259,9 +269,9 @@ static const struct parent_map gcc_pxo_pll8_map[] = {
-> > >  	{ P_PLL8, 3 }
+> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > > ---
+> > >  drivers/clk/qcom/gcc-ipq806x.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+> > > index a4bf78fe8678..53a61860063d 100644
+> > > --- a/drivers/clk/qcom/gcc-ipq806x.c
+> > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> > > @@ -232,7 +232,9 @@ static struct clk_regmap pll14_vote = {
+> > >  
+> > >  static struct pll_freq_tbl pll18_freq_tbl[] = {
+> > >  	NSS_PLL_RATE(550000000, 44, 0, 1, 0x01495625),
+> > > +	NSS_PLL_RATE(600000000, 48, 0, 1, 0x01495625),
+> > >  	NSS_PLL_RATE(733000000, 58, 16, 25, 0x014b5625),
+> > > +	NSS_PLL_RATE(800000000, 64, 0, 1, 0x01495625),
 > > >  };
 > > >  
-> > > -static const char * const gcc_pxo_pll8[] = {
-> > > -	"pxo",
-> > > -	"pll8_vote",
-> > > +static const struct clk_parent_data gcc_pxo_pll8[] = {
-> > > +	{ .fw_name = "pxo" },
-> > > +	{ .hw = &pll8_vote.hw },
+> > >  static struct clk_pll pll18 = {
+> > > @@ -2702,7 +2704,9 @@ static const struct freq_tbl clk_tbl_nss[] = {
+> > >  	{ 110000000, P_PLL18, 1, 1, 5 },
+> > >  	{ 275000000, P_PLL18, 2, 0, 0 },
+> > >  	{ 550000000, P_PLL18, 1, 0, 0 },
+> > > +	{ 600000000, P_PLL18, 1, 0, 0 },
+> > >  	{ 733000000, P_PLL18, 1, 0, 0 },
+> > > +	{ 800000000, P_PLL18, 1, 0, 0 },
+> > >  	{ }
 > > >  };
 > > >  
-> > >  static const struct parent_map gcc_pxo_pll8_cxo_map[] = {
-> > > @@ -270,10 +280,10 @@ static const struct parent_map gcc_pxo_pll8_cxo_map[] = {
-> > >  	{ P_CXO, 5 }
-> > >  };
-> > >  
-> > > -static const char * const gcc_pxo_pll8_cxo[] = {
-> > > -	"pxo",
-> > > -	"pll8_vote",
-> > > -	"cxo",
-> > > +static const struct clk_parent_data gcc_pxo_pll8_cxo[] = {
-> > > +	{ .fw_name = "pxo" },
-> > > +	{ .hw = &pll8_vote.hw },
-> > > +	{ .fw_name = "cxo" },
-> > 
-> > As with "pxo", I think you need a .name = "cxo" here as well.
-> > 
-> > Regards,
-> > Bjorn
+> > > -- 
+> > > 2.34.1
+> > > 
 > 
 > -- 
 > 	Ansuel
