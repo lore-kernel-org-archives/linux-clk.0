@@ -2,147 +2,77 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 299D3C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 18:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C32C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 18:43:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbiBXSYR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 13:24:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54028 "EHLO
+        id S232279AbiBXSoH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 13:44:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbiBXSYQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 13:24:16 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68AA525317D;
-        Thu, 24 Feb 2022 10:23:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1645727026; x=1677263026;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=nB30B/2Cq7Khl08NUdbourrgXm8MBEepU1mDXjaveQ0=;
-  b=F68xIsyIyKwlquGzQRRpbfqi1AQ5xjdzqX6NEALc/cu1tiPB/TKWN9D1
-   6I3JzGO0B5yaH9Z+U1iamtJNWFuDx5QLdTkT1uA0OzklNAXqCHD/yX4rT
-   XhcRs6/0Lyec7xVqA96z0XuhhV/lnxmodSoHhKL/6wSdZ2nweuXmto2Tc
-   z9fClHw2qfNzkuDpxlFNaIzsD4G3L7dmasF2dgQDdzBU0ZMsZ3SPGiY6D
-   6CpHBHElrGcobIYqGOqcZMZI1cVmYhVPyOwqJv1dDtRw1ttq29xhq3wo6
-   +UVbn8rkZmyO/Mt5S4UUwBqqR95V6+SoE9BpNn7vMkre0jLoBHr3Zsg/+
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,134,1643698800"; 
-   d="scan'208";a="154800783"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Feb 2022 11:23:45 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 24 Feb 2022 11:23:45 -0700
-Received: from [10.12.73.51] (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Thu, 24 Feb 2022 11:23:43 -0700
-Message-ID: <2e2a265c-8d6c-59a3-e38a-28dc9f37fe94@microchip.com>
-Date:   Thu, 24 Feb 2022 19:23:42 +0100
+        with ESMTP id S229850AbiBXSoG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 13:44:06 -0500
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F704223211;
+        Thu, 24 Feb 2022 10:43:36 -0800 (PST)
+Received: by mail-oi1-f176.google.com with SMTP id l25so4103119oic.13;
+        Thu, 24 Feb 2022 10:43:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rDAV/WWC011qVv0D0YjIr6Ze1/ltKncfCfMwzEnMjjQ=;
+        b=o8+zIulVbhgAZbFoTuYA4+uz+LExCbxhjmPDq3Omw15z7+w/aqEUCHK9d0z9xJkHXh
+         mKHcsMJ7mej35QfkeczYztLX0kO9yZ+h1937eGKxEWZ971MbVpQkKsr3QWomuWPwlX1t
+         dCJTaEe2F6Gp2Osk/42gzv+xEiCi5ZgL1cM70nIr2uruBVITXS6u9pSFDax1Y8s3Y0u8
+         QaSsis8leehdU+kXf3c7S1NbYhSaU1uRFdv/rsWX8lxCJd3W+9subBTQ+wXJqnMuXkwA
+         fbqBR06H3RIcvEUt2e2RvsHjNcgKbYVnYnLKifjqjKpDK21jNiuW8rKqW3Xvzc9YCyft
+         vT/Q==
+X-Gm-Message-State: AOAM530VzZDLAb9U6F3xMMMVJ3r5MxlsbrzUeuIHkbjPL5PKShlUqGdm
+        2cfeDs72SlHMEs8zjytYIg==
+X-Google-Smtp-Source: ABdhPJyzToIn+k8zZMPupkt5bsE/2FY1U+G91saHHxKA8Ux7j9WTKJiq5dYRPnNsAu8lEQhspejNdg==
+X-Received: by 2002:a05:6808:1448:b0:2d7:dc0:c271 with SMTP id x8-20020a056808144800b002d70dc0c271mr5178534oiv.127.1645728215536;
+        Thu, 24 Feb 2022 10:43:35 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id p22-20020a056870831600b000ccfbea4f23sm236718oae.33.2022.02.24.10.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Feb 2022 10:43:34 -0800 (PST)
+Received: (nullmailer pid 3382450 invoked by uid 1000);
+        Thu, 24 Feb 2022 18:43:33 -0000
+Date:   Thu, 24 Feb 2022 12:43:33 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <agross@kernel.org>
+Subject: Re: [PATCH v5 01/15] dt-bindings: clock: split qcom,gcc.yaml to
+ common and specific schema
+Message-ID: <YhfR1fx+A0ZOrn5g@robh.at.kernel.org>
+References: <20220224164831.21475-1-ansuelsmth@gmail.com>
+ <20220224164831.21475-2-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 6/8] ARM: dts: at91: sama7g5: add opps
-Content-Language: en-US
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <robh+dt@kernel.org>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20211216141338.35144-1-claudiu.beznea@microchip.com>
- <20211216141338.35144-7-claudiu.beznea@microchip.com>
- <d0c4262c-097d-18da-cb51-5409f6e02b61@microchip.com>
-Organization: microchip
-In-Reply-To: <d0c4262c-097d-18da-cb51-5409f6e02b61@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220224164831.21475-2-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/02/2022 at 15:59, Nicolas Ferre wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Thu, 24 Feb 2022 17:48:17 +0100, Ansuel Smith wrote:
+> Split qcom,gcc.yaml to common and specific schema to use it as a
+> template for schema that needs to use the gcc bindings and require
+> to add additional bindings.
 > 
-> On 16/12/2021 at 15:13, Claudiu Beznea wrote:
->> Add OPPs for SAMA7G5 along with clock for CPU.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-other.yaml        | 76 +++++++++++++++++++
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   | 59 +-------------
+>  2 files changed, 80 insertions(+), 55 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
 > 
-> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Queued in at91-dt branch.
 
-FYI: I took v2 series of DT changes.
-
-> 
-> Regards,
->     Nicolas
-> 
->> ---
->>    arch/arm/boot/dts/sama7g5.dtsi | 37 ++++++++++++++++++++++++++++++++++
->>    1 file changed, 37 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
->> index 7039311bf678..22352ef5bc72 100644
->> --- a/arch/arm/boot/dts/sama7g5.dtsi
->> +++ b/arch/arm/boot/dts/sama7g5.dtsi
->> @@ -30,6 +30,43 @@ cpu0: cpu@0 {
->>                        device_type = "cpu";
->>                        compatible = "arm,cortex-a7";
->>                        reg = <0x0>;
->> +                     clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
->> +                     clock-names = "cpu";
->> +                     operating-points-v2 = <&cpu_opp_table>;
->> +             };
->> +     };
->> +
->> +     cpu_opp_table: opp-table {
->> +             compatible = "operating-points-v2";
->> +
->> +             opp-90000000 {
->> +                     opp-hz = /bits/ 64 <90000000>;
->> +                     opp-microvolt = <1050000 1050000 1225000>;
->> +                     clock-latency-ns = <320000>;
->> +             };
->> +
->> +             opp-250000000 {
->> +                     opp-hz = /bits/ 64 <250000000>;
->> +                     opp-microvolt = <1050000 1050000 1225000>;
->> +                     clock-latency-ns = <320000>;
->> +             };
->> +
->> +             opp-600000000 {
->> +                     opp-hz = /bits/ 64 <600000000>;
->> +                     opp-microvolt = <1050000 1050000 1225000>;
->> +                     clock-latency-ns = <320000>;
->> +             };
->> +
->> +             opp-800000000 {
->> +                     opp-hz = /bits/ 64 <800000000>;
->> +                     opp-microvolt = <1150000 1125000 1225000>;
->> +                     clock-latency-ns = <320000>;
->> +             };
->> +
->> +             opp-1000000002 {
->> +                     opp-hz = /bits/ 64 <1000000002>;
->> +                     opp-microvolt = <1250000 1225000 1300000>;
->> +                     clock-latency-ns = <320000>;
->>                };
->>        };
->>
-> 
-> 
-> --
-> Nicolas Ferre
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
--- 
-Nicolas Ferre
+Reviewed-by: Rob Herring <robh@kernel.org>
