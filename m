@@ -2,173 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B05C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 12:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD6FC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Feb 2022 14:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234246AbiBXMQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 07:16:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47270 "EHLO
+        id S234542AbiBXPAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 10:00:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233348AbiBXMQw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 07:16:52 -0500
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEDC52325E0;
-        Thu, 24 Feb 2022 04:16:22 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id d11so1898342vsm.5;
-        Thu, 24 Feb 2022 04:16:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F9klOtGIegRZ7rKwwt1H5qZSXqDy38qXRG5ldgMZILY=;
-        b=CHtPaiZBR0Kaqk4J7Wn9Z4kRlS3qp/uc2Y4rMQkPuGnaK0lghVOH0vmES9Vn7icWCU
-         c9Ba2P6IAwYjH0fVkt+TvXPlY6sOSf/nTLyqShiTtMDFPhvrOwBRg/AMVtNjR/5GYQXd
-         litwshH4HE3adaq1iKOGRKKIrH/01qRXzRye/fERfs7fie/+n8P1ABvbjKHQzQ/aZHlD
-         utGZ2GbvnXpl/X3UbMWI06aMbC20KJ7masz4v5ZzMZ0xUiFApc2sSHbSCqBuASQ6vhgI
-         RPTtm8ADdNc017zBsU11nwIA2A3PpJ1+oyEetEZeZlB9a2NzAwplVbLy5ezqzWJuyXHl
-         xp4g==
-X-Gm-Message-State: AOAM531LE6xaGtLWXEx5BXhgKII3j1UlZdhcRq7GrauKkPmJ4n14pBfw
-        gqKHHOIY0QNgwS+9cuv+Dq3z1RNLLno8bg==
-X-Google-Smtp-Source: ABdhPJwb8b/HnjBl+TO6YfuCgXhZu1YZvv9hvAp3LbnUXQBkC4ppBKiEobr4QE1n45xCmeyPwYZSig==
-X-Received: by 2002:a67:d81e:0:b0:31b:a09a:1c4d with SMTP id e30-20020a67d81e000000b0031ba09a1c4dmr1010814vsj.0.1645704981580;
-        Thu, 24 Feb 2022 04:16:21 -0800 (PST)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id l35sm349485uac.7.2022.02.24.04.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Feb 2022 04:16:21 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id 60so791952uae.1;
-        Thu, 24 Feb 2022 04:16:21 -0800 (PST)
-X-Received: by 2002:a9f:360f:0:b0:341:8a12:8218 with SMTP id
- r15-20020a9f360f000000b003418a128218mr916874uad.14.1645704980847; Thu, 24 Feb
- 2022 04:16:20 -0800 (PST)
+        with ESMTP id S234948AbiBXPAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 10:00:03 -0500
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D243426834C;
+        Thu, 24 Feb 2022 06:59:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1645714769; x=1677250769;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ORDMBlKCGSdSfHM8GA+311LvkiZtIfohu3XDDYVXTUo=;
+  b=avyvOQmmF4BPcZcaesDapZhEzVsXUXhtWe2l+KWfsHByG3VsWz/xiho9
+   orMS5UNJokPWBNN1qxwpmasgdMXkoH6EcnL3PlNCLCxppWsvDnCzJiAW1
+   7hMlI60fhpXPG1L7lT6TIfoIwxm3W7sjc9/fdhtK3ssUsHpjvrM3ErPA9
+   /nJAxxD7vdf9MHdnRAUScamy7Cd0wMQHccULa8hLsiyvjYKKUQ5gTAiK1
+   gPMhgBhbo+VqII3LS/ENTDXCQ0dy7NbhFskK8WzIecVmd0RaC2Oex7j3f
+   Xw7dIIiCPVdcf6G6Rs5r8hcQe1OILPdufaeX10/UXR5YNJ1Sw2lkNRUID
+   w==;
+X-IronPort-AV: E=Sophos;i="5.90,134,1643698800"; 
+   d="scan'208";a="154765321"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Feb 2022 07:59:29 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 24 Feb 2022 07:59:29 -0700
+Received: from [10.12.73.51] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
+ Transport; Thu, 24 Feb 2022 07:59:26 -0700
+Message-ID: <d0c4262c-097d-18da-cb51-5409f6e02b61@microchip.com>
+Date:   Thu, 24 Feb 2022 15:59:26 +0100
 MIME-Version: 1.0
-References: <20220222103437.194779-1-miquel.raynal@bootlin.com>
- <20220222103437.194779-5-miquel.raynal@bootlin.com> <CAMuHMdWd150q63Nr-=7tn34D3EyiBkAKyuXHm35MM6wci93KZw@mail.gmail.com>
- <20220223174902.3a9b85ea@xps13> <CAMuHMdVr4tiicEn-BbBnCd-zP6ncr=zKd-eDvPYoYKNWUKsOBw@mail.gmail.com>
- <20220224102724.74e2c406@xps13> <CAMuHMdWtx5jnyZ0vhCVvM=nTv9H4tD7+g0YTWX8MALc_hR5x4g@mail.gmail.com>
- <20220224123620.02740e8c@xps13>
-In-Reply-To: <20220224123620.02740e8c@xps13>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 24 Feb 2022 13:16:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
-Message-ID: <CAMuHMdWofNo5aCZscADc_LuQjzDb7YoQhZS736d7_hrswdY5DA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] dma: dmamux: Introduce RZN1 DMA router support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 6/8] ARM: dts: at91: sama7g5: add opps
+Content-Language: en-US
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <robh+dt@kernel.org>, <linux@armlinux.org.uk>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20211216141338.35144-1-claudiu.beznea@microchip.com>
+ <20211216141338.35144-7-claudiu.beznea@microchip.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20211216141338.35144-7-claudiu.beznea@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+On 16/12/2021 at 15:13, Claudiu Beznea wrote:
+> Add OPPs for SAMA7G5 along with clock for CPU.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-On Thu, Feb 24, 2022 at 12:36 PM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
-> > > > > > > +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> > > > > > > +{
-> > > > > > > +       struct device_node *mux_node = pdev->dev.of_node;
-> > > > > > > +       const struct of_device_id *match;
-> > > > > > > +       struct device_node *dmac_node;
-> > > > > > > +       struct rzn1_dmamux_data *dmamux;
-> > > > > > > +
-> > > > > > > +       dmamux = devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL);
-> > > > > > > +       if (!dmamux)
-> > > > > > > +               return -ENOMEM;
-> > > > > > > +
-> > > > > > > +       mutex_init(&dmamux->lock);
-> > > > > > > +
-> > > > > > > +       dmac_node = of_parse_phandle(mux_node, "dma-masters", 0);
-> > > > > > > +       if (!dmac_node)
-> > > > > > > +               return dev_err_probe(&pdev->dev, -ENODEV, "Can't get DMA master node\n");
-> > > > > > > +
-> > > > > > > +       match = of_match_node(rzn1_dmac_match, dmac_node);
-> > > > > > > +       if (!match) {
-> > > > > > > +               of_node_put(dmac_node);
-> > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "DMA master is not supported\n");
-> > > > > > > +       }
-> > > > > > > +
-> > > > > > > +       if (of_property_read_u32(dmac_node, "dma-requests", &dmamux->dmac_requests)) {
-> > > > > > > +               of_node_put(dmac_node);
-> > > > > > > +               return dev_err_probe(&pdev->dev, -EINVAL, "Missing DMAC requests information\n");
-> > > > > > > +       }
-> > > > > > > +
-> > > > > > > +       of_node_put(dmac_node);
-> > > > > >
-> > > > > > When hardcoding dmac_requests to 16, I guess the whole dmac_node
-> > > > > > handling can be removed?
-> > > > >
-> > > > > Not really, I think the following checks are still valid and fortunate,
-> > > > > and they need some of_ handling to work properly:
-> > > > > - verify that the chan requested is within the range of dmac_requests
-> > > > >   in the _route_allocate() callback
-> > > > > - ensure the dmamux is wired to a supported DMAC in the DT (this
-> > > > >   condition might be loosen in the future if needed or dropped entirely
-> > > > >   if considered useless)
-> > > > > - I would like to add a check against the number of requests supported
-> > > > >   by the dmamux and the dmac (not done yet).
-> > > > > For the record, I've taken inspiration to write these lines on the other
-> > > > > dma router driver from TI.
->
->         ^^^^^^^^^^^
-> ... these checks
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Queued in at91-dt branch.
 
-I don't know. Some of them will be checked when calling into the
-parent DMAC, right?
+Regards,
+   Nicolas
 
->
-> > > > >
-> > > > > Unless, and I know some people think like that, we do not try to
-> > > > > validate the DT and if the DT is wrong that is none of our business.
-> > > > >
-> > > > > >
-> > > > > > > +
-> > > > > > > +       if (of_property_read_u32(mux_node, "dma-requests", &dmamux->dmamux_requests)) {
-> > > > > >
-> > > > > > Don't obtain from DT, but fix to 32?
-> > > > >
-> > > > > I believe the answer to the previous question should give me a clue
-> > > > > about why you would prefer hardcoding than reading from the DT such
-> > > > > an information. Perhaps I should mention that all these properties are
-> > > > > already part of the bindings, and are not specific to the driver, the
-> > > > > information will be in the DT anyway.
-> > > >
-> > > > The 32 is a property of the hardware (32 bits in DMAMUX register).
-> > > > So IMHO it falls under the "differentiate by compatible value,
-> > > > not by property" rule.
-> > >
-> > > I agree this is a property of the hardware and feels redundant here.
-> > >
-> > > What about the checks below, do you agree with the fact that I should
-> > > keep them or do you prefer dropping them (all? partially?)?
-> >
-> > There are no checks below?
->
-> I meant above /o\ ...
+> ---
+>   arch/arm/boot/dts/sama7g5.dtsi | 37 ++++++++++++++++++++++++++++++++++
+>   1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/sama7g5.dtsi b/arch/arm/boot/dts/sama7g5.dtsi
+> index 7039311bf678..22352ef5bc72 100644
+> --- a/arch/arm/boot/dts/sama7g5.dtsi
+> +++ b/arch/arm/boot/dts/sama7g5.dtsi
+> @@ -30,6 +30,43 @@ cpu0: cpu@0 {
+>   			device_type = "cpu";
+>   			compatible = "arm,cortex-a7";
+>   			reg = <0x0>;
+> +			clocks = <&pmc PMC_TYPE_CORE PMC_CPUPLL>;
+> +			clock-names = "cpu";
+> +			operating-points-v2 = <&cpu_opp_table>;
+> +		};
+> +	};
+> +
+> +	cpu_opp_table: opp-table {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp-90000000 {
+> +			opp-hz = /bits/ 64 <90000000>;
+> +			opp-microvolt = <1050000 1050000 1225000>;
+> +			clock-latency-ns = <320000>;
+> +		};
+> +
+> +		opp-250000000 {
+> +			opp-hz = /bits/ 64 <250000000>;
+> +			opp-microvolt = <1050000 1050000 1225000>;
+> +			clock-latency-ns = <320000>;
+> +		};
+> +
+> +		opp-600000000 {
+> +			opp-hz = /bits/ 64 <600000000>;
+> +			opp-microvolt = <1050000 1050000 1225000>;
+> +			clock-latency-ns = <320000>;
+> +		};
+> +
+> +		opp-800000000 {
+> +			opp-hz = /bits/ 64 <800000000>;
+> +			opp-microvolt = <1150000 1125000 1225000>;
+> +			clock-latency-ns = <320000>;
+> +		};
+> +
+> +		opp-1000000002 {
+> +			opp-hz = /bits/ 64 <1000000002>;
+> +			opp-microvolt = <1250000 1225000 1300000>;
+> +			clock-latency-ns = <320000>;
+>   		};
+>   	};
+>   
 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Nicolas Ferre
