@@ -2,107 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE4EC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0713EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239087AbiBYJ25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 04:28:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37488 "EHLO
+        id S239148AbiBYJfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 04:35:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239078AbiBYJ24 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:28:56 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9F541795C6
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:28:24 -0800 (PST)
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 299153FCAC
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 09:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645781303;
-        bh=kGwkKU8L/fn7aVH4SNRnVpay291DKpyh1Xqm8qPEDW0=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=u9uI0FeEI+nougT15+fBtZ/gs9REL/PNcYi0pXWGm5BgBJq0W0BYcB/M+wimVDIej
-         KFE2bnrTgkpLn/kCDvd75nkXtRbG+NdHqR1AntoD8WWGlJywbx7J6lr/2Q8CFu+3R5
-         RQzYVKRYwRd5Rxurkoq2UTEjNBRLhYc98HkPEe/e6XZW0eB0lYXs+I5hyIDW9u5RpL
-         Cwtrn8UbbNx9i2cKMtL32JZho2rLjbK2q0k68wvNsE2mZcMWMPKttKl/ybL+U5I8Ti
-         sKFEbro4RM6yKLZV90hjtqIxOrpiaHUICe7RIc4rDnwbmUiooxBwQJfC+y6dRhP3pD
-         Me9m6HlULn4mg==
-Received: by mail-ej1-f71.google.com with SMTP id k21-20020a1709063e1500b006d0777c06d6so2409306eji.1
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:28:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=kGwkKU8L/fn7aVH4SNRnVpay291DKpyh1Xqm8qPEDW0=;
-        b=MakUa42ZCTpj8NlK63JA4R1Ia30oStqTnuqL53uv0vLEXvu+xHbKnDza4+LxSfyvR5
-         5/gWt4xNwRz+h15ImvE0zQepZ2lZc6UFUw02Ey3DAIsz7yoT0PgF3NOGFfBPjGpvp3NB
-         Ec2ardLOrxTfv+5TvG/TooaVv0ZP7HvNn8YnyssaUnzX1Ji2SUazO5TOax6SfG5uYIQm
-         j1G901IEd1LldSlbPNe0A+RDq62np7RcQ2HhJ//nAbqNcPxqkiPX6CyVsP+ChE+Msg74
-         7YuXIX1UXUOwM6k3m0rd8P+8YsX1WKdMifNB5J7AS/T6alxcOnebPxX8463Rem7moL1u
-         MbGA==
-X-Gm-Message-State: AOAM532T5R1oI3sJDAlL/FSjSTKcp79IaWDiMwVaa9kqpxMO/CpB6vIT
-        cTUjt6UtWRttRQlBN8ZMg8YWMVR3Tb5eVmL5W4QOJ97t5OcispW8ml6VNASIz6zoL8vgcEDhis2
-        eUQ8A2WnimR2aRDtQAySXk9xcMsJ/tF58Wk5fOA==
-X-Received: by 2002:a17:906:4d51:b0:6b8:78e0:565a with SMTP id b17-20020a1709064d5100b006b878e0565amr5351323ejv.587.1645781302265;
-        Fri, 25 Feb 2022 01:28:22 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz8c3ZhY7jr+/X0AvJodZEzeopQeOKXYiLB34QdycL3m21MYR4q1dg62gQBFvoYHXY7gyalew==
-X-Received: by 2002:a17:906:4d51:b0:6b8:78e0:565a with SMTP id b17-20020a1709064d5100b006b878e0565amr5351308ejv.587.1645781302107;
-        Fri, 25 Feb 2022 01:28:22 -0800 (PST)
-Received: from [192.168.0.130] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id d8-20020a170906304800b006cdf8a1e146sm770803ejd.217.2022.02.25.01.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Feb 2022 01:28:21 -0800 (PST)
-Message-ID: <f77b2f7d-9a22-3e1f-a5f4-90766bdc232f@canonical.com>
-Date:   Fri, 25 Feb 2022 10:28:20 +0100
+        with ESMTP id S237389AbiBYJfm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:35:42 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E7B1F7695
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:35:10 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 98C2F5C01A6;
+        Fri, 25 Feb 2022 04:35:09 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 25 Feb 2022 04:35:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=vhjDOaUktKciKJbZAf44ISyP03nTGYieQt5n1R
+        9DNl0=; b=X5m6Z4qxnM6xHpH38tA2HPRcwWzkAyA0d2S8EpgfZp9V/rGc3pp5A4
+        WuGWSr46TsH5n8mfIGdIgX9o3NbYp5onZV2HDi799ATwghMsAqtrC0BFw7SxX/m2
+        ZrrcKwOR8rIBboQBomW/4jbDq2Cp/yzCSFL1KPl2jeeFe4eC+jsq1DEsWUXHc0VU
+        lW6cMaBByWF2k9wQJDJmCERZ68V1AvKhzqot/eveMYqFc6+tHy3EA0D+TUWQCe8G
+        fgX+/v/Wctx6u0SYyqznXdM9lRjmn1+6fyZNAHifHDg83fKEyr0qQQgliZkkAGj9
+        t8ex+dp+r9+LJDExpv9Qut3vXdkMtcSw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vhjDOaUktKciKJbZA
+        f44ISyP03nTGYieQt5n1R9DNl0=; b=Qju+sgm5YpwcGoPlq7HHnszMq2l+Z6NRX
+        3aITkVtu/yTxlK7usziecycpj1aThvKTSdRTHdHQ34XQKJfnjIDlrHsY2Ulb77IN
+        e0EH4ACQO9IEFQQj0FhDSwFGRKW+hvG4c+0qCmGU1Hjj4RKllCEaAWF0p+KJQS4h
+        NYdcvKDxCxol4gO1wQ5vlBPWtd9WlXEfDG+fne5n+H+kw46LJCutVB9us00q3HLX
+        ijrUSfKZmrzSBNzpSQqw77FMloNLIaikF7pgiWIiSq6IgmAeXmFIGJy+BYgRYkhM
+        wvazd0q/LnFAlGYCppKfoiIbQ6Ia7zAokmpCUT8M9wtLYHcp7WIng==
+X-ME-Sender: <xms:zaIYYivAvtFrgdoCYNuJgjeXPAP0QfEBQyOZNx6iO2BQ7d0i9SbGnQ>
+    <xme:zaIYYneQeGiAzNoO5hIQ12WTgcPsljwUhZiZhrbful9Qqlds9aeOHWwzgcsFyKMwT
+    k5hZqR76B7HxnoZLdc>
+X-ME-Received: <xmr:zaIYYtzENCRB4fc9eOmn1EfPfk1uC-pwUNCEmPCoE0ljQcxB-nbR-XwhY0CNXlcsjajEIARBiYFLcxu_LLujn_LvwByTix0_cn_7Ygs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrleeggddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:zaIYYtPlCFsNMIhOSW60HhLAW5-Fz1MT54bkUM849K6WMRukct_fow>
+    <xmx:zaIYYi8xDdZ0EqPA-5aAIKRoLzykttIPGlKaiSCv-iymlCW56urleQ>
+    <xmx:zaIYYlXHCJiviqLZcVajFj4uvginqB28xT8KkTCjo484ejzANEf17Q>
+    <xmx:zaIYYiyG2J1Ig-6CbPB73uOepeUW_7Rr4SlHMd_JgGvF1c4QZXfqeg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Feb 2022 04:35:08 -0500 (EST)
+Date:   Fri, 25 Feb 2022 10:35:06 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: Re: [PATCH v4 02/10] clk: Always clamp the rounded rate
+Message-ID: <20220225093506.kkn6g6kqqn67suvi@houat>
+References: <20220125141549.747889-1-maxime@cerno.tech>
+ <20220125141549.747889-3-maxime@cerno.tech>
+ <20220218231508.7B5FCC340E9@smtp.kernel.org>
+ <20220221161821.jbktbgx2t6aaxds3@houat>
+ <20220221164323.6xacozlk3usiidfy@houat>
+ <20220224223922.15246C340E9@smtp.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 01/13] dt-bindings: rcc: stm32: add new compatible for
- STM32MP13 SoC
-Content-Language: en-US
-To:     gabriel.fernandez@foss.st.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220224160141.455881-1-gabriel.fernandez@foss.st.com>
- <20220224160141.455881-2-gabriel.fernandez@foss.st.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220224160141.455881-2-gabriel.fernandez@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bzfec56ydwngvrjb"
+Content-Disposition: inline
+In-Reply-To: <20220224223922.15246C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/02/2022 17:01, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> 
-> New compatible to manage clock and reset of STM32MP13 SoC.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
->  .../bindings/clock/st,stm32mp1-rcc.yaml       |   2 +
->  include/dt-bindings/clock/stm32mp13-clks.h    | 229 ++++++++++++++++++
->  include/dt-bindings/reset/stm32mp13-resets.h  | 100 ++++++++
->  3 files changed, 331 insertions(+)
->  create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
->  create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
-> 
 
+--bzfec56ydwngvrjb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Hi,
 
+On Thu, Feb 24, 2022 at 02:39:20PM -0800, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-02-21 08:43:23)
+> > Hi again,
+> >=20
+> > On Mon, Feb 21, 2022 at 05:18:21PM +0100, Maxime Ripard wrote:
+> > > On Fri, Feb 18, 2022 at 03:15:06PM -0800, Stephen Boyd wrote:
+> > > > Quoting Maxime Ripard (2022-01-25 06:15:41)
+> > > > > +/*
+> > > > > + * Test that if our clock has some boundaries and we try to roun=
+d a rate
+> > > > > + * lower than the minimum, the returned rate will be within rang=
+e.
+> > > > > + */
+> > > > > +static void clk_range_test_set_range_round_rate_lower(struct kun=
+it *test)
+> > > > > +{
+> > > > > +       struct clk_dummy_context *ctx =3D test->priv;
+> > > > > +       struct clk_hw *hw =3D &ctx->hw;
+> > > > > +       struct clk *clk =3D hw->clk;
+> > > > > +       long rate;
+> > > > > +
+> > > > > +       KUNIT_ASSERT_EQ(test,
+> > > > > +                       clk_set_rate_range(clk,
+> > > > > +                                          DUMMY_CLOCK_RATE_1,
+> > > > > +                                          DUMMY_CLOCK_RATE_2),
+> > > > > +                       0);
+> > > > > +
+> > > > > +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
+> > > > > +       KUNIT_ASSERT_GT(test, rate, 0);
+> > > > > +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> > > >=20
+> > > > The comment says within range but this test says exactly the minimum
+> > > > rate. Please change it to test that the rate is within rate 1 and r=
+ate
+> > > > 2. Also, we should call clk_get_rate() here to make sure the rate is
+> > > > within the boundaries and matches what clk_round_rate() returned.
+> > >=20
+> > > Ok
+> >=20
+> > Actually, that doesn't work. Calling clk_round_rate() won't affect the
+> > clock rate, so the rate returned by clk_get_rate() won't match what
+> > clk_round_rate() will return.
+>=20
+> Huh? This is asking "what rate will I get if I call clk_set_rate() with
+> DUMMY_CLOCK_RATE_1 - 1000 after setting the range to be rate 1 and rate
+> 2. It should round that up to some value (and we should enforce that it
+> is inclusive or exclusive). I think I missed that this is
+> clk_round_rate().
+>=20
+> Either way, the clk provider implementation could say that if you call
+> clk_set_rate() with a frequency below the minimum that it lies somewhere
+> between the rate 1 and rate 2. The expectation should only check that it
+> is within the range and not exactly the minimum because we're not
+> testing the clk provider implementation of the rounding here, just that
+> the constraints are satisfied and the rate is within range. That's my
+> understanding of the comment above the function and the function name.
 
-Best regards,
-Krzysztof
+You're right, that has been addressed in the last version I sent already
+
+Maxime
+
+--bzfec56ydwngvrjb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhiiygAKCRDj7w1vZxhR
+xdyUAQC4zyprmmH2ygtZk0ErwGyncEtazWHRLvlfJ2eVoMrV1gD+KgEhpvdl+3Bi
+q73173fu8I/uwsR7Wh8KVvmvm2xJegw=
+=W7cx
+-----END PGP SIGNATURE-----
+
+--bzfec56ydwngvrjb--
