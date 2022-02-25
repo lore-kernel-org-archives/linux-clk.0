@@ -2,71 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D371DC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 00:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8159BC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 00:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235990AbiBYAWL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 19:22:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
+        id S235653AbiBYAuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 19:50:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235989AbiBYAWJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 19:22:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D460D26134;
-        Thu, 24 Feb 2022 16:21:37 -0800 (PST)
+        with ESMTP id S235626AbiBYAuR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 19:50:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EC42C0335;
+        Thu, 24 Feb 2022 16:49:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6F40F61CE5;
-        Fri, 25 Feb 2022 00:21:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4277C340E9;
-        Fri, 25 Feb 2022 00:21:36 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 24EF1B82A7C;
+        Fri, 25 Feb 2022 00:49:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA8EDC340EF;
+        Fri, 25 Feb 2022 00:49:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645748496;
-        bh=zL7K5H0gG9i3MojJhvMFQOdtVRIDLw7kDEqM24zLUlA=;
+        s=k20201202; t=1645750183;
+        bh=/gjfyXft3KepKTQGQRWa22PpJYtYND6chFxYq2s6++s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=dUfqYmeiNZpNTuzZiH/9xYLYzlWiB4P+/auqvVlPa1U+gKz5qhfFBVwj9UZ6LMYQx
-         vgeM1YWVAWtz1xOeeXZ6z9dGQoDigFZzzxCEll27gpvgN6mDTtiATjXZRG05uQ8lby
-         oMpky7ylgWVr8jY5UeKL/0+TFKV/HinmxsqAhf/rxUU/VmUB5onQ3BwOdTqHqx2Zgo
-         pq9LG0+SIhHwFTFsouc26LuFSxSJ8mlo+ozcg5qPuGZ32lQ2VkzEDiGm5zHB/p+rKg
-         2Bm1X9/3DZIUWhuIhi7nmiqvH78+v5RV2N7Grt8OvlQnZAxPlncSP2Yy9d1bnPGURK
-         cKT4DzX3hqhkQ==
+        b=Osej/u5wUspxVqADMrgvgoC5FXMvyHDkHZW4fBJ1kgFe1+EKJFtljIZYJhQnFMHnB
+         6B2AMVFTv+WbbL5IV+/Bgq70y+YevqLtpWLNfmmB+SADRrSDkwIJw7suwxnQrAz074
+         6k5eD73lafLOJkdIj1k2/mEbD4dIlFFyxc1u8Lq77F1Q5ezIjtZ6UlQeB8G5RUrk/r
+         6CgFL6QrUg7V4vpBLk4jkbxv9mZ/MLvXSCbcOWR3Nd/ESbF2KYIhOh0dYb87wHpya3
+         KaI4/FGdO4SeKfmLCGq+owJAwN2gm/SxIfHiAaGa+TRXkg0NU9Fd9fskn42WAl04Gk
+         9FKPxFUgjkfMA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220223185606.3941-2-tdas@codeaurora.org>
-References: <20220223185606.3941-1-tdas@codeaurora.org> <20220223185606.3941-2-tdas@codeaurora.org>
-Subject: Re: [v2 2/2] clk: qcom: dispcc: Update the transition delay for MDSS GDSC
+In-Reply-To: <c7d1539f-01a2-299d-ca4f-8e60cfe71775@redhat.com>
+References: <20220216225304.53911-1-djrscally@gmail.com> <20220216225304.53911-4-djrscally@gmail.com> <c7d1539f-01a2-299d-ca4f-8e60cfe71775@redhat.com>
+Subject: Re: [PATCH 3/6] platform/x86: int3472: Support multiple clock consumers
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 24 Feb 2022 16:21:35 -0800
+Cc:     rafael@kernel.org, lenb@kernel.org, markgross@kernel.org,
+        robert.moore@intel.com, linux-acpi@vger.kernel.org,
+        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
+To:     Daniel Scally <djrscally@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 24 Feb 2022 16:49:41 -0800
 User-Agent: alot/0.10
-Message-Id: <20220225002136.C4277C340E9@smtp.kernel.org>
+Message-Id: <20220225004943.AA8EDC340EF@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2022-02-23 10:56:06)
-> On SC7180 we observe black screens because the gdsc is being
-> enabled/disabled very rapidly and the GDSC FSM state does not work as
-> expected. This is due to the fact that the GDSC reset value is being
-> updated from SW.
+Quoting Hans de Goede (2022-02-21 01:59:09)
+> Hi,
 >=20
-> The recommended transition delay for mdss core gdsc updated for
-> SC7180/SC7280/SM8250.
+> On 2/16/22 23:53, Daniel Scally wrote:
+> > At present, the int3472-tps68470 only supports a single clock consumer =
+when
+> > passing platform data to the clock driver. In some devices multiple
+> > sensors depend on the clock provided by a single TPS68470 and so all
+> > need to be able to acquire the clock. Support passing multiple
+> > consumers as platform data.
+> >=20
+> > Signed-off-by: Daniel Scally <djrscally@gmail.com>
 >=20
-> Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for =
-SC7180")
-> Fixes: 1a00c962f9cd ("clk: qcom: Add display clock controller driver for =
-SC7280")
-> Fixes: 80a18f4a8567 ("clk: qcom: Add display clock controller driver for =
-SM8150 and SM8250")
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+> Thanks, patch looks good to me:
+>=20
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>=20
+> Michael, I plan to merge this entire series through the platform-drivers-=
+x86 git
+> tree, may I have your ack for merging the clk bits from this ?
+>=20
 
-Applied to clk-fixes
+With the type fix
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
