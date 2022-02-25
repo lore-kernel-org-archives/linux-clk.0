@@ -2,109 +2,130 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A415C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 15:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3481C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 17:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242271AbiBYPoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 10:44:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
+        id S243496AbiBYROR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 12:14:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242307AbiBYPoA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 10:44:00 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7A81B5115;
-        Fri, 25 Feb 2022 07:43:26 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 21PD6pq4031745;
-        Fri, 25 Feb 2022 16:43:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=MBoowDQHPfD1JA5SFm2tPIXGpLPPrwVQpuzL9/QQv20=;
- b=OmyHVP7XKeH06zdmOAYu3zu/hZ/Nuja8/4COwZUTHGgwqGn+AWfahVMR+FeMrD7l5pt1
- NqdKTrEb2OnZe5u2bkgS8wQG5hLFdZmjgm1a/cUPb7gLFE1JBPBV4HgCQDd/LsyyTcXu
- GwzxOURKLINGKMVgQl8YaOS5Gx9f8Y5ZGLueE635n0SgGcEzcPPR5my+ZxN5HmKw0MBh
- fBH9O/ebNcfG6EBCfoQAsbeniNEMiKtIlLMVVVnPdaHqGOiOJmJwu7QLEtURoBe3mWVZ
- b0BrtWctGTanPYtYUyCS6TQF68pG2Btrt2ARESG/hzJPh+qpI/c1yJiRyaVzmryGevNb eA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3eetrf2y6q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 25 Feb 2022 16:43:10 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 31B5F10002A;
-        Fri, 25 Feb 2022 16:43:09 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 28BDC22FA49;
-        Fri, 25 Feb 2022 16:43:09 +0100 (CET)
-Received: from [10.201.22.79] (10.75.127.51) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 25 Feb
- 2022 16:43:08 +0100
-Message-ID: <7d1c5ef9-beca-9804-471f-92abd8a6e168@foss.st.com>
-Date:   Fri, 25 Feb 2022 16:43:08 +0100
+        with ESMTP id S240804AbiBYROQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 12:14:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91AB1A8043;
+        Fri, 25 Feb 2022 09:13:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E5EE61D73;
+        Fri, 25 Feb 2022 17:13:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E452C340E7;
+        Fri, 25 Feb 2022 17:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645809222;
+        bh=4sE4Gtevnk8/TCjMANbcRjCHG8DgJ5S+RZAsg3tQewo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=aKNMEZYO9GYS47EsbtSGoBp7jQ6cq+PB2zbte+AwwqqiqpcVRMxGDM0F0Afex5ZJW
+         4rYESli2esu86LIUX6eb+GIiQqKG0aJoZCwpzqlHuXkixzO/1AezAk2443Z9c992ps
+         XywAbCY1/AWyw1jhDZ3bHZQXnfC+/H1QPWErc949Yi5ixSLpl4/cO2POfTAAfrxKho
+         CAVXpDY7lijl79zw4wxpFlP592n7RcY/q2RQ45t4e4X5U4/DfLgdvmThUjLUu/hMNF
+         a6Vl3pNKPQMeAYVdX3MJ7TCbUyat1DVH9TvH+imzTBTV3gNbtHMVmiV6Fa05o9r3/n
+         oKdbLx9yzFJlA==
+Date:   Fri, 25 Feb 2022 11:13:41 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
+ driver_override
+Message-ID: <20220225171341.GA364850@bhelgaas>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Linux-stm32] [PATCH v2 00/13] Introduction of STM32MP13 RCC
- driver (Reset Clock Controller)
-Content-Language: en-US
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20220225133137.813919-1-gabriel.fernandez@foss.st.com>
- <3e2f8cf8-3a41-d2e2-c9f1-6c1240b4a610@pengutronix.de>
-From:   Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <3e2f8cf8-3a41-d2e2-c9f1-6c1240b4a610@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-02-25_09,2022-02-25_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ahmad,
+On Fri, Feb 25, 2022 at 10:36:20AM +0100, Krzysztof Kozlowski wrote:
+> On 25/02/2022 00:52, Bjorn Helgaas wrote:
+> > On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
+> >> On 23/02/2022 22:51, Bjorn Helgaas wrote:
+> >>> In subject, to match drivers/pci/ convention, do something like:
+> >>>
+> >>>   PCI: Use driver_set_override() instead of open-coding
+> >>>
+> >>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
+> >>>> Use a helper for seting driver_override to reduce amount of duplicated
+> >>>> code.
+> >>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
+> >>>>  				     const char *buf, size_t count)
+> >>>>  {
+> >>>>  	struct pci_dev *pdev = to_pci_dev(dev);
+> >>>> -	char *driver_override, *old, *cp;
+> >>>> +	int ret;
+> >>>>  
+> >>>>  	/* We need to keep extra room for a newline */
+> >>>>  	if (count >= (PAGE_SIZE - 1))
+> >>>>  		return -EINVAL;
+> >>>
+> >>> This check makes no sense in the new function.  Michael alluded to
+> >>> this as well.
+> >>
+> >> I am not sure if I got your comment properly. You mean here:
+> >> 1. Move this check to driver_set_override()?
+> >> 2. Remove the check entirely?
+> > 
+> > I was mistaken about the purpose of the comment and the check.  I
+> > thought it had to do with *this* function, and this function doesn't
+> > add a newline, and there's no obvious connection with PAGE_SIZE.
+> > 
+> > But looking closer, I think the "extra room for a newline" is really
+> > to make sure that *driver_override_show()* can add a newline and have
+> > it still fit within the PAGE_SIZE sysfs limit.
+> > 
+> > Most driver_override_*() functions have the same comment, so maybe
+> > this was obvious to everybody except me :)  I do see that spi.c adds
+> > "when displaying value" at the end, which helps a lot.
+> > 
+> > Sorry for the wild goose chase.
+> 
+> I think I will move this check anyway to driver_set_override() helper,
+> because there is no particular benefit to have duplicated all over. The
+> helper will receive "count" argument so can perform all checks.
 
-many thanks for your review.
+Thanks, I think that would be good!
 
-I'll check linux-stm32 mailing list issue.
-
-Best Regards
-
-Gabriel
-
-On 2/25/22 16:28, Ahmad Fatoum wrote:
-> On 25.02.22 14:31, gabriel.fernandez@foss.st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>
->> This patchset introduce the reset and clock driver of STM32MP13 SoC.
->> It uses a clk-stm32-core module to manage stm32 gate, mux and divider
->> for STM32MP13 and for new future STMP32 SoC.
->>
->> v2:
->>    - Resend because patch 9,10,12,13 has not been sent
->>    - add Reviewed by Krzysztof Kozlowski for patch 1
->>
->> Gabriel Fernandez (13):
->>    dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
->>    clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
-> This patch seems to not have reached linux-stm32. It's not in my inbox
-> and https://st-md-mailman.stormreply.com/pipermail/linux-stm32/2022-February/014533.html
-> doesn't list it either. It's indexed by lore.kernel.org though.
->
-> Cheers,
-> Ahmad
->
->
+Bjorn
