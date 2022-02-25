@@ -2,73 +2,73 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC5AC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 07:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1D5C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 07:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238122AbiBYH1j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 02:27:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40698 "EHLO
+        id S238132AbiBYH2A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 02:28:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238100AbiBYH1i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 02:27:38 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4553CEFF82
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 23:27:06 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id 12so3939928pgd.0
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 23:27:06 -0800 (PST)
+        with ESMTP id S238119AbiBYH17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 02:27:59 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0272192C8F
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 23:27:27 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id 12so3940583pgd.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 23:27:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=/EJDPZRyJrLUyYjmcHsD92/llft00F0XDI+OboyiE0k=;
-        b=A/DIi8DryiplGseepJFYonOSdU+a9rytJ1hnRk6LHHKWgxNXAk4+7qhUn69/dVlCWj
-         pIta1sp6sFd7PbLKRcxzfAcVyBM5IBI4vNrRtkzuzXtqpzwFMHbQxBR3YH/Et5Q0oiuS
-         RXrGnnZw4+Otl9W0BpdWQkAI1JspNdcAvvYTeCsdPjQPVw2d4+T8xqE+zOd7AEfp9O8/
-         P9Gv/7Qe0CMjLGpToawSBaZUgCQ9Oa9fQgK/d3jSaQ0WR4GMCyZlsWPTZWBIIJKjnX6n
-         n8cMCJ9V/fTzoPqsPGu5EHb7dyCygFus23R7xJeEA28rFVwFeggGsOkdDDrgIrhSvDco
-         OSNg==
+        bh=pZld643HuW0/07Bu4DSXyfjcKpraUhym1XI5gyrgNOk=;
+        b=cuj/O6w4RHklkvb7BlBFffzE0inrWWOX0/PjEwewBYlkyZ+Xb7qs8hjGv/fNqGuRev
+         tDWWhu0+q0fYtxyRueNE17EzLHL4FZn+Ei9+T7TxRzwxdaRfaNN13c/Wa/o30giD/OVW
+         fhWbdFOJ+uawSxrMvwmKj7+3q0tyFg8kIa38NqZ6h81PVqeSCo4scYjutj8Ri/tbA2IY
+         Wybrc7TGiwoZSkDvp6ovwMyz5Z/VUgfL7+xUF7lxRrtX9Mz6Q2cdmhU9mecBOTCluqq6
+         vN8SpTGnCIp1/2KQs9lBue5k4ibFtzcdBi9x4/zOQGYsN/3OJHBCeSSj+0CsN1miXr9l
+         bmZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=/EJDPZRyJrLUyYjmcHsD92/llft00F0XDI+OboyiE0k=;
-        b=hgabKW1mE4u8ec0+KrnvVW5Q99gEQ36E8W0Y/lPnY4PXpw93UJD1679jfBBrkqY64H
-         3dh4SmjRaw5WmtaYxtU5b6OTPUkyWLEJhS3ReHEo8Yyl+VUntThQBad/WYF0t3bNlTef
-         S1ESkDnXLurLWrYTxVuhy+mou+YQrn0H+YzVrkp5hQJabg6mknqMvxk7Beww1ff3mopk
-         WXxTiFuVjLJ3qWdvkwpohl4Cx42zm580l4kquDqas0snOyL2S0Be6iB2FXIjsIoeUbSB
-         Qpx1m+DIeykvaxo81+fxKSQjChyk87C1nsOPmNTBXbXdPDehZGhOl5t/lO7hOkVsuTKg
-         LbQg==
-X-Gm-Message-State: AOAM531DAj0/p6sjzyiKfaA6/Oaxc+mCXJzmOHOlAUmlch4XeMT3qwcr
-        dTujGAPT9KGvsRH1k6EPIE8W
-X-Google-Smtp-Source: ABdhPJxvLSiLEaYc56xVY4d/jDRBFxFxauVrOYn64Ab3+ev1wXxI5whdwbWwxrhNCmmzfwTrldviIA==
-X-Received: by 2002:a62:3085:0:b0:4e0:1218:6d03 with SMTP id w127-20020a623085000000b004e012186d03mr6378679pfw.19.1645774025767;
-        Thu, 24 Feb 2022 23:27:05 -0800 (PST)
+        bh=pZld643HuW0/07Bu4DSXyfjcKpraUhym1XI5gyrgNOk=;
+        b=8Cmw9eNWkFXAt9CvmnbYSqksssVkknBsNJdmvz0F+yUAcdT4VL9ud3lfoUqYdfS7Ex
+         jtehNWeLMUFmCZhmdGMbhyZc6IAijtJApIckffVu48ks5RyB7osMjP+AKm6Bs3lfJzVN
+         b14d2DPgnSrOluoi7qJiJnsdKhr/1MDX/1YxMHWLevBJQNtuOl1V//xuSnnI626KWkYm
+         xsMZMmVpcfPcN5FnlAtxCutLv/6eTXf5ZUKIZOAf6Ckh49xhRWq2u3pVaybYk142cP3Z
+         O7CB9/pbaVHCwirFFv8UB78tKT7snSVR8Ii8e93MtbqbGvmRP2Rr8aPrDwnKzVWvtLfy
+         hvCA==
+X-Gm-Message-State: AOAM533xrPxCbgddAj1PNQKbeHgaLs0/RHrAXzXZ5VdsoWrolLc6W510
+        S3xseM6d8Z8IEj7Z/c9mvunG
+X-Google-Smtp-Source: ABdhPJwFdPzXdeQZMtrt4sI0MD3SfbXz3OURh87Nc9aslImgzfiD/6+gpcAjiZGQiadInU/X1o/0GA==
+X-Received: by 2002:a05:6a00:88e:b0:4d2:4829:156c with SMTP id q14-20020a056a00088e00b004d24829156cmr6500246pfj.47.1645774047427;
+        Thu, 24 Feb 2022 23:27:27 -0800 (PST)
 Received: from thinkpad ([220.158.159.240])
-        by smtp.gmail.com with ESMTPSA id z16-20020a056a00241000b004f3a647ae89sm1883328pfh.174.2022.02.24.23.27.01
+        by smtp.gmail.com with ESMTPSA id p28-20020a056a000a1c00b004f3b355dcb1sm1959980pfh.58.2022.02.24.23.27.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Feb 2022 23:27:05 -0800 (PST)
-Date:   Fri, 25 Feb 2022 12:56:59 +0530
+        Thu, 24 Feb 2022 23:27:27 -0800 (PST)
+Date:   Fri, 25 Feb 2022 12:57:21 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Rohit Agarwal <quic_rohiagar@quicinc.com>
 Cc:     bjorn.andersson@linaro.org, agross@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] ARM: dts: qcom: sdx65: Add support for APCS block
-Message-ID: <20220225072659.GD274289@thinkpad>
+Subject: Re: [PATCH v4 5/5] clk: qcom: Add SDX65 APCS clock controller support
+Message-ID: <20220225072721.GE274289@thinkpad>
 References: <1645505785-2271-1-git-send-email-quic_rohiagar@quicinc.com>
- <1645505785-2271-5-git-send-email-quic_rohiagar@quicinc.com>
+ <1645505785-2271-6-git-send-email-quic_rohiagar@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1645505785-2271-5-git-send-email-quic_rohiagar@quicinc.com>
+In-Reply-To: <1645505785-2271-6-git-send-email-quic_rohiagar@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 10:26:24AM +0530, Rohit Agarwal wrote:
-> The APCS block on SDX65 acts as a mailbox controller and also provides
-> clock output for the Cortex A7 CPU.
+On Tue, Feb 22, 2022 at 10:26:25AM +0530, Rohit Agarwal wrote:
+> Update APCS Kconfig to reflect support for SDX65
+> APCS clock controller.
 > 
 > Signed-off-by: Rohit Agarwal <quic_rohiagar@quicinc.com>
 
@@ -78,29 +78,30 @@ Thanks,
 Mani
 
 > ---
->  arch/arm/boot/dts/qcom-sdx65.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/clk/qcom/Kconfig | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/qcom-sdx65.dtsi b/arch/arm/boot/dts/qcom-sdx65.dtsi
-> index ec80266..af7453a 100644
-> --- a/arch/arm/boot/dts/qcom-sdx65.dtsi
-> +++ b/arch/arm/boot/dts/qcom-sdx65.dtsi
-> @@ -133,6 +133,15 @@
->  			#clock-cells = <0>;
->  		};
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 5159a1d..1a641d4 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -55,13 +55,13 @@ config QCOM_CLK_APCC_MSM8996
+>  	  drivers for dynamic power management.
 >  
-> +		apcs: mailbox@17810000 {
-> +			compatible = "qcom,sdx55-apcs-gcc", "syscon";
-> +			reg = <0x17810000 0x2000>;
-> +			#mbox-cells = <1>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>, <&a7pll>, <&gcc GPLL0>;
-> +			clock-names = "ref", "pll", "aux";
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		timer@17820000 {
->  			#address-cells = <1>;
->  			#size-cells = <1>;
+>  config QCOM_CLK_APCS_SDX55
+> -	tristate "SDX55 APCS Clock Controller"
+> +	tristate "SDX55 and SDX65 APCS Clock Controller"
+>  	depends on QCOM_APCS_IPC || COMPILE_TEST
+>  	help
+> -	  Support for the APCS Clock Controller on SDX55 platform. The
+> +	  Support for the APCS Clock Controller on SDX55, SDX65 platforms. The
+>  	  APCS is managing the mux and divider which feeds the CPUs.
+>  	  Say Y if you want to support CPU frequency scaling on devices
+> -	  such as SDX55.
+> +	  such as SDX55, SDX65.
+>  
+>  config QCOM_CLK_RPM
+>  	tristate "RPM based Clock Controller"
 > -- 
 > 2.7.4
 > 
