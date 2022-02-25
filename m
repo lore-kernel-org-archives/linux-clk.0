@@ -2,535 +2,193 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC403C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 01:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D434C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 04:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236634AbiBYB6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 20:58:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37198 "EHLO
+        id S233827AbiBYEPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 23:15:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236630AbiBYB6h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 20:58:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B22A28F459;
-        Thu, 24 Feb 2022 17:58:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 19CF661470;
-        Fri, 25 Feb 2022 01:58:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C81CC340E9;
-        Fri, 25 Feb 2022 01:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645754284;
-        bh=Am4FBRKLYugZvkSv0Lo8VPgRbfXsAVl3IMh275eLbjU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=uutRSKlgKaj6D3K+WTu9yKqS/waQc7a0hSfs0n67//r61NwyJFItq9y9mcv/QrXHX
-         D6uuCml+sUrDtDcdP+Z5dYIQW16wBdVtWmPFbVS5e+B/3TmGJQ9g8tCxwKfIq6Q4zf
-         n6uFBx+8umZzGt9l73Vqr0zo/SkJBgXd9aHWehnwCAGLaRz+Ooeuglqiib2HY2twTW
-         CBOmf3Tr3I2LtT5S+H0wSUtpqgZKKjMutMjMgX4DZPh91cF2+Lsv31ObhweEQw1soD
-         W8XtnpLBv6mCi7ff5bSl3pOLMiV7HJiwRai5Ncn2GVd2LAH98/u0zs/80t6HrNXi7p
-         hifJF71nDmRZA==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S231420AbiBYEPN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 23:15:13 -0500
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087D42465F8
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 20:14:41 -0800 (PST)
+Received: by mail-wr1-x42d.google.com with SMTP id n14so2569287wrq.7
+        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 20:14:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yoUk+VnR1eNkSVG6We7Jw5jzACHO+PVs3ZxuGbblYYw=;
+        b=Tk8K44wMB3wDfGi7TEuIY62HyGAXI8bnbcQDNLfduW4Vur1TDHKV9vf5HwwNmytucV
+         vKmzX3xXV8nNPbAmL4pPiUtORgwMMvIDCxgoWa3/7x4Z3r7J/NGUT+xwbU3uI9ONLpHk
+         Peo/c2bcXt+oVfJr85v4SYXGlf8GyWLvULOVHH0UfvfRWexqhW6JaHNK0FSsou7jtg2S
+         C4JiPNYl9+7r2aI4lMwbdP4/pHmRE+2bXpaQNriDoJYrfVhNdguQHfzo/fdbirqKjY0o
+         P/w113Q7Y13hXuh5g34QmIcicE5+jy33c9ARRa5Y+8QWiWxhxOObr1LlCnX4MgvmTM/S
+         ob1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yoUk+VnR1eNkSVG6We7Jw5jzACHO+PVs3ZxuGbblYYw=;
+        b=eCk643AUUD8oBryCJPymUc97YypcQtqmUJkXwfRM2dCulwWIKHM2MzFwEP6Aw+3c5g
+         WWv3/IJsP0vRN8K4IePziwGEsGoo0tkzJWdtEomgv1rlft61vDOhxcverOmUJCkxZe4k
+         tB4tSZZh3gK0DheLBWZeOrjatCy8SeecUUvsrXg6tJ6/cUy+hWqd2snK2ZueNCAr8kQl
+         XgUjUvLz666sznwB16nM3IUQbvEv3jE4PLMlCwAEeHHm58nORb5a0/g78dC3hHfAlk4G
+         14iToTvnPCBe5uS0e5GgMIG60xffNV35JgyS2mw4OU2Pif/yDmbdoKuwjZtxElOfBqO1
+         Bsww==
+X-Gm-Message-State: AOAM530YOqVM/ajpecGcXYdplPjNjuoWowUoAUG6bjTPBjQJaQReeV88
+        I+lwOyCcyBr6xOeJhz20wFdR0Gf3AgiiTJu0M8KnVg==
+X-Google-Smtp-Source: ABdhPJyOKnj9JiRXrsuEw3Jgm8tIx3MxkdbHICx139eeiQEkY4JydNdAheDnh2cTBawJuXAeCE5IAWlHNEo9TpLEp5w=
+X-Received: by 2002:a5d:5446:0:b0:1ed:c29c:1a4d with SMTP id
+ w6-20020a5d5446000000b001edc29c1a4dmr4532405wrv.46.1645762479438; Thu, 24 Feb
+ 2022 20:14:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220225014234.1766305-6-peng.fan@oss.nxp.com>
-References: <20220225014234.1766305-1-peng.fan@oss.nxp.com> <20220225014234.1766305-6-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH V5 5/5] clk: imx: add i.MX93 clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@nxp.com,
-        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Thu, 24 Feb 2022 17:58:02 -0800
-User-Agent: alot/0.10
-Message-Id: <20220225015804.6C81CC340E9@smtp.kernel.org>
+References: <20220224035902.1594253-1-davidgow@google.com> <20220225005304.140FFC340E9@smtp.kernel.org>
+In-Reply-To: <20220225005304.140FFC340E9@smtp.kernel.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 25 Feb 2022 12:14:28 +0800
+Message-ID: <CABVgOSku_a7=w-AWcW0fa1jdk2qP923+oYq85s1zhKEaBrThgw@mail.gmail.com>
+Subject: Re: [PATCH] clk: lan966x: Depend on CONFIG_IOMEM
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-um <linux-um@lists.infradead.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000fde2ad05d8cfef64"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2022-02-24 17:42:34)
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> new file mode 100644
-> index 000000000000..7cd5e7fb0c8b
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -0,0 +1,338 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2021 NXP.
-> + */
-> +
-> +#include <dt-bindings/clock/imx93-clock.h>
+--000000000000fde2ad05d8cfef64
+Content-Type: text/plain; charset="UTF-8"
 
-Include after linux headers please.
+On Fri, Feb 25, 2022 at 8:53 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting David Gow (2022-02-23 19:59:02)
+> > The lan966x clk driver depends on IOMEM functions, in particular
+> > devm_platform_ioremap_resource(), but doesn't state a formal dependency
+> > on it in Kconfig.
+> >
+> > Add such a dependency, which prevents this driver from being enabled
+> > on UML configurations without IOMEM.
+> >
+> > This fixes the following build failure:
+> >
+> > /usr/bin/ld: drivers/clk/clk-lan966x.o: in function `lan966x_clk_probe':
+> > clk-lan966x.c:(.text+0x294): undefined reference to `devm_platform_ioremap_resource'
+> > /usr/bin/ld: clk-lan966x.c:(.text+0x3aa): undefined reference to `devm_ioremap_resource'
+> > collect2: error: ld returned 1 exit status
+> >
+> > Signed-off-by: David Gow <davidgow@google.com>
+> > ---
+> >  drivers/clk/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 3cdf33470a75..7b5db8a9eb4f 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -231,6 +231,7 @@ config COMMON_CLK_GEMINI
+> >
+> >  config COMMON_CLK_LAN966X
+> >         bool "Generic Clock Controller driver for LAN966X SoC"
+> > +       depends on IOMEM
+>
+> What is CONFIG_IOMEM? This is superseded by
+> https://lore.kernel.org/r/20220219141536.460812-1-horatiu.vultur@microchip.com
+>
 
-> +#include <linux/clk.h>
+Whoops, thanks! If I had a nickel every time I forgot the "HAS" in
+"CONFIG_HAS_IOMEM"...
 
-Is this include used?
+This patch indeed is no-longer needed in clk-fixes, so let's abandon it here.
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/debugfs.h>
+Cheers,
+-- David
 
-Is this used?
 
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +
-> +#include "clk.h"
-> +
-> +enum clk_sel {
-> +       LOW_SPEED_IO_SEL,
-> +       NON_IO_SEL,
-> +       FAST_SEL,
-> +       AUDIO_SEL,
-> +       VIDEO_SEL,
-> +       TPM_SEL,
-> +       CKO1_SEL,
-> +       CKO2_SEL,
-> +       MISC_SEL,
-> +       MAX_SEL
-> +};
-> +
-> +static const char *parent_names[MAX_SEL][4] =3D {
-> +       {"osc_24m", "sys_pll_pfd0_div2", "sys_pll_pfd1_div2", "video_pll"=
-},
-> +       {"osc_24m", "sys_pll_pfd0_div2", "sys_pll_pfd1_div2", "sys_pll_pf=
-d2_div2"},
-> +       {"osc_24m", "sys_pll_pfd0", "sys_pll_pfd1", "sys_pll_pfd2"},
-> +       {"osc_24m", "audio_pll", "video_pll", "clk_ext1"},
-> +       {"osc_24m", "audio_pll", "video_pll", "sys_pll_pfd0"},
-> +       {"osc_24m", "sys_pll_pfd0", "audio_pll", "clk_ext1"},
-> +       {"osc_24m", "sys_pll_pfd0", "sys_pll_pfd1", "audio_pll"},
-> +       {"osc_24m", "sys_pll_pfd0", "sys_pll_pfd1", "video_pll"},
-> +       {"osc_24m", "audio_pll", "video_pll", "sys_pll_pfd2"},
-> +};
-> +
-> +struct imx93_clk_root {
-> +       u32 clk;
-> +       char *name;
-> +       u32 off;
-> +       enum clk_sel sel;
-> +       unsigned long flags;
-> +} root_array[] =3D {
+> >         help
+> >           This driver provides support for Generic Clock Controller(GCK) on
+> >           LAN966X SoC. GCK generates and supplies clock to various peripherals
 
-Can this be const and static?
+--000000000000fde2ad05d8cfef64
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> +       { IMX93_CLK_A55_PERIPH,         "a55_periph_root",      0x0000, F=
-AST_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_A55_MTR_BUS,        "a55_mtr_bus_root",     0x0080, L=
-OW_SPEED_IO_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_A55,                "a55_root",             0x0100, F=
-AST_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_M33,                "m33_root",             0x0180, L=
-OW_SPEED_IO_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_BUS_WAKEUP,         "bus_wakeup_root",      0x0280, L=
-OW_SPEED_IO_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_BUS_AON,            "bus_aon_root",         0x0300, L=
-OW_SPEED_IO_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_WAKEUP_AXI,         "wakeup_axi_root",      0x0380, F=
-AST_SEL, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_SWO_TRACE,          "swo_trace_root",       0x0400, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_M33_SYSTICK,        "m33_systick_root",     0x0480, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_FLEXIO1,            "flexio1_root",         0x0500, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_FLEXIO2,            "flexio2_root",         0x0580, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPIT1,              "lpit1_root",           0x0600, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPIT2,              "lpit2_root",           0x0680, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPTMR1,             "lptmr1_root",          0x0700, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPTMR2,             "lptmr2_root",          0x0780, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_TPM1,               "tpm1_root",            0x0800, T=
-PM_SEL, },
-> +       { IMX93_CLK_TPM2,               "tpm2_root",            0x0880, T=
-PM_SEL, },
-> +       { IMX93_CLK_TPM3,               "tpm3_root",            0x0900, T=
-PM_SEL, },
-> +       { IMX93_CLK_TPM4,               "tpm4_root",            0x0980, T=
-PM_SEL, },
-> +       { IMX93_CLK_TPM5,               "tpm5_root",            0x0a00, T=
-PM_SEL, },
-> +       { IMX93_CLK_TPM6,               "tpm6_root",            0x0a80, T=
-PM_SEL, },
-> +       { IMX93_CLK_FLEXSPI1,           "flexspi1_root",        0x0b00, F=
-AST_SEL, },
-> +       { IMX93_CLK_CAN1,               "can1_root",            0x0b80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_CAN2,               "can2_root",            0x0c00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART1,            "lpuart1_root",         0x0c80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART2,            "lpuart2_root",         0x0d00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART3,            "lpuart3_root",         0x0d80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART4,            "lpuart4_root",         0x0e00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART5,            "lpuart5_root",         0x0e80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART6,            "lpuart6_root",         0x0f00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART7,            "lpuart7_root",         0x0f80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPUART8,            "lpuart8_root",         0x1000, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C1,             "lpi2c1_root",          0x1080, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C2,             "lpi2c2_root",          0x1100, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C3,             "lpi2c3_root",          0x1180, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C4,             "lpi2c4_root",          0x1200, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C5,             "lpi2c5_root",          0x1280, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C6,             "lpi2c6_root",          0x1300, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C7,             "lpi2c7_root",          0x1380, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPI2C8,             "lpi2c8_root",          0x1400, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI1,             "lpspi1_root",          0x1480, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI2,             "lpspi2_root",          0x1500, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI3,             "lpspi3_root",          0x1580, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI4,             "lpspi4_root",          0x1600, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI5,             "lpspi5_root",          0x1680, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI6,             "lpspi6_root",          0x1700, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI7,             "lpspi7_root",          0x1780, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_LPSPI8,             "lpspi8_root",          0x1800, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_I3C1,               "i3c1_root",            0x1880, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_I3C2,               "i3c2_root",            0x1900, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_USDHC1,             "usdhc1_root",          0x1980, F=
-AST_SEL, },
-> +       { IMX93_CLK_USDHC2,             "usdhc2_root",          0x1a00, F=
-AST_SEL, },
-> +       { IMX93_CLK_USDHC3,             "usdhc3_root",          0x1a80, F=
-AST_SEL, },
-> +       { IMX93_CLK_SAI1,               "sai1_root",            0x1b00, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_SAI2,               "sai2_root",            0x1b80, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_SAI3,               "sai3_root",            0x1c00, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_CCM_CKO1,           "ccm_cko1_root",        0x1c80, C=
-KO1_SEL, },
-> +       { IMX93_CLK_CCM_CKO2,           "ccm_cko2_root",        0x1d00, C=
-KO2_SEL, },
-> +       { IMX93_CLK_CCM_CKO3,           "ccm_cko3_root",        0x1d80, C=
-KO1_SEL, },
-> +       { IMX93_CLK_CCM_CKO4,           "ccm_cko4_root",        0x1e00, C=
-KO2_SEL, },
-> +       { IMX93_CLK_HSIO,               "hsio_root",            0x1e80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_HSIO_USB_TEST_60M,  "hsio_usb_test_60m_root", 0x1f00,=
- LOW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_HSIO_ACSCAN_80M,    "hsio_acscan_80m_root", 0x1f80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_HSIO_ACSCAN_480M,   "hsio_acscan_480m_root", 0x2000, =
-MISC_SEL, },
-> +       { IMX93_CLK_ML_APB,             "ml_apb_root",          0x2180, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_ML,                 "ml_root",              0x2200, F=
-AST_SEL, },
-> +       { IMX93_CLK_MEDIA_AXI,          "media_axi_root",       0x2280, F=
-AST_SEL, },
-> +       { IMX93_CLK_MEDIA_APB,          "media_apb_root",       0x2300, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_MEDIA_LDB,          "media_ldb_root",       0x2380, V=
-IDEO_SEL, },
-> +       { IMX93_CLK_MEDIA_DISP_PIX,     "media_disp_pix_root",  0x2400, V=
-IDEO_SEL, },
-> +       { IMX93_CLK_CAM_PIX,            "cam_pix_root",         0x2480, V=
-IDEO_SEL, },
-> +       { IMX93_CLK_MIPI_TEST_BYTE,     "mipi_test_byte_root",  0x2500, V=
-IDEO_SEL, },
-> +       { IMX93_CLK_MIPI_PHY_CFG,       "mipi_phy_cfg_root",    0x2580, V=
-IDEO_SEL, },
-> +       { IMX93_CLK_ADC,                "adc_root",             0x2700, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_PDM,                "pdm_root",             0x2780, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_TSTMR1,             "tstmr1_root",          0x2800, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_TSTMR2,             "tstmr2_root",          0x2880, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_MQS1,               "mqs1_root",            0x2900, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_MQS2,               "mqs2_root",            0x2980, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_AUDIO_XCVR,         "audio_xcvr_root",      0x2a00, N=
-ON_IO_SEL, },
-> +       { IMX93_CLK_SPDIF,              "spdif_root",           0x2a80, A=
-UDIO_SEL, },
-> +       { IMX93_CLK_ENET,               "enet_root",            0x2b00, N=
-ON_IO_SEL, },
-> +       { IMX93_CLK_ENET_TIMER1,        "enet_timer1_root",     0x2b80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_ENET_TIMER2,        "enet_timer2_root",     0x2c00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_ENET_REF,           "enet_ref_root",        0x2c80, N=
-ON_IO_SEL, },
-> +       { IMX93_CLK_ENET_REF_PHY,       "enet_ref_phy_root",    0x2d00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_I3C1_SLOW,          "i3c1_slow_root",       0x2d80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_I3C2_SLOW,          "i3c2_slow_root",       0x2e00, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_USB_PHY_BURUNIN,    "usb_phy_root",         0x2e80, L=
-OW_SPEED_IO_SEL, },
-> +       { IMX93_CLK_PAL_CAME_SCAN,      "pal_came_scan_root",   0x2f00, M=
-ISC_SEL, }
-> +};
-> +
-> +struct imx93_clk_ccgr {
-> +       u32 clk;
-> +       char *name;
-> +       char *parent_name;
-> +       u32 off;
-> +       unsigned long flags;
-> +} ccgr_array[] =3D {
-
-static const?
-
-> +       { IMX93_CLK_A55_GATE,           "a55",          "a55_root",      =
-       0x8000, CLK_IS_CRITICAL },
-
-Please add comments on why clks are critical.
-
-> +       { IMX93_CLK_CM33_GATE,          "cm33",         "m33_root",      =
-       0x8040, CLK_IS_CRITICAL },
-> +       { IMX93_CLK_ADC1_GATE,          "adc1",         "osc_24m",       =
-       0x82c0, },
-> +       { IMX93_CLK_WDOG1_GATE,         "wdog1",        "osc_24m",       =
-       0x8300, },
-> +       { IMX93_CLK_WDOG2_GATE,         "wdog2",        "osc_24m",       =
-       0x8340, },
-> +       { IMX93_CLK_WDOG3_GATE,         "wdog3",        "osc_24m",       =
-       0x8380, },
-> +       { IMX93_CLK_WDOG4_GATE,         "wdog4",        "osc_24m",       =
-       0x83c0, },
-> +       { IMX93_CLK_WDOG5_GATE,         "wdog5",        "osc_24m",       =
-       0x8400, },
-> +       { IMX93_CLK_SEMA1_GATE,         "sema1",        "bus_aon_root",  =
-       0x8440, },
-> +       { IMX93_CLK_SEMA2_GATE,         "sema2",        "bus_wakeup_root"=
-,      0x8480, },
-> +       { IMX93_CLK_MU_A_GATE,          "mu_a",         "bus_aon_root",  =
-       0x84c0, },
-> +       { IMX93_CLK_MU_B_GATE,          "mu_b",         "bus_aon_root",  =
-       0x8500, },
-> +       { IMX93_CLK_EDMA1_GATE,         "edma1",        "wakeup_axi_root"=
-,      0x8540, },
-> +       { IMX93_CLK_EDMA2_GATE,         "edma2",        "wakeup_axi_root"=
-,      0x8580, },
-> +       { IMX93_CLK_FLEXSPI1_GATE,      "flexspi",      "flexspi_root",  =
-       0x8640, },
-> +       { IMX93_CLK_GPIO1_GATE,         "gpio1",        "m33_root",      =
-       0x8880, },
-> +       { IMX93_CLK_GPIO2_GATE,         "gpio2",        "bus_wakeup_root"=
-,      0x88c0, },
-> +       { IMX93_CLK_GPIO3_GATE,         "gpio3",        "bus_wakeup_root"=
-,      0x8900, },
-> +       { IMX93_CLK_GPIO4_GATE,         "gpio4",        "bus_wakeup_root"=
-,      0x8940, },
-> +       { IMX93_CLK_FLEXIO1_GATE,       "flexio1",      "flexio1_root",  =
-       0x8980, },
-> +       { IMX93_CLK_FLEXIO2_GATE,       "flexio2",      "flexio2_root",  =
-       0x89c0, },
-> +       { IMX93_CLK_LPIT1_GATE,         "lpit1",        "lpit1_root",    =
-       0x8a00, },
-> +       { IMX93_CLK_LPIT2_GATE,         "lpit2",        "lpit2_root",    =
-       0x8a40, },
-> +       { IMX93_CLK_LPTMR1_GATE,        "lptmr1",       "lptmr1_root",   =
-       0x8a80, },
-> +       { IMX93_CLK_LPTMR2_GATE,        "lptmr2",       "lptmr2_root",   =
-       0x8ac0, },
-> +       { IMX93_CLK_TPM1_GATE,          "tpm1",         "tpm1_root",     =
-       0x8b00, },
-> +       { IMX93_CLK_TPM2_GATE,          "tpm2",         "tpm2_root",     =
-       0x8b40, },
-> +       { IMX93_CLK_TPM3_GATE,          "tpm3",         "tpm3_root",     =
-       0x8b80, },
-> +       { IMX93_CLK_TPM4_GATE,          "tpm4",         "tpm4_root",     =
-       0x8bc0, },
-> +       { IMX93_CLK_TPM5_GATE,          "tpm5",         "tpm5_root",     =
-       0x8c00, },
-> +       { IMX93_CLK_TPM6_GATE,          "tpm6",         "tpm6_root",     =
-       0x8c40, },
-> +       { IMX93_CLK_CAN1_GATE,          "can1",         "can1_root",     =
-       0x8c80, },
-> +       { IMX93_CLK_CAN2_GATE,          "can2",         "can2_root",     =
-       0x8cc0, },
-> +       { IMX93_CLK_LPUART1_GATE,       "lpuart1",      "lpuart1_root",  =
-       0x8d00, },
-> +       { IMX93_CLK_LPUART2_GATE,       "lpuart2",      "lpuart2_root",  =
-       0x8d40, },
-> +       { IMX93_CLK_LPUART3_GATE,       "lpuart3",      "lpuart3_root",  =
-       0x8d80, },
-> +       { IMX93_CLK_LPUART4_GATE,       "lpuart4",      "lpuart4_root",  =
-       0x8dc0, },
-> +       { IMX93_CLK_LPUART5_GATE,       "lpuart5",      "lpuart5_root",  =
-       0x8e00, },
-> +       { IMX93_CLK_LPUART6_GATE,       "lpuart6",      "lpuart6_root",  =
-       0x8e40, },
-> +       { IMX93_CLK_LPUART7_GATE,       "lpuart7",      "lpuart7_root",  =
-       0x8e80, },
-> +       { IMX93_CLK_LPUART8_GATE,       "lpuart8",      "lpuart8_root",  =
-       0x8ec0, },
-> +       { IMX93_CLK_LPI2C1_GATE,        "lpi2c1",       "lpi2c1_root",   =
-       0x8f00, },
-> +       { IMX93_CLK_LPI2C2_GATE,        "lpi2c2",       "lpi2c2_root",   =
-       0x8f40, },
-> +       { IMX93_CLK_LPI2C3_GATE,        "lpi2c3",       "lpi2c3_root",   =
-       0x8f80, },
-> +       { IMX93_CLK_LPI2C4_GATE,        "lpi2c4",       "lpi2c4_root",   =
-       0x8fc0, },
-> +       { IMX93_CLK_LPI2C5_GATE,        "lpi2c5",       "lpi2c5_root",   =
-       0x9000, },
-> +       { IMX93_CLK_LPI2C6_GATE,        "lpi2c6",       "lpi2c6_root",   =
-       0x9040, },
-> +       { IMX93_CLK_LPI2C7_GATE,        "lpi2c7",       "lpi2c7_root",   =
-       0x9080, },
-> +       { IMX93_CLK_LPI2C8_GATE,        "lpi2c8",       "lpi2c8_root",   =
-       0x90c0, },
-> +       { IMX93_CLK_LPSPI1_GATE,        "lpspi1",       "lpspi1_root",   =
-       0x9100, },
-> +       { IMX93_CLK_LPSPI2_GATE,        "lpspi2",       "lpspi2_root",   =
-       0x9140, },
-> +       { IMX93_CLK_LPSPI3_GATE,        "lpspi3",       "lpspi3_root",   =
-       0x9180, },
-> +       { IMX93_CLK_LPSPI4_GATE,        "lpspi4",       "lpspi4_root",   =
-       0x91c0, },
-> +       { IMX93_CLK_LPSPI5_GATE,        "lpspi5",       "lpspi5_root",   =
-       0x9200, },
-> +       { IMX93_CLK_LPSPI6_GATE,        "lpspi6",       "lpspi6_root",   =
-       0x9240, },
-> +       { IMX93_CLK_LPSPI7_GATE,        "lpspi7",       "lpspi7_root",   =
-       0x9280, },
-> +       { IMX93_CLK_LPSPI8_GATE,        "lpspi8",       "lpspi8_root",   =
-       0x92c0, },
-> +       { IMX93_CLK_I3C1_GATE,          "i3c1",         "i3c1_root",     =
-       0x9300, },
-> +       { IMX93_CLK_I3C2_GATE,          "i3c2",         "i3c2_root",     =
-       0x9340, },
-> +       { IMX93_CLK_USDHC1_GATE,        "usdhc1",       "usdhc1_root",   =
-       0x9380, },
-> +       { IMX93_CLK_USDHC2_GATE,        "usdhc2",       "usdhc2_root",   =
-       0x93c0, },
-> +       { IMX93_CLK_USDHC3_GATE,        "usdhc3",       "usdhc3_root",   =
-       0x9400, },
-> +       { IMX93_CLK_SAI1_GATE,          "sai1",         "sai1_root",     =
-       0x9440, },
-> +       { IMX93_CLK_SAI2_GATE,          "sai2",         "sai2_root",     =
-       0x9480, },
-> +       { IMX93_CLK_SAI3_GATE,          "sai3",         "sai3_root",     =
-       0x94c0, },
-> +       { IMX93_CLK_MIPI_CSI_GATE,      "mipi_csi",     "media_apb_root",=
-       0x9580, },
-> +       { IMX93_CLK_MIPI_DSI_GATE,      "mipi_dsi",     "media_apb_root",=
-       0x95c0, },
-> +       { IMX93_CLK_LVDS_GATE,          "lvds",         "media_ldb_root",=
-       0x9600, },
-> +       { IMX93_CLK_LCDIF_GATE,         "lcdif",        "media_apb_root",=
-       0x9640, },
-> +       { IMX93_CLK_PXP_GATE,           "pxp",          "media_apb_root",=
-       0x9680, },
-> +       { IMX93_CLK_ISI_GATE,           "isi",          "media_apb_root",=
-       0x96c0, },
-> +       { IMX93_CLK_NIC_MEDIA_GATE,     "nic_media",    "media_apb_root",=
-       0x9700, },
-> +       { IMX93_CLK_USB_CONTROLLER_GATE, "usb_controller", "hsio_root",  =
-       0x9a00, },
-> +       { IMX93_CLK_USB_TEST_60M_GATE,  "usb_test_60m", "hsio_usb_test_60=
-m_root", 0x9a40, },
-> +       { IMX93_CLK_HSIO_TROUT_24M_GATE, "hsio_trout_24m", "osc_24m",    =
-       0x9a80, },
-> +       { IMX93_CLK_PDM_GATE,           "pdm",          "pdm_root",      =
-       0x9ac0, },
-> +       { IMX93_CLK_MQS1_GATE,          "mqs1",         "sai1_root",     =
-       0x9b00, },
-> +       { IMX93_CLK_MQS2_GATE,          "mqs2",         "sai3_root",     =
-       0x9b40, },
-> +       { IMX93_CLK_AUD_XCVR_GATE,      "aud_xcvr",     "audio_xcvr_root"=
-,      0x9b80, },
-> +       { IMX93_CLK_SPDIF_GATE,         "spdif",        "spdif_root",    =
-       0x9c00, },
-> +       { IMX93_CLK_HSIO_32K_GATE,      "hsio_32k",     "osc_32k",       =
-       0x9dc0, },
-> +       { IMX93_CLK_ENET1_GATE,         "enet1",        "enet_root",     =
-       0x9e00, },
-> +       { IMX93_CLK_ENET_QOS_GATE,      "enet_qos",     "wakeup_axi_root"=
-,      0x9e40, },
-> +       { IMX93_CLK_SYS_CNT_GATE,       "sys_cnt",      "osc_24m",       =
-       0x9e80, },
-> +       { IMX93_CLK_TSTMR1_GATE,        "tstmr1",       "bus_aon_root",  =
-       0x9ec0, },
-> +       { IMX93_CLK_TSTMR2_GATE,        "tstmr2",       "bus_wakeup_root"=
-,      0x9f00, },
-> +       { IMX93_CLK_TMC_GATE,           "tmc",          "osc_24m",       =
-       0x9f40, },
-> +       { IMX93_CLK_PMRO_GATE,          "pmro",         "osc_24m",       =
-       0x9f80, }
-> +};
-> +
-> +static struct clk_hw_onecell_data *clk_hw_data;
-> +static struct clk_hw **clks;
-> +
-> +static int imx93_clocks_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct device_node *np =3D dev->of_node;
-> +       struct imx93_clk_root *root;
-> +       struct imx93_clk_ccgr *ccgr;
-> +       void __iomem *base =3D NULL;
-> +       int i, ret;
-> +
-> +       clk_hw_data =3D kzalloc(struct_size(clk_hw_data, hws,
-> +                                         IMX93_CLK_END), GFP_KERNEL);
-> +       if (WARN_ON(!clk_hw_data))
-
-Drop WARN_ON() as allocation already prints a stacktrace on failure.
-
-> +               return -ENOMEM;
-> +
-> +       clk_hw_data->num =3D IMX93_CLK_END;
-> +       clks =3D clk_hw_data->hws;
-> +
-> +       clks[IMX93_CLK_DUMMY] =3D imx_clk_hw_fixed("dummy", 0);
-> +       clks[IMX93_CLK_24M] =3D imx_obtain_fixed_clk_hw(np, "osc_24m");
-> +       clks[IMX93_CLK_32K] =3D imx_obtain_fixed_clk_hw(np, "osc_32k");
-> +       clks[IMX93_CLK_EXT1] =3D imx_obtain_fixed_clk_hw(np, "clk_ext1");
-> +
-> +       clks[IMX93_CLK_SYS_PLL_PFD0] =3D imx_clk_hw_fixed("sys_pll_pfd0",=
- 1000000000);
-> +       clks[IMX93_CLK_SYS_PLL_PFD0_DIV2] =3D imx_clk_hw_fixed_factor("sy=
-s_pll_pfd0_div2",
-> +                                                                   "sys_=
-pll_pfd0", 1, 2);
-> +       clks[IMX93_CLK_SYS_PLL_PFD1] =3D imx_clk_hw_fixed("sys_pll_pfd1",=
- 800000000);
-> +       clks[IMX93_CLK_SYS_PLL_PFD1_DIV2] =3D imx_clk_hw_fixed_factor("sy=
-s_pll_pfd1_div2",
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+G7p3AiuB2sgfq6cOpbO5MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQBsL34EJkCtu9Nu
+2+R6l1Qzno5Gl+N2Cm6/YLujukDGYa1JW27txXiilR9dGP7yl60HYyG2Exd5i6fiLDlaNEw0SqzE
+dw9ZSIak3Qvm2UybR8zcnB0deCUiwahqh7ZncEPlhnPpB08ETEUtwBEqCEnndNEkIN67yz4kniCZ
+jZstNF/BUnI3864fATiXSbnNqBwlJS3YkoaCTpbI9qNTrf5VIvnbryT69xJ6f25yfmxrXNJJe5OG
+ncB34Cwnb7xQyk+uRLZ465yUBkbjk9pC/yamL0O7SOGYUclrQl2c5zzGuVBD84YcQGDOK6gSPj6w
+QuBfOooZPOyZZZ8AMih7J980MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABQeVybOOpR4bOOXZYL5T3MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCc
+8m6Md3NUghCo/5KQMZikd/Q3OdbUpmNGqXEIcVQztTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjAyMjUwNDE0MzlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEANaZ8ulie59tTpHMd1TQF
+C62PJikiWUSm9jhl0ejWcpzGGEdN2ARXWW6+O1xYf1uAGH1Pzy9xBIIFYzV+t5jVJI/rEjj+mWS5
+U2i/Msef/w1NKKIuCci4Tam+A1AHV1KHadegQ/YPXsXR6PMvfXzaeXiRXeyeLaMv/SM7e9mVwjpY
+tl1M6OaeI8b1lNegQHUP0AiAHYKnb7P+x0Zbp+sF7vffzOEUQzk/R4y7yPqEmZANEgEeoUzPK5nG
+nKaL5CevL46gm7VZh41uRr9mkKyxkZOAihgG50SpqXtAVOiXkZlf50oR+4jV6KKUypGNMLppOWzW
+iKHqdyMueuNSrLG1Fg==
+--000000000000fde2ad05d8cfef64--
