@@ -2,95 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4196CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 10:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E08C4332F
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 11:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239525AbiBYKcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 05:32:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49266 "EHLO
+        id S240023AbiBYLYk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 06:24:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230500AbiBYKcP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 05:32:15 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4EF87658;
-        Fri, 25 Feb 2022 02:31:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1645785101; x=1677321101;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=KQD7n9IlWz2cK2vL5gVsYXD/voNOuf0gAg5CPXpfExk=;
-  b=w5GrchaIn/OgyJZO0spkAwFNSkKOFz16hUA/ywcL8N5wCXQRAVl1YbQT
-   NXaNMOs0wWxmUbjpQ6ddSyzwBM08xn8WrhCAH/q9Z8JQNmiRgmNF32Ze5
-   eCW9tYTvBLtpKLyA+zHCJ+J90w6Hd+iqorf4rCCIXrztTyjr4AW8hfhnK
-   q2MvTPhjoiF7B/MvfQvOG9wj1O/IbalsDg+kc88mfYfhzml8qJ7Ie4b8O
-   7Z40XPi1G9ps4XwKNENfhmHJXvHt7w40UNYLGwMugt6U9y3N5GxL1Go9G
-   s5UZVGgy9GOzpJVsG7HPqliv9/1Ozo0n7m7UXX2fls99gbSEY/Vwyse+/
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,136,1643698800"; 
-   d="scan'208";a="163635846"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Feb 2022 03:31:40 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 25 Feb 2022 03:31:40 -0700
-Received: from [10.12.72.56] (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Fri, 25 Feb 2022 03:31:38 -0700
-Message-ID: <deb6ace6-adfc-bbaa-d31f-16d02a5f762b@microchip.com>
-Date:   Fri, 25 Feb 2022 11:31:37 +0100
+        with ESMTP id S237386AbiBYLYk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 06:24:40 -0500
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC8921EBBF;
+        Fri, 25 Feb 2022 03:24:07 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 92075FF80A;
+        Fri, 25 Feb 2022 11:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1645788245;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BojsKi1ruriqiFypw1qe5SRshGJ6mnVKS+raZKmEv4g=;
+        b=fpyF6FVw5omwB31iIRERcbtM2pRALzfiS8UDs1nEQWzOUOUqr/0qrrzJBWvtgB/r4Efn/A
+        dUrg25JBQ415iE4uxNu1rsXZR6jmtFRrDekWtn/UiyW/Y7+iNa6G6Za6abS3OLiIl+OHrB
+        pBPsZA1A31UjN3yUa2gJn4BBKlZLvd4h5ocgh0visIFcfQ6r2S0l5On5F4kzkbF75F+51D
+        hgRDGhvtPHE/ROwD0OO6lYinqotSF7F4wcMTwM1VaelAeTRBippl8HtXFESsPdC/n0UKb8
+        6GvPqDEf5p/31GYtJd7bXOb4OA2OrrtDY6IspNe6CC/Z3RaMYqdYT+NxnxgB7w==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v3 0/7] RZN1 DMA support
+Date:   Fri, 25 Feb 2022 12:23:55 +0100
+Message-Id: <20220225112403.505562-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: at91: sama7g5: Allow MCK1 to be exported and
- referenced in DT
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        <claudiu.beznea@microchip.com>, <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-CC:     <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <rdunlap@infradead.org>, <unixbhaskar@gmail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20220111125310.902856-1-tudor.ambarus@microchip.com>
- <20220125010554.BB92BC340E4@smtp.kernel.org>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20220125010554.BB92BC340E4@smtp.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/01/2022 at 02:05, Stephen Boyd wrote:
-> Quoting Tudor Ambarus (2022-01-11 04:53:10)
->> MCK1 feeds the External Bus Interface (EBI). EBI's clock rate is used
->> to translate EBI's timmings to SMC timings, thus we need to handle MCK1
->> in the EBI driver. Allow MCK1 to be referenced as a PMC_TYPE_CORE clock
->> from phandle in DT.
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->> ---
-> 
-> Applied to clk-next
+Hello,
 
-Hi Stephen,
+Here is a first series bringing DMA support to RZN1 platforms. I'm not a
+DMA expert at all so criticism is welcome.
 
-I depend on the PMC_MCK1 definition for some of the DT patches that I 
-must queue for my pull request to arm-soc, for 5.18.
+Soon a second series will come with changes made to the UART controller
+driver, in order to interact with the RZN1 DMA controller.
 
-Would you mind doing an immutable branch for me to pull from, so that 
-the build doesn't crash while the clock tree is not integrated yet with 
-my patches?
+Cheers,
+Miquèl
 
-Tell me if there's a better way, as well.
+Changes in v3:
+* Added Reviewed-by tags.
+* Exported the set_dmamux* symbol properly.
+* Dropped a useless check in the probe and moved the sysctrl_priv
+  assignation to the end of the probe.
+* Renamed the dmamux driver
+* Added a couple of missing MODULE_ macros in the dmamux driver.
+* Decided to use a regular platform init call instead of the
+  arch_initcall() initially proposed.
+* s/%d/%u/ in printk's when appropriate.
+* Used a hardcoded value instead of dmamux->dmac_requests when
+  appropriate.
+* Changed the variable name "master" to "dmac_idx" to be more
+  descriptive.
+* Dropped most of the of_* calls in favor of #define's.
+* Fixed a typo.
+* Exported two symbols from 8250_dma.c.
 
-Thanks, best regards,
-   Nicolas
+Changes in v2:
+* Clarified that the 'fix' regarding non aligned reads would only apply
+  to the DEV_TO_MEM case.
+* Fix the DMA controller compatible string (copy-paste error).
+* s/syscon/sysctrl/ as advised by Geert.
+* Disabled irqs when taking the spinlock from the clocks driver.
+* Moved the DMAMUX offset inside the driver.
+* Removed extra commas.
+* Improved the style as suggested by Andy.
+* Removed a dupplicated check against the device node presence.
+* Reduced the number of lines of code by using dev_err_probe().
+* Created a Kconfig symbol for DMAMUX to fix the two robot reports
+  received and be sure there was no useless overhead with other
+  platforms.
+* Exported the serial8250_{tx,rx}_dma() symbols.
+
+Miquel Raynal (7):
+  dt-bindings: dma: Introduce RZN1 dmamux bindings
+  dt-bindings: dma: Introduce RZN1 DMA compatible
+  soc: renesas: rzn1-sysc: Export function to set dmamux
+  dma: dmamux: Introduce RZN1 DMA router support
+  dma: dw: Add RZN1 compatible
+  ARM: dts: r9a06g032: Add the two DMA nodes
+  ARM: dts: r9a06g032: Describe the DMA router
+
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     |  42 +++++
+ .../bindings/dma/snps,dma-spear1340.yaml      |   8 +-
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  37 +++++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  35 +++-
+ drivers/dma/dw/Kconfig                        |   8 +
+ drivers/dma/dw/Makefile                       |   2 +
+ drivers/dma/dw/platform.c                     |   1 +
+ drivers/dma/dw/rzn1-dmamux.c                  | 152 ++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |  11 ++
+ 10 files changed, 295 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ create mode 100644 drivers/dma/dw/rzn1-dmamux.c
+ create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
 
 -- 
-Nicolas Ferre
+2.27.0
+
