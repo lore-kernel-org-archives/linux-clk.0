@@ -2,78 +2,91 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8159BC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 00:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD322C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 00:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235653AbiBYAuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 19:50:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38600 "EHLO
+        id S236176AbiBYAxl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 19:53:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235626AbiBYAuR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 19:50:17 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81EC42C0335;
-        Thu, 24 Feb 2022 16:49:46 -0800 (PST)
+        with ESMTP id S236167AbiBYAxh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 19:53:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE62B6211C;
+        Thu, 24 Feb 2022 16:53:06 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 24EF1B82A7C;
-        Fri, 25 Feb 2022 00:49:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA8EDC340EF;
-        Fri, 25 Feb 2022 00:49:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 772D2B82A7B;
+        Fri, 25 Feb 2022 00:53:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140FFC340E9;
+        Fri, 25 Feb 2022 00:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645750183;
-        bh=/gjfyXft3KepKTQGQRWa22PpJYtYND6chFxYq2s6++s=;
+        s=k20201202; t=1645750384;
+        bh=WiU8eEovdrcQvzN/+8CTcDkJk87O1toyFK3+Ul8Gjb8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Osej/u5wUspxVqADMrgvgoC5FXMvyHDkHZW4fBJ1kgFe1+EKJFtljIZYJhQnFMHnB
-         6B2AMVFTv+WbbL5IV+/Bgq70y+YevqLtpWLNfmmB+SADRrSDkwIJw7suwxnQrAz074
-         6k5eD73lafLOJkdIj1k2/mEbD4dIlFFyxc1u8Lq77F1Q5ezIjtZ6UlQeB8G5RUrk/r
-         6CgFL6QrUg7V4vpBLk4jkbxv9mZ/MLvXSCbcOWR3Nd/ESbF2KYIhOh0dYb87wHpya3
-         KaI4/FGdO4SeKfmLCGq+owJAwN2gm/SxIfHiAaGa+TRXkg0NU9Fd9fskn42WAl04Gk
-         9FKPxFUgjkfMA==
+        b=X1YIG8CgztDg9F5f0ybeylBTdTUrK+zafUIqud9XcPsM3jDkPkqdorMHGP1L9xIpp
+         RPkhp5owG7Mx2z8HpR6BpCYOOrg/yDmSMUy3YFmYeXTPDYCEE20swn/eXS0BBxp1ZV
+         cMNwj1RFR6ojLFQPSuHTW87F00TNzZWsR26HZr97UP6+vrJ5zhEgrphCZxnu44OpTB
+         EyTR3un+hl1a9nWAJk18TW+6oQ445lAUNzMDG2JUFluJqPGlNrRcMXhx6LnyhBsVSh
+         e4G0CARftrojyHJVMsVZNmDsShiGfmMfxpSKtV8p5gVgiOOMcDqvEGrhS6WZBwgcsg
+         NA0IEEa5iSSSQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c7d1539f-01a2-299d-ca4f-8e60cfe71775@redhat.com>
-References: <20220216225304.53911-1-djrscally@gmail.com> <20220216225304.53911-4-djrscally@gmail.com> <c7d1539f-01a2-299d-ca4f-8e60cfe71775@redhat.com>
-Subject: Re: [PATCH 3/6] platform/x86: int3472: Support multiple clock consumers
+In-Reply-To: <20220224035902.1594253-1-davidgow@google.com>
+References: <20220224035902.1594253-1-davidgow@google.com>
+Subject: Re: [PATCH] clk: lan966x: Depend on CONFIG_IOMEM
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     rafael@kernel.org, lenb@kernel.org, markgross@kernel.org,
-        robert.moore@intel.com, linux-acpi@vger.kernel.org,
-        linux-clk@vger.kernel.org, platform-driver-x86@vger.kernel.org
-To:     Daniel Scally <djrscally@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
+Cc:     David Gow <davidgow@google.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-um@lists.infradead.org
+To:     David Gow <davidgow@google.com>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 24 Feb 2022 16:49:41 -0800
+Date:   Thu, 24 Feb 2022 16:53:02 -0800
 User-Agent: alot/0.10
-Message-Id: <20220225004943.AA8EDC340EF@smtp.kernel.org>
+Message-Id: <20220225005304.140FFC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hans de Goede (2022-02-21 01:59:09)
-> Hi,
+Quoting David Gow (2022-02-23 19:59:02)
+> The lan966x clk driver depends on IOMEM functions, in particular
+> devm_platform_ioremap_resource(), but doesn't state a formal dependency
+> on it in Kconfig.
 >=20
-> On 2/16/22 23:53, Daniel Scally wrote:
-> > At present, the int3472-tps68470 only supports a single clock consumer =
-when
-> > passing platform data to the clock driver. In some devices multiple
-> > sensors depend on the clock provided by a single TPS68470 and so all
-> > need to be able to acquire the clock. Support passing multiple
-> > consumers as platform data.
-> >=20
-> > Signed-off-by: Daniel Scally <djrscally@gmail.com>
+> Add such a dependency, which prevents this driver from being enabled
+> on UML configurations without IOMEM.
 >=20
-> Thanks, patch looks good to me:
+> This fixes the following build failure:
 >=20
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> /usr/bin/ld: drivers/clk/clk-lan966x.o: in function `lan966x_clk_probe':
+> clk-lan966x.c:(.text+0x294): undefined reference to `devm_platform_iorema=
+p_resource'
+> /usr/bin/ld: clk-lan966x.c:(.text+0x3aa): undefined reference to `devm_io=
+remap_resource'
+> collect2: error: ld returned 1 exit status
 >=20
-> Michael, I plan to merge this entire series through the platform-drivers-=
-x86 git
-> tree, may I have your ack for merging the clk bits from this ?
+> Signed-off-by: David Gow <davidgow@google.com>
+> ---
+>  drivers/clk/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >=20
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 3cdf33470a75..7b5db8a9eb4f 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -231,6 +231,7 @@ config COMMON_CLK_GEMINI
+> =20
+>  config COMMON_CLK_LAN966X
+>         bool "Generic Clock Controller driver for LAN966X SoC"
+> +       depends on IOMEM
 
-With the type fix
+What is CONFIG_IOMEM? This is superseded by
+https://lore.kernel.org/r/20220219141536.460812-1-horatiu.vultur@microchip.=
+com
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+>         help
+>           This driver provides support for Generic Clock Controller(GCK) =
+on
+>           LAN966X SoC. GCK generates and supplies clock to various periph=
+erals
