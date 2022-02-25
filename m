@@ -2,130 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3481C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 17:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0116C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 17:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243496AbiBYROR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 12:14:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
+        id S235656AbiBYRbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 12:31:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240804AbiBYROQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 12:14:16 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A91AB1A8043;
-        Fri, 25 Feb 2022 09:13:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E5EE61D73;
-        Fri, 25 Feb 2022 17:13:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E452C340E7;
-        Fri, 25 Feb 2022 17:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645809222;
-        bh=4sE4Gtevnk8/TCjMANbcRjCHG8DgJ5S+RZAsg3tQewo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=aKNMEZYO9GYS47EsbtSGoBp7jQ6cq+PB2zbte+AwwqqiqpcVRMxGDM0F0Afex5ZJW
-         4rYESli2esu86LIUX6eb+GIiQqKG0aJoZCwpzqlHuXkixzO/1AezAk2443Z9c992ps
-         XywAbCY1/AWyw1jhDZ3bHZQXnfC+/H1QPWErc949Yi5ixSLpl4/cO2POfTAAfrxKho
-         CAVXpDY7lijl79zw4wxpFlP592n7RcY/q2RQ45t4e4X5U4/DfLgdvmThUjLUu/hMNF
-         a6Vl3pNKPQMeAYVdX3MJ7TCbUyat1DVH9TvH+imzTBTV3gNbtHMVmiV6Fa05o9r3/n
-         oKdbLx9yzFJlA==
-Date:   Fri, 25 Feb 2022 11:13:41 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
- driver_override
-Message-ID: <20220225171341.GA364850@bhelgaas>
+        with ESMTP id S243734AbiBYRbE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 12:31:04 -0500
+X-Greylist: delayed 915 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 25 Feb 2022 09:30:26 PST
+Received: from m12-13.163.com (m12-13.163.com [220.181.12.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 980A260D8B
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 09:30:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=MziJy
+        eKtUoRsiZinTshO21CHXaFn+Yc0G5M/yw91x/8=; b=GLxXfgx1IDJCtOB+esS9h
+        F/kFOYv/+DTm1WV3VqETah0y1+PtN4XeIUdZDcnSI9DKw9swXIGtY3zdC0hQFRcZ
+        sPppRPpwSAVp4pC6TjYG314GaDY5UdYvTvFX19aSRZOZIeJrTD5xugOEKpq/Q03D
+        iysfPTw/8I4c15ydzjTPn4=
+Received: from localhost.localdomain (unknown [14.221.173.100])
+        by smtp9 (Coremail) with SMTP id DcCowAAX7xqODhlibbHRAA--.18593S2;
+        Sat, 26 Feb 2022 01:14:55 +0800 (CST)
+From:   logic_wei@163.com
+To:     mturquette@baylibre.com
+Cc:     sboyd@kernel.org, popcornmix@gmail.com,
+        dave.stevenson@raspberrypi.com, nsaenz@kernel.org,
+        linux-clk@vger.kernel.org, Peng Wei <logic_wei@163.com>
+Subject: [PATCH] clk: bcm: rpi: Fix slab-out-of-bounds during raspberrypi_discover_clocks.
+Date:   Sat, 26 Feb 2022 01:14:53 +0800
+Message-Id: <20220225171453.1241132-1-logic_wei@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DcCowAAX7xqODhlibbHRAA--.18593S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WFWDJryrtryDXrWUAF1UKFg_yoW8ZrW3pF
+        W8Xa43AF1qgr45KF45Jayq93WS93909Fy5WryIvwsavFW7GF98KFWjkrn5GryrGr1UX3Z8
+        Xry5AFWDZFnrAFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0z_LvKAUUUUU=
+X-Originating-IP: [14.221.173.100]
+X-CM-SenderInfo: 5orjxupbzhxqqrwthudrp/xtbBLQ+yulzialPR1AAAso
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 25, 2022 at 10:36:20AM +0100, Krzysztof Kozlowski wrote:
-> On 25/02/2022 00:52, Bjorn Helgaas wrote:
-> > On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
-> >> On 23/02/2022 22:51, Bjorn Helgaas wrote:
-> >>> In subject, to match drivers/pci/ convention, do something like:
-> >>>
-> >>>   PCI: Use driver_set_override() instead of open-coding
-> >>>
-> >>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
-> >>>> Use a helper for seting driver_override to reduce amount of duplicated
-> >>>> code.
-> >>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
-> >>>>  				     const char *buf, size_t count)
-> >>>>  {
-> >>>>  	struct pci_dev *pdev = to_pci_dev(dev);
-> >>>> -	char *driver_override, *old, *cp;
-> >>>> +	int ret;
-> >>>>  
-> >>>>  	/* We need to keep extra room for a newline */
-> >>>>  	if (count >= (PAGE_SIZE - 1))
-> >>>>  		return -EINVAL;
-> >>>
-> >>> This check makes no sense in the new function.  Michael alluded to
-> >>> this as well.
-> >>
-> >> I am not sure if I got your comment properly. You mean here:
-> >> 1. Move this check to driver_set_override()?
-> >> 2. Remove the check entirely?
-> > 
-> > I was mistaken about the purpose of the comment and the check.  I
-> > thought it had to do with *this* function, and this function doesn't
-> > add a newline, and there's no obvious connection with PAGE_SIZE.
-> > 
-> > But looking closer, I think the "extra room for a newline" is really
-> > to make sure that *driver_override_show()* can add a newline and have
-> > it still fit within the PAGE_SIZE sysfs limit.
-> > 
-> > Most driver_override_*() functions have the same comment, so maybe
-> > this was obvious to everybody except me :)  I do see that spi.c adds
-> > "when displaying value" at the end, which helps a lot.
-> > 
-> > Sorry for the wild goose chase.
-> 
-> I think I will move this check anyway to driver_set_override() helper,
-> because there is no particular benefit to have duplicated all over. The
-> helper will receive "count" argument so can perform all checks.
+From: Peng Wei <logic_wei@163.com>
 
-Thanks, I think that would be good!
+There're two potential bugs here:
+1) RPI_FIRMWARE_EMMC_CLK_ID the first element of enum rpi_firmware_clk_id
+   is set to be 1.So RPI_FIRMWARE_NUM_CLK_ID will be bigger than the total
+   number of the enum rpi_firmware_clk_id.It maybe cause overflow bug when
+   accessing the array of clks.Besides it will cost more memory when alloc
+   memory for clks.
+2) When iterating the clks,there's no way to break the loop until any error
+   is returned.
+So change the RPI_FIRMWARE_EMMC_CLK_ID from 1 to 0.And then tell the loop
+the way to break.
 
-Bjorn
+The KASAN warning:
+
+BUG: KASAN: slab-out-of-bounds in raspberrypi_clk_probe+0x1d8/0x2f8
+
+Read of size 4 at addr ffffff8040bd8704 by task swapper/0/1
+
+Call trace:
+ ...
+ __asan_load4+0x94/0xd0
+ raspberrypi_clk_probe+0x1d8/0x2f8
+ platform_probe+0x94/0x110
+ ...
+
+Signed-off-by: Peng Wei <logic_wei@163.com>
+---
+ drivers/clk/bcm/clk-raspberrypi.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 99cc4c856de1..726b3f45c137 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -19,7 +19,7 @@
+ #include <soc/bcm2835/raspberrypi-firmware.h>
+ 
+ enum rpi_firmware_clk_id {
+-	RPI_FIRMWARE_EMMC_CLK_ID = 1,
++	RPI_FIRMWARE_EMMC_CLK_ID = 0,
+ 	RPI_FIRMWARE_UART_CLK_ID,
+ 	RPI_FIRMWARE_ARM_CLK_ID,
+ 	RPI_FIRMWARE_CORE_CLK_ID,
+@@ -252,6 +252,7 @@ static int raspberrypi_discover_clocks(struct raspberrypi_clk *rpi,
+ {
+ 	struct rpi_firmware_get_clocks_response *clks;
+ 	int ret;
++	int count = 0;
+ 
+ 	clks = devm_kcalloc(rpi->dev,
+ 			    sizeof(*clks), RPI_FIRMWARE_NUM_CLK_ID,
+@@ -265,7 +266,7 @@ static int raspberrypi_discover_clocks(struct raspberrypi_clk *rpi,
+ 	if (ret)
+ 		return ret;
+ 
+-	while (clks->id) {
++	while (count++ < RPI_FIRMWARE_NUM_CLK_ID && clks->id) {
+ 		struct clk_hw *hw;
+ 
+ 		switch (clks->id) {
+-- 
+2.25.1
+
