@@ -2,116 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569FDC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 14:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1E5C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 15:13:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234160AbiBYOgd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 09:36:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
+        id S241814AbiBYPOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 10:14:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241819AbiBYOgc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 09:36:32 -0500
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DFC1AE64D
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 06:36:00 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id F0F075C0138;
-        Fri, 25 Feb 2022 09:35:59 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 25 Feb 2022 09:35:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=B/S+5pJTjISbVKXDbmkZvJslRN2Aa6
-        NU173g50j/vbU=; b=XBp17LPoauOjyeNC4WdBZXIG5Y4US0YJ13un+UcoxObIO8
-        t6TCTomoTNNRT+2ULAqRiuY0ke4qktCEJiKwkYJ75nsyguKOO3IRXuBXrmFKHTaE
-        Srpik1wUExrDinF72y2wcoBb4nrflzb3OXCX8X8i8ikYlGal4HkHkHSsTqv+aRAI
-        Zf1Dy0vux5BD83KZ1F761qYREGMiVF/QhmOAjIuVAIF4bD5aYMRgIg37bkbX64JW
-        OtwAJ7WzjwyCEZxrvDByTi43NbDU32X8dBIu+GYUcdq01zmz9OE+XRpskG7JCYT2
-        9Oa/0eMEorSM+Eojsi4t0aOwc4UFBkxsTUed6R/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=B/S+5p
-        JTjISbVKXDbmkZvJslRN2Aa6NU173g50j/vbU=; b=kAotQOEkxd+hD4BDdLCLA/
-        hBz/1Kry7hN1knZlfWkWSFY5Kk62/Y4AknUJnuItOg103m1/j5WggBVH6EYu32M1
-        9tqaXf8/USQFRljSgqalUKCbmTvbzXCkBncruymddiUompnaNtFBxQoxmaAZPuSl
-        rAgwaC5bVndChcp6dbAW5rn91fsylQszycIHq0XjTsjeWXEERhKGGsLcDn9BdH42
-        17SsTG85Y0vCN42FOMb/wuYQ64jyBv+egYtEUrxQJdulclx6H/qQsIoCX7q8D6wh
-        HC6yvpbaEScbzMqcEH7utL6YjjheB2JrzKN+5dm1mcPXlJW3wejCVOoFgucddEcw
-        ==
-X-ME-Sender: <xms:T-kYYkHbrSHxF9zRYwpN41KjskSHspH3ZbtLihDIa1ShCj8W5sxStQ>
-    <xme:T-kYYtXc5E-hQJYgVLsblT1eCXMIZ2nXSXzwwG3KPmHS7urQmzKuTFpf9Bh27zB-2
-    TnM08Guu0QrAQpvN04>
-X-ME-Received: <xmr:T-kYYuK8leTEbL3o1-QovEQj42yfVV6df0mzz4Fur-pQpuplkxdiIVSRdgfCQyBsT7kYSM6P2yqTE0P_8CgnNy1AfJwG3Pyx4F7J9Y0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrleeggdeijecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpeefnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:T-kYYmHkrzzG1_4DJtc3QBxbTmg8IpqMsI0piTGA5SXdQt_N2AYivQ>
-    <xmx:T-kYYqUnw8FZ5jTJgeo2-IEBAV9fQXZ-GhHCnky5ojYTK6DSyYRPPA>
-    <xmx:T-kYYpO7uPhLr9RZLxi0Ye03DMmV_Crrlgf0-ijqHCykDf3oV6MMgQ>
-    <xmx:T-kYYlFGw_UUiEv0JSYoO2vq66fawq87d_hgYEQbzc_0bztk9z0Nqw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Feb 2022 09:35:59 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v7 12/12] drm/vc4: hdmi: Remove clock rate initialization
-Date:   Fri, 25 Feb 2022 15:35:34 +0100
-Message-Id: <20220225143534.405820-13-maxime@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220225143534.405820-1-maxime@cerno.tech>
-References: <20220225143534.405820-1-maxime@cerno.tech>
+        with ESMTP id S241826AbiBYPOO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 10:14:14 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB7C1A1C46
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 07:13:41 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1nNcHf-0006DM-IZ; Fri, 25 Feb 2022 16:13:27 +0100
+Message-ID: <1d90078d-e27f-539d-d010-78a3c4da565a@pengutronix.de>
+Date:   Fri, 25 Feb 2022 16:13:25 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Subject: Re: [Linux-stm32] [PATCH v2 12/13] ARM: dts: stm32: enable optee
+ firmware and SCMI support on STM32MP13
+To:     gabriel.fernandez@foss.st.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20220225133137.813919-1-gabriel.fernandez@foss.st.com>
+ <20220225133137.813919-13-gabriel.fernandez@foss.st.com>
+Content-Language: en-US
+In-Reply-To: <20220225133137.813919-13-gabriel.fernandez@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the clock driver makes sure we never end up with a rate of 0,
-the HDMI driver doesn't need to care anymore.
+Hello Gabriel,
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/vc4/vc4_hdmi.c | 13 -------------
- 1 file changed, 13 deletions(-)
+On 25.02.22 14:31, gabriel.fernandez@foss.st.com wrote:
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> 
+> Enable optee and SCMI clocks support.
+> 
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+> ---
+>  arch/arm/boot/dts/stm32mp131.dtsi | 37 +++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp131.dtsi b/arch/arm/boot/dts/stm32mp131.dtsi
+> index 262de4eeb4ed..78eac53224d4 100644
+> --- a/arch/arm/boot/dts/stm32mp131.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp131.dtsi
+> @@ -27,6 +27,43 @@ arm-pmu {
+>  		interrupt-parent = <&intc>;
+>  	};
+>  
+> +	scmi_sram: sram@2ffff000 {
+> +		compatible = "mmio-sram";
+> +		reg = <0x2ffff000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0x2ffff000 0x1000>;
+> +
+> +		scmi_shm: scmi_shm@0 {
+> +			compatible = "arm,scmi-shmem";
+> +			reg = <0 0x80>;
+> +		};
+> +	};
+> +
+> +	firmware {
+> +		optee {
+> +			method = "smc";
+> +			compatible = "linaro,optee-tz";
+> +		};
+> +
+> +		scmi: scmi {
+> +			compatible = "linaro,scmi-optee";
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 92b1530aa17b..21aff3ad96cf 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -2576,19 +2576,6 @@ static int vc4_hdmi_bind(struct device *dev, struct device *master, void *data)
- 			vc4_hdmi->disable_4kp60 = true;
- 	}
- 
--	/*
--	 * If we boot without any cable connected to the HDMI connector,
--	 * the firmware will skip the HSM initialization and leave it
--	 * with a rate of 0, resulting in a bus lockup when we're
--	 * accessing the registers even if it's enabled.
--	 *
--	 * Let's put a sensible default at runtime_resume so that we
--	 * don't end up in this situation.
--	 */
--	ret = clk_set_min_rate(vc4_hdmi->hsm_clock, HSM_MIN_CLOCK_FREQ);
--	if (ret)
--		goto err_put_ddc;
--
- 	/*
- 	 * We need to have the device powered up at this point to call
- 	 * our reset hook and for the CEC init.
+This compatible doesn't seem to be documented upstream. I am looking at v5.17-rc5.
+Do you have a reference detailing the difference between this conduit and
+plain arm,scmi-smc (as used with TF-A on the STM32MP151).
+
+Cheers,
+Ahmad
+
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			linaro,optee-channel-id = <0>;
+> +			shmem = <&scmi_shm>;
+> +
+> +			scmi_clk: protocol@14 {
+> +				reg = <0x14>;
+> +				#clock-cells = <1>;
+> +			};
+> +
+> +			scmi_reset: protocol@16 {
+> +				reg = <0x16>;
+> +				#reset-cells = <1>;
+> +			};
+> +		};
+> +	};
+>  	clocks {
+>  		clk_axi: clk-axi {
+>  			#clock-cells = <0>;
+
+
 -- 
-2.35.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
