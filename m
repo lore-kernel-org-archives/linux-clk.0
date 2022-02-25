@@ -2,71 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F65BC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 18:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C936CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 18:57:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233816AbiBYS4I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 13:56:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50766 "EHLO
+        id S233834AbiBYS6L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 13:58:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230051AbiBYS4H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 13:56:07 -0500
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08AA41DA01F;
-        Fri, 25 Feb 2022 10:55:32 -0800 (PST)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id D8B55837F6;
-        Fri, 25 Feb 2022 19:55:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1645815330;
-        bh=8KPXkNDxqyZ3eBWxu5d/ZoPP8rsdRQhtEv74YlBXzdw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Yo+w4q/jLgtWzZ4isxb+s7i97qlSPkYd+da5fM5vfp8lSxOESEI11eZqxxsNQ+SfE
-         gIVD/5ryZ4JGkG+4x+b+VKqus9UWAXSkNfukg+r0jJCldcHeUj2PoB+HbtrlmJMZgU
-         vx6Pwwu2SI9YlQD5MEezESoWIik3+ZCHDkiy8VzUleYzOWlknPAuBUJj/1HyFcio+A
-         AUtOGf9509qkqmm0FUEsrjUtgb7qXAH7tfdEsQXewKuSLnqh4krE0as6VEkxE+R56B
-         WtLkeRik+rNI+hGZqTZ65e5o+QuawjSDYGtcok1kDJL/46azni8SlBYaR8Tb2YIm/D
-         SE/SgorGyne4g==
-Message-ID: <a405dea6-800d-471b-1992-aa271175e795@denx.de>
-Date:   Fri, 25 Feb 2022 19:55:29 +0100
+        with ESMTP id S230366AbiBYS6K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 13:58:10 -0500
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F66260CFD;
+        Fri, 25 Feb 2022 10:57:37 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id k22-20020a9d4b96000000b005ad5211bd5aso4252681otf.8;
+        Fri, 25 Feb 2022 10:57:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=x8VduacFeI2TtrIqE99cIVcfc9BkTJGt0d9uSUOVc7E=;
+        b=WOew9d8LhibU+zZg6zht5O9gdJcvGFlHDftcqjeaeXzzNwsV0dR122W5LNh1WrkSab
+         4YDpAyyIM/bIjody5VrjLlb0a6PHBRO08M8+fpeKcKvjQRNBQsMDAa+b3fczqcMSGyzL
+         W90lN5iDc4KFnZleRMLEE7XemF/jtgphqpSHc10uxv2VgmRi7c8eCkrgQyJ13Gv5Xpeh
+         1xoRGV1wxB3DzTxrlinmlE6ROLDnSUntlxLNi+FLRfG+WNRPOhuu2zEPtyidwQBynrVh
+         OIYPklVmzJJFQJKC3cvn6nJd6jtIoYSbIlBAkWX/2UrxdbRl3nSZjOZSzwyI+keGTbhT
+         Tp3w==
+X-Gm-Message-State: AOAM532DsA9aWtYM2qXJBmx6gA5Kp4N8MM5HI/vZlNc1llrkMkvhFrEF
+        vVoFsBtS1EhAi7bmJCf50w==
+X-Google-Smtp-Source: ABdhPJyley6JPhi/AEjlC8FHuJ7ppAxof/WudVKlaHcQo3+Rn5IGxqe/9TCzVrCzQFJDLr4y/9d3LA==
+X-Received: by 2002:a9d:6a43:0:b0:5af:6595:458c with SMTP id h3-20020a9d6a43000000b005af6595458cmr3452302otn.241.1645815456446;
+        Fri, 25 Feb 2022 10:57:36 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id u24-20020a4ae698000000b0031c286f2e0csm1451768oot.29.2022.02.25.10.57.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Feb 2022 10:57:35 -0800 (PST)
+Received: (nullmailer pid 1247199 invoked by uid 1000);
+        Fri, 25 Feb 2022 18:57:34 -0000
+Date:   Fri, 25 Feb 2022 12:57:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, srv_heupstream@mediatek.com,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v2 01/15] dt-bindings: ARM: Mediatek: Add new document
+ bindings of MT8186 clock
+Message-ID: <YhkmnnIApvU7gRlZ@robh.at.kernel.org>
+References: <20220221015258.913-1-chun-jie.chen@mediatek.com>
+ <20220221015258.913-2-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v2 1/3] dt-bindings: clk: rs9: Add Renesas 9-series I2C
- PCIe clock generator
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-References: <20220219015003.507601-1-marex@denx.de>
- <YhkkLTqc8igZ9kzh@robh.at.kernel.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <YhkkLTqc8igZ9kzh@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220221015258.913-2-chun-jie.chen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/25/22 19:47, Rob Herring wrote:
-
-[...]
-
->> +  renesas,out-spread-spectrum:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [ 100000, 99750, 99500 ]
->> +    description: Output clock down spread in pcm
+On Mon, Feb 21, 2022 at 09:52:44AM +0800, Chun-Jie Chen wrote:
+> This patch adds the new binding documentation for system clock
+> and functional clock on Mediatek MT8186.
 > 
-> pcm?
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+>  .../arm/mediatek/mediatek,mt8186-clock.yaml   |  56 +++
+>  .../mediatek/mediatek,mt8186-sys-clock.yaml   |  54 +++
+>  include/dt-bindings/clock/mt8186-clk.h        | 445 ++++++++++++++++++
+>  3 files changed, 555 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/mt8186-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+> new file mode 100644
+> index 000000000000..373e8a100da3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Mediatek Functional Clock Controller for MT8186
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
 
-per cent mille , 1/1000th of percent.
+You need a '|' to preserve the formatting.
 
-https://en.wikipedia.org/wiki/Per_cent_mille
+> +  The clock architecture in Mediatek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The devices provide clock gate control in different IP blocks.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8186-imp_iic_wrap
+> +          - mediatek,mt8186-mfgsys
+> +          - mediatek,mt8186-wpesys
+> +          - mediatek,mt8186-imgsys1
+> +          - mediatek,mt8186-imgsys2
+> +          - mediatek,mt8186-vdecsys
+> +          - mediatek,mt8186-vencsys
+> +          - mediatek,mt8186-camsys
+> +          - mediatek,mt8186-camsys_rawa
+> +          - mediatek,mt8186-camsys_rawb
+> +          - mediatek,mt8186-mdpsys
+> +          - mediatek,mt8186-ipesys
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    imp_iic_wrap: clock-controller@11017000 {
+> +        compatible = "mediatek,mt8186-imp_iic_wrap";
+> +        reg = <0x11017000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..4c071dd66b76
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-sys-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Mediatek System Clock Controller for MT8186
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
 
-[...]
+And here.
+
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +  The clock architecture in Mediatek like below
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The apmixedsys provides most of PLLs which generated from SoC 26m.
+> +  The topckgen provides dividers and muxes which provide the clock source to other IP blocks.
+> +  The infracfg_ao provides clock gate in peripheral and infrastructure IP blocks.
+> +  The mcusys provides mux control to select the clock source in AP MCU.
+> +  The device nodes also provide the system control capacity for configuration.
