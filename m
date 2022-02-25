@@ -2,265 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D55C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 01:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D4FC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 01:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234214AbiBYB4G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Feb 2022 20:56:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58300 "EHLO
+        id S234197AbiBYB4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Feb 2022 20:56:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232825AbiBYB4F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 20:56:05 -0500
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB8C329F40C
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 17:55:32 -0800 (PST)
-Received: by mail-qv1-xf2e.google.com with SMTP id j5so5590718qvs.13
-        for <linux-clk@vger.kernel.org>; Thu, 24 Feb 2022 17:55:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iP7thDEIqxn21zEZ3PMQ8d97ApEy1E0BI3PlG0cqqqI=;
-        b=NSeSMtKyj99jH6jqKoa2oCetHycscOUuBA/ciiagthe8WbrbdyH0oidbOzNB+GERnt
-         7GnT/yi8vHXZcLBjuuoUrQrvugyOxEsqKBuT9cqMKzKkNTDmnsJ5F8+hBygrIew4P/xi
-         iDE5v+T5pIPrHPNMDt4kp9uwi8SJzUoXZFdV+R9mGh1DY6D+P+odFk0wJn2QpK3ptoKg
-         5B+JqsP4B0xs4dYeESfLwcCVPsdhHn0lV28Ikb1pReztaeqiGi9LNOetNboF7i+aMBK/
-         XsGzdFloUsCb1v4vegIbb2dfUTC7cJ2LFPcYyO3jRcPAQ5+4T+07vcD5AvMeKiRvtMK2
-         XZYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iP7thDEIqxn21zEZ3PMQ8d97ApEy1E0BI3PlG0cqqqI=;
-        b=1fGHm02WEWWbBGGBPTzuhYVyzf0U7sHAogPi6BAJLKBGNX7Scic3R/qV1cuXPfXABF
-         EnKYG9pZSUfDf8/wEh4GAHH8MHY3Nbd4LgmW9JAfvjq+I8BAZtdSh+j4w6PG4xANMLy5
-         9UNIcUu6Zym8O1WKPWjyrPVhXwcjbAi9ePCRqTQcZrTuyTAM3V6sgOe0KZRJQfnYkrym
-         Q1EVukXjEtx+7eN2ae1FMWVVcGctOv2xF+bL4dexz0ovQIZw6RY5En1gszkR2Clq5/QG
-         TnzrBIuIyAGbpP3ldFRt+/Hwm5b8EawkJrNTQTkqZjs3Rjv1WWfUYKr6GyZdLVu3CoiH
-         ytZg==
-X-Gm-Message-State: AOAM530eVc5a5G3BDYbd0jZvCM9YLZXoyRVu2wzNNhPaSJqkNHu6bDlN
-        RZzaVQi/fLEHhuJS03Nkw5iu9RcBde5kfWwCu/V75w==
-X-Google-Smtp-Source: ABdhPJwtcqY26Ilbtl3vvQJTUAkuzzp0wReye57bVm9rFgd6ozvVavrVULfow+3AJDcxUKcr2DWV3V7izjvlasLLu1c=
-X-Received: by 2002:a05:6214:400a:b0:431:7f6c:98fc with SMTP id
- kd10-20020a056214400a00b004317f6c98fcmr4206463qvb.122.1645754132127; Thu, 24
- Feb 2022 17:55:32 -0800 (PST)
+        with ESMTP id S232825AbiBYB4X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Feb 2022 20:56:23 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F7929F40A;
+        Thu, 24 Feb 2022 17:55:52 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 44363612F0;
+        Fri, 25 Feb 2022 01:55:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EEC3C340E9;
+        Fri, 25 Feb 2022 01:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645754151;
+        bh=gPX7D8TWcwgfwGimCjLecj2OhwEh5+nLirnvtc31utY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Bk5AE9LtcZhk1Sp2LiQ0xOGl0DZm6uuUlgBWZynVcxHgumzwXubAEskCGvw9DNDat
+         K5TvSRMw3TxcVOfVv+IRlYp+DBuUCKmra1GA29RQxlGQjgQXbr+AA7YU53ZIsM72FL
+         Wwq+bcG5CQZ6IRAuJ3ptGjHc7OL0XpxYgm9bql3waPKoGsf1O4jMk2+tCOO134YzNx
+         xxp6ZeiyNjszfzAmbS4GFOFBJcB0KXIZAHoKK1WAgkPMLDX5PwcDZnMK+uICGc5BPR
+         J7eKMKuWsqWx4R2T1/iad/1U5gNCu91IzfDP/bddGGEXY3abs1U1YuHsqukHTraS4h
+         xGNKK3XdYikYg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
- <20220204144645.3016603-4-dmitry.baryshkov@linaro.org> <Yf2jRAf5UKYSMYxe@builder.lan>
- <f521a273-7250-ddca-0e56-b1b27bd75117@linaro.org> <CO1PR02MB8537B9CA859D2719B3BDC4FEE9349@CO1PR02MB8537.namprd02.prod.outlook.com>
-In-Reply-To: <CO1PR02MB8537B9CA859D2719B3BDC4FEE9349@CO1PR02MB8537.namprd02.prod.outlook.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 25 Feb 2022 04:55:21 +0300
-Message-ID: <CAA8EJpor6beihED6oAPb26PMT0_VjFBnmaAyeakh4eJFyF9_NQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tied to
- the GDSC
-To:     "Prasad Malisetty (Temp) (QUIC)" <quic_pmaliset@quicinc.com>
-Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Wilczy??ski" <kw@linux.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220225014234.1766305-5-peng.fan@oss.nxp.com>
+References: <20220225014234.1766305-1-peng.fan@oss.nxp.com> <20220225014234.1766305-5-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH V5 4/5] clk: imx: support fracn gppll
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@nxp.com,
+        robh+dt@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Thu, 24 Feb 2022 17:55:49 -0800
+User-Agent: alot/0.10
+Message-Id: <20220225015551.9EEC3C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 15 Feb 2022 at 13:24, Prasad Malisetty (Temp) (QUIC)
-<quic_pmaliset@quicinc.com> wrote:
->
->
->
-> -----Original Message-----
-> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Sent: Saturday, February 12, 2022 1:23 AM
-> To: bjorn.andersson@linaro.org; Prasad Malisetty (Temp) (QUIC) <quic_pmal=
-iset@quicinc.com>
-> Cc: Andy Gross <agross@kernel.org>; Stanimir Varbanov <svarbanov@mm-sol.c=
-om>; Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>; Rob Herring <robh+dt@ke=
-rnel.org>; Krzysztof Wilczy??ski <kw@linux.com>; Michael Turquette <mturque=
-tte@baylibre.com>; Stephen Boyd <swboyd@chromium.org>; Bjorn Helgaas <bhelg=
-aas@google.com>; Prasad Malisetty <pmaliset@codeaurora.org>; Vinod Koul <vk=
-oul@kernel.org>; linux-arm-msm@vger.kernel.org; linux-pci@vger.kernel.org; =
-linux-clk@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tie=
-d to the GDSC
->
-> On 05/02/2022 01:05, Bjorn Andersson wrote:
-> > On Fri 04 Feb 08:46 CST 2022, Dmitry Baryshkov wrote:
-> >
-> >> On newer Qualcomm platforms GCC_PCIE_n_PIPE_CLK_SRC should be
-> >> controlled together with the PCIE_n_GDSC. The clock should be fed
-> >> from the TCXO before switching the GDSC off and can be fed from
-> >> PCIE_n_PIPE_CLK once the GDSC is on.
-> >>
-> >> Since commit aa9c0df98c29 ("PCI: qcom: Switch pcie_1_pipe_clk_src
-> >> after PHY init in SC7280") PCIe controller driver tries to manage
-> >> this on it's own, resulting in the non-optimal code. Furthermore, if
-> >> the any of the drivers will have the same requirements, the code
-> >> would have to be dupliacted there.
-> >>
-> >> Move handling of such clocks to the GDSC code, providing special GDSC
-> >> type.
-> >>
-> >
-> > As discussed on IRC, I'm inclined not to take this, because looks to
-> > me to be the same situation that we have with all GDSCs in SM8350 and
-> > onwards - that some clocks must be parked on a safe parent before the
-> > associated GDSC can be toggled.
-> >
-> > Prasad, please advice on what the actual requirements are wrt the
-> > gcc_pipe_clk_src. When does it need to provide a valid signal and when
-> > does it need to be parked?
->
-> [Excuse me for the duplicate, Prasad's email was bouncing]
->
-> Prasad, any comments?
->
-> >
-> > Regards,
-> > Bjorn
-> >
->
-> Hi  Dmitry,
->
-> Greetings !!!
->
-> Sorry for the inconvenience,  there was an issue with my mail so I couldn=
-=E2=80=99t receive the updates properly. Now issue is resolved.
-> I am in discussion with internal team to know more about this. I will upd=
-ate my comments after this discussion.
+Quoting Peng Fan (OSS) (2022-02-24 17:42:33)
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> This PLL module is a Fractional-N synthesizer,
+> supporting 30-bit numerator and denominator. Numerator is a signed
+> number. It has feature to adjust fractional portion of feedback
+> divider dynamically. This fracn gppll is used in i.MX93.
+>=20
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/Makefile          |   1 +
+>  drivers/clk/imx/clk-fracn-gppll.c | 324 ++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h             |  21 ++
+>  3 files changed, 346 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-fracn-gppll.c
+>=20
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index 36c04922d789..60c8a4bb7574 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -5,6 +5,7 @@ mxc-clk-objs +=3D clk-busy.o
+>  mxc-clk-objs +=3D clk-composite-7ulp.o
+>  mxc-clk-objs +=3D clk-composite-8m.o
+>  mxc-clk-objs +=3D clk-composite-93.o
+> +mxc-clk-objs +=3D clk-fracn-gppll.o
+>  mxc-clk-objs +=3D clk-cpu.o
+>  mxc-clk-objs +=3D clk-divider-gate.o
+>  mxc-clk-objs +=3D clk-fixup-div.o
+> diff --git a/drivers/clk/imx/clk-fracn-gppll.c b/drivers/clk/imx/clk-frac=
+n-gppll.c
+> new file mode 100644
+> index 000000000000..57b38147f05a
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-fracn-gppll.c
+> @@ -0,0 +1,324 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2021 NXP
+> + */
+> +
+> +#include <asm/div64.h>
 
-Prasad, any updates on this topic?
+Please include this after linux headers
 
->
-> Thanks
-> -Prasad
->
-> >> Cc: Prasad Malisetty <pmaliset@codeaurora.org>
-> >> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> ---
-> >>   drivers/clk/qcom/gdsc.c | 41 +++++++++++++++++++++++++++++++++++++++=
-++
-> >>   drivers/clk/qcom/gdsc.h | 14 ++++++++++++++
-> >>   2 files changed, 55 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c index
-> >> 7e1dd8ccfa38..9913d1b70947 100644
-> >> --- a/drivers/clk/qcom/gdsc.c
-> >> +++ b/drivers/clk/qcom/gdsc.c
-> >> @@ -45,6 +45,7 @@
-> >>   #define TIMEOUT_US         500
-> >>
-> >>   #define domain_to_gdsc(domain) container_of(domain, struct gdsc,
-> >> pd)
-> >> +#define domain_to_pipe_clk_gdsc(domain) container_of(domain, struct
-> >> +pipe_clk_gdsc, base.pd)
-> >>
-> >>   enum gdsc_status {
-> >>      GDSC_OFF,
-> >> @@ -549,3 +550,43 @@ int gdsc_gx_do_nothing_enable(struct generic_pm_d=
-omain *domain)
-> >>      return 0;
-> >>   }
-> >>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
-> >> +
-> >> +/*
-> >> + * Special operations for GDSCs with attached pipe clocks.
-> >> + * The clock should be parked to safe source (tcxo) before turning
-> >> +off the GDSC
-> >> + * and can be switched on as soon as the GDSC is on.
-> >> + *
-> >> + * We remove respective clock sources from clocks map and handle them=
- manually.
-> >> + */
-> >> +int gdsc_pipe_enable(struct generic_pm_domain *domain) {
-> >> +    struct pipe_clk_gdsc *sc =3D domain_to_pipe_clk_gdsc(domain);
-> >> +    int i, ret;
-> >> +
-> >> +    ret =3D gdsc_enable(domain);
-> >> +    if (ret)
-> >> +            return ret;
-> >> +
-> >> +    for (i =3D 0; i< sc->num_clocks; i++)
-> >> +            regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
-> >> +                            BIT(sc->clocks[i].shift + sc->clocks[i].w=
-idth) - BIT(sc->clocks[i].shift),
-> >> +                            sc->clocks[i].on_value << sc->clocks[i].s=
-hift);
-> >> +
-> >> +    return 0;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(gdsc_pipe_enable);
-> >> +
-> >> +int gdsc_pipe_disable(struct generic_pm_domain *domain) {
-> >> +    struct pipe_clk_gdsc *sc =3D domain_to_pipe_clk_gdsc(domain);
-> >> +    int i;
-> >> +
-> >> +    for (i =3D sc->num_clocks - 1; i >=3D 0; i--)
-> >> +            regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
-> >> +                            BIT(sc->clocks[i].shift + sc->clocks[i].w=
-idth) - BIT(sc->clocks[i].shift),
-> >> +                            sc->clocks[i].off_value << sc->clocks[i].=
-shift);
-> >> +
-> >> +    /* In case of an error do not try turning the clocks again. We ca=
-n not be sure about the GDSC state. */
-> >> +    return gdsc_disable(domain);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(gdsc_pipe_disable);
-> >> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h index
-> >> d7cc4c21a9d4..b1a2f0abe41c 100644
-> >> --- a/drivers/clk/qcom/gdsc.h
-> >> +++ b/drivers/clk/qcom/gdsc.h
-> >> @@ -68,11 +68,25 @@ struct gdsc_desc {
-> >>      size_t num;
-> >>   };
-> >>
-> >> +struct pipe_clk_gdsc {
-> >> +    struct gdsc base;
-> >> +    int num_clocks;
-> >> +    struct {
-> >> +            u32 reg;
-> >> +            u32 shift;
-> >> +            u32 width;
-> >> +            u32 off_value;
-> >> +            u32 on_value;
-> >> +    } clocks[];
-> >> +};
-> >> +
-> >>   #ifdef CONFIG_QCOM_GDSC
-> >>   int gdsc_register(struct gdsc_desc *desc, struct reset_controller_de=
-v *,
-> >>                struct regmap *);
-> >>   void gdsc_unregister(struct gdsc_desc *desc);
-> >>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
-> >> +int gdsc_pipe_enable(struct generic_pm_domain *domain); int
-> >> +gdsc_pipe_disable(struct generic_pm_domain *domain);
-> >>   #else
-> >>   static inline int gdsc_register(struct gdsc_desc *desc,
-> >>                              struct reset_controller_dev *rcdev,
-> >> --
-> >> 2.34.1
-> >>
->
->
-> --
-> With best wishes
-> Dmitry
+> +#include <linux/bitfield.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/export.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/slab.h>
+> +#include <linux/jiffies.h>
 
+Is this include used?
 
-
---=20
-With best wishes
-Dmitry
+> +
+> +#include "clk.h"
+> +
