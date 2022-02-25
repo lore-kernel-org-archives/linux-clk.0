@@ -2,69 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30013C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 19:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A000C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 19:32:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234353AbiBYTQ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 14:16:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
+        id S234868AbiBYTdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 14:33:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232149AbiBYTQz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 14:16:55 -0500
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC7621CD25;
-        Fri, 25 Feb 2022 11:16:23 -0800 (PST)
-Received: by mail-ot1-f49.google.com with SMTP id g6-20020a9d6486000000b005acf9a0b644so4276084otl.12;
-        Fri, 25 Feb 2022 11:16:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=MjMHysom9kW2ufziIfpzHU8NZ8UHajftf+w14wsmNUE=;
-        b=o+N24FFy9WhUxDvSr8hhFyvBWvc2/W7eVT4O0WgBsMUgmTiIlSzIgZpYE2rq2MFczr
-         vUjNpdMYC45USwWjUgb9CxToqmZoXsSCBHDqEXtvp6OCCxgX5gftCSo22+BiyAAiCPvn
-         d+BtqQP4Jq5QTOxIgKoo9IP1WtibTODO3Gm1sG0X7YCUA0YT/9JW4ePKmhV5ppk1LkOH
-         IuIHaGfoIjPYpiE1N/YF2y/cbrc9gMCok0fd4LGVCKCJr4dca6LvU23H75QcVc0Z5Ycn
-         o9Zu83y6cOPMIsmOrgIMjmlMt6Fv3vWmQSrCusEx1Fvskv8m+vNDLz8SPoqplZYxDi+Q
-         pVgQ==
-X-Gm-Message-State: AOAM530yBmoaMbKl78dSujamdgJodp/DXhloBza6hiwx2O6JdUNcsDpW
-        c1SRYUVPk7KmV34sk/rn8Q==
-X-Google-Smtp-Source: ABdhPJzH92pAlv3IwnBQb2MbcNAImo/5jXQUnmCcDK1tSYu6KTmKZ8JzgUrj0xYit4bGDtM1Rh59Dg==
-X-Received: by 2002:a05:6830:1f51:b0:5ad:1f9b:dc43 with SMTP id u17-20020a0568301f5100b005ad1f9bdc43mr3522990oth.369.1645816582896;
-        Fri, 25 Feb 2022 11:16:22 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id g7-20020a056870d20700b000d1614be328sm1559694oac.27.2022.02.25.11.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 11:16:22 -0800 (PST)
-Received: (nullmailer pid 1274167 invoked by uid 1000);
-        Fri, 25 Feb 2022 19:16:21 -0000
-Date:   Fri, 25 Feb 2022 13:16:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: fsl: scu: add imx8dxl scu clock support
-Message-ID: <YhkrBZzIDJ4Rgj9x@robh.at.kernel.org>
-References: <20220222082140.2073629-1-abel.vesa@nxp.com>
+        with ESMTP id S234862AbiBYTdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 14:33:08 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 119B920F55;
+        Fri, 25 Feb 2022 11:32:36 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CECC8B832FA;
+        Fri, 25 Feb 2022 19:32:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57001C340E7;
+        Fri, 25 Feb 2022 19:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645817553;
+        bh=GI40B6hRPOX7dQ8lCayKwuLySe70APW9z+nvx2bNfTM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T09cAwPjKegRFhRCC62PlqzAm+6ToWcb+iCAft0L11ACrwMmPajuxjcjQyW+W39U4
+         xH/3f9KfHTh4ufi2z+7MiBQLUxPGsxFub5nroychbDhglXreSsLwvLrBldnYSoOhmb
+         BnKc37PH633qEugSXqvFTuMNT6xhJJ77D3TPkVIC01fR55phkn0mueGXsrsu316E6q
+         NrFl08Jior7gcVVuNkeODldX5bNvRwiXJ7RrHt1s3x4MLoh2t6gXHcS5g1mQLyqte0
+         mEFBcO3w0LWJHUbeCjIWBxPsHrvFci4McxxmtbfMlNTTuIIQK2wtb1LEjbc1S/rhBO
+         VsTUnxGHgZyxg==
+Received: by pali.im (Postfix)
+        id 186D17EF; Fri, 25 Feb 2022 20:32:30 +0100 (CET)
+Date:   Fri, 25 Feb 2022 20:32:29 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 0/6] serial: mvebu-uart: Support for higher baudrates
+Message-ID: <20220225193229.f7uiv4o6br5xmyis@pali>
+References: <20220219152818.4319-1-kabel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220222082140.2073629-1-abel.vesa@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220219152818.4319-1-kabel@kernel.org>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 22, 2022 at 10:21:40AM +0200, Abel Vesa wrote:
-> Add imx8dxl scu clock support.
+On Saturday 19 February 2022 16:28:12 Marek Behún wrote:
+> Pali Rohár (6):
+>   math64: New DIV_U64_ROUND_CLOSEST helper
+>   dt-bindings: mvebu-uart: document DT bindings for
+>     marvell,armada-3700-uart-clock
+>   serial: mvebu-uart: implement UART clock driver for configuring UART
+>     base clock
+>   dt-bindings: mvebu-uart: update information about UART clock
+>   serial: mvebu-uart: implement support for baudrates higher than 230400
+>     Bd
+>   arm64: dts: marvell: armada-37xx: add device node for UART clock and
+>     use it
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  .../clock/marvell,armada-3700-uart-clock.yaml |  59 ++
+>  .../devicetree/bindings/serial/mvebu-uart.txt |   9 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  14 +-
+>  drivers/tty/serial/Kconfig                    |   1 +
+>  drivers/tty/serial/mvebu-uart.c               | 596 +++++++++++++++++-
+>  include/linux/math64.h                        |  13 +
+>  6 files changed, 671 insertions(+), 21 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,armada-3700-uart-clock.yaml
 
-Acked-by: Rob Herring <robh@kernel.org>
-
-But please convert this to schema.
-
-Rob
+Hello Greg! I think that this patch series has now all reviews.
+Could you look at it if you can finally take it? Or is there still
+something missing?
