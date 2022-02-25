@@ -2,159 +2,183 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3A6C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66803C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:39:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239168AbiBYJhP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 04:37:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
+        id S234665AbiBYJjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 04:39:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239155AbiBYJhO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:37:14 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFC6F42
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:36:35 -0800 (PST)
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EF98740300
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 09:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645781793;
-        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=qk45lsTpLT74Z731Io80odzcwBaoFTxG+Ex9+UdRPhdmJoGO9vW6y4Mb2oCr/hm3P
-         a3qd6+kEXaJtSUP9Zl/ZtXqLzBxM3SABsJxlR5a8Il+l1tZX8I88h/yKKSUUV6I01g
-         DRFJxqp7rC4/ai+ha0dw0AHBcOvES48XJhLinWjnK6HIYzDvQdZv8YY+X82rBA815f
-         dmRZwh/gCIT80u78M+aOlLhHR7VlFPIT54eSAKS0o1ICxbK2oej410Ty4oKK942k66
-         7iCUwLl8iMrf0pv37dqGhyIPijzTANBJE7OHXSNGASwWf0nUHLabKJoDTXWAK/SRre
-         c8UfUrM4p9Awg==
-Received: by mail-ed1-f69.google.com with SMTP id eq13-20020a056402298d00b00412cfa4bb0eso2064920edb.7
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:36:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
-        b=IVfkpx9Di4OkTBWBi6tKv74htTAL81kI4jKCXg7HRCzzLv9ST0UvxbS6NawyYLhlC5
-         Y0tmAHVshdPD5oDTq31Ld9O+EIc0Q2eHG5y9GUmz8fc6HDitvk7XVchDrudUusUEuwdM
-         eimcD4/G5IbO0IQtc9/WXCO6280ytTXsyE0pv1elu/wO50uF7JlGxaTwYyk+9zquOQVZ
-         bU1Kz/RfG1V03D6vsMF0yqiDjfLrvTSBdX7/DUIKXYUA2u/YcEra1FTWbW2v9m3Uxvgh
-         4cjSrR3elyM3mSWAUslwp9Qu6mcD3Z/vSc7OvSyvsO6rHDfjQ4/zAC025Glbnac5SmFs
-         0Bdg==
-X-Gm-Message-State: AOAM533MJGmSBa+goFi4ko/1Lvu7D0bcGuZacKmMm6zud3P2SPY2VREc
-        xAWFBKL1e52N1YoW6DHMFanFnR1qQTSx11/9Zp8K85tQ+7STRnbAvV7FqV+FXbmnd3Nndcd9I+d
-        0ero8IiObP+qz0RBOK+lCrrGdJqHoHblRJJkGSg==
-X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644762ejt.109.1645781782638;
-        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxvGXs5zpBbIxYfXArg3HJWTHPHMBjqJChT5RpHzF7M3/UrStNiNcxogS5o2fNS3FLp8Ip6Ag==
-X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644737ejt.109.1645781782424;
-        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
-Received: from [192.168.0.130] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id bo9-20020a170906d04900b006ce6b8e05c1sm773655ejb.150.2022.02.25.01.36.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Feb 2022 01:36:21 -0800 (PST)
-Message-ID: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
-Date:   Fri, 25 Feb 2022 10:36:20 +0100
+        with ESMTP id S233715AbiBYJjh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:39:37 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FEC0239304
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:39:05 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 09F2B5C01C8;
+        Fri, 25 Feb 2022 04:39:05 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 25 Feb 2022 04:39:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=i4n+zE7pRzESH5umc37OtG7AGBNOlIKcR5HhtO
+        XLXV8=; b=hzTQImi7ZbN1LHunxy71ovtcqvaDNwquBC/iDQx9Tx/uSGSW7FuU2d
+        JBYK0bMM3Vcib/AaxFcKD8sLDPGFqISEAB6kPXPtFdOGXa+LKgCAZKzSOV7s8JFe
+        /NKBPXtv2d6hrsqMpB52rV+lgb9Y1sB/bs31Gh0n7NaD0Wy1JTkKatth2hycKjmZ
+        GhlCefBJc5ZCJfzKS7iD5eeq5EunWxGVadlhDlTxCdxI5rGdbW4NJNBFY3HdoqGI
+        BI7aWf30ieYLeFd8QDzF7dBB3pjJCxQXq1bjyfa2nHkIjxcXdF1w2TovkZe6QG1Q
+        FbnplkrVriZjXvtNA8sM3jY/KhmU2KDg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=i4n+zE7pRzESH5umc
+        37OtG7AGBNOlIKcR5HhtOXLXV8=; b=AiiQShjH0/aI8zs+M7XrPDOkeIjLsG82j
+        N0vjc2Rica16YBHFbM3bIbwB/Jl9pOJ1uNSZuBfWsQTlwEyg6ObaultoO6Sy6OTR
+        7ABOHtnUDFpiI27LWTVOmrDHXx0PymiQwO5irrqc1earrSp3b6i21Ra02YCagIRV
+        fkcMS5mJRJQPxUeTZc8U1Rvoxnr5qV9w2xSl0KqEn+oRJO1iFBEm4J4NZBmUeICr
+        f66Jq4eLpGLGbk6anNWn+8uWUviUSzRIpKq2BRgvidqQVBbK31dkXvvOuj4FpZnT
+        gsyEBtvQ/r32MzKb+zD+rcIEloMhJeRT1U2HXtBQTV2QxlXePrUPA==
+X-ME-Sender: <xms:uKMYYpxHhW08SrNJb6kB_NR3uzGvEh4YDqLkft0RDhAR7GoM7h2ckQ>
+    <xme:uKMYYpTB2_NBfCmqFCxmWd-CIqnEpKHb-f6-fYgqpM5VIDHF2bjvJ5V7wh6EtSI9_
+    BdC3BXrFLTRmW3v_dY>
+X-ME-Received: <xmr:uKMYYjW8TAgDyNdPnvwvxP67xox4SxR4lnPpo9gxPf1Fi5qgoGWTMyDPKlzCtXkueqtvninONjYUm73p-fqZ25bYDQ1SOY2wGlOhLZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrleeggddtjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:uKMYYrgsgzUtRCcCtMkytL6vqpZxAQiVpjVpETtEyVg-0RNP-HnoqA>
+    <xmx:uKMYYrAe66i6cEZ4G9e5Cin6y-0Nw_KUleOMAnpvwWXH_pp9zQ2W3Q>
+    <xmx:uKMYYkLN1JQmpou5oPsvQo_yh9uv6NJbYTGZ1i9YbGYoj5b46Svdng>
+    <xmx:uaMYYt3Lg3fZqt1U6TSO3oZ1ju8oTwbuuHtp_IiGIQ0rHSFyyNLkcQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Feb 2022 04:39:04 -0500 (EST)
+Date:   Fri, 25 Feb 2022 10:39:02 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>
+Subject: Re: [PATCH v4 03/10] clk: Use clamp instead of open-coding our own
+Message-ID: <20220225093902.ucmqt5ayusz75djz@houat>
+References: <20220125141549.747889-1-maxime@cerno.tech>
+ <20220125141549.747889-4-maxime@cerno.tech>
+ <20220218223422.4FA9DC340E9@smtp.kernel.org>
+ <20220221163001.k4nstaxtbmlxgz3j@houat>
+ <20220224224422.DA9F5C340E9@smtp.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
- driver_override
-Content-Language: en-US
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-References: <20220224235206.GA302751@bhelgaas>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220224235206.GA302751@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6ohmxjilufbxrvoa"
+Content-Disposition: inline
+In-Reply-To: <20220224224422.DA9F5C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/02/2022 00:52, Bjorn Helgaas wrote:
-> On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
->> On 23/02/2022 22:51, Bjorn Helgaas wrote:
->>> In subject, to match drivers/pci/ convention, do something like:
->>>
->>>   PCI: Use driver_set_override() instead of open-coding
->>>
->>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
->>>> Use a helper for seting driver_override to reduce amount of duplicated
->>>> code.
->>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
->>>>  				     const char *buf, size_t count)
->>>>  {
->>>>  	struct pci_dev *pdev = to_pci_dev(dev);
->>>> -	char *driver_override, *old, *cp;
->>>> +	int ret;
->>>>  
->>>>  	/* We need to keep extra room for a newline */
->>>>  	if (count >= (PAGE_SIZE - 1))
->>>>  		return -EINVAL;
->>>
->>> This check makes no sense in the new function.  Michael alluded to
->>> this as well.
->>
->> I am not sure if I got your comment properly. You mean here:
->> 1. Move this check to driver_set_override()?
->> 2. Remove the check entirely?
-> 
-> I was mistaken about the purpose of the comment and the check.  I
-> thought it had to do with *this* function, and this function doesn't
-> add a newline, and there's no obvious connection with PAGE_SIZE.
-> 
-> But looking closer, I think the "extra room for a newline" is really
-> to make sure that *driver_override_show()* can add a newline and have
-> it still fit within the PAGE_SIZE sysfs limit.
-> 
-> Most driver_override_*() functions have the same comment, so maybe
-> this was obvious to everybody except me :)  I do see that spi.c adds
-> "when displaying value" at the end, which helps a lot.
-> 
-> Sorry for the wild goose chase.
 
-I think I will move this check anyway to driver_set_override() helper,
-because there is no particular benefit to have duplicated all over. The
-helper will receive "count" argument so can perform all checks.
+--6ohmxjilufbxrvoa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Feb 24, 2022 at 02:44:20PM -0800, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-02-21 08:30:01)
+> > On Fri, Feb 18, 2022 at 02:34:20PM -0800, Stephen Boyd wrote:
+> > > Quoting Maxime Ripard (2022-01-25 06:15:42)
+> > > > The code in clk_set_rate_range() will, if the current rate is outsi=
+de of
+> > > > the new range, will force it to the minimum or maximum. This is
+> > > > equivalent to using clamp, while being less readable. Let's switch =
+to
+> > > > using clamp instead.
+> > > >=20
+> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > > > ---
+> > > >  drivers/clk/clk.c | 6 +-----
+> > > >  1 file changed, 1 insertion(+), 5 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index 7bb5ae0fb688..150d1bc0985b 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -2365,11 +2365,7 @@ int clk_set_rate_range(struct clk *clk, unsi=
+gned long min, unsigned long max)
+> > > >                  *   this corner case when determining the rate
+> > > >                  */
+> > > > =20
+> > > > -               if (rate < min)
+> > > > -                       rate =3D min;
+> > > > -               else
+> > > > -                       rate =3D max;
+> > > > -
+> > > > +               rate =3D clamp(clk->core->req_rate, min, max);
+> > >=20
+> > > This isn't equivalent. The else arm is taken if rate >=3D min and rat=
+e is
+> > > set to max, whereas clamp() will leave the rate unchanged if rate >=
+=3D min
+> > > && rate < max.
+> >=20
+> > This can't happen, since we're in an if block that is (rate < min ||
+> > rate > max), so at this point if rate is not less than min, it is
+> > greater than rate. Thus, it's equivalent to clamp.
+> >=20
+> > Still, the commit message could be better, I'll rephrase it.
+>=20
+> Perfect! Should probably add a comment above the clamp as well just in
+> case someone decides to move it out of that if block.
 
-Best regards,
-Krzysztof
+The last version has a better commit message. We're actually moving that
+out of the if in the next patch.
+
+I'm not sure we really need a comment for this though:
+
+The existing code does:
+
+if (rate < min || rate > max)
+    if (rate < min)
+        rate =3D min;
+    else
+        rate =3D max;
+
+So if the rate is below min, it's set to min, if it's between min and
+max, it's unaffected, and if it's above max, it's set to max.
+
+With this patch, the code does:
+
+if (rate < min || rate > max)
+    rate =3D clamp(rate, min, max)
+
+So if the rate is below min, it's set to min, if it's between min and
+max, it's unaffected, and if it's above max, it's set to max. It's
+equivalent.
+
+After the next patch, the code will do:
+rate =3D clamp(rate, min, max)
+
+So if the rate is below min, it's set to min, if it's between min and
+max, it's unaffected, and if it's above max, it's set to max. They are
+all equivalent.
+
+Maxime
+
+--6ohmxjilufbxrvoa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhijtgAKCRDj7w1vZxhR
+xW14AQDB/clyt++c40pPzPMna17gid+8qy/hwNed59lgCmIRewEAvDi8I71HhApl
+EhKiYfSqLvSQr+x8+FHGmtUcRKXNUA4=
+=NQCQ
+-----END PGP SIGNATURE-----
+
+--6ohmxjilufbxrvoa--
