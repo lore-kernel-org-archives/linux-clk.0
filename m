@@ -2,80 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521F2C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 19:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30013C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 19:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234362AbiBYTNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 14:13:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40034 "EHLO
+        id S234353AbiBYTQ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 14:16:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234316AbiBYTNv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 14:13:51 -0500
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BEC81BBF50;
-        Fri, 25 Feb 2022 11:13:19 -0800 (PST)
-Received: by mail-oi1-f172.google.com with SMTP id y7so8342148oih.5;
-        Fri, 25 Feb 2022 11:13:19 -0800 (PST)
+        with ESMTP id S232149AbiBYTQz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 14:16:55 -0500
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC7621CD25;
+        Fri, 25 Feb 2022 11:16:23 -0800 (PST)
+Received: by mail-ot1-f49.google.com with SMTP id g6-20020a9d6486000000b005acf9a0b644so4276084otl.12;
+        Fri, 25 Feb 2022 11:16:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6CeaqLyIxWM5I+T0XX9mjVdw7W8EHbW4/9lxu7rLHXk=;
-        b=ADUAFah9EY1b3PpUJFLQTogij27reCA4O1LVhFnFuR2IZRNd/47z2BhyxBA+7701F7
-         sIYETehetWi7rsBKUKV59/u/2Fm4TABi034wmmmilpSCpPsx5jjdNeoOn/ocRHuMXk7+
-         pCPJ6BGIDbysm4jTz5Z8B9zj8M806J5EQb7jm7iomTy2yqHfA0kikcWDMLiC4qf1ezKs
-         uGAqGAP1xrL+axiKOQU+73zsIdxS//XHZtZrwJQ0lICDR8YJOtb/Qx843ToRKeTT1M89
-         H0VYMMmpIuBvPWCh2Wmuio9YRJlxXHCYElzoqt/ShWajUzcfe2bmLpolB/6hQSZYm7yx
-         RD7w==
-X-Gm-Message-State: AOAM533d26niy0wckEdTLmtJ9zOMsJ1ut6na6Z8Kl0ogc25479s94J+s
-        bSMJgVNAgYm1ZS2QrrO9xg==
-X-Google-Smtp-Source: ABdhPJyh/wasr6vqvD+N7tIc56hS+EJ8IcxkguQEnVPLvXTdeOZ3f7bSVOYYC16KfQseaf3anQKekA==
-X-Received: by 2002:a05:6808:23cd:b0:2d4:b5ce:e2fb with SMTP id bq13-20020a05680823cd00b002d4b5cee2fbmr2584419oib.78.1645816398643;
-        Fri, 25 Feb 2022 11:13:18 -0800 (PST)
+        bh=MjMHysom9kW2ufziIfpzHU8NZ8UHajftf+w14wsmNUE=;
+        b=o+N24FFy9WhUxDvSr8hhFyvBWvc2/W7eVT4O0WgBsMUgmTiIlSzIgZpYE2rq2MFczr
+         vUjNpdMYC45USwWjUgb9CxToqmZoXsSCBHDqEXtvp6OCCxgX5gftCSo22+BiyAAiCPvn
+         d+BtqQP4Jq5QTOxIgKoo9IP1WtibTODO3Gm1sG0X7YCUA0YT/9JW4ePKmhV5ppk1LkOH
+         IuIHaGfoIjPYpiE1N/YF2y/cbrc9gMCok0fd4LGVCKCJr4dca6LvU23H75QcVc0Z5Ycn
+         o9Zu83y6cOPMIsmOrgIMjmlMt6Fv3vWmQSrCusEx1Fvskv8m+vNDLz8SPoqplZYxDi+Q
+         pVgQ==
+X-Gm-Message-State: AOAM530yBmoaMbKl78dSujamdgJodp/DXhloBza6hiwx2O6JdUNcsDpW
+        c1SRYUVPk7KmV34sk/rn8Q==
+X-Google-Smtp-Source: ABdhPJzH92pAlv3IwnBQb2MbcNAImo/5jXQUnmCcDK1tSYu6KTmKZ8JzgUrj0xYit4bGDtM1Rh59Dg==
+X-Received: by 2002:a05:6830:1f51:b0:5ad:1f9b:dc43 with SMTP id u17-20020a0568301f5100b005ad1f9bdc43mr3522990oth.369.1645816582896;
+        Fri, 25 Feb 2022 11:16:22 -0800 (PST)
 Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id g35-20020a9d2da6000000b005af5fb99326sm1485024otb.63.2022.02.25.11.13.17
+        by smtp.gmail.com with ESMTPSA id g7-20020a056870d20700b000d1614be328sm1559694oac.27.2022.02.25.11.16.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 11:13:18 -0800 (PST)
-Received: (nullmailer pid 1269956 invoked by uid 1000);
-        Fri, 25 Feb 2022 19:13:17 -0000
-Date:   Fri, 25 Feb 2022 13:13:17 -0600
+        Fri, 25 Feb 2022 11:16:22 -0800 (PST)
+Received: (nullmailer pid 1274167 invoked by uid 1000);
+        Fri, 25 Feb 2022 19:16:21 -0000
+Date:   Fri, 25 Feb 2022 13:16:21 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        jamipkettunen@somainline.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        martin.botka@somainline.org, Andy Gross <agross@kernel.org>,
-        marijn.suijten@somainline.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        angelogioacchino.delregno@somainline.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 3/4] dt-bindings: clock: add SM6350 QCOM Graphics clock
- bindings
-Message-ID: <YhkqTXUGUj7vIXFJ@robh.at.kernel.org>
-References: <20220222011534.3502-1-konrad.dybcio@somainline.org>
- <20220222011534.3502-3-konrad.dybcio@somainline.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: fsl: scu: add imx8dxl scu clock support
+Message-ID: <YhkrBZzIDJ4Rgj9x@robh.at.kernel.org>
+References: <20220222082140.2073629-1-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220222011534.3502-3-konrad.dybcio@somainline.org>
+In-Reply-To: <20220222082140.2073629-1-abel.vesa@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 22 Feb 2022 02:15:30 +0100, Konrad Dybcio wrote:
-> Add device tree bindings for graphics clock controller for
-> Qualcomm Technology Inc's SM6350 SoCs.
+On Tue, Feb 22, 2022 at 10:21:40AM +0200, Abel Vesa wrote:
+> Add imx8dxl scu clock support.
 > 
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->  .../devicetree/bindings/clock/qcom,gpucc.yaml |  2 +
->  include/dt-bindings/clock/qcom,gpucc-sm6350.h | 37 +++++++++++++++++++
->  2 files changed, 39 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm6350.h
-> 
+>  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+But please convert this to schema.
+
+Rob
