@@ -2,118 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E75AC433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 13:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0120C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 13:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236839AbiBYNQk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 08:16:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42978 "EHLO
+        id S230167AbiBYNXo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 08:23:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231822AbiBYNQk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 08:16:40 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8537F181E57;
-        Fri, 25 Feb 2022 05:16:06 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id y5so1658450wmi.0;
-        Fri, 25 Feb 2022 05:16:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PR0fVE6nKdbpIIw7hJEF8MSW4jXjDeHQgC3lme605B8=;
-        b=anJqAJyqR1JJuKkVL5flu3y/k4W+jFAWd/iGY0wrg5hQcRUWZfJAwh9AmqHSsSpFna
-         mtygh6JpGd7rbFet8a3QIrcyZ/lxy6eSRMb8eHARVTPUGHuPNVEgLaajW5/iZTclku7y
-         I+CKNcMURZ5WOKfTmxeAGyRWeB25TJm4OKGO2g3zx8aNR0nYAbST6fZQ72+6Zuon9GmP
-         yEQVzo/PBqgXoAtTBPjO1FquPb/BvrxbKebokI5qjsn/1czkJO0luF44Pj6/0Co+Zcwc
-         W2AAZL8402+Ej8udlpP4WL3uI8j4HeMuRcRrCWW/EHrUC2n8ITZxDHolNJmVDTyW6uln
-         WEjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PR0fVE6nKdbpIIw7hJEF8MSW4jXjDeHQgC3lme605B8=;
-        b=76x7kqX21mhw3l8af2O1INu0kzSPEUT5L1p6NxWiu7Lwc4dZWy2VfpSKCrCteZS9C0
-         moZt0bDIyn3tpZG2SPLOw7zaHd2RrElgZntYRzO2R2eLrWeVMkDllJlBo8YVOobm7tz7
-         OzL/l2ypekT2FkmHsc1fMgl8mXaSp901QL1EBMG+6u1NdZ3FOmLnri4k05tz88ogDWlk
-         MnolsUWLr/mdalPr85IjQSXcJXDLzibLK7tnNc8XUkhGm+KtOAeUXjnSM7QzRDtAOJqm
-         cXEf1n4nPrafWwReLmf2boxRJ6M+KH1Ib/EwNmLUapub6Abi5TNQSALJT+ugkm2z+h3X
-         Wuog==
-X-Gm-Message-State: AOAM533A77VvFxle8YrpxeSDQDCNozVp6KIxW/9vBaMiHDnF6CdYk7n7
-        U/CECEonc/pr44EkaRAQ3Hs=
-X-Google-Smtp-Source: ABdhPJyq4qAAE2JwMqRKyRmCEqKdxr+spBqAPqTGrh1UYZFlm2gbd/sq9mwJ58JcFT9kLFmHqjb/pw==
-X-Received: by 2002:a7b:c844:0:b0:37b:b986:7726 with SMTP id c4-20020a7bc844000000b0037bb9867726mr2715536wml.160.1645794965095;
-        Fri, 25 Feb 2022 05:16:05 -0800 (PST)
-Received: from orome ([62.96.65.119])
-        by smtp.gmail.com with ESMTPSA id j7-20020a05600c1c0700b0037c2c6d2a91sm2337948wms.2.2022.02.25.05.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Feb 2022 05:16:04 -0800 (PST)
-Date:   Fri, 25 Feb 2022 14:16:01 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Miaoqian Lin <linmq006@gmail.com>
-Cc:     sboyd@kernel.org, jonathanh@nvidia.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        mturquette@baylibre.com, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com
-Subject: Re: [PATCH v2] clk: tegra: tegra124-emc: Fix missing put_device()
- call in emc_ensure_emc_driver
-Message-ID: <YhjWkVnjGvTkOgnM@orome>
-References: <20220112025200.95C4BC36AEB@smtp.kernel.org>
- <20220112104501.30655-1-linmq006@gmail.com>
+        with ESMTP id S241183AbiBYNXm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 08:23:42 -0500
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A261FEFB7
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 05:23:04 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8F9A45C0208;
+        Fri, 25 Feb 2022 08:23:01 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Fri, 25 Feb 2022 08:23:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=jPf3kk8AeGh5y2CXV8/KX/do1tYOdgIIQXlD/X
+        m7+PM=; b=TtYGPuesXWuYqh1Mhv9ZtQELNNvIBD/hl5zibh/D+iWXax2mjA7cr9
+        JrdSkhXYEPDdhDIDdfCp+an9ydf9Tdk+h7x9NHHJ0Lxh9BfKlYkyaTVy8PvTpntx
+        wae0SlOFN/hGSKrAKUr3yisjANOjoy6dTlzEr7CKLR/hS49y/w6+LanAZxX0uyDy
+        KygugXE0vcKcUyapvtTVNEtfv5R/8VxC1gORsq6+0V9RN7VwlFdx/tuGizP37dOX
+        kr96Y2WWPBNtPLtOlp/3l4AtZ8Vgjf3netxX1aeeahKo7o6FSYG8hAbFATrVk3nr
+        A04P1FwtzUNMMNWwLurULWKPWgO5ZIXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=jPf3kk8AeGh5y2CXV
+        8/KX/do1tYOdgIIQXlD/Xm7+PM=; b=bcZSx4K71XrD3A3r5zaLf5iba6xP4Myu7
+        i9ZhjkziBtQIImW0rpJuSmQUb2GgmPhSZz7haxOunMINWbBnsgYjL2g8EBzX6x1g
+        ShY36FtdcxZOw1kFjYp5cCGk/w3roc9DVSvEPOrWi72uWoWQOKZ/8VYjIx3bOSEi
+        t7BvDES4caGmtADAiUiMzqInY17FVZ9wTM9N8lt4QzGxJfYrbDu3vhNcYofw3bse
+        nmZoYxGhefQ/NrFjx/1X97EJoHyXl8FJfvZpU/axe7oiFTvMuE9YSg5ZLkjjbnZa
+        2wtKUcKgbnAfApUtDrnMSdTygzjY/kLWbBfcrusRiczXbwV1Clnlg==
+X-ME-Sender: <xms:NdgYYscjvvPv__k5uyMc_qiAbBm7aZzS47uEHJLx-2RCBJm0iZrpyw>
+    <xme:NdgYYuMhhHEG6DXLfuZGOlo3iDA6FT-jFRFwiDifuKesNHEse2xcrWsMHo741gpUF
+    PqFBzdE3u1lIAQ42Ag>
+X-ME-Received: <xmr:NdgYYti3WBq6uRAGFNnTqTOOVzfyo9mJmNKWpw2XKhQSfP3KGRwWv0UA8M7_rDH7FFHakxCLUnNIdhiK-F_XZCcIp3X2C8UjI_J3iRI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrleeggdehvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:NdgYYh_D9fy73RkU9QLO6smo5S2S5fuzZ0MHy_XtW-h7xfRpQUpPsQ>
+    <xmx:NdgYYouyyYB8vtdW7N1ckwIDPpTfidEoG0jWgv7hL9g4UGkvhxfV3Q>
+    <xmx:NdgYYoGDVK-g5Ns3-LD95-QM519E3u3k1ZkMb1745iqeErGnbkvdmw>
+    <xmx:NdgYYmBGhefdpXUqy1kpIzbjD6O2zTjumG8ls_HAPNdWgfAh2klzbg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Feb 2022 08:23:00 -0500 (EST)
+Date:   Fri, 25 Feb 2022 14:22:58 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Latypov <dlatypov@google.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
+Message-ID: <20220225132258.55yh537iknxh72vw@houat>
+References: <20220223105600.1132593-1-maxime@cerno.tech>
+ <20220223105600.1132593-3-maxime@cerno.tech>
+ <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fsBpXhVaVDYjKv6h"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rvi5pp6zy3kjveon"
 Content-Disposition: inline
-In-Reply-To: <20220112104501.30655-1-linmq006@gmail.com>
-User-Agent: Mutt/2.2.1 (c8109e14) (2022-02-19)
+In-Reply-To: <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---fsBpXhVaVDYjKv6h
+--rvi5pp6zy3kjveon
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 12, 2022 at 10:45:01AM +0000, Miaoqian Lin wrote:
-> The reference taken by 'of_find_device_by_node()' must be released when
-> not needed anymore.
-> Add the corresponding 'put_device()' in the error handling path.
+Hi Daniel,
+
+On Wed, Feb 23, 2022 at 02:50:59PM -0800, Daniel Latypov wrote:
+> On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> >
+> > Let's test various parts of the rate-related clock API with the kunit
+> > testing framework.
+> >
+> > Cc: kunit-dev@googlegroups.com
+> > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 >=20
-> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
-> Changes in v2:
-> - add fixes tag.
-> ---
->  drivers/clk/tegra/clk-tegra124-emc.c | 1 +
->  1 file changed, 1 insertion(+)
+> Tested-by: Daniel Latypov <dlatypov@google.com>
+>=20
+> Looks good to me on the KUnit side.
+> Two small nits below.
+>=20
+> FYI, I computed the incremental coverage for this series, i.e.:
+> 1) applied the full series
+> 2) computed the absolute coverage
+>=20
+> $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG_KERNEL=
+=3Dy
+> --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=3Dy
 
-Stephen, Mike,
+I built a docker container based on ubuntu 18.04 to have gcc6 and
+python3.7, but this doesn't seem to be working, I'm not entirely sure why:
 
-I don't have anything else for clock tree this cycle, so perhaps best
-for you guys to pick this up directly:
+[13:11:22] Configuring KUnit Kernel ...
+Regenerating .config ...
+Populating config with:
+$ make ARCH=3Dum olddefconfig CC=3D/usr/bin/gcc-6 O=3D.kunit
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the gene=
+rated .config.
+This is probably due to unsatisfied dependencies.
+Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
+Note: many Kconfig options aren't available on UML. You can try running on =
+a different architecture with something like "--arch=3Dx86_64".
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Thanks,
+Maxime
 
---fsBpXhVaVDYjKv6h
+--rvi5pp6zy3kjveon
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmIY1pEACgkQ3SOs138+
-s6F9DxAApzyiKCjUIjlfxY3qWe0+3n4QDbO17EIyirLw6UzgcmFRXkV1Qru1Vcc7
-aJHjdcBYlHRX4X6/sIlxqG/QavChcvYDBW4pSNKdlAXoF9EJiifV1j/hnpW5RM3a
-L5ShTie7gsvPyNW5+HqpYcmwHUoHRE2VEU/VRZAza1nAf64nygHYiOPo4u0K01NX
-9qs8gWUh/4kJBkCQxruiFnnqpe9UblsGVJ85HMADVLzacamzmMVkjBKSYGvg6eSr
-0YycbJkX3G1W54saPY7wfUiSGSZuUQZBrnmgWjJHJ+k7jQxIj5UvrHlBxZwglrOc
-LMVCxHqiDlzuIM6daT/hHWE5FaVTmVGVsBqYIgUMK6KXwZ2YbZUh/WiJ57pnK9uE
-xqR05HAkRapHy40rpr6uLz0uFmu9prvLahxl1W7PyD2ENbWym8765j5ZstxeFzw4
-zY95aC/NSieGa/IU0Gdlen1t1dkhkxT23rwwI1wAlEF7WXuxGER/EMYBWtFAAiR/
-SY0PE97YYEawIIfbxLQr3OzcWT+54M+KTz/aTjVk8ahIrVJ3SSXX54NNSTmIi1p4
-Jiv5rQCZgejYfVnTc6IpIqXfnYJxly8B4s4pAApjw6fhNWT9fbIy0JzFYxThCW5+
-pAIVe+5N1ymwR2F8NYxDqGpNhrDJixgDwRp4Zw+tK5D2bEg8kuM=
-=Vhua
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhjYMgAKCRDj7w1vZxhR
+xf6MAPsFqiXvsUyPQGtDx+aYs1YeGisJp8+oTXUM7dl2q5TCyQEAycW64trbxucC
+wOsKU/TERF7tV1raKjk4kxNKZEE/igI=
+=qJcm
 -----END PGP SIGNATURE-----
 
---fsBpXhVaVDYjKv6h--
+--rvi5pp6zy3kjveon--
