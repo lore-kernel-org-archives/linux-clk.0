@@ -2,166 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0713EC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3A6C433FE
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 09:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239148AbiBYJfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 04:35:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60386 "EHLO
+        id S239168AbiBYJhP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 04:37:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237389AbiBYJfm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:35:42 -0500
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E7B1F7695
-        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:35:10 -0800 (PST)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 98C2F5C01A6;
-        Fri, 25 Feb 2022 04:35:09 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 25 Feb 2022 04:35:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; bh=vhjDOaUktKciKJbZAf44ISyP03nTGYieQt5n1R
-        9DNl0=; b=X5m6Z4qxnM6xHpH38tA2HPRcwWzkAyA0d2S8EpgfZp9V/rGc3pp5A4
-        WuGWSr46TsH5n8mfIGdIgX9o3NbYp5onZV2HDi799ATwghMsAqtrC0BFw7SxX/m2
-        ZrrcKwOR8rIBboQBomW/4jbDq2Cp/yzCSFL1KPl2jeeFe4eC+jsq1DEsWUXHc0VU
-        lW6cMaBByWF2k9wQJDJmCERZ68V1AvKhzqot/eveMYqFc6+tHy3EA0D+TUWQCe8G
-        fgX+/v/Wctx6u0SYyqznXdM9lRjmn1+6fyZNAHifHDg83fKEyr0qQQgliZkkAGj9
-        t8ex+dp+r9+LJDExpv9Qut3vXdkMtcSw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vhjDOaUktKciKJbZA
-        f44ISyP03nTGYieQt5n1R9DNl0=; b=Qju+sgm5YpwcGoPlq7HHnszMq2l+Z6NRX
-        3aITkVtu/yTxlK7usziecycpj1aThvKTSdRTHdHQ34XQKJfnjIDlrHsY2Ulb77IN
-        e0EH4ACQO9IEFQQj0FhDSwFGRKW+hvG4c+0qCmGU1Hjj4RKllCEaAWF0p+KJQS4h
-        NYdcvKDxCxol4gO1wQ5vlBPWtd9WlXEfDG+fne5n+H+kw46LJCutVB9us00q3HLX
-        ijrUSfKZmrzSBNzpSQqw77FMloNLIaikF7pgiWIiSq6IgmAeXmFIGJy+BYgRYkhM
-        wvazd0q/LnFAlGYCppKfoiIbQ6Ia7zAokmpCUT8M9wtLYHcp7WIng==
-X-ME-Sender: <xms:zaIYYivAvtFrgdoCYNuJgjeXPAP0QfEBQyOZNx6iO2BQ7d0i9SbGnQ>
-    <xme:zaIYYneQeGiAzNoO5hIQ12WTgcPsljwUhZiZhrbful9Qqlds9aeOHWwzgcsFyKMwT
-    k5hZqR76B7HxnoZLdc>
-X-ME-Received: <xmr:zaIYYtzENCRB4fc9eOmn1EfPfk1uC-pwUNCEmPCoE0ljQcxB-nbR-XwhY0CNXlcsjajEIARBiYFLcxu_LLujn_LvwByTix0_cn_7Ygs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrleeggddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:zaIYYtPlCFsNMIhOSW60HhLAW5-Fz1MT54bkUM849K6WMRukct_fow>
-    <xmx:zaIYYi8xDdZ0EqPA-5aAIKRoLzykttIPGlKaiSCv-iymlCW56urleQ>
-    <xmx:zaIYYlXHCJiviqLZcVajFj4uvginqB28xT8KkTCjo484ejzANEf17Q>
-    <xmx:zaIYYiyG2J1Ig-6CbPB73uOepeUW_7Rr4SlHMd_JgGvF1c4QZXfqeg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Feb 2022 04:35:08 -0500 (EST)
-Date:   Fri, 25 Feb 2022 10:35:06 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>
-Subject: Re: [PATCH v4 02/10] clk: Always clamp the rounded rate
-Message-ID: <20220225093506.kkn6g6kqqn67suvi@houat>
-References: <20220125141549.747889-1-maxime@cerno.tech>
- <20220125141549.747889-3-maxime@cerno.tech>
- <20220218231508.7B5FCC340E9@smtp.kernel.org>
- <20220221161821.jbktbgx2t6aaxds3@houat>
- <20220221164323.6xacozlk3usiidfy@houat>
- <20220224223922.15246C340E9@smtp.kernel.org>
+        with ESMTP id S239155AbiBYJhO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 04:37:14 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AFC6F42
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:36:35 -0800 (PST)
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id EF98740300
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 09:36:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645781793;
+        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=qk45lsTpLT74Z731Io80odzcwBaoFTxG+Ex9+UdRPhdmJoGO9vW6y4Mb2oCr/hm3P
+         a3qd6+kEXaJtSUP9Zl/ZtXqLzBxM3SABsJxlR5a8Il+l1tZX8I88h/yKKSUUV6I01g
+         DRFJxqp7rC4/ai+ha0dw0AHBcOvES48XJhLinWjnK6HIYzDvQdZv8YY+X82rBA815f
+         dmRZwh/gCIT80u78M+aOlLhHR7VlFPIT54eSAKS0o1ICxbK2oej410Ty4oKK942k66
+         7iCUwLl8iMrf0pv37dqGhyIPijzTANBJE7OHXSNGASwWf0nUHLabKJoDTXWAK/SRre
+         c8UfUrM4p9Awg==
+Received: by mail-ed1-f69.google.com with SMTP id eq13-20020a056402298d00b00412cfa4bb0eso2064920edb.7
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 01:36:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=mwBGuSv1vzWcEgYl2MgCXz9QnnQmXLrpGmSTa9ywwuI=;
+        b=IVfkpx9Di4OkTBWBi6tKv74htTAL81kI4jKCXg7HRCzzLv9ST0UvxbS6NawyYLhlC5
+         Y0tmAHVshdPD5oDTq31Ld9O+EIc0Q2eHG5y9GUmz8fc6HDitvk7XVchDrudUusUEuwdM
+         eimcD4/G5IbO0IQtc9/WXCO6280ytTXsyE0pv1elu/wO50uF7JlGxaTwYyk+9zquOQVZ
+         bU1Kz/RfG1V03D6vsMF0yqiDjfLrvTSBdX7/DUIKXYUA2u/YcEra1FTWbW2v9m3Uxvgh
+         4cjSrR3elyM3mSWAUslwp9Qu6mcD3Z/vSc7OvSyvsO6rHDfjQ4/zAC025Glbnac5SmFs
+         0Bdg==
+X-Gm-Message-State: AOAM533MJGmSBa+goFi4ko/1Lvu7D0bcGuZacKmMm6zud3P2SPY2VREc
+        xAWFBKL1e52N1YoW6DHMFanFnR1qQTSx11/9Zp8K85tQ+7STRnbAvV7FqV+FXbmnd3Nndcd9I+d
+        0ero8IiObP+qz0RBOK+lCrrGdJqHoHblRJJkGSg==
+X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644762ejt.109.1645781782638;
+        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxvGXs5zpBbIxYfXArg3HJWTHPHMBjqJChT5RpHzF7M3/UrStNiNcxogS5o2fNS3FLp8Ip6Ag==
+X-Received: by 2002:a17:906:4cca:b0:6ce:6a06:bf7 with SMTP id q10-20020a1709064cca00b006ce6a060bf7mr5644737ejt.109.1645781782424;
+        Fri, 25 Feb 2022 01:36:22 -0800 (PST)
+Received: from [192.168.0.130] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id bo9-20020a170906d04900b006ce6b8e05c1sm773655ejb.150.2022.02.25.01.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Feb 2022 01:36:21 -0800 (PST)
+Message-ID: <0aff95ff-5b79-8ae9-48fd-720a9f27cbce@canonical.com>
+Date:   Fri, 25 Feb 2022 10:36:20 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bzfec56ydwngvrjb"
-Content-Disposition: inline
-In-Reply-To: <20220224223922.15246C340E9@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 05/11] pci: use helper for safer setting of
+ driver_override
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220224235206.GA302751@bhelgaas>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220224235206.GA302751@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 25/02/2022 00:52, Bjorn Helgaas wrote:
+> On Thu, Feb 24, 2022 at 08:49:15AM +0100, Krzysztof Kozlowski wrote:
+>> On 23/02/2022 22:51, Bjorn Helgaas wrote:
+>>> In subject, to match drivers/pci/ convention, do something like:
+>>>
+>>>   PCI: Use driver_set_override() instead of open-coding
+>>>
+>>> On Wed, Feb 23, 2022 at 08:13:04PM +0100, Krzysztof Kozlowski wrote:
+>>>> Use a helper for seting driver_override to reduce amount of duplicated
+>>>> code.
+>>>> @@ -567,31 +567,15 @@ static ssize_t driver_override_store(struct device *dev,
+>>>>  				     const char *buf, size_t count)
+>>>>  {
+>>>>  	struct pci_dev *pdev = to_pci_dev(dev);
+>>>> -	char *driver_override, *old, *cp;
+>>>> +	int ret;
+>>>>  
+>>>>  	/* We need to keep extra room for a newline */
+>>>>  	if (count >= (PAGE_SIZE - 1))
+>>>>  		return -EINVAL;
+>>>
+>>> This check makes no sense in the new function.  Michael alluded to
+>>> this as well.
+>>
+>> I am not sure if I got your comment properly. You mean here:
+>> 1. Move this check to driver_set_override()?
+>> 2. Remove the check entirely?
+> 
+> I was mistaken about the purpose of the comment and the check.  I
+> thought it had to do with *this* function, and this function doesn't
+> add a newline, and there's no obvious connection with PAGE_SIZE.
+> 
+> But looking closer, I think the "extra room for a newline" is really
+> to make sure that *driver_override_show()* can add a newline and have
+> it still fit within the PAGE_SIZE sysfs limit.
+> 
+> Most driver_override_*() functions have the same comment, so maybe
+> this was obvious to everybody except me :)  I do see that spi.c adds
+> "when displaying value" at the end, which helps a lot.
+> 
+> Sorry for the wild goose chase.
 
---bzfec56ydwngvrjb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I think I will move this check anyway to driver_set_override() helper,
+because there is no particular benefit to have duplicated all over. The
+helper will receive "count" argument so can perform all checks.
 
-Hi,
 
-On Thu, Feb 24, 2022 at 02:39:20PM -0800, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-02-21 08:43:23)
-> > Hi again,
-> >=20
-> > On Mon, Feb 21, 2022 at 05:18:21PM +0100, Maxime Ripard wrote:
-> > > On Fri, Feb 18, 2022 at 03:15:06PM -0800, Stephen Boyd wrote:
-> > > > Quoting Maxime Ripard (2022-01-25 06:15:41)
-> > > > > +/*
-> > > > > + * Test that if our clock has some boundaries and we try to roun=
-d a rate
-> > > > > + * lower than the minimum, the returned rate will be within rang=
-e.
-> > > > > + */
-> > > > > +static void clk_range_test_set_range_round_rate_lower(struct kun=
-it *test)
-> > > > > +{
-> > > > > +       struct clk_dummy_context *ctx =3D test->priv;
-> > > > > +       struct clk_hw *hw =3D &ctx->hw;
-> > > > > +       struct clk *clk =3D hw->clk;
-> > > > > +       long rate;
-> > > > > +
-> > > > > +       KUNIT_ASSERT_EQ(test,
-> > > > > +                       clk_set_rate_range(clk,
-> > > > > +                                          DUMMY_CLOCK_RATE_1,
-> > > > > +                                          DUMMY_CLOCK_RATE_2),
-> > > > > +                       0);
-> > > > > +
-> > > > > +       rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
-> > > > > +       KUNIT_ASSERT_GT(test, rate, 0);
-> > > > > +       KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> > > >=20
-> > > > The comment says within range but this test says exactly the minimum
-> > > > rate. Please change it to test that the rate is within rate 1 and r=
-ate
-> > > > 2. Also, we should call clk_get_rate() here to make sure the rate is
-> > > > within the boundaries and matches what clk_round_rate() returned.
-> > >=20
-> > > Ok
-> >=20
-> > Actually, that doesn't work. Calling clk_round_rate() won't affect the
-> > clock rate, so the rate returned by clk_get_rate() won't match what
-> > clk_round_rate() will return.
->=20
-> Huh? This is asking "what rate will I get if I call clk_set_rate() with
-> DUMMY_CLOCK_RATE_1 - 1000 after setting the range to be rate 1 and rate
-> 2. It should round that up to some value (and we should enforce that it
-> is inclusive or exclusive). I think I missed that this is
-> clk_round_rate().
->=20
-> Either way, the clk provider implementation could say that if you call
-> clk_set_rate() with a frequency below the minimum that it lies somewhere
-> between the rate 1 and rate 2. The expectation should only check that it
-> is within the range and not exactly the minimum because we're not
-> testing the clk provider implementation of the rounding here, just that
-> the constraints are satisfied and the rate is within range. That's my
-> understanding of the comment above the function and the function name.
-
-You're right, that has been addressed in the last version I sent already
-
-Maxime
-
---bzfec56ydwngvrjb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhiiygAKCRDj7w1vZxhR
-xdyUAQC4zyprmmH2ygtZk0ErwGyncEtazWHRLvlfJ2eVoMrV1gD+KgEhpvdl+3Bi
-q73173fu8I/uwsR7Wh8KVvmvm2xJegw=
-=W7cx
------END PGP SIGNATURE-----
-
---bzfec56ydwngvrjb--
+Best regards,
+Krzysztof
