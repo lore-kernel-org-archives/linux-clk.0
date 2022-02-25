@@ -2,307 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 150EEC433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 22:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26D5C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Feb 2022 22:44:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232823AbiBYWDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 17:03:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47898 "EHLO
+        id S233266AbiBYWol (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 17:44:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230052AbiBYWDS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 17:03:18 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F15F869496;
-        Fri, 25 Feb 2022 14:02:41 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id g6so8454182ybe.12;
-        Fri, 25 Feb 2022 14:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+b6+oake8hiYhMiw+tRXERgHNKqcFJBlff8fODarYU=;
-        b=b4M47ALchiwecpDWLWwnv+1HcycN9upAGuuvTNj65F1/nZS8fwQTdSrQbmMT/8QR4S
-         JjAXUaGls0tAFaXkp+YFrTiGMF9aQwBMK8ggI/NMVUlZgTDBYiopJOBLN8oEAckkY9/M
-         /Rq5SxH9Gnv+uzEo57VQtn5uJKe/aPfgIR+Eg9ylxXKED+z+ujN09vE5xTQ6nqRjkhMR
-         jJsT6l+6xvNv+0s5ncr5FYgjoXPsxUG4RVEPxJ8ZugExaX81qCCQFH1KNwj1SDBoaO3m
-         JPBjRJUB5u8Xce+CJdw2ejX6rXzrEGvciajQQzM+IDg+zcAZa3ZRMjpr8fDgsiQPlX9E
-         tV+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+b6+oake8hiYhMiw+tRXERgHNKqcFJBlff8fODarYU=;
-        b=xDIDPpqu87rjaehTbOwxN1B9XeLDgHu0PJ4BZOuyIZ6kuZFGqFuLTOWMIAxLU2nsSG
-         GjErn8M3mN3E2RHi72sMEhckXcXvqbxU/YALJSe9LIX2WFJqt9fAJg0bJaM6th8terf4
-         kUapA7kSMf4LOMM0hFMRcTwvDHQf4VTa8PKZ5CieXMexWncJdo1jvy73u+hZz3YlxtGy
-         AUfmJ4alU7Uc6Fij8X5TW16mkILbsqke1/RdkDBYkpowBLJIXVsPOnJ7PLfgBBmFs5Oe
-         EKKXK8z60pYvDW57yRJFygk2aTUXgj5GWm4ShT2raDM6eJ+T+dpRopJqzwQ4ll0xEZtP
-         /1jA==
-X-Gm-Message-State: AOAM532OwGLQeZ8XR43uQAPH6l8PJnDB2ohdj0jgTrjQSVIYNSTasWnY
-        xajt7bNen4bmzfNkS3ikr+7hDmWETVRiDCnrSmU=
-X-Google-Smtp-Source: ABdhPJw6jGnheN/kSTANjDauweJTFcZxMicChKUXLQrjC/eFpvYdZIS2U26Y6hOLoX6r9gvAaTVr14qrxT0VZSiDf5A=
-X-Received: by 2002:a05:6902:4e2:b0:611:19fc:a30 with SMTP id
- w2-20020a05690204e200b0061119fc0a30mr9085820ybs.431.1645826561146; Fri, 25
- Feb 2022 14:02:41 -0800 (PST)
+        with ESMTP id S238760AbiBYWol (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 17:44:41 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 336B8218CDD
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 14:44:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B360E61C77
+        for <linux-clk@vger.kernel.org>; Fri, 25 Feb 2022 22:44:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1947FC340E7;
+        Fri, 25 Feb 2022 22:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645829046;
+        bh=Qjrl53nCL2BzmMtE1eNdfHJTZQC3VrNII70g1zW6sXg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ttpKGnQGBOvGP7yuFgsMXQw2rAQRs1OdcgsU6j7YKWfGzQ1e/3ui7qVmHEyGoMNdH
+         IyEPmAXfYgYOvHZUyRt1eHchO5povJKGTRI3dpOcZ4zjCupuoqjRGw5PpRRiFtRM61
+         KoLfyp3S9flyaVsZ+z54NHkdACrFX3cutwD+GZR/3dZMi5fpSPm80hs0GK2ZruQD+H
+         iy1ghuLXgdZmYXbyRwkMUr80lP6DxnsQKHNmGiDGOtVGL/cTnh/s8166b7jxddQP5J
+         cHr16P03WXlU80eoVM/uSpn1kHXu4vuHPHX7DH2ldaTfWp0QRrfwML/rsT+AmKIOow
+         9KxjUbNgC8lqg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220225112403.505562-1-miquel.raynal@bootlin.com> <20220225112403.505562-5-miquel.raynal@bootlin.com>
-In-Reply-To: <20220225112403.505562-5-miquel.raynal@bootlin.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Fri, 25 Feb 2022 22:01:00 +0000
-Message-ID: <CA+V-a8usUF+ABZ30bQ0vkY3FQEzBR-vV0i=Z0uzz_-XySSjp=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] dma: dmamux: Introduce RZN1 DMA router support
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220225142606.6xpq4nzh7ldtkekk@houat>
+References: <20220223105600.1132593-1-maxime@cerno.tech> <20220223105600.1132593-3-maxime@cerno.tech> <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com> <20220224225422.98298C340E9@smtp.kernel.org> <20220225142606.6xpq4nzh7ldtkekk@houat>
+Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Fri, 25 Feb 2022 14:44:04 -0800
+User-Agent: alot/0.10
+Message-Id: <20220225224406.1947FC340E7@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
+Quoting Maxime Ripard (2022-02-25 06:26:06)
+> Hi Stephen,
+>=20
+> On Thu, Feb 24, 2022 at 02:54:20PM -0800, Stephen Boyd wrote:
+> > Quoting Daniel Latypov (2022-02-23 14:50:59)
+> > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> > > Incremental coverage for 3/9 files in --diff_file
+> > > Total incremental: 99.29% coverage (281/283 lines)
+> > >   drivers/clk/clk.c: 84.62% coverage (11/13 lines)
+> > >   drivers/clk/clk_test.c: 100.00% coverage (269/269 lines)
+> > >   include/linux/clk.h: 100.00% coverage (1/1 lines)
+> > >=20
+> > > Missing lines are drivers/clk/clk.c:2397-8, i.e. this part of the dif=
+f:
+> > > +       if (ret) {
+> > > +               /* rollback the changes */
+> > > +               clk->min_rate =3D old_min; <- 2397
+> > > +               clk->max_rate =3D old_max; <- 2398
+> > >=20
+> > > These are from before and were just moved around.
+> >=20
+> > We could trigger a failure in the provider when the rate is set, and
+> > then we could call round_rate() again and make sure the boundaries from
+> > before are maintained.
+>=20
+> I tried to do that, and it turns out we can't, since we ignore the
+> set_rate return code:
+>=20
+> https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L2107
+>=20
+> We could make determine_rate fail, but then clk_round_rate would fail as
+> well and wouldn't allow us to test whether the boundaries are still in
+> place.
+>=20
 
-Thank you for the patch.
-
-On Fri, Feb 25, 2022 at 12:09 PM Miquel Raynal
-<miquel.raynal@bootlin.com> wrote:
->
-> The Renesas RZN1 DMA IP is a based on a DW core, with eg. an additional
-> dmamux register located in the system control area which can take up to
-> 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> two different peripherals.
->
-> We need two additional information from the 'dmas' property: the channel
-> (bit in the dmamux register) that must be accessed and the value of the
-> mux for this channel.
->
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/dma/dw/Kconfig       |   8 ++
->  drivers/dma/dw/Makefile      |   2 +
->  drivers/dma/dw/rzn1-dmamux.c | 152 +++++++++++++++++++++++++++++++++++
->  3 files changed, 162 insertions(+)
->  create mode 100644 drivers/dma/dw/rzn1-dmamux.c
->
-> diff --git a/drivers/dma/dw/Kconfig b/drivers/dma/dw/Kconfig
-> index db25f9b7778c..dd53d4a9fa92 100644
-> --- a/drivers/dma/dw/Kconfig
-> +++ b/drivers/dma/dw/Kconfig
-> @@ -16,6 +16,14 @@ config DW_DMAC
->           Support the Synopsys DesignWare AHB DMA controller. This
->           can be integrated in chips such as the Intel Cherrytrail.
->
-> +config RZN1_DMAMUX
-> +       tristate "Renesas RZ/N1 DMAMUX driver"
-> +       depends on DW_DMAC
-Maybe dependencies for ARCH_RZN1and COMPILE_TEST too?
-
-> +       help
-> +         Support the Renesas RZ/N1 DMAMUX which is located in front of
-> +         the Synopsys DesignWare AHB DMA controller located on Renesas
-> +         SoCs.
-> +
->  config DW_DMAC_PCI
->         tristate "Synopsys DesignWare AHB DMA PCI driver"
->         depends on PCI
-> diff --git a/drivers/dma/dw/Makefile b/drivers/dma/dw/Makefile
-> index a6f358ad8591..8025f75e589c 100644
-> --- a/drivers/dma/dw/Makefile
-> +++ b/drivers/dma/dw/Makefile
-> @@ -7,5 +7,7 @@ obj-$(CONFIG_DW_DMAC)           += dw_dmac.o
->  dw_dmac-y                      := platform.o
->  dw_dmac-$(CONFIG_OF)           += of.o
->
-> +obj-$(CONFIG_RZN1_DMAMUX)      += rzn1-dmamux.o
-> +
->  obj-$(CONFIG_DW_DMAC_PCI)      += dw_dmac_pci.o
->  dw_dmac_pci-y                  := pci.o
-> diff --git a/drivers/dma/dw/rzn1-dmamux.c b/drivers/dma/dw/rzn1-dmamux.c
-> new file mode 100644
-> index 000000000000..bc4e2e7c3d18
-> --- /dev/null
-> +++ b/drivers/dma/dw/rzn1-dmamux.c
-> @@ -0,0 +1,152 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2022 Schneider-Electric
-> + * Author: Miquel Raynal <miquel.raynal@bootlin.com
-> + * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalusi@ti.com>
-> + */
-> +#include <linux/slab.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-can you please check if the above four includes are really required.
-
-> +#include <linux/of_device.h>
-> +#include <linux/of_dma.h>
-> +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> +
-headers need to be sorted.
-
-> +#define RZN1_DMAMUX_LINES 64
-> +#define RZN1_DMAMUX_SPLIT 16
-> +
-> +struct rzn1_dmamux_data {
-> +       struct dma_router dmarouter;
-> +       u32 used_chans;
-> +       struct mutex lock;
-> +};
-> +
-> +struct rzn1_dmamux_map {
-> +       unsigned int req_idx;
-> +};
-> +
-> +static void rzn1_dmamux_free(struct device *dev, void *route_data)
-> +{
-> +       struct rzn1_dmamux_data *dmamux = dev_get_drvdata(dev);
-> +       struct rzn1_dmamux_map *map = route_data;
-> +
-> +       dev_dbg(dev, "Unmapping DMAMUX request %u\n", map->req_idx);
-> +
-> +       mutex_lock(&dmamux->lock);
-> +       dmamux->used_chans &= ~BIT(map->req_idx);
-> +       mutex_unlock(&dmamux->lock);
-> +
-> +       kfree(map);
-> +}
-> +
-> +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
-> +                                       struct of_dma *ofdma)
-> +{
-> +       struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
-> +       struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
-> +       struct rzn1_dmamux_map *map;
-> +       unsigned int dmac_idx, chan, val;
-> +       u32 mask;
-> +       int ret;
-> +
-> +       map = kzalloc(sizeof(*map), GFP_KERNEL);
-> +       if (!map)
-> +               return ERR_PTR(-ENOMEM);
-> +
-map needs to be freed in the error path.
-
-> +       if (dma_spec->args_count != 6)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       chan = dma_spec->args[0];
-> +       map->req_idx = dma_spec->args[4];
-> +       val = dma_spec->args[5];
-> +       dma_spec->args_count -= 2;
-> +
-> +       if (chan >= RZN1_DMAMUX_SPLIT) {
-> +               dev_err(&pdev->dev, "Invalid DMA request line: %u\n", chan);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (map->req_idx >= RZN1_DMAMUX_LINES ||
-> +           (map->req_idx % RZN1_DMAMUX_SPLIT) != chan) {
-> +               dev_err(&pdev->dev, "Invalid MUX request line: %u\n", map->req_idx);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       dmac_idx = map->req_idx < RZN1_DMAMUX_SPLIT ? 0 : 1;
-> +       dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", dmac_idx);
-> +       if (!dma_spec->np) {
-> +               dev_err(&pdev->dev, "Can't get DMA master\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n",
-> +               map->req_idx, dmac_idx, chan);
-> +
-> +       mask = BIT(map->req_idx);
-> +       mutex_lock(&dmamux->lock);
-> +       dmamux->used_chans |= mask;
-> +       ret = r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
-> +       mutex_unlock(&dmamux->lock);
-> +       if (ret) {
-> +               rzn1_dmamux_free(&pdev->dev, map);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return map;
-> +}
-> +
-> +static const struct of_device_id rzn1_dmac_match[] __maybe_unused = {
-any reason for using __maybe_unused?
-
-> +       { .compatible = "renesas,rzn1-dma" },
-> +       {},
-"," not required.
-
-> +};
-> +
-> +static int rzn1_dmamux_probe(struct platform_device *pdev)
-> +{
-> +       struct device_node *mux_node = pdev->dev.of_node;
-> +       const struct of_device_id *match;
-> +       struct device_node *dmac_node;
-> +       struct rzn1_dmamux_data *dmamux;
-> +
-> +       dmamux = devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL);
-> +       if (!dmamux)
-> +               return -ENOMEM;
-> +
-> +       mutex_init(&dmamux->lock);
-> +
-> +       dmac_node = of_parse_phandle(mux_node, "dma-masters", 0);
-> +       if (!dmac_node)
-> +               return dev_err_probe(&pdev->dev, -ENODEV, "Can't get DMA master node\n");
-> +
-> +       match = of_match_node(rzn1_dmac_match, dmac_node);
-> +       of_node_put(dmac_node);
-> +       if (!match)
-> +               return dev_err_probe(&pdev->dev, -EINVAL, "DMA master is not supported\n");
-> +
-> +       dmamux->dmarouter.dev = &pdev->dev;
-> +       dmamux->dmarouter.route_free = rzn1_dmamux_free;
-> +
-> +       platform_set_drvdata(pdev, dmamux);
-> +
-> +       return of_dma_router_register(mux_node, rzn1_dmamux_route_allocate,
-> +                                     &dmamux->dmarouter);
-> +}
-> +
-> +static const struct of_device_id rzn1_dmamux_match[] = {
-> +       { .compatible = "renesas,rzn1-dmamux" },
-> +       {},
-"," not required.
-
-> +};
-> +
-> +static struct platform_driver rzn1_dmamux_driver = {
-> +       .driver = {
-> +               .name = "renesas,rzn1-dmamux",
-> +               .of_match_table = rzn1_dmamux_match,
-> +       },
-> +       .probe  = rzn1_dmamux_probe,
-> +};
-> +module_platform_driver(rzn1_dmamux_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Miquel Raynal <miquel.raynal@bootlin.com");
-> +MODULE_DESCRIPTION("Renesas RZ/N1 DMAMUX driver");
-> --
-> 2.27.0
->
-
-Cheers,
-Prabhakar
+The test could still do it at a high level right? And when/if we decide
+to bubble up the set_rate failure then we would be testing these lines.
+Seems like a good idea to implement it with a TODO note that clk.c is
+ignoring the set_rate clk_op returning failure.
