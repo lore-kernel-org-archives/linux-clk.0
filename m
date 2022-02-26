@@ -2,59 +2,57 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AD7C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Feb 2022 01:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA6C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Feb 2022 01:05:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240250AbiBZBCw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Feb 2022 20:02:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60484 "EHLO
+        id S230022AbiBZBFg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Feb 2022 20:05:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241025AbiBZBCt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 20:02:49 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14DAC2036CA;
-        Fri, 25 Feb 2022 17:02:16 -0800 (PST)
+        with ESMTP id S229702AbiBZBFe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Feb 2022 20:05:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A1721130D;
+        Fri, 25 Feb 2022 17:05:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5943CCE27FA;
-        Sat, 26 Feb 2022 01:02:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9CBC340E7;
-        Sat, 26 Feb 2022 01:02:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B8EA861DF6;
+        Sat, 26 Feb 2022 01:05:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133D4C340E8;
+        Sat, 26 Feb 2022 01:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645837332;
-        bh=s3uxVknzRgf4ZtLVDNn/SWgZmKi4vM3vX/Dr0awPoAM=;
+        s=k20201202; t=1645837500;
+        bh=VknzNYngZ6fmFKJbNbhxXqzBORmVxmLx62PlrXRCt08=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QTevI/z1kScguSDOxT421Kt6eqC6xPaxY5HoM7SiiZgQLCpVoe+RVUgb4DJpa/QM7
-         AX51Y+Bb+1p+H58FlhYbTj6ERGPOlDJEtYkoxIgmWWDGYKbuzFygrPMtR75q/rM8wD
-         tnr5TV/K9vLxtzQOMfTcQhdRKv48u/oIJoeasg8JkCiFRv3QWpIhcSMCKWKPfY6XsI
-         sL4tjJfWEO60MlP/EUHdiQ46MZ+xHEgxDaCEJsPYIIb3lfJBpC80fcR9UQWSxj6VU0
-         UdTDgyikVrgKNJrkvpP9D6+HsLHUCpRmrzANfkat5faURrtIio3RxI3rWjGA2l+XSH
-         J60FeeIfKEhQg==
+        b=iGjKLX5kIOe+TmoHyN6yn1qndjNJvHKYSFf/AnwPPEWa1BTtM/Jir9/PO2oA4KoU6
+         ZO6Iki+2wc8dI62MnX09/gcRPbZZplHUpkH+daUXFk/ri0UPY+dS34FEUpESNj1otQ
+         wpKfDllKPnNwDP7TUQk3ZKX4JS/RK8JBJ2FAa0A6qVR3za25+KYNjV6g+B6mIzMzPj
+         TAnJSJYws24X9ZslKZqOg11hoQFJDvxTh/WbD8df8st6nzZhSxaYcY7DQiGH9eqO5J
+         HlZKjyfvCskpEqEHXP7NGUHjZYGolNqjoaPCnqWMkwYzmUjpwDnEf/ym7kesRwJsMi
+         o+BJvSwqvA5IA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220205103613.1216218-8-j.neuschaefer@gmx.net>
-References: <20220205103613.1216218-1-j.neuschaefer@gmx.net> <20220205103613.1216218-8-j.neuschaefer@gmx.net>
-Subject: Re: [PATCH v2 7/7] clk: pistachio: Declare mux table as const u32[]
+In-Reply-To: <20220217220554.2711696-2-sboyd@kernel.org>
+References: <20220217220554.2711696-1-sboyd@kernel.org> <20220217220554.2711696-2-sboyd@kernel.org>
+Subject: Re: [PATCH 1/2] clk: Mark 'all_lists' as const
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org
-Date:   Fri, 25 Feb 2022 17:02:11 -0800
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 25 Feb 2022 17:04:58 -0800
 User-Agent: alot/0.10
-Message-Id: <20220226010212.BD9CBC340E7@smtp.kernel.org>
+Message-Id: <20220226010500.133D4C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Neusch=C3=A4fer (2022-02-05 02:36:13)
-> Now that clk_register_mux_table takes a const u32 *, we can declare the
-> mux table as const u32[].
+Quoting Stephen Boyd (2022-02-17 14:05:53)
+> This list array doesn't change at runtime. Mark it const to move to RO
+> memory.
 >=20
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
