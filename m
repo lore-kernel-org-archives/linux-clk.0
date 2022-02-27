@@ -2,145 +2,191 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CC2C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 03:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72405C4332F
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 10:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbiB0D3k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Feb 2022 22:29:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
+        id S229995AbiB0KEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Feb 2022 05:04:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbiB0D3k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Feb 2022 22:29:40 -0500
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1797D21F5CE
-        for <linux-clk@vger.kernel.org>; Sat, 26 Feb 2022 19:29:04 -0800 (PST)
-Received: by mail-qv1-xf2a.google.com with SMTP id a1so9874187qvl.6
-        for <linux-clk@vger.kernel.org>; Sat, 26 Feb 2022 19:29:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7uVsTdS9A3VvM3V9jvyobaIfl/vvSxzX/obLWEqItyo=;
-        b=Gus3oS9RSn7V1sr7kHl81y1aya0zl1pkxCw11w+XDvu9TPjWigg3K7tlfZovWKB4ae
-         LoFSKEOnw1/CPf1ue5bg4+ZnXYbF9Y+zkicAyImn/QMeG0xf8RkYkMwE7td7V+XucgUg
-         0gDiET8OWcLiR/uTHn2wUh3WcY8POKYYZw/O/qikdZt/B8Oxa+/h0kWL0zlh0jNugHBG
-         Rv5B++uhoDoF5bNd2dF70oz4vn2VMV+FnUr/zAIOwkrn52j00Kfgxx5zPdTqm8q/d8vi
-         I5UERrNvI3oCAHu2jLszQfE2Ir4z01/zstiDc3a//KS3VlYN7Eft03BJzMvOQq3z/VZH
-         WOlw==
+        with ESMTP id S229969AbiB0KEe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Feb 2022 05:04:34 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF345C37C
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 02:03:57 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 20BC43FCA8
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 10:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1645956235;
+        bh=IfVXPHlKvsF/IugNOxJ2nfDin24YI7mhh0WDRsHK5Xo=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=P/mAev3ks6m/REqgAqjHXLVl9KPAHGZ/Ncc2NMJUUfNrHvhPodopMyItXyCVR180W
+         RaROqczYBdlKDPapvQL+s5nO/FXH/omMkqLBvDXnFURGRraBCv65VYYIySPd5EUJXr
+         9E2xNPoWZCEnZkFkWlCgPqDk81sEcTU74++b+0kAIw3WQ36k910aLmrQ/bc4BnwoGK
+         mNjn79OR/LX4TRMXYtbnZiYUvp1Q3xtJVru0dBrWGm3YPOurcud1eFdn2BRDa2xAOE
+         IJmgEHPPSJUbD5c46bFl90Y1FZS0e8vQgoYmLV8/CkOe/F+M7M/afvvfhEo7XmRXXL
+         Fzzf408yO0ebg==
+Received: by mail-ed1-f71.google.com with SMTP id y10-20020a056402358a00b00410deddea4cso4029319edc.16
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 02:03:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7uVsTdS9A3VvM3V9jvyobaIfl/vvSxzX/obLWEqItyo=;
-        b=tSrW68ObogPMHvcUI6oKWe7a6QoeZXvKr0kxqXOsuS462FH4yAFtwFWvat/y36KEbL
-         /ZCJyy8gfwgr5IY621ikYZEY25sQVG9y4bt0tsdup65iaSH9GhSUe9CR7fakQNfFFjMl
-         OMPxsCzd3T3bsKvv0k2EQIYG6UR/GUOtOOfHMTCdaQeriOQLP3bkRvlu/Vb0ghP31bgb
-         p5O+oXJRJkXMGYBPOkkNCZXWJQeE9G+4GhFPxf2TeZFdJBFsEspAGCrpkVOI/xVqJpJL
-         2YsQOHUp7MbbQK1mhz/QFMZgGfdkhXf7IprudWsDHGEWRzmSh9nmFSMPImw5pElpjrtX
-         +wJA==
-X-Gm-Message-State: AOAM5316lKNm5QuCziVxyl3QmpBKhsWbWNUNJUB4TRB+ww6OOlm3msT5
-        h0iPqCFQCwncu/GaIONM7a9ENdAw3qS7qUcl1ReTPA==
-X-Google-Smtp-Source: ABdhPJy7XFThPExoHd3VFYJIkPak1UpwZE6oPWxM0M9mvJOEkCCe6XwmadvukE4ueQzyWqWGH926oT69VQqrOB0s4xU=
-X-Received: by 2002:a0c:d807:0:b0:42c:1ff7:7242 with SMTP id
- h7-20020a0cd807000000b0042c1ff77242mr10578010qvj.119.1645932543232; Sat, 26
- Feb 2022 19:29:03 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=IfVXPHlKvsF/IugNOxJ2nfDin24YI7mhh0WDRsHK5Xo=;
+        b=Y8E83itCGYbt7rP9x0fwuZp7jUFeaSQNgn9AqW/dOTjSS8q99GifFrSdl/nYPv80Pv
+         RkV6H/nS9C+tm/tv0yQayamfrQTZECAKrh3/r0tXPutog+m82kCiyPjL0f31HoWjDBau
+         dMYRjr17NSH1GdRfw/7ZMbCkBnFy5qkzw4lgoG0Nf1w2Hq++QnLnBH86x3StmZdbD2F/
+         48cblFqhA0eW4rcuJ99M/RwyFzsMkbUSYpcxViraCmYBHpNkVSHNNFL1bSNolUmoL+ov
+         yV+h5/7E1d/Tuz0N8xKbRGAlsLXybiODnn87vFTGWo+F5PF5jt70r7wW2aD1OlvYlQcB
+         AJdQ==
+X-Gm-Message-State: AOAM531eymYUShbSrmBomO6vz1pX0bjB4fbZgp907DXjKXhryrJjbZJm
+        MQePy0LX32prBSZKkUfGaeRUWRzeoD1mPZ+VJLFtb+VPopwb5RB62BJ93wSihK/dg/zlqGNfPDn
+        CDZq2VpSxyEjUOONCfCKW4yq2evPJpCBlRinnZg==
+X-Received: by 2002:a17:906:6d09:b0:6b9:2e0e:5bdd with SMTP id m9-20020a1709066d0900b006b92e0e5bddmr11270627ejr.246.1645956234709;
+        Sun, 27 Feb 2022 02:03:54 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwPviELBAb3YlJF3dqApYWhzkERExWKru4Uij+RIvAJZ8xES86UbS47+QTJNfsojvKwn0q7ag==
+X-Received: by 2002:a17:906:6d09:b0:6b9:2e0e:5bdd with SMTP id m9-20020a1709066d0900b006b92e0e5bddmr11270607ejr.246.1645956234415;
+        Sun, 27 Feb 2022 02:03:54 -0800 (PST)
+Received: from [192.168.0.133] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id ee21-20020a056402291500b00410d4261313sm4211234edb.24.2022.02.27.02.03.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Feb 2022 02:03:53 -0800 (PST)
+Message-ID: <ea5d34c6-fe75-c096-d5b2-6a327c9d0ae5@canonical.com>
+Date:   Sun, 27 Feb 2022 11:03:52 +0100
 MIME-Version: 1.0
-References: <20220226200911.230030-1-marijn.suijten@somainline.org> <20220226200911.230030-2-marijn.suijten@somainline.org>
-In-Reply-To: <20220226200911.230030-2-marijn.suijten@somainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sun, 27 Feb 2022 06:28:52 +0300
-Message-ID: <CAA8EJppH2AKe7DK7mPhtz2CCW19WdJ0-NJihmFPDswRwTtKcfw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: qcom: Fix sorting of SDX_GCC_65 in Makefile
- and Kconfig
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: add QCOM SM6125 display clock
+ bindings
+Content-Language: en-US
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Martin Botka <martin.botka@somainline.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
         Pavel Dubrova <pashadubrova@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220226200911.230030-1-marijn.suijten@somainline.org>
+ <20220226200911.230030-3-marijn.suijten@somainline.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220226200911.230030-3-marijn.suijten@somainline.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 27 Feb 2022 at 02:38, Marijn Suijten
-<marijn.suijten@somainline.org> wrote:
->
-> In order to keep at least the list of `CONFIG_SM_` drivers sorted
-> alphabetically, SDX_GCC_65 should have been moved one line up.  This in
-> turn makes it easier and cleaner to add the followup SM_DISPCC_6125
-> driver in the right place, right before SM_DISPCC_8250.
->
-> Fixes: d79afa201328 ("clk: qcom: Add SDX65 GCC support")
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+On 26/02/2022 21:09, Marijn Suijten wrote:
+> From: Martin Botka <martin.botka@somainline.org>
+> 
+> Add device tree bindings for display clock controller for
+> Qualcomm Technology Inc's SM6125 SoC.
+> 
+> Signed-off-by: Martin Botka <martin.botka@somainline.org>
 > ---
->  drivers/clk/qcom/Kconfig  | 14 +++++++-------
->  drivers/clk/qcom/Makefile |  2 +-
->  2 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index f5b54bfc992f..161b257da9ca 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -574,13 +574,6 @@ config SDX_GCC_55
->           Say Y if you want to use peripheral devices such as UART,
->           SPI, I2C, USB, SD/UFS, PCIe etc.
->
-> -config SM_CAMCC_8250
-> -       tristate "SM8250 Camera Clock Controller"
-> -       select SM_GCC_8250
-> -       help
-> -         Support for the camera clock controller on SM8250 devices.
-> -         Say Y if you want to support camera devices and camera functionality.
-> -
->  config SDX_GCC_65
->         tristate "SDX65 Global Clock Controller"
->         select QCOM_GDSC
-> @@ -589,6 +582,13 @@ config SDX_GCC_65
->           Say Y if you want to use peripheral devices such as UART,
->           SPI, I2C, USB, SD/UFS, PCIe etc.
->
-> +config SM_CAMCC_8250
-> +       tristate "SM8250 Camera Clock Controller"
-> +       select SM_GCC_8250
-> +       help
-> +         Support for the camera clock controller on SM8250 devices.
-> +         Say Y if you want to support camera devices and camera functionality.
+>  .../bindings/clock/qcom,dispcc-sm6125.yaml    | 87 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,dispcc-sm6125.h    | 41 +++++++++
+>  2 files changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm6125.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+> new file mode 100644
+> index 000000000000..3465042d0d9f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+> @@ -0,0 +1,87 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,dispcc-sm6125.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  config SM_DISPCC_8250
->         tristate "SM8150 and SM8250 Display Clock Controller"
->         depends on SM_GCC_8150 || SM_GCC_8250
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index d96d6793fc7d..3e4eb843b8d2 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -84,8 +84,8 @@ obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
->  obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
->  obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
->  obj-$(CONFIG_SDX_GCC_55) += gcc-sdx55.o
-> -obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
->  obj-$(CONFIG_SDX_GCC_65) += gcc-sdx65.o
-> +obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
->  obj-$(CONFIG_SM_DISPCC_8250) += dispcc-sm8250.o
->  obj-$(CONFIG_SM_GCC_6115) += gcc-sm6115.o
->  obj-$(CONFIG_SM_GCC_6125) += gcc-sm6125.o
-> --
-> 2.35.1
->
+> +title: Qualcomm Display Clock Controller Binding for SM6125
+> +
+> +maintainers:
+> +  - Martin Botka <martin.botka@somainline.org>
+> +
+> +description: |
+> +  Qualcomm display clock control module which supports the clocks and
+> +  power domains on SM6125.
+> +
+> +  See also:
+> +    dt-bindings/clock/qcom,dispcc-sm6125.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sm6125-dispcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Byte clock from DSI PHY0
+> +      - description: Pixel clock from DSI PHY0
+> +      - description: Pixel clock from DSI PHY1
+> +      - description: Link clock from DP PHY
+> +      - description: VCO DIV clock from DP PHY
+> +      - description: AHB config clock from GCC
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: dsi0_phy_pll_out_byteclk
+> +      - const: dsi0_phy_pll_out_dsiclk
+> +      - const: dsi1_phy_pll_out_dsiclk
+> +      - const: dp_phy_pll_link_clk
+> +      - const: dp_phy_pll_vco_div_clk
+> +      - const: cfg_ahb_clk
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sm6125.h>
+> +    clock-controller@5f00000 {
+> +      compatible = "qcom,sm6125-dispcc";
+> +      reg = <0x5f00000 0x20000>;
+> +      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +               <&dsi0_phy 0>,
+> +               <&dsi0_phy 1>,
+> +               <0>,
+
+This does not look like a valid phandle. This clock is required, isn't it?
 
 
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
