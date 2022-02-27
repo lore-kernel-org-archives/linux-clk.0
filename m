@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D089EC35278
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 13:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCA2C433F5
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 13:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbiB0Ny1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Feb 2022 08:54:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43644 "EHLO
+        id S231424AbiB0Nyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Feb 2022 08:54:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbiB0Ny0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Feb 2022 08:54:26 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8888A65BD
-        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 05:53:49 -0800 (PST)
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        with ESMTP id S231386AbiB0Nyb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Feb 2022 08:54:31 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 408DB1BE88
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 05:53:53 -0800 (PST)
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 4CB624004D
-        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 13:53:48 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 77C3A3FCAC
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 13:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1645970028;
-        bh=npGNvoQmcQXzOf9MUvG7bOfkjnwx60Xk35PbEgCfPxw=;
+        s=20210705; t=1645970031;
+        bh=x+DOMuEjhXppqlmSDNC0RKdzUzslcBqDhsGS9OsoQS4=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=TuSSqqLER80YcA1/RpVOJ2K5WL+/AG4UvX1GCjPhRt8igN7+egU3VdFqP01lBdTto
-         bi/nxScJF30ylROyvEEDzmBsUOUKH6InN4ULr93fj2AJr3syOgPXbfaXz7M3/N9LIW
-         hCMJbtjL2yP1tFFrmDIQ6Bi4VXsbkm6FTvIw0GqWZwMiQR4GVHTXM0Ve2Am0Xm3l1g
-         6opBlecxSjQoQZNWNbwBvD0FQY727Z2YQhARzYOUQVp8cpRLjYiV0QW/DN35YpzwmE
-         GjrWXp3FtU8dOd1JGX00qfI4gOAsZqsOzTy9k27FjhYMmgfo+qL1uRfM4ltpZI6w58
-         WrGnFMGNOFueA==
-Received: by mail-wm1-f69.google.com with SMTP id q17-20020a1ca711000000b0037be98d03a1so4940405wme.0
-        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 05:53:48 -0800 (PST)
+        b=fqtz3nQVi5TjYwJxw0nX5FCG8CIsVmwudBKZjnrG6qv4VqMjYplEwyu1maQjtgQ3n
+         67CUny07O8wu7hmOMlwti7I1WieNvenhJytR9Eukoh9grNqpIu+Tod4NrL5d/Bmd2S
+         wfXCTvxdcbq+RKgCGnbv44rAVPrRtXdz38zMz61DfBvLra+8aG3zepPL1A6su+Dcz4
+         +i8zRhowqxldmJhyzqHwO+gtyxPpQ3HbXFyMXS4xabAXet8sXK/eXV9gcYphq80bwN
+         2S6deJfQuM6H3Unt6lBLDQO8+mxgkbq8Vf0julCPRtuQNhmVnJffh2+l9a3uxBTCxX
+         uzj4+QgkJRlNg==
+Received: by mail-ed1-f71.google.com with SMTP id bq19-20020a056402215300b0040f276105a4so4254351edb.2
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 05:53:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=npGNvoQmcQXzOf9MUvG7bOfkjnwx60Xk35PbEgCfPxw=;
-        b=vJ9kBigShKj99cot+xqHwHAkU/4r8nEFtFEyiBEn5yXVnnyvD1hkjo299QqdUSFEUX
-         /JlgXTHVlYy2RPCbnQlMfRLxOrgot3xLQA41BJfQAx2LPr8vbfJB8rC9M5pjUroJ6dgy
-         RW1hTdNttwHgOc6BRgkwoLNY/r2rhhbz+nmUNjaf6BfYLhXg6/JD/B7tYwGS093ED4JV
-         4k4mYO8vYuWdEhI2HufffoqOop3WEHJawov/WWNWa1iCFoD8k7FAmw62SASSWLM9WMBd
-         IotVaxIAlxWaRQRoNyHRhQ8gE3YYrSGKxyEnhFcW2Zqyc5XUDR4Dql6aVpP2C1Hy6MLv
-         ADoA==
-X-Gm-Message-State: AOAM530JUT8GFiVNhwPEY6YkC6AFwnERdYRY5ovMTtILQu+W4EpCJgvZ
-        wz2OExp88GqeEl8tcnUtA76X0p4zqRc4M483MgV7bGXYNBrO6G0lDNSul+hBejJqoERHm/CllqC
-        xhmaHh4umTrW8cQHqNZ1rUTk6H8e1GkgchIQLiQ==
-X-Received: by 2002:aa7:d49a:0:b0:410:875c:e21b with SMTP id b26-20020aa7d49a000000b00410875ce21bmr15261497edr.357.1645970017415;
-        Sun, 27 Feb 2022 05:53:37 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzicu7l4IEwzqhlq2xIFoxdFytokSeMFkgjaEtpJW9Dl/uL3ibJtEoSzuA4VDSoAwu8n3nm0A==
-X-Received: by 2002:aa7:d49a:0:b0:410:875c:e21b with SMTP id b26-20020aa7d49a000000b00410875ce21bmr15261460edr.357.1645970017251;
-        Sun, 27 Feb 2022 05:53:37 -0800 (PST)
+        bh=x+DOMuEjhXppqlmSDNC0RKdzUzslcBqDhsGS9OsoQS4=;
+        b=rnNrIpYQyzU3pgxZBmbHKaZ44YlxY8ndyAcbW8y9AWUUd3lRyzq/pJndlxzIuH43lt
+         CGvBkgfk0TEVFWCqvKTUUq6idgerZVUoTO+kFk8rbeMfAw0UricSCmapdf11XzzISrOa
+         wIz/zM9v+KoWjWJjUKMVV+ixwyTz+rrsX51Eo8r2NIItfgDaHUNtMNfl9iW4g5hFZQUa
+         i1y+TkOhl8BhDEqY0zV+eKC4N2OBsS9eCxjsiMul0ImV+VqNUnO/AcHY+MoLyw4stUIP
+         w1a1XjydrANtt4ErdRS2hk1+/DbwLNa2/q9sYiq+MojsKQ8tcRb9EqHt10pFB0BVDuUQ
+         WvlA==
+X-Gm-Message-State: AOAM532F86WUmpctj+jAyjS3zLlvBSwR86+KmVHMSHd14jABPpIyWXKq
+        68hl0tBElu5oAJrhm4SuQ9ITwfYtvAsuxjQyaP+60YxrMw00calMLiozbo0b5YcvzQaQJmRceBh
+        t/IL646sjwfgJQHkIWLjHP82eVId9yo5d5dLjKw==
+X-Received: by 2002:a17:906:354f:b0:6b4:1449:2d03 with SMTP id s15-20020a170906354f00b006b414492d03mr13078908eja.197.1645970019290;
+        Sun, 27 Feb 2022 05:53:39 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyLkm/ya1hWTxNWHY0owECzZBrknUNuVIsi2Y1TI9mIZSzwklvOz9AjjK7v7g0U5lSZuOzjqQ==
+X-Received: by 2002:a17:906:354f:b0:6b4:1449:2d03 with SMTP id s15-20020a170906354f00b006b414492d03mr13078900eja.197.1645970019102;
+        Sun, 27 Feb 2022 05:53:39 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id w11-20020a056402128b00b00412ec3f5f74sm4600760edv.62.2022.02.27.05.53.35
+        by smtp.gmail.com with ESMTPSA id w11-20020a056402128b00b00412ec3f5f74sm4600760edv.62.2022.02.27.05.53.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Feb 2022 05:53:36 -0800 (PST)
+        Sun, 27 Feb 2022 05:53:38 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -91,10 +91,11 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         virtualization@lists.linux-foundation.org,
         Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v3 08/11] vdpa: Use helper for safer setting of driver_override
-Date:   Sun, 27 Feb 2022 14:53:26 +0100
-Message-Id: <20220227135329.145862-2-krzysztof.kozlowski@canonical.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3 09/11] clk: imx: scu: Fix kfree() of static memory on setting driver_override
+Date:   Sun, 27 Feb 2022 14:53:27 +0100
+Message-Id: <20220227135329.145862-3-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
 References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
@@ -104,71 +105,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use a helper for seting driver_override to reduce amount of duplicated
-code.
+The driver_override field from platform driver should not be initialized
+from static memory (string literal) because the core later kfree() it,
+for example when driver_override is set via sysfs.
 
+Use dedicated helper to set driver_override properly.
+
+Fixes: 77d8f3068c63 ("clk: imx: scu: add two cells binding support")
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- drivers/vdpa/vdpa.c  | 29 ++++-------------------------
- include/linux/vdpa.h |  4 +++-
- 2 files changed, 7 insertions(+), 26 deletions(-)
+ drivers/clk/imx/clk-scu.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-index 9846c9de4bfa..2d924a89ce28 100644
---- a/drivers/vdpa/vdpa.c
-+++ b/drivers/vdpa/vdpa.c
-@@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
- 				     const char *buf, size_t count)
- {
- 	struct vdpa_device *vdev = dev_to_vdpa(dev);
--	const char *driver_override, *old;
--	char *cp;
-+	int ret;
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 083da31dc3ea..4b2268b7d0d0 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -683,7 +683,12 @@ struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+ 		return ERR_PTR(ret);
+ 	}
  
--	/* We need to keep extra room for a newline */
--	if (count >= (PAGE_SIZE - 1))
--		return -EINVAL;
--
--	driver_override = kstrndup(buf, count, GFP_KERNEL);
--	if (!driver_override)
--		return -ENOMEM;
--
--	cp = strchr(driver_override, '\n');
--	if (cp)
--		*cp = '\0';
--
--	device_lock(dev);
--	old = vdev->driver_override;
--	if (strlen(driver_override)) {
--		vdev->driver_override = driver_override;
--	} else {
--		kfree(driver_override);
--		vdev->driver_override = NULL;
--	}
--	device_unlock(dev);
--
--	kfree(old);
-+	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
-+	if (ret)
-+		return ret;
+-	pdev->driver_override = "imx-scu-clk";
++	ret = driver_set_override(&pdev->dev, &pdev->driver_override,
++				  "imx-scu-clk", strlen("imx-scu-clk"));
++	if (ret) {
++		platform_device_put(pdev);
++		return ERR_PTR(ret);
++	}
  
- 	return count;
- }
-diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-index 2de442ececae..89ec4e4d4cdc 100644
---- a/include/linux/vdpa.h
-+++ b/include/linux/vdpa.h
-@@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
-  * struct vdpa_device - representation of a vDPA device
-  * @dev: underlying device
-  * @dma_dev: the actual device that is performing DMA
-- * @driver_override: driver name to force a match
-+ * @driver_override: driver name to force a match; do not set directly,
-+ *                   because core frees it; use driver_set_override() to
-+ *                   set or clear it.
-  * @config: the configuration ops for this device.
-  * @cf_mutex: Protects get and set access to configuration layout.
-  * @index: device index
+ 	ret = imx_clk_scu_attach_pd(&pdev->dev, rsrc_id);
+ 	if (ret)
 -- 
 2.32.0
 
