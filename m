@@ -2,84 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBB1C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 17:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B877AC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Feb 2022 20:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230088AbiB0R4e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Feb 2022 12:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36522 "EHLO
+        id S231247AbiB0UNH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Feb 2022 15:13:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbiB0R4d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Feb 2022 12:56:33 -0500
-Received: from m43-7.mailgun.net (m43-7.mailgun.net [69.72.43.7])
-        by lindbergh.monkeyblade.net (Postfix) with UTF8SMTPS id 6A3A14BFEB
-        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 09:55:56 -0800 (PST)
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1645984556; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=b6BQsCntXnK8VTVQSNvYsY4KF1OTQqRI/T5zw5TX6tk=; b=Q3pECYJXjNXnGgVQ66EspPP0uBlJlSO+OD3NkG3ErNO/lVpGnh85FV6QVMkKlQEPpAmaajPz
- x+oLJm6ujnVCl3FUOWJc0b1ZnHNljY8irAcHxiXzveYAh5WTC9E2WP3PXu/J4PP5r5EUDuoE
- PAAIMBF0MZ5TegFNQ/aw3vb+Lfc=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n03.prod.us-east-1.postgun.com with SMTP id
- 621bbb2a6f8d3f1389344a76 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 27 Feb 2022 17:55:54
- GMT
-Sender: tdas=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 16F58C4361A; Sun, 27 Feb 2022 17:55:54 +0000 (UTC)
-Received: from hu-tdas-hyd.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02380C4338F;
-        Sun, 27 Feb 2022 17:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.1 smtp.codeaurora.org 02380C4338F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [v3 2/2] clk: qcom: clk-rcg2: Update the frac table for pixel clock
-Date:   Sun, 27 Feb 2022 23:25:36 +0530
-Message-Id: <20220227175536.3131-2-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220227175536.3131-1-tdas@codeaurora.org>
-References: <20220227175536.3131-1-tdas@codeaurora.org>
+        with ESMTP id S229848AbiB0UNG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Feb 2022 15:13:06 -0500
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2538B63B3;
+        Sun, 27 Feb 2022 12:12:27 -0800 (PST)
+Received: by mail-io1-xd36.google.com with SMTP id f14so12686076ioz.1;
+        Sun, 27 Feb 2022 12:12:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mZFvwtuK5rzdjJTgzXoknsNe52lngj5l45fnHN2s9EA=;
+        b=b1k9QCr9ysDO2pOOKoUC1vycuz6UP6D/aAtYGlaR1JWs4fGJD+h7eisuKLeF1C4Zy+
+         Dyd80Axg6RtCTOsL/X1iyG8c5ZjeIKP5yoLFHSwL6ljXYJml84S27YRdXWk5kSUkue57
+         0Udfr9Ky4rTAWhVhjHWk/vGlFsmn91YyJ31G2kRcH2HbIJ36Xe/z1YKamQRx5XPlU6HD
+         8OAOw0BeuNp1SnpOiUtXgXY/rbS/7no8FF6OUynJTpYau+NjHiqG54uTcASF9LoKHAkB
+         daejP/CweZxcReQ7LyMGditb1c4SQICyrz6l6BPxTNwMuC/fZMhGKP7lkJbmMhwJoAt9
+         gsdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mZFvwtuK5rzdjJTgzXoknsNe52lngj5l45fnHN2s9EA=;
+        b=GHKq8t6NbG7H6+fnzriEyNkS6HtcK8GmjsaKVf50iHU0i7eGbrFOuZ6+ay8010cLaj
+         iJ/QhOVtU5OCN8QDPgjltqbihLm+AdVJ0Tu4UUlPmeN5duA1T3a9k1kF0kMvxKwkdYXr
+         7E4mwXNqui+OENjhDil/47ZOR2dIJABZ+EpUA3QAmkXIhkq9CTzmgL11YLO4Ze2x+JJV
+         8eQPH3/pDwaZPn+dZQ3pH9jDLD6CnOKL242ZeliLisAUlIjJqR2oCzhrPmHYfIY4IyQh
+         AAN7XgplKQzxIF4upzH1n0qGiqEvah8xBrHNYPuLfGfgLlcXzjULjwNTJW0M+xjbbgNu
+         5tOA==
+X-Gm-Message-State: AOAM532Y67mFEnNOuY5dq7K6AUjSzXnNNHHof5C4BOQjP74ojT0+wAs5
+        7722pxhVC3C984ir5frJFORqjZ8QYoQsurFV6wE=
+X-Google-Smtp-Source: ABdhPJwpCSppZ6Yw2mHaH3DTl3Mfki6KikEfebjmAX8Dpb4Kf4pHt+ok/u4vIzh7QqaluxZxP1POC9Kij1ee8aeHKEI=
+X-Received: by 2002:a5d:970d:0:b0:5f2:9242:d881 with SMTP id
+ h13-20020a5d970d000000b005f29242d881mr12912255iol.187.1645992745645; Sun, 27
+ Feb 2022 12:12:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20220220212034.9152-1-michael.srba@seznam.cz> <20220220212034.9152-3-michael.srba@seznam.cz>
+In-Reply-To: <20220220212034.9152-3-michael.srba@seznam.cz>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Sun, 27 Feb 2022 13:12:14 -0700
+Message-ID: <CAOCk7Noo_opbG3tLwMkXc1U1MHKQgf+JfEwRnpQqeLamcS5tuA@mail.gmail.com>
+Subject: Re: [PATCH v8 3/5] dt-bindings: bus: add device tree bindings for qcom,ssc-block-bus
+To:     michael.srba@seznam.cz
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support the new numerator and denominator for pixel clock on SM8350 and
-support rgb101010, RGB888 use cases on SM8450.
+On Sun, Feb 20, 2022 at 6:32 PM <michael.srba@seznam.cz> wrote:
+>
+> From: Michael Srba <Michael.Srba@seznam.cz>
+>
+> Adds bindings for the AHB bus which exposes the SCC block in the global
+> address space. This bus (and the SSC block itself) is present on certain
+> qcom SoCs.
 
-Fixes: 99cbd064b059f ("clk: qcom: Support display RCG clocks")
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/clk-rcg2.c | 1 +
- 1 file changed, 1 insertion(+)
+"SSC" or "SCC"?  You have both and I suspect one is a typo.
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index b831975a9606..f675fd969c4d 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -729,6 +729,7 @@ static const struct frac_entry frac_table_pixel[] = {
- 	{ 2, 9 },
- 	{ 4, 9 },
- 	{ 1, 1 },
-+	{ 2, 3 },
- 	{ }
- };
+>
+> In typical configuration, this bus (as some of the clocks and registers
+> that we need to manipulate) is not accessible to the OS, and the
+> resources on this bus are indirectly accessed by communicating with a
+> hexagon CPU core residing in the SSC block. In this configuration, the
+> hypervisor is the one performing the bus initialization for the purposes
+> of bringing the haxagon CPU core out of reset.
+>
+> However, it is possible to change the configuration, in which case this
+> binding serves to allow the OS to initialize the bus.
+>
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  CHANGES:
+>  - v2: fix issues caught by by dt-schema
+>  - v3: none
+>  - v4: address the issues pointed out in the review
+>  - v5: clarify type of additional properties; remove ssc_tlmm node for now
+>  - v6: none
+>  - v7: fix indentation, use imperative in commit message
+>  - v8: none
+> ---
+>  .../bindings/bus/qcom,ssc-block-bus.yaml      | 143 ++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml b/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> new file mode 100644
+> index 000000000000..4044af0afda8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> @@ -0,0 +1,143 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bus/qcom,ssc-block-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: The AHB Bus Providing a Global View of the SSC Block on (some) qcom SoCs
+> +
+> +maintainers:
+> +  - Michael Srba <Michael.Srba@seznam.cz>
+> +
+> +description: |
+> +  This binding describes the dependencies (clocks, resets, power domains) which
+> +  need to be turned on in a sequence before communication over the AHB bus
+> +  becomes possible.
+> +
+> +  Additionally, the reg property is used to pass to the driver the location of
+> +  two sadly undocumented registers which need to be poked as part of the sequence.
 
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+Surely "SSC" is an acronym.  Can you define it in the description?  I
+suspect folks not familiar with 8998 will not know what it is.
