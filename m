@@ -2,31 +2,31 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E12C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 06:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801B5C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 07:07:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233013AbiB1Gfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 01:35:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56598 "EHLO
+        id S233572AbiB1HIV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 02:08:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbiB1Gfv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 01:35:51 -0500
+        with ESMTP id S233574AbiB1HIT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 02:08:19 -0500
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7223966C8C
-        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 22:35:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9C5E424091
+        for <linux-clk@vger.kernel.org>; Sun, 27 Feb 2022 23:07:31 -0800 (PST)
 X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
         R,40,3)
 Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26025:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Mon, 28 Feb 2022 14:31:28 +0800 (CST)
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26026:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Mon, 28 Feb 2022 15:05:16 +0800 (CST)
 Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
  CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Mon, 28 Feb 2022 14:31:48 +0800
+ 15.1.2375.18; Mon, 28 Feb 2022 15:05:37 +0800
 Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Mon, 28 Feb 2022 14:31:48 +0800
+ ([::1]) with mapi id 15.01.2375.018; Mon, 28 Feb 2022 15:05:37 +0800
 From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>
 CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
@@ -44,17 +44,19 @@ CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         =?utf-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
         Rob Herring <robh@kernel.org>
-Subject: RE: [PATCH v9 05/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Topic: [PATCH v9 05/10] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Index: AQHYJtROb4p9p9dJDEiPbzM3WmTlw6ygfv2AgAgL80A=
-Date:   Mon, 28 Feb 2022 06:31:47 +0000
-Message-ID: <97cf98c598a04b77bb6de6e91fcdcc0b@cqplus1.com>
+Subject: RE: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Thread-Topic: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
+ Sunplus SP7021 SoC boards
+Thread-Index: AQHYJtRL7BpgMun7wkSEmTd5rYSoP6ydrKQAgAFsZ7D//5U0gIAJ5rig
+Date:   Mon, 28 Feb 2022 07:05:36 +0000
+Message-ID: <66b2710bc7c048a284fa3b6270ba7bc8@cqplus1.com>
 References: <cover.1645413746.git.qinjian@cqplus1.com>
- <2089471296584b527f1e08f51f5216d1e733741f.1645413746.git.qinjian@cqplus1.com>
- <498e89dd-c438-68dc-69b5-8de82045ffbd@canonical.com>
-In-Reply-To: <498e89dd-c438-68dc-69b5-8de82045ffbd@canonical.com>
+ <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
+ <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
+ <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
+ <8ce8a3db-0f42-0b30-6688-01c1ea905425@kernel.org>
+In-Reply-To: <8ce8a3db-0f42-0b30-6688-01c1ea905425@kernel.org>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach: 
@@ -67,13 +69,13 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICtleGFtcGxlczoNCj4gPiArICAtIHwNCj4gPiArICAgIGNsa2M6IGNsb2NrLWNvbnRyb2xs
-ZXJAOWMwMDAwMDAgew0KPiA+ICsgICAgICBjb21wYXRpYmxlID0gInN1bnBsdXMsc3A3MDIxLWNs
-a2MiOw0KPiA+ICsgICAgICAjY2xvY2stY2VsbHMgPSA8MT47DQo+ID4gKyAgICAgIHJlZyA9IDww
-eDljMDAwMDAwIDB4MjgwPjsNCj4gPiArICAgICAgY2xvY2tzID0gPCZleHRjbGs+LCA8JmNsa2Mg
-UExMX1NZUz47DQo+IA0KPiBFeGNlcHQgdGhlIHdhcm5pbmcgcG9pbnRlZCBvdXQgYnkgUm9iJ3Mg
-Ym90LCBpdCBsb29rcyBsaWtlIHlvdSBmZWVkIHRoaXMNCj4gY2xvY2stY29udHJvbGxlciB3aXRo
-IGEgY2xvY2sgZnJvbSBpdHNlbGYuIElzIHRoZXJlIGEgcG9pbnQgdG8gZXhwcmVzcw0KPiBpdCBp
-biBEVFMgYXQgYWxsPw0KIA0KWWVzLCBwbGxzeXMgaXMgYW4gaW50ZXJuYWwgY2xvY2ssIGJ1dCBp
-dCBhbHNvIGFzIGEgcGFyZW50IGNsb2NrIGZvciBzb21lIG90aGVyDQpjbG9ja3MgaW4gdGhpcyBj
-bG9jay1jb250cm9sbGVyLg0KDQoNCg==
+DQo+ID4+IFRoaXMgYmluZGluZyBsb29rcyBpbmNvbXBsZXRlLg0KPiA+DQo+ID4gU3VucGx1cyBT
+UDcwMjEgaXMgYW4gQVJNIENvcnRleCBBNyBiYXNlZCBTb0MuDQo+ID4gVGhlIHBhdGNoIGlzIGZv
+ciBTUDcwMjEgU29DIGFuZCBTUDcwMjEgYmFzZWQgYm9hcmRzLg0KPiA+IFNvcnJ5LCBJIGRvbid0
+IHVuZGVyc3RhbmQgeW91ciBxdWVzdGlvbnMuDQo+ID4gQ291bGQgeW91IGV4cGxhaW4gbW9yZT8N
+Cj4gDQo+IFlvdSBoYXZlIHRoZXJlIG9ubHkgb25lIGNvbXBhdGlibGUgYnV0IGlmIEkgd291bGQg
+ZXhwZWN0IGF0IGxlYXN0IHR3by4NCj4gT25lIGZvciBTb0MgYW5kIG9uZSBmb3IgYm9hcmQuIFNv
+bWV0aGluZyBsaWtlIHRoaXM6DQo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9h
+cm0vcmRhLnlhbWwNCj4gYnV0IGluIHlvdXIgY2FzZSBlbnVtIHdvdWxkIGhhdmUgb25seSBvbmUg
+ZW50cnkuDQoNCkN1cnJlbnRseSwgd2Ugb25seSBzdXBwb3J0IG9uZSBib2FyZC4gTWF5YmUgd2ls
+bCBzdXBwb3J0IG1vcmUgYm9hcmRzIGluIGZ1dHVyZS4NCg==
