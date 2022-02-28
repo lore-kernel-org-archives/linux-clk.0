@@ -2,48 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396A7C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 08:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40067C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 09:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231205AbiB1IlM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 03:41:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
+        id S233884AbiB1JV3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 04:21:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbiB1IlM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 03:41:12 -0500
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3B9E6621B;
-        Mon, 28 Feb 2022 00:40:33 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id i11so16440483eda.9;
-        Mon, 28 Feb 2022 00:40:33 -0800 (PST)
+        with ESMTP id S231463AbiB1JV2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 04:21:28 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9503B57B1F
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 01:20:49 -0800 (PST)
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ECA113F1D9
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 09:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646040046;
+        bh=zIzvjzWPwb88RX7Be5mzyc2hwLD5m8zhDYIVz1aVBLU=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=cUNpbCvwM46vwe2lzv3W9laAvS9XgujGEBuUw1jb6mUfQAkQThhMpjBqbuuMwfdcO
+         /wKblIjEbk1XAgb7tTkddZf11CywOwjh2VdO0Wf6Y8+4NKYf8lcCRfiA4tM/cIbBIY
+         Q4DS4zD7zicMUaV7ot/FDJnquuq7rw6ysqJvsKVdcLiDtoUS2n6Pngtwm0mDdLM49J
+         IbgTyFLxZz7/gO2GCVz+ZiTSfnJPF13PuABvxV88kJlQnZNvpqpy0MdXmxzSHtPItc
+         xa+kXSNq+xTb09c99CykhXd5NEBNU+VNe1AseaFTpH9zpJznreOks6+9EbP3/RFlhE
+         48HnK2lJY/n9Q==
+Received: by mail-ej1-f71.google.com with SMTP id m12-20020a1709062acc00b006cfc98179e2so4886436eje.6
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 01:20:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=lU9U3y2H7TqVnOKr76UbIM5qDbprhU53RuO6iQcXBMM=;
-        b=KuRA/HCILOh35h1WjtNlZr12Xn1VpoPNsKsuCte7HiHc55pOeypTmQWcHmx1XRLKgB
-         i6WUEudncISh3tzzoy0iOdrjxyJ4UYr5igWy6FtFr9k2PYlKB3T34DYK4JtfHIZ05MLJ
-         F585x5WhLQs+t/bcnk8moVVPN9CSz/p55VVzKK/stB0LR1hXrtHUxy/jB+ninO6kDl52
-         RYmsEt5KGGG/B6159fjp3nKusVU4HV3yYq2XvJo8w3NOhk+ecj0Dx17sQa8N2TuGTwW9
-         nfdoIR42kPm6K4HdFf6b6UcMBC2peFE0OreB8nK9lEfw5+9PAOWMOn8eqr8Qv+upOMdA
-         0OrQ==
-X-Gm-Message-State: AOAM53255x1/hOdRr5+9EDsQbwRWikfCYv70W3DLu8yznupTv82X4FOi
-        0qUo3eOrOQSc1djk74l+iyg=
-X-Google-Smtp-Source: ABdhPJyts5/gqTTGMWCFC+e0qih7SB7RX2Oirk3XrA6slJNhiE6x/o/r+k1+mv+NqSeB5e5HpidKlw==
-X-Received: by 2002:a05:6402:524e:b0:410:dedd:ea37 with SMTP id t14-20020a056402524e00b00410deddea37mr806629edd.260.1646037632061;
-        Mon, 28 Feb 2022 00:40:32 -0800 (PST)
+        bh=zIzvjzWPwb88RX7Be5mzyc2hwLD5m8zhDYIVz1aVBLU=;
+        b=1dIln1ayVthj+9CcvFEbxsLeJSKxkVq7zSaP2Vt9hODItZhmqoFhx0VyLMM9FagIp/
+         67IvnD2g8EZ3z6B0htnS7U6Fbxe7Zrf2LULo6dye5T+QUNAR6glSOllS8UUD90JB1XVn
+         2jDXfZPSaM5FpkCQa54LU653mhqKG/WYfkfNJu3bCYkFPaw/MaREFdDmpf0ge0J/JS/P
+         HFxBP3Dp/yDMvcHKsP2MmAGA5r+qoAOuwWvo04hccol4NvQX3suuRYNLckJh1V/SEzUP
+         4cGvO9ze6XENDLVTAXsXlHgv3nAK+EmQaVj7tVVyd3VImj29CUTTCR2/QQPn1o00JEPB
+         yFGg==
+X-Gm-Message-State: AOAM530jWnEFT+ZTbfO2hIVnIBALXX4svVSlfyVZfyCgOlhRnj6pzUKQ
+        CLpTRjrfOPkaXBR4uBedCJTpjNY7aMHdJs2A0SB/Sh9e05tlKwcvY7j/NDsKHQTJQnGgF92uk82
+        MT/x4M2GMDH+s1GODFda7ZntgsxBaQxFIAeIvng==
+X-Received: by 2002:a17:906:79c4:b0:6cf:5489:da57 with SMTP id m4-20020a17090679c400b006cf5489da57mr14589521ejo.48.1646040046612;
+        Mon, 28 Feb 2022 01:20:46 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxtS4BULGnHYR4a2TLg9KjNh6wGTwF0AEjW8HK1zVCNGkkiiiZWwK4NQJMYwdBYd5Z+WirWqQ==
+X-Received: by 2002:a17:906:79c4:b0:6cf:5489:da57 with SMTP id m4-20020a17090679c400b006cf5489da57mr14589507ejo.48.1646040046450;
+        Mon, 28 Feb 2022 01:20:46 -0800 (PST)
 Received: from [192.168.0.133] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.googlemail.com with ESMTPSA id j7-20020a1709062a0700b006bc28a6b8f1sm4119215eje.222.2022.02.28.00.40.30
+        by smtp.gmail.com with ESMTPSA id y18-20020a056402271200b0041110d6b80asm5784327edd.39.2022.02.28.01.20.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 00:40:30 -0800 (PST)
-Message-ID: <d6031c8e-5a70-9561-f44e-0573594da34d@kernel.org>
-Date:   Mon, 28 Feb 2022 09:40:29 +0100
+        Mon, 28 Feb 2022 01:20:40 -0800 (PST)
+Message-ID: <39ce4a12-ff56-e0cf-b0b2-2a3545a9cb7f@canonical.com>
+Date:   Mon, 28 Feb 2022 10:20:39 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
+Subject: Re: [PATCH v9 05/10] dt-bindings: clock: Add bindings for SP7021
+ clock driver
 Content-Language: en-US
 To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>
@@ -64,42 +84,39 @@ Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         =?UTF-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
         Rob Herring <robh@kernel.org>
 References: <cover.1645413746.git.qinjian@cqplus1.com>
- <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
- <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
- <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
- <8ce8a3db-0f42-0b30-6688-01c1ea905425@kernel.org>
- <66b2710bc7c048a284fa3b6270ba7bc8@cqplus1.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <66b2710bc7c048a284fa3b6270ba7bc8@cqplus1.com>
+ <2089471296584b527f1e08f51f5216d1e733741f.1645413746.git.qinjian@cqplus1.com>
+ <498e89dd-c438-68dc-69b5-8de82045ffbd@canonical.com>
+ <97cf98c598a04b77bb6de6e91fcdcc0b@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <97cf98c598a04b77bb6de6e91fcdcc0b@cqplus1.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/02/2022 08:05, qinjian[覃健] wrote:
-> 
->>>> This binding looks incomplete.
->>>
->>> Sunplus SP7021 is an ARM Cortex A7 based SoC.
->>> The patch is for SP7021 SoC and SP7021 based boards.
->>> Sorry, I don't understand your questions.
->>> Could you explain more?
+On 28/02/2022 07:31, qinjian[覃健] wrote:
+>>> +examples:
+>>> +  - |
+>>> +    clkc: clock-controller@9c000000 {
+>>> +      compatible = "sunplus,sp7021-clkc";
+>>> +      #clock-cells = <1>;
+>>> +      reg = <0x9c000000 0x280>;
+>>> +      clocks = <&extclk>, <&clkc PLL_SYS>;
 >>
->> You have there only one compatible but if I would expect at least two.
->> One for SoC and one for board. Something like this:
->> Documentation/devicetree/bindings/arm/rda.yaml
->> but in your case enum would have only one entry.
-> 
-> Currently, we only support one board. Maybe will support more boards in future.
+>> Except the warning pointed out by Rob's bot, it looks like you feed this
+>> clock-controller with a clock from itself. Is there a point to express
+>> it in DTS at all?
+>  
+> Yes, pllsys is an internal clock, but it also as a parent clock for some other
+> clocks in this clock-controller.
 
-This is not the answer for my questions. I said I expect two compatibles:
-1. One for SoC,
-2. One for board.
+What is the point to express it in DTS? Usually such internal
+parent-child relation is described in the driver.
 
-And you respond "we have only one board".
+And how does it even work? How can you get a clock from a device before
+you registered that device?
 
-Where is the SoC compatible?
 
 Best regards,
 Krzysztof
