@@ -2,121 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E08C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 21:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC090C4321E
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 22:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbiB1V4B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 16:56:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54276 "EHLO
+        id S231477AbiB1W3v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 17:29:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbiB1V4A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 16:56:00 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715B733A10;
-        Mon, 28 Feb 2022 13:55:21 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 044046125B;
-        Mon, 28 Feb 2022 21:55:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C98C340EE;
-        Mon, 28 Feb 2022 21:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646085320;
-        bh=LczBSDm6Uc0Q4dRCm0NyjD8OkSIDDPEpgJolzKcX5WM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ab4/ozRU2o9MEojSPOGq6RYi8i99oEMq9fXG9q6fPoyrvn/pXBR2DHBrjHFTox6Wg
-         IZ3+X+ps0eN3pR4s8gMkJo4DoN/k5AnRtYkCK4y9KkQuAvNxQp9cjBfoQyAsg3eDLN
-         UAz1SfoZm2u0Wd9V2lZlvOdpUaD2cQdPJTu10pRDZllTb2F3XX1NciqLBV15eDk13x
-         rXhfo5P+bJFTDxTbGo94xGdW6Pdg1dQa5INCtEP4wul17JNK0mrfh+KEyEZnzG4fvt
-         qF/Eh0upvYNUwf9qsH4iHw7axG1aYPDOBL03vDKGQEApBAjfswVgRWiQ5RTD055gy5
-         zSBzrCiiYzqng==
-Received: by mail-ed1-f46.google.com with SMTP id w3so19488266edu.8;
-        Mon, 28 Feb 2022 13:55:20 -0800 (PST)
-X-Gm-Message-State: AOAM5313Lf3YKZ1sUQJ+ukXzZEqfG2KtCf+dKjFdiKimYYX0KbWFk3he
-        8LgeapKn8WplhBm2lPWSO+yVLX+SFKtCuVTKSw==
-X-Google-Smtp-Source: ABdhPJxVFM5uEo/WfiysGAqUH9IlTD4c6kjFVSqhWiuXsAa85mkhJYkbCEQGpBs6i+Uj8JqsYczIXsRnH5grwapZmNo=
-X-Received: by 2002:a05:6402:1cae:b0:410:d3ae:3c8a with SMTP id
- cz14-20020a0564021cae00b00410d3ae3c8amr21349170edb.215.1646085318679; Mon, 28
- Feb 2022 13:55:18 -0800 (PST)
+        with ESMTP id S229741AbiB1W3u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 17:29:50 -0500
+X-Greylist: delayed 925 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Feb 2022 14:29:09 PST
+Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30D9EDF1A
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 14:29:08 -0800 (PST)
+Received: from [77.244.183.192] (port=62650 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1nOoGy-000Fab-VO; Mon, 28 Feb 2022 23:13:41 +0100
+Message-ID: <b15f993b-d67b-b96a-904c-53025eda3aa3@lucaceresoli.net>
+Date:   Mon, 28 Feb 2022 23:13:39 +0100
 MIME-Version: 1.0
-References: <20220228131435.29207-1-michael.srba@seznam.cz>
- <20220228131435.29207-3-michael.srba@seznam.cz> <1646082901.647733.1599408.nullmailer@robh.at.kernel.org>
-In-Reply-To: <1646082901.647733.1599408.nullmailer@robh.at.kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 28 Feb 2022 15:55:07 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+j+LmZbCfnKUTveKAsBqqT_VGNcNrpVef=z_0yPBxMwA@mail.gmail.com>
-Message-ID: <CAL_Jsq+j+LmZbCfnKUTveKAsBqqT_VGNcNrpVef=z_0yPBxMwA@mail.gmail.com>
-Subject: Re: [PATCH v9 3/5] dt-bindings: bus: add device tree bindings for qcom,ssc-block-bus
-To:     Michael Srba <michael.srba@seznam.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: Questions regarding regarding idt/renesas versaclock5 driver
+Content-Language: it-IT
+To:     Adam Ford <aford173@gmail.com>,
+        Sean Anderson <sean.anderson@seco.com>
+Cc:     "Fillion, Claude" <Claude.Fillion@mksinst.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <9e4e542f-6f73-164e-581e-17369aada2f3@seco.com>
+ <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+In-Reply-To: <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 3:15 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, 28 Feb 2022 14:14:33 +0100, michael.srba@seznam.cz wrote:
-> > From: Michael Srba <Michael.Srba@seznam.cz>
-> >
-> > Adds bindings for the AHB bus which exposes the SSC block in the global
-> > address space. This bus (and the SSC block itself) is present on certain
-> > qcom SoCs.
-> >
-> > In typical configuration, this bus (as some of the clocks and registers
-> > that we need to manipulate) is not accessible to the OS, and the
-> > resources on this bus are indirectly accessed by communicating with a
-> > hexagon CPU core residing in the SSC block. In this configuration, the
-> > hypervisor is the one performing the bus initialization for the purposes
-> > of bringing the haxagon CPU core out of reset.
-> >
-> > However, it is possible to change the configuration, in which case this
-> > binding serves to allow the OS to initialize the bus.
-> >
-> > Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  CHANGES:
-> >  - v2: fix issues caught by by dt-schema
-> >  - v3: none
-> >  - v4: address the issues pointed out in the review
-> >  - v5: clarify type of additional properties; remove ssc_tlmm node for now
-> >  - v6: none
-> >  - v7: fix indentation, use imperative in commit message
-> >  - v8: none
-> >  - v9: fix typo in commit description; explain what SSC is in the 'decription' section of the binding
-> > ---
-> >  .../bindings/bus/qcom,ssc-block-bus.yaml      | 147 ++++++++++++++++++
-> >  1 file changed, 147 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
-> >
->
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->
-> yamllint warnings/errors:
->
-> dtschema/dtc warnings/errors:
-> Error: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dts:39.32-33 syntax error
-> FATAL ERROR: Unable to parse input tree
-> make[1]: *** [scripts/Makefile.lib:378: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dt.yaml] Error 1
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:1398: dt_binding_check] Error 2
+Hi,
 
-This can be ignored I guess as the bot doesn't handle missing cover
-letter... As I mentioned on v6, you should be sending series with a
-cover letter.
+On 28/02/22 18:06, Adam Ford wrote:
+> On Mon, Feb 28, 2022 at 10:04 AM Sean Anderson <sean.anderson@seco.com> wrote:
+>>
+>>
+>>
+>> On 2/28/22 7:35 AM, Fillion, Claude wrote:
+>>>
+>>> You don't often get email from claude.fillion@mksinst.com. Learn why this is important <http://aka.ms/LearnAboutSenderIdentification>
+>>>
+>>>
+>>> Hello  Sean,
+>>>
+>>>
+> 
+> + Luca Ceresoli
+> 
+>>>
+>>> I have a design that is looking to use the Renesas 5P49V6965 or 5P49V690 clock chip and am looking to use the versaclock 5 driver (https://github.com/Xilinx/linux-xlnx/blob/master/drivers/clk/clk-versaclock5.c).
+>>>
+>>>
+>>>
+>>> I am new to writing drivers and have two questions I am hoping you can help me with:
+>>>
+>>> 1) In the driver I see the following code:
+>>>
+>>> static const struct vc5_chip_info idt_5p49v6901_info = {
+>>>
+>>>             .model = IDT_VC6_5P49V6901,
+>>>
+>>>             .clk_fod_cnt = 4,
+>>>
+>>>             .clk_out_cnt = 5,
+>>>
+>>>             .flags = VC5_HAS_PFD_FREQ_DBL,
+>>>
+>>> };
+>>>
+>>>
+>>>
+>>> static const struct vc5_chip_info idt_5p49v6965_info = {
+>>>
+>>>             .model = IDT_VC6_5P49V6965,
+>>>
+>>>             .clk_fod_cnt = 4,
+>>>
+>>>             .clk_out_cnt = 5,
+>>>
+>>>             .flags =  VC5_HAS_BYPASS_SYNC_BIT,
+>>>
+>>> };
+>>>
+>>>
+>>>
+>>> However, the 6965 part also has the same frequency doubling bit as the 6901.  Would it be better to set the flags for the 6965 to something like this?
+>>>
+>>>
+>>>
+>>> static const struct vc5_chip_info idt_5p49v6965_info = {
+>>>
+>>>             .model = IDT_VC6_5P49V6965,
+>>>
+>>>             .clk_fod_cnt = 4,
+>>>
+>>>             .clk_out_cnt = 5,
+>>>
+>>>             .flags = VC5_HAS_PFD_FREQ_DBL | VC5_HAS_BYPASS_SYNC_BIT,
+>>>
+>>> };
+>>
+>> I think Adam will have a better idea about this.
+>>
+>>> 2) I am unclear how to set the output frequencies for the device. For my application I would like to set output clock 1 to 250MHz and output clock 2 to 46.8MHz but I am unclear how to do so.  I have looked at the documentation at https://mjmwired.net/kernel/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml but remain unclear how to set the output frequencies.  Any insight you could provide would be greatly appreciated.
+>>
+>> Use assigned-clock-frequencies as described in
+>> Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>
+> 
+> I agree that the clock-bindings have the instructions on how to set
+> them.  If you check
+> arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi, there are some
+> examples of how to set the frequency.
+> In my instance,  the chip wasn't enabling the output by default, so I
+> needed to submit some patches upstream to make sure the device that
+> was being clocked by this device had get and enable functions to make
+> sure the clock chip would turn on the clock when requested.
 
-Rob
+Indeed assigned-clocks is the way to enable a clock when the downstream
+driver does not request it. Not that it is easy to find: it took me a
+while to find it the first time I needed it.
+
+>>> I saw your name mentioned so I am emailing  you directly.  If there is a better place to ask these questions can you please direct me there?  Thanks you so much.
+>>
+>> Adam (CC'd) wrote the original driver, so he's probably a
+>> better person to start with. You should also CC the linux-clk
+>> mailing list for questions about clock drivers.
+> 
+> I've reviewed the datasheet for the 6965, and it doesn't explicitly
+> show the multiplier, but the programmer's guide does appear to show
+> the existence of bit that when set, it will "double the reference
+> frequency for the Phase frequency detector" but on the programmer's
+> guide for the 6901, the same bit reads "Enables frequency doubler when
+> set to 1" so it's not clear to me that these functions are exactly the
+> same, but implies that it might be.  I'll need some time to test this,
+> but if I find it works, I can push a patch to this driver.  I added
+> Luca, as he is the maintainer for this driver as well.
+
+Thanks Adam. I'm afraid I have no detailed answer as I never tried this
+bit, but according to the docs indeed it looks like there is a doubler
+as you noticed, that it is disabled by default. It would be nice to test
+it and submit a patch, thanks!
+
+-- 
+Luca
