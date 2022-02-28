@@ -2,175 +2,179 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1728C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 09:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99702C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 10:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234512AbiB1Jtz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 04:49:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40360 "EHLO
+        id S234888AbiB1KsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 05:48:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234521AbiB1Jty (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 04:49:54 -0500
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80050.outbound.protection.outlook.com [40.107.8.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD51420F7A;
-        Mon, 28 Feb 2022 01:49:16 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QA/+lwAndZt42PJfmxt7akP6rJ+UOTui33AJF4ePKp0fGMKRj8T81S0/EEfO4G0kI9kVX/tT3gOeqGsaXBxc3LJre+b8Z53v/DS5YmLNQlYk6WBF4BSThZkRhk00eMtZdxU7G5+n0AYqUbECcPacSrro2LcYzfR1ngW1mNDfVQHs49zHRGr64upqXyqj7dCqInaEBQJyx9FYvuPxFQwi4DO0zSCIRlHxB4U87a7XfIFE/2n/ZE5h0zS/Ugnp8W8MbSR+QJDlMjUy5lG0QyHmjI1AD/ZsACODw22VNbEDzFY8TFm4t1Gxvb6l3LTiDMRa66O4iCrFhni8MeYecM8uxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nJ1QOjYa79p3eOFsqS+aDOxQXYZHRMetwVr5fmkxWeg=;
- b=OhUAyRSs++Nk9MuSeyMoPdCFE8/4Mj7ywwrVuJ5snQSaGL6Yxwr4gj39GeymvXbpFPpc1w436eh9gAcQ+IEz0h67tuKCycAgFk8CYTMuuX6VjtW9F5J2DL7jY/b8RTNfZu0VAVS+Q3gU5Xz3Os3wB6gEWusAGl8/GBZcLqA8pTvWhq3fkRFG673EOBKQS15TgrmzVc9vkYzFFe6W7g6Gf6xfyMbTR5NMRLB/yO2fIxJ3+A5jMpqcFNUZq84F2qlLyJSqwA5EcBy+54jUNfC0H7Tmyy5FQ7S/4TtcGxVxjz72MzLlSEAgjXjVfiLukHcsnICg2t9eBo4uOMKzwsZ78A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nJ1QOjYa79p3eOFsqS+aDOxQXYZHRMetwVr5fmkxWeg=;
- b=sYwLyi4nS0bbchceTfE6wbAzdp2aeNpeEtGhUimrWhG8VUcQims3OICq4bJ3LrLxitA+L8mPCTs/H0ABwtC1GRm8a5jnwGrjaqYz3EfQdAg4clFlPZYfjh2Y1wEaFpWur98d6cqUytbBt3lOqwGxZVFH6tAs8bfULgF2/J07YTQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com (2603:10a6:803:6a::30)
- by AS8PR04MB8166.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5017.26; Mon, 28 Feb
- 2022 09:49:14 +0000
-Received: from VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::98a7:fbac:5cec:776e]) by VI1PR04MB4688.eurprd04.prod.outlook.com
- ([fe80::98a7:fbac:5cec:776e%5]) with mapi id 15.20.5017.026; Mon, 28 Feb 2022
- 09:49:14 +0000
-Date:   Mon, 28 Feb 2022 11:49:12 +0200
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/2] clk: imx: add mcore_booted boot paratemter
-Message-ID: <YhyamBQWfY+2LOWF@abelvesa>
-References: <20220228061150.3006113-1-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220228061150.3006113-1-peng.fan@oss.nxp.com>
-X-ClientProxiedBy: VI1PR09CA0132.eurprd09.prod.outlook.com
- (2603:10a6:803:12c::16) To VI1PR04MB4688.eurprd04.prod.outlook.com
- (2603:10a6:803:6a::30)
+        with ESMTP id S234891AbiB1KsD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 05:48:03 -0500
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194302BC
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 02:47:23 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id C89B2320094D;
+        Mon, 28 Feb 2022 05:47:21 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 28 Feb 2022 05:47:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm2; bh=aBQu7upbZgdbLLHKuB/qTx0if9/d6dUXkxnJMl
+        Mb1Yg=; b=CKKT7kbAkn7PYQneTsTscW5IZUNKcmc31UMg1UQjtX1iHueTCvr9Qd
+        oBZExJUXCn0DlmQG5UPrncgbr/PncT0pmYk94MTGH9Uczn7M7ygqBa3UMJJr5QVi
+        rrG7Oxy7AKaCMFdlhCd12tyo7g7PH8gcIJbMq8x4Cm/zsFMvFrwL9u0rx072llE1
+        XWxf3jOziYqR1/ErVZjB3JEjGXogYlnGe89Il3MSefB6kY9t9t4OLZnFzlzl/14V
+        67ese+Xjh8H/8cCxYRIoKg0Z3BhN/MeByyQK2uYhv7iF2S17dIYKHacLeL3Y9gSw
+        EOG8s4rQfOSvICJFpTFUDRSNFMDUPYzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=aBQu7upbZgdbLLHKu
+        B/qTx0if9/d6dUXkxnJMlMb1Yg=; b=jcrselFOR2nRw4r6i/nxG6jtLEAkC2SAv
+        lm0ltuKzJnz68R15pHFvslWblRVP56Kq7RK6KmhQwXqhOGtR8VfUB07U8TpVU39z
+        qkoAEEkdXWdWmUbIHiQElrjNnSx0+aoorJk1yIqHc+/Oc9W56eeC1u7zCyvYYwsY
+        cAHksiBh1xzITNM9GkbjoC+uzBHW8CD3S3eWjDoUJptLsL2Sgz4vj+k5UT1CK5yA
+        /QU/GGQ25T5Ghvv4lBZjKnUmhiSYsVdRzoRM6lD3ZTYMNOa5oK4Y5SE4gJXaUT4I
+        BUUuJrbAiIeHbPpV2ev0RwNOw3/fOLMkzdtL4nBZllGNthir+1rVA==
+X-ME-Sender: <xms:OKgcYuQdoSQBYANUTdSODKJWtyKxcBBGQAUX3Yuq0pynBzzjPCnwjA>
+    <xme:OKgcYjyumucM8GlbLocI3q21MxID9BZtzczbErpDiD-Ryt_QKPLijtw6TCJsTkvLz
+    b0XINOKP6gzEm5k9Qw>
+X-ME-Received: <xmr:OKgcYr1vFjRS_1F85Q9dM3Tjg6iseGUyV1zkFOH3EXmURB8-mjJ70LrLa6AUTGFME3j_UlQw8RzSFliNi9pXDGun31NIqAo-e0aIMjU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddruddttddgudelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:OKgcYqDNEIM3WMAmivvjRuStuB8LZGepRgm0esp66dOqbCEMPoAAzA>
+    <xmx:OKgcYngRqXLlmhpfHoCHB8rRjs2Qfq-hiOzk0MscCJYgIkwR7NLfgQ>
+    <xmx:OKgcYmrcNGMVVH0Ijqa54blQkR40obwtuXVASAIwvPNpgbXXCn7uKw>
+    <xmx:OagcYoXB5B8FVDJviIrpAz_j1OymcCQrwCPV8xgPUfjc-kCEl2MZ1A>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Feb 2022 05:47:20 -0500 (EST)
+Date:   Mon, 28 Feb 2022 11:47:18 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Latypov <dlatypov@google.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
+Message-ID: <20220228104718.yorlzq6264jtffak@houat>
+References: <20220223105600.1132593-1-maxime@cerno.tech>
+ <20220223105600.1132593-3-maxime@cerno.tech>
+ <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
+ <20220225132258.55yh537iknxh72vw@houat>
+ <CAGS_qxpzWE8DYVVj-pzvMgJqA25cwNh7wsP8nnUkMcZVyUF2Yg@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ff5090dc-ad16-4357-ab38-08d9fa9f93ff
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8166:EE_
-X-Microsoft-Antispam-PRVS: <AS8PR04MB8166934ECEA56B8339F61F6EF6019@AS8PR04MB8166.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kPdgv23/Tgv+M3Stcy9odSL+qtH5MK2jR5il7LxkJgbpPEePvMX2/gvuwxm2DZI6QK+TouOAuPKYi0EOKT8UCfWFoxbgomH6IxJeHyHFJweIhH269K0MtmNAsCoaJC6l23jK+Uaw+5wHZLeaHlcOXRNw/xSCqrLWuYoX51wWisiRQPO2SRjjOyPVlM1xV6jPi3+w7fMm1nXePRl0xqZsdemBRgKJ2hT5jbV8jPspRh7mZ2MzYJHjFrQU2q7PDecuQW01HLB5axtLiLHa6MFyTOGoW84fYwOQ1d0fJoiPj6uQTxsqPpXmsIhKTkaoPSOiWvo5iYsc1oCSIrgyxg8pqStJ9bcRjy4qmkHSVgFZ4Yl961NLiOglhrzhnjdsPqgLmnZ2fXFcKXhXBNEhYdssCAxOD7KWVAjxrpqpo6/z2MD5Q3LZ9o474zxkWbmyvvKsy7ubKu6d8upidhaYNTeRUfCUijaLanVl16y7aHP0CS9a17fqqi9rp4pthDQgB0zW1yWvxJWJMXVdVlWFicNmPhZHI7SEVoZVhrnTPh2+rNLiM/84a3OrCLuUNwKhqMK7ONSDSUNBUt1SgIAljn/G0efDB9dFcvw7tlqWglaUi/wgg5cUkNCBPse+UOHZJUwVflVdIATVvUypbxCFgiOXTKKcCsOjB3HxxBUD9Xx+o/XRSDYYCHCANrVcycuw9OZJzKpLiF3D+gIwRz9pHmO3ia2Exlspx3N9XIUn2kQOwCA=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4688.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(38100700002)(508600001)(33716001)(83380400001)(38350700002)(6506007)(44832011)(52116002)(9686003)(2906002)(6512007)(5660300002)(86362001)(53546011)(8936002)(66476007)(66946007)(66556008)(6862004)(4326008)(316002)(186003)(26005)(8676002)(6486002)(67856001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EZD4gGROUXeIOfOVMC3a6DqGKxhYT/hET6Le49erRUph6uAZyi5q0AI5Jd6f?=
- =?us-ascii?Q?O9tPNkylZn4FFbYBw0wW9fgiDIRBti1c3xH9ZkfiF8v65nCOMtr6Qup/c5Mr?=
- =?us-ascii?Q?54jjP8xyk/t6RaYS8Mki1leb3S0nDGphXJFuSXu76bvVy0Vp8GWKiudHr9cF?=
- =?us-ascii?Q?WmD2iGjrh9nkfUWDTpsoQgRQm3MlcdiInORR3PyL84JCwnnZC4vBkIQuWAuE?=
- =?us-ascii?Q?UKRYSYD8dafYO03lqvowo/FRR1G0XY07kad9vd1VpuSj0D0xkIDrdLP7oGeV?=
- =?us-ascii?Q?VauyyjXWfLFPYQW7mBuPFdq92R1eM6RUTqow/h9WWFweMtlXfZ8hZtksNb7P?=
- =?us-ascii?Q?FQZrGiRBttjdDg+drEv0efdDlvszrfJScjJzu4UgDdEI65TKfi80waJIirtg?=
- =?us-ascii?Q?viCbVPjarS9htmLkqesa+n7HRP2Moft+r+YQKXQ9y21g97NsBi0wXh98fK7F?=
- =?us-ascii?Q?+qKx97Adkj7izdIYk9DLeBvMycf4xcS7u66IGw/ENzJT6sQ4pEJlF3v96VVo?=
- =?us-ascii?Q?/emKOjo1dauLjSAwS8Up+i+h9IJby6Cacc9iOn3hIS5rGZ8a8uikG2yeVa3U?=
- =?us-ascii?Q?XoyflUXP+7oXsy0QD5P396dwoSIEl4eXNIMJLwkWM9igOAH/C3wRY9sqjCwB?=
- =?us-ascii?Q?6nBhMXtKShYFkdA69UrzN70KQv9P5VnEmWKi1v5ioC+NhCc+r7Xpom1qrn71?=
- =?us-ascii?Q?OuzzRWD0yKKoP/4rTlVmcS7SeEBym5PNs6if4KJc4cw6MBtMHw7g7u3myRSO?=
- =?us-ascii?Q?/GX3D+Tk8+15FSYPLxiaRlH+NkYPySODmi9SDUN4DxtbcIjx42zwVhdee1yf?=
- =?us-ascii?Q?/5zHzBNxe7W4FSCmhaH5/GkDy0eyRchNONcBptdqHEcazHlukST5yvJKIJAP?=
- =?us-ascii?Q?wdTKtEZ9+jy7Dt5CMPN2/bRU/3xaupUHf4KOl9UwqAEOo2Uk0iHwlC+DN0B5?=
- =?us-ascii?Q?BTskti2gAgYcp3T/Goy/5MP9rm63GO1cTHrW/kYdw1mqwlaV898/yKlajDt/?=
- =?us-ascii?Q?+jT4g9BE3PmUuaTAwPFKerYsyM9ZhW2Y+pwa/NToHhwmKgfdCef8QN8Yc+v5?=
- =?us-ascii?Q?mBNf0tTBY2tA8JmfYMq97iq/4M2psHUOosclHDcrqZ+FTR3qcVMHGurLFTUD?=
- =?us-ascii?Q?JqSuHt3rKIfPD2Eyf7z/jXvYb3x64sJqXfsR8ijQUR9Hu0DDugUqvdBLUa26?=
- =?us-ascii?Q?j16c0SjT6CZke0ZskkPXKCiC3jI60XrrOYmy6EXFXs+7eAJvrmbWJuUQUE0i?=
- =?us-ascii?Q?+KY3yp7AB+koydNuptWycFZPGRngVbW+SAhiz5t0YFx6toISgdEl1BKp0Dux?=
- =?us-ascii?Q?MbW1rBfCjCtytcXBOBwYrILbdhiVRZQaniDIVoINVInOx1iWyMufy/kH3dPj?=
- =?us-ascii?Q?g+QLZvJBnq2QhZUCi8APel4i9iwUAHp4AG2u3wG52cOIcveFtte1J6HLsFa4?=
- =?us-ascii?Q?x+sqlVT61VVbFhQ50UyjdDx4mG5ij+Tv8xWTitGS8G9TLmDhoOUS8FJBVdKT?=
- =?us-ascii?Q?uY4TB6jImx9dDgzN2Y0FY+3ASD/Erlxu49IqsKV3wc7h1q7RAI/+4za5SzqF?=
- =?us-ascii?Q?bYVmKxiGGFJ7fsLlAZ3WcXbm/vlbMO3sBbk/l1cF4twD/3zdiztas7WmsMdL?=
- =?us-ascii?Q?3lqoatkwwC5+0rRoO0tzCmw=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff5090dc-ad16-4357-ab38-08d9fa9f93ff
-X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4688.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2022 09:49:14.0948
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lxealOvRLPJp5wQSr+e0gfA4/DpAASZqI5h7N8TGY/+b/dttKuh/zjIv4ywUr4De2ie8V4PSaWIW+v4aUiZdbg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8166
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iib5nwly66weogpv"
+Content-Disposition: inline
+In-Reply-To: <CAGS_qxpzWE8DYVVj-pzvMgJqA25cwNh7wsP8nnUkMcZVyUF2Yg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22-02-28 14:11:49, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Add mcore_booted boot parameter which could simplify AMP clock
-> management. To i.MX8M, there is CCM(clock control Module) to generate
-> clock root clock, anatop(analog PLL module) to generate PLL, and CCGR
-> (clock gating) to gate clocks to peripherals. As below:
->   anatop->ccm->ccgr->peripheral
-> 
-> Linux handles the clock management and the auxiliary core is under
-> control of Linux. Although there is per hardware domain control for CCGR
-> and CCM, auxiliary core normally only use CCGR hardware domain control
-> to avoid linux gate off the clk to peripherals and leave CCM ana anatop
-> to Linux.
-> 
-> Per NXP hardware design, because CCGR already support gate to
-> peripherals, and clk root gate power leakage is negligible. So
-> when in AMP case, we could not register the clk root gate.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk.c | 9 +++++++++
->  drivers/clk/imx/clk.h | 1 +
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index 7cc669934253..5d3ac59b382b 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -146,6 +146,15 @@ void imx_cscmr1_fixup(u32 *val)
->  	return;
->  }
->  
-> +bool mcore_booted;
-> +
-> +static int __init setup_mcore_booted(char *booted)
-> +{
-> +	mcore_booted = true;
-> +	return 1;
-> +}
-> +__setup("mcore_booted", setup_mcore_booted);
 
-Lets give module_param a try first, as discussed.
+--iib5nwly66weogpv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Fri, Feb 25, 2022 at 01:29:03PM -0800, Daniel Latypov wrote:
+> On Fri, Feb 25, 2022 at 5:23 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> >
+> > Hi Daniel,
+> >
+> > On Wed, Feb 23, 2022 at 02:50:59PM -0800, Daniel Latypov wrote:
+> > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> > > >
+> > > > Let's test various parts of the rate-related clock API with the kun=
+it
+> > > > testing framework.
+> > > >
+> > > > Cc: kunit-dev@googlegroups.com
+> > > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > >
+> > > Tested-by: Daniel Latypov <dlatypov@google.com>
+> > >
+> > > Looks good to me on the KUnit side.
+> > > Two small nits below.
+> > >
+> > > FYI, I computed the incremental coverage for this series, i.e.:
+> > > 1) applied the full series
+> > > 2) computed the absolute coverage
+> > >
+> > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> > > --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG_KER=
+NEL=3Dy
+> > > --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=3Dy
+> >
+> > I built a docker container based on ubuntu 18.04 to have gcc6 and
+> > python3.7, but this doesn't seem to be working, I'm not entirely sure w=
+hy:
+> >
+> > [13:11:22] Configuring KUnit Kernel ...
+> > Regenerating .config ...
+> > Populating config with:
+> > $ make ARCH=3Dum olddefconfig CC=3D/usr/bin/gcc-6 O=3D.kunit
+> > ERROR:root:Not all Kconfig options selected in kunitconfig were in the =
+generated .config.
+> > This is probably due to unsatisfied dependencies.
+> > Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
+> > Note: many Kconfig options aren't available on UML. You can try running=
+ on a different architecture with something like "--arch=3Dx86_64".
+>=20
+> Did you perhaps drop CONFIG_DEBUG_KERNEL=3Dy?
+> Need to add 3 config options in total for coverage.
+>=20
+> If I tweak the command I ran above but drop CONFIG_DEBUG_KERNEL=3Dy, I
+> get the error message you get:
+>=20
+> $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> --make_options=3DCC=3D/usr/bin/gcc-6  --kconfig_add=3DCONFIG_DEBUG_INFO=
+=3Dy
+> --kconfig_add=3DCONFIG_GCOV=3Dy
+> ...
+> Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
+> Note: many Kconfig options aren't available on UML. You can try
+> running on a different architecture with something like
+> "--arch=3Dx86_64".
 
-> +
->  #ifndef MODULE
->  
->  static bool imx_keep_uart_clocks;
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index a7cbbcd1a3f4..5061a06468df 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -7,6 +7,7 @@
->  #include <linux/clk-provider.h>
->  
->  extern spinlock_t imx_ccm_lock;
-> +extern bool mcore_booted;
->  
->  void imx_check_clocks(struct clk *clks[], unsigned int count);
->  void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
-> -- 
-> 2.25.1
->
+It looks to me that it's more that DEBUG_INFO isn't enabled.
+
+If I'm running
+
+=2E/tools/testing/kunit/kunit.py config --kunitconfig=3Ddrivers/clk
+    --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG_KERNE=
+L=3Dy
+    --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=3Dy
+
+DEBUG_INFO isn't selected and I end up with DEBUG_INFO_NONE.
+DEBUG_KERNEL is enabled though.
+
+Maxime
+
+--iib5nwly66weogpv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhyoNgAKCRDj7w1vZxhR
+xTcPAP9+TnfrqTlXrJIZOrqVk81hJZc94EdgN/TikllrUr00+gD/bP3OtQQ6yyd3
+3Sw8YcdpD/1viH3Y6Eoqi3MvcRhH1gY=
+=JZIM
+-----END PGP SIGNATURE-----
+
+--iib5nwly66weogpv--
