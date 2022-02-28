@@ -2,184 +2,207 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B8BC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 11:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8DEC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 11:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235074AbiB1LPf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 06:15:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42016 "EHLO
+        id S235011AbiB1Lbc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 06:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235676AbiB1LPY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 06:15:24 -0500
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B73A7523B
-        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 03:12:19 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 60B8B3200BD2;
-        Mon, 28 Feb 2022 06:10:53 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 28 Feb 2022 06:10:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm2; bh=BoXgeyVAh5F3HeGNXMqR5ovAbrWK49vT1e1JUe
-        yC8MM=; b=W/55fJDLwDlemM/LeTmfXFCpSyUy7L67taJHQrnrr289zeYi1g3GJU
-        02rj7XodUS3v4VBQFUnUV/nPribGrHXFY9Cq6N0+eVLQZ8X8rtYIm3pLaGUhaVnv
-        XQzXgCKT1GjX50TyVMEGyKlKavVErLxvFNDmwpRhf77cyLSn6pYaRDAJHLFFY5M0
-        KvSzkQs94uXrEC9RKjjy0wCEejLjp1PORxX2l1zt8bqu/sGOd7OXo8Rzt/qCYtIt
-        Mc5PGm6eRwhZuT3hxQ/PKqlc8zxk29nhGNHUWg9ltsIAVwpzC+UQs76dx/Q5ro/a
-        ol/O99k0yVcKVeZxNu4LmOldgLK3flHw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=BoXgeyVAh5F3HeGNX
-        MqR5ovAbrWK49vT1e1JUeyC8MM=; b=P4ZD+c8W0JEc4cAFtv0BQYVHZx7jpJoD0
-        v7RGTFXqXaYP85fa87jPLuuAFZwoUZJns5pns9ppsiyvpyBb2emN7MtN2jSAryaq
-        k5Eaq1TNEHrEZyYWQAL7hlutpWQni+dcm3EaiiFdCcCmbHjn1AwLNK/kVIcmhB02
-        LTi4U8VMOQzhRzhM/fcu6JGChFPBMO/Jj2qioNt9WrEyG/R/uhS2rDJX49OP+1GE
-        yP0X6pcHUe1UH/fMJuZecnBlQB2R1AHoReIAgBmPrJwtoxNo/1jgFiI5PLy10muu
-        mqDHvaHY/KMGlhJtfr5hC1MNQLn8g0hRUYdGXeEdlfH3Hwejdkg2Q==
-X-ME-Sender: <xms:vK0cYjRe2-PgD4NNwkoOPTlj2FFyZ1W4PZS5RyOGhSWK-taTK9MoRg>
-    <xme:vK0cYkzw71LDMZvNXUrvKGeD4sCvjnk8-bY0LWH_utQUiUW2kOZlU3qRPcyYAxWP2
-    zlvrH1HaI6xN8hNoFI>
-X-ME-Received: <xmr:vK0cYo3wfUdvViVFmoCgT9AzmnSXmkO5sSzaGeYDPHKOH3QxRRp1TZRWqUZsrjjGTY_9L96exRL6o6RBsDS6Wy76rfwgZ07xKrv9Y2g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddruddttddgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepffeijeetheethfevgeekvdejteeghfeiueekhefgteffudekteeikefftdej
-    iefhnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
-    hh
-X-ME-Proxy: <xmx:vK0cYjCGneN3m9jNsQP7JX2_ExTj75th7ngjIr8lt04xFzND4afl1g>
-    <xmx:vK0cYsgGJQGK8Qxba68e4GO33VFF7WX3EPpbWprtCb-n3RuUALdbwQ>
-    <xmx:vK0cYnovIvLnz4ZofTqWWM8KStEPomoun_cxrsRq_al4zt2I-CVE8Q>
-    <xmx:vK0cYlUWbjr94ZM-z1sCMhhkWW0iLV3uFsrlt1Hjc6cjjnFCBVZ2iw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Feb 2022 06:10:51 -0500 (EST)
-Date:   Mon, 28 Feb 2022 12:10:49 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Daniel Latypov <dlatypov@google.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
-Message-ID: <20220228111049.g6kw43fvr6fqeu72@houat>
-References: <20220223105600.1132593-1-maxime@cerno.tech>
- <20220223105600.1132593-3-maxime@cerno.tech>
- <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
- <20220224225422.98298C340E9@smtp.kernel.org>
- <20220225142606.6xpq4nzh7ldtkekk@houat>
- <20220225224406.1947FC340E7@smtp.kernel.org>
+        with ESMTP id S231290AbiB1Lba (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 06:31:30 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99EC951E42
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 03:30:51 -0800 (PST)
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 67AC540300
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 11:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1646047849;
+        bh=TqoJaizFHWK8/heI0IG9vgkdj098BV5WNR7J8iP/dOc=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=oP1dduqvIsPl+g7c1mWdFXOsn57WzlWlKJSlK2vB/F8dGZlWSYiqbynW7VtvSGz6s
+         FRS6RiQua6+GdlOU0GEq9qdgq55H2k7IRSgWaatQoEYTeVkEO8qLABXEE9jme8AW1B
+         UDoZLDuGg801DmAFpyXyKQmpTZVZrApkDNVDPOjhZ9djVrR4niU0QUkO0xYNPeztSC
+         zjJALxFMNF58CehCpA48m11gU0jNrOHUYGOcK4KaQUHs736d7VKonZpyTJullp61l/
+         oHxSYuQW4X1ActxDb0AktqyEIqiKdKJakPhDnX93kCc+RP4Zmjtg7EZFpuiq4WNgRU
+         oJKDIgEu2DqjA==
+Received: by mail-ed1-f72.google.com with SMTP id j9-20020a056402238900b004128085d906so5625602eda.19
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 03:30:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=TqoJaizFHWK8/heI0IG9vgkdj098BV5WNR7J8iP/dOc=;
+        b=RSMxxoCOShrs/mnFNaoOq2SJKoQ4saPpAl1WjklX8Q8NMWcDEnOihEdXnSkwk1yPfZ
+         hTPhb6Dty6HLULTB4sAjaIiMleNr0iy5mdh4XGvX9/yYw1z2fpXgnswO1jfQ0lvNRa8g
+         5kzyJ5QHy+gUTn4S4Q+sCmmAFt8zzTm5sQukdJ3WIQhI7Fogeke9rOCrRGjgNgMxA4GN
+         P6f9IrjC42g/PmHC8t0YlhuMhnJjPkRf8CGZzdMdbn6sfeGwwC81sIgmOJ0wUsMzBEmM
+         eAgfDfy79o1qxDJ4HTM7aRm5+XzrROrUGUWFV0TBuMO3uyfBkHJVZ/P4pPpAs0BGWW0B
+         0OzA==
+X-Gm-Message-State: AOAM5325Khtw08V++HqwGQfSQZe64kPz6Yj6d69GIDA+KhMYiGEDe5ua
+        DtBUhbXe8t5tMbubc4vwcXp3BDcMkyq3bTMzWrPD1wEX8mOoiogr/8ck0VK2kaV7RbFc4tKohvg
+        AcM5gQMsf29JvkHeFprpwpoYFSXxGyI2zDRiwzA==
+X-Received: by 2002:a17:906:69ce:b0:6a7:8c03:3caa with SMTP id g14-20020a17090669ce00b006a78c033caamr14869886ejs.335.1646047848635;
+        Mon, 28 Feb 2022 03:30:48 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJy8wXt+PKUVmt9ZYqUS8EzsJUeRWG5FxAFTct2htJDic6wAfCk0sPsop3G0sa4LoCQVSlMP6w==
+X-Received: by 2002:a17:906:69ce:b0:6a7:8c03:3caa with SMTP id g14-20020a17090669ce00b006a78c033caamr14869844ejs.335.1646047848374;
+        Mon, 28 Feb 2022 03:30:48 -0800 (PST)
+Received: from [192.168.0.133] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id cc21-20020a0564021b9500b00403bc1dfd5csm6063924edb.85.2022.02.28.03.30.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Feb 2022 03:30:47 -0800 (PST)
+Message-ID: <b428f7b0-9f3e-466c-9386-9f72f13ebbd0@canonical.com>
+Date:   Mon, 28 Feb 2022 12:30:45 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="x25sekw3i76vbfhj"
-Content-Disposition: inline
-In-Reply-To: <20220225224406.1947FC340E7@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3 01/11] driver: platform: Add helper for safer setting
+ of driver_override
+Content-Language: en-US
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
+ <20220227135214.145599-2-krzysztof.kozlowski@canonical.com>
+ <YhypTr5754yK9WGi@abelvesa>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <YhypTr5754yK9WGi@abelvesa>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 28/02/2022 11:51, Abel Vesa wrote:
+> On 22-02-27 14:52:04, Krzysztof Kozlowski wrote:
+>> Several core drivers and buses expect that driver_override is a
+>> dynamically allocated memory thus later they can kfree() it.
+>>
+>> However such assumption is not documented, there were in the past and
+>> there are already users setting it to a string literal. This leads to
+>> kfree() of static memory during device release (e.g. in error paths or
+>> during unbind):
+>>
+>>     kernel BUG at ../mm/slub.c:3960!
+>>     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+>>     ...
+>>     (kfree) from [<c058da50>] (platform_device_release+0x88/0xb4)
+>>     (platform_device_release) from [<c0585be0>] (device_release+0x2c/0x90)
+>>     (device_release) from [<c0a69050>] (kobject_put+0xec/0x20c)
+>>     (kobject_put) from [<c0f2f120>] (exynos5_clk_probe+0x154/0x18c)
+>>     (exynos5_clk_probe) from [<c058de70>] (platform_drv_probe+0x6c/0xa4)
+>>     (platform_drv_probe) from [<c058b7ac>] (really_probe+0x280/0x414)
+>>     (really_probe) from [<c058baf4>] (driver_probe_device+0x78/0x1c4)
+>>     (driver_probe_device) from [<c0589854>] (bus_for_each_drv+0x74/0xb8)
+>>     (bus_for_each_drv) from [<c058b48c>] (__device_attach+0xd4/0x16c)
+>>     (__device_attach) from [<c058a638>] (bus_probe_device+0x88/0x90)
+>>     (bus_probe_device) from [<c05871fc>] (device_add+0x3dc/0x62c)
+>>     (device_add) from [<c075ff10>] (of_platform_device_create_pdata+0x94/0xbc)
+>>     (of_platform_device_create_pdata) from [<c07600ec>] (of_platform_bus_create+0x1a8/0x4fc)
+>>     (of_platform_bus_create) from [<c0760150>] (of_platform_bus_create+0x20c/0x4fc)
+>>     (of_platform_bus_create) from [<c07605f0>] (of_platform_populate+0x84/0x118)
+>>     (of_platform_populate) from [<c0f3c964>] (of_platform_default_populate_init+0xa0/0xb8)
+>>     (of_platform_default_populate_init) from [<c01031f8>] (do_one_initcall+0x8c/0x404)
+>>     (do_one_initcall) from [<c0f012c0>] (kernel_init_freeable+0x3d0/0x4d8)
+>>     (kernel_init_freeable) from [<c0a7def0>] (kernel_init+0x8/0x114)
+>>     (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+>>
+>> Provide a helper which clearly documents the usage of driver_override.
+>> This will allow later to reuse the helper and reduce amount of
+>> duplicated code.
+>>
+>> Convert the platform driver to use new helper and make the
+>> driver_override field const char (it is not modified by the core).
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>> ---
+>>  drivers/base/driver.c           | 51 +++++++++++++++++++++++++++++++++
+>>  drivers/base/platform.c         | 28 +++---------------
+>>  include/linux/device/driver.h   |  2 ++
+>>  include/linux/platform_device.h |  7 ++++-
+>>  4 files changed, 63 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+>> index 8c0d33e182fd..353750b0bbc5 100644
+>> --- a/drivers/base/driver.c
+>> +++ b/drivers/base/driver.c
+>> @@ -30,6 +30,57 @@ static struct device *next_device(struct klist_iter *i)
+>>  	return dev;
+>>  }
+>>  
+>> +/**
+>> + * driver_set_override() - Helper to set or clear driver override.
+>> + * @dev: Device to change
+>> + * @override: Address of string to change (e.g. &device->driver_override);
+>> + *            The contents will be freed and hold newly allocated override.
+>> + * @s: NUL terminated string, new driver name to force a match, pass empty
+>> + *     string to clear it
+>> + * @len: length of @s
+>> + *
+>> + * Helper to set or clear driver override in a device, intended for the cases
+>> + * when the driver_override field is allocated by driver/bus code.
+>> + *
+>> + * Returns: 0 on success or a negative error code on failure.
+>> + */
+>> +int driver_set_override(struct device *dev, const char **override,
+>> +			const char *s, size_t len)
+> 
+> TBH, I think it would make more sense to have this generic
+> driver_set_override receive only the dev and the string. And then,
+> each bus type will have their own implementation that handle things
+> their own way. This would allow all the drivers that will use this to
+> do something like this:
+> 
+> 	ret = driver_set_override(&pdev->dev, "override_string");
+> 
+> I think it would look more cleaner.
+> 
 
---x25sekw3i76vbfhj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The interface in general is not for the drivers. Drivers use it in
+exceptions (few cases in entire kernel) but many times they actually do
+not need to.
 
-On Fri, Feb 25, 2022 at 02:44:04PM -0800, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-02-25 06:26:06)
-> > Hi Stephen,
-> >=20
-> > On Thu, Feb 24, 2022 at 02:54:20PM -0800, Stephen Boyd wrote:
-> > > Quoting Daniel Latypov (2022-02-23 14:50:59)
-> > > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech> w=
-rote:
-> > > > Incremental coverage for 3/9 files in --diff_file
-> > > > Total incremental: 99.29% coverage (281/283 lines)
-> > > >   drivers/clk/clk.c: 84.62% coverage (11/13 lines)
-> > > >   drivers/clk/clk_test.c: 100.00% coverage (269/269 lines)
-> > > >   include/linux/clk.h: 100.00% coverage (1/1 lines)
-> > > >=20
-> > > > Missing lines are drivers/clk/clk.c:2397-8, i.e. this part of the d=
-iff:
-> > > > +       if (ret) {
-> > > > +               /* rollback the changes */
-> > > > +               clk->min_rate =3D old_min; <- 2397
-> > > > +               clk->max_rate =3D old_max; <- 2398
-> > > >=20
-> > > > These are from before and were just moved around.
-> > >=20
-> > > We could trigger a failure in the provider when the rate is set, and
-> > > then we could call round_rate() again and make sure the boundaries fr=
-om
-> > > before are maintained.
-> >=20
-> > I tried to do that, and it turns out we can't, since we ignore the
-> > set_rate return code:
-> >=20
-> > https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L2107
-> >=20
-> > We could make determine_rate fail, but then clk_round_rate would fail as
-> > well and wouldn't allow us to test whether the boundaries are still in
-> > place.
-> >=20
->=20
-> The test could still do it at a high level right? And when/if we decide
-> to bubble up the set_rate failure then we would be testing these lines.
-> Seems like a good idea to implement it with a TODO note that clk.c is
-> ignoring the set_rate clk_op returning failure.
+Adding a dedicated driver_set_override() brings intention that such
+usage is welcomed... but it's not. :)
 
-I'm sorry, but I don't get what I need to implement here
 
-The trivial test for this would be to have a driver with set_rate that
-returns some error, and then:
-
-KUNIT_ASSERT_LT(test, clk_get_rate(clk), DUMMY_CLOCK_RATE_1);
-KUNIT_EXPECT_LT(test,
-		clk_set_rate_range(clk,
-				   DUMMY_CLOCK_RATE_1,
-				   DUMMY_CLOCK_RATE_2),
-		0);
-
-rate =3D clk_round_rate(clk, DUMMY_CLOCK_RATE_1 - 1000);
-KUNIT_ASSERT_GT(test, rate, 0);
-KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1 - 1000);
-
-clk_set_rate_range will never return an error code though, and the
-round_rate tests won't work either because the set_rate error was not
-propagated, and therefore the boundaries won't be reverted either. So
-not only the test will fail, but it will also not increase the coverage.
-
-It's really not clear to me what you expect here. Or we should just
-create it but skip it all the time with a FIXME? But then again, it
-doesn't increase the coverage, so I'm not sure why it's holding off that
-series.
-
-Honestly, I'm getting a bit frustrated by all this. This started as a
-small fix, and now we keep moving the goalposts, with more and more
-expectations and fixes for things that have nothing related to the
-original series. And we're now arguing about gaining a few percent of
-code coverage on some code that without this series has a 0% percent
-coverage.
-
-Maxime
-
---x25sekw3i76vbfhj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYhytuQAKCRDj7w1vZxhR
-xQWPAP9Puh/4Mha2nwzmRLcmLn76nncDcp4oRVsMdJw+tVP5FgEAsWq1XV5LpelI
-05W30qbgMAVrfLohhfon0K5JTU9uoAc=
-=xDmS
------END PGP SIGNATURE-----
-
---x25sekw3i76vbfhj--
+Best regards,
+Krzysztof
