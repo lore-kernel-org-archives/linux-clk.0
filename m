@@ -2,108 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5BAC433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 20:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F425C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 21:15:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbiB1UGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 15:06:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33028 "EHLO
+        id S230102AbiB1VPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 16:15:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbiB1UGt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 15:06:49 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D33DEDE;
-        Mon, 28 Feb 2022 12:06:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 27383B81642;
-        Mon, 28 Feb 2022 20:06:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E29C340F1;
-        Mon, 28 Feb 2022 20:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646078767;
-        bh=uSavGpk0ExFlsWEKDVZVzJWcPdfAeGmRGCCGsNDGZJI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Qb3B2kQ3+f9XzXe4nmDRsU8fezmZ+/v8PAEwfxslUlmRBgDPXTSFx61nrA8w3HnnB
-         jiO48/wBjY9ATJ1CiCs8pQbzqi+CPyMUD7VJzynEdGC7iEhWqi2wiMxXsSWYiUDIQt
-         A3kKL2pQXkopi7jn30+fSIP85KMOScBqm+z9JZHWR2G9Pnhp71ylIv9Hk7UHqh5TFW
-         vROrJiyF+MkB5CSUYjMTwfvPtGA4K1mbCgJkjG4HhaTUDUqd2aSATsYWThH1CNVAP/
-         Q0tdc6VQmrdT+I+jgvtFLagljNriJV7jZByMhdj/HNW8K7kIBTiLovJvYIp5rkp81v
-         RPoj3hmNJbrCA==
-Date:   Mon, 28 Feb 2022 14:06:06 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        with ESMTP id S230103AbiB1VPo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 16:15:44 -0500
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A695DFD2;
+        Mon, 28 Feb 2022 13:15:04 -0800 (PST)
+Received: by mail-ot1-f43.google.com with SMTP id l21-20020a056830239500b005afd2a7eaa2so7713541ots.9;
+        Mon, 28 Feb 2022 13:15:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=y6AzB2ljaq086U1SKhDMlS54EEVDwXoqAsbqXMIOXW4=;
+        b=5v3jmBu0ZJGvoJliCVepx6QAZOysofgvt/eXCdblQSltmeIYdJmuDlqC+M9cqMlb5G
+         dLlT6qVyV0HZLBXLRG13oJkr2SXjd5aBPVTZgTHf8zSEvyORkc5KZPpceKbl8KmZ8C0X
+         2LvFATNInZ69bm02By/7XVFxcFdKouD6Ln4GSVJ0Bl/3BhlLxdVyWHsqt6b07p9LU9yQ
+         bwAfeUEQVL8O+U30rOIzS4hH71O3sF2hDb69AZ9YhmUGrI3WzC/B/5RlWqngU0iS3WEH
+         mkV5qAW/tjWTnNozF4AvOLQrqG4OhIvXkmjpOOi3ycT/T7fSOrJGBO8ApediAsnaO6KH
+         XS9A==
+X-Gm-Message-State: AOAM533KwmWfeLMZy6JWqI9TPJkEb/9B7joILKfqE39y2AVoQ5ymyqJx
+        90nGQcdYPjSVz8sMKh84qg==
+X-Google-Smtp-Source: ABdhPJw7aBN9mUJo0g3AXWmCIIBdVBxbVetccP0NRASyfXWxAf1XCNcG3srYD3XgcUmcOM7JuPoVKw==
+X-Received: by 2002:a9d:4712:0:b0:5ad:f2a:6394 with SMTP id a18-20020a9d4712000000b005ad0f2a6394mr10507051otf.281.1646082903555;
+        Mon, 28 Feb 2022 13:15:03 -0800 (PST)
+Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
+        by smtp.gmail.com with ESMTPSA id g7-20020a056870d20700b000d1614be328sm4994086oac.27.2022.02.28.13.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Feb 2022 13:15:02 -0800 (PST)
+Received: (nullmailer pid 1599409 invoked by uid 1000);
+        Mon, 28 Feb 2022 21:15:01 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     michael.srba@seznam.cz
+Cc:     Michael Srba <Michael.Srba@seznam.cz>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v3 05/11] PCI: Use driver_set_override() instead of
- open-coding
-Message-ID: <20220228200606.GA516338@bhelgaas>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220227135214.145599-6-krzysztof.kozlowski@canonical.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-clk@vger.kernel.org, Saravana Kannan <saravanak@google.com>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20220228131435.29207-3-michael.srba@seznam.cz>
+References: <20220228131435.29207-1-michael.srba@seznam.cz> <20220228131435.29207-3-michael.srba@seznam.cz>
+Subject: Re: [PATCH v9 3/5] dt-bindings: bus: add device tree bindings for qcom,ssc-block-bus
+Date:   Mon, 28 Feb 2022 15:15:01 -0600
+Message-Id: <1646082901.647733.1599408.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Feb 27, 2022 at 02:52:08PM +0100, Krzysztof Kozlowski wrote:
-> Use a helper for seting driver_override to reduce amount of duplicated
-> code. Make the driver_override field const char, because it is not
-> modified by the core and it matches other subsystems.
-
-s/seting/setting/
-or even better, s/for seting/to set/
-
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> -	char		*driver_override; /* Driver name to force a match */
-> +	/*
-> +	 * Driver name to force a match.
-> +	 * Do not set directly, because core frees it.
-> +	 * Use driver_set_override() to set or clear it.
-
-Wrap this comment to fill 78 columns or so.
-
-> +	 */
-> +	const char	*driver_override;
->  
->  	unsigned long	priv_flags;	/* Private flags for the PCI driver */
->  
-> -- 
-> 2.32.0
+On Mon, 28 Feb 2022 14:14:33 +0100, michael.srba@seznam.cz wrote:
+> From: Michael Srba <Michael.Srba@seznam.cz>
 > 
+> Adds bindings for the AHB bus which exposes the SSC block in the global
+> address space. This bus (and the SSC block itself) is present on certain
+> qcom SoCs.
+> 
+> In typical configuration, this bus (as some of the clocks and registers
+> that we need to manipulate) is not accessible to the OS, and the
+> resources on this bus are indirectly accessed by communicating with a
+> hexagon CPU core residing in the SSC block. In this configuration, the
+> hypervisor is the one performing the bus initialization for the purposes
+> of bringing the haxagon CPU core out of reset.
+> 
+> However, it is possible to change the configuration, in which case this
+> binding serves to allow the OS to initialize the bus.
+> 
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  CHANGES:
+>  - v2: fix issues caught by by dt-schema
+>  - v3: none
+>  - v4: address the issues pointed out in the review
+>  - v5: clarify type of additional properties; remove ssc_tlmm node for now
+>  - v6: none
+>  - v7: fix indentation, use imperative in commit message
+>  - v8: none
+>  - v9: fix typo in commit description; explain what SSC is in the 'decription' section of the binding
+> ---
+>  .../bindings/bus/qcom,ssc-block-bus.yaml      | 147 ++++++++++++++++++
+>  1 file changed, 147 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.yaml
+> 
+
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dts:39.32-33 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:378: Documentation/devicetree/bindings/bus/qcom,ssc-block-bus.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1398: dt_binding_check] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1598879
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
