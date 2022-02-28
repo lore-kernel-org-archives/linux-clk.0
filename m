@@ -2,59 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B683BC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 12:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D68C43219
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Feb 2022 12:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234241AbiB1MEX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Feb 2022 07:04:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47054 "EHLO
+        id S236136AbiB1ME1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Feb 2022 07:04:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236102AbiB1MEW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 07:04:22 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 912BF1CB24
-        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 04:03:40 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id bu29so21059316lfb.0
-        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 04:03:40 -0800 (PST)
+        with ESMTP id S236102AbiB1MEY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Feb 2022 07:04:24 -0500
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7BED33343
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 04:03:42 -0800 (PST)
+Received: by mail-lj1-x22d.google.com with SMTP id v22so17067962ljh.7
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 04:03:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qq9dTW6gbLY/ve5ehTRpDEnNxOPOXDUjIljMGUur/vM=;
-        b=aN/fbfvJYkMaQ6JZsaQplTCNBbqYo/36NQ1agdTDibMAY9McVKtjS4P2feFAtBg6ko
-         o2+1FTh/60giuzyFw+f7pr6/XVul/fmtHyOb+dh39T6cVetTqx/vV/eh833MLGU26EIj
-         yZMyCYb/gW88BpWIqjHKWn3ZkCfAlcvNt6VaaJT6rajeJjN1lWQtRBtiyiMMcCscYClW
-         it313JJX/COllsAesyCOwpZO5fRVvsIHrQzCCCK1sYFjaPcC1hMjX4EOdhmHTD1bIM9t
-         tASbS3tOWTqYh0+7+ZG9BYjywO+2GEgvMJ/xeXlVLIF86ouxWpG1pMMDKiIkl8lLdKNW
-         kgOg==
+        bh=vMx1zrdqzaxXvIBHY8/KE2H7fWu3A+MnNVm30JFgEjE=;
+        b=YCr/eRDE3P6FOQtVGYqVndsko0gU9Am5Q3sGZxhp8sWd1nJlitnIGwcqiixtsxODLL
+         JhV/8onyOomECBVrQqXZs9Iko16CReh/1Rl6gHQlmgCMynqrn/J5G/2y81POgfsMSq4x
+         e3msD53fpszBL1QKp8lnabvyP90qWo3WhLUAE20luknWnYfRMhcApTjessFlmBunfqD1
+         zmuv2z0BtqEywK4ADz7ShJEkJKsLr4m0Mgb/rZm+eDrXGs9WIZP+843KEc2BkiUwe7Ym
+         kQCMua8n8d7APkeh9cStXMICMoeIsn+RFzBfWFYR1Vuuo3hI+pVSySLcVdFON5b/WfL6
+         gO0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qq9dTW6gbLY/ve5ehTRpDEnNxOPOXDUjIljMGUur/vM=;
-        b=hkTAqaZpe9xH+NGaM8M2X3ogczakidb7nFkq1dw/2xNj4HOXaWreyyXOalPF1grEy1
-         1op9lmvepK+u56sGrDVWWIVfffJBbFKumTjApYNPEXqLH5jVGXVphtBXOnFDaOsbg8aC
-         M5slT0qQS2dFXEdX1OKvKUXNZF0YdbOqzzwAUme8CIXUlz0GHWABtQo+OWqPGDYpQnnd
-         Qi+469k2VKU+nhzXrUjRaE+Eme2Smz3awcsnAy8SoNAtapxz/rLlT5ZtH52WY/dIbYyc
-         YjkYYe+xCYT4QHJHRR1bjVeotzH4GIsfNFc4uExojYSD/CL5FmUpb2TIt1EPALw3Pa4o
-         jqHg==
-X-Gm-Message-State: AOAM532T6huSubx4vVk9V2GqUh6SE2AeU4gWXOu25rimra4GUFFw/AYK
-        MF3D9I1BZ8Ro5noI3BHYYDdeuA==
-X-Google-Smtp-Source: ABdhPJzDzsXT3v6dRlixV+zSbvGbPhlqakW8MzcoPsYwLdv+t1kIvHsN654An7b6c+N1KHIuvxBz4w==
-X-Received: by 2002:ac2:5963:0:b0:442:eff6:4219 with SMTP id h3-20020ac25963000000b00442eff64219mr12520251lfp.56.1646049818978;
-        Mon, 28 Feb 2022 04:03:38 -0800 (PST)
+        bh=vMx1zrdqzaxXvIBHY8/KE2H7fWu3A+MnNVm30JFgEjE=;
+        b=FbjPm3mZ5gO8XCq36hBrl6FYmUbGANflfKUyjd93E10rvdROQP3DXAoOsSQZ9+ZPKI
+         T3T38bNNjDLJi8uKOHiD1KUMvrWjw50LkLW2RJxDmTiV7oZLcq3M6wKzx2vG5QqWnXCP
+         xbtpE2kS6aIUVa3Yt6uAHQsxlVM5wRtSCJuBzrc8N+XTkB7AhEB3p55OhlovPzkuJFsh
+         d/rT+ym3SPYgk00eAMOU43T4RzQPbBmY6oa8opE+XpZXHYuZkia0hcVPfBz/VcDGygoI
+         bv2w9bX1Wkiu4c5w9bOv1keGHkrazVwg7FhzBhBpjN8odiN/Fq1Nxl+Vg8tYLIeWdThe
+         zebg==
+X-Gm-Message-State: AOAM532Y042r4hi8uB0kynR7E64Gg9al+5Czr7FG4BrGMdsHnqBfMMlt
+        21Uziwv8BGFEyuM4Hr1TlbCYsDDGMJZXlLIE
+X-Google-Smtp-Source: ABdhPJy7xH3Qzv57w99oy70eiKV543CHzYZpxQlunKJ6PQWaKMdMdbBPIAKjTxzjnDwTLs/s3GO9ag==
+X-Received: by 2002:a2e:6818:0:b0:235:3ae:c2c8 with SMTP id c24-20020a2e6818000000b0023503aec2c8mr13807607lja.252.1646049821019;
+        Mon, 28 Feb 2022 04:03:41 -0800 (PST)
 Received: from localhost.localdomain (88-113-46-102.elisa-laajakaista.fi. [88.113.46.102])
-        by smtp.gmail.com with ESMTPSA id g23-20020ac24d97000000b004433c8459a6sm928146lfe.157.2022.02.28.04.03.38
+        by smtp.gmail.com with ESMTPSA id k11-20020a2e920b000000b002463777bbb9sm1284531ljg.24.2022.02.28.04.03.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Feb 2022 04:03:38 -0800 (PST)
+        Mon, 28 Feb 2022 04:03:40 -0800 (PST)
 From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 4/8] clk: qcom: clk-alpha-pll: limit exported symbols to GPL licensed code
-Date:   Mon, 28 Feb 2022 14:03:37 +0200
-Message-Id: <20220228120337.997079-1-vladimir.zapolskiy@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 5/8] clk: qcom: Fix sorting of SDX_GCC_65 in Makefile and Kconfig
+Date:   Mon, 28 Feb 2022 14:03:39 +0200
+Message-Id: <20220228120339.997100-1-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20220228120258.997027-1-vladimir.zapolskiy@linaro.org>
 References: <20220228120258.997027-1-vladimir.zapolskiy@linaro.org>
@@ -64,53 +66,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unify all exported PLL clock configuration functions and data structures
-as GPL symbols.
+From: Marijn Suijten <marijn.suijten@somainline.org>
 
+In order to keep at least the list of `CONFIG_SM_` drivers sorted
+alphabetically, SDX_GCC_65 should have been moved one line up.  This in
+turn makes it easier and cleaner to add the followup SM_DISPCC_6125
+driver in the right place, right before SM_DISPCC_8250.
+
+Fixes: d79afa201328 ("clk: qcom: Add SDX65 GCC support")
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/qcom/Kconfig  | 14 +++++++-------
+ drivers/clk/qcom/Makefile |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 288692f0ea39..47879ee5a677 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1823,7 +1823,7 @@ const struct clk_ops clk_alpha_pll_lucid_5lpe_ops = {
- 	.round_rate = clk_alpha_pll_round_rate,
- 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_5lpe_ops);
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index f5b54bfc992f..161b257da9ca 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -574,13 +574,6 @@ config SDX_GCC_55
+ 	  Say Y if you want to use peripheral devices such as UART,
+ 	  SPI, I2C, USB, SD/UFS, PCIe etc.
  
- const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
- 	.enable = alpha_pll_lucid_5lpe_enable,
-@@ -1832,14 +1832,14 @@ const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
- 	.recalc_rate = clk_trion_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_fixed_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_5lpe_ops);
+-config SM_CAMCC_8250
+-	tristate "SM8250 Camera Clock Controller"
+-	select SM_GCC_8250
+-	help
+-	  Support for the camera clock controller on SM8250 devices.
+-	  Say Y if you want to support camera devices and camera functionality.
+-
+ config SDX_GCC_65
+ 	tristate "SDX65 Global Clock Controller"
+ 	select QCOM_GDSC
+@@ -589,6 +582,13 @@ config SDX_GCC_65
+ 	  Say Y if you want to use peripheral devices such as UART,
+ 	  SPI, I2C, USB, SD/UFS, PCIe etc.
  
- const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
- 	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
- 	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
- 
- void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
-@@ -1992,7 +1992,7 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
- 	.round_rate = clk_alpha_pll_round_rate,
- 	.set_rate = clk_zonda_pll_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_zonda_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
- 
- static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
- {
++config SM_CAMCC_8250
++	tristate "SM8250 Camera Clock Controller"
++	select SM_GCC_8250
++	help
++	  Support for the camera clock controller on SM8250 devices.
++	  Say Y if you want to support camera devices and camera functionality.
++
+ config SM_DISPCC_8250
+ 	tristate "SM8150 and SM8250 Display Clock Controller"
+ 	depends on SM_GCC_8150 || SM_GCC_8250
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index d96d6793fc7d..3e4eb843b8d2 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -84,8 +84,8 @@ obj-$(CONFIG_SDM_GPUCC_845) += gpucc-sdm845.o
+ obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SDX_GCC_55) += gcc-sdx55.o
+-obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+ obj-$(CONFIG_SDX_GCC_65) += gcc-sdx65.o
++obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+ obj-$(CONFIG_SM_DISPCC_8250) += dispcc-sm8250.o
+ obj-$(CONFIG_SM_GCC_6115) += gcc-sm6115.o
+ obj-$(CONFIG_SM_GCC_6125) += gcc-sm6125.o
 -- 
 2.33.0
 
