@@ -2,341 +2,358 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F26C4332F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 15:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD32FC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 15:39:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235545AbiCAPHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Mar 2022 10:07:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56816 "EHLO
+        id S235833AbiCAPjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Mar 2022 10:39:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235578AbiCAPHu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 10:07:50 -0500
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758A0A650E;
-        Tue,  1 Mar 2022 07:07:09 -0800 (PST)
-Received: by mail-oo1-f41.google.com with SMTP id y15-20020a4a650f000000b0031c19e9fe9dso22639471ooc.12;
-        Tue, 01 Mar 2022 07:07:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=hDEFHMjiNbMwfNx0jgRe+PVxlh5mka+OlSMk4HZIIWQ=;
-        b=xQiSTvm9flRQa6mPoZKjGO1CldgNb7mYL8ZjzyMiOwqz1AhA5Jtetp0+vTQ8De2PnD
-         Km4Th2U+B3kowUmjmTTqTN1kQJGGvrxXiYIhzRUtXuO5DBXur0+BQIYu4g26FT0mPi6Y
-         en/4AFsJpiGcl+OhsjW+TsNy6rc10g1kYXZt5aXZ5RXJrgcPiPv5OQG0Cwv6FW6WNXxV
-         kzkuxaWAe/482wIZBeZWc9o11LhDn+JbH68Lw6UvLK6GElA5f2UI3/yEUqQ5EJoWncJp
-         ZlePyy/VcNs4UVkOyJzrb2kElzcNbOUYGo802ymw44zqNAZNwpTUkkHoHb5jM3JLxRQN
-         LPDg==
-X-Gm-Message-State: AOAM5318IJUDYmf9Fo0QpvIsygiNIRsvSlB+MTvu1HFXc3OVK0abowEH
-        HV1rid1BvdpQYI0sv0edXw==
-X-Google-Smtp-Source: ABdhPJyKAaGoqiUnCAWLWBAZAADCzcbZzR9c9WPPix81jPcvOPiVOWd8EPhzQc7nZyHJcyfRcFHTGw==
-X-Received: by 2002:a4a:3447:0:b0:31b:f530:bc52 with SMTP id n7-20020a4a3447000000b0031bf530bc52mr12079526oof.74.1646147227896;
-        Tue, 01 Mar 2022 07:07:07 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id v7-20020a4aa507000000b0031c01a4ef37sm6067021ook.32.2022.03.01.07.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Mar 2022 07:07:07 -0800 (PST)
-Received: (nullmailer pid 1238363 invoked by uid 1000);
-        Tue, 01 Mar 2022 15:07:06 -0000
-Date:   Tue, 1 Mar 2022 09:07:06 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: clock: add QCOM SM8450 camera clock
- bindings
-Message-ID: <Yh42msUo6GN0P5MX@robh.at.kernel.org>
-References: <20220228120258.997027-1-vladimir.zapolskiy@linaro.org>
- <20220228120258.997027-2-vladimir.zapolskiy@linaro.org>
+        with ESMTP id S235827AbiCAPjs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 10:39:48 -0500
+Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E2F7C17F;
+        Tue,  1 Mar 2022 07:39:04 -0800 (PST)
+Received: (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id 6C20920000F;
+        Tue,  1 Mar 2022 15:39:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1646149143;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gZwW+QUl9JqH7P5EOlb5s2sEQ5b/N8R2bfw+OnxsFyU=;
+        b=BNMRN3Qpo5zcIE9QBdb+7PBRlRqgZYzbGacWpJLyELN10PkQb7+c4iXMTIE+aCJX5ktAez
+        SsFfHpsuMI3vTIfm2cDezkcRh0OljJL6qBWqi57Ch4LqYi/1WrVSIaxBAtvtm3ElegU1Pz
+        mBN7jA3BbvXTEAvIJj0Dshv/DK6u/EmRrWwK5vELHwIwUjB8MCCh2uTfdqVQXOfpmxk9qB
+        KYJKd9lCOJx0sosmbGH9EHy0wEo113bMO/cDQKrCvo4u7RcIGrD0JGmcTuPzv5bxSfk/dg
+        y1vLBucIUXn77lNHYgl01o68BCXRpYoRDoEnw4DkUDTj6ArYpTcVZx6vqgxtcw==
+Date:   Tue, 1 Mar 2022 16:38:59 +0100
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
+ bindings documentation
+Message-ID: <Yh4+E9el5NdQ7qJq@aptenodytes>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
+ <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
+ <YgqAv2vLimYgRwDS@aptenodytes>
+ <YgqM3ZdMfEz+ZKo/@pendragon.ideasonboard.com>
+ <Ygt8LF8qx3rnxlgp@aptenodytes>
+ <Ygt9j+rwEC+2aUjH@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nHoejL1ruAig0FXy"
 Content-Disposition: inline
-In-Reply-To: <20220228120258.997027-2-vladimir.zapolskiy@linaro.org>
+In-Reply-To: <Ygt9j+rwEC+2aUjH@pendragon.ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 02:02:57PM +0200, Vladimir Zapolskiy wrote:
-> The change adds device tree bindings for camera clock controller
-> found on SM8450 SoC.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
->  .../bindings/clock/qcom,camcc-sm8450.yaml     |  87 ++++++++++
->  include/dt-bindings/clock/qcom,camcc-sm8450.h | 159 ++++++++++++++++++
->  2 files changed, 246 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,camcc-sm8450.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
-> new file mode 100644
-> index 000000000000..835cf7d7a229
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
-> @@ -0,0 +1,87 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,camcc-sm8450.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Camera Clock & Reset Controller Binding for SM8450
-> +
-> +maintainers:
-> +  - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> +
-> +description: |
-> +  Qualcomm camera clock control module which supports the clocks, resets and
-> +  power domains on SM8450.
-> +
-> +  See also dt-bindings/clock/qcom,camcc-sm8450.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8450-camcc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Camera AHB clock from GCC
-> +      - description: Board XO source
-> +      - description: Board active XO source
-> +      - description: Sleep clock source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: bi_tcxo
-> +      - const: bi_tcxo_ao
-> +      - const: sleep_clk
-> +
-> +  power-domains:
-> +    description:
-> +      A phandle and PM domain specifier for the MMCX power domain.
 
-Need to define how many (maxItems: 1).
+--nHoejL1ruAig0FXy
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +  required-opps:
-> +    description:
-> +      A phandle to an OPP node describing required MMCX performance point.
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - required-opps
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    clock-controller@ade0000 {
-> +      compatible = "qcom,sm8450-camcc";
-> +      reg = <0 0xade0000 0 0x20000>;
-> +      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-> +               <&rpmhcc RPMH_CXO_CLK>,
-> +               <&rpmhcc RPMH_CXO_CLK_A>,
-> +               <&sleep_clk>;
-> +      clock-names = "iface", bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-> +      power-domains = <&rpmhpd SM8450_MMCX>;
-> +      required-opps = <&rpmhpd_opp_low_svs>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/qcom,camcc-sm8450.h b/include/dt-bindings/clock/qcom,camcc-sm8450.h
-> new file mode 100644
-> index 000000000000..ad9c0af79f15
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,camcc-sm8450.h
-> @@ -0,0 +1,159 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
+Hi Laurent,
 
-Dual license please.
+Looks like I didn't follow-up here.
 
-> +/*
-> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_WAIPIO_H
-> +#define _DT_BINDINGS_CLK_QCOM_CAM_CC_WAIPIO_H
-> +
-> +/* CAM_CC clocks */
-> +#define CAM_CC_BPS_AHB_CLK					0
-> +#define CAM_CC_BPS_CLK						1
-> +#define CAM_CC_BPS_CLK_SRC					2
-> +#define CAM_CC_BPS_FAST_AHB_CLK					3
-> +#define CAM_CC_CAMNOC_AXI_CLK					4
-> +#define CAM_CC_CAMNOC_AXI_CLK_SRC				5
-> +#define CAM_CC_CAMNOC_DCD_XO_CLK				6
-> +#define CAM_CC_CCI_0_CLK					7
-> +#define CAM_CC_CCI_0_CLK_SRC					8
-> +#define CAM_CC_CCI_1_CLK					9
-> +#define CAM_CC_CCI_1_CLK_SRC					10
-> +#define CAM_CC_CORE_AHB_CLK					11
-> +#define CAM_CC_CPAS_AHB_CLK					12
-> +#define CAM_CC_CPAS_BPS_CLK					13
-> +#define CAM_CC_CPAS_FAST_AHB_CLK				14
-> +#define CAM_CC_CPAS_IFE_0_CLK					15
-> +#define CAM_CC_CPAS_IFE_1_CLK					16
-> +#define CAM_CC_CPAS_IFE_2_CLK					17
-> +#define CAM_CC_CPAS_IFE_LITE_CLK				18
-> +#define CAM_CC_CPAS_IPE_NPS_CLK					19
-> +#define CAM_CC_CPAS_SBI_CLK					20
-> +#define CAM_CC_CPAS_SFE_0_CLK					21
-> +#define CAM_CC_CPAS_SFE_1_CLK					22
-> +#define CAM_CC_CPHY_RX_CLK_SRC					23
-> +#define CAM_CC_CSI0PHYTIMER_CLK					24
-> +#define CAM_CC_CSI0PHYTIMER_CLK_SRC				25
-> +#define CAM_CC_CSI1PHYTIMER_CLK					26
-> +#define CAM_CC_CSI1PHYTIMER_CLK_SRC				27
-> +#define CAM_CC_CSI2PHYTIMER_CLK					28
-> +#define CAM_CC_CSI2PHYTIMER_CLK_SRC				29
-> +#define CAM_CC_CSI3PHYTIMER_CLK					30
-> +#define CAM_CC_CSI3PHYTIMER_CLK_SRC				31
-> +#define CAM_CC_CSI4PHYTIMER_CLK					32
-> +#define CAM_CC_CSI4PHYTIMER_CLK_SRC				33
-> +#define CAM_CC_CSI5PHYTIMER_CLK					34
-> +#define CAM_CC_CSI5PHYTIMER_CLK_SRC				35
-> +#define CAM_CC_CSID_CLK						36
-> +#define CAM_CC_CSID_CLK_SRC					37
-> +#define CAM_CC_CSID_CSIPHY_RX_CLK				38
-> +#define CAM_CC_CSIPHY0_CLK					39
-> +#define CAM_CC_CSIPHY1_CLK					40
-> +#define CAM_CC_CSIPHY2_CLK					41
-> +#define CAM_CC_CSIPHY3_CLK					42
-> +#define CAM_CC_CSIPHY4_CLK					43
-> +#define CAM_CC_CSIPHY5_CLK					44
-> +#define CAM_CC_FAST_AHB_CLK_SRC					45
-> +#define CAM_CC_GDSC_CLK						46
-> +#define CAM_CC_ICP_AHB_CLK					47
-> +#define CAM_CC_ICP_CLK						48
-> +#define CAM_CC_ICP_CLK_SRC					49
-> +#define CAM_CC_IFE_0_CLK					50
-> +#define CAM_CC_IFE_0_CLK_SRC					51
-> +#define CAM_CC_IFE_0_DSP_CLK					52
-> +#define CAM_CC_IFE_0_FAST_AHB_CLK				53
-> +#define CAM_CC_IFE_1_CLK					54
-> +#define CAM_CC_IFE_1_CLK_SRC					55
-> +#define CAM_CC_IFE_1_DSP_CLK					56
-> +#define CAM_CC_IFE_1_FAST_AHB_CLK				57
-> +#define CAM_CC_IFE_2_CLK					58
-> +#define CAM_CC_IFE_2_CLK_SRC					59
-> +#define CAM_CC_IFE_2_DSP_CLK					60
-> +#define CAM_CC_IFE_2_FAST_AHB_CLK				61
-> +#define CAM_CC_IFE_LITE_AHB_CLK					62
-> +#define CAM_CC_IFE_LITE_CLK					63
-> +#define CAM_CC_IFE_LITE_CLK_SRC					64
-> +#define CAM_CC_IFE_LITE_CPHY_RX_CLK				65
-> +#define CAM_CC_IFE_LITE_CSID_CLK				66
-> +#define CAM_CC_IFE_LITE_CSID_CLK_SRC				67
-> +#define CAM_CC_IPE_NPS_AHB_CLK					68
-> +#define CAM_CC_IPE_NPS_CLK					69
-> +#define CAM_CC_IPE_NPS_CLK_SRC					70
-> +#define CAM_CC_IPE_NPS_FAST_AHB_CLK				71
-> +#define CAM_CC_IPE_PPS_CLK					72
-> +#define CAM_CC_IPE_PPS_FAST_AHB_CLK				73
-> +#define CAM_CC_JPEG_CLK						74
-> +#define CAM_CC_JPEG_CLK_SRC					75
-> +#define CAM_CC_MCLK0_CLK					76
-> +#define CAM_CC_MCLK0_CLK_SRC					77
-> +#define CAM_CC_MCLK1_CLK					78
-> +#define CAM_CC_MCLK1_CLK_SRC					79
-> +#define CAM_CC_MCLK2_CLK					80
-> +#define CAM_CC_MCLK2_CLK_SRC					81
-> +#define CAM_CC_MCLK3_CLK					82
-> +#define CAM_CC_MCLK3_CLK_SRC					83
-> +#define CAM_CC_MCLK4_CLK					84
-> +#define CAM_CC_MCLK4_CLK_SRC					85
-> +#define CAM_CC_MCLK5_CLK					86
-> +#define CAM_CC_MCLK5_CLK_SRC					87
-> +#define CAM_CC_MCLK6_CLK					88
-> +#define CAM_CC_MCLK6_CLK_SRC					89
-> +#define CAM_CC_MCLK7_CLK					90
-> +#define CAM_CC_MCLK7_CLK_SRC					91
-> +#define CAM_CC_PLL0						92
-> +#define CAM_CC_PLL0_OUT_EVEN					93
-> +#define CAM_CC_PLL0_OUT_ODD					94
-> +#define CAM_CC_PLL1						95
-> +#define CAM_CC_PLL1_OUT_EVEN					96
-> +#define CAM_CC_PLL2						97
-> +#define CAM_CC_PLL3						98
-> +#define CAM_CC_PLL3_OUT_EVEN					99
-> +#define CAM_CC_PLL4						100
-> +#define CAM_CC_PLL4_OUT_EVEN					101
-> +#define CAM_CC_PLL5						102
-> +#define CAM_CC_PLL5_OUT_EVEN					103
-> +#define CAM_CC_PLL6						104
-> +#define CAM_CC_PLL6_OUT_EVEN					105
-> +#define CAM_CC_PLL7						106
-> +#define CAM_CC_PLL7_OUT_EVEN					107
-> +#define CAM_CC_PLL8						108
-> +#define CAM_CC_PLL8_OUT_EVEN					109
-> +#define CAM_CC_QDSS_DEBUG_CLK					110
-> +#define CAM_CC_QDSS_DEBUG_CLK_SRC				111
-> +#define CAM_CC_QDSS_DEBUG_XO_CLK				112
-> +#define CAM_CC_SBI_AHB_CLK					113
-> +#define CAM_CC_SBI_CLK						114
-> +#define CAM_CC_SFE_0_CLK					115
-> +#define CAM_CC_SFE_0_CLK_SRC					116
-> +#define CAM_CC_SFE_0_FAST_AHB_CLK				117
-> +#define CAM_CC_SFE_1_CLK					118
-> +#define CAM_CC_SFE_1_CLK_SRC					119
-> +#define CAM_CC_SFE_1_FAST_AHB_CLK				120
-> +#define CAM_CC_SLEEP_CLK					121
-> +#define CAM_CC_SLEEP_CLK_SRC					122
-> +#define CAM_CC_SLOW_AHB_CLK_SRC					123
-> +#define CAM_CC_XO_CLK_SRC					124
-> +
-> +/* CAM_CC resets */
-> +#define CAM_CC_BPS_BCR						0
-> +#define CAM_CC_ICP_BCR						1
-> +#define CAM_CC_IFE_0_BCR					2
-> +#define CAM_CC_IFE_1_BCR					3
-> +#define CAM_CC_IFE_2_BCR					4
-> +#define CAM_CC_IPE_0_BCR					5
-> +#define CAM_CC_QDSS_DEBUG_BCR					6
-> +#define CAM_CC_SBI_BCR						7
-> +#define CAM_CC_SFE_0_BCR					8
-> +#define CAM_CC_SFE_1_BCR					9
-> +
-> +/* CAM_CC GDSCRs */
-> +#define BPS_GDSC		0
-> +#define IPE_0_GDSC		1
-> +#define SBI_GDSC		2
-> +#define IFE_0_GDSC		3
-> +#define IFE_1_GDSC		4
-> +#define IFE_2_GDSC		5
-> +#define SFE_0_GDSC		6
-> +#define SFE_1_GDSC		7
-> +#define TITAN_TOP_GDSC		8
-> +
-> +#endif
-> -- 
-> 2.33.0
-> 
-> 
+On Tue 15 Feb 22, 12:16, Laurent Pinchart wrote:
+> Hi Paul,
+>=20
+> On Tue, Feb 15, 2022 at 11:10:52AM +0100, Paul Kocialkowski wrote:
+> > On Mon 14 Feb 22, 19:09, Laurent Pinchart wrote:
+> > > On Mon, Feb 14, 2022 at 05:18:07PM +0100, Paul Kocialkowski wrote:
+> > > > On Mon 07 Feb 22, 17:51, Laurent Pinchart wrote:
+> > > > > On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
+> > > > > > This introduces YAML bindings documentation for the Allwinner A=
+31 Image
+> > > > > > Signal Processor (ISP).
+> > > > > >=20
+> > > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > ---
+> > > > > >  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++=
+++++++++
+> > > > > >  1 file changed, 117 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/media/all=
+winner,sun6i-a31-isp.yaml
+> > > > > >=20
+> > > > > > diff --git a/Documentation/devicetree/bindings/media/allwinner,=
+sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6=
+i-a31-isp.yaml
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..2d87022c43ce
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a=
+31-isp.yaml
+> > > > > > @@ -0,0 +1,117 @@
+> > > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > > > +%YAML 1.2
+> > > > > > +---
+> > > > > > +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-i=
+sp.yaml#
+> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > +
+> > > > > > +title: Allwinner A31 Image Signal Processor Driver (ISP) Devic=
+e Tree Bindings
+> > > > > > +
+> > > > > > +maintainers:
+> > > > > > +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > +
+> > > > > > +properties:
+> > > > > > +  compatible:
+> > > > > > +    enum:
+> > > > > > +      - allwinner,sun6i-a31-isp
+> > > > > > +      - allwinner,sun8i-v3s-isp
+> > > > > > +
+> > > > > > +  reg:
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  interrupts:
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  clocks:
+> > > > > > +    items:
+> > > > > > +      - description: Bus Clock
+> > > > > > +      - description: Module Clock
+> > > > > > +      - description: DRAM Clock
+> > > > >=20
+> > > > > That's interesting, does the ISP have a dedicated DRAM ?
+> > > >=20
+> > > > It doesn't, it actually uses the main DRAM with the "mbus" intercon=
+nect.
+> > > > The clock is probably for the DMA engine.
+> > > >=20
+> > > > > > +
+> > > > > > +  clock-names:
+> > > > > > +    items:
+> > > > > > +      - const: bus
+> > > > > > +      - const: mod
+> > > > > > +      - const: ram
+> > > > > > +
+> > > > > > +  resets:
+> > > > > > +    maxItems: 1
+> > > > > > +
+> > > > > > +  ports:
+> > > > > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > > > > +
+> > > > > > +    properties:
+> > > > > > +      port@0:
+> > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > +        description: CSI0 input port
+> > > > > > +
+> > > > > > +        properties:
+> > > > > > +          reg:
+> > > > > > +            const: 0
+> > > > > > +
+> > > > > > +          endpoint:
+> > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > +            unevaluatedProperties: false
+> > > > >=20
+> > > > > If no other property than remote-endpoint are allowed, I'd write
+> > > > >=20
+> > > > >           endpoint:
+> > > > >             $ref: video-interfaces.yaml#
+> > > > > 	    remote-endpoint: true
+> > > > >             additionalProperties: false
+> > > > >=20
+> > > > > Same below.
+> > > > >=20
+> > > > > > +
+> > > > > > +        additionalProperties: false
+> > > > > > +
+> > > > > > +      port@1:
+> > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > +        description: CSI1 input port
+> > > > > > +
+> > > > > > +        properties:
+> > > > > > +          reg:
+> > > > > > +            const: 0
+> > > > >=20
+> > > > > This should be 1.
+> > > >=20
+> > > > Correct, thanks!
+> > > >=20
+> > > > > > +
+> > > > > > +          endpoint:
+> > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > +            unevaluatedProperties: false
+> > > > > > +
+> > > > > > +        additionalProperties: false
+> > > > > > +
+> > > > > > +    anyOf:
+> > > > > > +      - required:
+> > > > > > +        - port@0
+> > > > > > +      - required:
+> > > > > > +        - port@1
+> > > > >=20
+> > > > > As ports are an intrinsic property of the ISP, both should be req=
+uired,
+> > > > > but they don't have to be connected.
+> > > >=20
+> > > > Well the ISP does have the ability to source from either CSI0 and C=
+SI1
+> > > > but I don't really get the point of declaring both ports when only =
+one
+> > > > of the two controllers is present.
+> > >=20
+> > > If it's within an SoC I don't mind too much. What I usually insist on=
+ is
+> > > declaring all ports even when no external devices are connected on the
+> > > board. It may however be easier to implement things on the driver side
+> > > when all the ports are declared, even for internal devices. I won't
+> > > insist either way here.
+> > >=20
+> > > > > By the way, how do you select at runtime which CSI-2 RX the ISP g=
+ets its
+> > > > > image stream from ? Is it configured through registers of the ISP=
+ ?
+> > > >=20
+> > > > Actually what the ISP gets is fully dependent on what is received b=
+y the
+> > > > CSI controller it is connected to (which can be the mipi csi-2 cont=
+roller
+> > > > or its direct parallel pins), so the configuration happens on the C=
+SI side.
+> > >=20
+> > > OK, then how do you select at runtime which CSI the ISP gets its image
+> > > stream from ? :-)
+> >=20
+> > What is done in the driver is that all available csi(s) entities pads a=
+re linked
+> > to a single csi sink media pad, which allows userspace to enable one or=
+ the
+> > other. If there's only one, it's enabled by default.
+> >=20
+> > The actual stream source (isp_dev->proc.source) is selected at link_val=
+idate
+> > time and the source bit is set in sun6i_isp_proc_enable.
+> >=20
+> > I hope this answers your question!
+>=20
+> Yes it does, thank you.
+>=20
+> While this works, it makes life a bit more complicated for userspace, as
+> switching between the two sources require disabling the link first and
+> then enabling the new one. This is something that caused issues in the
+> libcamera simple pipeline handler, I ended up having to implement a
+> workaround.
+
+That surprises me a bit, I thought this was a typical use-case for links.
+So the fact that it's a two-step process causes issues somehow?
+
+> Could you instead have two sink pads for the ISP, and select the sensor
+> at stream on time instead of link validation time by checking which link
+> is enabled ? If no links or both links are enabled, you can then return
+> an error.
+
+Yes that's totally doable.
+
+There's a similar situation with the sun6i-csi bridge where the source pad
+has two possible links: one for routing to sun6i-csi capture (video device)
+and one for routing to the isp entity.
+
+Would that also be best represented as two pads?
+
+> Ideally I'd say such internal routing should use the new V4L2 subdev
+> routing API that is currently being implemented (see [1]), but I don't
+> know when it will land, and I don't want to delay your patch series.
+>=20
+> [1] https://lore.kernel.org/linux-media/20211130141536.891878-28-tomi.val=
+keinen@ideasonboard.com
+
+I'm still a bit confused what problem this is trying to solve.
+My understanding was that the current pad/link API allows representing comp=
+lex
+topologies and switching different paths with link enable/disable.
+
+Cheers,
+
+Paul
+=20
+> > > > > > +
+> > > > > > +required:
+> > > > > > +  - compatible
+> > > > > > +  - reg
+> > > > > > +  - interrupts
+> > > > > > +  - clocks
+> > > > > > +  - clock-names
+> > > > > > +  - resets
+> > > > > > +
+> > > > > > +additionalProperties: false
+> > > > > > +
+> > > > > > +examples:
+> > > > > > +  - |
+> > > > > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > > > > +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
+> > > > > > +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
+> > > > > > +
+> > > > > > +    isp: isp@1cb8000 {
+> > > > > > +        compatible =3D "allwinner,sun8i-v3s-isp";
+> > > > > > +        reg =3D <0x01cb8000 0x1000>;
+> > > > > > +        interrupts =3D <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > +        clocks =3D <&ccu CLK_BUS_CSI>,
+> > > > > > +             <&ccu CLK_CSI1_SCLK>,
+> > > > > > +             <&ccu CLK_DRAM_CSI>;
+> > > > > > +        clock-names =3D "bus", "mod", "ram";
+> > > > > > +        resets =3D <&ccu RST_BUS_CSI>;
+> > > > > > +
+> > > > > > +        ports {
+> > > > > > +            #address-cells =3D <1>;
+> > > > > > +            #size-cells =3D <0>;
+> > > > > > +
+> > > > > > +            port@0 {
+> > > > > > +                reg =3D <0>;
+> > > > > > +
+> > > > > > +                isp_in_csi0: endpoint {
+> > > > > > +                    remote-endpoint =3D <&csi0_out_isp>;
+> > > > > > +                };
+> > > > > > +            };
+> > > > > > +        };
+> > > > > > +    };
+> > > > > > +
+> > > > > > +...
+>=20
+> --=20
+> Regards,
+>=20
+> Laurent Pinchart
+
+--=20
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
+--nHoejL1ruAig0FXy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAmIePhMACgkQ3cLmz3+f
+v9H0gwf9HtEyW3FZKBulFC3rF9aAlSw7xuWFNCVcO7Fv18GQhhxC90OtUX8w9af0
+uk6YiGR8+2/PRBwcjWieLCOMBYXxiCMtyWiKI2agrQ/AE4Mf4t+5hxoYBk14mtn1
+k3Wp5WGtcyLQc6WpTpCHzHaczulPVMNofP4Llxbd+yRIiLY5se12LSDsylBriqVX
+mzhD55G/oxHRaqvko0/LnqVitWExJnBNJB+xfKQf924a+1DPfiKT8l1b08IBXrUE
+Uade4L3l8B9sikpoEsO8N69FCwaei5Qa6UkrRtcdEJRqE2FOeY+vvcXVbQsfo+Nt
+jmZiyabuNPb1owIsSvozwPmmtT780A==
+=jWNV
+-----END PGP SIGNATURE-----
+
+--nHoejL1ruAig0FXy--
