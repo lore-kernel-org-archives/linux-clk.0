@@ -2,68 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0508C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 08:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDBAC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 08:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233465AbiCAImn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Mar 2022 03:42:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51146 "EHLO
+        id S233400AbiCAIuX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Mar 2022 03:50:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233466AbiCAImm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 03:42:42 -0500
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A0F788B14
-        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 00:42:01 -0800 (PST)
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+        with ESMTP id S233417AbiCAIuV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 03:50:21 -0500
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD5289310
+        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 00:49:40 -0800 (PST)
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C748640809
-        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 08:41:59 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id CED503FCA2
+        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 08:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646124119;
-        bh=dZm4dVdpcvNRhKnzE3iapZ6aqr4LkpURHZ0F0cP2Ffk=;
+        s=20210705; t=1646124577;
+        bh=i5oNvJtWT2nQMVMnHuzSOVOeJhkbSN882hqbqowwmW8=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=WNozuzhh51MkPB6e5T6zDNZ9rtSg3VDRJWH1IDwZSfpJJa3XmxTsuEmO5tG+IrS9x
-         sENmzqV0KRI+6VpVte7znN/e6JiOzWz/Ks05zoUusuYUk8lTVyfJ5DWP6AsPSMfX5K
-         E04N9kSL9W50Y50K2H9Txk52qlMh20NMXd7vjuVfNOH0ohrD+UckfyarzdSIPJK+2N
-         qqFl+dL87t/4REdj419Fhfn3RyK1OG4nT+5YxRXcSrStFV+KB1/8ra3R3aMeFSKKTl
-         YJSrqr9uWK39ooxO7RjeY9lWE5+6KYf4kwswy0k+TQdYiM/qC3T1XIOSR++hi4xCHJ
-         yjHyNwqXa9PFA==
-Received: by mail-ej1-f69.google.com with SMTP id j6-20020a170906830600b006d6e2eb61f7so1068067ejx.15
-        for <linux-clk@vger.kernel.org>; Tue, 01 Mar 2022 00:41:59 -0800 (PST)
+        b=c88GyFPPo6sEwnpjjs3fjMh3NHJh3kPCBNjrInIgh23e3G6SGRqawoNFlPTEhiSNv
+         kMwZtbcAsIMxQnsmp/VwSYAhTq/d2UdLvP2SilIXIGcne16HbqKsqrWWJqsLxzyokQ
+         jkVQWxuqQS0w+but44E/uhUYGq3cQsbVg6tz8cPD/WNQVl5JOHDpCG0YPkSogwoY77
+         9iuOk7l3lLbvUxgY2Cu/vroMtp3i3nFNSWZREgrt7JsXjM3BTXUvxwQJx787KoL1/T
+         VUR8tdZg2d+SWk/O4NWqHXPvozKPf0FOICkJ6N4R28PJ/4K9+UH1/l5S7KBIEW/zPi
+         LxXxlJZgCkoTA==
+Received: by mail-ed1-f72.google.com with SMTP id s7-20020a508dc7000000b0040f29ccd65aso7426767edh.1
+        for <linux-clk@vger.kernel.org>; Tue, 01 Mar 2022 00:49:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=dZm4dVdpcvNRhKnzE3iapZ6aqr4LkpURHZ0F0cP2Ffk=;
-        b=db358K2A/8F+gWV/1YhOraN+ZBmueELr+m93VLbliJ88V/2i6zcYRFKUgFVVemmZ1C
-         uDtylcahCMywooPwAgTLuYpjidXo08k7f4ozPWkNeQy7on8f7CkjAGADgyBsTczIXiPB
-         9yOLH6fQA8YfTlPYS8sk2OprCLGJjsME2Td4QAz41Vfvsr5uvjZixUY8DDsAgWBxgGj6
-         zFtzVuGdRplWgzl8Z2gt6gY+RW3Oj1VnSbue/8T5/D1J5KPibLK/on+WW2BS9k507lKR
-         fu0mrezOCwaz9tl4yq/yxY25lqJq80GLSNFtGRYQs5Zw1PinMFPsJeQl99PyBUsucx2n
-         MACQ==
-X-Gm-Message-State: AOAM532K3cuEjjuW0RIituc8o3GxsrZJKB+B+OoqM9eEXWAZY/UySOPo
-        3BbMRm5t7ZT0Cp/1FzdK9ILPqJGUwSqucTILEpMfV2pFueaX8vzFNKVpeUdPX5TgPr/rg5HNMJI
-        7VcoKwjJpx+aE5R+lRkJm9X3+1TDrEZZN9la75Q==
-X-Received: by 2002:a17:907:248a:b0:69b:ba2d:62cd with SMTP id zg10-20020a170907248a00b0069bba2d62cdmr18284901ejb.212.1646124119340;
-        Tue, 01 Mar 2022 00:41:59 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxkLsXZPJFLzXPV5FGYgxl+qkbahIyWcZp4Gh4Ixdg/+bf55XzGLZMALWtwePubTl5fD9ILsg==
-X-Received: by 2002:a17:907:248a:b0:69b:ba2d:62cd with SMTP id zg10-20020a170907248a00b0069bba2d62cdmr18284886ejb.212.1646124119100;
-        Tue, 01 Mar 2022 00:41:59 -0800 (PST)
-Received: from [192.168.0.135] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id bo14-20020a170906d04e00b006ce98d9c3e3sm5116757ejb.194.2022.03.01.00.41.57
+        bh=i5oNvJtWT2nQMVMnHuzSOVOeJhkbSN882hqbqowwmW8=;
+        b=lYZHWNm0KvVkjUT7kuRZIMBBwf0LiYEQwIPDz9Zg6JIMBCZRi8IvAK5SXZt/35FN36
+         F01eRIl9TOAh/LZetOlACeBq7zO1zytL7ndRch+gS2WQJ9/1E2GAllq6OJwW1SXN1TbR
+         q2Nu7ccVPm4feYa0WDApqO+s/fp/FHAbkbvCRbC1w3Ooyuis6QqKZU/vpjOjocg47xCu
+         JdJPSsOGX91AxCyyCJSBsP9/0I03tpb6iZ3JpcnuVDz7EjkEDkW9RJveomVBpoIi/4Go
+         uFApaBlBYjoPc5UzLIb7Wn8Xf5BCJBMumTJshj4tHtt8iS5DSCeaVywlJXOaCe842Xhs
+         XW4g==
+X-Gm-Message-State: AOAM532M+DbPbfFJf3cDdgsQdTLxC8GMTY9zPYunTFyimzoVML+obeJ2
+        hhTgUDVI3vMeTShdD6a9aSH2lplhbwpnIHX9XEasNcoMmxQyx2wTyITH39s8Cxm5CsyIQSiB4jr
+        UOfSD6LtGURoK8RGjcROAf3luqYrewJ47CUwxGQ==
+X-Received: by 2002:aa7:db47:0:b0:413:7649:c2bb with SMTP id n7-20020aa7db47000000b004137649c2bbmr18696638edt.123.1646124577530;
+        Tue, 01 Mar 2022 00:49:37 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz0Ji57X8BPtLBdo02/7Aw5hrJyfazNqZcwT3ns08IlVBGD/uW7vhmHoqEKLaS5kqGFV7Hlhw==
+X-Received: by 2002:aa7:db47:0:b0:413:7649:c2bb with SMTP id n7-20020aa7db47000000b004137649c2bbmr18696608edt.123.1646124577357;
+        Tue, 01 Mar 2022 00:49:37 -0800 (PST)
+Received: from [192.168.0.136] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
+        by smtp.gmail.com with ESMTPSA id y14-20020a50eb8e000000b00410a2e7798dsm6893213edr.38.2022.03.01.00.49.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Mar 2022 00:41:58 -0800 (PST)
-Message-ID: <59ba1fd5-4be5-278f-47df-d26c341da73a@canonical.com>
-Date:   Tue, 1 Mar 2022 09:41:57 +0100
+        Tue, 01 Mar 2022 00:49:36 -0800 (PST)
+Message-ID: <40d9b2ad-2f8a-42c8-54cf-b22e24d78538@canonical.com>
+Date:   Tue, 1 Mar 2022 09:49:35 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v3 05/11] PCI: Use driver_set_override() instead of
- open-coding
+Subject: Re: [PATCH v3 01/11] driver: platform: Add helper for safer setting
+ of driver_override
 Content-Language: en-US
 To:     Bjorn Helgaas <helgaas@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -100,37 +100,38 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         virtualization@lists.linux-foundation.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-References: <20220228200606.GA516338@bhelgaas>
+References: <20220228200326.GA516164@bhelgaas>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220228200606.GA516338@bhelgaas>
+In-Reply-To: <20220228200326.GA516164@bhelgaas>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/02/2022 21:06, Bjorn Helgaas wrote:
-> On Sun, Feb 27, 2022 at 02:52:08PM +0100, Krzysztof Kozlowski wrote:
->> Use a helper for seting driver_override to reduce amount of duplicated
->> code. Make the driver_override field const char, because it is not
->> modified by the core and it matches other subsystems.
+On 28/02/2022 21:03, Bjorn Helgaas wrote:
+> On Sun, Feb 27, 2022 at 02:52:04PM +0100, Krzysztof Kozlowski wrote:
+>> Several core drivers and buses expect that driver_override is a
+>> dynamically allocated memory thus later they can kfree() it.
 > 
-> s/seting/setting/
-> or even better, s/for seting/to set/
+>> +int driver_set_override(struct device *dev, const char **override,
+>> +			const char *s, size_t len)
+>> +{
+>> +	const char *new, *old;
+>> +	char *cp;
+>> +
+>> +	if (!dev || !override || !s)
+>> +		return -EINVAL;
+>> +
+>> +	/* We need to keep extra room for a newline */
 > 
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> It would help a lot to extend this comment with a hint about where the
+> room for a newline is needed.  It was confusing even before, but it's
+> much more so now that the check is in a completely different file than
+> the "show" functions that need the space.
 > 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
->> -	char		*driver_override; /* Driver name to force a match */
->> +	/*
->> +	 * Driver name to force a match.
->> +	 * Do not set directly, because core frees it.
->> +	 * Use driver_set_override() to set or clear it.
-> 
-> Wrap this comment to fill 78 columns or so.
 
-Thanks, I'll fix both.
+Indeed, this needs explanation.
 
 
 Best regards,
