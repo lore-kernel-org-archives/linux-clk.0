@@ -2,249 +2,115 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F12C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 06:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F2EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 07:25:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231699AbiCAGsc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Mar 2022 01:48:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35648 "EHLO
+        id S232203AbiCAH0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Mar 2022 02:26:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232527AbiCAGsb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 01:48:31 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B783BA72
-        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 22:47:49 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id s15so9176891qtk.10
-        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 22:47:49 -0800 (PST)
+        with ESMTP id S231935AbiCAH0O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 02:26:14 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1F465174
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 23:25:34 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id m22so13384545pja.0
+        for <linux-clk@vger.kernel.org>; Mon, 28 Feb 2022 23:25:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a2XtpJx5sPnXKHV3JQK6M1BlpjabNjiFLBIJvQC2PrU=;
-        b=uucmstoPCZo1SZCKEB4vsyzCsYAdwpXrGNEPQfK7SPGbHagKhZOMoLRkfVPNuu5kzu
-         5JEdU41+YXnXWa5qL+jVM/3ZJngRVU57KuUA2mvTslRIsub7UZoGZ6lc2hhoTN+mW/dY
-         WLr+2fjFBT6d5KVS01Du+iXp1KZl7hAvIotjdaR9jv0E6CqXb5juVBsHlnfBlUjPFk3m
-         +JGq2iW/k9pGf6j+eHsOowm3cVwL6VJ6/DbR8weZmFqvLMu1pYD8ps8viyQ9RAA0oHy1
-         6Lp9o75pX5XoS/1qPgwthdd7VBxJvCOi+c6rOmqMK4pu0W/pGiOjoo7OeYVDW3tGeHbB
-         rM+g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Fq9+hKXE2B25/q7SGHJTgmlpE5pNGMn67wmPQ/2AfFA=;
+        b=gw+AgpqERSMLyvVAkktbZBdBQAxCpln9+7y5E4lCT6UDIE8RSSZw3sHef0pgS+cDcP
+         0CSs/PdWEOtNhMq+K42nTRPmww08VKf9MHYaOwy7QRMoo5/yAZry4qWzXkJWuf86v9Fa
+         ZJPTuWFy5R4R0DZeqlZKsIAztbRIHQOgdOnTofkoNFQ7XQvrsW7xRPYnx5R72vMROM/B
+         oYE4pAxMVK1aCdg9OYq+zGOS9qXSQ429BqHYAbDf12OeRrwscs0AxHrzehBFOejwaDse
+         2xzfkpQf6u8PIIv5EYYaSi8iHkVBRzlwItd49jGo5CNE+HJEbiWgFC8J/HhCHU/T/kmo
+         XMOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a2XtpJx5sPnXKHV3JQK6M1BlpjabNjiFLBIJvQC2PrU=;
-        b=gRe7I60h/TktcmJHgozlaQz+LjrKj3AUXpVfSZQvdwzWAZOzk7YOzqOzANsWOTH+yT
-         DvXY1L0jFSK95QwXPddyhw9eiqDiFhAvP7DP1PHC5mRph+OFsRCxi6CyzuJE5woSrp/E
-         oyKb1xkpLIdG4Z/g+AmOUnPSEjraZ2dHdkiprtYP4Vyxb/OOH2PzCX0FOjUTonTTd1EJ
-         GgIWUBxIPoQKCwNAfkucFumZT6DlaM9j9ilxI8NLKQk9/4GY9dEpCU2ZbhyxSZAAI7wY
-         bAB8XB/4JVyW+r0VhJfzIn8sr034pIdKrz9asjdyuhnpfAUZI4KWTQ182HShvvGgQjBT
-         t8Bg==
-X-Gm-Message-State: AOAM532bUX8TT6dp0+vEnfuH0xXIL1+FlT3vOd+NGtp322tfDwB72Htl
-        i81CevhNkUCd569EATbVaStjGvu32lDj9YDdfIYd8Q==
-X-Google-Smtp-Source: ABdhPJyRVGKv0JkoFnOwPsKQgHJZizIwqRm8ib+7cWMsmH2b49Mi4quFUx99BOcxQpFGklCN2Fw3oNzHP6QJT+PgSKQ=
-X-Received: by 2002:ac8:5cc9:0:b0:2de:8838:5888 with SMTP id
- s9-20020ac85cc9000000b002de88385888mr19521798qta.370.1646117268391; Mon, 28
- Feb 2022 22:47:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
- <20220204144645.3016603-4-dmitry.baryshkov@linaro.org> <Yf2jRAf5UKYSMYxe@builder.lan>
- <f521a273-7250-ddca-0e56-b1b27bd75117@linaro.org> <3bc0461d-3a2e-f994-e712-dfc8be04c9b4@quicinc.com>
-In-Reply-To: <3bc0461d-3a2e-f994-e712-dfc8be04c9b4@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 1 Mar 2022 09:47:37 +0300
-Message-ID: <CAA8EJpo8Abvfea8mYZo0opp=7RSpvp+WnC06tGgr1YeWzOFLPw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tied to
- the GDSC
-To:     Prasad Malisetty <quic_pmaliset@quicinc.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Wilczy??ski" <kw@linux.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Prasad Malisetty <pmaliset@codeaurora.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Fq9+hKXE2B25/q7SGHJTgmlpE5pNGMn67wmPQ/2AfFA=;
+        b=BXPUAzPje57GiIJBm8BH90NIuXYpyoZohEGZKdi1KwvllrnAdICUqxWij1CR+hMtgS
+         rf6imBDFa8PZhaTeyvdK7hxNb5VESCnqD1cstq8yPBx6D9mjHUqsX5aRV7hE2K2uusb2
+         xjJYKZyb+OoNY3byoSaavbKbFFqWiiWXgLqD0axqn+19zxgg7jOGFXzpXvKi/XwKyfR4
+         bNYrheru0bfJwzWVWoaCcqD0TSWmI8TOxOjwbAVuNgc5CJAI1f5ja1Bk0YzmCpKvY+or
+         Uw7O7zMojvOSwedtdUJeKTe7+xKRuczpm7E/vgSjngU85V2xbLsALD8RB6BBw9dGZEqw
+         UnFQ==
+X-Gm-Message-State: AOAM533hhs8CI/IepW2yxycgio5aW/nRbeXGrrSxZJQI7brfja0Z5NNv
+        U7b+JZOIVewhLEKezCQbxsdocg==
+X-Google-Smtp-Source: ABdhPJyQpoHq58XxxDiH1vNEtJGyB3ROg2E9nRNb6DbulnTpMJjY+JTpp9jWTnRHJzb8qLKPuHtgwQ==
+X-Received: by 2002:a17:90a:9306:b0:1bc:9256:5477 with SMTP id p6-20020a17090a930600b001bc92565477mr20937679pjo.170.1646119529474;
+        Mon, 28 Feb 2022 23:25:29 -0800 (PST)
+Received: from localhost.localdomain ([223.179.136.225])
+        by smtp.gmail.com with ESMTPSA id m6-20020a62f206000000b004e152bc0527sm15680445pfh.153.2022.02.28.23.25.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Feb 2022 23:25:29 -0800 (PST)
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
+        lorenzo.pieralisi@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, svarbanov@mm-sol.com,
+        bhelgaas@google.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 0/7] Add PCIe support for SM8150 SoC
+Date:   Tue,  1 Mar 2022 12:55:04 +0530
+Message-Id: <20220301072511.117818-1-bhupesh.sharma@linaro.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On Tue, 1 Mar 2022 at 09:42, Prasad Malisetty <quic_pmaliset@quicinc.com> wrote:
-> I discussed with internal team. setting gcc_pcie_n_pipe_clk src in pcie
-> driver doesn't have any relation with gdsc.
->
-> But we are making sure that gcc_pcie_n_pipe_clk src is bi_tcxo before
-> enabling the clocks and switching to pipe_clk src after PHY is enalbe.
->
-> During suspend switching back to bi_tcxo as we enabling the clock as
-> part of resume.
-
-So... I assume that if we implement the enable/disable() ops in a way
-similar to clk_rcg2_shared_ops, we can drop all manual handling of
-pipe_clk sources.
-
-Bjorn, Taniya WDYT?
-
->
->   Hi Taniya,
->
-> Please provide your inputs.
->
-> Thanks
->
-> -Prasad
-> On 2/12/2022 1:22 AM, Dmitry Baryshkov wrote:
-> > On 05/02/2022 01:05, Bjorn Andersson wrote:
-> >> On Fri 04 Feb 08:46 CST 2022, Dmitry Baryshkov wrote:
-> >>
-> >>> On newer Qualcomm platforms GCC_PCIE_n_PIPE_CLK_SRC should be
-> >>> controlled
-> >>> together with the PCIE_n_GDSC. The clock should be fed from the TCXO
-> >>> before switching the GDSC off and can be fed from PCIE_n_PIPE_CLK once
-> >>> the GDSC is on.
-> >>>
-> >>> Since commit aa9c0df98c29 ("PCI: qcom: Switch pcie_1_pipe_clk_src after
-> >>> PHY init in SC7280") PCIe controller driver tries to manage this on
-> >>> it's
-> >>> own, resulting in the non-optimal code. Furthermore, if the any of the
-> >>> drivers will have the same requirements, the code would have to be
-> >>> dupliacted there.
-> >>>
-> >>> Move handling of such clocks to the GDSC code, providing special GDSC
-> >>> type.
-> >>>
-> >>
-> >> As discussed on IRC, I'm inclined not to take this, because looks to me
-> >> to be the same situation that we have with all GDSCs in SM8350 and
-> >> onwards - that some clocks must be parked on a safe parent before the
-> >> associated GDSC can be toggled.
-> >>
-> >> Prasad, please advice on what the actual requirements are wrt the
-> >> gcc_pipe_clk_src. When does it need to provide a valid signal and when
-> >> does it need to be parked?
-> >
-> > [Excuse me for the duplicate, Prasad's email was bouncing]
-> >
-> > Prasad, any comments?
-> >
-> >>
-> >> Regards,
-> >> Bjorn
-> >>
-> >>> Cc: Prasad Malisetty <pmaliset@codeaurora.org>
-> >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>> ---
-> >>>   drivers/clk/qcom/gdsc.c | 41
-> >>> +++++++++++++++++++++++++++++++++++++++++
-> >>>   drivers/clk/qcom/gdsc.h | 14 ++++++++++++++
-> >>>   2 files changed, 55 insertions(+)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> >>> index 7e1dd8ccfa38..9913d1b70947 100644
-> >>> --- a/drivers/clk/qcom/gdsc.c
-> >>> +++ b/drivers/clk/qcom/gdsc.c
-> >>> @@ -45,6 +45,7 @@
-> >>>   #define TIMEOUT_US        500
-> >>>     #define domain_to_gdsc(domain) container_of(domain, struct gdsc,
-> >>> pd)
-> >>> +#define domain_to_pipe_clk_gdsc(domain) container_of(domain, struct
-> >>> pipe_clk_gdsc, base.pd)
-> >>>     enum gdsc_status {
-> >>>       GDSC_OFF,
-> >>> @@ -549,3 +550,43 @@ int gdsc_gx_do_nothing_enable(struct
-> >>> generic_pm_domain *domain)
-> >>>       return 0;
-> >>>   }
-> >>>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
-> >>> +
-> >>> +/*
-> >>> + * Special operations for GDSCs with attached pipe clocks.
-> >>> + * The clock should be parked to safe source (tcxo) before turning
-> >>> off the GDSC
-> >>> + * and can be switched on as soon as the GDSC is on.
-> >>> + *
-> >>> + * We remove respective clock sources from clocks map and handle
-> >>> them manually.
-> >>> + */
-> >>> +int gdsc_pipe_enable(struct generic_pm_domain *domain)
-> >>> +{
-> >>> +    struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
-> >>> +    int i, ret;
-> >>> +
-> >>> +    ret = gdsc_enable(domain);
-> >>> +    if (ret)
-> >>> +        return ret;
-> >>> +
-> >>> +    for (i = 0; i< sc->num_clocks; i++)
-> >>> +        regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
-> >>> +                BIT(sc->clocks[i].shift + sc->clocks[i].width) -
-> >>> BIT(sc->clocks[i].shift),
-> >>> +                sc->clocks[i].on_value << sc->clocks[i].shift);
-> >>> +
-> >>> +    return 0;
-> >>> +}
-> >>> +EXPORT_SYMBOL_GPL(gdsc_pipe_enable);
-> >>> +
-> >>> +int gdsc_pipe_disable(struct generic_pm_domain *domain)
-> >>> +{
-> >>> +    struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
-> >>> +    int i;
-> >>> +
-> >>> +    for (i = sc->num_clocks - 1; i >= 0; i--)
-> >>> +        regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
-> >>> +                BIT(sc->clocks[i].shift + sc->clocks[i].width) -
-> >>> BIT(sc->clocks[i].shift),
-> >>> +                sc->clocks[i].off_value << sc->clocks[i].shift);
-> >>> +
-> >>> +    /* In case of an error do not try turning the clocks again. We
-> >>> can not be sure about the GDSC state. */
-> >>> +    return gdsc_disable(domain);
-> >>> +}
-> >>> +EXPORT_SYMBOL_GPL(gdsc_pipe_disable);
-> >>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> >>> index d7cc4c21a9d4..b1a2f0abe41c 100644
-> >>> --- a/drivers/clk/qcom/gdsc.h
-> >>> +++ b/drivers/clk/qcom/gdsc.h
-> >>> @@ -68,11 +68,25 @@ struct gdsc_desc {
-> >>>       size_t num;
-> >>>   };
-> >>>   +struct pipe_clk_gdsc {
-> >>> +    struct gdsc base;
-> >>> +    int num_clocks;
-> >>> +    struct {
-> >>> +        u32 reg;
-> >>> +        u32 shift;
-> >>> +        u32 width;
-> >>> +        u32 off_value;
-> >>> +        u32 on_value;
-> >>> +    } clocks[];
-> >>> +};
-> >>> +
-> >>>   #ifdef CONFIG_QCOM_GDSC
-> >>>   int gdsc_register(struct gdsc_desc *desc, struct
-> >>> reset_controller_dev *,
-> >>>             struct regmap *);
-> >>>   void gdsc_unregister(struct gdsc_desc *desc);
-> >>>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
-> >>> +int gdsc_pipe_enable(struct generic_pm_domain *domain);
-> >>> +int gdsc_pipe_disable(struct generic_pm_domain *domain);
-> >>>   #else
-> >>>   static inline int gdsc_register(struct gdsc_desc *desc,
-> >>>                   struct reset_controller_dev *rcdev,
-> >>> --
-> >>> 2.34.1
-> >>>
-> >
-> >
+Changes since v1:
+-----------------
+- v1 can be found here: https://lore.kernel.org/linux-arm-msm/20220223192946.473172-1-bhupesh.sharma@linaro.org/T/
+- Collected ACKs on [PATCH 1/7], [PATCH 2/7] and [PATCH 4/7] from Rob
+  and Dmitry.
+- Broke down another separately sent out PATCH (see [1]), into a 3 patches (one each for emac, pci
+  and ufs gdsc defines) - one of which is carried as [PATCH 3/7]
+  in this series, which fixes a compilation error.
+  The rest of the gdsc defines have been sent out as separate patch(es).
+[1]. https://patchwork.kernel.org/project/netdevbpf/patch/20220126221725.710167-4-bhupesh.sharma@linaro.org/
+- Rob's bot reported a number of 'dtbs_check' errors with the v1 series,
+  which are been fixed with a separate series now (see [2]), to ease the
+  review of this series.
+[2]. https://lore.kernel.org/linux-arm-msm/20220228123019.382037-1-bhupesh.sharma@linaro.org/T/
 
 
+This series adds PCIe support for Qualcomm SM8150 SoC with relevant PHYs.
+There are 2 PCIe instances on this SoC each with different PHYs. The PCIe
+controller and PHYs are mostly compatible with the ones found on SM8250
+SoC, hence the old drivers are modified to add the support.
+
+This series has been tested on SA8155p ADP board with QCA6696 chipset connected
+onboard.
+
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+
+Bhupesh Sharma (7):
+  dt-bindings: pci: qcom: Document PCIe bindings for SM8150 SoC
+  dt-bindings: phy: qcom,qmp: Add SM8150 PCIe PHY bindings
+  clk: qcom: gcc: Add PCIE_0_GDSC and PCIE_1_GDSC for SM8150
+  phy: qcom-qmp: Add SM8150 PCIe QMP PHYs
+  PCI: qcom: Add SM8150 SoC support
+  arm64: dts: qcom: sm8150: Add pcie nodes for SM8150
+  arm64: dts: qcom: sa8155: Enable pcie nodes
+
+ .../devicetree/bindings/pci/qcom,pcie.txt     |   5 +-
+ .../devicetree/bindings/phy/qcom,qmp-phy.yaml |   4 +
+ arch/arm64/boot/dts/qcom/sa8155p-adp.dts      |  42 +++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          | 243 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-qcom.c        |  16 ++
+ drivers/phy/qualcomm/phy-qcom-qmp.c           |  90 +++++++
+ include/dt-bindings/clock/qcom,gcc-sm8150.h   |   2 +
+ 7 files changed, 400 insertions(+), 2 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.35.1
+
