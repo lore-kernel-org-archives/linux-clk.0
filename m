@@ -2,153 +2,288 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADFAC433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 17:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC26C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 17:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236479AbiCAR3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Mar 2022 12:29:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
+        id S235523AbiCARmX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Mar 2022 12:42:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236056AbiCAR3J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 12:29:09 -0500
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FDC4522CD
-        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 09:28:27 -0800 (PST)
-Received: by mail-wm1-x32e.google.com with SMTP id bg16-20020a05600c3c9000b00380f6f473b0so1680394wmb.1
-        for <linux-clk@vger.kernel.org>; Tue, 01 Mar 2022 09:28:27 -0800 (PST)
+        with ESMTP id S234906AbiCARmW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 12:42:22 -0500
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 673E35DE5F
+        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 09:41:40 -0800 (PST)
+Received: by mail-oi1-x231.google.com with SMTP id j2so16847496oie.7
+        for <linux-clk@vger.kernel.org>; Tue, 01 Mar 2022 09:41:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Y86hBfPWj9E4aTo+XMBrAu6Y5p4SQMawkPD4Q/SuKPY=;
-        b=ifR445Ptk0kZIwyK/iR5LauUeexT4h+Xm5fWIS9UfHsJTwIXI+TBUH0b1B1nklV58Q
-         e3posB9tDmWAuXNqOByYa8OEIeuEgFpyIkDoWKkxe1RAiCnFE6ZEzQVCpMvS62fGzNFV
-         nWcw5JV2lmoD9jxvmDMFuNVsgy/NwYWUQ6a0I1zB2e5jSr3/JFEIp9xW/NRIDhtT+/y6
-         uvAB7/5ZICC2qcmaHb2EAlpVYU+L8My5syB7aELi6iajmzjea09g2vNncJq3GY6hv/nP
-         g2d17hu4ZYUIRYCXpyuRUhAY/Kr9r3k7MyrtDEVfLOZZZFWPJ239r6w7DpTzLNolCHHw
-         A62A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Dj9jClIeUnpps0dqvQJqNq3ULWQwNcCV3LH2BxUJGms=;
+        b=TcyAz5Y+hFUh8EDGKhQQp8PP/lNhvlR/qhCtRH4jyxwoU7jQ3m8JXa+y0XP6UOjfdx
+         JKEqBWZS73vw/zH2uo1wizbmjHTl+FS/iHyRafKXJxbsSEcAaH3sOt3RS2TynuB9OiRQ
+         SG+r9xDw98qwxF8CKQo6H3GFrt5g0wdkJrOd36a7kcevJds9YEelN3k7c61RzIBmtdB/
+         dgd7lDSrPEfviuPtmtu8WUD+8kRhDB3VBtlFwt98k2G0ZfA3LZSvAsTwmeLwbTFxEcDd
+         Px+1JhCvcaxTdpHUwJvqe9SGVl8vL+qpFC5SugNtKPijfpxC2/xkrQeV7zgnV3/JlQg3
+         4Z0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Y86hBfPWj9E4aTo+XMBrAu6Y5p4SQMawkPD4Q/SuKPY=;
-        b=iV9yX42mkIU8c7xDheJaPXtTG2FNBWBaIUNG72EdMlgNSjbjPtk27LQSqpVMrhdW0t
-         b1dZKoeUodnonRTaR0jNQtauPmvFjwCFuxaQJUNlm4ofNXbJEDayY4eMF9jZ1sI2ZA1t
-         QAAhm4nwndCYPuQw4AXQqijd65rQDyRJIwYDSnI+A8AhX38mJ54ZtUCmvR4WeWccTRn9
-         22PBIWo7W6DbJZiIVgDjJhNrYcxtSCp1EiQ8yWlq4aVxUIYMLl+zmACSOfGyqzpjHoiq
-         irv7aYZPAniCHS+NRhNcuYYDjK7rMWMLH1OlqTS67EsmzvQqJvrP6MBwuIWVwhABLwGm
-         NImg==
-X-Gm-Message-State: AOAM532LVDTaxwMwyn4K/T1guN9vw/3FWpQ1Gm2VLlchyFmxgV0N4mo1
-        ONCSQSGfcOiWAX2KwBC5LGKjPw==
-X-Google-Smtp-Source: ABdhPJyP4zzjkBPeDrhk1IU4HHA4Z4mVRSeyWw7DiZ4BmjKx+FbF6/CkwhxttMvqrC0XO+mqNoqKvQ==
-X-Received: by 2002:a05:600c:a4b:b0:37b:ea2b:5583 with SMTP id c11-20020a05600c0a4b00b0037bea2b5583mr18173339wmq.139.1646155705687;
-        Tue, 01 Mar 2022 09:28:25 -0800 (PST)
-Received: from [192.168.86.34] (cpc90716-aztw32-2-0-cust825.18-1.cable.virginm.net. [86.26.103.58])
-        by smtp.googlemail.com with ESMTPSA id c4-20020adfed84000000b001e5b8d5b8dasm20457807wro.36.2022.03.01.09.28.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Mar 2022 09:28:24 -0800 (PST)
-Message-ID: <5f481315-021c-39d6-8c6c-91918851ab13@linaro.org>
-Date:   Tue, 1 Mar 2022 17:28:22 +0000
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 10/11] slimbus: qcom-ngd: Fix kfree() of static memory
- on setting driver_override
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Dj9jClIeUnpps0dqvQJqNq3ULWQwNcCV3LH2BxUJGms=;
+        b=dsXc4NnlTeL7GS3JIjBIfTzYs6/+TNKNHFx2BFBGhgukuqvAqrqJMT5xNc+nTKi1VU
+         j8ZTf//NI43gka7ckKnRWcJBOWPAALf1WQwIbWVlv9atFds0Syv1UY+TKtNnDgtlHu3i
+         8BmUZG55OuyEwnAk/N7U8TFXx71NNx0EAHU/ar1WVfx/MiO4ozw2knMVFE7k/a4/Lu/j
+         VF20IOB6oeMXCT3QSb1LKTJbo3YUVYMKgPKIL+CNXXrX/6IDVv2hBdhEl+aM1YpogsZZ
+         yH34YnII8Jg2cCiT41eleoW2RddEtu6hoHPjFasePqLOZbpvJ4y+N/E+x1BOPFYVPmXq
+         Qv3g==
+X-Gm-Message-State: AOAM532xr/bbymTZG8C+6yjvD8q3Y6PesayYwF3YThhauJK4DwTwpwaW
+        DaVHxecrM55yc0eis+H3rDfS2A==
+X-Google-Smtp-Source: ABdhPJw9T2ag+1PboNShZd97DGAbxwRAr1BkU149XaLa6NR+zTE37rZpaQ/gTvrxQfNxN5LqMQNR+w==
+X-Received: by 2002:a05:6808:188b:b0:2d4:70f2:3cfa with SMTP id bi11-20020a056808188b00b002d470f23cfamr15842992oib.168.1646156499704;
+        Tue, 01 Mar 2022 09:41:39 -0800 (PST)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id y6-20020a4a86c6000000b0031bf43a9212sm6441136ooh.11.2022.03.01.09.41.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Mar 2022 09:41:38 -0800 (PST)
+Date:   Tue, 1 Mar 2022 09:43:31 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
         Andy Gross <agross@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>, stable@vger.kernel.org
-References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
- <20220227135329.145862-4-krzysztof.kozlowski@canonical.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20220227135329.145862-4-krzysztof.kozlowski@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Wilczy??ski <kw@linux.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Prasad Malisetty <pmaliset@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] clk: qcom: gdsc: add support for clocks tied to
+ the GDSC
+Message-ID: <Yh5bQ8FqwN7wOkb8@ripper>
+References: <20220204144645.3016603-1-dmitry.baryshkov@linaro.org>
+ <20220204144645.3016603-4-dmitry.baryshkov@linaro.org>
+ <Yf2jRAf5UKYSMYxe@builder.lan>
+ <f521a273-7250-ddca-0e56-b1b27bd75117@linaro.org>
+ <3bc0461d-3a2e-f994-e712-dfc8be04c9b4@quicinc.com>
+ <CAA8EJpo8Abvfea8mYZo0opp=7RSpvp+WnC06tGgr1YeWzOFLPw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpo8Abvfea8mYZo0opp=7RSpvp+WnC06tGgr1YeWzOFLPw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon 28 Feb 22:47 PST 2022, Dmitry Baryshkov wrote:
 
-
-On 27/02/2022 13:53, Krzysztof Kozlowski wrote:
-> The driver_override field from platform driver should not be initialized
-> from static memory (string literal) because the core later kfree() it,
-> for example when driver_override is set via sysfs.
+> Hi,
 > 
-> Use dedicated helper to set driver_override properly.
+> On Tue, 1 Mar 2022 at 09:42, Prasad Malisetty <quic_pmaliset@quicinc.com> wrote:
+> > I discussed with internal team. setting gcc_pcie_n_pipe_clk src in pcie
+> > driver doesn't have any relation with gdsc.
+> >
+> > But we are making sure that gcc_pcie_n_pipe_clk src is bi_tcxo before
+> > enabling the clocks and switching to pipe_clk src after PHY is enalbe.
+> >
+> > During suspend switching back to bi_tcxo as we enabling the clock as
+> > part of resume.
 > 
-> Fixes: 917809e2280b ("slimbus: ngd: Add qcom SLIMBus NGD driver")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-
-LGTM,
-
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-
-> ---
->   drivers/slimbus/qcom-ngd-ctrl.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
+> So... I assume that if we implement the enable/disable() ops in a way
+> similar to clk_rcg2_shared_ops, we can drop all manual handling of
+> pipe_clk sources.
 > 
-> diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-> index 7040293c2ee8..e5d9fdb81eb0 100644
-> --- a/drivers/slimbus/qcom-ngd-ctrl.c
-> +++ b/drivers/slimbus/qcom-ngd-ctrl.c
-> @@ -1434,6 +1434,7 @@ static int of_qcom_slim_ngd_register(struct device *parent,
->   	const struct of_device_id *match;
->   	struct device_node *node;
->   	u32 id;
-> +	int ret;
->   
->   	match = of_match_node(qcom_slim_ngd_dt_match, parent->of_node);
->   	data = match->data;
-> @@ -1455,7 +1456,17 @@ static int of_qcom_slim_ngd_register(struct device *parent,
->   		}
->   		ngd->id = id;
->   		ngd->pdev->dev.parent = parent;
-> -		ngd->pdev->driver_override = QCOM_SLIM_NGD_DRV_NAME;
-> +
-> +		ret = driver_set_override(&ngd->pdev->dev,
-> +					  &ngd->pdev->driver_override,
-> +					  QCOM_SLIM_NGD_DRV_NAME,
-> +					  strlen(QCOM_SLIM_NGD_DRV_NAME));
-> +		if (ret) {
-> +			platform_device_put(ngd->pdev);
-> +			kfree(ngd);
-> +			of_node_put(node);
-> +			return ret;
-> +		}
->   		ngd->pdev->dev.of_node = node;
->   		ctrl->ngd = ngd;
->   
+> Bjorn, Taniya WDYT?
+> 
+
+To me it really sounds like the need here is to "park" the pipe clock
+source on bi_tcxo while the PHY isn't providing a valid clock signal
+into GCC. If so "parking" the clock the same way as the rcg2_shared_ops
+seems reasonable in that case.
+
+Also, looking at downstream, the USB pipe clock seems to be handled in a
+similar fashion.
+
+
+But I'm still wondering what the actual requirement for the pipe clock
+is. Per your description Prasad, it seems that the PHY doesn't need the
+pipe clock coming back from GCC during initialization - and the PCIe
+controller driver enables the pipe_clk after powering on the phy.
+
+On platforms prior to there being a mux involved (e.g. SDM845) we have a
+branch that is marked BRANCH_HALT_SKIP. But do we have that because we
+incorrectly enable the gcc_pipe_clk before we power on the PHY?
+
+I thought we did this because gcc_pipe_clk was part of some feedback
+loop when calibrating the PHY PLL, but if sc7280 can feed tcxo that
+doesn't make sense. Is the incoming pipe_clk part of the PHY
+initialization or not?
+
+Can we move the enablement of gcc_pipe_clk to be done after we bring up
+the PHY and thereby drop the BRANCH_HALT_SKIP on these platforms?
+
+Regards,
+Bjorn
+
+> >
+> >   Hi Taniya,
+> >
+> > Please provide your inputs.
+> >
+> > Thanks
+> >
+> > -Prasad
+> > On 2/12/2022 1:22 AM, Dmitry Baryshkov wrote:
+> > > On 05/02/2022 01:05, Bjorn Andersson wrote:
+> > >> On Fri 04 Feb 08:46 CST 2022, Dmitry Baryshkov wrote:
+> > >>
+> > >>> On newer Qualcomm platforms GCC_PCIE_n_PIPE_CLK_SRC should be
+> > >>> controlled
+> > >>> together with the PCIE_n_GDSC. The clock should be fed from the TCXO
+> > >>> before switching the GDSC off and can be fed from PCIE_n_PIPE_CLK once
+> > >>> the GDSC is on.
+> > >>>
+> > >>> Since commit aa9c0df98c29 ("PCI: qcom: Switch pcie_1_pipe_clk_src after
+> > >>> PHY init in SC7280") PCIe controller driver tries to manage this on
+> > >>> it's
+> > >>> own, resulting in the non-optimal code. Furthermore, if the any of the
+> > >>> drivers will have the same requirements, the code would have to be
+> > >>> dupliacted there.
+> > >>>
+> > >>> Move handling of such clocks to the GDSC code, providing special GDSC
+> > >>> type.
+> > >>>
+> > >>
+> > >> As discussed on IRC, I'm inclined not to take this, because looks to me
+> > >> to be the same situation that we have with all GDSCs in SM8350 and
+> > >> onwards - that some clocks must be parked on a safe parent before the
+> > >> associated GDSC can be toggled.
+> > >>
+> > >> Prasad, please advice on what the actual requirements are wrt the
+> > >> gcc_pipe_clk_src. When does it need to provide a valid signal and when
+> > >> does it need to be parked?
+> > >
+> > > [Excuse me for the duplicate, Prasad's email was bouncing]
+> > >
+> > > Prasad, any comments?
+> > >
+> > >>
+> > >> Regards,
+> > >> Bjorn
+> > >>
+> > >>> Cc: Prasad Malisetty <pmaliset@codeaurora.org>
+> > >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >>> ---
+> > >>>   drivers/clk/qcom/gdsc.c | 41
+> > >>> +++++++++++++++++++++++++++++++++++++++++
+> > >>>   drivers/clk/qcom/gdsc.h | 14 ++++++++++++++
+> > >>>   2 files changed, 55 insertions(+)
+> > >>>
+> > >>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > >>> index 7e1dd8ccfa38..9913d1b70947 100644
+> > >>> --- a/drivers/clk/qcom/gdsc.c
+> > >>> +++ b/drivers/clk/qcom/gdsc.c
+> > >>> @@ -45,6 +45,7 @@
+> > >>>   #define TIMEOUT_US        500
+> > >>>     #define domain_to_gdsc(domain) container_of(domain, struct gdsc,
+> > >>> pd)
+> > >>> +#define domain_to_pipe_clk_gdsc(domain) container_of(domain, struct
+> > >>> pipe_clk_gdsc, base.pd)
+> > >>>     enum gdsc_status {
+> > >>>       GDSC_OFF,
+> > >>> @@ -549,3 +550,43 @@ int gdsc_gx_do_nothing_enable(struct
+> > >>> generic_pm_domain *domain)
+> > >>>       return 0;
+> > >>>   }
+> > >>>   EXPORT_SYMBOL_GPL(gdsc_gx_do_nothing_enable);
+> > >>> +
+> > >>> +/*
+> > >>> + * Special operations for GDSCs with attached pipe clocks.
+> > >>> + * The clock should be parked to safe source (tcxo) before turning
+> > >>> off the GDSC
+> > >>> + * and can be switched on as soon as the GDSC is on.
+> > >>> + *
+> > >>> + * We remove respective clock sources from clocks map and handle
+> > >>> them manually.
+> > >>> + */
+> > >>> +int gdsc_pipe_enable(struct generic_pm_domain *domain)
+> > >>> +{
+> > >>> +    struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
+> > >>> +    int i, ret;
+> > >>> +
+> > >>> +    ret = gdsc_enable(domain);
+> > >>> +    if (ret)
+> > >>> +        return ret;
+> > >>> +
+> > >>> +    for (i = 0; i< sc->num_clocks; i++)
+> > >>> +        regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
+> > >>> +                BIT(sc->clocks[i].shift + sc->clocks[i].width) -
+> > >>> BIT(sc->clocks[i].shift),
+> > >>> +                sc->clocks[i].on_value << sc->clocks[i].shift);
+> > >>> +
+> > >>> +    return 0;
+> > >>> +}
+> > >>> +EXPORT_SYMBOL_GPL(gdsc_pipe_enable);
+> > >>> +
+> > >>> +int gdsc_pipe_disable(struct generic_pm_domain *domain)
+> > >>> +{
+> > >>> +    struct pipe_clk_gdsc *sc = domain_to_pipe_clk_gdsc(domain);
+> > >>> +    int i;
+> > >>> +
+> > >>> +    for (i = sc->num_clocks - 1; i >= 0; i--)
+> > >>> +        regmap_update_bits(sc->base.regmap, sc->clocks[i].reg,
+> > >>> +                BIT(sc->clocks[i].shift + sc->clocks[i].width) -
+> > >>> BIT(sc->clocks[i].shift),
+> > >>> +                sc->clocks[i].off_value << sc->clocks[i].shift);
+> > >>> +
+> > >>> +    /* In case of an error do not try turning the clocks again. We
+> > >>> can not be sure about the GDSC state. */
+> > >>> +    return gdsc_disable(domain);
+> > >>> +}
+> > >>> +EXPORT_SYMBOL_GPL(gdsc_pipe_disable);
+> > >>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> > >>> index d7cc4c21a9d4..b1a2f0abe41c 100644
+> > >>> --- a/drivers/clk/qcom/gdsc.h
+> > >>> +++ b/drivers/clk/qcom/gdsc.h
+> > >>> @@ -68,11 +68,25 @@ struct gdsc_desc {
+> > >>>       size_t num;
+> > >>>   };
+> > >>>   +struct pipe_clk_gdsc {
+> > >>> +    struct gdsc base;
+> > >>> +    int num_clocks;
+> > >>> +    struct {
+> > >>> +        u32 reg;
+> > >>> +        u32 shift;
+> > >>> +        u32 width;
+> > >>> +        u32 off_value;
+> > >>> +        u32 on_value;
+> > >>> +    } clocks[];
+> > >>> +};
+> > >>> +
+> > >>>   #ifdef CONFIG_QCOM_GDSC
+> > >>>   int gdsc_register(struct gdsc_desc *desc, struct
+> > >>> reset_controller_dev *,
+> > >>>             struct regmap *);
+> > >>>   void gdsc_unregister(struct gdsc_desc *desc);
+> > >>>   int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
+> > >>> +int gdsc_pipe_enable(struct generic_pm_domain *domain);
+> > >>> +int gdsc_pipe_disable(struct generic_pm_domain *domain);
+> > >>>   #else
+> > >>>   static inline int gdsc_register(struct gdsc_desc *desc,
+> > >>>                   struct reset_controller_dev *rcdev,
+> > >>> --
+> > >>> 2.34.1
+> > >>>
+> > >
+> > >
+> 
+> 
+> 
+> -- 
+> With best wishes
+> Dmitry
