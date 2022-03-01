@@ -2,118 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B87C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 07:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96FD0C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Mar 2022 08:22:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231555AbiCAH3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Mar 2022 02:29:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35404 "EHLO
+        id S233011AbiCAIXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Mar 2022 03:23:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiCAH3Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 02:29:16 -0500
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E26433B0;
-        Mon, 28 Feb 2022 23:28:35 -0800 (PST)
-Received: by mail-ed1-f47.google.com with SMTP id s1so20731608edd.13;
-        Mon, 28 Feb 2022 23:28:35 -0800 (PST)
+        with ESMTP id S229956AbiCAIXR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Mar 2022 03:23:17 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 154DB26F2
+        for <linux-clk@vger.kernel.org>; Tue,  1 Mar 2022 00:22:37 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id p12-20020a05683019cc00b005af1442c9e9so11578934otp.13
+        for <linux-clk@vger.kernel.org>; Tue, 01 Mar 2022 00:22:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tosKASypLvVXrNr25i9iVdhZeYDT2gXwfp+eHTQoEEc=;
+        b=q7IePSd4ZDSr0rC4WaQs2Hck81KsTkOAuEkmg5frbLPNtN1TTPLDw/H8Soa5pgoLaE
+         v/JgEr6qOQlPpKQi+w+ayfXsksZm1suQ83beh/Kl0E5clZouPyyi+pLNcD8uWfFfc7lF
+         mxb8FDo5WuKX5JfGVkgqcS+smWNAS/fraJZ47zfgjfH2nA5sjpVQpW14+xvOkynO5fHe
+         epIWggk+xHt/AKTVqrVuKAQ2ihuaqYt6H8W1/bZQsmhM9nU0TvTqKlhE6X6RxfOKBX8C
+         qmtVBoeh+1NfS9uGnBIzwrW87uBmO94rs5s24d7ny0n+h7eqT8udkU9eV7AIyIqYVWOz
+         4KPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=wKJAfUuvmexmmq3PlD9f46VsJrO53MebKTGUYq+/qrQ=;
-        b=vjjEUsy3R6rR8QL5rOuAGtRclvkUJJLskyRbWf/a7lyyY2IcSr2UG3h1cf8NxrbDZW
-         4Ej6JHvE4oyb0UxkW/Hu+YE1yLXs5iE7oioc6iit7cWXUe/0AxNP2107h0+K6bF18n+T
-         WEcZ6PxcSazmaJx7g1z3e/LbCdzhbOXPxXWJU+uitp3bvpgCeaj+eXGgXliL/0AnNSGp
-         FEAJDRNieP9sPOqaLB+7QlaogCuwKl42o8M7P2nb3xtPKeHf5xtlOg8fuVID3hz8bOYc
-         +PdXXVEePWMqGJ+owuvjgsu4sGrjTETjeiqNSREg8+FhQoT5/IGapGdTwUCcerFHjozg
-         dnew==
-X-Gm-Message-State: AOAM531AARg/lKTn18a68F2aD8BhMe+yCOcucueYyDDXPqfPRI7MsWHf
-        NAy7lqLgEKzBFbc+2J/k++M=
-X-Google-Smtp-Source: ABdhPJwNczAdO1z86KiTqLoOamzpjwnTcoZbKMAdw4eGkzqoIH+WEsHJKDD2jE1OIyExt85h8nXfLA==
-X-Received: by 2002:aa7:c948:0:b0:413:2bed:e82e with SMTP id h8-20020aa7c948000000b004132bede82emr23373534edt.394.1646119713356;
-        Mon, 28 Feb 2022 23:28:33 -0800 (PST)
-Received: from [192.168.0.135] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.googlemail.com with ESMTPSA id d6-20020a056402144600b00412a7d10c20sm6720982edx.60.2022.02.28.23.28.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 23:28:32 -0800 (PST)
-Message-ID: <496ebfcc-424f-d56a-5b88-9ae1c35d47db@kernel.org>
-Date:   Tue, 1 Mar 2022 08:28:30 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tosKASypLvVXrNr25i9iVdhZeYDT2gXwfp+eHTQoEEc=;
+        b=tnuS+Ly0viet/P92M6n7u1ZLWiLP0TizBctpHrhlROr1dXVUY6hCBicFPzNbi2Pseb
+         3ShctvIcX6dgjYlRqQbGpPCcGmeB+9APHUFcrM9bffsnITyn8f9353qc9FIeBsYCI2QE
+         XEWx1H7lp/yRx/52BhYHggeJNkYtEnexHJgMECt/CObPtP6pp6XC72XbOpMjGI5vHsbE
+         OVP7iOgmi0t/P5SyIQFb1gROqSYvOLpXMI24lpyV4l6HQESounRvUDNnJ5/jps16Ytro
+         etRRuaV55DLjNxlR7Vl5NTsbHpuF16h9JanX9LX66g+bj64s/j6613YGj2cG9eJDyVgW
+         tFRw==
+X-Gm-Message-State: AOAM531uEOrCosjvtQat/6JNOChwkQ3EpHUsH542lQEnkHoUhs0i3f46
+        WPjeIs50CYP9LC7apCmNTJKQ2aP9fQ+P469aPaLt1g==
+X-Google-Smtp-Source: ABdhPJySTn/ilMv7viVUZTUp94aI8GCiZqiF//jp/oGXCWlvdQoeAbndmnnwQeAkYwB9DYHC69sSdgfPNU5WpkzDfmQ=
+X-Received: by 2002:a05:6830:314c:b0:5af:dc8a:d066 with SMTP id
+ c12-20020a056830314c00b005afdc8ad066mr9037959ots.28.1646122956336; Tue, 01
+ Mar 2022 00:22:36 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v9 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
-Content-Language: en-US
-To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        =?UTF-8?B?V2VsbHMgTHUg5ZGC6Iqz6aiw?= <wells.lu@sunplus.com>,
-        Rob Herring <robh@kernel.org>
-References: <cover.1645413746.git.qinjian@cqplus1.com>
- <87cc20bb3ef747c4da89f9e60c0847532bb0a679.1645413746.git.qinjian@cqplus1.com>
- <141c1b3e-b116-a0eb-78ad-dd9263880e9d@kernel.org>
- <fd66d0c1f8d5410ca676dd523bcde61b@cqplus1.com>
- <8ce8a3db-0f42-0b30-6688-01c1ea905425@kernel.org>
- <66b2710bc7c048a284fa3b6270ba7bc8@cqplus1.com>
- <d6031c8e-5a70-9561-f44e-0573594da34d@kernel.org>
- <3d7decc2cf9c4df4ae7f22d0ca671f34@cqplus1.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <3d7decc2cf9c4df4ae7f22d0ca671f34@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220126221725.710167-1-bhupesh.sharma@linaro.org>
+ <20220126221725.710167-8-bhupesh.sharma@linaro.org> <CAA8EJpqVP=E8GkO_BYBdPD6k84SDDD7cWduSf4yhG3M9VmbBLw@mail.gmail.com>
+In-Reply-To: <CAA8EJpqVP=E8GkO_BYBdPD6k84SDDD7cWduSf4yhG3M9VmbBLw@mail.gmail.com>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Date:   Tue, 1 Mar 2022 13:52:25 +0530
+Message-ID: <CAH=2Ntw5m9zfb4xfySYx71QgdmJwkAgtQ8B1=jXu19GQ84b+rg@mail.gmail.com>
+Subject: Re: [PATCH 7/8] clk: qcom: gcc-sm8150: use runtime PM for the clock controller
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, agross@kernel.org, sboyd@kernel.org,
+        tdas@codeaurora.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, bjorn.andersson@linaro.org,
+        davem@davemloft.net, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/03/2022 03:08, qinjian[覃健] wrote:
->>>>>> This binding looks incomplete.
->>>>>
->>>>> Sunplus SP7021 is an ARM Cortex A7 based SoC.
->>>>> The patch is for SP7021 SoC and SP7021 based boards.
->>>>> Sorry, I don't understand your questions.
->>>>> Could you explain more?
->>>>
->>>> You have there only one compatible but if I would expect at least two.
->>>> One for SoC and one for board. Something like this:
->>>> Documentation/devicetree/bindings/arm/rda.yaml
->>>> but in your case enum would have only one entry.
->>>
->>> Currently, we only support one board. Maybe will support more boards in future.
->>
->> This is not the answer for my questions. I said I expect two compatibles:
->> 1. One for SoC,
->> 2. One for board.
->>
->> And you respond "we have only one board".
->>
->> Where is the SoC compatible?
->>
-> 
-> Got it, thanks for your explanation.
-> 
-> I'll add the SoC compatible(sunplus,sp7021) in next patch.
-> 
->   compatible:
->     items:
->       - enum:
->           - sunplus,sp7021-achip
->       - const: sunplus,sp7021
+Hi Dmitry,
 
-Yes, this looks correct (assuming "sp7021-achip" is the name for this board.
+Sorry for the late reply.
 
-Best regards,
-Krzysztof
+On Thu, 27 Jan 2022 at 04:04, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Thu, 27 Jan 2022 at 01:19, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
+> >
+> > On sm8150 emac clk registers are powered up by the GDSC power
+> > domain. Use runtime PM calls to make sure that required power domain is
+> > powered on while we access clock controller's registers.
+> >
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > ---
+> >  drivers/clk/qcom/gcc-sm8150.c | 27 +++++++++++++++++++++++++--
+> >  1 file changed, 25 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> > index ada755ad55f7..2e71afed81fd 100644
+> > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > @@ -5,6 +5,7 @@
+> >  #include <linux/bitops.h>
+> >  #include <linux/err.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_device.h>
+> > @@ -3792,19 +3793,41 @@ static const struct of_device_id gcc_sm8150_match_table[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(of, gcc_sm8150_match_table);
+> >
+> > +static void gcc_sm8150_pm_runtime_disable(void *data)
+> > +{
+> > +       pm_runtime_disable(data);
+> > +}
+> > +
+> >  static int gcc_sm8150_probe(struct platform_device *pdev)
+> >  {
+> >         struct regmap *regmap;
+> > +       int ret;
+> > +
+> > +       pm_runtime_enable(&pdev->dev);
+> > +
+> > +       ret = devm_add_action_or_reset(&pdev->dev, gcc_sm8150_pm_runtime_disable, &pdev->dev);
+> > +       if (ret)
+> > +               return ret;
+>
+> Please use devm_pm_runtime_enable() instead.
+
+Sure, I will fix it in v2.
+
+Thanks,
+Bhupesh
+
+> > +
+> > +       ret = pm_runtime_resume_and_get(&pdev->dev);
+> > +       if (ret)
+> > +               return ret;
+> >
+> >         regmap = qcom_cc_map(pdev, &gcc_sm8150_desc);
+> > -       if (IS_ERR(regmap))
+> > +       if (IS_ERR(regmap)) {
+> > +               pm_runtime_put(&pdev->dev);
+> >                 return PTR_ERR(regmap);
+> > +       }
+> >
+> >         /* Disable the GPLL0 active input to NPU and GPU via MISC registers */
+> >         regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+> >         regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> >
+> > -       return qcom_cc_really_probe(pdev, &gcc_sm8150_desc, regmap);
+> > +       ret = qcom_cc_really_probe(pdev, &gcc_sm8150_desc, regmap);
+> > +
+> > +       pm_runtime_put(&pdev->dev);
+> > +
+> > +       return ret;
+> >  }
+> >
+> >  static struct platform_driver gcc_sm8150_driver = {
+> > --
+> > 2.34.1
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
