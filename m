@@ -2,164 +2,198 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AB8C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Mar 2022 17:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60F0C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Mar 2022 17:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243797AbiCBR0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Mar 2022 12:26:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56474 "EHLO
+        id S234865AbiCBR1U convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Mar 2022 12:27:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243829AbiCBR0R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2022 12:26:17 -0500
-Received: from mail-ot1-x333.google.com (mail-ot1-x333.google.com [IPv6:2607:f8b0:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E9E4CCC53
-        for <linux-clk@vger.kernel.org>; Wed,  2 Mar 2022 09:25:31 -0800 (PST)
-Received: by mail-ot1-x333.google.com with SMTP id j9-20020a9d7d89000000b005ad5525ba09so2242140otn.10
-        for <linux-clk@vger.kernel.org>; Wed, 02 Mar 2022 09:25:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A7p+Sua3vWTnrJZHdXkQWaCDCi1ogBb2wcZTsYiqgV4=;
-        b=kSgjDYJtPfb9ROCmWxhJKur8Uaw3MOy+15dIiLp2BSKjF6NgN4VZPpOm11PH5Q2XrA
-         r7UqQ8AaC5RLrjGi485c5S8PablqMesWLFYHzsnpfcYXW5sH7ojPTvi/b4Wtn1+Lb4LI
-         u8Ki+p4BrjOZDvRVCNP8Yq6NvOGZ/t85CEOYWpgTSqxC7K326FpV9CyYlRyr7Dbr2eNx
-         FAVu6BaRigJcOwFcbBaJDzoIRdc8l5qu53ZMTrJiSXmNLtU9wGjUkOmDJ9OFe1KyB66C
-         FfM9f9NRMOu0nrjn4rjNuOs/xijBjaPfQMoRJ0OArmgDe2qhxEE2dOoW/gkO3qeFidbu
-         eyXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A7p+Sua3vWTnrJZHdXkQWaCDCi1ogBb2wcZTsYiqgV4=;
-        b=AXaVGTWazNG4teGliUtkrDhWzdCTQnNsO2qerf84BRNhQQ4xFQX9fcoO5VXEOo56ok
-         bQbsrmyI3CF6kDgKsLmoAZl1xG7JqJzxMG5nvX/sIO2GnAofmGG/ozObfmGphXwL8oKm
-         Zp/IUXcD78ZBTfSiHE402OLgG3R0QhxqlwEBrDL4tZT9iLiE1AK1C/q7oukUuwOKKr6d
-         7g6LBrX5HP5HTtZaoK4RYZ4Xu46zeZRrg1N45KVtScJNKcunv//NhEYRgUFzMDrWhmoe
-         TnYmGl/V1WVJexEkHKsgZEVPIjK0pazUNmdU/4HbxQ4NXMdbvbbnC5VEOfIqF4xkepS0
-         LstQ==
-X-Gm-Message-State: AOAM530mrCBJqGemzEZdU9xSNWOTaEZLE7Amkx/qxl0ISPzV3ygoHWAH
-        dIxchuUi14Vh2LQDJgnd8bibYQKnOQwMPLnRUezjVw==
-X-Google-Smtp-Source: ABdhPJwwxzHWuf8viqR1OdWBAi0a7r41AOauclraB7d347YvqjAztRTJua35obzbRfApLE3btcmqP+cYlOjzbV8E/Ns=
-X-Received: by 2002:a05:6830:314c:b0:5af:dc8a:d066 with SMTP id
- c12-20020a056830314c00b005afdc8ad066mr13881461ots.28.1646241930640; Wed, 02
- Mar 2022 09:25:30 -0800 (PST)
+        with ESMTP id S233700AbiCBR1U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2022 12:27:20 -0500
+Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B17CA337
+        for <linux-clk@vger.kernel.org>; Wed,  2 Mar 2022 09:26:36 -0800 (PST)
+Received: from [77.244.183.192] (port=62702 helo=[192.168.178.41])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1nPSkD-0007KY-JV; Wed, 02 Mar 2022 18:26:33 +0100
+Message-ID: <fa9aa952-6560-7123-d095-32e88ecc5fb3@lucaceresoli.net>
+Date:   Wed, 2 Mar 2022 18:26:32 +0100
 MIME-Version: 1.0
-References: <20220302110508.69053-1-bhupesh.sharma@linaro.org>
- <20220302110508.69053-3-bhupesh.sharma@linaro.org> <CAA8EJprTiGfEnkPOeDPyobdRGkyzyC6=vHivfQ9zsk22JPjM3w@mail.gmail.com>
-In-Reply-To: <CAA8EJprTiGfEnkPOeDPyobdRGkyzyC6=vHivfQ9zsk22JPjM3w@mail.gmail.com>
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Date:   Wed, 2 Mar 2022 22:55:19 +0530
-Message-ID: <CAH=2NtySLVEk_aLdftCS9DcfPS6egUxVAJTZnxjxLPQQnGb4aw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] clk: qcom: gcc: Add emac GDSC support for SM8150
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
-        agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
+ versaclock5 driver
+Content-Language: en-US
+To:     Adam Ford <aford173@gmail.com>,
+        "Fillion, Claude" <Claude.Fillion@mksinst.com>
+Cc:     Sean Anderson <sean.anderson@seco.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <9e4e542f-6f73-164e-581e-17369aada2f3@seco.com>
+ <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
+ <b15f993b-d67b-b96a-904c-53025eda3aa3@lucaceresoli.net>
+ <MN2PR03MB5008747FDF505CA30970ADE293029@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7x+kusPwHpkp+4zwvGN48oDUGfN2ueCn=8kt_54aiYwE9g@mail.gmail.com>
+ <MN2PR03MB5008F4921D8484306505F8FB93029@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7xKbE9Rv3EsvFkS4Lk8nCwy1TK-xJQLk_h70PSVdeUHJcA@mail.gmail.com>
+ <MN2PR03MB5008536F789B93337AF0BA6793039@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7xJFxtA=9GYkQ1dVig=sSRQY3yhjS9dO2GRtqn=zdc9w7g@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+In-Reply-To: <CAHCN7xJFxtA=9GYkQ1dVig=sSRQY3yhjS9dO2GRtqn=zdc9w7g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+Hi,
 
-On Wed, 2 Mar 2022 at 18:00, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, 2 Mar 2022 at 14:05, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
-> >
-> > Add the EMAC GDSC defines and driver structures for SM8150.
-> >
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> > ---
-> >  drivers/clk/qcom/gcc-sm8150.c               | 34 +++++++++++++--------
-> >  include/dt-bindings/clock/qcom,gcc-sm8150.h |  1 +
-> >  2 files changed, 23 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> > index 245794485719..08ba29e3a835 100644
-> > --- a/drivers/clk/qcom/gcc-sm8150.c
-> > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > @@ -3448,22 +3448,31 @@ static struct clk_branch gcc_video_xo_clk = {
-> >         },
-> >  };
-> >
-> > +static struct gdsc emac_gdsc = {
-> > +       .gdscr = 0x6004,
-> > +       .pd = {
-> > +               .name = "emac_gdsc",
-> > +       },
-> > +       .pwrsts = PWRSTS_OFF_ON,
-> > +       .flags = POLL_CFG_GDSCR,
-> > +};
-> > +
-> >  static struct gdsc usb30_prim_gdsc = {
-> > -               .gdscr = 0xf004,
-> > -               .pd = {
-> > -                       .name = "usb30_prim_gdsc",
-> > -               },
-> > -               .pwrsts = PWRSTS_OFF_ON,
-> > -               .flags = POLL_CFG_GDSCR,
-> > +       .gdscr = 0xf004,
-> > +       .pd = {
-> > +               .name = "usb30_prim_gdsc",
-> > +       },
-> > +       .pwrsts = PWRSTS_OFF_ON,
-> > +       .flags = POLL_CFG_GDSCR,
->
-> Please move alignment changes to a separate patch
+On 02/03/22 16:45, Adam Ford wrote:
+...
+>>>>>>     versaclock6: clock-controller@6a {
+>>>>>>
+>>>>>>         /* Clock Consumer */
+>>>>>>
+>>>>>>         compatible = "idt,5p49v6965";
+>>>>>>
+>>>>>>                                 reg = <0x6a>;
+>>>>>>
+>>>>>>                                 #clock-cells = <1>;
+>>>>>>
+>>>>>>                                 clocks = <&x304_clk>;
+>>>>>>
+>>>>>>                                 clock-names = "xin";
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>         assigned_clocks = <&versaclock6 1>,
+>>>>>>
+>>>>>>                           <&versaclock6 2>,
+>>>>>>
+>>>>>>                           <&versaclock6 3>,
+>>>>>>
+>>>>>>                           <&versaclock6 4>;
+>>>>>>
+>>>>>>         assigned_clock_rates = <46800000>, <250000000>, <1000000>,
+>>>>>> <13000000>;
+>>>>>
+>>>>>
+>>>>> Assigned clocks and assigned clock rates should be hyphens and not
+>>>>> underscores.
+>>>>>
+>>>>> assigned-clocks =  <&versaclock6 1>,   <&versaclock6 2>,
+>>>>> <&versaclock6 3>, <&versaclock6 4>;
+>>>>>
+>>>>> assigned-clock-rates =  <46800000>, <250000000>, <1000000>,
+>>>>> <13000000>;
+>>>>>
+>>>>> Another thing to check is to make sure the consumers of these clocks
+>>>>> is enabling them.  They do not necessarily get enabled by default.
+>>>>>
+>>>>> adam
+>>>>
+>>>> Doh - thanks.  I looked at it a million times 😊 .
+>>>>
+>>>> Now getting desired out1 frequency but nothing on other outputs.  From
+>>> the code it seems vc5_clk_out_prepare() is the method that enables outputs
+>>> but this method is not being called I am not clear how to make the 'consumer
+>>> enable them.'
+>>>>
+>>>> I have added this to my dtsi to no avail.
+>>>>
+>>>>          /* Consumer referencing 5P49V5965 pin OUT1 and OUT2 */
+>>>>         consumer {
+>>>>             clocks = <&versaclock6 1>, <&versaclock6 2>;
+>>>>             /* ... */
+>>>>          };
+>>>>
+>>>> Looking through device tree documentation.
+>>>
+>>> It's likely going to be in the consumer's driver.  Check the consumer device
+>>> tree binding to make sure you've correctly associated the clock.  If the
+>>> binding doesnt't show a clock is required, it might not know that you using a
+>>> programmable clock.
+>>>
+>>> Here is a patch that I needed to apply to an Ethernet driver which wasn't
+>>> expecting a programmable clock to drive a reference clock, so the clock
+>>> wasn't being enabled.
+>>>
+>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/g
+>>> it/torvalds/linux.git/commit/drivers/net/ethernet/renesas/ravb_main.c?id=
+>>> 8ef7adc6beb2ef0bce83513dc9e4505e7b21e8c2__;!!KnJ4-rp7!1Qb17q-
+>>> TWrV62AeQtTNNVDErVbyhbXB1sukyT2ggvFPUltIBI5nIKzNnjVOcqlw8qJyy$
+>>>
+>>> Look at the use of devm_clk_get_optional and clk_prepare_enable from that
+>>> patch.  (yes, there is a subsequent patch that fixes something I didn't quite
+>>> do right, but the basics are here)
+>>>
+>>> The consumer drivers need to 'get' the clock so it can associate itself to the
+>>> clock in question.  Once the relationship is established, the consumer needs
+>>> to call clk_prepare_enable() which uses the clock system to turn the clock on.
+>>> Without this step, it's likely the Versaclock won't generate a signal, because it
+>>> doesn't know it needs to turn it on.
+>>>
+>>> adam
+>>
+>> Not sure I fully follow.  I see that clk out1 is enabled but the other channels are not so it would seem my difficulty is with individual channels.
+> 
+> Do the devices that need the clock from the versaclock reference the
+> versaclock?  If so, to those drivers use the get and enable?  If not,
+> the versaclock will stay off.  In the patch example I showed, I had to
+> modify the Ethernet driver on a processor, because it didn't
+> explicitly enable the reference clock.  That Ethernet driver expected
+> the refclk was always present which was a false assumption.  Once I
+> got the consumer device (in this case, Ethernet) to request and enable
+> the clock, the clock subsystem enabled the corresponding output on the
+> versaclock.
+> 
+> For the Ethernet example I cited above, the corresponding device tree
+> looks like:
+> 
+> &avb {
+>      clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
+>      clock-names = "fck", "refclk";
+>      status = "okay";
+> };
+> 
+> With this device tree reference, the 'refclk' gets associated to
+> versaclock ouput 4.  When the Ethernet needs the clock, it calls
+> clk_prepare_enable on that clock reference, and the clock system calls
+> on the versaclock driver to enable the output.  The reason I needed to
+> submit that patch was that the consumer driver (the Ethernet in this
+> case) wasn't calling the clk_prepare_enable, so the clock remained
+> off.  It's likely that whatever devices that need the clock from the
+> versaclock will need both a device tree reference to it as well as a
+> call to clk_prepare_enable.
+> 
+>>
+>> In my simple application I would like to enable outputs, on a per channel basis, from the device tree.  Would it make sense  to add  an 'idt,enable' property in similar fashion to the existing idt,mode, idt,voltage-microvolt, and idt,slew-percent properties?  Then vc5_get_output_config() could be modified to also call vc5_clk_out_prepare() (or clk_prepare_enable(), which in turn would call vc5_clk_out_prepare()).
+> 
+> I can't speak for the linux clock group, but the advantage of patching
+> the drivers that need the clocks generated from the versaclock is the
+> ability to stop these clocks when the drivers are halted and/or
+> suspended.
 
-Right, Will fix it in v3.
+Having the consumer driver get, prepare and enable the clock is of
+course the best as Adam explained.
 
-Regards,
-Bhupesh
+However I think using assigned-clocks and assigned-clock-rates should
+enable the clocks unconditionally even if the consumer driver does not
+do any clk_*() calls. Might be worth double checking that.
 
-> >  };
-> >
-> >  static struct gdsc usb30_sec_gdsc = {
-> > -               .gdscr = 0x10004,
-> > -               .pd = {
-> > -                       .name = "usb30_sec_gdsc",
-> > -               },
-> > -               .pwrsts = PWRSTS_OFF_ON,
-> > -               .flags = POLL_CFG_GDSCR,
-> > +       .gdscr = 0x10004,
-> > +       .pd = {
-> > +               .name = "usb30_sec_gdsc",
-> > +       },
-> > +       .pwrsts = PWRSTS_OFF_ON,
-> > +       .flags = POLL_CFG_GDSCR,
-> >  };
-> >
-> >  static struct clk_regmap *gcc_sm8150_clocks[] = {
-> > @@ -3714,6 +3723,7 @@ static const struct qcom_reset_map gcc_sm8150_resets[] = {
-> >  };
-> >
-> >  static struct gdsc *gcc_sm8150_gdscs[] = {
-> > +       [EMAC_GDSC] = &emac_gdsc,
-> >         [USB30_PRIM_GDSC] = &usb30_prim_gdsc,
-> >         [USB30_SEC_GDSC] = &usb30_sec_gdsc,
-> >  };
-> > diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> > index 3e1a91876610..40596b9ded06 100644
-> > --- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> > +++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> > @@ -243,5 +243,6 @@
-> >  /* GCC GDSCRs */
-> >  #define USB30_PRIM_GDSC                     4
-> >  #define USB30_SEC_GDSC                                         5
-> > +#define EMAC_GDSC                                              6
-> >
-> >  #endif
-> > --
-> > 2.35.1
-> >
->
->
-> --
-> With best wishes
-> Dmitry
+-- 
+Luca
