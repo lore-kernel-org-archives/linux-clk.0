@@ -2,100 +2,163 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3712C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 01:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBBDC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 06:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231488AbiCCBts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Mar 2022 20:49:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
+        id S229781AbiCCGKn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 01:10:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231493AbiCCBtr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Mar 2022 20:49:47 -0500
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5EA21B71A0;
-        Wed,  2 Mar 2022 17:49:03 -0800 (PST)
-Received: by mail-qt1-x82b.google.com with SMTP id n11so3402826qtk.8;
-        Wed, 02 Mar 2022 17:49:03 -0800 (PST)
+        with ESMTP id S229468AbiCCGKm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 01:10:42 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2273E163D54
+        for <linux-clk@vger.kernel.org>; Wed,  2 Mar 2022 22:09:58 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id ay7so3890296oib.8
+        for <linux-clk@vger.kernel.org>; Wed, 02 Mar 2022 22:09:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Anotryq1/JEstPBo/+p/ETt+CcRn9oPDl8FCPVS78QU=;
-        b=DVrnbguOY2Kvqn3Z1fuMOjoBDxX0Wqo+j6Nr70wQhjiSGfizc7VmZOKJ8J1KoBQNto
-         ADxMqtr1OycXlA1TbByToDW12s0SEtFaoZJLiXtr7QKuCduhVMmwnlydgIC8aslFTmOb
-         bBWXbIb/mcX0AJwE3jfX0e5LTs9w2bsv7ytJhQwvYjwjbp/foZT0pI2vqfGhGu5ws/NZ
-         hQkFo3LatNfh6iPTC7BwkeKd50ZSB3DJnBFTV2XGmjgg04d491lyLb5axLykVG+amcsr
-         rZ2jTrnfXajKYCzvuTu5K3IEUsNeeJBRuHaWL3OxDtW1g+vypI59xDksolOtziyX9gSj
-         UM/w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F72bStix4IAs331NpnLfcvSkp3vRgdYM9D6jVxCO3QM=;
+        b=mSmOEmxrWvorEYk7gtgGW3K4iwExNWCdjz0ETKAOYeEVbyg/cDPlngL2s7hEPx4/2P
+         1Dt9/loXa7MYg3XY39YIedYAdXyh2s6Hk4RCByvFFECGsnrOjiVGJm746faqn75T/tCI
+         X8rLznuEa7mLlGd8AFgcWMzXYROccUbza3KAh4GXXEumgdBMSVHoGSMkl+kvg3mR0Ryh
+         iEo8o0H/db4NyunEi7Jz2O4SqoTcpOG9Q/ZOkIdFY5ZtxwJqwEffbHD+weHSDd9jLpyr
+         fps/FD6TN95wlMtVUiP7Xp+ghyc4DoM+drJSnhnp273OFM15OkQ1ydO4+BwAkJrpYO1R
+         h+Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Anotryq1/JEstPBo/+p/ETt+CcRn9oPDl8FCPVS78QU=;
-        b=vBDff7/6zR+RYaUDV3mjnLcD+RN86NB2PyDtPhCYUszJcJwSaV1Jv60WIq70T852R0
-         3WPmx7FvBFAHnza0TZ1N/2cSalS3vWKOt+lD19ZQ4M3fqUKGsSow5ITCOb6/7DnChC7u
-         RHYC6NEsWxyfExOwi8hJH4oeQbqckFpnmsrn5DqUqnNi8MAcqftevNcK9UpTmu9PmaeU
-         ia0Y0S6lDab9HWSVAES8mboDU7cNAb1EEqLjXW8ByRkZPvwnQv4cVRqWMHiMSgOHkF/J
-         3mJDHmLATXGc9zl3ra5pTzuaYcFR0ocoqaC3nJ64eYk26C9ZA7EEuYxZfnr+eG7uDyju
-         Dtbw==
-X-Gm-Message-State: AOAM531Lv2KbjrPkz+ltgnFa0s75zm+na+KO4+IHekM/YExunPp2IJoF
-        tLNcJlK0VXOHH5SAmfMZc9QDmK4axgE=
-X-Google-Smtp-Source: ABdhPJzNfeZVmPQWUDx+smKOJTa6RTNbBgzABmVfjrEY0eqR+ftilZORquANV20T8Jh48KlcJyaVwQ==
-X-Received: by 2002:ac8:5153:0:b0:2d0:e87c:8160 with SMTP id h19-20020ac85153000000b002d0e87c8160mr26048671qtn.332.1646272142867;
-        Wed, 02 Mar 2022 17:49:02 -0800 (PST)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id a8-20020a05622a064800b002dd4f1eccc3sm527468qtb.35.2022.03.02.17.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Mar 2022 17:49:02 -0800 (PST)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     mturquette@baylibre.com
-Cc:     sboyd@kernel.org, narmstrong@baylibre.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-oxnas@groups.io, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] clk: Use of_device_get_match_data()
-Date:   Thu,  3 Mar 2022 01:48:56 +0000
-Message-Id: <20220303014856.2059307-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F72bStix4IAs331NpnLfcvSkp3vRgdYM9D6jVxCO3QM=;
+        b=KtXF7RBpYlAaRoWLEYW+Zpwmckh52jdBD9umOQNAM/gTwMe+8AQvmUW0ERRmQHnzEa
+         Gvn+GokxGyTFSuXeGDBnHQasm/k3l8VHndQqIgyWzzP2LsMGpJ9FlJqqu40xm1037pv8
+         qC3RwWMVKvt0QT+juo1wG8M3Ae373/MLx8pauXCc5XPUOxafgIcFE4rN/tPLaerRtPhH
+         fzYVCOuYFvz0eawT+gbi5q9IaL0c3R677JM53NbJQ0UfH+jbihriN4nmQIqrpZsoXh87
+         gpgoZA+gp/KYMpoAWMzkkO44UhJTuqa1wlLniY/uPT8YSuHr7LBBosW2I5eJXFXwHSk6
+         fHHw==
+X-Gm-Message-State: AOAM532zG+RX4BmzU4GAYXz5Dlp+1ClxHCzUQ2i00E/Kbg19vBZCKPEF
+        Te2Jm8WUQDKwr8K5GAOqU39IUOzSIayLzz0EX61zgA==
+X-Google-Smtp-Source: ABdhPJxP3AtADN5GNByKE/AGLTv6cQU/7GcPF7zfBmZLYqoxmlu3/BeupgEkWEqQsweRc3052c5+h2eBjUrfS2FL/lY=
+X-Received: by 2002:a54:4494:0:b0:2d7:652b:287 with SMTP id
+ v20-20020a544494000000b002d7652b0287mr3236523oiv.126.1646287797432; Wed, 02
+ Mar 2022 22:09:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220302203045.184500-1-bhupesh.sharma@linaro.org>
+ <20220302203045.184500-8-bhupesh.sharma@linaro.org> <CAA8EJpqEy+669gpDsy-zGp2NpDP-d7ZxNf7RVo=OQZdvGdZOvQ@mail.gmail.com>
+In-Reply-To: <CAA8EJpqEy+669gpDsy-zGp2NpDP-d7ZxNf7RVo=OQZdvGdZOvQ@mail.gmail.com>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Date:   Thu, 3 Mar 2022 11:39:46 +0530
+Message-ID: <CAH=2Ntz2=pgysEVSfSuGd12C-Am-qRZymaotCw-Lwp0_xaNcOg@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: sa8155: Enable PCIe nodes
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, bhupesh.linux@gmail.com,
+        lorenzo.pieralisi@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, svarbanov@mm-sol.com,
+        bhelgaas@google.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+Hi Dmitry,
 
-Use of_device_get_match_data() to simplify the code.
+On Thu, 3 Mar 2022 at 02:29, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Wed, 2 Mar 2022 at 23:31, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
+> >
+> > SA8155p ADP board supports the PCIe0 controller in the RC
+> > mode (only). So add the support for the same.
+> >
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Cc: Vinod Koul <vkoul@kernel.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sa8155p-adp.dts | 42 ++++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > index 8756c2b25c7e..3f6b3ee404f5 100644
+> > --- a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > +++ b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > @@ -387,9 +387,51 @@ &usb_2_qmpphy {
+> >         vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
+> >  };
+> >
+> > +&pcie0 {
+> > +       status = "okay";
+> > +};
+> > +
+> > +&pcie0_phy {
+> > +       status = "okay";
+> > +       vdda-phy-supply = <&vreg_l18c_0p88>;
+> > +       vdda-pll-supply = <&vreg_l8c_1p2>;
+> > +};
+> > +
+> > +&pcie1_phy {
+> > +       vdda-phy-supply = <&vreg_l18c_0p88>;
+> > +       vdda-pll-supply = <&vreg_l8c_1p2>;
+> > +};
+> > +
+> >  &tlmm {
+> >         gpio-reserved-ranges = <0 4>;
+> >
+> > +       bt_en_default: bt_en_default {
+> > +               mux {
+> > +                       pins = "gpio172";
+> > +                       function = "gpio";
+> > +               };
+> > +
+> > +               config {
+> > +                       pins = "gpio172";
+> > +                       drive-strength = <2>;
+> > +                       bias-pull-down;
+> > +               };
+> > +       };
+> > +
+> > +       wlan_en_default: wlan_en_default {
+> > +               mux {
+> > +                       pins = "gpio169";
+> > +                       function = "gpio";
+> > +               };
+> > +
+> > +               config {
+> > +                       pins = "gpio169";
+> > +                       drive-strength = <16>;
+> > +                       output-high;
+> > +                       bias-pull-up;
+> > +               };
+> > +       };
+> > +
+>
+> Not related to PCIe
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
----
- drivers/clk/clk-oxnas.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Hmm.. I have no strong personal opinion on this, so let's see what
+Bjorn thinks about the same.
+My reasoning for keeping it here was to just capture that we have
+'bt_en' and 'wlan_en' related tlmm details here, so that when you send
+out the reworked QCAxxxx mfd series (see [1]) later, I can easily plug
+it in for SA8155p ADP dts as well with the 'bt' and 'wlan' constructs.
 
-diff --git a/drivers/clk/clk-oxnas.c b/drivers/clk/clk-oxnas.c
-index 78d5ea669fea..cda5e258355b 100644
---- a/drivers/clk/clk-oxnas.c
-+++ b/drivers/clk/clk-oxnas.c
-@@ -209,15 +209,11 @@ static int oxnas_stdclk_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct oxnas_stdclk_data *data;
--	const struct of_device_id *id;
- 	struct regmap *regmap;
- 	int ret;
- 	int i;
- 
--	id = of_match_device(oxnas_stdclk_dt_ids, &pdev->dev);
--	if (!id)
--		return -ENODEV;
--	data = id->data;
-+	data = of_device_get_match_data(&pdev->dev);
- 
- 	regmap = syscon_node_to_regmap(of_get_parent(np));
- 	if (IS_ERR(regmap)) {
--- 
-2.25.1
+[1]. https://lore.kernel.org/lkml/20210621223141.1638189-2-dmitry.baryshkov@linaro.org/T/
 
+Regards.
+Bhupesh
+
+> >         usb2phy_ac_en1_default: usb2phy_ac_en1_default {
+> >                 mux {
+> >                         pins = "gpio113";
+> > --
+> > 2.35.1
+> >
+>
+>
+> --
+> With best wishes
+> Dmitry
