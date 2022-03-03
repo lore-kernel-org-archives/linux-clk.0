@@ -2,99 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0092BC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF01C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 10:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231718AbiCCJiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 04:38:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54428 "EHLO
+        id S232375AbiCCKdE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 05:33:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231705AbiCCJiT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:38:19 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 528B42647
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 01:37:31 -0800 (PST)
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6A3C53F5F2
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 09:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646300249;
-        bh=WN0fHS1E3WYhaNTMIUFWDS4nw/cwGpcpJ5Ec381RmGw=;
-        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-         In-Reply-To:Content-Type;
-        b=k2hQd24JScVsX1Ixeq9TUSFbK+09EuipWJSvhrcFxsesEMJRA1ua+PFjHnBkjr6OK
-         /t9uIioomzQvwHGpaOqY2za575U+Mf6im8w15V5OHJ6s2ayW6MPo5IHlj5UmFhtuxP
-         IsoMKSadiSeA+cj5pQ9MWWgDCt5Nbj5txVFPBAWdzxRWiuLElp4p7Jxk50ROa9AgUH
-         g+nQoBihW9a2kDMYd2lfoRPjcUQao4izqdpCTqtLOCY5tlAzjqB72e8IclZAneFzao
-         q1VmLxA4KNFaD5Fg8szB8m4sVgr+DN6+Rwtattize7kpHOVEOVWKHQPEh0g33SoP9j
-         Mn1sC0L3WMB9Q==
-Received: by mail-ej1-f70.google.com with SMTP id qf24-20020a1709077f1800b006ce8c140d3dso2427690ejc.18
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 01:37:29 -0800 (PST)
+        with ESMTP id S232364AbiCCKdD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 05:33:03 -0500
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CE9C179A36
+        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 02:32:18 -0800 (PST)
+Received: by mail-qk1-x736.google.com with SMTP id bm39so3573970qkb.0
+        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 02:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DYNpbzV9XCiofWlx6Ep0BAs5/BGBNmH1zZ8NMWTIAps=;
+        b=fy0N6aDWxd9z8c5sVpt36gG3Rrkj9OAzl0zu/lXoo1lw0c1syMnCgctBz3OncmfbM0
+         S+KbgdxLrOAslzi7fGCU7byhgjCMGQR7RG9XvsTYyS6S9mo3Pmn5i9NoeIow9KZMM7pD
+         +podm37QZ6PoLVvFNEHsflNn+Nima0L7TquXJIHls0EDOZAdHIYcuPCoApohbx97Q73t
+         0Mt5gbZAMFDhneLUGctdZaepeKXl8LXljTyfvWA4LdVfOM6+gRKbtNBK8pAFltxGhejI
+         /l5FNFKInqlY5w/IhuASsiplMmK9Pj6q801DmJ5kq13IteTd6ayV4ohDbuctWEph8vt8
+         BZXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=WN0fHS1E3WYhaNTMIUFWDS4nw/cwGpcpJ5Ec381RmGw=;
-        b=ASdSgfIQPoByQU8qh3O/rtC/e4BbuhIYFeKtQxlE1YTbRNmauT/PvzJXCs29iaaOmB
-         tQGItGo6SPwpop1WjGhvcqmxA3b79JHk0vXrVFaFrZluv7vV+ZlvFdAqYRDUsLo/y3gS
-         8KEo/o28E/7TC4ocXIa/9rKhJ5xPZm6zr0/83D+4t2H55OK+pHnY6XYFtA2O/kKDWuWN
-         gUP+MaYWuT8Btmb4IV7wrOBGi5Drnd/c+7RhsxOPHyzx6IhLU84LHnY0FsnMhbh5mPCH
-         jhfkWhtACh/rQGa0Le/CovlYaoh8VxiTwN3hLz2HzJ4HtJ8MW8vthTga+h/V30/gM5C7
-         Nqmg==
-X-Gm-Message-State: AOAM530OQ5aSfTuTnHQIV8avMfexzMDFUMr6tSVyqJ+7gc9eU3xkKlH+
-        W2/rAzg+kQFM8RjTU2xa68triW0TS7Qnt6d+2hL9cDX8OpJYDvhzlzBeZXmTursAoMvYKDHWXlF
-        3JHGFYIMh98bqWQe5/OL1JhQAToMjzgQ5Mo8Tvw==
-X-Received: by 2002:a05:6402:d06:b0:412:eafd:8b9a with SMTP id eb6-20020a0564020d0600b00412eafd8b9amr34091224edb.278.1646300249136;
-        Thu, 03 Mar 2022 01:37:29 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwEOItBLjufIOG9pn9AcKVKBYrCqc0esYl+3bxjYohOhF8iGM2MCH5hndXuQg+/CTNrvTsxYg==
-X-Received: by 2002:a05:6402:d06:b0:412:eafd:8b9a with SMTP id eb6-20020a0564020d0600b00412eafd8b9amr34091202edb.278.1646300248959;
-        Thu, 03 Mar 2022 01:37:28 -0800 (PST)
-Received: from [192.168.0.137] (xdsl-188-155-181-108.adslplus.ch. [188.155.181.108])
-        by smtp.gmail.com with ESMTPSA id l2-20020a1709066b8200b006bbea7e566esm506462ejr.55.2022.03.03.01.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Mar 2022 01:37:28 -0800 (PST)
-Message-ID: <77a147f9-794c-83ca-070b-fb17d665ed8f@canonical.com>
-Date:   Thu, 3 Mar 2022 10:37:27 +0100
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DYNpbzV9XCiofWlx6Ep0BAs5/BGBNmH1zZ8NMWTIAps=;
+        b=Lr33cprjB7mA5sLJ2KyzvGlU9pvsA6KPV/Oe1gcFcJM9I+UX5gGKmLcR6MlZPvTGWd
+         7IYQph2vwbCRuCc7A44BFHA5hT9UViWY4GPks3bJtvFda9SXr6Oya7miAIWPETEJpzUp
+         uSOYFoF0IPhaUvfd4SzZz68TW48KQk9tgJSkydhGEFy8Qr5jSiTJt3u68XWq1tGcAjSr
+         IsiN758JJKVB7U6VuHnJihbHBsr4mDi5DJ95nvnD+ohY2HBa7YDxhy7CVFM0i7S3z4fh
+         /BdObYWohvCacxOlKiupXW99PjPEgrnNiKPRCHjNpaPiNAU7JQWb57kis6dPT/IEcsM+
+         97PA==
+X-Gm-Message-State: AOAM532/8LNn57voU32nwRFTwPFKA9+Aj42pLSuuP/8tF0whowj1pacv
+        jig+nWlfgbdeaVQaoCHIKIdB+VTbnbH3/cjmMJwM6A==
+X-Google-Smtp-Source: ABdhPJzq7dQyX57teeUVtaORiHuUIw2463URNE+PzG8vjJ8rLlyi3cWylCaVROZ+17COu1fZbs0dYl5c19KFfc0dSTg=
+X-Received: by 2002:a05:620a:4307:b0:507:d5b1:f65e with SMTP id
+ u7-20020a05620a430700b00507d5b1f65emr18375993qko.363.1646303537535; Thu, 03
+ Mar 2022 02:32:17 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk/samsung: Use of_device_get_match_data()
-Content-Language: en-US
-To:     cgel.zte@gmail.com, s.nawrocki@samsung.com
-Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com,
-        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-References: <20220303092223.2060108-1-chi.minghao@zte.com.cn>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <20220303092223.2060108-1-chi.minghao@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220303082140.240745-1-bhupesh.sharma@linaro.org> <20220303082140.240745-3-bhupesh.sharma@linaro.org>
+In-Reply-To: <20220303082140.240745-3-bhupesh.sharma@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Thu, 3 Mar 2022 13:32:06 +0300
+Message-ID: <CAA8EJpqF5ppEc7-ngvpQifUaGLuvguUS+EKofwwuYe2edOhSbQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sm8150: Add ufs power-domain entries
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
+        agross@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/03/2022 10:22, cgel.zte@gmail.com wrote:
-> From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
-> 
-> Use of_device_get_match_data() to simplify the code.
-> 
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
+On Thu, 3 Mar 2022 at 11:22, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
+>
+> Add power-domain entries for UFS controller & phy nodes
+> in sm8150 dts.
+>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> index 6012322a5984..7aa879eb24d7 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -1637,6 +1637,8 @@ ufs_mem_hc: ufshc@1d84000 {
+>                         phy-names = "ufsphy";
+>                         lanes-per-direction = <2>;
+>                         #reset-cells = <1>;
+> +
+> +                       power-domains = <&gcc UFS_PHY_GDSC>;
+>                         resets = <&gcc GCC_UFS_PHY_BCR>;
+>                         reset-names = "rst";
+>
+> @@ -1687,6 +1689,9 @@ ufs_mem_phy: phy@1d87000 {
+>                         clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
+>                                  <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+>
+> +                       power-domains = <&gcc UFS_CARD_GDSC>,
+> +                                       <&gcc UFS_PHY_GDSC>;
+> +                       power-domain-names = "ufs_card_gdsc", "ufs_phy_gdsc";
 
-Where is the bug report to be credited? Where is the actual bug which
-justifies usage of "Reported-by" tag (it is *only* for crediting bug
-reporters)? Last time this email was invalid - why do you add invalid
-emails to commit log?
+This will not work, if I'm not mistaken. Platform drivers won't bind
+two power-domains by default. And the qmp driver lacks handling for
+power domains.
 
-NAK.
+Also a generic question. I see that other platforms use UFS_PHY_GDSC
+for the host controller and completely ingore the UFS_CARD_GDSC. What
+makes sm8150 so different from the rest of the platforms?
 
-Please resend without this.
+>                         resets = <&ufs_mem_hc 0>;
+>                         reset-names = "ufsphy";
+>                         status = "disabled";
+> --
+> 2.35.1
+>
 
-Best regards,
-Krzysztof
+
+-- 
+With best wishes
+Dmitry
