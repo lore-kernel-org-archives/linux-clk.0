@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC94C433FE
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 08:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B813C4332F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 08:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231609AbiCCIts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:49:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57094 "EHLO
+        id S231623AbiCCItv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 03:49:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231610AbiCCItm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 03:49:42 -0500
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03D88175848
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 00:48:54 -0800 (PST)
-Received: by mail-io1-xd2d.google.com with SMTP id c18so4984331ioc.6
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 00:48:53 -0800 (PST)
+        with ESMTP id S231637AbiCCItq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 03:49:46 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EA8C167FAC
+        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 00:48:59 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id i1so3477898ila.7
+        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 00:48:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=482hD2qt/fBTqqMj7tAx9n2UG+YZouWq5uywKb+Ersw=;
-        b=M19HlaEWFMO5kHQfzFlCLzmDcVSL7CIc0WlpcCMOt9UgrGMCX4Lr0eNBQ5L6PyXgl8
-         IkHtVnjDicQhYvUbChvfUgrsu2QfAuhtnwGJLJc0TcXKu6eUe9oHglyI7PkxlnH6hUx3
-         aaFpSrogRbKBIobHDn5OTu8YJBTcwN5YZjjffLSb3yysxbLD0xoO47DF1HBW60GfOMty
-         AogDZ6dOstriarTzpKLv+3xBXF+8KhfiDOAgP+A5ocHrBQc1jjP+DfI1twjNWOb1oGWN
-         w2nScQ7ohoKGjjStfKCpFaJrPruocyH/u3DMg+sTExXCEQehx9VCQ7PPhBsig0RT2jSL
-         945A==
+        bh=20eucF22WnDJBIef+XBNRtcVtRBLlgGa2MbsKG7djtE=;
+        b=WRmS1nSKnowdulkfNW0XaOlwXV6i5MaLkYTLP6c/mA8ELeUYYD2/4UMUQz1hP5OwVH
+         v+/ZhJ2DfoIVg307iUV9IE8nTm5d2utdmYHxRsFBz/aQY0ZwMmtMD+bs02YYTLtwcICf
+         FRGI0ujPDvZVrCMJ8uVyIEPoFT2AJTAcXAuY8mso33l1KfVQGf9BZY+bnYzd6fp8ofOa
+         QezsW/wYOs9AaelbwraR8KBXijUSuEVN9Ts9C5JDLdjTHrE9PvrI/Y+9uWoQh+jtWDFd
+         zYWxZAiQxlb37/1TaMSbeJgOmqUgGK/8d9IELq7RytZeQyY7eXLltsnOBcTsshu3Nwkb
+         RK7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=482hD2qt/fBTqqMj7tAx9n2UG+YZouWq5uywKb+Ersw=;
-        b=lkeYmUHgzyaPFVE5OS0ObmgwEnWuiEyJVZlNWTQy+z05eTKGmrZaMeDSa+r96P+Tys
-         arIJLqiu+cCSe8em+ll4uk3BqIU6lJh4ScFXXkoMsR1WlToAef6vSEjrwr7WSPkf0WHY
-         hj5xsV4qnURv2HBQRLhCxNR4gaObUAvmFmss2eeeJef/yLEtT6w8WLw55wqGgT3FvTgk
-         uQ9iOB9amgazN2SPNZ8gLUS0ITR2r0iw7oiTnmrz4zkKpQlP+buDtgTRxJB0BS1WHjmy
-         9mcCKJ6qjNuqpbBNn1frW7ySfOysInMhT0DXlhhFnvUsXK1KqhV+ufBpxTjtIF0wXw7M
-         Jn2A==
-X-Gm-Message-State: AOAM533QyDePKYMVYsnKUBwIBPWFM/+/6GmL1klzHbvVgn7WLrWIp3nj
-        QkG8Uivx+vwDwJVdVY8Mu2ddIw==
-X-Google-Smtp-Source: ABdhPJyph0+r+OaL+USUMZ6pzp9tvhX9O/L6ChA22JMqK7rKFwLKaSCOe7ZVdIORk9Of7XkvPGd6sQ==
-X-Received: by 2002:a5e:d60d:0:b0:640:9e90:c1c4 with SMTP id w13-20020a5ed60d000000b006409e90c1c4mr26083357iom.0.1646297333361;
-        Thu, 03 Mar 2022 00:48:53 -0800 (PST)
+        bh=20eucF22WnDJBIef+XBNRtcVtRBLlgGa2MbsKG7djtE=;
+        b=2UHuYsU5Oap5w/cX9UPaDV+WOmXpxrHUkvIsdbpz2TQp6bg0BiTFPMueM3BSB4HlVy
+         uHC9pqhrLyy8RAvu4Qr5DBbJHNtiETO2HlfIBW9LXGhSUGs2ev7CPthmxuEuTEcKxjZ+
+         wSZcYv2jMXqbzN48/NHzxZYXATe41R3pnuviDGike4/uZrhatNeu/4yx+3Bb6pYCEhHu
+         2zYHd5lJCobohAkAGkRjNYE5H00uZRGHqritHKiauml8FaqP+K46nC3EDkYZkEVczV00
+         G5F0QSqmT9/TT/G0+nnqXpUwuRbN4xUeSSLRGPC5ix305d39GdQvKSJbhFWVswvMnonM
+         3F5A==
+X-Gm-Message-State: AOAM5311DA5m1/7bH92KuEzoZ+69Og5hW7g6vMjRPYg8/pHETARorVDx
+        zqhFD5T0wssotdn4zy3ZnZFFfw==
+X-Google-Smtp-Source: ABdhPJzTkoONlJPJvab6E5fmAv8yEhiOczk66QANB+yBCAJzPoaRlEd5eRfuL5uY1vnssHy4GG6Ysw==
+X-Received: by 2002:a92:c8ca:0:b0:2c4:ff8b:98cb with SMTP id c10-20020a92c8ca000000b002c4ff8b98cbmr7537222ilq.183.1646297338443;
+        Thu, 03 Mar 2022 00:48:58 -0800 (PST)
 Received: from localhost.localdomain ([182.64.85.91])
-        by smtp.gmail.com with ESMTPSA id m9-20020a923f09000000b002c2a1a3a888sm1480704ila.50.2022.03.03.00.48.48
+        by smtp.gmail.com with ESMTPSA id m9-20020a923f09000000b002c2a1a3a888sm1480704ila.50.2022.03.03.00.48.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 00:48:53 -0800 (PST)
+        Thu, 03 Mar 2022 00:48:58 -0800 (PST)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
@@ -54,9 +54,9 @@ Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
         devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
         mturquette@baylibre.com, linux-clk@vger.kernel.org,
         robh+dt@kernel.org, bjorn.andersson@linaro.org
-Subject: [PATCH v3 3/6] clk: qcom: gcc: Add emac GDSC support for SM8150
-Date:   Thu,  3 Mar 2022 14:18:21 +0530
-Message-Id: <20220303084824.284946-4-bhupesh.sharma@linaro.org>
+Subject: [PATCH v3 4/6] clk: qcom: gcc-sm8150: Use ALWAYS_ON flag as a workaround for emac gdsc
+Date:   Thu,  3 Mar 2022 14:18:22 +0530
+Message-Id: <20220303084824.284946-5-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220303084824.284946-1-bhupesh.sharma@linaro.org>
 References: <20220303084824.284946-1-bhupesh.sharma@linaro.org>
@@ -66,55 +66,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the EMAC GDSC defines and driver structures for SM8150.
+emac GDSC currently has issues (seen on SA8155p-ADP) when its
+turn'ed ON, once its already in OFF state. So when the 'eth'
+interface is turned up, it fails (as RGMII CLK is unavailable,
+which is gated by emac GDSC) with the following logs:
 
-Cc: Stephen Boyd <sboyd@kernel.org>
+  qcom-ethqos 20000.ethernet eth0: PHY [stmmac-0:07] driver [Micrel
+                                   KSZ9031 Gigabit PHY] (irq=150)
+  <..snip..>
+  qcom-ethqos 20000.ethernet: Failed to reset the dma
+  qcom-ethqos 20000.ethernet eth0: stmmac_hw_setup: DMA engine
+                                   initialization failed
+  qcom-ethqos 20000.ethernet eth0: stmmac_open: Hw setup failed
+
+So, use the 'ALWAYS_ON' flag as a workaround to describe emac GDSC
+for now.
+
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 ---
- drivers/clk/qcom/gcc-sm8150.c               | 10 ++++++++++
- include/dt-bindings/clock/qcom,gcc-sm8150.h |  1 +
- 2 files changed, 11 insertions(+)
+ drivers/clk/qcom/gcc-sm8150.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 85a431ac417b..08ba29e3a835 100644
+index 08ba29e3a835..76485bff7240 100644
 --- a/drivers/clk/qcom/gcc-sm8150.c
 +++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -3448,6 +3448,15 @@ static struct clk_branch gcc_video_xo_clk = {
+@@ -3454,7 +3454,13 @@ static struct gdsc emac_gdsc = {
+ 		.name = "emac_gdsc",
  	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = POLL_CFG_GDSCR,
++	/*
++	 * FIXME: emac GDSC cannot resume after GDSC power off:
++	 * qcom-ethqos 20000.ethernet: Failed to reset the dma
++	 *
++	 * So use ALWAYS_ON flag as a workaround.
++	 */
++	.flags = ALWAYS_ON,
  };
  
-+static struct gdsc emac_gdsc = {
-+	.gdscr = 0x6004,
-+	.pd = {
-+		.name = "emac_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = POLL_CFG_GDSCR,
-+};
-+
  static struct gdsc usb30_prim_gdsc = {
- 	.gdscr = 0xf004,
- 	.pd = {
-@@ -3714,6 +3723,7 @@ static const struct qcom_reset_map gcc_sm8150_resets[] = {
- };
- 
- static struct gdsc *gcc_sm8150_gdscs[] = {
-+	[EMAC_GDSC] = &emac_gdsc,
- 	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
- 	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
- };
-diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-index 3e1a91876610..40596b9ded06 100644
---- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-@@ -243,5 +243,6 @@
- /* GCC GDSCRs */
- #define USB30_PRIM_GDSC                     4
- #define USB30_SEC_GDSC						5
-+#define EMAC_GDSC						6
- 
- #endif
 -- 
 2.35.1
 
