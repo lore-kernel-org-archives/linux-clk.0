@@ -2,127 +2,260 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7260DC433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 10:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E952EC433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 12:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbiCCKfa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 05:35:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49850 "EHLO
+        id S233083AbiCCMOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 07:14:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231626AbiCCKfa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 05:35:30 -0500
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B17433E20
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 02:34:44 -0800 (PST)
-Received: by mail-qk1-x731.google.com with SMTP id n185so3529642qke.5
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 02:34:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Paj8FNxOly+Z1sFlHaZ1IXLZB2+GxhjkskQqoM3JxY8=;
-        b=MOxX/pIfiTOHdcUuGfh6LT1Cc8tLMfyk3Kw99M3VF33JijFC6ckUJO1x69xBW1P26N
-         sUWWm3HwoEgSn6edanOXeaqALRNvLDAkFWPe6wpn4pGtIGAxVkGqX4AQYhak6lzWNm/u
-         0ps0yB/+WjA2yEayDqcUmErk48dHwvz1j8MkHWfwsOvnk+Ocumjo9nVHu3V3QKxzJh8R
-         iryNVi1grlruL0lxxIukQto7olpV1KJXn0K5SMUb3a/uTBL24O1rQu/FDjAx5lD63N6I
-         NUi9DvCs3DwRNknUOB43Vd1SHL+CBCIb/aYoWLkHpzlhttHUmKoz4Fm8z+OpodTH3s09
-         OKfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Paj8FNxOly+Z1sFlHaZ1IXLZB2+GxhjkskQqoM3JxY8=;
-        b=t/I3njQk5PqKGDazOUF9jrLP0EcMKAHoCOcvzwgNTWA1EmuNv3dHOtzfW6UW4w7FLE
-         ZMjmK79fjtgjsgtYFuHzVXKsSfEC2GN2Ifkwh6hi+4ObHjMzxafdvkLpW4X+EY7tUWGo
-         yY/YO8OJrowC9LQD88eWj1BaQGr4npnU071KmyN6ajC4hdPnyLhddeZQm5lTmD+Cg/KA
-         ZFhY0ws84ywVgVRpJMz54vQdd03zXYMKk7ctaHLJ7Us8kP3BpoNOJXCTygfN0Qq8jQ0K
-         aOmzpzJW3TqAIOhj1wHklAHmXU4pnge4VIJxxZL/88/colEtx0iqsy8fSgpGSkQHtYAf
-         MbKw==
-X-Gm-Message-State: AOAM532HW5XL9w0/C088Ij5JhztkRoPoahxLEmC5SkOu4JktvBMvJOIM
-        fOI47AzatjirIqncaQMknSuvQxcfw7F8ar9UrVJZPg==
-X-Google-Smtp-Source: ABdhPJwo7qYsBN4V7J+1DL7V0IsCYkDt2z/F+5SxCYlKEhf0gzrrQAla1e+8qSFyuEdV0xn468wsWrAwkznC6fcjC24=
-X-Received: by 2002:a37:6215:0:b0:508:c213:72de with SMTP id
- w21-20020a376215000000b00508c21372demr18862608qkb.30.1646303683187; Thu, 03
- Mar 2022 02:34:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20220303084824.284946-1-bhupesh.sharma@linaro.org> <20220303084824.284946-6-bhupesh.sharma@linaro.org>
-In-Reply-To: <20220303084824.284946-6-bhupesh.sharma@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 3 Mar 2022 13:34:32 +0300
-Message-ID: <CAA8EJprSU5KAN-pOE1kz49_f8sDD1+1qB80Ga5+RWe5WRnuKPA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: sm8150: add ethernet node
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
-        agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        Vinod Koul <vkoul@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S233079AbiCCMOi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 07:14:38 -0500
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2D5AAB0D20;
+        Thu,  3 Mar 2022 04:13:51 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.90,151,1643641200"; 
+   d="scan'208";a="112218599"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 03 Mar 2022 21:13:51 +0900
+Received: from localhost.localdomain (unknown [10.226.93.138])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1C67242F4DB2;
+        Thu,  3 Mar 2022 21:13:48 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/7] Add Renesas RZ/G2UL Type-1 {SoC,SMARC EVK} support
+Date:   Thu,  3 Mar 2022 12:13:39 +0000
+Message-Id: <20220303121346.4769-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 3 Mar 2022 at 11:49, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
->
-> From: Vinod Koul <vkoul@kernel.org>
->
-> SM8150 SoC supports ethqos ethernet controller so add the node for it
+Hi All,
+RZ/G2UL SoC has single Core 1.0GHz CA-55 with Type-1 and
+Type-2 SoC's
 
-Is it available e.g. in the sm8150 SoC that I have in the phone?
+The difference between Type1 and Type2 SoC's are as follows
+Function	Type1			Type2
+SCIF		5ch {0,1,2,3,4}		4ch {0,1,2,3}
+Ethernet	2ch {0,1}		1ch {0}
+SSI		4ch {0,1,2,3}		3ch {0,1,2}
+ADC		2ch {0,1}		N/A
+DU		1ch Parallel I/F	N/A
 
->
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> [bhsharma: Correct ethernet interrupt numbers and add power-domain]
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8150.dtsi | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> index 6012322a5984..2ed231767535 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> @@ -915,6 +915,33 @@ gpi_dma0: dma-controller@800000 {
->                         status = "disabled";
->                 };
->
-> +               ethernet: ethernet@20000 {
-> +                       compatible = "qcom,sm8150-ethqos";
-> +                       reg = <0x0 0x00020000 0x0 0x10000>,
-> +                             <0x0 0x00036000 0x0 0x100>;
-> +                       reg-names = "stmmaceth", "rgmii";
-> +                       clock-names = "stmmaceth", "pclk", "ptp_ref", "rgmii";
-> +                       clocks = <&gcc GCC_EMAC_AXI_CLK>,
-> +                               <&gcc GCC_EMAC_SLV_AHB_CLK>,
-> +                               <&gcc GCC_EMAC_PTP_CLK>,
-> +                               <&gcc GCC_EMAC_RGMII_CLK>;
-> +                       interrupts = <GIC_SPI 689 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 699 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "macirq", "eth_lpi";
-> +
-> +                       power-domains = <&gcc EMAC_GDSC>;
-> +                       resets = <&gcc GCC_EMAC_BCR>;
-> +
-> +                       iommus = <&apps_smmu 0x3C0 0x0>;
-> +
-> +                       snps,tso;
-> +                       rx-fifo-depth = <4096>;
-> +                       tx-fifo-depth = <4096>;
-> +
-> +                       status = "disabled";
-> +               };
-> +
-> +
->                 qupv3_id_0: geniqup@8c0000 {
->                         compatible = "qcom,geni-se-qup";
->                         reg = <0x0 0x008c0000 0x0 0x6000>;
-> --
-> 2.35.1
->
+RZ/G2UL Type-2 is pin compatible with RZ/G2LC, so the number of channels
+for each IP matches with RZ/G2LC.
+The table below shows the functional differences between RZ/G2LC and 
+RZ/G2UL Type-2.
+Function	RZ/G2LC			RZ/G2UL Type-2
+Cortex-A55	Dual 1.2GHz		Single 1.0GHz
+DU		1ch MIPI-DSI		N/A
+GPT		6ch {0,3,4,5,6,7}	N/A
+Mali-31		1ch			N/A
 
+This patch series aims to add support for Renesas RZ/G2UL Type-1 SoC and
+basic support for Renesas RZ/G2UL SMARC EVK (based on R9A07G043U11)
+- memory
+- External input clock
+- SCIF
+- GbEthernet
+
+It shares the same carrier board with RZ/G2L, but the pin mapping is
+different. Place holders are added in device nodes to avoid compilation
+errors for the devices which have not been enabled yet on RZ/G2UL SoC.
+
+Also disable the device nodes which is not tested and delete the
+corresponding pinctrl definitions.
+
+Test logs:-
+
+/ # for i in machine family soc_id revision; do echo -n "$i: "; cat /sys/devices/soc0/$i;done
+machine: Renesas SMARC EVK based on r9a07g043u11
+family: RZ/G2UL
+soc_id: r9a07g043u
+revision: 0
+
+/ # cat /proc/cpuinfo
+processor       : 0
+BogoMIPS        : 48.00
+Features        : fp asimd evtstrm crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant     : 0x2
+CPU part        : 0xd05
+CPU revision    : 0
+
+/ # cat /proc/interrupts
+           CPU0
+ 11:        397     GICv3  27 Level     arch_timer
+ 13:          0     GICv3 412 Level     1004b800.serial:rx err
+ 14:         11     GICv3 414 Level     1004b800.serial:rx full
+ 15:        333     GICv3 415 Level     1004b800.serial:tx empty
+ 16:          0     GICv3 413 Level     1004b800.serial:break
+ 17:         28     GICv3 416 Level     1004b800.serial:rx ready
+ 18:          0     GICv3 173 Edge      error
+ 19:          0     GICv3 157 Edge      11820000.dma-controller:0
+ 20:          0     GICv3 158 Edge      11820000.dma-controller:1
+ 21:          0     GICv3 159 Edge      11820000.dma-controller:2
+ 22:          0     GICv3 160 Edge      11820000.dma-controller:3
+ 23:          0     GICv3 161 Edge      11820000.dma-controller:4
+ 24:          0     GICv3 162 Edge      11820000.dma-controller:5
+ 25:          0     GICv3 163 Edge      11820000.dma-controller:6
+ 26:          0     GICv3 164 Edge      11820000.dma-controller:7
+ 27:          0     GICv3 165 Edge      11820000.dma-controller:8
+ 28:          0     GICv3 166 Edge      11820000.dma-controller:9
+ 29:          0     GICv3 167 Edge      11820000.dma-controller:10
+ 30:          0     GICv3 168 Edge      11820000.dma-controller:11
+ 31:          0     GICv3 169 Edge      11820000.dma-controller:12
+ 32:          0     GICv3 170 Edge      11820000.dma-controller:13
+ 33:          0     GICv3 171 Edge      11820000.dma-controller:14
+ 34:          0     GICv3 172 Edge      11820000.dma-controller:15
+IPI0:         0       Rescheduling interrupts
+IPI1:         0       Function call interrupts
+IPI2:         0       CPU stop interrupts
+IPI3:         0       CPU stop (for crash dump) interrupts
+IPI4:         0       Timer broadcast interrupts
+IPI5:         0       IRQ work interrupts
+IPI6:         0       CPU wake-up interrupts
+Err:          0
+
+/ # cat /proc/meminfo
+MemTotal:         872180 kB
+MemFree:          848960 kB
+MemAvailable:     816180 kB
+Buffers:               0 kB
+Cached:             3948 kB
+SwapCached:            0 kB
+Active:                4 kB
+Inactive:             76 kB
+Active(anon):          4 kB
+Inactive(anon):       76 kB
+Active(file):          0 kB
+Inactive(file):        0 kB
+Unevictable:        3948 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:           116 kB
+Mapped:             1292 kB
+Shmem:                 0 kB
+KReclaimable:       2024 kB
+Slab:               6868 kB
+SReclaimable:       2024 kB
+SUnreclaim:         4844 kB
+KernelStack:         908 kB
+PageTables:           64 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:      436088 kB
+Committed_AS:        592 kB
+VmallocTotal:   133143592960 kB
+VmallocUsed:        1136 kB
+VmallocChunk:          0 kB
+Percpu:               92 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+CmaTotal:          32768 kB
+CmaFree:           32384 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+
+/ # mount -t debugfs none /sys/kernel/debug/
+/ #  cat /sys/kernel/debug/clk/clk_summary
+                                 enable  prepare  protect                                duty  hardware
+   clock                          count    count    count        rate   accuracy phase  cycle    enable
+-------------------------------------------------------------------------------------------------------
+ audio_mclock                         0        0        0    11289600          0     0  50000         Y
+ extal                                2        2        0    24000000          0     0  50000         Y
+    .pll6                             0        0        0   500000000          0     0  50000         Y
+    .pll5                             0        0        0  3000000000          0     0  50000         Y
+    .pll3                             1        1        0  1600000000          0     0  50000         Y
+       .pll3_div2                     1        1        0   800000000          0     0  50000         Y
+          .pll3_div2_4                1        1        0   200000000          0     0  50000         Y
+             P1                       4        4        0   200000000          0     0  50000         Y
+                dmac_aclk             2        2        0   200000000          0     0  50000         Y
+                ia55_clk              1        1        0   200000000          0     0  50000         Y
+                gic                   1        1        0   200000000          0     0  50000         Y
+                P1_DIV2               1        1        0   100000000          0     0  50000         Y
+                   dmac_pclk          1        1        0   100000000          0     0  50000         Y
+             .pll3_div2_4_2           0        0        0   100000000          0     0  50000         Y
+                P2                    0        0        0   100000000          0     0  50000         Y
+                   ia55_pclk          0        0        0   100000000          0     0  50000         N
+    .pll2                             1        1        0  1600000000          0     0  50000         Y
+       .pll2_div2                     1        1        0   800000000          0     0  50000         Y
+          .pll2_div2_8                1        1        0   100000000          0     0  50000         Y
+             P0                       1        1        0   100000000          0     0  50000         Y
+                sci1                  0        0        0   100000000          0     0  50000         N
+                sci0                  0        0        0   100000000          0     0  50000         N
+                scif4                 0        0        0   100000000          0     0  50000         N
+                scif3                 0        0        0   100000000          0     0  50000         N
+                scif2                 0        0        0   100000000          0     0  50000         N
+                scif1                 0        0        0   100000000          0     0  50000         N
+                scif0                 2        2        0   100000000          0     0  50000         Y
+    .pll1                             0        0        0  1000000000          0     0  50000         Y
+       I                              0        0        0  1000000000          0     0  50000         Y
+    .osc_div1000                      0        0        0       24000          0     0  50000         Y
+    .osc                              0        0        0    24000000          0     0  50000         Y
+ can                                  0        0        0           0          0     0  50000         Y
+ audio_clk2                           0        0        0    12288000          0     0  50000         Y
+ audio_clk1                           0        0        0    11289600          0     0  50000         Y
+/ #
+
+
+Cheers,
+Biju
+
+Biju Das (7):
+  dt-bindings: power: renesas,rzg2l-sysc: Document RZ/G2UL SoC
+  soc: renesas: Identify RZ/G2UL SoC
+  dt-bindings: clock: Add R9A07G043U CPG Clock and Reset Definitions
+  dt-bindings: clock: renesas: Document RZ/G2UL SoC
+  clk: renesas: Add support for RZ/G2UL SoC
+  arm64: dts: renesas: Add initial DTSI for RZ/G2UL SoC
+  arm64: dts: renesas: Add initial device tree for RZ/G2UL Type-1 SMARC
+    EVK
+
+ .../bindings/clock/renesas,rzg2l-cpg.yaml     |   9 +-
+ .../bindings/power/renesas,rzg2l-sysc.yaml    |  11 +-
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   | 413 ++++++++++++++++++
+ .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 111 +++++
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    |  25 ++
+ drivers/clk/renesas/Kconfig                   |   7 +-
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a07g043-cpg.c           | 157 +++++++
+ drivers/clk/renesas/rzg2l-cpg.c               |   6 +
+ drivers/clk/renesas/rzg2l-cpg.h               |   1 +
+ drivers/soc/renesas/Kconfig                   |   6 +
+ drivers/soc/renesas/renesas-soc.c             |  13 +
+ include/dt-bindings/clock/r9a07g043u-cpg.h    | 186 ++++++++
+ 14 files changed, 938 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+ create mode 100644 drivers/clk/renesas/r9a07g043-cpg.c
+ create mode 100644 include/dt-bindings/clock/r9a07g043u-cpg.h
 
 -- 
-With best wishes
-Dmitry
+2.17.1
+
