@@ -2,97 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05132C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0073C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbiCCJF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 04:05:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
+        id S229801AbiCCJSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 04:18:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiCCJF6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:05:58 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2DE177740;
-        Thu,  3 Mar 2022 01:05:10 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so2792148wmp.5;
-        Thu, 03 Mar 2022 01:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
-        b=bV0quv7CQHqRsqMuMnYki4NDf3gyminsa8fgh1Tkc09abQfrsbuKCSyIiNQsR89d3M
-         kj+RSpp585GVLCBfQZ3ZUb7yAUCpOu/yN7XukhV+udVL/9xkrC2ifWDnMgH5aunLxQTv
-         Zi6PGwfDUpWv7DW3l6wEV7x7EgcEk/5Rohqs54CouPvTTS78X4SMsbKnRzfnezg4kr4k
-         WWw3+EeOD1QM3tpg0qnkgvHB8rWJrMwRdXG6XyDwzPSwKDOwjxWyBNZVyYTZGShIPIVv
-         0hwKaTajT54NLnq6rHttPXXvBjRUKGGVgmaSg1AfIltw0xSOlJQEQr3UiLFI5QE6ygDR
-         1UTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
-        b=Moti2u3j8pA95HvPLQRerhGC3sVwbJ2deWif1rCJX6o5CToE4PGXb1bnXVRDYpcIOx
-         1W7189vfRtFKSpB1Gxc6rmaYmn4Iqj4fwzRCAKfoDV7U0ukff5Y6zBmsO1Nj6WWduajl
-         C/5DTY1pWsCDOSDiBN/9Zu9sJXXTPFVeaG9rIHXjSlxxWSdLWgeUQy2pmsK5QBoAFq51
-         iJcNjo3S69ayq8FmUOLWiWZYXQWkkdJIIaZUkkh9nKL3cIMPbgX/3ruyopl5FvZjwvrH
-         ZR1ic5uiJVn9FPbdVTc66bpFjGiCG8e6rYtjyniV6F7oyUW7qf9uWptYhAEs5AYRCt+q
-         qNAw==
-X-Gm-Message-State: AOAM533ddzI4x2phYqVbQYMsP5G6Czu/Se+KUM71ITSBrVkOTq3BK6rp
-        RquqHUc4Om2+WYoZh9xJQUc=
-X-Google-Smtp-Source: ABdhPJwQfGl2taTo7TZ21DRaALXumXvZYaUbZJ65zGR4LRTDVWP64sLQJSK2ZUxRUaKTbvBt3qe0jw==
-X-Received: by 2002:a1c:1907:0:b0:380:f6ec:4daa with SMTP id 7-20020a1c1907000000b00380f6ec4daamr3088912wmz.50.1646298309192;
-        Thu, 03 Mar 2022 01:05:09 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id e20-20020adfa454000000b001f01a14dce8sm1357768wra.97.2022.03.03.01.05.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 01:05:08 -0800 (PST)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Abel Vesa <abel.vesa@nxp.com>,
+        with ESMTP id S229613AbiCCJSL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:18:11 -0500
+X-Greylist: delayed 1654 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 01:17:25 PST
+Received: from the.earth.li (the.earth.li [IPv6:2a00:1098:86:4d:c0ff:ee:15:900d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53356119852
+        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 01:17:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+        s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=JraoEzfEu6BVdZPY22b9hr2HRvi9Lg4wAD5QnaTlQvQ=; b=Uzu5ikcdaD2LeKuz7YlSfqL2Rd
+        zHmlzoo/7Rp94sqmn55Y/prB0TYZe/9B8ocnsqcxOeflHQ8BQFcwYU9Gc8A17OfgljU5DWsREfzox
+        pGqr0j3osNbyhYjud8eLurnfnoAsSq8AuhFCMVsARC5/MCGJbMIFgkKVD3/YvaV0X7cukuL6khjr4
+        dCSs9kLBkqv3FYqdxHTWdgWYUzFyWA5ucAcuVCJeYbJEdGipec3/oEUetYU1CVBAaG6F9ZOxATauF
+        2yq9GIlMYgqieGSRGmOpttxgLxwTtZtU9DDm/9EPTz+H1jIU9cGhwPRK1+AvYnxH50KelgKX3eGWo
+        ofb6PtZA==;
+Received: from noodles by the.earth.li with local (Exim 4.94.2)
+        (envelope-from <noodles@earth.li>)
+        id 1nPh9U-00287t-A6; Thu, 03 Mar 2022 08:49:36 +0000
+Date:   Thu, 3 Mar 2022 08:49:36 +0000
+From:   Jonathan McDowell <noodles@earth.li>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: remove redundant re-assignment of pll->base
-Date:   Thu,  3 Mar 2022 09:05:08 +0000
-Message-Id: <20220303090508.1125175-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/15] Multiple addition and improvement to ipq8064 gcc
+Message-ID: <YiCBIIA1FU1DbOso@earth.li>
+References: <20220226135235.10051-1-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220226135235.10051-1-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are two identical assignments of pll->base to the same value,
-the second assignment is redundant and can be removed.
+On Sat, Feb 26, 2022 at 02:52:20PM +0100, Ansuel Smith wrote:
+> This is an attempt in making the ipq8064 SoC actually usable. Currently
+> many feature are missing for this SoC and devs user off-the-tree patches
+> to make it work (example patch for missing clock, patch for cpufreq
+> driver, patch to add missing node in the dts)
+> 
+> I notice there was some work in modernizing the gcc driver for other
+> qcom target but this wasn't done for ipq806x. This does exactly this, we
+> drop any parent_names stuff and we switch to the parent_data way. We
+> also drop the pxo and cxo source clk from gcc driver and we refer to the
+> dts for it.
+> 
+> This also add all the missing feature for the nss cores and the
+> cryptoengine in them. It does also introduce the required flags to make
+> the RPM actually work and NOT reject any command. There was an attempt
+> in declaring these clock as core clock in the dts but this ends up in no
+> serial as the kernel makes these clock not accessible. We just want to
+> make the kernel NOT disable them if unused nothing more.
+> 
+> At the end we update the ipq8064 dtsi to add the pxo and cxo tag and
+> declare them in gcc and also fix a problem with tsens probe.
 
-Cleans up cppcheck warning:
-drivers/clk/imx/clk-sscg-pll.c:528:12: style: Variable 'pll->base' is
-reassigned a value before the old one has been used. [redundantAssignment]
+FWIW, series tested on my RB3011. No regressions, tsens driver now
+correctly loads.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/imx/clk-sscg-pll.c | 1 -
- 1 file changed, 1 deletion(-)
+Tested-by: Jonathan McDowell <noodles@earth.li>
 
-diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
-index 9d6cdff0537f..81f304fae908 100644
---- a/drivers/clk/imx/clk-sscg-pll.c
-+++ b/drivers/clk/imx/clk-sscg-pll.c
-@@ -525,7 +525,6 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
- 
--	pll->base = base;
- 	pll->hw.init = &init;
- 
- 	hw = &pll->hw;
+> v6:
+> - Add more info about the changed define
+> - Fixed wrong definition for pxo/cxo parent map
+> v5:
+> - Drop patch removing fixed clk
+> - Use name in parent_data to keep compatibility with old dtb
+> - Fix error in the documentation commits
+> - Keep old copyright for gcc documentation
+> - Fix an error with the rcg floor ops
+> - Set nss clk based on the device compatible
+> v4:
+> - Drop drivers in all the patches.
+> - Introduce floor ops for sdc
+> - gcc.yaml to gcc-other.yaml
+> - gcc-common.yaml to gcc.yaml
+> v3:
+> - Rework Documentation with Rob suggestions
+> v2:
+> - Fix error from Rob bot.
+> - Add additional commits to make qcom,gcc.yaml a template
+> - Squash parent_hws patch with the modernize patch
+> - Create gcc_pxo instead of using long define.
+> 
+> Ansuel Smith (15):
+>   dt-bindings: clock: split qcom,gcc.yaml to common and specific schema
+>   dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
+>   dt-bindings: clock: document qcom,gcc-ipq8064 binding
+>   clk: qcom: gcc-ipq806x: fix wrong naming for gcc_pxo_pll8_pll0
+>   clk: qcom: gcc-ipq806x: convert parent_names to parent_data
+>   clk: qcom: gcc-ipq806x: use ARRAY_SIZE for num_parents
+>   clk: qcom: gcc-ipq806x: add additional freq nss cores
+>   clk: qcom: gcc-ipq806x: add unusued flag for critical clock
+>   clk: qcom: clk-rcg: add clk_rcg_floor_ops ops
+>   clk: qcom: gcc-ipq806x: add additional freq for sdc table
+>   dt-bindings: clock: add ipq8064 ce5 clk define
+>   clk: qcom: gcc-ipq806x: add CryptoEngine clocks
+>   dt-bindings: reset: add ipq8064 ce5 resets
+>   clk: qcom: gcc-ipq806x: add CryptoEngine resets
+>   ARM: dts: qcom: add syscon and cxo/pxo clock to gcc node for ipq8064
+> 
+>  .../bindings/clock/qcom,gcc-apq8064.yaml      |  29 +-
+>  .../bindings/clock/qcom,gcc-ipq8064.yaml      |  76 ++
+>  .../bindings/clock/qcom,gcc-other.yaml        |  70 ++
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   |  59 +-
+>  arch/arm/boot/dts/qcom-ipq8064.dtsi           |   8 +-
+>  drivers/clk/qcom/clk-rcg.c                    |  24 +
+>  drivers/clk/qcom/clk-rcg.h                    |   1 +
+>  drivers/clk/qcom/gcc-ipq806x.c                | 649 +++++++++++++-----
+>  include/dt-bindings/clock/qcom,gcc-ipq806x.h  |   5 +-
+>  include/dt-bindings/reset/qcom,gcc-ipq806x.h  |   5 +
+>  10 files changed, 685 insertions(+), 241 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> 
+> -- 
+> 2.34.1
+
+J.
+
 -- 
-2.34.1
-
+Web [            Even the Evening Herald slags me off.             ]
+site: https:// [                                          ]      Made by
+www.earth.li/~noodles/  [                      ]         HuggieTag 0.0.24
