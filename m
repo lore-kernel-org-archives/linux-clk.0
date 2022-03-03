@@ -2,144 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0073C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE80C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbiCCJSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 04:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52714 "EHLO
+        id S231154AbiCCJXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 04:23:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbiCCJSL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:18:11 -0500
-X-Greylist: delayed 1654 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Mar 2022 01:17:25 PST
-Received: from the.earth.li (the.earth.li [IPv6:2a00:1098:86:4d:c0ff:ee:15:900d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53356119852
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 01:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-        s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=JraoEzfEu6BVdZPY22b9hr2HRvi9Lg4wAD5QnaTlQvQ=; b=Uzu5ikcdaD2LeKuz7YlSfqL2Rd
-        zHmlzoo/7Rp94sqmn55Y/prB0TYZe/9B8ocnsqcxOeflHQ8BQFcwYU9Gc8A17OfgljU5DWsREfzox
-        pGqr0j3osNbyhYjud8eLurnfnoAsSq8AuhFCMVsARC5/MCGJbMIFgkKVD3/YvaV0X7cukuL6khjr4
-        dCSs9kLBkqv3FYqdxHTWdgWYUzFyWA5ucAcuVCJeYbJEdGipec3/oEUetYU1CVBAaG6F9ZOxATauF
-        2yq9GIlMYgqieGSRGmOpttxgLxwTtZtU9DDm/9EPTz+H1jIU9cGhwPRK1+AvYnxH50KelgKX3eGWo
-        ofb6PtZA==;
-Received: from noodles by the.earth.li with local (Exim 4.94.2)
-        (envelope-from <noodles@earth.li>)
-        id 1nPh9U-00287t-A6; Thu, 03 Mar 2022 08:49:36 +0000
-Date:   Thu, 3 Mar 2022 08:49:36 +0000
-From:   Jonathan McDowell <noodles@earth.li>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/15] Multiple addition and improvement to ipq8064 gcc
-Message-ID: <YiCBIIA1FU1DbOso@earth.li>
-References: <20220226135235.10051-1-ansuelsmth@gmail.com>
+        with ESMTP id S230133AbiCCJXR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:23:17 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08D9BDB;
+        Thu,  3 Mar 2022 01:22:31 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id b23so4056500qtt.6;
+        Thu, 03 Mar 2022 01:22:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/zSPK6JEvJijyCiO9MABrtOwuhrRt9yY2leCnS6HUS0=;
+        b=XgIZuW+mhwEVgZNB9ZO+iX9LiKtwmin8cXBt3P5Hewpj+JwXcqYDkDl8SYwIT47Ve1
+         6UC0aedtNtUysYMmAFMXeJE9EYxVEanwBVpZ113sU+G/ZyGvfil3dM8ic9KjfjVfvB3L
+         eQd1OzdGtgxWqxSz9ObNMeqhp8P9RguYj0Itc9gx4/PFCB9dVXofrryo8HLjBOn0XcHl
+         oleEwQ7uAr6HnW70wt883JxIk1+Kv0wn++bDg7Cz1sKCukcJ2Hn+/b34mKO0ajQVtyb5
+         7iM0jhRroUGomEBqruhafh+7uiWGChVzm4VMZij8H76cWiHfY9++kkREXPvJbEl24jF5
+         w9zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/zSPK6JEvJijyCiO9MABrtOwuhrRt9yY2leCnS6HUS0=;
+        b=yE4BqWRVTW+9y4Tlc67YCo8PdWbb9mJDJBFO5RDGeMxXNDJdqgIVZThaqW8mxrdrj4
+         ekLKJBd8Oy7NVvxGJWqF84NV1LNidmgmHK5OJ+lan2Bjkal077C++4J4BZRmfxSURGev
+         whIcfUzBSEqv/1WpD2yqMEbyVwdXCvxKeZgNdxtWO45jExZWuwGToW6Bni1dvq7norNv
+         HmvLy+2UyvNYaMnpIF586u+4GbszKbY2b1CVspsvueQi4JGI+g2wIRIrehJf19nM41+P
+         iNR7w1+qTy9tzeopJqWbYK7FZCtRXgeJoKmbyHsphAHp+O/OzAysrAskyao08E6vF6pu
+         FvPA==
+X-Gm-Message-State: AOAM5300/6LB1flmhoz2NCUBQH5pnhL4augPU8fzPz26IfsRr9Pd0mJA
+        0YCCbj4d4sxUIT4+YI7rMBxlaijW6ao=
+X-Google-Smtp-Source: ABdhPJwG5VUeWIl21NeNrWs2YKDhLgzYhhIJRERbt2tiJT5u7bdGVyUMP9LlqEQmttn4Xwpe/ngUJQ==
+X-Received: by 2002:ac8:5946:0:b0:2df:c52:86e3 with SMTP id 6-20020ac85946000000b002df0c5286e3mr21929324qtz.575.1646299350796;
+        Thu, 03 Mar 2022 01:22:30 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id s7-20020a05622a018700b002dfed15c9edsm1191015qtw.74.2022.03.03.01.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Mar 2022 01:22:30 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     s.nawrocki@samsung.com
+Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] clk/samsung: Use of_device_get_match_data()
+Date:   Thu,  3 Mar 2022 09:22:23 +0000
+Message-Id: <20220303092223.2060108-1-chi.minghao@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220226135235.10051-1-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 26, 2022 at 02:52:20PM +0100, Ansuel Smith wrote:
-> This is an attempt in making the ipq8064 SoC actually usable. Currently
-> many feature are missing for this SoC and devs user off-the-tree patches
-> to make it work (example patch for missing clock, patch for cpufreq
-> driver, patch to add missing node in the dts)
-> 
-> I notice there was some work in modernizing the gcc driver for other
-> qcom target but this wasn't done for ipq806x. This does exactly this, we
-> drop any parent_names stuff and we switch to the parent_data way. We
-> also drop the pxo and cxo source clk from gcc driver and we refer to the
-> dts for it.
-> 
-> This also add all the missing feature for the nss cores and the
-> cryptoengine in them. It does also introduce the required flags to make
-> the RPM actually work and NOT reject any command. There was an attempt
-> in declaring these clock as core clock in the dts but this ends up in no
-> serial as the kernel makes these clock not accessible. We just want to
-> make the kernel NOT disable them if unused nothing more.
-> 
-> At the end we update the ipq8064 dtsi to add the pxo and cxo tag and
-> declare them in gcc and also fix a problem with tsens probe.
+From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
 
-FWIW, series tested on my RB3011. No regressions, tsens driver now
-correctly loads.
+Use of_device_get_match_data() to simplify the code.
 
-Tested-by: Jonathan McDowell <noodles@earth.li>
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> v6:
-> - Add more info about the changed define
-> - Fixed wrong definition for pxo/cxo parent map
-> v5:
-> - Drop patch removing fixed clk
-> - Use name in parent_data to keep compatibility with old dtb
-> - Fix error in the documentation commits
-> - Keep old copyright for gcc documentation
-> - Fix an error with the rcg floor ops
-> - Set nss clk based on the device compatible
-> v4:
-> - Drop drivers in all the patches.
-> - Introduce floor ops for sdc
-> - gcc.yaml to gcc-other.yaml
-> - gcc-common.yaml to gcc.yaml
-> v3:
-> - Rework Documentation with Rob suggestions
-> v2:
-> - Fix error from Rob bot.
-> - Add additional commits to make qcom,gcc.yaml a template
-> - Squash parent_hws patch with the modernize patch
-> - Create gcc_pxo instead of using long define.
-> 
-> Ansuel Smith (15):
->   dt-bindings: clock: split qcom,gcc.yaml to common and specific schema
->   dt-bindings: clock: simplify qcom,gcc-apq8064 Documentation
->   dt-bindings: clock: document qcom,gcc-ipq8064 binding
->   clk: qcom: gcc-ipq806x: fix wrong naming for gcc_pxo_pll8_pll0
->   clk: qcom: gcc-ipq806x: convert parent_names to parent_data
->   clk: qcom: gcc-ipq806x: use ARRAY_SIZE for num_parents
->   clk: qcom: gcc-ipq806x: add additional freq nss cores
->   clk: qcom: gcc-ipq806x: add unusued flag for critical clock
->   clk: qcom: clk-rcg: add clk_rcg_floor_ops ops
->   clk: qcom: gcc-ipq806x: add additional freq for sdc table
->   dt-bindings: clock: add ipq8064 ce5 clk define
->   clk: qcom: gcc-ipq806x: add CryptoEngine clocks
->   dt-bindings: reset: add ipq8064 ce5 resets
->   clk: qcom: gcc-ipq806x: add CryptoEngine resets
->   ARM: dts: qcom: add syscon and cxo/pxo clock to gcc node for ipq8064
-> 
->  .../bindings/clock/qcom,gcc-apq8064.yaml      |  29 +-
->  .../bindings/clock/qcom,gcc-ipq8064.yaml      |  76 ++
->  .../bindings/clock/qcom,gcc-other.yaml        |  70 ++
->  .../devicetree/bindings/clock/qcom,gcc.yaml   |  59 +-
->  arch/arm/boot/dts/qcom-ipq8064.dtsi           |   8 +-
->  drivers/clk/qcom/clk-rcg.c                    |  24 +
->  drivers/clk/qcom/clk-rcg.h                    |   1 +
->  drivers/clk/qcom/gcc-ipq806x.c                | 649 +++++++++++++-----
->  include/dt-bindings/clock/qcom,gcc-ipq806x.h  |   5 +-
->  include/dt-bindings/reset/qcom,gcc-ipq806x.h  |   5 +
->  10 files changed, 685 insertions(+), 241 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8064.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
-> 
-> -- 
-> 2.34.1
-
-J.
-
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index e6d6cbf8c4e6..feed1a347c09 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -81,19 +81,13 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+ static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
+ {
+ 	const struct exynos_clkout_variant *variant;
+-	const struct of_device_id *match;
+ 
+ 	if (!dev->parent) {
+ 		dev_err(dev, "not instantiated from MFD\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	match = of_match_device(exynos_clkout_ids, dev->parent);
+-	if (!match) {
+-		dev_err(dev, "cannot match parent device\n");
+-		return -EINVAL;
+-	}
+-	variant = match->data;
++	variant = of_device_get_match_data(dev->parent);
+ 
+ 	*mux_mask = variant->mux_mask;
+ 
 -- 
-Web [            Even the Evening Herald slags me off.             ]
-site: https:// [                                          ]      Made by
-www.earth.li/~noodles/  [                      ]         HuggieTag 0.0.24
+2.25.1
+
