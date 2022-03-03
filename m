@@ -2,251 +2,97 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4E4C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 08:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05132C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 09:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231465AbiCCIt7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:49:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        id S230109AbiCCJF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 04:05:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231648AbiCCIt5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 03:49:57 -0500
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77ED217585E
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 00:49:09 -0800 (PST)
-Received: by mail-il1-x12e.google.com with SMTP id b5so812432ilj.9
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 00:49:09 -0800 (PST)
+        with ESMTP id S229491AbiCCJF6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 04:05:58 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2DE177740;
+        Thu,  3 Mar 2022 01:05:10 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so2792148wmp.5;
+        Thu, 03 Mar 2022 01:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=31oR/5R8uiOoYLaqojfd9sfVOvx41Qx3BFeK4/Ytd84=;
-        b=j5CDqRS3oxPTE35yyFrHx2Y6GB2DlGJtO1iBOz3pvlLX8PTZyPdSu/k/MLAFVdzMdM
-         WI9TdX0wk42+MOxOtu4a5Tz8h8cw0KwEDv4EKo5pIzBWME8qpuq6MbGHgKPpeNNbRE77
-         9TKifPjcQSQzE+W9OZUSdKgA6FFRCCsXKvU63O2nMiQw248a4c6xQDUeY0MMkBERCopw
-         BtfK7bSiJ9jtqkj6DcVbpFE22wS/gbrHcHuZUlUtZX2yo/8axZqS5aeV5waqSET/uOHQ
-         7Utib7uaAZUc2eCJhMiVrezn2YYr10VwkBY8JdWuAUpOb5CHIJea6BQ/t6bS6xrOfwWL
-         qNfw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
+        b=bV0quv7CQHqRsqMuMnYki4NDf3gyminsa8fgh1Tkc09abQfrsbuKCSyIiNQsR89d3M
+         kj+RSpp585GVLCBfQZ3ZUb7yAUCpOu/yN7XukhV+udVL/9xkrC2ifWDnMgH5aunLxQTv
+         Zi6PGwfDUpWv7DW3l6wEV7x7EgcEk/5Rohqs54CouPvTTS78X4SMsbKnRzfnezg4kr4k
+         WWw3+EeOD1QM3tpg0qnkgvHB8rWJrMwRdXG6XyDwzPSwKDOwjxWyBNZVyYTZGShIPIVv
+         0hwKaTajT54NLnq6rHttPXXvBjRUKGGVgmaSg1AfIltw0xSOlJQEQr3UiLFI5QE6ygDR
+         1UTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=31oR/5R8uiOoYLaqojfd9sfVOvx41Qx3BFeK4/Ytd84=;
-        b=BAWV+nWajbBH0JkRwezU4c/w+ufgfcnl6BnzdNIh5OVH6emG2tF8mu5+rmx0Dqipzi
-         OYEB4rcwdcO6PVqtJSwCRifh0kyHvmcSx+BM1EnXbEe2BUftJtuSDxW1t3nei5A765hd
-         UP63bGR0+j4WZMGfKhLa56avjn9X2XkcAY9aGL6xVG7FXgE3QOLwKlOO6OlUTGQTzSNm
-         IL3Af+RCGcHMvx1SQYwM69IJuQpR9YQZLneU5yIuYcBiFD9tvPDdvvlLPfDM/kl4sHcH
-         lFHEMNilDXbx/Z673698I8HUopDHbK0F9sWe3SFv+7uFbaZfT3rZ7F1i2Jju5mjTmd0R
-         ydGg==
-X-Gm-Message-State: AOAM530c/SXo4WxLKM2eb5yZMVHBMV+OmK+oafszzycOt1VU8vFTmvqn
-        pXc7nMgwrxwG/65Z1CILp8Afug==
-X-Google-Smtp-Source: ABdhPJwPOMyXQ3RYefx6bbUpZKR8O4u9lKzqY1zOzCWZGh6vbFl1jFWIQFFAAaSdqNoF7NR8nEpD4w==
-X-Received: by 2002:a05:6e02:15c8:b0:2bd:fdca:18a8 with SMTP id q8-20020a056e0215c800b002bdfdca18a8mr30638024ilu.320.1646297348867;
-        Thu, 03 Mar 2022 00:49:08 -0800 (PST)
-Received: from localhost.localdomain ([182.64.85.91])
-        by smtp.gmail.com with ESMTPSA id m9-20020a923f09000000b002c2a1a3a888sm1480704ila.50.2022.03.03.00.49.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+FOBCOKBUOKBrO8yhdXy1yyP31Rv+CE5Az+FJgpuSOw=;
+        b=Moti2u3j8pA95HvPLQRerhGC3sVwbJ2deWif1rCJX6o5CToE4PGXb1bnXVRDYpcIOx
+         1W7189vfRtFKSpB1Gxc6rmaYmn4Iqj4fwzRCAKfoDV7U0ukff5Y6zBmsO1Nj6WWduajl
+         C/5DTY1pWsCDOSDiBN/9Zu9sJXXTPFVeaG9rIHXjSlxxWSdLWgeUQy2pmsK5QBoAFq51
+         iJcNjo3S69ayq8FmUOLWiWZYXQWkkdJIIaZUkkh9nKL3cIMPbgX/3ruyopl5FvZjwvrH
+         ZR1ic5uiJVn9FPbdVTc66bpFjGiCG8e6rYtjyniV6F7oyUW7qf9uWptYhAEs5AYRCt+q
+         qNAw==
+X-Gm-Message-State: AOAM533ddzI4x2phYqVbQYMsP5G6Czu/Se+KUM71ITSBrVkOTq3BK6rp
+        RquqHUc4Om2+WYoZh9xJQUc=
+X-Google-Smtp-Source: ABdhPJwQfGl2taTo7TZ21DRaALXumXvZYaUbZJ65zGR4LRTDVWP64sLQJSK2ZUxRUaKTbvBt3qe0jw==
+X-Received: by 2002:a1c:1907:0:b0:380:f6ec:4daa with SMTP id 7-20020a1c1907000000b00380f6ec4daamr3088912wmz.50.1646298309192;
+        Thu, 03 Mar 2022 01:05:09 -0800 (PST)
+Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
+        by smtp.gmail.com with ESMTPSA id e20-20020adfa454000000b001f01a14dce8sm1357768wra.97.2022.03.03.01.05.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 00:49:08 -0800 (PST)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
-        agross@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v3 6/6] arm64: dts: qcom: sa8155p-adp: Enable ethernet node
-Date:   Thu,  3 Mar 2022 14:18:24 +0530
-Message-Id: <20220303084824.284946-7-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220303084824.284946-1-bhupesh.sharma@linaro.org>
-References: <20220303084824.284946-1-bhupesh.sharma@linaro.org>
+        Thu, 03 Mar 2022 01:05:08 -0800 (PST)
+From:   Colin Ian King <colin.i.king@gmail.com>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: remove redundant re-assignment of pll->base
+Date:   Thu,  3 Mar 2022 09:05:08 +0000
+Message-Id: <20220303090508.1125175-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+There are two identical assignments of pll->base to the same value,
+the second assignment is redundant and can be removed.
 
-Enable the etheret node, add the phy node and pinctrl for ethernet.
+Cleans up cppcheck warning:
+drivers/clk/imx/clk-sscg-pll.c:528:12: style: Variable 'pll->base' is
+reassigned a value before the old one has been used. [redundantAssignment]
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-[bhsharma: Correct ethernet/rgmii related pinmuxs, specify multi-queues and
- plug in the PHY interrupt for WOL]
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sa8155p-adp.dts | 144 +++++++++++++++++++++++
- 1 file changed, 144 insertions(+)
+ drivers/clk/imx/clk-sscg-pll.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
-index 8756c2b25c7e..474f688f14a2 100644
---- a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
-+++ b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
-@@ -47,6 +47,65 @@ vreg_s4a_1p8: smps4 {
+diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
+index 9d6cdff0537f..81f304fae908 100644
+--- a/drivers/clk/imx/clk-sscg-pll.c
++++ b/drivers/clk/imx/clk-sscg-pll.c
+@@ -525,7 +525,6 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num_parents;
  
- 		vin-supply = <&vreg_3p3>;
- 	};
-+
-+	mtl_rx_setup: rx-queues-config {
-+		snps,rx-queues-to-use = <4>;
-+		snps,rx-sched-sp;
-+
-+		queue0 {
-+			snps,dcb-algorithm;
-+			snps,map-to-dma-channel = <0x0>;
-+			snps,route-up;
-+			snps,priority = <0x1>;
-+		};
-+
-+		queue1 {
-+			snps,dcb-algorithm;
-+			snps,map-to-dma-channel = <0x1>;
-+			snps,route-ptp;
-+		};
-+
-+		queue2 {
-+			snps,avb-algorithm;
-+			snps,map-to-dma-channel = <0x2>;
-+			snps,route-avcp;
-+		};
-+
-+		queue3 {
-+			snps,avb-algorithm;
-+			snps,map-to-dma-channel = <0x3>;
-+			snps,priority = <0xC>;
-+		};
-+	};
-+
-+	mtl_tx_setup: tx-queues-config {
-+		snps,tx-queues-to-use = <4>;
-+		snps,tx-sched-wrr;
-+
-+		queue0 {
-+			snps,weight = <0x10>;
-+			snps,dcb-algorithm;
-+			snps,priority = <0x0>;
-+		};
-+
-+		queue1 {
-+			snps,weight = <0x11>;
-+			snps,dcb-algorithm;
-+			snps,priority = <0x1>;
-+		};
-+
-+		queue2 {
-+			snps,weight = <0x12>;
-+			snps,dcb-algorithm;
-+			snps,priority = <0x2>;
-+		};
-+
-+		queue3 {
-+			snps,weight = <0x13>;
-+			snps,dcb-algorithm;
-+			snps,priority = <0x3>;
-+		};
-+	};
- };
+-	pll->base = base;
+ 	pll->hw.init = &init;
  
- &apps_rsc {
-@@ -317,6 +376,42 @@ &remoteproc_cdsp {
- 	firmware-name = "qcom/sa8155p/cdsp.mdt";
- };
- 
-+&ethernet {
-+	status = "okay";
-+
-+	snps,reset-gpio = <&tlmm 79 GPIO_ACTIVE_LOW>;
-+	snps,reset-active-low;
-+	snps,reset-delays-us = <0 11000 70000>;
-+
-+	snps,ptp-ref-clk-rate = <250000000>;
-+	snps,ptp-req-clk-rate = <96000000>;
-+
-+	snps,mtl-rx-config = <&mtl_rx_setup>;
-+	snps,mtl-tx-config = <&mtl_tx_setup>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ethernet_defaults>;
-+
-+	phy-handle = <&rgmii_phy>;
-+	phy-mode = "rgmii";
-+	mdio {
-+		#address-cells = <0x1>;
-+		#size-cells = <0x0>;
-+
-+		compatible = "snps,dwmac-mdio";
-+
-+		/* Micrel KSZ9031RNZ PHY */
-+		rgmii_phy: phy@7 {
-+			reg = <0x7>;
-+
-+			interrupt-parent = <&tlmm>;
-+			interrupts-extended = <&tlmm 124 IRQ_TYPE_EDGE_FALLING>; /* phy intr */
-+			device_type = "ethernet-phy";
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+		};
-+	};
-+};
-+
- &uart2 {
- 	status = "okay";
- };
-@@ -407,4 +502,53 @@ mux {
- 			drive-strength = <2>;
- 		};
- 	};
-+
-+	ethernet_defaults: ethernet-defaults {
-+		mdc {
-+			pins = "gpio7";
-+			function = "rgmii";
-+			bias-pull-up;
-+		};
-+
-+		mdio {
-+			pins = "gpio59";
-+			function = "rgmii";
-+			bias-pull-up;
-+		};
-+
-+		rgmii-rx {
-+			pins = "gpio117", "gpio118", "gpio119", "gpio120", "gpio115", "gpio116";
-+			function = "rgmii";
-+			bias-disable;
-+			drive-strength = <2>;
-+		};
-+
-+		rgmii-tx {
-+			pins = "gpio122", "gpio4", "gpio5", "gpio6", "gpio114", "gpio121";
-+			function = "rgmii";
-+			bias-pull-up;
-+			drive-strength = <16>;
-+		};
-+
-+		phy-intr {
-+			pins = "gpio124";
-+			function = "emac_phy";
-+			bias-disable;
-+			drive-strength = <8>;
-+		};
-+
-+		pps {
-+			pins = "gpio81";
-+			function = "emac_pps";
-+			bias-disable;
-+			drive-strength = <8>;
-+		};
-+
-+		phy-reset {
-+			pins = "gpio79";
-+			function = "gpio";
-+			bias-pull-up;
-+			drive-strength = <16>;
-+		};
-+	};
- };
+ 	hw = &pll->hw;
 -- 
-2.35.1
+2.34.1
 
