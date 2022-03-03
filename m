@@ -2,386 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE24C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 22:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274A7C433F5
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 22:44:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbiCCWeo convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 17:34:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
+        id S229963AbiCCWov (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 17:44:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230525AbiCCWen (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 17:34:43 -0500
-Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DCB13982A
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 14:33:55 -0800 (PST)
-Received: from [77.244.183.192] (port=62422 helo=[192.168.178.42])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1nPu1B-000EW5-63; Thu, 03 Mar 2022 23:33:53 +0100
-Message-ID: <22b859cf-4388-0471-64a5-5113c133c9ef@lucaceresoli.net>
-Date:   Thu, 3 Mar 2022 23:33:52 +0100
+        with ESMTP id S237072AbiCCWot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 17:44:49 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C3F15928A;
+        Thu,  3 Mar 2022 14:44:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646347442; x=1677883442;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LGs61FMx3IeFD9eB7+GKLp/0tGX59gvBzS7laALfEFU=;
+  b=ddfYk6zLewr44AgGkgnryfNqOwg4t31DsOhFNR4zkzSsDKNn12tE7ntx
+   0IbIUol8cwEUrIFdUgIfI7sZoapOr0Cjagz//jnZowqRYF5jpZOdE+i+b
+   P8J6Cwm9JqP6CdScMR9ewiixR/xLSwufB50GWYAUV3wNnqu6Xs1TpvU9v
+   JeCG/Kj/L6a+jUxiytbf3/w1UhutbmgdPde0VhB5vCZ7jbZxQqYglSOgl
+   5TIP3mM27UYeBDwr+c8SqmhcewpXq3fLhN2Vn+/2KJfFY2vM1UiEFgd8z
+   xJYqksmtko7+dlb3oD66NQpiXcqKjoEkC8rzVppzANe+t0LXB3gc0cKf/
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10275"; a="252660211"
+X-IronPort-AV: E=Sophos;i="5.90,153,1643702400"; 
+   d="scan'208";a="252660211"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2022 14:44:02 -0800
+X-IronPort-AV: E=Sophos;i="5.90,153,1643702400"; 
+   d="scan'208";a="642299153"
+Received: from punajuuri.fi.intel.com (HELO paasikivi.fi.intel.com) ([10.237.72.43])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2022 14:43:57 -0800
+Received: from paasikivi.fi.intel.com (localhost [127.0.0.1])
+        by paasikivi.fi.intel.com (Postfix) with SMTP id 33DDE20150;
+        Fri,  4 Mar 2022 00:43:55 +0200 (EET)
+Date:   Fri, 4 Mar 2022 00:43:55 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 30/66] media: sun6i-csi: Add bridge v4l2 subdev with
+ port management
+Message-ID: <YiFEq1liAnBy0fkq@paasikivi.fi.intel.com>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-31-paul.kocialkowski@bootlin.com>
+ <YgqbqVRinNxQ8+WV@paasikivi.fi.intel.com>
+ <Yh+GZv9/rKQ2WbI2@aptenodytes>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
- versaclock5 driver
-Content-Language: it-IT
-To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>,
-        Adam Ford <aford173@gmail.com>
-Cc:     Sean Anderson <sean.anderson@seco.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "Klein, Jesse" <Jesse.Klein@mksinst.com>
-References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
- <9e4e542f-6f73-164e-581e-17369aada2f3@seco.com>
- <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
- <b15f993b-d67b-b96a-904c-53025eda3aa3@lucaceresoli.net>
- <MN2PR03MB5008747FDF505CA30970ADE293029@MN2PR03MB5008.namprd03.prod.outlook.com>
- <CAHCN7x+kusPwHpkp+4zwvGN48oDUGfN2ueCn=8kt_54aiYwE9g@mail.gmail.com>
- <MN2PR03MB5008F4921D8484306505F8FB93029@MN2PR03MB5008.namprd03.prod.outlook.com>
- <CAHCN7xKbE9Rv3EsvFkS4Lk8nCwy1TK-xJQLk_h70PSVdeUHJcA@mail.gmail.com>
- <MN2PR03MB5008536F789B93337AF0BA6793039@MN2PR03MB5008.namprd03.prod.outlook.com>
- <CAHCN7xJFxtA=9GYkQ1dVig=sSRQY3yhjS9dO2GRtqn=zdc9w7g@mail.gmail.com>
- <fa9aa952-6560-7123-d095-32e88ecc5fb3@lucaceresoli.net>
- <MN2PR03MB500847D9F5BFF44F5E98ABA893039@MN2PR03MB5008.namprd03.prod.outlook.com>
- <59a74714-ae45-897e-57b9-7346998442cb@lucaceresoli.net>
- <MN2PR03MB5008DB1C7B0B5A4D2ECBB88E93049@MN2PR03MB5008.namprd03.prod.outlook.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-In-Reply-To: <MN2PR03MB5008DB1C7B0B5A4D2ECBB88E93049@MN2PR03MB5008.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yh+GZv9/rKQ2WbI2@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claude,
+Hi Paul,
 
-On 03/03/22 19:15, Fillion, Claude wrote:
-> Hello Luca,
+On Wed, Mar 02, 2022 at 03:59:50PM +0100, Paul Kocialkowski wrote:
+> > > +static int
+> > > +sun6i_csi_bridge_notifier_bound(struct v4l2_async_notifier *notifier,
+> > > +				struct v4l2_subdev *remote_subdev,
+> > > +				struct v4l2_async_subdev *async_subdev)
+> > > +{
+> > > +	struct sun6i_csi_device *csi_dev =
+> > > +		container_of(notifier, struct sun6i_csi_device,
+> > > +			     bridge.notifier);
+> > > +	struct sun6i_csi_bridge *bridge = &csi_dev->bridge;
+> > > +	struct sun6i_csi_bridge_source *source = NULL;
+> > > +	struct fwnode_handle *fwnode = dev_fwnode(csi_dev->dev);
+> > > +	struct fwnode_handle *handle = NULL;
+> > > +	bool enabled;
+> > > +	int ret;
+> > > +
+> > > +	while ((handle = fwnode_graph_get_next_endpoint(fwnode, handle))) {
+> > 
+> > I'd instead store the information you need here in struct sun6i_csi_bridge.
+> > You could remove the loop here.
 > 
->> -----Original Message-----
->> From: Luca Ceresoli <luca@lucaceresoli.net>
->> Sent: Thursday, March 3, 2022 9:42 AM
->> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->> <aford173@gmail.com>
->> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->> versaclock5 driver
->>
->> Hi Claude,
->>
->> On 02/03/22 21:49, Fillion, Claude wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>> Sent: Wednesday, March 2, 2022 12:27 PM
->>>> To: Adam Ford <aford173@gmail.com>; Fillion, Claude
->>>> <Claude.Fillion@mksinst.com>
->>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>> clk@vger.kernel.org>
->>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->>>> versaclock5 driver
->>>>
->>>> Hi,
->>>>
->>>> On 02/03/22 16:45, Adam Ford wrote:
->>>> ...
->>>>>>>>>>     versaclock6: clock-controller@6a {
->>>>>>>>>>
->>>>>>>>>>         /* Clock Consumer */
->>>>>>>>>>
->>>>>>>>>>         compatible = "idt,5p49v6965";
->>>>>>>>>>
->>>>>>>>>>                                 reg = <0x6a>;
->>>>>>>>>>
->>>>>>>>>>                                 #clock-cells = <1>;
->>>>>>>>>>
->>>>>>>>>>                                 clocks = <&x304_clk>;
->>>>>>>>>>
->>>>>>>>>>                                 clock-names = "xin";
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>         assigned_clocks = <&versaclock6 1>,
->>>>>>>>>>
->>>>>>>>>>                           <&versaclock6 2>,
->>>>>>>>>>
->>>>>>>>>>                           <&versaclock6 3>,
->>>>>>>>>>
->>>>>>>>>>                           <&versaclock6 4>;
->>>>>>>>>>
->>>>>>>>>>         assigned_clock_rates = <46800000>, <250000000>,
->>>>>>>>>> <1000000>, <13000000>;
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Assigned clocks and assigned clock rates should be hyphens and
->>>>>>>>> not underscores.
->>>>>>>>>
->>>>>>>>> assigned-clocks =  <&versaclock6 1>,   <&versaclock6 2>,
->>>>>>>>> <&versaclock6 3>, <&versaclock6 4>;
->>>>>>>>>
->>>>>>>>> assigned-clock-rates =  <46800000>, <250000000>, <1000000>,
->>>>>>>>> <13000000>;
->>>>>>>>>
->>>>>>>>> Another thing to check is to make sure the consumers of these
->>>>>>>>> clocks is enabling them.  They do not necessarily get enabled by
->>>> default.
->>>>>>>>>
->>>>>>>>> adam
->>>>>>>>
->>>>>>>> Doh - thanks.  I looked at it a million times 😊 .
->>>>>>>>
->>>>>>>> Now getting desired out1 frequency but nothing on other outputs.
->>>>>>>> From
->>>>>>> the code it seems vc5_clk_out_prepare() is the method that enables
->>>>>>> outputs but this method is not being called I am not clear how to
->>>>>>> make the 'consumer enable them.'
->>>>>>>>
->>>>>>>> I have added this to my dtsi to no avail.
->>>>>>>>
->>>>>>>>          /* Consumer referencing 5P49V5965 pin OUT1 and OUT2 */
->>>>>>>>         consumer {
->>>>>>>>             clocks = <&versaclock6 1>, <&versaclock6 2>;
->>>>>>>>             /* ... */
->>>>>>>>          };
->>>>>>>>
->>>>>>>> Looking through device tree documentation.
->>>>>>>
->>>>>>> It's likely going to be in the consumer's driver.  Check the
->>>>>>> consumer device tree binding to make sure you've correctly
->>>>>>> associated the clock.  If the binding doesnt't show a clock is
->>>>>>> required, it might not know that you using a programmable clock.
->>>>>>>
->>>>>>> Here is a patch that I needed to apply to an Ethernet driver which
->>>>>>> wasn't expecting a programmable clock to drive a reference clock,
->>>>>>> so the clock wasn't being enabled.
->>>>>>>
->>>>>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/k
->>>>>>> er
->>>>>>> nel/g
->>>>>>>
->> it/torvalds/linux.git/commit/drivers/net/ethernet/renesas/ravb_main.
->>>>>>> c?id=
->>>>>>> 8ef7adc6beb2ef0bce83513dc9e4505e7b21e8c2__;!!KnJ4-rp7!1Qb17q-
->>>>>>>
->>>>
->> TWrV62AeQtTNNVDErVbyhbXB1sukyT2ggvFPUltIBI5nIKzNnjVOcqlw8qJyy$
->>>>>>>
->>>>>>> Look at the use of devm_clk_get_optional and clk_prepare_enable
->>>>>>> from that patch.  (yes, there is a subsequent patch that fixes
->>>>>>> something I didn't quite do right, but the basics are here)
->>>>>>>
->>>>>>> The consumer drivers need to 'get' the clock so it can associate
->>>>>>> itself to the clock in question.  Once the relationship is
->>>>>>> established, the consumer needs to call clk_prepare_enable() which
->>>> uses the clock system to turn the clock on.
->>>>>>> Without this step, it's likely the Versaclock won't generate a
->>>>>>> signal, because it doesn't know it needs to turn it on.
->>>>>>>
->>>>>>> adam
->>>>>>
->>>>>> Not sure I fully follow.  I see that clk out1 is enabled but the
->>>>>> other
->>>> channels are not so it would seem my difficulty is with individual channels.
->>>>>
->>>>> Do the devices that need the clock from the versaclock reference the
->>>>> versaclock?  If so, to those drivers use the get and enable?  If
->>>>> not, the versaclock will stay off.  In the patch example I showed, I
->>>>> had to modify the Ethernet driver on a processor, because it didn't
->>>>> explicitly enable the reference clock.  That Ethernet driver
->>>>> expected the refclk was always present which was a false assumption.
->>>>> Once I got the consumer device (in this case, Ethernet) to request
->>>>> and enable the clock, the clock subsystem enabled the corresponding
->>>>> output on the versaclock.
->>>>>
->>>>> For the Ethernet example I cited above, the corresponding device
->>>>> tree looks like:
->>>>>
->>>>> &avb {
->>>>>      clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
->>>>>      clock-names = "fck", "refclk";
->>>>>      status = "okay";
->>>>> };
->>>>>
->>>>> With this device tree reference, the 'refclk' gets associated to
->>>>> versaclock ouput 4.  When the Ethernet needs the clock, it calls
->>>>> clk_prepare_enable on that clock reference, and the clock system
->>>>> calls on the versaclock driver to enable the output.  The reason I
->>>>> needed to submit that patch was that the consumer driver (the
->>>>> Ethernet in this
->>>>> case) wasn't calling the clk_prepare_enable, so the clock remained
->>>>> off.  It's likely that whatever devices that need the clock from the
->>>>> versaclock will need both a device tree reference to it as well as a
->>>>> call to clk_prepare_enable.
->>>>>
->>>>>>
->>>>>> In my simple application I would like to enable outputs, on a per
->>>>>> channel
->>>> basis, from the device tree.  Would it make sense  to add  an 'idt,enable'
->>>> property in similar fashion to the existing idt,mode,
->>>> idt,voltage-microvolt, and idt,slew-percent properties?  Then
->>>> vc5_get_output_config() could be modified to also call
->>>> vc5_clk_out_prepare() (or clk_prepare_enable(), which in turn would call
->> vc5_clk_out_prepare()).
->>>>>
->>>>> I can't speak for the linux clock group, but the advantage of
->>>>> patching the drivers that need the clocks generated from the
->>>>> versaclock is the ability to stop these clocks when the drivers are
->>>>> halted and/or suspended.
->>>>
->>>> Having the consumer driver get, prepare and enable the clock is of
->>>> course the best as Adam explained.
->>>>
->>>> However I think using assigned-clocks and assigned-clock-rates should
->>>> enable the clocks unconditionally even if the consumer driver does
->>>> not do any clk_*() calls. Might be worth double checking that.
->>>>
->>>> --
->>>> Luca
->>>
->>> In our application we plan to use the 6965/6901 to replace a part that does
->> not use a consumer driver.  We just set clock options in our device tree.
->> Ideally that is how we would like to use the Renesas part as well.
->>>
->>> In the limited testing I have done thus far behavior is a bit puzzling.  From
->> the device tree I am able to change the clock frequency for out1 (which is
->> enabled by default) and I can disable outputs using 'idt,shutdown', but I
->> cannot change the logic levels for out1 using the 'idt,mode' parameter.
->>
->> This is very strange.
->>
->> Did you double-check that your device tree description of the versaclock
->> node is correct according to [0]?
->>
->> Please send the complete  description of the versaclock node in your device
->> tree, so we can check it and see if any detail is misplaced.
->>
->> [0]
->> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kernel/g
->> it/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/idt,vers
->> aclock5.yaml*n169__;Iw!!KnJ4-
->> rp7!yalfgsfaZKSlo4yNfQfvlbsmNKBRltGSetoIonP--5aGebuHUJ-M-
->> am93tjT8aEhsSJJ$
->>
->>
->> --
->> Luca
-> 
-> Here is the relevant portions of my device tree.  On the scope I see the default 'CMOSD' voltages and a modified frequency of 46.8MHz.  
-> 
-> I have also modified my local copy of the driver to accept an 'idt,enable' pattern property that allows me to enable outputs from the device tree. It needs some refinement but I can pass it along if there is interest.
-> 
-> -Claude
-> 
-> ==================
-> Top of device tree file:
-> ==================
-> /*
-> This is a message for system-user.dtsi. If you are reading from system-user.dtsi.genxxxx, please note that this message is
-> for explaining the purpose of system-user.dist in relation to system-user.dtsi.genxxx.
-> 
-> system-user.dtsi is merely a writable file handled by ./buildPetaLinux.sh to copy the appropriate system-user.dtsi.genxxxx to this filename for use
-> in the build image. Do not put your device tree here. They belong to the system-user.dtsi.genxxxx.
-> 
-> If you add a new dtsi, please create an appropriate device tree file and modify the ./buildPetaLinux.sh to handle it 
-> */
-> 
-> #include <dt-bindings/clk/versaclock.h>
-> 
-> /include/ "system-conf.dtsi"
-> / {
->  
->   /* Clock Provider */
->   x304_clk: x304-clock {
->     compatible = "fixed-clock";
->     #clock-cells = <0>;
->     clock-frequency = <25000000>;
->   };
-> 
-> ...
-> 
-> ==================
-> Device Tree Node:
-> ==================
-> &i2c1 {
->     clock-frequency = <100000>;
-> 
->     // Use patch.  Updated driver for 5p49v6965 available  at https://github.com/Xilinx/linux-xlnx/blob/master/drivers/clk/clk-versaclock5.c
->     // Device Tree Setup -> https://github.com/Xilinx/linux-xlnx/blob/master/Documentation/devicetree/bindings/clock/idt%2Cversaclock5.yaml
->     versaclock6: clock-controller@6a {
->         /* Clock Consumer */
->         compatible = "idt,5p49v6965";
-> 		reg = <0x6a>;
-> 		#clock-cells = <1>;
-> 		clocks = <&x304_clk>;
-> 		clock-names = "xin";
-> 
->         assigned-clocks = <&versaclock6 1>,
->                           <&versaclock6 2>,
->                           <&versaclock6 3>,
->                           <&versaclock6 4>;
->         // assigned-clock-rates = <46800000>, <250000000>, <1000000>, <13000000>;
->         assigned-clock-rates = <46800000>, <250000000>, <1000000>, <13000000>;
->         /* Set the SD/OE pin's settings */
->         idt,shutdown = <0>;
->         idt,output-enable-active = <0>;
->         OUT1 {
->             idt,mode = <VC5_CMOS>;
->             idt,voltage-microvolt = <3300000>;
->             c = <100>;
->         };
->         OUT2 {
->             idt,mode = <VC5_CMOS>;
->             idt,voltage-microvolt = <3300000>;
->             idt,slew-percent = <100>;
->         };
->         OUT3 {
->             idt,mode = <VC5_CMOSD>;
->             idt,voltage-microvolt = <3300000>;
->             idt,slew-percent = <100>;
->         };
->         OUT4 {
->             idt,mode = <VC5_CMOS>;
->             idt,voltage-microvolt = <3300000>;
->             idt,slew-percent = <100>;
->         };
->     };
+> Is there a different method for matching a remote subdev to a local port?
+> The rationale here is that I need the handle for fwnode_graph_parse_endpoint
+> but cannot get that handle from the remote subdev's fwnode pointer directly.
 
-Strange. Something you may check (or double check if you already did):
+You generally shouldn't try to match fwnodes here as the V4L2 async
+framework has already done that job. This information can be found behind
+the async_subdev pointer.
 
-1. Read if the register has been set:
+See e.g. drivers/media/pci/intel/ipu3/ipu3-cio2-main.c for an example.
 
-  # not tested, check carefully
-  i2cget -y -r 1 0x6a 0x60
+> 
+> > > +		struct fwnode_endpoint endpoint = { 0 };
+> > > +		struct fwnode_handle *remote_fwnode;
+> > > +
+> > > +		remote_fwnode = fwnode_graph_get_remote_port_parent(handle);
+> > > +		if (!remote_fwnode)
+> > > +			continue;
+> > > +
+> > > +		if (remote_fwnode != remote_subdev->fwnode)
+> > > +			goto next;
+> > > +
+> > > +		ret = fwnode_graph_parse_endpoint(handle, &endpoint);
+> > > +		if (ret < 0)
+> > > +			goto next;
+> > > +
+> > > +		switch (endpoint.port) {
+> > > +		case SUN6I_CSI_PORT_PARALLEL:
+> > > +			source = &bridge->source_parallel;
+> > > +			enabled = true;
+> > > +			break;
+> > > +		default:
+> > > +			break;
+> > > +		}
+> > > +
+> > > +next:
+> > > +		fwnode_handle_put(remote_fwnode);
+> > > +	}
+> > > +
+> > > +	if (!source)
+> > > +		return -EINVAL;
+> > > +
+> > > +	source->subdev = remote_subdev;
+> > > +
+> > > +	return sun6i_csi_bridge_link(csi_dev, SUN6I_CSI_BRIDGE_PAD_SINK,
+> > > +				     remote_subdev, enabled);
+> > > +}
+> > > +
+> > > +static int
+> > > +sun6i_csi_bridge_notifier_complete(struct v4l2_async_notifier *notifier)
+> > > +{
+> > > +	struct sun6i_csi_device *csi_dev =
+> > > +		container_of(notifier, struct sun6i_csi_device,
+> > > +			     bridge.notifier);
+> > > +
+> > > +	return sun6i_csi_v4l2_complete(csi_dev);
+> > 
+> > You could call v4l2_device_register_subdev_nodes() here.
+> 
+> That's definitely what sun6i_csi_v4l2_complete does (the diff is probably not
+> very clear). Note that the wrapper is extended later on to register the capture
+> video device for the no-isp path.
 
-the three low bits in register 0x60 should read 0x1 for CMOS, 0x5 for CMOSD.
+I could be missing something... Do you need to call
+sun6i_csi_v4l2_complete() in multiple places or not? If not, then I think
+it'd be probably better to just move the code here.
 
-2. Change idt,mode in device tree and see whether the register changes
-or the scope show any different output mode.
-
-3. Enable debugging output (simpliy add #define DEBUG on top of file and
-rebuild), then see whether during clk prepare you see this in dmesg:
-
-  Update output ... mask 0x... val 0x....
-
-4. Check whether the OUT1 node is actually found by adding a dev_dbg()
-in vc5_get_output_config(), just before the of_get_child_by_name() call
-and ~5 lines below, between 'return 0' and vc5_update_mode().
-
-Let us know your findings.
+> 
+> Maybe the capture registration could be kept in sun6i_csi_probe for the non-isp
+> path and then the wrapper wouldn't be needed. I don't mind either way.
 
 -- 
-Luca
+Kind regards,
+
+Sakari Ailus
