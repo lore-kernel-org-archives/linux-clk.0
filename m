@@ -2,111 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF01C433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 10:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010A1C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 10:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbiCCKdE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 05:33:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40768 "EHLO
+        id S231259AbiCCKeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 05:34:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232364AbiCCKdD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 05:33:03 -0500
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CE9C179A36
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 02:32:18 -0800 (PST)
-Received: by mail-qk1-x736.google.com with SMTP id bm39so3573970qkb.0
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 02:32:18 -0800 (PST)
+        with ESMTP id S230097AbiCCKeW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 05:34:22 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F92232EF1
+        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 02:33:32 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id t28so4158162qtc.7
+        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 02:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DYNpbzV9XCiofWlx6Ep0BAs5/BGBNmH1zZ8NMWTIAps=;
-        b=fy0N6aDWxd9z8c5sVpt36gG3Rrkj9OAzl0zu/lXoo1lw0c1syMnCgctBz3OncmfbM0
-         S+KbgdxLrOAslzi7fGCU7byhgjCMGQR7RG9XvsTYyS6S9mo3Pmn5i9NoeIow9KZMM7pD
-         +podm37QZ6PoLVvFNEHsflNn+Nima0L7TquXJIHls0EDOZAdHIYcuPCoApohbx97Q73t
-         0Mt5gbZAMFDhneLUGctdZaepeKXl8LXljTyfvWA4LdVfOM6+gRKbtNBK8pAFltxGhejI
-         /l5FNFKInqlY5w/IhuASsiplMmK9Pj6q801DmJ5kq13IteTd6ayV4ohDbuctWEph8vt8
-         BZXg==
+        bh=hIUIRXFBoXE7LKj0blqQPxppbo/nPIraWqBU8j6waVY=;
+        b=VdUl2d8LLr7udWRlgutHX9PzKUBiepsWR4ZGSOZOMFfx4AWeOCur+bRsfqi1tbR81u
+         A4E/PYgAMzgVyMWZQZuiIiscLz1FUCnSRb6F+V9OV+YTEokff5b7+/uMR8jigHZ6wIeR
+         Ca1blU08Qz0fVJqoNlwxrclYlnOgMQMiZuuFvn9ass0VJRZLfggditK3iHpmZOAFOQY6
+         8CsOIemjBsMfjJ/dkxgBtrdOdEEStNkmr8W+cY3bLg/4ONpw8zJ6OtSum7vTE2hSmo5q
+         cjv83xod6p2z7GZYj6Vn6C5Z60uj5hrtl/baKGgHEuMRwsApzircFKgSM+k/H5wxlDMg
+         exKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DYNpbzV9XCiofWlx6Ep0BAs5/BGBNmH1zZ8NMWTIAps=;
-        b=Lr33cprjB7mA5sLJ2KyzvGlU9pvsA6KPV/Oe1gcFcJM9I+UX5gGKmLcR6MlZPvTGWd
-         7IYQph2vwbCRuCc7A44BFHA5hT9UViWY4GPks3bJtvFda9SXr6Oya7miAIWPETEJpzUp
-         uSOYFoF0IPhaUvfd4SzZz68TW48KQk9tgJSkydhGEFy8Qr5jSiTJt3u68XWq1tGcAjSr
-         IsiN758JJKVB7U6VuHnJihbHBsr4mDi5DJ95nvnD+ohY2HBa7YDxhy7CVFM0i7S3z4fh
-         /BdObYWohvCacxOlKiupXW99PjPEgrnNiKPRCHjNpaPiNAU7JQWb57kis6dPT/IEcsM+
-         97PA==
-X-Gm-Message-State: AOAM532/8LNn57voU32nwRFTwPFKA9+Aj42pLSuuP/8tF0whowj1pacv
-        jig+nWlfgbdeaVQaoCHIKIdB+VTbnbH3/cjmMJwM6A==
-X-Google-Smtp-Source: ABdhPJzq7dQyX57teeUVtaORiHuUIw2463URNE+PzG8vjJ8rLlyi3cWylCaVROZ+17COu1fZbs0dYl5c19KFfc0dSTg=
-X-Received: by 2002:a05:620a:4307:b0:507:d5b1:f65e with SMTP id
- u7-20020a05620a430700b00507d5b1f65emr18375993qko.363.1646303537535; Thu, 03
- Mar 2022 02:32:17 -0800 (PST)
+        bh=hIUIRXFBoXE7LKj0blqQPxppbo/nPIraWqBU8j6waVY=;
+        b=63Tn8mfThSfIFzY6rLBcrUGnMwGmokIJEc38VGNvPJoOotqtkkv4gownNS3ixX96KQ
+         ifzHSb0XyYlbigloZ2r/R+vWY7o6M75UbGjbhPji1UlJ39xjyg0RPHRGjlN0uwYmAus4
+         ydaSkozErFZOH0bGxOwIUHss/mEpx7e9/iNzLWErbfG3MJ1tHqi913hd+30QD8wmnvSh
+         FERPLhkD7F2VMUueJQvpLjkalunvX0vZVoUg861YPMOoDBD4KJPha+JAogdpfJCUmaUH
+         x1wGcB+Q204MJ5/Qk4/ty4LtcKXJF104WL5yLBwuwkDTl0XOmaINJnJPCa4iiDJLT1lr
+         mPtA==
+X-Gm-Message-State: AOAM532irpmbqlrmJjjLyXqW2IFOUiY5LfUWfdhgIxyvveQK8+RPbyT7
+        hXgc1QHcyiIwq4hMRKb6oAqweUNntdFNfjjqd56Nnw==
+X-Google-Smtp-Source: ABdhPJyr88hvBfvOgw+m1GCaBzh3gAlaA1b0BQe2hsLrUNDuXnLB77Rt8WPohBlyTN1KHHsy5mCgRdnHWPadzhTlr6s=
+X-Received: by 2002:a05:622a:1206:b0:2de:6fa4:41fb with SMTP id
+ y6-20020a05622a120600b002de6fa441fbmr26633601qtx.295.1646303611639; Thu, 03
+ Mar 2022 02:33:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20220303082140.240745-1-bhupesh.sharma@linaro.org> <20220303082140.240745-3-bhupesh.sharma@linaro.org>
-In-Reply-To: <20220303082140.240745-3-bhupesh.sharma@linaro.org>
+References: <20220303084824.284946-1-bhupesh.sharma@linaro.org> <20220303084824.284946-4-bhupesh.sharma@linaro.org>
+In-Reply-To: <20220303084824.284946-4-bhupesh.sharma@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 3 Mar 2022 13:32:06 +0300
-Message-ID: <CAA8EJpqF5ppEc7-ngvpQifUaGLuvguUS+EKofwwuYe2edOhSbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sm8150: Add ufs power-domain entries
+Date:   Thu, 3 Mar 2022 13:33:20 +0300
+Message-ID: <CAA8EJpow=NPM5TrK24qsziVWgrD0cfbtwUxBD45CE2EQAg-msA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] clk: qcom: gcc: Add emac GDSC support for SM8150
 To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, bhupesh.linux@gmail.com,
         agross@kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
         mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        Rob Herring <robh@kernel.org>
+        robh+dt@kernel.org, bjorn.andersson@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 3 Mar 2022 at 11:22, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
+On Thu, 3 Mar 2022 at 11:48, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
 >
-> Add power-domain entries for UFS controller & phy nodes
-> in sm8150 dts.
+> Add the EMAC GDSC defines and driver structures for SM8150.
 >
+> Cc: Stephen Boyd <sboyd@kernel.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Rob Herring <robh@kernel.org>
 > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/sm8150.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/clk/qcom/gcc-sm8150.c               | 10 ++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sm8150.h |  1 +
+>  2 files changed, 11 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> index 6012322a5984..7aa879eb24d7 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> @@ -1637,6 +1637,8 @@ ufs_mem_hc: ufshc@1d84000 {
->                         phy-names = "ufsphy";
->                         lanes-per-direction = <2>;
->                         #reset-cells = <1>;
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> index 85a431ac417b..08ba29e3a835 100644
+> --- a/drivers/clk/qcom/gcc-sm8150.c
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> @@ -3448,6 +3448,15 @@ static struct clk_branch gcc_video_xo_clk = {
+>         },
+>  };
+>
+
+Is it available on sm8150 or only on sa8155au? I think this deserves
+at least a comment.
+
+> +static struct gdsc emac_gdsc = {
+> +       .gdscr = 0x6004,
+> +       .pd = {
+> +               .name = "emac_gdsc",
+> +       },
+> +       .pwrsts = PWRSTS_OFF_ON,
+> +       .flags = POLL_CFG_GDSCR,
+> +};
 > +
-> +                       power-domains = <&gcc UFS_PHY_GDSC>;
->                         resets = <&gcc GCC_UFS_PHY_BCR>;
->                         reset-names = "rst";
+>  static struct gdsc usb30_prim_gdsc = {
+>         .gdscr = 0xf004,
+>         .pd = {
+> @@ -3714,6 +3723,7 @@ static const struct qcom_reset_map gcc_sm8150_resets[] = {
+>  };
 >
-> @@ -1687,6 +1689,9 @@ ufs_mem_phy: phy@1d87000 {
->                         clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
->                                  <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
+>  static struct gdsc *gcc_sm8150_gdscs[] = {
+> +       [EMAC_GDSC] = &emac_gdsc,
+>         [USB30_PRIM_GDSC] = &usb30_prim_gdsc,
+>         [USB30_SEC_GDSC] = &usb30_sec_gdsc,
+>  };
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> index 3e1a91876610..40596b9ded06 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> @@ -243,5 +243,6 @@
+>  /* GCC GDSCRs */
+>  #define USB30_PRIM_GDSC                     4
+>  #define USB30_SEC_GDSC                                         5
+> +#define EMAC_GDSC                                              6
 >
-> +                       power-domains = <&gcc UFS_CARD_GDSC>,
-> +                                       <&gcc UFS_PHY_GDSC>;
-> +                       power-domain-names = "ufs_card_gdsc", "ufs_phy_gdsc";
-
-This will not work, if I'm not mistaken. Platform drivers won't bind
-two power-domains by default. And the qmp driver lacks handling for
-power domains.
-
-Also a generic question. I see that other platforms use UFS_PHY_GDSC
-for the host controller and completely ingore the UFS_CARD_GDSC. What
-makes sm8150 so different from the rest of the platforms?
-
->                         resets = <&ufs_mem_hc 0>;
->                         reset-names = "ufsphy";
->                         status = "disabled";
+>  #endif
 > --
 > 2.35.1
 >
