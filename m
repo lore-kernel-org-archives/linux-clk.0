@@ -2,104 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1599EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 08:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA7EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 08:48:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbiCCIW4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 03:22:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58188 "EHLO
+        id S231574AbiCCItX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 03:49:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231403AbiCCIWz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 03:22:55 -0500
+        with ESMTP id S231565AbiCCItX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 03:49:23 -0500
 Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9389F171ECA
-        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 00:22:09 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id r7so4930445iot.3
-        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 00:22:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E2DE1B54
+        for <linux-clk@vger.kernel.org>; Thu,  3 Mar 2022 00:48:37 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id t11so4973575ioi.7
+        for <linux-clk@vger.kernel.org>; Thu, 03 Mar 2022 00:48:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OvbikKoAKho7Bpj5HDlLF47y32hMSGJasX39JrNGXFI=;
-        b=f+nzyti+qR6MREuY43WY1a4cjc7YEyZRGiKyg7jREG3YSvLNneTdgD2kuE535dK50J
-         enHSZEaWeABNgz4UyM5TEoF4ZjYlU3decu2UKQWENbiys2ihqRx2S9Ipy8jP09/xgeEh
-         h/JuffJstoOEUwL5AGRQE+0RmtCMin1yNwjVxVNAOuXcAg8kfFd2EHX0I3DK/w9FYEmH
-         ikDJNANAGx7VzHYH/psDbPQXfwItOwIXrRtCHBabTelw9t0wRwhfC56VI8rWod4JxkHB
-         H7r+2jsBidMT7mLFcVM+PIPbd7x7bBme2U/1jAXFNLu9R15IjH1P6JsIEsRnvZcmgLam
-         A9gQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hkhZgYA/1qOi3W2uMLIGsfsxrZRgQn2BiaZgNLglVk0=;
+        b=M0ezjdyrjpxEXpbLa8XmCe5TcR38bl/0Ga+yN9Pqt/XC+DK1HN60rS/o1hiifZvSFT
+         47kBu0kK/MhEKAnNOruoXzPukiKGz35QKKXxMIOeEoIg8P48FFs57G9kS7DHRrFVFbHn
+         Ef4lOsCqo0Ox8ZFYYWw/kvBH8QBQ81yRv3Hloir2SJKHGNSojn9EFGvR/mNPeANbOGsr
+         q3S6krJltUOh6VrTH4WwclsYY9cosrRTMjhPF6ckE8ahyQbRQ24ZWoCrm6ID0IvIfq5n
+         R/38ll9GQqCY7GFfoWkYBlLsK+Uit8hlu4IxJ6aARXn3k6ZsL6+Ov638hx8e6t4187ZW
+         GmRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OvbikKoAKho7Bpj5HDlLF47y32hMSGJasX39JrNGXFI=;
-        b=GPl7z5W6jdb3rHuP4orUb9Zl7ooD1zGddZQ5mGwJPEHBNmVRMV2jbVDExR8eeWFND0
-         4Rpgz8eBT8rfujlX3WS+8wISB9bcoD26AKohyGhEuR+1uChUw3ejtDMo0Yqd8dxWf1US
-         14lc90oiek1QPTM7BY4J0XxBOno4IH6TVjSELvYw/8L64ntKrSpiXC9O7BcK2oz6r+bK
-         afAcnoFGFBW4QQtfztX2sf2hSmh4/SQLci0EZszFhBsXV+JqxfF3yMYdI2QQm5qm1I4U
-         0j1E0Z4H4lOkyWLh+ChNN2Y/0dsJyrPz/HjPe7ssGopF1FUulTwfXs00piy5XvYpglDo
-         aWIQ==
-X-Gm-Message-State: AOAM532W8I1s87etF7Tp1NHsvAv+eDvygiUpO5FGCLPuednkH9q4XU14
-        B3ej1HEpEd1KyFKfxETYMhuizg==
-X-Google-Smtp-Source: ABdhPJzjyPfDQxk9e3ZO6oRtB96iZsy8mSZP2do7RFoMubNR7JTUh4xLcktUA+jnUfJv5jq1avtehg==
-X-Received: by 2002:a05:6638:285:b0:30e:54b4:d8df with SMTP id c5-20020a056638028500b0030e54b4d8dfmr27700511jaq.154.1646295728953;
-        Thu, 03 Mar 2022 00:22:08 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hkhZgYA/1qOi3W2uMLIGsfsxrZRgQn2BiaZgNLglVk0=;
+        b=PQ1UTOMwnw15Rlhc/qkbWIn1jzPw/XgFwhvjY3AFOekwaZu6gBSFpfgsbmsX7dlfdc
+         OJs2XU9ndP9FZbufH+iw8L7JfEBQgm9ycDwSVcNBZuFKW0x5HYAmSrOja+tya2qiSr+K
+         StCK4fH5BQ4p22HC6EpuKXBF3LSBWMMPr5/KGLoMlSwE/9lPCbLGn3+KweJfIiOv+6Fr
+         GYmwTTwrhRKJuhl9ZycNxG4fo/rA9VOqNhm19Vb2Yt9K2J/1pybtBveqtC6u0C2lI7Aq
+         GegUPKvXqtGbsbrkJEiGU4CNWei8Y+rRXiae0hr8YK9A8+oPOk9SrLVRIVKYnH3CjFAZ
+         1MUQ==
+X-Gm-Message-State: AOAM530LoWy//pWnnGHoEWsSRhTpRvYAeKQIKBn3vpFJ63Y9W4C5DhXP
+        RF30M7gjd0kdURGhKflLClWZpQBgx2a7Pw==
+X-Google-Smtp-Source: ABdhPJxRnkg1tkBRcs8xLRSbKg7O8Y2NzXOn2lh8XyLpEd0WwwpP1/qplz0Uz1GyMwWFpfLzUxnoMA==
+X-Received: by 2002:a6b:4106:0:b0:5ec:2631:4047 with SMTP id n6-20020a6b4106000000b005ec26314047mr26589505ioa.65.1646297316771;
+        Thu, 03 Mar 2022 00:48:36 -0800 (PST)
 Received: from localhost.localdomain ([182.64.85.91])
-        by smtp.gmail.com with ESMTPSA id l187-20020a6b3ec4000000b0060523f4e92dsm1204569ioa.28.2022.03.03.00.22.03
+        by smtp.gmail.com with ESMTPSA id m9-20020a923f09000000b002c2a1a3a888sm1480704ila.50.2022.03.03.00.48.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Mar 2022 00:22:08 -0800 (PST)
+        Thu, 03 Mar 2022 00:48:36 -0800 (PST)
 From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     bhupesh.sharma@linaro.org, bhupesh.linux@gmail.com,
         agross@kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, sboyd@kernel.org, tdas@codeaurora.org,
         mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, bjorn.andersson@linaro.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: sm8150: Add ufs power-domain entries
-Date:   Thu,  3 Mar 2022 13:51:40 +0530
-Message-Id: <20220303082140.240745-3-bhupesh.sharma@linaro.org>
+        robh+dt@kernel.org, bjorn.andersson@linaro.org
+Subject: [PATCH v3 0/6] Add ethernet support for Qualcomm SA8155p-ADP board
+Date:   Thu,  3 Mar 2022 14:18:18 +0530
+Message-Id: <20220303084824.284946-1-bhupesh.sharma@linaro.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220303082140.240745-1-bhupesh.sharma@linaro.org>
-References: <20220303082140.240745-1-bhupesh.sharma@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add power-domain entries for UFS controller & phy nodes
-in sm8150 dts.
+Changes since v2:
+-----------------
+- v2 can be seen here: https://lore.kernel.org/linux-arm-msm/20220302110508.69053-1-bhupesh.sharma@linaro.org/T
+- Fixed review comments from Dmitry - created a new [PATCH 2/6]
+  to fix some identation issues with sm8150 gcc driver.
+
+Changes since v1:
+-----------------
+- v1 can be seen here: https://lore.kernel.org/netdev/20220126221725.710167-1-bhupesh.sharma@linaro.org/t/
+- Fixed review comments from Bjorn - broke the v1 series into two
+  separate series - one each for 'net' tree and 'arm clock/dts' tree
+  - so as to ease review of the same from the respective maintainers.
+- This series is intended for the 'arm msm clock/dts' tree.
+- Other changes:
+  - Dropped [PATCH 7/8] from v1.
+  - Added more background on the emac gdsc issue, requiring it to be in
+    ALWAYS_ON state in [PATCH 5/5].
+  - Collected Ack from Rob for [PATCH 1/5].
+  - Broke down v1's [PATCH 3/8] into 3 separate patches (one each for emac,
+    pci and ufs gdsc defines) - one of which is carried as [PATCH 2/5]
+    in this series, which is used to enable emac GDSC.
+
+The SA8155p-ADP board supports on-board ethernet (Gibabit Interface),
+with support for both RGMII and RMII buses.
+
+This patchset adds the support for the same.
+
+Note that this patchset is based on an earlier sent patchset
+for adding PDC controller support on SM8150 (see [1]).
+
+[1]. https://lore.kernel.org/linux-arm-msm/20220226184028.111566-1-bhupesh.sharma@linaro.org/T/
 
 Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 6012322a5984..7aa879eb24d7 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -1637,6 +1637,8 @@ ufs_mem_hc: ufshc@1d84000 {
- 			phy-names = "ufsphy";
- 			lanes-per-direction = <2>;
- 			#reset-cells = <1>;
-+
-+			power-domains = <&gcc UFS_PHY_GDSC>;
- 			resets = <&gcc GCC_UFS_PHY_BCR>;
- 			reset-names = "rst";
- 
-@@ -1687,6 +1689,9 @@ ufs_mem_phy: phy@1d87000 {
- 			clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
- 				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
- 
-+			power-domains = <&gcc UFS_CARD_GDSC>,
-+					<&gcc UFS_PHY_GDSC>;
-+			power-domain-names = "ufs_card_gdsc", "ufs_phy_gdsc";
- 			resets = <&ufs_mem_hc 0>;
- 			reset-names = "ufsphy";
- 			status = "disabled";
+Bhupesh Sharma (3):
+  clk: qcom: gcc: sm8150: Fix some identation issues
+  clk: qcom: gcc: Add emac GDSC support for SM8150
+  clk: qcom: gcc-sm8150: Use ALWAYS_ON flag as a workaround for emac
+    gdsc
+
+Vinod Koul (3):
+  dt-bindings: net: qcom,ethqos: Document SM8150 SoC compatible
+  arm64: dts: qcom: sm8150: add ethernet node
+  arm64: dts: qcom: sa8155p-adp: Enable ethernet node
+
+ .../devicetree/bindings/net/qcom,ethqos.txt   |   4 +-
+ arch/arm64/boot/dts/qcom/sa8155p-adp.dts      | 144 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          |  27 ++++
+ drivers/clk/qcom/gcc-sm8150.c                 |  40 +++--
+ include/dt-bindings/clock/qcom,gcc-sm8150.h   |   1 +
+ 5 files changed, 203 insertions(+), 13 deletions(-)
+
 -- 
 2.35.1
 
