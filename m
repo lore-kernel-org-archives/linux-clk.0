@@ -2,157 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B185C433F5
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 13:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E91C433EF
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Mar 2022 13:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbiCCNKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Mar 2022 08:10:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48870 "EHLO
+        id S232365AbiCCNTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Mar 2022 08:19:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231362AbiCCNKd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 08:10:33 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250B816A591;
-        Thu,  3 Mar 2022 05:09:46 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2238CPqK032368;
-        Thu, 3 Mar 2022 14:09:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=pkx2zGWPYrmHsy35xU9yJKQc3yW9y5fEcg/t+W/SnkU=;
- b=sC6ovMPOTEXe+30l/yJflYQQHj+2vmOsf96wQ/rTixDLGP3fvI6Ooh3N3I4kV4d/h7Oe
- KD9FbaawUGGJBOW8Nm5nnzO341bzj3RTmPCs4ButNosY+EsMaGBBjQAJUyAurUkbVCcz
- 8gds/mjiSvihkIeyLWHh38jH5KVu8xOGOzqNrVzNuv2xJy0NK4QOFJL40v6CVw9tCZfx
- nbhyHi9C2sWLuQguz2gzp+gdjE5fUpOWqyGIdRWvaAWhPjxG63IK5c5T+22OLQnAkhaS
- S9i1sXco1nWZBuLWsLZabmKXG32UuefhfI9Z2IlfU3JaldcjK0qwjY4X7Aey2u2bpejI OQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ejsy7hw3f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Mar 2022 14:09:21 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 70197100034;
-        Thu,  3 Mar 2022 14:09:18 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5A18A22178A;
-        Thu,  3 Mar 2022 14:09:18 +0100 (CET)
-Received: from [10.201.22.79] (10.75.127.49) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 3 Mar
- 2022 14:09:17 +0100
-Message-ID: <65581f3a-3ae6-2dd3-7571-1e64982b5f50@foss.st.com>
-Date:   Thu, 3 Mar 2022 14:09:17 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [Linux-stm32] [PATCH v2 12/13] ARM: dts: stm32: enable optee
- firmware and SCMI support on STM32MP13
-Content-Language: en-US
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        with ESMTP id S230373AbiCCNTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Mar 2022 08:19:15 -0500
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50727149B8B;
+        Thu,  3 Mar 2022 05:18:30 -0800 (PST)
+Received: from Marijn-Arch-PC.localdomain (94-209-165-62.cable.dynamic.v4.ziggo.nl [94.209.165.62])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4F3AD3F635;
+        Thu,  3 Mar 2022 14:18:28 +0100 (CET)
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        Pavel Dubrova <pashadubrova@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20220225133137.813919-1-gabriel.fernandez@foss.st.com>
- <20220225133137.813919-13-gabriel.fernandez@foss.st.com>
- <1d90078d-e27f-539d-d010-78a3c4da565a@pengutronix.de>
-From:   Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <1d90078d-e27f-539d-d010-78a3c4da565a@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-03_07,2022-02-26_01,2022-02-23_01
+        Vamsi Krishna Lanka <quic_vamslank@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] clk: qcom: Add display clock controller driver for SM6125
+Date:   Thu,  3 Mar 2022 14:18:09 +0100
+Message-Id: <20220303131812.302302-1-marijn.suijten@somainline.org>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Changes since v2:
+- dt-bindings: Use a sensible `&dsi1_phy 1` example clock for the
+  mandatory "dsi1_phy_pll_out_dsiclk", instead of a null phandle.
 
-On 2/25/22 16:13, Ahmad Fatoum wrote:
-> Hello Gabriel,
->
-> On 25.02.22 14:31, gabriel.fernandez@foss.st.com wrote:
->> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->>
->> Enable optee and SCMI clocks support.
->>
->> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->> ---
->>   arch/arm/boot/dts/stm32mp131.dtsi | 37 +++++++++++++++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/stm32mp131.dtsi b/arch/arm/boot/dts/stm32mp131.dtsi
->> index 262de4eeb4ed..78eac53224d4 100644
->> --- a/arch/arm/boot/dts/stm32mp131.dtsi
->> +++ b/arch/arm/boot/dts/stm32mp131.dtsi
->> @@ -27,6 +27,43 @@ arm-pmu {
->>   		interrupt-parent = <&intc>;
->>   	};
->>   
->> +	scmi_sram: sram@2ffff000 {
->> +		compatible = "mmio-sram";
->> +		reg = <0x2ffff000 0x1000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0 0x2ffff000 0x1000>;
->> +
->> +		scmi_shm: scmi_shm@0 {
->> +			compatible = "arm,scmi-shmem";
->> +			reg = <0 0x80>;
->> +		};
->> +	};
->> +
->> +	firmware {
->> +		optee {
->> +			method = "smc";
->> +			compatible = "linaro,optee-tz";
->> +		};
->> +
->> +		scmi: scmi {
->> +			compatible = "linaro,scmi-optee";
-> This compatible doesn't seem to be documented upstream. I am looking at v5.17-rc5.
-> Do you have a reference detailing the difference between this conduit and
-> plain arm,scmi-smc (as used with TF-A on the STM32MP151).
->
-> Cheers,
-> Ahmad
+v2: https://lore.kernel.org/phone-devel/20220226200911.230030-1-marijn.suijten@somainline.org/
 
-Hi
+Changes since v1:
+- Documentation is dual-licensed;
+- Documentation example now uses zero-clock for dsi1_phy pixel clock;
+- SDX_GCC_65 is sorted in Kconfig/Makefile to easen adding this driver
+  in the correct alphabetic spot;
+- clk.h is replaced with clk-provider.h;
+- ahb, mdp and rot source clocks use rcg2_shared_ops instead of standard
+  ops;
+- Unnecessary line breaks are removed when remaining under 80 chars.
 
-Ahmad,
+v1: https://lore.kernel.org/linux-arm-msm/20211130212137.25303-1-martin.botka@somainline.org/T/#u
 
-it's on going.
+Marijn Suijten (1):
+  clk: qcom: Fix sorting of SDX_GCC_65 in Makefile and Kconfig
 
-https://lore.kernel.org/linux-arm-kernel/20211029102118.GG6526@e120937-lin/T/#mf46c83f0aadce3061ee93fa22159405f38d881a0
+Martin Botka (2):
+  dt-bindings: clock: add QCOM SM6125 display clock bindings
+  clk: qcom: Add display clock controller driver for SM6125
 
->
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			linaro,optee-channel-id = <0>;
->> +			shmem = <&scmi_shm>;
->> +
->> +			scmi_clk: protocol@14 {
->> +				reg = <0x14>;
->> +				#clock-cells = <1>;
->> +			};
->> +
->> +			scmi_reset: protocol@16 {
->> +				reg = <0x16>;
->> +				#reset-cells = <1>;
->> +			};
->> +		};
->> +	};
->>   	clocks {
->>   		clk_axi: clk-axi {
->>   			#clock-cells = <0>;
->
+ .../bindings/clock/qcom,dispcc-sm6125.yaml    |  87 +++
+ drivers/clk/qcom/Kconfig                      |  21 +-
+ drivers/clk/qcom/Makefile                     |   3 +-
+ drivers/clk/qcom/dispcc-sm6125.c              | 709 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,dispcc-sm6125.h    |  41 +
+ 5 files changed, 854 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+ create mode 100644 drivers/clk/qcom/dispcc-sm6125.c
+ create mode 100644 include/dt-bindings/clock/qcom,dispcc-sm6125.h
+
+
+base-commit: e6ada6df471f847da3b09b357e246c62335bc0bb
+--
+2.35.1
+
