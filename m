@@ -2,26 +2,26 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 429A5C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 12:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFF1C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 12:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233631AbiCDMyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 07:54:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41656 "EHLO
+        id S229521AbiCDMyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 07:54:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233682AbiCDMyE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 07:54:04 -0500
+        with ESMTP id S233197AbiCDMyM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 07:54:12 -0500
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452D25004F
-        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 04:53:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C9156205
+        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 04:53:24 -0800 (PST)
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <sha@pengutronix.de>)
-        id 1nQ7QY-0002ss-Gs; Fri, 04 Mar 2022 13:52:58 +0100
+        id 1nQ7QY-0002sr-Gz; Fri, 04 Mar 2022 13:52:58 +0100
 Received: from sha by dude02.hi.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <sha@pengutronix.de>)
-        id 1nQ7QX-008v4E-L2; Fri, 04 Mar 2022 13:52:57 +0100
+        id 1nQ7QX-008v4B-KK; Fri, 04 Mar 2022 13:52:57 +0100
 From:   Sascha Hauer <s.hauer@pengutronix.de>
 To:     linux-clk@vger.kernel.org
 Cc:     Abel Vesa <abel.vesa@nxp.com>,
@@ -33,9 +33,9 @@ Cc:     Abel Vesa <abel.vesa@nxp.com>,
         Adrian Alonso <adrian.alonso@nxp.com>,
         Mads Bligaard Nielsen <bli@bang-olufsen.dk>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v3 6/8] clk: imx: pll14xx: explicitly return lowest rate
-Date:   Fri,  4 Mar 2022 13:52:54 +0100
-Message-Id: <20220304125256.2125023-7-s.hauer@pengutronix.de>
+Subject: [PATCH v3 5/8] clk: imx: pll14xx: name variables after usage
+Date:   Fri,  4 Mar 2022 13:52:53 +0100
+Message-Id: <20220304125256.2125023-6-s.hauer@pengutronix.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220304125256.2125023-1-s.hauer@pengutronix.de>
 References: <20220304125256.2125023-1-s.hauer@pengutronix.de>
@@ -49,38 +49,101 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_pll14xx_round_rate() returns the lowest rate by indexing into
-the rate table with the variable i. i is actually pll->rate_count
-as this is the value we come out of the loop with. Use pll->rate_count
-explicitly to make it a bit more clear what is being done. While at
-it fix a typo in the comment. No functional change.
+In clk_pll1443x_set_rate() 'tmp' is used for the content of different
+registers which makes it a bit hard to follow. Use different variables
+named after the registers to make it clearer. No functional change
+intended.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-pll14xx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-pll14xx.c | 42 +++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index b464e1155e25b..af4c979e70a64 100644
+index ebd5d888fea6d..b464e1155e25b 100644
 --- a/drivers/clk/imx/clk-pll14xx.c
 +++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -118,13 +118,13 @@ static long clk_pll14xx_round_rate(struct clk_hw *hw, unsigned long rate,
- 	const struct imx_pll14xx_rate_table *rate_table = pll->rate_table;
- 	int i;
+@@ -238,7 +238,7 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ {
+ 	struct clk_pll14xx *pll = to_clk_pll14xx(hw);
+ 	const struct imx_pll14xx_rate_table *rate;
+-	u32 tmp, div_val;
++	u32 gnrl_ctl, div_ctl0;
+ 	int ret;
  
--	/* Assumming rate_table is in descending order */
-+	/* Assuming rate_table is in descending order */
- 	for (i = 0; i < pll->rate_count; i++)
- 		if (rate >= rate_table[i].rate)
- 			return rate_table[i].rate;
+ 	rate = imx_get_pll_settings(pll, drate);
+@@ -248,32 +248,32 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return -EINVAL;
+ 	}
  
- 	/* return minimum supported value */
--	return rate_table[i - 1].rate;
-+	return rate_table[pll->rate_count - 1].rate;
+-	tmp = readl_relaxed(pll->base + DIV_CTL0);
++	div_ctl0 = readl_relaxed(pll->base + DIV_CTL0);
+ 
+-	if (!clk_pll14xx_mp_change(rate, tmp)) {
+-		tmp &= ~SDIV_MASK;
+-		tmp |= FIELD_PREP(SDIV_MASK, rate->sdiv);
+-		writel_relaxed(tmp, pll->base + DIV_CTL0);
++	if (!clk_pll14xx_mp_change(rate, div_ctl0)) {
++		div_ctl0 &= ~SDIV_MASK;
++		div_ctl0 |= FIELD_PREP(SDIV_MASK, rate->sdiv);
++		writel_relaxed(div_ctl0, pll->base + DIV_CTL0);
+ 
+-		tmp = FIELD_PREP(KDIV_MASK, rate->kdiv);
+-		writel_relaxed(tmp, pll->base + DIV_CTL1);
++		writel_relaxed(FIELD_PREP(KDIV_MASK, rate->kdiv),
++			       pll->base + DIV_CTL1);
+ 
+ 		return 0;
+ 	}
+ 
+ 	/* Enable RST */
+-	tmp = readl_relaxed(pll->base + GNRL_CTL);
+-	tmp &= ~RST_MASK;
+-	writel_relaxed(tmp, pll->base + GNRL_CTL);
++	gnrl_ctl = readl_relaxed(pll->base + GNRL_CTL);
++	gnrl_ctl &= ~RST_MASK;
++	writel_relaxed(gnrl_ctl, pll->base + GNRL_CTL);
+ 
+ 	/* Enable BYPASS */
+-	tmp |= BYPASS_MASK;
+-	writel_relaxed(tmp, pll->base + GNRL_CTL);
++	gnrl_ctl |= BYPASS_MASK;
++	writel_relaxed(gnrl_ctl, pll->base + GNRL_CTL);
+ 
+-	div_val = FIELD_PREP(MDIV_MASK, rate->mdiv) |
+-		  FIELD_PREP(PDIV_MASK, rate->pdiv) |
+-		  FIELD_PREP(SDIV_MASK, rate->sdiv);
+-	writel_relaxed(div_val, pll->base + DIV_CTL0);
++	div_ctl0 = FIELD_PREP(MDIV_MASK, rate->mdiv) |
++		   FIELD_PREP(PDIV_MASK, rate->pdiv) |
++		   FIELD_PREP(SDIV_MASK, rate->sdiv);
++	writel_relaxed(div_ctl0, pll->base + DIV_CTL0);
+ 	writel_relaxed(FIELD_PREP(KDIV_MASK, rate->kdiv), pll->base + DIV_CTL1);
+ 
+ 	/*
+@@ -285,8 +285,8 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	udelay(3);
+ 
+ 	/* Disable RST */
+-	tmp |= RST_MASK;
+-	writel_relaxed(tmp, pll->base + GNRL_CTL);
++	gnrl_ctl |= RST_MASK;
++	writel_relaxed(gnrl_ctl, pll->base + GNRL_CTL);
+ 
+ 	/* Wait Lock*/
+ 	ret = clk_pll14xx_wait_lock(pll);
+@@ -294,8 +294,8 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return ret;
+ 
+ 	/* Bypass */
+-	tmp &= ~BYPASS_MASK;
+-	writel_relaxed(tmp, pll->base + GNRL_CTL);
++	gnrl_ctl &= ~BYPASS_MASK;
++	writel_relaxed(gnrl_ctl, pll->base + GNRL_CTL);
+ 
+ 	return 0;
  }
- 
- static unsigned long clk_pll14xx_recalc_rate(struct clk_hw *hw,
 -- 
 2.30.2
 
