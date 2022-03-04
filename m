@@ -2,38 +2,54 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23A9C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 20:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E95C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 20:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbiCDUa7 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 15:30:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
+        id S229566AbiCDUyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 15:54:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229482AbiCDUa6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 15:30:58 -0500
-Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B15231DD0C6
-        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 12:30:08 -0800 (PST)
-Received: from [77.244.183.192] (port=63090 helo=[192.168.178.73])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1nQEYw-000CMz-00; Fri, 04 Mar 2022 21:30:06 +0100
-Message-ID: <6f4a1657-0747-2e02-3053-3ae04c194fa5@lucaceresoli.net>
-Date:   Fri, 4 Mar 2022 21:30:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
+        with ESMTP id S229544AbiCDUyx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 15:54:53 -0500
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2051.outbound.protection.outlook.com [40.107.22.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D895AA60
+        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 12:54:03 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UcwrpQTeMmteS8d+uTP0neNbQLhLQZl4qw6jDD4adAHgsNcUJsHTrhCoDTDjRBHG45SZ1x28EyfPmNwVHds72wT3kLP9dafGrwET2rIF74MiLd2DUhf36vBzTn66VqJMWDU3d7YjyYwH5fsId87IClR7zerRorbrgqcqCR5sojYBGNb81hzqBTqcka6a4KagCberrzC8NdLzQiyBg8m9qMT/hakUa9j3M8wYLnxWcoKRPr5CFGPqjqDtKdHXVnYPQjN+0bQqpJe7eNy7lEv6Xim7sZyr0rZGtzUK63SapwaL98fDtXe7M0R/NN+uXScHPB73bNISqWH3m1CcwAmVkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J0CxP1d9vP766kVpvNYoKRCmLECrjP5tdadplyyijkQ=;
+ b=H1OhxqnEG5j0dAY79YkIP5BjByyhpkTYe1kRDnGUht1EvACL7Wi8VmjS8UcVRF0y4BdQcepX+eVYs7R+9Lk42yCVbG9qvTSpS8fWR9zZ2uUx3jWgf2zNMNW3tOkFwiAuAf9pzo51Qp2gOSR4WDop+JpnZlHB+mvsWsOy7ukPZoz4Rh4A6pwDapEW54V5CBAu0agtmHAiytQFaMDvU9opxZwHxU9i+7+EpsvuTZhW127QQp8JNFgQElOAcyL5sF6C2xOJ19UMFOSOKzUHgAkCG6m0LTDDNPoCY2iTBpKbQZB7Zmpr8FMveSk5JEn+59aEw0W60Kj63hBot7Rg3dYruw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J0CxP1d9vP766kVpvNYoKRCmLECrjP5tdadplyyijkQ=;
+ b=pDHxDubNuzA1/c9w7O+hJQZ25I9zyDMrpV/K0sOtQSE8TcLaqWGMOLHpuQ6kU6EtUxQcZssqkmde2sug62Ln8J4p2oobOLKNopIr6oswaXSEMyO1K/HfHMb0hGikuv8PhcUghxv4f7kWR5+WXQWLuaqEi92yB5OEqu2xnzMI/edY0l2+FKnyRm1O2ARTTixt/ZnPW0qiL7uQOveP/Z3/Q+bo52mIH5KpLWMXLsFqYvwLffwWXUXFX6jx8G0JE3apV5j3DT6xMaj2jAtpzf150/mrnbefQBetPMcV+bAW29+ts0AbQxqB3ZVEk/BkCVGJWDa4ECLKjNGlipJEnRwUIA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB7PR03MB4523.eurprd03.prod.outlook.com (2603:10a6:10:19::27)
+ by VE1PR03MB5742.eurprd03.prod.outlook.com (2603:10a6:803:123::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Fri, 4 Mar
+ 2022 20:53:59 +0000
+Received: from DB7PR03MB4523.eurprd03.prod.outlook.com
+ ([fe80::9130:93ae:6e27:e9a]) by DB7PR03MB4523.eurprd03.prod.outlook.com
+ ([fe80::9130:93ae:6e27:e9a%4]) with mapi id 15.20.5038.014; Fri, 4 Mar 2022
+ 20:53:59 +0000
 Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
  versaclock5 driver
-Content-Language: it-IT
 To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
         Adam Ford <aford173@gmail.com>
-Cc:     Sean Anderson <sean.anderson@seco.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
         "Klein, Jesse" <Jesse.Klein@mksinst.com>
 References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <9e4e542f-6f73-164e-581e-17369aada2f3@seco.com>
+ <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
+ <b15f993b-d67b-b96a-904c-53025eda3aa3@lucaceresoli.net>
  <MN2PR03MB5008747FDF505CA30970ADE293029@MN2PR03MB5008.namprd03.prod.outlook.com>
  <CAHCN7x+kusPwHpkp+4zwvGN48oDUGfN2ueCn=8kt_54aiYwE9g@mail.gmail.com>
  <MN2PR03MB5008F4921D8484306505F8FB93029@MN2PR03MB5008.namprd03.prod.outlook.com>
@@ -44,458 +60,169 @@ References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.
  <MN2PR03MB500847D9F5BFF44F5E98ABA893039@MN2PR03MB5008.namprd03.prod.outlook.com>
  <59a74714-ae45-897e-57b9-7346998442cb@lucaceresoli.net>
  <MN2PR03MB5008DB1C7B0B5A4D2ECBB88E93049@MN2PR03MB5008.namprd03.prod.outlook.com>
- <22b859cf-4388-0471-64a5-5113c133c9ef@lucaceresoli.net>
- <MN2PR03MB50085CFBC36FAEDCC1DCB4F493059@MN2PR03MB5008.namprd03.prod.outlook.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-In-Reply-To: <MN2PR03MB50085CFBC36FAEDCC1DCB4F493059@MN2PR03MB5008.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+From:   Sean Anderson <sean.anderson@seco.com>
+Message-ID: <a93e4fef-3001-0a41-1e3c-c23438e14799@seco.com>
+Date:   Fri, 4 Mar 2022 15:53:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <MN2PR03MB5008DB1C7B0B5A4D2ECBB88E93049@MN2PR03MB5008.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN2PR01CA0046.prod.exchangelabs.com (2603:10b6:208:23f::15)
+ To DB7PR03MB4523.eurprd03.prod.outlook.com (2603:10a6:10:19::27)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f4154017-cf83-4cca-ed4e-08d9fe211af4
+X-MS-TrafficTypeDiagnostic: VE1PR03MB5742:EE_
+X-Microsoft-Antispam-PRVS: <VE1PR03MB57429E31771485803AA27EB296059@VE1PR03MB5742.eurprd03.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kpWZLZHFWA4TczWA+c611/V008AL3/zcIe9xANqrFckquQGvQIJzPEjxyHuXt1EsJTbS3xgLeEcjYWlczZWnLUUOsaIta/QCdLRA0yNQfZ48Zgd9SkIQXvTF1CiGHtljV9W4u9aG/eZFLf9c6nGVNWDMH352E4YkdqKlNx5zqrOMvLDRbaqnnHsMZxcr7pDwiL8LsHRrCRYKmFPuKWmZOWLTuM+Ra56Ceblk3LGexrna3kSJcqcf0chuvmuREt+UPE56wb5nT49umxlLt0yVKUGOCDJrJqvh0WYnVqmYtc7sO7CyrA8A5PNIOM7GBAWHhfsAnWGuVP4d3a8BFh4wQ8/AGJp79PiaRerlSOgBZmjDU4K2qAUy8iEsU39YgpcPgQ+zwXoimbYPtvvotrm9eKB83P3RM/f0XG7ZovZ+4tZ3dwtdweqQgzEc3KMhp32qZBDXtIATu4RiWFbILWWM+nw7zylalWeibYcmBhJqC13oAoqvqEALZWGenah1Wca6uejsitfaDSS9pH2klJ1voYYjW5QGRxcElua9Col4I5sdgqg+yafgrnaN59qtqrekMMKUloVei2cUFBCtS19hQsU8lkyszYPOOhebG2ljTCgpcyksZ+zeX9weMV24vURQJXHN66/i+LIFAzMf7du3k0k04fVIJfrDRDYv3oc3IDiHDA7rUvisPNAyTLT8DmIYGrfH4+9BlcspW2Cu0hLy5TWx9ngC4NhFUT8JwRWvY1LLM1QWJL/LzerfSGC3q4fMwaG6UPKnguxKnxlU0DTiDAws9xCvfbWPqwCWU8AAW/zYdiAJVag6A6Kgki6Wb3mfYwGsO/8Zhguzvw2WZj1oRo2gLhZYQjJOakqM0NkukXg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR03MB4523.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6486002)(2906002)(110136005)(966005)(31696002)(316002)(38350700002)(38100700002)(8676002)(66476007)(66556008)(4326008)(36756003)(66946007)(54906003)(44832011)(8936002)(5660300002)(52116002)(6666004)(6506007)(6512007)(86362001)(53546011)(83380400001)(2616005)(508600001)(26005)(186003)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N3pRVENoR2d2UXBhRFhUZE9uUlpXT1pIb3ZzMDRPT0lFc20yNVFyazdjUUdZ?=
+ =?utf-8?B?OXpOc0JCMmVMbHRpeEtMRnFMNlpBaFBtemc3bGlGUWRmVWhzR3dlN2dSd25n?=
+ =?utf-8?B?Mld0akVNeVJ1Nit2d0hSMFdXWExVTlFDamRnRVJPRkt4ODdMb1A4a1pPUDJP?=
+ =?utf-8?B?R1p1Mmo5UzJnYWY5WDg1Yy9vSXQ5SUxmMFl6cVZORzdHNmVCdGEwMGQxYjdG?=
+ =?utf-8?B?cjNmSnpTdTNTcTdHNjR5S21QRTZxUG1Pa3RSMGtjdHEwTHg0RVp5cnBmZ0VI?=
+ =?utf-8?B?ZEtjUUt4bUNLbnhyNXZReDZMU1Z4U0pEUXNvaThwOUF3TGpFaXIySmQwNlRK?=
+ =?utf-8?B?NmUxcTFvVFlHTm05T2VYRm9LOWVyWEMydENFZ2toVVRWZkdOVVhMZitkRy9m?=
+ =?utf-8?B?NURiTGs1a1lJYTl0SDd6WXBaL0R2ejE2WFYwUnVXK2MybmIxSDRGTVEzUjZ0?=
+ =?utf-8?B?L1IzZjZYczR2YXFXTUNJNjl2TUM2Qlp2elJ3SlIvVlJhUktWVFA1aGZTR0l6?=
+ =?utf-8?B?VjNiMlgvUWxneGFiMXRyV2c1NmJsZEZPcXU4Ums1Q0dWY2hTRTVqWmRaVGdJ?=
+ =?utf-8?B?TGZ5bnh3NGQvcUtvb0lIVERSazNhdy8xNkxtcng3VlBDYjlDT3k0dEJQUlg3?=
+ =?utf-8?B?c0ViN2ppSC9nTjB1aHFhVDJ4NnMyZU90Q2M4TkJqMG1LbHExeGlMYjVKL25a?=
+ =?utf-8?B?OHR1NFJCdk5UUmh0bzROUkc2K3M0Q20yM3B3Z01QalB6cTVJd1ppa255MTZh?=
+ =?utf-8?B?cU9iV05qUG92M0tmcnU1RTVPbklrVCtFMVlwQVBTQ0grSWpSa1grUTQ3UitQ?=
+ =?utf-8?B?K1pTT3o1L3BycEFlVlQzVnpveFJWUTA0STlsbzU2VWZoT01XbnRLNmNxMUtK?=
+ =?utf-8?B?eTg3TzNtS2RGT2dmTkxXYzU0Tlg4Tlo3dkJhQnE3YW5SSlUySENGN3Vjejk4?=
+ =?utf-8?B?YXNLbHloMG9XUEhCbUJPMW5QTXBBVDlTT1RHQXMwS2duelVJZ1d6NjZ1M0I4?=
+ =?utf-8?B?TGNpRGJjQXE4bDdBNlFPUnpuVXhVUktpOWtWL3ZySVp0VFpidDJKdmdKakhk?=
+ =?utf-8?B?UnRnY0VjbWt6ZkNEMGpSVnVLOG10ZEhENnlhN2RZdUNZUkh4Y2xtU01NR3RT?=
+ =?utf-8?B?WTZVenp3YkRRSFpUUkk4NW80VktONXQza0pLWitscVo0V1kvZVpuTXNoM0dn?=
+ =?utf-8?B?R3l1S3NLRm1xVXM0bWVkc2pXTkdldy94TUk4Sno0QS9wSDZaTit0VkVrYW0x?=
+ =?utf-8?B?UHFnSmNHQWNtbW9kSExodnpFak9GNjNqVVJsSm5UcE8rNGdlUENyeXA5WUsv?=
+ =?utf-8?B?TVozVndvcE51NUxTZ01hVldtdm4wV0wyR2xoVVcrTis3MUJSUW44ajFNeHBX?=
+ =?utf-8?B?Mko3Yzd6OWYzVm1Cd2xuazVsaDhDR0h1SjB2SU11L0JkQk1udm9OOFRMNTNL?=
+ =?utf-8?B?RzlvQkJ2OFRhTHNuU2cvL2kwcmVPOVIyUEdmQi9aS0hvMG44SlJKSndVYWpD?=
+ =?utf-8?B?dkx6a3cxd004TzNTeUhac1FQS0hKZ2Z4Wm9NVWRjM3dwYlFUWU1iZUNkYTFO?=
+ =?utf-8?B?cFJBTndFa0cxMkwvRVk3UnovSy9abmZXNVpvcDB1WHBDWlA5OGlBM0U5K0tW?=
+ =?utf-8?B?UWtaN252UW9qcUV5UWc5MWJaQkp5S2JiMVFud3FLUWpzbVVSZHNGLzZ6TUVL?=
+ =?utf-8?B?RnBlK1p3OGo2aEhYdkc3QUlmb3ZqWEU3THNCMTR4NlppMDQzaXpJQldUUFBK?=
+ =?utf-8?B?eTc4VnhhNGkzVGd4MnpsNkJ0VzAwakhvL3JFSXNnVHRxT0NXSlhWaC9laG5t?=
+ =?utf-8?B?Ny9HdXAvVGhZWlc5QUhSK0VWUDl1eE01N254N2xiVDhJWVNxeWNLMHE2aEdW?=
+ =?utf-8?B?SlVHbG9LTVFaN1Y3SWJtZ1JaQmhqNkx4T0RKZjJQQ1owZUU1YW9zK1g5RmFL?=
+ =?utf-8?B?Q3ZHbkF1YVJxa2ZqNnBsV21Mc0RhdUgzVVdyNjU5ek5pN042VkE0QzRMdUty?=
+ =?utf-8?B?czhtWUppTDVGZFdHclcyRGhpaTc0Z0Ixb08vTEh1czhNNWZZd0N4d0cvZ1RV?=
+ =?utf-8?B?RSthbWNVOXM4Sm0zNlEzTCt5Ujkrc0gxTUllVEh3Ykh4UW55cjlTMGI1eVI2?=
+ =?utf-8?B?NGdtaGQwNHNFS25VZzJKVVQrUUdPNncweFI2UVIvVmtZL0Q0ejN3dDI5QlRU?=
+ =?utf-8?Q?FqV9F9KmzN5mvobdUc2LQx8=3D?=
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4154017-cf83-4cca-ed4e-08d9fe211af4
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4523.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2022 20:53:59.1145
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0hxdmwGnD/KarCpo1ykecH+NlHHXv1XKHxcspnLBAbr34EGJa8BCTCn053JzQRmSzbXues/IeTDzqApnZq0cng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR03MB5742
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claude,
+Hi Fillion,
 
-On 04/03/22 21:07, Fillion, Claude wrote:
-> Hello Luca,
+On 3/3/22 1:15 PM, Fillion, Claude wrote:
 > 
->> -----Original Message-----
->> From: Luca Ceresoli <luca@lucaceresoli.net>
->> Sent: Thursday, March 3, 2022 5:34 PM
->> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->> <aford173@gmail.com>
->> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->> versaclock5 driver
->>
->> Hi Claude,
->>
->> On 03/03/22 19:15, Fillion, Claude wrote:
->>> Hello Luca,
->>>
->>>> -----Original Message-----
->>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>> Sent: Thursday, March 3, 2022 9:42 AM
->>>> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->>>> <aford173@gmail.com>
->>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->>>> versaclock5 driver
->>>>
->>>> Hi Claude,
->>>>
->>>> On 02/03/22 21:49, Fillion, Claude wrote:
->>>>>
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>>>> Sent: Wednesday, March 2, 2022 12:27 PM
->>>>>> To: Adam Ford <aford173@gmail.com>; Fillion, Claude
->>>>>> <Claude.Fillion@mksinst.com>
->>>>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>>>> clk@vger.kernel.org>
->>>>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding
->>>>>> idt/renesas
->>>>>> versaclock5 driver
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> On 02/03/22 16:45, Adam Ford wrote:
->>>>>> ...
->>>>>>>>>>>>     versaclock6: clock-controller@6a {
->>>>>>>>>>>>
->>>>>>>>>>>>         /* Clock Consumer */
->>>>>>>>>>>>
->>>>>>>>>>>>         compatible = "idt,5p49v6965";
->>>>>>>>>>>>
->>>>>>>>>>>>                                 reg = <0x6a>;
->>>>>>>>>>>>
->>>>>>>>>>>>                                 #clock-cells = <1>;
->>>>>>>>>>>>
->>>>>>>>>>>>                                 clocks = <&x304_clk>;
->>>>>>>>>>>>
->>>>>>>>>>>>                                 clock-names = "xin";
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>         assigned_clocks = <&versaclock6 1>,
->>>>>>>>>>>>
->>>>>>>>>>>>                           <&versaclock6 2>,
->>>>>>>>>>>>
->>>>>>>>>>>>                           <&versaclock6 3>,
->>>>>>>>>>>>
->>>>>>>>>>>>                           <&versaclock6 4>;
->>>>>>>>>>>>
->>>>>>>>>>>>         assigned_clock_rates = <46800000>, <250000000>,
->>>>>>>>>>>> <1000000>, <13000000>;
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> Assigned clocks and assigned clock rates should be hyphens and
->>>>>>>>>>> not underscores.
->>>>>>>>>>>
->>>>>>>>>>> assigned-clocks =  <&versaclock6 1>,   <&versaclock6 2>,
->>>>>>>>>>> <&versaclock6 3>, <&versaclock6 4>;
->>>>>>>>>>>
->>>>>>>>>>> assigned-clock-rates =  <46800000>, <250000000>, <1000000>,
->>>>>>>>>>> <13000000>;
->>>>>>>>>>>
->>>>>>>>>>> Another thing to check is to make sure the consumers of these
->>>>>>>>>>> clocks is enabling them.  They do not necessarily get enabled
->>>>>>>>>>> by
->>>>>> default.
->>>>>>>>>>>
->>>>>>>>>>> adam
->>>>>>>>>>
->>>>>>>>>> Doh - thanks.  I looked at it a million times 😊 .
->>>>>>>>>>
->>>>>>>>>> Now getting desired out1 frequency but nothing on other
->> outputs.
->>>>>>>>>> From
->>>>>>>>> the code it seems vc5_clk_out_prepare() is the method that
->>>>>>>>> enables outputs but this method is not being called I am not
->>>>>>>>> clear how to make the 'consumer enable them.'
->>>>>>>>>>
->>>>>>>>>> I have added this to my dtsi to no avail.
->>>>>>>>>>
->>>>>>>>>>          /* Consumer referencing 5P49V5965 pin OUT1 and OUT2 */
->>>>>>>>>>         consumer {
->>>>>>>>>>             clocks = <&versaclock6 1>, <&versaclock6 2>;
->>>>>>>>>>             /* ... */
->>>>>>>>>>          };
->>>>>>>>>>
->>>>>>>>>> Looking through device tree documentation.
->>>>>>>>>
->>>>>>>>> It's likely going to be in the consumer's driver.  Check the
->>>>>>>>> consumer device tree binding to make sure you've correctly
->>>>>>>>> associated the clock.  If the binding doesnt't show a clock is
->>>>>>>>> required, it might not know that you using a programmable clock.
->>>>>>>>>
->>>>>>>>> Here is a patch that I needed to apply to an Ethernet driver
->>>>>>>>> which wasn't expecting a programmable clock to drive a reference
->>>>>>>>> clock, so the clock wasn't being enabled.
->>>>>>>>>
->>>>>>>>>
->> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux
->>>>>>>>> /k
->>>>>>>>> er
->>>>>>>>> nel/g
->>>>>>>>>
->>>> it/torvalds/linux.git/commit/drivers/net/ethernet/renesas/ravb_main.
->>>>>>>>> c?id=
->>>>>>>>> 8ef7adc6beb2ef0bce83513dc9e4505e7b21e8c2__;!!KnJ4-
->> rp7!1Qb17q-
->>>>>>>>>
->>>>>>
->>>>
->> TWrV62AeQtTNNVDErVbyhbXB1sukyT2ggvFPUltIBI5nIKzNnjVOcqlw8qJyy$
->>>>>>>>>
->>>>>>>>> Look at the use of devm_clk_get_optional and clk_prepare_enable
->>>>>>>>> from that patch.  (yes, there is a subsequent patch that fixes
->>>>>>>>> something I didn't quite do right, but the basics are here)
->>>>>>>>>
->>>>>>>>> The consumer drivers need to 'get' the clock so it can associate
->>>>>>>>> itself to the clock in question.  Once the relationship is
->>>>>>>>> established, the consumer needs to call clk_prepare_enable()
->>>>>>>>> which
->>>>>> uses the clock system to turn the clock on.
->>>>>>>>> Without this step, it's likely the Versaclock won't generate a
->>>>>>>>> signal, because it doesn't know it needs to turn it on.
->>>>>>>>>
->>>>>>>>> adam
->>>>>>>>
->>>>>>>> Not sure I fully follow.  I see that clk out1 is enabled but the
->>>>>>>> other
->>>>>> channels are not so it would seem my difficulty is with individual
->> channels.
->>>>>>>
->>>>>>> Do the devices that need the clock from the versaclock reference
->>>>>>> the versaclock?  If so, to those drivers use the get and enable?
->>>>>>> If not, the versaclock will stay off.  In the patch example I
->>>>>>> showed, I had to modify the Ethernet driver on a processor,
->>>>>>> because it didn't explicitly enable the reference clock.  That
->>>>>>> Ethernet driver expected the refclk was always present which was a
->> false assumption.
->>>>>>> Once I got the consumer device (in this case, Ethernet) to request
->>>>>>> and enable the clock, the clock subsystem enabled the
->>>>>>> corresponding output on the versaclock.
->>>>>>>
->>>>>>> For the Ethernet example I cited above, the corresponding device
->>>>>>> tree looks like:
->>>>>>>
->>>>>>> &avb {
->>>>>>>      clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
->>>>>>>      clock-names = "fck", "refclk";
->>>>>>>      status = "okay";
->>>>>>> };
->>>>>>>
->>>>>>> With this device tree reference, the 'refclk' gets associated to
->>>>>>> versaclock ouput 4.  When the Ethernet needs the clock, it calls
->>>>>>> clk_prepare_enable on that clock reference, and the clock system
->>>>>>> calls on the versaclock driver to enable the output.  The reason I
->>>>>>> needed to submit that patch was that the consumer driver (the
->>>>>>> Ethernet in this
->>>>>>> case) wasn't calling the clk_prepare_enable, so the clock remained
->>>>>>> off.  It's likely that whatever devices that need the clock from
->>>>>>> the versaclock will need both a device tree reference to it as
->>>>>>> well as a call to clk_prepare_enable.
->>>>>>>
->>>>>>>>
->>>>>>>> In my simple application I would like to enable outputs, on a per
->>>>>>>> channel
->>>>>> basis, from the device tree.  Would it make sense  to add  an
->> 'idt,enable'
->>>>>> property in similar fashion to the existing idt,mode,
->>>>>> idt,voltage-microvolt, and idt,slew-percent properties?  Then
->>>>>> vc5_get_output_config() could be modified to also call
->>>>>> vc5_clk_out_prepare() (or clk_prepare_enable(), which in turn would
->>>>>> call
->>>> vc5_clk_out_prepare()).
->>>>>>>
->>>>>>> I can't speak for the linux clock group, but the advantage of
->>>>>>> patching the drivers that need the clocks generated from the
->>>>>>> versaclock is the ability to stop these clocks when the drivers
->>>>>>> are halted and/or suspended.
->>>>>>
->>>>>> Having the consumer driver get, prepare and enable the clock is of
->>>>>> course the best as Adam explained.
->>>>>>
->>>>>> However I think using assigned-clocks and assigned-clock-rates
->>>>>> should enable the clocks unconditionally even if the consumer
->>>>>> driver does not do any clk_*() calls. Might be worth double checking
->> that.
->>>>>>
->>>>>> --
->>>>>> Luca
->>>>>
->>>>> In our application we plan to use the 6965/6901 to replace a part
->>>>> that does
->>>> not use a consumer driver.  We just set clock options in our device tree.
->>>> Ideally that is how we would like to use the Renesas part as well.
->>>>>
->>>>> In the limited testing I have done thus far behavior is a bit
->>>>> puzzling.  From
->>>> the device tree I am able to change the clock frequency for out1
->>>> (which is enabled by default) and I can disable outputs using
->>>> 'idt,shutdown', but I cannot change the logic levels for out1 using the
->> 'idt,mode' parameter.
->>>>
->>>> This is very strange.
->>>>
->>>> Did you double-check that your device tree description of the
->>>> versaclock node is correct according to [0]?
->>>>
->>>> Please send the complete  description of the versaclock node in your
->>>> device tree, so we can check it and see if any detail is misplaced.
->>>>
->>>> [0]
->>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/kern
->>>> el/g
->>>> it/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/id
->>>> t,vers
->>>> aclock5.yaml*n169__;Iw!!KnJ4-
->>>> rp7!yalfgsfaZKSlo4yNfQfvlbsmNKBRltGSetoIonP--5aGebuHUJ-M-
->>>> am93tjT8aEhsSJJ$
->>>>
->>>>
->>>> --
->>>> Luca
->>>
->>> Here is the relevant portions of my device tree.  On the scope I see the
->> default 'CMOSD' voltages and a modified frequency of 46.8MHz.
->>>
->>> I have also modified my local copy of the driver to accept an 'idt,enable'
->> pattern property that allows me to enable outputs from the device tree. It
->> needs some refinement but I can pass it along if there is interest.
->>>
->>> -Claude
->>>
->>> ==================
->>> Top of device tree file:
->>> ==================
->>> /*
->>> This is a message for system-user.dtsi. If you are reading from
->>> system-user.dtsi.genxxxx, please note that this message is for explaining
->> the purpose of system-user.dist in relation to system-user.dtsi.genxxx.
->>>
->>> system-user.dtsi is merely a writable file handled by
->>> ./https://urldefense.com/v3/__http://buildPetaLinux.sh__;!!KnJ4-
->> rp7!w34odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->> J3Uswvovc00BUt$  to copy the appropriate system-user.dtsi.genxxxx to this
->> filename for use in the build image. Do not put your device tree here. They
->> belong to the system-user.dtsi.genxxxx.
->>>
->>> If you add a new dtsi, please create an appropriate device tree file
->>> and modify the
->>> ./https://urldefense.com/v3/__http://buildPetaLinux.sh__;!!KnJ4-rp7!w3
->>> 4odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->> J3Uswvovc00BUt$
->>> to handle it */
->>>
->>> #include <dt-bindings/clk/versaclock.h>
->>>
->>> /include/ "system-conf.dtsi"
->>> / {
->>>
->>>   /* Clock Provider */
->>>   x304_clk: x304-clock {
->>>     compatible = "fixed-clock";
->>>     #clock-cells = <0>;
->>>     clock-frequency = <25000000>;
->>>   };
->>>
->>> ...
->>>
->>> ==================
->>> Device Tree Node:
->>> ==================
->>> &i2c1 {
->>>     clock-frequency = <100000>;
->>>
->>>     // Use patch.  Updated driver for 5p49v6965 available  at
->> https://urldefense.com/v3/__https://github.com/Xilinx/linux-
->> xlnx/blob/master/drivers/clk/clk-versaclock5.c__;!!KnJ4-
->> rp7!w34odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->> J3UswvoiTIHWiN$
->>>     // Device Tree Setup ->
->> https://urldefense.com/v3/__https://github.com/Xilinx/linux-
->> xlnx/blob/master/Documentation/devicetree/bindings/clock/idt*2Cversaclo
->> ck5.yaml__;JQ!!KnJ4-rp7!w34odUyH6hHBct-rWC671nddpz5440f-
->> viaETLtFnGYMlkuB7P0ye-J3Uswvor3hNb3f$
->>>     versaclock6: clock-controller@6a {
->>>         /* Clock Consumer */
->>>         compatible = "idt,5p49v6965";
->>> 		reg = <0x6a>;
->>> 		#clock-cells = <1>;
->>> 		clocks = <&x304_clk>;
->>> 		clock-names = "xin";
->>>
->>>         assigned-clocks = <&versaclock6 1>,
->>>                           <&versaclock6 2>,
->>>                           <&versaclock6 3>,
->>>                           <&versaclock6 4>;
->>>         // assigned-clock-rates = <46800000>, <250000000>, <1000000>,
->> <13000000>;
->>>         assigned-clock-rates = <46800000>, <250000000>, <1000000>,
->> <13000000>;
->>>         /* Set the SD/OE pin's settings */
->>>         idt,shutdown = <0>;
->>>         idt,output-enable-active = <0>;
->>>         OUT1 {
->>>             idt,mode = <VC5_CMOS>;
->>>             idt,voltage-microvolt = <3300000>;
->>>             c = <100>;
->>>         };
->>>         OUT2 {
->>>             idt,mode = <VC5_CMOS>;
->>>             idt,voltage-microvolt = <3300000>;
->>>             idt,slew-percent = <100>;
->>>         };
->>>         OUT3 {
->>>             idt,mode = <VC5_CMOSD>;
->>>             idt,voltage-microvolt = <3300000>;
->>>             idt,slew-percent = <100>;
->>>         };
->>>         OUT4 {
->>>             idt,mode = <VC5_CMOS>;
->>>             idt,voltage-microvolt = <3300000>;
->>>             idt,slew-percent = <100>;
->>>         };
->>>     };
->>
->> Strange. Something you may check (or double check if you already did):
->>
->> 1. Read if the register has been set:
->>
->>   # not tested, check carefully
->>   i2cget -y -r 1 0x6a 0x60
->>
->> the three low bits in register 0x60 should read 0x1 for CMOS, 0x5 for CMOSD.
+> Here is the relevant portions of my device tree.  On the scope I see the default 'CMOSD' voltages and a modified frequency of 46.8MHz.  
 > 
-> Apparently the register is not getting set properly.
+> I have also modified my local copy of the driver to accept an 'idt,enable' pattern property that allows me to enable outputs from the device tree. It needs some refinement but I can pass it along if there is interest.
 > 
-> In response to 'i2cget -y -f 1 0x6a 0x60' (-r not supported maybe a typo?)
+> -Claude
 > 
-> I get 0xbb, which according to the spec I believe should give me CMOSD, which is what I am seeing ( (D7, D6, D5) = 101: CMOSD ).
+> ==================
+> Top of device tree file:
+> ==================
+> /*
+> This is a message for system-user.dtsi. If you are reading from system-user.dtsi.genxxxx, please note that this message is
+> for explaining the purpose of system-user.dist in relation to system-user.dtsi.genxxx.
 > 
-> I can set address 0x60 to 0x3b using i2cset to get single ended CMOS.
-
-I see. 0xbb is the reset default, so as you said it is not set.
-
->> 2. Change idt,mode in device tree and see whether the register changes or
->> the scope show any different output mode.
+> system-user.dtsi is merely a writable file handled by ./buildPetaLinux.sh to copy the appropriate system-user.dtsi.genxxxx to this filename for use
+> in the build image. Do not put your device tree here. They belong to the system-user.dtsi.genxxxx.
 > 
-> Changing ide,mode to VC5_LVDS does not the value of register 0x06.  I still get a value of 0xbb
-
-Ok, coherent with test 1.
-
->> 3. Enable debugging output (simpliy add #define DEBUG on top of file and
->> rebuild), then see whether during clk prepare you see this in dmesg:
->>
->>   Update output ... mask 0x... val 0x....
->>
->> 4. Check whether the OUT1 node is actually found by adding a dev_dbg() in
->> vc5_get_output_config(), just before the of_get_child_by_name() call and
->> ~5 lines below, between 'return 0' and vc5_update_mode().
->>
->> Let us know your findings.
->>
+> If you add a new dtsi, please create an appropriate device tree file and modify the ./buildPetaLinux.sh to handle it 
+> */
 > 
-> Seems to be finding the nodes ok. Here is the relevant code section:
+> #include <dt-bindings/clk/versaclock.h>
 > 
-> 	// temp for driver debug
-> 	dev_dbg(&client->dev,
-> 			"get_output_config(before of_get_child_by_name)  OUT%d\n",
-> 			clk_out->num + 1);
-> 
-> 	np_output = of_get_child_by_name(client->dev.of_node, child_name);
-> 	kfree(child_name);
-> 	if (!np_output)
-> 		return 0;
-> 
-> 	// temp for driver debug
-> 	dev_dbg(&client->dev,
-> 			"get_output_config(before update_mode)  OUT%d\n",
-> 			clk_out->num + 1);
-> 
-> 	ret = vc5_update_mode(np_output, clk_out);
-> 	if (ret)
-> 		goto output_error;
+> /include/ "system-conf.dtsi"
+> / {
 >  
-> And dmesg output:
+>   /* Clock Provider */
+>   x304_clk: x304-clock {
+>     compatible = "fixed-clock";
+>     #clock-cells = <0>;
+>     clock-frequency = <25000000>;
+>   };
 > 
-> 	[    7.498005] vc5 1-006a: get_output_config(before of_get_child_by_name)  OUT1                                                                               
-> 	[    7.498017] vc5 1-006a: get_output_config(before update_mode)  OUT1                                                                                        
-> 	[    7.511631] vc5 1-006a: get_output_config(before of_get_child_by_name)  OUT2                                                                               
-> 	[    7.511643] vc5 1-006a: get_output_config(before update_mode)  OUT2                                                                                        
-> 	[    7.525257] vc5 1-006a: get_output_config(before of_get_child_by_name)  OUT3                                                                               
-> 	[    7.525270] vc5 1-006a: get_output_config(before update_mode)  OUT3                                                                                        
-> 	[    7.538905] vc5 1-006a: get_output_config(before of_get_child_by_name)  OUT4                                                                               
-> 	[    7.538919] vc5 1-006a: get_output_config(before update_mode)  OUT4
+> ...
+> 
+> ==================
+> Device Tree Node:
+> ==================
+> &i2c1 {
+>     clock-frequency = <100000>;
+> 
+>     // Use patch.  Updated driver for 5p49v6965 available  at https://github.com/Xilinx/linux-xlnx/blob/master/drivers/clk/clk-versaclock5.c
+>     // Device Tree Setup -> https://github.com/Xilinx/linux-xlnx/blob/master/Documentation/devicetree/bindings/clock/idt%2Cversaclock5.yaml
+>     versaclock6: clock-controller@6a {
+>         /* Clock Consumer */
+>         compatible = "idt,5p49v6965";
+> 		reg = <0x6a>;
+> 		#clock-cells = <1>;
+> 		clocks = <&x304_clk>;
+> 		clock-names = "xin";
+> 
+>         assigned-clocks = <&versaclock6 1>,
+>                           <&versaclock6 2>,
+>                           <&versaclock6 3>,
+>                           <&versaclock6 4>;
+>         // assigned-clock-rates = <46800000>, <250000000>, <1000000>, <13000000>;
+>         assigned-clock-rates = <46800000>, <250000000>, <1000000>, <13000000>;
+>         /* Set the SD/OE pin's settings */
+>         idt,shutdown = <0>;
+>         idt,output-enable-active = <0>;
 
-So the values are picked up from DT and if you print the content of
-clk_out->clk_output_cfg0[_mask] you should see the correct register values.
+Have you verified that these are correct? E.g. on my board I had to set
 
-Now the relevant question is question 3: do you enter the
-'if (hwdata->clk_output_cfg0_mask)' in vc5_clk_out_prepare()? Do you
-even enter vc5_clk_out_prepare()?
+idt,output-enable-active = <1>;
 
-You can add dev_dbg()s there and track the problem on your own. If
-regmap_update_bits(...hwdata->clk_output_cfg0) is not called then the
-code is not doing the right thing. If it is called and returns no error,
-then it looks like there is a problem in the i2c controller which thinks
-it has done the transaction but it really hasn't. Or some other mystery.
+You can also remove these properties to use the default values from the OTP.
 
--- 
-Luca
+--Sean
+
+>         OUT1 {
+>             idt,mode = <VC5_CMOS>;
+>             idt,voltage-microvolt = <3300000>;
+>             idt,slew-percent = <100>;
+>         };
+>         OUT2 {
+>             idt,mode = <VC5_CMOS>;
+>             idt,voltage-microvolt = <3300000>;
+>             idt,slew-percent = <100>;
+>         };
+>         OUT3 {
+>             idt,mode = <VC5_CMOSD>;
+>             idt,voltage-microvolt = <3300000>;
+>             idt,slew-percent = <100>;
+>         };
+>         OUT4 {
+>             idt,mode = <VC5_CMOS>;
+>             idt,voltage-microvolt = <3300000>;
+>             idt,slew-percent = <100>;
+>         };
+>     };
