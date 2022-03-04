@@ -2,605 +2,312 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DDBC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 10:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063D4C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 12:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239501AbiCDKEn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 05:04:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37438 "EHLO
+        id S239305AbiCDMCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 07:02:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239500AbiCDKEc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 05:04:32 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C7361A41F4
-        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 02:03:41 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id 15-20020a17090a098f00b001bef0376d5cso7536868pjo.5
-        for <linux-clk@vger.kernel.org>; Fri, 04 Mar 2022 02:03:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PCP8eXeYalFQxUcrQ3/FrtqjgCxxVlX7LiIMyPjqTF0=;
-        b=Jc9dBCZDORJggSrN0RW/uspvjH8cNMrEjjjMXBqJ0PbYQYKDFVYRoLEoKWRPDKca68
-         CnSI05Xb4QAtvlJ64A1oKAf1SWuZ8hQh0QpaTUn8Y2JXNZ+Tbiol4efbtevDifinpoSP
-         5EwNdSEKUbshLSGgDfSug5CpkBAU/7p4HSuKhKPWOAX1A+tfIRWSapYrF+LuvJOp2q1+
-         x72bFqjPBR6KPnyFHgANDhyZNBL4MB2uP89QaFicpD4qFGVyFT41XqKMBarGo0ez8SVK
-         mkr2IP3BcWCuNhd0oYzK4nI6AIWe4Plo5ezApX/XSlg7x79b4ghVwwlLsSIiiNvTDB6N
-         06dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PCP8eXeYalFQxUcrQ3/FrtqjgCxxVlX7LiIMyPjqTF0=;
-        b=OQWUGyZZD0hlLgdWiS1MK2LU7PNpPprb14UYfAlJNFcrPxbVg/CGTBq231qU9WcSV8
-         KpyTAhWQYeQW3WdLjjz1rOkwbTfWjgK7CDNVlkR/KsAYWasF+4e7qrouXJtdPtpTA+c8
-         d1mLLAZOsaCcw1Fu0eQVJU38FTFMtqZOSOPoNUtcxW+tymT6FKBzqasBb3cxIPijD1U5
-         bQzJlI012ZTFhWZRRzlS+w7bPpvaFW7Wak0hujW6VPS+KPPZ51ZVmkz963aF0rAoGzKN
-         nKiUk8zUInfFcEZu99A+50WMAcgmyHjvMGLMUtjIwaKDnRXjYpxsNsCY/pw4kZ4QdUD7
-         h4+A==
-X-Gm-Message-State: AOAM530/aGc8xbbtWeMk05h49rjtpN1Y8dcSyRHaj1WWAt3LCB1it6oZ
-        9o3HJlsb3k8VKqNdwiWW2u+JzA==
-X-Google-Smtp-Source: ABdhPJzNRnA1Be/6ZJ5+vZ0VOTKPtHvfX/WC7Z9HwH3W82FFt4erqoky0CLVSrSUxr5M1THWCjlOCw==
-X-Received: by 2002:a17:902:f54c:b0:14f:c36f:804 with SMTP id h12-20020a170902f54c00b0014fc36f0804mr40863288plf.119.1646388220795;
-        Fri, 04 Mar 2022 02:03:40 -0800 (PST)
-Received: from hsinchu16.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id j8-20020a056a00174800b004f26d3f5b03sm5461605pfc.39.2022.03.04.02.03.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Mar 2022 02:03:40 -0800 (PST)
-From:   Zong Li <zong.li@sifive.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Zong Li <zong.li@sifive.com>, Palmer Dabbelt <palmer@rivosinc.com>
-Subject: [PATCH v2 5/5] clk: sifive: Move all stuff into SoCs header files from C files
-Date:   Fri,  4 Mar 2022 18:03:21 +0800
-Message-Id: <a3c7ec5c46c1d8be455d1c347db4855bb56cec53.1646388139.git.zong.li@sifive.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1646388139.git.zong.li@sifive.com>
-References: <cover.1646388139.git.zong.li@sifive.com>
+        with ESMTP id S230023AbiCDMCX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 07:02:23 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0161AAA7C;
+        Fri,  4 Mar 2022 04:01:34 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F2EF51C;
+        Fri,  4 Mar 2022 13:01:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1646395293;
+        bh=lQch15hUc/mpi+qq1+TtRmnffODJBIvBGrrZ4WWNTwc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=myQzxkoQ6GwBNoSWRuFaWr0RxAD6+8mfTiQQADwZ5fvZPUW954Q1o3k/m7NoBbBqo
+         FrlfOTgDjy2ALvbKptlwFt6v5sCKtcJ27dzlcB7MUBCZxh36neES5z7TEr+zCLZf78
+         8I9HP/+vnsd/24IAkEbv37520smh2uq/q7E15LNM=
+Date:   Fri, 4 Mar 2022 14:01:20 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
+ bindings documentation
+Message-ID: <YiH/kLakb/GOaYIT@pendragon.ideasonboard.com>
+References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
+ <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
+ <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
+ <YgqAv2vLimYgRwDS@aptenodytes>
+ <YgqM3ZdMfEz+ZKo/@pendragon.ideasonboard.com>
+ <Ygt8LF8qx3rnxlgp@aptenodytes>
+ <Ygt9j+rwEC+2aUjH@pendragon.ideasonboard.com>
+ <Yh4+E9el5NdQ7qJq@aptenodytes>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Yh4+E9el5NdQ7qJq@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Improve PRCI driver to reduce the complexity, we remove the SoCs C files
-by putting all stuff in each SoCs header files, and include these
-SoCs-specific header files in core of PRCI. It can also avoid the W=1
-kernel build warnings about variable defined but not used
-[-Wunused-const-variable=], like commit 487dc7bb6a0c ("clk: sifive:
-fu540-prci: Declare static const variable 'prci_clk_fu540' where it's
-used") does.
+Hi Paul,
 
-Signed-off-by: Zong Li <zong.li@sifive.com>
-Suggested-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
----
- drivers/clk/sifive/Makefile      |   2 +-
- drivers/clk/sifive/fu540-prci.c  |  88 --------------------
- drivers/clk/sifive/fu540-prci.h  |  91 ++++++++++++++++++++-
- drivers/clk/sifive/fu740-prci.c  | 133 -------------------------------
- drivers/clk/sifive/fu740-prci.h  | 130 +++++++++++++++++++++++++++++-
- drivers/clk/sifive/sifive-prci.c |   5 --
- 6 files changed, 214 insertions(+), 235 deletions(-)
- delete mode 100644 drivers/clk/sifive/fu540-prci.c
- delete mode 100644 drivers/clk/sifive/fu740-prci.c
+On Tue, Mar 01, 2022 at 04:38:59PM +0100, Paul Kocialkowski wrote:
+> On Tue 15 Feb 22, 12:16, Laurent Pinchart wrote:
+> > On Tue, Feb 15, 2022 at 11:10:52AM +0100, Paul Kocialkowski wrote:
+> > > On Mon 14 Feb 22, 19:09, Laurent Pinchart wrote:
+> > > > On Mon, Feb 14, 2022 at 05:18:07PM +0100, Paul Kocialkowski wrote:
+> > > > > On Mon 07 Feb 22, 17:51, Laurent Pinchart wrote:
+> > > > > > On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
+> > > > > > > This introduces YAML bindings documentation for the Allwinner A31 Image
+> > > > > > > Signal Processor (ISP).
+> > > > > > > 
+> > > > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > > ---
+> > > > > > >  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++++++++++
+> > > > > > >  1 file changed, 117 insertions(+)
+> > > > > > >  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > 
+> > > > > > > diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..2d87022c43ce
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > @@ -0,0 +1,117 @@
+> > > > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > > > > +%YAML 1.2
+> > > > > > > +---
+> > > > > > > +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-isp.yaml#
+> > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > > +
+> > > > > > > +title: Allwinner A31 Image Signal Processor Driver (ISP) Device Tree Bindings
+> > > > > > > +
+> > > > > > > +maintainers:
+> > > > > > > +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > > +
+> > > > > > > +properties:
+> > > > > > > +  compatible:
+> > > > > > > +    enum:
+> > > > > > > +      - allwinner,sun6i-a31-isp
+> > > > > > > +      - allwinner,sun8i-v3s-isp
+> > > > > > > +
+> > > > > > > +  reg:
+> > > > > > > +    maxItems: 1
+> > > > > > > +
+> > > > > > > +  interrupts:
+> > > > > > > +    maxItems: 1
+> > > > > > > +
+> > > > > > > +  clocks:
+> > > > > > > +    items:
+> > > > > > > +      - description: Bus Clock
+> > > > > > > +      - description: Module Clock
+> > > > > > > +      - description: DRAM Clock
+> > > > > > 
+> > > > > > That's interesting, does the ISP have a dedicated DRAM ?
+> > > > > 
+> > > > > It doesn't, it actually uses the main DRAM with the "mbus" interconnect.
+> > > > > The clock is probably for the DMA engine.
+> > > > > 
+> > > > > > > +
+> > > > > > > +  clock-names:
+> > > > > > > +    items:
+> > > > > > > +      - const: bus
+> > > > > > > +      - const: mod
+> > > > > > > +      - const: ram
+> > > > > > > +
+> > > > > > > +  resets:
+> > > > > > > +    maxItems: 1
+> > > > > > > +
+> > > > > > > +  ports:
+> > > > > > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > > > > > +
+> > > > > > > +    properties:
+> > > > > > > +      port@0:
+> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > > +        description: CSI0 input port
+> > > > > > > +
+> > > > > > > +        properties:
+> > > > > > > +          reg:
+> > > > > > > +            const: 0
+> > > > > > > +
+> > > > > > > +          endpoint:
+> > > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > > +            unevaluatedProperties: false
+> > > > > > 
+> > > > > > If no other property than remote-endpoint are allowed, I'd write
+> > > > > > 
+> > > > > >           endpoint:
+> > > > > >             $ref: video-interfaces.yaml#
+> > > > > > 	    remote-endpoint: true
+> > > > > >             additionalProperties: false
+> > > > > > 
+> > > > > > Same below.
+> > > > > > 
+> > > > > > > +
+> > > > > > > +        additionalProperties: false
+> > > > > > > +
+> > > > > > > +      port@1:
+> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > > +        description: CSI1 input port
+> > > > > > > +
+> > > > > > > +        properties:
+> > > > > > > +          reg:
+> > > > > > > +            const: 0
+> > > > > > 
+> > > > > > This should be 1.
+> > > > > 
+> > > > > Correct, thanks!
+> > > > > 
+> > > > > > > +
+> > > > > > > +          endpoint:
+> > > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > > +            unevaluatedProperties: false
+> > > > > > > +
+> > > > > > > +        additionalProperties: false
+> > > > > > > +
+> > > > > > > +    anyOf:
+> > > > > > > +      - required:
+> > > > > > > +        - port@0
+> > > > > > > +      - required:
+> > > > > > > +        - port@1
+> > > > > > 
+> > > > > > As ports are an intrinsic property of the ISP, both should be required,
+> > > > > > but they don't have to be connected.
+> > > > > 
+> > > > > Well the ISP does have the ability to source from either CSI0 and CSI1
+> > > > > but I don't really get the point of declaring both ports when only one
+> > > > > of the two controllers is present.
+> > > > 
+> > > > If it's within an SoC I don't mind too much. What I usually insist on is
+> > > > declaring all ports even when no external devices are connected on the
+> > > > board. It may however be easier to implement things on the driver side
+> > > > when all the ports are declared, even for internal devices. I won't
+> > > > insist either way here.
+> > > > 
+> > > > > > By the way, how do you select at runtime which CSI-2 RX the ISP gets its
+> > > > > > image stream from ? Is it configured through registers of the ISP ?
+> > > > > 
+> > > > > Actually what the ISP gets is fully dependent on what is received by the
+> > > > > CSI controller it is connected to (which can be the mipi csi-2 controller
+> > > > > or its direct parallel pins), so the configuration happens on the CSI side.
+> > > > 
+> > > > OK, then how do you select at runtime which CSI the ISP gets its image
+> > > > stream from ? :-)
+> > > 
+> > > What is done in the driver is that all available csi(s) entities pads are linked
+> > > to a single csi sink media pad, which allows userspace to enable one or the
+> > > other. If there's only one, it's enabled by default.
+> > > 
+> > > The actual stream source (isp_dev->proc.source) is selected at link_validate
+> > > time and the source bit is set in sun6i_isp_proc_enable.
+> > > 
+> > > I hope this answers your question!
+> > 
+> > Yes it does, thank you.
+> > 
+> > While this works, it makes life a bit more complicated for userspace, as
+> > switching between the two sources require disabling the link first and
+> > then enabling the new one. This is something that caused issues in the
+> > libcamera simple pipeline handler, I ended up having to implement a
+> > workaround.
+> 
+> That surprises me a bit, I thought this was a typical use-case for links.
+> So the fact that it's a two-step process causes issues somehow?
 
-diff --git a/drivers/clk/sifive/Makefile b/drivers/clk/sifive/Makefile
-index 7b06fc04e6b3..efdf01f1c8d5 100644
---- a/drivers/clk/sifive/Makefile
-+++ b/drivers/clk/sifive/Makefile
-@@ -1,2 +1,2 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-$(CONFIG_CLK_SIFIVE_PRCI)	+= sifive-prci.o fu540-prci.o fu740-prci.o
-+obj-$(CONFIG_CLK_SIFIVE_PRCI)	+= sifive-prci.o
-diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
-deleted file mode 100644
-index 672c782ad604..000000000000
---- a/drivers/clk/sifive/fu540-prci.c
-+++ /dev/null
-@@ -1,88 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (C) 2018-2022 SiFive, Inc.
-- * Copyright (C) 2018-2019 Wesley Terpstra
-- * Copyright (C) 2018-2019 Paul Walmsley
-- * Copyright (C) 2020-2022 Zong Li
-- *
-- * The FU540 PRCI implements clock and reset control for the SiFive
-- * FU540-C000 chip.  This driver assumes that it has sole control
-- * over all PRCI resources.
-- *
-- * This driver is based on the PRCI driver written by Wesley Terpstra:
-- * https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d221b2ee56bb60
-- *
-- * References:
-- * - SiFive FU540-C000 manual v1p0, Chapter 7 "Clocking and Reset"
-- */
--
--#include <linux/module.h>
--
--#include <dt-bindings/clock/sifive-fu540-prci.h>
--
--#include "sifive-prci.h"
--
--/* PRCI integration data for each WRPLL instance */
--
--static struct __prci_wrpll_data sifive_fu540_prci_corepll_data = {
--	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
--	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
--	.disable_bypass = sifive_prci_coreclksel_use_corepll,
--};
--
--static struct __prci_wrpll_data sifive_fu540_prci_ddrpll_data = {
--	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
--};
--
--static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data = {
--	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
--};
--
--/* Linux clock framework integration */
--
--static const struct clk_ops sifive_fu540_prci_wrpll_clk_ops = {
--	.set_rate = sifive_prci_wrpll_set_rate,
--	.round_rate = sifive_prci_wrpll_round_rate,
--	.recalc_rate = sifive_prci_wrpll_recalc_rate,
--	.enable = sifive_prci_clock_enable,
--	.disable = sifive_prci_clock_disable,
--	.is_enabled = sifive_clk_is_enabled,
--};
--
--static const struct clk_ops sifive_fu540_prci_wrpll_ro_clk_ops = {
--	.recalc_rate = sifive_prci_wrpll_recalc_rate,
--};
--
--static const struct clk_ops sifive_fu540_prci_tlclksel_clk_ops = {
--	.recalc_rate = sifive_prci_tlclksel_recalc_rate,
--};
--
--/* List of clock controls provided by the PRCI */
--struct __prci_clock __prci_init_clocks_fu540[] = {
--	[FU540_PRCI_CLK_COREPLL] = {
--		.name = "corepll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu540_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu540_prci_corepll_data,
--	},
--	[FU540_PRCI_CLK_DDRPLL] = {
--		.name = "ddrpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu540_prci_wrpll_ro_clk_ops,
--		.pwd = &sifive_fu540_prci_ddrpll_data,
--	},
--	[FU540_PRCI_CLK_GEMGXLPLL] = {
--		.name = "gemgxlpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu540_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu540_prci_gemgxlpll_data,
--	},
--	[FU540_PRCI_CLK_TLCLK] = {
--		.name = "tlclk",
--		.parent_name = "corepll",
--		.ops = &sifive_fu540_prci_tlclksel_clk_ops,
--	},
--};
-diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
-index c220677dc010..e0173324f3c5 100644
---- a/drivers/clk/sifive/fu540-prci.h
-+++ b/drivers/clk/sifive/fu540-prci.h
-@@ -1,16 +1,99 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (C) 2020 SiFive, Inc.
-- * Zong Li
-+ * Copyright (C) 2018-2021 SiFive, Inc.
-+ * Copyright (C) 2018-2019 Wesley Terpstra
-+ * Copyright (C) 2018-2019 Paul Walmsley
-+ * Copyright (C) 2020-2021 Zong Li
-+ *
-+ * The FU540 PRCI implements clock and reset control for the SiFive
-+ * FU540-C000 chip.  This driver assumes that it has sole control
-+ * over all PRCI resources.
-+ *
-+ * This driver is based on the PRCI driver written by Wesley Terpstra:
-+ * https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d221b2ee56bb60
-+ *
-+ * References:
-+ * - SiFive FU540-C000 manual v1p0, Chapter 7 "Clocking and Reset"
-  */
- 
- #ifndef __SIFIVE_CLK_FU540_PRCI_H
- #define __SIFIVE_CLK_FU540_PRCI_H
- 
-+
-+#include <linux/module.h>
-+
-+#include <dt-bindings/clock/sifive-fu540-prci.h>
-+
- #include "sifive-prci.h"
- 
--#define NUM_CLOCK_FU540	4
-+/* PRCI integration data for each WRPLL instance */
-+
-+static struct __prci_wrpll_data sifive_fu540_prci_corepll_data = {
-+	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
-+	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
-+	.disable_bypass = sifive_prci_coreclksel_use_corepll,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu540_prci_ddrpll_data = {
-+	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data = {
-+	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
-+};
-+
-+/* Linux clock framework integration */
-+
-+static const struct clk_ops sifive_fu540_prci_wrpll_clk_ops = {
-+	.set_rate = sifive_prci_wrpll_set_rate,
-+	.round_rate = sifive_prci_wrpll_round_rate,
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+	.enable = sifive_prci_clock_enable,
-+	.disable = sifive_prci_clock_disable,
-+	.is_enabled = sifive_clk_is_enabled,
-+};
-+
-+static const struct clk_ops sifive_fu540_prci_wrpll_ro_clk_ops = {
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu540_prci_tlclksel_clk_ops = {
-+	.recalc_rate = sifive_prci_tlclksel_recalc_rate,
-+};
-+
-+/* List of clock controls provided by the PRCI */
-+static struct __prci_clock __prci_init_clocks_fu540[] = {
-+	[FU540_PRCI_CLK_COREPLL] = {
-+		.name = "corepll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu540_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu540_prci_corepll_data,
-+	},
-+	[FU540_PRCI_CLK_DDRPLL] = {
-+		.name = "ddrpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu540_prci_wrpll_ro_clk_ops,
-+		.pwd = &sifive_fu540_prci_ddrpll_data,
-+	},
-+	[FU540_PRCI_CLK_GEMGXLPLL] = {
-+		.name = "gemgxlpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu540_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu540_prci_gemgxlpll_data,
-+	},
-+	[FU540_PRCI_CLK_TLCLK] = {
-+		.name = "tlclk",
-+		.parent_name = "corepll",
-+		.ops = &sifive_fu540_prci_tlclksel_clk_ops,
-+	},
-+};
- 
--extern struct __prci_clock __prci_init_clocks_fu540[NUM_CLOCK_FU540];
-+static const struct prci_clk_desc prci_clk_fu540 = {
-+	.clks = __prci_init_clocks_fu540,
-+	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
-+};
- 
- #endif /* __SIFIVE_CLK_FU540_PRCI_H */
-diff --git a/drivers/clk/sifive/fu740-prci.c b/drivers/clk/sifive/fu740-prci.c
-deleted file mode 100644
-index f27d1a42d946..000000000000
---- a/drivers/clk/sifive/fu740-prci.c
-+++ /dev/null
-@@ -1,133 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (C) 2020-2022 SiFive, Inc.
-- * Copyright (C) 2020-2022 Zong Li
-- */
--
--#include <linux/module.h>
--
--#include <dt-bindings/clock/sifive-fu740-prci.h>
--
--#include "sifive-prci.h"
--
--/* PRCI integration data for each WRPLL instance */
--
--static struct __prci_wrpll_data sifive_fu740_prci_corepll_data = {
--	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
--	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
--	.disable_bypass = sifive_prci_coreclksel_use_final_corepll,
--};
--
--static struct __prci_wrpll_data sifive_fu740_prci_ddrpll_data = {
--	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
--};
--
--static struct __prci_wrpll_data sifive_fu740_prci_gemgxlpll_data = {
--	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
--};
--
--static struct __prci_wrpll_data sifive_fu740_prci_dvfscorepll_data = {
--	.cfg0_offs = PRCI_DVFSCOREPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_DVFSCOREPLLCFG1_OFFSET,
--	.enable_bypass = sifive_prci_corepllsel_use_corepll,
--	.disable_bypass = sifive_prci_corepllsel_use_dvfscorepll,
--};
--
--static struct __prci_wrpll_data sifive_fu740_prci_hfpclkpll_data = {
--	.cfg0_offs = PRCI_HFPCLKPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_HFPCLKPLLCFG1_OFFSET,
--	.enable_bypass = sifive_prci_hfpclkpllsel_use_hfclk,
--	.disable_bypass = sifive_prci_hfpclkpllsel_use_hfpclkpll,
--};
--
--static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data = {
--	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
--	.cfg1_offs = PRCI_CLTXPLLCFG1_OFFSET,
--};
--
--/* Linux clock framework integration */
--
--static const struct clk_ops sifive_fu740_prci_wrpll_clk_ops = {
--	.set_rate = sifive_prci_wrpll_set_rate,
--	.round_rate = sifive_prci_wrpll_round_rate,
--	.recalc_rate = sifive_prci_wrpll_recalc_rate,
--	.enable = sifive_prci_clock_enable,
--	.disable = sifive_prci_clock_disable,
--	.is_enabled = sifive_clk_is_enabled,
--};
--
--static const struct clk_ops sifive_fu740_prci_wrpll_ro_clk_ops = {
--	.recalc_rate = sifive_prci_wrpll_recalc_rate,
--};
--
--static const struct clk_ops sifive_fu740_prci_tlclksel_clk_ops = {
--	.recalc_rate = sifive_prci_tlclksel_recalc_rate,
--};
--
--static const struct clk_ops sifive_fu740_prci_hfpclkplldiv_clk_ops = {
--	.recalc_rate = sifive_prci_hfpclkplldiv_recalc_rate,
--};
--
--static const struct clk_ops sifive_fu740_prci_pcie_aux_clk_ops = {
--	.enable = sifive_prci_pcie_aux_clock_enable,
--	.disable = sifive_prci_pcie_aux_clock_disable,
--	.is_enabled = sifive_prci_pcie_aux_clock_is_enabled,
--};
--
--/* List of clock controls provided by the PRCI */
--struct __prci_clock __prci_init_clocks_fu740[] = {
--	[FU740_PRCI_CLK_COREPLL] = {
--		.name = "corepll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu740_prci_corepll_data,
--	},
--	[FU740_PRCI_CLK_DDRPLL] = {
--		.name = "ddrpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_ro_clk_ops,
--		.pwd = &sifive_fu740_prci_ddrpll_data,
--	},
--	[FU740_PRCI_CLK_GEMGXLPLL] = {
--		.name = "gemgxlpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu740_prci_gemgxlpll_data,
--	},
--	[FU740_PRCI_CLK_DVFSCOREPLL] = {
--		.name = "dvfscorepll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu740_prci_dvfscorepll_data,
--	},
--	[FU740_PRCI_CLK_HFPCLKPLL] = {
--		.name = "hfpclkpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu740_prci_hfpclkpll_data,
--	},
--	[FU740_PRCI_CLK_CLTXPLL] = {
--		.name = "cltxpll",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_wrpll_clk_ops,
--		.pwd = &sifive_fu740_prci_cltxpll_data,
--	},
--	[FU740_PRCI_CLK_TLCLK] = {
--		.name = "tlclk",
--		.parent_name = "corepll",
--		.ops = &sifive_fu740_prci_tlclksel_clk_ops,
--	},
--	[FU740_PRCI_CLK_PCLK] = {
--		.name = "pclk",
--		.parent_name = "hfpclkpll",
--		.ops = &sifive_fu740_prci_hfpclkplldiv_clk_ops,
--	},
--	[FU740_PRCI_CLK_PCIE_AUX] = {
--		.name = "pcie_aux",
--		.parent_name = "hfclk",
--		.ops = &sifive_fu740_prci_pcie_aux_clk_ops,
--	},
--};
-diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
-index 511a0bf7ba2b..f31cd30fc395 100644
---- a/drivers/clk/sifive/fu740-prci.h
-+++ b/drivers/clk/sifive/fu740-prci.h
-@@ -1,17 +1,139 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (C) 2020 SiFive, Inc.
-- * Zong Li
-+ * Copyright (C) 2020-2021 SiFive, Inc.
-+ * Copyright (C) 2020-2021 Zong Li
-  */
- 
- #ifndef __SIFIVE_CLK_FU740_PRCI_H
- #define __SIFIVE_CLK_FU740_PRCI_H
- 
-+#include <linux/module.h>
-+
-+#include <dt-bindings/clock/sifive-fu740-prci.h>
-+
- #include "sifive-prci.h"
- 
--#define NUM_CLOCK_FU740	9
-+/* PRCI integration data for each WRPLL instance */
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_corepll_data = {
-+	.cfg0_offs = PRCI_COREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_COREPLLCFG1_OFFSET,
-+	.enable_bypass = sifive_prci_coreclksel_use_hfclk,
-+	.disable_bypass = sifive_prci_coreclksel_use_final_corepll,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_ddrpll_data = {
-+	.cfg0_offs = PRCI_DDRPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DDRPLLCFG1_OFFSET,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_gemgxlpll_data = {
-+	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_dvfscorepll_data = {
-+	.cfg0_offs = PRCI_DVFSCOREPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_DVFSCOREPLLCFG1_OFFSET,
-+	.enable_bypass = sifive_prci_corepllsel_use_corepll,
-+	.disable_bypass = sifive_prci_corepllsel_use_dvfscorepll,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_hfpclkpll_data = {
-+	.cfg0_offs = PRCI_HFPCLKPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_HFPCLKPLLCFG1_OFFSET,
-+	.enable_bypass = sifive_prci_hfpclkpllsel_use_hfclk,
-+	.disable_bypass = sifive_prci_hfpclkpllsel_use_hfpclkpll,
-+};
-+
-+static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data = {
-+	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
-+	.cfg1_offs = PRCI_CLTXPLLCFG1_OFFSET,
-+};
-+
-+/* Linux clock framework integration */
-+
-+static const struct clk_ops sifive_fu740_prci_wrpll_clk_ops = {
-+	.set_rate = sifive_prci_wrpll_set_rate,
-+	.round_rate = sifive_prci_wrpll_round_rate,
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+	.enable = sifive_prci_clock_enable,
-+	.disable = sifive_prci_clock_disable,
-+	.is_enabled = sifive_clk_is_enabled,
-+};
- 
--extern struct __prci_clock __prci_init_clocks_fu740[NUM_CLOCK_FU740];
-+static const struct clk_ops sifive_fu740_prci_wrpll_ro_clk_ops = {
-+	.recalc_rate = sifive_prci_wrpll_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_tlclksel_clk_ops = {
-+	.recalc_rate = sifive_prci_tlclksel_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_hfpclkplldiv_clk_ops = {
-+	.recalc_rate = sifive_prci_hfpclkplldiv_recalc_rate,
-+};
-+
-+static const struct clk_ops sifive_fu740_prci_pcie_aux_clk_ops = {
-+	.enable = sifive_prci_pcie_aux_clock_enable,
-+	.disable = sifive_prci_pcie_aux_clock_disable,
-+	.is_enabled = sifive_prci_pcie_aux_clock_is_enabled,
-+};
-+
-+/* List of clock controls provided by the PRCI */
-+static struct __prci_clock __prci_init_clocks_fu740[] = {
-+	[FU740_PRCI_CLK_COREPLL] = {
-+		.name = "corepll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu740_prci_corepll_data,
-+	},
-+	[FU740_PRCI_CLK_DDRPLL] = {
-+		.name = "ddrpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_ro_clk_ops,
-+		.pwd = &sifive_fu740_prci_ddrpll_data,
-+	},
-+	[FU740_PRCI_CLK_GEMGXLPLL] = {
-+		.name = "gemgxlpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu740_prci_gemgxlpll_data,
-+	},
-+	[FU740_PRCI_CLK_DVFSCOREPLL] = {
-+		.name = "dvfscorepll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu740_prci_dvfscorepll_data,
-+	},
-+	[FU740_PRCI_CLK_HFPCLKPLL] = {
-+		.name = "hfpclkpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu740_prci_hfpclkpll_data,
-+	},
-+	[FU740_PRCI_CLK_CLTXPLL] = {
-+		.name = "cltxpll",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_wrpll_clk_ops,
-+		.pwd = &sifive_fu740_prci_cltxpll_data,
-+	},
-+	[FU740_PRCI_CLK_TLCLK] = {
-+		.name = "tlclk",
-+		.parent_name = "corepll",
-+		.ops = &sifive_fu740_prci_tlclksel_clk_ops,
-+	},
-+	[FU740_PRCI_CLK_PCLK] = {
-+		.name = "pclk",
-+		.parent_name = "hfpclkpll",
-+		.ops = &sifive_fu740_prci_hfpclkplldiv_clk_ops,
-+	},
-+	[FU740_PRCI_CLK_PCIE_AUX] = {
-+		.name = "pcie_aux",
-+		.parent_name = "hfclk",
-+		.ops = &sifive_fu740_prci_pcie_aux_clk_ops,
-+	},
-+};
- 
- static const struct prci_clk_desc prci_clk_fu740 = {
- 	.clks = __prci_init_clocks_fu740,
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index 80a288c59e56..916d2fc28b9c 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -12,11 +12,6 @@
- #include "fu540-prci.h"
- #include "fu740-prci.h"
- 
--static const struct prci_clk_desc prci_clk_fu540 = {
--	.clks = __prci_init_clocks_fu540,
--	.num_clks = ARRAY_SIZE(__prci_init_clocks_fu540),
--};
--
- /*
-  * Private functions
-  */
+It's not so much that the links have to be configured in two steps
+(although it would be nice if that could be fixed), but the fact that
+the order of the operations matter. Userspace has to know what
+combination of links is acceptable in order to determine the order of
+the enable/disable operations, otherwise errors may be returned. That
+makes it more difficult to write generic userspace code.
+
+> > Could you instead have two sink pads for the ISP, and select the sensor
+> > at stream on time instead of link validation time by checking which link
+> > is enabled ? If no links or both links are enabled, you can then return
+> > an error.
+> 
+> Yes that's totally doable.
+> 
+> There's a similar situation with the sun6i-csi bridge where the source pad
+> has two possible links: one for routing to sun6i-csi capture (video device)
+> and one for routing to the isp entity.
+> 
+> Would that also be best represented as two pads?
+
+Are the two outputs mutually exclusive ? Sorry if I've asked before.
+
+> > Ideally I'd say such internal routing should use the new V4L2 subdev
+> > routing API that is currently being implemented (see [1]), but I don't
+> > know when it will land, and I don't want to delay your patch series.
+> > 
+> > [1] https://lore.kernel.org/linux-media/20211130141536.891878-28-tomi.valkeinen@ideasonboard.com
+> 
+> I'm still a bit confused what problem this is trying to solve.
+> My understanding was that the current pad/link API allows representing complex
+> topologies and switching different paths with link enable/disable.
+
+That was the intent of the MEDIA_IOC_SETUP_LINK ioctl, but we ended up
+with something that is fairly ill-defined, and doesn't have the ability
+to set multiple links atomically. It turned out to be less usable for
+userspace than expected. Mistakes happen (and I'll blame myself here,
+having designed that API) when we don't have real test cases during
+kernel development.
+
+> > > > > > > +
+> > > > > > > +required:
+> > > > > > > +  - compatible
+> > > > > > > +  - reg
+> > > > > > > +  - interrupts
+> > > > > > > +  - clocks
+> > > > > > > +  - clock-names
+> > > > > > > +  - resets
+> > > > > > > +
+> > > > > > > +additionalProperties: false
+> > > > > > > +
+> > > > > > > +examples:
+> > > > > > > +  - |
+> > > > > > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > > > > > +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
+> > > > > > > +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
+> > > > > > > +
+> > > > > > > +    isp: isp@1cb8000 {
+> > > > > > > +        compatible = "allwinner,sun8i-v3s-isp";
+> > > > > > > +        reg = <0x01cb8000 0x1000>;
+> > > > > > > +        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > > +        clocks = <&ccu CLK_BUS_CSI>,
+> > > > > > > +             <&ccu CLK_CSI1_SCLK>,
+> > > > > > > +             <&ccu CLK_DRAM_CSI>;
+> > > > > > > +        clock-names = "bus", "mod", "ram";
+> > > > > > > +        resets = <&ccu RST_BUS_CSI>;
+> > > > > > > +
+> > > > > > > +        ports {
+> > > > > > > +            #address-cells = <1>;
+> > > > > > > +            #size-cells = <0>;
+> > > > > > > +
+> > > > > > > +            port@0 {
+> > > > > > > +                reg = <0>;
+> > > > > > > +
+> > > > > > > +                isp_in_csi0: endpoint {
+> > > > > > > +                    remote-endpoint = <&csi0_out_isp>;
+> > > > > > > +                };
+> > > > > > > +            };
+> > > > > > > +        };
+> > > > > > > +    };
+> > > > > > > +
+> > > > > > > +...
+
 -- 
-2.31.1
+Regards,
 
+Laurent Pinchart
