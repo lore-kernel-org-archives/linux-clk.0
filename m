@@ -2,312 +2,170 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063D4C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD88AC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 12:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239305AbiCDMCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 07:02:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
+        id S230038AbiCDMo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 07:44:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230023AbiCDMCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 07:02:23 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA0161AAA7C;
-        Fri,  4 Mar 2022 04:01:34 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F2EF51C;
-        Fri,  4 Mar 2022 13:01:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1646395293;
-        bh=lQch15hUc/mpi+qq1+TtRmnffODJBIvBGrrZ4WWNTwc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=myQzxkoQ6GwBNoSWRuFaWr0RxAD6+8mfTiQQADwZ5fvZPUW954Q1o3k/m7NoBbBqo
-         FrlfOTgDjy2ALvbKptlwFt6v5sCKtcJ27dzlcB7MUBCZxh36neES5z7TEr+zCLZf78
-         8I9HP/+vnsd/24IAkEbv37520smh2uq/q7E15LNM=
-Date:   Fri, 4 Mar 2022 14:01:20 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
-        Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Helen Koike <helen.koike@collabora.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
- bindings documentation
-Message-ID: <YiH/kLakb/GOaYIT@pendragon.ideasonboard.com>
-References: <20220205185429.2278860-1-paul.kocialkowski@bootlin.com>
- <20220205185429.2278860-62-paul.kocialkowski@bootlin.com>
- <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
- <YgqAv2vLimYgRwDS@aptenodytes>
- <YgqM3ZdMfEz+ZKo/@pendragon.ideasonboard.com>
- <Ygt8LF8qx3rnxlgp@aptenodytes>
- <Ygt9j+rwEC+2aUjH@pendragon.ideasonboard.com>
- <Yh4+E9el5NdQ7qJq@aptenodytes>
+        with ESMTP id S229530AbiCDMo4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 07:44:56 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A60D157208
+        for <linux-clk@vger.kernel.org>; Fri,  4 Mar 2022 04:44:08 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1nQ7Hy-0001ko-SO; Fri, 04 Mar 2022 13:44:06 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1nQ7Hx-0000k8-T4; Fri, 04 Mar 2022 13:44:05 +0100
+Date:   Fri, 4 Mar 2022 13:44:05 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Adrian Alonso <adrian.alonso@nxp.com>,
+        Mads Bligaard Nielsen <bli@bang-olufsen.dk>
+Subject: Re: [PATCH v2 8/8] clk: imx: pll14xx: Support dynamic rates
+Message-ID: <20220304124405.GK22780@pengutronix.de>
+References: <20220225082937.2746176-1-s.hauer@pengutronix.de>
+ <20220225082937.2746176-9-s.hauer@pengutronix.de>
+ <Yhjj8o3vEQy0qysO@abelvesa>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yh4+E9el5NdQ7qJq@aptenodytes>
+In-Reply-To: <Yhjj8o3vEQy0qysO@abelvesa>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:40:47 up 83 days, 19:26, 80 users,  load average: 0.13, 0.14,
+ 0.17
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
-
-On Tue, Mar 01, 2022 at 04:38:59PM +0100, Paul Kocialkowski wrote:
-> On Tue 15 Feb 22, 12:16, Laurent Pinchart wrote:
-> > On Tue, Feb 15, 2022 at 11:10:52AM +0100, Paul Kocialkowski wrote:
-> > > On Mon 14 Feb 22, 19:09, Laurent Pinchart wrote:
-> > > > On Mon, Feb 14, 2022 at 05:18:07PM +0100, Paul Kocialkowski wrote:
-> > > > > On Mon 07 Feb 22, 17:51, Laurent Pinchart wrote:
-> > > > > > On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
-> > > > > > > This introduces YAML bindings documentation for the Allwinner A31 Image
-> > > > > > > Signal Processor (ISP).
-> > > > > > > 
-> > > > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > > > > ---
-> > > > > > >  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++++++++++
-> > > > > > >  1 file changed, 117 insertions(+)
-> > > > > > >  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> > > > > > > 
-> > > > > > > diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..2d87022c43ce
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
-> > > > > > > @@ -0,0 +1,117 @@
-> > > > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > > > > +%YAML 1.2
-> > > > > > > +---
-> > > > > > > +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-isp.yaml#
-> > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > > +
-> > > > > > > +title: Allwinner A31 Image Signal Processor Driver (ISP) Device Tree Bindings
-> > > > > > > +
-> > > > > > > +maintainers:
-> > > > > > > +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > > > > +
-> > > > > > > +properties:
-> > > > > > > +  compatible:
-> > > > > > > +    enum:
-> > > > > > > +      - allwinner,sun6i-a31-isp
-> > > > > > > +      - allwinner,sun8i-v3s-isp
-> > > > > > > +
-> > > > > > > +  reg:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  interrupts:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  clocks:
-> > > > > > > +    items:
-> > > > > > > +      - description: Bus Clock
-> > > > > > > +      - description: Module Clock
-> > > > > > > +      - description: DRAM Clock
-> > > > > > 
-> > > > > > That's interesting, does the ISP have a dedicated DRAM ?
-> > > > > 
-> > > > > It doesn't, it actually uses the main DRAM with the "mbus" interconnect.
-> > > > > The clock is probably for the DMA engine.
-> > > > > 
-> > > > > > > +
-> > > > > > > +  clock-names:
-> > > > > > > +    items:
-> > > > > > > +      - const: bus
-> > > > > > > +      - const: mod
-> > > > > > > +      - const: ram
-> > > > > > > +
-> > > > > > > +  resets:
-> > > > > > > +    maxItems: 1
-> > > > > > > +
-> > > > > > > +  ports:
-> > > > > > > +    $ref: /schemas/graph.yaml#/properties/ports
-> > > > > > > +
-> > > > > > > +    properties:
-> > > > > > > +      port@0:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        description: CSI0 input port
-> > > > > > > +
-> > > > > > > +        properties:
-> > > > > > > +          reg:
-> > > > > > > +            const: 0
-> > > > > > > +
-> > > > > > > +          endpoint:
-> > > > > > > +            $ref: video-interfaces.yaml#
-> > > > > > > +            unevaluatedProperties: false
-> > > > > > 
-> > > > > > If no other property than remote-endpoint are allowed, I'd write
-> > > > > > 
-> > > > > >           endpoint:
-> > > > > >             $ref: video-interfaces.yaml#
-> > > > > > 	    remote-endpoint: true
-> > > > > >             additionalProperties: false
-> > > > > > 
-> > > > > > Same below.
-> > > > > > 
-> > > > > > > +
-> > > > > > > +        additionalProperties: false
-> > > > > > > +
-> > > > > > > +      port@1:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        description: CSI1 input port
-> > > > > > > +
-> > > > > > > +        properties:
-> > > > > > > +          reg:
-> > > > > > > +            const: 0
-> > > > > > 
-> > > > > > This should be 1.
-> > > > > 
-> > > > > Correct, thanks!
-> > > > > 
-> > > > > > > +
-> > > > > > > +          endpoint:
-> > > > > > > +            $ref: video-interfaces.yaml#
-> > > > > > > +            unevaluatedProperties: false
-> > > > > > > +
-> > > > > > > +        additionalProperties: false
-> > > > > > > +
-> > > > > > > +    anyOf:
-> > > > > > > +      - required:
-> > > > > > > +        - port@0
-> > > > > > > +      - required:
-> > > > > > > +        - port@1
-> > > > > > 
-> > > > > > As ports are an intrinsic property of the ISP, both should be required,
-> > > > > > but they don't have to be connected.
-> > > > > 
-> > > > > Well the ISP does have the ability to source from either CSI0 and CSI1
-> > > > > but I don't really get the point of declaring both ports when only one
-> > > > > of the two controllers is present.
-> > > > 
-> > > > If it's within an SoC I don't mind too much. What I usually insist on is
-> > > > declaring all ports even when no external devices are connected on the
-> > > > board. It may however be easier to implement things on the driver side
-> > > > when all the ports are declared, even for internal devices. I won't
-> > > > insist either way here.
-> > > > 
-> > > > > > By the way, how do you select at runtime which CSI-2 RX the ISP gets its
-> > > > > > image stream from ? Is it configured through registers of the ISP ?
-> > > > > 
-> > > > > Actually what the ISP gets is fully dependent on what is received by the
-> > > > > CSI controller it is connected to (which can be the mipi csi-2 controller
-> > > > > or its direct parallel pins), so the configuration happens on the CSI side.
-> > > > 
-> > > > OK, then how do you select at runtime which CSI the ISP gets its image
-> > > > stream from ? :-)
-> > > 
-> > > What is done in the driver is that all available csi(s) entities pads are linked
-> > > to a single csi sink media pad, which allows userspace to enable one or the
-> > > other. If there's only one, it's enabled by default.
-> > > 
-> > > The actual stream source (isp_dev->proc.source) is selected at link_validate
-> > > time and the source bit is set in sun6i_isp_proc_enable.
-> > > 
-> > > I hope this answers your question!
-> > 
-> > Yes it does, thank you.
-> > 
-> > While this works, it makes life a bit more complicated for userspace, as
-> > switching between the two sources require disabling the link first and
-> > then enabling the new one. This is something that caused issues in the
-> > libcamera simple pipeline handler, I ended up having to implement a
-> > workaround.
+On Fri, Feb 25, 2022 at 04:13:06PM +0200, Abel Vesa wrote:
+> On 22-02-25 09:29:37, Sascha Hauer wrote:
+> > The pll1443x PLL so far only supports rates from a rate table passed
+> > during initialization. Calculating PLL settings dynamically helps audio
+> > applications to get their desired rates, so support for this is added
+> > in this patch.
+> > +	const struct imx_pll14xx_rate_table *tt;
+> > +
+> > +	/*
+> > +	 * Fractional PLL constrains:
+> > +	 *
+> > +	 * a) 6MHz <= prate <= 25MHz
+> > +	 * b) 1 <= p <= 63 (1 <= p <= 4 prate = 24MHz)
+> > +	 * c) 64 <= m <= 1023
+> > +	 * d) 0 <= s <= 6
+> > +	 * e) -32768 <= k <= 32767
+> > +	 *
+> > +	 * fvco = (m * 65536 + k) * prate / (p * 65536)
+> > +	 */
+> > +
+> > +	pll_div_ctl0 = readl_relaxed(pll->base + DIV_CTL0);
+> > +	mdiv = FIELD_GET(MDIV_MASK, pll_div_ctl0);
+> > +	pdiv = FIELD_GET(PDIV_MASK, pll_div_ctl0);
+> > +	sdiv = FIELD_GET(SDIV_MASK, pll_div_ctl0);
+> > +	pll_div_ctl1 = readl_relaxed(pll->base + DIV_CTL1);
+> > +
+> > +	/* First see if we can get the desired rate by only adjusting kdiv (glitch free) */
+> > +	rate_min = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, KDIV_MIN, prate);
+> > +	rate_max = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, KDIV_MAX, prate);
+> > +
+> > +	if (rate >= rate_min && rate <= rate_max) {
+> > +		kdiv = pll1443x_calc_kdiv(mdiv, pdiv, sdiv, rate, prate);
+> > +		pr_debug("%s: in=%ld, want=%ld Only adjust kdiv %ld -> %d\n",
+> > +			 clk_hw_get_name(&pll->hw), prate, rate,
+> > +			 FIELD_GET(KDIV_MASK, pll_div_ctl1), kdiv);
+> > +		fvco = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, kdiv, prate);
+> > +		t->rate = (unsigned int)fvco;
+> > +		t->mdiv = mdiv;
+> > +		t->pdiv = pdiv;
+> > +		t->sdiv = sdiv;
+> > +		t->kdiv = kdiv;
+> > +		return;
+> > +	}
+> > +
+> > +	/* Then try if we can get the desired rate from one of the static entries */
+> > +	tt = imx_get_pll_settings(pll, rate);
 > 
-> That surprises me a bit, I thought this was a typical use-case for links.
-> So the fact that it's a two-step process causes issues somehow?
+> Shouldn't we try this one first? Maybe we don't need to compute kdiv at
+> all.
 
-It's not so much that the links have to be configured in two steps
-(although it would be nice if that could be fixed), but the fact that
-the order of the operations matter. Userspace has to know what
-combination of links is acceptable in order to determine the order of
-the enable/disable operations, otherwise errors may be returned. That
-makes it more difficult to write generic userspace code.
+Sorry, missed that part of your mail.
 
-> > Could you instead have two sink pads for the ISP, and select the sensor
-> > at stream on time instead of link validation time by checking which link
-> > is enabled ? If no links or both links are enabled, you can then return
-> > an error.
+The intention was to try the glitchfree path first so that we switch
+glitchfree when possible. For most cases the order doesn't make a
+difference, I think we can change it if you like.
+
+There's one case in which we end up with a glitch where we could do a
+glitchfree switch: We come from some rate to a rate which is nearly but
+not exactly the rate from one of the table entries. From there we then
+switch to the exact rate from the table entry. The algorithm below will
+find other values than the ones in the table entries, so the PLL
+switches to the same output frequency with completely different values.
+
+I don't know if anyone ever hits this and then if he has a problem with
+the PLL being restartet, so yes, we can change the order.
+
+Sascha
+
 > 
-> Yes that's totally doable.
-> 
-> There's a similar situation with the sun6i-csi bridge where the source pad
-> has two possible links: one for routing to sun6i-csi capture (video device)
-> and one for routing to the isp entity.
-> 
-> Would that also be best represented as two pads?
-
-Are the two outputs mutually exclusive ? Sorry if I've asked before.
-
-> > Ideally I'd say such internal routing should use the new V4L2 subdev
-> > routing API that is currently being implemented (see [1]), but I don't
-> > know when it will land, and I don't want to delay your patch series.
-> > 
-> > [1] https://lore.kernel.org/linux-media/20211130141536.891878-28-tomi.valkeinen@ideasonboard.com
-> 
-> I'm still a bit confused what problem this is trying to solve.
-> My understanding was that the current pad/link API allows representing complex
-> topologies and switching different paths with link enable/disable.
-
-That was the intent of the MEDIA_IOC_SETUP_LINK ioctl, but we ended up
-with something that is fairly ill-defined, and doesn't have the ability
-to set multiple links atomically. It turned out to be less usable for
-userspace than expected. Mistakes happen (and I'll blame myself here,
-having designed that API) when we don't have real test cases during
-kernel development.
-
-> > > > > > > +
-> > > > > > > +required:
-> > > > > > > +  - compatible
-> > > > > > > +  - reg
-> > > > > > > +  - interrupts
-> > > > > > > +  - clocks
-> > > > > > > +  - clock-names
-> > > > > > > +  - resets
-> > > > > > > +
-> > > > > > > +additionalProperties: false
-> > > > > > > +
-> > > > > > > +examples:
-> > > > > > > +  - |
-> > > > > > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > > > > +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
-> > > > > > > +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
-> > > > > > > +
-> > > > > > > +    isp: isp@1cb8000 {
-> > > > > > > +        compatible = "allwinner,sun8i-v3s-isp";
-> > > > > > > +        reg = <0x01cb8000 0x1000>;
-> > > > > > > +        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > > > +        clocks = <&ccu CLK_BUS_CSI>,
-> > > > > > > +             <&ccu CLK_CSI1_SCLK>,
-> > > > > > > +             <&ccu CLK_DRAM_CSI>;
-> > > > > > > +        clock-names = "bus", "mod", "ram";
-> > > > > > > +        resets = <&ccu RST_BUS_CSI>;
-> > > > > > > +
-> > > > > > > +        ports {
-> > > > > > > +            #address-cells = <1>;
-> > > > > > > +            #size-cells = <0>;
-> > > > > > > +
-> > > > > > > +            port@0 {
-> > > > > > > +                reg = <0>;
-> > > > > > > +
-> > > > > > > +                isp_in_csi0: endpoint {
-> > > > > > > +                    remote-endpoint = <&csi0_out_isp>;
-> > > > > > > +                };
-> > > > > > > +            };
-> > > > > > > +        };
-> > > > > > > +    };
-> > > > > > > +
-> > > > > > > +...
+> > +	if (tt) {
+> > +		pr_debug("%s: in=%ld, want=%ld, Using PLL setting from table\n",
+> > +			 clk_hw_get_name(&pll->hw), prate, rate);
+> > +		t->rate = tt->rate;
+> > +		t->mdiv = tt->mdiv;
+> > +		t->pdiv = tt->pdiv;
+> > +		t->sdiv = tt->sdiv;
+> > +		t->kdiv = tt->kdiv;
+> > +		return;
+> > +	}
+> > +
+> > +	/* Finally calculate best values */
+> > +	for (pdiv = 1; pdiv <= 7; pdiv++) {
+> > +		for (sdiv = 0; sdiv <= 6; sdiv++) {
+> > +			/* calc mdiv = round(rate * pdiv * 2^sdiv) / prate) */
+> > +			mdiv = DIV_ROUND_CLOSEST(rate * (pdiv << sdiv), prate);
+> > +			mdiv = clamp(mdiv, 64, 1023);
+> > +
+> > +			kdiv = pll1443x_calc_kdiv(mdiv, pdiv, sdiv, rate, prate);
+> > +			fvco = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, kdiv, prate);
+> > +
+> > +			/* best match */
+> > +			dist = abs((long)rate - (long)fvco);
+> > +			if (dist < best) {
+> > +				best = dist;
+> > +				t->rate = (unsigned int)fvco;
+> > +				t->mdiv = mdiv;
+> > +				t->pdiv = pdiv;
+> > +				t->sdiv = sdiv;
+> > +				t->kdiv = kdiv;
+> > +
+> > +				if (!dist)
+> > +					goto found;
+> > +			}
+> > +		}
+> > +	}
 
 -- 
-Regards,
-
-Laurent Pinchart
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
