@@ -2,115 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3733C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 18:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D8A1C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 18:26:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241534AbiCDSKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 13:10:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51322 "EHLO
+        id S232010AbiCDS1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 13:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241491AbiCDSKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 13:10:01 -0500
+        with ESMTP id S234502AbiCDS1O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 13:27:14 -0500
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A421CA5E4;
-        Fri,  4 Mar 2022 10:09:10 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D818C1C666B;
+        Fri,  4 Mar 2022 10:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1646417350; x=1677953350;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=V/bZBUMsYnI85haLHW2qBk7fMPvFA3wzMy4PTN+iSoA=;
-  b=tNfk8EABYo1yLD/z/pOhGPasey3ZMDOZKw72gWEm9mJ81VD9wZJ6Ghl9
-   TzNDlWLfPj+S3aVgk0L8hzLvT2LlFLvCNR1rEQEC9sAiPoRONIAfdGD95
-   sQzaGuaT08UQ+98F89+wFpPE5OVs0AhdAZP2pjQDyg87GnH833B571ZH0
-   szjO2Q9JkP5dMjrlPqQ+u3CO/XX8KfNeInJCZyNyVTjURG2VcueQMRnRt
-   z19JOrs/dw0KZcOdt2SN82MalFSUMnPbBgQvbZW78agIOww355NCX2M7S
-   Gdsd+BRjlRL7H914fJEwk5eGFyUJQ6i9rleCg4EbImYS8+bm3xlMq9s43
+  t=1646418386; x=1677954386;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+jdzbR3flYYEH/bLSuzRzaIbwXXnCNewgaIgwzeUhWU=;
+  b=DrGYNveW8plsTOumioNhyVIDarS7ubuT/7z0taqtXPPA873s0OeXdRup
+   J4c5C0xvceI6Hn7WvTO7ikQdBshHePS4raTve4Qgw1opCNz2gluVgruqF
+   9Jogr4VUwtSAV7Y3lP136G0oKoUA89vtAFhQwGDNyRrrTCjNf/vso5HfP
+   XcIjFQDC9QAVtz4C4H42LjQygniGqp1ReR0N0ibUKj8+um0x0rrD29dGL
+   8peUWNvKkvbtlKigvwYu6ErrEgLENyVIgcTNTgVIIYf1yKSE6Jbj5jNIs
+   v6qcpDJPRd49jLjZNnUemG+dM3zW4sbRPv9ViLa1ySqefvjDP1SWrXOS5
    A==;
 X-IronPort-AV: E=Sophos;i="5.90,155,1643698800"; 
-   d="scan'208";a="164568479"
+   d="scan'208";a="164571070"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Mar 2022 11:09:09 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 04 Mar 2022 11:26:26 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 4 Mar 2022 11:09:08 -0700
-Received: from [10.12.73.230] (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Fri, 4 Mar 2022 11:09:06 -0700
-Message-ID: <d3dfbe45-00d4-2131-9d42-32ce11b5c2f5@microchip.com>
-Date:   Fri, 4 Mar 2022 19:09:05 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: at91: sama7g5: Allow MCK1 to be exported and
- referenced in DT
-Content-Language: en-US
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        <claudiu.beznea@microchip.com>, <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-CC:     <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <rdunlap@infradead.org>, <unixbhaskar@gmail.com>,
-        <linux-clk@vger.kernel.org>,
+ 15.1.2375.17; Fri, 4 Mar 2022 11:26:26 -0700
+Received: from rob-ult-m19940.amer.actel.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2375.17 via Frontend Transport; Fri, 4 Mar 2022 11:26:23 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20220111125310.902856-1-tudor.ambarus@microchip.com>
- <20220125010554.BB92BC340E4@smtp.kernel.org>
- <deb6ace6-adfc-bbaa-d31f-16d02a5f762b@microchip.com>
-Organization: microchip
-In-Reply-To: <deb6ace6-adfc-bbaa-d31f-16d02a5f762b@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <claudiu.beznea@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: [PATCH] clk: at91: sama7g5: fix parents of PDMCs' GCLK
+Date:   Fri, 4 Mar 2022 20:26:16 +0200
+Message-ID: <20220304182616.1920392-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/02/2022 at 11:31, Nicolas Ferre wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> On 25/01/2022 at 02:05, Stephen Boyd wrote:
->> Quoting Tudor Ambarus (2022-01-11 04:53:10)
->>> MCK1 feeds the External Bus Interface (EBI). EBI's clock rate is used
->>> to translate EBI's timmings to SMC timings, thus we need to handle MCK1
->>> in the EBI driver. Allow MCK1 to be referenced as a PMC_TYPE_CORE clock
->>> from phandle in DT.
->>>
->>> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->>> ---
->>
->> Applied to clk-next
-> 
-> Hi Stephen,
-> 
-> I depend on the PMC_MCK1 definition for some of the DT patches that I
-> must queue for my pull request to arm-soc, for 5.18.
-> 
-> Would you mind doing an immutable branch for me to pull from, so that
-> the build doesn't crash while the clock tree is not integrated yet with
-> my patches?
+Audio PLL can be used as parent by the GCLKs of PDMCs.
 
-Stephen,
+Fixes: cb783bbbcf54 ("clk: at91: sama7g5: add clock support for sama7g5")
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ drivers/clk/at91/sama7g5.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I added the needed chunk in the DT patch. I don't need this anymore.
-
-Best regards,
-   Nicolas
-
-> Tell me if there's a better way, as well.
-> 
-> Thanks, best regards,
->     Nicolas
-> 
-> --
-> Nicolas Ferre
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index e43458673afb..9a213ba9e58b 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -699,16 +699,16 @@ static const struct {
+ 	{ .n  = "pdmc0_gclk",
+ 	  .id = 68,
+ 	  .r = { .max = 50000000  },
+-	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
+-	  .pp_mux_table = { 5, 8, },
++	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
++	  .pp_mux_table = { 5, 9, },
+ 	  .pp_count = 2,
+ 	  .pp_chg_id = INT_MIN, },
+ 
+ 	{ .n  = "pdmc1_gclk",
+ 	  .id = 69,
+ 	  .r = { .max = 50000000, },
+-	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
+-	  .pp_mux_table = { 5, 8, },
++	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
++	  .pp_mux_table = { 5, 9, },
+ 	  .pp_count = 2,
+ 	  .pp_chg_id = INT_MIN, },
+ 
 -- 
-Nicolas Ferre
+2.32.0
+
