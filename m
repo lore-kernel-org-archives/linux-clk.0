@@ -2,76 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E928C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Mar 2022 23:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8338EC433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Mar 2022 02:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbiCDXNi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 18:13:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37674 "EHLO
+        id S230040AbiCECml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Mar 2022 21:42:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230035AbiCDXNc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 18:13:32 -0500
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C275E0AF;
-        Fri,  4 Mar 2022 15:12:43 -0800 (PST)
-Received: by mail-oi1-f179.google.com with SMTP id l25so9368172oic.13;
-        Fri, 04 Mar 2022 15:12:43 -0800 (PST)
+        with ESMTP id S229956AbiCECml (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 21:42:41 -0500
+Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C295A24F866;
+        Fri,  4 Mar 2022 18:41:52 -0800 (PST)
+Received: by mail-vk1-xa29.google.com with SMTP id x62so5318394vkg.6;
+        Fri, 04 Mar 2022 18:41:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KkcNCtjpcO8rVm8LUzoHbBDqzf+JRgklTyG6XGrgh2A=;
+        b=n3v5g4r26iSDUpyH/15c34qb0OSlTQqGD+1AH+W+Ewm3Q8qbcr6ZF6eVUJqPxPg4AK
+         v1GMcYCik7Q682YyBSUSvzc4tarHahIlPrBHLKlVNZ6xWcydkFrucAajd29dD6DrJJwB
+         KTzCOgZpQjNn+KApVn46AtG6+ybOyLOhA9IoX4hMorNwLui+negdc5M2M9uoYiNIs9yd
+         rBlpV3llDOutr17RMr5lWoEb9FOXiZ9lIk79HMyeVyH1CJcoAt+fTwQEcMbyduPCmZax
+         Ew3hwauqxhC3lmJkK/c1qRQHdxy6tAj+6Hq97iFEV2MNzbiVNsP8nR/6Cf4PLyfkf3T6
+         J5CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KVWbDqpK6bOdzGo2h0qtWE+fgf4PwelKmZTMZdMDaZ0=;
-        b=fEdj2ho0HTfVmwb6ikxcEh9FQXfnI4SMJ+2iiPxAfCKBbPhMehzGxDP2V0nHK8hQsJ
-         wnb8M5KkvWVPZn8K+dcZqbfnwjA6pXT2L46MmLaT231svEw6OVjHd5xMtPyyB7mAbeL6
-         wMU915nOBRe74Miq209nrfBjOu3GDN8qt1jWro/aT1969D7EYzsImPMYlE37i7iYelHJ
-         qW5JzpZFA9bfLmuG4p5W91CbvkhoANTGq1Fsfhz4TRdY9jDnw1Hus2ocq7L6eBit5WZa
-         0W0IvmVzItMQHGhg/ItqNCQzqxfXt78es9zIGKTMPE/7zm9nAI6MSQCFI1f53gL3mTAZ
-         z3Kw==
-X-Gm-Message-State: AOAM530vZIlIuXIRsVY3xkeywT0dTSK4Qy5Pjs6PbCoF+v4vFprfVRLb
-        aQkWzf5j9RJ5IcvlADXKGvRhHcYYdA==
-X-Google-Smtp-Source: ABdhPJzBGD3S4vU8ZCKqlhfZLNdTutmb70tW40mVotqvoPSlg1sjO3pVV1WVraWzwiGw/TjOnMbAiw==
-X-Received: by 2002:a05:6808:2393:b0:2d9:a01a:487b with SMTP id bp19-20020a056808239300b002d9a01a487bmr994342oib.198.1646435562446;
-        Fri, 04 Mar 2022 15:12:42 -0800 (PST)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id l15-20020a0568302b0f00b005b0285d2434sm144236otv.40.2022.03.04.15.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Mar 2022 15:12:41 -0800 (PST)
-Received: (nullmailer pid 638646 invoked by uid 1000);
-        Fri, 04 Mar 2022 23:12:40 -0000
-Date:   Fri, 4 Mar 2022 17:12:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v6 02/15] dt-bindings: clock: simplify qcom,gcc-apq8064
- Documentation
-Message-ID: <YiKc6Ho9D1VLiOqB@robh.at.kernel.org>
-References: <20220226135235.10051-1-ansuelsmth@gmail.com>
- <20220226135235.10051-3-ansuelsmth@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KkcNCtjpcO8rVm8LUzoHbBDqzf+JRgklTyG6XGrgh2A=;
+        b=xdZXcN9ndX6kIjQSkktOsaEWTkfV/+JtGBe5Tiy4wCcYZjhq2uxKVQ0TQMNAFTSNoD
+         29ckoy8axEIFoc7y4PEQm5uaFXxCAgPPnb1iqcio403cY4MNpoDFqSH7xUTztYTStCI/
+         Y9dn0fTy+jO6U630wuOY4Ci2+sx//kcZH6s0Me0oksnu0ZZTUy/ClYSoM9vSTBsOn0kS
+         ZegBiwEgNgCk+jmyVWy7EAxBIwap5CuQOtqfUS/kT9O9ebsc9HdWhrhnTwzxYXafus++
+         bYDD5jPFxxarNP2ON8gOqRSLUkRzKrcgqMXElCcKSWhhkNfrXObLB5aDM6OhmK9PkSQD
+         2TNg==
+X-Gm-Message-State: AOAM531VMTI4FhWRyCvpHzxIQA0Z+62a7ky8EVFagBAXlNCwHd1lNwH4
+        G5ykantArbgyJyL3RVa8f+3N2rDE+9Im3KVt00iZBH3z
+X-Google-Smtp-Source: ABdhPJxOsN2RrE8cJHgE60PZbU5R7UZ2J4YCIf+ekeTLJwL7RE7YXmJekBtVPUrks2W4I8GY7/R3s05NmLLJnOyQapA=
+X-Received: by 2002:a1f:ee4a:0:b0:336:e616:82c6 with SMTP id
+ m71-20020a1fee4a000000b00336e61682c6mr603775vkh.8.1646448111552; Fri, 04 Mar
+ 2022 18:41:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220226135235.10051-3-ansuelsmth@gmail.com>
+References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
+ <20210304221247.488173-1-linux@rasmusvillemoes.dk> <20210304221247.488173-2-linux@rasmusvillemoes.dk>
+ <4b560502-3885-91a0-3100-4b5506a17b32@roeck-us.net>
+In-Reply-To: <4b560502-3885-91a0-3100-4b5506a17b32@roeck-us.net>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Fri, 4 Mar 2022 18:41:39 -0800
+Message-ID: <CAKdAkRQj9fTv-g03__ncNrnyNh5x+4uG2_yioyrc-iFAd22c3Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: add devm_clk_prepare_enable() helper
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 26 Feb 2022 14:52:22 +0100, Ansuel Smith wrote:
-> Simplify qcon,gcc-apq8064 Documentation by using qcom,gcc.yaml as a
-> template and remove the compatible from qcom,gcc.yaml
-> 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/clock/qcom,gcc-apq8064.yaml      | 29 +++++--------------
->  .../bindings/clock/qcom,gcc-other.yaml        |  3 --
->  2 files changed, 7 insertions(+), 25 deletions(-)
-> 
+On Mon, Mar 8, 2021 at 9:32 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 3/4/21 2:12 PM, Rasmus Villemoes wrote:
+> > Add a managed wrapper for clk_prepare_enable().
+> >
+> > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>
+> That has been tried several times, including by yours truly,
+> and has always been rejected.
+>
+> Just use devm_add_action_or_reset() like many other watchdog
+> drivers.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Can we apply the devm version for crying out loud? I do not see what
+benefit there is to force everyone open-code it with
+devm_add_action_or_reset(). By simply blocking it we are not making
+the kernel better and it's been stalled for a very long time.
+
+Thanks.
+
+-- 
+Dmitry
