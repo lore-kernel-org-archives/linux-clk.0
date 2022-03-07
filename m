@@ -2,90 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8338EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Mar 2022 02:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB269C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Mar 2022 03:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbiCECml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Mar 2022 21:42:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34806 "EHLO
+        id S235022AbiCGDgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Mar 2022 22:36:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbiCECml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Mar 2022 21:42:41 -0500
-Received: from mail-vk1-xa29.google.com (mail-vk1-xa29.google.com [IPv6:2607:f8b0:4864:20::a29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C295A24F866;
-        Fri,  4 Mar 2022 18:41:52 -0800 (PST)
-Received: by mail-vk1-xa29.google.com with SMTP id x62so5318394vkg.6;
-        Fri, 04 Mar 2022 18:41:52 -0800 (PST)
+        with ESMTP id S231285AbiCGDgt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Mar 2022 22:36:49 -0500
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 500305E15B;
+        Sun,  6 Mar 2022 19:35:56 -0800 (PST)
+Received: by mail-qv1-xf31.google.com with SMTP id d3so11131334qvb.5;
+        Sun, 06 Mar 2022 19:35:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KkcNCtjpcO8rVm8LUzoHbBDqzf+JRgklTyG6XGrgh2A=;
-        b=n3v5g4r26iSDUpyH/15c34qb0OSlTQqGD+1AH+W+Ewm3Q8qbcr6ZF6eVUJqPxPg4AK
-         v1GMcYCik7Q682YyBSUSvzc4tarHahIlPrBHLKlVNZ6xWcydkFrucAajd29dD6DrJJwB
-         KTzCOgZpQjNn+KApVn46AtG6+ybOyLOhA9IoX4hMorNwLui+negdc5M2M9uoYiNIs9yd
-         rBlpV3llDOutr17RMr5lWoEb9FOXiZ9lIk79HMyeVyH1CJcoAt+fTwQEcMbyduPCmZax
-         Ew3hwauqxhC3lmJkK/c1qRQHdxy6tAj+6Hq97iFEV2MNzbiVNsP8nR/6Cf4PLyfkf3T6
-         J5CA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R5XBkGbLpwKeBtWV3nxW7T3iRe3e2U7dNRaaKdhMqyg=;
+        b=aCj15Rfu3s9zAggB/tbruIRc88f/jJ82tAjsZGPQys8b+IPg06+lO1UlsqNnW74Vhs
+         g1Ix/vZVtZqqOtVxfBBcwDuzRIRCQ8nbr9N0P+8GduTzXi5uAYodSYccfFgAUVmEUzpn
+         XN3NqsJe9iaH/uJjf4eCqZigG1X/+hYGNxGsWsXBk9wIUy0XHgJ+CJkKwt7kW+wekakG
+         MBXaqGic42TIRee4pneOjeXYsV3kUwht9RXj2s0PQkfH00Wso7h6MRFRPZvPkWCwcWyQ
+         jqZp1N6C0vtTN6itM6Fa9ZPMirfuHRn5IUhGNbIuLesxCTwbhBU+FJCuhbq3/hto2pZ6
+         m9Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KkcNCtjpcO8rVm8LUzoHbBDqzf+JRgklTyG6XGrgh2A=;
-        b=xdZXcN9ndX6kIjQSkktOsaEWTkfV/+JtGBe5Tiy4wCcYZjhq2uxKVQ0TQMNAFTSNoD
-         29ckoy8axEIFoc7y4PEQm5uaFXxCAgPPnb1iqcio403cY4MNpoDFqSH7xUTztYTStCI/
-         Y9dn0fTy+jO6U630wuOY4Ci2+sx//kcZH6s0Me0oksnu0ZZTUy/ClYSoM9vSTBsOn0kS
-         ZegBiwEgNgCk+jmyVWy7EAxBIwap5CuQOtqfUS/kT9O9ebsc9HdWhrhnTwzxYXafus++
-         bYDD5jPFxxarNP2ON8gOqRSLUkRzKrcgqMXElCcKSWhhkNfrXObLB5aDM6OhmK9PkSQD
-         2TNg==
-X-Gm-Message-State: AOAM531VMTI4FhWRyCvpHzxIQA0Z+62a7ky8EVFagBAXlNCwHd1lNwH4
-        G5ykantArbgyJyL3RVa8f+3N2rDE+9Im3KVt00iZBH3z
-X-Google-Smtp-Source: ABdhPJxOsN2RrE8cJHgE60PZbU5R7UZ2J4YCIf+ekeTLJwL7RE7YXmJekBtVPUrks2W4I8GY7/R3s05NmLLJnOyQapA=
-X-Received: by 2002:a1f:ee4a:0:b0:336:e616:82c6 with SMTP id
- m71-20020a1fee4a000000b00336e61682c6mr603775vkh.8.1646448111552; Fri, 04 Mar
- 2022 18:41:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R5XBkGbLpwKeBtWV3nxW7T3iRe3e2U7dNRaaKdhMqyg=;
+        b=GsxXbD56ERKTrNRjeL9AUT3UaE/xOktbt05IETsS6CdW1pz0qF1P3heUVINr/1XTXD
+         KJh3dXF7NzTb34LJiTQrXBlcTNmmnrB10qxEHQA+cYvaB/4GE29uTqHzG3pgf6+iRFYV
+         s8OnuE3oCB8sBBBbvwjH5dXw7XCjqm+CVFuZOLRLSjZnnoUB4MnnjDgZYdYoD97LtHQK
+         0AckC8rcnfUpy1jMcEcTp2INMDp/7IVWo/qr2vTcD/G+PNaA3QntW4lsnPF+NFUpc5GC
+         dzr/QnHp9tv3q27VR6/DI2wB/GDe5tTJkYaQdKU+/R4Nc71KcukCdzbuQLK2n6kQR1vd
+         BxWw==
+X-Gm-Message-State: AOAM5334pS9ZC/fr+UwTAU5JkC/hO36DrDK6hHWItf8b+DseZ4GO+0vQ
+        psE8CUfUDItpeo4G/00FBxw=
+X-Google-Smtp-Source: ABdhPJzu52klhBnRGqJo8805Vg4DIQqWlUEGypeXh4aucC3h7ef9+QM9aYDTXGGTP96FVPbl2pMHVQ==
+X-Received: by 2002:a05:6214:104b:b0:435:17bf:da07 with SMTP id l11-20020a056214104b00b0043517bfda07mr6749274qvr.91.1646624155436;
+        Sun, 06 Mar 2022 19:35:55 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id i192-20020a379fc9000000b0067b314c0ff3sm616867qke.43.2022.03.06.19.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Mar 2022 19:35:54 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: chi.minghao@zte.com.cn
+To:     s.nawrocki@samsung.com
+Cc:     tomasz.figa@gmail.com, cw00.choi@samsung.com,
+        alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski@canonical.com,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Minghao Chi <chi.minghao@zte.com.cn>
+Subject: [PATCH V2] clk/samsung: Use of_device_get_match_data()
+Date:   Mon,  7 Mar 2022 03:35:46 +0000
+Message-Id: <20220307033546.2075097-1-chi.minghao@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210226141411.2517368-1-linux@rasmusvillemoes.dk>
- <20210304221247.488173-1-linux@rasmusvillemoes.dk> <20210304221247.488173-2-linux@rasmusvillemoes.dk>
- <4b560502-3885-91a0-3100-4b5506a17b32@roeck-us.net>
-In-Reply-To: <4b560502-3885-91a0-3100-4b5506a17b32@roeck-us.net>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Fri, 4 Mar 2022 18:41:39 -0800
-Message-ID: <CAKdAkRQj9fTv-g03__ncNrnyNh5x+4uG2_yioyrc-iFAd22c3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: add devm_clk_prepare_enable() helper
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 8, 2021 at 9:32 PM Guenter Roeck <linux@roeck-us.net> wrote:
->
-> On 3/4/21 2:12 PM, Rasmus Villemoes wrote:
-> > Add a managed wrapper for clk_prepare_enable().
-> >
-> > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->
-> That has been tried several times, including by yours truly,
-> and has always been rejected.
->
-> Just use devm_add_action_or_reset() like many other watchdog
-> drivers.
+From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
 
-Can we apply the devm version for crying out loud? I do not see what
-benefit there is to force everyone open-code it with
-devm_add_action_or_reset(). By simply blocking it we are not making
-the kernel better and it's been stalled for a very long time.
+Use of_device_get_match_data() to simplify the code.
 
-Thanks.
+v1->v2:
+  Add a judgment for returning variant to NULL
 
+Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+---
+ drivers/clk/samsung/clk-exynos-clkout.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
+index e6d6cbf8c4e6..273f77d54dab 100644
+--- a/drivers/clk/samsung/clk-exynos-clkout.c
++++ b/drivers/clk/samsung/clk-exynos-clkout.c
+@@ -81,19 +81,17 @@ MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+ static int exynos_clkout_match_parent_dev(struct device *dev, u32 *mux_mask)
+ {
+ 	const struct exynos_clkout_variant *variant;
+-	const struct of_device_id *match;
+ 
+ 	if (!dev->parent) {
+ 		dev_err(dev, "not instantiated from MFD\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	match = of_match_device(exynos_clkout_ids, dev->parent);
+-	if (!match) {
++	variant = of_device_get_match_data(dev->parent);
++	if (!variant) {
+ 		dev_err(dev, "cannot match parent device\n");
+ 		return -EINVAL;
+ 	}
+-	variant = match->data;
+ 
+ 	*mux_mask = variant->mux_mask;
+ 
 -- 
-Dmitry
+2.25.1
+
