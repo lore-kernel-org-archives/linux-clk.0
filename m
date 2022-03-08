@@ -2,92 +2,189 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4B6C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 15:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB407C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 22:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238315AbiCHPvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Mar 2022 10:51:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46466 "EHLO
+        id S1350826AbiCHWdE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Mar 2022 17:33:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236656AbiCHPvD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 10:51:03 -0500
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92E6C4F451;
-        Tue,  8 Mar 2022 07:50:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1646754607; x=1678290607;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uoonVeIcIw0ZF7CyzIEfJW8mtwFWH3uBfX/PSuQYy6c=;
-  b=lENOGMPvY3FlhJOwKXaVnqVAm/w3qNBFPKLAEfUxqWFJ6l9XOvhodt57
-   euzxHcsSSZyDDQwYnBvcMCZHK9CFSQSA1iRlv4azMWJuCL/593sRfxEPf
-   NY8fAZYcpKvkCgIGcfY5QIp0MpTvbyOSCt8hdX+b9G8mKszr/yNK+Y91w
-   GAejkdgXkM5veV4azo5uAxXGJJdlgllNkb9HxMVbrwuWl5w1jbwNhmmQE
-   3jo6C1PDi3ljtfGnSjBGZ4YLhuCk/bamiel6g/ZZxCefwpUxHTGcvR+ea
-   UXn2maBFybdEwCD9Y62DchKy7JYnojjnQo+r3WhlEhuVShSTHQjcIm4Tf
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,165,1643698800"; 
-   d="scan'208";a="156124961"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Mar 2022 08:50:02 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 8 Mar 2022 08:50:01 -0700
-Received: from localhost (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Tue, 8 Mar 2022 08:50:01 -0700
-Date:   Tue, 8 Mar 2022 16:52:53 +0100
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Kavyasree Kotagiri" <kavyasree.kotagiri@microchip.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: COMMON_CLK_LAN966X should depend on SOC_LAN966
-Message-ID: <20220308155253.aoedxrdke2l3homa@soft-dev3-1.localhost>
-References: <eb102eae05e5667b9bd342a0c387f7f262d24bda.1645716471.git.geert+renesas@glider.be>
+        with ESMTP id S1350746AbiCHWcu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 17:32:50 -0500
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8515A09C
+        for <linux-clk@vger.kernel.org>; Tue,  8 Mar 2022 14:31:51 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id a7-20020a9d5c87000000b005ad1467cb59so417964oti.5
+        for <linux-clk@vger.kernel.org>; Tue, 08 Mar 2022 14:31:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yu1THqTGD6F10/7zLdE8sY/7tnkCw2lQhVUm7kdi5Vs=;
+        b=zM6yJDkCXVr46DAoZEfhO1+xZLGgCRwLMK9TAYUYZVTFi0U5oPxRtHIVQ7xmtlSpMI
+         3E8Zq03Dbu+RxrYTIpq2jMcfSFLBmdtuyeiOFn/NaomcmAli5diS6gEyBm1jpZM1t5jT
+         dvkq6b9VKQvyrK819bjV/z5ga84NAouXrIchc3cnFe7J9Ph8ty8CSO3Ls09pu0+6JQg4
+         VO1vBoP7KH5b9CkJBeYwxPKJXC3oPsEvKV0yYGtVOBrM4mUQkExaBH8vhc00KjKA2ynY
+         cEENkWVocmJAKULBG2HXLq6f/fRoupJS9KM8zXL5ixYiW3CKIG8xeNpQA2JR1DtiyMEz
+         uhpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yu1THqTGD6F10/7zLdE8sY/7tnkCw2lQhVUm7kdi5Vs=;
+        b=ExIz25IgXm3FedJh704EMp9tsX+LCAGAJjCXUFC2YnM3SBsn7+oKBkxToKN30PxFog
+         w03ZSX5M90NcRCxpbQRqwYyWEVWk1B8+Wo7RP9arBVxF97lwE4ZY0QJcNoKziwKGP6iI
+         CwDnLlMXg4ihcfYtTrMXhdsOcFLD3baAPRqr6XcA8UmGDCuCqkQssyhztX8PuCt86upz
+         G+8F6korxqYSSUkZ+icp/dAGctGVP0rpsZ8GZL/0ODqTSnvPJYGyM4ayGzhoKQIdeBud
+         McEESkUexx2OW7+wVWE49N3retw9dM2gyIHSvdBgdyRFehubkChilNQy9tU6rYNm0r2/
+         HC+A==
+X-Gm-Message-State: AOAM532mXfiDTpGd47pg9+sigMb77WCJxmXgz23xfb/PD3ca0wYeDYXs
+        g0SIRzgurNWNJ9a5WH60vHRAfw==
+X-Google-Smtp-Source: ABdhPJzj4SI3aBtkqXo6gIsiBBn8CcMdnLEkOtQN5+H1BR7bbwBxT7uH7KUFlOg2LT41M+Vsy/RXfQ==
+X-Received: by 2002:a05:6830:43a0:b0:5af:e328:6bc7 with SMTP id s32-20020a05683043a000b005afe3286bc7mr9495407otv.62.1646778710427;
+        Tue, 08 Mar 2022 14:31:50 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id f4-20020a056870d30400b000da71ab35e0sm78779oag.44.2022.03.08.14.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Mar 2022 14:31:49 -0800 (PST)
+Date:   Tue, 8 Mar 2022 16:31:46 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, bhupesh.linux@gmail.com,
+        lorenzo.pieralisi@arm.com, agross@kernel.org, svarbanov@mm-sol.com,
+        bhelgaas@google.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: sa8155: Enable PCIe nodes
+Message-ID: <YifZUtH8hbelcB8L@builder.lan>
+References: <20220302203045.184500-1-bhupesh.sharma@linaro.org>
+ <20220302203045.184500-8-bhupesh.sharma@linaro.org>
+ <CAA8EJpqEy+669gpDsy-zGp2NpDP-d7ZxNf7RVo=OQZdvGdZOvQ@mail.gmail.com>
+ <CAH=2Ntz2=pgysEVSfSuGd12C-Am-qRZymaotCw-Lwp0_xaNcOg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eb102eae05e5667b9bd342a0c387f7f262d24bda.1645716471.git.geert+renesas@glider.be>
+In-Reply-To: <CAH=2Ntz2=pgysEVSfSuGd12C-Am-qRZymaotCw-Lwp0_xaNcOg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 02/24/2022 16:29, Geert Uytterhoeven wrote:
-> 
-> The LAN966x Generic Clock Controller is only present on Microchip
-> LAN966x SoCs.  Hence add a dependency on SOC_LAN966, to prevent asking
-> the user about this driver when configuring a kernel without LAN966x SoC
-> support.
+On Thu 03 Mar 00:09 CST 2022, Bhupesh Sharma wrote:
 
-Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> Hi Dmitry,
+> 
+> On Thu, 3 Mar 2022 at 02:29, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Wed, 2 Mar 2022 at 23:31, Bhupesh Sharma <bhupesh.sharma@linaro.org> wrote:
+> > >
+> > > SA8155p ADP board supports the PCIe0 controller in the RC
+> > > mode (only). So add the support for the same.
+> > >
+> > > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > > Cc: Vinod Koul <vkoul@kernel.org>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sa8155p-adp.dts | 42 ++++++++++++++++++++++++
+> > >  1 file changed, 42 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > > index 8756c2b25c7e..3f6b3ee404f5 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/sa8155p-adp.dts
+> > > @@ -387,9 +387,51 @@ &usb_2_qmpphy {
+> > >         vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
+> > >  };
+> > >
+> > > +&pcie0 {
+> > > +       status = "okay";
+> > > +};
+> > > +
+> > > +&pcie0_phy {
+> > > +       status = "okay";
+> > > +       vdda-phy-supply = <&vreg_l18c_0p88>;
+> > > +       vdda-pll-supply = <&vreg_l8c_1p2>;
+> > > +};
+> > > +
+> > > +&pcie1_phy {
+> > > +       vdda-phy-supply = <&vreg_l18c_0p88>;
+> > > +       vdda-pll-supply = <&vreg_l8c_1p2>;
+> > > +};
+> > > +
+> > >  &tlmm {
+> > >         gpio-reserved-ranges = <0 4>;
+> > >
+> > > +       bt_en_default: bt_en_default {
 
+'_' is not a valid character in the node name (it is in the label).
+
+> > > +               mux {
+
+Please flatten this, you can omit the mux and config subnodes and put
+the properties directly in the state node.
+
+> > > +                       pins = "gpio172";
+> > > +                       function = "gpio";
+> > > +               };
+> > > +
+> > > +               config {
+> > > +                       pins = "gpio172";
+> > > +                       drive-strength = <2>;
+> > > +                       bias-pull-down;
+> > > +               };
+> > > +       };
+> > > +
+> > > +       wlan_en_default: wlan_en_default {
+> > > +               mux {
+> > > +                       pins = "gpio169";
+> > > +                       function = "gpio";
+> > > +               };
+> > > +
+> > > +               config {
+> > > +                       pins = "gpio169";
+> > > +                       drive-strength = <16>;
+> > > +                       output-high;
+> > > +                       bias-pull-up;
+> > > +               };
+> > > +       };
+> > > +
+> >
+> > Not related to PCIe
 > 
-> Fixes: 54104ee023333e3b ("clk: lan966x: Add lan966x SoC clock driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  drivers/clk/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c390e26dadf471f5..1c82a3e1129d4342 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -232,6 +232,7 @@ config COMMON_CLK_GEMINI
-> 
->  config COMMON_CLK_LAN966X
->         bool "Generic Clock Controller driver for LAN966X SoC"
-> +       depends on SOC_LAN966 || COMPILE_TEST
->         help
->           This driver provides support for Generic Clock Controller(GCK) on
->           LAN966X SoC. GCK generates and supplies clock to various peripherals
-> --
-> 2.25.1
+> Hmm.. I have no strong personal opinion on this, so let's see what
+> Bjorn thinks about the same.
+> My reasoning for keeping it here was to just capture that we have
+> 'bt_en' and 'wlan_en' related tlmm details here, so that when you send
+> out the reworked QCAxxxx mfd series (see [1]) later, I can easily plug
+> it in for SA8155p ADP dts as well with the 'bt' and 'wlan' constructs.
 > 
 
--- 
-/Horatiu
+The BT_EN is unrelated to PCIe, and I'm not able to see where you select
+the wlan_en_default state, so this would be dangling.
+
+So the bt_en should come in a patch together with a bluetooth node and
+the wlan_en_default should come with something that ensures that the
+WiFi portion of the chip is powered and the gpio enabled.
+
+Regards,
+Bjorn
+
+> [1]. https://lore.kernel.org/lkml/20210621223141.1638189-2-dmitry.baryshkov@linaro.org/T/
+> 
+> Regards.
+> Bhupesh
+> 
+> > >         usb2phy_ac_en1_default: usb2phy_ac_en1_default {
+> > >                 mux {
+> > >                         pins = "gpio113";
+> > > --
+> > > 2.35.1
+> > >
+> >
+> >
+> > --
+> > With best wishes
+> > Dmitry
