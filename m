@@ -2,102 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCC0C433F5
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 09:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EE4C433EF
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 09:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234348AbiCHJyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Mar 2022 04:54:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35780 "EHLO
+        id S1345547AbiCHJ7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Mar 2022 04:59:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232116AbiCHJyL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 04:54:11 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68EE34B93;
-        Tue,  8 Mar 2022 01:53:15 -0800 (PST)
-Received: by mail-qt1-f178.google.com with SMTP id a14so2726584qtx.12;
-        Tue, 08 Mar 2022 01:53:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RhnnNRTUQhZ66DiV0sFKGErrjIL8uzqVLKi9U1XyIMU=;
-        b=67a9/olw7Lui86qnC8r6WCSUTlNFBD0ajR0SUMXISia9ODkBCfvNeRfofNmEZKM3wU
-         zDCHfZjeNcE51Y+rIfZtoeh64Ek8cs041+xk79xvFB1faSqYa2Il9hoIKBi7bMPrbSkx
-         EYcCTMf4uepmb+APeBRENBhregIFFjDBelaf7AeFtVvHiEbOHRZNGE1c1uXiVEoYx3v6
-         6knwe9cBfs4YulG4ccg/QPGx0S9yIZEiGiR5HDyZQnqkIyWmuMZ/LV+RKdGRCC7LG9/n
-         nAhY6SP6o9Ymf+WKPP62r7A+06iWr2qyEL8Tggq4vsgOdk3NgyMxRItwCos6Fy8HLqRQ
-         lF5g==
-X-Gm-Message-State: AOAM530U7UFY/BnhldFP4JaDouWev2xOIXT+oFW7tIOpskuwIkysGtNl
-        K5IzFEZ9ml/yrbjt7V928qLB32IOrpowMg==
-X-Google-Smtp-Source: ABdhPJxAM/RrpROx9BNYQugwuKU7LEzbGQw+a4KKOhS0kVbUseOgmmL9XBqkF5xN8JzSmUEOcP/v0Q==
-X-Received: by 2002:a05:622a:164b:b0:2e0:769e:fa2a with SMTP id y11-20020a05622a164b00b002e0769efa2amr404124qtj.343.1646733194799;
-        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id n13-20020ac85b4d000000b002de6fe91d2fsm10228796qtw.68.2022.03.08.01.53.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2dbfe58670cso195106257b3.3;
-        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
-X-Received: by 2002:a0d:f1c7:0:b0:2db:d2bc:be11 with SMTP id
- a190-20020a0df1c7000000b002dbd2bcbe11mr11992421ywf.62.1646733193799; Tue, 08
- Mar 2022 01:53:13 -0800 (PST)
+        with ESMTP id S1345395AbiCHJ7a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 04:59:30 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 139F637012
+        for <linux-clk@vger.kernel.org>; Tue,  8 Mar 2022 01:58:34 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1nRWbo-00070Z-K6; Tue, 08 Mar 2022 10:58:24 +0100
+Message-ID: <2ed036b4-5a0a-f017-17e3-7922fcc2e8cc@pengutronix.de>
+Date:   Tue, 8 Mar 2022 10:58:19 +0100
 MIME-Version: 1.0
-References: <20220301190400.1644150-1-robh@kernel.org> <CAMuHMdXqsvQy_6+6w8DVCtqNiFERPV29xd3HRqtyz9RY3KXOYw@mail.gmail.com>
- <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com>
-In-Reply-To: <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Mar 2022 10:53:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
-Message-ID: <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [Linux-stm32] [PATCH v2 12/13] ARM: dts: stm32: enable optee
+ firmware and SCMI support on STM32MP13
+Content-Language: en-US
+To:     Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Etienne Carriere <etienne.carriere@linaro.org>
+References: <20220225133137.813919-1-gabriel.fernandez@foss.st.com>
+ <20220225133137.813919-13-gabriel.fernandez@foss.st.com>
+ <1d90078d-e27f-539d-d010-78a3c4da565a@pengutronix.de>
+ <65581f3a-3ae6-2dd3-7571-1e64982b5f50@foss.st.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <65581f3a-3ae6-2dd3-7571-1e64982b5f50@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+Helo Gabriel,
 
-On Fri, Mar 4, 2022 at 2:28 PM Rob Herring <robh@kernel.org> wrote:
-> On Fri, Mar 4, 2022 at 3:09 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Mar 1, 2022 at 8:04 PM Rob Herring <robh@kernel.org> wrote:
-> > > 'clocks' in the example is not parsable with the 0 phandle value
-> > > because the number of #clock-cells is unknown in the previous entry.
-> > > Solve this by adding the clock provider node. Only 'cpg_clocks' is
-> > > needed as the examples are built with fixups which can be used to
-> > > identify phandles.
-> > >
-> > > This is in preparation to support schema validation on .dtb files.
-> > >
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> >
-> > Thanks for your patch!
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Do you want me to queue this in renesas-clk-for-v5.19, or do you
-> > want to take it yourself, together with the validation patches?
-> > Please let me know.
->
-> You can take it.
+On 03.03.22 14:09, Gabriel FERNANDEZ wrote:
+> 
+> On 2/25/22 16:13, Ahmad Fatoum wrote:
+>> Hello Gabriel,
+>>
+>> On 25.02.22 14:31, gabriel.fernandez@foss.st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+>>> +    firmware {
+>>> +        optee {
+>>> +            method = "smc";
+>>> +            compatible = "linaro,optee-tz";
+>>> +        };
+>>> +
+>>> +        scmi: scmi {
+>>> +            compatible = "linaro,scmi-optee";
+>> This compatible doesn't seem to be documented upstream. I am looking at v5.17-rc5.
+>> Do you have a reference detailing the difference between this conduit and
+>> plain arm,scmi-smc (as used with TF-A on the STM32MP151).
+>>
+>> Cheers,
+>> Ahmad
+> 
+> Hi
+> 
+> Ahmad,
+> 
+> it's on going.
+> 
+> https://lore.kernel.org/linux-arm-kernel/20211029102118.GG6526@e120937-lin/T/#mf46c83f0aadce3061ee93fa22159405f38d881a0
 
-Thanks, queuing in renesas-clk-for-v5.19.
+I've found that thread in the meantime and got some clarification on why a new
+transport for OP-TEE was added. One question I still have though is why make
+this transport the default for STM32MP13x instead of using SCMI over SMC like
+you do for STM32MP15x. OP-TEE could still be made to service SCMI over SMC
+and it would allow people employing TF-A as SCMI provider an easier migration
+to the newer SoC.
 
-Gr{oetje,eeting}s,
+Cheers,
+Ahmad
 
-                        Geert
+> 
+>>
+>>> +            #address-cells = <1>;
+>>> +            #size-cells = <0>;
+>>> +            linaro,optee-channel-id = <0>;
+>>> +            shmem = <&scmi_shm>;
+>>> +
+>>> +            scmi_clk: protocol@14 {
+>>> +                reg = <0x14>;
+>>> +                #clock-cells = <1>;
+>>> +            };
+>>> +
+>>> +            scmi_reset: protocol@16 {
+>>> +                reg = <0x16>;
+>>> +                #reset-cells = <1>;
+>>> +            };
+>>> +        };
+>>> +    };
+>>>       clocks {
+>>>           clk_axi: clk-axi {
+>>>               #clock-cells = <0>;
+>>
+> 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
