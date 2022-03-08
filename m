@@ -2,55 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2622C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 08:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCC0C433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 09:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345127AbiCHIt7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Mar 2022 03:49:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34466 "EHLO
+        id S234348AbiCHJyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Mar 2022 04:54:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345133AbiCHIt7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 03:49:59 -0500
-Received: from mail.olerise.pl (mail.olerise.pl [46.183.184.59])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70AE37A3F
-        for <linux-clk@vger.kernel.org>; Tue,  8 Mar 2022 00:49:02 -0800 (PST)
-Received: by mail.olerise.pl (Postfix, from userid 1001)
-        id A7383445AA; Tue,  8 Mar 2022 09:46:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=olerise.pl; s=mail;
-        t=1646729237; bh=ZNYiuZLXlxCdAPtstEG/gwJieB5RBwA/cHj1SZ3Mpl0=;
-        h=Date:From:To:Subject:From;
-        b=Gms0SoVLK0sA/Kqn6aitDUz0NoG26V06PHb8ebhDAty+El+v2jB4ADpIcTWDFY2tg
-         0gNoRvpu+DVwrYhRzGdIuR61G+7S0+Psyam/1+4xsj4BfNrqD/2WzK3dQ/eiLg6E71
-         GbW3EQ5g6qOh8b+tsSLvWIgsdjw9yLXdX5aDMV5FwFCbHj7yPCv/vA/NCbsBlPjB7W
-         XbMRsWQ/gHqtUJ9AQ9dpAHWtQLGASWdDtgAqMDCTE+80F58K2VBYWjJvn8HTPqR1Zf
-         0PnIGTpoLNbEGlNjXc/VzT5qEkjZMlayEkoxIG+UFXMTJ31IoFLt5Aoxnc5Z64zRcD
-         VF90rLrDS8F/A==
-Received: by mail.olerise.pl for <linux-clk@vger.kernel.org>; Tue,  8 Mar 2022 08:45:41 GMT
-Message-ID: <20220308084500-0.1.26.mt5n.0.79r8npqtp6@olerise.pl>
-Date:   Tue,  8 Mar 2022 08:45:41 GMT
-From:   =?UTF-8?Q? "Miko=C5=82aj_Rudzik" ?= <mikolaj.rudzik@olerise.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: =?UTF-8?Q?Nap=C5=82yw_Klient=C3=B3w_ze_strony?=
-X-Mailer: mail.olerise.pl
+        with ESMTP id S232116AbiCHJyL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 04:54:11 -0500
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E68EE34B93;
+        Tue,  8 Mar 2022 01:53:15 -0800 (PST)
+Received: by mail-qt1-f178.google.com with SMTP id a14so2726584qtx.12;
+        Tue, 08 Mar 2022 01:53:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RhnnNRTUQhZ66DiV0sFKGErrjIL8uzqVLKi9U1XyIMU=;
+        b=67a9/olw7Lui86qnC8r6WCSUTlNFBD0ajR0SUMXISia9ODkBCfvNeRfofNmEZKM3wU
+         zDCHfZjeNcE51Y+rIfZtoeh64Ek8cs041+xk79xvFB1faSqYa2Il9hoIKBi7bMPrbSkx
+         EYcCTMf4uepmb+APeBRENBhregIFFjDBelaf7AeFtVvHiEbOHRZNGE1c1uXiVEoYx3v6
+         6knwe9cBfs4YulG4ccg/QPGx0S9yIZEiGiR5HDyZQnqkIyWmuMZ/LV+RKdGRCC7LG9/n
+         nAhY6SP6o9Ymf+WKPP62r7A+06iWr2qyEL8Tggq4vsgOdk3NgyMxRItwCos6Fy8HLqRQ
+         lF5g==
+X-Gm-Message-State: AOAM530U7UFY/BnhldFP4JaDouWev2xOIXT+oFW7tIOpskuwIkysGtNl
+        K5IzFEZ9ml/yrbjt7V928qLB32IOrpowMg==
+X-Google-Smtp-Source: ABdhPJxAM/RrpROx9BNYQugwuKU7LEzbGQw+a4KKOhS0kVbUseOgmmL9XBqkF5xN8JzSmUEOcP/v0Q==
+X-Received: by 2002:a05:622a:164b:b0:2e0:769e:fa2a with SMTP id y11-20020a05622a164b00b002e0769efa2amr404124qtj.343.1646733194799;
+        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id n13-20020ac85b4d000000b002de6fe91d2fsm10228796qtw.68.2022.03.08.01.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2dbfe58670cso195106257b3.3;
+        Tue, 08 Mar 2022 01:53:14 -0800 (PST)
+X-Received: by 2002:a0d:f1c7:0:b0:2db:d2bc:be11 with SMTP id
+ a190-20020a0df1c7000000b002dbd2bcbe11mr11992421ywf.62.1646733193799; Tue, 08
+ Mar 2022 01:53:13 -0800 (PST)
 MIME-Version: 1.0
+References: <20220301190400.1644150-1-robh@kernel.org> <CAMuHMdXqsvQy_6+6w8DVCtqNiFERPV29xd3HRqtyz9RY3KXOYw@mail.gmail.com>
+ <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com>
+In-Reply-To: <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Mar 2022 10:53:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
+Message-ID: <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Hi Rob,
 
-chcia=C5=82bym poinformowa=C4=87 Pa=C5=84stwa o mo=C5=BCliwo=C5=9Bci pozy=
-skania nowych zlece=C5=84 ze strony www.
+On Fri, Mar 4, 2022 at 2:28 PM Rob Herring <robh@kernel.org> wrote:
+> On Fri, Mar 4, 2022 at 3:09 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, Mar 1, 2022 at 8:04 PM Rob Herring <robh@kernel.org> wrote:
+> > > 'clocks' in the example is not parsable with the 0 phandle value
+> > > because the number of #clock-cells is unknown in the previous entry.
+> > > Solve this by adding the clock provider node. Only 'cpg_clocks' is
+> > > needed as the examples are built with fixups which can be used to
+> > > identify phandles.
+> > >
+> > > This is in preparation to support schema validation on .dtb files.
+> > >
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
+> >
+> > Thanks for your patch!
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Do you want me to queue this in renesas-clk-for-v5.19, or do you
+> > want to take it yourself, together with the validation patches?
+> > Please let me know.
+>
+> You can take it.
 
-Widzimy zainteresowanie potencjalnych Klient=C3=B3w Pa=C5=84stwa firm=C4=85=
-, dlatego ch=C4=99tnie pomo=C5=BCemy Pa=C5=84stwu dotrze=C4=87 z ofert=C4=
-=85 do wi=C4=99kszego grona odbiorc=C3=B3w poprzez efektywne metody pozyc=
-jonowania strony w Google.
+Thanks, queuing in renesas-clk-for-v5.19.
 
-Czy m=C3=B3g=C5=82bym liczy=C4=87 na kontakt zwrotny?
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Pozdrawiam
-Miko=C5=82aj Rudzik
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
