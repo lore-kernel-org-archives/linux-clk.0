@@ -2,102 +2,116 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056C6C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 15:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0105EC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Mar 2022 15:27:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236725AbiCHP0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Mar 2022 10:26:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56722 "EHLO
+        id S229529AbiCHP2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Mar 2022 10:28:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234280AbiCHPZ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 10:25:59 -0500
+        with ESMTP id S1347870AbiCHP2E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Mar 2022 10:28:04 -0500
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF36C473B2;
-        Tue,  8 Mar 2022 07:25:02 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D514754D;
+        Tue,  8 Mar 2022 07:27:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1646753103; x=1678289103;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=obCCS3BdzrwExG9xpWAFThjRl4GzkZv81IRkCSJcDnA=;
-  b=pRyZGQDaNEZQlN649mHIkktJsEI+lOKKo4f3EXDRD3zjwmoNwl/DEv5A
-   SbW+PKx2Fh7N2GaZJaYlZPDCF+Zsm1rMGWEJn1MXRLtBoqGvAA5naborV
-   qx8ehenIE73VGDu3kAcRcfzb8RRLK+y2P65wpP+Sx/iJdPEVaiNRIdQf6
-   4V5RHtrhv+k/wHyZ/1kk21afSk+xrIyBKlEXEMJfdEajvL26kztZsDmA6
-   036UdU1NqTTizBj/yStn/mXJSkUbLknnIirrTLEqF38IcqKuUGlqlFN7m
-   wDysKbzTfuDiKMRru7nE0kv3wesYUW6Y1fz5Oj3YnKBbtsji/TzI5WZ/B
-   A==;
+  t=1646753227; x=1678289227;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OqLAsScm99MzSHfnnVnnariDd9egzhLVRa/r0A/f1gg=;
+  b=YI749p7VNXoSYSZyKt3o670mJ10NeFFW+tkoFh8q1wgTzGoa/Oh9PHUP
+   GOsUVb0kL6LbxlEteiHGOFgpNh7xDrCBeYwKMUsdrDmWZeOUbKqmn/KXn
+   VboXywArLVygMJyHXXl9FxAVrFEbp8XFlfkE0GR21CDo0BbLY/83KmFLC
+   kryQG8Y7JDuDG1oZTAivQvgk95FlCAOeS/AwxiCt4vsXEquwLk2l8ym/I
+   i+swbEnTdpOy9vp9bNr6FdLEkbKI/iyOO2lR+uvlWM/geQULo+gaYH9C8
+   FoBSZ3pBIjM9NhzMLL3RfDfxVimGU4IB5Q62P3BSqGEy+Num1a/Q/ZyCq
+   g==;
 X-IronPort-AV: E=Sophos;i="5.90,165,1643698800"; 
-   d="scan'208";a="155667355"
+   d="scan'208";a="156121015"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Mar 2022 08:25:03 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Mar 2022 08:27:07 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Tue, 8 Mar 2022 08:25:02 -0700
-Received: from [10.12.73.60] (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ 15.1.2375.17; Tue, 8 Mar 2022 08:27:07 -0700
+Received: from ness.home (10.10.115.15) by chn-vm-ex03.mchp-main.com
  (10.10.85.151) with Microsoft SMTP Server id 15.1.2375.17 via Frontend
- Transport; Tue, 8 Mar 2022 08:25:00 -0700
-Message-ID: <487711a7-baca-6992-6e5e-1ff19d54ad0b@microchip.com>
-Date:   Tue, 8 Mar 2022 16:24:59 +0100
+ Transport; Tue, 8 Mar 2022 08:27:05 -0700
+From:   <nicolas.ferre@microchip.com>
+To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-clk@vger.kernel.org>
+CC:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [GIT PULL] clk: at91: clk for 5.18
+Date:   Tue, 8 Mar 2022 16:26:57 +0100
+Message-ID: <20220308152657.30651-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] clk: COMMON_CLK_LAN966X should depend on SOC_LAN966
-Content-Language: en-US
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        Kavyasree Kotagiri <kavyasree.kotagiri@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <eb102eae05e5667b9bd342a0c387f7f262d24bda.1645716471.git.geert+renesas@glider.be>
-From:   Nicolas Ferre <nicolas.ferre@microchip.com>
 Organization: microchip
-In-Reply-To: <eb102eae05e5667b9bd342a0c387f7f262d24bda.1645716471.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/02/2022 at 16:29, Geert Uytterhoeven wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> The LAN966x Generic Clock Controller is only present on Microchip
-> LAN966x SoCs.  Hence add a dependency on SOC_LAN966, to prevent asking
-> the user about this driver when configuring a kernel without LAN966x SoC
-> support.
-> 
-> Fixes: 54104ee023333e3b ("clk: lan966x: Add lan966x SoC clock driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Horatiu, Kavyasree,
-We probably need your view on this.
+Stephen,
 
-Best regards,
-   Nicolas
+Here are a couple more clk changes for 5.18. This Pull-Request is made on top
+of what you already have for at91 targeting 5.18 on your clk-at91 existing
+branch. Hopefully, we are aligned on this.
+this.
 
-> ---
->   drivers/clk/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c390e26dadf471f5..1c82a3e1129d4342 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -232,6 +232,7 @@ config COMMON_CLK_GEMINI
-> 
->   config COMMON_CLK_LAN966X
->          bool "Generic Clock Controller driver for LAN966X SoC"
-> +       depends on SOC_LAN966 || COMPILE_TEST
->          help
->            This driver provides support for Generic Clock Controller(GCK) on
->            LAN966X SoC. GCK generates and supplies clock to various peripherals
-> --
-> 2.25.1
-> 
+Please pull.
 
+Thanks, best regards,
+  Nicolas
+
+The following changes since commit a5ab04af49434aef532bf6cd4baa08a13665d608:
+
+  clk: at91: sama7g5: Allow MCK1 to be exported and referenced in DT (2022-01-24 17:05:45 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-at91-5.18
+
+for you to fetch changes up to 8e842f02af7e2f6225d52d78cd25b465a98d344b:
+
+  clk: at91: clk-master: remove dead code (2022-03-08 15:37:08 +0100)
+
+----------------------------------------------------------------
+AT91 clk driver additional changes for 5.18:
+
+- sama7g5: One low priority fix for GCLK of PDMC
+- clk-master: cleanup of dead code
+
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      clk: at91: clk-master: remove dead code
+
+Codrin Ciubotariu (1):
+      clk: at91: sama7g5: fix parents of PDMCs' GCLK
+
+ drivers/clk/at91/at91rm9200.c  |   3 +-
+ drivers/clk/at91/at91sam9260.c |   3 +-
+ drivers/clk/at91/at91sam9g45.c |   3 +-
+ drivers/clk/at91/at91sam9n12.c |   3 +-
+ drivers/clk/at91/at91sam9rl.c  |   3 +-
+ drivers/clk/at91/at91sam9x5.c  |   3 +-
+ drivers/clk/at91/clk-master.c  | 117 ++---------------------------------
+ drivers/clk/at91/dt-compat.c   |   3 +-
+ drivers/clk/at91/pmc.h         |   2 +-
+ drivers/clk/at91/sam9x60.c     |   3 +-
+ drivers/clk/at91/sama5d2.c     |   3 +-
+ drivers/clk/at91/sama5d3.c     |   3 +-
+ drivers/clk/at91/sama5d4.c     |   3 +-
+ drivers/clk/at91/sama7g5.c     |   8 +--
+ 14 files changed, 22 insertions(+), 138 deletions(-)
 
 -- 
 Nicolas Ferre
