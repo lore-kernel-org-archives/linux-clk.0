@@ -2,137 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4675FC433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D86C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232225AbiCISzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Mar 2022 13:55:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41162 "EHLO
+        id S236943AbiCIS6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Mar 2022 13:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231153AbiCISzS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:55:18 -0500
+        with ESMTP id S235281AbiCIS6k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:58:40 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0544C785
-        for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 10:54:18 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5371FCEE;
+        Wed,  9 Mar 2022 10:57:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 78F9FB8234F
-        for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 18:54:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21630C340E8;
-        Wed,  9 Mar 2022 18:54:16 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9671DB82357;
+        Wed,  9 Mar 2022 18:57:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2192EC340EC;
+        Wed,  9 Mar 2022 18:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646852056;
-        bh=+je8750rmcLyhQrtk46blBGYfajbghJIoeMGvqtr9/4=;
+        s=k20201202; t=1646852258;
+        bh=823gQkzc3z2Ax/PB0AF2EV05ZOJdbyNdg1TPhRMlf2Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iAGeGS4UzJDIIGi7D2c9zHeubxfwJ1T0vIZ2OLIlPtdq3aIaGTktJbnWOOJxBpbfX
-         1YlkOfesbPSLSy0oFGnytGaLhDeL0uSTzp3X6FCxOIDmKzCU+asxz3EU/6FKQaUfju
-         RDHZG6se0xaITTfqoNrq0X9rdpi/iCX6R8GuiA1ZtNiDKcFzhi7wB22Sc6RXV3Q1yl
-         HUsr/VzEMFcDw7JuyOWagz3qs0A20+GQcYbm69+ve24zrq+QPCdGw/2Lq7C1810VDX
-         qQfez87Xw/J+Y7X0B5J2oioMGwDRrBF6CqlRJ02XvOi6SdM21mY0/NZ6Qc7oGYEOj6
-         BkgdymXjpcoLQ==
+        b=FuJ4NbNq6ZUsKFhmbJ2zFX5viVTa8gA45bLJJZRHiFOzTeSCo3hBGt/tPAM32fL0z
+         ooTODTKvoDEPUwxniaQSdeA8mFp02c4vFjMPMLJ4hvz5j+lRhUJds/ZlgHbDqyPr3A
+         fD0ZaKpYDQGnxagXfQJ0s4CXXOIeP93L1/3+m/yPbauUZD6dLxFOQ5UrWPIZ/BPnHB
+         tkD+2moevzlwOtOY5NVtvxqIFKqQ4cn3FzcfbjYzqUQd2iBEOmE8HZYvbgCuCx+xKL
+         gS7if2l5nKWHcrAOCK73sr+mm47SCj3LqlTASTm868D8aSod/TWX98LeI4xfcbMqCz
+         VDUrsMZZo2MCA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220225171453.1241132-1-logic_wei@163.com>
-References: <20220225171453.1241132-1-logic_wei@163.com>
-Subject: Re: [PATCH] clk: bcm: rpi: Fix slab-out-of-bounds during raspberrypi_discover_clocks.
+In-Reply-To: <20220304011703.2061466-1-chi.minghao@zte.com.cn>
+References: <20220304011703.2061466-1-chi.minghao@zte.com.cn>
+Subject: Re: [PATCH] clk/rockchip: Use of_device_get_match_data()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     popcornmix@gmail.com, dave.stevenson@raspberrypi.com,
-        nsaenz@kernel.org, linux-clk@vger.kernel.org,
-        Peng Wei <logic_wei@163.com>
-To:     logic_wei@163.com, mturquette@baylibre.com
-Date:   Wed, 09 Mar 2022 10:54:14 -0800
+Cc:     heiko@sntech.de, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+To:     cgel.zte@gmail.com, mturquette@baylibre.com
+Date:   Wed, 09 Mar 2022 10:57:36 -0800
 User-Agent: alot/0.10
-Message-Id: <20220309185416.21630C340E8@smtp.kernel.org>
+Message-Id: <20220309185738.2192EC340EC@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting logic_wei@163.com (2022-02-25 09:14:53)
-> From: Peng Wei <logic_wei@163.com>
+Quoting cgel.zte@gmail.com (2022-03-03 17:17:03)
+> From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
 >=20
-> There're two potential bugs here:
-> 1) RPI_FIRMWARE_EMMC_CLK_ID the first element of enum rpi_firmware_clk_id
->    is set to be 1.So RPI_FIRMWARE_NUM_CLK_ID will be bigger than the total
-
-s/1\.So/1 so/
-
->    number of the enum rpi_firmware_clk_id.It maybe cause overflow bug when
-
-s/clk_id\.It/clk_id. It/
-
->    accessing the array of clks.Besides it will cost more memory when alloc
-
-You get the idea.
-
->    memory for clks.
-> 2) When iterating the clks,there's no way to break the loop until any err=
-or
->    is returned.
-> So change the RPI_FIRMWARE_EMMC_CLK_ID from 1 to 0.And then tell the loop
-
-s/0\.And/0 and/
-
-> the way to break.
+> Use of_device_get_match_data() to simplify the code.
 >=20
-> The KASAN warning:
->=20
-> BUG: KASAN: slab-out-of-bounds in raspberrypi_clk_probe+0x1d8/0x2f8
->=20
-> Read of size 4 at addr ffffff8040bd8704 by task swapper/0/1
->=20
-> Call trace:
->  ...
->  __asan_load4+0x94/0xd0
->  raspberrypi_clk_probe+0x1d8/0x2f8
->  platform_probe+0x94/0x110
->  ...
->=20
-> Signed-off-by: Peng Wei <logic_wei@163.com>
-
-Please add a Fixes tag.
-
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
 > ---
->  drivers/clk/bcm/clk-raspberrypi.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/clk/rockchip/clk-rk3399.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 >=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index 99cc4c856de1..726b3f45c137 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -19,7 +19,7 @@
->  #include <soc/bcm2835/raspberrypi-firmware.h>
-> =20
->  enum rpi_firmware_clk_id {
-> -       RPI_FIRMWARE_EMMC_CLK_ID =3D 1,
-> +       RPI_FIRMWARE_EMMC_CLK_ID =3D 0,
->         RPI_FIRMWARE_UART_CLK_ID,
->         RPI_FIRMWARE_ARM_CLK_ID,
->         RPI_FIRMWARE_CORE_CLK_ID,
-> @@ -252,6 +252,7 @@ static int raspberrypi_discover_clocks(struct raspber=
-rypi_clk *rpi,
+> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk=
+-rk3399.c
+> index 306910a3a0d3..b1b67bfb63b8 100644
+> --- a/drivers/clk/rockchip/clk-rk3399.c
+> +++ b/drivers/clk/rockchip/clk-rk3399.c
+> @@ -1634,14 +1634,8 @@ static const struct of_device_id clk_rk3399_match_=
+table[] =3D {
+>  static int __init clk_rk3399_probe(struct platform_device *pdev)
 >  {
->         struct rpi_firmware_get_clocks_response *clks;
->         int ret;
-> +       int count =3D 0;
-> =20
->         clks =3D devm_kcalloc(rpi->dev,
->                             sizeof(*clks), RPI_FIRMWARE_NUM_CLK_ID,
-> @@ -265,7 +266,7 @@ static int raspberrypi_discover_clocks(struct raspber=
-rypi_clk *rpi,
->         if (ret)
->                 return ret;
-> =20
-> -       while (clks->id) {
-> +       while (count++ < RPI_FIRMWARE_NUM_CLK_ID && clks->id) {
+>         struct device_node *np =3D pdev->dev.of_node;
+> -       const struct of_device_id *match;
+>         const struct clk_rk3399_inits *init_data;
+> -
+> -       match =3D of_match_device(clk_rk3399_match_table, &pdev->dev);
+> -       if (!match || !match->data)
+> -               return -EINVAL;
+> -
+> -       init_data =3D match->data;
+> +       init_data =3D of_device_get_match_data(&pdev->dev);
 
-Use a for loop please.
+The translation doesn't look equivalent. Before we would bail out of
+probe if match data isn't there with an error. That isn't possible of
+course with further investigation but please make a note of this in the
+commit text to aid review. Also, please don't send new versions of
+patches in reply to previous versions of patches. It breaks my patch
+workflow. Thanks in advance.
 
->                 struct clk_hw *hw;
-> =20
->                 switch (clks->id) {
-> --=20
-> 2.25.1
+>         if (init_data->inits)
+>                 init_data->inits(np);
 >
