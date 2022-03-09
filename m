@@ -2,37 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B746C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 17:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A799EC433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:03:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233872AbiCIRVN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Mar 2022 12:21:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36494 "EHLO
+        id S236494AbiCISEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Mar 2022 13:04:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234916AbiCIRVM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 12:21:12 -0500
-Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 487644C7BF
-        for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 09:20:11 -0800 (PST)
-Received: from [77.244.183.192] (port=64802 helo=[192.168.178.39])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1nRzyr-0002Kx-O8; Wed, 09 Mar 2022 18:20:09 +0100
-Message-ID: <e76ad6db-fdee-49e1-5513-1e4d6dcc49f0@lucaceresoli.net>
-Date:   Wed, 9 Mar 2022 18:20:08 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
- versaclock5 driver
-Content-Language: it-IT
-To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>,
+        with ESMTP id S233212AbiCISEG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:04:06 -0500
+Received: from mx0a-00369f01.pphosted.com (mx0a-00369f01.pphosted.com [148.163.135.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F189637023
+        for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 10:03:05 -0800 (PST)
+Received: from pps.filterd (m0167462.ppops.net [127.0.0.1])
+        by mx0a-00369f01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2299tldT009709;
+        Wed, 9 Mar 2022 13:02:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mksinst.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to :
+ content-transfer-encoding : mime-version : content-type; s=podFeb2021;
+ bh=GqBIWY48ZYY0kaVlinMLOoE2IE3N31PzRVqrxUKkRW4=;
+ b=WEwExcDkYW05iL1L0I27Zoxe+fKtGX+Jbcb/4WEUEy7Vz8MIQUWKoGZBAUj46ikSYjKo
+ omjGvgo4y7k3wxQV+H6acTmTG4P/V8NPQbQ6E/XAprLlvDiIJAp7oOhdhwZbV0UsA5PL
+ oNrmn1b7qukLUMze+7n99IdiITcaZtqjOibvVcty1dxidiQDkBce/DIHUxmwdy3sX2zJ
+ 4KcntsPeJKDE9COhvXoPa0DeaBdTQIN5fZpjjihPfFZJajtzpj/Oo2Q93A42F+qFIwZL
+ 0x+RLv3KqKoo9p9b3fyACpI6PbH92kmyvMogJc7V0iiSuBmZaiPuA2ZI1Siw/4HkLVdL 7g== 
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
+        by mx0a-00369f01.pphosted.com with ESMTP id 3ept1nj3mk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Mar 2022 13:02:51 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=app7aYIBHOjeQC2S2TjOEI2Gcnz1wKbE/KJX+s7i+N37QLJyD8cjrJyE644yIet99sAojE7OCAkqn0Wk0XzTkrGCrnOLSKw7nAcMzUxKrAiEXwBBpvo9NNKGzZhnK8zUCBLYB9Bs2dIfO2N8ElCEoFHuoyYtp58Vi4mdRPXXEJjvEV4+uaOFJ9Tz5c++UgDyrEeEiq70CK/mtWq1MVKlDRZ3dv1twYPW/hpra3hvAo0PKzJSpd9gjjdmiah69PekAbcLPvjmZ/RstjpWJhucPEGnMQhvKWXWiRuBtLlpMUer7WwxmvhCQZ9w4QYlGOM9kxAs11r1Z+GAmwlRQtHAIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ou9zFwfih42KcTbtt6xReGGXpFQNCmFg9mBd2qmGHDc=;
+ b=U9BXB7QwsryZXB9Z2FPnTGvy2DN1zHA6ec1ZvwhM4Tq2zh6jK/d0ReiYWeqwhbswGHYKGhVLbiToYyp8B563/+P9PT109FzwFT1amuqVqMGoAj6rwd48t3/lo282VglcczZof3r+asBgRMwnjC9Wuv3PtrtLkC6yZdfm/1KYzsWgI90foObyhwtWOUpTlaNnHt7rF/zhM5U0GeoTk4oKOBW1jeOqeWvzkZGRWA3TvMgXpSF71QLCC7tnZO2TJO7rePVvDqV3iOJtxkd1wg9tPi/gNCiUhVsHggcpmDJIDCDfTQVjv+NXaB1bb2/KD1E7ugi3YQHTF009RlUU1xP0dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mksinst.com; dmarc=pass action=none header.from=mksinst.com;
+ dkim=pass header.d=mksinst.com; arc=none
+Received: from MN2PR03MB5008.namprd03.prod.outlook.com (2603:10b6:208:1ac::24)
+ by CO6PR03MB6227.namprd03.prod.outlook.com (2603:10b6:5:358::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.21; Wed, 9 Mar
+ 2022 18:02:48 +0000
+Received: from MN2PR03MB5008.namprd03.prod.outlook.com
+ ([fe80::5d5c:2dd2:649d:6323]) by MN2PR03MB5008.namprd03.prod.outlook.com
+ ([fe80::5d5c:2dd2:649d:6323%5]) with mapi id 15.20.5038.029; Wed, 9 Mar 2022
+ 18:02:48 +0000
+From:   "Fillion, Claude" <Claude.Fillion@mksinst.com>
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
         Adam Ford <aford173@gmail.com>
-Cc:     Sean Anderson <sean.anderson@seco.com>,
+CC:     Sean Anderson <sean.anderson@seco.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         "Klein, Jesse" <Jesse.Klein@mksinst.com>
+Subject: RE: [EXTERNAL] Re: Questions regarding regarding idt/renesas
+ versaclock5 driver
+Thread-Topic: [EXTERNAL] Re: Questions regarding regarding idt/renesas
+ versaclock5 driver
+Thread-Index: Adgsn5PPBaqTu/AxTlmRjOlUu8xbbwAHTV6AAAIztgAACrX3gAAgAxSwAAIUYgAAAPDp8AAHZO8AACleenAAAzsYAAADh08AAAYy0vAAJlUEgAAEcw7wAAwLfAAAKXjXcAAEfw6AAJQDlQAAYM8mAAABLanQ
+Date:   Wed, 9 Mar 2022 18:02:48 +0000
+Message-ID: <MN2PR03MB5008E8256DCC2476BD689D3F930A9@MN2PR03MB5008.namprd03.prod.outlook.com>
 References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
  <MN2PR03MB5008F4921D8484306505F8FB93029@MN2PR03MB5008.namprd03.prod.outlook.com>
  <CAHCN7xKbE9Rv3EsvFkS4Lk8nCwy1TK-xJQLk_h70PSVdeUHJcA@mail.gmail.com>
@@ -46,566 +75,500 @@ References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.
  <MN2PR03MB50085CFBC36FAEDCC1DCB4F493059@MN2PR03MB5008.namprd03.prod.outlook.com>
  <6f4a1657-0747-2e02-3053-3ae04c194fa5@lucaceresoli.net>
  <MN2PR03MB5008A1E7A9BCBCF8DCBC580293089@MN2PR03MB5008.namprd03.prod.outlook.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-In-Reply-To: <MN2PR03MB5008A1E7A9BCBCF8DCBC580293089@MN2PR03MB5008.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+ <e76ad6db-fdee-49e1-5513-1e4d6dcc49f0@lucaceresoli.net>
+In-Reply-To: <e76ad6db-fdee-49e1-5513-1e4d6dcc49f0@lucaceresoli.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c664aff4-59ad-4a67-1f7a-08da01f70598
+x-ms-traffictypediagnostic: CO6PR03MB6227:EE_
+x-microsoft-antispam-prvs: <CO6PR03MB6227CD2410B945AA80F7C88A930A9@CO6PR03MB6227.namprd03.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: x4BiHIdcVg/XZkWThDzFpoesZQXUvPTs1ghsVs6SBKFgc/I6USfEZmJVXO55/3hauCumxuCZvVMuOPVoRtKiMs2fZlM4kSzdc5ZO33UL4t3gotG9yiEfPA0kD/8mGaMK/dPVZSEsYO4WUEcH4f58vsGjdipwkMvaTvp66kNCs2tQRZ78xO4q3LPiHz9b/bvcVHI5DR60mD8M9QwREevX7N0uw43d6U0haz12+6/lcyNEYGBf2AjgtbMOzICndhCpAA+EI3XsBkEHG4GHrQugtPM26iw3FqVkE91G2M7POwvelv0vwhEyeU9543XXILn/ZDLAfK9zJIHPSUqJMYFG2K0P1bulOc4pMd+Jn/uxW5tVXOeGpT+zKeHyE+WuMGFHNRQSMCMCWlY6p6SZSKSN/I7Vf0dE/BAFlg+YiAEgJW6hA5Aa0/18UwOeQZYokR2VYVV+OxiIZqnb4Rd6ZUisQkrwLzUb/ki4P+n6KNjbJVl+0igQARP1C6aHNMG9VNXtJs8zXwxxxGKK0yJyEs6Oz3FvIJwwGZoUw41rpcqH4CNb72d5SHGXcq11/1wsJW8subNpn2BsSSE2Z8A90Vb3eOfYvnTg11uubJZSnwIadFXKD49FKEptJtJWaNi56gyst/GOEtqW3ON0SPyZ73qlJU8kLCXUZzb0R56vYbhbUV3L2w58h1ehvAfnHZr6thFm3AVwFyx5C9KWQtwm5DfalFcFiaB7mN2dISrkaExRVqehVU/XqNDV9lcI0W3dHXoskLKU0I3pecG5mLbw7tQcsTS7O7gSDHKSTntsVo3PFeiIXqQVUtiYlQkfQ0YwQ1FIeZdozT9JWKFsslQtOG6k9w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR03MB5008.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(966005)(4326008)(122000001)(83380400001)(30864003)(508600001)(66556008)(66476007)(66446008)(64756008)(76116006)(5660300002)(8676002)(38070700005)(55016003)(8936002)(86362001)(52536014)(66946007)(6506007)(316002)(7696005)(54906003)(26005)(33656002)(9686003)(110136005)(53546011)(2906002)(107886003)(71200400001)(38100700002)(186003)(579004);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K2Z5SmNNNGthaktuVFBGN2xtSGlLVmg3dDQzeU11SjhVOXQ0bGZhY1ptZE55?=
+ =?utf-8?B?ZEROSkxsUGV0anBGb25SZGloNlFvVkFIT1c0MEpmU3pELzBSb1hrL3BleHor?=
+ =?utf-8?B?RnovdjZwcnpHQnRSMm5pejNsMzREN0JqUkFBOTNtY0Q5a0xPdStYVWNWOU40?=
+ =?utf-8?B?WndabndWM0F5U3Z6NG1kM1JqVWhtRzNaVjlFQ0d6aFRUbzJCRURQampmWkxK?=
+ =?utf-8?B?TUhEVHlqbG1PSE5PQjdBVUpKWnAwYWFtdFpFSjF5WXVVbjd3ZWYxWG5nbElF?=
+ =?utf-8?B?YzZBTEFUTXNYYXFBVXpscWtCdGFnUGVVdnVjMmRYN1k2bkZnNVlPVlVySDRC?=
+ =?utf-8?B?Ulk2NlN2R3RQTzJ2N1BwZGI2ZFRSVTRoS0V2WmU2UGFoTWZ1MERDcUxCdkQ3?=
+ =?utf-8?B?bi9HNU11TnZtVTNjTFh3bU5POEpmbkVDdXBkckV5S0NTajgvQUdOajhyaFg5?=
+ =?utf-8?B?ZGVtZkdQWjAxNmYwblJqVEtkRER0eDRuTzdQUGdYbXVESTlDL2RmTE0vZTVp?=
+ =?utf-8?B?M0N5aHFxbEp1UU5NYXIvWmVEZ0tKZlJMWUw2YWJ5UmY0a2tDSEgrVGlpZ3lY?=
+ =?utf-8?B?cmgwZ21UUWRUanViZ2Izd2FIMVhJTThXRW1yQ3FrWmE5MEpPTmdyRlI1QVNx?=
+ =?utf-8?B?T0VXS1ZKaTI1UncrZlpoZExQdTFzUkFVUnVzb0hJNTY2amk4QVgrMENZQ0Zt?=
+ =?utf-8?B?blVuZGZWS2ViUEFGcTVaZHdxN0UyWnNkYzMrUjBBMUt6QVlGNDh2OXJ6clVj?=
+ =?utf-8?B?b3d1cUUrT2lnTUphT1phd1VnSTU2NlhIdkI1Y2p4dlBjbTdDUHBiNzh2bXl2?=
+ =?utf-8?B?YmhsZ21UNG0yTTFvbVNIa2FqQys0UHpkV2dkMGNZajBtTHFVTlBieWtZd0tx?=
+ =?utf-8?B?TnhmeFIxUGxoRkhsdUtQY0FUcFFTU25EOVNRTXRWUVR2Z0U0Q0tqVlppTFU1?=
+ =?utf-8?B?WVVTS0lIMkNPTkgyemxuNTltSUlxNGp0YTJxaC9kL1h3RHM0TmhoLzAvNjVp?=
+ =?utf-8?B?WmJZYWptOGcxdGF1eHdKaTNkbDA2bnBhM3hIZTVVa0dkdDBxQnJnTlNaWU1N?=
+ =?utf-8?B?Sk5laHN6MHFTTVlCdVQ1eVFxOS9sYnUxekxnY0RkZGhzOUZaRGlNd0gzS1Rp?=
+ =?utf-8?B?SjNMMThCVFYwMFVhVSt3Zy9NSVd2RERZUXdRQnY3enh5Tkx3VGxPa2xtV3Mw?=
+ =?utf-8?B?eHFPcDB2U291c1ZoZlhHbUZYZXVJY3dxa29MYUh4VUM2UVh4aVhnUWRlQmFy?=
+ =?utf-8?B?N2JxZzR1ZDI2R1BLalA3MzMzVlZYYWQ2Sk9hVDFScmt4ZklUUXhwdnlvWmNx?=
+ =?utf-8?B?ZC81clh0d3F6RnEzMFY0elNBMW4vS2UyQ213RzJrZVpzL1ZaaDlPVjR5WDl2?=
+ =?utf-8?B?RE0zYVVxaEtvdUYwcDBsdDJ3YkZNdlpMUFNJRGdEQ0ZES0xXclJ6cmdoR3Z4?=
+ =?utf-8?B?WThpODltVFpqdXgvbTJkZmtOYmlweHRkQ1BBeXVhVzc4WkYzNFNxVEJsa2xN?=
+ =?utf-8?B?Z3ErMzNJQ2FacWlnUXU2K0lQci9HMnU5ZUJzSlZsU01EVlhsU2krVUZTS1NR?=
+ =?utf-8?B?SFcxdXJJSm9YOUg0b0Y4UmdBYmlvN3NqdVMwNXdMV0FqaFRpcGhIUGZMRXov?=
+ =?utf-8?B?ajZKSWZaendyK0t3eHNCb0tMWUo0QlRMTkQzdFpMNzd2UGFRMHp0ZUU0Q01F?=
+ =?utf-8?B?S01LbzJHQS9qT29EaGFsVzB5K1JJVXczb0lNc1RPSWNOZ0ZSQisrZHRWK3Rz?=
+ =?utf-8?B?UzNPTm5KQ21wK1hhblFONTlaWUpLQ3F6SzNMODlBMm1KYTNHcVZLc2lwUjhE?=
+ =?utf-8?B?VWlXdkRpTksyU2F2WEZrWitvLzkwY01wbVIvNU9SY2NZbElXOHVxRnZSR280?=
+ =?utf-8?B?aitqVzl4UUprV1dNeWhVWHV5R0l5VnRGVDNjZWIwb21qbmx3QnVwalhzajdt?=
+ =?utf-8?Q?BIeWTR4vs1AGpUPeTtR4Ak0liPaN2NqL?=
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: mksinst.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR03MB5008.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c664aff4-59ad-4a67-1f7a-08da01f70598
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Mar 2022 18:02:48.8127
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 34fc6b5f-c773-4cad-ae20-f226c36b7e65
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lGBGBQrnN1J5V3XnA5lZp6PUeR8LQX36yHBBfUbDmI0c9YsCAX2B6J840WNoZIqyY+BbDSpJNjlbr62gjZHzpkPoJ0DOAzXDHQMEP0KDefQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR03MB6227
+X-Proofpoint-GUID: s6VILTi1PsJ9Fc16MWbJRaIu6aYTUPXo
+X-Proofpoint-ORIG-GUID: s6VILTi1PsJ9Fc16MWbJRaIu6aYTUPXo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-09_07,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015 spamscore=0
+ adultscore=0 suspectscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203090099
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Claude,
-
-On 07/03/22 21:39, Fillion, Claude wrote:
-> Hello Luca
-> 
->> -----Original Message-----
->> From: Luca Ceresoli <luca@lucaceresoli.net>
->> Sent: Friday, March 4, 2022 3:30 PM
->> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->> <aford173@gmail.com>
->> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->> versaclock5 driver
->>
->> Hi Claude,
->>
->> On 04/03/22 21:07, Fillion, Claude wrote:
->>> Hello Luca,
->>>
->>>> -----Original Message-----
->>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>> Sent: Thursday, March 3, 2022 5:34 PM
->>>> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->>>> <aford173@gmail.com>
->>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
->>>> versaclock5 driver
->>>>
->>>> Hi Claude,
->>>>
->>>> On 03/03/22 19:15, Fillion, Claude wrote:
->>>>> Hello Luca,
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>>>> Sent: Thursday, March 3, 2022 9:42 AM
->>>>>> To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
->>>>>> <aford173@gmail.com>
->>>>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>>>> clk@vger.kernel.org>; Klein, Jesse <Jesse.Klein@mksinst.com>
->>>>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding
->>>>>> idt/renesas
->>>>>> versaclock5 driver
->>>>>>
->>>>>> Hi Claude,
->>>>>>
->>>>>> On 02/03/22 21:49, Fillion, Claude wrote:
->>>>>>>
->>>>>>>
->>>>>>>> -----Original Message-----
->>>>>>>> From: Luca Ceresoli <luca@lucaceresoli.net>
->>>>>>>> Sent: Wednesday, March 2, 2022 12:27 PM
->>>>>>>> To: Adam Ford <aford173@gmail.com>; Fillion, Claude
->>>>>>>> <Claude.Fillion@mksinst.com>
->>>>>>>> Cc: Sean Anderson <sean.anderson@seco.com>; linux-clk <linux-
->>>>>>>> clk@vger.kernel.org>
->>>>>>>> Subject: Re: [EXTERNAL] Re: Questions regarding regarding
->>>>>>>> idt/renesas
->>>>>>>> versaclock5 driver
->>>>>>>>
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> On 02/03/22 16:45, Adam Ford wrote:
->>>>>>>> ...
->>>>>>>>>>>>>>     versaclock6: clock-controller@6a {
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>         /* Clock Consumer */
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>         compatible = "idt,5p49v6965";
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                                 reg = <0x6a>;
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                                 #clock-cells = <1>;
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                                 clocks = <&x304_clk>;
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                                 clock-names = "xin";
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>         assigned_clocks = <&versaclock6 1>,
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                           <&versaclock6 2>,
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                           <&versaclock6 3>,
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>                           <&versaclock6 4>;
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>         assigned_clock_rates = <46800000>, <250000000>,
->>>>>>>>>>>>>> <1000000>, <13000000>;
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> Assigned clocks and assigned clock rates should be hyphens
->>>>>>>>>>>>> and not underscores.
->>>>>>>>>>>>>
->>>>>>>>>>>>> assigned-clocks =  <&versaclock6 1>,   <&versaclock6 2>,
->>>>>>>>>>>>> <&versaclock6 3>, <&versaclock6 4>;
->>>>>>>>>>>>>
->>>>>>>>>>>>> assigned-clock-rates =  <46800000>, <250000000>, <1000000>,
->>>>>>>>>>>>> <13000000>;
->>>>>>>>>>>>>
->>>>>>>>>>>>> Another thing to check is to make sure the consumers of
->>>>>>>>>>>>> these clocks is enabling them.  They do not necessarily get
->>>>>>>>>>>>> enabled by
->>>>>>>> default.
->>>>>>>>>>>>>
->>>>>>>>>>>>> adam
->>>>>>>>>>>>
->>>>>>>>>>>> Doh - thanks.  I looked at it a million times 😊 .
->>>>>>>>>>>>
->>>>>>>>>>>> Now getting desired out1 frequency but nothing on other
->>>> outputs.
->>>>>>>>>>>> From
->>>>>>>>>>> the code it seems vc5_clk_out_prepare() is the method that
->>>>>>>>>>> enables outputs but this method is not being called I am not
->>>>>>>>>>> clear how to make the 'consumer enable them.'
->>>>>>>>>>>>
->>>>>>>>>>>> I have added this to my dtsi to no avail.
->>>>>>>>>>>>
->>>>>>>>>>>>          /* Consumer referencing 5P49V5965 pin OUT1 and OUT2
->> */
->>>>>>>>>>>>         consumer {
->>>>>>>>>>>>             clocks = <&versaclock6 1>, <&versaclock6 2>;
->>>>>>>>>>>>             /* ... */
->>>>>>>>>>>>          };
->>>>>>>>>>>>
->>>>>>>>>>>> Looking through device tree documentation.
->>>>>>>>>>>
->>>>>>>>>>> It's likely going to be in the consumer's driver.  Check the
->>>>>>>>>>> consumer device tree binding to make sure you've correctly
->>>>>>>>>>> associated the clock.  If the binding doesnt't show a clock is
->>>>>>>>>>> required, it might not know that you using a programmable
->> clock.
->>>>>>>>>>>
->>>>>>>>>>> Here is a patch that I needed to apply to an Ethernet driver
->>>>>>>>>>> which wasn't expecting a programmable clock to drive a
->>>>>>>>>>> reference clock, so the clock wasn't being enabled.
->>>>>>>>>>>
->>>>>>>>>>>
->>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux
->>>>>>>>>>> /k
->>>>>>>>>>> er
->>>>>>>>>>> nel/g
->>>>>>>>>>>
->>>>>> it/torvalds/linux.git/commit/drivers/net/ethernet/renesas/ravb_main.
->>>>>>>>>>> c?id=
->>>>>>>>>>> 8ef7adc6beb2ef0bce83513dc9e4505e7b21e8c2__;!!KnJ4-
->>>> rp7!1Qb17q-
->>>>>>>>>>>
->>>>>>>>
->>>>>>
->>>>
->> TWrV62AeQtTNNVDErVbyhbXB1sukyT2ggvFPUltIBI5nIKzNnjVOcqlw8qJyy$
->>>>>>>>>>>
->>>>>>>>>>> Look at the use of devm_clk_get_optional and
->>>>>>>>>>> clk_prepare_enable from that patch.  (yes, there is a
->>>>>>>>>>> subsequent patch that fixes something I didn't quite do right,
->>>>>>>>>>> but the basics are here)
->>>>>>>>>>>
->>>>>>>>>>> The consumer drivers need to 'get' the clock so it can
->>>>>>>>>>> associate itself to the clock in question.  Once the
->>>>>>>>>>> relationship is established, the consumer needs to call
->>>>>>>>>>> clk_prepare_enable() which
->>>>>>>> uses the clock system to turn the clock on.
->>>>>>>>>>> Without this step, it's likely the Versaclock won't generate a
->>>>>>>>>>> signal, because it doesn't know it needs to turn it on.
->>>>>>>>>>>
->>>>>>>>>>> adam
->>>>>>>>>>
->>>>>>>>>> Not sure I fully follow.  I see that clk out1 is enabled but
->>>>>>>>>> the other
->>>>>>>> channels are not so it would seem my difficulty is with
->>>>>>>> individual
->>>> channels.
->>>>>>>>>
->>>>>>>>> Do the devices that need the clock from the versaclock reference
->>>>>>>>> the versaclock?  If so, to those drivers use the get and enable?
->>>>>>>>> If not, the versaclock will stay off.  In the patch example I
->>>>>>>>> showed, I had to modify the Ethernet driver on a processor,
->>>>>>>>> because it didn't explicitly enable the reference clock.  That
->>>>>>>>> Ethernet driver expected the refclk was always present which was
->>>>>>>>> a
->>>> false assumption.
->>>>>>>>> Once I got the consumer device (in this case, Ethernet) to
->>>>>>>>> request and enable the clock, the clock subsystem enabled the
->>>>>>>>> corresponding output on the versaclock.
->>>>>>>>>
->>>>>>>>> For the Ethernet example I cited above, the corresponding device
->>>>>>>>> tree looks like:
->>>>>>>>>
->>>>>>>>> &avb {
->>>>>>>>>      clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
->>>>>>>>>      clock-names = "fck", "refclk";
->>>>>>>>>      status = "okay";
->>>>>>>>> };
->>>>>>>>>
->>>>>>>>> With this device tree reference, the 'refclk' gets associated to
->>>>>>>>> versaclock ouput 4.  When the Ethernet needs the clock, it calls
->>>>>>>>> clk_prepare_enable on that clock reference, and the clock system
->>>>>>>>> calls on the versaclock driver to enable the output.  The reason
->>>>>>>>> I needed to submit that patch was that the consumer driver (the
->>>>>>>>> Ethernet in this
->>>>>>>>> case) wasn't calling the clk_prepare_enable, so the clock
->>>>>>>>> remained off.  It's likely that whatever devices that need the
->>>>>>>>> clock from the versaclock will need both a device tree reference
->>>>>>>>> to it as well as a call to clk_prepare_enable.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> In my simple application I would like to enable outputs, on a
->>>>>>>>>> per channel
->>>>>>>> basis, from the device tree.  Would it make sense  to add  an
->>>> 'idt,enable'
->>>>>>>> property in similar fashion to the existing idt,mode,
->>>>>>>> idt,voltage-microvolt, and idt,slew-percent properties?  Then
->>>>>>>> vc5_get_output_config() could be modified to also call
->>>>>>>> vc5_clk_out_prepare() (or clk_prepare_enable(), which in turn
->>>>>>>> would call
->>>>>> vc5_clk_out_prepare()).
->>>>>>>>>
->>>>>>>>> I can't speak for the linux clock group, but the advantage of
->>>>>>>>> patching the drivers that need the clocks generated from the
->>>>>>>>> versaclock is the ability to stop these clocks when the drivers
->>>>>>>>> are halted and/or suspended.
->>>>>>>>
->>>>>>>> Having the consumer driver get, prepare and enable the clock is
->>>>>>>> of course the best as Adam explained.
->>>>>>>>
->>>>>>>> However I think using assigned-clocks and assigned-clock-rates
->>>>>>>> should enable the clocks unconditionally even if the consumer
->>>>>>>> driver does not do any clk_*() calls. Might be worth double
->>>>>>>> checking
->>>> that.
->>>>>>>>
->>>>>>>> --
->>>>>>>> Luca
->>>>>>>
->>>>>>> In our application we plan to use the 6965/6901 to replace a part
->>>>>>> that does
->>>>>> not use a consumer driver.  We just set clock options in our device tree.
->>>>>> Ideally that is how we would like to use the Renesas part as well.
->>>>>>>
->>>>>>> In the limited testing I have done thus far behavior is a bit
->>>>>>> puzzling.  From
->>>>>> the device tree I am able to change the clock frequency for out1
->>>>>> (which is enabled by default) and I can disable outputs using
->>>>>> 'idt,shutdown', but I cannot change the logic levels for out1 using
->>>>>> the
->>>> 'idt,mode' parameter.
->>>>>>
->>>>>> This is very strange.
->>>>>>
->>>>>> Did you double-check that your device tree description of the
->>>>>> versaclock node is correct according to [0]?
->>>>>>
->>>>>> Please send the complete  description of the versaclock node in
->>>>>> your device tree, so we can check it and see if any detail is misplaced.
->>>>>>
->>>>>> [0]
->>>>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/ke
->>>>>> rn
->>>>>> el/g
->>>>>> it/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/
->>>>>> id
->>>>>> t,vers
->>>>>> aclock5.yaml*n169__;Iw!!KnJ4-
->>>>>> rp7!yalfgsfaZKSlo4yNfQfvlbsmNKBRltGSetoIonP--5aGebuHUJ-M-
->>>>>> am93tjT8aEhsSJJ$
->>>>>>
->>>>>>
->>>>>> --
->>>>>> Luca
->>>>>
->>>>> Here is the relevant portions of my device tree.  On the scope I see
->>>>> the
->>>> default 'CMOSD' voltages and a modified frequency of 46.8MHz.
->>>>>
->>>>> I have also modified my local copy of the driver to accept an 'idt,enable'
->>>> pattern property that allows me to enable outputs from the device
->>>> tree. It needs some refinement but I can pass it along if there is interest.
->>>>>
->>>>> -Claude
->>>>>
->>>>> ==================
->>>>> Top of device tree file:
->>>>> ==================
->>>>> /*
->>>>> This is a message for system-user.dtsi. If you are reading from
->>>>> system-user.dtsi.genxxxx, please note that this message is for
->>>>> explaining
->>>> the purpose of system-user.dist in relation to system-user.dtsi.genxxx.
->>>>>
->>>>> system-user.dtsi is merely a writable file handled by
->>>>> ./https://urldefense.com/v3/__http://buildPetaLinux.sh__;!!KnJ4-
->>>> rp7!w34odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->>>> J3Uswvovc00BUt$  to copy the appropriate system-user.dtsi.genxxxx to
->>>> this filename for use in the build image. Do not put your device tree
->>>> here. They belong to the system-user.dtsi.genxxxx.
->>>>>
->>>>> If you add a new dtsi, please create an appropriate device tree file
->>>>> and modify the
->>>>> ./https://urldefense.com/v3/__http://buildPetaLinux.sh__;!!KnJ4-rp7!
->>>>> w3
->>>>> 4odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->>>> J3Uswvovc00BUt$
->>>>> to handle it */
->>>>>
->>>>> #include <dt-bindings/clk/versaclock.h>
->>>>>
->>>>> /include/ "system-conf.dtsi"
->>>>> / {
->>>>>
->>>>>   /* Clock Provider */
->>>>>   x304_clk: x304-clock {
->>>>>     compatible = "fixed-clock";
->>>>>     #clock-cells = <0>;
->>>>>     clock-frequency = <25000000>;
->>>>>   };
->>>>>
->>>>> ...
->>>>>
->>>>> ==================
->>>>> Device Tree Node:
->>>>> ==================
->>>>> &i2c1 {
->>>>>     clock-frequency = <100000>;
->>>>>
->>>>>     // Use patch.  Updated driver for 5p49v6965 available  at
->>>> https://urldefense.com/v3/__https://github.com/Xilinx/linux-
->>>> xlnx/blob/master/drivers/clk/clk-versaclock5.c__;!!KnJ4-
->>>> rp7!w34odUyH6hHBct-rWC671nddpz5440f-viaETLtFnGYMlkuB7P0ye-
->>>> J3UswvoiTIHWiN$
->>>>>     // Device Tree Setup ->
->>>> https://urldefense.com/v3/__https://github.com/Xilinx/linux-
->>>>
->> xlnx/blob/master/Documentation/devicetree/bindings/clock/idt*2Cversac
->>>> lo
->>>> ck5.yaml__;JQ!!KnJ4-rp7!w34odUyH6hHBct-rWC671nddpz5440f-
->>>> viaETLtFnGYMlkuB7P0ye-J3Uswvor3hNb3f$
->>>>>     versaclock6: clock-controller@6a {
->>>>>         /* Clock Consumer */
->>>>>         compatible = "idt,5p49v6965";
->>>>> 		reg = <0x6a>;
->>>>> 		#clock-cells = <1>;
->>>>> 		clocks = <&x304_clk>;
->>>>> 		clock-names = "xin";
->>>>>
->>>>>         assigned-clocks = <&versaclock6 1>,
->>>>>                           <&versaclock6 2>,
->>>>>                           <&versaclock6 3>,
->>>>>                           <&versaclock6 4>;
->>>>>         // assigned-clock-rates = <46800000>, <250000000>,
->>>>> <1000000>,
->>>> <13000000>;
->>>>>         assigned-clock-rates = <46800000>, <250000000>, <1000000>,
->>>> <13000000>;
->>>>>         /* Set the SD/OE pin's settings */
->>>>>         idt,shutdown = <0>;
->>>>>         idt,output-enable-active = <0>;
->>>>>         OUT1 {
->>>>>             idt,mode = <VC5_CMOS>;
->>>>>             idt,voltage-microvolt = <3300000>;
->>>>>             c = <100>;
->>>>>         };
->>>>>         OUT2 {
->>>>>             idt,mode = <VC5_CMOS>;
->>>>>             idt,voltage-microvolt = <3300000>;
->>>>>             idt,slew-percent = <100>;
->>>>>         };
->>>>>         OUT3 {
->>>>>             idt,mode = <VC5_CMOSD>;
->>>>>             idt,voltage-microvolt = <3300000>;
->>>>>             idt,slew-percent = <100>;
->>>>>         };
->>>>>         OUT4 {
->>>>>             idt,mode = <VC5_CMOS>;
->>>>>             idt,voltage-microvolt = <3300000>;
->>>>>             idt,slew-percent = <100>;
->>>>>         };
->>>>>     };
->>>>
->>>> Strange. Something you may check (or double check if you already did):
->>>>
->>>> 1. Read if the register has been set:
->>>>
->>>>   # not tested, check carefully
->>>>   i2cget -y -r 1 0x6a 0x60
->>>>
->>>> the three low bits in register 0x60 should read 0x1 for CMOS, 0x5 for
->> CMOSD.
->>>
->>> Apparently the register is not getting set properly.
->>>
->>> In response to 'i2cget -y -f 1 0x6a 0x60' (-r not supported maybe a
->>> typo?)
->>>
->>> I get 0xbb, which according to the spec I believe should give me CMOSD,
->> which is what I am seeing ( (D7, D6, D5) = 101: CMOSD ).
->>>
->>> I can set address 0x60 to 0x3b using i2cset to get single ended CMOS.
->>
->> I see. 0xbb is the reset default, so as you said it is not set.
->>
->>>> 2. Change idt,mode in device tree and see whether the register
->>>> changes or the scope show any different output mode.
->>>
->>> Changing ide,mode to VC5_LVDS does not the value of register 0x06.  I
->>> still get a value of 0xbb
->>
->> Ok, coherent with test 1.
->>
->>>> 3. Enable debugging output (simpliy add #define DEBUG on top of file
->>>> and rebuild), then see whether during clk prepare you see this in dmesg:
->>>>
->>>>   Update output ... mask 0x... val 0x....
->>>>
->>>> 4. Check whether the OUT1 node is actually found by adding a
->>>> dev_dbg() in vc5_get_output_config(), just before the
->>>> of_get_child_by_name() call and
->>>> ~5 lines below, between 'return 0' and vc5_update_mode().
->>>>
->>>> Let us know your findings.
->>>>
->>>
->>> Seems to be finding the nodes ok. Here is the relevant code section:
->>>
->>> 	// temp for driver debug
->>> 	dev_dbg(&client->dev,
->>> 			"get_output_config(before of_get_child_by_name)
->> OUT%d\n",
->>> 			clk_out->num + 1);
->>>
->>> 	np_output = of_get_child_by_name(client->dev.of_node,
->> child_name);
->>> 	kfree(child_name);
->>> 	if (!np_output)
->>> 		return 0;
->>>
->>> 	// temp for driver debug
->>> 	dev_dbg(&client->dev,
->>> 			"get_output_config(before update_mode)
->> OUT%d\n",
->>> 			clk_out->num + 1);
->>>
->>> 	ret = vc5_update_mode(np_output, clk_out);
->>> 	if (ret)
->>> 		goto output_error;
->>>
->>> And dmesg output:
->>>
->>> 	[    7.498005] vc5 1-006a: get_output_config(before
->> of_get_child_by_name)  OUT1
->>> 	[    7.498017] vc5 1-006a: get_output_config(before update_mode)
->> OUT1
->>> 	[    7.511631] vc5 1-006a: get_output_config(before
->> of_get_child_by_name)  OUT2
->>> 	[    7.511643] vc5 1-006a: get_output_config(before update_mode)
->> OUT2
->>> 	[    7.525257] vc5 1-006a: get_output_config(before
->> of_get_child_by_name)  OUT3
->>> 	[    7.525270] vc5 1-006a: get_output_config(before update_mode)
->> OUT3
->>> 	[    7.538905] vc5 1-006a: get_output_config(before
->> of_get_child_by_name)  OUT4
->>> 	[    7.538919] vc5 1-006a: get_output_config(before update_mode)
->> OUT4
->>
->> So the values are picked up from DT and if you print the content of clk_out-
->>> clk_output_cfg0[_mask] you should see the correct register values.
->>
->> Now the relevant question is question 3: do you enter the 'if (hwdata-
->>> clk_output_cfg0_mask)' in vc5_clk_out_prepare()? Do you even enter
->> vc5_clk_out_prepare()?
->>
->> You can add dev_dbg()s there and track the problem on your own. If
->> regmap_update_bits(...hwdata->clk_output_cfg0) is not called then the
->> code is not doing the right thing. If it is called and returns no error, then it
->> looks like there is a problem in the i2c controller which thinks it has done the
->> transaction but it really hasn't. Or some other mystery.
->>
->> --
->> Luca
-> 
-> I added a few debug statements and I see that vc5_clk_out_prepare() is not being called.
-
-My bad, I was quite sure assigned-clocks also enables the clock. :-/
-Apologies for having led you to a dead end.
-
-> So perhaps this ties back to the point Adam made earlier about their needing to be a consumer driver that enables the reference clock because it is not enabled by default.  For my application there is no consumer driver, I only have the device tree.
-
-Well, this is clearly the "correct" thing to do. However it's uncommon
-that you have no consumer driver. What is the device that uses that
-clock and why does it have no driver? Is it a device that "just works"
-in the expected way without any configuration? Is it even avvessible by
-the CPU?
-
-You might consider writing a "dummy" driver, with just a simple probe()
-function that does devm_clk_get and clk_prepare_enable(). You'll find
-many examples in the kernel. is it doable?
-
-> In my local copy of the driver that adds an 'idt,enable' pattern property I call vc5_clk_out_prepare() if idt,enable is set for an output.  There may be a cleaner way, but this seems to allow enabling of outputs from the device tree.
-> 
-> I did the following:
-> 
->         // idt,enable mod: add struct clk_hw *hw  arg
->         static int vc5_get_output_config(struct i2c_client *client,
->                                       struct vc5_out_data *clk_out, struct clk_hw *hw)
->         {
->             ...
->             ret = vc5_update_slew(np_output, clk_out);
-> 
->             // idt,enable mod: call to vc5_update_enable()
->             ret = vc5_update_enable(np_output, hw);
->             if (ret)
->                 goto output_error;
-> 
-> And:
-> 
->         // begin idt,enable mod
->         static int vc5_update_enable(struct device_node *np_output,
->                                   struct clk_hw *hw)
->         {
->             u32 value;
-> 
->             if (!of_property_read_u32(np_output, "idt,enable", &value)) {
->                 if (value) {
->                     vc5_clk_out_prepare(hw);
->                 } else {
->                     vc5_clk_out_unprepare(hw);
->                 }
->             }
->             return 0;
->         }
->         // end idt,enable mod
-
-This is not the "expected" way to do it in the kernel, I would call it a
-shortcut for not writing a consumer driver. However if it is enough for
-you and you don't mind maintaining this modification in your own kernel
-fork, it will do. Only, if were me, I would write a simple, dummy driver
-for the consumer device to have things clean, learn something and, well,
-have fun.
-
--- 
-Luca
+SGVsbG8gTHVjYSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMdWNh
+IENlcmVzb2xpIDxsdWNhQGx1Y2FjZXJlc29saS5uZXQ+DQo+IFNlbnQ6IFdlZG5lc2RheSwgTWFy
+Y2ggOSwgMjAyMiAxMjoyMCBQTQ0KPiBUbzogRmlsbGlvbiwgQ2xhdWRlIDxDbGF1ZGUuRmlsbGlv
+bkBta3NpbnN0LmNvbT47IEFkYW0gRm9yZA0KPiA8YWZvcmQxNzNAZ21haWwuY29tPg0KPiBDYzog
+U2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBzZWNvLmNvbT47IGxpbnV4LWNsayA8bGludXgt
+DQo+IGNsa0B2Z2VyLmtlcm5lbC5vcmc+OyBLbGVpbiwgSmVzc2UgPEplc3NlLktsZWluQG1rc2lu
+c3QuY29tPg0KPiBTdWJqZWN0OiBSZTogW0VYVEVSTkFMXSBSZTogUXVlc3Rpb25zIHJlZ2FyZGlu
+ZyByZWdhcmRpbmcgaWR0L3JlbmVzYXMNCj4gdmVyc2FjbG9jazUgZHJpdmVyDQo+IA0KPiBIaSBD
+bGF1ZGUsDQo+IA0KPiBPbiAwNy8wMy8yMiAyMTozOSwgRmlsbGlvbiwgQ2xhdWRlIHdyb3RlOg0K
+PiA+IEhlbGxvIEx1Y2ENCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+
+PiBGcm9tOiBMdWNhIENlcmVzb2xpIDxsdWNhQGx1Y2FjZXJlc29saS5uZXQ+DQo+ID4+IFNlbnQ6
+IEZyaWRheSwgTWFyY2ggNCwgMjAyMiAzOjMwIFBNDQo+ID4+IFRvOiBGaWxsaW9uLCBDbGF1ZGUg
+PENsYXVkZS5GaWxsaW9uQG1rc2luc3QuY29tPjsgQWRhbSBGb3JkDQo+ID4+IDxhZm9yZDE3M0Bn
+bWFpbC5jb20+DQo+ID4+IENjOiBTZWFuIEFuZGVyc29uIDxzZWFuLmFuZGVyc29uQHNlY28uY29t
+PjsgbGludXgtY2xrIDxsaW51eC0NCj4gPj4gY2xrQHZnZXIua2VybmVsLm9yZz47IEtsZWluLCBK
+ZXNzZSA8SmVzc2UuS2xlaW5AbWtzaW5zdC5jb20+DQo+ID4+IFN1YmplY3Q6IFJlOiBbRVhURVJO
+QUxdIFJlOiBRdWVzdGlvbnMgcmVnYXJkaW5nIHJlZ2FyZGluZyBpZHQvcmVuZXNhcw0KPiA+PiB2
+ZXJzYWNsb2NrNSBkcml2ZXINCj4gPj4NCj4gPj4gSGkgQ2xhdWRlLA0KPiA+Pg0KPiA+PiBPbiAw
+NC8wMy8yMiAyMTowNywgRmlsbGlvbiwgQ2xhdWRlIHdyb3RlOg0KPiA+Pj4gSGVsbG8gTHVjYSwN
+Cj4gPj4+DQo+ID4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4+PiBGcm9tOiBM
+dWNhIENlcmVzb2xpIDxsdWNhQGx1Y2FjZXJlc29saS5uZXQ+DQo+ID4+Pj4gU2VudDogVGh1cnNk
+YXksIE1hcmNoIDMsIDIwMjIgNTozNCBQTQ0KPiA+Pj4+IFRvOiBGaWxsaW9uLCBDbGF1ZGUgPENs
+YXVkZS5GaWxsaW9uQG1rc2luc3QuY29tPjsgQWRhbSBGb3JkDQo+ID4+Pj4gPGFmb3JkMTczQGdt
+YWlsLmNvbT4NCj4gPj4+PiBDYzogU2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBzZWNvLmNv
+bT47IGxpbnV4LWNsayA8bGludXgtDQo+ID4+Pj4gY2xrQHZnZXIua2VybmVsLm9yZz47IEtsZWlu
+LCBKZXNzZSA8SmVzc2UuS2xlaW5AbWtzaW5zdC5jb20+DQo+ID4+Pj4gU3ViamVjdDogUmU6IFtF
+WFRFUk5BTF0gUmU6IFF1ZXN0aW9ucyByZWdhcmRpbmcgcmVnYXJkaW5nDQo+ID4+Pj4gaWR0L3Jl
+bmVzYXMNCj4gPj4+PiB2ZXJzYWNsb2NrNSBkcml2ZXINCj4gPj4+Pg0KPiA+Pj4+IEhpIENsYXVk
+ZSwNCj4gPj4+Pg0KPiA+Pj4+IE9uIDAzLzAzLzIyIDE5OjE1LCBGaWxsaW9uLCBDbGF1ZGUgd3Jv
+dGU6DQo+ID4+Pj4+IEhlbGxvIEx1Y2EsDQo+ID4+Pj4+DQo+ID4+Pj4+PiAtLS0tLU9yaWdpbmFs
+IE1lc3NhZ2UtLS0tLQ0KPiA+Pj4+Pj4gRnJvbTogTHVjYSBDZXJlc29saSA8bHVjYUBsdWNhY2Vy
+ZXNvbGkubmV0Pg0KPiA+Pj4+Pj4gU2VudDogVGh1cnNkYXksIE1hcmNoIDMsIDIwMjIgOTo0MiBB
+TQ0KPiA+Pj4+Pj4gVG86IEZpbGxpb24sIENsYXVkZSA8Q2xhdWRlLkZpbGxpb25AbWtzaW5zdC5j
+b20+OyBBZGFtIEZvcmQNCj4gPj4+Pj4+IDxhZm9yZDE3M0BnbWFpbC5jb20+DQo+ID4+Pj4+PiBD
+YzogU2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBzZWNvLmNvbT47IGxpbnV4LWNsayA8bGlu
+dXgtDQo+ID4+Pj4+PiBjbGtAdmdlci5rZXJuZWwub3JnPjsgS2xlaW4sIEplc3NlIDxKZXNzZS5L
+bGVpbkBta3NpbnN0LmNvbT4NCj4gPj4+Pj4+IFN1YmplY3Q6IFJlOiBbRVhURVJOQUxdIFJlOiBR
+dWVzdGlvbnMgcmVnYXJkaW5nIHJlZ2FyZGluZw0KPiA+Pj4+Pj4gaWR0L3JlbmVzYXMNCj4gPj4+
+Pj4+IHZlcnNhY2xvY2s1IGRyaXZlcg0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IEhpIENsYXVkZSwNCj4g
+Pj4+Pj4+DQo+ID4+Pj4+PiBPbiAwMi8wMy8yMiAyMTo0OSwgRmlsbGlvbiwgQ2xhdWRlIHdyb3Rl
+Og0KPiA+Pj4+Pj4+DQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
+LS0tLS0NCj4gPj4+Pj4+Pj4gRnJvbTogTHVjYSBDZXJlc29saSA8bHVjYUBsdWNhY2VyZXNvbGku
+bmV0Pg0KPiA+Pj4+Pj4+PiBTZW50OiBXZWRuZXNkYXksIE1hcmNoIDIsIDIwMjIgMTI6MjcgUE0N
+Cj4gPj4+Pj4+Pj4gVG86IEFkYW0gRm9yZCA8YWZvcmQxNzNAZ21haWwuY29tPjsgRmlsbGlvbiwg
+Q2xhdWRlDQo+ID4+Pj4+Pj4+IDxDbGF1ZGUuRmlsbGlvbkBta3NpbnN0LmNvbT4NCj4gPj4+Pj4+
+Pj4gQ2M6IFNlYW4gQW5kZXJzb24gPHNlYW4uYW5kZXJzb25Ac2Vjby5jb20+OyBsaW51eC1jbGsg
+PGxpbnV4LQ0KPiA+Pj4+Pj4+PiBjbGtAdmdlci5rZXJuZWwub3JnPg0KPiA+Pj4+Pj4+PiBTdWJq
+ZWN0OiBSZTogW0VYVEVSTkFMXSBSZTogUXVlc3Rpb25zIHJlZ2FyZGluZyByZWdhcmRpbmcNCj4g
+Pj4+Pj4+Pj4gaWR0L3JlbmVzYXMNCj4gPj4+Pj4+Pj4gdmVyc2FjbG9jazUgZHJpdmVyDQo+ID4+
+Pj4+Pj4+DQo+ID4+Pj4+Pj4+IEhpLA0KPiA+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+PiBPbiAwMi8wMy8y
+MiAxNjo0NSwgQWRhbSBGb3JkIHdyb3RlOg0KPiA+Pj4+Pj4+PiAuLi4NCj4gPj4+Pj4+Pj4+Pj4+
+Pj4gICAgIHZlcnNhY2xvY2s2OiBjbG9jay1jb250cm9sbGVyQDZhIHsNCj4gPj4+Pj4+Pj4+Pj4+
+Pj4NCj4gPj4+Pj4+Pj4+Pj4+Pj4gICAgICAgICAvKiBDbG9jayBDb25zdW1lciAqLw0KPiA+Pj4+
+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+PiAgICAgICAgIGNvbXBhdGlibGUgPSAiaWR0LDVw
+NDl2Njk2NSI7DQo+ID4+Pj4+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+Pj4+Pj4+ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDB4NmE+Ow0KPiA+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+
+Pj4+Pj4+Pj4+Pj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICNjbG9jay1jZWxs
+cyA9IDwxPjsNCj4gPj4+Pj4+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+Pj4+Pj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBjbG9ja3MgPSA8JngzMDRfY2xrPjsNCj4gPj4+Pj4+Pj4+Pj4+
+Pj4NCj4gPj4+Pj4+Pj4+Pj4+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjbG9j
+ay1uYW1lcyA9ICJ4aW4iOw0KPiA+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+
+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+PiAgICAgICAgIGFzc2lnbmVkX2Nsb2NrcyA9
+IDwmdmVyc2FjbG9jazYgMT4sDQo+ID4+Pj4+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+Pj4+Pj4+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgPCZ2ZXJzYWNsb2NrNiAyPiwNCj4gPj4+Pj4+Pj4+Pj4+
+Pj4NCj4gPj4+Pj4+Pj4+Pj4+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICA8JnZlcnNhY2xv
+Y2s2IDM+LA0KPiA+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+PiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIDwmdmVyc2FjbG9jazYgND47DQo+ID4+Pj4+Pj4+Pj4+Pj4+DQo+ID4+Pj4+
+Pj4+Pj4+Pj4+ICAgICAgICAgYXNzaWduZWRfY2xvY2tfcmF0ZXMgPSA8NDY4MDAwMDA+LCA8MjUw
+MDAwMDAwPiwNCj4gPj4+Pj4+Pj4+Pj4+Pj4gPDEwMDAwMDA+LCA8MTMwMDAwMDA+Ow0KPiA+Pj4+
+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+Pj4+PiBBc3NpZ25lZCBjbG9j
+a3MgYW5kIGFzc2lnbmVkIGNsb2NrIHJhdGVzIHNob3VsZCBiZSBoeXBoZW5zDQo+ID4+Pj4+Pj4+
+Pj4+Pj4gYW5kIG5vdCB1bmRlcnNjb3Jlcy4NCj4gPj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+
+Pj4+IGFzc2lnbmVkLWNsb2NrcyA9ICA8JnZlcnNhY2xvY2s2IDE+LCAgIDwmdmVyc2FjbG9jazYg
+Mj4sDQo+ID4+Pj4+Pj4+Pj4+Pj4gPCZ2ZXJzYWNsb2NrNiAzPiwgPCZ2ZXJzYWNsb2NrNiA0PjsN
+Cj4gPj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+IGFzc2lnbmVkLWNsb2NrLXJhdGVzID0g
+IDw0NjgwMDAwMD4sIDwyNTAwMDAwMDA+LA0KPiA+Pj4+Pj4+Pj4+Pj4+IDwxMDAwMDAwPiwgPDEz
+MDAwMDAwPjsNCj4gPj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+IEFub3RoZXIgdGhpbmcg
+dG8gY2hlY2sgaXMgdG8gbWFrZSBzdXJlIHRoZSBjb25zdW1lcnMgb2YNCj4gPj4+Pj4+Pj4+Pj4+
+PiB0aGVzZSBjbG9ja3MgaXMgZW5hYmxpbmcgdGhlbS4gIFRoZXkgZG8gbm90IG5lY2Vzc2FyaWx5
+DQo+ID4+Pj4+Pj4+Pj4+Pj4gZ2V0IGVuYWJsZWQgYnkNCj4gPj4+Pj4+Pj4gZGVmYXVsdC4NCj4g
+Pj4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4+IGFkYW0NCj4gPj4+Pj4+Pj4+Pj4+DQo+ID4+
+Pj4+Pj4+Pj4+PiBEb2ggLSB0aGFua3MuICBJIGxvb2tlZCBhdCBpdCBhIG1pbGxpb24gdGltZXMg
+8J+YiiAuDQo+ID4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4gTm93IGdldHRpbmcgZGVzaXJl
+ZCBvdXQxIGZyZXF1ZW5jeSBidXQgbm90aGluZyBvbiBvdGhlcg0KPiA+Pj4+IG91dHB1dHMuDQo+
+ID4+Pj4+Pj4+Pj4+PiBGcm9tDQo+ID4+Pj4+Pj4+Pj4+IHRoZSBjb2RlIGl0IHNlZW1zIHZjNV9j
+bGtfb3V0X3ByZXBhcmUoKSBpcyB0aGUgbWV0aG9kIHRoYXQNCj4gPj4+Pj4+Pj4+Pj4gZW5hYmxl
+cyBvdXRwdXRzIGJ1dCB0aGlzIG1ldGhvZCBpcyBub3QgYmVpbmcgY2FsbGVkIEkgYW0gbm90DQo+
+ID4+Pj4+Pj4+Pj4+IGNsZWFyIGhvdyB0byBtYWtlIHRoZSAnY29uc3VtZXIgZW5hYmxlIHRoZW0u
+Jw0KPiA+Pj4+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+Pj4+IEkgaGF2ZSBhZGRlZCB0aGlzIHRvIG15
+IGR0c2kgdG8gbm8gYXZhaWwuDQo+ID4+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+Pj4gICAgICAg
+ICAgLyogQ29uc3VtZXIgcmVmZXJlbmNpbmcgNVA0OVY1OTY1IHBpbiBPVVQxIGFuZA0KPiA+Pj4+
+Pj4+Pj4+Pj4gT1VUMg0KPiA+PiAqLw0KPiA+Pj4+Pj4+Pj4+Pj4gICAgICAgICBjb25zdW1lciB7
+DQo+ID4+Pj4+Pj4+Pj4+PiAgICAgICAgICAgICBjbG9ja3MgPSA8JnZlcnNhY2xvY2s2IDE+LCA8
+JnZlcnNhY2xvY2s2IDI+Ow0KPiA+Pj4+Pj4+Pj4+Pj4gICAgICAgICAgICAgLyogLi4uICovDQo+
+ID4+Pj4+Pj4+Pj4+PiAgICAgICAgICB9Ow0KPiA+Pj4+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+Pj4+
+IExvb2tpbmcgdGhyb3VnaCBkZXZpY2UgdHJlZSBkb2N1bWVudGF0aW9uLg0KPiA+Pj4+Pj4+Pj4+
+Pg0KPiA+Pj4+Pj4+Pj4+PiBJdCdzIGxpa2VseSBnb2luZyB0byBiZSBpbiB0aGUgY29uc3VtZXIn
+cyBkcml2ZXIuICBDaGVjayB0aGUNCj4gPj4+Pj4+Pj4+Pj4gY29uc3VtZXIgZGV2aWNlIHRyZWUg
+YmluZGluZyB0byBtYWtlIHN1cmUgeW91J3ZlIGNvcnJlY3RseQ0KPiA+Pj4+Pj4+Pj4+PiBhc3Nv
+Y2lhdGVkIHRoZSBjbG9jay4gIElmIHRoZSBiaW5kaW5nIGRvZXNudCd0IHNob3cgYSBjbG9jaw0K
+PiA+Pj4+Pj4+Pj4+PiBpcyByZXF1aXJlZCwgaXQgbWlnaHQgbm90IGtub3cgdGhhdCB5b3UgdXNp
+bmcgYSBwcm9ncmFtbWFibGUNCj4gPj4gY2xvY2suDQo+ID4+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+
+Pj4+IEhlcmUgaXMgYSBwYXRjaCB0aGF0IEkgbmVlZGVkIHRvIGFwcGx5IHRvIGFuIEV0aGVybmV0
+IGRyaXZlcg0KPiA+Pj4+Pj4+Pj4+PiB3aGljaCB3YXNuJ3QgZXhwZWN0aW5nIGEgcHJvZ3JhbW1h
+YmxlIGNsb2NrIHRvIGRyaXZlIGENCj4gPj4+Pj4+Pj4+Pj4gcmVmZXJlbmNlIGNsb2NrLCBzbyB0
+aGUgY2xvY2sgd2Fzbid0IGJlaW5nIGVuYWJsZWQuDQo+ID4+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+
+Pj4+DQo+ID4+Pj4gaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eA0KPiA+Pj4+Pj4+Pj4+PiAvaw0KPiA+Pj4+Pj4+Pj4+PiBlcg0K
+PiA+Pj4+Pj4+Pj4+PiBuZWwvZw0KPiA+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4NCj4gaXQvdG9ydmFs
+ZHMvbGludXguZ2l0L2NvbW1pdC9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5lc2FzL3JhdmJfbWFp
+bi4NCj4gPj4+Pj4+Pj4+Pj4gYz9pZD0NCj4gPj4+Pj4+Pj4+Pj4gOGVmN2FkYzZiZWIyZWYwYmNl
+ODM1MTNkYzllNDUwNWU3YjIxZThjMl9fOyEhS25KNC0NCj4gPj4+PiBycDchMVFiMTdxLQ0KPiA+
+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pg0KPiA+Pj4+Pj4NCj4gPj4+Pg0KPiA+Pg0KPiBUV3JWNjJB
+ZVF0VE5OVkRFclZieWhiWEIxc3VreVQyZ2d2RlBVbHRJQkk1bklLek5ualZPY3FsdzhxSnl5JA0K
+PiA+Pj4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+PiBMb29rIGF0IHRoZSB1c2Ugb2YgZGV2bV9jbGtf
+Z2V0X29wdGlvbmFsIGFuZA0KPiA+Pj4+Pj4+Pj4+PiBjbGtfcHJlcGFyZV9lbmFibGUgZnJvbSB0
+aGF0IHBhdGNoLiAgKHllcywgdGhlcmUgaXMgYQ0KPiA+Pj4+Pj4+Pj4+PiBzdWJzZXF1ZW50IHBh
+dGNoIHRoYXQgZml4ZXMgc29tZXRoaW5nIEkgZGlkbid0IHF1aXRlIGRvDQo+ID4+Pj4+Pj4+Pj4+
+IHJpZ2h0LCBidXQgdGhlIGJhc2ljcyBhcmUgaGVyZSkNCj4gPj4+Pj4+Pj4+Pj4NCj4gPj4+Pj4+
+Pj4+Pj4gVGhlIGNvbnN1bWVyIGRyaXZlcnMgbmVlZCB0byAnZ2V0JyB0aGUgY2xvY2sgc28gaXQg
+Y2FuDQo+ID4+Pj4+Pj4+Pj4+IGFzc29jaWF0ZSBpdHNlbGYgdG8gdGhlIGNsb2NrIGluIHF1ZXN0
+aW9uLiAgT25jZSB0aGUNCj4gPj4+Pj4+Pj4+Pj4gcmVsYXRpb25zaGlwIGlzIGVzdGFibGlzaGVk
+LCB0aGUgY29uc3VtZXIgbmVlZHMgdG8gY2FsbA0KPiA+Pj4+Pj4+Pj4+PiBjbGtfcHJlcGFyZV9l
+bmFibGUoKSB3aGljaA0KPiA+Pj4+Pj4+PiB1c2VzIHRoZSBjbG9jayBzeXN0ZW0gdG8gdHVybiB0
+aGUgY2xvY2sgb24uDQo+ID4+Pj4+Pj4+Pj4+IFdpdGhvdXQgdGhpcyBzdGVwLCBpdCdzIGxpa2Vs
+eSB0aGUgVmVyc2FjbG9jayB3b24ndCBnZW5lcmF0ZQ0KPiA+Pj4+Pj4+Pj4+PiBhIHNpZ25hbCwg
+YmVjYXVzZSBpdCBkb2Vzbid0IGtub3cgaXQgbmVlZHMgdG8gdHVybiBpdCBvbi4NCj4gPj4+Pj4+
+Pj4+Pj4NCj4gPj4+Pj4+Pj4+Pj4gYWRhbQ0KPiA+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+Pj4gTm90
+IHN1cmUgSSBmdWxseSBmb2xsb3cuICBJIHNlZSB0aGF0IGNsayBvdXQxIGlzIGVuYWJsZWQgYnV0
+DQo+ID4+Pj4+Pj4+Pj4gdGhlIG90aGVyDQo+ID4+Pj4+Pj4+IGNoYW5uZWxzIGFyZSBub3Qgc28g
+aXQgd291bGQgc2VlbSBteSBkaWZmaWN1bHR5IGlzIHdpdGgNCj4gPj4+Pj4+Pj4gaW5kaXZpZHVh
+bA0KPiA+Pj4+IGNoYW5uZWxzLg0KPiA+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+IERvIHRoZSBkZXZp
+Y2VzIHRoYXQgbmVlZCB0aGUgY2xvY2sgZnJvbSB0aGUgdmVyc2FjbG9jaw0KPiA+Pj4+Pj4+Pj4g
+cmVmZXJlbmNlIHRoZSB2ZXJzYWNsb2NrPyAgSWYgc28sIHRvIHRob3NlIGRyaXZlcnMgdXNlIHRo
+ZSBnZXQgYW5kDQo+IGVuYWJsZT8NCj4gPj4+Pj4+Pj4+IElmIG5vdCwgdGhlIHZlcnNhY2xvY2sg
+d2lsbCBzdGF5IG9mZi4gIEluIHRoZSBwYXRjaCBleGFtcGxlIEkNCj4gPj4+Pj4+Pj4+IHNob3dl
+ZCwgSSBoYWQgdG8gbW9kaWZ5IHRoZSBFdGhlcm5ldCBkcml2ZXIgb24gYSBwcm9jZXNzb3IsDQo+
+ID4+Pj4+Pj4+PiBiZWNhdXNlIGl0IGRpZG4ndCBleHBsaWNpdGx5IGVuYWJsZSB0aGUgcmVmZXJl
+bmNlIGNsb2NrLiAgVGhhdA0KPiA+Pj4+Pj4+Pj4gRXRoZXJuZXQgZHJpdmVyIGV4cGVjdGVkIHRo
+ZSByZWZjbGsgd2FzIGFsd2F5cyBwcmVzZW50IHdoaWNoDQo+ID4+Pj4+Pj4+PiB3YXMgYQ0KPiA+
+Pj4+IGZhbHNlIGFzc3VtcHRpb24uDQo+ID4+Pj4+Pj4+PiBPbmNlIEkgZ290IHRoZSBjb25zdW1l
+ciBkZXZpY2UgKGluIHRoaXMgY2FzZSwgRXRoZXJuZXQpIHRvDQo+ID4+Pj4+Pj4+PiByZXF1ZXN0
+IGFuZCBlbmFibGUgdGhlIGNsb2NrLCB0aGUgY2xvY2sgc3Vic3lzdGVtIGVuYWJsZWQgdGhlDQo+
+ID4+Pj4+Pj4+PiBjb3JyZXNwb25kaW5nIG91dHB1dCBvbiB0aGUgdmVyc2FjbG9jay4NCj4gPj4+
+Pj4+Pj4+DQo+ID4+Pj4+Pj4+PiBGb3IgdGhlIEV0aGVybmV0IGV4YW1wbGUgSSBjaXRlZCBhYm92
+ZSwgdGhlIGNvcnJlc3BvbmRpbmcNCj4gPj4+Pj4+Pj4+IGRldmljZSB0cmVlIGxvb2tzIGxpa2U6
+DQo+ID4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4gJmF2YiB7DQo+ID4+Pj4+Pj4+PiAgICAgIGNsb2Nr
+cyA9IDwmY3BnIENQR19NT0QgODEyPiwgPCZ2ZXJzYWNsb2NrNSA0PjsNCj4gPj4+Pj4+Pj4+ICAg
+ICAgY2xvY2stbmFtZXMgPSAiZmNrIiwgInJlZmNsayI7DQo+ID4+Pj4+Pj4+PiAgICAgIHN0YXR1
+cyA9ICJva2F5IjsNCj4gPj4+Pj4+Pj4+IH07DQo+ID4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4gV2l0
+aCB0aGlzIGRldmljZSB0cmVlIHJlZmVyZW5jZSwgdGhlICdyZWZjbGsnIGdldHMgYXNzb2NpYXRl
+ZA0KPiA+Pj4+Pj4+Pj4gdG8gdmVyc2FjbG9jayBvdXB1dCA0LiAgV2hlbiB0aGUgRXRoZXJuZXQg
+bmVlZHMgdGhlIGNsb2NrLCBpdA0KPiA+Pj4+Pj4+Pj4gY2FsbHMgY2xrX3ByZXBhcmVfZW5hYmxl
+IG9uIHRoYXQgY2xvY2sgcmVmZXJlbmNlLCBhbmQgdGhlDQo+ID4+Pj4+Pj4+PiBjbG9jayBzeXN0
+ZW0gY2FsbHMgb24gdGhlIHZlcnNhY2xvY2sgZHJpdmVyIHRvIGVuYWJsZSB0aGUNCj4gPj4+Pj4+
+Pj4+IG91dHB1dC4gIFRoZSByZWFzb24gSSBuZWVkZWQgdG8gc3VibWl0IHRoYXQgcGF0Y2ggd2Fz
+IHRoYXQgdGhlDQo+ID4+Pj4+Pj4+PiBjb25zdW1lciBkcml2ZXIgKHRoZSBFdGhlcm5ldCBpbiB0
+aGlzDQo+ID4+Pj4+Pj4+PiBjYXNlKSB3YXNuJ3QgY2FsbGluZyB0aGUgY2xrX3ByZXBhcmVfZW5h
+YmxlLCBzbyB0aGUgY2xvY2sNCj4gPj4+Pj4+Pj4+IHJlbWFpbmVkIG9mZi4gIEl0J3MgbGlrZWx5
+IHRoYXQgd2hhdGV2ZXIgZGV2aWNlcyB0aGF0IG5lZWQgdGhlDQo+ID4+Pj4+Pj4+PiBjbG9jayBm
+cm9tIHRoZSB2ZXJzYWNsb2NrIHdpbGwgbmVlZCBib3RoIGEgZGV2aWNlIHRyZWUNCj4gPj4+Pj4+
+Pj4+IHJlZmVyZW5jZSB0byBpdCBhcyB3ZWxsIGFzIGEgY2FsbCB0byBjbGtfcHJlcGFyZV9lbmFi
+bGUuDQo+ID4+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+Pj4gSW4gbXkgc2ltcGxl
+IGFwcGxpY2F0aW9uIEkgd291bGQgbGlrZSB0byBlbmFibGUgb3V0cHV0cywgb24gYQ0KPiA+Pj4+
+Pj4+Pj4+IHBlciBjaGFubmVsDQo+ID4+Pj4+Pj4+IGJhc2lzLCBmcm9tIHRoZSBkZXZpY2UgdHJl
+ZS4gIFdvdWxkIGl0IG1ha2Ugc2Vuc2UgIHRvIGFkZCAgYW4NCj4gPj4+PiAnaWR0LGVuYWJsZScN
+Cj4gPj4+Pj4+Pj4gcHJvcGVydHkgaW4gc2ltaWxhciBmYXNoaW9uIHRvIHRoZSBleGlzdGluZyBp
+ZHQsbW9kZSwNCj4gPj4+Pj4+Pj4gaWR0LHZvbHRhZ2UtbWljcm92b2x0LCBhbmQgaWR0LHNsZXct
+cGVyY2VudCBwcm9wZXJ0aWVzPyAgVGhlbg0KPiA+Pj4+Pj4+PiB2YzVfZ2V0X291dHB1dF9jb25m
+aWcoKSBjb3VsZCBiZSBtb2RpZmllZCB0byBhbHNvIGNhbGwNCj4gPj4+Pj4+Pj4gdmM1X2Nsa19v
+dXRfcHJlcGFyZSgpIChvciBjbGtfcHJlcGFyZV9lbmFibGUoKSwgd2hpY2ggaW4gdHVybg0KPiA+
+Pj4+Pj4+PiB3b3VsZCBjYWxsDQo+ID4+Pj4+PiB2YzVfY2xrX291dF9wcmVwYXJlKCkpLg0KPiA+
+Pj4+Pj4+Pj4NCj4gPj4+Pj4+Pj4+IEkgY2FuJ3Qgc3BlYWsgZm9yIHRoZSBsaW51eCBjbG9jayBn
+cm91cCwgYnV0IHRoZSBhZHZhbnRhZ2Ugb2YNCj4gPj4+Pj4+Pj4+IHBhdGNoaW5nIHRoZSBkcml2
+ZXJzIHRoYXQgbmVlZCB0aGUgY2xvY2tzIGdlbmVyYXRlZCBmcm9tIHRoZQ0KPiA+Pj4+Pj4+Pj4g
+dmVyc2FjbG9jayBpcyB0aGUgYWJpbGl0eSB0byBzdG9wIHRoZXNlIGNsb2NrcyB3aGVuIHRoZQ0K
+PiA+Pj4+Pj4+Pj4gZHJpdmVycyBhcmUgaGFsdGVkIGFuZC9vciBzdXNwZW5kZWQuDQo+ID4+Pj4+
+Pj4+DQo+ID4+Pj4+Pj4+IEhhdmluZyB0aGUgY29uc3VtZXIgZHJpdmVyIGdldCwgcHJlcGFyZSBh
+bmQgZW5hYmxlIHRoZSBjbG9jayBpcw0KPiA+Pj4+Pj4+PiBvZiBjb3Vyc2UgdGhlIGJlc3QgYXMg
+QWRhbSBleHBsYWluZWQuDQo+ID4+Pj4+Pj4+DQo+ID4+Pj4+Pj4+IEhvd2V2ZXIgSSB0aGluayB1
+c2luZyBhc3NpZ25lZC1jbG9ja3MgYW5kIGFzc2lnbmVkLWNsb2NrLXJhdGVzDQo+ID4+Pj4+Pj4+
+IHNob3VsZCBlbmFibGUgdGhlIGNsb2NrcyB1bmNvbmRpdGlvbmFsbHkgZXZlbiBpZiB0aGUgY29u
+c3VtZXINCj4gPj4+Pj4+Pj4gZHJpdmVyIGRvZXMgbm90IGRvIGFueSBjbGtfKigpIGNhbGxzLiBN
+aWdodCBiZSB3b3J0aCBkb3VibGUNCj4gPj4+Pj4+Pj4gY2hlY2tpbmcNCj4gPj4+PiB0aGF0Lg0K
+PiA+Pj4+Pj4+Pg0KPiA+Pj4+Pj4+PiAtLQ0KPiA+Pj4+Pj4+PiBMdWNhDQo+ID4+Pj4+Pj4NCj4g
+Pj4+Pj4+PiBJbiBvdXIgYXBwbGljYXRpb24gd2UgcGxhbiB0byB1c2UgdGhlIDY5NjUvNjkwMSB0
+byByZXBsYWNlIGENCj4gPj4+Pj4+PiBwYXJ0IHRoYXQgZG9lcw0KPiA+Pj4+Pj4gbm90IHVzZSBh
+IGNvbnN1bWVyIGRyaXZlci4gIFdlIGp1c3Qgc2V0IGNsb2NrIG9wdGlvbnMgaW4gb3VyIGRldmlj
+ZQ0KPiB0cmVlLg0KPiA+Pj4+Pj4gSWRlYWxseSB0aGF0IGlzIGhvdyB3ZSB3b3VsZCBsaWtlIHRv
+IHVzZSB0aGUgUmVuZXNhcyBwYXJ0IGFzIHdlbGwuDQo+ID4+Pj4+Pj4NCj4gPj4+Pj4+PiBJbiB0
+aGUgbGltaXRlZCB0ZXN0aW5nIEkgaGF2ZSBkb25lIHRodXMgZmFyIGJlaGF2aW9yIGlzIGEgYml0
+DQo+ID4+Pj4+Pj4gcHV6emxpbmcuICBGcm9tDQo+ID4+Pj4+PiB0aGUgZGV2aWNlIHRyZWUgSSBh
+bSBhYmxlIHRvIGNoYW5nZSB0aGUgY2xvY2sgZnJlcXVlbmN5IGZvciBvdXQxDQo+ID4+Pj4+PiAo
+d2hpY2ggaXMgZW5hYmxlZCBieSBkZWZhdWx0KSBhbmQgSSBjYW4gZGlzYWJsZSBvdXRwdXRzIHVz
+aW5nDQo+ID4+Pj4+PiAnaWR0LHNodXRkb3duJywgYnV0IEkgY2Fubm90IGNoYW5nZSB0aGUgbG9n
+aWMgbGV2ZWxzIGZvciBvdXQxDQo+ID4+Pj4+PiB1c2luZyB0aGUNCj4gPj4+PiAnaWR0LG1vZGUn
+IHBhcmFtZXRlci4NCj4gPj4+Pj4+DQo+ID4+Pj4+PiBUaGlzIGlzIHZlcnkgc3RyYW5nZS4NCj4g
+Pj4+Pj4+DQo+ID4+Pj4+PiBEaWQgeW91IGRvdWJsZS1jaGVjayB0aGF0IHlvdXIgZGV2aWNlIHRy
+ZWUgZGVzY3JpcHRpb24gb2YgdGhlDQo+ID4+Pj4+PiB2ZXJzYWNsb2NrIG5vZGUgaXMgY29ycmVj
+dCBhY2NvcmRpbmcgdG8gWzBdPw0KPiA+Pj4+Pj4NCj4gPj4+Pj4+IFBsZWFzZSBzZW5kIHRoZSBj
+b21wbGV0ZSAgZGVzY3JpcHRpb24gb2YgdGhlIHZlcnNhY2xvY2sgbm9kZSBpbg0KPiA+Pj4+Pj4g
+eW91ciBkZXZpY2UgdHJlZSwgc28gd2UgY2FuIGNoZWNrIGl0IGFuZCBzZWUgaWYgYW55IGRldGFp
+bCBpcw0KPiBtaXNwbGFjZWQuDQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gWzBdDQo+ID4+Pj4+PiBodHRw
+czovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
+bnV4Lw0KPiA+Pj4+Pj4ga2UNCj4gPj4+Pj4+IHJuDQo+ID4+Pj4+PiBlbC9nDQo+ID4+Pj4+PiBp
+dC90b3J2YWxkcy9saW51eC5naXQvdHJlZS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvY2xvYw0KPiA+Pj4+Pj4gay8NCj4gPj4+Pj4+IGlkDQo+ID4+Pj4+PiB0LHZlcnMNCj4gPj4+
+Pj4+IGFjbG9jazUueWFtbCpuMTY5X187SXchIUtuSjQtDQo+ID4+Pj4+PiBycDcheWFsZmdzZmFa
+S1NsbzR5TmZRZnZsYnNtTktCUmx0R1NldG9Jb25QLS01YUdlYnVIVUotTS0NCj4gPj4+Pj4+IGFt
+OTN0alQ4YUVoc1NKSiQNCj4gPj4+Pj4+DQo+ID4+Pj4+Pg0KPiA+Pj4+Pj4gLS0NCj4gPj4+Pj4+
+IEx1Y2ENCj4gPj4+Pj4NCj4gPj4+Pj4gSGVyZSBpcyB0aGUgcmVsZXZhbnQgcG9ydGlvbnMgb2Yg
+bXkgZGV2aWNlIHRyZWUuICBPbiB0aGUgc2NvcGUgSQ0KPiA+Pj4+PiBzZWUgdGhlDQo+ID4+Pj4g
+ZGVmYXVsdCAnQ01PU0QnIHZvbHRhZ2VzIGFuZCBhIG1vZGlmaWVkIGZyZXF1ZW5jeSBvZiA0Ni44
+TUh6Lg0KPiA+Pj4+Pg0KPiA+Pj4+PiBJIGhhdmUgYWxzbyBtb2RpZmllZCBteSBsb2NhbCBjb3B5
+IG9mIHRoZSBkcml2ZXIgdG8gYWNjZXB0IGFuDQo+ICdpZHQsZW5hYmxlJw0KPiA+Pj4+IHBhdHRl
+cm4gcHJvcGVydHkgdGhhdCBhbGxvd3MgbWUgdG8gZW5hYmxlIG91dHB1dHMgZnJvbSB0aGUgZGV2
+aWNlDQo+ID4+Pj4gdHJlZS4gSXQgbmVlZHMgc29tZSByZWZpbmVtZW50IGJ1dCBJIGNhbiBwYXNz
+IGl0IGFsb25nIGlmIHRoZXJlIGlzDQo+IGludGVyZXN0Lg0KPiA+Pj4+Pg0KPiA+Pj4+PiAtQ2xh
+dWRlDQo+ID4+Pj4+DQo+ID4+Pj4+ID09PT09PT09PT09PT09PT09PQ0KPiA+Pj4+PiBUb3Agb2Yg
+ZGV2aWNlIHRyZWUgZmlsZToNCj4gPj4+Pj4gPT09PT09PT09PT09PT09PT09DQo+ID4+Pj4+IC8q
+DQo+ID4+Pj4+IFRoaXMgaXMgYSBtZXNzYWdlIGZvciBzeXN0ZW0tdXNlci5kdHNpLiBJZiB5b3Ug
+YXJlIHJlYWRpbmcgZnJvbQ0KPiA+Pj4+PiBzeXN0ZW0tdXNlci5kdHNpLmdlbnh4eHgsIHBsZWFz
+ZSBub3RlIHRoYXQgdGhpcyBtZXNzYWdlIGlzIGZvcg0KPiA+Pj4+PiBleHBsYWluaW5nDQo+ID4+
+Pj4gdGhlIHB1cnBvc2Ugb2Ygc3lzdGVtLXVzZXIuZGlzdCBpbiByZWxhdGlvbiB0byBzeXN0ZW0t
+dXNlci5kdHNpLmdlbnh4eC4NCj4gPj4+Pj4NCj4gPj4+Pj4gc3lzdGVtLXVzZXIuZHRzaSBpcyBt
+ZXJlbHkgYSB3cml0YWJsZSBmaWxlIGhhbmRsZWQgYnkNCj4gPj4+Pj4gLi9odHRwczovL3VybGRl
+ZmVuc2UuY29tL3YzL19faHR0cDovL2J1aWxkUGV0YUxpbnV4LnNoX187ISFLbko0LQ0KPiA+Pj4+
+IHJwNyF3MzRvZFV5SDZoSEJjdC1yV0M2NzFuZGRwejU0NDBmLXZpYUVUTHRGbkdZTWxrdUI3UDB5
+ZS0NCj4gPj4+PiBKM1Vzd3ZvdmMwMEJVdCQgIHRvIGNvcHkgdGhlIGFwcHJvcHJpYXRlIHN5c3Rl
+bS11c2VyLmR0c2kuZ2VueHh4eA0KPiA+Pj4+IHRvIHRoaXMgZmlsZW5hbWUgZm9yIHVzZSBpbiB0
+aGUgYnVpbGQgaW1hZ2UuIERvIG5vdCBwdXQgeW91ciBkZXZpY2UNCj4gPj4+PiB0cmVlIGhlcmUu
+IFRoZXkgYmVsb25nIHRvIHRoZSBzeXN0ZW0tdXNlci5kdHNpLmdlbnh4eHguDQo+ID4+Pj4+DQo+
+ID4+Pj4+IElmIHlvdSBhZGQgYSBuZXcgZHRzaSwgcGxlYXNlIGNyZWF0ZSBhbiBhcHByb3ByaWF0
+ZSBkZXZpY2UgdHJlZQ0KPiA+Pj4+PiBmaWxlIGFuZCBtb2RpZnkgdGhlDQo+ID4+Pj4+IC4vaHR0
+cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHA6Ly9idWlsZFBldGFMaW51eC5zaF9fOyEhS25K
+NC0NCj4gcnA3IQ0KPiA+Pj4+PiB3Mw0KPiA+Pj4+PiA0b2RVeUg2aEhCY3QtcldDNjcxbmRkcHo1
+NDQwZi12aWFFVEx0Rm5HWU1sa3VCN1AweWUtDQo+ID4+Pj4gSjNVc3d2b3ZjMDBCVXQkDQo+ID4+
+Pj4+IHRvIGhhbmRsZSBpdCAqLw0KPiA+Pj4+Pg0KPiA+Pj4+PiAjaW5jbHVkZSA8ZHQtYmluZGlu
+Z3MvY2xrL3ZlcnNhY2xvY2suaD4NCj4gPj4+Pj4NCj4gPj4+Pj4gL2luY2x1ZGUvICJzeXN0ZW0t
+Y29uZi5kdHNpIg0KPiA+Pj4+PiAvIHsNCj4gPj4+Pj4NCj4gPj4+Pj4gICAvKiBDbG9jayBQcm92
+aWRlciAqLw0KPiA+Pj4+PiAgIHgzMDRfY2xrOiB4MzA0LWNsb2NrIHsNCj4gPj4+Pj4gICAgIGNv
+bXBhdGlibGUgPSAiZml4ZWQtY2xvY2siOw0KPiA+Pj4+PiAgICAgI2Nsb2NrLWNlbGxzID0gPDA+
+Ow0KPiA+Pj4+PiAgICAgY2xvY2stZnJlcXVlbmN5ID0gPDI1MDAwMDAwPjsNCj4gPj4+Pj4gICB9
+Ow0KPiA+Pj4+Pg0KPiA+Pj4+PiAuLi4NCj4gPj4+Pj4NCj4gPj4+Pj4gPT09PT09PT09PT09PT09
+PT09DQo+ID4+Pj4+IERldmljZSBUcmVlIE5vZGU6DQo+ID4+Pj4+ID09PT09PT09PT09PT09PT09
+PQ0KPiA+Pj4+PiAmaTJjMSB7DQo+ID4+Pj4+ICAgICBjbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAw
+PjsNCj4gPj4+Pj4NCj4gPj4+Pj4gICAgIC8vIFVzZSBwYXRjaC4gIFVwZGF0ZWQgZHJpdmVyIGZv
+ciA1cDQ5djY5NjUgYXZhaWxhYmxlICBhdA0KPiA+Pj4+IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20v
+djMvX19odHRwczovL2dpdGh1Yi5jb20vWGlsaW54L2xpbnV4LQ0KPiA+Pj4+IHhsbngvYmxvYi9t
+YXN0ZXIvZHJpdmVycy9jbGsvY2xrLXZlcnNhY2xvY2s1LmNfXzshIUtuSjQtDQo+ID4+Pj4gcnA3
+IXczNG9kVXlINmhIQmN0LXJXQzY3MW5kZHB6NTQ0MGYtdmlhRVRMdEZuR1lNbGt1QjdQMHllLQ0K
+PiA+Pj4+IEozVXN3dm9pVElIV2lOJA0KPiA+Pj4+PiAgICAgLy8gRGV2aWNlIFRyZWUgU2V0dXAg
+LT4NCj4gPj4+PiBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6Ly9naXRodWIuY29t
+L1hpbGlueC9saW51eC0NCj4gPj4+Pg0KPiA+Pg0KPiB4bG54L2Jsb2IvbWFzdGVyL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9pZHQqMkN2ZXJzYWMNCj4gPj4+PiBsbw0K
+PiA+Pj4+IGNrNS55YW1sX187SlEhIUtuSjQtcnA3IXczNG9kVXlINmhIQmN0LXJXQzY3MW5kZHB6
+NTQ0MGYtDQo+ID4+Pj4gdmlhRVRMdEZuR1lNbGt1QjdQMHllLUozVXN3dm9yM2hOYjNmJA0KPiA+
+Pj4+PiAgICAgdmVyc2FjbG9jazY6IGNsb2NrLWNvbnRyb2xsZXJANmEgew0KPiA+Pj4+PiAgICAg
+ICAgIC8qIENsb2NrIENvbnN1bWVyICovDQo+ID4+Pj4+ICAgICAgICAgY29tcGF0aWJsZSA9ICJp
+ZHQsNXA0OXY2OTY1IjsNCj4gPj4+Pj4gCQlyZWcgPSA8MHg2YT47DQo+ID4+Pj4+IAkJI2Nsb2Nr
+LWNlbGxzID0gPDE+Ow0KPiA+Pj4+PiAJCWNsb2NrcyA9IDwmeDMwNF9jbGs+Ow0KPiA+Pj4+PiAJ
+CWNsb2NrLW5hbWVzID0gInhpbiI7DQo+ID4+Pj4+DQo+ID4+Pj4+ICAgICAgICAgYXNzaWduZWQt
+Y2xvY2tzID0gPCZ2ZXJzYWNsb2NrNiAxPiwNCj4gPj4+Pj4gICAgICAgICAgICAgICAgICAgICAg
+ICAgICA8JnZlcnNhY2xvY2s2IDI+LA0KPiA+Pj4+PiAgICAgICAgICAgICAgICAgICAgICAgICAg
+IDwmdmVyc2FjbG9jazYgMz4sDQo+ID4+Pj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZ2
+ZXJzYWNsb2NrNiA0PjsNCj4gPj4+Pj4gICAgICAgICAvLyBhc3NpZ25lZC1jbG9jay1yYXRlcyA9
+IDw0NjgwMDAwMD4sIDwyNTAwMDAwMDA+LA0KPiA+Pj4+PiA8MTAwMDAwMD4sDQo+ID4+Pj4gPDEz
+MDAwMDAwPjsNCj4gPj4+Pj4gICAgICAgICBhc3NpZ25lZC1jbG9jay1yYXRlcyA9IDw0NjgwMDAw
+MD4sIDwyNTAwMDAwMDA+LCA8MTAwMDAwMD4sDQo+ID4+Pj4gPDEzMDAwMDAwPjsNCj4gPj4+Pj4g
+ICAgICAgICAvKiBTZXQgdGhlIFNEL09FIHBpbidzIHNldHRpbmdzICovDQo+ID4+Pj4+ICAgICAg
+ICAgaWR0LHNodXRkb3duID0gPDA+Ow0KPiA+Pj4+PiAgICAgICAgIGlkdCxvdXRwdXQtZW5hYmxl
+LWFjdGl2ZSA9IDwwPjsNCj4gPj4+Pj4gICAgICAgICBPVVQxIHsNCj4gPj4+Pj4gICAgICAgICAg
+ICAgaWR0LG1vZGUgPSA8VkM1X0NNT1M+Ow0KPiA+Pj4+PiAgICAgICAgICAgICBpZHQsdm9sdGFn
+ZS1taWNyb3ZvbHQgPSA8MzMwMDAwMD47DQo+ID4+Pj4+ICAgICAgICAgICAgIGMgPSA8MTAwPjsN
+Cj4gPj4+Pj4gICAgICAgICB9Ow0KPiA+Pj4+PiAgICAgICAgIE9VVDIgew0KPiA+Pj4+PiAgICAg
+ICAgICAgICBpZHQsbW9kZSA9IDxWQzVfQ01PUz47DQo+ID4+Pj4+ICAgICAgICAgICAgIGlkdCx2
+b2x0YWdlLW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4gPj4+Pj4gICAgICAgICAgICAgaWR0LHNs
+ZXctcGVyY2VudCA9IDwxMDA+Ow0KPiA+Pj4+PiAgICAgICAgIH07DQo+ID4+Pj4+ICAgICAgICAg
+T1VUMyB7DQo+ID4+Pj4+ICAgICAgICAgICAgIGlkdCxtb2RlID0gPFZDNV9DTU9TRD47DQo+ID4+
+Pj4+ICAgICAgICAgICAgIGlkdCx2b2x0YWdlLW1pY3Jvdm9sdCA9IDwzMzAwMDAwPjsNCj4gPj4+
+Pj4gICAgICAgICAgICAgaWR0LHNsZXctcGVyY2VudCA9IDwxMDA+Ow0KPiA+Pj4+PiAgICAgICAg
+IH07DQo+ID4+Pj4+ICAgICAgICAgT1VUNCB7DQo+ID4+Pj4+ICAgICAgICAgICAgIGlkdCxtb2Rl
+ID0gPFZDNV9DTU9TPjsNCj4gPj4+Pj4gICAgICAgICAgICAgaWR0LHZvbHRhZ2UtbWljcm92b2x0
+ID0gPDMzMDAwMDA+Ow0KPiA+Pj4+PiAgICAgICAgICAgICBpZHQsc2xldy1wZXJjZW50ID0gPDEw
+MD47DQo+ID4+Pj4+ICAgICAgICAgfTsNCj4gPj4+Pj4gICAgIH07DQo+ID4+Pj4NCj4gPj4+PiBT
+dHJhbmdlLiBTb21ldGhpbmcgeW91IG1heSBjaGVjayAob3IgZG91YmxlIGNoZWNrIGlmIHlvdSBh
+bHJlYWR5IGRpZCk6DQo+ID4+Pj4NCj4gPj4+PiAxLiBSZWFkIGlmIHRoZSByZWdpc3RlciBoYXMg
+YmVlbiBzZXQ6DQo+ID4+Pj4NCj4gPj4+PiAgICMgbm90IHRlc3RlZCwgY2hlY2sgY2FyZWZ1bGx5
+DQo+ID4+Pj4gICBpMmNnZXQgLXkgLXIgMSAweDZhIDB4NjANCj4gPj4+Pg0KPiA+Pj4+IHRoZSB0
+aHJlZSBsb3cgYml0cyBpbiByZWdpc3RlciAweDYwIHNob3VsZCByZWFkIDB4MSBmb3IgQ01PUywg
+MHg1DQo+ID4+Pj4gZm9yDQo+ID4+IENNT1NELg0KPiA+Pj4NCj4gPj4+IEFwcGFyZW50bHkgdGhl
+IHJlZ2lzdGVyIGlzIG5vdCBnZXR0aW5nIHNldCBwcm9wZXJseS4NCj4gPj4+DQo+ID4+PiBJbiBy
+ZXNwb25zZSB0byAnaTJjZ2V0IC15IC1mIDEgMHg2YSAweDYwJyAoLXIgbm90IHN1cHBvcnRlZCBt
+YXliZSBhDQo+ID4+PiB0eXBvPykNCj4gPj4+DQo+ID4+PiBJIGdldCAweGJiLCB3aGljaCBhY2Nv
+cmRpbmcgdG8gdGhlIHNwZWMgSSBiZWxpZXZlIHNob3VsZCBnaXZlIG1lDQo+ID4+PiBDTU9TRCwN
+Cj4gPj4gd2hpY2ggaXMgd2hhdCBJIGFtIHNlZWluZyAoIChENywgRDYsIEQ1KSA9IDEwMTogQ01P
+U0QgKS4NCj4gPj4+DQo+ID4+PiBJIGNhbiBzZXQgYWRkcmVzcyAweDYwIHRvIDB4M2IgdXNpbmcg
+aTJjc2V0IHRvIGdldCBzaW5nbGUgZW5kZWQgQ01PUy4NCj4gPj4NCj4gPj4gSSBzZWUuIDB4YmIg
+aXMgdGhlIHJlc2V0IGRlZmF1bHQsIHNvIGFzIHlvdSBzYWlkIGl0IGlzIG5vdCBzZXQuDQo+ID4+
+DQo+ID4+Pj4gMi4gQ2hhbmdlIGlkdCxtb2RlIGluIGRldmljZSB0cmVlIGFuZCBzZWUgd2hldGhl
+ciB0aGUgcmVnaXN0ZXINCj4gPj4+PiBjaGFuZ2VzIG9yIHRoZSBzY29wZSBzaG93IGFueSBkaWZm
+ZXJlbnQgb3V0cHV0IG1vZGUuDQo+ID4+Pg0KPiA+Pj4gQ2hhbmdpbmcgaWRlLG1vZGUgdG8gVkM1
+X0xWRFMgZG9lcyBub3QgdGhlIHZhbHVlIG9mIHJlZ2lzdGVyIDB4MDYuDQo+ID4+PiBJIHN0aWxs
+IGdldCBhIHZhbHVlIG9mIDB4YmINCj4gPj4NCj4gPj4gT2ssIGNvaGVyZW50IHdpdGggdGVzdCAx
+Lg0KPiA+Pg0KPiA+Pj4+IDMuIEVuYWJsZSBkZWJ1Z2dpbmcgb3V0cHV0IChzaW1wbGl5IGFkZCAj
+ZGVmaW5lIERFQlVHIG9uIHRvcCBvZg0KPiA+Pj4+IGZpbGUgYW5kIHJlYnVpbGQpLCB0aGVuIHNl
+ZSB3aGV0aGVyIGR1cmluZyBjbGsgcHJlcGFyZSB5b3Ugc2VlIHRoaXMgaW4NCj4gZG1lc2c6DQo+
+ID4+Pj4NCj4gPj4+PiAgIFVwZGF0ZSBvdXRwdXQgLi4uIG1hc2sgMHguLi4gdmFsIDB4Li4uLg0K
+PiA+Pj4+DQo+ID4+Pj4gNC4gQ2hlY2sgd2hldGhlciB0aGUgT1VUMSBub2RlIGlzIGFjdHVhbGx5
+IGZvdW5kIGJ5IGFkZGluZyBhDQo+ID4+Pj4gZGV2X2RiZygpIGluIHZjNV9nZXRfb3V0cHV0X2Nv
+bmZpZygpLCBqdXN0IGJlZm9yZSB0aGUNCj4gPj4+PiBvZl9nZXRfY2hpbGRfYnlfbmFtZSgpIGNh
+bGwgYW5kDQo+ID4+Pj4gfjUgbGluZXMgYmVsb3csIGJldHdlZW4gJ3JldHVybiAwJyBhbmQgdmM1
+X3VwZGF0ZV9tb2RlKCkuDQo+ID4+Pj4NCj4gPj4+PiBMZXQgdXMga25vdyB5b3VyIGZpbmRpbmdz
+Lg0KPiA+Pj4+DQo+ID4+Pg0KPiA+Pj4gU2VlbXMgdG8gYmUgZmluZGluZyB0aGUgbm9kZXMgb2su
+IEhlcmUgaXMgdGhlIHJlbGV2YW50IGNvZGUgc2VjdGlvbjoNCj4gPj4+DQo+ID4+PiAJLy8gdGVt
+cCBmb3IgZHJpdmVyIGRlYnVnDQo+ID4+PiAJZGV2X2RiZygmY2xpZW50LT5kZXYsDQo+ID4+PiAJ
+CQkiZ2V0X291dHB1dF9jb25maWcoYmVmb3JlIG9mX2dldF9jaGlsZF9ieV9uYW1lKQ0KPiA+PiBP
+VVQlZFxuIiwNCj4gPj4+IAkJCWNsa19vdXQtPm51bSArIDEpOw0KPiA+Pj4NCj4gPj4+IAlucF9v
+dXRwdXQgPSBvZl9nZXRfY2hpbGRfYnlfbmFtZShjbGllbnQtPmRldi5vZl9ub2RlLA0KPiA+PiBj
+aGlsZF9uYW1lKTsNCj4gPj4+IAlrZnJlZShjaGlsZF9uYW1lKTsNCj4gPj4+IAlpZiAoIW5wX291
+dHB1dCkNCj4gPj4+IAkJcmV0dXJuIDA7DQo+ID4+Pg0KPiA+Pj4gCS8vIHRlbXAgZm9yIGRyaXZl
+ciBkZWJ1Zw0KPiA+Pj4gCWRldl9kYmcoJmNsaWVudC0+ZGV2LA0KPiA+Pj4gCQkJImdldF9vdXRw
+dXRfY29uZmlnKGJlZm9yZSB1cGRhdGVfbW9kZSkNCj4gPj4gT1VUJWRcbiIsDQo+ID4+PiAJCQlj
+bGtfb3V0LT5udW0gKyAxKTsNCj4gPj4+DQo+ID4+PiAJcmV0ID0gdmM1X3VwZGF0ZV9tb2RlKG5w
+X291dHB1dCwgY2xrX291dCk7DQo+ID4+PiAJaWYgKHJldCkNCj4gPj4+IAkJZ290byBvdXRwdXRf
+ZXJyb3I7DQo+ID4+Pg0KPiA+Pj4gQW5kIGRtZXNnIG91dHB1dDoNCj4gPj4+DQo+ID4+PiAJWyAg
+ICA3LjQ5ODAwNV0gdmM1IDEtMDA2YTogZ2V0X291dHB1dF9jb25maWcoYmVmb3JlDQo+ID4+IG9m
+X2dldF9jaGlsZF9ieV9uYW1lKSAgT1VUMQ0KPiA+Pj4gCVsgICAgNy40OTgwMTddIHZjNSAxLTAw
+NmE6IGdldF9vdXRwdXRfY29uZmlnKGJlZm9yZSB1cGRhdGVfbW9kZSkNCj4gPj4gT1VUMQ0KPiA+
+Pj4gCVsgICAgNy41MTE2MzFdIHZjNSAxLTAwNmE6IGdldF9vdXRwdXRfY29uZmlnKGJlZm9yZQ0K
+PiA+PiBvZl9nZXRfY2hpbGRfYnlfbmFtZSkgIE9VVDINCj4gPj4+IAlbICAgIDcuNTExNjQzXSB2
+YzUgMS0wMDZhOiBnZXRfb3V0cHV0X2NvbmZpZyhiZWZvcmUgdXBkYXRlX21vZGUpDQo+ID4+IE9V
+VDINCj4gPj4+IAlbICAgIDcuNTI1MjU3XSB2YzUgMS0wMDZhOiBnZXRfb3V0cHV0X2NvbmZpZyhi
+ZWZvcmUNCj4gPj4gb2ZfZ2V0X2NoaWxkX2J5X25hbWUpICBPVVQzDQo+ID4+PiAJWyAgICA3LjUy
+NTI3MF0gdmM1IDEtMDA2YTogZ2V0X291dHB1dF9jb25maWcoYmVmb3JlIHVwZGF0ZV9tb2RlKQ0K
+PiA+PiBPVVQzDQo+ID4+PiAJWyAgICA3LjUzODkwNV0gdmM1IDEtMDA2YTogZ2V0X291dHB1dF9j
+b25maWcoYmVmb3JlDQo+ID4+IG9mX2dldF9jaGlsZF9ieV9uYW1lKSAgT1VUNA0KPiA+Pj4gCVsg
+ICAgNy41Mzg5MTldIHZjNSAxLTAwNmE6IGdldF9vdXRwdXRfY29uZmlnKGJlZm9yZSB1cGRhdGVf
+bW9kZSkNCj4gPj4gT1VUNA0KPiA+Pg0KPiA+PiBTbyB0aGUgdmFsdWVzIGFyZSBwaWNrZWQgdXAg
+ZnJvbSBEVCBhbmQgaWYgeW91IHByaW50IHRoZSBjb250ZW50IG9mDQo+ID4+IGNsa19vdXQtDQo+
+ID4+PiBjbGtfb3V0cHV0X2NmZzBbX21hc2tdIHlvdSBzaG91bGQgc2VlIHRoZSBjb3JyZWN0IHJl
+Z2lzdGVyIHZhbHVlcy4NCj4gPj4NCj4gPj4gTm93IHRoZSByZWxldmFudCBxdWVzdGlvbiBpcyBx
+dWVzdGlvbiAzOiBkbyB5b3UgZW50ZXIgdGhlICdpZg0KPiA+PiAoaHdkYXRhLQ0KPiA+Pj4gY2xr
+X291dHB1dF9jZmcwX21hc2spJyBpbiB2YzVfY2xrX291dF9wcmVwYXJlKCk/IERvIHlvdSBldmVu
+IGVudGVyDQo+ID4+IHZjNV9jbGtfb3V0X3ByZXBhcmUoKT8NCj4gPj4NCj4gPj4gWW91IGNhbiBh
+ZGQgZGV2X2RiZygpcyB0aGVyZSBhbmQgdHJhY2sgdGhlIHByb2JsZW0gb24geW91ciBvd24uIElm
+DQo+ID4+IHJlZ21hcF91cGRhdGVfYml0cyguLi5od2RhdGEtPmNsa19vdXRwdXRfY2ZnMCkgaXMg
+bm90IGNhbGxlZCB0aGVuIHRoZQ0KPiA+PiBjb2RlIGlzIG5vdCBkb2luZyB0aGUgcmlnaHQgdGhp
+bmcuIElmIGl0IGlzIGNhbGxlZCBhbmQgcmV0dXJucyBubw0KPiA+PiBlcnJvciwgdGhlbiBpdCBs
+b29rcyBsaWtlIHRoZXJlIGlzIGEgcHJvYmxlbSBpbiB0aGUgaTJjIGNvbnRyb2xsZXINCj4gPj4g
+d2hpY2ggdGhpbmtzIGl0IGhhcyBkb25lIHRoZSB0cmFuc2FjdGlvbiBidXQgaXQgcmVhbGx5IGhh
+c24ndC4gT3Igc29tZSBvdGhlcg0KPiBteXN0ZXJ5Lg0KPiA+Pg0KPiA+PiAtLQ0KPiA+PiBMdWNh
+DQo+ID4NCj4gPiBJIGFkZGVkIGEgZmV3IGRlYnVnIHN0YXRlbWVudHMgYW5kIEkgc2VlIHRoYXQg
+dmM1X2Nsa19vdXRfcHJlcGFyZSgpIGlzDQo+IG5vdCBiZWluZyBjYWxsZWQuDQo+IA0KPiBNeSBi
+YWQsIEkgd2FzIHF1aXRlIHN1cmUgYXNzaWduZWQtY2xvY2tzIGFsc28gZW5hYmxlcyB0aGUgY2xv
+Y2suIDotLyBBcG9sb2dpZXMNCj4gZm9yIGhhdmluZyBsZWQgeW91IHRvIGEgZGVhZCBlbmQuDQoN
+Ck5vIHByb2JsZW0uICBZb3UgaGF2ZSBiZWVuIGEgdHJlbWVuZG91cyBoZWxwIQ0KDQo+IA0KPiA+
+IFNvIHBlcmhhcHMgdGhpcyB0aWVzIGJhY2sgdG8gdGhlIHBvaW50IEFkYW0gbWFkZSBlYXJsaWVy
+IGFib3V0IHRoZWlyDQo+IG5lZWRpbmcgdG8gYmUgYSBjb25zdW1lciBkcml2ZXIgdGhhdCBlbmFi
+bGVzIHRoZSByZWZlcmVuY2UgY2xvY2sgYmVjYXVzZSBpdA0KPiBpcyBub3QgZW5hYmxlZCBieSBk
+ZWZhdWx0LiAgRm9yIG15IGFwcGxpY2F0aW9uIHRoZXJlIGlzIG5vIGNvbnN1bWVyIGRyaXZlciwg
+SQ0KPiBvbmx5IGhhdmUgdGhlIGRldmljZSB0cmVlLg0KPiANCj4gV2VsbCwgdGhpcyBpcyBjbGVh
+cmx5IHRoZSAiY29ycmVjdCIgdGhpbmcgdG8gZG8uIEhvd2V2ZXIgaXQncyB1bmNvbW1vbiB0aGF0
+DQo+IHlvdSBoYXZlIG5vIGNvbnN1bWVyIGRyaXZlci4gV2hhdCBpcyB0aGUgZGV2aWNlIHRoYXQg
+dXNlcyB0aGF0IGNsb2NrIGFuZA0KPiB3aHkgZG9lcyBpdCBoYXZlIG5vIGRyaXZlcj8gSXMgaXQg
+YSBkZXZpY2UgdGhhdCAianVzdCB3b3JrcyINCj4gaW4gdGhlIGV4cGVjdGVkIHdheSB3aXRob3V0
+IGFueSBjb25maWd1cmF0aW9uPyBJcyBpdCBldmVuIGF2dmVzc2libGUgYnkgdGhlDQo+IENQVT8N
+Cj4gDQo+IFlvdSBtaWdodCBjb25zaWRlciB3cml0aW5nIGEgImR1bW15IiBkcml2ZXIsIHdpdGgg
+anVzdCBhIHNpbXBsZSBwcm9iZSgpDQo+IGZ1bmN0aW9uIHRoYXQgZG9lcyBkZXZtX2Nsa19nZXQg
+YW5kIGNsa19wcmVwYXJlX2VuYWJsZSgpLiBZb3UnbGwgZmluZCBtYW55DQo+IGV4YW1wbGVzIGlu
+IHRoZSBrZXJuZWwuIGlzIGl0IGRvYWJsZT8NCj4gDQo+ID4gSW4gbXkgbG9jYWwgY29weSBvZiB0
+aGUgZHJpdmVyIHRoYXQgYWRkcyBhbiAnaWR0LGVuYWJsZScgcGF0dGVybiBwcm9wZXJ0eSBJIGNh
+bGwNCj4gdmM1X2Nsa19vdXRfcHJlcGFyZSgpIGlmIGlkdCxlbmFibGUgaXMgc2V0IGZvciBhbiBv
+dXRwdXQuICBUaGVyZSBtYXkgYmUgYQ0KPiBjbGVhbmVyIHdheSwgYnV0IHRoaXMgc2VlbXMgdG8g
+YWxsb3cgZW5hYmxpbmcgb2Ygb3V0cHV0cyBmcm9tIHRoZSBkZXZpY2UNCj4gdHJlZS4NCj4gPg0K
+PiA+IEkgZGlkIHRoZSBmb2xsb3dpbmc6DQo+ID4NCj4gPiAgICAgICAgIC8vIGlkdCxlbmFibGUg
+bW9kOiBhZGQgc3RydWN0IGNsa19odyAqaHcgIGFyZw0KPiA+ICAgICAgICAgc3RhdGljIGludCB2
+YzVfZ2V0X291dHB1dF9jb25maWcoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4gPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCB2YzVfb3V0X2RhdGEgKmNs
+a19vdXQsIHN0cnVjdCBjbGtfaHcgKmh3KQ0KPiA+ICAgICAgICAgew0KPiA+ICAgICAgICAgICAg
+IC4uLg0KPiA+ICAgICAgICAgICAgIHJldCA9IHZjNV91cGRhdGVfc2xldyhucF9vdXRwdXQsIGNs
+a19vdXQpOw0KPiA+DQo+ID4gICAgICAgICAgICAgLy8gaWR0LGVuYWJsZSBtb2Q6IGNhbGwgdG8g
+dmM1X3VwZGF0ZV9lbmFibGUoKQ0KPiA+ICAgICAgICAgICAgIHJldCA9IHZjNV91cGRhdGVfZW5h
+YmxlKG5wX291dHB1dCwgaHcpOw0KPiA+ICAgICAgICAgICAgIGlmIChyZXQpDQo+ID4gICAgICAg
+ICAgICAgICAgIGdvdG8gb3V0cHV0X2Vycm9yOw0KPiA+DQo+ID4gQW5kOg0KPiA+DQo+ID4gICAg
+ICAgICAvLyBiZWdpbiBpZHQsZW5hYmxlIG1vZA0KPiA+ICAgICAgICAgc3RhdGljIGludCB2YzVf
+dXBkYXRlX2VuYWJsZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wX291dHB1dCwNCj4gPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNsa19odyAqaHcpDQo+ID4gICAgICAg
+ICB7DQo+ID4gICAgICAgICAgICAgdTMyIHZhbHVlOw0KPiA+DQo+ID4gICAgICAgICAgICAgaWYg
+KCFvZl9wcm9wZXJ0eV9yZWFkX3UzMihucF9vdXRwdXQsICJpZHQsZW5hYmxlIiwgJnZhbHVlKSkg
+ew0KPiA+ICAgICAgICAgICAgICAgICBpZiAodmFsdWUpIHsNCj4gPiAgICAgICAgICAgICAgICAg
+ICAgIHZjNV9jbGtfb3V0X3ByZXBhcmUoaHcpOw0KPiA+ICAgICAgICAgICAgICAgICB9IGVsc2Ug
+ew0KPiA+ICAgICAgICAgICAgICAgICAgICAgdmM1X2Nsa19vdXRfdW5wcmVwYXJlKGh3KTsNCj4g
+PiAgICAgICAgICAgICAgICAgfQ0KPiA+ICAgICAgICAgICAgIH0NCj4gPiAgICAgICAgICAgICBy
+ZXR1cm4gMDsNCj4gPiAgICAgICAgIH0NCj4gPiAgICAgICAgIC8vIGVuZCBpZHQsZW5hYmxlIG1v
+ZA0KPiANCj4gVGhpcyBpcyBub3QgdGhlICJleHBlY3RlZCIgd2F5IHRvIGRvIGl0IGluIHRoZSBr
+ZXJuZWwsIEkgd291bGQgY2FsbCBpdCBhIHNob3J0Y3V0DQo+IGZvciBub3Qgd3JpdGluZyBhIGNv
+bnN1bWVyIGRyaXZlci4gSG93ZXZlciBpZiBpdCBpcyBlbm91Z2ggZm9yIHlvdSBhbmQgeW91DQo+
+IGRvbid0IG1pbmQgbWFpbnRhaW5pbmcgdGhpcyBtb2RpZmljYXRpb24gaW4geW91ciBvd24ga2Vy
+bmVsIGZvcmssIGl0IHdpbGwgZG8uDQo+IE9ubHksIGlmIHdlcmUgbWUsIEkgd291bGQgd3JpdGUg
+YSBzaW1wbGUsIGR1bW15IGRyaXZlciBmb3IgdGhlIGNvbnN1bWVyDQo+IGRldmljZSB0byBoYXZl
+IHRoaW5ncyBjbGVhbiwgbGVhcm4gc29tZXRoaW5nIGFuZCwgd2VsbCwgaGF2ZSBmdW4uDQo+IA0K
+PiAtLQ0KPiBMdWNhDQoNCkluIG91ciBhcHBsaWNhdGlvbiB0aGUgcmVxdWlyZW1lbnQgb25seSB0
+aGF0IHdlIHNldCB0aGUgY2xvY2sgZnJlcXVlbmNpZXMgYXQgYm9vdCB0aW1lIHNvIGRldmljZSB0
+cmVlIGlzIHN1ZmZpY2llbnQuICBUaGF0IGJlaW5nIHNhaWQsIEkgaG9wZSB0byB3b3JrIG9uIGEg
+c2ltcGxlIGNvbnN1bWVyIGRyaXZlciBuZXh0LiAgVGhvdWdodCBpcyB0byBhbGxvdyB1c2VyIHRv
+IG1ha2UgY2hhbmdlcyB2aWEgY29uZmlnIGZpbGUgb3Igc29tZXRoaW5nIHNpbWlsYXIuICBBcyB5
+b3Ugc2F5IHNob3VsZCBiZSBmdW4hDQoNClRoYW5rcyBhZ2FpbiBmb3IgYWxsIHRoZSBoZWxwIHlv
+dSBhbmQgb3RoZXJzIGhhdmUgcHJvdmlkZWQuDQoNCi1DbGF1ZGUNCgo9PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ClRo
+aXMgbWVzc2FnZSBhbmQgYW55IGF0dGFjaG1lbnRzIGFyZSBpbnRlbmRlZCBvbmx5IGZvciB0aGUg
+ZGVzaWduYXRlZCByZWNpcGllbnQocykgYW5kIG1heSBjb250YWluIGNvbmZpZGVudGlhbCBvciBw
+cm9wcmlldGFyeSBpbmZvcm1hdGlvbiBhbmQgYmUgc3ViamVjdCB0byB0aGUgYXR0b3JuZXktY2xp
+ZW50IHByaXZpbGVnZSBvciBvdGhlciBjb25maWRlbnRpYWxpdHkgcHJvdGVjdGlvbnMuICBJZiB5
+b3UgYXJlIG5vdCBhIGRlc2lnbmF0ZWQgcmVjaXBpZW50LCB5b3UgbWF5IG5vdCByZXZpZXcsIHVz
+ZSwgY29weSBvciBkaXN0cmlidXRlIHRoaXMgbWVzc2FnZSBvciBhbnkgYXR0YWNobWVudHMuICBJ
+ZiB5b3UgcmVjZWl2ZWQgdGhpcyBlbWFpbCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2Vu
+ZGVyIGJ5IHJlcGx5IGUtbWFpbCBhbmQgcGVybWFuZW50bHkgZGVsZXRlIHRoZSBvcmlnaW5hbCBh
+bmQgYW55IGNvcGllcyBvZiB0aGlzIG1lc3NhZ2UgYW5kIGFueSBhdHRhY2htZW50cyB0aGVyZXRv
+LiAgVGhhbmsgeW91Lgo=
