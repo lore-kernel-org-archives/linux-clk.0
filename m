@@ -2,60 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F295BC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7F8C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236652AbiCISZq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Mar 2022 13:25:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44096 "EHLO
+        id S236189AbiCISkd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Mar 2022 13:40:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236447AbiCISZe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:25:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B73674E6;
-        Wed,  9 Mar 2022 10:24:27 -0800 (PST)
+        with ESMTP id S232677AbiCISkc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:40:32 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365841704D7;
+        Wed,  9 Mar 2022 10:39:33 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8900761670;
-        Wed,  9 Mar 2022 18:24:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD693C340E8;
-        Wed,  9 Mar 2022 18:24:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D974CB8232E;
+        Wed,  9 Mar 2022 18:39:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992C8C340E8;
+        Wed,  9 Mar 2022 18:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646850266;
-        bh=XVe6hQddOEoUOdatIlL3UN6Z9+g4NeqXw/MGBTd0ohI=;
+        s=k20201202; t=1646851170;
+        bh=A1WR8Wa0q1Tb60p8NvM8B+XJXSA09o36ZvVXUiktXhQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oPnm9Kjx0Df4PQFYrsBuv/qvOtTptQNNErvs9lz8pYkdTREQJg7jr8+D52+gSKixs
-         QVke9DG+ldd6ylDCKr86ew31CovsoiF8WwuvbZ2E1WZkAnBGDbyuM35+GYhefVZMbN
-         XP6OJJVFz6PpuNcAAHS9p7tDVNBKCF/JE8OVWYo5hMyM4unosoCG360jJl3yoqhxGZ
-         9J5pxGzcl9wnNMf8eqXF9mSs0rJP1PajyfP1NTOeCkNOPJ1qwhqQNwQslfz6zfbI+d
-         t45kEx6k+UnHmPHwTZAyIQkEY4Di12Zo1mGxNE0gQdObOrfBX10/HXhLjhyhZg911K
-         n88ntACiKV9Lw==
+        b=Prw/oGXFFzVWobc/hScuBsVUV9ti3ml5QS3Aj/hbhdQKs1BGgm8t9+zTq7BQvhrfY
+         a+wdQJPv6b6f3Es1uCUhT7W6E3JsYKkgRhQQcTlpDQsW0RcqcsUssVKo+8DQ0QASDD
+         YVL3wxDR06QnurH4hHv5EBNFzI19cgWzZGailF7NuSwZT8j4rYNuwdfv9qZnwsBEbF
+         g7g2SrZ3ar0DFFln4fJ3JG7GuFQkDE1U26bdHMR6pyFmiZBjgrsy8nB+csq48RxCfK
+         8WfzSvR4r7q5kn7285DmpTt41xukXc1SUIWcym2x8lKsv+q4Rk20XOTwjAWsQiSe+J
+         BugY1LPjdap/Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YiHfinMkAQIAQBci@abelvesa>
-References: <20220216132214.258865-1-abel.vesa@nxp.com> <YiHfinMkAQIAQBci@abelvesa>
-Subject: Re: [PATCH] MAINTAINERS: clk: imx: add git tree and dt-bindings files
+In-Reply-To: <20220303090508.1125175-1-colin.i.king@gmail.com>
+References: <20220303090508.1125175-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] clk: imx: remove redundant re-assignment of pll->base
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Date:   Wed, 09 Mar 2022 10:24:24 -0800
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Colin Ian King <colin.i.king@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Date:   Wed, 09 Mar 2022 10:39:28 -0800
 User-Agent: alot/0.10
-Message-Id: <20220309182425.DD693C340E8@smtp.kernel.org>
+Message-Id: <20220309183930.992C8C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2022-03-04 01:44:42)
-> On 22-02-16 15:22:14, Abel Vesa wrote:
-> > The i.MX clocks dt-bindings are going through the same tree as
-> > the drivers, so add them to the same entry. Also add the git
-> > tree and branch used.
-> >=20
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Quoting Colin Ian King (2022-03-03 01:05:08)
+> There are two identical assignments of pll->base to the same value,
+> the second assignment is redundant and can be removed.
 >=20
-> Stephen, will you be picking up this yourself ?
+> Cleans up cppcheck warning:
+> drivers/clk/imx/clk-sscg-pll.c:528:12: style: Variable 'pll->base' is
+> reassigned a value before the old one has been used. [redundantAssignment]
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-Sure.
+Applied to clk-next
