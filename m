@@ -2,93 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D86C433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 18:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76667C433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Mar 2022 20:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236943AbiCIS6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Mar 2022 13:58:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
+        id S236787AbiCIUzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Mar 2022 15:55:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbiCIS6k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 13:58:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5371FCEE;
-        Wed,  9 Mar 2022 10:57:41 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S235059AbiCIUzj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Mar 2022 15:55:39 -0500
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB02674FD;
+        Wed,  9 Mar 2022 12:54:39 -0800 (PST)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9671DB82357;
-        Wed,  9 Mar 2022 18:57:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2192EC340EC;
-        Wed,  9 Mar 2022 18:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646852258;
-        bh=823gQkzc3z2Ax/PB0AF2EV05ZOJdbyNdg1TPhRMlf2Q=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FuJ4NbNq6ZUsKFhmbJ2zFX5viVTa8gA45bLJJZRHiFOzTeSCo3hBGt/tPAM32fL0z
-         ooTODTKvoDEPUwxniaQSdeA8mFp02c4vFjMPMLJ4hvz5j+lRhUJds/ZlgHbDqyPr3A
-         fD0ZaKpYDQGnxagXfQJ0s4CXXOIeP93L1/3+m/yPbauUZD6dLxFOQ5UrWPIZ/BPnHB
-         tkD+2moevzlwOtOY5NVtvxqIFKqQ4cn3FzcfbjYzqUQd2iBEOmE8HZYvbgCuCx+xKL
-         gS7if2l5nKWHcrAOCK73sr+mm47SCj3LqlTASTm868D8aSod/TWX98LeI4xfcbMqCz
-         VDUrsMZZo2MCA==
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 725758399E;
+        Wed,  9 Mar 2022 21:54:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1646859276;
+        bh=8x9ip6XskdTCS9XgTDpegWPGD+ym4XXbveavhXy7Du8=;
+        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+        b=LPpae7pt9aj2l56OhJ5fuVX8wnAlcVGcpjTHW7NS0u396W6fWRmGWZGCo1QC5vUm6
+         Lyfpr1ZFsO5+0kVTrCbNPA5kX+/PMDrgduHIQk2QT+PFTecHsZqz55BMbekXn7+eYr
+         82qzeJXk1bDX/+dQHE+IBetF2sp7bK5bUTn1jt0+k6VjU7crfSThWQ7pdzbWlI3uJ/
+         mlJvFZK9hfhFj1lFRGDY8jqHzUgy3jc4wgUETAYFhhJqyGStm8VzX6PYvh7bQ3vRkA
+         XkidNvg0sBAhTfgK0HEGQGny2Xr9LNJM7O5IQgC5w0uAGFgDekAInIbPUs7TaD9XPt
+         3GZeB9YVgZbbg==
+Message-ID: <4f1b946d-ee82-bd0e-c51e-100c23b87fdf@denx.de>
+Date:   Wed, 9 Mar 2022 21:54:35 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220304011703.2061466-1-chi.minghao@zte.com.cn>
-References: <20220304011703.2061466-1-chi.minghao@zte.com.cn>
-Subject: Re: [PATCH] clk/rockchip: Use of_device_get_match_data()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     heiko@sntech.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-To:     cgel.zte@gmail.com, mturquette@baylibre.com
-Date:   Wed, 09 Mar 2022 10:57:36 -0800
-User-Agent: alot/0.10
-Message-Id: <20220309185738.2192EC340EC@smtp.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH 2/3] clk: Introduce 'critical-clocks' property
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20220215084412.8090-1-marex@denx.de>
+ <20220215084412.8090-2-marex@denx.de>
+ <20220217222328.7F7B3C340E8@smtp.kernel.org>
+ <77c85470-5378-8c8b-8e5f-d57c83773ed6@denx.de>
+In-Reply-To: <77c85470-5378-8c8b-8e5f-d57c83773ed6@denx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting cgel.zte@gmail.com (2022-03-03 17:17:03)
-> From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
->=20
-> Use of_device_get_match_data() to simplify the code.
->=20
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
-> ---
->  drivers/clk/rockchip/clk-rk3399.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk=
--rk3399.c
-> index 306910a3a0d3..b1b67bfb63b8 100644
-> --- a/drivers/clk/rockchip/clk-rk3399.c
-> +++ b/drivers/clk/rockchip/clk-rk3399.c
-> @@ -1634,14 +1634,8 @@ static const struct of_device_id clk_rk3399_match_=
-table[] =3D {
->  static int __init clk_rk3399_probe(struct platform_device *pdev)
->  {
->         struct device_node *np =3D pdev->dev.of_node;
-> -       const struct of_device_id *match;
->         const struct clk_rk3399_inits *init_data;
-> -
-> -       match =3D of_match_device(clk_rk3399_match_table, &pdev->dev);
-> -       if (!match || !match->data)
-> -               return -EINVAL;
-> -
-> -       init_data =3D match->data;
-> +       init_data =3D of_device_get_match_data(&pdev->dev);
+On 2/21/22 01:58, Marek Vasut wrote:
+> On 2/17/22 23:23, Stephen Boyd wrote:
+>> Quoting Marek Vasut (2022-02-15 00:44:11)
+>>> Some platforms require clock to be always running, e.g. because those 
+>>> clock
+>>> supply devices which are not otherwise attached to the system. One 
+>>> example
+>>> is a system where the SoC serves as a crystal oscillator replacement 
+>>> for a
+>>> programmable logic device. The critical-clock property of a clock 
+>>> controller
+>>> allows listing clock which must never be turned off.
+>>>
+>>> The implementation here is similar to "protected-clock", except 
+>>> protected
+>>> clock property is currently driver specific. This patch attempts to make
+>>> a generic implementation of "critical-clock" instead.
+>>>
+>>> Unlike "assigned-clocks", the "critical-clock" must be parsed much 
+>>> earlier
+>>> in __clk_register() to assign CLK_IS_CRITICAL flag to clk_init_data 
+>>> .flags
+>>> field. The parsing code obviously need to be cleaned up and factor 
+>>> out into
+>>> separate function.
+>>>
+>>> The new match_clkspec() callback is used to determine whether struct 
+>>> clk_hw
+>>> that is currently being registered matches the clock specifier in the DT
+>>> "critical-clock" property, and if so, then the CLK_IS_CRITICAL is 
+>>> added to
+>>> these newly registered clock. This callback is currently driver 
+>>> specific,
+>>> although I suspect a common and/or generic version of the callback could
+>>> be added. Also, this new callback could possibly be used to replace 
+>>> (*get)
+>>> argument of of_clk_add_hw_provider() later on too.
+>>
+>> I don't see any mention of of_clk_detect_critical() here. We don't want
+>> to enshrine the critical clk flag in DT. There was a bunch of discussion
+>> about this on the mailing list years ago and the end result was this
+>> instantly deprecated function to set the flag based on a DT property.
+>> That thread isn't mentioned here either.
+> 
+> I wasn't aware of clock-critical DT prop, but it seems deprecated and 
+> not generic enough anyway.
+> 
+>> I see that there isn't any more 'clock-critical' in the kernel's dts so
+>> I wonder if we would be able to get rid of that function or at least
+>> hollow it out and see if anyone complains. Either way, what is the
+>> actual problem trying to be solved? If the crystal oscillator isn't used
+>> anywhere in the kernel why are we registering it with the clk framework?
+> 
+> The problem is the other way around -- the SoC clock IPs often have a 
+> couple of general purpose clock routed to various SoC IO pins, those 
+> clock can be used for any purpose, and those are already registered with 
+> kernel clock framework. Some devices save on BoM and use those general 
+> purpose clock to supply clock networks which are otherwise not 
+> interacting with the kernel, like some CPLD for example. Since from the 
+> kernel point of view, those clock are unused, the kernel can turn those 
+> clock OFF and that will make the entire device fail.
+> 
+> So this critical-clocks property permits marking clock which must not 
+> ever be turned OFF accordingly.
 
-The translation doesn't look equivalent. Before we would bail out of
-probe if match data isn't there with an error. That isn't possible of
-course with further investigation but please make a note of this in the
-commit text to aid review. Also, please don't send new versions of
-patches in reply to previous versions of patches. It breaks my patch
-workflow. Thanks in advance.
-
->         if (init_data->inits)
->                 init_data->inits(np);
->
+How can we proceed here ?
