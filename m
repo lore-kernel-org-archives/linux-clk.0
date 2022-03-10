@@ -2,68 +2,208 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1C6C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 12:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC90C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 13:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241862AbiCJMD2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 07:03:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59874 "EHLO
+        id S242446AbiCJNhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 08:37:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241879AbiCJMD0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 07:03:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84E7655C;
-        Thu, 10 Mar 2022 04:02:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7528C61876;
-        Thu, 10 Mar 2022 12:02:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D7796C340EB;
-        Thu, 10 Mar 2022 12:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646913744;
-        bh=PNe2iwu5r38ZoHjpa4VmSnAPzCtR15WtnbU46e68JP4=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=pVn9F71no8Emq5U5+8T553Xt3P5NoQ+ZoAEk5ajtdsS8lBnOXlrfCTDphZOHOEHis
-         E8B4ZMPfN+j28whtKUJcQEAP85ohkIkeITiSMrCKp4kmkm/DZwMGEYhosGEmXPQAmN
-         kHMJ4+XJc4u3gGTcT6mW3/1B73eFGMIMQascXoJ40WjjQxDxEF7G40Isd8o6rhyiFy
-         uUzzIlB8rywL2+I39crltRpQjzRlXz9bfWsM81zhTgKEYG5FBCa3q3PXqTjW28B8qg
-         f68dfezv76jNAYJDftWanx+cBVERQQgDVXPRmLmBie1ejypaVos7VH6dy/CNuGjAfI
-         DD7Vy7pZyR4vw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C4B29E8DD5B;
-        Thu, 10 Mar 2022 12:02:24 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v5.17-rc7
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220310043112.3908132-1-sboyd@kernel.org>
-References: <20220310043112.3908132-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220310043112.3908132-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: aa091a6a91df395a0fa00a808a543301ec99e734
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9c674947f6112e4d68715e9f363c6698c2b0eead
-Message-Id: <164691374480.28854.18227610351154161128.pr-tracker-bot@kernel.org>
-Date:   Thu, 10 Mar 2022 12:02:24 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S242445AbiCJNhk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 08:37:40 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1623D14E958;
+        Thu, 10 Mar 2022 05:36:34 -0800 (PST)
+X-UUID: bea02a7fddde472dbc27cfea5490503d-20220310
+X-UUID: bea02a7fddde472dbc27cfea5490503d-20220310
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 265800282; Thu, 10 Mar 2022 21:36:29 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Thu, 10 Mar 2022 21:36:27 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 10 Mar 2022 21:36:27 +0800
+Message-ID: <d80c89fd5fb704ed03244a7e333d59d0ee972e8f.camel@mediatek.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: ARM: Mediatek: Add new document
+ bindings of MT8186 clock
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Thu, 10 Mar 2022 21:36:27 +0800
+In-Reply-To: <YhkmnnIApvU7gRlZ@robh.at.kernel.org>
+References: <20220221015258.913-1-chun-jie.chen@mediatek.com>
+         <20220221015258.913-2-chun-jie.chen@mediatek.com>
+         <YhkmnnIApvU7gRlZ@robh.at.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Wed,  9 Mar 2022 20:31:12 -0800:
+On Fri, 2022-02-25 at 12:57 -0600, Rob Herring wrote:
+> On Mon, Feb 21, 2022 at 09:52:44AM +0800, Chun-Jie Chen wrote:
+> > This patch adds the new binding documentation for system clock
+> > and functional clock on Mediatek MT8186.
+> > 
+> > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> > ---
+> >  .../arm/mediatek/mediatek,mt8186-clock.yaml   |  56 +++
+> >  .../mediatek/mediatek,mt8186-sys-clock.yaml   |  54 +++
+> >  include/dt-bindings/clock/mt8186-clk.h        | 445
+> > ++++++++++++++++++
+> >  3 files changed, 555 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > clock.yaml
+> >  create mode 100644
+> > Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-
+> > clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/mt8186-clk.h
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > clock.yaml
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > clock.yaml
+> > new file mode 100644
+> > index 000000000000..373e8a100da3
+> > --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > clock.yaml
+> > @@ -0,0 +1,56 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: "
+> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-clock.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRWfJmMCT$
+> >  "
+> > +$schema: "
+> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRfM3OA21$
+> >  "
+> > +
+> > +title: Mediatek Functional Clock Controller for MT8186
+> > +
+> > +maintainers:
+> > +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> > +
+> > +description:
+> 
+> You need a '|' to preserve the formatting.
+> 
+> > +  The clock architecture in Mediatek like below
+> > +  PLLs -->
+> > +          dividers -->
+> > +                      muxes
+> > +                           -->
+> > +                              clock gate
+> > +
+> > +  The devices provide clock gate control in different IP blocks.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - mediatek,mt8186-imp_iic_wrap
+> > +          - mediatek,mt8186-mfgsys
+> > +          - mediatek,mt8186-wpesys
+> > +          - mediatek,mt8186-imgsys1
+> > +          - mediatek,mt8186-imgsys2
+> > +          - mediatek,mt8186-vdecsys
+> > +          - mediatek,mt8186-vencsys
+> > +          - mediatek,mt8186-camsys
+> > +          - mediatek,mt8186-camsys_rawa
+> > +          - mediatek,mt8186-camsys_rawb
+> > +          - mediatek,mt8186-mdpsys
+> > +          - mediatek,mt8186-ipesys
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    imp_iic_wrap: clock-controller@11017000 {
+> > +        compatible = "mediatek,mt8186-imp_iic_wrap";
+> > +        reg = <0x11017000 0x1000>;
+> > +        #clock-cells = <1>;
+> > +    };
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > sys-clock.yaml
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > sys-clock.yaml
+> > new file mode 100644
+> > index 000000000000..4c071dd66b76
+> > --- /dev/null
+> > +++
+> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
+> > sys-clock.yaml
+> > @@ -0,0 +1,54 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: "
+> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-sys-clock.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRRtmGvUx$
+> >  "
+> > +$schema: "
+> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRfM3OA21$
+> >  "
+> > +
+> > +title: Mediatek System Clock Controller for MT8186
+> > +
+> > +maintainers:
+> > +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> > +
+> > +description:
+> 
+> And here.
+> 
+> With that,
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Ok, I will fix it in next version.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9c674947f6112e4d68715e9f363c6698c2b0eead
+Thanks!
 
-Thank you!
+> > +  The clock architecture in Mediatek like below
+> > +  PLLs -->
+> > +          dividers -->
+> > +                      muxes
+> > +                           -->
+> > +                              clock gate
+> > +
+> > +  The apmixedsys provides most of PLLs which generated from SoC
+> > 26m.
+> > +  The topckgen provides dividers and muxes which provide the clock
+> > source to other IP blocks.
+> > +  The infracfg_ao provides clock gate in peripheral and
+> > infrastructure IP blocks.
+> > +  The mcusys provides mux control to select the clock source in AP
+> > MCU.
+> > +  The device nodes also provide the system control capacity for
+> > configuration.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
