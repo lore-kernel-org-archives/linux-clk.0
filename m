@@ -2,235 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B58C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 06:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D71FFC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 08:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236189AbiCJGiO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 01:38:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55716 "EHLO
+        id S240170AbiCJIEU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 03:04:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237458AbiCJGhg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 01:37:36 -0500
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8EAFF12F155
-        for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 22:36:19 -0800 (PST)
-X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
-        LIVER,40,3)
-Received: from 172.28.114.216
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(26038:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Thu, 10 Mar 2022 14:29:00 +0800 (CST)
-From:   Qin Jian <qinjian@cqplus1.com>
-To:     robh+dt@kernel.org
-Cc:     krzk@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        tglx@linutronix.de, maz@kernel.org, p.zabel@pengutronix.de,
-        linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de,
-        stefan.wahren@i2se.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>
-Subject: [PATCH v10 04/10] reset: Add Sunplus SP7021 reset driver
-Date:   Thu, 10 Mar 2022 14:28:43 +0800
-Message-Id: <bf6e958891901893bdef6e6b49adac52ea8b1d76.1646892810.git.qinjian@cqplus1.com>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <cover.1646892810.git.qinjian@cqplus1.com>
-References: <cover.1646892810.git.qinjian@cqplus1.com>
+        with ESMTP id S231814AbiCJIET (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 03:04:19 -0500
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24DDD48385;
+        Thu, 10 Mar 2022 00:03:17 -0800 (PST)
+Received: from localhost.localdomain (unknown [124.16.138.126])
+        by APP-05 (Coremail) with SMTP id zQCowABnVkGysClibGjFAg--.11037S2;
+        Thu, 10 Mar 2022 16:02:59 +0800 (CST)
+From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
+To:     abel.vesa@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Subject: [PATCH] clk: imx: Add check for kcalloc
+Date:   Thu, 10 Mar 2022 16:02:57 +0800
+Message-Id: <20220310080257.1988412-1-jiasheng@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowABnVkGysClibGjFAg--.11037S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrury5Jw45GFykAw1UWryxGrg_yoW3Xrg_Ga
+        yrJrn7Grs8tFnayF1UAr1rZr9Yvwn7Zr4xW3WavFy3J3y7Ar17J3yjvws3Xr17GrWj9FZx
+        C34qkrWxCr9xujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbxkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+        Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+        n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+        0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+        IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+        AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+        Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
+        XdbUUUUUU==
+X-Originating-IP: [124.16.138.126]
+X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add reset driver for Sunplus SP7021 SoC.
+As the potential failure of the kcalloc(),
+it should be better to check it in order to
+avoid the dereference of the NULL pointer.
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Qin Jian <qinjian@cqplus1.com>
+Fixes: 379c9a24cc23 ("clk: imx: Fix reparenting of UARTs not associated with stdout")
+Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 ---
- MAINTAINERS                   |   1 +
- drivers/reset/Kconfig         |   9 +++
- drivers/reset/Makefile        |   1 +
- drivers/reset/reset-sunplus.c | 130 ++++++++++++++++++++++++++++++++++
- 4 files changed, 141 insertions(+)
- create mode 100644 drivers/reset/reset-sunplus.c
+ drivers/clk/imx/clk.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 652f42cab..6caffd6d0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2662,6 +2662,7 @@ S:	Maintained
- W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
- F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
- F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
-+F:	drivers/reset/reset-sunplus.c
- F:	include/dt-bindings/reset/sp-sp7021.h
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index 7cc669934253..99249ab361d2 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -173,6 +173,8 @@ void imx_register_uart_clocks(unsigned int clk_count)
+ 		int i;
  
- ARM/Synaptics SoC support
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index be799a5ab..fb14456a8 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -224,6 +224,15 @@ config RESET_SOCFPGA
- 	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
- 	  driver gets initialized early during platform init calls.
+ 		imx_uart_clocks = kcalloc(clk_count, sizeof(struct clk *), GFP_KERNEL);
++		if (!imx_uart_clocks)
++			return;
  
-+config RESET_SUNPLUS
-+	bool "Sunplus SoCs Reset Driver" if COMPILE_TEST
-+	default ARCH_SUNPLUS
-+	help
-+	  This enables the reset driver support for Sunplus SoCs.
-+	  The reset lines that can be asserted and deasserted by toggling bits
-+	  in a contiguous, exclusive register space. The register is HIWORD_MASKED,
-+	  which means each register hold 16 reset lines.
-+
- config RESET_SUNXI
- 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
- 	default ARCH_SUNXI
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 21d46d886..f03403e97 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
-+obj-$(CONFIG_RESET_SUNPLUS) += reset-sunplus.o
- obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
- obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
-diff --git a/drivers/reset/reset-sunplus.c b/drivers/reset/reset-sunplus.c
-new file mode 100644
-index 000000000..113b36b57
---- /dev/null
-+++ b/drivers/reset/reset-sunplus.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * SP7021 reset driver
-+ *
-+ * Copyright (C) Sunplus Technology Co., Ltd.
-+ *       All rights reserved.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/init.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/reboot.h>
-+
-+/* HIWORD_MASK_REG BITS */
-+#define BITS_PER_HWM_REG	16
-+
-+struct sp_reset {
-+	struct reset_controller_dev rcdev;
-+	struct notifier_block notifier;
-+	void __iomem *base;
-+};
-+
-+static inline struct sp_reset *to_sp_reset(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct sp_reset, rcdev);
-+}
-+
-+static int sp_reset_update(struct reset_controller_dev *rcdev,
-+			   unsigned long id, bool assert)
-+{
-+	struct sp_reset *reset = to_sp_reset(rcdev);
-+	int index = id / BITS_PER_HWM_REG;
-+	int shift = id % BITS_PER_HWM_REG;
-+	u32 val;
-+
-+	val = (1 << (16 + shift)) | (assert << shift);
-+	writel(val, reset->base + (index * 4));
-+
-+	return 0;
-+}
-+
-+static int sp_reset_assert(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	return sp_reset_update(rcdev, id, true);
-+}
-+
-+static int sp_reset_deassert(struct reset_controller_dev *rcdev,
-+			     unsigned long id)
-+{
-+	return sp_reset_update(rcdev, id, false);
-+}
-+
-+static int sp_reset_status(struct reset_controller_dev *rcdev,
-+			   unsigned long id)
-+{
-+	struct sp_reset *reset = to_sp_reset(rcdev);
-+	int index = id / BITS_PER_HWM_REG;
-+	int shift = id % BITS_PER_HWM_REG;
-+	u32 reg;
-+
-+	reg = readl(reset->base + (index * 4));
-+
-+	return !!(reg & BIT(shift));
-+}
-+
-+static const struct reset_control_ops sp_reset_ops = {
-+	.assert   = sp_reset_assert,
-+	.deassert = sp_reset_deassert,
-+	.status   = sp_reset_status,
-+};
-+
-+static int sp_restart(struct notifier_block *nb, unsigned long mode,
-+		      void *cmd)
-+{
-+	struct sp_reset *reset = container_of(nb, struct sp_reset, notifier);
-+
-+	sp_reset_assert(&reset->rcdev, 0);
-+	sp_reset_deassert(&reset->rcdev, 0);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int sp_reset_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sp_reset *reset;
-+	struct resource *res;
-+	int ret;
-+
-+	reset = devm_kzalloc(dev, sizeof(*reset), GFP_KERNEL);
-+	if (!reset)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	reset->base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(reset->base))
-+		return PTR_ERR(reset->base);
-+
-+	reset->rcdev.ops = &sp_reset_ops;
-+	reset->rcdev.owner = THIS_MODULE;
-+	reset->rcdev.of_node = dev->of_node;
-+	reset->rcdev.nr_resets = resource_size(res) / 4 * BITS_PER_HWM_REG;
-+
-+	ret = devm_reset_controller_register(dev, &reset->rcdev);
-+	if (ret)
-+		return ret;
-+
-+	reset->notifier.notifier_call = sp_restart;
-+	reset->notifier.priority = 192;
-+
-+	return register_restart_handler(&reset->notifier);
-+}
-+
-+static const struct of_device_id sp_reset_dt_ids[] = {
-+	{.compatible = "sunplus,sp7021-reset",},
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver sp_reset_driver = {
-+	.probe = sp_reset_probe,
-+	.driver = {
-+		.name			= "sunplus-reset",
-+		.of_match_table		= sp_reset_dt_ids,
-+		.suppress_bind_attrs	= true,
-+	},
-+};
-+builtin_platform_driver(sp_reset_driver);
+ 		if (!of_stdout)
+ 			return;
 -- 
-2.33.1
+2.25.1
 
