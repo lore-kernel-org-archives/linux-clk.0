@@ -2,68 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED167C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 09:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AACC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 09:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240743AbiCJJXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 04:23:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
+        id S240760AbiCJJZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 04:25:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239310AbiCJJXf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 04:23:35 -0500
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CE219293
-        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 01:22:30 -0800 (PST)
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+        with ESMTP id S234905AbiCJJZP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 04:25:15 -0500
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA2F947AF2
+        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 01:24:13 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id A3EBD3F32D
-        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 09:22:29 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CF9413F4BC
+        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 09:24:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1646904149;
-        bh=urZkMj1CVFHDmDBVJ94HruqSmh7h0kdRAgFJ0/wcFrI=;
+        s=20210705; t=1646904252;
+        bh=Vq+x+LnICgNgSaQrOStld4MyN/N8TRx3ztXdKLjhEx0=;
         h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
          In-Reply-To:Content-Type;
-        b=eC0pWIRIZ3ZKVY0UP6TqSKe5v0RkHI4hjZmxHw7J7rBYxa8hATx9s0qA5E4TmDOqy
-         IQ7XMp5CtkIzqXpYMMWT920y4UkPSVtcjbp1xS/XoBhwwe0lX+TnmOdMpO6E8R91jH
-         BS+F1xmAt3PLs/VtKp6pFk/7tHugbcA3aQDAYQFW0pVq6ozBbRJO2920VyYPxglCal
-         0VJkeJCzl5+CLy2Wf9LQ2WRtdQSdNgDIa2z20v9mkzxaaCS3pL/IL8YHukbRPYRfnC
-         ai9jl43Pl2JJzKyW12oLofuwhhkJ+3XE70C+0PkBGHlliuC+R71nUBhkc3St38SzQR
-         Y+4CeAykp/ZDw==
-Received: by mail-ej1-f71.google.com with SMTP id r18-20020a17090609d200b006a6e943d09eso2766206eje.20
-        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 01:22:29 -0800 (PST)
+        b=TGeX02+LAEvK7aT8Bf5Yu4E9v3PIQzt969ZzIKi2WGoDh8xc875K3W2tbcVsXqX3Y
+         GGVJ+ADeFWPeUeKWkg8I9ne2Y7np+M7Y1MoKH1cMYX2A2jQFako0ALgihZO6oUAHRy
+         vTEmK8e5gFvq1WzYbOtPcotoZNV8UYRRBi0nAaFoyCZiPM0qx1VAJvvvY4R5f5m4gH
+         93UU9ddanFJqIUrO9ZOV+8OMFbelP43QJtRofog3kfQM8xf+/zTOo438D5kH+YqS7Q
+         +E2G6EFZ1kQiaIa/oQw1BaO+EwFPofNguFIJdWKo4FSYb8GZfc4bR2HqUvxZXWetnC
+         hC/uhDak6fgDg==
+Received: by mail-ej1-f70.google.com with SMTP id lf15-20020a170906ae4f00b006da86a43346so2780335ejb.14
+        for <linux-clk@vger.kernel.org>; Thu, 10 Mar 2022 01:24:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=urZkMj1CVFHDmDBVJ94HruqSmh7h0kdRAgFJ0/wcFrI=;
-        b=6sqsRQukTDbz3GAduCpGKCp/RR36DA+1KJQYhbSJDvdWrsvuKsAWOeMsb2iiqPHG7G
-         SoF7fMhtP0+8SJw05uFmdsV+jsBDK8+OoPqWzKzD0eeL31yd02KjpriTxbqRsmj4eqwg
-         HWFYpxesGmm0hFeYIgruXQ4sOliOiXRrvghW+jFUC5h49LLpo93Cu6CT448OK9l6pV2o
-         YdXcuN/NJlK5NGhauZqalSewr6rG/gae1bWHHPN54F8JeNemHFiTwR55K9pQz+O9ErJE
-         SBkiCQ3CdtqPvVT1Y1myafvwlYHnet+Lcx6kAtOWT77mNRdDgO4QEKkXGlbtvXNTJHJk
-         08DA==
-X-Gm-Message-State: AOAM533+hx5R++xsJL/GaW2GGRFhgUclHqVFYksHBAVLm42BNaHAoeY5
-        Vym/mZbnG4tFreondEetu+e7kxZ1kG7S+nZ/PCbIbmAiis40bIFtre27n4bAoUR7zqSxipRMbDh
-        S1Zrb71tHdRz/a0vqaDTESsEHT4Rr2tKL5YaYsg==
-X-Received: by 2002:a05:6402:5255:b0:416:6089:b23f with SMTP id t21-20020a056402525500b004166089b23fmr3275301edd.87.1646904148961;
-        Thu, 10 Mar 2022 01:22:28 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx8GzTU6l3uc5oXfjJxqxMo0SlXcIWmtaWXAFmIM5inJcUnvOtC5zOyN2yO3KsVjUmD5zVvMA==
-X-Received: by 2002:a05:6402:5255:b0:416:6089:b23f with SMTP id t21-20020a056402525500b004166089b23fmr3275277edd.87.1646904148803;
-        Thu, 10 Mar 2022 01:22:28 -0800 (PST)
+        bh=Vq+x+LnICgNgSaQrOStld4MyN/N8TRx3ztXdKLjhEx0=;
+        b=dpDG5iS173zRNQpRsGL7JFJ+NrHOcMOoxj4WHbkhXGISosuu+FRoWpJEvgdgdQBnsV
+         aSjbmtaYWy0n6VdNrsroJNbdmRdCnEkVBGoMGj/tjTHhEIzXuPhTE5O7TVo5ztOH8RBA
+         VU7aLgOuiyCfws7mTfiqER45QylBdNCp9zxk+62l1gupcgjNqicxINve2CZb6/AS2D4V
+         m/Wdr/UAYJXo8YLgGXRYlezrJdalKlXvoXlYyVqwb3J6Yu8hJ7uXTZCE9VfixQ9Kk1bC
+         6SJYrSI1qIlZ7nad5Mr0qesDmEHauvNomxT2GcNA20T9eTaPckkvAFLf1tbSBFERHH6h
+         4MYQ==
+X-Gm-Message-State: AOAM532VzC99w8iR3H8Tk0ATqlXdjmhxLsfnxdY7/DIKIlz7V/n4TMl9
+        VwVWYKjMnUh0FWf5t+BchERaKPZhN4sxyMOkp3ItFR/kgl5bmZjNw2gBbqRsMbzLmQGrlBl/7hw
+        fpejeKS+meAC+JWfxP9VH36UZNkhlJokbyPoxmg==
+X-Received: by 2002:aa7:de84:0:b0:40f:db98:d0f9 with SMTP id j4-20020aa7de84000000b0040fdb98d0f9mr3362727edv.366.1646904252548;
+        Thu, 10 Mar 2022 01:24:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwBzUrALp6RBw3QyI4DMV1UDz3vpwLuHFpa3ac6hmg3GtuGPDpwGZ4fXoqGkaFiZShadZCanA==
+X-Received: by 2002:aa7:de84:0:b0:40f:db98:d0f9 with SMTP id j4-20020aa7de84000000b0040fdb98d0f9mr3362710edv.366.1646904252290;
+        Thu, 10 Mar 2022 01:24:12 -0800 (PST)
 Received: from [192.168.0.144] (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id f6-20020a056402354600b004167d09f418sm1744200edd.55.2022.03.10.01.22.27
+        by smtp.gmail.com with ESMTPSA id u4-20020a170906780400b006ce69ff6050sm1601377ejm.69.2022.03.10.01.24.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 01:22:28 -0800 (PST)
-Message-ID: <cb6f313d-7e02-2341-c1b2-f4dba8ad981d@canonical.com>
-Date:   Thu, 10 Mar 2022 10:22:27 +0100
+        Thu, 10 Mar 2022 01:24:11 -0800 (PST)
+Message-ID: <d3ac3e2f-71fd-b2b4-7c7e-bb43c681d14e@canonical.com>
+Date:   Thu, 10 Mar 2022 10:24:10 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v10 02/10] dt-bindings: arm: sunplus: Add bindings for
- Sunplus SP7021 SoC boards
+Subject: Re: [PATCH v10 05/10] dt-bindings: clock: Add bindings for SP7021
+ clock driver
 Content-Language: en-US
 To:     Qin Jian <qinjian@cqplus1.com>, robh+dt@kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
@@ -72,9 +72,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <cover.1646892810.git.qinjian@cqplus1.com>
- <7b9357809c002f6dd76c6fdd738a4ea8af62cb26.1646892810.git.qinjian@cqplus1.com>
+ <80256ac7f67c041ae3070638aa6499ee0d0ee0c6.1646892810.git.qinjian@cqplus1.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-In-Reply-To: <7b9357809c002f6dd76c6fdd738a4ea8af62cb26.1646892810.git.qinjian@cqplus1.com>
+In-Reply-To: <80256ac7f67c041ae3070638aa6499ee0d0ee0c6.1646892810.git.qinjian@cqplus1.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,17 +82,64 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 10/03/2022 07:28, Qin Jian wrote:
-> This introduces bindings for boards based Sunplus SP7021 SoC.
+> Add documentation to describe Sunplus SP7021 clock driver bindings.
 > 
 > Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 > ---
-> Add SoC compatible: "sunplus,sp7021"
+> Remove the internal clock parent from DTS
 > ---
->  .../bindings/arm/sunplus,sp7021.yaml          | 28 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++++
->  2 files changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+>  .../bindings/clock/sunplus,sp7021-clkc.yaml   |  39 ++++++
+>  MAINTAINERS                                   |   2 +
+>  include/dt-bindings/clock/sp-sp7021.h         | 112 ++++++++++++++++++
+>  3 files changed, 153 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/sp-sp7021.h
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+> new file mode 100644
+> index 000000000..7d6e3fdd7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
+> @@ -0,0 +1,39 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (C) Sunplus Co., Ltd. 2021
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/sunplus,sp7021-clkc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sunplus SP7021 SoC Clock Controller Binding
+> +
+> +maintainers:
+> +  - Qin Jian <qinjian@cqplus1.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: sunplus,sp7021-clkc
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +
+> +    clkc: clock-controller@9c000000 {
+> +      compatible = "sunplus,sp7021-clkc";
+> +      #clock-cells = <1>;
+> +      reg = <0x9c000000 0x280>;
+
+In DTS code, please put reg after compatible. In all your examples and
+DTS patches.
 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
