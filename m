@@ -2,208 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC90C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 13:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420E4C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 15:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242446AbiCJNhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 08:37:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51374 "EHLO
+        id S239186AbiCJP7J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 10:59:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242445AbiCJNhk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 08:37:40 -0500
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1623D14E958;
-        Thu, 10 Mar 2022 05:36:34 -0800 (PST)
-X-UUID: bea02a7fddde472dbc27cfea5490503d-20220310
-X-UUID: bea02a7fddde472dbc27cfea5490503d-20220310
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 265800282; Thu, 10 Mar 2022 21:36:29 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 10 Mar 2022 21:36:27 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 10 Mar 2022 21:36:27 +0800
-Message-ID: <d80c89fd5fb704ed03244a7e333d59d0ee972e8f.camel@mediatek.com>
-Subject: Re: [PATCH v2 01/15] dt-bindings: ARM: Mediatek: Add new document
- bindings of MT8186 clock
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Thu, 10 Mar 2022 21:36:27 +0800
-In-Reply-To: <YhkmnnIApvU7gRlZ@robh.at.kernel.org>
-References: <20220221015258.913-1-chun-jie.chen@mediatek.com>
-         <20220221015258.913-2-chun-jie.chen@mediatek.com>
-         <YhkmnnIApvU7gRlZ@robh.at.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S239312AbiCJP7I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 10:59:08 -0500
+Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFEB74CD5E;
+        Thu, 10 Mar 2022 07:58:03 -0800 (PST)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id E6007200009;
+        Thu, 10 Mar 2022 15:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1646927882;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6mUw1s5AD/TcEltbPbuCIH0UE3gTMKJgx97rOVtZxOw=;
+        b=E/rwr2iaOnLpEhvcxVV1nOw7T2xsFn++epCN+sfaUCFOnHF1iUB5ozXScPaSJcwXHrYF2+
+        cS82WxT0KZSTSFmZJBgNEX0n7eKlzTgzL3kfpVm1GS3KZ8IUm4BPnlrpKV3oRajiBKJkDH
+        u9YD1R8W4c1hUwqttU/pyJV7a6O11p7KAw66yuGzaG2o8Yrxl6XVtpdMEoOuE4MUnnZG18
+        wIsphOmKL/ET7mzj0j0fOyzvDEfHfxG81jUGZLp4Khk6M8jgAi/f5W59rcH/ktxMnLZixT
+        aF4O5VORDOScfEJyGfuPc5vCB9rHKqBQ7Uads1ZjrZCUBxEy+9OxXZ3c76aJVA==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 1/9] dt-bindings: dma: Introduce RZN1 dmamux bindings
+Date:   Thu, 10 Mar 2022 16:57:47 +0100
+Message-Id: <20220310155755.287294-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220310155755.287294-1-miquel.raynal@bootlin.com>
+References: <20220310155755.287294-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2022-02-25 at 12:57 -0600, Rob Herring wrote:
-> On Mon, Feb 21, 2022 at 09:52:44AM +0800, Chun-Jie Chen wrote:
-> > This patch adds the new binding documentation for system clock
-> > and functional clock on Mediatek MT8186.
-> > 
-> > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > ---
-> >  .../arm/mediatek/mediatek,mt8186-clock.yaml   |  56 +++
-> >  .../mediatek/mediatek,mt8186-sys-clock.yaml   |  54 +++
-> >  include/dt-bindings/clock/mt8186-clk.h        | 445
-> > ++++++++++++++++++
-> >  3 files changed, 555 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > clock.yaml
-> >  create mode 100644
-> > Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-
-> > clock.yaml
-> >  create mode 100644 include/dt-bindings/clock/mt8186-clk.h
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > clock.yaml
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > clock.yaml
-> > new file mode 100644
-> > index 000000000000..373e8a100da3
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > clock.yaml
-> > @@ -0,0 +1,56 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: "
-> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-clock.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRWfJmMCT$
-> >  "
-> > +$schema: "
-> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRfM3OA21$
-> >  "
-> > +
-> > +title: Mediatek Functional Clock Controller for MT8186
-> > +
-> > +maintainers:
-> > +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > +
-> > +description:
-> 
-> You need a '|' to preserve the formatting.
-> 
-> > +  The clock architecture in Mediatek like below
-> > +  PLLs -->
-> > +          dividers -->
-> > +                      muxes
-> > +                           -->
-> > +                              clock gate
-> > +
-> > +  The devices provide clock gate control in different IP blocks.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - mediatek,mt8186-imp_iic_wrap
-> > +          - mediatek,mt8186-mfgsys
-> > +          - mediatek,mt8186-wpesys
-> > +          - mediatek,mt8186-imgsys1
-> > +          - mediatek,mt8186-imgsys2
-> > +          - mediatek,mt8186-vdecsys
-> > +          - mediatek,mt8186-vencsys
-> > +          - mediatek,mt8186-camsys
-> > +          - mediatek,mt8186-camsys_rawa
-> > +          - mediatek,mt8186-camsys_rawb
-> > +          - mediatek,mt8186-mdpsys
-> > +          - mediatek,mt8186-ipesys
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    imp_iic_wrap: clock-controller@11017000 {
-> > +        compatible = "mediatek,mt8186-imp_iic_wrap";
-> > +        reg = <0x11017000 0x1000>;
-> > +        #clock-cells = <1>;
-> > +    };
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > sys-clock.yaml
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > sys-clock.yaml
-> > new file mode 100644
-> > index 000000000000..4c071dd66b76
-> > --- /dev/null
-> > +++
-> > b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-
-> > sys-clock.yaml
-> > @@ -0,0 +1,54 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: "
-> > https://urldefense.com/v3/__http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-sys-clock.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRRtmGvUx$
-> >  "
-> > +$schema: "
-> > https://urldefense.com/v3/__http://devicetree.org/meta-schemas/core.yaml*__;Iw!!CTRNKA9wMg0ARbw!xKDeg6ddrFWd8p__fZiG7r5F5Py9NVWCmi7zVue5fUzuxKtvqHCSu_pslcpXRfM3OA21$
-> >  "
-> > +
-> > +title: Mediatek System Clock Controller for MT8186
-> > +
-> > +maintainers:
-> > +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > +
-> > +description:
-> 
-> And here.
-> 
-> With that,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
+The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+dmamux register located in the system control area which can take up to
+32 requests (16 per DMA controller). Each DMA channel can be wired to
+two different peripherals.
 
-Ok, I will fix it in next version.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
 
-Thanks!
-
-> > +  The clock architecture in Mediatek like below
-> > +  PLLs -->
-> > +          dividers -->
-> > +                      muxes
-> > +                           -->
-> > +                              clock gate
-> > +
-> > +  The apmixedsys provides most of PLLs which generated from SoC
-> > 26m.
-> > +  The topckgen provides dividers and muxes which provide the clock
-> > source to other IP blocks.
-> > +  The infracfg_ao provides clock gate in peripheral and
-> > infrastructure IP blocks.
-> > +  The mcusys provides mux control to select the clock source in AP
-> > MCU.
-> > +  The device nodes also provide the system control capacity for
-> > configuration.
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+new file mode 100644
+index 000000000000..d83013b0dd74
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 DMA mux
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++allOf:
++  - $ref: "dma-router.yaml#"
++
++properties:
++  compatible:
++    const: renesas,rzn1-dmamux
++
++  reg:
++    maxItems: 1
++    description: DMA mux first register offset within the system control parent.
++
++  '#dma-cells':
++    const: 6
++    description:
++      The first four cells are dedicated to the master DMA controller. The fifth
++      cell gives the DMA mux bit index that must be set starting from 0. The
++      sixth cell gives the binary value that must be written there, ie. 0 or 1.
++
++  dma-masters:
++    minItems: 1
++    maxItems: 2
++
++  dma-requests:
++    const: 32
++
++required:
++  - reg
++  - dma-requests
++
++additionalProperties: false
++
++examples:
++  - |
++    dma-router@a0 {
++      compatible = "renesas,rzn1-dmamux";
++      reg = <0xa0 4>;
++      #dma-cells = <6>;
++      dma-masters = <&dma0 &dma1>;
++      dma-requests = <32>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ea3e6c914384..c70c9c39a2f3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18636,6 +18636,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
+ M:	Viresh Kumar <vireshk@kernel.org>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
+ F:	drivers/dma/dw/
+ F:	include/dt-bindings/dma/dw-dmac.h
+-- 
+2.27.0
 
