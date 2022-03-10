@@ -2,140 +2,166 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B12AC4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 18:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01271C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 23:45:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245573AbiCJSrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 13:47:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
+        id S238905AbiCJXqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 18:46:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245567AbiCJSrs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 13:47:48 -0500
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD56B19D74B;
-        Thu, 10 Mar 2022 10:46:45 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 169C7200005;
-        Thu, 10 Mar 2022 18:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1646938004;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hZU6SVWgpj28SgSGWMJlq8dkif2ZOccvFZ1KeCDp1sk=;
-        b=FAOz01qqILI59eL5ElxRP3GT03NPc1HH1ll9vqDcFFee61xZTV22Khog1bIExta4/W41i1
-        NUMhmPFfsPJS6vs0mUmrZu72ekB4YcH6MopkfDsKEBR4j8Hl93ITk5Se6QQgc6ak2JyxOV
-        TUglNrbYgTnAs4Sirkex6I0Mhw4Arwz2vRoOo7rBDprDvjAdHmHFHW+ZkYpHLEm0um6x3P
-        AfkAIMXhXUxrg++lgicu7PioRmhyDVv3C55LyUoQTdWUkDv23TotkWH6jyib1s55ubi66i
-        PGFS3oo5C4KE2woLLEZjXvqB80EXt2/daOQNVm8j8P2CPcKjmqUtJPQDIilXSA==
-Date:   Thu, 10 Mar 2022 19:46:40 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>
-Subject: Re: [PATCH v4 7/9] dma: dw: Avoid partial transfers
-Message-ID: <20220310194640.4bc6e604@xps13>
-In-Reply-To: <Yio6UWYIDZWXx2Ux@smile.fi.intel.com>
-References: <20220310155755.287294-1-miquel.raynal@bootlin.com>
-        <20220310155755.287294-8-miquel.raynal@bootlin.com>
-        <Yio6UWYIDZWXx2Ux@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S232493AbiCJXqT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 18:46:19 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F66C12E3;
+        Thu, 10 Mar 2022 15:45:13 -0800 (PST)
+X-UUID: 8eb3cdbf9b844ea48027def2f2d42723-20220311
+X-UUID: 8eb3cdbf9b844ea48027def2f2d42723-20220311
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 2135811672; Fri, 11 Mar 2022 07:45:10 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 11 Mar 2022 07:45:09 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 11 Mar 2022 07:45:09 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     <chun-jie.chen@mediatek.com>
+CC:     <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <devicetree@vger.kernel.org>, <drinkcat@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <matthias.bgg@gmail.com>,
+        <robh+dt@kernel.org>, <sboyd@kernel.org>,
+        <srv_heupstream@mediatek.com>
+Subject: Re: [PATCH v2 01/15] dt-bindings: ARM: Mediatek: Add new document bindings of MT8186 clock
+Date:   Fri, 11 Mar 2022 07:45:09 +0800
+Message-ID: <20220310234509.32636-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220221015258.913-2-chun-jie.chen@mediatek.com>
+References: <20220221015258.913-2-chun-jie.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Andy,
+Hi Chun-Jie,
 
-andriy.shevchenko@linux.intel.com wrote on Thu, 10 Mar 2022 19:50:09
-+0200:
+> [PATCH v2 01/15] dt-bindings: ARM: Mediatek: Add new document bindings of MT8186 clock
 
-> +Cc: Ilpo who is currently doing adjoining stuff.
->=20
-> Ilpo, this one affects Intel Bay Trail and Cherry Trail platforms.
-> Not sure if it's in scope of your interest right now, but it might
-> be useful to see how DMA <--> 8250 UART functioning.
->=20
-> On Thu, Mar 10, 2022 at 04:57:53PM +0100, Miquel Raynal wrote:
-> > As investigated by Phil Edworthy <phil.edworthy@renesas.com> on RZN1 a =
-=20
->=20
-> Email can be dropped as you put it below, just (full) name is enough.
+s/Mediatek/MediaTek/
 
-Sure.
+> This patch adds the new binding documentation for system clock
+> and functional clock on Mediatek MT8186.
 
-> I'm wondering if Phil or anybody else who possess the hardware can
-> test / tested this.
+s/Mediatek/MediaTek/
+> 
+> Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> ---
+>  .../arm/mediatek/mediatek,mt8186-clock.yaml   |  56 +++
+>  .../mediatek/mediatek,mt8186-sys-clock.yaml   |  54 +++
+>  include/dt-bindings/clock/mt8186-clk.h        | 445 ++++++++++++++++++
+>  3 files changed, 555 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+>  create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/mt8186-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+> new file mode 100644
+> index 000000000000..373e8a100da3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Mediatek Functional Clock Controller for MT8186
 
-I have a board with an RZN1 SoC but I don't have exactly the same setup
-as Phil (I only have one port with DMA working, while he used two as a
-loopback device). I tried to reproduce the error with no luck so far. I
-however verified that there was apparently no performance hit
-whatsoever due to this change. IIRC Phil does not have the hardware
-anymore.
+s/Mediatek/MediaTek/
 
-> > while ago, pausing a partial transfer only causes data to be written to
-> > memory that is a multiple of the memory width setting. Such a situation
-> > can happen eg. because of a char timeout interrupt on a UART. In this
-> > case, the current ->terminate_all() implementation does not always flush
-> > the remaining data as it should.
-> >=20
-> > In order to workaround this, a solutions is to resume and then pause
-> > again the transfer before termination. The resume call in practice
-> > actually flushes the remaining data. =20
->=20
-> Perhaps Fixes tag?
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The clock architecture in Mediatek like below
 
-I don't know exactly what hardware can suffer from this, hence I
-decided not to add a Fixes tag given the fact that it was only observed
-on RZN1 (which was until now not yet supported upstream).
+s/Mediatek/MediaTek/
 
-> > Reported-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---
-> >  drivers/dma/dw/core.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >=20
-> > diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
-> > index 7ab83fe601ed..2f6183177ba5 100644
-> > --- a/drivers/dma/dw/core.c
-> > +++ b/drivers/dma/dw/core.c
-> > @@ -862,6 +862,10 @@ static int dwc_terminate_all(struct dma_chan *chan)
-> > =20
-> >  	clear_bit(DW_DMA_IS_SOFT_LLP, &dwc->flags);
-> > =20
-> > +	/* Ensure the last byte(s) are drained before disabling the channel */
-> > +	if (test_bit(DW_DMA_IS_PAUSED, &dwc->flags))
-> > +		dwc_chan_resume(dwc, true);
-> > +
-> >  	dwc_chan_pause(dwc, true);
-> > =20
-> >  	dwc_chan_disable(dw, dwc);
-> > --=20
-> > 2.27.0
-> >  =20
->=20
+> +  PLLs -->
+> +          dividers -->
+> +                      muxes
+> +                           -->
+> +                              clock gate
+> +
+> +  The devices provide clock gate control in different IP blocks.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mediatek,mt8186-imp_iic_wrap
+> +          - mediatek,mt8186-mfgsys
+> +          - mediatek,mt8186-wpesys
+> +          - mediatek,mt8186-imgsys1
+> +          - mediatek,mt8186-imgsys2
+> +          - mediatek,mt8186-vdecsys
+> +          - mediatek,mt8186-vencsys
+> +          - mediatek,mt8186-camsys
+> +          - mediatek,mt8186-camsys_rawa
+> +          - mediatek,mt8186-camsys_rawb
+> +          - mediatek,mt8186-mdpsys
+> +          - mediatek,mt8186-ipesys
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    imp_iic_wrap: clock-controller@11017000 {
+> +        compatible = "mediatek,mt8186-imp_iic_wrap";
+> +        reg = <0x11017000 0x1000>;
+> +        #clock-cells = <1>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+> new file mode 100644
+> index 000000000000..4c071dd66b76
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/arm/mediatek/mediatek,mt8186-sys-clock.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Mediatek System Clock Controller for MT8186
+>
+s/Mediatek/MediaTek/
 
+> +
+> +maintainers:
+> +  - Chun-Jie Chen <chun-jie.chen@mediatek.com>
+> +
+> +description:
+> +  The clock architecture in Mediatek like below
+
+s/Mediatek/MediaTek/
 
 Thanks,
-Miqu=C3=A8l
+Miles
