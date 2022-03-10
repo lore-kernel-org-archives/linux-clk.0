@@ -2,107 +2,162 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D00BC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 16:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB47C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 17:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244050AbiCJQYv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 11:24:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44794 "EHLO
+        id S243730AbiCJRqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 12:46:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244047AbiCJQYq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 11:24:46 -0500
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09883195300;
-        Thu, 10 Mar 2022 08:22:23 -0800 (PST)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1nSLYO-00055v-2B; Thu, 10 Mar 2022 17:22:16 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     cgel.zte@gmail.com, mturquette@baylibre.com,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: Re: [PATCH] clk/rockchip: Use of_device_get_match_data()
-Date:   Thu, 10 Mar 2022 17:22:15 +0100
-Message-ID: <2697395.DCgNgQjydf@diego>
-In-Reply-To: <20220309185738.2192EC340EC@smtp.kernel.org>
-References: <20220304011703.2061466-1-chi.minghao@zte.com.cn> <20220309185738.2192EC340EC@smtp.kernel.org>
+        with ESMTP id S243762AbiCJRqE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 12:46:04 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F05180D2A;
+        Thu, 10 Mar 2022 09:45:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646934302; x=1678470302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4Hgem/xb7fgEnabZDJWfqC0vFwT+ahTBVHdBBEWMA6Q=;
+  b=PzXzYF182SeA3S6798u/dsu0OGjOVd5XzUY8WmAxF6CsVxVnJSsfSYOu
+   YKJtCfP9By8HgoN3PevDbE1RgK6rVACn9LUR03HDzRL4+49+q8UFQP65E
+   FOfcJ+0W3J8vEEw9FYBL/JjpJR3DkcUNdwVQa8SKsl91fq0Cu5APcWy8n
+   ajZw+AqwjHwatqlzhH67aqAuiLgY5O+4N9HRoJGlM2qttixiEeSgvo0r1
+   uEH1ptOIQcvZypBIjNqxegeSJSJQq8seCxmTesz17PDCX7eF9dwPhxrU3
+   VDgw7hjLr60aNqqE+d2IlSKcoDSE/q3hMS0FJyNenXWdtCdsOP4UrzNTI
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10282"; a="341748011"
+X-IronPort-AV: E=Sophos;i="5.90,171,1643702400"; 
+   d="scan'208";a="341748011"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 09:45:02 -0800
+X-IronPort-AV: E=Sophos;i="5.90,171,1643702400"; 
+   d="scan'208";a="781540349"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 09:44:57 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nSMpi-00Eqwb-AB;
+        Thu, 10 Mar 2022 19:44:14 +0200
+Date:   Thu, 10 Mar 2022 19:44:13 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>
+Subject: Re: [PATCH v4 5/9] dma: dw: dmamux: Introduce RZN1 DMA router support
+Message-ID: <Yio47YVZuHaFvwE8@smile.fi.intel.com>
+References: <20220310155755.287294-1-miquel.raynal@bootlin.com>
+ <20220310155755.287294-6-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220310155755.287294-6-miquel.raynal@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 9. März 2022, 19:57:36 CET schrieb Stephen Boyd:
-> Quoting cgel.zte@gmail.com (2022-03-03 17:17:03)
-> > From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
-> > 
-> > Use of_device_get_match_data() to simplify the code.
-> > 
-> > Reported-by: Zeal Robot <zealci@zte.com.cn>
-> > Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
-> > ---
-> >  drivers/clk/rockchip/clk-rk3399.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
-> > index 306910a3a0d3..b1b67bfb63b8 100644
-> > --- a/drivers/clk/rockchip/clk-rk3399.c
-> > +++ b/drivers/clk/rockchip/clk-rk3399.c
-> > @@ -1634,14 +1634,8 @@ static const struct of_device_id clk_rk3399_match_table[] = {
-> >  static int __init clk_rk3399_probe(struct platform_device *pdev)
-> >  {
-> >         struct device_node *np = pdev->dev.of_node;
-> > -       const struct of_device_id *match;
-> >         const struct clk_rk3399_inits *init_data;
-> > -
-> > -       match = of_match_device(clk_rk3399_match_table, &pdev->dev);
-> > -       if (!match || !match->data)
-> > -               return -EINVAL;
-> > -
-> > -       init_data = match->data;
-> > +       init_data = of_device_get_match_data(&pdev->dev);
+On Thu, Mar 10, 2022 at 04:57:51PM +0100, Miquel Raynal wrote:
+> The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+> dmamux register located in the system control area which can take up to
+> 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> two different peripherals.
 > 
-> The translation doesn't look equivalent. Before we would bail out of
-> probe if match data isn't there with an error. That isn't possible of
-> course with further investigation but please make a note of this in the
-> commit text to aid review.
-
-We _do have_ Rockchip clock drivers serving multiple socs already
-(rk3188+rk3066 for example) and as patterns are duplicated often from
-one existing driver to a new one, I think it makes sense to have the
-error handling done correctly.
-
-So doing
-	init_data = of_device_get_match_data(&pdev->dev);
-	if (init_data)
-		return -EINVAL;
-as before.
-
-If due to some strange coincidence the condition is triggered
-this would cause a null-ptr-dereference with the direct call to
-	init_data->scripts
-below, which might or might not be hidden due to the (early-)console
-being up yet, where with correct error handling a system might at
-least come up to a point to complain about a missing clock driver.
-
-
-
-> Also, please don't send new versions of
-> patches in reply to previous versions of patches. It breaks my patch
-> workflow. Thanks in advance.
+> We need two additional information from the 'dmas' property: the channel
+> (bit in the dmamux register) that must be accessed and the value of the
+> mux for this channel.
 > 
-> >         if (init_data->inits)
-> >                 init_data->inits(np);
-> >
-> 
+> Aside from the driver introduction, as these devices are described as
+> subnodes of the system controller, we also need the system controller
+> (clock) driver to populate its children manually. Starting from now on,
+> one child can be the dmamux.
 
+In all DMA engine related patches the prefix should be "dmaengine:".
 
+...
+
+> +static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
+> +					struct of_dma *ofdma)
+> +{
+> +	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
+> +	struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
+> +	struct rzn1_dmamux_map *map;
+> +	unsigned int dmac_idx, chan, val;
+> +	u32 mask;
+> +	int ret;
+> +
+> +	map = kzalloc(sizeof(*map), GFP_KERNEL);
+> +	if (!map)
+> +		return ERR_PTR(-ENOMEM);
+
+> +	if (dma_spec->args_count != 6) {
+> +		kfree(map);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+
+You may move this check above and get one kfree() call less.
+Moreover, you may use a goto approach to call kfree() from
+a single point of exit.
+
+> +	chan = dma_spec->args[0];
+> +	map->req_idx = dma_spec->args[4];
+> +	val = dma_spec->args[5];
+> +	dma_spec->args_count -= 2;
+> +
+> +	if (chan >= RZN1_DMAMUX_SPLIT) {
+> +		kfree(map);
+> +		dev_err(&pdev->dev, "Invalid DMA request line: %u\n", chan);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (map->req_idx >= RZN1_DMAMUX_LINES ||
+> +	    (map->req_idx % RZN1_DMAMUX_SPLIT) != chan) {
+> +		kfree(map);
+> +		dev_err(&pdev->dev, "Invalid MUX request line: %u\n", map->req_idx);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	dmac_idx = map->req_idx < RZN1_DMAMUX_SPLIT ? 0 : 1;
+> +	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", dmac_idx);
+> +	if (!dma_spec->np) {
+> +		kfree(map);
+> +		dev_err(&pdev->dev, "Can't get DMA master\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n",
+> +		map->req_idx, dmac_idx, chan);
+> +
+> +	mask = BIT(map->req_idx);
+> +	mutex_lock(&dmamux->lock);
+> +	dmamux->used_chans |= mask;
+> +	ret = r9a06g032_sysctrl_set_dmamux(mask, val ? mask : 0);
+> +	mutex_unlock(&dmamux->lock);
+> +	if (ret) {
+> +		rzn1_dmamux_free(&pdev->dev, map);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return map;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
