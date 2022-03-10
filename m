@@ -2,17 +2,17 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8935C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 06:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2613EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 06:37:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234726AbiCJGhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 01:37:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55448 "EHLO
+        id S239933AbiCJGhq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 01:37:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239873AbiCJGha (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 01:37:30 -0500
+        with ESMTP id S239851AbiCJGhg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 01:37:36 -0500
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8E9AF12F14F
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8EAA212F150
         for <linux-clk@vger.kernel.org>; Wed,  9 Mar 2022 22:36:19 -0800 (PST)
 X-MailGates: (flag:4,DYNAMIC,BADHELO,RELAY,NOHOST:PASS)(compute_score:DE
         LIVER,40,3)
@@ -26,11 +26,10 @@ Cc:     krzk@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux@armlinux.org.uk, broonie@kernel.org, arnd@arndb.de,
         stefan.wahren@i2se.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v10 07/10] dt-bindings: interrupt-controller: Add bindings for SP7021 interrupt controller
-Date:   Thu, 10 Mar 2022 14:28:46 +0800
-Message-Id: <5578ab17764cd3c3e3273be1d6f7592d3250446e.1646892811.git.qinjian@cqplus1.com>
+        linux-clk@vger.kernel.org, Qin Jian <qinjian@cqplus1.com>
+Subject: [PATCH v10 09/10] ARM: sunplus: Add initial support for Sunplus SP7021 SoC
+Date:   Thu, 10 Mar 2022 14:28:48 +0800
+Message-Id: <6333857fe43f09b91bba8558eefbbe4464dfc250.1646892811.git.qinjian@cqplus1.com>
 X-Mailer: git-send-email 2.33.1
 In-Reply-To: <cover.1646892810.git.qinjian@cqplus1.com>
 References: <cover.1646892810.git.qinjian@cqplus1.com>
@@ -40,96 +39,128 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation to describe Sunplus SP7021 interrupt controller bindings.
+This patch aims to add an initial support for Sunplus SP7021 SoC.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 ---
- .../sunplus,sp7021-intc.yaml                  | 62 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+ MAINTAINERS                    |  1 +
+ arch/arm/Kconfig               |  2 ++
+ arch/arm/Makefile              |  1 +
+ arch/arm/mach-sunplus/Kconfig  | 26 ++++++++++++++++++++++++++
+ arch/arm/mach-sunplus/Makefile |  9 +++++++++
+ arch/arm/mach-sunplus/sp7021.c | 16 ++++++++++++++++
+ 6 files changed, 55 insertions(+)
+ create mode 100644 arch/arm/mach-sunplus/Kconfig
+ create mode 100644 arch/arm/mach-sunplus/Makefile
+ create mode 100644 arch/arm/mach-sunplus/sp7021.c
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
-new file mode 100644
-index 000000000..5daeab63c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
-@@ -0,0 +1,62 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+# Copyright (C) Sunplus Co., Ltd. 2021
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/sunplus,sp7021-intc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sunplus SP7021 SoC Interrupt Controller Device Tree Bindings
-+
-+maintainers:
-+  - Qin Jian <qinjian@cqplus1.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: sunplus,sp7021-intc
-+
-+  interrupt-controller: true
-+
-+  "#interrupt-cells":
-+    const: 2
-+    description:
-+      The first cell is the IRQ number, the second cell is the trigger
-+      type as defined in interrupt.txt in this directory.
-+
-+  reg:
-+    maxItems: 2
-+    description:
-+      Specifies base physical address(s) and size of the controller regs.
-+      The 1st region include type/polarity/priority/mask regs.
-+      The 2nd region include clear/masked_ext0/masked_ext1/group regs.
-+
-+  interrupts:
-+    maxItems: 2
-+    description:
-+      EXT_INT0 & EXT_INT1, 2 interrupts references to primary interrupt
-+      controller.
-+
-+required:
-+  - compatible
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    intc: interrupt-controller@9c000780 {
-+        compatible = "sunplus,sp7021-intc";
-+        interrupt-controller;
-+        #interrupt-cells = <2>;
-+        reg = <0x9c000780 0x80>, <0x9c000a80 0x80>;
-+        interrupt-parent = <&gic>;
-+        interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>, /* EXT_INT0 */
-+                     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>; /* EXT_INT1 */
-+    };
-+
-+...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 5069f552f..6b3bbe021 100644
+index febbd97bf..0ae537a41 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -2662,6 +2662,7 @@ S:	Maintained
- W:	https://sunplus-tibbo.atlassian.net/wiki/spaces/doc/overview
- F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
+@@ -2664,6 +2664,7 @@ F:	Documentation/devicetree/bindings/arm/sunplus,sp7021.yaml
  F:	Documentation/devicetree/bindings/clock/sunplus,sp7021-clkc.yaml
-+F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
+ F:	Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
  F:	Documentation/devicetree/bindings/reset/sunplus,reset.yaml
++F:	arch/arm/mach-sunplus/
  F:	drivers/clk/clk-sp7021.c
+ F:	drivers/irqchip/irq-sp7021-intc.c
  F:	drivers/reset/reset-sunplus.c
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 59baf6c13..8c7883b5a 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -689,6 +689,8 @@ source "arch/arm/mach-sti/Kconfig"
+ 
+ source "arch/arm/mach-stm32/Kconfig"
+ 
++source "arch/arm/mach-sunplus/Kconfig"
++
+ source "arch/arm/mach-sunxi/Kconfig"
+ 
+ source "arch/arm/mach-tegra/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 847c31e7c..973ffb830 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -212,6 +212,7 @@ machine-$(CONFIG_ARCH_RENESAS)	 	+= shmobile
+ machine-$(CONFIG_ARCH_INTEL_SOCFPGA)	+= socfpga
+ machine-$(CONFIG_ARCH_STI)		+= sti
+ machine-$(CONFIG_ARCH_STM32)		+= stm32
++machine-$(CONFIG_ARCH_SUNPLUS)		+= sunplus
+ machine-$(CONFIG_ARCH_SUNXI)		+= sunxi
+ machine-$(CONFIG_ARCH_TEGRA)		+= tegra
+ machine-$(CONFIG_ARCH_U8500)		+= ux500
+diff --git a/arch/arm/mach-sunplus/Kconfig b/arch/arm/mach-sunplus/Kconfig
+new file mode 100644
+index 000000000..e720606dd
+--- /dev/null
++++ b/arch/arm/mach-sunplus/Kconfig
+@@ -0,0 +1,26 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++
++menuconfig ARCH_SUNPLUS
++	bool "Sunplus SoCs"
++	depends on ARCH_MULTI_V7
++	help
++	  Support for Sunplus SoC family: SP7021 and succeeding SoC-based systems,
++	  such as the Banana Pi BPI-F2S development board (and derivatives).
++	  (<http://www.sinovoip.com.cn/ecp_view.asp?id=586>)
++	  (<https://tibbo.com/store/plus1.html>)
++
++config SOC_SP7021
++	bool "Sunplus SP7021 SoC support"
++	depends on ARCH_SUNPLUS
++	default ARCH_SUNPLUS
++	select ARM_GIC
++	select ARM_PSCI
++	select PINCTRL
++	select PINCTRL_SPPCTL
++	select SERIAL_SUNPLUS
++	select SERIAL_SUNPLUS_CONSOLE
++	help
++	  Support for Sunplus SP7021 SoC. It is based on ARM 4-core
++	  Cortex-A7 with various peripherals (ex: I2C, SPI, SDIO,
++	  Ethernet and etc.), FPGA interface,  chip-to-chip bus.
++	  It is designed for industrial control.
+diff --git a/arch/arm/mach-sunplus/Makefile b/arch/arm/mach-sunplus/Makefile
+new file mode 100644
+index 000000000..c902580a7
+--- /dev/null
++++ b/arch/arm/mach-sunplus/Makefile
+@@ -0,0 +1,9 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for the linux kernel.
++#
++
++# Object file lists.
++
++obj-$(CONFIG_SOC_SP7021)	+= sp7021.o
++
+diff --git a/arch/arm/mach-sunplus/sp7021.c b/arch/arm/mach-sunplus/sp7021.c
+new file mode 100644
+index 000000000..774d0a5bd
+--- /dev/null
++++ b/arch/arm/mach-sunplus/sp7021.c
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Copyright (C) Sunplus Technology Co., Ltd.
++ *       All rights reserved.
++ */
++#include <linux/kernel.h>
++#include <asm/mach/arch.h>
++
++static const char *sp7021_compat[] __initconst = {
++	"sunplus,sp7021",
++	NULL
++};
++
++DT_MACHINE_START(SP7021_DT, "SP7021")
++	.dt_compat	= sp7021_compat,
++MACHINE_END
 -- 
 2.33.1
 
