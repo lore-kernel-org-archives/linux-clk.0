@@ -2,94 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E6FC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 15:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D00BC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Mar 2022 16:23:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239539AbiCJP7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Mar 2022 10:59:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60394 "EHLO
+        id S244050AbiCJQYv convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Mar 2022 11:24:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239513AbiCJP7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 10:59:35 -0500
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD8C15F373;
-        Thu, 10 Mar 2022 07:58:31 -0800 (PST)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 3B029200004;
-        Thu, 10 Mar 2022 15:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1646927906;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Uy3xMiCeqQ87JLlqai2jsXrx2//qDPrOCXzM+XIFa1E=;
-        b=aNoob1WG6iGF5gZu3S3nbzrYvvHwuLanw6TyZpoXeUkHVtensdopYAiFatLWaG42AHj6y1
-        B1Zq2RY3CV3mk1nJC3ZO+/CYW2I7sXmhcZqPNuXdsShs0j9r/UwiaSHXPEZGKrqzFRmU8Z
-        cqCt5mS7gMScPiy0uop43ZGrpM/lwBVYEf+BnkuMh5l5DeBiiRRETC+wNV1YhPEdsd5Xj7
-        JC0GONCJm5XDuQK3MAWpPwyojbYrkcWVkbd2LGdqRbeVkSxkpSQgC/EFpVCBtgeSPsfur9
-        oyeKc5GxIXHocC+fxL+DTYIxmW/SVnBBOd4nM/2Sr6wB5Q51WDd9NnqAqIdt+Q==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v4 9/9] ARM: dts: r9a06g032: Describe the DMA router
-Date:   Thu, 10 Mar 2022 16:57:55 +0100
-Message-Id: <20220310155755.287294-10-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220310155755.287294-1-miquel.raynal@bootlin.com>
-References: <20220310155755.287294-1-miquel.raynal@bootlin.com>
+        with ESMTP id S244047AbiCJQYq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Mar 2022 11:24:46 -0500
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09883195300;
+        Thu, 10 Mar 2022 08:22:23 -0800 (PST)
+Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nSLYO-00055v-2B; Thu, 10 Mar 2022 17:22:16 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     cgel.zte@gmail.com, mturquette@baylibre.com,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Minghao Chi <chi.minghao@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: Re: [PATCH] clk/rockchip: Use of_device_get_match_data()
+Date:   Thu, 10 Mar 2022 17:22:15 +0100
+Message-ID: <2697395.DCgNgQjydf@diego>
+In-Reply-To: <20220309185738.2192EC340EC@smtp.kernel.org>
+References: <20220304011703.2061466-1-chi.minghao@zte.com.cn> <20220309185738.2192EC340EC@smtp.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is a dmamux on this SoC which allows picking two different sources
-for a single DMA request.
+Am Mittwoch, 9. März 2022, 19:57:36 CET schrieb Stephen Boyd:
+> Quoting cgel.zte@gmail.com (2022-03-03 17:17:03)
+> > From: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+> > 
+> > Use of_device_get_match_data() to simplify the code.
+> > 
+> > Reported-by: Zeal Robot <zealci@zte.com.cn>
+> > Signed-off-by: Minghao Chi (CGEL ZTE) <chi.minghao@zte.com.cn>
+> > ---
+> >  drivers/clk/rockchip/clk-rk3399.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/clk/rockchip/clk-rk3399.c b/drivers/clk/rockchip/clk-rk3399.c
+> > index 306910a3a0d3..b1b67bfb63b8 100644
+> > --- a/drivers/clk/rockchip/clk-rk3399.c
+> > +++ b/drivers/clk/rockchip/clk-rk3399.c
+> > @@ -1634,14 +1634,8 @@ static const struct of_device_id clk_rk3399_match_table[] = {
+> >  static int __init clk_rk3399_probe(struct platform_device *pdev)
+> >  {
+> >         struct device_node *np = pdev->dev.of_node;
+> > -       const struct of_device_id *match;
+> >         const struct clk_rk3399_inits *init_data;
+> > -
+> > -       match = of_match_device(clk_rk3399_match_table, &pdev->dev);
+> > -       if (!match || !match->data)
+> > -               return -EINVAL;
+> > -
+> > -       init_data = match->data;
+> > +       init_data = of_device_get_match_data(&pdev->dev);
+> 
+> The translation doesn't look equivalent. Before we would bail out of
+> probe if match data isn't there with an error. That isn't possible of
+> course with further investigation but please make a note of this in the
+> commit text to aid review.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+We _do have_ Rockchip clock drivers serving multiple socs already
+(rk3188+rk3066 for example) and as patterns are duplicated often from
+one existing driver to a new one, I think it makes sense to have the
+error handling done correctly.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 640c3eb4bbcd..804f2d6f416f 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -75,6 +75,16 @@ sysctrl: system-controller@4000c000 {
- 			clocks = <&ext_mclk>, <&ext_rtc_clk>,
- 					<&ext_jtag_clk>, <&ext_rgmii_ref>;
- 			clock-names = "mclk", "rtc", "jtag", "rgmii_ref_ext";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			dmamux: dma-router@a0 {
-+				compatible = "renesas,rzn1-dmamux";
-+				reg = <0xa0 4>;
-+				#dma-cells = <6>;
-+				dma-requests = <32>;
-+				dma-masters = <&dma0 &dma1>;
-+			};
- 		};
- 
- 		uart0: serial@40060000 {
--- 
-2.27.0
+So doing
+	init_data = of_device_get_match_data(&pdev->dev);
+	if (init_data)
+		return -EINVAL;
+as before.
+
+If due to some strange coincidence the condition is triggered
+this would cause a null-ptr-dereference with the direct call to
+	init_data->scripts
+below, which might or might not be hidden due to the (early-)console
+being up yet, where with correct error handling a system might at
+least come up to a point to complain about a missing clock driver.
+
+
+
+> Also, please don't send new versions of
+> patches in reply to previous versions of patches. It breaks my patch
+> workflow. Thanks in advance.
+> 
+> >         if (init_data->inits)
+> >                 init_data->inits(np);
+> >
+> 
+
+
+
 
