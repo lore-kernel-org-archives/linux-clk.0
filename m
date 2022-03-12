@@ -2,86 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4431CC433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 11:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B578DC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 13:03:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229486AbiCLLjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Mar 2022 06:39:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        id S229883AbiCLNEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Mar 2022 08:04:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231193AbiCLLjC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 06:39:02 -0500
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB53D26543
-        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 03:37:55 -0800 (PST)
-Received: from relay1-d.mail.gandi.net (unknown [217.70.183.193])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id B10D4C0752
-        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 11:29:16 +0000 (UTC)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id C3BDD240006;
-        Sat, 12 Mar 2022 11:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1647084548;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=jOH08bKV9K2o0RK2gMfpuKKcHc4JTuayEfTcXVSyoKg=;
-        b=SoqJe68LgVq4CRgKPCCveLY+ejVgYCvL/1qfwaBt5hGH0BPknjJBopP4JIp6xYiQQwyVla
-        RvQUc2jDlwa0548Y5tV4gOvIWASgxS3dUJEYSJ6E0oTUtTlpw0qO+Xx9putEeqr3oNgpFU
-        D4O+5sF3hDydCnEqR9tpM2RY9SbnsL8taQVzwxMmeEFDqFtPvgyFsGxW7EPaCfp4wgD0a+
-        p44rqi3d7vJiQs2CZjhc+Ewj80jlPXDPLNxXKMPbcdaKiavaysDalf4c2VzGLNNXZ85rET
-        ThhkrG9VhzsMGyIPf55tjdihiPTxn5KyIOoPtctgGk8UpirGVca1xxQPtArF7w==
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Maxime Ripard <mripard@kernel.org>, linux-sunxi@lists.linux.dev,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-rtc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v3 0/6] clk: sunxi-ng: Add a RTC CCU driver
-Date:   Sat, 12 Mar 2022 12:29:04 +0100
-Message-Id: <164708452927.194759.8728581507803680066.b4-ty@bootlin.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220203021736.13434-1-samuel@sholland.org>
-References: <20220203021736.13434-1-samuel@sholland.org>
+        with ESMTP id S229681AbiCLNEy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 08:04:54 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E150E3D1C7
+        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:03:47 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id l10so6664728wmb.0
+        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:03:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=conchuod-ie.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=F4ZxAMvdyayeBfKvb+RIOxNuxxzTOU9uY/N/Ir8tEVk=;
+        b=pxcoqmCCYvT6TkWVajDPrCWVrrjGub2g1njqN41rRxE2cQoVVD0Hxj9u2bEKTfyMfA
+         V/xkR7dLfCq/13/tSiu/BlYFUEni1Kl1O3uRap7oRjUoAYYg5wKnS3y/Zc7FDn4eZEqI
+         iqkEUgsTaoOJigp9gAy43FQi3KJ8I/c27NowrUPreyBfLEtF4sPNir79r+zW04VIkN+K
+         c7pt3ezm+dfpABNb8YmzRiFp1xfa2lNG5Ko4yKo1qDojg5K/9Yg3Pi+gjaO+1a1Hxo0x
+         tQ4O9yb+m1PSyZcCKa+Zn69olwiwPRSAsoLZs6BkcxxIk9X/kDCDh5Xw0cbpMSwlsY8g
+         V62A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=F4ZxAMvdyayeBfKvb+RIOxNuxxzTOU9uY/N/Ir8tEVk=;
+        b=YB1yfLEozDOa1fqqDLmTc+YPhs6f1XX4IBxnkVNInM+iTB14Mb3srgAgI9cB4T56wy
+         PXTZwQYB23VacDX1jsPgTiktFXe7aPeXV12dJFGlNJJtT03MUYMbcZyiVmMHlM6A0+Me
+         AP8Za1cYgCQ9lPsrtNyVOThzGHnc0TU4H6xg7GeBvCccl9h9Jh3I/N4YhORZpox+bXuZ
+         wd/tH32uxrCjiSS8F4rC4rMGOeEP7nkoeuU2optuOVTbf/saxC2vUvp8ytHH63dFfOEf
+         HW9X0u/ZxrxuirpqsoNV+bBpnapihbSncxSF04D0M2o7iX5eOaCK7qZHF6sum9GMhJPI
+         NB8w==
+X-Gm-Message-State: AOAM532sY7R46Op8a6Qp8Q7IJs6k64R85gdLgS10YYU/WMpjTERVIAKc
+        cWZ4bAoVKLoVZKwKdrRKEOmObg==
+X-Google-Smtp-Source: ABdhPJxUGmG844w1SIPn3JsQVTzy6w7HV63dr1JeVPmdac+rE5PxCxyYoZd2BF5SK/sNa3jOBghTdA==
+X-Received: by 2002:a7b:c5d0:0:b0:389:fe85:3d79 with SMTP id n16-20020a7bc5d0000000b00389fe853d79mr1803275wmk.77.1647090226367;
+        Sat, 12 Mar 2022 05:03:46 -0800 (PST)
+Received: from [192.168.2.222] ([109.76.4.19])
+        by smtp.gmail.com with ESMTPSA id v124-20020a1cac82000000b0037c3d08e0e7sm12862918wme.29.2022.03.12.05.03.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Mar 2022 05:03:45 -0800 (PST)
+Message-ID: <05e2fa13-163f-e6ef-4cf8-be6de513f068@conchuod.ie>
+Date:   Sat, 12 Mar 2022 13:03:43 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v12 1/1] clk: microchip: Add driver for Microchip
+ PolarFire SoC
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, conor.dooley@microchip.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     krzysztof.kozlowski@canonical.com, geert@linux-m68k.org,
+        david.abdurachmanov@gmail.com, palmer@dabbelt.com,
+        daire.mcnamara@microchip.com, cyril.jean@microchip.com,
+        Padmarao Begari <padmarao.begari@microchip.com>
+References: <20220222121143.3316880-1-conor.dooley@microchip.com>
+ <20220222121143.3316880-2-conor.dooley@microchip.com>
+ <20220312033230.5CB87C340E9@smtp.kernel.org>
+From:   Conor Dooley <mail@conchuod.ie>
+In-Reply-To: <20220312033230.5CB87C340E9@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Feb 2022 20:17:30 -0600, Samuel Holland wrote:
-> This patch series adds a CCU driver for the RTC in the H616, R329 and
-> D1. The extra patch at the end of this series shows how it would be
-> explanded to additional hardware variants.
+
+On 12/03/2022 03:32, Stephen Boyd wrote:
+> Quoting conor.dooley@microchip.com (2022-02-22 04:11:44)
+>> From: Daire McNamara <daire.mcnamara@microchip.com>
+>>
+>> Add support for clock configuration on Microchip PolarFire SoC
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Co-developed-by: Padmarao Begari <padmarao.begari@microchip.com>
+>> Signed-off-by: Padmarao Begari <padmarao.begari@microchip.com>
+>> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+>> Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
+>> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+>> ---
 > 
-> The driver is intended to support the existing binding used for the H6,
-> but also an updated binding which includes all RTC input clocks.
-> 
-> [...]
+> Applied to clk-next
 
-Applied, thanks!
-
-[1/6] dt-bindings: rtc: sun6i: Clean up repetition
-      (no commit info)
-[2/6] dt-bindings: rtc: sun6i: Add H616, R329, and D1 support
-      (no commit info)
-[3/6] rtc: sun6i: Enable the bus clock when provided
-      (no commit info)
-[4/6] clk: sunxi-ng: mux: Allow muxes to have keys
-      commit: b6e649834afa1fc6fd856b287e808cebe2c6fb8e
-[5/6] clk: sunxi-ng: Add support for the sun6i RTC clocks
-      commit: df8925adc02f1cb2c87582d688dd8991aaabf8b2
-[6/6] clk: sunxi-ng: sun6i-rtc: Add support for H6
-      commit: dc1d63a697304fbd246e24901e0635885856ef63
-
-Best regards,
--- 
-Alexandre Belloni <alexandre.belloni@bootlin.com>
+great, thanks!
