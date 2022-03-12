@@ -2,69 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39355C433EF
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 03:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 209BFC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 04:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbiCLDdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Mar 2022 22:33:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38310 "EHLO
+        id S230354AbiCLEuG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Mar 2022 23:50:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiCLDdg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Mar 2022 22:33:36 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F0C23F3A3;
-        Fri, 11 Mar 2022 19:32:31 -0800 (PST)
+        with ESMTP id S229502AbiCLEtx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Mar 2022 23:49:53 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0315B2C2;
+        Fri, 11 Mar 2022 20:48:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2155A619B3;
-        Sat, 12 Mar 2022 03:32:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB87C340E9;
-        Sat, 12 Mar 2022 03:32:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6CE6CB801B8;
+        Sat, 12 Mar 2022 04:48:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D56FBC340EE;
+        Sat, 12 Mar 2022 04:48:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647055950;
-        bh=5c/uqaf7HToSvDPVi8t5ZcxA8su2vJ0/79YKHfkHeB0=;
+        s=k20201202; t=1647060523;
+        bh=S0bWRsxYFtupOFptAFXrymcTV8mDH/7x+mVBM89HJM0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ExM6Ngjp3aVt6jQtzDZpF+jinio9XtIB5t7hXIdl3WJufUQEUlr01m6RyVbCA/4rk
-         so2vkwtW05akkZA7B/bJOhetDZjnyOYorA2RAAX+AGXEqDTQ52aWVJ+xWtS0SKCZZo
-         xSMAzl/1cwSI74vD/7fNveugQxty8loZwgCH1Va5EwoBHUSPRKbpywxunkF4JpxCPw
-         JUMMLl5xXjFReE7uOUEMET5HC0dqHpgeuyRHPmHoDBxCFc/5hInN992N1q+xmN7Dnp
-         ieuf8kryS2+0HEMhC1EwTyc7XSemipI3/rK6oXwZxMkLNgG/TLxo2ZotUOp+EY9Ndf
-         yPFz4iG4jmd1Q==
+        b=ofU0J3Y/WbDhhAfzcuyLflxy9IRDe1z3xVPT4mmFNbOh1vcfdXEbEZNGujA7lm5mf
+         7iNHD1bgNC87c1OZsgpGi1txmoffQrRBOTnJAFa6uHv8Fw8gtj3axs0EOvAq/PxNE3
+         blnC/Ez1aBN1kDPqjprBqtCPOQToMl2Bb2TxZAeOdpXGQAoJI51VWEmG/+8s1pJErW
+         BwSTRMkHmGB6hxBerB1WcCMEDLsh2Xv+MR3I3MRBUxEW+mZ1EPE28SLnQU4EFhEMjp
+         J0P0BSaPREPRfn7SGg9LcPagSkjM0rJ6p8q4KL0pJtRMqw9S9CljTp1a/n/hFCisdN
+         3xO0a14FK+xFQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220222121143.3316880-2-conor.dooley@microchip.com>
-References: <20220222121143.3316880-1-conor.dooley@microchip.com> <20220222121143.3316880-2-conor.dooley@microchip.com>
-Subject: Re: [PATCH v12 1/1] clk: microchip: Add driver for Microchip PolarFire SoC
+In-Reply-To: <20220208183411.61090-2-povik+lin@cutebit.org>
+References: <20220208183411.61090-1-povik+lin@cutebit.org> <20220208183411.61090-2-povik+lin@cutebit.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add Apple NCO
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     krzysztof.kozlowski@canonical.com, geert@linux-m68k.org,
-        david.abdurachmanov@gmail.com, palmer@dabbelt.com,
-        daire.mcnamara@microchip.com, cyril.jean@microchip.com,
-        conor.dooley@microchip.com,
-        Padmarao Begari <padmarao.begari@microchip.com>
-To:     conor.dooley@microchip.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Fri, 11 Mar 2022 19:32:27 -0800
+Cc:     Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Kettenis <kettenis@openbsd.org>,
+        Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 11 Mar 2022 20:48:42 -0800
 User-Agent: alot/0.10
-Message-Id: <20220312033230.5CB87C340E9@smtp.kernel.org>
+Message-Id: <20220312044843.D56FBC340EE@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting conor.dooley@microchip.com (2022-02-22 04:11:44)
-> From: Daire McNamara <daire.mcnamara@microchip.com>
+Quoting Martin Povi=C5=A1er (2022-02-08 10:34:09)
+> The NCO block found on Apple SoCs is a programmable clock generator
+> performing fractional division of a high frequency input clock.
 >=20
-> Add support for clock configuration on Microchip PolarFire SoC
->=20
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Co-developed-by: Padmarao Begari <padmarao.begari@microchip.com>
-> Signed-off-by: Padmarao Begari <padmarao.begari@microchip.com>
-> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-> Co-developed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Mark Kettenis <kettenis@openbsd.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Martin Povi=C5=A1er <povik+lin@cutebit.org>
 > ---
 
 Applied to clk-next
