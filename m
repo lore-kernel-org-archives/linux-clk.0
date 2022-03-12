@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC01C4332F
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 13:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C6BC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 13:30:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbiCLNbC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Mar 2022 08:31:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45066 "EHLO
+        id S231979AbiCLNbK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Mar 2022 08:31:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231945AbiCLNaw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 08:30:52 -0500
+        with ESMTP id S231963AbiCLNas (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 08:30:48 -0500
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCD2E8BF2B
-        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:29:42 -0800 (PST)
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF84C208324
+        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:29:36 -0800 (PST)
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D1BFE3F79C
-        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 13:29:40 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 983723F312
+        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 13:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1647091780;
-        bh=k4Jb1JIbmx97RGU5zYwsibslXr/amA0TPgZk/TYiBU0=;
+        s=20210705; t=1647091775;
+        bh=Z+Z1CBBLpVo7KqzVCsMaZv4r7Tw7oQzghpWsDjTy8tg=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=etcl4ZIf+1dzLAo24O5sWFn+ySSFcmyZ1bRwykvDKzOuU9XZKxGHb3ghak7hh1gaV
-         prEdn75dYtOv5gHWAi/agKY/3l1jbXe7wlkmEXbXVIVq6ig3wEbr37Ty5VZUb5Mte3
-         iGEQmqy3O4sX25P9faXewnFdibWC0ZaDOFHp0hTqE4kj6Djqm94ptoc5zRe5jndurx
-         cwUvFP/Vjn5gu90b54gPfZz+nTBidDE/nvDB1JP5cpjfgemZseionsjMHQplJbRmqg
-         GlgNQ6MC7bhWuHLR/DnKJKcIJ4/h9KEumn2zYw+FFF8Epudw9ui5d6bidWccc6Z/EL
-         aPPWi7QYFvRiA==
-Received: by mail-wm1-f69.google.com with SMTP id x5-20020a1c7c05000000b00389bcc8df46so4411919wmc.0
-        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:29:40 -0800 (PST)
+        b=rBmxa141BG1JcQQzlUGwVeJyuFaGcOKFJV1idfACkTmZfMxwy2b9hhMSl2tcpmOj9
+         fwbinGKWOZXCWMSVeroPjfeFuBlT/+Fxfj3C9UeFEYzqjZHEi0PfYC6Nu+x8FLI5kc
+         B0M2t3qi3ltEuw47rcBif1X1toir6CoUbhgVWeBtKrHF7O8MWfgsaKAzdxAVE4ShEh
+         uoPnJc8sbKjNStXn/KRRzktbhuGDzIdlVqAhPipYjZNWu4tLD9yXfaV16B/OMmPER1
+         XAYwZFoE6M3ZPvXOIzJ7snQKt5UWf1+UWsm1eoJb1DQHJJDtJ748UcCMVzJUW933QF
+         DLwcxWbDS1hig==
+Received: by mail-ej1-f70.google.com with SMTP id qf24-20020a1709077f1800b006ce8c140d3dso6340205ejc.18
+        for <linux-clk@vger.kernel.org>; Sat, 12 Mar 2022 05:29:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=k4Jb1JIbmx97RGU5zYwsibslXr/amA0TPgZk/TYiBU0=;
-        b=mnZILBi6znGQyRLvE6iDLQLTN67wnxAeRJ9MhsXSNSdihpcUJIjUMRmq/F5O/udbKk
-         xF3vhcZ1DN4UjrDZ1KemwUnTZ44q3W9oHAFEcw4WJ0Dnlu7TxCyfhP0AH43GOL59rQeZ
-         c5Nil87uuxpOcnq6qMOrnrwXUfThLVVOwytYw+fobWEKgKbgq5pBKIecZjy3fFYl2xKg
-         L8cH33h6QUfOAxp2+Z7WBSZWuV6cBx+In+3SSDK1VixcyHKcfXP9a2TBK7dXPMTbknLQ
-         s12fFfvhfGE90aiWBy9uph7MXxxPvr58cDJKo4LsxLM02fH51HELGlBrh/YqSFjXW9dp
-         UO9A==
-X-Gm-Message-State: AOAM533ze38EbpenuXQh40D0wpnCJ5+vXiav1uWYXsp9SOdiE4qcT43O
-        B3SRrOKJ55DDFRjAbeGIGnhaFipnE1Ds5pg36fSB/earzVqlBnOS/VKW6qWkKPKtRGejOU+rGbZ
-        PZabwZzsy9Ntrdu+N7K+g0m9MpcJjViaeP545OA==
-X-Received: by 2002:a05:600c:205a:b0:380:d03d:9cd5 with SMTP id p26-20020a05600c205a00b00380d03d9cd5mr18973794wmg.89.1647091769339;
-        Sat, 12 Mar 2022 05:29:29 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx/UYRzL44sORF2ylmmKXb7vWoxaA4l4bh2hpunrfXO0ZX4FC17dWpWNzj8sLP8bds5v9sX3A==
-X-Received: by 2002:a05:600c:205a:b0:380:d03d:9cd5 with SMTP id p26-20020a05600c205a00b00380d03d9cd5mr18973773wmg.89.1647091769175;
-        Sat, 12 Mar 2022 05:29:29 -0800 (PST)
+        bh=Z+Z1CBBLpVo7KqzVCsMaZv4r7Tw7oQzghpWsDjTy8tg=;
+        b=ixo5LNSOKSohDDfMPyyxruEXSPdwhyPorHoyUt2C/1bGJyl+D7Qea+XEjibzsZzIAu
+         beX0brO7k0z2WHnaO6rjlD6NP1S71p0bXsSdASkgLttw64SbykIU20ooXMx25gphc8pL
+         nHzg3W2HZ0KBtPJTpR3znPKk21tdkA69I8V7r+SbDNUXfN1nwLhmNYIbrQZWAwUUI3yM
+         6B3tJU9mRMPrl2Kkx0FBg7SfimoVIUQdspwBTDQCGr2LU894ZtiENgJyFCDgFfgr1AzV
+         0E+/YhhQ7Swub96yP3yDS3gMmuU7aZaCuryu3yHlKwtj2QzfcNzmaOx9javyfB42Y6dU
+         1cCg==
+X-Gm-Message-State: AOAM533u8TOFEQsYGWW+nQuQI95XB0n3HszUTjtYFBVMC7DQYwkOEncL
+        dfHLXmC3v39Jm7dnPFDsbPVGaz3p6M5rQUJO7wd3Z9IDsC1cQz0TSfEsv/Fi+R5cw+jqZk6E2fo
+        bdHDQhCPHu3JlMEhqClRtB0+Q0UfavoEympMX8g==
+X-Received: by 2002:a05:6000:1a8e:b0:202:8714:d312 with SMTP id f14-20020a0560001a8e00b002028714d312mr10815845wry.683.1647091763738;
+        Sat, 12 Mar 2022 05:29:23 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwjYZfFJ+GUQwy/f/MdbbiQp6L99Sn+ofXO+Q8l7XBFVGS1E/0dNsBqx+eOeH3/7jrINWLOsQ==
+X-Received: by 2002:a05:6000:1a8e:b0:202:8714:d312 with SMTP id f14-20020a0560001a8e00b002028714d312mr10815805wry.683.1647091763553;
+        Sat, 12 Mar 2022 05:29:23 -0800 (PST)
 Received: from localhost.localdomain (xdsl-188-155-174-239.adslplus.ch. [188.155.174.239])
-        by smtp.gmail.com with ESMTPSA id p22-20020a1c5456000000b00389e7e62800sm5751550wmi.8.2022.03.12.05.29.26
+        by smtp.gmail.com with ESMTPSA id p22-20020a1c5456000000b00389e7e62800sm5751550wmi.8.2022.03.12.05.29.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Mar 2022 05:29:28 -0800 (PST)
+        Sat, 12 Mar 2022 05:29:23 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>
@@ -92,9 +92,9 @@ Cc:     Stuart Yoder <stuyoder@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Subject: [PATCH v4 08/11] vdpa: Use helper for safer setting of driver_override
-Date:   Sat, 12 Mar 2022 14:28:53 +0100
-Message-Id: <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v4 06/11] s390/cio: Use driver_set_override() instead of open-coding
+Date:   Sat, 12 Mar 2022 14:28:51 +0100
+Message-Id: <20220312132856.65163-7-krzysztof.kozlowski@canonical.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220312132856.65163-1-krzysztof.kozlowski@canonical.com>
 References: <20220312132856.65163-1-krzysztof.kozlowski@canonical.com>
@@ -105,25 +105,43 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Use a helper to set driver_override to reduce amount of duplicated code.
+Make the driver_override field const char, because it is not modified by
+the core and it matches other subsystems.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Acked-by: Vineeth Vijayan <vneethv@linux.ibm.com>
 ---
- drivers/vdpa/vdpa.c  | 29 ++++-------------------------
- include/linux/vdpa.h |  4 +++-
- 2 files changed, 7 insertions(+), 26 deletions(-)
+ drivers/s390/cio/cio.h |  6 +++++-
+ drivers/s390/cio/css.c | 28 ++++------------------------
+ 2 files changed, 9 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-index 1ea525433a5c..2dabed1df35c 100644
---- a/drivers/vdpa/vdpa.c
-+++ b/drivers/vdpa/vdpa.c
-@@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
+diff --git a/drivers/s390/cio/cio.h b/drivers/s390/cio/cio.h
+index 1cb9daf9c645..fa8df50bb49e 100644
+--- a/drivers/s390/cio/cio.h
++++ b/drivers/s390/cio/cio.h
+@@ -103,7 +103,11 @@ struct subchannel {
+ 	struct work_struct todo_work;
+ 	struct schib_config config;
+ 	u64 dma_mask;
+-	char *driver_override; /* Driver name to force a match */
++	/*
++	 * Driver name to force a match.  Do not set directly, because core
++	 * frees it.  Use driver_set_override() to set or clear it.
++	 */
++	const char *driver_override;
+ } __attribute__ ((aligned(8)));
+ 
+ DECLARE_PER_CPU_ALIGNED(struct irb, cio_irb);
+diff --git a/drivers/s390/cio/css.c b/drivers/s390/cio/css.c
+index fa8293335077..913b6ddd040b 100644
+--- a/drivers/s390/cio/css.c
++++ b/drivers/s390/cio/css.c
+@@ -338,31 +338,11 @@ static ssize_t driver_override_store(struct device *dev,
  				     const char *buf, size_t count)
  {
- 	struct vdpa_device *vdev = dev_to_vdpa(dev);
--	const char *driver_override, *old;
--	char *cp;
-+	int ret;
- 
+ 	struct subchannel *sch = to_subchannel(dev);
+-	char *driver_override, *old, *cp;
+-
 -	/* We need to keep extra room for a newline */
 -	if (count >= (PAGE_SIZE - 1))
 -		return -EINVAL;
@@ -137,37 +155,23 @@ index 1ea525433a5c..2dabed1df35c 100644
 -		*cp = '\0';
 -
 -	device_lock(dev);
--	old = vdev->driver_override;
+-	old = sch->driver_override;
 -	if (strlen(driver_override)) {
--		vdev->driver_override = driver_override;
+-		sch->driver_override = driver_override;
 -	} else {
 -		kfree(driver_override);
--		vdev->driver_override = NULL;
+-		sch->driver_override = NULL;
 -	}
 -	device_unlock(dev);
--
++	int ret;
+ 
 -	kfree(old);
-+	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
++	ret = driver_set_override(dev, &sch->driver_override, buf, count);
 +	if (ret)
 +		return ret;
  
  	return count;
  }
-diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-index 721089bb4c84..37117404660e 100644
---- a/include/linux/vdpa.h
-+++ b/include/linux/vdpa.h
-@@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
-  * struct vdpa_device - representation of a vDPA device
-  * @dev: underlying device
-  * @dma_dev: the actual device that is performing DMA
-- * @driver_override: driver name to force a match
-+ * @driver_override: driver name to force a match; do not set directly,
-+ *                   because core frees it; use driver_set_override() to
-+ *                   set or clear it.
-  * @config: the configuration ops for this device.
-  * @cf_mutex: Protects get and set access to configuration layout.
-  * @index: device index
 -- 
 2.32.0
 
