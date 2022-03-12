@@ -2,83 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8701BC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 02:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E63FC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 02:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbiCLCeo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Mar 2022 21:34:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34574 "EHLO
+        id S229481AbiCLCzA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Mar 2022 21:55:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiCLCeo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Mar 2022 21:34:44 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7213E13D562;
-        Fri, 11 Mar 2022 18:33:38 -0800 (PST)
+        with ESMTP id S229480AbiCLCy7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Mar 2022 21:54:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EF324F788;
+        Fri, 11 Mar 2022 18:53:54 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 10502617D4;
-        Sat, 12 Mar 2022 02:33:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62A25C340E9;
-        Sat, 12 Mar 2022 02:33:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3DE33B80EBB;
+        Sat, 12 Mar 2022 02:53:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7207C340E9;
+        Sat, 12 Mar 2022 02:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647052417;
-        bh=GGNY0j2NPdsmfEcjre+nJnJmbDsf2XDswNA45NrrSbo=;
+        s=k20201202; t=1647053631;
+        bh=j4DQ0Z4F7/1qdMCCjWIhTypbozMGPnG0zK+BtArEHoQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qMZY9aDZVNjBYfYdQ7qMegZ/V7P/eWbBQmTkizELh+Cm4Qrr6y8p/EmFXfgw/n6zA
-         B8oLCF7h+wmX+Rky3YZxO8UVep2st1JlUJNhrpPMSpr15Qrr+m98fGxOI/jmvOBKF9
-         z6st5RSBVtzPejnovCzbI35KM2mlh5v3qsYv/L6Qswx2i9fPcficIKp7qr+IK2leak
-         FSVlyvVrBrb4Fk2aFngYmssxZxOLa3aVQIF8FliZ9/7cKTqlc5WW6eE92y4BPXuPlZ
-         x4V12HLYKRGls7j2qzfh/jajIJVck4iQqA4Wc3wQY0tMLsYNaxFWTkjlrCk0yDFcrQ
-         QF4XJbrgAkfEg==
+        b=SR7gRWzScDnZdEdJWI64VUQoCr+8bsKB8DAQFbDVTrwceEiWB31cJieOyQ0K+I1zM
+         ylcIs0UknxCCOAOBVqMnHuph0mGrqblHenc4h0taHAniH61AshrbrmgEwCrhxC3PdQ
+         S5IxSBhjq69nF8uRFrMDL4L5iZucvIfofeDFLjSELgzhpdfJ7ic8Bt3NEyWs59EMFZ
+         hKfAYdZ8n7ALVW3JQ6mhRtm9ub3Ru+/TPWM75MDfy1fk3uvgmFYHyLnsiQgi7SN2d6
+         w1apSzPPFGqdAO6MynlmD1SALIVdUXn1x8o02+VsZMNOasSB1kVMADcq/2wloO3mBS
+         A0AxAl8t1vLtg==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Yhofs/PbIOmiyNIH@latitude>
-References: <20220205103613.1216218-1-j.neuschaefer@gmx.net> <20220226010033.6C870C340E7@smtp.kernel.org> <Yhofs/PbIOmiyNIH@latitude>
-Subject: Re: [PATCH v2 0/7] clk: Declare mux tables as const u32[]
+In-Reply-To: <20220225133137.813919-9-gabriel.fernandez@foss.st.com>
+References: <20220225133137.813919-1-gabriel.fernandez@foss.st.com> <20220225133137.813919-9-gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH v2 08/13] clk: stm32mp13: add all STM32MP13 peripheral clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Jonathan =?utf-8?q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Date:   Fri, 11 Mar 2022 18:33:35 -0800
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 11 Mar 2022 18:53:48 -0800
 User-Agent: alot/0.10
-Message-Id: <20220312023337.62A25C340E9@smtp.kernel.org>
+Message-Id: <20220312025351.C7207C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Neusch=C3=A4fer (2022-02-26 04:40:19)
-> On Fri, Feb 25, 2022 at 05:00:31PM -0800, Stephen Boyd wrote:
-> > Quoting Jonathan Neusch=C3=A4fer (2022-02-05 02:36:06)
-> > > I noticed that the 'table' parameter to clk_register_mux_table is nev=
-er
-> > > used for modifying the table elements, and so it can be declared cons=
-t.
-> > >=20
-> > > In version 2 I'm addressing two warnings in the clk-lpc18xx-cgu driver
-> > > that I previously missed.
-> >=20
-> > The format of these patches deeply confused my scripts that use git
-> > interpret-trailer. I fixed it now, hopefully it keeps working. In the
-> > future, please don't add more triple dash '---' sections to the patch.
-> > It looks like those extra sections for the changelog messed everything
-> > up. Or there's a new bug in interpret-trailers.  Either way,
-> > interpret-trailers was adding tags after the entire patch contents
-> > because I think it looks for the last triple dash instead of the first
-> > triple dash. Not sure why it's done that way. I resorted to
-> > reconstructing the patch after splitting it with mailinfo.
+Quoting gabriel.fernandez@foss.st.com (2022-02-25 05:31:32)
+> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 >=20
-> Hmm, sorry about that.
->=20
-> I've used this format for a while, because it conveniently lets me
-> keep my remarks in a git commit (rather than a patch file), until I use
-> git format-patch to generate the final patch file.
->=20
-> I'm not very familiar with git interpret-trailers, but git 2.34.1
-> doesn't seem to get confused on my patches (or I didn't pass the right
-> options to cause it to happen).
->=20
+> All peripheral clocks are mainly base on stm32_gate ckocks.
 
-It's possible it's a git bug. No worries!
+s/ckocks/clocks/
