@@ -2,82 +2,68 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E6E2C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 05:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF606C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Mar 2022 07:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbiCLFF1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Mar 2022 00:05:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54584 "EHLO
+        id S229483AbiCLH7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Mar 2022 02:59:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiCLFF0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 00:05:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D1F22C8A8;
-        Fri, 11 Mar 2022 21:04:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BACF4B80EF1;
-        Sat, 12 Mar 2022 05:04:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB91C340EE;
-        Sat, 12 Mar 2022 05:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647061459;
-        bh=Ue4yGDXPhseqkb7NonFZ7wOtLCloicTmJQv1n7hvKLI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=U2Ozyoki/RwE2daCf2ud5cDLVUzVJ4k9DnOBSjotDahLzjOjTNQf0uyUwomOHG2CX
-         fuxCleaxIxGvvBHs0zdo/MsvO9jNSDjXXofG99LtDRS/nmzqO4wYenDX9kDZyGB3wV
-         OQdQ8+3ppLIzu1u7TH9DD1y60Nsz2q9J8wrQp6fPKat+QMLAJwSK/SsCKtA/++QQeJ
-         fDfwcxc+KwgEMAkbzTmjCzNhhQaG8khPQ7GMlJoLs9C4TLa6u+ba0Idg/EJnobr/+e
-         l+4UyHYKoNQGqc9kngtEtQ1hIJbH0kWxlOZsVN/g5odZPwPBjoR3xitirO+VP19FWs
-         BN4HJLiyQrDOQ==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4f1b946d-ee82-bd0e-c51e-100c23b87fdf@denx.de>
-References: <20220215084412.8090-1-marex@denx.de> <20220215084412.8090-2-marex@denx.de> <20220217222328.7F7B3C340E8@smtp.kernel.org> <77c85470-5378-8c8b-8e5f-d57c83773ed6@denx.de> <4f1b946d-ee82-bd0e-c51e-100c23b87fdf@denx.de>
-Subject: Re: [PATCH 2/3] clk: Introduce 'critical-clocks' property
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230415AbiCLH7M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Mar 2022 02:59:12 -0500
+X-Greylist: delayed 326 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 11 Mar 2022 23:58:07 PST
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8947D10B0
+        for <linux-clk@vger.kernel.org>; Fri, 11 Mar 2022 23:58:05 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A5F9380B3;
+        Sat, 12 Mar 2022 07:51:08 +0000 (UTC)
+Date:   Sat, 12 Mar 2022 09:52:36 +0200
+From:   Tony Lindgren <tony@atomide.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
-Date:   Fri, 11 Mar 2022 21:04:17 -0800
-User-Agent: alot/0.10
-Message-Id: <20220312050419.2AB91C340EE@smtp.kernel.org>
+Subject: Re: [PATCH 0/3] Drop TI compatibility clocks
+Message-ID: <YixRREMd+t1tbbwC@atomide.com>
+References: <20220203085618.16043-1-tony@atomide.com>
+ <20220311033617.5712AC340EE@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220311033617.5712AC340EE@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2022-03-09 12:54:35)
-> On 2/21/22 01:58, Marek Vasut wrote:
-> > On 2/17/22 23:23, Stephen Boyd wrote:
-> >=20
-> >> I see that there isn't any more 'clock-critical' in the kernel's dts so
-> >> I wonder if we would be able to get rid of that function or at least
-> >> hollow it out and see if anyone complains. Either way, what is the
-> >> actual problem trying to be solved? If the crystal oscillator isn't us=
-ed
-> >> anywhere in the kernel why are we registering it with the clk framewor=
-k?
-> >=20
-> > The problem is the other way around -- the SoC clock IPs often have a=20
-> > couple of general purpose clock routed to various SoC IO pins, those=20
-> > clock can be used for any purpose, and those are already registered wit=
-h=20
-> > kernel clock framework. Some devices save on BoM and use those general =
+* Stephen Boyd <sboyd@kernel.org> [220311 03:34]:
+> Quoting Tony Lindgren (2022-02-03 00:56:15)
+> > Hi all,
+> > 
+> > In order to prepare the TI clocks for fixing lots of devicetree warnings,
+> > let's first drop the now unused compatibility clocks.
+> > 
+> > The dra7 changes depend on my still pending omap-for-v5.17/fixes-not-urgent
+> > pull request that did not make it for v5.17-rc series so far.
+> > 
+> 
+> What should I do with this one though?
 
-> > purpose clock to supply clock networks which are otherwise not=20
-> > interacting with the kernel, like some CPLD for example. Since from the=
-=20
-> > kernel point of view, those clock are unused, the kernel can turn those=
-=20
-> > clock OFF and that will make the entire device fail.
-> >=20
-> > So this critical-clocks property permits marking clock which must not=20
-> > ever be turned OFF accordingly.
->=20
-> How can we proceed here ?
+Well the dependencies are now merged to the mainline kernel, so you could
+merge in commit 31aa7056bbec, then apply this series if otherwise OK.
 
-Why are we registering the clks with the framework on device that are
-saving on BoM and using them outside of the kernel. What is the use of
-kernel memory for struct clk_core that aren't ever used?
+Commit 31aa7056bbec is based on the old v5.16-rc1. It would bring few other
+fixes from mainline too if pulled on a v5.17-rc1 based branch:
+
+31aa7056bbec ("ARM: dts: Don't use legacy clock defines for dra7 clkctrl")
+9206a3af4fc0 ("clk: ti: Move dra7 clock devices out of the legacy section")
+23885389dbbb ("ARM: dts: Fix timer regression for beagleboard revision c")
+29a5e8496b3a ("ARM: dts: am335x-wega: Fix typo in mcasp property rx-num-evt")
+34596ba380b0 ("ARM: OMAP2+: adjust the location of put_device() call in omapdss_init_of")
+80c469a0a037 ("ARM: OMAP2+: hwmod: Add of_node_put() before break")
+
+Regards,
+
+Tony
