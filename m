@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D112C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 19:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBA5C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 19:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235400AbiCMTGm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Mar 2022 15:06:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37462 "EHLO
+        id S235454AbiCMTHI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Mar 2022 15:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235404AbiCMTGl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 15:06:41 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806BB50B13;
-        Sun, 13 Mar 2022 12:05:17 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a8so29583203ejc.8;
-        Sun, 13 Mar 2022 12:05:17 -0700 (PDT)
+        with ESMTP id S234615AbiCMTHG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 15:07:06 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED4E51E4B;
+        Sun, 13 Mar 2022 12:05:20 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id qx21so29510602ejb.13;
+        Sun, 13 Mar 2022 12:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=ULORFmB1Gv653NhwYAC6GyuMCDu1OWN34Ide113fYeY=;
-        b=jLZx6wHRAQlKhDJq8r1pf+twX5RsUltvQMFTKUyaZOIJHmvCGm60JM5AWPsMmoo9kf
-         4f2Zh1MzbE5QaCzShn8HEoVMDNi+Iwe9y1GR7uPw/9ddI8tbEZLFnAT37eb6rPn4NA2i
-         Z6MztMJafR88Nmu4cUhShdLBFS6s1GhpnbhbOmJn19eqfP2JTZ3pK8HVQavg0SwjBurd
-         AEP7MqUReH6kgOEE8xR3Er930To+yPqhshHnGUTWaqxqGkdLGM+oF8SpbGwWpmSylEOX
-         ONYf3wzXmrwd6X1XaNNjvL0hWZju7iMng6aYOIAqTSvhmBoHWrOvLzWQOpRLnLFVh8PN
-         Xbsw==
+        bh=KF5KajzdUjlsueHw3PGEQrW6QOzbz3BzoTgHX03BJeo=;
+        b=MtegQtBvPQDBpaGLhB2WrNX/E0Tu2vRax15Zb+J0ntgtjQHbz5gW/fJ6MJ/1kSrKRs
+         m1pQHSYvAMbmnbQ81CG9or9Dur3COP/7fZt8i1LdufLj6f8PxAQHA0B3oYeqyjxbfORb
+         ZhkpsQUlH7lxu8CpJrrCt4p+ILMnLwUVRWm3KBlDXLT2JnKKoRSC7ny5Pqu5dPnFupx0
+         bjmYsITWLZw9uat6RC2VmKV6t8Z5cr4SLycHlZK3gAR67GJnZCkM9IXhgTlS8ZZA1m/t
+         JY3cga55dxPD9kGrZgaLU8x+1vb8OS3vYVAwMDJ3vhwE+BHJA+t+II6+YQiVMize1X9a
+         IcaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ULORFmB1Gv653NhwYAC6GyuMCDu1OWN34Ide113fYeY=;
-        b=39o98h+pZPqhWehlVh62zZwciQ4J+JmxWZ1yafDeg3Hg0KfngA7Lmti7nJxivZPzQ/
-         KW7VDej7gDwSVwdO+2twHyvInJSc6npb8gImHGCDYja1U3ACpRQSPxZiNu8LQt8Z2Z6j
-         9jcYQ4nTMhN4LIJS4EWNhW5Y0EdxmOqDlOw2clslc01yy/Qb3z99QBZHy11thOUhDrnb
-         aPTuUqdDSuMpVG07oor48SQcrvgd0zGvpuCce++Z8DF1PX/wEvccpwrSC3zbNahX32oR
-         kkXDNRkE6/bJLwRslSdciM0N1Hn6t5eluT3fCmw/iLYWIKuzp6ayGyqNb3+pgi3Q9JED
-         ZDxw==
-X-Gm-Message-State: AOAM5329zy5sS7fo3LMkoP8vRV3a/IgiBjwnmhmYYBTS/edThzbbB2vq
-        BmlJFJhdTodwQuQpEN3hY1o=
-X-Google-Smtp-Source: ABdhPJxRL8RZcsidjudMbrw77ttd/RNpbT/GvMdVejgX0mXy/oMdLgL07Djq6C91LDW0EBoL1481gQ==
-X-Received: by 2002:a17:906:9b8f:b0:6db:ab62:4713 with SMTP id dd15-20020a1709069b8f00b006dbab624713mr9662533ejc.738.1647198315903;
-        Sun, 13 Mar 2022 12:05:15 -0700 (PDT)
+        bh=KF5KajzdUjlsueHw3PGEQrW6QOzbz3BzoTgHX03BJeo=;
+        b=jwe6Ry9KoLUF7VK53w4Mu6HOlTo8tVL8019Ara1F+9N+D6gi7zIa2vKTPfPPn91ptG
+         E7ownYIy0ttOegT07tB96AkZWLijnNiu6WQanrMNshyhgWJZ2ZURt7bUNO2g3JV5MFKU
+         uXqnD/PVmVCg3DfzpKup3Bq2CtxnlQSqAtcEaWcL8udo5caEAebHBPMhhamWUpaRktjY
+         BiA6k/muTsn4X2HkOXrrW9yv7IK0kDARmE7os3O6duFcqRH4RC/ZtWwJcFe2Gjo8+ADU
+         l3ebax1ZE6cJbIiNFSOwweYMRxqV7J1mjuI9uMx+1D+xcBLfDQ/EZj1lcUNkZt2uEUDZ
+         qgJQ==
+X-Gm-Message-State: AOAM533qziSfVfFvd9kkufo2Xhz13z5kQl9fRxMLFYw6CLxkWSclG4ws
+        tTA3bRIm4nlsnbUHW4QeVsQ=
+X-Google-Smtp-Source: ABdhPJyGKH0wV1cFqwVRH0bS0asq/PkVZXvShZquXJauFDnzxGLNkM1WOKSCavi9N4dQIZdxg5dXyg==
+X-Received: by 2002:a17:906:948:b0:6d6:e479:1fe4 with SMTP id j8-20020a170906094800b006d6e4791fe4mr15899252ejd.240.1647198318526;
+        Sun, 13 Mar 2022 12:05:18 -0700 (PDT)
 Received: from Ansuel-xps.localdomain (93-42-71-246.ip85.fastwebnet.it. [93.42.71.246])
-        by smtp.googlemail.com with ESMTPSA id n13-20020a170906724d00b006cedd6d7e24sm5856697ejk.119.2022.03.13.12.05.14
+        by smtp.googlemail.com with ESMTPSA id n13-20020a170906724d00b006cedd6d7e24sm5856697ejk.119.2022.03.13.12.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Mar 2022 12:05:15 -0700 (PDT)
+        Sun, 13 Mar 2022 12:05:18 -0700 (PDT)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -61,9 +61,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 13/16] clk: qcom: clk-krait: add enable disable ops
-Date:   Sun, 13 Mar 2022 20:04:16 +0100
-Message-Id: <20220313190419.2207-14-ansuelsmth@gmail.com>
+Subject: [PATCH 15/16] dts: qcom-ipq8064: add missing krait-cc compatible and clocks
+Date:   Sun, 13 Mar 2022 20:04:18 +0100
+Message-Id: <20220313190419.2207-16-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220313190419.2207-1-ansuelsmth@gmail.com>
 References: <20220313190419.2207-1-ansuelsmth@gmail.com>
@@ -73,44 +73,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add enable/disable ops for krait mux. On disable the mux is set to the
-safe selection.
+Add missing krait-cc clock-controller and define missing aux clock for
+CPUs. Also change phandle for l2cc node to point to pxo_board instead
+of gcc PXO_SRC.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- drivers/clk/qcom/clk-krait.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-krait.c b/drivers/clk/qcom/clk-krait.c
-index 82fe7031e1f4..fc277fe3841c 100644
---- a/drivers/clk/qcom/clk-krait.c
-+++ b/drivers/clk/qcom/clk-krait.c
-@@ -85,7 +85,25 @@ static u8 krait_mux_get_parent(struct clk_hw *hw)
- 	return clk_mux_val_to_index(hw, mux->parent_map, 0, sel);
- }
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 996f4458d9fc..888f17d64283 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -468,11 +468,19 @@ IRQ_TYPE_EDGE_RISING)>,
+ 		acc0: clock-controller@2088000 {
+ 			compatible = "qcom,kpss-acc-v1";
+ 			reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
++			clock-output-names = "acpu0_aux";
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
++			clock-names = "pll8_vote", "pxo";
++			#clock-cells = <0>;
+ 		};
  
-+static int krait_mux_enable(struct clk_hw *hw)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
+ 		acc1: clock-controller@2098000 {
+ 			compatible = "qcom,kpss-acc-v1";
+ 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
++			clock-output-names = "acpu1_aux";
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
++			clock-names = "pll8_vote", "pxo";
++			#clock-cells = <0>;
+ 		};
+ 
+ 		adm_dma: dma-controller@18300000 {
+@@ -782,11 +790,21 @@ tcsr: syscon@1a400000 {
+ 		l2cc: clock-controller@2011000 {
+ 			compatible = "qcom,kpss-gcc", "syscon";
+ 			reg = <0x2011000 0x1000>;
+-			clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
+ 			clock-names = "pll8_vote", "pxo";
+ 			clock-output-names = "acpu_l2_aux";
+ 		};
+ 
++		kraitcc: clock-controller {
++			compatible = "qcom,krait-cc-v1";
++			clocks = <&gcc PLL9>, <&gcc PLL10>, <&gcc PLL12>,
++				 <&acc0>, <&acc1>, <&l2cc>, <&qsb>;
++			clock-names = "hfpll0", "hfpll1", "hfpll_l2",
++				      "acpu0_aux", "acpu1_aux", "acpu_l2_aux",
++				      "qsb";
++			#clock-cells = <1>;
++		};
 +
-+	__krait_mux_set_sel(mux, mux->en_mask);
-+
-+	return 0;
-+}
-+
-+static void krait_mux_disable(struct clk_hw *hw)
-+{
-+	struct krait_mux_clk *mux = to_krait_mux_clk(hw);
-+
-+	__krait_mux_set_sel(mux, mux->safe_sel);
-+}
-+
- const struct clk_ops krait_mux_clk_ops = {
-+	.enable = krait_mux_enable,
-+	.disable = krait_mux_disable,
- 	.set_parent = krait_mux_set_parent,
- 	.get_parent = krait_mux_get_parent,
- 	.determine_rate = __clk_mux_determine_rate_closest,
+ 		lcc: clock-controller@28000000 {
+ 			compatible = "qcom,lcc-ipq8064";
+ 			reg = <0x28000000 0x1000>;
 -- 
 2.34.1
 
