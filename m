@@ -2,112 +2,368 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AF6C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 12:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F894C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 16:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231265AbiCMMlG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Mar 2022 08:41:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
+        id S234777AbiCMQRD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Mar 2022 12:17:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231182AbiCMMlG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 08:41:06 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0EA3A715
-        for <linux-clk@vger.kernel.org>; Sun, 13 Mar 2022 05:39:58 -0700 (PDT)
-Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id B24CC81433;
-        Sun, 13 Mar 2022 13:39:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1647175197;
-        bh=yJhvyzmg5SVn/f6Q/GhS6tlpwyR2VmugeOj+uKs2bU0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=UCtNSFSPDKGWWBsCsbn3QBgM2alDHJkS21Sqprrd6v2Z+A/q07Qp51pEFdRQX4QSF
-         qI++DNXLrNz7H2xokXbPZ09TJt7GEmfUH0kMhg/mC2zjGWYx+8fCd0ilGLA3SyHU5j
-         EOEpJjeLwsGyGLXEIPPP/W4lGtlSaZRQSadicwmVbSlAq9coIgRDm2jlHW1kWUnc1W
-         /wUh61HEoreZqrB/vnQfaQPXEAXLTkyY+LBUG3wslQrqrYdDN0VjKiZur/SPFtrNKc
-         7z3PX+OHVWbO16F3HE0I5/vn/s9PPvaS6/YTpFsfvh/Et2pXp1fUljeeACxCP7DDKu
-         vl1cvvf0ookeg==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH] clk: imx8mp: Add DISP2 pixel clock
-Date:   Sun, 13 Mar 2022 13:39:49 +0100
-Message-Id: <20220313123949.207284-1-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S229983AbiCMQRC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 12:17:02 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB40F38BDC;
+        Sun, 13 Mar 2022 09:15:53 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35208475;
+        Sun, 13 Mar 2022 17:15:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1647188151;
+        bh=kDZteoz/vLxKC+dAc2am0kAxaFB6dCfEEzjUoN5FEUo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kQpErlASlVm7jSj0F9neo0lEN2wjXCTNUnaDvyeaUi2BI/dx4jn7AAUpcNFsC4Pk9
+         mc2xEv+/942NbznabvxF4qxzWyY+FSiMUkRSyPH08kkQTybqbif/AqMAQ2IoyOTVbx
+         iZykGMLNYTDnXyqt44OoTJBPrYn46pyObsQRhjoA=
+Date:   Sun, 13 Mar 2022 18:15:34 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-staging@lists.linux.dev,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 61/66] dt-bindings: media: Add Allwinner A31 ISP
+ bindings documentation
+Message-ID: <Yi4YpnMWguEMWYaA@pendragon.ideasonboard.com>
+References: <YgE/+UmP4nJVxtRT@pendragon.ideasonboard.com>
+ <YgqAv2vLimYgRwDS@aptenodytes>
+ <YgqM3ZdMfEz+ZKo/@pendragon.ideasonboard.com>
+ <Ygt8LF8qx3rnxlgp@aptenodytes>
+ <Ygt9j+rwEC+2aUjH@pendragon.ideasonboard.com>
+ <Yh4+E9el5NdQ7qJq@aptenodytes>
+ <YiH/kLakb/GOaYIT@pendragon.ideasonboard.com>
+ <YiIa1SRFhtvURTbN@aptenodytes>
+ <YiIdo4PF/5smLocf@pendragon.ideasonboard.com>
+ <YitZ6y2JoNzeHUrp@aptenodytes>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YitZ6y2JoNzeHUrp@aptenodytes>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add pixel clock for second LCDIFv3 interface. Both LCDIFv3 interfaces use
-the same set of parent clock, so deduplicate imx8mp_media_disp1_pix_sels
-into common imx8mp_media_disp_pix_sels and use it for both.
+Hi Paul,
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Abel Vesa <abel.vesa@nxp.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
----
- drivers/clk/imx/clk-imx8mp.c             | 5 +++--
- include/dt-bindings/clock/imx8mp-clock.h | 4 +++-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+On Fri, Mar 11, 2022 at 03:17:15PM +0100, Paul Kocialkowski wrote:
+> On Fri 04 Mar 22, 16:09, Laurent Pinchart wrote:
+> > On Fri, Mar 04, 2022 at 02:57:41PM +0100, Paul Kocialkowski wrote:
+> > > On Fri 04 Mar 22, 14:01, Laurent Pinchart wrote:
+> > > > On Tue, Mar 01, 2022 at 04:38:59PM +0100, Paul Kocialkowski wrote:
+> > > > > On Tue 15 Feb 22, 12:16, Laurent Pinchart wrote:
+> > > > > > On Tue, Feb 15, 2022 at 11:10:52AM +0100, Paul Kocialkowski wrote:
+> > > > > > > On Mon 14 Feb 22, 19:09, Laurent Pinchart wrote:
+> > > > > > > > On Mon, Feb 14, 2022 at 05:18:07PM +0100, Paul Kocialkowski wrote:
+> > > > > > > > > On Mon 07 Feb 22, 17:51, Laurent Pinchart wrote:
+> > > > > > > > > > On Sat, Feb 05, 2022 at 07:54:24PM +0100, Paul Kocialkowski wrote:
+> > > > > > > > > > > This introduces YAML bindings documentation for the Allwinner A31 Image
+> > > > > > > > > > > Signal Processor (ISP).
+> > > > > > > > > > > 
+> > > > > > > > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > > > > > > ---
+> > > > > > > > > > >  .../media/allwinner,sun6i-a31-isp.yaml        | 117 ++++++++++++++++++
+> > > > > > > > > > >  1 file changed, 117 insertions(+)
+> > > > > > > > > > >  create mode 100644 Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > > > > > 
+> > > > > > > > > > > diff --git a/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > > > > > new file mode 100644
+> > > > > > > > > > > index 000000000000..2d87022c43ce
+> > > > > > > > > > > --- /dev/null
+> > > > > > > > > > > +++ b/Documentation/devicetree/bindings/media/allwinner,sun6i-a31-isp.yaml
+> > > > > > > > > > > @@ -0,0 +1,117 @@
+> > > > > > > > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > > > > > > > > +%YAML 1.2
+> > > > > > > > > > > +---
+> > > > > > > > > > > +$id: http://devicetree.org/schemas/media/allwinner,sun6i-a31-isp.yaml#
+> > > > > > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > > > > > > +
+> > > > > > > > > > > +title: Allwinner A31 Image Signal Processor Driver (ISP) Device Tree Bindings
+> > > > > > > > > > > +
+> > > > > > > > > > > +maintainers:
+> > > > > > > > > > > +  - Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > > > > > > > > > > +
+> > > > > > > > > > > +properties:
+> > > > > > > > > > > +  compatible:
+> > > > > > > > > > > +    enum:
+> > > > > > > > > > > +      - allwinner,sun6i-a31-isp
+> > > > > > > > > > > +      - allwinner,sun8i-v3s-isp
+> > > > > > > > > > > +
+> > > > > > > > > > > +  reg:
+> > > > > > > > > > > +    maxItems: 1
+> > > > > > > > > > > +
+> > > > > > > > > > > +  interrupts:
+> > > > > > > > > > > +    maxItems: 1
+> > > > > > > > > > > +
+> > > > > > > > > > > +  clocks:
+> > > > > > > > > > > +    items:
+> > > > > > > > > > > +      - description: Bus Clock
+> > > > > > > > > > > +      - description: Module Clock
+> > > > > > > > > > > +      - description: DRAM Clock
+> > > > > > > > > > 
+> > > > > > > > > > That's interesting, does the ISP have a dedicated DRAM ?
+> > > > > > > > > 
+> > > > > > > > > It doesn't, it actually uses the main DRAM with the "mbus" interconnect.
+> > > > > > > > > The clock is probably for the DMA engine.
+> > > > > > > > > 
+> > > > > > > > > > > +
+> > > > > > > > > > > +  clock-names:
+> > > > > > > > > > > +    items:
+> > > > > > > > > > > +      - const: bus
+> > > > > > > > > > > +      - const: mod
+> > > > > > > > > > > +      - const: ram
+> > > > > > > > > > > +
+> > > > > > > > > > > +  resets:
+> > > > > > > > > > > +    maxItems: 1
+> > > > > > > > > > > +
+> > > > > > > > > > > +  ports:
+> > > > > > > > > > > +    $ref: /schemas/graph.yaml#/properties/ports
+> > > > > > > > > > > +
+> > > > > > > > > > > +    properties:
+> > > > > > > > > > > +      port@0:
+> > > > > > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > > > > > > +        description: CSI0 input port
+> > > > > > > > > > > +
+> > > > > > > > > > > +        properties:
+> > > > > > > > > > > +          reg:
+> > > > > > > > > > > +            const: 0
+> > > > > > > > > > > +
+> > > > > > > > > > > +          endpoint:
+> > > > > > > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > > > > > > +            unevaluatedProperties: false
+> > > > > > > > > > 
+> > > > > > > > > > If no other property than remote-endpoint are allowed, I'd write
+> > > > > > > > > > 
+> > > > > > > > > >           endpoint:
+> > > > > > > > > >             $ref: video-interfaces.yaml#
+> > > > > > > > > > 	    remote-endpoint: true
+> > > > > > > > > >             additionalProperties: false
+> > > > > > > > > > 
+> > > > > > > > > > Same below.
+> > > > > > > > > > 
+> > > > > > > > > > > +
+> > > > > > > > > > > +        additionalProperties: false
+> > > > > > > > > > > +
+> > > > > > > > > > > +      port@1:
+> > > > > > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > > > > > > > > > +        description: CSI1 input port
+> > > > > > > > > > > +
+> > > > > > > > > > > +        properties:
+> > > > > > > > > > > +          reg:
+> > > > > > > > > > > +            const: 0
+> > > > > > > > > > 
+> > > > > > > > > > This should be 1.
+> > > > > > > > > 
+> > > > > > > > > Correct, thanks!
+> > > > > > > > > 
+> > > > > > > > > > > +
+> > > > > > > > > > > +          endpoint:
+> > > > > > > > > > > +            $ref: video-interfaces.yaml#
+> > > > > > > > > > > +            unevaluatedProperties: false
+> > > > > > > > > > > +
+> > > > > > > > > > > +        additionalProperties: false
+> > > > > > > > > > > +
+> > > > > > > > > > > +    anyOf:
+> > > > > > > > > > > +      - required:
+> > > > > > > > > > > +        - port@0
+> > > > > > > > > > > +      - required:
+> > > > > > > > > > > +        - port@1
+> > > > > > > > > > 
+> > > > > > > > > > As ports are an intrinsic property of the ISP, both should be required,
+> > > > > > > > > > but they don't have to be connected.
+> > > > > > > > > 
+> > > > > > > > > Well the ISP does have the ability to source from either CSI0 and CSI1
+> > > > > > > > > but I don't really get the point of declaring both ports when only one
+> > > > > > > > > of the two controllers is present.
+> > > > > > > > 
+> > > > > > > > If it's within an SoC I don't mind too much. What I usually insist on is
+> > > > > > > > declaring all ports even when no external devices are connected on the
+> > > > > > > > board. It may however be easier to implement things on the driver side
+> > > > > > > > when all the ports are declared, even for internal devices. I won't
+> > > > > > > > insist either way here.
+> > > > > > > > 
+> > > > > > > > > > By the way, how do you select at runtime which CSI-2 RX the ISP gets its
+> > > > > > > > > > image stream from ? Is it configured through registers of the ISP ?
+> > > > > > > > > 
+> > > > > > > > > Actually what the ISP gets is fully dependent on what is received by the
+> > > > > > > > > CSI controller it is connected to (which can be the mipi csi-2 controller
+> > > > > > > > > or its direct parallel pins), so the configuration happens on the CSI side.
+> > > > > > > > 
+> > > > > > > > OK, then how do you select at runtime which CSI the ISP gets its image
+> > > > > > > > stream from ? :-)
+> > > > > > > 
+> > > > > > > What is done in the driver is that all available csi(s) entities pads are linked
+> > > > > > > to a single csi sink media pad, which allows userspace to enable one or the
+> > > > > > > other. If there's only one, it's enabled by default.
+> > > > > > > 
+> > > > > > > The actual stream source (isp_dev->proc.source) is selected at link_validate
+> > > > > > > time and the source bit is set in sun6i_isp_proc_enable.
+> > > > > > > 
+> > > > > > > I hope this answers your question!
+> > > > > > 
+> > > > > > Yes it does, thank you.
+> > > > > > 
+> > > > > > While this works, it makes life a bit more complicated for userspace, as
+> > > > > > switching between the two sources require disabling the link first and
+> > > > > > then enabling the new one. This is something that caused issues in the
+> > > > > > libcamera simple pipeline handler, I ended up having to implement a
+> > > > > > workaround.
+> > > > > 
+> > > > > That surprises me a bit, I thought this was a typical use-case for links.
+> > > > > So the fact that it's a two-step process causes issues somehow?
+> > > > 
+> > > > It's not so much that the links have to be configured in two steps
+> > > > (although it would be nice if that could be fixed), but the fact that
+> > > > the order of the operations matter. Userspace has to know what
+> > > > combination of links is acceptable in order to determine the order of
+> > > > the enable/disable operations, otherwise errors may be returned. That
+> > > > makes it more difficult to write generic userspace code.
+> > > 
+> > > Ah right, I understand that. Now it's pretty much trial-and-error if userspace
+> > > doesn't have prior knowledge about the hardware. But to be honest I assumed
+> > > that it was more or less understood that there cannot be fully generic
+> > > userspace for this and that knowedlege about the driver and pipeline flow
+> > > is required to do things right.
+> > 
+> > You're right, and that's why we have device-specific code in libcamera.
+> > However, the more generic-friendly the APIs can be, the more the
+> > device-specific userspace code will be able to use generic helpers, so
+> > it still matters.
+> > 
+> > > > > > Could you instead have two sink pads for the ISP, and select the sensor
+> > > > > > at stream on time instead of link validation time by checking which link
+> > > > > > is enabled ? If no links or both links are enabled, you can then return
+> > > > > > an error.
+> > > > > 
+> > > > > Yes that's totally doable.
+> > > > > 
+> > > > > There's a similar situation with the sun6i-csi bridge where the source pad
+> > > > > has two possible links: one for routing to sun6i-csi capture (video device)
+> > > > > and one for routing to the isp entity.
+> > > > > 
+> > > > > Would that also be best represented as two pads?
+> > > > 
+> > > > Are the two outputs mutually exclusive ? Sorry if I've asked before.
+> > > 
+> > > I don't think you have. Yes they are mutually exclusive, only one source
+> > > can be selected at a time. Same situation as the ISP where the two CSI unit
+> > > inputs are mutually exclusive.
+> > 
+> > On the sink (input) side that's quite common, if you have two different
+> > sources but a single sink, the sink can't (usually) process both sources
+> > at the same time. I understand that for the sun6i-csi bridge it's the
+> > other way around, with the bridge can output to either a DMA engine or
+> > to the ISP, but not both at the same time. That's less common, but can
+> > certainly happen. I think I'd go for two source pads in that case too.
+> > Sakari, any opinion ?
+> 
+> As I was reading this thread again, I think there might be a misunderstanding
+> here when you said that "switching between the two sources require disabling
+> the link first and then enabling the new one".
+> 
+> The driver is currently not checking the validity of the setup at link_setup
+> but at link_validate (which is called at streamon time), so userspace can
+> effectively disable/enable links in whichever order and a valid setup is only
+> required when streaming starts. I think that's already the situation that you
+> want to achieve.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 18f5b7c3ca9d8..d7a0339ae76ba 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -358,7 +358,7 @@ static const char * const imx8mp_media_mipi_phy1_ref_sels[] = {"osc_24m", "sys_p
- 							       "clk_ext2", "audio_pll2_out",
- 							       "video_pll1_out", };
- 
--static const char * const imx8mp_media_disp1_pix_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out",
-+static const char * const imx8mp_media_disp_pix_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out",
- 							   "audio_pll1_out", "sys_pll1_800m",
- 							   "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
- 
-@@ -538,6 +538,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
- 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
- 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
-+	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
- 
- 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
- 
-@@ -600,7 +601,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
- 	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
--	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp1_pix_sels, ccm_base + 0xbe00);
-+	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
- 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
- 	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
- 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 235c7a00d379c..e05d21bf7813e 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -318,7 +318,9 @@
- #define IMX8MP_CLK_HSIO_AXI			311
- #define IMX8MP_CLK_MEDIA_ISP			312
- 
--#define IMX8MP_CLK_END				313
-+#define IMX8MP_CLK_MEDIA_DISP2_PIX		313
-+
-+#define IMX8MP_CLK_END				314
- 
- #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
- #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
+That's right. link_validate is probably not the best place though, as
+it's meant to validate one link, while here you need to perform
+validation of the state of multiple links, right ?
+
+> To summarize, the following pads can have multiple links:
+> - csi sink (parallel sensor source or mipi csi-2 bridge source)
+> - csi source (isp sink or video capture sink)
+> - isp sink (csi0 source or csi1 source)
+> 
+> I'll send my next versions without changes (one pad, multiple links)
+> but we can revisit this if there's an issue with that after all.
+
+OK.
+
+> > > > > > Ideally I'd say such internal routing should use the new V4L2 subdev
+> > > > > > routing API that is currently being implemented (see [1]), but I don't
+> > > > > > know when it will land, and I don't want to delay your patch series.
+> > > > > > 
+> > > > > > [1] https://lore.kernel.org/linux-media/20211130141536.891878-28-tomi.valkeinen@ideasonboard.com
+> > > > > 
+> > > > > I'm still a bit confused what problem this is trying to solve.
+> > > > > My understanding was that the current pad/link API allows representing complex
+> > > > > topologies and switching different paths with link enable/disable.
+> > > > 
+> > > > That was the intent of the MEDIA_IOC_SETUP_LINK ioctl, but we ended up
+> > > > with something that is fairly ill-defined, and doesn't have the ability
+> > > > to set multiple links atomically. It turned out to be less usable for
+> > > > userspace than expected. Mistakes happen (and I'll blame myself here,
+> > > > having designed that API) when we don't have real test cases during
+> > > > kernel development.
+> > > 
+> > > Yeah it's hard to predict these kinds of things in advance I suppose.
+> > > Thanks for the heads up!
+> > > 
+> > > > > > > > > > > +
+> > > > > > > > > > > +required:
+> > > > > > > > > > > +  - compatible
+> > > > > > > > > > > +  - reg
+> > > > > > > > > > > +  - interrupts
+> > > > > > > > > > > +  - clocks
+> > > > > > > > > > > +  - clock-names
+> > > > > > > > > > > +  - resets
+> > > > > > > > > > > +
+> > > > > > > > > > > +additionalProperties: false
+> > > > > > > > > > > +
+> > > > > > > > > > > +examples:
+> > > > > > > > > > > +  - |
+> > > > > > > > > > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > > > > > > > > > > +    #include <dt-bindings/clock/sun8i-v3s-ccu.h>
+> > > > > > > > > > > +    #include <dt-bindings/reset/sun8i-v3s-ccu.h>
+> > > > > > > > > > > +
+> > > > > > > > > > > +    isp: isp@1cb8000 {
+> > > > > > > > > > > +        compatible = "allwinner,sun8i-v3s-isp";
+> > > > > > > > > > > +        reg = <0x01cb8000 0x1000>;
+> > > > > > > > > > > +        interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > > > > > > +        clocks = <&ccu CLK_BUS_CSI>,
+> > > > > > > > > > > +             <&ccu CLK_CSI1_SCLK>,
+> > > > > > > > > > > +             <&ccu CLK_DRAM_CSI>;
+> > > > > > > > > > > +        clock-names = "bus", "mod", "ram";
+> > > > > > > > > > > +        resets = <&ccu RST_BUS_CSI>;
+> > > > > > > > > > > +
+> > > > > > > > > > > +        ports {
+> > > > > > > > > > > +            #address-cells = <1>;
+> > > > > > > > > > > +            #size-cells = <0>;
+> > > > > > > > > > > +
+> > > > > > > > > > > +            port@0 {
+> > > > > > > > > > > +                reg = <0>;
+> > > > > > > > > > > +
+> > > > > > > > > > > +                isp_in_csi0: endpoint {
+> > > > > > > > > > > +                    remote-endpoint = <&csi0_out_isp>;
+> > > > > > > > > > > +                };
+> > > > > > > > > > > +            };
+> > > > > > > > > > > +        };
+> > > > > > > > > > > +    };
+> > > > > > > > > > > +
+> > > > > > > > > > > +...
+
 -- 
-2.35.1
+Regards,
 
+Laurent Pinchart
