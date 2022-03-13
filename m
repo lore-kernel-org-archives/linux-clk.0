@@ -2,89 +2,112 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39481C433EF
-	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 11:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AF6C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 13 Mar 2022 12:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbiCML6b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 13 Mar 2022 07:58:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47542 "EHLO
+        id S231265AbiCMMlG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 13 Mar 2022 08:41:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbiCML6a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 07:58:30 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8479BE3398;
-        Sun, 13 Mar 2022 04:57:23 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id l18so7881967ioj.2;
-        Sun, 13 Mar 2022 04:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BwtHbOYBAHvTkXWaEDlnEeOYsI2vNh0rAunNRD0QW2w=;
-        b=URVBnu/V/NzOS0pCi1fOrZLkvVZYO0O8I1ooqwRtbnYesnTxDcztbz3uF3jeq3u+Bp
-         zUbX/U49xJxe/GgLtq0l7uhNMKD6vVB2HIQp7uPGUykwYWTPYTcfKzQXsu/hP6SCslSr
-         2x+5bH/iSTIUJprlfje1yAOdShsAbt+iJ27lYRH1cadhhOoJTERnlrtBRhf3vJHNBZU6
-         ifqJEvS2xl5nNnlhpGs6PUpUsuN42Wv13r0S2+KOJu/ByY/J0zbR4lpu0bNWlUnerxvF
-         y4Q6MPDHujkAWTMOmuOksDgv6ivHwlr9hqLuwJ7Y1Or611x5oK/A7L2RxU7ATt9ZXv+e
-         5kKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BwtHbOYBAHvTkXWaEDlnEeOYsI2vNh0rAunNRD0QW2w=;
-        b=1MRXkmR6IF6z0XyEVr2PFs5qgfm4A6/saw7iEx1apqZDO1OY7Y+Raj8Q/9/ybqQcor
-         On2T4CMO9aVhfxyXLW8nuZ9Ffb1EE39I8Cb/YYmibTP7xrC3zhInOn2arkCjAMakkxvi
-         3LBPFrd7FBGgsgo6nR92uf7oQjW6r8+iD9Xmd5En62bOofe/ewjGfRZCsOBZ/A7KIDgc
-         reNmjMIxg5CZFk6z2TLlnzR1KNxVdojvkycQiYhMlAbby9CqohKBNT1H8VioISsUdS+g
-         HLeiD+MnXw4E+plWwoq5xDaOL3CMeRsOYc4cAc7gwYMPvw5IKf9U+tkF3q/4wArVbP0I
-         Gmhw==
-X-Gm-Message-State: AOAM533AeOXyq//0iLYu8paCu6F5E0gGOh+50DEqRC/0lMf8Tf0exzYF
-        zvWWlW/JcvkqdqXYw09ChhIAwXcfwDo=
-X-Google-Smtp-Source: ABdhPJzzp9rEKtYXk8Nk6/WUlkorAPHLcfAwIzy02wK/SuZGL/dfkKCXYCwqIReq8puHNjyqm+807A==
-X-Received: by 2002:a02:b0d5:0:b0:317:c62c:cbcb with SMTP id w21-20020a02b0d5000000b00317c62ccbcbmr16245029jah.78.1647172642076;
-        Sun, 13 Mar 2022 04:57:22 -0700 (PDT)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:e254:36c5:6684:5681])
-        by smtp.gmail.com with ESMTPSA id u15-20020a056e021a4f00b002c665afb993sm7797918ilv.11.2022.03.13.04.57.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Mar 2022 04:57:21 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
+        with ESMTP id S231182AbiCMMlG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 13 Mar 2022 08:41:06 -0400
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B0EA3A715
+        for <linux-clk@vger.kernel.org>; Sun, 13 Mar 2022 05:39:58 -0700 (PDT)
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id B24CC81433;
+        Sun, 13 Mar 2022 13:39:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1647175197;
+        bh=yJhvyzmg5SVn/f6Q/GhS6tlpwyR2VmugeOj+uKs2bU0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UCtNSFSPDKGWWBsCsbn3QBgM2alDHJkS21Sqprrd6v2Z+A/q07Qp51pEFdRQX4QSF
+         qI++DNXLrNz7H2xokXbPZ09TJt7GEmfUH0kMhg/mC2zjGWYx+8fCd0ilGLA3SyHU5j
+         EOEpJjeLwsGyGLXEIPPP/W4lGtlSaZRQSadicwmVbSlAq9coIgRDm2jlHW1kWUnc1W
+         /wUh61HEoreZqrB/vnQfaQPXEAXLTkyY+LBUG3wslQrqrYdDN0VjKiZur/SPFtrNKc
+         7z3PX+OHVWbO16F3HE0I5/vn/s9PPvaS6/YTpFsfvh/Et2pXp1fUljeeACxCP7DDKu
+         vl1cvvf0ookeg==
+From:   Marek Vasut <marex@denx.de>
 To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, cstevens@beaconembedded.com,
-        Adam Ford <aford173@gmail.com>,
-        Claude Fillion <Claude.Fillion@mksinst.com>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: vc5: Enable VC5_HAS_PFD_FREQ_DBL on 5p49v6965
-Date:   Sun, 13 Mar 2022 06:57:04 -0500
-Message-Id: <20220313115704.301718-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Cc:     Marek Vasut <marex@denx.de>, Abel Vesa <abel.vesa@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH] clk: imx8mp: Add DISP2 pixel clock
+Date:   Sun, 13 Mar 2022 13:39:49 +0100
+Message-Id: <20220313123949.207284-1-marex@denx.de>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 5p49v6965 has a reference clock frequency doubler.
-Enabling it adds versaclock_som.dbl to the clock tree,
-but the output frequency remains correct.
+Add pixel clock for second LCDIFv3 interface. Both LCDIFv3 interfaces use
+the same set of parent clock, so deduplicate imx8mp_media_disp1_pix_sels
+into common imx8mp_media_disp_pix_sels and use it for both.
 
-Suggested-by: Claude Fillion <Claude.Fillion@mksinst.com>
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Abel Vesa <abel.vesa@nxp.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+---
+ drivers/clk/imx/clk-imx8mp.c             | 5 +++--
+ include/dt-bindings/clock/imx8mp-clock.h | 4 +++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index e7be3e54b9be..4d190579e874 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -1211,7 +1211,7 @@ static const struct vc5_chip_info idt_5p49v6965_info = {
- 	.model = IDT_VC6_5P49V6965,
- 	.clk_fod_cnt = 4,
- 	.clk_out_cnt = 5,
--	.flags = VC5_HAS_BYPASS_SYNC_BIT,
-+	.flags = VC5_HAS_BYPASS_SYNC_BIT | VC5_HAS_PFD_FREQ_DBL,
- };
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 18f5b7c3ca9d8..d7a0339ae76ba 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -358,7 +358,7 @@ static const char * const imx8mp_media_mipi_phy1_ref_sels[] = {"osc_24m", "sys_p
+ 							       "clk_ext2", "audio_pll2_out",
+ 							       "video_pll1_out", };
  
- static const struct i2c_device_id vc5_id[] = {
+-static const char * const imx8mp_media_disp1_pix_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out",
++static const char * const imx8mp_media_disp_pix_sels[] = {"osc_24m", "video_pll1_out", "audio_pll2_out",
+ 							   "audio_pll1_out", "sys_pll1_800m",
+ 							   "sys_pll2_1000m", "sys_pll3_out", "clk_ext4", };
+ 
+@@ -538,6 +538,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
+ 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
+ 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
++	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
+ 
+ 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
+ 
+@@ -600,7 +601,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
+ 	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+-	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp1_pix_sels, ccm_base + 0xbe00);
++	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
+ 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+ 	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+ 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+index 235c7a00d379c..e05d21bf7813e 100644
+--- a/include/dt-bindings/clock/imx8mp-clock.h
++++ b/include/dt-bindings/clock/imx8mp-clock.h
+@@ -318,7 +318,9 @@
+ #define IMX8MP_CLK_HSIO_AXI			311
+ #define IMX8MP_CLK_MEDIA_ISP			312
+ 
+-#define IMX8MP_CLK_END				313
++#define IMX8MP_CLK_MEDIA_DISP2_PIX		313
++
++#define IMX8MP_CLK_END				314
+ 
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_IPG		0
+ #define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1		1
 -- 
-2.34.1
+2.35.1
 
