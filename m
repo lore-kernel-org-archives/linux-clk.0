@@ -2,101 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC61C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F5C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 15:02:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240019AbiCNOoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 10:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48128 "EHLO
+        id S240634AbiCNPDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 11:03:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240020AbiCNOoK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:44:10 -0400
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E342AE6;
-        Mon, 14 Mar 2022 07:42:59 -0700 (PDT)
-Received: by mail-io1-f51.google.com with SMTP id d62so18406840iog.13;
-        Mon, 14 Mar 2022 07:42:59 -0700 (PDT)
+        with ESMTP id S242315AbiCNPCw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 11:02:52 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F99419AF
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 08:01:42 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id b24so20295189edu.10
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 08:01:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sDbB5ttwC5zs8tGCg8StLORKGzic+0zDsHvDFd64VD0=;
+        b=zD6QgQosP2Yt8LezeDqwPxX/Rmrqv0jH+q9iKfFnJOHGVV/nZRbEgUFO/FbBU8si+w
+         KVNQhkNhziWFp+G4S/kR/Dx55Mb3qPq1dB6bvUgYx2qOVc8PIitCPWYFsRfEbKHsQVzA
+         OquDpBOnmf25Fo6LUqt24/4dau24+dQGHc9cMb46gori13pqUynUMkMBfAUQD1fa4JoM
+         aU9m3iM5ADOUMUs8zg2xotD92gmSKFPESF1ORdex7WxYD1cTyL+O0R4dMlGT2MlxUhag
+         33hnrWnstphS8niiT0Q9bTlv5SWjVA4lpFbQvwRTlfFZMx/HntxbLf30la6IeClEY4Fz
+         Ok4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=AqFg7xrs3Geyfxo5Vr0DOQb5idtAj8J/XERgXrBpIrU=;
-        b=DXk7Ms8ncO3F0RgAwItJeuf6ojvyf4bbklDoNpSCZ+KhrG1+krrCCn7ZAUNLETNPEg
-         M00vQlzBVL/zoPI5F6NUrhMY4d0/p/DwAM/0GDlQhgwqTuZJDH7xWh4M3x9+10ONv19j
-         RZ3oHzKYamIlN3IfPYEXDuK+rAGSMhkYEL5n9Wcw0t4vNWJA0CgRGlH1soobbFgzNnf/
-         wEzP1AkJKDLvnpcbTJ0VUOzUh0jQ+XTHnn1mK4f3SXPKoL2V4z+95wHXHERy/YxryXp4
-         HjPdaJWAPDYRZzcaa8glPYl7zMsAvw9/aayvZGbrlImnIkiquwHqvaZUywpslyrTAl+5
-         raBw==
-X-Gm-Message-State: AOAM533Sv97P8M7B1IivRs2HaLPFp6JPsfKXNpX7vtj3rJ1pCwdHQySP
-        XogjGPaaV4We5Pd9vQdrkw==
-X-Google-Smtp-Source: ABdhPJwFTcp79lodU884hJVkoWne5DgyZnLhnKAbJFb9GtejUeLRtjVys1pJd7RPg/rUb1YbHKAp+Q==
-X-Received: by 2002:a05:6638:108:b0:319:99c7:5a69 with SMTP id x8-20020a056638010800b0031999c75a69mr21008718jao.297.1647268979081;
-        Mon, 14 Mar 2022 07:42:59 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id a13-20020a056e02180d00b002c77c357fcfsm5500032ilv.76.2022.03.14.07.42.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 07:42:58 -0700 (PDT)
-Received: (nullmailer pid 12513 invoked by uid 1000);
-        Mon, 14 Mar 2022 14:42:49 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sDbB5ttwC5zs8tGCg8StLORKGzic+0zDsHvDFd64VD0=;
+        b=rfbqyTJd3PPUQz0llGyya1WU7QZdQCgR9n64zOtHJvs+0ODK3NWtnxVIL8i4vdzCF1
+         BoZ+myIRcnvwTbVaIDinSo/bYC9rFBAflYjTpDCwvlaBDBi7X1L+Eg0vkfMNTy2Koae7
+         yMq5kCXiProMUZ4hUZqjM20J54+xW7c0m/5Km0UeVTfwevzqOYuTI5nZskrktgKbn9Vm
+         CkjaiC/gimuQQyJkC1qS4F1YWN/HPiJViIPlivfhhL8PR/jDHPjCemKq7SEXuayHzpG5
+         /jEkdh640xZC/dGodrGr64plyCBG9/TRu32EJOSHo/CI/s99lgOZG7Nxyc0h0mHlo5Mv
+         5n0Q==
+X-Gm-Message-State: AOAM533MNg8kxgBvIuRbjfQ/7uQe1qa23trm9d5NnwlzfKKO6c3O91A1
+        8EKWQqj0eMnIqG2j891LsHCZQTppfsdJhn2syr416Q==
+X-Google-Smtp-Source: ABdhPJyOmWNJXp9JdafV1pGswb/BIFRtCQSDlaxyOCsZUfo6wmsMsDdncdEchVCW9VFhyvRMzif9bK6ckKZG2iWQQ1Y=
+X-Received: by 2002:a05:6402:3715:b0:410:a415:fd95 with SMTP id
+ ek21-20020a056402371500b00410a415fd95mr20843527edb.288.1647270101193; Mon, 14
+ Mar 2022 08:01:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de> <20220314141643.22184-8-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20220314141643.22184-8-u.kleine-koenig@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 14 Mar 2022 16:01:30 +0100
+Message-ID: <CAMRc=MeJLrfzNhPHRjg06qMC45fZ97RDrDwn6mRrzqK7zxUa2A@mail.gmail.com>
+Subject: Re: [PATCH v8 07/16] gpio: vf610: Simplify error handling in probe
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220314114211.1636574-2-vladimir.zapolskiy@linaro.org>
-References: <20220314114211.1636574-1-vladimir.zapolskiy@linaro.org> <20220314114211.1636574-2-vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: add QCOM SM8450 camera clock bindings
-Date:   Mon, 14 Mar 2022 08:42:49 -0600
-Message-Id: <1647268969.345129.12512.nullmailer@robh.at.kernel.org>
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 14 Mar 2022 13:42:10 +0200, Vladimir Zapolskiy wrote:
-> The change adds device tree bindings for camera clock controller
-> found on SM8450 SoC.
-> 
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+On Mon, Mar 14, 2022 at 3:17 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Instead of manually enabling and registering a devm cleanup handler that
+> disables the clock, use devm_clk_get_enabled(). Also replace the handling
+> of the optional clocks by using a variant of clk_get_optional().
+>
+> The resulting code is a tad stricter than the previous code as errors fro=
+m
+> clk_get() (apart from -ENOENT) make vf610_gpio_probe() return an error.
+> This is however an improvement.
+>
+> Also make the clock pointers local variables instead of a member of drive=
+r
+> data, as they are only used in .probe().
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 > ---
-> Changes from v1 to v2:
-> * updated qcom,camcc-sm8450.yaml according to review comments from Rob,
-> * changed qcom,camcc-sm8450.h license to dual one.
-> 
->  .../bindings/clock/qcom,camcc-sm8450.yaml     |  89 ++++++++++
->  include/dt-bindings/clock/qcom,camcc-sm8450.h | 159 ++++++++++++++++++
->  2 files changed, 248 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,camcc-sm8450.h
-> 
+>  drivers/gpio/gpio-vf610.c | 45 +++++++--------------------------------
+>  1 file changed, 8 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+> index 20780c35da1b..4a6ad2e8d1a1 100644
+> --- a/drivers/gpio/gpio-vf610.c
+> +++ b/drivers/gpio/gpio-vf610.c
+> @@ -34,8 +34,6 @@ struct vf610_gpio_port {
+>         void __iomem *gpio_base;
+>         const struct fsl_gpio_soc_data *sdata;
+>         u8 irqc[VF610_GPIO_PER_PORT];
+> -       struct clk *clk_port;
+> -       struct clk *clk_gpio;
+>         int irq;
+>  };
+>
+> @@ -232,11 +230,6 @@ static int vf610_gpio_irq_set_wake(struct irq_data *=
+d, u32 enable)
+>         return 0;
+>  }
+>
+> -static void vf610_gpio_disable_clk(void *data)
+> -{
+> -       clk_disable_unprepare(data);
+> -}
+> -
+>  static int vf610_gpio_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev =3D &pdev->dev;
+> @@ -245,6 +238,8 @@ static int vf610_gpio_probe(struct platform_device *p=
+dev)
+>         struct gpio_chip *gc;
+>         struct gpio_irq_chip *girq;
+>         struct irq_chip *ic;
+> +       struct clk *clk_port;
+> +       struct clk *clk_gpio;
+>         int i;
+>         int ret;
+>
+> @@ -265,37 +260,13 @@ static int vf610_gpio_probe(struct platform_device =
+*pdev)
+>         if (port->irq < 0)
+>                 return port->irq;
+>
+> -       port->clk_port =3D devm_clk_get(dev, "port");
+> -       ret =3D PTR_ERR_OR_ZERO(port->clk_port);
+> -       if (!ret) {
+> -               ret =3D clk_prepare_enable(port->clk_port);
+> -               if (ret)
+> -                       return ret;
+> -               ret =3D devm_add_action_or_reset(dev, vf610_gpio_disable_=
+clk,
+> -                                              port->clk_port);
+> -               if (ret)
+> -                       return ret;
+> -       } else if (ret =3D=3D -EPROBE_DEFER) {
+> -               /*
+> -                * Percolate deferrals, for anything else,
+> -                * just live without the clocking.
+> -                */
+> -               return ret;
+> -       }
+> +       clk_port =3D devm_clk_get_optional_enabled(dev, "port");
+> +       if (IS_ERR(clk_port))
+> +               return PTR_ERR(clk_port);
+>
+> -       port->clk_gpio =3D devm_clk_get(dev, "gpio");
+> -       ret =3D PTR_ERR_OR_ZERO(port->clk_gpio);
+> -       if (!ret) {
+> -               ret =3D clk_prepare_enable(port->clk_gpio);
+> -               if (ret)
+> -                       return ret;
+> -               ret =3D devm_add_action_or_reset(dev, vf610_gpio_disable_=
+clk,
+> -                                              port->clk_gpio);
+> -               if (ret)
+> -                       return ret;
+> -       } else if (ret =3D=3D -EPROBE_DEFER) {
+> -               return ret;
+> -       }
+> +       clk_gpio =3D devm_clk_get_optional_enabled(dev, "gpio");
+> +       if (IS_ERR(clk_gpio))
+> +               return PTR_ERR(clk_gpio);
+>
+>         gc =3D &port->gc;
+>         gc->parent =3D dev;
+> --
+> 2.35.1
+>
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.example.dts:30.34-35 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:378: Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1398: dt_binding_check] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/1605035
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+Acked-by: Bartosz Golaszewski <brgl@bgdev.pl>
