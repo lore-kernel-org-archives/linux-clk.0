@@ -2,51 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972EBC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39EDC433F5
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:17:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242232AbiCNOST (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 10:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54214 "EHLO
+        id S242218AbiCNOSU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 10:18:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242226AbiCNOST (ORCPT
+        with ESMTP id S242222AbiCNOST (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:19 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A9619C1C
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E480819C2B
         for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:08 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVM-00050A-2Z; Mon, 14 Mar 2022 15:17:00 +0100
+        id 1nTlVL-0004zV-JM; Mon, 14 Mar 2022 15:16:59 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVM-000f3E-Kq; Mon, 14 Mar 2022 15:16:59 +0100
+        id 1nTlVL-000f35-Nf; Mon, 14 Mar 2022 15:16:58 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVK-0097bA-H4; Mon, 14 Mar 2022 15:16:58 +0100
+        id 1nTlVJ-0097ay-KN; Mon, 14 Mar 2022 15:16:57 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-amlogic@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 10/16] clk: meson: axg-audio: Don't duplicate devm_clk_get_enabled()
-Date:   Mon, 14 Mar 2022 15:16:37 +0100
-Message-Id: <20220314141643.22184-11-u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v8 08/16] drm/meson: dw-hdmi: Don't open code devm_clk_get_enabled()
+Date:   Mon, 14 Mar 2022 15:16:35 +0100
+Message-Id: <20220314141643.22184-9-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1899; i=uwe@kleine-koenig.org; h=from:subject; bh=ifDCWLNWOL0YsD190lDHgYWEgpILJPKuKKXrEJE9+6k=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04L4e9IWDji46EkjNnzAhHVqLKQME2Cj5ZGNUdC xgjHkqmJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9OCwAKCRDB/BR4rcrsCaRsB/ 4lw+anORVBYqdBZWfiCRFFXRQ1s91OC7WxPcmn0FjB9HAVMFy2dbkDyj6f0nmTf+yUwEGrDTPZOFJN sm4dQ6knZvNGSweqsOAOLHFzuLkqcEE4Q25ruO0NF7Lvc6zA276x7VDCocmn7B8oKPg2+sITuo7qcW l6GpEHjwOvtN+FrW61a/R97V0S9wv6Ko0ZkN43U5h5uQsgt1hGo3JjZEf2wLOMIgq+MDqlMu8Fd7fC 88wZVw9dR6TsrgMSkJrdXY/2ykuniA9i3TmaWCIZ0qIc9Sa5tOp2sw1MqXJaX1blBcXqn4Kw5x5lZy U5SXida2sOuLdzEBzT18QLzS/ce2Dc
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2666; i=uwe@kleine-koenig.org; h=from:subject; bh=YhET4fR0Omj8gJ/JCkSwUJxwvBYawy9/DlBkkMAAnOI=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04EyEHJOItayKHmew1fSM2xmrHq4+SWHnqUOQnS kKp0Dr2JATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9OBAAKCRDB/BR4rcrsCddkCA CAisftWSdUNCnYOFUA6r4wIsgWzLZYQ396YWYMZkQQBC6DXAThdrh1a/WIy8BEpr3wbFQNBL2loko5 kJ2p6cWyeNYDVeKT7iRuClSG8JnvWw55qDtphq6pz4SQXK2Un3STKZc26NxmIoln93Yg+qfevK5WnG ydjVSz0wApZ769rEmeP45xTHd7rRYDiXWw4GeEeTvBR/alJGPVrpp2K6QqWMdJpae2GsFFRpULtrJe fSHYK6Yo5jEbhgaIu47FXZkBYBWfygDwv/BVwA3xd5S5kHHm+RAjQ0dodEJ8I/Rr9LbHYit2s4f5Je H3fc37FLniTUu0zu464M9/qguAsgrO
 X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -57,75 +59,93 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk API recently got a function with a slightly different name and
-the same functionality. Remove the duplication.
+devm_clk_get_enabled() returns a clock prepared and enabled and already
+registers a devm exit handler to disable (and unprepare) the clock.
+
+There is slight change in behavior as a failure to enable the clock
+now results in an error message, too. Also the actual error code is added
+to the message.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/meson/axg-audio.c | 36 ++++-------------------------------
- 1 file changed, 4 insertions(+), 32 deletions(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 48 +++++++++------------------
+ 1 file changed, 16 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index bfe36bd41339..5016682e47c8 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -1657,35 +1657,6 @@ static struct clk_regmap *const sm1_clk_regmaps[] = {
- 	&sm1_sysclk_b_en,
- };
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 5cd2b2ebbbd3..6034e80c5b2e 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -670,29 +670,6 @@ static void meson_disable_regulator(void *data)
+ 	regulator_disable(data);
+ }
  
--static int devm_clk_get_enable(struct device *dev, char *id)
+-static void meson_disable_clk(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+-static int meson_enable_clk(struct device *dev, char *name)
 -{
 -	struct clk *clk;
 -	int ret;
 -
--	clk = devm_clk_get(dev, id);
+-	clk = devm_clk_get(dev, name);
 -	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
--		dev_err_probe(dev, ret, "failed to get %s", id);
--		return ret;
+-		dev_err(dev, "Unable to get %s pclk\n", name);
+-		return PTR_ERR(clk);
 -	}
 -
 -	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "failed to enable %s", id);
--		return ret;
--	}
+-	if (!ret)
+-		ret = devm_add_action_or_reset(dev, meson_disable_clk, clk);
 -
--	ret = devm_add_action_or_reset(dev,
--				       (void(*)(void *))clk_disable_unprepare,
--				       clk);
--	if (ret) {
--		dev_err(dev, "failed to add reset action on %s", id);
--		return ret;
--	}
--
--	return 0;
+-	return ret;
 -}
 -
- struct axg_audio_reset_data {
- 	struct reset_controller_dev rstc;
- 	struct regmap *map;
-@@ -1787,6 +1758,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	struct regmap *map;
- 	void __iomem *regs;
- 	struct clk_hw *hw;
+ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+@@ -702,6 +679,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	struct drm_device *drm = data;
+ 	struct meson_drm *priv = drm->dev_private;
+ 	struct dw_hdmi_plat_data *dw_plat_data;
 +	struct clk *clk;
- 	int ret, i;
+ 	int irq;
+ 	int ret;
  
- 	data = of_device_get_match_data(dev);
-@@ -1804,9 +1776,9 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 	}
+@@ -763,17 +741,23 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	if (IS_ERR(meson_dw_hdmi->hdmitx))
+ 		return PTR_ERR(meson_dw_hdmi->hdmitx);
  
- 	/* Get the mandatory peripheral clock */
--	ret = devm_clk_get_enable(dev, "pclk");
+-	ret = meson_enable_clk(dev, "isfr");
 -	if (ret)
 -		return ret;
-+	clk = devm_clk_get_enabled(dev, "pclk");
-+	if (IS_ERR(clk))
++	clk = devm_clk_get_enabled(dev, "isfr");
++	if (IS_ERR(clk)) {
++		dev_err(dev, "Failed to get enabled isfr pclk (%pe)\n", clk);
 +		return PTR_ERR(clk);
++	}
  
- 	ret = device_reset(dev);
- 	if (ret) {
+-	ret = meson_enable_clk(dev, "iahb");
+-	if (ret)
+-		return ret;
++	clk = devm_clk_get_enabled(dev, "iahb");
++	if (IS_ERR(clk)) {
++		dev_err(dev, "Failed to get enabled iahb pclk (%pe)\n", clk);
++		return PTR_ERR(clk);
++	}
+ 
+-	ret = meson_enable_clk(dev, "venci");
+-	if (ret)
+-		return ret;
++	clk = devm_clk_get_enabled(dev, "venci");
++	if (IS_ERR(clk)) {
++		dev_err(dev, "Failed to get enabled venci pclk (%pe)\n", clk);
++		return PTR_ERR(clk);
++	}
+ 
+ 	dw_plat_data->regm = devm_regmap_init(dev, NULL, meson_dw_hdmi,
+ 					      &meson_dw_hdmi_regmap_config);
 -- 
 2.35.1
 
