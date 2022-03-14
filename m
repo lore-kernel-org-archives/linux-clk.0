@@ -2,61 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667B6C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 11:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D53BC4707A
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 11:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239594AbiCNLpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 07:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42868 "EHLO
+        id S239561AbiCNLpE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 07:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240463AbiCNLn5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 07:43:57 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD13462E3
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:16 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id y17so4302330ljd.12
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:16 -0700 (PDT)
+        with ESMTP id S240516AbiCNLoE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 07:44:04 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E3CB76
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:52 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id y17so4304609ljd.12
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=gxs4AoGvxoGVob+pJTOcjpIC7vgPqS7XoYkAU0fhZMY=;
-        b=oB4w/v3n2XybDN0uAvjdaWpDNmhcwv6s7ChWnqEUvSeI8USTle7y8UMPKaXS960j/H
-         HLqeJRBjOGeaJZIzhhTtwy7+M8t0zaSXy6lcT6hxnfoYhnjNMZytDUSizHLup/cNdOBk
-         kHi5nyQ1AzOmLhuQTYEOjJzwMu+MQv+MlIkyhPuBXywM5WgO3MmGDaU0Pp7clsAz2QHD
-         B8lQ5RN4MXDOPT1UxjjqZD5OW2XtPBJo/fbdiBELGT61P7Fw9bJjnDr3S0RfRBDrN63f
-         nLHnMshh1C+/KrPeufs11hTB/wUR6EJpzCzQM3DyJiBwRLtm1zcaur1Kb+im47tiBATr
-         DJhA==
+        bh=X1kSt/cNOLlYSBXaFCcGxTofXAnfGn13whIIfArQmJc=;
+        b=eSjLK1tRy0JVfWY3mY+Af8oxLMg6fsbPMIuhe4IzMSfTusyXUItQMA1qDRU+WG5Y3n
+         YZYeAJNrF83kEiQzMqaFAHzSiOE+m/V+Jbjrp+4q6O08egFczatqZcaefwpSim2bry2f
+         g+NyZnkiU1xKiSnz1bGCN5f1qBtooj8Cdf/p/pgeVBIVZvGxKH0HV+sssF91YRO9C08J
+         ibVkXhZ9IKS5DKp3uWquwfVGoOR4M/p75gqeiagb+GhK/LZp3/QJDFszBkUgNrmGg5C2
+         xp0opcd5VetzqBBdOIzZEvM3j2v2dVSShAQiQzwjUIp9o/QdOtWePEZH6pwqOSFpVrRM
+         Cjiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=gxs4AoGvxoGVob+pJTOcjpIC7vgPqS7XoYkAU0fhZMY=;
-        b=PqyZT+NN904KCTl6Cop/nK2vXU3HuwEp865tAcdEh1B76BGoAAPqqCDIZbP9L/3ELH
-         vkxk0BiSAwTbm/0b2gYdSFtnMAi2pCHtKaPKBuqmshIy8XA11UvO6PShtYcBNI6VbGYo
-         sDXqOlY9p/bI/XXaEo18OQDn0NGB3gpUGicmjX2jTGmMx7wkAUBnkpytHDCH0RlHIM+P
-         vAuf0KRPmkB15zkATARfDgFntHWl6YNFCE+T5k0VBolohQylZo/CIIeAAr9lzxMZqAvM
-         9ya/MdEzLqdfWDy09gUdX7YSGUGYIjh6yMdxX0Jyayv+XQzxlAuw9DArBjy/BVOAeJq8
-         Ofmw==
-X-Gm-Message-State: AOAM533t8EkkNHvULvZk23CErb7txkonRiX8FNbEqqXJg0uiJUIwXvr2
-        +k+DEvqzj17+sEMdXIQFlXDa0w==
-X-Google-Smtp-Source: ABdhPJzoc1+Y9K6nq87cW+jqiZOQo/tTqir1yNhyEAFb73MLmnJWHchNocNbULKnFMTVgPdBhwDf3Q==
-X-Received: by 2002:a05:651c:3da:b0:247:ff8b:e965 with SMTP id f26-20020a05651c03da00b00247ff8be965mr13854861ljp.87.1647258135131;
-        Mon, 14 Mar 2022 04:42:15 -0700 (PDT)
+        bh=X1kSt/cNOLlYSBXaFCcGxTofXAnfGn13whIIfArQmJc=;
+        b=CJvLKX2YAqwyI4N2ICxldsIFulIRlXVBrgqpHnFPUK82DfRLn9cEULi7f9iX/4WWd7
+         hsW/NklGzf2ChCEQlLybelcBP5HruT0PBy57gcdwM+lbhDYcwKcxmmuBVetfZ20I5XTc
+         MbyF3oZlnIbeVqYGRURlft09FQFEniLBPZUwjmpPU/zgPD7MuLz318Xe36yKNgsN0PUF
+         ibM4+grDc8D/mmQH7Wni5TX5dQueQG0Q0NAIfC4XrD3aTfzR00rHslU80a+mNrHyRtLI
+         +EPhXwE7KN6S8WJdmtbKlrbmwSV9AYjs0D2XidD9aY/xy8FtJBszHjox7liQTOd6ufuk
+         bW8w==
+X-Gm-Message-State: AOAM532orPa2Zyf/dmWcoE2MLLyXfugnCdm3DWztlt+Mq7JaYKMrsMsi
+        LZs6imm611h9wsEgMh9gx+ycDg==
+X-Google-Smtp-Source: ABdhPJxtf648Anu8+WQLwnefbc8tfID+CS39yck6gidPtDuLGqwclTyXEfQC2d24Q/jYTtnAsWDcsg==
+X-Received: by 2002:a2e:2a44:0:b0:243:6b73:1c0 with SMTP id q65-20020a2e2a44000000b002436b7301c0mr14138309ljq.376.1647258170940;
+        Mon, 14 Mar 2022 04:42:50 -0700 (PDT)
 Received: from localhost.localdomain (88-113-46-102.elisa-laajakaista.fi. [88.113.46.102])
-        by smtp.gmail.com with ESMTPSA id l11-20020a2e834b000000b00246308690e2sm3893333ljh.85.2022.03.14.04.42.14
+        by smtp.gmail.com with ESMTPSA id h5-20020a197005000000b00448287d1275sm3223847lfc.298.2022.03.14.04.42.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 04:42:14 -0700 (PDT)
+        Mon, 14 Mar 2022 04:42:50 -0700 (PDT)
 From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2 1/7] dt-bindings: clock: add QCOM SM8450 camera clock bindings
-Date:   Mon, 14 Mar 2022 13:42:10 +0200
-Message-Id: <20220314114211.1636574-2-vladimir.zapolskiy@linaro.org>
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH v2 5/7] clk: qcom: clk-alpha-pll: export lucid evo PLL configuration interfaces
+Date:   Mon, 14 Mar 2022 13:42:49 +0200
+Message-Id: <20220314114249.1636641-1-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20220314114211.1636574-1-vladimir.zapolskiy@linaro.org>
 References: <20220314114211.1636574-1-vladimir.zapolskiy@linaro.org>
@@ -66,281 +64,133 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The change adds device tree bindings for camera clock controller
-found on SM8450 SoC.
+The change exports lucid evo PLL configuration and control functions
+to clock controller drivers.
 
 Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
-Changes from v1 to v2:
-* updated qcom,camcc-sm8450.yaml according to review comments from Rob,
-* changed qcom,camcc-sm8450.h license to dual one.
+ drivers/clk/qcom/clk-alpha-pll.c | 65 ++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.h |  5 ++-
+ 2 files changed, 69 insertions(+), 1 deletion(-)
 
- .../bindings/clock/qcom,camcc-sm8450.yaml     |  89 ++++++++++
- include/dt-bindings/clock/qcom,camcc-sm8450.h | 159 ++++++++++++++++++
- 2 files changed, 248 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
- create mode 100644 include/dt-bindings/clock/qcom,camcc-sm8450.h
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
-new file mode 100644
-index 000000000000..2ea0fc12dd69
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,camcc-sm8450.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,camcc-sm8450.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 47879ee5a677..54bad5277802 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -191,8 +191,10 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ #define LUCID_5LPE_ENABLE_VOTE_RUN	BIT(21)
+ 
+ /* LUCID EVO PLL specific settings and offsets */
++#define LUCID_EVO_PCAL_NOT_DONE		BIT(8)
+ #define LUCID_EVO_ENABLE_VOTE_RUN       BIT(25)
+ #define LUCID_EVO_PLL_L_VAL_MASK        GENMASK(15, 0)
++#define LUCID_EVO_PLL_CAL_L_VAL_SHIFT	16
+ 
+ /* ZONDA PLL specific */
+ #define ZONDA_PLL_OUT_MASK	0xf
+@@ -1994,6 +1996,33 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
+ 
++void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++				 const struct alpha_pll_config *config)
++{
++	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l |
++			(TRION_PLL_CAL_VAL << LUCID_EVO_PLL_CAL_L_VAL_SHIFT));
 +
-+title: Qualcomm Camera Clock & Reset Controller Binding for SM8450
++	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
++	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll), config->user_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
++	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
 +
-+maintainers:
-+  - Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
++	/* Disable PLL output */
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
 +
-+description: |
-+  Qualcomm camera clock control module which supports the clocks, resets and
-+  power domains on SM8450.
++	/* Set operation mode to STANDBY */
++	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
 +
-+  See also dt-bindings/clock/qcom,camcc-sm8450.h
++	/* Place the PLL in STANDBY mode */
++	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
++}
++EXPORT_SYMBOL_GPL(clk_lucid_evo_pll_configure);
 +
-+properties:
-+  compatible:
-+    const: qcom,sm8450-camcc
+ static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+@@ -2079,6 +2108,31 @@ static void alpha_pll_lucid_evo_disable(struct clk_hw *hw)
+ 	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+ }
+ 
++static int alpha_pll_lucid_evo_prepare(struct clk_hw *hw)
++{
++	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
++	struct clk_hw *p;
++	u32 val = 0;
++	int ret;
 +
-+  clocks:
-+    items:
-+      - description: Camera AHB clock from GCC
-+      - description: Board XO source
-+      - description: Board active XO source
-+      - description: Sleep clock source
++	/* Return early if calibration is not needed. */
++	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
++	if (!(val & LUCID_EVO_PCAL_NOT_DONE))
++		return 0;
 +
-+  clock-names:
-+    items:
-+      - const: iface
-+      - const: bi_tcxo
-+      - const: bi_tcxo_ao
-+      - const: sleep_clk
++	p = clk_hw_get_parent(hw);
++	if (!p)
++		return -EINVAL;
 +
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      A phandle and PM domain specifier for the MMCX power domain.
++	ret = alpha_pll_lucid_evo_enable(hw);
++	if (ret)
++		return ret;
 +
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
++	alpha_pll_lucid_evo_disable(hw);
 +
-+  '#clock-cells':
-+    const: 1
++	return 0;
++}
 +
-+  '#reset-cells':
-+    const: 1
+ static unsigned long alpha_pll_lucid_evo_recalc_rate(struct clk_hw *hw,
+ 						     unsigned long parent_rate)
+ {
+@@ -2114,3 +2168,14 @@ const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops = {
+ 	.set_rate = clk_lucid_evo_pll_postdiv_set_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_evo_ops);
 +
-+  '#power-domain-cells':
-+    const: 1
++const struct clk_ops clk_alpha_pll_lucid_evo_ops = {
++	.prepare = alpha_pll_lucid_evo_prepare,
++	.enable = alpha_pll_lucid_evo_enable,
++	.disable = alpha_pll_lucid_evo_disable,
++	.is_enabled = clk_trion_pll_is_enabled,
++	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++	.set_rate = alpha_pll_lucid_5lpe_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_evo_ops);
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 6e9907deaf30..0b7a6859ca2c 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -152,6 +152,8 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops;
+ 
+ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+ #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
 +
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - required-opps
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    clock-controller@ade0000 {
-+      compatible = "qcom,sm8450-camcc";
-+      reg = <0 0xade0000 0 0x20000>;
-+      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK_A>,
-+               <&sleep_clk>;
-+      clock-names = "iface", bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-+      power-domains = <&rpmhpd SM8450_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,camcc-sm8450.h b/include/dt-bindings/clock/qcom,camcc-sm8450.h
-new file mode 100644
-index 000000000000..7ff67acf301a
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,camcc-sm8450.h
-@@ -0,0 +1,159 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8450_H
-+#define _DT_BINDINGS_CLK_QCOM_CAM_CC_SM8450_H
-+
-+/* CAM_CC clocks */
-+#define CAM_CC_BPS_AHB_CLK					0
-+#define CAM_CC_BPS_CLK						1
-+#define CAM_CC_BPS_CLK_SRC					2
-+#define CAM_CC_BPS_FAST_AHB_CLK					3
-+#define CAM_CC_CAMNOC_AXI_CLK					4
-+#define CAM_CC_CAMNOC_AXI_CLK_SRC				5
-+#define CAM_CC_CAMNOC_DCD_XO_CLK				6
-+#define CAM_CC_CCI_0_CLK					7
-+#define CAM_CC_CCI_0_CLK_SRC					8
-+#define CAM_CC_CCI_1_CLK					9
-+#define CAM_CC_CCI_1_CLK_SRC					10
-+#define CAM_CC_CORE_AHB_CLK					11
-+#define CAM_CC_CPAS_AHB_CLK					12
-+#define CAM_CC_CPAS_BPS_CLK					13
-+#define CAM_CC_CPAS_FAST_AHB_CLK				14
-+#define CAM_CC_CPAS_IFE_0_CLK					15
-+#define CAM_CC_CPAS_IFE_1_CLK					16
-+#define CAM_CC_CPAS_IFE_2_CLK					17
-+#define CAM_CC_CPAS_IFE_LITE_CLK				18
-+#define CAM_CC_CPAS_IPE_NPS_CLK					19
-+#define CAM_CC_CPAS_SBI_CLK					20
-+#define CAM_CC_CPAS_SFE_0_CLK					21
-+#define CAM_CC_CPAS_SFE_1_CLK					22
-+#define CAM_CC_CPHY_RX_CLK_SRC					23
-+#define CAM_CC_CSI0PHYTIMER_CLK					24
-+#define CAM_CC_CSI0PHYTIMER_CLK_SRC				25
-+#define CAM_CC_CSI1PHYTIMER_CLK					26
-+#define CAM_CC_CSI1PHYTIMER_CLK_SRC				27
-+#define CAM_CC_CSI2PHYTIMER_CLK					28
-+#define CAM_CC_CSI2PHYTIMER_CLK_SRC				29
-+#define CAM_CC_CSI3PHYTIMER_CLK					30
-+#define CAM_CC_CSI3PHYTIMER_CLK_SRC				31
-+#define CAM_CC_CSI4PHYTIMER_CLK					32
-+#define CAM_CC_CSI4PHYTIMER_CLK_SRC				33
-+#define CAM_CC_CSI5PHYTIMER_CLK					34
-+#define CAM_CC_CSI5PHYTIMER_CLK_SRC				35
-+#define CAM_CC_CSID_CLK						36
-+#define CAM_CC_CSID_CLK_SRC					37
-+#define CAM_CC_CSID_CSIPHY_RX_CLK				38
-+#define CAM_CC_CSIPHY0_CLK					39
-+#define CAM_CC_CSIPHY1_CLK					40
-+#define CAM_CC_CSIPHY2_CLK					41
-+#define CAM_CC_CSIPHY3_CLK					42
-+#define CAM_CC_CSIPHY4_CLK					43
-+#define CAM_CC_CSIPHY5_CLK					44
-+#define CAM_CC_FAST_AHB_CLK_SRC					45
-+#define CAM_CC_GDSC_CLK						46
-+#define CAM_CC_ICP_AHB_CLK					47
-+#define CAM_CC_ICP_CLK						48
-+#define CAM_CC_ICP_CLK_SRC					49
-+#define CAM_CC_IFE_0_CLK					50
-+#define CAM_CC_IFE_0_CLK_SRC					51
-+#define CAM_CC_IFE_0_DSP_CLK					52
-+#define CAM_CC_IFE_0_FAST_AHB_CLK				53
-+#define CAM_CC_IFE_1_CLK					54
-+#define CAM_CC_IFE_1_CLK_SRC					55
-+#define CAM_CC_IFE_1_DSP_CLK					56
-+#define CAM_CC_IFE_1_FAST_AHB_CLK				57
-+#define CAM_CC_IFE_2_CLK					58
-+#define CAM_CC_IFE_2_CLK_SRC					59
-+#define CAM_CC_IFE_2_DSP_CLK					60
-+#define CAM_CC_IFE_2_FAST_AHB_CLK				61
-+#define CAM_CC_IFE_LITE_AHB_CLK					62
-+#define CAM_CC_IFE_LITE_CLK					63
-+#define CAM_CC_IFE_LITE_CLK_SRC					64
-+#define CAM_CC_IFE_LITE_CPHY_RX_CLK				65
-+#define CAM_CC_IFE_LITE_CSID_CLK				66
-+#define CAM_CC_IFE_LITE_CSID_CLK_SRC				67
-+#define CAM_CC_IPE_NPS_AHB_CLK					68
-+#define CAM_CC_IPE_NPS_CLK					69
-+#define CAM_CC_IPE_NPS_CLK_SRC					70
-+#define CAM_CC_IPE_NPS_FAST_AHB_CLK				71
-+#define CAM_CC_IPE_PPS_CLK					72
-+#define CAM_CC_IPE_PPS_FAST_AHB_CLK				73
-+#define CAM_CC_JPEG_CLK						74
-+#define CAM_CC_JPEG_CLK_SRC					75
-+#define CAM_CC_MCLK0_CLK					76
-+#define CAM_CC_MCLK0_CLK_SRC					77
-+#define CAM_CC_MCLK1_CLK					78
-+#define CAM_CC_MCLK1_CLK_SRC					79
-+#define CAM_CC_MCLK2_CLK					80
-+#define CAM_CC_MCLK2_CLK_SRC					81
-+#define CAM_CC_MCLK3_CLK					82
-+#define CAM_CC_MCLK3_CLK_SRC					83
-+#define CAM_CC_MCLK4_CLK					84
-+#define CAM_CC_MCLK4_CLK_SRC					85
-+#define CAM_CC_MCLK5_CLK					86
-+#define CAM_CC_MCLK5_CLK_SRC					87
-+#define CAM_CC_MCLK6_CLK					88
-+#define CAM_CC_MCLK6_CLK_SRC					89
-+#define CAM_CC_MCLK7_CLK					90
-+#define CAM_CC_MCLK7_CLK_SRC					91
-+#define CAM_CC_PLL0						92
-+#define CAM_CC_PLL0_OUT_EVEN					93
-+#define CAM_CC_PLL0_OUT_ODD					94
-+#define CAM_CC_PLL1						95
-+#define CAM_CC_PLL1_OUT_EVEN					96
-+#define CAM_CC_PLL2						97
-+#define CAM_CC_PLL3						98
-+#define CAM_CC_PLL3_OUT_EVEN					99
-+#define CAM_CC_PLL4						100
-+#define CAM_CC_PLL4_OUT_EVEN					101
-+#define CAM_CC_PLL5						102
-+#define CAM_CC_PLL5_OUT_EVEN					103
-+#define CAM_CC_PLL6						104
-+#define CAM_CC_PLL6_OUT_EVEN					105
-+#define CAM_CC_PLL7						106
-+#define CAM_CC_PLL7_OUT_EVEN					107
-+#define CAM_CC_PLL8						108
-+#define CAM_CC_PLL8_OUT_EVEN					109
-+#define CAM_CC_QDSS_DEBUG_CLK					110
-+#define CAM_CC_QDSS_DEBUG_CLK_SRC				111
-+#define CAM_CC_QDSS_DEBUG_XO_CLK				112
-+#define CAM_CC_SBI_AHB_CLK					113
-+#define CAM_CC_SBI_CLK						114
-+#define CAM_CC_SFE_0_CLK					115
-+#define CAM_CC_SFE_0_CLK_SRC					116
-+#define CAM_CC_SFE_0_FAST_AHB_CLK				117
-+#define CAM_CC_SFE_1_CLK					118
-+#define CAM_CC_SFE_1_CLK_SRC					119
-+#define CAM_CC_SFE_1_FAST_AHB_CLK				120
-+#define CAM_CC_SLEEP_CLK					121
-+#define CAM_CC_SLEEP_CLK_SRC					122
-+#define CAM_CC_SLOW_AHB_CLK_SRC					123
-+#define CAM_CC_XO_CLK_SRC					124
-+
-+/* CAM_CC resets */
-+#define CAM_CC_BPS_BCR						0
-+#define CAM_CC_ICP_BCR						1
-+#define CAM_CC_IFE_0_BCR					2
-+#define CAM_CC_IFE_1_BCR					3
-+#define CAM_CC_IFE_2_BCR					4
-+#define CAM_CC_IPE_0_BCR					5
-+#define CAM_CC_QDSS_DEBUG_BCR					6
-+#define CAM_CC_SBI_BCR						7
-+#define CAM_CC_SFE_0_BCR					8
-+#define CAM_CC_SFE_1_BCR					9
-+
-+/* CAM_CC GDSCRs */
-+#define BPS_GDSC		0
-+#define IPE_0_GDSC		1
-+#define SBI_GDSC		2
-+#define IFE_0_GDSC		3
-+#define IFE_1_GDSC		4
-+#define IFE_2_GDSC		5
-+#define SFE_0_GDSC		6
-+#define SFE_1_GDSC		7
-+#define TITAN_TOP_GDSC		8
-+
-+#endif
++extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+ 
+@@ -168,6 +170,7 @@ void clk_agera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 
+ void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+ 			     const struct alpha_pll_config *config);
+-
++void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
++				 const struct alpha_pll_config *config);
+ 
+ #endif
 -- 
 2.33.0
 
