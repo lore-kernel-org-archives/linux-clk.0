@@ -2,49 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D5DC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A693BC43219
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233443AbiCNOSZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S242226AbiCNOSZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 14 Mar 2022 10:18:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54308 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242226AbiCNOSY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:24 -0400
+        with ESMTP id S242236AbiCNOSZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:25 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F851A38C
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E9041A39C
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:14 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVM-0004zh-01; Mon, 14 Mar 2022 15:17:00 +0100
+        id 1nTlVL-0004zT-8j; Mon, 14 Mar 2022 15:16:59 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVM-000f3A-Ca; Mon, 14 Mar 2022 15:16:59 +0100
+        id 1nTlVL-000f2z-Gx; Mon, 14 Mar 2022 15:16:58 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVK-0097b5-7o; Mon, 14 Mar 2022 15:16:58 +0100
+        id 1nTlVJ-0097ao-2C; Mon, 14 Mar 2022 15:16:57 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-mips@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [PATCH v8 09/16] rtc: ingenic: Simplify using devm_clk_get_enabled()
-Date:   Mon, 14 Mar 2022 15:16:36 +0100
-Message-Id: <20220314141643.22184-10-u.kleine-koenig@pengutronix.de>
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH v8 05/16] hwrng: meson - Don't open-code devm_clk_get_optional_enabled()
+Date:   Mon, 14 Mar 2022 15:16:32 +0100
+Message-Id: <20220314141643.22184-6-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1594; i=uwe@kleine-koenig.org; h=from:subject; bh=FeAj6Ohg9mkpr+zt239XYH6V0/QlOhGXtSKI9NFJOhU=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04I04iODxa+kI91syZiUDXI2CeBN8AaiC2n/y4O g+rD3nuJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9OCAAKCRDB/BR4rcrsCYJeB/ 9+fceY++w2qiCyAKn43cDe3s1P3VvLC68fdLkbHJm4jywsslju+hq7fSs2r4AD4nBXG7pywqfs0ZSU FJUWrBWnSjXTUctP7slKWVag5kR4jAUmt4ChfPvw5jTdcC1QS5jwPR1Hzkr2zHucE31nimhProcDHy xN5fLrSD29P8qhA+Tj6XsoNAtyMHiOYri1z2bwK/uOylK9bor99hXnBgCerbbNIJOmF9UPG7IQmYNt md3btgA77WDUhDXdw+/vvFdPYQIKhfnAw3c+KlSV2yad2C/5lTvxxjMMtEjsG/VCYDw2zfC4zBSEQw uvy7n+Ob+p2scOYh5nHNCwvUqlXYu5
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1735; i=uwe@kleine-koenig.org; h=from:subject; bh=bfqnxylPnbbJXe+3GBtwLYLgZPhd+qJZuw2RI3jILYE=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL035AdG35VtGykFXO3us1e4Qyfe85laP1NXWH96B J/ooUYmJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9N+QAKCRDB/BR4rcrsCaXiCA CYQFfcviJ8XTZvDwlKW0nOhnqK5pTk5a0ilSqlNkH2f7pbLRUYz1rMgQTnxyx4mfi2x7jHSUvQ80ZT XrlFiSMUGotXPWPSjAUJtt/ZB9qpJIkDJquiChcWWfqfB93qxX7eOCzqjmM/C3k/uibRqKM6E2qaKK kEmkOLoBVbmGMXAlti6yjPpMx+ObbWu4w1cwFw1pLAaCuq8fgXcIjhi95Q/7JfLu+gadS6zU5a44LZ Eqie89qMyY4R8y4ZcWGjy+UHyrWlXdQ3RxglzdRGZHT3wAZb+gFSUfxq+FyiKjlwfM8XheHVut3VVz P3sPTI8D/NFV8C+7vxPxHB1zuDfQqZ
 X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -55,57 +59,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With devm_clk_get_enabled() caring to disable (and unprepare) the clock,
-the probe function can be simplified accordingly.
+devm_clk_get_enabled() returns a clock prepared and enabled and already
+registers a devm exit handler to disable (and unprepare) the clock.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/rtc/rtc-jz4740.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
+ drivers/char/hw_random/meson-rng.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/rtc/rtc-jz4740.c b/drivers/rtc/rtc-jz4740.c
-index 6e51df72fd65..9b7bb6ce93ee 100644
---- a/drivers/rtc/rtc-jz4740.c
-+++ b/drivers/rtc/rtc-jz4740.c
-@@ -257,11 +257,6 @@ static void jz4740_rtc_power_off(void)
- 	kernel_halt();
+diff --git a/drivers/char/hw_random/meson-rng.c b/drivers/char/hw_random/meson-rng.c
+index 8bb30282ca46..06db5a93e257 100644
+--- a/drivers/char/hw_random/meson-rng.c
++++ b/drivers/char/hw_random/meson-rng.c
+@@ -33,16 +33,10 @@ static int meson_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
+ 	return sizeof(u32);
  }
  
--static void jz4740_rtc_clk_disable(void *data)
+-static void meson_rng_clk_disable(void *data)
 -{
 -	clk_disable_unprepare(data);
 -}
 -
- static const struct of_device_id jz4740_rtc_of_match[] = {
- 	{ .compatible = "ingenic,jz4740-rtc", .data = (void *)ID_JZ4740 },
- 	{ .compatible = "ingenic,jz4760-rtc", .data = (void *)ID_JZ4760 },
-@@ -329,24 +324,12 @@ static int jz4740_rtc_probe(struct platform_device *pdev)
- 	if (IS_ERR(rtc->base))
- 		return PTR_ERR(rtc->base);
+ static int meson_rng_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct meson_rng_data *data;
+-	int ret;
  
--	clk = devm_clk_get(dev, "rtc");
-+	clk = devm_clk_get_enabled(dev, "rtc");
- 	if (IS_ERR(clk)) {
--		dev_err(dev, "Failed to get RTC clock\n");
-+		dev_err(dev, "Failed to get enabled RTC clock\n");
- 		return PTR_ERR(clk);
- 	}
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+@@ -54,20 +48,10 @@ static int meson_rng_probe(struct platform_device *pdev)
+ 	if (IS_ERR(data->base))
+ 		return PTR_ERR(data->base);
  
--	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "Failed to enable clock\n");
--		return ret;
--	}
+-	data->core_clk = devm_clk_get_optional(dev, "core");
++	data->core_clk = devm_clk_get_optional_enabled(dev, "core");
+ 	if (IS_ERR(data->core_clk))
+ 		return dev_err_probe(dev, PTR_ERR(data->core_clk),
+-				     "Failed to get core clock\n");
 -
--	ret = devm_add_action_or_reset(dev, jz4740_rtc_clk_disable, clk);
--	if (ret) {
--		dev_err(dev, "Failed to register devm action\n");
--		return ret;
+-	if (data->core_clk) {
+-		ret = clk_prepare_enable(data->core_clk);
+-		if (ret)
+-			return ret;
+-		ret = devm_add_action_or_reset(dev, meson_rng_clk_disable,
+-					       data->core_clk);
+-		if (ret)
+-			return ret;
 -	}
--
- 	spin_lock_init(&rtc->lock);
++				     "Failed to get enabled core clock\n");
  
- 	platform_set_drvdata(pdev, rtc);
+ 	data->rng.name = pdev->name;
+ 	data->rng.read = meson_rng_read;
 -- 
 2.35.1
 
