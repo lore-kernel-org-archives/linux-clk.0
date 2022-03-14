@@ -2,67 +2,58 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA5AC433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB032C433FE
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242233AbiCNOSo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 10:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54488 "EHLO
+        id S242243AbiCNOSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 10:18:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242243AbiCNOSn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:43 -0400
+        with ESMTP id S242244AbiCNOSo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:44 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3B619C1C
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3867819C2B
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:33 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVQ-00050t-Iu; Mon, 14 Mar 2022 15:17:04 +0100
+        id 1nTlVQ-0004zP-CV; Mon, 14 Mar 2022 15:17:04 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVN-000f3O-FH; Mon, 14 Mar 2022 15:17:00 +0100
+        id 1nTlVK-000f2q-Sa; Mon, 14 Mar 2022 15:16:57 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVL-0097bD-6i; Mon, 14 Mar 2022 15:16:59 +0100
+        id 1nTlVI-0097aj-Qb; Mon, 14 Mar 2022 15:16:56 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>
 Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Keguang Zhang <keguang.zhang@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
         Vladimir Zapolskiy <vz@mleia.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Tomislav Denis <tomislav.denis@avl.com>,
+        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
         Michal Simek <michal.simek@xilinx.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v8 11/16] watchdog: Make use of devm_clk_get_enabled()
-Date:   Mon, 14 Mar 2022 15:16:38 +0100
-Message-Id: <20220314141643.22184-12-u.kleine-koenig@pengutronix.de>
+        Nuno Sa <nuno.sa@analog.com>,
+        =?utf-8?q?Andr=C3=A9_Gustavo_Nakagomi_Lopez?= <andregnl@usp.br>,
+        Cai Huoqing <caihuoqing@baidu.com>, linux-iio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v8 04/16] iio: Make use of devm_clk_get_enabled()
+Date:   Mon, 14 Mar 2022 15:16:31 +0100
+Message-Id: <20220314141643.22184-5-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=23797; i=uwe@kleine-koenig.org; h=from:subject; bh=z57t7hxiRb0NTIAkiUMcqO0E2/a/jQQAqPgx8u7xqp0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04OjJ1FYttOI7EmFq+M+HzPZrVVsUCPl4DrTTRp LASeDoCJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9ODgAKCRDB/BR4rcrsCVb5B/ oCGFESVzd5j1J6vbnXf8xVUoGYb6wv7mg2MmYMQpOfZOBE+HC6QiVcPTE8UrrpQrMZ7Q3kyzwgKhFD VFr0JrkdljITIRjQbGiP1/nhZ9HxvZylfahRcUn3RkjI7UGpqY3numSTZD2K/+SOWXygT2r/v38aXW y4gtNsNOMki+77Z1AZ33n73l3r+4Ijwvh5Trbyaphb197zfnp43MUyQ2HxvBWtyeepS/2Qd6jfLwxP 64U0fzNNhCMfAihV+UWK1ORTzh1Zrp7WRDUiiOnd2p0XFjw+Q0QR2lk6iNtsPnE2XDvO24vkd5WwHe E6+1UtteAyud51zR+4hhlBhgDqHYVa
+X-Developer-Signature: v=1; a=openpgp-sha256; l=17454; i=uwe@kleine-koenig.org; h=from:subject; bh=i9uOj9rJ8R0lLtC7G7hwQvqW5HzUyB5cY9bPKzJBCpo=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL032d0clk5PlLPmb9uTEhyEYVc3VRiD9isy+A0+r a6R7WSOJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9N9gAKCRDB/BR4rcrsCdStB/ 9s6kywY0taRO7uP0e9p/sNh3RDtqk6IRuYqHKw3FQjOu0wigkhJ9Q9HOwpOKNACO6aDJcjfPBOXzib 9pi5FNOeAFpEgPUhuYiZ/4YRpTNOHlVl45kYRtZhdL02wG7xqCCiXi6Cyke7oQja+n24EOpJ6CVcJa 88u5gROe8Svmi9JowfJXv8SBfbPVwTxUmz4rl4Dnh25f9qpE/TP3+BS38xaX4bqshbOWLG2xyZpJVc N6+5Y5qmJIkHLuOE4/KxsjxqScf3NbEgWufZxS6Kq93ScjpBFUDhkDvuV/iJ5HV7URbRXy5WCFAUY5 uAvbnL/HxYyaUR0JR/YPfHdoC/8sih
 X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -78,759 +69,563 @@ Convert them to devm_clk_get_enabled().
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/watchdog/cadence_wdt.c    | 17 +----------------
- drivers/watchdog/davinci_wdt.c    | 18 +-----------------
- drivers/watchdog/imgpdc_wdt.c     | 31 +++----------------------------
- drivers/watchdog/imx2_wdt.c       | 15 +--------------
- drivers/watchdog/imx7ulp_wdt.c    | 15 +--------------
- drivers/watchdog/loongson1_wdt.c  | 17 +----------------
- drivers/watchdog/lpc18xx_wdt.c    | 30 ++----------------------------
- drivers/watchdog/meson_gxbb_wdt.c | 16 +---------------
- drivers/watchdog/of_xilinx_wdt.c  | 16 +---------------
- drivers/watchdog/pic32-dmt.c      | 15 +--------------
- drivers/watchdog/pic32-wdt.c      | 17 +----------------
- drivers/watchdog/pnx4008_wdt.c    | 15 +--------------
- drivers/watchdog/qcom-wdt.c       | 16 +---------------
- drivers/watchdog/rtd119x_wdt.c    | 16 +---------------
- drivers/watchdog/st_lpc_wdt.c     | 16 +---------------
- drivers/watchdog/stm32_iwdg.c     | 31 ++-----------------------------
- drivers/watchdog/visconti_wdt.c   | 18 +-----------------
- 17 files changed, 21 insertions(+), 298 deletions(-)
+ drivers/iio/adc/ad7124.c           | 15 +---------
+ drivers/iio/adc/ad7768-1.c         | 17 +-----------
+ drivers/iio/adc/ad9467.c           | 17 +-----------
+ drivers/iio/adc/ingenic-adc.c      | 15 ++--------
+ drivers/iio/adc/lpc18xx_adc.c      | 18 +-----------
+ drivers/iio/adc/rockchip_saradc.c  | 44 ++----------------------------
+ drivers/iio/adc/ti-ads131e08.c     | 19 +------------
+ drivers/iio/adc/xilinx-ams.c       | 15 +---------
+ drivers/iio/adc/xilinx-xadc-core.c | 18 +-----------
+ drivers/iio/frequency/adf4371.c    | 17 +-----------
+ drivers/iio/frequency/admv1013.c   | 15 +---------
+ drivers/iio/frequency/adrf6780.c   | 16 +----------
+ drivers/iio/imu/adis16475.c        | 15 +---------
+ 13 files changed, 15 insertions(+), 226 deletions(-)
 
-diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
-index bc99e9164930..23d41043863f 100644
---- a/drivers/watchdog/cadence_wdt.c
-+++ b/drivers/watchdog/cadence_wdt.c
-@@ -274,11 +274,6 @@ static const struct watchdog_ops cdns_wdt_ops = {
- 	.set_timeout = cdns_wdt_settimeout,
- };
- 
--static void cdns_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- /************************Platform Operations*****************************/
- /**
-  * cdns_wdt_probe - Probe call for the device.
-@@ -333,21 +328,11 @@ static int cdns_wdt_probe(struct platform_device *pdev)
- 	watchdog_stop_on_reboot(cdns_wdt_device);
- 	watchdog_set_drvdata(cdns_wdt_device, wdt);
- 
--	wdt->clk = devm_clk_get(dev, NULL);
-+	wdt->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(wdt->clk))
- 		return dev_err_probe(dev, PTR_ERR(wdt->clk),
- 				     "input clock not found\n");
- 
--	ret = clk_prepare_enable(wdt->clk);
--	if (ret) {
--		dev_err(dev, "unable to enable clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, cdns_clk_disable_unprepare,
--				       wdt->clk);
--	if (ret)
--		return ret;
--
- 	clock_f = clk_get_rate(wdt->clk);
- 	if (clock_f <= CDNS_WDT_CLK_75MHZ) {
- 		wdt->prescaler = CDNS_WDT_PRESCALE_512;
-diff --git a/drivers/watchdog/davinci_wdt.c b/drivers/watchdog/davinci_wdt.c
-index 584a56893b81..5f2184bda7b2 100644
---- a/drivers/watchdog/davinci_wdt.c
-+++ b/drivers/watchdog/davinci_wdt.c
-@@ -189,14 +189,8 @@ static const struct watchdog_ops davinci_wdt_ops = {
- 	.restart	= davinci_wdt_restart,
- };
- 
--static void davinci_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int davinci_wdt_probe(struct platform_device *pdev)
- {
--	int ret = 0;
- 	struct device *dev = &pdev->dev;
- 	struct watchdog_device *wdd;
- 	struct davinci_wdt_device *davinci_wdt;
-@@ -205,21 +199,11 @@ static int davinci_wdt_probe(struct platform_device *pdev)
- 	if (!davinci_wdt)
- 		return -ENOMEM;
- 
--	davinci_wdt->clk = devm_clk_get(dev, NULL);
-+	davinci_wdt->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(davinci_wdt->clk))
- 		return dev_err_probe(dev, PTR_ERR(davinci_wdt->clk),
- 				     "failed to get clock node\n");
- 
--	ret = clk_prepare_enable(davinci_wdt->clk);
--	if (ret) {
--		dev_err(dev, "failed to prepare clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, davinci_clk_disable_unprepare,
--				       davinci_wdt->clk);
--	if (ret)
--		return ret;
--
- 	platform_set_drvdata(pdev, davinci_wdt);
- 
- 	wdd			= &davinci_wdt->wdd;
-diff --git a/drivers/watchdog/imgpdc_wdt.c b/drivers/watchdog/imgpdc_wdt.c
-index b57ff3787052..a55f801895d4 100644
---- a/drivers/watchdog/imgpdc_wdt.c
-+++ b/drivers/watchdog/imgpdc_wdt.c
-@@ -175,16 +175,11 @@ static const struct watchdog_ops pdc_wdt_ops = {
- 	.restart        = pdc_wdt_restart,
- };
- 
--static void pdc_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int pdc_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	u64 div;
--	int ret, val;
-+	int val;
- 	unsigned long clk_rate;
- 	struct pdc_wdt_dev *pdc_wdt;
- 
-@@ -196,38 +191,18 @@ static int pdc_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(pdc_wdt->base))
- 		return PTR_ERR(pdc_wdt->base);
- 
--	pdc_wdt->sys_clk = devm_clk_get(dev, "sys");
-+	pdc_wdt->sys_clk = devm_clk_get_enabled(dev, "sys");
- 	if (IS_ERR(pdc_wdt->sys_clk)) {
- 		dev_err(dev, "failed to get the sys clock\n");
- 		return PTR_ERR(pdc_wdt->sys_clk);
- 	}
- 
--	pdc_wdt->wdt_clk = devm_clk_get(dev, "wdt");
-+	pdc_wdt->wdt_clk = devm_clk_get_enabled(dev, "wdt");
- 	if (IS_ERR(pdc_wdt->wdt_clk)) {
- 		dev_err(dev, "failed to get the wdt clock\n");
- 		return PTR_ERR(pdc_wdt->wdt_clk);
- 	}
- 
--	ret = clk_prepare_enable(pdc_wdt->sys_clk);
--	if (ret) {
--		dev_err(dev, "could not prepare or enable sys clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, pdc_clk_disable_unprepare,
--				       pdc_wdt->sys_clk);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(pdc_wdt->wdt_clk);
--	if (ret) {
--		dev_err(dev, "could not prepare or enable wdt clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, pdc_clk_disable_unprepare,
--				       pdc_wdt->wdt_clk);
--	if (ret)
--		return ret;
--
- 	/* We use the clock rate to calculate the max timeout */
- 	clk_rate = clk_get_rate(pdc_wdt->wdt_clk);
- 	if (clk_rate == 0) {
-diff --git a/drivers/watchdog/imx2_wdt.c b/drivers/watchdog/imx2_wdt.c
-index 51bfb796898b..273d720588bf 100644
---- a/drivers/watchdog/imx2_wdt.c
-+++ b/drivers/watchdog/imx2_wdt.c
-@@ -248,11 +248,6 @@ static const struct regmap_config imx2_wdt_regmap_config = {
- 	.max_register = 0x8,
- };
- 
--static void imx2_wdt_action(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int __init imx2_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -277,7 +272,7 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
- 		return PTR_ERR(wdev->regmap);
- 	}
- 
--	wdev->clk = devm_clk_get(dev, NULL);
-+	wdev->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(wdev->clk)) {
- 		dev_err(dev, "can't get Watchdog clock\n");
- 		return PTR_ERR(wdev->clk);
-@@ -297,14 +292,6 @@ static int __init imx2_wdt_probe(struct platform_device *pdev)
- 				      dev_name(dev), wdog))
- 			wdog->info = &imx2_wdt_pretimeout_info;
- 
--	ret = clk_prepare_enable(wdev->clk);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(dev, imx2_wdt_action, wdev->clk);
--	if (ret)
--		return ret;
--
- 	wdev->clk_is_on = true;
- 
- 	regmap_read(wdev->regmap, IMX2_WDT_WRSR, &val);
-diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
-index 922b60374295..61517abf2dba 100644
---- a/drivers/watchdog/imx7ulp_wdt.c
-+++ b/drivers/watchdog/imx7ulp_wdt.c
-@@ -200,11 +200,6 @@ static int imx7ulp_wdt_init(void __iomem *base, unsigned int timeout)
- 	return ret;
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+index b400bbe291aa..fcfa4e0b41fb 100644
+--- a/drivers/iio/adc/ad7124.c
++++ b/drivers/iio/adc/ad7124.c
+@@ -862,11 +862,6 @@ static void ad7124_reg_disable(void *r)
+ 	regulator_disable(r);
  }
  
--static void imx7ulp_wdt_action(void *data)
+-static void ad7124_clk_disable(void *c)
 -{
--	clk_disable_unprepare(data);
+-	clk_disable_unprepare(c);
 -}
 -
- static int imx7ulp_wdt_probe(struct platform_device *pdev)
+ static int ad7124_probe(struct spi_device *spi)
  {
- 	struct imx7ulp_wdt_device *imx7ulp_wdt;
-@@ -222,20 +217,12 @@ static int imx7ulp_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(imx7ulp_wdt->base))
- 		return PTR_ERR(imx7ulp_wdt->base);
- 
--	imx7ulp_wdt->clk = devm_clk_get(dev, NULL);
-+	imx7ulp_wdt->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(imx7ulp_wdt->clk)) {
- 		dev_err(dev, "Failed to get watchdog clock\n");
- 		return PTR_ERR(imx7ulp_wdt->clk);
+ 	const struct ad7124_chip_info *info;
+@@ -917,18 +912,10 @@ static int ad7124_probe(struct spi_device *spi)
+ 			return ret;
  	}
  
--	ret = clk_prepare_enable(imx7ulp_wdt->clk);
+-	st->mclk = devm_clk_get(&spi->dev, "mclk");
++	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+ 	if (IS_ERR(st->mclk))
+ 		return PTR_ERR(st->mclk);
+ 
+-	ret = clk_prepare_enable(st->mclk);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ad7124_clk_disable, st->mclk);
 -	if (ret)
 -		return ret;
 -
--	ret = devm_add_action_or_reset(dev, imx7ulp_wdt_action, imx7ulp_wdt->clk);
--	if (ret)
--		return ret;
--
- 	wdog = &imx7ulp_wdt->wdd;
- 	wdog->info = &imx7ulp_wdt_info;
- 	wdog->ops = &imx7ulp_wdt_ops;
-diff --git a/drivers/watchdog/loongson1_wdt.c b/drivers/watchdog/loongson1_wdt.c
-index bb3d075c0633..c55656cfb403 100644
---- a/drivers/watchdog/loongson1_wdt.c
-+++ b/drivers/watchdog/loongson1_wdt.c
-@@ -79,11 +79,6 @@ static const struct watchdog_ops ls1x_wdt_ops = {
- 	.set_timeout = ls1x_wdt_set_timeout,
- };
- 
--static void ls1x_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int ls1x_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -100,20 +95,10 @@ static int ls1x_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(drvdata->base))
- 		return PTR_ERR(drvdata->base);
- 
--	drvdata->clk = devm_clk_get(dev, pdev->name);
-+	drvdata->clk = devm_clk_get_enabled(dev, pdev->name);
- 	if (IS_ERR(drvdata->clk))
- 		return PTR_ERR(drvdata->clk);
- 
--	err = clk_prepare_enable(drvdata->clk);
--	if (err) {
--		dev_err(dev, "clk enable failed\n");
--		return err;
--	}
--	err = devm_add_action_or_reset(dev, ls1x_clk_disable_unprepare,
--				       drvdata->clk);
--	if (err)
--		return err;
--
- 	clk_rate = clk_get_rate(drvdata->clk);
- 	if (!clk_rate)
- 		return -EINVAL;
-diff --git a/drivers/watchdog/lpc18xx_wdt.c b/drivers/watchdog/lpc18xx_wdt.c
-index 60b6d74f267d..1b9b5f21a0df 100644
---- a/drivers/watchdog/lpc18xx_wdt.c
-+++ b/drivers/watchdog/lpc18xx_wdt.c
-@@ -197,16 +197,10 @@ static const struct watchdog_ops lpc18xx_wdt_ops = {
- 	.restart        = lpc18xx_wdt_restart,
- };
- 
--static void lpc18xx_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int lpc18xx_wdt_probe(struct platform_device *pdev)
- {
- 	struct lpc18xx_wdt_dev *lpc18xx_wdt;
- 	struct device *dev = &pdev->dev;
--	int ret;
- 
- 	lpc18xx_wdt = devm_kzalloc(dev, sizeof(*lpc18xx_wdt), GFP_KERNEL);
- 	if (!lpc18xx_wdt)
-@@ -216,38 +210,18 @@ static int lpc18xx_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(lpc18xx_wdt->base))
- 		return PTR_ERR(lpc18xx_wdt->base);
- 
--	lpc18xx_wdt->reg_clk = devm_clk_get(dev, "reg");
-+	lpc18xx_wdt->reg_clk = devm_clk_get_enabled(dev, "reg");
- 	if (IS_ERR(lpc18xx_wdt->reg_clk)) {
- 		dev_err(dev, "failed to get the reg clock\n");
- 		return PTR_ERR(lpc18xx_wdt->reg_clk);
- 	}
- 
--	lpc18xx_wdt->wdt_clk = devm_clk_get(dev, "wdtclk");
-+	lpc18xx_wdt->wdt_clk = devm_clk_get_enabled(dev, "wdtclk");
- 	if (IS_ERR(lpc18xx_wdt->wdt_clk)) {
- 		dev_err(dev, "failed to get the wdt clock\n");
- 		return PTR_ERR(lpc18xx_wdt->wdt_clk);
- 	}
- 
--	ret = clk_prepare_enable(lpc18xx_wdt->reg_clk);
--	if (ret) {
--		dev_err(dev, "could not prepare or enable sys clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, lpc18xx_clk_disable_unprepare,
--				       lpc18xx_wdt->reg_clk);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(lpc18xx_wdt->wdt_clk);
--	if (ret) {
--		dev_err(dev, "could not prepare or enable wdt clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, lpc18xx_clk_disable_unprepare,
--				       lpc18xx_wdt->wdt_clk);
--	if (ret)
--		return ret;
--
- 	/* We use the clock rate to calculate timeouts */
- 	lpc18xx_wdt->clk_rate = clk_get_rate(lpc18xx_wdt->wdt_clk);
- 	if (lpc18xx_wdt->clk_rate == 0) {
-diff --git a/drivers/watchdog/meson_gxbb_wdt.c b/drivers/watchdog/meson_gxbb_wdt.c
-index d3c9e2f6e63b..cf65d096f3c0 100644
---- a/drivers/watchdog/meson_gxbb_wdt.c
-+++ b/drivers/watchdog/meson_gxbb_wdt.c
-@@ -146,16 +146,10 @@ static const struct of_device_id meson_gxbb_wdt_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, meson_gxbb_wdt_dt_ids);
- 
--static void meson_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int meson_gxbb_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct meson_gxbb_wdt *data;
--	int ret;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -165,18 +159,10 @@ static int meson_gxbb_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->reg_base))
- 		return PTR_ERR(data->reg_base);
- 
--	data->clk = devm_clk_get(dev, NULL);
-+	data->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(data->clk))
- 		return PTR_ERR(data->clk);
- 
--	ret = clk_prepare_enable(data->clk);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(dev, meson_clk_disable_unprepare,
--				       data->clk);
--	if (ret)
--		return ret;
--
- 	platform_set_drvdata(pdev, data);
- 
- 	data->wdt_dev.parent = dev;
-diff --git a/drivers/watchdog/of_xilinx_wdt.c b/drivers/watchdog/of_xilinx_wdt.c
-index 3318544366b8..2a079ca04aa3 100644
---- a/drivers/watchdog/of_xilinx_wdt.c
-+++ b/drivers/watchdog/of_xilinx_wdt.c
-@@ -154,11 +154,6 @@ static u32 xwdt_selftest(struct xwdt_device *xdev)
- 		return XWT_TIMER_FAILED;
+ 	ret = ad7124_soft_reset(st);
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+index aa42ba759fa1..8ae34ed8fabd 100644
+--- a/drivers/iio/adc/ad7768-1.c
++++ b/drivers/iio/adc/ad7768-1.c
+@@ -539,13 +539,6 @@ static void ad7768_regulator_disable(void *data)
+ 	regulator_disable(st->vref);
  }
  
--static void xwdt_clk_disable_unprepare(void *data)
+-static void ad7768_clk_disable(void *data)
 -{
--	clk_disable_unprepare(data);
+-	struct ad7768_state *st = data;
+-
+-	clk_disable_unprepare(st->mclk);
 -}
 -
- static int xwdt_probe(struct platform_device *pdev)
+ static int ad7768_set_channel_label(struct iio_dev *indio_dev,
+ 						int num_channels)
  {
- 	struct device *dev = &pdev->dev;
-@@ -193,7 +188,7 @@ static int xwdt_probe(struct platform_device *pdev)
+@@ -600,18 +593,10 @@ static int ad7768_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
  
- 	watchdog_set_nowayout(xilinx_wdt_wdd, enable_once);
+-	st->mclk = devm_clk_get(&spi->dev, "mclk");
++	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+ 	if (IS_ERR(st->mclk))
+ 		return PTR_ERR(st->mclk);
  
--	xdev->clk = devm_clk_get(dev, NULL);
-+	xdev->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(xdev->clk)) {
- 		if (PTR_ERR(xdev->clk) != -ENOENT)
- 			return PTR_ERR(xdev->clk);
-@@ -211,15 +206,6 @@ static int xwdt_probe(struct platform_device *pdev)
- 				 "The watchdog clock freq cannot be obtained\n");
- 	} else {
- 		pfreq = clk_get_rate(xdev->clk);
--		rc = clk_prepare_enable(xdev->clk);
--		if (rc) {
--			dev_err(dev, "unable to enable clock\n");
--			return rc;
--		}
--		rc = devm_add_action_or_reset(dev, xwdt_clk_disable_unprepare,
--					      xdev->clk);
--		if (rc)
--			return rc;
- 	}
- 
- 	/*
-diff --git a/drivers/watchdog/pic32-dmt.c b/drivers/watchdog/pic32-dmt.c
-index f43062b3c4c8..bc4ccddc75a3 100644
---- a/drivers/watchdog/pic32-dmt.c
-+++ b/drivers/watchdog/pic32-dmt.c
-@@ -164,11 +164,6 @@ static struct watchdog_device pic32_dmt_wdd = {
- 	.ops		= &pic32_dmt_fops,
- };
- 
--static void pic32_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int pic32_dmt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -184,20 +179,12 @@ static int pic32_dmt_probe(struct platform_device *pdev)
- 	if (IS_ERR(dmt->regs))
- 		return PTR_ERR(dmt->regs);
- 
--	dmt->clk = devm_clk_get(dev, NULL);
-+	dmt->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(dmt->clk)) {
- 		dev_err(dev, "clk not found\n");
- 		return PTR_ERR(dmt->clk);
- 	}
- 
--	ret = clk_prepare_enable(dmt->clk);
--	if (ret)
+-	ret = clk_prepare_enable(st->mclk);
+-	if (ret < 0)
 -		return ret;
--	ret = devm_add_action_or_reset(dev, pic32_clk_disable_unprepare,
--				       dmt->clk);
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ad7768_clk_disable, st);
 -	if (ret)
 -		return ret;
 -
- 	wdd->timeout = pic32_dmt_get_timeout_secs(dmt);
- 	if (!wdd->timeout) {
- 		dev_err(dev, "failed to read watchdog register timeout\n");
-diff --git a/drivers/watchdog/pic32-wdt.c b/drivers/watchdog/pic32-wdt.c
-index 41715d68d9e9..6d1a00222991 100644
---- a/drivers/watchdog/pic32-wdt.c
-+++ b/drivers/watchdog/pic32-wdt.c
-@@ -162,11 +162,6 @@ static const struct of_device_id pic32_wdt_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, pic32_wdt_dt_ids);
+ 	st->mclk_freq = clk_get_rate(st->mclk);
  
--static void pic32_clk_disable_unprepare(void *data)
+ 	mutex_init(&st->lock);
+diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
+index dbfc8517cb8a..a07df0fd3329 100644
+--- a/drivers/iio/adc/ad9467.c
++++ b/drivers/iio/adc/ad9467.c
+@@ -378,13 +378,6 @@ static int ad9467_preenable_setup(struct adi_axi_adc_conv *conv)
+ 	return ad9467_outputmode_set(st->spi, st->output_mode);
+ }
+ 
+-static void ad9467_clk_disable(void *data)
 -{
--	clk_disable_unprepare(data);
+-	struct ad9467_state *st = data;
+-
+-	clk_disable_unprepare(st->clk);
 -}
 -
- static int pic32_wdt_drv_probe(struct platform_device *pdev)
+ static int ad9467_probe(struct spi_device *spi)
  {
- 	struct device *dev = &pdev->dev;
-@@ -186,22 +181,12 @@ static int pic32_wdt_drv_probe(struct platform_device *pdev)
- 	if (!wdt->rst_base)
- 		return -ENOMEM;
+ 	const struct ad9467_chip_info *info;
+@@ -404,18 +397,10 @@ static int ad9467_probe(struct spi_device *spi)
+ 	st = adi_axi_adc_conv_priv(conv);
+ 	st->spi = spi;
  
--	wdt->clk = devm_clk_get(dev, NULL);
-+	wdt->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(wdt->clk)) {
- 		dev_err(dev, "clk not found\n");
- 		return PTR_ERR(wdt->clk);
+-	st->clk = devm_clk_get(&spi->dev, "adc-clk");
++	st->clk = devm_clk_get_enabled(&spi->dev, "adc-clk");
+ 	if (IS_ERR(st->clk))
+ 		return PTR_ERR(st->clk);
+ 
+-	ret = clk_prepare_enable(st->clk);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ad9467_clk_disable, st);
+-	if (ret)
+-		return ret;
+-
+ 	st->pwrdown_gpio = devm_gpiod_get_optional(&spi->dev, "powerdown",
+ 						   GPIOD_OUT_LOW);
+ 	if (IS_ERR(st->pwrdown_gpio))
+diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
+index 2b3912c6ca6b..b6433bcd53f5 100644
+--- a/drivers/iio/adc/ingenic-adc.c
++++ b/drivers/iio/adc/ingenic-adc.c
+@@ -732,11 +732,6 @@ static int ingenic_adc_of_xlate(struct iio_dev *iio_dev,
+ 	return -EINVAL;
+ }
+ 
+-static void ingenic_adc_clk_cleanup(void *data)
+-{
+-	clk_unprepare(data);
+-}
+-
+ static const struct iio_info ingenic_adc_info = {
+ 	.write_raw = ingenic_adc_write_raw,
+ 	.read_raw = ingenic_adc_read_raw,
+@@ -856,13 +851,13 @@ static int ingenic_adc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(adc->base))
+ 		return PTR_ERR(adc->base);
+ 
+-	adc->clk = devm_clk_get(dev, "adc");
++	adc->clk = devm_clk_get_prepared(dev, "adc");
+ 	if (IS_ERR(adc->clk)) {
+ 		dev_err(dev, "Unable to get clock\n");
+ 		return PTR_ERR(adc->clk);
  	}
  
--	ret = clk_prepare_enable(wdt->clk);
+-	ret = clk_prepare_enable(adc->clk);
++	ret = clk_enable(adc->clk);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable clock\n");
+ 		return ret;
+@@ -891,12 +886,6 @@ static int ingenic_adc_probe(struct platform_device *pdev)
+ 	usleep_range(2000, 3000); /* Must wait at least 2ms. */
+ 	clk_disable(adc->clk);
+ 
+-	ret = devm_add_action_or_reset(dev, ingenic_adc_clk_cleanup, adc->clk);
 -	if (ret) {
--		dev_err(dev, "clk enable failed\n");
+-		dev_err(dev, "Unable to add action\n");
 -		return ret;
 -	}
--	ret = devm_add_action_or_reset(dev, pic32_clk_disable_unprepare,
--				       wdt->clk);
--	if (ret)
--		return ret;
 -
- 	if (pic32_wdt_is_win_enabled(wdt)) {
- 		dev_err(dev, "windowed-clear mode is not supported.\n");
- 		return -ENODEV;
-diff --git a/drivers/watchdog/pnx4008_wdt.c b/drivers/watchdog/pnx4008_wdt.c
-index e0ea133c1690..87a44a5675a1 100644
---- a/drivers/watchdog/pnx4008_wdt.c
-+++ b/drivers/watchdog/pnx4008_wdt.c
-@@ -179,11 +179,6 @@ static struct watchdog_device pnx4008_wdd = {
- 	.max_timeout = MAX_HEARTBEAT,
- };
+ 	iio_dev->name = "jz-adc";
+ 	iio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
+ 	iio_dev->setup_ops = &ingenic_buffer_setup_ops;
+diff --git a/drivers/iio/adc/lpc18xx_adc.c b/drivers/iio/adc/lpc18xx_adc.c
+index ae9c9384f23e..8bbc18aaa474 100644
+--- a/drivers/iio/adc/lpc18xx_adc.c
++++ b/drivers/iio/adc/lpc18xx_adc.c
+@@ -122,11 +122,6 @@ static void lpc18xx_clear_cr_reg(void *data)
+ 	writel(0, adc->base + LPC18XX_ADC_CR);
+ }
  
--static void pnx4008_clk_disable_unprepare(void *data)
+-static void lpc18xx_clk_disable(void *clk)
 -{
--	clk_disable_unprepare(data);
+-	clk_disable_unprepare(clk);
 -}
 -
- static int pnx4008_wdt_probe(struct platform_device *pdev)
+ static void lpc18xx_regulator_disable(void *vref)
  {
- 	struct device *dev = &pdev->dev;
-@@ -195,18 +190,10 @@ static int pnx4008_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(wdt_base))
- 		return PTR_ERR(wdt_base);
+ 	regulator_disable(vref);
+@@ -152,7 +147,7 @@ static int lpc18xx_adc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(adc->base))
+ 		return PTR_ERR(adc->base);
  
--	wdt_clk = devm_clk_get(dev, NULL);
-+	wdt_clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(wdt_clk))
- 		return PTR_ERR(wdt_clk);
+-	adc->clk = devm_clk_get(&pdev->dev, NULL);
++	adc->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(adc->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(adc->clk),
+ 				     "error getting clock\n");
+@@ -178,17 +173,6 @@ static int lpc18xx_adc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
--	ret = clk_prepare_enable(wdt_clk);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(dev, pnx4008_clk_disable_unprepare,
--				       wdt_clk);
--	if (ret)
--		return ret;
--
- 	pnx4008_wdd.bootstatus = (readl(WDTIM_RES(wdt_base)) & WDOG_RESET) ?
- 			WDIOF_CARDRESET : 0;
- 	pnx4008_wdd.parent = dev;
-diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
-index 0d2209c5eaca..d776474dcdf3 100644
---- a/drivers/watchdog/qcom-wdt.c
-+++ b/drivers/watchdog/qcom-wdt.c
-@@ -175,11 +175,6 @@ static const struct watchdog_info qcom_wdt_pt_info = {
- 	.identity	= KBUILD_MODNAME,
- };
- 
--static void qcom_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static const struct qcom_wdt_match_data match_data_apcs_tmr = {
- 	.offset = reg_offset_data_apcs_tmr,
- 	.pretimeout = false,
-@@ -226,21 +221,12 @@ static int qcom_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(wdt->base))
- 		return PTR_ERR(wdt->base);
- 
--	clk = devm_clk_get(dev, NULL);
-+	clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(dev, "failed to get input clock\n");
- 		return PTR_ERR(clk);
- 	}
- 
--	ret = clk_prepare_enable(clk);
+-	ret = clk_prepare_enable(adc->clk);
 -	if (ret) {
--		dev_err(dev, "failed to setup clock\n");
+-		dev_err(&pdev->dev, "unable to enable clock\n");
 -		return ret;
 -	}
--	ret = devm_add_action_or_reset(dev, qcom_clk_disable_unprepare, clk);
+-
+-	ret = devm_add_action_or_reset(&pdev->dev, lpc18xx_clk_disable,
+-				       adc->clk);
+-	if (ret)
+-		return ret;
+-
+ 	rate = clk_get_rate(adc->clk);
+ 	clkdiv = DIV_ROUND_UP(rate, LPC18XX_ADC_CLK_TARGET);
+ 
+diff --git a/drivers/iio/adc/rockchip_saradc.c b/drivers/iio/adc/rockchip_saradc.c
+index 14b8df4ca9c8..0a053e8b2483 100644
+--- a/drivers/iio/adc/rockchip_saradc.c
++++ b/drivers/iio/adc/rockchip_saradc.c
+@@ -233,20 +233,6 @@ static void rockchip_saradc_reset_controller(struct reset_control *reset)
+ 	reset_control_deassert(reset);
+ }
+ 
+-static void rockchip_saradc_clk_disable(void *data)
+-{
+-	struct rockchip_saradc *info = data;
+-
+-	clk_disable_unprepare(info->clk);
+-}
+-
+-static void rockchip_saradc_pclk_disable(void *data)
+-{
+-	struct rockchip_saradc *info = data;
+-
+-	clk_disable_unprepare(info->pclk);
+-}
+-
+ static void rockchip_saradc_regulator_disable(void *data)
+ {
+ 	struct rockchip_saradc *info = data;
+@@ -380,12 +366,12 @@ static int rockchip_saradc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	info->pclk = devm_clk_get(&pdev->dev, "apb_pclk");
++	info->pclk = devm_clk_get_enabled(&pdev->dev, "apb_pclk");
+ 	if (IS_ERR(info->pclk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(info->pclk),
+ 				     "failed to get pclk\n");
+ 
+-	info->clk = devm_clk_get(&pdev->dev, "saradc");
++	info->clk = devm_clk_get_enabled(&pdev->dev, "saradc");
+ 	if (IS_ERR(info->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk),
+ 				     "failed to get adc clock\n");
+@@ -427,32 +413,6 @@ static int rockchip_saradc_probe(struct platform_device *pdev)
+ 
+ 	info->uv_vref = ret;
+ 
+-	ret = clk_prepare_enable(info->pclk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to enable pclk\n");
+-		return ret;
+-	}
+-	ret = devm_add_action_or_reset(&pdev->dev,
+-				       rockchip_saradc_pclk_disable, info);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to register devm action, %d\n",
+-			ret);
+-		return ret;
+-	}
+-
+-	ret = clk_prepare_enable(info->clk);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "failed to enable converter clock\n");
+-		return ret;
+-	}
+-	ret = devm_add_action_or_reset(&pdev->dev,
+-				       rockchip_saradc_clk_disable, info);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to register devm action, %d\n",
+-			ret);
+-		return ret;
+-	}
+-
+ 	platform_set_drvdata(pdev, indio_dev);
+ 
+ 	indio_dev->name = dev_name(&pdev->dev);
+diff --git a/drivers/iio/adc/ti-ads131e08.c b/drivers/iio/adc/ti-ads131e08.c
+index 0c2025a22575..7d7a8f0d3ab5 100644
+--- a/drivers/iio/adc/ti-ads131e08.c
++++ b/drivers/iio/adc/ti-ads131e08.c
+@@ -793,13 +793,6 @@ static void ads131e08_regulator_disable(void *data)
+ 	regulator_disable(st->vref_reg);
+ }
+ 
+-static void ads131e08_clk_disable(void *data)
+-{
+-	struct ads131e08_state *st = data;
+-
+-	clk_disable_unprepare(st->adc_clk);
+-}
+-
+ static int ads131e08_probe(struct spi_device *spi)
+ {
+ 	const struct ads131e08_info *info;
+@@ -892,21 +885,11 @@ static int ads131e08_probe(struct spi_device *spi)
+ 		st->vref_reg = NULL;
+ 	}
+ 
+-	st->adc_clk = devm_clk_get(&spi->dev, "adc-clk");
++	st->adc_clk = devm_clk_get_enabled(&spi->dev, "adc-clk");
+ 	if (IS_ERR(st->adc_clk))
+ 		return dev_err_probe(&spi->dev, PTR_ERR(st->adc_clk),
+ 				     "failed to get the ADC clock\n");
+ 
+-	ret = clk_prepare_enable(st->adc_clk);
+-	if (ret) {
+-		dev_err(&spi->dev, "failed to prepare/enable the ADC clock\n");
+-		return ret;
+-	}
+-
+-	ret = devm_add_action_or_reset(&spi->dev, ads131e08_clk_disable, st);
+-	if (ret)
+-		return ret;
+-
+ 	adc_clk_hz = clk_get_rate(st->adc_clk);
+ 	if (!adc_clk_hz) {
+ 		dev_err(&spi->dev, "failed to get the ADC clock rate\n");
+diff --git a/drivers/iio/adc/xilinx-ams.c b/drivers/iio/adc/xilinx-ams.c
+index 8343c5f74121..4e4f0c80db54 100644
+--- a/drivers/iio/adc/xilinx-ams.c
++++ b/drivers/iio/adc/xilinx-ams.c
+@@ -1343,11 +1343,6 @@ static const struct of_device_id ams_of_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, ams_of_match_table);
+ 
+-static void ams_clk_disable_unprepare(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+ static void ams_cancel_delayed_work(void *data)
+ {
+ 	cancel_delayed_work(data);
+@@ -1377,18 +1372,10 @@ static int ams_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ams->base))
+ 		return PTR_ERR(ams->base);
+ 
+-	ams->clk = devm_clk_get(&pdev->dev, NULL);
++	ams->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(ams->clk))
+ 		return PTR_ERR(ams->clk);
+ 
+-	ret = clk_prepare_enable(ams->clk);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&pdev->dev, ams_clk_disable_unprepare, ams->clk);
+-	if (ret < 0)
+-		return ret;
+-
+ 	INIT_DELAYED_WORK(&ams->ams_unmask_work, ams_unmask_worker);
+ 	ret = devm_add_action_or_reset(&pdev->dev, ams_cancel_delayed_work,
+ 				       &ams->ams_unmask_work);
+diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
+index 823c8e5f9809..a520e07e4e08 100644
+--- a/drivers/iio/adc/xilinx-xadc-core.c
++++ b/drivers/iio/adc/xilinx-xadc-core.c
+@@ -1299,13 +1299,6 @@ static const char * const xadc_type_names[] = {
+ 	[XADC_TYPE_US] = "xilinx-system-monitor",
+ };
+ 
+-static void xadc_clk_disable_unprepare(void *data)
+-{
+-	struct clk *clk = data;
+-
+-	clk_disable_unprepare(clk);
+-}
+-
+ static void xadc_cancel_delayed_work(void *data)
+ {
+ 	struct delayed_work *work = data;
+@@ -1383,19 +1376,10 @@ static int xadc_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	xadc->clk = devm_clk_get(dev, NULL);
++	xadc->clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(xadc->clk))
+ 		return PTR_ERR(xadc->clk);
+ 
+-	ret = clk_prepare_enable(xadc->clk);
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(dev,
+-				       xadc_clk_disable_unprepare, xadc->clk);
 -	if (ret)
 -		return ret;
 -
  	/*
- 	 * We use the clock rate to calculate the max timeout, so ensure it's
- 	 * not zero to avoid a divide-by-zero exception.
-diff --git a/drivers/watchdog/rtd119x_wdt.c b/drivers/watchdog/rtd119x_wdt.c
-index 834b94ff3f90..95c8d7abce42 100644
---- a/drivers/watchdog/rtd119x_wdt.c
-+++ b/drivers/watchdog/rtd119x_wdt.c
-@@ -94,16 +94,10 @@ static const struct of_device_id rtd119x_wdt_dt_ids[] = {
- 	 { }
- };
- 
--static void rtd119x_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int rtd119x_wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rtd119x_watchdog_device *data;
--	int ret;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -113,18 +107,10 @@ static int rtd119x_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->base))
- 		return PTR_ERR(data->base);
- 
--	data->clk = devm_clk_get(dev, NULL);
-+	data->clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(data->clk))
- 		return PTR_ERR(data->clk);
- 
--	ret = clk_prepare_enable(data->clk);
--	if (ret)
--		return ret;
--	ret = devm_add_action_or_reset(dev, rtd119x_clk_disable_unprepare,
--				       data->clk);
--	if (ret)
--		return ret;
--
- 	data->wdt_dev.info = &rtd119x_wdt_info;
- 	data->wdt_dev.ops = &rtd119x_wdt_ops;
- 	data->wdt_dev.timeout = 120;
-diff --git a/drivers/watchdog/st_lpc_wdt.c b/drivers/watchdog/st_lpc_wdt.c
-index 14ab6559c748..d79823e1b07e 100644
---- a/drivers/watchdog/st_lpc_wdt.c
-+++ b/drivers/watchdog/st_lpc_wdt.c
-@@ -142,11 +142,6 @@ static struct watchdog_device st_wdog_dev = {
- 	.ops		= &st_wdog_ops,
- };
- 
--static void st_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int st_wdog_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -190,7 +185,7 @@ static int st_wdog_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
- 	}
- 
--	clk = devm_clk_get(dev, NULL);
-+	clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(clk)) {
- 		dev_err(dev, "Unable to request clock\n");
- 		return PTR_ERR(clk);
-@@ -210,15 +205,6 @@ static int st_wdog_probe(struct platform_device *pdev)
- 	st_wdog_dev.max_timeout = 0xFFFFFFFF / st_wdog->clkrate;
- 	st_wdog_dev.parent = dev;
- 
--	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "Unable to enable clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, st_clk_disable_unprepare, clk);
--	if (ret)
--		return ret;
--
- 	watchdog_set_drvdata(&st_wdog_dev, st_wdog);
- 	watchdog_set_nowayout(&st_wdog_dev, WATCHDOG_NOWAYOUT);
- 
-diff --git a/drivers/watchdog/stm32_iwdg.c b/drivers/watchdog/stm32_iwdg.c
-index 570a71509d2a..01849720310d 100644
---- a/drivers/watchdog/stm32_iwdg.c
-+++ b/drivers/watchdog/stm32_iwdg.c
-@@ -150,50 +150,23 @@ static int stm32_iwdg_set_timeout(struct watchdog_device *wdd,
- 	return 0;
+ 	 * Make sure not to exceed the maximum samplerate since otherwise the
+ 	 * resulting interrupt storm will soft-lock the system.
+diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4371.c
+index ecd5e18995ad..54040b5fded0 100644
+--- a/drivers/iio/frequency/adf4371.c
++++ b/drivers/iio/frequency/adf4371.c
+@@ -540,13 +540,6 @@ static int adf4371_setup(struct adf4371_state *st)
+ 	return regmap_bulk_write(st->regmap, ADF4371_REG(0x30), st->buf, 5);
  }
  
--static void stm32_clk_disable_unprepare(void *data)
+-static void adf4371_clk_disable(void *data)
+-{
+-	struct adf4371_state *st = data;
+-
+-	clk_disable_unprepare(st->clkin);
+-}
+-
+ static int adf4371_probe(struct spi_device *spi)
+ {
+ 	const struct spi_device_id *id = spi_get_device_id(spi);
+@@ -579,18 +572,10 @@ static int adf4371_probe(struct spi_device *spi)
+ 	indio_dev->channels = st->chip_info->channels;
+ 	indio_dev->num_channels = st->chip_info->num_channels;
+ 
+-	st->clkin = devm_clk_get(&spi->dev, "clkin");
++	st->clkin = devm_clk_get_enabled(&spi->dev, "clkin");
+ 	if (IS_ERR(st->clkin))
+ 		return PTR_ERR(st->clkin);
+ 
+-	ret = clk_prepare_enable(st->clkin);
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&spi->dev, adf4371_clk_disable, st);
+-	if (ret)
+-		return ret;
+-
+ 	st->clkin_freq = clk_get_rate(st->clkin);
+ 
+ 	ret = adf4371_setup(st);
+diff --git a/drivers/iio/frequency/admv1013.c b/drivers/iio/frequency/admv1013.c
+index 3f3c478e9baa..b3e7eb322ade 100644
+--- a/drivers/iio/frequency/admv1013.c
++++ b/drivers/iio/frequency/admv1013.c
+@@ -490,11 +490,6 @@ static int admv1013_init(struct admv1013_state *st)
+ 					  st->input_mode);
+ }
+ 
+-static void admv1013_clk_disable(void *data)
 -{
 -	clk_disable_unprepare(data);
 -}
 -
- static int stm32_iwdg_clk_init(struct platform_device *pdev,
- 			       struct stm32_iwdg *wdt)
+ static void admv1013_reg_disable(void *data)
  {
- 	struct device *dev = &pdev->dev;
--	u32 ret;
+ 	regulator_disable(data);
+@@ -559,7 +554,7 @@ static int admv1013_properties_parse(struct admv1013_state *st)
+ 		return dev_err_probe(&spi->dev, PTR_ERR(st->reg),
+ 				     "failed to get the common-mode voltage\n");
  
--	wdt->clk_lsi = devm_clk_get(dev, "lsi");
-+	wdt->clk_lsi = devm_clk_get_enabled(dev, "lsi");
- 	if (IS_ERR(wdt->clk_lsi))
- 		return dev_err_probe(dev, PTR_ERR(wdt->clk_lsi), "Unable to get lsi clock\n");
+-	st->clkin = devm_clk_get(&spi->dev, "lo_in");
++	st->clkin = devm_clk_get_enabled(&spi->dev, "lo_in");
+ 	if (IS_ERR(st->clkin))
+ 		return dev_err_probe(&spi->dev, PTR_ERR(st->clkin),
+ 				     "failed to get the LO input clock\n");
+@@ -601,14 +596,6 @@ static int admv1013_probe(struct spi_device *spi)
+ 	if (ret)
+ 		return ret;
  
- 	/* optional peripheral clock */
- 	if (wdt->data->has_pclk) {
--		wdt->clk_pclk = devm_clk_get(dev, "pclk");
-+		wdt->clk_pclk = devm_clk_get_enabled(dev, "pclk");
- 		if (IS_ERR(wdt->clk_pclk))
- 			return dev_err_probe(dev, PTR_ERR(wdt->clk_pclk),
- 					     "Unable to get pclk clock\n");
+-	ret = clk_prepare_enable(st->clkin);
+-	if (ret)
+-		return ret;
 -
--		ret = clk_prepare_enable(wdt->clk_pclk);
--		if (ret) {
--			dev_err(dev, "Unable to prepare pclk clock\n");
--			return ret;
--		}
--		ret = devm_add_action_or_reset(dev,
--					       stm32_clk_disable_unprepare,
--					       wdt->clk_pclk);
+-	ret = devm_add_action_or_reset(&spi->dev, admv1013_clk_disable, st->clkin);
+-	if (ret)
+-		return ret;
+-
+ 	st->nb.notifier_call = admv1013_freq_change;
+ 	ret = devm_clk_notifier_register(&spi->dev, st->clkin, &st->nb);
+ 	if (ret)
+diff --git a/drivers/iio/frequency/adrf6780.c b/drivers/iio/frequency/adrf6780.c
+index 8255ffd174f6..d7bf34ceedd8 100644
+--- a/drivers/iio/frequency/adrf6780.c
++++ b/drivers/iio/frequency/adrf6780.c
+@@ -441,11 +441,6 @@ static void adrf6780_properties_parse(struct adrf6780_state *st)
+ 	st->vdet_out_en = device_property_read_bool(&spi->dev, "adi,vdet-out-en");
+ }
+ 
+-static void adrf6780_clk_disable(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+ static void adrf6780_powerdown(void *data)
+ {
+ 	/* Disable all components in the Enable Register */
+@@ -473,20 +468,11 @@ static int adrf6780_probe(struct spi_device *spi)
+ 
+ 	adrf6780_properties_parse(st);
+ 
+-	st->clkin = devm_clk_get(&spi->dev, "lo_in");
++	st->clkin = devm_clk_get_enabled(&spi->dev, "lo_in");
+ 	if (IS_ERR(st->clkin))
+ 		return dev_err_probe(&spi->dev, PTR_ERR(st->clkin),
+ 				     "failed to get the LO input clock\n");
+ 
+-	ret = clk_prepare_enable(st->clkin);
+-	if (ret)
+-		return ret;
+-
+-	ret = devm_add_action_or_reset(&spi->dev, adrf6780_clk_disable,
+-				       st->clkin);
+-	if (ret)
+-		return ret;
+-
+ 	mutex_init(&st->lock);
+ 
+ 	ret = adrf6780_init(st);
+diff --git a/drivers/iio/imu/adis16475.c b/drivers/iio/imu/adis16475.c
+index ea91d127077d..45a8765d7c16 100644
+--- a/drivers/iio/imu/adis16475.c
++++ b/drivers/iio/imu/adis16475.c
+@@ -1120,11 +1120,6 @@ static irqreturn_t adis16475_trigger_handler(int irq, void *p)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void adis16475_disable_clk(void *data)
+-{
+-	clk_disable_unprepare((struct clk *)data);
+-}
+-
+ static int adis16475_config_sync_mode(struct adis16475 *st)
+ {
+ 	int ret;
+@@ -1150,19 +1145,11 @@ static int adis16475_config_sync_mode(struct adis16475 *st)
+ 
+ 	/* All the other modes require external input signal */
+ 	if (sync->sync_mode != ADIS16475_SYNC_OUTPUT) {
+-		struct clk *clk = devm_clk_get(dev, NULL);
++		struct clk *clk = devm_clk_get_enabled(dev, NULL);
+ 
+ 		if (IS_ERR(clk))
+ 			return PTR_ERR(clk);
+ 
+-		ret = clk_prepare_enable(clk);
 -		if (ret)
 -			return ret;
- 	}
- 
--	ret = clk_prepare_enable(wdt->clk_lsi);
--	if (ret) {
--		dev_err(dev, "Unable to prepare lsi clock\n");
--		return ret;
--	}
--	ret = devm_add_action_or_reset(dev, stm32_clk_disable_unprepare,
--				       wdt->clk_lsi);
--	if (ret)
--		return ret;
 -
- 	wdt->rate = clk_get_rate(wdt->clk_lsi);
- 
- 	return 0;
-diff --git a/drivers/watchdog/visconti_wdt.c b/drivers/watchdog/visconti_wdt.c
-index 83ef55e66ca8..1127e42734f4 100644
---- a/drivers/watchdog/visconti_wdt.c
-+++ b/drivers/watchdog/visconti_wdt.c
-@@ -112,11 +112,6 @@ static const struct watchdog_ops visconti_wdt_ops = {
- 	.set_timeout	= visconti_wdt_set_timeout,
- };
- 
--static void visconti_clk_disable_unprepare(void *data)
--{
--	clk_disable_unprepare(data);
--}
+-		ret = devm_add_action_or_reset(dev, adis16475_disable_clk, clk);
+-		if (ret)
+-			return ret;
 -
- static int visconti_wdt_probe(struct platform_device *pdev)
- {
- 	struct watchdog_device *wdev;
-@@ -134,20 +129,9 @@ static int visconti_wdt_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	clk = devm_clk_get(dev, NULL);
-+	clk = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(clk))
- 		return dev_err_probe(dev, PTR_ERR(clk), "Could not get clock\n");
--
--	ret = clk_prepare_enable(clk);
--	if (ret) {
--		dev_err(dev, "Could not enable clock\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(dev, visconti_clk_disable_unprepare, clk);
--	if (ret)
--		return ret;
--
- 	clk_freq = clk_get_rate(clk);
- 	if (!clk_freq)
- 		return -EINVAL;
+ 		st->clk_freq = clk_get_rate(clk);
+ 		if (st->clk_freq < sync->min_rate ||
+ 		    st->clk_freq > sync->max_rate) {
 -- 
 2.35.1
 
