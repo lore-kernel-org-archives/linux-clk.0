@@ -2,71 +2,152 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF8DC43219
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 12:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E8FC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234055AbiCNMtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 08:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
+        id S242215AbiCNOSP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 10:18:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237936AbiCNMr4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 08:47:56 -0400
-X-Greylist: delayed 1450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 14 Mar 2022 05:41:45 PDT
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B663915F
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 05:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RBomFePC0D3Nz1nRDfr5gUM4W4kZT6zAPNV0+Hq+aWE=;
-  b=OpCQwjxAdFHsU6aTCrifW9qTCnMKp+/mh16Ez/S05MOtWRHohzP+fqYW
-   ou319aHC2g3dk9DRUyMuuXJ5PSYtjNvyz9HA96Y5f5miGPVgjul3aSef/
-   8Tc0aL7i2fjvDQYaUWuZUNDusJOhCHSZ5rnx6/cTj8q9Nvt0lxrS41Ab+
-   w=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
-   d="scan'208";a="25997347"
-Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:54:00 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Tero Kristo <kristo@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 14/30] clk: ti: clkctrl: fix typos in comments
-Date:   Mon, 14 Mar 2022 12:53:38 +0100
-Message-Id: <20220314115354.144023-15-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220314115354.144023-1-Julia.Lawall@inria.fr>
-References: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+        with ESMTP id S242212AbiCNOSP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:15 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E519119C23
+        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:04 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nTlVL-0004zU-B8; Mon, 14 Mar 2022 15:16:59 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nTlVL-000f32-Ji; Mon, 14 Mar 2022 15:16:58 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1nTlVJ-0097au-EO; Mon, 14 Mar 2022 15:16:57 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v8 07/16] gpio: vf610: Simplify error handling in probe
+Date:   Mon, 14 Mar 2022 15:16:34 +0100
+Message-Id: <20220314141643.22184-8-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
+References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2888; i=uwe@kleine-koenig.org; h=from:subject; bh=Dq67GJWI0h4L8WkYxDyaqd3dARkdTA4rj3Fyv3NX2P0=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04Apa3/7po70we0OsQEOmgMvEYlPY+6i4PmwzMh LxpdWwWJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9OAAAKCRDB/BR4rcrsCe8eCA CFj2DlaWpIHhiwkJiYB+1ZyfgdhiLgqubWRs/HIE+t3YXNpDHSyZb/I6tBwRI5OxljbD8k+FJ56Avy wFjb/SBl9U8A7UhtY75pjmXZ506HahvN0iZar5vJyJ55oY0r3LnhRu1+MoqMvL9Qx5V/dmbuLI+m3B kp7ObVBKp6dmAhIFGDcsBzsoYlONVIKcaGUEl6L1zXW37mh8xUVINmg83RMnsEwfvxX3KHovkOKesZ DXQWx8ymGBDp1FIo4giRJZ9KUq8uOdfILfWXauCbJS59fPUwuil4LBk0121uX79i/9cQ64qOYjWG1O SNFJv+uSKqBdGaxcDCh238ZgAOo6l3
+X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Various spelling mistakes in comments.
-Detected with the help of Coccinelle.
+Instead of manually enabling and registering a devm cleanup handler that
+disables the clock, use devm_clk_get_enabled(). Also replace the handling
+of the optional clocks by using a variant of clk_get_optional().
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+The resulting code is a tad stricter than the previous code as errors from
+clk_get() (apart from -ENOENT) make vf610_gpio_probe() return an error.
+This is however an improvement.
 
+Also make the clock pointers local variables instead of a member of driver
+data, as they are only used in .probe().
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/clk/ti/clkctrl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-vf610.c | 45 +++++++--------------------------------
+ 1 file changed, 8 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 864c484bde1b..170cdf9ea8f6 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -603,7 +603,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 20780c35da1b..4a6ad2e8d1a1 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -34,8 +34,6 @@ struct vf610_gpio_port {
+ 	void __iomem *gpio_base;
+ 	const struct fsl_gpio_soc_data *sdata;
+ 	u8 irqc[VF610_GPIO_PER_PORT];
+-	struct clk *clk_port;
+-	struct clk *clk_gpio;
+ 	int irq;
+ };
  
- 	/*
- 	 * The code below can be removed when all clkctrl nodes use domain
--	 * specific compatible proprerty and standard clock node naming
-+	 * specific compatible property and standard clock node naming
- 	 */
- 	if (legacy_naming) {
- 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
+@@ -232,11 +230,6 @@ static int vf610_gpio_irq_set_wake(struct irq_data *d, u32 enable)
+ 	return 0;
+ }
+ 
+-static void vf610_gpio_disable_clk(void *data)
+-{
+-	clk_disable_unprepare(data);
+-}
+-
+ static int vf610_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -245,6 +238,8 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	struct gpio_chip *gc;
+ 	struct gpio_irq_chip *girq;
+ 	struct irq_chip *ic;
++	struct clk *clk_port;
++	struct clk *clk_gpio;
+ 	int i;
+ 	int ret;
+ 
+@@ -265,37 +260,13 @@ static int vf610_gpio_probe(struct platform_device *pdev)
+ 	if (port->irq < 0)
+ 		return port->irq;
+ 
+-	port->clk_port = devm_clk_get(dev, "port");
+-	ret = PTR_ERR_OR_ZERO(port->clk_port);
+-	if (!ret) {
+-		ret = clk_prepare_enable(port->clk_port);
+-		if (ret)
+-			return ret;
+-		ret = devm_add_action_or_reset(dev, vf610_gpio_disable_clk,
+-					       port->clk_port);
+-		if (ret)
+-			return ret;
+-	} else if (ret == -EPROBE_DEFER) {
+-		/*
+-		 * Percolate deferrals, for anything else,
+-		 * just live without the clocking.
+-		 */
+-		return ret;
+-	}
++	clk_port = devm_clk_get_optional_enabled(dev, "port");
++	if (IS_ERR(clk_port))
++		return PTR_ERR(clk_port);
+ 
+-	port->clk_gpio = devm_clk_get(dev, "gpio");
+-	ret = PTR_ERR_OR_ZERO(port->clk_gpio);
+-	if (!ret) {
+-		ret = clk_prepare_enable(port->clk_gpio);
+-		if (ret)
+-			return ret;
+-		ret = devm_add_action_or_reset(dev, vf610_gpio_disable_clk,
+-					       port->clk_gpio);
+-		if (ret)
+-			return ret;
+-	} else if (ret == -EPROBE_DEFER) {
+-		return ret;
+-	}
++	clk_gpio = devm_clk_get_optional_enabled(dev, "gpio");
++	if (IS_ERR(clk_gpio))
++		return PTR_ERR(clk_gpio);
+ 
+ 	gc = &port->gc;
+ 	gc->parent = dev;
+-- 
+2.35.1
 
