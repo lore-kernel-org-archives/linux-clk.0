@@ -2,46 +2,53 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1760CC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EBFC43217
 	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 14:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242212AbiCNOSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S242224AbiCNOSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 14 Mar 2022 10:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54164 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232623AbiCNOSP (ORCPT
+        with ESMTP id S242218AbiCNOSP (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 10:18:15 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FFCA13D3D
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDE019C1C
         for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 07:17:05 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVK-0004zQ-Uh; Mon, 14 Mar 2022 15:16:58 +0100
+        id 1nTlVN-00054l-QO; Mon, 14 Mar 2022 15:17:01 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVL-000f2w-C0; Mon, 14 Mar 2022 15:16:58 +0100
+        id 1nTlVO-000f3b-57; Mon, 14 Mar 2022 15:17:00 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1nTlVJ-0097ar-83; Mon, 14 Mar 2022 15:16:57 +0100
+        id 1nTlVL-0097bO-R5; Mon, 14 Mar 2022 15:16:59 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH v8 06/16] bus: bt1: Don't open code devm_clk_get_enabled()
-Date:   Mon, 14 Mar 2022 15:16:33 +0100
-Message-Id: <20220314141643.22184-7-u.kleine-koenig@pengutronix.de>
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>
+Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Wolfram Sang <wsa@kernel.org>,
+        Alexandru Ardelean <aardelean@deviqon.com>
+Subject: [PATCH v8 14/16] i2c: imx: Simplify using devm_clk_get_enabled()
+Date:   Mon, 14 Mar 2022 15:16:41 +0100
+Message-Id: <20220314141643.22184-15-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2562; i=uwe@kleine-koenig.org; h=from:subject; bh=RiJiPFiKMeyGfmKhKarGEGDg1+/6Bn25BvlbEK0N0us=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL03960HOitJFfJZ+CRAFjCSUeq2zaKYmZFQt3SqD 9iqwUYSJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9N/QAKCRDB/BR4rcrsCXPnB/ 9o0B3mWCEzFHjYT6pfTwTJYm52n5sClCxESiYiFf/iC7rwP6c/8E+s52Ev3OBXvF5oLORNLtfRnVLK rDK8Fzn6yM+QXPrPVMuLdWMr/sTAzfgGZsQgYW6JuFWbLRe8H89h2it4S+7FBLpvYIkkLO2JxoSJqk K0MCE/vLGs90HXzNGPky82/NaVrh4IsHYKVi0Dm71Lc6d1xvi6SMc4Wq6SY/D3iNomvtFuuORcpXKx XqaZYZIAor/s2xs6m8IQvkMLlPRRvcJilRVz0z6GCRTx2JZqucAz901ctS6wZApgQAMag1yVlGFGXL brxdJAEln4hBERYIa9YPWA0IfzpWTm
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1934; i=uwe@kleine-koenig.org; h=from:subject; bh=cpOMMXrTgDVsYCx6J041u9Sl0/KU1ysc3e28Et5yT2A=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBiL04Y4IYmtIk+6wsiLalltodMqdw1TLc/q+2Nnx0c cq8KWxyJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCYi9OGAAKCRDB/BR4rcrsCckbB/ 9ogXsizZb0rBg6Bx/xYUbIdKqpE30LnfXEqv017psaGBUuc/2tt/TSHUsuc5UghUr/EvpLqTZUCRif c8ry4euVhU3+JKjchSi1N1LN3LGJmqjShya3Bdn2HlUK75MXMCPwhhvOGjJ19MVqtljxGg6aXL3M5a qXywvqajbwSr2el+lDH9697DniQpWhCgC4PQJB1FT3nGhRLoT0hbonljjUePM5Yo2jTQkMm+rxLWDm IqKZt1CtXEiqFxzOEjfOIdBp4vJttpnzsNJ26yaRTuj6TQVmyrU9ryGVK+eloJRmlgX3YYJTJnS572 C4SHo3v9PHkzI9KpIEAUMFfdcoQVQD
 X-Developer-Key: i=uwe@kleine-koenig.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -52,97 +59,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-devm_clk_get_enabled() returns a clock prepared and enabled and already
-registers a devm exit handler to disable (and unprepare) the clock.
+devm_clk_get_enabled() returns the clk already (prepared and) enabled
+and the automatically called cleanup cares for disabling (and
+unpreparing). So simplify .probe() and .remove() accordingly.
 
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Wolfram Sang <wsa@kernel.org>
+Reviewed-by: Alexandru Ardelean <aardelean@deviqon.com>
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/bus/bt1-apb.c | 23 +----------------------
- drivers/bus/bt1-axi.c | 23 ++---------------------
- 2 files changed, 3 insertions(+), 43 deletions(-)
+ drivers/i2c/busses/i2c-imx.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/bus/bt1-apb.c b/drivers/bus/bt1-apb.c
-index b25ff941e7c7..2fa135f1097b 100644
---- a/drivers/bus/bt1-apb.c
-+++ b/drivers/bus/bt1-apb.c
-@@ -187,35 +187,14 @@ static int bt1_apb_request_rst(struct bt1_apb *apb)
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 27f969b3dc07..6c346b0bec8b 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1448,16 +1448,10 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	ACPI_COMPANION_SET(&i2c_imx->adapter.dev, ACPI_COMPANION(&pdev->dev));
+ 
+ 	/* Get I2C clock */
+-	i2c_imx->clk = devm_clk_get(&pdev->dev, NULL);
++	i2c_imx->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(i2c_imx->clk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(i2c_imx->clk),
+-				     "can't get I2C clock\n");
+-
+-	ret = clk_prepare_enable(i2c_imx->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "can't enable I2C clock, ret=%d\n", ret);
+-		return ret;
+-	}
++				     "can't get prepared I2C clock\n");
+ 
+ 	/* Init queue */
+ 	init_waitqueue_head(&i2c_imx->queue);
+@@ -1530,7 +1524,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+-	clk_disable_unprepare(i2c_imx->clk);
  	return ret;
  }
  
--static void bt1_apb_disable_clk(void *data)
--{
--	struct bt1_apb *apb = data;
--
--	clk_disable_unprepare(apb->pclk);
--}
--
- static int bt1_apb_request_clk(struct bt1_apb *apb)
- {
--	int ret;
--
--	apb->pclk = devm_clk_get(apb->dev, "pclk");
-+	apb->pclk = devm_clk_get_enabled(apb->dev, "pclk");
- 	if (IS_ERR(apb->pclk)) {
- 		dev_err(apb->dev, "Couldn't get APB clock descriptor\n");
- 		return PTR_ERR(apb->pclk);
- 	}
+@@ -1562,7 +1555,6 @@ static int i2c_imx_remove(struct platform_device *pdev)
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq >= 0)
+ 		free_irq(irq, i2c_imx);
+-	clk_disable_unprepare(i2c_imx->clk);
  
--	ret = clk_prepare_enable(apb->pclk);
--	if (ret) {
--		dev_err(apb->dev, "Couldn't enable the APB clock\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(apb->dev, bt1_apb_disable_clk, apb);
--	if (ret) {
--		dev_err(apb->dev, "Can't add APB EHB clocks disable action\n");
--		return ret;
--	}
--
- 	apb->rate = clk_get_rate(apb->pclk);
- 	if (!apb->rate) {
- 		dev_err(apb->dev, "Invalid clock rate\n");
-diff --git a/drivers/bus/bt1-axi.c b/drivers/bus/bt1-axi.c
-index e7a6744acc7b..e96a2c0df890 100644
---- a/drivers/bus/bt1-axi.c
-+++ b/drivers/bus/bt1-axi.c
-@@ -147,34 +147,15 @@ static int bt1_axi_request_rst(struct bt1_axi *axi)
- 	return ret;
- }
- 
--static void bt1_axi_disable_clk(void *data)
--{
--	struct bt1_axi *axi = data;
--
--	clk_disable_unprepare(axi->aclk);
--}
--
- static int bt1_axi_request_clk(struct bt1_axi *axi)
- {
--	int ret;
--
--	axi->aclk = devm_clk_get(axi->dev, "aclk");
-+	axi->aclk = devm_clk_get_enabled(axi->dev, "aclk");
- 	if (IS_ERR(axi->aclk)) {
- 		dev_err(axi->dev, "Couldn't get AXI Interconnect clock\n");
- 		return PTR_ERR(axi->aclk);
- 	}
- 
--	ret = clk_prepare_enable(axi->aclk);
--	if (ret) {
--		dev_err(axi->dev, "Couldn't enable the AXI clock\n");
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(axi->dev, bt1_axi_disable_clk, axi);
--	if (ret)
--		dev_err(axi->dev, "Can't add AXI clock disable action\n");
--
--	return ret;
-+	return 0;
- }
- 
- static int bt1_axi_request_irq(struct bt1_axi *axi)
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
 -- 
 2.35.1
 
