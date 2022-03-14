@@ -2,115 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7783FC4167B
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 11:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874D1C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Mar 2022 12:47:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239465AbiCNLpF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Mar 2022 07:45:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59826 "EHLO
+        id S231962AbiCNMsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Mar 2022 08:48:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240505AbiCNLoC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 07:44:02 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4ACE32C
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:51 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id q10so21413857ljc.7
-        for <linux-clk@vger.kernel.org>; Mon, 14 Mar 2022 04:42:51 -0700 (PDT)
+        with ESMTP id S238520AbiCNMr5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Mar 2022 08:47:57 -0400
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBCBD387A8;
+        Mon, 14 Mar 2022 05:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qq9dTW6gbLY/ve5ehTRpDEnNxOPOXDUjIljMGUur/vM=;
-        b=JDYM2WmmHXGLb5VWToLUskc15H+29Tu+HtUvqkKnXKsRP2OTKfjVDK0+xnXhuS7Wc3
-         i0NjWGG4aObhW1zNlwWdHf3qGs4APnyWwIT9bb/GF2UBd70EDlZ9VtN3u6gbnITGGT41
-         vmUL9JuV0c1mEIjQI3d3NCIoRh9hkwgBa9WkIdjQza/bihuHKiBMti051Jl0yjhAvo6x
-         mRTuaa6rqwLsmGpyMkon1Z8bsx9IhSvODQJLW/ZOw95T+OjY68Adpbyg+XQptFIknprE
-         r2S8ivOj9mzz7Qb2jAHO0lkAHS9SYXjIVRk27E5LgL45t/u9XmpMj4Aj84QsOor7U89v
-         6n/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qq9dTW6gbLY/ve5ehTRpDEnNxOPOXDUjIljMGUur/vM=;
-        b=TdDGJw2Ut+0COTLuOtAPStu+MkGmGhYlyM/Y1bislQuDfrHSKn5odU7nHc7SOEw0L5
-         t8GpJrXD6Yi27E8w3ZboDThJZ2ICXLdr+wMf4NaLxWGbxzRljabrOneNmDicTw/z36NB
-         gOjSS3kABod83E8SMszYGff6DcL3BMPH5NqBzOqb14mIlIjt3lPs0FY5uy7lhH7C2k13
-         dzyBwaZ7m+v5rnDiqi8zXFmnGbrFavXdpk8hW0Q8rcxXo4L4CGQkVCTYYLVSAXJDAlC+
-         mGJk62EzICIawMctzzDDzxatvorThzEZw/zd6i/YEMNnw5hjverMOrWSJ9ET5TaOLowL
-         rhjg==
-X-Gm-Message-State: AOAM532neEmJ14+uT3lAiG2XZn4t8GG+2uqBLfrAl0jhsMShf9Z+xjiy
-        TxkJJvmVncP+8xILzZKNNSu1qQ==
-X-Google-Smtp-Source: ABdhPJxAYLeEwbvD+chVwWk4vypPLS9H42TX2q+iWyvPdYlgVj/+Ic0xiSmN+mdUjCBf4MTgpdcpKQ==
-X-Received: by 2002:a2e:b706:0:b0:247:ff35:cfd7 with SMTP id j6-20020a2eb706000000b00247ff35cfd7mr13652799ljo.510.1647258169349;
-        Mon, 14 Mar 2022 04:42:49 -0700 (PDT)
-Received: from localhost.localdomain (88-113-46-102.elisa-laajakaista.fi. [88.113.46.102])
-        by smtp.gmail.com with ESMTPSA id g27-20020a19e05b000000b004485c877230sm2840850lfj.235.2022.03.14.04.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 04:42:49 -0700 (PDT)
-From:   Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/7] clk: qcom: clk-alpha-pll: limit exported symbols to GPL licensed code
-Date:   Mon, 14 Mar 2022 13:42:48 +0200
-Message-Id: <20220314114248.1636620-1-vladimir.zapolskiy@linaro.org>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20220314114211.1636574-1-vladimir.zapolskiy@linaro.org>
-References: <20220314114211.1636574-1-vladimir.zapolskiy@linaro.org>
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=41PUcU9tzULCiIgb8Uibh/5DuRgn44vcqHlit9be1ys=;
+  b=da5ZDADTYjfUb4CkZvv1ifI5i+2sUHWvJw+dkr6l96rFI9+3qCoi3gnv
+   q0ycGdD5ccrm59796HzJuglqTi/Zn7sM07eq2eqJ7FQY8P7GtUxL24J6z
+   5W/zcd3/E6fo/TuVnTzoYm6lik0f+KcMTza69NkDCls6kpW1/h8PdxP5f
+   k=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.90,180,1643670000"; 
+   d="scan'208";a="25997332"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 12:53:59 +0100
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     linux-can@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        linux-spi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-staging@lists.linux.dev, platform-driver-x86@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-leds@vger.kernel.org, Shayne Chen <shayne.chen@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-rdma@vger.kernel.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        linux-s390@vger.kernel.org,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        linux-power@fi.rohmeurope.com, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-perf-users@vger.kernel.org
+Subject: [PATCH 00/30] fix typos in comments
+Date:   Mon, 14 Mar 2022 12:53:24 +0100
+Message-Id: <20220314115354.144023-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unify all exported PLL clock configuration functions and data structures
-as GPL symbols.
+Various spelling mistakes in comments.
+Detected with the help of Coccinelle.
 
-Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 288692f0ea39..47879ee5a677 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -1823,7 +1823,7 @@ const struct clk_ops clk_alpha_pll_lucid_5lpe_ops = {
- 	.round_rate = clk_alpha_pll_round_rate,
- 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_5lpe_ops);
- 
- const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
- 	.enable = alpha_pll_lucid_5lpe_enable,
-@@ -1832,14 +1832,14 @@ const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
- 	.recalc_rate = clk_trion_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_fixed_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_5lpe_ops);
- 
- const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
- 	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
- 	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
- 
- void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
-@@ -1992,7 +1992,7 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
- 	.round_rate = clk_alpha_pll_round_rate,
- 	.set_rate = clk_zonda_pll_set_rate,
- };
--EXPORT_SYMBOL(clk_alpha_pll_zonda_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
- 
- static int alpha_pll_lucid_evo_enable(struct clk_hw *hw)
- {
--- 
-2.33.0
-
+ drivers/base/devres.c                               |    4 ++--
+ drivers/clk/qcom/gcc-sm6125.c                       |    2 +-
+ drivers/clk/ti/clkctrl.c                            |    2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c              |    4 ++--
+ drivers/gpu/drm/amd/display/dc/bios/command_table.c |    6 +++---
+ drivers/gpu/drm/amd/pm/amdgpu_pm.c                  |    2 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c  |    4 ++--
+ drivers/gpu/drm/sti/sti_gdp.c                       |    2 +-
+ drivers/infiniband/hw/qib/qib_iba7220.c             |    4 ++--
+ drivers/leds/leds-pca963x.c                         |    2 +-
+ drivers/media/i2c/ov5695.c                          |    2 +-
+ drivers/mfd/rohm-bd9576.c                           |    2 +-
+ drivers/mtd/ubi/block.c                             |    2 +-
+ drivers/net/can/usb/ucan.c                          |    4 ++--
+ drivers/net/ethernet/packetengines/yellowfin.c      |    2 +-
+ drivers/net/wireless/ath/ath6kl/htc_mbox.c          |    2 +-
+ drivers/net/wireless/cisco/airo.c                   |    2 +-
+ drivers/net/wireless/mediatek/mt76/mt7915/init.c    |    2 +-
+ drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c |    6 +++---
+ drivers/platform/x86/uv_sysfs.c                     |    2 +-
+ drivers/s390/crypto/pkey_api.c                      |    2 +-
+ drivers/scsi/aic7xxx/aicasm/aicasm.c                |    2 +-
+ drivers/scsi/elx/libefc_sli/sli4.c                  |    2 +-
+ drivers/scsi/lpfc/lpfc_mbox.c                       |    2 +-
+ drivers/scsi/qla2xxx/qla_gs.c                       |    2 +-
+ drivers/spi/spi-sun4i.c                             |    2 +-
+ drivers/staging/rtl8723bs/core/rtw_mlme.c           |    2 +-
+ drivers/usb/gadget/udc/snps_udc_core.c              |    2 +-
+ fs/kernfs/file.c                                    |    2 +-
+ kernel/events/core.c                                |    2 +-
+ 30 files changed, 39 insertions(+), 39 deletions(-)
