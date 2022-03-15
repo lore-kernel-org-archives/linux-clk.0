@@ -2,81 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C75AC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 21:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70357C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 21:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236752AbiCOV0v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 17:26:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58540 "EHLO
+        id S1350805AbiCOVbv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 17:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235170AbiCOV0v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 17:26:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB245BD1F;
-        Tue, 15 Mar 2022 14:25:38 -0700 (PDT)
+        with ESMTP id S1350379AbiCOVbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 17:31:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A14C15BE4B;
+        Tue, 15 Mar 2022 14:30:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C91A2B818C2;
-        Tue, 15 Mar 2022 21:25:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F90C340E8;
-        Tue, 15 Mar 2022 21:25:35 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 19EA3B81892;
+        Tue, 15 Mar 2022 21:30:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E47C340F4;
+        Tue, 15 Mar 2022 21:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647379535;
-        bh=a1DRy59KBSvpfBS/knLhFJ3ZhRJa4GK/pC3wt82Aazg=;
+        s=k20201202; t=1647379830;
+        bh=Z+w7qmmwtApw9A0X4lTrxH73AXRGI1t4uG6akIL9azM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mFVNMHAbPL6IOWUZTbNqcg30Izqmcnx2wnhHjAwEhbr3Uh1MfOA5Xgveq14jaLmMY
-         +jx8sFq48rQJHZt3tRAUhgYmT5blF0kTKIw/K8RwIkGObtxi7STtKdp3MtspmGCcW0
-         Fos83M9XFosBM23PHGN/AOewfSOBBfFlmsVgPHZZWfMJHXw5tWultRIoEscuIP37O7
-         94MfPrKLYEWRuwDpHkS8VvwZVfqL1R58tEsRNhZGdMZFVFVnUOhhaFLgUHvT5QcKCp
-         ekSfd+c2j/eyGDwv01RrZTz0Go1QVlDZ9lWxGjooXQN5tYbkqpRxYZEnnwbgJLjSly
-         NdyLhc/4qI5Qg==
+        b=M4PwMSDorSTfdtY0s/1gMPAGwA76o8BVklHp8cUpOsLR/WrS9AYZ0xQbOt88TuQaH
+         EMQbSpPCoHfLXrEwj2M+QFhUoVpxT++T84P/S7tTMMZOvurhsiRzOWIGXE3vASsh+e
+         36FI6P9cehMnn4n2+l4rzhjFAqEy35TiQWb3azA3bsUcQzWn2u1GgsQhcX2nilHAfS
+         eF4egGjPLjkS4eVKhpZ2+lctYADUqew2oGAyw1mE8bswn940YdxDiTyWOZ3pAMwYVG
+         +7xrwSWWJ8yHK8a6zeB47BABudr8r8ppqzsH7d+muharC6MX2YyZZNiwVPyxJ/RmZN
+         4tKFqn7Jr7fVA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YixV85yYNy+xxYEE@atomide.com>
-References: <20220204084339.12341-1-tony@atomide.com> <20220204084339.12341-2-tony@atomide.com> <20220311033439.15316C340EC@smtp.kernel.org> <YixV85yYNy+xxYEE@atomide.com>
-Subject: Re: [PATCH 1/5] ARM: dts: Add clock-output-names for omap4
+In-Reply-To: <YjDV3n1Xq/EGWU1E@Ansuel-xps.localdomain>
+References: <20220313190419.2207-1-ansuelsmth@gmail.com> <20220313190419.2207-2-ansuelsmth@gmail.com> <20220315175520.32E1AC340EE@smtp.kernel.org> <YjDV3n1Xq/EGWU1E@Ansuel-xps.localdomain>
+Subject: Re: [PATCH 01/16] clk: permit to define a custom parent for clk_hw_get_parent_index
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org,
-        =?utf-8?q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
-        linux-clk@vger.kernel.org
-To:     Tony Lindgren <tony@atomide.com>
-Date:   Tue, 15 Mar 2022 14:25:32 -0700
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Date:   Tue, 15 Mar 2022 14:30:28 -0700
 User-Agent: alot/0.10
-Message-Id: <20220315212535.65F90C340E8@smtp.kernel.org>
+Message-Id: <20220315213030.C8E47C340F4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2022-03-12 00:12:35)
-> Hi,
->=20
-> * Stephen Boyd <sboyd@kernel.org> [220311 03:33]:
-> > Quoting Tony Lindgren (2022-02-04 00:43:35)
-> > > To stop using the non-standard node name based clock naming, let's
-> > > first add the clock-output-names property. This allows us to stop usi=
-ng
-> > > the internal legacy clock naming and unify the naming for the TI SoCs=
- in
-> > > the following patches.
-> > >=20
-> > > Note that we must wait on fixing the node naming issues until after t=
-he
-> > > internal clock names have been updated to avoid adding name translati=
-on
-> > > unnecessarily.
-> > >=20
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: Tero Kristo <kristo@kernel.org>
-> > > Signed-off-by: Tony Lindgren <tony@atomide.com>
-> > > ---
+Quoting Ansuel Smith (2022-03-15 11:07:26)
+> On Tue, Mar 15, 2022 at 10:55:18AM -0700, Stephen Boyd wrote:
+> > Quoting Ansuel Smith (2022-03-13 12:04:04)
+> > >   */
+> > > -int clk_hw_get_parent_index(struct clk_hw *hw)
+> > > +int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent)
 > >=20
-> > I assume I don't merge this through clk tree.
+> > Please introduce another API vs. tacking on an "output" argument to this
+> > API. That makes the patch less invasive. And it can also return a
+> > pointer instead of an integer in that case.
+> >
 >=20
-> AFAIK these won't conflict with other dts changes, so you could merge
-> them if you like and they look OK. Or we can also wait for v5.18-rc1 and
-> then I'll pick up the dts changes.
+> Any suggestion about the name? clk_hw_fetch_parent_index? That would be
+> a direct access of the internal clk_fetch_parent_index.
+>=20
+> The name is already not that intuitive as is. The alternative is to make
+> it extra long, don't know if that's a problem...
+> Something like clk_hw_get_parent_index_by_parent? (that is even more
+> confusing)
 
-I'll let you take them through arm-soc.
+Haha that's a mouthful. clk_hw_get_index_of_parent()? I realize now that
+I misread the API because parent wasn't a const pointer. Please make
+parent argument const as well and return an int as before.
