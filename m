@@ -2,69 +2,76 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324F8C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 20:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76A5C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 21:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241887AbiCOUi1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 16:38:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44242 "EHLO
+        id S1351832AbiCOVIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 17:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237765AbiCOUi0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 16:38:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E71A4BFF7;
-        Tue, 15 Mar 2022 13:37:14 -0700 (PDT)
+        with ESMTP id S1343868AbiCOVIP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 17:08:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6492483AC;
+        Tue, 15 Mar 2022 14:07:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D36F360B89;
-        Tue, 15 Mar 2022 20:37:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293D6C340FA;
-        Tue, 15 Mar 2022 20:37:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6A83060FDC;
+        Tue, 15 Mar 2022 21:07:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B742DC340E8;
+        Tue, 15 Mar 2022 21:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647376633;
-        bh=/b4vCj+wePpz0Cx1dk2J9m5iFlRl2HG/Zlcl7lyh6mg=;
+        s=k20201202; t=1647378421;
+        bh=NiKlQ4AlEgc5TLAFPoW4tC6zwEcBuwoyPhrWAhvkRqk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZFfdMIygGk3snRixW7kHlZYa822LyySAzqVl5egAZeOAY41n95U2GgVU1oYmI/aAH
-         nGqbNx0gSK8CYSZfE11yP4RY4AxW/LEaCeE/iMoesZ8cMEZUDdnLwkHScLl/fDS2a6
-         +PhbEDppQ10BgJQnxvfwZyLknNfPPCAWb37oTYFXZKvD+Nv7YG5RFSRQBa/5j4dEIv
-         ZqVyoc4LhwkOjbRb/o0jJ8XoVkNjX/qf1nfnr3uqo7Yf8qfKy+uUUmteZgvq7XZRZx
-         OBnoXJr/7IWiZLON9VDuKmE1rpDAZAPTwQMKTa4A+vwGuKoycNHmcD3AkkxfP89dcS
-         iAh8TZcbxV3Lw==
+        b=mdj1N6KluB1jAwn2cVFH37tkUHTnfIvn23n86c/LzGumrNO2srBLGoqx6nTqIpsw9
+         WNPFx33VqkrFUMXZ/Hym5t4UsbKC4ceojUiDyRLUpwtPYv5tfUTBeHY5sOaVD4pQ3E
+         1vyq9Ugi0bbcPlnAf9AUaOzyIjz3VLm8S4OcIRAYhP5tlHyB3mVD4sRkpz/z/Uivio
+         Rij4DttkjXZX/sxzoSb04LSEvk3QpSlLW81jZsO0XrAr715rJBC9K9qTWiYdC2Oak9
+         YFlR0CFfhsM3h22c8a0kIpS2/sq4m9l+TlOur4ZYBQSuPmhjtHc+sRVHQrhRTV7oXC
+         kcNyPQnKJEEdw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220311041957.2611885-1-bjorn.andersson@linaro.org>
-References: <20220311041957.2611885-1-bjorn.andersson@linaro.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for v5.18
+In-Reply-To: <YixRREMd+t1tbbwC@atomide.com>
+References: <20220203085618.16043-1-tony@atomide.com> <20220311033617.5712AC340EE@smtp.kernel.org> <YixRREMd+t1tbbwC@atomide.com>
+Subject: Re: [PATCH 0/3] Drop TI compatibility clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Tue, 15 Mar 2022 13:37:11 -0700
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To:     Tony Lindgren <tony@atomide.com>
+Date:   Tue, 15 Mar 2022 14:06:59 -0700
 User-Agent: alot/0.10
-Message-Id: <20220315203713.293D6C340FA@smtp.kernel.org>
+Message-Id: <20220315210701.B742DC340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-03-10 20:19:57)
-> The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac=
-07:
+Quoting Tony Lindgren (2022-03-11 23:52:36)
+> * Stephen Boyd <sboyd@kernel.org> [220311 03:34]:
+> > Quoting Tony Lindgren (2022-02-03 00:56:15)
+> > > Hi all,
+> > >=20
+> > > In order to prepare the TI clocks for fixing lots of devicetree warni=
+ngs,
+> > > let's first drop the now unused compatibility clocks.
+> > >=20
+> > > The dra7 changes depend on my still pending omap-for-v5.17/fixes-not-=
+urgent
+> > > pull request that did not make it for v5.17-rc series so far.
+> > >=20
+> >=20
+> > What should I do with this one though?
 >=20
->   Linux 5.17-rc1 (2022-01-23 10:12:53 +0200)
+> Well the dependencies are now merged to the mainline kernel, so you could
+> merge in commit 31aa7056bbec, then apply this series if otherwise OK.
 >=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-5.18
->=20
-> for you to fetch changes up to 6e87c8f074075e10c5352d3256879b4e6dd6cb81:
->=20
->   clk: qcom: Add display clock controller driver for SM6125 (2022-03-09 0=
-8:53:30 -0600)
->=20
-> ----------------------------------------------------------------
+> Commit 31aa7056bbec is based on the old v5.16-rc1. It would bring few oth=
+er
 
-Please Cc linux-clk on pull requests.
-
-Thanks. Pulled into clk-next
+Ok. Looks like I can merge v5.17-rc4 and then apply these patches. I'll
+do that now. Thanks!
