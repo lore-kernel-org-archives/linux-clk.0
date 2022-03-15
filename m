@@ -2,295 +2,135 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2CB5C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 23:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5ACC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 23:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352645AbiCOXvI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 19:51:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35246 "EHLO
+        id S240824AbiCOXxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 19:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345401AbiCOXvH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 19:51:07 -0400
-X-Greylist: delayed 1391 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Mar 2022 16:49:55 PDT
-Received: from gateway31.websitewelcome.com (gateway31.websitewelcome.com [192.185.144.95])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181AE1C10F
-        for <linux-clk@vger.kernel.org>; Tue, 15 Mar 2022 16:49:55 -0700 (PDT)
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 095CE1187B
-        for <linux-clk@vger.kernel.org>; Tue, 15 Mar 2022 18:26:44 -0500 (CDT)
-Received: from 162-215-252-75.unifiedlayer.com ([208.91.199.152])
-        by cmsmtp with SMTP
-        id UGYtnG5FB9AGSUGYtnMRWC; Tue, 15 Mar 2022 18:26:44 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FMz4dv/MLCPqxMquT9pFk6KUEVB5ed9lWVOqB/G2Qsw=; b=5lgvZgsRcs9SGWnnx6JtY06wdS
-        zNXTyuY4WPr1wuvZdRXTiodbvM++DqqAvJyC19CA1efn2LGgFXA5qswXI8+H5ekOniOW4LesN/j9c
-        MOLxvpN0OUjSoIQtD2nynya5Z+MpWX7hY0+xSke5stHgb/hj87kik5FoJ+WSanS7i4229VDCICafa
-        FpS6GM3T4sp7pPNRFf1ZKKt7C2hqPvlWWwBvComWpmZ8BAlO2Uh4UK6DwxqNpaxM51BUQSCIFiM/u
-        ZNCUOiYA+JF/3hjMpkpc9Whgk7qsXtGL4Z09OfHF1aVB6HSuN8siwqS7wVzAwtMpZY6c+Z9LoMT+5
-        fWYrEG3A==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:54298)
-        by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@roeck-us.net>)
-        id 1nUGYs-002Vpc-Bh; Tue, 15 Mar 2022 23:26:42 +0000
-Message-ID: <4af362d3-999d-cc3c-50e2-5a91d888f09f@roeck-us.net>
-Date:   Tue, 15 Mar 2022 16:26:38 -0700
+        with ESMTP id S1344372AbiCOXxh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 19:53:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEEF65DA6E;
+        Tue, 15 Mar 2022 16:52:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1C1C6B819C4;
+        Tue, 15 Mar 2022 23:52:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B005FC340E8;
+        Tue, 15 Mar 2022 23:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647388340;
+        bh=sOtInCF0hZ6fW10dwSAqSoHzmwagl4Jp1zLZzFMYLUc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=D2ZoP6D4NiAUBM2aPLInRYm34sGnWhrQOUC5T8siHrQnFeyD5MI8qOj0OKz+JiJYw
+         FHVFvrhsRlqo47/VdlBqd+soJ0nL1mccvi6cvkZ3eobIagR1HiK4S5v7AtqoclQZNT
+         ZHHXYvb8VqcC6xp+vBks/0vz1W0hhCUygL1Pmm/sc7OtSsthM4T6+ZfmToMkCrOAbG
+         Wl/r87EWzp1od8ycREDLwv+PDwUeI+Tm4XsJNAS1aVJ/SWw3vkaNR0wtwSdpQiElTg
+         zuR7KiBxeXaQRB2bGh1iBYWmbX1+CV+ZRs6Nlb3Z30HCsS4oophhhuTm1wEPvBuc9x
+         cp7MDWgiT0+bA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v8 03/16] hwmon: Make use of devm_clk_get_enabled()
-Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        =?UTF-8?Q?Nuno_S=c3=a1?= <nuno.sa@analog.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        UNGLinuxDriver@microchip.com, linux-hwmon@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tomislav Denis <tomislav.denis@avl.com>,
-        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?Q?Andr=c3=a9_Gustavo_Nakagomi_Lopez?= <andregnl@usp.br>,
-        Cai Huoqing <caihuoqing@baidu.com>, linux-iio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org
-References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
- <20220314141643.22184-4-u.kleine-koenig@pengutronix.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-In-Reply-To: <20220314141643.22184-4-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1nUGYs-002Vpc-Bh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:54298
-X-Source-Auth: linux@roeck-us.net
-X-Email-Count: 17
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <00479d7f-1124-de8b-d125-40f8139331f1@denx.de>
+References: <20220215084412.8090-1-marex@denx.de> <20220215084412.8090-2-marex@denx.de> <20220217222328.7F7B3C340E8@smtp.kernel.org> <77c85470-5378-8c8b-8e5f-d57c83773ed6@denx.de> <4f1b946d-ee82-bd0e-c51e-100c23b87fdf@denx.de> <20220312050419.2AB91C340EE@smtp.kernel.org> <00479d7f-1124-de8b-d125-40f8139331f1@denx.de>
+Subject: Re: [PATCH 2/3] clk: Introduce 'critical-clocks' property
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Tue, 15 Mar 2022 16:52:18 -0700
+User-Agent: alot/0.10
+Message-Id: <20220315235220.B005FC340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/14/22 07:16, Uwe Kleine-König wrote:
-> Several drivers manually register a devm handler to disable their clk.
-> Convert them to devm_clk_get_enabled().
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Quoting Marek Vasut (2022-03-12 02:26:17)
+> On 3/12/22 06:04, Stephen Boyd wrote:
+> > Quoting Marek Vasut (2022-03-09 12:54:35)
+> >> On 2/21/22 01:58, Marek Vasut wrote:
+> >>> On 2/17/22 23:23, Stephen Boyd wrote:
+> >>>
+> >>>> I see that there isn't any more 'clock-critical' in the kernel's dts=
+ so
+> >>>> I wonder if we would be able to get rid of that function or at least
+> >>>> hollow it out and see if anyone complains. Either way, what is the
+> >>>> actual problem trying to be solved? If the crystal oscillator isn't =
+used
+> >>>> anywhere in the kernel why are we registering it with the clk framew=
+ork?
+> >>>
+> >>> The problem is the other way around -- the SoC clock IPs often have a
+> >>> couple of general purpose clock routed to various SoC IO pins, those
+> >>> clock can be used for any purpose, and those are already registered w=
+ith
+> >>> kernel clock framework. Some devices save on BoM and use those general
+> >>> purpose clock to supply clock networks which are otherwise not
+> >>> interacting with the kernel, like some CPLD for example. Since from t=
+he
+> >>> kernel point of view, those clock are unused, the kernel can turn tho=
+se
+> >>> clock OFF and that will make the entire device fail.
+> >>>
+> >>> So this critical-clocks property permits marking clock which must not
+> >>> ever be turned OFF accordingly.
+> >>
+> >> How can we proceed here ?
+> >=20
+> > Why are we registering the clks with the framework on device that are
+> > saving on BoM and using them outside of the kernel. What is the use of
+> > kernel memory for struct clk_core that aren't ever used?
+>=20
+> Those clock may be used to supply a device in DT on another hardware=20
+> using the same SoC.
+>=20
+> Take e.g. this random git grep result:
+>=20
+> arch/arm/boot/dts/imx7d-remarkable2.dts
+> / {
+>    wifi_pwrseq {
+>      ...
+>      clocks =3D <&clks IMX7D_CLKO2_ROOT_DIV>;
+>      ...
+>    };
+> };
+>=20
+> This IMX7D_CLKO2_ROOT_DIV is one such general purpose clock output. In=20
+> the aforementioned case, it is used to supply 32 kHz clock to a WiFi=20
+> chip, i.e. it has a consumer in DT. These clock are registered by the=20
+> platform clock driver:
+>=20
+> drivers/clk/imx/clk-imx7d.c
+>=20
+> But those clock can also be used to supply e.g. CPLD which has no other=20
+> connection to the SoC but the clock. That is where it needs this=20
+> critical-clocks property. Because then there is no consumer in DT. So=20
+> the kernel will now think the clock are not used and will turn them off=20
+> after boot, thus e.g. crashing such platform.
+>=20
+> So in the later case, the DT would contain the following to avoid the cra=
+sh:
+> &clks {
+>    critical-clocks =3D <IMX7D_CLKO2_ROOT_DIV>;
+> };
 
-Let's see if it goes anywhere this time.
+Got it. Why, in the latter case, would we register the clk with the clk
+framework? I can see that they're "critical" in the sense that there's
+no consumer node in DT and we want to make sure that nothing turns it
+off. But it's also wasteful to even register the clk with the kernel
+because no device is using it. It feels like we need a property like
+'clock-dont-register' which is very simiilar to 'protected-clocks'.
+There's already a binding for 'protected-clocks' so maybe that should be
+reused and the definition of what the property means can be flexible to
+handle the various use cases. The cases would be first this one here
+where a clock doesn't matter because nobody uses it and second how it is
+used on qualcomm SoCs where they have blocked access to certain clk
+registers in the firmware so that the system crashes if we try to
+read/write those clk registers.
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->   drivers/hwmon/axi-fan-control.c | 15 +--------------
->   drivers/hwmon/ltc2947-core.c    | 17 +----------------
->   drivers/hwmon/mr75203.c         | 26 +-------------------------
->   drivers/hwmon/sparx5-temp.c     | 19 +------------------
->   4 files changed, 4 insertions(+), 73 deletions(-)
-> 
-> diff --git a/drivers/hwmon/axi-fan-control.c b/drivers/hwmon/axi-fan-control.c
-> index d2092c17d993..ce404ed9c53e 100644
-> --- a/drivers/hwmon/axi-fan-control.c
-> +++ b/drivers/hwmon/axi-fan-control.c
-> @@ -393,11 +393,6 @@ static int axi_fan_control_init(struct axi_fan_control_data *ctl,
->   	return ret;
->   }
->   
-> -static void axi_fan_control_clk_disable(void *clk)
-> -{
-> -	clk_disable_unprepare(clk);
-> -}
-> -
->   static const struct hwmon_channel_info *axi_fan_control_info[] = {
->   	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT),
->   	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT | HWMON_F_FAULT | HWMON_F_LABEL),
-> @@ -477,20 +472,12 @@ static int axi_fan_control_probe(struct platform_device *pdev)
->   	if (IS_ERR(ctl->base))
->   		return PTR_ERR(ctl->base);
->   
-> -	clk = devm_clk_get(&pdev->dev, NULL);
-> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
->   	if (IS_ERR(clk)) {
->   		dev_err(&pdev->dev, "clk_get failed with %ld\n", PTR_ERR(clk));
->   		return PTR_ERR(clk);
->   	}
->   
-> -	ret = clk_prepare_enable(clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev, axi_fan_control_clk_disable, clk);
-> -	if (ret)
-> -		return ret;
-> -
->   	ctl->clk_rate = clk_get_rate(clk);
->   	if (!ctl->clk_rate)
->   		return -EINVAL;
-> diff --git a/drivers/hwmon/ltc2947-core.c b/drivers/hwmon/ltc2947-core.c
-> index 5423466de697..626f5bf2c9c7 100644
-> --- a/drivers/hwmon/ltc2947-core.c
-> +++ b/drivers/hwmon/ltc2947-core.c
-> @@ -956,13 +956,6 @@ static struct attribute *ltc2947_attrs[] = {
->   };
->   ATTRIBUTE_GROUPS(ltc2947);
->   
-> -static void ltc2947_clk_disable(void *data)
-> -{
-> -	struct clk *extclk = data;
-> -
-> -	clk_disable_unprepare(extclk);
-> -}
-> -
->   static int ltc2947_setup(struct ltc2947_data *st)
->   {
->   	int ret;
-> @@ -989,7 +982,7 @@ static int ltc2947_setup(struct ltc2947_data *st)
->   		return ret;
->   
->   	/* check external clock presence */
-> -	extclk = devm_clk_get_optional(st->dev, NULL);
-> +	extclk = devm_clk_get_optional_enabled(st->dev, NULL);
->   	if (IS_ERR(extclk))
->   		return dev_err_probe(st->dev, PTR_ERR(extclk),
->   				     "Failed to get external clock\n");
-> @@ -1007,14 +1000,6 @@ static int ltc2947_setup(struct ltc2947_data *st)
->   			return -EINVAL;
->   		}
->   
-> -		ret = clk_prepare_enable(extclk);
-> -		if (ret)
-> -			return ret;
-> -
-> -		ret = devm_add_action_or_reset(st->dev, ltc2947_clk_disable,
-> -					       extclk);
-> -		if (ret)
-> -			return ret;
->   		/* as in table 1 of the datasheet */
->   		if (rate_hz >= LTC2947_CLK_MIN && rate_hz <= 1000000)
->   			pre = 0;
-> diff --git a/drivers/hwmon/mr75203.c b/drivers/hwmon/mr75203.c
-> index 1ba1e3145969..0c691f291a64 100644
-> --- a/drivers/hwmon/mr75203.c
-> +++ b/drivers/hwmon/mr75203.c
-> @@ -461,24 +461,6 @@ static int pvt_get_regmap(struct platform_device *pdev, char *reg_name,
->   	return 0;
->   }
->   
-> -static void pvt_clk_disable(void *data)
-> -{
-> -	struct pvt_device *pvt = data;
-> -
-> -	clk_disable_unprepare(pvt->clk);
-> -}
-> -
-> -static int pvt_clk_enable(struct device *dev, struct pvt_device *pvt)
-> -{
-> -	int ret;
-> -
-> -	ret = clk_prepare_enable(pvt->clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return devm_add_action_or_reset(dev, pvt_clk_disable, pvt);
-> -}
-> -
->   static void pvt_reset_control_assert(void *data)
->   {
->   	struct pvt_device *pvt = data;
-> @@ -515,16 +497,10 @@ static int mr75203_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> -	pvt->clk = devm_clk_get(dev, NULL);
-> +	pvt->clk = devm_clk_get_enabled(dev, NULL);
->   	if (IS_ERR(pvt->clk))
->   		return dev_err_probe(dev, PTR_ERR(pvt->clk), "failed to get clock\n");
->   
-> -	ret = pvt_clk_enable(dev, pvt);
-> -	if (ret) {
-> -		dev_err(dev, "failed to enable clock\n");
-> -		return ret;
-> -	}
-> -
->   	pvt->rst = devm_reset_control_get_exclusive(dev, NULL);
->   	if (IS_ERR(pvt->rst))
->   		return dev_err_probe(dev, PTR_ERR(pvt->rst),
-> diff --git a/drivers/hwmon/sparx5-temp.c b/drivers/hwmon/sparx5-temp.c
-> index 98be48e3a22a..04fd8505e5d6 100644
-> --- a/drivers/hwmon/sparx5-temp.c
-> +++ b/drivers/hwmon/sparx5-temp.c
-> @@ -26,13 +26,6 @@ struct s5_hwmon {
->   	struct clk *clk;
->   };
->   
-> -static void s5_temp_clk_disable(void *data)
-> -{
-> -	struct clk *clk = data;
-> -
-> -	clk_disable_unprepare(clk);
-> -}
-> -
->   static void s5_temp_enable(struct s5_hwmon *hwmon)
->   {
->   	u32 val = readl(hwmon->base + TEMP_CFG);
-> @@ -113,7 +106,6 @@ static int s5_temp_probe(struct platform_device *pdev)
->   {
->   	struct device *hwmon_dev;
->   	struct s5_hwmon *hwmon;
-> -	int ret;
->   
->   	hwmon = devm_kzalloc(&pdev->dev, sizeof(*hwmon), GFP_KERNEL);
->   	if (!hwmon)
-> @@ -123,19 +115,10 @@ static int s5_temp_probe(struct platform_device *pdev)
->   	if (IS_ERR(hwmon->base))
->   		return PTR_ERR(hwmon->base);
->   
-> -	hwmon->clk = devm_clk_get(&pdev->dev, NULL);
-> +	hwmon->clk = devm_clk_get_enabled(&pdev->dev, NULL);
->   	if (IS_ERR(hwmon->clk))
->   		return PTR_ERR(hwmon->clk);
->   
-> -	ret = clk_prepare_enable(hwmon->clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev, s5_temp_clk_disable,
-> -				       hwmon->clk);
-> -	if (ret)
-> -		return ret;
-> -
->   	s5_temp_enable(hwmon);
->   
->   	hwmon_dev = devm_hwmon_device_register_with_info(&pdev->dev,
-
+The dt-binding can be reworded as "the OS shouldn't use these clks" and
+then the implementation can skip registering those clks with the
+framework.
