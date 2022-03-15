@@ -2,25 +2,25 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55407C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 15:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDC9C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 15:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349722AbiCOPsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 11:48:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59638 "EHLO
+        id S1349723AbiCOPsJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 11:48:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233153AbiCOPsH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 11:48:07 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ACB7313CD6;
-        Tue, 15 Mar 2022 08:46:54 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,184,1643641200"; 
-   d="scan'208";a="113587385"
+        with ESMTP id S233153AbiCOPsJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 11:48:09 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 176BC13CD6;
+        Tue, 15 Mar 2022 08:46:56 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,183,1643641200"; 
+   d="scan'208";a="114499295"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Mar 2022 00:46:54 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Mar 2022 00:46:56 +0900
 Received: from localhost.localdomain (unknown [10.226.92.209])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1CD684002C3E;
-        Wed, 16 Mar 2022 00:46:51 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7BA134000A83;
+        Wed, 16 Mar 2022 00:46:54 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -30,29 +30,47 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/4] Add GPIO,ETHERNET and SDHI Clock/Reset entries for RZ/G2UL
-Date:   Tue, 15 Mar 2022 15:46:45 +0000
-Message-Id: <20220315154649.22343-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/4] clk: renesas: r9a07g043: Add GPIO clock and reset entries
+Date:   Tue, 15 Mar 2022 15:46:46 +0000
+Message-Id: <20220315154649.22343-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220315154649.22343-1-biju.das.jz@bp.renesas.com>
+References: <20220315154649.22343-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series aims to add GPIO, ETHERNET and SDHI Clock/Reset
-entries to RZ/G2UL Clk driver.
+Add GPIO clock and reset entries in CPG driver.
 
-This patch series depend upon [1]
-[1] https://lore.kernel.org/linux-renesas-soc/20220315142644.17660-6-biju.das.jz@bp.renesas.com/T/#u
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g043-cpg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Biju Das (4):
-  clk: renesas: r9a07g043: Add GPIO clock and reset entries
-  clk: renesas: r9a07g043: Add ethernet clock sources
-  clk: renesas: r9a07g043: Add GbEthernet clock/reset
-  clk: renesas: r9a07g043: Add SDHI clock and reset entries
-
- drivers/clk/renesas/r9a07g043-cpg.c | 63 +++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
-
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index ac8e3f182a66..50e3f8874ee1 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -112,6 +112,8 @@ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 				0x588, 0),
+ 	DEF_MOD("sci1",		R9A07G043_SCI1_CLKP, R9A07G043_CLK_P0,
+ 				0x588, 1),
++	DEF_MOD("gpio",		R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
++				0x598, 0),
+ };
+ 
+ static struct rzg2l_reset r9a07g043_resets[] = {
+@@ -127,6 +129,9 @@ static struct rzg2l_reset r9a07g043_resets[] = {
+ 	DEF_RST(R9A07G043_SCIF4_RST_SYSTEM_N, 0x884, 4),
+ 	DEF_RST(R9A07G043_SCI0_RST, 0x888, 0),
+ 	DEF_RST(R9A07G043_SCI1_RST, 0x888, 1),
++	DEF_RST(R9A07G043_GPIO_RSTN, 0x898, 0),
++	DEF_RST(R9A07G043_GPIO_PORT_RESETN, 0x898, 1),
++	DEF_RST(R9A07G043_GPIO_SPARE_RESETN, 0x898, 2),
+ };
+ 
+ static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
 -- 
 2.17.1
 
