@@ -2,117 +2,61 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A3DC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 22:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CBCC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 22:48:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352334AbiCOWtV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:49:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47136 "EHLO
+        id S1352367AbiCOWuH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 18:50:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350376AbiCOWtU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 18:49:20 -0400
-Received: from aposti.net (aposti.net [89.234.176.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDDF1255BF;
-        Tue, 15 Mar 2022 15:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1647384480; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vePc/2l2kPwqNPcpI7/w16whm1eM7Hut3osd5HFg+AM=;
-        b=jsFuj1qimCPjEGuKNaHW6yqQaPtxJASN3/Kr0LSEzU+5TLxv/hHEUfkzw+sh1BrG8gbE53
-        0nidIxjVglH7P062Z4lr05vFtCKiWPR0N0vYgsmR63Mu1KnPS9SPi9c5QAdDbz4sXeUcc8
-        /iPmtTQOZo7lYCYNcfNfn0LmwgmH0gg=
-Date:   Tue, 15 Mar 2022 22:47:50 +0000
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 09/16] rtc: ingenic: Simplify using
- devm_clk_get_enabled()
-To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-mips@vger.kernel.org, linux-rtc@vger.kernel.org
-Message-Id: <QZ5T8R.VWFGTZG0ZTLW2@crapouillou.net>
-In-Reply-To: <20220314141643.22184-10-u.kleine-koenig@pengutronix.de>
-References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
-        <20220314141643.22184-10-u.kleine-koenig@pengutronix.de>
+        with ESMTP id S1350376AbiCOWuE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 18:50:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CB756C21;
+        Tue, 15 Mar 2022 15:48:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 00EC5B818D3;
+        Tue, 15 Mar 2022 22:48:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AED3CC340E8;
+        Tue, 15 Mar 2022 22:48:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647384529;
+        bh=AbKXXpWtIybMeDJAnL0pTXEGeuf+WhH1XeWvboxWJfw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FCY/KOAuxadBlAw2dOhF565hovODg4HmxRtqT7Je0ujCg22wNMmW8lpBFHNzVC/OB
+         DfXxAw8/QqRMXTrfAu1Ab+nIhsS0gRanjRKjqyTodO04v+rtiRipHzvxO4DubCIekG
+         PY2mCwp2NcMMr0Uq9hrrYrznQtoSUTT/uE7GMFAjSEBC1vKARtH5C/Uvw/Ycd4RJYV
+         KFYk8TRCudblFrNbRnRwQjphkTygEFqPrDhymMg/g01njMPQdOpYf6kC90fpnk1/62
+         HBysgvu1Key2fTmvKbYnXaTdn0LRkU19wJYCSw15D6XLCUTCyRRdOMv/UK8sQKDT0j
+         QU4z9MJIsC2MQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220314115354.144023-15-Julia.Lawall@inria.fr>
+References: <20220314115354.144023-1-Julia.Lawall@inria.fr> <20220314115354.144023-15-Julia.Lawall@inria.fr>
+Subject: Re: [PATCH 14/30] clk: ti: clkctrl: fix typos in comments
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Julia Lawall <Julia.Lawall@inria.fr>,
+        Tero Kristo <kristo@kernel.org>
+Date:   Tue, 15 Mar 2022 15:48:47 -0700
+User-Agent: alot/0.10
+Message-Id: <20220315224849.AED3CC340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Uwe,
-
-Le lun., mars 14 2022 at 15:16:36 +0100, Uwe Kleine-K=F6nig=20
-<u.kleine-koenig@pengutronix.de> a =E9crit :
-> With devm_clk_get_enabled() caring to disable (and unprepare) the=20
-> clock,
-> the probe function can be simplified accordingly.
+Quoting Julia Lawall (2022-03-14 04:53:38)
+> Various spelling mistakes in comments.
+> Detected with the help of Coccinelle.
 >=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
-
-Thanks!
--Paul
-
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+>=20
 > ---
->  drivers/rtc/rtc-jz4740.c | 21 ++-------------------
->  1 file changed, 2 insertions(+), 19 deletions(-)
->=20
-> diff --git a/drivers/rtc/rtc-jz4740.c b/drivers/rtc/rtc-jz4740.c
-> index 6e51df72fd65..9b7bb6ce93ee 100644
-> --- a/drivers/rtc/rtc-jz4740.c
-> +++ b/drivers/rtc/rtc-jz4740.c
-> @@ -257,11 +257,6 @@ static void jz4740_rtc_power_off(void)
->  	kernel_halt();
->  }
->=20
-> -static void jz4740_rtc_clk_disable(void *data)
-> -{
-> -	clk_disable_unprepare(data);
-> -}
-> -
->  static const struct of_device_id jz4740_rtc_of_match[] =3D {
->  	{ .compatible =3D "ingenic,jz4740-rtc", .data =3D (void *)ID_JZ4740 },
->  	{ .compatible =3D "ingenic,jz4760-rtc", .data =3D (void *)ID_JZ4760 },
-> @@ -329,24 +324,12 @@ static int jz4740_rtc_probe(struct=20
-> platform_device *pdev)
->  	if (IS_ERR(rtc->base))
->  		return PTR_ERR(rtc->base);
->=20
-> -	clk =3D devm_clk_get(dev, "rtc");
-> +	clk =3D devm_clk_get_enabled(dev, "rtc");
->  	if (IS_ERR(clk)) {
-> -		dev_err(dev, "Failed to get RTC clock\n");
-> +		dev_err(dev, "Failed to get enabled RTC clock\n");
->  		return PTR_ERR(clk);
->  	}
->=20
-> -	ret =3D clk_prepare_enable(clk);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to enable clock\n");
-> -		return ret;
-> -	}
-> -
-> -	ret =3D devm_add_action_or_reset(dev, jz4740_rtc_clk_disable, clk);
-> -	if (ret) {
-> -		dev_err(dev, "Failed to register devm action\n");
-> -		return ret;
-> -	}
-> -
->  	spin_lock_init(&rtc->lock);
->=20
->  	platform_set_drvdata(pdev, rtc);
-> --
-> 2.35.1
->=20
 
-
+Applied to clk-next
