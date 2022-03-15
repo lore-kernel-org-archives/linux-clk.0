@@ -2,82 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4496BC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 22:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEB1C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Mar 2022 22:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352250AbiCOW3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 18:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43446 "EHLO
+        id S1352294AbiCOWma (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 18:42:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352244AbiCOW3f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 18:29:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBCB1C92B;
-        Tue, 15 Mar 2022 15:28:22 -0700 (PDT)
+        with ESMTP id S240275AbiCOWma (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 18:42:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DEC5D191;
+        Tue, 15 Mar 2022 15:41:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CCB82612B7;
-        Tue, 15 Mar 2022 22:28:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FDBFC340E8;
-        Tue, 15 Mar 2022 22:28:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BE7661375;
+        Tue, 15 Mar 2022 22:41:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1F9C340E8;
+        Tue, 15 Mar 2022 22:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647383301;
-        bh=IoWtr+uaNbF74yc3AVtjTkb2gJE77265clN6rkXSnkI=;
+        s=k20201202; t=1647384076;
+        bh=QJySxIrBFyO2J4pGMuN4V88tfN+T8HlJrnBR2Ek3/Go=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SuTfVErnY0tDWtg0x6YU6PmGOGI89MiQ4PQvzepNwhGuWF6Id+PwhL/1uCi5lpR8P
-         dARQL+X/iThztMWo4jVwi+0x8IOy+wcPNo8v9tss2bzYoL1OJFHf5KXT/xRn45m81N
-         NtHM07yAYwoRLYEpTr3ZsFNpNROZ1twUtiXbJbp50xvL71Jly26ALOPKBiQeYO+n8j
-         t0onLke4nEEjxdqjT5eu6YapzZf2MUa2RZ1QZG/7mQezBkmvTPmC3GJJQIdqQA1di6
-         WR/LIAhgHyVac8DMZHfRihD34UcJAH/oaNRh3aPZMtHG5+8YhZI+pwZRNGcAF1Lhtv
-         NnSFFMBuAyHjA==
+        b=dbeYwPMA+kTG7ZgLzdU9tD5BjqbSBZgwwHMnn7xNl20ZI6Lc3+eQTN+TDtCI0XKrf
+         beBlw5oU26UsNs11wY6liecUUe2Y7gotd2VrMvsEsZdLXuCDofc1+HTGWKWHuvOUHY
+         YwhXTP+Wcf/cotszDCRQ9+zIGx+EpywxdgCwbVcGk7EMYOs4lhwLdLqTqsAyfQ3I+T
+         g5oM5XTKUCmYxw4yNlKrmy1ymUeueg0r7PqbSD7pzY38qUq/Ei0Wogq2p2vUe3gwUP
+         +ALTOpw3i9Zbo8Gwn1jOfNkfyI0BPrJk9LcEW/DXZ2u3QzgV1A3vKNNMNXP5OITDrw
+         /ui9SD0MMuKIQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220315191255.221473-6-miquel.raynal@bootlin.com>
-References: <20220315191255.221473-1-miquel.raynal@bootlin.com> <20220315191255.221473-6-miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v5 5/8] dmaengine: dw: dmamux: Introduce RZN1 DMA router support
+In-Reply-To: <YjEJjB/Hwj/1Ncum@Ansuel-xps.localdomain>
+References: <20220313190419.2207-1-ansuelsmth@gmail.com> <20220313190419.2207-13-ansuelsmth@gmail.com> <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org> <Yi84aNrJ7p+3jy2A@Ansuel-xps.localdomain> <20220315213431.DB6C4C340EE@smtp.kernel.org> <YjEJjB/Hwj/1Ncum@Ansuel-xps.localdomain>
+Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Date:   Tue, 15 Mar 2022 15:28:19 -0700
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Date:   Tue, 15 Mar 2022 15:41:14 -0700
 User-Agent: alot/0.10
-Message-Id: <20220315222821.2FDBFC340E8@smtp.kernel.org>
+Message-Id: <20220315224115.EA1F9C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2022-03-15 12:12:52)
-> The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
-> dmamux register located in the system control area which can take up to
-> 32 requests (16 per DMA controller). Each DMA channel can be wired to
-> two different peripherals.
+Quoting Ansuel Smith (2022-03-15 14:47:56)
+> On Tue, Mar 15, 2022 at 02:34:30PM -0700, Stephen Boyd wrote:
+> > Quoting Ansuel Smith (2022-03-14 05:43:20)
+> > > On Mon, Mar 14, 2022 at 11:20:21AM +0300, Dmitry Baryshkov wrote:
+> > > > On 13/03/2022 22:04, Ansuel Smith wrote:
+> > > > > Add 8064 errata workaround where the sec_src clock gating needs t=
+o be
+> > > >=20
+> > > > Could you please be more specific whether the errata applies only t=
+o the
+> > > > ipq8064 or to the apq8064 too? 8064 is not specific enough.
+> > > >
+> > >=20
+> > > That's a good question... Problem is that we really don't know the
+> > > answer. This errata comes from qsdk on an old sourcecode. I assume th=
+is
+> > > is specific to ipq8064 and apq8064 have different mux configuration.
+> > >=20
+> >=20
+> > I think it was some glitch that happened when the automatic clk gating
+> > was enabled during a switch. The automatic clk gating didn't know that
+> > software was running and switching the input so it killed the CPU and
+> > stopped the clk. That lead to hangs and super badness. I assume it was
+> > applicable to apq8064 as well because ipq8064 is basically apq8064 with
+> > the multimedia subsystem replaced by the networking subsystem. Also I
+> > wouldn't remember all these details because I worked on apq8064 but not
+> > so much on ipq8064 :)
 >=20
-> We need two additional information from the 'dmas' property: the channel
-> (bit in the dmamux register) that must be accessed and the value of the
-> mux for this channel.
+> Honest question. Do you remember other glitch present on the platform?
+> We are trying to bisect an instability problem and we still needs to
+> find the reason. We really can't understand if it's just a power
+> delivery problem or a scaling problem from muxes or other things.
 >=20
-> Aside from the driver introduction, as these devices are described as
-> subnodes of the system controller, we also need the system controller
-> (clock) driver to populate its children manually. Starting from now on,
-> one child can be the dmamux.
+> The current problem is that after some time the device kernel panics
+> with a number of strange reason like invalid kernel paging and other
+> strange (or the device just freze and reboots, not even a crash log)
+> Many kernel panics reports the crash near the mux switch (like random
+> error right before the mux switch) So I suspect there is a problem
+> there. But due to the fact that is very random we have NO exact way to
+> repro it. I manage sometime, while playing with the code, to repo
+> similar kernel crash but still i'm not sure of the real cause.
 >=20
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
+> I know it's OT but do you have any idea about it? If you remember
+> anything about it?
+> (To scale the freq i'm using a dedicated cpufreq driver that works this
+> way:
+> - We first scale the cache to the max freq across all core, we set the
+>   voltage
+> - We scale the cpu to the correct target.
+> This is all done under a lock. Do you see anything wrong in this logic?
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I honestly don't remember much anymore about this. It's been a decade.
+Scaling the cache used to be an independent clk and operation vs. the
+CPU. Basically the clk domain and power domain for the cache was
+separate from the CPU. There's also the fuse stuff that means you have
+to read the fuse to know what OPP table to use. Otherwise you may be
+overclocking the CPU or undervolting it. It may also be that cpuidle
+can't happen during a frequency transition. Otherwise the clk gating
+will be reenabled when the cpu startup code reinitializes all the cpu
+registers? I'd have to look through some old vendor kernels to see if
+anything jogs my memory.
+
+> To mee these random crash looks to be really related to something wrong
+> with the mux or with the cache set to a wrong state)
+>=20
+> Thx for any suggestion about this.
+> (also I will update this commit and mention both apq and ipq in the
+> comments)
