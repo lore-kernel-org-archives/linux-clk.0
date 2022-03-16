@@ -2,160 +2,159 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B687C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 15:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E349C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 15:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357324AbiCPPsO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:48:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
+        id S1357397AbiCPP4f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 11:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230089AbiCPPsN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 11:48:13 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BC66D1BA;
-        Wed, 16 Mar 2022 08:46:59 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a8so5068243ejc.8;
-        Wed, 16 Mar 2022 08:46:58 -0700 (PDT)
+        with ESMTP id S1357364AbiCPP4e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 11:56:34 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944945F4F0;
+        Wed, 16 Mar 2022 08:55:19 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id hw13so5077104ejc.9;
+        Wed, 16 Mar 2022 08:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=f3ts7NrETiD/n+vGF+vAT89sY+x2BlKtnOMPf3PZf04=;
-        b=Lkv9c8HyZ6iRngQe1gj3rOwvUiOqcf11dtCXHUzAo430dtSDwHvHNs73TVoH3YS0EI
-         8w9dXdJzXDyU6d9rI+E19PoW/DaPwiqFAAp7P1JDGN9ZQ4sMe4KHGPn/JL+0RDSNQP5b
-         DAEn2FiUzfv6OQpa8T7/GPntezVHuP6TPzbAqpE9xydvP+P3f3LlyBA4hYYPQ7vcSMyK
-         KOQcog8dO8ZeouHQDnuu9hE4XAb4lZ/pqxIUX1f2bpcH9EwMyi1SpLh70mPoVXl+/4Kt
-         BXqz0jqaT1yXASDhiHXQaaRw7hn7TqmZ7ttmuZML+vpdPvN3IIalWLAInye23B5fqvbA
-         c6Qw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xrv4PFSyhAtwnCAL/pjWyzmn6e9Q3pw3qGeeMjVLkWc=;
+        b=ThLCeQCLe60XloIENcKZTLtoa92AsszbMGtlE1VP85Nj8ONYeGAtPtd3THFkwuE1R4
+         Rb+p8levz1Kkk/esESpsWOOce4y/GAs3zE/h/Iq8JTZadMNMhSzoXuCsi65zQcSj9uj9
+         roUu7BL6G2KSrbQdMUcXxa1eBfn7GLPhFdgtrRtKQ1B6XjhvDCk1M6WlSKyn57HnuVDa
+         81Zd+YwZwjEFy9IgsZIWqi9+OJ0hcLCs/C3anzU5mAn4GgUA+5ei9x+U8aPDc4PlCURW
+         8DQSGQ08z9c9bhp4uK79m+ecf2bqZ6sdte5Pd0FZyKDC2WwgAQ/cfFk5gcysCgAmWYjH
+         wmBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=f3ts7NrETiD/n+vGF+vAT89sY+x2BlKtnOMPf3PZf04=;
-        b=hRTXUEERQ8O5wWns6ekfFO1Yy/jdRBrCItp74NxSBRIygEdDFloySWwyL8tUv0j98s
-         yy1U1PPskjFIU8XbEeBopWhGrQB3OT+XGJ2Wq6/O5vObCNS/F/DRvIEczZC94PGk0/PV
-         Or0pz5EBb/AK0iciD/ZJRGAQJnp9qmG0tJ7fX6DoyGMA4IUiXo0dvWPCGtP0yaI9EBoL
-         lVm5s78/6glzCuvKF09DWeGu+zCyMM38kXVhlAve5SqlpEMLg5zgZD3JdOOBT7V4wEhA
-         fFq7HMq6dEhyQKhWC/2dmeIFa8sX5yYSp1uylIl0r9XvWFspOwV78HH4N73TM8DmaTgP
-         FD4Q==
-X-Gm-Message-State: AOAM533SzPFYWa1GRuPzI/+dFjBix1qst8EnSzlYqj6kGOfHtg5exhuN
-        TRRH5Wp8wj6RP2uVMXDzxq6JdKqMk1U=
-X-Google-Smtp-Source: ABdhPJwTDo0b3UgbE88SkpZ3LeHwHJ4IP8X1wdvjwxvXjhF64Gmi2f42UFZQA6PavRIQ4AtL/D4JDg==
-X-Received: by 2002:a17:906:1e4c:b0:6cf:7429:cfea with SMTP id i12-20020a1709061e4c00b006cf7429cfeamr556994ejj.158.1647445617173;
-        Wed, 16 Mar 2022 08:46:57 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.gmail.com with ESMTPSA id sb31-20020a1709076d9f00b006ceb969822esm1042752ejc.76.2022.03.16.08.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 08:46:56 -0700 (PDT)
-Date:   Wed, 16 Mar 2022 16:46:54 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
-Message-ID: <YjIGbs+Pz2EK9riB@Ansuel-xps.localdomain>
-References: <20220313190419.2207-1-ansuelsmth@gmail.com>
- <20220313190419.2207-13-ansuelsmth@gmail.com>
- <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org>
- <Yi84aNrJ7p+3jy2A@Ansuel-xps.localdomain>
- <20220315213431.DB6C4C340EE@smtp.kernel.org>
- <YjEJjB/Hwj/1Ncum@Ansuel-xps.localdomain>
- <20220315224115.EA1F9C340E8@smtp.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xrv4PFSyhAtwnCAL/pjWyzmn6e9Q3pw3qGeeMjVLkWc=;
+        b=jZbVG83EaNe51cfcqEo9zhXvbP0JhZmRa5ZQhstJYLcyw5r96NRrK+Quf/tVffXkRC
+         s4KfTzJCbYt6XC3lKngK7Pt9Cg8ORMH9LLnB+SDHbXt9IKMZfKa5bLo1VL9zjdsPtn0H
+         SqVNrKJp6hIjfAUDBJh0GMLgbC5PtvvPaXMhe1V+Y+r5o/vZTrbZntfJXz5ZcPvMonlN
+         DT22h5wzva3KgO7A9Ms9tGDqMTRKUfhMPkrW+D48QnGLV3u0A8INbVEZ43VF/B4RG5/q
+         DCedcz06rkUE02MyfAx2f927LmGrNhCkZnoQRIILqlyw0vy7Jn0wsDzDZ+Ns5lSCSQLi
+         jQHw==
+X-Gm-Message-State: AOAM532FM1C5NuMF+Jefu/fmEKnWuwFxwfW4y5qzanz2YoWIcBTMkeY7
+        lVwHu1j6CbKdJUvidv7pmqkKuZydHQWmUgZOtDA=
+X-Google-Smtp-Source: ABdhPJx7tfhflG1OGwg4hJv+lc6fCCCsMyBIcaeP4g7aVOZtvesN3U3Aevmj9sLhxYjH7UWlro+fkCpgMa2F3+GK74E=
+X-Received: by 2002:a17:907:6e01:b0:6d0:562c:e389 with SMTP id
+ sd1-20020a1709076e0100b006d0562ce389mr499870ejc.497.1647446118072; Wed, 16
+ Mar 2022 08:55:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220315224115.EA1F9C340E8@smtp.kernel.org>
+References: <20220316150533.421349-1-krzysztof.kozlowski@canonical.com> <20220316150533.421349-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220316150533.421349-2-krzysztof.kozlowski@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 16 Mar 2022 17:54:04 +0200
+Message-ID: <CAHp75VeaQdzUKJSKzH9FjbmON5asqH799AS8OzHGoDiRnJifNw@mail.gmail.com>
+Subject: Re: [PATCH v5 01/11] driver: platform: Add helper for safer setting
+ of driver_override
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 03:41:14PM -0700, Stephen Boyd wrote:
-> Quoting Ansuel Smith (2022-03-15 14:47:56)
-> > On Tue, Mar 15, 2022 at 02:34:30PM -0700, Stephen Boyd wrote:
-> > > Quoting Ansuel Smith (2022-03-14 05:43:20)
-> > > > On Mon, Mar 14, 2022 at 11:20:21AM +0300, Dmitry Baryshkov wrote:
-> > > > > On 13/03/2022 22:04, Ansuel Smith wrote:
-> > > > > > Add 8064 errata workaround where the sec_src clock gating needs to be
-> > > > > 
-> > > > > Could you please be more specific whether the errata applies only to the
-> > > > > ipq8064 or to the apq8064 too? 8064 is not specific enough.
-> > > > >
-> > > > 
-> > > > That's a good question... Problem is that we really don't know the
-> > > > answer. This errata comes from qsdk on an old sourcecode. I assume this
-> > > > is specific to ipq8064 and apq8064 have different mux configuration.
-> > > > 
-> > > 
-> > > I think it was some glitch that happened when the automatic clk gating
-> > > was enabled during a switch. The automatic clk gating didn't know that
-> > > software was running and switching the input so it killed the CPU and
-> > > stopped the clk. That lead to hangs and super badness. I assume it was
-> > > applicable to apq8064 as well because ipq8064 is basically apq8064 with
-> > > the multimedia subsystem replaced by the networking subsystem. Also I
-> > > wouldn't remember all these details because I worked on apq8064 but not
-> > > so much on ipq8064 :)
-> > 
-> > Honest question. Do you remember other glitch present on the platform?
-> > We are trying to bisect an instability problem and we still needs to
-> > find the reason. We really can't understand if it's just a power
-> > delivery problem or a scaling problem from muxes or other things.
-> > 
-> > The current problem is that after some time the device kernel panics
-> > with a number of strange reason like invalid kernel paging and other
-> > strange (or the device just freze and reboots, not even a crash log)
-> > Many kernel panics reports the crash near the mux switch (like random
-> > error right before the mux switch) So I suspect there is a problem
-> > there. But due to the fact that is very random we have NO exact way to
-> > repro it. I manage sometime, while playing with the code, to repo
-> > similar kernel crash but still i'm not sure of the real cause.
-> > 
-> > I know it's OT but do you have any idea about it? If you remember
-> > anything about it?
-> > (To scale the freq i'm using a dedicated cpufreq driver that works this
-> > way:
-> > - We first scale the cache to the max freq across all core, we set the
-> >   voltage
-> > - We scale the cpu to the correct target.
-> > This is all done under a lock. Do you see anything wrong in this logic?
-> 
-> I honestly don't remember much anymore about this. It's been a decade.
-> Scaling the cache used to be an independent clk and operation vs. the
-> CPU. Basically the clk domain and power domain for the cache was
-> separate from the CPU. There's also the fuse stuff that means you have
-> to read the fuse to know what OPP table to use. Otherwise you may be
-> overclocking the CPU or undervolting it. It may also be that cpuidle
-> can't happen during a frequency transition. Otherwise the clk gating
-> will be reenabled when the cpu startup code reinitializes all the cpu
-> registers? I'd have to look through some old vendor kernels to see if
-> anything jogs my memory.
-> 
-> > To mee these random crash looks to be really related to something wrong
-> > with the mux or with the cache set to a wrong state)
-> > 
-> > Thx for any suggestion about this.
-> > (also I will update this commit and mention both apq and ipq in the
-> > comments)
+On Wed, Mar 16, 2022 at 5:06 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-Hi, i'm checking the spm qcom idle driver and something doesn't look
-right to me... Aside from the different sequence used for boot cpu and
-the abset l2 sequence, it looks like to me that WFI is enabled anyway
-(even if it's not defined in the DTS or set disabled) and on top of that
-it looks like we overwrite the WFI logic but we actually set to
-enter power collapse (spc). Why?
+...
 
-Also I think we are missing the assembly code to enter wfi on krait cpu.
-Am I totally confused or there are some problems in the code that nobody
-notice?
+> +int driver_set_override(struct device *dev, const char **override,
+> +                       const char *s, size_t len)
+> +{
+> +       const char *new, *old;
+> +       char *cp;
+
+> +       if (!dev || !override || !s)
+> +               return -EINVAL;
+
+Sorry, I didn't pay much attention on this. First of all, I would drop
+dev checks and simply require that dev should be valid. Do you expect
+this can be called when dev is invalid? I would like to hear if it's
+anything but theoretical. Second one, is the !s requirement. Do I
+understand correctly that the string must be always present? But then
+how we NULify the override? Is it possible? Third one is absence of
+len check. See below.
+
+> +       /*
+> +        * The stored value will be used in sysfs show callback (sysfs_emit()),
+> +        * which has a length limit of PAGE_SIZE and adds a trailing newline.
+> +        * Thus we can store one character less to avoid truncation during sysfs
+> +        * show.
+> +        */
+> +       if (len >= (PAGE_SIZE - 1))
+> +               return -EINVAL;
+
+I would relax this to make sure we can use it if \n is within this limit.
+
+> +       cp = strnchr(s, len, '\n');
+> +       if (cp)
+> +               len = cp - s;
+> +
+> +       new = kstrndup(s, len, GFP_KERNEL);
+
+Here is a word about the len check.
+
+> +       if (!new)
+
+If len == 0, this won't trigger and you have something very
+interesting as a result.
+
+One way is to use ZERO_PTR_OR_NULL() another is explicitly check for 0
+and issue a (different?) error code.
+
+> +               return -ENOMEM;
+> +
+> +       device_lock(dev);
+> +       old = *override;
+> +       if (cp != s) {
+> +               *override = new;
+> +       } else {
+> +               kfree(new);
+> +               *override = NULL;
+> +       }
+> +       device_unlock(dev);
+> +
+> +       kfree(old);
+> +
+> +       return 0;
+> +}
 
 -- 
-	Ansuel
+With Best Regards,
+Andy Shevchenko
