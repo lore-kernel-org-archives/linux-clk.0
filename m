@@ -2,136 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F88C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 13:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DFDC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 13:09:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240232AbiCPNFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 09:05:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50134 "EHLO
+        id S1356017AbiCPNLB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 09:11:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241627AbiCPNFt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 09:05:49 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6CFE1E3C0;
-        Wed, 16 Mar 2022 06:04:34 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GAA8Yh009708;
-        Wed, 16 Mar 2022 14:04:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=caLH5xorRCEoALX4pq7ufOB8VX+um3FujwLjscQI2h8=;
- b=n3cotjuT9QfJZ8TudzlmmakXMPIczQmnyDBqjgRXbOtBfTE3jysM7FkbnGnzeHiW/k4P
- TaK9S2d1KPfI8+jf1cK7L4vNc8d1fk9m4k4Bi8Er8tYD2XNEPOv9jcauTlY+8Dp0K0Cn
- DK/Pv6g/4MKBvbaMvjwEnxq/2JAOdzywlLlL9yEvIj78rviafd7C+M5lA8DXin5j9b03
- jgFCRtTXFnH2K1YjPn9koH5+oGKZ1ar2zu5GrR7Wp3DlEj8QUpgwghmXyAQu7LJ6d4mb
- lORWUvSfuEwWMIMVJNdbcM1HwrATJcLNFSRn9obh8OLd8h9N5AA8y75cKlVXy4yFL7M2 Og== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3et63hdn0h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Mar 2022 14:04:22 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C804B10002A;
-        Wed, 16 Mar 2022 14:04:20 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BFC4D2278A3;
-        Wed, 16 Mar 2022 14:04:20 +0100 (CET)
-Received: from [10.201.22.79] (10.75.127.45) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar
- 2022 14:04:20 +0100
-Message-ID: <ba05cd7e-0c1a-5188-f92a-20eb243789ab@foss.st.com>
-Date:   Wed, 16 Mar 2022 14:04:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 00/13] Introduction of STM32MP13 RCC driver (Reset
- Clock Controller)
-Content-Language: en-US
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1356021AbiCPNK7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 09:10:59 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF2FA4F9E7
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 06:09:45 -0700 (PDT)
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 783393F5F4
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 13:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647436178;
+        bh=hMpVGD6o3TsybJH5wrGEkbZ3q6M86lmXlzkdgti+gZM=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+        b=ajmhVyosPjPHewC9eWeEy8Gk5x03HOhY37sldJdEb7V8LzWc1AkFlEv3Fdz4MHxIS
+         9xIvzmA8QuKUDHjGdO0R2yBl6DLFjbC0I1UBWVgVkQ5byHYT6cOYiRYBHk1FYVDgu5
+         86JBj7OphBtExVKE0G5zNFSvj1vBF+21WIw4zbXN70B0kBtvymXH7MtOb/1ZSHLBkI
+         5jINgdOUHZwZjGpxJnkm0Hfr39IyA83XqnWSJ1vE4fbDFd3TDN6aN5RXFqnMcoOhUI
+         VpQPig8CWRv54gq1292rNP4cQRfGwJ5CsGPe7o1zABJFEg3lQ8CqhGwJSVnoS6sswE
+         FmJTkBp3GraRg==
+Received: by mail-ed1-f69.google.com with SMTP id l24-20020a056402231800b00410f19a3103so1295443eda.5
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 06:09:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hMpVGD6o3TsybJH5wrGEkbZ3q6M86lmXlzkdgti+gZM=;
+        b=2Thr39gj4mZ/NUqTyz8rSy/zV5CRO/FYzg5DEG/36USNrfvTfQNgjPuPbWMYGc/3XY
+         eD/SfwUXlTreC9l1eLLjsZpj95Nt0A+IQWl7vCuJqC8wWGUug1fgIPKRYxWT+0wqAcbw
+         gCizKIqJuPQHwI8JohiAcODHH/I33yYxE10HFSEf0Kj3Ms5l8pNZqSgAXk6lBkzkhvT7
+         hYtbpRBrp5/XuAgUVKNRSmqUtRJx2ZllozHnHS3oTT/sX9IHNw4OdZ+NBO4tAYlRo06v
+         0x0Cv1/gsAxEtStmOMfRp1DLsKvwyjdZ6ibecezLjISsFau2Tdu7kz/shXLqBmXDb6Dx
+         XkCA==
+X-Gm-Message-State: AOAM531s+ZLndpTZnWpYni/WDXnDbbFIJrapZ740oFbNHWEpZyDNxjs8
+        5XCM/H5pOyt+I4dvSwzDEHM67xARmqQ41tQdwRlrW8EAWX4TYfc6VgRowicc/leJvL2507j1j/s
+        cXjhqBnGaV9bjFPeKBE2xUEtLzlTkHzTjBqSQQg==
+X-Received: by 2002:a17:906:dc8c:b0:6df:831e:76d4 with SMTP id cs12-20020a170906dc8c00b006df831e76d4mr1659347ejc.139.1647436177722;
+        Wed, 16 Mar 2022 06:09:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFY00Fte9yceTYtdcLIDEMUngEA7Vv2XIZrc94QHM+xHDidA3EN1sRimJG9UK5kh8CSQEOXQ==
+X-Received: by 2002:a17:906:dc8c:b0:6df:831e:76d4 with SMTP id cs12-20020a170906dc8c00b006df831e76d4mr1659302ejc.139.1647436177483;
+        Wed, 16 Mar 2022 06:09:37 -0700 (PDT)
+Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id mp33-20020a1709071b2100b006db6dea7f9dsm861597ejc.168.2022.03.16.06.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 06:09:36 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
-From:   Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
-In-Reply-To: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-16_04,2022-03-15_01,2022-02-23_01
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Jesse Taube <Mr.Bossman075@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH 1/2] dt-bindings: gpio: pca95xx: drop useless consumer example
+Date:   Wed, 16 Mar 2022 14:08:57 +0100
+Message-Id: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sorry, this series is incomplete due to a firewall issue.
+Consumer examples in the bindings of resource providers are trivial,
+useless and duplication of code.  Remove the example code for consumer
 
-I will resend it.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Best regards
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+index b6a6e742b66d..dc0fc8fc4839 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+@@ -190,14 +190,6 @@ examples:
+                               "chg-status+red", "green", "blue", "en-esata",
+                               "fault1", "p26", "p27";
+         };
+-
+-        ts3a227@3b {
+-            compatible = "ti,ts3a227e";
+-            reg = <0x3b>;
+-            interrupt-parent = <&gpio99>;
+-            interrupts = <14 IRQ_TYPE_EDGE_RISING>;
+-            ti,micbias = <0>; /* 2.1V */
+-        };
+     };
+ 
+   - |
+-- 
+2.32.0
 
-Gabriel
-
-
-On 3/16/22 13:45, gabriel.fernandez@foss.st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->
-> v3:
->    - cosmetic change from Stephen Boyd
->    - rename some functions in clk-stm32-core
->    - add missing static for variables or functions
->
-> v2:
->    - Resend because patch 9,10,12,13 has not been sent
->    - add Reviewed by Krzysztof Kozlowski for patch 1
->
-> Gabriel Fernandez (13):
->    dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
->    clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
->    clk: stm32mp13: add stm32_mux clock management
->    clk: stm32mp13: add stm32_gate management
->    clk: stm32mp13: add stm32 divider clock
->    clk: stm32mp13: add composite clock
->    clk: stm32mp13: manage secured clocks
->    clk: stm32mp13: add all STM32MP13 peripheral clocks
->    clk: stm32mp13: add all STM32MP13 kernel clocks
->    clk: stm32mp13: add multi mux function
->    clk: stm32mp13: add safe mux management
->    ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
->    ARM: dts: stm32: add RCC on STM32MP13x SoC family
->
->   .../bindings/clock/st,stm32mp1-rcc.yaml       |    2 +
->   arch/arm/boot/dts/stm32mp131.dtsi             |  128 +-
->   arch/arm/boot/dts/stm32mp133.dtsi             |    4 +-
->   arch/arm/boot/dts/stm32mp13xf.dtsi            |    3 +-
->   drivers/clk/Kconfig                           |    5 +
->   drivers/clk/Makefile                          |    1 +
->   drivers/clk/stm32/Makefile                    |    1 +
->   drivers/clk/stm32/clk-stm32-core.c            |  695 +++++++
->   drivers/clk/stm32/clk-stm32-core.h            |  188 ++
->   drivers/clk/stm32/clk-stm32mp13.c             | 1620 +++++++++++++++
->   drivers/clk/stm32/reset-stm32.c               |  122 ++
->   drivers/clk/stm32/reset-stm32.h               |    8 +
->   drivers/clk/stm32/stm32mp13_rcc.h             | 1748 +++++++++++++++++
->   include/dt-bindings/clock/stm32mp13-clks.h    |  229 +++
->   include/dt-bindings/reset/stm32mp13-resets.h  |  100 +
->   15 files changed, 4794 insertions(+), 60 deletions(-)
->   create mode 100644 drivers/clk/stm32/Makefile
->   create mode 100644 drivers/clk/stm32/clk-stm32-core.c
->   create mode 100644 drivers/clk/stm32/clk-stm32-core.h
->   create mode 100644 drivers/clk/stm32/clk-stm32mp13.c
->   create mode 100644 drivers/clk/stm32/reset-stm32.c
->   create mode 100644 drivers/clk/stm32/reset-stm32.h
->   create mode 100644 drivers/clk/stm32/stm32mp13_rcc.h
->   create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
->   create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
->
