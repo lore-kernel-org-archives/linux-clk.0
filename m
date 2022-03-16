@@ -2,156 +2,176 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFB6C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 08:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8437C43217
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 08:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348902AbiCPIjC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 04:39:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45360 "EHLO
+        id S1354764AbiCPI6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 04:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233630AbiCPIjB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 04:39:01 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08609C6B
-        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:37:46 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id BB2E75C0228;
-        Wed, 16 Mar 2022 04:37:43 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 16 Mar 2022 04:37:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=18XKH3GFDQ+Ep+q25Q1/K+i7TdNK2S5fPAytfx
-        lQ4CI=; b=lG4LLQHaH/uhxmlDCK0JyYlFT+qTRn1o4C0vRM1eC+cyOpFWHnbBRi
-        sDUAsWiebgVxiRxWymgj/tNSqBT/7Z0ZfXfm1P8FSmhQuMxjEvtSRxOBuWBn0A7L
-        Mt8xiSJKdqEBiW/yRJWm6cSMfkTicCjq1eILExXsyuiowoyHDAsaIHLh59ydhtrK
-        LcQ800/uSVxgczMfFT+3cWfhiHvaJppspak48tBi8j8uSZRfclAemBLayRkL4JZZ
-        Bw3H5cZuGSbIX33+6EfzlYZIXbR5CfuGV9IxPJU3sF/rXOCgfF/fQ5QVlYQ8lrQ2
-        DWJrRm9AI95il1TFGIXleDnUTDunj9qA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=18XKH3GFDQ+Ep+q25
-        Q1/K+i7TdNK2S5fPAytfxlQ4CI=; b=FPeBWKiF5ixx9K2jTufISYHPrNvtx2kgq
-        Ov9bgLg/tsfTmAvPRhim+CTgoL2rYSSJaa1loKyp2T7D57vQOjBOVaecwHrftBm8
-        1LkHsHXvMuplSbUJ/G4EWNAHqf7jsHjjn88qz9o18EPrcA7MwsDwmr+DOQBd97qb
-        qMQqT5v0yMqQF35jEwKy8dbcKpquSVgHws9S4R3xqICfbdnSnUFQzR/wjcrby7gz
-        KF7GSum2TbbB3nrcHLd0MHqJyICVCKjkR+NAlyu+K47Q5cNhG761RVqSdWqUxvpb
-        PV3WhbTWCrdrOq+jrguACJgBFg8tJMh/B6wFXrE/VnVrLBG3xx6Hg==
-X-ME-Sender: <xms:16ExYg0kON57HZjw6oripiZsO5sTtChVj8yMt6MIvZZi2h9v6GSQkw>
-    <xme:16ExYrEjPdgT3gGav0ygTkxw9y352rs_hsjRLCOco5F0BaEcfC9zKHaILNmEwsvBD
-    6bZb91zjTomTK-Bqw4>
-X-ME-Received: <xmr:16ExYo6QpVwIUDFo0T7a7qbLN-YX_vmzJFb2Iwwj2YOCoEqlhk61ez-uzVUgBnTKczCT7sxA1z58rkLhAi3xdniWnVMXGG_yZNrsgU0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudefuddguddvtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeevveefffduveeitdegtefhhfetueffteefffdvheevvdehteethedvleff
-    gfejvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
-    hh
-X-ME-Proxy: <xmx:16ExYp2MKd40NjsLWoDrdEnAJkh24XvOKoyANkNxIor2KQEDZzITCw>
-    <xmx:16ExYjGxBe8rUaSCg6lmuxuVjX5O3R1gzXA-W1gQrh72wqtRDySLvA>
-    <xmx:16ExYi8UsTop4VeK8MPd96mgSt1GiRO--6kjVpR0hDxkLNRh0_JZcw>
-    <xmx:16ExYo6m2r3WN1YgHrQM0IouYUj0o1uBBf7w0jc1XXxxoXt4klcckg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Mar 2022 04:37:43 -0400 (EDT)
-Date:   Wed, 16 Mar 2022 09:37:41 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 00/12] clk: Improve clock range handling
-Message-ID: <20220316083741.5hvuli2cvxlqr2ji@houat>
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220312030842.DB69FC340E9@smtp.kernel.org>
+        with ESMTP id S1354733AbiCPI6V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 04:58:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5A831652C0
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:57:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647421021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
+        b=V60Ao4Zw1OA7tAOzdGW44leJ0jkElJhSPole8p+6UPMribGjSmwXawi+d7wL2Q1uaj/FON
+        k2CwETmF1FBe7qqQ65ImSpIasQTWKeABDsfs/Z/Z9ZDbgpp3vQdsjJ7ohAKIiOP5I7+x9l
+        Ax1/tYInHk81E+ISM4zKnhPSG9WCdaE=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-74-IDbzCevePnS23Ay3rRipNA-1; Wed, 16 Mar 2022 04:56:59 -0400
+X-MC-Unique: IDbzCevePnS23Ay3rRipNA-1
+Received: by mail-wr1-f71.google.com with SMTP id f18-20020adf9f52000000b00203d86759beso320599wrg.11
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:56:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
+        b=hfQVzQuUhDXLQeIUK7HId37Okg06kdGhKJc/gebViG91mbg3CfYpkF9ApwouVMGi3K
+         zB316R01LkZ2gdMzBzni3I5+JHJTxfBZHti0/r51XLOUrzUndX09JHCe8cCJLoEDkGz6
+         pxFwBv/bRvpRtWIm1n0HL9dyfAGry3bC11GGTE4QYMJoV5AvJ+4y8PRjGBzV8XXsAbn1
+         hh0GoQ/ehvPZFrHPvIg31y5hZnxEycapf/ER+GbUltDoPZR84K/dmbOGWai8DQ+HfRi1
+         KAA3Z7skt3fsqqECJTnzuZFw58C4FDOTo2neT3P+vUJMD9kiyeBj95o4yjZ5pxma3/qi
+         YHDw==
+X-Gm-Message-State: AOAM530LdbAeHMt/f/Ctjje0tD+2Tl/arU6wnq3ClxZrIB99OXyyZUXa
+        fiLIAz8O4rtwG7LWQkglM6IPzWdwfZtQXxmeGKPRAsLdqzBlRCT13sCgApaxNr2UdzAOxAolVid
+        msLedkJGJLMt0jWs+6b4/
+X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570202wru.604.1647421018439;
+        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxxg+HdKFc+OlgI5Uf6j74GkTyT+tlDfMeOChHK9/5Na0k8DDsBUyiZqTzroGOmIKGPRSv82g==
+X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570190wru.604.1647421018228;
+        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
+Received: from redhat.com ([2.53.2.35])
+        by smtp.gmail.com with ESMTPSA id p1-20020a5d59a1000000b00203d83b0ae4sm1136056wrr.109.2022.03.16.01.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 01:56:57 -0700 (PDT)
+Date:   Wed, 16 Mar 2022 04:56:48 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v4 08/11] vdpa: Use helper for safer setting of
+ driver_override
+Message-ID: <20220316045633-mutt-send-email-mst@kernel.org>
+References: <20220312132856.65163-1-krzysztof.kozlowski@canonical.com>
+ <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mdxmlp5d2ghaq3tj"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220312030842.DB69FC340E9@smtp.kernel.org>
+In-Reply-To: <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sat, Mar 12, 2022 at 02:28:53PM +0100, Krzysztof Kozlowski wrote:
+> Use a helper to set driver_override to reduce amount of duplicated code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
---mdxmlp5d2ghaq3tj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-Hi,
+feel free to merge with the rest of the patchset.
 
-On Fri, Mar 11, 2022 at 07:08:39PM -0800, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2022-02-25 06:35:22)
-> > Hi,
-> >=20
-> > This is a follow-up of the discussion here:
-> > https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmo=
-ur/
-> >=20
-> > and here:
-> > https://lore.kernel.org/all/20210914093515.260031-1-maxime@cerno.tech/
-> >=20
-> > While the initial proposal implemented a new API to temporarily raise a=
-nd lower
-> > clock rates based on consumer workloads, Stephen suggested an
-> > alternative approach implemented here.
-> >=20
-> > The main issue that needed to be addressed in our case was that in a
-> > situation where we would have multiple calls to clk_set_rate_range, we
-> > would end up with a clock at the maximum of the minimums being set. This
-> > would be expected, but the issue was that if one of the users was to
-> > relax or drop its requirements, the rate would be left unchanged, even
-> > though the ideal rate would have changed.
-> >=20
-> > So something like
-> >=20
-> > clk_set_rate(user1_clk, 1000);
-> > clk_set_min_rate(user1_clk, 2000);
-> > clk_set_min_rate(user2_clk, 3000);
-> > clk_set_min_rate(user2_clk, 1000);
-> >=20
-> > Would leave the clock running at 3000Hz, while the minimum would now be
-> > 2000Hz.
-> >=20
-> > This was mostly due to the fact that the core only triggers a rate
-> > change in clk_set_rate_range() if the current rate is outside of the
-> > boundaries, but not if it's within the new boundaries.
-> >=20
-> > That series changes that and will trigger a rate change on every call,
-> > with the former rate being tried again. This way, providers have a
-> > chance to follow whatever policy they see fit for a given clock each
-> > time the boundaries change.
-> >=20
-> > This series also implements some kunit tests, first to test a few rate
-> > related functions in the CCF, and then extends it to make sure that
-> > behaviour has some test coverage.
-> >=20
-> > Let me know what you think
->=20
-> Thanks. I'm going to apply this to clk-next but not the last two drm
-> patches. That is OK?
+> ---
+>  drivers/vdpa/vdpa.c  | 29 ++++-------------------------
+>  include/linux/vdpa.h |  4 +++-
+>  2 files changed, 7 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index 1ea525433a5c..2dabed1df35c 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
+>  				     const char *buf, size_t count)
+>  {
+>  	struct vdpa_device *vdev = dev_to_vdpa(dev);
+> -	const char *driver_override, *old;
+> -	char *cp;
+> +	int ret;
+>  
+> -	/* We need to keep extra room for a newline */
+> -	if (count >= (PAGE_SIZE - 1))
+> -		return -EINVAL;
+> -
+> -	driver_override = kstrndup(buf, count, GFP_KERNEL);
+> -	if (!driver_override)
+> -		return -ENOMEM;
+> -
+> -	cp = strchr(driver_override, '\n');
+> -	if (cp)
+> -		*cp = '\0';
+> -
+> -	device_lock(dev);
+> -	old = vdev->driver_override;
+> -	if (strlen(driver_override)) {
+> -		vdev->driver_override = driver_override;
+> -	} else {
+> -		kfree(driver_override);
+> -		vdev->driver_override = NULL;
+> -	}
+> -	device_unlock(dev);
+> -
+> -	kfree(old);
+> +	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
+> +	if (ret)
+> +		return ret;
+>  
+>  	return count;
+>  }
+> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> index 721089bb4c84..37117404660e 100644
+> --- a/include/linux/vdpa.h
+> +++ b/include/linux/vdpa.h
+> @@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
+>   * struct vdpa_device - representation of a vDPA device
+>   * @dev: underlying device
+>   * @dma_dev: the actual device that is performing DMA
+> - * @driver_override: driver name to force a match
+> + * @driver_override: driver name to force a match; do not set directly,
+> + *                   because core frees it; use driver_set_override() to
+> + *                   set or clear it.
+>   * @config: the configuration ops for this device.
+>   * @cf_mutex: Protects get and set access to configuration layout.
+>   * @index: device index
+> -- 
+> 2.32.0
 
-Yes, that will be perfect, thanks!
-Maxime
-
---mdxmlp5d2ghaq3tj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYjGh1QAKCRDj7w1vZxhR
-xe+0AQCXDnxMwBcdSas+jyIQJCIGV1nH10as/gYsRRfoxH63mwD+Ie0RrDh9YB1m
-dNrIjZlCP0+Ijrn9vHDT5uvla1NklQ0=
-=PeNm
------END PGP SIGNATURE-----
-
---mdxmlp5d2ghaq3tj--
