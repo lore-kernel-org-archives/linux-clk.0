@@ -2,84 +2,89 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E55AC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 00:07:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE18EC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 01:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349486AbiCPAJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 20:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
+        id S1353032AbiCPBzC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 21:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244967AbiCPAJJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 20:09:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C77BF5B;
-        Tue, 15 Mar 2022 17:07:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7A72EB818F9;
-        Wed, 16 Mar 2022 00:07:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 120E1C340E8;
-        Wed, 16 Mar 2022 00:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647389273;
-        bh=2tyUNb7dn2nQ7bEuHj4DwFLAyjpMrDCvB7bUvqHcVqs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=HXTnDlnK7X8WXEYPJqBaSVQqB90AoS0J/YuLBt+jBfpY3108BRQh+dbKUMb9lUoJL
-         b10YesXghFIDHfs2pFIxgbdrYO/NRrvuxkuAaOfGvI3TjjUnTqXDYweGIJIj1xySdu
-         lQdF0V5H+wW90MC0XK9aQeJmLYyTrRB+bfLRuF/EvKUuq9zQE6GoC/2N82dRB579Qm
-         L8lx1s/ATXeUNz+jVIJvK8N7xbe9WH0rC9gZrE+lnR+cXSV3WO6HZhLcMo3oa/mShL
-         dLBGZ93X3nltrb9iUpH1CKQMwZrqPyS8zmxyVLovb+z8HE27zctMmt4U/PighDr7Hm
-         oXx2x6ZReeAXw==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S1353029AbiCPBzB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 21:55:01 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E5A033E8B
+        for <linux-clk@vger.kernel.org>; Tue, 15 Mar 2022 18:53:47 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id n19so1436034lfh.8
+        for <linux-clk@vger.kernel.org>; Tue, 15 Mar 2022 18:53:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/w6g4UFapgjJyWigEntfY4YR+4uWCSZSSrQixa3u6+g=;
+        b=NOuO/gH2k2r8FqAWGTSFu3/K2RelH8l1bUKZJrYmiVaqA+UTjEqKY666OVXfT8d219
+         2YlKjBcEbW9rsLFaO+lVQexhLzkDhDnQGUhQ6bY4urMhIT5FyhNYWPgdC5OvZaiN9swo
+         /zne3iP33JmXYXygB8OBviNrskeEf2CIACj4MnvcwOiNM9JiuDaFHLDOnvuVC7Hg/n7i
+         XrNztpYGFUn6I7YMjneJT3ad4ZI8dzWyZuSAkx4zMcPbHYeRU8K1Y6jjkkV7xw0ze/KC
+         +eMZ95j3B3AybgLC9l3crRekrK+Y0eIwj3PxUJeA1TEud6ZXDuDCRYdWKXyGdbPpzgL8
+         W0WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/w6g4UFapgjJyWigEntfY4YR+4uWCSZSSrQixa3u6+g=;
+        b=bRrsY9lsYJVIK7CS2j5ce6KcvOq3SvZIj+4dTtT1nENqO0LrDnK5DhPpKqLbmpaEva
+         a4Gyain5BYN5z8AQC/qXM5ihryVpFnT6ogL8F0sbAgZPhWM7XhcIgE/9JG1AkUWmUab4
+         uwr+XwD4oFXewXr3RgTKcuBD8CxxGNVC7sOo2jOZjo9xt6QIgajYrllOJvTzrnCWr2m6
+         JstpX5P8qTAuji9I3WPV6X4OdD/2oNZ6+ybhOzlRxYcKfW+jKCApMsxh2VKhNtaxxxHi
+         qIkYChJy/yGGGTmKDSLtORQdF1wPosAMHDz5n0IA2/bZ4KOlgCbvOtoZGeY2kgYIu+On
+         kf7g==
+X-Gm-Message-State: AOAM531MR5O8B1Myb77U3l8Ccn1ohT2pjJha4/dKVDIW8otFyYJnGpx1
+        mpviSV4JpUb2cbzF8bHzPwJYxkt7Mb5u2llbkdAnQg==
+X-Google-Smtp-Source: ABdhPJwJrWMGPCVAe9Kdw4+yO4dxhyREg9HzABowyT5uPfqBiphteSCarJzNDqam5BVctAGvnqC08Kzr648dwxePEXc=
+X-Received: by 2002:a05:6512:1510:b0:445:cbc3:a51f with SMTP id
+ bq16-20020a056512151000b00445cbc3a51fmr18924746lfb.116.1647395625908; Tue, 15
+ Mar 2022 18:53:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220313000824.229405-4-dmitry.baryshkov@linaro.org>
-References: <20220313000824.229405-1-dmitry.baryshkov@linaro.org> <20220313000824.229405-4-dmitry.baryshkov@linaro.org>
-Subject: Re: [RFC PATCH 3/5] clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+References: <cover.1646388139.git.zong.li@sifive.com> <db92d209fa700f7da8bc8028083476fcc138d80e.1646388139.git.zong.li@sifive.com>
+ <20220315225459.73F2DC340E8@smtp.kernel.org> <20220315225652.CDAD1C340E8@smtp.kernel.org>
+In-Reply-To: <20220315225652.CDAD1C340E8@smtp.kernel.org>
+From:   Zong Li <zong.li@sifive.com>
+Date:   Wed, 16 Mar 2022 09:53:36 +0800
+Message-ID: <CANXhq0oAsxqL2PxkB8eOu_8L10pX_oWgwPH5y4edq5tw6ObWiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] riscv: dts: Change the macro name of prci in each
+ device node
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 15 Mar 2022 17:07:51 -0700
-User-Agent: alot/0.10
-Message-Id: <20220316000753.120E1C340E8@smtp.kernel.org>
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Palmer Dabbelt <palmer@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2022-03-12 16:08:22)
-> Use newly defined clk_regmap_mux_safe_ops for PCIe pipe clocks to let
-> the clock framework automatically park the clock when the clock is
-> switched off and restore the parent when the clock is switched on.
->=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-sc7280.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
-> index 423627d49719..69887e45d02f 100644
-> --- a/drivers/clk/qcom/gcc-sc7280.c
-> +++ b/drivers/clk/qcom/gcc-sc7280.c
-> @@ -373,13 +373,14 @@ static struct clk_regmap_mux gcc_pcie_0_pipe_clk_sr=
-c =3D {
->         .reg =3D 0x6b054,
->         .shift =3D 0,
->         .width =3D 2,
-> +       .safe_src_index =3D 2,
+On Wed, Mar 16, 2022 at 6:56 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Stephen Boyd (2022-03-15 15:54:57)
+> > Quoting Zong Li (2022-03-04 02:03:19)
+> > > We currently change the macro name for fu540 and fu740 by adding the
+> > > prefix respectively, these marcos are referenced by some device nodes,
+> > > they should be modified as well.
+> > >
+> > > Signed-off-by: Zong Li <zong.li@sifive.com>
+> > > Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > > ---
+> >
+> > Cool. So it looks like I can take the clk patches and not this one and
+> > it should be OK?
+>
+> To speed things up I can take the whole pile. Thanks for fixing the
+> bisection problem.
 
-Can this be
-
-	.safe_src_index =3D gcc_parent_map_6[1].cfg
-
-or something that indicates that this is a value inside the parent map
-and not an array index?
+I appreciate that you are willing to pick them up. Many thanks.
