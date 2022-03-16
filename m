@@ -2,68 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C10C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 00:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E55AC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 00:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352704AbiCPAD5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Mar 2022 20:03:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56214 "EHLO
+        id S1349486AbiCPAJK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Mar 2022 20:09:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352717AbiCPAD4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 20:03:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5E305DE4F;
-        Tue, 15 Mar 2022 17:02:42 -0700 (PDT)
+        with ESMTP id S244967AbiCPAJJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Mar 2022 20:09:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0C77BF5B;
+        Tue, 15 Mar 2022 17:07:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 723E96149A;
-        Wed, 16 Mar 2022 00:02:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7C86C340E8;
-        Wed, 16 Mar 2022 00:02:41 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7A72EB818F9;
+        Wed, 16 Mar 2022 00:07:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 120E1C340E8;
+        Wed, 16 Mar 2022 00:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647388961;
-        bh=gSjwqWfs0xHAYr2djQjQy7OqRlnUPhxMCbMqx3FoaNo=;
+        s=k20201202; t=1647389273;
+        bh=2tyUNb7dn2nQ7bEuHj4DwFLAyjpMrDCvB7bUvqHcVqs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tRV99RsTh7UBRLm80E74A83E1av840luLqyGcVBIazJDG+QAvwJrmzIOkRn3GVndU
-         dcbiUWNiOMAv2xwvEHVGd427Hm0z9vbzaOEdtP4KgurnRm6UykHbeO6vGx0qAT39YX
-         Mai0EkzClKVJRGExXv3sEp8zY3Pj3S+zOGKxi01T1i/sFIFAprjMBbek7m8M87oLKz
-         Gu7KTw7PNfgIakn3khUNKxEbdHA/Q4UXPk0Dr1MQ5mvp+ySnqfdwLdSFoYHCn+6r/R
-         uyX+Sa2CvMuTSuW8ZRzLm7ZSl9kg7CaitKm+4UiVUZmnZGwkaBu7hDQEZ26accK9ci
-         ExUnIdJ7hUMww==
+        b=HXTnDlnK7X8WXEYPJqBaSVQqB90AoS0J/YuLBt+jBfpY3108BRQh+dbKUMb9lUoJL
+         b10YesXghFIDHfs2pFIxgbdrYO/NRrvuxkuAaOfGvI3TjjUnTqXDYweGIJIj1xySdu
+         lQdF0V5H+wW90MC0XK9aQeJmLYyTrRB+bfLRuF/EvKUuq9zQE6GoC/2N82dRB579Qm
+         L8lx1s/ATXeUNz+jVIJvK8N7xbe9WH0rC9gZrE+lnR+cXSV3WO6HZhLcMo3oa/mShL
+         dLBGZ93X3nltrb9iUpH1CKQMwZrqPyS8zmxyVLovb+z8HE27zctMmt4U/PighDr7Hm
+         oXx2x6ZReeAXw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a3c7ec5c46c1d8be455d1c347db4855bb56cec53.1646388139.git.zong.li@sifive.com>
-References: <cover.1646388139.git.zong.li@sifive.com> <a3c7ec5c46c1d8be455d1c347db4855bb56cec53.1646388139.git.zong.li@sifive.com>
-Subject: Re: [PATCH v2 5/5] clk: sifive: Move all stuff into SoCs header files from C files
+In-Reply-To: <20220313000824.229405-4-dmitry.baryshkov@linaro.org>
+References: <20220313000824.229405-1-dmitry.baryshkov@linaro.org> <20220313000824.229405-4-dmitry.baryshkov@linaro.org>
+Subject: Re: [RFC PATCH 3/5] clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Zong Li <zong.li@sifive.com>, Palmer Dabbelt <palmer@rivosinc.com>
-To:     Zong Li <zong.li@sifive.com>, devicetree@vger.kernel.org,
-        lee.jones@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        mturquette@baylibre.com, palmer@dabbelt.com,
-        paul.walmsley@sifive.com, robh+dt@kernel.org
-Date:   Tue, 15 Mar 2022 17:02:40 -0700
+Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Tue, 15 Mar 2022 17:07:51 -0700
 User-Agent: alot/0.10
-Message-Id: <20220316000241.C7C86C340E8@smtp.kernel.org>
+Message-Id: <20220316000753.120E1C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zong Li (2022-03-04 02:03:21)
-> Improve PRCI driver to reduce the complexity, we remove the SoCs C files
-> by putting all stuff in each SoCs header files, and include these
-> SoCs-specific header files in core of PRCI. It can also avoid the W=3D1
-> kernel build warnings about variable defined but not used
-> [-Wunused-const-variable=3D], like commit 487dc7bb6a0c ("clk: sifive:
-> fu540-prci: Declare static const variable 'prci_clk_fu540' where it's
-> used") does.
+Quoting Dmitry Baryshkov (2022-03-12 16:08:22)
+> Use newly defined clk_regmap_mux_safe_ops for PCIe pipe clocks to let
+> the clock framework automatically park the clock when the clock is
+> switched off and restore the parent when the clock is switched on.
 >=20
-> Signed-off-by: Zong Li <zong.li@sifive.com>
-> Suggested-by: Lee Jones <lee.jones@linaro.org>
-> Reviewed-by: Lee Jones <lee.jones@linaro.org>
-> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
+>  drivers/clk/qcom/gcc-sc7280.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+> index 423627d49719..69887e45d02f 100644
+> --- a/drivers/clk/qcom/gcc-sc7280.c
+> +++ b/drivers/clk/qcom/gcc-sc7280.c
+> @@ -373,13 +373,14 @@ static struct clk_regmap_mux gcc_pcie_0_pipe_clk_sr=
+c =3D {
+>         .reg =3D 0x6b054,
+>         .shift =3D 0,
+>         .width =3D 2,
+> +       .safe_src_index =3D 2,
 
-Applied to clk-next
+Can this be
+
+	.safe_src_index =3D gcc_parent_map_6[1].cfg
+
+or something that indicates that this is a value inside the parent map
+and not an array index?
