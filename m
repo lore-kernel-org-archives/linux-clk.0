@@ -2,185 +2,235 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0A2C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 12:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C23C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 12:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354945AbiCPMcO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 08:32:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38350 "EHLO
+        id S1355868AbiCPMrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 08:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236328AbiCPMcN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 08:32:13 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 228653C487;
-        Wed, 16 Mar 2022 05:30:58 -0700 (PDT)
-Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id A99538301E;
-        Wed, 16 Mar 2022 13:30:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1647433857;
-        bh=fEYvIWC6xo2xNf3PH8VNaMyulNlzE2HvVibuAfq7fWY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aNUXy+r9rn0jIQQyMxmQqaJuHJY3NXy6YowSZ5h9bwVp0HDZiBu7oG8lo4i6Er37w
-         HkRAlvBSxCgsyUgYJY/fohvBCgR5y3FDPNa1QKaCKUi4gctPJuVxN4NSlWt5vZ/mW2
-         Yg0IFlu0lqaVh2XgIReESw+Ed/5L3KJKVGdnVFKZormLPfgRthGSfoNYFhz7aVZAX8
-         qWb9OC0ltGB9F9q9z6QNxQebQIyCA/zaO5HM5QULR+tt08v+z65GStlPx2emJC3c4L
-         TnClCdNMNC0HifTjV0X2E1E4wRJWCe9krp4F0GGWiH7CY1zfvdIeiAYKqvsegkdoB7
-         Ogos+4yz4/uDw==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1346786AbiCPMre (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 08:47:34 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331483B57A;
+        Wed, 16 Mar 2022 05:46:20 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GAKPMF026976;
+        Wed, 16 Mar 2022 13:46:01 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=ZiRrRo4KPczvg2JBhLVWSWvGKQYYdComXd2P4kRbhpU=;
+ b=grHcWnMSUrf9ekTryeAcwPrA+f53f9oHPnXNmTZOitoGFc7Lf+SLexN1IwdbFqrjh3+C
+ Gg7QAfLxqJfQoYKTfAHhPd2occCtVUKpm1eLgiJlWmKAeCTMbxak33zklQ3wOxrmgtGY
+ lkZJ5dTC3YOJ4DdBSbplY7KJFjEHrVrzrLoghkyeprk6nCTflLUCbUIYTYSpMFfi7lvr
+ gZ3+T7UWvJskHXWWgPF7LWI+EoTuQQyFt4LqWMgjZOkSHYghs31QI57d+YE8G44c4Cc5
+ iKSJZyHzJsCH8OVAfObmovtZdfSfaEYDlEc+j6rmRpe0e3qW+oaZ8uvnX9gaCV/gd+C6 vw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3etj2atard-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Mar 2022 13:46:01 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4318F100038;
+        Wed, 16 Mar 2022 13:46:01 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3C8CF226FAF;
+        Wed, 16 Mar 2022 13:46:01 +0100 (CET)
+Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar 2022 13:46:00
+ +0100
+From:   <gabriel.fernandez@foss.st.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: Introduce 'critical-clocks' property
-Date:   Wed, 16 Mar 2022 13:30:34 +0100
-Message-Id: <20220316123034.13465-2-marex@denx.de>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220316123034.13465-1-marex@denx.de>
-References: <20220316123034.13465-1-marex@denx.de>
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 03/13] clk: stm32mp13: add stm32_mux clock management
+Date:   Wed, 16 Mar 2022 13:45:43 +0100
+Message-ID: <20220316124553.6818-4-gabriel.fernandez@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
+References: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-16_04,2022-03-15_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some platforms require select clock to be always running, e.g. because
-those clock supply vital devices which are not otherwise attached to
-the system and thus do not have a matching DT node and clock consumer.
+From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-An example is a system where the SoC serves as a crystal oscillator
-replacement for a programmable logic device. The "critical-clocks"
-property of a clock controller allows listing clock which must never
-be turned off.
+Just to introduce management of a stm32 mux clock.
 
-Clock listed in the "critical-clocks" property may have other consumers
-in DT, listing the clock in "critical-clocks" only assures those clock
-are never turned off, and none of these optional additional consumers
-can turn the clock off either. This is achieved by adding CLK_IS_CRITICAL
-flag to these critical clock.
-
-This flag has thus far been added to select clock by hard-coding it in
-various clock drivers, this patch provides generic DT interface to add
-the flag to arbitrary clock that may be critical.
-
-The implementation is modeled after "protected-clocks", except the protected
-clock property is currently driver specific. This patch attempts to provide
-a generic implementation of "critical-clocks" instead.
-
-Unlike "assigned-clocks", the "critical-clocks" must be parsed much earlier
-in __clk_register() to assign CLK_IS_CRITICAL flag to clk_init_data .flags
-field.
-
-The new match_clkspec() callback is used to determine whether struct clk_hw
-that is currently being registered matches the clock specifier in the DT
-"critical-clocks" property, and if so, then the CLK_IS_CRITICAL is added to
-these newly registered clock. This callback can only be driver specific.
-
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-To: linux-clk@vger.kernel.org
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 ---
-V2: - Warn in case critical-clock field cannot be parsed and skip those clock
-    - Use match_clkspec() only for non-zero clock-cells controllers
-    - Pull the critical-clock code into __clk_register_critical_clock()
-    - Update commit message
----
- drivers/clk/clk.c            | 44 ++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  3 +++
- 2 files changed, 47 insertions(+)
+ drivers/clk/stm32/clk-stm32-core.c | 79 ++++++++++++++++++++++++++++++
+ drivers/clk/stm32/clk-stm32-core.h | 24 +++++++++
+ drivers/clk/stm32/clk-stm32mp13.c  | 11 +++++
+ 3 files changed, 114 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 6dc768a9674f4..8831c8f9e47c4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3896,6 +3896,48 @@ static void clk_core_free_parent_map(struct clk_core *core)
- 	kfree(core->parents);
- }
+diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
+index 0fab4a5a8c66..98699093eb21 100644
+--- a/drivers/clk/stm32/clk-stm32-core.c
++++ b/drivers/clk/stm32/clk-stm32-core.c
+@@ -91,3 +91,82 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
  
-+static void
-+__clk_register_critical_clock(struct device_node *np, struct clk_core *core,
-+			      struct clk_hw *hw)
+ 	return 0;
+ }
++
++static u8 stm32_mux_get_parent(void __iomem *base,
++			       struct clk_stm32_clock_data *data,
++			       u16 mux_id)
 +{
-+	struct of_phandle_args clkspec;
-+	u32 clksize, clktotal;
-+	int ret, i, index;
++	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
++	u32 mask = BIT(mux->width) - 1;
++	u32 val;
 +
-+	if (!np)
-+		return;
++	val = readl(base + mux->offset) >> mux->shift;
++	val &= mask;
 +
-+	if (of_property_read_u32(np, "#clock-cells", &clksize))
-+		return;
-+
-+	/* Clock node with #clock-cells = <0> uses critical-clocks; */
-+	if (clksize == 0) {
-+		if (of_property_read_bool(np, "critical-clocks"))
-+			core->flags |= CLK_IS_CRITICAL;
-+		return;
-+	}
-+
-+	if (!core->ops->match_clkspec)
-+		return;
-+
-+	clkspec.np = np;
-+	clktotal = of_property_count_u32_elems(np, "critical-clocks");
-+	clktotal /= clksize;
-+	for (index = 0; index < clktotal; index++) {
-+		for (i = 0; i < clksize; i++) {
-+			ret = of_property_read_u32_index(np, "critical-clocks",
-+							 (index * clksize) + i,
-+							 &(clkspec.args[i]));
-+			if (ret) {
-+				pr_warn("Skipping critical-clocks index %d (ret=%d)\n",
-+					i, ret);
-+			}
-+		}
-+		if (!core->ops->match_clkspec(hw, &clkspec))
-+			core->flags |= CLK_IS_CRITICAL;
-+	}
++	return val;
 +}
 +
- static struct clk *
- __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- {
-@@ -3940,6 +3982,8 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
- 
-+	__clk_register_critical_clock(np, core, hw);
++static int stm32_mux_set_parent(void __iomem *base,
++				struct clk_stm32_clock_data *data,
++				u16 mux_id, u8 index)
++{
++	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
 +
- 	ret = clk_core_populate_parent_map(core, init);
- 	if (ret)
- 		goto fail_parents;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 48d67574d4030..ad205d065c606 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -205,6 +205,8 @@ struct clk_duty {
-  *		directory is provided as an argument.  Called with
-  *		prepare_lock held.  Returns 0 on success, -EERROR otherwise.
-  *
-+ * @match_clkspec: Check whether clk_hw matches DT clock specifier.
-+ *		Returns 0 on success, -EERROR otherwise.
-  *
-  * The clk_enable/clk_disable and clk_prepare/clk_unprepare pairs allow
-  * implementations to split any work between atomic (enable) and sleepable
-@@ -252,6 +254,7 @@ struct clk_ops {
- 	int		(*init)(struct clk_hw *hw);
- 	void		(*terminate)(struct clk_hw *hw);
- 	void		(*debug_init)(struct clk_hw *hw, struct dentry *dentry);
-+	int		(*match_clkspec)(struct clk_hw *hw, struct of_phandle_args *clkspec);
++	u32 mask = BIT(mux->width) - 1;
++	u32 reg = readl(base + mux->offset);
++	u32 val = index << mux->shift;
++
++	reg &= ~(mask << mux->shift);
++	reg |= val;
++
++	writel(reg, base + mux->offset);
++
++	return 0;
++}
++
++static u8 clk_stm32_mux_get_parent(struct clk_hw *hw)
++{
++	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
++
++	return stm32_mux_get_parent(mux->base, mux->clock_data, mux->mux_id);
++}
++
++static int clk_stm32_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
++	unsigned long flags = 0;
++
++	spin_lock_irqsave(mux->lock, flags);
++
++	stm32_mux_set_parent(mux->base, mux->clock_data, mux->mux_id, index);
++
++	spin_unlock_irqrestore(mux->lock, flags);
++
++	return 0;
++}
++
++const struct clk_ops clk_stm32_mux_ops = {
++	.get_parent	= clk_stm32_mux_get_parent,
++	.set_parent	= clk_stm32_mux_set_parent,
++};
++
++struct clk_hw *clk_stm32_mux_register(struct device *dev,
++				      const struct stm32_rcc_match_data *data,
++				      void __iomem *base,
++				      spinlock_t *lock,
++				      const struct clock_config *cfg)
++{
++	struct clk_stm32_mux *mux = cfg->clock_cfg;
++	struct clk_hw *hw = &mux->hw;
++	int err;
++
++	mux->base = base;
++	mux->lock = lock;
++	mux->clock_data = data->clock_data;
++
++	err = clk_hw_register(dev, hw);
++	if (err)
++		return ERR_PTR(err);
++
++	return hw;
++}
+diff --git a/drivers/clk/stm32/clk-stm32-core.h b/drivers/clk/stm32/clk-stm32-core.h
+index 519723ae97eb..8563e6e1c91a 100644
+--- a/drivers/clk/stm32/clk-stm32-core.h
++++ b/drivers/clk/stm32/clk-stm32-core.h
+@@ -83,10 +83,34 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
+ /* DIV define */
+ #define DIV_NO_RDY		0xFF
+ 
++/* Definition of clock structure */
++struct clk_stm32_mux {
++	u16 mux_id;
++	struct clk_hw hw;
++	void __iomem *base;
++	struct clk_stm32_clock_data *clock_data;
++	spinlock_t *lock; /* spin lock */
++};
++
++#define to_clk_stm32_mux(_hw) container_of(_hw, struct clk_stm32_mux, hw)
++
++/* Clock operators */
++extern const struct clk_ops clk_stm32_mux_ops;
++
+ /* Clock registering */
++struct clk_hw *clk_stm32_mux_register(struct device *dev,
++				      const struct stm32_rcc_match_data *data,
++				      void __iomem *base,
++				      spinlock_t *lock,
++				      const struct clock_config *cfg);
++
+ #define STM32_CLOCK_CFG(_binding, _clk, _struct, _register)\
+ {\
+ 	.id		= (_binding),\
+ 	.clock_cfg	= (_struct) {_clk},\
+ 	.func		= (_register),\
+ }
++
++#define STM32_MUX_CFG(_binding, _clk)\
++	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_mux *,\
++			&clk_stm32_mux_register)
+diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
+index a2a6bbb4ace5..40568a676111 100644
+--- a/drivers/clk/stm32/clk-stm32mp13.c
++++ b/drivers/clk/stm32/clk-stm32mp13.c
+@@ -400,7 +400,18 @@ static const struct stm32_mux_cfg stm32mp13_muxes[] = {
+ 	CFG_MUX(MUX_SDMMC2,	RCC_SDMMC12CKSELR,	3, 3),
  };
  
- /**
++static const char * const eth12_src[] = {
++	"pll4_p", "pll3_q"
++};
++
++static struct clk_stm32_mux ck_ker_eth1 = {
++	.mux_id = MUX_ETH1,
++	.hw.init = CLK_HW_INIT_PARENTS("ck_ker_eth1", eth12_src, &clk_stm32_mux_ops,
++				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
++};
++
+ static const struct clock_config stm32mp13_clock_cfg[] = {
++	STM32_MUX_CFG(NO_ID, ck_ker_eth1),
+ };
+ 
+ static u16 stm32mp13_cpt_gate[GATE_NB];
 -- 
-2.35.1
+2.25.1
 
