@@ -2,189 +2,156 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C8FC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 08:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFB6C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 08:37:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244552AbiCPIhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 04:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        id S1348902AbiCPIjC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 04:39:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237832AbiCPIhJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 04:37:09 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87EC043EFC;
-        Wed, 16 Mar 2022 01:35:55 -0700 (PDT)
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22G88uxt011457;
-        Wed, 16 Mar 2022 08:35:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
- bh=CFBbPuKdxB90x1kSR5h9mbm8HsiC+dTBnrF5LD2xi0Y=;
- b=AXWcgHkJVaRamksntWPVbp6gptKvLXpzL/ZLkwClVwrARc+BU5bvDNh29KWNTofR/0b9
- 306vQJVnubdvLheQUiLPaWd+IZ/N84OddwfjYKrzFihMoFC8knI6nVtTCfaWVgg7RtLX
- PQkp6Y+kCUfD2RZTLSK7il9ZqhHNOn66Ocqrb0AcwOV0rLG9kxR/CBlWID9djP82BNyo
- sCi694qv8+ANvLICIGSarzydri1WiuMLkR6lauVqyp4d7eZMwjqi89EdmyUDC8yhDq9q
- jantida7sMTAUwe1/uxd6SM6S7Qnw07q1YESq1zd6vSCGix01LMFQKonBArTlJyfqJwr nw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80] (may be forged))
-        by mx0b-00069f02.pphosted.com with ESMTP id 3et5s6nfd2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Mar 2022 08:35:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22G8Uu61029472;
-        Wed, 16 Mar 2022 08:35:47 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2107.outbound.protection.outlook.com [104.47.58.107])
-        by userp3030.oracle.com with ESMTP id 3et65pvgwg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Mar 2022 08:35:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H0e7rt9wdJXzCIf+6xh6t+RRXHWJJUlhRYVm2JRHIN4f5megda1iIQwwQ8g9H5OAKsy9GVtREQn+m7dM3GB5oUQD9RCwIluv97ufbypkUzNpAQkI7oWpE/2vouZXgzTTu3hAzmXr4SMZq0XehB/e47eYBR5ZhB4K5Umh/9ND7kgicr/3f1zwGIi+LGAFL3E74+WUFYC0KYo+E+3eIoRHiDHyNmXM6OELZjK8UTRH2HqcRY+VnyykjYaMI+LhI9IDCV1k4cvO7YmsqIrRFiUiW+RQ1Rl1cQr0Jq2TirREmR+akGXlYXpXcAf/aE/SU+zfVnP+xqp/nMb6GQDrwfGgYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CFBbPuKdxB90x1kSR5h9mbm8HsiC+dTBnrF5LD2xi0Y=;
- b=DTPn8pRKLKiYczFCDeHHMkFpu/a/nixcYcWa4raJKVErvgTwATnUsjnID7s+zJ5/WiDFCOIXAPU/MaKIdFd5KHmQFpQw3EE6/mGvrijDXiOp3pVxa6r45XFOMcb0r7jmxH3kUYkaY34evPoQGXgpDyJ6ZqiXACRS1tqUOk1jLP2DWJShAwCnBjMBmro/JTh2Oj3TfP2GW2FM94RiByEkXDjj0nMJTaDvrMvPU7ieHqhJmM9AIyUU3MEXNkKQU1umzyb/4QPzuNV9T4Lu0mKyH6dgVYLAGdzMdMJ68oUzStrS4p4LV9KU+CzCytB/kFL3lyTimOawjMYC4LFotmgoxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CFBbPuKdxB90x1kSR5h9mbm8HsiC+dTBnrF5LD2xi0Y=;
- b=vUXBhYg/YK7c4lTFuUQswrcB6uAG7P8LYhgrSe4N9LEZDo3o+96JXOKYBOIS8snXeMiDt99NrlUZZoZqtXU7PjMNwmZUPr4gRp6CcAEHGP9ZZe1Jy34e0Nnl6gnkej1AL71Ivl+x1eGH96KfBNouW5esFPK6VIO3yUhoWqks0RU=
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28) by SJ0PR10MB4736.namprd10.prod.outlook.com
- (2603:10b6:a03:2d6::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Wed, 16 Mar
- 2022 08:35:45 +0000
-Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5]) by MWHPR1001MB2365.namprd10.prod.outlook.com
- ([fe80::2c3d:92b5:42b3:c1c5%4]) with mapi id 15.20.5081.015; Wed, 16 Mar 2022
- 08:35:45 +0000
-Date:   Wed, 16 Mar 2022 11:35:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: visconti: prevent array overflow in
- visconti_clk_register_gates()
-Message-ID: <20220316083533.GA30941@kili>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: ZR0P278CA0028.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:1c::15) To MWHPR1001MB2365.namprd10.prod.outlook.com
- (2603:10b6:301:2d::28)
+        with ESMTP id S233630AbiCPIjB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 04:39:01 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08609C6B
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:37:46 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id BB2E75C0228;
+        Wed, 16 Mar 2022 04:37:43 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 16 Mar 2022 04:37:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=18XKH3GFDQ+Ep+q25Q1/K+i7TdNK2S5fPAytfx
+        lQ4CI=; b=lG4LLQHaH/uhxmlDCK0JyYlFT+qTRn1o4C0vRM1eC+cyOpFWHnbBRi
+        sDUAsWiebgVxiRxWymgj/tNSqBT/7Z0ZfXfm1P8FSmhQuMxjEvtSRxOBuWBn0A7L
+        Mt8xiSJKdqEBiW/yRJWm6cSMfkTicCjq1eILExXsyuiowoyHDAsaIHLh59ydhtrK
+        LcQ800/uSVxgczMfFT+3cWfhiHvaJppspak48tBi8j8uSZRfclAemBLayRkL4JZZ
+        Bw3H5cZuGSbIX33+6EfzlYZIXbR5CfuGV9IxPJU3sF/rXOCgfF/fQ5QVlYQ8lrQ2
+        DWJrRm9AI95il1TFGIXleDnUTDunj9qA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=18XKH3GFDQ+Ep+q25
+        Q1/K+i7TdNK2S5fPAytfxlQ4CI=; b=FPeBWKiF5ixx9K2jTufISYHPrNvtx2kgq
+        Ov9bgLg/tsfTmAvPRhim+CTgoL2rYSSJaa1loKyp2T7D57vQOjBOVaecwHrftBm8
+        1LkHsHXvMuplSbUJ/G4EWNAHqf7jsHjjn88qz9o18EPrcA7MwsDwmr+DOQBd97qb
+        qMQqT5v0yMqQF35jEwKy8dbcKpquSVgHws9S4R3xqICfbdnSnUFQzR/wjcrby7gz
+        KF7GSum2TbbB3nrcHLd0MHqJyICVCKjkR+NAlyu+K47Q5cNhG761RVqSdWqUxvpb
+        PV3WhbTWCrdrOq+jrguACJgBFg8tJMh/B6wFXrE/VnVrLBG3xx6Hg==
+X-ME-Sender: <xms:16ExYg0kON57HZjw6oripiZsO5sTtChVj8yMt6MIvZZi2h9v6GSQkw>
+    <xme:16ExYrEjPdgT3gGav0ygTkxw9y352rs_hsjRLCOco5F0BaEcfC9zKHaILNmEwsvBD
+    6bZb91zjTomTK-Bqw4>
+X-ME-Received: <xmr:16ExYo6QpVwIUDFo0T7a7qbLN-YX_vmzJFb2Iwwj2YOCoEqlhk61ez-uzVUgBnTKczCT7sxA1z58rkLhAi3xdniWnVMXGG_yZNrsgU0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudefuddguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeevveefffduveeitdegtefhhfetueffteefffdvheevvdehteethedvleff
+    gfejvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:16ExYp2MKd40NjsLWoDrdEnAJkh24XvOKoyANkNxIor2KQEDZzITCw>
+    <xmx:16ExYjGxBe8rUaSCg6lmuxuVjX5O3R1gzXA-W1gQrh72wqtRDySLvA>
+    <xmx:16ExYi8UsTop4VeK8MPd96mgSt1GiRO--6kjVpR0hDxkLNRh0_JZcw>
+    <xmx:16ExYo6m2r3WN1YgHrQM0IouYUj0o1uBBf7w0jc1XXxxoXt4klcckg>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 16 Mar 2022 04:37:43 -0400 (EDT)
+Date:   Wed, 16 Mar 2022 09:37:41 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v7 00/12] clk: Improve clock range handling
+Message-ID: <20220316083741.5hvuli2cvxlqr2ji@houat>
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220312030842.DB69FC340E9@smtp.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d4e11d81-dae3-444d-ff92-08da0727f67d
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB4736:EE_
-X-Microsoft-Antispam-PRVS: <SJ0PR10MB473655033FC89940752985038E119@SJ0PR10MB4736.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: bvhuK9TsiWTHtvDxqn1Fm+UZawXKlH1bki9emG6007aHXpjcDW8wB5CH1oPdgoicPmHcIYDQILJOOegRvt+KiHR3330wSM8kNca/08DXWKE0KaUtQTOWzW85JabG6jjxBh2wG+QOBm7xtNS2fADguVbyx6z+lwkhr+T3wxh5Ct8ZOwHgQOn78Wzaa8JutPBVAzXkpOgeSW9DPJvIS5gMRo08Zzk7fKREQQkT+pXgIDr/b22/ZzDiUjB0Vdvmbax793yuklL6pc8rBXY8OjsmDETWE1c4I4E9FR9MOr+i9uI0i5C8Q3mHvBj5b7h0GpBgRzd630Q1Y8LjBAsungOaKXBKat6sKBC/cVHerElXO7h3lEn07CM9ar2tcUnEFWWzKCLFvMJafSZNTFxJ0ZTus1pqlOHul9uIW+gDE+3ER0s/PAAW0rg8TZUCQz5HoFIZ9GiPhp9+RDOKQXCTbJWy1mOQ3N7d2HOYIJKLDuwxlE5ijkT1Qe5jHii2EUjiWhYJKuW/o+oQ32j3z7MjEdrp4O6c5ITkujT0t99A6V/gUXfLD07pPflOtvUnzwCpTeHdNNp2zn/MIs2NMXCnrtaEtXTjs1w8gdRJyf5bBC34cDOD2ejk38BWJxgwJfXooGgb/cohg+RFrbP+c/UWqfVpvG5oZQyIcUPERxSlMej40RmD7t89LmfyMQ8vZTVlMfbBebd/ZTi+taVqSzxvql1O4g==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(366004)(110136005)(508600001)(6486002)(4326008)(38350700002)(38100700002)(33716001)(86362001)(5660300002)(8936002)(66556008)(66476007)(8676002)(316002)(66946007)(83380400001)(52116002)(6506007)(9686003)(6512007)(6666004)(186003)(26005)(1076003)(2906002)(33656002)(44832011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+nKXGbqUqUyHOr4heEOjShkOLdO4erD/6ZhfLSbE1JUIQrHEkttmMXEwBJR1?=
- =?us-ascii?Q?Nl9pOm6Ew1kjbea5S/mK78i0+ho1df8HrBcS1daBzWPXTuzIfq735wTcMi+L?=
- =?us-ascii?Q?k+Gx9bBnBpxD/U9b/6IiXrWRr9WX26q3L50VdnTykSxJxLiuFuKZMCcBPTNV?=
- =?us-ascii?Q?jgffvZaw2yr2htR4wHmH7klA3sAtwRrfaNhA0EdCbjyjLVeRAOUUVTvoOcy5?=
- =?us-ascii?Q?PV6gigZzWQx7f3fGC8FCIJkAa8ijmkfsZma3gJlX5eFlDHiiQRGGkeof+q3y?=
- =?us-ascii?Q?qSI+DrV7dflUTczv6T7oC0q9eA6Z3dZUCsIsu+5hBj7Rr2vL1qkIoIvrzJf4?=
- =?us-ascii?Q?kg6HKwuUDiINznuoUjs2N2vVGkollwL00J25VXgEPwHkUw8Hn+ZOPukfSanr?=
- =?us-ascii?Q?r4tR0GAbOSkpSPND9zwnyJwuqFZ1TGCCyYuvYKaRVCku88hAiVv4FdKEPqTV?=
- =?us-ascii?Q?iHxQkvv3jxxkSPEWpiYPQYhAXJftcSCLrDBcGGmaLJ/U6wKfY0eRTi06qRGw?=
- =?us-ascii?Q?iPlfCqVx08uXz+NzSIC1VZMhpDfyNQLPWcTl5PpePaeynkO7QvcqE9Dc3X+V?=
- =?us-ascii?Q?IyY0KBj5P3g1tXU9AGf21pbY4v6QLCjj5W2BgRix1v+fGoLfGv0xpG1vVqaD?=
- =?us-ascii?Q?5Ac/U5eiNK4/MS/uOI5z4z1enun+vdzRApf78qPNDpMN2QeluKiQffkBjiQp?=
- =?us-ascii?Q?c7Zz2TnmpL21IobP2Q5X/763PcFkPlQiiRaftn/hXE4ZL0SgsAu1cO2kRFYH?=
- =?us-ascii?Q?FprzKOVZUe0BagId6q7/KsyuDLlmgjR3Fxzqh2rVzFYSTupJiosk5kFQR8UV?=
- =?us-ascii?Q?YHF0fovlhJXNrpoYu4SzXlokDMPlgByczgn2kM0ynWlxrvt4Tm+nr/ZS/3qL?=
- =?us-ascii?Q?wixBITTV1JONsXSf0ZPJAdd3XmZBfW9rmlbxCpXfke+rGxV8xnmkR4HeqCeG?=
- =?us-ascii?Q?QbuhfTya8qY/71L6TUs5JHj3ACLv1V7faeRLHlJ+SZNKXgsBcdsvd59PhP/t?=
- =?us-ascii?Q?WjRYfExPN4Yj+aNPin0hO+WlK4klI+JcfUBwDiFotB8Pjl7aHLhXpMhnLq6r?=
- =?us-ascii?Q?/Ve+JE1BaNBRbNb1odEnsNJdOgymnUQylmS16wy9sIt9QsPYu4ZX4PpMDMjp?=
- =?us-ascii?Q?IkKzjfaGQWsSdDOdNUsp6Ex4LuRjJ0lyPHOk76nfE4c9lvRLVgY6KN2aA3k6?=
- =?us-ascii?Q?il6EOQrnPw9wPzTiIv1yGBZksu5N2qkgIUr+U3DejEJt8SXVwalJKUzpvvy/?=
- =?us-ascii?Q?aWTKBMXpmUZPOhaocPuf0Vp9Vv0DGSqshImWOQ04CcDHwHioWsXpoZM5wFs5?=
- =?us-ascii?Q?ukdxco9uukzp3DP0g7J5riLb00y7o1SiEdSdV35E8+vGvk/7tKXhrPPCBknn?=
- =?us-ascii?Q?LL8c/Y5l8ZXYYFYk929e+cNUEotCIhngCB21Q14luowntm2VxQVdA5g5w8yF?=
- =?us-ascii?Q?KthzCPvqQn5heb8gcZ+9/wD1LB6zx1mJyjonsexzOvDqjpXRxgLL1w=3D=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4e11d81-dae3-444d-ff92-08da0727f67d
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2022 08:35:45.0980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zvmwmlGjWNjdAlS6wlFRBE89ItY5FFhVXxB4G4C1UZvSF/A4KKgMWXQjzaHMdFnLZp6n8ewZkVlWSWnMkrqERLV7Hn7/5TnQ9irf/dFrnL4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4736
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10287 signatures=693139
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203160052
-X-Proofpoint-GUID: xmP2QscQyUHCEF6l2b__IX71hj4bR3M7
-X-Proofpoint-ORIG-GUID: xmP2QscQyUHCEF6l2b__IX71hj4bR3M7
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mdxmlp5d2ghaq3tj"
+Content-Disposition: inline
+In-Reply-To: <20220312030842.DB69FC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This code was using -1 to represent that there was no reset function.
-Unfortunately, the -1 was stored in u8 so the if (clks[i].rs_id >= 0)
-condition was always true.  This lead to an out of bounds access in
-visconti_clk_register_gates().
 
-Fixes: b4cbe606dc36 ("clk: visconti: Add support common clock driver and reset driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/clk/visconti/clkc.h          | 3 +++
- drivers/clk/visconti/clkc-tmpv770x.c | 2 +-
- drivers/clk/visconti/clkc.c          | 2 +-
- 3 files changed, 5 insertions(+), 2 deletions(-)
+--mdxmlp5d2ghaq3tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/visconti/clkc.h b/drivers/clk/visconti/clkc.h
-index 09ed82ff64e4..8756a1ec42ef 100644
---- a/drivers/clk/visconti/clkc.h
-+++ b/drivers/clk/visconti/clkc.h
-@@ -73,4 +73,7 @@ int visconti_clk_register_gates(struct visconti_clk_provider *data,
- 				 int num_gate,
- 				 const struct visconti_reset_data *reset,
- 				 spinlock_t *lock);
-+
-+#define NO_RESET 0xFF
-+
- #endif /* _VISCONTI_CLKC_H_ */
-diff --git a/drivers/clk/visconti/clkc-tmpv770x.c b/drivers/clk/visconti/clkc-tmpv770x.c
-index c2b2f41a85a4..6c753b2cb558 100644
---- a/drivers/clk/visconti/clkc-tmpv770x.c
-+++ b/drivers/clk/visconti/clkc-tmpv770x.c
-@@ -176,7 +176,7 @@ static const struct visconti_clk_gate_table clk_gate_tables[] = {
- 	{ TMPV770X_CLK_WRCK, "wrck",
- 		clks_parent_data, ARRAY_SIZE(clks_parent_data),
- 		0, 0x68, 0x168, 9, 32,
--		-1, }, /* No reset */
-+		NO_RESET, },
- 	{ TMPV770X_CLK_PICKMON, "pickmon",
- 		clks_parent_data, ARRAY_SIZE(clks_parent_data),
- 		0, 0x10, 0x110, 8, 4,
-diff --git a/drivers/clk/visconti/clkc.c b/drivers/clk/visconti/clkc.c
-index 56a8a4ffebca..d0b193b5d0b3 100644
---- a/drivers/clk/visconti/clkc.c
-+++ b/drivers/clk/visconti/clkc.c
-@@ -147,7 +147,7 @@ int visconti_clk_register_gates(struct visconti_clk_provider *ctx,
- 		if (!dev_name)
- 			return -ENOMEM;
- 
--		if (clks[i].rs_id >= 0) {
-+		if (clks[i].rs_id != NO_RESET) {
- 			rson_offset = reset[clks[i].rs_id].rson_offset;
- 			rsoff_offset = reset[clks[i].rs_id].rsoff_offset;
- 			rs_idx = reset[clks[i].rs_id].rs_idx;
--- 
-2.20.1
+Hi,
 
+On Fri, Mar 11, 2022 at 07:08:39PM -0800, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2022-02-25 06:35:22)
+> > Hi,
+> >=20
+> > This is a follow-up of the discussion here:
+> > https://lore.kernel.org/linux-clk/20210319150355.xzw7ikwdaga2dwhv@gilmo=
+ur/
+> >=20
+> > and here:
+> > https://lore.kernel.org/all/20210914093515.260031-1-maxime@cerno.tech/
+> >=20
+> > While the initial proposal implemented a new API to temporarily raise a=
+nd lower
+> > clock rates based on consumer workloads, Stephen suggested an
+> > alternative approach implemented here.
+> >=20
+> > The main issue that needed to be addressed in our case was that in a
+> > situation where we would have multiple calls to clk_set_rate_range, we
+> > would end up with a clock at the maximum of the minimums being set. This
+> > would be expected, but the issue was that if one of the users was to
+> > relax or drop its requirements, the rate would be left unchanged, even
+> > though the ideal rate would have changed.
+> >=20
+> > So something like
+> >=20
+> > clk_set_rate(user1_clk, 1000);
+> > clk_set_min_rate(user1_clk, 2000);
+> > clk_set_min_rate(user2_clk, 3000);
+> > clk_set_min_rate(user2_clk, 1000);
+> >=20
+> > Would leave the clock running at 3000Hz, while the minimum would now be
+> > 2000Hz.
+> >=20
+> > This was mostly due to the fact that the core only triggers a rate
+> > change in clk_set_rate_range() if the current rate is outside of the
+> > boundaries, but not if it's within the new boundaries.
+> >=20
+> > That series changes that and will trigger a rate change on every call,
+> > with the former rate being tried again. This way, providers have a
+> > chance to follow whatever policy they see fit for a given clock each
+> > time the boundaries change.
+> >=20
+> > This series also implements some kunit tests, first to test a few rate
+> > related functions in the CCF, and then extends it to make sure that
+> > behaviour has some test coverage.
+> >=20
+> > Let me know what you think
+>=20
+> Thanks. I'm going to apply this to clk-next but not the last two drm
+> patches. That is OK?
+
+Yes, that will be perfect, thanks!
+Maxime
+
+--mdxmlp5d2ghaq3tj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYjGh1QAKCRDj7w1vZxhR
+xe+0AQCXDnxMwBcdSas+jyIQJCIGV1nH10as/gYsRRfoxH63mwD+Ie0RrDh9YB1m
+dNrIjZlCP0+Ijrn9vHDT5uvla1NklQ0=
+=PeNm
+-----END PGP SIGNATURE-----
+
+--mdxmlp5d2ghaq3tj--
