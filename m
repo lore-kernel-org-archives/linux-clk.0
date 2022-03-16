@@ -2,381 +2,175 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D805BC43219
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 13:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1014DC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 15:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356154AbiCPNOC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 09:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40956 "EHLO
+        id S241839AbiCPPHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 11:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356136AbiCPNNy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 09:13:54 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F5E66C80;
-        Wed, 16 Mar 2022 06:12:28 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GAFxGW001886;
-        Wed, 16 Mar 2022 14:12:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=sJ1oIyVC/AnxmiVrqN8MoR+Qt7gRUBhnVNSOUHrRRO0=;
- b=ciDuNV8S7y2hCg8/J6L3tlA5hHw+7SDtffXDmux/S0mlNfM4MXstEg83G1ETQKFXfgio
- vacQQmva92+bdqxI2rpTO6+b30RLMalnQcJ5KVIoJAKKgq/7Dzboj2MyDKOwkBESom6P
- qflpfE1kKQfsF1h7nPMtT7ukR9lhSobf2aIqbCdEBlQoV4hDotUyt7QfttcceAGXjFoQ
- KXols+6hTOnOkbXHZA+7EFSsCH7YyKCLgbn/kT3dcVCW0RZ8Eig/OyIFFFWVh/Mu06yW
- GOv85QxXdf/gv81YOHX9C76E2XJD/2jur5AXPOELXROgEsOUiyE+Mx/8bhDpjGjATFCg bQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ethxu2hpf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Mar 2022 14:12:17 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1B7C410002A;
-        Wed, 16 Mar 2022 14:12:17 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 12E6921FE9F;
-        Wed, 16 Mar 2022 14:12:17 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar 2022 14:12:16
- +0100
-From:   <gabriel.fernandez@foss.st.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND v3 13/13] ARM: dts: stm32: add RCC on STM32MP13x SoC family
-Date:   Wed, 16 Mar 2022 14:10:00 +0100
-Message-ID: <20220316131000.9874-14-gabriel.fernandez@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220316131000.9874-1-gabriel.fernandez@foss.st.com>
-References: <20220316131000.9874-1-gabriel.fernandez@foss.st.com>
+        with ESMTP id S1354879AbiCPPHt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 11:07:49 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2B8245B6
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 08:06:35 -0700 (PDT)
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0B6233F1A1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 15:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647443194;
+        bh=BsP1eItj+J1d4aDzpqEMBIF5j1znYVUHQj+VHIPIFgg=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+         MIME-Version;
+        b=cQUCJfUc+0v77YlbHiCktjmuJhf7N7YpkQzgG7n8h7CYk2OHQXK1L4L4CKfs5l+ew
+         ySGKYF8qRJp5Ba67qS7YamvKebJIGjT35pJkTcpMARD+yrSLXL/6bcGXvFvogeJ+sp
+         vW4cFy+UztYY8lC7WU5QIZAWdNlFYaLMazjHMgj65p0iXp6OWTihJ1M7q24hsZrmSP
+         dX1TvEAK0/mrF6JG9Mg1rYDKjQnoYjCEgGMB7A78rbS8jt2W+IgmecgvxUX85Wg5LJ
+         KJp1Eon3v9b+62o+tHbBkBcOc6mstFg5UBXpdacINZtbCUwEGDKUfvNwV5pMPZ4juA
+         /T9iYiAicRyvA==
+Received: by mail-wr1-f71.google.com with SMTP id t15-20020adfdc0f000000b001ef93643476so672314wri.2
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 08:06:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BsP1eItj+J1d4aDzpqEMBIF5j1znYVUHQj+VHIPIFgg=;
+        b=N49opY8UZGyLvP5crJcwBK0IPeQmfEFG5pMMgX8K6kQdKP14PvdurlJkOTyOdMg8e5
+         VYJS3xIl22LlZ46FdVgks1CevhllgCbFYWHt3aQCQHoI0/gxSbSJxQjE1ZN9V5avxvfs
+         VprkszkfKD2E1ENPFOQrfbVwz/wgWTfxMM/pw9UxmgrZLmrQWvMMA1/9u2sy55apXd5E
+         KE1S8lRs0/Pz8mPTQUc4zz9zyxUlFfikMK9AjF4xihQV7+rDu+2kOj0xgAE2ro55OKvi
+         Q5oJoFqoWQ6k8D2mA26dlca/UrN0iRYM5VjNlweTIOqiJiaSjuJYyFLSZMeFhJ6iImo2
+         SVZg==
+X-Gm-Message-State: AOAM530kyhFxl+zZCVuQf14Q/HQ3IeIXc5wIPYnevy7L80BBq1P0k89C
+        Fzr8gSWZ18olYJoJAJ4ioiEqW2V6vpp1uxU1/KCiWvv5+DVRjQ+rIspkSiXGlB1OO5OHm4+gzEU
+        Jm55uooniSpuez+cRpMDoVzNtKuoAsldgFBhYuw==
+X-Received: by 2002:adf:f68d:0:b0:203:7b96:a7ff with SMTP id v13-20020adff68d000000b002037b96a7ffmr326840wrp.101.1647443193784;
+        Wed, 16 Mar 2022 08:06:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxoarwZUHPsM12itXV7mRUexTXGgAuLA6KWe3K/HjtbGdnXbQ8PTTCIoN4L2QaZn0F+apvl9w==
+X-Received: by 2002:adf:f68d:0:b0:203:7b96:a7ff with SMTP id v13-20020adff68d000000b002037b96a7ffmr326805wrp.101.1647443193616;
+        Wed, 16 Mar 2022 08:06:33 -0700 (PDT)
+Received: from localhost.localdomain (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id p14-20020a5d59ae000000b00203dcc87d39sm3130155wrr.54.2022.03.16.08.06.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 08:06:32 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Subject: [PATCH v5 03/11] fsl-mc: Use driver_set_override() instead of open-coding
+Date:   Wed, 16 Mar 2022 16:05:25 +0100
+Message-Id: <20220316150533.421349-4-krzysztof.kozlowski@canonical.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220316150533.421349-1-krzysztof.kozlowski@canonical.com>
+References: <20220316150533.421349-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-16_05,2022-03-15_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Use a helper to set driver_override to reduce the amount of duplicated
+code.  Make the driver_override field const char, because it is not
+modified by the core and it matches other subsystems.
 
-Enables Reset and Clocks Controller on STM32MP13
-
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 ---
- arch/arm/boot/dts/stm32mp131.dtsi  | 107 +++++++++++------------------
- arch/arm/boot/dts/stm32mp133.dtsi  |   4 +-
- arch/arm/boot/dts/stm32mp13xf.dtsi |   3 +-
- 3 files changed, 46 insertions(+), 68 deletions(-)
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 25 ++++---------------------
+ include/linux/fsl/mc.h          |  6 ++++--
+ 2 files changed, 8 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp131.dtsi b/arch/arm/boot/dts/stm32mp131.dtsi
-index 78eac53224d4..d7300b00ec19 100644
---- a/arch/arm/boot/dts/stm32mp131.dtsi
-+++ b/arch/arm/boot/dts/stm32mp131.dtsi
-@@ -4,6 +4,8 @@
-  * Author: Alexandre Torgue <alexandre.torgue@foss.st.com> for STMicroelectronics.
-  */
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/stm32mp13-clks.h>
-+#include <dt-bindings/reset/stm32mp13-resets.h>
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+index 8fd4a356a86e..ba01c7f4de92 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -166,31 +166,14 @@ static ssize_t driver_override_store(struct device *dev,
+ 				     const char *buf, size_t count)
+ {
+ 	struct fsl_mc_device *mc_dev = to_fsl_mc_device(dev);
+-	char *driver_override, *old = mc_dev->driver_override;
+-	char *cp;
++	int ret;
  
- / {
- 	#address-cells = <1>;
-@@ -64,54 +66,8 @@ scmi_reset: protocol@16 {
- 			};
- 		};
- 	};
--	clocks {
--		clk_axi: clk-axi {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <266500000>;
--		};
--
--		clk_hse: clk-hse {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <24000000>;
--		};
--
--		clk_hsi: clk-hsi {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <64000000>;
--		};
--
--		clk_lsi: clk-lsi {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <32000>;
--		};
--
--		clk_pclk3: clk-pclk3 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <104438965>;
--		};
+ 	if (WARN_ON(dev->bus != &fsl_mc_bus_type))
+ 		return -EINVAL;
  
--		clk_pclk4: clk-pclk4 {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <133250000>;
--		};
+-	if (count >= (PAGE_SIZE - 1))
+-		return -EINVAL;
 -
--		clk_pll4_p: clk-pll4_p {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <50000000>;
--		};
+-	driver_override = kstrndup(buf, count, GFP_KERNEL);
+-	if (!driver_override)
+-		return -ENOMEM;
 -
--		clk_pll4_r: clk-pll4_r {
--			#clock-cells = <0>;
--			compatible = "fixed-clock";
--			clock-frequency = <99000000>;
--		};
-+	clocks {
- 	};
+-	cp = strchr(driver_override, '\n');
+-	if (cp)
+-		*cp = '\0';
+-
+-	if (strlen(driver_override)) {
+-		mc_dev->driver_override = driver_override;
+-	} else {
+-		kfree(driver_override);
+-		mc_dev->driver_override = NULL;
+-	}
+-
+-	kfree(old);
++	ret = driver_set_override(dev, &mc_dev->driver_override, buf, count);
++	if (ret)
++		return ret;
  
- 	intc: interrupt-controller@a0021000 {
-@@ -148,7 +104,8 @@ uart4: serial@40010000 {
- 			compatible = "st,stm32h7-uart";
- 			reg = <0x40010000 0x400>;
- 			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_hsi>;
-+			clocks = <&rcc UART4_K>;
-+			resets = <&rcc UART4_R>;
- 			status = "disabled";
- 		};
+ 	return count;
+ }
+diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
+index 7b6c42bfb660..7a87ab9eba99 100644
+--- a/include/linux/fsl/mc.h
++++ b/include/linux/fsl/mc.h
+@@ -170,7 +170,9 @@ struct fsl_mc_obj_desc {
+  * @regions: pointer to array of MMIO region entries
+  * @irqs: pointer to array of pointers to interrupts allocated to this device
+  * @resource: generic resource associated with this MC object device, if any.
+- * @driver_override: driver name to force a match
++ * @driver_override: driver name to force a match; do not set directly,
++ *                   because core frees it; use driver_set_override() to
++ *                   set or clear it.
+  *
+  * Generic device object for MC object devices that are "attached" to a
+  * MC bus.
+@@ -204,7 +206,7 @@ struct fsl_mc_device {
+ 	struct fsl_mc_device_irq **irqs;
+ 	struct fsl_mc_resource *resource;
+ 	struct device_link *consumer_link;
+-	char   *driver_override;
++	const char *driver_override;
+ };
  
-@@ -163,7 +120,8 @@ dma1: dma-controller@48000000 {
- 				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_pclk4>;
-+			clocks = <&rcc DMA1>;
-+			resets = <&rcc DMA1_R>;
- 			#dma-cells = <4>;
- 			st,mem2mem;
- 			dma-requests = <8>;
-@@ -180,7 +138,8 @@ dma2: dma-controller@48001000 {
- 				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_pclk4>;
-+			clocks = <&rcc DMA2>;
-+			resets = <&rcc DMA2_R>;
- 			#dma-cells = <4>;
- 			st,mem2mem;
- 			dma-requests = <8>;
-@@ -189,13 +148,29 @@ dma2: dma-controller@48001000 {
- 		dmamux1: dma-router@48002000 {
- 			compatible = "st,stm32h7-dmamux";
- 			reg = <0x48002000 0x40>;
--			clocks = <&clk_pclk4>;
-+			clocks = <&rcc DMAMUX1>;
-+			resets = <&rcc DMAMUX1_R>;
- 			#dma-cells = <3>;
- 			dma-masters = <&dma1 &dma2>;
- 			dma-requests = <128>;
- 			dma-channels = <16>;
- 		};
- 
-+		rcc: rcc@50000000 {
-+			compatible = "st,stm32mp13-rcc", "syscon";
-+			reg = <0x50000000 0x1000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+
-+			clock-names = "hse", "hsi", "csi", "lse", "lsi";
-+
-+			clocks = <&scmi_clk CK_SCMI_HSE>,
-+				 <&scmi_clk CK_SCMI_HSI>,
-+				 <&scmi_clk CK_SCMI_CSI>,
-+				 <&scmi_clk CK_SCMI_LSE>,
-+				 <&scmi_clk CK_SCMI_LSI>;
-+		};
-+
- 		exti: interrupt-controller@5000d000 {
- 			compatible = "st,stm32mp13-exti", "syscon";
- 			interrupt-controller;
-@@ -206,14 +181,14 @@ exti: interrupt-controller@5000d000 {
- 		syscfg: syscon@50020000 {
- 			compatible = "st,stm32mp157-syscfg", "syscon";
- 			reg = <0x50020000 0x400>;
--			clocks = <&clk_pclk3>;
-+			clocks = <&rcc SYSCFG>;
- 		};
- 
- 		mdma: dma-controller@58000000 {
- 			compatible = "st,stm32h7-mdma";
- 			reg = <0x58000000 0x1000>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_pclk4>;
-+			clocks = <&rcc MDMA>;
- 			#dma-cells = <5>;
- 			dma-channels = <32>;
- 			dma-requests = <48>;
-@@ -225,8 +200,9 @@ sdmmc1: mmc@58005000 {
- 			reg = <0x58005000 0x1000>, <0x58006000 0x1000>;
- 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "cmd_irq";
--			clocks = <&clk_pll4_p>;
-+			clocks = <&rcc SDMMC1_K>;
- 			clock-names = "apb_pclk";
-+			resets = <&rcc SDMMC1_R>;
- 			cap-sd-highspeed;
- 			cap-mmc-highspeed;
- 			max-frequency = <130000000>;
-@@ -239,8 +215,9 @@ sdmmc2: mmc@58007000 {
- 			reg = <0x58007000 0x1000>, <0x58008000 0x1000>;
- 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "cmd_irq";
--			clocks = <&clk_pll4_p>;
-+			clocks = <&rcc SDMMC2_K>;
- 			clock-names = "apb_pclk";
-+			resets = <&rcc SDMMC2_R>;
- 			cap-sd-highspeed;
- 			cap-mmc-highspeed;
- 			max-frequency = <130000000>;
-@@ -250,7 +227,7 @@ sdmmc2: mmc@58007000 {
- 		iwdg2: watchdog@5a002000 {
- 			compatible = "st,stm32mp1-iwdg";
- 			reg = <0x5a002000 0x400>;
--			clocks = <&clk_pclk4>, <&clk_lsi>;
-+			clocks = <&rcc IWDG2>, <&scmi_clk CK_SCMI_LSI>;
- 			clock-names = "pclk", "lsi";
- 			status = "disabled";
- 		};
-@@ -289,7 +266,7 @@ gpioa: gpio@50002000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x0 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOA>;
- 				st,bank-name = "GPIOA";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 0 16>;
-@@ -301,7 +278,7 @@ gpiob: gpio@50003000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x1000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOB>;
- 				st,bank-name = "GPIOB";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 16 16>;
-@@ -313,7 +290,7 @@ gpioc: gpio@50004000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x2000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOC>;
- 				st,bank-name = "GPIOC";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 32 16>;
-@@ -325,7 +302,7 @@ gpiod: gpio@50005000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x3000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOD>;
- 				st,bank-name = "GPIOD";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 48 16>;
-@@ -337,7 +314,7 @@ gpioe: gpio@50006000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x4000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOE>;
- 				st,bank-name = "GPIOE";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 64 16>;
-@@ -349,7 +326,7 @@ gpiof: gpio@50007000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x5000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOF>;
- 				st,bank-name = "GPIOF";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 80 16>;
-@@ -361,7 +338,7 @@ gpiog: gpio@50008000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x6000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOG>;
- 				st,bank-name = "GPIOG";
- 				ngpios = <16>;
- 				gpio-ranges = <&pinctrl 0 96 16>;
-@@ -373,7 +350,7 @@ gpioh: gpio@50009000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x7000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOH>;
- 				st,bank-name = "GPIOH";
- 				ngpios = <15>;
- 				gpio-ranges = <&pinctrl 0 112 15>;
-@@ -385,7 +362,7 @@ gpioi: gpio@5000a000 {
- 				interrupt-controller;
- 				#interrupt-cells = <2>;
- 				reg = <0x8000 0x400>;
--				clocks = <&clk_pclk4>;
-+				clocks = <&rcc GPIOI>;
- 				st,bank-name = "GPIOI";
- 				ngpios = <8>;
- 				gpio-ranges = <&pinctrl 0 128 8>;
-diff --git a/arch/arm/boot/dts/stm32mp133.dtsi b/arch/arm/boot/dts/stm32mp133.dtsi
-index 0fb1386257cf..531c263c9f46 100644
---- a/arch/arm/boot/dts/stm32mp133.dtsi
-+++ b/arch/arm/boot/dts/stm32mp133.dtsi
-@@ -15,7 +15,7 @@ m_can1: can@4400e000 {
- 			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "int0", "int1";
--			clocks = <&clk_hse>, <&clk_pll4_r>;
-+			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
- 			status = "disabled";
-@@ -28,7 +28,7 @@ m_can2: can@4400f000 {
- 			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "int0", "int1";
--			clocks = <&clk_hse>, <&clk_pll4_r>;
-+			clocks = <&scmi_clk CK_SCMI_HSE>, <&rcc FDCAN_K>;
- 			clock-names = "hclk", "cclk";
- 			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
- 			status = "disabled";
-diff --git a/arch/arm/boot/dts/stm32mp13xf.dtsi b/arch/arm/boot/dts/stm32mp13xf.dtsi
-index fa6889e30591..4d00e7592882 100644
---- a/arch/arm/boot/dts/stm32mp13xf.dtsi
-+++ b/arch/arm/boot/dts/stm32mp13xf.dtsi
-@@ -10,7 +10,8 @@ cryp: crypto@54002000 {
- 			compatible = "st,stm32mp1-cryp";
- 			reg = <0x54002000 0x400>;
- 			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&clk_axi>;
-+			clocks = <&rcc CRYP1>;
-+			resets = <&rcc CRYP1_R>;
- 			status = "disabled";
- 		};
- 	};
+ #define to_fsl_mc_device(_dev) \
 -- 
-2.25.1
+2.32.0
 
