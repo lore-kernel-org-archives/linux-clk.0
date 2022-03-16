@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C23C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 12:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CE4C43217
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 12:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355868AbiCPMrf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 08:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33826 "EHLO
+        id S1355878AbiCPMrg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 08:47:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346786AbiCPMre (ORCPT
+        with ESMTP id S1355866AbiCPMre (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 08:47:34 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331483B57A;
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67456548D;
         Wed, 16 Mar 2022 05:46:20 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GAKPMF026976;
-        Wed, 16 Mar 2022 13:46:01 +0100
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GAA4Yv013540;
+        Wed, 16 Mar 2022 13:46:02 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=ZiRrRo4KPczvg2JBhLVWSWvGKQYYdComXd2P4kRbhpU=;
- b=grHcWnMSUrf9ekTryeAcwPrA+f53f9oHPnXNmTZOitoGFc7Lf+SLexN1IwdbFqrjh3+C
- Gg7QAfLxqJfQoYKTfAHhPd2occCtVUKpm1eLgiJlWmKAeCTMbxak33zklQ3wOxrmgtGY
- lkZJ5dTC3YOJ4DdBSbplY7KJFjEHrVrzrLoghkyeprk6nCTflLUCbUIYTYSpMFfi7lvr
- gZ3+T7UWvJskHXWWgPF7LWI+EoTuQQyFt4LqWMgjZOkSHYghs31QI57d+YE8G44c4Cc5
- iKSJZyHzJsCH8OVAfObmovtZdfSfaEYDlEc+j6rmRpe0e3qW+oaZ8uvnX9gaCV/gd+C6 vw== 
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=xQ0LY62N9ucJsRtmmS7ed7yZVgwJC7hBULDEdrXmsp4=;
+ b=G4WdUUHjUULb5wZFHpgXbt+9XrzcIJGjvHqHnwzTy2OYZm4wBWHgOPosiBoGiR/A4EwU
+ i2PITWsjEAiXSXozHLkKLunwDQ78rhPamMfdh/eU6hgUHUhQVYmkjhrLEa7AZ9YHWyJF
+ G/TKfojRwbwnrPLZp6kOggJlY4/9dryVtg0dd7wYghiwi8ncRdTneh+x6jCq9OLsQzRK
+ TxVVco+Aj6SOu8Qb7kv7EIUmgSbB6Tjd8SJWi3XWyHOMuvZVRs4Lo0yg2QjFnWN/Dfbe
+ GS3J6w4IWazcy+PU68kjXw2NGvg+aMNvtzlqWEPo0gs4258x7W+YWtso03H8Wm/9MBPo kw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3etj2atard-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3et63hdhen-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Mar 2022 13:46:01 +0100
+        Wed, 16 Mar 2022 13:46:02 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4318F100038;
-        Wed, 16 Mar 2022 13:46:01 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CA00310002A;
+        Wed, 16 Mar 2022 13:45:57 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3C8CF226FAF;
-        Wed, 16 Mar 2022 13:46:01 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B3729226FB3;
+        Wed, 16 Mar 2022 13:45:57 +0100 (CET)
 Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar 2022 13:46:00
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar 2022 13:45:57
  +0100
 From:   <gabriel.fernandez@foss.st.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -52,12 +52,10 @@ CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 03/13] clk: stm32mp13: add stm32_mux clock management
-Date:   Wed, 16 Mar 2022 13:45:43 +0100
-Message-ID: <20220316124553.6818-4-gabriel.fernandez@foss.st.com>
+Subject: [PATCH v3 00/13] Introduction of STM32MP13 RCC driver (Reset Clock Controller)
+Date:   Wed, 16 Mar 2022 13:45:40 +0100
+Message-ID: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
-References: <20220316124553.6818-1-gabriel.fernandez@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -73,164 +71,56 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-Just to introduce management of a stm32 mux clock.
+v3:
+  - cosmetic change from Stephen Boyd
+  - rename some functions in clk-stm32-core
+  - add missing static for variables or functions
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
----
- drivers/clk/stm32/clk-stm32-core.c | 79 ++++++++++++++++++++++++++++++
- drivers/clk/stm32/clk-stm32-core.h | 24 +++++++++
- drivers/clk/stm32/clk-stm32mp13.c  | 11 +++++
- 3 files changed, 114 insertions(+)
+v2:
+  - Resend because patch 9,10,12,13 has not been sent
+  - add Reviewed by Krzysztof Kozlowski for patch 1
 
-diff --git a/drivers/clk/stm32/clk-stm32-core.c b/drivers/clk/stm32/clk-stm32-core.c
-index 0fab4a5a8c66..98699093eb21 100644
---- a/drivers/clk/stm32/clk-stm32-core.c
-+++ b/drivers/clk/stm32/clk-stm32-core.c
-@@ -91,3 +91,82 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
- 
- 	return 0;
- }
-+
-+static u8 stm32_mux_get_parent(void __iomem *base,
-+			       struct clk_stm32_clock_data *data,
-+			       u16 mux_id)
-+{
-+	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
-+	u32 mask = BIT(mux->width) - 1;
-+	u32 val;
-+
-+	val = readl(base + mux->offset) >> mux->shift;
-+	val &= mask;
-+
-+	return val;
-+}
-+
-+static int stm32_mux_set_parent(void __iomem *base,
-+				struct clk_stm32_clock_data *data,
-+				u16 mux_id, u8 index)
-+{
-+	const struct stm32_mux_cfg *mux = &data->muxes[mux_id];
-+
-+	u32 mask = BIT(mux->width) - 1;
-+	u32 reg = readl(base + mux->offset);
-+	u32 val = index << mux->shift;
-+
-+	reg &= ~(mask << mux->shift);
-+	reg |= val;
-+
-+	writel(reg, base + mux->offset);
-+
-+	return 0;
-+}
-+
-+static u8 clk_stm32_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
-+
-+	return stm32_mux_get_parent(mux->base, mux->clock_data, mux->mux_id);
-+}
-+
-+static int clk_stm32_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_stm32_mux *mux = to_clk_stm32_mux(hw);
-+	unsigned long flags = 0;
-+
-+	spin_lock_irqsave(mux->lock, flags);
-+
-+	stm32_mux_set_parent(mux->base, mux->clock_data, mux->mux_id, index);
-+
-+	spin_unlock_irqrestore(mux->lock, flags);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_stm32_mux_ops = {
-+	.get_parent	= clk_stm32_mux_get_parent,
-+	.set_parent	= clk_stm32_mux_set_parent,
-+};
-+
-+struct clk_hw *clk_stm32_mux_register(struct device *dev,
-+				      const struct stm32_rcc_match_data *data,
-+				      void __iomem *base,
-+				      spinlock_t *lock,
-+				      const struct clock_config *cfg)
-+{
-+	struct clk_stm32_mux *mux = cfg->clock_cfg;
-+	struct clk_hw *hw = &mux->hw;
-+	int err;
-+
-+	mux->base = base;
-+	mux->lock = lock;
-+	mux->clock_data = data->clock_data;
-+
-+	err = clk_hw_register(dev, hw);
-+	if (err)
-+		return ERR_PTR(err);
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/stm32/clk-stm32-core.h b/drivers/clk/stm32/clk-stm32-core.h
-index 519723ae97eb..8563e6e1c91a 100644
---- a/drivers/clk/stm32/clk-stm32-core.h
-+++ b/drivers/clk/stm32/clk-stm32-core.h
-@@ -83,10 +83,34 @@ int stm32_rcc_init(struct device *dev, const struct of_device_id *match_data,
- /* DIV define */
- #define DIV_NO_RDY		0xFF
- 
-+/* Definition of clock structure */
-+struct clk_stm32_mux {
-+	u16 mux_id;
-+	struct clk_hw hw;
-+	void __iomem *base;
-+	struct clk_stm32_clock_data *clock_data;
-+	spinlock_t *lock; /* spin lock */
-+};
-+
-+#define to_clk_stm32_mux(_hw) container_of(_hw, struct clk_stm32_mux, hw)
-+
-+/* Clock operators */
-+extern const struct clk_ops clk_stm32_mux_ops;
-+
- /* Clock registering */
-+struct clk_hw *clk_stm32_mux_register(struct device *dev,
-+				      const struct stm32_rcc_match_data *data,
-+				      void __iomem *base,
-+				      spinlock_t *lock,
-+				      const struct clock_config *cfg);
-+
- #define STM32_CLOCK_CFG(_binding, _clk, _struct, _register)\
- {\
- 	.id		= (_binding),\
- 	.clock_cfg	= (_struct) {_clk},\
- 	.func		= (_register),\
- }
-+
-+#define STM32_MUX_CFG(_binding, _clk)\
-+	STM32_CLOCK_CFG(_binding, &(_clk), struct clk_stm32_mux *,\
-+			&clk_stm32_mux_register)
-diff --git a/drivers/clk/stm32/clk-stm32mp13.c b/drivers/clk/stm32/clk-stm32mp13.c
-index a2a6bbb4ace5..40568a676111 100644
---- a/drivers/clk/stm32/clk-stm32mp13.c
-+++ b/drivers/clk/stm32/clk-stm32mp13.c
-@@ -400,7 +400,18 @@ static const struct stm32_mux_cfg stm32mp13_muxes[] = {
- 	CFG_MUX(MUX_SDMMC2,	RCC_SDMMC12CKSELR,	3, 3),
- };
- 
-+static const char * const eth12_src[] = {
-+	"pll4_p", "pll3_q"
-+};
-+
-+static struct clk_stm32_mux ck_ker_eth1 = {
-+	.mux_id = MUX_ETH1,
-+	.hw.init = CLK_HW_INIT_PARENTS("ck_ker_eth1", eth12_src, &clk_stm32_mux_ops,
-+				       CLK_OPS_PARENT_ENABLE | CLK_SET_RATE_NO_REPARENT),
-+};
-+
- static const struct clock_config stm32mp13_clock_cfg[] = {
-+	STM32_MUX_CFG(NO_ID, ck_ker_eth1),
- };
- 
- static u16 stm32mp13_cpt_gate[GATE_NB];
+Gabriel Fernandez (13):
+  dt-bindings: rcc: stm32: add new compatible for STM32MP13 SoC
+  clk: stm32: Introduce STM32MP13 RCC drivers (Reset Clock Controller)
+  clk: stm32mp13: add stm32_mux clock management
+  clk: stm32mp13: add stm32_gate management
+  clk: stm32mp13: add stm32 divider clock
+  clk: stm32mp13: add composite clock
+  clk: stm32mp13: manage secured clocks
+  clk: stm32mp13: add all STM32MP13 peripheral clocks
+  clk: stm32mp13: add all STM32MP13 kernel clocks
+  clk: stm32mp13: add multi mux function
+  clk: stm32mp13: add safe mux management
+  ARM: dts: stm32: enable optee firmware and SCMI support on STM32MP13
+  ARM: dts: stm32: add RCC on STM32MP13x SoC family
+
+ .../bindings/clock/st,stm32mp1-rcc.yaml       |    2 +
+ arch/arm/boot/dts/stm32mp131.dtsi             |  128 +-
+ arch/arm/boot/dts/stm32mp133.dtsi             |    4 +-
+ arch/arm/boot/dts/stm32mp13xf.dtsi            |    3 +-
+ drivers/clk/Kconfig                           |    5 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/stm32/Makefile                    |    1 +
+ drivers/clk/stm32/clk-stm32-core.c            |  695 +++++++
+ drivers/clk/stm32/clk-stm32-core.h            |  188 ++
+ drivers/clk/stm32/clk-stm32mp13.c             | 1620 +++++++++++++++
+ drivers/clk/stm32/reset-stm32.c               |  122 ++
+ drivers/clk/stm32/reset-stm32.h               |    8 +
+ drivers/clk/stm32/stm32mp13_rcc.h             | 1748 +++++++++++++++++
+ include/dt-bindings/clock/stm32mp13-clks.h    |  229 +++
+ include/dt-bindings/reset/stm32mp13-resets.h  |  100 +
+ 15 files changed, 4794 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/clk/stm32/Makefile
+ create mode 100644 drivers/clk/stm32/clk-stm32-core.c
+ create mode 100644 drivers/clk/stm32/clk-stm32-core.h
+ create mode 100644 drivers/clk/stm32/clk-stm32mp13.c
+ create mode 100644 drivers/clk/stm32/reset-stm32.c
+ create mode 100644 drivers/clk/stm32/reset-stm32.h
+ create mode 100644 drivers/clk/stm32/stm32mp13_rcc.h
+ create mode 100644 include/dt-bindings/clock/stm32mp13-clks.h
+ create mode 100644 include/dt-bindings/reset/stm32mp13-resets.h
+
 -- 
 2.25.1
 
