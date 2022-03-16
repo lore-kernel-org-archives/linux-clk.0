@@ -2,176 +2,253 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8437C43217
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 08:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EDDC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Mar 2022 10:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354764AbiCPI6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Mar 2022 04:58:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33896 "EHLO
+        id S1355199AbiCPKrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Mar 2022 06:47:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354733AbiCPI6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 04:58:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5A831652C0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647421021;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
-        b=V60Ao4Zw1OA7tAOzdGW44leJ0jkElJhSPole8p+6UPMribGjSmwXawi+d7wL2Q1uaj/FON
-        k2CwETmF1FBe7qqQ65ImSpIasQTWKeABDsfs/Z/Z9ZDbgpp3vQdsjJ7ohAKIiOP5I7+x9l
-        Ax1/tYInHk81E+ISM4zKnhPSG9WCdaE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-74-IDbzCevePnS23Ay3rRipNA-1; Wed, 16 Mar 2022 04:56:59 -0400
-X-MC-Unique: IDbzCevePnS23Ay3rRipNA-1
-Received: by mail-wr1-f71.google.com with SMTP id f18-20020adf9f52000000b00203d86759beso320599wrg.11
-        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 01:56:59 -0700 (PDT)
+        with ESMTP id S1349442AbiCPKrX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Mar 2022 06:47:23 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AB8D6353A
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 03:46:07 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id g17so3072743lfh.2
+        for <linux-clk@vger.kernel.org>; Wed, 16 Mar 2022 03:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GteVWLltyK5Jm3+PPqUFpGc+wNqzAaaXRGKL8n97SG4=;
+        b=BUZw5e7LEn7GEHouUIwY6FKJIKkdPJTENZkyseYtgEWUXCnQnmkiLqzDYKLqcLq8Rj
+         hHIYP/XWTPhDgTPME9+bHo7P4h6vpbfnCIbC9VRNYcVKrTnj8iYHM3yLTAA9FRD1pdg5
+         cQTE8ecKbPcHH82NEHlNq4+VAXw3hPZyKiQKbwkei6edZbZ+PWNvNAObOnW6wwp1CxEW
+         WXIXmTkzgciTsQjnVZjzGabv8LXS1bkD4kSOdWOAtdabDsqEFYBQ92NcwogcDH8lQZjl
+         TkvOod4EauvE3CZlLyE5iQxCHQZtkqr1Jg0DIES6b8xR4sq5K6aJ+HS/V99Uk9O+Ogp4
+         mXqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
-        b=hfQVzQuUhDXLQeIUK7HId37Okg06kdGhKJc/gebViG91mbg3CfYpkF9ApwouVMGi3K
-         zB316R01LkZ2gdMzBzni3I5+JHJTxfBZHti0/r51XLOUrzUndX09JHCe8cCJLoEDkGz6
-         pxFwBv/bRvpRtWIm1n0HL9dyfAGry3bC11GGTE4QYMJoV5AvJ+4y8PRjGBzV8XXsAbn1
-         hh0GoQ/ehvPZFrHPvIg31y5hZnxEycapf/ER+GbUltDoPZR84K/dmbOGWai8DQ+HfRi1
-         KAA3Z7skt3fsqqECJTnzuZFw58C4FDOTo2neT3P+vUJMD9kiyeBj95o4yjZ5pxma3/qi
-         YHDw==
-X-Gm-Message-State: AOAM530LdbAeHMt/f/Ctjje0tD+2Tl/arU6wnq3ClxZrIB99OXyyZUXa
-        fiLIAz8O4rtwG7LWQkglM6IPzWdwfZtQXxmeGKPRAsLdqzBlRCT13sCgApaxNr2UdzAOxAolVid
-        msLedkJGJLMt0jWs+6b4/
-X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570202wru.604.1647421018439;
-        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxxg+HdKFc+OlgI5Uf6j74GkTyT+tlDfMeOChHK9/5Na0k8DDsBUyiZqTzroGOmIKGPRSv82g==
-X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570190wru.604.1647421018228;
-        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
-Received: from redhat.com ([2.53.2.35])
-        by smtp.gmail.com with ESMTPSA id p1-20020a5d59a1000000b00203d83b0ae4sm1136056wrr.109.2022.03.16.01.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 01:56:57 -0700 (PDT)
-Date:   Wed, 16 Mar 2022 04:56:48 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v4 08/11] vdpa: Use helper for safer setting of
- driver_override
-Message-ID: <20220316045633-mutt-send-email-mst@kernel.org>
-References: <20220312132856.65163-1-krzysztof.kozlowski@canonical.com>
- <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GteVWLltyK5Jm3+PPqUFpGc+wNqzAaaXRGKL8n97SG4=;
+        b=Hd5z9iBUoPZDsd8oOju6Y2rrmynX1ObibfvcS2aAYC1yMymF/oB0n/0Vc8xWoBh+pX
+         Pxj0aUQETUB0ESCn9keTTgiz/+GwmLo8LuRkGz91w3G3qUK/h547Lg6gBdT+zprkK+y3
+         JYSzVElhcsySeqKgMUQkwkidIqNZiaBpo2SWK/SEaQN6z4ojaX1qDMf/y51e9x+uA8p9
+         FdPzuC2lwBfuo7FmympUiJW/W7wSik+PutR/nGg4aNXwt9oEdEu0rFV3Ur1JAJIf/Oxh
+         e0NJ8hZTuzVh5n/ZZvFI/HrLO3uqwcw9IYDq+HKvhfzoGd8iwhJ6vla9DGWQjT0ioDqI
+         C5ZA==
+X-Gm-Message-State: AOAM533UAxbJHQSJJYyQg1Z9DVaPvobUmGg6h0qJSvdlZIghbXp9aIsC
+        6o73zy3x0sJYsC8cN6h09BnfRnnf3zCGWQTq1lzhbQ==
+X-Google-Smtp-Source: ABdhPJwzs6cfjG1RsK5PU9KcqMqRftnVfbjOUKEeVJGSdrn27baM8pVzLXoTaCgWMMnm2oxC8D3tsQOKtnmZFqMK8Vg=
+X-Received: by 2002:a05:6512:3e0c:b0:448:3480:1fe5 with SMTP id
+ i12-20020a0565123e0c00b0044834801fe5mr19016208lfv.358.1647427565349; Wed, 16
+ Mar 2022 03:46:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
+References: <20220313232926.1004842-1-linus.walleij@linaro.org>
+ <20220313232926.1004842-2-linus.walleij@linaro.org> <20220315222049.DA563C340E8@smtp.kernel.org>
+In-Reply-To: <20220315222049.DA563C340E8@smtp.kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 16 Mar 2022 11:45:29 +0100
+Message-ID: <CAPDyKFrpN3+4aEqQzkQJjOT0VaNEbNhFbSWXH1uP5aNfVRYXWw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: ux500: Implement the missing CLKOUT clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Mar 12, 2022 at 02:28:53PM +0100, Krzysztof Kozlowski wrote:
-> Use a helper to set driver_override to reduce amount of duplicated code.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+On Tue, 15 Mar 2022 at 23:20, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Linus Walleij (2022-03-13 16:29:26)
+> > diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+> > index 937b6bb82b30..e6a27c917126 100644
+> > --- a/drivers/clk/ux500/clk-prcmu.c
+> > +++ b/drivers/clk/ux500/clk-prcmu.c
+> > @@ -14,6 +14,7 @@
+> >  #include "clk.h"
+> >
+> >  #define to_clk_prcmu(_hw) container_of(_hw, struct clk_prcmu, hw)
+> > +#define to_clk_prcmu_clkout(_hw) container_of(_hw, struct clk_prcmu_clkout, hw)
+> >
+> >  struct clk_prcmu {
+> >         struct clk_hw hw;
+> > @@ -23,6 +24,15 @@ struct clk_prcmu {
+> >         int opp_requested;
+> >  };
+> >
+> > +struct clk_prcmu_clkout {
+> > +       struct clk_hw hw;
+> > +       u8 clkout_id;
+> > +       u8 source;
+> > +       u8 divider;
+> > +       int is_prepared;
+> > +       int is_enabled;
+> > +};
+> > +
+> >  /* PRCMU clock operations. */
+> >
+> >  static int clk_prcmu_prepare(struct clk_hw *hw)
+> > @@ -344,3 +354,144 @@ struct clk *clk_reg_prcmu_opp_volt_scalable(const char *name,
+> >         return clk_reg_prcmu(name, parent_name, cg_sel, rate, flags,
+> >                         &clk_prcmu_opp_volt_scalable_ops);
+> >  }
+> > +
+> > +/* The clkout (external) clock is special and need special ops */
+> > +
+> > +static int clk_prcmu_clkout_prepare(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       int ret;
+> > +
+> > +       ret = prcmu_config_clkout(clk->clkout_id, clk->source, clk->divider);
+> > +       if (!ret)
+> > +               clk->is_prepared = 1;
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static void clk_prcmu_clkout_unprepare(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       int ret;
+> > +
+> > +       /* The clkout clock is disabled by dividing by 0 */
+> > +       ret = prcmu_config_clkout(clk->clkout_id, clk->source, 0);
+> > +       if (!ret)
+> > +               clk->is_prepared = 0;
+> > +}
+> > +
+> > +static int clk_prcmu_clkout_is_prepared(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       return clk->is_prepared;
+> > +}
+> > +
+> > +static int clk_prcmu_clkout_enable(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       clk->is_enabled = 1;
+>
+> If this isn't reading the hardware then we can just let the core figure
+> it out and remove these functions and 'is_enabled'/'is_prepared'
+> variables.
+>
+> > +       return 0;
+> > +}
+> > +
+> > +static void clk_prcmu_clkout_disable(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       clk->is_enabled = 0;
+> > +}
+> > +
+> > +static int clk_prcmu_clkout_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       return clk->is_enabled;
+> > +}
+> > +
+> > +static unsigned long clk_prcmu_clkout_recalc_rate(struct clk_hw *hw,
+> > +                                                 unsigned long parent_rate)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +
+> > +       if (!clk->divider)
+> > +               return 0;
+> > +       return (parent_rate / clk->divider);
+> > +}
+> > +
+> > +static u8 clk_prcmu_clkout_get_parent(struct clk_hw *hw)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +       return clk->source;
+> > +}
+> > +
+> > +static int clk_prcmu_clkout_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> > +
+> > +       clk->source = index;
+> > +       /* Make sure the change reaches the hardware immediately */
+> > +       if (clk->is_prepared)
+> > +               return clk_prcmu_clkout_prepare(hw);
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct clk_ops clk_prcmu_clkout_ops = {
+> > +       .prepare = clk_prcmu_clkout_prepare,
+> > +       .unprepare = clk_prcmu_clkout_unprepare,
+> > +       .is_prepared = clk_prcmu_clkout_is_prepared,
+> > +       .enable = clk_prcmu_clkout_enable,
+> > +       .disable = clk_prcmu_clkout_disable,
+> > +       .is_enabled = clk_prcmu_clkout_is_enabled,
+> > +       .recalc_rate = clk_prcmu_clkout_recalc_rate,
+> > +       .get_parent = clk_prcmu_clkout_get_parent,
+> > +       .set_parent = clk_prcmu_clkout_set_parent,
+> > +};
+> > +
+> > +struct clk *clk_reg_prcmu_clkout(const char *name,
+> > +                                const char **parent_names, int num_parents,
+> > +                                u8 source, u8 divider)
+> > +
+> > +{
+> > +       struct clk_prcmu_clkout *clk;
+> > +       struct clk_init_data clk_prcmu_clkout_init;
+> > +       struct clk *clk_reg;
+> > +       u8 clkout_id;
+> > +
+> > +       if (!name) {
+> > +               pr_err("clk_prcmu_clkout: %s invalid arguments passed\n", __func__);
+> > +               return ERR_PTR(-EINVAL);
+> > +       }
+> > +
+> > +       if (!strcmp(name, "clkout1"))
+> > +               clkout_id = 0;
+> > +       else if (!strcmp(name, "clkout2"))
+> > +               clkout_id = 1;
+> > +       else {
+> > +               pr_err("clk_prcmu_clkout: %s bad clock name\n", __func__);
+> > +               return ERR_PTR(-EINVAL);
+> > +       }
+> > +
+> > +       clk = kzalloc(sizeof(*clk), GFP_KERNEL);
+> > +       if (!clk)
+> > +               return ERR_PTR(-ENOMEM);
+> > +
+> > +       clk->clkout_id = clkout_id;
+> > +       clk->is_prepared = 1;
+> > +       clk->is_enabled = 1;
+> > +       clk->source = source;
+> > +       clk->divider = divider;
+> > +
+> > +       clk_prcmu_clkout_init.name = name;
+> > +       clk_prcmu_clkout_init.ops = &clk_prcmu_clkout_ops;
+> > +       clk_prcmu_clkout_init.flags = CLK_GET_RATE_NOCACHE;
+> > +       clk_prcmu_clkout_init.parent_names = parent_names;
+> > +       clk_prcmu_clkout_init.num_parents = num_parents;
+> > +       clk->hw.init = &clk_prcmu_clkout_init;
+> > +
+> > +       clk_reg = clk_register(NULL, &clk->hw);
+>
+> Please use clk_hw_register()
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+I was just about to send a comment like this. I assume Linus just
+tried to be consistent with the existing code in this file (which has
+turned into being quite old nowadays).
 
-feel free to merge with the rest of the patchset.
+So, I think, either we should start by converting the existing code to
+use clk_hw_register() and then make these changes on top - or we allow
+Linus $subject patch to use clk_register() and on top we convert over
+to use clk_hw_register(), for the entire file/driver. I am fine either
+way.
 
-> ---
->  drivers/vdpa/vdpa.c  | 29 ++++-------------------------
->  include/linux/vdpa.h |  4 +++-
->  2 files changed, 7 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> index 1ea525433a5c..2dabed1df35c 100644
-> --- a/drivers/vdpa/vdpa.c
-> +++ b/drivers/vdpa/vdpa.c
-> @@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
->  				     const char *buf, size_t count)
->  {
->  	struct vdpa_device *vdev = dev_to_vdpa(dev);
-> -	const char *driver_override, *old;
-> -	char *cp;
-> +	int ret;
->  
-> -	/* We need to keep extra room for a newline */
-> -	if (count >= (PAGE_SIZE - 1))
-> -		return -EINVAL;
-> -
-> -	driver_override = kstrndup(buf, count, GFP_KERNEL);
-> -	if (!driver_override)
-> -		return -ENOMEM;
-> -
-> -	cp = strchr(driver_override, '\n');
-> -	if (cp)
-> -		*cp = '\0';
-> -
-> -	device_lock(dev);
-> -	old = vdev->driver_override;
-> -	if (strlen(driver_override)) {
-> -		vdev->driver_override = driver_override;
-> -	} else {
-> -		kfree(driver_override);
-> -		vdev->driver_override = NULL;
-> -	}
-> -	device_unlock(dev);
-> -
-> -	kfree(old);
-> +	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
-> +	if (ret)
-> +		return ret;
->  
->  	return count;
->  }
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index 721089bb4c84..37117404660e 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
->   * struct vdpa_device - representation of a vDPA device
->   * @dev: underlying device
->   * @dma_dev: the actual device that is performing DMA
-> - * @driver_override: driver name to force a match
-> + * @driver_override: driver name to force a match; do not set directly,
-> + *                   because core frees it; use driver_set_override() to
-> + *                   set or clear it.
->   * @config: the configuration ops for this device.
->   * @cf_mutex: Protects get and set access to configuration layout.
->   * @index: device index
-> -- 
-> 2.32.0
+Linus, I am happy to help with this, just tell me.
 
+[...]
+
+Kind regards
+Uffe
