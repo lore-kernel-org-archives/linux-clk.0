@@ -2,169 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D737C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Mar 2022 19:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A100C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Mar 2022 19:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238030AbiCQTfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Mar 2022 15:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
+        id S229445AbiCQTif (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Mar 2022 15:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238029AbiCQTfV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 15:35:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31C29DF485;
-        Thu, 17 Mar 2022 12:34:04 -0700 (PDT)
+        with ESMTP id S230122AbiCQTie (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 15:38:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C15122C6D4;
+        Thu, 17 Mar 2022 12:37:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BED11618AC;
-        Thu, 17 Mar 2022 19:34:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15511C340E9;
-        Thu, 17 Mar 2022 19:34:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D3276618A9;
+        Thu, 17 Mar 2022 19:37:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33264C340E9;
+        Thu, 17 Mar 2022 19:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647545643;
-        bh=Cplw1DogFBiyO3f6JlbndQ+AtgWmf6UgQThui5qA4l0=;
+        s=k20201202; t=1647545837;
+        bh=wZADvi8AH8u7rrJ6fm+rJHZo13IxweiVHExl3Kx7B8w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sZzLiMwITzd3BzRnpJpr1/JbIRjadbOCiFGo/Efy6fvH+S58iXbZRsLjdiePjbx+x
-         j/CFMH80CP532XN4nakMzxfcJRLHaraoUhlNYAedpDPQ7v1E8pA2rdgsbNamllmLMc
-         Wqpbv+sgrUMY23UyWoKRD3jhV8EZCnQinkvmpS5vZhb0DmtId7fwFo0yIXorfM+TaF
-         G3PqVyo7UOJ4TPHNp0HqhqJT5GthYjRfwQL+xMjGGVwQ2O++9Qrksw4L5vkg4Z2XfS
-         gYvD72ZTrLwskOH1uxBjdnsn1b3QGG6uqW6KhYnftPYVvJFofsL73qUDXTTX5SRCEc
-         xUnfVDD+CL6Gg==
+        b=hxtB08nDB74+ElGeDdXkWH2FwFo4gBAPQhiuOUh6fiSJfkzsO9ah0hwNQZenA/2th
+         knoPfLRHIgJRHROWhmzJTG6F9Fq+0/Zh5mk1NQJiWYukgxxHc/hvBkXrluk/dPk2NU
+         qkFORdIDaAGS2ottyyHKj5SJQnYlXq2XJN69JdWRSEW7N8ytZOLmZnmP/z610zzvCu
+         Nk1pkksgr4jUvI6cnWW1Sdz3ngU4P0226G1+zvejoiISo33DYMD/URR3oOf/dErLxX
+         8+8mguAIhlrHNj5hau8+szip14RmlbPiL01ExsNKXhGXXwobUN/RBIIIrcIsst1Lnd
+         QbY9JPVh18gxA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YjIGbs+Pz2EK9riB@Ansuel-xps.localdomain>
-References: <20220313190419.2207-1-ansuelsmth@gmail.com> <20220313190419.2207-13-ansuelsmth@gmail.com> <169795c1-607e-ee60-7ac7-538ed888bedf@linaro.org> <Yi84aNrJ7p+3jy2A@Ansuel-xps.localdomain> <20220315213431.DB6C4C340EE@smtp.kernel.org> <YjEJjB/Hwj/1Ncum@Ansuel-xps.localdomain> <20220315224115.EA1F9C340E8@smtp.kernel.org> <YjIGbs+Pz2EK9riB@Ansuel-xps.localdomain>
-Subject: Re: [PATCH 12/16] clk: qcom: clk-krait: add 8064 errata workaround
+In-Reply-To: <20220228124112.3974242-1-peng.fan@oss.nxp.com>
+References: <20220228124112.3974242-1-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH V2 1/2] clk: imx: add mcore_booted module paratemter
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Date:   Thu, 17 Mar 2022 12:34:01 -0700
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Thu, 17 Mar 2022 12:37:15 -0700
 User-Agent: alot/0.10
-Message-Id: <20220317193403.15511C340E9@smtp.kernel.org>
+Message-Id: <20220317193717.33264C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ansuel Smith (2022-03-16 08:46:54)
-> On Tue, Mar 15, 2022 at 03:41:14PM -0700, Stephen Boyd wrote:
-> > Quoting Ansuel Smith (2022-03-15 14:47:56)
-> > > On Tue, Mar 15, 2022 at 02:34:30PM -0700, Stephen Boyd wrote:
-> > > > Quoting Ansuel Smith (2022-03-14 05:43:20)
-> > > > > On Mon, Mar 14, 2022 at 11:20:21AM +0300, Dmitry Baryshkov wrote:
-> > > > > > On 13/03/2022 22:04, Ansuel Smith wrote:
-> > > > > > > Add 8064 errata workaround where the sec_src clock gating nee=
-ds to be
-> > > > > >=20
-> > > > > > Could you please be more specific whether the errata applies on=
-ly to the
-> > > > > > ipq8064 or to the apq8064 too? 8064 is not specific enough.
-> > > > > >
-> > > > >=20
-> > > > > That's a good question... Problem is that we really don't know the
-> > > > > answer. This errata comes from qsdk on an old sourcecode. I assum=
-e this
-> > > > > is specific to ipq8064 and apq8064 have different mux configurati=
-on.
-> > > > >=20
-> > > >=20
-> > > > I think it was some glitch that happened when the automatic clk gat=
-ing
-> > > > was enabled during a switch. The automatic clk gating didn't know t=
-hat
-> > > > software was running and switching the input so it killed the CPU a=
-nd
-> > > > stopped the clk. That lead to hangs and super badness. I assume it =
-was
-> > > > applicable to apq8064 as well because ipq8064 is basically apq8064 =
-with
-> > > > the multimedia subsystem replaced by the networking subsystem. Also=
- I
-> > > > wouldn't remember all these details because I worked on apq8064 but=
- not
-> > > > so much on ipq8064 :)
-> > >=20
-> > > Honest question. Do you remember other glitch present on the platform?
-> > > We are trying to bisect an instability problem and we still needs to
-> > > find the reason. We really can't understand if it's just a power
-> > > delivery problem or a scaling problem from muxes or other things.
-> > >=20
-> > > The current problem is that after some time the device kernel panics
-> > > with a number of strange reason like invalid kernel paging and other
-> > > strange (or the device just freze and reboots, not even a crash log)
-> > > Many kernel panics reports the crash near the mux switch (like random
-> > > error right before the mux switch) So I suspect there is a problem
-> > > there. But due to the fact that is very random we have NO exact way to
-> > > repro it. I manage sometime, while playing with the code, to repo
-> > > similar kernel crash but still i'm not sure of the real cause.
-> > >=20
-> > > I know it's OT but do you have any idea about it? If you remember
-> > > anything about it?
-> > > (To scale the freq i'm using a dedicated cpufreq driver that works th=
-is
-> > > way:
-> > > - We first scale the cache to the max freq across all core, we set the
-> > >   voltage
-> > > - We scale the cpu to the correct target.
-> > > This is all done under a lock. Do you see anything wrong in this logi=
-c?
-> >=20
-> > I honestly don't remember much anymore about this. It's been a decade.
-> > Scaling the cache used to be an independent clk and operation vs. the
-> > CPU. Basically the clk domain and power domain for the cache was
-> > separate from the CPU. There's also the fuse stuff that means you have
-> > to read the fuse to know what OPP table to use. Otherwise you may be
-> > overclocking the CPU or undervolting it. It may also be that cpuidle
-> > can't happen during a frequency transition. Otherwise the clk gating
-> > will be reenabled when the cpu startup code reinitializes all the cpu
-> > registers? I'd have to look through some old vendor kernels to see if
-> > anything jogs my memory.
-> >=20
-> > > To mee these random crash looks to be really related to something wro=
-ng
-> > > with the mux or with the cache set to a wrong state)
-> > >=20
-> > > Thx for any suggestion about this.
-> > > (also I will update this commit and mention both apq and ipq in the
-> > > comments)
+Quoting Peng Fan (OSS) (2022-02-28 04:41:11)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> Hi, i'm checking the spm qcom idle driver and something doesn't look
-> right to me... Aside from the different sequence used for boot cpu and
-> the abset l2 sequence, it looks like to me that WFI is enabled anyway
-> (even if it's not defined in the DTS or set disabled) and on top of that
-> it looks like we overwrite the WFI logic but we actually set to
-> enter power collapse (spc). Why?
-
-When the CPU is power collapsed they need to notify software running in
-the secure world that the CPU is going to be reset. The CPU comes out of
-reset in secure mode and it has to jump to non-secure mode. It's still a
-WFI, but we don't see it in the kernel because the secure world code
-executes the wfi and that runs the power collapse sequence to turn all
-the power off. On power up the secure world will restore various cpu
-registers (*cough* workarounds *cough*) and then switch to non-secure
-mode wherever linux told it to execute at on warm boot.
-
+> Add mcore_booted boot parameter which could simplify AMP clock
+> management. To i.MX8M, there is CCM(clock control Module) to generate
+> clock root clock, anatop(analog PLL module) to generate PLL, and CCGR
+> (clock gating) to gate clocks to peripherals. As below:
+>   anatop->ccm->ccgr->peripheral
 >=20
-> Also I think we are missing the assembly code to enter wfi on krait cpu.
-> Am I totally confused or there are some problems in the code that nobody
-> notice?
+> Linux handles the clock management and the auxiliary core is under
+> control of Linux. Although there is per hardware domain control for CCGR
+> and CCM, auxiliary core normally only use CCGR hardware domain control
+> to avoid linux gate off the clk to peripherals and leave CCM ana anatop
+> to Linux.
 >=20
+> Per NXP hardware design, because CCGR already support gate to
+> peripherals, and clk root gate power leakage is negligible. So
+> when in AMP case, we could not register the clk root gate.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>=20
+> V2:
+>  Switch to use module parameter, tested on i.MX8MP-EVK
 
-I'd expect that to run through some scm_call() path into the secure
-world. The wfi can still be run by the kernel in non-secure mode, but
-that will only gate the CPU clk and not actually power collapse the
-core. It's a "light sleep" for the CPU. All this stuff predates PSCI but
-it is very similar, just a bespoke solution instead of a standard
-calling format.
+Why is a module parameter being used? I'd expect this informatioon that
+mcore is booted to come from devicetree/firmware somehow.
