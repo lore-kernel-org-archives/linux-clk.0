@@ -2,78 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A100C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Mar 2022 19:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20920C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Mar 2022 19:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiCQTif (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Mar 2022 15:38:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46406 "EHLO
+        id S230058AbiCQTjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Mar 2022 15:39:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230122AbiCQTie (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 15:38:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C15122C6D4;
-        Thu, 17 Mar 2022 12:37:18 -0700 (PDT)
+        with ESMTP id S231955AbiCQTjf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 15:39:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F21EAC8B;
+        Thu, 17 Mar 2022 12:38:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D3276618A9;
-        Thu, 17 Mar 2022 19:37:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33264C340E9;
-        Thu, 17 Mar 2022 19:37:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E7870618B3;
+        Thu, 17 Mar 2022 19:38:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47BC1C340E9;
+        Thu, 17 Mar 2022 19:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647545837;
-        bh=wZADvi8AH8u7rrJ6fm+rJHZo13IxweiVHExl3Kx7B8w=;
+        s=k20201202; t=1647545895;
+        bh=YDBqqtsD8hurDcBaCOcL4NXPfM8to2wSvDT1JakwR+U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hxtB08nDB74+ElGeDdXkWH2FwFo4gBAPQhiuOUh6fiSJfkzsO9ah0hwNQZenA/2th
-         knoPfLRHIgJRHROWhmzJTG6F9Fq+0/Zh5mk1NQJiWYukgxxHc/hvBkXrluk/dPk2NU
-         qkFORdIDaAGS2ottyyHKj5SJQnYlXq2XJN69JdWRSEW7N8ytZOLmZnmP/z610zzvCu
-         Nk1pkksgr4jUvI6cnWW1Sdz3ngU4P0226G1+zvejoiISo33DYMD/URR3oOf/dErLxX
-         8+8mguAIhlrHNj5hau8+szip14RmlbPiL01ExsNKXhGXXwobUN/RBIIIrcIsst1Lnd
-         QbY9JPVh18gxA==
+        b=QHOjltqeHi+HQG2Xky3LWk1zqqafGF3WxgeGSm8rT3vPU0OrIVtLl3wS6uocN6bUc
+         Iz9caqzXOHhc9wy/pqpGQWLiUT7tEAYL04H3Off9vCiP7LW2TXslbbnrF9M9FlQCV8
+         attIKQFFR35qHc16JPmEtjl44Q5Ff7maf96V5okDuWAb49J7rdiDeNzTYTncKzvF6Z
+         T1iQSTqsCDlTlep0XNjgklbMVXIHWtcGfmRnX1G3rClnGTe5a/M2H3sdA+adcK70ew
+         XDm0JwOvUwJoPhdpLYxbPEH2ppUF0xVoM3GXRKcaZKCN77N1oT1TWg0Zam3UXU1/mi
+         F6m00k3fi+c+Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220228124112.3974242-1-peng.fan@oss.nxp.com>
-References: <20220228124112.3974242-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH V2 1/2] clk: imx: add mcore_booted module paratemter
+In-Reply-To: <20220228124112.3974242-2-peng.fan@oss.nxp.com>
+References: <20220228124112.3974242-1-peng.fan@oss.nxp.com> <20220228124112.3974242-2-peng.fan@oss.nxp.com>
+Subject: Re: [PATCH V2 2/2] clk: imx8m: check mcore_booted before register clk
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abel.vesa@nxp.com,
         s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Thu, 17 Mar 2022 12:37:15 -0700
+Date:   Thu, 17 Mar 2022 12:38:13 -0700
 User-Agent: alot/0.10
-Message-Id: <20220317193717.33264C340E9@smtp.kernel.org>
+Message-Id: <20220317193815.47BC1C340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2022-02-28 04:41:11)
+Quoting Peng Fan (OSS) (2022-02-28 04:41:12)
 > From: Peng Fan <peng.fan@nxp.com>
 >=20
-> Add mcore_booted boot parameter which could simplify AMP clock
-> management. To i.MX8M, there is CCM(clock control Module) to generate
-> clock root clock, anatop(analog PLL module) to generate PLL, and CCGR
-> (clock gating) to gate clocks to peripherals. As below:
->   anatop->ccm->ccgr->peripheral
->=20
-> Linux handles the clock management and the auxiliary core is under
-> control of Linux. Although there is per hardware domain control for CCGR
-> and CCM, auxiliary core normally only use CCGR hardware domain control
-> to avoid linux gate off the clk to peripherals and leave CCM ana anatop
-> to Linux.
->=20
-> Per NXP hardware design, because CCGR already support gate to
-> peripherals, and clk root gate power leakage is negligible. So
-> when in AMP case, we could not register the clk root gate.
+> If mcore_booted is true, ignore the clk root gate registration and
+> this will simplify AMP clock management and avoid system hang unexpectly
+> especially Linux shutdown clk used by mcore.
 >=20
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
 >=20
 > V2:
->  Switch to use module parameter, tested on i.MX8MP-EVK
+>  None
+>=20
+>  drivers/clk/imx/clk-composite-8m.c | 21 +++++++++++++--------
+>  1 file changed, 13 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-com=
+posite-8m.c
+> index 2dfd6149e528..b16c2c0ea9f6 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -223,14 +223,19 @@ struct clk_hw *__imx8m_clk_hw_composite(const char =
+*name,
+>         div->lock =3D &imx_ccm_lock;
+>         div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
+> =20
+> -       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> -       if (!gate)
+> -               goto fail;
+> -
+> -       gate_hw =3D &gate->hw;
+> -       gate->reg =3D reg;
+> -       gate->bit_idx =3D PCG_CGC_SHIFT;
+> -       gate->lock =3D &imx_ccm_lock;
+> +       /* skip registering the gate ops if M4 is enabled */
+> +       if (mcore_booted) {
+> +               gate_hw =3D NULL;
 
-Why is a module parameter being used? I'd expect this informatioon that
-mcore is booted to come from devicetree/firmware somehow.
+It could even use the protected-clocks property and then parse it to
+figure out to not register this gate?
+
+> +       } else {
+> +               gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> +               if (!gate)
+> +                       goto fail;
+> +
+> +               gate_hw =3D &gate->hw;
+> +               gate->reg =3D reg;
+> +               gate->bit_idx =3D PCG_CGC_SHIFT;
+> +               gate->lock =3D &imx_ccm_lock;
+> +       }
