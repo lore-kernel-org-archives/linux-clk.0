@@ -2,48 +2,48 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512E9C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADB7C4332F
 	for <linux-clk@archiver.kernel.org>; Thu, 17 Mar 2022 22:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbiCQW0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Mar 2022 18:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49826 "EHLO
+        id S229760AbiCQW0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Mar 2022 18:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiCQW0q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 18:26:46 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85655234574
-        for <linux-clk@vger.kernel.org>; Thu, 17 Mar 2022 15:25:27 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a8so13616665ejc.8
-        for <linux-clk@vger.kernel.org>; Thu, 17 Mar 2022 15:25:27 -0700 (PDT)
+        with ESMTP id S229756AbiCQW0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Mar 2022 18:26:47 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD44235769
+        for <linux-clk@vger.kernel.org>; Thu, 17 Mar 2022 15:25:29 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id u23so4027849ejt.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Mar 2022 15:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=pqrs.dk; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=he5SYi2i8fnJsV9XJ7BjYt6CsD8atydpjeDiU4Eqw2I=;
-        b=CXw3IFQ1Fhhf/LJrTcBsPUQ7ryNjlpwia1KfOQuYTYdh/igOYUtvcWxOuRnd07Y2m6
-         zln98DPcLhv3iy/H0+c6zhaEbOQXsuc4k7i5LcZWki1+QokVmpe0NBW+CGqHAFy8IUlF
-         B0V+f/RXCC7M4h4IIsieOnQ3FPOOzUnMW/xjY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nZfilmYHEofOtZGObUor2LVeuuotlJwuDmGStM/5HWM=;
+        b=LBQun4ZLprJhQy4lcg0rlMkxjD8+w89BISbRA+6e0n3Ak3QuX8r6xRyTrgXzs0KtMB
+         okDzOO/8IitcG9YyjrMAheUDkE2T4AujZBiSmk0rdhiy5FBOQgZMgwOktfR2ujZPwD0H
+         zdK3ZGIjCuNJ9lvC7vq2eMia1HZit0wfwquyc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=he5SYi2i8fnJsV9XJ7BjYt6CsD8atydpjeDiU4Eqw2I=;
-        b=CtSzD7zT387sDudhfxh7I1Ecuysrqr4wtqoVqAmnGYiaBsbzq2HdwQ7J7aZE7Nnz74
-         yyN3Aki2NaeSSLQnH/ie8mAMcijPMbubLH928fts9mtsawAdtTSmoI7nNjUVIjV9gVSL
-         4TOP/RgkDB8D/14PUeLIJ6PS4/Ii1cv/9FD6xxrtIk2RNn/BC/oCQwhGU8zJYsTwKMaW
-         XtnZ6PLvtOhj0z9Jz7z94+eu1BSgntEAqDbSKjLn2eF/CmsAq/iDVaCutO3qFkPPqCxb
-         ocilc5p7Rr00wZ+afXNT7f3GCxXmRo19d8rcM8a40vyaBuSkc8Rliab5ub4ACAf/RXnD
-         hLDw==
-X-Gm-Message-State: AOAM532rPOR82JiNA1l19ld7vdgT0ajLTzSB1lGEa4UAxgfGfmcyInsp
-        RFWC4vz/e7tfCibcykA/zYzpQw==
-X-Google-Smtp-Source: ABdhPJxgX/wXd+34bhzCk9cw+jFEVE6cMoRGT/ICO7kBqqHpet4BknKxAsc0UhhsSs69Alq7gUbZnw==
-X-Received: by 2002:a17:906:c18c:b0:6d5:8518:e567 with SMTP id g12-20020a170906c18c00b006d58518e567mr6319063ejz.37.1647555926042;
-        Thu, 17 Mar 2022 15:25:26 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nZfilmYHEofOtZGObUor2LVeuuotlJwuDmGStM/5HWM=;
+        b=gulUq/odQpH++VT+TmWpi0xCNm18H7eNQh6Fr/X3fBbgSonLhkTgkMr7+50zKzwhem
+         IBHf9zw69uCM9wgKYVUxF0nV+FS/qkFzwNjgwb5U2ASgGlpQ0FXZM2IOBuLNS7wao/OJ
+         pShUSZcbRhkp8OGo6MqRw/1f5sGPvdeJA/2hH5C85pkUw8ODr1XzJHpSUPApNtBsTplB
+         bFi9R6qHRUNN23u1g0+0xft4yppkQqL/1WWrc3ID7K+Q+0Iih8wo33cABy1BQVou6Zel
+         wVvzR6icgNEM4nZ7SEjCbQ2gx0zabM/FDeuq/DYybipKsVIls1e08KdbwK1f8Q8KHNUE
+         r73A==
+X-Gm-Message-State: AOAM53306dN+5TioyWL94OJ4ECpOCH43p98KyRHyVZKOZEvln714m89S
+        p2Bcde1N0nJ3Pn41zkYEPNvA1A==
+X-Google-Smtp-Source: ABdhPJx9aL6eUBg4QeYDzR9Is7l5WFiUmAXRHp8oQLBL72F7SPxk1C+Qifc3fVbeWStLorfagn5wxA==
+X-Received: by 2002:a17:906:a213:b0:6b5:b0f9:7567 with SMTP id r19-20020a170906a21300b006b5b0f97567mr6600807ejy.129.1647555927534;
+        Thu, 17 Mar 2022 15:25:27 -0700 (PDT)
 Received: from capella.. (80.71.142.18.ipv4.parknet.dk. [80.71.142.18])
-        by smtp.gmail.com with ESMTPSA id m24-20020a170906161800b006d420027b63sm2949654ejd.18.2022.03.17.15.25.24
+        by smtp.gmail.com with ESMTPSA id m24-20020a170906161800b006d420027b63sm2949654ejd.18.2022.03.17.15.25.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 15:25:25 -0700 (PDT)
+        Thu, 17 Mar 2022 15:25:27 -0700 (PDT)
 From:   =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alvin@pqrs.dk>
 To:     Abel Vesa <abel.vesa@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -57,10 +57,12 @@ To:     Abel Vesa <abel.vesa@nxp.com>,
 Cc:     =?UTF-8?q?Alvin=20=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: imx: add clock bindings for i.MX8MN GPT
-Date:   Thu, 17 Mar 2022 23:25:20 +0100
-Message-Id: <20220317222521.170762-1-alvin@pqrs.dk>
+Subject: [PATCH 2/2] clk: imx8mn: add GPT support
+Date:   Thu, 17 Mar 2022 23:25:21 +0100
+Message-Id: <20220317222521.170762-2-alvin@pqrs.dk>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220317222521.170762-1-alvin@pqrs.dk>
+References: <20220317222521.170762-1-alvin@pqrs.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -70,41 +72,85 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-The i.MX8MN has a General Purpose Timer (GPT) just like the i.MX8MM,
-which already has such bindings. Add the relevant bindings for the Nano
-SoC too.
+Add support for the General Purpose Timer (GPT) clocks on the i.MX8MN.
+The i.MX8MN GPT IP block is the same as on the i.MX8MM, on which this
+patch is based.
 
 Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
- include/dt-bindings/clock/imx8mn-clock.h | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx8mn.c | 38 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings/clock/imx8mn-clock.h
-index 01e8bab1d767..07b8a282c268 100644
---- a/include/dt-bindings/clock/imx8mn-clock.h
-+++ b/include/dt-bindings/clock/imx8mn-clock.h
-@@ -243,6 +243,20 @@
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 92fcbab4f5be..aa7c6e02733d 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -227,6 +227,30 @@ static const char * const imx8mn_pwm4_sels[] = {"osc_24m", "sys_pll2_100m", "sys
+ 						"sys_pll1_40m", "sys_pll3_out", "clk_ext2",
+ 						"sys_pll1_80m", "video_pll1_out", };
  
- #define IMX8MN_CLK_M7_CORE			221
- 
--#define IMX8MN_CLK_END				222
-+#define IMX8MN_CLK_GPT_3M			222
-+#define IMX8MN_CLK_GPT1				223
-+#define IMX8MN_CLK_GPT1_ROOT			224
-+#define IMX8MN_CLK_GPT2				225
-+#define IMX8MN_CLK_GPT2_ROOT			226
-+#define IMX8MN_CLK_GPT3				227
-+#define IMX8MN_CLK_GPT3_ROOT			228
-+#define IMX8MN_CLK_GPT4				229
-+#define IMX8MN_CLK_GPT4_ROOT			230
-+#define IMX8MN_CLK_GPT5				231
-+#define IMX8MN_CLK_GPT5_ROOT			232
-+#define IMX8MN_CLK_GPT6				233
-+#define IMX8MN_CLK_GPT6_ROOT			234
++static const char *const imx8mn_gpt1_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
 +
-+#define IMX8MN_CLK_END				235
++static const char *const imx8mn_gpt2_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
++
++static const char *const imx8mn_gpt3_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
++
++static const char *const imx8mn_gpt4_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
++
++static const char *const imx8mn_gpt5_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
++
++static const char *const imx8mn_gpt6_sels[] = {"osc_24m", "sys_pll2_100m", "sys_pll1_400m",
++					       "sys_pll1_40m", "video_pll1_out", "sys_pll1_80m",
++					       "audio_pll1_out", "clk_ext1", };
++
+ static const char * const imx8mn_wdog_sels[] = {"osc_24m", "sys_pll1_133m", "sys_pll1_160m",
+ 						"vpu_pll_out", "sys_pll2_125m", "sys_pll3_out",
+ 						"sys_pll1_80m", "sys_pll2_166m", };
+@@ -476,6 +500,12 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_PWM2] = imx8m_clk_hw_composite("pwm2", imx8mn_pwm2_sels, base + 0xb400);
+ 	hws[IMX8MN_CLK_PWM3] = imx8m_clk_hw_composite("pwm3", imx8mn_pwm3_sels, base + 0xb480);
+ 	hws[IMX8MN_CLK_PWM4] = imx8m_clk_hw_composite("pwm4", imx8mn_pwm4_sels, base + 0xb500);
++	hws[IMX8MN_CLK_GPT1] = imx8m_clk_hw_composite("gpt1", imx8mn_gpt1_sels, base + 0xb580);
++	hws[IMX8MN_CLK_GPT2] = imx8m_clk_hw_composite("gpt2", imx8mn_gpt2_sels, base + 0xb600);
++	hws[IMX8MN_CLK_GPT3] = imx8m_clk_hw_composite("gpt3", imx8mn_gpt3_sels, base + 0xb680);
++	hws[IMX8MN_CLK_GPT4] = imx8m_clk_hw_composite("gpt4", imx8mn_gpt4_sels, base + 0xb700);
++	hws[IMX8MN_CLK_GPT5] = imx8m_clk_hw_composite("gpt5", imx8mn_gpt5_sels, base + 0xb780);
++	hws[IMX8MN_CLK_GPT6] = imx8m_clk_hw_composite("gpt6", imx8mn_gpt6_sels, base + 0xb800);
+ 	hws[IMX8MN_CLK_WDOG] = imx8m_clk_hw_composite("wdog", imx8mn_wdog_sels, base + 0xb900);
+ 	hws[IMX8MN_CLK_WRCLK] = imx8m_clk_hw_composite("wrclk", imx8mn_wrclk_sels, base + 0xb980);
+ 	hws[IMX8MN_CLK_CLKO1] = imx8m_clk_hw_composite("clko1", imx8mn_clko1_sels, base + 0xba00);
+@@ -501,6 +531,12 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_GPIO3_ROOT] = imx_clk_hw_gate4("gpio3_root_clk", "ipg_root", base + 0x40d0, 0);
+ 	hws[IMX8MN_CLK_GPIO4_ROOT] = imx_clk_hw_gate4("gpio4_root_clk", "ipg_root", base + 0x40e0, 0);
+ 	hws[IMX8MN_CLK_GPIO5_ROOT] = imx_clk_hw_gate4("gpio5_root_clk", "ipg_root", base + 0x40f0, 0);
++	hws[IMX8MN_CLK_GPT1_ROOT] = imx_clk_hw_gate4("gpt1_root_clk", "gpt1", base + 0x4100, 0);
++	hws[IMX8MN_CLK_GPT2_ROOT] = imx_clk_hw_gate4("gpt2_root_clk", "gpt2", base + 0x4110, 0);
++	hws[IMX8MN_CLK_GPT3_ROOT] = imx_clk_hw_gate4("gpt3_root_clk", "gpt3", base + 0x4120, 0);
++	hws[IMX8MN_CLK_GPT4_ROOT] = imx_clk_hw_gate4("gpt4_root_clk", "gpt4", base + 0x4130, 0);
++	hws[IMX8MN_CLK_GPT5_ROOT] = imx_clk_hw_gate4("gpt5_root_clk", "gpt5", base + 0x4140, 0);
++	hws[IMX8MN_CLK_GPT6_ROOT] = imx_clk_hw_gate4("gpt6_root_clk", "gpt6", base + 0x4150, 0);
+ 	hws[IMX8MN_CLK_I2C1_ROOT] = imx_clk_hw_gate4("i2c1_root_clk", "i2c1", base + 0x4170, 0);
+ 	hws[IMX8MN_CLK_I2C2_ROOT] = imx_clk_hw_gate4("i2c2_root_clk", "i2c2", base + 0x4180, 0);
+ 	hws[IMX8MN_CLK_I2C3_ROOT] = imx_clk_hw_gate4("i2c3_root_clk", "i2c3", base + 0x4190, 0);
+@@ -549,6 +585,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MN_CLK_SDMA3_ROOT] = imx_clk_hw_gate4("sdma3_clk", "ipg_audio_root", base + 0x45f0, 0);
+ 	hws[IMX8MN_CLK_SAI7_ROOT] = imx_clk_hw_gate2_shared2("sai7_root_clk", "sai7", base + 0x4650, 0, &share_count_sai7);
  
- #endif
++	hws[IMX8MN_CLK_GPT_3M] = imx_clk_hw_fixed_factor("gpt_3m", "osc_24m", 1, 8);
++
+ 	hws[IMX8MN_CLK_DRAM_ALT_ROOT] = imx_clk_hw_fixed_factor("dram_alt_root", "dram_alt", 1, 4);
+ 
+ 	hws[IMX8MN_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
 -- 
 2.35.1
 
