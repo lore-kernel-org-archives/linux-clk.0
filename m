@@ -2,89 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0B5C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Mar 2022 13:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1C8C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Mar 2022 14:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236667AbiCRNiw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Mar 2022 09:38:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
+        id S237315AbiCROce convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Mar 2022 10:32:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236589AbiCRNiu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2022 09:38:50 -0400
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB0F618F225;
-        Fri, 18 Mar 2022 06:37:31 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id p15so3414273lfk.8;
-        Fri, 18 Mar 2022 06:37:31 -0700 (PDT)
+        with ESMTP id S237314AbiCROce (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2022 10:32:34 -0400
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE9A90FE2;
+        Fri, 18 Mar 2022 07:31:14 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id jq9so6615143qvb.0;
+        Fri, 18 Mar 2022 07:31:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+V1zc7ny51rS1agIr/dQWhdEHL02UEPO78yZkxZhSns=;
-        b=pdI1ag1X3Nb03pD6pBqiJ06ktHlAlRqwHuB5tb5dzQh+eOTFD5mCKZGnTcYLNZKQYI
-         DGtzfzogsIIpbfZq9Oa7IhjU8+xjUE2/+hOMBWdtvSXCNwFL66M5wdxt5ZK6puXIq23D
-         74QJ5EfariZIGSwfJeP85pnYHSB6p2e7VjWGkkPc4Vehd8wKb28My4aoz+1JNgYr63fi
-         TB1X4EFhM9w/p6c9R5PRrgDjccNA4hRlDCVgAmXxBGCrSBSbOqrAOs/amKh0g9L1xg46
-         5zJs3/R/yex0Pm7yxjaRS+x90w3hBnjEuuXDstGtrX4S9bJuomfSVIhbWi8V6xUkqT5c
-         vE7A==
-X-Gm-Message-State: AOAM53107OJ1poh5spcspDHCGu+1vOKdTBh4dZYEtmplJZk/+/0c3WA6
-        Ty6VjEEP198CfDf+3nCWsgs=
-X-Google-Smtp-Source: ABdhPJwMv16kaKZSDgr9UlfX77ncJxrsuXGQV5YPZ6e55hxp4b59R9D+vwGyGLO3VkxKIsAzUjWUVA==
-X-Received: by 2002:a05:6512:400e:b0:447:5d84:c40 with SMTP id br14-20020a056512400e00b004475d840c40mr5794875lfb.591.1647610649973;
-        Fri, 18 Mar 2022 06:37:29 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id w13-20020a2e998d000000b002496199495csm685972lji.55.2022.03.18.06.37.27
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jP9TvkuCSsb0OcWWPjFrD6QtbUKa4Jb9v30XMjZh+kg=;
+        b=TMaXVuW/D8u7F/urs6gwwYH1V8xsd51cvqcsZqbLH7QS5+CKGJXKG5/PFekcT110fC
+         HdFyLGuti9Ln50wRNUCsyiL2MAzJ8hh5BWV90vsAiivYaKbBdzCTM0Ipm08uEavQ9W/Z
+         dbYHOMRovDmIkALtuVMidFoI+FZHmCN8BvG/hSrwBusVcJQWiMuS0hLppZuWFvAUuqJt
+         CPG1OLKutkao/XVl22QRUgeOTM8VYcXnsFdOJQ2tk5H7Do+Bi9oQOST5WW+Ep+lSDtwG
+         33KaxvFyQ2tCg9kkhogHKPFrXP1A9gt+uB8cGwHBkOmbRVZZEz/Y02h8p0gP/gmpXC64
+         Pd/w==
+X-Gm-Message-State: AOAM531oS7PMm+DpKkHAE531gQPplrrvO7CZU3Q6Aycs5embP7a+Fqbu
+        rSJGqluUSdVWrQK6W92oZbJpwL3Eva3QA++A
+X-Google-Smtp-Source: ABdhPJxoNfgq8RJ2DHdgHLMX38/LpKVR8D511qlFlcKFext/8hjpeR8EICeMQpB9tqVPBz6+sHR9zA==
+X-Received: by 2002:ad4:594e:0:b0:441:4d5:6a62 with SMTP id eo14-20020ad4594e000000b0044104d56a62mr1237883qvb.110.1647613872718;
+        Fri, 18 Mar 2022 07:31:12 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id f18-20020a05622a105200b002e1eb06ece3sm5383091qte.31.2022.03.18.07.31.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Mar 2022 06:37:29 -0700 (PDT)
-Message-ID: <af4f1abd-55e0-f120-f5c3-e5835325d468@kernel.org>
-Date:   Fri, 18 Mar 2022 14:37:26 +0100
+        Fri, 18 Mar 2022 07:31:12 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id v35so16108650ybi.10;
+        Fri, 18 Mar 2022 07:31:12 -0700 (PDT)
+X-Received: by 2002:a25:dc4:0:b0:629:2337:f9ea with SMTP id
+ 187-20020a250dc4000000b006292337f9eamr10480438ybn.6.1647613871770; Fri, 18
+ Mar 2022 07:31:11 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 1/2] dt-bindings: imx: add clock bindings for i.MX8MN
- GPT
-Content-Language: en-US
-To:     =?UTF-8?Q?Alvin_=c5=a0ipraga?= <alvin@pqrs.dk>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     =?UTF-8?Q?Alvin_=c5=a0ipraga?= <alsi@bang-olufsen.dk>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20220317223600.175894-1-alvin@pqrs.dk>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220317223600.175894-1-alvin@pqrs.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220314220012.218731-1-marek.vasut@gmail.com>
+In-Reply-To: <20220314220012.218731-1-marek.vasut@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 18 Mar 2022 15:31:00 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU5xqr4tVJefg7shTgtxMe+h8YrHrGdgkcgx5sCbuAjiA@mail.gmail.com>
+Message-ID: <CAMuHMdU5xqr4tVJefg7shTgtxMe+h8YrHrGdgkcgx5sCbuAjiA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a7795: Add ZG clocks
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/03/2022 23:35, Alvin Šipraga wrote:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
-> 
-> The i.MX8MN has a General Purpose Timer (GPT) just like the i.MX8MM,
-> which already has such bindings. Add the relevant bindings for the Nano
-> SoC too.
-> 
-> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
-> ---
-> v1->v2: no changes
-> ---
->  include/dt-bindings/clock/imx8mn-clock.h | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
+Hi Marek,
 
+On Mon, Mar 14, 2022 at 11:00 PM <marek.vasut@gmail.com> wrote:
+> This patch adds ZG clocks used by the PowerVR GPU.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks for your patch!
 
+> --- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+> @@ -83,6 +83,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+>         /* Core Clock Outputs */
+>         DEF_GEN3_Z("z",         R8A7795_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
+>         DEF_GEN3_Z("z2",        R8A7795_CLK_Z2,    CLK_TYPE_GEN3_Z,  CLK_PLL2, 2, 0),
+> +       DEF_GEN3_Z("zg",        R8A7795_CLK_ZG,    CLK_TYPE_GEN3_Z,  CLK_PLL4, 2, 0),
 
-Best regards,
-Krzysztof
+The "2" is not correct: /sys/kernel/debug/clk/clk_summary should tell
+you it is running at 1200 MHz instead of 600 MHz.  The correct value
+is "4", as PLL4 is divided by 4 and by the ZG/3DGE divider, cfr. the
+documentation for the PLL4CR.STC6 field.
+
+The "0" is also not correct, as it refers to the bit field starting
+in the FRQCRC register starting at bit 0, which is not the ZG but
+the Z2 divider, cfr. the line above.
+The actual ZG divider field was never documented, and the documentation
+states the divider is fixed[1].  However, the BSP assumes the field
+does exist, and is located in the FRQCRB register[2], starting at
+bit 24[3].
+
+Older BSP versions assumed a fixed clock[4].
+
+What do we do? Follow the current BSP, or the documentation?
+Do you have a use case for changing the divider to lower\
+the ZG clock rate?
+Note that we do not need to change the divider to increase the ZG
+clock rate to 700 MHz for High Performance mode on R-Car M3-W/W+/N,
+as that would be done by making PLL4 configurable, cfr. PLL0 and PLL2.
+
+>         DEF_FIXED("ztr",        R8A7795_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+>         DEF_FIXED("ztrd2",      R8A7795_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+>         DEF_FIXED("zt",         R8A7795_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+> @@ -129,6 +130,7 @@ static struct cpg_core_clk r8a7795_core_clks[] __initdata = {
+>  };
+>
+>  static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+> +       DEF_MOD("3dge",                  112,   R8A7795_CLK_ZG),
+>         DEF_MOD("fdp1-2",                117,   R8A7795_CLK_S2D1), /* ES1.x */
+>         DEF_MOD("fdp1-1",                118,   R8A7795_CLK_S0D1),
+>         DEF_MOD("fdp1-0",                119,   R8A7795_CLK_S0D1),
+
+This part looks good to me.
+
+The same comments apply to patches 2/3 and 3/3 of this series.
+
+[1] Section 8.3.1 ("Changing Frequency"): "R-Car H3, R-Car H3-N, R-Car
+M3-W, R-Car M3-W+, and R-Car M3-N do not support to change division
+ratio of ZGϕ."
+[2] https://github.com/renesas-rcar/linux-bsp/blob/rcar-5.1.4/drivers/clk/renesas/rcar-gen3-cpg.c#L365
+[3] https://github.com/renesas-rcar/linux-bsp/blob/rcar-5.1.4/drivers/clk/renesas/r8a7795-cpg-mssr.c#L86
+[4] https://github.com/renesas-rcar/linux-bsp/blob/rcar-3.5.3/drivers/clk/renesas/r8a7795-cpg-mssr.c#L80
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
