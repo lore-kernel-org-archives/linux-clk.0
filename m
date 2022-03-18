@@ -2,364 +2,221 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9184AC4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Mar 2022 16:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20050C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Mar 2022 17:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238623AbiCRQMC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Mar 2022 12:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54796 "EHLO
+        id S233847AbiCRRwt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Mar 2022 13:52:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238643AbiCRQKP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2022 12:10:15 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC90A2BF3;
-        Fri, 18 Mar 2022 09:08:47 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id qx21so17855195ejb.13;
-        Fri, 18 Mar 2022 09:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=GsYDL/OyQ4CKGuUspknG5Sq0zM6BGuA8VP+jOV/hNlQ=;
-        b=ebXb9I72pym+b2ARd9uIcThbuFCa2zTTvq6DwWnh2cn7k4g7ka0sLgJwVfb0WcgITv
-         Dxmksz2ER2pRqV4EOwJ6QkoMW4Tlx9uS5oJ53HLlJSaJWyIrnGevCK/wE2fHqmd9jPrH
-         Yt+xHCFUIoA1ijN1KZv+G1Ys9wa2JMoNyNF1lc9OtMYcPfwZSA6zmFj3q/B4YfCW4llw
-         IdhSgKBI/91+xjErPzes71c1cbAtk90DK+eHDvPF7RWXw4E8omJGsn7PyEXAOKHd+OdX
-         dkzjUDiWgKHrG3SCYnXroXjtJ7E2mobSEvP1xyNWnDoDfR5ZVYb8S1QD89orG5+Cslqd
-         Tz/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GsYDL/OyQ4CKGuUspknG5Sq0zM6BGuA8VP+jOV/hNlQ=;
-        b=kmcKl1NiEtI6G8i7YdQozTbeEoc0dsm2iOmSb1jEWuNElLrqTgxUmu0QdcL6GJ3Dn0
-         wy2xvvDUsxmOrKqbsFLof4Yz/+2a6eljrckAJNz6haYKq+3ZJ4d8LXIDe9C3Ei14nlMk
-         ZHhrRxNPPqRrOwybXTWF7u1plV2tI8Q5yD0Mya+HC4HiJhrnvZ7Bx9KcdpQLNd9sQ1F5
-         QehA/i7xahb9LjBxTQhoAe8Bok6TmwQCSm2Bl+GqqfDElmxHZjNgR1LSCq6QZmN3aodW
-         rm6FYYds+SAWmrlzdzjs5qt0VCMJv/DcujFYcedy7L69nRNYfR9rv/ONSB8z1yx8E9Z/
-         cx+w==
-X-Gm-Message-State: AOAM533MBIO5Sd3dbnwOA/W1zNII0HzQxwKVWAWdOW9ivGNkrDGc8huh
-        KWOFRpZzI5WH2yb8IsJSewc=
-X-Google-Smtp-Source: ABdhPJxbAgDpTcZCM/28nsz/se8K3HvJP5o7yyvu3PWKlT9r7h1VJe0eG27GmsHqhYQlIj99DMk2LQ==
-X-Received: by 2002:a17:906:57c1:b0:6d6:da73:e9c0 with SMTP id u1-20020a17090657c100b006d6da73e9c0mr9800874ejr.45.1647619725920;
-        Fri, 18 Mar 2022 09:08:45 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.googlemail.com with ESMTPSA id e9-20020a170906c00900b006d4a45869basm3754118ejz.199.2022.03.18.09.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Mar 2022 09:08:45 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v2 16/16] dt-bindings: arm: msm: Convert kpss driver Documentation to yaml
-Date:   Fri, 18 Mar 2022 17:08:27 +0100
-Message-Id: <20220318160827.8860-17-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220318160827.8860-1-ansuelsmth@gmail.com>
-References: <20220318160827.8860-1-ansuelsmth@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S239967AbiCRRws (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Mar 2022 13:52:48 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D12D418FAF7;
+        Fri, 18 Mar 2022 10:51:19 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,192,1643641200"; 
+   d="scan'208";a="115031006"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Mar 2022 02:51:18 +0900
+Received: from localhost.localdomain (unknown [10.226.93.159])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 037E140165BF;
+        Sat, 19 Mar 2022 02:51:15 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/9] Add RZ/G2L Display clock support
+Date:   Fri, 18 Mar 2022 17:51:04 +0000
+Message-Id: <20220318175113.8956-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert kpss-acc and kpss-gcc Documentation to yaml. Fix multiple
-Documentation error and provide additional example for kpss-gcc-v2.
+This patch series aims to add display clock support on RZ/G2L SMARC
+EVK platform. The output from DSI is connected to ADV7535.
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
- .../bindings/arm/msm/qcom,kpss-acc.yaml       | 97 +++++++++++++++++++
- .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ---------
- .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 63 ++++++++++++
- 4 files changed, 160 insertions(+), 93 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
- delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+Implementation details:-
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-deleted file mode 100644
-index 7f696362a4a1..000000000000
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ /dev/null
-@@ -1,49 +0,0 @@
--Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
--
--The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
--There is one ACC register region per CPU within the KPSS remapped region as
--well as an alias register region that remaps accesses to the ACC associated
--with the CPU accessing the region.
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: should be one of:
--			"qcom,kpss-acc-v1"
--			"qcom,kpss-acc-v2"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: the first element specifies the base address and size of
--		    the register region. An optional second element specifies
--		    the base address and size of the alias register region.
--
--- clocks:
--        Usage: required
--        Value type: <prop-encoded-array>
--        Definition: reference to the pll parents.
--
--- clock-names:
--        Usage: required
--        Value type: <stringlist>
--        Definition: must be "pll8_vote", "pxo".
--
--- clock-output-names:
--	Usage: optional
--	Value type: <string>
--	Definition: Name of the output clock. Typically acpuX_aux where X is a
--		    CPU number starting at 0.
--
--Example:
--
--	clock-controller@2088000 {
--		compatible = "qcom,kpss-acc-v2";
--		reg = <0x02088000 0x1000>,
--		      <0x02008000 0x1000>;
--		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
--		clock-names = "pll8_vote", "pxo";
--		clock-output-names = "acpu0_aux";
--	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
-new file mode 100644
-index 000000000000..6e8ef4f85eab
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
-@@ -0,0 +1,97 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-acc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
-+
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |
-+  The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
-+  There is one ACC register region per CPU within the KPSS remapped region as
-+  well as an alias register region that remaps accesses to the ACC associated
-+  with the CPU accessing the region.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,kpss-acc-v1
-+      - qcom,kpss-acc-v2
-+
-+  reg:
-+    items:
-+      - description: Base address and size of the register region
-+      - description: Optional base address and size of the alias register region
-+
-+  clocks:
-+    items:
-+      - description: phandle to pll8_vote
-+      - description: phandle to pxo_board
-+
-+  clock-names:
-+    items:
-+      - const: pll8_vote
-+      - const: pxo
-+
-+  clock-output-names:
-+    description: Name of the aux clock. Krait can have at most 4 cpu.
-+    enum:
-+      - acpu0_aux
-+      - acpu1_aux
-+      - acpu2_aux
-+      - acpu3_aux
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,kpss-acc-v1
-+      then:
-+        required:
-+          - clocks
-+          - clock-names
-+          - clock-output-names
-+          - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
-+
-+    clock-controller@2088000 {
-+      compatible = "qcom,kpss-acc-v1";
-+      reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
-+      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+      clock-names = "pll8_vote", "pxo";
-+      clock-output-names = "acpu0_aux";
-+      #clock-cells = <0>;
-+    };
-+
-+    clock-controller@2098000 {
-+      compatible = "qcom,kpss-acc-v1";
-+      reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
-+      clock-output-names = "acpu1_aux";
-+      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+      clock-names = "pll8_vote", "pxo";
-+      #clock-cells = <0>;
-+    };
-+
-+  - |
-+    clock-controller@f9088000 {
-+      compatible = "qcom,kpss-acc-v2";
-+      reg = <0xf9088000 0x1000>,
-+            <0xf9008000 0x1000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-deleted file mode 100644
-index e628758950e1..000000000000
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: should be one of the following. The generic compatible
--			"qcom,kpss-gcc" should also be included.
--			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: base address and size of the register region
--
--- clocks:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: reference to the pll parents.
--
--- clock-names:
--	Usage: required
--	Value type: <stringlist>
--	Definition: must be "pll8_vote", "pxo".
--
--- clock-output-names:
--	Usage: required
--	Value type: <string>
--	Definition: Name of the output clock. Typically acpu_l2_aux indicating
--		    an L2 cache auxiliary clock.
--
--Example:
--
--	l2cc: clock-controller@2011000 {
--		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
--		reg = <0x2011000 0x1000>;
--		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
--		clock-names = "pll8_vote", "pxo";
--		clock-output-names = "acpu_l2_aux";
--	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-new file mode 100644
-index 000000000000..578e2eccb7db
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |
-+  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
-+  to control L2 mux (in the current implementation).
-+
-+properties:
-+  compatible:
-+    const: qcom,kpss-gcc
-+
-+  reg:
-+    items:
-+      - description: Base address and size of the register region
-+
-+  clocks:
-+    items:
-+      - description: phandle to pll8_vote
-+      - description: phandle to pxo_board
-+
-+  clock-names:
-+    items:
-+      - const: pll8_vote
-+      - const: pxo
-+
-+  clock-output-names:
-+    const: acpu_l2_aux
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - clock-output-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
-+
-+    clock-controller@2011000 {
-+      compatible = "qcom,kpss-gcc";
-+      reg = <0x2011000 0x1000>;
-+      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+      clock-names = "pll8_vote", "pxo";
-+      clock-output-names = "acpu_l2_aux";
-+      #clock-cells = <0>;
-+    };
-+...
-+
+PLL5 generates 2 clock sources, FOUTPOSTDIV and FOUT1PH0 and vclk is
+sourced through DSI divider which is connected to a mux with the above
+clock sources.
+
+Pll5-->Mux->DSI divider--> vclk.
+
+DSI mode and DPI mode needs different set of PLL5 parameters for
+generating the video clock. Currently we support only DSI mode.
+later plan to extend this support to DPI mode.
+
+RFC->V1:
+ * Replaced LUT with an equation for computing pll5 parameters for generating vclk.
+ * Replaced magic numbers with macros.
+ * Added Rb tag from Geert.
+RFC:
+ * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-2-biju.das.jz@bp.renesas.com/
+ * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20220112174612.10773-3-biju.das.jz@bp.renesas.com/
+
+Logs:-
+
+Clock tree output with monitor connected at 1080p@60Hz:
+root@smarc-rzg2l:~# cat /sys/kernel/debug/clk/clk_summary
+                                 enable  prepare  protect                                duty  hardware
+   clock                          count    count    count        rate   accuracy phase  cycle    enable
+-------------------------------------------------------------------------------------------------------
+ audio_mclock                         0        0        0    11289600          0     0  50000         Y
+ extal                                5        5        0    24000000          0     0  50000         Y
+    .pll5_foutpostdiv                 2        2        0   888000000          0     0  50000         Y
+       M1                             1        1        0   888000000          0     0  50000         Y
+          dsi_pll_clk                 1        1        0   888000000          0     0  50000         Y
+       .pll5_fout1ph0                 1        1        0   444000000          0     0  50000         Y
+          .sel_pll5_4                 1        1        0   444000000          0     0  50000         Y
+             DSI_DIV                  1        1        0   148500000          0     0  50000         Y
+                M3                    2        2        0   148500000          0     0  50000         Y
+                   lcdc_clk_d         3        4        0   148500000          0     0  50000         Y
+                   dsi_vclk           1        1        0   148500000          0     0  50000         Y
+    .pll6                             2        2        0   500000000          0     0  50000         Y
+       .sel_gpu2                      1        1        0   500000000          0     0  50000         Y
+          G                           1        1        0    62500000          0     0  50000         Y
+             gpu_clk                  1        2        0    62500000          0     0  50000         Y
+       .pll6_250                      1        1        0   250000000          0     0  50000         Y
+          HP                          2        2        0   250000000          0     0  50000         Y
+    .pll5                             0        0        0  3000000000          0     0  50000         Y
+       .pll5_fout3                    0        0        0   500000000          0     0  50000         Y
+          .pll5_250                   0        0        0   250000000          0     0  50000         Y
+    .pll3                             2        2        0  1600000000          0     0  50000         Y
+       .pll3_div2                     1        1        0   800000000          0     0  50000         Y
+          .pll3_div2_4                3        3        0   200000000          0     0  50000         Y
+             M0                       3        3        0   200000000          0     0  50000         Y
+                eth1_axi              1        1        0   200000000          0     0  50000         Y
+                eth0_axi              1        1        0   200000000          0     0  50000         Y
+                lcdc_a                3        4        0   200000000          0     0  50000         Y
+             P1                      12       13        0   200000000          0     0  50000         Y
+                usb_pclk              8       12        0   200000000          0     0  50000         Y
+                usb0_func             1        1        0   200000000          0     0  50000         Y
+                usb1_host             3        5        0   200000000          0     0  50000         Y
+                usb0_host             3        5        0   200000000          0     0  50000         Y
+                dsi_aclk              1        1        0   200000000          0     0  50000         Y
+                gpu_ace_clk           0        1        0   200000000          0     0  50000         N
+                gpu_axi_clk           1        2        0   200000000          0     0  50000         Y
+                sdhi1_aclk            1        1        0   200000000          0     0  50000         Y
+                sdhi0_aclk            1        1        0   200000000          0     0  50000         Y
+                dmac_aclk             2        2        0   200000000          0     0  50000         Y
+                ia55_clk              1        1        0   200000000          0     0  50000         Y
+                gic                   1        1        0   200000000          0     0  50000         Y
+                P1_DIV2               1        1        0   100000000          0     0  50000         Y
+                   dmac_pclk          1        1        0   100000000          0     0  50000         Y
+             .pll3_div2_4_2           2        2        0   100000000          0     0  50000         Y
+                ZT                    3        3        0   100000000          0     0  50000         Y
+                   eth1_chi           1        1        0   100000000          0     0  50000         Y
+                   eth0_chi           1        1        0   100000000          0     0  50000         Y
+                   lcdc_p             2        3        0   100000000          0     0  50000         Y
+                P2                    1        1        0   100000000          0     0  50000         Y
+                   dsi_pclk           1        1        0   100000000          0     0  50000         Y
+                   ia55_pclk          0        0        0   100000000          0     0  50000         N
+          .pll3_div2_2                0        0        0   400000000          0     0  50000         Y
+       .pll3_533                      1        2        0   533333333          0     0  50000         Y
+          M2                          1        1        0   266666666          0     0  50000         Y
+             M2_DIV2                  1        1        0   133333333          0     0  50000         Y
+                dsi_sys_clk           1        1        0   133333333          0     0  50000         Y
+          .sel_pll3_3                 0        1        0   533333333          0     0  50000         Y
+             divpl3c                  0        2        0   266666667          0     0  50000         Y
+                SPI1                  0        1        0    66666666          0     0  50000         Y
+                   spi_clk2           0        1        0    66666666          0     0  50000         N
+                SPI0                  0        1        0   133333333          0     0  50000         Y
+                   spi_clk            0        1        0   133333333          0     0  50000         N
+       .pll3_400                      0        0        0   400000000          0     0  50000         Y
+    .pll2                             3        3        0  1600000000          0     0  50000         Y
+       .clk_533                       0        0        0   533333333          0     0  50000         Y
+          .clk_266                    0        0        0   266666666          0     0  50000         Y
+       .clk_800                       1        1        0   800000000          0     0  50000         Y
+          .clk_400                    2        2        0   400000000          0     0  50000         Y
+             sd1                      2        2        0   400000000          0     0  50000         Y
+                sdhi1_clk_hs          1        1        0   400000000          0     0  50000         Y
+                SD1_DIV4              2        2        0   100000000          0     0  50000         Y
+                   sdhi1_imclk2       2        2        0   100000000          0     0  50000         Y
+                   sdhi1_imclk        1        1        0   100000000          0     0  50000         Y
+             sd0                      2        2        0   400000000          0     0  50000         Y
+                sdhi0_clk_hs          1        1        0   400000000          0     0  50000         Y
+                SD0_DIV4              2        2        0   100000000          0     0  50000         Y
+                   sdhi0_imclk2       2        2        0   100000000          0     0  50000         Y
+                   sdhi0_imclk        1        1        0   100000000          0     0  50000         Y
+       .pll2_div2                     2        2        0   800000000          0     0  50000         Y
+          .pll2_div2_10               1        1        0    80000000          0     0  50000         Y
+             TSU                      1        2        0    80000000          0     0  50000         Y
+                tsu_pclk              1        1        0    80000000          0     0  50000         Y
+                adc_adclk             0        1        0    80000000          0     0  50000         N
+          .pll2_div2_8                1        1        0   100000000          0     0  50000         Y
+             P0                       6       15        0   100000000          0     0  50000         Y
+                adc_pclk              0        1        0   100000000          0     0  50000         N
+                canfd                 1        2        0   100000000          0     0  50000         Y
+                rspi2                 0        0        0   100000000          0     0  50000         N
+                rspi1                 0        1        0   100000000          0     0  50000         N
+                rspi0                 0        0        0   100000000          0     0  50000         N
+                sci1                  0        0        0   100000000          0     0  50000         N
+                sci0                  0        0        0   100000000          0     0  50000         N
+                scif4                 0        0        0   100000000          0     0  50000         N
+                scif3                 0        0        0   100000000          0     0  50000         N
+                scif2                 0        1        0   100000000          0     0  50000         N
+                scif1                 0        0        0   100000000          0     0  50000         N
+                scif0                 2        2        0   100000000          0     0  50000         Y
+                i2c3                  0        1        0   100000000          0     0  50000         N
+                i2c2                  0        0        0   100000000          0     0  50000         N
+                i2c1                  0        1        0   100000000          0     0  50000         N
+                i2c0                  0        1        0   100000000          0     0  50000         N
+                ssi3_sfr              0        0        0   100000000          0     0  50000         N
+                ssi3_pclk             0        0        0   100000000          0     0  50000         N
+                ssi2_sfr              0        0        0   100000000          0     0  50000         N
+                ssi2_pclk             0        0        0   100000000          0     0  50000         N
+                ssi1_sfr              0        0        0   100000000          0     0  50000         N
+                ssi1_pclk             0        0        0   100000000          0     0  50000         N
+                ssi0_sfr              1        1        0   100000000          0     0  50000         Y
+                ssi0_pclk             1        1        0   100000000          0     0  50000         Y
+                wdt2_pclk             0        1        0   100000000          0     0  50000         N
+                wdt1_pclk             0        1        0   100000000          0     0  50000         N
+                wdt0_pclk             0        1        0   100000000          0     0  50000         N
+                ostm2_pclk            1        2        0   100000000          0     0  50000         Y
+                ostm1_clk             1        2        0   100000000          0     0  50000         Y
+                ostm0_pclk            0        0        0   100000000          0     0  50000         N
+                P0_DIV2               0        0        0    50000000          0     0  50000         Y
+       .pll2_533                      1        1        0   533333333          0     0  50000         Y
+          .pll2_533_div2              1        1        0   266666666          0     0  50000         Y
+             .div_dsi_lpclk           1        1        0    16666667          0     0  50000         Y
+                M4                    1        1        0    16666667          0     0  50000         Y
+                   dsi_lpclk          1        1        0    16666667          0     0  50000         Y
+    .pll1                             0        0        0  1200000000          0     0  50000         Y
+       I                              0        0        0  1200000000          0     0  50000         Y
+    .osc_div1000                      0        0        0       24000          0     0  50000         Y
+    .osc                              1        4        0    24000000          0     0  50000         Y
+       gpio                           1        2        0    24000000          0     0  50000         Y
+       wdt2_clk                       0        1        0    24000000          0     0  50000         N
+       wdt1_clk                       0        1        0    24000000          0     0  50000         N
+       wdt0_clk                       0        1        0    24000000          0     0  50000         N
+ can                                  0        0        0           0          0     0  50000         Y
+ audio_clk2                           0        0        0    12288000          0     0  50000         Y
+ audio_clk1                           0        0        0    11289600          0     0  50000         Y
+root@smarc-rzg2l:~#
+
+Biju Das (9):
+  clk: renesas: rzg2l: Add FOUTPOSTDIV clk support
+  clk: renesas: rzg2l: Add PLL5_4 clk mux support
+  clk: renesas: rzg2l: Add DSI divider clk support
+  clk: renesas: r9a07g044: Add M1 clock support
+  clk: renesas: r9a07g044: Add {M2, M2_DIV2} Clocks support
+  clk: renesas: r9a07g044: Add M3 Clock support
+  clk: renesas: r9a07g044: Add M4 Clock support
+  clk: renesas: r9a07g044: Add LCDC clock and reset entries
+  clk: renesas: r9a07g044: Add DSI clock and reset entries
+
+ drivers/clk/renesas/r9a07g044-cpg.c |  58 ++++-
+ drivers/clk/renesas/rzg2l-cpg.c     | 338 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     |  43 ++++
+ 3 files changed, 437 insertions(+), 2 deletions(-)
+
 -- 
-2.34.1
+2.17.1
 
