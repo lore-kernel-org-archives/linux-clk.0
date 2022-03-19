@@ -2,335 +2,317 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939D1C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 18:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A72EC433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 21:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243871AbiCSSXy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Mar 2022 14:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38372 "EHLO
+        id S237864AbiCSVZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Mar 2022 17:25:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243868AbiCSSXx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Mar 2022 14:23:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45FED2689A8;
-        Sat, 19 Mar 2022 11:22:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C1A85B80D9B;
-        Sat, 19 Mar 2022 18:22:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32FEC340EC;
-        Sat, 19 Mar 2022 18:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647714148;
-        bh=hhu+iiM+PEsCTNMjvrEDz1ucmDg+Fr+55HCY0c8/UsU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NXtiYgj8z1V7NwGkSTBqzfcsA2AcF0FUaqWmKBlbJdkZlY+5X/Y+POt10MISO2kS/
-         +1wBVMn6in+UaYxrsB+ld5KedeYkHNIj02KA2XruXSe2eHDPJ8URwB8AcSYSv8ps+Z
-         Ifuohar81D4hwwl9tgfqOVucJpMb+IwOwfp/yuzmcpASxtg1A0RlMGefuRRTYs6DZ8
-         Xkap8/jSbiLBifie7GY6O1b3vhEHaGasq6nPAxrFZ7DCPkDSnV0SrTrqs0Z0rxACg7
-         vwu2sYtiP3sQddRlnOw3C8WIjDKnbeTbeq2k5N++3G6fabIoEi1fRpinli5QNuYYzo
-         nvfjeQZ5q5TAQ==
-Date:   Sat, 19 Mar 2022 18:29:36 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        UNGLinuxDriver@microchip.com, linux-hwmon@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tomislav Denis <tomislav.denis@avl.com>,
-        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        =?UTF-8?B?QW5kcsOp?= Gustavo Nakagomi Lopez <andregnl@usp.br>,
-        Cai Huoqing <caihuoqing@baidu.com>, linux-iio@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mips@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Keguang Zhang <keguang.zhang@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        linux-watchdog@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-pwm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>, dmaengine@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Alexandru Ardelean <aardelean@deviqon.com>
-Subject: Re: [PATCH v8 02/16] clk: Provide new devm_clk helpers for prepared
- and enabled clocks
-Message-ID: <20220319182936.06d75742@jic23-huawei>
-In-Reply-To: <20220314141643.22184-3-u.kleine-koenig@pengutronix.de>
-References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
-        <20220314141643.22184-3-u.kleine-koenig@pengutronix.de>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+        with ESMTP id S234541AbiCSVZk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Mar 2022 17:25:40 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36EF517E18;
+        Sat, 19 Mar 2022 14:24:18 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id h13so13986165ede.5;
+        Sat, 19 Mar 2022 14:24:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=KRLRxQFuDkV4XwZnkLpyAS1x2/YWT0F8R7jLRmwo6L4=;
+        b=ckFFKU9ntPEoMlOM/P4zkdVIRQ+5w4TtiUirfdI8b7/r/1k+VhpBhx/DlK/vCNiMkD
+         Bh6lOmkmHExMQXQj7oy246kLQ/HtynqmXdxscDyEJ1MpFeR3UwcfKgxQESw8zGKCcDMU
+         5OR6T0OehlPY6RMcd81mO5u7nqlwQph3L+YCc6s6iHSWmPnZnyhtHx6baxn4OeOmX+DU
+         1aIEPCogBFYj8XXdZSDUo60DbgR2xncPecAPESim9a/q83+E0d7lvsJL+6Lr9C7fJW8v
+         c7ihCZq57oP2DLbkoOhhChPLoBliQalFsYOTHDaHoTP27igjO3Eu4Tu+F7ogxS7sLR84
+         5hjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KRLRxQFuDkV4XwZnkLpyAS1x2/YWT0F8R7jLRmwo6L4=;
+        b=20pNi0E29nIrDdrNj3Y+dC8Pw95f6sYs0PXpVmtTgwR/+CPKUhXY12mPEbR8CfLP1t
+         VaAxjyDzdngnIfwFbAdA0yLwpDsZ91EtKCoFz9kGagN15a9LuUG8E8McH3mTpRwqZil6
+         5YtkB2VFSls3vxFtTV5K5gU7/Mf1sStC7eMKAMgjHDfl1RGTQMEK+yZWaOK4TAJYoc9n
+         zC8CP3uBnhXOLCclWq1Vqv6m3sLWKq7T8kK5tiVIiYrDVvHRLEjH7JG2NZTfmkpGCh2Q
+         K7c8J59EU5+5g5ulkWfqeRA9+P45MN5RmWi+Y65U5pnCNyxYbuAKmO2CdSE8kvLp+bAM
+         Vn4g==
+X-Gm-Message-State: AOAM533Ando1N7iha7q3ex/gYZrN+9SOCbxYaO+eSh/hB8JZe8UgWoqP
+        xOtXPh3P2aiTqzhDI2QJKiDYgkGB88Ydm59QNJrC4qivFqY=
+X-Google-Smtp-Source: ABdhPJx8xyZtjqqANjp1qdsdW4frrcybtDI8hcUIL1ci9B2xBFQ8Vnd+uMb38C+J/oBTTzDsIwFcsdexThI8WV8ND9Q=
+X-Received: by 2002:aa7:cb18:0:b0:413:3a7a:b5d6 with SMTP id
+ s24-20020aa7cb18000000b004133a7ab5d6mr15641286edt.254.1647725056396; Sat, 19
+ Mar 2022 14:24:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20220313115704.301718-1-aford173@gmail.com> <a146f554-837a-d19a-425c-b1fd790a0497@lucaceresoli.net>
+ <MN2PR03MB5008F8DDC6DD934074EBBC0E93109@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <59ee78c2-7d05-6d97-1ff2-36ea326be188@lucaceresoli.net> <MN2PR03MB500803388839E563D29CF25C93129@MN2PR03MB5008.namprd03.prod.outlook.com>
+In-Reply-To: <MN2PR03MB500803388839E563D29CF25C93129@MN2PR03MB5008.namprd03.prod.outlook.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sat, 19 Mar 2022 16:24:05 -0500
+Message-ID: <CAHCN7xKZDTdKyMgCUOmKXrceC8Qhk8ES6xn5GFag-8Vt=NgpAA@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [PATCH] clk: vc5: Enable VC5_HAS_PFD_FREQ_DBL on 5p49v6965
+To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "aford@beaconembedded.com" <aford@beaconembedded.com>,
+        "cstevens@beaconembedded.com" <cstevens@beaconembedded.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 14 Mar 2022 15:16:29 +0100
-Uwe Kleine-K=C3=B6nig         <u.kleine-koenig@pengutronix.de> wrote:
+On Thu, Mar 17, 2022 at 1:57 PM Fillion, Claude
+<Claude.Fillion@mksinst.com> wrote:
+>
+> Hello Luca,
+>
+> > -----Original Message-----
+> > From: Luca Ceresoli <luca@lucaceresoli.net>
+> > Sent: Tuesday, March 15, 2022 6:53 PM
+> > To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
+> > <aford173@gmail.com>; linux-clk@vger.kernel.org
+> > Cc: aford@beaconembedded.com; cstevens@beaconembedded.com;
+> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> > <sboyd@kernel.org>; linux-kernel@vger.kernel.org; Marek Vasut
+> > <marek.vasut@gmail.com>
+> > Subject: Re: [EXTERNAL] Re: [PATCH] clk: vc5: Enable
+> > VC5_HAS_PFD_FREQ_DBL on 5p49v6965
+> >
+> > Hi Claude,
+> >
+> > [adding Marek in Cc:, the original author of the driver and also of the
+> > frequency doubler]
+> >
+> > On 15/03/22 20:34, Fillion, Claude wrote:
+> > > Hello Luca,
+> > >
+> > > I will defer to Adam, but a few comments:
+> > >
+> > >> -----Original Message-----
+> > >> From: Luca Ceresoli <luca@lucaceresoli.net>
+> > >> Sent: Tuesday, March 15, 2022 4:55 AM
+> > >> To: Adam Ford <aford173@gmail.com>; linux-clk@vger.kernel.org
+> > >> Cc: aford@beaconembedded.com; cstevens@beaconembedded.com;
+> > Fillion,
+> > >> Claude <Claude.Fillion@mksinst.com>; Michael Turquette
+> > >> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; linux-
+> > >> kernel@vger.kernel.org
+> > >> Subject: [EXTERNAL] Re: [PATCH] clk: vc5: Enable
+> > VC5_HAS_PFD_FREQ_DBL
+> > >> on 5p49v6965
+> > >>
+> > >> This email originated outside of MKS.  Use caution when sharing
+> > >> information or opening attachments and links.
+> > >>
+> > >> --------------------------------------------------------------------=
+-
+> > >> -------------------------
+> > >> ----------------------------------------------
+> > >> Hi Adam, Claude,
+> > >>
+> > >> thanks for your patch.
+> > >>
+> > >> On 13/03/22 12:57, Adam Ford wrote:
+> > >>> The 5p49v6965 has a reference clock frequency doubler.
+> > >>> Enabling it adds versaclock_som.dbl to the clock tree, but the
+> > >>> output frequency remains correct.
+> > >>>
+> > >>> Suggested-by: Claude Fillion <Claude.Fillion@mksinst.com>
+> > >>> Signed-off-by: Adam Ford <aford173@gmail.com>
+> > >>>
+> > >>> diff --git a/drivers/clk/clk-versaclock5.c
+> > >>> b/drivers/clk/clk-versaclock5.c index e7be3e54b9be..4d190579e874
+> > >>> 100644
+> > >>> --- a/drivers/clk/clk-versaclock5.c
+> > >>> +++ b/drivers/clk/clk-versaclock5.c
+> > >>> @@ -1211,7 +1211,7 @@ static const struct vc5_chip_info
+> > >> idt_5p49v6965_info =3D {
+> > >>>   .model =3D IDT_VC6_5P49V6965,
+> > >>>   .clk_fod_cnt =3D 4,
+> > >>>   .clk_out_cnt =3D 5,
+> > >>> - .flags =3D VC5_HAS_BYPASS_SYNC_BIT,
+> > >>> + .flags =3D VC5_HAS_BYPASS_SYNC_BIT | VC5_HAS_PFD_FREQ_DBL,
+> > >>
+> > >>
+> > >> If my understanding is correct, the doubler is not mentioned by the
+> > >> datasheet, but it exists. Maybe it's worth a line of comment to help
+> > >> future readers not waste their time in finding out:
+> > >>   /* Frequency doubler not mentioned on datasheet */
+> > >>
+> > >
+> > > I see the doubler bit mentioned in Table 25 of both v6 and v6e specs.=
+  It is
+> > named differently, but appears to have the same purpose.
+> >
+> > Well, literally speaking what I wrote is correct: the _datasheet_ does =
+not
+> > mention the doubler. Table 25 you mention is on the "Register Descripti=
+on
+> > and Programming Guide".
+> >
+> > Practically speaking I would expect the datasheet to mention the hardwa=
+re
+> > blocks including the doubler, but apparently Renesas has a different op=
+inion
+> > and perhaps they are not alone.
+> >
+> > So I think you can forget about my proposal to add a comment.
+> >
+> > >> Can you confirm that:
+> > >>  - the en_ref_doubler bit value defaults to zero when reading it, as=
+ the
+> > >>    register guide says?
+> > >>  - if set to 1 the frequencies double?
+> > >>
+> > >> With that confirmed, the patch looks good.
+> > >>
+> > >> Thanks,
+> > >> --
+> > >> Luca
+> > >
+> > > I played around a bit with the programming board today and did not se=
+e
+> > what I expected to see.
+> > >
+> > > Using i2cget I see that the register in question (0x10) has a default=
+ value of
+> > 0xA0 for both 6901 and 6965.  Thus it seems disabled by default for bot=
+h
+> > parts.
+> >
+> > Coherently with the Register guide. OK.
+> >
+> > > Starting at my base frequency of 46.8MHz, setting the bit to 1 (i2cse=
+t)
+> > changes the output  frequency to 59.04MHz for the 6901 part, and to
+> > 47.7MHz for the 6965 part.  So setting the 'doubler' bit changes output
+> > frequency for both parts, but not the same amount.
+> > >
+> > > Not sure of the meaning, just want to pass the information along.
+> >
+> > Me neither.
+> >
+> > I have no clever idea, only this one that I consider unlikely: by enabl=
+ing the
+> > doubler you may have increased some internal frequency above its allowe=
+d
+> > range and thus the chip is not working properly anymore. Can you use a
+> > lower base frequency or check the PLL settings to ensure you are not
+> > exceeding some range?
+> >
+> > What output frequency are you measuring? OUT0 or another one? What
+> > frequency do you measure with en_ref_doubler =3D 0?
+> >
+> > --
+> > Luca
+>
+> Not sure what I did wrong with my earlier testing, but I am now seeing bo=
+th parts respond similarly to the doubler bit being set.
+>
+> With doubler bit disabled (register 0x10, value 0xa0), I set the output f=
+requencies to 1, 10, 100, and 46.8MHz.
+>
+> After setting doubler bit (0xa8), I saw frequencies of 1.260, 12.60, 126.=
+0, and 58.9 Mhz for both 6901 and 6965 parts.
+>
+> So from my testing the doubler bit seems to behave similarly for both par=
+ts.
+>
+> At this point I will leave my unofficial testing and move on to writing a=
+ consumer driver.
 
-> When a driver keeps a clock prepared (or enabled) during the whole
-> lifetime of the driver, these helpers allow to simplify the drivers.
->=20
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Alexandru Ardelean <aardelean@deviqon.com>
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+I don't have a scope to measure the exact frequencies, but I was able
+to test it with both USB and Ethernet, which are clock from the
+versaclock, and I can check the output frequencies against the
+clk_summary in debugfs.
 
-One trivial thing below.
+Without this patch:
 
-> ---
->  drivers/clk/clk-devres.c | 31 ++++++++++++++
->  include/linux/clk.h      | 90 +++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 120 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index fb7761888b30..4707fe718f0b 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -67,12 +67,43 @@ struct clk *devm_clk_get(struct device *dev, const ch=
-ar *id)
->  }
->  EXPORT_SYMBOL(devm_clk_get);
-> =20
-> +struct clk *devm_clk_get_prepared(struct device *dev, const char *id)
-> +{
-> +	return __devm_clk_get(dev, id, clk_get, clk_prepare, clk_unprepare);
+    clock-controller.mux              1        1        0    25000000
+        0     0  50000         Y
+       clock-controller.out0_sel_i2cb       0        0        0
+25000000          0     0  50000         Y
+       clock-controller.pfd           1        1        0    25000000
+        0     0  50000         Y
+          clock-controller.pll        1        1        0  2800000000
+        0     0  50000         Y
+             clock-controller.fod3       1        1        0
+24576000          0     0  50000         Y
+                clock-controller.out4       1        1        0
+24576000          0     0  50000         Y
+             clock-controller.fod2       0        0        0
+24000000          0     0  50000         Y
+                clock-controller.out3       0        0        0
+24000000          0     0  50000         Y
+             clock-controller.fod1       0        0        0
+24000000          0     0  50000         Y
+                clock-controller.out2       0        0        0
+24000000          0     0  50000         Y
+             clock-controller.fod0       0        0        0
+24000000          0     0  50000         Y
+                clock-controller.out1       0        0        0
+24000000          0     0  50000         Y
 
-Nitpick but this spacing before } in functions is rather unusual and not
-in keeping with the existing code in this file.
 
-> +
-> +}
-> +EXPORT_SYMBOL(devm_clk_get_prepared);
-> +
-> +struct clk *devm_clk_get_enabled(struct device *dev, const char *id)
-> +{
-> +	return __devm_clk_get(dev, id, clk_get,
-> +			      clk_prepare_enable, clk_disable_unprepare);
-> +
-> +}
-> +EXPORT_SYMBOL(devm_clk_get_enabled);
-> +
->  struct clk *devm_clk_get_optional(struct device *dev, const char *id)
->  {
->  	return __devm_clk_get(dev, id, clk_get_optional, NULL, NULL);
->  }
->  EXPORT_SYMBOL(devm_clk_get_optional);
-> =20
-> +struct clk *devm_clk_get_optional_prepared(struct device *dev, const cha=
-r *id)
-> +{
-> +	return __devm_clk_get(dev, id, clk_get_optional,
-> +			      clk_prepare, clk_unprepare);
-> +
-> +}
-> +EXPORT_SYMBOL(devm_clk_get_optional_prepared);
-> +
-> +struct clk *devm_clk_get_optional_enabled(struct device *dev, const char=
- *id)
-> +{
-> +	return __devm_clk_get(dev, id, clk_get_optional,
-> +			      clk_prepare_enable, clk_disable_unprepare);
-> +
-> +}
-> +EXPORT_SYMBOL(devm_clk_get_optional_enabled);
-> +
->  struct clk_bulk_devres {
->  	struct clk_bulk_data *clks;
->  	int num_clks;
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index 266e8de3cb51..b011dbba7109 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -449,7 +449,7 @@ int __must_check devm_clk_bulk_get_all(struct device =
-*dev,
->   * the clock producer.  (IOW, @id may be identical strings, but
->   * clk_get may return different clock producers depending on @dev.)
->   *
-> - * Drivers must assume that the clock source is not enabled.
-> + * Drivers must assume that the clock source is neither prepared nor ena=
-bled.
->   *
->   * devm_clk_get should not be called from within interrupt context.
->   *
-> @@ -458,6 +458,47 @@ int __must_check devm_clk_bulk_get_all(struct device=
- *dev,
->   */
->  struct clk *devm_clk_get(struct device *dev, const char *id);
-> =20
-> +/**
-> + * devm_clk_get_prepared - devm_clk_get() + clk_prepare()
-> + * @dev: device for clock "consumer"
-> + * @id: clock consumer ID
-> + *
-> + * Returns a struct clk corresponding to the clock producer, or
-> + * valid IS_ERR() condition containing errno.  The implementation
-> + * uses @dev and @id to determine the clock consumer, and thereby
-> + * the clock producer.  (IOW, @id may be identical strings, but
-> + * clk_get may return different clock producers depending on @dev.)
-> + *
-> + * The returned clk (if valid) is prepared. Drivers must however assume =
-that the
-> + * clock is not enabled.
-> + *
-> + * devm_clk_get_prepared should not be called from within interrupt cont=
-ext.
-> + *
-> + * The clock will automatically be unprepared and freed when the
-> + * device is unbound from the bus.
-> + */
-> +struct clk *devm_clk_get_prepared(struct device *dev, const char *id);
-> +
-> +/**
-> + * devm_clk_get_enabled - devm_clk_get() + clk_prepare_enable()
-> + * @dev: device for clock "consumer"
-> + * @id: clock consumer ID
-> + *
-> + * Returns a struct clk corresponding to the clock producer, or valid IS=
-_ERR()
-> + * condition containing errno.  The implementation uses @dev and @id to
-> + * determine the clock consumer, and thereby the clock producer.  (IOW, =
-@id may
-> + * be identical strings, but clk_get may return different clock producers
-> + * depending on @dev.)
-> + *
-> + * The returned clk (if valid) is prepared and enabled.
-> + *
-> + * devm_clk_get_prepared should not be called from within interrupt cont=
-ext.
-> + *
-> + * The clock will automatically be disabled, unprepared and freed when t=
-he
-> + * device is unbound from the bus.
-> + */
-> +struct clk *devm_clk_get_enabled(struct device *dev, const char *id);
-> +
->  /**
->   * devm_clk_get_optional - lookup and obtain a managed reference to an o=
-ptional
->   *			   clock producer.
-> @@ -469,6 +510,29 @@ struct clk *devm_clk_get(struct device *dev, const c=
-har *id);
->   */
->  struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-> =20
-> +/**
-> + * devm_clk_get_optional_prepared - devm_clk_get_optional() + clk_prepar=
-e()
-> + * @dev: device for clock "consumer"
-> + * @id: clock consumer ID
-> + *
-> + * Behaves the same as devm_clk_get_prepared() except where there is no =
-clock
-> + * producer.  In this case, instead of returning -ENOENT, the function r=
-eturns
-> + * NULL.
-> + */
-> +struct clk *devm_clk_get_optional_prepared(struct device *dev, const cha=
-r *id);
-> +
-> +/**
-> + * devm_clk_get_optional_enabled - devm_clk_get_optional() +
-> + *                                 clk_prepare_enable()
-> + * @dev: device for clock "consumer"
-> + * @id: clock consumer ID
-> + *
-> + * Behaves the same as devm_clk_get_enabled() except where there is no c=
-lock
-> + * producer.  In this case, instead of returning -ENOENT, the function r=
-eturns
-> + * NULL.
-> + */
-> +struct clk *devm_clk_get_optional_enabled(struct device *dev, const char=
- *id);
-> +
->  /**
->   * devm_get_clk_from_child - lookup and obtain a managed reference to a
->   *			     clock producer from child node.
-> @@ -813,12 +877,36 @@ static inline struct clk *devm_clk_get(struct devic=
-e *dev, const char *id)
->  	return NULL;
->  }
-> =20
-> +static inline struct clk *devm_clk_get_prepared(struct device *dev,
-> +						const char *id)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline struct clk *devm_clk_get_enabled(struct device *dev,
-> +					       const char *id)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline struct clk *devm_clk_get_optional(struct device *dev,
->  						const char *id)
->  {
->  	return NULL;
->  }
-> =20
-> +static inline struct clk *devm_clk_get_optional_prepared(struct device *=
-dev,
-> +							 const char *id)
-> +{
-> +	return NULL;
-> +}
-> +
-> +static inline struct clk *devm_clk_get_optional_enabled(struct device *d=
-ev,
-> +							const char *id)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline int __must_check devm_clk_bulk_get(struct device *dev, int=
- num_clks,
->  						 struct clk_bulk_data *clks)
->  {
+With this patch:
 
+    clock-controller.mux              1        1        0    25000000
+        0     0  50000         Y
+       clock-controller.out0_sel_i2cb       0        0        0
+25000000          0     0  50000         Y
+       clock-controller.dbl           1        1        0    25000000
+        0     0  50000         Y
+          clock-controller.pfd        1        1        0    25000000
+        0     0  50000         Y
+             clock-controller.pll       1        1        0
+2800000000          0     0  50000         Y
+                clock-controller.fod3       1        1        0
+24576000          0     0  50000         Y
+                   clock-controller.out4       1        1        0
+24576000          0     0  50000         Y
+                clock-controller.fod2       0        0        0
+24000000          0     0  50000         Y
+                   clock-controller.out3       0        0        0
+24000000          0     0  50000         Y
+                clock-controller.fod1       0        0        0
+24000000          0     0  50000         Y
+                   clock-controller.out2       0        0        0
+24000000          0     0  50000         Y
+                clock-controller.fod0       0        0        0
+24000000          0     0  50000         Y
+                   clock-controller.out1       0        0        0
+24000000          0     0  50000         Y
+
+From what I can tell, the only thing that changes is the introduction
+of clock-controller.dbl into the clock dump.
+In my interpretation of reading the programmer's manual, the frequency
+that is doubled is the reference frequency, but based on looking at
+the clock dump, it's not obvious what's happening.
+
+Having said that, if Claude is measuring incorrect frequencies, I am
+fine with abandoning this patch.
+
+adam
+
+>
+> Regards,
+> Claude
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> This message and any attachments are intended only for the designated rec=
+ipient(s) and may contain confidential or proprietary information and be su=
+bject to the attorney-client privilege or other confidentiality protections=
+.  If you are not a designated recipient, you may not review, use, copy or =
+distribute this message or any attachments.  If you received this email in =
+error, please notify the sender by reply e-mail and permanently delete the =
+original and any copies of this message and any attachments thereto.  Thank=
+ you.
