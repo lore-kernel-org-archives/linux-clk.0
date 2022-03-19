@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C556C433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 23:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309E9C433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 23:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244333AbiCSXCX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S244332AbiCSXCX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 19 Mar 2022 19:02:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43900 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244332AbiCSXCV (ORCPT
+        with ESMTP id S234512AbiCSXCV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Mar 2022 19:02:21 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FC6A1A9C8E
-        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 16:00:57 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id h7so1908005lfl.2
-        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 16:00:56 -0700 (PDT)
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5E201A9C82
+        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 16:00:55 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id bn33so15599721ljb.6
+        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 16:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AXrF/QUZIJ/g2tq/AcJFm/biPJJeGIWETKdd1rNt5eI=;
-        b=cqlXmt5Nc44R8DWDgNIdEY3BvG4wY4BmsaHrg7RODK2oocUmqqKN/1AY5gIQCF3DCC
-         6Y0D8jCAJ5tYjkOuDq3vZDCP2ITh+kSLEeJB+5KqPMbiWRN1jp+roNRD4kBVnGSWAS0r
-         oALw9HPf0MgUw2xZZze2ivoCtprH/10aP2eh+xXy5YI6Y4FqFyUSZeEJNZAWQWFgQWR6
-         Zj6R6wLYh3VibRF4BiBfyJiSlNlyvaPXiDxcL2VMWNz4yA59csIcrz7CAMrExZfoj58g
-         nHTtVqHOjHHz8hTe/RO6btsQFccxsDzmGls81qiIb8U1c0IVRShsmykFYAKjDF9potKI
-         2gYA==
+        bh=dfsKKhofUU0oxE9bz8stUr+16bmhZiDH24dwYU6qJoI=;
+        b=XMjZFfWMQpU8vgemfFvGd/h/cW3Q1tvGvbhIFdXegk9EeJxpRfqACnkvJcsbmS6S4q
+         8KbAJRcvyXwhwGwgDW0Ul7NJxOTcOvUoW/nP6QNxmgzQPfMz4F9N7nrzWfc96Nfx9gr4
+         8lcpMWwv6f/rO00h0Mvy03Vqrn1IPU8VmZUqJCJ/bSMLuArz2TQj5LcJcGWk+kjyG2Vj
+         f1NVIWB5C6+WwSyoR4mjL4//HiT+ikzvz7AoqaBh9blVcaJvRIYcV60+cCp5o79moiUh
+         FkcrdFOkXW9Q5mDEEtuTxNi5flGVVLvGjVuxhpDcGIp3Zu7M+Mm6J14AblPqhlFhtHju
+         f54Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AXrF/QUZIJ/g2tq/AcJFm/biPJJeGIWETKdd1rNt5eI=;
-        b=QFK/1DZ84sKAsYnNMH0nIjpSCMyl5L2L+r8t7Zv+9gTEwI8GKv7dFVsApidDhXg3oK
-         XFRrzF5MojhFoP9tvSQm7lFx6Ypbr0Yvg6LYX4MADc9NUGPV0cJr5me4UMWJzbFqOnWl
-         TRbmqi8JR++1Z1mwaFjYT8TCn7tHALWPr/4gKsUEcqGiCF61WWwJwSLrV2a/NCEaTYXI
-         jrt9yCadnqyR0W6fxQt5wkzAF10V4yCPRolvnpxU4n6BZ1jLwcTEOByhTLG7nHLUyIXk
-         EeH23/2GsyWZBWJWcVFJh3V1HAppt3u4SqVcatOePA/ETjo48KdwilTHwMPcgiGI9BRI
-         o6/Q==
-X-Gm-Message-State: AOAM533yksvmDv0VDW1wu0EOxYCilbpyYC1ypyCrfrxCtSsHdG0qbNw6
-        GA3KOtXOr0/FnXeyH2NfYCa7wQ==
-X-Google-Smtp-Source: ABdhPJwUPwgwr81PyPCK+OyrhmGexuF1Kz0ZZuAjp1gJuCFCvMQ/Ac2c9MkjLWR/odiCoqBsyOVvVA==
-X-Received: by 2002:ac2:50d1:0:b0:44a:12e5:9d3e with SMTP id h17-20020ac250d1000000b0044a12e59d3emr4260369lfm.25.1647730855205;
-        Sat, 19 Mar 2022 16:00:55 -0700 (PDT)
+        bh=dfsKKhofUU0oxE9bz8stUr+16bmhZiDH24dwYU6qJoI=;
+        b=OS1GWHmHIpbApyt5sKMOqpJlwKupz1KQXfH7T0QFjG3VRUBHKmCLm9lngbxHTg5fz/
+         Mthe+FLfpyt8iB/DldPexzl2hMvOt+6CYRZT22+V6SkgGV44Ztsx+igBjmLQNx/l7oVM
+         900ciJ9pF9/Qjno9NJJDmd7nqFKUagK1hlYy0hI32Wi4EGl+L2lraedE6tThbWtO88be
+         +eo8kKKxk45y6p8rtPl4lyAcXH/NLGig0Di3fkc0l7uOZ2D9ess0CEzhA3JFGZgbXMow
+         mTBAiKrVeM7OGGff/FmaqVW3rR6LDQlmfqUWoKII4IvrHahTk152ZqBWHHDHZowyz2Fh
+         2tFw==
+X-Gm-Message-State: AOAM532eoCRSpGJo7sBMiS/K+DaahvuHEttAGlTIuibG2PJDSULpFAfd
+        mhtgvCwrHUlXGMTkoZuZJbpinA==
+X-Google-Smtp-Source: ABdhPJyO7yVZ9uHEtyVNXJbneDwVVIbQfuFEx8SH0daPBwxWhkCgfnLEE7xoxRNCepfEIPYf+h9o2w==
+X-Received: by 2002:a05:651c:11c4:b0:249:80fe:d5f4 with SMTP id z4-20020a05651c11c400b0024980fed5f4mr600438ljo.185.1647730853908;
+        Sat, 19 Mar 2022 16:00:53 -0700 (PDT)
 Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
-        by smtp.gmail.com with ESMTPSA id z5-20020a196505000000b0044a12b953f9sm581520lfb.45.2022.03.19.16.00.54
+        by smtp.gmail.com with ESMTPSA id z5-20020a196505000000b0044a12b953f9sm581520lfb.45.2022.03.19.16.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Mar 2022 16:00:54 -0700 (PDT)
+        Sat, 19 Mar 2022 16:00:53 -0700 (PDT)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 5/5 v2] clk: ux500: Implement the missing CLKOUT clocks
-Date:   Sat, 19 Mar 2022 23:51:56 +0100
-Message-Id: <20220319225156.1451636-6-linus.walleij@linaro.org>
+Subject: [PATCH 4/5 v2] clk: ux500: Rewrite PRCMU clocks to use clk_hw_*
+Date:   Sat, 19 Mar 2022 23:51:55 +0100
+Message-Id: <20220319225156.1451636-5-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220319225156.1451636-1-linus.walleij@linaro.org>
 References: <20220319225156.1451636-1-linus.walleij@linaro.org>
@@ -64,369 +64,532 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This implements the two missing CLKOUT clocks for the ux500
-(well really U8500/DB8500) SoC.
+This rewrites all the u8500 PRCMU clocks and helper functions to
+handle clocks using struct clk_hw rather than struct clk, as is
+normal for modern clock drivers.
 
-The clocks are initialized using a specific parent and
-divider and these are specified in the device tree, see
-the separate binding patch.
-
-The implementation is a bit different in that it will only
-create the clock in the clock framework if a user appears
-in the device tree, rather than it being registered upfront
-like most of the other clocks. This is because the clock
-needs parameters for source and divider from the consumer
-phandle for the clock to be set up properly when the clock
-is registered.
-
-There could be more than one user of a CLKOUT clock, but
-we have not seen this in practice. If this happens the
-framework prints and info and returns the previously
-registered clock.
-
-Using the clocks requires also muxing the CLKOUT1 or
-CLKOUT2 to the appropriate pad. In practice this is
-achived in a pinctrl handle in the DTS node for the device
-using the CLKOUT clock, so this muxing is done separately
-from the clock itself. Example:
-
-  haptic@49 {
-    compatible = "immersion,isa1200";
-    reg = <0x49>;
-    (...)
-    /* clkout1 from ACLK divided by 8 */
-    clocks = <&clkout_clk DB8500_CLKOUT_1 DB8500_CLKOUT_SRC_ACLK 8>;
-    pinctrl-names = "default";
-    pinctrl-0 = <&isa1200_janice_default>;
-  };
-
-  isa1200_janice_default: isa1200_janice {
-    /* Bring out clkout1 on pin GPIO227 pin AH7 */
-    janice_mux {
-      function = "clkout";
-      groups = "clkout1_a_1";
-    };
-    janice_cfg1 {
-      pins = "GPIO227_AH7";
-      ste,config = <&out_lo>;
-    };
-  (...)
-
-This was tested successfully with the Immersion ISA1200
-haptic feedback unit on the Samsung Galaxy S Advance GT-I9070
-(Janice) mobile phone.
-
-As the CLKOUT clocks need some undefined fixed rate parent
-clocks that are currently missing from the PRCMU clock
-implementation, the three simplest are added in this patch:
-clk38m_to_clkgen, aclk and sysclk. The only parent not yet
-available in the implementation is clk009, which is a kind
-of special muxed and divided clock which isn't even
-implemented in the vendor clock driver.
+Use clk_hw_register(), of_clk_add_hw_provider() and stack all the
+clocks into a compile-time dynamic array of
+struct clk_hw_onecell_data.
 
 Cc: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-ChangeLog v1->v2:
-- Drop the custom software .is_enabled tracking.
-- Drop the custom software .is_prepared tracking.
-- Use clk_hw_* calls and struct clk_hw all over.
-- Fix const-correctness with const * const on the parent
-  table
-- Use u32 for the DT cell values, drop pointless < 0 check
-- Reference ab8500_sysclk rather than creating a second
-  instance of sysclk
-- Drop extra paranthesis around expressions in
-   if ((divider == 0) || (divider > 63))
----
- drivers/clk/ux500/clk-prcmu.c    | 115 +++++++++++++++++++++++++++++++
- drivers/clk/ux500/clk.h          |   5 ++
- drivers/clk/ux500/u8500_of_clk.c |  88 +++++++++++++++++++++--
- 3 files changed, 201 insertions(+), 7 deletions(-)
+ drivers/clk/ux500/clk-prcmu.c    |  74 ++++-----
+ drivers/clk/ux500/clk.h          |  55 +++----
+ drivers/clk/ux500/u8500_of_clk.c | 263 ++++++++++++++-----------------
+ 3 files changed, 183 insertions(+), 209 deletions(-)
 
 diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
-index 4c1f3a6f5eb5..4c3ea84c9474 100644
+index 6627ed1ef37e..4c1f3a6f5eb5 100644
 --- a/drivers/clk/ux500/clk-prcmu.c
 +++ b/drivers/clk/ux500/clk-prcmu.c
-@@ -14,6 +14,7 @@
- #include "clk.h"
- 
- #define to_clk_prcmu(_hw) container_of(_hw, struct clk_prcmu, hw)
-+#define to_clk_prcmu_clkout(_hw) container_of(_hw, struct clk_prcmu_clkout, hw)
- 
- struct clk_prcmu {
- 	struct clk_hw hw;
-@@ -21,6 +22,13 @@ struct clk_prcmu {
- 	int opp_requested;
+@@ -183,16 +183,16 @@ static const struct clk_ops clk_prcmu_opp_volt_scalable_ops = {
+ 	.set_rate = clk_prcmu_set_rate,
  };
  
-+struct clk_prcmu_clkout {
-+	struct clk_hw hw;
-+	u8 clkout_id;
-+	u8 source;
-+	u8 divider;
-+};
-+
- /* PRCMU clock operations. */
+-static struct clk *clk_reg_prcmu(const char *name,
+-				 const char *parent_name,
+-				 u8 cg_sel,
+-				 unsigned long rate,
+-				 unsigned long flags,
+-				 const struct clk_ops *clk_prcmu_ops)
++static struct clk_hw *clk_reg_prcmu(const char *name,
++				    const char *parent_name,
++				    u8 cg_sel,
++				    unsigned long rate,
++				    unsigned long flags,
++				    const struct clk_ops *clk_prcmu_ops)
+ {
+ 	struct clk_prcmu *clk;
+ 	struct clk_init_data clk_prcmu_init;
+-	struct clk *clk_reg;
++	int ret;
  
- static int clk_prcmu_prepare(struct clk_hw *hw)
-@@ -284,3 +292,110 @@ struct clk_hw *clk_reg_prcmu_opp_volt_scalable(const char *name,
- 	return clk_reg_prcmu(name, parent_name, cg_sel, rate, flags,
- 			&clk_prcmu_opp_volt_scalable_ops);
- }
-+
-+/* The clkout (external) clock is special and need special ops */
-+
-+static int clk_prcmu_clkout_prepare(struct clk_hw *hw)
-+{
-+	struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
-+
-+	return prcmu_config_clkout(clk->clkout_id, clk->source, clk->divider);
-+}
-+
-+static void clk_prcmu_clkout_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
-+	int ret;
-+
-+	/* The clkout clock is disabled by dividing by 0 */
-+	ret = prcmu_config_clkout(clk->clkout_id, clk->source, 0);
-+	if (ret)
-+		pr_err("clk_prcmu: %s failed to disable %s\n", __func__,
-+		       clk_hw_get_name(hw));
-+}
-+
-+static unsigned long clk_prcmu_clkout_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
-+
-+	if (!clk->divider)
-+		return 0;
-+	return (parent_rate / clk->divider);
-+}
-+
-+static u8 clk_prcmu_clkout_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
-+	return clk->source;
-+}
-+
-+static int clk_prcmu_clkout_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
-+
-+	clk->source = index;
-+	/* Make sure the change reaches the hardware immediately */
-+	if (clk_hw_is_prepared(hw))
-+		return clk_prcmu_clkout_prepare(hw);
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_prcmu_clkout_ops = {
-+	.prepare = clk_prcmu_clkout_prepare,
-+	.unprepare = clk_prcmu_clkout_unprepare,
-+	.recalc_rate = clk_prcmu_clkout_recalc_rate,
-+	.get_parent = clk_prcmu_clkout_get_parent,
-+	.set_parent = clk_prcmu_clkout_set_parent,
-+};
-+
-+struct clk_hw *clk_reg_prcmu_clkout(const char *name,
-+				    const char * const *parent_names,
-+				    int num_parents,
-+				    u8 source, u8 divider)
-+
-+{
-+	struct clk_prcmu_clkout *clk;
-+	struct clk_init_data clk_prcmu_clkout_init;
-+	u8 clkout_id;
-+	int ret;
-+
-+	if (!name) {
-+		pr_err("clk_prcmu_clkout: %s invalid arguments passed\n", __func__);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (!strcmp(name, "clkout1"))
-+		clkout_id = 0;
-+	else if (!strcmp(name, "clkout2"))
-+		clkout_id = 1;
-+	else {
-+		pr_err("clk_prcmu_clkout: %s bad clock name\n", __func__);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
-+	if (!clk)
-+		return ERR_PTR(-ENOMEM);
-+
-+	clk->clkout_id = clkout_id;
-+	clk->source = source;
-+	clk->divider = divider;
-+
-+	clk_prcmu_clkout_init.name = name;
-+	clk_prcmu_clkout_init.ops = &clk_prcmu_clkout_ops;
-+	clk_prcmu_clkout_init.flags = CLK_GET_RATE_NOCACHE;
-+	clk_prcmu_clkout_init.parent_names = parent_names;
-+	clk_prcmu_clkout_init.num_parents = num_parents;
-+	clk->hw.init = &clk_prcmu_clkout_init;
-+
+ 	if (!name) {
+ 		pr_err("clk_prcmu: %s invalid arguments passed\n", __func__);
+@@ -216,11 +216,11 @@ static struct clk *clk_reg_prcmu(const char *name,
+ 	clk_prcmu_init.num_parents = (parent_name ? 1 : 0);
+ 	clk->hw.init = &clk_prcmu_init;
+ 
+-	clk_reg = clk_register(NULL, &clk->hw);
+-	if (IS_ERR_OR_NULL(clk_reg))
 +	ret = clk_hw_register(NULL, &clk->hw);
 +	if (ret)
-+		goto free_clkout;
-+
+ 		goto free_clk;
+ 
+-	return clk_reg;
 +	return &clk->hw;
-+free_clkout:
-+	kfree(clk);
-+	pr_err("clk_prcmu_clkout: %s failed to register clk\n", __func__);
-+	return ERR_PTR(-ENOMEM);
-+}
+ 
+ free_clk:
+ 	kfree(clk);
+@@ -228,58 +228,58 @@ static struct clk *clk_reg_prcmu(const char *name,
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+-struct clk *clk_reg_prcmu_scalable(const char *name,
+-				   const char *parent_name,
+-				   u8 cg_sel,
+-				   unsigned long rate,
+-				   unsigned long flags)
++struct clk_hw *clk_reg_prcmu_scalable(const char *name,
++				      const char *parent_name,
++				      u8 cg_sel,
++				      unsigned long rate,
++				      unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, rate, flags,
+ 			&clk_prcmu_scalable_ops);
+ }
+ 
+-struct clk *clk_reg_prcmu_gate(const char *name,
+-			       const char *parent_name,
+-			       u8 cg_sel,
+-			       unsigned long flags)
++struct clk_hw *clk_reg_prcmu_gate(const char *name,
++				  const char *parent_name,
++				  u8 cg_sel,
++				  unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, 0, flags,
+ 			&clk_prcmu_gate_ops);
+ }
+ 
+-struct clk *clk_reg_prcmu_scalable_rate(const char *name,
+-					const char *parent_name,
+-					u8 cg_sel,
+-					unsigned long rate,
+-					unsigned long flags)
++struct clk_hw *clk_reg_prcmu_scalable_rate(const char *name,
++					   const char *parent_name,
++					   u8 cg_sel,
++					   unsigned long rate,
++					   unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, rate, flags,
+ 			&clk_prcmu_scalable_rate_ops);
+ }
+ 
+-struct clk *clk_reg_prcmu_rate(const char *name,
+-			       const char *parent_name,
+-			       u8 cg_sel,
+-			       unsigned long flags)
++struct clk_hw *clk_reg_prcmu_rate(const char *name,
++				  const char *parent_name,
++				  u8 cg_sel,
++				  unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, 0, flags,
+ 			&clk_prcmu_rate_ops);
+ }
+ 
+-struct clk *clk_reg_prcmu_opp_gate(const char *name,
+-				   const char *parent_name,
+-				   u8 cg_sel,
+-				   unsigned long flags)
++struct clk_hw *clk_reg_prcmu_opp_gate(const char *name,
++				      const char *parent_name,
++				      u8 cg_sel,
++				      unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, 0, flags,
+ 			&clk_prcmu_opp_gate_ops);
+ }
+ 
+-struct clk *clk_reg_prcmu_opp_volt_scalable(const char *name,
+-					    const char *parent_name,
+-					    u8 cg_sel,
+-					    unsigned long rate,
+-					    unsigned long flags)
++struct clk_hw *clk_reg_prcmu_opp_volt_scalable(const char *name,
++					       const char *parent_name,
++					       u8 cg_sel,
++					       unsigned long rate,
++					       unsigned long flags)
+ {
+ 	return clk_reg_prcmu(name, parent_name, cg_sel, rate, flags,
+ 			&clk_prcmu_opp_volt_scalable_ops);
 diff --git a/drivers/clk/ux500/clk.h b/drivers/clk/ux500/clk.h
-index b443c3f257b1..91003cf8003c 100644
+index 40cd9fc95b8b..b443c3f257b1 100644
 --- a/drivers/clk/ux500/clk.h
 +++ b/drivers/clk/ux500/clk.h
-@@ -60,6 +60,11 @@ struct clk_hw *clk_reg_prcmu_opp_volt_scalable(const char *name,
- 					       unsigned long rate,
- 					       unsigned long flags);
+@@ -13,6 +13,7 @@
+ #include <linux/types.h>
  
-+struct clk_hw *clk_reg_prcmu_clkout(const char *name,
-+				    const char * const *parent_names,
-+				    int num_parents,
-+				    u8 source, u8 divider);
-+
+ struct clk;
++struct clk_hw;
+ 
+ struct clk *clk_reg_prcc_pclk(const char *name,
+ 			      const char *parent_name,
+@@ -26,38 +27,38 @@ struct clk *clk_reg_prcc_kclk(const char *name,
+ 			      u32 cg_sel,
+ 			      unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_scalable(const char *name,
+-				   const char *parent_name,
+-				   u8 cg_sel,
+-				   unsigned long rate,
+-				   unsigned long flags);
++struct clk_hw *clk_reg_prcmu_scalable(const char *name,
++				      const char *parent_name,
++				      u8 cg_sel,
++				      unsigned long rate,
++				      unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_gate(const char *name,
+-			       const char *parent_name,
+-			       u8 cg_sel,
+-			       unsigned long flags);
++struct clk_hw *clk_reg_prcmu_gate(const char *name,
++				  const char *parent_name,
++				  u8 cg_sel,
++				  unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_scalable_rate(const char *name,
+-					const char *parent_name,
+-					u8 cg_sel,
+-					unsigned long rate,
+-					unsigned long flags);
++struct clk_hw *clk_reg_prcmu_scalable_rate(const char *name,
++					   const char *parent_name,
++					   u8 cg_sel,
++					   unsigned long rate,
++					   unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_rate(const char *name,
+-			       const char *parent_name,
+-			       u8 cg_sel,
+-			       unsigned long flags);
++struct clk_hw *clk_reg_prcmu_rate(const char *name,
++				  const char *parent_name,
++				  u8 cg_sel,
++				  unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_opp_gate(const char *name,
+-				   const char *parent_name,
+-				   u8 cg_sel,
+-				   unsigned long flags);
++struct clk_hw *clk_reg_prcmu_opp_gate(const char *name,
++				      const char *parent_name,
++				      u8 cg_sel,
++				      unsigned long flags);
+ 
+-struct clk *clk_reg_prcmu_opp_volt_scalable(const char *name,
+-					    const char *parent_name,
+-					    u8 cg_sel,
+-					    unsigned long rate,
+-					    unsigned long flags);
++struct clk_hw *clk_reg_prcmu_opp_volt_scalable(const char *name,
++					       const char *parent_name,
++					       u8 cg_sel,
++					       unsigned long rate,
++					       unsigned long flags);
+ 
  struct clk *clk_reg_sysctrl_gate(struct device *dev,
  				 const char *name,
- 				 const char *parent_name,
 diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-index 6aa89645f5fa..e855ce35db0e 100644
+index e86ed2eec3fd..6aa89645f5fa 100644
 --- a/drivers/clk/ux500/u8500_of_clk.c
 +++ b/drivers/clk/ux500/u8500_of_clk.c
-@@ -17,6 +17,7 @@
+@@ -15,7 +15,6 @@
+ #include "prcc.h"
+ #include "reset-prcc.h"
  
+-static struct clk *prcmu_clk[PRCMU_NUM_CLKS];
  static struct clk *prcc_pclk[(PRCC_NUM_PERIPH_CLUSTERS + 1) * PRCC_PERIPHS_PER_CLUSTER];
  static struct clk *prcc_kclk[(PRCC_NUM_PERIPH_CLUSTERS + 1) * PRCC_PERIPHS_PER_CLUSTER];
-+static struct clk_hw *clkout_clk[2];
  
- #define PRCC_SHOW(clk, base, bit) \
- 	clk[(base * PRCC_PERIPHS_PER_CLUSTER) + bit]
-@@ -56,12 +57,78 @@ static struct clk_hw_onecell_data u8500_prcmu_hw_clks = {
- 	.num = PRCMU_NUM_CLKS,
- };
+@@ -46,6 +45,17 @@ static struct clk *ux500_twocell_get(struct of_phandle_args *clkspec,
+ 	return PRCC_SHOW(clk_data, base, bit);
+ }
  
-+/* Essentially names for the first PRCMU_CLKSRC_* defines */
-+static const char * const u8500_clkout_parents[] = {
-+	"clk38m_to_clkgen",
-+	"aclk",
-+	/* Just called "sysclk" in documentation */
-+	"ab8500_sysclk",
-+	"lcdclk",
-+	"sdmmcclk",
-+	"tvclk",
-+	"timclk",
-+	/* CLK009 is not implemented, add it if you need it */
-+	"clk009",
++static struct clk_hw_onecell_data u8500_prcmu_hw_clks = {
++	.hws = {
++		/*
++		 * This assignment makes sure the dynamic array
++		 * gets the right size.
++		 */
++		[PRCMU_NUM_CLKS] = NULL,
++	},
++	.num = PRCMU_NUM_CLKS,
 +};
-+
-+static struct clk_hw *ux500_clkout_get(struct of_phandle_args *clkspec,
-+				       void *data)
-+{
-+	u32 id, source, divider;
-+	struct clk_hw *clkout;
-+
-+	if (clkspec->args_count != 3)
-+		return  ERR_PTR(-EINVAL);
-+
-+	id = clkspec->args[0];
-+	source = clkspec->args[1];
-+	divider = clkspec->args[2];
-+
-+	if (id > 1) {
-+		pr_err("%s: invalid clkout ID %d\n", __func__, id);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (clkout_clk[id]) {
-+		pr_info("%s: clkout%d already registered, not reconfiguring\n",
-+			__func__, id + 1);
-+		return clkout_clk[id];
-+	}
-+
-+	if (source > 7) {
-+		pr_err("%s: invalid source ID %d\n", __func__, source);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	if (divider == 0 || divider > 63) {
-+		pr_err("%s: invalid divider %d\n", __func__, divider);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	pr_debug("registering clkout%d with source %d and divider %d\n",
-+		 id + 1, source, divider);
-+
-+	clkout = clk_reg_prcmu_clkout(id ? "clkout2" : "clkout1",
-+				      u8500_clkout_parents,
-+				      ARRAY_SIZE(u8500_clkout_parents),
-+				      source, divider);
-+	if (IS_ERR(clkout)) {
-+		pr_err("failed to register clkout%d\n",  id + 1);
-+		return ERR_CAST(clkout);
-+	}
-+
-+	clkout_clk[id] = clkout;
-+
-+	return clkout;
-+}
 +
  static void u8500_clk_init(struct device_node *np)
  {
  	struct prcmu_fw_version *fw_version;
- 	struct device_node *child = NULL;
- 	const char *sgaclk_parent = NULL;
- 	struct clk *clk, *rtc_clk, *twd_clk;
-+	struct clk_hw *hw;
- 	u32 bases[CLKRST_MAX];
- 	struct u8500_prcc_reset *rstc;
- 	int i;
-@@ -99,7 +166,17 @@ static void u8500_clk_init(struct device_node *np)
- 		clk_reg_prcmu_gate("ddr_pll", NULL, PRCMU_PLLDDR,
- 				   CLK_IGNORE_UNUSED);
+@@ -77,17 +87,17 @@ static void u8500_clk_init(struct device_node *np)
+ 	}
  
--	/* FIXME: Add sys, ulp and int clocks here. */
-+	/*
-+	 * Read-only clocks that only return their current rate, only used
-+	 * as parents to other clocks and not visible in the device tree.
-+	 * clk38m_to_clkgen is the same as the SYSCLK, i.e. the root clock.
-+	 */
-+	hw = clk_reg_prcmu_rate("clk38m_to_clkgen", NULL, PRCMU_SYSCLK,
-+				CLK_IGNORE_UNUSED);
-+	hw = clk_reg_prcmu_rate("aclk", NULL, PRCMU_ACLK,
-+				CLK_IGNORE_UNUSED);
+ 	/* Clock sources */
+-	clk = clk_reg_prcmu_gate("soc0_pll", NULL, PRCMU_PLLSOC0,
+-				CLK_IGNORE_UNUSED);
+-	prcmu_clk[PRCMU_PLLSOC0] = clk;
++	u8500_prcmu_hw_clks.hws[PRCMU_PLLSOC0] =
++		clk_reg_prcmu_gate("soc0_pll", NULL, PRCMU_PLLSOC0,
++				   CLK_IGNORE_UNUSED);
+ 
+-	clk = clk_reg_prcmu_gate("soc1_pll", NULL, PRCMU_PLLSOC1,
+-				CLK_IGNORE_UNUSED);
+-	prcmu_clk[PRCMU_PLLSOC1] = clk;
++	u8500_prcmu_hw_clks.hws[PRCMU_PLLSOC1] =
++		clk_reg_prcmu_gate("soc1_pll", NULL, PRCMU_PLLSOC1,
++				   CLK_IGNORE_UNUSED);
+ 
+-	clk = clk_reg_prcmu_gate("ddr_pll", NULL, PRCMU_PLLDDR,
+-				CLK_IGNORE_UNUSED);
+-	prcmu_clk[PRCMU_PLLDDR] = clk;
++	u8500_prcmu_hw_clks.hws[PRCMU_PLLDDR] =
++		clk_reg_prcmu_gate("ddr_pll", NULL, PRCMU_PLLDDR,
++				   CLK_IGNORE_UNUSED);
+ 
+ 	/* FIXME: Add sys, ulp and int clocks here. */
+ 
+@@ -113,136 +123,102 @@ static void u8500_clk_init(struct device_node *np)
+ 	}
+ 
+ 	if (sgaclk_parent)
+-		clk = clk_reg_prcmu_gate("sgclk", sgaclk_parent,
+-					PRCMU_SGACLK, 0);
++		u8500_prcmu_hw_clks.hws[PRCMU_SGACLK] =
++			clk_reg_prcmu_gate("sgclk", sgaclk_parent,
++					   PRCMU_SGACLK, 0);
+ 	else
+-		clk = clk_reg_prcmu_gate("sgclk", NULL, PRCMU_SGACLK, 0);
+-	prcmu_clk[PRCMU_SGACLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("uartclk", NULL, PRCMU_UARTCLK, 0);
+-	prcmu_clk[PRCMU_UARTCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("msp02clk", NULL, PRCMU_MSP02CLK, 0);
+-	prcmu_clk[PRCMU_MSP02CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("msp1clk", NULL, PRCMU_MSP1CLK, 0);
+-	prcmu_clk[PRCMU_MSP1CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("i2cclk", NULL, PRCMU_I2CCLK, 0);
+-	prcmu_clk[PRCMU_I2CCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("slimclk", NULL, PRCMU_SLIMCLK, 0);
+-	prcmu_clk[PRCMU_SLIMCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per1clk", NULL, PRCMU_PER1CLK, 0);
+-	prcmu_clk[PRCMU_PER1CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per2clk", NULL, PRCMU_PER2CLK, 0);
+-	prcmu_clk[PRCMU_PER2CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per3clk", NULL, PRCMU_PER3CLK, 0);
+-	prcmu_clk[PRCMU_PER3CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per5clk", NULL, PRCMU_PER5CLK, 0);
+-	prcmu_clk[PRCMU_PER5CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per6clk", NULL, PRCMU_PER6CLK, 0);
+-	prcmu_clk[PRCMU_PER6CLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("per7clk", NULL, PRCMU_PER7CLK, 0);
+-	prcmu_clk[PRCMU_PER7CLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("lcdclk", NULL, PRCMU_LCDCLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_LCDCLK] = clk;
+-
+-	clk = clk_reg_prcmu_opp_gate("bmlclk", NULL, PRCMU_BMLCLK, 0);
+-	prcmu_clk[PRCMU_BMLCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("hsitxclk", NULL, PRCMU_HSITXCLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_HSITXCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("hsirxclk", NULL, PRCMU_HSIRXCLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_HSIRXCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("hdmiclk", NULL, PRCMU_HDMICLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_HDMICLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("apeatclk", NULL, PRCMU_APEATCLK, 0);
+-	prcmu_clk[PRCMU_APEATCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("apetraceclk", NULL, PRCMU_APETRACECLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_APETRACECLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("mcdeclk", NULL, PRCMU_MCDECLK, 0);
+-	prcmu_clk[PRCMU_MCDECLK] = clk;
+-
+-	clk = clk_reg_prcmu_opp_gate("ipi2cclk", NULL, PRCMU_IPI2CCLK, 0);
+-	prcmu_clk[PRCMU_IPI2CCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("dsialtclk", NULL, PRCMU_DSIALTCLK, 0);
+-	prcmu_clk[PRCMU_DSIALTCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("dmaclk", NULL, PRCMU_DMACLK, 0);
+-	prcmu_clk[PRCMU_DMACLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("b2r2clk", NULL, PRCMU_B2R2CLK, 0);
+-	prcmu_clk[PRCMU_B2R2CLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("tvclk", NULL, PRCMU_TVCLK, 0,
+-				CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_TVCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("sspclk", NULL, PRCMU_SSPCLK, 0);
+-	prcmu_clk[PRCMU_SSPCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("rngclk", NULL, PRCMU_RNGCLK, 0);
+-	prcmu_clk[PRCMU_RNGCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("uiccclk", NULL, PRCMU_UICCCLK, 0);
+-	prcmu_clk[PRCMU_UICCCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
+-	prcmu_clk[PRCMU_TIMCLK] = clk;
+-
+-	clk = clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
+-	prcmu_clk[PRCMU_SYSCLK] = clk;
+-
+-	clk = clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL, PRCMU_SDMMCCLK,
+-					100000000, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_SDMMCCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi_pll", "hdmiclk",
+-				PRCMU_PLLDSI, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_PLLDSI] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi0clk", "dsi_pll",
+-				PRCMU_DSI0CLK, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_DSI0CLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi1clk", "dsi_pll",
+-				PRCMU_DSI1CLK, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_DSI1CLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi0escclk", "tvclk",
+-				PRCMU_DSI0ESCCLK, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_DSI0ESCCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi1escclk", "tvclk",
+-				PRCMU_DSI1ESCCLK, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_DSI1ESCCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable("dsi2escclk", "tvclk",
+-				PRCMU_DSI2ESCCLK, 0, CLK_SET_RATE_GATE);
+-	prcmu_clk[PRCMU_DSI2ESCCLK] = clk;
+-
+-	clk = clk_reg_prcmu_scalable_rate("armss", NULL,
+-				PRCMU_ARMSS, 0, CLK_IGNORE_UNUSED);
+-	prcmu_clk[PRCMU_ARMSS] = clk;
++		u8500_prcmu_hw_clks.hws[PRCMU_SGACLK] =
++			clk_reg_prcmu_gate("sgclk", NULL, PRCMU_SGACLK, 0);
 +
-+	/* TODO: add CLK009 if needed */
++	u8500_prcmu_hw_clks.hws[PRCMU_UARTCLK] =
++		clk_reg_prcmu_gate("uartclk", NULL, PRCMU_UARTCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_MSP02CLK] =
++		clk_reg_prcmu_gate("msp02clk", NULL, PRCMU_MSP02CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_MSP1CLK] =
++		clk_reg_prcmu_gate("msp1clk", NULL, PRCMU_MSP1CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_I2CCLK] =
++		clk_reg_prcmu_gate("i2cclk", NULL, PRCMU_I2CCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_SLIMCLK] =
++		clk_reg_prcmu_gate("slimclk", NULL, PRCMU_SLIMCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER1CLK] =
++		clk_reg_prcmu_gate("per1clk", NULL, PRCMU_PER1CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER2CLK] =
++		clk_reg_prcmu_gate("per2clk", NULL, PRCMU_PER2CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER3CLK] =
++		clk_reg_prcmu_gate("per3clk", NULL, PRCMU_PER3CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER5CLK] =
++		clk_reg_prcmu_gate("per5clk", NULL, PRCMU_PER5CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER6CLK] =
++		clk_reg_prcmu_gate("per6clk", NULL, PRCMU_PER6CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_PER7CLK] =
++		clk_reg_prcmu_gate("per7clk", NULL, PRCMU_PER7CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_LCDCLK] =
++		clk_reg_prcmu_scalable("lcdclk", NULL, PRCMU_LCDCLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_BMLCLK] =
++		clk_reg_prcmu_opp_gate("bmlclk", NULL, PRCMU_BMLCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_HSITXCLK] =
++		clk_reg_prcmu_scalable("hsitxclk", NULL, PRCMU_HSITXCLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_HSIRXCLK] =
++		clk_reg_prcmu_scalable("hsirxclk", NULL, PRCMU_HSIRXCLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_HDMICLK] =
++		clk_reg_prcmu_scalable("hdmiclk", NULL, PRCMU_HDMICLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_APEATCLK] =
++		clk_reg_prcmu_gate("apeatclk", NULL, PRCMU_APEATCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_APETRACECLK] =
++		clk_reg_prcmu_scalable("apetraceclk", NULL, PRCMU_APETRACECLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_MCDECLK] =
++		clk_reg_prcmu_gate("mcdeclk", NULL, PRCMU_MCDECLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_IPI2CCLK] =
++		clk_reg_prcmu_opp_gate("ipi2cclk", NULL, PRCMU_IPI2CCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSIALTCLK] =
++		clk_reg_prcmu_gate("dsialtclk", NULL, PRCMU_DSIALTCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_DMACLK] =
++		clk_reg_prcmu_gate("dmaclk", NULL, PRCMU_DMACLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_B2R2CLK] =
++		clk_reg_prcmu_gate("b2r2clk", NULL, PRCMU_B2R2CLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_TVCLK] =
++		clk_reg_prcmu_scalable("tvclk", NULL, PRCMU_TVCLK, 0,
++				       CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_SSPCLK] =
++		clk_reg_prcmu_gate("sspclk", NULL, PRCMU_SSPCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_RNGCLK] =
++		clk_reg_prcmu_gate("rngclk", NULL, PRCMU_RNGCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_UICCCLK] =
++		clk_reg_prcmu_gate("uiccclk", NULL, PRCMU_UICCCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_TIMCLK] =
++		clk_reg_prcmu_gate("timclk", NULL, PRCMU_TIMCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_SYSCLK] =
++		clk_reg_prcmu_gate("ab8500_sysclk", NULL, PRCMU_SYSCLK, 0);
++	u8500_prcmu_hw_clks.hws[PRCMU_SDMMCCLK] =
++		clk_reg_prcmu_opp_volt_scalable("sdmmcclk", NULL,
++						PRCMU_SDMMCCLK, 100000000,
++						CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_PLLDSI] =
++		clk_reg_prcmu_scalable("dsi_pll", "hdmiclk",
++				       PRCMU_PLLDSI, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSI0CLK] =
++		clk_reg_prcmu_scalable("dsi0clk", "dsi_pll",
++				       PRCMU_DSI0CLK, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSI1CLK] =
++		clk_reg_prcmu_scalable("dsi1clk", "dsi_pll",
++				       PRCMU_DSI1CLK, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSI0ESCCLK] =
++		clk_reg_prcmu_scalable("dsi0escclk", "tvclk",
++				       PRCMU_DSI0ESCCLK, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSI1ESCCLK] =
++		clk_reg_prcmu_scalable("dsi1escclk", "tvclk",
++				       PRCMU_DSI1ESCCLK, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_DSI2ESCCLK] =
++		clk_reg_prcmu_scalable("dsi2escclk", "tvclk",
++				       PRCMU_DSI2ESCCLK, 0, CLK_SET_RATE_GATE);
++	u8500_prcmu_hw_clks.hws[PRCMU_ARMSS] =
++		clk_reg_prcmu_scalable_rate("armss", NULL,
++					    PRCMU_ARMSS, 0, CLK_IGNORE_UNUSED);
  
- 	rtc_clk = clk_register_fixed_rate(NULL, "rtc32k", "NULL",
- 				CLK_IGNORE_UNUSED,
-@@ -223,12 +300,6 @@ static void u8500_clk_init(struct device_node *np)
  	twd_clk = clk_register_fixed_factor(NULL, "smp_twd", "armss",
  				CLK_IGNORE_UNUSED, 1, 2);
+@@ -546,13 +522,10 @@ static void u8500_clk_init(struct device_node *np)
+ 	PRCC_KCLK_STORE(clk, 6, 0);
  
--	/*
--	 * FIXME: Add special handled PRCMU clocks here:
--	 * 1. clkout0yuv, use PRCMU as parent + need regulator + pinctrl.
--	 * 2. ab9540_clkout1yuv, see clkout0yuv
--	 */
--
- 	/* PRCC P-clocks */
- 	clk = clk_reg_prcc_pclk("p1_pclk0", "per1clk", bases[CLKRST1_INDEX],
- 				BIT(0), 0);
-@@ -526,6 +597,9 @@ static void u8500_clk_init(struct device_node *np)
- 			of_clk_add_hw_provider(child, of_clk_hw_onecell_get,
- 					       &u8500_prcmu_hw_clks);
+ 	for_each_child_of_node(np, child) {
+-		static struct clk_onecell_data clk_data;
++		if (of_node_name_eq(child, "prcmu-clock"))
++			of_clk_add_hw_provider(child, of_clk_hw_onecell_get,
++					       &u8500_prcmu_hw_clks);
  
-+		if (of_node_name_eq(child, "clkout-clock"))
-+			of_clk_add_hw_provider(child, ux500_clkout_get, NULL);
-+
+-		if (of_node_name_eq(child, "prcmu-clock")) {
+-			clk_data.clks = prcmu_clk;
+-			clk_data.clk_num = ARRAY_SIZE(prcmu_clk);
+-			of_clk_add_provider(child, of_clk_src_onecell_get, &clk_data);
+-		}
  		if (of_node_name_eq(child, "prcc-periph-clock"))
  			of_clk_add_provider(child, ux500_twocell_get, prcc_pclk);
  
