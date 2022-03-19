@@ -2,317 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A72EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 21:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D056BC433EF
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Mar 2022 22:54:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237864AbiCSVZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Mar 2022 17:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
+        id S236014AbiCSWzY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Mar 2022 18:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234541AbiCSVZk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Mar 2022 17:25:40 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36EF517E18;
-        Sat, 19 Mar 2022 14:24:18 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id h13so13986165ede.5;
-        Sat, 19 Mar 2022 14:24:18 -0700 (PDT)
+        with ESMTP id S234512AbiCSWzY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Mar 2022 18:55:24 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DEC9E994F
+        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 15:54:01 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id a26so1354200lfg.10
+        for <linux-clk@vger.kernel.org>; Sat, 19 Mar 2022 15:54:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KRLRxQFuDkV4XwZnkLpyAS1x2/YWT0F8R7jLRmwo6L4=;
-        b=ckFFKU9ntPEoMlOM/P4zkdVIRQ+5w4TtiUirfdI8b7/r/1k+VhpBhx/DlK/vCNiMkD
-         Bh6lOmkmHExMQXQj7oy246kLQ/HtynqmXdxscDyEJ1MpFeR3UwcfKgxQESw8zGKCcDMU
-         5OR6T0OehlPY6RMcd81mO5u7nqlwQph3L+YCc6s6iHSWmPnZnyhtHx6baxn4OeOmX+DU
-         1aIEPCogBFYj8XXdZSDUo60DbgR2xncPecAPESim9a/q83+E0d7lvsJL+6Lr9C7fJW8v
-         c7ihCZq57oP2DLbkoOhhChPLoBliQalFsYOTHDaHoTP27igjO3Eu4Tu+F7ogxS7sLR84
-         5hjw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1H0Kr8NdTPDNAJ4whIcFCRZHEVI7wVTVLJ0HOgoRKVo=;
+        b=ON0TvHBA1GBfiLjyoB+G5dl1iwEZcwobFrCAFL44tFbTD39+XRHHw6gEmGjAC0/Ltm
+         JWZAoARC0LQ5CoKkcQFe3EZ5IjmNcmwI3YvvxS4J1hNHfTlaUiXJVec051j2SqyOU8OT
+         MnjI/RAuduX+TNzbzpbw3wOmlhsXzfiqjdw+P87/NdRqSPaG6j371hLYPvYza7Rxo7lb
+         xtNLsMH+6Ejc9rtbw7ouBjQMAXtB9yDgWwWJRanFvaMaQdkMw5kRqmyBWsmwh8HlKvTc
+         Y1HKXvoDhvPkzcRQJ0+QJq006hOspF+/xbsGFE87FaJcNif2ccVS+cTo/qH1puUpwLQ+
+         Od3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KRLRxQFuDkV4XwZnkLpyAS1x2/YWT0F8R7jLRmwo6L4=;
-        b=20pNi0E29nIrDdrNj3Y+dC8Pw95f6sYs0PXpVmtTgwR/+CPKUhXY12mPEbR8CfLP1t
-         VaAxjyDzdngnIfwFbAdA0yLwpDsZ91EtKCoFz9kGagN15a9LuUG8E8McH3mTpRwqZil6
-         5YtkB2VFSls3vxFtTV5K5gU7/Mf1sStC7eMKAMgjHDfl1RGTQMEK+yZWaOK4TAJYoc9n
-         zC8CP3uBnhXOLCclWq1Vqv6m3sLWKq7T8kK5tiVIiYrDVvHRLEjH7JG2NZTfmkpGCh2Q
-         K7c8J59EU5+5g5ulkWfqeRA9+P45MN5RmWi+Y65U5pnCNyxYbuAKmO2CdSE8kvLp+bAM
-         Vn4g==
-X-Gm-Message-State: AOAM533Ando1N7iha7q3ex/gYZrN+9SOCbxYaO+eSh/hB8JZe8UgWoqP
-        xOtXPh3P2aiTqzhDI2QJKiDYgkGB88Ydm59QNJrC4qivFqY=
-X-Google-Smtp-Source: ABdhPJx8xyZtjqqANjp1qdsdW4frrcybtDI8hcUIL1ci9B2xBFQ8Vnd+uMb38C+J/oBTTzDsIwFcsdexThI8WV8ND9Q=
-X-Received: by 2002:aa7:cb18:0:b0:413:3a7a:b5d6 with SMTP id
- s24-20020aa7cb18000000b004133a7ab5d6mr15641286edt.254.1647725056396; Sat, 19
- Mar 2022 14:24:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1H0Kr8NdTPDNAJ4whIcFCRZHEVI7wVTVLJ0HOgoRKVo=;
+        b=p0fox9E4ja1PuJM4kwnYGbHEOi3wkLAsYI8hGnJba2zyu6bnQmJ47wWQzgDbbb+qJ2
+         vmxnzfNZwLc5Mm0fEy6OW7h3IRBkVGV4guTeJM+dpokGLirU3HmjUOAiRskGC9TEiexU
+         p3PxSzBx+jRIs0cmACiB2v5zccv5MmreudxUxLyl8TR2sGgYsm1fsFAmnsy9o17RvqZI
+         aHYDyQ7EDa73ECSejVIT5X/3p4tLo2OyxKXoarqaTQ4hZ0KbSAI1usDVhzlDSlLEydv7
+         JatK0LNTeElMX6TdxoxZiGd7Dm952g3/AF0uOuQM8Lphgpjg2ivZ/XGqN16ugeSaikpa
+         KSnQ==
+X-Gm-Message-State: AOAM530YgtHzwqwJDCWUGG9SAr2A/mtLHstLgFxwNVy0ZYfisyTTnU3x
+        6PHHyV/E8Q9w1pOZ+qHLwjabY6BRNzbWRw==
+X-Google-Smtp-Source: ABdhPJxVgY2lhH4ZnG+KrcXEKQafagmnA7cx1DahXeoN7i4qXEzuuuVJWWel4YAGT06SPePjv/Vx9w==
+X-Received: by 2002:ac2:44bc:0:b0:448:30ec:685c with SMTP id c28-20020ac244bc000000b0044830ec685cmr10034760lfm.404.1647730439399;
+        Sat, 19 Mar 2022 15:53:59 -0700 (PDT)
+Received: from localhost.localdomain (c-fdcc225c.014-348-6c756e10.bbcust.telenor.se. [92.34.204.253])
+        by smtp.gmail.com with ESMTPSA id z5-20020a196505000000b0044a12b953f9sm581520lfb.45.2022.03.19.15.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Mar 2022 15:53:58 -0700 (PDT)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 0/5 v2] U8500 clkout clocks v2
+Date:   Sat, 19 Mar 2022 23:51:51 +0100
+Message-Id: <20220319225156.1451636-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-References: <20220313115704.301718-1-aford173@gmail.com> <a146f554-837a-d19a-425c-b1fd790a0497@lucaceresoli.net>
- <MN2PR03MB5008F8DDC6DD934074EBBC0E93109@MN2PR03MB5008.namprd03.prod.outlook.com>
- <59ee78c2-7d05-6d97-1ff2-36ea326be188@lucaceresoli.net> <MN2PR03MB500803388839E563D29CF25C93129@MN2PR03MB5008.namprd03.prod.outlook.com>
-In-Reply-To: <MN2PR03MB500803388839E563D29CF25C93129@MN2PR03MB5008.namprd03.prod.outlook.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sat, 19 Mar 2022 16:24:05 -0500
-Message-ID: <CAHCN7xKZDTdKyMgCUOmKXrceC8Qhk8ES6xn5GFag-8Vt=NgpAA@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH] clk: vc5: Enable VC5_HAS_PFD_FREQ_DBL on 5p49v6965
-To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "aford@beaconembedded.com" <aford@beaconembedded.com>,
-        "cstevens@beaconembedded.com" <cstevens@beaconembedded.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 17, 2022 at 1:57 PM Fillion, Claude
-<Claude.Fillion@mksinst.com> wrote:
->
-> Hello Luca,
->
-> > -----Original Message-----
-> > From: Luca Ceresoli <luca@lucaceresoli.net>
-> > Sent: Tuesday, March 15, 2022 6:53 PM
-> > To: Fillion, Claude <Claude.Fillion@mksinst.com>; Adam Ford
-> > <aford173@gmail.com>; linux-clk@vger.kernel.org
-> > Cc: aford@beaconembedded.com; cstevens@beaconembedded.com;
-> > Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> > <sboyd@kernel.org>; linux-kernel@vger.kernel.org; Marek Vasut
-> > <marek.vasut@gmail.com>
-> > Subject: Re: [EXTERNAL] Re: [PATCH] clk: vc5: Enable
-> > VC5_HAS_PFD_FREQ_DBL on 5p49v6965
-> >
-> > Hi Claude,
-> >
-> > [adding Marek in Cc:, the original author of the driver and also of the
-> > frequency doubler]
-> >
-> > On 15/03/22 20:34, Fillion, Claude wrote:
-> > > Hello Luca,
-> > >
-> > > I will defer to Adam, but a few comments:
-> > >
-> > >> -----Original Message-----
-> > >> From: Luca Ceresoli <luca@lucaceresoli.net>
-> > >> Sent: Tuesday, March 15, 2022 4:55 AM
-> > >> To: Adam Ford <aford173@gmail.com>; linux-clk@vger.kernel.org
-> > >> Cc: aford@beaconembedded.com; cstevens@beaconembedded.com;
-> > Fillion,
-> > >> Claude <Claude.Fillion@mksinst.com>; Michael Turquette
-> > >> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; linux-
-> > >> kernel@vger.kernel.org
-> > >> Subject: [EXTERNAL] Re: [PATCH] clk: vc5: Enable
-> > VC5_HAS_PFD_FREQ_DBL
-> > >> on 5p49v6965
-> > >>
-> > >> This email originated outside of MKS.  Use caution when sharing
-> > >> information or opening attachments and links.
-> > >>
-> > >> --------------------------------------------------------------------=
--
-> > >> -------------------------
-> > >> ----------------------------------------------
-> > >> Hi Adam, Claude,
-> > >>
-> > >> thanks for your patch.
-> > >>
-> > >> On 13/03/22 12:57, Adam Ford wrote:
-> > >>> The 5p49v6965 has a reference clock frequency doubler.
-> > >>> Enabling it adds versaclock_som.dbl to the clock tree, but the
-> > >>> output frequency remains correct.
-> > >>>
-> > >>> Suggested-by: Claude Fillion <Claude.Fillion@mksinst.com>
-> > >>> Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >>>
-> > >>> diff --git a/drivers/clk/clk-versaclock5.c
-> > >>> b/drivers/clk/clk-versaclock5.c index e7be3e54b9be..4d190579e874
-> > >>> 100644
-> > >>> --- a/drivers/clk/clk-versaclock5.c
-> > >>> +++ b/drivers/clk/clk-versaclock5.c
-> > >>> @@ -1211,7 +1211,7 @@ static const struct vc5_chip_info
-> > >> idt_5p49v6965_info =3D {
-> > >>>   .model =3D IDT_VC6_5P49V6965,
-> > >>>   .clk_fod_cnt =3D 4,
-> > >>>   .clk_out_cnt =3D 5,
-> > >>> - .flags =3D VC5_HAS_BYPASS_SYNC_BIT,
-> > >>> + .flags =3D VC5_HAS_BYPASS_SYNC_BIT | VC5_HAS_PFD_FREQ_DBL,
-> > >>
-> > >>
-> > >> If my understanding is correct, the doubler is not mentioned by the
-> > >> datasheet, but it exists. Maybe it's worth a line of comment to help
-> > >> future readers not waste their time in finding out:
-> > >>   /* Frequency doubler not mentioned on datasheet */
-> > >>
-> > >
-> > > I see the doubler bit mentioned in Table 25 of both v6 and v6e specs.=
-  It is
-> > named differently, but appears to have the same purpose.
-> >
-> > Well, literally speaking what I wrote is correct: the _datasheet_ does =
-not
-> > mention the doubler. Table 25 you mention is on the "Register Descripti=
-on
-> > and Programming Guide".
-> >
-> > Practically speaking I would expect the datasheet to mention the hardwa=
-re
-> > blocks including the doubler, but apparently Renesas has a different op=
-inion
-> > and perhaps they are not alone.
-> >
-> > So I think you can forget about my proposal to add a comment.
-> >
-> > >> Can you confirm that:
-> > >>  - the en_ref_doubler bit value defaults to zero when reading it, as=
- the
-> > >>    register guide says?
-> > >>  - if set to 1 the frequencies double?
-> > >>
-> > >> With that confirmed, the patch looks good.
-> > >>
-> > >> Thanks,
-> > >> --
-> > >> Luca
-> > >
-> > > I played around a bit with the programming board today and did not se=
-e
-> > what I expected to see.
-> > >
-> > > Using i2cget I see that the register in question (0x10) has a default=
- value of
-> > 0xA0 for both 6901 and 6965.  Thus it seems disabled by default for bot=
-h
-> > parts.
-> >
-> > Coherently with the Register guide. OK.
-> >
-> > > Starting at my base frequency of 46.8MHz, setting the bit to 1 (i2cse=
-t)
-> > changes the output  frequency to 59.04MHz for the 6901 part, and to
-> > 47.7MHz for the 6965 part.  So setting the 'doubler' bit changes output
-> > frequency for both parts, but not the same amount.
-> > >
-> > > Not sure of the meaning, just want to pass the information along.
-> >
-> > Me neither.
-> >
-> > I have no clever idea, only this one that I consider unlikely: by enabl=
-ing the
-> > doubler you may have increased some internal frequency above its allowe=
-d
-> > range and thus the chip is not working properly anymore. Can you use a
-> > lower base frequency or check the PLL settings to ensure you are not
-> > exceeding some range?
-> >
-> > What output frequency are you measuring? OUT0 or another one? What
-> > frequency do you measure with en_ref_doubler =3D 0?
-> >
-> > --
-> > Luca
->
-> Not sure what I did wrong with my earlier testing, but I am now seeing bo=
-th parts respond similarly to the doubler bit being set.
->
-> With doubler bit disabled (register 0x10, value 0xa0), I set the output f=
-requencies to 1, 10, 100, and 46.8MHz.
->
-> After setting doubler bit (0xa8), I saw frequencies of 1.260, 12.60, 126.=
-0, and 58.9 Mhz for both 6901 and 6965 parts.
->
-> So from my testing the doubler bit seems to behave similarly for both par=
-ts.
->
-> At this point I will leave my unofficial testing and move on to writing a=
- consumer driver.
+This second iteration adds patches that:
 
-I don't have a scope to measure the exact frequencies, but I was able
-to test it with both USB and Ethernet, which are clock from the
-versaclock, and I can check the output frequencies against the
-clk_summary in debugfs.
+- Drops custom .is_enabled and .is_prepared implementations
+  for the U8500 PRCMU clocks.
+- Rewrite the PRCMU clocks to use clk_hw
+- Then adds the new clkout clocks in the same style
 
-Without this patch:
+Modernizing the PRCMU clock was necessary so the new clock
+would not look off.
 
-    clock-controller.mux              1        1        0    25000000
-        0     0  50000         Y
-       clock-controller.out0_sel_i2cb       0        0        0
-25000000          0     0  50000         Y
-       clock-controller.pfd           1        1        0    25000000
-        0     0  50000         Y
-          clock-controller.pll        1        1        0  2800000000
-        0     0  50000         Y
-             clock-controller.fod3       1        1        0
-24576000          0     0  50000         Y
-                clock-controller.out4       1        1        0
-24576000          0     0  50000         Y
-             clock-controller.fod2       0        0        0
-24000000          0     0  50000         Y
-                clock-controller.out3       0        0        0
-24000000          0     0  50000         Y
-             clock-controller.fod1       0        0        0
-24000000          0     0  50000         Y
-                clock-controller.out2       0        0        0
-24000000          0     0  50000         Y
-             clock-controller.fod0       0        0        0
-24000000          0     0  50000         Y
-                clock-controller.out1       0        0        0
-24000000          0     0  50000         Y
+We can go on and fix the rest of the ux500 clocks to use
+clk_hw style registration on top of this series if there
+is desire.
 
+Linus Walleij (5):
+  dt-bindings: clock: u8500: Add clkout clock bindings
+  clk: ux500: Drop .is_enabled state from PRCMU clocks
+  clk: ux500: Drop .is_prepared state from PRCMU clocks
+  clk: ux500: Rewrite PRCMU clocks to use clk_hw_*
+  clk: ux500: Implement the missing CLKOUT clocks
 
-With this patch:
+ .../bindings/clock/stericsson,u8500-clks.yaml |  57 +++
+ drivers/clk/ux500/clk-prcmu.c                 | 253 ++++++++-----
+ drivers/clk/ux500/clk.h                       |  70 ++--
+ drivers/clk/ux500/u8500_of_clk.c              | 349 ++++++++++--------
+ include/dt-bindings/clock/ste-db8500-clkout.h |  17 +
+ 5 files changed, 464 insertions(+), 282 deletions(-)
+ create mode 100644 include/dt-bindings/clock/ste-db8500-clkout.h
 
-    clock-controller.mux              1        1        0    25000000
-        0     0  50000         Y
-       clock-controller.out0_sel_i2cb       0        0        0
-25000000          0     0  50000         Y
-       clock-controller.dbl           1        1        0    25000000
-        0     0  50000         Y
-          clock-controller.pfd        1        1        0    25000000
-        0     0  50000         Y
-             clock-controller.pll       1        1        0
-2800000000          0     0  50000         Y
-                clock-controller.fod3       1        1        0
-24576000          0     0  50000         Y
-                   clock-controller.out4       1        1        0
-24576000          0     0  50000         Y
-                clock-controller.fod2       0        0        0
-24000000          0     0  50000         Y
-                   clock-controller.out3       0        0        0
-24000000          0     0  50000         Y
-                clock-controller.fod1       0        0        0
-24000000          0     0  50000         Y
-                   clock-controller.out2       0        0        0
-24000000          0     0  50000         Y
-                clock-controller.fod0       0        0        0
-24000000          0     0  50000         Y
-                   clock-controller.out1       0        0        0
-24000000          0     0  50000         Y
+-- 
+2.35.1
 
-From what I can tell, the only thing that changes is the introduction
-of clock-controller.dbl into the clock dump.
-In my interpretation of reading the programmer's manual, the frequency
-that is doubled is the reference frequency, but based on looking at
-the clock dump, it's not obvious what's happening.
-
-Having said that, if Claude is measuring incorrect frequencies, I am
-fine with abandoning this patch.
-
-adam
-
->
-> Regards,
-> Claude
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> This message and any attachments are intended only for the designated rec=
-ipient(s) and may contain confidential or proprietary information and be su=
-bject to the attorney-client privilege or other confidentiality protections=
-.  If you are not a designated recipient, you may not review, use, copy or =
-distribute this message or any attachments.  If you received this email in =
-error, please notify the sender by reply e-mail and permanently delete the =
-original and any copies of this message and any attachments thereto.  Thank=
- you.
