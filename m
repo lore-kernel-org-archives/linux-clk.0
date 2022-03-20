@@ -2,164 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC602C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 12:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3EAC433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 13:23:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234948AbiCTMLK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Mar 2022 08:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56028 "EHLO
+        id S237391AbiCTNYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Mar 2022 09:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232356AbiCTMLK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 08:11:10 -0400
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AECC53DDD1;
-        Sun, 20 Mar 2022 05:09:47 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id w25so15021197edi.11;
-        Sun, 20 Mar 2022 05:09:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=09MJ3F+SKFH/o6mzuUI5CFbfCkCq8QY9FgJU9k73OZc=;
-        b=fiRC911N6/W6iGbV1JRrSUO87WXp9WRuMNaCtvHy0RX3SanCyN0mfgEK6tpDa/FHUJ
-         ZdLVla7ZBETDHCBIO+bgeQUjbZzqj1FtmHE/8AbH2jucxn1IGHc08jMsGG+FHZuE9gjR
-         wtDhbteeJ1e1W1ATm0NN8byiIxMGH5Kbxx4pIa9TZKhTZiKYHE43nA5cTpUHQm9nTRqv
-         b3dNSHava7sqq2AY3fkZ4lKuwUTSCgQlSlRh9ApsyTKGljisLjnqrZ6DV7WTykYfeuP0
-         LIrn1WE16GO4mMqxqKYS8Tb+HaPmkHv9o+0fplHQEhR288hRub76cKdqxqTL4gSoyyaQ
-         Ry9w==
-X-Gm-Message-State: AOAM531q1bKi9Qupk9ZjLxtSv8zM6f7b8TntDCG/jYK17yDfQfyxKCUQ
-        jTogCwt5AT2IyVetP2nT4vY=
-X-Google-Smtp-Source: ABdhPJxJw0uAM+k7E1tqS8+6bFI30rkfWXjj31C1g20y/9V+mDiczOByjIKW0euKEIwV3OiVfosgQA==
-X-Received: by 2002:aa7:d156:0:b0:419:bc7:acd6 with SMTP id r22-20020aa7d156000000b004190bc7acd6mr11821446edo.239.1647778186114;
-        Sun, 20 Mar 2022 05:09:46 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id z21-20020a1709063a1500b006da6436819dsm5790038eje.173.2022.03.20.05.09.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Mar 2022 05:09:45 -0700 (PDT)
-Message-ID: <ce32768b-d68f-a5dd-ff68-4b90089c88f2@kernel.org>
-Date:   Sun, 20 Mar 2022 13:09:43 +0100
+        with ESMTP id S245157AbiCTNYl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 09:24:41 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D063ED33;
+        Sun, 20 Mar 2022 06:23:17 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id F2562836A9;
+        Sun, 20 Mar 2022 14:23:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1647782595;
+        bh=54w8kSGD8O4Mg2N20vQfaHgu3zTtCAhOtmYc/RXD0uU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=iK843SEaMf3mLrx1X3rfsU1U8EPe0CjrhI+Ysm337C5QlovTpUfCHStd41rutJll0
+         jktMjk/8f+BriX6EB1NkNW9xQVR42s3bPSzADePK/j+OyhN1g0f7tz+h4gLNhhEdII
+         Jw81MJN4c7ubuv47w8q87u9tpGx6QRybi4Sa82zetvXYMNaIPESWXlZdh7YbpVg8Gk
+         i8VZlJMfV/S2fm3idtQ4M4TpwYLGVkHTQ9RVP41zfCQIFH8rEiORCTXmdEK4FL5RPD
+         k+SdIRih6fuHR2dag9Jaq2twMuacnHbvf+vrXd4LE1mLQKZnI08ZIXiEVzsEz04YbP
+         zdaFBp+nI31sg==
+Message-ID: <5f97232b-579f-bccf-c603-c263aea143b6@denx.de>
+Date:   Sun, 20 Mar 2022 14:23:14 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 14/16] dt-bindings: clock: Convert qcom,krait-cc to
- yaml
+ Thunderbird/91.6.2
+Subject: Re: [PATCH v3 2/3] clk: Make __clk_hw_register_fixed_factor
+ non-static
 Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220318160827.8860-1-ansuelsmth@gmail.com>
- <20220318160827.8860-15-ansuelsmth@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220318160827.8860-15-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+References: <20220226040723.143705-1-marex@denx.de>
+ <20220226040723.143705-2-marex@denx.de>
+ <20220318210356.55D1EC340E8@smtp.kernel.org>
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <20220318210356.55D1EC340E8@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/03/2022 17:08, Ansuel Smith wrote:
-> Convert qcom,krait-cc to yaml and add missing l2 clocks and names
-> definiton.
-
-lang typo.
-
+On 3/18/22 22:03, Stephen Boyd wrote:
+> Quoting Marek Vasut (2022-02-25 20:07:22)
+>> Access to the full parameters of __clk_hw_register_fixed_factor()
+>> is useful in case a driver is registering fixed clock with only
+>> single parent, in which case the driver should set parent_name to
+>> NULL and parent_index to 0, and access to this function permits it
+>> to do just that.
+>>
+>> Signed-off-by: Marek Vasut <marex@denx.de>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: devicetree@vger.kernel.org
+>> To: linux-clk@vger.kernel.org
+>> ---
+>> V2: - New patch
+>> V3: - No change
 > 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/clock/qcom,krait-cc.txt          | 34 ----------
->  .../bindings/clock/qcom,krait-cc.yaml         | 63 +++++++++++++++++++
->  2 files changed, 63 insertions(+), 34 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-> deleted file mode 100644
-> index 030ba60dab08..000000000000
-> --- a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-> +++ /dev/null
-> @@ -1,34 +0,0 @@
-> -Krait Clock Controller
-> -
-> -PROPERTIES
-> -
-> -- compatible:
-> -	Usage: required
-> -	Value type: <string>
-> -	Definition: must be one of:
-> -			"qcom,krait-cc-v1"
-> -			"qcom,krait-cc-v2"
-> -
-> -- #clock-cells:
-> -	Usage: required
-> -	Value type: <u32>
-> -	Definition: must be 1
-> -
-> -- clocks:
-> -	Usage: required
-> -	Value type: <prop-encoded-array>
-> -	Definition: reference to the clock parents of hfpll, secondary muxes.
-> -
-> -- clock-names:
-> -	Usage: required
-> -	Value type: <stringlist>
-> -	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
-> -
-> -Example:
-> -
-> -	kraitcc: clock-controller {
-> -		compatible = "qcom,krait-cc-v1";
-> -		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
-> -		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
-> -		#clock-cells = <1>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> new file mode 100644
-> index 000000000000..f89b70ab01ae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,krait-cc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Krait Clock Controller
-> +
-> +maintainers:
-> +  - Ansuel Smith <ansuelsmth@gmail.com>
-> +
-> +description: |
-> +  Qualcomm Krait Clock Controller used to correctly scale the CPU and the L2
-> +  rates.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,krait-cc-v1
-> +      - qcom,krait-cc-v2
-> +
-> +  clocks:
-> +    items:
-> +      - description: phandle to hfpll for CPU0 mux
-> +      - description: phandle to hfpll for CPU1 mux
-> +      - description: phandle to hfpll for L2 mux
-> +      - description: phandle to CPU0 aux clock
-> +      - description: phandle to CPU1 aux clock
-> +      - description: phandle to L2 aux clock
-> +      - description: phandle to QSB fixed clk
+> This isn't exported. Given that we don't typically export an internal
+> function (hence the double underscore) I'm going to change this to be a
+> new function. See the attached patch.
 
-None of these were in original bindings, original DTS (because it does
-not exist), original driver. Therefore you do not need to change
-bindings during conversion.
+I can confirm the change works and looks OK.
 
-I propose to add them in second commit with explanation why do you add them.
-
-Best regards,
-Krzysztof
+Do you want me to send a V4 or will you squash it into these patches 
+yourself when applying?
