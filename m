@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E42E3C4332F
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 16:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95553C4321E
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 16:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245600AbiCTQaE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Mar 2022 12:30:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40904 "EHLO
+        id S245610AbiCTQaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Mar 2022 12:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245557AbiCTQ3z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 12:29:55 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665923585B;
-        Sun, 20 Mar 2022 09:28:28 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id j10so4786862wrb.13;
-        Sun, 20 Mar 2022 09:28:28 -0700 (PDT)
+        with ESMTP id S245572AbiCTQ34 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 12:29:56 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C75035DD9;
+        Sun, 20 Mar 2022 09:28:30 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id j10so4786937wrb.13;
+        Sun, 20 Mar 2022 09:28:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=Uw2FgXL2MG6c1O6jLTs0CVZuitMyMBRaze5ZuwDxY6M=;
-        b=MlcxB5b6b6VXQQFL4W/XmzxZwI1BpuQNepAMcrLZAhfmZZRhm1j1W6jChuCiwZ50Fw
-         Mb3IVa66bZUPLCi4X7WRw/hcAflBCE2r2dKnKcAdRGfgMScfi/JYhtpD+O0JhspS4xwk
-         yn8tusbHISLjtvBd8hF16y+TmTZ5OJ8IOT7dbh/OnLawNn4cAEQadxuHHXGIxN5DdR0C
-         A/XW0tp7jmBMU3sBEOMjsohrazOlB37opjvsftWsShWGnHz+1g5g9ULOHRp9Zj6K1xd2
-         onR0GxF1ccM4Fi22Pz01YsM9sMIoBAsniaUD7CSZYQR9Yvjtq4DI29kf1e7BfDvemwsu
-         d+Jw==
+        bh=KF5KajzdUjlsueHw3PGEQrW6QOzbz3BzoTgHX03BJeo=;
+        b=Y7BNVTk9cezmPcQXjAAq4bwk2ilXOMmt9Z496mY93lqThWnVj6vnnRNj+OtZGZVivV
+         4IQnYi4l2k/trw38zXP/hlrF4rDf8mevN09wTfk6yxoIRb9aRyFhhdLVjhtmTpqnPZLk
+         jwgLXx5oQXTL4WLVHA8G32CONxqA2uZmxWavRCs86VzGGI/JZ0goffQxJlZyun8pAYE7
+         XOFfF4BMwru6cmQuHOM/g01NAQjTzpqA3LRCRqVZintsuidcbVet3Wa+MeWJy7bSluto
+         WZck3Vkgt3oWeUaAX5IYvKEUqhINB6jrNuSwHRxitOxOasMZnoYXrBz2TbMiUoOuXWBo
+         SXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Uw2FgXL2MG6c1O6jLTs0CVZuitMyMBRaze5ZuwDxY6M=;
-        b=sZld4a6u/okxgmQX8XBs8/IB8AfTvl13d0yCJFLQ/QtcjekTjHdyDb0W6Fl5z4px2z
-         46ebTShbb5MiwdBOOFnZyBsTh6u6yYgcIYCvzP8h58h1vXsS0a5hu513Nha4FtjI2Y5Q
-         OzSJSa9eWPsNbT+XQvbNNIKplog08wnd5r6jkpc4RMWoDAFbODhnSnvIjty6DVl5XmKc
-         6i0DRSXq9yXaj/gnNoeDQS3X51Am8nOblf6R1pdFIqtvhL88oADP+8Mn8KrBnFjMA12M
-         Qzisqu6+uqGfvKRth4s8m//5vNiDaPHSzq0eQ2NapejWIhaZg3VM7KM59Vqsuo5FV/RO
-         p8hw==
-X-Gm-Message-State: AOAM533w0RaubIp41YrIc2bD0tjBBYtj9DTg56lfxjBti6t/WS96x/xN
-        ccNU2FL8KbFYUx+CqCN9wrk=
-X-Google-Smtp-Source: ABdhPJxuN/CtqeHIEo6ox/UTDdleHxTwkFNSSbvHF/17UR/qoDBoag9oEwXwNDgCcK4K+MmQ2aMlTA==
-X-Received: by 2002:a05:6000:1ace:b0:203:d465:1a83 with SMTP id i14-20020a0560001ace00b00203d4651a83mr15195713wry.26.1647793706671;
-        Sun, 20 Mar 2022 09:28:26 -0700 (PDT)
+        bh=KF5KajzdUjlsueHw3PGEQrW6QOzbz3BzoTgHX03BJeo=;
+        b=j+4y7ak+3mAQlDB2p6TnBzzt3tCyKePymP2VxvD2UIuNvkQuzAnBX8Qz+fc58vIee0
+         tA1HBMNJo/GZGhuurEa27NiR9VdPDcf8vEzfb1y5durOemy5VrilWPKHGQ9nh8i12DSa
+         VgiZkADaBrb4HNJGIcMFbeTLzYUvfyjz9hwwzcg/uyemeIOJe2Qd6z7NgZQUI1mGI3R3
+         OTxMHFc4gLVXbmZxnrJ2rEESVjpNZF/I9WhxTiRASBaoU5xtrYS+yZP+dEeaOZ3oIGTc
+         v1fSgaLS0Vi/Zf1simzAKl5iUmKyeL2DlFQJzxaP+efcCl8exCBLlG5fAJtG/wIaXdIS
+         rx9w==
+X-Gm-Message-State: AOAM532ydYiDletNIYugm9UGbBzQiUhqsVeuwVPLLaOi2/6bfLJXVMlb
+        W0o6SrE8Gt6W+6D7gYO+7F0=
+X-Google-Smtp-Source: ABdhPJxJAudWDgGVXloA9ASuQeNZSLaofQoYZDfhUlmOiZZYr4SgIdHrP6qALbzZcMc9DOhe5FKZ7g==
+X-Received: by 2002:adf:ab09:0:b0:203:f9ce:cc1d with SMTP id q9-20020adfab09000000b00203f9cecc1dmr8590497wrc.269.1647793708830;
+        Sun, 20 Mar 2022 09:28:28 -0700 (PDT)
 Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.googlemail.com with ESMTPSA id y6-20020a05600015c600b00203fa70b4ebsm6760085wry.53.2022.03.20.09.28.25
+        by smtp.googlemail.com with ESMTPSA id y6-20020a05600015c600b00203fa70b4ebsm6760085wry.53.2022.03.20.09.28.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Mar 2022 09:28:26 -0700 (PDT)
+        Sun, 20 Mar 2022 09:28:28 -0700 (PDT)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -55,9 +55,9 @@ To:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
         Ansuel Smith <ansuelsmth@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 14/18] dt-bindings: clock: Convert qcom,krait-cc to yaml
-Date:   Sun, 20 Mar 2022 12:34:26 +0100
-Message-Id: <20220320113430.26076-15-ansuelsmth@gmail.com>
+Subject: [PATCH v3 16/18] ARM: dts: qcom: qcom-ipq8064: add missing krait-cc compatible and clocks
+Date:   Sun, 20 Mar 2022 12:34:28 +0100
+Message-Id: <20220320113430.26076-17-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220320113430.26076-1-ansuelsmth@gmail.com>
 References: <20220320113430.26076-1-ansuelsmth@gmail.com>
@@ -67,121 +67,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert qcom,krait-cc to yaml Documentation.
+Add missing krait-cc clock-controller and define missing aux clock for
+CPUs. Also change phandle for l2cc node to point to pxo_board instead
+of gcc PXO_SRC.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- .../bindings/clock/qcom,krait-cc.txt          | 34 -----------
- .../bindings/clock/qcom,krait-cc.yaml         | 59 +++++++++++++++++++
- 2 files changed, 59 insertions(+), 34 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
+ arch/arm/boot/dts/qcom-ipq8064.dtsi | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt b/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-deleted file mode 100644
-index 030ba60dab08..000000000000
---- a/Documentation/devicetree/bindings/clock/qcom,krait-cc.txt
-+++ /dev/null
-@@ -1,34 +0,0 @@
--Krait Clock Controller
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: must be one of:
--			"qcom,krait-cc-v1"
--			"qcom,krait-cc-v2"
--
--- #clock-cells:
--	Usage: required
--	Value type: <u32>
--	Definition: must be 1
--
--- clocks:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: reference to the clock parents of hfpll, secondary muxes.
--
--- clock-names:
--	Usage: required
--	Value type: <stringlist>
--	Definition: must be "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb".
--
--Example:
--
--	kraitcc: clock-controller {
--		compatible = "qcom,krait-cc-v1";
--		clocks = <&hfpll0>, <&hfpll1>, <&acpu0_aux>, <&acpu1_aux>, <qsb>;
--		clock-names = "hfpll0", "hfpll1", "acpu0_aux", "acpu1_aux", "qsb";
--		#clock-cells = <1>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-new file mode 100644
-index 000000000000..3223fce915bb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,krait-cc.yaml
-@@ -0,0 +1,59 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,krait-cc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+index 996f4458d9fc..888f17d64283 100644
+--- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
+@@ -468,11 +468,19 @@ IRQ_TYPE_EDGE_RISING)>,
+ 		acc0: clock-controller@2088000 {
+ 			compatible = "qcom,kpss-acc-v1";
+ 			reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
++			clock-output-names = "acpu0_aux";
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
++			clock-names = "pll8_vote", "pxo";
++			#clock-cells = <0>;
+ 		};
+ 
+ 		acc1: clock-controller@2098000 {
+ 			compatible = "qcom,kpss-acc-v1";
+ 			reg = <0x02098000 0x1000>, <0x02008000 0x1000>;
++			clock-output-names = "acpu1_aux";
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
++			clock-names = "pll8_vote", "pxo";
++			#clock-cells = <0>;
+ 		};
+ 
+ 		adm_dma: dma-controller@18300000 {
+@@ -782,11 +790,21 @@ tcsr: syscon@1a400000 {
+ 		l2cc: clock-controller@2011000 {
+ 			compatible = "qcom,kpss-gcc", "syscon";
+ 			reg = <0x2011000 0x1000>;
+-			clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
++			clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
+ 			clock-names = "pll8_vote", "pxo";
+ 			clock-output-names = "acpu_l2_aux";
+ 		};
+ 
++		kraitcc: clock-controller {
++			compatible = "qcom,krait-cc-v1";
++			clocks = <&gcc PLL9>, <&gcc PLL10>, <&gcc PLL12>,
++				 <&acc0>, <&acc1>, <&l2cc>, <&qsb>;
++			clock-names = "hfpll0", "hfpll1", "hfpll_l2",
++				      "acpu0_aux", "acpu1_aux", "acpu_l2_aux",
++				      "qsb";
++			#clock-cells = <1>;
++		};
 +
-+title: Qualcomm Krait Clock Controller
-+
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |
-+  Qualcomm Krait Clock Controller used to correctly scale the CPU and the L2
-+  rates.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,krait-cc-v1
-+      - qcom,krait-cc-v2
-+
-+  clocks:
-+    items:
-+      - description: phandle to hfpll for CPU0 mux
-+      - description: phandle to hfpll for CPU1 mux
-+      - description: phandle to CPU0 aux clock
-+      - description: phandle to CPU1 aux clock
-+      - description: phandle to QSB fixed clk
-+
-+  clock-names:
-+    items:
-+      - const: hfpll0
-+      - const: hfpll1
-+      - const: acpu0_aux
-+      - const: acpu1_aux
-+      - const: qsb
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller {
-+      compatible = "qcom,krait-cc-v1";
-+      clocks = <&hfpll0>, <&hfpll1>, <&hfpll_l2>,
-+               <&acpu0_aux>, <&acpu1_aux>, <&acpu_l2_aux>, <&qsb>;
-+      clock-names = "hfpll0", "hfpll1",
-+                    "acpu0_aux", "acpu1_aux", "qsb";
-+      #clock-cells = <1>;
-+    };
-+...
+ 		lcc: clock-controller@28000000 {
+ 			compatible = "qcom,lcc-ipq8064";
+ 			reg = <0x28000000 0x1000>;
 -- 
 2.34.1
 
