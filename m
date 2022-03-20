@@ -2,76 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 621A0C433F5
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 21:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCA3C433EF
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Mar 2022 21:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343681AbiCTVKi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Mar 2022 17:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42288 "EHLO
+        id S244387AbiCTVMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Mar 2022 17:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343682AbiCTVKg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 17:10:36 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084973FBE3;
-        Sun, 20 Mar 2022 14:09:11 -0700 (PDT)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id CB401240005;
-        Sun, 20 Mar 2022 21:09:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1647810549;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=eoUvjXcWxsCS2k8VppywzQry5S7nHcH0mW8C42GzOcs=;
-        b=Kv7mnn6+qhPoe4nYAA3HU8KH96O+5yNpew8NlJqW72ofsz2ognKKCzpo6Ro6Qmuh0o6/Aj
-        H4MDHrQTsDpJkXRpoVCIk2lp8hdLr9hgtulZKUNXmaZSGN69vlAfQNW1YX3dp4XAcHNNDa
-        RxiykDC3B/+fAfxAf2cA3R3rB8nJDSKPFHKjlVaX80wJOW9I6LPmhdiWYncCdRD9bLhw67
-        nnnWmK0oE9guT/rcqjPVCAA8uH0k9ULd+eYSJkTPPKOUFcY0eSQnRwAFDNPtwvm0wJrl4n
-        axkoZzjlqM+jistlPqfPumFuC+R63Dc1qnYE6ztCeP6BqNFYwqqFl53dFD2xYA==
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+        with ESMTP id S1343707AbiCTVL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 20 Mar 2022 17:11:59 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63D1160C20;
+        Sun, 20 Mar 2022 14:10:35 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id v22so4472364wra.2;
+        Sun, 20 Mar 2022 14:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SnrtPlmOffeZj6T7GE+tanB2uK1Y6oGCWk5gspUCR0Q=;
+        b=dgDD7JBM5aF973Pd+bCKYP7HarHcawC9pIaR0mu/mSl7zG7daUDk3Ai8g+EdRhnhtG
+         VGMUW5/JrtAtJ9QOXbM796A0wnAd2HdQ36ezr32V3Rmz+CeCof1/iOXUT3rToMJK/Gw/
+         zJfjoh+cQ+jgJAX+DcGqJTx29ahYIB7vZin9eof4ufDYkpLOHmNMpYE9P7TMFgvI5EGD
+         D5ghqND03oNtKXoeEvYS3igEYKK/dOQj67ybvZzY1YdA7I//3JuRG/WCnAiv/chCGibt
+         tdzasKtdOPuNC3aTRvPQTt4qRK57U3jo3Wgw81T6QxydahCV0mGI28XP/QwEojzZcNP1
+         3UhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SnrtPlmOffeZj6T7GE+tanB2uK1Y6oGCWk5gspUCR0Q=;
+        b=kPK0nhGzD4GMo6Fs/DKL3QgVwhQyn0tG4qtZ1YKR3vySZHUAeoDS07ev0eU+0pLRXv
+         XzqdGlZ3scqCL17m2osxWVfRDswnv23hJQEiMJUAybFpr4/PvVgdINfWwiOMg3PgriNc
+         4vmkozMZPxN+TVzX6KXkTmkXDkG8/quEi8adTbjC8Yt7IFQ8ZVh1bUwxC5+hkjVXe6V5
+         qwXfN6GNQ2EalW5ur1om5KgkY++xSc05h/SZDvOJmAVJKC4yjKJrWQJZp+Z3QLJK7T37
+         bLSiSdG69ym8k4eFM5bcxrmvDsiR+csX1XeB7XOW+zBhJRPwLRNCwVmuAxN0+fU+SnzI
+         YtSw==
+X-Gm-Message-State: AOAM533Ps60O2NwOXzIAoyehneBqtCRAmBfKK4sBtaXfB7Wj/r/vP697
+        xrmjQSb4CYnE6rRbtA/0dWw=
+X-Google-Smtp-Source: ABdhPJwiU+n1q6r5/cPaRlWWrMm2PghCqUJO1nCR4tiXAbP510ymFnq2c37jzDiAJb/5AXhuZnU7Ow==
+X-Received: by 2002:a05:6000:1e09:b0:204:44a:7837 with SMTP id bj9-20020a0560001e0900b00204044a7837mr5438144wrb.6.1647810634467;
+        Sun, 20 Mar 2022 14:10:34 -0700 (PDT)
+Received: from jernej-laptop.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
+        by smtp.gmail.com with ESMTPSA id u8-20020a5d4348000000b00203dbfa4ff2sm11613911wrr.34.2022.03.20.14.10.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Mar 2022 14:10:34 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Maxime Ripard <mripard@kernel.org>,
         Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: sun6i-rtc: include clk/sunxi-ng.h
-Date:   Sun, 20 Mar 2022 22:09:04 +0100
-Message-Id: <20220320210905.6606-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.35.1
+Subject: Re: [PATCH] clk: sunxi-ng: sun6i-rtc: include clk/sunxi-ng.h
+Date:   Sun, 20 Mar 2022 22:10:32 +0100
+Message-ID: <2620573.mvXUDI8C0e@jernej-laptop>
+In-Reply-To: <20220320210905.6606-1-alexandre.belloni@bootlin.com>
+References: <20220320210905.6606-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This solves:
->> drivers/clk/sunxi-ng/ccu-sun6i-rtc.c:334:5: warning: no previous prototype for 'sun6i_rtc_ccu_probe' [-Wmissing-prototypes]
-     334 | int sun6i_rtc_ccu_probe(struct device *dev, void __iomem *reg)
-         |     ^~~~~~~~~~~~~~~~~~~
+Dne nedelja, 20. marec 2022 ob 22:09:04 CET je Alexandre Belloni napisal(a):
+> This solves:
+> >> drivers/clk/sunxi-ng/ccu-sun6i-rtc.c:334:5: warning: no previous
+> >> prototype for 'sun6i_rtc_ccu_probe' [-Wmissing-prototypes]
+>      334 | int sun6i_rtc_ccu_probe(struct device *dev, void __iomem *reg)
+> 
+>          |     ^~~~~~~~~~~~~~~~~~~
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index 712fda22efd5..8a10bade7e0d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -9,6 +9,8 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
- 
-+#include <linux/clk/sunxi-ng.h>
-+
- #include "ccu_common.h"
- 
- #include "ccu_div.h"
--- 
-2.35.1
+Best regards,
+Jernej
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c index 712fda22efd5..8a10bade7e0d
+> 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
+> @@ -9,6 +9,8 @@
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+> 
+> +#include <linux/clk/sunxi-ng.h>
+> +
+>  #include "ccu_common.h"
+> 
+>  #include "ccu_div.h"
+
+
+
 
