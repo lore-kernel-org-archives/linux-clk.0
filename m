@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73195C4167E
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 23:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD57C3527D
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 23:45:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233297AbiCUXrA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 19:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39488 "EHLO
+        id S233168AbiCUXrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 19:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233294AbiCUXq5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 19:46:57 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB67128E1F;
-        Mon, 21 Mar 2022 16:45:30 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id u16so21752688wru.4;
-        Mon, 21 Mar 2022 16:45:30 -0700 (PDT)
+        with ESMTP id S233311AbiCUXqw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 19:46:52 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB3791ACD;
+        Mon, 21 Mar 2022 16:45:25 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id j13-20020a05600c1c0d00b0038c8f94aac2so461571wms.3;
+        Mon, 21 Mar 2022 16:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=e6CBS8LdYYo1w7dXhFqcS8AmrcQet4Ln8lA/fEmtzfE=;
-        b=OOYapsgeMR7gBbuk497I8FmvUmT3meXzPA0Y+p8rQih8G6gGh9ehKq5bTQAVm8AjZo
-         6/tyvS/Q7A5Hc+abLb49fxWHBA5CatWZRQThy9k13gjxEYvsUcox8rR26pI3b6R1wyud
-         bKETGY0izqB5A9WNvDujwvapImjOgldjukxw6+pFcqjGYcXs1Vrkbdjpvhqfxd7nOu4Y
-         ijwSxK+bsR7D+t5KeCO9gN4oZYAvb/Mn2fjv7q4dc7LrUTuH4aFOY5PyCeIvWVW8wLO5
-         HTRbigk390+g+U6QFm9UlClGJhApDeKkJG2ta7RzY+gBUYV4FJ+YZEpG7oe7M+ZlxxbG
-         ZUNA==
+        bh=qACBw0o2MS9FzPU5J+S+Zvtw1uM7Qy8GLYaDlXl8cVc=;
+        b=iw4y1sosX82Uo7ZrwSqURxgcrLwJCvxn4uZoH3seSgje+Ees4ov9mTKU6d9ywwq5aI
+         ywxWQmy8rDQtQza0VIJkaP/n9uVWm8JNIZSRt+z25JKHsnUudVhUgGSdzvIV4nzfQMOP
+         6+dRijY7DZ4+LIhGrN6nGekLsEYXl0/Kej861IGv3SxJRvQCjKNObHlTqM0fVtkcH2kt
+         2q6DkLoEttaT6u+wE2bLgU3HbsvhbK+mCDu/SAwoR7lu3/jDgqXxJzpaFo86b/OorIgP
+         ISrptaYCONGiPSS/hebIU4MxMaHDT1iC+SHWMB6p+7oc0+4R6+lQWSnfg835+zkiqEmS
+         Y1Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e6CBS8LdYYo1w7dXhFqcS8AmrcQet4Ln8lA/fEmtzfE=;
-        b=35lm1hmCZBBkd0FIaz1BDrdmPob0wO2Kh9G73xaUreOVlRmXkikO9Qmgtb2XgSHsnM
-         VoDuRqN/9C4ghHralGXMFh+MdWTAMLXiPfdDMTc4MnrKVVD9bwfhpZBmPfTTGRX7ZD9O
-         iUNEp/UcLnvwn4ZRIfSQyvzyh/Db7sWfUsoltB2PY+MXl9js+/qteGLaxI15aCuPVq5Y
-         nT6hLhxAa/kNPEnBwGMMh0zmMtG5Is3b2ikbb6l65VWb9eAYM7eT6avrowVll5DHQB5b
-         wa6PMpJgXDZgPp5WUkG4/E2FprAHcU0xJW+LOl50rRgBXBDrz+GBReq1tNkr3GJkLNmv
-         EnGg==
-X-Gm-Message-State: AOAM530Kv4QdZJ6a8noikFbSBvpZw8WTisJYzF9TXEnVVwtYVjEIEyVo
-        67KFzLfoLBtt9U0BLaKwr88=
-X-Google-Smtp-Source: ABdhPJy0/KTfnDsp6NaDciPVogWbLOdJKUTb4Wcpui9yNSZ0OxWYr66JzWcc6zYchBwV1EqkO8TyMQ==
-X-Received: by 2002:adf:d1c9:0:b0:203:c4f8:dd17 with SMTP id b9-20020adfd1c9000000b00203c4f8dd17mr19705530wrd.633.1647906329073;
-        Mon, 21 Mar 2022 16:45:29 -0700 (PDT)
+        bh=qACBw0o2MS9FzPU5J+S+Zvtw1uM7Qy8GLYaDlXl8cVc=;
+        b=eCDoosUc3642FZdFyiNABzcgqLLh3F21xTRyTTQ2pCESyRYzanWXUSU+picVG8uVhG
+         FQAze3IY5vuCC/R50KMMBrEI0GxoXZIWreuKqz+rrDfwcdbTN8I1DF5nyzwMT1rv6lVD
+         qHQvS3yHMEjSlRM03A1CKtJftyKjRXFugLFVaFU3DMuPjKKgR4FcOHMRsBwmVux3y15J
+         /5MD8aRoepgyBXvlwfgDZB4e5sotaPe0qkshUuHHimxsT+tB2ezqMk9C153y4gTYhX89
+         PzRm4lrS23e1W/foGzP302g5LzZ2imsCX+rNT48gVosdp8XgHYTFT+Kh3QbT2HFd9HJ+
+         PBBg==
+X-Gm-Message-State: AOAM530TZZRcmvHF5JAxMOlsqs4CRRtVdeqmUjITe9F04mWPRBSJY3q6
+        Bp2+TcjK/S4z5k1AW5A4gRg1iXtPdIM=
+X-Google-Smtp-Source: ABdhPJyc6HIlSVB3CoyWYcnXdbT1/VUCA3ga7IMCIxjAuQXe/ByImscn1BxBBGeNjhxgth3dsqjwqQ==
+X-Received: by 2002:a05:600c:2146:b0:38c:ab68:1919 with SMTP id v6-20020a05600c214600b0038cab681919mr1273044wml.52.1647906323799;
+        Mon, 21 Mar 2022 16:45:23 -0700 (PDT)
 Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.googlemail.com with ESMTPSA id n10-20020a5d588a000000b002052e4aaf89sm105497wrf.80.2022.03.21.16.45.28
+        by smtp.googlemail.com with ESMTPSA id n10-20020a5d588a000000b002052e4aaf89sm105497wrf.80.2022.03.21.16.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 16:45:28 -0700 (PDT)
+        Mon, 21 Mar 2022 16:45:23 -0700 (PDT)
 From:   Ansuel Smith <ansuelsmth@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Ansuel Smith <ansuelsmth@gmail.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v6 16/18] dt-bindings: arm: msm: Convert kpss-acc driver Documentation to yaml
-Date:   Tue, 22 Mar 2022 00:15:46 +0100
-Message-Id: <20220321231548.14276-17-ansuelsmth@gmail.com>
+Subject: [PATCH v6 11/18] clk: qcom: krait-cc: force sec_mux to QSB
+Date:   Tue, 22 Mar 2022 00:15:41 +0100
+Message-Id: <20220321231548.14276-12-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220321231548.14276-1-ansuelsmth@gmail.com>
 References: <20220321231548.14276-1-ansuelsmth@gmail.com>
@@ -68,178 +68,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert kpss-acc driver Documentation to yaml.
-The original Documentation was wrong all along. Fix it while we are
-converting it.
-The example was wrong as kpss-acc-v2 should only expose the regs but we
-don't have any driver that expose additional clocks. The kpss-acc driver
-is only specific to v1. For this exact reason, limit all the additional
-bindings (clocks, clock-names, clock-output-names and #clock-cells) to
-v1 and also flag that these bindings should NOT be used for v2.
+Now that we have converted every driver to parent_data, it was
+notice that the bootloader can't really leave the system in a
+strange state where l2 or the cpu0/1 can be sourced in a number of ways
+for example cpu1 sourcing out of qsb, l2 sourcing out of pxo.
+To correctly reset the mux and the HFPLL force the sec_mux to QSB.
 
 Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
- .../bindings/arm/msm/qcom,kpss-acc.yaml       | 94 +++++++++++++++++++
- 2 files changed, 94 insertions(+), 49 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
+ drivers/clk/qcom/krait-cc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-deleted file mode 100644
-index 7f696362a4a1..000000000000
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
-+++ /dev/null
-@@ -1,49 +0,0 @@
--Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
--
--The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
--There is one ACC register region per CPU within the KPSS remapped region as
--well as an alias register region that remaps accesses to the ACC associated
--with the CPU accessing the region.
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: should be one of:
--			"qcom,kpss-acc-v1"
--			"qcom,kpss-acc-v2"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: the first element specifies the base address and size of
--		    the register region. An optional second element specifies
--		    the base address and size of the alias register region.
--
--- clocks:
--        Usage: required
--        Value type: <prop-encoded-array>
--        Definition: reference to the pll parents.
--
--- clock-names:
--        Usage: required
--        Value type: <stringlist>
--        Definition: must be "pll8_vote", "pxo".
--
--- clock-output-names:
--	Usage: optional
--	Value type: <string>
--	Definition: Name of the output clock. Typically acpuX_aux where X is a
--		    CPU number starting at 0.
--
--Example:
--
--	clock-controller@2088000 {
--		compatible = "qcom,kpss-acc-v2";
--		reg = <0x02088000 0x1000>,
--		      <0x02008000 0x1000>;
--		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
--		clock-names = "pll8_vote", "pxo";
--		clock-output-names = "acpu0_aux";
--	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
-new file mode 100644
-index 000000000000..707a81a6c30e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-acc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
+index 5f98ee1c3681..299eb4c81d96 100644
+--- a/drivers/clk/qcom/krait-cc.c
++++ b/drivers/clk/qcom/krait-cc.c
+@@ -15,6 +15,8 @@
+ 
+ #include "clk-krait.h"
+ 
++#define QSB_RATE	1
 +
-+title: Krait Processor Sub-system (KPSS) Application Clock Controller (ACC)
+ static unsigned int sec_mux_map[] = {
+ 	2,
+ 	0,
+@@ -181,6 +183,13 @@ krait_add_sec_mux(struct device *dev, struct clk *qsb, int id,
+ 	if (ret)
+ 		clk = ERR_PTR(ret);
+ 
++	/*
++	 * Force the sec_mux to be set to QSB rate.
++	 * This is needed to correctly set the parents and
++	 * to later reset mux and HFPLL to a known freq.
++	 */
++	clk_set_rate(clk, QSB_RATE);
 +
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |
-+  The KPSS ACC provides clock, power domain, and reset control to a Krait CPU.
-+  There is one ACC register region per CPU within the KPSS remapped region as
-+  well as an alias register region that remaps accesses to the ACC associated
-+  with the CPU accessing the region.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,kpss-acc-v1
-+      - qcom,kpss-acc-v2
-+
-+  reg:
-+    items:
-+      - description: Base address and size of the register region
-+      - description: Optional base address and size of the alias register region
-+
-+  clocks:
-+    items:
-+      - description: phandle to pll8_vote
-+      - description: phandle to pxo_board
-+
-+  clock-names:
-+    items:
-+      - const: pll8_vote
-+      - const: pxo
-+
-+  clock-output-names:
-+    description: Name of the aux clock. Krait can have at most 4 cpu.
-+    enum:
-+      - acpu0_aux
-+      - acpu1_aux
-+      - acpu2_aux
-+      - acpu3_aux
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,kpss-acc-v1
-+      then:
-+        required:
-+          - clocks
-+          - clock-names
-+          - clock-output-names
-+          - '#clock-cells'
-+    else:
-+      properties:
-+        clocks: false
-+        clock-names: false
-+        clock-output-names: false
-+        '#clock-cells': false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
-+
-+    clock-controller@2088000 {
-+      compatible = "qcom,kpss-acc-v1";
-+      reg = <0x02088000 0x1000>, <0x02008000 0x1000>;
-+      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+      clock-names = "pll8_vote", "pxo";
-+      clock-output-names = "acpu0_aux";
-+      #clock-cells = <0>;
-+    };
-+
-+  - |
-+    clock-controller@f9088000 {
-+      compatible = "qcom,kpss-acc-v2";
-+      reg = <0xf9088000 0x1000>,
-+            <0xf9008000 0x1000>;
-+    };
-+...
+ err_clk:
+ 	if (unique_aux)
+ 		kfree(parent_name);
+@@ -378,7 +387,7 @@ static int krait_cc_probe(struct platform_device *pdev)
+ 	 */
+ 	cur_rate = clk_get_rate(l2_pri_mux_clk);
+ 	aux_rate = 384000000;
+-	if (cur_rate == 1) {
++	if (cur_rate == QSB_RATE) {
+ 		dev_info(dev, "L2 @ QSB rate. Forcing new rate.\n");
+ 		cur_rate = aux_rate;
+ 	}
+@@ -389,7 +398,7 @@ static int krait_cc_probe(struct platform_device *pdev)
+ 	for_each_possible_cpu(cpu) {
+ 		clk = clks[cpu];
+ 		cur_rate = clk_get_rate(clk);
+-		if (cur_rate == 1) {
++		if (cur_rate == QSB_RATE) {
+ 			dev_info(dev, "CPU%d @ QSB rate. Forcing new rate.\n", cpu);
+ 			cur_rate = aux_rate;
+ 		}
 -- 
 2.34.1
 
