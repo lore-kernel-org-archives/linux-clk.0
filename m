@@ -2,207 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49980C43219
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 16:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD99C433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 18:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350833AbiCUQK3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 12:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
+        id S1352062AbiCUSXj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 14:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350776AbiCUQKI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 12:10:08 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3762A709;
-        Mon, 21 Mar 2022 09:08:36 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id j18so11741453wrd.6;
-        Mon, 21 Mar 2022 09:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=FUy/r9Be6sB+uJt1vdamBW63PDhsfX/EA9tDB1Eiasg=;
-        b=qu88LCHuPVn7AFxJZgq681bD5nNpZ1cmwe3q/lcZukRgeiNtH4jeXe6Gq28zmbBsQW
-         PnG7Ry3M1GNTjqWNxtoFF3f+0EJVjWIbS+UDBtCWHAFiyiudvDDcq5ZDSQrRsM/PGQTd
-         elLlmiGWmni3XLDsi98xhx9WSPUlQLLTkoY3TGEEQ+8AFMkg5xhY6elVn4WLEa+nMRrO
-         GuRvNCiOJj0MqdS1jP7whBnFlFUzMimY3jw069ayoXLQgxP184GQ350B2n6SyBm0PbHs
-         3Iw82XFOQAJxV9u+ywZoJKqhTbqb2+VpeTpn3mIdrnkR4Ih8wuplT1W+wSBuDu19M5PR
-         VYWg==
+        with ESMTP id S243327AbiCUSXi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 14:23:38 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2BE751597;
+        Mon, 21 Mar 2022 11:22:12 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id n7so17111723oif.5;
+        Mon, 21 Mar 2022 11:22:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FUy/r9Be6sB+uJt1vdamBW63PDhsfX/EA9tDB1Eiasg=;
-        b=cWaFwqOQcG4i5Gat1hBOpbkMkWCc//yWq1YAg+Ey3xU8huCjJrsqy6DTqfM5IBZ0t8
-         T1Y1LvK4xYoIfwvpg/IVTcFCjRVJvcYsXsrbr8fb08tR4MxtwuO2rIEZvY8RJmJyYssT
-         uLTEsHodUiu0tZ1W0D+FBGsH1kRPY5tA9XBxcpcpeTP8kUhB54e1lrq1wKESr0t2ligB
-         WEIsfW+5e5hWUOwADFPleVSNcn6L2qdmISeaaVPxPzS3dES0N4hZZbi0FT/EwcMm4DNA
-         gU9Ha8ZyXBPmb4kGAaoOsP+Z5InnBjv36o3Em/q/mCC4aDsoKswHIXqVnFQ45E8QLPhY
-         KLZQ==
-X-Gm-Message-State: AOAM531Am4Y/1O+/UbFmmbScF0wS6+cwyG79jexaSULsuP2nIOi9e41v
-        krFlj62Uiro2Rj5T4YEEwyw=
-X-Google-Smtp-Source: ABdhPJzN/TJk/yV+t+YAxeMzAmYMbqfRPoSyPVymQcoHJi1lmIcNRoQ7HePTAAS/mKeYTLWLk6EKeg==
-X-Received: by 2002:a05:6000:1d97:b0:204:1b0:74b2 with SMTP id bk23-20020a0560001d9700b0020401b074b2mr9042793wrb.14.1647878914463;
-        Mon, 21 Mar 2022 09:08:34 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.googlemail.com with ESMTPSA id az19-20020a05600c601300b0038cadf3aa69sm2603864wmb.36.2022.03.21.09.08.33
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jPpBt5CMXkZhRhdIU/BLWvRxEOokz8q1mszwxpflsEk=;
+        b=XF7rIvdZexGkjfe41RVMWdfGcqzIr7iwZLjVshMh5SLe5aAwsDz2AT6jmqd0xZFYy7
+         ICf4Oo0LnYSkOCrvhnAsXXAnkmYKO3OkhwRjET/g+t6hQs5IuhGml+eUTkYWjk4cBV96
+         3Je6un88IEe8nUZv3H5F3c/Udvch0Gb0MCiahkDOukm2UqR3pxhDPJ6IPGCvQIMJsHaW
+         6ntTlfbEtmm4wKsJeMeu0kpFyDFa5GpgiUTJF9beSbcBFbFrLXQub9Dalc7BMFrrG++j
+         jEqEwvWQL02uHxKK81DzAzzdUbiqOcqorGWHT68Oz7XWbNdQb6SwA6lLZ2q5tbQuouCF
+         CtXA==
+X-Gm-Message-State: AOAM531jphNzht4uQOssSRCA0hcbU6wYqsrebTN5G0XD9wDoEko7JAuv
+        vRmsqh0z+zJUaJ577KJ73Q==
+X-Google-Smtp-Source: ABdhPJyhSCB8epzuBfPCHNF2aPHzZ9GS2sNitb9TnzDDC3cqg3Wa304fSoHZHvmLZQ3TEkGP/RIklw==
+X-Received: by 2002:a05:6808:1b22:b0:2da:7725:f278 with SMTP id bx34-20020a0568081b2200b002da7725f278mr244489oib.90.1647886932051;
+        Mon, 21 Mar 2022 11:22:12 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z26-20020a9d62da000000b005b23f5488cdsm7523947otk.52.2022.03.21.11.22.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 09:08:34 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Mon, 21 Mar 2022 11:22:11 -0700 (PDT)
+Received: (nullmailer pid 317197 invoked by uid 1000);
+        Mon, 21 Mar 2022 18:22:09 -0000
+Date:   Mon, 21 Mar 2022 13:22:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v5 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver Documentation to yaml
-Date:   Mon, 21 Mar 2022 16:38:55 +0100
-Message-Id: <20220321153855.12082-19-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220321153855.12082-1-ansuelsmth@gmail.com>
-References: <20220321153855.12082-1-ansuelsmth@gmail.com>
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-gpio@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        Jesse Taube <Mr.Bossman075@gmail.com>,
+        linux-tegra@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: pca95xx: drop useless consumer
+ example
+Message-ID: <YjjCUUz5yiQQK2Q3@robh.at.kernel.org>
+References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert kpss-gcc driver Documentation to yaml. Since kpss-gcc expose a
-clock add the required '#clock-cells' binding while converting it.
+On Wed, 16 Mar 2022 14:08:57 +0100, Krzysztof Kozlowski wrote:
+> Consumer examples in the bindings of resource providers are trivial,
+> useless and duplication of code.  Remove the example code for consumer
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
- .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
- 2 files changed, 68 insertions(+), 44 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-deleted file mode 100644
-index e628758950e1..000000000000
---- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-+++ /dev/null
-@@ -1,44 +0,0 @@
--Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
--
--PROPERTIES
--
--- compatible:
--	Usage: required
--	Value type: <string>
--	Definition: should be one of the following. The generic compatible
--			"qcom,kpss-gcc" should also be included.
--			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
--			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
--
--- reg:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: base address and size of the register region
--
--- clocks:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: reference to the pll parents.
--
--- clock-names:
--	Usage: required
--	Value type: <stringlist>
--	Definition: must be "pll8_vote", "pxo".
--
--- clock-output-names:
--	Usage: required
--	Value type: <string>
--	Definition: Name of the output clock. Typically acpu_l2_aux indicating
--		    an L2 cache auxiliary clock.
--
--Example:
--
--	l2cc: clock-controller@2011000 {
--		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
--		reg = <0x2011000 0x1000>;
--		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
--		clock-names = "pll8_vote", "pxo";
--		clock-output-names = "acpu_l2_aux";
--	};
-diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-new file mode 100644
-index 000000000000..20ee182eb16f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-@@ -0,0 +1,68 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-+
-+maintainers:
-+  - Ansuel Smith <ansuelsmth@gmail.com>
-+
-+description: |
-+  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
-+  to control L2 mux (in the current implementation).
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - qcom,kpss-gcc-ipq8064
-+          - qcom,kpss-gcc-apq8064
-+          - qcom,kpss-gcc-msm8974
-+          - qcom,kpss-gcc-msm8960
-+      - const: qcom,kpss-gcc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: phandle to pll8_vote
-+      - description: phandle to pxo_board
-+
-+  clock-names:
-+    items:
-+      - const: pll8_vote
-+      - const: pxo
-+
-+  clock-output-names:
-+    const: acpu_l2_aux
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - clock-output-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-ipq806x.h>
-+
-+    clock-controller@2011000 {
-+      compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-+      reg = <0x2011000 0x1000>;
-+      clocks = <&gcc PLL8_VOTE>, <&pxo_board>;
-+      clock-names = "pll8_vote", "pxo";
-+      clock-output-names = "acpu_l2_aux";
-+      #clock-cells = <0>;
-+    };
-+...
-+
--- 
-2.34.1
-
+Applied, thanks!
