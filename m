@@ -2,181 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F9C2C433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 07:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A8BC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 07:28:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344880AbiCUHZO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 03:25:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
+        id S1344583AbiCUH3z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 03:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344855AbiCUHZE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 03:25:04 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8230DE89
-        for <linux-clk@vger.kernel.org>; Mon, 21 Mar 2022 00:23:37 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nWCND-0006et-Tt; Mon, 21 Mar 2022 08:22:39 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nWCMp-0021t4-Og; Mon, 21 Mar 2022 08:22:16 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1nWCMp-00AcZn-OA; Mon, 21 Mar 2022 08:22:15 +0100
-Date:   Mon, 21 Mar 2022 08:22:15 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Alexandru Ardelean <aardelean@deviqon.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Tomislav Denis <tomislav.denis@avl.com>,
-        =?utf-8?B?QW5kcsOp?= Gustavo Nakagomi Lopez <andregnl@usp.br>,
-        Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-i2c@vger.kernel.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-rtc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-pwm@vger.kernel.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-iio@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        Keguang Zhang <keguang.zhang@gmail.com>,
+        with ESMTP id S244518AbiCUH3y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 03:29:54 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B931229822
+        for <linux-clk@vger.kernel.org>; Mon, 21 Mar 2022 00:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1647847708; x=1679383708;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3XiR2aCLOnGO8i8qifDIkgNyjS+AntjEKdLnXVQp0Zw=;
+  b=BeeUYVT1OhvZr36QTYFFcsixv7ia8yxHA+NuNckNbEXyNgmwcEYwdwOr
+   vY3m+JzntA61rl1trCRLPGzqqO5mBG0DZpZfGNDnUKSvbxnlG75Rw7Epj
+   6AWAKz89N0+0ap8fuMhsoKE6CL6UYBSNPOiTW3w/iApa33bEiytfovz/X
+   XzqXLoaGxcub6hqTfBS3RrGl6PrsDENpz52jaQx8THby0XXoXXJcP2uHN
+   09+HS7l4YscE7GB9OyRLfsIOwiUE5EB07OGQ9lsSsZZNaqWSQBIiHtq8k
+   Sw2r1E1CA82Rw8OiTtkyo6kJC1qGTy4/owKBR3yco8YYcNUHtBJ08pEeH
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10292"; a="255053261"
+X-IronPort-AV: E=Sophos;i="5.90,198,1643702400"; 
+   d="scan'208";a="255053261"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2022 00:28:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,198,1643702400"; 
+   d="scan'208";a="648462972"
+Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 21 Mar 2022 00:28:20 -0700
+Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nWCSh-000HbD-J2; Mon, 21 Mar 2022 07:28:19 +0000
+Date:   Mon, 21 Mar 2022 15:27:51 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>, kernel@pengutronix.de,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        linux-amlogic@lists.infradead.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        linux-hwmon@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        UNGLinuxDriver@microchip.com, Vinod Koul <vkoul@kernel.org>,
-        Cai Huoqing <caihuoqing@baidu.com>,
-        linux-crypto@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>,
-        dmaengine@vger.kernel.org,
-        Amireddy Mallikarjuna reddy 
-        <mallikarjunax.reddy@linux.intel.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>
-Subject: Re: [PATCH v8 02/16] clk: Provide new devm_clk helpers for prepared
- and enabled clocks
-Message-ID: <20220321072215.5lffm7qtpvg5ofk4@pengutronix.de>
-References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
- <20220314141643.22184-3-u.kleine-koenig@pengutronix.de>
- <20220319182936.06d75742@jic23-huawei>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        linux-clk@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 5/5 v2] clk: ux500: Implement the missing CLKOUT clocks
+Message-ID: <202203211549.CqMHSrT8-lkp@intel.com>
+References: <20220319225156.1451636-6-linus.walleij@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oterd73bfcoy35ck"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220319182936.06d75742@jic23-huawei>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20220319225156.1451636-6-linus.walleij@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Linus,
 
---oterd73bfcoy35ck
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I love your patch! Perhaps something to improve:
 
-On Sat, Mar 19, 2022 at 06:29:36PM +0000, Jonathan Cameron wrote:
-> On Mon, 14 Mar 2022 15:16:29 +0100
-> Uwe Kleine-K=F6nig         <u.kleine-koenig@pengutronix.de> wrote:
->=20
-> > When a driver keeps a clock prepared (or enabled) during the whole
-> > lifetime of the driver, these helpers allow to simplify the drivers.
-> >=20
-> > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Reviewed-by: Alexandru Ardelean <aardelean@deviqon.com>
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
->=20
-> One trivial thing below.
->=20
-> > ---
-> >  drivers/clk/clk-devres.c | 31 ++++++++++++++
-> >  include/linux/clk.h      | 90 +++++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 120 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> > index fb7761888b30..4707fe718f0b 100644
-> > --- a/drivers/clk/clk-devres.c
-> > +++ b/drivers/clk/clk-devres.c
-> > @@ -67,12 +67,43 @@ struct clk *devm_clk_get(struct device *dev, const =
-char *id)
-> >  }
-> >  EXPORT_SYMBOL(devm_clk_get);
-> > =20
-> > +struct clk *devm_clk_get_prepared(struct device *dev, const char *id)
-> > +{
-> > +	return __devm_clk_get(dev, id, clk_get, clk_prepare, clk_unprepare);
->=20
-> Nitpick but this spacing before } in functions is rather unusual and not
-> in keeping with the existing code in this file.
->=20
-> > +
-> > +}
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v5.17 next-20220318]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-ack, I fixed that in my tree, so this will be part of an v9. I won't
-send it just for this change, though. I fixed three further functions
-that had a similar empty line, too.
+url:    https://github.com/0day-ci/linux/commits/Linus-Walleij/U8500-clkout-clocks-v2/20220320-070131
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: arm-buildonly-randconfig-r004-20220321 (https://download.01.org/0day-ci/archive/20220321/202203211549.CqMHSrT8-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 85e9b2687a13d1908aa86d1b89c5ce398a06cd39)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/0day-ci/linux/commit/b9b90d02e856e84100c5613ebb25d1ab7a1069ec
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Linus-Walleij/U8500-clkout-clocks-v2/20220320-070131
+        git checkout b9b90d02e856e84100c5613ebb25d1ab7a1069ec
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/clk/ux500/
 
-Thanks for looking
-Uwe
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+All warnings (new ones prefixed by >>):
 
---oterd73bfcoy35ck
-Content-Type: application/pgp-signature; name="signature.asc"
+>> drivers/clk/ux500/u8500_of_clk.c:131:17: warning: variable 'hw' set but not used [-Wunused-but-set-variable]
+           struct clk_hw *hw;
+                          ^
+   1 warning generated.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmI4J6MACgkQwfwUeK3K
-7Ak5sAf/aG3oVD1FgzqJLWD3uSmF0uX0/3lky1l56go3LpRjDym8tlGglXT4z7Hl
-Z3q8YXru6LSihHT/n6V4EUdpV6f49dxPfrr9hu9OFU+UY0Cd7NgisKr+0Wi61dbS
-d8IVGHwcCPqBZanHdAEjhle7d7WdWhfukR1oLljd8B2XM6qP2jQgjFWzrSJfZ+hd
-qd6k9TcfIHjy8n8xBtyIYSvYZbywqfa+wJeU54fe4fp4NNPVTmxGtzHFNDipSZGL
-uF+yg7qDqSezst7wO3dNeblEvpVZfG9TZAXvGMCZQLn9x4b35iSmZtLVPN+HZZM4
-WBr/EA6mCSOr4iHXCKfNr4UegGV4/w==
-=gON5
------END PGP SIGNATURE-----
+vim +/hw +131 drivers/clk/ux500/u8500_of_clk.c
 
---oterd73bfcoy35ck--
+   124	
+   125	static void u8500_clk_init(struct device_node *np)
+   126	{
+   127		struct prcmu_fw_version *fw_version;
+   128		struct device_node *child = NULL;
+   129		const char *sgaclk_parent = NULL;
+   130		struct clk *clk, *rtc_clk, *twd_clk;
+ > 131		struct clk_hw *hw;
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
