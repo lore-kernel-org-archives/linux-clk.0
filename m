@@ -2,206 +2,106 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C34EAC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 15:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B911C4332F
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 15:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345487AbiCUPpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 11:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49636 "EHLO
+        id S1350482AbiCUPpy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 11:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234700AbiCUPpg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 11:45:36 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE3413DE4;
-        Mon, 21 Mar 2022 08:44:04 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id h16so8249221wmd.0;
-        Mon, 21 Mar 2022 08:44:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XoXisWW93pi2sg9tIKJ01ulYb1YdPWU5OGPWRm7ICC8=;
-        b=ZkJpGUGZG9/PZzeERfZOKs755Ch+NcehEboHt9ataGdfL9hvC87CjoNyVxbqHHxAbZ
-         R+vrihTuqVommri1kJaqDILNLLl1/jXiK7/8yuL4ENXPCCpklTkxHRCz4/teui+aJgA4
-         n0w7eC++x+3Q/DuRGB4V9SAo8EZYQ7OYFk6rRCfVVI3mc4jgBZcTGWIo/5iqdCI/OBTg
-         9IkUdIShLal30IKV0DZ8VaBwDaEL14DLa13qFx5WX87BkZbwnWjsEAuh6GIWQJ3GhIun
-         UZg4IT6Q2RD7YzbPupQoNTNBBP+iQPhhzqS0+HtgTf3qDg1/ag9TNJlrljxJwbKZxD70
-         HotA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XoXisWW93pi2sg9tIKJ01ulYb1YdPWU5OGPWRm7ICC8=;
-        b=DiHW7vePiRkykqYQ7rYzFJoEOG1TmKcL9ZERm3Ry2i8KmParjgKsPe6XTquumBqGez
-         sHRj/galPRSO7s7yBVrpHt7Dm6EyA7dIGCGQswwnyuBOQkMtyzvxCPtM03pQsQRcZKcm
-         HX/bj2NAf0oWhafCoBGyrz979XVJ7xJuTNHKrdwkpYUZG5YgHHFZytpG18gl0LyMD2fU
-         Q0Jr+/MROmYiscia32wBydT8ZN6xRj5X/1Hk3veUUEGmqXV3OGNxlT8USz1ieWYMRbdV
-         pD6rgPtwiMHpzi9kZ95hrS3TAAr1K6/CP+Z/DZyj7bvfs3ey4NN8X+CuEp4qubmS++AP
-         7taA==
-X-Gm-Message-State: AOAM531u9mGf+eKcdCx5s7ZLNkdncliT/hEcGrUJ4vm04hbN6k89RaQZ
-        s1FZAdQ67B1pjwxu1aZ33Zk=
-X-Google-Smtp-Source: ABdhPJxz1OvwDf6onrSDOBQ3m4NWwCfjreQVmBfTLj/cPJO7pdDw9tod5DFAPbxVQ1P8+ZVmz1FBfg==
-X-Received: by 2002:a7b:c844:0:b0:37b:b986:7726 with SMTP id c4-20020a7bc844000000b0037bb9867726mr20648461wml.160.1647877443015;
-        Mon, 21 Mar 2022 08:44:03 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm15457215wms.25.2022.03.21.08.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 08:44:02 -0700 (PDT)
-Date:   Mon, 21 Mar 2022 16:14:43 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S1350489AbiCUPpx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 11:45:53 -0400
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BAD4C15FEA;
+        Mon, 21 Mar 2022 08:44:19 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="5.90,198,1643641200"; 
+   d="scan'208";a="115215922"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 22 Mar 2022 00:44:12 +0900
+Received: from vb.home (unknown [10.226.92.216])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 279DE4007539;
+        Tue, 22 Mar 2022 00:44:09 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-Message-ID: <YjiWY9wxGMtUAcjY@Ansuel-xps.localdomain>
-References: <20220321144825.11736-1-ansuelsmth@gmail.com>
- <20220321144825.11736-19-ansuelsmth@gmail.com>
- <a7837388-e36f-9e55-4107-9f7f85571f3b@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 05/14] dt-bindings: clock: renesas,rzg2l: Document RZ/V2M SoC
+Date:   Mon, 21 Mar 2022 15:42:23 +0000
+Message-Id: <20220321154232.56315-6-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220321154232.56315-1-phil.edworthy@renesas.com>
+References: <20220321154232.56315-1-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7837388-e36f-9e55-4107-9f7f85571f3b@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 21, 2022 at 04:41:37PM +0100, Krzysztof Kozlowski wrote:
-> On 21/03/2022 15:48, Ansuel Smith wrote:
-> > Convert kpss-gcc driver Documentation to yaml.
-> > 
-> > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > ---
-> >  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
-> >  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
-> >  2 files changed, 68 insertions(+), 44 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-> > deleted file mode 100644
-> > index e628758950e1..000000000000
-> > --- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-> > +++ /dev/null
-> > @@ -1,44 +0,0 @@
-> > -Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-> > -
-> > -PROPERTIES
-> > -
-> > -- compatible:
-> > -	Usage: required
-> > -	Value type: <string>
-> > -	Definition: should be one of the following. The generic compatible
-> > -			"qcom,kpss-gcc" should also be included.
-> > -			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
-> > -			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
-> > -			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
-> > -			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
-> > -
-> > -- reg:
-> > -	Usage: required
-> > -	Value type: <prop-encoded-array>
-> > -	Definition: base address and size of the register region
-> > -
-> > -- clocks:
-> > -	Usage: required
-> > -	Value type: <prop-encoded-array>
-> > -	Definition: reference to the pll parents.
-> > -
-> > -- clock-names:
-> > -	Usage: required
-> > -	Value type: <stringlist>
-> > -	Definition: must be "pll8_vote", "pxo".
-> > -
-> > -- clock-output-names:
-> > -	Usage: required
-> > -	Value type: <string>
-> > -	Definition: Name of the output clock. Typically acpu_l2_aux indicating
-> > -		    an L2 cache auxiliary clock.
-> > -
-> > -Example:
-> > -
-> > -	l2cc: clock-controller@2011000 {
-> > -		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
-> > -		reg = <0x2011000 0x1000>;
-> > -		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
-> > -		clock-names = "pll8_vote", "pxo";
-> > -		clock-output-names = "acpu_l2_aux";
-> > -	};
-> > diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-> > new file mode 100644
-> > index 000000000000..20ee182eb16f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-> > @@ -0,0 +1,68 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
-> > +
-> > +maintainers:
-> > +  - Ansuel Smith <ansuelsmth@gmail.com>
-> > +
-> > +description: |
-> > +  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
-> > +  to control L2 mux (in the current implementation).
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - qcom,kpss-gcc-ipq8064
-> > +          - qcom,kpss-gcc-apq8064
-> > +          - qcom,kpss-gcc-msm8974
-> > +          - qcom,kpss-gcc-msm8960
-> > +      - const: qcom,kpss-gcc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: phandle to pll8_vote
-> > +      - description: phandle to pxo_board
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: pll8_vote
-> > +      - const: pxo
-> > +
-> > +  clock-output-names:
-> > +    const: acpu_l2_aux
-> > +
-> > +  '#clock-cells':
-> > +    const: 0
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - clock-output-names
-> > +  - '#clock-cells'
-> 
-> You add here a new required property, so this is not a pure conversion.
-> Please explain in the commit msg why are you doing this. I asked about
-> this in your previous patchset.
-> 
-> Best regards,
-> Krzysztof
+Document the device tree binding for the Renesas RZ/V2M (r9a09g011) SoC.
 
-Sorry I probably missed it. Just to make sure you are referring to
-#clock-cells?
-Since this expose a clock, clock-cells is required. Should I put this in
-a different commit? 
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/clock/renesas,rzg2l-cpg.yaml           | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+index bd3af8fc616b..b1145f9139d2 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+@@ -4,14 +4,15 @@
+ $id: "http://devicetree.org/schemas/clock/renesas,rzg2l-cpg.yaml#"
+ $schema: "http://devicetree.org/meta-schemas/core.yaml#"
+ 
+-title: Renesas RZ/{G2L,V2L} Clock Pulse Generator / Module Standby Mode
++title: Renesas RZ/{G2L,V2L,V2M} Clock Pulse Generator / Module Standby Mode
+ 
+ maintainers:
+   - Geert Uytterhoeven <geert+renesas@glider.be>
+ 
+ description: |
+   On Renesas RZ/{G2L,V2L} SoC, the CPG (Clock Pulse Generator) and Module
+-  Standby Mode share the same register block.
++  Standby Mode share the same register block. On RZ/V2M, the functionality is
++  similar, but does not have Clock Monitor Registers.
+ 
+   They provide the following functionalities:
+     - The CPG block generates various core clocks,
+@@ -25,6 +26,7 @@ properties:
+     enum:
+       - renesas,r9a07g044-cpg  # RZ/G2{L,LC}
+       - renesas,r9a07g054-cpg  # RZ/V2L
++      - renesas,r9a09g011-cpg  # RZ/V2M
+ 
+   reg:
+     maxItems: 1
+@@ -42,9 +44,10 @@ properties:
+     description: |
+       - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+         and a core clock reference, as defined in
+-        <dt-bindings/clock/r9a07g*-cpg.h>
++        <dt-bindings/clock/r9a07g*-cpg.h> or <dt-bindings/clock/r9a09g011-cpg.h>
+       - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+-        a module number, as defined in the <dt-bindings/clock/r9a07g0*-cpg.h>.
++        a module number, as defined in the <dt-bindings/clock/r9a07g0*-cpg.h> or
++        <dt-bindings/clock/r9a09g011-cpg.h>.
+     const: 2
+ 
+   '#power-domain-cells':
+@@ -58,7 +61,7 @@ properties:
+   '#reset-cells':
+     description:
+       The single reset specifier cell must be the module number, as defined in
+-      the <dt-bindings/clock/r9a07g0*-cpg.h>.
++      the <dt-bindings/clock/r9a07g0*-cpg.h> or <dt-bindings/clock/r9a09g011-cpg.h>.
+     const: 1
+ 
+ required:
 -- 
-	Ansuel
+2.32.0
+
