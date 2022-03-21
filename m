@@ -2,89 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65667C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF6DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 20:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347336AbiCUTpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 15:45:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38108 "EHLO
+        id S1352907AbiCUUJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 16:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344392AbiCUTpM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:45:12 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB4F72E10;
-        Mon, 21 Mar 2022 12:43:45 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 17E448141D;
-        Mon, 21 Mar 2022 20:43:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1647891823;
-        bh=D2IpHeVAxnkZMDlNfPujRJHA+Lbh55IZq2hGC3wCKQ4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=DEMr1xlMHtuLMxyVCkXzx1i9I2bynmqnPzEAoWelrvtD+jzHmgYzFIvfBgB4Uq54t
-         Mbkq20IloKSZsYTF5oEtD0euoPZ+dzdaS5LEOXBcEcr/sl4ThqkMAlI5Gea82euXN0
-         BudO/SWhlN0fW5BT/t8rZ/GLE7tzxPDKi2GAmzQRISI8gCZu8E7P2XzOVeHfTJbvig
-         Cz4w0AJARo39VaZqKoB5HreuP8PAQ11sjCBHh+Q5v5qSyU1FfbTyE06Ahp7LkDGYFw
-         +GOj/zPZg2sP1IGpTZgXectXWtb/MeVBiSH4r+9pgZfzuvm767bXwSGNCZuqbydAnP
-         TzIV2U3hInRSg==
-Message-ID: <0ad64a7a-408a-1b11-0775-bd9bc71955e3@denx.de>
-Date:   Mon, 21 Mar 2022 20:43:42 +0100
+        with ESMTP id S1352901AbiCUUJT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 16:09:19 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72B9D103BAF
+        for <linux-clk@vger.kernel.org>; Mon, 21 Mar 2022 13:07:50 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so217966wmb.4
+        for <linux-clk@vger.kernel.org>; Mon, 21 Mar 2022 13:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hpGd4BgFciLAC/AOKn8WnKSRlZJshCJsO8rO8N9T8Mg=;
+        b=V7cv1Gp5aYUibydiPpyC1iMAPbfElb1ADdcdh2NllNmvAz5EkPjMAvKfhwkfbY1IAd
+         OXbsHhDDuxNxPSB2aUioeFasHP5Wzsq9zehd1ydDT/K7KZFV7rbFVPOneG4k8Qz3JWfp
+         dVaY4fquxKPKPWmNOS1S4d/1SjqX66IvzwHmTJF+xGEJNEKU/c0o6Vh5X0dxBa/UD7MI
+         u5g9nUMIo1/XMBeU293pMbxYl9aRpHQ5iysFjutGUsI6ivPRv5ELA3IWx6F177v4iGye
+         cC5C6BnkB1YpuYYbuaIHZJ0VJ6lU8zP+4KoQe2RG1J+ryBwrum+OKcot28iki2N9IFlw
+         Rfaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hpGd4BgFciLAC/AOKn8WnKSRlZJshCJsO8rO8N9T8Mg=;
+        b=x9zubj0khOlmI8gvhkcr3zp4iGGGZUoybf7I7MJ8o7hGi/E1fYBooOCREK8guxcvyq
+         ElZKxu0WBXdFFSrKHdlXeeVdlETU5lKCk81Sv4MJHV1ej80MpKiSPZG5Ukc3ZxvOBzBU
+         yvJwD+WBE1f2WR3lKlMkURLdyILbeeeD5j1vfRBiEDvBiaLEnRBfqlbIEy7mPJa6v7rl
+         iYES96ulo1oRhdw3SW1zAbvVfa9+T9a+Y9dKj2bJxXuGOH2HCqFbBT1fOglPXWv7cBwk
+         l5TFComI8QBmrYBOrPcsW0frjgLs497S8KdpS1mOExy//N5QOrbiBAza8z2MdoZw0EDJ
+         ySpA==
+X-Gm-Message-State: AOAM532pAysXmteW/u6+Sd9X7vIh+3jpPn7/cxJlYDjAGRdLRfgRpuVT
+        4O0xmU3k5QfNv699YdFoy++Dag==
+X-Google-Smtp-Source: ABdhPJwZTaaNTA/qSdU39RAezvG8FUGCtvMy8rvdvR8ZMrlNQk+E0JLW8u50BBVObfgDdD/uXVdHNA==
+X-Received: by 2002:a05:600c:3c9d:b0:37f:a5c3:fccf with SMTP id bg29-20020a05600c3c9d00b0037fa5c3fccfmr669083wmb.13.1647893268904;
+        Mon, 21 Mar 2022 13:07:48 -0700 (PDT)
+Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id i14-20020a0560001ace00b00203da1fa749sm24426988wry.72.2022.03.21.13.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Mar 2022 13:07:48 -0700 (PDT)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v3 00/26] crypto: rockchip: permit to pass self-tests
+Date:   Mon, 21 Mar 2022 20:07:13 +0000
+Message-Id: <20220321200739.3572792-1-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v3 2/3] clk: Make __clk_hw_register_fixed_factor
- non-static
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-References: <20220226040723.143705-1-marex@denx.de>
- <20220226040723.143705-2-marex@denx.de>
- <20220318210356.55D1EC340E8@smtp.kernel.org>
- <5f97232b-579f-bccf-c603-c263aea143b6@denx.de>
- <20220321192650.E4409C340E8@smtp.kernel.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20220321192650.E4409C340E8@smtp.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/21/22 20:26, Stephen Boyd wrote:
-> Quoting Marek Vasut (2022-03-20 06:23:14)
->> On 3/18/22 22:03, Stephen Boyd wrote:
->>> Quoting Marek Vasut (2022-02-25 20:07:22)
->>>> Access to the full parameters of __clk_hw_register_fixed_factor()
->>>> is useful in case a driver is registering fixed clock with only
->>>> single parent, in which case the driver should set parent_name to
->>>> NULL and parent_index to 0, and access to this function permits it
->>>> to do just that.
->>>>
->>>> Signed-off-by: Marek Vasut <marex@denx.de>
->>>> Cc: Michael Turquette <mturquette@baylibre.com>
->>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>> Cc: Stephen Boyd <sboyd@kernel.org>
->>>> Cc: devicetree@vger.kernel.org
->>>> To: linux-clk@vger.kernel.org
->>>> ---
->>>> V2: - New patch
->>>> V3: - No change
->>>
->>> This isn't exported. Given that we don't typically export an internal
->>> function (hence the double underscore) I'm going to change this to be a
->>> new function. See the attached patch.
->>
->> I can confirm the change works and looks OK.
->>
->> Do you want me to send a V4 or will you squash it into these patches
->> yourself when applying?
-> 
-> No need I fixed it up and pushed it out.
+Hello
 
-Thank you
+The rockchip crypto driver is broken and do not pass self-tests.
+This serie's goal is to permit to become usable and pass self-tests.
+
+This whole serie is tested on a rk3328-rock64, rk3288-miqi with selftests (with
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y)
+The serie is also tested on a rk3399 by Hugh Cole-Baker <sigmaris@gmail.com>
+
+Regards
+
+Changes since v1:
+- select CRYPTO_ENGINE
+- forgot to free fallbacks TFMs
+- fixed kernel test robots warning
+- add the PM patch
+
+Changes since v2:
+- Added DMA clock back to 3288 since it dont work without it
+- fallback needed to select CBC and ECB configs
+- Added support for rk3399
+- Added more patch (style, read_poll_timeout)
+
+Corentin Labbe (26):
+  crypto: rockchip: use dev_err for error message about interrupt
+  crypto: rockchip: do not use uninit variable
+  crypto: rockchip: do not do custom power management
+  crypto: rockchip: fix privete/private typo
+  crypto: rockchip: do not store mode globally
+  crypto: rockchip: add fallback for cipher
+  crypto: rockchip: add fallback for ahash
+  crypto: rockchip: better handle cipher key
+  crypto: rockchip: remove non-aligned handling
+  crypto: rockchip: rework by using crypto_engine
+  crypto: rockchip: rewrite type
+  crypto: rockchip: add debugfs
+  crypto: rockchip: introduce PM
+  crypto: rockchip: handle reset also in PM
+  crypto: rockchip: use clk_bulk to simplify clock management
+  crypto: rockchip: add support for r3399
+  clk: rk3399: use proper crypto0 name
+  arm64: dts: rockchip: rk3399: add crypto node
+  arm64: dts: rockchip: add rk3328 crypto node
+  ARM: dts: rk3288: crypto does not need reset-names anymore
+  dt-bindings: crypto: convert rockchip-crypto to yaml
+  crypto: rockchip: add support for rk3328
+  crypto: rockchip: Check for maximum frequency of clocks
+  crypto: rockchip: add myself as maintainer
+  crypto: rockchip: fix style issue
+  crypto: rockchip: use read_poll_timeout
+
+ .../bindings/clock/qcom,gcc-other.yaml        |   2 +-
+ .../crypto/rockchip,rk3288-crypto.yaml        |  84 +++
+ .../bindings/crypto/rockchip-crypto.txt       |  28 -
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/rk3288.dtsi                 |   1 -
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  10 +
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |  12 +
+ drivers/crypto/Kconfig                        |  15 +
+ drivers/crypto/rockchip/rk3288_crypto.c       | 498 ++++++++----------
+ drivers/crypto/rockchip/rk3288_crypto.h       | 109 ++--
+ drivers/crypto/rockchip/rk3288_crypto_ahash.c | 274 ++++++----
+ .../crypto/rockchip/rk3288_crypto_skcipher.c  | 480 ++++++++++-------
+ include/dt-bindings/clock/rk3399-cru.h        |   6 +-
+ 13 files changed, 880 insertions(+), 646 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+
+-- 
+2.34.1
+
