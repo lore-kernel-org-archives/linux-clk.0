@@ -2,104 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79074C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 18:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DBC433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:01:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352112AbiCUSZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 14:25:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37992 "EHLO
+        id S1352405AbiCUTDH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 15:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352118AbiCUSZC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 14:25:02 -0400
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB061205F8;
-        Mon, 21 Mar 2022 11:23:36 -0700 (PDT)
-Received: by mail-oo1-f44.google.com with SMTP id y27-20020a4a9c1b000000b0032129651bb0so20207819ooj.2;
-        Mon, 21 Mar 2022 11:23:36 -0700 (PDT)
+        with ESMTP id S1352410AbiCUTC7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:02:59 -0400
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B87A96BDC6;
+        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
+Received: by mail-oi1-f173.google.com with SMTP id e4so14189181oif.2;
+        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Ku41EwMrpike2rw1zkBgegHuSBM8D1pxwnRie00HI3s=;
-        b=ifa5iJdQpJAqwQD9NDVar3BiAxcUtXDmy5m3ssz6e4Z12t9RLt+MuTXvD967hNRIat
-         99Pztr17EW8CUifk0CiFU2wswSvwUQZApytCMY6ROO8rPwaieU9kMNdPj885FcZnLKwP
-         h9EZDEt0p6MRGAqZRTuy2tbh7eHUDAG8UPueAk1/D5uv93MjqgM3fh8o9+7jO6sUGhs8
-         mCTGU4V3HznQYL+oIlI0R3aqZREWoHND9NYU8se1tfjXHCSQr9tjGbl8oTtt2hiF3BWd
-         Vjt+kwVmQ2Q5RyyAS8AoZ+tfrPYmmBmXHL8T4DcIHmMDV5hIEaYYkv6kOhkaMvQTv4+m
-         0NcA==
-X-Gm-Message-State: AOAM532O0FP7cuSIc6oY2Gi6frPT52qvUPzC5uaGG/EAZ+IOSLrTrC5R
-        /E+wdRXV7/D7hXrU3vqksg==
-X-Google-Smtp-Source: ABdhPJxEbbdQHTHasMqPbVoEvSXN5GqzSXj2JN10aOeMu119s+b2yNq16XRHjwNknIXSn2Ux3/bbGg==
-X-Received: by 2002:a05:6870:4586:b0:da:6a35:fcd with SMTP id y6-20020a056870458600b000da6a350fcdmr182637oao.140.1647887016156;
-        Mon, 21 Mar 2022 11:23:36 -0700 (PDT)
+        bh=nTS2qwxUjqkOxdza+qR3eJAIN++xMhTtIwt7IFM0yNk=;
+        b=1r0xm5kqRK3C8yfVMgBsHwL/UxxKM8ttv340jzPmV4Ncbz3V+uM/YkUNEFFLPcULtA
+         6EPJJ5dkn2zzij/aID841ee/gOq17j9HPQU4qsYU/O1yTSmy//IkJhcJXvMzTSzZOohZ
+         gD+OjABKaKTw02nh5lWjPdTabyJ22bC0X7/x3Om1bUhRRLzAK4qKmUXjod2+fJnPijIJ
+         c1Z0KvM/lKTudfyDV8tbAL3LMkWIShJaMGsh7i6TvknOxMEcf2jreslvGjv0U7bGI41w
+         bWWGyOwZ+PgliifQKnRBCOzR2f1zRPJshie0nLllVGCnwbtwBnHf69iv0/XWFS9q9Tl3
+         yA1g==
+X-Gm-Message-State: AOAM531ZtKEtqv4HS2g0EDBAh+KOPClwdf3Fh0PeafBAwSMx8Cth0rdx
+        Jf9TZ4euXMM7mCCeOdPV9w==
+X-Google-Smtp-Source: ABdhPJwBf3B8U+YRggLxFORt7XVFKeJf5OQOyxnaahYvv0Am8tpP+ceivfPpcJFwo+I8oEj4Bk+ysA==
+X-Received: by 2002:a05:6808:198a:b0:2da:59cd:46c6 with SMTP id bj10-20020a056808198a00b002da59cd46c6mr285275oib.75.1647889293043;
+        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id bm51-20020a0568081ab300b002da5c44e0bdsm7304841oib.28.2022.03.21.11.23.34
+        by smtp.gmail.com with ESMTPSA id v8-20020a05683018c800b005cb39fc3e15sm5777211ote.13.2022.03.21.12.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 11:23:35 -0700 (PDT)
-Received: (nullmailer pid 319364 invoked by uid 1000);
-        Mon, 21 Mar 2022 18:23:33 -0000
-Date:   Mon, 21 Mar 2022 13:23:33 -0500
+        Mon, 21 Mar 2022 12:01:31 -0700 (PDT)
+Received: (nullmailer pid 371596 invoked by uid 1000);
+        Mon, 21 Mar 2022 19:01:30 -0000
+Date:   Mon, 21 Mar 2022 14:01:30 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        Jesse Taube <Mr.Bossman075@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
-Message-ID: <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
-References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
- <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/5 v2] dt-bindings: clock: u8500: Add clkout clock
+ bindings
+Message-ID: <YjjLitPzqOA3tCYj@robh.at.kernel.org>
+References: <20220319225156.1451636-1-linus.walleij@linaro.org>
+ <20220319225156.1451636-2-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220319225156.1451636-2-linus.walleij@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
-> Consumer examples in the bindings of resource providers are trivial,
-> useless and duplication of code.  Remove the example code for consumer
+On Sat, 19 Mar 2022 23:51:52 +0100, Linus Walleij wrote:
+> This adds device tree bindings for the externally routed clocks
+> CLKOUT1 and CLKOUT2 clocks found in the DB8500.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
->  .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
->  .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
->  .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
->  .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
->  .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
->  .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
->  .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
->  .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
->  .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
->  .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
->  .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
->  .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
->  .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
->  .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
->  .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
->  16 files changed, 143 deletions(-)
+> ChangeLog v1->v2:
+> - Push the description of the clock-cells down under the clock-cells
+>   subnode.
+> - Add an example, as this was missing and requested.
+> ---
+>  .../bindings/clock/stericsson,u8500-clks.yaml | 57 +++++++++++++++++++
+>  include/dt-bindings/clock/ste-db8500-clkout.h | 17 ++++++
+>  2 files changed, 74 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/ste-db8500-clkout.h
+> 
 
-Doesn't apply to my tree (no imxrt1050-clock.yaml), so
-
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
