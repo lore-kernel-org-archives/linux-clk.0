@@ -2,92 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831B8C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DECC433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352676AbiCUTUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 15:20:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
+        id S1352657AbiCUT3W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 15:29:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352620AbiCUTT4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:19:56 -0400
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA72C1CB00;
-        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
-Received: by mail-oo1-f48.google.com with SMTP id g5-20020a4ae885000000b003240bc9b2afso20385069ooe.10;
-        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=zQsaTPyUZRrtGSfO6Vj1TGY8oZRoTuE+VKGytgXpzzg=;
-        b=ArfqrP/y9oMW41ohoQWgFyxLlp0YQJDQtYwixlje6FqdqSX7xsXFpyQ3Y8fFrzTq+8
-         G992R8z93KzTzdc0geJd/2AzL2Rw2NXcuIMqdLTuueSxh6hwzR3UjzoJrTVQblIorKFQ
-         tp4wqYToVKGqwr/4lDNBT8jbWRcmgM+ymcP8YnGOH8560o1s99diInjoYdhHoNuxqA5z
-         C0FVGJlkxBocvHjdZbcl9N61imorABWqC08fhAQeebc7KqFdI7EUViCShQYW+jvIqzHg
-         wy0zolfds/z+emDcW89nJytL9Ked5Tj3dnixXCcNJLgM6Qpnq4lE8mAy2DrwnS2XQ2VO
-         CHHg==
-X-Gm-Message-State: AOAM532TsoJGio3TXYkpYJBuj+YuYFn5exyKxYwAPTPvXDYM5p5sheFB
-        tTneqD8M69rG8v585laoNQ==
-X-Google-Smtp-Source: ABdhPJzHrejqYtTO7cVO+lZa5TGwJfswtpENqFTFNjyk0JeJ7ytAcURFYCvK/4bCrBstINdyYiBs7Q==
-X-Received: by 2002:a05:6870:d207:b0:de:1872:fe43 with SMTP id g7-20020a056870d20700b000de1872fe43mr271409oac.242.1647890303057;
-        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 15-20020aca110f000000b002da58c4ec52sm7835920oir.6.2022.03.21.12.18.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 12:18:21 -0700 (PDT)
-Received: (nullmailer pid 394706 invoked by uid 1000);
-        Mon, 21 Mar 2022 19:18:20 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>
-In-Reply-To: <20220321153855.12082-19-ansuelsmth@gmail.com>
-References: <20220321153855.12082-1-ansuelsmth@gmail.com> <20220321153855.12082-19-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v5 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver Documentation to yaml
-Date:   Mon, 21 Mar 2022 14:18:20 -0500
-Message-Id: <1647890300.369438.394705.nullmailer@robh.at.kernel.org>
+        with ESMTP id S1352830AbiCUT2R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:28:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F2E91877E1;
+        Mon, 21 Mar 2022 12:26:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A7CC460DBF;
+        Mon, 21 Mar 2022 19:26:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4409C340E8;
+        Mon, 21 Mar 2022 19:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647890811;
+        bh=VBZ7dLMfzVeymeYnE82k5NNdzTuepKWng0FFKYTaSA4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=IR5BGmYkMJ8vBX+bfjnOoPbfgh8UY7vKJtQeJ5RZWTDsNoeDCqdjfBtK/cBLVAoe7
+         /zjQRxYHhQCjpZE4GFWwOdUbbAvn0GKB5oXc3tmDtYg8mh8m0p4cjmUPYpVJBjfJKx
+         3kAvNc6l7WWZe8GB9Ke/aQTfAuLOddgeO1zeNaTYQqa9eg5k4k2jba18fWv4qt3NT3
+         Lvbn5Rr3H4/7/4RRPRj9Zx0Sms1uDcRp/6CTeGMXV+p3GsVAlzT6EPAbAqd34WZaSz
+         0TMPARQd0i6TSQG6gC8c8q/zAfgkpCrs8JrZn23lYs0rMTczcfE7EQ32qjFwHkhrGR
+         2NvoQ1tmqOT3A==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5f97232b-579f-bccf-c603-c263aea143b6@denx.de>
+References: <20220226040723.143705-1-marex@denx.de> <20220226040723.143705-2-marex@denx.de> <20220318210356.55D1EC340E8@smtp.kernel.org> <5f97232b-579f-bccf-c603-c263aea143b6@denx.de>
+Subject: Re: [PATCH v3 2/3] clk: Make __clk_hw_register_fixed_factor non-static
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+To:     Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org
+Date:   Mon, 21 Mar 2022 12:26:49 -0700
+User-Agent: alot/0.10
+Message-Id: <20220321192650.E4409C340E8@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 21 Mar 2022 16:38:55 +0100, Ansuel Smith wrote:
-> Convert kpss-gcc driver Documentation to yaml. Since kpss-gcc expose a
-> clock add the required '#clock-cells' binding while converting it.
-> 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
->  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
->  2 files changed, 68 insertions(+), 44 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-> 
+Quoting Marek Vasut (2022-03-20 06:23:14)
+> On 3/18/22 22:03, Stephen Boyd wrote:
+> > Quoting Marek Vasut (2022-02-25 20:07:22)
+> >> Access to the full parameters of __clk_hw_register_fixed_factor()
+> >> is useful in case a driver is registering fixed clock with only
+> >> single parent, in which case the driver should set parent_name to
+> >> NULL and parent_index to 0, and access to this function permits it
+> >> to do just that.
+> >>
+> >> Signed-off-by: Marek Vasut <marex@denx.de>
+> >> Cc: Michael Turquette <mturquette@baylibre.com>
+> >> Cc: Rob Herring <robh+dt@kernel.org>
+> >> Cc: Stephen Boyd <sboyd@kernel.org>
+> >> Cc: devicetree@vger.kernel.org
+> >> To: linux-clk@vger.kernel.org
+> >> ---
+> >> V2: - New patch
+> >> V3: - No change
+> >=20
+> > This isn't exported. Given that we don't typically export an internal
+> > function (hence the double underscore) I'm going to change this to be a
+> > new function. See the attached patch.
+>=20
+> I can confirm the change works and looks OK.
+>=20
+> Do you want me to send a V4 or will you squash it into these patches=20
+> yourself when applying?
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
-
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
-
-Full log is available here: https://patchwork.ozlabs.org/patch/1607841
-
-
-clock-controller@2011000: '#clock-cells' is a required property
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-
-clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960']
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-
-clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
-	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-
+No need I fixed it up and pushed it out.
