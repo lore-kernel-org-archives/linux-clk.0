@@ -2,78 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DBC433FE
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831B8C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Mar 2022 19:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352405AbiCUTDH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 15:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+        id S1352676AbiCUTUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 15:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352410AbiCUTC7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:02:59 -0400
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B87A96BDC6;
-        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
-Received: by mail-oi1-f173.google.com with SMTP id e4so14189181oif.2;
-        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
+        with ESMTP id S1352620AbiCUTT4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 15:19:56 -0400
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA72C1CB00;
+        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id g5-20020a4ae885000000b003240bc9b2afso20385069ooe.10;
+        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nTS2qwxUjqkOxdza+qR3eJAIN++xMhTtIwt7IFM0yNk=;
-        b=1r0xm5kqRK3C8yfVMgBsHwL/UxxKM8ttv340jzPmV4Ncbz3V+uM/YkUNEFFLPcULtA
-         6EPJJ5dkn2zzij/aID841ee/gOq17j9HPQU4qsYU/O1yTSmy//IkJhcJXvMzTSzZOohZ
-         gD+OjABKaKTw02nh5lWjPdTabyJ22bC0X7/x3Om1bUhRRLzAK4qKmUXjod2+fJnPijIJ
-         c1Z0KvM/lKTudfyDV8tbAL3LMkWIShJaMGsh7i6TvknOxMEcf2jreslvGjv0U7bGI41w
-         bWWGyOwZ+PgliifQKnRBCOzR2f1zRPJshie0nLllVGCnwbtwBnHf69iv0/XWFS9q9Tl3
-         yA1g==
-X-Gm-Message-State: AOAM531ZtKEtqv4HS2g0EDBAh+KOPClwdf3Fh0PeafBAwSMx8Cth0rdx
-        Jf9TZ4euXMM7mCCeOdPV9w==
-X-Google-Smtp-Source: ABdhPJwBf3B8U+YRggLxFORt7XVFKeJf5OQOyxnaahYvv0Am8tpP+ceivfPpcJFwo+I8oEj4Bk+ysA==
-X-Received: by 2002:a05:6808:198a:b0:2da:59cd:46c6 with SMTP id bj10-20020a056808198a00b002da59cd46c6mr285275oib.75.1647889293043;
-        Mon, 21 Mar 2022 12:01:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=zQsaTPyUZRrtGSfO6Vj1TGY8oZRoTuE+VKGytgXpzzg=;
+        b=ArfqrP/y9oMW41ohoQWgFyxLlp0YQJDQtYwixlje6FqdqSX7xsXFpyQ3Y8fFrzTq+8
+         G992R8z93KzTzdc0geJd/2AzL2Rw2NXcuIMqdLTuueSxh6hwzR3UjzoJrTVQblIorKFQ
+         tp4wqYToVKGqwr/4lDNBT8jbWRcmgM+ymcP8YnGOH8560o1s99diInjoYdhHoNuxqA5z
+         C0FVGJlkxBocvHjdZbcl9N61imorABWqC08fhAQeebc7KqFdI7EUViCShQYW+jvIqzHg
+         wy0zolfds/z+emDcW89nJytL9Ked5Tj3dnixXCcNJLgM6Qpnq4lE8mAy2DrwnS2XQ2VO
+         CHHg==
+X-Gm-Message-State: AOAM532TsoJGio3TXYkpYJBuj+YuYFn5exyKxYwAPTPvXDYM5p5sheFB
+        tTneqD8M69rG8v585laoNQ==
+X-Google-Smtp-Source: ABdhPJzHrejqYtTO7cVO+lZa5TGwJfswtpENqFTFNjyk0JeJ7ytAcURFYCvK/4bCrBstINdyYiBs7Q==
+X-Received: by 2002:a05:6870:d207:b0:de:1872:fe43 with SMTP id g7-20020a056870d20700b000de1872fe43mr271409oac.242.1647890303057;
+        Mon, 21 Mar 2022 12:18:23 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id v8-20020a05683018c800b005cb39fc3e15sm5777211ote.13.2022.03.21.12.01.31
+        by smtp.gmail.com with ESMTPSA id 15-20020aca110f000000b002da58c4ec52sm7835920oir.6.2022.03.21.12.18.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 12:01:31 -0700 (PDT)
-Received: (nullmailer pid 371596 invoked by uid 1000);
-        Mon, 21 Mar 2022 19:01:30 -0000
-Date:   Mon, 21 Mar 2022 14:01:30 -0500
+        Mon, 21 Mar 2022 12:18:21 -0700 (PDT)
+Received: (nullmailer pid 394706 invoked by uid 1000);
+        Mon, 21 Mar 2022 19:18:20 -0000
 From:   Rob Herring <robh@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/5 v2] dt-bindings: clock: u8500: Add clkout clock
- bindings
-Message-ID: <YjjLitPzqOA3tCYj@robh.at.kernel.org>
-References: <20220319225156.1451636-1-linus.walleij@linaro.org>
- <20220319225156.1451636-2-linus.walleij@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220319225156.1451636-2-linus.walleij@linaro.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>
+In-Reply-To: <20220321153855.12082-19-ansuelsmth@gmail.com>
+References: <20220321153855.12082-1-ansuelsmth@gmail.com> <20220321153855.12082-19-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v5 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver Documentation to yaml
+Date:   Mon, 21 Mar 2022 14:18:20 -0500
+Message-Id: <1647890300.369438.394705.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 19 Mar 2022 23:51:52 +0100, Linus Walleij wrote:
-> This adds device tree bindings for the externally routed clocks
-> CLKOUT1 and CLKOUT2 clocks found in the DB8500.
+On Mon, 21 Mar 2022 16:38:55 +0100, Ansuel Smith wrote:
+> Convert kpss-gcc driver Documentation to yaml. Since kpss-gcc expose a
+> clock add the required '#clock-cells' binding while converting it.
 > 
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 > ---
-> ChangeLog v1->v2:
-> - Push the description of the clock-cells down under the clock-cells
->   subnode.
-> - Add an example, as this was missing and requested.
-> ---
->  .../bindings/clock/stericsson,u8500-clks.yaml | 57 +++++++++++++++++++
->  include/dt-bindings/clock/ste-db8500-clkout.h | 17 ++++++
->  2 files changed, 74 insertions(+)
->  create mode 100644 include/dt-bindings/clock/ste-db8500-clkout.h
+>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
+>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
+>  2 files changed, 68 insertions(+), 44 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
+
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/1607841
+
+
+clock-controller@2011000: '#clock-cells' is a required property
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
+
+clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960']
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
+
+clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
+	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
+	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
+
