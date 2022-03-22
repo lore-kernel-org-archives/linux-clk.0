@@ -2,272 +2,138 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C1DC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 08:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA48C433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 08:45:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231142AbiCVIby (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 04:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39392 "EHLO
+        id S231723AbiCVIqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 04:46:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbiCVIbx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 04:31:53 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBC0713F8D;
-        Tue, 22 Mar 2022 01:30:24 -0700 (PDT)
-X-UUID: 2c5a5ae2a33341f9803f4fa11f802fd3-20220322
-X-UUID: 2c5a5ae2a33341f9803f4fa11f802fd3-20220322
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <chun-jie.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1934978458; Tue, 22 Mar 2022 16:30:18 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Tue, 22 Mar 2022 16:30:17 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 22 Mar 2022 16:30:17 +0800
-Message-ID: <51750d230b38aa3d2e9d370247bcb4be93a35877.camel@mediatek.com>
-Subject: Re: [PATCH v2 02/15] clk: mediatek: Add MT8186 mcusys clock support
-From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
-To:     Chen-Yu Tsai <wenst@chromium.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Date:   Tue, 22 Mar 2022 16:30:17 +0800
-In-Reply-To: <CAGXv+5Fq4_dZBWJvKZ8ADUSQF4bTu-QWZ+7KG1dsJoWDrT2nXg@mail.gmail.com>
-References: <20220221015258.913-1-chun-jie.chen@mediatek.com>
-         <20220221015258.913-3-chun-jie.chen@mediatek.com>
-         <CAGXv+5Fq4_dZBWJvKZ8ADUSQF4bTu-QWZ+7KG1dsJoWDrT2nXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        with ESMTP id S231707AbiCVIqs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 04:46:48 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047015591
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 01:45:21 -0700 (PDT)
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com [209.85.167.72])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 818313F1D8
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 08:45:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1647938719;
+        bh=neGecA7HBSwD46fG4cAmxThQpgGejbSlPRN3sQKWp0I=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=AinNeP/Np4LDGSGmGCD2N07ltqHIzok5a/Mp3FevBAD+z4yHnCBGpc4aIZ6Lr3r7S
+         fbBVO1UMse4ZaBJWnex1uCHllZFK9CQO6sgA1cTbPZdCe5L/ugx7qlVs0cWtYjEN9K
+         cH5q6F9+U37lK5McWiAgucQKMy3k2ZbnA3qdC54hEzn2V9SiCIdTG63jMBFTW0cBrK
+         ZfcS/AkLXu31awg16KEkDiJi8BwzLU49TXvAzz7yzd7O6QD5Rm6Q1MGjUQWZQowuW8
+         PFdScq41CtngaXxXS4gINvSnjGfI3Wa8+rzEuVsbvb13nBbMKQSK4LIMiTjPBcVcyI
+         /LF4+/FSM7PUg==
+Received: by mail-lf1-f72.google.com with SMTP id x26-20020a056512131a00b00448708fa822so4480467lfu.6
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 01:45:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=neGecA7HBSwD46fG4cAmxThQpgGejbSlPRN3sQKWp0I=;
+        b=wOBWdjhYLR0lN1IrL3Li3XMIr4dGao5Lt2oL93xpRHnb0nrtTNCYTLNP+Th3ZfKqU7
+         b8EmHN9FrKBYUNf3cZP/6ww1hfuODfsMjW6BgQkKxlarKtudtXYZQFSe2eg8nd4PKF9N
+         jgP9UWEAkFKltTx6PVrvrSMzC4eNLltfO57Ppx9EVloe/nFpkbcyx2n13oQhMCotRWGH
+         l9aRAWicZgwagyGC5Px+9aXCK6HJxcJPILBF3esr1nO3SWkDpm3w96EgYmApfclwe1mg
+         mNfax/M/c7MwY/kXipcot/UJsykLNtlOcnApBKGnKFOSyRnJVKyKQvpzHG0QdZsOYXmM
+         lfWQ==
+X-Gm-Message-State: AOAM532pkp5NpKVs5fSxbHgb+BlnMUli/adKU11Wu0qbvi8cwJKBIQuf
+        41NmH39vGYHM56ehFsLd9Zm1Xu3S6MPYkXy5QO9oMwt4yXxQVDqRBYWC84Jv/M5Ohorntw9H3Rl
+        FyRBQ3XorEHINKzazH2Sz1Fo9x3SOHGpfKXt1HA==
+X-Received: by 2002:a5d:59a1:0:b0:204:1777:fc08 with SMTP id p1-20020a5d59a1000000b002041777fc08mr5740207wrr.545.1647938708541;
+        Tue, 22 Mar 2022 01:45:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw04a3TswDavls/3TZ+Ylafig5G9XRM4IJdq5o+8htxAoCK7PnTDqyBAOY10yAJcYtgnX428g==
+X-Received: by 2002:a5d:59a1:0:b0:204:1777:fc08 with SMTP id p1-20020a5d59a1000000b002041777fc08mr5740165wrr.545.1647938708324;
+        Tue, 22 Mar 2022 01:45:08 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id f9-20020a05600c4e8900b0038c740951ebsm1522235wmq.24.2022.03.22.01.45.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Mar 2022 01:45:07 -0700 (PDT)
+Message-ID: <a8290aa4-8a2c-68c3-bc55-82abcd27385e@canonical.com>
+Date:   Tue, 22 Mar 2022 09:45:05 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
+Content-Language: en-US
+To:     Jesse Taube <mr.bossman075@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Ioana Ciornei <ioana.ciornei@nxp.com>
+References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
+ <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
+ <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
+ <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+In-Reply-To: <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2022-03-09 at 18:13 +0800, Chen-Yu Tsai wrote:
-> Hi,
+On 22/03/2022 02:45, Jesse Taube wrote:
 > 
-> On Mon, Feb 21, 2022 at 9:59 AM Chun-Jie Chen
-> <chun-jie.chen@mediatek.com> wrote:
-> > 
-> > Add MT8186 mcusys clock controller which provides muxes
-> > to select the clock source of APMCU.
-> > 
-> > Signed-off-by: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > Acked-by: AngeloGioacchino Del Regno <
-> > angelogioacchino.delregno@collabora.com>
-> > ---
-> >  drivers/clk/mediatek/Kconfig          |   8 ++
-> >  drivers/clk/mediatek/Makefile         |   1 +
-> >  drivers/clk/mediatek/clk-mt8186-mcu.c | 106
-> > ++++++++++++++++++++++++++
-> >  3 files changed, 115 insertions(+)
-> >  create mode 100644 drivers/clk/mediatek/clk-mt8186-mcu.c
-> > 
-> > diff --git a/drivers/clk/mediatek/Kconfig
-> > b/drivers/clk/mediatek/Kconfig
-> > index 01ef02c54725..d5936cfb3bee 100644
-> > --- a/drivers/clk/mediatek/Kconfig
-> > +++ b/drivers/clk/mediatek/Kconfig
-> > @@ -512,6 +512,14 @@ config COMMON_CLK_MT8183_VENCSYS
-> >         help
-> >           This driver supports MediaTek MT8183 vencsys clocks.
-> > 
-> > +config COMMON_CLK_MT8186
-> > +       bool "Clock driver for MediaTek MT8186"
-> > +       depends on ARM64 || COMPILE_TEST
-> > +       select COMMON_CLK_MEDIATEK
-> > +       default ARCH_MEDIATEK
-> > +       help
-> > +         This driver supports MediaTek MT8186 clocks.
-> > +
-> >  config COMMON_CLK_MT8192
-> >         bool "Clock driver for MediaTek MT8192"
-> >         depends on ARM64 || COMPILE_TEST
-> > diff --git a/drivers/clk/mediatek/Makefile
-> > b/drivers/clk/mediatek/Makefile
-> > index 7b0c2646ce4a..677fa4f0eea2 100644
-> > --- a/drivers/clk/mediatek/Makefile
-> > +++ b/drivers/clk/mediatek/Makefile
-> > @@ -71,6 +71,7 @@ obj-$(CONFIG_COMMON_CLK_MT8183_MFGCFG) += clk-
-> > mt8183-mfgcfg.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8183_MMSYS) += clk-mt8183-mm.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8183_VDECSYS) += clk-mt8183-vdec.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8183_VENCSYS) += clk-mt8183-venc.o
-> > +obj-$(CONFIG_COMMON_CLK_MT8186) += clk-mt8186-mcu.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8192) += clk-mt8192.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8192_AUDSYS) += clk-mt8192-aud.o
-> >  obj-$(CONFIG_COMMON_CLK_MT8192_CAMSYS) += clk-mt8192-cam.o
-> > diff --git a/drivers/clk/mediatek/clk-mt8186-mcu.c
-> > b/drivers/clk/mediatek/clk-mt8186-mcu.c
-> > new file mode 100644
-> > index 000000000000..6d82c5de16c1
-> > --- /dev/null
-> > +++ b/drivers/clk/mediatek/clk-mt8186-mcu.c
-> > @@ -0,0 +1,106 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +//
-> > +// Copyright (c) 2022 MediaTek Inc.
-> > +// Author: Chun-Jie Chen <chun-jie.chen@mediatek.com>
-> > +
-> > +#include "clk-mtk.h"
 > 
-> Please move local headers after global ones. And please do this for
-> all
-> patches.
-> 
-> > +
-> > +#include <dt-bindings/clock/mt8186-clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/platform_device.h>
-> > +
-> > +static DEFINE_SPINLOCK(mt8186_clk_lock);
-> > +
-> > +static const char * const mcu_armpll_ll_parents[] = {
-> > +       "clk26m",
-> > +       "armpll_ll",
-> > +       "mainpll",
-> > +       "univpll_d2"
-> > +};
-> > +
-> > +static const char * const mcu_armpll_bl_parents[] = {
-> > +       "clk26m",
-> > +       "armpll_bl",
-> > +       "mainpll",
-> > +       "univpll_d2"
-> > +};
-> > +
-> > +static const char * const mcu_armpll_bus_parents[] = {
-> > +       "clk26m",
-> > +       "ccipll",
-> > +       "mainpll",
-> > +       "univpll_d2"
-> > +};
-> > +
-> > +static struct mtk_composite mcu_muxes[] = {
-> > +       /* CPU_PLLDIV_CFG0 */
-> > +       MUX(CLK_MCU_ARMPLL_LL_SEL, "mcu_armpll_ll_sel",
-> > mcu_armpll_ll_parents, 0x2A0, 9, 2),
-> 
-> Can you add a comment stating that these registers have other bits
-> that
-> should not be touched? Otherwise anyone reading the datasheet might
-> consider this to be incomplete.
-> 
-> I assume the other bits (such as one field that looks like a divider)
-> are
-> configured in the bootloader, or the POR defaults are correct.
-> 
+> On 3/21/22 14:23, Rob Herring wrote:
+>> On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
+>>> Consumer examples in the bindings of resource providers are trivial,
+>>> useless and duplication of code.  Remove the example code for consumer
+>>>
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+>>> ---
+>>>   .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
+>>>   .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
+>>>   .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
+>>>   .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
+>>>   .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
+>>>   .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
+>>>   .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
+>>>   .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
+>>>   .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
+>>>   .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
+>>>   .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
+>>>   16 files changed, 143 deletions(-)
+>>
+>> Doesn't apply to my tree (no imxrt1050-clock.yaml), so
+> merge against linux-next I can submit another patch if needed.
+>> Acked-by: Rob Herring <robh@kernel.org>
 
-Yes, We only control mux in linux side and keep same value in divider.
-I will add more description in v4. Sorry I missed this comment before.
+Let me send it after the merge window - all dependencies should be there.
 
-> > +       /* CPU_PLLDIV_CFG1 */
-> > +       MUX(CLK_MCU_ARMPLL_BL_SEL, "mcu_armpll_bl_sel",
-> > mcu_armpll_bl_parents, 0x2A4, 9, 2),
-> > +       /* BUS_PLLDIV_CFG */
-> > +       MUX(CLK_MCU_ARMPLL_BUS_SEL, "mcu_armpll_bus_sel",
-> > mcu_armpll_bus_parents, 0x2E0, 9, 2),
-> > +};
-> 
-> Note: I've checked the register bits against the datasheet.
-> 
-> > +
-> > +static const struct of_device_id of_match_clk_mt8186_mcu[] = {
-> > +       { .compatible = "mediatek,mt8186-mcusys", },
-> > +       {}
-> > +};
-> > +
-> > +static int clk_mt8186_mcu_probe(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data;
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +       int r;
-> > +       void __iomem *base;
-> > +
-> > +       clk_data = mtk_alloc_clk_data(CLK_MCU_NR_CLK);
-> > +       if (!clk_data)
-> > +               return -ENOMEM;
-> > +
-> > +       base = devm_platform_ioremap_resource(pdev, 0);
-> > +       if (IS_ERR(base)) {
-> > +               r = PTR_ERR(base);
-> > +               goto free_mcu_data;
-> > +       }
-> > +
-> > +       r = mtk_clk_register_composites(mcu_muxes,
-> > ARRAY_SIZE(mcu_muxes), base,
-> > +                                       &mt8186_clk_lock,
-> > clk_data);
-> 
-> I don't think you need the lock. None of the bit fields you have
-> defined
-> in this driver have overlapping registers.
-> 
-> 
-> Regards
-> ChenYu
-> 
 
-Yes, the muxes register of big and little CPU are not overlapping,
-I will remove the lock in next patch.
-
-Thanks!
-
-> > +       if (r)
-> > +               goto free_mcu_data;
-> > +
-> > +       r = of_clk_add_provider(node, of_clk_src_onecell_get,
-> > clk_data);
-> > +       if (r)
-> > +               goto unregister_composite_muxes;
-> > +
-> > +       platform_set_drvdata(pdev, clk_data);
-> > +
-> > +       return r;
-> > +
-> > +unregister_composite_muxes:
-> > +       mtk_clk_unregister_composites(mcu_muxes,
-> > ARRAY_SIZE(mcu_muxes), clk_data);
-> > +free_mcu_data:
-> > +       mtk_free_clk_data(clk_data);
-> > +       return r;
-> > +}
-> > +
-> > +static int clk_mt8186_mcu_remove(struct platform_device *pdev)
-> > +{
-> > +       struct clk_onecell_data *clk_data =
-> > platform_get_drvdata(pdev);
-> > +       struct device_node *node = pdev->dev.of_node;
-> > +
-> > +       of_clk_del_provider(node);
-> > +       mtk_clk_unregister_composites(mcu_muxes,
-> > ARRAY_SIZE(mcu_muxes), clk_data);
-> > +       mtk_free_clk_data(clk_data);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static struct platform_driver clk_mt8186_mcu_drv = {
-> > +       .probe = clk_mt8186_mcu_probe,
-> > +       .remove = clk_mt8186_mcu_remove,
-> > +       .driver = {
-> > +               .name = "clk-mt8186-mcu",
-> > +               .of_match_table = of_match_clk_mt8186_mcu,
-> > +       },
-> > +};
-> > +builtin_platform_driver(clk_mt8186_mcu_drv);
-> > --
-> > 2.18.0
-> > 
-
+Best regards,
+Krzysztof
