@@ -2,65 +2,75 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D90B7C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 10:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0B4C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 11:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233802AbiCVK6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 06:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34128 "EHLO
+        id S233817AbiCVLET (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 07:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbiCVK62 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 06:58:28 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6088C68FB5;
-        Tue, 22 Mar 2022 03:56:59 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24E87106F;
-        Tue, 22 Mar 2022 03:56:59 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 496013F66F;
-        Tue, 22 Mar 2022 03:56:57 -0700 (PDT)
-Date:   Tue, 22 Mar 2022 10:56:54 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     krzysztof.kozlowski@canonical.com, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, tglx@linutronix.de,
-        maz@kernel.org, p.zabel@pengutronix.de, linux@armlinux.org.uk,
-        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v11 0/9] Add Sunplus SP7021 SoC Support
-Message-ID: <YjmrdlQqoqUNcs7R@bogus>
-References: <cover.1647928315.git.qinjian@cqplus1.com>
+        with ESMTP id S231920AbiCVLES (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 07:04:18 -0400
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08F7EA25;
+        Tue, 22 Mar 2022 04:02:51 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id i186so1014146wma.3;
+        Tue, 22 Mar 2022 04:02:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=0ggFh2/a0C+1lpqeBh9Syc0UkF8/1nYLPIxegFFB/Pc=;
+        b=Nl4lLAgve5vLxwFa9h3fLEcj0+QusBqopMQFYPNoX4lJ6Hj+kuzCCA6s69RioHkZZp
+         NNRSNk/xYS9CQtrPnVTVyccREfPUZJV0iEERqIun2JEzJbzw21Yxd4utbGMCOBjCP395
+         K/XIJ9lPANtbt/FhTQ/lCghZJ3FIgg+fdkBC3UjJe4c6V4cj7Idv6XnEOjff+zEa4G76
+         OnasOrySRAoMKz2xfdGqiF2RHVObwj96y7P1VpUOvZnlYHlmxmzIbwwIMsozqrreAaj3
+         Y/BqGlcKe1GJVCGJswhyFRRaJ2gtdu/C2DFvQy4mGOPAR6o4/oKyLZA/gxax0xO7PKrM
+         HT/w==
+X-Gm-Message-State: AOAM532U2EqcsLXOOsmguBZaF1dTn8ZYKMb0jm/6jH+anRSX1sMSP2KG
+        J+ATI1qeGhFwsVy5RVEtoyvPUz+mOlU=
+X-Google-Smtp-Source: ABdhPJw/w6GpkGUEvPB4iVhhmwX3JFRg3NQctEYzaWFjx0CTAeswStfrvDCu2n5xlN8IfRxa+3jOiQ==
+X-Received: by 2002:adf:fe8d:0:b0:203:e02e:c6c7 with SMTP id l13-20020adffe8d000000b00203e02ec6c7mr22330036wrr.37.1647946968736;
+        Tue, 22 Mar 2022 04:02:48 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id f7-20020a05600c154700b0038c85aade39sm1747828wmg.47.2022.03.22.04.02.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Mar 2022 04:02:48 -0700 (PDT)
+Message-ID: <0bfa2a53-a45f-3691-f473-0e0848a4d7f0@kernel.org>
+Date:   Tue, 22 Mar 2022 12:02:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1647928315.git.qinjian@cqplus1.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v11 4/9] dt-bindings: clock: Add bindings for SP7021 clock
+ driver
+Content-Language: en-US
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        tglx@linutronix.de, maz@kernel.org, p.zabel@pengutronix.de,
+        linux@armlinux.org.uk, arnd@arndb.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1647928315.git.qinjian@cqplus1.com>
+ <ff9d9a9124f1535dbfe68171359be964f6f4e4e2.1647928316.git.qinjian@cqplus1.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <ff9d9a9124f1535dbfe68171359be964f6f4e4e2.1647928316.git.qinjian@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 02:16:51PM +0800, Qin Jian wrote:
-> This patch series add Sunplus SP7021 SoC support.
+On 22/03/2022 07:16, Qin Jian wrote:
+> Add documentation to describe Sunplus SP7021 clock driver bindings.
 > 
-> Sunplus SP7021 is an ARM Cortex A7 (4 cores) based SoC. It integrates many
-> peripherals (ex: UART, I2C, SPI, SDIO, eMMC, USB, SD card and etc.) into a
-> single chip. It is designed for industrial control.
-> 
-> SP7021 consists of two chips (dies) in a package. One is called C-chip
-> (computing chip). It is a 4-core ARM Cortex A7 CPU. It adopts high-level
-> process (22 nm) for high performance computing. The other is called P-
-> chip (peripheral chip). It has many peripherals and an ARM A926 added
-> especially for real-time control. P-chip is made for customers. It adopts
-> low-level process (ex: 0.11 um) to reduce cost.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Not related to this series, but to the platform in general. You still
-need to resolved the boot/cpu-method for this platform before you add
-support for all the 4 cpus on this platform. I remember discussing about
-CPUIdle on a separate thread. I thought this is best thread to remind that
-so that it is addressed before we see either cpuidle or cpuhotplug support
-on this platform.
+Since you did not implement changes I was asking for, you cannot use my
+review-tag.
 
--- 
-Regards,
-Sudeep
+NAK.
+
+
+Best regards,
+Krzysztof
