@@ -2,89 +2,88 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CB7C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 10:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61ADDC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 10:19:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbiCVKNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 06:13:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39338 "EHLO
+        id S232862AbiCVKVX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 06:21:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232901AbiCVKNG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 06:13:06 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D97D3237CC;
-        Tue, 22 Mar 2022 03:11:38 -0700 (PDT)
-Received: by mail-wm1-f50.google.com with SMTP id bg31-20020a05600c3c9f00b00381590dbb33so1091005wmb.3;
-        Tue, 22 Mar 2022 03:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Wfhu1CSV3zn98iQVKtYyekWe4LUUvowP2lTHlaYZsg4=;
-        b=7wEnSyWQ2L3CO8I0z0BL/9OehhtuD5IcdqkkmIGFGdRMndYe2rpJVRJmjsZMiTRtHO
-         ovU8FVkynP+8mQiEFrxgoSOSzmlvynFXHS5ljkQr5ndvkEv3iUd347NkjtO07poSPx6y
-         4gBEfzE7IfVh1g7RttY/XUG24WkbFU7efIsizmJx4v+laAzQBHDSSW1RbZgOov1jvUF0
-         6J6cy43/U8pMV973E4tNaWAgq7RvjedYC2wWda4aRZeK3ESjYAKHxC+mq1V3GjfG/aVn
-         UfzaOkl/j7ytixZ9lmKNncepg3JGKA/oTgKAI2OiyFYBNzpbJmV1DyUV9KgSRAzzfVzS
-         0TpQ==
-X-Gm-Message-State: AOAM530LcH346sIdO88axgxjYzZX8+NQxtWPgjOQYp5VABjdXsHs0gIR
-        UwBvAiISs0jVjfex7NDW5yo=
-X-Google-Smtp-Source: ABdhPJw2eSKQ40kfHH4/obdrsq52+J1jn/jywYsqAYGLcQtmvdukg4qua1/zAOEj2uu5oWGwR02ivQ==
-X-Received: by 2002:a05:600c:1909:b0:389:ee24:caf6 with SMTP id j9-20020a05600c190900b00389ee24caf6mr3157959wmq.158.1647943897408;
-        Tue, 22 Mar 2022 03:11:37 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id v14-20020a7bcb4e000000b0034492fa24c6sm1533196wmj.34.2022.03.22.03.11.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Mar 2022 03:11:36 -0700 (PDT)
-Message-ID: <7f44490d-1b5a-cdf7-280c-d37ec2765450@kernel.org>
-Date:   Tue, 22 Mar 2022 11:11:35 +0100
+        with ESMTP id S231332AbiCVKVW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 06:21:22 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C8380200;
+        Tue, 22 Mar 2022 03:19:54 -0700 (PDT)
+Received: from mail-wm1-f49.google.com ([209.85.128.49]) by
+ mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MElhb-1nHTL12vUZ-00GIYs; Tue, 22 Mar 2022 11:19:52 +0100
+Received: by mail-wm1-f49.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so1343400wmb.4;
+        Tue, 22 Mar 2022 03:19:52 -0700 (PDT)
+X-Gm-Message-State: AOAM530bWBvWM9ntC+bk90KgEoU8vsTGK3oVOEBvt806WgJBRUacvlrj
+        /4+8G1L1DsaCMnBE+EerggpSBUXDTUyULmxxe94=
+X-Google-Smtp-Source: ABdhPJwdbflMTyfO6uATl5GHFZmF+z0lbORSOicvJ4H+deKlIBq4ori/SM7/sEXZTmFU6gY9Y+GGeD1FNpnfFY/4qso=
+X-Received: by 2002:a1c:f219:0:b0:38c:782c:3bb with SMTP id
+ s25-20020a1cf219000000b0038c782c03bbmr3017415wmc.94.1647944392359; Tue, 22
+ Mar 2022 03:19:52 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v6 16/18] dt-bindings: arm: msm: Convert kpss-acc driver
- Documentation to yaml
-Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
+References: <cover.1647928315.git.qinjian@cqplus1.com> <8372ee2fcf361a3af7233450c4403178052ceee2.1647928316.git.qinjian@cqplus1.com>
+In-Reply-To: <8372ee2fcf361a3af7233450c4403178052ceee2.1647928316.git.qinjian@cqplus1.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 22 Mar 2022 11:19:36 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1H2xM1PdDwKPWHD0fqZ0q_o-KZTLvSXdm9jjqTWcX-hA@mail.gmail.com>
+Message-ID: <CAK8P3a1H2xM1PdDwKPWHD0fqZ0q_o-KZTLvSXdm9jjqTWcX-hA@mail.gmail.com>
+Subject: Re: [PATCH v11 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021 defconfig
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220321231548.14276-1-ansuelsmth@gmail.com>
- <20220321231548.14276-17-ansuelsmth@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220321231548.14276-17-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:gWRO82PyVIBo4zOziSihvLnl+yjPW9/rb7xLTq+m/nDIRNqKye9
+ o0yskHKYwmDbSwBnHRa70PSr1Qn+UxzgmwEp+c5AcSi8zUVTPnCCkuoIGfXBpN5GY8X4OMb
+ w5CsflLLjocAmHiSowux7FguSySuTCFlUt7q0Le2H21juIzdoixo7Alh7rNAd/qfFR0dxA+
+ /dw1Vmy1B2PMHosR0YJdQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:hX8OBEP4Flk=:Y/IP4ybCl1z6sT8txeV9HB
+ JBaVvamnBYvEweoouc9QuOfJsloIypQgWTQIwv/zG0YETigOa0g/Qlw40uWD24Hi0g+LU9waS
+ cxAcCiHSKNrPKZSG7RF2JQWZFaFsOkG/H1HGbZUA+739AOd5BEJX74j8OYyTEYzUO9e9JP2ki
+ FPvETNP8vwliTEhyDGMLYZL5liy99vbl/OJ4rH/fXIKL1aGf2/aN5KaNIGkn3Wtvx6uCIxbi2
+ pMvxeUb3WTKi/0CxxJkczYgpe313kTXsQ+4+3zwWOa6u1UbS1YqjeAzZbY1rBryBNCDxY/Uei
+ fALp8eWSYVpFAQPWIxz+BW6ZAWMK8K+OtfiOO8/UzYR3sIoFyfUahO2WKCfbC9JA1IRUPvkwV
+ +w/hVTJ8e3k21Xh6sPiuJbmpcODtrRAws4N5HRhMNKBrCWfjetlNESiZtCtp7gH/hV5QqFTq4
+ PW8NhoBN90pepBvRcb1bZVixUIYTOhbt/vDQB0t/STHgT1YCSxh0ltaYGMQeJZj84W7mDgWVc
+ T+F2+VZC+11pDAg3vkGAQqRtTLN3LFZEt8uSs9XmLkRTTx1r3CLdatjhdUZ0fDg5Fo9U12mho
+ ugqLeEramYXg9dFg5B1PkZ9WcCZb/IeoDcjdYYXg2Im2aKxmDIVc45EGP7JETgtfD3wOPRrSh
+ ekKTWYAts9cKt6sonKDnvBGXNL8+QIE5s7wDa/GNP/gh4wJ22EYSUSxkRowoBRNtqsLvhMqVJ
+ qEng4rCRPCdNfjS+fUz/oZMjGRITBFZcMkQe8zA4Is+tRDpeytANo6O+Knn1FRXq+hFDSM30u
+ Tr6R/Zdocp+l78ibTeui179ACyrWpDcErz4I3kmW4Rhp41irOo=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/03/2022 00:15, Ansuel Smith wrote:
-> Convert kpss-acc driver Documentation to yaml.
-> The original Documentation was wrong all along. Fix it while we are
-> converting it.
-> The example was wrong as kpss-acc-v2 should only expose the regs but we
-> don't have any driver that expose additional clocks. The kpss-acc driver
-> is only specific to v1. For this exact reason, limit all the additional
-> bindings (clocks, clock-names, clock-output-names and #clock-cells) to
-> v1 and also flag that these bindings should NOT be used for v2.
-> 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/arm/msm/qcom,kpss-acc.txt        | 49 ----------
->  .../bindings/arm/msm/qcom,kpss-acc.yaml       | 94 +++++++++++++++++++
->  2 files changed, 94 insertions(+), 49 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-acc.yaml
-> 
+On Tue, Mar 22, 2022 at 7:17 AM Qin Jian <qinjian@cqplus1.com> wrote:
+>
+> Add generic Sunplus SP7021 based board defconfig
+>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 
+I don't think I ever replied with 'Reviewed-by: Arnd Bergmann <arnd@arndb.de>'
+to this patch. While I did review it in version 5, you never seem to have
+replied to my questions there.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+It was a while ago though, so I don't remember the details, if we did
+conclude the review, can you link to the lore.kernel.org thread in
+the next version? Please also check the other patches on which
+you added a 'Reviewed-by' tag from someone to ensure that they
+actually provided that tag, rather than just providing review comments.
 
-
-Best regards,
-Krzysztof
+       Arnd
