@@ -2,176 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B4BC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 13:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF80C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 15:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235004AbiCVNpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 09:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39484 "EHLO
+        id S236222AbiCVQBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 12:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232683AbiCVNpD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 09:45:03 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2AD6145;
-        Tue, 22 Mar 2022 06:43:33 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id l7-20020a05600c1d0700b0038c99618859so2623190wms.2;
-        Tue, 22 Mar 2022 06:43:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sUWPIP8GGlUV6VTKUliU0ZHihvV6xHZFMDP/CthCS1Y=;
-        b=kMiThXn0nYgm8kE9/5EMEUd8O+PbiR58lHQyKuCcXR9EnM/D1SqqpTE6RCdV1X25G2
-         l8g7Afpgbu7uEWO6cMsOHaLUqgVcBvc0UXE8VLy71Jk3gEYaBmmZ7YQZjq0peIwRN7YS
-         pcSSh+oSHkWK8j2mMr8q3Pt4Qq/Nmb57vctQQo1ezBtCy/Lqhv9mNTujciIcBFiR/cj3
-         wv0Tg48dt1Olollfdfo/Pz6efrGjhW/lDlryryfodStI2ZGKmrzW9iFiWhYGXh3lutEc
-         9GlyHsqdnLtFABWLXE5RSc20zOcjMWcMuonTzDhuXa+RyZaIN7qHUEyjT+PcdlgUmaRJ
-         9rfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sUWPIP8GGlUV6VTKUliU0ZHihvV6xHZFMDP/CthCS1Y=;
-        b=7ODUo15p9XCkFbB+nG6vPcELnwoSldNEWAX73/9T4b6HWmf6bIRlanLebpDkuoho+K
-         9NvtXKH93faIVkD7y8GodlZseYfkMFS/c+yUMgwXuXMdQIc40YCB1olThR8srZHq43q8
-         uheAnUjIbifsK0OnixDTwxsah7nsqfACscIJ31NNHS2MUFaqRY4TNvBBVSHBPuY59lTj
-         w4rpEPyl5SJS1hzHmiaWvdfVdtXMEOFVNJ3GgAFu4cZ74Cw4Uv8GGZlLYPoXGIzYJfbV
-         SWz1UHlbe58idW6u2G6l83cpd7M73kl5JToghQRUcuvHKj/f+Db8yiuYcfyanCdRW/oR
-         hgcQ==
-X-Gm-Message-State: AOAM531X/R7YSpx67qmSUiGBOQPl7ombJH80VCQ4n33PJHjRBMPVy6K1
-        td13WZcph53KmXUP77hCZHI=
-X-Google-Smtp-Source: ABdhPJzLfbPQALu/tIjINp547kjDW6t8wUr3vl4gLrMN21/OlnP9ymOVeRnzDdJSQWmTLH34IZu+cw==
-X-Received: by 2002:adf:908e:0:b0:1e7:bea7:3486 with SMTP id i14-20020adf908e000000b001e7bea73486mr21814271wri.401.1647956612387;
-        Tue, 22 Mar 2022 06:43:32 -0700 (PDT)
-Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
-        by smtp.gmail.com with ESMTPSA id 189-20020a1c02c6000000b0038c57df82aasm1961561wmc.20.2022.03.22.06.43.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Mar 2022 06:43:31 -0700 (PDT)
-Date:   Tue, 22 Mar 2022 14:43:31 +0100
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v6 00/18] Modernize rest of the krait drivers
-Message-ID: <YjnSg1NixXzjyXX9@Ansuel-xps.localdomain>
-References: <20220321231548.14276-1-ansuelsmth@gmail.com>
- <CAL_JsqKbgZ39XBbT3nueN+vs9GdL9+mejJKYqB-o8-A3xti6jQ@mail.gmail.com>
+        with ESMTP id S231546AbiCVQBJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 12:01:09 -0400
+Received: from hostingweb31-40.netsons.net (hostingweb31-40.netsons.net [89.40.174.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211077CDE2
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 08:59:41 -0700 (PDT)
+Received: from [77.244.183.192] (port=64308 helo=[192.168.178.75])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.94.2)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1nWgv5-0008bg-82; Tue, 22 Mar 2022 16:59:39 +0100
+Message-ID: <158a5b3e-7ed0-c545-99d7-8890583facdb@lucaceresoli.net>
+Date:   Tue, 22 Mar 2022 16:59:38 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKbgZ39XBbT3nueN+vs9GdL9+mejJKYqB-o8-A3xti6jQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [EXTERNAL] Re: Questions regarding regarding idt/renesas
+ versaclock5 driver
+Content-Language: en-US
+To:     "Fillion, Claude" <Claude.Fillion@mksinst.com>,
+        Adam Ford <aford173@gmail.com>
+Cc:     Sean Anderson <sean.anderson@seco.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <MN2PR03MB5008EB5F50B680C2A2E271D893019@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <9e4e542f-6f73-164e-581e-17369aada2f3@seco.com>
+ <CAHCN7xKVMCC_Sgqp_Dgpwyi4X4rq4qKi2MheA_CK1vcrm3JjyA@mail.gmail.com>
+ <b15f993b-d67b-b96a-904c-53025eda3aa3@lucaceresoli.net>
+ <MN2PR03MB5008747FDF505CA30970ADE293029@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7x+kusPwHpkp+4zwvGN48oDUGfN2ueCn=8kt_54aiYwE9g@mail.gmail.com>
+ <MN2PR03MB5008F4921D8484306505F8FB93029@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7xKbE9Rv3EsvFkS4Lk8nCwy1TK-xJQLk_h70PSVdeUHJcA@mail.gmail.com>
+ <MN2PR03MB5008536F789B93337AF0BA6793039@MN2PR03MB5008.namprd03.prod.outlook.com>
+ <CAHCN7xJFxtA=9GYkQ1dVig=sSRQY3yhjS9dO2GRtqn=zdc9w7g@mail.gmail.com>
+ <MN2PR03MB500831D1691CE0416BE22C1593169@MN2PR03MB5008.namprd03.prod.outlook.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+In-Reply-To: <MN2PR03MB500831D1691CE0416BE22C1593169@MN2PR03MB5008.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 21, 2022 at 08:56:13PM -0500, Rob Herring wrote:
-> On Mon, Mar 21, 2022 at 6:45 PM Ansuel Smith <ansuelsmth@gmail.com> wrote:
-> >
-> > This is a follow-up to the ipq806x gcc modernize series. Manu cleanup
-> > changes and also some discoveries of wrong definition notice only with
-> > all these conversions.
-> >
-> > The first patch is an improvement of the clk_hw_get_parent_index. The
-> > original idea of clk_hw_get_parent_index was to give a way to access the
-> > parent index but for some reason the final version limited it to the
-> > current index. We change it to give the current parent if is not
-> > provided and to give the requested parent if provided. Any user of this
-> > function is updated to follow the new implementation.
-> >
-> > The patch 2 and 3 are some additional fixes for gcc.
-> > The first one is a fix that register the pxo and cxo fixed clock only if
-> > they are not defined in DTS.
-> > The patch 3 require some explaination. In short is a big HACK to prevent
-> > kernel panic with this series.
-> >
-> > The kpss-xcc driver is a mess.
-> > The Documentation declare that the clocks should be provided but for some
-> > reason it was never followed.
-> > In fact in the ipq8064 DTSI only the clocks for l2cc are declared but
-> > for cpu0 and cpu1 the clocks are not defined.
-> > The kpss-xcc driver use parent_names so the clks are ignored and never
-> > used so till now it wasn't a problem (ignoring the fact that they
-> > doesn't follow documentation at all)
-> > On top of that, the l2cc node declare the pxo clock in a really strange
-> > way. It's declared using the PXO_SRC gcc clock that is never defined in
-> > the gcc ipq8064 clock table. (the correct way was to declare a fixed
-> > clock in dts and reference that)
-> > To prevent any kind of problem we use the patch 3 and provide the clk
-> > for PXO_SRC in the gcc clock table. We manually provide the clk after
-> > gcc probe.
-> >
-> > Patch 4 is just a minor cleanup where we use the poll macro
-> >
-> > Patch 5 is the actually kpss-xcc conversion to parent data
-> >
-> > Patch 6-7 should be a fixup of a real conver case
-> >
-> > Patch 8 converts the krait-cc to parent_data
-> > Patch 9 give some love to the code with some minor fixup
-> > Patch 10 drop the hardcoded safe sel and use the new
-> > clk_hw_get_parent_index to get the safe parent index.
-> > (also I discovered that the parent order was wrong)
-> >
-> > Patch 11 is an additional fixup to force the reset of the muxes even
-> > more.
-> >
-> > Patch 12-13 are some additiona taken from the qsdk that were missing in
-> > the upstream driver
-> >
-> > Patch 14 converts krait-cc to yaml
-> >
-> > Patch 15 add to krait-cc Documentation the L2 clocks
-> >
-> > Patch 16 converts the kpss-acc driver to yaml and fix some Documentation
-> > error
-> >
-> > Patch 17 convets the kpss-gcc driver to yaml
-> >
-> > Patch 18 finally adds all this stuff to the ipq8064 dtsi (and fix the
-> > stupid PXO_SRC phandle)
-> >
-> > I tested this series on a ipq8064 SoC by running a cache benchmark test
-> > to make sure the changes are correct and we don't silently cause
-> > regressions. Also I compared the output of the clk_summary every time
-> > and we finally have a sane output where the mux are correctly placed in
-> > the correct parent. (till now we had the cpu aux clock all over the
-> > place, probably never cause problems but who knows.)
-> >
-> > v6:
-> > - Move dts patch as last patch
-> > - Address commencts from Rob
-> > - Fix warning from make dtbs_check
-> > v5:
-> > - Address comments from Krzysztof
-> > v4:
-> > - Fix more dt-bindings bog errors
-> > v3:
-> > - Split Documentation files for kpss and krait-cc
-> > v2:
-> > - introduce new API instead of fixing the existing one
-> > - do not reorganize variables in krait-cc
-> > - fix some comments error and improve it
-> > - return better error for patch 7
-> > - fix missing new line on patch 16
-> 
-> 6 versions in a week is too many, especially with the merge window
-> starting. Please give some time for review of all the patches and by
-> more than one person. It doesn't look like any of the clk driver
-> patches have been reviewed since v1 for example.
-> 
-> Rob
+Hi Claude,
 
-Yes sorry. There was an initial review for the clk driver from v1 to
-v2 but nothing else. I was trying to make the Documentation ready while
-I wait for a second review of the clk code.
+On 21/03/22 22:21, Fillion, Claude wrote:
+[...]
+>>>> Look at the use of devm_clk_get_optional and clk_prepare_enable from
+>>>> that patch.  (yes, there is a subsequent patch that fixes something
+>>>> I didn't quite do right, but the basics are here)
+>>>>
+>>>> The consumer drivers need to 'get' the clock so it can associate
+>>>> itself to the clock in question.  Once the relationship is
+>>>> established, the consumer needs to call clk_prepare_enable() which uses
+>> the clock system to turn the clock on.
+>>>> Without this step, it's likely the Versaclock won't generate a
+>>>> signal, because it doesn't know it needs to turn it on.
+>>>>
+>>>> adam
+>>>
+>>> Not sure I fully follow.  I see that clk out1 is enabled but the other channels
+>> are not so it would seem my difficulty is with individual channels.
+>>
+>> Do the devices that need the clock from the versaclock reference the
+>> versaclock?  If so, to those drivers use the get and enable?  If not, the
+>> versaclock will stay off.  In the patch example I showed, I had to modify the
+>> Ethernet driver on a processor, because it didn't explicitly enable the
+>> reference clock.  That Ethernet driver expected the refclk was always
+>> present which was a false assumption.  Once I got the consumer device (in
+>> this case, Ethernet) to request and enable the clock, the clock subsystem
+>> enabled the corresponding output on the versaclock.
+>>
+>> For the Ethernet example I cited above, the corresponding device tree looks
+>> like:
+>>
+>> &avb {
+>>      clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
+>>      clock-names = "fck", "refclk";
+>>      status = "okay";
+>> };
+>>
+>> With this device tree reference, the 'refclk' gets associated to versaclock
+>> ouput 4.  When the Ethernet needs the clock, it calls clk_prepare_enable on
+>> that clock reference, and the clock system calls on the versaclock driver to
+>> enable the output.  The reason I needed to submit that patch was that the
+>> consumer driver (the Ethernet in this
+>> case) wasn't calling the clk_prepare_enable, so the clock remained off.  It's
+>> likely that whatever devices that need the clock from the versaclock will
+>> need both a device tree reference to it as well as a call to
+>> clk_prepare_enable.
+> 
+> For my application I would like the ability to set clock frequencies according  to values that are stored in a json formatted config file. Is there a way to change these values from user space app code?  If not, would it be ok to add code to my consumer driver (say in the probe method) that would read the values from the json and then call set_rate() and prepare_enable()) ?
 
-Will wait for clk code review to send v7 hoping it will be the final
-version.
+This is absolutely not a standard practice in the kernel. If drivers are
+well written then a consumer driver knows which clock it needs, it will
+ask the produced that frequency and configure the consumer device
+accordingly.
+
+E.g. if the consumer device is an audio codec then user space will never
+say "I want you to ask for a 1 MHz clock" but rather "I want to playback
+at 48 kHz", then the driver will ask for a given clock frequency and
+configure the codec to use it, perhaps setting divisor/multiplier
+registers etc.
+
+So I really suggest you to understand what the correct kernel-userspace
+interface would be for your consumer driver. If you want you can share
+what the consumer device is so we can be give some suggestions.
+
+That said, if you don't want to mainline your consumer driver nobody
+will prevent you from doing anything "strange". But keep it limited to
+your driver, you don't want to have conflicts in the versaclock code
+when you upgrade to a more recent kernel.
+
+Also, I don't think json is expected to be in the kernel. If you want to
+do something like that then maybe parse json at userspace level and then
+send just the frequency in Hz via a sysfs entry.
 
 -- 
-	Ansuel
+Luca
