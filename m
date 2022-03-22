@@ -2,141 +2,128 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412B0C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 08:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1674EC433FE
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 09:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231405AbiCVIsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 04:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47528 "EHLO
+        id S232248AbiCVJNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 05:13:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231933AbiCVIr6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 04:47:58 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E849E4ECFB
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 01:46:30 -0700 (PDT)
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8A48641FA7
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 08:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1647938789;
-        bh=Ns6x5qMhMdYQ14F/6CRmR+MC5tPxoh9wJPntlRcRYM8=;
-        h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-         In-Reply-To:Content-Type;
-        b=n056Sl5XuOgmMqUCyViD66hFvB8v9w30oMpkz+GXpKIs2oSCnHtaWQPTi6N0MZx6M
-         D96U7tq5/9zDpDgdghQ2e/G+siTzGKfgQckzRSYAiv64fbKh0DEGwO3AsGXw9uokg3
-         wvGYLVwFMEqXEuWLCLtFVaTggWVU2TT6NZUG1KHZHjWfFLvB8gNAgodGaL5251IHBb
-         M9gOAidjd9XP5Tgq9OTGruBviF7Pic1j+gcAgyKt1oMDMSXGyINdSa1xK4iCDXnXCP
-         avy1icfRs1MwcLi6cKow0K5+G1596vSc/wooTRanz9f4cipKL2AvsXXEnNbFQIJ0mW
-         sC+ajbk4zqSaA==
-Received: by mail-wm1-f69.google.com with SMTP id o10-20020a1c4d0a000000b0038c6e5fcbaeso536042wmh.9
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 01:46:29 -0700 (PDT)
+        with ESMTP id S232164AbiCVJNi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 05:13:38 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2487E59B
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 02:12:08 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id a1so22602215wrh.10
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 02:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=qjT77DYYL/GJDwodJ6Rapm1bpiNcBpPlg2Vo7gCqJB8=;
+        b=YHPUJUn3zIjNoMGTdwff2Vfop45kQtaHqwdMY6Nf8YYhoP7j4H4GyXGENtvzHBaohP
+         F2MgM6pQidOA1F9Uq+q+SVMZR6AGKPBRf8tBeqoqe6Mdq2WTxk7cNHZ6zlePagEwmM91
+         Yo3oMJuAk+OfT3Hp6pPqHN1iV5UhwJ7kJcjVRcnRF9bGo8WXBUr1dmWcuxv0rxlQ5WJx
+         PRn8cHwW9Q2h2QVnvyff5uKC7pk3mUtYBsAzefyp7x9sdbToS2G+u8m4HdvZUkEXYVxS
+         5IAnOPoa+Rog0P93TZ+oXkPfUbVVnlAqf4smHVGah/4oE00rlX/6OLWizehJas3RtOyt
+         KXtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=Ns6x5qMhMdYQ14F/6CRmR+MC5tPxoh9wJPntlRcRYM8=;
-        b=35rNNRUdPcNxbKCtS/MTK+lAiJirYLOPaUgV0NN21KuRb6LaOa9rbtDPGa2gw0S7dd
-         ZBDgJe909x34RtBr3vh5iLiEoSbEOAiaWYkaw4ekj5j0Oj2Vf5CqAPw+0SUbFyHslUrx
-         TAlGyetT8SGMlUXoQVa7PGNmMLSIMrGdwIqFkklkNzNWvbxHbgjSXv8Z9eJVnNRuuLsW
-         4BSUyspncsWKqN6WgDeL0pLT7+0DyRj4v05pPZy7DDTJSX+ZL/JvPh9LOnFgIJxeJInt
-         HiqzlS3utgzX4aQVCh4/FS1Gxhyv4gK95HlaJTjTISnbRL5MK0HbVvxf2zNFCIoalOlb
-         X3aA==
-X-Gm-Message-State: AOAM531fWE7rNvDMMpjwY3E8evegQYoMuF3EX+9BVqpVshharqOH2foC
-        Z73QNywQSUj2njGj2c+SRsxawe7VJuF2anIYQ1Oj5KVD2dMJ39BAHJnj8IXdrtJEQctvP86Ve/2
-        9p8J732cX0bqeZYtZOYLivQMmxKf2nnh+plKHng==
-X-Received: by 2002:a5d:47a7:0:b0:203:d1b4:8f6 with SMTP id 7-20020a5d47a7000000b00203d1b408f6mr22185080wrb.36.1647938788911;
-        Tue, 22 Mar 2022 01:46:28 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyhYewicFouwHmI7LoZatc4e5+uyx8QH11LnUERCGbNVF6UFm3eYkF8CEUxLw1D82wG8LV7FA==
-X-Received: by 2002:a5d:47a7:0:b0:203:d1b4:8f6 with SMTP id 7-20020a5d47a7000000b00203d1b408f6mr22185047wrb.36.1647938788647;
-        Tue, 22 Mar 2022 01:46:28 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id p21-20020a05600c359500b0038ca92f175csm2416313wmq.32.2022.03.22.01.46.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Mar 2022 01:46:27 -0700 (PDT)
-Message-ID: <13878c88-487b-2546-0af8-3031fdc8e308@canonical.com>
-Date:   Tue, 22 Mar 2022 09:46:26 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=qjT77DYYL/GJDwodJ6Rapm1bpiNcBpPlg2Vo7gCqJB8=;
+        b=SxzlMGYh+/zX3pVEeLAU2pC+WLAg6sf8oj2knZtUIiuS5JSZscKRYDtuU7pwfJJ7li
+         QRSaqDmFF+lM9LiubOzh0H2YTqJ7AQuxe3tQkSfk1oZYx3oH2iN61+NflmHFSYjm0d5J
+         l7fN3ked/J6bmcmy9otsYqMn7AcxY+UEmXOHVxJzMmwDt0hCLBgYC9Y/UZfskHre3O8q
+         zu/OpJ/ZqW6qVwk3vB27b/UEDsOcwzWm1oFyAkBHBB3GQyEcxR3Dfr1uqfraf1mK1AdF
+         8kma3ORiuc823p4R2WoQj4irOKRd9meUwZ7TrwXLyeVqSVjrxnTx8GHdxShi/V+gFsqu
+         oUJA==
+X-Gm-Message-State: AOAM533icPRazWzl2OddAzmKXcNTMvpsE+8aArjWsrK7X+egy4BZYv2r
+        nVWKttUgoInpBiMhK5NA0Gw2Ow==
+X-Google-Smtp-Source: ABdhPJwLrFHSs/rg59Z4qNL8r8Ak6OWe1nu8EXetVqZllyP8jhyj2fCHM/JwIgFdiBq/bbrEdWHwGA==
+X-Received: by 2002:a05:6000:2ca:b0:204:1e6a:d2a9 with SMTP id o10-20020a05600002ca00b002041e6ad2a9mr3768869wry.182.1647940327256;
+        Tue, 22 Mar 2022 02:12:07 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id u7-20020a5d6da7000000b00203d9d1875bsm17176008wrs.73.2022.03.22.02.12.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Mar 2022 02:12:06 -0700 (PDT)
+Date:   Tue, 22 Mar 2022 10:12:04 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     sboyd@kernel.org, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-crypto@vger.kernel.org, heiko@sntech.de, robh+dt@kernel.org,
+        herbert@gondor.apana.org.au, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
+ yaml
+Message-ID: <YjmS5DE95xTuJMi7@Red>
+References: <20220321200739.3572792-1-clabbe@baylibre.com>
+ <20220321200739.3572792-22-clabbe@baylibre.com>
+ <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-To:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jesse Taube <mr.bossman075@gmail.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
- <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
- <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
- <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
- <a8290aa4-8a2c-68c3-bc55-82abcd27385e@canonical.com>
-In-Reply-To: <a8290aa4-8a2c-68c3-bc55-82abcd27385e@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/03/2022 09:45, Krzysztof Kozlowski wrote:
-> On 22/03/2022 02:45, Jesse Taube wrote:
->>
->>
->> On 3/21/22 14:23, Rob Herring wrote:
->>> On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
->>>> Consumer examples in the bindings of resource providers are trivial,
->>>> useless and duplication of code.  Remove the example code for consumer
->>>>
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->>>> ---
->>>>   .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
->>>>   .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
->>>>   .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
->>>>   .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
->>>>   .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
->>>>   .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
->>>>   .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
->>>>   .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
->>>>   .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
->>>>   .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
->>>>   .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
->>>>   .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
->>>>   .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
->>>>   .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
->>>>   .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
->>>>   .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
->>>>   16 files changed, 143 deletions(-)
->>>
->>> Doesn't apply to my tree (no imxrt1050-clock.yaml), so
->> merge against linux-next I can submit another patch if needed.
->>> Acked-by: Rob Herring <robh@kernel.org>
+Le Mon, Mar 21, 2022 at 08:50:51PM -0500, Rob Herring a écrit :
+> On Mon, 21 Mar 2022 20:07:34 +0000, Corentin Labbe wrote:
+> > Convert rockchip-crypto to yaml
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  .../crypto/rockchip,rk3288-crypto.yaml        | 84 +++++++++++++++++++
+> >  .../bindings/crypto/rockchip-crypto.txt       | 28 -------
+> >  2 files changed, 84 insertions(+), 28 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+> > 
 > 
-> Let me send it after the merge window - all dependencies should be there.
+> Running 'make dtbs_check' with the schema in this patch gives the
+> following warnings. Consider if they are expected or the schema is
+> incorrect. These may not be new warnings.
+> 
+> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+> This will change in the future.
+> 
+> Full log is available here: https://patchwork.ozlabs.org/patch/1607887
+> 
+> 
+> cypto-controller@ff8a0000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml
+> 	arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml
+> 	arch/arm/boot/dts/rk3288-firefly-beta.dt.yaml
+> 	arch/arm/boot/dts/rk3288-firefly.dt.yaml
+> 	arch/arm/boot/dts/rk3288-firefly-reload.dt.yaml
+> 	arch/arm/boot/dts/rk3288-miqi.dt.yaml
+> 	arch/arm/boot/dts/rk3288-phycore-rdk.dt.yaml
+> 	arch/arm/boot/dts/rk3288-popmetal.dt.yaml
+> 	arch/arm/boot/dts/rk3288-r89.dt.yaml
+> 	arch/arm/boot/dts/rk3288-rock2-square.dt.yaml
+> 	arch/arm/boot/dts/rk3288-rock-pi-n8.dt.yaml
+> 	arch/arm/boot/dts/rk3288-tinker.dt.yaml
+> 	arch/arm/boot/dts/rk3288-tinker-s.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-brain.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-fievel.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-jaq.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-jerry.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-mickey.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-mighty.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-minnie.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-pinky.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-speedy.dt.yaml
+> 	arch/arm/boot/dts/rk3288-veyron-tiger.dt.yaml
+> 	arch/arm/boot/dts/rk3288-vyasa.dt.yaml
+> 
 
-Optionally this could be picked up by Stephen/Michael (clock).
+Hello
 
+This should not happen since patch 20 remove it.
 
-Best regards,
-Krzysztof
+Regards
