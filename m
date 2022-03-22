@@ -2,126 +2,203 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3C5C433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 18:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C747C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 18:15:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233299AbiCVSHH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
+        id S237300AbiCVSRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 14:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240162AbiCVSHG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 14:07:06 -0400
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B234C430;
-        Tue, 22 Mar 2022 11:05:38 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id p15so37983556ejc.7;
-        Tue, 22 Mar 2022 11:05:38 -0700 (PDT)
+        with ESMTP id S232524AbiCVSRF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 14:17:05 -0400
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2307020186;
+        Tue, 22 Mar 2022 11:15:37 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id w4so22684786edc.7;
+        Tue, 22 Mar 2022 11:15:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=xBJ03RbkQ2mzOlnG3ngY0wg3ZtIL080pq1pFXF62OoA=;
-        b=XF+awp6VFKRbPpLTaRct/HixJf7pIEmRCkDYsRG+1m/YYzBffmjT4McMI4TGdK/aCm
-         PUaPWmjWsrSaOk4Q5lafFqVoKEFva+zXgrdLT5vHIc+wkB9GWiFj6zlSbFx9IHJrD/jQ
-         tU8VEQVpQxv29zE8gxQ4pI2Hr3LLOaqiRDeTnopRzmcCtewmMyY6rFF2dzalvNTpF1Xr
-         POBTsi3nXhWBGNM66apD2frOY/Fkk8/CmgJAP/dmMNKgrtX+mFTToUbvtdy/vl5JZruv
-         KHHVtw1m3y1AaWLsPCNHp8+RbimaM98T8BcE4/A2uT7mSFP0cakxhZSGDxyMIGHYblp7
-         yGxA==
-X-Gm-Message-State: AOAM53371HuhPUxPUKXCkrx2Lu2cKMEWMraq1m9ewkk6ul3iE5zlsc/0
-        05j/S/4NGZLG1Zd3H1cYhB8=
-X-Google-Smtp-Source: ABdhPJw95gsYqtTGMcuFCiiZW9xd9E4ovb6BYDBpZBwyDT/tkLLn/dlfwhpTxOwXJ2rYmpNaZ30hrA==
-X-Received: by 2002:a17:906:36ce:b0:6d6:e540:ed65 with SMTP id b14-20020a17090636ce00b006d6e540ed65mr27061623ejc.330.1647972336954;
-        Tue, 22 Mar 2022 11:05:36 -0700 (PDT)
+        bh=9c+q5A+g63Va4Id/tmRlrr68w+A/h9s1XNixEI8cdPY=;
+        b=MZbbZEzDhqYnzreHZWQHLgQFRRKXCrimZZJ2PVoXf6sZGFi88PAoUvENr0F3uuFFaH
+         BkDnVFYJmrWBE72nAhcFl87Q3BiNONwK3e1YjPiRO10fYOa6YGQbYuqNlV8y5V0uUV0V
+         pIjA1iG9EtHdTP/Yn+eAWGa2cvbpOgZN9MHZW7oZJhdX4agmtNNWUCIMAS53OZb6WWBw
+         8Af/qNNinP+OMwCHqIPlx2EVGbN/JcBa7YtqGa/Erg4O0CEV6cWtTRrta2vO7kzgDtrs
+         QserO+vJ7S85En9VA42Dq84u7tzuQXbJkrkp8GlB+NccDFD2Ycy2Bn1VY8S1nDpsJ7os
+         Tx9w==
+X-Gm-Message-State: AOAM530y44U8T1x39KSnJ8m/B9ie1oRaVl9PKuS6ySXrdi5S3ufiJ2PE
+        zviAgJbVDqb+adRUPfbNgXE=
+X-Google-Smtp-Source: ABdhPJwkbOwQf7TAo9l37B0npu7WSJxyJ0dZLWCi2/outcxSGf3TiBsI3b27baCUKxtDm+/pazgL5A==
+X-Received: by 2002:aa7:c881:0:b0:419:1a3d:4437 with SMTP id p1-20020aa7c881000000b004191a3d4437mr20895274eds.378.1647972935477;
+        Tue, 22 Mar 2022 11:15:35 -0700 (PDT)
 Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id z23-20020a170906435700b006b0e62bee84sm8599506ejm.115.2022.03.22.11.05.35
+        by smtp.googlemail.com with ESMTPSA id u9-20020a170906124900b006ce88a505a1sm9069026eja.179.2022.03.22.11.15.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Mar 2022 11:05:36 -0700 (PDT)
-Message-ID: <eb1b1702-5470-3e63-b0c6-70624c5c120b@kernel.org>
-Date:   Tue, 22 Mar 2022 19:05:35 +0100
+        Tue, 22 Mar 2022 11:15:34 -0700 (PDT)
+Message-ID: <30ec2e32-aa72-bfd5-9513-172b396d9424@kernel.org>
+Date:   Tue, 22 Mar 2022 19:15:33 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
- yaml
-Content-Language: en-US
-To:     LABBE Corentin <clabbe@baylibre.com>, Rob Herring <robh@kernel.org>
-Cc:     sboyd@kernel.org, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        krzk+dt@kernel.org, mturquette@baylibre.com,
-        linux-crypto@vger.kernel.org, heiko@sntech.de, robh+dt@kernel.org,
-        herbert@gondor.apana.org.au, linux-clk@vger.kernel.org
-References: <20220321200739.3572792-1-clabbe@baylibre.com>
- <20220321200739.3572792-22-clabbe@baylibre.com>
- <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
- <YjmS5DE95xTuJMi7@Red>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <YjmS5DE95xTuJMi7@Red>
+Subject: Re: [PATCH v4 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver
+ Documentation to yaml
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220321144825.11736-1-ansuelsmth@gmail.com>
+ <20220321144825.11736-19-ansuelsmth@gmail.com>
+ <a7837388-e36f-9e55-4107-9f7f85571f3b@kernel.org>
+ <YjiWY9wxGMtUAcjY@Ansuel-xps.localdomain>
+In-Reply-To: <YjiWY9wxGMtUAcjY@Ansuel-xps.localdomain>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/03/2022 10:12, LABBE Corentin wrote:
-> Le Mon, Mar 21, 2022 at 08:50:51PM -0500, Rob Herring a écrit :
->> On Mon, 21 Mar 2022 20:07:34 +0000, Corentin Labbe wrote:
->>> Convert rockchip-crypto to yaml
+On 21/03/2022 16:14, Ansuel Smith wrote:
+> On Mon, Mar 21, 2022 at 04:41:37PM +0100, Krzysztof Kozlowski wrote:
+>> On 21/03/2022 15:48, Ansuel Smith wrote:
+>>> Convert kpss-gcc driver Documentation to yaml.
 >>>
->>> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+>>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 >>> ---
->>>  .../crypto/rockchip,rk3288-crypto.yaml        | 84 +++++++++++++++++++
->>>  .../bindings/crypto/rockchip-crypto.txt       | 28 -------
->>>  2 files changed, 84 insertions(+), 28 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
->>>  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+>>>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
+>>>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
+>>>  2 files changed, 68 insertions(+), 44 deletions(-)
+>>>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
 >>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>> deleted file mode 100644
+>>> index e628758950e1..000000000000
+>>> --- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>> +++ /dev/null
+>>> @@ -1,44 +0,0 @@
+>>> -Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
+>>> -
+>>> -PROPERTIES
+>>> -
+>>> -- compatible:
+>>> -	Usage: required
+>>> -	Value type: <string>
+>>> -	Definition: should be one of the following. The generic compatible
+>>> -			"qcom,kpss-gcc" should also be included.
+>>> -			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
+>>> -
+>>> -- reg:
+>>> -	Usage: required
+>>> -	Value type: <prop-encoded-array>
+>>> -	Definition: base address and size of the register region
+>>> -
+>>> -- clocks:
+>>> -	Usage: required
+>>> -	Value type: <prop-encoded-array>
+>>> -	Definition: reference to the pll parents.
+>>> -
+>>> -- clock-names:
+>>> -	Usage: required
+>>> -	Value type: <stringlist>
+>>> -	Definition: must be "pll8_vote", "pxo".
+>>> -
+>>> -- clock-output-names:
+>>> -	Usage: required
+>>> -	Value type: <string>
+>>> -	Definition: Name of the output clock. Typically acpu_l2_aux indicating
+>>> -		    an L2 cache auxiliary clock.
+>>> -
+>>> -Example:
+>>> -
+>>> -	l2cc: clock-controller@2011000 {
+>>> -		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
+>>> -		reg = <0x2011000 0x1000>;
+>>> -		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
+>>> -		clock-names = "pll8_vote", "pxo";
+>>> -		clock-output-names = "acpu_l2_aux";
+>>> -	};
+>>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>>> new file mode 100644
+>>> index 000000000000..20ee182eb16f
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>>> @@ -0,0 +1,68 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
+>>> +
+>>> +maintainers:
+>>> +  - Ansuel Smith <ansuelsmth@gmail.com>
+>>> +
+>>> +description: |
+>>> +  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
+>>> +  to control L2 mux (in the current implementation).
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - qcom,kpss-gcc-ipq8064
+>>> +          - qcom,kpss-gcc-apq8064
+>>> +          - qcom,kpss-gcc-msm8974
+>>> +          - qcom,kpss-gcc-msm8960
+>>> +      - const: qcom,kpss-gcc
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: phandle to pll8_vote
+>>> +      - description: phandle to pxo_board
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: pll8_vote
+>>> +      - const: pxo
+>>> +
+>>> +  clock-output-names:
+>>> +    const: acpu_l2_aux
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 0
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clocks
+>>> +  - clock-names
+>>> +  - clock-output-names
+>>> +  - '#clock-cells'
 >>
->> Running 'make dtbs_check' with the schema in this patch gives the
->> following warnings. Consider if they are expected or the schema is
->> incorrect. These may not be new warnings.
+>> You add here a new required property, so this is not a pure conversion.
+>> Please explain in the commit msg why are you doing this. I asked about
+>> this in your previous patchset.
 >>
->> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
->> This will change in the future.
->>
->> Full log is available here: https://patchwork.ozlabs.org/patch/1607887
->>
->>
->> cypto-controller@ff8a0000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
->> 	arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml
->> 	arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml
->> 	arch/arm/boot/dts/rk3288-firefly-beta.dt.yaml
->> 	arch/arm/boot/dts/rk3288-firefly.dt.yaml
->> 	arch/arm/boot/dts/rk3288-firefly-reload.dt.yaml
->> 	arch/arm/boot/dts/rk3288-miqi.dt.yaml
->> 	arch/arm/boot/dts/rk3288-phycore-rdk.dt.yaml
->> 	arch/arm/boot/dts/rk3288-popmetal.dt.yaml
->> 	arch/arm/boot/dts/rk3288-r89.dt.yaml
->> 	arch/arm/boot/dts/rk3288-rock2-square.dt.yaml
->> 	arch/arm/boot/dts/rk3288-rock-pi-n8.dt.yaml
->> 	arch/arm/boot/dts/rk3288-tinker.dt.yaml
->> 	arch/arm/boot/dts/rk3288-tinker-s.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-brain.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-fievel.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-jaq.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-jerry.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-mickey.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-mighty.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-minnie.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-pinky.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-speedy.dt.yaml
->> 	arch/arm/boot/dts/rk3288-veyron-tiger.dt.yaml
->> 	arch/arm/boot/dts/rk3288-vyasa.dt.yaml
->>
+>> Best regards,
+>> Krzysztof
 > 
-> Hello
-> 
-> This should not happen since patch 20 remove it.
+> Sorry I probably missed it. Just to make sure you are referring to
+> #clock-cells?
+> Since this expose a clock, clock-cells is required. Should I put this in
+> a different commit? 
 
-
-From all DTBS in the world? If you want to deprecate a property, add a
-"deprecated: true".
+Yeah, clock-cells. It's enough to mention it in commit msg.
 
 
 Best regards,
