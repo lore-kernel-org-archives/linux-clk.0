@@ -2,122 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB03C4332F
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 01:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CA7C4332F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 01:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234660AbiCVBrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Mar 2022 21:47:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
+        id S235136AbiCVBwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Mar 2022 21:52:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234610AbiCVBrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 21:47:01 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2129E33E91;
-        Mon, 21 Mar 2022 18:45:34 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id e9so10790300ilu.9;
-        Mon, 21 Mar 2022 18:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zr0mWxQ50In1k50aI0C4tqPbw585vCp4j+PEvB7bkb8=;
-        b=WPeQWzlV2V8L+K20EVJb+LMeyLxwsBHU8JgNhDMz2/4wk7Upkb0JOcwnXg8aFR+A+7
-         pEg6qPQ6Eob5oE0M4bP3muGozT/dxeB/eAusirOX1ledQNzJ1k4xcA3J7Rr2q34NGp50
-         3zwU8o43mM6yToZ5771Ww/E2I9vbLrXzC0q+kNaALhWkkKf5BDkpS+KdaKMTLPnuyxfE
-         ux232B2Pl8yJmWhorpLFITU1hHTa1Mwl8tXoK+gBBayyBOffGncDPSPI2LTyoqH40Aa2
-         40yEdRDRbW1tmENlHoVfU5G8yXHSA6agJM+Q/lGTtm6U8/kL91jFTbVThKbRKAIeDAC+
-         4rzQ==
+        with ESMTP id S235118AbiCVBwU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Mar 2022 21:52:20 -0400
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94CC43BA5B;
+        Mon, 21 Mar 2022 18:50:54 -0700 (PDT)
+Received: by mail-oi1-f170.google.com with SMTP id j83so18170157oih.6;
+        Mon, 21 Mar 2022 18:50:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=zr0mWxQ50In1k50aI0C4tqPbw585vCp4j+PEvB7bkb8=;
-        b=Ygg+AecK7bVi/1ESvb6hDwHr/FOXaFYNM1bUtfhITcwX6c01tdnVDPHkHnpKlInYBE
-         c/2Ufw4W3CEjDs2So4cC9A1pVBFRfNkT3cLboTLL/GYNaHNI5Oab1IXVEi7JuzvlVB8g
-         mBcp8rUJlGxEAn9CB5cObofDY5EuaJDiIUyD3qMF+ia741WIxvNeP7r0SU/gFxlXAJuz
-         QUvnYt7nNyHMmLLT0Lvn8ER3Xnz6guR/cN6Re9bKbj0V6rN9PRj86GKyK+LOKhaVrUAn
-         /Ndz4FJBAP55cNNoe0bdjM/tLqmzAddkJFcmdfCu80nRChDehJJk+UjgzkB9PAfS5hDg
-         t5ug==
-X-Gm-Message-State: AOAM530bPUXT8eHXTPdBKvA6gJSyitQlYzZ6R7UDnqOq2vnVj/uiyfWt
-        D5IJZbSPDLdiKyIOpBOuBCg=
-X-Google-Smtp-Source: ABdhPJyO1XKSI7rN37fLL9+RWQm3FDgEEZEuiFvyfCvwgCm0b+qN5b2DQubr3ioFDqHp4GAM0w4Pzw==
-X-Received: by 2002:a92:cbc3:0:b0:2c6:78fa:41e9 with SMTP id s3-20020a92cbc3000000b002c678fa41e9mr11160986ilq.112.1647913533439;
-        Mon, 21 Mar 2022 18:45:33 -0700 (PDT)
-Received: from [10.4.10.38] (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id m2-20020a056e021c2200b002c837530587sm1389456ilh.60.2022.03.21.18.45.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Mar 2022 18:45:32 -0700 (PDT)
-Message-ID: <ca6c4fe5-93c5-9ad4-0c9f-86ec3213d44e@gmail.com>
-Date:   Mon, 21 Mar 2022 21:45:28 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH 2/2] dt-bindings: clock: drop useless consumer example
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Manivannan Sadhasivam <mani@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Giulio Benetti <giulio.benetti@benettiengineering.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-References: <20220316130858.93455-1-krzysztof.kozlowski@canonical.com>
- <20220316130858.93455-2-krzysztof.kozlowski@canonical.com>
- <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
-From:   Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <YjjCpQ9vwFoEmFFi@robh.at.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=6wGO95480o++3hkVke2KCQeABv0JOzxQ2AVcywF5mS8=;
+        b=neFfjZUMragKNmD3hjaep8XtQScupTwKAPLsIuiRX09q3gMrUUiFyKEKM5IkExPBRd
+         QOIN093DhF/veq8EV3Mj5HyPxqVPS3hwhrVGewDdt9Lmc/DSQL2y4HOFF/PZRLuBSgjk
+         CqRyjNboEcqKQfa8w30F9AxTCjTc32dCcnkuGv9GAXLD4Gyay3NOwYUlN9Sj63w9OSsu
+         K/O54/U332hVNy1DlusXzXT1essdjEh8JxBsi3rvvmBt3YCBYMWUlIKs40zZgi5H72Fj
+         it9QEivFcSuqVTM8U/qkf66OFLrGL9Qz6qIQM8ebscq1Yp/hJ+LyQqDMG3eeF8Ke9Ue0
+         NNlg==
+X-Gm-Message-State: AOAM533W/hya12U6eaEYX+w4KYceja0DOaM3M1GgxW+uXsK1AiRU/MAa
+        7YKADIsCcwD0FZsmxOSU7w==
+X-Google-Smtp-Source: ABdhPJwj36RCG58UmGKrtvgw5QXEfOwvQc1Y4lLzuT9Y/w9iAv4/yO6DZ834We37179XQTFVsEmSEg==
+X-Received: by 2002:a54:4f89:0:b0:2ef:7561:d35d with SMTP id g9-20020a544f89000000b002ef7561d35dmr1055708oiy.261.1647913853228;
+        Mon, 21 Mar 2022 18:50:53 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id p8-20020a4aac08000000b00324907b406fsm1857479oon.21.2022.03.21.18.50.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Mar 2022 18:50:52 -0700 (PDT)
+Received: (nullmailer pid 941033 invoked by uid 1000);
+        Tue, 22 Mar 2022 01:50:51 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     sboyd@kernel.org, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-crypto@vger.kernel.org, heiko@sntech.de, robh+dt@kernel.org,
+        herbert@gondor.apana.org.au, linux-clk@vger.kernel.org
+In-Reply-To: <20220321200739.3572792-22-clabbe@baylibre.com>
+References: <20220321200739.3572792-1-clabbe@baylibre.com> <20220321200739.3572792-22-clabbe@baylibre.com>
+Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to yaml
+Date:   Mon, 21 Mar 2022 20:50:51 -0500
+Message-Id: <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 3/21/22 14:23, Rob Herring wrote:
-> On Wed, Mar 16, 2022 at 02:08:58PM +0100, Krzysztof Kozlowski wrote:
->> Consumer examples in the bindings of resource providers are trivial,
->> useless and duplication of code.  Remove the example code for consumer
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
->> ---
->>   .../bindings/clock/bitmain,bm1880-clk.yaml           | 12 ------------
->>   .../devicetree/bindings/clock/idt,versaclock5.yaml   |  7 -------
->>   .../devicetree/bindings/clock/imx1-clock.yaml        |  9 ---------
->>   .../devicetree/bindings/clock/imx21-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx23-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx25-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx27-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx28-clock.yaml       |  9 ---------
->>   .../devicetree/bindings/clock/imx31-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx35-clock.yaml       |  8 --------
->>   .../devicetree/bindings/clock/imx7ulp-pcc-clock.yaml | 11 -----------
->>   .../devicetree/bindings/clock/imx7ulp-scg-clock.yaml | 11 -----------
->>   .../devicetree/bindings/clock/imx8qxp-lpcg.yaml      | 11 -----------
->>   .../devicetree/bindings/clock/imxrt1050-clock.yaml   |  8 --------
->>   .../bindings/clock/nvidia,tegra124-car.yaml          |  7 -------
->>   .../bindings/clock/nvidia,tegra20-car.yaml           |  7 -------
->>   16 files changed, 143 deletions(-)
+On Mon, 21 Mar 2022 20:07:34 +0000, Corentin Labbe wrote:
+> Convert rockchip-crypto to yaml
 > 
-> Doesn't apply to my tree (no imxrt1050-clock.yaml), so
-merge against linux-next I can submit another patch if needed.
-> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  .../crypto/rockchip,rk3288-crypto.yaml        | 84 +++++++++++++++++++
+>  .../bindings/crypto/rockchip-crypto.txt       | 28 -------
+>  2 files changed, 84 insertions(+), 28 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
+> 
+
+Running 'make dtbs_check' with the schema in this patch gives the
+following warnings. Consider if they are expected or the schema is
+incorrect. These may not be new warnings.
+
+Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+This will change in the future.
+
+Full log is available here: https://patchwork.ozlabs.org/patch/1607887
+
+
+cypto-controller@ff8a0000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+	arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml
+	arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml
+	arch/arm/boot/dts/rk3288-firefly-beta.dt.yaml
+	arch/arm/boot/dts/rk3288-firefly.dt.yaml
+	arch/arm/boot/dts/rk3288-firefly-reload.dt.yaml
+	arch/arm/boot/dts/rk3288-miqi.dt.yaml
+	arch/arm/boot/dts/rk3288-phycore-rdk.dt.yaml
+	arch/arm/boot/dts/rk3288-popmetal.dt.yaml
+	arch/arm/boot/dts/rk3288-r89.dt.yaml
+	arch/arm/boot/dts/rk3288-rock2-square.dt.yaml
+	arch/arm/boot/dts/rk3288-rock-pi-n8.dt.yaml
+	arch/arm/boot/dts/rk3288-tinker.dt.yaml
+	arch/arm/boot/dts/rk3288-tinker-s.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-brain.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-fievel.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-jaq.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-jerry.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-mickey.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-mighty.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-minnie.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-pinky.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-speedy.dt.yaml
+	arch/arm/boot/dts/rk3288-veyron-tiger.dt.yaml
+	arch/arm/boot/dts/rk3288-vyasa.dt.yaml
 
