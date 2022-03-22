@@ -2,128 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1674EC433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 09:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EF7C433F5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 10:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbiCVJNj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 05:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49594 "EHLO
+        id S232054AbiCVKDr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 06:03:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232164AbiCVJNi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 05:13:38 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA2487E59B
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 02:12:08 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id a1so22602215wrh.10
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 02:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=qjT77DYYL/GJDwodJ6Rapm1bpiNcBpPlg2Vo7gCqJB8=;
-        b=YHPUJUn3zIjNoMGTdwff2Vfop45kQtaHqwdMY6Nf8YYhoP7j4H4GyXGENtvzHBaohP
-         F2MgM6pQidOA1F9Uq+q+SVMZR6AGKPBRf8tBeqoqe6Mdq2WTxk7cNHZ6zlePagEwmM91
-         Yo3oMJuAk+OfT3Hp6pPqHN1iV5UhwJ7kJcjVRcnRF9bGo8WXBUr1dmWcuxv0rxlQ5WJx
-         PRn8cHwW9Q2h2QVnvyff5uKC7pk3mUtYBsAzefyp7x9sdbToS2G+u8m4HdvZUkEXYVxS
-         5IAnOPoa+Rog0P93TZ+oXkPfUbVVnlAqf4smHVGah/4oE00rlX/6OLWizehJas3RtOyt
-         KXtg==
+        with ESMTP id S232789AbiCVKDQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 06:03:16 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB6EC7C79D;
+        Tue, 22 Mar 2022 03:01:48 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id r7so10152875wmq.2;
+        Tue, 22 Mar 2022 03:01:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=qjT77DYYL/GJDwodJ6Rapm1bpiNcBpPlg2Vo7gCqJB8=;
-        b=SxzlMGYh+/zX3pVEeLAU2pC+WLAg6sf8oj2knZtUIiuS5JSZscKRYDtuU7pwfJJ7li
-         QRSaqDmFF+lM9LiubOzh0H2YTqJ7AQuxe3tQkSfk1oZYx3oH2iN61+NflmHFSYjm0d5J
-         l7fN3ked/J6bmcmy9otsYqMn7AcxY+UEmXOHVxJzMmwDt0hCLBgYC9Y/UZfskHre3O8q
-         zu/OpJ/ZqW6qVwk3vB27b/UEDsOcwzWm1oFyAkBHBB3GQyEcxR3Dfr1uqfraf1mK1AdF
-         8kma3ORiuc823p4R2WoQj4irOKRd9meUwZ7TrwXLyeVqSVjrxnTx8GHdxShi/V+gFsqu
-         oUJA==
-X-Gm-Message-State: AOAM533icPRazWzl2OddAzmKXcNTMvpsE+8aArjWsrK7X+egy4BZYv2r
-        nVWKttUgoInpBiMhK5NA0Gw2Ow==
-X-Google-Smtp-Source: ABdhPJwLrFHSs/rg59Z4qNL8r8Ak6OWe1nu8EXetVqZllyP8jhyj2fCHM/JwIgFdiBq/bbrEdWHwGA==
-X-Received: by 2002:a05:6000:2ca:b0:204:1e6a:d2a9 with SMTP id o10-20020a05600002ca00b002041e6ad2a9mr3768869wry.182.1647940327256;
-        Tue, 22 Mar 2022 02:12:07 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
-        by smtp.googlemail.com with ESMTPSA id u7-20020a5d6da7000000b00203d9d1875bsm17176008wrs.73.2022.03.22.02.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Mar 2022 02:12:06 -0700 (PDT)
-Date:   Tue, 22 Mar 2022 10:12:04 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     sboyd@kernel.org, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        krzk+dt@kernel.org, mturquette@baylibre.com,
-        linux-crypto@vger.kernel.org, heiko@sntech.de, robh+dt@kernel.org,
-        herbert@gondor.apana.org.au, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
- yaml
-Message-ID: <YjmS5DE95xTuJMi7@Red>
-References: <20220321200739.3572792-1-clabbe@baylibre.com>
- <20220321200739.3572792-22-clabbe@baylibre.com>
- <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=j/qgdjKwccf8EPOidmwJ3w5TF8yoynAyS/lxz3nLGS8=;
+        b=5Xu6KACnQx7m4B9ZRYAccCJjbBKGrzAwrKwMZFqffPNDfaHysMUS/TGndXYSj/2jcx
+         +OFPsxgwmdhPkR+Lx5IWggE6Xzz7Gr73p16BgikDz3gBhLw1LCDfoaPQ0WJOiDRWXzkM
+         6oLUrSzCYoqAyEFLxYz4/E0ebSYoyWxDDNMks6zt6JEHYFMKZB6NSyhY540q1k/2OwF6
+         24NMO3SCBwX7PyWfs/zOB3ZZYX2yGnJcQkQdVfFjHWbnX+4svnBCcZT9P0/D1LsdYW9K
+         Ptdm6vVqPiBETC6jtlSilfg4d9sZNMR8C6UN0uFZ6KZ8XZn5riN880Yze4oIj6zXvS1/
+         0Whg==
+X-Gm-Message-State: AOAM533hgjf4fTGlBF859FQJutQ+sxPBn2vJyYBg06hLGx04nEzmZrHA
+        pSdRze2S+49z8xc1oxb+lNs=
+X-Google-Smtp-Source: ABdhPJy4XHyMtIM442pgEfYm42wdqDd8trn7iJ9ILqvcyqLt8QdybwbOUvTXfhm04dhJ/5udG8Tdxw==
+X-Received: by 2002:a5d:5886:0:b0:204:85e:5a3a with SMTP id n6-20020a5d5886000000b00204085e5a3amr9701385wrf.434.1647943307366;
+        Tue, 22 Mar 2022 03:01:47 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id r4-20020a1c2b04000000b0038a0e15ee13sm1568576wmr.8.2022.03.22.03.01.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Mar 2022 03:01:46 -0700 (PDT)
+Message-ID: <9bcd0548-ff5b-78f2-9fb7-7b15755a049f@kernel.org>
+Date:   Tue, 22 Mar 2022 11:01:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1647913851.207213.941032.nullmailer@robh.at.kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v6 18/18] ARM: dts: qcom: qcom-ipq8064: add missing
+ krait-cc compatible and clocks
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220321231548.14276-1-ansuelsmth@gmail.com>
+ <20220321231548.14276-19-ansuelsmth@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220321231548.14276-19-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Mon, Mar 21, 2022 at 08:50:51PM -0500, Rob Herring a écrit :
-> On Mon, 21 Mar 2022 20:07:34 +0000, Corentin Labbe wrote:
-> > Convert rockchip-crypto to yaml
-> > 
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >  .../crypto/rockchip,rk3288-crypto.yaml        | 84 +++++++++++++++++++
-> >  .../bindings/crypto/rockchip-crypto.txt       | 28 -------
-> >  2 files changed, 84 insertions(+), 28 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
-> > 
+On 22/03/2022 00:15, Ansuel Smith wrote:
+> Add missing krait-cc clock-controller and define missing aux clock for
+> CPUs. Also change phandle for l2cc node to point to pxo_board instead
+> of gcc PXO_SRC. This should align ipq8064 dtsi to the new changes in
+> the Documentation.
 > 
-> Running 'make dtbs_check' with the schema in this patch gives the
-> following warnings. Consider if they are expected or the schema is
-> incorrect. These may not be new warnings.
-> 
-> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-> This will change in the future.
-> 
-> Full log is available here: https://patchwork.ozlabs.org/patch/1607887
-> 
-> 
-> cypto-controller@ff8a0000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 	arch/arm/boot/dts/rk3288-evb-act8846.dt.yaml
-> 	arch/arm/boot/dts/rk3288-evb-rk808.dt.yaml
-> 	arch/arm/boot/dts/rk3288-firefly-beta.dt.yaml
-> 	arch/arm/boot/dts/rk3288-firefly.dt.yaml
-> 	arch/arm/boot/dts/rk3288-firefly-reload.dt.yaml
-> 	arch/arm/boot/dts/rk3288-miqi.dt.yaml
-> 	arch/arm/boot/dts/rk3288-phycore-rdk.dt.yaml
-> 	arch/arm/boot/dts/rk3288-popmetal.dt.yaml
-> 	arch/arm/boot/dts/rk3288-r89.dt.yaml
-> 	arch/arm/boot/dts/rk3288-rock2-square.dt.yaml
-> 	arch/arm/boot/dts/rk3288-rock-pi-n8.dt.yaml
-> 	arch/arm/boot/dts/rk3288-tinker.dt.yaml
-> 	arch/arm/boot/dts/rk3288-tinker-s.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-brain.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-fievel.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-jaq.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-jerry.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-mickey.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-mighty.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-minnie.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-pinky.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-speedy.dt.yaml
-> 	arch/arm/boot/dts/rk3288-veyron-tiger.dt.yaml
-> 	arch/arm/boot/dts/rk3288-vyasa.dt.yaml
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  arch/arm/boot/dts/qcom-ipq8064.dtsi | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
 > 
 
-Hello
+It should not be the last patch in series because now it is impossible
+to judge whether you actually fixed Rob's robot reports or not. You
+still have warnings as answer to patch #17.
 
-This should not happen since patch 20 remove it.
 
-Regards
+Best regards,
+Krzysztof
