@@ -2,204 +2,153 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C747C433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 18:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E1BC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 19:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237300AbiCVSRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 14:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47866 "EHLO
+        id S230444AbiCVTHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 15:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232524AbiCVSRF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 14:17:05 -0400
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2307020186;
-        Tue, 22 Mar 2022 11:15:37 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id w4so22684786edc.7;
-        Tue, 22 Mar 2022 11:15:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:content-language:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=9c+q5A+g63Va4Id/tmRlrr68w+A/h9s1XNixEI8cdPY=;
-        b=MZbbZEzDhqYnzreHZWQHLgQFRRKXCrimZZJ2PVoXf6sZGFi88PAoUvENr0F3uuFFaH
-         BkDnVFYJmrWBE72nAhcFl87Q3BiNONwK3e1YjPiRO10fYOa6YGQbYuqNlV8y5V0uUV0V
-         pIjA1iG9EtHdTP/Yn+eAWGa2cvbpOgZN9MHZW7oZJhdX4agmtNNWUCIMAS53OZb6WWBw
-         8Af/qNNinP+OMwCHqIPlx2EVGbN/JcBa7YtqGa/Erg4O0CEV6cWtTRrta2vO7kzgDtrs
-         QserO+vJ7S85En9VA42Dq84u7tzuQXbJkrkp8GlB+NccDFD2Ycy2Bn1VY8S1nDpsJ7os
-         Tx9w==
-X-Gm-Message-State: AOAM530y44U8T1x39KSnJ8m/B9ie1oRaVl9PKuS6ySXrdi5S3ufiJ2PE
-        zviAgJbVDqb+adRUPfbNgXE=
-X-Google-Smtp-Source: ABdhPJwkbOwQf7TAo9l37B0npu7WSJxyJ0dZLWCi2/outcxSGf3TiBsI3b27baCUKxtDm+/pazgL5A==
-X-Received: by 2002:aa7:c881:0:b0:419:1a3d:4437 with SMTP id p1-20020aa7c881000000b004191a3d4437mr20895274eds.378.1647972935477;
-        Tue, 22 Mar 2022 11:15:35 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id u9-20020a170906124900b006ce88a505a1sm9069026eja.179.2022.03.22.11.15.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Mar 2022 11:15:34 -0700 (PDT)
-Message-ID: <30ec2e32-aa72-bfd5-9513-172b396d9424@kernel.org>
-Date:   Tue, 22 Mar 2022 19:15:33 +0100
+        with ESMTP id S230383AbiCVTHe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 15:07:34 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 147F121277;
+        Tue, 22 Mar 2022 12:06:02 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dmitry.osipenko)
+        with ESMTPSA id 8F1C61F4414B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1647975960;
+        bh=D6hgpxoxSbhmTxNI08QE3zs+RAds6Z3h0HTtecS2zSY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=PTWkCR5eni7rM6R0IZivCAw/HYJ9Cvzt5muTfeNyqm5A+cvOhi9cRFlhWldTkNB2p
+         s3yaykh4JmPQM+EZ8WOrufMC4412fuxwt96tTY5vIzGqcSw3/PL/rh1kRxXPQAkBxC
+         f4WW0Jy+qn82v5i/ZHWUbQjF8IgIqID4AJfogwYTHaN8AHyuwrpVKLBcdtlbb/aZ8r
+         1lHjjO3mWT5ZRrtcNY2mCBcFESDHiunxkhkdQy9/8bQzIcMZxkmFzNBZbyrIUxuQf2
+         drcdzZbGVxUoB435/dXrL+wP0XwMxG81BIj4o4lbyQXwOSkFob6Lw1VhDquQueuEYc
+         f0FyOPGE/zSUw==
+Message-ID: <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+Date:   Tue, 22 Mar 2022 22:05:56 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v4 18/18] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v7 06/12] clk: Always set the rate on clk_set_range_rate
 Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20220321144825.11736-1-ansuelsmth@gmail.com>
- <20220321144825.11736-19-ansuelsmth@gmail.com>
- <a7837388-e36f-9e55-4107-9f7f85571f3b@kernel.org>
- <YjiWY9wxGMtUAcjY@Ansuel-xps.localdomain>
-In-Reply-To: <YjiWY9wxGMtUAcjY@Ansuel-xps.localdomain>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-7-maxime@cerno.tech>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20220225143534.405820-7-maxime@cerno.tech>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/03/2022 16:14, Ansuel Smith wrote:
-> On Mon, Mar 21, 2022 at 04:41:37PM +0100, Krzysztof Kozlowski wrote:
->> On 21/03/2022 15:48, Ansuel Smith wrote:
->>> Convert kpss-gcc driver Documentation to yaml.
->>>
->>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
->>> ---
->>>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
->>>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 68 +++++++++++++++++++
->>>  2 files changed, 68 insertions(+), 44 deletions(-)
->>>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->>>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->>> deleted file mode 100644
->>> index e628758950e1..000000000000
->>> --- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
->>> +++ /dev/null
->>> @@ -1,44 +0,0 @@
->>> -Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
->>> -
->>> -PROPERTIES
->>> -
->>> -- compatible:
->>> -	Usage: required
->>> -	Value type: <string>
->>> -	Definition: should be one of the following. The generic compatible
->>> -			"qcom,kpss-gcc" should also be included.
->>> -			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
->>> -			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
->>> -			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
->>> -			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
->>> -
->>> -- reg:
->>> -	Usage: required
->>> -	Value type: <prop-encoded-array>
->>> -	Definition: base address and size of the register region
->>> -
->>> -- clocks:
->>> -	Usage: required
->>> -	Value type: <prop-encoded-array>
->>> -	Definition: reference to the pll parents.
->>> -
->>> -- clock-names:
->>> -	Usage: required
->>> -	Value type: <stringlist>
->>> -	Definition: must be "pll8_vote", "pxo".
->>> -
->>> -- clock-output-names:
->>> -	Usage: required
->>> -	Value type: <string>
->>> -	Definition: Name of the output clock. Typically acpu_l2_aux indicating
->>> -		    an L2 cache auxiliary clock.
->>> -
->>> -Example:
->>> -
->>> -	l2cc: clock-controller@2011000 {
->>> -		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
->>> -		reg = <0x2011000 0x1000>;
->>> -		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
->>> -		clock-names = "pll8_vote", "pxo";
->>> -		clock-output-names = "acpu_l2_aux";
->>> -	};
->>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
->>> new file mode 100644
->>> index 000000000000..20ee182eb16f
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
->>> @@ -0,0 +1,68 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
->>> +
->>> +maintainers:
->>> +  - Ansuel Smith <ansuelsmth@gmail.com>
->>> +
->>> +description: |
->>> +  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
->>> +  to control L2 mux (in the current implementation).
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - qcom,kpss-gcc-ipq8064
->>> +          - qcom,kpss-gcc-apq8064
->>> +          - qcom,kpss-gcc-msm8974
->>> +          - qcom,kpss-gcc-msm8960
->>> +      - const: qcom,kpss-gcc
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  clocks:
->>> +    items:
->>> +      - description: phandle to pll8_vote
->>> +      - description: phandle to pxo_board
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: pll8_vote
->>> +      - const: pxo
->>> +
->>> +  clock-output-names:
->>> +    const: acpu_l2_aux
->>> +
->>> +  '#clock-cells':
->>> +    const: 0
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - clocks
->>> +  - clock-names
->>> +  - clock-output-names
->>> +  - '#clock-cells'
->>
->> You add here a new required property, so this is not a pure conversion.
->> Please explain in the commit msg why are you doing this. I asked about
->> this in your previous patchset.
->>
->> Best regards,
->> Krzysztof
+On 2/25/22 17:35, Maxime Ripard wrote:
+> When we change a clock minimum or maximum using clk_set_rate_range(),
+> clk_set_min_rate() or clk_set_max_rate(), the current code will only
+> trigger a new rate change if the rate is outside of the new boundaries.
 > 
-> Sorry I probably missed it. Just to make sure you are referring to
-> #clock-cells?
-> Since this expose a clock, clock-cells is required. Should I put this in
-> a different commit? 
+> However, a clock driver might want to always keep the clock rate to
+> one of its boundary, for example the minimum to keep the power
+> consumption as low as possible.
+> 
+> Since they don't always get called though, clock providers don't have the
+> opportunity to implement this behaviour.
+> 
+> Let's trigger a clk_set_rate() on the previous requested rate every time
+> clk_set_rate_range() is called. That way, providers that care about the
+> new boundaries have a chance to adjust the rate, while providers that
+> don't care about those new boundaries will return the same rate than
+> before, which will be ignored by clk_set_rate() and won't result in a
+> new rate change.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/clk.c      | 45 ++++++++++++++++----------------
+>  drivers/clk/clk_test.c | 58 +++++++++++++++++++-----------------------
+>  2 files changed, 49 insertions(+), 54 deletions(-)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c15ee5070f52..9bc8bf434b94 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2373,28 +2373,29 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
+>  		goto out;
+>  	}
+>  
+> -	rate = clk_core_get_rate_nolock(clk->core);
+> -	if (rate < min || rate > max) {
+> -		/*
+> -		 * FIXME:
+> -		 * We are in bit of trouble here, current rate is outside the
+> -		 * the requested range. We are going try to request appropriate
+> -		 * range boundary but there is a catch. It may fail for the
+> -		 * usual reason (clock broken, clock protected, etc) but also
+> -		 * because:
+> -		 * - round_rate() was not favorable and fell on the wrong
+> -		 *   side of the boundary
+> -		 * - the determine_rate() callback does not really check for
+> -		 *   this corner case when determining the rate
+> -		 */
+> -
+> -		rate = clamp(clk->core->req_rate, min, max);
+> -		ret = clk_core_set_rate_nolock(clk->core, rate);
+> -		if (ret) {
+> -			/* rollback the changes */
+> -			clk->min_rate = old_min;
+> -			clk->max_rate = old_max;
+> -		}
+> +	/*
+> +	 * Since the boundaries have been changed, let's give the
+> +	 * opportunity to the provider to adjust the clock rate based on
+> +	 * the new boundaries.
+> +	 *
+> +	 * We also need to handle the case where the clock is currently
+> +	 * outside of the boundaries. Clamping the last requested rate
+> +	 * to the current minimum and maximum will also handle this.
+> +	 *
+> +	 * FIXME:
+> +	 * There is a catch. It may fail for the usual reason (clock
+> +	 * broken, clock protected, etc) but also because:
+> +	 * - round_rate() was not favorable and fell on the wrong
+> +	 *   side of the boundary
+> +	 * - the determine_rate() callback does not really check for
+> +	 *   this corner case when determining the rate
+> +	 */
+> +	rate = clamp(clk->core->req_rate, min, max);
+> +	ret = clk_core_set_rate_nolock(clk->core, rate);
+> +	if (ret) {
+> +		/* rollback the changes */
+> +		clk->min_rate = old_min;
+> +		clk->max_rate = old_max;
+>  	}
+>  
+>  out:
 
-Yeah, clock-cells. It's enough to mention it in commit msg.
+Hi,
 
+NVIDIA Tegra30 no longer boots with this change.
 
-Best regards,
-Krzysztof
+You can't assume that rate was requested by clk_set_rate() before
+clk_set_rate_range() is called, see what [1] does. T30 memory rate now
+drops to min on boot when clk debug range is inited innocuously and CPU
+no longer can make any progress because display controller takes out
+whole memory bandwidth.
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/memory/tegra/tegra30-emc.c#n1437
+
+If clk_set_rate() wasn't ever invoked and req_rate=0, then you must not
+change the clk rate if it's within the new range. Please revert this
+patch, thanks.
