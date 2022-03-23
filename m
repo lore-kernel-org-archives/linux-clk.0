@@ -2,80 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2561C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 08:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC1BC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 08:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231853AbiCWIsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56646 "EHLO
+        id S242988AbiCWIvu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 04:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234839AbiCWIsx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 04:48:53 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C5C0D710D6
-        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 01:47:15 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7823:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Wed, 23 Mar 2022 16:45:30 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Wed, 23 Mar 2022 16:45:58 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Wed, 23 Mar 2022 16:45:58 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S242916AbiCWIvs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 04:51:48 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF047561F
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 01:50:15 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id h11so902975ljb.2
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 01:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3m7sD5DReLGuXAEizIRitWnlXHp9Kn3L0qq2hxmokpc=;
+        b=gv9gcPlHQ35G9R6MWJXTwf0cGkoBwsLehTQsndz59t01evyNDJF5UrpJT2BcNu8OyX
+         I+OooxIhJSXZhbAU84NvqSuzUuGD37pZQNSH30RT3xBfDaXEaXkBeJhB7+JmiHen2EAA
+         3X1b1xS3jj2yn4cT7rDWvFXpWDudayGtu/6Fey9G8Nk81/151t4hD8n8lGRSeuZkSTdS
+         b20JVBL+/RpxZQRpTl1V62CnosEGj2NQqidLJR4Ll/h5/5bGuNPq8NHckgocdSPhqhu3
+         6DK3Mxbxlu5FHAI4pCEiSFyzHw5s3AXRmyH22rw7jAQTXg23FytFK7Yg/Gw72TXMpvUf
+         ZLEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3m7sD5DReLGuXAEizIRitWnlXHp9Kn3L0qq2hxmokpc=;
+        b=DMcpR7h0Lyp3X+iZeQEiLfTf0HoAzXSsyASiv8Sa+ii8JGoOhzn3YwKgJcjl+WaBlL
+         7bumvQHRz+bzC/4SlejHKmV7xSVrYuSMXkgNIlPdltPfsmLWVrVMcR47qUNNish/IytA
+         gGpKrM9PPa9xtgH8e3g+oZdqJEyeP+PSkTyCAtaQQdf2k1Mv/b5kf2ozwf1Byjav7lfa
+         +++A7BtxuNb67duDPrepUOcKorYNdHP2TMlSKOXUyj0Z5mMPBDW78n2fqVuBeRLFc1Xd
+         FfZDAnrWVLt5iouQEi8lwPJN0ujzhnnXrWobDfLZuh8XY7DyC3+GCJfVwEeH2LYZv09v
+         Y85Q==
+X-Gm-Message-State: AOAM532vVJCF7vDhf79R3titZk58cEF3i/wGFggRsbqaR4gTi7x4BCMu
+        v6n+vSP3NCbMG7qvqxfEvJjqGg==
+X-Google-Smtp-Source: ABdhPJy1vlu6yxy06uWNWZ48yM4MosclnzEQBTVrPPCqlL7MPEExEmPACb/jv15/v0LmctoyviJRsA==
+X-Received: by 2002:a2e:87c4:0:b0:249:2cdf:da53 with SMTP id v4-20020a2e87c4000000b002492cdfda53mr23163574ljj.161.1648025413622;
+        Wed, 23 Mar 2022 01:50:13 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id c40-20020a05651223a800b0044a1edf823dsm1376140lfv.150.2022.03.23.01.50.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 01:50:13 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v11 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021
- defconfig
-Thread-Topic: [PATCH v11 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021
- defconfig
-Thread-Index: AQHYPbV20XoTM/apKU2VdtNWQYp2n6zKqyIAgAGFk2D//+uUgIAAjMMg
-Date:   Wed, 23 Mar 2022 08:45:58 +0000
-Message-ID: <c0af7c88c19f4fe9a9288f371482c302@cqplus1.com>
-References: <cover.1647928315.git.qinjian@cqplus1.com>
- <8372ee2fcf361a3af7233450c4403178052ceee2.1647928316.git.qinjian@cqplus1.com>
- <CAK8P3a1H2xM1PdDwKPWHD0fqZ0q_o-KZTLvSXdm9jjqTWcX-hA@mail.gmail.com>
- <d79dd7655c964f88a58d8bf403da39be@cqplus1.com>
- <CAK8P3a10rsxpzd4eJbSJmRUDEMbOO+=6+=6Eu-7EY86+xw8V6g@mail.gmail.com>
-In-Reply-To: <CAK8P3a10rsxpzd4eJbSJmRUDEMbOO+=6+=6Eu-7EY86+xw8V6g@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Taniya Das <tdas@codeaurora.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH v1 2/5] clk: qcom: gcc-sm8450: use new clk_regmap_mux_safe_ops for PCIe pipe clocks
+Date:   Wed, 23 Mar 2022 11:50:07 +0300
+Message-Id: <20220323085010.1753493-3-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220323085010.1753493-1-dmitry.baryshkov@linaro.org>
+References: <20220323085010.1753493-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+IEluIHBhdGNoIDYsIEkgZml4ZWQgYWxsIHlvdXIgY29tbWVudHMuDQo+ID4NCj4gPiBJIGdv
-dCBhIHJlcGx5IGZyb20geW91Og0KPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvQ0FLOFAz
-YTFEb2g4R1k5aUZac3ZtZDZ3QVNIb1BxeVIrcm9YeDBHNVhpZG5tSE5rR2FBQG1haWwuZ21haWwu
-Y29tLw0KPiA+ID4gVGhpcyBsb29rcyBhbGwgZ29vZCB0byBtZSBub3csIGl0IGp1c3QgbmVlZHMg
-YSByZXZpZXcgZm9yIHRoZSBjbGssDQo+ID4gPiByZXNldCAgYW5kIGlycWNoaXAgZHJpdmVycy4g
-Li4uDQo+ID4NCj4gPiBJZiB0aGVzZSBub3QgbWVhbnMgeW91IHJldmlld2VkLCBJJ2xsIHJlbW92
-ZSB5b3VyIHJldmlldy10YWcuDQo+IA0KPiBZb3UgY2FuIG9ubHkgYWRkIFJldmlld2VkLWJ5IHRh
-Z3MgdGhhdCBoYXZlIGJlZW4gZXhwbGljaXRseSBnaXZlbiwNCj4gc2VlIHRoZSBkb2N1bWVudGF0
-aW9uIGF0IFsxXSBmb3IgZGV0YWlscy4gV2hhdCBJIHdyb3RlIHdhcyBhIGxlc3MNCj4gZm9ybWFs
-IGFja25vd2xlZGdlbWVudCB0aGF0IGRvZXMgbm90IGhhdmUgdGhlIHNwZWNpZmljIG1lYW5pbmcu
-DQo+IA0KPiAgICAgICBBcm5kDQo+IA0KPiBbMV0gaHR0cHM6Ly93d3cua2VybmVsLm9yZy9kb2Mv
-aHRtbC9sYXRlc3QvdHJhbnNsYXRpb25zL3poX1RXL3Byb2Nlc3Mvc3VibWl0dGluZy1wYXRjaGVz
-Lmh0bWwjdXNpbmctcmVwb3J0ZWQtYnktdGVzdGVkLWJ5LQ0KPiByZXZpZXdlZC1ieS1zdWdnZXN0
-ZWQtYnktYW5kLWZpeGVzDQoNClRoYW5rcyBmb3IgeW91ciBjb21tZW50cywgSSdsbCByZW1vdmUg
-eW91ciB0YWdzIGxhdGVyLg0K
+Use newly defined clk_regmap_mux_safe_ops for PCIe pipe clocks to let
+the clock framework automatically park the clock when the clock is
+switched off and restore the parent when the clock is switched on.
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/clk/qcom/gcc-sm8450.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sm8450.c b/drivers/clk/qcom/gcc-sm8450.c
+index 593a195467ff..fb6decd3df49 100644
+--- a/drivers/clk/qcom/gcc-sm8450.c
++++ b/drivers/clk/qcom/gcc-sm8450.c
+@@ -243,13 +243,14 @@ static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
+ 	.reg = 0x7b060,
+ 	.shift = 0,
+ 	.width = 2,
++	.safe_src_parent = P_BI_TCXO,
+ 	.parent_map = gcc_parent_map_4,
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_pcie_0_pipe_clk_src",
+ 			.parent_data = gcc_parent_data_4,
+ 			.num_parents = ARRAY_SIZE(gcc_parent_data_4),
+-			.ops = &clk_regmap_mux_closest_ops,
++			.ops = &clk_regmap_mux_safe_ops,
+ 		},
+ 	},
+ };
+@@ -273,13 +274,14 @@ static struct clk_regmap_mux gcc_pcie_1_pipe_clk_src = {
+ 	.reg = 0x9d064,
+ 	.shift = 0,
+ 	.width = 2,
++	.safe_src_parent = P_BI_TCXO,
+ 	.parent_map = gcc_parent_map_6,
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_pcie_1_pipe_clk_src",
+ 			.parent_data = gcc_parent_data_6,
+ 			.num_parents = ARRAY_SIZE(gcc_parent_data_6),
+-			.ops = &clk_regmap_mux_closest_ops,
++			.ops = &clk_regmap_mux_safe_ops,
+ 		},
+ 	},
+ };
+-- 
+2.35.1
+
