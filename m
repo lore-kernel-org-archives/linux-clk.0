@@ -2,52 +2,32 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C50C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 08:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9219CC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 08:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242770AbiCWIiq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:38:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59846 "EHLO
+        id S237184AbiCWIsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 04:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbiCWIil (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 04:38:41 -0400
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A99B13D71;
-        Wed, 23 Mar 2022 01:37:12 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id dr20so1331918ejc.6;
-        Wed, 23 Mar 2022 01:37:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:content-language:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=2uwWKangGrfoNqiPlNGeHQBRLV7j3l1qJ3zQHU/H6fU=;
-        b=GQ1L73waSRYfPH5ts+D9PciPM/VMlW00UjnQsAN9e4aZS/OBUtp3e03akDCjDM7fL6
-         dwz36aH0NzX7OZ0CECHoRkCR2uxNh3TYnm1VSvyBR+OVjxeoh+Q2XLPGxT7NJrHv/Dpy
-         QsKWn/4wOnZq/NdFZvwFSe5fwIOX2YiDqe3b0n2GJ92x7Pm0eJJTSVtPhZJL7KSh95eI
-         bohTpQHNlPlVuRuthLHneZRdLVcXAGoo4r0zhE457PGtr0AvhU0GBAA8melmHLmqBy5U
-         7i8Nr7srGasyCv5EIzXdvgw5gjHBu+/GlFY4LzGD2PZb+iE6w7jsuhs+nnBHfj9Yatfz
-         e4IA==
-X-Gm-Message-State: AOAM533i8Wgw1xHhi9nh/TTGS093NxbLW9g0owKWS59M5xrha5FvyTr5
-        jgRlgoZgAqUOspUTjxKU4SUU1KN89oAQhA==
-X-Google-Smtp-Source: ABdhPJx8Z6gP0ujGPYONx0mp8t8f7WVWrxoGqsdueiAH/ANAeGjjooorJgxwu+9tMzipbAWKORJ4DQ==
-X-Received: by 2002:a17:906:c148:b0:6e0:2196:9251 with SMTP id dp8-20020a170906c14800b006e021969251mr11945441ejc.180.1648024630977;
-        Wed, 23 Mar 2022 01:37:10 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.googlemail.com with ESMTPSA id go40-20020a1709070da800b006dfc3945312sm6458473ejc.202.2022.03.23.01.37.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 01:37:10 -0700 (PDT)
-Message-ID: <6dbeda18-a11c-609d-7a8f-bf2e6f27aea7@kernel.org>
-Date:   Wed, 23 Mar 2022 09:37:08 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v11 2/9] dt-bindings: reset: Add bindings for SP7021 reset
- driver
-Content-Language: en-US
-To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        with ESMTP id S232314AbiCWIsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 04:48:36 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5F8C96E8C9
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 01:46:59 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7828:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 23 Mar 2022 16:44:09 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.18; Wed, 23 Mar 2022 16:44:39 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.018; Wed, 23 Mar 2022 16:44:39 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -61,61 +41,35 @@ Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Rob Herring <robh@kernel.org>
+Subject: RE: [PATCH v11 2/9] dt-bindings: reset: Add bindings for SP7021 reset
+ driver
+Thread-Topic: [PATCH v11 2/9] dt-bindings: reset: Add bindings for SP7021
+ reset driver
+Thread-Index: AQHYPbVznEjGDkREfkyqc2C0ll94iqzKt7sAgAF7uwD//+1fAIAAh2Tg
+Date:   Wed, 23 Mar 2022 08:44:39 +0000
+Message-ID: <ab6f62e8995f4b3485c971b49e0ef8b4@cqplus1.com>
 References: <cover.1647928315.git.qinjian@cqplus1.com>
  <55db801055793f43678e902395913330ecb8fbbf.1647928316.git.qinjian@cqplus1.com>
  <a7194fbf-8423-9b49-1443-68dd33e23783@kernel.org>
  <678d1f84d9d240b9983f9d3b82db17d4@cqplus1.com>
-In-Reply-To: <678d1f84d9d240b9983f9d3b82db17d4@cqplus1.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+ <6dbeda18-a11c-609d-7a8f-bf2e6f27aea7@kernel.org>
+In-Reply-To: <6dbeda18-a11c-609d-7a8f-bf2e6f27aea7@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/03/2022 02:54, qinjian[覃健] wrote:
->>> +examples:
->>> +  - |
->>> +    rstc: reset@9c000054 {
->>> +      compatible = "sunplus,sp7021-reset";
->>> +      #reset-cells = <1>;
->>> +      reg = <0x9c000054 0x28>;
->>
->> I asked you to put the reg after compatible in all DTS code and
->> examples. If you do not agree with a comment, please respond. Ignoring
->> it is not cooperative.
->>
-> 
-> Your  reply: https://lore.kernel.org/all/d3ac3e2f-71fd-b2b4-7c7e-bb43c681d14e@canonical.com/
->>> +  - |
->>> +
->>> +    clkc: clock-controller@9c000000 {
->>> +      compatible = "sunplus,sp7021-clkc";
->>> +      #clock-cells = <1>;
->>> +      reg = <0x9c000000 0x280>;
->>
->> In DTS code, please put reg after compatible. In all your examples and
->> DTS patches.
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-> 
-> I see your review-tag. So, I misunderstand your comments.
-> Did you means 'reg' must directly after the 'compatible', like this?
->     clkc: clock-controller@9c000000 {
->       #clock-cells = <1>;
->       compatible = "sunplus,sp7021-clkc";
->       reg = <0x9c000000 0x280>;
-
-You moved now compatible so not. First goes compatible, then goes reg.
-
-clock-controller@.... {
-  compatible = ....;
-  reg = ...;
-  here goes the rest;
-}
-
-My review tag was conditional because I asked to change the code. Such
-review tag should be used by you if you implement what I asked for.
-
-Best regards,
-Krzysztof
+PiBZb3UgbW92ZWQgbm93IGNvbXBhdGlibGUgc28gbm90LiBGaXJzdCBnb2VzIGNvbXBhdGlibGUs
+IHRoZW4gZ29lcyByZWcuDQo+IA0KPiBjbG9jay1jb250cm9sbGVyQC4uLi4gew0KPiAgIGNvbXBh
+dGlibGUgPSAuLi4uOw0KPiAgIHJlZyA9IC4uLjsNCj4gICBoZXJlIGdvZXMgdGhlIHJlc3Q7DQo+
+IH0NCj4gDQo+IE15IHJldmlldyB0YWcgd2FzIGNvbmRpdGlvbmFsIGJlY2F1c2UgSSBhc2tlZCB0
+byBjaGFuZ2UgdGhlIGNvZGUuIFN1Y2gNCj4gcmV2aWV3IHRhZyBzaG91bGQgYmUgdXNlZCBieSB5
+b3UgaWYgeW91IGltcGxlbWVudCB3aGF0IEkgYXNrZWQgZm9yLg0KPiANCg0KVGhhbmtzIGZvciB5
+b3VyIHBhdGllbnQsIEknbGwgZml4ZWQgaXQgaW4gbmV4dCBwYXRjaC4NCg==
