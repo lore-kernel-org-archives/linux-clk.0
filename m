@@ -2,32 +2,34 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EFCC433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 01:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8452BC433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 02:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237989AbiCWCAC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 22:00:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41182 "EHLO
+        id S240671AbiCWCq3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 22:46:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230314AbiCWCAA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 22:00:00 -0400
+        with ESMTP id S241396AbiCWCq2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 22:46:28 -0400
 Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B41426ADA
-        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 18:58:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0175070877
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 19:44:50 -0700 (PDT)
 X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
         R,40,3)
 Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7830:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Wed, 23 Mar 2022 09:54:05 +0800 (CST)
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7832:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 23 Mar 2022 10:40:26 +0800 (CST)
 Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
  CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Wed, 23 Mar 2022 09:54:35 +0800
+ 15.1.2375.18; Wed, 23 Mar 2022 10:40:52 +0800
 Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Wed, 23 Mar 2022 09:54:35 +0800
+ ([::1]) with mapi id 15.01.2375.018; Wed, 23 Mar 2022 10:40:52 +0800
 From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     "krzysztof.kozlowski@canonical.com" 
+        <krzysztof.kozlowski@canonical.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -39,19 +41,15 @@ CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>
-Subject: RE: [PATCH v11 2/9] dt-bindings: reset: Add bindings for SP7021 reset
- driver
-Thread-Topic: [PATCH v11 2/9] dt-bindings: reset: Add bindings for SP7021
- reset driver
-Thread-Index: AQHYPbVznEjGDkREfkyqc2C0ll94iqzKt7sAgAF7uwA=
-Date:   Wed, 23 Mar 2022 01:54:35 +0000
-Message-ID: <678d1f84d9d240b9983f9d3b82db17d4@cqplus1.com>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v11 0/9] Add Sunplus SP7021 SoC Support
+Thread-Topic: [PATCH v11 0/9] Add Sunplus SP7021 SoC Support
+Thread-Index: AQHYPbV1SsKXsmp1VUKTEITYbA9OsKzKtY4AgAGLvVA=
+Date:   Wed, 23 Mar 2022 02:40:51 +0000
+Message-ID: <be7f6ea70a5146a190c750695aead7f5@cqplus1.com>
 References: <cover.1647928315.git.qinjian@cqplus1.com>
- <55db801055793f43678e902395913330ecb8fbbf.1647928316.git.qinjian@cqplus1.com>
- <a7194fbf-8423-9b49-1443-68dd33e23783@kernel.org>
-In-Reply-To: <a7194fbf-8423-9b49-1443-68dd33e23783@kernel.org>
+ <YjmrdlQqoqUNcs7R@bogus>
+In-Reply-To: <YjmrdlQqoqUNcs7R@bogus>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach: 
@@ -64,22 +62,13 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+ICtleGFtcGxlczoNCj4gPiArICAtIHwNCj4gPiArICAgIHJzdGM6IHJlc2V0QDljMDAwMDU0
-IHsNCj4gPiArICAgICAgY29tcGF0aWJsZSA9ICJzdW5wbHVzLHNwNzAyMS1yZXNldCI7DQo+ID4g
-KyAgICAgICNyZXNldC1jZWxscyA9IDwxPjsNCj4gPiArICAgICAgcmVnID0gPDB4OWMwMDAwNTQg
-MHgyOD47DQo+IA0KPiBJIGFza2VkIHlvdSB0byBwdXQgdGhlIHJlZyBhZnRlciBjb21wYXRpYmxl
-IGluIGFsbCBEVFMgY29kZSBhbmQNCj4gZXhhbXBsZXMuIElmIHlvdSBkbyBub3QgYWdyZWUgd2l0
-aCBhIGNvbW1lbnQsIHBsZWFzZSByZXNwb25kLiBJZ25vcmluZw0KPiBpdCBpcyBub3QgY29vcGVy
-YXRpdmUuDQo+IA0KDQpZb3VyICByZXBseTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsL2Qz
-YWMzZTJmLTcxZmQtYjJiNC03YzdlLWJiNDNjNjgxZDE0ZUBjYW5vbmljYWwuY29tLw0KPiA+ICsg
-IC0gfA0KPiA+ICsNCj4gPiArICAgIGNsa2M6IGNsb2NrLWNvbnRyb2xsZXJAOWMwMDAwMDAgew0K
-PiA+ICsgICAgICBjb21wYXRpYmxlID0gInN1bnBsdXMsc3A3MDIxLWNsa2MiOw0KPiA+ICsgICAg
-ICAjY2xvY2stY2VsbHMgPSA8MT47DQo+ID4gKyAgICAgIHJlZyA9IDwweDljMDAwMDAwIDB4Mjgw
-PjsNCj4NCj4gSW4gRFRTIGNvZGUsIHBsZWFzZSBwdXQgcmVnIGFmdGVyIGNvbXBhdGlibGUuIElu
-IGFsbCB5b3VyIGV4YW1wbGVzIGFuZA0KPiBEVFMgcGF0Y2hlcy4NCj4NCj4NCj4gUmV2aWV3ZWQt
-Ynk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyenlzenRvZi5rb3psb3dza2lAY2Fub25pY2FsLmNv
-bT4NCg0KSSBzZWUgeW91ciByZXZpZXctdGFnLiBTbywgSSBtaXN1bmRlcnN0YW5kIHlvdXIgY29t
-bWVudHMuDQpEaWQgeW91IG1lYW5zICdyZWcnIG11c3QgZGlyZWN0bHkgYWZ0ZXIgdGhlICdjb21w
-YXRpYmxlJywgbGlrZSB0aGlzPw0KICAgIGNsa2M6IGNsb2NrLWNvbnRyb2xsZXJAOWMwMDAwMDAg
-ew0KICAgICAgI2Nsb2NrLWNlbGxzID0gPDE+Ow0KICAgICAgY29tcGF0aWJsZSA9ICJzdW5wbHVz
-LHNwNzAyMS1jbGtjIjsNCiAgICAgIHJlZyA9IDwweDljMDAwMDAwIDB4MjgwPjsNCg==
+PiANCj4gTm90IHJlbGF0ZWQgdG8gdGhpcyBzZXJpZXMsIGJ1dCB0byB0aGUgcGxhdGZvcm0gaW4g
+Z2VuZXJhbC4gWW91IHN0aWxsDQo+IG5lZWQgdG8gcmVzb2x2ZWQgdGhlIGJvb3QvY3B1LW1ldGhv
+ZCBmb3IgdGhpcyBwbGF0Zm9ybSBiZWZvcmUgeW91IGFkZA0KPiBzdXBwb3J0IGZvciBhbGwgdGhl
+IDQgY3B1cyBvbiB0aGlzIHBsYXRmb3JtLiBJIHJlbWVtYmVyIGRpc2N1c3NpbmcgYWJvdXQNCj4g
+Q1BVSWRsZSBvbiBhIHNlcGFyYXRlIHRocmVhZC4gSSB0aG91Z2h0IHRoaXMgaXMgYmVzdCB0aHJl
+YWQgdG8gcmVtaW5kIHRoYXQNCj4gc28gdGhhdCBpdCBpcyBhZGRyZXNzZWQgYmVmb3JlIHdlIHNl
+ZSBlaXRoZXIgY3B1aWRsZSBvciBjcHVob3RwbHVnIHN1cHBvcnQNCj4gb24gdGhpcyBwbGF0Zm9y
+bS4NCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IFN1ZGVlcA0KDQpUaGFua3MgZm9yIHlvdXIgY29t
+bWVudHMuDQpDdXJyZW50bHksICB3ZSBib290IGFsbCA0IGNvcmVzIHZpYSBwc2NpIHN1Y2Nlc3Nm
+dWxseS4NCg0K
