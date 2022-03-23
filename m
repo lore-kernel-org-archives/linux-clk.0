@@ -2,136 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A72FC4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 13:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22788C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 13:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244269AbiCWNYR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 09:24:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
+        id S236856AbiCWN5R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 09:57:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244258AbiCWNYQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 09:24:16 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E6D403E1
-        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:22:45 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id u16so2120825wru.4
-        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=nFhPQ/2TAffPjbDjiI/2I0v37r+CcQs5C7D/sWxAMI8=;
-        b=quPIS4rlbqNNwzlG7UsIcANuXUutqUX2+fS2vwwVrkSb8FadLyZ9PZuzt3n4FECs6b
-         JD3NheA8m53Arv3IJp2+FRXgb8apclZMBwVLZzL1u949YS0k93kjWRoPRC7j6cfksk60
-         qxWnya1GQ0o6FnD0kdxsnW3YSZ6iUb00BQ9WyMilezQ5n3ltGCDn+C8jl6rMTHz5Oakz
-         /607HtEh8xP6zzvxbUd5PSpNYWuV9/bc8PQYBMTN/o3/amywjFJkjwFPiEjWUSPZsUf+
-         UUicmWGMkDbN/NfGnIkjbJTQNk7WhHnpkDNNvhtM2OQ7+b+7vY0duYDYvrj3Vwl6M31g
-         2puA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=nFhPQ/2TAffPjbDjiI/2I0v37r+CcQs5C7D/sWxAMI8=;
-        b=lcxW9tkEQXjarevEv4B9BdgNSubOB6c3OnNit3lDDALI0b4qBKr/VLHnCyFllGgpGj
-         8aty3EmkuMOnnas3ffF+KvPxGcMOxh371QWjDscO3xcMwrEIBGX2hMzUn4c6FaRJ+C68
-         zcMYaoQFy7lifNJpy3g28ebxnSjGJgOpzv6xwK4+/fcfTH3LkDNUdN6UmNE0J3xIFUKK
-         J0jk8FlR+iJGQsOpToxPn7jBEQcdT0mbuU6B/vjBgYUku/bKynAKv34YTYPvw2knXPU6
-         RjqBzxbbLevZU4TXu3G0Mb5qX3mHhPiLIZ6ZGU2NYRIQC5+s5kdrt2aiWURLKaITaXIs
-         Jkcw==
-X-Gm-Message-State: AOAM530+XSn4krxltCeI6lwT/TzZmEirGpGlQI+VZ6bX5LlQJWgOZ1LM
-        AolVPGPMwbu3KhTpWLpZSTB312+i15CsZA==
-X-Google-Smtp-Source: ABdhPJzktCyQ+4ZXtq4E5zEr/KHSW2QBwhlwN+M/BloZ0THBfCmhcKR2IkHX5we1S2uX5VNg/THYAA==
-X-Received: by 2002:a05:6000:1b86:b0:1f0:d6f:1424 with SMTP id r6-20020a0560001b8600b001f00d6f1424mr26954876wru.174.1648041764214;
-        Wed, 23 Mar 2022 06:22:44 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
-        by smtp.googlemail.com with ESMTPSA id l15-20020a05600c4f0f00b0038cbdf5221dsm2806353wmq.41.2022.03.23.06.22.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 06:22:43 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 14:22:41 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 18/26] arm64: dts: rockchip: rk3399: add crypto node
-Message-ID: <YjsfIbLQRvoxkana@Red>
-References: <20220321200739.3572792-1-clabbe@baylibre.com>
- <20220321200739.3572792-19-clabbe@baylibre.com>
- <70422777-a3f9-b2f1-5faa-94d24fe200ac@arm.com>
+        with ESMTP id S234058AbiCWN5Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 09:57:16 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACAF57484E;
+        Wed, 23 Mar 2022 06:55:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5572BB81F53;
+        Wed, 23 Mar 2022 13:55:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1923AC340F6;
+        Wed, 23 Mar 2022 13:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648043744;
+        bh=P8NTZuF0QXODpURRwvFC6LW0z8AssRvgJlAdwMonpCg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oy29/wl2bpoI1wsHjVLiihwZqX1tUiGJhKfhp1QXkiNGvJw91j+dYsNT7hRqe0WU3
+         gQ8emufN69eeenFbET/C7/nGr0irezv0LbcKoPZqcysYpr1jZ8CO8z44blAmwIQ2a+
+         UxOYVlWfZDXl4gAbYDHMZaSX33OIN0KmBxGYUmQTu2/a4Sd+35vDDgbL+CEV+lcVbt
+         VJgDiV9dxjUzjV4E1bWBSSGoVF6JZhK1e/OB5bUJk36TCzRlqsSI/uHEOzhiD1naOh
+         Ej4kfgJdgKjg8Hdl4hNT09SERYuCgROQGeMqHECIRxoq7hO9IWZLOuzFwcfqPN3uyI
+         MsPnJY/MnFeIA==
+Received: by mail-ed1-f53.google.com with SMTP id b24so1908134edu.10;
+        Wed, 23 Mar 2022 06:55:43 -0700 (PDT)
+X-Gm-Message-State: AOAM531XIrD+tRbEmtxDzHQhVWmk3YEQ6kUZhuelXmhdhRxKY+O3LNTs
+        nocK6qcbB66TnQbHyFwSbbpk25aXlF3fSBKhdg==
+X-Google-Smtp-Source: ABdhPJyl3S/nnGcuk0QekFB6PwTDpTG4muoEfDkHxTUjbPfg2atZC9hLqjSf0xf6Kd1lpsl0pXjp+7cobGg9ogJfxVM=
+X-Received: by 2002:aa7:da99:0:b0:419:17be:ceb4 with SMTP id
+ q25-20020aa7da99000000b0041917beceb4mr145746eds.303.1648043742316; Wed, 23
+ Mar 2022 06:55:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <70422777-a3f9-b2f1-5faa-94d24fe200ac@arm.com>
+References: <20220224164831.21475-1-ansuelsmth@gmail.com> <20220224164831.21475-2-ansuelsmth@gmail.com>
+In-Reply-To: <20220224164831.21475-2-ansuelsmth@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 23 Mar 2022 08:55:30 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLduGK=CyAcgahswFfeA43vh+QPgRgcL4+=piOwWwvJRQ@mail.gmail.com>
+Message-ID: <CAL_JsqLduGK=CyAcgahswFfeA43vh+QPgRgcL4+=piOwWwvJRQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/15] dt-bindings: clock: split qcom,gcc.yaml to
+ common and specific schema
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Tue, Mar 22, 2022 at 12:00:06PM +0000, Robin Murphy a écrit :
-> On 2022-03-21 20:07, Corentin Labbe wrote:
-> > The rk3399 has a crypto IP handled by the rk3288 crypto driver so adds a
-> > node for it.
-> > 
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >   arch/arm64/boot/dts/rockchip/rk3399.dtsi | 12 ++++++++++++
-> >   1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > index 88f26d89eea1..ca2c658371a5 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > @@ -573,6 +573,18 @@ saradc: saradc@ff100000 {
-> >   		status = "disabled";
-> >   	};
-> >   
-> > +	crypto0: crypto@ff8b0000 {
-> > +		compatible = "rockchip,rk3399-crypto";
-> > +		reg = <0x0 0xff8b0000 0x0 0x4000>,
-> > +		      <0x0 0xff8b8000 0x0 0x4000>;
-> > +		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
-> > +			     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +		clocks = <&cru SCLK_CRYPTO0>, <&cru HCLK_M_CRYPTO0>, <&cru HCLK_S_CRYPTO0>,
-> > +			 <&cru SCLK_CRYPTO1>, <&cru HCLK_M_CRYPTO1>, <&cru HCLK_S_CRYPTO1>;
-> > +		resets = <&cru SRST_CRYPTO0>, <&cru SRST_CRYPTO0_S>, <&cru SRST_CRYPTO0_M>,
-> > +			 <&cru SRST_CRYPTO1>, <&cru SRST_CRYPTO1_S>, <&cru SRST_CRYPTO1_M>;
-> > +	};
-> 
-> What's going on here? If these are simply two instances of the same IP 
-> block as the evidence suggests, why are they crammed into a single DT 
-> node rather than simply being described as two separate instances? I was 
-> rather wondering what all the confusing mess in patch #16 was about, 
-> until I got here.
-> 
-> If there's something in the crypto API that means the driver can't 
-> simply naively register itself multiple times, there should be any 
-> number of ways for the probe routine to keep track of whether it's 
-> already registered something and associate any subsequent devices with 
-> the first one internally if need be. Linux implementation details should 
-> not leak out as non-standard DT weirdness.
-> 
-> I know the Rockchip IOMMU driver does this, but in that case the two 
-> IOMMU instances are closely coupled and sharing work such that they 
-> effectively need to be programmed identically at all times, so it was a 
-> bit more justifiable. I don't know the full story here, but it certainly 
-> looks like rk_get_engine_number() is just a means to schedule work on 
-> any available unit independently, so looks like it wouldn't take much to 
-> select between distinct devices at that point, and actually end up a lot 
-> simpler and cleaner overall.
+On Thu, Feb 24, 2022 at 10:48 AM Ansuel Smith <ansuelsmth@gmail.com> wrote:
+>
+> Split qcom,gcc.yaml to common and specific schema to use it as a
+> template for schema that needs to use the gcc bindings and require
+> to add additional bindings.
+>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/clock/qcom,gcc-other.yaml        | 76 +++++++++++++++++++
 
-Yes rk3399 has 2 instances of the same IP (Exception: crypto1 does not have RSA).
+This now throws errors in linux-next:
 
-The problem is that only one drivername (like rk-md5) could exists.
-If crypto0 and crypto1 register with different drivername (rk-md5-0/rk-md5-1), only one will be used anyway.
-So I merged them into only one instance.
-I think this way will be easier, but you are right, this is not pretty.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+line 816, in resolve_from_url
+    document = self.resolve_remote(url)
+  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+line 923, in resolve_remote
+    result = json.loads(url.read().decode("utf-8"))
+  File "/usr/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib/python3.8/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-doc-validate", line 70, in <module>
+    ret = check_doc(f)
+  File "/usr/local/bin/dt-doc-validate", line 36, in check_doc
+    for error in
+sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda
+e: e.linecol):
+  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line
+1016, in iter_schema_errors
+    meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+line 818, in resolve_from_url
+    raise exceptions.RefResolutionError(exc)
+jsonschema.exceptions.RefResolutionError: Expecting value: line 1
+column 1 (char 0)
+./Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml:
+mapping values are not allowed in this context
+  in "<unicode string>", line 17, column 11
 
-I found another way with 2 nodes:
-You could preview it at https://github.com/montjoie/linux/tree/cryptorockchipv4
-Basicly the crypto0 is a normal instance, and crypto1 "registers" itself against crypto0.
-So if crypto0 know another instance exists it will load balance requests.
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   | 59 +-------------
+>  2 files changed, 80 insertions(+), 55 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> new file mode 100644
+> index 000000000000..4e5903bcd70d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-other.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description:
+> +  Qualcomm global clock control module which supports the clocks, resets and
+> +  power domains.
+> +
+> +  See also:
 
-Regards
+I think the problem is here. You need a '|' after 'description' to
+preserve formatting and ignore what looks like a mapping.
+
+> +  - dt-bindings/clock/qcom,gcc-apq8084.h
+> +  - dt-bindings/reset/qcom,gcc-apq8084.h
+> +  - dt-bindings/clock/qcom,gcc-ipq4019.h
+> +  - dt-bindings/clock/qcom,gcc-ipq6018.h
+> +  - dt-bindings/reset/qcom,gcc-ipq6018.h
+> +  - dt-bindings/clock/qcom,gcc-ipq806x.h (qcom,gcc-ipq8064)
+> +  - dt-bindings/reset/qcom,gcc-ipq806x.h (qcom,gcc-ipq8064)
+> +  - dt-bindings/clock/qcom,gcc-msm8939.h
+> +  - dt-bindings/clock/qcom,gcc-msm8953.h
+> +  - dt-bindings/reset/qcom,gcc-msm8939.h
+> +  - dt-bindings/clock/qcom,gcc-msm8660.h
+> +  - dt-bindings/reset/qcom,gcc-msm8660.h
+> +  - dt-bindings/clock/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+> +  - dt-bindings/reset/qcom,gcc-msm8974.h (qcom,gcc-msm8226 and qcom,gcc-msm8974)
+> +  - dt-bindings/clock/qcom,gcc-mdm9607.h
+> +  - dt-bindings/clock/qcom,gcc-mdm9615.h
+> +  - dt-bindings/reset/qcom,gcc-mdm9615.h
+> +  - dt-bindings/clock/qcom,gcc-sdm660.h  (qcom,gcc-sdm630 and qcom,gcc-sdm660)
