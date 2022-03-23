@@ -2,112 +2,78 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E714C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 14:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E25CC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 15:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237130AbiCWO2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 10:28:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33466 "EHLO
+        id S240152AbiCWP3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 11:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231790AbiCWO2P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 10:28:15 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21B38DF2C;
-        Wed, 23 Mar 2022 07:26:44 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id t7so1234978qta.10;
-        Wed, 23 Mar 2022 07:26:44 -0700 (PDT)
+        with ESMTP id S238427AbiCWP3E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 11:29:04 -0400
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB436E57C;
+        Wed, 23 Mar 2022 08:27:32 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id e4so1986180oif.2;
+        Wed, 23 Mar 2022 08:27:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MgaVbTc6NIAbgS2wEZfzTz0EIf+0SLB19R8ha1w5Zmc=;
-        b=6yh7OkIoFpKFL3aPJ7SSm/F4hrHx85q6Ka0r12r0MXCDIuKsUseKrtkxutPWaOBqFR
-         DsWng2xiiJYyaQuFoKxrWH/gZtgpZXuEyj01WrK0XuLQcWyChNzW5KbKPyBca37a+i8d
-         Mxc40PYPJXFpaHz46kIHmtEEiFLwO+URSI1aBIB9PjMVKxompgXlBsd6XhwKxrUHZfnJ
-         84QOYmLQo6FE8XiHp4qedljX5H2HGCGDzJ2lk/5XSOLzgKoG2cqIQlbu4ErJO/X7qG/u
-         yNjFmsOwd+OowWNLgVHTL9hLFyFOSVcBPnToBZJP/YRb/VIq/KmTErDqWKDx/pixMIGU
-         XAqQ==
-X-Gm-Message-State: AOAM533tbJpw0/aOGCa5UG78a9EZUN8hpq3xlmtzzQCl+J2jFkkRYEWE
-        yKJRwP8gmpXcFHHLlPA9CZOlNAhT1k0rqquj
-X-Google-Smtp-Source: ABdhPJzPnzoyNIrd1y1A1+ahUJOehAFamtMkh/kPgcBS1SG4dLj9mcGF3yn2if79yS8zlNzQ6JvmxQ==
-X-Received: by 2002:ac8:57ca:0:b0:2e2:131b:6f0e with SMTP id w10-20020ac857ca000000b002e2131b6f0emr11994094qta.664.1648045602739;
-        Wed, 23 Mar 2022 07:26:42 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id b21-20020a05620a04f500b0067b4895472esm75201qkh.5.2022.03.23.07.26.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Mar 2022 07:26:42 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id z8so2989358ybh.7;
-        Wed, 23 Mar 2022 07:26:42 -0700 (PDT)
-X-Received: by 2002:a5b:a8f:0:b0:633:fd57:f587 with SMTP id
- h15-20020a5b0a8f000000b00633fd57f587mr190730ybq.506.1648045601981; Wed, 23
- Mar 2022 07:26:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220301190400.1644150-1-robh@kernel.org> <CAMuHMdXqsvQy_6+6w8DVCtqNiFERPV29xd3HRqtyz9RY3KXOYw@mail.gmail.com>
- <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com>
- <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com> <CAL_Jsq+=2oibXA1otjaVoGY0GWdLZg2bmw1C9BACga5P99X35A@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+=2oibXA1otjaVoGY0GWdLZg2bmw1C9BACga5P99X35A@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 23 Mar 2022 15:26:30 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUHUqCccnUa2WaAm=7s8EcumwJoZ22Wyy1=hosOu1kVuQ@mail.gmail.com>
-Message-ID: <CAMuHMdUHUqCccnUa2WaAm=7s8EcumwJoZ22Wyy1=hosOu1kVuQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OiYCf95OWnPHrVVcTil3o0lRfEOuLqIN4kvzsdZ2vik=;
+        b=TnJeNwpLWNzEJeN4I9gJGnkiQQe7d6xrKAtG9CCTK8ArlTY5Rosou4jVSS9XQ5wEl8
+         2skd+VK1l++zZ+y5emIzxi6UdXCejIY07uOtIzMYyFHuJnJJ/HpGx2rqRHr2uEzOrNiU
+         eD5TUpnLTpLGzt/S4iAMtfbhBcJFCrOtltm8UUywp26i/wB67N+hcDB6E7GdlgTQIFji
+         9MIzXyTUUvZlEnRjc47jdgE+YNooUlkdBp6V72w4kYmWpt/pTSHIp18SuVJar/xbHJ40
+         xr9r1Z+scrV7ahwBQVHFp0oa3IecOfYX/Q1W1GbrcYuJA0NtqULyo/dafr5YXtl4p0ec
+         KYlg==
+X-Gm-Message-State: AOAM5304G8XD5BvCTEFkUpPLw8maWIx9iFWRcwNhF840KY10xbw/AIOM
+        4ZqZ4YAp3IEgWceEQFblsSERl1XYSA==
+X-Google-Smtp-Source: ABdhPJybrZv5UTpvpd5w0OCO/sjEIBA8GtcwyYtDEnIypXsi04z3xMY5BwbDKYJSvJpxjrYZ7eJPzQ==
+X-Received: by 2002:a05:6808:2189:b0:2da:b59:3acb with SMTP id be9-20020a056808218900b002da0b593acbmr4953810oib.112.1648049252195;
+        Wed, 23 Mar 2022 08:27:32 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id b188-20020aca34c5000000b002da579c994dsm60536oia.31.2022.03.23.08.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 08:27:30 -0700 (PDT)
+Received: (nullmailer pid 4133173 invoked by uid 1000);
+        Wed, 23 Mar 2022 15:27:29 -0000
+Date:   Wed, 23 Mar 2022 10:27:29 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v6 15/18] dt-bindings: clock: Add L2 clocks to
+ qcom,krait-cc Documentation
+Message-ID: <Yjs8YdAbytYhhnb4@robh.at.kernel.org>
+References: <20220321231548.14276-1-ansuelsmth@gmail.com>
+ <20220321231548.14276-16-ansuelsmth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220321231548.14276-16-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+On Tue, 22 Mar 2022 00:15:45 +0100, Ansuel Smith wrote:
+> Krait-cc qcom driver provide also L2 clocks and require the acpu_l2_aux
+> and the hfpll_l2 clock to be provided. Add these missing clocks to the
+> Documentation. The driver keep support for both old (it did already used
+> these clocks and we keep the same naming scheme) and this new
+> implementation and should prevent any regression by this fixup.
+> 
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,krait-cc.yaml       | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
 
-On Wed, Mar 23, 2022 at 3:07 PM Rob Herring <robh@kernel.org> wrote:
-> On Tue, Mar 8, 2022 at 3:53 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Fri, Mar 4, 2022 at 2:28 PM Rob Herring <robh@kernel.org> wrote:
-> > > On Fri, Mar 4, 2022 at 3:09 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Tue, Mar 1, 2022 at 8:04 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > 'clocks' in the example is not parsable with the 0 phandle value
-> > > > > because the number of #clock-cells is unknown in the previous entry.
-> > > > > Solve this by adding the clock provider node. Only 'cpg_clocks' is
-> > > > > needed as the examples are built with fixups which can be used to
-> > > > > identify phandles.
-> > > > >
-> > > > > This is in preparation to support schema validation on .dtb files.
-> > > > >
-> > > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > >
-> > > > Thanks for your patch!
-> > > >
-> > > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >
-> > > > Do you want me to queue this in renesas-clk-for-v5.19, or do you
-> > > > want to take it yourself, together with the validation patches?
-> > > > Please let me know.
-> > >
-> > > You can take it.
-> >
-> > Thanks, queuing in renesas-clk-for-v5.19.
->
-> This needs to go in 5.18, not 5.19.
-
-Mike/Stephen: can you please take this directly?
-Thanks!
-
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
