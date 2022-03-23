@@ -2,261 +2,236 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5799BC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 08:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D557C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 09:59:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240447AbiCWIxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 04:53:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
+        id S243372AbiCWKBN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 06:01:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233985AbiCWIxR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 04:53:17 -0400
-Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4D972E07;
-        Wed, 23 Mar 2022 01:51:46 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 0B0FC3200C4A;
-        Wed, 23 Mar 2022 04:51:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 23 Mar 2022 04:51:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=F9M2I+3m5383hh01Q4rw+Q7eh2cWbcFSUcjzbo
-        ebKQE=; b=zJVdHWUg9SmFe9vt/aJgAUICqpCYrHT7IYBjVYIs10QpE4V5ITHkPS
-        X5Xb8lXHj1ie6x1zSkq3+//NkOkzWd0MutXF7ThRQGZXXpUuwG0IMN4BSnxk35Vg
-        LfdG+nD/A96s+l95aIdyuP5vLi2a4fm7wPK2i1rZSF5aR5G9K8nLR8U3hszkwoiY
-        kTpZT4XZ3qhr1dSdSB5j2s6A361eYOUWPKhTD00ANxWpfAU5vPWdq/Qyw0RL3I4k
-        hogvVYUmk2IkrXYSODTQ+t6a3W7JltXNhrBbElfxLgniA8lrM3PM6s+oaICmpY/T
-        BOxlIKMXAWimI/cjqI/X1iZBOIPPJaiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=F9M2I+3m5383hh01Q
-        4rw+Q7eh2cWbcFSUcjzboebKQE=; b=Hmf9vAgJL1q7x0VUnmDwc0tHtwpybeKJh
-        nxOtKUOa1NoTQ/SJr+4jG60UP2qi49N8KO9IOzCLN3gj7NL4T3e5V9nSvkBPIt75
-        fJs8/xGK5MiK0I7Ki0yo5ki/omJOaQ+jmOlfHtIRTS9wVGr/z09mSjleUG+tnLrY
-        wKh+LDN0k549v43qBeYlR06/kl/cOrHKgwssxr4i5VwFY6o5UJio/zzuQvh79WDT
-        NMOV2bShWt18yH7s98jMKiMYejP/l+5D1YaOQyevfiNCztpt/5pOEHySpqme3kLL
-        GofxnKhj1mbAUAODBMwf8Y4L7VkrpWSVSSC0tsxem3/A2iUmqXQVQ==
-X-ME-Sender: <xms:n986YpAJzcgsibHiBn4mTn1DA9fmaCjNOeOcGaLgMWMyVm6ea6OX8g>
-    <xme:n986YniOmq4dwsg9Zd39bQqGoCr45rHIyx5lgueoVEI9GN_oyuafa7imV_lNVrAT5
-    0NEFCd22jfFGFPF48s>
-X-ME-Received: <xmr:n986YknRzpFum28ukV52a3fBdEvQ0bS0KppKu3FXZ0gf0Vo4YgpOd9onsy9yLvjoKcnzWqhHnycTvRzM7Fve9RD6qKRbVVHGqT0uwbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudegiedguddvfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeduhedugeelgeegieetheekteegudfffeeuudfhuefhudeihfelheelheef
-    hfehleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihi
-    mhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:n986YjweRmdAm-IhElpeqZHwIQfFkHjqgHWSI49mqRml2TaqQqD0TQ>
-    <xmx:n986YuSLmBuYrYqwQgEviDV_ryFhuaHFJbUVfTbXwWFNI909zHXSiw>
-    <xmx:n986YmYEufxUy13E0HvzHbYih1uO7qEWCWNNjLM9EQ7Vf1ULbqWfig>
-    <xmx:n986YhGe6A-DDNi9KvJEKRYc53buZpSte5_ycVitwDA33QSMX_vY9w>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Mar 2022 04:51:42 -0400 (EDT)
-Date:   Wed, 23 Mar 2022 09:51:40 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v7 06/12] clk: Always set the rate on clk_set_range_rate
-Message-ID: <20220323085140.ifeclmttkrqo55ru@houat>
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-7-maxime@cerno.tech>
- <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+        with ESMTP id S239268AbiCWKBM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 06:01:12 -0400
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36C375C37;
+        Wed, 23 Mar 2022 02:59:42 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id r22so1704019ejs.11;
+        Wed, 23 Mar 2022 02:59:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=RkfMRwQ+lzNAq0Y79wKv+fIuubMsSf8cziDDSaFTilM=;
+        b=sYViR/5W1aINEirPPtsZ4Pe9BasCo37hI/1QbOqMVG9EpWNqCSGfJVQzgl09HG/8a9
+         48Albv+u8wkdrWBcdkivscKn8TB3P4dPCfLo+H5jHWYs9nWrGBVGTD5eNXcWtXFxQpSK
+         Lu4PriSxbd3d9SYHQRrCRXKuVI9qajrF3AYMlYV+ditXGY0zpeG3adiEo6N1aSzDfUp/
+         jb0R2YtItmyZmwdGkH1G3f1T5N8wsbKlgRT5ytYpvlTjwVDKeBYcIPjqjP7tmkLVUfDP
+         SaD5sHFOG712AQ2fVdOlAF/GzjDihq4WH8R7PUzU8o/qPRowx2QZDardBBvtbrR/388m
+         AcUg==
+X-Gm-Message-State: AOAM532kcHku9SZpfVV58YqZ6Mj/x+AlsGDVnakrAqdBYco3sNNti3pC
+        WJcCq2R7x2LdcRlKKyMnMxA=
+X-Google-Smtp-Source: ABdhPJwjV+ei6iKYAvFwt4ijhV80vJ+s3wmOKfaFxFMyXsM5AGVP3dJvLED3a7u2jEgvijnDBfVk/w==
+X-Received: by 2002:a17:907:3e0d:b0:6e0:5c27:a184 with SMTP id hp13-20020a1709073e0d00b006e05c27a184mr3041967ejc.355.1648029581079;
+        Wed, 23 Mar 2022 02:59:41 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id yy18-20020a170906dc1200b006d6e5c75029sm9447882ejb.187.2022.03.23.02.59.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Mar 2022 02:59:40 -0700 (PDT)
+Message-ID: <f13fdc4b-8f45-b09f-5d58-8d2a565e2c18@kernel.org>
+Date:   Wed, 23 Mar 2022 10:59:39 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cicq5zfd5kk2y3zt"
-Content-Disposition: inline
-In-Reply-To: <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 17/18] dt-bindings: arm: msm: Convert kpss-gcc driver
+ Documentation to yaml
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220321231548.14276-1-ansuelsmth@gmail.com>
+ <20220321231548.14276-18-ansuelsmth@gmail.com>
+ <e832516d-277d-6a0b-4588-b32a085185c8@kernel.org>
+ <YjnOdYMS+P85pqvF@Ansuel-xps.localdomain>
+In-Reply-To: <YjnOdYMS+P85pqvF@Ansuel-xps.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 22/03/2022 14:26, Ansuel Smith wrote:
+> On Tue, Mar 22, 2022 at 11:07:26AM +0100, Krzysztof Kozlowski wrote:
+>> On 22/03/2022 00:15, Ansuel Smith wrote:
+>>> Convert kpss-gcc driver Documentation to yaml. Since kpss-gcc expose a
+>>> clock add the required '#clock-cells' binding while converting it.
+>>>
+>>> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+>>> ---
+>>>  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
+>>>  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 69 +++++++++++++++++++
+>>>  2 files changed, 69 insertions(+), 44 deletions(-)
+>>>  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>>  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>> deleted file mode 100644
+>>> index e628758950e1..000000000000
+>>> --- a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
+>>> +++ /dev/null
+>>> @@ -1,44 +0,0 @@
+>>> -Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
+>>> -
+>>> -PROPERTIES
+>>> -
+>>> -- compatible:
+>>> -	Usage: required
+>>> -	Value type: <string>
+>>> -	Definition: should be one of the following. The generic compatible
+>>> -			"qcom,kpss-gcc" should also be included.
+>>> -			"qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-apq8064", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-msm8974", "qcom,kpss-gcc"
+>>> -			"qcom,kpss-gcc-msm8960", "qcom,kpss-gcc"
+>>> -
+>>> -- reg:
+>>> -	Usage: required
+>>> -	Value type: <prop-encoded-array>
+>>> -	Definition: base address and size of the register region
+>>> -
+>>> -- clocks:
+>>> -	Usage: required
+>>> -	Value type: <prop-encoded-array>
+>>> -	Definition: reference to the pll parents.
+>>> -
+>>> -- clock-names:
+>>> -	Usage: required
+>>> -	Value type: <stringlist>
+>>> -	Definition: must be "pll8_vote", "pxo".
+>>> -
+>>> -- clock-output-names:
+>>> -	Usage: required
+>>> -	Value type: <string>
+>>> -	Definition: Name of the output clock. Typically acpu_l2_aux indicating
+>>> -		    an L2 cache auxiliary clock.
+>>> -
+>>> -Example:
+>>> -
+>>> -	l2cc: clock-controller@2011000 {
+>>> -		compatible = "qcom,kpss-gcc-ipq8064", "qcom,kpss-gcc";
+>>> -		reg = <0x2011000 0x1000>;
+>>> -		clocks = <&gcc PLL8_VOTE>, <&gcc PXO_SRC>;
+>>> -		clock-names = "pll8_vote", "pxo";
+>>> -		clock-output-names = "acpu_l2_aux";
+>>> -	};
+>>> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>>> new file mode 100644
+>>> index 000000000000..7eb852be02c1
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+>>> @@ -0,0 +1,69 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/arm/msm/qcom,kpss-gcc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Krait Processor Sub-system (KPSS) Global Clock Controller (GCC)
+>>> +
+>>> +maintainers:
+>>> +  - Ansuel Smith <ansuelsmth@gmail.com>
+>>> +
+>>> +description: |
+>>> +  Krait Processor Sub-system (KPSS) Global Clock Controller (GCC). Used
+>>> +  to control L2 mux (in the current implementation).
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - qcom,kpss-gcc-ipq8064
+>>> +          - qcom,kpss-gcc-apq8064
+>>> +          - qcom,kpss-gcc-msm8974
+>>> +          - qcom,kpss-gcc-msm8960
+>>> +      - const: qcom,kpss-gcc
+>>> +      - const: syscon
+>>
+>> There was no syscon here before. This is not explained in commit msg or
+>> patch history, while I asked to document explicitly any deviation from
+>> the conversion.
+>>
+>> This is not how the process works. You keep making silent/hidden changes
+>> to the bindings and to the patch submission process. It's difficult to
+>> review and it is even more difficult to trust you that you implement
+>> what we ask for. You keep resending versions of the patchset the same
+>> day (two versions yesterday, shortly after another one) which does not
+>> give time to react and review. Plus then you hide some more changes to
+>> regular conversion without explaining them.
+>>
+>> NAK. It's really bad process. :(
+>>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> The thing is that i'm trying to fix all the mess of years of keeping bad
+> Documentation and having dts that never followed Documentation. It's
+> really nothing silent/hidden. You add review tag to a patch? That won't
+> change. The bot alert me of some bugs? I push another revision with the
+> bug fixed. 
 
---cicq5zfd5kk2y3zt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It does not necessarily mean that bindings are bad and such changes
+should be documented.
 
-Hi,
+> (I understand I should not send that much revision in the
+> same day but still considering the slow process of reviewing the c code,
+> I prefer to keep the Documentation part correct and ready)
 
-On Tue, Mar 22, 2022 at 10:05:56PM +0300, Dmitry Osipenko wrote:
-> On 2/25/22 17:35, Maxime Ripard wrote:
-> > When we change a clock minimum or maximum using clk_set_rate_range(),
-> > clk_set_min_rate() or clk_set_max_rate(), the current code will only
-> > trigger a new rate change if the rate is outside of the new boundaries.
-> >=20
-> > However, a clock driver might want to always keep the clock rate to
-> > one of its boundary, for example the minimum to keep the power
-> > consumption as low as possible.
-> >=20
-> > Since they don't always get called though, clock providers don't have t=
-he
-> > opportunity to implement this behaviour.
-> >=20
-> > Let's trigger a clk_set_rate() on the previous requested rate every time
-> > clk_set_rate_range() is called. That way, providers that care about the
-> > new boundaries have a chance to adjust the rate, while providers that
-> > don't care about those new boundaries will return the same rate than
-> > before, which will be ignored by clk_set_rate() and won't result in a
-> > new rate change.
-> >=20
-> > Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/clk/clk.c      | 45 ++++++++++++++++----------------
-> >  drivers/clk/clk_test.c | 58 +++++++++++++++++++-----------------------
-> >  2 files changed, 49 insertions(+), 54 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index c15ee5070f52..9bc8bf434b94 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2373,28 +2373,29 @@ int clk_set_rate_range(struct clk *clk, unsigne=
-d long min, unsigned long max)
-> >  		goto out;
-> >  	}
-> > =20
-> > -	rate =3D clk_core_get_rate_nolock(clk->core);
-> > -	if (rate < min || rate > max) {
-> > -		/*
-> > -		 * FIXME:
-> > -		 * We are in bit of trouble here, current rate is outside the
-> > -		 * the requested range. We are going try to request appropriate
-> > -		 * range boundary but there is a catch. It may fail for the
-> > -		 * usual reason (clock broken, clock protected, etc) but also
-> > -		 * because:
-> > -		 * - round_rate() was not favorable and fell on the wrong
-> > -		 *   side of the boundary
-> > -		 * - the determine_rate() callback does not really check for
-> > -		 *   this corner case when determining the rate
-> > -		 */
-> > -
-> > -		rate =3D clamp(clk->core->req_rate, min, max);
-> > -		ret =3D clk_core_set_rate_nolock(clk->core, rate);
-> > -		if (ret) {
-> > -			/* rollback the changes */
-> > -			clk->min_rate =3D old_min;
-> > -			clk->max_rate =3D old_max;
-> > -		}
-> > +	/*
-> > +	 * Since the boundaries have been changed, let's give the
-> > +	 * opportunity to the provider to adjust the clock rate based on
-> > +	 * the new boundaries.
-> > +	 *
-> > +	 * We also need to handle the case where the clock is currently
-> > +	 * outside of the boundaries. Clamping the last requested rate
-> > +	 * to the current minimum and maximum will also handle this.
-> > +	 *
-> > +	 * FIXME:
-> > +	 * There is a catch. It may fail for the usual reason (clock
-> > +	 * broken, clock protected, etc) but also because:
-> > +	 * - round_rate() was not favorable and fell on the wrong
-> > +	 *   side of the boundary
-> > +	 * - the determine_rate() callback does not really check for
-> > +	 *   this corner case when determining the rate
-> > +	 */
-> > +	rate =3D clamp(clk->core->req_rate, min, max);
-> > +	ret =3D clk_core_set_rate_nolock(clk->core, rate);
-> > +	if (ret) {
-> > +		/* rollback the changes */
-> > +		clk->min_rate =3D old_min;
-> > +		clk->max_rate =3D old_max;
-> >  	}
-> > =20
-> >  out:
->
-> NVIDIA Tegra30 no longer boots with this change.
->=20
-> You can't assume that rate was requested by clk_set_rate() before
-> clk_set_rate_range() is called, see what [1] does.
+Rob also pointed to this - sending two versions of this huge patchset
+the same day is way too much.
 
-We don't, and it would be bad indeed.
+> 
+> If you notice the changes across the different patch, it's very minimal
+> and 99% of it has not changed. Nothing silent just me addressing warning
+> from the bot. About the trust issue...
+> Is it really a syscon addition that bad? Again the original
+> Documentation was just bad so why should we care to have a 100% 1:1
+> conversion if it should have been not accepted in the first place.
 
-We even have (multiple) tests to cover that case:
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/tree/drivers/=
-clk/clk_test.c?h=3Dclk-range&id=3Da9b269310ad9abb2f206fe814fd3afcadddce3aa#=
-n242
+Does not have to be 100% but deviations should be either expected or
+explained. Bindings are used also outside of Linux kernel.
 
-> T30 memory rate now drops to min on boot when clk debug range is
-> inited innocuously and CPU no longer can make any progress because
-> display controller takes out whole memory bandwidth.
->=20
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/=
-drivers/memory/tegra/tegra30-emc.c#n1437
->=20
-> If clk_set_rate() wasn't ever invoked and req_rate=3D0, then you must not
-> change the clk rate if it's within the new range. Please revert this
-> patch, thanks.
+> The addition of this new syscon is because in the current dtsi it's
+> there and I assume it's there as this is a global accessor and probably
+> other driver would access the same regs (so it's also a syscon)
 
-The whole point of this patch is to give an opportunity to every driver
-to change the rate whenever the boundaries have changed, so we very much
-want to have the option to change it if clk_set_rate() has never been
-called.
+If these are assumptions, then they need to be checked. If these were
+new bindings, we would discuss/check the need of syscon. Now we do not
+question existing properties, because they were accepted. But syscon
+compatible was not accepted, so putting it here requires our acknowledgment.
 
-However, I think the issue is why req_rate would be 0 in the first
-place?
+The bindings are probably pure junk, so this is not merely a conversion
+how you wrote in commit msg. This is rework of the bindings. Don't hide
+rework under "conversion". Conversion is TXT->YAML without any changes...
 
-req_rate is initialized to what recalc_rate returns:
-https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L3607
+I asked about this before and the only part you added to commit msg was
+"clock-cells". And now I see syscon - so isn't it a bit surprising?
 
-So the case where req_rate is 0 shouldn't occur unless you had an
-explicit clk_set_rate to 0, or if your clock was orphaned at some point.
+> 
+> I understand the complain about putting too much revision... But NAK
+> this cause I'm trying to fix all this mess just because more and more
+> problems are coming up and I'm trying to fix them. It's a bit sad.
 
-Judging from the code, it seems like the latter is the most plausible.
-Indeed, __clk_core_init() will set req_rate to 0 if the clock is
-orphaned (just like rate and accuracy), and
-clk_core_reparent_orphans_nolock will be in charge of updating them when
-the clock is no longer an orphan.
+Why you cannot test your changes and fix them all before sending sixth
+version? Why the bot has to test your code, not you?
 
-However, clk_core_reparent_orphans_nolock() will update rate by calling
-__clk_recalc_rate and accuracy by calling __clk_recalc_accuracies, but
-it never sets req_rate.
-
-I'm not sure if this is the right patch, Stephen will tell, but could
-you test:
-
------------------------- >8 ------------------------
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9bc8bf434b94..c43340afedee 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3479,6 +3479,7 @@ static void clk_core_reparent_orphans_nolock(void)
- 			__clk_set_parent_after(orphan, parent, NULL);
- 			__clk_recalc_accuracies(orphan);
- 			__clk_recalc_rates(orphan, 0);
-+			orphan->req_rate =3D orphan->rate;
- 		}
- 	}
- }
-
------------------------- >8 ------------------------
-
-Maxime
-
---cicq5zfd5kk2y3zt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYjrflwAKCRDj7w1vZxhR
-xSfZAP9hSMfZjOdlobFqCwZaycsyt8eFvkcipSAJf5yuxXuzxwEAllH2qwBrezuC
-5+HjlqOdhVrM+Lk9twk9YdX494m1KgY=
-=j69K
------END PGP SIGNATURE-----
-
---cicq5zfd5kk2y3zt--
+> Hope you can understand that it's not my interest to push silent changes
+> or other nasty stuff. It's just me fixing the mess and trying to at
+> least have the Documentation part ready while I wait for c code review.
+Best regards,
+Krzysztof
