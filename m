@@ -2,75 +2,113 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCC5C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 11:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EE9C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 13:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243782AbiCWLSI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 07:18:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48458 "EHLO
+        id S244141AbiCWNJD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 09:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241420AbiCWLSI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 07:18:08 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A83A57891B;
-        Wed, 23 Mar 2022 04:16:38 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 467FFED1;
-        Wed, 23 Mar 2022 04:16:38 -0700 (PDT)
-Received: from bogus (unknown [10.57.41.67])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C74303F73B;
-        Wed, 23 Mar 2022 04:16:34 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 11:15:05 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-Cc:     "krzysztof.kozlowski@canonical.com" 
-        <krzysztof.kozlowski@canonical.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v11 0/9] Add Sunplus SP7021 SoC Support
-Message-ID: <20220323111505.caioueiqdj75kw6b@bogus>
-References: <cover.1647928315.git.qinjian@cqplus1.com>
- <YjmrdlQqoqUNcs7R@bogus>
- <be7f6ea70a5146a190c750695aead7f5@cqplus1.com>
+        with ESMTP id S244137AbiCWNJA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 09:09:00 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFB17CDD6
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:07:29 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id r7so935021wrc.0
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:07:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/7GPfWTScrdUPxYCfpF4p4gmdocaWvB3DedYIkySiRQ=;
+        b=7EDiYHM0/mHUHNh2nAcUtV8Mo87BBMJDjh2R3QaAEXuxurVdInHyGhkLnwH6gL3bPY
+         ftLMYfyygow8mzkD5Dev2Iq+3cB/DbsVL3VVzYv3NYkRy77gO07thxxfnDuE/5vvFwiB
+         SnNZc9jBzd7JxXBaPe5MmyMhQ/dZvf5IJrjHbztF2VDxy+YSXfGCFsGy91bzu0dpwUVD
+         vLLzZ2UR7OCpthmgXf0+rBDgwrScxpIXhhh0aF66G9+NvYfooCnN6Ac965njTsu7vX7H
+         5rK015KemhcLQmxFbNnPmlRfVnVllLsShyU6SyQvhK65gIf9XVzlSMG1ZoK1rbNLFDgk
+         2K8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/7GPfWTScrdUPxYCfpF4p4gmdocaWvB3DedYIkySiRQ=;
+        b=iyUCybmFKAhpVMxseD/DhIiMnQEd+YjjPyRvNcQrBVFbmZLXciGgxvtcTGtLPcyhjh
+         vkzdhRt9as7x/Z7zH1vEQZWqCwo33uXatAh7HjFj6si8V+mte7G380L3MFH3LtQh9gct
+         4g4/tCFeGxwlreOuPiJ2+5rjCnDRbYYq7D1G3Me0vIcfbRX33Gv2PUdgCgxRpjPuKBIP
+         wUYE+7XbsqFL3x6ArufhfGD0zqVS0FJYH+trMBsHFymLzE0aCPco8q1sjnlZupVfagOm
+         gxKy8fZwFjrmhoUhR07zQS/Abwr9FEybRiXTbynrldqMRwlmSBE0SLuOqWM9av2J39yG
+         9qqA==
+X-Gm-Message-State: AOAM531QxhS0j495q1sjwQ9YyBkMpaY+2lZl2cpNoTapIQsMqxwdBwmd
+        E4pn2pVAyTsF/e1oZrOEtDAYsw==
+X-Google-Smtp-Source: ABdhPJwlHTs/jXded6YR+bEyG9ABUfL/AlSP0pBeJMmhWDxUYvyYfFnDLfkgPcSrNXyLqFblB0f+cw==
+X-Received: by 2002:a5d:5509:0:b0:204:f77:c2d with SMTP id b9-20020a5d5509000000b002040f770c2dmr13533390wrv.432.1648040848448;
+        Wed, 23 Mar 2022 06:07:28 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id n20-20020a05600c4f9400b0038cbd13e06esm2794951wmq.2.2022.03.23.06.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 06:07:27 -0700 (PDT)
+Date:   Wed, 23 Mar 2022 14:07:25 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 06/26] crypto: rockchip: add fallback for cipher
+Message-ID: <YjsbjaQrj2Y+cLmL@Red>
+References: <20220321200739.3572792-1-clabbe@baylibre.com>
+ <20220321200739.3572792-7-clabbe@baylibre.com>
+ <c643c8a0-3ebc-519b-bc6e-f95362d43a69@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <be7f6ea70a5146a190c750695aead7f5@cqplus1.com>
+In-Reply-To: <c643c8a0-3ebc-519b-bc6e-f95362d43a69@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 02:40:51AM +0000, qinjian[覃健] wrote:
+Le Tue, Mar 22, 2022 at 11:25:25AM +0000, Robin Murphy a �crit :
+> On 2022-03-21 20:07, Corentin Labbe wrote:
+> > The hardware does not handle 0 size length request, let's add a
+> > fallback.
+> > Furthermore fallback will be used for all unaligned case the hardware
+> > cannot handle.
 > > 
-> > Not related to this series, but to the platform in general. You still
-> > need to resolved the boot/cpu-method for this platform before you add
-> > support for all the 4 cpus on this platform. I remember discussing about
-> > CPUIdle on a separate thread. I thought this is best thread to remind that
-> > so that it is addressed before we see either cpuidle or cpuhotplug support
-> > on this platform.
+> > Fixes: ce0183cb6464b ("crypto: rockchip - switch to skcipher API")
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >   drivers/crypto/Kconfig                        |   4 +
+> >   drivers/crypto/rockchip/rk3288_crypto.h       |   2 +
+> >   .../crypto/rockchip/rk3288_crypto_skcipher.c  | 105 +++++++++++++++---
+> >   3 files changed, 98 insertions(+), 13 deletions(-)
 > > 
-> Thanks for your comments.
-> Currently,  we boot all 4 cores via psci successfully.
+> > diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+> > index 7b2d138bc83e..84ab14afcbd9 100644
+> > --- a/drivers/crypto/Kconfig
+> > +++ b/drivers/crypto/Kconfig
+> > @@ -784,6 +784,10 @@ config CRYPTO_DEV_IMGTEC_HASH
+> >   config CRYPTO_DEV_ROCKCHIP
+> >   	tristate "Rockchip's Cryptographic Engine driver"
+> >   	depends on OF && ARCH_ROCKCHIP
+> > +	depends on PM
+> 
+> This appears to belong to patch #13 rather than this one.
 > 
 
-That's great. Sounds like Edwin Chiu may not be fully aware of the situation
-based on the discussion we had here[1]
+Hello
 
--- 
-Regards,
-Sudeep
+Yes this is an error, I will move it this line on the right patch.
 
-[1] https://lore.kernel.org/lkml/1628e048220f066204b8ac27f3cedf7f3cc02963.1645427180.git.edwinchiu0505tw@gmail.com/
+> My initial thought was that it probably shouldn't be something for 
+> random consumers to care about at all, but there do seem to be a handful 
+> of other drivers relying on pm_runtime_resume to enable their clocks, so 
+> I guess maybe it's an acceptable idiom :/
+> 
+
+Depending on PM made the driver easier to understand (no more if PM/if not PM).
+And anyway, since it's embedded device, PM should be always enabled.
+
+Thanks
