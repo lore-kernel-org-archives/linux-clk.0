@@ -2,101 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248AAC433F5
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Mar 2022 20:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E200CC433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 01:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbiCVUf6 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Mar 2022 16:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41988 "EHLO
+        id S240480AbiCWBp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Mar 2022 21:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbiCVUf6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 16:35:58 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66492559E;
-        Tue, 22 Mar 2022 13:34:30 -0700 (PDT)
-Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KNNTV6Nh1z67NyL;
-        Wed, 23 Mar 2022 04:32:46 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
+        with ESMTP id S229622AbiCWBp1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Mar 2022 21:45:27 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4D9842DAB0
+        for <linux-clk@vger.kernel.org>; Tue, 22 Mar 2022 18:43:50 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(7834:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Wed, 23 Mar 2022 09:41:20 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 22 Mar 2022 21:34:28 +0100
-Received: from localhost (10.47.75.191) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Tue, 22 Mar
- 2022 20:34:27 +0000
-Date:   Tue, 22 Mar 2022 20:34:26 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Tomislav Denis <tomislav.denis@avl.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Michal Simek" <michal.simek@xilinx.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "Michael Hennerich" <Michael.Hennerich@analog.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+ 15.1.2375.18; Wed, 23 Mar 2022 09:41:50 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.018; Wed, 23 Mar 2022 09:41:50 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-        Russell King <linux@armlinux.org.uk>,
-        =?ISO-8859-1?Q?Andr=E9?= Gustavo Nakagomi Lopez 
-        <andregnl@usp.br>, "Vladimir Zapolskiy" <vz@mleia.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        <linux-iio@vger.kernel.org>, Cai Huoqing <caihuoqing@baidu.com>,
-        <kernel@pengutronix.de>, Nuno Sa <nuno.sa@analog.com>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 04/16] iio: Make use of devm_clk_get_enabled()
-Message-ID: <20220322203426.00002532@Huawei.com>
-In-Reply-To: <20220321074154.rktt7e54q774puwj@pengutronix.de>
-References: <20220314141643.22184-1-u.kleine-koenig@pengutronix.de>
-        <20220314141643.22184-5-u.kleine-koenig@pengutronix.de>
-        <20220319182240.30456776@jic23-huawei>
-        <20220321074154.rktt7e54q774puwj@pengutronix.de>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.29; i686-w64-mingw32)
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v11 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021
+ defconfig
+Thread-Topic: [PATCH v11 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021
+ defconfig
+Thread-Index: AQHYPbV20XoTM/apKU2VdtNWQYp2n6zKqyIAgAGFk2A=
+Date:   Wed, 23 Mar 2022 01:41:50 +0000
+Message-ID: <d79dd7655c964f88a58d8bf403da39be@cqplus1.com>
+References: <cover.1647928315.git.qinjian@cqplus1.com>
+ <8372ee2fcf361a3af7233450c4403178052ceee2.1647928316.git.qinjian@cqplus1.com>
+ <CAK8P3a1H2xM1PdDwKPWHD0fqZ0q_o-KZTLvSXdm9jjqTWcX-hA@mail.gmail.com>
+In-Reply-To: <CAK8P3a1H2xM1PdDwKPWHD0fqZ0q_o-KZTLvSXdm9jjqTWcX-hA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.47.75.191]
-X-ClientProxiedBy: lhreml742-chm.china.huawei.com (10.201.108.192) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 21 Mar 2022 08:41:54 +0100
-Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
-
-> Hello,
-> 
-> On Sat, Mar 19, 2022 at 06:22:40PM +0000, Jonathan Cameron wrote:
-> > On Mon, 14 Mar 2022 15:16:31 +0100
-> > Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
-> >   
-> > > Several drivers manually register a devm handler to disable their clk.
-> > > Convert them to devm_clk_get_enabled().
-> > > 
-> > > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  
-> > 
-> > Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > 
-> > If this does get picked up, can who ever does it please provide
-> > an immutable branch. With some many drivers cleaned up, it's very
-> > likely to cause some merge fun somewhere otherwise.  
-> 
-> That would be good, indeed. If only the first two patches go in via clk
-> tree, it would however also be OK for me if the other patches go in only
-> after the clk changes are in an -rc1. I can care about rebasing if need
-> be.
-
-That works to, but so slow!!! :)
-
-Jonathan
-
-> 
-> Best regards
-> Uwe
-> 
-
+PiBPbiBUdWUsIE1hciAyMiwgMjAyMiBhdCA3OjE3IEFNIFFpbiBKaWFuIDxxaW5qaWFuQGNxcGx1
+czEuY29tPiB3cm90ZToNCj4gPg0KPiA+IEFkZCBnZW5lcmljIFN1bnBsdXMgU1A3MDIxIGJhc2Vk
+IGJvYXJkIGRlZmNvbmZpZw0KPiA+DQo+ID4gUmV2aWV3ZWQtYnk6IEFybmQgQmVyZ21hbm4gPGFy
+bmRAYXJuZGIuZGU+DQo+ID4gU2lnbmVkLW9mZi1ieTogUWluIEppYW4gPHFpbmppYW5AY3FwbHVz
+MS5jb20+DQo+IA0KPiBJIGRvbid0IHRoaW5rIEkgZXZlciByZXBsaWVkIHdpdGggJ1Jldmlld2Vk
+LWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPicNCj4gdG8gdGhpcyBwYXRjaC4gV2hp
+bGUgSSBkaWQgcmV2aWV3IGl0IGluIHZlcnNpb24gNSwgeW91IG5ldmVyIHNlZW0gdG8gaGF2ZQ0K
+PiByZXBsaWVkIHRvIG15IHF1ZXN0aW9ucyB0aGVyZS4NCj4gDQo+IEl0IHdhcyBhIHdoaWxlIGFn
+byB0aG91Z2gsIHNvIEkgZG9uJ3QgcmVtZW1iZXIgdGhlIGRldGFpbHMsIGlmIHdlIGRpZA0KPiBj
+b25jbHVkZSB0aGUgcmV2aWV3LCBjYW4geW91IGxpbmsgdG8gdGhlIGxvcmUua2VybmVsLm9yZyB0
+aHJlYWQgaW4NCj4gdGhlIG5leHQgdmVyc2lvbj8gUGxlYXNlIGFsc28gY2hlY2sgdGhlIG90aGVy
+IHBhdGNoZXMgb24gd2hpY2gNCj4geW91IGFkZGVkIGEgJ1Jldmlld2VkLWJ5JyB0YWcgZnJvbSBz
+b21lb25lIHRvIGVuc3VyZSB0aGF0IHRoZXkNCj4gYWN0dWFsbHkgcHJvdmlkZWQgdGhhdCB0YWcs
+IHJhdGhlciB0aGFuIGp1c3QgcHJvdmlkaW5nIHJldmlldyBjb21tZW50cy4NCj4gDQo+ICAgICAg
+ICBBcm5kDQoNCg0KSW4gcGF0Y2ggNiwgSSBmaXhlZCBhbGwgeW91ciBjb21tZW50cy4NCg0KSSBn
+b3QgYSByZXBseSBmcm9tIHlvdTogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsL0NBSzhQM2Ex
+RG9oOEdZOWlGWnN2bWQ2d0FTSG9QcXlSK3JvWHgwRzVYaWRubUhOa0dhQUBtYWlsLmdtYWlsLmNv
+bS8NCj4gVGhpcyBsb29rcyBhbGwgZ29vZCB0byBtZSBub3csIGl0IGp1c3QgbmVlZHMgYSByZXZp
+ZXcgZm9yIHRoZSBjbGssDQo+IHJlc2V0ICBhbmQgaXJxY2hpcCBkcml2ZXJzLiAuLi4NCg0KSWYg
+dGhlc2Ugbm90IG1lYW5zIHlvdSByZXZpZXdlZCwgSSdsbCByZW1vdmUgeW91ciByZXZpZXctdGFn
+Lg0KDQoNCg==
