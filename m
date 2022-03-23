@@ -2,118 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D02C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 13:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A72FC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 13:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236516AbiCWNVB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 09:21:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
+        id S244269AbiCWNYR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 09:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236216AbiCWNVB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 09:21:01 -0400
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855AA1FCFB;
-        Wed, 23 Mar 2022 06:19:31 -0700 (PDT)
-Received: by mail-ot1-f47.google.com with SMTP id k25-20020a056830151900b005b25d8588dbso1053390otp.4;
-        Wed, 23 Mar 2022 06:19:31 -0700 (PDT)
+        with ESMTP id S244258AbiCWNYQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 09:24:16 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E6D403E1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:22:45 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id u16so2120825wru.4
+        for <linux-clk@vger.kernel.org>; Wed, 23 Mar 2022 06:22:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=nFhPQ/2TAffPjbDjiI/2I0v37r+CcQs5C7D/sWxAMI8=;
+        b=quPIS4rlbqNNwzlG7UsIcANuXUutqUX2+fS2vwwVrkSb8FadLyZ9PZuzt3n4FECs6b
+         JD3NheA8m53Arv3IJp2+FRXgb8apclZMBwVLZzL1u949YS0k93kjWRoPRC7j6cfksk60
+         qxWnya1GQ0o6FnD0kdxsnW3YSZ6iUb00BQ9WyMilezQ5n3ltGCDn+C8jl6rMTHz5Oakz
+         /607HtEh8xP6zzvxbUd5PSpNYWuV9/bc8PQYBMTN/o3/amywjFJkjwFPiEjWUSPZsUf+
+         UUicmWGMkDbN/NfGnIkjbJTQNk7WhHnpkDNNvhtM2OQ7+b+7vY0duYDYvrj3Vwl6M31g
+         2puA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HyrrPHrvO3f1aaisugCkhzShyIOT6AwhUm27bUwnRnY=;
-        b=edJGnoiidC2B8L1eSAB1pVDctAy16XehxgC2A548wjV2WGwCQGPXPAZO8O/CaCwcCv
-         d3NDrKaz09eHAevVn3XNZD8nUb7Uw2yly6B5TccEF3aCWguruS6EXr4XU7hemWQMF17e
-         OCwZAjXB150bvRcNyKzPi0AsEx4L7KFz9JgJyAVYSQK3aNGCo93Kzvg019qz39T5zng2
-         PEVv2hbFYioa2ojf591KV/Y3u7urGkQyeta+T+7tSMnUxuQscVNlkBG9cMrKECma5vlV
-         xbxzniopKcuQYRKCLZbdXXB6Ss4W/gzcVUVU+moM973jCiz+nsqdrL74JzRxgSCIKw3U
-         M70g==
-X-Gm-Message-State: AOAM530+cprwJecoliORx8d/67oGTuZJLBOZU+sS1lcB7Lpr9vzV1wPn
-        GPpnHtsAw+BrubVRn4lFaxOB90nWng==
-X-Google-Smtp-Source: ABdhPJzsDMm/cvfuLg7u1LLlbwsqx1fxh37nvGVMM7XfRdRCrSnJJGXTwTDOnKPPSTOyY7+8cpZLIg==
-X-Received: by 2002:a05:6830:4106:b0:5c9:6651:9333 with SMTP id w6-20020a056830410600b005c966519333mr11914812ott.183.1648041569775;
-        Wed, 23 Mar 2022 06:19:29 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 60-20020a9d0642000000b005b22a82458csm9972012otn.55.2022.03.23.06.19.28
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=nFhPQ/2TAffPjbDjiI/2I0v37r+CcQs5C7D/sWxAMI8=;
+        b=lcxW9tkEQXjarevEv4B9BdgNSubOB6c3OnNit3lDDALI0b4qBKr/VLHnCyFllGgpGj
+         8aty3EmkuMOnnas3ffF+KvPxGcMOxh371QWjDscO3xcMwrEIBGX2hMzUn4c6FaRJ+C68
+         zcMYaoQFy7lifNJpy3g28ebxnSjGJgOpzv6xwK4+/fcfTH3LkDNUdN6UmNE0J3xIFUKK
+         J0jk8FlR+iJGQsOpToxPn7jBEQcdT0mbuU6B/vjBgYUku/bKynAKv34YTYPvw2knXPU6
+         RjqBzxbbLevZU4TXu3G0Mb5qX3mHhPiLIZ6ZGU2NYRIQC5+s5kdrt2aiWURLKaITaXIs
+         Jkcw==
+X-Gm-Message-State: AOAM530+XSn4krxltCeI6lwT/TzZmEirGpGlQI+VZ6bX5LlQJWgOZ1LM
+        AolVPGPMwbu3KhTpWLpZSTB312+i15CsZA==
+X-Google-Smtp-Source: ABdhPJzktCyQ+4ZXtq4E5zEr/KHSW2QBwhlwN+M/BloZ0THBfCmhcKR2IkHX5we1S2uX5VNg/THYAA==
+X-Received: by 2002:a05:6000:1b86:b0:1f0:d6f:1424 with SMTP id r6-20020a0560001b8600b001f00d6f1424mr26954876wru.174.1648041764214;
+        Wed, 23 Mar 2022 06:22:44 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id l15-20020a05600c4f0f00b0038cbdf5221dsm2806353wmq.41.2022.03.23.06.22.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 06:19:28 -0700 (PDT)
-Received: (nullmailer pid 3946551 invoked by uid 1000);
-        Wed, 23 Mar 2022 13:19:27 -0000
-Date:   Wed, 23 Mar 2022 08:19:27 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 17/18] dt-bindings: arm: msm: Convert kpss-gcc driver
- Documentation to yaml
-Message-ID: <YjseX1+AGkByxpg7@robh.at.kernel.org>
-References: <20220321231548.14276-1-ansuelsmth@gmail.com>
- <20220321231548.14276-18-ansuelsmth@gmail.com>
- <1647913851.222685.941035.nullmailer@robh.at.kernel.org>
- <Yjr2nkIrQ356DMUI@Ansuel-xps.localdomain>
+        Wed, 23 Mar 2022 06:22:43 -0700 (PDT)
+Date:   Wed, 23 Mar 2022 14:22:41 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 18/26] arm64: dts: rockchip: rk3399: add crypto node
+Message-ID: <YjsfIbLQRvoxkana@Red>
+References: <20220321200739.3572792-1-clabbe@baylibre.com>
+ <20220321200739.3572792-19-clabbe@baylibre.com>
+ <70422777-a3f9-b2f1-5faa-94d24fe200ac@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Yjr2nkIrQ356DMUI@Ansuel-xps.localdomain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <70422777-a3f9-b2f1-5faa-94d24fe200ac@arm.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 11:29:50AM +0100, Ansuel Smith wrote:
-> On Mon, Mar 21, 2022 at 08:50:51PM -0500, Rob Herring wrote:
-> > On Tue, 22 Mar 2022 00:15:47 +0100, Ansuel Smith wrote:
-> > > Convert kpss-gcc driver Documentation to yaml. Since kpss-gcc expose a
-> > > clock add the required '#clock-cells' binding while converting it.
-> > > 
-> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > ---
-> > >  .../bindings/arm/msm/qcom,kpss-gcc.txt        | 44 ------------
-> > >  .../bindings/arm/msm/qcom,kpss-gcc.yaml       | 69 +++++++++++++++++++
-> > >  2 files changed, 69 insertions(+), 44 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
-> > > 
+Le Tue, Mar 22, 2022 at 12:00:06PM +0000, Robin Murphy a écrit :
+> On 2022-03-21 20:07, Corentin Labbe wrote:
+> > The rk3399 has a crypto IP handled by the rk3288 crypto driver so adds a
+> > node for it.
 > > 
-> > Running 'make dtbs_check' with the schema in this patch gives the
-> > following warnings. Consider if they are expected or the schema is
-> > incorrect. These may not be new warnings.
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >   arch/arm64/boot/dts/rockchip/rk3399.dtsi | 12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
 > > 
-> > Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-> > This will change in the future.
-> > 
-> > Full log is available here: https://patchwork.ozlabs.org/patch/1607962
-> > 
-> > 
-> > clock-controller@2011000: '#clock-cells' is a required property
-> > 	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-> > 	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-> > 
-> > clock-controller@2011000: compatible:0: 'qcom,kpss-gcc' is not one of ['qcom,kpss-gcc-ipq8064', 'qcom,kpss-gcc-apq8064', 'qcom,kpss-gcc-msm8974', 'qcom,kpss-gcc-msm8960']
-> > 	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-> > 	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-> > 
-> > clock-controller@2011000: compatible:1: 'qcom,kpss-gcc' was expected
-> > 	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-> > 	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-> > 
-> > clock-controller@2011000: compatible: ['qcom,kpss-gcc', 'syscon'] is too short
-> > 	arch/arm/boot/dts/qcom-ipq8064-ap148.dt.yaml
-> > 	arch/arm/boot/dts/qcom-ipq8064-rb3011.dt.yaml
-> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > index 88f26d89eea1..ca2c658371a5 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> > @@ -573,6 +573,18 @@ saradc: saradc@ff100000 {
+> >   		status = "disabled";
+> >   	};
+> >   
+> > +	crypto0: crypto@ff8b0000 {
+> > +		compatible = "rockchip,rk3399-crypto";
+> > +		reg = <0x0 0xff8b0000 0x0 0x4000>,
+> > +		      <0x0 0xff8b8000 0x0 0x4000>;
+> > +		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH 0>,
+> > +			     <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH 0>;
+> > +		clocks = <&cru SCLK_CRYPTO0>, <&cru HCLK_M_CRYPTO0>, <&cru HCLK_S_CRYPTO0>,
+> > +			 <&cru SCLK_CRYPTO1>, <&cru HCLK_M_CRYPTO1>, <&cru HCLK_S_CRYPTO1>;
+> > +		resets = <&cru SRST_CRYPTO0>, <&cru SRST_CRYPTO0_S>, <&cru SRST_CRYPTO0_M>,
+> > +			 <&cru SRST_CRYPTO1>, <&cru SRST_CRYPTO1_S>, <&cru SRST_CRYPTO1_M>;
+> > +	};
 > 
-> Sorry for the very stupid question but it's something i'm searching for
-> a bit now... I can't really find Documentation or a guide on how to
-> check single yaml and dts instead of using the make command and check
-> everything. Am I missing something or this is not supported?
+> What's going on here? If these are simply two instances of the same IP 
+> block as the evidence suggests, why are they crammed into a single DT 
+> node rather than simply being described as two separate instances? I was 
+> rather wondering what all the confusing mess in patch #16 was about, 
+> until I got here.
+> 
+> If there's something in the crypto API that means the driver can't 
+> simply naively register itself multiple times, there should be any 
+> number of ways for the probe routine to keep track of whether it's 
+> already registered something and associate any subsequent devices with 
+> the first one internally if need be. Linux implementation details should 
+> not leak out as non-standard DT weirdness.
+> 
+> I know the Rockchip IOMMU driver does this, but in that case the two 
+> IOMMU instances are closely coupled and sharing work such that they 
+> effectively need to be programmed identically at all times, so it was a 
+> bit more justifiable. I don't know the full story here, but it certainly 
+> looks like rk_get_engine_number() is just a means to schedule work on 
+> any available unit independently, so looks like it wouldn't take much to 
+> select between distinct devices at that point, and actually end up a lot 
+> simpler and cleaner overall.
 
-make allmodconfig
-make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc.yaml
+Yes rk3399 has 2 instances of the same IP (Exception: crypto1 does not have RSA).
 
-And now in next you can do just the filename or a pattern:
+The problem is that only one drivername (like rk-md5) could exists.
+If crypto0 and crypto1 register with different drivername (rk-md5-0/rk-md5-1), only one will be used anyway.
+So I merged them into only one instance.
+I think this way will be easier, but you are right, this is not pretty.
 
-make dtbs_check DT_SCHEMA_FILES=qcom,kpss-gcc.yaml
+I found another way with 2 nodes:
+You could preview it at https://github.com/montjoie/linux/tree/cryptorockchipv4
+Basicly the crypto0 is a normal instance, and crypto1 "registers" itself against crypto0.
+So if crypto0 know another instance exists it will load balance requests.
 
-Rob
+Regards
