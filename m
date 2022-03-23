@@ -2,95 +2,147 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F55C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 14:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD58C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 14:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244650AbiCWOJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 10:09:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43280 "EHLO
+        id S244147AbiCWOV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 10:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbiCWOJF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 10:09:05 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE54E7E093;
-        Wed, 23 Mar 2022 07:07:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 42F41B81F15;
-        Wed, 23 Mar 2022 14:07:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6011C340E8;
-        Wed, 23 Mar 2022 14:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648044452;
-        bh=hlAK85GWeZIiZUtHyCOQqLWZSNib4RZQ9MjZfUdypAM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ORlt45dCzEAqKCiG4WzfiALVPc4/rPqz8Lt8ifVDWSr1sQHEeZ5/k6ed6dMw22kZQ
-         8galVZwXj5MrlxrCo2PCPuA3ON5HbA6t+t8jOeCIpC+1oCNa4KaGujmgGuNfP3hM+v
-         eTQHVR5lBgGKyVcg+zMDVcB2A8m5racEdqsRTSXeTI7WC0yHG8l6lC/uaV9cKcjYIa
-         Rg5mro4VesTqfuWp3DigW6kE3tYPs8V6JH4hH4V5CUR20V8XlB96omglM4LWJav+Cf
-         mGaP391sWWHhkc3uZYjaeHwJEzeoY7cC9BGuBZtTDf4cEoIp4wpApnREAmGWbl9m1c
-         7HpLxy71WoJXA==
-Received: by mail-ed1-f42.google.com with SMTP id w25so1958095edi.11;
-        Wed, 23 Mar 2022 07:07:32 -0700 (PDT)
-X-Gm-Message-State: AOAM530Ob5e2KjkdXu8c+J8b7Z4Fxn/ODyAtNhGaQ3dkxyl2XnHF4y6y
-        6+mPgWBxuz3wDGFAbgXJeUxgAKm/5aG1PRhZMA==
-X-Google-Smtp-Source: ABdhPJyqtH2wi69wtxMlEd0gUrDvXtAAZhqIdFHRMCXO5QGIr2NlWJpS6ir6FtDZgjkTS4FM7uOdfb/mrEXFiRGWVdQ=
-X-Received: by 2002:a05:6402:686:b0:418:edaa:9cbc with SMTP id
- f6-20020a056402068600b00418edaa9cbcmr247094edy.67.1648044451245; Wed, 23 Mar
- 2022 07:07:31 -0700 (PDT)
+        with ESMTP id S237528AbiCWOV1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 10:21:27 -0400
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E937CDC4;
+        Wed, 23 Mar 2022 07:19:58 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id d10so3118011eje.10;
+        Wed, 23 Mar 2022 07:19:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:content-language:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=LCtVktgE+tM1dwB6vvs9xAHGeA+uCrA5P8a3RwuF97c=;
+        b=Jr9QgDWM3710HQkVcJXK1tKtYWZIXXVIfdGSajSBNV43nKq2oaUtckQFJW4UzfaMOm
+         a+JAU6jmR3rcQ8YvFDbddte/Z0Bu+2M5jiRrD9T7IsPRfwsLAgCkUW5QcLYs0ZW+4NkQ
+         tuquJ0v+5eb9STV38Nan7uZj7td3gqM/6SOJzvUZq+/dG/teByf9WOiKQYiaIVznGaQ1
+         v4VoNJNEQL2CTtHuFiwvUWCsAUuxLKaa0gVToLMvrtDdobJveWtVilkLG5xRiGrLPYMJ
+         6xIB0HL0yrqEQM2fuSplWBVj/tdJRsIKS33xR6usLsIFceYsw6Lj0e1DuOKOz1A4xQ/b
+         Ss9w==
+X-Gm-Message-State: AOAM532pfBFlwHHOZy6ozypUUJIyW/i4q6CratebLYW9256HkDyOdusd
+        VlB+C8JP0mQ7O5HnylDjs5ct2lC6QJc7TA==
+X-Google-Smtp-Source: ABdhPJy6qkIrAOliQ88WXgP2REqzU/lsvhMnM1TlyKzJ/52Top/TQDHtwKvBnMjc/PumEPXeyMjfdA==
+X-Received: by 2002:a17:907:a422:b0:6e0:238c:4f44 with SMTP id sg34-20020a170907a42200b006e0238c4f44mr152721ejc.257.1648045196681;
+        Wed, 23 Mar 2022 07:19:56 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.googlemail.com with ESMTPSA id e10-20020a170906748a00b006dfaff31e88sm4639ejl.125.2022.03.23.07.19.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Mar 2022 07:19:56 -0700 (PDT)
+Message-ID: <1d3e9846-f092-09c6-e4ef-7a52d61613f1@kernel.org>
+Date:   Wed, 23 Mar 2022 15:19:54 +0100
 MIME-Version: 1.0
-References: <20220301190400.1644150-1-robh@kernel.org> <CAMuHMdXqsvQy_6+6w8DVCtqNiFERPV29xd3HRqtyz9RY3KXOYw@mail.gmail.com>
- <CAL_JsqKX7XrSS1OktT6OfPgyxte6_+AcGh4uV0Abdf2Wi4eCFg@mail.gmail.com> <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXzNpjSjhT3crdN3XzcFNXd8Uojqo8gA7Y=Qtz8utH6Mw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 23 Mar 2022 09:07:19 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+=2oibXA1otjaVoGY0GWdLZg2bmw1C9BACga5P99X35A@mail.gmail.com>
-Message-ID: <CAL_Jsq+=2oibXA1otjaVoGY0GWdLZg2bmw1C9BACga5P99X35A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v6 17/18] dt-bindings: arm: msm: Convert kpss-gcc driver
+ Documentation to yaml
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20220321231548.14276-1-ansuelsmth@gmail.com>
+ <20220321231548.14276-18-ansuelsmth@gmail.com>
+ <e832516d-277d-6a0b-4588-b32a085185c8@kernel.org>
+ <YjnOdYMS+P85pqvF@Ansuel-xps.localdomain>
+ <f13fdc4b-8f45-b09f-5d58-8d2a565e2c18@kernel.org>
+ <Yjr+nHBFqNqMV+v0@Ansuel-xps.localdomain>
+In-Reply-To: <Yjr+nHBFqNqMV+v0@Ansuel-xps.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 8, 2022 at 3:53 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Fri, Mar 4, 2022 at 2:28 PM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Mar 4, 2022 at 3:09 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Tue, Mar 1, 2022 at 8:04 PM Rob Herring <robh@kernel.org> wrote:
-> > > > 'clocks' in the example is not parsable with the 0 phandle value
-> > > > because the number of #clock-cells is unknown in the previous entry.
-> > > > Solve this by adding the clock provider node. Only 'cpg_clocks' is
-> > > > needed as the examples are built with fixups which can be used to
-> > > > identify phandles.
-> > > >
-> > > > This is in preparation to support schema validation on .dtb files.
-> > > >
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > >
-> > > Do you want me to queue this in renesas-clk-for-v5.19, or do you
-> > > want to take it yourself, together with the validation patches?
-> > > Please let me know.
-> >
-> > You can take it.
->
-> Thanks, queuing in renesas-clk-for-v5.19.
+On 23/03/2022 12:03, Ansuel Smith wrote:
+>>>
+>>> If you notice the changes across the different patch, it's very minimal
+>>> and 99% of it has not changed. Nothing silent just me addressing warning
+>>> from the bot. About the trust issue...
+>>> Is it really a syscon addition that bad? Again the original
+>>> Documentation was just bad so why should we care to have a 100% 1:1
+>>> conversion if it should have been not accepted in the first place.
+>>
+>> Does not have to be 100% but deviations should be either expected or
+>> explained. Bindings are used also outside of Linux kernel.
+>>
+>>> The addition of this new syscon is because in the current dtsi it's
+>>> there and I assume it's there as this is a global accessor and probably
+>>> other driver would access the same regs (so it's also a syscon)
+>>
+>> If these are assumptions, then they need to be checked. If these were
+>> new bindings, we would discuss/check the need of syscon. Now we do not
+>> question existing properties, because they were accepted. But syscon
+>> compatible was not accepted, so putting it here requires our acknowledgment.
+>>
+> 
+> About this I have a question. If the dts already have some binding and
+> the Documentation doesn't have them. Should the dts have priority or the
+> Documentation?
 
-This needs to go in 5.18, not 5.19.
+Depends, usually yes, if the DTS is being actually used. There might be
+some exceptions, though. The priority is for the ones which are correct.
 
-Rob
+Judging by current DTS, the syscon is indeed used in DTS and documented
+in bindings. It might be deprecated, because one binding is saying that
+mailboxes can be used instead.
+
+Here your call to add syscon looks correct. Just please document it in
+commit msg, why it has to be added (there are real users of it: Qualcomm
+RPM).
+
+> In the case where we can't prove that syscon is needed (for example), can
+> we remove it from dts (and accept to have inconsistency while the dts
+> changes are merged) or we should add the extra binding to the
+> Documentation putting some comments about it and discussing the
+> inclusion? 
+> 
+>> The bindings are probably pure junk, so this is not merely a conversion
+>> how you wrote in commit msg. This is rework of the bindings. Don't hide
+>> rework under "conversion". Conversion is TXT->YAML without any changes...
+>>
+> 
+> Ok, thanks for the clarification. I still think should be handled with
+> conversion + additional commit to add the missing part so I have to fix
+> my wrong commits.
+> 
+>> I asked about this before and the only part you added to commit msg was
+>> "clock-cells". And now I see syscon - so isn't it a bit surprising?
+>>
+> 
+> You are right... I will just do the 1:1 conversion and put all these
+> addition to a separate commit to make them clear.
+> 
+>>>
+>>> I understand the complain about putting too much revision... But NAK
+>>> this cause I'm trying to fix all this mess just because more and more
+>>> problems are coming up and I'm trying to fix them. It's a bit sad.
+>>
+>> Why you cannot test your changes and fix them all before sending sixth
+>> version? Why the bot has to test your code, not you?
+>>
+> 
+> I'm aksed Rob if there is a quicker way to test single Documenation and
+> dts but it's my fault anyway.
+
+make -j8 dt_binding_check DT_SCHEMA_FILES="qcom-kpss"
+
+make defconfig (or allyesconfig etc)
+make -j8 dtbs_check DT_SCHEMA_FILES="qcom-kpss"
+
+
+Best regards,
+Krzysztof
