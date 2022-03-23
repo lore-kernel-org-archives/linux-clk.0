@@ -2,120 +2,95 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38981C433F5
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Mar 2022 20:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1AEC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 00:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240647AbiCWUiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Mar 2022 16:38:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43094 "EHLO
+        id S1346746AbiCXAOJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Mar 2022 20:14:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240098AbiCWUit (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 16:38:49 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755EF2A2;
-        Wed, 23 Mar 2022 13:37:19 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id w25so3258010edi.11;
-        Wed, 23 Mar 2022 13:37:19 -0700 (PDT)
+        with ESMTP id S229569AbiCXAOI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Mar 2022 20:14:08 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F10AFE73;
+        Wed, 23 Mar 2022 17:12:37 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id a1so4367068wrh.10;
+        Wed, 23 Mar 2022 17:12:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=m+xd1tDwGKjGGm1zRlDPZw7g8jsg6c2oSOsHqvT059o=;
-        b=ogb23Z8o0r/ojubfh+pyigrMuy6eys5nZmQvx5floY4wNh05nWnIkD8uqS5hfZnhzh
-         SL43Mrma5nRnEzoQDsKutyWjTdmtYq3brVNebVBpbdYMtrJDwIaOVYNnkJFiYHtB/Bwt
-         5KIclFGoYdtuicHtIqzBm+x+zkM8ENocbNhwnBaLQ6cOEYe9YBedEXmlJSfpVEmwEhGx
-         Z9I9qzUa79xjd86uX3V3/vRhHkGO0SjKW0KokMDt3Xp+lh5bU2HkCmdfh34qGkMtvSB3
-         UjZ0zww6IAFfcQugTEabS886lfbKvvhpa3nx6O3eTZJRoWNMvZLJmeP1+GdQvO7ip92s
-         LiAQ==
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/J+7k67HIa20DrfFo2NZzVdI2EGmtq275w1giXcVqMg=;
+        b=aX7p1KgXTAPQI9KVgmJz86DFHJvwHj/22QzWJxFYKV+H5EEDKfPyv9MsDGu9ulX0Al
+         khcAN99RaFvggO1wOv/K/I27zC1DPjZXxkSrMmIIPzPyCfsG+F76aPa+Pp5fBFBYobUt
+         mu0bcqmW9kE55KNDY+lWK5X9UEWxkrG6Ijb6t1D0feSrFYlCj683uyYARj7lsQWS0BC0
+         f4Z/AhoO5mRAZFLEwK1KDVb5bfACaEV/AyUALHU0WSmpPvzZhNc5Qi3DCY8+byocF8dz
+         YKQkkUTvJXV1+mEFY0CafLsRRkCi6Qi0j+nwUgAQb/vSuWw5DohLenFZhXFG25yU1thI
+         MYQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=m+xd1tDwGKjGGm1zRlDPZw7g8jsg6c2oSOsHqvT059o=;
-        b=X/Roy/xXY4/7BLEDQgyhzCETJ12DOLN9iEvS+A73qGHImFS9ep08OYI4slaM8Aqes2
-         Ary1amzOemr31ZOZxL5bYNLuKKUPEiY8xHTqc/ZhObzLdGonEPmsvOahVAOvGxMzn/cy
-         pJ8L4y1W8nGMM3IQXu0pqZzi1YabLzC97eFstBffG7zC9OkIev3YTQF/r+6A4dTjFD9H
-         hK1NKmffeZqVZcEGgaEY2wlX8YBQ4KvsSm5y2z04eLCcImFqp7Bq+R9C5gK+SW5GwmCV
-         wRLPNLk3gI7M3IBpNNQKeaOkLoKTzpzwjE0lAg7439j41xljVuNP6KhkS3YLHjZvDymD
-         u8qA==
-X-Gm-Message-State: AOAM532DaNk9raKyqHaQFuzKQZ4Snrq2j+iYETJ/UDqnPJrxoS4R2MPT
-        S5SxpBGn3hvU8KKVPF+2wD6wvpD/dmTbhQ==
-X-Google-Smtp-Source: ABdhPJw4LDxBQy/6K4rrDRgH6/barx60YfE+K+Lrj0R3Vp9IsIRY+wfsg0LYJ6oLeBYbFCvC5pIyQg==
-X-Received: by 2002:aa7:cf0d:0:b0:419:362:7ebf with SMTP id a13-20020aa7cf0d000000b0041903627ebfmr2507685edy.225.1648067837909;
-        Wed, 23 Mar 2022 13:37:17 -0700 (PDT)
-Received: from pevik (gw1.ms-free.net. [185.243.124.10])
-        by smtp.gmail.com with ESMTPSA id b3-20020aa7d483000000b00419209d4c85sm422261edr.66.2022.03.23.13.37.15
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/J+7k67HIa20DrfFo2NZzVdI2EGmtq275w1giXcVqMg=;
+        b=gMoeDjwbp0nZTl7U/fpugZALrJrsFTQWDnGw0av51chZ0NYxt0xME/ZKaeTOPpv/At
+         gvoKFTxKeS6PHVvZyRHwmp1HmkbTlFFKcXmJqN3q5i1ZWy+YKUSJmNLM7FsMomqpWup6
+         XgdGx519kiFmpAVjFMsungKHhuax6BbGqPTP0Bp8dxuePVJ1SSl4ia3359EbDAl5uBoL
+         lfdu94AUuBfFDa1FRzUjKGZV10q3Li+k5jD86LA8+3EFb9OEGhZEcBUzToV7K09HzJZs
+         4CesZmgqQT0iBFY+glG+VC3KN3Qd1EZI77Fvmwe8Xlr9OhMcE1TQzM+X5Gm7tyL/ubW3
+         0Wow==
+X-Gm-Message-State: AOAM532OHqaamg859hfA1/A/RmqIHdQJe31y/NfiormjebvC//aYjhO1
+        d4FzyZu4lr3ISTYbEv/UigNQSPCYGvc=
+X-Google-Smtp-Source: ABdhPJxSxAzqMRccmd40N0pwlBUxRZGY1074kjwxy9DJTuBtXtj9TRvIROv1gUaKQI7JxeQrcDP8Vw==
+X-Received: by 2002:adf:f28d:0:b0:203:f161:55ac with SMTP id k13-20020adff28d000000b00203f16155acmr2252918wro.209.1648080756298;
+        Wed, 23 Mar 2022 17:12:36 -0700 (PDT)
+Received: from Ansuel-xps.localdomain (93-42-69-170.ip85.fastwebnet.it. [93.42.69.170])
+        by smtp.googlemail.com with ESMTPSA id bg18-20020a05600c3c9200b0037c2ef07493sm1058665wmb.3.2022.03.23.17.12.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Mar 2022 13:37:17 -0700 (PDT)
-Date:   Wed, 23 Mar 2022 21:37:13 +0100
-From:   Petr Vorel <petr.vorel@gmail.com>
-To:     Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, martin.botka@somainline.org,
-        angelogioacchino.delregno@somainline.org,
-        marijn.suijten@somainline.org, jamipkettunen@somainline.org,
-        Andy Gross <agross@kernel.org>,
+        Wed, 23 Mar 2022 17:12:35 -0700 (PDT)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Bastian =?iso-8859-2?Q?K=F6cher?= <mail@kchr.de>,
-        Jeremy McNicoll <jeremymc@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-msm8994: Fix gpll4 width
-Message-ID: <YjuE+cgGXCLihPIa@pevik>
-Reply-To: Petr Vorel <petr.vorel@gmail.com>
-References: <20220319174940.341137-1-konrad.dybcio@somainline.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: fix dt_binding_check error for qcom,gcc-other.yaml
+Date:   Wed, 23 Mar 2022 20:42:48 +0100
+Message-Id: <20220323194248.26970-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220319174940.341137-1-konrad.dybcio@somainline.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Konrad,
+qcom,gcc-other Documentation lacks a '|' for the description. This cause
+dt_binding_check to incorrectly parse "See also:" as a new value.
+Add the missing '|' to correctly parse the description.
 
-Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+Fixes: a03965ed1310 ("dt-bindings: clock: split qcom,gcc.yaml to common and specific schema")
+Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index 4dc0274dbd6b..6c45e0f85494 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -10,7 +10,7 @@ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+   - Taniya Das <tdas@codeaurora.org>
+ 
+-description:
++description: |
+   Qualcomm global clock control module which supports the clocks, resets and
+   power domains.
+ 
+-- 
+2.34.1
 
-> The gpll4 postdiv is actually a div4, so make sure that Linux is aware of
-> this.
-
-> This fixes the following error messages:
-
-> [    0.804491] mmc1: Card appears overclocked; req 200000000 Hz, actual 343999999 Hz
-> [    0.805057] mmc1: Card appears overclocked; req 400000000 Hz, actual 687999999 Hz
-yes, this works on my patchset [1] even without these workarounds (I'll submit
-v5 without it)
-
-+	assigned-clocks = <&gcc GPLL4_EARLY>;
-+	assigned-clock-rates = <384000000>;
-
-Tested-by: Petr Vorel <petr.vorel@gmail.com>
-
-Kind regards,
-Petr
-
-[1] https://lore.kernel.org/linux-arm-msm/20220218203710.895-1-petr.vorel@gmail.com/
-
-> Fixes: aec89f78cf01 ("clk: qcom: Add support for msm8994 global clock controller")
-
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-> ---
-> Cc: Petr Vorel <petr.vorel@gmail.com>
-
->  drivers/clk/qcom/gcc-msm8994.c | 1 +
->  1 file changed, 1 insertion(+)
-
-> diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
-> index f09499999eb3..6b702cdacbf2 100644
-> --- a/drivers/clk/qcom/gcc-msm8994.c
-> +++ b/drivers/clk/qcom/gcc-msm8994.c
-> @@ -77,6 +77,7 @@ static struct clk_alpha_pll gpll4_early = {
-
->  static struct clk_alpha_pll_postdiv gpll4 = {
->  	.offset = 0x1dc0,
-> +	.width = 4,
->  	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
->  	.clkr.hw.init = &(struct clk_init_data){
->  		.name = "gpll4",
