@@ -2,100 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD959C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 18:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E23C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 19:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345982AbiCXSVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 14:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40260 "EHLO
+        id S1348896AbiCXTKl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 15:10:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243033AbiCXSVG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 14:21:06 -0400
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC628B0D3A;
-        Thu, 24 Mar 2022 11:19:34 -0700 (PDT)
-Received: by mail-wr1-f51.google.com with SMTP id b19so7775940wrh.11;
-        Thu, 24 Mar 2022 11:19:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=sShruqNvZUchI28ILvTdEo38ieYS+DY+iNhiC6vHsC8=;
-        b=NZDcJ3TMal4QJgsrqPJ0CbE4bvDXYMJm0rdFYtmdBksV4XOGYDjRqkq15EESvfw7mC
-         Ulq4k1LU+kFZD2Hdwu/Jcra5JZR+ALXWdmSEYelp/OMC+kCr/PZ+tBZL5EaSg+AkId61
-         yRXUT2p4Rjf1kN+VW3GxujkRTRp2YiXIW1MUyVBDMCr3ogM+nxrzk/v2jVKEJWIQQFkn
-         3XzgOiDQAzWYOMZI7ny7f9UKiMv621E3RQkX6TlPki5TcUrS4ny7j0YlDatbhp3/cJ6T
-         O6CsiFydZYB+m8WOJWof1X0YSK8wQOebv/QJj5M+GDm8TRNWoylYe74yhJ22LWidwgki
-         JRFQ==
-X-Gm-Message-State: AOAM532ARLEwLlbmuWdxBl/h8B9Hlb/XpEun1ls5BfpEmoMI7fJnWDn4
-        tCAk4kpVU0AAd5YyCklajmk=
-X-Google-Smtp-Source: ABdhPJzC6djT24nFCyVp44IEirJJaFJU/0jVblYX0o/KcYPym7BgkM7Zs06lR+obo/brOCN4fKSFvA==
-X-Received: by 2002:a5d:6d44:0:b0:1e4:9a6d:c171 with SMTP id k4-20020a5d6d44000000b001e49a6dc171mr5714666wri.468.1648145973234;
-        Thu, 24 Mar 2022 11:19:33 -0700 (PDT)
-Received: from [192.168.0.158] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id l15-20020a05600c1d0f00b0038c8ff8e708sm2655396wms.13.2022.03.24.11.19.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 11:19:32 -0700 (PDT)
-Message-ID: <c0ae3465-9185-197f-65a4-49df856bc2e0@kernel.org>
-Date:   Thu, 24 Mar 2022 19:19:31 +0100
+        with ESMTP id S242820AbiCXTKk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 15:10:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22B638FE74;
+        Thu, 24 Mar 2022 12:09:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B185061B41;
+        Thu, 24 Mar 2022 19:09:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E28C340EE;
+        Thu, 24 Mar 2022 19:09:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648148947;
+        bh=9Zaw4QnaJObocBpW0+nZUqWqUxkYP++HlVIrKQzxWEU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=qTe1wJ1MlFK/aCHoeArbL74wovZbNPa7WMUUcq9v1Zeclg5Jsg69dBcVZ3m1b1w6k
+         NuzdGSrVyXXAIQKu8Zqd1BcgjWVsz9qV5ctM4qnngyDZDtbHWVclSyodYFCQiTiauZ
+         jaLyBXJEPn+Y+H9fIhLy1OJQhOkJ9OIBfl+cMJgPcjcSsh468HymuDm8ZeY+2t671j
+         VspVYwvLFeVpWHJ4ybu/UF6mOQf9tCLL4nF/JHpi45vfwuSr0vCfO9SzdGJJ+6Y567
+         q6pEJw+q9aftuAwfta0VIvnxJbF35QckWApSq51AOqZQFnl6LOBA35kiqvUPwfrZeQ
+         fcNnpS67S1njA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
- yaml
-Content-Language: en-US
-To:     LABBE Corentin <clabbe@baylibre.com>
-Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20220321200739.3572792-1-clabbe@baylibre.com>
- <20220321200739.3572792-22-clabbe@baylibre.com>
- <90ebea0b-1d67-98dc-2b49-a6e3b97a2c4a@kernel.org> <YjyaV68mTsJAr9Xm@Red>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <YjyaV68mTsJAr9Xm@Red>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220323085140.ifeclmttkrqo55ru@houat>
+References: <20220225143534.405820-1-maxime@cerno.tech> <20220225143534.405820-7-maxime@cerno.tech> <7720158d-10a7-a17b-73a4-a8615c9c6d5c@collabora.com> <20220323085140.ifeclmttkrqo55ru@houat>
+Subject: Re: [PATCH v7 06/12] clk: Always set the rate on clk_set_range_rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+To:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Date:   Thu, 24 Mar 2022 12:09:05 -0700
+User-Agent: alot/0.10
+Message-Id: <20220324190907.08E28C340EE@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/03/2022 17:20, LABBE Corentin wrote:
+Quoting Maxime Ripard (2022-03-23 01:51:40)
+> Hi,
+>=20
+>=20
+> The whole point of this patch is to give an opportunity to every driver
+> to change the rate whenever the boundaries have changed, so we very much
+> want to have the option to change it if clk_set_rate() has never been
+> called.
+>=20
+> However, I think the issue is why req_rate would be 0 in the first
+> place?
+>=20
+> req_rate is initialized to what recalc_rate returns:
+> https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L3607
+>=20
+> So the case where req_rate is 0 shouldn't occur unless you had an
+> explicit clk_set_rate to 0, or if your clock was orphaned at some point.
+>=20
+> Judging from the code, it seems like the latter is the most plausible.
+> Indeed, __clk_core_init() will set req_rate to 0 if the clock is
+> orphaned (just like rate and accuracy), and
+> clk_core_reparent_orphans_nolock will be in charge of updating them when
+> the clock is no longer an orphan.
+>=20
+> However, clk_core_reparent_orphans_nolock() will update rate by calling
+> __clk_recalc_rate and accuracy by calling __clk_recalc_accuracies, but
+> it never sets req_rate.
+>=20
+> I'm not sure if this is the right patch, Stephen will tell, but could
+> you test:
 
-(...)
->>
->>> +    resets:
->>> +      minItems: 6
->>> +else:
->>> +  if:
->>> +    properties:
->>> +      compatible:
->>> +        const: rockchip,rk3328-crypto
->>> +  then:
->>> +    properties:
->>> +      clocks:
->>> +        minItems: 3
->>> +      clock-names:
->>> +        minItems: 3
->>> +
->>
-> 
-> I have create a binding update patch (https://github.com/montjoie/linux/commit/da05ef9bb488c16cfd15a47054f5b1161829b6bf)
-> But I have lot of problem, DT are not validating.
-> Example: Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.example.dtb: crypto@ff8a0000: resets: [[4294967295, 174]] is too short
-> 
-> I have tried also to set default resets/maxItems to 3 and setting it to 4 via an if. But I still got error like maxItems cannot be update after initial set.
-> 
-> Any idea on why my new binding update patch is failling ?
-
-For such case one way to solve is to:
-1. Define the most relaxed min/maxItems in properties.
-2. Narrow the min/maxItems in allOf for each flavor.
-Something like in clocks for:
-Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
-
-
-Best regards,
-Krzysztof
+It looks correct to me. Would be helpful to have some comment of course
+that we're setting a default req_rate because we want a
+clk_set_rate_range() before clk_set_rate() to work properly when this
+clk is initially an orphan. We should be able to code up a test case for
+that too by registering an orphan and then registering the parent and
+then calling clk_set_rate_range().
