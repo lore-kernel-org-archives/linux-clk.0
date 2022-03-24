@@ -2,83 +2,158 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F79C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 11:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60F9C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 13:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231686AbiCXLXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 07:23:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55688 "EHLO
+        id S234224AbiCXNSV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 09:18:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242748AbiCXLWz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 07:22:55 -0400
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D7C558B;
-        Thu, 24 Mar 2022 04:21:23 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id lr4so41755ejb.11;
-        Thu, 24 Mar 2022 04:21:23 -0700 (PDT)
+        with ESMTP id S231977AbiCXNSU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 09:18:20 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C2F5D5D9;
+        Thu, 24 Mar 2022 06:16:49 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-ddfa38f1c1so4855504fac.11;
+        Thu, 24 Mar 2022 06:16:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=vCtXvC6NKv02vJBz9LwhC/wnC/pxcDKfv/yu+jbUxCw=;
-        b=WnO7W+D4zCkjflkpcOP6eubCKOXUG6KE9hdKLdtEuHdptehxDwpXj2+qGniJaBTKIp
-         DinDQwothfNOcKDlBMZ8SQf2wlnnmcNdkYIcd5I3fI6CumuDlTQRge6ZiKF+nr8bZ2r5
-         ELkMmHIKQipkIlLTjdWwLP9Z2HuZaAmrE3PPMKimlIYYkG9DpAEXh/hS3BsXf8DVK7ot
-         uedAtZ5M6vmGHfW5YYR4XHASL+CI03fnRu65Uvz6xSTMojjWJP4poOqzln5cKs3Jzuih
-         O8KyKYVEsISybRwuFl042cQCQdx2cZco0tnZee5J0BAyAk+eptpem/8W07teWN6MCF6K
-         yOUg==
-X-Gm-Message-State: AOAM5323g5yljcOwtN9l/p40SrEQvqC9Z5sUdRIjHDXsilL7QWdSbOAd
-        L0/UJ4r2s1K8MQ6UZvFdMuQ=
-X-Google-Smtp-Source: ABdhPJyCTxGliZdVLfNGUT8I7TgpabWX5335rJB94c1ko8edVYQAv0GtvE97R3/yB5clVvYbu1npPQ==
-X-Received: by 2002:a17:907:c05:b0:6db:f118:8834 with SMTP id ga5-20020a1709070c0500b006dbf1188834mr5284672ejc.536.1648120881620;
-        Thu, 24 Mar 2022 04:21:21 -0700 (PDT)
-Received: from [192.168.0.156] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id a18-20020a1709063e9200b006e0527baa77sm996889ejj.92.2022.03.24.04.21.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Mar 2022 04:21:20 -0700 (PDT)
-Message-ID: <b15567c7-98e9-2d01-d1a5-7675136c625d@kernel.org>
-Date:   Thu, 24 Mar 2022 12:21:19 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH] dt-bindings: clock: fix dt_binding_check error for
- qcom,gcc-other.yaml
-Content-Language: en-US
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L4yFfoTfZccYE7Di0YlYjA+29UIzoRBEMm0qGrq7xq0=;
+        b=pyWonZjOu8h2d1LF/imDL6nNHN71qqyZobbj2ihOkPo6OUo09bC2jk8Rr95oxvzyOO
+         n0nOFeGacSWCNPg/Pd8nFqsPW3c3lN5hErE3iMf41+ReawQStFqYoE/SJ6fHuPLAIm7E
+         Qlk6W2djiL6/N/7k+KTsuip3aGJYiW4PBxE6R51FvkxMyimGU0aoQ39/kUyYqbiazh3x
+         5NuLRq1szjfkDgovIsMm6bdmFD82gtl3xs8/Fh02INhGDM420FJbIMGrBvb+aKTmyh73
+         5tlKFcYLRmG4dCNU+ZgNk02+f3lw3e/d28yRApMcKkAwYUp3btfwlqJLlkvEPKmvcRJv
+         A8tQ==
+X-Gm-Message-State: AOAM53033C2yGb7TFTOyRcQbj4DmyPLtMXt5lv5xNKvpFekUBd8BWzXR
+        JyI/5+8cs1bntyQ9qTbfDQ==
+X-Google-Smtp-Source: ABdhPJyWCV888rnqVqehNYjSRgPdI4EiYHkWQq19im/ieDnEq2LtJ//jkVdiM9VQ0b2qos+XqrXknw==
+X-Received: by 2002:a05:6871:811:b0:dd:b8ea:6bb1 with SMTP id q17-20020a056871081100b000ddb8ea6bb1mr6479846oap.43.1648127808262;
+        Thu, 24 Mar 2022 06:16:48 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t10-20020a056830224a00b005cd9db03fabsm1296706otd.78.2022.03.24.06.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Mar 2022 06:16:47 -0700 (PDT)
+Received: (nullmailer pid 1905192 invoked by uid 1000);
+        Thu, 24 Mar 2022 13:16:46 -0000
+Date:   Thu, 24 Mar 2022 08:16:46 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220323194248.26970-1-ansuelsmth@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220323194248.26970-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 01/15] dt-bindings: clock: split qcom,gcc.yaml to
+ common and specific schema
+Message-ID: <YjxvPik3jaQHXIzt@robh.at.kernel.org>
+References: <20220224164831.21475-1-ansuelsmth@gmail.com>
+ <20220224164831.21475-2-ansuelsmth@gmail.com>
+ <CAL_JsqLduGK=CyAcgahswFfeA43vh+QPgRgcL4+=piOwWwvJRQ@mail.gmail.com>
+ <Yjt5QxZ4+kdwTtUH@Ansuel-xps.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yjt5QxZ4+kdwTtUH@Ansuel-xps.localdomain>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/03/2022 20:42, Ansuel Smith wrote:
-> qcom,gcc-other Documentation lacks a '|' for the description. This cause
-> dt_binding_check to incorrectly parse "See also:" as a new value.
-> Add the missing '|' to correctly parse the description.
+On Wed, Mar 23, 2022 at 08:47:15PM +0100, Ansuel Smith wrote:
+> On Wed, Mar 23, 2022 at 08:55:30AM -0500, Rob Herring wrote:
+> > On Thu, Feb 24, 2022 at 10:48 AM Ansuel Smith <ansuelsmth@gmail.com> wrote:
+> > >
+> > > Split qcom,gcc.yaml to common and specific schema to use it as a
+> > > template for schema that needs to use the gcc bindings and require
+> > > to add additional bindings.
+> > >
+> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> > > ---
+> > >  .../bindings/clock/qcom,gcc-other.yaml        | 76 +++++++++++++++++++
+> > 
+> > This now throws errors in linux-next:
+> > 
+> > Traceback (most recent call last):
+> >   File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+> > line 816, in resolve_from_url
+> >     document = self.resolve_remote(url)
+> >   File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+> > line 923, in resolve_remote
+> >     result = json.loads(url.read().decode("utf-8"))
+> >   File "/usr/lib/python3.8/json/__init__.py", line 357, in loads
+> >     return _default_decoder.decode(s)
+> >   File "/usr/lib/python3.8/json/decoder.py", line 337, in decode
+> >     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+> >   File "/usr/lib/python3.8/json/decoder.py", line 355, in raw_decode
+> >     raise JSONDecodeError("Expecting value", s, err.value) from None
+> > json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+> > During handling of the above exception, another exception occurred:
+> > Traceback (most recent call last):
+> >   File "/usr/local/bin/dt-doc-validate", line 70, in <module>
+> >     ret = check_doc(f)
+> >   File "/usr/local/bin/dt-doc-validate", line 36, in check_doc
+> >     for error in
+> > sorted(dtschema.DTValidator.iter_schema_errors(testtree), key=lambda
+> > e: e.linecol):
+> >   File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line
+> > 1016, in iter_schema_errors
+> >     meta_schema = cls.resolver.resolve_from_url(schema['$schema'])
+> >   File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py",
+> > line 818, in resolve_from_url
+> >     raise exceptions.RefResolutionError(exc)
+> > jsonschema.exceptions.RefResolutionError: Expecting value: line 1
+> > column 1 (char 0)
+> > ./Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml:
+> > mapping values are not allowed in this context
+> >   in "<unicode string>", line 17, column 11
+> > 
+> > >  .../devicetree/bindings/clock/qcom,gcc.yaml   | 59 +-------------
+> > >  2 files changed, 80 insertions(+), 55 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> > > new file mode 100644
+> > > index 000000000000..4e5903bcd70d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+> > > @@ -0,0 +1,76 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/clock/qcom,gcc-other.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Qualcomm Global Clock & Reset Controller Binding
+> > > +
+> > > +maintainers:
+> > > +  - Stephen Boyd <sboyd@kernel.org>
+> > > +  - Taniya Das <tdas@codeaurora.org>
+> > > +
+> > > +description:
+> > > +  Qualcomm global clock control module which supports the clocks, resets and
+> > > +  power domains.
+> > > +
+> > > +  See also:
+> > 
+> > I think the problem is here. You need a '|' after 'description' to
+> > preserve formatting and ignore what looks like a mapping.
+> >
 > 
-> Fixes: a03965ed1310 ("dt-bindings: clock: split qcom,gcc.yaml to common and specific schema")
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+> Yes, I just sent a patch to fix this.
+> Out of curiosity, any idea why this wasn't flagged by an old run of
+> dt_binding_check? I totally remember running dt_binding_check on these
+> Documentation and I had no problem. There was a bug in the old version
+> and it does now correctly find these kind of errors?
 
-Reported-by: Rob Herring <robh@kernel.org>
+Not sure exactly, but I don't think there was any change. v3 didn't 
+have the issue and the bot checks didn't run on v4 or later. Probably 
+because it couldn't apply them.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-Best regards,
-Krzysztof
+Rob
