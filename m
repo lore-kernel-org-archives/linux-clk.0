@@ -2,181 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C2EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 17:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD959C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 18:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243247AbiCXRKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 13:10:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50174 "EHLO
+        id S1345982AbiCXSVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 14:21:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242253AbiCXRKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 13:10:01 -0400
-X-Greylist: delayed 2344 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Mar 2022 10:08:27 PDT
-Received: from 6.mo561.mail-out.ovh.net (6.mo561.mail-out.ovh.net [188.165.43.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E94B0D11
-        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 10:08:24 -0700 (PDT)
-Received: from player779.ha.ovh.net (unknown [10.110.115.91])
-        by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4D95F24837
-        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 16:29:19 +0000 (UTC)
-Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
-        (Authenticated sender: steve@sk2.org)
-        by player779.ha.ovh.net (Postfix) with ESMTPSA id E876028AC2CB3;
-        Thu, 24 Mar 2022 16:29:11 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-99G003cab070b8-3fe0-45c6-ae9b-e73783c827e2,
-                    78FFD8E4238D9337B8F0C8EEA79873C5FE5514E5) smtp.auth=steve@sk2.org
-X-OVh-ClientIp: 82.65.25.201
-From:   Stephen Kitt <steve@sk2.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH] clk: use simple i2c probe function
-Date:   Thu, 24 Mar 2022 17:29:04 +0100
-Message-Id: <20220324162904.530140-1-steve@sk2.org>
-X-Mailer: git-send-email 2.27.0
+        with ESMTP id S243033AbiCXSVG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 14:21:06 -0400
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC628B0D3A;
+        Thu, 24 Mar 2022 11:19:34 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id b19so7775940wrh.11;
+        Thu, 24 Mar 2022 11:19:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=sShruqNvZUchI28ILvTdEo38ieYS+DY+iNhiC6vHsC8=;
+        b=NZDcJ3TMal4QJgsrqPJ0CbE4bvDXYMJm0rdFYtmdBksV4XOGYDjRqkq15EESvfw7mC
+         Ulq4k1LU+kFZD2Hdwu/Jcra5JZR+ALXWdmSEYelp/OMC+kCr/PZ+tBZL5EaSg+AkId61
+         yRXUT2p4Rjf1kN+VW3GxujkRTRp2YiXIW1MUyVBDMCr3ogM+nxrzk/v2jVKEJWIQQFkn
+         3XzgOiDQAzWYOMZI7ny7f9UKiMv621E3RQkX6TlPki5TcUrS4ny7j0YlDatbhp3/cJ6T
+         O6CsiFydZYB+m8WOJWof1X0YSK8wQOebv/QJj5M+GDm8TRNWoylYe74yhJ22LWidwgki
+         JRFQ==
+X-Gm-Message-State: AOAM532ARLEwLlbmuWdxBl/h8B9Hlb/XpEun1ls5BfpEmoMI7fJnWDn4
+        tCAk4kpVU0AAd5YyCklajmk=
+X-Google-Smtp-Source: ABdhPJzC6djT24nFCyVp44IEirJJaFJU/0jVblYX0o/KcYPym7BgkM7Zs06lR+obo/brOCN4fKSFvA==
+X-Received: by 2002:a5d:6d44:0:b0:1e4:9a6d:c171 with SMTP id k4-20020a5d6d44000000b001e49a6dc171mr5714666wri.468.1648145973234;
+        Thu, 24 Mar 2022 11:19:33 -0700 (PDT)
+Received: from [192.168.0.158] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.googlemail.com with ESMTPSA id l15-20020a05600c1d0f00b0038c8ff8e708sm2655396wms.13.2022.03.24.11.19.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Mar 2022 11:19:32 -0700 (PDT)
+Message-ID: <c0ae3465-9185-197f-65a4-49df856bc2e0@kernel.org>
+Date:   Thu, 24 Mar 2022 19:19:31 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11267724796347713158
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudegledgkeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeetgedugfelkeeikeetgeegteevfeeufeetuefgudeiiedthfehtdeffeekvdeffeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejjeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
+ yaml
+Content-Language: en-US
+To:     LABBE Corentin <clabbe@baylibre.com>
+Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20220321200739.3572792-1-clabbe@baylibre.com>
+ <20220321200739.3572792-22-clabbe@baylibre.com>
+ <90ebea0b-1d67-98dc-2b49-a6e3b97a2c4a@kernel.org> <YjyaV68mTsJAr9Xm@Red>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <YjyaV68mTsJAr9Xm@Red>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The i2c probe functions here don't use the id information provided in
-their second argument, so the single-parameter i2c probe function
-("probe_new") can be used instead.
+On 24/03/2022 17:20, LABBE Corentin wrote:
 
-This avoids scanning the identifier tables during probes.
+(...)
+>>
+>>> +    resets:
+>>> +      minItems: 6
+>>> +else:
+>>> +  if:
+>>> +    properties:
+>>> +      compatible:
+>>> +        const: rockchip,rk3328-crypto
+>>> +  then:
+>>> +    properties:
+>>> +      clocks:
+>>> +        minItems: 3
+>>> +      clock-names:
+>>> +        minItems: 3
+>>> +
+>>
+> 
+> I have create a binding update patch (https://github.com/montjoie/linux/commit/da05ef9bb488c16cfd15a47054f5b1161829b6bf)
+> But I have lot of problem, DT are not validating.
+> Example: Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.example.dtb: crypto@ff8a0000: resets: [[4294967295, 174]] is too short
+> 
+> I have tried also to set default resets/maxItems to 3 and setting it to 4 via an if. But I still got error like maxItems cannot be update after initial set.
+> 
+> Any idea on why my new binding update patch is failling ?
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- drivers/clk/clk-cdce706.c   | 5 ++---
- drivers/clk/clk-cs2000-cp.c | 5 ++---
- drivers/clk/clk-max9485.c   | 5 ++---
- drivers/clk/clk-si514.c     | 5 ++---
- drivers/clk/clk-si5341.c    | 5 ++---
- 5 files changed, 10 insertions(+), 15 deletions(-)
+For such case one way to solve is to:
+1. Define the most relaxed min/maxItems in properties.
+2. Narrow the min/maxItems in allOf for each flavor.
+Something like in clocks for:
+Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml
 
-diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
-index c91e9096b070..5467d941ddfd 100644
---- a/drivers/clk/clk-cdce706.c
-+++ b/drivers/clk/clk-cdce706.c
-@@ -627,8 +627,7 @@ of_clk_cdce_get(struct of_phandle_args *clkspec, void *data)
- 	return &cdce->clkout[idx].hw;
- }
- 
--static int cdce706_probe(struct i2c_client *client,
--			 const struct i2c_device_id *id)
-+static int cdce706_probe(struct i2c_client *client)
- {
- 	struct i2c_adapter *adapter = client->adapter;
- 	struct cdce706_dev_data *cdce;
-@@ -692,7 +691,7 @@ static struct i2c_driver cdce706_i2c_driver = {
- 		.name	= "cdce706",
- 		.of_match_table = of_match_ptr(cdce706_dt_match),
- 	},
--	.probe		= cdce706_probe,
-+	.probe_new	= cdce706_probe,
- 	.remove		= cdce706_remove,
- 	.id_table	= cdce706_id,
- };
-diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
-index 92bc4aca0f95..db9746a604ad 100644
---- a/drivers/clk/clk-cs2000-cp.c
-+++ b/drivers/clk/clk-cs2000-cp.c
-@@ -504,8 +504,7 @@ static int cs2000_remove(struct i2c_client *client)
- 	return 0;
- }
- 
--static int cs2000_probe(struct i2c_client *client,
--			const struct i2c_device_id *id)
-+static int cs2000_probe(struct i2c_client *client)
- {
- 	struct cs2000_priv *priv;
- 	struct device *dev = &client->dev;
-@@ -555,7 +554,7 @@ static struct i2c_driver cs2000_driver = {
- 		.pm	= &cs2000_pm_ops,
- 		.of_match_table = cs2000_of_match,
- 	},
--	.probe		= cs2000_probe,
-+	.probe_new	= cs2000_probe,
- 	.remove		= cs2000_remove,
- 	.id_table	= cs2000_id,
- };
-diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
-index 5e80f3d090f3..5f85b0a32872 100644
---- a/drivers/clk/clk-max9485.c
-+++ b/drivers/clk/clk-max9485.c
-@@ -254,8 +254,7 @@ max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
- 	return &drvdata->hw[idx].hw;
- }
- 
--static int max9485_i2c_probe(struct i2c_client *client,
--			     const struct i2c_device_id *id)
-+static int max9485_i2c_probe(struct i2c_client *client)
- {
- 	struct max9485_driver_data *drvdata;
- 	struct device *dev = &client->dev;
-@@ -377,7 +376,7 @@ static struct i2c_driver max9485_driver = {
- 		.pm		= &max9485_pm_ops,
- 		.of_match_table	= max9485_dt_ids,
- 	},
--	.probe = max9485_i2c_probe,
-+	.probe_new = max9485_i2c_probe,
- 	.id_table = max9485_i2c_ids,
- };
- module_i2c_driver(max9485_driver);
-diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
-index 364b62b9928d..4481c4303534 100644
---- a/drivers/clk/clk-si514.c
-+++ b/drivers/clk/clk-si514.c
-@@ -327,8 +327,7 @@ static const struct regmap_config si514_regmap_config = {
- 	.volatile_reg = si514_regmap_is_volatile,
- };
- 
--static int si514_probe(struct i2c_client *client,
--		const struct i2c_device_id *id)
-+static int si514_probe(struct i2c_client *client)
- {
- 	struct clk_si514 *data;
- 	struct clk_init_data init;
-@@ -394,7 +393,7 @@ static struct i2c_driver si514_driver = {
- 		.name = "si514",
- 		.of_match_table = clk_si514_of_match,
- 	},
--	.probe		= si514_probe,
-+	.probe_new	= si514_probe,
- 	.remove		= si514_remove,
- 	.id_table	= si514_id,
- };
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index f7b41366666e..55b0fa6b9c1d 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -1545,8 +1545,7 @@ static const struct attribute *si5341_attributes[] = {
- 	NULL
- };
- 
--static int si5341_probe(struct i2c_client *client,
--		const struct i2c_device_id *id)
-+static int si5341_probe(struct i2c_client *client)
- {
- 	struct clk_si5341 *data;
- 	struct clk_init_data init;
-@@ -1835,7 +1834,7 @@ static struct i2c_driver si5341_driver = {
- 		.name = "si5341",
- 		.of_match_table = clk_si5341_of_match,
- 	},
--	.probe		= si5341_probe,
-+	.probe_new	= si5341_probe,
- 	.remove		= si5341_remove,
- 	.id_table	= si5341_id,
- };
 
-base-commit: b47d5a4f6b8d42f8a8fbe891b36215e4fddc53be
--- 
-2.27.0
-
+Best regards,
+Krzysztof
