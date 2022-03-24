@@ -2,197 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAE7C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 16:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C2EC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 17:08:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351555AbiCXQWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 12:22:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42974 "EHLO
+        id S243247AbiCXRKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 13:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243598AbiCXQWQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 12:22:16 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 865E89E9C9
-        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 09:20:43 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id w21so2807855wra.2
-        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 09:20:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=u+XoZ+fuIL/ZPqi/MqDlAYN5/s61cbWyTsDVR6ShDXg=;
-        b=7x7yo5Bs1LpGDx1Z/m5ZaOu8cUAl21e7wWdU9yxKzW8vX0CjUGxZctK8KwWnscCoVZ
-         9LxP65DgHeKtf/hZGwB3qLTaAxg9dIFAjsyvDPXqNwfjZtUKy31VfYnkNC7UVPNVhb6p
-         DFWKacToNwykDGrrPa4EO7lI3DYAFLrP9A23HcrD22Cuy78HpnamrgybwQGMWkFwx1vF
-         I2bjpDirPChL6lZVg/QNemvqzmFlvAhQfsuXZ3ej8UrR1kv1YekCXLTJiHsiaXPrtTae
-         h+qV/ldDYsSEqJnAvk5LP5ZdsoTcHaGCBpcPUfGIqZo9CLNPQOMpHfRMEaa847gLl9Yx
-         aBsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=u+XoZ+fuIL/ZPqi/MqDlAYN5/s61cbWyTsDVR6ShDXg=;
-        b=spiB+tVGCcIKECt9Nb1GhVr8+HRRxI0McT8EVU8KyN7DJ78EKW2pPuuonmcb5w0YqI
-         xX/P9M2PqgS8Tn50JWSpCsoVkm8YLQnEXG3gd1CMwYI0xCGjdJYqlPlVSGLqjg6EkdkC
-         AQj+9WHOPit5nRownwzzmvytXrZLb+qg1dNSVCZJA5na9se2x7UZJJE3SPuZy5aaT34m
-         i++w2j1bvSWTiwAH7oISH1V2NYeLkU1pN9SgTuDHtmBWMUv2QXdydsmO5N199/+9kgRF
-         RdwxbARbbYIllpo695y9UlIiJrcyzH62HcxmYURJyThAfjagzLrvOfgBvsPLmmcsodMs
-         KKHA==
-X-Gm-Message-State: AOAM533yecm1QIRJGCU6JPnxnRoNeyuy5WX2HVfUqBjbDxM+abE+vcx3
-        8paq5P/ipM8JHOo9VjJUt4euiQ==
-X-Google-Smtp-Source: ABdhPJzeYjDJdSI+WUHT0aW2nK8ZdlM/pdZDaZr/eYh34FM+5W0i/XYyjvNvYiq5Hbek/iwW1aWLpQ==
-X-Received: by 2002:a05:6000:181a:b0:205:9051:ab6d with SMTP id m26-20020a056000181a00b002059051ab6dmr5239391wrh.191.1648138841944;
-        Thu, 24 Mar 2022 09:20:41 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
-        by smtp.googlemail.com with ESMTPSA id r2-20020a0560001b8200b00203dffb9598sm2914810wru.86.2022.03.24.09.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 09:20:41 -0700 (PDT)
-Date:   Thu, 24 Mar 2022 17:20:39 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 21/26] dt-bindings: crypto: convert rockchip-crypto to
- yaml
-Message-ID: <YjyaV68mTsJAr9Xm@Red>
-References: <20220321200739.3572792-1-clabbe@baylibre.com>
- <20220321200739.3572792-22-clabbe@baylibre.com>
- <90ebea0b-1d67-98dc-2b49-a6e3b97a2c4a@kernel.org>
+        with ESMTP id S242253AbiCXRKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 13:10:01 -0400
+X-Greylist: delayed 2344 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 24 Mar 2022 10:08:27 PDT
+Received: from 6.mo561.mail-out.ovh.net (6.mo561.mail-out.ovh.net [188.165.43.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E94B0D11
+        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 10:08:24 -0700 (PDT)
+Received: from player779.ha.ovh.net (unknown [10.110.115.91])
+        by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4D95F24837
+        for <linux-clk@vger.kernel.org>; Thu, 24 Mar 2022 16:29:19 +0000 (UTC)
+Received: from sk2.org (82-65-25-201.subs.proxad.net [82.65.25.201])
+        (Authenticated sender: steve@sk2.org)
+        by player779.ha.ovh.net (Postfix) with ESMTPSA id E876028AC2CB3;
+        Thu, 24 Mar 2022 16:29:11 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-99G003cab070b8-3fe0-45c6-ae9b-e73783c827e2,
+                    78FFD8E4238D9337B8F0C8EEA79873C5FE5514E5) smtp.auth=steve@sk2.org
+X-OVh-ClientIp: 82.65.25.201
+From:   Stephen Kitt <steve@sk2.org>
+To:     Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] clk: use simple i2c probe function
+Date:   Thu, 24 Mar 2022 17:29:04 +0100
+Message-Id: <20220324162904.530140-1-steve@sk2.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <90ebea0b-1d67-98dc-2b49-a6e3b97a2c4a@kernel.org>
+X-Ovh-Tracer-Id: 11267724796347713158
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrudegledgkeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucggtffrrghtthgvrhhnpeetgedugfelkeeikeetgeegteevfeeufeetuefgudeiiedthfehtdeffeekvdeffeenucfkpheptddrtddrtddrtddpkedvrdeihedrvdehrddvtddunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehplhgrhigvrhejjeelrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le Tue, Mar 22, 2022 at 07:04:43PM +0100, Krzysztof Kozlowski a écrit :
-> On 21/03/2022 21:07, Corentin Labbe wrote:
-> > Convert rockchip-crypto to yaml
-> > 
-> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > ---
-> >  .../crypto/rockchip,rk3288-crypto.yaml        | 84 +++++++++++++++++++
-> >  .../bindings/crypto/rockchip-crypto.txt       | 28 -------
-> >  2 files changed, 84 insertions(+), 28 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> >  delete mode 100644 Documentation/devicetree/bindings/crypto/rockchip-crypto.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> > new file mode 100644
-> > index 000000000000..a6be89a1c890
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.yaml
-> > @@ -0,0 +1,84 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/crypto/rockchip,rk3288-crypto.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip Electronics And Security Accelerator
-> > +
-> > +maintainers:
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - rockchip,rk3288-crypto
-> > +      - rockchip,rk3328-crypto
-> > +      - rockchip,rk3399-crypto
-> 
-> Waaaait, what? Only rockchip,rk3288-crypto is in original bindings.
+The i2c probe functions here don't use the id information provided in
+their second argument, so the single-parameter i2c probe function
+("probe_new") can be used instead.
 
-Hello
+This avoids scanning the identifier tables during probes.
 
-Yes, my way is an error.
-Next time, I will split my patch in 2, first a 1 to 1 conversion, then a binding update.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ drivers/clk/clk-cdce706.c   | 5 ++---
+ drivers/clk/clk-cs2000-cp.c | 5 ++---
+ drivers/clk/clk-max9485.c   | 5 ++---
+ drivers/clk/clk-si514.c     | 5 ++---
+ drivers/clk/clk-si5341.c    | 5 ++---
+ 5 files changed, 10 insertions(+), 15 deletions(-)
 
-> 
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 4
-> > +
-> > +  clock-names:
-> > +    minItems: 4
-> > +
-> > +  resets:
-> > +    maxItems: 1
-> 
-> You missed reset-names.
-> 
-> This patch is quite different than previous, in unexpected way. What
-> happened here?
-> 
-> > +
-> > +if:
-> 
-> Please define it after "allOf:", so it could be easily extended without
-> changing indentation.
-> 
-> > +  properties:
-> > +    compatible:
-> > +      const: rockchip,rk3399-crypto
-> > +then:
-> > +  properties:
-> > +    reg:
-> > +      minItems: 2
-> > +    interrupts:
-> > +      minItems: 2
-> 
-> List interrupts. This is really different than your v1. It also looks
-> different than original bindings and you did not mention any differences
-> here, nor in the commit msg. Either explain in commit msg all
-> differences (and why) or move them to separate commit.
-> 
-> You seem to change the bindings a lot (new properties, different
-> constraints, new compatibles), so this should all go to separate commit.
-> Now it is just confusing.
-> 
-> > +    clocks:
-> > +      minItems: 6
-> 
-> You need maxItems. Everywhere.
-> 
-> > +    clock-names:
-> > +      minItems: 6
-> 
-> List all items.
-> 
-> > +    resets:
-> > +      minItems: 6
-> > +else:
-> > +  if:
-> > +    properties:
-> > +      compatible:
-> > +        const: rockchip,rk3328-crypto
-> > +  then:
-> > +    properties:
-> > +      clocks:
-> > +        minItems: 3
-> > +      clock-names:
-> > +        minItems: 3
-> > +
-> 
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index c91e9096b070..5467d941ddfd 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -627,8 +627,7 @@ of_clk_cdce_get(struct of_phandle_args *clkspec, void *data)
+ 	return &cdce->clkout[idx].hw;
+ }
+ 
+-static int cdce706_probe(struct i2c_client *client,
+-			 const struct i2c_device_id *id)
++static int cdce706_probe(struct i2c_client *client)
+ {
+ 	struct i2c_adapter *adapter = client->adapter;
+ 	struct cdce706_dev_data *cdce;
+@@ -692,7 +691,7 @@ static struct i2c_driver cdce706_i2c_driver = {
+ 		.name	= "cdce706",
+ 		.of_match_table = of_match_ptr(cdce706_dt_match),
+ 	},
+-	.probe		= cdce706_probe,
++	.probe_new	= cdce706_probe,
+ 	.remove		= cdce706_remove,
+ 	.id_table	= cdce706_id,
+ };
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 92bc4aca0f95..db9746a604ad 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -504,8 +504,7 @@ static int cs2000_remove(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static int cs2000_probe(struct i2c_client *client,
+-			const struct i2c_device_id *id)
++static int cs2000_probe(struct i2c_client *client)
+ {
+ 	struct cs2000_priv *priv;
+ 	struct device *dev = &client->dev;
+@@ -555,7 +554,7 @@ static struct i2c_driver cs2000_driver = {
+ 		.pm	= &cs2000_pm_ops,
+ 		.of_match_table = cs2000_of_match,
+ 	},
+-	.probe		= cs2000_probe,
++	.probe_new	= cs2000_probe,
+ 	.remove		= cs2000_remove,
+ 	.id_table	= cs2000_id,
+ };
+diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
+index 5e80f3d090f3..5f85b0a32872 100644
+--- a/drivers/clk/clk-max9485.c
++++ b/drivers/clk/clk-max9485.c
+@@ -254,8 +254,7 @@ max9485_of_clk_get(struct of_phandle_args *clkspec, void *data)
+ 	return &drvdata->hw[idx].hw;
+ }
+ 
+-static int max9485_i2c_probe(struct i2c_client *client,
+-			     const struct i2c_device_id *id)
++static int max9485_i2c_probe(struct i2c_client *client)
+ {
+ 	struct max9485_driver_data *drvdata;
+ 	struct device *dev = &client->dev;
+@@ -377,7 +376,7 @@ static struct i2c_driver max9485_driver = {
+ 		.pm		= &max9485_pm_ops,
+ 		.of_match_table	= max9485_dt_ids,
+ 	},
+-	.probe = max9485_i2c_probe,
++	.probe_new = max9485_i2c_probe,
+ 	.id_table = max9485_i2c_ids,
+ };
+ module_i2c_driver(max9485_driver);
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index 364b62b9928d..4481c4303534 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -327,8 +327,7 @@ static const struct regmap_config si514_regmap_config = {
+ 	.volatile_reg = si514_regmap_is_volatile,
+ };
+ 
+-static int si514_probe(struct i2c_client *client,
+-		const struct i2c_device_id *id)
++static int si514_probe(struct i2c_client *client)
+ {
+ 	struct clk_si514 *data;
+ 	struct clk_init_data init;
+@@ -394,7 +393,7 @@ static struct i2c_driver si514_driver = {
+ 		.name = "si514",
+ 		.of_match_table = clk_si514_of_match,
+ 	},
+-	.probe		= si514_probe,
++	.probe_new	= si514_probe,
+ 	.remove		= si514_remove,
+ 	.id_table	= si514_id,
+ };
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index f7b41366666e..55b0fa6b9c1d 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -1545,8 +1545,7 @@ static const struct attribute *si5341_attributes[] = {
+ 	NULL
+ };
+ 
+-static int si5341_probe(struct i2c_client *client,
+-		const struct i2c_device_id *id)
++static int si5341_probe(struct i2c_client *client)
+ {
+ 	struct clk_si5341 *data;
+ 	struct clk_init_data init;
+@@ -1835,7 +1834,7 @@ static struct i2c_driver si5341_driver = {
+ 		.name = "si5341",
+ 		.of_match_table = clk_si5341_of_match,
+ 	},
+-	.probe		= si5341_probe,
++	.probe_new	= si5341_probe,
+ 	.remove		= si5341_remove,
+ 	.id_table	= si5341_id,
+ };
 
-I have create a binding update patch (https://github.com/montjoie/linux/commit/da05ef9bb488c16cfd15a47054f5b1161829b6bf)
-But I have lot of problem, DT are not validating.
-Example: Documentation/devicetree/bindings/crypto/rockchip,rk3288-crypto.example.dtb: crypto@ff8a0000: resets: [[4294967295, 174]] is too short
+base-commit: b47d5a4f6b8d42f8a8fbe891b36215e4fddc53be
+-- 
+2.27.0
 
-I have tried also to set default resets/maxItems to 3 and setting it to 4 via an if. But I still got error like maxItems cannot be update after initial set.
-
-Any idea on why my new binding update patch is failling ?
-
-Regards
