@@ -2,124 +2,83 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721C4C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 07:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F79C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Mar 2022 11:21:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348363AbiCXHMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 03:12:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
+        id S231686AbiCXLXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 07:23:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbiCXHML (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 03:12:11 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3C992858;
-        Thu, 24 Mar 2022 00:10:40 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id bg10so7282552ejb.4;
-        Thu, 24 Mar 2022 00:10:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=EwHGNo4299brXkfx15j4GX5scza9emTqyVtoZOQKDeg=;
-        b=mUjGObUl7C0bY7nCN6SUhdA9Uke/I0GKeZg30Rjqz7+hQfShrg2m5LPgKfjJnZcWh+
-         2uLPDy+zPbyuNNIq24rohLVJfWV59EKAZpW19QlacMWFQQz2m0uiBzaUZbT/+30B84Oi
-         yzaYAE56uZH1G+iRM/rRAO86SUv4q9rXf3mFMKYSAhSE7a6Lfpylcl/6XBnUc06CjQzW
-         WB/mVyATDETVDO3jOo2FIvR0V2/jZoKkEwPbdBkjPZnc0YL98v9fbjgrRargUvUfzbli
-         fDLpBtnATbFwkx/A5ixyeVagHX+E8n+e+/Kd4YNU2OJ8jGMMjUI7Q0rAkRzcu95htbH3
-         Gj8Q==
+        with ESMTP id S242748AbiCXLWz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 07:22:55 -0400
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D7C558B;
+        Thu, 24 Mar 2022 04:21:23 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id lr4so41755ejb.11;
+        Thu, 24 Mar 2022 04:21:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=EwHGNo4299brXkfx15j4GX5scza9emTqyVtoZOQKDeg=;
-        b=ah+2BI2LwDr3wsAJ9V+fYTV6FrEzbCb/xdugMflCXGZrMpRm1z/T7Fo0s8uP/eF2E+
-         d87h2g166fBC7SP1BAid7DTjmA8Kc5Mx80vNFaei8TApYzpB2CWG3GQez8/L8yfJxULP
-         S6uNOcu/GWqC+Na1wo9ZJFPo4vBSmlRreXFzaayvQKmb6Vk2kKJPEplVmb6h7NsADFvV
-         MFpuTxZV02dhyswD4rsQoSrZPn6lf5asmrQE0dw6rUby6dsBPgYaiXwsjdCQunMhOM5g
-         i/eHBDKgPHGP1s6A+YBaVhsuFUvcevhWrh6wandLZ6+SY5qhnuQtOFPo7ub8FkRfTCh+
-         WANQ==
-X-Gm-Message-State: AOAM531+x5dghTbfejhftv8zTsganwzrv4xVSyi4onDo0tEBBAV14neJ
-        BleTXzsH47/JOoodFqscOAc=
-X-Google-Smtp-Source: ABdhPJzuV9/GXeh9KjJYtEK7qcrmXHoJ7GxW2j+7tXUQg5zPZv084j7Alf0YIeEMISjnsuRCzFV2HQ==
-X-Received: by 2002:a17:907:60c8:b0:6da:83f0:9eaa with SMTP id hv8-20020a17090760c800b006da83f09eaamr4081185ejc.605.1648105838649;
-        Thu, 24 Mar 2022 00:10:38 -0700 (PDT)
-Received: from localhost.localdomain (i130160.upc-i.chello.nl. [62.195.130.160])
-        by smtp.googlemail.com with ESMTPSA id b7-20020a170906490700b006b2512921b2sm766465ejq.48.2022.03.24.00.10.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 00:10:38 -0700 (PDT)
-From:   Jakob Koschel <jakobkoschel@gmail.com>
-To:     Tero Kristo <kristo@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@kernel.org>,
-        "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jakobkoschel@gmail.com>
-Subject: [PATCH] clk: ti: clkctrl: replace usage of found with dedicated list iterator variable
-Date:   Thu, 24 Mar 2022 08:10:19 +0100
-Message-Id: <20220324071019.59483-1-jakobkoschel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=vCtXvC6NKv02vJBz9LwhC/wnC/pxcDKfv/yu+jbUxCw=;
+        b=WnO7W+D4zCkjflkpcOP6eubCKOXUG6KE9hdKLdtEuHdptehxDwpXj2+qGniJaBTKIp
+         DinDQwothfNOcKDlBMZ8SQf2wlnnmcNdkYIcd5I3fI6CumuDlTQRge6ZiKF+nr8bZ2r5
+         ELkMmHIKQipkIlLTjdWwLP9Z2HuZaAmrE3PPMKimlIYYkG9DpAEXh/hS3BsXf8DVK7ot
+         uedAtZ5M6vmGHfW5YYR4XHASL+CI03fnRu65Uvz6xSTMojjWJP4poOqzln5cKs3Jzuih
+         O8KyKYVEsISybRwuFl042cQCQdx2cZco0tnZee5J0BAyAk+eptpem/8W07teWN6MCF6K
+         yOUg==
+X-Gm-Message-State: AOAM5323g5yljcOwtN9l/p40SrEQvqC9Z5sUdRIjHDXsilL7QWdSbOAd
+        L0/UJ4r2s1K8MQ6UZvFdMuQ=
+X-Google-Smtp-Source: ABdhPJyCTxGliZdVLfNGUT8I7TgpabWX5335rJB94c1ko8edVYQAv0GtvE97R3/yB5clVvYbu1npPQ==
+X-Received: by 2002:a17:907:c05:b0:6db:f118:8834 with SMTP id ga5-20020a1709070c0500b006dbf1188834mr5284672ejc.536.1648120881620;
+        Thu, 24 Mar 2022 04:21:21 -0700 (PDT)
+Received: from [192.168.0.156] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.googlemail.com with ESMTPSA id a18-20020a1709063e9200b006e0527baa77sm996889ejj.92.2022.03.24.04.21.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Mar 2022 04:21:20 -0700 (PDT)
+Message-ID: <b15567c7-98e9-2d01-d1a5-7675136c625d@kernel.org>
+Date:   Thu, 24 Mar 2022 12:21:19 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH] dt-bindings: clock: fix dt_binding_check error for
+ qcom,gcc-other.yaml
+Content-Language: en-US
+To:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220323194248.26970-1-ansuelsmth@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220323194248.26970-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-To move the list iterator variable into the list_for_each_entry_*()
-macro in the future it should be avoided to use the list iterator
-variable after the loop body.
+On 23/03/2022 20:42, Ansuel Smith wrote:
+> qcom,gcc-other Documentation lacks a '|' for the description. This cause
+> dt_binding_check to incorrectly parse "See also:" as a new value.
+> Add the missing '|' to correctly parse the description.
+> 
+> Fixes: a03965ed1310 ("dt-bindings: clock: split qcom,gcc.yaml to common and specific schema")
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-To *never* use the list iterator variable after the loop it was
-concluded to use a separate iterator variable instead of a
-found boolean [1].
+Reported-by: Rob Herring <robh@kernel.org>
 
-This removes the need to use a found variable and simply checking if
-the variable was set, can determine if the break/goto was hit.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/
-Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
----
- drivers/clk/ti/clkctrl.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 864c484bde1b..f12caef4f9bd 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -232,8 +232,7 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
- 					      void *data)
- {
- 	struct omap_clkctrl_provider *provider = data;
--	struct omap_clkctrl_clk *entry;
--	bool found = false;
-+	struct omap_clkctrl_clk *entry = NULL, *iter;
- 
- 	if (clkspec->args_count != 2)
- 		return ERR_PTR(-EINVAL);
-@@ -241,15 +240,15 @@ static struct clk_hw *_ti_omap4_clkctrl_xlate(struct of_phandle_args *clkspec,
- 	pr_debug("%s: looking for %x:%x\n", __func__,
- 		 clkspec->args[0], clkspec->args[1]);
- 
--	list_for_each_entry(entry, &provider->clocks, node) {
--		if (entry->reg_offset == clkspec->args[0] &&
--		    entry->bit_offset == clkspec->args[1]) {
--			found = true;
-+	list_for_each_entry(iter, &provider->clocks, node) {
-+		if (iter->reg_offset == clkspec->args[0] &&
-+		    iter->bit_offset == clkspec->args[1]) {
-+			entry = iter;
- 			break;
- 		}
- 	}
- 
--	if (!found)
-+	if (!entry)
- 		return ERR_PTR(-EINVAL);
- 
- 	return entry->clk;
-
-base-commit: f443e374ae131c168a065ea1748feac6b2e76613
--- 
-2.25.1
-
+Best regards,
+Krzysztof
