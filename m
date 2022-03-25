@@ -2,81 +2,93 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6293C433EF
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 07:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E7CC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 07:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239631AbiCYH1Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 03:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
+        id S1353070AbiCYHdM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 03:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232528AbiCYH1Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 03:27:16 -0400
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A9CBD8B7;
-        Fri, 25 Mar 2022 00:25:42 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id dr20so13604059ejc.6;
-        Fri, 25 Mar 2022 00:25:42 -0700 (PDT)
+        with ESMTP id S1353861AbiCYHdC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 03:33:02 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87C7C4E16;
+        Fri, 25 Mar 2022 00:31:28 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so8466990wmb.4;
+        Fri, 25 Mar 2022 00:31:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=PGD5QqaGJRv1esnTF6Tb03pd+mwDyDYap4xXF2trhtU=;
-        b=4uHzH7TJ4O5h2gVSOl+g+ZAaZW7BL6UB5b01MQed+ezJYXnE7bw7rNEkBvijH3PK+X
-         3e4j+OXDK8jhE1Y/txdyYP7lSwun19TVbTlT4XzXud444Rd7P+4zhZyWsT/R1bU2vyi1
-         D3yZ1Jil45GeHzaT1U6kZKKTwFT1SFEu+mHl8Cv+oi82R0jBRZo2EPFSUJUiVQdFPrjP
-         fWlggijqk+eIam8f4dXbjT9IYNaMcF7LCYpQkRRyJPyXCryFKv/vasCEE2JtpVKNERGC
-         541X0hEEnIA0C2vbVnbIbuqwXkTZM3uj91siOKXeuFnkhtyoc02WlpfxpAXfqrp9nVMt
-         kmxQ==
-X-Gm-Message-State: AOAM531e5vGyuJ35G1WGxEOoPVBsMR/xZGOyepG5nmFzaMfLBD22Mk0n
-        BYdMP3jT4PbP1ATiTqMKens=
-X-Google-Smtp-Source: ABdhPJxc+c0/rm44/n4LJplb86pnVU2nq6rmC9C5azx3YO+GWv/j7x1WVmHxMjH7HZ/yrjNGyUaxLw==
-X-Received: by 2002:a17:906:9f28:b0:6df:f811:5286 with SMTP id fy40-20020a1709069f2800b006dff8115286mr9617360ejc.745.1648193141250;
-        Fri, 25 Mar 2022 00:25:41 -0700 (PDT)
+        bh=GuILc5kRDriiMUiIXV7yGyzOLFCBv5MwLQdIg/dr7Gg=;
+        b=2MwnyaHIDCeOMjlyuMw16yPfLLAiMAkijo9erxkIgOLDmoQso8QIpt4W29MN6HH4aN
+         HHwAZYkbNQVVYhjAbnWIDfRTjr4Nj3ZBLbgdHwVLmOveclYAVgj5xYaOoCUtEK2xwqtj
+         LknRocmXioSGWxQuMUZ0VjF4IRW8e+LzwDtLiBvLOPAXLpApjFRto4LsUc9ydN7wDue2
+         R+cwCdTW6plVHnr3SGvyWtqkvZnyEfNTish0zHeDZSxJ/t2BuGssK4DTBrgDPVrcSAbX
+         m4yhNEC7jUNIOCUawlP0tPBICJmFTh3l8/DXSAs7uvAYpedvst0fZRcptIbauwuBUtLE
+         +HRg==
+X-Gm-Message-State: AOAM533+xmho4XDp4AnucDNHcUIm7vwMomv1SSvv3izFohKuKZbJHJ+e
+        rtgPfayOGg1r/uuxkIygesw=
+X-Google-Smtp-Source: ABdhPJxX9+mei/tkczYkXDnJ8Ea8iol1WorIaCdEFNkBNxZcDCKU/ZfZR2wP0DOrgOPfGrPat8W3eA==
+X-Received: by 2002:a05:600c:3b86:b0:38c:afdf:66cd with SMTP id n6-20020a05600c3b8600b0038cafdf66cdmr17701222wms.198.1648193487331;
+        Fri, 25 Mar 2022 00:31:27 -0700 (PDT)
 Received: from [192.168.0.158] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id ky5-20020a170907778500b006d1b2dd8d4csm2027917ejc.99.2022.03.25.00.25.40
+        by smtp.googlemail.com with ESMTPSA id u7-20020a5d6da7000000b00203d9d1875bsm5199505wrs.73.2022.03.25.00.31.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Mar 2022 00:25:40 -0700 (PDT)
-Message-ID: <2e16716b-b3d8-5730-f10c-f0be9526d5c4@kernel.org>
-Date:   Fri, 25 Mar 2022 08:25:39 +0100
+        Fri, 25 Mar 2022 00:31:26 -0700 (PDT)
+Message-ID: <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org>
+Date:   Fri, 25 Mar 2022 08:31:25 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-Subject: Re: [PATCH] dt-bindings: clock: fix dt_binding_check error for
- qcom,gcc-other.yaml
+Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3188-cru.txt to
+ YAML
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220323194248.26970-1-ansuelsmth@gmail.com>
- <20220325004910.E0246C340EC@smtp.kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>, Johan Jonker <jbx6244@gmail.com>,
+        heiko@sntech.de
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220324133229.24035-1-jbx6244@gmail.com>
+ <f7493d93-6c8a-efa9-1f2c-a0003a6d43b2@kernel.org>
+ <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com>
+ <20220325005130.C45A3C340EC@smtp.kernel.org>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <20220325004910.E0246C340EC@smtp.kernel.org>
+In-Reply-To: <20220325005130.C45A3C340EC@smtp.kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/03/2022 01:49, Stephen Boyd wrote:
-> Quoting Ansuel Smith (2022-03-23 12:42:48)
->> qcom,gcc-other Documentation lacks a '|' for the description. This cause
->> dt_binding_check to incorrectly parse "See also:" as a new value.
->> Add the missing '|' to correctly parse the description.
+On 25/03/2022 01:51, Stephen Boyd wrote:
+> Quoting Johan Jonker (2022-03-24 12:51:36)
+>> Hi Heiko, Krzysztof,
 >>
->> Fixes: a03965ed1310 ("dt-bindings: clock: split qcom,gcc.yaml to common and specific schema")
->> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
->> ---
+>> Question for the Rockchip clock maintainer:
+>> What clock should be used here and other SoCs with several clock parents
+>> in the tree?
+>>
+>> The clock.yaml produces a lot off notifications like:
+>>
+>> /arch/arm/boot/dts/rk3036-evb.dtb: clock-controller@20000000: 'clocks'
+>> is a dependency of 'assigned-clocks'
+> 
+> 'clocks' is not a dependency of 'assigned-clocks'. The dt-schema should
+> be fixed to remove that requirement.
 
-Just to clarify:
-This should go with fixed commit (a03965ed1310), so maybe for this merge
-window (I don't know the plans for a03965ed1310).
+If the driver does not have any clock inputs ("clocks" property), why
+does it care about some clock frequencies and parents?
+
+The clocks is the logical dependency of assigned-clocks, because
+otherwise hardware description is not complete.
+
+What should be here for Rockhip? We had similar cases like this for many
+drivers, I was fixing some of Exynos as well. In my case usually the
+root/external clock was missing, so I supplied is as input clock to the
+clock controller.
 
 
 Best regards,
