@@ -2,84 +2,122 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71EEC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 19:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B36C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 21:19:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230371AbiCYThT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 15:37:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41948 "EHLO
+        id S233357AbiCYVV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 17:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230446AbiCYThD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 15:37:03 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E2126B58F;
-        Fri, 25 Mar 2022 12:22:38 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id h7so15002000lfl.2;
-        Fri, 25 Mar 2022 12:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pba7oP54HKPv7rvuNO3mNof6XZxbJlFCeC12aVk0OXE=;
-        b=kwIy6IhFaTatHujym71oQXoxz+i5Xr8B7K7YXVjy1gWItwQ1opyNXXop+NF1l9aJS2
-         pzBuo/+uA+LVAHR7nDUHFvICyPEkZ5t7syk2ZuOaS7m2Mhdn8I7uWQwDMiytYwtx+dnW
-         Zrip7Uc9q8qylF3mmXJJ+lZ+eyGquAs2dzXvNQIw/kUzydliK7pTPRqacmCh2QCWsfVw
-         B4wEh4olQWOvguJc6sjgqw/DQMKhigcRZqXRct8WeVARTzM9aHsLpSdblReheJTC4CD3
-         PT3t4+JjyC1uk5V3Rt/F7wyMs4ycsC9sMLnMKQGTo5aQ8vWxNy7B4ddve8rl0HY5ie8p
-         EkCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pba7oP54HKPv7rvuNO3mNof6XZxbJlFCeC12aVk0OXE=;
-        b=FtLduTcWyoRpEBgIoQY5R2gusk+DwRlTKtW/wkFKYQejtLOXq3C+8YzhIlFOKhDITD
-         3da0+DXo2LPwwyD3IomYqKLKdzJUPacf/PP4MLOp//dhr9QaerMMolMIw8skzY9XHH4r
-         wwkus+fl+VOk+mC5HAd8YGhrpHjmQzQp7HRtNhOzz07yUdrjfZ73RgrbojiZpYxztBiX
-         fMwRXsWHoGcOt0TbYWPq1CuJeaMgg1USifG0hN7FfXZrheSQHel+NyhEcuAkkSD2hyke
-         6eTjutADloEdHtS07JYqMsZEfM79CheilIg+F+H1ZBAm0Wl5F2GTgPomPTFwk7aWyag0
-         V3AQ==
-X-Gm-Message-State: AOAM533KMjo8i0gRBu8blQH0bVc97Wg6fyKQlnKQaBPXdDWSoNhDVfgN
-        C4F7VCh15Ps68+otRQ5qCBwpQ3aL0dLj91eXxBn+bkm/PZM=
-X-Google-Smtp-Source: ABdhPJyclTqv78QfqPyJNZ2heKEpBQldstQKfe7AytnXqGbW0MlwSUx+GbZJS/LQVwYd/cNvFYeDK7a3b4Kgh/hCK04=
-X-Received: by 2002:a17:906:9751:b0:6e0:5cdd:cabf with SMTP id
- o17-20020a170906975100b006e05cddcabfmr13358276ejy.38.1648232337047; Fri, 25
- Mar 2022 11:18:57 -0700 (PDT)
+        with ESMTP id S233356AbiCYVV1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 17:21:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E74C4FC64
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 14:19:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C414FB828FC
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 21:19:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77643C004DD;
+        Fri, 25 Mar 2022 21:19:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648243189;
+        bh=vCo4mYlUupqPyE1ULrxig99asXmCqYLMb9eSjJgivtQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=rDAttaxDMqvsmCFSZtSoqUdSKvwcPqZFJlJiIjIB8uv+gttSVokcaqQynIqLfcTJl
+         N0bsQ7tJBgkH7x3xkO5c9Z+vGdI2UTh88G7/oOpcG19Tvm4CMMCl9grK5fMWUjw8v0
+         lJnQ5cHa3qHj/6deoIcN7wq6BfblLDp+ph5GYspAhGvxVL9BpS6OGBo+csV7uJm92y
+         lkDesHTgEDbKUzpqFBpWhnpLDFx++FwwRzpFAXc+t0vEDZXOpgoDJyg6Fj+0Vawox3
+         zxsIq6tOWBYGqtxGpbjeGLlnStKsx93Oi2T3OY4qEuTEk1KA+6B/im8MYZKy/Ik1H6
+         RmPbHhaA3quQA==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20220324162904.530140-1-steve@sk2.org>
-In-Reply-To: <20220324162904.530140-1-steve@sk2.org>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Fri, 25 Mar 2022 11:18:45 -0700
-Message-ID: <CAMo8Bf+vk+mkEAAQCirw7cdCFXx4wq7yxkM0tSP8PvpCaaacMw@mail.gmail.com>
-Subject: Re: [PATCH] clk: use simple i2c probe function
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAGS_qxrDs5RYa4nxNR2ghsyBhgVyMHApi+GJKzGxF7FvNHe9dQ@mail.gmail.com>
+References: <20220223105600.1132593-1-maxime@cerno.tech> <20220223105600.1132593-3-maxime@cerno.tech> <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com> <20220224225422.98298C340E9@smtp.kernel.org> <CAGS_qxrDs5RYa4nxNR2ghsyBhgVyMHApi+GJKzGxF7FvNHe9dQ@mail.gmail.com>
+Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
+To:     Daniel Latypov <dlatypov@google.com>
+Date:   Fri, 25 Mar 2022 14:19:47 -0700
+User-Agent: alot/0.10
+Message-Id: <20220325211949.77643C004DD@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 24, 2022 at 9:29 AM Stephen Kitt <steve@sk2.org> wrote:
->
-> The i2c probe functions here don't use the id information provided in
-> their second argument, so the single-parameter i2c probe function
-> ("probe_new") can be used instead.
->
-> This avoids scanning the identifier tables during probes.
->
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
->  drivers/clk/clk-cdce706.c   | 5 ++---
->  drivers/clk/clk-cs2000-cp.c | 5 ++---
->  drivers/clk/clk-max9485.c   | 5 ++---
->  drivers/clk/clk-si514.c     | 5 ++---
->  drivers/clk/clk-si5341.c    | 5 ++---
->  5 files changed, 10 insertions(+), 15 deletions(-)
+Quoting Daniel Latypov (2022-02-24 15:21:57)
+> On Thu, Feb 24, 2022 at 2:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Daniel Latypov (2022-02-23 14:50:59)
+> > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> > > >
+> > > > Let's test various parts of the rate-related clock API with the kun=
+it
+> > > > testing framework.
+> > > >
+> > > > Cc: kunit-dev@googlegroups.com
+> > > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > >
+> > > Tested-by: Daniel Latypov <dlatypov@google.com>
+> > >
+> > > Looks good to me on the KUnit side.
+> > > Two small nits below.
+> > >
+> > > FYI, I computed the incremental coverage for this series, i.e.:
+> > > 1) applied the full series
+> > > 2) computed the absolute coverage
+> > >
+> > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> > > --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG_KER=
+NEL=3Dy
+> > > --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=3Dy
+> > > $ lcov -t "clk_tests" -o coverage.info -c -d .kunit/ --gcov-tool=3D/u=
+sr/bin/gcov-6
+> >
+> > This is cool. Thanks! Is it possible to add some 'coverage' command to
+> > kunit so we don't have to recall this invocation?
+>=20
+> This is documented at
+> https://www.kernel.org/doc/html/latest/dev-tools/kunit/running_tips.html#=
+generating-code-coverage-reports-under-uml
+> It also includes pointers on how to use lcov to process the .gcda files.
+> I wrote it before --kconfig_add existed, so it just looks a bit different.
+>=20
+> The main blockers to directly supporting this in kunit.py are
+> 1.) this only works on UML
+> 2.) it needs gcc-6 or lower (and the kernel's min version is 5.1, iirc)...
+> 3.) in kernels older than 5.14, this requires some more hacks to get
+> working. So for the large portion of us stuck dealing with somewhat
+> older kernels, we'd have to do stuff manually anyway.
+>=20
+> For #1, we'd need different kconfig options and kunit.py's QEMU would
+> need some sort of userspace (busybox should be sufficient).
+> For #2, I don't recall what the precise issues were anymore. But I
+> think there were some more issues in gcc 8 or 9... :(
+>=20
+> >
+> > >
+> > > 3) intersected that with the total diff
+> >
+> > This would also be cool to do automatically with a revision range.
+>=20
+> Hmm, can you elaborate?
+> I assume you mean other revision ranges beyond this patch set?
 
-Reviewed-by: Max Filippov <jcmvbkbc@gmail.com>
+I mean somehow to tell kunit.py that I want incremental coverage
+information for a git revision range so that I can say something like
 
--- 
-Thanks.
--- Max
+	kunit.py incremental HEAD~3..HEAD
+
+and have it tell me the line coverage.
