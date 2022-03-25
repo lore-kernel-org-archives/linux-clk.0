@@ -2,71 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A326C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 16:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71EEC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 19:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376983AbiCYQyR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 12:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44862 "EHLO
+        id S230371AbiCYThT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 15:37:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241225AbiCYQyQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 12:54:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3212E5400;
-        Fri, 25 Mar 2022 09:52:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 77C43618CA;
-        Fri, 25 Mar 2022 16:52:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A6DC2BBE4;
-        Fri, 25 Mar 2022 16:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648227160;
-        bh=Ra8ieuBzaiUMPlsrjMnh2eiTTbFJ7RF3zaiOYqpcWRY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Yc5KjUsXj0C3ePGmhyRuZJgrCSRp4+HyI1a7yErLlR/GcQnY5tNLV1BmC+enHzLg7
-         VkPDqNzov93jRYdDqfRphGZaqNe/6MrJKtu0chA542UYeMVcO+026KPHUvImpJHRy2
-         SSD8o8rU0W/9ZVKZ5jWypI28tPMm5CFeJHLQj6GiDSEMXIwcm1fA5Ibf42imrE9nnZ
-         uC1wRNKl95f+lsEt7efD2foDSsaT82ItZjSJdVJt0btni/gsKvvntazhgnpTDA3D9d
-         ljIaXMIYw1l6gpYSSETL24GOW5zcqJ+uT5dWsIDJpz4+X5/ekL/ToquYczoXPsnd+s
-         CQYhh6dO5mFPA==
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230446AbiCYThD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 15:37:03 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E2126B58F;
+        Fri, 25 Mar 2022 12:22:38 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id h7so15002000lfl.2;
+        Fri, 25 Mar 2022 12:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pba7oP54HKPv7rvuNO3mNof6XZxbJlFCeC12aVk0OXE=;
+        b=kwIy6IhFaTatHujym71oQXoxz+i5Xr8B7K7YXVjy1gWItwQ1opyNXXop+NF1l9aJS2
+         pzBuo/+uA+LVAHR7nDUHFvICyPEkZ5t7syk2ZuOaS7m2Mhdn8I7uWQwDMiytYwtx+dnW
+         Zrip7Uc9q8qylF3mmXJJ+lZ+eyGquAs2dzXvNQIw/kUzydliK7pTPRqacmCh2QCWsfVw
+         B4wEh4olQWOvguJc6sjgqw/DQMKhigcRZqXRct8WeVARTzM9aHsLpSdblReheJTC4CD3
+         PT3t4+JjyC1uk5V3Rt/F7wyMs4ycsC9sMLnMKQGTo5aQ8vWxNy7B4ddve8rl0HY5ie8p
+         EkCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pba7oP54HKPv7rvuNO3mNof6XZxbJlFCeC12aVk0OXE=;
+        b=FtLduTcWyoRpEBgIoQY5R2gusk+DwRlTKtW/wkFKYQejtLOXq3C+8YzhIlFOKhDITD
+         3da0+DXo2LPwwyD3IomYqKLKdzJUPacf/PP4MLOp//dhr9QaerMMolMIw8skzY9XHH4r
+         wwkus+fl+VOk+mC5HAd8YGhrpHjmQzQp7HRtNhOzz07yUdrjfZ73RgrbojiZpYxztBiX
+         fMwRXsWHoGcOt0TbYWPq1CuJeaMgg1USifG0hN7FfXZrheSQHel+NyhEcuAkkSD2hyke
+         6eTjutADloEdHtS07JYqMsZEfM79CheilIg+F+H1ZBAm0Wl5F2GTgPomPTFwk7aWyag0
+         V3AQ==
+X-Gm-Message-State: AOAM533KMjo8i0gRBu8blQH0bVc97Wg6fyKQlnKQaBPXdDWSoNhDVfgN
+        C4F7VCh15Ps68+otRQ5qCBwpQ3aL0dLj91eXxBn+bkm/PZM=
+X-Google-Smtp-Source: ABdhPJyclTqv78QfqPyJNZ2heKEpBQldstQKfe7AytnXqGbW0MlwSUx+GbZJS/LQVwYd/cNvFYeDK7a3b4Kgh/hCK04=
+X-Received: by 2002:a17:906:9751:b0:6e0:5cdd:cabf with SMTP id
+ o17-20020a170906975100b006e05cddcabfmr13358276ejy.38.1648232337047; Fri, 25
+ Mar 2022 11:18:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Yj1x5hJEKVL71JZ1@Red>
-References: <20220321200739.3572792-1-clabbe@baylibre.com> <20220321200739.3572792-18-clabbe@baylibre.com> <20220325004125.C80FDC340EC@smtp.kernel.org> <Yj1x5hJEKVL71JZ1@Red>
-Subject: Re: [PATCH v3 17/26] clk: rk3399: use proper crypto0 name
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-To:     LABBE Corentin <clabbe@baylibre.com>
-Date:   Fri, 25 Mar 2022 09:52:38 -0700
-User-Agent: alot/0.10
-Message-Id: <20220325165240.C9A6DC2BBE4@smtp.kernel.org>
+References: <20220324162904.530140-1-steve@sk2.org>
+In-Reply-To: <20220324162904.530140-1-steve@sk2.org>
+From:   Max Filippov <jcmvbkbc@gmail.com>
+Date:   Fri, 25 Mar 2022 11:18:45 -0700
+Message-ID: <CAMo8Bf+vk+mkEAAQCirw7cdCFXx4wq7yxkM0tSP8PvpCaaacMw@mail.gmail.com>
+Subject: Re: [PATCH] clk: use simple i2c probe function
+To:     Stephen Kitt <steve@sk2.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting LABBE Corentin (2022-03-25 00:40:22)
-> Le Thu, Mar 24, 2022 at 05:41:23PM -0700, Stephen Boyd a =C3=A9crit :
-> > Quoting Corentin Labbe (2022-03-21 13:07:30)
-> >=20
-> > $ git grep SRST_CRYPTO
-> > Documentation/devicetree/bindings/crypto/rockchip-crypto.txt:          =
- resets =3D <&cru SRST_CRYPTO>;
-> > arch/arm/boot/dts/rk3288.dtsi:          resets =3D <&cru SRST_CRYPTO>;
-> >=20
-> > Uh oh. Just don't change it and think about something else when it
-> > starts to feel inconsistent.
->=20
-> This is on rk3288, so not related to rk3399.
-> Even on the RK3399 TRM, all crypto clocks are called either crypto0 or cr=
-ypto1 (neither just crypto)
->=20
+On Thu, Mar 24, 2022 at 9:29 AM Stephen Kitt <steve@sk2.org> wrote:
+>
+> The i2c probe functions here don't use the id information provided in
+> their second argument, so the single-parameter i2c probe function
+> ("probe_new") can be used instead.
+>
+> This avoids scanning the identifier tables during probes.
+>
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
+> ---
+>  drivers/clk/clk-cdce706.c   | 5 ++---
+>  drivers/clk/clk-cs2000-cp.c | 5 ++---
+>  drivers/clk/clk-max9485.c   | 5 ++---
+>  drivers/clk/clk-si514.c     | 5 ++---
+>  drivers/clk/clk-si5341.c    | 5 ++---
+>  5 files changed, 10 insertions(+), 15 deletions(-)
 
-Ok. Please add a note in the commit text why it's OK to change the
-define names.
+Reviewed-by: Max Filippov <jcmvbkbc@gmail.com>
+
+-- 
+Thanks.
+-- Max
