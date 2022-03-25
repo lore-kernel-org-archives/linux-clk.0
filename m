@@ -2,96 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9764C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 00:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77316C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 00:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354679AbiCYAnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 20:43:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53952 "EHLO
+        id S239525AbiCYAur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 20:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348270AbiCYAm7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 20:42:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2662BA30B;
-        Thu, 24 Mar 2022 17:41:26 -0700 (PDT)
+        with ESMTP id S1357062AbiCYAuq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 20:50:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95E3943EE4;
+        Thu, 24 Mar 2022 17:49:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6E6AA617E3;
-        Fri, 25 Mar 2022 00:41:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80FDC340EC;
-        Fri, 25 Mar 2022 00:41:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4C2BBB826FF;
+        Fri, 25 Mar 2022 00:49:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0246C340EC;
+        Fri, 25 Mar 2022 00:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648168885;
-        bh=FbOzwJQ3VItTPiRwVL0i6iYEw4wn48XltfsXSq3Gp0I=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=heQg+oDa7Y6hrV9cfifoxjjs109z+q36R8eT3+BFw4M0zUjooFDcroS4+WlBhFu8P
-         GeyTbIPNwH8DN4D5L87WCjB6fsExxxYylolVtUVdqMnWNZLSXMI0bt77o83lwoDqsf
-         U1V//fakJzWSm9GAFDn51NoPEQr2Xd/B88ALmkyf10pi8RjLf/6XnUHqOXwnRd6dx/
-         Hbgm258ar/AEJ/RMB7grT+bdeR48/HT9+1RBcl9MaqOquU/xj0rDw4URq56v8wncNP
-         Pk4HrDByhLh2ixpsORYTVluAGEBpP2gInzE4wN2G4QWvXSfZO8sZ6SsS+OisfXWtjV
-         tR3pLBOcq+IAw==
+        s=k20201202; t=1648169351;
+        bh=rjmJYiQgY1akn7Nl/HQbMNXWnvmQlSy6McuLLTA/aQ0=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=piWZNbAMJgatSoT5xZOBehw/787gdX7J2NFCFEg7hdeUOlTqpHyqQOZ2soAsgdUQo
+         tNDvmVdE7C5dC5Uue5GtFm2NpjOdK1ju8gwbQvk/u+9JkBnhtCbFiHNnsRbLe/Jk9I
+         YITQjYjV+OzZDyLfYkBh//OKskKOV5OW58gE4DAwzgbCMOVr2XhU3vcldt78BlBsnS
+         dEhd3JsMSKL0/EGETQWqywgKHBgaeZ6YLQ+mPKyyjGujJZRLI5eAzvmN0xGwl39mNh
+         g5QZ6Ym+OXhANLLLqIvisZ3+BOBtLXYbBdT4H9bOJkCMhDOp9YUkP05/qcRZpyxRGX
+         kzJIU/v8CiSMw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220321200739.3572792-18-clabbe@baylibre.com>
-References: <20220321200739.3572792-1-clabbe@baylibre.com> <20220321200739.3572792-18-clabbe@baylibre.com>
-Subject: Re: [PATCH v3 17/26] clk: rk3399: use proper crypto0 name
+In-Reply-To: <20220323194248.26970-1-ansuelsmth@gmail.com>
+References: <20220323194248.26970-1-ansuelsmth@gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: fix dt_binding_check error for qcom,gcc-other.yaml
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Corentin Labbe <clabbe@baylibre.com>
-To:     Corentin Labbe <clabbe@baylibre.com>, heiko@sntech.de,
-        herbert@gondor.apana.org.au, krzk+dt@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Thu, 24 Mar 2022 17:41:23 -0700
+To:     Andy Gross <agross@kernel.org>,
+        Ansuel Smith <ansuelsmth@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 24 Mar 2022 17:49:09 -0700
 User-Agent: alot/0.10
-Message-Id: <20220325004125.C80FDC340EC@smtp.kernel.org>
+Message-Id: <20220325004910.E0246C340EC@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Corentin Labbe (2022-03-21 13:07:30)
-> rk3399 has 2 crypto instance, reset for crypto1 is correctly named, but
-> crypto0 not.
-> Add a 0 to be consistent.
-
-This is OK because nothing is using the define today?
-
+Quoting Ansuel Smith (2022-03-23 12:42:48)
+> qcom,gcc-other Documentation lacks a '|' for the description. This cause
+> dt_binding_check to incorrectly parse "See also:" as a new value.
+> Add the missing '|' to correctly parse the description.
 >=20
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> Fixes: a03965ed1310 ("dt-bindings: clock: split qcom,gcc.yaml to common a=
+nd specific schema")
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 > ---
->  include/dt-bindings/clock/rk3399-cru.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings=
-/clock/rk3399-cru.h
-> index 44e0a319f077..39169d94a44e 100644
-> --- a/include/dt-bindings/clock/rk3399-cru.h
-> +++ b/include/dt-bindings/clock/rk3399-cru.h
-> @@ -547,8 +547,8 @@
->  #define SRST_H_PERILP0                 171
->  #define SRST_H_PERILP0_NOC             172
->  #define SRST_ROM                       173
-> -#define SRST_CRYPTO_S                  174
-> -#define SRST_CRYPTO_M                  175
-> +#define SRST_CRYPTO0_S                 174
-> +#define SRST_CRYPTO0_M                 175
-> =20
->  /* cru_softrst_con11 */
->  #define SRST_P_DCF                     176
-> @@ -556,7 +556,7 @@
->  #define SRST_CM0S                      178
->  #define SRST_CM0S_DBG                  179
->  #define SRST_CM0S_PO                   180
-> -#define SRST_CRYPTO                    181
-> +#define SRST_CRYPTO0                   181
 
-$ git grep SRST_CRYPTO
-Documentation/devicetree/bindings/crypto/rockchip-crypto.txt:           res=
-ets =3D <&cru SRST_CRYPTO>;
-arch/arm/boot/dts/rk3288.dtsi:          resets =3D <&cru SRST_CRYPTO>;
-
-Uh oh. Just don't change it and think about something else when it
-starts to feel inconsistent.
+Applied to clk-next
