@@ -2,133 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54938C433FE
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C96C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352924AbiCYLAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 07:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
+        id S244096AbiCYLAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 07:00:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244096AbiCYLAG (ORCPT
+        with ESMTP id S1346224AbiCYLAG (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 07:00:06 -0400
 Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 068854AE34
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069764AE36
         for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:58:29 -0700 (PDT)
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5E56B5C0069;
-        Fri, 25 Mar 2022 06:58:28 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 8A0385C0051;
+        Fri, 25 Mar 2022 06:58:26 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 25 Mar 2022 06:58:28 -0400
+  by compute3.internal (MEProxy); Fri, 25 Mar 2022 06:58:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; bh=dg8syyqhxJbaBkZFBbyZepMurtjTn3
-        l4/9qNBy6pFCk=; b=KMa5olhW6abLg8l16+Hw/SAoBU8dNwzjdq8judoxWFWTE3
-        PG/hpTvZNV2W3zsD47Q2WfNmNOfILfm8/AtuxeYxQgVaKxE6ujO1yEZ/nQK4AmTn
-        pF4GeUijCrkKN7XOoY7kXcRqZwV8el8jMcht/zZP8zaZhkBtDFryTJ3C9zeFhZux
-        0IOYgwf/KoKyd73dv2ACide7MhDrjnVFp1cNVlTmBAMUzax75N1+blBtnGaxGAmd
-        MNbL7++DFrFfm/Z2P7Qq4VAsVXPHRJv+OtKsWEqJxZHIVjdQkKxjHm8v4HWBLudZ
-        fox0esgQHBGR0M77Yv/d8/jACBCflvOqxXn+3UVQ==
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:message-id:mime-version:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=8r7t2v8slyq37pMiLh7npibLuc0RE1WTRjMQYY
+        t+jv0=; b=NItixDzqNbkYDiXRmOShGushnaNKUd2jkOzj3wUgWY46X5HNtzskUS
+        IDHHuCGxPnVHZ5bEZC+u4dUUeZd+5Wjr/73NvAObS5w7/Qo8pStK4hV+dgc6s/Kv
+        APhoiJOh+96nDesCIP6A1st9P5Q023yazH9qBZYFxes8ARSNP4NNXYjhFucVsPOj
+        /vku7LhPpPOaZu4jtQPep9v3NvAAxsFWiqLWRFElE8KhZKx21s/CwWX+uzVWUyBI
+        oI4gLfx04bqyjzXo8e6ie/t+WKcDoByA4aPBk5Vu6MwXnmkz56N+18BS6cYT91ZK
+        NidlC1YBQKQB8GxoElxYaue9i/P18Lag==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=dg8syy
-        qhxJbaBkZFBbyZepMurtjTn3l4/9qNBy6pFCk=; b=GRlfKiXy8wLa/DlPaGtJ1K
-        0Phl9DGgmvz2/Ik1mIHMvb7kGMAS/RjA0mBsnNXEJo56QM/45vbS0LN8HxKvLfM1
-        Hz5J2VmYWS5aSR9L2LFVwIqT5oGaPe7rZWQfi8QCZd7B8kzNuMJsAJb4eYB3cye7
-        4vYklPHfiaNpEGttlut3Ss8RzFGBOwQSXnnl5rh30u89THRPIUXxjP36H10STCsY
-        3oygi8PvDPst4vu4D9DCLHB9Kqt7K8/Akyy7Gx9z6seIN84kbGX4psqCWzmh//xA
-        s45hRa29xgNesF/zP3AiaPmxiPZdoYjIj6g0NzeCm+IrdbmPgMLbN9eofiOwajaA
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:message-id
+        :mime-version:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=8r7t2v
+        8slyq37pMiLh7npibLuc0RE1WTRjMQYYt+jv0=; b=WFEJxwL8wrcsgAlsMq7Qz2
+        5TG2E/uPeaVAjvWPHxu2iJr3g4xB1yJftNODxvVxmpeWc+qBTjGT8S9+HZX5p/ez
+        1eCiHyJN4TP8T4JtWLFdyrKaZxsxWFUnZqe7q8xyOOnMhf8O9b33fld/CfDZWvEc
+        tIA34R9YF8isBulDYMiTlYOl+OJ8xdVyCPvPz1r7nCxTDwIS7nJIx09uyBxofqIX
+        LDDO+ug1My7EoUB+MaZH7ytV4Wf9i06a+HHkeYxgHfS3Ix5oNJ+UhaV2wQCL8dPP
+        1FlhE3fKC9tX2bmziwuuL5GYWASOxBHtxQ39r8MvxRfQYtU4jEsVpOgD7sePXyDQ
         ==
-X-ME-Sender: <xms:VKA9Yl5SsMdoLmzFL9gGp6xUJpoEudBJE9cFCB9UTdO3UkrnGY2TUA>
-    <xme:VKA9Yi6isSp_dqASNzeZ4tUOjVvbVRbyKgFv6V9r8WPo6OJLgRLKWQMdKYFnTrgQO
-    ychFndacuz8G_nAcVI>
-X-ME-Received: <xmr:VKA9Yse5HyNaYnQ-9HOWEl8RBiCSR3SxnfixK3Y0bXiBQGRtRed0dsZxvxYJXRSP_nupubDqausiZ2Af41mNCZgiNXFsoKPCHGcFJXk>
+X-ME-Sender: <xms:UaA9YvlOH9yQ3LI3brsoROedXe9y6YkKSglNkpe5iMVzeiTYdZ-X3w>
+    <xme:UaA9Yi1yyt1PCuJqkhJvzUuf8sp7APEODffvBQp7pySheAPXOvpKTLsb_XfQ1J0OH
+    vXtF1s5cJK2L-2j8ac>
+X-ME-Received: <xmr:UaA9Ylpjo5AH3ByvGb3vL5BCJmKRZCr973Zw2lycr-UrJ1QYkJTCkozeDb8hKXej1gpFgXNgtCW73XHQ3kDqwYQLUub8iC4g-hRrK7o>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvdduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:VKA9YuJPwo_YQBGW0uX9z0xrI9uuwRNxhXV-9DbBqwWtn-9Ooop0Hw>
-    <xmx:VKA9YpLTHKZ997fxrDhcHTlJQ_i2jN33f3TLpw6NsSCeoyNhC9VDrQ>
-    <xmx:VKA9Ynzd2ceClg52Kp-7jq6ipqE-VC12kLBLrBtSbDW8l3IejlaNYA>
-    <xmx:VKA9Yp32OQBCRnsWyvPWqJChP9T6bI5fqVd3J8qR8uDtaJULrEkKQA>
+    cujfgurhephffvufffkffotggggfesthhqredtredtjeenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeetieekgfffkeegkeeltdehudetteejgfekueevhffhteegudfgkedtueegfffg
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
+    igihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:UaA9YnmVr0g3vIc32iC8xPHCWhXjNs0XXPwoELBJMrXAS_4c-iHipQ>
+    <xmx:UaA9Yt0e3agPdNfpyYLo9rxe-sN-aA6wWTNwBMxrQmz1lD_fazBrWQ>
+    <xmx:UaA9YmtOgyqVvQn3kXlZK9Ain3jLeuiIirDBj5bDOAqO1YrF3VTxsQ>
+    <xmx:UqA9Ymz2wLhOrgFOemNTHi6RUiHgxAdHR4F5YYXS2HgzYwO8nmk6iw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Mar 2022 06:58:27 -0400 (EDT)
+ 25 Mar 2022 06:58:25 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     linux-clk@vger.kernel.org,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 1/3] clk: Initialize orphan req_rate
-Date:   Fri, 25 Mar 2022 11:58:20 +0100
-Message-Id: <20220325105822.1723827-2-maxime@cerno.tech>
+Subject: [PATCH 0/3] clk: Some Clock Range Fixes
+Date:   Fri, 25 Mar 2022 11:58:19 +0100
+Message-Id: <20220325105822.1723827-1-maxime@cerno.tech>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220325105822.1723827-1-maxime@cerno.tech>
-References: <20220325105822.1723827-1-maxime@cerno.tech>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When registering a clock that doesn't have a recalc_rate implementation,
-and doesn't have its parent registered yet, we initialize the clk_core
-rate and req_rate fields to 0.
-
-The rate field is later updated when the parent is registered in
-clk_core_reparent_orphans_nolock() using __clk_recalc_rates(), but the
-req_rate field is never updated.
-
-This leads to an issue in clk_set_rate_range() and clk_put(), since
-those functions will call clk_set_rate with the content of req_rate to
-provide drivers with the opportunity to change the rate based on the new
-boundaries. In this case, we would call clk_set_rate() with a rate of 0,
-effectively enforcing the minimum allowed for this clock whenever we
-would call one of those two functions, even though the actual rate might
-be within range.
-
-Let's fix this by setting req_rate in clk_core_reparent_orphans_nolock()
-with the rate field content just updated by the call to
-__clk_recalc_rates().
-
-Fixes: 1c8e600440c7 ("clk: Add rate constraints to clocks")
-Reported-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com> # T30 Nexus7
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9bc8bf434b94..915a2fa363b1 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3479,6 +3479,19 @@ static void clk_core_reparent_orphans_nolock(void)
- 			__clk_set_parent_after(orphan, parent, NULL);
- 			__clk_recalc_accuracies(orphan);
- 			__clk_recalc_rates(orphan, 0);
-+
-+			/*
-+			 * If the clock doesn't have .recalc_rate (so
-+			 * wouldn't affect the parent rate) and is
-+			 * orphan when it's registered, the
-+			 * __clk_init_parent will set the initial
-+			 * req_rate to 0.
-+			 *
-+			 * req_rate is then used by clk_set_rate_range
-+			 * and clk_put to trigger a clk_set_rate call
-+			 * whenever the boundaries are modified.
-+			 */
-+			orphan->req_rate = orphan->rate;
- 		}
- 	}
- }
--- 
-2.35.1
-
+Hi,=0D
+=0D
+This fixes one regression for Tegra30 reported by Dmitry, and another issue=
+ I=0D
+came across while looking at it.=0D
+=0D
+We're also adding a bunch of unit tests to cover those cases.=0D
+=0D
+Let me know what you think,=0D
+Maxime=0D
+=0D
+Maxime Ripard (3):=0D
+  clk: Initialize orphan req_rate=0D
+  clk: test: Test clk_set_rate_range on orphan mux=0D
+  clk: Drop the rate range on clk_put=0D
+=0D
+ drivers/clk/clk.c      |  47 +++++++--=0D
+ drivers/clk/clk_test.c | 213 +++++++++++++++++++++++++++++++++++++++++=0D
+ 2 files changed, 254 insertions(+), 6 deletions(-)=0D
+=0D
+-- =0D
+2.35.1=0D
+=0D
