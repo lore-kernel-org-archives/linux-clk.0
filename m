@@ -2,302 +2,240 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E35C4332F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3F0C433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 15:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346224AbiCYLAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 07:00:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
+        id S1353479AbiCYPDa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 11:03:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352917AbiCYLAH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 07:00:07 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 957464C7A0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:58:33 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 000EF5C0131;
-        Fri, 25 Mar 2022 06:58:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 25 Mar 2022 06:58:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; bh=8SSTOccaUNCExmRl+Z4+r2gQ1J2Z5G
-        J+pWFxiyH9Zdg=; b=Hx116PMZTkJBDp76MJqljFkmBd3/ARa3nJMde8D4rd5bXH
-        MYTGbc7FpLM1pHyp46KRsyeiPRO3KxOWkuOH8bcGZEsCgyvxIGOZkzci5yXrK+3k
-        /uR35h3JZY7aKPdx4oMnJlfKuhvFgpz9Wph6WMpaf8Ce9Y5cW/Igf3GA0+DViK85
-        ZxuSTBjrJ/8WhXfO/puzO6DgYy4Vd9TqIFCmn9LicSjJ+sQs5LzjSq/zNktYVUWG
-        8/kHUyjod+3vYkjuBu04fNtAfcykvIVWsxn7N87sDT4rLQWtgCxhpIppVjaKahxF
-        eODj06eZCaEPOac5/jSyLPrYtOx5Ce3G1sJjwbcg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=8SSTOc
-        caUNCExmRl+Z4+r2gQ1J2Z5GJ+pWFxiyH9Zdg=; b=ayb4LRQhy5TLqUk1rthyjP
-        wTQDfgUmtuA9x/WXOJCNIPURe7b9oWe7C4d3Mn8iuTqYfK4fVcKDPUd5WO27UBmN
-        rl7PwOO9XP5XKU8e/8jt+Jk/wFQ3fYebTiQ+Sg2urBt9RqQTdPVIc+uPV0WqfZWa
-        8uX+o9VgXSS3I33OjK79oaZr3GFqTp/DK8tcolGXD+lrEpMcCDqkFiPRiT3VUC5g
-        3LENQlYrgfqB7ZzZbn0kWwG1gt0VI6qQ2syptyRjb5pw6x3wn8+oLi613BnMa8Vw
-        Kf6wMnmDIv6w3LntIzzAxJ168DMVAFsGxvEnup+3UiS0/tuIK/a4b3oEIyoYJXKw
-        ==
-X-ME-Sender: <xms:WKA9YvBKEZ0zADqFSTfYxWJF2U93e-zWgCcA3xa3RRK6-PIkFIlCIw>
-    <xme:WKA9Ylik5ubZMVCJwLEGVDETY9vmRYJU9E3x8dyA_GsO5aBnKURul8N1J7hUGsuUB
-    m4UhlA4LegLcbGvceo>
-X-ME-Received: <xmr:WKA9YqlhW1BW5GVNQWUpNS3Cty3FI33F0_zj_GLoLlTRw7BqVyO4scdjBFK9NoJgYqUvFoD9_4sDUjiKRA6A4E9VY3C_qvD1iuNQEpU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:WKA9YhzXVSvhjcPAN8u8mFVSXuT763wyVRfJpSUv3WdRNZys7Zq5ag>
-    <xmx:WKA9YkSD42QMi_Ljwo079WxcEX2XVKtzm6p8TjYlX0HkLxV5DSM6nA>
-    <xmx:WKA9YkaYZNh1yuE7WyI1lUXufkYvbrz3feJ9moON8FLHFShfyl7jbQ>
-    <xmx:WKA9YqeAUcFH7zg9rpQy52FCMI7hOj42pyb_zJDoijnNzZ8vr3ouFQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Mar 2022 06:58:32 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     linux-clk@vger.kernel.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 3/3] clk: Drop the rate range on clk_put
-Date:   Fri, 25 Mar 2022 11:58:22 +0100
-Message-Id: <20220325105822.1723827-4-maxime@cerno.tech>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220325105822.1723827-1-maxime@cerno.tech>
-References: <20220325105822.1723827-1-maxime@cerno.tech>
+        with ESMTP id S244579AbiCYPD3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 11:03:29 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAC4A954B8;
+        Fri, 25 Mar 2022 08:01:54 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id b24so9546587edu.10;
+        Fri, 25 Mar 2022 08:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ANMaiNS+tsFPctCqYM7KG7s3uQ7H+7+M41RZf3QmwQw=;
+        b=Zb8YJdLbsmUBPPOglHtnDhCB7mEIlgPslESZhBkCjEeHxAAE1DnFP3KFn/UgPgebDm
+         XaBJbuhCiLkLxG9Rtn1DsE5KnwMx5DeQABb1hV2JqGa0dOadKyVG6IOj4Cb8QsCuLGmP
+         zGa65rlUzK+0gSpiR7COruu8RSHG9a33cLKgX6ihrwehY92naYONPCJHucQwWDv33N8Z
+         OaVi+TMeKwrslLWvRbFipT3j5El/BC6fMY34G2OiYt0iTR9YUXT/rC63H/+yWscmGYqk
+         Eg3Yzxo8+qFWNDt4X+l0CzBn82tPPMgFVj+D7RbXCEz9EezX7KolyPQ0tfM+q7TOSYF9
+         eDVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ANMaiNS+tsFPctCqYM7KG7s3uQ7H+7+M41RZf3QmwQw=;
+        b=YCJI+R3PJWJyGLqwdZ/gzvCSlHr+8WITBpnezdWGmt0ZaA40+Zm72ieANHkSoR1Fbj
+         GLla0M39Z6rcGxV8ZjrvZ2/dRc4MpRgp9VpfclLLB1o0AZida6bGyZk8kTrKIJw8JNrn
+         xg8fZ8LEHOXtRU+9Tng3fDkiDCiFSVyJ8SdWIyy2gIJA2hmHdWP2yApGxcnPPSiuue/K
+         lUcyOuLq4j1VwV/amg/k3zbYxULseGxpE30hVX9CFa6Z5jMGI49I7NLYYfabxxwc0wVG
+         oilaFoqpg4XPrFJcg9wrhqToWzfCVAPEobku+bMB385zRMee7sO1x69Lzq/aMMcmiL5z
+         3x3w==
+X-Gm-Message-State: AOAM531WHrWVoGdL5BkzoAQKSD0NUFGmtJ7WsTSEbK95IMt09wFWaMH5
+        x5u1OF7/S7jciqLdslK+bfQ=
+X-Google-Smtp-Source: ABdhPJy6yOYyRZlGnUG37FK3ih1/UHdYyPKxA95erpwf4j37GXfNckTUyllGt0WI2IMCepVF43gazw==
+X-Received: by 2002:aa7:cb93:0:b0:415:d57a:4603 with SMTP id r19-20020aa7cb93000000b00415d57a4603mr13503112edt.62.1648220513124;
+        Fri, 25 Mar 2022 08:01:53 -0700 (PDT)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id w14-20020a170906d20e00b006cee22553f7sm2455714ejz.213.2022.03.25.08.01.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Mar 2022 08:01:52 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
+Date:   Fri, 25 Mar 2022 16:01:45 +0100
+Message-Id: <20220325150146.18638-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While the current code will trigger a new clk_set_rate call whenever the
-rate boundaries are changed through clk_set_rate_range, this doesn't
-occur when clk_put() is called.
+Current dts files with RK3188/RK3066 'cru' nodes are manually verified.
+In order to automate this process rockchip,rk3188-cru.txt has to be
+converted to YAML.
 
-However, this is essentially equivalent since, after clk_put()
-completes, those boundaries won't be enforced anymore.
+Changed:
+  Add properties to fix notifications by clocks.yaml for example:
+    clocks
+    clock-names
 
-Let's add a call to clk_set_rate_range in clk_put to make sure those
-rate boundaries are dropped and the clock drivers can react.
-
-Let's also add a few tests to make sure this case is covered.
-
-Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rate")
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- drivers/clk/clk.c      |  34 ++++++++++---
- drivers/clk/clk_test.c | 108 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 136 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 915a2fa363b1..f21901b83a9b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2340,11 +2340,15 @@ EXPORT_SYMBOL_GPL(clk_set_rate_exclusive);
-  *
-  * Returns success (0) or negative errno.
-  */
--int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
-+static int clk_set_rate_range_nolock(struct clk *clk,
-+				     unsigned long min,
-+				     unsigned long max)
- {
- 	int ret = 0;
- 	unsigned long old_min, old_max, rate;
- 
-+	lockdep_assert_held(&prepare_lock);
-+
- 	if (!clk)
- 		return 0;
- 
-@@ -2357,8 +2361,6 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 		return -EINVAL;
- 	}
- 
--	clk_prepare_lock();
+Changed V2:
+  change clocks maxItems
+  add clock-names
+  use clock-controller node name
+  remove assigned-xxx
+---
+ .../bindings/clock/rockchip,rk3188-cru.txt    | 61 ---------------
+ .../bindings/clock/rockchip,rk3188-cru.yaml   | 76 +++++++++++++++++++
+ 2 files changed, 76 insertions(+), 61 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt
+deleted file mode 100644
+index 7f368530a..000000000
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt
++++ /dev/null
+@@ -1,61 +0,0 @@
+-* Rockchip RK3188/RK3066 Clock and Reset Unit
 -
- 	if (clk->exclusive_count)
- 		clk_core_rate_unprotect(clk->core);
- 
-@@ -2402,6 +2404,28 @@ int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
- 	if (clk->exclusive_count)
- 		clk_core_rate_protect(clk->core);
- 
-+	return ret;
-+}
+-The RK3188/RK3066 clock controller generates and supplies clock to various
+-controllers within the SoC and also implements a reset controller for SoC
+-peripherals.
+-
+-Required Properties:
+-
+-- compatible: should be "rockchip,rk3188-cru", "rockchip,rk3188a-cru" or
+-			"rockchip,rk3066a-cru"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- #clock-cells: should be 1.
+-- #reset-cells: should be 1.
+-
+-Optional Properties:
+-
+-- rockchip,grf: phandle to the syscon managing the "general register files"
+-  If missing pll rates are not changeable, due to the missing pll lock status.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
+-dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
+-Similar macros exist for the reset sources in these files.
+-
+-External clocks:
+-
+-There are several clocks that are generated outside the SoC. It is expected
+-that they are defined using standard clock bindings with following
+-clock-output-names:
+- - "xin24m" - crystal input - required,
+- - "xin32k" - rtc clock - optional,
+- - "xin27m" - 27mhz crystal input on rk3066 - optional,
+- - "ext_hsadc" - external HSADC clock - optional,
+- - "ext_cif0" - external camera clock - optional,
+- - "ext_rmii" - external RMII clock - optional,
+- - "ext_jtag" - externalJTAG clock - optional
+-
+-Example: Clock controller node:
+-
+-	cru: cru@20000000 {
+-		compatible = "rockchip,rk3188-cru";
+-		reg = <0x20000000 0x1000>;
+-		rockchip,grf = <&grf>;
+-
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+-
+-Example: UART controller node that consumes the clock generated by the clock
+-  controller:
+-
+-	uart0: serial@10124000 {
+-		compatible = "snps,dw-apb-uart";
+-		reg = <0x10124000 0x400>;
+-		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
+-		reg-shift = <2>;
+-		reg-io-width = <1>;
+-		clocks = <&cru SCLK_UART0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+new file mode 100644
+index 000000000..8d2fe7982
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/**
-+ * clk_set_rate_range - set a rate range for a clock source
-+ * @clk: clock source
-+ * @min: desired minimum clock rate in Hz, inclusive
-+ * @max: desired maximum clock rate in Hz, inclusive
-+ *
-+ * Returns success (0) or negative errno.
-+ */
-+int clk_set_rate_range(struct clk *clk, unsigned long min, unsigned long max)
-+{
-+	int ret;
++title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
 +
-+	if (!clk)
-+		return 0;
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
 +
-+	clk_prepare_lock();
++description: |
++  The RK3188/RK3066 clock controller generates and supplies clocks to various
++  controllers within the SoC and also implements a reset controller for SoC
++  peripherals.
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All available clocks are defined as
++  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
++  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
++  Similar macros exist for the reset sources in these files.
++  There are several clocks that are generated outside the SoC. It is expected
++  that they are defined using standard clock bindings with following
++  clock-output-names:
++    - "xin24m"    - crystal input                 - required
++    - "xin32k"    - RTC clock                     - optional
++    - "xin27m"    - 27mhz crystal input on RK3066 - optional
++    - "ext_hsadc" - external HSADC clock          - optional
++    - "ext_cif0"  - external camera clock         - optional
++    - "ext_rmii"  - external RMII clock           - optional
++    - "ext_jtag"  - external JTAG clock           - optional
 +
-+	ret = clk_set_rate_range_nolock(clk, min, max);
++properties:
++  compatible:
++    enum:
++      - rockchip,rk3066a-cru
++      - rockchip,rk3188-cru
++      - rockchip,rk3188a-cru
 +
- 	clk_prepare_unlock();
- 
- 	return ret;
-@@ -4403,9 +4427,7 @@ void __clk_put(struct clk *clk)
- 	}
- 
- 	hlist_del(&clk->clks_node);
--	if (clk->min_rate > clk->core->req_rate ||
--	    clk->max_rate < clk->core->req_rate)
--		clk_core_set_rate_nolock(clk->core, clk->core->req_rate);
-+	clk_set_rate_range_nolock(clk, 0, ULONG_MAX);
- 
- 	owner = clk->core->owner;
- 	kref_put(&clk->core->ref, __clk_release);
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 146b1759798e..b205c329cf32 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -760,9 +760,65 @@ static void clk_range_test_multiple_set_range_rate_maximized(struct kunit *test)
- 	clk_put(user1);
- }
- 
-+/*
-+ * Test that if we have several subsequent calls to
-+ * clk_set_rate_range(), across multiple users, the core will reevaluate
-+ * whether a new rate is needed, including when a user drop its clock.
-+ *
-+ * With clk_dummy_maximize_rate_ops, this means that the the rate will
-+ * trail along the maximum as it evolves.
-+ */
-+static void clk_range_test_multiple_set_range_rate_put_maximized(struct kunit *test)
-+{
-+	struct clk_dummy_context *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = hw->clk;
-+	struct clk *user1, *user2;
-+	unsigned long rate;
++  reg:
++    maxItems: 1
 +
-+	user1 = clk_hw_get_clk(hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
++  "#clock-cells":
++    const: 1
 +
-+	user2 = clk_hw_get_clk(hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
++  "#reset-cells":
++    const: 1
 +
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate(clk, DUMMY_CLOCK_RATE_2 + 1000),
-+			0);
++  clocks:
++    maxItems: 1
 +
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate_range(user1,
-+					   0,
-+					   DUMMY_CLOCK_RATE_2),
-+			0);
++  clock-names:
++    const: xin24m
 +
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to the syscon managing the "general register files" (GRF),
++      if missing pll rates are not changeable, due to the missing pll lock status.
 +
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate_range(user2,
-+					   0,
-+					   DUMMY_CLOCK_RATE_1),
-+			0);
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
 +
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
++additionalProperties: false
 +
-+	clk_put(user2);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(user1);
-+}
-+
- static struct kunit_case clk_range_maximize_test_cases[] = {
- 	KUNIT_CASE(clk_range_test_set_range_rate_maximized),
- 	KUNIT_CASE(clk_range_test_multiple_set_range_rate_maximized),
-+	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_maximized),
- 	{}
- };
- 
-@@ -877,9 +933,61 @@ static void clk_range_test_multiple_set_range_rate_minimized(struct kunit *test)
- 	clk_put(user1);
- }
- 
-+/*
-+ * Test that if we have several subsequent calls to
-+ * clk_set_rate_range(), across multiple users, the core will reevaluate
-+ * whether a new rate is needed, including when a user drop its clock.
-+ *
-+ * With clk_dummy_minimize_rate_ops, this means that the the rate will
-+ * trail along the minimum as it evolves.
-+ */
-+static void clk_range_test_multiple_set_range_rate_put_minimized(struct kunit *test)
-+{
-+	struct clk_dummy_context *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = hw->clk;
-+	struct clk *user1, *user2;
-+	unsigned long rate;
-+
-+	user1 = clk_hw_get_clk(hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user1);
-+
-+	user2 = clk_hw_get_clk(hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, user2);
-+
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate_range(user1,
-+					   DUMMY_CLOCK_RATE_1,
-+					   ULONG_MAX),
-+			0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-+
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate_range(user2,
-+					   DUMMY_CLOCK_RATE_2,
-+					   ULONG_MAX),
-+			0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_2);
-+
-+	clk_put(user2);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-+
-+	clk_put(user1);
-+}
-+
- static struct kunit_case clk_range_minimize_test_cases[] = {
- 	KUNIT_CASE(clk_range_test_set_range_rate_minimized),
- 	KUNIT_CASE(clk_range_test_multiple_set_range_rate_minimized),
-+	KUNIT_CASE(clk_range_test_multiple_set_range_rate_put_minimized),
- 	{}
- };
- 
++examples:
++  - |
++    cru: clock-controller@20000000 {
++      compatible = "rockchip,rk3188-cru";
++      reg = <0x20000000 0x1000>;
++      rockchip,grf = <&grf>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
 -- 
-2.35.1
+2.20.1
 
