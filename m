@@ -2,65 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE4EC433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 02:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2748FC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 04:19:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351820AbiCYC0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 22:26:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
+        id S1348156AbiCYEVA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 00:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242818AbiCYC0W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 22:26:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D83B715C;
-        Thu, 24 Mar 2022 19:24:50 -0700 (PDT)
+        with ESMTP id S230312AbiCYEU7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 00:20:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E585D46B0F;
+        Thu, 24 Mar 2022 21:19:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E786BB81D87;
-        Fri, 25 Mar 2022 02:24:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D24AC340EC;
-        Fri, 25 Mar 2022 02:24:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 80BC261889;
+        Fri, 25 Mar 2022 04:19:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C059EC340E9;
+        Fri, 25 Mar 2022 04:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648175087;
-        bh=W0F2Z3p5WAM8fTBOKDMDZFzxM3rAnJKqt6oovefK64k=;
+        s=k20201202; t=1648181965;
+        bh=M+30WQWFiWcxarQLidDh8zL22qXkHedtyeYWaeVHqdk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gBARd777s6T2nNiwInnDZ80Vh4r6FjUzoGC7yk++50o/cO70nzX6bIf0NRqqQ5GQI
-         hj6NJffEd0K45pOEiibjPGCNPM0O11VxCw79ZN/AQTw3vU3wqfakyZtA6ZAvc/ulhR
-         zXMXwI3d50W4ADQ2GGYc7HM2QRpJzfP83FbJEGZ821MaSSfX8Cc9k8uxtigI1DOkDp
-         ZrT/uRRCDRS1Y9p9MnMeFFsA37JlHCIVk1D5MiXq7Frd2Kx22URXzrUv8URL6nEPFT
-         1TxHpc8sBCkUTEgjWj/IalfDag5ZE6N/gK1faPBu0x+6mGWI+OTpgarcu6Ga1xIpjG
-         OVa9Uo+m7z/NQ==
+        b=MzviDmJuZnlAlivadEOUaJX+unFykST9QGoLMglYB+8OA+JVvHCxs8vhOm7yAxSuw
+         wqXgW9lmU6mrwCb+cjUGhRNoQxlCOGUCZFOttM0QzI+qYauC6dNW9dxhsdEtDmO/4m
+         85gGWlBULP0K7N4k6yCGsu1/O9nqJsokjHE48r5VFFJ8dmE+A6e+msCch3QOVeabHY
+         u17x/tCU1wHxHTDtjYThyz1K4KYzAZQYbIx/34jhz/plTcgVyg6+maJqDEyYAPtE1x
+         81jFfYjAjrDt0NuldufpGjborSfarhuodqSrTqUJ1PoBRzEM0sJzr6T9fXZ/Vul6I5
+         FVeNxbA40FR+Q==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220301190400.1644150-1-robh@kernel.org>
-References: <20220301190400.1644150-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
+In-Reply-To: <20220324010905.15589-4-Sergey.Semin@baikalelectronics.ru>
+References: <20220324010905.15589-1-Sergey.Semin@baikalelectronics.ru> <20220324010905.15589-4-Sergey.Semin@baikalelectronics.ru>
+Subject: Re: [PATCH 3/4] clk: baikal-t1: Move reset-controls code into a dedicated module
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        linux-clk@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>
-Date:   Thu, 24 Mar 2022 19:24:45 -0700
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Date:   Thu, 24 Mar 2022 21:19:23 -0700
 User-Agent: alot/0.10
-Message-Id: <20220325022447.9D24AC340EC@smtp.kernel.org>
+Message-Id: <20220325041925.C059EC340E9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2022-03-01 11:03:59)
-> 'clocks' in the example is not parsable with the 0 phandle value
-> because the number of #clock-cells is unknown in the previous entry.
-> Solve this by adding the clock provider node. Only 'cpg_clocks' is
-> needed as the examples are built with fixups which can be used to
-> identify phandles.
->=20
-> This is in preparation to support schema validation on .dtb files.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Please Cc reset maintainer on reset patches (Philipp Zabel <p.zabel@pengutr=
+onix.de>)
 
-Applied to clk-next
+Quoting Serge Semin (2022-03-23 18:09:04)
+> Before adding the directly controlled resets support it's reasonable to
+> move the existing resets control functionality into a dedicated object for
+> the sake of the CCU dividers clock driver simplification. After the new
+> functionality is added clk-ccu-div.c would have got to a mixture of the
+> weakly dependent clocks and resets methods. Splitting the methods up into
+> the two objects will make code easier to read especially seeing it isn't
+> that hard to do.
+>=20
+> As before the CCU reset module will support the trigger-like CCU resets
+> only, which are responsible for the AXI-bus, APB-bus and SATA-ref blocks
+> reset. The assert/de-assert-capable reset controls support will be added
+> in the next commit.
+>=20
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
