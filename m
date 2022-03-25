@@ -2,70 +2,65 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 182C6C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 01:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE4EC433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 02:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357255AbiCYBYH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Mar 2022 21:24:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41264 "EHLO
+        id S1351820AbiCYC0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Mar 2022 22:26:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiCYBYG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 21:24:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3190DBD8A5;
-        Thu, 24 Mar 2022 18:22:34 -0700 (PDT)
+        with ESMTP id S242818AbiCYC0W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Mar 2022 22:26:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D83B715C;
+        Thu, 24 Mar 2022 19:24:50 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E5724B82726;
-        Fri, 25 Mar 2022 01:22:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899FBC340EC;
-        Fri, 25 Mar 2022 01:22:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E786BB81D87;
+        Fri, 25 Mar 2022 02:24:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D24AC340EC;
+        Fri, 25 Mar 2022 02:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648171351;
-        bh=wsbD88OkQk6RA2UPPUVYj29mlvHLRNYOv+tOFG2E2wc=;
+        s=k20201202; t=1648175087;
+        bh=W0F2Z3p5WAM8fTBOKDMDZFzxM3rAnJKqt6oovefK64k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aXsjkxgAT9q8AR32d84qZxnvZOw6VPTp+57E0WruO1F8ae/1dPJQtfOiMY0KsvHd4
-         RGRTOfxVGRvPNBevAMYGT/UgHx5Chj0HtXil0Kt2MDlhwgrpXPwr+48bqmQEPEghDp
-         TLok6ARWoss753YbyWeIyjkyXVe5VDTXz2ykOOg1QoQR+8FLVn2fMxMxFmcyWuI6QP
-         RmAiB7/HNSWDWUexZAJcrph6jaeeWbhf+4gULwTXWjhz+5h4QtYc+/QKjZ4/J1j9U3
-         EnizVD5Prha2R5AL97ItmsjDnLhF2t1H+OT6rEGFAb8qmORbJZe45ZoEdz974cT73s
-         hi+PImrYOzTfQ==
+        b=gBARd777s6T2nNiwInnDZ80Vh4r6FjUzoGC7yk++50o/cO70nzX6bIf0NRqqQ5GQI
+         hj6NJffEd0K45pOEiibjPGCNPM0O11VxCw79ZN/AQTw3vU3wqfakyZtA6ZAvc/ulhR
+         zXMXwI3d50W4ADQ2GGYc7HM2QRpJzfP83FbJEGZ821MaSSfX8Cc9k8uxtigI1DOkDp
+         ZrT/uRRCDRS1Y9p9MnMeFFsA37JlHCIVk1D5MiXq7Frd2Kx22URXzrUv8URL6nEPFT
+         1TxHpc8sBCkUTEgjWj/IalfDag5ZE6N/gK1faPBu0x+6mGWI+OTpgarcu6Ga1xIpjG
+         OVa9Uo+m7z/NQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Yj0XTYgoMScoiUHP@Ansuel-xps.localdomain>
-References: <20220321231548.14276-1-ansuelsmth@gmail.com> <20220321231548.14276-4-ansuelsmth@gmail.com> <20220325011037.03173C340EC@smtp.kernel.org> <Yj0XTYgoMScoiUHP@Ansuel-xps.localdomain>
-Subject: Re: [PATCH v6 03/18] clk: qcom: gcc-ipq806x: add PXO_SRC in clk table
+In-Reply-To: <20220301190400.1644150-1-robh@kernel.org>
+References: <20220301190400.1644150-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: Make example 'clocks' parsable
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Date:   Thu, 24 Mar 2022 18:22:29 -0700
+        Rob Herring <robh@kernel.org>
+Date:   Thu, 24 Mar 2022 19:24:45 -0700
 User-Agent: alot/0.10
-Message-Id: <20220325012231.899FBC340EC@smtp.kernel.org>
+Message-Id: <20220325022447.9D24AC340EC@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ansuel Smith (2022-03-24 18:13:49)
-> On Thu, Mar 24, 2022 at 06:10:35PM -0700, Stephen Boyd wrote:
-> > Quoting Ansuel Smith (2022-03-21 16:15:33)
-> > > PXO_SRC is currently defined in the gcc include and referenced in the
-> > > ipq8064 DTSI. Correctly provide a clk after gcc probe to fix kernel
-> > > panic if a driver starts to actually use it.
-> > >=20
-> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> > > ---
-> >=20
-> > What is this patch about? clk providers shouldn't be calling clk_get().
-> >
+Quoting Rob Herring (2022-03-01 11:03:59)
+> 'clocks' in the example is not parsable with the 0 phandle value
+> because the number of #clock-cells is unknown in the previous entry.
+> Solve this by adding the clock provider node. Only 'cpg_clocks' is
+> needed as the examples are built with fixups which can be used to
+> identify phandles.
 >=20
-> If pxo is passed as a clock in dts and defined as a fixed clock, what
-> should be used?=20
+> This is in preparation to support schema validation on .dtb files.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-clk_parent_data
+Applied to clk-next
