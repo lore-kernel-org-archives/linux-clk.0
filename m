@@ -2,50 +2,50 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E1EC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54938C433FE
 	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:58:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347920AbiCYLAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1352924AbiCYLAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 25 Mar 2022 07:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45444 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352917AbiCYLAG (ORCPT
+        with ESMTP id S244096AbiCYLAG (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 07:00:06 -0400
 Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823C14B87E
-        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:58:31 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id E88D85C012F;
-        Fri, 25 Mar 2022 06:58:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 25 Mar 2022 06:58:30 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 068854AE34
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:58:29 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 5E56B5C0069;
+        Fri, 25 Mar 2022 06:58:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Fri, 25 Mar 2022 06:58:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; bh=RFquksmpacjSeTqjfsccpJfJmo3zhB
-        IHT1ConYdBl6s=; b=fh0f6+V89+YkaJzfxhI/ZKbC15wEcTY110rXxcxKaI8bOx
-        /9Uh3XmseiK2ZqLstsKdS6jh1jKBkNxUdiKnJjtggb7+sbOYgNGduj1gzzcVPHfk
-        GhhpRawsyW7JDCO+4xzRhJrwSdlmPNMcsJhYWI5XJY3+r4OmFv6SdgQ9QT65I7w0
-        CdlGUYTNuj1IA7O7xRbOo32xBinA8o0Mvq4vGVyBtPAkTVffW8ZYxHg/5l1Yxtvr
-        XqLZXtRcWVpPd4gE9XYklqjlByFKKq/vEj4wB47RccnSZIutqssmD9uI1E2O3KTq
-        LrhMv9e8s3TRHKQ2m6N0wLXrdcPCwtRPm6/C9A5Q==
+        :subject:subject:to:to; s=fm3; bh=dg8syyqhxJbaBkZFBbyZepMurtjTn3
+        l4/9qNBy6pFCk=; b=KMa5olhW6abLg8l16+Hw/SAoBU8dNwzjdq8judoxWFWTE3
+        PG/hpTvZNV2W3zsD47Q2WfNmNOfILfm8/AtuxeYxQgVaKxE6ujO1yEZ/nQK4AmTn
+        pF4GeUijCrkKN7XOoY7kXcRqZwV8el8jMcht/zZP8zaZhkBtDFryTJ3C9zeFhZux
+        0IOYgwf/KoKyd73dv2ACide7MhDrjnVFp1cNVlTmBAMUzax75N1+blBtnGaxGAmd
+        MNbL7++DFrFfm/Z2P7Qq4VAsVXPHRJv+OtKsWEqJxZHIVjdQkKxjHm8v4HWBLudZ
+        fox0esgQHBGR0M77Yv/d8/jACBCflvOqxXn+3UVQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=RFquks
-        mpacjSeTqjfsccpJfJmo3zhBIHT1ConYdBl6s=; b=P4dexc3IveDtXzEKok+AOE
-        WpAsLbS0QtmO+hPzXcwpdrGwb5JxSCuyRIZomTRfurpJJRU+Dl+S3zjSNMCvNVWX
-        06PMUmEmz9ZM3wnRnOGrdqOHrh/w5CL+kiAFlF8M2rK5dLh07Lr05icuwdJZ0H7E
-        PS7idQWmVzFx+kNauY2OOIf9vOUby8+16Ff7KGoAN5Uu+GqjTv2reO0GJe9xWbHE
-        J0aNBNzZX/CbBzvdyQ8cL2e5AlRvCA62pyx2wtdt8g188rAAqbwoRy4rETzMTI+N
-        9vap04GkN549CPOkwGIPKCfLLPwKwJyjZd/mq+wbVYObV9KdKZOFgPfAZC7jw/Ew
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=dg8syy
+        qhxJbaBkZFBbyZepMurtjTn3l4/9qNBy6pFCk=; b=GRlfKiXy8wLa/DlPaGtJ1K
+        0Phl9DGgmvz2/Ik1mIHMvb7kGMAS/RjA0mBsnNXEJo56QM/45vbS0LN8HxKvLfM1
+        Hz5J2VmYWS5aSR9L2LFVwIqT5oGaPe7rZWQfi8QCZd7B8kzNuMJsAJb4eYB3cye7
+        4vYklPHfiaNpEGttlut3Ss8RzFGBOwQSXnnl5rh30u89THRPIUXxjP36H10STCsY
+        3oygi8PvDPst4vu4D9DCLHB9Kqt7K8/Akyy7Gx9z6seIN84kbGX4psqCWzmh//xA
+        s45hRa29xgNesF/zP3AiaPmxiPZdoYjIj6g0NzeCm+IrdbmPgMLbN9eofiOwajaA
         ==
-X-ME-Sender: <xms:VqA9YisdpAYZHLL2cBmbgCmnHkvTkTZftaGIbki8ONoNv1FN3BLvmg>
-    <xme:VqA9Yncpr7u7dv3vIuKUsgNiTI3o6fBPGU1Yav5s7ZXdllU-wo1sRjxtbdYSbq6m9
-    XYC6A0X5Bb_eTmU6ww>
-X-ME-Received: <xmr:VqA9Ytzp6auQVcYmuDgoXBMNoRuH7WaW36SChRoVozSZhU_-ZPkduWDmOAOIk4I7Nm8n8hNy29gykTyyBWx1vsz3bBXGnbatriwl3L4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvddvucetufdoteggodetrfdotf
+X-ME-Sender: <xms:VKA9Yl5SsMdoLmzFL9gGp6xUJpoEudBJE9cFCB9UTdO3UkrnGY2TUA>
+    <xme:VKA9Yi6isSp_dqASNzeZ4tUOjVvbVRbyKgFv6V9r8WPo6OJLgRLKWQMdKYFnTrgQO
+    ychFndacuz8G_nAcVI>
+X-ME-Received: <xmr:VKA9Yse5HyNaYnQ-9HOWEl8RBiCSR3SxnfixK3Y0bXiBQGRtRed0dsZxvxYJXRSP_nupubDqausiZ2Af41mNCZgiNXFsoKPCHGcFJXk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvdduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
@@ -53,21 +53,21 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvddvucetufdoteggod
     htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
     hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
     grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:VqA9YtOmZ_7rHYNkiYIUTFOrsRC0jad87BGLKJ-WMHF_JHYIGKNt_Q>
-    <xmx:VqA9Yi9ey3IBh52L6dZuQXUBqv4S4I6OHXbCDyFoRpMETPJ7sZlmig>
-    <xmx:VqA9YlXwb62EzCdXFHzBqpB_eMF-KFos8MfsTFCctqLonYK0zxw46A>
-    <xmx:VqA9YpYrpE732Cr2lcO8drreTYaCISA-RrKKDh7rtl_PbdsaipaoiQ>
+X-ME-Proxy: <xmx:VKA9YuJPwo_YQBGW0uX9z0xrI9uuwRNxhXV-9DbBqwWtn-9Ooop0Hw>
+    <xmx:VKA9YpLTHKZ997fxrDhcHTlJQ_i2jN33f3TLpw6NsSCeoyNhC9VDrQ>
+    <xmx:VKA9Ynzd2ceClg52Kp-7jq6ipqE-VC12kLBLrBtSbDW8l3IejlaNYA>
+    <xmx:VKA9Yp32OQBCRnsWyvPWqJChP9T6bI5fqVd3J8qR8uDtaJULrEkKQA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Mar 2022 06:58:30 -0400 (EDT)
+ 25 Mar 2022 06:58:27 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     linux-clk@vger.kernel.org,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 2/3] clk: test: Test clk_set_rate_range on orphan mux
-Date:   Fri, 25 Mar 2022 11:58:21 +0100
-Message-Id: <20220325105822.1723827-3-maxime@cerno.tech>
+Subject: [PATCH 1/3] clk: Initialize orphan req_rate
+Date:   Fri, 25 Mar 2022 11:58:20 +0100
+Message-Id: <20220325105822.1723827-2-maxime@cerno.tech>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220325105822.1723827-1-maxime@cerno.tech>
 References: <20220325105822.1723827-1-maxime@cerno.tech>
@@ -77,161 +77,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A bug recently affected the Tegra30 where calling clk_set_rate_range()
-on a clock would make it change its rate to the minimum.
+When registering a clock that doesn't have a recalc_rate implementation,
+and doesn't have its parent registered yet, we initialize the clk_core
+rate and req_rate fields to 0.
 
-This was due to the clock in question being a mux that was orphan at
-registration, which lead to the clk_core req_rate being 0, and the
-clk_set_rate_range() function then calling clk_set_rate() with req_rate,
-effectively making that clock running at the minimum rate allowed, even
-though the initial rate was within that range.
+The rate field is later updated when the parent is registered in
+clk_core_reparent_orphans_nolock() using __clk_recalc_rates(), but the
+req_rate field is never updated.
 
-Make a test suite to create a mux initially orphan, and then make sure
-that if our clock rate was initially within a given range, then
-enforcing that range won't affect it.
+This leads to an issue in clk_set_rate_range() and clk_put(), since
+those functions will call clk_set_rate with the content of req_rate to
+provide drivers with the opportunity to change the rate based on the new
+boundaries. In this case, we would call clk_set_rate() with a rate of 0,
+effectively enforcing the minimum allowed for this clock whenever we
+would call one of those two functions, even though the actual rate might
+be within range.
 
+Let's fix this by setting req_rate in clk_core_reparent_orphans_nolock()
+with the rate field content just updated by the call to
+__clk_recalc_rates().
+
+Fixes: 1c8e600440c7 ("clk: Add rate constraints to clocks")
+Reported-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com> # T30 Nexus7
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/clk_test.c | 105 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 105 insertions(+)
+ drivers/clk/clk.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index a92600311506..146b1759798e 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -72,6 +72,19 @@ static int clk_dummy_set_rate(struct clk_hw *hw,
- 	return 0;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9bc8bf434b94..915a2fa363b1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3479,6 +3479,19 @@ static void clk_core_reparent_orphans_nolock(void)
+ 			__clk_set_parent_after(orphan, parent, NULL);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
++
++			/*
++			 * If the clock doesn't have .recalc_rate (so
++			 * wouldn't affect the parent rate) and is
++			 * orphan when it's registered, the
++			 * __clk_init_parent will set the initial
++			 * req_rate to 0.
++			 *
++			 * req_rate is then used by clk_set_rate_range
++			 * and clk_put to trigger a clk_set_rate call
++			 * whenever the boundaries are modified.
++			 */
++			orphan->req_rate = orphan->rate;
+ 		}
+ 	}
  }
- 
-+static int clk_dummy_single_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	if (index >= clk_hw_get_num_parents(hw))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static u8 clk_dummy_single_get_parent(struct clk_hw *hw)
-+{
-+	return 0;
-+}
-+
- static const struct clk_ops clk_dummy_rate_ops = {
- 	.recalc_rate = clk_dummy_recalc_rate,
- 	.determine_rate = clk_dummy_determine_rate,
-@@ -90,6 +103,11 @@ static const struct clk_ops clk_dummy_minimize_rate_ops = {
- 	.set_rate = clk_dummy_set_rate,
- };
- 
-+static const struct clk_ops clk_dummy_single_parent_ops = {
-+	.set_parent = clk_dummy_single_set_parent,
-+	.get_parent = clk_dummy_single_get_parent,
-+};
-+
- static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
- {
- 	struct clk_dummy_context *ctx;
-@@ -239,6 +257,92 @@ static struct kunit_suite clk_test_suite = {
- 	.test_cases = clk_test_cases,
- };
- 
-+struct clk_single_parent_ctx {
-+	struct clk_dummy_context parent_ctx;
-+	struct clk_hw hw;
-+};
-+
-+static int clk_orphan_transparent_single_parent_mux_test_init(struct kunit *test)
-+{
-+	struct clk_single_parent_ctx *ctx;
-+	struct clk_init_data init = { };
-+	const char *parents[] = { "orphan_parent" };
-+	int ret;
-+
-+	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	test->priv = ctx;
-+
-+	init.name = "test_orphan_dummy_parent";
-+	init.ops = &clk_dummy_single_parent_ops;
-+	init.parent_names = parents;
-+	init.num_parents = ARRAY_SIZE(parents);
-+	init.flags = CLK_SET_RATE_PARENT;
-+	ctx->hw.init = &init;
-+
-+	ret = clk_hw_register(NULL, &ctx->hw);
-+	if (ret)
-+		return ret;
-+
-+	memset(&init, 0, sizeof(init));
-+	init.name = "orphan_parent";
-+	init.ops = &clk_dummy_rate_ops;
-+	ctx->parent_ctx.hw.init = &init;
-+	ctx->parent_ctx.rate = DUMMY_CLOCK_INIT_RATE;
-+
-+	ret = clk_hw_register(NULL, &ctx->parent_ctx.hw);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void clk_orphan_transparent_single_parent_mux_test_exit(struct kunit *test)
-+{
-+	struct clk_single_parent_ctx *ctx = test->priv;
-+
-+	clk_hw_unregister(&ctx->hw);
-+	clk_hw_unregister(&ctx->parent_ctx.hw);
-+}
-+
-+/*
-+ * Test that a mux-only clock, with an initial rate within a range,
-+ * will still have the same rate after the range has been enforced.
-+ */
-+static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
-+{
-+	struct clk_single_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = hw->clk;
-+	unsigned long rate, new_rate;
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+
-+	KUNIT_ASSERT_EQ(test,
-+			clk_set_rate_range(clk,
-+					   ctx->parent_ctx.rate - 1000,
-+					   ctx->parent_ctx.rate + 1000),
-+			0);
-+
-+	new_rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, new_rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, new_rate);
-+}
-+
-+static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] = {
-+	KUNIT_CASE(clk_test_orphan_transparent_parent_mux_set_range),
-+	{}
-+};
-+
-+static struct kunit_suite clk_orphan_transparent_single_parent_test_suite = {
-+	.name = "clk-orphan-transparent-single-parent-test",
-+	.init = clk_orphan_transparent_single_parent_mux_test_init,
-+	.exit = clk_orphan_transparent_single_parent_mux_test_exit,
-+	.test_cases = clk_orphan_transparent_single_parent_mux_test_cases,
-+};
-+
- /*
-  * Test that clk_set_rate_range won't return an error for a valid range
-  * and that it will make sure the rate of the clock is within the
-@@ -788,6 +892,7 @@ static struct kunit_suite clk_range_minimize_test_suite = {
- 
- kunit_test_suites(
- 	&clk_test_suite,
-+	&clk_orphan_transparent_single_parent_test_suite,
- 	&clk_range_test_suite,
- 	&clk_range_maximize_test_suite,
- 	&clk_range_minimize_test_suite
 -- 
 2.35.1
 
