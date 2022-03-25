@@ -2,187 +2,121 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA27C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 07:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8094C433F5
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 07:40:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351662AbiCYHie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 03:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42702 "EHLO
+        id S1354306AbiCYHmB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 03:42:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243353AbiCYHid (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 03:38:33 -0400
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68162C74BD;
-        Fri, 25 Mar 2022 00:37:00 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id lr4so5222563ejb.11;
-        Fri, 25 Mar 2022 00:37:00 -0700 (PDT)
+        with ESMTP id S236028AbiCYHmA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 03:42:00 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6569BAC9
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 00:40:26 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id h10-20020a1c210a000000b0038ccb70e239so18782wmh.3
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 00:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=dnODPaJY/J+n3BkIXlCmsZJUqQLCC5eiwNXYnqqukBk=;
+        b=bqhz2zWMvRkdTQBDj6ZAZIlYrvJPAcKBIWzKZeB+/CBBucdnqvI52PJthfpFSq+v5U
+         gXqOV2I/8IDY7tAerS3IsF8S1vXomCZ1TkWfwbcmlpEgxTPxHvU+zVX3G2N0DTAcHLMJ
+         xOUOaDwTZW9KOGyD2L0A4rv7QA0/M+fARHBAeMn3SCe/jeZPkLW3Dj3jiq3n+2iluKQE
+         cAhJiVZqDkYed4GWxHxsLQw3DW4OsTsw3ovEleJL41j1eDpnGyH2ilSHffmU2sYL02Gm
+         xR1hyx4LtKVBwt6pwVXtAWjX8dqRx7hdnRbdg5huBC4C2NnohFwIHSQmBkkuIzhrg8hK
+         w5ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=6VyB3UYxWMO3tIrgEiCLozgnlezY4UO/iQgH0TlS3Ek=;
-        b=yzyXbWvoIiH8l/fYEhge/3jnKDAcFirGlnc1sw5Ey4Rwf1Z8YU6/xPqsE/6ebCyLG7
-         2wluVKZDjiUgoulA1WilrCsiQclcAai0VWwyTUcwcbf43SJql2A471UhSS4WCXX+wRkC
-         gFo4xYnnoLMYABEk2eKgH5zhbQapqDU9YV5Wyvpumi054ekA+fttCohkMhsFUMtM3zK8
-         3mNbXVHxV7WwognPui2p1noM/T7FB31bmbH8tV6wwmRwhxiZFW4r2yb3uWIdUH0WWdRZ
-         38taMU6na5HXmbB0erFH1gA5FG9EqwbkJA7azHWvLDGsgt6Q+89IVr54fnMsAFQnBT3E
-         Y9Xg==
-X-Gm-Message-State: AOAM530ALXDYvD3hfAgPp+9oEUoR68/bWYGHr7W8hVufhIe3wpLVvEB1
-        Z31M5ApfyQJMcfQUAOIK+TmlC06fgNQ=
-X-Google-Smtp-Source: ABdhPJye6CqOTuW/WLwG8QnXQHalgAOvoPopU/9m5KwtnnA+wXTM9UKgjiBBnOU8B4FUrtXiZR/+LQ==
-X-Received: by 2002:a17:906:1804:b0:6d6:dc46:d9ed with SMTP id v4-20020a170906180400b006d6dc46d9edmr9903089eje.288.1648193818924;
-        Fri, 25 Mar 2022 00:36:58 -0700 (PDT)
-Received: from [192.168.0.158] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.googlemail.com with ESMTPSA id q16-20020a170906145000b006bdaf981589sm2011246ejc.81.2022.03.25.00.36.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Mar 2022 00:36:58 -0700 (PDT)
-Message-ID: <9fc72d19-1827-7681-4eb7-ba7c67f325fa@kernel.org>
-Date:   Fri, 25 Mar 2022 08:36:57 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3188-cru.txt to
- YAML
-Content-Language: en-US
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=dnODPaJY/J+n3BkIXlCmsZJUqQLCC5eiwNXYnqqukBk=;
+        b=g4WHx6CzJ5DUjNanaFydioY8w8nkKxH23YGfoBv/FkDAg/tBWkayKk4yAw2LlffED3
+         yZLAvwtDrhalE184m+8uG3SA+Mnk1PyRO0yjcgKXBKYQ9esxYwmy8jB8yychmtTsHvcz
+         /F19KV1sADHDDwfd7J8yav3Dioip8EmEec/ZGF6WnVz6hf6L+n4m4T4nj/wUV22CzvsA
+         f9skJCHUe6/aEgXG77rCHMTnongj7vdSY0MTNcJmXohGqmrlAFBlu5M2GQnVZPUYRkGe
+         i5Xu5VSi5luxLQyDnp4b/eNUdHrAOAWPV2T+Nq2/tPMtLVfc/aWqN3KZPKl8cUU/uQq2
+         Jtog==
+X-Gm-Message-State: AOAM533qtVRs1FTNvFgLry6G22sjcsD5/nQ4qznALsaHQ7aii+iP6TeK
+        Hgyg5PQoBETwmDLgyiJbzerOuA==
+X-Google-Smtp-Source: ABdhPJx8uYzQeFEFXzUdYuZYNV0f37cM+IUTkBkG2uijMoKDe1z93YfbCiKDAtPpG64eUg9/BDRz/Q==
+X-Received: by 2002:a05:600c:34c5:b0:38c:30e3:1e6c with SMTP id d5-20020a05600c34c500b0038c30e31e6cmr18251767wmq.144.1648194024977;
+        Fri, 25 Mar 2022 00:40:24 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:264b:feff:fe03:2806])
+        by smtp.googlemail.com with ESMTPSA id q16-20020adfea10000000b00203e0735791sm4407043wrm.39.2022.03.25.00.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Mar 2022 00:40:24 -0700 (PDT)
+Date:   Fri, 25 Mar 2022 08:40:22 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     heiko@sntech.de, herbert@gondor.apana.org.au, krzk+dt@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220324133229.24035-1-jbx6244@gmail.com>
- <f7493d93-6c8a-efa9-1f2c-a0003a6d43b2@kernel.org>
- <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 17/26] clk: rk3399: use proper crypto0 name
+Message-ID: <Yj1x5hJEKVL71JZ1@Red>
+References: <20220321200739.3572792-1-clabbe@baylibre.com>
+ <20220321200739.3572792-18-clabbe@baylibre.com>
+ <20220325004125.C80FDC340EC@smtp.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220325004125.C80FDC340EC@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/03/2022 20:51, Johan Jonker wrote:
-> Hi Heiko, Krzysztof,
+Le Thu, Mar 24, 2022 at 05:41:23PM -0700, Stephen Boyd a écrit :
+> Quoting Corentin Labbe (2022-03-21 13:07:30)
+> > rk3399 has 2 crypto instance, reset for crypto1 is correctly named, but
+> > crypto0 not.
+> > Add a 0 to be consistent.
 > 
-> Question for the Rockchip clock maintainer:
-> What clock should be used here and other SoCs with several clock parents
-> in the tree?
-> 
-> The clock.yaml produces a lot off notifications like:
-> 
-> /arch/arm/boot/dts/rk3036-evb.dtb: clock-controller@20000000: 'clocks'
-> is a dependency of 'assigned-clocks'
-> 
-> Same for power-controller:
-> 
-> /arch/arm/boot/dts/rk3288-evb-rk808.dtb: power-controller: 'clocks' is a
-> dependency of 'assigned-clocks'
-> 
-> Just followed rk3399.yaml that got approved recent.
-> The current CRU nodes are in use for a long time this way.
-> Converting a simple .txt comes with a lot of extra work each time. :\
-> Please advise.
+> This is OK because nothing is using the define today?
 
-Same for me, same for me...
-
-I replied to this part to Stephen's email. Here I'll reply to other parts:
-
-(...)
-
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - rockchip,rk3066a-cru
->>> +      - rockchip,rk3188-cru
->>> +      - rockchip,rk3188a-cru
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  "#clock-cells":
->>> +    const: 1
->>> +
->>> +  "#reset-cells":
->>> +    const: 1
->>> +
->>> +  clocks:
->>> +    minItems: 1
->>
-> 
->> You need maxItems. Would be also nice to describe what should be here as
->> input
-> 
-> Just followed rockchip,rk3399-cru.yaml that got rob+dt's ack.
-> 
-> Is this dependency only for simple clock consumers suitable for complex
-> clock trees with pll's, mux, etc? Shouldn't that be relaxed a bit?
-
-minItems means that your clock controller can take any number of other
-clock inputs. This is not true, for sure. Your device probably has fixed
-number of external clocks (usually provided on the board if this is main
-SoC clock controller).
+Yes, nothing use this rk3399 define.
 
 > 
->>
->>
->>> +
->>> +  assigned-clock-rates:
->>> +    minItems: 1
->>> +    maxItems: 64
->>> +
->>> +  assigned-clocks:
->>> +    minItems: 1
->>> +    maxItems: 64
->>
->> Both assigned-xxx should not be necessary. Did you try validate the dtbs
->> without these?
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  include/dt-bindings/clock/rk3399-cru.h | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/dt-bindings/clock/rk3399-cru.h b/include/dt-bindings/clock/rk3399-cru.h
+> > index 44e0a319f077..39169d94a44e 100644
+> > --- a/include/dt-bindings/clock/rk3399-cru.h
+> > +++ b/include/dt-bindings/clock/rk3399-cru.h
+> > @@ -547,8 +547,8 @@
+> >  #define SRST_H_PERILP0                 171
+> >  #define SRST_H_PERILP0_NOC             172
+> >  #define SRST_ROM                       173
+> > -#define SRST_CRYPTO_S                  174
+> > -#define SRST_CRYPTO_M                  175
+> > +#define SRST_CRYPTO0_S                 174
+> > +#define SRST_CRYPTO0_M                 175
+> >  
+> >  /* cru_softrst_con11 */
+> >  #define SRST_P_DCF                     176
+> > @@ -556,7 +556,7 @@
+> >  #define SRST_CM0S                      178
+> >  #define SRST_CM0S_DBG                  179
+> >  #define SRST_CM0S_PO                   180
+> > -#define SRST_CRYPTO                    181
+> > +#define SRST_CRYPTO0                   181
 > 
-> That's how it's currently done for Rockchip cru's.
-
-I understand, but if you remove assigned-xxx from schema what happens?
-
+> $ git grep SRST_CRYPTO
+> Documentation/devicetree/bindings/crypto/rockchip-crypto.txt:           resets = <&cru SRST_CRYPTO>;
+> arch/arm/boot/dts/rk3288.dtsi:          resets = <&cru SRST_CRYPTO>;
 > 
-> 
-> ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make dtbs_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+> Uh oh. Just don't change it and think about something else when it
+> starts to feel inconsistent.
 
-There is no such file in my tree...
+This is on rk3288, so not related to rk3399.
+Even on the RK3399 TRM, all crypto clocks are called either crypto0 or crypto1 (neither just crypto)
 
-> 
->>
->> I guess you added "clocks" above because of these, so you need to
->> correct the DTS because asigned-xxx depend on clocks property.
-> 
-> See comment above.
-> 
->>
->>> +
->>> +  rockchip,grf:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description:
->>> +      Phandle to the syscon managing the "general register files" (GRF),
->>> +      if missing pll rates are not changeable, due to the missing pll lock status.
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - "#clock-cells"
->>> +  - "#reset-cells"
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    cru: cru@20000000 {
->>
->> Node name: clock-controller
-> 
-> Which schema?
-
-Devicetree specification (see chapter for node naming). Nodes should
-have generic name. There is also list of example names to use.
-
-
-Best regards,
-Krzysztof
+Regards
