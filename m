@@ -2,80 +2,236 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D709C433F5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E1EC433EF
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Mar 2022 10:58:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239454AbiCYKoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Mar 2022 06:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35048 "EHLO
+        id S1347920AbiCYLAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Mar 2022 07:00:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236476AbiCYKod (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 06:44:33 -0400
-X-Greylist: delayed 730 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 25 Mar 2022 03:42:59 PDT
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28A60CC50B
-        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1648204977;
-        bh=r7MTF35xCe4CtzCMUlH4AuHMMOLVBgWolF8Nu+I39t8=;
-        h=From:To:Cc:Subject:Date;
-        b=BsL/tmQi5bgyRV2NoO5Slo7/xj0Og1YxzLKe6PO3g309jBb9XKq/UZs7/6dzVcw3j
-         qn0RPuUVvwCi17ze6Wwc4wz32rtrj0Uo3dq+Jh/SKCoAjPNqNHXiBnJLeJaD65pqfN
-         dB4HdI+woNtMbWeNLlnghvQ4rLAp3FBcgQZ1ad9A=
-Received: from localhost.localdomain ([218.197.153.188])
-        by newxmesmtplogicsvrszc11.qq.com (NewEsmtp) with SMTP
-        id 6DFA0EBB; Fri, 25 Mar 2022 18:27:31 +0800
-X-QQ-mid: xmsmtpt1648204051tp1m08xmo
-Message-ID: <tencent_C0622B5C4209E83F1C6495D926979F239D05@qq.com>
-X-QQ-XMAILINFO: OOWntbL6xj16UYjmDCYdk3zdV6AkUlVJYVXvFXwyqwiwhHIj+QucYg/rjcEuOt
-         YO7j/eprBmyc4h2c06wgdcYMWSep4SXwq7n+QGxdcp6ICsFbd9yTBd2y9WzUKB2YwYvs/h8Mu+NF
-         3O/awHA4MLl1CeBeM8HFfgPZWH4/vqzvwiDrMgaZ1iu7C+gGmhfen9xCWY78+E9vsdumUiwchXp4
-         mJ73wtlnQeZQVQvB0aU6xAs+7niZUpJswpFFx/U+6co38r4urXkGPe7qIJSEtptS8cCk3XI76bTp
-         GBE+6cG8pXUfIhIIY9a7UwUFabdQ/611P/rXY4ZbxNXiy8imWSu0q73DKFp1Msl/Pa6B+f5RKrac
-         sSm5Px8sotmHtHcqLRGQL365aXb8G3bBusnZsNdweoK6RnKfba5j1ExXohhWM3FWaZVb01iUwIjO
-         pT0uKiE2iQVbdhmVfWnzg2WAg+6AXI+v+dsz4HXd4ir0CpdQyG4Mib4UAQ2w64jYH+G2tUmzeiO9
-         9N+Ovt6E8HcR0Tgr/s+oXNSDCJh9CgsVSGZnTQUqi93ePXrydTOfbWsoZ0bm/3w7cdnlXn6pNOF9
-         40+wNNghlHZdV0tlfWByU4qL02Q62qlEokvhYrJA08qEVbWsPgtdDnFlY2pEOyogx28ge0OdJ2+m
-         uVRokNyTXZOSXJFejgBRQH3MwBIxrMvlEuN81q5FUuHsBCfxmqKB3NrQcjYDGNjsWOA7q/UFbbU8
-         0RgF7ducb3U9hMY0DCyV5rs3grDP+0m82+2Fxk+Bgc47ZWsWcTGnKI23eMDlfDInZFmuP8CXDGfo
-         3F5LJfdBoqKuPXyuapA6uM02us/UpXvP6ex3EJV25oaVzPNcIvty5n3vPl95GMhOiXT+jqXPdXYX
-         uhv4HuJcsBQ3Sq8KD4AmLy27zc0kW4D6QVRKYYc1Ma8FrYOrL8GxLkNokTZ7YcnIA0Tdh2vAxPmH
-         erom5GfnM=
-From:   xkernel.wang@foxmail.com
-To:     mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiaoke Wang <xkernel.wang@foxmail.com>
-Subject: [PATCH] clk: pxa: add a check for the return value of kzalloc()
-Date:   Fri, 25 Mar 2022 18:27:20 +0800
-X-OQ-MSGID: <20220325102720.4155-1-xkernel.wang@foxmail.com>
+        with ESMTP id S1352917AbiCYLAG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Mar 2022 07:00:06 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 823C14B87E
+        for <linux-clk@vger.kernel.org>; Fri, 25 Mar 2022 03:58:31 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id E88D85C012F;
+        Fri, 25 Mar 2022 06:58:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 25 Mar 2022 06:58:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; bh=RFquksmpacjSeTqjfsccpJfJmo3zhB
+        IHT1ConYdBl6s=; b=fh0f6+V89+YkaJzfxhI/ZKbC15wEcTY110rXxcxKaI8bOx
+        /9Uh3XmseiK2ZqLstsKdS6jh1jKBkNxUdiKnJjtggb7+sbOYgNGduj1gzzcVPHfk
+        GhhpRawsyW7JDCO+4xzRhJrwSdlmPNMcsJhYWI5XJY3+r4OmFv6SdgQ9QT65I7w0
+        CdlGUYTNuj1IA7O7xRbOo32xBinA8o0Mvq4vGVyBtPAkTVffW8ZYxHg/5l1Yxtvr
+        XqLZXtRcWVpPd4gE9XYklqjlByFKKq/vEj4wB47RccnSZIutqssmD9uI1E2O3KTq
+        LrhMv9e8s3TRHKQ2m6N0wLXrdcPCwtRPm6/C9A5Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=RFquks
+        mpacjSeTqjfsccpJfJmo3zhBIHT1ConYdBl6s=; b=P4dexc3IveDtXzEKok+AOE
+        WpAsLbS0QtmO+hPzXcwpdrGwb5JxSCuyRIZomTRfurpJJRU+Dl+S3zjSNMCvNVWX
+        06PMUmEmz9ZM3wnRnOGrdqOHrh/w5CL+kiAFlF8M2rK5dLh07Lr05icuwdJZ0H7E
+        PS7idQWmVzFx+kNauY2OOIf9vOUby8+16Ff7KGoAN5Uu+GqjTv2reO0GJe9xWbHE
+        J0aNBNzZX/CbBzvdyQ8cL2e5AlRvCA62pyx2wtdt8g188rAAqbwoRy4rETzMTI+N
+        9vap04GkN549CPOkwGIPKCfLLPwKwJyjZd/mq+wbVYObV9KdKZOFgPfAZC7jw/Ew
+        ==
+X-ME-Sender: <xms:VqA9YisdpAYZHLL2cBmbgCmnHkvTkTZftaGIbki8ONoNv1FN3BLvmg>
+    <xme:VqA9Yncpr7u7dv3vIuKUsgNiTI3o6fBPGU1Yav5s7ZXdllU-wo1sRjxtbdYSbq6m9
+    XYC6A0X5Bb_eTmU6ww>
+X-ME-Received: <xmr:VqA9Ytzp6auQVcYmuDgoXBMNoRuH7WaW36SChRoVozSZhU_-ZPkduWDmOAOIk4I7Nm8n8hNy29gykTyyBWx1vsz3bBXGnbatriwl3L4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehuddgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
+    hedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:VqA9YtOmZ_7rHYNkiYIUTFOrsRC0jad87BGLKJ-WMHF_JHYIGKNt_Q>
+    <xmx:VqA9Yi9ey3IBh52L6dZuQXUBqv4S4I6OHXbCDyFoRpMETPJ7sZlmig>
+    <xmx:VqA9YlXwb62EzCdXFHzBqpB_eMF-KFos8MfsTFCctqLonYK0zxw46A>
+    <xmx:VqA9YpYrpE732Cr2lcO8drreTYaCISA-RrKKDh7rtl_PbdsaipaoiQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Mar 2022 06:58:30 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     linux-clk@vger.kernel.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH 2/3] clk: test: Test clk_set_rate_range on orphan mux
+Date:   Fri, 25 Mar 2022 11:58:21 +0100
+Message-Id: <20220325105822.1723827-3-maxime@cerno.tech>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220325105822.1723827-1-maxime@cerno.tech>
+References: <20220325105822.1723827-1-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Xiaoke Wang <xkernel.wang@foxmail.com>
+A bug recently affected the Tegra30 where calling clk_set_rate_range()
+on a clock would make it change its rate to the minimum.
 
-kzalloc() is a memory allocation function which can return NULL when
-some internal memory errors happen. So it is better to check it to
-prevent potential wrong memory access.
+This was due to the clock in question being a mux that was orphan at
+registration, which lead to the clk_core req_rate being 0, and the
+clk_set_rate_range() function then calling clk_set_rate() with req_rate,
+effectively making that clock running at the minimum rate allowed, even
+though the initial rate was within that range.
 
-Signed-off-by: Xiaoke Wang <xkernel.wang@foxmail.com>
+Make a test suite to create a mux initially orphan, and then make sure
+that if our clock rate was initially within a given range, then
+enforcing that range won't affect it.
+
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/pxa/clk-pxa.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk_test.c | 105 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
 
-diff --git a/drivers/clk/pxa/clk-pxa.c b/drivers/clk/pxa/clk-pxa.c
-index cfc79f9..d0df104 100644
---- a/drivers/clk/pxa/clk-pxa.c
-+++ b/drivers/clk/pxa/clk-pxa.c
-@@ -102,6 +102,8 @@ int __init clk_pxa_cken_init(const struct desc_clk_cken *clks, int nb_clks)
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a92600311506..146b1759798e 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -72,6 +72,19 @@ static int clk_dummy_set_rate(struct clk_hw *hw,
+ 	return 0;
+ }
  
- 	for (i = 0; i < nb_clks; i++) {
- 		pxa_clk = kzalloc(sizeof(*pxa_clk), GFP_KERNEL);
-+		if (!pxa_clk)
-+			continue;
- 		pxa_clk->is_in_low_power = clks[i].is_in_low_power;
- 		pxa_clk->lp = clks[i].lp;
- 		pxa_clk->hp = clks[i].hp;
++static int clk_dummy_single_set_parent(struct clk_hw *hw, u8 index)
++{
++	if (index >= clk_hw_get_num_parents(hw))
++		return -EINVAL;
++
++	return 0;
++}
++
++static u8 clk_dummy_single_get_parent(struct clk_hw *hw)
++{
++	return 0;
++}
++
+ static const struct clk_ops clk_dummy_rate_ops = {
+ 	.recalc_rate = clk_dummy_recalc_rate,
+ 	.determine_rate = clk_dummy_determine_rate,
+@@ -90,6 +103,11 @@ static const struct clk_ops clk_dummy_minimize_rate_ops = {
+ 	.set_rate = clk_dummy_set_rate,
+ };
+ 
++static const struct clk_ops clk_dummy_single_parent_ops = {
++	.set_parent = clk_dummy_single_set_parent,
++	.get_parent = clk_dummy_single_get_parent,
++};
++
+ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ {
+ 	struct clk_dummy_context *ctx;
+@@ -239,6 +257,92 @@ static struct kunit_suite clk_test_suite = {
+ 	.test_cases = clk_test_cases,
+ };
+ 
++struct clk_single_parent_ctx {
++	struct clk_dummy_context parent_ctx;
++	struct clk_hw hw;
++};
++
++static int clk_orphan_transparent_single_parent_mux_test_init(struct kunit *test)
++{
++	struct clk_single_parent_ctx *ctx;
++	struct clk_init_data init = { };
++	const char *parents[] = { "orphan_parent" };
++	int ret;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	test->priv = ctx;
++
++	init.name = "test_orphan_dummy_parent";
++	init.ops = &clk_dummy_single_parent_ops;
++	init.parent_names = parents;
++	init.num_parents = ARRAY_SIZE(parents);
++	init.flags = CLK_SET_RATE_PARENT;
++	ctx->hw.init = &init;
++
++	ret = clk_hw_register(NULL, &ctx->hw);
++	if (ret)
++		return ret;
++
++	memset(&init, 0, sizeof(init));
++	init.name = "orphan_parent";
++	init.ops = &clk_dummy_rate_ops;
++	ctx->parent_ctx.hw.init = &init;
++	ctx->parent_ctx.rate = DUMMY_CLOCK_INIT_RATE;
++
++	ret = clk_hw_register(NULL, &ctx->parent_ctx.hw);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static void clk_orphan_transparent_single_parent_mux_test_exit(struct kunit *test)
++{
++	struct clk_single_parent_ctx *ctx = test->priv;
++
++	clk_hw_unregister(&ctx->hw);
++	clk_hw_unregister(&ctx->parent_ctx.hw);
++}
++
++/*
++ * Test that a mux-only clock, with an initial rate within a range,
++ * will still have the same rate after the range has been enforced.
++ */
++static void clk_test_orphan_transparent_parent_mux_set_range(struct kunit *test)
++{
++	struct clk_single_parent_ctx *ctx = test->priv;
++	struct clk_hw *hw = &ctx->hw;
++	struct clk *clk = hw->clk;
++	unsigned long rate, new_rate;
++
++	rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, rate, 0);
++
++	KUNIT_ASSERT_EQ(test,
++			clk_set_rate_range(clk,
++					   ctx->parent_ctx.rate - 1000,
++					   ctx->parent_ctx.rate + 1000),
++			0);
++
++	new_rate = clk_get_rate(clk);
++	KUNIT_ASSERT_GT(test, new_rate, 0);
++	KUNIT_EXPECT_EQ(test, rate, new_rate);
++}
++
++static struct kunit_case clk_orphan_transparent_single_parent_mux_test_cases[] = {
++	KUNIT_CASE(clk_test_orphan_transparent_parent_mux_set_range),
++	{}
++};
++
++static struct kunit_suite clk_orphan_transparent_single_parent_test_suite = {
++	.name = "clk-orphan-transparent-single-parent-test",
++	.init = clk_orphan_transparent_single_parent_mux_test_init,
++	.exit = clk_orphan_transparent_single_parent_mux_test_exit,
++	.test_cases = clk_orphan_transparent_single_parent_mux_test_cases,
++};
++
+ /*
+  * Test that clk_set_rate_range won't return an error for a valid range
+  * and that it will make sure the rate of the clock is within the
+@@ -788,6 +892,7 @@ static struct kunit_suite clk_range_minimize_test_suite = {
+ 
+ kunit_test_suites(
+ 	&clk_test_suite,
++	&clk_orphan_transparent_single_parent_test_suite,
+ 	&clk_range_test_suite,
+ 	&clk_range_maximize_test_suite,
+ 	&clk_range_minimize_test_suite
 -- 
+2.35.1
+
