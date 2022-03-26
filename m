@@ -2,132 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3667EC433F5
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Mar 2022 14:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19393C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Mar 2022 21:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233555AbiCZOqA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Mar 2022 10:46:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45688 "EHLO
+        id S229534AbiCZVbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Mar 2022 17:31:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233607AbiCZOpn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Mar 2022 10:45:43 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CB9821592D;
-        Sat, 26 Mar 2022 07:43:54 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id k125so8130113qkf.0;
-        Sat, 26 Mar 2022 07:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2YlgMBSPmJUk0Rk6GLoONESlcILYtfMxn7a25rTaF2E=;
-        b=bRr0kfXyZWJKTCY0yDrgbVKgvL6NAnG92yYSh+ggecEex1QlemaMmbaWmC/tKPZoVO
-         E7NU0Kn33ukzhjWBrJ9bX43NPvXU3RiK3A4iifUmlAnyvlAqKWqjlm/aoIkRgNejJYlX
-         cJBsoxE6FxCit1CztX91Bn+6TP50wrBoqniJzt8qHXFUtA3Kj6GXBnAmjMqidEbW1eZK
-         3Kkn9k8bUl1Bs+U//+eCUloh32kwnty3NqGi1BM6PDTXqMnd6MEjvY2O3ty8/6ak18nb
-         oJ+4y/n/C2yj0nJ3HD0Jdk9J3ZJvOsvPLE/UbuqD2zi1LeW79ceLbIS14mFqxOTIS8t/
-         rijg==
+        with ESMTP id S229890AbiCZVbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Mar 2022 17:31:40 -0400
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 101FC15FCC;
+        Sat, 26 Mar 2022 14:30:03 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id h1so12927695edj.1;
+        Sat, 26 Mar 2022 14:30:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2YlgMBSPmJUk0Rk6GLoONESlcILYtfMxn7a25rTaF2E=;
-        b=KlDY92VyyW4vXMNFcdBYv4EUS/yDNp25h74Q/BLb8TsAjW+WLxWZRUfutxLl1Rse5D
-         j0mSXY00NV3NhQZ2reBsdAetAef4fzRrwziejR+qPsuKIQTKz1+Py0mSS5do7hl3Ko4+
-         v2Ae34csy2FJgh9ep3faQRaD7dEYiqNzaQD2TwPW2kREDfqwc0dNcWTmgMzNTkDqB1Rt
-         T80HfEUNsieJdjXjazvbpjfdVnvqJECBEaWzW1eZANBmkrks19MCJNqhsBkvRssxjMXA
-         Mp5YVicr1K5X6eBdJs9OlNl9tlHd6jBF+i/xn6D0XZsU0fSdrHzFV9Od0Jn9iKFi1qxb
-         bewQ==
-X-Gm-Message-State: AOAM532RklrlS0s6jYfnTCh1gOgDM5Q208o9ZP8x6jHngj6yCx49gI2v
-        YcHIrTKilXAAxI+x1q75Pu8=
-X-Google-Smtp-Source: ABdhPJxkICEugBg7oRpjNBUje7xtmOMgdsUqF2ijDNDcfDIaObRzldofvcB2xTgJFpnnOJMi5fl5LQ==
-X-Received: by 2002:a05:620a:318b:b0:67d:7f67:8e8c with SMTP id bi11-20020a05620a318b00b0067d7f678e8cmr9724912qkb.637.1648305833500;
-        Sat, 26 Mar 2022 07:43:53 -0700 (PDT)
-Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
-        by smtp.gmail.com with ESMTPSA id 70-20020a370649000000b0067b4cd8ffbasm4908918qkg.60.2022.03.26.07.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Mar 2022 07:43:52 -0700 (PDT)
-From:   Jesse Taube <mr.bossman075@gmail.com>
-X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
-To:     linux-imx@nxp.com
-Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
-        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
-        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
-        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
-        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
-        cniedermaier@dh-electronics.com, Mr.Bossman075@gmail.com,
-        clin@suse.com, giulio.benetti@benettiengineering.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH v1 12/12] ARM: imxrt_defconfig: Add i.MXRT1170
-Date:   Sat, 26 Mar 2022 10:43:13 -0400
-Message-Id: <20220326144313.673549-13-Mr.Bossman075@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
-References: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7H//OQ3peeZo6cFkBAqd2bvidUOeWSddr0qVAjJHEkk=;
+        b=ToKx5GFSWbdebqWwDP5bXXXoseEHeeq+9zfq1GCuStROox2Wq1AXIH7Vpbc31ZtVlW
+         1hTI1gSW2PCcMVFwUkW12Vi89+YE0gFQ0Sxk6FooqIkC3gDu2Qc64v6jltJaUDRJ2zs1
+         BLD7pw1DN+Og6ClNX1low0b1vP/rOHGnA9xo5S7ie9oPUETvqRVictrWqIfxZ+EA3RCV
+         VP9jzqGQSwOBevMTU0oZMfPj4DEtpaYrSTZSptgWAEgG+7i2hHuMC0yXDwwq/N+shnKU
+         8aCRsa0iz9JW/9BcBVUhUjWlhwu4M5zBG/NSVj1Tts+ZYjgdUiN3qNpFo0Zk444j5bIl
+         tatw==
+X-Gm-Message-State: AOAM530jjYx8xC8PJ3gHB+EC9+0hFM3U8+f/CnyDzMTqa34lFWTIkAJk
+        7gzEUDy0L81Y1Aujrxot5GE=
+X-Google-Smtp-Source: ABdhPJwdup7W+e8oCpUfyH1DfPFRegqIKYsj2TkC1DZLAN5hn9CCubKrNb7IkbBYOsLudYhnXw3P3Q==
+X-Received: by 2002:aa7:d58e:0:b0:419:c121:ea33 with SMTP id r14-20020aa7d58e000000b00419c121ea33mr5846197edq.256.1648330201522;
+        Sat, 26 Mar 2022 14:30:01 -0700 (PDT)
+Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.googlemail.com with ESMTPSA id pk9-20020a170906d7a900b006e05b7ce40csm3864675ejb.221.2022.03.26.14.29.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Mar 2022 14:30:00 -0700 (PDT)
+Message-ID: <a6d8ab4e-c863-1dce-249b-e3971cdaf930@kernel.org>
+Date:   Sat, 26 Mar 2022 22:29:56 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: convert
+ rockchip,rk3288-cru.txt to YAML
+Content-Language: en-US
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220326120942.24008-1-jbx6244@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20220326120942.24008-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add i.MXRT1170 pinctrl, clocks and USB to imxrt_defconfig.
+On 26/03/2022 13:09, Johan Jonker wrote:
+> Current dts files with RK3288 'cru' nodes are manually verified.
+> In order to automate this process rockchip,rk3288-cru.txt has to be
+> converted to YAML.
+> 
+> Changed:
+>   Add properties to fix notifications by clocks.yaml for example:
+>     clocks
+>     clock-names
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../bindings/clock/rockchip,rk3288-cru.txt    | 67 ---------------
+>  .../bindings/clock/rockchip,rk3288-cru.yaml   | 83 +++++++++++++++++++
+>  2 files changed, 83 insertions(+), 67 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
+> 
 
-Cc: Giulio Benetti <giulio.benetti@benettiengineering.com>
-Signed-off-by: Jesse Taube <Mr.Bossman075@gmail.com>
----
- arch/arm/configs/imxrt_defconfig | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/configs/imxrt_defconfig b/arch/arm/configs/imxrt_defconfig
-index 52dba3762996..bc0b8751956e 100644
---- a/arch/arm/configs/imxrt_defconfig
-+++ b/arch/arm/configs/imxrt_defconfig
-@@ -17,7 +17,32 @@ CONFIG_SERIAL_FSL_LPUART=y
- CONFIG_SERIAL_FSL_LPUART_CONSOLE=y
- CONFIG_SERIAL_DEV_BUS=y
- CONFIG_PINCTRL_IMXRT1050=y
-+CONFIG_PINCTRL_IMXRT1170=y
- CONFIG_GPIO_MXC=y
-+CONFIG_USB=y
-+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
-+CONFIG_USB_DYNAMIC_MINORS=y
-+CONFIG_USB_OTG=y
-+CONFIG_USB_OTG_FSM=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_EHCI_FSL=y
-+CONFIG_USB_EHCI_HCD_PLATFORM=y
-+CONFIG_USB_CHIPIDEA=y
-+CONFIG_USB_CHIPIDEA_UDC=y
-+CONFIG_USB_CHIPIDEA_HOST=y
-+CONFIG_NOP_USB_XCEIV=y
-+CONFIG_USB_MXS_PHY=y
-+CONFIG_USB_GADGET=y
-+CONFIG_USB_CONFIGFS=y
-+CONFIG_USB_CONFIGFS_SERIAL=y
-+CONFIG_USB_CONFIGFS_ACM=y
-+CONFIG_USB_CONFIGFS_OBEX=y
-+CONFIG_USB_CONFIGFS_MASS_STORAGE=y
-+CONFIG_USB_CONFIGFS_F_LB_SS=y
-+CONFIG_USB_CONFIGFS_F_FS=y
-+CONFIG_USB_CONFIGFS_F_HID=y
-+CONFIG_USB_CONFIGFS_F_PRINTER=y
-+CONFIG_USB_MASS_STORAGE=y
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
-@@ -25,6 +50,7 @@ CONFIG_MMC_SDHCI_ESDHC_IMX=y
- CONFIG_DMADEVICES=y
- CONFIG_FSL_EDMA=y
- CONFIG_CLK_IMXRT1050=y
-+CONFIG_CLK_IMXRT1170=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_EXT4_FS_SECURITY=y
--- 
-2.34.1
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
+
+Best regards,
+Krzysztof
