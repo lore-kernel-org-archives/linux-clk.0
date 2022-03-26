@@ -2,246 +2,137 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86212C433FE
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Mar 2022 12:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0708C433F5
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Mar 2022 14:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbiCZMLa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Mar 2022 08:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57650 "EHLO
+        id S233313AbiCZOo6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Mar 2022 10:44:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232776AbiCZML3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Mar 2022 08:11:29 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDA062A02;
-        Sat, 26 Mar 2022 05:09:50 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id x34so11893257ede.8;
-        Sat, 26 Mar 2022 05:09:50 -0700 (PDT)
+        with ESMTP id S231485AbiCZOo6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Mar 2022 10:44:58 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028AC208244;
+        Sat, 26 Mar 2022 07:43:21 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id 10so8792262qtz.11;
+        Sat, 26 Mar 2022 07:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rkpQ2CvLx5/YOytL3DUt1U7LW03Ve0SSyCtKDL1HKQY=;
-        b=cv/OXQ3kn0vZd+oalJeNtX7VyFKKTOQdKzR0MzowDFH69xIOlKBGmPW2QBt1H/awLB
-         EfkUgZd/oiK1dD+SvmSCVlRvuPGdppO/QDzvov6XSX5FJ+IRDdS1qUXWRhD6T8XZjdKk
-         6nk4WYC5TIux739Y2eK1mrP8sdzSJm6UsaVasewRQ5EXUxCUUP0o1Bcwe+BVluvUhOq6
-         8BlGcxm0jF0GfC6wDwuxntMb+hdGR0EXizhlJqgmbL2oFcTJSpoDl1kEczjrzfmIuqi8
-         gSeWetQE8MRzsSit53Ow9rQ4PKfzDQIJJQL/8iSJemCBUX1XYnabzSKBDEJdDULFjKHS
-         nkAg==
+        bh=4EjMh1BXc6L+8+2yCB/wSo589PUQ7VAWNTCQaSkJ5DQ=;
+        b=bX5hy0vhjxCbMhu+7P8AdpCsHwvPtkAzjWp8oIILb7PvQEqQPvSkMEtE8wD/zI+b4O
+         A1iLDSA6UOIia18J1ieodiovWaDGODX2GAmQ03CXwXeBvvVIzteKT79vqPh1bBzg5Ov8
+         1YeVjJgC+UlAujDFCZi/pcIqjXhKnbdFXi5V5ojTesq7e+tVoxZQXtTrPo6bzdprd0vh
+         0J6fco6DGwJU7HGK5Ll5duDmf3vyzmPGSbla+z5IQ9HSUs8IqBCwY4CYWV36fcevaecN
+         osbk0AMuA1eD9384huE9v64oB9jQDCGnctVakdgcHBnNVsj2O2hbDll3VrobpLyoLY/O
+         MZgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=rkpQ2CvLx5/YOytL3DUt1U7LW03Ve0SSyCtKDL1HKQY=;
-        b=YIYc8IfnSE0T6gOVKv5eY/lefSezzeIPK29SEGxdFxfoQ5DVvzDmbFdAGUNz4Sp/W9
-         AvJ0TrAKPqkU+X6eW/qDhIfkHqr4iYlmoSQDFnMcF80T8+Di6qOmxocH/WPVSSOMwIhC
-         MgzTcUiZlIgVmKUY8Ne9OhHQlU2+GjxndNWAqgj9SdhGbb8P72odihLiR8QRIeVJ+Dl0
-         usWl2B3npaKlTB0PE2BQvuskc1Na+htRWXmIrzeuVdxwjbL4HIVRPxfxUfVFuNpp56ke
-         9HwICZh1GSVeJwfgsT+omB9iJpxBU+ClWQWxnXi6tnsVQErepuh7ByxSvdJmkZW3XmXo
-         abew==
-X-Gm-Message-State: AOAM5305d3g5Uin+CqZEpmle00tbxErKzci1WD7PATnT6ulocvEphjqs
-        qi+Y6qjr9VUowqOmfx8uz89btNGksws=
-X-Google-Smtp-Source: ABdhPJzTrzjvLOcgoh8sDDfmO2EFpSX8kVF9ThptSc0DTR0uV/5q6FdEiwo6Fc8Q/a0EnUykuXUzPQ==
-X-Received: by 2002:aa7:c056:0:b0:418:e8d7:52a3 with SMTP id k22-20020aa7c056000000b00418e8d752a3mr3983658edo.301.1648296589084;
-        Sat, 26 Mar 2022 05:09:49 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id cr19-20020a170906d55300b006df6b316e29sm3559920ejc.208.2022.03.26.05.09.47
+        bh=4EjMh1BXc6L+8+2yCB/wSo589PUQ7VAWNTCQaSkJ5DQ=;
+        b=ohUaS0XhB0gl7XMxzthdv/T9ycGIqDUKS5H7WRHkBjKcAxyOszLQ4QDZ7+UMiXdDe9
+         xGvN8YAImvYqSijfyjmjJ7nguRxieaFJPBKMMNAYda8tpZDVuZ5RX7B7s3VFQbrhLYfR
+         GISUBNBdL0PKP1IH7oAnrAj9q6XhaeMpq/D92tSin/Y0UiJJRDlF821eBrPgoOEcKaty
+         KC9NN9sdxM1tYwWU2Vilc6ndN8lqM12tP1B5qh6dExFHrcy5PBhemUolKjie9vbnIcEP
+         xeF2lme8/fJcbrijURxMchaL1kZWe1LRkrzyXjVWmiOC0MehrvmfXEB2zs8TUpYEG56N
+         sCrw==
+X-Gm-Message-State: AOAM532kVXEJAqE+odD1LBC8bndw7eHahXwFYzaFUy5Tu7iM9QHZHaPw
+        GRO9qIL3HP6Zaj2tSDLw1jM=
+X-Google-Smtp-Source: ABdhPJxlSMIB6q5kWqyaMQn/pan1GzoHN8bORyLMAqLixcIUaE8/0GbyYu4Eju9FJ1kveap/pQmo3Q==
+X-Received: by 2002:a05:622a:155:b0:2e1:cc60:8947 with SMTP id v21-20020a05622a015500b002e1cc608947mr13974558qtw.243.1648305800092;
+        Sat, 26 Mar 2022 07:43:20 -0700 (PDT)
+Received: from jesse-desktop.jtp-bos.lab (146-115-144-188.s4282.c3-0.nwt-cbr1.sbo-nwt.ma.cable.rcncustomer.com. [146.115.144.188])
+        by smtp.gmail.com with ESMTPSA id 70-20020a370649000000b0067b4cd8ffbasm4908918qkg.60.2022.03.26.07.43.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Mar 2022 05:09:48 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: clock: convert rockchip,rk3288-cru.txt to YAML
-Date:   Sat, 26 Mar 2022 13:09:41 +0100
-Message-Id: <20220326120942.24008-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Sat, 26 Mar 2022 07:43:18 -0700 (PDT)
+From:   Jesse Taube <mr.bossman075@gmail.com>
+X-Google-Original-From: Jesse Taube <Mr.Bossman075@gmail.com>
+To:     linux-imx@nxp.com
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, stefan@agner.ch,
+        linus.walleij@linaro.org, daniel.lezcano@linaro.org,
+        tglx@linutronix.de, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+        linux@armlinux.org.uk, abel.vesa@nxp.com, dev@lynxeye.de,
+        marcel.ziswiler@toradex.com, tharvey@gateworks.com,
+        leoyang.li@nxp.com, sebastian.reichel@collabora.com,
+        cniedermaier@dh-electronics.com, Mr.Bossman075@gmail.com,
+        clin@suse.com, giulio.benetti@benettiengineering.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH v1 00/12] Add support for the i.MXRT1170-evk
+Date:   Sat, 26 Mar 2022 10:43:01 -0400
+Message-Id: <20220326144313.673549-1-Mr.Bossman075@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Current dts files with RK3288 'cru' nodes are manually verified.
-In order to automate this process rockchip,rk3288-cru.txt has to be
-converted to YAML.
+This patch continues support for the imxrt series now with the imxrt1170
 
-Changed:
-  Add properties to fix notifications by clocks.yaml for example:
-    clocks
-    clock-names
+This patch contains:
+- Update to imxrt_defconfig
+- Devicetree
+- Clock driver
+- Pinctrl driver
+- New pll
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- .../bindings/clock/rockchip,rk3288-cru.txt    | 67 ---------------
- .../bindings/clock/rockchip,rk3288-cru.yaml   | 83 +++++++++++++++++++
- 2 files changed, 83 insertions(+), 67 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
+This patch also updates some documentation for both imxrt1170 an 1050.
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
-deleted file mode 100644
-index bf3a9ec19..000000000
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--* Rockchip RK3288 Clock and Reset Unit
--
--The RK3288 clock controller generates and supplies clock to various
--controllers within the SoC and also implements a reset controller for SoC
--peripherals.
--
--A revision of this SoC is available: rk3288w. The clock tree is a bit
--different so another dt-compatible is available. Noticed that it is only
--setting the difference but there is no automatic revision detection. This
--should be performed by bootloaders.
--
--Required Properties:
--
--- compatible: should be "rockchip,rk3288-cru" or "rockchip,rk3288w-cru" in
--  case of this revision of Rockchip rk3288.
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Optional Properties:
--
--- rockchip,grf: phandle to the syscon managing the "general register files"
--  If missing pll rates are not changeable, due to the missing pll lock status.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. All available clocks are defined as
--preprocessor macros in the dt-bindings/clock/rk3288-cru.h headers and can be
--used in device tree sources. Similar macros exist for the reset sources in
--these files.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "xin24m" - crystal input - required,
-- - "xin32k" - rtc clock - optional,
-- - "ext_i2s" - external I2S clock - optional,
-- - "ext_hsadc" - external HSADC clock - optional,
-- - "ext_edp_24m" - external display port clock - optional,
-- - "ext_vip" - external VIP clock - optional,
-- - "ext_isp" - external ISP clock - optional,
-- - "ext_jtag" - external JTAG clock - optional
--
--Example: Clock controller node:
--
--	cru: cru@20000000 {
--		compatible = "rockchip,rk3188-cru";
--		reg = <0x20000000 0x1000>;
--		rockchip,grf = <&grf>;
--
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller:
--
--	uart0: serial@10124000 {
--		compatible = "snps,dw-apb-uart";
--		reg = <0x10124000 0x400>;
--		interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <1>;
--		clocks = <&cru SCLK_UART0>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
-new file mode 100644
-index 000000000..e5f89a78e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3288-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3288 Clock and Reset Unit (CRU)
-+
-+maintainers:
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description: |
-+  The RK3288 clock controller generates and supplies clock to various
-+  controllers within the SoC and also implements a reset controller for SoC
-+  peripherals.
-+
-+  A revision of this SoC is available: rk3288w. The clock tree is a bit
-+  different so another dt-compatible is available. Noticed that it is only
-+  setting the difference but there is no automatic revision detection. This
-+  should be performed by bootloaders.
-+
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All available clocks are defined as
-+  preprocessor macros in the dt-bindings/clock/rk3288-cru.h headers and can be
-+  used in device tree sources. Similar macros exist for the reset sources in
-+  these files.
-+
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+    - "xin24m"      - crystal input               - required,
-+    - "xin32k"      - rtc clock                   - optional,
-+    - "ext_i2s"     - external I2S clock          - optional,
-+    - "ext_hsadc"   - external HSADC clock        - optional,
-+    - "ext_edp_24m" - external display port clock - optional,
-+    - "ext_vip"     - external VIP clock          - optional,
-+    - "ext_isp"     - external ISP clock          - optional,
-+    - "ext_jtag"    - external JTAG clock         - optional
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3288-cru
-+      - rockchip,rk3288w-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: xin24m
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to the syscon managing the "general register files",
-+      if missing pll rates are not changeable, due to the missing pll lock status.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cru: clock-controller@ff760000 {
-+      compatible = "rockchip,rk3288-cru";
-+      reg = <0xff760000 0x1000>;
-+      rockchip,grf = <&grf>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
+The i.MXRT1170 has a vast array of fetures includeing two cores. 2 Ethernet, 2 USB phy, and a 2d gpu.
+
+It also is fetured in a new google coral board
+https://coral.ai/products/dev-board-micro
+Not affiliated unfortunaly.
+
+Jesse Taube (12):
+  dt-bindings: arm: imx: Add i.MXRT compatible Documentation
+  dt-bindings: timer: gpt: Add i.MXRT compatible Documentation
+  dt-bindings: pinctrl: add i.MXRT1170 pinctrl Documentation
+  dt-bindings: clock: imx: Add documentation for i.MXRT1170 clock
+  ARM: mach-imx: Add support for i.MXRT1170
+  ARM: clk: imx: Update pllv3 to support i.MXRT1170
+  dt-bindings: imx: Add clock binding for i.MXRT1170
+  clk: imx: Add initial support for i.MXRT1170 clock driver
+  pinctrl: freescale: Add i.MXRT1170 pinctrl driver support
+  ARM: dts: imxrt1170-pinfunc: Add pinctrl binding header
+  ARM: dts: imx: Add i.MXRT1170-EVK support
+  ARM: imxrt_defconfig: Add i.MXRT1170
+
+ .../devicetree/bindings/arm/fsl.yaml          |   12 +
+ .../bindings/clock/imxrt1170-clock.yaml       |   59 +
+ .../bindings/pinctrl/fsl,imxrt1170.yaml       |   77 +
+ .../devicetree/bindings/timer/fsl,imxgpt.yaml |    2 +
+ arch/arm/boot/dts/Makefile                    |    3 +-
+ arch/arm/boot/dts/imxrt1170-evk.dts           |  126 ++
+ arch/arm/boot/dts/imxrt1170-pinfunc.h         | 1561 +++++++++++++++++
+ arch/arm/boot/dts/imxrt1170.dtsi              |  278 +++
+ arch/arm/configs/imxrt_defconfig              |   26 +
+ arch/arm/mach-imx/mach-imxrt.c                |    1 +
+ drivers/clk/imx/Kconfig                       |    7 +
+ drivers/clk/imx/Makefile                      |    1 +
+ drivers/clk/imx/clk-imxrt1170.c               |  391 +++++
+ drivers/clk/imx/clk-pllv3.c                   |   57 +-
+ drivers/clk/imx/clk.h                         |    4 +
+ drivers/pinctrl/freescale/Kconfig             |    7 +
+ drivers/pinctrl/freescale/Makefile            |    1 +
+ drivers/pinctrl/freescale/pinctrl-imxrt1170.c |  349 ++++
+ include/dt-bindings/clock/imxrt1170-clock.h   |  282 +++
+ 19 files changed, 3241 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imxrt1170-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/fsl,imxrt1170.yaml
+ create mode 100644 arch/arm/boot/dts/imxrt1170-evk.dts
+ create mode 100644 arch/arm/boot/dts/imxrt1170-pinfunc.h
+ create mode 100644 arch/arm/boot/dts/imxrt1170.dtsi
+ create mode 100644 drivers/clk/imx/clk-imxrt1170.c
+ create mode 100644 drivers/pinctrl/freescale/pinctrl-imxrt1170.c
+ create mode 100644 include/dt-bindings/clock/imxrt1170-clock.h
+
 -- 
-2.20.1
+2.34.1
 
