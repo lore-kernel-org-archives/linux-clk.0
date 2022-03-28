@@ -2,103 +2,79 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D518C433F5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E53C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 17:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240498AbiC1Q7Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Mar 2022 12:59:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56444 "EHLO
+        id S239521AbiC1R3j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Mar 2022 13:29:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234838AbiC1Q7P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 12:59:15 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E340C4CD4B;
-        Mon, 28 Mar 2022 09:57:34 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a8so29908300ejc.8;
-        Mon, 28 Mar 2022 09:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wBY8GOjTBGWVEL0GTMWI6P1arfhZD9nF3EMgpiHJ8pg=;
-        b=TrhfV81sE8oJYSmCYeOpiNX4rwzFlNa0YYzLP08JEAl6V9ZLFZAITEpA+veBQrtYXd
-         nTIjE75VTCdIqCw6ACstHID8jmEUgPezsa2Ye+Q8W1m3xfHTfeACSgW68kRyL0MmayFL
-         y6fCbN7XOb4+BqlfFW+POMeDwCKcSLdInFNbxW1/RObEC7S48YVIEaaj7mIRVg9cBG15
-         2beqkvhDpR66XCMne9A7AkOOyftPDo8lqXCdH3KL4usS/GBmP0v4FgXC0I0ohOZ3So6t
-         JRh1x+o00LD4zh72QK1QlcGKLfNkewdqNuktuGZnEQEyx0ijfjAX/mqSuMPxI5K9/NIS
-         EQlw==
+        with ESMTP id S230226AbiC1R3i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 13:29:38 -0400
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2420963530;
+        Mon, 28 Mar 2022 10:27:58 -0700 (PDT)
+Received: by mail-oi1-f172.google.com with SMTP id w127so16313027oig.10;
+        Mon, 28 Mar 2022 10:27:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wBY8GOjTBGWVEL0GTMWI6P1arfhZD9nF3EMgpiHJ8pg=;
-        b=b/HWAANSSAgj7N2sbARHIp85cju/6wieArTUtr9yRGrt9z9kXzj6UpHVpMAnhGilMC
-         USkt6cHlb2vm8qJakP0bEV1YdB7djmEvfMipWYYqk1txS2txLIWe9Dq7JEsycTgTTkXr
-         uMFNThoE7jBMeflNREz2ueNZKp8Zp1IiMiqZHBRk2e8MmuYCguLYyloQRrsqgl/JVobM
-         XNH8Y8vsQYW3AWvDhz/tVfqEN29AHYDJzsWC3sPC5MhCy5eIzLTyPsq6DzfVSWPBenpK
-         6WPvxCwSvN1OjC65evSGXX5HI3Mcw+e29gZs8tGrZ+p68f8m1jXXjym+uKeA7XXG3GBu
-         XRRQ==
-X-Gm-Message-State: AOAM531OKdieaSY5IKM5b8byoB4DjSecZCZcsXKRjHOWZqe4t/l+Y3Rz
-        cos9igW8S7oWOiRCuVOUTqo=
-X-Google-Smtp-Source: ABdhPJwbZdbg18gH4uRako7Q+MjVs4nlqqVBcAfzLaiEeJvaLPgfUTObm+Sv22eUIX11zO3Tys/+HQ==
-X-Received: by 2002:a17:907:2a53:b0:6ce:e4fe:3f92 with SMTP id fe19-20020a1709072a5300b006cee4fe3f92mr28685432ejc.389.1648486649986;
-        Mon, 28 Mar 2022 09:57:29 -0700 (PDT)
-Received: from jernej-laptop.localnet (cpe-86-58-32-107.static.triera.net. [86.58.32.107])
-        by smtp.gmail.com with ESMTPSA id p12-20020a17090635cc00b006e055c9c91esm6038305ejb.101.2022.03.28.09.57.28
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pKj0Gjvro8HTxjGPukTbqzqx9n4h/OXOk7/nuTgNznk=;
+        b=YxIOSdrFnwgp+NrOe7QEDFoqev1ufwNP9BTLhsX3oibQuaQOqLqgj53JajQVKqFqOx
+         MUYaCT3KtVRoObXy/h3Ylz8atNVohwRVeQQbSsoRY0iVU7+yU1NqagMDCboCqk2Th1Pt
+         B67oG8pFt9Zm7Jhss/jy8d3Z83QjRaooCfbg7edg77Wy5qxui9y89KCwMGAfOCUrZoMv
+         g7jVz59f177F2neSzIvgRMefH7dQVcJEBINAsSefCjWJ0A2ME4XiEDINUoATTDtRA3Ti
+         k7J4FqNOkG18xbaLAkwsRh5S+D9djYjh0/cfj+JZYL/6pG5Wu4//hsKbOyrfX//Y1dD8
+         uGJQ==
+X-Gm-Message-State: AOAM533aczP/unKlcx7wfwM9RIDPa1o5YVEzvntqJYgrxXkWxQCDd3tD
+        CmyTxgSrviO9HKDKuWcV7A==
+X-Google-Smtp-Source: ABdhPJy9zkdxb+G0m7ZY98qArUKWYEXV2InDfgYRh2KbJ2ffNuMS4F51mQaf1i8pp3e5obxjJ3g9Ng==
+X-Received: by 2002:a05:6808:308c:b0:2f7:5d2e:1a5e with SMTP id bl12-20020a056808308c00b002f75d2e1a5emr102483oib.209.1648488477125;
+        Mon, 28 Mar 2022 10:27:57 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id x65-20020a9d20c7000000b005cdaeec68d5sm7389911ota.37.2022.03.28.10.27.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Mar 2022 09:57:29 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Wan Jiabing <wanjiabing@vivo.com>
-Cc:     kael_w@yeah.net, Wan Jiabing <wanjiabing@vivo.com>
-Subject: Re: [PATCH] clk: sunxi-ng: fix not NULL terminated coccicheck error
-Date:   Mon, 28 Mar 2022 18:57:28 +0200
-Message-ID: <2621623.mvXUDI8C0e@jernej-laptop>
-In-Reply-To: <20220328073931.36544-1-wanjiabing@vivo.com>
-References: <20220328073931.36544-1-wanjiabing@vivo.com>
+        Mon, 28 Mar 2022 10:27:56 -0700 (PDT)
+Received: (nullmailer pid 2611453 invoked by uid 1000);
+        Mon, 28 Mar 2022 17:27:55 -0000
+Date:   Mon, 28 Mar 2022 12:27:55 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Johan Jonker <jbx6244@gmail.com>
+Cc:     krzk+dt@kernel.org, mturquette@baylibre.com,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        heiko@sntech.de, sboyd@kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: clock: convert
+ rockchip,rk3288-cru.txt to YAML
+Message-ID: <YkHwG5SaXchzeJ7o@robh.at.kernel.org>
+References: <20220326120942.24008-1-jbx6244@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220326120942.24008-1-jbx6244@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 28. marec 2022 ob 09:39:31 CEST je Wan Jiabing napisal(a):
-> Fix the following coccicheck error:
-> ./drivers/clk/sunxi-ng/ccu-sun6i-rtc.c:348:1-2: sun6i_rtc_ccu_match is
-> not NULL terminated at line 348
+On Sat, 26 Mar 2022 13:09:41 +0100, Johan Jonker wrote:
+> Current dts files with RK3288 'cru' nodes are manually verified.
+> In order to automate this process rockchip,rk3288-cru.txt has to be
+> converted to YAML.
 > 
-> Fixes: d91612d7f01a ("clk: sunxi-ng: Add support for the sun6i RTC clocks")
-> Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
-
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
-
+> Changed:
+>   Add properties to fix notifications by clocks.yaml for example:
+>     clocks
+>     clock-names
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun6i-rtc.c | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/clock/rockchip,rk3288-cru.txt    | 67 ---------------
+>  .../bindings/clock/rockchip,rk3288-cru.yaml   | 83 +++++++++++++++++++
+>  2 files changed, 83 insertions(+), 67 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-> b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c index 8a10bade7e0d..ffb72d9a9c36
-> 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-> @@ -346,6 +346,7 @@ static const struct of_device_id sun6i_rtc_ccu_match[] =
-> { .compatible	= "allwinner,sun50i-r329-rtc",
->  		.data		= &sun50i_r329_rtc_ccu_data,
->  	},
-> +	{},
->  };
-> 
->  int sun6i_rtc_ccu_probe(struct device *dev, void __iomem *reg)
 
-
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
