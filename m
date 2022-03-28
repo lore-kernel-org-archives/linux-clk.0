@@ -2,62 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713E9C433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 07:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B344CC433EF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 07:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233324AbiC1HyT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Mar 2022 03:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59676 "EHLO
+        id S239014AbiC1H7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Mar 2022 03:59:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237327AbiC1HyS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 03:54:18 -0400
-X-Greylist: delayed 310 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 28 Mar 2022 00:52:38 PDT
-Received: from mail.ourpartnership.pl (mail.ourpartnership.pl [80.211.82.238])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF3052E5C
-        for <linux-clk@vger.kernel.org>; Mon, 28 Mar 2022 00:52:38 -0700 (PDT)
-Received: by mail.ourpartnership.pl (Postfix, from userid 1001)
-        id 8633E62112; Mon, 28 Mar 2022 08:46:33 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ourpartnership.pl;
-        s=mail; t=1648453646;
-        bh=M1ZVeu3q6Upppe+FUx/3rgI7MKJXh389NZDbgCK1SX4=;
-        h=Date:From:To:Subject:From;
-        b=qrDkYW8yBnJFOcRoWvGWViyDnBq1SZxoUeWlRXqxlrIg4aQb3jzuFk+GJxAxVuZV0
-         ChLTCibzxw1QjQeKAVD/PfFXWRCC39yyLuD/fnRLS/73Ob4NJ8RayKTK3RTW9QoAvX
-         kBwn6wOEWszB7oVdsRag+alAAItMpko1JHiwiPa5/ugnxrYWxK2zP+ue385NOtTN9U
-         fiQ3tEg5whkcPiwjVaTByedlx2zaZv02iQMULQyLgwXN4zn21b3/3Qce0tWuPmBVmC
-         5UQyezSogFkDJ7ek0qZFvhmWdjLWzqaJqiP0Zs4oDPsZLC9LNUU6CCK/MjQr9vfEGB
-         NYBDJMknuFasQ==
-Received: by mail.ourpartnership.pl for <linux-clk@vger.kernel.org>; Mon, 28 Mar 2022 07:46:04 GMT
-Message-ID: <20220328074501-0.1.9.2ah9.0.aqkd7b2ry8@ourpartnership.pl>
-Date:   Mon, 28 Mar 2022 07:46:04 GMT
-From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
-        <arkadiusz.sokolowski@ourpartnership.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Koszty instalacji fotowoltaicznej
-X-Mailer: mail.ourpartnership.pl
+        with ESMTP id S234175AbiC1H7f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 03:59:35 -0400
+Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CB6DFAC
+        for <linux-clk@vger.kernel.org>; Mon, 28 Mar 2022 00:57:55 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id DACEC3200D98;
+        Mon, 28 Mar 2022 03:57:53 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 28 Mar 2022 03:57:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=h5eykCiHJKolkq2/gxI9dBCQ8RaFOcLfxhB6pw
+        SatSY=; b=P8vkNGIt2hyGzthrsB9O2FUMW4Kxmm5aFsK1328cpqc5ufUY3ZDEE+
+        ZhPwn42rUh3TQpdADfVL2gV71LSLxu94IKAt2BcGF/sq6SgIQ/r0Z5CrOW/H03Ve
+        /UHcUpsyQnGqSjLHVSoj9GBrfdfqm6aPptZDR4aWwEtRFhuZfnNtt5CscVhCf+XX
+        iJcMcI18mJMwXwQx3GBuZ/M7sN7TQi8wHaT+xiMSTfy/NrnYt9FW/Mo8kOqH6qev
+        je5qn5syY8Iz/IplHBPhf27FfLCzwtyoPUqxVnH5rP5Bkx+1RpslztezVWYdUWGp
+        EVI6LujzpmRWPel+VqCKpvijdxVHuJjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=h5eykCiHJKolkq2/g
+        xI9dBCQ8RaFOcLfxhB6pwSatSY=; b=g2u+cOtTzlmFzjAlS3fdOYxZDo3jOXhg6
+        mF+M5bq96gEqfPx/qEhBOvUuffYoCJ+ep3WIz3ZCazusTK9rDYxR/5yTv2LXZCNG
+        JE1cxKyp9+Hx2zaUhMugDnLJNNjKosI2hUqQZS7+drIqVIK3qUHL9PYfHJUjqUay
+        mhOBIbUDj5HyFPit7LGOvn5njFGfbq3X3Qc+5WW708c4miNUJz66VZMhMSVuKSkz
+        QMdazx51wlGEcxA/FS2IF/am0vhyzfOwi0UPLU5g25/DKIroRYxlDLZvdqid6C09
+        gyaE7wF06RHlW3F+UvPZdhrD9XKMyQ4xIztnnbwZXoHBI86LqxHXA==
+X-ME-Sender: <xms:gGpBYpMEDUn1v3hz7MyCXrwCfF1g9srb54L7i1e5D2rtX0qb0Rk-0Q>
+    <xme:gGpBYr8gIcZl9BXCob7WhvpfRXmtwXovl-1QjGiAEslv2SY78h6iks9H8F44gz6Ni
+    PFnITGqyP7fxD6vNtk>
+X-ME-Received: <xmr:gGpBYoTj-uhTAr7Gq0eRVnCj8mj9x2r7f0Xt8tAM1VUE3X85lqoF6g71g2dSsUyQj1nAF0DNUuXppzseUGO2ELzfn0UwmuYhIuo8ow4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehiedguddvjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheei
+    heegudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:gWpBYlvjzhVLLrtWWBuH7J2mqGrEf92kO8iNqHT8raDaqHtrWWxFpQ>
+    <xmx:gWpBYhdUgueAZSMTYTOg46wenPjXg244oNKWagaD2J_xmkz1i-4YNQ>
+    <xmx:gWpBYh0UJaJ3fmo1oFFyAhCclT-_JLYTxT40qnBxUytT09f8KOFG5A>
+    <xmx:gWpBYgy1-ez1dlCsSFEQqbCKC37kFbLQVsD1H44RAKovwFJSytk-SQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Mar 2022 03:57:52 -0400 (EDT)
+Date:   Mon, 28 Mar 2022 09:57:50 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Latypov <dlatypov@google.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
+Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
+Message-ID: <20220328075750.zfuvgd3q56cy5zir@houat>
+References: <20220223105600.1132593-1-maxime@cerno.tech>
+ <20220223105600.1132593-3-maxime@cerno.tech>
+ <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
+ <20220225132258.55yh537iknxh72vw@houat>
+ <CAGS_qxpzWE8DYVVj-pzvMgJqA25cwNh7wsP8nnUkMcZVyUF2Yg@mail.gmail.com>
+ <20220228104718.yorlzq6264jtffak@houat>
+ <CAGS_qxpu_OivRptp05gdSNhdSQzFUU_2bsdW1JSrs0c5bhGnrw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2hrc3ougec5ehkah"
+Content-Disposition: inline
+In-Reply-To: <CAGS_qxpu_OivRptp05gdSNhdSQzFUU_2bsdW1JSrs0c5bhGnrw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
 
-stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
- obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99. =20
+--2hrc3ougec5ehkah
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
-acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
-ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
+Hi,
 
-Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
-=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
-=2E
+On Fri, Mar 25, 2022 at 05:36:25PM -0500, Daniel Latypov wrote:
+> On Mon, Feb 28, 2022 at 4:47 AM Maxime Ripard <maxime@cerno.tech> wrote:
+> >
+> > On Fri, Feb 25, 2022 at 01:29:03PM -0800, Daniel Latypov wrote:
+> > > On Fri, Feb 25, 2022 at 5:23 AM Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> > > >
+> > > > Hi Daniel,
+> > > >
+> > > > On Wed, Feb 23, 2022 at 02:50:59PM -0800, Daniel Latypov wrote:
+> > > > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech>=
+ wrote:
+> > > > > >
+> > > > > > Let's test various parts of the rate-related clock API with the=
+ kunit
+> > > > > > testing framework.
+> > > > > >
+> > > > > > Cc: kunit-dev@googlegroups.com
+> > > > > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > > > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > > > >
+> > > > > Tested-by: Daniel Latypov <dlatypov@google.com>
+> > > > >
+> > > > > Looks good to me on the KUnit side.
+> > > > > Two small nits below.
+> > > > >
+> > > > > FYI, I computed the incremental coverage for this series, i.e.:
+> > > > > 1) applied the full series
+> > > > > 2) computed the absolute coverage
+> > > > >
+> > > > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> > > > > --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG=
+_KERNEL=3Dy
+> > > > > --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=
+=3Dy
+> > > >
+> > > > I built a docker container based on ubuntu 18.04 to have gcc6 and
+> > > > python3.7, but this doesn't seem to be working, I'm not entirely su=
+re why:
+> > > >
+> > > > [13:11:22] Configuring KUnit Kernel ...
+> > > > Regenerating .config ...
+> > > > Populating config with:
+> > > > $ make ARCH=3Dum olddefconfig CC=3D/usr/bin/gcc-6 O=3D.kunit
+> > > > ERROR:root:Not all Kconfig options selected in kunitconfig were in =
+the generated .config.
+> > > > This is probably due to unsatisfied dependencies.
+> > > > Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
+> > > > Note: many Kconfig options aren't available on UML. You can try run=
+ning on a different architecture with something like "--arch=3Dx86_64".
+> > >
+> > > Did you perhaps drop CONFIG_DEBUG_KERNEL=3Dy?
+> > > Need to add 3 config options in total for coverage.
+> > >
+> > > If I tweak the command I ran above but drop CONFIG_DEBUG_KERNEL=3Dy, I
+> > > get the error message you get:
+> > >
+> > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
+> > > --make_options=3DCC=3D/usr/bin/gcc-6  --kconfig_add=3DCONFIG_DEBUG_IN=
+FO=3Dy
+> > > --kconfig_add=3DCONFIG_GCOV=3Dy
+> > > ...
+> > > Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
+> > > Note: many Kconfig options aren't available on UML. You can try
+> > > running on a different architecture with something like
+> > > "--arch=3Dx86_64".
+> >
+> > It looks to me that it's more that DEBUG_INFO isn't enabled.
+>=20
+> Sorry for the very delayed response.
+> I was largely getting internet over mobile data around when this email
+> came in and didn't want to try and download docker images over that.
+>=20
+> It looks like that there was another change that is now merged into
+> Linus' tree that causes this.
+>=20
+> I found that adding this helped (thanks David Gow)
+>   --kconfig_add=3DDEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+>=20
+> Running against --kunitconfig=3Dlib/kunit, my final coverage result is
+>=20
+> Overall coverage rate:
+>   lines......: 13.6% (18004 of 132055 lines)
+>   functions..: 15.7% (1885 of 12010 functions)
+>=20
+> Can you give that a shot and see if it works?
 
-Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
-temacie?
+It does fix the configuration issue, but I'm not able to run the tests eith=
+er:
+
+[07:53:51] Configuring KUnit Kernel ...
+Generating .config ...
+Populating config with:
+$ make ARCH=3Dum olddefconfig O=3D/home/max/out
+[07:53:53] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=3Dum olddefconfig O=3D/home/max/out
+Building with:
+$ make ARCH=3Dum --jobs=3D16 O=3D/home/max/out
+[07:54:09] Starting KUnit Kernel (1/1)...
+[07:54:09] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[07:54:09] [ERROR] Test : invalid KTAP input!
+[07:54:09] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+[07:54:09] Testing complete. Passed: 0, Failed: 0, Crashed: 0, Skipped: 0, =
+Errors: 1
+[07:54:09] Elapsed time: 18.486s total, 2.430s configuring, 16.052s buildin=
+g, 0.003s running
 
 
-Pozdrawiam
-Arkadiusz Soko=C5=82owski
+I've tried to remove all the coverage from the equation, and I get the
+same issue if I only run kunit run from inside the container, but it
+works fine outside. So I guess it's my setup that is broken. Is there
+some way to debug what could be going wrong there?
+
+Thanks!
+Maxime
+
+--2hrc3ougec5ehkah
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkFqfgAKCRDj7w1vZxhR
+xTZ8APwLMdDa8Sr8DY4qbhNvdAZOxHRd7Wd1QQZSnxJNUWSg1wD+OeS/YGnb0oMK
+0nIkR1yL47xkTzWi/lRkgKWkACzZEA8=
+=nJMB
+-----END PGP SIGNATURE-----
+
+--2hrc3ougec5ehkah--
