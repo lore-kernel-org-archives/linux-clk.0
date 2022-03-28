@@ -2,228 +2,127 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B344CC433EF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 07:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA08C433F5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Mar 2022 13:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239014AbiC1H7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Mar 2022 03:59:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44254 "EHLO
+        id S242194AbiC1NHT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Mar 2022 09:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234175AbiC1H7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 03:59:35 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CB6DFAC
-        for <linux-clk@vger.kernel.org>; Mon, 28 Mar 2022 00:57:55 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id DACEC3200D98;
-        Mon, 28 Mar 2022 03:57:53 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 28 Mar 2022 03:57:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=h5eykCiHJKolkq2/gxI9dBCQ8RaFOcLfxhB6pw
-        SatSY=; b=P8vkNGIt2hyGzthrsB9O2FUMW4Kxmm5aFsK1328cpqc5ufUY3ZDEE+
-        ZhPwn42rUh3TQpdADfVL2gV71LSLxu94IKAt2BcGF/sq6SgIQ/r0Z5CrOW/H03Ve
-        /UHcUpsyQnGqSjLHVSoj9GBrfdfqm6aPptZDR4aWwEtRFhuZfnNtt5CscVhCf+XX
-        iJcMcI18mJMwXwQx3GBuZ/M7sN7TQi8wHaT+xiMSTfy/NrnYt9FW/Mo8kOqH6qev
-        je5qn5syY8Iz/IplHBPhf27FfLCzwtyoPUqxVnH5rP5Bkx+1RpslztezVWYdUWGp
-        EVI6LujzpmRWPel+VqCKpvijdxVHuJjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=h5eykCiHJKolkq2/g
-        xI9dBCQ8RaFOcLfxhB6pwSatSY=; b=g2u+cOtTzlmFzjAlS3fdOYxZDo3jOXhg6
-        mF+M5bq96gEqfPx/qEhBOvUuffYoCJ+ep3WIz3ZCazusTK9rDYxR/5yTv2LXZCNG
-        JE1cxKyp9+Hx2zaUhMugDnLJNNjKosI2hUqQZS7+drIqVIK3qUHL9PYfHJUjqUay
-        mhOBIbUDj5HyFPit7LGOvn5njFGfbq3X3Qc+5WW708c4miNUJz66VZMhMSVuKSkz
-        QMdazx51wlGEcxA/FS2IF/am0vhyzfOwi0UPLU5g25/DKIroRYxlDLZvdqid6C09
-        gyaE7wF06RHlW3F+UvPZdhrD9XKMyQ4xIztnnbwZXoHBI86LqxHXA==
-X-ME-Sender: <xms:gGpBYpMEDUn1v3hz7MyCXrwCfF1g9srb54L7i1e5D2rtX0qb0Rk-0Q>
-    <xme:gGpBYr8gIcZl9BXCob7WhvpfRXmtwXovl-1QjGiAEslv2SY78h6iks9H8F44gz6Ni
-    PFnITGqyP7fxD6vNtk>
-X-ME-Received: <xmr:gGpBYoTj-uhTAr7Gq0eRVnCj8mj9x2r7f0Xt8tAM1VUE3X85lqoF6g71g2dSsUyQj1nAF0DNUuXppzseUGO2ELzfn0UwmuYhIuo8ow4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudehiedguddvjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheei
-    heegudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:gWpBYlvjzhVLLrtWWBuH7J2mqGrEf92kO8iNqHT8raDaqHtrWWxFpQ>
-    <xmx:gWpBYhdUgueAZSMTYTOg46wenPjXg244oNKWagaD2J_xmkz1i-4YNQ>
-    <xmx:gWpBYh0UJaJ3fmo1oFFyAhCclT-_JLYTxT40qnBxUytT09f8KOFG5A>
-    <xmx:gWpBYgy1-ez1dlCsSFEQqbCKC37kFbLQVsD1H44RAKovwFJSytk-SQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Mar 2022 03:57:52 -0400 (EDT)
-Date:   Mon, 28 Mar 2022 09:57:50 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Latypov <dlatypov@google.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org, kunit-dev@googlegroups.com
-Subject: Re: [PATCH v6 02/12] clk: Introduce Kunit Tests for the framework
-Message-ID: <20220328075750.zfuvgd3q56cy5zir@houat>
-References: <20220223105600.1132593-1-maxime@cerno.tech>
- <20220223105600.1132593-3-maxime@cerno.tech>
- <CAGS_qxqNU+rGFuALEpmqqmtD+LsTQ4R3_WWL3M70Ar-_af6OnA@mail.gmail.com>
- <20220225132258.55yh537iknxh72vw@houat>
- <CAGS_qxpzWE8DYVVj-pzvMgJqA25cwNh7wsP8nnUkMcZVyUF2Yg@mail.gmail.com>
- <20220228104718.yorlzq6264jtffak@houat>
- <CAGS_qxpu_OivRptp05gdSNhdSQzFUU_2bsdW1JSrs0c5bhGnrw@mail.gmail.com>
+        with ESMTP id S240033AbiC1NHS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Mar 2022 09:07:18 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AFEF5FD9;
+        Mon, 28 Mar 2022 06:05:36 -0700 (PDT)
+X-UUID: 9958799102904dd99c0d53d6590b66b2-20220328
+X-UUID: 9958799102904dd99c0d53d6590b66b2-20220328
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <chun-jie.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1081657017; Mon, 28 Mar 2022 21:05:31 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Mon, 28 Mar 2022 21:05:30 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 28 Mar 2022 21:05:30 +0800
+From:   Chun-Jie Chen <chun-jie.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 00/15] MediaTek MT8186 clock support
+Date:   Mon, 28 Mar 2022 21:05:06 +0800
+Message-ID: <20220328130521.24385-1-chun-jie.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2hrc3ougec5ehkah"
-Content-Disposition: inline
-In-Reply-To: <CAGS_qxpu_OivRptp05gdSNhdSQzFUU_2bsdW1JSrs0c5bhGnrw@mail.gmail.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+this patch series is based on 5.17-rc1 and depends on
+[1]"clk: mediatek: Cleanups and Improvements - Part 1"
 
---2hrc3ougec5ehkah
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+changes since v3:
+- re-order linux and internal driver header
+- remove redundant lock in mcusys muxes
+- add more description for mcusys clock driver
 
-Hi,
+changes since v2:
+- add '|' to preserve the formatting in binding document
+- change 'Mediatek'to 'MediaTek'
 
-On Fri, Mar 25, 2022 at 05:36:25PM -0500, Daniel Latypov wrote:
-> On Mon, Feb 28, 2022 at 4:47 AM Maxime Ripard <maxime@cerno.tech> wrote:
-> >
-> > On Fri, Feb 25, 2022 at 01:29:03PM -0800, Daniel Latypov wrote:
-> > > On Fri, Feb 25, 2022 at 5:23 AM Maxime Ripard <maxime@cerno.tech> wro=
-te:
-> > > >
-> > > > Hi Daniel,
-> > > >
-> > > > On Wed, Feb 23, 2022 at 02:50:59PM -0800, Daniel Latypov wrote:
-> > > > > On Wed, Feb 23, 2022 at 2:56 AM Maxime Ripard <maxime@cerno.tech>=
- wrote:
-> > > > > >
-> > > > > > Let's test various parts of the rate-related clock API with the=
- kunit
-> > > > > > testing framework.
-> > > > > >
-> > > > > > Cc: kunit-dev@googlegroups.com
-> > > > > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> > > > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > > >
-> > > > > Tested-by: Daniel Latypov <dlatypov@google.com>
-> > > > >
-> > > > > Looks good to me on the KUnit side.
-> > > > > Two small nits below.
-> > > > >
-> > > > > FYI, I computed the incremental coverage for this series, i.e.:
-> > > > > 1) applied the full series
-> > > > > 2) computed the absolute coverage
-> > > > >
-> > > > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
-> > > > > --make_options=3DCC=3D/usr/bin/gcc-6 --kconfig_add=3DCONFIG_DEBUG=
-_KERNEL=3Dy
-> > > > > --kconfig_add=3DCONFIG_DEBUG_INFO=3Dy --kconfig_add=3DCONFIG_GCOV=
-=3Dy
-> > > >
-> > > > I built a docker container based on ubuntu 18.04 to have gcc6 and
-> > > > python3.7, but this doesn't seem to be working, I'm not entirely su=
-re why:
-> > > >
-> > > > [13:11:22] Configuring KUnit Kernel ...
-> > > > Regenerating .config ...
-> > > > Populating config with:
-> > > > $ make ARCH=3Dum olddefconfig CC=3D/usr/bin/gcc-6 O=3D.kunit
-> > > > ERROR:root:Not all Kconfig options selected in kunitconfig were in =
-the generated .config.
-> > > > This is probably due to unsatisfied dependencies.
-> > > > Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
-> > > > Note: many Kconfig options aren't available on UML. You can try run=
-ning on a different architecture with something like "--arch=3Dx86_64".
-> > >
-> > > Did you perhaps drop CONFIG_DEBUG_KERNEL=3Dy?
-> > > Need to add 3 config options in total for coverage.
-> > >
-> > > If I tweak the command I ran above but drop CONFIG_DEBUG_KERNEL=3Dy, I
-> > > get the error message you get:
-> > >
-> > > $  ./tools/testing/kunit/kunit.py run  --kunitconfig=3Ddrivers/clk
-> > > --make_options=3DCC=3D/usr/bin/gcc-6  --kconfig_add=3DCONFIG_DEBUG_IN=
-FO=3Dy
-> > > --kconfig_add=3DCONFIG_GCOV=3Dy
-> > > ...
-> > > Missing: CONFIG_DEBUG_INFO=3Dy, CONFIG_GCOV=3Dy
-> > > Note: many Kconfig options aren't available on UML. You can try
-> > > running on a different architecture with something like
-> > > "--arch=3Dx86_64".
-> >
-> > It looks to me that it's more that DEBUG_INFO isn't enabled.
->=20
-> Sorry for the very delayed response.
-> I was largely getting internet over mobile data around when this email
-> came in and didn't want to try and download docker images over that.
->=20
-> It looks like that there was another change that is now merged into
-> Linus' tree that causes this.
->=20
-> I found that adding this helped (thanks David Gow)
->   --kconfig_add=3DDEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
->=20
-> Running against --kunitconfig=3Dlib/kunit, my final coverage result is
->=20
-> Overall coverage rate:
->   lines......: 13.6% (18004 of 132055 lines)
->   functions..: 15.7% (1885 of 12010 functions)
->=20
-> Can you give that a shot and see if it works?
+changes since v1:
+- combine dt-binding documents as a single patch
+- remove redundant example in binding document
+- change to dual license in binding document
+- add more clock error handle based on interface provided in [1]
 
-It does fix the configuration issue, but I'm not able to run the tests eith=
-er:
+[1]https://patchwork.kernel.org/project/linux-mediatek/list/?series=612171
 
-[07:53:51] Configuring KUnit Kernel ...
-Generating .config ...
-Populating config with:
-$ make ARCH=3Dum olddefconfig O=3D/home/max/out
-[07:53:53] Building KUnit Kernel ...
-Populating config with:
-$ make ARCH=3Dum olddefconfig O=3D/home/max/out
-Building with:
-$ make ARCH=3Dum --jobs=3D16 O=3D/home/max/out
-[07:54:09] Starting KUnit Kernel (1/1)...
-[07:54:09] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[07:54:09] [ERROR] Test : invalid KTAP input!
-[07:54:09] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[07:54:09] Testing complete. Passed: 0, Failed: 0, Crashed: 0, Skipped: 0, =
-Errors: 1
-[07:54:09] Elapsed time: 18.486s total, 2.430s configuring, 16.052s buildin=
-g, 0.003s running
+Chun-Jie Chen (15):
+  dt-bindings: ARM: MediaTek: Add new document bindings of MT8186 clock
+  clk: mediatek: Add MT8186 mcusys clock support
+  clk: mediatek: Add MT8186 topckgen clock support
+  clk: mediatek: Add MT8186 infrastructure clock support
+  clk: mediatek: Add MT8186 apmixedsys clock support
+  clk: mediatek: Add MT8186 imp i2c wrapper clock support
+  clk: mediatek: Add MT8186 mfgsys clock support
+  clk: mediatek: Add MT8186 mmsys clock support
+  clk: mediatek: Add MT8186 wpesys clock support
+  clk: mediatek: Add MT8186 imgsys clock support
+  clk: mediatek: Add MT8186 vdecsys clock support
+  clk: mediatek: Add MT8186 vencsys clock support
+  clk: mediatek: Add MT8186 camsys clock support
+  clk: mediatek: Add MT8186 mdpsys clock support
+  clk: mediatek: Add MT8186 ipesys clock support
 
+ .../arm/mediatek/mediatek,mt8186-clock.yaml   |  56 ++
+ .../mediatek/mediatek,mt8186-sys-clock.yaml   |  54 ++
+ drivers/clk/mediatek/Kconfig                  |   8 +
+ drivers/clk/mediatek/Makefile                 |   5 +
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c  | 133 +++
+ drivers/clk/mediatek/clk-mt8186-cam.c         |  90 ++
+ drivers/clk/mediatek/clk-mt8186-img.c         |  68 ++
+ .../clk/mediatek/clk-mt8186-imp_iic_wrap.c    |  67 ++
+ drivers/clk/mediatek/clk-mt8186-infra_ao.c    | 216 +++++
+ drivers/clk/mediatek/clk-mt8186-ipe.c         |  55 ++
+ drivers/clk/mediatek/clk-mt8186-mcu.c         | 108 +++
+ drivers/clk/mediatek/clk-mt8186-mdp.c         |  80 ++
+ drivers/clk/mediatek/clk-mt8186-mfg.c         |  48 ++
+ drivers/clk/mediatek/clk-mt8186-mm.c          | 111 +++
+ drivers/clk/mediatek/clk-mt8186-topckgen.c    | 780 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8186-vdec.c        |  88 ++
+ drivers/clk/mediatek/clk-mt8186-venc.c        |  51 ++
+ drivers/clk/mediatek/clk-mt8186-wpe.c         |  51 ++
+ include/dt-bindings/clock/mt8186-clk.h        | 445 ++++++++++
+ 19 files changed, 2514 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mt8186-sys-clock.yaml
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-apmixedsys.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-infra_ao.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-ipe.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-mcu.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-mdp.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-topckgen.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt8186-wpe.c
+ create mode 100644 include/dt-bindings/clock/mt8186-clk.h
 
-I've tried to remove all the coverage from the equation, and I get the
-same issue if I only run kunit run from inside the container, but it
-works fine outside. So I guess it's my setup that is broken. Is there
-some way to debug what could be going wrong there?
+-- 
+2.18.0
 
-Thanks!
-Maxime
-
---2hrc3ougec5ehkah
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkFqfgAKCRDj7w1vZxhR
-xTZ8APwLMdDa8Sr8DY4qbhNvdAZOxHRd7Wd1QQZSnxJNUWSg1wD+OeS/YGnb0oMK
-0nIkR1yL47xkTzWi/lRkgKWkACzZEA8=
-=nJMB
------END PGP SIGNATURE-----
-
---2hrc3ougec5ehkah--
