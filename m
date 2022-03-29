@@ -2,89 +2,228 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089CAC433EF
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 15:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9F7C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 16:30:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238710AbiC2PdF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Mar 2022 11:33:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        id S239641AbiC2QcM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Mar 2022 12:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232645AbiC2PdD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 11:33:03 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6202010CF10
-        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 08:31:20 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id bq8so21962518ejb.10
-        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 08:31:20 -0700 (PDT)
+        with ESMTP id S239647AbiC2QcM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 12:32:12 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2D22467DD;
+        Tue, 29 Mar 2022 09:30:28 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id r23so21355548edb.0;
+        Tue, 29 Mar 2022 09:30:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=svO6+p4lvUcLP2B5A8gd9KTlZ89bA7C5UIQa69nPz94=;
-        b=S7Q+7tEyKS92vmJzQdbwJTIdwM8IUJZQqVH5F4vBdWTA+Iss96J8tWXkSBxADDUrfJ
-         MIV/aD22mrVCWixSz0ZY+tAddVj1ZD2+/5+cY7+pKABkqYfcr9x2TEeWsY1u5qEoI3p5
-         0rO0GU6t600WtUbDmO8lViKU9N6ApTLH7pTQ+2+qSnu8CLGnkIFAn9BuU2xyVEFbnV1V
-         fDb8N62cIeygJH0mIScVDbQj5lHkEno/K9WR2/v87tPyhfnU7HCyf3EGqd7ydY6STih+
-         dAzq+6RgEt1E3lak7pN1y6qANgoEpLPPoxrpX/geH4Pu+Pv7IR26P7NZy+HPgIfS1dm2
-         tcbw==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d1S/S8hgFbgrR0O65twBXNIv5pIOQ9OSLSPFpnPfz8s=;
+        b=YWWSRnIauJSl8GV+h692nAqVdl2yPxmvRjetyo7oLsUsa04Zd1Tbm/AFTmx2QohXjJ
+         mjBSZAmo9VRs/Yv18bacq5PdVBLRqSq9mGg661WqYU9yALjEpTe0vMBZPDTIYwt6bFgI
+         X7Lm8LTy0w6Zj4GFsFUVBXvUhzx2LsYBjiQLqUpBWVqAzqa2u9pIxILaiq4W1HZZrrsa
+         LfMkVQoCS4/m4IFpVcI+W0Ag5NYX2Vx4a9Y8zXDZeDm0h2Xow+UdUu2KkNgLIdkQPOXV
+         lcXeFa41lws/n7gQwk2nouWO+uXQX3bTB70+DEl3t5LIJV70fdxtbaFenoQF1eYWZUKg
+         h+iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=svO6+p4lvUcLP2B5A8gd9KTlZ89bA7C5UIQa69nPz94=;
-        b=oCMqAk4U636DW5KjnGjX8QmbRVHITXeLLcYYwfg9KGVCXUoCG7ljvrMjvQU2tctZDH
-         fL/cbaPnM1lZAWItofZe6f2N3bxn8RG6QtsuoB9f57iWElJFI36RmPlqvSAlcSwk9XYy
-         uxtFcXTS257CqyKTTE8ggsuc7ZSxxXdIXuV+t1w9Z+tBMyQ2hgmybn6PTK0vJNrbG+0l
-         jehKNyDdmbRA0jwqtz36Jcr3WByXMsiB/hy8BGB4aIu0EVvdc7wm3YZ5gcOMJig6isnm
-         yB2cnjwmW4Ypzl+EhbkKh7k1MhVd9Mr1mSwYZXF7y0udvLmrhRp17PG3NY9eHKgpsRo/
-         HM5A==
-X-Gm-Message-State: AOAM530EBaKmLcaM949HS53pReyV93F7iiZST+Fafv4SFK3ZeJ/sCyna
-        XYMH30Rg47O5xVzS73EvmWyA2w==
-X-Google-Smtp-Source: ABdhPJyGbtpxFR4x01t7rTmHja9jPNp0Yhgf4v5BkuuQlt7LhCL0joyVH5KU90NB9zFEtkwk7g2rVg==
-X-Received: by 2002:a17:907:62a2:b0:6e0:e201:b94e with SMTP id nd34-20020a17090762a200b006e0e201b94emr19225728ejc.730.1648567878997;
-        Tue, 29 Mar 2022 08:31:18 -0700 (PDT)
-Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id c2-20020aa7d602000000b0041997b3ce40sm7143124edr.86.2022.03.29.08.31.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Mar 2022 08:31:18 -0700 (PDT)
-Message-ID: <f5bec960-3424-dd21-71fc-cab3a427cdb9@linaro.org>
-Date:   Tue, 29 Mar 2022 17:31:17 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: fix some conversion style
- issues for rockchip, rk3399-cru.yaml
-Content-Language: en-US
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
-        zhangqing@rock-chips.com
+        bh=d1S/S8hgFbgrR0O65twBXNIv5pIOQ9OSLSPFpnPfz8s=;
+        b=noTl5JuvineVIhj6AloTgQ/OdGf43D/mXXZzG8Lr1bMY5quaGxW+VAOy1s0JbXOlyL
+         bx3OUoXyotBnwApm5s3c+x74zSVHia4kyxeH5L039pY+rTe4GqMzhoWwgHfzpz9dlrT5
+         ItKjivRXVfwZuR17WgGsw1kr5b9STuuxwQBBd7eJ3x6gebdJytfBhObEUPtN1IFedeSN
+         jWk9NO6x/LRHWDxm92rFXJ/CjnSVthSs6tlzi3Y9jNct/B3GZlBwIF9SzpiWY8w/2lSl
+         hE/a5Ji1oJkYAFXqz2HHeRdcsu5ix2H5RLt4XGHWJbVde1OSCGqaAYAGe3pv49SzqHG9
+         pCpg==
+X-Gm-Message-State: AOAM532qzx+S0zkQ1dK8JF7JYwxJ8bFi4j721EUaeUxZiOFHAB2wAGQc
+        4RoKN5tCtjmOGVkcMAWU4/o=
+X-Google-Smtp-Source: ABdhPJyAmd7mdqFmqHLCmRFi1gR1ClGaGIb+efJ6Hu6voyCX6CW37zaNOeSUt0Y6IXtICaaQsIixTA==
+X-Received: by 2002:a05:6402:d2:b0:413:2e50:d6fd with SMTP id i18-20020a05640200d200b004132e50d6fdmr5565813edu.171.1648571427125;
+        Tue, 29 Mar 2022 09:30:27 -0700 (PDT)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id k26-20020a056402049a00b004197b0867e0sm8601179edv.42.2022.03.29.09.30.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 09:30:26 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de, zhangqing@rock-chips.com
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220329150742.22093-1-jbx6244@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220329150742.22093-1-jbx6244@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v1 1/3] dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML
+Date:   Tue, 29 Mar 2022 18:30:14 +0200
+Message-Id: <20220329163016.27458-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/03/2022 17:07, Johan Jonker wrote:
-> With the conversion of rockchip,rk3399-cru.txt a table with external clocks
-> was copied. Make it a bit cleaner by aligning the columns. Also fix
-> a description. Phrases start with a capital.
-> 
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
->  .../bindings/clock/rockchip,rk3399-cru.yaml        | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
+Current dts files with RK3328 'cru' nodes are manually verified.
+In order to automate this process rockchip,rk3328-cru.txt has to be
+converted to YAML.
 
+Changed:
+  Add properties to fix notifications by clocks.yaml for example:
+    clocks
+    clock-names
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../bindings/clock/rockchip,rk3328-cru.txt    | 58 ---------------
+ .../bindings/clock/rockchip,rk3328-cru.yaml   | 74 +++++++++++++++++++
+ 2 files changed, 74 insertions(+), 58 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
 
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+deleted file mode 100644
+index 904ae682e..000000000
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
++++ /dev/null
+@@ -1,58 +0,0 @@
+-* Rockchip RK3328 Clock and Reset Unit
+-
+-The RK3328 clock controller generates and supplies clock to various
+-controllers within the SoC and also implements a reset controller for SoC
+-peripherals.
+-
+-Required Properties:
+-
+-- compatible: should be "rockchip,rk3328-cru"
+-- reg: physical base address of the controller and length of memory mapped
+-  region.
+-- #clock-cells: should be 1.
+-- #reset-cells: should be 1.
+-
+-Optional Properties:
+-
+-- rockchip,grf: phandle to the syscon managing the "general register files"
+-  If missing pll rates are not changeable, due to the missing pll lock status.
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
+-used in device tree sources. Similar macros exist for the reset sources in
+-these files.
+-
+-External clocks:
+-
+-There are several clocks that are generated outside the SoC. It is expected
+-that they are defined using standard clock bindings with following
+-clock-output-names:
+- - "xin24m" - crystal input - required,
+- - "clkin_i2s" - external I2S clock - optional,
+- - "gmac_clkin" - external GMAC clock - optional
+- - "phy_50m_out" - output clock of the pll in the mac phy
+- - "hdmi_phy" - output clock of the hdmi phy pll - optional
+-
+-Example: Clock controller node:
+-
+-	cru: clock-controller@ff440000 {
+-		compatible = "rockchip,rk3328-cru";
+-		reg = <0x0 0xff440000 0x0 0x1000>;
+-		rockchip,grf = <&grf>;
+-
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+-
+-Example: UART controller node that consumes the clock generated by the clock
+-  controller:
+-
+-	uart0: serial@ff120000 {
+-		compatible = "snps,dw-apb-uart";
+-		reg = <0xff120000 0x100>;
+-		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+-		reg-shift = <2>;
+-		reg-io-width = <4>;
+-		clocks = <&cru SCLK_UART0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
+new file mode 100644
+index 000000000..f079c7a25
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/rockchip,rk3328-cru.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Rockchip RK3328 Clock and Reset Unit (CRU)
++
++maintainers:
++  - Elaine Zhang <zhangqing@rock-chips.com>
++  - Heiko Stuebner <heiko@sntech.de>
++
++description: |
++  The RK3328 clock controller generates and supplies clocks to various
++  controllers within the SoC and also implements a reset controller for SoC
++  peripherals.
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All available clocks are defined as
++  preprocessor macros in the dt-bindings/clock/rk3328-cru.h headers and can be
++  used in device tree sources. Similar macros exist for the reset sources in
++  these files.
++  There are several clocks that are generated outside the SoC. It is expected
++  that they are defined using standard clock bindings with following
++  clock-output-names:
++    - "xin24m"      - crystal input                          - required,
++    - "clkin_i2s"   - external I2S clock                     - optional,
++    - "gmac_clkin"  - external GMAC clock                    - optional
++    - "phy_50m_out" - output clock of the pll in the mac phy
++    - "hdmi_phy"    - output clock of the hdmi phy pll       - optional
++
++properties:
++  compatible:
++    enum:
++      - rockchip,rk3328-cru
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: xin24m
++
++  rockchip,grf:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to the syscon managing the "general register files" (GRF),
++      if missing pll rates are not changeable, due to the missing pll
++      lock status.
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - "#reset-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    cru: clock-controller@ff440000 {
++      compatible = "rockchip,rk3328-cru";
++      reg = <0xff440000 0x1000>;
++      rockchip,grf = <&grf>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+-- 
+2.20.1
 
-Best regards,
-Krzysztof
