@@ -2,90 +2,100 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEDC9C43217
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 16:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F56C433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 17:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239656AbiC2QcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Mar 2022 12:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46952 "EHLO
+        id S235086AbiC2RWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Mar 2022 13:22:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239658AbiC2QcO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 12:32:14 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C8B24221E;
-        Tue, 29 Mar 2022 09:30:30 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id h4so13554614edr.3;
-        Tue, 29 Mar 2022 09:30:30 -0700 (PDT)
+        with ESMTP id S233422AbiC2RWD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 13:22:03 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 347E916D8F9
+        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 10:20:20 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id qa43so36482745ejc.12
+        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 10:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=rup4gmFVRMm1Db1xKcQ9C4DJyayglE33FgITP93feZI=;
-        b=f8zqtGcfvk0wEpNaAgaCylr34j14R+MDTTY9qugHrR1MIk/oAlUmCHAAvTannf6ZUz
-         sLY36RDHN0pt3a7GCMLxHiNojdB3MLuSBUkzIZVRHTWGX8DquOLPps7qp5PIyNinj13i
-         58KwUPz25LTZe2Di6xx4zhdb7FBfiDAevjCdMJ2J5oNvt+Rahrnk5wf/XJAxuPp10CMI
-         Z3tQ7GMhTvu/hyfb0/8je/fK7yqsHvbZv3PrmOf4GL7WrhCZiMSzH2g85ObyMspop5Kc
-         vRtkCdcF0QXVz/ZXU4dI+I6PNZm2YhPBZsVRXsi9ZelyDjWZvTA4Qf+PO7RUCWIH3GJW
-         0lyw==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ROsQcUJTGNxUVGtLXxEiy/5+m8Zgw5SGAV2688lVg4g=;
+        b=o/5vMuNiIBEAuZd0SjplKcjp4d+racjVgUESBlfA7iYult41e/OVKGwOCEAy0g7c/z
+         +c4TtwYJM7xxJXIPEGKsjG2JI/W60wL58H1Ex3ebbr5vicEqqSeSRUqXK6i8F+7PnxCr
+         XA+25ysr6U44Tp3sL0L8TMGMwO31zYmhOvetAvrGt/1NjtqLE49OUBtpw5G2bxUyg3rH
+         cA2m5BVCkFXY4DtvCZ5oerGtLJ9Oo00/ByywRHHYmgL6t46w0NByYO+clPjtup72Vdr2
+         GpdC+9GdcFUdCotzU2JNFHyJt+Ere370OakHWs5NR9tyAdWCdxd2egttVqvgHPmb9dJw
+         aU4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rup4gmFVRMm1Db1xKcQ9C4DJyayglE33FgITP93feZI=;
-        b=IMOsVFrgVkzpt2smsoDhDnqswo8LzWWhtHNQzSNuftUk3ggRkNFKUJl4WpZc7zHKUD
-         dPLRizjChI5xdqJF6mByXSoqysrEEOche0m7MRdzL+BrK0wbFNerCfrUkX9WUz09VyMZ
-         pHPHSQMwM35DOTm6zoeBiqMq3WUDmILuVm7nB6WdYLWpwuL2LdRFPvHo4etQ1E1S0V5B
-         nFdtq6Yi0erGU2KHLNPvin+8waObf6pfMMc+IPBuub90oDcN4wwl9MHGZaAv5PJ2oYdA
-         ZQ5xoTjy+Tt+n2SptUGNUra08HhuDwGhUQ78cP2T0HeQoUYaJ4j1kpce3nNH/e0p1Qgj
-         U1nQ==
-X-Gm-Message-State: AOAM532VuZ+mXCuvqcvoQF1nif37YGD0udkDxbbqehp2WaBFLF8bcQnJ
-        LxucGJwGivvkbBPUYEJHSuc=
-X-Google-Smtp-Source: ABdhPJzTy7FW/+WGlMtP1pToBeoHtes0f1brjP90ukaULF4+ONZLw0bw81tdrnAqoB2Cm4GbqnRReA==
-X-Received: by 2002:a50:d90f:0:b0:418:8a5a:14b2 with SMTP id t15-20020a50d90f000000b004188a5a14b2mr5538105edj.241.1648571429156;
-        Tue, 29 Mar 2022 09:30:29 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id k26-20020a056402049a00b004197b0867e0sm8601179edv.42.2022.03.29.09.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 09:30:28 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de, zhangqing@rock-chips.com
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ROsQcUJTGNxUVGtLXxEiy/5+m8Zgw5SGAV2688lVg4g=;
+        b=zLzqu2DZHhJb+y/2xpe1/HdE5XWAO/FM1kuL8Vwgif/zfp9M+8N3csXgqUmDfEip29
+         +5GXCa8sBfCQ+8ATJoXVVVTKyK5EbxQgGa8qdpmZgx7V5KypITtaXd0HLE9rIkGCeQ7B
+         wj1Iusk7xkiBlN1Mekw29K8W8/muqSY5N+hyFzjZcgs8L/yvJKoQKVeTyUZfqJgacIRn
+         FmZ107ek7g9bhUWIQkRiOXhHfXoK3/WnIP/wZCCGEJEHb50l/R7kc5JaNCBBwoo+nxww
+         yD7E/Vr9jJnHLyExe7739fLaQD3qHvm6cGaTtSm+G+19ChO3p7apWM6hrLglSqjfwj/y
+         mFsg==
+X-Gm-Message-State: AOAM532hgOKh3QnXrPSsXKcD5SZ8HvcsrmGfa/lYWmM68URh95+xM7E5
+        UZcuyHXwR2IhEAnll+BuhvUVKQ==
+X-Google-Smtp-Source: ABdhPJxkbDZq562GC5mkdl0Wlt68amgyNMSrc+Yo4YTeVWsfVfweU8TsmgnU6j66uTFhrh1FbFO/8g==
+X-Received: by 2002:a17:906:c110:b0:6e0:dc2a:3393 with SMTP id do16-20020a170906c11000b006e0dc2a3393mr20631113ejc.512.1648574418760;
+        Tue, 29 Mar 2022 10:20:18 -0700 (PDT)
+Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id z21-20020a1709063a1500b006da6436819dsm7295462eje.173.2022.03.29.10.20.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Mar 2022 10:20:18 -0700 (PDT)
+Message-ID: <5e3ef437-82d3-ae4e-f8bb-0b508b45050d@linaro.org>
+Date:   Tue, 29 Mar 2022 19:20:17 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: convert rockchip,
+ rk3328-cru.txt to YAML
+Content-Language: en-US
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
+        zhangqing@rock-chips.com
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/3] arm64: rockchip: add clocks property to cru node rk3328
-Date:   Tue, 29 Mar 2022 18:30:16 +0200
-Message-Id: <20220329163016.27458-3-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220329163016.27458-1-jbx6244@gmail.com>
 References: <20220329163016.27458-1-jbx6244@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220329163016.27458-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks property to rk3328 cru node to fix warnings like:
-'clocks' is a dependency of 'assigned-clocks'
+On 29/03/2022 18:30, Johan Jonker wrote:
+> Current dts files with RK3328 'cru' nodes are manually verified.
+> In order to automate this process rockchip,rk3328-cru.txt has to be
+> converted to YAML.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3328.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+You know that this can be one or two lines max?
+"Convert RK3328 clock controller bindings to DT schema"
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index 73418fd2f..8ceac0388 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -758,6 +758,8 @@
- 	cru: clock-controller@ff440000 {
- 		compatible = "rockchip,rk3328-cru";
- 		reg = <0x0 0xff440000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
--- 
-2.20.1
+It's equal, because we all know the benefits of DT schema. :)
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+> Changed:
+>   Add properties to fix notifications by clocks.yaml for example:
+>     clocks
+>     clock-names
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../bindings/clock/rockchip,rk3328-cru.txt    | 58 ---------------
+>  .../bindings/clock/rockchip,rk3328-cru.yaml   | 74 +++++++++++++++++++
+>  2 files changed, 74 insertions(+), 58 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
+> 
+
+Best regards,
+Krzysztof
