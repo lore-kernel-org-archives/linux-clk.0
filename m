@@ -2,91 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F23C433FE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 17:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFAEC433EF
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Mar 2022 17:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240167AbiC2R1q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Mar 2022 13:27:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36402 "EHLO
+        id S240306AbiC2Rph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Mar 2022 13:45:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239139AbiC2R1p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 13:27:45 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B74718EEB9
-        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 10:26:00 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id pv16so36591036ejb.0
-        for <linux-clk@vger.kernel.org>; Tue, 29 Mar 2022 10:26:00 -0700 (PDT)
+        with ESMTP id S240309AbiC2Rpg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Mar 2022 13:45:36 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65068DEB8;
+        Tue, 29 Mar 2022 10:43:52 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id p15so36613636ejc.7;
+        Tue, 29 Mar 2022 10:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=16O1OMAfhlCbCfBLXhj0uiBE7+Ph4Xzv5BL186nDdEE=;
-        b=Iz0gFt6SkMM/Tc1oKY+iWeHB+ZZzVCBhie9aFJTmGMcAo9i/HuFW8csLVXQUFouF7i
-         sODn1lkzn7fEu9q/GWTsROihZlk1uPShwi0QMfkhbopw6GToZht6UVCbVifHRhRZJ7NB
-         pslFxBjNnSP7HSaOmFfJGSTrQfUU+bs3n4vS+S7HDqxOlIwthiEQnI3UKTF319vYLHmo
-         weXVxF9pkizeGsEBh71hKzQz20MJ/aHwGGypCtIjcE018sPWX4agTh5FLy0ed2PZmEPn
-         U6ngoOrUZBCJPLjvHna3xjRPh0QQZfMUzSS6HSLs4yBE+Ej6pMMiZiDebkc0cr/N41+7
-         COsw==
+        bh=MehIMCOHPm3o42xMjUspyRsRaGCPZO4k+2JRMM8VP60=;
+        b=Ioy9Hj2QZz5p8Z/D5ukHs4lzEtpu1CXcwGQ+UNVfJhDtlG00LRfk412S3en59kv4Re
+         WkhEr82+A9Icp/37rVNFTZ7xqXaINY6BxwA91tMo50N60XyJWjcmh55PR8288Fs59taM
+         Ct4ZVD65f/yBY5vEHMJ0AoYGhcJvutWLB07q/8vyXX7c4AYWRAMD94kVYhvDYNvvFPMK
+         kB0ZIjQ1/orxaNdAssqD0k0b+wVwSB6yb22fGPdAmvc1RZXT3TXsEn7mjas36G665mMX
+         WzwZ4kUYAOOSZoKnxObBCbvgnIwbV4H+FKnaFF92XFton5X3ClKjR8D/dpepI3WoEh3T
+         ij2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=16O1OMAfhlCbCfBLXhj0uiBE7+Ph4Xzv5BL186nDdEE=;
-        b=W9Ju3Q7fxscnyWoBgYBf9VYOkmUinrHCcNJyL43JuF+jA0oBkCciC4tRRPYFK3gPnt
-         Ye0XYe3AqzlUYZBtJRb6ZX2RcbrRH0Y9Tw22X1MGTozrX4qddxTNyBE8WFeYQ7rywtTp
-         UI+42YEDdN3tzRPU1vldR903UMCFkMRTWLNxfhX+6E+tBY7sFcFFtvQg2ntjd1LdGh8u
-         zN/lFvSwQoitulVEoBjQfJF//QDKZXbS5KOWf78ExmU5LKYcsSraAtOjlaaC5uKvVAdX
-         MM1P9RsGETwLnBXuiMsKM9yVPUGw48SJwfmHJhO4HQblkA9UKs4XBDc3tBQ/QHPoOpwz
-         l9nQ==
-X-Gm-Message-State: AOAM532wB2U9mT/kZps46gUoiH6A+k4LPbO+fvLUJOCKSLlz+KM37F+i
-        e1085Dc5mKmq3LLCtexTn+CSZw==
-X-Google-Smtp-Source: ABdhPJwO9YuESjI9rToeZW+DG0b2tF5pOXo1HOsOCjNQL+mrVjMKAMiXxYXUoYj7xy0+X+N5MP2kCQ==
-X-Received: by 2002:a17:907:1b20:b0:6da:649b:d99e with SMTP id mp32-20020a1709071b2000b006da649bd99emr35881835ejc.712.1648574759076;
-        Tue, 29 Mar 2022 10:25:59 -0700 (PDT)
-Received: from [192.168.0.162] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id k3-20020a05640212c300b0041605b2d9c1sm8772042edx.58.2022.03.29.10.25.57
+        bh=MehIMCOHPm3o42xMjUspyRsRaGCPZO4k+2JRMM8VP60=;
+        b=UOxgVmv1kePUmDlqXSSbPuwhcVJuhmqNNpB0t0UKEtx7sP+u9zVxvaYSnLZdECxq9C
+         UbRXW0+KLM8Xu+fQ4QOAhYC1SyKdPDFlN876N7/nNuKnl9jH55HbmscRmsu2nasyZ8Jg
+         NIsmW991opZR7SlzJVky3OWt7TRiUgxJ7NUoaAgtpHYgDsB2fPIZbmxizNyTmy+8Q0/7
+         6hrhh7L3FMNE6GgTwjXy9CbNqw2Zgs6n6W9d1ozBLVflxr/TBErF5QSNx9NSOiWKsBVz
+         KM4hnmpxW3WtbnWKvFZI0qYT0N3gaTt8+NWFfGtFQfvXmoTn123P2402cGYH3SwGxrAK
+         A4cA==
+X-Gm-Message-State: AOAM531IR7g5bzrIqzxgzkIYtN/ss0yJfPe94z4dG+unHhIAcN1U80HL
+        xn4YVHIw5hU+opssc+mJBmk=
+X-Google-Smtp-Source: ABdhPJyzfti3CS/e24Ly5WM74Dz/LkpZUBjNoeNIQqIY56i7iaj94vcNqx1CjI1XHgEUr+qwuY0XUg==
+X-Received: by 2002:a17:906:99c3:b0:6df:a289:ed3a with SMTP id s3-20020a17090699c300b006dfa289ed3amr35708735ejn.660.1648575830776;
+        Tue, 29 Mar 2022 10:43:50 -0700 (PDT)
+Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id e28-20020a170906649c00b006df6dfeb557sm7265737ejm.49.2022.03.29.10.43.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Mar 2022 10:25:58 -0700 (PDT)
-Message-ID: <403f831c-6a19-8ede-9dfe-6b033d1292b4@linaro.org>
-Date:   Tue, 29 Mar 2022 19:25:57 +0200
+        Tue, 29 Mar 2022 10:43:50 -0700 (PDT)
+Message-ID: <686f4aab-e41f-ad3d-249c-09fb8da8ef8c@gmail.com>
+Date:   Tue, 29 Mar 2022 19:43:49 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v1 1/2] dt-bindings: clock: convert rockchip,
- rk3368-cru.txt to YAML
+ Thunderbird/91.6.2
+Subject: Re: [PATCH v1 2/3] arm64: dts: rockchip: fix compatible string rk3328
+ cru node
 Content-Language: en-US
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
-        zhangqing@rock-chips.com
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        heiko@sntech.de, zhangqing@rock-chips.com
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220329172120.30328-1-jbx6244@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220329172120.30328-1-jbx6244@gmail.com>
+References: <20220329163016.27458-1-jbx6244@gmail.com>
+ <20220329163016.27458-2-jbx6244@gmail.com>
+ <09fa521e-dcf9-b744-da30-86542fd8855e@linaro.org>
+From:   Johan Jonker <jbx6244@gmail.com>
+In-Reply-To: <09fa521e-dcf9-b744-da30-86542fd8855e@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/03/2022 19:21, Johan Jonker wrote:
-> Current dts files with RK3368 'cru' nodes are manually verified.
-> In order to automate this process rockchip,rk3368-cru.txt has to be
-> converted to YAML.
+
+
+On 3/29/22 19:23, Krzysztof Kozlowski wrote:
+> On 29/03/2022 18:30, Johan Jonker wrote:
+>> The rockchip,rk3328-cru.txt file was converted to YAML.
+>> A DT test of the rk3328 cru node gives notifications regarding
+>> the compatible string. Bring it in line with the binding by
+>> removing some unused fall back strings.
 > 
-> Changed:
->   Add properties to fix notifications by clocks.yaml for example:
 
-I see you are on a conversion spree. :) Thanks for the work. Please
-shorten the subject as I proposed for 3328. Also this "Changed" and
-"notifications" are confusing. There are no notifications here.
+> Are you sure these are unused? rockchip,cru maybe, but what about DTS
+> used out of tree? It's useful to mention that the compatible is not
+> documented (so if there are any out of tree users, it's their fault).
+> 
+> Removal of syscon is different case - why do you think it is unused? Did
+> you check it? It's not a fallback compatible.
 
-This could be something like:
-Changes against original bindings:
- - Add clocks and clock-names because the device has at least one input
-clocks.
+Hi,
 
-Best regards,
-Krzysztof
+If someone knows why that was added to the Rockchip tree? Let us
+know.(Elaine ??)
+Other well know locations don't seem to use it.
+
+Please advise.
+
+Johan
+===
+
+https://github.com/torvalds/linux/search?q=rockchip%2Ccru&type=code
+
+https://source.denx.de/search?search=rockchip%2Ccru&group_id=325&project_id=540&scope=&search_code=true&snippets=false&repository_ref=master&nav_source=navbar
+
+https://github.com/rockchip-linux/kernel/search?q=rockchip%2Ccru&type=code
+
+> 
+>>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> ---
+>>  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> index b822533dc..73418fd2f 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> @@ -756,7 +756,7 @@
+>>  	};
+>>  
+>>  	cru: clock-controller@ff440000 {
+>> -		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
+>> +		compatible = "rockchip,rk3328-cru";
+>>  		reg = <0x0 0xff440000 0x0 0x1000>;
+>>  		rockchip,grf = <&grf>;
+>>  		#clock-cells = <1>;
+> 
+> 
+> Best regards,
+> Krzysztof
