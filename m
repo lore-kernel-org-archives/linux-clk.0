@@ -2,225 +2,119 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B0CC433FE
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 12:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2EDC4332F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 12:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239128AbiC3MeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Mar 2022 08:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56864 "EHLO
+        id S242840AbiC3M6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Mar 2022 08:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231192AbiC3Mdi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 08:33:38 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C6A6C49D;
-        Wed, 30 Mar 2022 05:19:51 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id r13so41133421ejd.5;
-        Wed, 30 Mar 2022 05:19:51 -0700 (PDT)
+        with ESMTP id S1345425AbiC3M57 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 08:57:59 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64B0A1D2074
+        for <linux-clk@vger.kernel.org>; Wed, 30 Mar 2022 05:56:13 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id bq24so19697629lfb.5
+        for <linux-clk@vger.kernel.org>; Wed, 30 Mar 2022 05:56:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6mDVuQKSlm5xd/4ZBvFr9HbdN100hZFnLWXptWqyI1A=;
-        b=NzYSE1GEzipFpPz8yWywZroIiRaGERgfkU3aIyjLjxNUSwJWByqS4s7w2gLXrcPWsr
-         FXnBnEmgHiZCdegVNlSItW7xe8cYNr2zS731eieslkLPbchLmvGbVLXvPi3daC4WXP1D
-         jR2mI4P924VK1NdwBE9sEjWX+o1FBNan9jfnywMHo2EpVrGqh1y+9pbxPrclcT1hlzle
-         4aG8jTF4YzhtV8703b5m2Cu7hYiTEMAMYkLspml9RpxpheEgjGo7ocrPmT1ZwfJWaOw2
-         E0wL3xG79SySsFPNVmukNC263UcsnQWpfwIQv8chg3k5EZl5KmIgMmQd8VxvosQGWOop
-         w0GA==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=G5HJzN7yLosBTkE6FblfJhF8/NxTEia64Q4IDEWiIUY=;
+        b=QwfPAD+9wwtOxMGPx3FuoweZ9OmsOzbFFUoPPM4R81ypDZdDHjAVZqBfEQ/MCcEXFm
+         qzgZmn3q75tuixnjAwl1C3n/Hm+NRs9wji7+rfoqk2G1/jZzbzponHpetWW0XMSWqQtD
+         mj69FKBVmfKntzvJR1RLQ0hsY/LPdRTQFcAvagy5SGOSiRp2+n0hVibQ0f9t5aMApovc
+         oXIDttUEWfkxn7n4V8xv8fgqVq9awCBnj8cTNVDr05iJx7ZoxuOS3dylB+XTeP7zqEqi
+         l1pGxDRwcw6kZYZdIU0XQx8TXO9IIX8nlCEgrn0mVVb623ZPuptOiOBYFospCC2u4ANS
+         ifdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=6mDVuQKSlm5xd/4ZBvFr9HbdN100hZFnLWXptWqyI1A=;
-        b=6ry+Eu9fhQ7p85Cr7Cb0TC3B84ccNyKRBvYaiXl7rEogD6PHa6kClKeEL1zic+KGbg
-         NSu6nD1W04TpUMATCkQ54gCjL6//JL0SVAG7c5Pmxqe8NCz+R23NH9WFEJR0Skoiib6b
-         LjfEVeAM+H/T0AH8q9glbEBMumO2T7BA61lNqkP2eWXMGEXL3Z8sRCeuaxce85TxMHC/
-         blbO3mjJhinzaew736CDF7lqZvDufxu3GoucRDibCKuYXwqZ/Nu+Dfk5wiLj58lI5OIk
-         bmy9JpOz1KQtG1taIShRttvt72pSU95ymIdIPH3ZKabQWH8U/qRGF3Z9sTxQz5vQ6lfQ
-         Gglg==
-X-Gm-Message-State: AOAM530DQiFpcNbC+3T77rfCMFkxOcQdga0GRfbvIdd7rsYFT6/NAUAa
-        Re9daY8TpA4hqTuUHpnhAas=
-X-Google-Smtp-Source: ABdhPJwLYPlD8kBE+uO+I0ODS6hr6ze+DT6BQDe9nG2ycmHkRWfgazFMNyK+vXnGmPdAB7CyarDmvw==
-X-Received: by 2002:a17:907:3e14:b0:6e0:1ef7:6319 with SMTP id hp20-20020a1709073e1400b006e01ef76319mr39537633ejc.321.1648642770379;
-        Wed, 30 Mar 2022 05:19:30 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id j21-20020a170906255500b006e08c4862ccsm7288778ejb.96.2022.03.30.05.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 05:19:29 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de, zhangqing@rock-chips.com
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] dt-bindings: clock: convert rockchip,rk3228-cru.txt to YAML
-Date:   Wed, 30 Mar 2022 14:19:21 +0200
-Message-Id: <20220330121923.24240-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        bh=G5HJzN7yLosBTkE6FblfJhF8/NxTEia64Q4IDEWiIUY=;
+        b=E8ycpcjM7n7hW2aIh+X1vFGUxSaqVj0O3qlw6wwpP3U4GMuPTJowK3ae9klTiUMmV7
+         XQ8jBdYSJGhC6pDK5nDa6TtxVifLG2ICj3SOxcr+6OlTSZo1GV3/iBNshxzeZ+j/KUSj
+         IjpJlkm9laBHmJWXV7lHOFyP3hRSQmBa/Zp3yOjBAcIOf+PVrSsvbQs+G9BypJ/EiK+4
+         63A9IypxCRFjkmOEmvTBNG9rCwYnHy2SfO+P0YxJeuKg0bVMlx1p3jQOQwz358SbrgNQ
+         +2+JyHuDVfrWqk+6cGNWHWLd6OmdEYYQLRBg/XxrDmy5INfoXNZfTosaHFxdOgEBemqe
+         4w6g==
+X-Gm-Message-State: AOAM530c4aT7jiBB1bY5ImXjaC1vmwrQjDCIn2APwrfTqKte/VbEOUPd
+        TQG50lTAfM+420jjK3opJQ9ykg==
+X-Google-Smtp-Source: ABdhPJz0ETGvRlDBDOivkyi/5XpRFV5fGpwgEKcaUN5wmAZnanZInTJpmaYJHQCoxwseyYPRJLLpFg==
+X-Received: by 2002:a05:6512:118b:b0:438:b7ad:11a2 with SMTP id g11-20020a056512118b00b00438b7ad11a2mr6656755lfr.295.1648644968195;
+        Wed, 30 Mar 2022 05:56:08 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id h6-20020a2e5306000000b00247e893075asm2367302ljb.37.2022.03.30.05.56.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Mar 2022 05:56:07 -0700 (PDT)
+Message-ID: <edfff61f-02a0-7962-a72c-97ef5f14ba76@linaro.org>
+Date:   Wed, 30 Mar 2022 15:56:06 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v1 0/5] PCI: qcom: rework pipe_clk/pipe_clk_src handling
+Content-Language: en-GB
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Prasad Malisetty <quic_pmaliset@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+References: <20220323085010.1753493-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220323085010.1753493-1-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert rockchip,rk3228-cru.txt to YAML.
+On 23/03/2022 11:50, Dmitry Baryshkov wrote:
+> PCIe pipe clk (and some other clocks) must be parked to the "safe"
+> source (bi_tcxo) when corresponding GDSC is turned off and on again.
+> Currently this is handcoded in the PCIe driver by reparenting the
+> gcc_pipe_N_clk_src clock.
+> 
+> Instead of doing it manually, follow the approach used by
+> clk_rcg2_shared_ops and implement this parking in the enable() and
+> disable() clock operations for respective pipe clocks.
 
-Changes against original bindings:
-  Add clocks and clock-names because the device has to have
-  at least one input clock.
+Prasad, can we please get your comments on this patchset?
+Since you have submitted original patchset for sc7280, it looks like you 
+should be interested in testing that this patchset doesn't break your 
+devices.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- .../bindings/clock/rockchip,rk3228-cru.txt    | 58 ---------------
- .../bindings/clock/rockchip,rk3228-cru.yaml   | 74 +++++++++++++++++++
- 2 files changed, 74 insertions(+), 58 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
+> 
+> Changes since RFC:
+>   - Rework clk-regmap-mux fields. Specify safe parent as P_* value rather
+>     than specifying the register value directly
+>   - Expand commit message to the first patch to specially mention that
+>     it is required only on newer generations of Qualcomm chipsets.
+> 
+> Dmitry Baryshkov (5):
+>    clk: qcom: regmap-mux: add pipe clk implementation
+>    clk: qcom: gcc-sm8450: use new clk_regmap_mux_safe_ops for PCIe pipe
+>      clocks
+>    clk: qcom: gcc-sc7280: use new clk_regmap_mux_safe_ops for PCIe pipe
+>      clocks
+>    PCI: qcom: Remove unnecessary pipe_clk handling
+>    PCI: qcom: Drop manual pipe_clk_src handling
+> 
+>   drivers/clk/qcom/clk-regmap-mux.c      | 78 +++++++++++++++++++++++
+>   drivers/clk/qcom/clk-regmap-mux.h      |  3 +
+>   drivers/clk/qcom/gcc-sc7280.c          |  6 +-
+>   drivers/clk/qcom/gcc-sm8450.c          |  6 +-
+>   drivers/pci/controller/dwc/pcie-qcom.c | 87 +-------------------------
+>   5 files changed, 92 insertions(+), 88 deletions(-)
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
-deleted file mode 100644
-index f32304812..000000000
---- a/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
-+++ /dev/null
-@@ -1,58 +0,0 @@
--* Rockchip RK3228 Clock and Reset Unit
--
--The RK3228 clock controller generates and supplies clock to various
--controllers within the SoC and also implements a reset controller for SoC
--peripherals.
--
--Required Properties:
--
--- compatible: should be "rockchip,rk3228-cru"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Optional Properties:
--
--- rockchip,grf: phandle to the syscon managing the "general register files"
--  If missing pll rates are not changeable, due to the missing pll lock status.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. All available clocks are defined as
--preprocessor macros in the dt-bindings/clock/rk3228-cru.h headers and can be
--used in device tree sources. Similar macros exist for the reset sources in
--these files.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "xin24m" - crystal input - required,
-- - "ext_i2s" - external I2S clock - optional,
-- - "ext_gmac" - external GMAC clock - optional
-- - "ext_hsadc" - external HSADC clock - optional
-- - "phy_50m_out" - output clock of the pll in the mac phy
--
--Example: Clock controller node:
--
--	cru: cru@20000000 {
--		compatible = "rockchip,rk3228-cru";
--		reg = <0x20000000 0x1000>;
--		rockchip,grf = <&grf>;
--
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller:
--
--	uart0: serial@10110000 {
--		compatible = "snps,dw-apb-uart";
--		reg = <0x10110000 0x100>;
--		interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--		clocks = <&cru SCLK_UART0>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
-new file mode 100644
-index 000000000..cf7dc01d9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3228-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3228 Clock and Reset Unit (CRU)
-+
-+maintainers:
-+  - Elaine Zhang <zhangqing@rock-chips.com>
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description: |
-+  The RK3228 clock controller generates and supplies clocks to various
-+  controllers within the SoC and also implements a reset controller for SoC
-+  peripherals.
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All available clocks are defined as
-+  preprocessor macros in the dt-bindings/clock/rk3228-cru.h headers and can be
-+  used in device tree sources. Similar macros exist for the reset sources in
-+  these files.
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+    - "xin24m"      - crystal input                          - required
-+    - "ext_i2s"     - external I2S clock                     - optional
-+    - "ext_gmac"    - external GMAC clock                    - optional
-+    - "ext_hsadc"   - external HSADC clock                   - optional
-+    - "phy_50m_out" - output clock of the pll in the mac phy
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3228-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: xin24m
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to the syscon managing the "general register files" (GRF),
-+      if missing pll rates are not changeable, due to the missing pll
-+      lock status.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cru: clock-controller@20000000 {
-+      compatible = "rockchip,rk3228-cru";
-+      reg = <0x20000000 0x1000>;
-+      rockchip,grf = <&grf>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
+
 -- 
-2.20.1
-
+With best wishes
+Dmitry
