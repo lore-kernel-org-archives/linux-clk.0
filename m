@@ -2,227 +2,120 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA38C43217
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 13:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08050C433EF
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 14:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345850AbiC3NSF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Mar 2022 09:18:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46532 "EHLO
+        id S1347059AbiC3Op0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Mar 2022 10:45:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345817AbiC3NSC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 09:18:02 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 226F62FFF8;
-        Wed, 30 Mar 2022 06:16:16 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id bg10so41457684ejb.4;
-        Wed, 30 Mar 2022 06:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kIZngZOjWy/J3S+b4z6+BUn/eXOxV020jVmkrkFNZpQ=;
-        b=biH0nxISIqGQSS6v7IiQeP0zNDT0PEkBjLFaq1jmJRMkJP74TqKUjH2bP7aVt9KtQp
-         TWRHFlLQ4mYWPEgAbR1NxjkfM75bZdcQu2rANl3Uo6noaZggYAYLZk9nXfn4965pQynB
-         yooB4KgRMwDuXQPgsHGc2V49mFs4YafwhRqTzklEIj0mMBufGVxwLNzzVn9ba5f1qIJs
-         iNbMX+bmavYi2ijWIwfXVxONCIlUgyCh1MGo3zg3A/nu1cVlHdB34YY5tM95G1/uym+q
-         GgajeY3vUZ4rK263Jey0gj5Y6Iuq+lL5nNYHa03Ha+SR1tpxhGHob+DPqSw+g2NHMG+F
-         34BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kIZngZOjWy/J3S+b4z6+BUn/eXOxV020jVmkrkFNZpQ=;
-        b=klM1ZNhv2JrXjsEA20rl7rlfp10A61v1Prg8cLYaxdNQ2vGnfvowD/YBO/lqlMXbV5
-         yj+jmRLoAy3JIKJAvQ2mmeCHbPK2xGURj5MYhDRj7iuRZdqql3/eZrLdovoPqvcSOoxs
-         f0msUmj0wv+KAM/d8L9pZ/ZEO6rmTpwEVWEXOl/WmX+rms2fEDmUTTRy6mpYHqPleDdl
-         il2CDFxyA0PS8B9Z0wgbnYrMfslm0dJHMvyMagd3cDUAYWpIVZllp3xdfLZB+DsAumKv
-         KeN0vz+BBRvIh1VBypKF6O8LdFZj/INiHayGSbXxaK/BY9buOLe9G8a+4fJUEDaWrnWK
-         KmIg==
-X-Gm-Message-State: AOAM530k0FRXC7oY8cL8IKmpnrfYnKQwDNlLROBipbigHNACekovgLu4
-        zNPQogpCS6awR6zo3ygQzmk=
-X-Google-Smtp-Source: ABdhPJxS9G9VHO3IThZxz4ao9YzTgP8Wz1c0iHE9nerrkjAwT9R8JXr1OX+n2TYNV647tHhxNfQ6vg==
-X-Received: by 2002:a17:906:a4b:b0:6d0:fbdd:7cb5 with SMTP id x11-20020a1709060a4b00b006d0fbdd7cb5mr40462121ejf.152.1648646174471;
-        Wed, 30 Mar 2022 06:16:14 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id ge13-20020a170907908d00b006e09a005d73sm6603476ejb.31.2022.03.30.06.16.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 06:16:14 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de, zhangqing@rock-chips.com
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/3] dt-bindings: clock: convert rockchip,rv1108-cru.txt to YAML
-Date:   Wed, 30 Mar 2022 15:16:06 +0200
-Message-Id: <20220330131608.30040-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        with ESMTP id S239909AbiC3OpZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 10:45:25 -0400
+Received: from mail.baikalelectronics.ru (mail.baikalelectronics.com [87.245.175.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00A385BD14;
+        Wed, 30 Mar 2022 07:43:34 -0700 (PDT)
+Received: from mail.baikalelectronics.ru (unknown [192.168.51.25])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 17BC816AA;
+        Wed, 30 Mar 2022 17:43:37 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.baikalelectronics.ru 17BC816AA
+Received: from localhost (192.168.53.207) by mail (192.168.51.25) with
+ Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 30 Mar 2022 17:43:32 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        <linux-clk@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 2/4] clk: baikal-t1: Define shared xGMAC ref/ptp clocks parent
+Date:   Wed, 30 Mar 2022 17:43:18 +0300
+Message-ID: <20220330144320.27039-3-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru>
+References: <20220330144320.27039-1-Sergey.Semin@baikalelectronics.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert rockchip,rv1108-cru.txt to YAML.
+Baikal-T1 CCU reference manual says that both xGMAC reference and xGMAC
+PTP clocks are generated by two different wrappers with the same constant
+divider thus each producing a 156.25 MHz signal. But for some reason both
+of these clock sources are gated by a single switch-flag in the CCU
+registers space - CCU_SYS_XGMAC_BASE.BIT(0). In order to make the clocks
+handled independently we need to define a shared parental gate so the base
+clock signal would be switched off only if both of the child-clocks are
+disabled.
 
-Changes against original bindings:
-  Add clocks and clock-names because the device has to have
-  at least one input clock.
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+Fixes: 353afa3a8d2e ("clk: Add Baikal-T1 CCU Dividers driver")
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
 ---
- .../bindings/clock/rockchip,rv1108-cru.txt    | 59 ---------------
- .../bindings/clock/rockchip,rv1108-cru.yaml   | 75 +++++++++++++++++++
- 2 files changed, 75 insertions(+), 59 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
+ drivers/clk/baikal-t1/ccu-div.c     | 1 +
+ drivers/clk/baikal-t1/ccu-div.h     | 6 ++++++
+ drivers/clk/baikal-t1/clk-ccu-div.c | 8 +++++---
+ 3 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
-deleted file mode 100644
-index 161326a4f..000000000
---- a/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
-+++ /dev/null
-@@ -1,59 +0,0 @@
--* Rockchip RV1108 Clock and Reset Unit
--
--The RV1108 clock controller generates and supplies clock to various
--controllers within the SoC and also implements a reset controller for SoC
--peripherals.
--
--Required Properties:
--
--- compatible: should be "rockchip,rv1108-cru"
--- reg: physical base address of the controller and length of memory mapped
--  region.
--- #clock-cells: should be 1.
--- #reset-cells: should be 1.
--
--Optional Properties:
--
--- rockchip,grf: phandle to the syscon managing the "general register files"
--  If missing pll rates are not changeable, due to the missing pll lock status.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. All available clocks are defined as
--preprocessor macros in the dt-bindings/clock/rv1108-cru.h headers and can be
--used in device tree sources. Similar macros exist for the reset sources in
--these files.
--
--External clocks:
--
--There are several clocks that are generated outside the SoC. It is expected
--that they are defined using standard clock bindings with following
--clock-output-names:
-- - "xin24m" - crystal input - required,
-- - "ext_vip" - external VIP clock - optional
-- - "ext_i2s" - external I2S clock - optional
-- - "ext_gmac" - external GMAC clock - optional
-- - "hdmiphy" - external clock input derived from HDMI PHY - optional
-- - "usbphy" - external clock input derived from USB PHY - optional
--
--Example: Clock controller node:
--
--	cru: cru@20200000 {
--		compatible = "rockchip,rv1108-cru";
--		reg = <0x20200000 0x1000>;
--		rockchip,grf = <&grf>;
--
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--Example: UART controller node that consumes the clock generated by the clock
--  controller:
--
--	uart0: serial@10230000 {
--		compatible = "rockchip,rv1108-uart", "snps,dw-apb-uart";
--		reg = <0x10230000 0x100>;
--		interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
--		reg-shift = <2>;
--		reg-io-width = <4>;
--		clocks = <&cru SCLK_UART0>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-new file mode 100644
-index 000000000..20421c22f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rv1108-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/baikal-t1/ccu-div.c b/drivers/clk/baikal-t1/ccu-div.c
+index 4062092d67f9..bbfa3526ee10 100644
+--- a/drivers/clk/baikal-t1/ccu-div.c
++++ b/drivers/clk/baikal-t1/ccu-div.c
+@@ -579,6 +579,7 @@ struct ccu_div *ccu_div_hw_register(const struct ccu_div_init_data *div_init)
+ 		goto err_free_div;
+ 	}
+ 	parent_data.fw_name = div_init->parent_name;
++	parent_data.name = div_init->parent_name;
+ 	hw_init.parent_data = &parent_data;
+ 	hw_init.num_parents = 1;
+ 
+diff --git a/drivers/clk/baikal-t1/ccu-div.h b/drivers/clk/baikal-t1/ccu-div.h
+index 795665caefbd..81fc26be6e75 100644
+--- a/drivers/clk/baikal-t1/ccu-div.h
++++ b/drivers/clk/baikal-t1/ccu-div.h
+@@ -13,6 +13,12 @@
+ #include <linux/bits.h>
+ #include <linux/of.h>
+ 
++/*
++ * CCU Divider private clock IDs
++ * @CCU_SYS_INT_CLK: Internal CCU system clock
++ */
++#define CCU_SYS_INT_CLK		-1
 +
-+title: Rockchip RV1108 Clock and Reset Unit (CRU)
-+
-+maintainers:
-+  - Elaine Zhang <zhangqing@rock-chips.com>
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+description: |
-+  The RV1108 clock controller generates and supplies clocks to various
-+  controllers within the SoC and also implements a reset controller for SoC
-+  peripherals.
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All available clocks are defined as
-+  preprocessor macros in the dt-bindings/clock/rv1108-cru.h headers and can be
-+  used in device tree sources. Similar macros exist for the reset sources in
-+  these files.
-+  There are several clocks that are generated outside the SoC. It is expected
-+  that they are defined using standard clock bindings with following
-+  clock-output-names:
-+    - "xin24m"   - crystal input                              - required
-+    - "ext_vip"  - external VIP clock                         - optional
-+    - "ext_i2s"  - external I2S clock                         - optional
-+    - "ext_gmac" - external GMAC clock                        - optional
-+    - "hdmiphy"  - external clock input derived from HDMI PHY - optional
-+    - "usbphy"   - external clock input derived from USB PHY  - optional
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rv1108-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: xin24m
-+
-+  rockchip,grf:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      Phandle to the syscon managing the "general register files" (GRF),
-+      if missing pll rates are not changeable, due to the missing pll
-+      lock status.
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cru: clock-controller@20200000 {
-+      compatible = "rockchip,rv1108-cru";
-+      reg = <0x20200000 0x1000>;
-+      rockchip,grf = <&grf>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
+ /*
+  * CCU Divider private flags
+  * @CCU_DIV_SKIP_ONE: Due to some reason divider can't be set to 1.
+diff --git a/drivers/clk/baikal-t1/clk-ccu-div.c b/drivers/clk/baikal-t1/clk-ccu-div.c
+index ea77eec40ddd..e544129a7543 100644
+--- a/drivers/clk/baikal-t1/clk-ccu-div.c
++++ b/drivers/clk/baikal-t1/clk-ccu-div.c
+@@ -204,10 +204,12 @@ static const struct ccu_div_info sys_info[] = {
+ 			  "eth_clk", CCU_SYS_GMAC1_BASE, 5),
+ 	CCU_DIV_FIXED_INFO(CCU_SYS_GMAC1_PTP_CLK, "sys_gmac1_ptp_clk",
+ 			   "eth_clk", 10),
+-	CCU_DIV_GATE_INFO(CCU_SYS_XGMAC_REF_CLK, "sys_xgmac_ref_clk",
+-			  "eth_clk", CCU_SYS_XGMAC_BASE, 8),
++	CCU_DIV_GATE_INFO(CCU_SYS_INT_CLK, "sys_xgmac_clk",
++			  "eth_clk", CCU_SYS_XGMAC_BASE, 1),
++	CCU_DIV_FIXED_INFO(CCU_SYS_XGMAC_REF_CLK, "sys_xgmac_ref_clk",
++			   "sys_xgmac_clk", 8),
+ 	CCU_DIV_FIXED_INFO(CCU_SYS_XGMAC_PTP_CLK, "sys_xgmac_ptp_clk",
+-			   "eth_clk", 8),
++			   "sys_xgmac_clk", 8),
+ 	CCU_DIV_GATE_INFO(CCU_SYS_USB_CLK, "sys_usb_clk",
+ 			  "eth_clk", CCU_SYS_USB_BASE, 10),
+ 	CCU_DIV_VAR_INFO(CCU_SYS_PVT_CLK, "sys_pvt_clk",
 -- 
-2.20.1
+2.35.1
 
