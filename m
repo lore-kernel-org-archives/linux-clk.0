@@ -2,309 +2,94 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E373C4332F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 15:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2C5C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 17:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348359AbiC3PoR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:44:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55714 "EHLO
+        id S245162AbiC3RaL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Mar 2022 13:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348358AbiC3PoQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 11:44:16 -0400
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B825733E3E;
-        Wed, 30 Mar 2022 08:42:30 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,223,1643641200"; 
-   d="scan'208";a="115200303"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Mar 2022 00:42:30 +0900
-Received: from localhost.localdomain (unknown [10.226.92.121])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 970E7400AD83;
-        Thu, 31 Mar 2022 00:42:28 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 10/13] clk: renesas: Add RZ/V2M support using the rzg2l driver
-Date:   Wed, 30 Mar 2022 16:40:21 +0100
-Message-Id: <20220330154024.112270-11-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220330154024.112270-1-phil.edworthy@renesas.com>
-References: <20220330154024.112270-1-phil.edworthy@renesas.com>
+        with ESMTP id S1349280AbiC3RaJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 13:30:09 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AF7054682
+        for <linux-clk@vger.kernel.org>; Wed, 30 Mar 2022 10:28:23 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id bi12so43016785ejb.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Mar 2022 10:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ZsXgBTrCuEUxC1QZQ0H2Ukv1GeSn41ah9SOqQNdPE7M=;
+        b=oJLD1USfQGNXmh8umJRilraVZc9jthngKtOn/GdB9lcFP3jbqhtVZWPFPC0D62l3hw
+         vLWXTeE6XRN6+SovH0Z9z2ecTReOxQ4+G8nEGQQDVSoaVNW//uuDDPw+neLNdqvj9pwe
+         6beKe54sSMzYbbv5rc71eNK7uysO8puaSwRrK9QEL9I3lX+Eisv56ALY3v/+Iyqn3lJg
+         ot4ahZJCAB4UBAj3+qjybA0iEGDuNmb58m2Fblw/umLLrf55Doi0thEfBiCOQH4VEcKO
+         c0X+dTBxUWqw3dr2RC0ezjxvmiWGzUmIO+VB+D+om6vZ6KqzNECf95GYg56DgCpihm0S
+         n2xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZsXgBTrCuEUxC1QZQ0H2Ukv1GeSn41ah9SOqQNdPE7M=;
+        b=0e59kCrB4aN8jjY/93dzMbKRFKyvsnvnbV5pk08VOBC1smhSziiF27sGaVYk4XJkZ2
+         oE0u2TUF3mQuC1fjrN0UAOn/p/kp2KKQjM7rRG0uLcT9y4/bSltJAdemnGgXCtbAXApH
+         nzwEoUWkvOOlUrp1U8owp/BEsT9JGPWeMiksEwcXobwzp87N6sLNkvHIQ9Fm5Rcs3+dn
+         C5w6BmNOvZkt4OEW7ZvFcvYZjPFsm86/7u9WRqQwrQ3Zq65AvUYYrTodMSHs7DfVaSIP
+         XG0kyLNutPuKJ+U8vS9ZkVDJ9Lqzh9y0bCfgyGe3zbreCX80d8yTY1/UYCHI8FUfjma6
+         uDnA==
+X-Gm-Message-State: AOAM530aK3pDDEGj/mKWn5td3NohlTLXz/vjkbvRVXefkmTGrZdtwlY7
+        rwCgb0WhJMpvQgaksumDf8h3Lg==
+X-Google-Smtp-Source: ABdhPJwAF/kWlcbyw+AnOhkeZyWbHk5sSJiKV2D52eeGBittR1aJjyH4YGKCBAWEytDCQ4+LdVuN6Q==
+X-Received: by 2002:a17:906:9c8e:b0:6df:f6bf:7902 with SMTP id fj14-20020a1709069c8e00b006dff6bf7902mr631908ejc.191.1648661301916;
+        Wed, 30 Mar 2022 10:28:21 -0700 (PDT)
+Received: from [192.168.0.164] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id ky5-20020a170907778500b006d1b2dd8d4csm8521852ejc.99.2022.03.30.10.28.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Mar 2022 10:28:21 -0700 (PDT)
+Message-ID: <faee52b3-6d43-dfe0-500d-2fae70fe2fd9@linaro.org>
+Date:   Wed, 30 Mar 2022 19:28:20 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: convert
+ rockchip,rk3036-cru.txt to YAML
+Content-Language: en-US
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
+        zhangqing@rock-chips.com
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220330114847.18633-1-jbx6244@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220330114847.18633-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Renesas RZ/V2M SoC is very similar to RZ/G2L, though it doesn't have
-any CLK_MON registers.
+On 30/03/2022 13:48, Johan Jonker wrote:
+> Convert rockchip,rk3036-cru.txt to YAML.
+> 
+> Changes against original bindings:
+>   Add clocks and clock-names because the device has to have
+>   at least one input clock.
+> 
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>  .../bindings/clock/rockchip,rk3036-cru.txt    | 56 ---------------
+>  .../bindings/clock/rockchip,rk3036-cru.yaml   | 72 +++++++++++++++++++
+>  2 files changed, 72 insertions(+), 56 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
+> 
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/Kconfig         |   5 +
- drivers/clk/renesas/Makefile        |   1 +
- drivers/clk/renesas/r9a09g011-cpg.c | 164 ++++++++++++++++++++++++++++
- drivers/clk/renesas/rzg2l-cpg.c     |   6 +
- drivers/clk/renesas/rzg2l-cpg.h     |   7 ++
- 5 files changed, 183 insertions(+)
- create mode 100644 drivers/clk/renesas/r9a09g011-cpg.c
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index c281f3af5716..83c5a9929936 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -35,6 +35,7 @@ config CLK_RENESAS
- 	select CLK_R9A06G032 if ARCH_R9A06G032
- 	select CLK_R9A07G044 if ARCH_R9A07G044
- 	select CLK_R9A07G054 if ARCH_R9A07G054
-+        select CLK_R9A09G011 if ARCH_R9A09G011
- 	select CLK_SH73A0 if ARCH_SH73A0
- 
- if CLK_RENESAS
-@@ -168,6 +169,10 @@ config CLK_R9A07G054
- 	bool "RZ/V2L clock support" if COMPILE_TEST
- 	select CLK_RZG2L
- 
-+config CLK_R9A09G011
-+       bool "RZ/V2M clock support" if COMPILE_TEST
-+       select CLK_RZG2L
-+
- config CLK_SH73A0
- 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index d5e571699a30..650dbe2bb5c6 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_CLK_R8A779F0)		+= r8a779f0-cpg-mssr.o
- obj-$(CONFIG_CLK_R9A06G032)		+= r9a06g032-clocks.o
- obj-$(CONFIG_CLK_R9A07G044)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
-+obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
- # Family
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-new file mode 100644
-index 000000000000..47b93c1dec11
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -0,0 +1,164 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/V2M Clock Pulse Generator / Module Standby and Software Reset
-+ *
-+ * Copyright (C) 2022 Renesas Electronics Corp.
-+ *
-+ * Based on r9a07g044-cpg.c
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/r9a09g011-cpg.h>
-+
-+#include "rzg2l-cpg.h"
-+
-+#define RZV2M_SAMPLL4_CLK1	0x104
-+#define RZV2M_SAMPLL4_CLK2	0x108
-+
-+#define PLL4_CONF	(RZV2M_SAMPLL4_CLK1 << 22 | RZV2M_SAMPLL4_CLK2 << 12)
-+
-+#define DIV_A		DDIV_PACK(0x200, 0, 3)
-+#define DIV_B		DDIV_PACK(0x204, 0, 2)
-+#define DIV_E		DDIV_PACK(0x204, 8, 1)
-+#define DIV_W		DDIV_PACK(0x328, 0, 3)
-+
-+#define SEL_B		SEL_PLL_PACK(0x214, 0, 1)
-+#define SEL_E		SEL_PLL_PACK(0x214, 2, 1)
-+#define SEL_W0		SEL_PLL_PACK(0x32C, 0, 1)
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = 0,
-+
-+	/* External Input Clocks */
-+	CLK_EXTAL,
-+
-+	/* Internal Core Clocks */
-+	CLK_MAIN,
-+	CLK_MAIN_24,
-+	CLK_MAIN_2,
-+	CLK_PLL1,
-+	CLK_PLL2,
-+	CLK_PLL2_800,
-+	CLK_PLL2_400,
-+	CLK_PLL2_200,
-+	CLK_PLL2_100,
-+	CLK_PLL4,
-+	CLK_DIV_A,
-+	CLK_DIV_B,
-+	CLK_DIV_E,
-+	CLK_DIV_W,
-+	CLK_SEL_B,
-+	CLK_SEL_B_D2,
-+	CLK_SEL_E,
-+	CLK_SEL_W0,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE
-+};
-+
-+/* Divider tables */
-+static const struct clk_div_table dtable_diva[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 3},
-+	{3, 4},
-+	{4, 6},
-+	{5, 12},
-+	{6, 24},
-+	{0, 0},
-+};
-+
-+static const struct clk_div_table dtable_divb[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{3, 8},
-+	{0, 0},
-+};
-+
-+static const struct clk_div_table dtable_divw[] = {
-+	{0, 6},
-+	{1, 7},
-+	{2, 8},
-+	{3, 9},
-+	{4, 10},
-+	{5, 11},
-+	{6, 12},
-+	{0, 0},
-+};
-+
-+/* Mux clock tables */
-+static const char * const sel_b[] = { ".main", ".divb" };
-+static const char * const sel_e[] = { ".main", ".dive" };
-+static const char * const sel_w[] = { ".main", ".divw" };
-+
-+static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("extal",	CLK_EXTAL),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".main",	CLK_MAIN,	CLK_EXTAL,	1,	1),
-+	DEF_FIXED(".main_24",	CLK_MAIN_24,	CLK_MAIN,	1,	2),
-+	DEF_FIXED(".main_2",	CLK_MAIN_2,	CLK_MAIN,	1,	24),
-+	DEF_FIXED(".pll1",	CLK_PLL1,	CLK_MAIN_2,	498,	1),
-+	DEF_FIXED(".pll2",	CLK_PLL2,	CLK_MAIN_2,	800,	1),
-+	DEF_FIXED(".pll2_800",	CLK_PLL2_800,	CLK_PLL2,	1,	2),
-+	DEF_FIXED(".pll2_400",	CLK_PLL2_400,	CLK_PLL2_800,	1,	2),
-+	DEF_FIXED(".pll2_200",	CLK_PLL2_200,	CLK_PLL2_800,	1,	4),
-+	DEF_FIXED(".pll2_100",	CLK_PLL2_100,	CLK_PLL2_800,	1,	8),
-+	DEF_SAMPLL(".pll4",	CLK_PLL4,	CLK_MAIN_2,	PLL4_CONF),
-+
-+	DEF_DIV_RO(".diva",	CLK_DIV_A,	CLK_PLL1,	DIV_A,	dtable_diva),
-+	DEF_DIV_RO(".divb",	CLK_DIV_B,	CLK_PLL2_400,	DIV_B,	dtable_divb),
-+	DEF_DIV_RO(".divw",	CLK_DIV_W,	CLK_PLL4,	DIV_W,	dtable_divw),
-+
-+	DEF_MUX2_RO(".selb",	CLK_SEL_B,	SEL_B,		sel_b,   0),
-+	DEF_MUX2(".selw0",	CLK_SEL_W0,	SEL_W0,		sel_w,   0, 0),
-+
-+	DEF_FIXED(".selb_d2",	CLK_SEL_B_D2,	CLK_SEL_B,	1,	2),
-+};
-+
-+static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
-+	DEF_MOD("gic",		R9A09G011_GIC_CLK,	CLK_SEL_B_D2, 0x400, 5),
-+	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	CLK_MAIN_24,  0x41c, 12),
-+	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	CLK_SEL_W0,   0x438, 5),
-+	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	CLK_DIV_A,    0x448, 0),
-+};
-+
-+static const struct rzg2l_reset r9a09g011_resets[] = {
-+	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
-+};
-+
-+static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
-+	MOD_CLK_BASE + R9A09G011_CA53_CLK,
-+	MOD_CLK_BASE + R9A09G011_GIC_CLK,
-+	MOD_CLK_BASE + R9A09G011_SYC_CNT_CLK,
-+};
-+
-+const struct rzg2l_cpg_info r9a09g011_cpg_info = {
-+	/* Core Clocks */
-+	.core_clks = r9a09g011_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a09g011_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Critical Module Clocks */
-+	.crit_mod_clks = r9a09g011_crit_mod_clks,
-+	.num_crit_mod_clks = ARRAY_SIZE(r9a09g011_crit_mod_clks),
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a09g011_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a09g011_mod_clks),
-+	.num_hw_mod_clks = R9A09G011_CA53_CLK + 1,
-+
-+	/* Resets */
-+	.resets = r9a09g011_resets,
-+	.num_resets = ARRAY_SIZE(r9a09g011_resets),
-+
-+	.has_clk_mon_regs = false,
-+};
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 220955366538..04f2cfafe6b3 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -967,6 +967,12 @@ static const struct of_device_id rzg2l_cpg_match[] = {
- 		.compatible = "renesas,r9a07g054-cpg",
- 		.data = &r9a07g054_cpg_info,
- 	},
-+#endif
-+#ifdef CONFIG_CLK_R9A09G011
-+	{
-+		.compatible = "renesas,r9a09g011-cpg",
-+		.data = &r9a09g011_cpg_info,
-+	},
- #endif
- 	{ /* sentinel */ }
- };
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index d1d08669066b..b571d1f1c5f3 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -103,11 +103,17 @@ enum clk_types {
- 	DEF_TYPE(_name, _id, CLK_TYPE_DIV, .conf = _conf, \
- 		 .parent = _parent, .dtable = _dtable, \
- 		 .flag = CLK_DIVIDER_HIWORD_MASK | _flag)
-+#define DEF_DIV_RO(_name, _id, _parent, _conf, _dtable) \
-+	DEF_DIV(_name, _id, _parent, _conf, _dtable, CLK_DIVIDER_READ_ONLY)
- #define DEF_MUX(_name, _id, _conf, _parent_names, _num_parents, _flag, \
- 		_mux_flags) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = _conf, \
- 		 .parent_names = _parent_names, .num_parents = _num_parents, \
- 		 .flag = _flag, .mux_flags = CLK_MUX_HIWORD_MASK | _mux_flags)
-+#define DEF_MUX2(_name, _id, _conf, _parent_names, _flag, _mux_flags) \
-+	DEF_MUX(_name, _id, _conf, _parent_names, 2, _flag, _mux_flags)
-+#define DEF_MUX2_RO(_name, _id, _conf, _parent_names, _flag) \
-+	DEF_MUX2(_name, _id, _conf, _parent_names, _flag, CLK_MUX_READ_ONLY)
- #define DEF_SD_MUX(_name, _id, _conf, _parent_names, _num_parents) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_SD_MUX, .conf = _conf, \
- 		 .parent_names = _parent_names, .num_parents = _num_parents)
-@@ -214,5 +220,6 @@ struct rzg2l_cpg_info {
- 
- extern const struct rzg2l_cpg_info r9a07g044_cpg_info;
- extern const struct rzg2l_cpg_info r9a07g054_cpg_info;
-+extern const struct rzg2l_cpg_info r9a09g011_cpg_info;
- 
- #endif
--- 
-2.32.0
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+
+Best regards,
+Krzysztof
