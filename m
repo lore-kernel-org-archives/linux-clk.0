@@ -2,90 +2,90 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D603C433EF
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 11:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4A1C433F5
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Mar 2022 12:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344183AbiC3Lzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Mar 2022 07:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+        id S233660AbiC3MeA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Mar 2022 08:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344441AbiC3LxK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 07:53:10 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BB1262400;
-        Wed, 30 Mar 2022 04:48:56 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id bh17so1480213ejb.8;
-        Wed, 30 Mar 2022 04:48:56 -0700 (PDT)
+        with ESMTP id S238372AbiC3Mdu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Mar 2022 08:33:50 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0210E6C944;
+        Wed, 30 Mar 2022 05:19:57 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id c10so22726719ejs.13;
+        Wed, 30 Mar 2022 05:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=H5VTVLY2z6i13dvk5wtcwbzRR2pZJCvwJwdziJVAOMQ=;
-        b=HCuend+++KI5ObYAh+8oGZAuDnrsOdDn31plrdpo+Fo3t+SXVujiaqqqU0MKgsq87H
-         pHBc9cLbcal7y/FrS2eKcC3UJcA4YbCxtd1qqWKu/MxLiV09sKnz8GA6wy+zojN9+qdl
-         9X7RAOIWpv0KDT28qgzszlANqnPO8kyR1qWdms6+iiLhiP8r/fObG/zj079XptDkTJP6
-         uSHc1hiHqfiBWa9ICHDT8AvNYMlY2VeW2NE9M0IMexANL8oveZG0eeVHDK1VEsN2gPSv
-         WpSpcvLyl049ozh7gqbu9t5c8WbbAYqB+PnY2dktwzYB7a4/AqFp+dg8jizIbBrmhB+3
-         Jagg==
+        bh=yb13D0MHL1q0I5GMitPig2+TSOgHDixtNwuPnXxvwfA=;
+        b=dI7gx0ZI5YlOBk1wG2SDHXM04Peh5+DkcX7RDGRl9EwkN6RszSeZBTj6ZN7fE6Yxx4
+         UMNH8SIDUrXlcSZ5IRBPixrf7W0oXWo8IB23yIYe7GCEAe10pIT7oL9xs8EVvXrPdtlY
+         mpbuImX83TEuRXCPaxnag7HtMh7oj7XRVe5H57whU6AAGHsWPl47gXIvWgLspvf6bEGc
+         naxxdvy0YYl9tYpUDNexlLoA2LCVWK68KOA33vQDD85RVDsQkgB9H80JSPhOtDl4WE8Z
+         d7Wep1OhiBOzSHrVJQbI68jkXrqvJPLKdxuiB61MnNOUh7PnIM/HdK1ZjtPe8gmJxfWG
+         SwjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=H5VTVLY2z6i13dvk5wtcwbzRR2pZJCvwJwdziJVAOMQ=;
-        b=syJkl0AUFQGlFbiKZw9d6y4ewrIjTTl3xBB0NoaqQpDmdoqzbfSo7XqksYnKbIe3QL
-         o1tcwzx/MH0uFrDVZzLLtAoaIMjFkazhKHv1BMMvfIDgDtR6xq/zborb8ZGJGxxBtvgk
-         VtatZ/rnycpWWegaBh7i1SZMEr3DaedjARkkiQpHLaZplnftTKuLezn7USyLj3OG9M/1
-         mwAmlkKp14rJR9AQHIapV8QrlhCHygedo+TqwFDVXfMo2uypS6vFMAOmpfLfY/Vsm5PT
-         AY742nGPvmFkS2UnN8sDRpGpYKbx7rBOWuHYpXMgjrHeVFmDjBN6FzwBLg8+E70lURVG
-         sZnQ==
-X-Gm-Message-State: AOAM531Ys+x5YwMQjh3zD0zgi7BGzAyiW3gezHhizk3mN70x+pIOtYow
-        MxWLrfwGz7OSigC3yQz1MXU=
-X-Google-Smtp-Source: ABdhPJw/Xl9g3IPsAOoM+4M6ZWl9RbIh1DIkd9VFUCU3+dZWBzlI38COLdIRHgd0iJ07HnsdsJadeg==
-X-Received: by 2002:a17:907:8690:b0:6da:8436:2b94 with SMTP id qa16-20020a170907869000b006da84362b94mr39851667ejc.33.1648640934543;
-        Wed, 30 Mar 2022 04:48:54 -0700 (PDT)
+        bh=yb13D0MHL1q0I5GMitPig2+TSOgHDixtNwuPnXxvwfA=;
+        b=eWHTDmPrTR4TJZC0xQcyMYvZqjH1t2/aTlPtMcDf+ZzLz6ryG33FoXZwvoCbNQT0zn
+         4ylivb1htCxGZDzrvhZgB7Ib4K58nfEBnhMbZvAZoAWIliSX2+nwrJtoJQQhzDZWEomz
+         XvBbEoEBjOHOXfLphzpp6pITmOH97RH7ctdQYMDdjobjX8yFzLqxIU/bFEtaPk7J88ca
+         cfzW5qRWentC0C2F3geeSp7wTKEQsTIqTz1BsUqU3+YPB4dAOZ8+VhMPP923M5UEyDRv
+         cBj+yVlkz/HgzOzer2ICO4UnY3wikAbvT3DZ6gRMs2wjSJDP9QOMjRXyOE0Pyew3nD2y
+         Dyxw==
+X-Gm-Message-State: AOAM530jasDNp2Hva6oexvgzPmO3QDgYmvlZr2OSYRwdI4YVwUuzXCsN
+        AnmH2DIk+jwZmVEgpTzbQzo=
+X-Google-Smtp-Source: ABdhPJz5HqJgfVLDw1fcgFbevMH0wU4OD3vKhI5tl/7Qy20DQc2ktAI+VZ2y8SpWOlN8Rd2RDGSLmw==
+X-Received: by 2002:a17:907:2513:b0:6e1:2c10:2ada with SMTP id y19-20020a170907251300b006e12c102adamr10865184ejl.211.1648642772122;
+        Wed, 30 Mar 2022 05:19:32 -0700 (PDT)
 Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id g9-20020aa7c849000000b00412fc6bf26dsm9934442edt.80.2022.03.30.04.48.53
+        by smtp.gmail.com with ESMTPSA id j21-20020a170906255500b006e08c4862ccsm7288778ejb.96.2022.03.30.05.19.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Mar 2022 04:48:54 -0700 (PDT)
+        Wed, 30 Mar 2022 05:19:31 -0700 (PDT)
 From:   Johan Jonker <jbx6244@gmail.com>
 To:     heiko@sntech.de, zhangqing@rock-chips.com
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
         sboyd@kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/3] ARM: dts: rockchip: add clocks property to cru node rk3036
-Date:   Wed, 30 Mar 2022 13:48:46 +0200
-Message-Id: <20220330114847.18633-2-jbx6244@gmail.com>
+Subject: [PATCH v1 3/3] ARM: dts: rockchip: rk322x: use generic node name for dma
+Date:   Wed, 30 Mar 2022 14:19:23 +0200
+Message-Id: <20220330121923.24240-3-jbx6244@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220330114847.18633-1-jbx6244@gmail.com>
-References: <20220330114847.18633-1-jbx6244@gmail.com>
+In-Reply-To: <20220330121923.24240-1-jbx6244@gmail.com>
+References: <20220330121923.24240-1-jbx6244@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks and clock-names to the rk3036 cru node, because
-the device has to have at least one input clock.
+The node names should be generic, so fix this for the rk3228 dma node
+and rename it to "dma-controller".
 
 Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 ---
- arch/arm/boot/dts/rk3036.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/rk322x.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/rk3036.dtsi b/arch/arm/boot/dts/rk3036.dtsi
-index ba2b8891b..3894b8d2e 100644
---- a/arch/arm/boot/dts/rk3036.dtsi
-+++ b/arch/arm/boot/dts/rk3036.dtsi
-@@ -330,6 +330,8 @@
- 	cru: clock-controller@20000000 {
- 		compatible = "rockchip,rk3036-cru";
- 		reg = <0x20000000 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
+diff --git a/arch/arm/boot/dts/rk322x.dtsi b/arch/arm/boot/dts/rk322x.dtsi
+index 2547f46fe..ffc16d6b9 100644
+--- a/arch/arm/boot/dts/rk322x.dtsi
++++ b/arch/arm/boot/dts/rk322x.dtsi
+@@ -503,7 +503,7 @@
+ 			<75000000>;
+ 	};
+ 
+-	pdma: pdma@110f0000 {
++	pdma: dma-controller@110f0000 {
+ 		compatible = "arm,pl330", "arm,primecell";
+ 		reg = <0x110f0000 0x4000>;
+ 		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
 -- 
 2.20.1
 
