@@ -2,88 +2,66 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC669C433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 21:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FDAC433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 22:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235281AbiCaWAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 18:00:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50910 "EHLO
+        id S232406AbiCaWDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 18:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242185AbiCaWAM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:00:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61664C30;
-        Thu, 31 Mar 2022 14:58:21 -0700 (PDT)
+        with ESMTP id S230028AbiCaWDy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:03:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA5AC1EE8E0
+        for <linux-clk@vger.kernel.org>; Thu, 31 Mar 2022 15:02:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59C2CB82256;
-        Thu, 31 Mar 2022 21:58:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11BEC340F0;
-        Thu, 31 Mar 2022 21:58:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 51E7760B60
+        for <linux-clk@vger.kernel.org>; Thu, 31 Mar 2022 22:02:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93DDC340ED;
+        Thu, 31 Mar 2022 22:02:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648763899;
-        bh=EdyYRv/RjH6voZpfK9AsnGWVtEgWXeOuukdtRC5UEKg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lnycOEjlNdrSNQz4HWAciAAwYkiads1HaoBhzmckHhiGEx2FVc8VApvNG/U9fZnlr
-         7/clOK8vr/mk4bbIw/imRUg8mKlFLGoy3cP6lF6pfy8pQFAN9CSbTGH1aF7rXWFAwC
-         5eUCCuB8MPWi+ft9NaYXhMPh7WIgoijxWXzG3EvDuKREPSLVRmVUmawgEWVWzGnPN6
-         jdqsO4KjIYszy0jIQDN2bn/8Iq5wsP06a7Dx2wzyA5cDIyvc9MJaYk0dnifJpTE+yM
-         7DMl4xqMVdY5x0jyrH5A50uRGYv52Ykkt6t2QK5+3Hwm5mVrzYernar930y/vMNyzw
-         Uhg6D24iOoTWQ==
+        s=k20201202; t=1648764125;
+        bh=sq4IJmGrxQ3TogrRpurT596fT/qZn5fqE2CDej4dznc=;
+        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+        b=EXUleC8Ql14kXOrbr7fxGnYkqH+JUL20xchmr4SsO99VVc/8MaZlzsuqqVyrFYIUB
+         QRZujlKXlGuOSLSIGZ2noA+SosOECL0fr57eAmWUZbKFFJ3afRx0Ts9lQPuA4GtNF1
+         tj7NnndQDs/7wGIZifrx1zGm2LP85lBnX5d9HxPWzVYmbjpsGMQdrhDYeWBlTBgVuD
+         g63KJ6gRYwUDEMBDYWRFC9/5uOlz77uq88Wg/Md5ti0hbV9GBgDwRqPaCWWCw6VXFC
+         Fb8WBLXlmjS1CcWX8uB7tZJC3lF/EB3DDb738D9kt5JVK7zRkSSWPSmSBO2Xu0uMX4
+         exonihFLLe9Ug==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YkXeGS5zaovOaEzp@atomide.com>
-References: <20220325161144.1901695-1-maxime@cerno.tech> <20220325161144.1901695-4-maxime@cerno.tech> <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com> <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com> <20220330084710.3r6b5pjspz5hdmy6@houat> <YkV3ch7R7YxlATW+@atomide.com> <20220331095456.dyyxsiu2b3yw2vvs@houat> <YkXCGlrok0niwlyg@atomide.com> <20220331153134.h3alp24hzquajkly@houat> <YkXeGS5zaovOaEzp@atomide.com>
-Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
+In-Reply-To: <1911426.usQuhbGJ8B@steina-w>
+References: <1911426.usQuhbGJ8B@steina-w>
+Subject: Re: Boot lockup on imx8mp in llinux-next
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-To:     Maxime Ripard <maxime@cerno.tech>, Tony Lindgren <tony@atomide.com>
-Date:   Thu, 31 Mar 2022 14:58:17 -0700
+To:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     Maxime Ripard <maxime@cerno.tech>
+Date:   Thu, 31 Mar 2022 15:02:03 -0700
 User-Agent: alot/0.10
-Message-Id: <20220331215818.F11BEC340F0@smtp.kernel.org>
+Message-Id: <20220331220205.A93DDC340ED@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2022-03-31 10:00:09)
-> * Maxime Ripard <maxime@cerno.tech> [220331 15:29]:
-> > On Thu, Mar 31, 2022 at 06:00:42PM +0300, Tony Lindgren wrote:
-> > > * Maxime Ripard <maxime@cerno.tech> [220331 09:52]:
-> > > > On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
-> > > > > It seems the dts assigned-clock-parents no longer works now?
-> > > >=20
-> > > > That would make some kind of sense, __set_clk_parents calls clk_put=
- on
-> > > > both the assigned clock and its parent.
-> > > >=20
-> > > > Could you see what parent (and why?) it tries to enforce then?
-> > >=20
-> > > It picks the other option available for the mux clock that only has
-> > > two options. No idea why, but if you have some debug patch in mind I
-> > > can give it a try.
-> > >=20
-> > > > It looks like the gpt1_fck driver might favor another parent for th=
-at
-> > > > rate, which, if it's an invalid configuration, shouldn't really hap=
-pen?
-> > >=20
-> > > Hmm there's a gate clock and a mux clock, there's not really a rate
-> > > selection available here for the sources.
-> >=20
-> > If I followed the OMAP driver properly, clk_mux_determine_rate_flags is
-> > doing the heavy lifting, could you run your test with
+Quoting Alexander Stein (2022-03-30 00:49:31)
+> Hello everyone,
 >=20
-> Thanks that produces some interesting output. In the working case with
-> the $subject patch reverted we have:
+> I noticed that my imx8mp based board (TQMa8MPxL, not yet mainline) locked=
+ up=20
+> during boot in linux-next. I bisected it down to commit [1].
+> I found out that disabling 'fec' and 'eqos' (both ethernet controller) no=
+des=20
+> in DT resulted in booting Kernel, alas NFS boot failed eventually obvious=
+ly.=20
+> Reverting make things working again.
+> I have no idea which clock is the actual culprit here and how to fix it. =
+I=20
+> just wanted to make you aware of this issue.
 
-I don't think clk_put() dropping a range request is very important right
-now. If this isn't fixed tomorrow then we should revert out this patch
-so systems can boot -rc1 and try to fix it in parallel.
+Thanks. Please try to help debug hit on the thread at
+https://lore.kernel.org/r/20220325161144.1901695-4-maxime@cerno.tech
