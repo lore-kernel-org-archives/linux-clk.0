@@ -2,104 +2,151 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F68CC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 22:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2B5C433F5
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 22:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242589AbiCaWjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 18:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34764 "EHLO
+        id S233953AbiCaWx0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 18:53:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242560AbiCaWjv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:39:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC301FF406;
-        Thu, 31 Mar 2022 15:38:02 -0700 (PDT)
+        with ESMTP id S233610AbiCaWxZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:53:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F3241D4C0D;
+        Thu, 31 Mar 2022 15:51:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1C4F5B8225B;
-        Thu, 31 Mar 2022 22:38:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B12C340ED;
-        Thu, 31 Mar 2022 22:37:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CB079B82207;
+        Thu, 31 Mar 2022 22:51:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0A9C340ED;
+        Thu, 31 Mar 2022 22:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648766279;
-        bh=0+cqxY3wgXl1ZxgBlYb2Pw1E+eA45qGlrrGxGV6BP4Q=;
+        s=k20201202; t=1648767094;
+        bh=QZtPMXY6JUY/ZfIXbEGhe3FtZuMlYLYppA7pePl5R5Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KVubnGXunMJIF0ThNkEy70N0q5PMBLlBFHZtwDDlcF/LEM30o5NILdXywFFrb8Mfc
-         ky7xDb6uCD4Uq5P+YIK0JXy/82QVa7PNArud3iXwsD5Iau9k1s91+EARvK9nB8dHpe
-         4vBaeI10JPTgNi+n1jcuDoQHMUkhMO1DNZQG5u/KveYKZBPKI+qcrYKLHXt7clQOH3
-         heENiVEo2e3zffwSV2wtufCT5wlmCKwc6wlvxoJs23Fa1vvMgHgyNR1B4RXf8/Z+St
-         9/W6lO1dTqMP7gpPu7WhKM5soFhWTd+O3lsNeubAc0SwUOkZnQsP57x/LmzTDPgsww
-         ohHY7YDlIt5UA==
+        b=eUVu2/0sluYfq3DhNMOnQ4SajAYtEbiavPa1PqSheOk4ucJs3VxLKjLCLbuGbl9hO
+         XuevYEOKMXwSFS/Tpb+r6f0IqPoBQqigC7l8mm0W4emupTTfmjEAHRYe3HZTgo8MIo
+         SB4MnkP4WO8ZQkr5M6AtdtP24O8ABHi2QQteUeQASfyFZz1LMIQ/++bGvSwA0zUB+x
+         tG8mkgKQJtBS7khMW7VkW9z3PuK29qPubZP0ClVE/p5/SqQ1TyJbDQvGQabWYbxM9r
+         Nl4jL3godJaYUbHrN8K0r810g5D2tRiYZAWPeRUZsKJkZR22ObCIHOQ3uyxxPbTGY6
+         DO11ilqutw7hw==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org>
-References: <20220324133229.24035-1-jbx6244@gmail.com> <f7493d93-6c8a-efa9-1f2c-a0003a6d43b2@kernel.org> <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com> <20220325005130.C45A3C340EC@smtp.kernel.org> <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org>
-Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
+In-Reply-To: <20220329111323.3569-1-jbx6244@gmail.com>
+References: <20220329111323.3569-1-jbx6244@gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Johan Jonker <jbx6244@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, heiko@sntech.de
-Date:   Thu, 31 Mar 2022 15:37:57 -0700
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de,
+        zhangqing@rock-chips.com
+Date:   Thu, 31 Mar 2022 15:51:32 -0700
 User-Agent: alot/0.10
-Message-Id: <20220331223759.B8B12C340ED@smtp.kernel.org>
+Message-Id: <20220331225134.7A0A9C340ED@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-03-25 00:31:25)
-> On 25/03/2022 01:51, Stephen Boyd wrote:
-> > Quoting Johan Jonker (2022-03-24 12:51:36)
-> >> Hi Heiko, Krzysztof,
-> >>
-> >> Question for the Rockchip clock maintainer:
-> >> What clock should be used here and other SoCs with several clock paren=
-ts
-> >> in the tree?
-> >>
-> >> The clock.yaml produces a lot off notifications like:
-> >>
-> >> /arch/arm/boot/dts/rk3036-evb.dtb: clock-controller@20000000: 'clocks'
-> >> is a dependency of 'assigned-clocks'
-> >=20
-> > 'clocks' is not a dependency of 'assigned-clocks'. The dt-schema should
-> > be fixed to remove that requirement.
->=20
-> If the driver does not have any clock inputs ("clocks" property), why
-> does it care about some clock frequencies and parents?
+Quoting Johan Jonker (2022-03-29 04:13:22)
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.=
+yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+> new file mode 100644
+> index 000000000..ddd7e46af
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+> @@ -0,0 +1,78 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
+> +
+> +maintainers:
+> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +description: |
+> +  The RK3188/RK3066 clock controller generates and supplies clocks to va=
+rious
+> +  controllers within the SoC and also implements a reset controller for =
+SoC
+> +  peripherals.
+> +  Each clock is assigned an identifier and client nodes can use this ide=
+ntifier
+> +  to specify the clock which they consume. All available clocks are defi=
+ned as
+> +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
+> +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree =
+sources.
+> +  Similar macros exist for the reset sources in these files.
+> +  There are several clocks that are generated outside the SoC. It is exp=
+ected
+> +  that they are defined using standard clock bindings with following
+> +  clock-output-names:
+> +    - "xin24m"    - crystal input                 - required
+> +    - "xin32k"    - RTC clock                     - optional
+> +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
+> +    - "ext_hsadc" - external HSADC clock          - optional
+> +    - "ext_cif0"  - external camera clock         - optional
+> +    - "ext_rmii"  - external RMII clock           - optional
+> +    - "ext_jtag"  - external JTAG clock           - optional
 
-Because it's a clock provider itself. In this case I suspect because
-this is a clock-controller node it was skipping describing some crystal
-input though. Maybe it wants to configure the various PLLs in the
-clock-controller for a particular board. I can imagine some node with
-#clock-cells may want to configure the frequency of the clock outputs or
-configure the clk parents for a certain board/SoC. In that case there
-may not be any clocks property, but we still want to configure things.
+I'd expect all these clks here to be inputs to this node.
 
->=20
-> The clocks is the logical dependency of assigned-clocks, because
-> otherwise hardware description is not complete.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - rockchip,rk3066a-cru
+> +      - rockchip,rk3188-cru
+> +      - rockchip,rk3188a-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    maxItems: 1
 
-Sure, but also #clock-cells indicating that this is a clock-controller
-itself means something. The existing bindings are what they are so
-forcing bindings to be updated to comply with having a 'clocks' property
-doesn't seem very nice.
+so that maxItems here should be larger and minItems would be 1?
 
->=20
-> What should be here for Rockhip? We had similar cases like this for many
-> drivers, I was fixing some of Exynos as well. In my case usually the
-> root/external clock was missing, so I supplied is as input clock to the
-> clock controller.
->=20
+> +
+> +  clock-names:
+> +    const: xin24m
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing the "general register files" (GRF),
+> +      if missing pll rates are not changeable, due to the missing pll
+> +      lock status.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    cru: clock-controller@20000000 {
+> +      compatible =3D "rockchip,rk3188-cru";
+> +      reg =3D <0x20000000 0x1000>;
+> +      rockchip,grf =3D <&grf>;
+> +      #clock-cells =3D <1>;
+> +      #reset-cells =3D <1>;
 
-Can the schema consider either #clock-cells or clocks? I think that will
-work for most cases. It would also be good to have a comment in the
-schema or more detail around the definition of assigned-clocks in
-bindings/clock/clock-bindings.txt that clocks or #clock-cells are
-required. It would be super cool if assigned-clocks only applied if
-#clock-cells was present, otherwise clocks property applies, but I doubt
-we can do that anymore given how long the binding has been around.
+Where is clocks in the example?
