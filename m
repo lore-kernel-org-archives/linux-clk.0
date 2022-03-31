@@ -2,37 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2705C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6759C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234169AbiCaJhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 05:37:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40872 "EHLO
+        id S229884AbiCaJk2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 05:40:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233210AbiCaJhD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:37:03 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C49B6E67;
-        Thu, 31 Mar 2022 02:35:13 -0700 (PDT)
-Received: from mail-lj1-f182.google.com ([209.85.208.182]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MQ8OG-1nMZWF0sMa-00LzwN; Thu, 31 Mar 2022 11:35:07 +0200
-Received: by mail-lj1-f182.google.com with SMTP id a30so23743420ljq.13;
-        Thu, 31 Mar 2022 02:34:53 -0700 (PDT)
-X-Gm-Message-State: AOAM530f4YF5XRzdcJZz402Q2dO5W10j2CxRXZsoZgbvCJBBidfnMn6p
-        1/KYMOMILw6hB8QXWn2cZtkHJnXJoUV7wKUaAgk=
-X-Google-Smtp-Source: ABdhPJzlZAknllrYU3sqw0DcJDBqe9QGu2EJFIsGG1Jj93+/mwICYSZMvQMKUcZsQpnc8rRysI1G9CixKr24DtuSHyk=
-X-Received: by 2002:a5d:66ca:0:b0:203:fb72:a223 with SMTP id
- k10-20020a5d66ca000000b00203fb72a223mr3263936wrw.12.1648717194942; Thu, 31
- Mar 2022 01:59:54 -0700 (PDT)
+        with ESMTP id S229680AbiCaJk1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:40:27 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B57D91704A;
+        Thu, 31 Mar 2022 02:38:40 -0700 (PDT)
+Received: from mail-lf1-f49.google.com ([209.85.167.49]) by
+ mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1MPXQi-1nN7XR34t8-00Mdvn; Thu, 31 Mar 2022 11:37:03 +0200
+Received: by mail-lf1-f49.google.com with SMTP id d5so40435274lfj.9;
+        Thu, 31 Mar 2022 02:36:50 -0700 (PDT)
+X-Gm-Message-State: AOAM530XhI3aUDLE7WrTxLraYv8W2xQYM+4LWqCGYs1FijtafLVn5hjA
+        A03rFeTLMRbHbCPGVj9E2emEdf1PsQiuAiCk11Q=
+X-Google-Smtp-Source: ABdhPJyx6uQXMBvORHeb8NOlqEaHCi9NLjE3UiFEIE0bvdtwMjjaxo+soHSe4zhQsJUkrp9pp2oFUj5K/neYvZqbvSc=
+X-Received: by 2002:adf:e54e:0:b0:205:a9be:c66e with SMTP id
+ z14-20020adfe54e000000b00205a9bec66emr3326498wrm.192.1648717430754; Thu, 31
+ Mar 2022 02:03:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1648714851.git.qinjian@cqplus1.com> <840bf90d4e7ba05fe621cd94101b912162311e41.1648714851.git.qinjian@cqplus1.com>
-In-Reply-To: <840bf90d4e7ba05fe621cd94101b912162311e41.1648714851.git.qinjian@cqplus1.com>
+References: <cover.1648714851.git.qinjian@cqplus1.com> <fdd371ceb896ea17dde0e398a136fa9c895a521c.1648714851.git.qinjian@cqplus1.com>
+In-Reply-To: <fdd371ceb896ea17dde0e398a136fa9c895a521c.1648714851.git.qinjian@cqplus1.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 31 Mar 2022 10:59:39 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3dRs=-XdK-Y3eHFJEkXTaCzRCm-YAdiUw_DRUcqHd02w@mail.gmail.com>
-Message-ID: <CAK8P3a3dRs=-XdK-Y3eHFJEkXTaCzRCm-YAdiUw_DRUcqHd02w@mail.gmail.com>
-Subject: Re: [PATCH v12 3/9] reset: Add Sunplus SP7021 reset driver
+Date:   Thu, 31 Mar 2022 11:03:34 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0oTTLp8BB4uMMw2gdPnkMYutmrndLaQtp9g5GBom=aog@mail.gmail.com>
+Message-ID: <CAK8P3a0oTTLp8BB4uMMw2gdPnkMYutmrndLaQtp9g5GBom=aog@mail.gmail.com>
+Subject: Re: [PATCH v12 8/9] ARM: sunplus: Add initial support for Sunplus
+ SP7021 SoC
 To:     Qin Jian <qinjian@cqplus1.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -48,44 +49,38 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:DfVrS+Ox3XDkFmwPTS20wXa+Ha4o0WcqDgVOIs5eqt6GtEcCbV4
- nVfLllx+NhIBJMi+iAS6nOOJnMJgeRUWFmoA78qsG/2IMxdgB6CLF1H4ThsMyWdah56Ez7o
- xstqnj8bqlfUOm7qLAGIDf4PRPpE38lAGL4LV594mvE9kbDmV2SDoDp548u7bSvM8jutdyG
- VFAtU62bbD8LFqYhadCEg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FV5ioI8hUa4=:znyj7Kx4BQT2vh6lX9KmcC
- sNW827kSRUWc46nsYmbPySZLiqAWcaUkI+s2Aq6fEkAbQxz4j+nMvz9CMJqUfBSql5zP4DkAt
- GGgr9uOMfD19Ug0nWtRZfVTEwyIhjFTp1GA31VwZH7QVVD4kWNpg9OmNqLsrsnRCKTy3k4/FK
- PVpx1kJOeOjrb9m2k+Rn2Ojv94nlqF9P3x1YXq8pnvVF376OHXp3F/3BVDjwWSLchQ8ueAC2P
- 7qNMsvpmaMk4xgounFDRXZiXIVS2KlGDEi42FT2nCnlQB4Nlfk4upRt/lGxayc9o71pMX4gAH
- FpWbjO7Y7QTqNhX+tqOuN6t0s76uxaQ6L3StFz7BCOMYGtQUj/jBbFdMUH7WIOXjNSDMgxRJE
- 7w50I5+7HJcNvL2ZCOMAZkGb039Z0RfxzYiYmltgDwaBZ6RkG2TJRMg91Gu6Cg81DCNV7LLeU
- j0+1Tj+8hyOEbFa6Rb2C+dwaYSdK5o6L0oN9hll/cPdXmMwM4uPSHJlovHne5SGRaWMvEyV8m
- 0C1TYearppaLDLIKnGcTKUeZQJdR6YjLtuBQmgrVCsFcMgBuL2lluYcEVWkHgCOV7ttmxXxVR
- //Kf/FYPztV7yZzihClLMjTWM8dtCPWABmkRt0MGuLASm5Sdim1EL75NBi67EqUgEdR0wABlv
- yltpRZRFHLA8AvJ/a+E7nMMatzJfDSKUXI0FvaAws23GvxHU22feBZfsOhOkwSS7PUeK6nBH3
- Rx1OWysCLKAxzHqX/rnTbCr/v93JgHRdpyiG4I7T6jgFAdlMWloErUhWGiQ/CE9iDDEjoZ8Nr
- ntDk+5ap+gcdrpy1quaeNo9ZBqgygG4Rtpn0HZeoL8yq4usTjKqMIMAhgez9xSZlnJUrjgw/L
- 8a7bYeruMKWgEFiycr5W1KN94LzzatCkATA4HRO9XjN/3PxTW4aZ03G4MhzFm89tpkgZp95bL
- uVh24r6nz3LzBpTNhi41ZqKvC1KBowA4qgTZYJBzkLTxizR/NtZKImc7SJT5yLxH4G/H5dWmh
- 546zOzkj1zLITvc3jevwBVOK/eVbiIadOXZiMKqkJd8ZHLr6q8dI3EsnXM/G9j6FLv0jFb3N0
- kMWMwFswDzW+iB30qz4j3ev3DpjkZ0IXD0FNjv3jHz5xHMWk5R/SitdSUU8YzBlSIbG3iIKGJ
- klnZ/eIZHEE0crf5RKWtDk9c2HqLSWBQP+m9R5NEoRvRpBECI73Nc+ZrRZejySv5tz7FT9GD9
- b9sajQXc2wbVoKkb6
+X-Provags-ID: V03:K1:F/C6lkDrYOWhZjOjlOcFkGI+hNdyGHe5L/uI/zMKgAzYNEF9ns2
+ hCT0eleYvEA/CwvkTzqJS1EbMo6/rpBrXyECjqFdoKP1R8T8oS0qxescGO0m2xt9eN35G8V
+ sFVQiqGxUcY3bT/qomD3WGDMuMVaqoPFgsbQ86zRv5DChzTL37cQFFl9Te71jJ5OJHznSlR
+ /OQj/RKOAuCgIpsuj0oHQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yJ1DIZJB1jo=:O8Y0M/XsHAkk5xWkBrq7uS
+ ldVsqPu60swmOTaHXvdEd54IKSdvt6EI9wDGqs6AyrRa0K8QPPf8ub/ot1vjoQI9YRslWIHNw
+ myDNj3Ztq1jFNjBcKbPOotok3YiBVF/LoFjoXk0E0k0MCleL5TFXYqepBNiuDeVNnfuv54Bfi
+ hepAjDvk3A5v5CX+pdIIT79MHhvAW6qSAIEQid2N5/HVOD81qZkQgE7gMS7hNF57D74rn3Saw
+ BwJyyc8/VTi09cvTK9prhhpfAPxzUUOVX2mqmEnfkaWUu69tmYvpIt06daUyjtPuzZzINZQPq
+ bCh384f6Gy6jafXzHvOmgmt/fU04VElSGFwQJfpCsADpGhZhaTg6Lj86lPwWr9R4cjxIs67lr
+ EBTTT88qhD2D5nBhMGm4H6MtVIEStzyEerdtKEOUUbEWDLB6CPH7J+0NdwOOs1upC5Sn50vgY
+ Lk+Q9EHzrSryLaJ3gjdbtb5jxWqSob+eqJ02AK/PTTJePyIAhTs6sKR4Cr6paK/TjRj8Es5UX
+ WBbsjw9MmaIyP0ssD9Jar4trKG2X8ZilWXWUx1zAH3qNg8mGeD5uEKJQD++EKFKqLyptCP4KV
+ Hz9XtasvVRYTXgynYznzogeuwR2XkIkKBBvFLwjIgzJ/wQJ5Q+UzDhNLM+mImvqaWJiydFPTI
+ M6Og1+X2IOiOFowgnkXCd3mJ2glfkYYCSUFOqBfRi7D8mcgBNzP/7BZh7TPJlPEkiC2fYIFPL
+ hRVHYpR8Ecj7YoP9Tc/tYp5kFmKWllbwb6d7J8DESM7HIqgRL+mlAxp6QKPD1kq8pApOkaxai
+ uIzRg3wZufucHKH3Zxoh2n7YPICaxwdRZR9F/jJCEkF7/IVE3LFjw4WKMoas1wms/TSejhWnE
+ VLpERja1lJxA+qTrk5jnEBQTeuAgwr/2SV231PKfpIQrTGzSYF66fsT0mjrM/Kjd4LRL2EA+e
+ QH9sXrstyFhHFaonAxLdwakNi7dJjnAE5padaFjzltk2FpGl2jaBUbk5WA+TiETbla83o5EqG
+ KD9xYRvy/c/bxZz5/BwpzjuukAN7MyEELFzy9oUj8lSInnMKjhw8C5y4f8k/DNsdfTxd8t3Yj
+ vSAU1/JoO7CqdejT9elARFDHSaCc8U2FEoO5inAa9xsMWt06WTauMKmRaAKLRb8FOi4buOVjo
+ FOMXExDZyTJyxzR1M8fmhTFTJNpzsxIbSsLJRBRG49iE9ltddKKFwBKFmliO6fc25pwClOfB7
+ 5BRNz/0JCTMD1ubNL
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Mar 31, 2022 at 10:29 AM Qin Jian <qinjian@cqplus1.com> wrote:
-> +
-> +#include <linux/io.h>
-> +#include <linux/init.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/reboot.h>
-> +
+>
+> This patch aims to add an initial support for Sunplus SP7021 SoC.
+>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 
-As commented on the binding header -- it looks again like you are not actually
-relying  on the header here, so it's almost certainly not needed.
 
-         Arnd
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
