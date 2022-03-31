@@ -2,37 +2,38 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 715FDC433F5
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 11:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57F5C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 11:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234928AbiCaLLe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 07:11:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34054 "EHLO
+        id S234986AbiCaLNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 07:13:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233340AbiCaLLd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 07:11:33 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9202C33884;
-        Thu, 31 Mar 2022 04:09:46 -0700 (PDT)
-Received: from mail-wm1-f47.google.com ([209.85.128.47]) by
- mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MmDVA-1oHm4e41eC-00iCg9; Thu, 31 Mar 2022 13:09:45 +0200
-Received: by mail-wm1-f47.google.com with SMTP id n63-20020a1c2742000000b0038d0c31db6eso1795830wmn.1;
-        Thu, 31 Mar 2022 04:09:44 -0700 (PDT)
-X-Gm-Message-State: AOAM530INeJhUyv5hTt1xlNCMP/TyN4P4MdYtbgp3t0YnqZOIslYlVKg
-        Rl4p27tp/QYUl7zF9X660PPR6EEfdc+Xu894ZDQ=
-X-Google-Smtp-Source: ABdhPJwswRRqbDwMtkp76KOHqIEK5fi1EuTDxnoFxe5vzZsgSg3vLorXuscXGtdUiF56ngc1yrWuHFdJZZOovE9Zm/8=
-X-Received: by 2002:a05:600c:1e0b:b0:38c:9ac5:b486 with SMTP id
- ay11-20020a05600c1e0b00b0038c9ac5b486mr3913978wmb.71.1648718552480; Thu, 31
- Mar 2022 02:22:32 -0700 (PDT)
+        with ESMTP id S233641AbiCaLNq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 07:13:46 -0400
+X-Greylist: delayed 305 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 31 Mar 2022 04:11:59 PDT
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40F265780
+        for <linux-clk@vger.kernel.org>; Thu, 31 Mar 2022 04:11:59 -0700 (PDT)
+Received: from mail-lf1-f54.google.com ([209.85.167.54]) by
+ mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1M8ysi-1ndkWg0Zle-0065B1; Thu, 31 Mar 2022 13:06:52 +0200
+Received: by mail-lf1-f54.google.com with SMTP id 5so40832298lfp.1;
+        Thu, 31 Mar 2022 04:06:51 -0700 (PDT)
+X-Gm-Message-State: AOAM533bTn7O7a11LnD4LBzLwpr8imLMTdfFqwRtGO9j/dD6jGxgn29N
+        Bk7dTw89SdYYprRoFXYSxHk4FidIZHqvl2i5TfY=
+X-Google-Smtp-Source: ABdhPJwGAKwpvIMNsQM9nFO11Su4f6CfBdGu0DMcmygJKo9OCuKECCNyCiW9rLz7dH/8XUmg1E8wSHe238gGnDMMuwI=
+X-Received: by 2002:a5d:6505:0:b0:205:9a98:e184 with SMTP id
+ x5-20020a5d6505000000b002059a98e184mr3173055wru.317.1648717802947; Thu, 31
+ Mar 2022 02:10:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1648714851.git.qinjian@cqplus1.com> <fe4f4c3b0c768d1cd66fb648d74fa302e86787c0.1648714851.git.qinjian@cqplus1.com>
-In-Reply-To: <fe4f4c3b0c768d1cd66fb648d74fa302e86787c0.1648714851.git.qinjian@cqplus1.com>
+References: <cover.1648714851.git.qinjian@cqplus1.com> <84a0839e7724fa39dd07fef491cf6bb357db2e7d.1648714851.git.qinjian@cqplus1.com>
+In-Reply-To: <84a0839e7724fa39dd07fef491cf6bb357db2e7d.1648714851.git.qinjian@cqplus1.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 31 Mar 2022 11:22:16 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0OGM4aiaE2Nfc=7XGkGwAbnB99-j3PhVUmuA1z2FWeKg@mail.gmail.com>
-Message-ID: <CAK8P3a0OGM4aiaE2Nfc=7XGkGwAbnB99-j3PhVUmuA1z2FWeKg@mail.gmail.com>
-Subject: Re: [PATCH v12 5/9] clk: Add Sunplus SP7021 clock driver
+Date:   Thu, 31 Mar 2022 11:09:47 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2SQCj8pqyJvS+TpgqQu51+YyB4SOi2cd_WU9ObgAjZOw@mail.gmail.com>
+Message-ID: <CAK8P3a2SQCj8pqyJvS+TpgqQu51+YyB4SOi2cd_WU9ObgAjZOw@mail.gmail.com>
+Subject: Re: [PATCH v12 9/9] ARM: sp7021_defconfig: Add Sunplus SP7021 defconfig
 To:     Qin Jian <qinjian@cqplus1.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -48,70 +49,66 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:EZyyEWyEMOU9SLsFVTSJz5+xXPGenqIY6YVzxSAVJPwSyeitGdv
- tP3jJeb1oqHB4ap9WCt8EMPp4V7dIAtHV7oPtiADTIOndc56vVfxwGbIDb2A/VGmJvlbUQf
- tklCGkC8EFdJmjLhWYNPCfRcGHDRBtb90pem18oEplQmb3jwqIFh91776xK+Uq+fFK6QPTU
- Ci1Gxl45DHzAkUfPj2KZw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YkAHc5UKE0I=:yiFaEkbErLxW5htSyxiAuo
- XpVqbSp97TMKGxcdgtgjlaNMx4qu5wPIlTAPLHe4zBjFSvVWOYdCm7w+vPocf5VAH8aE0WvLN
- Ri5NOmcfzUhb5JhO8rRGWaThiI/h5IDvUptyI4Xwg5kEKALoZsqzl9acKTJsb/MeZF1WsbY0N
- PCtbqDOLUS3zKQayZt4rR/IspX9Eyqp6/fh2ZQKKlspwsMTQuI3e2CshnQTZm4TM/maMYPS30
- 6BOFcJBSedTx1ilj9JO/4426nl+yanqogLgqKRTpP069EO2CxipR+fPStixazzJaK3/eA/cWn
- XYeiwiMyuP762BGbLx2/R4Bvo71C0nIgxQsC4hZ4hw93OBTyL8hFT0OQ1A3zNWyBYAsdWnqKv
- G9PTzuhyEMh4eMW42D/rkPwcBM+dxWe8QHBVoZ/zXUO5Ee/8ea7UPx0m94OkQBWw/FG2uZNFS
- hOZppkpxyHXNzsx/SlXGYH+hf64dW5pOyP83Cv8v4Amj1H0AARNgvIbqDiszfOhOK1Zx/I/5B
- 15WEY7Swao4lnEldLot+wlR4HztobZk4jTRZyyxnCzlX+khGojf9wJ3trerJS6MPACE58azyW
- r5iXXgf0jf8R4RnH7q/WDRCQEpKoW1EnMiYkHmXj8n/dNePyocXenXS+MVwBPDHx9NdFHub4z
- Z6/6FIGlyHiTjNIrkZWilcuT28I0S1nuCDgNv/N+lODPwf1NO6dn7f2wZeTRTeIvGLTMK1SGO
- VuIFID5UBWY+3aaQa4fcDfEy8W3WF+HQg9XXIqSF9lpJsn3rAfeQBBGIzrkv7MgJT7gA0UNOw
- v30omITtNA52kqHi4G49kCniQVXfmfphD+pXVrFlVvkswk9mSE=
+X-Provags-ID: V03:K1:z/4tzUqmZYGQZ24spxksEyOysVr2PtahhN9T25NYZZ8BcxpPVMr
+ 7f0+JFCQTAp6cESgArBXyjsnxp2HR+EBu8UPfgzj4IXgFZlfvqB7RfFHhSU91nDYWmAMn0s
+ UgOI3VfA50GGzeQd4uK/Ykpco/lJvUf8beq/MtMtFGXrfaPljzWiiqrOGNQZ8/gMr4pDlw2
+ S5kaIkofDm98f5Tq87h4Q==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2V9sh8I9v68=:OhM9rT6LD4p2wjVI2HscDE
+ WhhJ/hXYeJ9HehVn3vn8Jh8w+8AoT3i0Inv+7+zJYNwD2T4EqCXiAcgypwbn4YDQLB3MINxfu
+ lrMmn2UHVynYLQf95LH5uhGJXtPc0nFu4uNF+r0q0fUONKcpZO9wPvBz0FozGm7jjuGKTlUBK
+ Osu+xS4a+e5OHYEKlszyh4h2v4Eq3aEunBPEXHHKBVFU1PYJQt5vriZSowLtVI2YbBejar72O
+ cZ6bZi1sLJpcD3NyKAtrcYTmlnCQWCIgBQnbUf1rc7rqk7P9yDWm2CEumal12SIW03sQWO905
+ knBWRAVbgUOJcGZnNlYYe4SLIAzRJvXN7Y6DFNTUWG3Piro4+1kiqO9exzmvlOpwSyA0IkVvF
+ /vpVWkic+gCXGWYVYP7ClhD97OTP5LocoQgp7u5LhZc+wfEyqALC6DmzlmuJ7RJx+7ShULqPH
+ ODWO9reOPFVxLY8VSkF5RE/BbIsiT1a7KZawBxaLr5BN7BG4KhCYVO9WGc+vC78DPqp+1JDFX
+ hASTaadEnmDhSYb1++6qhGh4HHsc9ydDRnLyKHopKBBvr6E6vIsr9A/euoL54FniUzbdIMNOH
+ 7cN2n4SnmOrJgy80I5RWNEUOH9QirONBuaHBAJVzy+qtggBXCVLyUIRKC90kdvErHb3k8asv5
+ bauIcsayWVObE9jar1zffWHQOkSHT6xV6Y0g2cpmCw26CAPM4hV1haGmXfxxCY2pJF6HPgIQG
+ XS6KGvLnd/3kcy5gVKm3tj1FuBZXLL0gNRdscISAz3UPIdtUPsZ2OX0tJkciQh8BFpEUrvRMV
+ Cc8xoVdOVDHCWbg/fM/C0L+rl7T9pxMZSQefZx22h+GDJlcCYg=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Mar 31, 2022 at 10:29 AM Qin Jian <qinjian@cqplus1.com> wrote:
+> Add generic Sunplus SP7021 based board defconfig
 
-> +static int sp_pll_enable(struct clk_hw *hw)
-> +{
-> +       struct sp_pll *clk = to_sp_pll(hw);
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(clk->lock, flags);
-> +       writel(BIT(clk->pd_bit + 16) | BIT(clk->pd_bit), clk->reg); /* power up */
-> +       spin_unlock_irqrestore(clk->lock, flags);
-> +
-> +       return 0;
-> +}
-> +
-> +static void sp_pll_disable(struct clk_hw *hw)
-> +{
-> +       struct sp_pll *clk = to_sp_pll(hw);
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(clk->lock, flags);
-> +       writel(BIT(clk->pd_bit + 16), clk->reg); /* power down */
-> +       spin_unlock_irqrestore(clk->lock, flags);
-> +}
+Here, you should explain why you need a custom defconfig for this SoC, as
+most platforms are fine just using the generic one. Are you too memory
+constrained,
+or are there other problems?
 
-What does the spinlock actually protect here? As writel() is posted, it
-can already leak of of the lock, and the inputs would appear to be
-constant.
+> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+> index 8863fa969..a3bd9dbd8 100644
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@ -86,6 +86,7 @@ CONFIG_MACH_SPEAR1310=y
+>  CONFIG_MACH_SPEAR1340=y
+>  CONFIG_ARCH_STI=y
+>  CONFIG_ARCH_STM32=y
+> +CONFIG_ARCH_SUNPLUS=y
+>  CONFIG_ARCH_SUNXI=y
+>  CONFIG_ARCH_TEGRA=y
+>  CONFIG_ARCH_UNIPHIER=y
 
-> +       /* This memory region include multi HW regs in discontinuous order.
-> +        * clk driver used some discontinuous areas in the memory region.
-> +        * Using devm_platform_ioremap_resource() would conflicted with other drivers.
-> +        */
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       sp_clk_base = devm_ioremap(dev, res->start, resource_size(res));
-> +       if (!sp_clk_base)
-> +               return -ENXIO;
+Don't you need any drivers here?
 
-Can you explain this comment in more detail? Generally, the 'reg' properties
-of drivers should not overlap, so it is supposed to be safe to call
-devm_platform_ioremap_resource() here.
+> diff --git a/arch/arm/configs/sp7021_defconfig b/arch/arm/configs/sp7021_defconfig
+> new file mode 100644
+> index 000000000..cda16d33a
+> --- /dev/null
+> +++ b/arch/arm/configs/sp7021_defconfig
+...
+> +CONFIG_HAVE_ARM_ARCH_TIMER=y
 
-We discussed this in the context of the iop driver that did have overlapping
-registers with this driver, and that was incorrect. Are there any other drivers
-that conflict with the clk driver?
+I checked this one again, as most others don't enable it in the defconfig.
 
-      Arnd
+I don't remember if I recommended removing the 'select' from Kconfig
+in a previous round, but as that is where other platforms have it, I'd add
+it there as well.
+
+> +CONFIG_STAGING=y
+
+Do you actually enable any staging drivers here? If not, I'd drop that bit.
+
+          Arnd
