@@ -2,144 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467F9C433FE
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 20:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B52C433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 20:45:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241491AbiCaUje (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 16:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46860 "EHLO
+        id S235256AbiCaUqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 16:46:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235278AbiCaUje (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 16:39:34 -0400
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626C01DF855;
-        Thu, 31 Mar 2022 13:37:46 -0700 (PDT)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-dee0378ce7so548243fac.4;
-        Thu, 31 Mar 2022 13:37:46 -0700 (PDT)
+        with ESMTP id S234435AbiCaUqr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 16:46:47 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8992A522D2;
+        Thu, 31 Mar 2022 13:44:58 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id b188so734734oia.13;
+        Thu, 31 Mar 2022 13:44:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=aC+tCijUVPKI7nGBwd+nln2pgwufchUfIBD5KMT91Xk=;
-        b=d4KTSNUx6UH6VhBWqz1cAyewX/8B2f8E3+obuX/B5oYNl3b5I9zlp8PKy8Cvf+8xiS
-         k7j2ww1jL73U8rKEvjf3Tx+n4BT4x2QN8JBpjJrAv12cdD8a12QbQDOgissYwYTQVNQo
-         KAfbsVkHRd5Zb/CdsUYLSWfcn5/QqwzdilS7T99410N+TSJyVnSr+DxwAtv2/cbO42eR
-         torTaPdcYYsQ5f+hiLUKNLgJgrfa8aCJEh6lhDVwuhCkdXKX8STlo5IMks6YHuqHihDb
-         KjEPZbHkhR9HcrHkjLJYRX7Cpn1u/h94TPuezISCHjq1ixyQEmtpWLeYBLImH0DTwHXh
-         u0pw==
-X-Gm-Message-State: AOAM5330aHL7YtEe3AhMF1aju1Hb1xpQDBoF0A2Bmm7HLbDIYxTlpSJc
-        BAnxqnA3RGaPJPGpZmthag==
-X-Google-Smtp-Source: ABdhPJxZPwZTST4T5zDJ7hQZzH4dKiGtYUkP7MRT9ZWl+bcyWzED9bnOP3hWhIPAXY/E4rf4oXLl5Q==
-X-Received: by 2002:a05:6870:d1c7:b0:de:f3a2:c6f4 with SMTP id b7-20020a056870d1c700b000def3a2c6f4mr3571342oac.164.1648759065707;
-        Thu, 31 Mar 2022 13:37:45 -0700 (PDT)
+        bh=fGtAk0+XCya2tuDgY9VrbuZe8tnyjhnFimlASLoNPI8=;
+        b=F5vPyLcPsYpRO6ShpLxMM3JMYtw3qcnLZWjzcPfPZFwv1NHjTvVPXUj/2qYZpjsFzD
+         Ge+XdX2tgBY+Jk63wxobt2QNbGFGjZtjzOHB0WLrLXti5bb7l2lJHzUZw0TFSUeGNmDL
+         2ZAbAzJEPTmjXIMyZ/EiSKr9K0/A4OQRdNQURdsWMlFiYfzNQNOVRBuftqPFY6bW/p+m
+         O36XFTTOWbScvdoV3Jb0o9j1c7HTX5KED1AGWEkmiAQHlxOcwJoj7W+xBXQc46LLt9hS
+         Qsqb9dfxxwea1x7vNvjLdrxAhofoighovRl3CyCaVzsJ1jcCWGwfYWoO8J/yaW2CmcJ2
+         lcgg==
+X-Gm-Message-State: AOAM5313llfqmBal46IfRi3rcefeELILnxZvZwjXLo+RdSqYkxO+5ovP
+        Xx+s+cJ+ocNObN4zVYfyUesT98W+AA==
+X-Google-Smtp-Source: ABdhPJw3anR6siPHibQz2MGfN4iffr/8wQurbIagIlKD/2cmHXZ0tfwA8JUognsm1JUZEWJ+Xerd6A==
+X-Received: by 2002:a05:6808:1402:b0:2da:b72:74f2 with SMTP id w2-20020a056808140200b002da0b7274f2mr3333790oiv.113.1648759497901;
+        Thu, 31 Mar 2022 13:44:57 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q11-20020a4a330b000000b003289cbe97c6sm268863ooq.13.2022.03.31.13.37.44
+        by smtp.gmail.com with ESMTPSA id h6-20020a9d7986000000b005ce0d5433cdsm275155otm.15.2022.03.31.13.44.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Mar 2022 13:37:45 -0700 (PDT)
-Received: (nullmailer pid 1450145 invoked by uid 1000);
-        Thu, 31 Mar 2022 20:37:44 -0000
-Date:   Thu, 31 Mar 2022 15:37:44 -0500
+        Thu, 31 Mar 2022 13:44:57 -0700 (PDT)
+Received: (nullmailer pid 1462775 invoked by uid 1000);
+        Thu, 31 Mar 2022 20:44:56 -0000
+Date:   Thu, 31 Mar 2022 15:44:56 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Jacky Huang <ychuang3@nuvoton.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sboyd@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, cfli0@nuvoton.com
-Subject: Re: [PATCH 2/3] dt-bindings: clock: Document MA35D1 clock controller
- bindings
-Message-ID: <YkYRGNr1o087/6MM@robh.at.kernel.org>
-References: <20220331024256.14762-1-ychuang3@nuvoton.com>
- <20220331024256.14762-3-ychuang3@nuvoton.com>
+To:     Qin Jian <qinjian@cqplus1.com>
+Cc:     arnd@arndb.de, linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
+        maz@kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, krzysztof.kozlowski@canonical.com,
+        tglx@linutronix.de
+Subject: Re: [PATCH v12 6/9] dt-bindings: interrupt-controller: Add bindings
+ for SP7021 interrupt controller
+Message-ID: <YkYSyHVGsXkGs0uf@robh.at.kernel.org>
+References: <cover.1648714851.git.qinjian@cqplus1.com>
+ <ff5bfd5611ab0defe0c98f98edbbf655e33cd16d.1648714851.git.qinjian@cqplus1.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220331024256.14762-3-ychuang3@nuvoton.com>
+In-Reply-To: <ff5bfd5611ab0defe0c98f98edbbf655e33cd16d.1648714851.git.qinjian@cqplus1.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 31, 2022 at 10:42:55AM +0800, Jacky Huang wrote:
-> Add documentation to describe Nuvoton MA35D1 clock driver bindings.
+On Thu, 31 Mar 2022 16:29:53 +0800, Qin Jian wrote:
+> Add documentation to describe Sunplus SP7021 interrupt controller bindings.
 > 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> Signed-off-by: Qin Jian <qinjian@cqplus1.com>
 > ---
->  .../bindings/clock/nuvoton,ma35d1-clk.yaml    | 59 +++++++++++++++++++
->  1 file changed, 59 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+> Move 'reg' after 'compatible'
+> ---
+>  .../sunplus,sp7021-intc.yaml                  | 62 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-> new file mode 100644
-> index 000000000000..bf5474b10420
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/nuvoton,ma35d1-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton MA35D1 Clock Control Module Binding
-> +
-> +maintainers:
-> +  - Chi-Fang Li <cfli0@nuvoton.com>
-> +  - Jacky Huang <ychuang3@nuvoton.com>
-> +
-> +description: |
-> +  The MA35D1 clock controller generates clocks for the whole chip,
-> +  including system clocks and all peripheral clocks.
-> +
-> +  See also:
-> +    dt-bindings/clock/ma35d1-clk.h
-> +
-> +properties:
-> +  compatible:
-> +    const: nuvoton,ma35d1-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  assigned-clocks:
-> +    maxItems: 4
 
-These aren't usually in the clock controller...
 
-> +
-> +  assigned-clock-rates:
-> +    maxItems: 4
-> +
-> +  clock-pll-mode:
-> +    maxItems: 4
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-What's this? Not a standard property. Needs a type, description, and 
-vendor prefix.
+If a tag was not added on purpose, please state why and what changed.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # clock control module node:
-> +  - |
-> +    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
-> +
-> +    clk: clock-controller@40460200 {
-> +        compatible = "nuvoton,ma35d1-clk";
-> +        reg = <0x40460200 0x100>;
-> +        #clock-cells = <1>;
-> +    };
-> +...
-> -- 
-> 2.30.2
-> 
-> 
