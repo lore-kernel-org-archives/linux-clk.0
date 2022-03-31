@@ -2,115 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F685C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D15C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234238AbiCaJoF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 05:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43302 "EHLO
+        id S234275AbiCaJsA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 05:48:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234232AbiCaJoA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:44:00 -0400
-Received: from muru.com (muru.com [72.249.23.125])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 469C41D9163;
-        Thu, 31 Mar 2022 02:42:13 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A7D9580DB;
-        Thu, 31 Mar 2022 09:40:03 +0000 (UTC)
-Date:   Thu, 31 Mar 2022 12:42:10 +0300
-From:   Tony Lindgren <tony@atomide.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Message-ID: <YkV3ch7R7YxlATW+@atomide.com>
-References: <20220325161144.1901695-1-maxime@cerno.tech>
- <20220325161144.1901695-4-maxime@cerno.tech>
- <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
- <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
- <20220330084710.3r6b5pjspz5hdmy6@houat>
+        with ESMTP id S234278AbiCaJr7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:47:59 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6AAA1DEC1C;
+        Thu, 31 Mar 2022 02:46:12 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id q200so6011833qke.7;
+        Thu, 31 Mar 2022 02:46:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QS1S2tOrDhz/TSgr2td/3/wN4yGeGUIvppMqnCIff6Q=;
+        b=3bN2QGEsp2bsu7i3QWBSpOLeM/3/anOw7wESUaCxAeRgKW2O+Z5KXTazqWcH8XMQAp
+         2jtuA57BNXad8uDkNUpD7T9ac2szCFADpX+/gA5qxtmtk/iICRPQa2Cn8qmbu8WELn7s
+         8Y5gbhQwXFyCMUjCGGQAjlTqYIl05yim6s5KyhoWXZcvcbeAqC1W60PCWeR3MMHVykS2
+         SP/OcIyf3TUF1WUqUjMbIu9YBsTbsNt4SQJr950S54HA7XCxwxD2Xjg+7GRF9XISxr4d
+         5VhiNTrFO30juzj1t3kn8CGVb2y1xQWwybYw1k7b6tvwFoKmXU+veb6PWqbVAORuegX6
+         KAbA==
+X-Gm-Message-State: AOAM531f+d7utShKtTgAJKVYKu2v+VCMireR8vQcj7AyZQ8vNABkYMaC
+        WTt7XNhJWDFagHAIgXktt9thNWx1LjXPTg==
+X-Google-Smtp-Source: ABdhPJywOifNEUaUJK9X3N8H5rY/LHUuL1x8xOcbUcGJVk5KuDD6ptEoJMaXR9Y+Qy8amIrLbf7e9g==
+X-Received: by 2002:a37:a305:0:b0:67d:43fc:a393 with SMTP id m5-20020a37a305000000b0067d43fca393mr2676820qke.699.1648719971700;
+        Thu, 31 Mar 2022 02:46:11 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id r64-20020a37a843000000b0067b0cf40b18sm12485566qke.69.2022.03.31.02.46.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Mar 2022 02:46:11 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-2e6ceb45174so208288207b3.8;
+        Thu, 31 Mar 2022 02:46:11 -0700 (PDT)
+X-Received: by 2002:a81:c703:0:b0:2d0:cc6b:3092 with SMTP id
+ m3-20020a81c703000000b002d0cc6b3092mr3932933ywi.449.1648719970882; Thu, 31
+ Mar 2022 02:46:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220330084710.3r6b5pjspz5hdmy6@houat>
+References: <20220315142915.17764-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220315142915.17764-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 31 Mar 2022 11:45:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUsgoaBpG4B6O4qwT+jR0zpS_qnPyktMzyNyvm0PGT8kw@mail.gmail.com>
+Message-ID: <CAMuHMdUsgoaBpG4B6O4qwT+jR0zpS_qnPyktMzyNyvm0PGT8kw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] dt-bindings: clock: renesas: Document RZ/G2UL SoC
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Biju,
 
-* Maxime Ripard <maxime@cerno.tech> [700101 02:00]:
-> Hi Marek,
-> 
-> On Wed, Mar 30, 2022 at 10:06:13AM +0200, Marek Szyprowski wrote:
-> > On 25.03.2022 17:11, Maxime Ripard wrote:
-> > > While the current code will trigger a new clk_set_rate call whenever the
-> > > rate boundaries are changed through clk_set_rate_range, this doesn't
-> > > occur when clk_put() is called.
-> > >
-> > > However, this is essentially equivalent since, after clk_put()
-> > > completes, those boundaries won't be enforced anymore.
-> > >
-> > > Let's add a call to clk_set_rate_range in clk_put to make sure those
-> > > rate boundaries are dropped and the clock drivers can react.
-> > >
-> > > Let's also add a few tests to make sure this case is covered.
-> > >
-> > > Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rate")
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > 
-> > This patch landed recently in linux-next 20220328 as commit 7dabfa2bc480 
-> > ("clk: Drop the rate range on clk_put()"). Sadly it breaks booting of 
-> > the few of my test systems: Samsung ARM 32bit Exynos3250 based Rinato 
-> > board and all Amlogic Meson G12B/SM1 based boards (Odroid C4, N2, Khadas 
-> > VIM3/VIM3l). Rinato hangs always with the following oops:
-> > 
-> > --->8---
-> > 
-> > Kernel panic - not syncing: MCT hangs after writing 4 (offset:0x420)
-> > CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.17.0-rc1-00014-g7dabfa2bc480 
-> > #11551
-> > Hardware name: Samsung Exynos (Flattened Device Tree)
-> >   unwind_backtrace from show_stack+0x10/0x14
-> >   show_stack from dump_stack_lvl+0x58/0x70
-> >   dump_stack_lvl from panic+0x10c/0x328
-> >   panic from exynos4_mct_tick_stop+0x0/0x2c
-> > ---[ end Kernel panic - not syncing: MCT hangs after writing 4 
-> > (offset:0x420) ]---
-> > 
-> > --->8---
-> > 
-> > Amlogic boards hang randomly during early userspace init, usually just 
-> > after loading the driver modules.
-> > 
-> > Reverting $subject on top of linux-next fixes all those problems.
-> > 
-> > I will try to analyze it a bit more and if possible provide some more 
-> > useful/meaning full logs later.
-> 
-> I'm not sure what could go wrong there, but if you can figure out the
-> clock, if it tries to set a new rate and what rate it is, it would be
-> awesome :)
+On Tue, Mar 15, 2022 at 3:29 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Document the device tree binding for the Renesas RZ/G2UL Type-1
+> and Type-2 SoC. RZ/G2UL Type-2 has fewer clocks than RZ/G2UL Type-1
+> SoC.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> v2->v3:
+>  * Changed the compatible from r9a07g043u-cpg->r9a07g043-cpg
+>  * Retained the Rb tag from Rob as it is trivial change.
 
-I'm also seeing clockevent break on omaps as a wrong source clock gets
-picked.
+Thanks for the update!
 
-It seems the dts assigned-clock-parents no longer works now?
+> --- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
+> @@ -23,8 +23,9 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> -      - renesas,r9a07g044-cpg  # RZ/G2{L,LC}
+> -      - renesas,r9a07g054-cpg  # RZ/V2L
+> +      - renesas,r9a07g043-cpg   # RZ/G2UL{Type-1,Type-2}
+> +      - renesas,r9a07g044-cpg   # RZ/G2{L,LC}
+> +      - renesas,r9a07g054-cpg   # RZ/V2L
 
-So the following no longer sets omap_32k_fck as the clockevent source:
+No need to increase the number of spaces before the hashmark.
 
-timer@0 {
-	assigned-clocks = <&gpt1_fck>;
-	assigned-clock-parents = <&omap_32k_fck>;
-};
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.19, with the above fixed.
 
-Regards,
+Gr{oetje,eeting}s,
 
-Tony
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
