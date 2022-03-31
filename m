@@ -2,166 +2,124 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D36C4332F
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91932C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 09:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234282AbiCaJ4v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 05:56:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
+        id S234364AbiCaJ6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 05:58:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbiCaJ4u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:56:50 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A3F3DDD6;
-        Thu, 31 Mar 2022 02:55:02 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3B5655C01CE;
-        Thu, 31 Mar 2022 05:55:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 31 Mar 2022 05:55:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; bh=fIschB+nqCMB98
-        fI8niTL+6mM5W6p3IndMLM7eMuJYg=; b=L8gqq6q27fRzO3XPlGK64ELnFPiAZn
-        wL5KwFb1orZWm/7K7ZUKqQLQ94ZfkAVq0Di4FxYMm0VnoaDVAgOu+9EdLUuQpJnM
-        aNus2ZH9ysUyVcv+A0pmxZbFNNJwXfpYu5xgBkXx9LTESYJbdSUJZBxRXixkImYw
-        5jGZBU+wwO9HKvfBb3PCoDb0jYLTp9I7EIBs5790/QBy5c1cP80mfg0FzeIFdM8r
-        zsMfyMK+4kHpIvFwAlq3104cXV3yPjj9ULNMW8u023IVVQWGh80S/xZHohCK9+fy
-        /Z5X+2aSr0+uYhUWjh6jZNwN0jrbrWAMtMNIhbxxxIjQsS+edSylG7nw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=fIschB+nqCMB98fI8niTL+6mM5W6p3IndMLM7eMuJ
-        Yg=; b=efzsegme4AINtrqnsMxTyXhdweEgc+X3PQgEX7lIEcYU7tsY+4sb/O8WG
-        9sWSpraeBlHWCopoy1UZZTtkBvIFlHy1B57ITz8D12OCTgFTUF8deIjUU/s5Z2mv
-        3u+r9OyPJosmFfC/pKdVxCYboCJ1kRFF5iIb0aAjrPwL35AL6z7Yr0OoQKg6+EOF
-        oUiyWA+QW8pAP0f4C49PfqsasJZsWkNSFtKkhHNFTrJOKQj4smPgayqeSsQ8p3jU
-        W3DjlewuCX1avxqZ+xH9B2ZwDLXSFRy2VgRk8bx2uLfpe/puax7YjQ73hYmbNvD6
-        KX9ou/15o0qJ26HYlcankGWNg3DPw==
-X-ME-Sender: <xms:cnpFYgDV5qaH4rUHuhjTMLtX5WY3jbRHVM8gd_FpDliXUKXk3e-Qeg>
-    <xme:cnpFYijNnBfcOmnj9t4Adp8H5S5COHn5L7_EEyxHCNdzvUuluL-LcyCX6C_tkOrUy
-    G_IlGv1L5fYw3xnCRk>
-X-ME-Received: <xmr:cnpFYjmiVbayL9og8FBywuFPc_qh2q-_JIL6ViyXk3ZCalKgbK4A8QwEYmWEwQnyWiQfb8GGQajUwqRz0swWVidNKMqVpUIpZZrZp_M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudeigedgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtudenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeehledvhfeklefgveelkeeludevffethfdukedvfffhhfegfeeugfehgeef
-    jeevtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:cnpFYmy0pNHY2jnkNa2mo0MQHPE8EO69bKBH2IP6Cip9Qlg6Kuj7QQ>
-    <xmx:cnpFYlSeDXXYQoL7cYBbOKN0IQVi173MyJLo0mMXAiXh95nMp6DryA>
-    <xmx:cnpFYhZ-YmG5Nw6SNiiI66moIMtPHr1F48HxQTNfaV9n-ROtVomcxQ>
-    <xmx:dHpFYgGLhRCvGhFkr45uejAlf7yPx5Dd6PooQs8A_aRajr4GXCctKA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 31 Mar 2022 05:54:58 -0400 (EDT)
-Date:   Thu, 31 Mar 2022 11:54:56 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Message-ID: <20220331095456.dyyxsiu2b3yw2vvs@houat>
-References: <20220325161144.1901695-1-maxime@cerno.tech>
- <20220325161144.1901695-4-maxime@cerno.tech>
- <CGME20220330080612eucas1p195caaf35d900412de762a27ae02b7b9e@eucas1p1.samsung.com>
- <366a0232-bb4a-c357-6aa8-636e398e05eb@samsung.com>
- <20220330084710.3r6b5pjspz5hdmy6@houat>
- <YkV3ch7R7YxlATW+@atomide.com>
+        with ESMTP id S234322AbiCaJ61 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 05:58:27 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9521C2016BE;
+        Thu, 31 Mar 2022 02:56:40 -0700 (PDT)
+Received: by mail-qk1-f171.google.com with SMTP id r127so19276281qke.13;
+        Thu, 31 Mar 2022 02:56:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gg90NThCeAeGZxb8zdlM6tEKrn0mtCHmlF+3WtbPFi8=;
+        b=vSrQx595N9wRtKvHWp23gvnsPCTOmSoPoeladUc2UpvzdYmXYjBsuHqfbfZEPS2OML
+         NSgFcQyjXdP3OudhzRSSGKGfx20PPiI+pTHOOoEcjpW9xaPsFde3HPCb73Prd4CwVz3Q
+         pX0mvA1sV8+8nQTtO0QMJpkmW7HnqQGCaMip/adDhXsAjJs5f0l8KKRxXjoiKe00MUtS
+         ICBZNN/lUw4S2T8EeQd03Z7AZS5Dpcf27WI0pNEhUGh42Gs2MTwdLIkAkNmuL4EeEWJp
+         MNnEzwANi2zHHNENx0bzzl2AxAgeIdeRMH2v8lS/+r5+V6pmTksi2B1/n1PoSAnJ4eRv
+         ysdA==
+X-Gm-Message-State: AOAM533fihxxl0jln6kJUXI4yf7b+55AHxOrICVMYTmaLwmXZsWQPae9
+        GSC7tPpTjc0Njx+/edqGjRBV3xRciJThtg==
+X-Google-Smtp-Source: ABdhPJwE+LBqjy/ku7958Vf96vDWbBfHenh0vLeaMl9uJH12xl/D3bXx3TcpbdACVpo6YIvK1ZvsWQ==
+X-Received: by 2002:a05:620a:25d0:b0:47b:2596:de51 with SMTP id y16-20020a05620a25d000b0047b2596de51mr2692887qko.531.1648720599177;
+        Thu, 31 Mar 2022 02:56:39 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id j18-20020ac85c52000000b002e1b9897ae7sm18677416qtj.10.2022.03.31.02.56.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Mar 2022 02:56:38 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id y38so38737356ybi.8;
+        Thu, 31 Mar 2022 02:56:38 -0700 (PDT)
+X-Received: by 2002:a25:45:0:b0:633:96e2:2179 with SMTP id 66-20020a250045000000b0063396e22179mr3540466yba.393.1648720597988;
+ Thu, 31 Mar 2022 02:56:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <YkV3ch7R7YxlATW+@atomide.com>
+References: <20220315142644.17660-1-biju.das.jz@bp.renesas.com> <20220315142644.17660-6-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220315142644.17660-6-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 31 Mar 2022 11:56:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVyocgrgDoXVVoATDr6md2RjgdqhmKWMpcTFKXf-1QQSA@mail.gmail.com>
+Message-ID: <CAMuHMdVyocgrgDoXVVoATDr6md2RjgdqhmKWMpcTFKXf-1QQSA@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] clk: renesas: Add support for RZ/G2UL SoC
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Biju,
 
-On Thu, Mar 31, 2022 at 12:42:10PM +0300, Tony Lindgren wrote:
-> * Maxime Ripard <maxime@cerno.tech> [700101 02:00]:
-> > Hi Marek,
-> >=20
-> > On Wed, Mar 30, 2022 at 10:06:13AM +0200, Marek Szyprowski wrote:
-> > > On 25.03.2022 17:11, Maxime Ripard wrote:
-> > > > While the current code will trigger a new clk_set_rate call wheneve=
-r the
-> > > > rate boundaries are changed through clk_set_rate_range, this doesn't
-> > > > occur when clk_put() is called.
-> > > >
-> > > > However, this is essentially equivalent since, after clk_put()
-> > > > completes, those boundaries won't be enforced anymore.
-> > > >
-> > > > Let's add a call to clk_set_rate_range in clk_put to make sure those
-> > > > rate boundaries are dropped and the clock drivers can react.
-> > > >
-> > > > Let's also add a few tests to make sure this case is covered.
-> > > >
-> > > > Fixes: c80ac50cbb37 ("clk: Always set the rate on clk_set_range_rat=
-e")
-> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > >=20
-> > > This patch landed recently in linux-next 20220328 as commit 7dabfa2bc=
-480=20
-> > > ("clk: Drop the rate range on clk_put()"). Sadly it breaks booting of=
-=20
-> > > the few of my test systems: Samsung ARM 32bit Exynos3250 based Rinato=
-=20
-> > > board and all Amlogic Meson G12B/SM1 based boards (Odroid C4, N2, Kha=
-das=20
-> > > VIM3/VIM3l). Rinato hangs always with the following oops:
-> > >=20
-> > > --->8---
-> > >=20
-> > > Kernel panic - not syncing: MCT hangs after writing 4 (offset:0x420)
-> > > CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.17.0-rc1-00014-g7dabfa2bc=
-480=20
-> > > #11551
-> > > Hardware name: Samsung Exynos (Flattened Device Tree)
-> > >  =A0unwind_backtrace from show_stack+0x10/0x14
-> > >  =A0show_stack from dump_stack_lvl+0x58/0x70
-> > >  =A0dump_stack_lvl from panic+0x10c/0x328
-> > >  =A0panic from exynos4_mct_tick_stop+0x0/0x2c
-> > > ---[ end Kernel panic - not syncing: MCT hangs after writing 4=20
-> > > (offset:0x420) ]---
-> > >=20
-> > > --->8---
-> > >=20
-> > > Amlogic boards hang randomly during early userspace init, usually jus=
-t=20
-> > > after loading the driver modules.
-> > >=20
-> > > Reverting $subject on top of linux-next fixes all those problems.
-> > >=20
-> > > I will try to analyze it a bit more and if possible provide some more=
-=20
-> > > useful/meaning full logs later.
-> >=20
-> > I'm not sure what could go wrong there, but if you can figure out the
-> > clock, if it tries to set a new rate and what rate it is, it would be
-> > awesome :)
->=20
-> I'm also seeing clockevent break on omaps as a wrong source clock gets
-> picked.
->=20
-> It seems the dts assigned-clock-parents no longer works now?
+On Tue, Mar 15, 2022 at 3:27 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The clock structure for RZ/G2UL is almost identical to RZ/G2L SoC with
+> fewer IP blocks. The IP blocks such as WDT1, GPT, H264, GPU and POEG are
+> not present on RZ/G2UL.
+>
+> This patch adds minimal clock and reset entries required to boot the
+> system on Renesas RZ/G2UL SMARC EVK and binds it with the RZ/G2L CPG core
+> driver.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3:
+>  * Replaced R9A07G043U->R9A07G043 and r9a07g043u->r9a07g043
 
-That would make some kind of sense, __set_clk_parents calls clk_put on
-both the assigned clock and its parent.
+Thanks for the update!
 
-Could you see what parent (and why?) it tries to enforce then?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-It looks like the gpt1_fck driver might favor another parent for that
-rate, which, if it's an invalid configuration, shouldn't really happen?
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
 
-Maxime
+> +const struct rzg2l_cpg_info r9a07g043_cpg_info = {
+> +       /* Core Clocks */
+> +       .core_clks = r9a07g043_core_clks,
+> +       .num_core_clks = ARRAY_SIZE(r9a07g043_core_clks),
+> +       .last_dt_core_clk = LAST_DT_CORE_CLK,
+> +       .num_total_core_clks = MOD_CLK_BASE,
+> +
+> +       /* Critical Module Clocks */
+> +       .crit_mod_clks = r9a07g043_crit_mod_clks,
+> +       .num_crit_mod_clks = ARRAY_SIZE(r9a07g043_crit_mod_clks),
+
+This may need an update if you change the Clock and Reset Definitions.
+
+> +
+> +       /* Module Clocks */
+> +       .mod_clks = r9a07g043_mod_clks,
+> +       .num_mod_clks = ARRAY_SIZE(r9a07g043_mod_clks),
+> +       .num_hw_mod_clks = R9A07G043_LCDC_CLK_D + 1,
+> +
+> +       /* Resets */
+> +       .resets = r9a07g043_resets,
+> +       .num_resets = R9A07G043_LCDC_RESET_N + 1, /* Last reset ID + 1 */
+
+Likewise.
+
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
