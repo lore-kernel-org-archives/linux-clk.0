@@ -2,104 +2,81 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E42EC433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 11:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639C8C433FE
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 11:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234476AbiCaLlp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 07:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41896 "EHLO
+        id S230433AbiCaLmC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 07:42:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230433AbiCaLlo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 07:41:44 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A816D9B;
-        Thu, 31 Mar 2022 04:39:57 -0700 (PDT)
-Received: from mail-ej1-f41.google.com ([209.85.218.41]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MODeL-1nOfpa3AYD-00OTx0; Thu, 31 Mar 2022 13:39:55 +0200
-Received: by mail-ej1-f41.google.com with SMTP id bi12so47569244ejb.3;
-        Thu, 31 Mar 2022 04:39:55 -0700 (PDT)
-X-Gm-Message-State: AOAM530QE4AKPtAC0vv54I4CEfehPscaI4Z1aHLtE+4r40BpAL0ce+de
-        y4xd33Ut/gnOdbOuqPtAEFBjhbIVOXkWECFoEV0=
-X-Google-Smtp-Source: ABdhPJwfRFXUt4OqOk81tKu7LM5gxC4c3u5ZlWSR5HmES53I0aChYbGQncx+2OGAT9B1zXjl61ywA7U1ZfgbuUggEKw=
-X-Received: by 2002:adf:e54e:0:b0:205:a9be:c66e with SMTP id
- z14-20020adfe54e000000b00205a9bec66emr3308561wrm.192.1648717132578; Thu, 31
- Mar 2022 01:58:52 -0700 (PDT)
+        with ESMTP id S235273AbiCaLmC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 07:42:02 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E3738788;
+        Thu, 31 Mar 2022 04:40:14 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id bp39so21110778qtb.6;
+        Thu, 31 Mar 2022 04:40:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tsmHwbJm2HnWmEEnGO1Kr5LLzGgAaLDEK9i1GDikghQ=;
+        b=5kYBxWsdXryEclKhU1a076YQ803MVdYIHmhan0nyJfXeijYIpgUW/NNuMLRwzIp5t8
+         sBosPe+VGOmazOalvDOnu3R67DohzjEDFqup0wsNfIhfBP5t6LHSVDUJ//0l3HVpc/sN
+         ebyyGakAM15aTe9plvMimhQosZthYIy8/59Tv2r39JJ2qs8boDin0fHKJWhrO7eSj3Oz
+         xTk1ies1lyLbedtChLgaC5VnXzF7mVrK626RcUWwHBzIUOV/4cQUFMXF3WipACfUnRFE
+         GmVnv9nYfB7Xr+6eINCachM84CWsbZIhnnVD9FACCnmMsgCcLiRlkoAxhjQInj5GeiQH
+         40aQ==
+X-Gm-Message-State: AOAM53083vcKuqbcw9x01PIg+J3DfFcSyeIF2eUkUqed/lca2EGdbhL5
+        C4prY/s7AjNSLB2vjhTSi17PTAfFmRi6tA==
+X-Google-Smtp-Source: ABdhPJw9SF0CR7oGBSzShFE4nxbkjbZT38PfI5oYSK0PmHdvdw5SWGyeIctr/kSCkJqt3jmZoaE5sQ==
+X-Received: by 2002:ac8:5809:0:b0:2e1:f0bc:2e88 with SMTP id g9-20020ac85809000000b002e1f0bc2e88mr3809752qtg.138.1648726813355;
+        Thu, 31 Mar 2022 04:40:13 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id w1-20020ac857c1000000b002e1e899badesm19232314qta.72.2022.03.31.04.40.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Mar 2022 04:40:12 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id e81so12730430ybf.13;
+        Thu, 31 Mar 2022 04:40:12 -0700 (PDT)
+X-Received: by 2002:a5b:a8f:0:b0:633:fd57:f587 with SMTP id
+ h15-20020a5b0a8f000000b00633fd57f587mr3658548ybq.506.1648726812358; Thu, 31
+ Mar 2022 04:40:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1648714851.git.qinjian@cqplus1.com> <6abf8de01fa2f24e13e9b78b3dc3b206ea551c9c.1648714851.git.qinjian@cqplus1.com>
-In-Reply-To: <6abf8de01fa2f24e13e9b78b3dc3b206ea551c9c.1648714851.git.qinjian@cqplus1.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 31 Mar 2022 10:58:36 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1APzs74YTcZ=m43G3zrmwJZKcYSTvV5eDDQX-37UY7Tw@mail.gmail.com>
-Message-ID: <CAK8P3a1APzs74YTcZ=m43G3zrmwJZKcYSTvV5eDDQX-37UY7Tw@mail.gmail.com>
-Subject: Re: [PATCH v12 2/9] dt-bindings: reset: Add bindings for SP7021 reset driver
-To:     Qin Jian <qinjian@cqplus1.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+References: <20220315154649.22343-1-biju.das.jz@bp.renesas.com> <20220315154649.22343-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220315154649.22343-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 31 Mar 2022 13:40:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVoMxEYs+tS4QZ9rA+QLQG_Bp719oSMM3=6H5FnjfoGHA@mail.gmail.com>
+Message-ID: <CAMuHMdVoMxEYs+tS4QZ9rA+QLQG_Bp719oSMM3=6H5FnjfoGHA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: r9a07g043: Add GPIO clock and reset entries
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <maz@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:xb1nwe6pZUMj7SqipxY2qwYa302nWoQUEarEMdwC9tLY7AUD4YA
- pzxTeNO9EH5MEJjlsdLObXI4TlhiF6159X+058Z5ChoaVq3AstNIYxEoyS2hr5V2QOjx6kl
- Vowdo1QgrJl2MIggFw4Sr5uMIC5LZF9uztTYYOpRNmDEOcy1KdbUEvEVHnjHeHi8hcenNUa
- DUVKDYYcfXBAE0TC1DYGA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Yh7e+nE09wQ=:ITjTAe7s+PDrwX8B7qWaLz
- JoaAbrov4WBAt4xlN/tlggRqmCRguIsVyNgj+zaLd6D0Zvf7gzlEauKxLqF2d3wYrLracTbyj
- jIUxz8ASS2LBjwyP9DPZrK157LvEA5SqapdN5qjmSyakkRtiBXIVTeewueiEE6++VVAtrJO/u
- KMap1i2mhWjwhb+7W3nBXFkhZP1D1pWiFhk0YRR1kS11Nj2SXyECG0ZrNX9Q4ix0e1OR0Ta+8
- X9ty2qzTZILwhqU2rRz/7aJwf38JhxXpUvtLkSV5ORNuPbH9Ly40aKxR4v/V9+2BtpKme4uRF
- 3zcv5u3ffj2aLckXMSaF8+PSyyZ1enIaWgs/MGbQWzKiy6V5Q5AAPc7xFIcplkFyT4oHxn5xh
- jFSfq6EF4TpS3BLVUx/dPuKw3Xgfi1mUV3odFWYcMqDhHG97Hg2EJIR7UAIaVJjmKB76PKE/T
- YHgxyWPtEyunmWnKR+BFtW5tBtSK9VqceryRdv88u0jHizr3zKFbImee0RI745z93Q8Niuc8L
- jzYpke4DaMllXMdlGfR6yKwz47Yw5uhhyfb4yswaD76PDT8t3OLjcSEki7Pn2Pq2K/iXoGNsK
- FxMwOWDgPzC7PMWGEjU7Yf00SUo/EO6iTpKf9av2H9cH3XHRd6cd6FsvwzGLL91nxnkOX8Mxx
- mbOUfpu2N7jJs2ThCvb08ImVyOokeCYP3qkxJAo6dHhI2bK0PGjpUiEi1yCsb1gn1JZeOoHbf
- rdReOnaqjhVG7hml26a6pi4UabQj9TNiYJ5HdpoU2qlkwlz6QewmaN6oQ34IJfRf/a7NZJ47m
- 5uIglpyMxYjTQ4PXl2uP8s7gHpnN1FvQpXFjxCkUkhLF8SASDA=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 31, 2022 at 10:29 AM Qin Jian <qinjian@cqplus1.com> wrote:
+On Tue, Mar 15, 2022 at 4:47 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add GPIO clock and reset entries in CPG driver.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> +/* mo_reset0 ~ mo_reset9 */
-> +#define RST_SYSTEM             0x00
-> +#define RST_RTC                        0x02
-> +#define RST_IOCTL              0x03
-> +#define RST_IOP                        0x04
-> +#define RST_OTPRX              0x05
-> +#define RST_NOC                        0x06
-> +#define RST_BR                 0x07
-> +#define RST_RBUS_L00           0x08
-> +#define RST_SPIFL              0x09
-> +#define RST_SDCTRL0            0x0a
-> +#define RST_PERI0              0x0b
-> +#define RST_A926               0x0d
-> +#define RST_UMCTL2             0x0e
-> +#define RST_PERI1              0x0f
-> +
-> +#define RST_DDR_PHY0           0x10
-> +#define RST_ACHIP              0x12
-> +#define RST_STC0               0x14
-> +#define RST_STC_AV0            0x15
-> +#define RST_STC_AV1            0x16
-> +#define RST_STC_AV2            0x17
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The list looks like these definitions just match the hardware, which means you
-don't have to define them as a binding at all, just use the hardware numbers
-directly in the dt, as you do for interrupts or gpio numbers.
+Gr{oetje,eeting}s,
 
-If the hardware does not have a sane way of mapping reset lines to a particular
-hardware number, then you may have to define a binding, but in that case just
-use consecutive integer numbers, not hexadecimal numbers.
+                        Geert
 
-       Arnd
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
