@@ -2,260 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD36C433EF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 22:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F68CC433EF
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Mar 2022 22:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242234AbiCaWF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Mar 2022 18:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44486 "EHLO
+        id S242589AbiCaWjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Mar 2022 18:39:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242022AbiCaWF6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:05:58 -0400
+        with ESMTP id S242560AbiCaWjv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Mar 2022 18:39:51 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 597AC148641;
-        Thu, 31 Mar 2022 15:04:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC301FF406;
+        Thu, 31 Mar 2022 15:38:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0BFA6B82271;
-        Thu, 31 Mar 2022 22:04:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9246C340F0;
-        Thu, 31 Mar 2022 22:04:06 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1C4F5B8225B;
+        Thu, 31 Mar 2022 22:38:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B12C340ED;
+        Thu, 31 Mar 2022 22:37:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648764246;
-        bh=4xVNdxBqaOVelyuYC2NTicn7Q2prJGEUjhHB+LPAEfM=;
+        s=k20201202; t=1648766279;
+        bh=0+cqxY3wgXl1ZxgBlYb2Pw1E+eA45qGlrrGxGV6BP4Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=A8n1KsdbCA+kmhsUFUWkc/f6UB0evGNGV2r+m4o6sOVjFyyfp9cVFERV/T2f80NIY
-         0cT+3fGm4iiOA8qhThrOOlGGw8yGfGBjlhbXmhFApeRGkhu3nryPoxsVfR3dLFkKW9
-         HFfSwlQOycv1j64erLNQvag7hwy/moPQApZqHqKrd7zMAmZQvviXOxZiDThAMn9Ajv
-         9ZxVdxjCalMkv5+c8/DZdGMo/p+s/MDK9UwuEVLD/zv1/3rdDp26uFn0WryZwdK0xS
-         k3egXtDQ64TBXAxtVd5MYlztrpEs/DI4NwTJnao4kz8/5BkD5vILZH4hJXM1rsUHXG
-         Uo6aAUpnLfGZg==
+        b=KVubnGXunMJIF0ThNkEy70N0q5PMBLlBFHZtwDDlcF/LEM30o5NILdXywFFrb8Mfc
+         ky7xDb6uCD4Uq5P+YIK0JXy/82QVa7PNArud3iXwsD5Iau9k1s91+EARvK9nB8dHpe
+         4vBaeI10JPTgNi+n1jcuDoQHMUkhMO1DNZQG5u/KveYKZBPKI+qcrYKLHXt7clQOH3
+         heENiVEo2e3zffwSV2wtufCT5wlmCKwc6wlvxoJs23Fa1vvMgHgyNR1B4RXf8/Z+St
+         9/W6lO1dTqMP7gpPu7WhKM5soFhWTd+O3lsNeubAc0SwUOkZnQsP57x/LmzTDPgsww
+         ohHY7YDlIt5UA==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
-References: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
-Subject: Re: [next] db845c: WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139 divider_recalc_rate
+In-Reply-To: <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org>
+References: <20220324133229.24035-1-jbx6244@gmail.com> <f7493d93-6c8a-efa9-1f2c-a0003a6d43b2@kernel.org> <bf62ad40-6bcf-62ae-f56a-cdc8d17456ec@gmail.com> <20220325005130.C45A3C340EC@smtp.kernel.org> <bf438af8-5969-73e4-009d-cb7d93095a5e@kernel.org>
+Subject: Re: [PATCH v1] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     gabriel.fernandez@foss.st.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        lkft-triage@lists.linaro.org,
-        open list <linux-kernel@vger.kernel.org>,
-        regressions@lists.linux.dev
-Date:   Thu, 31 Mar 2022 15:04:04 -0700
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Johan Jonker <jbx6244@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, heiko@sntech.de
+Date:   Thu, 31 Mar 2022 15:37:57 -0700
 User-Agent: alot/0.10
-Message-Id: <20220331220406.A9246C340F0@smtp.kernel.org>
+Message-Id: <20220331223759.B8B12C340ED@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-+Maxime
+Quoting Krzysztof Kozlowski (2022-03-25 00:31:25)
+> On 25/03/2022 01:51, Stephen Boyd wrote:
+> > Quoting Johan Jonker (2022-03-24 12:51:36)
+> >> Hi Heiko, Krzysztof,
+> >>
+> >> Question for the Rockchip clock maintainer:
+> >> What clock should be used here and other SoCs with several clock paren=
+ts
+> >> in the tree?
+> >>
+> >> The clock.yaml produces a lot off notifications like:
+> >>
+> >> /arch/arm/boot/dts/rk3036-evb.dtb: clock-controller@20000000: 'clocks'
+> >> is a dependency of 'assigned-clocks'
+> >=20
+> > 'clocks' is not a dependency of 'assigned-clocks'. The dt-schema should
+> > be fixed to remove that requirement.
+>=20
+> If the driver does not have any clock inputs ("clocks" property), why
+> does it care about some clock frequencies and parents?
 
-Quoting Naresh Kamboju (2022-03-31 05:03:57)
-> Following kernel warning noticed on db845c while booting linux next-20220=
-331.
->=20
-> metadata:
->   git_ref: master
->   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->   git_sha: fdcbcd1348f4ef713668bae1b0fa9774e1811205
->   git_describe: next-20220331
->   kernel_version: 5.17.0
->   kernel-config: https://builds.tuxbuild.com/278RLnhgJL7XdlJbcbv07jiwbYB/=
-config
-
-I guess we really just shouldn't call clk_set_rate_range()
-unconditionally on clk_put().
+Because it's a clock provider itself. In this case I suspect because
+this is a clock-controller node it was skipping describing some crystal
+input though. Maybe it wants to configure the various PLLs in the
+clock-controller for a particular board. I can imagine some node with
+#clock-cells may want to configure the frequency of the clock outputs or
+configure the clk parents for a certain board/SoC. In that case there
+may not be any clocks property, but we still want to configure things.
 
 >=20
-> Boot log:
-> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x517f803c]
-> [    0.000000] Linux version 5.17.0-next-20220331 (tuxmake@tuxmake)
-> (aarch64-linux-gnu-gcc (Debian 11.2.0-18) 11.2.0, GNU ld (GNU Binutils
-> for Debian) 2.38) #1 SMP PREEMPT @1648699852
-> [    0.000000] Machine model: Thundercomm Dragonboard 845c
-> <trim>
-> [    8.131366] ------------[ cut here ]------------
-> [    8.131374] dsi0_pll_bit_clk: Zero divisor and CLK_DIVIDER_ALLOW_ZERO =
-not set
-> [    8.131387] WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
-> divider_recalc_rate+0x8c/0xc0
-> [    8.131398] Modules linked in: qcom_spmi_adc5 snd_soc_sdm845
-> qcom_vadc_common qcom_spmi_temp_alarm qcom_pon crct10dif_ce rtc_pm8xxx
-> snd_soc_rt5663 msm snd_soc_qcom_common gpu_sched snd_soc_rl6231
-> soundwire_bus reset_qcom_pdc drm_dp_helper qcom_camss hci_uart
-> videobuf2_dma_sg btqca v4l2_fwnode venus_core ath10k_snoc v4l2_async
-> btbcm ath10k_core i2c_qcom_geni v4l2_mem2mem videobuf2_memops
-> videobuf2_v4l2 ath bluetooth camcc_sdm845 videobuf2_common
-> spi_geni_qcom i2c_qcom_cci qcom_rng mac80211 xhci_pci qcom_q6v5_mss
-> xhci_pci_renesas cfg80211 icc_osm_l3 slim_qcom_ngd_ctrl qcom_wdt
-> rfkill qrtr lmh pdr_interface display_connector slimbus qcom_q6v5_pas
-> drm_kms_helper qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common
-> qcom_glink_smem qmi_helpers drm mdt_loader socinfo rmtfs_mem fuse
-> [    8.131462] CPU: 5 PID: 8 Comm: kworker/u16:0 Not tainted
-> 5.17.0-next-20220331 #1
-> [    8.131465] Hardware name: Thundercomm Dragonboard 845c (DT)
-> [    8.131467] Workqueue: events_unbound deferred_probe_work_func
-> [    8.131475] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> [    8.131477] pc : divider_recalc_rate+0x8c/0xc0
-> [    8.131479] lr : divider_recalc_rate+0x8c/0xc0
-> [    8.131481] sp : ffff8000080936c0
-> [    8.131482] x29: ffff8000080936c0 x28: ffff781940e58d00 x27: ffffa7f3f=
-1bc6d38
-> [    8.131485] x26: ffffa7f3f1bc6cf8 x25: 0000000000000000 x24: fffffffff=
-fffffff
-> [    8.131488] x23: ffff781947e8a400 x22: 000000003b9aca50 x21: ffff78194=
-0be0800
-> [    8.131491] x20: ffff781947e8a800 x19: 000000003b9aca50 x18: 000000000=
-0000000
-> [    8.131494] x17: 0000000000000000 x16: 0000000000000000 x15: 000000000=
-0000000
-> [    8.131497] x14: ffff7819bd718000 x13: 0a74657320746f6e x12: 204f52455=
-a5f574f
-> [    8.131500] x11: 4c4c415f52454449 x10: 5649445f4b4c4320 x9 : ffffa7f3f=
-011de84
-> [    8.131502] x8 : 445f4b4c4320646e x7 : 6120726f73697669 x6 : 000000000=
-0000001
-> [    8.131505] x5 : ffffa7f3f288f000 x4 : ffffa7f3f288f2d0 x3 : 000000000=
-0000000
-> [    8.131508] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff78194=
-02c7000
-> [    8.131511] Call trace:
-> [    8.131512]  divider_recalc_rate+0x8c/0xc0
-> [    8.131513]  clk_divider_recalc_rate+0x64/0x90
-> [    8.131515]  clk_recalc+0x40/0xb0
-> [    8.131519]  clk_calc_subtree+0x58/0x90
-> [    8.131521]  clk_calc_subtree+0x70/0x90
-> [    8.131523]  clk_calc_new_rates+0x150/0x290
-> [    8.131526]  clk_calc_new_rates+0x100/0x290
-> [    8.131528]  clk_calc_new_rates+0x100/0x290
-> [    8.131530]  clk_calc_new_rates+0x100/0x290
-> [    8.131533]  clk_core_set_rate_nolock+0xa0/0x2a4
-> [    8.131535]  clk_set_rate_range_nolock.part.0+0xbc/0x2a0
-> [    8.131538]  __clk_put+0x70/0x140
-> [    8.131540]  clk_put+0x1c/0x30
-> [    8.131543]  of_clk_set_defaults+0x140/0x3c0
-> [    8.131546]  platform_probe+0x48/0xf0
-> [    8.131548]  really_probe+0x184/0x3d0
-> [    8.131550]  __driver_probe_device+0x11c/0x190
-> [    8.131553]  driver_probe_device+0x44/0xf4
-> [    8.131556]  __device_attach_driver+0xa4/0x140
-> [    8.131558]  bus_for_each_drv+0x84/0xe0
-> [    8.131561]  __device_attach+0xe4/0x1c0
-> [    8.131563]  device_initial_probe+0x20/0x30
-> [    8.131565]  bus_probe_device+0xa4/0xb0
-> [    8.131567]  deferred_probe_work_func+0xa8/0xfc
-> [    8.131570]  process_one_work+0x1dc/0x450
-> [    8.131575]  worker_thread+0x154/0x450
-> [    8.131577]  kthread+0x100/0x110
-> [    8.131579]  ret_from_fork+0x10/0x20
-> [    8.131584] ---[ end trace 0000000000000000 ]---
-> [    8.131588] ------------[ cut here ]------------
-> [    8.131589] dsi0_phy_pll_out_dsiclk: Zero divisor and
-> CLK_DIVIDER_ALLOW_ZERO not set
-> [    8.131596] WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
-> divider_recalc_rate+0x8c/0xc0
-> [    8.131599] Modules linked in: qcom_spmi_adc5 snd_soc_sdm845 qcom_vadc=
-_commo#
-> n qcom_spmi_temp_alarm qcom_pon crct10dif_ce rtc_pm8xxx snd_soc_rt5663
-> msm snd_soc_qcom_common gpu_sched snd_soc_rl6231 soundwire_bus
-> reset_qcom_pdc drm_dp_helper qcom_camss hci_uart videobuf2_dma_sg
-> btqca v4l2_fwnode venus_core ath10k_snoc v4l2_async btbcm ath10k_core
-> i2c_qcom_geni v4l2_mem2mem videobuf2_memops videobuf2_v4l2 ath
-> bluetooth camcc_sdm845 videobuf2_common spi_geni_qcom i2c_qcom_cci
-> qcom_rng mac80211 xhci_pci qcom_q6v5_mss xhci_pci_renesas cfg80211
-> icc_osm_l3 slim_qcom_ngd_ctrl qcom_wdt rfkill qrtr lmh pdr_interface
-> display_connector slimbus qcom_q6v5_pas drm_kms_helper qcom_pil_info
-> qcom_q6v5 qcom_sysmon qcom_common qcom_glink_smem qmi_helpers drm
-> mdt_loader socinfo rmtfs_mem fuse
-> [    8.131637] CPU: 5 PID: 8 Comm: kworker/u16:0 Tainted: G        W
->       5.17.0-next-20220331 #1
-> [    8.131639] Hardware name: Thundercomm Dragonboard 845c (DT)
-> [    8.131640] Workqueue: events_unbound deferred_probe_work_func
-> [    8.131643] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> [    8.131645] pc : divider_recalc_rate+0x8c/0xc0
-> [    8.131647] lr : divider_recalc_rate+0x8c/0xc0
-> [    8.131648] sp : ffff800008093680
-> [    8.131649] x29: ffff800008093680 x28: ffff781940e58d00 x27: ffffa7f3f=
-1bc6d38
-> [    8.131652] x26: ffffa7f3f1bc6cf8 x25: 0000000000000000 x24: fffffffff=
-fffffff
-> [    8.131655] x23: ffff781947e8a400 x22: 000000003b9aca50 x21: ffff78194=
-0be0800
-> [    8.131657] x20: ffff781947e8b300 x19: 000000003b9aca50 x18: 000000000=
-0000000
-> [    8.131660] x17: 0000000000000000 x16: 0000000000000000 x15: 000000000=
-0000000
-> [    8.131663] x14: ffff7819bd718000 x13: 0a74657320746f6e x12: 204f52455=
-a5f574f
-> [    8.131666] x11: 4c4c415f52454449 x10: 5649445f4b4c4320 x9 : ffffa7f3f=
-011de84
-> [    8.131669] x8 : 445f4b4c4320646e x7 : 6120726f73697669 x6 : 000000000=
-0000001
-> [    8.131671] x5 : ffffa7f3f288f000 x4 : ffffa7f3f288f2d0 x3 : 000000000=
-0000000
-> [    8.131674] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff78194=
-02c7000
-> [    8.131677] Call trace:
-> [    8.131677]  divider_recalc_rate+0x8c/0xc0
-> [    8.131679]  clk_divider_recalc_rate+0x64/0x90
-> [    8.131680]  clk_recalc+0x40/0xb0
-> [    8.131683]  clk_calc_subtree+0x58/0x90
-> [    8.131685]  clk_calc_subtree+0x70/0x90
-> [    8.131687]  clk_calc_subtree+0x70/0x90
-> [    8.131690]  clk_calc_subtree+0x70/0x90
-> [    8.131692]  clk_calc_new_rates+0x150/0x290
-> [    8.131694]  clk_calc_new_rates+0x100/0x290
-> [    8.131697]  clk_calc_new_rates+0x100/0x290
-> [    8.131699]  clk_calc_new_rates+0x100/0x290
-> [    8.131701]  clk_core_set_rate_nolock+0xa0/0x2a4
-> [    8.131704]  clk_set_rate_range_nolock.part.0+0xbc/0x2a0
-> [    8.131707]  __clk_put+0x70/0x140
-> [    8.131708]  clk_put+0x1c/0x30
-> [    8.131710]  of_clk_set_defaults+0x140/0x3c0
-> [    8.131712]  platform_probe+0x48/0xf0
-> [    8.131714]  really_probe+0x184/0x3d0
-> [    8.131716]  __driver_probe_device+0x11c/0x190
-> [    8.131719]  driver_probe_device+0x44/0xf4
-> [    8.131722]  __device_attach_driver+0xa4/0x140
-> [    8.131723]  bus_for_each_drv+0x84/0xe0
-> [    8.131726]  __device_attach+0xe4/0x1c0
-> [    8.131728]  device_initial_probe+0x20/0x30
-> [    8.131730]  bus_probe_device+0xa4/0xb0
-> [    8.131732]  deferred_probe_work_func+0xa8/0xfc
-> [    8.131735]  process_one_work+0x1dc/0x450
-> [    8.131737]  worker_thread+0x154/0x450
-> [    8.131739]  kthread+0x100/0x110
-> [    8.131741]  ret_from_fork+0x10/0x20
-> [    8.131743] ---[ end trace 0000000000000000 ]---
-> [    8.131756] ------------[ cut here ]#
-> ------------
-> [    8.131757] dsi0_pll_bit_clk: Zero divisor and CLK_DIVIDER_ALLOW_ZERO =
-not set
+> The clocks is the logical dependency of assigned-clocks, because
+> otherwise hardware description is not complete.
+
+Sure, but also #clock-cells indicating that this is a clock-controller
+itself means something. The existing bindings are what they are so
+forcing bindings to be updated to comply with having a 'clocks' property
+doesn't seem very nice.
+
 >=20
+> What should be here for Rockhip? We had similar cases like this for many
+> drivers, I was fixing some of Exynos as well. In my case usually the
+> root/external clock was missing, so I supplied is as input clock to the
+> clock controller.
 >=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->=20
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
->=20
-> [1] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20220=
-331/testrun/8808185/suite/linux-log-parser/test/check-kernel-exception-4814=
-166/log
+
+Can the schema consider either #clock-cells or clocks? I think that will
+work for most cases. It would also be good to have a comment in the
+schema or more detail around the definition of assigned-clocks in
+bindings/clock/clock-bindings.txt that clocks or #clock-cells are
+required. It would be super cool if assigned-clocks only applied if
+#clock-cells was present, otherwise clocks property applies, but I doubt
+we can do that anymore given how long the binding has been around.
