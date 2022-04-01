@@ -2,100 +2,136 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA47CC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 09:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2857C433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 10:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344780AbiDAJvf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 05:51:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55278 "EHLO
+        id S236548AbiDAKLq convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 06:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344776AbiDAJve (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 05:51:34 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E376F54BF1
-        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 02:49:36 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1179:0:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 01 Apr 2022 17:46:50 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Fri, 1 Apr 2022 17:47:49 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Fri, 1 Apr 2022 17:47:49 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S230360AbiDAKLq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 06:11:46 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98EA618EE83;
+        Fri,  1 Apr 2022 03:09:56 -0700 (PDT)
+Received: from mail-wm1-f44.google.com ([209.85.128.44]) by
+ mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MeUPU-1o8BXC2q7I-00aWdB; Fri, 01 Apr 2022 12:09:54 +0200
+Received: by mail-wm1-f44.google.com with SMTP id i132-20020a1c3b8a000000b0038ce25c870dso3201254wma.1;
+        Fri, 01 Apr 2022 03:09:54 -0700 (PDT)
+X-Gm-Message-State: AOAM5300FLqhk7MHJ7VpqI0n1lgCekCvKPTQtCjhu8LrWdvuNkUu5jLl
+        /WLcIskzT/+p5X3ECJDLQTTviTYpkxZuaNkMhtk=
+X-Google-Smtp-Source: ABdhPJyNwn5VW/gR5pIv2np3RCs3K09s4CU+E1aUKrucWrsCjYi+cdzwK6CE+Qjb/zAcZxqYzBm4uCZmD6/ogYdeFHA=
+X-Received: by 2002:a1c:f219:0:b0:38c:782c:3bb with SMTP id
+ s25-20020a1cf219000000b0038c782c03bbmr8009475wmc.94.1648807794169; Fri, 01
+ Apr 2022 03:09:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1648714851.git.qinjian@cqplus1.com> <fe4f4c3b0c768d1cd66fb648d74fa302e86787c0.1648714851.git.qinjian@cqplus1.com>
+ <CAK8P3a0OGM4aiaE2Nfc=7XGkGwAbnB99-j3PhVUmuA1z2FWeKg@mail.gmail.com> <2fa0ce6048f6449d883e2454ceea9540@cqplus1.com>
+In-Reply-To: <2fa0ce6048f6449d883e2454ceea9540@cqplus1.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 1 Apr 2022 12:09:38 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a002iHquY4J59omBwxyZjCFFiymqbWKu9GXs-7RVy292g@mail.gmail.com>
+Message-ID: <CAK8P3a002iHquY4J59omBwxyZjCFFiymqbWKu9GXs-7RVy292g@mail.gmail.com>
+Subject: Re: [PATCH v12 5/9] clk: Add Sunplus SP7021 clock driver
+To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Marc Zyngier <maz@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v12 5/9] clk: Add Sunplus SP7021 clock driver
-Thread-Topic: [PATCH v12 5/9] clk: Add Sunplus SP7021 clock driver
-Thread-Index: AQHYRNqOjCd6CVvOR0G759g8P20c0KzYsc4AgAIYlbA=
-Date:   Fri, 1 Apr 2022 09:47:48 +0000
-Message-ID: <2fa0ce6048f6449d883e2454ceea9540@cqplus1.com>
-References: <cover.1648714851.git.qinjian@cqplus1.com>
- <fe4f4c3b0c768d1cd66fb648d74fa302e86787c0.1648714851.git.qinjian@cqplus1.com>
- <CAK8P3a0OGM4aiaE2Nfc=7XGkGwAbnB99-j3PhVUmuA1z2FWeKg@mail.gmail.com>
-In-Reply-To: <CAK8P3a0OGM4aiaE2Nfc=7XGkGwAbnB99-j3PhVUmuA1z2FWeKg@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:TJfhkoT13owuLxX72+XrftpY4mBmHY8SnpJTLmFFbgEiz/zazDE
+ 0+0xUB0SCDaAwD9fKPEAG/CGeUezOvORBimaOpZYgdDUo2bQjh+BoEsL8HZxMbXR9rmMyN+
+ E+ozx9/Tx/Z7kIQ6DBYE7+CNT/adpH7ygYiL67OP7/vyrDMltZGQQRUrvuT1OW2JWh4b38t
+ 8Flr20KY+4DRj9VI9VKNQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Qma4p1Kf2C4=:ai9TLjlnItrZs5x9f3JQbr
+ UItuX/jl4qCtpoV8Tq0IfIZjl/sONJ/n4TWDsylw4K7EFoztLJ3gET28E+6hQCkoIncZDfL8o
+ UjVhSu2WH0WG7B3sSt+w88aXq0rGcaSlaax3eN8Aqapz9hEXM4LpDoUpx06yEzFGqvXBXuNZ6
+ sCFgeBlwoMxeDS8CX3cBnsxgPbEhgY46J/A02mXjVdWndN7ygmPGE3itVERx64ZklYp3jff6+
+ B3I8xfr2doWFOgBUVb6NRiszLfPkd5RHSrkf/BDINXxGuDVVMmw0bAWTzzUTw/ueLOgP1MOAL
+ +T/n8IOzDSTLQKtI3kn8916AH1vU86P9q/zU8zcmloXzRPk7p8mLpf7yBCvc0sfwTeFxREFay
+ ve9lUksIbU2pbYFhfPA8kErNeegXQYz4zrv58FwKLyDW/sm7iqCkX7fRbGYrzDEJZmu8Niczd
+ 9aw2VB79IsjpJNFlAYMkASH06mrz5UvoIj2b4upFLemnuf5u2ZBgnFjnslFCNQAtO9V101r88
+ Sfxv7xtah9RODVSI9BReQ1I+jBYRbmrBwplgBLc3nB1imvEsmpCIy8QihtHF0rhuSavZgW1Qt
+ h/UyhI2brQoNnaDBguxiGGsEMYhNuYvW28BF7ONdt2gdvARxSrysMy818GHqbh0SgrjA1Y7Gm
+ laHkjs3i3gpih4PEkjMbOcbzIU602/Bh8V4aBMPYeHKEEaoukdFpIhzrEozjOo4R4dhoDLyTL
+ +uHj6uNnKjmYRa4B6Gkf9HKrbvso+I0HdrYK63WaRNFjnmlxOkP04lXWMsmoTre0oAQo5Whsa
+ spGW+nw5PTTaZd+TQQ1MuPJtHfMpsTQC584JaazZayi0EpspYQ=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiANCj4gPiArc3RhdGljIGludCBzcF9wbGxfZW5hYmxlKHN0cnVjdCBjbGtfaHcgKmh3KQ0KPiA+
-ICt7DQo+ID4gKyAgICAgICBzdHJ1Y3Qgc3BfcGxsICpjbGsgPSB0b19zcF9wbGwoaHcpOw0KPiA+
-ICsgICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsNCj4gPiArDQo+ID4gKyAgICAgICBzcGluX2xv
-Y2tfaXJxc2F2ZShjbGstPmxvY2ssIGZsYWdzKTsNCj4gPiArICAgICAgIHdyaXRlbChCSVQoY2xr
-LT5wZF9iaXQgKyAxNikgfCBCSVQoY2xrLT5wZF9iaXQpLCBjbGstPnJlZyk7IC8qIHBvd2VyIHVw
-ICovDQo+ID4gKyAgICAgICBzcGluX3VubG9ja19pcnFyZXN0b3JlKGNsay0+bG9jaywgZmxhZ3Mp
-Ow0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0
-aWMgdm9pZCBzcF9wbGxfZGlzYWJsZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4gPiArew0KPiA+ICsg
-ICAgICAgc3RydWN0IHNwX3BsbCAqY2xrID0gdG9fc3BfcGxsKGh3KTsNCj4gPiArICAgICAgIHVu
-c2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gKw0KPiA+ICsgICAgICAgc3Bpbl9sb2NrX2lycXNhdmUo
-Y2xrLT5sb2NrLCBmbGFncyk7DQo+ID4gKyAgICAgICB3cml0ZWwoQklUKGNsay0+cGRfYml0ICsg
-MTYpLCBjbGstPnJlZyk7IC8qIHBvd2VyIGRvd24gKi8NCj4gPiArICAgICAgIHNwaW5fdW5sb2Nr
-X2lycXJlc3RvcmUoY2xrLT5sb2NrLCBmbGFncyk7DQo+ID4gK30NCj4gDQo+IFdoYXQgZG9lcyB0
-aGUgc3BpbmxvY2sgYWN0dWFsbHkgcHJvdGVjdCBoZXJlPyBBcyB3cml0ZWwoKSBpcyBwb3N0ZWQs
-IGl0DQo+IGNhbiBhbHJlYWR5IGxlYWsgb2Ygb2YgdGhlIGxvY2ssIGFuZCB0aGUgaW5wdXRzIHdv
-dWxkIGFwcGVhciB0byBiZQ0KPiBjb25zdGFudC4NCj4gDQoNClRoZXNlIGNvZGUgaXMgcmVmZXJl
-ZCBmcm9tIG90aGVyIGNsayBkcml2ZXIuDQpCdXQsIG90aGVyIGRyaXZlciBuZWVkIHJlYWQgdGhl
-biB3cml0ZSwgc28gbmVlZCBsb2NrIHByb3RlY3RlZC4NCk91ciAgSFcgaXMgSElXT1JEX01BU0tF
-RF9SRUcsIG1lYW5zIG1vZGlmeSBiaXRzIG5vIG5lZWQgdG8gcmVhZCwganVzdCAxIHdyaXRlIG9u
-bHkuDQpTbywgdGhlIGxvY2sgaXMgdXNlbGVzcy4NCkRpZCBJIHJpZ2h0Pw0KDQo+ID4gKyAgICAg
-ICAvKiBUaGlzIG1lbW9yeSByZWdpb24gaW5jbHVkZSBtdWx0aSBIVyByZWdzIGluIGRpc2NvbnRp
-bnVvdXMgb3JkZXIuDQo+ID4gKyAgICAgICAgKiBjbGsgZHJpdmVyIHVzZWQgc29tZSBkaXNjb250
-aW51b3VzIGFyZWFzIGluIHRoZSBtZW1vcnkgcmVnaW9uLg0KPiA+ICsgICAgICAgICogVXNpbmcg
-ZGV2bV9wbGF0Zm9ybV9pb3JlbWFwX3Jlc291cmNlKCkgd291bGQgY29uZmxpY3RlZCB3aXRoIG90
-aGVyIGRyaXZlcnMuDQo+ID4gKyAgICAgICAgKi8NCj4gPiArICAgICAgIHJlcyA9IHBsYXRmb3Jt
-X2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+ID4gKyAgICAgICBzcF9j
-bGtfYmFzZSA9IGRldm1faW9yZW1hcChkZXYsIHJlcy0+c3RhcnQsIHJlc291cmNlX3NpemUocmVz
-KSk7DQo+ID4gKyAgICAgICBpZiAoIXNwX2Nsa19iYXNlKQ0KPiA+ICsgICAgICAgICAgICAgICBy
-ZXR1cm4gLUVOWElPOw0KPiANCj4gQ2FuIHlvdSBleHBsYWluIHRoaXMgY29tbWVudCBpbiBtb3Jl
-IGRldGFpbD8gR2VuZXJhbGx5LCB0aGUgJ3JlZycgcHJvcGVydGllcw0KPiBvZiBkcml2ZXJzIHNo
-b3VsZCBub3Qgb3ZlcmxhcCwgc28gaXQgaXMgc3VwcG9zZWQgdG8gYmUgc2FmZSB0byBjYWxsDQo+
-IGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZSgpIGhlcmUuDQo+IA0KPiBXZSBkaXNjdXNz
-ZWQgdGhpcyBpbiB0aGUgY29udGV4dCBvZiB0aGUgaW9wIGRyaXZlciB0aGF0IGRpZCBoYXZlIG92
-ZXJsYXBwaW5nDQo+IHJlZ2lzdGVycyB3aXRoIHRoaXMgZHJpdmVyLCBhbmQgdGhhdCB3YXMgaW5j
-b3JyZWN0LiBBcmUgdGhlcmUgYW55IG90aGVyIGRyaXZlcnMNCj4gdGhhdCBjb25mbGljdCB3aXRo
-IHRoZSBjbGsgZHJpdmVyPw0KPiANCj4gICAgICAgQXJuZA0KDQpJIG1lYW5zLCBJIG11c3Qgc3Bs
-aXQgdXAgdGhlIG9yaWdpbiByZWcgcmVnaW9uIGludG8gNCBzbWFsbCBwaWVjZXMsDQphbmQgY2Fs
-bCBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2UoKSA0IHRpbWVzLg0KRGlkIEkgc2hvdWxk
-IGZvbGxvdyB0aGlzIHdheT8NCg==
+On Fri, Apr 1, 2022 at 11:47 AM qinjian[覃健] <qinjian@cqplus1.com> wrote:
+> > > +static int sp_pll_enable(struct clk_hw *hw)
+> > > +{
+> > > +       struct sp_pll *clk = to_sp_pll(hw);
+> > > +       unsigned long flags;
+> > > +
+> > > +       spin_lock_irqsave(clk->lock, flags);
+> > > +       writel(BIT(clk->pd_bit + 16) | BIT(clk->pd_bit), clk->reg); /* power up */
+> > > +       spin_unlock_irqrestore(clk->lock, flags);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static void sp_pll_disable(struct clk_hw *hw)
+> > > +{
+> > > +       struct sp_pll *clk = to_sp_pll(hw);
+> > > +       unsigned long flags;
+> > > +
+> > > +       spin_lock_irqsave(clk->lock, flags);
+> > > +       writel(BIT(clk->pd_bit + 16), clk->reg); /* power down */
+> > > +       spin_unlock_irqrestore(clk->lock, flags);
+> > > +}
+> >
+> > What does the spinlock actually protect here? As writel() is posted, it
+> > can already leak of of the lock, and the inputs would appear to be
+> > constant.
+> >
+>
+> These code is refered from other clk driver.
+> But, other driver need read then write, so need lock protected.
+> Our  HW is HIWORD_MASKED_REG, means modify bits no need to read, just 1 write only.
+> So, the lock is useless.
+> Did I right?
+
+If the read-modify-write is done on a different register, then it is
+fine to remove
+the lock. You can also consider having shadow registers to avoid expensive
+r-m-w cycles and just always write the register directly.
+
+> > > +       /* This memory region include multi HW regs in discontinuous order.
+> > > +        * clk driver used some discontinuous areas in the memory region.
+> > > +        * Using devm_platform_ioremap_resource() would conflicted with other drivers.
+> > > +        */
+> > > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +       sp_clk_base = devm_ioremap(dev, res->start, resource_size(res));
+> > > +       if (!sp_clk_base)
+> > > +               return -ENXIO;
+> >
+> > Can you explain this comment in more detail? Generally, the 'reg' properties
+> > of drivers should not overlap, so it is supposed to be safe to call
+> > devm_platform_ioremap_resource() here.
+> >
+> > We discussed this in the context of the iop driver that did have overlapping
+> > registers with this driver, and that was incorrect. Are there any other drivers
+> > that conflict with the clk driver?
+>
+> I means, I must split up the origin reg region into 4 small pieces,
+> and call devm_platform_ioremap_resource() 4 times.
+> Did I should follow this way?
+
+It depends. What are those other registers, and what drivers use them?
+
+        Arnd
