@@ -2,32 +2,62 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A543C433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 09:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1610BC433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 09:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243593AbiDAJ1u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 05:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36514 "EHLO
+        id S1344589AbiDAJeR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 05:34:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344544AbiDAJ1t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 05:27:49 -0400
-Received: from mx1.cqplus1.com (unknown [113.204.237.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E85F4101F14
-        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 02:25:51 -0700 (PDT)
-X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
-        R,40,3)
-Received: from 172.27.96.203
-        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1193:1:AUTH_RELAY)
-        (envelope-from <qinjian@cqplus1.com>); Fri, 01 Apr 2022 17:18:32 +0800 (CST)
-Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
- CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.18; Fri, 1 Apr 2022 17:19:31 +0800
-Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
- ([::1]) with mapi id 15.01.2375.018; Fri, 1 Apr 2022 17:19:31 +0800
-From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        with ESMTP id S243024AbiDAJeO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 05:34:14 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A84026A977
+        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 02:32:25 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id yy13so4659773ejb.2
+        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 02:32:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=rEnMX3kFYdJSNCFKgHrvIJeizdwWp+J/Vi4xHAvB/ms=;
+        b=SJNd2U4dw7PTJOCbXDRPUUsMrlymsOE86fORtUCCHCEH8jMm7Zwdcu6u2KNm7eEpFH
+         UVrouBDLphRFhYMNnmD9AiP+V1HUi0dxsqE3jvOsuKbk8+F/wG4sIVSlRdtjnlHcC0D5
+         iYdSIOuQdVFeRxgkPqY4rZCoGLkmcAXzJ49J6MHzHDgpmS7A0IOjwhT/EuQbmNYO6TEw
+         Rkbs+e/bYJ8suUjuc6doxZ4Ixj8mVZVddg2KTEfUForgbMdk+w+yoQkm599wIcc2uDgb
+         2lKR6sd+/fZj/dgFTC96lGzSbJqJ6+lxM/4YSgnhhRj+U296gvgMQYi68h0BlCbkPjQc
+         wgbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=rEnMX3kFYdJSNCFKgHrvIJeizdwWp+J/Vi4xHAvB/ms=;
+        b=eQDzrdZPMPNfk0vdMn4VQ+MdIDOPpW7MQ0dVC8jEYcbtfcnyrE+key6jJmELUhDF7M
+         aLUq4J/WkAGBAvjaX8SHOvHHnyiBN4uYuwmcs2EWJGAIyXfyyy9vZasX+DvW6aDTc+eF
+         87IgMgiUce5tyYsGXSHan+gzDjh5cjn7TveBcxB4/5VotY/J6BbvljAmaFjBNUJv9rXR
+         RldIHQl+rlQQCuyf6eo2t0OnjcfuiUO6N85vjIs+TKnmSLqrfqMurKcRXjB+8Wu3/PtP
+         n07rNvSs/LRgaLZcRa9hbJP9Whc6t5t26XMpMk52LEsASZ8eItoFQMxPtatqAgaYPac+
+         tT5g==
+X-Gm-Message-State: AOAM531a8hjHh+ZwUN/tMuDsoAnscw/uy+41Ma/EQ9M+Yo3YPtECdq5s
+        pZT05w+vLjuapZtAq5tqTGgWvQ==
+X-Google-Smtp-Source: ABdhPJxBp9FEJqOTnq3NI8fFr4UYVz0l6hnPTbFtpsd9FK5uXnF9Lgh2ZWAtmr3NmKy2goHSRAzsjQ==
+X-Received: by 2002:a17:906:fc06:b0:6e0:d13f:65e4 with SMTP id ov6-20020a170906fc0600b006e0d13f65e4mr8624770ejb.71.1648805543257;
+        Fri, 01 Apr 2022 02:32:23 -0700 (PDT)
+Received: from [192.168.0.169] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id e6-20020a056402190600b00413d03ac4a2sm975178edz.69.2022.04.01.02.32.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Apr 2022 02:32:22 -0700 (PDT)
+Message-ID: <951173dd-0d39-017c-322e-b38f693a8848@linaro.org>
+Date:   Fri, 1 Apr 2022 11:32:21 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v12 4/9] dt-bindings: clock: Add bindings for SP7021 clock
+ driver
+Content-Language: en-US
+To:     =?UTF-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
         "tglx@linutronix.de" <tglx@linutronix.de>,
@@ -40,50 +70,65 @@ CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v12 4/9] dt-bindings: clock: Add bindings for SP7021 clock
- driver
-Thread-Topic: [PATCH v12 4/9] dt-bindings: clock: Add bindings for SP7021
- clock driver
-Thread-Index: AQHYRNqEmfEToMF3qkaI4FVvqF6nN6zZafcAgAFYO/A=
-Date:   Fri, 1 Apr 2022 09:19:31 +0000
-Message-ID: <eae0d1c49fcd4b41b700e8fd86af1b3e@cqplus1.com>
 References: <cover.1648714851.git.qinjian@cqplus1.com>
  <c535be1e977098993850789faceea1db605df81d.1648714851.git.qinjian@cqplus1.com>
  <84d1e5b6-caa5-cf98-a4b2-2f1ca738b795@linaro.org>
-In-Reply-To: <84d1e5b6-caa5-cf98-a4b2-2f1ca738b795@linaro.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.28.110.18]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <eae0d1c49fcd4b41b700e8fd86af1b3e@cqplus1.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <eae0d1c49fcd4b41b700e8fd86af1b3e@cqplus1.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3NwLXNwNzAyMS5oIGIv
-aW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zcC1zcDcwMjEuaA0KPiA+IG5ldyBmaWxlIG1vZGUg
-MTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMDAwLi40NWRhYzZkZTgNCj4gPiAtLS0gL2Rldi9udWxs
-DQo+ID4gKysrIGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9zcC1zcDcwMjEuaA0KPiA+IEBA
-IC0wLDAgKzEsMTEyIEBADQo+ID4gKy8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIu
-MC1vbmx5IE9SIEJTRC0yLUNsYXVzZSkgKi8NCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IChD
-KSBTdW5wbHVzIFRlY2hub2xvZ3kgQ28uLCBMdGQuDQo+ID4gKyAqICAgICAgIEFsbCByaWdodHMg
-cmVzZXJ2ZWQuDQo+ID4gKyAqLw0KPiA+ICsjaWZuZGVmIF9EVF9CSU5ESU5HU19DTE9DS19TVU5Q
-TFVTX1NQNzAyMV9IDQo+ID4gKyNkZWZpbmUgX0RUX0JJTkRJTkdTX0NMT0NLX1NVTlBMVVNfU1A3
-MDIxX0gNCj4gPiArDQo+ID4gKyNkZWZpbmUgWFRBTAkJCTI3MDAwMDAwDQo+ID4gKw0KPiA+ICsv
-KiBwbGxzICovDQo+ID4gKyNkZWZpbmUgUExMX0EJCQkwDQo+ID4gKyNkZWZpbmUgUExMX0UJCQkx
-DQo+ID4gKyNkZWZpbmUgUExMX0VfMlA1CQkyDQo+ID4gKyNkZWZpbmUgUExMX0VfMjUJCTMNCj4g
-PiArI2RlZmluZSBQTExfRV8xMTJQNQkJNA0KPiA+ICsjZGVmaW5lIFBMTF9GCQkJNQ0KPiA+ICsj
-ZGVmaW5lIFBMTF9UVgkJCTYNCj4gPiArI2RlZmluZSBQTExfVFZfQQkJNw0KPiA+ICsjZGVmaW5l
-IFBMTF9TWVMJCQk4DQo+ID4gKw0KPiA+ICsvKiBnYXRlczogbW9fY2xrZW4wIH4gbW9fY2xrZW45
-ICovDQo+ID4gKyNkZWZpbmUgQ0xLX1NZU1RFTQkJMHgxMA0KPiA+ICsjZGVmaW5lIENMS19SVEMJ
-CQkweDEyDQo+IA0KPiBZQU1MIGxvb2tzIG9rLCBidXQgaGVyZSBjb21tZW50IGZyb20gQXJuZCBh
-bHNvIGFwcGxpZXMuIFRoZXNlIHNob3VsZCBiZQ0KPiByZWd1bGFyIGRlY2ltYWwgbnVtYmVycyBp
-bmNyZW1lbnRlZCBieSBvbmUuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KDQpZ
-ZXMsIHNhbWUgYXMgcmVzZXQgZHJpdmVyLCB0aGVzZSBkZWZpbmVzIGFsc28gbWFwcGluZyB0aGUg
-aGFyZHdhcmUuDQpCdXQgZGlmZmVyZW50IGZyb20gcmVzZXQgZHJpdmVyLCBjbGsgZHJpdmVyIGFs
-c28gdXNlZCB0aGVzZSBkZWZpbmVzLg0KSWYgSSByZW1vdmVkIHRoaXMgZGVmaW5lcywgSSAgbXVz
-dCB3cml0ZSB0aGUgcHJvcGVyIGhhcmR3YXJlIG51bWJlciB0d2ljZSBpbiBkdCAmIGRyaXZlci4N
-Ckl0J3MgbWVhbmluZ2xlc3MgJiBoYXJkIHRvIGNoZWNrLg0KDQoNCg0KDQo=
+On 01/04/2022 11:19, qinjian[覃健] wrote:
+>>> diff --git a/include/dt-bindings/clock/sp-sp7021.h b/include/dt-bindings/clock/sp-sp7021.h
+>>> new file mode 100644
+>>> index 000000000..45dac6de8
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/sp-sp7021.h
+>>> @@ -0,0 +1,112 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>> +/*
+>>> + * Copyright (C) Sunplus Technology Co., Ltd.
+>>> + *       All rights reserved.
+>>> + */
+>>> +#ifndef _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
+>>> +#define _DT_BINDINGS_CLOCK_SUNPLUS_SP7021_H
+>>> +
+>>> +#define XTAL			27000000
+>>> +
+>>> +/* plls */
+>>> +#define PLL_A			0
+>>> +#define PLL_E			1
+>>> +#define PLL_E_2P5		2
+>>> +#define PLL_E_25		3
+>>> +#define PLL_E_112P5		4
+>>> +#define PLL_F			5
+>>> +#define PLL_TV			6
+>>> +#define PLL_TV_A		7
+>>> +#define PLL_SYS			8
+>>> +
+>>> +/* gates: mo_clken0 ~ mo_clken9 */
+>>> +#define CLK_SYSTEM		0x10
+>>> +#define CLK_RTC			0x12
+>>
+>> YAML looks ok, but here comment from Arnd also applies. These should be
+>> regular decimal numbers incremented by one.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> Yes, same as reset driver, these defines also mapping the hardware.
+> But different from reset driver, clk driver also used these defines.
+> If I removed this defines, I  must write the proper hardware number twice in dt & driver.
+> It's meaningless & hard to check.
+
+Not really... just follow what most (or all) clock drivers are doing -
+incremental IDs.
+
+
+
+Best regards,
+Krzysztof
