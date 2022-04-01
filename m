@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B7CC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE79C433EF
 	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 20:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351724AbiDAUMk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1351614AbiDAUMk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 1 Apr 2022 16:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351614AbiDAUMj (ORCPT
+        with ESMTP id S1351715AbiDAUMj (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 16:12:39 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC375215473
-        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 13:10:46 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id b24so4206812edu.10
-        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 13:10:46 -0700 (PDT)
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FCA21A896
+        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 13:10:48 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id b15so4244645edn.4
+        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 13:10:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sPCP8q2t9mmowMCPujklX+PmP86KwmADww9ebRiXDzI=;
-        b=GhS363ByZRL86Pn4YX8QGeTEZNgcgve9rTtFhLsS6bfdKrvWBwj5oY8x5J9F2HfuCw
-         ntx5GCboVcvYtoBfU5vFRJFlLkxNeOMIaqI8H9mmAGU1T0QP0qetLL6RDFLdg9VpBeZP
-         bAqed/UQPjQgnOg/QA9bcvxkHke8iZ98KOl671sIP2vtyGdKSk3yu40naSh7LvNems29
-         IDMAf1PZjfeahL6DCkr2ZUlnN9vzYKbMW+0pubDA1OBpl0bWnDXW2MMw4Jbww4YKytqV
-         n5IW/G778o+MzJjO9FEXFKOsoq8JWdjdEmdQYdbxl6Pz0kd6onyIwam9uQumYGEtVC9s
-         Q1Yw==
+        bh=yLz7aILXGbmCujlTI/g4EfDEC7wYnFYansE6wl1+BpI=;
+        b=PxHyDvJR26H9mDD/PwV4JiYvxj7YL0fkB7i5YMP1Gf2xT7q1GpkA/Sm0jVGd19n3FY
+         WUU+Zo9FwAAqqwN/cQN6MRC9XqY1PmcZ0kDsCkdSOPceSM2d27c8HqHjHZ68GSedte6h
+         wwDhzr16zY5wnQ1pp+IrwTzagBcaEq7a9qurEf3wGnL+Tz/JrTCWAXzjH00mVt/OfRGV
+         QJMLDSbFmkmIwk6Q1r4nplyUOjldlccOsJHdUcCbV3P8uRNiBNBEiziDi7UBdTG4ne1N
+         oofhk2pIaQV/9lZnjc6xLEa6wP1LVKmNf5ozhLU3BnmWoVrJV8vvO6GQcQVV+P09QSyT
+         kr+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sPCP8q2t9mmowMCPujklX+PmP86KwmADww9ebRiXDzI=;
-        b=qsBEC+ai7xPSsWmsL/Z11vlpKGoqC12P3G6uso7IrXXS6W0OHkRM1drObbzFr/YTbg
-         IXpGjOvfhja+VTzcybmA+6wE1IJlTi7lvgXeoc3cszPW8V7dBPsb/t+vZsroji2It6Ex
-         pVzmgTUItW/5Td9WVQguLApTZjD3rhPj6NHmH9ph/8tBKIgbcnhuk6aWX4wk1IutBJX1
-         4sxSXv2FgynPpjZPND3ue6eFPoj40RPl75cnEDh/Vuv5PnXzAD3JiKv7v1I03CK2w9hO
-         gOLSEaR2Rb0y3/5/jjj4tVYDvfkq5Ssf4hyPYcpQYXlENBPChIB/fmc15smxmSb/B+1f
-         kraw==
-X-Gm-Message-State: AOAM530flWlut3qd1Yv4HZMX4KBNkbUPxeOoKupE3v6lQ1+6idmlD0es
-        Tcm3NUClPohSczSothibok8ziQ==
-X-Google-Smtp-Source: ABdhPJxO17RtK3iw3c/J8HVKLZjSSJh2uya5eLbv6I7iVraHoeBQFAiBf5MNJGKlZV3bDnlQ4kmZzA==
-X-Received: by 2002:a05:6402:2794:b0:419:2ea9:7de3 with SMTP id b20-20020a056402279400b004192ea97de3mr22563439ede.169.1648843845493;
-        Fri, 01 Apr 2022 13:10:45 -0700 (PDT)
+        bh=yLz7aILXGbmCujlTI/g4EfDEC7wYnFYansE6wl1+BpI=;
+        b=TT60kwMAj+mfE5uVKjYB9HLmSi2098S6yUTILYtNaIgns9sifefQxSd7cQxoZ4LoF1
+         J1MbSRC8esUvq0VLmUK/ceSVdK4GMjPBEgOoz1pokGonNp5xEWmKoX88XdvbQvrjOC1Y
+         T+RHW+57aJTYCuwHSt+BSk8qFpj0eMNqEjpFKfvq7ewHSEM1544cs+pa/1xqn1UJY1vR
+         8Xc+OY3l/S+llnzNZnWY95m0kjs3qdk2/09Fk3musLoR9n40aMvzqIuFw45RnwwTDGAR
+         vFlVXxpQjka39ymkIKTVsqqCZn4iiYjaRWgHGB0XsanAbhyZ2YFMBGTqa7igHPdPBeL2
+         wZOQ==
+X-Gm-Message-State: AOAM531HxLOQIeHWmdzj+lKypAIOn85jglUSu0Ua27zVL/G9ZY0/5R17
+        XgtL3DLkktgmg+b8uuLrxrTZqQ==
+X-Google-Smtp-Source: ABdhPJzw259othySLhLy7RggcO11QlDizMLjwIjmeo/ASWp80QmrYaKNi/O++Se0nG6Wx35SN2iAwg==
+X-Received: by 2002:a05:6402:6da:b0:3fd:cacb:f4b2 with SMTP id n26-20020a05640206da00b003fdcacbf4b2mr22483918edy.332.1648843847292;
+        Fri, 01 Apr 2022 13:10:47 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm1509041edb.27.2022.04.01.13.10.44
+        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm1509041edb.27.2022.04.01.13.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Apr 2022 13:10:45 -0700 (PDT)
+        Fri, 01 Apr 2022 13:10:46 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -62,9 +62,9 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 03/10] arm64: dts: qcom: add RPM clock controller fallback compatible
-Date:   Fri,  1 Apr 2022 22:10:28 +0200
-Message-Id: <20220401201035.189106-4-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 04/10] ARM: dts: qcom: msm8974-lge-nexus5: move gpio-keys out of soc
+Date:   Fri,  1 Apr 2022 22:10:29 +0200
+Message-Id: <20220401201035.189106-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
 References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
@@ -74,95 +74,73 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The bindings require a fallback compatible to RPM clock controller.
+The GPIO keys are not part of SoC and they should be defined inside of
+the root node.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8992.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi  | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 42 +++++++++----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index e34963505e07..cf0482fdf69d 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -299,7 +299,7 @@ rpm_requests: rpm-requests {
- 				qcom,smd-channels = "rpm_requests";
+diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
+index 069136170198..6d5fb60e798f 100644
+--- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
++++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
+@@ -19,6 +19,27 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
- 				rpmcc: clock-controller {
--					compatible = "qcom,rpmcc-msm8916";
-+					compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
- 					#clock-cells = <1>;
- 				};
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_keys_pin_a>;
++
++		volume-up {
++			label = "volume_up";
++			gpios = <&pm8941_gpios 2 GPIO_ACTIVE_LOW>;
++			linux,input-type = <1>;
++			linux,code = <KEY_VOLUMEUP>;
++		};
++
++		volume-down {
++			label = "volume_down";
++			gpios = <&pm8941_gpios 3 GPIO_ACTIVE_LOW>;
++			linux,input-type = <1>;
++			linux,code = <KEY_VOLUMEDOWN>;
++		};
++	};
++
+ 	smd {
+ 		rpm {
+ 			rpm_requests {
+@@ -448,27 +469,6 @@ bcrmf@1 {
+ 		};
+ 	};
  
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index aca13760bb75..4fa0091d7a5e 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -326,7 +326,7 @@ rpm_requests: rpm-requests {
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: rpmcc {
--					compatible = "qcom,rpmcc-msm8953";
-+					compatible = "qcom,rpmcc-msm8953", "qcom,rpmcc";
- 					clocks = <&xo_board>;
- 					clock-names = "xo";
- 					#clock-cells = <1>;
-diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-index 58fe58cc7703..c286381240ed 100644
---- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-@@ -11,7 +11,7 @@
- /delete-node/ &cpu7_map;
- 
- &rpmcc {
--	compatible = "qcom,rpmcc-msm8992";
-+	compatible = "qcom,rpmcc-msm8992", "qcom,rpmcc";
- };
- 
- &tcsr_mutex {
-diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-index 1ff7e2c03ce3..a36b1c7cf10e 100644
---- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-@@ -240,7 +240,7 @@ rpm_requests: rpm-requests {
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: rpmcc {
--					compatible = "qcom,rpmcc-msm8994";
-+					compatible = "qcom,rpmcc-msm8994", "qcom,rpmcc";
- 					#clock-cells = <1>;
- 				};
- 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index f0f81c23c16f..527afc90d9ef 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -456,7 +456,7 @@ rpm_requests: rpm-requests {
- 			qcom,glink-channels = "rpm_requests";
- 
- 			rpmcc: qcom,rpmcc {
--				compatible = "qcom,rpmcc-msm8996";
-+				compatible = "qcom,rpmcc-msm8996", "qcom,rpmcc";
- 				#clock-cells = <1>;
- 			};
- 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 3f06f7cd3cf2..f0ade6a03208 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -226,7 +226,7 @@ rpm_requests: glink-channel {
- 			qcom,glink-channels = "rpm_requests";
- 
- 			rpmcc: clock-controller {
--				compatible = "qcom,rpmcc-qcs404";
-+				compatible = "qcom,rpmcc-qcs404", "qcom,rpmcc";
- 				#clock-cells = <1>;
- 			};
+-	gpio-keys {
+-		compatible = "gpio-keys";
+-
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&gpio_keys_pin_a>;
+-
+-		volume-up {
+-			label = "volume_up";
+-			gpios = <&pm8941_gpios 2 GPIO_ACTIVE_LOW>;
+-			linux,input-type = <1>;
+-			linux,code = <KEY_VOLUMEUP>;
+-		};
+-
+-		volume-down {
+-			label = "volume_down";
+-			gpios = <&pm8941_gpios 3 GPIO_ACTIVE_LOW>;
+-			linux,input-type = <1>;
+-			linux,code = <KEY_VOLUMEDOWN>;
+-		};
+-	};
+-
+ 	serial@f9960000 {
+ 		status = "okay";
  
 -- 
 2.32.0
