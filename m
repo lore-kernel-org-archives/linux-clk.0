@@ -2,104 +2,69 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A607CC433F5
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 17:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5272CC433F5
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 18:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347731AbiDARzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 13:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
+        id S245363AbiDASRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 14:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244792AbiDARzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 13:55:06 -0400
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB22D28EA2A;
-        Fri,  1 Apr 2022 10:53:16 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id b188so3508224oia.13;
-        Fri, 01 Apr 2022 10:53:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=KRYf5KVQn/9TVFC8m/mZH5t7YA/+oecomtuT98DZH6A=;
-        b=0J3SVbhwiJTNOkooMQafytsNaOVz5+EhEEhIDPWpYNTfYwjWdyVVWh4Uri+QsT8Qqh
-         gOkc1NGOmhkMGLLGh0+vrRMbfHZsrnsdEbwCA+xQUYeOk9Xh8jT0SAZM053SpLlh9D+6
-         8M43BJ39rArHAOxW84/9x0tlwdgHcUnuCPxQ/sK4rYn+9uoovnpqV7N2IgfTjXiLlv7+
-         Ren0e19Da7HDmqBz0rAYbRHs0jZuI4cvKperETcCIkOX+PG0cRp1OSiR5JvQyKyzwJbx
-         J7zxPEVQ4cG5LwkHuxyjao1GtD7xFxa6ef8qNqHV4ebSxHyRhXitBXIYMgIiVo3mS4gR
-         witQ==
-X-Gm-Message-State: AOAM53014BrZAB1gTDLZ39+MiWmxbpnPDsnVMAvZbSFcS8/xmhQh1eWP
-        MCyrLfvXaU84VhsU9ifZ3A==
-X-Google-Smtp-Source: ABdhPJyGVwEDdajob3aoE6VamFB2Kgaa+Md455uNk8dX14/1a+be0FqMFMEh08i/Lpfe0iJ9lfbXhA==
-X-Received: by 2002:a05:6808:2019:b0:2ec:bcde:efe with SMTP id q25-20020a056808201900b002ecbcde0efemr5523229oiw.266.1648835596219;
-        Fri, 01 Apr 2022 10:53:16 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 60-20020a9d0642000000b005b22a82458csm1412709otn.55.2022.04.01.10.53.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Apr 2022 10:53:15 -0700 (PDT)
-Received: (nullmailer pid 3315459 invoked by uid 1000);
-        Fri, 01 Apr 2022 17:53:14 -0000
-Date:   Fri, 1 Apr 2022 12:53:14 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
-Cc:     "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "krzysztof.kozlowski@canonical.com" 
-        <krzysztof.kozlowski@canonical.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH v12 6/9] dt-bindings: interrupt-controller: Add bindings
- for SP7021 interrupt controller
-Message-ID: <Ykc8Cv/TbYlr9GxV@robh.at.kernel.org>
-References: <cover.1648714851.git.qinjian@cqplus1.com>
- <ff5bfd5611ab0defe0c98f98edbbf655e33cd16d.1648714851.git.qinjian@cqplus1.com>
- <YkYSyHVGsXkGs0uf@robh.at.kernel.org>
- <3373b11528214394baae71198df3adff@cqplus1.com>
+        with ESMTP id S238409AbiDASRg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 14:17:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87F161788E0;
+        Fri,  1 Apr 2022 11:15:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 231E060B19;
+        Fri,  1 Apr 2022 18:15:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AAF3C340EE;
+        Fri,  1 Apr 2022 18:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648836945;
+        bh=dVdKOaXz9iaxANVQcfDDCpVI8xWzvRSZh/at93Wv6jg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=uQfzd4BOHaVqDO4ZgZhQhCLT+3p5a1pzo3UJ+8d7cx4bocv5rqXkpG6DD9FXK+sE6
+         6xnxiJb23d+LqznCMJUkzJl4Z6tcJq4+JBlBlb7hWf4CjNThkjlGBeW7hBC6HsmTmE
+         l/RygU0hN2DtTiUjnU/ItO/PL5pIzTpl+aT+8tY3Z4IiTX+EDNpHOjhHinIMN/g9qS
+         tKjfdIOTeoKpsO3vVrWVMLXJX2ISOOkI0KHMrupTroypga+zRE90iwWjuiEFOPL46z
+         8q5Ns3WfyrxUzmmiCIHFA2yc1Yha0+07/gf0dTHza66DZd93WOVVnQz11vXOO65diX
+         L7kpSOQa1iLxQ==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3373b11528214394baae71198df3adff@cqplus1.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220324165904.538861-1-steve@sk2.org>
+References: <20220324165904.538861-1-steve@sk2.org>
+Subject: Re: [PATCH] clk: use i2c_match_id and simple i2c probe
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@kernel.org>, Stephen Kitt <steve@sk2.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Kitt <steve@sk2.org>
+Date:   Fri, 01 Apr 2022 11:15:43 -0700
+User-Agent: alot/0.10
+Message-Id: <20220401181545.7AAF3C340EE@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Apr 01, 2022 at 02:29:58AM +0000, qinjian[覃健] wrote:
-> > 
-> > On Thu, 31 Mar 2022 16:29:53 +0800, Qin Jian wrote:
-> > > Add documentation to describe Sunplus SP7021 interrupt controller bindings.
-> > >
-> > > Signed-off-by: Qin Jian <qinjian@cqplus1.com>
-> > > ---
-> > > Move 'reg' after 'compatible'
-> > > ---
-> > >  .../sunplus,sp7021-intc.yaml                  | 62 +++++++++++++++++++
-> > >  MAINTAINERS                                   |  1 +
-> > >  2 files changed, 63 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/sunplus,sp7021-intc.yaml
-> > >
-> > 
-> > 
-> > Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> > there's no need to repost patches *only* to add the tags. The upstream
-> > maintainer will do that for acks received on the version they apply.
-> > 
-> > If a tag was not added on purpose, please state why and what changed.
-> 
-> Changes: Move 'reg' after 'compatible'
-> I did a modification based on comments from krzysztof.kozlowski@canonical.com [1]
-> 
-> [1] https://lore.kernel.org/all/6dbeda18-a11c-609d-7a8f-bf2e6f27aea7@kernel.org/
+Please fix the subject.
 
-A trivial change like that can keep a tag especially if it came after 
-the comment (not sure here).
+Quoting Stephen Kitt (2022-03-24 09:59:04)
+> As part of the ongoing i2c transition to the simple probe
+> ("probe_new"), this patch uses i2c_match_id to retrieve the
+> driver_data for the probed device. The id parameter is thus no longer
+> necessary and the simple probe can be used instead.
+>=20
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
+> ---
+>  drivers/clk/clk-cdce925.c | 8 +++++---
+>  drivers/clk/clk-si5351.c  | 8 +++++---
+>  drivers/clk/clk-si544.c   | 8 +++++---
+>  drivers/clk/clk-si570.c   | 8 +++++---
 
-Rob
+Also split the patch for each driver and send in one patch series with a
+cover letter. Then the subject can be appropriate for that driver
+instead of generic "clk:" which is only for core things. Looking at
+previous patches to these files should help with the subject line.
