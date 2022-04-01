@@ -2,190 +2,263 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1680C433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 18:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E88C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 19:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348921AbiDASsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 14:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
+        id S239054AbiDATqe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 15:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243542AbiDASsw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 14:48:52 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4A6220B18
-        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 11:47:01 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id x21so407649ybd.6
-        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 11:47:01 -0700 (PDT)
+        with ESMTP id S236368AbiDATqd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 15:46:33 -0400
+Received: from mail-oo1-xc32.google.com (mail-oo1-xc32.google.com [IPv6:2607:f8b0:4864:20::c32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27F7F4FC6F
+        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 12:44:43 -0700 (PDT)
+Received: by mail-oo1-xc32.google.com with SMTP id p34-20020a4a95e5000000b003248d73d460so702190ooi.1
+        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 12:44:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KHwVWHL7L6HTe2gQfSQb8Mhf5JWtkQAFwHffatgw3Es=;
-        b=ESJ35r6Soz3GoZhs4/iCaSgJ1H5iixLvtUeVbp8SMsTqOu7sPNt5Pt63aoZtQ9Gcy0
-         SrxH6F5EwyCwASWBNoryIheBo6XtCLv3VCV9FKV6axXrquEegjmORt3OLe2NP+Oh5vMj
-         6eiDCqxJwaDwjbuPyalFin+ZAyfRlCVmq1sfL3jXoMP5dYFk8qt5e6gIbpl6ByJCFHpi
-         45G8Ulfuq6EiLJOh6hKZP5MixWyE236KrdFKFLWFbYskpgpTNs07rfXS1ytSWh61FPTs
-         RbLrApZVP4f1+GphMyt/1nM3/REYmUoXnuKEdx+mQa2n8M5YRkHq1sWe6vCT0GgSCG2g
-         po1w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eoDyR5wLKAdUvoHHm1+xh38XadYbaqhL+MtwYEWyQx4=;
+        b=VsEowxTR0k/JyCDGGuUfcIkJx6D9iJg0x4e775Hs5IF5VzVDHWy7FTWxg+JaXeooYe
+         emKqj242txx5xJs2nNhg0cZ1OOWohlr3NZfRYD69Go9l/uRSEF+kTPlL7u5/rw4MV57D
+         okE4+d+KK5c10M5p8KZrO9JnKaR8ZmpUcRv2MaCwl7TSXyCf7oL0evsV7LsN9sFy98Re
+         YTOGmJwzQIry8pY0PZWZcAKYdaSr8BqgbSEtq2WRIvFcHE8tRfRuJ9kRL0SOdicBBss4
+         5OOgf1fd31O5X5eh9dUyNtUGWPh5BBuHOdXLmo8mx+P6zbX6U24Sb8PSSmT6nQEiZbiv
+         9BRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KHwVWHL7L6HTe2gQfSQb8Mhf5JWtkQAFwHffatgw3Es=;
-        b=sYgKbVsBC07P8P5N/exTb4gRZpiiQN9Su6KaLkKXOOJTyZvlNVKFP4edXCWhw5k7Vw
-         Pl6xYyrV3cf2yvKPImhvVS/HHEEJOBBQd/lxw1dvC6hUbBQ2Hv+FPHY6tVUqnaWMl1Il
-         paF/el65f/uwkWyUc+VMDdvMDPPdMgrQjSdD3HTZ75XzfsfDaDJLm/f2w4WE5gqrp2+X
-         PPxbXX8XdaKpL+qxYEQeJ08JK8t8KMUXN4EJOQpYDxGzY6lg/zuaT3359HkK4ZTUIhRh
-         fpz+qrX/b9pEKRjvwY0NTvUDQfrnCdY0tBVGJzS7vIFcHY52tHnmuQDhW+TuNw/SWR8i
-         DWcQ==
-X-Gm-Message-State: AOAM532FIGh/HBd5vL2JYZOP2H83+gF0CV3JOrvcjpWRMn2Wdr/Ap2LD
-        EWfuumy2ybqt42mvXjd+CggWAOtZaC+1n9FSog9otQ==
-X-Google-Smtp-Source: ABdhPJyWFhvCTOuWsnUZ1wF2W4+gUa9RiTNz4mEEbStDzWibyXeAUKdg/4Tk05i1j56aFF/Yn/cxNWLVdWmLGZfQZ94=
-X-Received: by 2002:a25:9846:0:b0:61a:3deb:4d39 with SMTP id
- k6-20020a259846000000b0061a3deb4d39mr10149476ybo.537.1648838820325; Fri, 01
- Apr 2022 11:47:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <CA+G9fYuqU45hHmK4WMUNEXQbmBucE+9fB=S9wcHEfEHaZ2jgcQ@mail.gmail.com>
- <20220401151058.fipdax3kvmxknctv@houat>
-In-Reply-To: <20220401151058.fipdax3kvmxknctv@houat>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 2 Apr 2022 00:16:48 +0530
-Message-ID: <CA+G9fYu+WddXTb0NcbviUfGQHhsmThssVCafLPw7+nj3JsoFAA@mail.gmail.com>
-Subject: Re: [next] db845c: WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
- divider_recalc_rate
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-        gabriel.fernandez@foss.st.com,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eoDyR5wLKAdUvoHHm1+xh38XadYbaqhL+MtwYEWyQx4=;
+        b=KN6iZA4aIvVeIokxS9GzIjLsXnyaq2KoMkIheSkHrVzHsLWuLNn9WdIzFEHJkcKGLR
+         Tc2p51lUIz5zL1ERcITuDaQabq+pDcXMkNW7mgMJdYVjlZDRVArzR0CyhQSI88C0ELyH
+         COkh07WDdYoerGtX0HXVVXG08Uf4YAVqSAaUvx3DFzq6OlsVV+3LP20U4Ho0BixYbrqu
+         Bcvyk5jhXaF1sR0BiLx7WwRa4hM9SLHphw89RhU5qHydwLrAFFxm3zWdTovvWdolQyP2
+         gDL+YqOrttCjwY2AUF6HoCS4BdS9d/3EnDmEbczb4OZdwAGbMXhRfnDARYL6o6Chswnl
+         CHog==
+X-Gm-Message-State: AOAM532ZhvVxzQMpxWESKBs6omTjI0PrAzC5yBeyzY90HABV6KntRa37
+        nRVayqKcU1Zs+gnj/s4PxSsQ2A==
+X-Google-Smtp-Source: ABdhPJzHVq2wM1+PpnlqzdvZWU1jvshpm1Veo28hKMWOVFTl5EbwrKGHejrrf26XPj5IVBEQR+BYfw==
+X-Received: by 2002:a4a:8904:0:b0:323:7039:6c68 with SMTP id f4-20020a4a8904000000b0032370396c68mr7182992ooi.8.1648842282375;
+        Fri, 01 Apr 2022 12:44:42 -0700 (PDT)
+Received: from ripper ([2600:1700:a0:3dc8:205:1bff:fec0:b9b3])
+        by smtp.gmail.com with ESMTPSA id h8-20020a056830400800b005cdceb42261sm1533435ots.66.2022.04.01.12.44.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Apr 2022 12:44:41 -0700 (PDT)
+Date:   Fri, 1 Apr 2022 12:47:09 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Nitin Rawat <quic_nitirawa@quicinc.com>,
+        Asutosh Das <quic_asutoshd@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+Subject: Re: [RFC PATCH 4/4] ufs: set power domain performance state when
+ scaling gears
+Message-ID: <YkdWvVVp4RloGjkC@ripper>
+References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
+ <20220401145820.1003826-5-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220401145820.1003826-5-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 1 Apr 2022 at 20:41, Maxime Ripard <maxime@cerno.tech> wrote:
->
-> Hi,
->
-> On Thu, Mar 31, 2022 at 05:33:57PM +0530, Naresh Kamboju wrote:
-> > Following kernel warning noticed on db845c while booting linux next-20220331.
-> >
-> > metadata:
-> >   git_ref: master
-> >   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> >   git_sha: fdcbcd1348f4ef713668bae1b0fa9774e1811205
-> >   git_describe: next-20220331
-> >   kernel_version: 5.17.0
-> >   kernel-config: https://builds.tuxbuild.com/278RLnhgJL7XdlJbcbv07jiwbYB/config
-> >
-> > Boot log:
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x517f803c]
-> > [    0.000000] Linux version 5.17.0-next-20220331 (tuxmake@tuxmake)
-> > (aarch64-linux-gnu-gcc (Debian 11.2.0-18) 11.2.0, GNU ld (GNU Binutils
-> > for Debian) 2.38) #1 SMP PREEMPT @1648699852
-> > [    0.000000] Machine model: Thundercomm Dragonboard 845c
-> > <trim>
-> > [    8.131366] ------------[ cut here ]------------
-> > [    8.131374] dsi0_pll_bit_clk: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set
-> > [    8.131387] WARNING: CPU: 5 PID: 8 at drivers/clk/clk-divider.c:139
-> > divider_recalc_rate+0x8c/0xc0
-> > [    8.131398] Modules linked in: qcom_spmi_adc5 snd_soc_sdm845
-> > qcom_vadc_common qcom_spmi_temp_alarm qcom_pon crct10dif_ce rtc_pm8xxx
-> > snd_soc_rt5663 msm snd_soc_qcom_common gpu_sched snd_soc_rl6231
-> > soundwire_bus reset_qcom_pdc drm_dp_helper qcom_camss hci_uart
-> > videobuf2_dma_sg btqca v4l2_fwnode venus_core ath10k_snoc v4l2_async
-> > btbcm ath10k_core i2c_qcom_geni v4l2_mem2mem videobuf2_memops
-> > videobuf2_v4l2 ath bluetooth camcc_sdm845 videobuf2_common
-> > spi_geni_qcom i2c_qcom_cci qcom_rng mac80211 xhci_pci qcom_q6v5_mss
-> > xhci_pci_renesas cfg80211 icc_osm_l3 slim_qcom_ngd_ctrl qcom_wdt
-> > rfkill qrtr lmh pdr_interface display_connector slimbus qcom_q6v5_pas
-> > drm_kms_helper qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common
-> > qcom_glink_smem qmi_helpers drm mdt_loader socinfo rmtfs_mem fuse
-> > [    8.131462] CPU: 5 PID: 8 Comm: kworker/u16:0 Not tainted
-> > 5.17.0-next-20220331 #1
-> > [    8.131465] Hardware name: Thundercomm Dragonboard 845c (DT)
-> > [    8.131467] Workqueue: events_unbound deferred_probe_work_func
-> > [    8.131475] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    8.131477] pc : divider_recalc_rate+0x8c/0xc0
-> > [    8.131479] lr : divider_recalc_rate+0x8c/0xc0
-> > [    8.131481] sp : ffff8000080936c0
-> > [    8.131482] x29: ffff8000080936c0 x28: ffff781940e58d00 x27: ffffa7f3f1bc6d38
-> > [    8.131485] x26: ffffa7f3f1bc6cf8 x25: 0000000000000000 x24: ffffffffffffffff
-> > [    8.131488] x23: ffff781947e8a400 x22: 000000003b9aca50 x21: ffff781940be0800
-> > [    8.131491] x20: ffff781947e8a800 x19: 000000003b9aca50 x18: 0000000000000000
-> > [    8.131494] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [    8.131497] x14: ffff7819bd718000 x13: 0a74657320746f6e x12: 204f52455a5f574f
-> > [    8.131500] x11: 4c4c415f52454449 x10: 5649445f4b4c4320 x9 : ffffa7f3f011de84
-> > [    8.131502] x8 : 445f4b4c4320646e x7 : 6120726f73697669 x6 : 0000000000000001
-> > [    8.131505] x5 : ffffa7f3f288f000 x4 : ffffa7f3f288f2d0 x3 : 0000000000000000
-> > [    8.131508] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff7819402c7000
-> > [    8.131511] Call trace:
-> > [    8.131512]  divider_recalc_rate+0x8c/0xc0
-> > [    8.131513]  clk_divider_recalc_rate+0x64/0x90
-> > [    8.131515]  clk_recalc+0x40/0xb0
-> > [    8.131519]  clk_calc_subtree+0x58/0x90
-> > [    8.131521]  clk_calc_subtree+0x70/0x90
-> > [    8.131523]  clk_calc_new_rates+0x150/0x290
-> > [    8.131526]  clk_calc_new_rates+0x100/0x290
-> > [    8.131528]  clk_calc_new_rates+0x100/0x290
-> > [    8.131530]  clk_calc_new_rates+0x100/0x290
-> > [    8.131533]  clk_core_set_rate_nolock+0xa0/0x2a4
-> > [    8.131535]  clk_set_rate_range_nolock.part.0+0xbc/0x2a0
-> > [    8.131538]  __clk_put+0x70/0x140
-> > [    8.131540]  clk_put+0x1c/0x30
-> > [    8.131543]  of_clk_set_defaults+0x140/0x3c0
-> > [    8.131546]  platform_probe+0x48/0xf0
-> > [    8.131548]  really_probe+0x184/0x3d0
-> > [    8.131550]  __driver_probe_device+0x11c/0x190
-> > [    8.131553]  driver_probe_device+0x44/0xf4
-> > [    8.131556]  __device_attach_driver+0xa4/0x140
-> > [    8.131558]  bus_for_each_drv+0x84/0xe0
-> > [    8.131561]  __device_attach+0xe4/0x1c0
-> > [    8.131563]  device_initial_probe+0x20/0x30
-> > [    8.131565]  bus_probe_device+0xa4/0xb0
-> > [    8.131567]  deferred_probe_work_func+0xa8/0xfc
-> > [    8.131570]  process_one_work+0x1dc/0x450
-> > [    8.131575]  worker_thread+0x154/0x450
-> > [    8.131577]  kthread+0x100/0x110
-> > [    8.131579]  ret_from_fork+0x10/0x20
-> > [    8.131584] ---[ end trace 0000000000000000 ]---
-> > [    8.131588] ------------[ cut here ]------------
->
-> I'm not sure if it's feasible, but if it is, it looks like something
-> that could be fixed by the patch pasted here:
->
-> https://lore.kernel.org/linux-clk/20220401122736.5yvanksa4pla7uql@houat/
-> Could you test it?
+On Fri 01 Apr 07:58 PDT 2022, Krzysztof Kozlowski wrote:
 
-I have tested the single line patch and reported problems not fixed.
+> Scaling gears requires not only scaling clocks, but also voltage levels,
+> e.g. via performance states.
+> 
+> USe the provided OPP table, to set proper OPP frequency which through
+> required-opps will trigger performance state change.
+> 
+
+This looks quite nice! Just two questions about the path looking forward.
+
+If we where to extend the opp core to allow specifying the clock rate
+for some N first clocks (similar to how e.g. regulators are handled) it
+seems possible to extend this to replace the freq-table property as
+well. Would you agree?
 
 
---->8---
+The other missing required feature (in this area) from the upstream UFS
+driver is the ability of voting for interconnect bandwidth. Based on
+your path it would be trivial to specify different values for the votes
+for each speed, but looking at downstream [1] (each row represents the
+vote for the two paths in KB/s) indicates a more complex relationship
+between gear and voted bandwidth.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 91f863b7a824..ee5a0223e47d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2599,6 +2599,8 @@ static int clk_core_set_parent_nolock(struct
-clk_core *core,
-  } else {
-  __clk_recalc_rates(core, POST_RATE_CHANGE);
-  __clk_recalc_accuracies(core);
-+
-+ core->req_rate = core->rate;
-  }
+This was the reason I suggested that perhaps we need to key the
+opp-table based on the gear? But I don't think there would be any issue
+detecting this in runtime...
 
+[1] https://github.com/MiCode/kernel_devicetree/blob/zeus-s-oss/qcom/waipio.dtsi#L1982
 
-- Naresh
+Regards,
+Bjorn
+
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/scsi/ufs/ufshcd-pltfrm.c |  6 +++++
+>  drivers/scsi/ufs/ufshcd.c        | 42 +++++++++++++++++++++++++-------
+>  drivers/scsi/ufs/ufshcd.h        |  3 +++
+>  3 files changed, 42 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> index cca4b2181a81..c8f19b54be92 100644
+> --- a/drivers/scsi/ufs/ufshcd-pltfrm.c
+> +++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+> @@ -360,6 +360,12 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
+>  		goto dealloc_host;
+>  	}
+>  
+> +	if (devm_pm_opp_of_add_table(dev))
+> +		dev_dbg(dev, "no OPP table (%d), no performance state control\n",
+> +			err);
+> +	else
+> +		hba->use_pm_opp = true;
+> +
+>  	ufshcd_init_lanes_per_dir(hba);
+>  
+>  	err = ufshcd_init(hba, mmio_base, irq);
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 3f9caafa91bf..84912db86da8 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1164,11 +1164,16 @@ static int ufshcd_wait_for_doorbell_clr(struct ufs_hba *hba,
+>  static int ufshcd_scale_gear(struct ufs_hba *hba, bool scale_up)
+>  {
+>  	int ret = 0;
+> +	struct ufs_clk_info *clki;
+> +	unsigned long pm_opp_target_rate;
+>  	struct ufs_pa_layer_attr new_pwr_info;
+>  
+> +	clki = list_first_entry(&hba->clk_list_head, struct ufs_clk_info, list);
+> +
+>  	if (scale_up) {
+>  		memcpy(&new_pwr_info, &hba->clk_scaling.saved_pwr_info.info,
+>  		       sizeof(struct ufs_pa_layer_attr));
+> +		pm_opp_target_rate = clki->max_freq;
+>  	} else {
+>  		memcpy(&new_pwr_info, &hba->pwr_info,
+>  		       sizeof(struct ufs_pa_layer_attr));
+> @@ -1184,6 +1189,13 @@ static int ufshcd_scale_gear(struct ufs_hba *hba, bool scale_up)
+>  			new_pwr_info.gear_tx = hba->clk_scaling.min_gear;
+>  			new_pwr_info.gear_rx = hba->clk_scaling.min_gear;
+>  		}
+> +		pm_opp_target_rate = clki->min_freq;
+> +	}
+> +
+> +	if (hba->use_pm_opp && scale_up) {
+> +		ret = dev_pm_opp_set_rate(hba->dev, pm_opp_target_rate);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	/* check if the power mode needs to be changed or not? */
+> @@ -1194,6 +1206,11 @@ static int ufshcd_scale_gear(struct ufs_hba *hba, bool scale_up)
+>  			hba->pwr_info.gear_tx, hba->pwr_info.gear_rx,
+>  			new_pwr_info.gear_tx, new_pwr_info.gear_rx);
+>  
+> +	if (ret && hba->use_pm_opp && scale_up)
+> +		dev_pm_opp_set_rate(hba->dev, hba->devfreq->previous_freq);
+> +	else if (hba->use_pm_opp && !scale_up)
+> +		ret = dev_pm_opp_set_rate(hba->dev, pm_opp_target_rate);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -1435,9 +1452,11 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
+>  	if (list_empty(clk_list))
+>  		return 0;
+>  
+> -	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
+> -	dev_pm_opp_add(hba->dev, clki->min_freq, 0);
+> -	dev_pm_opp_add(hba->dev, clki->max_freq, 0);
+> +	if (!hba->use_pm_opp) {
+> +		clki = list_first_entry(clk_list, struct ufs_clk_info, list);
+> +		dev_pm_opp_add(hba->dev, clki->min_freq, 0);
+> +		dev_pm_opp_add(hba->dev, clki->max_freq, 0);
+> +	}
+>  
+>  	ufshcd_vops_config_scaling_param(hba, &hba->vps->devfreq_profile,
+>  					 &hba->vps->ondemand_data);
+> @@ -1449,8 +1468,10 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
+>  		ret = PTR_ERR(devfreq);
+>  		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
+>  
+> -		dev_pm_opp_remove(hba->dev, clki->min_freq);
+> -		dev_pm_opp_remove(hba->dev, clki->max_freq);
+> +		if (!hba->use_pm_opp) {
+> +			dev_pm_opp_remove(hba->dev, clki->min_freq);
+> +			dev_pm_opp_remove(hba->dev, clki->max_freq);
+> +		}
+>  		return ret;
+>  	}
+>  
+> @@ -1462,7 +1483,6 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
+>  static void ufshcd_devfreq_remove(struct ufs_hba *hba)
+>  {
+>  	struct list_head *clk_list = &hba->clk_list_head;
+> -	struct ufs_clk_info *clki;
+>  
+>  	if (!hba->devfreq)
+>  		return;
+> @@ -1470,9 +1490,13 @@ static void ufshcd_devfreq_remove(struct ufs_hba *hba)
+>  	devfreq_remove_device(hba->devfreq);
+>  	hba->devfreq = NULL;
+>  
+> -	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
+> -	dev_pm_opp_remove(hba->dev, clki->min_freq);
+> -	dev_pm_opp_remove(hba->dev, clki->max_freq);
+> +	if (!hba->use_pm_opp) {
+> +		struct ufs_clk_info *clki;
+> +
+> +		clki = list_first_entry(clk_list, struct ufs_clk_info, list);
+> +		dev_pm_opp_remove(hba->dev, clki->min_freq);
+> +		dev_pm_opp_remove(hba->dev, clki->max_freq);
+> +	}
+>  }
+>  
+>  static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 88c20f3608c2..3bd02095897f 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -776,6 +776,8 @@ struct ufs_hba_monitor {
+>   * @auto_bkops_enabled: to track whether bkops is enabled in device
+>   * @vreg_info: UFS device voltage regulator information
+>   * @clk_list_head: UFS host controller clocks list node head
+> + * @use_pm_opp: whether OPP table is provided and scaling gears should trigger
+> + *              setting OPP
+>   * @pwr_info: holds current power mode
+>   * @max_pwr_info: keeps the device max valid pwm
+>   * @clk_scaling_lock: used to serialize device commands and clock scaling
+> @@ -894,6 +896,7 @@ struct ufs_hba {
+>  	bool auto_bkops_enabled;
+>  	struct ufs_vreg_info vreg_info;
+>  	struct list_head clk_list_head;
+> +	bool use_pm_opp;
+>  
+>  	/* Number of requests aborts */
+>  	int req_abort_count;
+> -- 
+> 2.32.0
+> 
