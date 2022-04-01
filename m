@@ -2,98 +2,99 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDECC433EF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 07:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF77C433EF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 08:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229891AbiDAH6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 03:58:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54120 "EHLO
+        id S243697AbiDAIaz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 04:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344157AbiDAH55 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 03:57:57 -0400
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F0FB1AA8F5;
-        Fri,  1 Apr 2022 00:56:06 -0700 (PDT)
-Received: from ip5b412258.dynamic.kabel-deutschland.de ([91.65.34.88] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1naC8T-0006pi-L5; Fri, 01 Apr 2022 09:55:57 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>, zhangqing@rock-chips.com,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
-Date:   Fri, 01 Apr 2022 09:55:55 +0200
-Message-ID: <3107512.vfdyTQepKt@diego>
-In-Reply-To: <20220331225134.7A0A9C340ED@smtp.kernel.org>
-References: <20220329111323.3569-1-jbx6244@gmail.com> <20220331225134.7A0A9C340ED@smtp.kernel.org>
+        with ESMTP id S243740AbiDAIaw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 04:30:52 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7F6F4615D
+        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 01:28:54 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1188:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Fri, 01 Apr 2022 16:23:46 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.18; Fri, 1 Apr 2022 16:24:45 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.018; Fri, 1 Apr 2022 16:24:45 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Russell King - ARM Linux" <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v12 2/9] dt-bindings: reset: Add bindings for SP7021 reset
+ driver
+Thread-Topic: [PATCH v12 2/9] dt-bindings: reset: Add bindings for SP7021
+ reset driver
+Thread-Index: AQHYRNqIUjsRZ57Im0G1ASM2miSM7KzYqzEAgAIN1IA=
+Date:   Fri, 1 Apr 2022 08:24:45 +0000
+Message-ID: <7a344146331847ce88d26716fc3b6380@cqplus1.com>
+References: <cover.1648714851.git.qinjian@cqplus1.com>
+ <6abf8de01fa2f24e13e9b78b3dc3b206ea551c9c.1648714851.git.qinjian@cqplus1.com>
+ <CAK8P3a1APzs74YTcZ=m43G3zrmwJZKcYSTvV5eDDQX-37UY7Tw@mail.gmail.com>
+In-Reply-To: <CAK8P3a1APzs74YTcZ=m43G3zrmwJZKcYSTvV5eDDQX-37UY7Tw@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-Am Freitag, 1. April 2022, 00:51:32 CEST schrieb Stephen Boyd:
-> Quoting Johan Jonker (2022-03-29 04:13:22)
-> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> > new file mode 100644
-> > index 000000000..ddd7e46af
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
-> > @@ -0,0 +1,78 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
-> > +
-> > +maintainers:
-> > +  - Elaine Zhang <zhangqing@rock-chips.com>
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +description: |
-> > +  The RK3188/RK3066 clock controller generates and supplies clocks to various
-> > +  controllers within the SoC and also implements a reset controller for SoC
-> > +  peripherals.
-> > +  Each clock is assigned an identifier and client nodes can use this identifier
-> > +  to specify the clock which they consume. All available clocks are defined as
-> > +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
-> > +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
-> > +  Similar macros exist for the reset sources in these files.
-> > +  There are several clocks that are generated outside the SoC. It is expected
-> > +  that they are defined using standard clock bindings with following
-> > +  clock-output-names:
-> > +    - "xin24m"    - crystal input                 - required
-> > +    - "xin32k"    - RTC clock                     - optional
-> > +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
-> > +    - "ext_hsadc" - external HSADC clock          - optional
-> > +    - "ext_cif0"  - external camera clock         - optional
-> > +    - "ext_rmii"  - external RMII clock           - optional
-> > +    - "ext_jtag"  - external JTAG clock           - optional
-> 
-> I'd expect all these clks here to be inputs to this node.
-
-The optional clocks are all part of a circular dependency.
-
-So for example xin32k normally is generated by the pmic and fed
-back into the system, so to get xin32k, we need the pmic to probe,
-which needs i2c, which in turn already needs the clock controller.
-
-Or optional clocks may not be available at all.
-
-So for the past years we already relied on the clock-system's
-self adaptation if a clock becomes available at some point
-during later boot and hence do not have those in a clocks-property.
-
-Heiko
-
-
+PiANCj4gT24gVGh1LCBNYXIgMzEsIDIwMjIgYXQgMTA6MjkgQU0gUWluIEppYW4gPHFpbmppYW5A
+Y3FwbHVzMS5jb20+IHdyb3RlOg0KPiANCj4gPiArLyogbW9fcmVzZXQwIH4gbW9fcmVzZXQ5ICov
+DQo+ID4gKyNkZWZpbmUgUlNUX1NZU1RFTSAgICAgICAgICAgICAweDAwDQo+ID4gKyNkZWZpbmUg
+UlNUX1JUQyAgICAgICAgICAgICAgICAgICAgICAgIDB4MDINCj4gPiArI2RlZmluZSBSU1RfSU9D
+VEwgICAgICAgICAgICAgIDB4MDMNCj4gPiArI2RlZmluZSBSU1RfSU9QICAgICAgICAgICAgICAg
+ICAgICAgICAgMHgwNA0KPiA+ICsjZGVmaW5lIFJTVF9PVFBSWCAgICAgICAgICAgICAgMHgwNQ0K
+PiA+ICsjZGVmaW5lIFJTVF9OT0MgICAgICAgICAgICAgICAgICAgICAgICAweDA2DQo+ID4gKyNk
+ZWZpbmUgUlNUX0JSICAgICAgICAgICAgICAgICAweDA3DQo+ID4gKyNkZWZpbmUgUlNUX1JCVVNf
+TDAwICAgICAgICAgICAweDA4DQo+ID4gKyNkZWZpbmUgUlNUX1NQSUZMICAgICAgICAgICAgICAw
+eDA5DQo+ID4gKyNkZWZpbmUgUlNUX1NEQ1RSTDAgICAgICAgICAgICAweDBhDQo+ID4gKyNkZWZp
+bmUgUlNUX1BFUkkwICAgICAgICAgICAgICAweDBiDQo+ID4gKyNkZWZpbmUgUlNUX0E5MjYgICAg
+ICAgICAgICAgICAweDBkDQo+ID4gKyNkZWZpbmUgUlNUX1VNQ1RMMiAgICAgICAgICAgICAweDBl
+DQo+ID4gKyNkZWZpbmUgUlNUX1BFUkkxICAgICAgICAgICAgICAweDBmDQo+ID4gKw0KPiA+ICsj
+ZGVmaW5lIFJTVF9ERFJfUEhZMCAgICAgICAgICAgMHgxMA0KPiA+ICsjZGVmaW5lIFJTVF9BQ0hJ
+UCAgICAgICAgICAgICAgMHgxMg0KPiA+ICsjZGVmaW5lIFJTVF9TVEMwICAgICAgICAgICAgICAg
+MHgxNA0KPiA+ICsjZGVmaW5lIFJTVF9TVENfQVYwICAgICAgICAgICAgMHgxNQ0KPiA+ICsjZGVm
+aW5lIFJTVF9TVENfQVYxICAgICAgICAgICAgMHgxNg0KPiA+ICsjZGVmaW5lIFJTVF9TVENfQVYy
+ICAgICAgICAgICAgMHgxNw0KPiANCj4gVGhlIGxpc3QgbG9va3MgbGlrZSB0aGVzZSBkZWZpbml0
+aW9ucyBqdXN0IG1hdGNoIHRoZSBoYXJkd2FyZSwgd2hpY2ggbWVhbnMgeW91DQo+IGRvbid0IGhh
+dmUgdG8gZGVmaW5lIHRoZW0gYXMgYSBiaW5kaW5nIGF0IGFsbCwganVzdCB1c2UgdGhlIGhhcmR3
+YXJlIG51bWJlcnMNCj4gZGlyZWN0bHkgaW4gdGhlIGR0LCBhcyB5b3UgZG8gZm9yIGludGVycnVw
+dHMgb3IgZ3BpbyBudW1iZXJzLg0KPiANCj4gSWYgdGhlIGhhcmR3YXJlIGRvZXMgbm90IGhhdmUg
+YSBzYW5lIHdheSBvZiBtYXBwaW5nIHJlc2V0IGxpbmVzIHRvIGEgcGFydGljdWxhcg0KPiBoYXJk
+d2FyZSBudW1iZXIsIHRoZW4geW91IG1heSBoYXZlIHRvIGRlZmluZSBhIGJpbmRpbmcsIGJ1dCBp
+biB0aGF0IGNhc2UganVzdA0KPiB1c2UgY29uc2VjdXRpdmUgaW50ZWdlciBudW1iZXJzLCBub3Qg
+aGV4YWRlY2ltYWwgbnVtYmVycy4NCj4gDQo+ICAgICAgICBBcm5kDQoNCllvdSBhcmUgcmlnaHQs
+IHRoZXNlIGRlZmluaXRpb25zIGRvZXMgbWF0Y2ggdGhlIGhhcmR3YXJlLCBJbiByZXNldC1zdW5w
+bHVzLmM6DQpzdGF0aWMgaW50IHNwX3Jlc2V0X3N0YXR1cyhzdHJ1Y3QgcmVzZXRfY29udHJvbGxl
+cl9kZXYgKnJjZGV2LA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQgbG9uZyBp
+ZCkNCnsNCiAgICAgICAgc3RydWN0IHNwX3Jlc2V0ICpyZXNldCA9IHRvX3NwX3Jlc2V0KHJjZGV2
+KTsNCiAgICAgICAgaW50IGluZGV4ID0gaWQgLyBCSVRTX1BFUl9IV01fUkVHOw0KICAgICAgICBp
+bnQgc2hpZnQgPSBpZCAlIEJJVFNfUEVSX0hXTV9SRUc7DQogICAgICAgIHUzMiByZWc7DQoNCiAg
+ICAgICAgcmVnID0gcmVhZGwocmVzZXQtPmJhc2UgKyAoaW5kZXggKiA0KSk7DQoNCiAgICAgICAg
+cmV0dXJuICEhKHJlZyAmIEJJVChzaGlmdCkpOw0KfQ0KdGhlICdpZCcgIGlzIHRoZXNlIHZhbHVl
+IHBhc3NlZCBmcm9tIGR0Lg0KDQpJJ2xsIHJlbW92ZSB0aGlzIGZpbGUgJiB1cGRhdGUgZHQsIHRo
+YW5rcyBmb3IgeW91ciBjb21tZW50cy4NCg0K
