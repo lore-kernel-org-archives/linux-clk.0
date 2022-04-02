@@ -2,137 +2,111 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964E0C433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 07:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29F5C4332F
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 09:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241199AbiDBHse (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Apr 2022 03:48:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51710 "EHLO
+        id S239643AbiDBJLc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Apr 2022 05:11:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240447AbiDBHsd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 03:48:33 -0400
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1190518EE95;
-        Sat,  2 Apr 2022 00:46:41 -0700 (PDT)
-X-IronPort-AV: E=Sophos;i="5.90,229,1643641200"; 
-   d="scan'208";a="116497970"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2022 16:46:41 +0900
-Received: from localhost.localdomain (unknown [10.226.92.166])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 784E041E3A6A;
-        Sat,  2 Apr 2022 16:46:39 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 4/4] clk: renesas: r9a07g043: Add SDHI clock and reset entries
-Date:   Sat,  2 Apr 2022 08:46:26 +0100
-Message-Id: <20220402074626.25624-5-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220402074626.25624-1-biju.das.jz@bp.renesas.com>
-References: <20220402074626.25624-1-biju.das.jz@bp.renesas.com>
+        with ESMTP id S245363AbiDBJLc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 05:11:32 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 647CF2459C
+        for <linux-clk@vger.kernel.org>; Sat,  2 Apr 2022 02:09:40 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id r13so10408074ejd.5
+        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2022 02:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=kd0NXB1Zpr99nwzhwykwjlZXPnel4cWxpQfKUpkCMHk=;
+        b=IPrXv9vJtuIqqczOLMSmbtbpxKLQMRqoHRQqRTjVRFt4XO+cn+jGv3A0ddYp/tq7gY
+         Zg7teYhVeEfjJ8csVKtGys1Y6/lrBvrxsdVaGEio7GpsGA26NvKIok57F6Ww8nbIHQye
+         rXmxl63yx1oW+DKpT22urlehfD/nbAMpo9LvOn1G6icNPf2NIzuPi1KPPEaHk5bXYQ2L
+         yfj9ZgvUPumDQ7S7kDptsISup59+tDCEC99Hw/VHbN6fEhZp+NoZ6CIxy1fjYa9XekPR
+         serYvl4TidGxyJu9quyVUhjNX3aQyNJjetX9Z2KkDWVzjwvoeVb0n+VdPnbOPkm+mK4A
+         0aQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kd0NXB1Zpr99nwzhwykwjlZXPnel4cWxpQfKUpkCMHk=;
+        b=Y1gYYHFvIx2Qlc1SfLeGUbw9sXMnZfU4/p+5qhTZGOVO84ThbtmSVcWESaWlHB3BDw
+         0fTbiGk1dBiwIrfe1B1SFsw9VQ4dczCPe3w4sVJYwGqXqyHWnw4VV3m2vCnBkQcSo4zf
+         QUC4ztKKkWlgk9sYSAI/bvVqGXiOwz/72jGxK1nTDL0bm8rzmJRwuashRU4CC/6s7ZiI
+         WWoCUC8sS5K2mbgMNPd2QI/XAAyMIVzjhOSIuTOVieK7Kl7a0kKA1Hp7jEurtUyBekZC
+         5uwtXF6Cc7DHY6jvgK/EoRr0nHsMi9TfXACA2m33LE4BnvPx3ENtJvrc6jLMPpsQu7Lg
+         DmJQ==
+X-Gm-Message-State: AOAM531zK5HDUb3fy2Fzr7nQ3nj/acoNA+QkiaaI/B0Zhqb6KDajMLJo
+        fVHngYeUvHDdEuhXbEXpe/aKRA==
+X-Google-Smtp-Source: ABdhPJwqleeVWzZcqz6QlP7/awNnzIZNAP/RE/+/3JTo9Oc/kx/lPCi9SIvYHyQ5AoA0h5pDpTMV4w==
+X-Received: by 2002:a17:907:3e16:b0:6df:b4f0:5cc2 with SMTP id hp22-20020a1709073e1600b006dfb4f05cc2mr3180696ejc.285.1648890579004;
+        Sat, 02 Apr 2022 02:09:39 -0700 (PDT)
+Received: from [192.168.0.170] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id o12-20020a50c90c000000b0041907e62024sm2192677edh.85.2022.04.02.02.09.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Apr 2022 02:09:38 -0700 (PDT)
+Message-ID: <c93bdf12-bf53-9277-0394-5eaeea081183@linaro.org>
+Date:   Sat, 2 Apr 2022 11:09:37 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH 1/4] dt-bindings: clock: qcom,gcc-sdm845: add parent
+ power domain
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Gross <agross@kernel.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
+ <20220401145820.1003826-2-krzysztof.kozlowski@linaro.org>
+ <20220401232451.1B7A9C340F3@smtp.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220401232451.1B7A9C340F3@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add SDHI{0,1} mux, clock and reset entries to CPG driver
+On 02/04/2022 01:24, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2022-04-01 07:58:17)
+>> Allow Qualcomm GCC to register its parent power domain (e.g. RPMHPD) to
+>> properly pass performance state from children.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+>> index d902f137ab17..5fe1b2c42d5a 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+>> @@ -43,6 +43,9 @@ properties:
+>>    '#reset-cells':
+>>      const: 1
+>>  
+>> +  powert-domains:
+> 
+> s/powert/power/
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
- * Added Rb tag from Geert
----
- drivers/clk/renesas/r9a07g043-cpg.c | 35 +++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Thanks. This actually points to the fact I did not test this bindings
+change :(
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index 03a00ec5ebf3..2d6c96789f5c 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -37,6 +37,12 @@ enum clk_ids {
- 	CLK_PLL6,
- 	CLK_PLL6_250,
- 	CLK_P1_DIV2,
-+	CLK_PLL2_800,
-+	CLK_PLL2_SDHI_533,
-+	CLK_PLL2_SDHI_400,
-+	CLK_PLL2_SDHI_266,
-+	CLK_SD0_DIV4,
-+	CLK_SD1_DIV4,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
-@@ -62,6 +68,7 @@ static const struct clk_div_table dtable_1_32[] = {
- 
- /* Mux clock tables */
- static const char * const sel_pll6_2[]	= { ".pll6_250", ".pll5_250" };
-+static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
- 
- static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 	/* External Clock Inputs */
-@@ -73,6 +80,10 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 	DEF_SAMPLL(".pll1", CLK_PLL1, CLK_EXTAL, PLL146_CONF(0)),
- 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll2_div2", CLK_PLL2_DIV2, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".clk_800", CLK_PLL2_800, CLK_PLL2, 1, 2),
-+	DEF_FIXED(".clk_533", CLK_PLL2_SDHI_533, CLK_PLL2, 1, 3),
-+	DEF_FIXED(".clk_400", CLK_PLL2_SDHI_400, CLK_PLL2_800, 1, 2),
-+	DEF_FIXED(".clk_266", CLK_PLL2_SDHI_266, CLK_PLL2_SDHI_533, 1, 2),
- 	DEF_FIXED(".pll2_div2_8", CLK_PLL2_DIV2_8, CLK_PLL2_DIV2, 1, 8),
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll3_div2", CLK_PLL3_DIV2, CLK_PLL3, 1, 2),
-@@ -98,6 +109,12 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
- 	DEF_FIXED("ZT", R9A07G043_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
- 	DEF_MUX("HP", R9A07G043_CLK_HP, SEL_PLL6_2,
- 		sel_pll6_2, ARRAY_SIZE(sel_pll6_2), 0, CLK_MUX_HIWORD_MASK),
-+	DEF_SD_MUX("SD0", R9A07G043_CLK_SD0, SEL_SDHI0,
-+		   sel_shdi, ARRAY_SIZE(sel_shdi)),
-+	DEF_SD_MUX("SD1", R9A07G043_CLK_SD1, SEL_SDHI1,
-+		   sel_shdi, ARRAY_SIZE(sel_shdi)),
-+	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G043_CLK_SD0, 1, 4),
-+	DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G043_CLK_SD1, 1, 4),
- };
- 
- static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
-@@ -111,6 +128,22 @@ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
- 				0x52c, 0),
- 	DEF_MOD("dmac_pclk",	R9A07G043_DMAC_PCLK, CLK_P1_DIV2,
- 				0x52c, 1),
-+	DEF_MOD("sdhi0_imclk",	R9A07G043_SDHI0_IMCLK, CLK_SD0_DIV4,
-+				0x554, 0),
-+	DEF_MOD("sdhi0_imclk2",	R9A07G043_SDHI0_IMCLK2, CLK_SD0_DIV4,
-+				0x554, 1),
-+	DEF_MOD("sdhi0_clk_hs",	R9A07G043_SDHI0_CLK_HS, R9A07G043_CLK_SD0,
-+				0x554, 2),
-+	DEF_MOD("sdhi0_aclk",	R9A07G043_SDHI0_ACLK, R9A07G043_CLK_P1,
-+				0x554, 3),
-+	DEF_MOD("sdhi1_imclk",	R9A07G043_SDHI1_IMCLK, CLK_SD1_DIV4,
-+				0x554, 4),
-+	DEF_MOD("sdhi1_imclk2",	R9A07G043_SDHI1_IMCLK2, CLK_SD1_DIV4,
-+				0x554, 5),
-+	DEF_MOD("sdhi1_clk_hs",	R9A07G043_SDHI1_CLK_HS, R9A07G043_CLK_SD1,
-+				0x554, 6),
-+	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
-+				0x554, 7),
- 	DEF_COUPLED("eth0_axi",	R9A07G043_ETH0_CLK_AXI, R9A07G043_CLK_M0,
- 				0x57c, 0),
- 	DEF_COUPLED("eth0_chi",	R9A07G043_ETH0_CLK_CHI, R9A07G043_CLK_ZT,
-@@ -143,6 +176,8 @@ static struct rzg2l_reset r9a07g043_resets[] = {
- 	DEF_RST(R9A07G043_IA55_RESETN, 0x818, 0),
- 	DEF_RST(R9A07G043_DMAC_ARESETN, 0x82c, 0),
- 	DEF_RST(R9A07G043_DMAC_RST_ASYNC, 0x82c, 1),
-+	DEF_RST(R9A07G043_SDHI0_IXRST, 0x854, 0),
-+	DEF_RST(R9A07G043_SDHI1_IXRST, 0x854, 1),
- 	DEF_RST(R9A07G043_ETH0_RST_HW_N, 0x87c, 0),
- 	DEF_RST(R9A07G043_ETH1_RST_HW_N, 0x87c, 1),
- 	DEF_RST(R9A07G043_SCIF0_RST_SYSTEM_N, 0x884, 0),
--- 
-2.17.1
-
+Best regards,
+Krzysztof
