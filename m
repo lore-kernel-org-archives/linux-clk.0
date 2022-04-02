@@ -2,103 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49624C433FE
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Apr 2022 20:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0C1C433F5
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 02:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351823AbiDAUNB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Apr 2022 16:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50078 "EHLO
+        id S229807AbiDBCqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Apr 2022 22:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351783AbiDAUMz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 16:12:55 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DCC22228E1
-        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 13:10:59 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id w25so4206869edi.11
-        for <linux-clk@vger.kernel.org>; Fri, 01 Apr 2022 13:10:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=AvfLRaJBW6E1M5nvBx02fvTqKdSpIJZJoIrrhvppE/c=;
-        b=biZjMi8Gi9Wa+XAWZfKljcKy6CGsNOfMCuvMA1MN2UQ2gQ7qRM1zytyuuCisemvT4n
-         eKVC3DRJur0w9NnJtl4JtehrItD1Z9STJe0cKv3h7Y9LFLg+fc/NSDp2+OcZdc3MORUc
-         ArC2Tx3XIBcrbxS2UJjJT/ztOLXwdl536GAcdsgkXGy7JlRxiGNuVlNsB/bxLAQiP6RB
-         SXBUBk7fUgmWbpC1zJkBjFOE0RkbJgdVnAPNFDRL18XYpILCww7uBZgyZTHV/xmFTMYm
-         5T4I0hQpJ/sRm88tKr/wqceEgF5V02ZBoXGjS7RNcGf3wlIZ9uBWFfafyBVZTjIPUPJO
-         DvXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AvfLRaJBW6E1M5nvBx02fvTqKdSpIJZJoIrrhvppE/c=;
-        b=zsgpk1cNOG1nCOcmLzrcXFxTTnoYgPCz1MTUdGc3gCtDxd7PDl1d2WTiovCZi97NcQ
-         a0Vxu1H5oIPSk0sdX7Z7BWsUFEtI8z3uCvgSkF9a5XBRfvTsqfl3FZQ0MNR8ldcJfTBh
-         XihXlbPMapjUGK02JdTad+pU0TZ2PmSz0vqvjUVlXNrkdDkjinhbce1+PK9m3MxLv9C/
-         BF3ssOy28ovD0wRCDzKeKmnTJGKgW7jQqsC/noNleYm5sWIIxS5JEBQ63bjlfAg4DBOQ
-         eKRDRQIcLnE9DJPQ9cXG3bw5gQ4vUGqKT7ru/EZfKTcg50E0f9Qf44xpUhnRflZwtFoj
-         tdcQ==
-X-Gm-Message-State: AOAM530yMPyiw1RteBv/2/v9B51camPUzcgBASW2OxjYZysfDvVnVCdN
-        Kpir4tcupAMyxf6uichZH0lNeQ==
-X-Google-Smtp-Source: ABdhPJzpUkQ6LrIZFlL2INaIFr88n0WL3JjUr/av2XB8sIX4zOzgm2+AQvyGZeA5W7bXKfcLuNLhBw==
-X-Received: by 2002:a05:6402:14b:b0:418:d06e:5d38 with SMTP id s11-20020a056402014b00b00418d06e5d38mr22375521edu.90.1648843858064;
-        Fri, 01 Apr 2022 13:10:58 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm1509041edb.27.2022.04.01.13.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Apr 2022 13:10:57 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 10/10] dt-bindings: clock: qcom,rpmcc: add clocks property
-Date:   Fri,  1 Apr 2022 22:10:35 +0200
-Message-Id: <20220401201035.189106-11-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
-References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+        with ESMTP id S229790AbiDBCqB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Apr 2022 22:46:01 -0400
+Received: from mx1.cqplus1.com (unknown [113.204.237.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 664B04ECD2
+        for <linux-clk@vger.kernel.org>; Fri,  1 Apr 2022 19:44:01 -0700 (PDT)
+X-MailGates: (flag:1,DYNAMIC,RELAY,NOHOST,LAN:PASS)(compute_score:DELIVE
+        R,40,3)
+Received: from 172.27.96.203
+        by mx1.cqplus1.com with MailGates ESMTP Server V5.0(1159:0:AUTH_RELAY)
+        (envelope-from <qinjian@cqplus1.com>); Sat, 02 Apr 2022 10:42:24 +0800 (CST)
+Received: from CQEXMAIL01.cqplus1.com (172.27.96.203) by
+ CQEXMAIL01.cqplus1.com (172.27.96.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.18; Sat, 2 Apr 2022 10:43:23 +0800
+Received: from CQEXMAIL01.cqplus1.com ([::1]) by CQEXMAIL01.cqplus1.com
+ ([::1]) with mapi id 15.01.2375.018; Sat, 2 Apr 2022 10:43:22 +0800
+From:   =?utf-8?B?cWluamlhblvopoPlgaVd?= <qinjian@cqplus1.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "maz@kernel.org" <maz@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "krzysztof.kozlowski@canonical.com" 
+        <krzysztof.kozlowski@canonical.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: RE: [PATCH v12 6/9] dt-bindings: interrupt-controller: Add bindings
+ for SP7021 interrupt controller
+Thread-Topic: [PATCH v12 6/9] dt-bindings: interrupt-controller: Add bindings
+ for SP7021 interrupt controller
+Thread-Index: AQHYRNqIBkj2YEKP8ka+VOn6WZsX66zZcIoAgADkMACAAH4sAIABGb5A
+Date:   Sat, 2 Apr 2022 02:43:22 +0000
+Message-ID: <2b5ed89d562543ac84351d8c1aee1635@cqplus1.com>
+References: <cover.1648714851.git.qinjian@cqplus1.com>
+ <ff5bfd5611ab0defe0c98f98edbbf655e33cd16d.1648714851.git.qinjian@cqplus1.com>
+ <YkYSyHVGsXkGs0uf@robh.at.kernel.org>
+ <3373b11528214394baae71198df3adff@cqplus1.com>
+ <Ykc8Cv/TbYlr9GxV@robh.at.kernel.org>
+In-Reply-To: <Ykc8Cv/TbYlr9GxV@robh.at.kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.28.110.18]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RPM clock controller receive input clock ("xo").  It is modelled on
-only one chip - MSM8953.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-index 6a492b1ebc7c..9d296b89a8d0 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-@@ -48,6 +48,12 @@ properties:
-   '#clock-cells':
-     const: 1
- 
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: xo
-+
- required:
-   - compatible
-   - '#clock-cells'
--- 
-2.32.0
-
+PiANCj4gT24gRnJpLCBBcHIgMDEsIDIwMjIgYXQgMDI6Mjk6NThBTSArMDAwMCwgcWluamlhblvo
+poPlgaVdIHdyb3RlOg0KPiA+ID4NCj4gPiA+IE9uIFRodSwgMzEgTWFyIDIwMjIgMTY6Mjk6NTMg
+KzA4MDAsIFFpbiBKaWFuIHdyb3RlOg0KPiA+ID4gPiBBZGQgZG9jdW1lbnRhdGlvbiB0byBkZXNj
+cmliZSBTdW5wbHVzIFNQNzAyMSBpbnRlcnJ1cHQgY29udHJvbGxlciBiaW5kaW5ncy4NCj4gPiA+
+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogUWluIEppYW4gPHFpbmppYW5AY3FwbHVzMS5jb20+
+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiBNb3ZlICdyZWcnIGFmdGVyICdjb21wYXRpYmxlJw0KPiA+
+ID4gPiAtLS0NCj4gPiA+ID4gIC4uLi9zdW5wbHVzLHNwNzAyMS1pbnRjLnlhbWwgICAgICAgICAg
+ICAgICAgICB8IDYyICsrKysrKysrKysrKysrKysrKysNCj4gPiA+ID4gIE1BSU5UQUlORVJTICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxICsNCj4gPiA+ID4gIDIgZmlsZXMg
+Y2hhbmdlZCwgNjMgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJvbGxlci9zdW5w
+bHVzLHNwNzAyMS1pbnRjLnlhbWwNCj4gPiA+ID4NCj4gPiA+DQo+ID4gPg0KPiA+ID4gUGxlYXNl
+IGFkZCBBY2tlZC1ieS9SZXZpZXdlZC1ieSB0YWdzIHdoZW4gcG9zdGluZyBuZXcgdmVyc2lvbnMu
+IEhvd2V2ZXIsDQo+ID4gPiB0aGVyZSdzIG5vIG5lZWQgdG8gcmVwb3N0IHBhdGNoZXMgKm9ubHkq
+IHRvIGFkZCB0aGUgdGFncy4gVGhlIHVwc3RyZWFtDQo+ID4gPiBtYWludGFpbmVyIHdpbGwgZG8g
+dGhhdCBmb3IgYWNrcyByZWNlaXZlZCBvbiB0aGUgdmVyc2lvbiB0aGV5IGFwcGx5Lg0KPiA+ID4N
+Cj4gPiA+IElmIGEgdGFnIHdhcyBub3QgYWRkZWQgb24gcHVycG9zZSwgcGxlYXNlIHN0YXRlIHdo
+eSBhbmQgd2hhdCBjaGFuZ2VkLg0KPiA+DQo+ID4gQ2hhbmdlczogTW92ZSAncmVnJyBhZnRlciAn
+Y29tcGF0aWJsZScNCj4gPiBJIGRpZCBhIG1vZGlmaWNhdGlvbiBiYXNlZCBvbiBjb21tZW50cyBm
+cm9tIGtyenlzenRvZi5rb3psb3dza2lAY2Fub25pY2FsLmNvbSBbMV0NCj4gPg0KPiA+IFsxXSBo
+dHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvNmRiZWRhMTgtYTExYy02MDlkLTdhOGYtYmYyZTZm
+MjdhZWE3QGtlcm5lbC5vcmcvDQo+IA0KPiBBIHRyaXZpYWwgY2hhbmdlIGxpa2UgdGhhdCBjYW4g
+a2VlcCBhIHRhZyBlc3BlY2lhbGx5IGlmIGl0IGNhbWUgYWZ0ZXINCj4gdGhlIGNvbW1lbnQgKG5v
+dCBzdXJlIGhlcmUpLg0KPiANCj4gUm9iDQoNCkknbGwgYWRkIGJhY2sgdGhlIHRhZyBuZXh0IHZl
+cnNpb24sIHRoYW5rcy4NCg==
