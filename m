@@ -2,107 +2,144 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC24C433EF
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 13:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC79C433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 14:36:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355602AbiDBNss (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Apr 2022 09:48:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
+        id S1354053AbiDBOih (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Apr 2022 10:38:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240004AbiDBNsr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 09:48:47 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3F415DABB;
-        Sat,  2 Apr 2022 06:46:54 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id b188so5462633oia.13;
-        Sat, 02 Apr 2022 06:46:54 -0700 (PDT)
+        with ESMTP id S243878AbiDBOig (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 10:38:36 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E973D181B13;
+        Sat,  2 Apr 2022 07:36:44 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id k23so7944183ejd.3;
+        Sat, 02 Apr 2022 07:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RGNMGqDkFSJymA3pWafV2dnoGntv8svW3Mz+ef8XMI4=;
+        b=n2YqOiNjdDyk26irDah8NTksunLZcPMNnL/oHlMuFo4PrHUpUvaNmuvvMXbAtD9NSG
+         NRRD+yh311awcfb2sxa0t8zYyHoHPyy8PCd3riNnMuBfbIAWPY05JyQSdJTUsYXvBEc4
+         LRVKdcGYubDE2BnQun3hiJgGax7RJ+mlyy31ONdDky5QofmY/danhSCq63ZCWR9RKYH9
+         amr43JGdlguglwrUOKuF3jGmSpSS/BQ4UNInu5Ql7JRJMqXvFy4iY6MtjhUprrn91dqX
+         iTB6+jeqUwsOu9BHBjHkQkVShY2D/gOb6zLT+XEk9oCL6MrNWvH5j7hKGb6NSZXztx3Y
+         5kzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=PYegHaEuhlY2VhKGl3I3pW9pPdgl7qRkG8VHF5n6JTw=;
-        b=FYPHnBWqroeBrbArtZQBD1Q3KEmj8oF0r9EHenL1v5o1HGQ5GSL+IF7sNvBSBaKidb
-         /Ak5Ra8JWE9owNnc0cK+diNu9keodYYrq2RE71FIYbEQps9FFXB89bzj/OoDE65qsDCm
-         aYTfcMuW7GZ2w5mAdEI7iMYq2XX18oTnB1rLBp1znY3cf+pMET8pXpIskMIKjtxBfZ2q
-         9RN2/u3y0HOla1VzI94nk0ybRBhT147OMgI37dWlXzeyaxbk113HRQZql/SUyvsVvI4I
-         UTDRCiPoXvjlI8F8+558ksDn9QNR3BgGlisZoJnqIdiHvw3x2z9k/ojT+7oZGYwazI2S
-         eCyQ==
-X-Gm-Message-State: AOAM532Reml2u8bo2nLFA9CLp5A0+Jydykh0Yqw+0y7Z+bVjZB39Lc2n
-        d7BRaV+6YjSb50wGHttRjGo48YS13Q==
-X-Google-Smtp-Source: ABdhPJx1x7E35z39ft+D4POeguSDa0gubfQC2fnl4EmTmsyuU+lI7tGV/uos8UwZuGXiMoWb3u+Qsg==
-X-Received: by 2002:a05:6808:2008:b0:2da:5b12:83ff with SMTP id q8-20020a056808200800b002da5b1283ffmr6521278oiw.216.1648907214036;
-        Sat, 02 Apr 2022 06:46:54 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id l12-20020a056870d3cc00b000ddeb925982sm2101659oag.38.2022.04.02.06.46.53
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RGNMGqDkFSJymA3pWafV2dnoGntv8svW3Mz+ef8XMI4=;
+        b=DZFhTsgZjA4JhoEm5pnia9ZIoI3t0XjyZyDGEX31VT7vQQWRoqZg8XB59tpYSONrP6
+         W85KWx7TtujUpdAxRTIPOQfFJvKqN5Ijzm1K2Hib+A1LWsOJ8NrfReeOdvEPD1I3CW1M
+         10z/bDYyJfNT/mEvSiFRKCl//9IciwCFqL1DtDMYIykKiIz0X90h8vAXg5rHB1f7wS2R
+         ugJJssTptHYU7hZc4TfZMQDk+B1IjvN14NNStEYYWpYshxwacBW7Ek63AtJ5A4nLdtWh
+         8UZOJkjdzyNoG3bwuTRsZe2rvx8zLHx3+GXEc1BPd3BFtWSyig2DmPbu8Nai6WDEnBzs
+         rS+w==
+X-Gm-Message-State: AOAM533Uzt/JaOrcAkWA2esNsK9+jgY65MdfbXUaiUY2Pnqsp7SO9eMu
+        dLdb3FwemIIvt+dDY/TK+5E=
+X-Google-Smtp-Source: ABdhPJzTbd5ywK0ecrPLfPLSq2IDdTj6OVySRGrIJcFomjN8tElW6y5sFBxCeefFejSxTebo5V8Ecw==
+X-Received: by 2002:a17:907:608c:b0:6e0:19fe:d689 with SMTP id ht12-20020a170907608c00b006e019fed689mr3995444ejc.164.1648910203449;
+        Sat, 02 Apr 2022 07:36:43 -0700 (PDT)
+Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id bp8-20020a170907918800b006e0daaa63ddsm2169557ejb.60.2022.04.02.07.36.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Apr 2022 06:46:53 -0700 (PDT)
-Received: (nullmailer pid 903502 invoked by uid 1000);
-        Sat, 02 Apr 2022 13:46:51 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Kathiravan T <kathirav@codeaurora.org>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>
-In-Reply-To: <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
-References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org> <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 08/10] dt-bindings: soc: qcom,smd: convert to dtschema
-Date:   Sat, 02 Apr 2022 08:46:51 -0500
-Message-Id: <1648907211.831405.903501.nullmailer@robh.at.kernel.org>
+        Sat, 02 Apr 2022 07:36:42 -0700 (PDT)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de, zhangqing@rock-chips.com
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/16] Convert Rockchip clk
+Date:   Sat,  2 Apr 2022 16:36:20 +0200
+Message-Id: <20220402143636.15222-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 01 Apr 2022 22:10:33 +0200, Krzysztof Kozlowski wrote:
-> Convert the Qualcomm Shared Memory Driver bindings to DT Schema.
-> 
-> Changes against original bindings: enforce only specific names of child
-> nodes, instead of any names.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../regulator/qcom,smd-rpm-regulator.yaml     |   2 +-
->  .../bindings/remoteproc/qcom,q6v5.txt         |   2 +-
->  .../bindings/remoteproc/qcom,wcnss-pil.txt    |   2 +-
->  .../bindings/soc/qcom/qcom,smd-rpm.yaml       |   4 +-
->  .../devicetree/bindings/soc/qcom/qcom,smd.txt |  98 -------------
->  .../bindings/soc/qcom/qcom,smd.yaml           | 137 ++++++++++++++++++
->  6 files changed, 142 insertions(+), 103 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
-> 
+Combined serie of previously converted Rockchip clk bindings.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Changed V4:
+  combine dts patches
+  add more clocks
+  add clocks to example
+  add clocks requirement
 
-yamllint warnings/errors:
+Johan Jonker (16):
+  dt-bindings: clock: convert rockchip,px30-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3036-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3228-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3288-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3308-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3328-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rk3368-cru.txt to YAML
+  dt-bindings: clock: convert rockchip,rv1108-cru.txt to YAML
+  ARM: dts: rockchip: add clocks property to Rockchip cru nodes
+  arm64: dts: rockchip: add clocks property to Rockchip cru nodes
+  arm64: dts: rockchip: rk3399: use generic node name for pmucru
+  arm64: dts: rockchip: fix compatible string rk3328 cru node
+  dt-bindings: clock: replace a maintainer for rockchip,rk3399-cru.yaml
+  dt-bindings: clock: use generic node name for pmucru example in
+    rockchip,rk3399-cru.yaml
+  dt-bindings: clock: fix some conversion clock issues for
+    rockchip,rk3399-cru.yaml
 
-dtschema/dtc warnings/errors:
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml: rpm-requests: 'clock-controller' does not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
-Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
+ .../bindings/clock/rockchip,px30-cru.txt      |  70 ----------
+ .../bindings/clock/rockchip,px30-cru.yaml     | 120 ++++++++++++++++++
+ .../bindings/clock/rockchip,rk3036-cru.txt    |  56 --------
+ .../bindings/clock/rockchip,rk3036-cru.yaml   |  80 ++++++++++++
+ .../bindings/clock/rockchip,rk3188-cru.txt    |  61 ---------
+ .../bindings/clock/rockchip,rk3188-cru.yaml   |  86 +++++++++++++
+ .../bindings/clock/rockchip,rk3228-cru.txt    |  58 ---------
+ .../bindings/clock/rockchip,rk3228-cru.yaml   |  82 ++++++++++++
+ .../bindings/clock/rockchip,rk3288-cru.txt    |  67 ----------
+ .../bindings/clock/rockchip,rk3288-cru.yaml   |  93 ++++++++++++++
+ .../bindings/clock/rockchip,rk3308-cru.txt    |  60 ---------
+ .../bindings/clock/rockchip,rk3308-cru.yaml   |  86 +++++++++++++
+ .../bindings/clock/rockchip,rk3328-cru.txt    |  58 ---------
+ .../bindings/clock/rockchip,rk3328-cru.yaml   |  82 ++++++++++++
+ .../bindings/clock/rockchip,rk3368-cru.txt    |  61 ---------
+ .../bindings/clock/rockchip,rk3368-cru.yaml   |  86 +++++++++++++
+ .../bindings/clock/rockchip,rk3399-cru.yaml   |  59 ++++-----
+ .../bindings/clock/rockchip,rv1108-cru.txt    |  59 ---------
+ .../bindings/clock/rockchip,rv1108-cru.yaml   |  83 ++++++++++++
+ arch/arm/boot/dts/rk3036.dtsi                 |   2 +
+ arch/arm/boot/dts/rk3066a.dtsi                |   3 +-
+ arch/arm/boot/dts/rk3188.dtsi                 |   3 +-
+ arch/arm/boot/dts/rk322x.dtsi                 |   2 +
+ arch/arm/boot/dts/rk3288.dtsi                 |   2 +
+ arch/arm/boot/dts/rv1108.dtsi                 |   2 +
+ arch/arm64/boot/dts/rockchip/rk3308.dtsi      |   5 +-
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi      |   4 +-
+ arch/arm64/boot/dts/rockchip/rk3368.dtsi      |   2 +
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |   6 +-
+ 29 files changed, 853 insertions(+), 585 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,px30-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3036-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3228-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3288-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3308-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3328-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3368-cru.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rv1108-cru.yaml
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+-- 
+2.20.1
 
