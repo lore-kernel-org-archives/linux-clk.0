@@ -2,157 +2,107 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427DEC433FE
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 12:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC24C433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 13:47:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242959AbiDBMV7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Apr 2022 08:21:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
+        id S1355602AbiDBNss (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Apr 2022 09:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240203AbiDBMV6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 08:21:58 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5FCF40;
-        Sat,  2 Apr 2022 05:20:05 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id qh7so973013ejb.11;
-        Sat, 02 Apr 2022 05:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=COt2euqRR3p6qNdVYbNstxwNnTYl7gJdBogMLtEgqTA=;
-        b=Mg6rc54xEGKqf6Sr62HIXx7/S6VwcgCxSYr4+lVSZnE1JT+1Miaoyi8dFVRIHtZSdu
-         5SULIpO3nKYYjA631kbta3mcFuJe2Y7ob2/PBHjSznzQfBpLvbBBYSR/YMxvMHELN1W6
-         kgqKhmdovoiMgzEGZ2a5glCn4FFJmRb/FWQ4H94SPDOuQR7HRSX8NINW82ibyoBbpl/a
-         8jAKy9r+WNjdm5Y33ocCMfZmZdTapku1kbkM4N08jm1YfqxE/zrNTZLVv2725+FIw50K
-         fZoW+UJYI4Q+Uvy84+Tl1UynjcRquxnS3g2vifcDgU8hPca4LAIMSSStxzazcNwCxyVY
-         K0nA==
+        with ESMTP id S240004AbiDBNsr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 09:48:47 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF3F415DABB;
+        Sat,  2 Apr 2022 06:46:54 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id b188so5462633oia.13;
+        Sat, 02 Apr 2022 06:46:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=COt2euqRR3p6qNdVYbNstxwNnTYl7gJdBogMLtEgqTA=;
-        b=zGUMP1yfxAzmD9ipwq5r3pi+0DJZTEAZWpXzYt0Ttyc4I7areR62H9fYCQrY77FvBp
-         2CL/C1pbuP6t7Z53bZ+AWnLYUBKJ46e9yRYhzcflePhQkLmxwYjltbb1V/ioJ8L7m1RL
-         5Dti/dIOWD75lNB9EVzJCUkxjzcHySJPnkz2nav2dCXKOh6fGx3+vEzUkmdm5hd2F5QE
-         4XUanV9HhL6whmHVCJgr60lnw88vrqa3/teTr84Cx7U6LxfFJ4Yc184tzd/s8hZQoaGW
-         szDYsQm96Nu5rjRRVSkk+AD7qmVdxyWbS3jPMus+DpvMAEMLKLEmEeTzY2XnQ3D/xeHP
-         cstg==
-X-Gm-Message-State: AOAM531lzoeIQ+uzeg4tEjfo242N9cfPvbzyFDmQB9zJGfVl+7CoN5Nz
-        gQ8yxygRnoZusqKLx/X85rw=
-X-Google-Smtp-Source: ABdhPJyCmCQjhb3s6usKGbvexqkR+YJgkUTkRVz71aLf6bCa6lioWwmFQnVrVCOqCIttMycVJO4N6A==
-X-Received: by 2002:a17:907:9626:b0:6da:6c6f:9825 with SMTP id gb38-20020a170907962600b006da6c6f9825mr3541752ejc.600.1648902003785;
-        Sat, 02 Apr 2022 05:20:03 -0700 (PDT)
-Received: from [192.168.2.1] (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id dk21-20020a0564021d9500b0041b501eab8csm2414432edb.57.2022.04.02.05.20.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Apr 2022 05:20:03 -0700 (PDT)
-Message-ID: <0eed395b-ca02-2308-a5c6-7c4a72720175@gmail.com>
-Date:   Sat, 2 Apr 2022 14:20:02 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert
- rockchip,rk3188-cru.txt to YAML
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        zhangqing@rock-chips.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20220329111323.3569-1-jbx6244@gmail.com>
- <20220331225134.7A0A9C340ED@smtp.kernel.org> <3107512.vfdyTQepKt@diego>
- <c212c994-fc5d-6ad0-3cd6-88dc2c719e38@linaro.org>
- <7c786619-6fcf-21dd-8e5a-0ec67da2a63d@gmail.com>
- <5e1b6c09-0a8f-f1d9-728b-90ffbaedae83@linaro.org>
-From:   Johan Jonker <jbx6244@gmail.com>
-In-Reply-To: <5e1b6c09-0a8f-f1d9-728b-90ffbaedae83@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=PYegHaEuhlY2VhKGl3I3pW9pPdgl7qRkG8VHF5n6JTw=;
+        b=FYPHnBWqroeBrbArtZQBD1Q3KEmj8oF0r9EHenL1v5o1HGQ5GSL+IF7sNvBSBaKidb
+         /Ak5Ra8JWE9owNnc0cK+diNu9keodYYrq2RE71FIYbEQps9FFXB89bzj/OoDE65qsDCm
+         aYTfcMuW7GZ2w5mAdEI7iMYq2XX18oTnB1rLBp1znY3cf+pMET8pXpIskMIKjtxBfZ2q
+         9RN2/u3y0HOla1VzI94nk0ybRBhT147OMgI37dWlXzeyaxbk113HRQZql/SUyvsVvI4I
+         UTDRCiPoXvjlI8F8+558ksDn9QNR3BgGlisZoJnqIdiHvw3x2z9k/ojT+7oZGYwazI2S
+         eCyQ==
+X-Gm-Message-State: AOAM532Reml2u8bo2nLFA9CLp5A0+Jydykh0Yqw+0y7Z+bVjZB39Lc2n
+        d7BRaV+6YjSb50wGHttRjGo48YS13Q==
+X-Google-Smtp-Source: ABdhPJx1x7E35z39ft+D4POeguSDa0gubfQC2fnl4EmTmsyuU+lI7tGV/uos8UwZuGXiMoWb3u+Qsg==
+X-Received: by 2002:a05:6808:2008:b0:2da:5b12:83ff with SMTP id q8-20020a056808200800b002da5b1283ffmr6521278oiw.216.1648907214036;
+        Sat, 02 Apr 2022 06:46:54 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id l12-20020a056870d3cc00b000ddeb925982sm2101659oag.38.2022.04.02.06.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Apr 2022 06:46:53 -0700 (PDT)
+Received: (nullmailer pid 903502 invoked by uid 1000);
+        Sat, 02 Apr 2022 13:46:51 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
+In-Reply-To: <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
+References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org> <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 08/10] dt-bindings: soc: qcom,smd: convert to dtschema
+Date:   Sat, 02 Apr 2022 08:46:51 -0500
+Message-Id: <1648907211.831405.903501.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 4/2/22 14:16, Krzysztof Kozlowski wrote:
-> On 02/04/2022 13:45, Johan Jonker wrote:
->>
->>
->> On 4/2/22 13:41, Krzysztof Kozlowski wrote:
->>> On 01/04/2022 09:55, Heiko Stübner wrote:
->>>> Hi Stephen,
->>>>
->>>> Am Freitag, 1. April 2022, 00:51:32 CEST schrieb Stephen Boyd:
->>>>> Quoting Johan Jonker (2022-03-29 04:13:22)
->>>>>> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
->>>>>> new file mode 100644
->>>>>> index 000000000..ddd7e46af
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
->>>>>> @@ -0,0 +1,78 @@
->>>>>> +# SPDX-License-Identifier: GPL-2.0
->>>>>> +%YAML 1.2
->>>>>> +---
->>>>>> +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
->>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>> +
->>>>>> +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
->>>>>> +
->>>>>> +maintainers:
->>>>>> +  - Elaine Zhang <zhangqing@rock-chips.com>
->>>>>> +  - Heiko Stuebner <heiko@sntech.de>
->>>>>> +
->>>>>> +description: |
->>>>>> +  The RK3188/RK3066 clock controller generates and supplies clocks to various
->>>>>> +  controllers within the SoC and also implements a reset controller for SoC
->>>>>> +  peripherals.
->>>>>> +  Each clock is assigned an identifier and client nodes can use this identifier
->>>>>> +  to specify the clock which they consume. All available clocks are defined as
->>>>>> +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
->>>>>> +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
->>>>>> +  Similar macros exist for the reset sources in these files.
->>>>>> +  There are several clocks that are generated outside the SoC. It is expected
->>>>>> +  that they are defined using standard clock bindings with following
->>>>>> +  clock-output-names:
->>>>>> +    - "xin24m"    - crystal input                 - required
->>>>>> +    - "xin32k"    - RTC clock                     - optional
->>>>>> +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
->>>>>> +    - "ext_hsadc" - external HSADC clock          - optional
->>>>>> +    - "ext_cif0"  - external camera clock         - optional
->>>>>> +    - "ext_rmii"  - external RMII clock           - optional
->>>>>> +    - "ext_jtag"  - external JTAG clock           - optional
->>>>>
->>>>> I'd expect all these clks here to be inputs to this node.
->>>>
->>>> The optional clocks are all part of a circular dependency.
->>>>
->>>> So for example xin32k normally is generated by the pmic and fed
->>>> back into the system, so to get xin32k, we need the pmic to probe,
->>>> which needs i2c, which in turn already needs the clock controller.
->>>
->>> Are you sure that xin32k (RTC) clock should be input to the clock
->>> controller? I would expect it is the input to the SoC RTC block, so
->>> there is no circular dependency.
->>
->> clk-rk3188.c:
->>
->> PNAME(mux_pll_p)		= { "xin24m", "xin32k" };
+On Fri, 01 Apr 2022 22:10:33 +0200, Krzysztof Kozlowski wrote:
+> Convert the Qualcomm Shared Memory Driver bindings to DT Schema.
 > 
-> Thanks, but that's not the answer whether it is an input to the clock
-> controller. It's the answer how the driver implements this. :)
-
-PX2 == rk3066
-
-Rockchip PX2 TRM V1.0.pdf
-
-page 30
-
-Chip Clock Architecture Diagram 1
-
+> Changes against original bindings: enforce only specific names of child
+> nodes, instead of any names.
 > 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../regulator/qcom,smd-rpm-regulator.yaml     |   2 +-
+>  .../bindings/remoteproc/qcom,q6v5.txt         |   2 +-
+>  .../bindings/remoteproc/qcom,wcnss-pil.txt    |   2 +-
+>  .../bindings/soc/qcom/qcom,smd-rpm.yaml       |   4 +-
+>  .../devicetree/bindings/soc/qcom/qcom,smd.txt |  98 -------------
+>  .../bindings/soc/qcom/qcom,smd.yaml           | 137 ++++++++++++++++++
+>  6 files changed, 142 insertions(+), 103 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
+> 
+
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml: rpm-requests: 'clock-controller' does not match any of the regexes: 'pinctrl-[0-9]+'
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
+Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
