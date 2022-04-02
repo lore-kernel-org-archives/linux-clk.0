@@ -2,152 +2,118 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBABBC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 14:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE51C433FE
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 14:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356615AbiDBOjV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Apr 2022 10:39:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59098 "EHLO
+        id S1356923AbiDBO43 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Apr 2022 10:56:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356616AbiDBOi5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 10:38:57 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28E48182DA1;
-        Sat,  2 Apr 2022 07:36:55 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id ot30so1483918ejb.12;
-        Sat, 02 Apr 2022 07:36:55 -0700 (PDT)
+        with ESMTP id S1356915AbiDBO42 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 10:56:28 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D910814DFD8
+        for <linux-clk@vger.kernel.org>; Sat,  2 Apr 2022 07:54:36 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a6so518881ejk.0
+        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2022 07:54:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WTxrl9DDD0eAWWMFEHVULS2CUBJnWkuPK0erlkszq2w=;
-        b=DxUpH7rm+/P+HnQ19VTOK/tUKPQchAqczLMAB75R0meXlaemhfpXusfoWalpxwCR4s
-         xqJ+MAzebx1HjyaWBZcKnNADD2X0RKmVhfWc6hxsyYnOnGekp8Crm91Ef0Mj00Jhj2T9
-         k+3RMJMDyCuSpF5jo/hqn7F+c1C56L7KU7k17tQi0IC9hUW0RDovZcdex8Z/+2A1hnB5
-         5yDkxgiYwxBrEuvwvCKeDOjO7EHOpzzLG6CY0TNpCwGAX9SBH4j2wM8LrCq8WFKt1Eq0
-         VNM0kUM9KMBN92n93fDTvWCvDJZqoW1TdNsiCPHf7x0cTXHgSTnt1V/+h7IaQVv/bKHf
-         EsCQ==
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=aEIBC1GQYG6ijVh1cs6MgxygYsFjf5D+o3BDcAwed1w=;
+        b=fK7dYpXSAmfp++dOrOjSwwgcGioBHc9fdWDTOqW2XfzK0MWWNTg2CJjED/AKxpil5w
+         PK5rkRWUwI0rq2A75PMMjDZ5XdyAmvjiWXZjU/3At9DDHq63ids721mQTBsme5t9GP9N
+         8MbSHuM0/H3LisI3vami7E6KZyTngZESULBzJVilF4jDcGj2R2iZnV0aupw/QJeMy7sq
+         qOX1J+QRFoochHMrOIP7XtqikdVhrNJ0TUTD/1xsDJV9YlweaJ7KF43HcqiS/9/CPuzB
+         px6L5xlob9c7lFY6aGhM61Tu2+MUo7aUbBVSC5Vo1kjInGBCo8QT6UE1W6jFZsyzA3d+
+         r+Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WTxrl9DDD0eAWWMFEHVULS2CUBJnWkuPK0erlkszq2w=;
-        b=BuqSrtgruXjxVmkh07eZlZqVrtZ36jVxug2Xq4rmOI9uAtKwZZn9K9Gfd8zyf5CsJC
-         iLbCcNudt4USXQfZimhGBluJ1auy+kvDzbhoPATLY5VbjpyTvjJbRLJbwtRTe5e9YBJm
-         9wXCDxfuEw2Ah8NJSTenZwI0wnilEctU2Di1jALlkBLvZXe1HRfcoOj/qgwimUQxlrpB
-         cksI/f2K+V9EgL63Gs6Q3trHR3whaqXzeS/SmqicTRsV1Qd9I6tiT9DRgfMFN03Mkr2y
-         L1iRUZAp0/RbEWCYqowGvLA/03s4kEDX7dBFWCqJzIZrMg/2emeqrbCMWcVAAT+ZBZIR
-         hrvg==
-X-Gm-Message-State: AOAM532kbuAN2HDytVrE53W4Xu1sUsj7hvqn5EvddgZJkqcXz8UyJmy/
-        2IgtVkA59F0sVnahaNgyKC8=
-X-Google-Smtp-Source: ABdhPJysthL0YIUDq1FZbVLlu57eYwOcK+vbupy00jeGwH2c8ufKvDM7S2KQ3X5r7vLI8+iI6M1u/g==
-X-Received: by 2002:a17:907:869f:b0:6da:888b:4258 with SMTP id qa31-20020a170907869f00b006da888b4258mr4077833ejc.720.1648910213763;
-        Sat, 02 Apr 2022 07:36:53 -0700 (PDT)
-Received: from debian.home (81-204-249-205.fixed.kpn.net. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id bp8-20020a170907918800b006e0daaa63ddsm2169557ejb.60.2022.04.02.07.36.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Apr 2022 07:36:53 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de, zhangqing@rock-chips.com
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 11/16] arm64: dts: rockchip: add clocks property to Rockchip cru nodes
-Date:   Sat,  2 Apr 2022 16:36:31 +0200
-Message-Id: <20220402143636.15222-12-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20220402143636.15222-1-jbx6244@gmail.com>
-References: <20220402143636.15222-1-jbx6244@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=aEIBC1GQYG6ijVh1cs6MgxygYsFjf5D+o3BDcAwed1w=;
+        b=bcf7GJENJgLrb9BLSBHRv5UiJEP5CGMaZVVVDnGgAEpxf71YJ5bQH2rULakQx/EIWW
+         RvppFtNF01dk1LObI/l6icJF4IcVtTo9fQ8FB7NANHkR6ZwxvU0WNkzZR5P8PJGaQvgq
+         CsOmFU83GG14kQ86JwQF/LClP78UzhLZphSH8l7QguHJUNP4KM5xsyUweV8RTRAC+Cdc
+         rujdEQu7JL/ddXdLrX4PuWJLgScduueZ7035/HEIzIFUZ+D+nJbQAF4lQSW1aClbpvkV
+         9dr4PqISH4rtoMiBCYYEL6ksC11xLJX4leGM0kKh2r1fzBYgEAqOm7M7LTBlgpzPRBo1
+         yYiQ==
+X-Gm-Message-State: AOAM530NvzU8rhoweK4i/4JGHW14CWI+ne2VzV7SQcPM1mCiElPj7zVN
+        rFLpwFHWDOlPFn0fIp+UtjyHuA==
+X-Google-Smtp-Source: ABdhPJxiLi2YcERcQnKzC72c/xfDbvVF2UNZKN62Kk4fjKbrJNpjV9egpTPWqHnbkbDT2ujFImYLwQ==
+X-Received: by 2002:a17:906:1603:b0:6ce:362:c938 with SMTP id m3-20020a170906160300b006ce0362c938mr4148843ejd.253.1648911275414;
+        Sat, 02 Apr 2022 07:54:35 -0700 (PDT)
+Received: from [192.168.0.171] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id f1-20020a056402194100b00416b174987asm2554089edz.35.2022.04.02.07.54.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Apr 2022 07:54:34 -0700 (PDT)
+Message-ID: <23d363ab-1b95-4995-ac65-7a3a2d442982@linaro.org>
+Date:   Sat, 2 Apr 2022 16:54:33 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 08/10] dt-bindings: soc: qcom,smd: convert to dtschema
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Kathiravan T <kathirav@codeaurora.org>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>
+References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+ <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
+ <1648907211.831405.903501.nullmailer@robh.at.kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1648907211.831405.903501.nullmailer@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clocks and clock-names to the Rockchip cru node, because
-the device has to have at least one input clock.
-With the addition of new properties also sort the node properties
-a little bit where needed.
+On 02/04/2022 15:46, Rob Herring wrote:
+> On Fri, 01 Apr 2022 22:10:33 +0200, Krzysztof Kozlowski wrote:
+>> Convert the Qualcomm Shared Memory Driver bindings to DT Schema.
+>>
+>> Changes against original bindings: enforce only specific names of child
+>> nodes, instead of any names.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  .../regulator/qcom,smd-rpm-regulator.yaml     |   2 +-
+>>  .../bindings/remoteproc/qcom,q6v5.txt         |   2 +-
+>>  .../bindings/remoteproc/qcom,wcnss-pil.txt    |   2 +-
+>>  .../bindings/soc/qcom/qcom,smd-rpm.yaml       |   4 +-
+>>  .../devicetree/bindings/soc/qcom/qcom,smd.txt |  98 -------------
+>>  .../bindings/soc/qcom/qcom,smd.yaml           | 137 ++++++++++++++++++
+>>  6 files changed, 142 insertions(+), 103 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+>>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
+>>
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml: rpm-requests: 'clock-controller' does not match any of the regexes: 'pinctrl-[0-9]+'
+> 	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+> Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
+> Documentation/devicetree/bindings/soc/qcom/qcom,smd.example.dt.yaml:0:0: /example-0/shared-memory/rpm/rpm-requests/clock-controller: failed to match any schema with compatible: ['qcom,rpmcc-msm8974', 'qcom,rpmcc']
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
+These are being fixed by patch 9-10, so their order could be reversed to
+avoid the warnings.
 
-Changed V4:
-  combine patches
----
- arch/arm64/boot/dts/rockchip/rk3308.dtsi | 5 +++--
- arch/arm64/boot/dts/rockchip/rk3328.dtsi | 2 ++
- arch/arm64/boot/dts/rockchip/rk3368.dtsi | 2 ++
- arch/arm64/boot/dts/rockchip/rk3399.dtsi | 4 ++++
- 4 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-index 1cbe21261..2dfa67f1c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-@@ -745,10 +745,11 @@
- 	cru: clock-controller@ff500000 {
- 		compatible = "rockchip,rk3308-cru";
- 		reg = <0x0 0xff500000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
-+		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
--		rockchip,grf = <&grf>;
--
- 		assigned-clocks = <&cru SCLK_RTC32K>;
- 		assigned-clock-rates = <32768>;
- 	};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index b822533dc..9c76c288b 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -758,6 +758,8 @@
- 	cru: clock-controller@ff440000 {
- 		compatible = "rockchip,rk3328-cru", "rockchip,cru", "syscon";
- 		reg = <0x0 0xff440000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-index c99da9032..4f0b5feaa 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-@@ -747,6 +747,8 @@
- 	cru: clock-controller@ff760000 {
- 		compatible = "rockchip,rk3368-cru";
- 		reg = <0x0 0xff760000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 88f26d89e..ce1cc42ff 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -1416,6 +1416,8 @@
- 	pmucru: pmu-clock-controller@ff750000 {
- 		compatible = "rockchip,rk3399-pmucru";
- 		reg = <0x0 0xff750000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&pmugrf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
-@@ -1426,6 +1428,8 @@
- 	cru: clock-controller@ff760000 {
- 		compatible = "rockchip,rk3399-cru";
- 		reg = <0x0 0xff760000 0x0 0x1000>;
-+		clocks = <&xin24m>;
-+		clock-names = "xin24m";
- 		rockchip,grf = <&grf>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
--- 
-2.20.1
-
+Best regards,
+Krzysztof
