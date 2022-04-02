@@ -2,116 +2,131 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7217DC433F5
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 09:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66235C433EF
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Apr 2022 11:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354241AbiDBJ57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Apr 2022 05:57:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57870 "EHLO
+        id S241595AbiDBLn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Apr 2022 07:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237742AbiDBJ5x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 05:57:53 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 530591A61DA
-        for <linux-clk@vger.kernel.org>; Sat,  2 Apr 2022 02:56:01 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id l9-20020a05600c4f0900b0038ccd1b8642so4401465wmq.0
-        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2022 02:56:01 -0700 (PDT)
+        with ESMTP id S241447AbiDBLn1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Apr 2022 07:43:27 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640DA1AC436
+        for <linux-clk@vger.kernel.org>; Sat,  2 Apr 2022 04:41:35 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id q19so706401wrc.6
+        for <linux-clk@vger.kernel.org>; Sat, 02 Apr 2022 04:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=cgXEkA1NsSLqZo2p9htj8GcgXUNKhGzyClMqMaWIvDI=;
-        b=QUxAVBIGjxzUGhga2bGVCacVjSav4X+BIyqne/0zdL/4ikLPyuC4Mjo9T5inO7Kfxd
-         A9mBSL+/8fh5y8c027vJHrlNiIBlYi1N1/6zLsHYkpl5ApP/7ZLL1C0sVCCQw2nd1aNv
-         gndE6vmrp777SW893dYvMN0B6M71FQJ20kdc3KLxeqj8hvQuS8HCfyqA/PksE3ruxMTz
-         szpncBtYVQ2rTkKKlzKbMfZJeHAKl5xtnc7GWgWmRuR8BbciBg/b02QYjY4wRE8EVGzZ
-         iFbhbM5HW7RbEQ2H25yQ4U/yxlvntt09ODrON3n7UN4WcYSCXmbBJORg6p+Bbfl7fe84
-         91tQ==
+        bh=AvR1umnn7W1R+x4WzthY5v4HXESOD96tHh9j731yuyI=;
+        b=Gb6gnH4BnPj01KZH7A4kXWQ8hmeq0ZH581OTlA9kouF5HlC/q7ghy/f13YADvbS+Jo
+         hYeV0Lhen1057rY1ps9eXglxGWRJ+9oRLY9DfDek3HIVk4IYUe2lnyyslvpf2g1JYS7t
+         I4dI75ExLKdFIlfv/0VN0wWhqI5a6PD4KNZzo2syvpF2dSYiOlo/0DCazPjtPcQdhRpT
+         efWFjuBh+6qwnv9V7aXGZTJ+KvtHs3Oh6OMeLBrDsxPMfrOHqeuZr1GZda1mEBn8rk1D
+         v97fMdC6ZSOKulNYUi/cNy4CqgI9CqL6iEE+owkBtFoodtinaSJk5F/iI8hsr4SePWhE
+         jLHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=cgXEkA1NsSLqZo2p9htj8GcgXUNKhGzyClMqMaWIvDI=;
-        b=obSoESOspsTD1DUmktlZQGfAzcWi2jm5LrF2zCQyOXsrh18ezDCFiKkzL0U6JIZ0MW
-         KUuMLg0/dBAsP86WklCKgWmufimUA493esEoPapmE9u3qxVCGr0vBX2Ix0eV3ErQVIBw
-         69JECOFE6ehHMBa7tW1/giw7Mv6p3tmUU4ADr5Xk4gmDegZT1qNQrZdVBkJY0JJq5wwE
-         DpyWcvfcyUTa8hVK58j52N0dqwm9GKyuV+hDwGaRBU637T/jdaKTdm3r80RVnQSMgDDE
-         FxAl9/fC3gxF0P5uhknfTL6WN+sOila2VNGiMBfLcAYJh+lM1C9f1zOXLZO6H1LdUD0Y
-         otbg==
-X-Gm-Message-State: AOAM5323aDiEuLWxHlOwXxSEghBRmzmjKdjZGFb0LJQfywAIvOgoMB+I
-        4Sv9WlvE4XVFQQDb4+2n53D3ZI0o/gg6mx1A
-X-Google-Smtp-Source: ABdhPJyO5nRYykQjZ5CMS3S/+vibAHXkJMz2nRlIfC5YDxd6cIz2T4VjeRMkWl0YnnwiCnUamYDmeg==
-X-Received: by 2002:a7b:c14d:0:b0:38c:801a:a8b3 with SMTP id z13-20020a7bc14d000000b0038c801aa8b3mr11732685wmi.40.1648893359903;
-        Sat, 02 Apr 2022 02:55:59 -0700 (PDT)
-Received: from [192.168.0.170] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id i19-20020a05600c355300b0038e1d69af52sm4436420wmq.7.2022.04.02.02.55.59
+        bh=AvR1umnn7W1R+x4WzthY5v4HXESOD96tHh9j731yuyI=;
+        b=IbINQnxcGKh+/Mvx99bgXj8cVF0qF0GwxWLbFvZ7Rbb6cl/YXizu+Jr5Gi0n+IaAAP
+         PFHkSU0nZGIvBpZ2Kfv0zDxHRMscncmyV7S4n7dq4twgn0diL03BaAosWhrEIjgH5nFE
+         96nU7N7IvCHDzByC8RH13LCsZOGM2OW4zzhskH9aT8260OCj3paNxu5nRVdBGGTyn/DT
+         pcTpFBf6maEAJ1Cdcp/JQrYvERZ8VZrWn6Od8VqeBov7BCEjEQpGRtTIsxECo+VfFkV/
+         u2BJreaxZicmKTr7Axh8ookhZlnThHBFnVtPlvhXR5ErDmFmKTr/oDWXLF4pQ4TcJeuq
+         X0IA==
+X-Gm-Message-State: AOAM533eYXvSRH2TJw515/7Pv4M2O4pRGEGdRKe47u5+nwO/4MX9o9v2
+        yV8IvY/C4vRyJil7+6G/S7FBjw==
+X-Google-Smtp-Source: ABdhPJyW+SkwDs4JCR2UYWWgiflNxMZWrZjRmhyqzN/fVy0Es0dbeHwx6imdXZmBlennZaTR9okHog==
+X-Received: by 2002:adf:f881:0:b0:203:f9b1:a6ab with SMTP id u1-20020adff881000000b00203f9b1a6abmr10755817wrp.410.1648899693983;
+        Sat, 02 Apr 2022 04:41:33 -0700 (PDT)
+Received: from [192.168.0.171] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id m63-20020a1c2642000000b0038e5fa06b50sm1932105wmm.31.2022.04.02.04.41.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Apr 2022 02:55:59 -0700 (PDT)
-Message-ID: <e7b2d7d3-b0a8-3937-1947-acb65090dc87@linaro.org>
-Date:   Sat, 2 Apr 2022 11:55:58 +0200
+        Sat, 02 Apr 2022 04:41:32 -0700 (PDT)
+Message-ID: <c212c994-fc5d-6ad0-3cd6-88dc2c719e38@linaro.org>
+Date:   Sat, 2 Apr 2022 13:41:31 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert
+ rockchip,rk3188-cru.txt to YAML
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jacky Huang <ychuang3@nuvoton.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, arnd@arndb.de,
-        olof@lixom.net, soc@kernel.org, cfli0@nuvoton.com
-References: <20220331024256.14762-1-ychuang3@nuvoton.com>
- <20220331024256.14762-4-ychuang3@nuvoton.com>
- <0c182962-0da0-c3b3-097a-090bf8d871e7@linaro.org>
- <20220401233422.58670C2BBE4@smtp.kernel.org>
+To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Johan Jonker <jbx6244@gmail.com>, zhangqing@rock-chips.com,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20220329111323.3569-1-jbx6244@gmail.com>
+ <20220331225134.7A0A9C340ED@smtp.kernel.org> <3107512.vfdyTQepKt@diego>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220401233422.58670C2BBE4@smtp.kernel.org>
+In-Reply-To: <3107512.vfdyTQepKt@diego>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02/04/2022 01:34, Stephen Boyd wrote:
-> Quoting Krzysztof Kozlowski (2022-03-30 23:32:04)
->> On 31/03/2022 04:42, Jacky Huang wrote:
->>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
+On 01/04/2022 09:55, Heiko Stübner wrote:
+> Hi Stephen,
+> 
+> Am Freitag, 1. April 2022, 00:51:32 CEST schrieb Stephen Boyd:
+>> Quoting Johan Jonker (2022-03-29 04:13:22)
+>>> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
 >>> new file mode 100644
->>> index 000000000000..e1e0c466bf5e
+>>> index 000000000..ddd7e46af
 >>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
->>> @@ -0,0 +1,2 @@
+>>> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+>>> @@ -0,0 +1,78 @@
 >>> +# SPDX-License-Identifier: GPL-2.0
->>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-evb.dtb
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
+>>> +
+>>> +maintainers:
+>>> +  - Elaine Zhang <zhangqing@rock-chips.com>
+>>> +  - Heiko Stuebner <heiko@sntech.de>
+>>> +
+>>> +description: |
+>>> +  The RK3188/RK3066 clock controller generates and supplies clocks to various
+>>> +  controllers within the SoC and also implements a reset controller for SoC
+>>> +  peripherals.
+>>> +  Each clock is assigned an identifier and client nodes can use this identifier
+>>> +  to specify the clock which they consume. All available clocks are defined as
+>>> +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
+>>> +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
+>>> +  Similar macros exist for the reset sources in these files.
+>>> +  There are several clocks that are generated outside the SoC. It is expected
+>>> +  that they are defined using standard clock bindings with following
+>>> +  clock-output-names:
+>>> +    - "xin24m"    - crystal input                 - required
+>>> +    - "xin32k"    - RTC clock                     - optional
+>>> +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
+>>> +    - "ext_hsadc" - external HSADC clock          - optional
+>>> +    - "ext_cif0"  - external camera clock         - optional
+>>> +    - "ext_rmii"  - external RMII clock           - optional
+>>> +    - "ext_jtag"  - external JTAG clock           - optional
 >>
->> NAK
->>
->> This is actually some resend, but you did not version it, did not
->> provide changelog.
->>
->> What is more - you ignored previously received comments.
->>
->> We do not work like this. If you do not agree with a comment, please
->> keep discussion, not resend ignoring it.
->>
+>> I'd expect all these clks here to be inputs to this node.
 > 
-> Please be kind to newcomers. Not everyone has been working on the kernel
-> for 10+ years.
-
-Sorry for being harsh.
-
+> The optional clocks are all part of a circular dependency.
 > 
-> Please read Documentation/process/submitting-patches.rst. We should
-> probably add some more details to that document about including
-> changelogs comparing previous rounds, links to previous rounds for ease
-> of discovery, cover letters for multi-patch series, etc.
+> So for example xin32k normally is generated by the pmic and fed
+> back into the system, so to get xin32k, we need the pmic to probe,
+> which needs i2c, which in turn already needs the clock controller.
 
-This is in general explained in:
-https://elixir.bootlin.com/linux/v5.13/source/Documentation/process/submitting-patches.rst#L311
-Just no one really reads it...
-
-I'll extend that section slightly.
+Are you sure that xin32k (RTC) clock should be input to the clock
+controller? I would expect it is the input to the SoC RTC block, so
+there is no circular dependency.
 
 
 Best regards,
