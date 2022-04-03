@@ -2,149 +2,178 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9498BC43217
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Apr 2022 17:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4894C433EF
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Apr 2022 18:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359697AbiDCRsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Apr 2022 13:48:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
+        id S1359752AbiDCS2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Apr 2022 14:28:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359699AbiDCRsc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Apr 2022 13:48:32 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E5F255BD
-        for <linux-clk@vger.kernel.org>; Sun,  3 Apr 2022 10:46:37 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id m30so11247498wrb.1
-        for <linux-clk@vger.kernel.org>; Sun, 03 Apr 2022 10:46:37 -0700 (PDT)
+        with ESMTP id S1358649AbiDCS2u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Apr 2022 14:28:50 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDF83915E
+        for <linux-clk@vger.kernel.org>; Sun,  3 Apr 2022 11:26:55 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id u3so11393552wrg.3
+        for <linux-clk@vger.kernel.org>; Sun, 03 Apr 2022 11:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=2g9qaHCuEJMeVa5OH4CWlrCXm2yddjigX6r4a3uF+bk=;
-        b=rcwgiQ7fmqJ88I3Jf91Mfta3uYZ8QtARp8w3WvGxtOHFN5fZNFmW70GTLdCa+yulK6
-         G1TQqMyFTSv38tQlFw7YE3v+xWA2YnoFTqymhC/NHvco4y+S2tmJLG2xyurtaC0KgXOB
-         wiMYSwPMiKS8/ujZgjjoHtisF80DdrfbCkajBtwW0UA25BRv9V1+toF9PMrVsUgNP36V
-         UQmUbDPZQbb30nyTo09vqGSLii/75jeVxcpcVgFsL94njAAGr9cIAlbGmBuo8XAXAJXh
-         293NODuR0ay1dMB/pqalvnojX4AGMf2XKfHZ646Nu1f+COAWPXVQV9TZdqV8CpEBgLC8
-         Zh7Q==
+        bh=bdNSHlvxbLgeS5OtknPrJD9scGCCHGJswcOxfjpkj8k=;
+        b=HJPxauClsE0np7DjAvay8A3qNO9yH3dZHFeONBhunsAye2QJjEwG8hC0V131BjTbQw
+         vtyLN7WthuLgwwNhdCY6aF/k7R8txSC/qRMJ8xCwemdVY+KaeRBkvHINcZa7pp8B9n/4
+         psP1HG8tSSfUDJ2zS0n2xwmmwSuh7hDUpNROy3vYRAbyHR3Q57BU0DgYPwekeLzw8ODZ
+         H+QsFAuIO1JiJhRZbkQKkU+MKR7bpvvFeUkaLl+jN0kxpw3dXUqm7FpniWC9vVy3Mtjb
+         RbhlTctNKmMP8B2cuuCA2Qn5LglXfvS2+fDopX/AruCsvwpY0kuwoNM7/EI3sZhhp1GW
+         65HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=2g9qaHCuEJMeVa5OH4CWlrCXm2yddjigX6r4a3uF+bk=;
-        b=EsWDZJHMYxDHlx0lHfdrUZskr+Y/y/i9VTOY5bAx1Wb7nK70e705CmbRlhKPRwkKLA
-         b+3O07O22MrPFykYCD0ckn45ZnkgFufx9L2AO0wIzLEOV4kojyD8gLuCY4VV6edOQ3qg
-         DxXncs6p9ROxqx+FxZ0MTUNQLcaQL54xE79oFvxYMum7yqKOABqhJUTvrHDfqrjKXzYn
-         hlYjRqKqR+NBfA0u36H/TzF/ue3UzKvpHhCevGNmCdviJDxG2+PfTvVkfTTSlohNZWHI
-         6+abSGaEYtMEA4F4yu3fFXkIjhtJvgQCdinamFBuQNM/C5iFMKujFzwqY4q5HyDv9nJ8
-         g7jA==
-X-Gm-Message-State: AOAM530r0VoplDrsHi9sV5Goj/Re+EyjysaM7YBlQQPXDqgETVdNNhDr
-        8Ng5hQYJoTao0TnibM0DKU8DMg==
-X-Google-Smtp-Source: ABdhPJy2DSeufMTTGlQGYb78V/qM1iOXosW2NM+9ShpV4un5yPctthuLTvns43Z+dwPourVAYXovxQ==
-X-Received: by 2002:a5d:4e8a:0:b0:206:d4f:86 with SMTP id e10-20020a5d4e8a000000b002060d4f0086mr2916038wru.301.1649007996129;
-        Sun, 03 Apr 2022 10:46:36 -0700 (PDT)
+        bh=bdNSHlvxbLgeS5OtknPrJD9scGCCHGJswcOxfjpkj8k=;
+        b=J9wPMMSGXp/8wqCXk3+FPlrEa3RGhx6wEjaWywV3IalXTsCIda5RRhlRtW0bwZo8gh
+         qmAbxcJmu//51f1XLncqIrX7GoCfFhVnOOiqRfiIUMjaqOC63xQ3I9/z082aqnmL9+6J
+         z6ZlErLFPEeAAo0quyOHz4N0bLudpgVikZG+z6rfW6/hkbI9m2Do2AxoPn5avR7d7iL2
+         AQsvrTGONiY5ebrW/YeZAxXsvulmVUywpi1280XhJkvWVanisrqPAT3ja7bJ6ouuljvG
+         gZYKB2H4CTiJFBeHYP4D2dovSpGCg/emj0/Cy6SXNxmYirwvoosB/lUZadVDmrS2o9IC
+         bKrA==
+X-Gm-Message-State: AOAM531PQu3faiaU+e/HRKFQcWohrq1dmBOZIClVXq5Am3gADCi/5tIM
+        KHaYpnlo37P2f9Jad9xUuE448Q==
+X-Google-Smtp-Source: ABdhPJxZiOGK2egxD/5OYMyK+G/Qvkwdu5zqnF3HM5t2oE8lWspEjCw8qRMqkAP48HNYh0SvcBxiOQ==
+X-Received: by 2002:a05:6000:1547:b0:204:213:ae28 with SMTP id 7-20020a056000154700b002040213ae28mr14429429wry.114.1649010413589;
+        Sun, 03 Apr 2022 11:26:53 -0700 (PDT)
 Received: from [192.168.0.172] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id p18-20020a1c5452000000b0038e70261309sm1750080wmi.1.2022.04.03.10.46.35
+        by smtp.gmail.com with ESMTPSA id f1-20020a1c6a01000000b0038c9f6a3634sm14881579wmc.7.2022.04.03.11.26.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Apr 2022 10:46:35 -0700 (PDT)
-Message-ID: <30aa1bdc-8b77-1077-a0a5-258ea0d27f71@linaro.org>
-Date:   Sun, 3 Apr 2022 19:46:34 +0200
+        Sun, 03 Apr 2022 11:26:52 -0700 (PDT)
+Message-ID: <fb2b05f0-7609-1fa7-4d69-c64e082e2e2b@linaro.org>
+Date:   Sun, 3 Apr 2022 20:26:51 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [RFC PATCH 4/4] ufs: set power domain performance state when
- scaling gears
+Subject: Re: [PATCH v5 01/11] driver: platform: Add helper for safer setting
+ of driver_override
 Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Nitin Rawat <quic_nitirawa@quicinc.com>,
-        Asutosh Das <quic_asutoshd@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
- <20220401145820.1003826-5-krzysztof.kozlowski@linaro.org>
- <YkdWvVVp4RloGjkC@ripper>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <20220316150533.421349-1-krzysztof.kozlowski@canonical.com>
+ <20220316150533.421349-2-krzysztof.kozlowski@canonical.com>
+ <CAHp75VeaQdzUKJSKzH9FjbmON5asqH799AS8OzHGoDiRnJifNw@mail.gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <YkdWvVVp4RloGjkC@ripper>
+In-Reply-To: <CAHp75VeaQdzUKJSKzH9FjbmON5asqH799AS8OzHGoDiRnJifNw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/04/2022 21:47, Bjorn Andersson wrote:
-> On Fri 01 Apr 07:58 PDT 2022, Krzysztof Kozlowski wrote:
+On 16/03/2022 16:54, Andy Shevchenko wrote:
+> On Wed, Mar 16, 2022 at 5:06 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@canonical.com> wrote:
 > 
->> Scaling gears requires not only scaling clocks, but also voltage levels,
->> e.g. via performance states.
->>
->> USe the provided OPP table, to set proper OPP frequency which through
->> required-opps will trigger performance state change.
->>
+> ...
 > 
-> This looks quite nice! Just two questions about the path looking forward.
-> 
-> If we where to extend the opp core to allow specifying the clock rate
-> for some N first clocks (similar to how e.g. regulators are handled) it
-> seems possible to extend this to replace the freq-table property as
-> well. Would you agree?
+>> +int driver_set_override(struct device *dev, const char **override,
+>> +                       const char *s, size_t len)
+>> +{
+>> +       const char *new, *old;
+>> +       char *cp;
 
-Yes, although that might be trickier. The frequency is a key. I'll take
-a look whether it could be changed to multiple values like the voltage.
+I focused on some other topics, so I did not respond to your questions
+for some time.
 
 > 
+>> +       if (!dev || !override || !s)
+>> +               return -EINVAL;
 > 
-> The other missing required feature (in this area) from the upstream UFS
-> driver is the ability of voting for interconnect bandwidth. Based on
-> your path it would be trivial to specify different values for the votes
-> for each speed, but looking at downstream [1] (each row represents the
-> vote for the two paths in KB/s) indicates a more complex relationship
-> between gear and voted bandwidth.
+> Sorry, I didn't pay much attention on this. First of all, I would drop
+> dev checks and simply require that dev should be valid. Do you expect
+> this can be called when dev is invalid?
+
+No, I can skip the check.
+
+> I would like to hear if it's
+> anything but theoretical. Second one, is the !s requirement. Do I
+> understand correctly that the string must be always present? But then
+> how we NULify the override? Is it possible?
+
+I did not change the convention of this sysfs hook, so removing of
+override is passing empty string "". Have in mind that his interface is
+mainly for sysfs, not for other drivers.
+
+> Third one is absence of
+> len check. See below.
 > 
-> This was the reason I suggested that perhaps we need to key the
-> opp-table based on the gear? But I don't think there would be any issue
-> detecting this in runtime...
+>> +       /*
+>> +        * The stored value will be used in sysfs show callback (sysfs_emit()),
+>> +        * which has a length limit of PAGE_SIZE and adds a trailing newline.
+>> +        * Thus we can store one character less to avoid truncation during sysfs
+>> +        * show.
+>> +        */
+>> +       if (len >= (PAGE_SIZE - 1))
+>> +               return -EINVAL;
 > 
-> [1] https://github.com/MiCode/kernel_devicetree/blob/zeus-s-oss/qcom/waipio.dtsi#L1982
+> I would relax this to make sure we can use it if \n is within this limit.
 
-It should be doable with current bindings, assuming that gear is some
-imaginary frequency. We have two interconnects for UFS (the DDR and CPU)
-and OPP bindings allow to specify opp-peak-kBps and opp-avg-kBps for all
-of interconnects. IOW, the opp-peak-kBps will have two values and
-opp-avg-kBps as well.
+Relax in what way? Store more than PAGE_SIZE? This is a user-visible
+string and the name of a driver.
 
-What would be still missing is scaling clocks.
+> 
+>> +       cp = strnchr(s, len, '\n');
+>> +       if (cp)
+>> +               len = cp - s;
+>> +
+>> +       new = kstrndup(s, len, GFP_KERNEL);
+> 
+> Here is a word about the len check.
+> 
+>> +       if (!new)
+> 
+> If len == 0, this won't trigger and you have something very
+> interesting as a result.
 
-interconnects = <&ddr>, <&cpu>
-interconnect-names = "ufs-ddr", "cpu-ufs";
-opp-table {
-  // gear 1 or some core clock frequency?
-  opp-1 {
-    opp-hz = /bits/ 64 <75000000>, <0>, <0>, <75000000> ....;
-    opp-avg-kBps = <922 1000>;
-    opp-peak-kBps = <0 0>;
-    required-opps = <&rpmpd_opp_low_svs>;
-  }
-}
+True, empty string would be set as override. The API says that empty
+string clears the override, so len==0 should be valid (just like "\n" is
+ok).
 
-arch/arm64/boot/dts/qcom/sdm630.dtsi already uses it.
+> 
+> One way is to use ZERO_PTR_OR_NULL() another is explicitly check for 0
+> and issue a (different?) error code.
 
-I think still the problem is scaling of multiple clocks, depending on
-the gear.
+
 
 Best regards,
 Krzysztof
