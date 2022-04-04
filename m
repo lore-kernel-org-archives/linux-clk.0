@@ -2,80 +2,82 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4C2C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 21:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10639C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 22:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbiDDVnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:43:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        id S238897AbiDDWDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 18:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380488AbiDDUSv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 16:18:51 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30DC33EB0;
-        Mon,  4 Apr 2022 13:16:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7B0D6B819AD;
-        Mon,  4 Apr 2022 20:16:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3A2C2BBE4;
-        Mon,  4 Apr 2022 20:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649103411;
-        bh=nYrjW11SMU4fva4wzJcQI6rU4ZAODE6Dnc/6xUWDrwk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=r03TCHe87koltSy95nzVGTn/o5qX36NLGQzxGvOSILvh4dNeIKDlYTienq8RyTz0v
-         lt2iBEqbgnxEg0ZprA3lhCRlSzrr6Jeppq7V6CEzgDGD8uYvHkeadhEc1hXXCLGTKu
-         OjO93VbTrqrDESOj6v4GNkO2rJ9FNjnwlos08toc1t0Uh8nzLogsK/9PvqmYrSJA5d
-         7tfhVIVl5Bo4bh/l1ZTy4ugKPpSFsX76S4Vv1B0VVFkESnzMeulD88bH+Jw/B2x/Gb
-         ZS5p7Y+e/2dQrP0mu5aAZJ26hdk1lwGqz7a9ixJg9ZassUxiwhjukxhrbfVvmOgIhQ
-         1n8oH9MX7i64g==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220308040348.1340405-1-bjorn.andersson@linaro.org>
-References: <20220308040348.1340405-1-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2] clk: qcom: rcg2: Cache CFG register updates for parked RCGs
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Amit Nischal <anischal@codeaurora.org>,
+        with ESMTP id S1348659AbiDDV4T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 17:56:19 -0400
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4BE377C1;
+        Mon,  4 Apr 2022 14:39:45 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id q129so11463583oif.4;
+        Mon, 04 Apr 2022 14:39:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7tFfq7b9VmjLYZDsJ/VEXlvRsUPqYtmmK37aE7ANU+M=;
+        b=ZNvi1tVMGDV6rReUc4VOfbVNyYwnvadh06x83N6H46vkptRqW8JtjeFQZZPA2Jdugt
+         wNecGghp6O1SPrcSRhkZLN4klmjUqmdHKsQskJEePAls4Gkxa/iN+mnnJyeZB/Dw1mlv
+         9eslbOqjPc2AU8DYy3P/oIA+qeRFlxqMWEIrx+jeahG8efQhXG9xnTw6Y1jVIc7HKnN1
+         1KaIUP1CIc2o13jyK5yctw2JaFLCWyJLpyXrrnXDglHZthdFxcpAYix+wpSuoawSIRBK
+         AkfqXT561YI3U4nk0Lq9l3NaOsWj6ysVbh5sWpTTFqqgibRYZHpT5phNkrVGS2c4fKsX
+         JHLA==
+X-Gm-Message-State: AOAM530S3y6gNK69EmrMr+q1Tt/ndUqn1OukE3aiu+8xItEDTTR4sJdZ
+        SviWyCVEtkY7L0yS0GNSJw==
+X-Google-Smtp-Source: ABdhPJwkBPHU37YXSW5i6D/bqu8AoWhmIEwdQoN/DKhZoQsz4VSfS5CXi9L73ed5EDEGtbUx9amVxA==
+X-Received: by 2002:a05:6808:8c4:b0:2da:575e:3402 with SMTP id k4-20020a05680808c400b002da575e3402mr143772oij.8.1649108384382;
+        Mon, 04 Apr 2022 14:39:44 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id el17-20020a056870f69100b000de9672ac3csm4644917oab.52.2022.04.04.14.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 14:39:44 -0700 (PDT)
+Received: (nullmailer pid 2033895 invoked by uid 1000);
+        Mon, 04 Apr 2022 21:39:43 -0000
+Date:   Mon, 4 Apr 2022 16:39:43 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bean Huo <beanhuo@micron.com>, linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Andy Gross <agross@kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Avri Altman <avri.altman@wdc.com>, linux-scsi@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 04 Apr 2022 13:16:49 -0700
-User-Agent: alot/0.10
-Message-Id: <20220404201651.0B3A2C2BBE4@smtp.kernel.org>
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [RFC PATCH 2/4] dt-bindings: ufs: common: allow OPP table
+Message-ID: <Yktln5RQN34SDruG@robh.at.kernel.org>
+References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
+ <20220401145820.1003826-3-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220401145820.1003826-3-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2022-03-07 20:03:48)
-> As GDSCs are turned on and off some associated clocks are momentarily
-> enabled for house keeping purposes. For this, and similar, purposes the
-> "shared RCGs" will park the RCG on a source clock which is known to be
-> available.
-> When the RCG is parked, a safe clock source will be selected and
-> committed, then the original source would be written back and upon enable
-> the change back to the unparked source would be committed.
->=20
-> But starting with SM8350 this fails, as the value in CFG is committed by
-> the GDSC handshake and without a valid parent the GDSC enablement will
-> fail.
->=20
-> To avoid this problem, the software needs to cache the CFG register
-> content while the shared RCG is parked.
->=20
-> Writes to M, N and D registers are committed as they are requested. New
-> helpers for get_parent() and recalc_rate() are extracted from their
-> previous implementations and __clk_rcg2_configure() is modified to allow
-> it to operate on the cached value.
->=20
-> Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as n=
-eeded")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Fri, 01 Apr 2022 16:58:18 +0200, Krzysztof Kozlowski wrote:
+> Except scaling UFS and bus clocks, it's necessary to scale also the
+> voltages of regulators or power domain performance state levels.  Adding
+> Operating Performance Points table allows to adjust power domain
+> performance state, depending on the UFS clock speed.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
+>  Documentation/devicetree/bindings/ufs/ufs-common.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
 
-Sorry I've been delaying reviewing this patch. I'll review it in the
-next couple days.
+Reviewed-by: Rob Herring <robh@kernel.org>
