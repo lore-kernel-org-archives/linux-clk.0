@@ -2,100 +2,85 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4662C433FE
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 15:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C44C4167E
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 21:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378356AbiDDPDo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 11:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48026 "EHLO
+        id S242229AbiDDVlM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378363AbiDDPDm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 11:03:42 -0400
-Received: from relay10.mail.gandi.net (relay10.mail.gandi.net [IPv6:2001:4b98:dc4:8::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B6FC2F3A4;
-        Mon,  4 Apr 2022 08:01:35 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 906E4240017;
-        Mon,  4 Apr 2022 15:01:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649084494;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=oSz9CbmyqFYj7WTtWZFGNmlwynE09FntzIRYQ161JtE=;
-        b=JpRUcx41T6mUPb3+9eobnQYBoR5+IieSvJsMpRY7Ryr9F4Q+33G8GaGaxT5unTjr8izY0S
-        vlp/LX+OfanFkUThDoRaNF4wiybPsyQA0JMD1UOTwEmQ9PzU2Eerg/4gvkEB3ws1WDBWhc
-        1YPMrhUuadRTXj3LrT6QAOysvTSUnEGBBZJIjMJ/tp7WOK7XxPFVpY/jdgxxW+ISug7lez
-        hwrv+7WArBEa9DgpF00m+WE1a/63a6j1YHLE1qiIayRt7GqZp59IelnMStimWpetbw1LcL
-        Nvi2AixApHxwFUyyq44PahYoosRTyuwyh+k7lVva0DtxqR6+7GjvesGjFRayMw==
-Date:   Mon, 4 Apr 2022 17:01:29 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v6 0/8] RZN1 DMA support
-Message-ID: <20220404170129.42a0924d@xps13>
-In-Reply-To: <CAMuHMdWS0ABggEuyqjzuX1Jp306p6FOj_uvPuHW1Z63Ov551+Q@mail.gmail.com>
-References: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
-        <CAMuHMdWS0ABggEuyqjzuX1Jp306p6FOj_uvPuHW1Z63Ov551+Q@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        with ESMTP id S1380443AbiDDUH3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 16:07:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D686013FAC;
+        Mon,  4 Apr 2022 13:05:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4C00BB819E1;
+        Mon,  4 Apr 2022 20:05:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F406C340F3;
+        Mon,  4 Apr 2022 20:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649102730;
+        bh=WPYWTY5BYrb49/S6MqrWmKHCLgSFZHgeBgSL+0PtGSY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ErB1Qr8fVgbsn6iyOwokf1BAc9rTXHYwHULQPZFGssew2MFFqylx36cJGPl+45os8
+         8l0CFtMv9Gq/K8f4/V/vYTWFHcmmK/zaUichl8aPoub/wrbyntaUYqfhtW2/zwYwPh
+         CWmoYnddJDNdiZ+/dhSsBZ4QvgZiasBy6QtCjnUIoBq1WasTyXpWv+4IXimoGYEvIF
+         t/6Wp31teXOeK2wNr1ODHmJ8n7sJS1avcT9bsJbyuRaz+SqkVi+P+G1aN4Moj1gVJt
+         iQ+HLX02qKK2K7WXXlqqA7/yxSSD9EfU/7OdrtYfOsjrIKhjdTca5JWTZBL0CJ76+q
+         XvSMLe/rDTdQg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220404072900.35jca2o26gopi2qb@houat>
+References: <20220403022818.39572-1-sboyd@kernel.org> <20220404072900.35jca2o26gopi2qb@houat>
+Subject: Re: [PATCH] Revert "clk: Drop the rate range on clk_put()"
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Mon, 04 Apr 2022 13:05:28 -0700
+User-Agent: alot/0.10
+Message-Id: <20220404200530.0F406C340F3@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
-
-geert@linux-m68k.org wrote on Mon, 4 Apr 2022 16:48:58 +0200:
-
-> Hi Miquel,
+Quoting Maxime Ripard (2022-04-04 00:29:00)
+> On Sat, Apr 02, 2022 at 07:28:18PM -0700, Stephen Boyd wrote:
+> > This reverts commit 7dabfa2bc4803eed83d6f22bd6f045495f40636b. There are
+> > multiple reports that this breaks boot on various systems. The common
+> > theme is that orphan clks are having rates set on them when that isn't
+> > expected. Let's revert it out for now so that -rc1 boots.
+> >=20
+> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Reported-by: Tony Lindgren <tony@atomide.com>
+> > Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> > Link: https://lore.kernel.org/r/366a0232-bb4a-c357-6aa8-636e398e05eb@sa=
+msung.com
+> > Cc: Maxime Ripard <maxime@cerno.tech>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 >=20
-> On Mon, Apr 4, 2022 at 3:39 PM Miquel Raynal <miquel.raynal@bootlin.com> =
-wrote:
-> > Here is a first series bringing DMA support to RZN1 platforms. Soon a
-> > second series will come with changes made to the UART controller
-> > driver, in order to interact with the RZN1 DMA controller.
-> >
-> > Stephen acked the sysctrl patch (in the clk driver) but somehow I feel
-> > like it would be good to have this patch applied on both sides
-> > (dmaengine and clk) because more changes will depend on the addition of
-> > this helper, that are not related to DMA at all. I'll let you folks
-> > figure out what is best.
-> >
-> > Cheers,
-> > Miqu=C3=A8l
-> >
-> > Changes in v6:
-> > * Added Stephen's acks. =20
+> I really like the attention it's getting now that it's broken, we can
+> fix a lot of things :)
+
+Sure! Except that can quickly turn into other attention.
+
 >=20
-> Looks like you forgot to add the ack?
+> It doesn't seem to be restricted to orphan clocks though :/
 
-Mmmh .____.
+Oof ok. I was busy last week so couldn't pay much attention.
 
-I have several series queued and I did apply Stephen's tag to
-the wrong patch without noticing. Kudos for catching this. I will send
-an updated version with it and Ilpo's comment addressed later this week.
-In the mean time if there is anything else, let me know.
+>=20
+> But obviously,
+> Acked-by: Maxime Ripard <maxime@cerno.tech>
 
-Thanks,
-Miqu=C3=A8l
+Thanks. Looks like it just made -rc1 so we can work through the fix at a
+more leisurely pace now.
