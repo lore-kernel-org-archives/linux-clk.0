@@ -2,68 +2,140 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB69C4332F
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Apr 2022 20:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52589C4332F
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 00:02:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376457AbiDCUby (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Apr 2022 16:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52130 "EHLO
+        id S1376754AbiDDAET (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Apr 2022 20:04:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376453AbiDCUbx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Apr 2022 16:31:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60CB933884;
-        Sun,  3 Apr 2022 13:29:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 12675B80D9F;
-        Sun,  3 Apr 2022 20:29:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ACD8DC340F2;
-        Sun,  3 Apr 2022 20:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649017796;
-        bh=0hK4HXo/3S6Y4aP5LPDRKT/TbXSlch0JfT0hI1hVRBs=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=ih0CsbZIcUbqZdjJAg6Ec675lDXLxoxpCewK2riM+UNQX7KzjztBUp5WENQvxKLyC
-         fRgXuQuZbkl1egIsoSRHR2duO4T2LiMS2m7QytrBYZnLPZQ2kb853v3XqXlzGrJxh6
-         iBfZNqM6cfHsbzMM8JR9TluDiRk1rJiJliOCWbcmXQMqVffZvdMkL3XVE+XugNN8o3
-         VD6IFkaTd60gb3elAz13WRs79mezdbr8p29+AVHv/JgKpmjJq8rhTRV8u13ZaG3/9P
-         LIaZu8DtTfHUEwe098rIi04wNk1DWFvqIh8l3xOHeI2RDpb1L0llc2IMXJ3JiQYYs1
-         YtUg8+EwXzcCA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 99250E6BBCA;
-        Sun,  3 Apr 2022 20:29:56 +0000 (UTC)
-Subject: Re: [GIT PULL] one more clk change for the merge window
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220403140959.113778-1-sboyd@kernel.org>
-References: <20220403140959.113778-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220403140959.113778-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: 859c2c7b1d0623a6f523f970043db85ce0e5aa60
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 34a53ff911eb30629baad788fbed892f711bdd3e
-Message-Id: <164901779662.22329.11478011777146283017.pr-tracker-bot@kernel.org>
-Date:   Sun, 03 Apr 2022 20:29:56 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        with ESMTP id S1358724AbiDDAES (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Apr 2022 20:04:18 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93EDA32ECC
+        for <linux-clk@vger.kernel.org>; Sun,  3 Apr 2022 17:02:22 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id v12so10904602ljd.3
+        for <linux-clk@vger.kernel.org>; Sun, 03 Apr 2022 17:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=5bWvZkBQTfXdI0SB8SrDEX7zVm6LPWgDXAasm42CGY4=;
+        b=mN4zhps0NYYwmzS+FQLFXsSlPjyZn4j7aifukivVkBYHBHCYVat5c393ANERlwS+7A
+         +83MnCatCAO/ik4twzmymo3YzTuoGyP12vZH+3V8jxmpEsyxce4Sk0+6b7MXsxn/SWCR
+         /W9m3DFc/k/ES0I/nlcU2OKweBRHd1+w6BFYBH+88mNzTpWAo+IU+/YNwIKngyPZmlWf
+         rNs/TbIpuF68TLMsbggVlOMYb1TqG/ieQhG3u4ltAXBkgsDOVpnZfy7fkUFyaBzghike
+         q452JJwoLzWM+wa6JJh73l72T208+rFuUniEw411oxQPWZkO8ZAgbYAZMA+QXo1OCX79
+         Htnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=5bWvZkBQTfXdI0SB8SrDEX7zVm6LPWgDXAasm42CGY4=;
+        b=4tPt7J2+q1Hi8nArxiNGhjXMltwtePkJ7lK6MYMXJBLR6GEXkA2ufA4Rv8W5pploXD
+         21E6W1CZ1aYfgkdkkxdUSysO+tMvzMjSKiW3wdxsYUGEr4u83mmRtv3Ea7xfcoXpcV5r
+         hDKqrZmj0ZHcrDmMrk3bU2WEijc82mXRb8dHwWfEnb7MWcYtzOxz269lhQf95rdqU9JJ
+         EtvAi+q890VNlDFD6xg/xphXajVzHtrljzs95jrJ0qLlafwDfTfi26HYFEtgfhdiG8fK
+         oy08ebmBCzz5h1tCE2/Q/hcwVs7t3khnt2LyP1A7lLMYxgRxWft9dymsy3/HqMNmy3rr
+         5lVA==
+X-Gm-Message-State: AOAM531QQA2Qal+WDtodVPzny5POPIQgIYrJAqTQ43cBGxdJkX7lcWuB
+        i5f0aXDZvSGkDj0Hu1LlgAgtSg==
+X-Google-Smtp-Source: ABdhPJwJWW8ulMLQITy0BpOLSJpg+fSPWC4n1v41PvGfawZsK+O5iwbPlB0c7173GPk7Gu/Amuskog==
+X-Received: by 2002:a2e:546:0:b0:24a:c194:ba34 with SMTP id 67-20020a2e0546000000b0024ac194ba34mr19549918ljf.146.1649030540783;
+        Sun, 03 Apr 2022 17:02:20 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id y12-20020a2e978c000000b0024b11369f20sm543441lji.126.2022.04.03.17.02.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Apr 2022 17:02:20 -0700 (PDT)
+Message-ID: <0da0b229-3493-967d-c14d-60d3246b07b2@linaro.org>
+Date:   Mon, 4 Apr 2022 03:02:18 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC PATCH 3/4] arm64: dts: qcom: sdm845: control RPMHPD
+ performance states with UFS
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org
+References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
+ <20220401145820.1003826-4-krzysztof.kozlowski@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220401145820.1003826-4-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Sun,  3 Apr 2022 07:09:59 -0700:
+On 01/04/2022 17:58, Krzysztof Kozlowski wrote:
+> UFS, when scaling gears, should choose appropriate performance state of
+> RPMHPD power domain controller.  Since UFS belongs to UFS_PHY_GDSC power
+> domain, add necessary parent power domain to GCC.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+This will cause all gcc GDSCs to be rooted in the CX. Are we sure that 
+this is an expected (and correct) change?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/34a53ff911eb30629baad788fbed892f711bdd3e
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/sdm845.dtsi | 17 ++++++++++++++++-
+>   1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index b31bf62e8680..c999b41c2605 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -1078,6 +1078,7 @@ gcc: clock-controller@100000 {
+>   			#clock-cells = <1>;
+>   			#reset-cells = <1>;
+>   			#power-domain-cells = <1>;
+> +			power-domains = <&rpmhpd SDM845_CX>;
+>   		};
+>   
+>   		qfprom@784000 {
+> @@ -2336,8 +2337,22 @@ ufs_mem_hc: ufshc@1d84000 {
+>   				<0 0>,
+>   				<0 0>,
+>   				<0 300000000>;
+> -
+> +			operating-points-v2 = <&ufs_opp_table>;
+>   			status = "disabled";
+> +
+> +			ufs_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-50000000 {
+> +					opp-hz = /bits/ 64 <50000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +				};
+> +
+> +				opp-200000000 {
+> +					opp-hz = /bits/ 64 <200000000>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +				};
+> +			};
+>   		};
+>   
+>   		ufs_mem_phy: phy@1d87000 {
 
-Thank you!
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With best wishes
+Dmitry
