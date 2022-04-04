@@ -2,107 +2,67 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFC7C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 07:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1431C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 08:22:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234949AbiDDHbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 03:31:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60596 "EHLO
+        id S234359AbiDDIYU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 04:24:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353761AbiDDHa7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 03:30:59 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 272A61403D;
-        Mon,  4 Apr 2022 00:29:04 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 3A2103201F82;
-        Mon,  4 Apr 2022 03:29:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 04 Apr 2022 03:29:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; bh=h/d4R0yINpQf3Q
-        7huFHq02rHS+Y8FhIyy0w0l8JY2tg=; b=wJV1LbKgjGW4zSvwVvZwGV0gBKwOUd
-        4Hvnl6tYTtE+Is19GtTLAvsUywA/wFR9B1Y+31ol00bWBsXwzbHkjmF8txvKOIiE
-        gw7xTEGdigaAIiDVv0sYMubY/ZjgGf8lafmpX1ptAPdL1vRXBLameWiRr9lxuHj6
-        gSK1XZnEfv4oUBX9Z5s2bdtvdfzFF3BdtVOyY18sK2FNu6bmJb7cp2tVymOMsixU
-        k5CX1ePxn7dGLFR6/kef5SEm9Kwefej5JhANQ197nQeFdxfaQl3ynJWqcFNcrdL7
-        wG++dwQ1IrNVUgm2Eix6bAPdugK1cfivrsEHOiiSYC4oHcxHlWM40rSg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=h/d4R0yINpQf3Q7huFHq02rHS+Y8FhIyy0w0l8JY2
-        tg=; b=oe1jeF16vbKRkBCCOQDVCYEOlBHji4TO2zGmJ7fPjjF2APxdZJ1R58kZN
-        2yJ9zTUCtg+1Zpf2k+hIYHPUFT02plhqKo9V19VmP664tH8iq7WpryVc1iWhPXFG
-        bkHU9tyuwNKgUi73EvwtJh9v/nH3u2wkMxi2vCkGY+oOYI+of3BqVJxyat20/uPA
-        0bBP2VpJ03H5bgZHIG/DEteZMp+8wj1aWkLU78/C7faqdLLs7HvUzt4BrdDKA24D
-        5vurEg3nLno+nfFrzzZxE+4NNq52nbQD4xWOcmvgkJ8IP8f0tZZHBwG4Cjo5Iyis
-        e4nyIxyrmDydt7WsS1Mt3lcIV26jA==
-X-ME-Sender: <xms:Pp5KYrG19Pa3WLROU3UvleaPzJ09j3EJKPppJ942WL2jdZg-vnIThw>
-    <xme:Pp5KYoV-kEbfLN0P0zE5u-b633aIEQB2E4Kr1IS-5CM9kSq-hsZm2juNgCc6WbSyw
-    7w2w66sn5CGCTnrKLE>
-X-ME-Received: <xmr:Pp5KYtK0Lc19uYrx_L8QPZOKirM1YYb1aBpQQ-9Q0Uwt9X2HUnR1IkauJRyoI7IEkAA6xrYsTqKgTl4_kOwRq6zAGy2NS21wg6r663E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejuddguddvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepkeeileetveejffegueetjeeigffgfefgkeeuueetfffhheegveefhfek
-    heevkedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgv
-    tghh
-X-ME-Proxy: <xmx:Pp5KYpEVZn9bpmrlC44RNMKXF-f0sjQFXQ6Ie-LeBguJHulmbGPBnQ>
-    <xmx:Pp5KYhU5x9EKg4Z15QyshDkquQajYk7KkYF2CzuOt4l7rtfS8UnOKQ>
-    <xmx:Pp5KYkPIXqWMszVCPKh2C7G-4-Lva-3SAHT5UYEUzH9zHw6ZxYtEXw>
-    <xmx:Pp5KYjLpLv13KlGrIZ94r1bl6gA2EuU_ex19hYrOCTJ-5gBm2YBB9Q>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 4 Apr 2022 03:29:01 -0400 (EDT)
-Date:   Mon, 4 Apr 2022 09:29:00 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: [PATCH] Revert "clk: Drop the rate range on clk_put()"
-Message-ID: <20220404072900.35jca2o26gopi2qb@houat>
-References: <20220403022818.39572-1-sboyd@kernel.org>
+        with ESMTP id S1349900AbiDDIYR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 04:24:17 -0400
+X-Greylist: delayed 520 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 04 Apr 2022 01:22:22 PDT
+Received: from mail.coredeal.pl (mail.coredeal.pl [51.75.73.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751233BA54
+        for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 01:22:22 -0700 (PDT)
+Received: by mail.coredeal.pl (Postfix, from userid 1002)
+        id 56341A32AD; Mon,  4 Apr 2022 08:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=coredeal.pl; s=mail;
+        t=1649059888; bh=9KGuIG62LgzC9aYmjKxzocuYLRCVghXg6v9Q1q2LHec=;
+        h=Date:From:To:Subject:From;
+        b=nnpeJHIYq9JxU27hWLOqQpknZ8qSl32Rhp99D94ftZIt+mJ95vnPW3mH6/DrXiC5I
+         mB384NuEylVXOVNKeQbfqhR0Md/ljrcU/SPFySn8CkB/Gk3VTz1ly4NmD1LhlcX9Xx
+         hwVprwFbBRjwzc5HmHlCwIpQqZWVACVvAZcP7nmZevhIz8Rbzn0KkcTq5mXSQ18Kr5
+         +7JeRNE4lga27b88yL0x25P/qXOf0p7+Y3Z0/EJi5skOPeZFdybHF+DyaiytUrvWXK
+         PgZrXPZQ7D382M1OA3e6itVIx7s0GOxJvuiH0YDUnlm8LFeNHACwixGkzgn4dxp30u
+         xNXC/ck4Y9EwQ==
+Received: by mail.coredeal.pl for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 08:10:30 GMT
+Message-ID: <20220404064500-0.1.2c.c8uv.0.tq7qrfg8rq@coredeal.pl>
+Date:   Mon,  4 Apr 2022 08:10:30 GMT
+From:   "Krzysztof Maj" <krzysztof.maj@coredeal.pl>
+To:     <linux-clk@vger.kernel.org>
+Subject: Biznesowy angielski
+X-Mailer: mail.coredeal.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220403022818.39572-1-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 02, 2022 at 07:28:18PM -0700, Stephen Boyd wrote:
-> This reverts commit 7dabfa2bc4803eed83d6f22bd6f045495f40636b. There are
-> multiple reports that this breaks boot on various systems. The common
-> theme is that orphan clks are having rates set on them when that isn't
-> expected. Let's revert it out for now so that -rc1 boots.
->=20
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reported-by: Tony Lindgren <tony@atomide.com>
-> Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> Link: https://lore.kernel.org/r/366a0232-bb4a-c357-6aa8-636e398e05eb@sams=
-ung.com
-> Cc: Maxime Ripard <maxime@cerno.tech>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Dzie=C5=84 dobry,=20
 
-I really like the attention it's getting now that it's broken, we can
-fix a lot of things :)
+czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
+swoich pracownik=C3=B3w?
 
-It doesn't seem to be restricted to orphan clocks though :/
+Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
+w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
+ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
+=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
 
-But obviously,
-Acked-by: Maxime Ripard <maxime@cerno.tech>
+Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
+=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
+re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
+o=C5=BCliwo=C5=9Bci biznesowe.=20
 
-Thanks!
-Maxime
+Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
+ kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
+za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
+=2E
+
+Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
+w i opowiedzie=C4=87 jak dzia=C5=82amy?=20
+
+
+Pozdrawiam
+Krzysztof Maj
