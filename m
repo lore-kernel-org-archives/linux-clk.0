@@ -2,82 +2,86 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10639C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 22:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA87C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 23:03:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238897AbiDDWDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 18:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
+        id S242449AbiDDXFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 19:05:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348659AbiDDV4T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 17:56:19 -0400
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4BE377C1;
-        Mon,  4 Apr 2022 14:39:45 -0700 (PDT)
-Received: by mail-oi1-f175.google.com with SMTP id q129so11463583oif.4;
-        Mon, 04 Apr 2022 14:39:45 -0700 (PDT)
+        with ESMTP id S241388AbiDDXFe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 19:05:34 -0400
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1376EB0F;
+        Mon,  4 Apr 2022 15:27:49 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id k10so11621780oia.0;
+        Mon, 04 Apr 2022 15:27:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7tFfq7b9VmjLYZDsJ/VEXlvRsUPqYtmmK37aE7ANU+M=;
-        b=ZNvi1tVMGDV6rReUc4VOfbVNyYwnvadh06x83N6H46vkptRqW8JtjeFQZZPA2Jdugt
-         wNecGghp6O1SPrcSRhkZLN4klmjUqmdHKsQskJEePAls4Gkxa/iN+mnnJyeZB/Dw1mlv
-         9eslbOqjPc2AU8DYy3P/oIA+qeRFlxqMWEIrx+jeahG8efQhXG9xnTw6Y1jVIc7HKnN1
-         1KaIUP1CIc2o13jyK5yctw2JaFLCWyJLpyXrrnXDglHZthdFxcpAYix+wpSuoawSIRBK
-         AkfqXT561YI3U4nk0Lq9l3NaOsWj6ysVbh5sWpTTFqqgibRYZHpT5phNkrVGS2c4fKsX
-         JHLA==
-X-Gm-Message-State: AOAM530S3y6gNK69EmrMr+q1Tt/ndUqn1OukE3aiu+8xItEDTTR4sJdZ
-        SviWyCVEtkY7L0yS0GNSJw==
-X-Google-Smtp-Source: ABdhPJwkBPHU37YXSW5i6D/bqu8AoWhmIEwdQoN/DKhZoQsz4VSfS5CXi9L73ed5EDEGtbUx9amVxA==
-X-Received: by 2002:a05:6808:8c4:b0:2da:575e:3402 with SMTP id k4-20020a05680808c400b002da575e3402mr143772oij.8.1649108384382;
-        Mon, 04 Apr 2022 14:39:44 -0700 (PDT)
+        bh=21RYx1siUXFRLcSMfYzZjQ6/E/QTCX038TIQLde76lI=;
+        b=7d5l8+rrTgeuOPwvzBZ5TVDccqB/y5/2pR8xe4Yl3dc39EBQTQxXvd14T95JRya3kQ
+         pgPqbz5ew54u01E8PM6AICug5z1vSyDAZoeXS/juKKaiYrL9XOLlv5+mKNdWjX4V2Fxd
+         l+vHMw94EdbkKu9pCWGdyz6EH6iU3WRTS6lcQStVpW6qiHs79Kx4ebd4g4+TBftkwEBD
+         4DrpXuuEHmwM+R28+sUQ0Ay/YsRQVgBf6gewZtdgn2UWd+9dDNLbMXl4ZhLx2kgERPsl
+         wWxDtyKqhdxllr74svRe8uxGA51T2r6DRmkTiTH1vgi/w5MB/EnaquxJ/Hmh12BzZQea
+         rEWA==
+X-Gm-Message-State: AOAM53077qKhIIAWuYXKwbEpidC6LyB5uDL8GmX7FX0zH0eLSevRv3Xg
+        WpkGLXKNzwkAG/mNegmYXw==
+X-Google-Smtp-Source: ABdhPJyWF91xQnODnm0DqGriBHyrjc+a5lRFRjRBgVc75n8XH2jeXM4ob5qMfO6szxo4J8zdWEKH2g==
+X-Received: by 2002:aca:f10:0:b0:2ef:9dd9:79fb with SMTP id 16-20020aca0f10000000b002ef9dd979fbmr229194oip.282.1649111268742;
+        Mon, 04 Apr 2022 15:27:48 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id el17-20020a056870f69100b000de9672ac3csm4644917oab.52.2022.04.04.14.39.43
+        by smtp.gmail.com with ESMTPSA id 11-20020a05687013cb00b000dd9b5dd71csm4731995oat.56.2022.04.04.15.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Apr 2022 14:39:44 -0700 (PDT)
-Received: (nullmailer pid 2033895 invoked by uid 1000);
-        Mon, 04 Apr 2022 21:39:43 -0000
-Date:   Mon, 4 Apr 2022 16:39:43 -0500
+        Mon, 04 Apr 2022 15:27:48 -0700 (PDT)
+Received: (nullmailer pid 2113248 invoked by uid 1000);
+        Mon, 04 Apr 2022 22:27:47 -0000
+Date:   Mon, 4 Apr 2022 17:27:47 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bean Huo <beanhuo@micron.com>, linux-kernel@vger.kernel.org,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
         Andy Gross <agross@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Avri Altman <avri.altman@wdc.com>, linux-scsi@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: Re: [RFC PATCH 2/4] dt-bindings: ufs: common: allow OPP table
-Message-ID: <Yktln5RQN34SDruG@robh.at.kernel.org>
-References: <20220401145820.1003826-1-krzysztof.kozlowski@linaro.org>
- <20220401145820.1003826-3-krzysztof.kozlowski@linaro.org>
+        Kathiravan T <kathirav@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 08/10] dt-bindings: soc: qcom,smd: convert to dtschema
+Message-ID: <Yktw42ujYEJQH2l9@robh.at.kernel.org>
+References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+ <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220401145820.1003826-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220401201035.189106-9-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 01 Apr 2022 16:58:18 +0200, Krzysztof Kozlowski wrote:
-> Except scaling UFS and bus clocks, it's necessary to scale also the
-> voltages of regulators or power domain performance state levels.  Adding
-> Operating Performance Points table allows to adjust power domain
-> performance state, depending on the UFS clock speed.
+On Fri, 01 Apr 2022 22:10:33 +0200, Krzysztof Kozlowski wrote:
+> Convert the Qualcomm Shared Memory Driver bindings to DT Schema.
+> 
+> Changes against original bindings: enforce only specific names of child
+> nodes, instead of any names.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  Documentation/devicetree/bindings/ufs/ufs-common.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../regulator/qcom,smd-rpm-regulator.yaml     |   2 +-
+>  .../bindings/remoteproc/qcom,q6v5.txt         |   2 +-
+>  .../bindings/remoteproc/qcom,wcnss-pil.txt    |   2 +-
+>  .../bindings/soc/qcom/qcom,smd-rpm.yaml       |   4 +-
+>  .../devicetree/bindings/soc/qcom/qcom,smd.txt |  98 -------------
+>  .../bindings/soc/qcom/qcom,smd.yaml           | 137 ++++++++++++++++++
+>  6 files changed, 142 insertions(+), 103 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
+>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
