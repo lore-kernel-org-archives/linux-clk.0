@@ -2,213 +2,169 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F26C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 09:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ABA7C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 10:14:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354323AbiDDJgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 05:36:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37542 "EHLO
+        id S244605AbiDDKQj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 06:16:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354272AbiDDJgx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 05:36:53 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F80275D4
-        for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 02:34:55 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id l7-20020a05600c1d0700b0038c99618859so7348117wms.2
-        for <linux-clk@vger.kernel.org>; Mon, 04 Apr 2022 02:34:55 -0700 (PDT)
+        with ESMTP id S244282AbiDDKQi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 06:16:38 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EA242B1A6
+        for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 03:14:42 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id t25so16280509lfg.7
+        for <linux-clk@vger.kernel.org>; Mon, 04 Apr 2022 03:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=xry0fvSIyDxjB2H9TftOM1VVr7Z84GMJx65XGE7l1g8=;
-        b=QyIkbrvP3PXHYn8SZb3YFGNOU4YEWKwijKbTOMes2v3n/iFjy3E0l83+3PU1OyKdiC
-         28W9oIBBI4K+hraVFUC4rWiUr33rPk2ySKcvsAeR22WUXi4iM2aHnZd8Fn1GeAeirYrD
-         vpYCRqjh9PypWsECcQ9s8YJ0IOwuqrtnIou1JtT8aMLsJeQiP8+/F14BOx45Pzoc5hOs
-         zFVa0z20WuRvfR9IM3W6B7NXFHL5NIRr3q2/9wWYRFFUZeBeGzMux4sUyMGNAuZjF3t0
-         mwwwBGsWFJCRgizWUZXY7qrl7cdc2T3DX58d8hKruK4mcWNDpPeP1QmPVvKj4hi4kGzf
-         uymg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1u8sTNMQs2L/ZaOIByfE6JlFjQsvK2xKVc8qvoFdOPw=;
+        b=QAVV3BjX88n2qMfMXixENf5xkuSaHNTxdWe0us6dP3B7yytOw/9vC3+0Lacw4YPmze
+         Dr8c9nlgamXB3VyWl7j/NXmZMcRNq/tVyfiAnKsTZZrexrnmnJ0JS+cu3EjjSXLdbNQA
+         Yk8aaUghMqt6nLpf8do2a1PEohg8sv3yWP4oSRKwEp0XCWFVoKa9u2Aa1J7oUiGEgB0T
+         cUwITkvmS4++5xzqtni2Fna1kaloNV+a1IeyKo4sIBMi61W426I0fhon2+rhSmh5uL2z
+         qdMgyBRjydTnfxQlU8JSE6i3bZECOMfCiCz8LrYn8FWn8l1ykNEFSZ62PGZH3Bs/m35X
+         9NwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=xry0fvSIyDxjB2H9TftOM1VVr7Z84GMJx65XGE7l1g8=;
-        b=4RqYeLl1cWa0qjLvgnGLj1izxG4igthqv+ozUm1kIHoK5iXGdx8MmefGLSuA5keaqM
-         cdOkQJSGsCEIg37KLjXEf8xVZ+TssvoO26JWRKEsRa3JGeHLvdb91Xzb7XcPd6NVj/4n
-         baycbcN2M3qIm1cQ+8VeHua45jY9V+Xh4aGMOML31Is58+q7tnPKgnp2WUDXV9rLjRLw
-         9uFkB14LxGBHG2B2I4rj0iMsvyyDKELfRzbgiRWAoLm04YqeqQcLDsZ4wpflhdZEiCal
-         289sJq2hW/rIQj44TZDsmCj+E/H+o0cw8ZQWtP+/ZKcB51CLm19NAunpEqWjQwMp/ieC
-         7BNw==
-X-Gm-Message-State: AOAM533X5FXRleCKgNWuxMnkwojoom925HfGPHz/oET/Wg3LIsxO7NzJ
-        QIr1eTHxXK9c1locflVRRWzAZw==
-X-Google-Smtp-Source: ABdhPJw+vbnPc6vft6RqA6zSnbRtvDlS1NwlZFp269pvENQ083BNJ7dEdI8BO5JpR9Ta6ymEkaX/jQ==
-X-Received: by 2002:a05:600c:3487:b0:38c:9a42:4d49 with SMTP id a7-20020a05600c348700b0038c9a424d49mr18900226wmq.29.1649064894420;
-        Mon, 04 Apr 2022 02:34:54 -0700 (PDT)
-Received: from [192.168.0.173] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id o4-20020a5d6484000000b002057ad822d4sm9143811wri.48.2022.04.04.02.34.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Apr 2022 02:34:54 -0700 (PDT)
-Message-ID: <2976f4f9-4fda-c04f-45cf-351518f88ec0@linaro.org>
-Date:   Mon, 4 Apr 2022 11:34:52 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1u8sTNMQs2L/ZaOIByfE6JlFjQsvK2xKVc8qvoFdOPw=;
+        b=4uXMZHja4vsLXRtfTQVir8//B6fb8IwsPC/QTZlMxIBtMjdtFh7mwK/wtdSpzjYizL
+         okc6rH/90qPhNylYPJbobTSEbullovEjRVBF08Jkturqir5S8ctnn2fpzyw4ajyIctsd
+         DEwJgpa93ZcWWNlatlrDbaC/VKJ7LuYEhTm54Ddar8vHM1bE76HSWC6DHKTtRrekiLXN
+         YE8H6djAOGiFVpoNZCmlZdoYMMHoetesIa5ar1qKf7+Y7oMSe91t9KCZ4K5I4xk06UtM
+         HpdQePQdPddBgeU4qNr4XaWHjLGfp5qyo141uiU1tWIlgC9Q/olJkxmjGlhCfcBakzFk
+         Y5qg==
+X-Gm-Message-State: AOAM530SSVBSds3UBcgxrvf3DgVMdqEiOv8t2cLopmx/rni13zdpGMOG
+        Bk8LMV289KahWNuib/dAKhxezypV6/M/2aTV8bvOTg==
+X-Google-Smtp-Source: ABdhPJwZImNew4tdoLpboVkwsg9nsiyhiSo0IFSMOa9PMe2LtpSbzDPRS4CnYEjWLznvW2sphO+/GM5PoF18NELcRW0=
+X-Received: by 2002:a05:6512:2627:b0:44a:f55c:ded9 with SMTP id
+ bt39-20020a056512262700b0044af55cded9mr5548447lfb.373.1649067280512; Mon, 04
+ Apr 2022 03:14:40 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v6 01/12] driver: platform: Add helper for safer setting
- of driver_override
-Content-Language: en-US
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-References: <20220403183758.192236-1-krzysztof.kozlowski@linaro.org>
- <20220403183758.192236-2-krzysztof.kozlowski@linaro.org>
- <CAHp75Vczm9f9Bx_w4nW31cnBgwEzPiN-Eqn-7DKZuB+Hew0F=Q@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAHp75Vczm9f9Bx_w4nW31cnBgwEzPiN-Eqn-7DKZuB+Hew0F=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220319225156.1451636-1-linus.walleij@linaro.org> <20220319225156.1451636-6-linus.walleij@linaro.org>
+In-Reply-To: <20220319225156.1451636-6-linus.walleij@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 4 Apr 2022 12:14:04 +0200
+Message-ID: <CAPDyKFqm8BbBLOsc92aSoa1u0_DMo3KUxbq0tGavEwnQNHDHew@mail.gmail.com>
+Subject: Re: [PATCH 5/5 v2] clk: ux500: Implement the missing CLKOUT clocks
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/04/2022 11:16, Andy Shevchenko wrote:
-> On Sun, Apr 3, 2022 at 9:38 PM Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org> wrote:
->>
->> Several core drivers and buses expect that driver_override is a
->> dynamically allocated memory thus later they can kfree() it.
->>
->> However such assumption is not documented, there were in the past and
->> there are already users setting it to a string literal. This leads to
->> kfree() of static memory during device release (e.g. in error paths or
->> during unbind):
->>
->>     kernel BUG at ../mm/slub.c:3960!
->>     Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
->>     ...
->>     (kfree) from [<c058da50>] (platform_device_release+0x88/0xb4)
->>     (platform_device_release) from [<c0585be0>] (device_release+0x2c/0x90)
->>     (device_release) from [<c0a69050>] (kobject_put+0xec/0x20c)
->>     (kobject_put) from [<c0f2f120>] (exynos5_clk_probe+0x154/0x18c)
->>     (exynos5_clk_probe) from [<c058de70>] (platform_drv_probe+0x6c/0xa4)
->>     (platform_drv_probe) from [<c058b7ac>] (really_probe+0x280/0x414)
->>     (really_probe) from [<c058baf4>] (driver_probe_device+0x78/0x1c4)
->>     (driver_probe_device) from [<c0589854>] (bus_for_each_drv+0x74/0xb8)
->>     (bus_for_each_drv) from [<c058b48c>] (__device_attach+0xd4/0x16c)
->>     (__device_attach) from [<c058a638>] (bus_probe_device+0x88/0x90)
->>     (bus_probe_device) from [<c05871fc>] (device_add+0x3dc/0x62c)
->>     (device_add) from [<c075ff10>] (of_platform_device_create_pdata+0x94/0xbc)
->>     (of_platform_device_create_pdata) from [<c07600ec>] (of_platform_bus_create+0x1a8/0x4fc)
->>     (of_platform_bus_create) from [<c0760150>] (of_platform_bus_create+0x20c/0x4fc)
->>     (of_platform_bus_create) from [<c07605f0>] (of_platform_populate+0x84/0x118)
->>     (of_platform_populate) from [<c0f3c964>] (of_platform_default_populate_init+0xa0/0xb8)
->>     (of_platform_default_populate_init) from [<c01031f8>] (do_one_initcall+0x8c/0x404)
->>
->> Provide a helper which clearly documents the usage of driver_override.
->> This will allow later to reuse the helper and reduce the amount of
->> duplicated code.
->>
->> Convert the platform driver to use a new helper and make the
->> driver_override field const char (it is not modified by the core).
-> 
-> ...
-> 
->> +int driver_set_override(struct device *dev, const char **override,
->> +                       const char *s, size_t len)
->> +{
->> +       const char *new, *old;
->> +       char *cp;
-> 
->> +       if (!override || !s)
->> +               return -EINVAL;
-> 
-> Still not sure if we should distinguish (s == NULL && len == 0) from
-> (s != NULL && len == 0).
-> Supplying the latter seems confusing (yes, I see that in the old code). Perhaps
-> !s test, in case you want to leave it, should be also commented.
+On Sun, 20 Mar 2022 at 00:00, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> This implements the two missing CLKOUT clocks for the ux500
+> (well really U8500/DB8500) SoC.
+>
+> The clocks are initialized using a specific parent and
+> divider and these are specified in the device tree, see
+> the separate binding patch.
+>
+> The implementation is a bit different in that it will only
+> create the clock in the clock framework if a user appears
+> in the device tree, rather than it being registered upfront
+> like most of the other clocks. This is because the clock
+> needs parameters for source and divider from the consumer
+> phandle for the clock to be set up properly when the clock
+> is registered.
+>
+> There could be more than one user of a CLKOUT clock, but
+> we have not seen this in practice. If this happens the
+> framework prints and info and returns the previously
+> registered clock.
+>
+> Using the clocks requires also muxing the CLKOUT1 or
+> CLKOUT2 to the appropriate pad. In practice this is
+> achived in a pinctrl handle in the DTS node for the device
+> using the CLKOUT clock, so this muxing is done separately
+> from the clock itself. Example:
+>
+>   haptic@49 {
+>     compatible = "immersion,isa1200";
+>     reg = <0x49>;
+>     (...)
+>     /* clkout1 from ACLK divided by 8 */
+>     clocks = <&clkout_clk DB8500_CLKOUT_1 DB8500_CLKOUT_SRC_ACLK 8>;
+>     pinctrl-names = "default";
+>     pinctrl-0 = <&isa1200_janice_default>;
+>   };
+>
+>   isa1200_janice_default: isa1200_janice {
+>     /* Bring out clkout1 on pin GPIO227 pin AH7 */
+>     janice_mux {
+>       function = "clkout";
+>       groups = "clkout1_a_1";
+>     };
+>     janice_cfg1 {
+>       pins = "GPIO227_AH7";
+>       ste,config = <&out_lo>;
+>     };
+>   (...)
+>
+> This was tested successfully with the Immersion ISA1200
+> haptic feedback unit on the Samsung Galaxy S Advance GT-I9070
+> (Janice) mobile phone.
+>
+> As the CLKOUT clocks need some undefined fixed rate parent
+> clocks that are currently missing from the PRCMU clock
+> implementation, the three simplest are added in this patch:
+> clk38m_to_clkgen, aclk and sysclk. The only parent not yet
+> available in the implementation is clk009, which is a kind
+> of special muxed and divided clock which isn't even
+> implemented in the vendor clock driver.
+>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Drop the custom software .is_enabled tracking.
+> - Drop the custom software .is_prepared tracking.
+> - Use clk_hw_* calls and struct clk_hw all over.
+> - Fix const-correctness with const * const on the parent
+>   table
+> - Use u32 for the DT cell values, drop pointless < 0 check
+> - Reference ab8500_sysclk rather than creating a second
+>   instance of sysclk
+> - Drop extra paranthesis around expressions in
+>    if ((divider == 0) || (divider > 63))
+> ---
+>  drivers/clk/ux500/clk-prcmu.c    | 115 +++++++++++++++++++++++++++++++
+>  drivers/clk/ux500/clk.h          |   5 ++
+>  drivers/clk/ux500/u8500_of_clk.c |  88 +++++++++++++++++++++--
+>  3 files changed, 201 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/ux500/clk-prcmu.c b/drivers/clk/ux500/clk-prcmu.c
+> index 4c1f3a6f5eb5..4c3ea84c9474 100644
+> --- a/drivers/clk/ux500/clk-prcmu.c
+> +++ b/drivers/clk/ux500/clk-prcmu.c
 
-The old semantics were focused on sysfs usage, so clearing is by passing
-an empty string. In the case of sysfs empty string is actually "\n". I
-intend to keep the semantics also for the in-kernel usage and in such
-case empty string can be also "".
+[...]
 
-If I understand your comment correctly, you propose to change it to NULL
-for in-kernel usage, but that would change the semantics.
+> +static unsigned long clk_prcmu_clkout_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_rate)
+> +{
+> +       struct clk_prcmu_clkout *clk = to_clk_prcmu_clkout(hw);
+> +
+> +       if (!clk->divider)
+> +               return 0;
 
-> Another approach is to split above to two checks and move !s after !len.
+Nitpick: clk->divider can't be 0, as a clock with such configuration
+is prevented from being registered.
 
-I don't follow why... The !override and !s are invalid uses. !len is a
-valid user for internal callers, just like "\n" is for sysfs.
+> +       return (parent_rate / clk->divider);
+> +}
 
-> 
->> +       /*
->> +        * The stored value will be used in sysfs show callback (sysfs_emit()),
->> +        * which has a length limit of PAGE_SIZE and adds a trailing newline.
->> +        * Thus we can store one character less to avoid truncation during sysfs
->> +        * show.
->> +        */
->> +       if (len >= (PAGE_SIZE - 1))
->> +               return -EINVAL;
-> 
-> Perhaps explain the case in the comment here?
+[...]
 
-You mean the case we discuss here (to clear override with "")? Sure.
+Other than this very minor thing, this looks good to me.
 
-> 
->> +       if (!len) {
->> +               device_lock(dev);
->> +               old = *override;
->> +               *override = NULL;
-> 
->> +               device_unlock(dev);
->> +               goto out_free;
-> 
-> You may deduplicate this one, by
-> 
->                goto out_unlock_free;
-> 
-> But I understand your intention to keep lock-unlock in one place, so
-> perhaps dropping that label would be even better in this case and
-> keeping it
-
-Yes, exactly.
-
-> 
->        kfree(old);
->        return 0;
-> 
-> here instead of goto.
-
-Slightly more code, but indeed maybe easier to follow. I'll do like this.
-
-
-Best regards,
-Krzysztof
+Kind regards
+Uffe
