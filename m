@@ -2,129 +2,168 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72A2C433F5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 11:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F889C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 12:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349726AbiDDLCU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 07:02:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
+        id S1344270AbiDDMxy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 08:53:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236147AbiDDLCU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 07:02:20 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BA0387BE
-        for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 04:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649070022; x=1680606022;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4mS2wKWtJCLyy4sWKFEMFpKltQLm+lRH7DD0rHaVqNA=;
-  b=W5uCQADV6Zd1nMoAc8271Qf3vpzcxXVBal7RGbCE9Bvb/9jnCdaHE5ji
-   xZsJdS+XFwUuOX1Oe/gxSslU89Lc/hXtXATT78yMxyx8F0nG4/gsjDq3g
-   PAjngAhjd9ZkR0ntVTa4/uQs94O8HbiiSDDF+A1O8XNAMQ0olluILkjfc
-   +UPLeV9P/64l1sqJICiOCmy6Hw0tOmRNKcEa9DVxI3zA3cSTELFFT2V6L
-   CtanxylhfAxe4Q9u7kp4tmgM/hlUhJRz024T9XSvlak33vNJdTBefYjP6
-   5s8faKGIGfqKlTg9qaI/WyxALU8TV+nfrPi6icYuCIn8iRXCEPAXBptRc
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10306"; a="241075771"
-X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="241075771"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 04:00:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
-   d="scan'208";a="657456155"
-Received: from lkp-server02.sh.intel.com (HELO a44fdfb70b94) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 04 Apr 2022 04:00:12 -0700
-Received: from kbuild by a44fdfb70b94 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nbKRP-0001z7-8e;
-        Mon, 04 Apr 2022 11:00:11 +0000
-Date:   Mon, 4 Apr 2022 18:59:58 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Ivan T. Ivanov" <iivanov@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kbuild-all@lists.01.org, Phil Elwell <phil@raspberrypi.org>,
+        with ESMTP id S238402AbiDDMxx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 08:53:53 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC0F6272;
+        Mon,  4 Apr 2022 05:51:57 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4FA4C1F383;
+        Mon,  4 Apr 2022 12:51:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649076716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=LpwuEfIs2cgjcVOl0/eZAJ55mes8AUF/9lxT/njPa6s=;
+        b=xlM7j3wuVAXjLaFbvkQYvTRMZCdZ//+Ilkj1a20gP1I1M9bak5V7MPL8nxOhBAotnvfOCL
+        sey7BXCtH2TL8uCcmT9SVnIDflznC0ACgd7H6Ccc43YrW3kHM8fH43/Pm8exxPBxjHOkgp
+        j2DLIldBOJ6bb2ZwqcxOsYy7AuMDiss=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649076716;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=LpwuEfIs2cgjcVOl0/eZAJ55mes8AUF/9lxT/njPa6s=;
+        b=MRSh4tzIp4uV7H/grQTZ5TpXRgcVOEALU5NtzUk/IMb3RSpdf7AxeT8WNU+dNPupOL9Vn+
+        1V8TL+pdcnEjgcBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 25D8412FC5;
+        Mon,  4 Apr 2022 12:51:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id h+b6COzpSmJ5DQAAMHmgww
+        (envelope-from <iivanov@suse.de>); Mon, 04 Apr 2022 12:51:56 +0000
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Nicolas Saenz Julienne <nsaenz@kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Ray Jui <rjui@broadcom.com>,
         Scott Branden <sbranden@broadcom.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Cc:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Phil Elwell <phil@raspberrypi.org>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        "Ivan T. Ivanov" <iivanov@suse.de>
-Subject: Re: [PATCH] clk: bcm2835: Round UART input clock up
-Message-ID: <202204041850.zEjvoN6Y-lkp@intel.com>
-References: <20220404085822.84135-1-iivanov@suse.de>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH v2] clk: bcm2835: Round UART input clock up
+Date:   Mon,  4 Apr 2022 15:51:13 +0300
+Message-Id: <20220404125113.80239-1-iivanov@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220404085822.84135-1-iivanov@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi "Ivan,
+The UART clock is initialised to be as close to the requested
+frequency as possible without exceeding it. Now that there is a
+clock manager that returns the actual frequencies, an expected
+48MHz clock is reported as 47999625. If the requested baudrate
+== requested clock/16, there is no headroom and the slight
+reduction in actual clock rate results in failure.
 
-Thank you for the patch! Perhaps something to improve:
+If increasing a clock by less than 0.1% changes it from ..999..
+to ..000.., round it up.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v5.18-rc1 next-20220404]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+This is reworked version of a downstream fix:
+https://github.com/raspberrypi/linux/commit/ab3f1b39537f6d3825b8873006fbe2fc5ff057b7
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-T-Ivanov/clk-bcm2835-Round-UART-input-clock-up/20220404-170105
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-config: riscv-randconfig-r042-20220404 (https://download.01.org/0day-ci/archive/20220404/202204041850.zEjvoN6Y-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/79c34b5361c9ab155da3175cfc964b67b9a06eab
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Ivan-T-Ivanov/clk-bcm2835-Round-UART-input-clock-up/20220404-170105
-        git checkout 79c34b5361c9ab155da3175cfc964b67b9a06eab
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/bcm/
-
-If you fix the issue, kindly add following tag as appropriate
+Cc: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+---
+Changes since v1
+Make bcm2835_clock_round() static to fix following warning
+when compiling for riscv:
+drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
 Reported-by: kernel test robot <lkp@intel.com>
 
-All warnings (new ones prefixed by >>):
+ drivers/clk/bcm/clk-bcm2835.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
->> drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
-     997 | unsigned long bcm2835_clock_round(unsigned long clk)
-         |               ^~~~~~~~~~~~~~~~~~~
-
-
-vim +/bcm2835_clock_round +997 drivers/clk/bcm/clk-bcm2835.c
-
-   996	
- > 997	unsigned long bcm2835_clock_round(unsigned long clk)
-   998	{
-   999		unsigned long scaler;
-  1000	
-  1001		/*
-  1002		 * If increasing a clock by less than 0.1% changes it
-  1003		 * from ..999.. to ..000.., round up.
-  1004		 */
-  1005		scaler = 1;
-  1006		while (scaler * 100000 < clk)
-  1007			scaler *= 10;
-  1008		if ((clk + scaler - 1) / scaler % 1000 == 0)
-  1009			clk = (clk / scaler + 1) * scaler;
-  1010	
-  1011		return clk;
-  1012	}
-  1013	
-
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 3ad20e75fd23..c29b643d1bf5 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -502,6 +502,8 @@ struct bcm2835_clock_data {
+ 	bool low_jitter;
+ 
+ 	u32 tcnt_mux;
++
++	bool round_up;
+ };
+ 
+ struct bcm2835_gate_data {
+@@ -992,12 +994,30 @@ static long bcm2835_clock_rate_from_divisor(struct bcm2835_clock *clock,
+ 	return temp;
+ }
+ 
++static unsigned long bcm2835_clock_round(unsigned long clk)
++{
++	unsigned long scaler;
++
++	/*
++	 * If increasing a clock by less than 0.1% changes it
++	 * from ..999.. to ..000.., round up.
++	 */
++	scaler = 1;
++	while (scaler * 100000 < clk)
++		scaler *= 10;
++	if ((clk + scaler - 1) / scaler % 1000 == 0)
++		clk = (clk / scaler + 1) * scaler;
++
++	return clk;
++}
++
+ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 					    unsigned long parent_rate)
+ {
+ 	struct bcm2835_clock *clock = bcm2835_clock_from_hw(hw);
+ 	struct bcm2835_cprman *cprman = clock->cprman;
+ 	const struct bcm2835_clock_data *data = clock->data;
++	unsigned long rate;
+ 	u32 div;
+ 
+ 	if (data->int_bits == 0 && data->frac_bits == 0)
+@@ -1005,7 +1025,12 @@ static unsigned long bcm2835_clock_get_rate(struct clk_hw *hw,
+ 
+ 	div = cprman_read(cprman, data->div_reg);
+ 
+-	return bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
++	rate = bcm2835_clock_rate_from_divisor(clock, parent_rate, div);
++
++	if (data->round_up)
++		rate = bcm2835_clock_round(rate);
++
++	return rate;
+ }
+ 
+ static void bcm2835_clock_wait_busy(struct bcm2835_clock *clock)
+@@ -2142,7 +2167,8 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 		.div_reg = CM_UARTDIV,
+ 		.int_bits = 10,
+ 		.frac_bits = 12,
+-		.tcnt_mux = 28),
++		.tcnt_mux = 28,
++		.round_up = true),
+ 
+ 	/* TV encoder clock.  Only operating frequency is 108Mhz.  */
+ 	[BCM2835_CLOCK_VEC]	= REGISTER_PER_CLK(
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.26.2
+
