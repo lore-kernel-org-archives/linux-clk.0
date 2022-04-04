@@ -2,85 +2,80 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C44C4167E
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 21:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4C2C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 21:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242229AbiDDVlM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 17:41:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
+        id S230035AbiDDVnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 17:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380443AbiDDUH3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 16:07:29 -0400
+        with ESMTP id S1380488AbiDDUSv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 16:18:51 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D686013FAC;
-        Mon,  4 Apr 2022 13:05:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D30DC33EB0;
+        Mon,  4 Apr 2022 13:16:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4C00BB819E1;
-        Mon,  4 Apr 2022 20:05:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F406C340F3;
-        Mon,  4 Apr 2022 20:05:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7B0D6B819AD;
+        Mon,  4 Apr 2022 20:16:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3A2C2BBE4;
+        Mon,  4 Apr 2022 20:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649102730;
-        bh=WPYWTY5BYrb49/S6MqrWmKHCLgSFZHgeBgSL+0PtGSY=;
+        s=k20201202; t=1649103411;
+        bh=nYrjW11SMU4fva4wzJcQI6rU4ZAODE6Dnc/6xUWDrwk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ErB1Qr8fVgbsn6iyOwokf1BAc9rTXHYwHULQPZFGssew2MFFqylx36cJGPl+45os8
-         8l0CFtMv9Gq/K8f4/V/vYTWFHcmmK/zaUichl8aPoub/wrbyntaUYqfhtW2/zwYwPh
-         CWmoYnddJDNdiZ+/dhSsBZ4QvgZiasBy6QtCjnUIoBq1WasTyXpWv+4IXimoGYEvIF
-         t/6Wp31teXOeK2wNr1ODHmJ8n7sJS1avcT9bsJbyuRaz+SqkVi+P+G1aN4Moj1gVJt
-         iQ+HLX02qKK2K7WXXlqqA7/yxSSD9EfU/7OdrtYfOsjrIKhjdTca5JWTZBL0CJ76+q
-         XvSMLe/rDTdQg==
+        b=r03TCHe87koltSy95nzVGTn/o5qX36NLGQzxGvOSILvh4dNeIKDlYTienq8RyTz0v
+         lt2iBEqbgnxEg0ZprA3lhCRlSzrr6Jeppq7V6CEzgDGD8uYvHkeadhEc1hXXCLGTKu
+         OjO93VbTrqrDESOj6v4GNkO2rJ9FNjnwlos08toc1t0Uh8nzLogsK/9PvqmYrSJA5d
+         7tfhVIVl5Bo4bh/l1ZTy4ugKPpSFsX76S4Vv1B0VVFkESnzMeulD88bH+Jw/B2x/Gb
+         ZS5p7Y+e/2dQrP0mu5aAZJ26hdk1lwGqz7a9ixJg9ZassUxiwhjukxhrbfVvmOgIhQ
+         1n8oH9MX7i64g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220404072900.35jca2o26gopi2qb@houat>
-References: <20220403022818.39572-1-sboyd@kernel.org> <20220404072900.35jca2o26gopi2qb@houat>
-Subject: Re: [PATCH] Revert "clk: Drop the rate range on clk_put()"
+In-Reply-To: <20220308040348.1340405-1-bjorn.andersson@linaro.org>
+References: <20220308040348.1340405-1-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2] clk: qcom: rcg2: Cache CFG register updates for parked RCGs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Date:   Mon, 04 Apr 2022 13:05:28 -0700
+Cc:     dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Amit Nischal <anischal@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Mon, 04 Apr 2022 13:16:49 -0700
 User-Agent: alot/0.10
-Message-Id: <20220404200530.0F406C340F3@smtp.kernel.org>
+Message-Id: <20220404201651.0B3A2C2BBE4@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2022-04-04 00:29:00)
-> On Sat, Apr 02, 2022 at 07:28:18PM -0700, Stephen Boyd wrote:
-> > This reverts commit 7dabfa2bc4803eed83d6f22bd6f045495f40636b. There are
-> > multiple reports that this breaks boot on various systems. The common
-> > theme is that orphan clks are having rates set on them when that isn't
-> > expected. Let's revert it out for now so that -rc1 boots.
-> >=20
-> > Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Reported-by: Tony Lindgren <tony@atomide.com>
-> > Reported-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-> > Link: https://lore.kernel.org/r/366a0232-bb4a-c357-6aa8-636e398e05eb@sa=
-msung.com
-> > Cc: Maxime Ripard <maxime@cerno.tech>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Quoting Bjorn Andersson (2022-03-07 20:03:48)
+> As GDSCs are turned on and off some associated clocks are momentarily
+> enabled for house keeping purposes. For this, and similar, purposes the
+> "shared RCGs" will park the RCG on a source clock which is known to be
+> available.
+> When the RCG is parked, a safe clock source will be selected and
+> committed, then the original source would be written back and upon enable
+> the change back to the unparked source would be committed.
 >=20
-> I really like the attention it's getting now that it's broken, we can
-> fix a lot of things :)
-
-Sure! Except that can quickly turn into other attention.
-
+> But starting with SM8350 this fails, as the value in CFG is committed by
+> the GDSC handshake and without a valid parent the GDSC enablement will
+> fail.
 >=20
-> It doesn't seem to be restricted to orphan clocks though :/
-
-Oof ok. I was busy last week so couldn't pay much attention.
-
+> To avoid this problem, the software needs to cache the CFG register
+> content while the shared RCG is parked.
 >=20
-> But obviously,
-> Acked-by: Maxime Ripard <maxime@cerno.tech>
+> Writes to M, N and D registers are committed as they are requested. New
+> helpers for get_parent() and recalc_rate() are extracted from their
+> previous implementations and __clk_rcg2_configure() is modified to allow
+> it to operate on the cached value.
+>=20
+> Fixes: 7ef6f11887bd ("clk: qcom: Configure the RCGs to a safe source as n=
+eeded")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Thanks. Looks like it just made -rc1 so we can work through the fix at a
-more leisurely pace now.
+Sorry I've been delaying reviewing this patch. I'll review it in the
+next couple days.
