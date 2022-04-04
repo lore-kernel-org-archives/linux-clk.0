@@ -2,145 +2,129 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3721C43217
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 10:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72A2C433F5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Apr 2022 11:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358674AbiDDK4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Apr 2022 06:56:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33128 "EHLO
+        id S1349726AbiDDLCU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Apr 2022 07:02:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358621AbiDDK4Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 06:56:16 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA302C117;
-        Mon,  4 Apr 2022 03:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1649069659; x=1680605659;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rQ+A9jrxP/AoNdJehS0U+xaw6T3SSUsxJMay+kwDw0g=;
-  b=hecybtFghTKqmVL3UrbmYo35an9RIhqtw6KzdG4l4Yvxgh2Lpyz+qtu6
-   ugMZNgIhXXMDCWleWJtCAHKWqrbCHa2cwzl+QQjTx1xU/x2cI8vxKFmbe
-   /YJRcaL7usXbtAOUSyqm87FR7B21BfTA5IgfEqv5f/XQwwSiJrPEmyuZw
-   VuKswhNk4UNISuRsvGmBa/f/rawacvn+fs3P7P+JuqkNjeB0f2GSwHcIm
-   ioEvK/SwCSQQLXXMrPAyuhkBIQU0+8KZ5u0qO4mdHdv3HveKGpMsEeXQe
-   FC2GAkjmg/VC3h3KxfGXcNAoC6Gl68O+f6pL7mPNx0BZFfzspGA6F/Nwi
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,234,1643670000"; 
-   d="scan'208";a="23073726"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 04 Apr 2022 12:54:16 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Mon, 04 Apr 2022 12:54:16 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Mon, 04 Apr 2022 12:54:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1649069656; x=1680605656;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rQ+A9jrxP/AoNdJehS0U+xaw6T3SSUsxJMay+kwDw0g=;
-  b=UeSxzdcc2p1icXFPdkoh46DqaU+0QaKapY01QotqNbfAheCiBj/lrg4N
-   btU/syVGc/Cdz4Jxmpxqq+fMkkTIaaaYAaEf6oY4bsSGT8eAcxQjifXXu
-   CQLGwV0SDXpuKQL5lIhbxw/sCrlsdoPIl+uVJg6GVxMD4T3PokhPevJJ7
-   qPqlpTK94h0XAIEqypTveTV4t2Uv1uqglX/vB2/V73uvSY166R+FykoMJ
-   dIzsl3sEA9Seqf/tSQnKYk8XHo4pkR0nxgXKA6P5H4UexXXkVWTj8ccJM
-   BfBKs+5Oer8bZebfSC4gqBdxMTMe3b2wFieloaVwiH2UiBbC2YdKBgW/7
-   g==;
-X-IronPort-AV: E=Sophos;i="5.90,234,1643670000"; 
-   d="scan'208";a="23073724"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 04 Apr 2022 12:54:09 +0200
-Received: from steina-w.localnet (unknown [10.123.49.12])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id CB22F280065;
-        Mon,  4 Apr 2022 12:54:04 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Tony Lindgren <tony@atomide.com>,
+        with ESMTP id S236147AbiDDLCU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Apr 2022 07:02:20 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BA0387BE
+        for <linux-clk@vger.kernel.org>; Mon,  4 Apr 2022 04:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649070022; x=1680606022;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4mS2wKWtJCLyy4sWKFEMFpKltQLm+lRH7DD0rHaVqNA=;
+  b=W5uCQADV6Zd1nMoAc8271Qf3vpzcxXVBal7RGbCE9Bvb/9jnCdaHE5ji
+   xZsJdS+XFwUuOX1Oe/gxSslU89Lc/hXtXATT78yMxyx8F0nG4/gsjDq3g
+   PAjngAhjd9ZkR0ntVTa4/uQs94O8HbiiSDDF+A1O8XNAMQ0olluILkjfc
+   +UPLeV9P/64l1sqJICiOCmy6Hw0tOmRNKcEa9DVxI3zA3cSTELFFT2V6L
+   CtanxylhfAxe4Q9u7kp4tmgM/hlUhJRz024T9XSvlak33vNJdTBefYjP6
+   5s8faKGIGfqKlTg9qaI/WyxALU8TV+nfrPi6icYuCIn8iRXCEPAXBptRc
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10306"; a="241075771"
+X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
+   d="scan'208";a="241075771"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 04:00:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,234,1643702400"; 
+   d="scan'208";a="657456155"
+Received: from lkp-server02.sh.intel.com (HELO a44fdfb70b94) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 04 Apr 2022 04:00:12 -0700
+Received: from kbuild by a44fdfb70b94 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nbKRP-0001z7-8e;
+        Mon, 04 Apr 2022 11:00:11 +0000
+Date:   Mon, 4 Apr 2022 18:59:58 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Ivan T. Ivanov" <iivanov@suse.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org, Phil Elwell <phil@raspberrypi.org>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-        'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org
-Subject: Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: (EXT) Re: [PATCH v2 3/3] clk: Drop the rate range on clk_put
-Date:   Mon, 04 Apr 2022 12:54:02 +0200
-Message-ID: <12990313.uLZWGnKmhe@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20220404072712.bbsbkq3cpyx4xuzy@houat>
-References: <20220325161144.1901695-1-maxime@cerno.tech> <4391300.LvFx2qVVIh@steina-w> <20220404072712.bbsbkq3cpyx4xuzy@houat>
+        "Ivan T. Ivanov" <iivanov@suse.de>
+Subject: Re: [PATCH] clk: bcm2835: Round UART input clock up
+Message-ID: <202204041850.zEjvoN6Y-lkp@intel.com>
+References: <20220404085822.84135-1-iivanov@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220404085822.84135-1-iivanov@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Maxime,
+Hi "Ivan,
 
-Am Montag, 4. April 2022, 09:27:12 CEST schrieb Maxime Ripard:
-> On Mon, Apr 04, 2022 at 09:06:42AM +0200, Alexander Stein wrote:
-> > Here is the requested output:
-> > ---
-> > $ ./scripts/faddr2line build_arm64/vmlinux
-> > 'clk_mux_determine_rate_flags+0x33c/0x380'
-> > clk_mux_determine_rate_flags+0x33c/0x380:
-> > clk_mux_determine_rate_flags at drivers/clk/clk.c:627
-> > ---
-> > From a first look it seems that 'best_parent' is just a NULL-pointer here.
-> > With this small fix
-> > --->8---
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 071857ef381a..45e081330fac 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -626,7 +626,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
-> > 
-> >         pr_crit("%s: Best parent %s (%lu)\n",
-> >         
-> >                 __func__,
-> > 
-> > -               best_parent->name,
-> > +               best_parent? best_parent->name : "unknown",
-> > 
-> >                 best);
-> >         
-> >         return 0;
-> > 
-> > --->8---
-> > 
-> > The boot eventually get stuck, but at a later point.Which is probably why
-> > your analysis found nothing strange. Due to the size of the output I put
-> > it on a gist on github [1]. Please note that this is still based on a
-> > next-20220331 based tree without the revert.
-> 
-> I've looked into it over the weekend, and ran qemu on an imx6 to try to
-> see if it was any similar
-> 
-> I believe the issue comes from the fact that the core will forward rate
-> requests structure to the parent clock as is, and if the parent clock
-> changes the parent it wants, we end up trying to use that parent in the
-> initial clock which doesn't work really well.
-> 
-> I've fixed it in my branch here:
-> https://github.com/mripard/linux/commits/rpi/clk-improvements-more-fixes
+Thank you for the patch! Perhaps something to improve:
 
-Thanks for providing another patchset. Unfortunately, my board hangs still at 
-the same location. For reference I put a branch based on next-20220401 on [1].
-Reverting still does the jobs, a branch is shown on [2]
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v5.18-rc1 next-20220404]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-next-20220404 has the offending patch already reverted, so this should work 
-again, I did not test it on that base on purpose.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-T-Ivanov/clk-bcm2835-Round-UART-input-clock-up/20220404-170105
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+config: riscv-randconfig-r042-20220404 (https://download.01.org/0day-ci/archive/20220404/202204041850.zEjvoN6Y-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/79c34b5361c9ab155da3175cfc964b67b9a06eab
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Ivan-T-Ivanov/clk-bcm2835-Round-UART-input-clock-up/20220404-170105
+        git checkout 79c34b5361c9ab155da3175cfc964b67b9a06eab
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=riscv SHELL=/bin/bash drivers/clk/bcm/
 
-Best regards,
-Alexander
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-[1] https://github.com/tq-steina/linux/tree/clk-fix
-[2] https://github.com/tq-steina/linux/tree/clk-revert
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/bcm/clk-bcm2835.c:997:15: warning: no previous prototype for 'bcm2835_clock_round' [-Wmissing-prototypes]
+     997 | unsigned long bcm2835_clock_round(unsigned long clk)
+         |               ^~~~~~~~~~~~~~~~~~~
 
 
+vim +/bcm2835_clock_round +997 drivers/clk/bcm/clk-bcm2835.c
+
+   996	
+ > 997	unsigned long bcm2835_clock_round(unsigned long clk)
+   998	{
+   999		unsigned long scaler;
+  1000	
+  1001		/*
+  1002		 * If increasing a clock by less than 0.1% changes it
+  1003		 * from ..999.. to ..000.., round up.
+  1004		 */
+  1005		scaler = 1;
+  1006		while (scaler * 100000 < clk)
+  1007			scaler *= 10;
+  1008		if ((clk + scaler - 1) / scaler % 1000 == 0)
+  1009			clk = (clk / scaler + 1) * scaler;
+  1010	
+  1011		return clk;
+  1012	}
+  1013	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
