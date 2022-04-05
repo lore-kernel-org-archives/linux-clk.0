@@ -2,99 +2,92 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1944BC3527B
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 08:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8051CC433F5
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 08:38:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235114AbiDEI0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53314 "EHLO
+        id S235734AbiDEIkW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 04:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235682AbiDEIVe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 04:21:34 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E99A462F9;
-        Tue,  5 Apr 2022 01:19:19 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 275B14000D;
-        Tue,  5 Apr 2022 08:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649146758;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S240958AbiDEIcl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 04:32:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EAE091352;
+        Tue,  5 Apr 2022 01:25:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BA4321F38C;
+        Tue,  5 Apr 2022 08:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649147130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ufacyo2BIZ8ell+Qh9P+IyEHIkAIPJ9lkLf9WuXjjMM=;
-        b=L2wKbRaixSiV7iOpPF9bZwPJ+lmkoEesTUzBI7hg9YXUeEGHRNf0zcu3l/EVM3emlAmDbH
-        5elhFyjKEKbatDiUXMtAGx30e1nA0qUlwm/JypIP8A2ix+55gPCUmh4QDp/Ya/TuMH/uqV
-        03ynAtIFN3jSr3ZVVCeDaxflYHWT7YsIEo5Q7Wkh+MuMcdCMmoKBVfXcXFtinzn6pOu91h
-        WhfNPhJpmG6B/5rbQ4mbkm8BS7To55qdjfz1dgwXKGkk9+k/MhHSGS3qQB3LI4g7w4xhy8
-        EA64z8eNY4Nv+WfZCZ8lX8F4qJocSWhXExacZuH1cguhfGYJro+Is/eeInevtg==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 2/9] dt-bindings: clock: r9a06g032-sysctrl: Reference the DMAMUX subnode
-Date:   Tue,  5 Apr 2022 10:19:04 +0200
-Message-Id: <20220405081911.1349563-3-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
-References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+        bh=Zu0DOcyD/nGWCPug+auF7Wbod45QBkXEGLd0rGqegqY=;
+        b=iT/xSl1G3Atfmvra3mOtDL6PenNX+qApfIuDT5obicNzD1XZizYn8HGn4k+/6n7W1BFDCs
+        3L8muz/QzU+MiMTOWmHgTgQz2Jew1NOHgdblxA9RyPY+crXYy7LYMI23QuuSZFimqvqz2d
+        Qa1sGCfqylKPzmH+qJm36SmKPkTafDE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649147130;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Zu0DOcyD/nGWCPug+auF7Wbod45QBkXEGLd0rGqegqY=;
+        b=W6uDqGqFPJSKtOhBX/73/3eyztesPCRsJykdVkveSBwtQcXj2uSeInJ/4tqDLpBb9L5H+j
+        5GpnPWraS4SwMjCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A038D13A30;
+        Tue,  5 Apr 2022 08:25:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id mOW1Jvr8S2JwEQAAMHmgww
+        (envelope-from <iivanov@suse.de>); Tue, 05 Apr 2022 08:25:30 +0000
+From:   "Ivan T. Ivanov" <iivanov@suse.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Ivan T. Ivanov" <iivanov@suse.de>,
+        Dom Cobley <popcornmix@gmail.com>
+Subject: [PATCH v2 1/2] clk: bcm: rpi: Add support HEVC clock
+Date:   Tue,  5 Apr 2022 11:25:02 +0300
+Message-Id: <20220405082503.61041-2-iivanov@suse.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20220405082503.61041-1-iivanov@suse.de>
+References: <20220405082503.61041-1-iivanov@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This system controller contains several registers that have nothing to
-do with the clock handling, like the DMA mux register. Describe this
-part of the system controller as a subnode.
+Export clock required for RPiVid video decoder hardware.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Cc: Dom Cobley <popcornmix@gmail.com>
+Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
 ---
- .../bindings/clock/renesas,r9a06g032-sysctrl.yaml     | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/bcm/clk-raspberrypi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-index 25dbb0fac065..95bf485c6cec 100644
---- a/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.yaml
-@@ -39,6 +39,17 @@ properties:
-   '#power-domain-cells':
-     const: 0
- 
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 1
-+
-+patternProperties:
-+  "^dma-router@[a-f0-9]+$":
-+    type: object
-+    $ref: "../dma/renesas,rzn1-dmamux.yaml#"
-+
- required:
-   - compatible
-   - reg
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 9d09621549b9..2e2491d85835 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -129,6 +129,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	[RPI_FIRMWARE_V3D_CLK_ID] = {
+ 		.export = true,
+ 	},
++	[RPI_FIRMWARE_HEVC_CLK_ID] = {
++		.export = true,
++	},
+ 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
+ 		.export = true,
+ 	},
 -- 
-2.27.0
+2.26.2
 
