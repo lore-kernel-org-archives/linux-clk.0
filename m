@@ -2,96 +2,160 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F08C433EF
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 14:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68DAC4167B
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 01:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235618AbiDEOJX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 10:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
+        id S241254AbiDFBnN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 21:43:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352128AbiDEMI2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 08:08:28 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AE1484EDE
-        for <linux-clk@vger.kernel.org>; Tue,  5 Apr 2022 04:21:43 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id yy13so26044459ejb.2
-        for <linux-clk@vger.kernel.org>; Tue, 05 Apr 2022 04:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8HBpgOGIWG9ETgsG7Wst3wSQlsF6QqlUH/m56PYbcF4=;
-        b=r+WQ67jWrMQNbPPlSV6FaBSfL3cneBxyAUt8105r5J1wNlYb7d2d4cmBZogrNadtBD
-         4wbXAeKy3Fu17tpfyBJprZ5HroGpb+HIUitxYNkt//jw3+QfW0dkNKorw/46F+jpI6fB
-         ax8MJ3H3ufgSqV5PqItN5Skfbn/UhW0h9QMww4RXGg8rut3iqu7ZV0eBGk2oLAQOLXPA
-         ahCOX/6pCMCF3W7Y8HbW8F11M4gLfIPaNB/LFi9mnznGKmrPHOsi5JPuzyyjElkWielN
-         utf8nZEecvkvtE6HZ0eXr/nxd+eezu9DXFbd3u5FJhLEXmLGuBVeBwbz/gc4tlioJPO+
-         pQfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8HBpgOGIWG9ETgsG7Wst3wSQlsF6QqlUH/m56PYbcF4=;
-        b=nj5cWqest/eS0D5Yam+NoNgGAH0EQ4XcghW6BPIxnf8qpC7JAMarr3Kz/viOvnhRYC
-         iJnJI0OJYgDeI4TxCnQKhbbixNkg162P/uuvkDb89dxqgFPEJAzJe5/5DQabZKGfGFEg
-         EK1ax2N/p8RB43w8JP+mxkHu3NbHH1TF9Me+dmLpULQz7nmn16Z1wpbUK0TBintSZ1ZQ
-         iABS9WUfIps+X2Oy0/qy5NlnMJc3Ch8+f714CDYfwnVdZlCNOhaYr1fXLO2coL3Qc/a5
-         rXn4u0NPCfTEWQNKq9++MUJVgEj4BLO+297ohiIaJ9KgtlKdQGjOZ8GWokDObUO+38ls
-         qyuA==
-X-Gm-Message-State: AOAM533PF5PaKywQG8rB8um4NEsFilHzgS8cjMOysK9aWwSlpZqCQQcs
-        CaozwSmc0zgpIov6NnjttYc1EV0LYFWveU12YRR02Q==
-X-Google-Smtp-Source: ABdhPJyN6ppDedI3VMUC8U84lVxFeRBGhb1ZgnbQuS7fhmJY9CvlWntbMJkTzXTB78FnsDDUaV+P9/XPaAAp+5Wojlk=
-X-Received: by 2002:a17:907:1b1f:b0:6e4:b202:db68 with SMTP id
- mp31-20020a1709071b1f00b006e4b202db68mr3138316ejc.294.1649157702311; Tue, 05
- Apr 2022 04:21:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220405082503.61041-1-iivanov@suse.de> <20220405082503.61041-3-iivanov@suse.de>
-In-Reply-To: <20220405082503.61041-3-iivanov@suse.de>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Tue, 5 Apr 2022 12:21:25 +0100
-Message-ID: <CAPY8ntArikrec3DOv_yB9kdhZex97B2aY5bfK7ye_fkjjRSgxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: bcm: rpi: Handle pixel clock in firmware
-To:     "Ivan T. Ivanov" <iivanov@suse.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S1573295AbiDESt0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 14:49:26 -0400
+Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BFCAF1DD;
+        Tue,  5 Apr 2022 11:47:25 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id CEBCB200006;
+        Tue,  5 Apr 2022 18:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649184443;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0wCROVhxQkzi01xQZ7CtsJyXoDnqptRHhKKgXAf97I8=;
+        b=nZgbol2lDFRyYnzqBtJaMKxRbItRYY9JnbB1a5Y+UcpARzJUkFKNDstOqUNCes3VX8N/2f
+        c7Xn9vYwgvePaycby+DlY5IFtH6sCptZ0SL2r6cjsf+IFGpwVY+6ny3X0NqWYDjhQ0UMHG
+        /3gywrTtSC/Ye3t1OQkQgIiH19PGwe9Li9hCeI530bBQbxme/WXNAZ6Cfk4AOC6fxf2xdG
+        3ntESKddPzvde6rL1rlZG9PL1Xe2zwoYk97tncuZ8A/7I8F4HLVDFSHgfZDtALzvulePyn
+        c7/o1sy3kD7K9I7oLpiPdMQssy5xBY0/gFkks6b5dHF6tDMESJ4PVJRzwqJwgQ==
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        linux-rtc@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a function to enable/disable the RTC
+Date:   Tue,  5 Apr 2022 20:47:11 +0200
+Message-Id: <20220405184716.1578385-3-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 5 Apr 2022 at 09:25, Ivan T. Ivanov <iivanov@suse.de> wrote:
->
-> The clk-bcm2835 handling of the pixel clock does not function
-> correctly when the HDMI power domain is disabled.
->
-> The firmware supports it correctly, so add it to the
-> firmware clock driver.
->
-> Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+There are two RTC registers located within the system controller.
 
-Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Like with the dmamux register, let's add a new helper to enable/disable
+the power, reset and clock of the RTC.
 
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-> index 2e2491d85835..530820d13104 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -129,6 +129,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
->         [RPI_FIRMWARE_V3D_CLK_ID] = {
->                 .export = true,
->         },
-> +       [RPI_FIRMWARE_PIXEL_CLK_ID] = {
-> +               .export = true,
-> +       },
->         [RPI_FIRMWARE_HEVC_CLK_ID] = {
->                 .export = true,
->         },
-> --
-> 2.26.2
->
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c        | 49 +++++++++++++++++++
+ include/linux/soc/renesas/r9a06g032-sysctrl.h |  2 +
+ 2 files changed, 51 insertions(+)
+
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 1df56d7ab3e1..7e61db39a43b 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -26,6 +26,13 @@
+ #include <dt-bindings/clock/r9a06g032-sysctrl.h>
+ 
+ #define R9A06G032_SYSCTRL_DMAMUX 0xA0
++#define R9A06G032_SYSCTRL_PWRCTRL_RTC 0x140
++#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN BIT(0)
++#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RST BIT(1)
++#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ BIT(2)
++#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW BIT(3)
++#define R9A06G032_SYSCTRL_PWRSTAT_RTC 0x144
++#define   R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE BIT(1)
+ 
+ struct r9a06g032_gate {
+ 	u16 gate, reset, ready, midle,
+@@ -343,6 +350,48 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
+ }
+ EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
+ 
++/* Exported helper to enable/disable the RTC */
++int r9a06g032_sysctrl_enable_rtc(bool enable)
++{
++	unsigned long flags;
++	u32 val;
++
++	if (!sysctrl_priv)
++		return -EPROBE_DEFER;
++
++	spin_lock_irqsave(&sysctrl_priv->lock, flags);
++
++	if (enable) {
++		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRSTAT_RTC);
++		if (val & R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE)
++			return -EIO;
++	} else {
++		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
++		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
++	}
++
++	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_enable_rtc);
++
+ /* register/bit pairs are encoded as an uint16_t */
+ static void
+ clk_rdesc_set(struct r9a06g032_priv *clocks,
+diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+index 066dfb15cbdd..914c8789149c 100644
+--- a/include/linux/soc/renesas/r9a06g032-sysctrl.h
++++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
+@@ -4,8 +4,10 @@
+ 
+ #ifdef CONFIG_CLK_R9A06G032
+ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
++int r9a06g032_sysctrl_enable_rtc(bool enable);
+ #else
+ static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
++static inline int r9a06g032_sysctrl_enable_rtc(bool enable) { return -ENODEV; }
+ #endif
+ 
+ #endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
+-- 
+2.27.0
+
