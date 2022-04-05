@@ -2,93 +2,108 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412DDC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7914DC4167D
 	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 02:02:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446399AbiDFBsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 21:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56050 "EHLO
+        id S242614AbiDFBsu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 21:48:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573307AbiDESti (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 14:49:38 -0400
-Received: from relay12.mail.gandi.net (relay12.mail.gandi.net [IPv6:2001:4b98:dc4:8::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECD9AF1DD
-        for <linux-clk@vger.kernel.org>; Tue,  5 Apr 2022 11:47:37 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 88418200008;
-        Tue,  5 Apr 2022 18:47:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649184452;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5VgkvEnP5b6St7Fp3o3CiWue0Qq0QtYCZ+H9lR4xV74=;
-        b=EvtzmemGu+VW/O34YilZ5smr0nIJGAu9gZYrdqsRAzToOBgE5O/NtykvyGz8iW62mjbyeP
-        Gf+p3cW+qxE9XVv7MasQidJQ5VJV80pjuiUNCJpOHiOT5msDV5pPAb8pD5zhDdyWOsXFDT
-        viy5tfF48XQgDh+hc9z+BAdv3NkQaGxJpcVYOdVjNR9AcTphoHQmBcvJNjViX9j3McLUSa
-        56ZxjXFzwBq8hQUHBMrL1PlIkCb7buze6Ec1sPTk+kn09xlI+IzchQSAqvm7JOihXtcRgB
-        CaUEVMA3tB5r/nAVKMzsjEBuGJtPbroclRf8aPD1T2zNnMPJTW0XiA5jIyRM3g==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        with ESMTP id S1452300AbiDEPyp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 11:54:45 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 919765DA11;
+        Tue,  5 Apr 2022 07:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649170333; x=1680706333;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j43We/NuvgFWbEzhQtKpK2IXQeIEAZ3DIUzlKkfSios=;
+  b=jTlBpo9ZT6SqJacT5oR1fLrCnaPgfGk6jVqC62Ow50/3MoG9m+pkBFuU
+   eRHQ2wLiAny8t4ETbGTWWKFPitJHkUZOXZJ1ICmvCgQkLuWMFnZc7tRD5
+   2EaxEZ8Boec9KEk9ww0tRB4dAdJmdCa+9IR06ZrTmDF0PcuO04H845AZ2
+   r6uvZ5qA1TZW36mBM9PhRaSp+dxI+RJNpaByoNpYTcmIRbouXifAvNFuw
+   IZeekotsd7dmXnsiCdildrpC33pod68Kj2AHO4D36wBQndLzNXprnCGHG
+   8u/bZHrmozfTTejvnDKnAnND8iVex95QGVm0FRs/FFKl9hPoRPQTydFK5
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10307"; a="347207507"
+X-IronPort-AV: E=Sophos;i="5.90,236,1643702400"; 
+   d="scan'208";a="347207507"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 07:52:02 -0700
+X-IronPort-AV: E=Sophos;i="5.90,236,1643702400"; 
+   d="scan'208";a="524023886"
+Received: from smile.fi.intel.com ([10.237.72.59])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2022 07:51:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nbkWl-00DQ4I-K7;
+        Tue, 05 Apr 2022 17:51:27 +0300
+Date:   Tue, 5 Apr 2022 17:51:27 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
         Milan Stevanovic <milan.stevanovic@se.com>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Pascal Eberhard <pascal.eberhard@se.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Herve Codina <herve.codina@bootlin.com>,
         Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 6/7] MAINTAINERS: Add myself as maintainer of the RZN1 RTC driver
-Date:   Tue,  5 Apr 2022 20:47:15 +0200
-Message-Id: <20220405184716.1578385-7-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v7 7/9] dmaengine: dw: Add RZN1 compatible
+Message-ID: <YkxXb5moC6/DkRwV@smile.fi.intel.com>
+References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+ <20220405081911.1349563-8-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220405081911.1349563-8-miquel.raynal@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After contributing it, I'll volunteer to maintain it.
+On Tue, Apr 05, 2022 at 10:19:09AM +0200, Miquel Raynal wrote:
+> The Renesas RZN1 DMA IP is very close to the original DW DMA IP, a DMA
+> router has been introduced to handle the wiring options that have been
+> added.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 120d3ae57a4b..a2bafa05ca60 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16849,6 +16849,14 @@ S:	Supported
- F:	Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
- F:	drivers/iio/adc/rzg2l_adc.c
- 
-+RENESAS RZ/N1 RTC CONTROLLER DRIVER
-+M:	Miquel Raynal <miquel.raynal@bootlin.com>
-+L:	linux-rtc@vger.kernel.org
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/rtc/renesas,rzn1-rtc.yaml
-+F:	drivers/rtc/rtc-rzn1.c
-+
- RENESAS R-CAR GEN3 & RZ/N1 NAND CONTROLLER DRIVER
- M:	Miquel Raynal <miquel.raynal@bootlin.com>
- L:	linux-mtd@lists.infradead.org
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/dma/dw/platform.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
+> index 246118955877..47f2292dba98 100644
+> --- a/drivers/dma/dw/platform.c
+> +++ b/drivers/dma/dw/platform.c
+> @@ -137,6 +137,7 @@ static void dw_shutdown(struct platform_device *pdev)
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id dw_dma_of_id_table[] = {
+>  	{ .compatible = "snps,dma-spear1340", .data = &dw_dma_chip_pdata },
+> +	{ .compatible = "renesas,rzn1-dma", .data = &dw_dma_chip_pdata },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, dw_dma_of_id_table);
+> -- 
+> 2.27.0
+> 
+
 -- 
-2.27.0
+With Best Regards,
+Andy Shevchenko
+
 
