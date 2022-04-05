@@ -2,96 +2,104 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E075C433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 08:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02038C41535
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 09:53:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235837AbiDEIk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46050 "EHLO
+        id S235552AbiDEJww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 05:52:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240959AbiDEIcl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 04:32:41 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ECFC91560;
-        Tue,  5 Apr 2022 01:25:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D0341210E1;
-        Tue,  5 Apr 2022 08:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649147130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p7Y05L7uOkIJquMnEg+eO/WF4r7xbv9mlE1hTt5HzHs=;
-        b=QTCcWeRSxmtaPQcnjhcxGV6y8zrYNXXfKZvW0smRC1Z4E8alqJxsnm3t1m5cIiLud6rBDX
-        CCFz18ZHmdnp4m1SaZg8qRC2zmNdtPamt4TTGfryllKc9mlcJP70meU4aXUD8kkrnkFVj7
-        CObTXQscO+vhCwIc9MT78jVoyqsxd64=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649147130;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p7Y05L7uOkIJquMnEg+eO/WF4r7xbv9mlE1hTt5HzHs=;
-        b=z850LmrTnqtL0PP3wyuPWV69JsNFpCW527wlNSNd9XqpJvWPDk+MS08t5MJQwvGBVhuaES
-        /OqRCZbvuc6hY8Aw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B795D13A04;
-        Tue,  5 Apr 2022 08:25:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id mKOcLPr8S2JwEQAAMHmgww
-        (envelope-from <iivanov@suse.de>); Tue, 05 Apr 2022 08:25:30 +0000
-From:   "Ivan T. Ivanov" <iivanov@suse.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Ivan T. Ivanov" <iivanov@suse.de>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH v2 2/2] clk: bcm: rpi: Handle pixel clock in firmware
-Date:   Tue,  5 Apr 2022 11:25:03 +0300
-Message-Id: <20220405082503.61041-3-iivanov@suse.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20220405082503.61041-1-iivanov@suse.de>
+        with ESMTP id S1344168AbiDEJS2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 05:18:28 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F79443C8;
+        Tue,  5 Apr 2022 02:04:38 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 2B34D32020A8;
+        Tue,  5 Apr 2022 05:04:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 05 Apr 2022 05:04:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm3; bh=ecr/cd7Z6SJzZFC1HDrSEJXqgPsjqb23Urnj4l
+        ZYBMU=; b=KrGgdmuQIuE3j8aVFK/mAslLpScm8lcxUgFNCwCGMPM9hvL92kyxOo
+        6FK83YOShxY9Gdo6ThC3YRuVx0knIYWEva6Qwy/YHw9qqCp3sTpwKfpSaoV4dlm2
+        t3z8e9PHEBGoQk5VTjXiZdBGexvz7drmYphxQ+r++0Quvo6+QLctw36uykeMkj+C
+        zB88zsbd4NmnlTOFhr2ikz9RRRVdBggL6CiUNHV1I6wGy3Om4O9xHV6Ml895dTmy
+        ZM6g2l5G+3wB2ztugXCckjWanOZlLvethgwWsvHhAmydPvgP4N5Q03D88leahNc+
+        8l47wgLwwsue+s0c2Kwslb+rfClWtiUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ecr/cd7Z6SJzZFC1H
+        DrSEJXqgPsjqb23Urnj4lZYBMU=; b=SD9lPJbsCXsD3IRVzWzs6HwdOJjLYmsHn
+        oIVvE1szBZvFED9i9hCkXfZsiAqxl9DD8FxETyA4Wfb0XUAe4xunMwB6UfcfQciy
+        QYJyvhRVaJ9dHAoQnr4p8WtjoDuWautsr3cxRoRTQYfVavwJt09uPhPpX8FTcAbl
+        iVa+WG/9K5oDaTNNUJpv8J3dILea799tLV8qhkPaYbas4ez3unyWvE28LWCxdbvd
+        +BFrdzMT6GcqVlTqqjkKlEZPISHIgHZ8HV4FieH0k+sJaBUHuGKHt96RLtWujigV
+        v3ivV3wxLqztxe207y7BXj4t+GcCNHvQTCLwCCm3Ww/iABdY06xpw==
+X-ME-Sender: <xms:IgZMYlCUSghPrq4O5rYv6tgoVPUV1R-_mbdMReYM-T0TtIMkvzA6Qg>
+    <xme:IgZMYjgit-q1l0WvyFNg_zIlBp1-b79Ra-Xw0vfOV0kPINWOhnU1guVJa_DWHV5bH
+    WvMbkT5xEz8J0f9wRE>
+X-ME-Received: <xmr:IgZMYgk6uItlRrBdTitnOKwRcBDAG_58tPaNzpeCtJy0MWTI1dSItgZzzUu0Jjdv-rNeQ7hbCA_PMMwSBs1lVyr77gzENYz7EmyrCss>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejgedgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:IgZMYvw3xJTqNH3Q1tyYDMZ_3EAGlXRrKotIUzrABzXO2u2yqo-P0g>
+    <xmx:IgZMYqQCbAIO7qZWmQHf4I_-_-TqaPhoxiRPsP7O-mMoZtGJSkUl5w>
+    <xmx:IgZMYiYUczpsbXJoUFzwkMSALHhMcekoQYAZ3icHdKdibv1bAhgxHw>
+    <xmx:IgZMYoeYf2vmZ_Uh-_ms7yUgP8xpvKS4xjEkKu1dM808UNLj3PioUw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 Apr 2022 05:04:33 -0400 (EDT)
+Date:   Tue, 5 Apr 2022 11:04:31 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     "Ivan T. Ivanov" <iivanov@suse.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] clk: bcm: rpi: Add support for two more clocks
+Message-ID: <20220405090431.ktlybn62eueh7gqi@houat>
 References: <20220405082503.61041-1-iivanov@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="hf5en5nuutxdxhwt"
+Content-Disposition: inline
+In-Reply-To: <20220405082503.61041-1-iivanov@suse.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk-bcm2835 handling of the pixel clock does not function
-correctly when the HDMI power domain is disabled.
 
-The firmware supports it correctly, so add it to the
-firmware clock driver.
+--hf5en5nuutxdxhwt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
- drivers/clk/bcm/clk-raspberrypi.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Tue, Apr 05, 2022 at 11:25:01AM +0300, Ivan T. Ivanov wrote:
+> Add missing clock required by RPiVid video decoder and make HDMI
+> pixel clock more reliable.
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 2e2491d85835..530820d13104 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -129,6 +129,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	[RPI_FIRMWARE_V3D_CLK_ID] = {
- 		.export = true,
- 	},
-+	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
-+		.export = true,
-+	},
- 	[RPI_FIRMWARE_HEVC_CLK_ID] = {
- 		.export = true,
- 	},
--- 
-2.26.2
+For both patches:
+Acked-by: Maxime Ripard <maxime@cerno.tech>
 
+Thanks!
+Maxime
+
+--hf5en5nuutxdxhwt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkwGHwAKCRDj7w1vZxhR
+xT9hAP97ZP4m7lMBga/y6bEsBJH/w3jNB0D9XMPN7wd+E5ecDgEAo6EuTF1V6UUw
+zhd/u37t4HE4ANpEFb5DuhQCVWaCnAo=
+=ifbI
+-----END PGP SIGNATURE-----
+
+--hf5en5nuutxdxhwt--
