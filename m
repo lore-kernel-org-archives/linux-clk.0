@@ -2,104 +2,84 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02038C41535
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 09:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06110C43219
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 09:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235552AbiDEJww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 05:52:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34474 "EHLO
+        id S235967AbiDEJxA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 05:53:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344168AbiDEJS2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 05:18:28 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F79443C8;
-        Tue,  5 Apr 2022 02:04:38 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 2B34D32020A8;
-        Tue,  5 Apr 2022 05:04:35 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 05 Apr 2022 05:04:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to; s=fm3; bh=ecr/cd7Z6SJzZFC1HDrSEJXqgPsjqb23Urnj4l
-        ZYBMU=; b=KrGgdmuQIuE3j8aVFK/mAslLpScm8lcxUgFNCwCGMPM9hvL92kyxOo
-        6FK83YOShxY9Gdo6ThC3YRuVx0knIYWEva6Qwy/YHw9qqCp3sTpwKfpSaoV4dlm2
-        t3z8e9PHEBGoQk5VTjXiZdBGexvz7drmYphxQ+r++0Quvo6+QLctw36uykeMkj+C
-        zB88zsbd4NmnlTOFhr2ikz9RRRVdBggL6CiUNHV1I6wGy3Om4O9xHV6Ml895dTmy
-        ZM6g2l5G+3wB2ztugXCckjWanOZlLvethgwWsvHhAmydPvgP4N5Q03D88leahNc+
-        8l47wgLwwsue+s0c2Kwslb+rfClWtiUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=ecr/cd7Z6SJzZFC1H
-        DrSEJXqgPsjqb23Urnj4lZYBMU=; b=SD9lPJbsCXsD3IRVzWzs6HwdOJjLYmsHn
-        oIVvE1szBZvFED9i9hCkXfZsiAqxl9DD8FxETyA4Wfb0XUAe4xunMwB6UfcfQciy
-        QYJyvhRVaJ9dHAoQnr4p8WtjoDuWautsr3cxRoRTQYfVavwJt09uPhPpX8FTcAbl
-        iVa+WG/9K5oDaTNNUJpv8J3dILea799tLV8qhkPaYbas4ez3unyWvE28LWCxdbvd
-        +BFrdzMT6GcqVlTqqjkKlEZPISHIgHZ8HV4FieH0k+sJaBUHuGKHt96RLtWujigV
-        v3ivV3wxLqztxe207y7BXj4t+GcCNHvQTCLwCCm3Ww/iABdY06xpw==
-X-ME-Sender: <xms:IgZMYlCUSghPrq4O5rYv6tgoVPUV1R-_mbdMReYM-T0TtIMkvzA6Qg>
-    <xme:IgZMYjgit-q1l0WvyFNg_zIlBp1-b79Ra-Xw0vfOV0kPINWOhnU1guVJa_DWHV5bH
-    WvMbkT5xEz8J0f9wRE>
-X-ME-Received: <xmr:IgZMYgk6uItlRrBdTitnOKwRcBDAG_58tPaNzpeCtJy0MWTI1dSItgZzzUu0Jjdv-rNeQ7hbCA_PMMwSBs1lVyr77gzENYz7EmyrCss>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejgedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:IgZMYvw3xJTqNH3Q1tyYDMZ_3EAGlXRrKotIUzrABzXO2u2yqo-P0g>
-    <xmx:IgZMYqQCbAIO7qZWmQHf4I_-_-TqaPhoxiRPsP7O-mMoZtGJSkUl5w>
-    <xmx:IgZMYiYUczpsbXJoUFzwkMSALHhMcekoQYAZ3icHdKdibv1bAhgxHw>
-    <xmx:IgZMYoeYf2vmZ_Uh-_ms7yUgP8xpvKS4xjEkKu1dM808UNLj3PioUw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 Apr 2022 05:04:33 -0400 (EDT)
-Date:   Tue, 5 Apr 2022 11:04:31 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     "Ivan T. Ivanov" <iivanov@suse.de>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] clk: bcm: rpi: Add support for two more clocks
-Message-ID: <20220405090431.ktlybn62eueh7gqi@houat>
-References: <20220405082503.61041-1-iivanov@suse.de>
+        with ESMTP id S236072AbiDEJbC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 05:31:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85BA9B;
+        Tue,  5 Apr 2022 02:18:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 74380B81C6C;
+        Tue,  5 Apr 2022 09:18:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C493C385A0;
+        Tue,  5 Apr 2022 09:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649150307;
+        bh=KqfmPx/FGZuQc1QjAMWhBBJLn80U3WK0f+K5lsmzmv8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ooEXi9RjMzMSxfLeOZEDjlTKA2kg1ILji4AeosSD72b5yu7U90rI1zHsW27BxBtKH
+         7S8+M5MPtdndh01Bnz7seefyYKzBuRNKUTnluAM9otDxptJ3nIg7ouNT41fRPe38C3
+         24rladwUbzaGGuxtmr75bnWKos85SB+LTOgZSkOtz9mcz+J6qJ9eARSqo/6k8s0bRx
+         c1Q19JrIqmUCO9hws+/YyGFdZI7ww06cB4Pc4Dvxq7kHGtVz3M+TU0+LuP5F+EHiHe
+         76X5+yA1xiB9Ldt/IEEN9vWR5GlwqqXxR2+tM12JtD1a90BmYUEmis6S9g10FOiLmT
+         Nq1mgmt1lNq+Q==
+Date:   Tue, 5 Apr 2022 14:48:22 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v6 5/8] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <YkwJXq+8tAPJ9saP@matsya>
+References: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
+ <20220404133904.1296258-6-miquel.raynal@bootlin.com>
+ <YkvaOKmamLF+Mp7m@matsya>
+ <YkvqsO0aecSjGqx2@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hf5en5nuutxdxhwt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220405082503.61041-1-iivanov@suse.de>
+In-Reply-To: <YkvqsO0aecSjGqx2@smile.fi.intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 05-04-22, 10:07, Andy Shevchenko wrote:
+> On Tue, Apr 05, 2022 at 11:27:12AM +0530, Vinod Koul wrote:
+> > On 04-04-22, 15:39, Miquel Raynal wrote:
+> 
+> ...
+> 
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > This is not consistent with the SPDX tag..
+> 
+> Actually it is. "GPLv2" is obsolete form, in new code we are supposed using
+> "GPL" as per Documentation.
 
---hf5en5nuutxdxhwt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes this has been updated, thanks for pointing out.
 
-On Tue, Apr 05, 2022 at 11:25:01AM +0300, Ivan T. Ivanov wrote:
-> Add missing clock required by RPiVid video decoder and make HDMI
-> pixel clock more reliable.
-
-For both patches:
-Acked-by: Maxime Ripard <maxime@cerno.tech>
-
-Thanks!
-Maxime
-
---hf5en5nuutxdxhwt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCYkwGHwAKCRDj7w1vZxhR
-xT9hAP97ZP4m7lMBga/y6bEsBJH/w3jNB0D9XMPN7wd+E5ecDgEAo6EuTF1V6UUw
-zhd/u37t4HE4ANpEFb5DuhQCVWaCnAo=
-=ifbI
------END PGP SIGNATURE-----
-
---hf5en5nuutxdxhwt--
+-- 
+~Vinod
