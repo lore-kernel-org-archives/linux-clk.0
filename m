@@ -2,84 +2,195 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06110C43219
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 09:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803D3C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 14:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235967AbiDEJxA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 05:53:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39964 "EHLO
+        id S238039AbiDEOJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 10:09:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236072AbiDEJbC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 05:31:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85BA9B;
-        Tue,  5 Apr 2022 02:18:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 74380B81C6C;
-        Tue,  5 Apr 2022 09:18:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C493C385A0;
-        Tue,  5 Apr 2022 09:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649150307;
-        bh=KqfmPx/FGZuQc1QjAMWhBBJLn80U3WK0f+K5lsmzmv8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ooEXi9RjMzMSxfLeOZEDjlTKA2kg1ILji4AeosSD72b5yu7U90rI1zHsW27BxBtKH
-         7S8+M5MPtdndh01Bnz7seefyYKzBuRNKUTnluAM9otDxptJ3nIg7ouNT41fRPe38C3
-         24rladwUbzaGGuxtmr75bnWKos85SB+LTOgZSkOtz9mcz+J6qJ9eARSqo/6k8s0bRx
-         c1Q19JrIqmUCO9hws+/YyGFdZI7ww06cB4Pc4Dvxq7kHGtVz3M+TU0+LuP5F+EHiHe
-         76X5+yA1xiB9Ldt/IEEN9vWR5GlwqqXxR2+tM12JtD1a90BmYUEmis6S9g10FOiLmT
-         Nq1mgmt1lNq+Q==
-Date:   Tue, 5 Apr 2022 14:48:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v6 5/8] dmaengine: dw: dmamux: Introduce RZN1 DMA router
- support
-Message-ID: <YkwJXq+8tAPJ9saP@matsya>
-References: <20220404133904.1296258-1-miquel.raynal@bootlin.com>
- <20220404133904.1296258-6-miquel.raynal@bootlin.com>
- <YkvaOKmamLF+Mp7m@matsya>
- <YkvqsO0aecSjGqx2@smile.fi.intel.com>
+        with ESMTP id S235500AbiDEOE4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 10:04:56 -0400
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2190A154726;
+        Tue,  5 Apr 2022 05:58:02 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id z33so18674800ybh.5;
+        Tue, 05 Apr 2022 05:58:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kVilzoYkYhuS9NBlsNW/Rf3/19+leGlmmW3jKbu7CMg=;
+        b=xoTG0BxWqaPSnsSv1Q1C+jhuzJllNGsSDaO26oVqHyuw/9I1od8h8STMOVebCKweXC
+         VjIuZ0Qcpfql+4AqLFXRCOUOGFSWbNFTlGLH/B2+Odmj3AqtPnd4OOJYzGQjSCjFLQTT
+         y1AsGzgO397Csrel/MaPG7+KtW7ezvhfwCYBLGOwPNGHYtn7w4m6PShCGQJv8TyZrgzu
+         jw4JnvDzjvDRjpOFJQiDsOv75YuqmQ/NStSNkVfLZ7lFDp92lGwt8C22eXmXkPa1sF+1
+         r38tkNN+SDhY1kT0nUSJs9kvucq7+W794HAtBHI5ISUUvSCEvQ5axSVPz/5yeP5BsUDo
+         DKUQ==
+X-Gm-Message-State: AOAM5337DrgKQqSUW81UnwsHzUSSW/mIlrg4CtMEigQLBuGIVmYsx/3p
+        YQ5uqW1Q8CsBHRDLOSyzpYj+grFfMpcXEfrdGLA=
+X-Google-Smtp-Source: ABdhPJwj3BR3DyOHkLyQZUaC2qStkhHS6hJ6c81qhNVQfk7N3KCMY4XnGE1YnzyKRRMV1QCHr6Ukb1fMl1Infj6TkgY=
+X-Received: by 2002:a25:9d8a:0:b0:633:9668:c48a with SMTP id
+ v10-20020a259d8a000000b006339668c48amr2488266ybp.153.1649163481315; Tue, 05
+ Apr 2022 05:58:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YkvqsO0aecSjGqx2@smile.fi.intel.com>
+References: <20220327161344.50477-1-djrscally@gmail.com> <20220327161344.50477-2-djrscally@gmail.com>
+In-Reply-To: <20220327161344.50477-2-djrscally@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 5 Apr 2022 14:57:50 +0200
+Message-ID: <CAJZ5v0i2ciLHP-=8eQcZc0v0xCzhKHKpxLC=Kgv6W5E_5=HQJA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] ACPI: scan: Add acpi_dev_get_next_consumer_dev()
+To:     Daniel Scally <djrscally@gmail.com>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Robert Moore <robert.moore@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05-04-22, 10:07, Andy Shevchenko wrote:
-> On Tue, Apr 05, 2022 at 11:27:12AM +0530, Vinod Koul wrote:
-> > On 04-04-22, 15:39, Miquel Raynal wrote:
-> 
-> ...
-> 
-> > > +MODULE_LICENSE("GPL");
-> > 
-> > This is not consistent with the SPDX tag..
-> 
-> Actually it is. "GPLv2" is obsolete form, in new code we are supposed using
-> "GPL" as per Documentation.
+On Sun, Mar 27, 2022 at 6:13 PM Daniel Scally <djrscally@gmail.com> wrote:
+>
+> In commit b83e2b306736 ("ACPI: scan: Add function to fetch dependent
+> of ACPI device") we added a means of fetching the first device to
+> declare itself dependent on another ACPI device in the _DEP method.
+> One assumption in that patch was that there would only be a single
+> consuming device, but this has not held.
+>
+> Replace that function with a new function that fetches the next consumer
+> of a supplier device. Where no "previous" consumer is passed in, it
+> behaves identically to the original function.
+>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Daniel Scally <djrscally@gmail.com>
+> ---
+> Changes in v2:
+>
+>         - Removed acpi_dev_get_first_consumer_dev() entirely
+>
+>  drivers/acpi/scan.c                         | 37 +++++++++++++++------
+>  drivers/platform/x86/intel/int3472/common.c |  2 +-
+>  include/acpi/acpi_bus.h                     |  4 ++-
+>  3 files changed, 30 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 010ef0b28374..8797e4a33674 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -2215,9 +2215,21 @@ static void acpi_bus_attach(struct acpi_device *device, bool first_pass)
+>                 device->handler->hotplug.notify_online(device);
+>  }
+>
+> -static int acpi_dev_get_first_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
+> +static int acpi_dev_get_next_consumer_dev_cb(struct acpi_dep_data *dep, void *data)
+>  {
+> -       struct acpi_device *adev;
+> +       struct acpi_device *adev = *(struct acpi_device **)data;
 
-Yes this has been updated, thanks for pointing out.
+I would prefer
 
--- 
-~Vinod
+struct acpi_device **adev_p = data;
+struct acpi_device *adev = *adev_p;
+
+> +
+> +       /*
+> +        * If we're passed a 'previous' consumer device then we need to skip
+> +        * any consumers until we meet the previous one, and then NULL @data
+> +        * so the next one can be returned.
+> +        */
+> +       if (adev) {
+> +               if (dep->consumer == adev->handle)
+> +                       *(struct acpi_device **)data = NULL;
+
+                      *adev_p = NULL;
+
+> +
+> +               return 0;
+> +       }
+>
+>         adev = acpi_bus_get_acpi_device(dep->consumer);
+>         if (adev) {
+> @@ -2348,25 +2360,28 @@ bool acpi_dev_ready_for_enumeration(const struct acpi_device *device)
+>  EXPORT_SYMBOL_GPL(acpi_dev_ready_for_enumeration);
+>
+>  /**
+> - * acpi_dev_get_first_consumer_dev - Return ACPI device dependent on @supplier
+> + * acpi_dev_get_next_consumer_dev - Return the next adev dependent on @supplier
+>   * @supplier: Pointer to the dependee device
+> + * @start: Pointer to the current dependent device
+>   *
+> - * Returns the first &struct acpi_device which declares itself dependent on
+> + * Returns the next &struct acpi_device which declares itself dependent on
+>   * @supplier via the _DEP buffer, parsed from the acpi_dep_list.
+>   *
+> - * The caller is responsible for putting the reference to adev when it is no
+> - * longer needed.
+> + * If the returned adev is not passed as @start to this function, the caller is
+> + * responsible for putting the reference to adev when it is no longer needed.
+>   */
+> -struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier)
+> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
+> +                                                  struct acpi_device *start)
+>  {
+> -       struct acpi_device *adev = NULL;
+> +       struct acpi_device *adev = start;
+>
+>         acpi_walk_dep_device_list(supplier->handle,
+> -                                 acpi_dev_get_first_consumer_dev_cb, &adev);
+> +                                 acpi_dev_get_next_consumer_dev_cb, &adev);
+>
+> -       return adev;
+> +       acpi_dev_put(start);
+> +       return adev == start ? NULL : adev;
+
+And here
+
+if (adev == start)
+        return NULL;
+
+return adev;
+
+>  }
+> -EXPORT_SYMBOL_GPL(acpi_dev_get_first_consumer_dev);
+> +EXPORT_SYMBOL_GPL(acpi_dev_get_next_consumer_dev);
+>
+>  /**
+>   * acpi_bus_scan - Add ACPI device node objects in a given namespace scope.
+> diff --git a/drivers/platform/x86/intel/int3472/common.c b/drivers/platform/x86/intel/int3472/common.c
+> index 77cf058e4168..9db2bb0bbba4 100644
+> --- a/drivers/platform/x86/intel/int3472/common.c
+> +++ b/drivers/platform/x86/intel/int3472/common.c
+> @@ -62,7 +62,7 @@ int skl_int3472_get_sensor_adev_and_name(struct device *dev,
+>         struct acpi_device *sensor;
+>         int ret = 0;
+>
+> -       sensor = acpi_dev_get_first_consumer_dev(adev);
+> +       sensor = acpi_dev_get_next_consumer_dev(adev, NULL);
+>         if (!sensor) {
+>                 dev_err(dev, "INT3472 seems to have no dependents.\n");
+>                 return -ENODEV;
+> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
+> index 2f93ecf05dac..cdc726d251b6 100644
+> --- a/include/acpi/acpi_bus.h
+> +++ b/include/acpi/acpi_bus.h
+> @@ -696,7 +696,9 @@ bool acpi_dev_hid_uid_match(struct acpi_device *adev, const char *hid2, const ch
+>
+>  void acpi_dev_clear_dependencies(struct acpi_device *supplier);
+>  bool acpi_dev_ready_for_enumeration(const struct acpi_device *device);
+> -struct acpi_device *acpi_dev_get_first_consumer_dev(struct acpi_device *supplier);
+> +struct acpi_device *acpi_dev_get_next_consumer_dev(struct acpi_device *supplier,
+> +                                                  struct acpi_device *start);
+> +
+>  struct acpi_device *
+>  acpi_dev_get_next_match_dev(struct acpi_device *adev, const char *hid, const char *uid, s64 hrv);
+>  struct acpi_device *
+> --
+> 2.25.1
+>
