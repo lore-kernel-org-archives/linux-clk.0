@@ -2,33 +2,33 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B54CC433FE
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 08:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73D2C433FE
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Apr 2022 08:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234777AbiDEI0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Apr 2022 04:26:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55700 "EHLO
+        id S234827AbiDEI0W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Apr 2022 04:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239883AbiDEIVo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 04:21:44 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::222])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236542AE2;
-        Tue,  5 Apr 2022 01:19:21 -0700 (PDT)
+        with ESMTP id S239950AbiDEIV5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Apr 2022 04:21:57 -0400
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA8EBB7EF;
+        Tue,  5 Apr 2022 01:19:29 -0700 (PDT)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id BE1A74000F;
-        Tue,  5 Apr 2022 08:19:18 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 21A394000E;
+        Tue,  5 Apr 2022 08:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649146760;
+        t=1649146768;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=psSRZJhAOXsPUtZ0dZbzo0PztnR1Q8vauZShn+Y/BqQ=;
-        b=ErW22Sr5/714P2xbxHEmvZ151D2k4+B/cMd7kIpWrdqheRaWwE1ezKy78tFea34WkxZtdB
-        voHuIlHmzPiKixFunA4XbcWUIa1/9ZF3yegRT5fqt4+2k4qTHT6eu+Z5G/65/UDh4gpMO0
-        aEz2/+/O4vY3oh+XLIZKBGSXCqUMUANaFJ0fVB0JrqUJZesVQnHy+FRJ2ZRsobA8kDYwtK
-        8BmmSfEI7LspAxVbDOynmT7afqrNgZ+Cvfa3x1JGZHnsUZFW4mCuYxx1qsXTpVSvHZiGh+
-        IuI8ZOKb3UNkuCA7RLQiW7KP2Xkda5xzB+WpK2FafokI6P9LCu5biIu6awpkSA==
+        bh=GcS1gM79z1ubwsDkiDMnQBqYcbRumBBw75m5IkrMpwU=;
+        b=MX+kgh3tqc13weQIUJ150hgj0t/bDVpfZ4BpuOjcLmPFUO0Pht+zzuOl+7/nnaqj2J2CXM
+        XBI8EtAE29+2QHYjMgAcsnI5M+fa8GuY2fJMh+j1lqeT593F7YZxRnU0nVX6d1hUWnBPsI
+        RpDTvpthDNA0N3lZL72h8ClwUGJL43q/f/Xb930JbWqaUYas/efCevY0nJ8pssLYP34jdN
+        UII7H9W4gM+kqS2+mEflb10E5Y/oum1jhli7ht5l5cq4mIx069KzDvdu+/WJMsu0fEHKms
+        UBzmL3efTkLdgQ0/k+FwM43Sm1igglV0GuoH1Nz4v22BS2+Ntc9+De5uquw8BA==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Gareth Williams <gareth.williams.jx@renesas.com>,
@@ -48,11 +48,10 @@ Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
         linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 3/9] dt-bindings: dmaengine: Introduce RZN1 DMA compatible
-Date:   Tue,  5 Apr 2022 10:19:05 +0200
-Message-Id: <20220405081911.1349563-4-miquel.raynal@bootlin.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v7 7/9] dmaengine: dw: Add RZN1 compatible
+Date:   Tue,  5 Apr 2022 10:19:09 +0200
+Message-Id: <20220405081911.1349563-8-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
 References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
@@ -63,36 +62,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Just like for the NAND controller that is also on this SoC, let's
-provide a SoC generic and a more specific couple of compatibles for the
-DMA controller.
+The Renesas RZN1 DMA IP is very close to the original DW DMA IP, a DMA
+router has been introduced to handle the wiring options that have been
+added.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/dma/snps,dma-spear1340.yaml       | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/dma/dw/platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-index 6b35089ac017..c13649bf7f19 100644
---- a/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-+++ b/Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
-@@ -15,7 +15,13 @@ allOf:
- 
- properties:
-   compatible:
--    const: snps,dma-spear1340
-+    oneOf:
-+      - const: snps,dma-spear1340
-+      - items:
-+          - enum:
-+              - renesas,r9a06g032-dma
-+          - const: renesas,rzn1-dma
-+
- 
-   "#dma-cells":
-     minimum: 3
+diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
+index 246118955877..47f2292dba98 100644
+--- a/drivers/dma/dw/platform.c
++++ b/drivers/dma/dw/platform.c
+@@ -137,6 +137,7 @@ static void dw_shutdown(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id dw_dma_of_id_table[] = {
+ 	{ .compatible = "snps,dma-spear1340", .data = &dw_dma_chip_pdata },
++	{ .compatible = "renesas,rzn1-dma", .data = &dw_dma_chip_pdata },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, dw_dma_of_id_table);
 -- 
 2.27.0
 
