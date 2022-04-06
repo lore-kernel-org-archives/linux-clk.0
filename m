@@ -2,150 +2,103 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C7EC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B164C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbiDFMrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54776 "EHLO
+        id S231893AbiDFMt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232290AbiDFMqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:46:18 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC429591224
-        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 01:50:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 677C1210DE;
-        Wed,  6 Apr 2022 08:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649235042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+lD0ry4dQlfPEWiVab4evz/HYwwWqd7eDGwOxj0rnIk=;
-        b=02hUbL+vxgoAP4OMfXcSDw60stGacRjLXZaBxvlX76FiE0amX2cnZLGrXEaVbvC57tlDTX
-        RCII+RON48XaeMJrqz6Xw7XWUS5//elqLwpar5I+LtdKLFa5yB6TS7EXrRUmqAgIuYUwm0
-        yptAY6fFxM0zekbDnjUePZ1TbIurcJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649235042;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+lD0ry4dQlfPEWiVab4evz/HYwwWqd7eDGwOxj0rnIk=;
-        b=8hf8k2R6jZ5RClPobNyRV5tIPENPTbIkOcanFZ6jBvIwXDE1R4TnarLSZ0nKvPZip4PJxn
-        V+SvJUkAakTNFXDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3035C139F5;
-        Wed,  6 Apr 2022 08:50:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id qjWRCmJUTWLGcgAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 06 Apr 2022 08:50:42 +0000
-Message-ID: <62ffcc58-3770-884f-611f-13cc0fddea4d@suse.de>
-Date:   Wed, 6 Apr 2022 10:50:41 +0200
+        with ESMTP id S230076AbiDFMsp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:48:45 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3CA4C7A60;
+        Wed,  6 Apr 2022 02:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649235652; x=1680771652;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tiv7QeQYk320EhgdYnj6Dr5WjXotDr2L+dj6zBG8/OA=;
+  b=AwBc0QehmGLYTG4n4ZZKtNRzwPyTE1glYCET7IAEvZRyI/D9jH1FLkRo
+   88r6fOJ/GF/pta2CDLEWlhYuAxJSpBuHVJs0MDGTARuYYgqKfS824h1SO
+   +QOq/Sh+upQkGGs373iMmEm1sfmvs8xEh2h263QcCjJJ07vwNfklT0Kcu
+   D/hcQVXNgyIbwDudiF9g1SOtSyw9tgEAcqwMF6qi5o8eU7HeM0qOpMfj/
+   jnvD1fRanQySpZjt2mtNZixCayZJ7F0ez0CjRVXHbawVQb2H/ayA9s3+C
+   n0WxNW6xTXnVSUf8h95Ni2fyG0molSg2fV1KhhSSWo7ZcO0lhTqKKu7jS
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10308"; a="241577635"
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="241577635"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 02:00:41 -0700
+X-IronPort-AV: E=Sophos;i="5.90,239,1643702400"; 
+   d="scan'208";a="524384610"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 02:00:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.95)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1nc1VJ-000BKC-GP;
+        Wed, 06 Apr 2022 11:59:05 +0300
+Date:   Wed, 6 Apr 2022 11:59:05 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v7 5/9] dmaengine: dw: dmamux: Introduce RZN1 DMA router
+ support
+Message-ID: <Yk1WWaJ9IJsU5HXV@smile.fi.intel.com>
+References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+ <20220405081911.1349563-6-miquel.raynal@bootlin.com>
+ <YkxXUdMA75b8keSd@smile.fi.intel.com>
+ <20220406094908.48ecc4bb@xps13>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v7 11/12] drm/vc4: Add logging and comments
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org,
-        Phil Elwell <phil@raspberrypi.com>, linux-clk@vger.kernel.org
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-12-maxime@cerno.tech>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20220225143534.405820-12-maxime@cerno.tech>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------Xl5vKddbOyOOjhIwP7mL0o0k"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406094908.48ecc4bb@xps13>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------Xl5vKddbOyOOjhIwP7mL0o0k
-Content-Type: multipart/mixed; boundary="------------zli0nFshZdlII5ARN0fhvShJ";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Maxime Ripard <maxime@cerno.tech>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Dom Cobley <dom@raspberrypi.com>, Tim Gover <tim.gover@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- dri-devel@lists.freedesktop.org, Phil Elwell <phil@raspberrypi.com>,
- linux-clk@vger.kernel.org
-Message-ID: <62ffcc58-3770-884f-611f-13cc0fddea4d@suse.de>
-Subject: Re: [PATCH v7 11/12] drm/vc4: Add logging and comments
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-12-maxime@cerno.tech>
-In-Reply-To: <20220225143534.405820-12-maxime@cerno.tech>
+On Wed, Apr 06, 2022 at 09:49:08AM +0200, Miquel Raynal wrote:
+> andriy.shevchenko@linux.intel.com wrote on Tue, 5 Apr 2022 17:50:57
+> +0300:
+> > On Tue, Apr 05, 2022 at 10:19:07AM +0200, Miquel Raynal wrote:
 
---------------zli0nFshZdlII5ARN0fhvShJ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+...
 
-DQoNCkFtIDI1LjAyLjIyIHVtIDE1OjM1IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gVGhl
-IEhWUyBjb3JlIGNsb2NrIGlzbid0IHJlYWxseSBvYnZpb3VzLCBzbyBsZXQncyBhZGQgYSBi
-dW5jaCBtb3JlDQo+IGNvbW1lbnRzIGFuZCBzb21lIGxvZ2dpbmcgZm9yIGVhc2llciBkZWJ1
-Z2dpbmcuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlwYXJkIDxtYXhpbWVAY2Vy
-bm8udGVjaD4NCg0KQWNrZWQtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBz
-dXNlLmRlPg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jIHwg
-MTEgKysrKysrKysrKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQ0K
-PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jIGIvZHJp
-dmVycy9ncHUvZHJtL3ZjNC92YzRfa21zLmMNCj4gaW5kZXggMjRkZTI5YmMxY2RhLi42ZmUw
-M2ZjMTdkNzMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5j
-DQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jDQo+IEBAIC0zODksOCAr
-Mzg5LDE1IEBAIHN0YXRpYyB2b2lkIHZjNF9hdG9taWNfY29tbWl0X3RhaWwoc3RydWN0IGRy
-bV9hdG9taWNfc3RhdGUgKnN0YXRlKQ0KPiAgIAkJCQkJCTUwMDAwMDAwMCwNCj4gICAJCQkJ
-CQluZXdfaHZzX3N0YXRlLT5jb3JlX2Nsb2NrX3JhdGUpOw0KPiAgIA0KPiArCQlkcm1fZGJn
-KGRldiwgIlJhaXNpbmcgdGhlIGNvcmUgY2xvY2sgYXQgJWx1IEh6XG4iLCBjb3JlX3JhdGUp
-Ow0KPiArDQo+ICsJCS8qDQo+ICsJCSAqIERvIGEgdGVtcG9yYXJ5IHJlcXVlc3Qgb24gdGhl
-IGNvcmUgY2xvY2sgZHVyaW5nIHRoZQ0KPiArCQkgKiBtb2Rlc2V0Lg0KPiArCQkgKi8NCj4g
-ICAJCWNsa19zZXRfbWluX3JhdGUoaHZzLT5jb3JlX2NsaywgY29yZV9yYXRlKTsNCj4gICAJ
-fQ0KPiArDQo+ICAgCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVz
-KGRldiwgc3RhdGUpOw0KPiAgIA0KPiAgIAl2YzRfY3RtX2NvbW1pdCh2YzQsIHN0YXRlKTsN
-Cj4gQEAgLTQxNiw2ICs0MjMsMTAgQEAgc3RhdGljIHZvaWQgdmM0X2F0b21pY19jb21taXRf
-dGFpbChzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpDQo+ICAgCQlkcm1fZGJnKGRl
-diwgIlJ1bm5pbmcgdGhlIGNvcmUgY2xvY2sgYXQgJWx1IEh6XG4iLA0KPiAgIAkJCW5ld19o
-dnNfc3RhdGUtPmNvcmVfY2xvY2tfcmF0ZSk7DQo+ICAgDQo+ICsJCS8qDQo+ICsJCSAqIFJl
-cXVlc3QgYSBjbG9jayByYXRlIGJhc2VkIG9uIHRoZSBjdXJyZW50IEhWUw0KPiArCQkgKiBy
-ZXF1aXJlbWVudHMuDQo+ICsJCSAqLw0KPiAgIAkJY2xrX3NldF9taW5fcmF0ZShodnMtPmNv
-cmVfY2xrLCBuZXdfaHZzX3N0YXRlLT5jb3JlX2Nsb2NrX3JhdGUpOw0KPiAgIAl9DQo+ICAg
-fQ0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVy
-DQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUs
-IDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0K
-R2VzY2jDpGZ0c2bDvGhyZXI6IEl2byBUb3Rldg0K
+> > > +#define RZN1_DMAMUX_SPLIT 16
+> >
+> > I would name it more explicitly:
+> > 
+> > #define RZN1_DMAMUX_SPLIT_1_0	 16
+> 
+> I am sorry but I don't understand this suffix, which probably means
+> that it is not as clear as we wish. Do you mind if I stick to
+> RZN1_DMAMUX_SPLIT?
 
---------------zli0nFshZdlII5ARN0fhvShJ--
+The suffix to show that this is the value between part 0 (indexed by 0) and
+part 1 (indexed by 1) as far as I can see they are different by size. Since
+they are not equal, the original name without suffix is confusing (I would
+expect indexing up to 4 in such case).
 
---------------Xl5vKddbOyOOjhIwP7mL0o0k
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
+-- 
+With Best Regards,
+Andy Shevchenko
 
------BEGIN PGP SIGNATURE-----
 
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmJNVGEFAwAAAAAACgkQlh/E3EQov+Bl
-ohAAqduPwfJMHn8DKbshiYC8q+MhL/14LTbuR7Qg6YyH7PymbLyXV/97RIR6rvzvKrucj9/90akT
-AHMJ9wSriIP6tyBDNM80i/oAmF/7KR0LHNA1joLL48jq2tKgEjBSv/7rZ9pkWrtvuFnYd4h8EM8r
-VH0p7St9O1iL3LnY3sNacrEefhKtE+wwNHVw72QEuYMAm3iM97vTp9zYU2WM5/Upkg4L4k6FzNrd
-LVGd+eC4vB2dqOu8yDWh5rDXasynPf9+F+cqzGdoJzezeT/+cqu5g19NT0NM4n2fG8NHQJ7xkmtY
-wuc6LNpP2dHi566yUruXhDH04YQDW6HS5g3ig+ESsUDdEEeznTelkvrOAQR8D1OYBOA5n83KoNJU
-/Bt9bZIDWL+nzh6fY4BUAtoh38vNDp670epcsH/JF+9uwYZQW+E4iXpkMhrESrh2GTRr8dwZS/vK
-NoXRP5CvaZgTwWcUBsr7l9kj6+wdK18Y47lllVCeN8XqKI3kb6iJbiT61Ud2Y0K9VhzM/0MKmx5E
-XcRANTuXvaXileFtrNwx0sNdJWqzf0etpTml0Ory+QdKRJVww8B0yD5SNayCcv0EKWs44IEbNxXz
-P8y479CoaKhlNH+ea5Kejat8b5hhFN5fJ6uJntM/irfmzV9S9XMQ5tLUB1+OfS5XcdAQFiVNVqLC
-xUw=
-=n+Kt
------END PGP SIGNATURE-----
-
---------------Xl5vKddbOyOOjhIwP7mL0o0k--
