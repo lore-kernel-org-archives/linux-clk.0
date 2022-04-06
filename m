@@ -2,184 +2,239 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F6BC43217
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 13:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A3FC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 13:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233150AbiDFN3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 09:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S233668AbiDFN6n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 09:58:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233646AbiDFN2B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 09:28:01 -0400
-Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 578D01BE117;
-        Wed,  6 Apr 2022 03:25:47 -0700 (PDT)
-Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 236BF1C8112B;
-        Wed,  6 Apr 2022 17:25:44 +0800 (CST)
-Received: from NTHCCAS03.nuvoton.com (10.1.20.28) by NTHCCAS04.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 6 Apr
- 2022 17:25:43 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS03.nuvoton.com
- (10.1.20.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Wed, 6 Apr 2022
- 17:25:43 +0800
-Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS01.nuvoton.com
- (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
- Transport; Wed, 6 Apr 2022 17:25:42 +0800
-Message-ID: <ab89589f-6dd7-d4ff-635d-ff8dbd2d3e02@nuvoton.com>
-Date:   Wed, 6 Apr 2022 17:25:42 +0800
+        with ESMTP id S234303AbiDFN6P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 09:58:15 -0400
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8D813CA2A;
+        Wed,  6 Apr 2022 02:10:21 -0700 (PDT)
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id BDD191BF20C;
+        Wed,  6 Apr 2022 09:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649236219;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=VQ63HwvnHGrZcb0MV+Lbc8R18sMVO+IEaXijo5IJKi0=;
+        b=KP4qyotP0+4BE/6EF2wTNEs6vuJZadjtA0gF1RPOUne3opDxjRA45bb3NFqdEOq7CkvZ2o
+        5h3G+EI8o7oufH/8ygDWxWBn7WWids8pd+pdjOjKg0W0vLuCYL7W/m4SCYcu58wvUKxQgG
+        Xg7MEsiuxPi1Z5mkOr/vPSjlbolN5BqWZWfrJHXu6XUwT+3tte1Ji46LGhRlYJ1bi3H572
+        7hV4KNGCio9LegIDlXvTvC50wRaRBHY8TyTv1mHcJFt69CtX/yeDJEB59dhhA/R+p4UFkH
+        RGT0eE/2gEscIz/EVO8ERYVWYy0CR6BWI7rTSbB6szhYETEO4ZPD2qLQGCfcpA==
+Date:   Wed, 6 Apr 2022 11:10:17 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 4/7] rtc: rzn1: Add alarm support
+Message-ID: <Yk1Y+eaDkk1FFiLZ@mail.local>
+References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
+ <20220405184716.1578385-5-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "soc@kernel.org" <soc@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220307091923.9909-1-ychuang3@nuvoton.com>
- <20220307091923.9909-4-ychuang3@nuvoton.com>
- <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
- <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
- <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
-From:   Jacky Huang <ychuang3@nuvoton.com>
-In-Reply-To: <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220405184716.1578385-5-miquel.raynal@bootlin.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 05/04/2022 20:47:13+0200, Miquel Raynal wrote:
+> The RZN1 RTC can trigger an interrupt when reaching a particular date up
+> to 7 days ahead. Bring support for this alarm.
+> 
+> One drawback though, the granularity is about a minute.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/rtc/rtc-rzn1.c | 108 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
+> index 15c533333930..85c5a68944a0 100644
+> --- a/drivers/rtc/rtc-rzn1.c
+> +++ b/drivers/rtc/rtc-rzn1.c
+> @@ -154,14 +154,110 @@ static int rzn1_rtc_set_time(struct device *dev, struct rtc_time *tm)
+>  	return ret;
+>  }
+>  
+> +static irqreturn_t rzn1_rtc_alarm_irq(int irq, void *dev_id)
+> +{
+> +	struct rzn1_rtc *rtc = dev_id;
+> +
+> +	rtc_update_irq(rtc->rtcdev, 1, RTC_AF | RTC_IRQF);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int rzn1_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
+> +{
+> +	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
+> +	u32 ctl1 = readl(rtc->base + RZN1_RTC_CTL1);
+> +
+> +	if (enable)
+> +		ctl1 |= RZN1_RTC_CTL1_ALME;
+> +	else
+> +		ctl1 &= ~RZN1_RTC_CTL1_ALME;
+> +
+> +	writel(ctl1, rtc->base + RZN1_RTC_CTL1);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+> +{
+> +	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
+> +	struct rtc_time *tm = &alrm->time;
+> +	unsigned int min, hour, wday, delta_days;
+> +	u32 ctl1;
+> +	int ret;
+> +
+> +	ret = rzn1_rtc_read_time(dev, tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	min = readl(rtc->base + RZN1_RTC_ALM);
+> +	hour = readl(rtc->base + RZN1_RTC_ALH);
+> +	wday = readl(rtc->base + RZN1_RTC_ALW);
+> +
+> +	tm->tm_sec = 0;
+> +	tm->tm_min = bcd2bin(min);
+> +	tm->tm_hour = bcd2bin(hour);
+> +	delta_days = ((fls(wday) - 1) - tm->tm_wday + 7) % 7;
+> +	tm->tm_wday = fls(wday) - 1;
+> +	tm->tm_mday += delta_days;
+> +	if (delta_days > rtc_month_days(tm->tm_mon, tm->tm_year)) {
+> +		tm->tm_mday %= rtc_month_days(tm->tm_mon, tm->tm_year);
+> +		tm->tm_mon++;
+> +	}
+> +	if (tm->tm_mon > 12) {
+> +		tm->tm_mon %= 12;
+> +		tm->tm_year++;
+> +	}
 
+I guess you could avoid having to handle rollover by making the
+calculations on a time64_t and then convert back to a tm. I don't think
+this would be much worse in terms of processing.
 
-On 2022/4/6 下午 03:14, Krzysztof Kozlowski wrote:
-> On 06/04/2022 04:58, Jacky Huang wrote:
->>>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
->>>> index 639e01a4d855..28e01442094f 100644
->>>> --- a/arch/arm64/boot/dts/Makefile
->>>> +++ b/arch/arm64/boot/dts/Makefile
->>>> @@ -30,3 +30,4 @@ subdir-y += synaptics
->>>>    subdir-y += ti
->>>>    subdir-y += toshiba
->>>>    subdir-y += xilinx
->>>> +subdir-y += nuvoton
->>>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
->>>> new file mode 100644
->>>> index 000000000000..e1e0c466bf5e
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
->>>> @@ -0,0 +1,2 @@
->>>> +# SPDX-License-Identifier: GPL-2.0
->>>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-evb.dtb
->>> ARCH_NUVOTON does not exist.
->> I would add the following to end of arch/arm64/Kconfig.platforms,
-> Don't add things at the end of files but rather in respective place
-> without messing the order.
+> +
+> +	ctl1 = readl(rtc->base + RZN1_RTC_CTL1);
+> +	alrm->enabled = !!(ctl1 & RZN1_RTC_CTL1_ALME);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzn1_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+> +{
+> +	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
+> +	struct rtc_time *tm = &alrm->time, tm_now;
+> +	unsigned long alarm, farest;
+> +	unsigned int days_ahead, wday;
+> +	int ret;
+> +
+> +	ret = rzn1_rtc_read_time(dev, &tm_now);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* We cannot set alarms more than one week ahead */
+> +	farest = rtc_tm_to_time64(&tm_now) + (7 * 86400);
+> +	alarm = rtc_tm_to_time64(tm);
+> +	if (time_after(alarm, farest))
+> +		return -EOPNOTSUPP;
+> +
 
-OK, I will put it to the right place in alphanumeric order.
-It should be between ARCH_MXC and ARCH_QCOM.
+I would return -ERANGE
 
->
->> and
->> add the
->> modification to this patch series.
->>
->> config ARCH_MA35D1
->>       bool "Nuvoton MA35D1 SOC Family"
-> We do not add options for specific SoCs, but for entire families, so
-> ARCH_NUVOTON is correct.
+> +	/* Convert alarm day into week day */
+> +	days_ahead = tm->tm_mday - tm_now.tm_mday;
+> +	wday = (tm_now.tm_wday + days_ahead) % 7;
+> +
+> +	writel(bin2bcd(tm->tm_min), rtc->base + RZN1_RTC_ALM);
+> +	writel(bin2bcd(tm->tm_hour), rtc->base + RZN1_RTC_ALH);
+> +	writel(BIT(wday), rtc->base + RZN1_RTC_ALW);
+> +
+> +	rzn1_rtc_alarm_irq_enable(dev, alrm->enabled);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct rtc_class_ops rzn1_rtc_ops = {
+>  	.read_time = rzn1_rtc_read_time,
+>  	.set_time = rzn1_rtc_set_time,
+> +	.read_alarm = rzn1_rtc_read_alarm,
+> +	.set_alarm = rzn1_rtc_set_alarm,
+> +	.alarm_irq_enable = rzn1_rtc_alarm_irq_enable,
+>  };
+>  
+>  static int rzn1_rtc_probe(struct platform_device *pdev)
+>  {
+>  	struct rzn1_rtc *rtc;
+> +	int alarm_irq;
+>  	int ret;
+>  
+>  	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+> @@ -178,12 +274,17 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(rtc->base))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n");
+>  
+> +	alarm_irq = platform_get_irq(pdev, 0);
+> +	if (alarm_irq < 0)
+> +		return dev_err_probe(&pdev->dev, alarm_irq, "Missing timer IRQ\n");
+> +
+>  	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
+>  	if (IS_ERR(rtc->rtcdev))
+>  		return PTR_ERR(rtc);
+>  
+>  	rtc->rtcdev->range_max = 3178591199UL; /* 100 years */
+>  	rtc->rtcdev->ops = &rzn1_rtc_ops;
+> +	set_bit(RTC_FEATURE_ALARM_RES_MINUTE, rtc->rtcdev->features);
 
-Yes, I would like to modify it as the following:
+You should probably clear RTC_FEATURE_UPDATE_INTERRUPT too.
 
-config ARCH_NUVOTON
-     bool "Nuvoton SoC Family"
-     select PINCTRL
-     select PINCTRL_MA35D1
-     select PM
-     select GPIOLIB
-     select SOC_BUS
-     help
-       This enables support for Nuvoton MA35D1 ARMv8 SoC.
+>  
+>  	ret = r9a06g032_sysctrl_enable_rtc(true);
+>  	if (ret)
+> @@ -206,6 +307,13 @@ static int rzn1_rtc_probe(struct platform_device *pdev)
+>  	/* Enable counter operation */
+>  	writel(0, rtc->base + RZN1_RTC_CTL2);
+>  
+> +	ret = devm_request_irq(&pdev->dev, alarm_irq, rzn1_rtc_alarm_irq, 0,
+> +			       dev_name(&pdev->dev), rtc);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "RTC timer interrupt not available\n");
+> +		goto disable_clk;
+> +	}
+> +
+>  	ret = devm_rtc_register_device(rtc->rtcdev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to register RTC\n");
+> -- 
+> 2.27.0
+> 
 
-(Currently, we have MA35D1 only in the support list for arm64 SoC.).
-
->>       select PINCTRL
->>       select PINCTRL_MA35D1
->>       select PM
->>       select GPIOLIB
->>       select SOC_BUS
->>       select VIDEOMODE_HELPERS
->>       select FB_MODE_HELPERS
->>       help
->>         This enables support for Nuvoton MA35D1 SOC Family.
->>
->>
->>>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
->>>> new file mode 100644
->>>> index 000000000000..38e4f734da0f
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
->>>> @@ -0,0 +1,23 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>>> +/*
->>>> + * Device Tree Source for MA35D1 Evaluation Board (EVB)
->>>> + *
->>>> + * Copyright (C) 2021 Nuvoton Technology Corp.
->>>> + */
->>>> +
->>>> +/dts-v1/;
->>>> +#include "ma35d1.dtsi"
->>>> +
->>>> +/ {
->>>> +       model = "Nuvoton MA35D1-EVB";
->>>> +
->>>> +       chosen {
->>>> +               bootargs = "console=ttyS0,115200n8";
->>> No bootargs. "chosen", please.
->> OK, I would modify it as:
->>
->> chosen {
->>           stdout-path = "serial0:115200n8";
->>       };
->>
->>
->>>> +       };
->>> You need compatible and bindings.
->> I will add the compatible here
->> compatible = "nuvoton,ma35d1-evb", "nuvoton,ma35d1"
->>
->> And, I should create a new binding file
->> Documentation/devicetree/bindings/arm/nuvoton.yaml to this patch series.
->> And the property would be:
->>
->> properties:
->>     compatible:
->>       description: Nuvoton MA35D1-EVB
->>       items:
->>         - const: nuvoton,ma35d1-evb
->>         - const: nuvoton,ma35d1
->>
->>
->> Is it OK?
-> Yes
->
->
->
-> Best regards,
-> Krzysztof
-
-Thanks for your review.
-
-Sincerely,
-Jacky
-
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
