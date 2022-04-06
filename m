@@ -2,159 +2,134 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE9DC4167E
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 17:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1975C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 17:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239988AbiDFR6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 13:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
+        id S239667AbiDFR7T convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 13:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240192AbiDFR55 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 13:57:57 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B92012B5F0;
-        Wed,  6 Apr 2022 09:19:10 -0700 (PDT)
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 50E7C2000F;
-        Wed,  6 Apr 2022 16:19:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649261949;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XZQwq9EVWiu0S9glnJx6yd3klQequgPHgMCbo1b5VzU=;
-        b=FsvGVXL9fu5CFh3MsiFusTfXlZDFmOPcG8opJdpgs1YRwwX2w0t4/B8a1VFEdcCPocYqAn
-        dh7BhNezbKzIzHPUli/H0naBgcSxKQYWsaNrW9GCkOgKgY3UtK8N77SCYv6TU/tmjK1dbS
-        ZtgNGINM8WftNeMMPOHiCvJeExJHBHhF+eJM594Ts/Oi/khvC7P4S3rU86+JFwKmTZSofT
-        0hMZJxQxUBXM2sRb8Vp1nrg0Kt/7pnOYZS0VU7jjl43wRlLD5xLQDOh0sBbtvqXxF59uKB
-        +hhJPIhlKB5gvd6oZcnNnNveXJqUErLKqaNXnpU7BWiS6tyHHi2LOpOyUOGIQQ==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 4/9] soc: renesas: rzn1-sysc: Export function to set dmamux
-Date:   Wed,  6 Apr 2022 18:18:51 +0200
-Message-Id: <20220406161856.1669069-5-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
-References: <20220406161856.1669069-1-miquel.raynal@bootlin.com>
+        with ESMTP id S239903AbiDFR6l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 13:58:41 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0CC3BCB7B;
+        Wed,  6 Apr 2022 09:18:38 -0700 (PDT)
+Received: from [213.70.33.226] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1nc8MP-0007f5-Ur; Wed, 06 Apr 2022 18:18:22 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Johan Jonker <jbx6244@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        zhangqing@rock-chips.com, Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     robh+dt@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: convert rockchip,rk3188-cru.txt to YAML
+Date:   Wed, 06 Apr 2022 18:18:20 +0200
+Message-ID: <14123901.uLZWGnKmhe@phil>
+In-Reply-To: <4b7af0ed-c5e1-7523-0abc-4204596edeb9@linaro.org>
+References: <20220329111323.3569-1-jbx6244@gmail.com> <0eed395b-ca02-2308-a5c6-7c4a72720175@gmail.com> <4b7af0ed-c5e1-7523-0abc-4204596edeb9@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The dmamux register is located within the system controller.
+Am Samstag, 2. April 2022, 18:01:11 CEST schrieb Krzysztof Kozlowski:
+> On 02/04/2022 14:20, Johan Jonker wrote:
+> > 
+> > 
+> > On 4/2/22 14:16, Krzysztof Kozlowski wrote:
+> >> On 02/04/2022 13:45, Johan Jonker wrote:
+> >>>
+> >>>
+> >>> On 4/2/22 13:41, Krzysztof Kozlowski wrote:
+> >>>> On 01/04/2022 09:55, Heiko Stübner wrote:
+> >>>>> Hi Stephen,
+> >>>>>
+> >>>>> Am Freitag, 1. April 2022, 00:51:32 CEST schrieb Stephen Boyd:
+> >>>>>> Quoting Johan Jonker (2022-03-29 04:13:22)
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+> >>>>>>> new file mode 100644
+> >>>>>>> index 000000000..ddd7e46af
+> >>>>>>> --- /dev/null
+> >>>>>>> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3188-cru.yaml
+> >>>>>>> @@ -0,0 +1,78 @@
+> >>>>>>> +# SPDX-License-Identifier: GPL-2.0
+> >>>>>>> +%YAML 1.2
+> >>>>>>> +---
+> >>>>>>> +$id: http://devicetree.org/schemas/clock/rockchip,rk3188-cru.yaml#
+> >>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>>>>>> +
+> >>>>>>> +title: Rockchip RK3188/RK3066 Clock and Reset Unit (CRU)
+> >>>>>>> +
+> >>>>>>> +maintainers:
+> >>>>>>> +  - Elaine Zhang <zhangqing@rock-chips.com>
+> >>>>>>> +  - Heiko Stuebner <heiko@sntech.de>
+> >>>>>>> +
+> >>>>>>> +description: |
+> >>>>>>> +  The RK3188/RK3066 clock controller generates and supplies clocks to various
+> >>>>>>> +  controllers within the SoC and also implements a reset controller for SoC
+> >>>>>>> +  peripherals.
+> >>>>>>> +  Each clock is assigned an identifier and client nodes can use this identifier
+> >>>>>>> +  to specify the clock which they consume. All available clocks are defined as
+> >>>>>>> +  preprocessor macros in the dt-bindings/clock/rk3188-cru.h and
+> >>>>>>> +  dt-bindings/clock/rk3066-cru.h headers and can be used in device tree sources.
+> >>>>>>> +  Similar macros exist for the reset sources in these files.
+> >>>>>>> +  There are several clocks that are generated outside the SoC. It is expected
+> >>>>>>> +  that they are defined using standard clock bindings with following
+> >>>>>>> +  clock-output-names:
+> >>>>>>> +    - "xin24m"    - crystal input                 - required
+> >>>>>>> +    - "xin32k"    - RTC clock                     - optional
+> >>>>>>> +    - "xin27m"    - 27mhz crystal input on RK3066 - optional
+> >>>>>>> +    - "ext_hsadc" - external HSADC clock          - optional
+> >>>>>>> +    - "ext_cif0"  - external camera clock         - optional
+> >>>>>>> +    - "ext_rmii"  - external RMII clock           - optional
+> >>>>>>> +    - "ext_jtag"  - external JTAG clock           - optional
+> >>>>>>
+> >>>>>> I'd expect all these clks here to be inputs to this node.
+> >>>>>
+> >>>>> The optional clocks are all part of a circular dependency.
+> >>>>>
+> >>>>> So for example xin32k normally is generated by the pmic and fed
+> >>>>> back into the system, so to get xin32k, we need the pmic to probe,
+> >>>>> which needs i2c, which in turn already needs the clock controller.
+> >>>>
+> >>>> Are you sure that xin32k (RTC) clock should be input to the clock
+> >>>> controller? I would expect it is the input to the SoC RTC block, so
+> >>>> there is no circular dependency.
+> >>>
+> >>> clk-rk3188.c:
+> >>>
+> >>> PNAME(mux_pll_p)		= { "xin24m", "xin32k" };
+> >>
+> >> Thanks, but that's not the answer whether it is an input to the clock
+> >> controller. It's the answer how the driver implements this. :)
+> > 
+> > PX2 == rk3066
+> > 
+> > Rockchip PX2 TRM V1.0.pdf
+> > 
+> > page 30
+> > 
+> > Chip Clock Architecture Diagram 1
+> 
+> I found it, thanks. That's the answer, so indeed this is an input.
+> 
+> Answering partially to Heiko/Stephen, this could be still modeled in DTS
+> as a fixed-frequency clock going as input to the clock-controller. The
+> trouble with that approach is that it would actually duplicate the
+> definition (another one coming from PMIC).
 
-Without syscon, we need an extra helper in order to give write access to
-this register to a dmamux driver.
+And it has the issue that the pmic doesn't necessarily has the clock
+enabled at boot. Also this would combat one issue by introducing
+a different one, as this would be modelling a clock in a way that is
+not reflected by hardware at all.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/renesas/r9a06g032-clocks.c        | 35 ++++++++++++++++++-
- include/linux/soc/renesas/r9a06g032-sysctrl.h | 11 ++++++
- 2 files changed, 45 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/soc/renesas/r9a06g032-sysctrl.h
-
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index c99942f0e4d4..052d99059981 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -20,9 +20,12 @@
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
- #include <linux/slab.h>
-+#include <linux/soc/renesas/r9a06g032-sysctrl.h>
- #include <linux/spinlock.h>
- #include <dt-bindings/clock/r9a06g032-sysctrl.h>
- 
-+#define R9A06G032_SYSCTRL_DMAMUX 0xA0
-+
- struct r9a06g032_gate {
- 	u16 gate, reset, ready, midle,
- 		scon, mirack, mistat;
-@@ -315,6 +318,30 @@ struct r9a06g032_priv {
- 	void __iomem *reg;
- };
- 
-+static struct r9a06g032_priv *sysctrl_priv;
-+
-+/* Exported helper to access the DMAMUX register */
-+int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
-+{
-+	unsigned long flags;
-+	u32 dmamux;
-+
-+	if (!sysctrl_priv)
-+		return -EPROBE_DEFER;
-+
-+	spin_lock_irqsave(&sysctrl_priv->lock, flags);
-+
-+	dmamux = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
-+	dmamux &= ~mask;
-+	dmamux |= val & mask;
-+	writel(dmamux, sysctrl_priv->reg + R9A06G032_SYSCTRL_DMAMUX);
-+
-+	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
-+
- /* register/bit pairs are encoded as an uint16_t */
- static void
- clk_rdesc_set(struct r9a06g032_priv *clocks,
-@@ -963,7 +990,13 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
--	return r9a06g032_add_clk_domain(dev);
-+	error = r9a06g032_add_clk_domain(dev);
-+	if (error)
-+		return error;
-+
-+	sysctrl_priv = clocks;
-+
-+	return 0;
- }
- 
- static const struct of_device_id r9a06g032_match[] = {
-diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-new file mode 100644
-index 000000000000..066dfb15cbdd
---- /dev/null
-+++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
-+#define __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__
-+
-+#ifdef CONFIG_CLK_R9A06G032
-+int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
-+#else
-+static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
-+#endif
-+
-+#endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
--- 
-2.27.0
 
