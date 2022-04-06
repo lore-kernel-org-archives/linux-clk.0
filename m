@@ -2,132 +2,184 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356F4C433F5
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F6BC43217
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 13:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiDFM6v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:58:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
+        id S233150AbiDFN3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 09:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231804AbiDFM5Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:57:16 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on20605.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::605])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF9B4D7832
-        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 02:16:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aGXEg5qJb60kfG6UbWBIIi+OulhGGQWK59QsoBXFg5MB8VxlTa9F2fZykFBEd4IsMlAn4hQ+i5icgFvttmIMiV0HItn4k7MkmU/bb7vPwCFyWrCsebZqsND2Mj+4dQlVPMODbYmBfOdZdSbB9Q9+jTCrlpjBDjFlCMpDjvfU4xGoTBmg66NlcxU1NBfnYYJ3pKOvRn5nqEyneFeb3IPzXh5n6JdTy1fsgZq23Q3XWLWhBxRzV4d3TZDnV0xBiMRSD1gNovSweDq2YKxJK68bI5rPRCk9GOtLiL6YLRvslb34fNoLvnaneOsIT9YuEbPJJ2aYEIoh/Fg6dph8JqHfkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=M9HUuFC7y7K+SXxmW7Ghv+cgRlhQzK6d4W/n46Wp5vI=;
- b=oOFbmw+zKKqKkpv7BWRxrMoPSdQlv05RafCLtUcBfszcVczLpe2RW+pjPV+9IiXYXal45+mGjkmavytx8uEpyLX8BR3F4m5PKL7DKk4IAyyeMAz4iF00cSEzMnYjF0Ae4t2W/A/n/nEVk6gGg8mLiO34kMQJOgQocmEonuqH2An3a871HVTl/xM4R9XmWVAfDQ7OPcfi1i9bf1tnsYOH8YDbaMtXEKjwWRnJzIqM2vSYMJ3U51UxuIQxDtYSLxr+nBO8gOiNX8K4xCtgr6P6aXHUHaGzcvcoR1aDDM51KSoVfS28DOWqkSbaq+zeNM5fAuuwAeGJQSFFx9Deivv+/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M9HUuFC7y7K+SXxmW7Ghv+cgRlhQzK6d4W/n46Wp5vI=;
- b=nVy32Mn7lGFa4YsiUcx7Nsk05hhh9b7aqFfHa8vnQQ0N+vxpIYMVfv5Dl2dYx/YffM/dx45W4/Ln+CIQPnoa7KIPWN4UZFyo/dJK6lfxKRhC6d7tTB/rQDpVaOayPaJxCZgUvlXKSN6Dzc0eq8Wx4E4g98/hQY67XFBwJygB5ic=
-Received: from SN4PR0401CA0026.namprd04.prod.outlook.com
- (2603:10b6:803:2a::12) by BN8PR02MB5987.namprd02.prod.outlook.com
- (2603:10b6:408:b4::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
- 2022 09:14:25 +0000
-Received: from SN1NAM02FT0035.eop-nam02.prod.protection.outlook.com
- (2603:10b6:803:2a:cafe::ee) by SN4PR0401CA0026.outlook.office365.com
- (2603:10b6:803:2a::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.21 via Frontend
- Transport; Wed, 6 Apr 2022 09:14:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT0035.mail.protection.outlook.com (10.97.4.137) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5144.21 via Frontend Transport; Wed, 6 Apr 2022 09:14:24 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Wed, 6 Apr 2022 02:14:23 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Wed, 6 Apr 2022 02:14:23 -0700
-Envelope-to: git@xilinx.com,
- linux-clk@vger.kernel.org,
- sboyd@kernel.org
-Received: from [10.140.6.59] (port=53080 helo=xhdshubhraj40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1nc1k6-000B5o-Rd; Wed, 06 Apr 2022 02:14:23 -0700
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-To:     <linux-clk@vger.kernel.org>
-CC:     <git@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
-        <sboyd@kernel.org>, <michal.simek@xilinx.com>
-Subject: [PATCH] clk: zynqmp: Check the return type  zynqmp_pm_query_data
-Date:   Wed, 6 Apr 2022 14:44:15 +0530
-Message-ID: <20220406091415.18109-1-shubhrajyoti.datta@xilinx.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S233646AbiDFN2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 09:28:01 -0400
+Received: from maillog.nuvoton.com (maillog.nuvoton.com [202.39.227.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 578D01BE117;
+        Wed,  6 Apr 2022 03:25:47 -0700 (PDT)
+Received: from NTHCCAS04.nuvoton.com (NTHCCAS04.nuvoton.com [10.1.8.29])
+        by maillog.nuvoton.com (Postfix) with ESMTP id 236BF1C8112B;
+        Wed,  6 Apr 2022 17:25:44 +0800 (CST)
+Received: from NTHCCAS03.nuvoton.com (10.1.20.28) by NTHCCAS04.nuvoton.com
+ (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 6 Apr
+ 2022 17:25:43 +0800
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS03.nuvoton.com
+ (10.1.20.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1847.3; Wed, 6 Apr 2022
+ 17:25:43 +0800
+Received: from [172.19.1.47] (172.19.1.47) by NTHCCAS01.nuvoton.com
+ (10.1.12.25) with Microsoft SMTP Server id 15.1.2375.7 via Frontend
+ Transport; Wed, 6 Apr 2022 17:25:42 +0800
+Message-ID: <ab89589f-6dd7-d4ff-635d-ff8dbd2d3e02@nuvoton.com>
+Date:   Wed, 6 Apr 2022 17:25:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f243c795-4526-49a0-35a6-08da17add834
-X-MS-TrafficTypeDiagnostic: BN8PR02MB5987:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR02MB5987C9A0D3D060507C82F562AAE79@BN8PR02MB5987.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: a44/i8HYM6KEl7k9hqNT1cEO5QsbzSTne2Y1noBfWnoWOYsO1a4WBZijTGN61/8PN685Huh5HZzh13tDtasNpq6muwONIl9+FJqm0iyCVI0wYVF/LcWawDqB3ldqf4JSYOdd9UTryAXkVhndjvIiIBe9fwQjeJHv29VpdHb2fgS0veCKGVZW2+CtLmdsVH0ESJTngX8PjtC4TOgYxFLLE9Wdk+Hpllh7jbRZffWu/U2cS8rMtryCqtzemW7jtT/+98uiZPR3Hg0dK95JuewoK9YbEPRx74iDhomHUVJo3eZ/KNkzQeNmGM76VdCdIAgNWX0a8XwWtsFp0EHybHLAzyEiwIEFNp1EPDXzUBkhuFb+MTUDqy+lFYDTh0gkIFeys1anJckAuTUb25F7Ya0gnF+oeMHESjfHAg7owBPIBAoL7yMmEmZ+cqKeVnX7N0y4QlZG9vC+jhXAzmLt4YNY+3Yj4jZxVib1Tv5NKlUFZBXsLWCbHCEIEZrS9BzD7cXc5BRDAxGRxHmiDHSkVQDkaLYRZJ088wZXLgpOHriKeyYzH43Cj3+AioX2kRyjLvxf7Gk8CFb3IJiCdepSzd1bXdzSnu0a34sgJiTj1bz/BeBWPn03WvBTuA4iOaAeq+s/Ng1dAAJcusDB80ft/vr7TMH7EfYCe59phPHlkC09OkyQrcrW0F+qm0TUq03+mxKvyqjdT9gJQhZ4Te3VqVZtIQ==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(70586007)(9786002)(2906002)(4744005)(1076003)(44832011)(8936002)(7696005)(8676002)(508600001)(186003)(4326008)(26005)(70206006)(36860700001)(2616005)(40460700003)(6666004)(107886003)(5660300002)(83380400001)(356005)(82310400005)(54906003)(7636003)(47076005)(36756003)(426003)(336012)(6916009)(316002)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 09:14:24.9646
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f243c795-4526-49a0-35a6-08da17add834
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0035.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR02MB5987
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220307091923.9909-1-ychuang3@nuvoton.com>
+ <20220307091923.9909-4-ychuang3@nuvoton.com>
+ <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
+ <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
+ <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
+From:   Jacky Huang <ychuang3@nuvoton.com>
+In-Reply-To: <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Check the return type of zynqmp_pm_query_data(qdata, ret_payload);
 
-Addresses-Coverity: Event check_return
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
----
- drivers/clk/zynqmp/clkc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index 75d895be2d89..8164939b3d18 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -227,11 +227,15 @@ static int zynqmp_pm_clock_get_name(u32 clock_id,
- {
- 	struct zynqmp_pm_query_data qdata = {0};
- 	u32 ret_payload[PAYLOAD_ARG_CNT];
-+	int ret;
- 
- 	qdata.qid = PM_QID_CLOCK_GET_NAME;
- 	qdata.arg1 = clock_id;
- 
--	zynqmp_pm_query_data(qdata, ret_payload);
-+	ret = zynqmp_pm_query_data(qdata, ret_payload);
-+	if (ret)
-+		return ret;
-+
- 	memcpy(response, ret_payload, sizeof(*response));
- 
- 	return 0;
--- 
-2.17.1
+On 2022/4/6 下午 03:14, Krzysztof Kozlowski wrote:
+> On 06/04/2022 04:58, Jacky Huang wrote:
+>>>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+>>>> index 639e01a4d855..28e01442094f 100644
+>>>> --- a/arch/arm64/boot/dts/Makefile
+>>>> +++ b/arch/arm64/boot/dts/Makefile
+>>>> @@ -30,3 +30,4 @@ subdir-y += synaptics
+>>>>    subdir-y += ti
+>>>>    subdir-y += toshiba
+>>>>    subdir-y += xilinx
+>>>> +subdir-y += nuvoton
+>>>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
+>>>> new file mode 100644
+>>>> index 000000000000..e1e0c466bf5e
+>>>> --- /dev/null
+>>>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
+>>>> @@ -0,0 +1,2 @@
+>>>> +# SPDX-License-Identifier: GPL-2.0
+>>>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-evb.dtb
+>>> ARCH_NUVOTON does not exist.
+>> I would add the following to end of arch/arm64/Kconfig.platforms,
+> Don't add things at the end of files but rather in respective place
+> without messing the order.
+
+OK, I will put it to the right place in alphanumeric order.
+It should be between ARCH_MXC and ARCH_QCOM.
+
+>
+>> and
+>> add the
+>> modification to this patch series.
+>>
+>> config ARCH_MA35D1
+>>       bool "Nuvoton MA35D1 SOC Family"
+> We do not add options for specific SoCs, but for entire families, so
+> ARCH_NUVOTON is correct.
+
+Yes, I would like to modify it as the following:
+
+config ARCH_NUVOTON
+     bool "Nuvoton SoC Family"
+     select PINCTRL
+     select PINCTRL_MA35D1
+     select PM
+     select GPIOLIB
+     select SOC_BUS
+     help
+       This enables support for Nuvoton MA35D1 ARMv8 SoC.
+
+(Currently, we have MA35D1 only in the support list for arm64 SoC.).
+
+>>       select PINCTRL
+>>       select PINCTRL_MA35D1
+>>       select PM
+>>       select GPIOLIB
+>>       select SOC_BUS
+>>       select VIDEOMODE_HELPERS
+>>       select FB_MODE_HELPERS
+>>       help
+>>         This enables support for Nuvoton MA35D1 SOC Family.
+>>
+>>
+>>>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
+>>>> new file mode 100644
+>>>> index 000000000000..38e4f734da0f
+>>>> --- /dev/null
+>>>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
+>>>> @@ -0,0 +1,23 @@
+>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>> +/*
+>>>> + * Device Tree Source for MA35D1 Evaluation Board (EVB)
+>>>> + *
+>>>> + * Copyright (C) 2021 Nuvoton Technology Corp.
+>>>> + */
+>>>> +
+>>>> +/dts-v1/;
+>>>> +#include "ma35d1.dtsi"
+>>>> +
+>>>> +/ {
+>>>> +       model = "Nuvoton MA35D1-EVB";
+>>>> +
+>>>> +       chosen {
+>>>> +               bootargs = "console=ttyS0,115200n8";
+>>> No bootargs. "chosen", please.
+>> OK, I would modify it as:
+>>
+>> chosen {
+>>           stdout-path = "serial0:115200n8";
+>>       };
+>>
+>>
+>>>> +       };
+>>> You need compatible and bindings.
+>> I will add the compatible here
+>> compatible = "nuvoton,ma35d1-evb", "nuvoton,ma35d1"
+>>
+>> And, I should create a new binding file
+>> Documentation/devicetree/bindings/arm/nuvoton.yaml to this patch series.
+>> And the property would be:
+>>
+>> properties:
+>>     compatible:
+>>       description: Nuvoton MA35D1-EVB
+>>       items:
+>>         - const: nuvoton,ma35d1-evb
+>>         - const: nuvoton,ma35d1
+>>
+>>
+>> Is it OK?
+> Yes
+>
+>
+>
+> Best regards,
+> Krzysztof
+
+Thanks for your review.
+
+Sincerely,
+Jacky
+
 
