@@ -2,181 +2,102 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9652AC433EF
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 10:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA2BC433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 11:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243208AbiDFKvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 06:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40224 "EHLO
+        id S1349871AbiDFLGb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 07:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbiDFKu0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 06:50:26 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D49E10856C
-        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 00:15:05 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id bg10so2360268ejb.4
-        for <linux-clk@vger.kernel.org>; Wed, 06 Apr 2022 00:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=ItLT2iWRQ8MK455HPWYXz8o5FEVTFaa0PW9WN5W7PWQ=;
-        b=aljVglaiorKfLr8hIxisEour0ptMG48CK1Bco7fzAXebuy++7+j30VgUqeBNWNdapT
-         46/oBIK5ME7783f1qbqsbxF5x372/E+eU6rexLJ3siZ4UM45XdYoJ8n8w31/ArgK1aNk
-         uwAEQrHoYEM0WjRO1nd1VUEwecsGsuQ1oi5AAOjZiNcyShoav28NWybX7c8Oa+tJbMez
-         Mey+ABS6X67p4P5xSubdsTVUfYEFFabbavXous5101XE2chjMSSJAY5XDxyGP1N/xccQ
-         JHURGWS09J+gDo3OLTrPKlNqcW6azIrdVUp/cCMhfqs+syP26YHknSOBGxCrRJue8I7e
-         mA1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=ItLT2iWRQ8MK455HPWYXz8o5FEVTFaa0PW9WN5W7PWQ=;
-        b=eEjCDHWuEBIiMQSQJNBprSW2OoJxprEyPBwpQr6u8a84vLTcGWeFaEhBMKOOWBSCVl
-         P3FoFlzyLXnUb9ndGZmUjZtOwf5geIkEp0zepKEx+Yu77VYps7evO1baOE4MS+Czae6b
-         fLL3Ky3D3ExBPh0HDMTPo7b0PlM9KarIGYSjzjocLQ9u225mfosKu7racoUPb5p5LPVu
-         WP+6RXzbfs+h1wu9tDqt+GXycPaNPZ7y5RxqJUdD/hOoLjQE/XlwSz1dPDMOd7W/A4RO
-         /sMSP7Y8nxaKqNHURRsqcS8u2boYBUjXnnXLS1/jwvt9Hz2a6FjcRpN/BaiiyPrN2rJI
-         NneA==
-X-Gm-Message-State: AOAM532sDePamg0/5zfGzTzme7Npv0cI8p/FK0uRJcXcMvNYYZkoJSa+
-        9WzmcqKsaqQCCUsFOE1gd8bjxA==
-X-Google-Smtp-Source: ABdhPJxkVzG6YeLl1AHfVOPZW8vCgyulJy2IwvFDrOQZC3HKys5OOJ6wApTj/h6GZDOZpaKoaF2krQ==
-X-Received: by 2002:a17:906:dc92:b0:6e4:a93b:8958 with SMTP id cs18-20020a170906dc9200b006e4a93b8958mr7148361ejc.403.1649229298612;
-        Wed, 06 Apr 2022 00:14:58 -0700 (PDT)
-Received: from [192.168.0.182] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id n6-20020aa7c786000000b00410d2403ccfsm7531111eds.21.2022.04.06.00.14.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Apr 2022 00:14:58 -0700 (PDT)
-Message-ID: <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
-Date:   Wed, 6 Apr 2022 09:14:57 +0200
+        with ESMTP id S1355260AbiDFLFX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 07:05:23 -0400
+Received: from relay11.mail.gandi.net (relay11.mail.gandi.net [IPv6:2001:4b98:dc4:8::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B9952D903;
+        Wed,  6 Apr 2022 00:31:26 -0700 (PDT)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by mail.gandi.net (Postfix) with ESMTPSA id A818910000A;
+        Wed,  6 Apr 2022 07:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1649230282;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nHj5k5RzXeFddFrVB4M3iAfHYNCiMLQrlVcvkv7tNwY=;
+        b=QQ5TYeKl8nxr5lg5xsdiD7SuJg8yDXW1F3juR7fPgJYpvK08QuPE7EUW/W6PxBk35X/bkI
+        2U0fwd4SCh3wyKlp8+o3l5XiTMtU8kAtBrzRE13elbV53+4g2CzJA+kLcO9KSBQzgVqlN2
+        HKHJTi/YZPm66mEm/kY9Jz3HDTsV30BMXAa8RNcJNQVKdxgeP6v0mXxGNz7Dv16PI2PLcH
+        AGrY5R6n9401GPAOrJfN2ejcm4gL7AjqusI3PJVB7yLWrBYxCtA9pCgZcirL1dxBfN22nH
+        Ft8GXJLBCXyz8aKnfaojBfueyrreClpIfWdVsFYBTWE3eFgPq96WB/NRIFHVAg==
+Date:   Wed, 6 Apr 2022 09:31:17 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
+        <dmaengine@vger.kernel.org>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Pascal Eberhard <pascal.eberhard@se.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Herve Codina <herve.codina@bootlin.com>,
+        Clement Leger <clement.leger@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v7 1/9] dt-bindings: dmaengine: Introduce RZN1 dmamux
+ bindings
+Message-ID: <20220406093117.128bc7f1@xps13>
+In-Reply-To: <CAL_JsqK3VJ=5VxF5DgZh58zkmWkaAHu9TL9dYOAeTw5nry1Xrg@mail.gmail.com>
+References: <20220405081911.1349563-1-miquel.raynal@bootlin.com>
+        <20220405081911.1349563-2-miquel.raynal@bootlin.com>
+        <CAL_JsqK3VJ=5VxF5DgZh58zkmWkaAHu9TL9dYOAeTw5nry1Xrg@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
-Content-Language: en-US
-To:     Jacky Huang <ychuang3@nuvoton.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "soc@kernel.org" <soc@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220307091923.9909-1-ychuang3@nuvoton.com>
- <20220307091923.9909-4-ychuang3@nuvoton.com>
- <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
- <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/04/2022 04:58, Jacky Huang wrote:
->>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
->>> index 639e01a4d855..28e01442094f 100644
->>> --- a/arch/arm64/boot/dts/Makefile
->>> +++ b/arch/arm64/boot/dts/Makefile
->>> @@ -30,3 +30,4 @@ subdir-y += synaptics
->>>   subdir-y += ti
->>>   subdir-y += toshiba
->>>   subdir-y += xilinx
->>> +subdir-y += nuvoton
->>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
->>> new file mode 100644
->>> index 000000000000..e1e0c466bf5e
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
->>> @@ -0,0 +1,2 @@
->>> +# SPDX-License-Identifier: GPL-2.0
->>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-evb.dtb
->> ARCH_NUVOTON does not exist.
-> 
-> I would add the following to end of arch/arm64/Kconfig.platforms,
+Hi Rob,
 
-Don't add things at the end of files but rather in respective place
-without messing the order.
+robh@kernel.org wrote on Tue, 5 Apr 2022 13:12:19 -0500:
 
-> and 
-> add the
-> modification to this patch series.
-> 
-> config ARCH_MA35D1
->      bool "Nuvoton MA35D1 SOC Family"
+> On Tue, Apr 5, 2022 at 3:19 AM Miquel Raynal <miquel.raynal@bootlin.com> =
+wrote:
+> >
+> > The Renesas RZN1 DMA IP is based on a DW core, with eg. an additional
+> > dmamux register located in the system control area which can take up to
+> > 32 requests (16 per DMA controller). Each DMA channel can be wired to
+> > two different peripherals.
+> >
+> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/dma/renesas,rzn1-dmamux.yaml     | 51 +++++++++++++++++++
+> >  MAINTAINERS                                   |  1 +
+> >  2 files changed, 52 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-=
+dmamux.yaml =20
+>=20
+> Please send to the DT list so checks run. I've already reviewed this,
+> but what passes does change over time. Such as RiscV cpuidle patches
+> that were picked up after 2 months on Thurs and sent to Linus on
+> Fri... :(
 
-We do not add options for specific SoCs, but for entire families, so
-ARCH_NUVOTON is correct.
+Oh, ok, no problem.
 
->      select PINCTRL
->      select PINCTRL_MA35D1
->      select PM
->      select GPIOLIB
->      select SOC_BUS
->      select VIDEOMODE_HELPERS
->      select FB_MODE_HELPERS
->      help
->        This enables support for Nuvoton MA35D1 SOC Family.
-> 
-> 
->>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
->>> new file mode 100644
->>> index 000000000000..38e4f734da0f
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
->>> @@ -0,0 +1,23 @@
->>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>> +/*
->>> + * Device Tree Source for MA35D1 Evaluation Board (EVB)
->>> + *
->>> + * Copyright (C) 2021 Nuvoton Technology Corp.
->>> + */
->>> +
->>> +/dts-v1/;
->>> +#include "ma35d1.dtsi"
->>> +
->>> +/ {
->>> +       model = "Nuvoton MA35D1-EVB";
->>> +
->>> +       chosen {
->>> +               bootargs = "console=ttyS0,115200n8";
->> No bootargs. "chosen", please.
-> 
-> OK, I would modify it as:
-> 
-> chosen {
->          stdout-path = "serial0:115200n8";
->      };
-> 
-> 
->>> +       };
->> You need compatible and bindings.
-> 
-> I will add the compatible here
-> compatible = "nuvoton,ma35d1-evb", "nuvoton,ma35d1"
-> 
-> And, I should create a new binding file 
-> Documentation/devicetree/bindings/arm/nuvoton.yaml to this patch series.
-> And the property would be:
-> 
-> properties:
->    compatible:
->      description: Nuvoton MA35D1-EVB
->      items:
->        - const: nuvoton,ma35d1-evb
->        - const: nuvoton,ma35d1
-> 
-> 
-> Is it OK?
-
-Yes
-
-
-
-Best regards,
-Krzysztof
+Thanks,
+Miqu=C3=A8l
