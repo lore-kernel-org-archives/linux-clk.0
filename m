@@ -2,97 +2,181 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0602FC433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 10:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9652AC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 10:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239262AbiDFKjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 06:39:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43624 "EHLO
+        id S243208AbiDFKvh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 06:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354978AbiDFKhj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 06:37:39 -0400
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC5B11A55F;
-        Wed,  6 Apr 2022 00:00:13 -0700 (PDT)
-Received: (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9CE54FF811;
-        Wed,  6 Apr 2022 07:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649228409;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3feAVPb/IZI+Kyt7g88AM6urFegWf3gJ4WYhTcG5vQY=;
-        b=IvewMjVxFUDoClFDiZPfYFb5P9w2kBwonvgmUOwfVj3KTaTmCwvn6H6Zp/sgPHHXgTXXQb
-        fOqvp9ztat3Swhn2xNnIFd+X8OPj4Il0S3AEFS/xu+IsC9XwEXLSgK0+9Ff1rfXjXp4BwX
-        Qs2r3m3yjzYRveSn1Lmg+Gd1kGNTAGzuSm0a15GTE66owzUxlcCzbmNA82dzpTsNUhDLL0
-        aCeOpFOc5b1uqU0tJMb1pUSDWKmUSnXJcdDUnLAiRfeMdyFkq4dnPlUga1sN0lZErDvCzn
-        GGZ3gvStPE4U07XzAGCyjmL7aSJpqZv6PSOh+kmetU4xmAbyMTz1VKC/ZuDEZg==
-Date:   Wed, 6 Apr 2022 09:00:04 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a function to
- enable/disable the RTC
-Message-ID: <20220406090004.230b9b94@windsurf>
-In-Reply-To: <20220405184716.1578385-3-miquel.raynal@bootlin.com>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
-        <20220405184716.1578385-3-miquel.raynal@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.31; x86_64-redhat-linux-gnu)
+        with ESMTP id S231237AbiDFKu0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 06:50:26 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D49E10856C
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 00:15:05 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id bg10so2360268ejb.4
+        for <linux-clk@vger.kernel.org>; Wed, 06 Apr 2022 00:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ItLT2iWRQ8MK455HPWYXz8o5FEVTFaa0PW9WN5W7PWQ=;
+        b=aljVglaiorKfLr8hIxisEour0ptMG48CK1Bco7fzAXebuy++7+j30VgUqeBNWNdapT
+         46/oBIK5ME7783f1qbqsbxF5x372/E+eU6rexLJ3siZ4UM45XdYoJ8n8w31/ArgK1aNk
+         uwAEQrHoYEM0WjRO1nd1VUEwecsGsuQ1oi5AAOjZiNcyShoav28NWybX7c8Oa+tJbMez
+         Mey+ABS6X67p4P5xSubdsTVUfYEFFabbavXous5101XE2chjMSSJAY5XDxyGP1N/xccQ
+         JHURGWS09J+gDo3OLTrPKlNqcW6azIrdVUp/cCMhfqs+syP26YHknSOBGxCrRJue8I7e
+         mA1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ItLT2iWRQ8MK455HPWYXz8o5FEVTFaa0PW9WN5W7PWQ=;
+        b=eEjCDHWuEBIiMQSQJNBprSW2OoJxprEyPBwpQr6u8a84vLTcGWeFaEhBMKOOWBSCVl
+         P3FoFlzyLXnUb9ndGZmUjZtOwf5geIkEp0zepKEx+Yu77VYps7evO1baOE4MS+Czae6b
+         fLL3Ky3D3ExBPh0HDMTPo7b0PlM9KarIGYSjzjocLQ9u225mfosKu7racoUPb5p5LPVu
+         WP+6RXzbfs+h1wu9tDqt+GXycPaNPZ7y5RxqJUdD/hOoLjQE/XlwSz1dPDMOd7W/A4RO
+         /sMSP7Y8nxaKqNHURRsqcS8u2boYBUjXnnXLS1/jwvt9Hz2a6FjcRpN/BaiiyPrN2rJI
+         NneA==
+X-Gm-Message-State: AOAM532sDePamg0/5zfGzTzme7Npv0cI8p/FK0uRJcXcMvNYYZkoJSa+
+        9WzmcqKsaqQCCUsFOE1gd8bjxA==
+X-Google-Smtp-Source: ABdhPJxkVzG6YeLl1AHfVOPZW8vCgyulJy2IwvFDrOQZC3HKys5OOJ6wApTj/h6GZDOZpaKoaF2krQ==
+X-Received: by 2002:a17:906:dc92:b0:6e4:a93b:8958 with SMTP id cs18-20020a170906dc9200b006e4a93b8958mr7148361ejc.403.1649229298612;
+        Wed, 06 Apr 2022 00:14:58 -0700 (PDT)
+Received: from [192.168.0.182] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
+        by smtp.gmail.com with ESMTPSA id n6-20020aa7c786000000b00410d2403ccfsm7531111eds.21.2022.04.06.00.14.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 00:14:58 -0700 (PDT)
+Message-ID: <bba99b9d-6960-f6e8-0ee4-0b5fe8a5601d@linaro.org>
+Date:   Wed, 6 Apr 2022 09:14:57 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 3/3] arm64: dts: nuvoton: Add initial support for MA35D1
+Content-Language: en-US
+To:     Jacky Huang <ychuang3@nuvoton.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "soc@kernel.org" <soc@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220307091923.9909-1-ychuang3@nuvoton.com>
+ <20220307091923.9909-4-ychuang3@nuvoton.com>
+ <2669852c-5bb6-1edf-bf58-ea815f54d50f@kernel.org>
+ <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ef8efda1-e985-0684-470f-7acf9b8a5e93@nuvoton.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Miqu=C3=A8l,
+On 06/04/2022 04:58, Jacky Huang wrote:
+>>> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+>>> index 639e01a4d855..28e01442094f 100644
+>>> --- a/arch/arm64/boot/dts/Makefile
+>>> +++ b/arch/arm64/boot/dts/Makefile
+>>> @@ -30,3 +30,4 @@ subdir-y += synaptics
+>>>   subdir-y += ti
+>>>   subdir-y += toshiba
+>>>   subdir-y += xilinx
+>>> +subdir-y += nuvoton
+>>> diff --git a/arch/arm64/boot/dts/nuvoton/Makefile b/arch/arm64/boot/dts/nuvoton/Makefile
+>>> new file mode 100644
+>>> index 000000000000..e1e0c466bf5e
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/nuvoton/Makefile
+>>> @@ -0,0 +1,2 @@
+>>> +# SPDX-License-Identifier: GPL-2.0
+>>> +dtb-$(CONFIG_ARCH_NUVOTON) += ma35d1-evb.dtb
+>> ARCH_NUVOTON does not exist.
+> 
+> I would add the following to end of arch/arm64/Kconfig.platforms,
 
-On Tue,  5 Apr 2022 20:47:11 +0200
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Don't add things at the end of files but rather in respective place
+without messing the order.
 
-> +	spin_lock_irqsave(&sysctrl_priv->lock, flags);
+> and 
+> add the
+> modification to this patch series.
+> 
+> config ARCH_MA35D1
+>      bool "Nuvoton MA35D1 SOC Family"
 
-Taking a lock here...
+We do not add options for specific SoCs, but for entire families, so
+ARCH_NUVOTON is correct.
 
-> +
-> +	if (enable) {
-> +		val =3D readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &=3D ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |=3D R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |=3D R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &=3D ~R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val =3D readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRSTAT_RTC);
-> +		if (val & R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE)
-> +			return -EIO;
+>      select PINCTRL
+>      select PINCTRL_MA35D1
+>      select PM
+>      select GPIOLIB
+>      select SOC_BUS
+>      select VIDEOMODE_HELPERS
+>      select FB_MODE_HELPERS
+>      help
+>        This enables support for Nuvoton MA35D1 SOC Family.
+> 
+> 
+>>> diff --git a/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
+>>> new file mode 100644
+>>> index 000000000000..38e4f734da0f
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/nuvoton/ma35d1-evb.dts
+>>> @@ -0,0 +1,23 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>> +/*
+>>> + * Device Tree Source for MA35D1 Evaluation Board (EVB)
+>>> + *
+>>> + * Copyright (C) 2021 Nuvoton Technology Corp.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +#include "ma35d1.dtsi"
+>>> +
+>>> +/ {
+>>> +       model = "Nuvoton MA35D1-EVB";
+>>> +
+>>> +       chosen {
+>>> +               bootargs = "console=ttyS0,115200n8";
+>> No bootargs. "chosen", please.
+> 
+> OK, I would modify it as:
+> 
+> chosen {
+>          stdout-path = "serial0:115200n8";
+>      };
+> 
+> 
+>>> +       };
+>> You need compatible and bindings.
+> 
+> I will add the compatible here
+> compatible = "nuvoton,ma35d1-evb", "nuvoton,ma35d1"
+> 
+> And, I should create a new binding file 
+> Documentation/devicetree/bindings/arm/nuvoton.yaml to this patch series.
+> And the property would be:
+> 
+> properties:
+>    compatible:
+>      description: Nuvoton MA35D1-EVB
+>      items:
+>        - const: nuvoton,ma35d1-evb
+>        - const: nuvoton,ma35d1
+> 
+> 
+> Is it OK?
 
-And forgetting to release it here in the error case.
+Yes
 
-Thomas
---=20
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
+
+
+Best regards,
+Krzysztof
