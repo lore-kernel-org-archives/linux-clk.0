@@ -2,148 +2,132 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA76C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356F4C433F5
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231482AbiDFMu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
+        id S229713AbiDFM6v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:58:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231740AbiDFMtj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:49:39 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D42A48BA81
-        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 01:53:20 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0AF7B1F38A;
-        Wed,  6 Apr 2022 08:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649235199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=EzGAQ/MofS+m8XrNR8nWydZTr6PeSPMu+omNIpQeHBA=;
-        b=WvFRtJMcgnuV44HT4HDNz2TJxPr/tVBCoTJH9shiK+uch9QD8jbsW/WTJebk5oIB95Kw6f
-        fZuUFgI9VvKyxNFehF0AK3NzBSawGYUv7euTibYFc2hBWeuEcljrrcB85M5eRAW7cZI1CQ
-        kML8wpEcHDd040xWk9B6oT/JIlVWHyo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649235199;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=EzGAQ/MofS+m8XrNR8nWydZTr6PeSPMu+omNIpQeHBA=;
-        b=8m/tuwTE2W7vdpkWV73106BkQqhWRyWWsFRyHKF4iHe4TrwLzI2XOhWhW4dTy2QsPAa7mA
-        b6JKMXS8czuZ1sAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A4F95139F5;
-        Wed,  6 Apr 2022 08:53:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 8L7nJv5UTWJqdAAAMHmgww
-        (envelope-from <tzimmermann@suse.de>); Wed, 06 Apr 2022 08:53:18 +0000
-Message-ID: <b1e7c3ad-1641-3466-e7df-f232d0fe4239@suse.de>
-Date:   Wed, 6 Apr 2022 10:53:17 +0200
+        with ESMTP id S231804AbiDFM5Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:57:16 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on20605.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8a::605])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF9B4D7832
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 02:16:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aGXEg5qJb60kfG6UbWBIIi+OulhGGQWK59QsoBXFg5MB8VxlTa9F2fZykFBEd4IsMlAn4hQ+i5icgFvttmIMiV0HItn4k7MkmU/bb7vPwCFyWrCsebZqsND2Mj+4dQlVPMODbYmBfOdZdSbB9Q9+jTCrlpjBDjFlCMpDjvfU4xGoTBmg66NlcxU1NBfnYYJ3pKOvRn5nqEyneFeb3IPzXh5n6JdTy1fsgZq23Q3XWLWhBxRzV4d3TZDnV0xBiMRSD1gNovSweDq2YKxJK68bI5rPRCk9GOtLiL6YLRvslb34fNoLvnaneOsIT9YuEbPJJ2aYEIoh/Fg6dph8JqHfkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M9HUuFC7y7K+SXxmW7Ghv+cgRlhQzK6d4W/n46Wp5vI=;
+ b=oOFbmw+zKKqKkpv7BWRxrMoPSdQlv05RafCLtUcBfszcVczLpe2RW+pjPV+9IiXYXal45+mGjkmavytx8uEpyLX8BR3F4m5PKL7DKk4IAyyeMAz4iF00cSEzMnYjF0Ae4t2W/A/n/nEVk6gGg8mLiO34kMQJOgQocmEonuqH2An3a871HVTl/xM4R9XmWVAfDQ7OPcfi1i9bf1tnsYOH8YDbaMtXEKjwWRnJzIqM2vSYMJ3U51UxuIQxDtYSLxr+nBO8gOiNX8K4xCtgr6P6aXHUHaGzcvcoR1aDDM51KSoVfS28DOWqkSbaq+zeNM5fAuuwAeGJQSFFx9Deivv+/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M9HUuFC7y7K+SXxmW7Ghv+cgRlhQzK6d4W/n46Wp5vI=;
+ b=nVy32Mn7lGFa4YsiUcx7Nsk05hhh9b7aqFfHa8vnQQ0N+vxpIYMVfv5Dl2dYx/YffM/dx45W4/Ln+CIQPnoa7KIPWN4UZFyo/dJK6lfxKRhC6d7tTB/rQDpVaOayPaJxCZgUvlXKSN6Dzc0eq8Wx4E4g98/hQY67XFBwJygB5ic=
+Received: from SN4PR0401CA0026.namprd04.prod.outlook.com
+ (2603:10b6:803:2a::12) by BN8PR02MB5987.namprd02.prod.outlook.com
+ (2603:10b6:408:b4::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
+ 2022 09:14:25 +0000
+Received: from SN1NAM02FT0035.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:803:2a:cafe::ee) by SN4PR0401CA0026.outlook.office365.com
+ (2603:10b6:803:2a::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.21 via Frontend
+ Transport; Wed, 6 Apr 2022 09:14:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com;
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ SN1NAM02FT0035.mail.protection.outlook.com (10.97.4.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5144.21 via Frontend Transport; Wed, 6 Apr 2022 09:14:24 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Wed, 6 Apr 2022 02:14:23 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Wed, 6 Apr 2022 02:14:23 -0700
+Envelope-to: git@xilinx.com,
+ linux-clk@vger.kernel.org,
+ sboyd@kernel.org
+Received: from [10.140.6.59] (port=53080 helo=xhdshubhraj40.xilinx.com)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <shubhrajyoti.datta@xilinx.com>)
+        id 1nc1k6-000B5o-Rd; Wed, 06 Apr 2022 02:14:23 -0700
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     <linux-clk@vger.kernel.org>
+CC:     <git@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
+        <sboyd@kernel.org>, <michal.simek@xilinx.com>
+Subject: [PATCH] clk: zynqmp: Check the return type  zynqmp_pm_query_data
+Date:   Wed, 6 Apr 2022 14:44:15 +0530
+Message-ID: <20220406091415.18109-1-shubhrajyoti.datta@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v7 12/12] drm/vc4: hdmi: Remove clock rate initialization
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Dom Cobley <dom@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        dri-devel@lists.freedesktop.org,
-        Phil Elwell <phil@raspberrypi.com>, linux-clk@vger.kernel.org
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-13-maxime@cerno.tech>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-In-Reply-To: <20220225143534.405820-13-maxime@cerno.tech>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------RtGF9mbG2qwnUI51Xrmvz4jr"
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: f243c795-4526-49a0-35a6-08da17add834
+X-MS-TrafficTypeDiagnostic: BN8PR02MB5987:EE_
+X-Microsoft-Antispam-PRVS: <BN8PR02MB5987C9A0D3D060507C82F562AAE79@BN8PR02MB5987.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: a44/i8HYM6KEl7k9hqNT1cEO5QsbzSTne2Y1noBfWnoWOYsO1a4WBZijTGN61/8PN685Huh5HZzh13tDtasNpq6muwONIl9+FJqm0iyCVI0wYVF/LcWawDqB3ldqf4JSYOdd9UTryAXkVhndjvIiIBe9fwQjeJHv29VpdHb2fgS0veCKGVZW2+CtLmdsVH0ESJTngX8PjtC4TOgYxFLLE9Wdk+Hpllh7jbRZffWu/U2cS8rMtryCqtzemW7jtT/+98uiZPR3Hg0dK95JuewoK9YbEPRx74iDhomHUVJo3eZ/KNkzQeNmGM76VdCdIAgNWX0a8XwWtsFp0EHybHLAzyEiwIEFNp1EPDXzUBkhuFb+MTUDqy+lFYDTh0gkIFeys1anJckAuTUb25F7Ya0gnF+oeMHESjfHAg7owBPIBAoL7yMmEmZ+cqKeVnX7N0y4QlZG9vC+jhXAzmLt4YNY+3Yj4jZxVib1Tv5NKlUFZBXsLWCbHCEIEZrS9BzD7cXc5BRDAxGRxHmiDHSkVQDkaLYRZJ088wZXLgpOHriKeyYzH43Cj3+AioX2kRyjLvxf7Gk8CFb3IJiCdepSzd1bXdzSnu0a34sgJiTj1bz/BeBWPn03WvBTuA4iOaAeq+s/Ng1dAAJcusDB80ft/vr7TMH7EfYCe59phPHlkC09OkyQrcrW0F+qm0TUq03+mxKvyqjdT9gJQhZ4Te3VqVZtIQ==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(46966006)(40470700004)(70586007)(9786002)(2906002)(4744005)(1076003)(44832011)(8936002)(7696005)(8676002)(508600001)(186003)(4326008)(26005)(70206006)(36860700001)(2616005)(40460700003)(6666004)(107886003)(5660300002)(83380400001)(356005)(82310400005)(54906003)(7636003)(47076005)(36756003)(426003)(336012)(6916009)(316002)(102446001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 09:14:24.9646
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f243c795-4526-49a0-35a6-08da17add834
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0035.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR02MB5987
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------RtGF9mbG2qwnUI51Xrmvz4jr
-Content-Type: multipart/mixed; boundary="------------dqTW1P6o0A0qYobMjYw27y8o";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Maxime Ripard <maxime@cerno.tech>,
- Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Dom Cobley <dom@raspberrypi.com>, Tim Gover <tim.gover@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- dri-devel@lists.freedesktop.org, Phil Elwell <phil@raspberrypi.com>,
- linux-clk@vger.kernel.org
-Message-ID: <b1e7c3ad-1641-3466-e7df-f232d0fe4239@suse.de>
-Subject: Re: [PATCH v7 12/12] drm/vc4: hdmi: Remove clock rate initialization
-References: <20220225143534.405820-1-maxime@cerno.tech>
- <20220225143534.405820-13-maxime@cerno.tech>
-In-Reply-To: <20220225143534.405820-13-maxime@cerno.tech>
+Check the return type of zynqmp_pm_query_data(qdata, ret_payload);
 
---------------dqTW1P6o0A0qYobMjYw27y8o
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Addresses-Coverity: Event check_return
+Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+---
+ drivers/clk/zynqmp/clkc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-DQoNCkFtIDI1LjAyLjIyIHVtIDE1OjM1IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gTm93
-IHRoYXQgdGhlIGNsb2NrIGRyaXZlciBtYWtlcyBzdXJlIHdlIG5ldmVyIGVuZCB1cCB3aXRo
-IGEgcmF0ZSBvZiAwLA0KPiB0aGUgSERNSSBkcml2ZXIgZG9lc24ndCBuZWVkIHRvIGNhcmUg
-YW55bW9yZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQgPG1heGltZUBj
-ZXJuby50ZWNoPg0KDQpBY2tlZC1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5u
-QHN1c2UuZGU+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfaGRtaS5j
-IHwgMTMgLS0tLS0tLS0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxMyBkZWxldGlvbnMo
-LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMNCj4gaW5kZXggOTJiMTUzMGFhMTdi
-Li4yMWFmZjNhZDk2Y2YgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0
-X2hkbWkuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMNCj4gQEAg
-LTI1NzYsMTkgKzI1NzYsNiBAQCBzdGF0aWMgaW50IHZjNF9oZG1pX2JpbmQoc3RydWN0IGRl
-dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpDQo+ICAgCQkJ
-dmM0X2hkbWktPmRpc2FibGVfNGtwNjAgPSB0cnVlOw0KPiAgIAl9DQo+ICAgDQo+IC0JLyoN
-Cj4gLQkgKiBJZiB3ZSBib290IHdpdGhvdXQgYW55IGNhYmxlIGNvbm5lY3RlZCB0byB0aGUg
-SERNSSBjb25uZWN0b3IsDQo+IC0JICogdGhlIGZpcm13YXJlIHdpbGwgc2tpcCB0aGUgSFNN
-IGluaXRpYWxpemF0aW9uIGFuZCBsZWF2ZSBpdA0KPiAtCSAqIHdpdGggYSByYXRlIG9mIDAs
-IHJlc3VsdGluZyBpbiBhIGJ1cyBsb2NrdXAgd2hlbiB3ZSdyZQ0KPiAtCSAqIGFjY2Vzc2lu
-ZyB0aGUgcmVnaXN0ZXJzIGV2ZW4gaWYgaXQncyBlbmFibGVkLg0KPiAtCSAqDQo+IC0JICog
-TGV0J3MgcHV0IGEgc2Vuc2libGUgZGVmYXVsdCBhdCBydW50aW1lX3Jlc3VtZSBzbyB0aGF0
-IHdlDQo+IC0JICogZG9uJ3QgZW5kIHVwIGluIHRoaXMgc2l0dWF0aW9uLg0KPiAtCSAqLw0K
-PiAtCXJldCA9IGNsa19zZXRfbWluX3JhdGUodmM0X2hkbWktPmhzbV9jbG9jaywgSFNNX01J
-Tl9DTE9DS19GUkVRKTsNCj4gLQlpZiAocmV0KQ0KPiAtCQlnb3RvIGVycl9wdXRfZGRjOw0K
-PiAtDQo+ICAgCS8qDQo+ICAgCSAqIFdlIG5lZWQgdG8gaGF2ZSB0aGUgZGV2aWNlIHBvd2Vy
-ZWQgdXAgYXQgdGhpcyBwb2ludCB0byBjYWxsDQo+ICAgCSAqIG91ciByZXNldCBob29rIGFu
-ZCBmb3IgdGhlIENFQyBpbml0Lg0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGlj
-cyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdt
-YkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQ0KKEhSQiAzNjgw
-OSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bDvGhyZXI6IEl2byBUb3Rldg0K
+diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+index 75d895be2d89..8164939b3d18 100644
+--- a/drivers/clk/zynqmp/clkc.c
++++ b/drivers/clk/zynqmp/clkc.c
+@@ -227,11 +227,15 @@ static int zynqmp_pm_clock_get_name(u32 clock_id,
+ {
+ 	struct zynqmp_pm_query_data qdata = {0};
+ 	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
+ 
+ 	qdata.qid = PM_QID_CLOCK_GET_NAME;
+ 	qdata.arg1 = clock_id;
+ 
+-	zynqmp_pm_query_data(qdata, ret_payload);
++	ret = zynqmp_pm_query_data(qdata, ret_payload);
++	if (ret)
++		return ret;
++
+ 	memcpy(response, ret_payload, sizeof(*response));
+ 
+ 	return 0;
+-- 
+2.17.1
 
---------------dqTW1P6o0A0qYobMjYw27y8o--
-
---------------RtGF9mbG2qwnUI51Xrmvz4jr
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmJNVP0FAwAAAAAACgkQlh/E3EQov+Bb
-Uw//QIql1fZy9kuJhuDDXDx+YbjD1BUZxyhi6zuh7NDJK9p/6Q796tvK2qqjdG8UPlY+5T6H5R1L
-fEsE8AM00gNA/P7AfsZ1tte7J1oVQX2+h05EhT0YVJIETWZtFiLh9VN1vdbY9baPZZsBNpQFHt33
-VRmh7ULjoT8wwlvVHFrmlQDYnSYdruYGDMCOjnxSzGmk9ut8rGim5Q1l45sHzaKdZomYZOlg7pSp
-V4JZAwdfzZWjsi4HFew8vtVNUd5sZH0ZNmb0A6XwVqpHvOOL3Dkio5/obuA0yFU2fyRUwy9krata
-Y0p1dcjEQ74yBWzcI4e5Cxsj4YGryPRobtqEG5ZrlPuGez47Wk47JFV61bl/YFnH42Jb/qZejtEs
-kHTflPap95a8Jwhkb4NubBuSPAWpGyx0d/ux74KfZQvtewUlzAKvr6iMWKWmfY7wDSTJaAusyEJz
-JieqnbKTcGph9SU8I6h7Yqx6UKFWP3+NAfaBFe3u9TGprSuKymrxtgGKrWKk7fZn/7qliURGWGHw
-iltBTKCK9JTX7cklDG8bPNqWKqR49keGhs9h7vhRCTAEQcb/IDph4GsoxsJqbzhfJoQawrqzonPR
-okXUrMBQ2auXcH5KAC7/pA0HI1eLE399tDIKqUKo0cbDt7oFJnbW9imDvblp8Hgdg+PvcfDo9ecQ
-ki0=
-=Ifv/
------END PGP SIGNATURE-----
-
---------------RtGF9mbG2qwnUI51Xrmvz4jr--
