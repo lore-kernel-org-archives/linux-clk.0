@@ -2,402 +2,148 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B001DC4332F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA76C433FE
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiDFMuA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:50:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58756 "EHLO
+        id S231482AbiDFMu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231415AbiDFMth (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:49:37 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2813B4C5ED3;
-        Wed,  6 Apr 2022 02:00:33 -0700 (PDT)
-Received: from relay3-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::223])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id A55DDC7AC4;
-        Wed,  6 Apr 2022 08:50:45 +0000 (UTC)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 6E84660006;
-        Wed,  6 Apr 2022 08:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649235041;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S231740AbiDFMtj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:49:39 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D42A48BA81
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 01:53:20 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0AF7B1F38A;
+        Wed,  6 Apr 2022 08:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649235199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=tErT+ZwaDPcqAIB1XKn6SPEZzapnWsR8UyXa+0xPdd4=;
-        b=Qcl6ijV+qnHcnFFJ1I2gNXCj3KZwIJ45rxx4CDq8Wv4iHBRL+gTGL6xz67PLyXmRv5MiiD
-        x/+dif+qRkTl9xw39teAu3rnPHUs3bq/g6Xc+hNgziVbAfUJIzU1LfvCqlIKsTDsj5fUus
-        5IcP7L8GLpCDXocxbSWReMPfkG61JvYLIWkBep9dh7zKCAHQ21lnYu23RUobCeVQGkES7Z
-        bT7bFZs3RsgFgNDarNMyrnzvKAlNBoGT9ZUPUbPi/CerhkCE2ZnvJqjwpwNnqO+fSoiyb2
-        DnUBqjFoTIwi89VILbD+IjOsM8R89xF1tvDL6bZEtgsg3YckpiVaq6hrBis4rw==
-Date:   Wed, 6 Apr 2022 10:50:38 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        Michel Pollet <michel.pollet@bp.renesas.com>
-Subject: Re: [PATCH 3/7] rtc: rzn1: Add new RTC driver
-Message-ID: <Yk1UXjTk32Vc9+/k@mail.local>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
- <20220405184716.1578385-4-miquel.raynal@bootlin.com>
+        bh=EzGAQ/MofS+m8XrNR8nWydZTr6PeSPMu+omNIpQeHBA=;
+        b=WvFRtJMcgnuV44HT4HDNz2TJxPr/tVBCoTJH9shiK+uch9QD8jbsW/WTJebk5oIB95Kw6f
+        fZuUFgI9VvKyxNFehF0AK3NzBSawGYUv7euTibYFc2hBWeuEcljrrcB85M5eRAW7cZI1CQ
+        kML8wpEcHDd040xWk9B6oT/JIlVWHyo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649235199;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EzGAQ/MofS+m8XrNR8nWydZTr6PeSPMu+omNIpQeHBA=;
+        b=8m/tuwTE2W7vdpkWV73106BkQqhWRyWWsFRyHKF4iHe4TrwLzI2XOhWhW4dTy2QsPAa7mA
+        b6JKMXS8czuZ1sAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A4F95139F5;
+        Wed,  6 Apr 2022 08:53:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 8L7nJv5UTWJqdAAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 06 Apr 2022 08:53:18 +0000
+Message-ID: <b1e7c3ad-1641-3466-e7df-f232d0fe4239@suse.de>
+Date:   Wed, 6 Apr 2022 10:53:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405184716.1578385-4-miquel.raynal@bootlin.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v7 12/12] drm/vc4: hdmi: Remove clock rate initialization
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Dom Cobley <dom@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org,
+        Phil Elwell <phil@raspberrypi.com>, linux-clk@vger.kernel.org
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-13-maxime@cerno.tech>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20220225143534.405820-13-maxime@cerno.tech>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------RtGF9mbG2qwnUI51Xrmvz4jr"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/04/2022 20:47:12+0200, Miquel Raynal wrote:
-> From: Michel Pollet <michel.pollet@bp.renesas.com>
-> 
-> Add a basic RTC driver for the RZ/N1.
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> Co-developed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/rtc/Kconfig    |   7 ++
->  drivers/rtc/Makefile   |   1 +
->  drivers/rtc/rtc-rzn1.c | 255 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 263 insertions(+)
->  create mode 100644 drivers/rtc/rtc-rzn1.c
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index 41c65b4d2baf..f4d72c5b99ea 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -1548,6 +1548,13 @@ config RTC_DRV_RS5C313
->  	help
->  	  If you say yes here you get support for the Ricoh RS5C313 RTC chips.
->  
-> +config RTC_DRV_RZN1
-> +	tristate "Renesas RZN1 RTC"
-> +	depends on ARCH_RZN1 || COMPILE_TEST
-> +	depends on OF && HAS_IOMEM
-> +	help
-> +	  If you say yes here you get support for the Renesas RZ/N1 RTC.
-> +
->  config RTC_DRV_GENERIC
->  	tristate "Generic RTC support"
->  	# Please consider writing a new RTC driver instead of using the generic
-> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-> index 2d827d8261d5..fb04467b652d 100644
-> --- a/drivers/rtc/Makefile
-> +++ b/drivers/rtc/Makefile
-> @@ -151,6 +151,7 @@ obj-$(CONFIG_RTC_DRV_RX6110)	+= rtc-rx6110.o
->  obj-$(CONFIG_RTC_DRV_RX8010)	+= rtc-rx8010.o
->  obj-$(CONFIG_RTC_DRV_RX8025)	+= rtc-rx8025.o
->  obj-$(CONFIG_RTC_DRV_RX8581)	+= rtc-rx8581.o
-> +obj-$(CONFIG_RTC_DRV_RZN1)	+= rtc-rzn1.o
->  obj-$(CONFIG_RTC_DRV_S35390A)	+= rtc-s35390a.o
->  obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
->  obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
-> diff --git a/drivers/rtc/rtc-rzn1.c b/drivers/rtc/rtc-rzn1.c
-> new file mode 100644
-> index 000000000000..15c533333930
-> --- /dev/null
-> +++ b/drivers/rtc/rtc-rzn1.c
-> @@ -0,0 +1,255 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Renesas RZN1 Real Time Clock interface for Linux
-> + *
-> + * Copyright:
-> + * - 2014 Renesas Electronics Europe Limited
-> + * - 2022 Schneider Electric
-> + *
-> + * Authors:
-> + * - Michel Pollet <michel.pollet@bp.renesas.com>, <buserror@gmail.com>
-> + * - Miquel Raynal <miquel.raynal@bootlin.com>
-> + */
-> +
-> +#include <linux/bcd.h>
-> +#include <linux/clk.h>
-> +#include <linux/init.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/rtc.h>
-> +#include <linux/soc/renesas/r9a06g032-sysctrl.h>
-> +
-> +#define RZN1_RTC_CTL0 0x00
-> +#define   RZN1_RTC_CTL0_SLSB_SUBU 0
-> +#define   RZN1_RTC_CTL0_SLSB_SCMP BIT(4)
-> +#define   RZN1_RTC_CTL0_AMPM BIT(5)
-> +#define   RZN1_RTC_CTL0_CE BIT(7)
-> +
-> +#define RZN1_RTC_CTL1 0x04
-> +#define   RZN1_RTC_CTL1_ALME BIT(4)
-> +
-> +#define RZN1_RTC_CTL2 0x08
-> +#define   RZN1_RTC_CTL2_WAIT BIT(0)
-> +#define   RZN1_RTC_CTL2_WST BIT(1)
-> +#define   RZN1_RTC_CTL2_WUST BIT(5)
-> +
-> +#define RZN1_RTC_SEC 0x14
-> +#define RZN1_RTC_MIN 0x18
-> +#define RZN1_RTC_HOUR 0x1c
-> +#define RZN1_RTC_WEEK 0x20
-> +#define RZN1_RTC_DAY 0x24
-> +#define RZN1_RTC_MONTH 0x28
-> +#define RZN1_RTC_YEAR 0x2c
-> +
-> +#define RZN1_RTC_SUBU 0x38
-> +#define   RZN1_RTC_SUBU_DEV BIT(7)
-> +#define   RZN1_RTC_SUBU_DECR BIT(6)
-> +
-> +#define RZN1_RTC_ALM 0x40
-> +#define RZN1_RTC_ALH 0x44
-> +#define RZN1_RTC_ALW 0x48
-> +
-> +#define RZN1_RTC_SECC 0x4c
-> +#define RZN1_RTC_MINC 0x50
-> +#define RZN1_RTC_HOURC 0x54
-> +#define RZN1_RTC_WEEKC 0x58
-> +#define RZN1_RTC_DAYC 0x5c
-> +#define RZN1_RTC_MONTHC 0x60
-> +#define RZN1_RTC_YEARC 0x64
-> +
-> +struct rzn1_rtc {
-> +	struct rtc_device *rtcdev;
-> +	void __iomem *base;
-> +	struct clk *clk;
-> +};
-> +
-> +static void rzn1_rtc_get_time_snapshot(struct rzn1_rtc *rtc, struct rtc_time *tm)
-> +{
-> +	tm->tm_sec = readl(rtc->base + RZN1_RTC_SECC);
-> +	tm->tm_min = readl(rtc->base + RZN1_RTC_MINC);
-> +	tm->tm_hour = readl(rtc->base + RZN1_RTC_HOURC);
-> +	tm->tm_wday = readl(rtc->base + RZN1_RTC_WEEKC);
-> +	tm->tm_mday = readl(rtc->base + RZN1_RTC_DAYC);
-> +	tm->tm_mon = readl(rtc->base + RZN1_RTC_MONTHC);
-> +	tm->tm_year = readl(rtc->base + RZN1_RTC_YEARC);
-> +}
-> +
-> +static unsigned int rzn1_rtc_tm_to_wday(struct rtc_time *tm)
-> +{
-> +	time64_t time;
-> +	unsigned int days;
-> +	u32 secs;
-> +
-> +	time = rtc_tm_to_time64(tm);
-> +	days = div_s64_rem(time, 86400, &secs);
-> +
-> +	/* day of the week, 1970-01-01 was a Thursday */
-> +	return (days + 4) % 7;
-> +}
-> +
-> +static int rzn1_rtc_read_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
-> +	u32 secs;
-> +
-> +	rzn1_rtc_get_time_snapshot(rtc, tm);
-> +	secs = readl(rtc->base + RZN1_RTC_SECC);
-> +	if (tm->tm_sec != secs)
-> +		rzn1_rtc_get_time_snapshot(rtc, tm);
-> +
-> +	tm->tm_sec = bcd2bin(tm->tm_sec);
-> +	tm->tm_min = bcd2bin(tm->tm_min);
-> +	tm->tm_hour = bcd2bin(tm->tm_hour);
-> +	tm->tm_wday = bcd2bin(tm->tm_wday);
-> +	tm->tm_mday = bcd2bin(tm->tm_mday);
-> +	tm->tm_mon = bcd2bin(tm->tm_mon);
-> +	tm->tm_year = bcd2bin(tm->tm_year);
-> +
-> +	dev_dbg(dev, "%d-%d-%d(%d)T%d:%d:%d\n",
-> +		tm->tm_year, tm->tm_mon, tm->tm_mday, tm->tm_wday,
-> +		tm->tm_hour, tm->tm_min, tm->tm_sec);
-> +
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------RtGF9mbG2qwnUI51Xrmvz4jr
+Content-Type: multipart/mixed; boundary="------------dqTW1P6o0A0qYobMjYw27y8o";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Maxime Ripard <maxime@cerno.tech>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Dom Cobley <dom@raspberrypi.com>, Tim Gover <tim.gover@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ dri-devel@lists.freedesktop.org, Phil Elwell <phil@raspberrypi.com>,
+ linux-clk@vger.kernel.org
+Message-ID: <b1e7c3ad-1641-3466-e7df-f232d0fe4239@suse.de>
+Subject: Re: [PATCH v7 12/12] drm/vc4: hdmi: Remove clock rate initialization
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-13-maxime@cerno.tech>
+In-Reply-To: <20220225143534.405820-13-maxime@cerno.tech>
 
-This is not really useful because we have tracepoints in the core.
-Anyway, please use %ptR.
+--------------dqTW1P6o0A0qYobMjYw27y8o
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-> +	return 0;
-> +}
-> +
-> +static int rzn1_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct rzn1_rtc *rtc = dev_get_drvdata(dev);
-> +	u32 val;
-> +	int ret;
-> +
-> +	tm->tm_sec = bin2bcd(tm->tm_sec);
-> +	tm->tm_min = bin2bcd(tm->tm_min);
-> +	tm->tm_hour = bin2bcd(tm->tm_hour);
-> +	tm->tm_wday = bin2bcd(rzn1_rtc_tm_to_wday(tm));
-> +	tm->tm_mday = bin2bcd(tm->tm_mday);
-> +	tm->tm_mon = bin2bcd(tm->tm_mon);
-> +	tm->tm_year = bin2bcd(tm->tm_year);
-> +
-> +	/* Hold the counter */
-> +	val = readl(rtc->base + RZN1_RTC_CTL2);
-> +	val |= RZN1_RTC_CTL2_WAIT;
-> +	writel(val, rtc->base + RZN1_RTC_CTL2);
-> +
-> +	/* Wait for the counter to stop: two 32k clock cycles */
-> +	usleep_range(61, 100);
-> +	ret = readl_poll_timeout(rtc->base + RZN1_RTC_CTL2, val,
-> +				 val & RZN1_RTC_CTL2_WST, 0, 100);
-> +	if (!ret) {
-> +		writel(tm->tm_sec, rtc->base + RZN1_RTC_SEC);
-> +		writel(tm->tm_min, rtc->base + RZN1_RTC_MIN);
-> +		writel(tm->tm_hour, rtc->base + RZN1_RTC_HOUR);
-> +		writel(tm->tm_wday, rtc->base + RZN1_RTC_WEEK);
-> +		writel(tm->tm_mday, rtc->base + RZN1_RTC_DAY);
-> +		writel(tm->tm_mon, rtc->base + RZN1_RTC_MONTH);
-> +		writel(tm->tm_year, rtc->base + RZN1_RTC_YEAR);
-> +	}
-> +
-> +	/* Release the counter back */
-> +	val &= ~RZN1_RTC_CTL2_WAIT;
-> +	writel(val, rtc->base + RZN1_RTC_CTL2);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct rtc_class_ops rzn1_rtc_ops = {
-> +	.read_time = rzn1_rtc_read_time,
-> +	.set_time = rzn1_rtc_set_time,
-> +};
-> +
-> +static int rzn1_rtc_probe(struct platform_device *pdev)
-> +{
-> +	struct rzn1_rtc *rtc;
-> +	int ret;
-> +
-> +	rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
-> +	if (!rtc)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, rtc);
-> +
-> +	rtc->clk = devm_clk_get(&pdev->dev, "hclk");
-> +	if (IS_ERR(rtc->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->clk), "Missing hclk\n");
-> +
-> +	rtc->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(rtc->base))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(rtc->base), "Missing reg\n");
-> +
-> +	rtc->rtcdev = devm_rtc_allocate_device(&pdev->dev);
-> +	if (IS_ERR(rtc->rtcdev))
-> +		return PTR_ERR(rtc);
-> +
-> +	rtc->rtcdev->range_max = 3178591199UL; /* 100 years */
+DQoNCkFtIDI1LjAyLjIyIHVtIDE1OjM1IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gTm93
+IHRoYXQgdGhlIGNsb2NrIGRyaXZlciBtYWtlcyBzdXJlIHdlIG5ldmVyIGVuZCB1cCB3aXRo
+IGEgcmF0ZSBvZiAwLA0KPiB0aGUgSERNSSBkcml2ZXIgZG9lc24ndCBuZWVkIHRvIGNhcmUg
+YW55bW9yZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQgPG1heGltZUBj
+ZXJuby50ZWNoPg0KDQpBY2tlZC1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5u
+QHN1c2UuZGU+DQoNCj4gLS0tDQo+ICAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfaGRtaS5j
+IHwgMTMgLS0tLS0tLS0tLS0tLQ0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxMyBkZWxldGlvbnMo
+LSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMNCj4gaW5kZXggOTJiMTUzMGFhMTdi
+Li4yMWFmZjNhZDk2Y2YgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0
+X2hkbWkuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9oZG1pLmMNCj4gQEAg
+LTI1NzYsMTkgKzI1NzYsNiBAQCBzdGF0aWMgaW50IHZjNF9oZG1pX2JpbmQoc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRhdGEpDQo+ICAgCQkJ
+dmM0X2hkbWktPmRpc2FibGVfNGtwNjAgPSB0cnVlOw0KPiAgIAl9DQo+ICAgDQo+IC0JLyoN
+Cj4gLQkgKiBJZiB3ZSBib290IHdpdGhvdXQgYW55IGNhYmxlIGNvbm5lY3RlZCB0byB0aGUg
+SERNSSBjb25uZWN0b3IsDQo+IC0JICogdGhlIGZpcm13YXJlIHdpbGwgc2tpcCB0aGUgSFNN
+IGluaXRpYWxpemF0aW9uIGFuZCBsZWF2ZSBpdA0KPiAtCSAqIHdpdGggYSByYXRlIG9mIDAs
+IHJlc3VsdGluZyBpbiBhIGJ1cyBsb2NrdXAgd2hlbiB3ZSdyZQ0KPiAtCSAqIGFjY2Vzc2lu
+ZyB0aGUgcmVnaXN0ZXJzIGV2ZW4gaWYgaXQncyBlbmFibGVkLg0KPiAtCSAqDQo+IC0JICog
+TGV0J3MgcHV0IGEgc2Vuc2libGUgZGVmYXVsdCBhdCBydW50aW1lX3Jlc3VtZSBzbyB0aGF0
+IHdlDQo+IC0JICogZG9uJ3QgZW5kIHVwIGluIHRoaXMgc2l0dWF0aW9uLg0KPiAtCSAqLw0K
+PiAtCXJldCA9IGNsa19zZXRfbWluX3JhdGUodmM0X2hkbWktPmhzbV9jbG9jaywgSFNNX01J
+Tl9DTE9DS19GUkVRKTsNCj4gLQlpZiAocmV0KQ0KPiAtCQlnb3RvIGVycl9wdXRfZGRjOw0K
+PiAtDQo+ICAgCS8qDQo+ICAgCSAqIFdlIG5lZWQgdG8gaGF2ZSB0aGUgZGV2aWNlIHBvd2Vy
+ZWQgdXAgYXQgdGhpcyBwb2ludCB0byBjYWxsDQo+ICAgCSAqIG91ciByZXNldCBob29rIGFu
+ZCBmb3IgdGhlIENFQyBpbml0Lg0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGlj
+cyBEcml2ZXIgRGV2ZWxvcGVyDQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdt
+YkgNCk1heGZlbGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQ0KKEhSQiAzNjgw
+OSwgQUcgTsO8cm5iZXJnKQ0KR2VzY2jDpGZ0c2bDvGhyZXI6IEl2byBUb3Rldg0K
 
-I'm not sure how you came to this value, this is 2070-09-22T05:59:59.
-I'm pretty sure the RTC will not fail at that time. Also, the comment
-seems fishy.
+--------------dqTW1P6o0A0qYobMjYw27y8o--
 
+--------------RtGF9mbG2qwnUI51Xrmvz4jr
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
 
-> +	rtc->rtcdev->ops = &rzn1_rtc_ops;
-> +
-> +	ret = r9a06g032_sysctrl_enable_rtc(true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = clk_prepare_enable(rtc->clk);
-> +	if (ret)
-> +		goto disable_rtc;
-> +
-> +	/*
-> +	 * Ensure the clock counter is enabled.
-> +	 * Set 24-hour mode and possible oscillator offset compensation in SUBU mode.
-> +	 */
-> +	writel(RZN1_RTC_CTL0_CE | RZN1_RTC_CTL0_AMPM | RZN1_RTC_CTL0_SLSB_SUBU,
-> +	       rtc->base + RZN1_RTC_CTL0);
-> +
-> +	/* Disable all interrupts */
-> +	writel(0, rtc->base + RZN1_RTC_CTL1);
-> +
-> +	/* Enable counter operation */
-> +	writel(0, rtc->base + RZN1_RTC_CTL2);
-> +
+-----BEGIN PGP SIGNATURE-----
 
-I don't think you should do that unconditionally. The RTC is either
-not already started (and doesn't carry the proper time/date) or already
-started. It would be better to start it in .set_time. Maybe you can even
-use that to detect whether it has already been set once.
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmJNVP0FAwAAAAAACgkQlh/E3EQov+Bb
+Uw//QIql1fZy9kuJhuDDXDx+YbjD1BUZxyhi6zuh7NDJK9p/6Q796tvK2qqjdG8UPlY+5T6H5R1L
+fEsE8AM00gNA/P7AfsZ1tte7J1oVQX2+h05EhT0YVJIETWZtFiLh9VN1vdbY9baPZZsBNpQFHt33
+VRmh7ULjoT8wwlvVHFrmlQDYnSYdruYGDMCOjnxSzGmk9ut8rGim5Q1l45sHzaKdZomYZOlg7pSp
+V4JZAwdfzZWjsi4HFew8vtVNUd5sZH0ZNmb0A6XwVqpHvOOL3Dkio5/obuA0yFU2fyRUwy9krata
+Y0p1dcjEQ74yBWzcI4e5Cxsj4YGryPRobtqEG5ZrlPuGez47Wk47JFV61bl/YFnH42Jb/qZejtEs
+kHTflPap95a8Jwhkb4NubBuSPAWpGyx0d/ux74KfZQvtewUlzAKvr6iMWKWmfY7wDSTJaAusyEJz
+JieqnbKTcGph9SU8I6h7Yqx6UKFWP3+NAfaBFe3u9TGprSuKymrxtgGKrWKk7fZn/7qliURGWGHw
+iltBTKCK9JTX7cklDG8bPNqWKqR49keGhs9h7vhRCTAEQcb/IDph4GsoxsJqbzhfJoQawrqzonPR
+okXUrMBQ2auXcH5KAC7/pA0HI1eLE399tDIKqUKo0cbDt7oFJnbW9imDvblp8Hgdg+PvcfDo9ecQ
+ki0=
+=Ifv/
+-----END PGP SIGNATURE-----
 
-> +	ret = devm_rtc_register_device(rtc->rtcdev);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register RTC\n");
-
-No error message is needed here.
-
-> +		goto disable_clk;
-> +	}
-> +
-> +	return 0;
-> +
-> +disable_clk:
-> +	clk_disable_unprepare(rtc->clk);
-> +disable_rtc:
-> +	r9a06g032_sysctrl_enable_rtc(false);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rzn1_rtc_remove(struct platform_device *pdev)
-> +{
-> +	struct rzn1_rtc *rtc = platform_get_drvdata(pdev);
-> +
-> +	clk_disable_unprepare(rtc->clk);
-> +	r9a06g032_sysctrl_enable_rtc(false);
-
-Does this stop the RTC or just the register interface?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id rzn1_rtc_of_match[] = {
-> +	{ .compatible	= "renesas,rzn1-rtc" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, rzn1_rtc_of_match);
-> +
-> +static struct platform_driver rzn1_rtc_driver = {
-> +	.probe = rzn1_rtc_probe,
-> +	.remove = rzn1_rtc_remove,
-> +	.driver = {
-> +		.name	= "rzn1-rtc",
-> +		.owner	= THIS_MODULE,
-> +		.of_match_table = rzn1_rtc_of_match,
-> +	},
-> +};
-> +module_platform_driver(rzn1_rtc_driver);
-> +
-> +MODULE_AUTHOR("Michel Pollet <Michel.Pollet@bp.renesas.com");
-> +MODULE_AUTHOR("Miquel Raynal <miquel.raynal@bootlin.com");
-> +MODULE_DESCRIPTION("RZ/N1 RTC driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.27.0
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--------------RtGF9mbG2qwnUI51Xrmvz4jr--
