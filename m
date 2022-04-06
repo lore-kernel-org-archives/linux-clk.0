@@ -2,173 +2,150 @@ Return-Path: <linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86772C433FE
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C7EC433EF
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Apr 2022 12:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232041AbiDFMoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55194 "EHLO
+        id S230450AbiDFMrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Apr 2022 08:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbiDFMoE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:44:04 -0400
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C794898A6;
-        Wed,  6 Apr 2022 01:45:44 -0700 (PDT)
-Received: from relay2-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::222])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 2AFF0C0380;
-        Wed,  6 Apr 2022 08:32:40 +0000 (UTC)
-Received: (Authenticated sender: alexandre.belloni@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id B5ACB4000E;
-        Wed,  6 Apr 2022 08:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1649233953;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S232290AbiDFMqS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Apr 2022 08:46:18 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC429591224
+        for <linux-clk@vger.kernel.org>; Wed,  6 Apr 2022 01:50:43 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 677C1210DE;
+        Wed,  6 Apr 2022 08:50:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649235042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=PZxxQo3dVhrsiwd8skvk945aAYTYNSp19GOHWGGNzKw=;
-        b=iLXbCHleLr0fpEmdF/teBjhd0vz4JA7GOX0jtRRTjHWBZdFABwBbIZB5+yNdAOKov3e//P
-        aAxRAdKQbIsViI0I4v59pAKI5B+wohE/Rt+h9f104Nr+W0A8WrWxRSceWBkEujAGVh14Iu
-        3TM1K+Ec0kFl82tb0qkCcZznT7BFLu/jTz5VnzdC5pb0ck/33Pa3GhriSFj61KQ1PlYNNE
-        XRSfOR/piCotExVeUuBw3OKbUT8gr280ZcsTCG6uMKL6OCH0KFD6rX34mwvKxr0ib3vltz
-        XKckXDirb/yME6NU1TYHXvhSMesIW0nhp5u4WgsFPvnBR2u/3MiyiB6JVffGKw==
-Date:   Wed, 6 Apr 2022 10:32:31 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Pascal Eberhard <pascal.eberhard@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Clement Leger <clement.leger@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 2/7] soc: renesas: rzn1-sysc: Export a function to
- enable/disable the RTC
-Message-ID: <Yk1QH71VskeACqqm@mail.local>
-References: <20220405184716.1578385-1-miquel.raynal@bootlin.com>
- <20220405184716.1578385-3-miquel.raynal@bootlin.com>
+        bh=+lD0ry4dQlfPEWiVab4evz/HYwwWqd7eDGwOxj0rnIk=;
+        b=02hUbL+vxgoAP4OMfXcSDw60stGacRjLXZaBxvlX76FiE0amX2cnZLGrXEaVbvC57tlDTX
+        RCII+RON48XaeMJrqz6Xw7XWUS5//elqLwpar5I+LtdKLFa5yB6TS7EXrRUmqAgIuYUwm0
+        yptAY6fFxM0zekbDnjUePZ1TbIurcJs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649235042;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+lD0ry4dQlfPEWiVab4evz/HYwwWqd7eDGwOxj0rnIk=;
+        b=8hf8k2R6jZ5RClPobNyRV5tIPENPTbIkOcanFZ6jBvIwXDE1R4TnarLSZ0nKvPZip4PJxn
+        V+SvJUkAakTNFXDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3035C139F5;
+        Wed,  6 Apr 2022 08:50:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id qjWRCmJUTWLGcgAAMHmgww
+        (envelope-from <tzimmermann@suse.de>); Wed, 06 Apr 2022 08:50:42 +0000
+Message-ID: <62ffcc58-3770-884f-611f-13cc0fddea4d@suse.de>
+Date:   Wed, 6 Apr 2022 10:50:41 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405184716.1578385-3-miquel.raynal@bootlin.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v7 11/12] drm/vc4: Add logging and comments
+Content-Language: en-US
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Dom Cobley <dom@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        dri-devel@lists.freedesktop.org,
+        Phil Elwell <phil@raspberrypi.com>, linux-clk@vger.kernel.org
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-12-maxime@cerno.tech>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+In-Reply-To: <20220225143534.405820-12-maxime@cerno.tech>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------Xl5vKddbOyOOjhIwP7mL0o0k"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/04/2022 20:47:11+0200, Miquel Raynal wrote:
-> There are two RTC registers located within the system controller.
-> 
-> Like with the dmamux register, let's add a new helper to enable/disable
-> the power, reset and clock of the RTC.
-> 
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/clk/renesas/r9a06g032-clocks.c        | 49 +++++++++++++++++++
->  include/linux/soc/renesas/r9a06g032-sysctrl.h |  2 +
->  2 files changed, 51 insertions(+)
-> 
-> diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-> index 1df56d7ab3e1..7e61db39a43b 100644
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -26,6 +26,13 @@
->  #include <dt-bindings/clock/r9a06g032-sysctrl.h>
->  
->  #define R9A06G032_SYSCTRL_DMAMUX 0xA0
-> +#define R9A06G032_SYSCTRL_PWRCTRL_RTC 0x140
-> +#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN BIT(0)
-> +#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RST BIT(1)
-> +#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ BIT(2)
-> +#define   R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW BIT(3)
-> +#define R9A06G032_SYSCTRL_PWRSTAT_RTC 0x144
-> +#define   R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE BIT(1)
->  
->  struct r9a06g032_gate {
->  	u16 gate, reset, ready, midle,
-> @@ -343,6 +350,48 @@ int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val)
->  }
->  EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_set_dmamux);
->  
-> +/* Exported helper to enable/disable the RTC */
-> +int r9a06g032_sysctrl_enable_rtc(bool enable)
-> +{
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	if (!sysctrl_priv)
-> +		return -EPROBE_DEFER;
-> +
-> +	spin_lock_irqsave(&sysctrl_priv->lock, flags);
-> +
-> +	if (enable) {
-> +		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRSTAT_RTC);
-> +		if (val & R9A06G032_SYSCTRL_PWRSTAT_RTC_IDLE)
-> +			return -EIO;
-> +	} else {
-> +		val = readl(sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_IDLE_REQ;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_RSTN_FW;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val &= ~R9A06G032_SYSCTRL_PWRCTRL_RTC_CLKEN;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +		val |= R9A06G032_SYSCTRL_PWRCTRL_RTC_RST;
-> +		writel(val, sysctrl_priv->reg + R9A06G032_SYSCTRL_PWRCTRL_RTC);
-> +	}
-> +
-> +	spin_unlock_irqrestore(&sysctrl_priv->lock, flags);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(r9a06g032_sysctrl_enable_rtc);
-> +
->  /* register/bit pairs are encoded as an uint16_t */
->  static void
->  clk_rdesc_set(struct r9a06g032_priv *clocks,
-> diff --git a/include/linux/soc/renesas/r9a06g032-sysctrl.h b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-> index 066dfb15cbdd..914c8789149c 100644
-> --- a/include/linux/soc/renesas/r9a06g032-sysctrl.h
-> +++ b/include/linux/soc/renesas/r9a06g032-sysctrl.h
-> @@ -4,8 +4,10 @@
->  
->  #ifdef CONFIG_CLK_R9A06G032
->  int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val);
-> +int r9a06g032_sysctrl_enable_rtc(bool enable);
->  #else
->  static inline int r9a06g032_sysctrl_set_dmamux(u32 mask, u32 val) { return -ENODEV; }
-> +static inline int r9a06g032_sysctrl_enable_rtc(bool enable) { return -ENODEV; }
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------Xl5vKddbOyOOjhIwP7mL0o0k
+Content-Type: multipart/mixed; boundary="------------zli0nFshZdlII5ARN0fhvShJ";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Maxime Ripard <maxime@cerno.tech>,
+ Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Dom Cobley <dom@raspberrypi.com>, Tim Gover <tim.gover@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ dri-devel@lists.freedesktop.org, Phil Elwell <phil@raspberrypi.com>,
+ linux-clk@vger.kernel.org
+Message-ID: <62ffcc58-3770-884f-611f-13cc0fddea4d@suse.de>
+Subject: Re: [PATCH v7 11/12] drm/vc4: Add logging and comments
+References: <20220225143534.405820-1-maxime@cerno.tech>
+ <20220225143534.405820-12-maxime@cerno.tech>
+In-Reply-To: <20220225143534.405820-12-maxime@cerno.tech>
 
-Couldn't that be handled using the reset subsystem to avoid leaking a
-random API in the RTC driver? (and that would remove the build
-dependency)
+--------------zli0nFshZdlII5ARN0fhvShJ
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
->  #endif
->  
->  #endif /* __LINUX_SOC_RENESAS_R9A06G032_SYSCTRL_H__ */
-> -- 
-> 2.27.0
-> 
+DQoNCkFtIDI1LjAyLjIyIHVtIDE1OjM1IHNjaHJpZWIgTWF4aW1lIFJpcGFyZDoNCj4gVGhl
+IEhWUyBjb3JlIGNsb2NrIGlzbid0IHJlYWxseSBvYnZpb3VzLCBzbyBsZXQncyBhZGQgYSBi
+dW5jaCBtb3JlDQo+IGNvbW1lbnRzIGFuZCBzb21lIGxvZ2dpbmcgZm9yIGVhc2llciBkZWJ1
+Z2dpbmcuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlwYXJkIDxtYXhpbWVAY2Vy
+bm8udGVjaD4NCg0KQWNrZWQtYnk6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBz
+dXNlLmRlPg0KDQo+IC0tLQ0KPiAgIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jIHwg
+MTEgKysrKysrKysrKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKQ0K
+PiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jIGIvZHJp
+dmVycy9ncHUvZHJtL3ZjNC92YzRfa21zLmMNCj4gaW5kZXggMjRkZTI5YmMxY2RhLi42ZmUw
+M2ZjMTdkNzMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5j
+DQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2ttcy5jDQo+IEBAIC0zODksOCAr
+Mzg5LDE1IEBAIHN0YXRpYyB2b2lkIHZjNF9hdG9taWNfY29tbWl0X3RhaWwoc3RydWN0IGRy
+bV9hdG9taWNfc3RhdGUgKnN0YXRlKQ0KPiAgIAkJCQkJCTUwMDAwMDAwMCwNCj4gICAJCQkJ
+CQluZXdfaHZzX3N0YXRlLT5jb3JlX2Nsb2NrX3JhdGUpOw0KPiAgIA0KPiArCQlkcm1fZGJn
+KGRldiwgIlJhaXNpbmcgdGhlIGNvcmUgY2xvY2sgYXQgJWx1IEh6XG4iLCBjb3JlX3JhdGUp
+Ow0KPiArDQo+ICsJCS8qDQo+ICsJCSAqIERvIGEgdGVtcG9yYXJ5IHJlcXVlc3Qgb24gdGhl
+IGNvcmUgY2xvY2sgZHVyaW5nIHRoZQ0KPiArCQkgKiBtb2Rlc2V0Lg0KPiArCQkgKi8NCj4g
+ICAJCWNsa19zZXRfbWluX3JhdGUoaHZzLT5jb3JlX2NsaywgY29yZV9yYXRlKTsNCj4gICAJ
+fQ0KPiArDQo+ICAgCWRybV9hdG9taWNfaGVscGVyX2NvbW1pdF9tb2Rlc2V0X2Rpc2FibGVz
+KGRldiwgc3RhdGUpOw0KPiAgIA0KPiAgIAl2YzRfY3RtX2NvbW1pdCh2YzQsIHN0YXRlKTsN
+Cj4gQEAgLTQxNiw2ICs0MjMsMTAgQEAgc3RhdGljIHZvaWQgdmM0X2F0b21pY19jb21taXRf
+dGFpbChzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUpDQo+ICAgCQlkcm1fZGJnKGRl
+diwgIlJ1bm5pbmcgdGhlIGNvcmUgY2xvY2sgYXQgJWx1IEh6XG4iLA0KPiAgIAkJCW5ld19o
+dnNfc3RhdGUtPmNvcmVfY2xvY2tfcmF0ZSk7DQo+ICAgDQo+ICsJCS8qDQo+ICsJCSAqIFJl
+cXVlc3QgYSBjbG9jayByYXRlIGJhc2VkIG9uIHRoZSBjdXJyZW50IEhWUw0KPiArCQkgKiBy
+ZXF1aXJlbWVudHMuDQo+ICsJCSAqLw0KPiAgIAkJY2xrX3NldF9taW5fcmF0ZShodnMtPmNv
+cmVfY2xrLCBuZXdfaHZzX3N0YXRlLT5jb3JlX2Nsb2NrX3JhdGUpOw0KPiAgIAl9DQo+ICAg
+fQ0KDQotLSANClRob21hcyBaaW1tZXJtYW5uDQpHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVy
+DQpTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgNCk1heGZlbGRzdHIuIDUs
+IDkwNDA5IE7DvHJuYmVyZywgR2VybWFueQ0KKEhSQiAzNjgwOSwgQUcgTsO8cm5iZXJnKQ0K
+R2VzY2jDpGZ0c2bDvGhyZXI6IEl2byBUb3Rldg0K
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--------------zli0nFshZdlII5ARN0fhvShJ--
+
+--------------Xl5vKddbOyOOjhIwP7mL0o0k
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsF5BAABCAAjFiEExndm/fpuMUdwYFFolh/E3EQov+AFAmJNVGEFAwAAAAAACgkQlh/E3EQov+Bl
+ohAAqduPwfJMHn8DKbshiYC8q+MhL/14LTbuR7Qg6YyH7PymbLyXV/97RIR6rvzvKrucj9/90akT
+AHMJ9wSriIP6tyBDNM80i/oAmF/7KR0LHNA1joLL48jq2tKgEjBSv/7rZ9pkWrtvuFnYd4h8EM8r
+VH0p7St9O1iL3LnY3sNacrEefhKtE+wwNHVw72QEuYMAm3iM97vTp9zYU2WM5/Upkg4L4k6FzNrd
+LVGd+eC4vB2dqOu8yDWh5rDXasynPf9+F+cqzGdoJzezeT/+cqu5g19NT0NM4n2fG8NHQJ7xkmtY
+wuc6LNpP2dHi566yUruXhDH04YQDW6HS5g3ig+ESsUDdEEeznTelkvrOAQR8D1OYBOA5n83KoNJU
+/Bt9bZIDWL+nzh6fY4BUAtoh38vNDp670epcsH/JF+9uwYZQW+E4iXpkMhrESrh2GTRr8dwZS/vK
+NoXRP5CvaZgTwWcUBsr7l9kj6+wdK18Y47lllVCeN8XqKI3kb6iJbiT61Ud2Y0K9VhzM/0MKmx5E
+XcRANTuXvaXileFtrNwx0sNdJWqzf0etpTml0Ory+QdKRJVww8B0yD5SNayCcv0EKWs44IEbNxXz
+P8y479CoaKhlNH+ea5Kejat8b5hhFN5fJ6uJntM/irfmzV9S9XMQ5tLUB1+OfS5XcdAQFiVNVqLC
+xUw=
+=n+Kt
+-----END PGP SIGNATURE-----
+
+--------------Xl5vKddbOyOOjhIwP7mL0o0k--
